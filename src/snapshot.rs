@@ -1,5 +1,6 @@
 //! Damus snapshot ingestion and corpus eligibility.
 
+use std::collections::BTreeSet;
 use std::fs::{self, File, OpenOptions};
 use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
 use std::ops::ControlFlow;
@@ -11,6 +12,10 @@ use sha2::{Digest, Sha256};
 use thiserror::Error;
 
 pub use crate::canonical::{CanonicalCounts, CanonicalManifest};
+
+const SOURCE_INGEST_BATCH_EVENTS: usize = 8 * 1_024;
+const SOURCE_INGEST_BATCH_WRITES: usize = 8 * 1_024;
+const SOURCE_INGEST_MAX_WRITES: usize = 24 * 1_024;
 
 /// Result type for snapshot pipeline operations.
 pub type Result<T> = std::result::Result<T, Error>;
@@ -124,6 +129,10 @@ pub enum Error {
     /// Independent source responses cannot be reproduced against one artifact set.
     #[error("oracle responses contain incompatible corpus or retriever versions")]
     OracleVersionMismatch,
+
+    /// The end-to-end preflight could not produce or verify its execution record.
+    #[error("preflight failed: {0}")]
+    Preflight(String),
 }
 
 /// Files and directories owned by one snapshot pipeline run.
@@ -185,6 +194,21 @@ impl SnapshotLayout {
         self.root.join("canonical").join("aliases.bin")
     }
 
+    /// Return one named immutable corpus-stage directory.
+    pub fn corpus_stage_dir(&self, name: &str) -> PathBuf {
+        self.root.join("stages").join(name)
+    }
+
+    /// Return one corpus stage's selected canonical row file.
+    pub fn corpus_stage_rows(&self, name: &str) -> PathBuf {
+        self.corpus_stage_dir(name).join("rows.bin")
+    }
+
+    /// Return one corpus stage's manifest path.
+    pub fn corpus_stage_manifest(&self, name: &str) -> PathBuf {
+        self.corpus_stage_dir(name).join("manifest.json")
+    }
+
     /// Return the root of one named embedding artifact.
     pub fn embedding_dir(&self, artifact_name: &str) -> PathBuf {
         self.root.join("embeddings").join(artifact_name)
@@ -193,6 +217,16 @@ impl SnapshotLayout {
     /// Return one named embedding manifest path.
     pub fn embedding_manifest(&self, artifact_name: &str) -> PathBuf {
         self.embedding_dir(artifact_name).join("manifest.json")
+    }
+
+    /// Return one immutable preflight execution directory.
+    pub fn preflight_dir(&self, name: &str) -> PathBuf {
+        self.root.join("preflight").join(name)
+    }
+
+    /// Return one preflight execution manifest path.
+    pub fn preflight_manifest(&self, name: &str) -> PathBuf {
+        self.preflight_dir(name).join("manifest.json")
     }
 
     fn source_dir(&self) -> PathBuf {
@@ -209,6 +243,14 @@ impl SnapshotLayout {
 
     pub(crate) fn embedding_root(&self) -> PathBuf {
         self.root.join("embeddings")
+    }
+
+    pub(crate) fn corpus_stage_root(&self) -> PathBuf {
+        self.root.join("stages")
+    }
+
+    pub(crate) fn preflight_root(&self) -> PathBuf {
+        self.root.join("preflight")
     }
 
     fn work_dir(&self) -> PathBuf {
@@ -229,6 +271,14 @@ impl SnapshotLayout {
 
     pub(crate) fn embedding_stage(&self, artifact_name: &str) -> PathBuf {
         self.work_dir().join(format!("embedding-{artifact_name}"))
+    }
+
+    pub(crate) fn corpus_stage_work(&self, name: &str) -> PathBuf {
+        self.work_dir().join(format!("corpus-stage-{name}"))
+    }
+
+    pub(crate) fn preflight_work(&self, name: &str) -> PathBuf {
+        self.work_dir().join(format!("preflight-{name}"))
     }
 }
 
@@ -318,7 +368,7 @@ impl DamusSnapshot {
         let mut reader = BufReader::new(decoder);
         let stage = self.prepare_stage(&self.layout.source_dir(), &self.layout.source_stage())?;
         let staged_db = stage.join("ndb");
-        let ndb = open_ndb(&staged_db, Validation::Verify)?;
+        let mut ingest = SourceIngest::new(&staged_db)?;
         let mut snapshot_records = 0_u64;
         let mut line = String::new();
 
@@ -339,8 +389,7 @@ impl DamusSnapshot {
                     bytes,
                 });
             }
-            ndb.process_event(&line)
-                .map_err(|source| ndb_error("submit event to", &staged_db, source))?;
+            ingest.submit(&line, SourceSubmission::SnapshotRecord)?;
         }
 
         let decoder = reader.into_inner();
@@ -354,7 +403,8 @@ impl DamusSnapshot {
             )));
         }
 
-        drop(ndb);
+        ingest.finish();
+        ingest_embedded_reposts(&staged_db)?;
         let stored_events = count_all(&staged_db, Validation::Verify)?;
         let manifest = SourceManifest {
             schema_version: 1,
@@ -468,6 +518,187 @@ impl DamusSnapshot {
     }
 }
 
+/// Bounded single-ingester writes avoid NostrDB's concurrent kind-6 shutdown race.
+struct SourceIngest<'a> {
+    path: &'a Path,
+    ndb: Option<Ndb>,
+    submitted: usize,
+    potential_writes: usize,
+}
+
+#[derive(Clone, Copy)]
+enum SourceSubmission {
+    SnapshotRecord,
+    EmbeddedContent,
+}
+
+impl SourceSubmission {
+    fn operation(self) -> &'static str {
+        match self {
+            Self::SnapshotRecord => "submit snapshot event to",
+            Self::EmbeddedContent => "submit embedded repost event to",
+        }
+    }
+}
+
+impl<'a> SourceIngest<'a> {
+    fn new(path: &'a Path) -> Result<Self> {
+        Ok(Self {
+            path,
+            ndb: Some(open_source_ingest_ndb(path)?),
+            submitted: 0,
+            potential_writes: 0,
+        })
+    }
+
+    fn submit(&mut self, event: &str, source: SourceSubmission) -> Result<()> {
+        let potential_writes = potential_ingest_writes(event);
+        if potential_writes > SOURCE_INGEST_MAX_WRITES {
+            return Err(Error::Invariant(format!(
+                "one source event could produce {potential_writes} NostrDB writes, exceeding the safe limit of {SOURCE_INGEST_MAX_WRITES}"
+            )));
+        }
+        if self.submitted > 0
+            && (self.submitted == SOURCE_INGEST_BATCH_EVENTS
+                || self
+                    .potential_writes
+                    .checked_add(potential_writes)
+                    .is_none_or(|writes| writes > SOURCE_INGEST_BATCH_WRITES))
+        {
+            self.finish_batch();
+        }
+        if self.ndb.is_none() {
+            self.ndb = Some(open_source_ingest_ndb(self.path)?);
+        }
+        self.ndb
+            .as_ref()
+            .expect("source ingest batch is open")
+            .process_event(event)
+            .map_err(|error| ndb_error(source.operation(), self.path, error))?;
+        self.submitted += 1;
+        self.potential_writes += potential_writes;
+        if potential_writes > SOURCE_INGEST_BATCH_WRITES {
+            self.finish_batch();
+        }
+        Ok(())
+    }
+
+    fn finish(mut self) {
+        self.finish_batch();
+    }
+
+    fn finish_batch(&mut self) {
+        drop(self.ndb.take());
+        self.submitted = 0;
+        self.potential_writes = 0;
+    }
+}
+
+/// Bound all messages that one NostrDB lifetime can send to its writer queue.
+///
+/// The pinned NostrDB revision gives both the ingester and writer queues 32,768
+/// slots. A kind-6 note may recursively dispatch its content, so counting only
+/// top-level snapshot records is insufficient. Keeping every direct submission
+/// and every possible kind-6 descendant within the smaller limit above makes a
+/// full internal queue impossible even if the writer makes no progress while
+/// the ingester drains. Standard event JSON is counted recursively. For JSON
+/// shapes accepted only by NostrDB's lax parser, byte length is a conservative
+/// upper bound: each additional recursive dispatch requires non-empty nested
+/// syntax in the finite input.
+fn potential_ingest_writes(event: &str) -> usize {
+    let mut current = event.to_owned();
+    let mut writes = 0_usize;
+
+    loop {
+        let value: serde_json::Value = match serde_json::from_str(&current) {
+            Ok(value) => value,
+            Err(_) => return writes.saturating_add(current.len()),
+        };
+        let event_like = value.is_object()
+            || value.as_array().is_some_and(|message| {
+                message.first().and_then(serde_json::Value::as_str) == Some("EVENT")
+            });
+        if !event_like {
+            return writes;
+        }
+
+        let strict: StrictIngestEvent = match serde_json::from_str(&current) {
+            Ok(strict) => strict,
+            Err(_) => return writes.saturating_add(current.len()),
+        };
+        let note = match strict {
+            StrictIngestEvent::Raw(note) => note,
+            StrictIngestEvent::Relay((marker, _, note)) if marker == "EVENT" => note,
+            StrictIngestEvent::Relay(_) => return writes,
+        };
+        writes = writes.saturating_add(1);
+        if writes > SOURCE_INGEST_MAX_WRITES || note.kind != 6 {
+            return writes;
+        }
+        current = note.content;
+    }
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct StrictNostrEvent {
+    #[serde(rename = "id")]
+    _id: String,
+    #[serde(rename = "pubkey")]
+    _pubkey: String,
+    #[serde(rename = "created_at")]
+    _created_at: u32,
+    kind: u32,
+    #[serde(rename = "tags")]
+    _tags: Vec<Vec<String>>,
+    content: String,
+    #[serde(rename = "sig")]
+    _sig: String,
+}
+
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum StrictIngestEvent {
+    Raw(StrictNostrEvent),
+    Relay((String, String, StrictNostrEvent)),
+}
+
+/// Complete NostrDB's valid kind-6 content closure without relying on recursive queue timing.
+fn ingest_embedded_reposts(path: &Path) -> Result<()> {
+    let mut processed = BTreeSet::new();
+    loop {
+        let ndb = open_source_ingest_ndb(path)?;
+        let txn = Transaction::new(&ndb)
+            .map_err(|source| ndb_error("open transaction on", path, source))?;
+        let kind_six = Filter::new().kinds([6]).build();
+        let pending = ndb
+            .fold(&txn, &[kind_six], Vec::new(), |mut pending, note| {
+                if processed.insert(*note.id()) && !note.content().is_empty() {
+                    pending.push(note.content().to_owned());
+                }
+                pending
+            })
+            .map_err(|source| ndb_error("scan embedded reposts from", path, source))?;
+        drop(txn);
+        drop(ndb);
+        if pending.is_empty() {
+            return Ok(());
+        }
+
+        let mut ingest = SourceIngest::new(path)?;
+        for event in pending {
+            if event.len() > i32::MAX as usize {
+                return Err(Error::Invariant(format!(
+                    "embedded repost event is too large for NostrDB: {} bytes",
+                    event.len()
+                )));
+            }
+            ingest.submit(&event, SourceSubmission::EmbeddedContent)?;
+        }
+        ingest.finish();
+    }
+}
+
 #[derive(Clone, Copy, Debug, Default)]
 struct DerivedCounts {
     replies: u64,
@@ -568,6 +799,18 @@ pub(crate) enum Validation {
 }
 
 pub(crate) fn open_ndb(path: &Path, validation: Validation) -> Result<Ndb> {
+    open_ndb_with_ingesters(path, validation, None)
+}
+
+fn open_source_ingest_ndb(path: &Path) -> Result<Ndb> {
+    open_ndb_with_ingesters(path, Validation::Verify, Some(1))
+}
+
+fn open_ndb_with_ingesters(
+    path: &Path,
+    validation: Validation,
+    ingester_threads: Option<i32>,
+) -> Result<Ndb> {
     let path_str = path
         .to_str()
         .ok_or_else(|| Error::NonUtf8Path(path.to_owned()))?;
@@ -580,6 +823,10 @@ pub(crate) fn open_ndb(path: &Path, validation: Validation) -> Result<Ndb> {
         .set_flags(no_fulltext | no_note_blocks | no_stats)
         .set_mapsize(map_size)
         .skip_validation(skip_validation);
+    let config = match ingester_threads {
+        Some(threads) => config.set_ingester_threads(threads),
+        None => config,
+    };
     Ndb::new(path_str, &config).map_err(|source| ndb_error("open", path, source))
 }
 

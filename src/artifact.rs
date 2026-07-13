@@ -9,6 +9,16 @@ use sha2::{Digest, Sha256};
 
 use crate::snapshot::{Error, Result, io_error};
 
+/// Return whether `name` is one safe, non-special filesystem component.
+pub(crate) fn is_safe_artifact_name(name: &str) -> bool {
+    !name.is_empty()
+        && name != "."
+        && name != ".."
+        && name
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
+}
+
 /// Description of one immutable fixed-record artifact.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct ArtifactFile {

@@ -2,7 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::embedding::EmbeddingEncoder;
+use crate::embedding::{EmbeddingEncoder, EmbeddingManifest};
 use crate::event::EventId;
 use crate::retrieval::{ExactRetriever, RetrievalCandidate};
 use crate::snapshot::{DamusSnapshot, Error, Result};
@@ -16,6 +16,18 @@ pub struct OracleVersions {
     pub corpus: String,
     /// Exact retrieval algorithm and embedding-manifest checksum.
     pub retriever: String,
+}
+
+impl OracleVersions {
+    pub(crate) fn from_embedding(manifest: &EmbeddingManifest, manifest_sha256: &str) -> Self {
+        Self {
+            corpus: manifest.corpus_stage.as_ref().map_or_else(
+                || manifest.canonical_manifest_sha256.clone(),
+                |stage| stage.manifest_sha256.clone(),
+            ),
+            retriever: format!("{RETRIEVER_ALGORITHM_VERSION}:{manifest_sha256}"),
+        }
+    }
 }
 
 /// One source-specific oracle candidate.
@@ -67,13 +79,8 @@ where
                 "query encoder identity differs from the embedding artifact".to_owned(),
             ));
         }
-        let versions = OracleVersions {
-            corpus: retriever.manifest().canonical_manifest_sha256.clone(),
-            retriever: format!(
-                "{RETRIEVER_ALGORITHM_VERSION}:{}",
-                retriever.manifest_sha256()
-            ),
-        };
+        let versions =
+            OracleVersions::from_embedding(retriever.manifest(), retriever.manifest_sha256());
         Ok(Self {
             retriever,
             encoder,

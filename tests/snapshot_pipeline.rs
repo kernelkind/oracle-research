@@ -8,8 +8,10 @@ use oracle_mvp::embedding::{
 };
 use oracle_mvp::event::EventId;
 use oracle_mvp::oracle::{OfflineOracle, Oracle};
+use oracle_mvp::preflight::PreflightConfig;
 use oracle_mvp::retrieval::ExactRetriever;
 use oracle_mvp::snapshot::{CanonicalManifest, CorpusManifest, DamusSnapshot, SourceManifest};
+use oracle_mvp::stage::CorpusStageConfig;
 use sha2::{Digest, Sha256};
 
 #[test]
@@ -27,7 +29,9 @@ fn imports_validated_source_and_derives_eligible_corpus() {
     let legacy_quote = signed_note(1, "legacy quote", &[["e", &"33".repeat(32), "", "mention"]]);
     let metadata = signed_note(0, "{}", &[]);
     let embedded_root = signed_note(1, "root recovered from repost content", &[]);
-    let repost = signed_note(6, &embedded_root, &[]);
+    let nested_repost = signed_note(6, &embedded_root, &[]);
+    let nested_envelope = format!(r#"["EVENT","nested",{nested_repost}]"#);
+    let repost = signed_note(6, &nested_envelope, &[]);
     let tampered = eligible_plain.replace("plain root note", "invalid signature");
 
     write_snapshot(
@@ -50,7 +54,7 @@ fn imports_validated_source_and_derives_eligible_corpus() {
         source.counts,
         oracle_mvp::snapshot::SourceCounts {
             snapshot_records: 9,
-            stored_events: 8,
+            stored_events: 9,
         }
     );
     assert_manifest::<SourceManifest>(pipeline.layout().source_manifest(), &source);
@@ -62,7 +66,7 @@ fn imports_validated_source_and_derives_eligible_corpus() {
             schema_version: 1,
             source_snapshot_sha256: source.snapshot_sha256,
             rejections: oracle_mvp::snapshot::EligibilityRejections {
-                non_kind_1: 2,
+                non_kind_1: 3,
                 replies: 1,
                 quotes: 2,
             },
@@ -92,6 +96,45 @@ fn imports_validated_source_and_derives_eligible_corpus() {
             .iter()
             .any(|content| content == "root recovered from repost content")
     );
+}
+
+#[test]
+fn imports_lax_numeric_kind_without_losing_embedded_content() {
+    let temp = tempfile::tempdir().expect("temporary directory");
+    let root = temp.path().join("damus_snapshot");
+    let pipeline = DamusSnapshot::new(&root);
+    fs::create_dir_all(pipeline.layout().snapshot().parent().expect("input parent"))
+        .expect("create input directory");
+    let child = signed_note(1, "embedded root", &[]);
+    let kind_six = signed_note(6, &child, &[]);
+    let lax_kind = kind_six.replacen(r#""kind":6"#, r#""kind":6.0"#, 1);
+    assert_ne!(lax_kind, kind_six);
+    write_snapshot(pipeline.layout().snapshot(), &[&lax_kind]);
+
+    let source = pipeline.import_source().expect("source import");
+    assert_eq!(source.counts.stored_events, 2);
+}
+
+#[test]
+fn does_not_store_non_string_kind_six_content() {
+    let temp = tempfile::tempdir().expect("temporary directory");
+    let root = temp.path().join("damus_snapshot");
+    let pipeline = DamusSnapshot::new(&root);
+    fs::create_dir_all(pipeline.layout().snapshot().parent().expect("input parent"))
+        .expect("create input directory");
+    let child = signed_note(1, "embedded root", &[]);
+    let kind_six = signed_note(6, &child, &[]);
+    let encoded_child = serde_json::to_string(&child).expect("encoded child content");
+    let lax_content = kind_six.replacen(
+        &format!(r#""content":{encoded_child}"#),
+        &format!(r#""content":{child}"#),
+        1,
+    );
+    assert_ne!(lax_content, kind_six);
+    write_snapshot(pipeline.layout().snapshot(), &[&lax_content]);
+
+    let source = pipeline.import_source().expect("source import");
+    assert_eq!(source.counts.stored_events, 0);
 }
 
 #[test]
@@ -453,6 +496,266 @@ fn text_and_note_queries_return_independent_versioned_evidence() {
     assert!(error.to_string().contains("encoder identity"));
 }
 
+#[test]
+fn corpus_stage_selects_and_embeds_exactly_the_requested_stable_rows() {
+    let temp = tempfile::tempdir().expect("temporary directory");
+    let root = temp.path().join("damus_snapshot");
+    let pipeline = DamusSnapshot::new(&root);
+    fs::create_dir_all(pipeline.layout().snapshot().parent().expect("input parent"))
+        .expect("create input directory");
+    let alpha = signed_note_at(1, "alpha", &[], 1_700_000_501, 41);
+    let beta = signed_note_at(1, "beta", &[], 1_700_000_502, 42);
+    let gamma = signed_note_at(1, "gamma", &[], 1_700_000_503, 43);
+    let delta = signed_note_at(1, "delta", &[], 1_700_000_504, 44);
+    write_snapshot(
+        pipeline.layout().snapshot(),
+        &[&alpha, &beta, &gamma, &delta],
+    );
+    pipeline.import_source().expect("source import");
+    pipeline.derive_corpus().expect("corpus derivation");
+    pipeline
+        .canonicalize_corpus()
+        .expect("corpus canonicalization");
+
+    let stage_config = CorpusStageConfig {
+        name: "three-row-preflight".to_owned(),
+        rows: 3,
+    };
+    let stage = pipeline
+        .materialize_corpus_stage(&stage_config)
+        .expect("materialize corpus stage");
+    assert_eq!(stage.available_canonical_rows, 4);
+    assert_eq!(stage.selected_rows, 3);
+    assert_eq!(stage.rows.records, 3);
+    let canonical_rows = fs::read(pipeline.layout().canonical_rows()).expect("canonical rows");
+    let stage_rows =
+        fs::read(pipeline.layout().corpus_stage_rows(&stage_config.name)).expect("stage rows");
+    assert_eq!(stage_rows, canonical_rows[..3 * 32]);
+    assert_eq!(
+        pipeline
+            .materialize_corpus_stage(&stage_config)
+            .expect("reopen corpus stage"),
+        stage
+    );
+    let error = pipeline
+        .materialize_corpus_stage(&CorpusStageConfig {
+            name: "too-large".to_owned(),
+            rows: 5,
+        })
+        .expect_err("insufficient canonical rows are rejected");
+    assert!(error.to_string().contains("only 4"));
+
+    let vectors = [
+        ("alpha", [4_i8, 0_i8]),
+        ("beta", [3, 1]),
+        ("gamma", [2, 2]),
+        ("delta", [1, 3]),
+        ("query", [1, 0]),
+    ];
+    let embedding_config = EmbeddingBuildConfig {
+        artifact_name: "three-row-stage-embedding".to_owned(),
+        batch_size: 2,
+        shard_rows: 2,
+    };
+    let mut build_encoder = LookupEncoder::new(&vectors);
+    let embedding = pipeline
+        .embed_corpus_stage(&stage_config.name, &embedding_config, &mut build_encoder)
+        .expect("embed selected corpus stage");
+    assert_eq!(embedding.total_rows, 3);
+    assert_eq!(
+        embedding
+            .corpus_stage
+            .as_ref()
+            .expect("embedding stage identity")
+            .name,
+        stage_config.name
+    );
+
+    let mut oracle = OfflineOracle::open(
+        &pipeline,
+        &embedding_config.artifact_name,
+        LookupEncoder::new(&vectors),
+    )
+    .expect("open staged oracle");
+    assert_eq!(
+        oracle
+            .search_text("query", 10)
+            .expect("search staged matrix")
+            .candidates
+            .len(),
+        3
+    );
+    let selected = decode_rows(&stage_rows);
+    let outside = decode_rows(&canonical_rows)
+        .into_iter()
+        .find(|event_id| !selected.contains(event_id))
+        .expect("event outside selected stage");
+    let error = oracle
+        .similar_notes(EventId::from(outside), 3)
+        .expect_err("out-of-stage event is rejected");
+    assert!(error.to_string().contains("not present"));
+
+    drop(oracle);
+    let preflight_config = PreflightConfig {
+        name: "three-row-codepath-check".to_owned(),
+        stage_name: stage_config.name.clone(),
+        embedding_artifact: embedding_config.artifact_name,
+        expected_rows: 3,
+        topic: "query".to_owned(),
+        candidate_depth: 1,
+    };
+    let preflight = pipeline
+        .execute_preflight(&preflight_config, LookupEncoder::new(&vectors))
+        .expect("execute production-shaped preflight");
+    assert!(preflight.failures.is_empty());
+    assert!(preflight.checks.text_query_deterministic);
+    assert!(preflight.checks.runner_state_deterministic);
+    assert!(preflight.checks.local_order_deterministic);
+    assert!(preflight.checks.onboarding_filtered);
+    assert!(preflight.checks.source_excluded);
+    assert_eq!(preflight.selected_rows, 3);
+    assert_eq!(preflight.bootstrap_candidates, 1);
+    assert_eq!(preflight.local_candidates, 1);
+    assert_eq!(
+        pipeline
+            .execute_preflight(&preflight_config, LookupEncoder::new(&vectors))
+            .expect("reopen preflight record"),
+        preflight
+    );
+
+    for unsafe_name in [".", ".."] {
+        let error = pipeline
+            .materialize_corpus_stage(&CorpusStageConfig {
+                name: unsafe_name.to_owned(),
+                rows: 3,
+            })
+            .expect_err("path component stage name is rejected");
+        assert!(error.to_string().contains("filesystem-safe"));
+    }
+    let mut unsafe_preflight = preflight_config.clone();
+    unsafe_preflight.name = "..".to_owned();
+    let error = pipeline
+        .execute_preflight(&unsafe_preflight, LookupEncoder::new(&vectors))
+        .expect_err("path component preflight name is rejected");
+    assert!(error.to_string().contains("filesystem-safe"));
+    let mut unsafe_embedding_encoder = LookupEncoder::new(&vectors);
+    let error = pipeline
+        .embed_corpus_stage(
+            &stage_config.name,
+            &EmbeddingBuildConfig {
+                artifact_name: ".".to_owned(),
+                batch_size: 1,
+                shard_rows: 1,
+            },
+            &mut unsafe_embedding_encoder,
+        )
+        .expect_err("path component embedding name is rejected");
+    assert!(error.to_string().contains("filesystem-safe"));
+
+    let alternate_stage = pipeline
+        .materialize_corpus_stage(&CorpusStageConfig {
+            name: "same-rows-other-stage".to_owned(),
+            rows: 3,
+        })
+        .expect("materialize alternate stage identity");
+    let preflight_path = pipeline.layout().preflight_manifest(&preflight_config.name);
+    let original_preflight = fs::read(&preflight_path).expect("original preflight record");
+    let mut mismatched_stage = preflight.clone();
+    mismatched_stage.stage_name = alternate_stage.name.clone();
+    mismatched_stage.stage_manifest_sha256 = sha256_file(
+        &pipeline
+            .layout()
+            .corpus_stage_manifest(&alternate_stage.name),
+    );
+    fs::write(
+        &preflight_path,
+        serde_json::to_vec_pretty(&mismatched_stage).expect("serialize mismatched stage record"),
+    )
+    .expect("write mismatched stage record");
+    let error = pipeline
+        .open_preflight(&preflight_config.name)
+        .expect_err("embedding bound to another stage is rejected");
+    assert!(error.to_string().contains("embedding"));
+
+    fs::write(&preflight_path, &original_preflight).expect("restore preflight record");
+    let mut mismatched_versions = preflight.clone();
+    mismatched_versions.oracle_versions.corpus = "00".repeat(32);
+    fs::write(
+        &preflight_path,
+        serde_json::to_vec_pretty(&mismatched_versions)
+            .expect("serialize mismatched version record"),
+    )
+    .expect("write mismatched version record");
+    let error = pipeline
+        .open_preflight(&preflight_config.name)
+        .expect_err("unrelated oracle versions are rejected");
+    assert!(error.to_string().contains("oracle versions"));
+
+    fs::write(&preflight_path, &original_preflight).expect("restore preflight record");
+    let mut inconsistent_failures = preflight.clone();
+    inconsistent_failures.checks.unseen_neighbor_returned = false;
+    fs::write(
+        &preflight_path,
+        serde_json::to_vec_pretty(&inconsistent_failures)
+            .expect("serialize inconsistent failure record"),
+    )
+    .expect("write inconsistent failure record");
+    let error = pipeline
+        .open_preflight(&preflight_config.name)
+        .expect_err("checks and failures must agree");
+    assert!(error.to_string().contains("failures"));
+    fs::write(&preflight_path, &original_preflight).expect("restore preflight record");
+
+    let canonical_manifest_path = pipeline.layout().canonical_manifest();
+    let original_canonical_manifest =
+        fs::read(&canonical_manifest_path).expect("original canonical manifest");
+    let stage_manifest_path = pipeline.layout().corpus_stage_manifest(&stage_config.name);
+    let original_stage_manifest =
+        fs::read(&stage_manifest_path).expect("original corpus stage manifest");
+    let mut incompatible_canonical: CanonicalManifest =
+        serde_json::from_slice(&original_canonical_manifest).expect("canonical manifest JSON");
+    incompatible_canonical.row_order_rule = "unapproved-row-order".to_owned();
+    fs::write(
+        &canonical_manifest_path,
+        serde_json::to_vec_pretty(&incompatible_canonical)
+            .expect("serialize incompatible canonical manifest"),
+    )
+    .expect("write incompatible canonical manifest");
+    let mut rebound_stage = stage.clone();
+    rebound_stage.canonical_manifest_sha256 = sha256_file(&canonical_manifest_path);
+    fs::write(
+        &stage_manifest_path,
+        serde_json::to_vec_pretty(&rebound_stage).expect("serialize rebound corpus stage"),
+    )
+    .expect("write rebound corpus stage");
+    let error = pipeline
+        .open_corpus_stage(&stage_config.name)
+        .expect_err("unapproved canonical rules are rejected");
+    assert!(error.to_string().contains("canonical manifest"));
+
+    fs::write(&canonical_manifest_path, original_canonical_manifest)
+        .expect("restore canonical manifest");
+    fs::write(&stage_manifest_path, &original_stage_manifest).expect("restore stage manifest");
+    let mut non_prefix_rows = stage_rows;
+    non_prefix_rows[..32].copy_from_slice(&outside);
+    fs::write(
+        pipeline.layout().corpus_stage_rows(&stage_config.name),
+        &non_prefix_rows,
+    )
+    .expect("write non-prefix stage rows");
+    let mut non_prefix_stage = stage;
+    non_prefix_stage.rows.sha256 = sha256_bytes(&non_prefix_rows);
+    fs::write(
+        &stage_manifest_path,
+        serde_json::to_vec_pretty(&non_prefix_stage).expect("serialize non-prefix stage"),
+    )
+    .expect("write non-prefix stage manifest");
+    let error = pipeline
+        .open_corpus_stage(&stage_config.name)
+        .expect_err("self-consistent non-prefix stage is rejected");
+    assert!(error.to_string().contains("canonical prefix"));
+}
+
 fn cosine(left: &[i8], right: &[i8]) -> f32 {
     let dot = left
         .iter()
@@ -657,6 +960,14 @@ fn row_order_key(id: &[u8; 32]) -> [u8; 32] {
     hasher.update(b"oracle-mvp/canonical-row-order/v1\0");
     hasher.update(id);
     hasher.finalize().into()
+}
+
+fn sha256_file(path: &std::path::Path) -> String {
+    sha256_bytes(&fs::read(path).expect("artifact bytes"))
+}
+
+fn sha256_bytes(bytes: &[u8]) -> String {
+    format!("{:x}", Sha256::digest(bytes))
 }
 
 fn decode_rows(bytes: &[u8]) -> Vec<[u8; 32]> {

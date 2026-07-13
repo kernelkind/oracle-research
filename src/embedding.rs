@@ -2,17 +2,20 @@
 
 use std::fs::{File, OpenOptions};
 use std::io::{BufReader, BufWriter, Read, Write};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use nostrdb::Transaction;
 use serde::{Deserialize, Serialize};
 
-use crate::artifact::{ArtifactFile, describe_fixed_artifact, hash_file, verify_fixed_artifact};
+use crate::artifact::{
+    ArtifactFile, describe_fixed_artifact, hash_file, is_safe_artifact_name, verify_fixed_artifact,
+};
 use crate::canonical::CanonicalManifest;
 use crate::snapshot::{
     DamusSnapshot, Error, Result, Validation, create_directory, io_error, ndb_error, open_ndb,
     read_manifest, require_directory, require_file, write_manifest,
 };
+use crate::stage::CorpusStageManifest;
 
 const EVENT_ID_BYTES: usize = 32;
 const NORM_BYTES: usize = size_of::<f32>();
@@ -89,6 +92,19 @@ pub struct EmbeddingShardManifest {
     pub row_ids: ArtifactFile,
 }
 
+/// Identity of a selected corpus stage represented by an embedding artifact.
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct EmbeddingCorpusStage {
+    /// Immutable stage name beneath `stages/`.
+    pub name: String,
+    /// SHA-256 of the stage manifest.
+    pub manifest_sha256: String,
+    /// SHA-256 of the exact selected row file.
+    pub rows_sha256: String,
+    /// Deterministic rule used to select the rows.
+    pub selection_rule: String,
+}
+
 /// Durable description of a complete embedding artifact.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct EmbeddingManifest {
@@ -100,6 +116,9 @@ pub struct EmbeddingManifest {
     pub canonical_manifest_sha256: String,
     /// SHA-256 of the complete canonical row-ID file.
     pub canonical_rows_sha256: String,
+    /// Selected corpus stage, absent when every canonical row was embedded.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub corpus_stage: Option<EmbeddingCorpusStage>,
     /// Exact encoder identity and preprocessing contract.
     pub encoder: EncoderDescriptor,
     /// Configured build batch size.
@@ -120,22 +139,31 @@ impl DamusSnapshot {
         encoder: &mut dyn EmbeddingEncoder,
     ) -> Result<EmbeddingManifest> {
         validate_config(config, encoder.descriptor())?;
+        let source = self.canonical_embedding_source()?;
+        self.embed_rows(config, encoder, source)
+    }
+
+    /// Encode every row in one verified nested corpus stage.
+    pub fn embed_corpus_stage(
+        &self,
+        stage_name: &str,
+        config: &EmbeddingBuildConfig,
+        encoder: &mut dyn EmbeddingEncoder,
+    ) -> Result<EmbeddingManifest> {
+        validate_config(config, encoder.descriptor())?;
+        let source = self.staged_embedding_source(stage_name)?;
+        self.embed_rows(config, encoder, source)
+    }
+
+    fn embed_rows(
+        &self,
+        config: &EmbeddingBuildConfig,
+        encoder: &mut dyn EmbeddingEncoder,
+        source: EmbeddingSource,
+    ) -> Result<EmbeddingManifest> {
         let layout = self.layout();
         let corpus_path = layout.corpus_db();
-        let canonical_manifest_path = layout.canonical_manifest();
-        let canonical_rows_path = layout.canonical_rows();
         require_directory(&corpus_path)?;
-        require_file(&canonical_manifest_path)?;
-        require_file(&canonical_rows_path)?;
-        let canonical: CanonicalManifest = read_manifest(&canonical_manifest_path)?;
-        let canonical_manifest_sha256 = hash_file(&canonical_manifest_path)?;
-        let rows_sha256 = hash_file(&canonical_rows_path)?;
-        if rows_sha256 != canonical.rows.sha256 {
-            return Err(Error::Invariant(format!(
-                "canonical rows checksum {rows_sha256} does not match manifest {}",
-                canonical.rows.sha256
-            )));
-        }
 
         let artifact = layout.embedding_dir(&config.artifact_name);
         if artifact.exists() {
@@ -152,6 +180,17 @@ impl DamusSnapshot {
                     "existing embedding artifact has different build settings".to_owned(),
                 ));
             }
+            if manifest.source_snapshot_sha256 != source.source_snapshot_sha256
+                || manifest.canonical_manifest_sha256 != source.canonical_manifest_sha256
+                || manifest.canonical_rows_sha256 != source.canonical_rows_sha256
+                || manifest.corpus_stage != source.corpus_stage
+                || manifest.total_rows != source.rows
+            {
+                return Err(Error::Invariant(
+                    "existing embedding artifact represents a different corpus selection"
+                        .to_owned(),
+                ));
+            }
             return Ok(manifest);
         }
 
@@ -164,8 +203,8 @@ impl DamusSnapshot {
         let txn = Transaction::new(&corpus)
             .map_err(|source| ndb_error("open transaction on", &corpus_path, source))?;
         let mut rows = BufReader::new(
-            File::open(&canonical_rows_path)
-                .map_err(|source| io_error("open", &canonical_rows_path, source))?,
+            File::open(&source.rows_path)
+                .map_err(|error| io_error("open", &source.rows_path, error))?,
         );
         let mut next_row = 0_u64;
         let mut shards = Vec::new();
@@ -178,15 +217,13 @@ impl DamusSnapshot {
                 txn: &txn,
                 corpus_path: &corpus_path,
                 canonical_rows: &mut rows,
-                canonical_rows_path: &canonical_rows_path,
+                canonical_rows_path: &source.rows_path,
             };
 
-            while next_row < canonical.counts.canonical_rows {
+            while next_row < source.rows {
                 let ordinal = u32::try_from(shards.len())
                     .map_err(|_| Error::Invariant("shard ordinal does not fit u32".to_owned()))?;
-                let rows_in_shard = config
-                    .shard_rows
-                    .min(canonical.counts.canonical_rows - next_row);
+                let rows_in_shard = config.shard_rows.min(source.rows - next_row);
                 let shard = build.encode_shard(ordinal, next_row, rows_in_shard)?;
                 next_row = next_row.checked_add(rows_in_shard).ok_or_else(|| {
                     Error::Invariant("embedded row count overflowed u64".to_owned())
@@ -194,18 +231,19 @@ impl DamusSnapshot {
                 shards.push(shard);
             }
         }
-        if read_event_id(&mut rows, &canonical_rows_path)?.is_some() {
+        if read_event_id(&mut rows, &source.rows_path)?.is_some() {
             return Err(Error::Invariant(format!(
-                "canonical row file contains more than {} records",
-                canonical.counts.canonical_rows
+                "embedding row file contains more than {} records",
+                source.rows
             )));
         }
 
         let manifest = EmbeddingManifest {
-            schema_version: 1,
-            source_snapshot_sha256: canonical.source_snapshot_sha256,
-            canonical_manifest_sha256,
-            canonical_rows_sha256: rows_sha256,
+            schema_version: if source.corpus_stage.is_some() { 2 } else { 1 },
+            source_snapshot_sha256: source.source_snapshot_sha256,
+            canonical_manifest_sha256: source.canonical_manifest_sha256,
+            canonical_rows_sha256: source.canonical_rows_sha256,
+            corpus_stage: source.corpus_stage,
             encoder: encoder.descriptor().clone(),
             batch_size: u32::try_from(config.batch_size)
                 .map_err(|_| Error::Invariant("batch size does not fit u32".to_owned()))?,
@@ -225,28 +263,71 @@ impl DamusSnapshot {
         validate_artifact_name(artifact_name)?;
         let layout = self.layout();
         let artifact = layout.embedding_dir(artifact_name);
-        let canonical_manifest_path = layout.canonical_manifest();
-        let canonical_rows_path = layout.canonical_rows();
         require_directory(&artifact)?;
-        require_file(&canonical_manifest_path)?;
-        require_file(&canonical_rows_path)?;
-        let canonical: CanonicalManifest = read_manifest(&canonical_manifest_path)?;
-        let canonical_manifest_sha256 = hash_file(&canonical_manifest_path)?;
-        let canonical_rows_sha256 = hash_file(&canonical_rows_path)?;
-        if canonical_rows_sha256 != canonical.rows.sha256 {
+        let manifest_path = artifact.join("manifest.json");
+        require_file(&manifest_path)?;
+        let manifest: EmbeddingManifest = read_manifest(&manifest_path)?;
+        let source = match &manifest.corpus_stage {
+            Some(stage) => self.staged_embedding_source(&stage.name)?,
+            None => self.canonical_embedding_source()?,
+        };
+        verify_embedding(&artifact, manifest, &source)
+    }
+
+    fn canonical_embedding_source(&self) -> Result<EmbeddingSource> {
+        let manifest_path = self.layout().canonical_manifest();
+        let rows_path = self.layout().canonical_rows();
+        require_file(&manifest_path)?;
+        require_file(&rows_path)?;
+        let canonical: CanonicalManifest = read_manifest(&manifest_path)?;
+        let manifest_sha256 = hash_file(&manifest_path)?;
+        let rows_sha256 = hash_file(&rows_path)?;
+        if rows_sha256 != canonical.rows.sha256 {
             return Err(Error::Invariant(format!(
-                "canonical rows checksum {canonical_rows_sha256} does not match manifest {}",
+                "canonical rows checksum {rows_sha256} does not match manifest {}",
                 canonical.rows.sha256
             )));
         }
-        verify_embedding(
-            &artifact,
-            &canonical,
-            &canonical_manifest_sha256,
-            &canonical_rows_sha256,
-            &canonical_rows_path,
-        )
+        Ok(EmbeddingSource {
+            source_snapshot_sha256: canonical.source_snapshot_sha256,
+            canonical_manifest_sha256: manifest_sha256,
+            canonical_rows_sha256: rows_sha256,
+            selected_rows_sha256: canonical.rows.sha256,
+            rows_path,
+            rows: canonical.counts.canonical_rows,
+            corpus_stage: None,
+        })
     }
+
+    fn staged_embedding_source(&self, stage_name: &str) -> Result<EmbeddingSource> {
+        let stage: CorpusStageManifest = self.open_corpus_stage(stage_name)?;
+        let stage_manifest_path = self.layout().corpus_stage_manifest(stage_name);
+        let stage_manifest_sha256 = hash_file(&stage_manifest_path)?;
+        Ok(EmbeddingSource {
+            source_snapshot_sha256: stage.source_snapshot_sha256,
+            canonical_manifest_sha256: stage.canonical_manifest_sha256,
+            canonical_rows_sha256: stage.canonical_rows_sha256,
+            selected_rows_sha256: stage.rows.sha256.clone(),
+            rows_path: self.layout().corpus_stage_rows(stage_name),
+            rows: stage.selected_rows,
+            corpus_stage: Some(EmbeddingCorpusStage {
+                name: stage.name,
+                manifest_sha256: stage_manifest_sha256,
+                rows_sha256: stage.rows.sha256,
+                selection_rule: stage.selection_rule,
+            }),
+        })
+    }
+}
+
+struct EmbeddingSource {
+    source_snapshot_sha256: String,
+    canonical_manifest_sha256: String,
+    canonical_rows_sha256: String,
+    selected_rows_sha256: String,
+    rows_path: PathBuf,
+    rows: u64,
+    corpus_stage: Option<EmbeddingCorpusStage>,
 }
 
 struct ShardBuild<'a> {
@@ -386,19 +467,15 @@ impl ShardBuild<'_> {
 
 fn verify_embedding(
     artifact: &Path,
-    canonical: &CanonicalManifest,
-    canonical_manifest_sha256: &str,
-    canonical_rows_sha256: &str,
-    canonical_rows_path: &Path,
+    manifest: EmbeddingManifest,
+    source: &EmbeddingSource,
 ) -> Result<EmbeddingManifest> {
     require_directory(artifact)?;
-    let manifest_path = artifact.join("manifest.json");
-    require_file(&manifest_path)?;
-    let manifest: EmbeddingManifest = read_manifest(&manifest_path)?;
-    if manifest.schema_version != 1 {
+    let expected_schema = if source.corpus_stage.is_some() { 2 } else { 1 };
+    if manifest.schema_version != expected_schema {
         return Err(Error::Invariant(format!(
-            "embedding manifest schema {} is not supported",
-            manifest.schema_version
+            "embedding manifest schema {} does not match corpus selection schema {expected_schema}",
+            manifest.schema_version,
         )));
     }
     if manifest.batch_size == 0 || manifest.shard_rows == 0 {
@@ -407,21 +484,31 @@ fn verify_embedding(
         ));
     }
     validate_descriptor(&manifest.encoder)?;
-    if manifest.source_snapshot_sha256 != canonical.source_snapshot_sha256
-        || manifest.canonical_manifest_sha256 != canonical_manifest_sha256
-        || manifest.canonical_rows_sha256 != canonical_rows_sha256
-        || manifest.total_rows != canonical.counts.canonical_rows
+    if manifest.source_snapshot_sha256 != source.source_snapshot_sha256
+        || manifest.canonical_manifest_sha256 != source.canonical_manifest_sha256
+        || manifest.canonical_rows_sha256 != source.canonical_rows_sha256
+        || manifest.corpus_stage != source.corpus_stage
+        || manifest.total_rows != source.rows
     {
         return Err(Error::Invariant(
-            "existing embedding artifact was built from a different canonical corpus".to_owned(),
+            "embedding artifact was built from a different corpus selection".to_owned(),
+        ));
+    }
+    let selected_rows_sha256 = manifest
+        .corpus_stage
+        .as_ref()
+        .map_or(&manifest.canonical_rows_sha256, |stage| &stage.rows_sha256);
+    if selected_rows_sha256 != &source.selected_rows_sha256 {
+        return Err(Error::Invariant(
+            "embedding artifact names a different selected row file".to_owned(),
         ));
     }
 
     let dimensions = usize::try_from(manifest.encoder.dimensions)
         .map_err(|_| Error::Invariant("encoder dimensions do not fit usize".to_owned()))?;
     let mut canonical_rows = BufReader::new(
-        File::open(canonical_rows_path)
-            .map_err(|source| io_error("open", canonical_rows_path, source))?,
+        File::open(&source.rows_path)
+            .map_err(|error| io_error("open", &source.rows_path, error))?,
     );
     let mut expected_start = 0_u64;
     for (index, shard) in manifest.shards.iter().enumerate() {
@@ -473,7 +560,7 @@ fn verify_embedding(
             &artifact.join(&shard.row_ids.file),
             shard.rows,
             &mut canonical_rows,
-            canonical_rows_path,
+            &source.rows_path,
             expected_start,
         )?;
         expected_start = expected_start
@@ -486,9 +573,9 @@ fn verify_embedding(
             manifest.total_rows
         )));
     }
-    if read_event_id(&mut canonical_rows, canonical_rows_path)?.is_some() {
+    if read_event_id(&mut canonical_rows, &source.rows_path)?.is_some() {
         return Err(Error::Invariant(
-            "embedding shards do not cover every canonical row".to_owned(),
+            "embedding shards do not cover every selected row".to_owned(),
         ));
     }
     Ok(manifest)
@@ -546,11 +633,7 @@ fn validate_config(config: &EmbeddingBuildConfig, descriptor: &EncoderDescriptor
 }
 
 fn validate_artifact_name(artifact_name: &str) -> Result<()> {
-    if artifact_name.is_empty()
-        || !artifact_name
-            .bytes()
-            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
-    {
+    if !is_safe_artifact_name(artifact_name) {
         return Err(Error::Invariant(format!(
             "embedding artifact name `{artifact_name}` is not filesystem-safe"
         )));
