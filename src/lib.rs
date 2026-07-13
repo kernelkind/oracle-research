@@ -3,6 +3,8 @@
 pub mod artifact;
 pub mod canonical;
 pub mod embedding;
+pub mod event;
+pub mod oracle;
 pub mod pplx;
 pub mod retrieval;
 pub mod snapshot;

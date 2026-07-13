@@ -3,14 +3,16 @@
 use std::cmp::{Ordering, Reverse};
 use std::collections::BinaryHeap;
 use std::fs::File;
-use std::io::{BufReader, Read};
+use std::io::{BufReader, Read, Seek, SeekFrom};
 use std::path::{Path, PathBuf};
 
-use crate::artifact::hash_file;
+use crate::artifact::{hash_file, verify_fixed_artifact};
+use crate::canonical::CanonicalManifest;
 use crate::embedding::{EmbeddingManifest, EmbeddingShardManifest};
-use crate::snapshot::{DamusSnapshot, Error, Result, io_error};
+use crate::snapshot::{DamusSnapshot, Error, Result, io_error, read_manifest};
 
 const EVENT_ID_BYTES: usize = 32;
+const ALIAS_RECORD_BYTES: usize = EVENT_ID_BYTES * 2;
 const NORM_BYTES: usize = size_of::<f32>();
 
 /// A canonical corpus event returned by exact dense retrieval.
@@ -25,6 +27,8 @@ pub struct RetrievalCandidate {
 /// Verified exact scanner over one immutable embedding artifact.
 pub struct ExactRetriever {
     artifact_root: PathBuf,
+    aliases_path: PathBuf,
+    alias_records: u64,
     manifest_sha256: String,
     manifest: EmbeddingManifest,
 }
@@ -34,10 +38,25 @@ impl ExactRetriever {
     pub fn open(pipeline: &DamusSnapshot, artifact_name: &str) -> Result<Self> {
         let manifest = pipeline.open_embedding_artifact(artifact_name)?;
         let layout = pipeline.layout();
+        let canonical_root = layout
+            .canonical_manifest()
+            .parent()
+            .expect("canonical manifest has a parent")
+            .to_owned();
+        let canonical: CanonicalManifest = read_manifest(&layout.canonical_manifest())?;
+        verify_fixed_artifact(
+            &canonical_root,
+            &canonical.aliases,
+            "aliases.bin",
+            ALIAS_RECORD_BYTES,
+            canonical.counts.eligible_events,
+        )?;
         let artifact_root = layout.embedding_dir(artifact_name);
         let manifest_sha256 = hash_file(&artifact_root.join("manifest.json"))?;
         Ok(Self {
             artifact_root,
+            aliases_path: layout.canonical_aliases(),
+            alias_records: canonical.counts.eligible_events,
             manifest_sha256,
             manifest,
         })
@@ -92,6 +111,47 @@ impl ExactRetriever {
             .into_iter()
             .map(|candidate| candidate.candidate)
             .collect())
+    }
+
+    pub(crate) fn canonical_vector(
+        &self,
+        event_id: [u8; EVENT_ID_BYTES],
+    ) -> Result<Option<([u8; EVENT_ID_BYTES], Vec<i8>)>> {
+        let Some(canonical_id) = self.resolve_alias(event_id)? else {
+            return Ok(None);
+        };
+        let dimensions = self.dimensions()?;
+        for shard in &self.manifest.shards {
+            let row_ids_path = self.artifact_root.join(&shard.row_ids.file);
+            let mut row_ids = BufReader::new(open_file(&row_ids_path)?);
+            let mut row_id = [0_u8; EVENT_ID_BYTES];
+            for row in 0..shard.rows {
+                row_ids
+                    .read_exact(&mut row_id)
+                    .map_err(|source| io_error("read", &row_ids_path, source))?;
+                if row_id == canonical_id {
+                    let vectors_path = self.artifact_root.join(&shard.vectors.file);
+                    let mut vectors = open_file(&vectors_path)?;
+                    let offset = row
+                        .checked_mul(u64::try_from(dimensions).expect("dimensions fit u64"))
+                        .ok_or_else(|| {
+                            Error::Invariant("vector byte offset overflowed u64".to_owned())
+                        })?;
+                    vectors
+                        .seek(SeekFrom::Start(offset))
+                        .map_err(|source| io_error("seek", &vectors_path, source))?;
+                    let mut bytes = vec![0_u8; dimensions];
+                    vectors
+                        .read_exact(&mut bytes)
+                        .map_err(|source| io_error("read", &vectors_path, source))?;
+                    return Ok(Some((
+                        canonical_id,
+                        bytes.into_iter().map(|byte| byte as i8).collect(),
+                    )));
+                }
+            }
+        }
+        Ok(None)
     }
 
     fn search_shard(
@@ -163,6 +223,37 @@ impl ExactRetriever {
             .into_iter()
             .map(|Reverse(candidate)| candidate)
             .collect())
+    }
+
+    fn resolve_alias(
+        &self,
+        event_id: [u8; EVENT_ID_BYTES],
+    ) -> Result<Option<[u8; EVENT_ID_BYTES]>> {
+        let mut aliases = open_file(&self.aliases_path)?;
+        let mut low = 0_u64;
+        let mut high = self.alias_records;
+        let mut record = [0_u8; ALIAS_RECORD_BYTES];
+        while low < high {
+            let middle = low + (high - low) / 2;
+            aliases
+                .seek(SeekFrom::Start(middle * ALIAS_RECORD_BYTES as u64))
+                .map_err(|source| io_error("seek", &self.aliases_path, source))?;
+            aliases
+                .read_exact(&mut record)
+                .map_err(|source| io_error("read", &self.aliases_path, source))?;
+            match record[..EVENT_ID_BYTES].cmp(&event_id) {
+                Ordering::Less => low = middle + 1,
+                Ordering::Greater => high = middle,
+                Ordering::Equal => {
+                    return Ok(Some(
+                        record[EVENT_ID_BYTES..]
+                            .try_into()
+                            .expect("canonical event ID width"),
+                    ));
+                }
+            }
+        }
+        Ok(None)
     }
 
     fn dimensions(&self) -> Result<usize> {

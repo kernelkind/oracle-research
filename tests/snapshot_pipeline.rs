@@ -6,6 +6,8 @@ use nostrdb::{Config, Filter, Ndb, NoteBuilder, Transaction};
 use oracle_mvp::embedding::{
     EmbeddingBuildConfig, EmbeddingEncoder, EmbeddingManifest, EncoderDescriptor,
 };
+use oracle_mvp::event::EventId;
+use oracle_mvp::oracle::{OfflineOracle, Oracle};
 use oracle_mvp::retrieval::ExactRetriever;
 use oracle_mvp::snapshot::{CanonicalManifest, CorpusManifest, DamusSnapshot, SourceManifest};
 use sha2::{Digest, Sha256};
@@ -355,6 +357,100 @@ fn exact_sharded_int8_search_matches_the_reference_order() {
             .map(|(event_id, _)| *event_id)
             .collect::<Vec<_>>()
     );
+}
+
+#[test]
+fn text_and_note_queries_return_independent_versioned_evidence() {
+    let temp = tempfile::tempdir().expect("temporary directory");
+    let root = temp.path().join("damus_snapshot");
+    let pipeline = DamusSnapshot::new(&root);
+    fs::create_dir_all(pipeline.layout().snapshot().parent().expect("input parent"))
+        .expect("create input directory");
+    let duplicate_a = signed_note_at(1, "alpha", &[], 1_700_000_401, 31);
+    let duplicate_b = signed_note_at(1, "alpha", &[], 1_700_000_402, 32);
+    let beta = signed_note_at(1, "beta", &[], 1_700_000_403, 33);
+    let diagonal = signed_note_at(1, "diagonal", &[], 1_700_000_404, 34);
+    write_snapshot(
+        pipeline.layout().snapshot(),
+        &[&duplicate_a, &duplicate_b, &beta, &diagonal],
+    );
+    pipeline.import_source().expect("source import");
+    pipeline.derive_corpus().expect("corpus derivation");
+    pipeline
+        .canonicalize_corpus()
+        .expect("corpus canonicalization");
+
+    let vectors = [
+        ("alpha", [2_i8, 0_i8]),
+        ("beta", [1, 0]),
+        ("diagonal", [1, 1]),
+        ("query about alpha", [1, 0]),
+    ];
+    let mut build_encoder = LookupEncoder::new(&vectors);
+    let config = EmbeddingBuildConfig {
+        artifact_name: "oracle-entrypoints".to_owned(),
+        batch_size: 2,
+        shard_rows: 2,
+    };
+    pipeline
+        .embed_canonical_corpus(&config, &mut build_encoder)
+        .expect("embedding artifacts");
+
+    let mut oracle = OfflineOracle::open(
+        &pipeline,
+        &config.artifact_name,
+        LookupEncoder::new(&vectors),
+    )
+    .expect("open offline oracle");
+    let text = oracle
+        .search_text("query about alpha", 3)
+        .expect("text search");
+    assert_eq!(
+        text.candidates
+            .iter()
+            .map(|candidate| candidate.rank)
+            .collect::<Vec<_>>(),
+        vec![1, 2, 3]
+    );
+    assert!(!text.versions.corpus.is_empty());
+    assert!(text.versions.retriever.starts_with("exact-int8-cosine-v1:"));
+    assert_eq!(
+        oracle
+            .search_text("query about alpha", 3)
+            .expect("repeated text search"),
+        text
+    );
+
+    let duplicate_ids = [event_id(&duplicate_a), event_id(&duplicate_b)];
+    let canonical = *duplicate_ids.iter().min().expect("canonical duplicate");
+    let alias = *duplicate_ids.iter().max().expect("noncanonical duplicate");
+    let neighbors = oracle
+        .similar_notes(EventId::from(alias), 3)
+        .expect("note-neighbor search through alias");
+    assert_eq!(neighbors.versions, text.versions);
+    assert!(
+        neighbors
+            .candidates
+            .iter()
+            .all(|candidate| candidate.event_id != EventId::from(canonical))
+    );
+    assert_eq!(neighbors.candidates.len(), 2);
+
+    let error = oracle
+        .similar_notes(EventId::from([0xff; 32]), 3)
+        .expect_err("unknown event is rejected");
+    assert!(error.to_string().contains("not present"));
+    let error = oracle
+        .search_text("query about alpha", 0)
+        .expect_err("zero candidate depth is rejected");
+    assert!(error.to_string().contains("candidate depth"));
+
+    let mut incompatible = LookupEncoder::new(&vectors);
+    incompatible.descriptor.model_revision = "fixture-v2".to_owned();
+    let error = OfflineOracle::open(&pipeline, &config.artifact_name, incompatible)
+        .err()
+        .expect("incompatible text encoder is rejected");
+    assert!(error.to_string().contains("encoder identity"));
 }
 
 fn cosine(left: &[i8], right: &[i8]) -> f32 {

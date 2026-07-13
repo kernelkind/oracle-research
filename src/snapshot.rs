@@ -95,6 +95,10 @@ pub enum Error {
     /// A caller supplied an invalid oracle query.
     #[error("invalid oracle query: {0}")]
     InvalidQuery(String),
+
+    /// A note query named an event outside the selected embedding corpus.
+    #[error("event `{0}` is not present in the selected embedding corpus")]
+    EventNotFound(String),
 }
 
 /// Files and directories owned by one snapshot pipeline run.
