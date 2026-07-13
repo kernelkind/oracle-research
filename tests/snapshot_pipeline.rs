@@ -6,6 +6,7 @@ use nostrdb::{Config, Filter, Ndb, NoteBuilder, Transaction};
 use oracle_mvp::embedding::{
     EmbeddingBuildConfig, EmbeddingEncoder, EmbeddingManifest, EncoderDescriptor,
 };
+use oracle_mvp::retrieval::ExactRetriever;
 use oracle_mvp::snapshot::{CanonicalManifest, CorpusManifest, DamusSnapshot, SourceManifest};
 use sha2::{Digest, Sha256};
 
@@ -272,6 +273,160 @@ fn embeds_canonical_rows_into_versioned_int8_shards() {
         .embed_canonical_corpus(&config, &mut encoder)
         .expect_err("reject incompatible encoder identity");
     assert!(error.to_string().contains("encoder identity"));
+}
+
+#[test]
+fn exact_sharded_int8_search_matches_the_reference_order() {
+    let temp = tempfile::tempdir().expect("temporary directory");
+    let root = temp.path().join("damus_snapshot");
+    let pipeline = DamusSnapshot::new(&root);
+    fs::create_dir_all(pipeline.layout().snapshot().parent().expect("input parent"))
+        .expect("create input directory");
+    let alpha = signed_note_at(1, "alpha", &[], 1_700_000_301, 21);
+    let beta = signed_note_at(1, "beta", &[], 1_700_000_302, 22);
+    let diagonal = signed_note_at(1, "diagonal", &[], 1_700_000_303, 23);
+    let opposite = signed_note_at(1, "opposite", &[], 1_700_000_304, 24);
+    write_snapshot(
+        pipeline.layout().snapshot(),
+        &[&alpha, &beta, &diagonal, &opposite],
+    );
+    pipeline.import_source().expect("source import");
+    pipeline.derive_corpus().expect("corpus derivation");
+    pipeline
+        .canonicalize_corpus()
+        .expect("corpus canonicalization");
+
+    let vectors = [
+        ("alpha", [2_i8, 0_i8]),
+        ("beta", [1, 0]),
+        ("diagonal", [1, 1]),
+        ("opposite", [-1, 0]),
+    ];
+    let mut encoder = LookupEncoder::new(&vectors);
+    let config = EmbeddingBuildConfig {
+        artifact_name: "exact-search-one-row-shards".to_owned(),
+        batch_size: 2,
+        shard_rows: 1,
+    };
+    pipeline
+        .embed_canonical_corpus(&config, &mut encoder)
+        .expect("embedding artifacts");
+
+    let retriever =
+        ExactRetriever::open(&pipeline, &config.artifact_name).expect("open exact retriever");
+    let actual = retriever
+        .search(&[1, 0], 4, None)
+        .expect("exact full-matrix search");
+
+    let mut expected = vec![
+        (event_id(&alpha), cosine(&[1, 0], &[2, 0])),
+        (event_id(&beta), cosine(&[1, 0], &[1, 0])),
+        (event_id(&diagonal), cosine(&[1, 0], &[1, 1])),
+        (event_id(&opposite), cosine(&[1, 0], &[-1, 0])),
+    ];
+    expected.sort_by(|left, right| {
+        right
+            .1
+            .total_cmp(&left.1)
+            .then_with(|| left.0.cmp(&right.0))
+    });
+    assert_eq!(actual.len(), expected.len());
+    for (candidate, (expected_id, expected_score)) in actual.iter().zip(&expected) {
+        assert_eq!(candidate.event_id, *expected_id);
+        assert_eq!(candidate.cosine_score, *expected_score);
+    }
+
+    let repeated = retriever
+        .search(&[1, 0], 4, None)
+        .expect("repeated exact search");
+    assert_eq!(repeated, actual);
+    let excluded = retriever
+        .search(&[1, 0], 2, Some(expected[0].0))
+        .expect("exact search with exclusion");
+    assert_eq!(
+        excluded
+            .iter()
+            .map(|candidate| candidate.event_id)
+            .collect::<Vec<_>>(),
+        expected
+            .iter()
+            .skip(1)
+            .take(2)
+            .map(|(event_id, _)| *event_id)
+            .collect::<Vec<_>>()
+    );
+}
+
+fn cosine(left: &[i8], right: &[i8]) -> f32 {
+    let dot = left
+        .iter()
+        .zip(right)
+        .map(|(left, right)| i64::from(*left) * i64::from(*right))
+        .sum::<i64>();
+    let left_norm = left
+        .iter()
+        .map(|value| f32::from(*value).powi(2))
+        .sum::<f32>()
+        .sqrt();
+    let right_norm = right
+        .iter()
+        .map(|value| f32::from(*value).powi(2))
+        .sum::<f32>()
+        .sqrt();
+    dot as f32 / (left_norm * right_norm)
+}
+
+struct LookupEncoder {
+    descriptor: EncoderDescriptor,
+    vectors: std::collections::BTreeMap<String, Vec<i8>>,
+}
+
+impl LookupEncoder {
+    fn new(vectors: &[(&str, [i8; 2])]) -> Self {
+        Self {
+            descriptor: EncoderDescriptor {
+                model_id: "test/lookup".to_owned(),
+                model_revision: "fixture-v1".to_owned(),
+                model_lock_sha256: "fixture-lock".to_owned(),
+                runtime: "test".to_owned(),
+                runtime_version: "1".to_owned(),
+                runtime_sha256: "fixture-runtime".to_owned(),
+                execution_provider: "test".to_owned(),
+                output_name: "native_int8".to_owned(),
+                dimensions: 2,
+                max_tokens: 32,
+                input_rule: "fixture-raw-text-v1".to_owned(),
+                pooling: "fixture".to_owned(),
+                quantization: "native-int8".to_owned(),
+                instruction: None,
+            },
+            vectors: vectors
+                .iter()
+                .map(|(text, vector)| ((*text).to_owned(), vector.to_vec()))
+                .collect(),
+        }
+    }
+}
+
+impl EmbeddingEncoder for LookupEncoder {
+    fn descriptor(&self) -> &EncoderDescriptor {
+        &self.descriptor
+    }
+
+    fn encode(&mut self, texts: &[&str]) -> oracle_mvp::snapshot::Result<Vec<i8>> {
+        let mut encoded = Vec::with_capacity(texts.len() * 2);
+        for text in texts {
+            let vector =
+                self.vectors
+                    .get(*text)
+                    .ok_or_else(|| oracle_mvp::snapshot::Error::Encoder {
+                        operation: "encoding lookup fixture",
+                        message: format!("missing vector for `{text}`"),
+                    })?;
+            encoded.extend(vector);
+        }
+        Ok(encoded)
+    }
 }
 
 struct DeterministicEncoder {

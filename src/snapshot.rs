@@ -91,6 +91,10 @@ pub enum Error {
         /// Backend-specific failure detail.
         message: String,
     },
+
+    /// A caller supplied an invalid oracle query.
+    #[error("invalid oracle query: {0}")]
+    InvalidQuery(String),
 }
 
 /// Files and directories owned by one snapshot pipeline run.

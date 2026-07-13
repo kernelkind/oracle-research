@@ -139,15 +139,20 @@ impl DamusSnapshot {
 
         let artifact = layout.embedding_dir(&config.artifact_name);
         if artifact.exists() {
-            return reopen_embedding(
-                &artifact,
-                config,
-                encoder.descriptor(),
-                &canonical,
-                &canonical_manifest_sha256,
-                &rows_sha256,
-                &canonical_rows_path,
-            );
+            let manifest = self.open_embedding_artifact(&config.artifact_name)?;
+            if manifest.encoder != *encoder.descriptor() {
+                return Err(Error::Invariant(
+                    "existing embedding artifact has a different encoder identity".to_owned(),
+                ));
+            }
+            let batch_size = u32::try_from(config.batch_size)
+                .map_err(|_| Error::Invariant("batch size does not fit u32".to_owned()))?;
+            if manifest.batch_size != batch_size || manifest.shard_rows != config.shard_rows {
+                return Err(Error::Invariant(
+                    "existing embedding artifact has different build settings".to_owned(),
+                ));
+            }
+            return Ok(manifest);
         }
 
         create_directory(&layout.embedding_root())?;
@@ -213,6 +218,34 @@ impl DamusSnapshot {
         drop(corpus);
         self.publish_stage(&stage, &artifact)?;
         Ok(manifest)
+    }
+
+    /// Open and fully verify an immutable embedding artifact without inference.
+    pub fn open_embedding_artifact(&self, artifact_name: &str) -> Result<EmbeddingManifest> {
+        validate_artifact_name(artifact_name)?;
+        let layout = self.layout();
+        let artifact = layout.embedding_dir(artifact_name);
+        let canonical_manifest_path = layout.canonical_manifest();
+        let canonical_rows_path = layout.canonical_rows();
+        require_directory(&artifact)?;
+        require_file(&canonical_manifest_path)?;
+        require_file(&canonical_rows_path)?;
+        let canonical: CanonicalManifest = read_manifest(&canonical_manifest_path)?;
+        let canonical_manifest_sha256 = hash_file(&canonical_manifest_path)?;
+        let canonical_rows_sha256 = hash_file(&canonical_rows_path)?;
+        if canonical_rows_sha256 != canonical.rows.sha256 {
+            return Err(Error::Invariant(format!(
+                "canonical rows checksum {canonical_rows_sha256} does not match manifest {}",
+                canonical.rows.sha256
+            )));
+        }
+        verify_embedding(
+            &artifact,
+            &canonical,
+            &canonical_manifest_sha256,
+            &canonical_rows_sha256,
+            &canonical_rows_path,
+        )
     }
 }
 
@@ -351,10 +384,8 @@ impl ShardBuild<'_> {
     }
 }
 
-fn reopen_embedding(
+fn verify_embedding(
     artifact: &Path,
-    config: &EmbeddingBuildConfig,
-    descriptor: &EncoderDescriptor,
     canonical: &CanonicalManifest,
     canonical_manifest_sha256: &str,
     canonical_rows_sha256: &str,
@@ -370,18 +401,12 @@ fn reopen_embedding(
             manifest.schema_version
         )));
     }
-    if &manifest.encoder != descriptor {
+    if manifest.batch_size == 0 || manifest.shard_rows == 0 {
         return Err(Error::Invariant(
-            "existing embedding artifact has a different encoder identity".to_owned(),
+            "embedding manifest contains zero-sized build settings".to_owned(),
         ));
     }
-    let batch_size = u32::try_from(config.batch_size)
-        .map_err(|_| Error::Invariant("batch size does not fit u32".to_owned()))?;
-    if manifest.batch_size != batch_size || manifest.shard_rows != config.shard_rows {
-        return Err(Error::Invariant(
-            "existing embedding artifact has different build settings".to_owned(),
-        ));
-    }
+    validate_descriptor(&manifest.encoder)?;
     if manifest.source_snapshot_sha256 != canonical.source_snapshot_sha256
         || manifest.canonical_manifest_sha256 != canonical_manifest_sha256
         || manifest.canonical_rows_sha256 != canonical_rows_sha256
@@ -392,7 +417,7 @@ fn reopen_embedding(
         ));
     }
 
-    let dimensions = usize::try_from(descriptor.dimensions)
+    let dimensions = usize::try_from(manifest.encoder.dimensions)
         .map_err(|_| Error::Invariant("encoder dimensions do not fit usize".to_owned()))?;
     let mut canonical_rows = BufReader::new(
         File::open(canonical_rows_path)
@@ -408,7 +433,7 @@ fn reopen_embedding(
             .ok_or_else(|| {
                 Error::Invariant("embedding shards exceed the manifest row count".to_owned())
             })?;
-        let expected_rows = config.shard_rows.min(remaining);
+        let expected_rows = manifest.shard_rows.min(remaining);
         if expected_rows == 0 {
             return Err(Error::Invariant(
                 "embedding manifest contains an empty trailing shard".to_owned(),
@@ -506,17 +531,7 @@ fn verify_row_ids(
 }
 
 fn validate_config(config: &EmbeddingBuildConfig, descriptor: &EncoderDescriptor) -> Result<()> {
-    if config.artifact_name.is_empty()
-        || !config
-            .artifact_name
-            .bytes()
-            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
-    {
-        return Err(Error::Invariant(format!(
-            "embedding artifact name `{}` is not filesystem-safe",
-            config.artifact_name
-        )));
-    }
+    validate_artifact_name(&config.artifact_name)?;
     if config.batch_size == 0 {
         return Err(Error::Invariant(
             "embedding batch size must be positive".to_owned(),
@@ -527,6 +542,23 @@ fn validate_config(config: &EmbeddingBuildConfig, descriptor: &EncoderDescriptor
             "embedding shard size must be positive".to_owned(),
         ));
     }
+    validate_descriptor(descriptor)
+}
+
+fn validate_artifact_name(artifact_name: &str) -> Result<()> {
+    if artifact_name.is_empty()
+        || !artifact_name
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
+    {
+        return Err(Error::Invariant(format!(
+            "embedding artifact name `{artifact_name}` is not filesystem-safe"
+        )));
+    }
+    Ok(())
+}
+
+fn validate_descriptor(descriptor: &EncoderDescriptor) -> Result<()> {
     if descriptor.dimensions == 0 {
         return Err(Error::Invariant(
             "encoder dimensions must be positive".to_owned(),
