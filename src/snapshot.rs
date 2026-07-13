@@ -99,6 +99,31 @@ pub enum Error {
     /// A note query named an event outside the selected embedding corpus.
     #[error("event `{0}` is not present in the selected embedding corpus")]
     EventNotFound(String),
+
+    /// Serialized or mutated private experiment state violated its invariants.
+    #[error("experiment state is invalid: {0}")]
+    ExperimentState(String),
+
+    /// A local operation named an interest that does not exist.
+    #[error("interest {0} does not exist")]
+    InterestNotFound(u64),
+
+    /// A note was selected as a source without coming from that interest's onboarding set.
+    #[error("event `{event_id}` was not an onboarding candidate for interest {interest_id}")]
+    InvalidPositiveSource {
+        /// Event the caller attempted to select.
+        event_id: String,
+        /// Local interest under which it was selected.
+        interest_id: u64,
+    },
+
+    /// A purported oracle response violated the source-specific response contract.
+    #[error("oracle response is invalid: {0}")]
+    InvalidOracleResponse(String),
+
+    /// Independent source responses cannot be reproduced against one artifact set.
+    #[error("oracle responses contain incompatible corpus or retriever versions")]
+    OracleVersionMismatch,
 }
 
 /// Files and directories owned by one snapshot pipeline run.
