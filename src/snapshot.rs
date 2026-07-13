@@ -10,6 +10,8 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use thiserror::Error;
 
+pub use crate::canonical::{CanonicalCounts, CanonicalManifest};
+
 /// Result type for snapshot pipeline operations.
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -126,12 +128,31 @@ impl SnapshotLayout {
         self.root.join("corpus").join("manifest.json")
     }
 
+    /// Return the canonical-row manifest path.
+    pub fn canonical_manifest(&self) -> PathBuf {
+        self.root.join("canonical").join("manifest.json")
+    }
+
+    /// Return canonical event IDs in deterministic row order.
+    pub fn canonical_rows(&self) -> PathBuf {
+        self.root.join("canonical").join("rows.bin")
+    }
+
+    /// Return the event-ID to canonical-event-ID index.
+    pub fn canonical_aliases(&self) -> PathBuf {
+        self.root.join("canonical").join("aliases.bin")
+    }
+
     fn source_dir(&self) -> PathBuf {
         self.root.join("source")
     }
 
     fn corpus_dir(&self) -> PathBuf {
         self.root.join("corpus")
+    }
+
+    pub(crate) fn canonical_dir(&self) -> PathBuf {
+        self.root.join("canonical")
     }
 
     fn work_dir(&self) -> PathBuf {
@@ -144,6 +165,10 @@ impl SnapshotLayout {
 
     fn corpus_stage(&self) -> PathBuf {
         self.work_dir().join("corpus")
+    }
+
+    pub(crate) fn canonical_stage(&self) -> PathBuf {
+        self.work_dir().join("canonical")
     }
 }
 
@@ -358,7 +383,13 @@ impl DamusSnapshot {
         Ok(manifest)
     }
 
-    fn prepare_stage(&self, artifact: &Path, stage: &Path) -> Result<PathBuf> {
+    /// Canonicalize byte-identical corpus content and assign stable row order.
+    #[profiling::function]
+    pub fn canonicalize_corpus(&self) -> Result<CanonicalManifest> {
+        crate::canonical::canonicalize_corpus(self)
+    }
+
+    pub(crate) fn prepare_stage(&self, artifact: &Path, stage: &Path) -> Result<PathBuf> {
         if artifact.exists() {
             return Err(Error::ArtifactExists(artifact.to_owned()));
         }
@@ -370,7 +401,7 @@ impl DamusSnapshot {
         Ok(stage.to_owned())
     }
 
-    fn publish_stage(&self, stage: &Path, artifact: &Path) -> Result<()> {
+    pub(crate) fn publish_stage(&self, stage: &Path, artifact: &Path) -> Result<()> {
         fs::rename(stage, artifact).map_err(|source| io_error("publish", artifact, source))?;
         let _ = fs::remove_dir(self.layout.work_dir());
         Ok(())
@@ -452,7 +483,7 @@ fn count_all(path: &Path, validation: Validation) -> Result<u64> {
     count_with_db(&ndb, path, None)
 }
 
-fn count_with_db(ndb: &Ndb, path: &Path, filter: Option<&Filter>) -> Result<u64> {
+pub(crate) fn count_with_db(ndb: &Ndb, path: &Path, filter: Option<&Filter>) -> Result<u64> {
     let txn =
         Transaction::new(ndb).map_err(|source| ndb_error("open transaction on", path, source))?;
     let all;
@@ -471,12 +502,12 @@ fn count_with_db(ndb: &Ndb, path: &Path, filter: Option<&Filter>) -> Result<u64>
 }
 
 #[derive(Clone, Copy)]
-enum Validation {
+pub(crate) enum Validation {
     Verify,
     TrustedSource,
 }
 
-fn open_ndb(path: &Path, validation: Validation) -> Result<Ndb> {
+pub(crate) fn open_ndb(path: &Path, validation: Validation) -> Result<Ndb> {
     let path_str = path
         .to_str()
         .ok_or_else(|| Error::NonUtf8Path(path.to_owned()))?;
@@ -492,7 +523,7 @@ fn open_ndb(path: &Path, validation: Validation) -> Result<Ndb> {
     Ndb::new(path_str, &config).map_err(|source| ndb_error("open", path, source))
 }
 
-fn require_file(path: &Path) -> Result<()> {
+pub(crate) fn require_file(path: &Path) -> Result<()> {
     if path.is_file() {
         Ok(())
     } else {
@@ -500,7 +531,7 @@ fn require_file(path: &Path) -> Result<()> {
     }
 }
 
-fn require_directory(path: &Path) -> Result<()> {
+pub(crate) fn require_directory(path: &Path) -> Result<()> {
     if path.is_dir() {
         Ok(())
     } else {
@@ -518,11 +549,11 @@ fn metadata_len(path: &Path) -> Result<u64> {
         .map_err(|source| io_error("read metadata for", path, source))
 }
 
-fn create_directory(path: &Path) -> Result<()> {
+pub(crate) fn create_directory(path: &Path) -> Result<()> {
     fs::create_dir_all(path).map_err(|source| io_error("create", path, source))
 }
 
-fn read_manifest<T>(path: &Path) -> Result<T>
+pub(crate) fn read_manifest<T>(path: &Path) -> Result<T>
 where
     T: serde::de::DeserializeOwned,
 {
@@ -534,7 +565,7 @@ where
     })
 }
 
-fn write_manifest<T>(path: &Path, manifest: &T) -> Result<()>
+pub(crate) fn write_manifest<T>(path: &Path, manifest: &T) -> Result<()>
 where
     T: Serialize,
 {
@@ -561,7 +592,11 @@ where
         .map_err(|source| io_error("sync", path, source))
 }
 
-fn io_error(operation: &'static str, path: impl AsRef<Path>, source: io::Error) -> Error {
+pub(crate) fn io_error(
+    operation: &'static str,
+    path: impl AsRef<Path>,
+    source: io::Error,
+) -> Error {
     Error::Io {
         operation,
         path: path.as_ref().to_owned(),
@@ -569,7 +604,11 @@ fn io_error(operation: &'static str, path: impl AsRef<Path>, source: io::Error) 
     }
 }
 
-fn ndb_error(operation: &'static str, path: impl AsRef<Path>, source: nostrdb::Error) -> Error {
+pub(crate) fn ndb_error(
+    operation: &'static str,
+    path: impl AsRef<Path>,
+    source: nostrdb::Error,
+) -> Error {
     Error::Ndb {
         operation,
         path: path.as_ref().to_owned(),

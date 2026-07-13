@@ -48,6 +48,17 @@ fn run() -> Result<(), String> {
                 .map_err(|error| error.to_string())?;
             print_json(&manifest)
         }
+        Command::CanonicalizeCorpus { root } => {
+            let pipeline = DamusSnapshot::new(root);
+            eprintln!(
+                "canonicalizing {}",
+                pipeline.layout().corpus_db().as_path().display()
+            );
+            let manifest = pipeline
+                .canonicalize_corpus()
+                .map_err(|error| error.to_string())?;
+            print_json(&manifest)
+        }
         Command::Build { root } => {
             let pipeline = DamusSnapshot::new(root);
             eprintln!(
@@ -64,7 +75,18 @@ fn run() -> Result<(), String> {
             let corpus = pipeline
                 .derive_corpus()
                 .map_err(|error| error.to_string())?;
-            print_json(&BuildResult { source, corpus })
+            eprintln!(
+                "canonicalizing {}",
+                pipeline.layout().corpus_db().as_path().display()
+            );
+            let canonical = pipeline
+                .canonicalize_corpus()
+                .map_err(|error| error.to_string())?;
+            print_json(&BuildResult {
+                source,
+                corpus,
+                canonical,
+            })
         }
     }
 }
@@ -73,6 +95,7 @@ fn run() -> Result<(), String> {
 enum Command {
     ImportSource { root: PathBuf },
     DeriveCorpus { root: PathBuf },
+    CanonicalizeCorpus { root: PathBuf },
     Build { root: PathBuf },
 }
 
@@ -97,6 +120,7 @@ impl Command {
         match command {
             "import-source" => Ok(Some(Self::ImportSource { root })),
             "derive-corpus" => Ok(Some(Self::DeriveCorpus { root })),
+            "canonicalize-corpus" => Ok(Some(Self::CanonicalizeCorpus { root })),
             "build" => Ok(Some(Self::Build { root })),
             _ => Err(format!("unknown command `{command}`\n\n{}", usage())),
         }
@@ -107,6 +131,7 @@ impl Command {
 struct BuildResult {
     source: oracle_mvp::snapshot::SourceManifest,
     corpus: oracle_mvp::snapshot::CorpusManifest,
+    canonical: oracle_mvp::snapshot::CanonicalManifest,
 }
 
 fn ensure_finished(mut args: impl Iterator<Item = OsString>) -> Result<(), String> {
@@ -132,5 +157,5 @@ fn print_usage() {
 }
 
 fn usage() -> &'static str {
-    "Usage:\n  oracle-mvp import-source DATA_ROOT\n  oracle-mvp derive-corpus DATA_ROOT\n  oracle-mvp build DATA_ROOT"
+    "Usage:\n  oracle-mvp import-source DATA_ROOT\n  oracle-mvp derive-corpus DATA_ROOT\n  oracle-mvp canonicalize-corpus DATA_ROOT\n  oracle-mvp build DATA_ROOT"
 }
