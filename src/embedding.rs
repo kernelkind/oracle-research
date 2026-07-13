@@ -1,0 +1,582 @@
+//! Versioned native-INT8 embedding artifacts over canonical corpus rows.
+
+use std::fs::{File, OpenOptions};
+use std::io::{BufReader, BufWriter, Read, Write};
+use std::path::Path;
+
+use nostrdb::Transaction;
+use serde::{Deserialize, Serialize};
+
+use crate::artifact::{ArtifactFile, describe_fixed_artifact, hash_file, verify_fixed_artifact};
+use crate::canonical::CanonicalManifest;
+use crate::snapshot::{
+    DamusSnapshot, Error, Result, Validation, create_directory, io_error, ndb_error, open_ndb,
+    read_manifest, require_directory, require_file, write_manifest,
+};
+
+const EVENT_ID_BYTES: usize = 32;
+const NORM_BYTES: usize = size_of::<f32>();
+
+type EventId = [u8; EVENT_ID_BYTES];
+
+/// Reproducibility metadata for an embedding encoder.
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct EncoderDescriptor {
+    /// Stable upstream model identifier.
+    pub model_id: String,
+    /// Immutable upstream model revision.
+    pub model_revision: String,
+    /// SHA-256 of the checked-in model-file lock.
+    pub model_lock_sha256: String,
+    /// Inference runtime family.
+    pub runtime: String,
+    /// Inference runtime version or compatibility level.
+    pub runtime_version: String,
+    /// SHA-256 of the inference runtime library.
+    pub runtime_sha256: String,
+    /// Runtime execution provider used for inference.
+    pub execution_provider: String,
+    /// Model output used for the stored vectors.
+    pub output_name: String,
+    /// Elements in each vector.
+    pub dimensions: u32,
+    /// Preflight token ceiling.
+    pub max_tokens: u32,
+    /// Exact experiment-only text preprocessing rule.
+    pub input_rule: String,
+    /// Pooling performed by the model.
+    pub pooling: String,
+    /// Quantization performed by the model.
+    pub quantization: String,
+    /// Optional text prepended before tokenization.
+    pub instruction: Option<String>,
+}
+
+/// A batch encoder that returns row-major native-INT8 vectors.
+pub trait EmbeddingEncoder {
+    /// Return the exact model, runtime, and preprocessing identity.
+    fn descriptor(&self) -> &EncoderDescriptor;
+
+    /// Encode raw kind `1` content in input order.
+    fn encode(&mut self, texts: &[&str]) -> Result<Vec<i8>>;
+}
+
+/// Controls artifact partitioning without changing encoder semantics.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct EmbeddingBuildConfig {
+    /// Filesystem-safe artifact name beneath `embeddings/`.
+    pub artifact_name: String,
+    /// Maximum rows submitted to the encoder at once.
+    pub batch_size: usize,
+    /// Maximum rows in one immutable output shard.
+    pub shard_rows: u64,
+}
+
+/// Metadata for one immutable embedding shard.
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct EmbeddingShardManifest {
+    /// Zero-based shard ordinal.
+    pub ordinal: u32,
+    /// Global canonical row at which this shard begins.
+    pub start_row: u64,
+    /// Rows stored in the shard.
+    pub rows: u64,
+    /// Row-major native-INT8 vectors.
+    pub vectors: ArtifactFile,
+    /// Little-endian float32 cosine norms.
+    pub norms: ArtifactFile,
+    /// Canonical event IDs corresponding one-to-one with vector rows.
+    pub row_ids: ArtifactFile,
+}
+
+/// Durable description of a complete embedding artifact.
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct EmbeddingManifest {
+    /// Manifest schema version.
+    pub schema_version: u32,
+    /// SHA-256 inherited from the source snapshot import.
+    pub source_snapshot_sha256: String,
+    /// SHA-256 of the canonical manifest consumed by this build.
+    pub canonical_manifest_sha256: String,
+    /// SHA-256 of the complete canonical row-ID file.
+    pub canonical_rows_sha256: String,
+    /// Exact encoder identity and preprocessing contract.
+    pub encoder: EncoderDescriptor,
+    /// Configured build batch size.
+    pub batch_size: u32,
+    /// Configured maximum rows per shard.
+    pub shard_rows: u64,
+    /// Total canonical rows embedded.
+    pub total_rows: u64,
+    /// Ordered immutable shard metadata.
+    pub shards: Vec<EmbeddingShardManifest>,
+}
+
+impl DamusSnapshot {
+    /// Encode every canonical row once and publish immutable INT8 shards.
+    pub fn embed_canonical_corpus(
+        &self,
+        config: &EmbeddingBuildConfig,
+        encoder: &mut dyn EmbeddingEncoder,
+    ) -> Result<EmbeddingManifest> {
+        validate_config(config, encoder.descriptor())?;
+        let layout = self.layout();
+        let corpus_path = layout.corpus_db();
+        let canonical_manifest_path = layout.canonical_manifest();
+        let canonical_rows_path = layout.canonical_rows();
+        require_directory(&corpus_path)?;
+        require_file(&canonical_manifest_path)?;
+        require_file(&canonical_rows_path)?;
+        let canonical: CanonicalManifest = read_manifest(&canonical_manifest_path)?;
+        let canonical_manifest_sha256 = hash_file(&canonical_manifest_path)?;
+        let rows_sha256 = hash_file(&canonical_rows_path)?;
+        if rows_sha256 != canonical.rows.sha256 {
+            return Err(Error::Invariant(format!(
+                "canonical rows checksum {rows_sha256} does not match manifest {}",
+                canonical.rows.sha256
+            )));
+        }
+
+        let artifact = layout.embedding_dir(&config.artifact_name);
+        if artifact.exists() {
+            return reopen_embedding(
+                &artifact,
+                config,
+                encoder.descriptor(),
+                &canonical,
+                &canonical_manifest_sha256,
+                &rows_sha256,
+                &canonical_rows_path,
+            );
+        }
+
+        create_directory(&layout.embedding_root())?;
+        let stage =
+            self.prepare_stage(&artifact, &layout.embedding_stage(&config.artifact_name))?;
+        create_directory(&stage.join("shards"))?;
+
+        let corpus = open_ndb(&corpus_path, Validation::TrustedSource)?;
+        let txn = Transaction::new(&corpus)
+            .map_err(|source| ndb_error("open transaction on", &corpus_path, source))?;
+        let mut rows = BufReader::new(
+            File::open(&canonical_rows_path)
+                .map_err(|source| io_error("open", &canonical_rows_path, source))?,
+        );
+        let mut next_row = 0_u64;
+        let mut shards = Vec::new();
+        {
+            let mut build = ShardBuild {
+                stage: &stage,
+                batch_size: config.batch_size,
+                encoder,
+                corpus: &corpus,
+                txn: &txn,
+                corpus_path: &corpus_path,
+                canonical_rows: &mut rows,
+                canonical_rows_path: &canonical_rows_path,
+            };
+
+            while next_row < canonical.counts.canonical_rows {
+                let ordinal = u32::try_from(shards.len())
+                    .map_err(|_| Error::Invariant("shard ordinal does not fit u32".to_owned()))?;
+                let rows_in_shard = config
+                    .shard_rows
+                    .min(canonical.counts.canonical_rows - next_row);
+                let shard = build.encode_shard(ordinal, next_row, rows_in_shard)?;
+                next_row = next_row.checked_add(rows_in_shard).ok_or_else(|| {
+                    Error::Invariant("embedded row count overflowed u64".to_owned())
+                })?;
+                shards.push(shard);
+            }
+        }
+        if read_event_id(&mut rows, &canonical_rows_path)?.is_some() {
+            return Err(Error::Invariant(format!(
+                "canonical row file contains more than {} records",
+                canonical.counts.canonical_rows
+            )));
+        }
+
+        let manifest = EmbeddingManifest {
+            schema_version: 1,
+            source_snapshot_sha256: canonical.source_snapshot_sha256,
+            canonical_manifest_sha256,
+            canonical_rows_sha256: rows_sha256,
+            encoder: encoder.descriptor().clone(),
+            batch_size: u32::try_from(config.batch_size)
+                .map_err(|_| Error::Invariant("batch size does not fit u32".to_owned()))?,
+            shard_rows: config.shard_rows,
+            total_rows: next_row,
+            shards,
+        };
+        write_manifest(&stage.join("manifest.json"), &manifest)?;
+        drop(txn);
+        drop(corpus);
+        self.publish_stage(&stage, &artifact)?;
+        Ok(manifest)
+    }
+}
+
+struct ShardBuild<'a> {
+    stage: &'a Path,
+    batch_size: usize,
+    encoder: &'a mut dyn EmbeddingEncoder,
+    corpus: &'a nostrdb::Ndb,
+    txn: &'a Transaction,
+    corpus_path: &'a Path,
+    canonical_rows: &'a mut BufReader<File>,
+    canonical_rows_path: &'a Path,
+}
+
+impl ShardBuild<'_> {
+    fn encode_shard(
+        &mut self,
+        ordinal: u32,
+        start_row: u64,
+        row_count: u64,
+    ) -> Result<EmbeddingShardManifest> {
+        let relative_dir = format!("shards/{ordinal:06}");
+        let shard_dir = self.stage.join(&relative_dir);
+        create_directory(&shard_dir)?;
+        let vectors_path = shard_dir.join("vectors.i8");
+        let norms_path = shard_dir.join("norms.f32le");
+        let row_ids_path = shard_dir.join("row_ids.bin");
+        let mut vectors = create_writer(&vectors_path)?;
+        let mut norms = create_writer(&norms_path)?;
+        let mut row_ids = create_writer(&row_ids_path)?;
+        let dimensions = usize::try_from(self.encoder.descriptor().dimensions)
+            .map_err(|_| Error::Invariant("encoder dimensions do not fit usize".to_owned()))?;
+        let mut written = 0_u64;
+
+        while written < row_count {
+            let batch_rows = usize::try_from(
+                (row_count - written).min(
+                    u64::try_from(self.batch_size)
+                        .map_err(|_| Error::Invariant("batch size does not fit u64".to_owned()))?,
+                ),
+            )
+            .map_err(|_| Error::Invariant("batch row count does not fit usize".to_owned()))?;
+            let mut ids = Vec::with_capacity(batch_rows);
+            let mut texts = Vec::with_capacity(batch_rows);
+            for _ in 0..batch_rows {
+                let id = read_event_id(self.canonical_rows, self.canonical_rows_path)?.ok_or_else(
+                    || {
+                        Error::Invariant(format!(
+                            "canonical row file ended after {} rows",
+                            start_row + written
+                        ))
+                    },
+                )?;
+                let note = self
+                    .corpus
+                    .get_note_by_id(self.txn, &id)
+                    .map_err(|source| {
+                        ndb_error("load canonical note from", self.corpus_path, source)
+                    })?;
+                ids.push(id);
+                texts.push(note.content().to_owned());
+            }
+            let text_refs = texts.iter().map(String::as_str).collect::<Vec<_>>();
+            let encoded = self.encoder.encode(&text_refs)?;
+            let expected = batch_rows.checked_mul(dimensions).ok_or_else(|| {
+                Error::Invariant("encoded batch element count overflowed usize".to_owned())
+            })?;
+            if encoded.len() != expected {
+                return Err(Error::Invariant(format!(
+                    "encoder returned {} elements for {batch_rows} rows at {dimensions} dimensions",
+                    encoded.len()
+                )));
+            }
+            let encoded_bytes = encoded.iter().map(|value| *value as u8).collect::<Vec<_>>();
+
+            for ((id, vector), vector_bytes) in ids
+                .iter()
+                .zip(encoded.chunks_exact(dimensions))
+                .zip(encoded_bytes.chunks_exact(dimensions))
+            {
+                vectors
+                    .write_all(vector_bytes)
+                    .map_err(|source| io_error("write", &vectors_path, source))?;
+                let squared = vector.iter().try_fold(0_u64, |sum, value| {
+                    let value = i64::from(*value);
+                    sum.checked_add(u64::try_from(value * value).expect("square is nonnegative"))
+                });
+                let squared = squared.ok_or_else(|| {
+                    Error::Invariant("vector squared norm overflowed u64".to_owned())
+                })?;
+                let norm = (squared as f32).sqrt();
+                if norm == 0.0 {
+                    return Err(Error::Invariant(format!(
+                        "encoder returned a zero vector at row {}",
+                        start_row + written
+                    )));
+                }
+                norms
+                    .write_all(&norm.to_le_bytes())
+                    .map_err(|source| io_error("write", &norms_path, source))?;
+                row_ids
+                    .write_all(id)
+                    .map_err(|source| io_error("write", &row_ids_path, source))?;
+                written = written
+                    .checked_add(1)
+                    .ok_or_else(|| Error::Invariant("shard row count overflowed u64".to_owned()))?;
+            }
+        }
+
+        finish_writer(&mut vectors, &vectors_path)?;
+        finish_writer(&mut norms, &norms_path)?;
+        finish_writer(&mut row_ids, &row_ids_path)?;
+        Ok(EmbeddingShardManifest {
+            ordinal,
+            start_row,
+            rows: written,
+            vectors: describe_fixed_artifact(
+                &vectors_path,
+                &format!("{relative_dir}/vectors.i8"),
+                dimensions,
+                written,
+            )?,
+            norms: describe_fixed_artifact(
+                &norms_path,
+                &format!("{relative_dir}/norms.f32le"),
+                NORM_BYTES,
+                written,
+            )?,
+            row_ids: describe_fixed_artifact(
+                &row_ids_path,
+                &format!("{relative_dir}/row_ids.bin"),
+                EVENT_ID_BYTES,
+                written,
+            )?,
+        })
+    }
+}
+
+fn reopen_embedding(
+    artifact: &Path,
+    config: &EmbeddingBuildConfig,
+    descriptor: &EncoderDescriptor,
+    canonical: &CanonicalManifest,
+    canonical_manifest_sha256: &str,
+    canonical_rows_sha256: &str,
+    canonical_rows_path: &Path,
+) -> Result<EmbeddingManifest> {
+    require_directory(artifact)?;
+    let manifest_path = artifact.join("manifest.json");
+    require_file(&manifest_path)?;
+    let manifest: EmbeddingManifest = read_manifest(&manifest_path)?;
+    if manifest.schema_version != 1 {
+        return Err(Error::Invariant(format!(
+            "embedding manifest schema {} is not supported",
+            manifest.schema_version
+        )));
+    }
+    if &manifest.encoder != descriptor {
+        return Err(Error::Invariant(
+            "existing embedding artifact has a different encoder identity".to_owned(),
+        ));
+    }
+    let batch_size = u32::try_from(config.batch_size)
+        .map_err(|_| Error::Invariant("batch size does not fit u32".to_owned()))?;
+    if manifest.batch_size != batch_size || manifest.shard_rows != config.shard_rows {
+        return Err(Error::Invariant(
+            "existing embedding artifact has different build settings".to_owned(),
+        ));
+    }
+    if manifest.source_snapshot_sha256 != canonical.source_snapshot_sha256
+        || manifest.canonical_manifest_sha256 != canonical_manifest_sha256
+        || manifest.canonical_rows_sha256 != canonical_rows_sha256
+        || manifest.total_rows != canonical.counts.canonical_rows
+    {
+        return Err(Error::Invariant(
+            "existing embedding artifact was built from a different canonical corpus".to_owned(),
+        ));
+    }
+
+    let dimensions = usize::try_from(descriptor.dimensions)
+        .map_err(|_| Error::Invariant("encoder dimensions do not fit usize".to_owned()))?;
+    let mut canonical_rows = BufReader::new(
+        File::open(canonical_rows_path)
+            .map_err(|source| io_error("open", canonical_rows_path, source))?,
+    );
+    let mut expected_start = 0_u64;
+    for (index, shard) in manifest.shards.iter().enumerate() {
+        let ordinal = u32::try_from(index)
+            .map_err(|_| Error::Invariant("shard ordinal does not fit u32".to_owned()))?;
+        let remaining = manifest
+            .total_rows
+            .checked_sub(expected_start)
+            .ok_or_else(|| {
+                Error::Invariant("embedding shards exceed the manifest row count".to_owned())
+            })?;
+        let expected_rows = config.shard_rows.min(remaining);
+        if expected_rows == 0 {
+            return Err(Error::Invariant(
+                "embedding manifest contains an empty trailing shard".to_owned(),
+            ));
+        }
+        if shard.ordinal != ordinal
+            || shard.start_row != expected_start
+            || shard.rows != expected_rows
+        {
+            return Err(Error::Invariant(format!(
+                "embedding shard {index} does not match the configured row partition"
+            )));
+        }
+        let relative_dir = format!("shards/{ordinal:06}");
+        verify_fixed_artifact(
+            artifact,
+            &shard.vectors,
+            &format!("{relative_dir}/vectors.i8"),
+            dimensions,
+            shard.rows,
+        )?;
+        verify_fixed_artifact(
+            artifact,
+            &shard.norms,
+            &format!("{relative_dir}/norms.f32le"),
+            NORM_BYTES,
+            shard.rows,
+        )?;
+        verify_fixed_artifact(
+            artifact,
+            &shard.row_ids,
+            &format!("{relative_dir}/row_ids.bin"),
+            EVENT_ID_BYTES,
+            shard.rows,
+        )?;
+        verify_row_ids(
+            &artifact.join(&shard.row_ids.file),
+            shard.rows,
+            &mut canonical_rows,
+            canonical_rows_path,
+            expected_start,
+        )?;
+        expected_start = expected_start
+            .checked_add(shard.rows)
+            .ok_or_else(|| Error::Invariant("embedded row count overflowed u64".to_owned()))?;
+    }
+    if expected_start != manifest.total_rows {
+        return Err(Error::Invariant(format!(
+            "embedding shards contain {expected_start} rows but manifest records {}",
+            manifest.total_rows
+        )));
+    }
+    if read_event_id(&mut canonical_rows, canonical_rows_path)?.is_some() {
+        return Err(Error::Invariant(
+            "embedding shards do not cover every canonical row".to_owned(),
+        ));
+    }
+    Ok(manifest)
+}
+
+fn verify_row_ids(
+    row_ids_path: &Path,
+    rows: u64,
+    canonical_rows: &mut impl Read,
+    canonical_rows_path: &Path,
+    start_row: u64,
+) -> Result<()> {
+    let mut row_ids = BufReader::new(
+        File::open(row_ids_path).map_err(|source| io_error("open", row_ids_path, source))?,
+    );
+    for offset in 0..rows {
+        let embedded = read_event_id(&mut row_ids, row_ids_path)?.ok_or_else(|| {
+            Error::Invariant(format!("embedding row-ID file ended after {offset} rows"))
+        })?;
+        let canonical = read_event_id(canonical_rows, canonical_rows_path)?.ok_or_else(|| {
+            Error::Invariant(format!(
+                "canonical row file ended before row {}",
+                start_row + offset
+            ))
+        })?;
+        if embedded != canonical {
+            return Err(Error::Invariant(format!(
+                "embedding row ID differs from canonical row {}",
+                start_row + offset
+            )));
+        }
+    }
+    if read_event_id(&mut row_ids, row_ids_path)?.is_some() {
+        return Err(Error::Invariant(format!(
+            "embedding row-ID file `{}` contains too many rows",
+            row_ids_path.display()
+        )));
+    }
+    Ok(())
+}
+
+fn validate_config(config: &EmbeddingBuildConfig, descriptor: &EncoderDescriptor) -> Result<()> {
+    if config.artifact_name.is_empty()
+        || !config
+            .artifact_name
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
+    {
+        return Err(Error::Invariant(format!(
+            "embedding artifact name `{}` is not filesystem-safe",
+            config.artifact_name
+        )));
+    }
+    if config.batch_size == 0 {
+        return Err(Error::Invariant(
+            "embedding batch size must be positive".to_owned(),
+        ));
+    }
+    if config.shard_rows == 0 {
+        return Err(Error::Invariant(
+            "embedding shard size must be positive".to_owned(),
+        ));
+    }
+    if descriptor.dimensions == 0 {
+        return Err(Error::Invariant(
+            "encoder dimensions must be positive".to_owned(),
+        ));
+    }
+    if descriptor.quantization != "native-int8" {
+        return Err(Error::Invariant(format!(
+            "encoder quantization `{}` is not native-int8",
+            descriptor.quantization
+        )));
+    }
+    Ok(())
+}
+
+fn read_event_id(reader: &mut impl Read, path: &Path) -> Result<Option<EventId>> {
+    let mut id = [0_u8; EVENT_ID_BYTES];
+    let mut offset = 0;
+    while offset < id.len() {
+        let bytes = reader
+            .read(&mut id[offset..])
+            .map_err(|source| io_error("read", path, source))?;
+        if bytes == 0 {
+            if offset == 0 {
+                return Ok(None);
+            }
+            return Err(Error::Invariant(format!(
+                "canonical row file `{}` ends with a partial event ID",
+                path.display()
+            )));
+        }
+        offset += bytes;
+    }
+    Ok(Some(id))
+}
+
+fn create_writer(path: &Path) -> Result<BufWriter<File>> {
+    let file = OpenOptions::new()
+        .create_new(true)
+        .write(true)
+        .open(path)
+        .map_err(|source| io_error("create", path, source))?;
+    Ok(BufWriter::new(file))
+}
+
+fn finish_writer(writer: &mut BufWriter<File>, path: &Path) -> Result<()> {
+    writer
+        .flush()
+        .map_err(|source| io_error("flush", path, source))?;
+    writer
+        .get_ref()
+        .sync_all()
+        .map_err(|source| io_error("sync", path, source))
+}

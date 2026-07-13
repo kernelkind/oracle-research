@@ -3,6 +3,9 @@ use std::io::{BufWriter, Write};
 use std::process::Command;
 
 use nostrdb::{Config, Filter, Ndb, NoteBuilder, Transaction};
+use oracle_mvp::embedding::{
+    EmbeddingBuildConfig, EmbeddingEncoder, EmbeddingManifest, EncoderDescriptor,
+};
 use oracle_mvp::snapshot::{CanonicalManifest, CorpusManifest, DamusSnapshot, SourceManifest};
 use sha2::{Digest, Sha256};
 
@@ -182,6 +185,146 @@ fn canonicalizes_exact_content_and_orders_rows_independently_of_ingestion_order(
     ];
     expected_rows.sort_unstable_by_key(row_order_key);
     assert_eq!(decode_rows(&first.rows), expected_rows);
+}
+
+#[test]
+fn embeds_canonical_rows_into_versioned_int8_shards() {
+    let temp = tempfile::tempdir().expect("temporary directory");
+    let root = temp.path().join("damus_snapshot");
+    let pipeline = DamusSnapshot::new(&root);
+    fs::create_dir_all(pipeline.layout().snapshot().parent().expect("input parent"))
+        .expect("create input directory");
+    let duplicate_a = signed_note_at(1, "same content", &[], 1_700_000_201, 11);
+    let duplicate_b = signed_note_at(1, "same content", &[], 1_700_000_202, 12);
+    let url = signed_note_at(1, "read https://example.com", &[], 1_700_000_203, 13);
+    let plain = signed_note_at(1, "plain content", &[], 1_700_000_204, 14);
+    write_snapshot(
+        pipeline.layout().snapshot(),
+        &[&duplicate_a, &duplicate_b, &url, &plain],
+    );
+    pipeline.import_source().expect("source import");
+    pipeline.derive_corpus().expect("corpus derivation");
+    pipeline
+        .canonicalize_corpus()
+        .expect("corpus canonicalization");
+
+    let mut encoder = DeterministicEncoder::new();
+    let config = EmbeddingBuildConfig {
+        artifact_name: "test-native-int8".to_owned(),
+        batch_size: 2,
+        shard_rows: 2,
+    };
+    let manifest = pipeline
+        .embed_canonical_corpus(&config, &mut encoder)
+        .expect("embedding artifacts");
+
+    assert_manifest::<EmbeddingManifest>(
+        pipeline.layout().embedding_manifest(&config.artifact_name),
+        &manifest,
+    );
+    assert_eq!(manifest.total_rows, 3);
+    assert_eq!(manifest.shards.len(), 2);
+    assert_eq!(manifest.shards[0].start_row, 0);
+    assert_eq!(manifest.shards[0].rows, 2);
+    assert_eq!(manifest.shards[1].start_row, 2);
+    assert_eq!(manifest.shards[1].rows, 1);
+    assert_eq!(encoder.batch_sizes, vec![2, 1]);
+    assert!(
+        encoder
+            .seen
+            .iter()
+            .any(|content| content == "read https://example.com")
+    );
+
+    let embedding_root = pipeline.layout().embedding_dir(&config.artifact_name);
+    let mut embedded_ids = Vec::new();
+    for shard in &manifest.shards {
+        let row_ids = fs::read(embedding_root.join(&shard.row_ids.file)).expect("shard row IDs");
+        let vectors = fs::read(embedding_root.join(&shard.vectors.file)).expect("shard vectors");
+        let norms = fs::read(embedding_root.join(&shard.norms.file)).expect("shard norms");
+        assert_eq!(vectors.len(), usize::try_from(shard.rows).unwrap() * 4);
+        assert_eq!(norms.len(), usize::try_from(shard.rows).unwrap() * 4);
+        for (vector, norm) in vectors.chunks_exact(4).zip(norms.chunks_exact(4)) {
+            let expected = vector
+                .iter()
+                .map(|byte| f32::from(*byte as i8).powi(2))
+                .sum::<f32>()
+                .sqrt();
+            assert_eq!(f32::from_le_bytes(norm.try_into().unwrap()), expected);
+        }
+        embedded_ids.extend(decode_rows(&row_ids));
+    }
+    let canonical_ids =
+        decode_rows(&fs::read(pipeline.layout().canonical_rows()).expect("canonical row IDs"));
+    assert_eq!(embedded_ids, canonical_ids);
+
+    encoder.batch_sizes.clear();
+    encoder.seen.clear();
+    let reopened = pipeline
+        .embed_canonical_corpus(&config, &mut encoder)
+        .expect("reopen compatible embedding artifacts");
+    assert_eq!(reopened, manifest);
+    assert!(encoder.batch_sizes.is_empty());
+    assert!(encoder.seen.is_empty());
+
+    encoder.descriptor.model_revision = "fixture-v2".to_owned();
+    let error = pipeline
+        .embed_canonical_corpus(&config, &mut encoder)
+        .expect_err("reject incompatible encoder identity");
+    assert!(error.to_string().contains("encoder identity"));
+}
+
+struct DeterministicEncoder {
+    descriptor: EncoderDescriptor,
+    batch_sizes: Vec<usize>,
+    seen: Vec<String>,
+}
+
+impl DeterministicEncoder {
+    fn new() -> Self {
+        Self {
+            descriptor: EncoderDescriptor {
+                model_id: "test/deterministic".to_owned(),
+                model_revision: "fixture-v1".to_owned(),
+                model_lock_sha256: "fixture-lock".to_owned(),
+                runtime: "test".to_owned(),
+                runtime_version: "1".to_owned(),
+                runtime_sha256: "fixture-runtime".to_owned(),
+                execution_provider: "test".to_owned(),
+                output_name: "native_int8".to_owned(),
+                dimensions: 4,
+                max_tokens: 32,
+                input_rule: "fixture-raw-text-v1".to_owned(),
+                pooling: "fixture".to_owned(),
+                quantization: "native-int8".to_owned(),
+                instruction: None,
+            },
+            batch_sizes: Vec::new(),
+            seen: Vec::new(),
+        }
+    }
+}
+
+impl EmbeddingEncoder for DeterministicEncoder {
+    fn descriptor(&self) -> &EncoderDescriptor {
+        &self.descriptor
+    }
+
+    fn encode(&mut self, texts: &[&str]) -> oracle_mvp::snapshot::Result<Vec<i8>> {
+        self.batch_sizes.push(texts.len());
+        let mut vectors = Vec::with_capacity(texts.len() * 4);
+        for text in texts {
+            self.seen.push((*text).to_owned());
+            let sum = text.bytes().fold(0_u8, u8::wrapping_add);
+            vectors.extend([
+                i8::try_from(text.len().min(127)).unwrap(),
+                (sum % 127) as i8,
+                text.as_bytes().first().copied().unwrap_or(0).min(127) as i8,
+                1,
+            ]);
+        }
+        Ok(vectors)
+    }
 }
 
 struct CanonicalFixture {

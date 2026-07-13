@@ -82,6 +82,15 @@ pub enum Error {
     /// Stored state contradicted the pipeline's accounting.
     #[error("snapshot pipeline invariant failed: {0}")]
     Invariant(String),
+
+    /// The configured embedding encoder failed.
+    #[error("embedding encoder failed while {operation}: {message}")]
+    Encoder {
+        /// Encoder operation being attempted.
+        operation: &'static str,
+        /// Backend-specific failure detail.
+        message: String,
+    },
 }
 
 /// Files and directories owned by one snapshot pipeline run.
@@ -143,6 +152,16 @@ impl SnapshotLayout {
         self.root.join("canonical").join("aliases.bin")
     }
 
+    /// Return the root of one named embedding artifact.
+    pub fn embedding_dir(&self, artifact_name: &str) -> PathBuf {
+        self.root.join("embeddings").join(artifact_name)
+    }
+
+    /// Return one named embedding manifest path.
+    pub fn embedding_manifest(&self, artifact_name: &str) -> PathBuf {
+        self.embedding_dir(artifact_name).join("manifest.json")
+    }
+
     fn source_dir(&self) -> PathBuf {
         self.root.join("source")
     }
@@ -153,6 +172,10 @@ impl SnapshotLayout {
 
     pub(crate) fn canonical_dir(&self) -> PathBuf {
         self.root.join("canonical")
+    }
+
+    pub(crate) fn embedding_root(&self) -> PathBuf {
+        self.root.join("embeddings")
     }
 
     fn work_dir(&self) -> PathBuf {
@@ -169,6 +192,10 @@ impl SnapshotLayout {
 
     pub(crate) fn canonical_stage(&self) -> PathBuf {
         self.work_dir().join("canonical")
+    }
+
+    pub(crate) fn embedding_stage(&self, artifact_name: &str) -> PathBuf {
+        self.work_dir().join(format!("embedding-{artifact_name}"))
     }
 }
 

@@ -11,6 +11,7 @@ use nostrdb::{Filter, Ndb, Note, Transaction};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
+use crate::artifact::{ArtifactFile, describe_fixed_artifact};
 use crate::snapshot::{
     CorpusManifest, DamusSnapshot, Error, Result, Validation, count_with_db, create_directory,
     io_error, ndb_error, open_ndb, read_manifest, require_directory, require_file, write_manifest,
@@ -39,20 +40,8 @@ pub struct CanonicalCounts {
     pub duplicate_events: u64,
 }
 
-/// Description of one immutable fixed-record canonicalization artifact.
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct CanonicalArtifact {
-    /// File name relative to the canonical artifact directory.
-    pub file: String,
-    /// Bytes in each fixed-width record.
-    pub record_bytes: u32,
-    /// Number of records in the file.
-    pub records: u64,
-    /// Total file length.
-    pub bytes: u64,
-    /// SHA-256 of the complete file.
-    pub sha256: String,
-}
+/// Backward-compatible name for canonical fixed-record artifacts.
+pub type CanonicalArtifact = ArtifactFile;
 
 /// Durable description of canonical event rows and event aliases.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -162,13 +151,13 @@ pub(crate) fn canonicalize_corpus(pipeline: &DamusSnapshot) -> Result<CanonicalM
         )));
     }
 
-    let rows = describe_artifact(
+    let rows = describe_fixed_artifact(
         &stage.join("rows.bin"),
         "rows.bin",
         EVENT_ID_BYTES,
         counts.canonical_rows,
     )?;
-    let aliases = describe_artifact(
+    let aliases = describe_fixed_artifact(
         &aliases_path,
         "aliases.bin",
         ALIAS_RECORD_BYTES,
@@ -465,50 +454,6 @@ fn read_record<const N: usize>(reader: &mut impl Read, path: &Path) -> Result<Op
         offset += bytes;
     }
     Ok(Some(record))
-}
-
-fn describe_artifact(
-    path: &Path,
-    file: &str,
-    record_bytes: usize,
-    expected_records: u64,
-) -> Result<CanonicalArtifact> {
-    let bytes = fs::metadata(path)
-        .map_err(|source| io_error("read metadata for", path, source))?
-        .len();
-    let expected_bytes = expected_records
-        .checked_mul(u64::try_from(record_bytes).expect("record width fits u64"))
-        .ok_or_else(|| Error::Invariant("artifact byte length overflowed u64".to_owned()))?;
-    if bytes != expected_bytes {
-        return Err(Error::Invariant(format!(
-            "artifact `{}` contains {bytes} bytes but expected {expected_bytes}",
-            path.display()
-        )));
-    }
-    Ok(CanonicalArtifact {
-        file: file.to_owned(),
-        record_bytes: u32::try_from(record_bytes)
-            .map_err(|_| Error::Invariant("record width does not fit u32".to_owned()))?,
-        records: expected_records,
-        bytes,
-        sha256: hash_file(path)?,
-    })
-}
-
-fn hash_file(path: &Path) -> Result<String> {
-    let mut reader = BufReader::new(open_file(path)?);
-    let mut hasher = Sha256::new();
-    let mut buffer = [0_u8; 64 * 1024];
-    loop {
-        let bytes = reader
-            .read(&mut buffer)
-            .map_err(|source| io_error("read", path, source))?;
-        if bytes == 0 {
-            break;
-        }
-        hasher.update(&buffer[..bytes]);
-    }
-    Ok(format!("{:x}", hasher.finalize()))
 }
 
 fn create_new_file(path: &Path) -> Result<File> {

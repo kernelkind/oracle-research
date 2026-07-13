@@ -9,11 +9,13 @@ path = "src/main.rs"
 
 [dependencies]
 nostrdb = { git = "https://github.com/kernelkind/nostrdb-rs", rev = "aca2f66e3579dee0c9245e4c66100dd12cd940d6" }
+ort = { version = "=2.0.0-rc.12", default-features = false, features = ["api-24", "cuda", "load-dynamic", "std"] }
 profiling = "1.0"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1.0.89"
 sha2 = "0.10.8"
 thiserror = "2.0.7"
+tokenizers = { version = "=0.23.1", default-features = false, features = ["onig"] }
 zstd = "0.13.3"
 
 [dev-dependencies]

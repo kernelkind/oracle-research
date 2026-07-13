@@ -6,6 +6,10 @@ use std::io::{self, Write};
 use std::path::PathBuf;
 use std::process::ExitCode;
 
+use oracle_mvp::embedding::EmbeddingBuildConfig;
+use oracle_mvp::pplx::{
+    ExecutionProvider, PREFLIGHT_ARTIFACT_NAME, PplxOnnxConfig, PplxOnnxEncoder,
+};
 use oracle_mvp::snapshot::DamusSnapshot;
 use serde::Serialize;
 
@@ -59,6 +63,37 @@ fn run() -> Result<(), String> {
                 .map_err(|error| error.to_string())?;
             print_json(&manifest)
         }
+        Command::EmbedCorpus {
+            root,
+            model_dir,
+            runtime_library,
+            execution_provider,
+            batch_size,
+            shard_rows,
+        } => {
+            let pipeline = DamusSnapshot::new(root);
+            eprintln!(
+                "verifying model and embedding {}",
+                pipeline.layout().canonical_rows().display()
+            );
+            let mut encoder = PplxOnnxEncoder::load(PplxOnnxConfig {
+                model_dir,
+                runtime_library,
+                execution_provider,
+            })
+            .map_err(|error| error.to_string())?;
+            let manifest = pipeline
+                .embed_canonical_corpus(
+                    &EmbeddingBuildConfig {
+                        artifact_name: PREFLIGHT_ARTIFACT_NAME.to_owned(),
+                        batch_size,
+                        shard_rows,
+                    },
+                    &mut encoder,
+                )
+                .map_err(|error| error.to_string())?;
+            print_json(&manifest)
+        }
         Command::Build { root } => {
             let pipeline = DamusSnapshot::new(root);
             eprintln!(
@@ -93,10 +128,26 @@ fn run() -> Result<(), String> {
 
 #[derive(Debug)]
 enum Command {
-    ImportSource { root: PathBuf },
-    DeriveCorpus { root: PathBuf },
-    CanonicalizeCorpus { root: PathBuf },
-    Build { root: PathBuf },
+    ImportSource {
+        root: PathBuf,
+    },
+    DeriveCorpus {
+        root: PathBuf,
+    },
+    CanonicalizeCorpus {
+        root: PathBuf,
+    },
+    EmbedCorpus {
+        root: PathBuf,
+        model_dir: PathBuf,
+        runtime_library: PathBuf,
+        execution_provider: ExecutionProvider,
+        batch_size: usize,
+        shard_rows: u64,
+    },
+    Build {
+        root: PathBuf,
+    },
 }
 
 impl Command {
@@ -115,16 +166,107 @@ impl Command {
             .next()
             .map(PathBuf::from)
             .ok_or_else(|| format!("{command} requires DATA_ROOT\n\n{}", usage()))?;
-        ensure_finished(args)?;
 
         match command {
-            "import-source" => Ok(Some(Self::ImportSource { root })),
-            "derive-corpus" => Ok(Some(Self::DeriveCorpus { root })),
-            "canonicalize-corpus" => Ok(Some(Self::CanonicalizeCorpus { root })),
-            "build" => Ok(Some(Self::Build { root })),
+            "import-source" => {
+                ensure_finished(args)?;
+                Ok(Some(Self::ImportSource { root }))
+            }
+            "derive-corpus" => {
+                ensure_finished(args)?;
+                Ok(Some(Self::DeriveCorpus { root }))
+            }
+            "canonicalize-corpus" => {
+                ensure_finished(args)?;
+                Ok(Some(Self::CanonicalizeCorpus { root }))
+            }
+            "embed-corpus" => {
+                let model_dir = required_path(&mut args, command, "MODEL_DIR")?;
+                let runtime_library = required_path(&mut args, command, "ONNX_RUNTIME")?;
+                let provider = required_utf8(&mut args, command, "PROVIDER")?;
+                let execution_provider = match provider.as_str() {
+                    "cpu" => ExecutionProvider::Cpu,
+                    "cuda" => ExecutionProvider::Cuda,
+                    _ => {
+                        return Err(format!(
+                            "embed-corpus PROVIDER must be `cpu` or `cuda`, not `{provider}`\n\n{}",
+                            usage()
+                        ));
+                    }
+                };
+                let batch_size = required_utf8(&mut args, command, "BATCH_SIZE")?
+                    .parse::<usize>()
+                    .map_err(|_| {
+                        format!(
+                            "embed-corpus BATCH_SIZE must be a positive integer\n\n{}",
+                            usage()
+                        )
+                    })?;
+                if batch_size == 0 {
+                    return Err(format!(
+                        "embed-corpus BATCH_SIZE must be a positive integer\n\n{}",
+                        usage()
+                    ));
+                }
+                let shard_rows = match args.next() {
+                    Some(value) => value
+                        .to_str()
+                        .ok_or_else(|| "SHARD_ROWS is not valid UTF-8".to_owned())?
+                        .parse::<u64>()
+                        .map_err(|_| {
+                            format!(
+                                "embed-corpus SHARD_ROWS must be a positive integer\n\n{}",
+                                usage()
+                            )
+                        })?,
+                    None => 100_000,
+                };
+                if shard_rows == 0 {
+                    return Err(format!(
+                        "embed-corpus SHARD_ROWS must be a positive integer\n\n{}",
+                        usage()
+                    ));
+                }
+                ensure_finished(args)?;
+                Ok(Some(Self::EmbedCorpus {
+                    root,
+                    model_dir,
+                    runtime_library,
+                    execution_provider,
+                    batch_size,
+                    shard_rows,
+                }))
+            }
+            "build" => {
+                ensure_finished(args)?;
+                Ok(Some(Self::Build { root }))
+            }
             _ => Err(format!("unknown command `{command}`\n\n{}", usage())),
         }
     }
+}
+
+fn required_path(
+    args: &mut impl Iterator<Item = OsString>,
+    command: &str,
+    name: &str,
+) -> Result<PathBuf, String> {
+    args.next()
+        .map(PathBuf::from)
+        .ok_or_else(|| format!("{command} requires {name}\n\n{}", usage()))
+}
+
+fn required_utf8(
+    args: &mut impl Iterator<Item = OsString>,
+    command: &str,
+    name: &str,
+) -> Result<String, String> {
+    let value = args
+        .next()
+        .ok_or_else(|| format!("{command} requires {name}\n\n{}", usage()))?;
+    value
+        .into_string()
+        .map_err(|_| format!("{name} is not valid UTF-8\n\n{}", usage()))
 }
 
 #[derive(Serialize)]
@@ -157,5 +299,5 @@ fn print_usage() {
 }
 
 fn usage() -> &'static str {
-    "Usage:\n  oracle-mvp import-source DATA_ROOT\n  oracle-mvp derive-corpus DATA_ROOT\n  oracle-mvp canonicalize-corpus DATA_ROOT\n  oracle-mvp build DATA_ROOT"
+    "Usage:\n  oracle-mvp import-source DATA_ROOT\n  oracle-mvp derive-corpus DATA_ROOT\n  oracle-mvp canonicalize-corpus DATA_ROOT\n  oracle-mvp embed-corpus DATA_ROOT MODEL_DIR ONNX_RUNTIME PROVIDER BATCH_SIZE [SHARD_ROWS]\n  oracle-mvp build DATA_ROOT"
 }
