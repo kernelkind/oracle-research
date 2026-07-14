@@ -292,7 +292,34 @@ impl ExperimentRunner {
         candidate_depth: usize,
     ) -> Result<BootstrapResult> {
         let response = oracle.search_text(&text, candidate_depth)?;
+        let onboarding_ids = response
+            .candidates
+            .iter()
+            .map(|candidate| candidate.event_id)
+            .collect();
+        self.bootstrap_with_onboarding(text, response, candidate_depth, onboarding_ids)
+    }
+
+    /// Register the locally presented subset of one unmodified bootstrap response.
+    pub(crate) fn bootstrap_with_onboarding(
+        &mut self,
+        text: String,
+        response: OracleResponse,
+        candidate_depth: usize,
+        onboarding_ids: BTreeSet<EventId>,
+    ) -> Result<BootstrapResult> {
         validate_response(&response, candidate_depth)?;
+        let response_ids = response
+            .candidates
+            .iter()
+            .map(|candidate| candidate.event_id)
+            .collect::<BTreeSet<_>>();
+        if !onboarding_ids.is_subset(&response_ids) {
+            return Err(Error::InvalidOracleResponse(
+                "locally presented onboarding IDs are not a subset of the bootstrap response"
+                    .to_owned(),
+            ));
+        }
         for interest in self.state.interests.values() {
             if response.versions != interest.current_versions {
                 return Err(Error::OracleVersionMismatch);
@@ -310,11 +337,6 @@ impl ExperimentRunner {
             .next_interest_id
             .checked_add(1)
             .ok_or_else(|| Error::ExperimentState("interest ID overflowed u64".to_owned()))?;
-        let onboarding_ids = response
-            .candidates
-            .iter()
-            .map(|candidate| candidate.event_id)
-            .collect::<BTreeSet<_>>();
         self.state.seen.extend(onboarding_ids.iter().copied());
         self.state.interests.insert(
             interest_id,

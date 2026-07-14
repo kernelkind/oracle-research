@@ -33,7 +33,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         embedding_artifact_path: work.join("embeddings").join(EMBEDDING_ARTIFACT),
         session_path: work.join("manual-workflow").join("crec-43-session.json"),
         onboarding_depth: 20,
-        neighbor_depth: 50,
+        neighbor_depth: 200,
         recommendation_limit: 20,
     };
     let encoder = PplxOnnxEncoder::load(PplxOnnxConfig {

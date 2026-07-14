@@ -7,14 +7,17 @@ use std::path::{Path, PathBuf};
 
 use nostrdb::{Ndb, Transaction};
 use serde::{Deserialize, Serialize};
+use whatlang::{Lang, detect};
 
 use crate::embedding::EmbeddingEncoder;
 use crate::event::EventId;
-use crate::oracle::{Oracle, OracleResponse, OrderedOfflineOracle};
+use crate::oracle::{Oracle, OracleCandidate, OracleResponse, OrderedOfflineOracle};
 use crate::runner::{ExperimentRunner, ExperimentState, InterestId, LocalCandidate, WorthJudgment};
 use crate::snapshot::{Error, Result, Validation, io_error, ndb_error, open_ndb, read_manifest};
 
-const SESSION_SCHEMA_VERSION: u32 = 1;
+const SESSION_SCHEMA_VERSION: u32 = 2;
+const BOOTSTRAP_RETRIEVAL_MULTIPLIER: usize = 10;
+const LANGUAGE_FILTER_POLICY: &str = "whatlang-0.18.0:exclude-reliable-non-english-v1";
 
 /// Files and fixed experiment limits for one guided session.
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -27,9 +30,9 @@ pub struct ManualWorkflowConfig {
     pub embedding_artifact_path: PathBuf,
     /// Private, resumable evidence file written after every decision.
     pub session_path: PathBuf,
-    /// Topic-bootstrap candidates shown before sources are selected.
+    /// Maximum topic-bootstrap candidates shown after local filtering.
     pub onboarding_depth: usize,
-    /// Semantic neighbors requested independently for each selected source.
+    /// Raw semantic neighbors requested independently for each selected source.
     pub neighbor_depth: usize,
     /// Maximum recommendation judgments in this session.
     pub recommendation_limit: usize,
@@ -102,18 +105,26 @@ pub struct ManualSession {
     pub topic: String,
     /// Fixed bootstrap depth for this session.
     pub onboarding_depth: usize,
+    /// Raw topic-search depth used before local presentation filtering.
+    pub bootstrap_retrieval_depth: usize,
     /// Fixed per-source neighbor depth for this session.
     pub neighbor_depth: usize,
     /// Fixed maximum number of recommendation judgments.
     pub recommendation_limit: usize,
     /// Interest created by the topic bootstrap.
     pub interest_id: InterestId,
-    /// Complete public response used to show onboarding candidates.
+    /// Complete raw public response retained before local presentation filtering.
     pub bootstrap_response: OracleResponse,
+    /// Fixed experiment-only local language-filter policy.
+    pub language_filter_policy: String,
+    /// Bootstrap candidates that passed the local filter and were presented.
+    pub onboarding_candidates: Vec<OracleCandidate>,
     /// Onboarding notes explicitly selected as independent positive sources.
     pub selected_source_ids: Vec<EventId>,
     /// Complete public response for every independently queried source.
     pub source_responses: Vec<ManualSourceResponse>,
+    /// Local unseen candidate order before experiment-only language filtering.
+    pub unfiltered_recommendation_candidates: Vec<LocalCandidate>,
     /// Fixed unseen candidate order produced before any recommendation judgment.
     pub recommendation_candidates: Vec<LocalCandidate>,
     /// Submitted judgments in presentation order.
@@ -172,6 +183,7 @@ where
         &config.embedding_artifact_path,
         encoder,
     )?;
+    let corpus = open_ndb(&config.corpus_path, Validation::TrustedSource)?;
     let mut session = if let Some(session) = loaded {
         session
     } else {
@@ -189,19 +201,40 @@ where
             }
             break line;
         };
+        let bootstrap_retrieval_depth = bootstrap_retrieval_depth(config.onboarding_depth)?;
+        let bootstrap_response = oracle.search_text(&topic, bootstrap_retrieval_depth)?;
+        let onboarding_candidates = filter_oracle_candidates(
+            &corpus,
+            &config.corpus_path,
+            &bootstrap_response.candidates,
+            config.onboarding_depth,
+        )?;
+        let onboarding_ids = onboarding_candidates
+            .iter()
+            .map(|candidate| candidate.event_id)
+            .collect();
         let mut runner = ExperimentRunner::new();
-        let bootstrap = runner.bootstrap(&mut oracle, topic.clone(), config.onboarding_depth)?;
+        let bootstrap = runner.bootstrap_with_onboarding(
+            topic.clone(),
+            bootstrap_response,
+            bootstrap_retrieval_depth,
+            onboarding_ids,
+        )?;
         let session = ManualSession {
             schema_version: SESSION_SCHEMA_VERSION,
             phase: ManualSessionPhase::SelectSources,
             topic,
             onboarding_depth: config.onboarding_depth,
+            bootstrap_retrieval_depth,
             neighbor_depth: config.neighbor_depth,
             recommendation_limit: config.recommendation_limit,
             interest_id: bootstrap.interest_id,
             bootstrap_response: bootstrap.response,
+            language_filter_policy: LANGUAGE_FILTER_POLICY.to_owned(),
+            onboarding_candidates,
             selected_source_ids: Vec::new(),
             source_responses: Vec::new(),
+            unfiltered_recommendation_candidates: Vec::new(),
             recommendation_candidates: Vec::new(),
             decisions: Vec::new(),
             runner_state: runner.into_state(),
@@ -210,7 +243,6 @@ where
         save_session(&config.session_path, &session)?;
         session
     };
-    let corpus = open_ndb(&config.corpus_path, Validation::TrustedSource)?;
     if session.phase == ManualSessionPhase::SelectSources {
         let outcome = select_sources(
             config,
@@ -250,7 +282,13 @@ where
         output,
         "\nChoose worthwhile source notes. These are onboarding examples, not recommendation judgments.\n",
     )?;
-    for (index, candidate) in session.bootstrap_response.candidates.iter().enumerate() {
+    write_sparsity_notice(
+        output,
+        "onboarding",
+        session.onboarding_candidates.len(),
+        session.onboarding_depth,
+    )?;
+    for (index, candidate) in session.onboarding_candidates.iter().enumerate() {
         display_note(
             output,
             corpus,
@@ -279,8 +317,7 @@ where
             }
             _ => {}
         }
-        let Some(indices) = parse_indices(&line, session.bootstrap_response.candidates.len())
-        else {
+        let Some(indices) = parse_indices(&line, session.onboarding_candidates.len()) else {
             write_output(output, "Enter valid displayed numbers, `none`, or `q`.\n")?;
             continue;
         };
@@ -288,19 +325,32 @@ where
         let mut runner = ExperimentRunner::restore(session.runner_state.clone())?;
         let mut selected_source_ids = Vec::with_capacity(indices.len());
         for index in indices {
-            let event_id = session.bootstrap_response.candidates[index - 1].event_id;
+            let event_id = session.onboarding_candidates[index - 1].event_id;
             runner.select_positive_source(session.interest_id, event_id)?;
             selected_source_ids.push(event_id);
         }
 
         let mut recording = RecordingOracle::new(oracle);
-        let recommendation_candidates = runner.recommend(&mut recording, config.neighbor_depth)?;
+        let unfiltered_recommendation_candidates =
+            runner.recommend(&mut recording, config.neighbor_depth)?;
+        let recommendation_candidates = filter_local_candidates(
+            corpus,
+            &config.corpus_path,
+            &unfiltered_recommendation_candidates,
+        )?;
         session.selected_source_ids = selected_source_ids;
         session.source_responses = recording.responses;
+        session.unfiltered_recommendation_candidates = unfiltered_recommendation_candidates;
         session.recommendation_candidates = recommendation_candidates;
         session.runner_state = runner.into_state();
         session.phase = ManualSessionPhase::JudgeRecommendations;
         save_session(&config.session_path, session)?;
+        write_sparsity_notice(
+            output,
+            "recommendation",
+            session.recommendation_candidates.len(),
+            session.recommendation_limit,
+        )?;
         return Ok(SourceSelectionOutcome::Ready);
     }
 }
@@ -425,14 +475,18 @@ fn validate_config(config: &ManualWorkflowConfig) -> Result<()> {
             "manual workflow depths and recommendation limit must be positive".to_owned(),
         ));
     }
+    bootstrap_retrieval_depth(config.onboarding_depth)?;
     Ok(())
 }
 
 fn validate_session(session: &ManualSession, config: &ManualWorkflowConfig) -> Result<()> {
+    let expected_bootstrap_retrieval_depth = bootstrap_retrieval_depth(config.onboarding_depth)?;
     if session.schema_version != SESSION_SCHEMA_VERSION
         || session.onboarding_depth != config.onboarding_depth
+        || session.bootstrap_retrieval_depth != expected_bootstrap_retrieval_depth
         || session.neighbor_depth != config.neighbor_depth
         || session.recommendation_limit != config.recommendation_limit
+        || session.language_filter_policy != LANGUAGE_FILTER_POLICY
     {
         return Err(Error::ExperimentState(
             "manual session does not match the requested workflow version or limits".to_owned(),
@@ -442,6 +496,21 @@ fn validate_session(session: &ManualSession, config: &ManualWorkflowConfig) -> R
         || session.completion_reason.is_some() != (session.phase == ManualSessionPhase::Complete)
         || session.decisions.len() > session.recommendation_limit
         || session.decisions.len() > session.recommendation_candidates.len()
+        || session.onboarding_candidates.len() > session.onboarding_depth
+        || session.bootstrap_response.provenance.candidate_depth
+            != u64::try_from(session.bootstrap_retrieval_depth).map_err(|_| {
+                Error::ExperimentState(
+                    "manual bootstrap retrieval depth does not fit u64".to_owned(),
+                )
+            })?
+        || !is_ordered_subset(
+            &session.bootstrap_response.candidates,
+            &session.onboarding_candidates,
+        )
+        || !is_ordered_subset(
+            &session.unfiltered_recommendation_candidates,
+            &session.recommendation_candidates,
+        )
     {
         return Err(Error::ExperimentState(
             "manual session phase or counts are inconsistent".to_owned(),
@@ -455,8 +524,7 @@ fn validate_session(session: &ManualSession, config: &ManualWorkflowConfig) -> R
     if interest.text() != session.topic
         || interest.onboarding_ids()
             != &session
-                .bootstrap_response
-                .candidates
+                .onboarding_candidates
                 .iter()
                 .map(|candidate| candidate.event_id)
                 .collect::<BTreeSet<_>>()
@@ -494,6 +562,89 @@ fn validate_session(session: &ManualSession, config: &ManualWorkflowConfig) -> R
         }
     }
     Ok(())
+}
+
+fn bootstrap_retrieval_depth(onboarding_depth: usize) -> Result<usize> {
+    onboarding_depth
+        .checked_mul(BOOTSTRAP_RETRIEVAL_MULTIPLIER)
+        .ok_or_else(|| {
+            Error::ExperimentState("bootstrap retrieval depth overflowed usize".to_owned())
+        })
+}
+
+fn filter_oracle_candidates(
+    corpus: &Ndb,
+    corpus_path: &Path,
+    candidates: &[OracleCandidate],
+    limit: usize,
+) -> Result<Vec<OracleCandidate>> {
+    let transaction = Transaction::new(corpus)
+        .map_err(|source| ndb_error("open transaction on", corpus_path, source))?;
+    let mut filtered = Vec::with_capacity(limit.min(candidates.len()));
+    for candidate in candidates {
+        if event_is_english_eligible(corpus, &transaction, corpus_path, candidate.event_id)? {
+            filtered.push(candidate.clone());
+            if filtered.len() == limit {
+                break;
+            }
+        }
+    }
+    Ok(filtered)
+}
+
+fn filter_local_candidates(
+    corpus: &Ndb,
+    corpus_path: &Path,
+    candidates: &[LocalCandidate],
+) -> Result<Vec<LocalCandidate>> {
+    let transaction = Transaction::new(corpus)
+        .map_err(|source| ndb_error("open transaction on", corpus_path, source))?;
+    let mut filtered = Vec::with_capacity(candidates.len());
+    for candidate in candidates {
+        if event_is_english_eligible(corpus, &transaction, corpus_path, candidate.event_id)? {
+            filtered.push(candidate.clone());
+        }
+    }
+    Ok(filtered)
+}
+
+fn event_is_english_eligible(
+    corpus: &Ndb,
+    transaction: &Transaction,
+    corpus_path: &Path,
+    event_id: EventId,
+) -> Result<bool> {
+    let note = corpus
+        .get_note_by_id(transaction, event_id.as_bytes())
+        .map_err(|source| ndb_error("load event from", corpus_path, source))?;
+    Ok(match detect(note.content()) {
+        Some(info) if info.is_reliable() => info.lang() == Lang::Eng,
+        Some(_) | None => true,
+    })
+}
+
+fn is_ordered_subset<T: PartialEq>(all: &[T], subset: &[T]) -> bool {
+    let mut remaining = all.iter();
+    subset
+        .iter()
+        .all(|expected| remaining.by_ref().any(|candidate| candidate == expected))
+}
+
+fn write_sparsity_notice(
+    output: &mut impl Write,
+    candidate_kind: &str,
+    available: usize,
+    requested: usize,
+) -> Result<()> {
+    if available >= requested {
+        return Ok(());
+    }
+    write_output(
+        output,
+        &format!(
+            "Only {available} English-eligible {candidate_kind} notes are available. Treat this shortage as 10K corpus sparsity, not recommendation-quality evidence.\n"
+        ),
+    )
 }
 
 fn parse_indices(line: &str, candidate_count: usize) -> Option<Vec<usize>> {
