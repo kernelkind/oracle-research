@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "tokenizer_id": "Alibaba-NLP/gte-multilingual-base-xlm-roberta",
+  "models": [
+    {
+      "model_id": "Alibaba-NLP/gte-multilingual-base",
+      "model_revision": "9bbca17d9273fd0d03d5725c7a4b0f6b45142062",
+      "model_config_sha256": "711bdc81365fc25d30533cf05b9fdf588e5ba01f18540fbbb1307d787597a313",
+      "native_context_tokens": 8192
+    }
+  ],
+  "configured_input_tokens": 512,
+  "input_rule": "raw-utf8-url-text-empty-unchanged-add-special-tokens-no-truncation-no-padding-v1",
+  "token_length_rule": "tokenizer-output-ids-before-model-truncation-v1",
+  "empty_input": {
+    "strategy": "unchanged"
+  },
+  "files": [
+    {
+      "path": "tokenizer.json",
+      "bytes": 17082756,
+      "sha256": "f59925fcb90c92b894cb93e51bb9b4a6105c5c249fe54ce1c704420ac39b81af"
+    },
+    {
+      "path": "tokenizer_config.json",
+      "bytes": 1149,
+      "sha256": "24cebbf2ef20fc317256e03e52ac7b2ca326586f946a8427ecac036332bf0933"
+    }
+  ]
+}

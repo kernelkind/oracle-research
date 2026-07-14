@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "tokenizer_id": "perplexity-ai/pplx-embed-v1-shared-qwen2",
+  "models": [
+    {
+      "model_id": "perplexity-ai/pplx-embed-v1-0.6b",
+      "model_revision": "2c4d510dd4a732063c31a0f70193e35067b51fd8",
+      "model_config_sha256": "f7865547ecc1c077c5b1f83913fb9816a6586c676ccf3e0f7f00105a1b0c1c6c",
+      "native_context_tokens": 32768
+    },
+    {
+      "model_id": "perplexity-ai/pplx-embed-v1-4b",
+      "model_revision": "06456497a00540a582918fe8dcd3a5eabb207772",
+      "model_config_sha256": "cc8413dd6170805f44287761fce87172bd5153fd942ca0cb60b41a54eec4f9b4",
+      "native_context_tokens": 32768
+    }
+  ],
+  "configured_input_tokens": 512,
+  "input_rule": "raw-utf8-url-text-empty-as-eot-add-special-tokens-no-truncation-no-padding-v1",
+  "token_length_rule": "tokenizer-output-ids-before-model-truncation-v1",
+  "empty_input": {
+    "strategy": "replace_with_token",
+    "token": "<|endoftext|>",
+    "token_id": 151643
+  },
+  "files": [
+    {
+      "path": "tokenizer.json",
+      "bytes": 11422837,
+      "sha256": "c6fb5c5bbba5fa5f8332edfb6d8aa67bd7fb3d75365b1765f108201698eaebf5"
+    },
+    {
+      "path": "tokenizer_config.json",
+      "bytes": 5638,
+      "sha256": "29282daeff3615d49f86c9e6c6fefb3a798a516da39f9297f3fcb2a8b39e0180"
+    }
+  ]
+}

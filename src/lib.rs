@@ -5,6 +5,7 @@ pub mod benchmark;
 pub mod budget;
 pub mod canonical;
 pub mod corpus_derivation;
+pub mod corpus_filter;
 pub mod embedding;
 pub mod event;
 pub mod oracle;
