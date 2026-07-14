@@ -7,6 +7,7 @@ use std::path::{Path, PathBuf};
 
 use nostrdb::{Ndb, Transaction};
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 use whatlang::{Lang, detect};
 
 use crate::embedding::EmbeddingEncoder;
@@ -15,9 +16,11 @@ use crate::oracle::{Oracle, OracleCandidate, OracleResponse, OrderedOfflineOracl
 use crate::runner::{ExperimentRunner, ExperimentState, InterestId, LocalCandidate, WorthJudgment};
 use crate::snapshot::{Error, Result, Validation, io_error, ndb_error, open_ndb, read_manifest};
 
-const SESSION_SCHEMA_VERSION: u32 = 2;
+const SESSION_SCHEMA_VERSION: u32 = 3;
 const BOOTSTRAP_RETRIEVAL_MULTIPLIER: usize = 10;
-const LANGUAGE_FILTER_POLICY: &str = "whatlang-0.18.0:exclude-reliable-non-english-v1";
+const LANGUAGE_FILTER_POLICY: &str =
+    "whatlang-0.18.0:strip-context-exclude-reliable-non-english-v2";
+const RECOMMENDATION_SAMPLING_POLICY: &str = "even-rank-coverage-sha256-blinded-order-v1";
 
 /// Files and fixed experiment limits for one guided session.
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -44,7 +47,7 @@ pub struct ManualWorkflowConfig {
 pub enum ManualSessionPhase {
     /// Onboarding candidates exist but source choices have not been submitted.
     SelectSources,
-    /// The fixed locally ordered recommendation list is being judged.
+    /// The fixed sampled and blinded recommendation list is being judged.
     JudgeRecommendations,
     /// No further input belongs to this session.
     Complete,
@@ -56,7 +59,7 @@ pub enum ManualSessionPhase {
 pub enum ManualCompletionReason {
     /// No onboarding note was suitable as a positive source.
     NoPositiveSources,
-    /// Every locally ordered candidate was judged before the fixed limit.
+    /// Every sampled candidate was judged before the fixed limit.
     CandidatesExhausted,
     /// The fixed manual-judgment limit was reached.
     RecommendationLimitReached,
@@ -72,8 +75,8 @@ pub enum ManualDecisionKind {
     NotWorthSeeing,
     /// The note had already been seen outside this session.
     AlreadySeen,
-    /// The note was displayed but no worth judgment was made.
-    Skipped,
+    /// Linked context required for a judgment could not be viewed.
+    CannotJudgeMissingContext,
 }
 
 /// The unmodified source-specific response recorded for one selected note.
@@ -125,7 +128,11 @@ pub struct ManualSession {
     pub source_responses: Vec<ManualSourceResponse>,
     /// Local unseen candidate order before experiment-only language filtering.
     pub unfiltered_recommendation_candidates: Vec<LocalCandidate>,
-    /// Fixed unseen candidate order produced before any recommendation judgment.
+    /// Complete locally ordered candidate pool after language filtering.
+    pub eligible_recommendation_candidates: Vec<LocalCandidate>,
+    /// Fixed policy used to sample and blind the presented candidates.
+    pub recommendation_sampling_policy: String,
+    /// Fixed sampled presentation order produced before any judgment.
     pub recommendation_candidates: Vec<LocalCandidate>,
     /// Submitted judgments in presentation order.
     pub decisions: Vec<ManualDecision>,
@@ -235,6 +242,8 @@ where
             selected_source_ids: Vec::new(),
             source_responses: Vec::new(),
             unfiltered_recommendation_candidates: Vec::new(),
+            eligible_recommendation_candidates: Vec::new(),
+            recommendation_sampling_policy: RECOMMENDATION_SAMPLING_POLICY.to_owned(),
             recommendation_candidates: Vec::new(),
             decisions: Vec::new(),
             runner_state: runner.into_state(),
@@ -280,7 +289,10 @@ where
 {
     write_output(
         output,
-        "\nChoose worthwhile source notes. These are onboarding examples, not recommendation judgments.\n",
+        &format!(
+            "\nChoose only notes that represent `{}` and that you want more notes like. A merely worthwhile note is not a source; use `none` if nothing fits.\n",
+            session.topic
+        ),
     )?;
     write_sparsity_notice(
         output,
@@ -302,7 +314,7 @@ where
         let Some(line) = prompt_line(
             output,
             input,
-            "Select one or more numbers (comma-separated), `none`, or `q`: ",
+            "Select numbers (comma-separated), `open N`, `none`, or `q`: ",
         )?
         else {
             return Ok(SourceSelectionOutcome::Paused);
@@ -317,8 +329,27 @@ where
             }
             _ => {}
         }
+        match requested_open_index(&line) {
+            Ok(Some(index)) if index > 0 && index <= session.onboarding_candidates.len() => {
+                open_linked_context(
+                    output,
+                    corpus,
+                    &config.corpus_path,
+                    session.onboarding_candidates[index - 1].event_id,
+                )?;
+                continue;
+            }
+            Ok(Some(_)) | Err(()) => {
+                write_output(output, "Use `open N` with a displayed note number.\n")?;
+                continue;
+            }
+            Ok(None) => {}
+        }
         let Some(indices) = parse_indices(&line, session.onboarding_candidates.len()) else {
-            write_output(output, "Enter valid displayed numbers, `none`, or `q`.\n")?;
+            write_output(
+                output,
+                "Enter valid displayed numbers, `open N`, `none`, or `q`.\n",
+            )?;
             continue;
         };
 
@@ -333,14 +364,20 @@ where
         let mut recording = RecordingOracle::new(oracle);
         let unfiltered_recommendation_candidates =
             runner.recommend(&mut recording, config.neighbor_depth)?;
-        let recommendation_candidates = filter_local_candidates(
+        let eligible_recommendation_candidates = filter_local_candidates(
             corpus,
             &config.corpus_path,
             &unfiltered_recommendation_candidates,
         )?;
+        let recommendation_candidates = sample_recommendation_candidates(
+            &session.topic,
+            &eligible_recommendation_candidates,
+            session.recommendation_limit,
+        );
         session.selected_source_ids = selected_source_ids;
         session.source_responses = recording.responses;
         session.unfiltered_recommendation_candidates = unfiltered_recommendation_candidates;
+        session.eligible_recommendation_candidates = eligible_recommendation_candidates;
         session.recommendation_candidates = recommendation_candidates;
         session.runner_state = runner.into_state();
         session.phase = ManualSessionPhase::JudgeRecommendations;
@@ -348,7 +385,7 @@ where
         write_sparsity_notice(
             output,
             "recommendation",
-            session.recommendation_candidates.len(),
+            session.eligible_recommendation_candidates.len(),
             session.recommendation_limit,
         )?;
         return Ok(SourceSelectionOutcome::Ready);
@@ -383,19 +420,21 @@ where
             let Some(line) = prompt_line(
                 output,
                 input,
-                "Worth seeing? [w = yes, n = no, a = already seen, s = skip]: ",
+                "Worth seeing? [w = yes, n = no, a = already seen, c = cannot judge, o = show context links, q = stop]: ",
             )?
             else {
-                apply_decision(session, candidate, ManualDecisionKind::Skipped)?;
-                save_session(&config.session_path, session)?;
                 return Ok(ManualWorkflowOutcome::Paused);
             };
             match line.trim() {
                 "w" => break ManualDecisionKind::WorthSeeing,
                 "n" => break ManualDecisionKind::NotWorthSeeing,
                 "a" => break ManualDecisionKind::AlreadySeen,
-                "s" => break ManualDecisionKind::Skipped,
-                _ => write_output(output, "Enter `w`, `n`, `a`, or `s`.\n")?,
+                "c" => break ManualDecisionKind::CannotJudgeMissingContext,
+                "o" => {
+                    open_linked_context(output, corpus, &config.corpus_path, candidate.event_id)?
+                }
+                "q" => return Ok(ManualWorkflowOutcome::Paused),
+                _ => write_output(output, "Enter `w`, `n`, `a`, `c`, `o`, or `q`.\n")?,
             }
         };
         apply_decision(session, candidate, judgment)?;
@@ -440,7 +479,7 @@ fn apply_decision(
         ManualDecisionKind::NotWorthSeeing => {
             runner.record_worth(candidate.event_id, WorthJudgment::NotWorthSeeing);
         }
-        ManualDecisionKind::AlreadySeen | ManualDecisionKind::Skipped => {
+        ManualDecisionKind::AlreadySeen | ManualDecisionKind::CannotJudgeMissingContext => {
             runner.mark_seen(candidate.event_id);
         }
     }
@@ -487,6 +526,7 @@ fn validate_session(session: &ManualSession, config: &ManualWorkflowConfig) -> R
         || session.neighbor_depth != config.neighbor_depth
         || session.recommendation_limit != config.recommendation_limit
         || session.language_filter_policy != LANGUAGE_FILTER_POLICY
+        || session.recommendation_sampling_policy != RECOMMENDATION_SAMPLING_POLICY
     {
         return Err(Error::ExperimentState(
             "manual session does not match the requested workflow version or limits".to_owned(),
@@ -496,6 +536,7 @@ fn validate_session(session: &ManualSession, config: &ManualWorkflowConfig) -> R
         || session.completion_reason.is_some() != (session.phase == ManualSessionPhase::Complete)
         || session.decisions.len() > session.recommendation_limit
         || session.decisions.len() > session.recommendation_candidates.len()
+        || session.recommendation_candidates.len() > session.recommendation_limit
         || session.onboarding_candidates.len() > session.onboarding_depth
         || session.bootstrap_response.provenance.candidate_depth
             != u64::try_from(session.bootstrap_retrieval_depth).map_err(|_| {
@@ -509,8 +550,14 @@ fn validate_session(session: &ManualSession, config: &ManualWorkflowConfig) -> R
         )
         || !is_ordered_subset(
             &session.unfiltered_recommendation_candidates,
-            &session.recommendation_candidates,
+            &session.eligible_recommendation_candidates,
         )
+        || session.recommendation_candidates
+            != sample_recommendation_candidates(
+                &session.topic,
+                &session.eligible_recommendation_candidates,
+                session.recommendation_limit,
+            )
     {
         return Err(Error::ExperimentState(
             "manual session phase or counts are inconsistent".to_owned(),
@@ -553,7 +600,7 @@ fn validate_session(session: &ManualSession, config: &ManualWorkflowConfig) -> R
         let expected = match decision.judgment {
             ManualDecisionKind::WorthSeeing => Some(WorthJudgment::WorthSeeing),
             ManualDecisionKind::NotWorthSeeing => Some(WorthJudgment::NotWorthSeeing),
-            ManualDecisionKind::AlreadySeen | ManualDecisionKind::Skipped => None,
+            ManualDecisionKind::AlreadySeen | ManualDecisionKind::CannotJudgeMissingContext => None,
         };
         if runner.state().worth_judgment(candidate.event_id) != expected {
             return Err(Error::ExperimentState(
@@ -617,10 +664,85 @@ fn event_is_english_eligible(
     let note = corpus
         .get_note_by_id(transaction, event_id.as_bytes())
         .map_err(|source| ndb_error("load event from", corpus_path, source))?;
-    Ok(match detect(note.content()) {
+    let detection_text = language_detection_text(note.content());
+    Ok(match detect(&detection_text) {
         Some(info) if info.is_reliable() => info.lang() == Lang::Eng,
         Some(_) | None => true,
     })
+}
+
+fn language_detection_text(content: &str) -> String {
+    content
+        .split_whitespace()
+        .filter(|token| context_url_for_token(token).is_none())
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+fn context_url_for_token(token: &str) -> Option<String> {
+    let token = trim_context_token(token);
+    if token.starts_with("https://") || token.starts_with("http://") {
+        return Some(token.to_owned());
+    }
+    let identifier = token.strip_prefix("nostr:").unwrap_or(token);
+    let supported = ["note1", "nevent1", "npub1", "nprofile1", "naddr1"]
+        .iter()
+        .any(|prefix| identifier.starts_with(prefix));
+    if supported
+        && identifier
+            .chars()
+            .all(|character| character.is_ascii_lowercase() || character.is_ascii_digit())
+    {
+        Some(format!("https://njump.me/{identifier}"))
+    } else {
+        None
+    }
+}
+
+fn trim_context_token(token: &str) -> &str {
+    token
+        .trim_start_matches(['(', '[', '{', '<', '"', '\''])
+        .trim_end_matches(['.', ',', ';', ':', '!', '?', ')', ']', '}', '>', '"', '\''])
+}
+
+fn sample_recommendation_candidates(
+    topic: &str,
+    candidates: &[LocalCandidate],
+    limit: usize,
+) -> Vec<LocalCandidate> {
+    let sample_size = limit.min(candidates.len());
+    if sample_size == 0 {
+        return Vec::new();
+    }
+    let mut sampled = (0..sample_size)
+        .map(|sample_index| {
+            let candidate_index = if sample_size == 1 {
+                0
+            } else {
+                let numerator = sample_index as u128 * (candidates.len() - 1) as u128;
+                let denominator = (sample_size - 1) as u128;
+                usize::try_from(numerator / denominator)
+                    .expect("sample index is bounded by the candidate slice")
+            };
+            candidates[candidate_index].clone()
+        })
+        .collect::<Vec<_>>();
+    sampled.sort_by(|left, right| {
+        blinded_order_key(topic, left.event_id)
+            .cmp(&blinded_order_key(topic, right.event_id))
+            .then_with(|| left.event_id.cmp(&right.event_id))
+    });
+    sampled
+}
+
+fn blinded_order_key(topic: &str, event_id: EventId) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(RECOMMENDATION_SAMPLING_POLICY.as_bytes());
+    hasher.update([0]);
+    hasher.update(topic.as_bytes());
+    hasher.update([0]);
+    hasher.update(event_id.as_bytes());
+    hasher.finalize().into()
 }
 
 fn is_ordered_subset<T: PartialEq>(all: &[T], subset: &[T]) -> bool {
@@ -647,6 +769,21 @@ fn write_sparsity_notice(
     )
 }
 
+fn requested_open_index(line: &str) -> std::result::Result<Option<usize>, ()> {
+    let mut parts = line.split_whitespace();
+    let Some(command) = parts.next() else {
+        return Ok(None);
+    };
+    if command != "open" && command != "o" {
+        return Ok(None);
+    }
+    let index = parts.next().ok_or(())?.parse::<usize>().map_err(|_| ())?;
+    if parts.next().is_some() {
+        return Err(());
+    }
+    Ok(Some(index))
+}
+
 fn parse_indices(line: &str, candidate_count: usize) -> Option<Vec<usize>> {
     let mut selected = BTreeSet::new();
     for value in line.split(|character: char| character == ',' || character.is_whitespace()) {
@@ -660,6 +797,36 @@ fn parse_indices(line: &str, candidate_count: usize) -> Option<Vec<usize>> {
         selected.insert(index);
     }
     (!selected.is_empty()).then(|| selected.into_iter().collect())
+}
+
+fn open_linked_context<W: Write>(
+    output: &mut W,
+    corpus: &Ndb,
+    corpus_path: &Path,
+    event_id: EventId,
+) -> Result<()> {
+    let urls = {
+        let transaction = Transaction::new(corpus)
+            .map_err(|source| ndb_error("open transaction on", corpus_path, source))?;
+        let note = corpus
+            .get_note_by_id(&transaction, event_id.as_bytes())
+            .map_err(|source| ndb_error("load event from", corpus_path, source))?;
+        let mut seen = BTreeSet::new();
+        note.content()
+            .split_whitespace()
+            .filter_map(context_url_for_token)
+            .filter(|url| seen.insert(url.clone()))
+            .collect::<Vec<_>>()
+    };
+
+    if urls.is_empty() {
+        return write_output(output, "No linked context was found in this note.\n");
+    }
+    write_output(output, "Linked context (open from your terminal):\n")?;
+    for (index, url) in urls.iter().enumerate() {
+        write_output(output, &format!("{}. {url}\n", index + 1))?;
+    }
+    Ok(())
 }
 
 fn display_note<W: Write>(
@@ -708,11 +875,20 @@ fn print_summary<W: Write>(
         .iter()
         .filter(|decision| decision.judgment == ManualDecisionKind::NotWorthSeeing)
         .count();
-    let neutral = session.decisions.len() - worth - not_worth;
+    let missing_context = session
+        .decisions
+        .iter()
+        .filter(|decision| decision.judgment == ManualDecisionKind::CannotJudgeMissingContext)
+        .count();
+    let already_seen = session
+        .decisions
+        .iter()
+        .filter(|decision| decision.judgment == ManualDecisionKind::AlreadySeen)
+        .count();
     write_output(
         output,
         &format!(
-            "\nSession complete: {worth} worth seeing, {not_worth} not worth seeing, {neutral} unjudged.\nEvidence: {}\n",
+            "\nSession complete: {worth} worth seeing, {not_worth} not worth seeing, {missing_context} missing context, {already_seen} already seen.\nEvidence: {}\n",
             session_path.display()
         ),
     )

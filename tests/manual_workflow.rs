@@ -128,13 +128,14 @@ fn guided_workflow_resumes_and_records_private_decisions_without_changing_source
 
     let transcript = String::from_utf8(first_output).expect("UTF-8 transcript");
     assert!(transcript.contains("Enter one interest"));
-    assert!(transcript.contains("Choose worthwhile source notes"));
+    assert!(transcript.contains("want more notes like"));
+    assert!(transcript.contains("distributed systems"));
     assert!(transcript.contains("Worth seeing?"));
     assert!(!transcript.contains("cosine"));
     assert!(!transcript.contains("source rank"));
     let resumed = String::from_utf8(second_output).expect("UTF-8 resumed transcript");
     assert!(!resumed.contains("Enter one interest"));
-    assert!(!resumed.contains("Choose worthwhile source notes"));
+    assert!(!resumed.contains("want more notes like"));
 }
 
 #[test]
@@ -143,6 +144,8 @@ fn guided_workflow_overretrieves_and_filters_non_english_before_presentation() {
     let ndb_path = temp.path().join("corpus.ndb");
     let ndb = open_ndb(&ndb_path);
     let contents = [
+        "https://github.com/circleayugm/carmies\n\n読まれないクソコードの一例です。\nご笑納ください。",
+        "どれくらい大変か非エンジニアにもわかるように大相撲で例えて欲しい\nnostr:nevent1qvzqqqqqqypzqt2p008gcyyg8qpmcsnhq03ufspygewg3ecx8mtgl807an6kjydvq9n8wumn8ghj7enfd36x2u3wdehhxarj9emkjmn99ah8qatzx9knwwrnx4jhza3cdsmhxmnrx4hxu7rywekxwat9xec8gdt9wpnhqmrwv36x2mfe89ch26rh09c8gctnxa48xuejw9ur2velvfex7ctyvdshxapaw3e82egqyqc763u7x6kcepx36r79jj5ldd7l752wvgxnwxtgr5q3quw22mm9j26nyfc",
         "Dieser ausführliche Beitrag erklärt sichere Rust-Programmierung mit praktischen Beispielen für verteilte Computersysteme.",
         "Este artículo detallado explica programación segura con Rust y ejemplos prácticos para sistemas distribuidos.",
         "This practical guide explains safe Rust programming for distributed computer systems.",
@@ -190,7 +193,7 @@ fn guided_workflow_overretrieves_and_filters_non_english_before_presentation() {
         embedding_artifact_path: artifact_path,
         session_path: session_path.clone(),
         onboarding_depth: 2,
-        neighbor_depth: 8,
+        neighbor_depth: 10,
         recommendation_limit: 2,
     };
     let mut output = Vec::new();
@@ -212,7 +215,11 @@ fn guided_workflow_overretrieves_and_filters_non_english_before_presentation() {
     );
     assert_eq!(
         session.language_filter_policy,
-        "whatlang-0.18.0:exclude-reliable-non-english-v1"
+        "whatlang-0.18.0:strip-context-exclude-reliable-non-english-v2"
+    );
+    assert_eq!(
+        session.recommendation_sampling_policy,
+        "even-rank-coverage-sha256-blinded-order-v1"
     );
     assert_eq!(session.onboarding_candidates.len(), 2);
     assert_eq!(
@@ -221,33 +228,182 @@ fn guided_workflow_overretrieves_and_filters_non_english_before_presentation() {
             .iter()
             .map(|candidate| candidate.event_id)
             .collect::<Vec<_>>(),
-        vec![ordered_ids[2].into(), ordered_ids[3].into()]
+        vec![ordered_ids[4].into(), ordered_ids[5].into()]
     );
     assert!(!session.runner_state.seen().contains(&ordered_ids[0].into()));
     assert!(!session.runner_state.seen().contains(&ordered_ids[1].into()));
-    assert!(!session.runner_state.seen().contains(&ordered_ids[4].into()));
+    assert!(!session.runner_state.seen().contains(&ordered_ids[2].into()));
+    assert!(!session.runner_state.seen().contains(&ordered_ids[3].into()));
+    assert!(!session.runner_state.seen().contains(&ordered_ids[6].into()));
     assert!(
         session.unfiltered_recommendation_candidates.len()
-            > session.recommendation_candidates.len()
+            > session.eligible_recommendation_candidates.len()
     );
-    assert_eq!(
+    assert!(
+        session.eligible_recommendation_candidates.len() > session.recommendation_candidates.len()
+    );
+    assert_eq!(session.recommendation_candidates.len(), 2);
+    assert!(
         session
             .recommendation_candidates
             .iter()
-            .take(2)
-            .map(|candidate| candidate.event_id)
-            .collect::<Vec<_>>(),
-        vec![ordered_ids[5].into(), ordered_ids[6].into()]
+            .map(|candidate| candidate.local_rank)
+            .max()
+            .expect("sampled rank")
+            > 2,
+        "evaluation sample must cover more than the nearest two candidates"
     );
 
     let transcript = String::from_utf8(output).expect("UTF-8 transcript");
-    assert!(transcript.contains(contents[2]));
-    assert!(transcript.contains(contents[3]));
+    assert!(transcript.contains(contents[4]));
     assert!(transcript.contains(contents[5]));
-    assert!(transcript.contains(contents[6]));
     assert!(!transcript.contains(contents[0]));
     assert!(!transcript.contains(contents[1]));
-    assert!(!transcript.contains(contents[4]));
+    assert!(!transcript.contains(contents[2]));
+    assert!(!transcript.contains(contents[3]));
+    assert!(!transcript.contains(contents[6]));
+}
+
+#[test]
+fn guided_workflow_presents_context_links_and_records_an_unjudgeable_recommendation() {
+    let temp = tempfile::tempdir().expect("temporary directory");
+    let ndb_path = temp.path().join("corpus.ndb");
+    let ndb = open_ndb(&ndb_path);
+    let nostr_note = "note1rss6chekdfhvk8lhsmznxu4suv8ajlhralmelkp5cegrlunu49sqel9fuv";
+    let contents = [
+        "A practical distributed systems guide https://example.com/guide",
+        "A database deployment story https://image.example/result.jpg nostr:note1rss6chekdfhvk8lhsmznxu4suv8ajlhralmelkp5cegrlunu49sqel9fuv",
+        "Consensus under partitions https://example.com/consensus nostr:note1rss6chekdfhvk8lhsmznxu4suv8ajlhralmelkp5cegrlunu49sqel9fuv",
+        "Reliable services in production https://example.com/services nostr:note1rss6chekdfhvk8lhsmznxu4suv8ajlhralmelkp5cegrlunu49sqel9fuv",
+    ];
+    let events = contents
+        .iter()
+        .enumerate()
+        .map(|(index, content)| signed_event(content, index as u64))
+        .collect::<Vec<_>>();
+    for event in &events {
+        ndb.process_event(event).expect("submit event");
+    }
+    wait_for_count(&ndb, events.len());
+    drop(ndb);
+
+    let ordered_ids = events
+        .iter()
+        .map(|event| event_id(event))
+        .collect::<Vec<_>>();
+    let ordered_path = temp.path().join("ordered-event-ids.bin");
+    write_ids(&ordered_path, &ordered_ids);
+    let artifact_path = temp.path().join("embeddings");
+    build_ordered_embeddings(
+        &ndb_path,
+        &ordered_path,
+        &artifact_path,
+        &OrderedEmbeddingBuildConfig {
+            rows: contents.len() as u64,
+            batch_size: 2,
+            shard_rows: contents.len() as u64,
+        },
+        &mut FixtureEncoder::new(),
+    )
+    .expect("build ordered embedding artifact");
+
+    let session_path = temp.path().join("manual-session.json");
+    let config = ManualWorkflowConfig {
+        corpus_path: ndb_path,
+        ordered_event_ids_path: ordered_path,
+        embedding_artifact_path: artifact_path,
+        session_path: session_path.clone(),
+        onboarding_depth: 1,
+        neighbor_depth: 4,
+        recommendation_limit: 1,
+    };
+    let mut output = Vec::new();
+    let outcome = run_manual_workflow(
+        &config,
+        FixtureEncoder::new(),
+        Cursor::new(b"linked systems\nopen 1\n1\no\nc\n"),
+        &mut output,
+    )
+    .expect("run context-aware workflow");
+    assert_eq!(outcome, ManualWorkflowOutcome::Complete);
+
+    let session = read_session(&session_path);
+    assert_eq!(session.decisions.len(), 1);
+    assert_eq!(
+        session.decisions[0].judgment,
+        ManualDecisionKind::CannotJudgeMissingContext
+    );
+    let transcript = String::from_utf8(output).expect("UTF-8 transcript");
+    assert_eq!(transcript.matches("Linked context").count(), 2);
+    assert!(transcript.contains("https://example.com/guide"));
+    assert!(transcript.contains(&format!("https://njump.me/{nostr_note}")));
+    assert!(transcript.contains("cannot judge"));
+}
+
+#[test]
+fn interruption_does_not_consume_the_current_recommendation() {
+    let temp = tempfile::tempdir().expect("temporary directory");
+    let ndb_path = temp.path().join("corpus.ndb");
+    let ndb = open_ndb(&ndb_path);
+    let contents = ["distributed systems design", "distributed databases"];
+    let events = contents
+        .iter()
+        .enumerate()
+        .map(|(index, content)| signed_event(content, index as u64))
+        .collect::<Vec<_>>();
+    for event in &events {
+        ndb.process_event(event).expect("submit event");
+    }
+    wait_for_count(&ndb, events.len());
+    drop(ndb);
+
+    let ordered_ids = events
+        .iter()
+        .map(|event| event_id(event))
+        .collect::<Vec<_>>();
+    let ordered_path = temp.path().join("ordered-event-ids.bin");
+    write_ids(&ordered_path, &ordered_ids);
+    let artifact_path = temp.path().join("embeddings");
+    build_ordered_embeddings(
+        &ndb_path,
+        &ordered_path,
+        &artifact_path,
+        &OrderedEmbeddingBuildConfig {
+            rows: contents.len() as u64,
+            batch_size: 2,
+            shard_rows: contents.len() as u64,
+        },
+        &mut FixtureEncoder::new(),
+    )
+    .expect("build ordered embedding artifact");
+
+    let session_path = temp.path().join("manual-session.json");
+    let config = ManualWorkflowConfig {
+        corpus_path: ndb_path,
+        ordered_event_ids_path: ordered_path,
+        embedding_artifact_path: artifact_path,
+        session_path: session_path.clone(),
+        onboarding_depth: 1,
+        neighbor_depth: 2,
+        recommendation_limit: 1,
+    };
+    let outcome = run_manual_workflow(
+        &config,
+        FixtureEncoder::new(),
+        Cursor::new(b"distributed systems\n1\n"),
+        &mut Vec::new(),
+    )
+    .expect("pause at judgment input");
+    assert_eq!(outcome, ManualWorkflowOutcome::Paused);
+    let session = read_session(&session_path);
+    assert_eq!(session.phase, ManualSessionPhase::JudgeRecommendations);
+    assert!(session.decisions.is_empty());
+    assert!(
+        !session
+            .runner_state
+            .seen()
+            .contains(&session.recommendation_candidates[0].event_id)
+    );
 }
 
 fn read_session(path: &std::path::Path) -> ManualSession {
@@ -355,21 +511,38 @@ impl FixtureEncoder {
             "consensus protocols" => [80, 20, 0, 0],
             "network partitions" => [65, 35, 0, 0],
             "ceramic glazing" => [0, 100, 0, 0],
+            "linked systems" => [100, 0, 0, 0],
+            "A practical distributed systems guide https://example.com/guide" => [100, 0, 0, 0],
+            "A database deployment story https://image.example/result.jpg nostr:note1rss6chekdfhvk8lhsmznxu4suv8ajlhralmelkp5cegrlunu49sqel9fuv" => {
+                [95, 5, 0, 0]
+            }
+            "Consensus under partitions https://example.com/consensus nostr:note1rss6chekdfhvk8lhsmznxu4suv8ajlhralmelkp5cegrlunu49sqel9fuv" => {
+                [80, 20, 0, 0]
+            }
+            "Reliable services in production https://example.com/services nostr:note1rss6chekdfhvk8lhsmznxu4suv8ajlhralmelkp5cegrlunu49sqel9fuv" => {
+                [65, 35, 0, 0]
+            }
             "rust coding" => [100, 0, 0, 0],
-            "Dieser ausführliche Beitrag erklärt sichere Rust-Programmierung mit praktischen Beispielen für verteilte Computersysteme." => {
+            "https://github.com/circleayugm/carmies\n\n読まれないクソコードの一例です。\nご笑納ください。" => {
                 [100, 0, 0, 0]
             }
-            "Este artículo detallado explica programación segura con Rust y ejemplos prácticos para sistemas distribuidos." => {
+            "どれくらい大変か非エンジニアにもわかるように大相撲で例えて欲しい\nnostr:nevent1qvzqqqqqqypzqt2p008gcyyg8qpmcsnhq03ufspygewg3ecx8mtgl807an6kjydvq9n8wumn8ghj7enfd36x2u3wdehhxarj9emkjmn99ah8qatzx9knwwrnx4jhza3cdsmhxmnrx4hxu7rywekxwat9xec8gdt9wpnhqmrwv36x2mfe89ch26rh09c8gctnxa48xuejw9ur2velvfex7ctyvdshxapaw3e82egqyqc763u7x6kcepx36r79jj5ldd7l752wvgxnwxtgr5q3quw22mm9j26nyfc" => {
                 [99, 1, 0, 0]
             }
-            "This practical guide explains safe Rust programming for distributed computer systems." => {
+            "Dieser ausführliche Beitrag erklärt sichere Rust-Programmierung mit praktischen Beispielen für verteilte Computersysteme." => {
                 [98, 2, 0, 0]
             }
-            "A detailed tutorial about writing reliable concurrent services in the Rust programming language." => {
+            "Este artículo detallado explica programación segura con Rust y ejemplos prácticos para sistemas distribuidos." => {
                 [97, 3, 0, 0]
             }
-            "Ce guide présente la programmation concurrente en Rust pour construire des services distribués fiables." => {
+            "This practical guide explains safe Rust programming for distributed computer systems." => {
                 [96, 4, 0, 0]
+            }
+            "A detailed tutorial about writing reliable concurrent services in the Rust programming language." => {
+                [95, 5, 0, 0]
+            }
+            "Ce guide présente la programmation concurrente en Rust pour construire des services distribués fiables." => {
+                [94, 6, 0, 0]
             }
             "Ownership patterns for reliable concurrent Rust services." => [90, 10, 0, 0],
             "Testing distributed Rust applications under network partitions." => [85, 15, 0, 0],
