@@ -6,7 +6,7 @@ use std::io::{BufReader, Read};
 use std::ops::ControlFlow;
 use std::path::{Path, PathBuf};
 use std::thread;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use nostrdb::{Error as NdbError, Filter, Ndb, Note, Transaction};
 use serde::{Deserialize, Serialize};
@@ -18,6 +18,10 @@ const TOKEN_LIMIT: u32 = 512;
 const FILTER_BATCH_EVENTS: usize = 1_024;
 const FILTER_BATCH_CONTENT_BYTES: usize = 8 * 1_024 * 1_024;
 const INGEST_RETRY_DELAY: Duration = Duration::from_millis(100);
+const PERSISTENCE_CHECKPOINT_EVENTS: usize = 16 * 1_024;
+const PERSISTENCE_POLL_DELAY: Duration = Duration::from_millis(50);
+const PERSISTENCE_STALL_POLLS: u8 = 4;
+const PERSISTENCE_TIMEOUT: Duration = Duration::from_secs(60);
 const TOKENIZER_LOCK_SCHEMA_VERSION: u32 = 1;
 const RAW_TOKEN_LENGTH_RULE: &str = "tokenizer-output-ids-before-model-truncation-v1";
 const PPLX_TOKENIZER_LOCK_JSON: &str = include_str!("../models/pplx-embed-v1-tokenizer.lock.json");
@@ -73,6 +77,10 @@ pub enum CorpusFilterError {
     /// A corpus counter overflowed.
     #[error("corpus filter count overflowed u64")]
     CountOverflow,
+
+    /// NostrDB did not persist every accepted event after bounded retries.
+    #[error("NostrDB did not persist {missing_events} accepted events within 60 seconds")]
+    PersistenceTimeout { missing_events: usize },
 }
 
 /// Counts produced by one complete pass over `corpus.ndb`.
@@ -261,12 +269,14 @@ pub fn filter_corpus(
         queue_note(state, note, filtered, pplx, gte)
     })??;
     flush_batch(&mut state, filtered, pplx, gte)?;
+    confirm_persistence(filtered, &mut state.unconfirmed)?;
     Ok(state.summary)
 }
 
 struct FilterState<'txn> {
     pending: Vec<Note<'txn>>,
     pending_content_bytes: usize,
+    unconfirmed: Vec<Note<'txn>>,
     summary: CorpusFilterSummary,
 }
 
@@ -275,6 +285,7 @@ impl FilterState<'_> {
         Self {
             pending: Vec::with_capacity(FILTER_BATCH_EVENTS),
             pending_content_bytes: 0,
+            unconfirmed: Vec::with_capacity(PERSISTENCE_CHECKPOINT_EVENTS),
             summary: CorpusFilterSummary {
                 scanned_events: 0,
                 retained_events: 0,
@@ -334,18 +345,87 @@ fn flush_batch(
     let gte_lengths = gte.raw_token_lengths(&texts)?;
     require_length_count("GTE tokenizer", texts.len(), gte_lengths.len())?;
 
+    let filtered_txn = Transaction::new(filtered)?;
     for ((note, pplx_length), gte_length) in state.pending.iter().zip(pplx_lengths).zip(gte_lengths)
     {
         if pplx_length <= TOKEN_LIMIT && gte_length <= TOKEN_LIMIT {
-            submit_with_retry(filtered, &note_json(note)?)?;
             state.summary.retained_events = increment(state.summary.retained_events)?;
+            match filtered.get_note_by_id(&filtered_txn, note.id()) {
+                Ok(_) => {}
+                Err(NdbError::NotFound) => {
+                    submit_with_retry(filtered, &note_json(note)?)?;
+                    state.unconfirmed.push(note.clone());
+                }
+                Err(error) => return Err(error.into()),
+            }
         } else {
             state.summary.excluded_events = increment(state.summary.excluded_events)?;
         }
     }
+    drop(filtered_txn);
     state.pending.clear();
     state.pending_content_bytes = 0;
+    if state.unconfirmed.len() >= PERSISTENCE_CHECKPOINT_EVENTS {
+        confirm_persistence(filtered, &mut state.unconfirmed)?;
+    }
     Ok(())
+}
+
+fn confirm_persistence(
+    filtered: &Ndb,
+    unconfirmed: &mut Vec<Note<'_>>,
+) -> Result<(), CorpusFilterError> {
+    if unconfirmed.is_empty() {
+        return Ok(());
+    }
+    let deadline = Instant::now() + PERSISTENCE_TIMEOUT;
+    let mut unresolved = std::mem::take(unconfirmed);
+    let mut previous_missing = usize::MAX;
+    let mut stalled_polls = 0_u8;
+
+    loop {
+        thread::sleep(PERSISTENCE_POLL_DELAY);
+        unresolved = missing_notes(filtered, unresolved)?;
+        if unresolved.is_empty() {
+            unconfirmed.reserve(PERSISTENCE_CHECKPOINT_EVENTS);
+            return Ok(());
+        }
+        if Instant::now() >= deadline {
+            return Err(CorpusFilterError::PersistenceTimeout {
+                missing_events: unresolved.len(),
+            });
+        }
+
+        if unresolved.len() < previous_missing {
+            stalled_polls = 0;
+        } else {
+            stalled_polls = stalled_polls.saturating_add(1);
+        }
+        previous_missing = unresolved.len();
+        if stalled_polls >= PERSISTENCE_STALL_POLLS {
+            for note in &unresolved {
+                submit_with_retry(filtered, &note_json(note)?)?;
+            }
+            previous_missing = usize::MAX;
+            stalled_polls = 0;
+        }
+    }
+}
+
+fn missing_notes<'txn>(
+    filtered: &Ndb,
+    notes: Vec<Note<'txn>>,
+) -> Result<Vec<Note<'txn>>, CorpusFilterError> {
+    let txn = Transaction::new(filtered)?;
+    let mut missing = Vec::with_capacity(notes.len());
+    for note in notes {
+        match filtered.get_note_by_id(&txn, note.id()) {
+            Ok(_) => {}
+            Err(NdbError::NotFound) => missing.push(note),
+            Err(error) => return Err(error.into()),
+        }
+    }
+    Ok(missing)
 }
 
 fn require_token_limit(tokenizer: &'static str, actual: u32) -> Result<(), CorpusFilterError> {

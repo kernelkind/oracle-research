@@ -24,7 +24,7 @@ fn filters_both_tokenizers_across_complete_and_partial_ndb_batches() {
     let mut pplx = fixture_tokenizer(&pplx_dir, "fixture/pplx", false);
     let mut gte = fixture_tokenizer(&gte_dir, "fixture/gte", true);
 
-    let mut contents = (0..1_025)
+    let mut contents = (0..20_025)
         .map(|index| match index {
             0 | 1 => "same retained content".to_owned(),
             _ => format!("short-{index}"),
@@ -42,18 +42,20 @@ fn filters_both_tokenizers_across_complete_and_partial_ndb_batches() {
         submit(&source, event);
     }
     wait_for_count(&source, events.len());
+    for event in events.iter().take(100) {
+        submit(&filtered, event);
+    }
+    wait_for_count(&filtered, 100);
 
     let expected_summary = CorpusFilterSummary {
-        scanned_events: 1_028,
-        retained_events: 1_026,
+        scanned_events: 20_028,
+        retained_events: 20_026,
         excluded_events: 2,
     };
     assert_eq!(
         filter_corpus(&source, &filtered, &mut pplx, &mut gte).expect("filter corpus"),
         expected_summary
     );
-    wait_for_count(&filtered, 1_026);
-
     let expected = events
         .iter()
         .filter_map(|event| {

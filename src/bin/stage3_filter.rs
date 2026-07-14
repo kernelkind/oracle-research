@@ -2,15 +2,11 @@ use std::env;
 use std::fs;
 use std::io::{self, Write};
 use std::path::Path;
-use std::thread;
-use std::time::Duration;
 
 use nostrdb::{Config, Ndb};
 use oracle_mvp::corpus_filter::{
     FrozenTokenizer, filter_corpus, gte_tokenizer_lock, pplx_tokenizer_lock,
 };
-
-const DRAIN_DELAY: Duration = Duration::from_secs(60);
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut args = env::args_os().skip(1);
@@ -68,7 +64,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let filtered = Ndb::new(filtered_path, &filtered_config)?;
 
     let summary = filter_corpus(&source, &filtered, &mut pplx, &mut gte)?;
-    thread::sleep(DRAIN_DELAY);
     drop(filtered);
     drop(source);
     serde_json::to_writer(io::stdout().lock(), &summary)?;
