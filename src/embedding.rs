@@ -19,11 +19,11 @@ use crate::snapshot::{
 };
 use crate::stage::CorpusStageManifest;
 
-const EVENT_ID_BYTES: usize = 32;
+pub(crate) const EVENT_ID_BYTES: usize = 32;
 const NORM_BYTES: usize = size_of::<f32>();
 const EMBEDDING_SCHEMA_VERSION: u32 = 3;
 const WORK_SCHEMA_VERSION: u32 = 1;
-const BATCHING_RULE: &str = "effective-token-length-ascending-within-shard-v1";
+pub(crate) const BATCHING_RULE: &str = "effective-token-length-ascending-within-shard-v1";
 pub const MATRIX_FORMAT: &str =
     "sharded-row-major-native-int8-vectors-f32le-norms-32-byte-event-ids-v1";
 const LENGTH_MEASUREMENT_BATCH_ROWS: usize = 1_024;
@@ -447,17 +447,17 @@ impl DamusSnapshot {
         ))
         .map_err(|error| io_error("seek", &source.rows_path, error))?;
         {
-            let mut build = ShardBuild {
-                stage: &stage,
-                batch_size: config.batch_size,
+            let mut build = EmbeddingShardBuilder::new(
+                &stage,
+                config.batch_size,
                 encoder,
-                corpus: &corpus,
-                txn: &txn,
-                corpus_path: &corpus_path,
-                canonical_rows: &mut rows,
-                canonical_rows_path: &source.rows_path,
+                &corpus,
+                &txn,
+                &corpus_path,
+                &mut rows,
+                &source.rows_path,
                 observer,
-            };
+            );
 
             while next_row < source.rows {
                 build.observer.check_continue()?;
@@ -820,7 +820,7 @@ fn load_completed_shards(
     Ok(shards)
 }
 
-struct ShardBuild<'a> {
+pub(crate) struct EmbeddingShardBuilder<'a> {
     stage: &'a Path,
     batch_size: usize,
     encoder: &'a mut dyn EmbeddingEncoder,
@@ -832,8 +832,33 @@ struct ShardBuild<'a> {
     observer: &'a mut dyn EmbeddingBuildObserver,
 }
 
-impl ShardBuild<'_> {
-    fn encode_shard(
+impl<'a> EmbeddingShardBuilder<'a> {
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn new(
+        stage: &'a Path,
+        batch_size: usize,
+        encoder: &'a mut dyn EmbeddingEncoder,
+        corpus: &'a nostrdb::Ndb,
+        txn: &'a Transaction,
+        corpus_path: &'a Path,
+        canonical_rows: &'a mut BufReader<File>,
+        canonical_rows_path: &'a Path,
+        observer: &'a mut dyn EmbeddingBuildObserver,
+    ) -> Self {
+        Self {
+            stage,
+            batch_size,
+            encoder,
+            corpus,
+            txn,
+            corpus_path,
+            canonical_rows,
+            canonical_rows_path,
+            observer,
+        }
+    }
+
+    pub(crate) fn encode_shard(
         &mut self,
         ordinal: u32,
         start_row: u64,
@@ -1163,28 +1188,7 @@ fn verify_embedding(
             )));
         }
         verify_shard_files(artifact, shard, dimensions)?;
-        let minimum_effective_tokens = shard
-            .rows
-            .checked_mul(u64::from(shard.minimum_effective_tokens))
-            .ok_or_else(|| {
-                Error::Invariant("minimum effective-token bound overflowed".to_owned())
-            })?;
-        let maximum_effective_tokens = shard
-            .rows
-            .checked_mul(u64::from(shard.maximum_effective_tokens))
-            .ok_or_else(|| {
-                Error::Invariant("maximum effective-token bound overflowed".to_owned())
-            })?;
-        if shard.minimum_effective_tokens == 0
-            || shard.minimum_effective_tokens > shard.maximum_effective_tokens
-            || shard.maximum_effective_tokens > manifest.encoder.max_tokens
-            || shard.effective_tokens < minimum_effective_tokens
-            || shard.effective_tokens > maximum_effective_tokens
-        {
-            return Err(Error::Invariant(format!(
-                "embedding shard {index} contains invalid effective-token metadata"
-            )));
-        }
+        verify_effective_token_metadata(shard, manifest.encoder.max_tokens)?;
         verify_row_ids(
             &artifact.join(&shard.row_ids.file),
             shard.rows,
@@ -1239,7 +1243,7 @@ fn verify_base_artifact(manifest: &EmbeddingManifest) -> Result<()> {
     Ok(())
 }
 
-fn verify_shard_files(
+pub(crate) fn verify_shard_files(
     artifact: &Path,
     shard: &EmbeddingShardManifest,
     dimensions: usize,
@@ -1266,6 +1270,32 @@ fn verify_shard_files(
         EVENT_ID_BYTES,
         shard.rows,
     )?;
+    Ok(())
+}
+
+pub(crate) fn verify_effective_token_metadata(
+    shard: &EmbeddingShardManifest,
+    max_tokens: u32,
+) -> Result<()> {
+    let minimum_effective_tokens = shard
+        .rows
+        .checked_mul(u64::from(shard.minimum_effective_tokens))
+        .ok_or_else(|| Error::Invariant("minimum effective-token bound overflowed".to_owned()))?;
+    let maximum_effective_tokens = shard
+        .rows
+        .checked_mul(u64::from(shard.maximum_effective_tokens))
+        .ok_or_else(|| Error::Invariant("maximum effective-token bound overflowed".to_owned()))?;
+    if shard.minimum_effective_tokens == 0
+        || shard.minimum_effective_tokens > shard.maximum_effective_tokens
+        || shard.maximum_effective_tokens > max_tokens
+        || shard.effective_tokens < minimum_effective_tokens
+        || shard.effective_tokens > maximum_effective_tokens
+    {
+        return Err(Error::Invariant(format!(
+            "embedding shard {} contains invalid effective-token metadata",
+            shard.ordinal
+        )));
+    }
     Ok(())
 }
 
@@ -1323,7 +1353,7 @@ pub(crate) fn validate_config(
     validate_descriptor(descriptor)
 }
 
-fn reject_unadmitted_cuda(descriptor: &EncoderDescriptor) -> Result<()> {
+pub(crate) fn reject_unadmitted_cuda(descriptor: &EncoderDescriptor) -> Result<()> {
     if descriptor.execution_provider == "cuda" {
         return Err(Error::Budget(
             "ordinary embedding APIs refuse CUDA; use the capped benchmark or verified admission path"
@@ -1342,7 +1372,7 @@ fn validate_artifact_name(artifact_name: &str) -> Result<()> {
     Ok(())
 }
 
-fn validate_descriptor(descriptor: &EncoderDescriptor) -> Result<()> {
+pub(crate) fn validate_descriptor(descriptor: &EncoderDescriptor) -> Result<()> {
     if descriptor.dimensions == 0 {
         return Err(Error::Invariant(
             "encoder dimensions must be positive".to_owned(),
@@ -1357,7 +1387,7 @@ fn validate_descriptor(descriptor: &EncoderDescriptor) -> Result<()> {
     Ok(())
 }
 
-fn read_event_id(reader: &mut impl Read, path: &Path) -> Result<Option<EventId>> {
+pub(crate) fn read_event_id(reader: &mut impl Read, path: &Path) -> Result<Option<EventId>> {
     let mut id = [0_u8; EVENT_ID_BYTES];
     let mut offset = 0;
     while offset < id.len() {
