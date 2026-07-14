@@ -4,6 +4,7 @@ pub mod artifact;
 pub mod benchmark;
 pub mod budget;
 pub mod canonical;
+pub mod corpus_dedup;
 pub mod corpus_derivation;
 pub mod corpus_filter;
 pub mod embedding;
