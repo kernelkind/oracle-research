@@ -2,18 +2,23 @@
 
 use std::env;
 use std::ffi::OsString;
+use std::fs::File;
 use std::io::{self, Write};
 use std::path::PathBuf;
 use std::process::ExitCode;
 
+use oracle_mvp::benchmark::BenchmarkStageConfig;
+use oracle_mvp::budget::{AdmittedExecutionConfig, BudgetAdmissionConfig};
 use oracle_mvp::embedding::EmbeddingBuildConfig;
 use oracle_mvp::pplx::{
     ExecutionProvider, PREFLIGHT_ARTIFACT_NAME, PplxOnnxConfig, PplxOnnxEncoder,
+    PplxTokenLengthCounter,
 };
 use oracle_mvp::preflight::PreflightConfig;
 use oracle_mvp::snapshot::DamusSnapshot;
 use oracle_mvp::stage::CorpusStageConfig;
-use serde::Serialize;
+use oracle_mvp::token_audit::TokenAuditConfig;
+use serde::{Serialize, de::DeserializeOwned};
 
 fn main() -> ExitCode {
     match run() {
@@ -65,6 +70,52 @@ fn run() -> Result<(), String> {
                 .map_err(|error| error.to_string())?;
             print_json(&manifest)
         }
+        Command::AuditTokenLengths {
+            root,
+            artifact_name,
+            model_dir,
+            shard_rows,
+        } => {
+            let pipeline = DamusSnapshot::new(root);
+            eprintln!(
+                "auditing raw token lengths for {}",
+                pipeline.layout().canonical_rows().display()
+            );
+            let mut counter =
+                PplxTokenLengthCounter::load(model_dir).map_err(|error| error.to_string())?;
+            let manifest = pipeline
+                .audit_canonical_token_lengths(
+                    &TokenAuditConfig {
+                        artifact_name,
+                        shard_rows,
+                    },
+                    &mut counter,
+                )
+                .map_err(|error| error.to_string())?;
+            print_json(&manifest)
+        }
+        Command::AuditStageTokenLengths {
+            root,
+            stage_name,
+            artifact_name,
+            model_dir,
+            shard_rows,
+        } => {
+            let pipeline = DamusSnapshot::new(root);
+            let mut counter =
+                PplxTokenLengthCounter::load(model_dir).map_err(|error| error.to_string())?;
+            let manifest = pipeline
+                .audit_corpus_stage_token_lengths(
+                    &stage_name,
+                    &TokenAuditConfig {
+                        artifact_name,
+                        shard_rows,
+                    },
+                    &mut counter,
+                )
+                .map_err(|error| error.to_string())?;
+            print_json(&manifest)
+        }
         Command::EmbedCorpus {
             root,
             model_dir,
@@ -73,6 +124,7 @@ fn run() -> Result<(), String> {
             batch_size,
             shard_rows,
         } => {
+            require_unadmitted_cpu(execution_provider, "embed-corpus")?;
             let pipeline = DamusSnapshot::new(root);
             eprintln!(
                 "verifying model and embedding {}",
@@ -111,6 +163,57 @@ fn run() -> Result<(), String> {
                 .map_err(|error| error.to_string())?;
             print_json(&manifest)
         }
+        Command::BenchmarkStage {
+            root,
+            config_path,
+            model_dir,
+            runtime_library,
+        } => {
+            let config: BenchmarkStageConfig = read_json(&config_path)?;
+            let pipeline = DamusSnapshot::new(root);
+            let mut encoder = PplxOnnxEncoder::load(PplxOnnxConfig {
+                model_dir,
+                runtime_library,
+                execution_provider: ExecutionProvider::Cuda,
+            })
+            .map_err(|error| error.to_string())?;
+            let manifest = pipeline
+                .benchmark_corpus_stage(&config, &mut encoder)
+                .map_err(|error| error.to_string())?;
+            print_json(&manifest)
+        }
+        Command::PlanAdmission {
+            root,
+            name,
+            config_path,
+        } => {
+            let config: BudgetAdmissionConfig = read_json(&config_path)?;
+            let pipeline = DamusSnapshot::new(root);
+            let admission = pipeline
+                .plan_and_publish_budget_admission(&name, &config)
+                .map_err(|error| error.to_string())?;
+            print_json(&admission)
+        }
+        Command::ExecuteAdmission {
+            root,
+            name,
+            execution_path,
+            model_dir,
+            runtime_library,
+        } => {
+            let execution: AdmittedExecutionConfig = read_json(&execution_path)?;
+            let pipeline = DamusSnapshot::new(root);
+            let mut encoder = PplxOnnxEncoder::load(PplxOnnxConfig {
+                model_dir,
+                runtime_library,
+                execution_provider: ExecutionProvider::Cuda,
+            })
+            .map_err(|error| error.to_string())?;
+            let manifest = pipeline
+                .execute_budget_admission(&name, &execution, &mut encoder)
+                .map_err(|error| error.to_string())?;
+            print_json(&manifest)
+        }
         Command::EmbedStage {
             root,
             stage_name,
@@ -120,6 +223,7 @@ fn run() -> Result<(), String> {
             batch_size,
             shard_rows,
         } => {
+            require_unadmitted_cpu(execution_provider, "embed-stage")?;
             let pipeline = DamusSnapshot::new(root);
             eprintln!("embedding corpus stage {stage_name}");
             let mut encoder = PplxOnnxEncoder::load(PplxOnnxConfig {
@@ -226,6 +330,19 @@ enum Command {
     CanonicalizeCorpus {
         root: PathBuf,
     },
+    AuditTokenLengths {
+        root: PathBuf,
+        artifact_name: String,
+        model_dir: PathBuf,
+        shard_rows: u64,
+    },
+    AuditStageTokenLengths {
+        root: PathBuf,
+        stage_name: String,
+        artifact_name: String,
+        model_dir: PathBuf,
+        shard_rows: u64,
+    },
     EmbedCorpus {
         root: PathBuf,
         model_dir: PathBuf,
@@ -247,6 +364,24 @@ enum Command {
         execution_provider: ExecutionProvider,
         batch_size: usize,
         shard_rows: u64,
+    },
+    BenchmarkStage {
+        root: PathBuf,
+        config_path: PathBuf,
+        model_dir: PathBuf,
+        runtime_library: PathBuf,
+    },
+    PlanAdmission {
+        root: PathBuf,
+        name: String,
+        config_path: PathBuf,
+    },
+    ExecuteAdmission {
+        root: PathBuf,
+        name: String,
+        execution_path: PathBuf,
+        model_dir: PathBuf,
+        runtime_library: PathBuf,
     },
     ExecutePreflight {
         root: PathBuf,
@@ -294,6 +429,38 @@ impl Command {
                 ensure_finished(args)?;
                 Ok(Some(Self::CanonicalizeCorpus { root }))
             }
+            "audit-token-lengths" => {
+                let artifact_name = required_utf8(&mut args, command, "AUDIT_NAME")?;
+                let model_dir = required_path(&mut args, command, "MODEL_DIR")?;
+                let shard_rows = match args.next() {
+                    Some(value) => parse_positive_u64(value, command, "SHARD_ROWS")?,
+                    None => 100_000,
+                };
+                ensure_finished(args)?;
+                Ok(Some(Self::AuditTokenLengths {
+                    root,
+                    artifact_name,
+                    model_dir,
+                    shard_rows,
+                }))
+            }
+            "audit-stage-token-lengths" => {
+                let stage_name = required_utf8(&mut args, command, "STAGE_NAME")?;
+                let artifact_name = required_utf8(&mut args, command, "AUDIT_NAME")?;
+                let model_dir = required_path(&mut args, command, "MODEL_DIR")?;
+                let shard_rows = match args.next() {
+                    Some(value) => parse_positive_u64(value, command, "SHARD_ROWS")?,
+                    None => 100_000,
+                };
+                ensure_finished(args)?;
+                Ok(Some(Self::AuditStageTokenLengths {
+                    root,
+                    stage_name,
+                    artifact_name,
+                    model_dir,
+                    shard_rows,
+                }))
+            }
             "embed-corpus" => {
                 let embedding = required_embedding_args(&mut args, command)?;
                 Ok(Some(Self::EmbedCorpus {
@@ -326,6 +493,42 @@ impl Command {
                     execution_provider: embedding.execution_provider,
                     batch_size: embedding.batch_size,
                     shard_rows: embedding.shard_rows,
+                }))
+            }
+            "benchmark-stage" => {
+                let config_path = required_path(&mut args, command, "CONFIG_JSON")?;
+                let model_dir = required_path(&mut args, command, "MODEL_DIR")?;
+                let runtime_library = required_path(&mut args, command, "ONNX_RUNTIME")?;
+                ensure_finished(args)?;
+                Ok(Some(Self::BenchmarkStage {
+                    root,
+                    config_path,
+                    model_dir,
+                    runtime_library,
+                }))
+            }
+            "plan-admission" => {
+                let name = required_utf8(&mut args, command, "ADMISSION_NAME")?;
+                let config_path = required_path(&mut args, command, "CONFIG_JSON")?;
+                ensure_finished(args)?;
+                Ok(Some(Self::PlanAdmission {
+                    root,
+                    name,
+                    config_path,
+                }))
+            }
+            "execute-admission" => {
+                let name = required_utf8(&mut args, command, "ADMISSION_NAME")?;
+                let execution_path = required_path(&mut args, command, "EXECUTION_JSON")?;
+                let model_dir = required_path(&mut args, command, "MODEL_DIR")?;
+                let runtime_library = required_path(&mut args, command, "ONNX_RUNTIME")?;
+                ensure_finished(args)?;
+                Ok(Some(Self::ExecuteAdmission {
+                    root,
+                    name,
+                    execution_path,
+                    model_dir,
+                    runtime_library,
                 }))
             }
             "execute-preflight" => {
@@ -403,6 +606,26 @@ fn required_execution_provider(
             usage()
         )),
     }
+}
+
+fn require_unadmitted_cpu(
+    execution_provider: ExecutionProvider,
+    command: &str,
+) -> Result<(), String> {
+    if execution_provider == ExecutionProvider::Cuda {
+        Err(format!(
+            "{command} refuses unadmitted CUDA work; use benchmark-stage or execute-admission"
+        ))
+    } else {
+        Ok(())
+    }
+}
+
+fn read_json<T: DeserializeOwned>(path: &std::path::Path) -> Result<T, String> {
+    let file = File::open(path)
+        .map_err(|error| format!("failed to open `{}`: {error}", path.display()))?;
+    serde_json::from_reader(file)
+        .map_err(|error| format!("failed to decode `{}`: {error}", path.display()))
 }
 
 fn required_positive_usize(
@@ -504,5 +727,5 @@ fn print_usage() {
 }
 
 fn usage() -> &'static str {
-    "Usage:\n  oracle-mvp import-source DATA_ROOT\n  oracle-mvp derive-corpus DATA_ROOT\n  oracle-mvp canonicalize-corpus DATA_ROOT\n  oracle-mvp embed-corpus DATA_ROOT MODEL_DIR ONNX_RUNTIME PROVIDER BATCH_SIZE [SHARD_ROWS]\n  oracle-mvp materialize-stage DATA_ROOT STAGE_NAME ROWS\n  oracle-mvp embed-stage DATA_ROOT STAGE_NAME MODEL_DIR ONNX_RUNTIME PROVIDER BATCH_SIZE [SHARD_ROWS]\n  oracle-mvp execute-preflight DATA_ROOT RECORD_NAME STAGE_NAME EXPECTED_ROWS MODEL_DIR ONNX_RUNTIME PROVIDER CANDIDATE_DEPTH TOPIC\n  oracle-mvp build DATA_ROOT"
+    "Usage:\n  oracle-mvp import-source DATA_ROOT\n  oracle-mvp derive-corpus DATA_ROOT\n  oracle-mvp canonicalize-corpus DATA_ROOT\n  oracle-mvp audit-token-lengths DATA_ROOT AUDIT_NAME MODEL_DIR [SHARD_ROWS]\n  oracle-mvp audit-stage-token-lengths DATA_ROOT STAGE_NAME AUDIT_NAME MODEL_DIR [SHARD_ROWS]\n  oracle-mvp embed-corpus DATA_ROOT MODEL_DIR ONNX_RUNTIME PROVIDER BATCH_SIZE [SHARD_ROWS]\n  oracle-mvp materialize-stage DATA_ROOT STAGE_NAME ROWS\n  oracle-mvp embed-stage DATA_ROOT STAGE_NAME MODEL_DIR ONNX_RUNTIME PROVIDER BATCH_SIZE [SHARD_ROWS]\n  oracle-mvp benchmark-stage DATA_ROOT CONFIG_JSON MODEL_DIR ONNX_RUNTIME\n  oracle-mvp plan-admission DATA_ROOT ADMISSION_NAME CONFIG_JSON\n  oracle-mvp execute-admission DATA_ROOT ADMISSION_NAME EXECUTION_JSON MODEL_DIR ONNX_RUNTIME\n  oracle-mvp execute-preflight DATA_ROOT RECORD_NAME STAGE_NAME EXPECTED_ROWS MODEL_DIR ONNX_RUNTIME PROVIDER CANDIDATE_DEPTH TOPIC\n  oracle-mvp build DATA_ROOT"
 }

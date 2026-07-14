@@ -2,12 +2,18 @@
 
 use serde::{Deserialize, Serialize};
 
+use crate::canonical::{CanonicalManifest, verify_canonical_rows};
 use crate::embedding::{EmbeddingEncoder, EmbeddingManifest};
 use crate::event::EventId;
 use crate::retrieval::{ExactRetriever, RetrievalCandidate};
-use crate::snapshot::{DamusSnapshot, Error, Result};
+use crate::snapshot::{
+    CorpusManifest, DamusSnapshot, EligibilityRules, Error, Result, read_manifest, require_file,
+    verify_corpus_manifest,
+};
 
 const RETRIEVER_ALGORITHM_VERSION: &str = "exact-int8-cosine-v1";
+const ALL_CANONICAL_ROWS_SELECTION: &str = "all-stable-canonical-rows-v1";
+const EXACT_SEARCH_IMPLEMENTATION: &str = "rust-scalar-sharded-exact-int8-cosine-v1";
 
 /// Artifact identities required to reproduce one oracle response.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -41,11 +47,44 @@ pub struct OracleCandidate {
     pub cosine_score: f32,
 }
 
+/// Explicit inputs and implementation details required to reproduce one response.
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct OracleProvenance {
+    /// SHA-256 of the compressed source snapshot.
+    pub source_snapshot_sha256: String,
+    /// Name of the selected immutable stage, or `None` for the full canonical reservoir.
+    pub corpus_stage_name: Option<String>,
+    /// Exact number of canonical events searched.
+    pub corpus_stage_event_count: u64,
+    /// Deterministic rule used to select those events.
+    pub corpus_stage_selection_rule: String,
+    /// Exact rules used to decide which source events were eligible.
+    pub eligibility: EligibilityRules,
+    /// Versioned rule applied to raw event content before model inference.
+    pub content_preprocessing_rule: String,
+    /// Maximum model-token count accepted for one content input.
+    pub content_length_limit_tokens: u32,
+    /// Stable upstream embedding-model identifier.
+    pub model_id: String,
+    /// Immutable upstream embedding-model revision.
+    pub model_revision: String,
+    /// Elements searched in each stored embedding.
+    pub embedding_dimensions: u32,
+    /// On-disk vector and norm representation.
+    pub matrix_format: String,
+    /// Requested number of source-specific candidates.
+    pub candidate_depth: u64,
+    /// Versioned exact-scanner implementation used for this response.
+    pub exact_search_implementation: String,
+}
+
 /// Deterministic evidence returned for exactly one text or note query.
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct OracleResponse {
     /// Corpus and retriever identities shared by every candidate.
     pub versions: OracleVersions,
+    /// Explicit reproducibility metadata for this exact query.
+    pub provenance: OracleProvenance,
     /// Candidates in exact source-specific rank order.
     pub candidates: Vec<OracleCandidate>,
 }
@@ -65,6 +104,22 @@ pub struct OfflineOracle<E> {
     retriever: ExactRetriever,
     encoder: E,
     versions: OracleVersions,
+    identity: OracleIdentity,
+}
+
+#[derive(Clone, Debug)]
+struct OracleIdentity {
+    source_snapshot_sha256: String,
+    corpus_stage_name: Option<String>,
+    corpus_stage_event_count: u64,
+    corpus_stage_selection_rule: String,
+    eligibility: EligibilityRules,
+    content_preprocessing_rule: String,
+    content_length_limit_tokens: u32,
+    model_id: String,
+    model_revision: String,
+    embedding_dimensions: u32,
+    matrix_format: String,
 }
 
 impl<E> OfflineOracle<E>
@@ -81,10 +136,12 @@ where
         }
         let versions =
             OracleVersions::from_embedding(retriever.manifest(), retriever.manifest_sha256());
+        let identity = OracleIdentity::from_verified_artifacts(pipeline, retriever.manifest())?;
         Ok(Self {
             retriever,
             encoder,
             versions,
+            identity,
         })
     }
 
@@ -93,7 +150,11 @@ where
         &self.versions
     }
 
-    fn response(&self, candidates: Vec<RetrievalCandidate>) -> Result<OracleResponse> {
+    fn response(
+        &self,
+        candidates: Vec<RetrievalCandidate>,
+        candidate_depth: usize,
+    ) -> Result<OracleResponse> {
         let candidates = candidates
             .into_iter()
             .enumerate()
@@ -112,6 +173,7 @@ where
             .collect::<Result<Vec<_>>>()?;
         Ok(OracleResponse {
             versions: self.versions.clone(),
+            provenance: self.identity.for_depth(candidate_depth)?,
             candidates,
         })
     }
@@ -132,7 +194,10 @@ where
                 vector.len()
             )));
         }
-        self.response(self.retriever.search(&vector, candidate_depth, None)?)
+        self.response(
+            self.retriever.search(&vector, candidate_depth, None)?,
+            candidate_depth,
+        )
     }
 
     fn similar_notes(
@@ -148,8 +213,82 @@ where
         self.response(
             self.retriever
                 .search(&vector, candidate_depth, Some(canonical_id))?,
+            candidate_depth,
         )
     }
+}
+
+impl OracleIdentity {
+    fn from_verified_artifacts(
+        pipeline: &DamusSnapshot,
+        embedding: &EmbeddingManifest,
+    ) -> Result<Self> {
+        let corpus_path = pipeline.layout().corpus_manifest();
+        let canonical_path = pipeline.layout().canonical_manifest();
+        require_file(&corpus_path)?;
+        require_file(&canonical_path)?;
+        let corpus: CorpusManifest = read_manifest(&corpus_path)?;
+        verify_corpus_manifest(&corpus)?;
+        let canonical: CanonicalManifest = read_manifest(&canonical_path)?;
+        verify_canonical_rows(&pipeline.layout().canonical_dir(), &canonical)?;
+        if corpus.source_snapshot_sha256 != canonical.source_snapshot_sha256
+            || corpus.eligibility != canonical.eligibility
+            || corpus.eligible_events != canonical.counts.eligible_events
+            || embedding.source_snapshot_sha256 != corpus.source_snapshot_sha256
+        {
+            return Err(Error::Invariant(
+                "oracle artifacts contain incompatible snapshot or eligibility provenance"
+                    .to_owned(),
+            ));
+        }
+
+        let (corpus_stage_name, corpus_stage_selection_rule) =
+            embedding.corpus_stage.as_ref().map_or_else(
+                || (None, ALL_CANONICAL_ROWS_SELECTION.to_owned()),
+                |stage| (Some(stage.name.clone()), stage.selection_rule.clone()),
+            );
+        Ok(Self {
+            source_snapshot_sha256: embedding.source_snapshot_sha256.clone(),
+            corpus_stage_name,
+            corpus_stage_event_count: embedding.total_rows,
+            corpus_stage_selection_rule,
+            eligibility: corpus.eligibility,
+            content_preprocessing_rule: embedding.encoder.input_rule.clone(),
+            content_length_limit_tokens: embedding.encoder.max_tokens,
+            model_id: embedding.encoder.model_id.clone(),
+            model_revision: embedding.encoder.model_revision.clone(),
+            embedding_dimensions: embedding.encoder.dimensions,
+            matrix_format: embedding.matrix_format.clone(),
+        })
+    }
+
+    fn for_depth(&self, candidate_depth: usize) -> Result<OracleProvenance> {
+        Ok(OracleProvenance {
+            source_snapshot_sha256: self.source_snapshot_sha256.clone(),
+            corpus_stage_name: self.corpus_stage_name.clone(),
+            corpus_stage_event_count: self.corpus_stage_event_count,
+            corpus_stage_selection_rule: self.corpus_stage_selection_rule.clone(),
+            eligibility: self.eligibility.clone(),
+            content_preprocessing_rule: self.content_preprocessing_rule.clone(),
+            content_length_limit_tokens: self.content_length_limit_tokens,
+            model_id: self.model_id.clone(),
+            model_revision: self.model_revision.clone(),
+            embedding_dimensions: self.embedding_dimensions,
+            matrix_format: self.matrix_format.clone(),
+            candidate_depth: u64::try_from(candidate_depth).map_err(|_| {
+                Error::Invariant("candidate depth does not fit reproducibility metadata".to_owned())
+            })?,
+            exact_search_implementation: EXACT_SEARCH_IMPLEMENTATION.to_owned(),
+        })
+    }
+}
+
+pub(crate) fn verified_oracle_provenance(
+    pipeline: &DamusSnapshot,
+    embedding: &EmbeddingManifest,
+    candidate_depth: usize,
+) -> Result<OracleProvenance> {
+    OracleIdentity::from_verified_artifacts(pipeline, embedding)?.for_depth(candidate_depth)
 }
 
 fn require_positive_depth(candidate_depth: usize) -> Result<()> {

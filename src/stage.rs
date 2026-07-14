@@ -10,11 +10,12 @@ use crate::artifact::{
 };
 use crate::canonical::{CanonicalManifest, verify_canonical_rows};
 use crate::snapshot::{
-    DamusSnapshot, Error, Result, create_directory, io_error, read_manifest, require_file,
-    write_manifest,
+    CorpusManifest, DamusSnapshot, EligibilityRules, Error, Result, create_directory, io_error,
+    read_manifest, require_file, verify_corpus_manifest, write_manifest,
 };
 
 const EVENT_ID_BYTES: usize = 32;
+const CORPUS_STAGE_MANIFEST_SCHEMA_VERSION: u32 = 2;
 const SELECTION_RULE: &str = "first-stable-canonical-rows-v1";
 
 /// Requested nested corpus stage.
@@ -35,6 +36,8 @@ pub struct CorpusStageManifest {
     pub name: String,
     /// SHA-256 inherited from source ingestion.
     pub source_snapshot_sha256: String,
+    /// Eligibility contract inherited from corpus derivation.
+    pub eligibility: EligibilityRules,
     /// SHA-256 of the complete backing canonical manifest.
     pub canonical_manifest_sha256: String,
     /// SHA-256 of the complete backing canonical row file.
@@ -92,9 +95,10 @@ impl DamusSnapshot {
         )?;
         let rows = describe_fixed_artifact(&rows_path, "rows.bin", EVENT_ID_BYTES, config.rows)?;
         let manifest = CorpusStageManifest {
-            schema_version: 1,
+            schema_version: CORPUS_STAGE_MANIFEST_SCHEMA_VERSION,
             name: config.name.clone(),
             source_snapshot_sha256: canonical.manifest.source_snapshot_sha256,
+            eligibility: canonical.manifest.eligibility,
             canonical_manifest_sha256: canonical.manifest_sha256,
             canonical_rows_sha256: canonical.rows_sha256,
             selection_rule: SELECTION_RULE.to_owned(),
@@ -115,7 +119,7 @@ impl DamusSnapshot {
         let manifest_path = root.join("manifest.json");
         require_file(&manifest_path)?;
         let manifest: CorpusStageManifest = read_manifest(&manifest_path)?;
-        if manifest.schema_version != 1 {
+        if manifest.schema_version != CORPUS_STAGE_MANIFEST_SCHEMA_VERSION {
             return Err(Error::Invariant(format!(
                 "corpus stage manifest schema {} is not supported",
                 manifest.schema_version
@@ -127,6 +131,7 @@ impl DamusSnapshot {
             )));
         }
         if manifest.source_snapshot_sha256 != canonical.manifest.source_snapshot_sha256
+            || manifest.eligibility != canonical.manifest.eligibility
             || manifest.canonical_manifest_sha256 != canonical.manifest_sha256
             || manifest.canonical_rows_sha256 != canonical.rows_sha256
             || manifest.available_canonical_rows != canonical.manifest.counts.canonical_rows
@@ -160,10 +165,22 @@ impl DamusSnapshot {
     fn verified_canonical_source(&self) -> Result<VerifiedCanonical> {
         let manifest_path = self.layout().canonical_manifest();
         let rows_path = self.layout().canonical_rows();
+        let corpus_manifest_path = self.layout().corpus_manifest();
         require_file(&manifest_path)?;
         require_file(&rows_path)?;
+        require_file(&corpus_manifest_path)?;
+        let corpus: CorpusManifest = read_manifest(&corpus_manifest_path)?;
+        verify_corpus_manifest(&corpus)?;
         let manifest: CanonicalManifest = read_manifest(&manifest_path)?;
         verify_canonical_rows(&self.layout().canonical_dir(), &manifest)?;
+        if manifest.source_snapshot_sha256 != corpus.source_snapshot_sha256
+            || manifest.eligibility != corpus.eligibility
+            || manifest.counts.eligible_events != corpus.eligible_events
+        {
+            return Err(Error::Invariant(
+                "canonical manifest was derived from a different corpus contract".to_owned(),
+            ));
+        }
         let manifest_sha256 = hash_file(&manifest_path)?;
         let rows_sha256 = manifest.rows.sha256.clone();
         Ok(VerifiedCanonical {

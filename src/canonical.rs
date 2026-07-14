@@ -13,13 +13,15 @@ use sha2::{Digest, Sha256};
 
 use crate::artifact::{ArtifactFile, describe_fixed_artifact, verify_fixed_artifact};
 use crate::snapshot::{
-    CorpusManifest, DamusSnapshot, Error, Result, Validation, count_with_db, create_directory,
-    io_error, ndb_error, open_ndb, read_manifest, require_directory, require_file, write_manifest,
+    CorpusManifest, DamusSnapshot, EligibilityRules, Error, Result, Validation, count_with_db,
+    create_directory, io_error, ndb_error, open_ndb, read_manifest, require_directory,
+    require_file, verify_corpus_manifest, write_manifest,
 };
 
 pub(crate) const CONTENT_RULE: &str = "byte-identical-utf8-v1";
 pub(crate) const CANONICAL_EVENT_RULE: &str = "lowest-event-id-v1";
 pub(crate) const ROW_ORDER_RULE: &str = "sha256-domain-separated-event-id-v1";
+const CANONICAL_MANIFEST_SCHEMA_VERSION: u32 = 2;
 const ROW_ORDER_DOMAIN: &[u8] = b"oracle-mvp/canonical-row-order/v1\0";
 const EVENT_ID_BYTES: usize = 32;
 const CONTENT_INDEX_BYTES: usize = EVENT_ID_BYTES * 2;
@@ -50,6 +52,8 @@ pub struct CanonicalManifest {
     pub schema_version: u32,
     /// SHA-256 inherited from the source snapshot import.
     pub source_snapshot_sha256: String,
+    /// Eligibility contract inherited from corpus derivation.
+    pub eligibility: EligibilityRules,
     /// Exact content-equivalence rule.
     pub content_rule: String,
     /// Rule used to select one event from an exact-content group.
@@ -66,7 +70,8 @@ pub struct CanonicalManifest {
 
 /// Verify the canonical rules, count accounting, and complete stable row artifact.
 pub(crate) fn verify_canonical_rows(root: &Path, manifest: &CanonicalManifest) -> Result<()> {
-    if manifest.schema_version != 1
+    if manifest.schema_version != CANONICAL_MANIFEST_SCHEMA_VERSION
+        || manifest.eligibility != EligibilityRules::mvp()
         || manifest.content_rule != CONTENT_RULE
         || manifest.canonical_event_rule != CANONICAL_EVENT_RULE
         || manifest.row_order_rule != ROW_ORDER_RULE
@@ -102,6 +107,7 @@ pub(crate) fn canonicalize_corpus(pipeline: &DamusSnapshot) -> Result<CanonicalM
     require_file(&corpus_manifest_path)?;
     require_directory(&corpus_path)?;
     let corpus_manifest: CorpusManifest = read_manifest(&corpus_manifest_path)?;
+    verify_corpus_manifest(&corpus_manifest)?;
     let corpus_db = open_ndb(&corpus_path, Validation::TrustedSource)?;
     let corpus_total = count_with_db(&corpus_db, &corpus_path, None)?;
     if corpus_total != corpus_manifest.eligible_events {
@@ -197,8 +203,9 @@ pub(crate) fn canonicalize_corpus(pipeline: &DamusSnapshot) -> Result<CanonicalM
     fs::remove_dir_all(&temporary).map_err(|source| io_error("remove", &temporary, source))?;
 
     let manifest = CanonicalManifest {
-        schema_version: 1,
+        schema_version: CANONICAL_MANIFEST_SCHEMA_VERSION,
         source_snapshot_sha256: corpus_manifest.source_snapshot_sha256,
+        eligibility: corpus_manifest.eligibility,
         content_rule: CONTENT_RULE.to_owned(),
         canonical_event_rule: CANONICAL_EVENT_RULE.to_owned(),
         row_order_rule: ROW_ORDER_RULE.to_owned(),

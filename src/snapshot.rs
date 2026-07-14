@@ -16,6 +16,8 @@ pub use crate::canonical::{CanonicalCounts, CanonicalManifest};
 const SOURCE_INGEST_BATCH_EVENTS: usize = 8 * 1_024;
 const SOURCE_INGEST_BATCH_WRITES: usize = 8 * 1_024;
 const SOURCE_INGEST_MAX_WRITES: usize = 24 * 1_024;
+const CORPUS_MANIFEST_SCHEMA_VERSION: u32 = 2;
+const NOSTRDB_REVISION: &str = "aca2f66e3579dee0c9245e4c66100dd12cd940d6";
 
 /// Result type for snapshot pipeline operations.
 pub type Result<T> = std::result::Result<T, Error>;
@@ -133,6 +135,10 @@ pub enum Error {
     /// The end-to-end preflight could not produce or verify its execution record.
     #[error("preflight failed: {0}")]
     Preflight(String),
+
+    /// A rented-compute stage failed deterministic budget admission.
+    #[error("budget admission failed: {0}")]
+    Budget(String),
 }
 
 /// Files and directories owned by one snapshot pipeline run.
@@ -319,6 +325,40 @@ pub struct EligibilityRejections {
     pub quotes: u64,
 }
 
+/// Exact event-eligibility semantics used to derive an MVP corpus.
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct EligibilityRules {
+    /// Only events with this Nostr kind are considered.
+    pub event_kind: u64,
+    /// Immutable NostrDB revision whose NIP-10 classifier is used.
+    pub nostrdb_revision: String,
+    /// Whether events classified as replies are excluded.
+    pub exclude_replies: bool,
+    /// Versioned implementation used to classify replies.
+    pub reply_classification: String,
+    /// Whether events classified as quote notes are excluded.
+    pub exclude_quote_notes: bool,
+    /// Versioned implementation used to classify quote notes.
+    pub quote_classification: String,
+    /// Whether the presence of a URL changes event eligibility.
+    pub urls_affect_eligibility: bool,
+}
+
+impl EligibilityRules {
+    /// Return the exact eligibility contract implemented by this pipeline.
+    pub fn mvp() -> Self {
+        Self {
+            event_kind: 1,
+            nostrdb_revision: NOSTRDB_REVISION.to_owned(),
+            exclude_replies: true,
+            reply_classification: "nostrdb-note-reply-v1".to_owned(),
+            exclude_quote_notes: true,
+            quote_classification: "nip18-q-or-nostrdb-nip10-mention-v1".to_owned(),
+            urls_affect_eligibility: false,
+        }
+    }
+}
+
 /// Durable description of a completed eligible-corpus derivation.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct CorpusManifest {
@@ -326,10 +366,27 @@ pub struct CorpusManifest {
     pub schema_version: u32,
     /// SHA-256 inherited from the source import.
     pub source_snapshot_sha256: String,
+    /// Exact rules used to decide which source events enter the corpus.
+    pub eligibility: EligibilityRules,
     /// Mutually exclusive rejection counts.
     pub rejections: EligibilityRejections,
     /// Root, non-quote kind `1` events retained in the corpus.
     pub eligible_events: u64,
+}
+
+pub(crate) fn verify_corpus_manifest(manifest: &CorpusManifest) -> Result<()> {
+    if manifest.schema_version != CORPUS_MANIFEST_SCHEMA_VERSION {
+        return Err(Error::Invariant(format!(
+            "corpus manifest schema {} is not supported; rebuild the corpus with schema {CORPUS_MANIFEST_SCHEMA_VERSION}",
+            manifest.schema_version
+        )));
+    }
+    if manifest.eligibility != EligibilityRules::mvp() {
+        return Err(Error::Invariant(
+            "corpus manifest has incompatible eligibility rules".to_owned(),
+        ));
+    }
+    Ok(())
 }
 
 /// Builds persistent NostrDB artifacts from the static Damus snapshot.
@@ -479,8 +536,9 @@ impl DamusSnapshot {
         }
 
         let manifest = CorpusManifest {
-            schema_version: 1,
+            schema_version: CORPUS_MANIFEST_SCHEMA_VERSION,
             source_snapshot_sha256: source_manifest.snapshot_sha256,
+            eligibility: EligibilityRules::mvp(),
             rejections: EligibilityRejections {
                 non_kind_1,
                 replies: derived.replies,

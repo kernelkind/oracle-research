@@ -8,9 +8,11 @@ use oracle_mvp::embedding::{
 };
 use oracle_mvp::event::EventId;
 use oracle_mvp::oracle::{OfflineOracle, Oracle};
-use oracle_mvp::preflight::PreflightConfig;
+use oracle_mvp::preflight::{PreflightConfig, PreflightEvidenceArtifact};
 use oracle_mvp::retrieval::ExactRetriever;
-use oracle_mvp::snapshot::{CanonicalManifest, CorpusManifest, DamusSnapshot, SourceManifest};
+use oracle_mvp::snapshot::{
+    CanonicalManifest, CorpusManifest, DamusSnapshot, EligibilityRules, SourceManifest,
+};
 use oracle_mvp::stage::CorpusStageConfig;
 use sha2::{Digest, Sha256};
 
@@ -60,11 +62,30 @@ fn imports_validated_source_and_derives_eligible_corpus() {
     assert_manifest::<SourceManifest>(pipeline.layout().source_manifest(), &source);
 
     let corpus = pipeline.derive_corpus().expect("corpus derivation");
+    let corpus_json = serde_json::to_value(&corpus).expect("corpus manifest JSON");
+    assert_eq!(corpus_json["schema_version"], 2);
+    assert_eq!(corpus_json["eligibility"]["event_kind"], 1);
+    assert_eq!(
+        corpus_json["eligibility"]["nostrdb_revision"],
+        "aca2f66e3579dee0c9245e4c66100dd12cd940d6"
+    );
+    assert_eq!(corpus_json["eligibility"]["exclude_replies"], true);
+    assert_eq!(
+        corpus_json["eligibility"]["reply_classification"],
+        "nostrdb-note-reply-v1"
+    );
+    assert_eq!(corpus_json["eligibility"]["exclude_quote_notes"], true);
+    assert_eq!(
+        corpus_json["eligibility"]["quote_classification"],
+        "nip18-q-or-nostrdb-nip10-mention-v1"
+    );
+    assert_eq!(corpus_json["eligibility"]["urls_affect_eligibility"], false);
     assert_eq!(
         corpus,
         CorpusManifest {
-            schema_version: 1,
+            schema_version: 2,
             source_snapshot_sha256: source.snapshot_sha256,
+            eligibility: EligibilityRules::mvp(),
             rejections: oracle_mvp::snapshot::EligibilityRejections {
                 non_kind_1: 3,
                 replies: 1,
@@ -192,8 +213,9 @@ fn canonicalizes_exact_content_and_orders_rows_independently_of_ingestion_order(
     assert_eq!(
         first.manifest,
         CanonicalManifest {
-            schema_version: 1,
+            schema_version: 2,
             source_snapshot_sha256: first.manifest.source_snapshot_sha256.clone(),
+            eligibility: EligibilityRules::mvp(),
             content_rule: "byte-identical-utf8-v1".to_owned(),
             canonical_event_rule: "lowest-event-id-v1".to_owned(),
             row_order_rule: "sha256-domain-separated-event-id-v1".to_owned(),
@@ -418,7 +440,7 @@ fn text_and_note_queries_return_independent_versioned_evidence() {
         &[&duplicate_a, &duplicate_b, &beta, &diagonal],
     );
     pipeline.import_source().expect("source import");
-    pipeline.derive_corpus().expect("corpus derivation");
+    let corpus = pipeline.derive_corpus().expect("corpus derivation");
     pipeline
         .canonicalize_corpus()
         .expect("corpus canonicalization");
@@ -448,6 +470,35 @@ fn text_and_note_queries_return_independent_versioned_evidence() {
     let text = oracle
         .search_text("query about alpha", 3)
         .expect("text search");
+    let response_json = serde_json::to_value(&text).expect("oracle response JSON");
+    let provenance = &response_json["provenance"];
+    assert_eq!(
+        provenance["source_snapshot_sha256"],
+        corpus.source_snapshot_sha256
+    );
+    assert_eq!(provenance["corpus_stage_event_count"], 3);
+    assert_eq!(
+        provenance["corpus_stage_selection_rule"],
+        "all-stable-canonical-rows-v1"
+    );
+    assert_eq!(provenance["eligibility"], corpus_json_eligibility(&corpus));
+    assert_eq!(
+        provenance["content_preprocessing_rule"],
+        "fixture-raw-text-v1"
+    );
+    assert_eq!(provenance["content_length_limit_tokens"], 32);
+    assert_eq!(provenance["model_id"], "test/lookup");
+    assert_eq!(provenance["model_revision"], "fixture-v1");
+    assert_eq!(provenance["embedding_dimensions"], 2);
+    assert_eq!(
+        provenance["matrix_format"],
+        "sharded-row-major-native-int8-vectors-f32le-norms-32-byte-event-ids-v1"
+    );
+    assert_eq!(provenance["candidate_depth"], 3);
+    assert_eq!(
+        provenance["exact_search_implementation"],
+        "rust-scalar-sharded-exact-int8-cosine-v1"
+    );
     assert_eq!(
         text.candidates
             .iter()
@@ -511,7 +562,7 @@ fn corpus_stage_selects_and_embeds_exactly_the_requested_stable_rows() {
         pipeline.layout().snapshot(),
         &[&alpha, &beta, &gamma, &delta],
     );
-    pipeline.import_source().expect("source import");
+    let source = pipeline.import_source().expect("source import");
     pipeline.derive_corpus().expect("corpus derivation");
     pipeline
         .canonicalize_corpus()
@@ -524,6 +575,8 @@ fn corpus_stage_selects_and_embeds_exactly_the_requested_stable_rows() {
     let stage = pipeline
         .materialize_corpus_stage(&stage_config)
         .expect("materialize corpus stage");
+    assert_eq!(stage.schema_version, 2);
+    assert_eq!(stage.eligibility, EligibilityRules::mvp());
     assert_eq!(stage.available_canonical_rows, 4);
     assert_eq!(stage.selected_rows, 3);
     assert_eq!(stage.rows.records, 3);
@@ -577,14 +630,20 @@ fn corpus_stage_selects_and_embeds_exactly_the_requested_stable_rows() {
         LookupEncoder::new(&vectors),
     )
     .expect("open staged oracle");
+    let staged_response = oracle
+        .search_text("query", 10)
+        .expect("search staged matrix");
+    assert_eq!(staged_response.candidates.len(), 3);
     assert_eq!(
-        oracle
-            .search_text("query", 10)
-            .expect("search staged matrix")
-            .candidates
-            .len(),
-        3
+        staged_response.provenance.corpus_stage_name.as_deref(),
+        Some(stage_config.name.as_str())
     );
+    assert_eq!(staged_response.provenance.corpus_stage_event_count, 3);
+    assert_eq!(
+        staged_response.provenance.corpus_stage_selection_rule,
+        "first-stable-canonical-rows-v1"
+    );
+    assert_eq!(staged_response.provenance.candidate_depth, 10);
     let selected = decode_rows(&stage_rows);
     let outside = decode_rows(&canonical_rows)
         .into_iter()
@@ -602,7 +661,7 @@ fn corpus_stage_selects_and_embeds_exactly_the_requested_stable_rows() {
         embedding_artifact: embedding_config.artifact_name,
         expected_rows: 3,
         topic: "query".to_owned(),
-        candidate_depth: 1,
+        candidate_depth: 2,
     };
     let preflight = pipeline
         .execute_preflight(&preflight_config, LookupEncoder::new(&vectors))
@@ -610,18 +669,88 @@ fn corpus_stage_selects_and_embeds_exactly_the_requested_stable_rows() {
     assert!(preflight.failures.is_empty());
     assert!(preflight.checks.text_query_deterministic);
     assert!(preflight.checks.runner_state_deterministic);
+    assert!(preflight.checks.note_query_deterministic);
     assert!(preflight.checks.local_order_deterministic);
     assert!(preflight.checks.onboarding_filtered);
     assert!(preflight.checks.source_excluded);
     assert_eq!(preflight.selected_rows, 3);
-    assert_eq!(preflight.bootstrap_candidates, 1);
+    assert_eq!(preflight.source_snapshot_sha256, source.snapshot_sha256);
+    assert_eq!(preflight.source_snapshot_records, 4);
+    assert_eq!(preflight.source_stored_events, 4);
+    assert_eq!(preflight.eligible_events, 4);
+    assert_eq!(preflight.available_canonical_rows, 4);
+    assert_eq!(
+        preflight.stage_selection_rule,
+        "first-stable-canonical-rows-v1"
+    );
+    assert_eq!(preflight.bootstrap_candidates, 2);
     assert_eq!(preflight.local_candidates, 1);
+    assert_eq!(preflight.mechanical_source_event_ids.len(), 2);
+    assert_eq!(
+        preflight.preflight_implementation,
+        "durable-replay-evidence-v3"
+    );
+    assert_eq!(preflight.runner_implementation, "experiment-runner-v4");
+    for evidence in [
+        &preflight.bootstrap_responses,
+        &preflight.runner_states,
+        &preflight.similar_notes_responses,
+        &preflight.local_candidate_results,
+    ] {
+        let path = pipeline
+            .layout()
+            .preflight_dir(&preflight_config.name)
+            .join(&evidence.file);
+        assert!(path.is_file());
+        assert_eq!(
+            fs::metadata(&path).expect("evidence metadata").len(),
+            evidence.bytes
+        );
+        assert_eq!(sha256_file(&path), evidence.sha256);
+    }
+    let similar_notes: serde_json::Value = serde_json::from_slice(
+        &fs::read(
+            pipeline
+                .layout()
+                .preflight_dir(&preflight_config.name)
+                .join(&preflight.similar_notes_responses.file),
+        )
+        .expect("similar-notes evidence"),
+    )
+    .expect("similar-notes evidence JSON");
+    for run in similar_notes["runs"].as_array().expect("two evidence runs") {
+        assert_eq!(run.as_array().expect("source responses").len(), 2);
+        for source_response in run.as_array().expect("source responses") {
+            let source = &source_response["source_event_id"];
+            assert!(
+                source_response["response"]["candidates"]
+                    .as_array()
+                    .expect("direct candidates")
+                    .iter()
+                    .all(|candidate| &candidate["event_id"] != source)
+            );
+        }
+    }
     assert_eq!(
         pipeline
             .execute_preflight(&preflight_config, LookupEncoder::new(&vectors))
-            .expect("reopen preflight record"),
+            .expect("re-execute and verify preflight record"),
         preflight
     );
+    let changed_query_vectors = [
+        ("alpha", [4_i8, 0_i8]),
+        ("beta", [3, 1]),
+        ("gamma", [2, 2]),
+        ("delta", [1, 3]),
+        ("query", [0, 1]),
+    ];
+    let error = pipeline
+        .execute_preflight(
+            &preflight_config,
+            LookupEncoder::new(&changed_query_vectors),
+        )
+        .expect_err("existing evidence is compared with a real current execution");
+    assert!(error.to_string().contains("re-execution"));
 
     for unsafe_name in [".", ".."] {
         let error = pipeline
@@ -660,6 +789,199 @@ fn corpus_stage_selects_and_embeds_exactly_the_requested_stable_rows() {
         .expect("materialize alternate stage identity");
     let preflight_path = pipeline.layout().preflight_manifest(&preflight_config.name);
     let original_preflight = fs::read(&preflight_path).expect("original preflight record");
+    let bootstrap_path = pipeline
+        .layout()
+        .preflight_dir(&preflight_config.name)
+        .join(&preflight.bootstrap_responses.file);
+    let original_bootstrap = fs::read(&bootstrap_path).expect("original bootstrap evidence");
+    let mut tampered_bootstrap = original_bootstrap.clone();
+    tampered_bootstrap[0] ^= 1;
+    fs::write(&bootstrap_path, &tampered_bootstrap).expect("tamper bootstrap evidence");
+    let error = pipeline
+        .open_preflight(&preflight_config.name)
+        .expect_err("tampered evidence bytes are rejected");
+    assert!(error.to_string().contains("evidence"));
+    fs::write(&bootstrap_path, &original_bootstrap).expect("restore bootstrap evidence");
+
+    let runner_states_path = pipeline
+        .layout()
+        .preflight_dir(&preflight_config.name)
+        .join(&preflight.runner_states.file);
+    let original_runner_states = fs::read(&runner_states_path).expect("original runner states");
+    let mut forged_runner_states: serde_json::Value =
+        serde_json::from_slice(&original_runner_states).expect("runner-state evidence JSON");
+    for run in forged_runner_states["runs"]
+        .as_array_mut()
+        .expect("two runner-state runs")
+    {
+        let interest = run["interests"]
+            .as_object_mut()
+            .expect("runner interests")
+            .values_mut()
+            .next()
+            .expect("bootstrap interest");
+        interest["text"] = serde_json::json!("a topic that was never queried");
+    }
+    let mut forged_runner_state_bytes =
+        serde_json::to_vec_pretty(&forged_runner_states).expect("serialize forged runner states");
+    forged_runner_state_bytes.push(b'\n');
+    fs::write(&runner_states_path, &forged_runner_state_bytes)
+        .expect("write forged runner-state evidence");
+    let mut forged_runner_state_manifest = preflight.clone();
+    forged_runner_state_manifest.runner_states.bytes =
+        u64::try_from(forged_runner_state_bytes.len()).expect("runner-state evidence length");
+    forged_runner_state_manifest.runner_states.sha256 = sha256_bytes(&forged_runner_state_bytes);
+    fs::write(
+        &preflight_path,
+        serde_json::to_vec_pretty(&forged_runner_state_manifest)
+            .expect("serialize forged runner-state manifest"),
+    )
+    .expect("write forged runner-state manifest");
+    let error = pipeline
+        .open_preflight(&preflight_config.name)
+        .expect_err("persisted runner state must be the exact bootstrap transition result");
+    assert!(error.to_string().contains("runner-state evidence"));
+    fs::write(&runner_states_path, &original_runner_states).expect("restore runner states");
+    fs::write(&preflight_path, &original_preflight).expect("restore preflight record");
+
+    let local_candidates_path = pipeline
+        .layout()
+        .preflight_dir(&preflight_config.name)
+        .join(&preflight.local_candidate_results.file);
+    let original_local_candidates =
+        fs::read(&local_candidates_path).expect("original local-candidate evidence");
+    let mut incomplete_local_candidates: serde_json::Value =
+        serde_json::from_slice(&original_local_candidates).expect("local-candidate evidence JSON");
+    for run in incomplete_local_candidates["runs"]
+        .as_array_mut()
+        .expect("two local-candidate runs")
+    {
+        let candidate = run
+            .as_array_mut()
+            .expect("local candidates")
+            .first_mut()
+            .expect("one unseen local candidate");
+        let removed = candidate["evidence"]
+            .as_array_mut()
+            .expect("source evidence")
+            .pop();
+        assert!(removed.is_some(), "fixture candidate has multiple sources");
+        assert!(
+            !candidate["evidence"]
+                .as_array()
+                .expect("remaining source evidence")
+                .is_empty()
+        );
+    }
+    let mut incomplete_local_candidates_bytes =
+        serde_json::to_vec_pretty(&incomplete_local_candidates)
+            .expect("serialize incomplete local-candidate evidence");
+    incomplete_local_candidates_bytes.push(b'\n');
+    fs::write(&local_candidates_path, &incomplete_local_candidates_bytes)
+        .expect("write incomplete local-candidate evidence");
+    let mut incomplete_evidence_manifest = preflight.clone();
+    incomplete_evidence_manifest.local_candidate_results.bytes =
+        u64::try_from(incomplete_local_candidates_bytes.len()).expect("evidence byte length");
+    incomplete_evidence_manifest.local_candidate_results.sha256 =
+        sha256_bytes(&incomplete_local_candidates_bytes);
+    let mut incomplete_evidence_manifest_bytes =
+        serde_json::to_vec_pretty(&incomplete_evidence_manifest)
+            .expect("serialize incomplete-evidence preflight");
+    incomplete_evidence_manifest_bytes.push(b'\n');
+    fs::write(&preflight_path, incomplete_evidence_manifest_bytes)
+        .expect("write incomplete-evidence preflight");
+    let error = pipeline
+        .open_preflight(&preflight_config.name)
+        .expect_err("persisted candidates must contain every source's exact evidence");
+    assert!(error.to_string().contains("runner output"));
+    fs::write(&local_candidates_path, &original_local_candidates)
+        .expect("restore local-candidate evidence");
+    fs::write(&preflight_path, &original_preflight).expect("restore preflight record");
+
+    let similar_notes_path = pipeline
+        .layout()
+        .preflight_dir(&preflight_config.name)
+        .join(&preflight.similar_notes_responses.file);
+    let original_similar_notes =
+        fs::read(&similar_notes_path).expect("original similar-notes evidence");
+    let mut nondeterministic_similar_notes: serde_json::Value =
+        serde_json::from_slice(&original_similar_notes).expect("similar-notes evidence JSON");
+    let onboarding_ids = preflight
+        .mechanical_source_event_ids
+        .iter()
+        .map(|event_id| serde_json::to_value(event_id).expect("event ID JSON"))
+        .collect::<Vec<_>>();
+    let repeated_run = nondeterministic_similar_notes["runs"]
+        .as_array_mut()
+        .expect("two source-response runs")
+        .get_mut(1)
+        .expect("repeated source-response run")
+        .as_array_mut()
+        .expect("source responses");
+    let filtered_candidate = repeated_run
+        .iter_mut()
+        .flat_map(|source| {
+            source["response"]["candidates"]
+                .as_array_mut()
+                .expect("direct candidates")
+        })
+        .find(|candidate| onboarding_ids.contains(&candidate["event_id"]))
+        .expect("direct response contains a filtered onboarding candidate");
+    let score = filtered_candidate["cosine_score"]
+        .as_f64()
+        .expect("cosine score");
+    filtered_candidate["cosine_score"] = serde_json::json!(score - 0.01);
+    let mut nondeterministic_similar_notes_bytes =
+        serde_json::to_vec_pretty(&nondeterministic_similar_notes)
+            .expect("serialize nondeterministic source responses");
+    nondeterministic_similar_notes_bytes.push(b'\n');
+    fs::write(&similar_notes_path, &nondeterministic_similar_notes_bytes)
+        .expect("write nondeterministic source responses");
+    let mut nondeterministic_manifest = preflight.clone();
+    nondeterministic_manifest.similar_notes_responses.bytes =
+        u64::try_from(nondeterministic_similar_notes_bytes.len()).expect("evidence byte length");
+    nondeterministic_manifest.similar_notes_responses.sha256 =
+        sha256_bytes(&nondeterministic_similar_notes_bytes);
+    let mut nondeterministic_manifest_bytes = serde_json::to_vec_pretty(&nondeterministic_manifest)
+        .expect("serialize nondeterministic preflight");
+    nondeterministic_manifest_bytes.push(b'\n');
+    fs::write(&preflight_path, nondeterministic_manifest_bytes)
+        .expect("write nondeterministic preflight");
+    let error = pipeline
+        .open_preflight(&preflight_config.name)
+        .expect_err("repeated note responses must be proven deterministic");
+    assert!(error.to_string().contains("checks"));
+    fs::write(&similar_notes_path, &original_similar_notes)
+        .expect("restore similar-notes evidence");
+    fs::write(&preflight_path, &original_preflight).expect("restore preflight record");
+
+    let mut forged_checks = preflight.clone();
+    forged_checks.checks.source_excluded = false;
+    forged_checks.failures = vec!["source event survived direct oracle exclusion".to_owned()];
+    fs::write(
+        &preflight_path,
+        serde_json::to_vec_pretty(&forged_checks).expect("serialize forged checks"),
+    )
+    .expect("write forged checks");
+    let error = pipeline
+        .open_preflight(&preflight_config.name)
+        .expect_err("checks are derived from evidence instead of trusted");
+    assert!(error.to_string().contains("checks"));
+    fs::write(&preflight_path, &original_preflight).expect("restore preflight record");
+
+    let mut forged_counts = preflight.clone();
+    forged_counts.bootstrap_candidates += 1;
+    fs::write(
+        &preflight_path,
+        serde_json::to_vec_pretty(&forged_counts).expect("serialize forged counts"),
+    )
+    .expect("write forged counts");
+    let error = pipeline
+        .open_preflight(&preflight_config.name)
+        .expect_err("counts are derived from evidence instead of trusted");
+    assert!(error.to_string().contains("counts"));
+    fs::write(&preflight_path, &original_preflight).expect("restore preflight record");
+
     let mut mismatched_stage = preflight.clone();
     mismatched_stage.stage_name = alternate_stage.name.clone();
     mismatched_stage.stage_manifest_sha256 = sha256_file(
@@ -692,6 +1014,64 @@ fn corpus_stage_selects_and_embeds_exactly_the_requested_stable_rows() {
     assert!(error.to_string().contains("oracle versions"));
 
     fs::write(&preflight_path, &original_preflight).expect("restore preflight record");
+    let preflight_root = pipeline.layout().preflight_dir(&preflight_config.name);
+    let mut forged_provenance = preflight.clone();
+    let original_bootstrap_provenance = forge_json_string_field(
+        &preflight_root.join(&forged_provenance.bootstrap_responses.file),
+        &mut forged_provenance.bootstrap_responses,
+        "model_revision",
+        "forged-model-revision",
+    );
+    let original_runner_provenance = forge_json_string_field(
+        &preflight_root.join(&forged_provenance.runner_states.file),
+        &mut forged_provenance.runner_states,
+        "model_revision",
+        "forged-model-revision",
+    );
+    let original_similar_provenance = forge_json_string_field(
+        &preflight_root.join(&forged_provenance.similar_notes_responses.file),
+        &mut forged_provenance.similar_notes_responses,
+        "model_revision",
+        "forged-model-revision",
+    );
+    let original_local_provenance = forge_json_string_field(
+        &preflight_root.join(&forged_provenance.local_candidate_results.file),
+        &mut forged_provenance.local_candidate_results,
+        "model_revision",
+        "forged-model-revision",
+    );
+    fs::write(
+        &preflight_path,
+        serde_json::to_vec_pretty(&forged_provenance)
+            .expect("serialize consistently forged provenance"),
+    )
+    .expect("write consistently forged provenance manifest");
+    let error = pipeline
+        .open_preflight(&preflight_config.name)
+        .expect_err("evidence provenance must match the verified embedding artifacts");
+    assert!(error.to_string().contains("bootstrap evidence"));
+    fs::write(
+        preflight_root.join(&preflight.bootstrap_responses.file),
+        original_bootstrap_provenance,
+    )
+    .expect("restore bootstrap provenance");
+    fs::write(
+        preflight_root.join(&preflight.runner_states.file),
+        original_runner_provenance,
+    )
+    .expect("restore runner provenance");
+    fs::write(
+        preflight_root.join(&preflight.similar_notes_responses.file),
+        original_similar_provenance,
+    )
+    .expect("restore similar-notes provenance");
+    fs::write(
+        preflight_root.join(&preflight.local_candidate_results.file),
+        original_local_provenance,
+    )
+    .expect("restore local-candidate provenance");
+    fs::write(&preflight_path, &original_preflight).expect("restore preflight record");
+
     let mut inconsistent_failures = preflight.clone();
     inconsistent_failures.checks.unseen_neighbor_returned = false;
     fs::write(
@@ -756,6 +1136,88 @@ fn corpus_stage_selects_and_embeds_exactly_the_requested_stable_rows() {
     assert!(error.to_string().contains("canonical prefix"));
 }
 
+#[test]
+fn legacy_manifests_without_explicit_eligibility_are_rejected() {
+    let temp = tempfile::tempdir().expect("temporary directory");
+    let root = temp.path().join("damus_snapshot");
+    let pipeline = DamusSnapshot::new(&root);
+    fs::create_dir_all(pipeline.layout().snapshot().parent().expect("input parent"))
+        .expect("create input directory");
+    let note = signed_note(1, "eligible root", &[]);
+    write_snapshot(pipeline.layout().snapshot(), &[&note]);
+    pipeline.import_source().expect("source import");
+    pipeline.derive_corpus().expect("corpus derivation");
+
+    let corpus_path = pipeline.layout().corpus_manifest();
+    let current_corpus = fs::read(&corpus_path).expect("current corpus manifest");
+    let mut legacy_corpus: serde_json::Value =
+        serde_json::from_slice(&current_corpus).expect("corpus manifest JSON");
+    legacy_corpus["schema_version"] = 1.into();
+    legacy_corpus
+        .as_object_mut()
+        .expect("corpus manifest object")
+        .remove("eligibility");
+    fs::write(
+        &corpus_path,
+        serde_json::to_vec_pretty(&legacy_corpus).expect("legacy corpus JSON"),
+    )
+    .expect("write legacy corpus manifest");
+    let error = pipeline
+        .canonicalize_corpus()
+        .expect_err("legacy corpus provenance must be rejected");
+    assert!(error.to_string().contains("eligibility"));
+    fs::write(&corpus_path, current_corpus).expect("restore corpus manifest");
+
+    pipeline
+        .canonicalize_corpus()
+        .expect("corpus canonicalization");
+    let canonical_path = pipeline.layout().canonical_manifest();
+    let current_canonical = fs::read(&canonical_path).expect("current canonical manifest");
+    let mut legacy_canonical: serde_json::Value =
+        serde_json::from_slice(&current_canonical).expect("canonical manifest JSON");
+    legacy_canonical["schema_version"] = 1.into();
+    legacy_canonical
+        .as_object_mut()
+        .expect("canonical manifest object")
+        .remove("eligibility");
+    fs::write(
+        &canonical_path,
+        serde_json::to_vec_pretty(&legacy_canonical).expect("legacy canonical JSON"),
+    )
+    .expect("write legacy canonical manifest");
+    let config = CorpusStageConfig {
+        name: "eligibility-chain".to_owned(),
+        rows: 1,
+    };
+    let error = pipeline
+        .materialize_corpus_stage(&config)
+        .expect_err("legacy canonical provenance must be rejected");
+    assert!(error.to_string().contains("eligibility"));
+    fs::write(&canonical_path, current_canonical).expect("restore canonical manifest");
+
+    pipeline
+        .materialize_corpus_stage(&config)
+        .expect("materialize corpus stage");
+    let stage_path = pipeline.layout().corpus_stage_manifest(&config.name);
+    let mut legacy_stage: serde_json::Value =
+        serde_json::from_slice(&fs::read(&stage_path).expect("current stage manifest"))
+            .expect("stage manifest JSON");
+    legacy_stage["schema_version"] = 1.into();
+    legacy_stage
+        .as_object_mut()
+        .expect("stage manifest object")
+        .remove("eligibility");
+    fs::write(
+        &stage_path,
+        serde_json::to_vec_pretty(&legacy_stage).expect("legacy stage JSON"),
+    )
+    .expect("write legacy stage manifest");
+    let error = pipeline
+        .open_corpus_stage(&config.name)
+        .expect_err("legacy stage provenance must be rejected");
+    assert!(error.to_string().contains("eligibility"));
+}
+
 fn cosine(left: &[i8], right: &[i8]) -> f32 {
     let dot = left
         .iter()
@@ -812,6 +1274,16 @@ impl EmbeddingEncoder for LookupEncoder {
         &self.descriptor
     }
 
+    fn effective_token_lengths(
+        &mut self,
+        texts: &[&str],
+    ) -> oracle_mvp::snapshot::Result<Vec<u32>> {
+        Ok(texts
+            .iter()
+            .map(|text| u32::try_from(text.len().max(1)).expect("fixture length fits u32"))
+            .collect())
+    }
+
     fn encode(&mut self, texts: &[&str]) -> oracle_mvp::snapshot::Result<Vec<i8>> {
         let mut encoded = Vec::with_capacity(texts.len() * 2);
         for text in texts {
@@ -862,6 +1334,16 @@ impl DeterministicEncoder {
 impl EmbeddingEncoder for DeterministicEncoder {
     fn descriptor(&self) -> &EncoderDescriptor {
         &self.descriptor
+    }
+
+    fn effective_token_lengths(
+        &mut self,
+        texts: &[&str],
+    ) -> oracle_mvp::snapshot::Result<Vec<u32>> {
+        Ok(texts
+            .iter()
+            .map(|text| u32::try_from(text.len().max(1)).expect("fixture length fits u32"))
+            .collect())
     }
 
     fn encode(&mut self, texts: &[&str]) -> oracle_mvp::snapshot::Result<Vec<i8>> {
@@ -970,6 +1452,43 @@ fn sha256_bytes(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
 }
 
+fn forge_json_string_field(
+    path: &std::path::Path,
+    artifact: &mut PreflightEvidenceArtifact,
+    field: &str,
+    replacement: &str,
+) -> Vec<u8> {
+    let original = fs::read(path).expect("original evidence bytes");
+    let mut value: serde_json::Value = serde_json::from_slice(&original).expect("evidence JSON");
+    replace_json_string_field(&mut value, field, replacement);
+    let mut forged = serde_json::to_vec_pretty(&value).expect("serialize forged evidence");
+    forged.push(b'\n');
+    fs::write(path, &forged).expect("write forged evidence");
+    artifact.bytes = u64::try_from(forged.len()).expect("evidence byte length");
+    artifact.sha256 = sha256_bytes(&forged);
+    original
+}
+
+fn replace_json_string_field(value: &mut serde_json::Value, field: &str, replacement: &str) {
+    match value {
+        serde_json::Value::Array(values) => {
+            for value in values {
+                replace_json_string_field(value, field, replacement);
+            }
+        }
+        serde_json::Value::Object(values) => {
+            for (key, value) in values {
+                if key == field {
+                    *value = serde_json::Value::String(replacement.to_owned());
+                } else {
+                    replace_json_string_field(value, field, replacement);
+                }
+            }
+        }
+        _ => {}
+    }
+}
+
 fn decode_rows(bytes: &[u8]) -> Vec<[u8; 32]> {
     bytes
         .chunks_exact(32)
@@ -1007,6 +1526,10 @@ where
     let manifest = fs::read(path).expect("manifest file");
     let actual = serde_json::from_slice::<T>(&manifest).expect("manifest JSON");
     assert_eq!(&actual, expected);
+}
+
+fn corpus_json_eligibility(corpus: &CorpusManifest) -> serde_json::Value {
+    serde_json::to_value(corpus).expect("corpus manifest JSON")["eligibility"].clone()
 }
 
 fn open_ndb(path: impl AsRef<std::path::Path>) -> Ndb {

@@ -14,6 +14,7 @@ use tokenizers::{
 use crate::artifact::{hash_bytes, hash_file};
 use crate::embedding::{EmbeddingEncoder, EncoderDescriptor};
 use crate::snapshot::{Error, Result, io_error, require_file};
+use crate::token_audit::{TokenLengthCounter, TokenizerDescriptor};
 
 const MODEL_ID: &str = "perplexity-ai/pplx-embed-v1-0.6b";
 const MODEL_REVISION: &str = "2c4d510dd4a732063c31a0f70193e35067b51fd8";
@@ -24,9 +25,12 @@ const OUTPUT_NAME: &str = "pooler_output_int8";
 const END_OF_TEXT: &str = "<|endoftext|>";
 const END_OF_TEXT_ID: u32 = 151_643;
 const INPUT_RULE: &str = "raw-utf8-url-text-empty-as-eot-add-special-tokens-right-truncate-512-v1";
+const RAW_TOKEN_INPUT_RULE: &str =
+    "raw-utf8-url-text-empty-as-eot-add-special-tokens-no-truncation-no-padding-v1";
+const RAW_TOKEN_LENGTH_RULE: &str = "tokenizer-output-ids-before-model-truncation-v1";
 
 /// Stable directory name for the CREC-4 preflight artifact.
-pub const PREFLIGHT_ARTIFACT_NAME: &str = "pplx-embed-v1-0.6b-int8-1024d-preflight-v1";
+pub const PREFLIGHT_ARTIFACT_NAME: &str = "pplx-embed-v1-0.6b-int8-1024d-preflight-v2";
 
 /// ONNX Runtime execution provider selected for one artifact build.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -63,6 +67,12 @@ pub struct PplxOnnxEncoder {
     config: PplxOnnxConfig,
     backend: Option<PplxOnnxBackend>,
     descriptor: EncoderDescriptor,
+}
+
+/// Frozen tokenizer-only counter for complete pre-truncation length audits.
+pub struct PplxTokenLengthCounter {
+    tokenizer: Tokenizer,
+    descriptor: TokenizerDescriptor,
 }
 
 struct PplxOnnxBackend {
@@ -111,6 +121,65 @@ impl PplxOnnxEncoder {
         self.backend
             .as_mut()
             .ok_or_else(|| Error::Invariant("ONNX backend did not initialize".to_owned()))
+    }
+}
+
+impl PplxTokenLengthCounter {
+    /// Load and verify only the locked tokenizer; no ONNX runtime or model weights are opened.
+    pub fn load(model_dir: impl AsRef<Path>) -> Result<Self> {
+        let model_dir = fs::canonicalize(model_dir.as_ref())
+            .map_err(|source| io_error("resolve", model_dir.as_ref(), source))?;
+        let (lock, tokenizer_sha256) = verify_tokenizer_file(&model_dir)?;
+        let tokenizer_path = model_dir.join("tokenizer.json");
+        let mut tokenizer = Tokenizer::from_file(&tokenizer_path)
+            .map_err(|source| encoder_error("loading tokenizer", source))?;
+        if tokenizer.token_to_id(END_OF_TEXT) != Some(END_OF_TEXT_ID) {
+            return Err(Error::Invariant(format!(
+                "tokenizer does not map `{END_OF_TEXT}` to {END_OF_TEXT_ID}"
+            )));
+        }
+        tokenizer
+            .with_truncation(None)
+            .map_err(|source| encoder_error("disabling tokenizer truncation", source))?;
+        tokenizer.with_padding(None);
+        Ok(Self {
+            tokenizer,
+            descriptor: TokenizerDescriptor {
+                model_id: lock.model_id,
+                model_revision: lock.revision,
+                model_lock_sha256: hash_bytes(MODEL_LOCK_JSON.as_bytes()),
+                tokenizer_file_sha256: tokenizer_sha256,
+                tokenizer_runtime: "tokenizers-0.23.1".to_owned(),
+                model_token_ceiling: u32::try_from(MAX_TOKENS).expect("token ceiling fits u32"),
+                input_rule: RAW_TOKEN_INPUT_RULE.to_owned(),
+                token_length_rule: RAW_TOKEN_LENGTH_RULE.to_owned(),
+            },
+        })
+    }
+}
+
+impl TokenLengthCounter for PplxTokenLengthCounter {
+    fn descriptor(&self) -> &TokenizerDescriptor {
+        &self.descriptor
+    }
+
+    fn raw_token_lengths(&mut self, texts: &[&str]) -> Result<Vec<u32>> {
+        if texts.is_empty() {
+            return Ok(Vec::new());
+        }
+        let inputs = texts
+            .iter()
+            .map(|text| if text.is_empty() { END_OF_TEXT } else { *text })
+            .collect::<Vec<_>>();
+        self.tokenizer
+            .encode_batch(inputs, true)
+            .map_err(|source| encoder_error("measuring raw token lengths", source))?
+            .iter()
+            .map(|encoding| {
+                u32::try_from(encoding.get_ids().len())
+                    .map_err(|_| Error::Invariant("raw token length does not fit u32".to_owned()))
+            })
+            .collect()
     }
 }
 
@@ -186,6 +255,32 @@ impl PplxOnnxBackend {
 impl EmbeddingEncoder for PplxOnnxEncoder {
     fn descriptor(&self) -> &EncoderDescriptor {
         &self.descriptor
+    }
+
+    fn effective_token_lengths(&mut self, texts: &[&str]) -> Result<Vec<u32>> {
+        if texts.is_empty() {
+            return Ok(Vec::new());
+        }
+        let inputs = texts
+            .iter()
+            .map(|text| if text.is_empty() { END_OF_TEXT } else { *text })
+            .collect::<Vec<_>>();
+        self.backend()?
+            .tokenizer
+            .encode_batch(inputs, true)
+            .map_err(|source| encoder_error("measuring effective token lengths", source))?
+            .iter()
+            .map(|encoding| {
+                let length = encoding
+                    .get_attention_mask()
+                    .iter()
+                    .map(|value| u64::from(*value))
+                    .sum::<u64>();
+                u32::try_from(length).map_err(|_| {
+                    Error::Invariant("effective token length does not fit u32".to_owned())
+                })
+            })
+            .collect()
     }
 
     fn encode(&mut self, texts: &[&str]) -> Result<Vec<i8>> {
@@ -283,6 +378,26 @@ struct ModelFile {
 }
 
 fn verify_model_files(model_dir: &Path) -> Result<ModelLock> {
+    let lock = parse_model_lock()?;
+    for file in &lock.files {
+        verify_locked_file(model_dir, file)?;
+    }
+    Ok(lock)
+}
+
+fn verify_tokenizer_file(model_dir: &Path) -> Result<(ModelLock, String)> {
+    let lock = parse_model_lock()?;
+    let tokenizer = lock
+        .files
+        .iter()
+        .find(|file| file.path == "tokenizer.json")
+        .ok_or_else(|| Error::Invariant("model lock does not contain tokenizer.json".to_owned()))?;
+    verify_locked_file(model_dir, tokenizer)?;
+    let sha256 = tokenizer.sha256.clone();
+    Ok((lock, sha256))
+}
+
+fn parse_model_lock() -> Result<ModelLock> {
     let lock: ModelLock =
         serde_json::from_str(MODEL_LOCK_JSON).map_err(|source| Error::Manifest {
             operation: "decode embedded model lock",
@@ -294,28 +409,30 @@ fn verify_model_files(model_dir: &Path) -> Result<ModelLock> {
             "embedded pplx model lock has an unsupported identity".to_owned(),
         ));
     }
-    for file in &lock.files {
-        let path = model_dir.join(&file.path);
-        require_file(&path)?;
-        let bytes = fs::metadata(&path)
-            .map_err(|source| io_error("read metadata for", &path, source))?
-            .len();
-        if bytes != file.bytes {
-            return Err(Error::Invariant(format!(
-                "model file `{}` has {bytes} bytes but lock records {}",
-                path.display(),
-                file.bytes
-            )));
-        }
-        let sha256 = hash_file(&path)?;
-        if sha256 != file.sha256 {
-            return Err(Error::Invariant(format!(
-                "model file `{}` checksum does not match the lock",
-                path.display()
-            )));
-        }
-    }
     Ok(lock)
+}
+
+fn verify_locked_file(model_dir: &Path, file: &ModelFile) -> Result<()> {
+    let path = model_dir.join(&file.path);
+    require_file(&path)?;
+    let bytes = fs::metadata(&path)
+        .map_err(|source| io_error("read metadata for", &path, source))?
+        .len();
+    if bytes != file.bytes {
+        return Err(Error::Invariant(format!(
+            "model file `{}` has {bytes} bytes but lock records {}",
+            path.display(),
+            file.bytes
+        )));
+    }
+    let sha256 = hash_file(&path)?;
+    if sha256 != file.sha256 {
+        return Err(Error::Invariant(format!(
+            "model file `{}` checksum does not match the lock",
+            path.display()
+        )));
+    }
+    Ok(())
 }
 
 fn encoder_error(operation: &'static str, source: impl std::fmt::Display) -> Error {
