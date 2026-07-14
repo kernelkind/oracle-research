@@ -5,7 +5,8 @@ use serde::{Deserialize, Serialize};
 use crate::canonical::{CanonicalManifest, verify_canonical_rows};
 use crate::embedding::{EmbeddingEncoder, EmbeddingManifest};
 use crate::event::EventId;
-use crate::retrieval::{ExactRetriever, RetrievalCandidate};
+use crate::ordered_embedding::OrderedEmbeddingManifest;
+use crate::retrieval::{ExactRetriever, OrderedExactRetriever, RetrievalCandidate};
 use crate::snapshot::{
     CorpusManifest, DamusSnapshot, EligibilityRules, Error, Result, read_manifest, require_file,
     verify_corpus_manifest,
@@ -30,6 +31,16 @@ impl OracleVersions {
             corpus: manifest.corpus_stage.as_ref().map_or_else(
                 || manifest.canonical_manifest_sha256.clone(),
                 |stage| stage.manifest_sha256.clone(),
+            ),
+            retriever: format!("{RETRIEVER_ALGORITHM_VERSION}:{manifest_sha256}"),
+        }
+    }
+
+    fn from_ordered(manifest: &OrderedEmbeddingManifest, manifest_sha256: &str) -> Self {
+        Self {
+            corpus: format!(
+                "{}:{}:{}",
+                manifest.ordered_event_ids_sha256, manifest.selection_rule, manifest.total_rows
             ),
             retriever: format!("{RETRIEVER_ALGORITHM_VERSION}:{manifest_sha256}"),
         }
@@ -107,6 +118,14 @@ pub struct OfflineOracle<E> {
     identity: OracleIdentity,
 }
 
+/// Offline oracle over a deterministic prefix of the final deduplicated corpus.
+pub struct OrderedOfflineOracle<E> {
+    retriever: OrderedExactRetriever,
+    encoder: E,
+    versions: OracleVersions,
+    identity: OracleIdentity,
+}
+
 #[derive(Clone, Debug)]
 struct OracleIdentity {
     source_snapshot_sha256: String,
@@ -155,27 +174,50 @@ where
         candidates: Vec<RetrievalCandidate>,
         candidate_depth: usize,
     ) -> Result<OracleResponse> {
-        let candidates = candidates
-            .into_iter()
-            .enumerate()
-            .map(|(index, candidate)| {
-                Ok(OracleCandidate {
-                    event_id: EventId::from(candidate.event_id),
-                    rank: u64::try_from(index)
-                        .ok()
-                        .and_then(|rank| rank.checked_add(1))
-                        .ok_or_else(|| {
-                            Error::Invariant("oracle candidate rank overflowed u64".to_owned())
-                        })?,
-                    cosine_score: candidate.cosine_score,
-                })
-            })
-            .collect::<Result<Vec<_>>>()?;
-        Ok(OracleResponse {
-            versions: self.versions.clone(),
-            provenance: self.identity.for_depth(candidate_depth)?,
-            candidates,
+        response(&self.versions, &self.identity, candidates, candidate_depth)
+    }
+}
+
+impl<E> OrderedOfflineOracle<E>
+where
+    E: EmbeddingEncoder,
+{
+    /// Open the verified final corpus and require the matching query encoder.
+    pub fn open(
+        corpus_path: impl AsRef<std::path::Path>,
+        ordered_event_ids_path: impl AsRef<std::path::Path>,
+        artifact_path: impl AsRef<std::path::Path>,
+        encoder: E,
+    ) -> Result<Self> {
+        let retriever =
+            OrderedExactRetriever::open(corpus_path, ordered_event_ids_path, artifact_path)?;
+        if retriever.manifest().encoder != *encoder.descriptor() {
+            return Err(Error::Invariant(
+                "query encoder identity differs from the ordered embedding artifact".to_owned(),
+            ));
+        }
+        let versions =
+            OracleVersions::from_ordered(retriever.manifest(), retriever.manifest_sha256());
+        let identity = OracleIdentity::from_ordered(retriever.manifest());
+        Ok(Self {
+            retriever,
+            encoder,
+            versions,
+            identity,
         })
+    }
+
+    /// Return the exact final-corpus and retriever identities.
+    pub fn versions(&self) -> &OracleVersions {
+        &self.versions
+    }
+
+    fn response(
+        &self,
+        candidates: Vec<RetrievalCandidate>,
+        candidate_depth: usize,
+    ) -> Result<OracleResponse> {
+        response(&self.versions, &self.identity, candidates, candidate_depth)
     }
 }
 
@@ -218,7 +260,62 @@ where
     }
 }
 
+impl<E> Oracle for OrderedOfflineOracle<E>
+where
+    E: EmbeddingEncoder,
+{
+    fn search_text(&mut self, text: &str, candidate_depth: usize) -> Result<OracleResponse> {
+        require_positive_depth(candidate_depth)?;
+        let vector = self.encoder.encode(&[text])?;
+        let expected = usize::try_from(self.retriever.manifest().encoder.dimensions)
+            .map_err(|_| Error::Invariant("encoder dimensions do not fit usize".to_owned()))?;
+        if vector.len() != expected {
+            return Err(Error::Invariant(format!(
+                "query encoder returned {} elements but expected {expected}",
+                vector.len()
+            )));
+        }
+        self.response(
+            self.retriever.search(&vector, candidate_depth, None)?,
+            candidate_depth,
+        )
+    }
+
+    fn similar_notes(
+        &mut self,
+        note_id: EventId,
+        candidate_depth: usize,
+    ) -> Result<OracleResponse> {
+        require_positive_depth(candidate_depth)?;
+        let Some(vector) = self.retriever.event_vector(note_id.into_bytes())? else {
+            return Err(Error::EventNotFound(note_id.to_string()));
+        };
+        self.response(
+            self.retriever
+                .search(&vector, candidate_depth, Some(note_id.into_bytes()))?,
+            candidate_depth,
+        )
+    }
+}
+
 impl OracleIdentity {
+    fn from_ordered(embedding: &OrderedEmbeddingManifest) -> Self {
+        Self {
+            // The ordered ID artifact is the verified public-corpus source for this path.
+            source_snapshot_sha256: embedding.ordered_event_ids_sha256.clone(),
+            corpus_stage_name: None,
+            corpus_stage_event_count: embedding.total_rows,
+            corpus_stage_selection_rule: embedding.selection_rule.clone(),
+            eligibility: EligibilityRules::mvp(),
+            content_preprocessing_rule: embedding.encoder.input_rule.clone(),
+            content_length_limit_tokens: embedding.encoder.max_tokens,
+            model_id: embedding.encoder.model_id.clone(),
+            model_revision: embedding.encoder.model_revision.clone(),
+            embedding_dimensions: embedding.encoder.dimensions,
+            matrix_format: embedding.matrix_format.clone(),
+        }
+    }
+
     fn from_verified_artifacts(
         pipeline: &DamusSnapshot,
         embedding: &EmbeddingManifest,
@@ -281,6 +378,35 @@ impl OracleIdentity {
             exact_search_implementation: EXACT_SEARCH_IMPLEMENTATION.to_owned(),
         })
     }
+}
+
+fn response(
+    versions: &OracleVersions,
+    identity: &OracleIdentity,
+    candidates: Vec<RetrievalCandidate>,
+    candidate_depth: usize,
+) -> Result<OracleResponse> {
+    let candidates = candidates
+        .into_iter()
+        .enumerate()
+        .map(|(index, candidate)| {
+            Ok(OracleCandidate {
+                event_id: EventId::from(candidate.event_id),
+                rank: u64::try_from(index)
+                    .ok()
+                    .and_then(|rank| rank.checked_add(1))
+                    .ok_or_else(|| {
+                        Error::Invariant("oracle candidate rank overflowed u64".to_owned())
+                    })?,
+                cosine_score: candidate.cosine_score,
+            })
+        })
+        .collect::<Result<Vec<_>>>()?;
+    Ok(OracleResponse {
+        versions: versions.clone(),
+        provenance: identity.for_depth(candidate_depth)?,
+        candidates,
+    })
 }
 
 pub(crate) fn verified_oracle_provenance(
