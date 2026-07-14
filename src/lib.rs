@@ -4,6 +4,7 @@ pub mod artifact;
 pub mod benchmark;
 pub mod budget;
 pub mod canonical;
+pub mod corpus_derivation;
 pub mod embedding;
 pub mod event;
 pub mod oracle;
