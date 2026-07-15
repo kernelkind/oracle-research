@@ -9,6 +9,7 @@ use std::path::{Path, PathBuf};
 use bech32::Bech32;
 use bech32::primitives::decode::CheckedHrpstring;
 use linkify::{LinkFinder, LinkKind};
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use thiserror::Error;
 
@@ -19,7 +20,30 @@ const NIP19_PREFIXES: [&str; 7] = [
 ];
 const MAX_NIP19_CHARACTERS: usize = 5_000;
 
+/// Pinned GlotLID v3 model file SHA-256.
+pub const GLOTLID_V3_SHA256: &str =
+    "a818b6bd42a628ab47d3dfc1578c7ea615c45381f3494c42535e31e8c4cafc9e";
+/// Hugging Face repository commit that owns the pinned model.
+pub const GLOTLID_V3_REPOSITORY_COMMIT: &str = "85cd6716494360367b75f642b5bc78667605d0b4";
+/// Exact content-normalization policy approved by CREC-59.
+pub const NORMALIZATION_POLICY: &str =
+    "remove-urls-and-structurally-valid-nip19-references-collapse-whitespace-v2";
+/// Exact top-label eligibility policy approved by CREC-59.
+pub const CLASSIFICATION_POLICY: &str = "empty-is-neutral-otherwise-glotlid-v3-top1-eng-or-zxx-v1";
+
 type EventId = [u8; EVENT_ID_BYTES];
+
+/// Eligibility decision made without private recommendation information.
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ClassifierDecision {
+    /// The top model label is English.
+    KeepEnglish,
+    /// No linguistic input remains or the top model label is `zxx`.
+    KeepLanguageNeutral,
+    /// The top label is neither English nor language-neutral.
+    Exclude,
+}
 
 /// A deterministic English-filter preparation failure.
 #[derive(Debug, Error)]
@@ -60,6 +84,40 @@ pub fn classifier_input(content: &str) -> String {
         .filter_map(clean_retained_token)
         .collect::<Vec<_>>()
         .join(" ")
+}
+
+/// Apply the frozen eligibility policy to normalized input and its top label.
+pub(crate) fn classifier_decision(
+    normalized_input: &str,
+    top_label: Option<&str>,
+) -> ClassifierDecision {
+    if normalized_input.is_empty() {
+        return ClassifierDecision::KeepLanguageNeutral;
+    }
+    match top_label {
+        Some("__label__eng_Latn") => ClassifierDecision::KeepEnglish,
+        Some(label) if is_zxx_label(label) => ClassifierDecision::KeepLanguageNeutral,
+        Some(_) | None => ClassifierDecision::Exclude,
+    }
+}
+
+/// Confirm that a loaded FastText model can express every approved keep decision.
+pub(crate) fn validate_model_labels(labels: &[String]) -> Result<(), Error> {
+    if !labels.iter().any(|label| label == "__label__eng_Latn") {
+        return Err(Error::Invariant(
+            "language model does not contain __label__eng_Latn".to_owned(),
+        ));
+    }
+    if !labels.iter().any(|label| is_zxx_label(label)) {
+        return Err(Error::Invariant(
+            "language model does not contain a zxx language-neutral label".to_owned(),
+        ));
+    }
+    Ok(())
+}
+
+fn is_zxx_label(label: &str) -> bool {
+    label == "__label__zxx" || label.starts_with("__label__zxx_")
 }
 
 /// Select an equal-probability deterministic sample from every ordered event ID.

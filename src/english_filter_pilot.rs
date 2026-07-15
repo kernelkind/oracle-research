@@ -11,24 +11,21 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 use crate::artifact::hash_file;
-use crate::english_filter::{self, classifier_input, select_sampled_event_ids};
+use crate::english_filter::{
+    self, CLASSIFICATION_POLICY, NORMALIZATION_POLICY, classifier_decision, classifier_input,
+    select_sampled_event_ids, validate_model_labels,
+};
+pub use crate::english_filter::{
+    ClassifierDecision, GLOTLID_V3_REPOSITORY_COMMIT, GLOTLID_V3_SHA256,
+};
 use crate::snapshot::{Validation, ndb_error, open_ndb};
 
 /// Fixed number of corpus notes in the approved CREC-59 pilot.
 pub const PILOT_SAMPLE_SIZE: usize = 1_000;
 /// Fixed sample seed recorded by the pilot artifact.
 pub const PILOT_SAMPLE_SEED: &str = "crec-59-english-eligibility-pilot-v1";
-/// Pinned GlotLID v3 model file SHA-256.
-pub const GLOTLID_V3_SHA256: &str =
-    "a818b6bd42a628ab47d3dfc1578c7ea615c45381f3494c42535e31e8c4cafc9e";
-/// Hugging Face repository commit that owns the pinned model.
-pub const GLOTLID_V3_REPOSITORY_COMMIT: &str = "85cd6716494360367b75f642b5bc78667605d0b4";
-
 const SCHEMA_VERSION: u32 = 1;
 const SELECTION_RULE: &str = "bottom-sha256-over-all-ordered-event-ids-v1";
-const NORMALIZATION_POLICY: &str =
-    "remove-urls-and-structurally-valid-nip19-references-collapse-whitespace-v2";
-const CLASSIFICATION_POLICY: &str = "empty-is-neutral-otherwise-glotlid-v3-top1-eng-or-zxx-v1";
 const TOP_PREDICTIONS: usize = 5;
 
 /// A CREC-59 pilot failure.
@@ -104,18 +101,6 @@ pub struct LanguagePrediction {
     pub label: String,
     /// FastText model score.
     pub confidence: f32,
-}
-
-/// Eligibility decision made without private recommendation information.
-#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[serde(rename_all = "snake_case")]
-pub enum ClassifierDecision {
-    /// The top model label is English.
-    KeepEnglish,
-    /// No linguistic input remains or the top model label is `zxx`.
-    KeepLanguageNeutral,
-    /// The top label is neither English nor language-neutral.
-    Exclude,
 }
 
 /// Classifier result kept separate from blind evaluation input.
@@ -375,7 +360,10 @@ fn build_in_stage(
             &PredictionRecord {
                 sample_ordinal,
                 event_id,
-                decision: classify(&classifier_input, &ranked),
+                decision: classifier_decision(
+                    &classifier_input,
+                    ranked.first().map(|prediction| prediction.label.as_str()),
+                ),
                 predictions: ranked,
             },
         )?;
@@ -416,35 +404,8 @@ fn build_in_stage(
 
 fn validate_model(model: &FastText) -> Result<(), Error> {
     let (labels, _) = model.get_labels();
-    if !labels.iter().any(|label| label == "__label__eng_Latn") {
-        return Err(Error::Invariant(
-            "pinned model does not contain __label__eng_Latn".to_owned(),
-        ));
-    }
-    if !labels.iter().any(|label| is_zxx_label(label)) {
-        return Err(Error::Invariant(
-            "pinned model does not contain a zxx language-neutral label".to_owned(),
-        ));
-    }
+    validate_model_labels(&labels)?;
     Ok(())
-}
-
-fn classify(input: &str, predictions: &[LanguagePrediction]) -> ClassifierDecision {
-    if input.is_empty() {
-        return ClassifierDecision::KeepLanguageNeutral;
-    }
-    match predictions
-        .first()
-        .map(|prediction| prediction.label.as_str())
-    {
-        Some("__label__eng_Latn") => ClassifierDecision::KeepEnglish,
-        Some(label) if is_zxx_label(label) => ClassifierDecision::KeepLanguageNeutral,
-        Some(_) | None => ClassifierDecision::Exclude,
-    }
-}
-
-fn is_zxx_label(label: &str) -> bool {
-    label == "__label__zxx" || label.starts_with("__label__zxx_")
 }
 
 fn write_json_line<T: Serialize>(
