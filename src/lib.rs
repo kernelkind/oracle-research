@@ -8,6 +8,8 @@ pub mod corpus_dedup;
 pub mod corpus_derivation;
 pub mod corpus_filter;
 pub mod embedding;
+pub mod english_filter;
+pub mod english_filter_pilot;
 pub mod event;
 pub mod manual_workflow;
 pub mod oracle;
