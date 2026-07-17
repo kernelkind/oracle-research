@@ -15,6 +15,7 @@ pub mod event;
 pub mod fp32_oracle;
 pub mod gte;
 pub mod gte_budget;
+pub mod local_personalizer;
 pub mod manual_workflow;
 pub mod oracle;
 pub mod ordered_embedding;
