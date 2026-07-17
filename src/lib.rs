@@ -20,6 +20,7 @@ pub mod manual_workflow;
 pub mod oracle;
 pub mod ordered_embedding;
 pub mod ordered_gte_token_audit;
+pub mod personalizer_learning;
 pub mod pplx;
 pub mod preflight;
 pub mod representation;

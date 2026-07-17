@@ -1,5 +1,7 @@
 //! Local scoring over frozen public candidate/document vectors.
 
+use std::collections::BTreeMap;
+
 use thiserror::Error;
 
 pub type Result<T> = std::result::Result<T, LocalPersonalizerError>;
@@ -125,6 +127,14 @@ impl<'a> CompactSupportScorer<'a> {
     }
 
     pub fn score(&self, candidate: &[f32]) -> Result<f64> {
+        Ok(self.score_parameters(candidate, &[self.parameters])?[0])
+    }
+
+    pub(crate) fn score_parameters(
+        &self,
+        candidate: &[f32],
+        parameters: &[CompactParameters],
+    ) -> Result<Vec<f64>> {
         validate_candidate(candidate, self.dimension)?;
 
         let mut distances = self
@@ -139,39 +149,67 @@ impl<'a> CompactSupportScorer<'a> {
             .collect::<Vec<_>>();
         distances.sort_unstable_by(|left, right| left.0.total_cmp(&right.0));
 
-        let bandwidth = match self.parameters.neighbor_count {
-            CompactNeighborCount::Finite(k) if distances.len() > k => {
-                self.parameters.maximum_distance.min(distances[k].0.sqrt())
-            }
-            CompactNeighborCount::Finite(_) | CompactNeighborCount::Infinite => {
-                self.parameters.maximum_distance
+        let mut support_by_geometry = BTreeMap::new();
+        parameters
+            .iter()
+            .map(|parameters| {
+                let neighbor_count =
+                    effective_neighbor_count(parameters.neighbor_count, distances.len());
+                let support = *support_by_geometry
+                    .entry((neighbor_count, parameters.maximum_distance.to_bits()))
+                    .or_insert_with(|| {
+                        compact_weighted_support(
+                            &distances,
+                            neighbor_count,
+                            parameters.maximum_distance,
+                        )
+                    });
+                let score = support.0 / (parameters.neutral_weight + support.1);
+                if !score.is_finite() {
+                    return Err(LocalPersonalizerError::NonFiniteScore);
+                }
+                Ok(score)
+            })
+            .collect()
+    }
+}
+
+fn effective_neighbor_count(neighbor_count: CompactNeighborCount, evidence_count: usize) -> usize {
+    match neighbor_count {
+        CompactNeighborCount::Finite(k) if evidence_count > k => k,
+        CompactNeighborCount::Finite(_) | CompactNeighborCount::Infinite => usize::MAX,
+    }
+}
+
+fn compact_weighted_support(
+    distances: &[(f64, f64)],
+    effective_neighbor_count: usize,
+    maximum_distance: f64,
+) -> (f64, f64) {
+    let bandwidth = if effective_neighbor_count == usize::MAX {
+        maximum_distance
+    } else {
+        maximum_distance.min(distances[effective_neighbor_count].0.sqrt())
+    };
+
+    let mut weighted_targets = 0.0;
+    let mut total_weight = 0.0;
+    for (distance_squared, target) in distances {
+        let weight = if *distance_squared == 0.0 {
+            1.0
+        } else {
+            let distance = distance_squared.sqrt();
+            if distance < bandwidth {
+                let ratio_cubed = (distance / bandwidth).powi(3);
+                (1.0 - ratio_cubed).powi(3)
+            } else {
+                0.0
             }
         };
-
-        let mut weighted_targets = 0.0;
-        let mut total_weight = 0.0;
-        for (distance_squared, target) in distances {
-            let weight = if distance_squared == 0.0 {
-                1.0
-            } else {
-                let distance = distance_squared.sqrt();
-                if distance < bandwidth {
-                    let ratio_cubed = (distance / bandwidth).powi(3);
-                    (1.0 - ratio_cubed).powi(3)
-                } else {
-                    0.0
-                }
-            };
-            weighted_targets += weight * target;
-            total_weight += weight;
-        }
-
-        let score = weighted_targets / (self.parameters.neutral_weight + total_weight);
-        if !score.is_finite() {
-            return Err(LocalPersonalizerError::NonFiniteScore);
-        }
-        Ok(score)
+        weighted_targets += weight * target;
+        total_weight += weight;
     }
+    (weighted_targets, total_weight)
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -182,7 +220,12 @@ pub struct RbfKernelRidgeParameters {
 
 impl RbfKernelRidgeParameters {
     pub fn new(scale: f64, regularization: f64) -> Result<Self> {
-        if !scale.is_finite() || scale <= 0.0 || !(2.0 * scale * scale).is_finite() {
+        let kernel_denominator = 2.0 * scale * scale;
+        if !scale.is_finite()
+            || scale <= 0.0
+            || !kernel_denominator.is_finite()
+            || kernel_denominator <= 0.0
+        {
             return Err(LocalPersonalizerError::InvalidRbfScale);
         }
         if !regularization.is_finite() || regularization <= 0.0 {
@@ -294,7 +337,7 @@ fn squared_chord_distance_unchecked(left: &[f32], right: &[f32]) -> f64 {
         .sum()
 }
 
-fn validate_vector(vector: &[f32]) -> Result<()> {
+pub(crate) fn validate_vector(vector: &[f32]) -> Result<()> {
     if vector.is_empty() {
         return Err(LocalPersonalizerError::EmptyVector);
     }
@@ -304,7 +347,7 @@ fn validate_vector(vector: &[f32]) -> Result<()> {
     Ok(())
 }
 
-fn validate_evidence(evidence: &[RatedVector]) -> Result<usize> {
+pub(crate) fn validate_evidence(evidence: &[RatedVector]) -> Result<usize> {
     let first = evidence
         .first()
         .ok_or(LocalPersonalizerError::EmptyEvidence)?;

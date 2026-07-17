@@ -134,6 +134,7 @@ fn scorer_inputs_are_rejected_before_scoring() {
     assert!(CompactParameters::new(CompactNeighborCount::Infinite, 0.0, 1.0).is_err());
     assert!(CompactParameters::new(CompactNeighborCount::Infinite, 1.0, 0.0).is_err());
     assert!(RbfKernelRidgeParameters::new(0.0, 1.0).is_err());
+    assert!(RbfKernelRidgeParameters::new(f64::MIN_POSITIVE, 1.0).is_err());
     assert!(RbfKernelRidgeParameters::new(1.0, 0.0).is_err());
 
     let mismatched = [evidence(&[1.0, 0.0], 1.0), evidence(&[1.0, 0.0, 0.0], 1.0)];
