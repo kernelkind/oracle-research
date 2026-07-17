@@ -771,6 +771,18 @@ impl CompactLearningController {
         &self.history
     }
 
+    pub(crate) fn evidence_event_ids(&self) -> &[EventId] {
+        &self.evidence.event_ids
+    }
+
+    pub(crate) fn evidence_ratings(&self) -> &[GladnessRating] {
+        &self.evidence.ratings
+    }
+
+    pub(crate) fn evidence_vectors(&self) -> &[RatedVector] {
+        &self.evidence.vectors
+    }
+
     pub fn freeze_batch(&mut self, batch: CandidateBatch) -> Result<&CompactFrozenBatch> {
         if self.pending.is_some() {
             return Err(PersonalizerLearningError::BatchAlreadyFrozen);
@@ -955,6 +967,18 @@ impl RbfLearningController {
 
     pub fn history(&self) -> &[RbfRoundRecord] {
         &self.history
+    }
+
+    pub(crate) fn evidence_event_ids(&self) -> &[EventId] {
+        &self.evidence.event_ids
+    }
+
+    pub(crate) fn evidence_ratings(&self) -> &[GladnessRating] {
+        &self.evidence.ratings
+    }
+
+    pub(crate) fn evidence_vectors(&self) -> &[RatedVector] {
+        &self.evidence.vectors
     }
 
     pub fn freeze_batch(&mut self, batch: CandidateBatch) -> Result<&RbfFrozenBatch> {
