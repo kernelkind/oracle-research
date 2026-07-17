@@ -1,6 +1,8 @@
 use std::fs::{self, File};
 use std::io::Write;
+use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 use std::sync::{Arc, Barrier};
 use std::thread;
 use std::time::{Duration, Instant};
@@ -11,9 +13,9 @@ use oracle_mvp::gte::TokenRole;
 use oracle_mvp::gte_budget::{
     CALIBRATION_LIFETIME_CAP, CalibrationEvidencePaths, CalibrationExecutionIdentity,
     CalibrationRecorder, CalibrationRecorderConfig, FullBuildNonComputeCosts, MVP_LIFETIME_CAP,
-    MonotonicCostGuard, VerifiedCalibrationEvidence, read_budget_ledger, reserve_calibration,
-    reserve_full_build, settle_calibration, settle_failed_calibration,
-    validate_calibration_selection,
+    MonotonicCostGuard, VerifiedCalibrationEvidence, read_active_calibration_reservation,
+    read_budget_ledger, reserve_calibration, reserve_full_build, settle_calibration,
+    settle_failed_calibration, validate_calibration_selection,
 };
 use oracle_mvp::ordered_gte_token_audit::{
     OrderedGteTokenAuditConfig, OrderedGteTokenCounter, audit_ordered_gte_tokens,
@@ -39,6 +41,394 @@ fn checked_in_ledger_freezes_both_caps_and_zero_calibration_spend() {
     assert_eq!(ledger.calibration_lifetime_cap, CALIBRATION_LIFETIME_CAP);
     assert_eq!(ledger.calibration_actual_spend, MicroUsd(0));
     assert_eq!(ledger.calibration_outstanding_commitments, MicroUsd(0));
+}
+
+#[test]
+fn cli_reserves_calibration_before_any_paid_inputs_exist() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let config_path = write_calibration_cli_config(
+        &fixture,
+        CalibrationCliConfigState::MissingInputs,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    );
+
+    let output = run_gte_oracle(&[
+        "reserve-calibration",
+        config_path.to_str().expect("UTF-8 config path"),
+        "2026-07-17T12:00:00Z",
+    ]);
+    assert_command_succeeded(&output);
+    let admission: serde_json::Value =
+        serde_json::from_slice(&output.stdout).expect("decode reservation admission");
+    assert_eq!(
+        admission["maximum_runtime_charge_micro_usd"],
+        MicroUsd::from_dollars(8).0
+    );
+    let reserved = read_budget_ledger(&fixture.path).expect("read persisted reservation");
+    assert_eq!(reserved.outstanding_commitments, MicroUsd::from_dollars(10));
+    assert_eq!(
+        reserved.calibration_outstanding_commitments,
+        MicroUsd::from_dollars(10)
+    );
+
+    let reservation = ledger_entries(&fixture.path)
+        .into_iter()
+        .find(|entry| entry["kind"] == "calibration_reservation")
+        .expect("calibration reservation entry");
+    assert_eq!(
+        reservation["requested_maximum_charge_micro_usd"],
+        MicroUsd::from_dollars(10).0
+    );
+    assert_eq!(
+        reservation["non_runtime_charge_reserve_micro_usd"],
+        MicroUsd::from_dollars(2).0
+    );
+
+    let reserved_bytes = fs::read(&fixture.path).expect("read reserved ledger bytes");
+    let duplicate = run_gte_oracle(&[
+        "reserve-calibration",
+        config_path.to_str().expect("UTF-8 config path"),
+        "2026-07-17T12:01:00Z",
+    ]);
+    assert_command_failed_with(&duplicate, "already exists");
+    assert_eq!(
+        fs::read(&fixture.path).expect("read duplicate-rejected ledger"),
+        reserved_bytes
+    );
+}
+
+#[test]
+fn cli_calibration_requires_an_existing_exact_reservation() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    fixture.write_calibration_evidence();
+    let config_path = write_calibration_cli_config(
+        &fixture,
+        CalibrationCliConfigState::FreshCalibrationOutput,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    );
+    let initial_ledger = fs::read(&fixture.path).expect("read initial ledger");
+
+    let output = run_gte_oracle(&[
+        "calibrate-shards",
+        config_path.to_str().expect("UTF-8 config path"),
+        "0",
+    ]);
+    assert_command_failed_with(&output, "does not exist");
+    assert_eq!(
+        fs::read(&fixture.path).expect("read rejected calibration ledger"),
+        initial_ledger
+    );
+}
+
+#[test]
+fn cli_calibration_consumes_but_never_recreates_the_reservation() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    fixture.write_calibration_evidence();
+    let config_path = write_calibration_cli_config(
+        &fixture,
+        CalibrationCliConfigState::FreshCalibrationOutput,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    );
+    let reserve = run_gte_oracle(&[
+        "reserve-calibration",
+        config_path.to_str().expect("UTF-8 config path"),
+        "2026-07-17T12:00:00Z",
+    ]);
+    assert_command_succeeded(&reserve);
+    let reserved_ledger = fs::read(&fixture.path).expect("read reserved ledger");
+
+    write_calibration_cli_config(
+        &fixture,
+        CalibrationCliConfigState::FreshCalibrationOutput,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(3),
+    );
+    let mismatch = run_gte_oracle(&[
+        "calibrate-shards",
+        config_path.to_str().expect("UTF-8 config path"),
+        "0",
+    ]);
+    assert_command_failed_with(&mismatch, "does not match");
+    assert_eq!(
+        fs::read(&fixture.path).expect("read mismatch-rejected ledger"),
+        reserved_ledger
+    );
+
+    write_calibration_cli_config(
+        &fixture,
+        CalibrationCliConfigState::FreshCalibrationOutput,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    );
+    let exact = run_gte_oracle(&[
+        "calibrate-shards",
+        config_path.to_str().expect("UTF-8 config path"),
+        "0",
+    ]);
+    assert!(!exact.status.success());
+    let stderr = String::from_utf8(exact.stderr).expect("UTF-8 stderr");
+    assert!(!stderr.contains("already exists"), "{stderr}");
+    assert!(!stderr.contains("does not match"), "{stderr}");
+    assert!(!stderr.contains("does not exist"), "{stderr}");
+    let claimed_ledger = fs::read(&fixture.path).expect("read claimed reservation ledger");
+    assert_ne!(claimed_ledger, reserved_ledger, "{stderr}");
+    assert!(
+        ledger_entries(&fixture.path)
+            .into_iter()
+            .any(|entry| entry["kind"] == "calibration_execution_claim")
+    );
+
+    let duplicate = run_gte_oracle(&[
+        "calibrate-shards",
+        config_path.to_str().expect("UTF-8 config path"),
+        "0",
+    ]);
+    assert_command_failed_with(&duplicate, "already claimed");
+    assert_eq!(
+        fs::read(&fixture.path).expect("read duplicate-execution ledger"),
+        claimed_ledger
+    );
+}
+
+#[test]
+fn cli_success_settlement_verifies_evidence_and_releases_commitment() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let config_path = write_calibration_cli_config(
+        &fixture,
+        CalibrationCliConfigState::MissingInputs,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    );
+    assert_command_succeeded(&run_gte_oracle(&[
+        "reserve-calibration",
+        config_path.to_str().expect("UTF-8 config path"),
+        "2026-07-17T12:00:00Z",
+    ]));
+    fixture.write_calibration_evidence();
+    claim_calibration_via_cli(
+        &fixture,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    );
+    write_calibration_cli_config(
+        &fixture,
+        CalibrationCliConfigState::CompletedCalibrationOutput,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    );
+
+    let settled = run_gte_oracle(&[
+        "settle-calibration",
+        config_path.to_str().expect("UTF-8 config path"),
+        "3250000",
+        "2026-07-17T13:00:00Z",
+    ]);
+    assert_command_succeeded(&settled);
+    let ledger = read_budget_ledger(&fixture.path).expect("read settled ledger");
+    assert_eq!(ledger.actual_spend, MicroUsd::from_cents(325));
+    assert_eq!(ledger.outstanding_commitments, MicroUsd(0));
+    assert_eq!(ledger.calibration_outstanding_commitments, MicroUsd(0));
+
+    let settled_bytes = fs::read(&fixture.path).expect("read settled ledger bytes");
+    let duplicate = run_gte_oracle(&[
+        "settle-calibration",
+        config_path.to_str().expect("UTF-8 config path"),
+        "3250000",
+        "2026-07-17T13:01:00Z",
+    ]);
+    assert_command_failed_with(&duplicate, "already settled");
+    assert_eq!(
+        fs::read(&fixture.path).expect("read duplicate settlement ledger"),
+        settled_bytes
+    );
+}
+
+#[test]
+fn cli_settlement_rejects_mutated_evidence_without_ledger_mutation() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let config_path = write_calibration_cli_config(
+        &fixture,
+        CalibrationCliConfigState::MissingInputs,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    );
+    assert_command_succeeded(&run_gte_oracle(&[
+        "reserve-calibration",
+        config_path.to_str().expect("UTF-8 config path"),
+        "2026-07-17T12:00:00Z",
+    ]));
+    let calibration = fixture.write_calibration_evidence();
+    claim_calibration_via_cli(
+        &fixture,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    );
+    write_calibration_cli_config(
+        &fixture,
+        CalibrationCliConfigState::CompletedCalibrationOutput,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    );
+    fs::write(
+        &calibration.paths.execution_identity_path,
+        b"changed execution identity",
+    )
+    .expect("mutate execution identity");
+    let reserved_ledger = fs::read(&fixture.path).expect("read reserved ledger");
+
+    let output = run_gte_oracle(&[
+        "settle-calibration",
+        config_path.to_str().expect("UTF-8 config path"),
+        "3250000",
+        "2026-07-17T13:00:00Z",
+    ]);
+    assert_command_failed_with(&output, "execution identity");
+    assert_eq!(
+        fs::read(&fixture.path).expect("read verifier-rejected ledger"),
+        reserved_ledger
+    );
+}
+
+#[test]
+fn cli_failed_settlement_records_provider_overrun() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let config_path = write_calibration_cli_config(
+        &fixture,
+        CalibrationCliConfigState::MissingInputs,
+        MicroUsd::from_dollars(2),
+        MicroUsd::from_cents(50),
+    );
+    assert_command_succeeded(&run_gte_oracle(&[
+        "reserve-calibration",
+        config_path.to_str().expect("UTF-8 config path"),
+        "2026-07-17T12:00:00Z",
+    ]));
+    let failure_evidence_path = fixture.directory.path().join("provider-charge.txt");
+    fs::write(&failure_evidence_path, b"provider charge after failed run")
+        .expect("write failure evidence");
+
+    let settled = run_gte_oracle(&[
+        "settle-failed-calibration",
+        config_path.to_str().expect("UTF-8 config path"),
+        failure_evidence_path
+            .to_str()
+            .expect("UTF-8 failure evidence path"),
+        "26000000",
+        "2026-07-17T13:00:00Z",
+    ]);
+    assert_command_succeeded(&settled);
+    let ledger = read_budget_ledger(&fixture.path).expect("read failed-run settlement");
+    assert_eq!(ledger.actual_spend, MicroUsd::from_dollars(26));
+    assert_eq!(ledger.outstanding_commitments, MicroUsd(0));
+    let entry = ledger_entries(&fixture.path)
+        .into_iter()
+        .find(|entry| entry["kind"] == "failed_calibration_settlement")
+        .expect("failed calibration settlement entry");
+    assert_eq!(
+        entry["failure_evidence_sha256"],
+        sha256_file(&failure_evidence_path)
+    );
+
+    let settled_bytes = fs::read(&fixture.path).expect("read failed settlement bytes");
+    let duplicate = run_gte_oracle(&[
+        "settle-failed-calibration",
+        config_path.to_str().expect("UTF-8 config path"),
+        failure_evidence_path
+            .to_str()
+            .expect("UTF-8 failure evidence path"),
+        "26000000",
+        "2026-07-17T13:01:00Z",
+    ]);
+    assert_command_failed_with(&duplicate, "already settled");
+    assert_eq!(
+        fs::read(&fixture.path).expect("read duplicate failure settlement ledger"),
+        settled_bytes
+    );
+}
+
+#[test]
+fn cli_full_build_projection_is_repeatable_and_read_only() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let config_path = write_calibration_cli_config(
+        &fixture,
+        CalibrationCliConfigState::MissingInputs,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    );
+    assert_command_succeeded(&run_gte_oracle(&[
+        "reserve-calibration",
+        config_path.to_str().expect("UTF-8 config path"),
+        "2026-07-17T12:00:00Z",
+    ]));
+    fixture.write_calibration_evidence();
+    claim_calibration_via_cli(
+        &fixture,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    );
+    write_calibration_cli_config(
+        &fixture,
+        CalibrationCliConfigState::CompletedCalibrationOutput,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    );
+    assert_command_succeeded(&run_gte_oracle(&[
+        "settle-calibration",
+        config_path.to_str().expect("UTF-8 config path"),
+        "3250000",
+        "2026-07-17T13:00:00Z",
+    ]));
+    let non_compute_costs_path = fixture.directory.path().join("non-compute-costs.json");
+    fs::write(
+        &non_compute_costs_path,
+        serde_json::to_vec_pretty(&serde_json::json!({
+            "artifact_storage_and_transfer_micro_usd": 1_000_000_u64,
+            "one_cold_restart_micro_usd": 1_000_000_u64,
+            "one_lost_shard_micro_usd": 1_000_000_u64
+        }))
+        .expect("encode non-compute costs"),
+    )
+    .expect("write non-compute costs");
+    let settled_ledger = fs::read(&fixture.path).expect("read settled ledger");
+
+    let arguments = [
+        "project-full-build",
+        config_path.to_str().expect("UTF-8 config path"),
+        non_compute_costs_path
+            .to_str()
+            .expect("UTF-8 non-compute costs path"),
+    ];
+    let first = run_gte_oracle(&arguments);
+    assert_command_succeeded(&first);
+    let second = run_gte_oracle(&arguments);
+    assert_command_succeeded(&second);
+    assert_eq!(first.stdout, second.stdout);
+    let projection: serde_json::Value =
+        serde_json::from_slice(&first.stdout).expect("decode projection output");
+    let component_total = [
+        "remaining_compute_micro_usd",
+        "artifact_storage_and_transfer_micro_usd",
+        "paid_lazy_inference_micro_usd",
+        "one_cold_restart_micro_usd",
+        "one_lost_shard_micro_usd",
+    ]
+    .into_iter()
+    .map(|field| projection[field].as_u64().expect("projection component"))
+    .sum::<u64>();
+    assert_eq!(projection["total_micro_usd"], component_total);
+    assert!(
+        projection["projected_lifetime_total_micro_usd"]
+            .as_u64()
+            .expect("projected lifetime total")
+            >= component_total
+    );
+    assert_eq!(
+        fs::read(&fixture.path).expect("read projection-reviewed ledger"),
+        settled_ledger
+    );
 }
 
 #[test]
@@ -80,6 +470,40 @@ fn calibration_reservation_is_persisted_before_another_attempt_can_be_admitted()
 
     let unchanged = read_budget_ledger(&fixture.path).expect("read rejected state");
     assert_eq!(unchanged.ledger_sha256, reserved.ledger_sha256);
+}
+
+#[test]
+fn active_calibration_reservation_rejects_duplicate_authorization_entries() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    reserve_calibration(
+        &fixture.path,
+        "duplicated-calibration",
+        MicroUsd::from_dollars(10),
+        "2026-07-16T20:00:00Z",
+    )
+    .expect("reserve calibration");
+    let mut ledger: serde_json::Value =
+        serde_json::from_slice(&fs::read(&fixture.path).expect("read ledger"))
+            .expect("decode ledger");
+    let duplicate = ledger["entries"][0].clone();
+    ledger["entries"]
+        .as_array_mut()
+        .expect("ledger entries")
+        .push(duplicate);
+    fs::write(
+        &fixture.path,
+        serde_json::to_vec_pretty(&ledger).expect("encode duplicated ledger"),
+    )
+    .expect("write duplicated ledger");
+
+    let error = read_active_calibration_reservation(
+        &fixture.path,
+        "duplicated-calibration",
+        MicroUsd::from_dollars(10),
+        MicroUsd(0),
+    )
+    .expect_err("duplicate authorization entries must fail closed");
+    assert!(error.to_string().contains("duplicate"), "{error}");
 }
 
 #[test]
@@ -952,6 +1376,181 @@ fn monotonic_guard_reserves_the_next_observed_interval_before_work() {
         error.to_string().contains("elapsed-time cost cap"),
         "{error}"
     );
+}
+
+#[derive(Clone, Copy)]
+enum CalibrationCliConfigState {
+    MissingInputs,
+    FreshCalibrationOutput,
+    CompletedCalibrationOutput,
+}
+
+fn claim_calibration_via_cli(
+    fixture: &LedgerFixture,
+    maximum_total_charge: MicroUsd,
+    non_runtime_charge_reserve: MicroUsd,
+) {
+    let config_path = write_calibration_cli_config(
+        fixture,
+        CalibrationCliConfigState::FreshCalibrationOutput,
+        maximum_total_charge,
+        non_runtime_charge_reserve,
+    );
+    let output = run_gte_oracle(&[
+        "calibrate-shards",
+        config_path.to_str().expect("UTF-8 config path"),
+        "0",
+    ]);
+    assert!(!output.status.success(), "fixture worker must stop the run");
+    let stderr = String::from_utf8(output.stderr).expect("UTF-8 stderr");
+    assert!(!stderr.contains("execution claim"), "{stderr}");
+    assert!(
+        ledger_entries(&fixture.path)
+            .into_iter()
+            .any(|entry| entry["kind"] == "calibration_execution_claim")
+    );
+}
+
+fn write_calibration_cli_config(
+    fixture: &LedgerFixture,
+    state: CalibrationCliConfigState,
+    maximum_total_charge: MicroUsd,
+    non_runtime_charge_reserve: MicroUsd,
+) -> PathBuf {
+    let root = fixture.directory.path();
+    let missing = root.join("missing");
+    let uses_real_inputs = !matches!(state, CalibrationCliConfigState::MissingInputs);
+    let path = |real: PathBuf, missing_name: &str| {
+        if uses_real_inputs {
+            real
+        } else {
+            missing.join(missing_name)
+        }
+    };
+    let model_lock_path = path(root.join("model.lock.json"), "model.lock.json");
+    let worker_source_path = path(root.join("worker.py"), "worker.py");
+    let dependency_lock_path = path(root.join("requirements.lock"), "requirements.lock");
+    let worker_model_lock_path = path(
+        root.join("worker-model.lock.json"),
+        "worker-model.lock.json",
+    );
+    let worker_dependency_lock_path = path(
+        root.join("worker-requirements.lock"),
+        "worker-requirements.lock",
+    );
+    let model_dir = path(root.join("model"), "model");
+    if uses_real_inputs {
+        for file in [
+            &model_lock_path,
+            &dependency_lock_path,
+            &worker_model_lock_path,
+            &worker_dependency_lock_path,
+        ] {
+            fs::write(file, b"fixture").expect("write CLI fixture input");
+        }
+        fs::write(&worker_source_path, b"#!/bin/sh\nexit 1\n").expect("write CLI fixture worker");
+        fs::set_permissions(&worker_source_path, fs::Permissions::from_mode(0o755))
+            .expect("make CLI fixture worker executable");
+        fs::create_dir_all(&model_dir).expect("create CLI fixture model directory");
+    }
+    let representation_path = match state {
+        CalibrationCliConfigState::CompletedCalibrationOutput => root.join("representation"),
+        CalibrationCliConfigState::FreshCalibrationOutput => root.join("paid-representation"),
+        CalibrationCliConfigState::MissingInputs => missing.join("representation"),
+    };
+    let evidence_path = match state {
+        CalibrationCliConfigState::CompletedCalibrationOutput => {
+            root.join("calibration-evidence.json")
+        }
+        CalibrationCliConfigState::FreshCalibrationOutput => {
+            root.join("paid-calibration-evidence.json")
+        }
+        CalibrationCliConfigState::MissingInputs => missing.join("calibration-evidence.json"),
+    };
+    let config_path = root.join("calibration-run.json");
+    fs::write(
+        &config_path,
+        serde_json::to_vec_pretty(&serde_json::json!({
+            "corpus_path": path(root.join("english.ndb"), "english.ndb"),
+            "ordered_event_ids_path": path(
+                root.join("ordered-event-ids.bin"),
+                "ordered-event-ids.bin"
+            ),
+            "token_audit_path": path(root.join("token-audit"), "token-audit"),
+            "batch_plan_path": path(root.join("batch-plan"), "batch-plan"),
+            "representation_path": representation_path,
+            "model_lock_path": model_lock_path,
+            "worker_source_path": worker_source_path,
+            "dependency_lock_path": dependency_lock_path,
+            "container_image": format!("fixture@sha256:{}", "5".repeat(64)),
+            "torch_version": "2.12.1",
+            "transformers_version": "4.41.2",
+            "cuda_version": "13.0.2",
+            "worker": {
+                "program": if uses_real_inputs {
+                    worker_source_path.clone()
+                } else {
+                    missing.join("python")
+                },
+                "model_dir": model_dir,
+                "model_lock_path": worker_model_lock_path,
+                "dependency_lock_path": worker_dependency_lock_path,
+                "device": "cuda"
+            },
+            "batch_size": 2,
+            "shard_rows": 4,
+            "calibration": {
+                "ledger_path": fixture.path,
+                "reservation_id": "cli-calibration",
+                "maximum_total_charge_micro_usd": maximum_total_charge.0,
+                "non_runtime_charge_reserve_micro_usd": non_runtime_charge_reserve.0,
+                "execution_identity_path": path(
+                    root.join("execution-identity.json"),
+                    "execution-identity.json"
+                ),
+                "evidence_path": evidence_path,
+                "token_range_upper_bounds": [4],
+                "maximum_work_unit_seconds": 10
+            }
+        }))
+        .expect("encode calibration CLI config"),
+    )
+    .expect("write calibration CLI config");
+    config_path
+}
+
+fn run_gte_oracle(arguments: &[&str]) -> std::process::Output {
+    Command::new(env!("CARGO_BIN_EXE_gte-oracle"))
+        .args(arguments)
+        .output()
+        .expect("run gte-oracle")
+}
+
+fn assert_command_succeeded(output: &std::process::Output) {
+    assert!(
+        output.status.success(),
+        "command failed: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+}
+
+fn assert_command_failed_with(output: &std::process::Output, expected: &str) {
+    assert!(!output.status.success());
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains(expected),
+        "expected `{expected}` in: {stderr}"
+    );
+}
+
+fn ledger_entries(path: &Path) -> Vec<serde_json::Value> {
+    let ledger: serde_json::Value =
+        serde_json::from_slice(&fs::read(path).expect("read ledger entries"))
+            .expect("decode ledger entries");
+    ledger["entries"]
+        .as_array()
+        .expect("ledger entries array")
+        .clone()
 }
 
 struct LedgerFixture {

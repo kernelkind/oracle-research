@@ -61,10 +61,31 @@ pub struct CalibrationAdmission {
     pub authorization_sha256: String,
     pub ledger_sha256: String,
     pub maximum_new_charge: MicroUsd,
+    pub maximum_runtime_charge: MicroUsd,
+    pub non_runtime_charge_reserve: MicroUsd,
     pub projected_calibration_total: MicroUsd,
     pub projected_lifetime_total: MicroUsd,
     pub remaining_calibration_budget: MicroUsd,
     pub remaining_lifetime_budget: MicroUsd,
+}
+
+/// One active calibration reservation and the exact runtime allowance derived
+/// from its total provider cap.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct ActiveCalibrationReservation {
+    pub binding: CalibrationReservationBinding,
+    pub maximum_total_charge: MicroUsd,
+    pub maximum_runtime_charge: MicroUsd,
+    pub non_runtime_charge_reserve: MicroUsd,
+}
+
+/// The one ledger transition that permits a production calibration command to
+/// start its worker.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CalibrationExecutionClaim {
+    pub reservation: ActiveCalibrationReservation,
+    pub claim_authorization_sha256: String,
+    pub ledger_sha256: String,
 }
 
 /// Exact ledger decision that one calibration evidence artifact must name.
@@ -336,6 +357,11 @@ impl CalibrationRecorder {
             ));
         }
         validate_reservation_binding(&config.reservation)?;
+        if config.maximum_charge > config.reservation.maximum_charge {
+            return Err(Error::Budget(
+                "calibration runtime cap exceeds the total provider reservation".to_owned(),
+            ));
+        }
         let guard = MonotonicCostGuard::new(
             config.rental_started_at,
             config.rental_rate_per_hour,
@@ -1128,6 +1154,17 @@ pub struct FullBuildAdmission {
     pub remaining_lifetime_budget: MicroUsd,
 }
 
+/// Verified, read-only answer to whether the projected full build fits the
+/// remaining lifetime budget.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct FullBuildProjectionReview {
+    pub ledger_sha256: String,
+    pub calibration_evidence_sha256: String,
+    pub projection: FullBuildCostProjection,
+    pub projected_lifetime_total: MicroUsd,
+    pub remaining_lifetime_budget: MicroUsd,
+}
+
 /// One monotonic-time observation of a running rental.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct CostObservation {
@@ -1239,17 +1276,33 @@ pub fn reserve_calibration(
     maximum_new_charge: MicroUsd,
     recorded_at_utc: &str,
 ) -> Result<CalibrationAdmission> {
-    if maximum_new_charge.0 == 0 {
-        return Err(Error::Budget(
-            "calibration reservation requires a nonzero maximum charge".to_owned(),
-        ));
-    }
+    reserve_calibration_with_non_runtime_reserve(
+        ledger_path,
+        reservation_id,
+        maximum_new_charge,
+        MicroUsd(0),
+        recorded_at_utc,
+    )
+}
+
+/// Atomically reserve the complete provider charge before rental creation.
+/// Transfer, setup, teardown, and storage consume the non-runtime reserve; the
+/// production runtime guard receives only the derived remainder.
+pub fn reserve_calibration_with_non_runtime_reserve(
+    ledger_path: &Path,
+    reservation_id: &str,
+    maximum_total_charge: MicroUsd,
+    non_runtime_charge_reserve: MicroUsd,
+    recorded_at_utc: &str,
+) -> Result<CalibrationAdmission> {
+    let maximum_runtime_charge =
+        calibration_runtime_charge(maximum_total_charge, non_runtime_charge_reserve)?;
     validate_reservation_input(reservation_id, recorded_at_utc)?;
     let _lock = LedgerLock::acquire(ledger_path)?;
     let (previous_bytes, mut document) = read_ledger_document(ledger_path)?;
     reject_existing_reservation(&document, reservation_id)?;
     let ledger = ledger_from_document(&document, hash_bytes(&previous_bytes))?;
-    let reserved_cents = ceiling_cents(maximum_new_charge)?;
+    let reserved_cents = ceiling_cents(maximum_total_charge)?;
     let reserved_charge = cents(reserved_cents)?;
     let projected_calibration_total = checked_sum(&[
         ledger.calibration_actual_spend,
@@ -1283,7 +1336,8 @@ pub fn reserve_calibration(
         "kind": "calibration_reservation",
         "reservation_id": reservation_id,
         "recorded_at_utc": recorded_at_utc,
-        "requested_maximum_charge_micro_usd": maximum_new_charge.0,
+        "requested_maximum_charge_micro_usd": maximum_total_charge.0,
+        "non_runtime_charge_reserve_micro_usd": non_runtime_charge_reserve.0,
         "reserved_maximum_charge_cents": reserved_cents,
         "previous_ledger_sha256": previous_ledger_sha256,
     });
@@ -1297,6 +1351,8 @@ pub fn reserve_calibration(
         authorization_sha256,
         ledger_sha256,
         maximum_new_charge: reserved_charge,
+        maximum_runtime_charge,
+        non_runtime_charge_reserve,
         projected_calibration_total,
         projected_lifetime_total,
         remaining_calibration_budget: subtract(
@@ -1304,6 +1360,84 @@ pub fn reserve_calibration(
             projected_calibration_total,
         ),
         remaining_lifetime_budget: subtract(MVP_LIFETIME_CAP, projected_lifetime_total),
+    })
+}
+
+/// Read the reservation that already authorized a calibration command. This
+/// never creates, settles, or otherwise changes budget state.
+pub fn read_active_calibration_reservation(
+    ledger_path: &Path,
+    reservation_id: &str,
+    expected_maximum_total_charge: MicroUsd,
+    expected_non_runtime_charge_reserve: MicroUsd,
+) -> Result<ActiveCalibrationReservation> {
+    validate_reservation_input(reservation_id, "active-reservation")?;
+    calibration_runtime_charge(
+        expected_maximum_total_charge,
+        expected_non_runtime_charge_reserve,
+    )?;
+    let _lock = LedgerLock::acquire(ledger_path)?;
+    let (bytes, document) = read_ledger_document(ledger_path)?;
+    ledger_from_document(&document, hash_bytes(&bytes))?;
+    let active = active_calibration_reservation(&document, reservation_id)?;
+    if active.maximum_total_charge != expected_maximum_total_charge
+        || active.non_runtime_charge_reserve != expected_non_runtime_charge_reserve
+    {
+        return Err(Error::Budget(format!(
+            "calibration reservation `{reservation_id}` does not match the configured total and non-runtime charges"
+        )));
+    }
+    Ok(active)
+}
+
+/// Atomically consume one production reservation before the paid worker can
+/// start. Validation may be retried, but the execution claim may not.
+pub fn claim_calibration_execution(
+    ledger_path: &Path,
+    reservation_id: &str,
+    expected_maximum_total_charge: MicroUsd,
+    expected_non_runtime_charge_reserve: MicroUsd,
+) -> Result<CalibrationExecutionClaim> {
+    validate_reservation_input(reservation_id, "execution-claim")?;
+    calibration_runtime_charge(
+        expected_maximum_total_charge,
+        expected_non_runtime_charge_reserve,
+    )?;
+    let _lock = LedgerLock::acquire(ledger_path)?;
+    let (previous_bytes, mut document) = read_ledger_document(ledger_path)?;
+    ledger_from_document(&document, hash_bytes(&previous_bytes))?;
+    let active = active_calibration_reservation(&document, reservation_id)?;
+    if active.maximum_total_charge != expected_maximum_total_charge
+        || active.non_runtime_charge_reserve != expected_non_runtime_charge_reserve
+    {
+        return Err(Error::Budget(format!(
+            "calibration reservation `{reservation_id}` does not match the configured total and non-runtime charges"
+        )));
+    }
+    if document.entries.iter().any(|entry| {
+        entry.get("kind").and_then(serde_json::Value::as_str) == Some("calibration_execution_claim")
+            && entry
+                .get("reservation_id")
+                .and_then(serde_json::Value::as_str)
+                == Some(reservation_id)
+    }) {
+        return Err(Error::Budget(format!(
+            "calibration reservation `{reservation_id}` is already claimed for execution"
+        )));
+    }
+    let claim_entry = json!({
+        "kind": "calibration_execution_claim",
+        "reservation_id": reservation_id,
+        "reservation_authorization_sha256": active.binding.authorization_sha256.clone(),
+        "previous_ledger_sha256": hash_bytes(&previous_bytes),
+    });
+    let claim_authorization_sha256 = calibration_authorization_sha256(&claim_entry)?;
+    document.entries.push(claim_entry);
+    let ledger_sha256 = publish_ledger_document(ledger_path, &document)?;
+    Ok(CalibrationExecutionClaim {
+        reservation: active,
+        claim_authorization_sha256,
+        ledger_sha256,
     })
 }
 
@@ -1327,31 +1461,9 @@ pub fn settle_calibration(
     }
     let _lock = LedgerLock::acquire(ledger_path)?;
     let (previous_bytes, mut document) = read_ledger_document(ledger_path)?;
-    let reserved_cents = active_calibration_reservation_cents(&document, reservation_id)?;
-    let reservation = document
-        .entries
-        .iter()
-        .find(|entry| {
-            entry.get("kind").and_then(serde_json::Value::as_str) == Some("calibration_reservation")
-                && entry
-                    .get("reservation_id")
-                    .and_then(serde_json::Value::as_str)
-                    == Some(reservation_id)
-        })
-        .expect("active calibration reservation was just verified");
-    if reservation
-        .get("previous_ledger_sha256")
-        .and_then(serde_json::Value::as_str)
-        != Some(
-            calibration_evidence
-                .reservation
-                .previous_ledger_sha256
-                .as_str(),
-        )
-        || reserved_cents != ceiling_cents(calibration_evidence.reservation.maximum_charge)?
-        || calibration_authorization_sha256(reservation)?
-            != calibration_evidence.reservation.authorization_sha256
-    {
+    let active = active_calibration_reservation(&document, reservation_id)?;
+    let reserved_cents = ceiling_cents(active.binding.maximum_charge)?;
+    if active.binding != calibration_evidence.reservation {
         return Err(Error::Budget(
             "calibration evidence does not match the ledger authorization that paid for it"
                 .to_owned(),
@@ -1407,7 +1519,8 @@ pub fn settle_failed_calibration(
     let failure_evidence_sha256 = hash_file(failure_evidence_path)?;
     let _lock = LedgerLock::acquire(ledger_path)?;
     let (previous_bytes, mut document) = read_ledger_document(ledger_path)?;
-    let reserved_cents = active_calibration_reservation_cents(&document, reservation_id)?;
+    let active = active_calibration_reservation(&document, reservation_id)?;
+    let reserved_cents = ceiling_cents(active.binding.maximum_charge)?;
     let actual_cents = ceiling_cents(actual_charge)?;
     let released_cents = apply_calibration_charge(
         &mut document,
@@ -1431,6 +1544,30 @@ pub fn settle_failed_calibration(
     ledger_from_document(&document, ledger_sha256)
 }
 
+/// Derive the conservative full-corpus cost from verified calibration evidence
+/// and current ledger state without creating a reservation.
+pub fn project_full_build(
+    ledger_path: &Path,
+    calibration_evidence: &VerifiedCalibrationEvidence,
+    non_compute_costs: FullBuildNonComputeCosts,
+) -> Result<FullBuildProjectionReview> {
+    calibration_evidence.reverify()?;
+    let projection = derive_full_build_projection(calibration_evidence, non_compute_costs)?;
+    let _lock = LedgerLock::acquire(ledger_path)?;
+    let (ledger_bytes, document) = read_ledger_document(ledger_path)?;
+    if has_reservation_kind(&document, "full_build_reservation") {
+        return Err(Error::Budget(
+            "a full-build reservation already exists".to_owned(),
+        ));
+    }
+    full_build_projection_review(
+        &document,
+        hash_bytes(&ledger_bytes),
+        calibration_evidence,
+        projection,
+    )
+}
+
 /// Atomically reserve the one full-corpus build. Remaining compute is derived
 /// from the verified per-range measurements rather than supplied by the caller.
 pub fn reserve_full_build(
@@ -1452,6 +1589,64 @@ pub fn reserve_full_build(
             "a full-build reservation already exists".to_owned(),
         ));
     }
+    let review = full_build_projection_review(
+        &document,
+        hash_bytes(&previous_bytes),
+        calibration_evidence,
+        projection,
+    )?;
+    let reserved_cents = ceiling_cents(review.projection.total()?)?;
+
+    document.outstanding_commitments_cents = document
+        .outstanding_commitments_cents
+        .checked_add(reserved_cents)
+        .ok_or_else(|| Error::Budget("lifetime commitment cents overflowed".to_owned()))?;
+    document.entries.push(json!({
+        "kind": "full_build_reservation",
+        "reservation_id": reservation_id,
+        "recorded_at_utc": recorded_at_utc,
+        "calibration_evidence_sha256": calibration_evidence.evidence_sha256,
+        "representation_build_identity_sha256": calibration_evidence.representation_build_identity_sha256,
+        "batch_plan_manifest_sha256": calibration_evidence.batch_plan_manifest_sha256,
+        "execution_identity_sha256": calibration_evidence.execution_identity_sha256,
+        "rental_rate_micro_usd_per_hour": calibration_evidence.execution_identity.rental_rate_per_hour.0,
+        "remaining_compute_micro_usd": review.projection.remaining_compute.0,
+        "artifact_storage_and_transfer_micro_usd": review.projection.artifact_storage_and_transfer.0,
+        "paid_lazy_inference_micro_usd": review.projection.paid_lazy_inference.0,
+        "one_cold_restart_micro_usd": review.projection.one_cold_restart.0,
+        "one_lost_shard_micro_usd": review.projection.one_lost_shard.0,
+        "reserved_maximum_charge_cents": reserved_cents,
+        "previous_ledger_sha256": review.ledger_sha256,
+    }));
+    let ledger_sha256 = publish_ledger_document(ledger_path, &document)?;
+
+    Ok(FullBuildAdmission {
+        ledger_sha256,
+        calibration_evidence_sha256: calibration_evidence.evidence_sha256.clone(),
+        projection: review.projection,
+        projected_lifetime_total: review.projected_lifetime_total,
+        remaining_lifetime_budget: review.remaining_lifetime_budget,
+    })
+}
+
+impl FullBuildCostProjection {
+    pub fn total(&self) -> Result<MicroUsd> {
+        checked_sum(&[
+            self.remaining_compute,
+            self.artifact_storage_and_transfer,
+            self.paid_lazy_inference,
+            self.one_cold_restart,
+            self.one_lost_shard,
+        ])
+    }
+}
+
+fn full_build_projection_review(
+    document: &BudgetLedgerDocument,
+    ledger_sha256: String,
+    calibration_evidence: &VerifiedCalibrationEvidence,
+    projection: FullBuildCostProjection,
+) -> Result<FullBuildProjectionReview> {
     let calibration_is_settled = document.entries.iter().any(|entry| {
         entry.get("kind").and_then(serde_json::Value::as_str) == Some("calibration_settlement")
             && entry
@@ -1473,69 +1668,31 @@ pub fn reserve_full_build(
     });
     if !calibration_is_settled {
         return Err(Error::Budget(
-            "full-build reservation requires this exact calibration evidence to be settled"
+            "full-build projection requires this exact calibration evidence to be settled"
                 .to_owned(),
         ));
     }
-    let ledger = ledger_from_document(&document, hash_bytes(&previous_bytes))?;
+    let ledger = ledger_from_document(document, ledger_sha256)?;
     if ledger.calibration_outstanding_commitments.0 != 0 {
         return Err(Error::Budget(
-            "full-build reservation requires calibration commitments to be reconciled first"
+            "full-build projection requires calibration commitments to be reconciled first"
                 .to_owned(),
         ));
     }
-    let new_commitment = projection.total()?;
-    let reserved_cents = ceiling_cents(new_commitment)?;
-    let reserved_charge = cents(reserved_cents)?;
+    let reserved_charge = cents(ceiling_cents(projection.total()?)?)?;
     let projected_lifetime_total = checked_sum(&[
         ledger.actual_spend,
         ledger.outstanding_commitments,
         reserved_charge,
     ])?;
     require_lifetime_cap(projected_lifetime_total)?;
-
-    document.outstanding_commitments_cents = document
-        .outstanding_commitments_cents
-        .checked_add(reserved_cents)
-        .ok_or_else(|| Error::Budget("lifetime commitment cents overflowed".to_owned()))?;
-    document.entries.push(json!({
-        "kind": "full_build_reservation",
-        "reservation_id": reservation_id,
-        "recorded_at_utc": recorded_at_utc,
-        "calibration_evidence_sha256": calibration_evidence.evidence_sha256,
-        "representation_build_identity_sha256": calibration_evidence.representation_build_identity_sha256,
-        "batch_plan_manifest_sha256": calibration_evidence.batch_plan_manifest_sha256,
-        "execution_identity_sha256": calibration_evidence.execution_identity_sha256,
-        "rental_rate_micro_usd_per_hour": calibration_evidence.execution_identity.rental_rate_per_hour.0,
-        "remaining_compute_micro_usd": projection.remaining_compute.0,
-        "artifact_storage_and_transfer_micro_usd": projection.artifact_storage_and_transfer.0,
-        "paid_lazy_inference_micro_usd": projection.paid_lazy_inference.0,
-        "one_cold_restart_micro_usd": projection.one_cold_restart.0,
-        "one_lost_shard_micro_usd": projection.one_lost_shard.0,
-        "reserved_maximum_charge_cents": reserved_cents,
-        "previous_ledger_sha256": ledger.ledger_sha256,
-    }));
-    let ledger_sha256 = publish_ledger_document(ledger_path, &document)?;
-
-    Ok(FullBuildAdmission {
-        ledger_sha256,
+    Ok(FullBuildProjectionReview {
+        ledger_sha256: ledger.ledger_sha256,
         calibration_evidence_sha256: calibration_evidence.evidence_sha256.clone(),
         projection,
         projected_lifetime_total,
         remaining_lifetime_budget: subtract(MVP_LIFETIME_CAP, projected_lifetime_total),
     })
-}
-
-impl FullBuildCostProjection {
-    fn total(&self) -> Result<MicroUsd> {
-        checked_sum(&[
-            self.remaining_compute,
-            self.artifact_storage_and_transfer,
-            self.paid_lazy_inference,
-            self.one_cold_restart,
-            self.one_lost_shard,
-        ])
-    }
 }
 
 fn derive_full_build_projection(
@@ -1909,10 +2066,10 @@ fn calibration_authorization_sha256(entry: &serde_json::Value) -> Result<String>
     Ok(hash_bytes(&bytes))
 }
 
-fn active_calibration_reservation_cents(
+fn active_calibration_reservation(
     document: &BudgetLedgerDocument,
     reservation_id: &str,
-) -> Result<u64> {
+) -> Result<ActiveCalibrationReservation> {
     if document.entries.iter().any(|entry| {
         matches!(
             entry.get("kind").and_then(serde_json::Value::as_str),
@@ -1926,29 +2083,91 @@ fn active_calibration_reservation_cents(
             "calibration reservation `{reservation_id}` is already settled"
         )));
     }
-    let reservation = document
+    let reservations = document
         .entries
         .iter()
-        .find(|entry| {
+        .filter(|entry| {
             entry.get("kind").and_then(serde_json::Value::as_str) == Some("calibration_reservation")
                 && entry
                     .get("reservation_id")
                     .and_then(serde_json::Value::as_str)
                     == Some(reservation_id)
         })
+        .collect::<Vec<_>>();
+    let [reservation] = reservations.as_slice() else {
+        if reservations.is_empty() {
+            return Err(Error::Budget(format!(
+                "calibration reservation `{reservation_id}` does not exist"
+            )));
+        }
+        return Err(Error::Budget(format!(
+            "calibration reservation `{reservation_id}` has duplicate authorization entries"
+        )));
+    };
+    let requested_maximum_charge = reservation
+        .get("requested_maximum_charge_micro_usd")
+        .and_then(serde_json::Value::as_u64)
+        .map(MicroUsd)
         .ok_or_else(|| {
             Error::Budget(format!(
-                "calibration reservation `{reservation_id}` does not exist"
+                "calibration reservation `{reservation_id}` has no valid requested charge"
             ))
         })?;
-    reservation
+    let non_runtime_charge_reserve_value = reservation.get("non_runtime_charge_reserve_micro_usd");
+    let non_runtime_charge_reserve = non_runtime_charge_reserve_value
+        .map(|value| {
+            value.as_u64().map(MicroUsd).ok_or_else(|| {
+                Error::Budget(format!(
+                    "calibration reservation `{reservation_id}` has no valid non-runtime reserve"
+                ))
+            })
+        })
+        .transpose()?
+        .unwrap_or(MicroUsd(0));
+    let maximum_runtime_charge =
+        calibration_runtime_charge(requested_maximum_charge, non_runtime_charge_reserve)?;
+    let reserved_cents = reservation
         .get("reserved_maximum_charge_cents")
         .and_then(serde_json::Value::as_u64)
         .ok_or_else(|| {
             Error::Budget(format!(
                 "calibration reservation `{reservation_id}` has no valid reserved charge"
             ))
-        })
+        })?;
+    if reserved_cents != ceiling_cents(requested_maximum_charge)? {
+        return Err(Error::Budget(format!(
+            "calibration reservation `{reservation_id}` does not conservatively round its requested charge"
+        )));
+    }
+    if document.outstanding_commitments_cents < reserved_cents
+        || document.calibration_outstanding_commitments_cents < reserved_cents
+    {
+        return Err(Error::Budget(format!(
+            "calibration reservation `{reservation_id}` exceeds the ledger's outstanding commitment"
+        )));
+    }
+    let previous_ledger_sha256 = reservation
+        .get("previous_ledger_sha256")
+        .and_then(serde_json::Value::as_str)
+        .ok_or_else(|| {
+            Error::Budget(format!(
+                "calibration reservation `{reservation_id}` has no previous ledger hash"
+            ))
+        })?
+        .to_owned();
+    let binding = CalibrationReservationBinding {
+        reservation_id: reservation_id.to_owned(),
+        previous_ledger_sha256,
+        authorization_sha256: calibration_authorization_sha256(reservation)?,
+        maximum_charge: cents(reserved_cents)?,
+    };
+    validate_reservation_binding(&binding)?;
+    Ok(ActiveCalibrationReservation {
+        binding,
+        maximum_total_charge: requested_maximum_charge,
+        maximum_runtime_charge,
+        non_runtime_charge_reserve,
+    })
 }
 
 fn apply_calibration_charge(
@@ -2006,6 +2225,28 @@ fn has_reservation_kind(document: &BudgetLedgerDocument, kind: &str) -> bool {
         .entries
         .iter()
         .any(|entry| entry.get("kind").and_then(serde_json::Value::as_str) == Some(kind))
+}
+
+fn calibration_runtime_charge(
+    maximum_total_charge: MicroUsd,
+    non_runtime_charge_reserve: MicroUsd,
+) -> Result<MicroUsd> {
+    if maximum_total_charge.0 == 0 {
+        return Err(Error::Budget(
+            "calibration reservation requires a nonzero maximum charge".to_owned(),
+        ));
+    }
+    let maximum_runtime_charge = maximum_total_charge
+        .0
+        .checked_sub(non_runtime_charge_reserve.0)
+        .filter(|charge| *charge > 0)
+        .ok_or_else(|| {
+            Error::Budget(
+                "calibration non-runtime reserve must be smaller than its total provider cap"
+                    .to_owned(),
+            )
+        })?;
+    Ok(MicroUsd(maximum_runtime_charge))
 }
 
 fn ceiling_cents(value: MicroUsd) -> Result<u64> {

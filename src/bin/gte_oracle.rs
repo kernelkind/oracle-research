@@ -12,8 +12,11 @@ use oracle_mvp::budget::MicroUsd;
 use oracle_mvp::fp32_oracle::{Fp32OfflineOracle, SimilarNotesRequest, vectors_for_notes};
 use oracle_mvp::gte::{GteProcessEncoder, GteWorkerConfig};
 use oracle_mvp::gte_budget::{
-    CalibrationEvidencePaths, CalibrationRecorder, CalibrationRecorderConfig,
-    read_calibration_execution_identity, reserve_calibration, validate_calibration_selection,
+    BudgetLedger, CalibrationEvidencePaths, CalibrationRecorder, CalibrationRecorderConfig,
+    FullBuildNonComputeCosts, VerifiedCalibrationEvidence, claim_calibration_execution,
+    project_full_build, read_active_calibration_reservation, read_calibration_execution_identity,
+    reserve_calibration_with_non_runtime_reserve, settle_calibration, settle_failed_calibration,
+    validate_calibration_selection,
 };
 use oracle_mvp::ordered_gte_token_audit::{OrderedGteTokenAuditConfig, audit_ordered_gte_tokens};
 use oracle_mvp::representation::{
@@ -46,16 +49,124 @@ fn run() -> Result<(), String> {
     let operation = operation
         .to_str()
         .ok_or_else(|| "operation is not UTF-8".to_owned())?;
-    if config.worker.device == "cuda"
-        && operation != "calibrate-shards"
-        && operation != "validate-calibration-selection"
-    {
+    let cuda_safe_operation = matches!(
+        operation,
+        "reserve-calibration"
+            | "calibrate-shards"
+            | "settle-calibration"
+            | "settle-failed-calibration"
+            | "project-full-build"
+            | "validate-calibration-selection"
+    );
+    if config.worker.device == "cuda" && !cuda_safe_operation {
         return Err(
             "gte-oracle refuses unadmitted CUDA work; the paid calibration requires a separate ledger-bound execution command"
                 .to_owned(),
         );
     }
     match operation {
+        "reserve-calibration" => {
+            let recorded_at_utc =
+                parse_string(&arguments.next().ok_or_else(usage)?, "RECORDED_AT_UTC")?;
+            require_no_more(arguments)?;
+            let calibration = config.calibration.as_ref().ok_or_else(|| {
+                "reserve-calibration requires calibration settings in the run config".to_owned()
+            })?;
+            let (maximum_total_charge, non_runtime_charge_reserve) = calibration.charge_split()?;
+            let admission = reserve_calibration_with_non_runtime_reserve(
+                &calibration.ledger_path,
+                &calibration.reservation_id,
+                maximum_total_charge,
+                non_runtime_charge_reserve,
+                &recorded_at_utc,
+            )
+            .map_err(|error| error.to_string())?;
+            print_json(&json!({
+                "reservation_id": admission.reservation_id,
+                "previous_ledger_sha256": admission.previous_ledger_sha256,
+                "authorization_sha256": admission.authorization_sha256,
+                "ledger_sha256": admission.ledger_sha256,
+                "reserved_maximum_charge_micro_usd": admission.maximum_new_charge.0,
+                "maximum_runtime_charge_micro_usd": admission.maximum_runtime_charge.0,
+                "non_runtime_charge_reserve_micro_usd": admission.non_runtime_charge_reserve.0,
+                "projected_calibration_total_micro_usd": admission.projected_calibration_total.0,
+                "projected_lifetime_total_micro_usd": admission.projected_lifetime_total.0,
+                "remaining_calibration_budget_micro_usd": admission.remaining_calibration_budget.0,
+                "remaining_lifetime_budget_micro_usd": admission.remaining_lifetime_budget.0,
+            }))
+        }
+        "settle-calibration" => {
+            let actual_charge = parse_micro_usd(
+                &arguments.next().ok_or_else(usage)?,
+                "ACTUAL_CHARGE_MICRO_USD",
+            )?;
+            let recorded_at_utc =
+                parse_string(&arguments.next().ok_or_else(usage)?, "RECORDED_AT_UTC")?;
+            require_no_more(arguments)?;
+            let calibration = config.calibration.as_ref().ok_or_else(|| {
+                "settle-calibration requires calibration settings in the run config".to_owned()
+            })?;
+            calibration.require_active_reservation()?;
+            let evidence = calibration.open_evidence(&config)?;
+            let ledger = settle_calibration(
+                &calibration.ledger_path,
+                &calibration.reservation_id,
+                &evidence,
+                actual_charge,
+                &recorded_at_utc,
+            )
+            .map_err(|error| error.to_string())?;
+            print_budget_ledger(&ledger)
+        }
+        "settle-failed-calibration" => {
+            let failure_evidence_path = PathBuf::from(arguments.next().ok_or_else(usage)?);
+            let actual_charge = parse_micro_usd(
+                &arguments.next().ok_or_else(usage)?,
+                "ACTUAL_CHARGE_MICRO_USD",
+            )?;
+            let recorded_at_utc =
+                parse_string(&arguments.next().ok_or_else(usage)?, "RECORDED_AT_UTC")?;
+            require_no_more(arguments)?;
+            let calibration = config.calibration.as_ref().ok_or_else(|| {
+                "settle-failed-calibration requires calibration settings in the run config"
+                    .to_owned()
+            })?;
+            calibration.require_active_reservation()?;
+            let ledger = settle_failed_calibration(
+                &calibration.ledger_path,
+                &calibration.reservation_id,
+                &failure_evidence_path,
+                actual_charge,
+                &recorded_at_utc,
+            )
+            .map_err(|error| error.to_string())?;
+            print_budget_ledger(&ledger)
+        }
+        "project-full-build" => {
+            let non_compute_costs_path = arguments.next().ok_or_else(usage)?;
+            require_no_more(arguments)?;
+            let calibration = config.calibration.as_ref().ok_or_else(|| {
+                "project-full-build requires calibration settings in the run config".to_owned()
+            })?;
+            let evidence = calibration.open_evidence(&config)?;
+            let costs: FullBuildNonComputeCostInput =
+                read_json(Path::new(&non_compute_costs_path))?;
+            let review =
+                project_full_build(&calibration.ledger_path, &evidence, costs.into_costs())
+                    .map_err(|error| error.to_string())?;
+            print_json(&json!({
+                "ledger_sha256": review.ledger_sha256,
+                "calibration_evidence_sha256": review.calibration_evidence_sha256,
+                "remaining_compute_micro_usd": review.projection.remaining_compute().0,
+                "artifact_storage_and_transfer_micro_usd": review.projection.artifact_storage_and_transfer().0,
+                "paid_lazy_inference_micro_usd": review.projection.paid_lazy_inference().0,
+                "one_cold_restart_micro_usd": review.projection.one_cold_restart().0,
+                "one_lost_shard_micro_usd": review.projection.one_lost_shard().0,
+                "total_micro_usd": review.projection.total().map_err(|error| error.to_string())?.0,
+                "projected_lifetime_total_micro_usd": review.projected_lifetime_total.0,
+                "remaining_lifetime_budget_micro_usd": review.remaining_lifetime_budget.0,
+            }))
+        }
         "model-smoke" => {
             require_no_more(arguments)?;
             let mut encoder = config.start_worker()?;
@@ -221,7 +332,8 @@ fn run() -> Result<(), String> {
             if config.worker.device != "cuda" {
                 return Err("calibrate-shards requires the approved CUDA worker".to_owned());
             }
-            calibration.validate(&config)?;
+            calibration.require_active_reservation()?;
+            calibration.validate_execution(&config)?;
             validate_calibration_selection(
                 &config.ordered_event_ids_path,
                 &config.token_audit_path,
@@ -233,20 +345,15 @@ fn run() -> Result<(), String> {
             let execution_identity =
                 read_calibration_execution_identity(&calibration.execution_identity_path)
                     .map_err(|error| error.to_string())?;
+            let execution_claim = calibration.claim_execution()?;
+            let active_reservation = execution_claim.reservation;
             let rental_started_at = Instant::now();
-            let admission = reserve_calibration(
-                &calibration.ledger_path,
-                &calibration.reservation_id,
-                MicroUsd(calibration.maximum_charge_micro_usd),
-                &calibration.recorded_at_utc,
-            )
-            .map_err(|error| error.to_string())?;
             let mut recorder = CalibrationRecorder::new(CalibrationRecorderConfig {
                 rental_started_at,
                 rental_rate_per_hour: execution_identity.rental_rate_per_hour,
-                maximum_charge: admission.maximum_new_charge,
+                maximum_charge: active_reservation.maximum_runtime_charge,
                 maximum_work_unit: Duration::from_secs(calibration.maximum_work_unit_seconds),
-                reservation: admission.evidence_binding(),
+                reservation: active_reservation.binding.clone(),
             })
             .map_err(|error| error.to_string())?;
             recorder
@@ -288,7 +395,9 @@ fn run() -> Result<(), String> {
                 "calibration_evidence_sha256": evidence.evidence_sha256(),
                 "encoded_rows": result.encoded_rows,
                 "representation_version": result.representation_version,
-                "reservation_ledger_sha256": admission.ledger_sha256,
+                "reservation_authorization_sha256": active_reservation.binding.authorization_sha256,
+                "execution_claim_authorization_sha256": execution_claim.claim_authorization_sha256,
+                "execution_claim_ledger_sha256": execution_claim.ledger_sha256,
             }))
         }
         "verify-representation" => {
@@ -424,11 +533,12 @@ struct RunConfig {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct CalibrationRunSettings {
     ledger_path: PathBuf,
     reservation_id: String,
-    maximum_charge_micro_usd: u64,
-    recorded_at_utc: String,
+    maximum_total_charge_micro_usd: u64,
+    non_runtime_charge_reserve_micro_usd: u64,
     execution_identity_path: PathBuf,
     evidence_path: PathBuf,
     token_range_upper_bounds: Vec<u32>,
@@ -436,9 +546,60 @@ struct CalibrationRunSettings {
 }
 
 impl CalibrationRunSettings {
-    fn validate(&self, config: &RunConfig) -> Result<(), String> {
-        if self.maximum_charge_micro_usd == 0
-            || self.maximum_work_unit_seconds == 0
+    fn charge_split(&self) -> Result<(MicroUsd, MicroUsd), String> {
+        let maximum_total_charge = MicroUsd(self.maximum_total_charge_micro_usd);
+        let non_runtime_charge_reserve = MicroUsd(self.non_runtime_charge_reserve_micro_usd);
+        if maximum_total_charge.0 == 0 || non_runtime_charge_reserve >= maximum_total_charge {
+            return Err(
+                "calibration non-runtime reserve must be smaller than its nonzero total provider cap"
+                    .to_owned(),
+            );
+        }
+        Ok((maximum_total_charge, non_runtime_charge_reserve))
+    }
+
+    fn require_active_reservation(
+        &self,
+    ) -> Result<oracle_mvp::gte_budget::ActiveCalibrationReservation, String> {
+        let (maximum_total_charge, non_runtime_charge_reserve) = self.charge_split()?;
+        read_active_calibration_reservation(
+            &self.ledger_path,
+            &self.reservation_id,
+            maximum_total_charge,
+            non_runtime_charge_reserve,
+        )
+        .map_err(|error| error.to_string())
+    }
+
+    fn claim_execution(&self) -> Result<oracle_mvp::gte_budget::CalibrationExecutionClaim, String> {
+        let (maximum_total_charge, non_runtime_charge_reserve) = self.charge_split()?;
+        claim_calibration_execution(
+            &self.ledger_path,
+            &self.reservation_id,
+            maximum_total_charge,
+            non_runtime_charge_reserve,
+        )
+        .map_err(|error| error.to_string())
+    }
+
+    fn evidence_paths(&self, config: &RunConfig) -> CalibrationEvidencePaths {
+        CalibrationEvidencePaths {
+            ordered_event_ids_path: config.ordered_event_ids_path.clone(),
+            token_audit_path: config.token_audit_path.clone(),
+            batch_plan_path: config.batch_plan_path.clone(),
+            representation_path: config.representation_path.clone(),
+            execution_identity_path: self.execution_identity_path.clone(),
+        }
+    }
+
+    fn open_evidence(&self, config: &RunConfig) -> Result<VerifiedCalibrationEvidence, String> {
+        VerifiedCalibrationEvidence::open(&self.evidence_path, &self.evidence_paths(config))
+            .map_err(|error| error.to_string())
+    }
+
+    fn validate_execution(&self, config: &RunConfig) -> Result<(), String> {
+        self.charge_split()?;
+        if self.maximum_work_unit_seconds == 0
             || self.token_range_upper_bounds.is_empty()
             || self.token_range_upper_bounds.contains(&0)
             || self
@@ -518,6 +679,25 @@ struct WorkerLaunch {
     model_lock_path: PathBuf,
     dependency_lock_path: PathBuf,
     device: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct FullBuildNonComputeCostInput {
+    artifact_storage_and_transfer_micro_usd: u64,
+    one_cold_restart_micro_usd: u64,
+    one_lost_shard_micro_usd: u64,
+}
+
+impl FullBuildNonComputeCostInput {
+    fn into_costs(self) -> FullBuildNonComputeCosts {
+        FullBuildNonComputeCosts {
+            artifact_storage_and_transfer: MicroUsd(self.artifact_storage_and_transfer_micro_usd),
+            paid_lazy_inference: MicroUsd(0),
+            one_cold_restart: MicroUsd(self.one_cold_restart_micro_usd),
+            one_lost_shard: MicroUsd(self.one_lost_shard_micro_usd),
+        }
+    }
 }
 
 impl RunConfig {
@@ -646,6 +826,22 @@ fn parse_positive_usize(value: &OsString, name: &str) -> Result<usize, String> {
         .ok_or_else(|| format!("{name} must be a positive integer"))
 }
 
+fn parse_micro_usd(value: &OsString, name: &str) -> Result<MicroUsd, String> {
+    value
+        .to_str()
+        .and_then(|value| value.parse::<u64>().ok())
+        .map(MicroUsd)
+        .ok_or_else(|| format!("{name} must be a nonnegative integer"))
+}
+
+fn parse_string(value: &OsString, name: &str) -> Result<String, String> {
+    value
+        .to_str()
+        .filter(|value| !value.is_empty())
+        .map(str::to_owned)
+        .ok_or_else(|| format!("{name} must be nonempty UTF-8"))
+}
+
 fn require_no_more(mut arguments: impl Iterator<Item = OsString>) -> Result<(), String> {
     if arguments.next().is_some() {
         Err(usage())
@@ -662,7 +858,21 @@ fn print_json(value: &impl serde::Serialize) -> Result<(), String> {
     writeln!(output).map_err(|error| format!("could not write result: {error}"))
 }
 
+fn print_budget_ledger(ledger: &BudgetLedger) -> Result<(), String> {
+    print_json(&json!({
+        "ledger_sha256": ledger.ledger_sha256,
+        "lifetime_cap_micro_usd": ledger.lifetime_cap.0,
+        "calibration_lifetime_cap_micro_usd": ledger.calibration_lifetime_cap.0,
+        "actual_spend_micro_usd": ledger.actual_spend.0,
+        "outstanding_commitments_micro_usd": ledger.outstanding_commitments.0,
+        "calibration_actual_spend_micro_usd": ledger.calibration_actual_spend.0,
+        "calibration_outstanding_commitments_micro_usd": ledger
+            .calibration_outstanding_commitments
+            .0,
+    }))
+}
+
 fn usage() -> String {
-    "usage: gte-oracle <operation> CONFIG_JSON [arguments]\n\noperations:\n  model-smoke CONFIG_JSON\n  prepare-semantic-order CONFIG_JSON\n  audit-tokens CONFIG_JSON\n  plan-batches CONFIG_JSON\n  prepare-representation CONFIG_JSON\n  validate-calibration-selection CONFIG_JSON SHARD_ORDINALS TOKEN_RANGE_UPPER_BOUNDS\n  embed-shards CONFIG_JSON SHARD_ORDINALS\n  calibrate-shards CONFIG_JSON SHARD_ORDINALS\n  verify-representation CONFIG_JSON\n  similar-notes CONFIG_JSON EVENT_IDS DEPTH REPRESENTATION_VERSION\n  vectors-for-notes CONFIG_JSON EVENT_IDS REPRESENTATION_VERSION"
+    "usage: gte-oracle <operation> CONFIG_JSON [arguments]\n\noperations:\n  reserve-calibration CONFIG_JSON RECORDED_AT_UTC\n  calibrate-shards CONFIG_JSON SHARD_ORDINALS\n  settle-calibration CONFIG_JSON ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  settle-failed-calibration CONFIG_JSON FAILURE_EVIDENCE ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  project-full-build CONFIG_JSON NON_COMPUTE_COSTS_JSON\n  model-smoke CONFIG_JSON\n  prepare-semantic-order CONFIG_JSON\n  audit-tokens CONFIG_JSON\n  plan-batches CONFIG_JSON\n  prepare-representation CONFIG_JSON\n  validate-calibration-selection CONFIG_JSON SHARD_ORDINALS TOKEN_RANGE_UPPER_BOUNDS\n  embed-shards CONFIG_JSON SHARD_ORDINALS\n  verify-representation CONFIG_JSON\n  similar-notes CONFIG_JSON EVENT_IDS DEPTH REPRESENTATION_VERSION\n  vectors-for-notes CONFIG_JSON EVENT_IDS REPRESENTATION_VERSION"
         .to_owned()
 }
