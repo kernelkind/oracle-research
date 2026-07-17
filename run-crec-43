@@ -2,11 +2,6 @@
 set -euo pipefail
 
 repository="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-shell_file="$repository/../nd-oracle-mvp/shell.nix"
 
-exec nix-shell "$shell_file" --arg use_android false --run "
-  cxx_lib=\$(nix-instantiate --eval --strict -E '(import <nixpkgs> {}).stdenv.cc.cc.lib.outPath' | tr -d '\"')
-  export LD_LIBRARY_PATH=\"\$cxx_lib/lib\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}\"
-  cd '$repository'
-  cargo run --quiet --bin manual_workflow
-"
+cd "$repository"
+exec nix develop --command cargo run --quiet --bin manual_workflow

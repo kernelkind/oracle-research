@@ -1,0 +1,7 @@
+.git
+target
+gte/__pycache__
+tests
+budget-ledger.json
+flake.nix
+flake.lock

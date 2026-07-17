@@ -7,10 +7,15 @@ edition = "2024"
 name = "oracle-mvp"
 path = "src/main.rs"
 
+[[bin]]
+name = "gte-oracle"
+path = "src/bin/gte_oracle.rs"
+
 [dependencies]
 bech32 = "=0.11.1"
 fasttext = "=0.8.0"
 linkify = "=0.11.0"
+memmap2 = "=0.9.11"
 nostrdb = { git = "https://github.com/kernelkind/nostrdb-rs", rev = "aca2f66e3579dee0c9245e4c66100dd12cd940d6" }
 ort = { version = "=2.0.0-rc.12", default-features = false, features = ["api-24", "cuda", "load-dynamic", "std"] }
 profiling = "1.0"

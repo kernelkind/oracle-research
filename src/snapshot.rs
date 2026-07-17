@@ -857,28 +857,35 @@ pub(crate) enum Validation {
 }
 
 pub(crate) fn open_ndb(path: &Path, validation: Validation) -> Result<Ndb> {
-    open_ndb_with_ingesters(path, validation, None)
+    open_ndb_with_ingesters(path, validation, None, false)
+}
+
+pub(crate) fn open_existing_ndb(path: &Path, validation: Validation) -> Result<Ndb> {
+    open_ndb_with_ingesters(path, validation, None, true)
 }
 
 fn open_source_ingest_ndb(path: &Path) -> Result<Ndb> {
-    open_ndb_with_ingesters(path, Validation::Verify, Some(1))
+    open_ndb_with_ingesters(path, Validation::Verify, Some(1), false)
 }
 
 fn open_ndb_with_ingesters(
     path: &Path,
     validation: Validation,
     ingester_threads: Option<i32>,
+    no_migrate: bool,
 ) -> Result<Ndb> {
     let path_str = path
         .to_str()
         .ok_or_else(|| Error::NonUtf8Path(path.to_owned()))?;
     let map_size = 256_usize.saturating_mul(1_024 * 1_024 * 1_024);
+    let no_migrate_flag = 1;
     let no_fulltext = 1 << 2;
     let no_note_blocks = 1 << 3;
     let no_stats = 1 << 4;
     let skip_validation = matches!(validation, Validation::TrustedSource);
+    let flags = no_fulltext | no_note_blocks | no_stats | (i32::from(no_migrate) * no_migrate_flag);
     let config = Config::new()
-        .set_flags(no_fulltext | no_note_blocks | no_stats)
+        .set_flags(flags)
         .set_mapsize(map_size)
         .skip_validation(skip_validation);
     let config = match ingester_threads {
