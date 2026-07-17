@@ -547,7 +547,7 @@ pub fn build_representation_shards_observed(
         ));
     }
     let descriptor = encoder.descriptor().clone();
-    let descriptor_sha256 = descriptor_hash(&descriptor)?;
+    let descriptor_sha256 = representation_descriptor_sha256(&descriptor)?;
     let index_manifest_sha256 = hash_file(&root.join(INDEX_DIRECTORY).join(INDEX_MANIFEST_FILE))?;
     let build_identity_sha256 = ensure_build_identity(
         root,
@@ -1223,7 +1223,7 @@ fn verify_manifest(
         ));
     }
     validate_descriptor(&manifest.descriptor)?;
-    if descriptor_hash(&manifest.descriptor)? != manifest.descriptor_sha256 {
+    if representation_descriptor_sha256(&manifest.descriptor)? != manifest.descriptor_sha256 {
         return Err(Error::Invariant(
             "representation descriptor checksum does not match".to_owned(),
         ));
@@ -1320,7 +1320,7 @@ fn verify_manifest_structure(
         ));
     }
     validate_descriptor(&manifest.descriptor)?;
-    if descriptor_hash(&manifest.descriptor)? != manifest.descriptor_sha256 {
+    if representation_descriptor_sha256(&manifest.descriptor)? != manifest.descriptor_sha256 {
         return Err(Error::Invariant(
             "representation descriptor checksum does not match".to_owned(),
         ));
@@ -1918,7 +1918,7 @@ fn validate_descriptor(descriptor: &RepresentationDescriptor) -> Result<()> {
     Ok(())
 }
 
-fn descriptor_hash(descriptor: &RepresentationDescriptor) -> Result<String> {
+pub fn representation_descriptor_sha256(descriptor: &RepresentationDescriptor) -> Result<String> {
     let bytes = serde_json::to_vec(descriptor).map_err(|source| Error::Manifest {
         operation: "encode",
         path: PathBuf::from("<representation-descriptor>"),

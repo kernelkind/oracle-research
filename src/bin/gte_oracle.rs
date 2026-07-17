@@ -15,13 +15,14 @@ use oracle_mvp::gte_budget::{
     BudgetLedger, CalibrationEvidencePaths, CalibrationRecorder, CalibrationRecorderConfig,
     FullBuildNonComputeCosts, VerifiedCalibrationEvidence, claim_calibration_execution,
     project_full_build, read_active_calibration_reservation, read_calibration_execution_identity,
-    reserve_calibration_with_non_runtime_reserve, settle_calibration, settle_failed_calibration,
-    validate_calibration_selection,
+    read_unclaimed_calibration_reservation, reserve_calibration_with_non_runtime_reserve,
+    settle_calibration, settle_failed_calibration, validate_calibration_selection,
 };
 use oracle_mvp::ordered_gte_token_audit::{OrderedGteTokenAuditConfig, audit_ordered_gte_tokens};
 use oracle_mvp::representation::{
     RepresentationBuildConfig, RepresentationEncoder, build_representation_shards,
-    build_representation_shards_observed, prepare_representation_index, verify_representation,
+    build_representation_shards_observed, prepare_representation_index,
+    representation_descriptor_sha256, verify_representation,
 };
 use oracle_mvp::representation_batch_plan::{
     RepresentationBatchPlanConfig, create_representation_batch_plan,
@@ -56,6 +57,8 @@ fn run() -> Result<(), String> {
             | "settle-calibration"
             | "settle-failed-calibration"
             | "project-full-build"
+            | "describe-representation"
+            | "prepare-representation"
             | "validate-calibration-selection"
     );
     if config.worker.device == "cuda" && !cuda_safe_operation {
@@ -165,6 +168,22 @@ fn run() -> Result<(), String> {
                 "total_micro_usd": review.projection.total().map_err(|error| error.to_string())?.0,
                 "projected_lifetime_total_micro_usd": review.projected_lifetime_total.0,
                 "remaining_lifetime_budget_micro_usd": review.remaining_lifetime_budget.0,
+            }))
+        }
+        "describe-representation" => {
+            require_no_more(arguments)?;
+            let descriptor = config
+                .worker_config()?
+                .representation_descriptor()
+                .map_err(|error| error.to_string())?;
+            let descriptor_json =
+                serde_json::to_string(&descriptor).map_err(|error| error.to_string())?;
+            let descriptor_sha256 =
+                representation_descriptor_sha256(&descriptor).map_err(|error| error.to_string())?;
+            print_json(&json!({
+                "descriptor": descriptor,
+                "descriptor_json": descriptor_json,
+                "descriptor_sha256": descriptor_sha256,
             }))
         }
         "model-smoke" => {
@@ -292,10 +311,22 @@ fn run() -> Result<(), String> {
                 &token_range_upper_bounds,
             )
             .map_err(|error| error.to_string())?;
+            let calibration = config.calibration.as_ref().ok_or_else(|| {
+                "validate-calibration-selection requires calibration settings in the run config"
+                    .to_owned()
+            })?;
+            config.validate_descriptor_bindings()?;
+            let reservation = calibration
+                .validate_preflight(&token_range_upper_bounds, &config.container_image)?;
             print_json(&json!({
                 "status": "pass",
                 "shard_ordinals": ordinals,
                 "token_range_upper_bounds": token_range_upper_bounds,
+                "reservation_id": reservation.binding.reservation_id,
+                "reservation_authorization_sha256": reservation.binding.authorization_sha256,
+                "maximum_total_charge_micro_usd": reservation.maximum_total_charge.0,
+                "maximum_runtime_charge_micro_usd": reservation.maximum_runtime_charge.0,
+                "non_runtime_charge_reserve_micro_usd": reservation.non_runtime_charge_reserve.0,
             }))
         }
         "embed-shards" => {
@@ -571,6 +602,30 @@ impl CalibrationRunSettings {
         .map_err(|error| error.to_string())
     }
 
+    fn validate_preflight(
+        &self,
+        token_range_upper_bounds: &[u32],
+        container_image: &str,
+    ) -> Result<oracle_mvp::gte_budget::ActiveCalibrationReservation, String> {
+        if self.maximum_work_unit_seconds == 0 {
+            return Err("calibration maximum work unit must be nonzero".to_owned());
+        }
+        if self.token_range_upper_bounds != token_range_upper_bounds {
+            return Err(
+                "calibration CLI token ranges do not match the configured token ranges".to_owned(),
+            );
+        }
+        require_immutable_container_image(container_image)?;
+        let (maximum_total_charge, non_runtime_charge_reserve) = self.charge_split()?;
+        read_unclaimed_calibration_reservation(
+            &self.ledger_path,
+            &self.reservation_id,
+            maximum_total_charge,
+            non_runtime_charge_reserve,
+        )
+        .map_err(|error| error.to_string())
+    }
+
     fn claim_execution(&self) -> Result<oracle_mvp::gte_budget::CalibrationExecutionClaim, String> {
         let (maximum_total_charge, non_runtime_charge_reserve) = self.charge_split()?;
         claim_calibration_execution(
@@ -599,6 +654,8 @@ impl CalibrationRunSettings {
 
     fn validate_execution(&self, config: &RunConfig) -> Result<(), String> {
         self.charge_split()?;
+        require_immutable_container_image(&config.container_image)?;
+        config.validate_descriptor_bindings()?;
         if self.maximum_work_unit_seconds == 0
             || self.token_range_upper_bounds.is_empty()
             || self.token_range_upper_bounds.contains(&0)
@@ -701,8 +758,55 @@ impl FullBuildNonComputeCostInput {
 }
 
 impl RunConfig {
-    fn start_worker(&self) -> Result<GteProcessEncoder, String> {
-        GteProcessEncoder::start(GteWorkerConfig {
+    fn validate_descriptor_bindings(&self) -> Result<(), String> {
+        if self.worker.device != "cuda"
+            || self.torch_version != "2.12.1"
+            || self.transformers_version != "4.41.2"
+            || self.cuda_version != "13.0.2"
+        {
+            return Err("calibration config does not use the approved runtime identity".to_owned());
+        }
+        if !self.worker.program.is_file() {
+            return Err(format!(
+                "calibration worker program `{}` is not a file",
+                self.worker.program.display()
+            ));
+        }
+        let launched_worker_source = self
+            .worker
+            .worker_path
+            .as_ref()
+            .unwrap_or(&self.worker.program);
+        for (descriptor_path, launched_path) in [
+            (&self.worker_source_path, launched_worker_source),
+            (&self.model_lock_path, &self.worker.model_lock_path),
+            (
+                &self.dependency_lock_path,
+                &self.worker.dependency_lock_path,
+            ),
+        ] {
+            if hash_file(descriptor_path)? != hash_file(launched_path)? {
+                return Err(
+                    "calibration worker must use the exact descriptor-bound inputs".to_owned(),
+                );
+            }
+        }
+        let approved_model_dir = self
+            .model_lock_path
+            .parent()
+            .ok_or_else(|| "calibration model lock has no parent directory".to_owned())?
+            .join("model");
+        if self.worker.model_dir != approved_model_dir || !self.worker.model_dir.is_dir() {
+            return Err(
+                "calibration worker model directory is not the descriptor-bound model directory"
+                    .to_owned(),
+            );
+        }
+        Ok(())
+    }
+
+    fn worker_config(&self) -> Result<GteWorkerConfig, String> {
+        Ok(GteWorkerConfig {
             program: self.worker.program.clone(),
             prefix_arguments: self
                 .worker
@@ -723,8 +827,26 @@ impl RunConfig {
             transformers_version: self.transformers_version.clone(),
             cuda_version: self.cuda_version.clone(),
         })
-        .map_err(|error| error.to_string())
     }
+
+    fn start_worker(&self) -> Result<GteProcessEncoder, String> {
+        GteProcessEncoder::start(self.worker_config()?).map_err(|error| error.to_string())
+    }
+}
+
+fn require_immutable_container_image(image: &str) -> Result<(), String> {
+    let Some((repository, digest)) = image.rsplit_once("@sha256:") else {
+        return Err("calibration container image must use an immutable digest".to_owned());
+    };
+    if repository.is_empty()
+        || digest.len() != 64
+        || !digest
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+    {
+        return Err("calibration container image must use an immutable digest".to_owned());
+    }
+    Ok(())
 }
 
 fn read_json<T: for<'de> Deserialize<'de>>(path: &Path) -> Result<T, String> {
@@ -873,6 +995,6 @@ fn print_budget_ledger(ledger: &BudgetLedger) -> Result<(), String> {
 }
 
 fn usage() -> String {
-    "usage: gte-oracle <operation> CONFIG_JSON [arguments]\n\noperations:\n  reserve-calibration CONFIG_JSON RECORDED_AT_UTC\n  calibrate-shards CONFIG_JSON SHARD_ORDINALS\n  settle-calibration CONFIG_JSON ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  settle-failed-calibration CONFIG_JSON FAILURE_EVIDENCE ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  project-full-build CONFIG_JSON NON_COMPUTE_COSTS_JSON\n  model-smoke CONFIG_JSON\n  prepare-semantic-order CONFIG_JSON\n  audit-tokens CONFIG_JSON\n  plan-batches CONFIG_JSON\n  prepare-representation CONFIG_JSON\n  validate-calibration-selection CONFIG_JSON SHARD_ORDINALS TOKEN_RANGE_UPPER_BOUNDS\n  embed-shards CONFIG_JSON SHARD_ORDINALS\n  verify-representation CONFIG_JSON\n  similar-notes CONFIG_JSON EVENT_IDS DEPTH REPRESENTATION_VERSION\n  vectors-for-notes CONFIG_JSON EVENT_IDS REPRESENTATION_VERSION"
+    "usage: gte-oracle <operation> CONFIG_JSON [arguments]\n\noperations:\n  reserve-calibration CONFIG_JSON RECORDED_AT_UTC\n  calibrate-shards CONFIG_JSON SHARD_ORDINALS\n  settle-calibration CONFIG_JSON ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  settle-failed-calibration CONFIG_JSON FAILURE_EVIDENCE ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  project-full-build CONFIG_JSON NON_COMPUTE_COSTS_JSON\n  describe-representation CONFIG_JSON\n  model-smoke CONFIG_JSON\n  prepare-semantic-order CONFIG_JSON\n  audit-tokens CONFIG_JSON\n  plan-batches CONFIG_JSON\n  prepare-representation CONFIG_JSON\n  validate-calibration-selection CONFIG_JSON SHARD_ORDINALS TOKEN_RANGE_UPPER_BOUNDS\n  embed-shards CONFIG_JSON SHARD_ORDINALS\n  verify-representation CONFIG_JSON\n  similar-notes CONFIG_JSON EVENT_IDS DEPTH REPRESENTATION_VERSION\n  vectors-for-notes CONFIG_JSON EVENT_IDS REPRESENTATION_VERSION"
         .to_owned()
 }

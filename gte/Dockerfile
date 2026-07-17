@@ -12,6 +12,10 @@ RUN cargo build --locked --release --bin gte-oracle
 
 FROM docker.io/pytorch/pytorch@sha256:72f863fa1fe13d5d87a72d00db2c85fb2d43409ee08dd26bc469de4c8a28b427
 
+ARG ORACLE_MVP_SOURCE_COMMIT
+RUN test -n "$ORACLE_MVP_SOURCE_COMMIT"
+LABEL org.opencontainers.image.revision="$ORACLE_MVP_SOURCE_COMMIT"
+
 ENV CUBLAS_WORKSPACE_CONFIG=:4096:8 \
     HF_HUB_DISABLE_TELEMETRY=1 \
     HF_HUB_OFFLINE=1 \
@@ -35,10 +39,11 @@ RUN uv venv --system-site-packages /opt/gte-venv \
         --require-hashes \
         --requirement /tmp/gte-locks/requirements.lock \
     && python -m pip check \
-    && python -c 'import sys, torch, transformers; assert sys.version_info[:2] == (3, 12); assert torch.__version__.split("+")[0] == "2.12.1"; assert torch.version.cuda == "13.0"; assert transformers.__version__ == "4.41.2"'
+    && python -c 'import importlib.metadata as metadata, sys, torch; assert sys.version_info[:2] == (3, 12); assert metadata.version("torch") == "2.12.1+cu130"; assert torch.version.cuda == "13.0"; assert metadata.version("cuda-toolkit") == "13.0.2"; assert metadata.version("transformers") == "4.41.2"'
 
 COPY --from=rust-builder /source/target/release/gte-oracle /usr/local/bin/gte-oracle
 COPY gte/worker.py /opt/oracle-mvp/gte/worker.py
 COPY gte/model_bundle.py /opt/oracle-mvp/gte/model_bundle.py
+COPY gte/calibration_package.py /opt/oracle-mvp/gte/calibration_package.py
 
 ENTRYPOINT ["/usr/local/bin/gte-oracle"]

@@ -56,6 +56,34 @@ pub struct GteWorkerConfig {
     pub cuda_version: String,
 }
 
+impl GteWorkerConfig {
+    /// Derive the exact representation identity without starting the model.
+    /// The worker handshake later proves that the configured runtime versions
+    /// and execution device match this descriptor.
+    pub fn representation_descriptor(&self) -> Result<RepresentationDescriptor> {
+        validate_config(self)?;
+        Ok(RepresentationDescriptor {
+            model_id: MODEL_ID.to_owned(),
+            model_revision: MODEL_REVISION.to_owned(),
+            model_lock_sha256: self.model_lock_sha256.clone(),
+            worker_sha256: self.worker_sha256.clone(),
+            dependency_lock_sha256: self.dependency_lock_sha256.clone(),
+            container_image: self.container_image.clone(),
+            torch_version: self.torch_version.clone(),
+            transformers_version: self.transformers_version.clone(),
+            cuda_version: self.cuda_version.clone(),
+            execution_device: self.device.clone(),
+            dimensions: DIMENSIONS,
+            model_token_ceiling: MODEL_TOKEN_CEILING,
+            document_input: "raw-note-content".to_owned(),
+            query_instruction: QUERY_INSTRUCTION.to_owned(),
+            pooling: "last-token".to_owned(),
+            normalization: "l2".to_owned(),
+            numeric_format: "f32le".to_owned(),
+        })
+    }
+}
+
 pub struct GteProcessEncoder {
     child: Child,
     input: BufWriter<ChildStdin>,
@@ -66,7 +94,7 @@ pub struct GteProcessEncoder {
 
 impl GteProcessEncoder {
     pub fn start(config: GteWorkerConfig) -> Result<Self> {
-        validate_config(&config)?;
+        let descriptor = config.representation_descriptor()?;
         let mut command = Command::new(&config.program);
         command.args(&config.prefix_arguments);
         if let Some(worker_path) = &config.worker_path {
@@ -147,26 +175,7 @@ impl GteProcessEncoder {
             child,
             input: BufWriter::new(input),
             output,
-            descriptor: RepresentationDescriptor {
-                model_id: MODEL_ID.to_owned(),
-                model_revision: MODEL_REVISION.to_owned(),
-                model_lock_sha256: config.model_lock_sha256,
-                worker_sha256: config.worker_sha256,
-                dependency_lock_sha256: config.dependency_lock_sha256,
-                container_image: config.container_image,
-                torch_version: actual_torch_version.expect("verified worker torch version"),
-                transformers_version: actual_transformers_version
-                    .expect("verified worker Transformers version"),
-                cuda_version: actual_cuda_version.expect("verified worker CUDA version"),
-                execution_device: config.device,
-                dimensions: DIMENSIONS,
-                model_token_ceiling: MODEL_TOKEN_CEILING,
-                document_input: "raw-note-content".to_owned(),
-                query_instruction: QUERY_INSTRUCTION.to_owned(),
-                pooling: "last-token".to_owned(),
-                normalization: "l2".to_owned(),
-                numeric_format: "f32le".to_owned(),
-            },
+            descriptor,
             next_request: 0,
         })
     }

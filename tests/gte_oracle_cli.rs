@@ -253,3 +253,120 @@ fn model_operations_rely_on_the_worker_verified_bundle_without_a_second_host_ver
     assert!(!stderr.contains("missing field"), "{stderr}");
     assert!(!stderr.contains("model-bundle verifier"), "{stderr}");
 }
+
+#[test]
+fn representation_descriptor_is_derived_without_starting_the_worker() {
+    let temporary = tempfile::tempdir().expect("temporary directory");
+    let model_lock = temporary.path().join("model-lock.json");
+    let worker_source = temporary.path().join("worker.py");
+    let dependency_lock = temporary.path().join("requirements.lock");
+    std::fs::write(&model_lock, b"model lock").expect("write model lock");
+    std::fs::write(&worker_source, b"worker source").expect("write worker source");
+    std::fs::write(&dependency_lock, b"dependency lock").expect("write dependency lock");
+
+    let image = "docker.io/kernelkind/oracle-mvp@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+    let config_path = temporary.path().join("descriptor.json");
+    std::fs::write(
+        &config_path,
+        serde_json::to_vec_pretty(&json!({
+            "corpus_path": temporary.path().join("missing-corpus"),
+            "ordered_event_ids_path": temporary.path().join("missing-order"),
+            "token_audit_path": temporary.path().join("missing-audit"),
+            "batch_plan_path": temporary.path().join("missing-batch-plan"),
+            "representation_path": temporary.path().join("missing-representation"),
+            "model_lock_path": model_lock,
+            "worker_source_path": worker_source,
+            "dependency_lock_path": dependency_lock,
+            "container_image": image,
+            "torch_version": "2.12.1",
+            "transformers_version": "4.41.2",
+            "cuda_version": "13.0.2",
+            "worker": {
+                "program": temporary.path().join("missing-python"),
+                "worker_path": temporary.path().join("missing-worker"),
+                "model_dir": temporary.path().join("missing-model"),
+                "model_lock_path": temporary.path().join("missing-worker-model-lock"),
+                "dependency_lock_path": temporary.path().join("missing-worker-dependencies"),
+                "device": "cuda"
+            },
+            "batch_size": 32,
+            "shard_rows": 16384
+        }))
+        .expect("serialize config"),
+    )
+    .expect("write config");
+
+    let output = Command::new(env!("CARGO_BIN_EXE_gte-oracle"))
+        .arg("describe-representation")
+        .arg(&config_path)
+        .output()
+        .expect("derive representation descriptor");
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let result: serde_json::Value =
+        serde_json::from_slice(&output.stdout).expect("decode descriptor result");
+    assert_eq!(result["descriptor"]["execution_device"], "cuda");
+    assert_eq!(result["descriptor"]["container_image"], image);
+    let descriptor_json = result["descriptor_json"]
+        .as_str()
+        .expect("exact descriptor JSON");
+    let reparsed: serde_json::Value =
+        serde_json::from_str(descriptor_json).expect("reparse exact descriptor JSON");
+    assert_eq!(reparsed, result["descriptor"]);
+    assert_eq!(
+        result["descriptor_sha256"]
+            .as_str()
+            .expect("descriptor hash")
+            .len(),
+        64
+    );
+}
+
+#[test]
+fn prepare_representation_is_cuda_safe_and_does_not_start_the_worker() {
+    let temporary = tempfile::tempdir().expect("temporary directory");
+    let config_path = temporary.path().join("prepare.json");
+    std::fs::write(
+        &config_path,
+        serde_json::to_vec_pretty(&json!({
+            "corpus_path": temporary.path().join("missing-corpus"),
+            "ordered_event_ids_path": temporary.path().join("missing-order"),
+            "token_audit_path": temporary.path().join("missing-audit"),
+            "batch_plan_path": temporary.path().join("missing-batch-plan"),
+            "representation_path": temporary.path().join("missing-representation"),
+            "model_lock_path": temporary.path().join("missing-model-lock"),
+            "worker_source_path": temporary.path().join("missing-worker-source"),
+            "dependency_lock_path": temporary.path().join("missing-dependency-lock"),
+            "container_image": "docker.io/kernelkind/oracle-mvp@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+            "torch_version": "2.12.1",
+            "transformers_version": "4.41.2",
+            "cuda_version": "13.0.2",
+            "worker": {
+                "program": temporary.path().join("missing-python"),
+                "worker_path": temporary.path().join("missing-worker"),
+                "model_dir": temporary.path().join("missing-model"),
+                "model_lock_path": temporary.path().join("missing-worker-model-lock"),
+                "dependency_lock_path": temporary.path().join("missing-worker-dependencies"),
+                "device": "cuda"
+            },
+            "batch_size": 32,
+            "shard_rows": 16384
+        }))
+        .expect("serialize config"),
+    )
+    .expect("write config");
+
+    let output = Command::new(env!("CARGO_BIN_EXE_gte-oracle"))
+        .arg("prepare-representation")
+        .arg(&config_path)
+        .output()
+        .expect("prepare representation");
+    assert!(!output.status.success());
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(!stderr.contains("refuses unadmitted CUDA work"), "{stderr}");
+    assert!(!stderr.contains("missing-python"), "{stderr}");
+    assert!(stderr.contains("missing-order"), "{stderr}");
+}

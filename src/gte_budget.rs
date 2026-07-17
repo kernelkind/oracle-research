@@ -24,7 +24,7 @@ const LEDGER_SCHEMA_VERSION: u32 = 2;
 const LEDGER_SCOPE: &str = "Entire oracle MVP effort";
 const CALIBRATION_EVIDENCE_SCHEMA_VERSION: u32 = 6;
 const CALIBRATION_EVIDENCE_KIND: &str = "gte-calibration-evidence";
-const CALIBRATION_EXECUTION_IDENTITY_SCHEMA_VERSION: u32 = 1;
+const CALIBRATION_EXECUTION_IDENTITY_SCHEMA_VERSION: u32 = 2;
 const CALIBRATION_EXECUTION_IDENTITY_KIND: &str = "gte-calibration-execution-identity";
 const APPROVED_GPU_MODEL: &str = "NVIDIA RTX PRO 6000 Blackwell Workstation Edition";
 const APPROVED_PROVIDER: &str = "vast.ai";
@@ -34,6 +34,7 @@ const MIN_LOCAL_NVME_BYTES: u64 = 200_000_000_000;
 const MIN_LOCAL_NVME_BANDWIDTH_BYTES_PER_SECOND: u64 = 1_000_000_000;
 const MIN_RELIABILITY_MILLIONTHS: u32 = 995_000;
 const REQUIRED_POWER_LIMIT_WATTS: u32 = 600;
+const MIN_AVAILABLE_DURATION_SECONDS: u64 = 86_400;
 
 /// Maximum cumulative charge authorized for all GTE calibration attempts.
 pub const CALIBRATION_LIFETIME_CAP: MicroUsd = MicroUsd::from_dollars(25);
@@ -186,6 +187,7 @@ pub struct CalibrationExecutionIdentity {
     pub available_duration_seconds: u64,
     pub rental_provider: String,
     pub rental_offer_id: String,
+    pub rental_instance_id: String,
     pub rental_rate_per_hour: MicroUsd,
 }
 
@@ -1371,6 +1373,38 @@ pub fn read_active_calibration_reservation(
     expected_maximum_total_charge: MicroUsd,
     expected_non_runtime_charge_reserve: MicroUsd,
 ) -> Result<ActiveCalibrationReservation> {
+    read_expected_calibration_reservation(
+        ledger_path,
+        reservation_id,
+        expected_maximum_total_charge,
+        expected_non_runtime_charge_reserve,
+        false,
+    )
+}
+
+/// Read the exact active reservation only when no paid execution has claimed it.
+pub fn read_unclaimed_calibration_reservation(
+    ledger_path: &Path,
+    reservation_id: &str,
+    expected_maximum_total_charge: MicroUsd,
+    expected_non_runtime_charge_reserve: MicroUsd,
+) -> Result<ActiveCalibrationReservation> {
+    read_expected_calibration_reservation(
+        ledger_path,
+        reservation_id,
+        expected_maximum_total_charge,
+        expected_non_runtime_charge_reserve,
+        true,
+    )
+}
+
+fn read_expected_calibration_reservation(
+    ledger_path: &Path,
+    reservation_id: &str,
+    expected_maximum_total_charge: MicroUsd,
+    expected_non_runtime_charge_reserve: MicroUsd,
+    reject_claimed: bool,
+) -> Result<ActiveCalibrationReservation> {
     validate_reservation_input(reservation_id, "active-reservation")?;
     calibration_runtime_charge(
         expected_maximum_total_charge,
@@ -1385,6 +1419,20 @@ pub fn read_active_calibration_reservation(
     {
         return Err(Error::Budget(format!(
             "calibration reservation `{reservation_id}` does not match the configured total and non-runtime charges"
+        )));
+    }
+    if reject_claimed
+        && document.entries.iter().any(|entry| {
+            entry.get("kind").and_then(serde_json::Value::as_str)
+                == Some("calibration_execution_claim")
+                && entry
+                    .get("reservation_id")
+                    .and_then(serde_json::Value::as_str)
+                    == Some(reservation_id)
+        })
+    {
+        return Err(Error::Budget(format!(
+            "calibration reservation `{reservation_id}` is already claimed for execution"
         )));
     }
     Ok(active)
@@ -1469,6 +1517,7 @@ pub fn settle_calibration(
                 .to_owned(),
         ));
     }
+    require_calibration_execution_claim(&document, &active)?;
     if document.entries.iter().any(|entry| {
         entry.get("kind").and_then(serde_json::Value::as_str) == Some("calibration_settlement")
             && entry
@@ -1906,6 +1955,7 @@ fn validate_execution_identity(identity: &CalibrationExecutionIdentity) -> Resul
         identity.host_cpu.as_str(),
         identity.rental_provider.as_str(),
         identity.rental_offer_id.as_str(),
+        identity.rental_instance_id.as_str(),
     ];
     if identity.schema_version != CALIBRATION_EXECUTION_IDENTITY_SCHEMA_VERSION
         || identity.artifact_kind != CALIBRATION_EXECUTION_IDENTITY_KIND
@@ -1920,7 +1970,7 @@ fn validate_execution_identity(identity: &CalibrationExecutionIdentity) -> Resul
         || identity.local_nvme_bandwidth_bytes_per_second
             < MIN_LOCAL_NVME_BANDWIDTH_BYTES_PER_SECOND
         || !identity.on_demand
-        || identity.available_duration_seconds == 0
+        || identity.available_duration_seconds < MIN_AVAILABLE_DURATION_SECONDS
         || identity.rental_provider != APPROVED_PROVIDER
         || !driver_at_least(&identity.driver_version, MIN_DRIVER_VERSION)
         || identity.rental_rate_per_hour.0 == 0
@@ -1935,9 +1985,13 @@ fn validate_execution_identity(identity: &CalibrationExecutionIdentity) -> Resul
 }
 
 fn driver_at_least(actual: &str, required: [u32; 3]) -> bool {
-    let mut parsed = actual.split('.').map(str::parse::<u32>);
-    let actual = match (parsed.next(), parsed.next(), parsed.next()) {
-        (Some(Ok(major)), Some(Ok(minor)), Some(Ok(patch))) => [major, minor, patch],
+    let parsed = actual
+        .split('.')
+        .map(str::parse::<u32>)
+        .collect::<std::result::Result<Vec<_>, _>>();
+    let actual = match parsed.as_deref() {
+        Ok([major, minor]) => [*major, *minor, 0],
+        Ok([major, minor, patch]) => [*major, *minor, *patch],
         _ => return false,
     };
     actual >= required
@@ -2168,6 +2222,45 @@ fn active_calibration_reservation(
         maximum_runtime_charge,
         non_runtime_charge_reserve,
     })
+}
+
+fn require_calibration_execution_claim(
+    document: &BudgetLedgerDocument,
+    active: &ActiveCalibrationReservation,
+) -> Result<()> {
+    let claims = document
+        .entries
+        .iter()
+        .filter(|entry| {
+            entry.get("kind").and_then(serde_json::Value::as_str)
+                == Some("calibration_execution_claim")
+                && entry
+                    .get("reservation_id")
+                    .and_then(serde_json::Value::as_str)
+                    == Some(active.binding.reservation_id.as_str())
+        })
+        .collect::<Vec<_>>();
+    let [claim] = claims.as_slice() else {
+        return Err(Error::Budget(format!(
+            "calibration reservation `{}` requires exactly one execution claim before successful settlement",
+            active.binding.reservation_id
+        )));
+    };
+    if claim
+        .get("reservation_authorization_sha256")
+        .and_then(serde_json::Value::as_str)
+        != Some(active.binding.authorization_sha256.as_str())
+        || !claim
+            .get("previous_ledger_sha256")
+            .and_then(serde_json::Value::as_str)
+            .is_some_and(is_sha256)
+    {
+        return Err(Error::Budget(format!(
+            "calibration reservation `{}` has an invalid execution claim",
+            active.binding.reservation_id
+        )));
+    }
+    Ok(())
 }
 
 fn apply_calibration_charge(

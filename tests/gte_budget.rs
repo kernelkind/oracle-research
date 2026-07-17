@@ -13,9 +13,10 @@ use oracle_mvp::gte::TokenRole;
 use oracle_mvp::gte_budget::{
     CALIBRATION_LIFETIME_CAP, CalibrationEvidencePaths, CalibrationExecutionIdentity,
     CalibrationRecorder, CalibrationRecorderConfig, FullBuildNonComputeCosts, MVP_LIFETIME_CAP,
-    MonotonicCostGuard, VerifiedCalibrationEvidence, read_active_calibration_reservation,
-    read_budget_ledger, reserve_calibration, reserve_full_build, settle_calibration,
-    settle_failed_calibration, validate_calibration_selection,
+    MonotonicCostGuard, VerifiedCalibrationEvidence, claim_calibration_execution,
+    read_active_calibration_reservation, read_budget_ledger, reserve_calibration,
+    reserve_full_build, settle_calibration, settle_failed_calibration,
+    validate_calibration_selection,
 };
 use oracle_mvp::ordered_gte_token_audit::{
     OrderedGteTokenAuditConfig, OrderedGteTokenCounter, audit_ordered_gte_tokens,
@@ -544,6 +545,13 @@ fn calibration_settlement_atomically_records_actual_spend_and_releases_the_commi
         "2026-07-16T20:00:00Z",
     )
     .expect("reserve calibration before rented work");
+    claim_calibration_execution(
+        &fixture.path,
+        "completed-calibration",
+        MicroUsd::from_dollars(10),
+        MicroUsd(0),
+    )
+    .expect("claim calibration before successful settlement");
     let calibration = fixture.write_calibration_evidence();
     let evidence =
         VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
@@ -588,6 +596,32 @@ fn calibration_settlement_atomically_records_actual_spend_and_releases_the_commi
 }
 
 #[test]
+fn successful_calibration_settlement_requires_the_execution_claim() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    reserve_calibration(
+        &fixture.path,
+        "unclaimed-calibration",
+        MicroUsd::from_dollars(10),
+        "2026-07-16T20:00:00Z",
+    )
+    .expect("reserve calibration before rented work");
+    let calibration = fixture.write_calibration_evidence();
+    let evidence =
+        VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
+            .expect("verify completed calibration evidence");
+
+    let error = settle_calibration(
+        &fixture.path,
+        "unclaimed-calibration",
+        &evidence,
+        MicroUsd::from_cents(325),
+        "2026-07-16T20:30:00Z",
+    )
+    .expect_err("successful evidence must not settle from an unclaimed ledger");
+    assert!(error.to_string().contains("execution claim"), "{error}");
+}
+
+#[test]
 fn calibration_evidence_can_only_settle_the_reservation_that_paid_for_it() {
     let fixture = LedgerFixture::new(0, 0, 0, 0);
     reserve_calibration(
@@ -597,6 +631,13 @@ fn calibration_evidence_can_only_settle_the_reservation_that_paid_for_it() {
         "2026-07-16T20:00:00Z",
     )
     .expect("reserve the calibration that will produce the evidence");
+    claim_calibration_execution(
+        &fixture.path,
+        "calibration-a",
+        MicroUsd::from_dollars(10),
+        MicroUsd(0),
+    )
+    .expect("claim the calibration that produced the evidence");
     let calibration = fixture.write_calibration_evidence();
     let evidence =
         VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
@@ -675,6 +716,13 @@ fn calibration_settlement_rejects_actual_cost_above_its_reservation() {
         "2026-07-16T20:00:00Z",
     )
     .expect("reserve calibration");
+    claim_calibration_execution(
+        &fixture.path,
+        "bounded-calibration",
+        MicroUsd::from_dollars(2),
+        MicroUsd(0),
+    )
+    .expect("claim calibration");
     let calibration = fixture.write_calibration_evidence();
     let evidence =
         VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
@@ -831,6 +879,13 @@ fn calibration_evidence_must_be_a_verified_file_and_drives_compute_projection() 
         "2026-07-16T20:00:00Z",
     )
     .expect("reserve measured calibration");
+    claim_calibration_execution(
+        &fixture.path,
+        "measured-calibration",
+        MicroUsd::from_dollars(20),
+        MicroUsd(0),
+    )
+    .expect("claim measured calibration");
     let calibration = fixture.write_calibration_evidence();
     let evidence =
         VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
@@ -939,6 +994,13 @@ fn full_build_rejects_an_evidence_derived_projection_over_the_lifetime_cap() {
         "2026-07-16T20:00:00Z",
     )
     .expect("reserve expensive calibration");
+    claim_calibration_execution(
+        &fixture.path,
+        "expensive-calibration",
+        MicroUsd::from_dollars(20),
+        MicroUsd(0),
+    )
+    .expect("claim expensive calibration");
     let calibration = fixture.write_calibration_evidence_with_rate(MicroUsd::from_dollars(600_000));
     let evidence =
         VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
@@ -983,6 +1045,13 @@ fn full_build_projection_includes_checkpoint_finalization_and_failure_overhead()
         "2026-07-16T01:00:00Z",
     )
     .expect("reserve calibration");
+    claim_calibration_execution(
+        &fixture.path,
+        "overhead-calibration",
+        MicroUsd::from_dollars(25),
+        MicroUsd(0),
+    )
+    .expect("claim calibration");
     let calibration = fixture.write_calibration_evidence_with_rate(MicroUsd::from_dollars(360));
     let evidence =
         VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
@@ -1027,6 +1096,13 @@ fn cold_restart_reserve_includes_discovering_the_existing_representation() {
         "2026-07-16T01:00:00Z",
     )
     .expect("reserve calibration");
+    claim_calibration_execution(
+        &fixture.path,
+        "restart-discovery-calibration",
+        MicroUsd::from_dollars(25),
+        MicroUsd(0),
+    )
+    .expect("claim calibration");
     let calibration = fixture.write_calibration_evidence_with_rate(MicroUsd::from_dollars(360));
     let evidence =
         VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
@@ -1176,6 +1252,13 @@ fn calibration_evidence_remains_verifiable_after_the_representation_grows() {
         "2026-07-16T00:00:00Z",
     )
     .expect("reserve calibration");
+    claim_calibration_execution(
+        &fixture.path,
+        "growing-representation-calibration",
+        MicroUsd::from_dollars(25),
+        MicroUsd(0),
+    )
+    .expect("claim calibration");
     let calibration = fixture.write_calibration_evidence();
     let evidence =
         VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
@@ -1320,6 +1403,114 @@ fn calibration_selection_is_proved_from_the_plan_before_paid_work() {
 }
 
 #[test]
+fn cli_selection_preflight_binds_the_configured_ranges_and_active_reservation() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let _calibration = fixture.write_calibration_evidence();
+    let config_path = write_calibration_cli_config(
+        &fixture,
+        CalibrationCliConfigState::FreshCalibrationOutput,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    );
+
+    let validate = || {
+        run_gte_oracle(&[
+            "validate-calibration-selection",
+            config_path.to_str().expect("UTF-8 config path"),
+            "0",
+            "4",
+        ])
+    };
+    assert_command_failed_with(&validate(), "does not exist");
+
+    assert_command_succeeded(&run_gte_oracle(&[
+        "reserve-calibration",
+        config_path.to_str().expect("UTF-8 config path"),
+        "2026-07-17T12:00:00Z",
+    ]));
+    assert_command_succeeded(&validate());
+
+    let mut config: serde_json::Value =
+        serde_json::from_slice(&fs::read(&config_path).expect("read config"))
+            .expect("decode config");
+    config["calibration"]["token_range_upper_bounds"] = serde_json::json!([5]);
+    fs::write(
+        &config_path,
+        serde_json::to_vec_pretty(&config).expect("encode changed config"),
+    )
+    .expect("write changed config");
+    assert_command_failed_with(&validate(), "configured token ranges");
+
+    config["calibration"]["token_range_upper_bounds"] = serde_json::json!([4]);
+    config["container_image"] = serde_json::json!("kernelkind/oracle-mvp:mutable");
+    fs::write(
+        &config_path,
+        serde_json::to_vec_pretty(&config).expect("encode mutable-image config"),
+    )
+    .expect("write mutable-image config");
+    assert_command_failed_with(&validate(), "immutable digest");
+
+    config["container_image"] =
+        serde_json::json!(format!("kernelkind/oracle-mvp@sha256:{}", "5".repeat(64)));
+    fs::write(
+        &config_path,
+        serde_json::to_vec_pretty(&config).expect("encode mismatched-worker config"),
+    )
+    .expect("write mismatched-worker config");
+    let launched_model_lock = PathBuf::from(
+        config["worker"]["model_lock_path"]
+            .as_str()
+            .expect("worker model lock path"),
+    );
+    fs::write(launched_model_lock, b"different lock").expect("change launched model lock");
+    assert_command_failed_with(&validate(), "descriptor-bound inputs");
+
+    fs::write(
+        PathBuf::from(
+            config["worker"]["model_lock_path"]
+                .as_str()
+                .expect("worker model lock path"),
+        ),
+        b"fixture",
+    )
+    .expect("restore launched model lock");
+    let approved_model_dir = config["worker"]["model_dir"].clone();
+    let wrong_model_dir = fixture.directory.path().join("wrong-model");
+    fs::create_dir(&wrong_model_dir).expect("create wrong model directory");
+    config["worker"]["model_dir"] = serde_json::json!(wrong_model_dir);
+    fs::write(
+        &config_path,
+        serde_json::to_vec_pretty(&config).expect("encode wrong-model config"),
+    )
+    .expect("write wrong-model config");
+    assert_command_failed_with(&validate(), "model directory");
+
+    config["worker"]["model_dir"] = approved_model_dir;
+    config["cuda_version"] = serde_json::json!("wrong");
+    fs::write(
+        &config_path,
+        serde_json::to_vec_pretty(&config).expect("encode wrong-runtime config"),
+    )
+    .expect("write wrong-runtime config");
+    assert_command_failed_with(&validate(), "runtime identity");
+
+    config["cuda_version"] = serde_json::json!("13.0.2");
+    fs::write(
+        &config_path,
+        serde_json::to_vec_pretty(&config).expect("encode restored config"),
+    )
+    .expect("write restored config");
+    claim_calibration_execution(
+        &fixture.path,
+        "cli-calibration",
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    )
+    .expect("claim the calibration once");
+    assert_command_failed_with(&validate(), "already claimed");
+}
+
+#[test]
 fn calibration_rejects_a_nonapproved_gpu_model() {
     let fixture = LedgerFixture::new(0, 0, 0, 0);
     let calibration = fixture.write_calibration_evidence_with_gpu_model("NVIDIA H100 80GB HBM3");
@@ -1355,6 +1546,95 @@ fn calibration_requires_the_frozen_600_watt_power_limit() {
 
     let error = VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
         .expect_err("the calibration hardware contract requires exactly 600 watts");
+    assert!(error.to_string().contains("hardware contract"), "{error}");
+}
+
+#[test]
+fn calibration_accepts_a_newer_two_component_driver_version() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let calibration = fixture.write_calibration_evidence();
+    let mut identity: serde_json::Value = serde_json::from_slice(
+        &fs::read(&calibration.paths.execution_identity_path).expect("read execution identity"),
+    )
+    .expect("decode execution identity");
+    identity["driver_version"] = serde_json::json!("595.84");
+    fs::write(
+        &calibration.paths.execution_identity_path,
+        serde_json::to_vec_pretty(&identity).expect("encode execution identity"),
+    )
+    .expect("write changed execution identity");
+    let mut evidence: serde_json::Value =
+        serde_json::from_slice(&fs::read(&calibration.evidence_path).expect("read evidence"))
+            .expect("decode evidence");
+    evidence["execution_identity_sha256"] =
+        serde_json::json!(sha256_file(&calibration.paths.execution_identity_path));
+    fs::write(
+        &calibration.evidence_path,
+        serde_json::to_vec_pretty(&evidence).expect("encode evidence"),
+    )
+    .expect("write evidence for changed execution identity");
+
+    VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
+        .expect("a newer two-component NVIDIA driver satisfies the minimum");
+}
+
+#[test]
+fn calibration_rejects_a_blank_rental_instance_id() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let calibration = fixture.write_calibration_evidence();
+    let mut identity: serde_json::Value = serde_json::from_slice(
+        &fs::read(&calibration.paths.execution_identity_path).expect("read execution identity"),
+    )
+    .expect("decode execution identity");
+    identity["rental_instance_id"] = serde_json::json!("  ");
+    fs::write(
+        &calibration.paths.execution_identity_path,
+        serde_json::to_vec_pretty(&identity).expect("encode execution identity"),
+    )
+    .expect("write changed execution identity");
+    let mut evidence: serde_json::Value =
+        serde_json::from_slice(&fs::read(&calibration.evidence_path).expect("read evidence"))
+            .expect("decode evidence");
+    evidence["execution_identity_sha256"] =
+        serde_json::json!(sha256_file(&calibration.paths.execution_identity_path));
+    fs::write(
+        &calibration.evidence_path,
+        serde_json::to_vec_pretty(&evidence).expect("encode evidence"),
+    )
+    .expect("write evidence for changed execution identity");
+
+    let error = VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
+        .expect_err("the instance that incurred the charge must be identified");
+    assert!(error.to_string().contains("hardware contract"), "{error}");
+}
+
+#[test]
+fn calibration_requires_at_least_one_day_of_offer_availability() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let calibration = fixture.write_calibration_evidence();
+    let mut identity: serde_json::Value = serde_json::from_slice(
+        &fs::read(&calibration.paths.execution_identity_path).expect("read execution identity"),
+    )
+    .expect("decode execution identity");
+    identity["available_duration_seconds"] = serde_json::json!(86_399_u64);
+    fs::write(
+        &calibration.paths.execution_identity_path,
+        serde_json::to_vec_pretty(&identity).expect("encode execution identity"),
+    )
+    .expect("write changed execution identity");
+    let mut evidence: serde_json::Value =
+        serde_json::from_slice(&fs::read(&calibration.evidence_path).expect("read evidence"))
+            .expect("decode evidence");
+    evidence["execution_identity_sha256"] =
+        serde_json::json!(sha256_file(&calibration.paths.execution_identity_path));
+    fs::write(
+        &calibration.evidence_path,
+        serde_json::to_vec_pretty(&evidence).expect("encode evidence"),
+    )
+    .expect("write evidence for changed execution identity");
+
+    let error = VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
+        .expect_err("the selected offer must remain available for at least one day");
     assert!(error.to_string().contains("hardware contract"), "{error}");
 }
 
@@ -1733,7 +2013,7 @@ impl LedgerFixture {
         .expect("build one reusable calibration shard");
 
         let execution_identity = CalibrationExecutionIdentity {
-            schema_version: 1,
+            schema_version: 2,
             artifact_kind: "gte-calibration-execution-identity".to_owned(),
             representation_descriptor_sha256: built.manifest.descriptor_sha256.clone(),
             gpu_model: gpu_model.to_owned(),
@@ -1751,6 +2031,7 @@ impl LedgerFixture {
             available_duration_seconds: 86_400,
             rental_provider: "vast.ai".to_owned(),
             rental_offer_id: "fixture-offer".to_owned(),
+            rental_instance_id: "fixture-instance".to_owned(),
             rental_rate_per_hour,
         };
         let execution_identity_path = self.directory.path().join("execution-identity.json");

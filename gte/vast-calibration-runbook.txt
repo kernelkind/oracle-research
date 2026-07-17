@@ -1,0 +1,477 @@
+CREC-66 / CREC-62 GTE calibration runbook
+
+Frozen contract
+
+  calibration shard: 157
+  token ceilings: 16,20,25,32,40,50,64,80,100,128,160,202,259,325,433,513
+  total provider reservation: 25,000,000 micro-USD
+  worker runtime allowance: 20,000,000 micro-USD
+  setup, transfer, retrieval, and teardown reserve: 5,000,000 micro-USD
+  minimum reserve left before worker start: 1,000,000 micro-USD
+  GPU: one NVIDIA RTX PRO 6000 Blackwell Workstation Edition at 600 W
+  host RAM: at least 128 GiB
+  disk: 200 GB, at least 1 GB/s advertised bandwidth
+
+No command in this file creates a second instance or retries calibrate-shards.
+All directory copies use trailing slashes intentionally: Vast copies directory
+contents with a trailing slash and nests the source directory without one.
+
+Local layout
+
+  <LOCAL_ROOT>/package       immutable package
+  <LOCAL_ROOT>/preflight     free local exact-image preflight
+  <LOCAL_ROOT>/launch        offer, instance, and provider records
+  <LOCAL_ROOT>/work.partial  resumable retrieval; absent before retrieval
+  <LOCAL_ROOT>/work          verified retrieved result; absent before retrieval
+
+The exact IMAGE_REF, SOURCE_COMMIT, and PRIVATE_TEMPLATE_HASH come from the
+reviewed CREC-66 package. IMAGE_REF is
+the docker.io/kernelkind/oracle-mvp@sha256:... value already stored in
+package/run/calibration-config.json.
+
+1. Free local preflight through the exact registry digest
+
+  export LOCAL_ROOT=<LOCAL_ROOT>
+  export IMAGE_REF=<IMAGE_REF>
+  export SOURCE_COMMIT=<SOURCE_COMMIT>
+  export PRIVATE_TEMPLATE_HASH=<PRIVATE_TEMPLATE_HASH>
+
+  set -euo pipefail
+
+  test ! -e "$LOCAL_ROOT/preflight"
+  test ! -e "$LOCAL_ROOT/launch"
+  test ! -e "$LOCAL_ROOT/work.partial"
+  test ! -e "$LOCAL_ROOT/work"
+
+  docker pull "$IMAGE_REF"
+  test "$(docker image inspect "$IMAGE_REF" \
+    --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}')" \
+    = "$SOURCE_COMMIT"
+
+  docker run --rm \
+    --entrypoint /opt/gte-venv/bin/python \
+    -v "$LOCAL_ROOT:/workspace/oracle-calibration" \
+    -w /workspace/oracle-calibration \
+    "$IMAGE_REF" \
+    /opt/oracle-mvp/gte/calibration_package.py \
+    verify package package/package-manifest.json
+
+  docker run --rm \
+    --entrypoint /opt/gte-venv/bin/python \
+    -v "$LOCAL_ROOT/package:/workspace/oracle-calibration/package:ro" \
+    "$IMAGE_REF" \
+    /opt/oracle-mvp/gte/model_bundle.py \
+    verify /workspace/oracle-calibration/package/bundle
+
+  mkdir -p "$LOCAL_ROOT/preflight/scratch/corpus-root/ndb"
+  mkdir -p "$LOCAL_ROOT/preflight/work"
+
+  vastai search templates "hash_id=$PRIVATE_TEMPLATE_HASH" --raw \
+    | docker run --rm -i \
+        --entrypoint /opt/gte-venv/bin/python \
+        -v "$LOCAL_ROOT/preflight:/preflight" \
+        "$IMAGE_REF" \
+        /opt/oracle-mvp/gte/calibration_package.py \
+        freeze-template \
+        /dev/stdin \
+        "$PRIVATE_TEMPLATE_HASH" \
+        "$IMAGE_REF" \
+        /preflight/template.json
+
+  cp --reflink=auto \
+    "$LOCAL_ROOT/package/corpus-root/ndb/data.mdb" \
+    "$LOCAL_ROOT/preflight/scratch/corpus-root/ndb/data.mdb"
+  cp -a \
+    "$LOCAL_ROOT/package/run/representation" \
+    "$LOCAL_ROOT/preflight/work/representation"
+  cp \
+    "$LOCAL_ROOT/package/run/budget-ledger.json" \
+    "$LOCAL_ROOT/preflight/work/budget-ledger.json"
+
+  docker run --rm \
+    -v "$LOCAL_ROOT/package:/workspace/oracle-calibration/package:ro" \
+    -v "$LOCAL_ROOT/preflight/scratch:/workspace/oracle-calibration/scratch" \
+    -v "$LOCAL_ROOT/preflight/work:/workspace/oracle-calibration/work" \
+    -w /workspace/oracle-calibration \
+    "$IMAGE_REF" \
+    prepare-representation package/run/calibration-config.json
+
+  docker run --rm \
+    -v "$LOCAL_ROOT/package:/workspace/oracle-calibration/package:ro" \
+    -v "$LOCAL_ROOT/preflight/scratch:/workspace/oracle-calibration/scratch" \
+    -v "$LOCAL_ROOT/preflight/work:/workspace/oracle-calibration/work" \
+    -w /workspace/oracle-calibration \
+    "$IMAGE_REF" \
+    validate-calibration-selection \
+    package/run/calibration-config.json \
+    157 \
+    16,20,25,32,40,50,64,80,100,128,160,202,259,325,433,513
+
+  docker run --rm \
+    -v "$LOCAL_ROOT/package:/workspace/oracle-calibration/package:ro" \
+    -v "$LOCAL_ROOT/preflight/scratch:/workspace/oracle-calibration/scratch" \
+    -v "$LOCAL_ROOT/preflight/work:/workspace/oracle-calibration/work" \
+    -w /workspace/oracle-calibration \
+    "$IMAGE_REF" \
+    describe-representation package/run/calibration-config.json \
+    > "$LOCAL_ROOT/preflight/offline-descriptor.json"
+
+  python3 - "$IMAGE_REF" "$LOCAL_ROOT/preflight/offline-descriptor.json" <<'PY'
+import json
+import sys
+
+expected = sys.argv[1]
+with open(sys.argv[2], encoding="utf-8") as source:
+    actual = json.load(source)["descriptor"]["container_image"]
+if actual != expected:
+    raise SystemExit(
+        f"calibration config image {actual!r} does not equal IMAGE_REF {expected!r}"
+    )
+PY
+
+  sha256sum "$LOCAL_ROOT/package/package-manifest.json"
+  sha256sum "$LOCAL_ROOT/preflight/offline-descriptor.json"
+
+  Confirm that preflight/template.json identifies PRIVATE_TEMPLATE_HASH and the
+  exact IMAGE_REF without containing any registry credential. Confirm that the
+  repository budget ledger and
+  package/run/budget-ledger.json have the same SHA-256 and contain the active,
+  unclaimed reservation named by package/run/calibration-config.json. Stop if
+  any local command above failed. Do not debug package paths on a rental.
+
+2. Refresh and save one exact 200 GB offer
+
+  mkdir "$LOCAL_ROOT/launch"
+  date -u +%Y-%m-%dT%H:%M:%SZ > "$LOCAL_ROOT/launch/attempt.log"
+
+  BASE_QUERY='gpu_name=RTX_PRO_6000_WS num_gpus=1 gpu_max_power=600 reliability>=0.995 cpu_arch=amd64 cpu_ram>=137.439 disk_space>=200 disk_bw>=1000 inet_down>=500 inet_down_cost<=0.02 inet_up>=100 inet_up_cost<=0.02 driver_version>=580.95.05 duration>=1 rentable=true verified=true'
+
+  vastai search offers \
+    "$BASE_QUERY geolocation in [US]" \
+    --type on-demand \
+    --storage 200 \
+    --order dph_total \
+    --limit 20 \
+    --raw \
+    > "$LOCAL_ROOT/launch/offers.json"
+
+  Prefer a US offer. If offers.json is an empty JSON array, repeat that exact
+  command without `geolocation in [US]`. Do not relax any other constraint.
+  Select one returned ID and set:
+
+  export OFFER_ID=<OFFER_ID>
+
+  vastai search offers \
+    "$BASE_QUERY id=$OFFER_ID" \
+    --type on-demand \
+    --storage 200 \
+    --order dph_total \
+    --limit 1 \
+    --raw \
+    > "$LOCAL_ROOT/launch/offer.json"
+
+  The resulting JSON array must contain exactly one offer. The explicit
+  `--storage 200` is mandatory because Vast otherwise prices only 5 GiB. The
+  network-price ceilings prevent the package and image downloads from consuming
+  the non-runtime reserve before the manual cost gate.
+
+3. Create exactly one private-template instance
+
+  umask 077
+  vastai create instance "$OFFER_ID" \
+    --template_hash "$PRIVATE_TEMPLATE_HASH" \
+    --disk 200 \
+    --label crec-62-gte-calibration \
+    --cancel-unavail \
+    --raw \
+    > "$LOCAL_ROOT/launch/create-result.raw.json" \
+    2>> "$LOCAL_ROOT/launch/attempt.log"
+
+  docker run --rm \
+    --entrypoint /opt/gte-venv/bin/python \
+    -v "$LOCAL_ROOT/launch:/launch" \
+    "$IMAGE_REF" \
+    /opt/oracle-mvp/gte/calibration_package.py \
+    freeze-create \
+    /launch/create-result.raw.json \
+    /launch/create-result.json
+
+  export INSTANCE_ID="$(python3 -c \
+    'import json,sys; print(json.load(open(sys.argv[1]))["new_contract"])' \
+    "$LOCAL_ROOT/launch/create-result.json")"
+  rm "$LOCAL_ROOT/launch/create-result.raw.json"
+
+  Record INSTANCE_ID and the launch time in launch/attempt.log. No second
+  instance is authorized if image pull, startup, transfer, or preparation
+  fails.
+
+  Wait until this exact instance reports actual_status=running, then capture it:
+
+  vastai show instance "$INSTANCE_ID" --raw \
+    | docker run --rm -i \
+    --entrypoint /opt/gte-venv/bin/python \
+    -v "$LOCAL_ROOT/launch:/launch" \
+    "$IMAGE_REF" \
+    /opt/oracle-mvp/gte/calibration_package.py \
+    freeze-instance \
+    /launch/create-result.json \
+    /dev/stdin \
+    /launch/instance.json
+
+  The sanitized instance.json intentionally excludes connection credentials.
+
+4. Transfer immutable inputs with directory-content semantics
+
+  mkdir "$LOCAL_ROOT/launch/remote"
+  cp "$LOCAL_ROOT/launch/offer.json" "$LOCAL_ROOT/launch/remote/offer.json"
+  cp "$LOCAL_ROOT/launch/create-result.json" \
+    "$LOCAL_ROOT/launch/remote/create-result.json"
+  cp "$LOCAL_ROOT/launch/instance.json" \
+    "$LOCAL_ROOT/launch/remote/instance.json"
+
+  vastai copy \
+    "local:$LOCAL_ROOT/package/" \
+    "C.$INSTANCE_ID:/workspace/oracle-calibration/package/"
+  vastai copy \
+    "local:$LOCAL_ROOT/launch/remote/" \
+    "C.$INSTANCE_ID:/workspace/oracle-calibration/launch/"
+
+  `vastai copy` is resumable synchronization. If interrupted, rerun the same
+  command against the same instance and path. Its exit status is not proof of
+  completeness; the remote package verification is the proof.
+
+5. Remote preparation without claiming the reservation
+
+  Run this block once on the rented host:
+
+  bash <<'REMOTE'
+set -u
+cd /workspace/oracle-calibration
+test ! -e work || exit 1
+test ! -e scratch || exit 1
+mkdir work
+mkdir -p scratch/corpus-root/ndb
+(
+  set -euo pipefail
+  /opt/gte-venv/bin/python \
+    /opt/oracle-mvp/gte/calibration_package.py \
+    verify package package/package-manifest.json
+  cp --reflink=auto \
+    package/corpus-root/ndb/data.mdb \
+    scratch/corpus-root/ndb/data.mdb
+  cp -a package/run/representation work/representation
+  cp package/run/budget-ledger.json work/budget-ledger.json
+  /usr/local/bin/gte-oracle prepare-representation \
+    package/run/calibration-config.json
+  /usr/local/bin/gte-oracle validate-calibration-selection \
+    package/run/calibration-config.json \
+    157 \
+    16,20,25,32,40,50,64,80,100,128,160,202,259,325,433,513
+  /usr/local/bin/gte-oracle describe-representation \
+    package/run/calibration-config.json \
+    > work/offline-descriptor.json
+  /opt/gte-venv/bin/python \
+    /opt/oracle-mvp/gte/calibration_package.py \
+    capture-identity \
+    work/offline-descriptor.json \
+    launch/offer.json \
+    launch/create-result.json \
+    launch/instance.json \
+    work/execution-identity.json \
+    --mount /workspace
+) > work/preparation.log 2>&1
+status=$?
+printf '%s\n' "$status" > work/preparation.exit
+cat work/preparation.log
+exit "$status"
+REMOTE
+
+  If this block fails, do not run calibrate-shards. Seal and retrieve work if
+  possible, then destroy and settle the failed attempt. If no remote work can
+  be retrieved, use the pre-worker fallback in step 9.
+
+6. Manual provider-cost gate
+
+  Read the provider's current total charge for this one instance, including
+  setup, storage, and transfer. Start the worker only if that charge is at most
+  4,000,000 micro-USD. This leaves at least 1,000,000 micro-USD for retrieval
+  and teardown within the 5,000,000 micro-USD non-runtime reserve.
+
+  If the charge is higher, do not run calibrate-shards. Seal, retrieve, destroy,
+  and failed-settle the attempt. Before sealing, record the observed charge on
+  the rented host so the refusal itself—not a successful preparation log—is the
+  failure evidence:
+
+  export SETUP_CHARGE_MICRO_USD=<OBSERVED_SETUP_CHARGE_MICRO_USD>
+  test "$SETUP_CHARGE_MICRO_USD" -gt 4000000
+  printf 'worker start refused: setup charge was %s micro-USD\n' \
+    "$SETUP_CHARGE_MICRO_USD" \
+    > /workspace/oracle-calibration/work/cost-gate-failure.log
+
+7. Claim once, run once, and supervise manually
+
+  Run this block once on the rented host:
+
+  bash -euo pipefail <<'REMOTE'
+cd /workspace/oracle-calibration
+test "$(cat work/preparation.exit)" = 0
+test ! -e work/calibration.pid
+test ! -e work/calibration.exit
+test ! -e work/calibration-evidence.json
+nohup bash -c '
+  cd /workspace/oracle-calibration
+  /usr/local/bin/gte-oracle calibrate-shards \
+    package/run/calibration-config.json 157 \
+    > work/calibration.log 2>&1
+  status=$?
+  printf "%s\n" "$status" > work/calibration.exit
+  exit "$status"
+' </dev/null > work/nohup.log 2>&1 &
+printf '%s\n' "$!" > work/calibration.pid
+REMOTE
+
+  tail -f work/calibration.log
+
+  calibrate-shards appends the one-time execution claim to
+  work/budget-ledger.json before starting the model, then performs its own CUDA
+  smoke encoding before shard 157. Never invoke it twice and never overwrite
+  work/budget-ledger.json from the package after this point.
+
+  The process is complete only when work/calibration.exit exists. On success it
+  contains 0 and work/calibration-evidence.json exists. On failure, retrieve the
+  claimed ledger and logs; do not retry.
+
+8. Seal and retrieve before teardown
+
+  After preparation failure, cost-gate refusal, or calibration completion, run
+  this once on the rented host:
+
+  bash -euo pipefail <<'REMOTE'
+cd /workspace/oracle-calibration
+test -f work/preparation.exit
+if test -f work/calibration.pid; then test -f work/calibration.exit; fi
+cd work
+find . -type f ! -name retrieval.sha256 -print0 \
+  | sort -z \
+  | xargs -0 sha256sum \
+  > ../retrieval.sha256.next
+mv ../retrieval.sha256.next retrieval.sha256
+REMOTE
+
+  From the local machine:
+
+  bash -euo pipefail <<LOCAL
+test ! -e "$LOCAL_ROOT/work"
+mkdir -p "$LOCAL_ROOT/work.partial"
+vastai copy \
+  "C.$INSTANCE_ID:/workspace/oracle-calibration/work/" \
+  "local:$LOCAL_ROOT/work.partial/"
+cd "$LOCAL_ROOT/work.partial"
+sha256sum -c retrieval.sha256
+test ! -e scratch
+cd "$LOCAL_ROOT"
+mv work.partial work
+LOCAL
+
+  Retry only the same copy into work.partial until every checksum passes. On a
+  worker attempt, the retrieved directory must include calibration.pid,
+  calibration.exit, calibration.log, the execution identity, representation,
+  and the claimed budget ledger. Successful exit additionally requires
+  calibration-evidence.json. Preparation-only failures require preparation.log,
+  preparation.exit, and the unclaimed budget ledger. The multi-gigabyte corpus
+  remains under remote scratch and is never retrieved.
+
+9. Destroy, record the final charge, and reconcile locally
+
+  Normally, destroy only after verified retrieval. The $25 reservation is the
+  harder boundary: if further retrieval would cross it, destroy immediately,
+  preserve every local/provider record available, and use the pre-worker or
+  claimed-state-loss path below. Never keep billing solely to complete evidence
+  retrieval.
+
+  set -euo pipefail
+
+  vastai destroy instance "$INSTANCE_ID" -y --raw \
+    > "$LOCAL_ROOT/launch/destroy-result.json"
+
+  python3 - "$LOCAL_ROOT/launch/destroy-result.json" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as source:
+    result = json.load(source)
+if result.get("success") is not True:
+    raise SystemExit("Vast did not confirm instance destruction")
+PY
+
+  instance_gone=
+  for _ in $(seq 1 24); do
+    if vastai show instances --raw \
+      | python3 -c 'import json,sys; target=sys.argv[1]; rows=json.load(sys.stdin); sys.exit(0 if all(str(row.get("id")) != target for row in rows) else 1)' \
+          "$INSTANCE_ID"; then
+      instance_gone=yes
+      break
+    fi
+    sleep 5
+  done
+  test "$instance_gone" = yes
+
+  Record the provider's final charge and its source in
+  launch/provider-final-charge.txt. Copy the retrieved pre-settlement ledger so
+  the one-time claim remains independently auditable:
+
+  cp "$LOCAL_ROOT/work/budget-ledger.json" \
+    "$LOCAL_ROOT/work/pre-settlement-budget-ledger.json"
+
+  For exit 0, run:
+
+  docker run --rm \
+    -v "$LOCAL_ROOT:/workspace/oracle-calibration" \
+    -w /workspace/oracle-calibration \
+    "$IMAGE_REF" \
+    settle-calibration \
+    package/run/calibration-config.json \
+    <ACTUAL_CHARGE_MICRO_USD> \
+    <RECORDED_AT_UTC>
+
+  For any retrieved failure, run:
+
+  FAILURE_EVIDENCE=work/preparation.log
+  if test -f "$LOCAL_ROOT/work/cost-gate-failure.log"; then
+    FAILURE_EVIDENCE=work/cost-gate-failure.log
+  fi
+  if test -f "$LOCAL_ROOT/work/calibration.log"; then
+    FAILURE_EVIDENCE=work/calibration.log
+  fi
+
+  docker run --rm \
+    -v "$LOCAL_ROOT:/workspace/oracle-calibration" \
+    -w /workspace/oracle-calibration \
+    "$IMAGE_REF" \
+    settle-failed-calibration \
+    package/run/calibration-config.json \
+    "$FAILURE_EVIDENCE" \
+    <ACTUAL_CHARGE_MICRO_USD> \
+    <RECORDED_AT_UTC>
+
+  If failure occurred before calibrate-shards was invoked and before remote work
+  could be retrieved, destroy the one instance, obtain the final charge, then
+  reconstruct the unclaimed local failure state:
+
+  test ! -e "$LOCAL_ROOT/work"
+  mkdir "$LOCAL_ROOT/work"
+  cp "$LOCAL_ROOT/package/run/budget-ledger.json" \
+    "$LOCAL_ROOT/work/budget-ledger.json"
+  cp "$LOCAL_ROOT/launch/attempt.log" \
+    "$LOCAL_ROOT/work/pre-calibration-failure.log"
+
+  Use work/pre-calibration-failure.log with settle-failed-calibration. This
+  fallback is never valid after calibrate-shards was invoked or for successful
+  settlement. If remote state is lost after worker start, record that the claim
+  is unrecoverable and stop for explicit ledger remediation; never represent it
+  as an unclaimed attempt. Successful settlement requires the retrieved one-time
+  execution claim in production code.
+
+  The settled work/budget-ledger.json replaces the repository ledger only after
+  its transition, actual provider charge, and preserved pre-settlement ledger
+  have been reviewed.
