@@ -707,6 +707,23 @@ struct PendingCompactBatch {
     candidates: Vec<BatchCandidate>,
 }
 
+pub(crate) struct PreparedCompactBatch(PendingCompactBatch);
+
+impl PreparedCompactBatch {
+    pub(crate) fn frozen(&self) -> &CompactFrozenBatch {
+        &self.0.frozen
+    }
+}
+
+pub(crate) struct PreparedCompactCompletion {
+    event_ids: Vec<EventId>,
+    ratings: Vec<GladnessRating>,
+    vectors: Vec<RatedVector>,
+    errors: Vec<ErrorAggregate>,
+    next_index: usize,
+    record: CompactRoundRecord,
+}
+
 pub struct CompactLearningController {
     representation_version: String,
     evidence: EvidenceState,
@@ -784,6 +801,11 @@ impl CompactLearningController {
     }
 
     pub fn freeze_batch(&mut self, batch: CandidateBatch) -> Result<&CompactFrozenBatch> {
+        let prepared = self.prepare_batch(batch)?;
+        Ok(self.commit_prepared_batch(prepared))
+    }
+
+    pub(crate) fn prepare_batch(&self, batch: CandidateBatch) -> Result<PreparedCompactBatch> {
         if self.pending.is_some() {
             return Err(PersonalizerLearningError::BatchAlreadyFrozen);
         }
@@ -828,14 +850,33 @@ impl CompactLearningController {
                 .collect(),
             predictions,
         };
-        self.pending = Some(PendingCompactBatch {
+        Ok(PreparedCompactBatch(PendingCompactBatch {
             frozen,
             candidates: batch.candidates,
-        });
-        Ok(&self.pending.as_ref().expect("pending batch was set").frozen)
+        }))
+    }
+
+    pub(crate) fn commit_prepared_batch(
+        &mut self,
+        prepared: PreparedCompactBatch,
+    ) -> &CompactFrozenBatch {
+        self.pending = Some(prepared.0);
+        &self.pending.as_ref().expect("pending batch was set").frozen
+    }
+
+    pub(crate) fn discard_pending_batch(&mut self) {
+        self.pending = None;
     }
 
     pub fn complete_batch(&mut self, ratings: Vec<BatchRating>) -> Result<&CompactRoundRecord> {
+        let prepared = self.prepare_completion(ratings)?;
+        Ok(self.commit_prepared_completion(prepared))
+    }
+
+    pub(crate) fn prepare_completion(
+        &self,
+        ratings: Vec<BatchRating>,
+    ) -> Result<PreparedCompactCompletion> {
         let pending = self
             .pending
             .as_ref()
@@ -878,32 +919,63 @@ impl CompactLearningController {
         );
         let frozen = pending.frozen.clone();
 
-        self.evidence.append(
+        Ok(PreparedCompactCompletion {
             event_ids,
-            aligned_ratings,
-            new_vectors,
-            next_identity.clone(),
+            ratings: aligned_ratings,
+            vectors: new_vectors,
+            errors: new_errors
+                .into_iter()
+                .map(|(aggregate, _, _)| aggregate)
+                .collect(),
+            next_index,
+            record: CompactRoundRecord {
+                frozen_batch: frozen,
+                outcomes,
+                errors: evaluations,
+                evidence_after: next_identity,
+                next_tuple,
+            },
+        })
+    }
+
+    pub(crate) fn commit_prepared_completion(
+        &mut self,
+        prepared: PreparedCompactCompletion,
+    ) -> &CompactRoundRecord {
+        self.evidence.append(
+            prepared.event_ids,
+            prepared.ratings,
+            prepared.vectors,
+            prepared.record.evidence_after.clone(),
         );
-        self.errors = new_errors
-            .into_iter()
-            .map(|(aggregate, _, _)| aggregate)
-            .collect();
-        self.active_index = next_index;
+        self.errors = prepared.errors;
+        self.active_index = prepared.next_index;
         self.pending = None;
-        self.history.push(CompactRoundRecord {
-            frozen_batch: frozen,
-            outcomes,
-            errors: evaluations,
-            evidence_after: next_identity,
-            next_tuple,
-        });
-        Ok(self.history.last().expect("completed round was retained"))
+        self.history.push(prepared.record);
+        self.history.last().expect("completed round was retained")
     }
 }
 
 struct PendingRbfBatch {
     frozen: RbfFrozenBatch,
     candidates: Vec<BatchCandidate>,
+}
+
+pub(crate) struct PreparedRbfBatch(PendingRbfBatch);
+
+impl PreparedRbfBatch {
+    pub(crate) fn frozen(&self) -> &RbfFrozenBatch {
+        &self.0.frozen
+    }
+}
+
+pub(crate) struct PreparedRbfCompletion {
+    event_ids: Vec<EventId>,
+    ratings: Vec<GladnessRating>,
+    vectors: Vec<RatedVector>,
+    errors: Vec<ErrorAggregate>,
+    next_index: usize,
+    record: RbfRoundRecord,
 }
 
 pub struct RbfLearningController {
@@ -982,6 +1054,11 @@ impl RbfLearningController {
     }
 
     pub fn freeze_batch(&mut self, batch: CandidateBatch) -> Result<&RbfFrozenBatch> {
+        let prepared = self.prepare_batch(batch)?;
+        Ok(self.commit_prepared_batch(prepared))
+    }
+
+    pub(crate) fn prepare_batch(&self, batch: CandidateBatch) -> Result<PreparedRbfBatch> {
         if self.pending.is_some() {
             return Err(PersonalizerLearningError::BatchAlreadyFrozen);
         }
@@ -1017,14 +1094,30 @@ impl RbfLearningController {
                 .collect(),
             predictions,
         };
-        self.pending = Some(PendingRbfBatch {
+        Ok(PreparedRbfBatch(PendingRbfBatch {
             frozen,
             candidates: batch.candidates,
-        });
-        Ok(&self.pending.as_ref().expect("pending batch was set").frozen)
+        }))
+    }
+
+    pub(crate) fn commit_prepared_batch(&mut self, prepared: PreparedRbfBatch) -> &RbfFrozenBatch {
+        self.pending = Some(prepared.0);
+        &self.pending.as_ref().expect("pending batch was set").frozen
+    }
+
+    pub(crate) fn discard_pending_batch(&mut self) {
+        self.pending = None;
     }
 
     pub fn complete_batch(&mut self, ratings: Vec<BatchRating>) -> Result<&RbfRoundRecord> {
+        let prepared = self.prepare_completion(ratings)?;
+        Ok(self.commit_prepared_completion(prepared))
+    }
+
+    pub(crate) fn prepare_completion(
+        &self,
+        ratings: Vec<BatchRating>,
+    ) -> Result<PreparedRbfCompletion> {
         let pending = self
             .pending
             .as_ref()
@@ -1072,26 +1165,40 @@ impl RbfLearningController {
         );
         let frozen = pending.frozen.clone();
 
-        self.evidence.append(
+        Ok(PreparedRbfCompletion {
             event_ids,
-            aligned_ratings,
-            new_vectors,
-            next_identity.clone(),
+            ratings: aligned_ratings,
+            vectors: new_vectors,
+            errors: new_errors
+                .into_iter()
+                .map(|(aggregate, _, _)| aggregate)
+                .collect(),
+            next_index,
+            record: RbfRoundRecord {
+                frozen_batch: frozen,
+                outcomes,
+                errors: evaluations,
+                evidence_after: next_identity,
+                next_tuple,
+            },
+        })
+    }
+
+    pub(crate) fn commit_prepared_completion(
+        &mut self,
+        prepared: PreparedRbfCompletion,
+    ) -> &RbfRoundRecord {
+        self.evidence.append(
+            prepared.event_ids,
+            prepared.ratings,
+            prepared.vectors,
+            prepared.record.evidence_after.clone(),
         );
-        self.errors = new_errors
-            .into_iter()
-            .map(|(aggregate, _, _)| aggregate)
-            .collect();
-        self.active_index = next_index;
+        self.errors = prepared.errors;
+        self.active_index = prepared.next_index;
         self.pending = None;
-        self.history.push(RbfRoundRecord {
-            frozen_batch: frozen,
-            outcomes,
-            errors: evaluations,
-            evidence_after: next_identity,
-            next_tuple,
-        });
-        Ok(self.history.last().expect("completed round was retained"))
+        self.history.push(prepared.record);
+        self.history.last().expect("completed round was retained")
     }
 }
 

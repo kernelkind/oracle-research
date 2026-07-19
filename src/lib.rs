@@ -30,6 +30,7 @@ pub mod representation_batch_plan;
 pub mod retrieval;
 pub mod runner;
 pub mod semantic_order;
+pub mod shared_learning_round;
 pub mod snapshot;
 pub mod stage;
 pub mod token_audit;
