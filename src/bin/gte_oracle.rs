@@ -66,6 +66,8 @@ fn run() -> Result<(), String> {
             | "describe-representation"
             | "prepare-representation"
             | "validate-calibration-selection"
+            | "verify-representation"
+            | "vectors-for-notes"
     );
     if config.worker.device == "cuda" && !cuda_safe_operation {
         return Err(
