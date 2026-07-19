@@ -146,6 +146,19 @@ class CalibrationPackageTest(unittest.TestCase):
         self.assertEqual(identity["local_nvme_bandwidth_bytes_per_second"], 8_615_000_000)
         self.assertEqual(identity["available_duration_seconds"], 86_400)
 
+        instance["bundle_id"] = None
+        identity = build_execution_identity(
+            descriptor_result, offer, create_result, instance, host
+        )
+        self.assertEqual(identity["rental_instance_id"], "88001234")
+
+        instance["bundle_id"] = 99999
+        with self.assertRaisesRegex(ValueError, "actual Vast instance"):
+            build_execution_identity(
+                descriptor_result, offer, create_result, instance, host
+            )
+
+        instance["bundle_id"] = offer["bundle_id"]
         instance["machine_id"] = 99999
         with self.assertRaisesRegex(ValueError, "actual Vast instance"):
             build_execution_identity(

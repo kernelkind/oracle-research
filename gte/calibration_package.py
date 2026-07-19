@@ -381,6 +381,7 @@ def build_execution_identity(
     offer_machine_id = offer.get("machine_id")
     offer_bundle_id = offer.get("bundle_id")
     instance_id = instance.get("id")
+    instance_bundle_id = instance.get("bundle_id")
     reliability = int(
         (require_number(offer.get("reliability"), "reliability") * 1_000_000).to_integral_value(
             rounding=ROUND_FLOOR
@@ -440,7 +441,10 @@ def build_execution_identity(
         or not str(instance_id).strip()
         or str(instance_id) != expected_instance_id
         or instance.get("machine_id") != offer_machine_id
-        or instance.get("bundle_id") != offer_bundle_id
+        or (
+            instance_bundle_id is not None
+            and instance_bundle_id != offer_bundle_id
+        )
         or instance.get("actual_status") != "running"
         or instance.get("intended_status") != "running"
         or immutable_image_ref(instance.get("image_uuid")) != descriptor_image
