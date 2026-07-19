@@ -9,7 +9,8 @@ use crate::candidate_order::{
 };
 use crate::personalizer_learning::{
     BatchRating, CompactLearningController, CompactRoundRecord, EvidenceIdentity,
-    PersonalizerLearningError, RbfLearningController, RbfRoundRecord,
+    PersonalizerLearningError, PreparedCompactCompletion, PreparedRbfCompletion,
+    RbfLearningController, RbfRoundRecord,
 };
 use crate::quota_resolution::{
     LanguageEligibility, PersonalizerId, PriorPresentation, QuotaResolutionMetadata,
@@ -155,6 +156,10 @@ struct PreparedRoutes {
 pub struct PendingSharedLearningRound<'a> {
     compact_controller: &'a mut CompactLearningController,
     rbf_controller: &'a mut RbfLearningController,
+    state: Option<Box<SharedLearningRoundState>>,
+}
+
+pub(crate) struct SharedLearningRoundState {
     round: usize,
     compact_order: FrozenCandidateOrder,
     rbf_order: FrozenCandidateOrder,
@@ -164,112 +169,44 @@ pub struct PendingSharedLearningRound<'a> {
     rbf_event_ids: Vec<EventId>,
     audit: Vec<SharedLearningAuditEvent>,
     terminal_failure: Option<(PersonalizerId, String)>,
-    completed: Option<SharedLearningRoundRecord>,
+    prepared_completion: Option<PreparedSharedRoundCompletion>,
 }
 
-impl PendingSharedLearningRound<'_> {
-    pub const fn round(&self) -> usize {
+struct PreparedSharedRoundCompletion {
+    compact: PreparedCompactCompletion,
+    rbf: PreparedRbfCompletion,
+    ratings: Vec<BatchRating>,
+}
+
+impl SharedLearningRoundState {
+    pub(crate) const fn round(&self) -> usize {
         self.round
     }
 
-    pub fn new_rating_event_ids(&self) -> &[EventId] {
+    pub(crate) fn new_rating_event_ids(&self) -> &[EventId] {
         &self.routes.new_event_ids
     }
 
-    pub fn stored_rating_event_ids(&self) -> &[EventId] {
+    pub(crate) fn stored_rating_event_ids(&self) -> &[EventId] {
         &self.routes.stored_event_ids
     }
 
-    pub fn required_rating_event_ids(&self) -> &[EventId] {
+    pub(crate) fn required_rating_event_ids(&self) -> &[EventId] {
         &self.routes.required_event_ids
     }
 
-    pub const fn is_complete(&self) -> bool {
-        self.completed.is_some()
+    const fn is_complete(&self) -> bool {
+        self.prepared_completion.is_some()
     }
 
-    pub fn audit(&self) -> &[SharedLearningAuditEvent] {
+    fn audit(&self) -> &[SharedLearningAuditEvent] {
         &self.audit
     }
 
-    pub fn terminal_failure(&self) -> Option<(PersonalizerId, &str)> {
+    fn terminal_failure(&self) -> Option<(PersonalizerId, &str)> {
         self.terminal_failure
             .as_ref()
             .map(|(personalizer, message)| (*personalizer, message.as_str()))
-    }
-
-    pub fn submit_ratings(&mut self, ratings: Vec<BatchRating>) -> Result<()> {
-        if self.completed.is_some() {
-            return Err(SharedLearningRoundError::AlreadyComplete);
-        }
-        if let Some((personalizer, message)) = &self.terminal_failure {
-            return Err(SharedLearningRoundError::TerminalFailure {
-                personalizer: *personalizer,
-                message: message.clone(),
-            });
-        }
-
-        let ratings = validate_rating_set(&self.routes.required_event_ids, ratings)?;
-        let canonical_ratings = self
-            .routes
-            .required_event_ids
-            .iter()
-            .map(|event_id| ratings[event_id])
-            .collect::<Vec<_>>();
-        let compact_ratings = ratings_for_event_ids(&self.compact_event_ids, &ratings)?;
-        let rbf_ratings = ratings_for_event_ids(&self.rbf_event_ids, &ratings)?;
-
-        let rbf_prepared = match self.rbf_controller.prepare_completion(rbf_ratings) {
-            Ok(prepared) => prepared,
-            Err(error) => {
-                return Err(self.record_terminal_failure(PersonalizerId::Rbf, error));
-            }
-        };
-        let compact_prepared = match self.compact_controller.prepare_completion(compact_ratings) {
-            Ok(prepared) => prepared,
-            Err(error) => {
-                return Err(self.record_terminal_failure(PersonalizerId::Compact, error));
-            }
-        };
-        let rbf_round = self
-            .rbf_controller
-            .commit_prepared_completion(rbf_prepared)
-            .clone();
-        let compact_round = self
-            .compact_controller
-            .commit_prepared_completion(compact_prepared)
-            .clone();
-
-        self.audit.push(SharedLearningAuditEvent::RatingsApplied {
-            ratings: canonical_ratings.clone(),
-        });
-        self.audit.push(SharedLearningAuditEvent::RoundCompleted {
-            round: self.round,
-            compact_evidence_after: compact_round.evidence_after().clone(),
-            rbf_evidence_after: rbf_round.evidence_after().clone(),
-        });
-        self.completed = Some(SharedLearningRoundRecord {
-            round: self.round,
-            compact_order: self.compact_order.clone(),
-            rbf_order: self.rbf_order.clone(),
-            quota_metadata: self.metadata.clone(),
-            compact_round,
-            rbf_round,
-            ratings: canonical_ratings,
-            presentation_ledger_entries: self.routes.presentation_ledger_entries.clone(),
-            audit: self.audit.clone(),
-        });
-        Ok(())
-    }
-
-    pub fn finish(mut self) -> std::result::Result<SharedLearningRoundRecord, Box<Self>> {
-        if self.completed.is_none() {
-            return Err(Box::new(self));
-        }
-        Ok(self
-            .completed
-            .take()
-            .expect("completed record was checked before consuming the pending round"))
     }
 
     fn record_terminal_failure(
@@ -290,10 +227,83 @@ impl PendingSharedLearningRound<'_> {
     }
 }
 
+impl PendingSharedLearningRound<'_> {
+    fn state(&self) -> &SharedLearningRoundState {
+        self.state
+            .as_ref()
+            .expect("pending shared round retains its state until it is consumed")
+    }
+
+    pub const fn round(&self) -> usize {
+        self.state
+            .as_ref()
+            .expect("pending shared round retains its state until it is consumed")
+            .round()
+    }
+
+    pub fn new_rating_event_ids(&self) -> &[EventId] {
+        self.state().new_rating_event_ids()
+    }
+
+    pub fn stored_rating_event_ids(&self) -> &[EventId] {
+        self.state().stored_rating_event_ids()
+    }
+
+    pub fn required_rating_event_ids(&self) -> &[EventId] {
+        self.state().required_rating_event_ids()
+    }
+
+    pub const fn is_complete(&self) -> bool {
+        self.state
+            .as_ref()
+            .expect("pending shared round retains its state until it is consumed")
+            .is_complete()
+    }
+
+    pub fn audit(&self) -> &[SharedLearningAuditEvent] {
+        self.state().audit()
+    }
+
+    pub fn terminal_failure(&self) -> Option<(PersonalizerId, &str)> {
+        self.state().terminal_failure()
+    }
+
+    pub fn submit_ratings(&mut self, ratings: Vec<BatchRating>) -> Result<()> {
+        submit_shared_learning_round_ratings(
+            self.state
+                .as_mut()
+                .expect("pending shared round retains its state until it is consumed"),
+            self.compact_controller,
+            self.rbf_controller,
+            ratings,
+        )
+    }
+
+    pub fn finish(mut self) -> std::result::Result<SharedLearningRoundRecord, Box<Self>> {
+        if !self.state().is_complete() {
+            return Err(Box::new(self));
+        }
+        let state = self
+            .state
+            .take()
+            .expect("completed pending shared round retains its state until it is consumed");
+        finish_shared_learning_round_state(state, self.compact_controller, self.rbf_controller)
+            .map_err(|state| {
+                self.state = Some(state);
+                Box::new(self)
+            })
+    }
+}
+
 impl Drop for PendingSharedLearningRound<'_> {
     fn drop(&mut self) {
-        self.compact_controller.discard_pending_batch();
-        self.rbf_controller.discard_pending_batch();
+        if let Some(state) = self.state.take() {
+            discard_shared_learning_round_state(
+                state,
+                self.compact_controller,
+                self.rbf_controller,
+            );
+        }
     }
 }
 
@@ -302,6 +312,19 @@ pub fn begin_shared_learning_round<'a>(
     compact_controller: &'a mut CompactLearningController,
     rbf_controller: &'a mut RbfLearningController,
 ) -> Result<PendingSharedLearningRound<'a>> {
+    let state = prepare_shared_learning_round_state(quota, compact_controller, rbf_controller)?;
+    Ok(PendingSharedLearningRound {
+        compact_controller,
+        rbf_controller,
+        state: Some(state),
+    })
+}
+
+pub(crate) fn prepare_shared_learning_round_state(
+    quota: ResolvedQuota,
+    compact_controller: &mut CompactLearningController,
+    rbf_controller: &mut RbfLearningController,
+) -> Result<Box<SharedLearningRoundState>> {
     validate_bindings(&quota, compact_controller, rbf_controller)?;
     let round = compact_controller.history().len() + 1;
     let (compact, rbf, metadata) = quota.into_parts();
@@ -346,9 +369,7 @@ pub fn begin_shared_learning_round<'a>(
         rbf_event_ids: rbf_event_ids.clone(),
     }];
 
-    Ok(PendingSharedLearningRound {
-        compact_controller,
-        rbf_controller,
+    Ok(Box::new(SharedLearningRoundState {
         round,
         compact_order,
         rbf_order,
@@ -358,8 +379,175 @@ pub fn begin_shared_learning_round<'a>(
         rbf_event_ids,
         audit,
         terminal_failure: None,
-        completed: None,
-    })
+        prepared_completion: None,
+    }))
+}
+
+pub(crate) fn submit_shared_learning_round_ratings(
+    state: &mut SharedLearningRoundState,
+    compact_controller: &mut CompactLearningController,
+    rbf_controller: &mut RbfLearningController,
+    ratings: Vec<BatchRating>,
+) -> Result<()> {
+    if state.prepared_completion.is_some() {
+        return Err(SharedLearningRoundError::AlreadyComplete);
+    }
+    if let Some((personalizer, message)) = &state.terminal_failure {
+        return Err(SharedLearningRoundError::TerminalFailure {
+            personalizer: *personalizer,
+            message: message.clone(),
+        });
+    }
+    validate_state_bindings(state, compact_controller, rbf_controller)?;
+
+    let ratings = validate_rating_set(&state.routes.required_event_ids, ratings)?;
+    let canonical_ratings = state
+        .routes
+        .required_event_ids
+        .iter()
+        .map(|event_id| ratings[event_id])
+        .collect::<Vec<_>>();
+    let compact_ratings = ratings_for_event_ids(&state.compact_event_ids, &ratings)?;
+    let rbf_ratings = ratings_for_event_ids(&state.rbf_event_ids, &ratings)?;
+
+    let rbf_prepared = match rbf_controller.prepare_completion(rbf_ratings) {
+        Ok(prepared) => prepared,
+        Err(error) => {
+            return Err(state.record_terminal_failure(PersonalizerId::Rbf, error));
+        }
+    };
+    let compact_prepared = match compact_controller.prepare_completion(compact_ratings) {
+        Ok(prepared) => prepared,
+        Err(error) => {
+            return Err(state.record_terminal_failure(PersonalizerId::Compact, error));
+        }
+    };
+    state.prepared_completion = Some(PreparedSharedRoundCompletion {
+        compact: compact_prepared,
+        rbf: rbf_prepared,
+        ratings: canonical_ratings,
+    });
+    Ok(())
+}
+
+pub(crate) fn finish_shared_learning_round_state(
+    state: Box<SharedLearningRoundState>,
+    compact_controller: &mut CompactLearningController,
+    rbf_controller: &mut RbfLearningController,
+) -> std::result::Result<SharedLearningRoundRecord, Box<SharedLearningRoundState>> {
+    if state.prepared_completion.is_none()
+        || validate_state_bindings(&state, compact_controller, rbf_controller).is_err()
+    {
+        return Err(state);
+    }
+    let SharedLearningRoundState {
+        round,
+        compact_order,
+        rbf_order,
+        metadata,
+        routes,
+        compact_event_ids: _,
+        rbf_event_ids: _,
+        mut audit,
+        terminal_failure: _,
+        prepared_completion,
+    } = *state;
+    let prepared = prepared_completion.expect("prepared completion was checked");
+    let compact_round = prepared.compact.record().clone();
+    let rbf_round = prepared.rbf.record().clone();
+    audit.push(SharedLearningAuditEvent::RatingsApplied {
+        ratings: prepared.ratings.clone(),
+    });
+    audit.push(SharedLearningAuditEvent::RoundCompleted {
+        round,
+        compact_evidence_after: compact_round.evidence_after().clone(),
+        rbf_evidence_after: rbf_round.evidence_after().clone(),
+    });
+    let record = SharedLearningRoundRecord {
+        round,
+        compact_order,
+        rbf_order,
+        quota_metadata: metadata,
+        compact_round,
+        rbf_round,
+        ratings: prepared.ratings,
+        presentation_ledger_entries: routes.presentation_ledger_entries,
+        audit,
+    };
+    rbf_controller.commit_prepared_completion(prepared.rbf);
+    compact_controller.commit_prepared_completion(prepared.compact);
+    Ok(record)
+}
+
+pub(crate) fn discard_shared_learning_round_state(
+    state: Box<SharedLearningRoundState>,
+    compact_controller: &mut CompactLearningController,
+    rbf_controller: &mut RbfLearningController,
+) {
+    if validate_state_bindings(&state, compact_controller, rbf_controller).is_ok() {
+        compact_controller.discard_pending_batch();
+        rbf_controller.discard_pending_batch();
+    }
+}
+
+fn validate_state_bindings(
+    state: &SharedLearningRoundState,
+    compact: &CompactLearningController,
+    rbf: &RbfLearningController,
+) -> Result<()> {
+    validate_pending_binding(
+        PersonalizerId::Compact,
+        state.round,
+        state.compact_order.evidence_identity(),
+        &state.compact_event_ids,
+        compact.history().len(),
+        compact.pending_batch().map(|batch| {
+            (
+                batch.round(),
+                batch.evidence_identity(),
+                batch.candidate_ids(),
+            )
+        }),
+    )?;
+    validate_pending_binding(
+        PersonalizerId::Rbf,
+        state.round,
+        state.rbf_order.evidence_identity(),
+        &state.rbf_event_ids,
+        rbf.history().len(),
+        rbf.pending_batch().map(|batch| {
+            (
+                batch.round(),
+                batch.evidence_identity(),
+                batch.candidate_ids(),
+            )
+        }),
+    )
+}
+
+fn validate_pending_binding(
+    personalizer: PersonalizerId,
+    round: usize,
+    evidence_identity: &EvidenceIdentity,
+    event_ids: &[EventId],
+    completed_rounds: usize,
+    pending: Option<(usize, &EvidenceIdentity, &[EventId])>,
+) -> Result<()> {
+    let Some((pending_round, pending_evidence, pending_event_ids)) = pending else {
+        return Err(invariant(format!(
+            "{personalizer:?} lost its frozen shared-learning batch"
+        )));
+    };
+    if completed_rounds + 1 != round
+        || pending_round != round
+        || pending_evidence != evidence_identity
+        || pending_event_ids != event_ids
+    {
+        return Err(invariant(format!(
+            "{personalizer:?} no longer matches its frozen shared-learning batch"
+        )));
+    }
+    Ok(())
 }
 
 fn validate_bindings(

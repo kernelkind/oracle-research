@@ -430,6 +430,25 @@ fn malformed_rating_sets_change_neither_personalizer_and_can_be_retried() {
 }
 
 #[test]
+fn dropping_a_prepared_completion_does_not_advance_either_personalizer() {
+    let (mut compact, mut rbf, quota) = learning_fixture(true);
+    let mut pending = begin_shared_learning_round(quota, &mut compact, &mut rbf)
+        .expect("begin shared learning round");
+    let ratings = exact_ratings(pending.required_rating_event_ids());
+
+    pending
+        .submit_ratings(ratings)
+        .expect("prepare valid ratings");
+    assert!(pending.is_complete());
+    drop(pending);
+
+    assert!(compact.pending_batch().is_none());
+    assert!(rbf.pending_batch().is_none());
+    assert!(compact.history().is_empty());
+    assert!(rbf.history().is_empty());
+}
+
+#[test]
 fn valid_ratings_are_routed_once_and_ledgered_only_for_new_presentations() {
     let run = |reverse: bool| {
         let (mut compact, mut rbf, quota) = learning_fixture(true);

@@ -150,8 +150,10 @@ impl CandidateOrderRequest {
 
 /// The public Oracle boundary required by local candidate construction.
 ///
-/// Implementations own the immutable `similar_notes` response cache. The local
-/// builder owns only its shared candidate/document vector cache.
+/// Implementations own the immutable `similar_notes` response cache. Repeating
+/// the same `(representation_version, source event, depth)` request must return
+/// the same response without another matrix pass. The local builder owns only
+/// its shared candidate/document vector cache.
 pub trait CandidateOrderOracle {
     fn representation_version(&self) -> &str;
 
@@ -215,6 +217,37 @@ impl CandidateVectorCache {
 
     pub fn vector_count(&self) -> usize {
         self.vectors.len()
+    }
+
+    pub(crate) fn insert_verified_vectors(
+        &mut self,
+        response: VectorsForNotesResponse,
+        requested: &[EventId],
+        dimensions: usize,
+    ) -> Result<()> {
+        let represented_rows = response.represented_rows;
+        let total_rows = response.total_rows;
+        if represented_rows == 0 || represented_rows != total_rows {
+            return Err(CandidateOrderError::InvalidVectorResponse {
+                message: format!("representation is incomplete ({represented_rows}/{total_rows})"),
+            });
+        }
+        self.require_rows(represented_rows, total_rows)?;
+        validate_vector_response(
+            &response,
+            &self.representation_version,
+            represented_rows,
+            total_rows,
+            dimensions,
+            requested,
+        )?;
+        let vectors = response
+            .vectors
+            .into_iter()
+            .map(|stored| (stored.event_id, stored.vector))
+            .collect();
+        self.insert_validated(represented_rows, total_rows, vectors);
+        Ok(())
     }
 
     fn require_rows(&self, represented_rows: u64, total_rows: u64) -> Result<()> {

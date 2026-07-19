@@ -724,6 +724,12 @@ pub(crate) struct PreparedCompactCompletion {
     record: CompactRoundRecord,
 }
 
+impl PreparedCompactCompletion {
+    pub(crate) fn record(&self) -> &CompactRoundRecord {
+        &self.record
+    }
+}
+
 pub struct CompactLearningController {
     representation_version: String,
     evidence: EvidenceState,
@@ -976,6 +982,12 @@ pub(crate) struct PreparedRbfCompletion {
     errors: Vec<ErrorAggregate>,
     next_index: usize,
     record: RbfRoundRecord,
+}
+
+impl PreparedRbfCompletion {
+    pub(crate) fn record(&self) -> &RbfRoundRecord {
+        &self.record
+    }
 }
 
 pub struct RbfLearningController {
