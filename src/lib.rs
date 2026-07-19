@@ -24,6 +24,7 @@ pub mod ordered_gte_token_audit;
 pub mod personalizer_learning;
 pub mod pplx;
 pub mod preflight;
+pub mod quota_resolution;
 pub mod representation;
 pub mod representation_batch_plan;
 pub mod retrieval;
