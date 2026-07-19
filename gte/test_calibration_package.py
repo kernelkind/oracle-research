@@ -231,6 +231,136 @@ class CalibrationPackageTest(unittest.TestCase):
                 ["bash", "-n"], input=block, check=True, text=True
             )
 
+    def test_runbook_selects_from_the_constrained_offer_list_and_refreshes_before_launch(self):
+        runbook = Path(__file__).with_name("vast-calibration-runbook.txt").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertNotIn("id=$OFFER_ID", runbook)
+        self.assertIn(
+            'export OFFER_QUERY="$BASE_QUERY geolocation in [US]"', runbook
+        )
+        self.assertEqual(runbook.count('    "$OFFER_QUERY" \\'), 2)
+        self.assertIn(
+            'printf \'%s\\n\' "$OFFER_QUERY" > '
+            '"$LOCAL_ROOT/launch/offer-query.txt"',
+            runbook,
+        )
+        selector = runbook.split("<<'SELECT_OFFER'\n", 1)[1].split(
+            "\nSELECT_OFFER\n", 1
+        )[0]
+        self.assertEqual(runbook.count("<<'SELECT_OFFER'"), 1)
+        self.assertEqual(
+            runbook.count(
+                'select_offer "$LOCAL_ROOT/launch/offers.json" \\\n'
+                '    "$LOCAL_ROOT/launch/offer.json"'
+            ),
+            1,
+        )
+        self.assertEqual(
+            runbook.count(
+                'select_offer "$LOCAL_ROOT/launch/offers.refresh.json" \\\n'
+                '    "$LOCAL_ROOT/launch/offer.json"'
+            ),
+            1,
+        )
+        refresh = runbook.index('> "$LOCAL_ROOT/launch/offers.refresh.json"')
+        launch = runbook.index("env -u DOCKER_PULL_PAT bash <<'DIRECT_LAUNCH'")
+        self.assertLess(refresh, launch)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            offers = root / "offers.json"
+            selected = root / "offer.json"
+            offers.write_text(
+                json.dumps(
+                    [
+                        {"id": 11, "dph_total": 1.5},
+                        {"id": 22, "dph_total": 1.2},
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            subprocess.run(
+                ["python3", "-", str(offers), "22", str(selected)],
+                input=selector,
+                check=True,
+                text=True,
+            )
+            self.assertEqual(
+                json.loads(selected.read_text(encoding="utf-8")),
+                [{"dph_total": 1.2, "id": 22}],
+            )
+
+            missing = subprocess.run(
+                ["python3", "-", str(offers), "33", str(selected)],
+                input=selector,
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(missing.returncode, 0)
+            self.assertFalse(selected.exists())
+
+            offers.write_text(
+                json.dumps([{"id": 22}, {"id": 22}]), encoding="utf-8"
+            )
+            duplicate = subprocess.run(
+                ["python3", "-", str(offers), "22", str(selected)],
+                input=selector,
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(duplicate.returncode, 0)
+            self.assertFalse(selected.exists())
+
+    def test_paid_launch_requires_the_refreshed_offer_record(self):
+        runbook = Path(__file__).with_name("vast-calibration-runbook.txt").read_text(
+            encoding="utf-8"
+        )
+
+        validator = runbook.split("<<'VALIDATE_OFFER'\n", 1)[1].split(
+            "\nVALIDATE_OFFER\n", 1
+        )[0]
+        direct_launch = runbook.index(
+            "env -u DOCKER_PULL_PAT bash <<'DIRECT_LAUNCH'"
+        )
+        validation = runbook.index("<<'VALIDATE_OFFER'", direct_launch)
+        credential = runbook.index("read -rsp", direct_launch)
+        paid_call = runbook.index('vastai create instance "$OFFER_ID"', direct_launch)
+        self.assertLess(validation, credential)
+        self.assertLess(validation, paid_call)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            offer = Path(temporary) / "offer.json"
+            offer.write_text(json.dumps([{"id": 22}]), encoding="utf-8")
+            subprocess.run(
+                ["python3", "-", str(offer), "22"],
+                input=validator,
+                check=True,
+                text=True,
+            )
+
+            for path, offer_id in (
+                (Path(temporary) / "missing.json", "22"),
+                (offer, "33"),
+            ):
+                rejected = subprocess.run(
+                    ["python3", "-", str(path), offer_id],
+                    input=validator,
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertNotEqual(rejected.returncode, 0)
+
+            offer.write_text(json.dumps([{"id": -1}]), encoding="utf-8")
+            invalid_id = subprocess.run(
+                ["python3", "-", str(offer), "-1"],
+                input=validator,
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(invalid_id.returncode, 0)
+
     def test_template_record_binds_the_exact_private_image_without_retaining_login(self):
         image = "kernelkind/oracle-mvp@sha256:" + "4" * 64
         raw = [

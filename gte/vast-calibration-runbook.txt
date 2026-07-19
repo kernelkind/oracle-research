@@ -148,37 +148,100 @@ PY
   date -u +%Y-%m-%dT%H:%M:%SZ > "$LOCAL_ROOT/launch/attempt.log"
 
   BASE_QUERY='gpu_name=RTX_PRO_6000_WS num_gpus=1 gpu_max_power=600 reliability>=0.995 cpu_arch=amd64 cpu_ram>=137.439 disk_space>=200 disk_bw>=1000 inet_down>=500 inet_down_cost<=0.02 inet_up>=100 inet_up_cost<=0.02 driver_version>=580.95.05 duration>=1 rentable=true verified=true'
+  export OFFER_QUERY="$BASE_QUERY geolocation in [US]"
 
   vastai search offers \
-    "$BASE_QUERY geolocation in [US]" \
+    "$OFFER_QUERY" \
     --type on-demand \
     --storage 200 \
     --order dph_total \
     --limit 20 \
     --raw \
+    2> /dev/null \
     > "$LOCAL_ROOT/launch/offers.json"
 
-  Prefer a US offer. If offers.json is an empty JSON array, repeat that exact
-  command without `geolocation in [US]`. Do not relax any other constraint.
+  Prefer a US offer. If offers.json is an empty JSON array, set
+  `export OFFER_QUERY="$BASE_QUERY"` and repeat that exact command. Do not relax
+  any other constraint. Record the exact query used:
+
+  printf '%s\n' "$OFFER_QUERY" > "$LOCAL_ROOT/launch/offer-query.txt"
+
   Select one returned ID and set:
 
   export OFFER_ID=<OFFER_ID>
 
+  select_offer() {
+    python3 - "$1" "$OFFER_ID" "$2" <<'SELECT_OFFER'
+import json
+import sys
+from pathlib import Path
+
+source = Path(sys.argv[1])
+offer_id = sys.argv[2]
+destination = Path(sys.argv[3])
+temporary = destination.with_name(f".{destination.name}.tmp")
+destination.unlink(missing_ok=True)
+temporary.unlink(missing_ok=True)
+
+if not offer_id.isdecimal() or int(offer_id) <= 0:
+    raise SystemExit("selected Vast offer ID must be a positive integer")
+
+try:
+    offers = json.loads(source.read_text(encoding="utf-8"))
+except (OSError, json.JSONDecodeError) as error:
+    raise SystemExit(f"could not read Vast offer list: {error}") from error
+if not isinstance(offers, list):
+    raise SystemExit("Vast offer search must return a JSON array")
+
+matches = [
+    offer
+    for offer in offers
+    if isinstance(offer, dict)
+    and not isinstance(offer.get("id"), bool)
+    and str(offer.get("id")) == offer_id
+]
+if len(matches) != 1:
+    raise SystemExit(
+        f"selected Vast offer {offer_id} must occur exactly once in the constrained list"
+    )
+
+temporary.write_text(
+    json.dumps(matches, ensure_ascii=False, sort_keys=True, indent=2) + "\n",
+    encoding="utf-8",
+)
+temporary.replace(destination)
+SELECT_OFFER
+  }
+
+  select_offer "$LOCAL_ROOT/launch/offers.json" \
+    "$LOCAL_ROOT/launch/offer.json"
+
+  This local selection must produce a JSON array containing exactly the chosen
+  row. The explicit `--storage 200` is mandatory because Vast otherwise prices
+  only 5 GiB. The network-price ceilings prevent the package and image downloads
+  from consuming the non-runtime reserve before the manual cost gate.
+
+3. Create exactly one direct private-image instance
+
+  Immediately before requesting explicit approval for the paid launch, refresh
+  the identical constrained list:
+
   vastai search offers \
-    "$BASE_QUERY id=$OFFER_ID" \
+    "$OFFER_QUERY" \
     --type on-demand \
     --storage 200 \
     --order dph_total \
-    --limit 1 \
+    --limit 20 \
     --raw \
-    > "$LOCAL_ROOT/launch/offer.json"
+    2> /dev/null \
+    > "$LOCAL_ROOT/launch/offers.refresh.json"
 
-  The resulting JSON array must contain exactly one offer. The explicit
-  `--storage 200` is mandatory because Vast otherwise prices only 5 GiB. The
-  network-price ceilings prevent the package and image downloads from consuming
-  the non-runtime reserve before the manual cost gate.
+  select_offer "$LOCAL_ROOT/launch/offers.refresh.json" \
+    "$LOCAL_ROOT/launch/offer.json"
 
-3. Create exactly one direct private-image instance
+  Stop if the selected ID is absent. Do not select another ID or relax a
+  constraint in this step. Review the refreshed offer.json and obtain explicit
+  user approval before running the paid command below.
 
   env -u DOCKER_PULL_PAT bash <<'DIRECT_LAUNCH'
 set -uo pipefail
@@ -187,6 +250,33 @@ umask 077
 : "${LOCAL_ROOT:?LOCAL_ROOT is required}"
 : "${IMAGE_REF:?IMAGE_REF is required}"
 : "${OFFER_ID:?OFFER_ID is required}"
+if ! python3 - "$LOCAL_ROOT/launch/offer.json" "$OFFER_ID" <<'VALIDATE_OFFER'
+import json
+import sys
+
+try:
+    with open(sys.argv[1], encoding="utf-8") as source:
+        offers = json.load(source)
+except (OSError, json.JSONDecodeError) as error:
+    raise SystemExit(f"could not read refreshed Vast offer: {error}") from error
+
+offer_id = sys.argv[2]
+valid = (
+    offer_id.isdecimal()
+    and int(offer_id) > 0
+    and isinstance(offers, list)
+    and len(offers) == 1
+    and isinstance(offers[0], dict)
+    and not isinstance(offers[0].get("id"), bool)
+    and str(offers[0].get("id")) == offer_id
+)
+if not valid:
+    raise SystemExit("refreshed Vast offer does not match OFFER_ID")
+VALIDATE_OFFER
+then
+  printf '%s\n' 'Refreshed offer record is missing or mismatched; refusing launch.' >&2
+  exit 1
+fi
 read -rsp "Docker read-only PAT: " DOCKER_PULL_PAT </dev/tty
 printf '\n' >/dev/tty
 if test -z "$DOCKER_PULL_PAT"; then
