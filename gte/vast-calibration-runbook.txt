@@ -24,17 +24,16 @@ Local layout
   <LOCAL_ROOT>/work.partial  resumable retrieval; absent before retrieval
   <LOCAL_ROOT>/work          verified retrieved result; absent before retrieval
 
-The exact IMAGE_REF, SOURCE_COMMIT, and PRIVATE_TEMPLATE_HASH come from the
-reviewed CREC-66 package. IMAGE_REF is
-the docker.io/kernelkind/oracle-mvp@sha256:... value already stored in
-package/run/calibration-config.json.
+The exact IMAGE_REF and SOURCE_COMMIT come from the reviewed CREC-66 package.
+IMAGE_REF is the docker.io/kernelkind/oracle-mvp@sha256:... value already stored
+in package/run/calibration-config.json. DOCKER_PULL_PAT is a short-lived,
+read-only Docker Hub token entered only for registry authentication.
 
 1. Free local preflight through the exact registry digest
 
   export LOCAL_ROOT=<LOCAL_ROOT>
   export IMAGE_REF=<IMAGE_REF>
   export SOURCE_COMMIT=<SOURCE_COMMIT>
-  export PRIVATE_TEMPLATE_HASH=<PRIVATE_TEMPLATE_HASH>
 
   set -euo pipefail
 
@@ -43,7 +42,25 @@ package/run/calibration-config.json.
   test ! -e "$LOCAL_ROOT/work.partial"
   test ! -e "$LOCAL_ROOT/work"
 
-  docker pull "$IMAGE_REF"
+  env -u DOCKER_PULL_PAT bash <<'PREFLIGHT_AUTH'
+set -euo pipefail
+set +x
+umask 077
+: "${IMAGE_REF:?IMAGE_REF is required}"
+read -rsp "Docker read-only PAT: " DOCKER_PULL_PAT </dev/tty
+printf '\n' >/dev/tty
+test -n "$DOCKER_PULL_PAT"
+PULL_CONFIG="$(mktemp -d)"
+trap 'rm -rf "$PULL_CONFIG"; unset DOCKER_PULL_PAT' EXIT
+printf '%s' "$DOCKER_PULL_PAT" \
+  | docker --config "$PULL_CONFIG" login \
+      --username kernelkind \
+      --password-stdin \
+      docker.io \
+      >/dev/null
+docker --config "$PULL_CONFIG" pull "$IMAGE_REF"
+PREFLIGHT_AUTH
+
   test "$(docker image inspect "$IMAGE_REF" \
     --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}')" \
     = "$SOURCE_COMMIT"
@@ -65,18 +82,6 @@ package/run/calibration-config.json.
 
   mkdir -p "$LOCAL_ROOT/preflight/scratch/corpus-root/ndb"
   mkdir -p "$LOCAL_ROOT/preflight/work"
-
-  vastai search templates "hash_id=$PRIVATE_TEMPLATE_HASH" --raw \
-    | docker run --rm -i \
-        --entrypoint /opt/gte-venv/bin/python \
-        -v "$LOCAL_ROOT/preflight:/preflight" \
-        "$IMAGE_REF" \
-        /opt/oracle-mvp/gte/calibration_package.py \
-        freeze-template \
-        /dev/stdin \
-        "$PRIVATE_TEMPLATE_HASH" \
-        "$IMAGE_REF" \
-        /preflight/template.json
 
   cp --reflink=auto \
     "$LOCAL_ROOT/package/corpus-root/ndb/data.mdb" \
@@ -132,9 +137,7 @@ PY
   sha256sum "$LOCAL_ROOT/package/package-manifest.json"
   sha256sum "$LOCAL_ROOT/preflight/offline-descriptor.json"
 
-  Confirm that preflight/template.json identifies PRIVATE_TEMPLATE_HASH and the
-  exact IMAGE_REF without containing any registry credential. Confirm that the
-  repository budget ledger and
+  Confirm that the repository budget ledger and
   package/run/budget-ledger.json have the same SHA-256 and contain the active,
   unclaimed reservation named by package/run/calibration-config.json. Stop if
   any local command above failed. Do not debug package paths on a rental.
@@ -175,31 +178,61 @@ PY
   network-price ceilings prevent the package and image downloads from consuming
   the non-runtime reserve before the manual cost gate.
 
-3. Create exactly one private-template instance
+3. Create exactly one direct private-image instance
 
-  umask 077
-  vastai create instance "$OFFER_ID" \
-    --template_hash "$PRIVATE_TEMPLATE_HASH" \
-    --disk 200 \
-    --label crec-62-gte-calibration \
-    --cancel-unavail \
-    --raw \
-    > "$LOCAL_ROOT/launch/create-result.raw.json" \
-    2>> "$LOCAL_ROOT/launch/attempt.log"
+  env -u DOCKER_PULL_PAT bash <<'DIRECT_LAUNCH'
+set -uo pipefail
+set +x
+umask 077
+: "${LOCAL_ROOT:?LOCAL_ROOT is required}"
+: "${IMAGE_REF:?IMAGE_REF is required}"
+: "${OFFER_ID:?OFFER_ID is required}"
+read -rsp "Docker read-only PAT: " DOCKER_PULL_PAT </dev/tty
+printf '\n' >/dev/tty
+if test -z "$DOCKER_PULL_PAT"; then
+  printf '%s\n' 'Docker read-only PAT must not be empty.' >&2
+  exit 1
+fi
+DOCKER_LOGIN="-u kernelkind -p $DOCKER_PULL_PAT docker.io"
 
-  docker run --rm \
-    --entrypoint /opt/gte-venv/bin/python \
-    -v "$LOCAL_ROOT/launch:/launch" \
-    "$IMAGE_REF" \
-    /opt/oracle-mvp/gte/calibration_package.py \
-    freeze-create \
-    /launch/create-result.raw.json \
-    /launch/create-result.json
+vastai create instance "$OFFER_ID" \
+  --image "$IMAGE_REF" \
+  --login "$DOCKER_LOGIN" \
+  --disk 200 \
+  --label crec-62-gte-calibration \
+  --ssh \
+  --direct \
+  --cancel-unavail \
+  --retry 1 \
+  --raw \
+  2> /dev/null \
+  | docker run --rm -i \
+      --entrypoint /opt/gte-venv/bin/python \
+      -v "$LOCAL_ROOT/launch:/launch" \
+      "$IMAGE_REF" \
+      /opt/oracle-mvp/gte/calibration_package.py \
+      freeze-create \
+      /dev/stdin \
+      /launch/create-result.json
+launch_status=("${PIPESTATUS[@]}")
+unset DOCKER_LOGIN DOCKER_PULL_PAT
+printf '%s vastai_create_status=%s freeze_create_status=%s\n' \
+  "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  "${launch_status[0]}" \
+  "${launch_status[1]}" \
+  >> "$LOCAL_ROOT/launch/attempt.log"
+if test "${launch_status[0]}" -ne 0 \
+  || test "${launch_status[1]}" -ne 0; then
+  printf '%s\n' \
+    'Direct launch failed; do not retry. Recover by the unique instance label.' \
+    >&2
+  exit 1
+fi
+DIRECT_LAUNCH
 
   export INSTANCE_ID="$(python3 -c \
     'import json,sys; print(json.load(open(sys.argv[1]))["new_contract"])' \
     "$LOCAL_ROOT/launch/create-result.json")"
-  rm "$LOCAL_ROOT/launch/create-result.raw.json"
 
   Record INSTANCE_ID and the launch time in launch/attempt.log. No second
   instance is authorized if image pull, startup, transfer, or preparation

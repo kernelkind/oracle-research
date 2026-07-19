@@ -1,5 +1,6 @@
 import hashlib
 import json
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -195,6 +196,40 @@ class CalibrationPackageTest(unittest.TestCase):
 
         record = freeze_create_result(raw)
         self.assertEqual(record, {"success": True, "new_contract": 88001234})
+
+    def test_runbook_launches_the_private_image_directly_without_a_template(self):
+        runbook = Path(__file__).with_name("vast-calibration-runbook.txt").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertNotIn("PRIVATE_TEMPLATE_HASH", runbook)
+        self.assertNotIn("search templates", runbook)
+        self.assertNotIn("freeze-template", runbook)
+        self.assertNotIn("template.json", runbook)
+        self.assertNotIn("--template_hash", runbook)
+        self.assertIn('--image "$IMAGE_REF"', runbook)
+        self.assertIn('--login "$DOCKER_LOGIN"', runbook)
+        self.assertIn("--disk 200", runbook)
+        self.assertIn("--label crec-62-gte-calibration", runbook)
+        self.assertIn("--ssh \\", runbook)
+        self.assertIn("--direct \\", runbook)
+        self.assertIn("--cancel-unavail", runbook)
+        self.assertIn("--retry 1", runbook)
+        self.assertIn("2> /dev/null", runbook)
+        self.assertIn("freeze-create \\", runbook)
+        self.assertIn("/dev/stdin \\", runbook)
+        self.assertNotIn("create-result.raw.json", runbook)
+        self.assertNotIn("create-result.stderr", runbook)
+        self.assertIn('docker --config "$PULL_CONFIG" login', runbook)
+        self.assertIn('if test -z "$DOCKER_PULL_PAT"; then', runbook)
+
+        for marker in ("PREFLIGHT_AUTH", "DIRECT_LAUNCH"):
+            block = runbook.split(f"<<'{marker}'\n", 1)[1].split(
+                f"\n{marker}\n", 1
+            )[0]
+            subprocess.run(
+                ["bash", "-n"], input=block, check=True, text=True
+            )
 
     def test_template_record_binds_the_exact_private_image_without_retaining_login(self):
         image = "kernelkind/oracle-mvp@sha256:" + "4" * 64
