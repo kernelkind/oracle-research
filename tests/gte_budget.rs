@@ -12,11 +12,12 @@ use oracle_mvp::budget::MicroUsd;
 use oracle_mvp::gte::TokenRole;
 use oracle_mvp::gte_budget::{
     CALIBRATION_LIFETIME_CAP, CalibrationEvidencePaths, CalibrationExecutionIdentity,
-    CalibrationRecorder, CalibrationRecorderConfig, FullBuildNonComputeCosts, MVP_LIFETIME_CAP,
-    MonotonicCostGuard, VerifiedCalibrationEvidence, claim_calibration_execution,
-    read_active_calibration_reservation, read_budget_ledger, reserve_calibration,
-    reserve_full_build, settle_calibration, settle_failed_calibration,
-    validate_calibration_selection,
+    CalibrationRecorder, CalibrationRecorderConfig, FullBuildNonComputeCosts, FullBuildResultPaths,
+    MVP_LIFETIME_CAP, MonotonicCostGuard, VerifiedCalibrationEvidence, claim_calibration_execution,
+    claim_or_resume_full_build_execution, read_active_calibration_reservation,
+    read_active_full_build_reservation, read_budget_ledger, reserve_calibration,
+    reserve_full_build, settle_calibration, settle_failed_calibration, settle_failed_full_build,
+    settle_full_build, validate_calibration_selection,
 };
 use oracle_mvp::ordered_gte_token_audit::{
     OrderedGteTokenAuditConfig, OrderedGteTokenCounter, audit_ordered_gte_tokens,
@@ -1032,6 +1033,408 @@ fn full_build_rejects_an_evidence_derived_projection_over_the_lifetime_cap() {
             .expect("read unchanged ledger")
             .outstanding_commitments,
         MicroUsd(0)
+    );
+}
+
+#[test]
+fn full_build_execution_claim_is_idempotent_only_for_the_same_runtime() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    reserve_calibration(
+        &fixture.path,
+        "claim-calibration",
+        MicroUsd::from_dollars(25),
+        "2026-07-16T01:00:00Z",
+    )
+    .expect("reserve calibration");
+    claim_calibration_execution(
+        &fixture.path,
+        "claim-calibration",
+        MicroUsd::from_dollars(25),
+        MicroUsd(0),
+    )
+    .expect("claim calibration");
+    let calibration = fixture.write_calibration_evidence_with_rate(MicroUsd::from_dollars(1));
+    let mut calibration_identity: serde_json::Value = serde_json::from_slice(
+        &fs::read(&calibration.paths.execution_identity_path)
+            .expect("read calibration execution identity"),
+    )
+    .expect("decode calibration execution identity");
+    calibration_identity["available_duration_seconds"] = serde_json::json!(1_000_000_u64);
+    fs::write(
+        &calibration.paths.execution_identity_path,
+        serde_json::to_vec_pretty(&calibration_identity)
+            .expect("encode long calibration execution identity"),
+    )
+    .expect("write long calibration execution identity");
+    let mut evidence_document: serde_json::Value = serde_json::from_slice(
+        &fs::read(&calibration.evidence_path).expect("read calibration evidence"),
+    )
+    .expect("decode calibration evidence");
+    evidence_document["execution_identity_sha256"] =
+        serde_json::json!(sha256_file(&calibration.paths.execution_identity_path));
+    for batch in evidence_document["batches"]
+        .as_array_mut()
+        .expect("calibration batches")
+    {
+        batch["end_to_end_elapsed_nanoseconds"] = serde_json::json!(90_000_000_000_000_u64);
+    }
+    fs::write(
+        &calibration.evidence_path,
+        serde_json::to_vec_pretty(&evidence_document).expect("encode long calibration evidence"),
+    )
+    .expect("write long calibration evidence");
+    let evidence =
+        VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
+            .expect("verify calibration evidence");
+    settle_calibration(
+        &fixture.path,
+        "claim-calibration",
+        &evidence,
+        MicroUsd::from_dollars(1),
+        "2026-07-16T02:00:00Z",
+    )
+    .expect("settle calibration");
+    let full_build_costs = FullBuildNonComputeCosts {
+        artifact_storage_and_transfer: MicroUsd::from_dollars(1),
+        paid_lazy_inference: MicroUsd(0),
+        one_cold_restart: MicroUsd(1),
+        one_lost_shard: MicroUsd(1),
+    };
+    reserve_full_build(
+        &fixture.path,
+        "complete-build",
+        &evidence,
+        full_build_costs.clone(),
+        "2026-07-16T03:00:00Z",
+    )
+    .expect("reserve full build");
+    let reserved_ledger = fs::read(&fixture.path).expect("read reserved full-build ledger");
+    let active = read_active_full_build_reservation(&fixture.path, "complete-build", &evidence)
+        .expect("read exact active full-build reservation");
+    assert_eq!(active.binding.reservation_id, "complete-build");
+    assert_eq!(
+        fs::read(&fixture.path).expect("read reservation after preflight"),
+        reserved_ledger,
+        "reservation preflight must be read-only",
+    );
+
+    let full_build_identity = fixture.directory.path().join("full-build-identity.json");
+    let mut identity: serde_json::Value = serde_json::from_slice(
+        &fs::read(&calibration.paths.execution_identity_path).expect("read calibration identity"),
+    )
+    .expect("decode calibration identity");
+    identity["rental_offer_id"] = serde_json::json!("full-build-offer");
+    identity["rental_instance_id"] = serde_json::json!("full-build-instance");
+    fs::write(
+        &full_build_identity,
+        serde_json::to_vec_pretty(&identity).expect("encode full-build identity"),
+    )
+    .expect("write full-build identity");
+
+    let mismatched_costs = FullBuildNonComputeCosts {
+        artifact_storage_and_transfer: MicroUsd::from_dollars(2),
+        ..full_build_costs.clone()
+    };
+    let error = claim_or_resume_full_build_execution(
+        &fixture.path,
+        "complete-build",
+        &evidence,
+        &mismatched_costs,
+        &full_build_identity,
+        &"a".repeat(64),
+    )
+    .expect_err("a different configured projection cannot consume the reservation");
+    assert!(error.to_string().contains("cost projection"), "{error}");
+    assert_eq!(
+        fs::read(&fixture.path).expect("read projection-mismatch ledger"),
+        reserved_ledger,
+    );
+
+    identity["rental_rate_per_hour"] = serde_json::json!(MicroUsd::from_dollars(2).0);
+    fs::write(
+        &full_build_identity,
+        serde_json::to_vec_pretty(&identity).expect("encode expensive identity"),
+    )
+    .expect("write expensive identity");
+    let error = claim_or_resume_full_build_execution(
+        &fixture.path,
+        "complete-build",
+        &evidence,
+        &full_build_costs,
+        &full_build_identity,
+        &"a".repeat(64),
+    )
+    .expect_err("a more expensive rental invalidates the calibrated projection");
+    assert!(error.to_string().contains("maximum rental rate"), "{error}");
+
+    identity["rental_rate_per_hour"] = serde_json::json!(MicroUsd::from_dollars(1).0);
+    identity["available_duration_seconds"] = serde_json::json!(360_030_u64);
+    fs::write(
+        &full_build_identity,
+        serde_json::to_vec_pretty(&identity).expect("encode short identity"),
+    )
+    .expect("write short identity");
+    let error = claim_or_resume_full_build_execution(
+        &fixture.path,
+        "complete-build",
+        &evidence,
+        &full_build_costs,
+        &full_build_identity,
+        &"a".repeat(64),
+    )
+    .expect_err("an offer that expires too soon cannot run the build");
+    assert!(error.to_string().contains("offer duration"), "{error}");
+
+    identity["available_duration_seconds"] = serde_json::json!(1_000_000_u64);
+    fs::write(
+        &full_build_identity,
+        serde_json::to_vec_pretty(&identity).expect("restore full-build identity"),
+    )
+    .expect("restore full-build identity");
+
+    let first = claim_or_resume_full_build_execution(
+        &fixture.path,
+        "complete-build",
+        &evidence,
+        &full_build_costs,
+        &full_build_identity,
+        &"a".repeat(64),
+    )
+    .expect("claim first full-build execution");
+    assert!(!first.resumed);
+    let claimed_ledger = fs::read(&fixture.path).expect("read claimed ledger");
+
+    let resumed = claim_or_resume_full_build_execution(
+        &fixture.path,
+        "complete-build",
+        &evidence,
+        &full_build_costs,
+        &full_build_identity,
+        &"a".repeat(64),
+    )
+    .expect("resume the exact execution");
+    assert!(resumed.resumed);
+    assert_eq!(
+        fs::read(&fixture.path).expect("read resumed ledger"),
+        claimed_ledger,
+        "an exact resume must not append another claim",
+    );
+
+    identity["rental_instance_id"] = serde_json::json!("different-instance");
+    fs::write(
+        &full_build_identity,
+        serde_json::to_vec_pretty(&identity).expect("encode changed identity"),
+    )
+    .expect("write changed identity");
+    let error = claim_or_resume_full_build_execution(
+        &fixture.path,
+        "complete-build",
+        &evidence,
+        &full_build_costs,
+        &full_build_identity,
+        &"a".repeat(64),
+    )
+    .expect_err("a different rental cannot reuse the claim");
+    assert!(error.to_string().contains("different execution"), "{error}");
+    assert_eq!(
+        fs::read(&fixture.path).expect("read mismatch-rejected ledger"),
+        claimed_ledger,
+    );
+}
+
+#[test]
+fn successful_full_build_settlement_requires_the_complete_verified_representation() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    reserve_calibration(
+        &fixture.path,
+        "settlement-calibration",
+        MicroUsd::from_dollars(25),
+        "2026-07-16T01:00:00Z",
+    )
+    .expect("reserve calibration");
+    claim_calibration_execution(
+        &fixture.path,
+        "settlement-calibration",
+        MicroUsd::from_dollars(25),
+        MicroUsd(0),
+    )
+    .expect("claim calibration");
+    let calibration = fixture.write_calibration_evidence();
+    let evidence =
+        VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
+            .expect("verify calibration evidence");
+    settle_calibration(
+        &fixture.path,
+        "settlement-calibration",
+        &evidence,
+        MicroUsd::from_dollars(1),
+        "2026-07-16T02:00:00Z",
+    )
+    .expect("settle calibration");
+    let full_build_costs = FullBuildNonComputeCosts {
+        artifact_storage_and_transfer: MicroUsd::from_dollars(1),
+        paid_lazy_inference: MicroUsd(0),
+        one_cold_restart: MicroUsd(1),
+        one_lost_shard: MicroUsd(1),
+    };
+    reserve_full_build(
+        &fixture.path,
+        "settlement-build",
+        &evidence,
+        full_build_costs.clone(),
+        "2026-07-16T03:00:00Z",
+    )
+    .expect("reserve full build");
+    let full_build_identity = fixture.directory.path().join("settlement-identity.json");
+    let mut identity: serde_json::Value = serde_json::from_slice(
+        &fs::read(&calibration.paths.execution_identity_path).expect("read calibration identity"),
+    )
+    .expect("decode calibration identity");
+    identity["rental_offer_id"] = serde_json::json!("settlement-offer");
+    identity["rental_instance_id"] = serde_json::json!("settlement-instance");
+    fs::write(
+        &full_build_identity,
+        serde_json::to_vec_pretty(&identity).expect("encode full-build identity"),
+    )
+    .expect("write full-build identity");
+    let control_sha256 = "b".repeat(64);
+    claim_or_resume_full_build_execution(
+        &fixture.path,
+        "settlement-build",
+        &evidence,
+        &full_build_costs,
+        &full_build_identity,
+        &control_sha256,
+    )
+    .expect("claim full build");
+    let paths = FullBuildResultPaths {
+        corpus_path: fixture.directory.path().join("english.ndb"),
+        ordered_event_ids_path: calibration.paths.ordered_event_ids_path.clone(),
+        representation_path: calibration.paths.representation_path.clone(),
+        execution_identity_path: full_build_identity,
+    };
+    let claimed_ledger = fs::read(&fixture.path).expect("read claimed ledger");
+    let error = settle_full_build(
+        &fixture.path,
+        "settlement-build",
+        &evidence,
+        &paths,
+        MicroUsd::from_dollars(2),
+        "2026-07-16T04:00:00Z",
+    )
+    .expect_err("an incomplete representation cannot settle successfully");
+    assert!(error.to_string().contains("not complete"), "{error}");
+    assert_eq!(
+        fs::read(&fixture.path).expect("read incomplete-rejected ledger"),
+        claimed_ledger,
+    );
+
+    let mut encoder = FixtureEncoder {
+        descriptor: fixture_descriptor(),
+    };
+    build_representation_shards(
+        &paths.corpus_path,
+        &paths.ordered_event_ids_path,
+        &paths.representation_path,
+        &RepresentationBuildConfig {
+            token_audit_path: calibration.paths.token_audit_path.clone(),
+            batch_plan_path: calibration.paths.batch_plan_path.clone(),
+            shard_ordinals: vec![1],
+        },
+        &mut encoder,
+    )
+    .expect("finish the representation");
+
+    let settled = settle_full_build(
+        &fixture.path,
+        "settlement-build",
+        &evidence,
+        &paths,
+        MicroUsd::from_dollars(2),
+        "2026-07-16T04:01:00Z",
+    )
+    .expect("settle complete full build");
+    assert_eq!(settled.actual_spend, MicroUsd::from_dollars(3));
+    assert_eq!(settled.outstanding_commitments, MicroUsd(0));
+}
+
+#[test]
+fn failed_full_build_settlement_records_the_real_provider_overrun() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    reserve_calibration(
+        &fixture.path,
+        "failed-build-calibration",
+        MicroUsd::from_dollars(25),
+        "2026-07-16T01:00:00Z",
+    )
+    .expect("reserve calibration");
+    claim_calibration_execution(
+        &fixture.path,
+        "failed-build-calibration",
+        MicroUsd::from_dollars(25),
+        MicroUsd(0),
+    )
+    .expect("claim calibration");
+    let calibration = fixture.write_calibration_evidence();
+    let evidence =
+        VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
+            .expect("verify calibration evidence");
+    settle_calibration(
+        &fixture.path,
+        "failed-build-calibration",
+        &evidence,
+        MicroUsd::from_dollars(1),
+        "2026-07-16T02:00:00Z",
+    )
+    .expect("settle calibration");
+    let admission = reserve_full_build(
+        &fixture.path,
+        "failed-build",
+        &evidence,
+        FullBuildNonComputeCosts {
+            artifact_storage_and_transfer: MicroUsd(0),
+            paid_lazy_inference: MicroUsd(0),
+            one_cold_restart: MicroUsd(1),
+            one_lost_shard: MicroUsd(1),
+        },
+        "2026-07-16T03:00:00Z",
+    )
+    .expect("reserve full build");
+    let reserved = admission.projection.total().expect("full-build total");
+    let failure_evidence = fixture.directory.path().join("full-build-failure.log");
+    fs::write(
+        &failure_evidence,
+        b"provider charge after interrupted build",
+    )
+    .expect("write failure evidence");
+
+    let actual = MicroUsd(
+        reserved
+            .0
+            .checked_add(MicroUsd::from_dollars(1).0)
+            .expect("provider overrun"),
+    );
+    let settled = settle_failed_full_build(
+        &fixture.path,
+        "failed-build",
+        &evidence,
+        &failure_evidence,
+        actual,
+        "2026-07-16T04:00:00Z",
+    )
+    .expect("reconcile failed full build");
+    assert_eq!(
+        settled.actual_spend,
+        MicroUsd(actual.0 + MicroUsd::from_dollars(1).0)
+    );
+    assert_eq!(settled.outstanding_commitments, MicroUsd(0));
+    let entry = ledger_entries(&fixture.path)
+        .into_iter()
+        .find(|entry| entry["kind"] == "failed_full_build_settlement")
+        .expect("failed full-build settlement entry");
+    assert_eq!(
+        entry["failure_evidence_sha256"],
+        sha256_file(&failure_evidence)
     );
 }
 

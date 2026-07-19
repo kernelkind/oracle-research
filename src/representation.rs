@@ -510,6 +510,50 @@ pub fn build_representation_shards(
     )
 }
 
+/// Continue the fixed representation plan through every shard. Existing valid
+/// checkpoints are reused; callers cannot accidentally publish a selected
+/// subset as the complete build.
+pub fn complete_representation(
+    corpus_path: impl AsRef<Path>,
+    ordered_event_ids_path: impl AsRef<Path>,
+    output_path: impl AsRef<Path>,
+    token_audit_path: impl AsRef<Path>,
+    batch_plan_path: impl AsRef<Path>,
+    encoder: &mut dyn RepresentationEncoder,
+) -> Result<RepresentationBuildResult> {
+    let ordered_path = ordered_event_ids_path.as_ref();
+    let token_audit_path = token_audit_path.as_ref();
+    let batch_plan_path = batch_plan_path.as_ref();
+    let plan = open_representation_batch_plan(ordered_path, token_audit_path, batch_plan_path)?;
+    let total_shards = plan
+        .identity()
+        .total_rows
+        .div_ceil(plan.identity().shard_rows);
+    let shard_ordinals = (0..total_shards)
+        .map(|ordinal| {
+            u32::try_from(ordinal)
+                .map_err(|_| Error::Invariant("representation shard ordinal overflowed".to_owned()))
+        })
+        .collect::<Result<Vec<_>>>()?;
+    let result = build_representation_shards(
+        corpus_path,
+        ordered_path,
+        output_path,
+        &RepresentationBuildConfig {
+            token_audit_path: token_audit_path.to_owned(),
+            batch_plan_path: batch_plan_path.to_owned(),
+            shard_ordinals,
+        },
+        encoder,
+    )?;
+    if !result.manifest.complete {
+        return Err(Error::Invariant(
+            "complete representation plan did not publish every shard".to_owned(),
+        ));
+    }
+    Ok(result)
+}
+
 /// Build through the same production path while exposing exact batch and
 /// artifact measurements to a calibration or budget observer.
 pub fn build_representation_shards_observed(

@@ -13,16 +13,18 @@ use oracle_mvp::fp32_oracle::{Fp32OfflineOracle, SimilarNotesRequest, vectors_fo
 use oracle_mvp::gte::{GteProcessEncoder, GteWorkerConfig};
 use oracle_mvp::gte_budget::{
     BudgetLedger, CalibrationEvidencePaths, CalibrationRecorder, CalibrationRecorderConfig,
-    FullBuildNonComputeCosts, VerifiedCalibrationEvidence, claim_calibration_execution,
-    project_full_build, read_active_calibration_reservation, read_calibration_execution_identity,
+    FullBuildNonComputeCosts, FullBuildResultPaths, VerifiedCalibrationEvidence,
+    claim_calibration_execution, claim_or_resume_full_build_execution, project_full_build,
+    read_active_calibration_reservation, read_calibration_execution_identity,
     read_unclaimed_calibration_reservation, reserve_calibration_with_non_runtime_reserve,
-    settle_calibration, settle_failed_calibration, validate_calibration_selection,
+    reserve_full_build, settle_calibration, settle_failed_calibration, settle_failed_full_build,
+    settle_full_build, validate_calibration_selection,
 };
 use oracle_mvp::ordered_gte_token_audit::{OrderedGteTokenAuditConfig, audit_ordered_gte_tokens};
 use oracle_mvp::representation::{
     RepresentationBuildConfig, RepresentationEncoder, build_representation_shards,
-    build_representation_shards_observed, prepare_representation_index,
-    representation_descriptor_sha256, verify_representation,
+    build_representation_shards_observed, complete_representation, open_representation,
+    prepare_representation_index, representation_descriptor_sha256, verify_representation,
 };
 use oracle_mvp::representation_batch_plan::{
     RepresentationBatchPlanConfig, create_representation_batch_plan,
@@ -57,6 +59,10 @@ fn run() -> Result<(), String> {
             | "settle-calibration"
             | "settle-failed-calibration"
             | "project-full-build"
+            | "reserve-full-build"
+            | "run-full-build"
+            | "settle-full-build"
+            | "settle-failed-full-build"
             | "describe-representation"
             | "prepare-representation"
             | "validate-calibration-selection"
@@ -169,6 +175,160 @@ fn run() -> Result<(), String> {
                 "projected_lifetime_total_micro_usd": review.projected_lifetime_total.0,
                 "remaining_lifetime_budget_micro_usd": review.remaining_lifetime_budget.0,
             }))
+        }
+        "reserve-full-build" => {
+            let recorded_at_utc =
+                parse_string(&arguments.next().ok_or_else(usage)?, "RECORDED_AT_UTC")?;
+            require_no_more(arguments)?;
+            let full_build = config.full_build.as_ref().ok_or_else(|| {
+                "reserve-full-build requires full_build settings in the run config".to_owned()
+            })?;
+            let evidence = full_build.open_evidence(&config)?;
+            let admission = reserve_full_build(
+                &full_build.ledger_path,
+                &full_build.reservation_id,
+                &evidence,
+                full_build.non_compute_costs(),
+                &recorded_at_utc,
+            )
+            .map_err(|error| error.to_string())?;
+            print_json(&json!({
+                "reservation_id": admission.reservation_id,
+                "previous_ledger_sha256": admission.previous_ledger_sha256,
+                "authorization_sha256": admission.authorization_sha256,
+                "ledger_sha256": admission.ledger_sha256,
+                "calibration_evidence_sha256": admission.calibration_evidence_sha256,
+                "remaining_compute_micro_usd": admission.projection.remaining_compute().0,
+                "artifact_storage_and_transfer_micro_usd": admission.projection.artifact_storage_and_transfer().0,
+                "paid_lazy_inference_micro_usd": admission.projection.paid_lazy_inference().0,
+                "one_cold_restart_micro_usd": admission.projection.one_cold_restart().0,
+                "one_lost_shard_micro_usd": admission.projection.one_lost_shard().0,
+                "total_micro_usd": admission.projection.total().map_err(|error| error.to_string())?.0,
+                "projected_lifetime_total_micro_usd": admission.projected_lifetime_total.0,
+                "remaining_lifetime_budget_micro_usd": admission.remaining_lifetime_budget.0,
+            }))
+        }
+        "run-full-build" => {
+            require_no_more(arguments)?;
+            let full_build = config.full_build.as_ref().ok_or_else(|| {
+                "run-full-build requires full_build settings in the run config".to_owned()
+            })?;
+            if config.worker.device != "cuda" {
+                return Err("run-full-build requires the approved CUDA worker".to_owned());
+            }
+            let evidence = full_build.validate_execution(&config)?;
+            let control_binary_sha256 = current_executable_sha256()?;
+            if control_binary_sha256 != full_build.control_binary_sha256 {
+                return Err(
+                    "full-build controller does not match its configured SHA-256".to_owned(),
+                );
+            }
+            let claim = claim_or_resume_full_build_execution(
+                &full_build.ledger_path,
+                &full_build.reservation_id,
+                &evidence,
+                &full_build.non_compute_costs(),
+                &full_build.execution_identity_path,
+                &control_binary_sha256,
+            )
+            .map_err(|error| error.to_string())?;
+            let existing =
+                open_representation(&config.ordered_event_ids_path, &config.representation_path)
+                    .map_err(|error| error.to_string())?;
+            if existing.manifest().complete {
+                let verified = verify_representation(
+                    &config.corpus_path,
+                    &config.ordered_event_ids_path,
+                    &config.representation_path,
+                )
+                .map_err(|error| error.to_string())?;
+                return print_json(&json!({
+                    "status": "complete",
+                    "resumed_claim": claim.resumed,
+                    "encoded_rows": 0,
+                    "reused_rows": verified.manifest().total_rows,
+                    "representation_version": verified.representation_version(),
+                    "control_binary_sha256": control_binary_sha256,
+                    "execution_claim_authorization_sha256": claim.claim_authorization_sha256,
+                    "execution_claim_ledger_sha256": claim.ledger_sha256,
+                }));
+            }
+            let mut encoder = config.start_worker()?;
+            let result = complete_representation(
+                &config.corpus_path,
+                &config.ordered_event_ids_path,
+                &config.representation_path,
+                &config.token_audit_path,
+                &config.batch_plan_path,
+                &mut encoder,
+            )
+            .map_err(|error| error.to_string())?;
+            if !result.manifest.complete
+                || result.manifest.build_identity_sha256
+                    != evidence.representation_build_identity_sha256()
+            {
+                return Err(
+                    "full-build command did not publish the complete reserved representation"
+                        .to_owned(),
+                );
+            }
+            print_json(&json!({
+                "status": "complete",
+                "resumed_claim": claim.resumed,
+                "encoded_rows": result.encoded_rows,
+                "reused_rows": result.reused_rows,
+                "representation_version": result.representation_version,
+                "control_binary_sha256": control_binary_sha256,
+                "execution_claim_authorization_sha256": claim.claim_authorization_sha256,
+                "execution_claim_ledger_sha256": claim.ledger_sha256,
+            }))
+        }
+        "settle-full-build" => {
+            let actual_charge = parse_micro_usd(
+                &arguments.next().ok_or_else(usage)?,
+                "ACTUAL_CHARGE_MICRO_USD",
+            )?;
+            let recorded_at_utc =
+                parse_string(&arguments.next().ok_or_else(usage)?, "RECORDED_AT_UTC")?;
+            require_no_more(arguments)?;
+            let full_build = config.full_build.as_ref().ok_or_else(|| {
+                "settle-full-build requires full_build settings in the run config".to_owned()
+            })?;
+            let evidence = full_build.open_evidence(&config)?;
+            let ledger = settle_full_build(
+                &full_build.ledger_path,
+                &full_build.reservation_id,
+                &evidence,
+                &full_build.result_paths(&config),
+                actual_charge,
+                &recorded_at_utc,
+            )
+            .map_err(|error| error.to_string())?;
+            print_budget_ledger(&ledger)
+        }
+        "settle-failed-full-build" => {
+            let failure_evidence_path = PathBuf::from(arguments.next().ok_or_else(usage)?);
+            let actual_charge = parse_micro_usd(
+                &arguments.next().ok_or_else(usage)?,
+                "ACTUAL_CHARGE_MICRO_USD",
+            )?;
+            let recorded_at_utc =
+                parse_string(&arguments.next().ok_or_else(usage)?, "RECORDED_AT_UTC")?;
+            require_no_more(arguments)?;
+            let full_build = config.full_build.as_ref().ok_or_else(|| {
+                "settle-failed-full-build requires full_build settings in the run config".to_owned()
+            })?;
+            let evidence = full_build.open_evidence(&config)?;
+            let ledger = settle_failed_full_build(
+                &full_build.ledger_path,
+                &full_build.reservation_id,
+                &evidence,
+                &failure_evidence_path,
+                actual_charge,
+                &recorded_at_utc,
+            )
+            .map_err(|error| error.to_string())?;
+            print_budget_ledger(&ledger)
         }
         "describe-representation" => {
             require_no_more(arguments)?;
@@ -561,6 +721,7 @@ struct RunConfig {
     batch_size: usize,
     shard_rows: u64,
     calibration: Option<CalibrationRunSettings>,
+    full_build: Option<FullBuildRunSettings>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -727,6 +888,124 @@ impl CalibrationRunSettings {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct FullBuildRunSettings {
+    ledger_path: PathBuf,
+    reservation_id: String,
+    calibration_evidence_path: PathBuf,
+    calibration_execution_identity_path: PathBuf,
+    execution_identity_path: PathBuf,
+    control_binary_sha256: String,
+    artifact_storage_and_transfer_micro_usd: u64,
+    one_cold_restart_micro_usd: u64,
+    one_lost_shard_micro_usd: u64,
+}
+
+impl FullBuildRunSettings {
+    fn evidence_paths(&self, config: &RunConfig) -> CalibrationEvidencePaths {
+        CalibrationEvidencePaths {
+            ordered_event_ids_path: config.ordered_event_ids_path.clone(),
+            token_audit_path: config.token_audit_path.clone(),
+            batch_plan_path: config.batch_plan_path.clone(),
+            representation_path: config.representation_path.clone(),
+            execution_identity_path: self.calibration_execution_identity_path.clone(),
+        }
+    }
+
+    fn open_evidence(&self, config: &RunConfig) -> Result<VerifiedCalibrationEvidence, String> {
+        VerifiedCalibrationEvidence::open(
+            &self.calibration_evidence_path,
+            &self.evidence_paths(config),
+        )
+        .map_err(|error| error.to_string())
+    }
+
+    fn non_compute_costs(&self) -> FullBuildNonComputeCosts {
+        FullBuildNonComputeCosts {
+            artifact_storage_and_transfer: MicroUsd(self.artifact_storage_and_transfer_micro_usd),
+            paid_lazy_inference: MicroUsd(0),
+            one_cold_restart: MicroUsd(self.one_cold_restart_micro_usd),
+            one_lost_shard: MicroUsd(self.one_lost_shard_micro_usd),
+        }
+    }
+
+    fn result_paths(&self, config: &RunConfig) -> FullBuildResultPaths {
+        FullBuildResultPaths {
+            corpus_path: config.corpus_path.clone(),
+            ordered_event_ids_path: config.ordered_event_ids_path.clone(),
+            representation_path: config.representation_path.clone(),
+            execution_identity_path: self.execution_identity_path.clone(),
+        }
+    }
+
+    fn validate_execution(
+        &self,
+        config: &RunConfig,
+    ) -> Result<VerifiedCalibrationEvidence, String> {
+        require_immutable_container_image(&config.container_image)?;
+        config.validate_descriptor_bindings()?;
+        if !is_sha256(&self.control_binary_sha256) {
+            return Err("full-build control binary has an invalid SHA-256".to_owned());
+        }
+        for path in [
+            self.ledger_path.as_path(),
+            self.calibration_evidence_path.as_path(),
+            self.calibration_execution_identity_path.as_path(),
+            self.execution_identity_path.as_path(),
+            config.corpus_path.join("data.mdb").as_path(),
+            config.ordered_event_ids_path.as_path(),
+            config.token_audit_path.join("manifest.json").as_path(),
+            config.batch_plan_path.join("manifest.json").as_path(),
+            config.model_lock_path.as_path(),
+            config.worker_source_path.as_path(),
+            config.dependency_lock_path.as_path(),
+            config.worker.program.as_path(),
+            config.worker.model_lock_path.as_path(),
+            config.worker.dependency_lock_path.as_path(),
+        ] {
+            if !path.is_file() {
+                return Err(format!(
+                    "full-build input `{}` is not a file",
+                    path.display()
+                ));
+            }
+        }
+        if !config.worker.model_dir.is_dir() {
+            return Err(format!(
+                "full-build model directory `{}` does not exist",
+                config.worker.model_dir.display()
+            ));
+        }
+        if let Some(worker_path) = &config.worker.worker_path
+            && !worker_path.is_file()
+        {
+            return Err(format!(
+                "full-build worker `{}` is not a file",
+                worker_path.display()
+            ));
+        }
+        let evidence = self.open_evidence(config)?;
+        let representation =
+            open_representation(&config.ordered_event_ids_path, &config.representation_path)
+                .map_err(|error| error.to_string())?;
+        let descriptor = config
+            .worker_config()?
+            .representation_descriptor()
+            .map_err(|error| error.to_string())?;
+        if descriptor != representation.manifest().descriptor
+            || representation.manifest().build_identity_sha256
+                != evidence.representation_build_identity_sha256()
+            || representation.manifest().batch_plan.shard_rows != config.shard_rows
+        {
+            return Err(
+                "full-build runtime does not match the calibrated representation".to_owned(),
+            );
+        }
+        Ok(evidence)
+    }
+}
+
+#[derive(Debug, Deserialize)]
 struct WorkerLaunch {
     program: PathBuf,
     #[serde(default)]
@@ -873,6 +1152,19 @@ fn hash_file(path: &Path) -> Result<String, String> {
     Ok(format!("{:x}", digest.finalize()))
 }
 
+fn current_executable_sha256() -> Result<String, String> {
+    let executable = env::current_exe()
+        .map_err(|error| format!("could not locate the full-build controller: {error}"))?;
+    hash_file(&executable)
+}
+
+fn is_sha256(value: &str) -> bool {
+    value.len() == 64
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+}
+
 fn hash_f32(values: &[f32]) -> String {
     let mut digest = Sha256::new();
     for value in values {
@@ -995,6 +1287,6 @@ fn print_budget_ledger(ledger: &BudgetLedger) -> Result<(), String> {
 }
 
 fn usage() -> String {
-    "usage: gte-oracle <operation> CONFIG_JSON [arguments]\n\noperations:\n  reserve-calibration CONFIG_JSON RECORDED_AT_UTC\n  calibrate-shards CONFIG_JSON SHARD_ORDINALS\n  settle-calibration CONFIG_JSON ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  settle-failed-calibration CONFIG_JSON FAILURE_EVIDENCE ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  project-full-build CONFIG_JSON NON_COMPUTE_COSTS_JSON\n  describe-representation CONFIG_JSON\n  model-smoke CONFIG_JSON\n  prepare-semantic-order CONFIG_JSON\n  audit-tokens CONFIG_JSON\n  plan-batches CONFIG_JSON\n  prepare-representation CONFIG_JSON\n  validate-calibration-selection CONFIG_JSON SHARD_ORDINALS TOKEN_RANGE_UPPER_BOUNDS\n  embed-shards CONFIG_JSON SHARD_ORDINALS\n  verify-representation CONFIG_JSON\n  similar-notes CONFIG_JSON EVENT_IDS DEPTH REPRESENTATION_VERSION\n  vectors-for-notes CONFIG_JSON EVENT_IDS REPRESENTATION_VERSION"
+    "usage: gte-oracle <operation> CONFIG_JSON [arguments]\n\noperations:\n  reserve-calibration CONFIG_JSON RECORDED_AT_UTC\n  calibrate-shards CONFIG_JSON SHARD_ORDINALS\n  settle-calibration CONFIG_JSON ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  settle-failed-calibration CONFIG_JSON FAILURE_EVIDENCE ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  project-full-build CONFIG_JSON NON_COMPUTE_COSTS_JSON\n  reserve-full-build CONFIG_JSON RECORDED_AT_UTC\n  run-full-build CONFIG_JSON\n  settle-full-build CONFIG_JSON ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  settle-failed-full-build CONFIG_JSON FAILURE_EVIDENCE ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  describe-representation CONFIG_JSON\n  model-smoke CONFIG_JSON\n  prepare-semantic-order CONFIG_JSON\n  audit-tokens CONFIG_JSON\n  plan-batches CONFIG_JSON\n  prepare-representation CONFIG_JSON\n  validate-calibration-selection CONFIG_JSON SHARD_ORDINALS TOKEN_RANGE_UPPER_BOUNDS\n  embed-shards CONFIG_JSON SHARD_ORDINALS\n  verify-representation CONFIG_JSON\n  similar-notes CONFIG_JSON EVENT_IDS DEPTH REPRESENTATION_VERSION\n  vectors-for-notes CONFIG_JSON EVENT_IDS REPRESENTATION_VERSION"
         .to_owned()
 }

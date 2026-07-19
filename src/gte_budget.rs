@@ -163,6 +163,16 @@ pub struct CalibrationEvidencePaths {
     pub execution_identity_path: PathBuf,
 }
 
+/// Immutable inputs used to verify the completed representation and the exact
+/// rental identity before releasing its budget commitment.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct FullBuildResultPaths {
+    pub corpus_path: PathBuf,
+    pub ordered_event_ids_path: PathBuf,
+    pub representation_path: PathBuf,
+    pub execution_identity_path: PathBuf,
+}
+
 /// Exact rented hardware, offer, rate, and representation runtime measured by
 /// calibration. The representation descriptor hash binds the model, worker,
 /// dependency locks, container, numeric format, and CUDA software identity.
@@ -1149,11 +1159,46 @@ struct CalibrationEvidenceDocument {
 /// A decision reserving the complete remaining cost of one full-corpus build.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct FullBuildAdmission {
+    pub reservation_id: String,
+    pub previous_ledger_sha256: String,
+    pub authorization_sha256: String,
     pub ledger_sha256: String,
     pub calibration_evidence_sha256: String,
     pub projection: FullBuildCostProjection,
     pub projected_lifetime_total: MicroUsd,
     pub remaining_lifetime_budget: MicroUsd,
+}
+
+/// Exact ledger decision authorizing the one complete representation build.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct FullBuildReservationBinding {
+    pub reservation_id: String,
+    pub previous_ledger_sha256: String,
+    pub authorization_sha256: String,
+    pub maximum_charge: MicroUsd,
+}
+
+/// The active complete-build reservation and its exact projected costs.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct ActiveFullBuildReservation {
+    pub binding: FullBuildReservationBinding,
+    pub calibration_evidence_sha256: String,
+    pub representation_build_identity_sha256: String,
+    pub batch_plan_manifest_sha256: String,
+    pub projection: FullBuildCostProjection,
+}
+
+/// The one execution identity allowed to continue the reserved complete build.
+/// An exact retry on the same rental returns this claim without another ledger
+/// mutation.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct FullBuildExecutionClaim {
+    pub reservation: ActiveFullBuildReservation,
+    pub execution_identity_sha256: String,
+    pub control_binary_sha256: String,
+    pub claim_authorization_sha256: String,
+    pub ledger_sha256: String,
+    pub resumed: bool,
 }
 
 /// Verified, read-only answer to whether the projected full build fits the
@@ -1650,7 +1695,8 @@ pub fn reserve_full_build(
         .outstanding_commitments_cents
         .checked_add(reserved_cents)
         .ok_or_else(|| Error::Budget("lifetime commitment cents overflowed".to_owned()))?;
-    document.entries.push(json!({
+    let previous_ledger_sha256 = review.ledger_sha256.clone();
+    let reservation_entry = json!({
         "kind": "full_build_reservation",
         "reservation_id": reservation_id,
         "recorded_at_utc": recorded_at_utc,
@@ -1665,17 +1711,315 @@ pub fn reserve_full_build(
         "one_cold_restart_micro_usd": review.projection.one_cold_restart.0,
         "one_lost_shard_micro_usd": review.projection.one_lost_shard.0,
         "reserved_maximum_charge_cents": reserved_cents,
-        "previous_ledger_sha256": review.ledger_sha256,
-    }));
+        "previous_ledger_sha256": previous_ledger_sha256,
+    });
+    let authorization_sha256 = full_build_authorization_sha256(&reservation_entry)?;
+    document.entries.push(reservation_entry);
     let ledger_sha256 = publish_ledger_document(ledger_path, &document)?;
 
     Ok(FullBuildAdmission {
+        reservation_id: reservation_id.to_owned(),
+        previous_ledger_sha256,
+        authorization_sha256,
         ledger_sha256,
         calibration_evidence_sha256: calibration_evidence.evidence_sha256.clone(),
         projection: review.projection,
         projected_lifetime_total: review.projected_lifetime_total,
         remaining_lifetime_budget: review.remaining_lifetime_budget,
     })
+}
+
+/// Read the exact active complete-build reservation without changing the
+/// ledger. This is the local preflight used before a paid launch.
+pub fn read_active_full_build_reservation(
+    ledger_path: &Path,
+    reservation_id: &str,
+    calibration_evidence: &VerifiedCalibrationEvidence,
+) -> Result<ActiveFullBuildReservation> {
+    validate_reservation_input(reservation_id, "active-full-build-reservation")?;
+    calibration_evidence.reverify()?;
+    let _lock = LedgerLock::acquire(ledger_path)?;
+    let (bytes, document) = read_ledger_document(ledger_path)?;
+    ledger_from_document(&document, hash_bytes(&bytes))?;
+    active_full_build_reservation(&document, reservation_id, calibration_evidence)
+}
+
+/// Atomically bind the reserved complete build to one exact rental and one
+/// checksum-pinned controller. Re-entering with the same identities is a
+/// read-only resume; another rental or controller is rejected.
+pub fn claim_or_resume_full_build_execution(
+    ledger_path: &Path,
+    reservation_id: &str,
+    calibration_evidence: &VerifiedCalibrationEvidence,
+    expected_non_compute_costs: &FullBuildNonComputeCosts,
+    execution_identity_path: &Path,
+    control_binary_sha256: &str,
+) -> Result<FullBuildExecutionClaim> {
+    validate_reservation_input(reservation_id, "full-build-execution-claim")?;
+    if !is_sha256(control_binary_sha256) {
+        return Err(Error::Budget(
+            "full-build control binary has an invalid SHA-256".to_owned(),
+        ));
+    }
+    calibration_evidence.reverify()?;
+    let expected_projection =
+        derive_full_build_projection(calibration_evidence, expected_non_compute_costs.clone())?;
+    let execution_identity = read_calibration_execution_identity(execution_identity_path)?;
+    if execution_identity.representation_descriptor_sha256
+        != calibration_evidence
+            .execution_identity
+            .representation_descriptor_sha256
+        || execution_identity.rental_rate_per_hour
+            > calibration_evidence.execution_identity.rental_rate_per_hour
+    {
+        return Err(Error::Budget(
+            "full-build execution does not match the calibrated representation or maximum rental rate"
+                .to_owned(),
+        ));
+    }
+    let required_elapsed_nanoseconds = calibration_evidence
+        .remaining_elapsed_nanoseconds
+        .checked_add(calibration_evidence.startup_elapsed_nanoseconds)
+        .and_then(|elapsed| {
+            elapsed.checked_add(calibration_evidence.cold_restart_elapsed_nanoseconds)
+        })
+        .and_then(|elapsed| {
+            elapsed.checked_add(calibration_evidence.lost_shard_elapsed_nanoseconds)
+        })
+        .ok_or_else(|| Error::Budget("full-build required duration overflowed".to_owned()))?;
+    let required_elapsed_seconds = div_ceil(required_elapsed_nanoseconds, 1_000_000_000);
+    if u128::from(execution_identity.available_duration_seconds) < required_elapsed_seconds {
+        return Err(Error::Budget(
+            "full-build offer duration does not cover the build and reserved recovery work"
+                .to_owned(),
+        ));
+    }
+    let execution_identity_sha256 = hash_file(execution_identity_path)?;
+
+    let _lock = LedgerLock::acquire(ledger_path)?;
+    let (previous_bytes, mut document) = read_ledger_document(ledger_path)?;
+    let current_ledger_sha256 = hash_bytes(&previous_bytes);
+    ledger_from_document(&document, current_ledger_sha256.clone())?;
+    let active = active_full_build_reservation(&document, reservation_id, calibration_evidence)?;
+    if active.projection != expected_projection {
+        return Err(Error::Budget(
+            "full-build reservation does not match the configured cost projection".to_owned(),
+        ));
+    }
+    let claims = document
+        .entries
+        .iter()
+        .filter(|entry| {
+            entry.get("kind").and_then(serde_json::Value::as_str)
+                == Some("full_build_execution_claim")
+                && entry
+                    .get("reservation_id")
+                    .and_then(serde_json::Value::as_str)
+                    == Some(reservation_id)
+        })
+        .collect::<Vec<_>>();
+    if let [claim] = claims.as_slice() {
+        if claim
+            .get("reservation_authorization_sha256")
+            .and_then(serde_json::Value::as_str)
+            != Some(active.binding.authorization_sha256.as_str())
+            || claim
+                .get("execution_identity_sha256")
+                .and_then(serde_json::Value::as_str)
+                != Some(execution_identity_sha256.as_str())
+            || claim
+                .get("control_binary_sha256")
+                .and_then(serde_json::Value::as_str)
+                != Some(control_binary_sha256)
+        {
+            return Err(Error::Budget(
+                "full-build reservation is already bound to a different execution".to_owned(),
+            ));
+        }
+        return Ok(FullBuildExecutionClaim {
+            reservation: active,
+            execution_identity_sha256,
+            control_binary_sha256: control_binary_sha256.to_owned(),
+            claim_authorization_sha256: full_build_authorization_sha256(claim)?,
+            ledger_sha256: current_ledger_sha256,
+            resumed: true,
+        });
+    }
+    if !claims.is_empty() {
+        return Err(Error::Budget(
+            "full-build reservation has duplicate execution claims".to_owned(),
+        ));
+    }
+
+    let claim_entry = json!({
+        "kind": "full_build_execution_claim",
+        "reservation_id": reservation_id,
+        "reservation_authorization_sha256": active.binding.authorization_sha256.clone(),
+        "execution_identity_sha256": execution_identity_sha256,
+        "rental_instance_id": execution_identity.rental_instance_id,
+        "control_binary_sha256": control_binary_sha256,
+        "previous_ledger_sha256": current_ledger_sha256,
+    });
+    let claim_authorization_sha256 = full_build_authorization_sha256(&claim_entry)?;
+    document.entries.push(claim_entry);
+    let ledger_sha256 = publish_ledger_document(ledger_path, &document)?;
+    Ok(FullBuildExecutionClaim {
+        reservation: active,
+        execution_identity_sha256,
+        control_binary_sha256: control_binary_sha256.to_owned(),
+        claim_authorization_sha256,
+        ledger_sha256,
+        resumed: false,
+    })
+}
+
+/// Reconcile the one successful complete build only after deeply verifying the
+/// final representation and the exact execution claim that produced it.
+pub fn settle_full_build(
+    ledger_path: &Path,
+    reservation_id: &str,
+    calibration_evidence: &VerifiedCalibrationEvidence,
+    paths: &FullBuildResultPaths,
+    actual_charge: MicroUsd,
+    recorded_at_utc: &str,
+) -> Result<BudgetLedger> {
+    validate_reservation_input(reservation_id, recorded_at_utc)?;
+    calibration_evidence.reverify()?;
+    let execution_identity_sha256 = hash_file(&paths.execution_identity_path)?;
+    read_calibration_execution_identity(&paths.execution_identity_path)?;
+    let completed = crate::representation::verify_representation(
+        &paths.corpus_path,
+        &paths.ordered_event_ids_path,
+        &paths.representation_path,
+    )?;
+    if !completed.manifest().complete {
+        return Err(Error::Budget(
+            "full-build representation is not complete".to_owned(),
+        ));
+    }
+
+    let _lock = LedgerLock::acquire(ledger_path)?;
+    let (previous_bytes, mut document) = read_ledger_document(ledger_path)?;
+    ledger_from_document(&document, hash_bytes(&previous_bytes))?;
+    let active = active_full_build_reservation(&document, reservation_id, calibration_evidence)?;
+    if completed.manifest().build_identity_sha256 != active.representation_build_identity_sha256
+        || completed.manifest().batch_plan.manifest_sha256 != active.batch_plan_manifest_sha256
+    {
+        return Err(Error::Budget(
+            "completed representation does not match the reserved full build".to_owned(),
+        ));
+    }
+    let claim = require_full_build_execution_claim(&document, &active)?;
+    if claim
+        .get("execution_identity_sha256")
+        .and_then(serde_json::Value::as_str)
+        != Some(execution_identity_sha256.as_str())
+    {
+        return Err(Error::Budget(
+            "full-build execution identity changed after the claim".to_owned(),
+        ));
+    }
+    let control_binary_sha256 = claim
+        .get("control_binary_sha256")
+        .and_then(serde_json::Value::as_str)
+        .filter(|value| is_sha256(value))
+        .ok_or_else(|| Error::Budget("full-build claim has no valid controller hash".to_owned()))?
+        .to_owned();
+    let reserved_cents = ceiling_cents(active.binding.maximum_charge)?;
+    let actual_cents = ceiling_cents(actual_charge)?;
+    if actual_cents > reserved_cents {
+        return Err(Error::Budget(format!(
+            "full-build actual charge of {actual_cents} cents exceeds its {reserved_cents}-cent reservation"
+        )));
+    }
+    let released_cents = apply_full_build_charge(
+        &mut document,
+        reserved_cents,
+        actual_cents,
+        recorded_at_utc,
+        false,
+    )?;
+    let previous_ledger_sha256 = hash_bytes(&previous_bytes);
+    document.entries.push(json!({
+        "kind": "full_build_settlement",
+        "reservation_id": reservation_id,
+        "recorded_at_utc": recorded_at_utc,
+        "calibration_evidence_sha256": calibration_evidence.evidence_sha256(),
+        "representation_build_identity_sha256": completed.manifest().build_identity_sha256,
+        "batch_plan_manifest_sha256": completed.manifest().batch_plan.manifest_sha256,
+        "representation_version": completed.representation_version(),
+        "completed_rows": completed.manifest().completed_rows,
+        "execution_identity_sha256": execution_identity_sha256,
+        "control_binary_sha256": control_binary_sha256,
+        "actual_charge_micro_usd": actual_charge.0,
+        "recorded_actual_charge_cents": actual_cents,
+        "released_commitment_cents": released_cents,
+        "previous_ledger_sha256": previous_ledger_sha256,
+    }));
+    let ledger_sha256 = publish_ledger_document(ledger_path, &document)?;
+    ledger_from_document(&document, ledger_sha256)
+}
+
+/// Reconcile a failed or interrupted complete-build reservation against the
+/// provider's actual charge. This is terminal even when the provider exceeded
+/// the reservation; it never authorizes another complete build.
+pub fn settle_failed_full_build(
+    ledger_path: &Path,
+    reservation_id: &str,
+    calibration_evidence: &VerifiedCalibrationEvidence,
+    failure_evidence_path: &Path,
+    actual_charge: MicroUsd,
+    recorded_at_utc: &str,
+) -> Result<BudgetLedger> {
+    validate_reservation_input(reservation_id, recorded_at_utc)?;
+    calibration_evidence.reverify()?;
+    let failure_evidence_sha256 = hash_file(failure_evidence_path)?;
+    let _lock = LedgerLock::acquire(ledger_path)?;
+    let (previous_bytes, mut document) = read_ledger_document(ledger_path)?;
+    ledger_from_document(&document, hash_bytes(&previous_bytes))?;
+    let active = active_full_build_reservation(&document, reservation_id, calibration_evidence)?;
+    let execution_claim_sha256 = document
+        .entries
+        .iter()
+        .filter(|entry| {
+            entry.get("kind").and_then(serde_json::Value::as_str)
+                == Some("full_build_execution_claim")
+                && entry
+                    .get("reservation_id")
+                    .and_then(serde_json::Value::as_str)
+                    == Some(reservation_id)
+        })
+        .map(full_build_authorization_sha256)
+        .collect::<Result<Vec<_>>>()?;
+    if execution_claim_sha256.len() > 1 {
+        return Err(Error::Budget(
+            "full-build reservation has duplicate execution claims".to_owned(),
+        ));
+    }
+    let reserved_cents = ceiling_cents(active.binding.maximum_charge)?;
+    let actual_cents = ceiling_cents(actual_charge)?;
+    let released_cents = apply_full_build_charge(
+        &mut document,
+        reserved_cents,
+        actual_cents,
+        recorded_at_utc,
+        true,
+    )?;
+    let previous_ledger_sha256 = hash_bytes(&previous_bytes);
+    document.entries.push(json!({
+        "kind": "failed_full_build_settlement",
+        "reservation_id": reservation_id,
+        "recorded_at_utc": recorded_at_utc,
+        "calibration_evidence_sha256": calibration_evidence.evidence_sha256(),
+        "failure_evidence_sha256": failure_evidence_sha256,
+        "execution_claim_sha256": execution_claim_sha256.first(),
+        "actual_charge_micro_usd": actual_charge.0,
+        "recorded_actual_charge_cents": actual_cents,
+        "released_commitment_cents": released_cents,
+        "previous_ledger_sha256": previous_ledger_sha256,
+    }));
+    let ledger_sha256 = publish_ledger_document(ledger_path, &document)?;
+    ledger_from_document(&document, ledger_sha256)
 }
 
 impl FullBuildCostProjection {
@@ -2120,6 +2464,138 @@ fn calibration_authorization_sha256(entry: &serde_json::Value) -> Result<String>
     Ok(hash_bytes(&bytes))
 }
 
+fn full_build_authorization_sha256(entry: &serde_json::Value) -> Result<String> {
+    let bytes = serde_json::to_vec(entry).map_err(|source| Error::Manifest {
+        operation: "encode",
+        path: PathBuf::from("full-build-authorization"),
+        source,
+    })?;
+    Ok(hash_bytes(&bytes))
+}
+
+fn active_full_build_reservation(
+    document: &BudgetLedgerDocument,
+    reservation_id: &str,
+    calibration_evidence: &VerifiedCalibrationEvidence,
+) -> Result<ActiveFullBuildReservation> {
+    if document.entries.iter().any(|entry| {
+        matches!(
+            entry.get("kind").and_then(serde_json::Value::as_str),
+            Some("full_build_settlement" | "failed_full_build_settlement")
+        ) && entry
+            .get("reservation_id")
+            .and_then(serde_json::Value::as_str)
+            == Some(reservation_id)
+    }) {
+        return Err(Error::Budget(format!(
+            "full-build reservation `{reservation_id}` is already settled"
+        )));
+    }
+    let reservations = document
+        .entries
+        .iter()
+        .filter(|entry| {
+            entry.get("kind").and_then(serde_json::Value::as_str) == Some("full_build_reservation")
+                && entry
+                    .get("reservation_id")
+                    .and_then(serde_json::Value::as_str)
+                    == Some(reservation_id)
+        })
+        .collect::<Vec<_>>();
+    let [reservation] = reservations.as_slice() else {
+        if reservations.is_empty() {
+            return Err(Error::Budget(format!(
+                "full-build reservation `{reservation_id}` does not exist"
+            )));
+        }
+        return Err(Error::Budget(format!(
+            "full-build reservation `{reservation_id}` has duplicate authorization entries"
+        )));
+    };
+    let expected_fields = [
+        (
+            "calibration_evidence_sha256",
+            calibration_evidence.evidence_sha256(),
+        ),
+        (
+            "representation_build_identity_sha256",
+            calibration_evidence.representation_build_identity_sha256(),
+        ),
+        (
+            "batch_plan_manifest_sha256",
+            calibration_evidence.batch_plan_manifest_sha256(),
+        ),
+        (
+            "execution_identity_sha256",
+            calibration_evidence.execution_identity_sha256(),
+        ),
+    ];
+    if expected_fields.iter().any(|(field, expected)| {
+        reservation.get(field).and_then(serde_json::Value::as_str) != Some(*expected)
+    }) {
+        return Err(Error::Budget(
+            "full-build reservation does not match the settled calibration evidence".to_owned(),
+        ));
+    }
+    let read_charge = |field: &str| {
+        reservation
+            .get(field)
+            .and_then(serde_json::Value::as_u64)
+            .map(MicroUsd)
+            .ok_or_else(|| {
+                Error::Budget(format!(
+                    "full-build reservation `{reservation_id}` has no valid {field}"
+                ))
+            })
+    };
+    let projection = FullBuildCostProjection {
+        remaining_compute: read_charge("remaining_compute_micro_usd")?,
+        artifact_storage_and_transfer: read_charge("artifact_storage_and_transfer_micro_usd")?,
+        paid_lazy_inference: read_charge("paid_lazy_inference_micro_usd")?,
+        one_cold_restart: read_charge("one_cold_restart_micro_usd")?,
+        one_lost_shard: read_charge("one_lost_shard_micro_usd")?,
+    };
+    let reserved_cents = reservation
+        .get("reserved_maximum_charge_cents")
+        .and_then(serde_json::Value::as_u64)
+        .ok_or_else(|| {
+            Error::Budget(format!(
+                "full-build reservation `{reservation_id}` has no valid reserved charge"
+            ))
+        })?;
+    if reserved_cents != ceiling_cents(projection.total()?)?
+        || document.outstanding_commitments_cents < reserved_cents
+    {
+        return Err(Error::Budget(format!(
+            "full-build reservation `{reservation_id}` does not match its outstanding commitment"
+        )));
+    }
+    let previous_ledger_sha256 = reservation
+        .get("previous_ledger_sha256")
+        .and_then(serde_json::Value::as_str)
+        .filter(|value| is_sha256(value))
+        .ok_or_else(|| {
+            Error::Budget(format!(
+                "full-build reservation `{reservation_id}` has no valid previous ledger hash"
+            ))
+        })?
+        .to_owned();
+    Ok(ActiveFullBuildReservation {
+        binding: FullBuildReservationBinding {
+            reservation_id: reservation_id.to_owned(),
+            previous_ledger_sha256,
+            authorization_sha256: full_build_authorization_sha256(reservation)?,
+            maximum_charge: cents(reserved_cents)?,
+        },
+        calibration_evidence_sha256: calibration_evidence.evidence_sha256.clone(),
+        representation_build_identity_sha256: calibration_evidence
+            .representation_build_identity_sha256
+            .clone(),
+        batch_plan_manifest_sha256: calibration_evidence.batch_plan_manifest_sha256.clone(),
+        projection,
+    })
+}
+
 fn active_calibration_reservation(
     document: &BudgetLedgerDocument,
     reservation_id: &str,
@@ -2263,6 +2739,53 @@ fn require_calibration_execution_claim(
     Ok(())
 }
 
+fn require_full_build_execution_claim<'a>(
+    document: &'a BudgetLedgerDocument,
+    active: &ActiveFullBuildReservation,
+) -> Result<&'a serde_json::Value> {
+    let claims = document
+        .entries
+        .iter()
+        .filter(|entry| {
+            entry.get("kind").and_then(serde_json::Value::as_str)
+                == Some("full_build_execution_claim")
+                && entry
+                    .get("reservation_id")
+                    .and_then(serde_json::Value::as_str)
+                    == Some(active.binding.reservation_id.as_str())
+        })
+        .collect::<Vec<_>>();
+    let [claim] = claims.as_slice() else {
+        return Err(Error::Budget(format!(
+            "full-build reservation `{}` requires exactly one execution claim before successful settlement",
+            active.binding.reservation_id
+        )));
+    };
+    if claim
+        .get("reservation_authorization_sha256")
+        .and_then(serde_json::Value::as_str)
+        != Some(active.binding.authorization_sha256.as_str())
+        || !claim
+            .get("previous_ledger_sha256")
+            .and_then(serde_json::Value::as_str)
+            .is_some_and(is_sha256)
+        || !claim
+            .get("execution_identity_sha256")
+            .and_then(serde_json::Value::as_str)
+            .is_some_and(is_sha256)
+        || !claim
+            .get("control_binary_sha256")
+            .and_then(serde_json::Value::as_str)
+            .is_some_and(is_sha256)
+    {
+        return Err(Error::Budget(format!(
+            "full-build reservation `{}` has an invalid execution claim",
+            active.binding.reservation_id
+        )));
+    }
+    Ok(claim)
+}
+
 fn apply_calibration_charge(
     document: &mut BudgetLedgerDocument,
     reserved_cents: u64,
@@ -2292,6 +2815,32 @@ fn apply_calibration_charge(
         .calibration_actual_spend_cents
         .checked_add(actual_cents)
         .ok_or_else(|| Error::Budget("calibration actual-spend cents overflowed".to_owned()))?;
+    document.reconciled_through_utc = recorded_at_utc.to_owned();
+    Ok(reserved_cents.saturating_sub(actual_cents))
+}
+
+fn apply_full_build_charge(
+    document: &mut BudgetLedgerDocument,
+    reserved_cents: u64,
+    actual_cents: u64,
+    recorded_at_utc: &str,
+    record_provider_overrun: bool,
+) -> Result<u64> {
+    if actual_cents > reserved_cents && !record_provider_overrun {
+        return Err(Error::Budget(format!(
+            "full-build actual charge of {actual_cents} cents exceeds its {reserved_cents}-cent reservation"
+        )));
+    }
+    if document.outstanding_commitments_cents < reserved_cents {
+        return Err(Error::Budget(
+            "full-build reservation exceeds the ledger's outstanding commitment".to_owned(),
+        ));
+    }
+    document.outstanding_commitments_cents -= reserved_cents;
+    document.actual_spend_cents = document
+        .actual_spend_cents
+        .checked_add(actual_cents)
+        .ok_or_else(|| Error::Budget("lifetime actual-spend cents overflowed".to_owned()))?;
     document.reconciled_through_utc = recorded_at_utc.to_owned();
     Ok(reserved_cents.saturating_sub(actual_cents))
 }

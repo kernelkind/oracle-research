@@ -1,0 +1,310 @@
+CREC-72 GTE complete-build runbook
+
+Purpose and boundary
+
+  This file prepares the future paid complete build. CREC-72 does not authorize
+  a reservation, a Vast instance, or any other paid action. Stop at the paid
+  boundary below. The future launch requires a fresh offer, its exact projected
+  reservation, and explicit user approval.
+
+  The build extends the calibrated representation. It does not create a new
+  representation and does not rebuild the embedding image.
+
+Frozen representation contract
+
+  image:
+    docker.io/kernelkind/oracle-mvp@sha256:96a60fd4caf87afadf0546636af6eeefee72d327dc95dde1714f86ea14fb435a
+  model:
+    Alibaba-NLP/gte-Qwen2-7B-instruct
+  model revision:
+    a8d08b36ada9cacfe34c4d6f80957772a025daf2
+  representation descriptor SHA-256:
+    bef8f7f8948ce11d9685f51acdd94486b9df1f992d4a18d1ee57787951db9c4d
+  representation build identity SHA-256:
+    9531c232e7ad8e3c18e46f5d51aba5102930ff879639fe6bdfd12691cd73a21e
+  corpus data.mdb bytes:
+    3921338368
+  corpus data.mdb SHA-256:
+    8c6e8b7798a52639f78bd4a0ba4276d72784e4d1f149e3d5925d95289ae62bad
+  total notes:
+    3530455
+  final vector bytes:
+    50612602880
+
+  Reusable checkpoint:
+
+    shard ordinal: 157
+    rows: 16384
+    vectors.f32le bytes: 234881024
+    vectors.f32le SHA-256:
+      9dbc6eeadc4446ee3d135bbece07765d2c67a163afef6025826b1f9300c4dd49
+
+  The exact image remains frozen because its digest is part of the
+  representation descriptor. A rebuilt image would create a different
+  representation. The reviewed complete-build controller, corrected execution
+  identity helper and complete-build package helper travel as separate
+  checksum-pinned files. The complete-build config pins the controller SHA-256,
+  and the transport manifest pins every transported file. Corpus decompression
+  uses /usr/bin/gzip from that exact image; no separate decoder is transported.
+
+Prepared local package
+
+  <LOCAL_ROOT>/execution is the free local execution layout. From that directory,
+  the exact config resolves package/... and work/... identically to the future
+  rental. execution/package is the complete local package; execution/work is the
+  shard 157 seed and current ledger; execution/control contains the reviewed
+  controller and helpers.
+
+  <LOCAL_ROOT>/transport becomes immutable after its final manifest is written.
+  It contains only the compressed corpus, package skeleton, exact legacy Hugging
+  Face cache metadata, shard 157 seed, small manifests and evidence, and pinned
+  control files. It does not contain the 30.46 GB model payload.
+
+  Required records are:
+
+    transport/transport-manifest.json
+    transport/control/gte-oracle
+    transport/control/calibration_package.py
+    transport/control/full_build_package.py
+    transport/control/SHA256SUMS
+    transport/corpus/data.mdb.gz
+    transport/model-payload-identity.json
+    transport/legacy-huggingface/
+    transport/package-skeleton/
+    transport/work-seed/
+
+  package-skeleton contains package-manifest.json, the exact run config, model
+  lock, semantic order, token audit, and batch plan, but not the model directory
+  or data.mdb.
+  work-seed contains the settled calibration evidence and execution identity,
+  the current budget ledger, and the incomplete representation with only valid
+  shard 157. It must not contain the old verification.json seal.
+
+  Before any future launch, verify locally:
+
+    cd <LOCAL_ROOT>
+    sha256sum -c transport/control/SHA256SUMS
+    test -x transport/control/gte-oracle
+    python3 transport/control/full_build_package.py \
+      verify transport transport/transport-manifest.json
+    test "$(sha256sum transport/work-seed/representation/shards/000157/vectors.f32le | cut -d' ' -f1)" \
+      = 9dbc6eeadc4446ee3d135bbece07765d2c67a163afef6025826b1f9300c4dd49
+    test ! -e transport/work-seed/representation/verification.json
+
+  Also complete the free local dry run recorded by CREC-72. Do not debug a
+  package, controller, helper, config, or resume path on rented time.
+
+Future fresh-offer gate
+
+  Search for one on-demand, verified Vast offer with all of these properties:
+
+    one RTX_PRO_6000_WS GPU
+    600 W GPU maximum power
+    amd64 CPU
+    at least 128 GiB host RAM
+    200 GB disk with at least 1 GB/s advertised bandwidth
+    reliability at least 0.995
+    rental rate at most 1.359259 USD/hour
+    available duration covering the conservative remaining build, one cold
+      restart, and one lost shard
+    rentable and non-interruptible/on-demand
+
+  Prefer the US. If no US offer qualifies, the same constraints may be used
+  globally. Do not relax a compute, duration, disk, reliability, or rate
+  constraint. Save the exact query and raw result, choose one row locally, and
+  save that row as launch/offer.json. Immediately before approval, rerun the
+  identical query and require the chosen offer to occur exactly once.
+
+  Recalculate the artifact/transfer allowance from that exact offer. Run the
+  read-only projection against the settled ledger and calibration evidence.
+
+PAID BOUNDARY -- STOP HERE DURING CREC-72
+
+  Present the refreshed offer, its rate and duration, the projected reservation,
+  and the current $500 lifetime ledger to the user. Continue only after explicit
+  approval of that exact launch.
+
+  After approval, reserve once and save its JSON result before creating the
+  instance:
+
+    cd <LOCAL_ROOT>/execution
+    control/gte-oracle reserve-full-build \
+      package/run/full-build-config.json \
+      <RECORDED_AT_UTC> \
+      > ../launch/full-build-reservation.json
+
+  Copy the newly reserved ledger into work-seed, rewrite and verify the exact
+  transport manifest, and then create exactly one instance from the refreshed
+  offer. A launch or staging failure does not authorize a second instance.
+
+Launch and identity capture
+
+  Create the one direct private-image instance with 200 GB disk, on-demand
+  pricing, SSH, and the exact IMAGE_REF above. Enter the short-lived read-only
+  Docker Hub PAT only through the terminal prompt; never put it in a file, shell
+  history, command log, or environment inherited by the worker.
+
+  Save the raw create result and live instance record. Use the transported,
+  checksum-pinned calibration_package.py--not the older copy in the image--to
+  freeze the provider records and capture work/execution-identity.json from the
+  live GPU and mounted disk. The captured identity must pass the same hardware
+  contract, must report an hourly rate no greater than 1359259 micro-USD, and
+  must report enough available duration for the reserved work.
+
+  Transfer <LOCAL_ROOT>/transport directly to:
+
+    /workspace/oracle-full-build/transport
+
+  The transfer may be resumed only to the same instance and path. Its exit code
+  is not proof of correctness. On the rented instance, first verify the pinned
+  control hashes and then the complete transport manifest. Do not run the model
+  before both checks pass.
+
+Remote package reconstruction
+
+  Work under /workspace/oracle-full-build. Reconstruct into package.next while
+  package is absent:
+
+    set -euo pipefail
+    cd /workspace/oracle-full-build
+    test ! -e package
+    test ! -e package.next
+    sha256sum -c transport/control/SHA256SUMS
+    test -x transport/control/gte-oracle
+    /opt/gte-venv/bin/python transport/control/full_build_package.py \
+      verify transport transport/transport-manifest.json
+    cp -a transport/package-skeleton package.next
+
+  Download the model directly on the rental using the exact old image's pinned
+  downloader. Override offline mode only for this one download:
+
+    mkdir -p scratch/downloaded-bundle
+    env HF_HUB_OFFLINE=0 TRANSFORMERS_OFFLINE=0 \
+      /opt/gte-venv/bin/python /opt/oracle-mvp/gte/model_bundle.py \
+      prepare scratch/downloaded-bundle
+    mkdir -p package.next/bundle
+    mv scratch/downloaded-bundle/model package.next/bundle/model
+    rm scratch/downloaded-bundle/model-lock.json
+
+  The fresh .huggingface download metadata is not model identity. First verify
+  every stable payload file against the transported identity and exact legacy
+  model lock. Then replace only that cache metadata with the transported legacy
+  tree so the old production verifier sees the exact calibrated lock:
+
+    /opt/gte-venv/bin/python transport/control/full_build_package.py \
+      verify-model-payload \
+      package.next/bundle/model \
+      package.next/bundle/model-lock.json \
+      transport/model-payload-identity.json
+    /opt/gte-venv/bin/python transport/control/full_build_package.py \
+      restore-model-metadata \
+      package.next/bundle/model \
+      transport/legacy-huggingface
+    /opt/gte-venv/bin/python /opt/oracle-mvp/gte/model_bundle.py \
+      verify package.next/bundle
+
+  Reconstruct the corpus through data.mdb.next. The helper verifies its exact
+  byte count and SHA-256 before the atomic rename:
+
+    /opt/gte-venv/bin/python transport/control/full_build_package.py \
+      reconstruct-corpus \
+      transport/corpus/data.mdb.gz \
+      package.next/corpus-root/ndb/data.mdb \
+      3921338368 \
+      8c6e8b7798a52639f78bd4a0ba4276d72784e4d1f149e3d5925d95289ae62bad \
+      --gzip /usr/bin/gzip
+
+  Verify the fully reconstructed package, then publish it with one same-filesystem
+  rename:
+
+    /opt/gte-venv/bin/python transport/control/full_build_package.py \
+      verify package.next package.next/package-manifest.json
+    mv package.next package
+
+  Copy transport/work-seed to work.next, require verification.json to be absent,
+  verify shard 157 again, and rename work.next to work. Capture the live
+  execution identity into work/execution-identity.json. Run the controller's
+  representation validation before starting CUDA work. The
+  representation must still report build identity 9531c232... and exactly one
+  completed checkpoint, shard 157 with vector SHA-256 9dbc6eea....
+
+Run and manual supervision
+
+  No watchdog is used. The user supervises provider cost and progress manually.
+  Start the worker under nohup, save its PID, log, and exit status, and invoke
+  exactly:
+
+    transport/control/gte-oracle run-full-build \
+      package/run/full-build-config.json
+
+  run-full-build takes no shard ordinal. It claims the reservation for the exact
+  captured instance and pinned controller, verifies and reuses shard 157, and
+  continues every missing shard in the frozen plan. Every published shard is an
+  atomic checkpoint.
+
+  A lost SSH connection is not a failure; check the saved PID and log. Never
+  start a concurrent worker. If the process has actually stopped, preserve its
+  log and exit status. The same command may be resumed only on the same Vast
+  instance, with the same execution-identity file, controller checksum, config,
+  ledger, and representation directory. That exact retry reuses valid shards
+  and does not append another claim. A different instance or controller must be
+  rejected. There is no automatic second rental.
+
+  Success requires exit status 0, a complete 3530455-row manifest, exactly
+  50612602880 vector bytes, the frozen build identity, and a successful deep
+  verify-representation run. Otherwise follow the failure settlement path.
+
+Retrieve without a second 50.61 GB copy
+
+  Keep the live representation as ordinary shard files. Do not tar, zip, copy,
+  or archive it on the rented disk; that would create a needless second 50.61 GB
+  remote copy.
+
+  Create <LOCAL_ROOT>/result with local copies or reflinks of execution/package
+  and execution/control. Copy remote work/representation and the small ledger,
+  execution identity, logs, and exit records directly into the absent
+  <LOCAL_ROOT>/result/work.partial directory. Vast copy may be resumed into that
+  same directory. Keep the model and corpus on the rental; they already exist
+  under execution/package and are not result artifacts.
+
+  Locally, verify every representation shard through the production
+  verify-representation path using the exact corpus and ordered IDs. Require the
+  final matrix byte count, complete row count, representation version, and build
+  identity to match. Rename result/work.partial to result/work only after this
+  deep local verification succeeds. Do not destroy the rental merely because
+  the copy command exited successfully.
+
+Teardown and settlement
+
+  After verified retrieval, request destruction once and save its raw response.
+  The response body is not proof. Poll `vastai show instances --raw` until the
+  exact instance ID is absent from the live list, and record that evidence. The
+  provider charge stops being estimated only after this absence is confirmed.
+
+  Save the provider's final actual charge and its source. Preserve a copy of the
+  retrieved pre-settlement ledger.
+
+  For a verified complete result, settle from <LOCAL_ROOT>/result with the
+  pinned controller:
+
+    cd <LOCAL_ROOT>/result
+    control/gte-oracle settle-full-build \
+      package/run/full-build-config.json \
+      <ACTUAL_CHARGE_MICRO_USD> \
+      <RECORDED_AT_UTC>
+
+  This succeeds only after deep verification of the complete representation and
+  the exact execution claim.
+
+  For any launch, staging, execution, retrieval, or verification failure, save
+  the most specific failure log and settle once:
+
+    cd <LOCAL_ROOT>/result
+    control/gte-oracle settle-failed-full-build \
+      package/run/full-build-config.json \
+      <FAILURE_EVIDENCE_PATH> \
+      <ACTUAL_CHARGE_MICRO_USD> \
+      <RECORDED_AT_UTC>
+
+  Failed settlement is terminal and records the real provider charge even if it
+  exceeded the reservation. It does not authorize another complete build.

@@ -215,10 +215,11 @@ reported `null`. The original identity gate rejected that provider omission.
 Commit `13ea4c4` accepts only the omission while continuing to reject every
 non-null mismatch.
 
-The immutable image used for embedding predates that fix, so the corrected
-identity helper was copied separately and recorded by commit and checksum.
-Before another rental, rebuild the image so the complete runtime is immutable
-again.
+The immutable image used for embedding predates that fix. Rebuilding it would
+change the image digest, which is part of the representation identity, and
+would make shard 157 unusable in the complete build. The complete build must
+therefore keep the calibrated image unchanged and checksum-pin the corrected
+identity helper and full-build controller separately.
 
 ### Destruction must be confirmed from live state
 

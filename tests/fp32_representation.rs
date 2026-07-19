@@ -14,8 +14,8 @@ use oracle_mvp::ordered_gte_token_audit::{
 use oracle_mvp::representation::{
     RepresentationArtifactPhase, RepresentationBatchShape, RepresentationBuildConfig,
     RepresentationBuildObserver, RepresentationDescriptor, RepresentationEncoder,
-    build_representation_shards, build_representation_shards_observed, open_representation,
-    prepare_representation_index, verify_representation,
+    build_representation_shards, build_representation_shards_observed, complete_representation,
+    open_representation, prepare_representation_index, verify_representation,
 };
 use oracle_mvp::representation_batch_plan::{
     RepresentationBatchPlanConfig, create_representation_batch_plan,
@@ -98,6 +98,45 @@ fn publishes_nonadjacent_shards_and_resumes_without_reencoding() {
     fs::write(&vectors_path, corrupted).expect("corrupt vectors");
     open_representation(&fixture.ordered_path, &artifact)
         .expect_err("corrupt immutable shard must be rejected");
+}
+
+#[test]
+fn complete_representation_reuses_the_existing_middle_shard() {
+    let fixture = Fixture::new();
+    let artifact = fixture.temp.path().join("complete-from-middle");
+    let calls = Arc::new(Mutex::new(Vec::new()));
+    let mut encoder = FixtureEncoder::new(calls.clone());
+    let config = fixture.build_config("complete-from-middle-plan", 2, 1, vec![1]);
+    let partial = build_representation_shards(
+        &fixture.ndb_path,
+        &fixture.ordered_path,
+        &artifact,
+        &config,
+        &mut encoder,
+    )
+    .expect("build reusable middle shard");
+    assert_eq!(partial.encoded_rows, 2);
+    assert!(!partial.manifest.complete);
+    let middle_vectors =
+        fs::read(artifact.join("shards/000001/vectors.f32le")).expect("read reusable vectors");
+
+    let completed = complete_representation(
+        &fixture.ndb_path,
+        &fixture.ordered_path,
+        &artifact,
+        &config.token_audit_path,
+        &config.batch_plan_path,
+        &mut encoder,
+    )
+    .expect("complete every missing shard");
+    assert!(completed.manifest.complete);
+    assert_eq!(completed.encoded_rows, 4);
+    assert_eq!(completed.reused_rows, 2);
+    assert_eq!(calls.lock().expect("call log").len(), 6);
+    assert_eq!(
+        fs::read(artifact.join("shards/000001/vectors.f32le")).expect("read reused middle vectors"),
+        middle_vectors,
+    );
 }
 
 #[test]

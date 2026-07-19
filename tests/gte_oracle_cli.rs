@@ -106,6 +106,60 @@ fn phase2_cli_has_one_separate_ledger_bound_cuda_calibration_entrypoint() {
 }
 
 #[test]
+fn phase2_cli_has_a_separate_ledger_bound_cuda_full_build_entrypoint() {
+    let temporary = tempfile::tempdir().expect("temporary directory");
+    let config_path = temporary.path().join("cuda-full-build.json");
+    std::fs::write(
+        &config_path,
+        serde_json::to_vec_pretty(&json!({
+            "corpus_path": temporary.path().join("missing-corpus"),
+            "ordered_event_ids_path": temporary.path().join("missing-order"),
+            "token_audit_path": temporary.path().join("missing-audit"),
+            "batch_plan_path": temporary.path().join("missing-batch-plan"),
+            "representation_path": temporary.path().join("missing-representation"),
+            "model_lock_path": temporary.path().join("missing-model-lock"),
+            "worker_source_path": temporary.path().join("missing-worker"),
+            "dependency_lock_path": temporary.path().join("missing-dependencies"),
+            "container_image": "missing@example.invalid/worker@sha256:deadbeef",
+            "torch_version": "2.12.1",
+            "transformers_version": "4.41.2",
+            "cuda_version": "13.0.2",
+            "worker": {
+                "program": temporary.path().join("missing-program"),
+                "model_dir": temporary.path().join("missing-model"),
+                "model_lock_path": temporary.path().join("missing-worker-model-lock"),
+                "dependency_lock_path": temporary.path().join("missing-worker-dependencies"),
+                "device": "cuda"
+            },
+            "batch_size": 32,
+            "shard_rows": 16384
+        }))
+        .expect("serialize config"),
+    )
+    .expect("write config");
+
+    let output = Command::new(env!("CARGO_BIN_EXE_gte-oracle"))
+        .arg("run-full-build")
+        .arg(&config_path)
+        .output()
+        .expect("run gte-oracle");
+    assert!(!output.status.success());
+    let stderr = String::from_utf8(output.stderr).expect("UTF-8 stderr");
+    assert!(stderr.contains("requires full_build settings"), "{stderr}");
+    assert!(!stderr.contains("refuses unadmitted CUDA"), "{stderr}");
+
+    let caller_selected_shard = Command::new(env!("CARGO_BIN_EXE_gte-oracle"))
+        .arg("run-full-build")
+        .arg(&config_path)
+        .arg("0")
+        .output()
+        .expect("run gte-oracle with forbidden shard selection");
+    assert!(!caller_selected_shard.status.success());
+    let stderr = String::from_utf8(caller_selected_shard.stderr).expect("UTF-8 stderr");
+    assert!(stderr.contains("usage: gte-oracle"), "{stderr}");
+}
+
+#[test]
 fn phase2_cli_exposes_local_batch_plan_and_index_preparation_without_starting_the_model() {
     let temporary = tempfile::tempdir().expect("temporary directory");
     let config_path = temporary.path().join("local.json");
