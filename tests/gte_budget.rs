@@ -33,14 +33,14 @@ use sha2::{Digest, Sha256};
 use tempfile::TempDir;
 
 #[test]
-fn checked_in_ledger_freezes_both_caps_and_zero_calibration_spend() {
+fn checked_in_ledger_freezes_both_caps_and_settled_calibration_spend() {
     let ledger =
         read_budget_ledger(&Path::new(env!("CARGO_MANIFEST_DIR")).join("budget-ledger.json"))
             .expect("read checked-in budget ledger");
 
     assert_eq!(ledger.lifetime_cap, MVP_LIFETIME_CAP);
     assert_eq!(ledger.calibration_lifetime_cap, CALIBRATION_LIFETIME_CAP);
-    assert_eq!(ledger.calibration_actual_spend, MicroUsd(0));
+    assert_eq!(ledger.calibration_actual_spend, MicroUsd(1_210_000));
     assert_eq!(ledger.calibration_outstanding_commitments, MicroUsd(0));
 }
 
