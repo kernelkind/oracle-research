@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, VecDeque};
 use std::io::{BufRead, Cursor, Read, Write};
 use std::thread;
 use std::time::{Duration, Instant};
@@ -6,9 +6,13 @@ use std::time::{Duration, Instant};
 use nostrdb::{Config, Filter, Ndb, NoteBuilder, Transaction};
 use oracle_mvp::adaptive_learning_runner::{
     AdaptiveLearningRunnerConfig, AdaptiveLearningRunnerOutcome, AdaptiveLearningSeed,
-    run_adaptive_learning,
+    run_adaptive_learning as run_adaptive_learning_with_ui,
 };
 use oracle_mvp::candidate_order::{B16Boundary, CandidateOrderOracle};
+use oracle_mvp::evaluator::{
+    CompletionView, EvaluatorDecision, EvaluatorSubmission, EvaluatorUi, RatingOutcome, RatingView,
+    RecoveryOutcome, RecoveryView, RestOutcome, RestView,
+};
 use oracle_mvp::fp32_oracle::{
     Fp32Candidate, SimilarNotesRequest, SimilarNotesResponse, SimilarNotesWaveMetrics,
     SimilarNotesWaveResponse, StoredNoteVector, VectorsForNotesResponse,
@@ -32,6 +36,167 @@ const APPROVED_RATING_ANCHORS: [&str; 7] = [
     "7: Exceptionally valuable.",
 ];
 const APPROVED_LANGUAGE_RULE: &str = "Use wrong_language only when the note is clearly primarily non-English. Mixed-language, code-heavy, and ambiguous notes remain eligible and must be rated.";
+
+fn run_adaptive_learning<O, R, W>(
+    config: &AdaptiveLearningRunnerConfig,
+    oracle: &mut O,
+    mut input: R,
+    output: &mut W,
+) -> SnapshotResult<AdaptiveLearningRunnerOutcome>
+where
+    O: CandidateOrderOracle,
+    R: BufRead,
+    W: Write,
+{
+    let result = {
+        let mut evaluator = ScriptedLineEvaluator {
+            input: &mut input,
+            output,
+            instructions_written: false,
+        };
+        run_adaptive_learning_with_ui(config, oracle, &mut evaluator)
+    };
+    if let Err(SnapshotError::ExperimentState(reason)) = &result
+        && persisted_failure_reason(&config.session_path).as_deref() == Some(reason.as_str())
+    {
+        output
+            .write_all(format!("Phase 3 learning is stopped: {reason}\n").as_bytes())
+            .map_err(|source| SnapshotError::Io {
+                operation: "write",
+                path: std::path::PathBuf::from("<scripted-terminal-output>"),
+                source,
+            })?;
+    }
+    result
+}
+
+struct ScriptedLineEvaluator<'a, R, W> {
+    input: &'a mut R,
+    output: &'a mut W,
+    instructions_written: bool,
+}
+
+impl<R: BufRead, W: Write> ScriptedLineEvaluator<'_, R, W> {
+    fn ensure_instructions(&mut self) -> std::io::Result<()> {
+        if !self.instructions_written {
+            self.output.write_all(
+                format!(
+                    "{}\n{}\n",
+                    APPROVED_RATING_ANCHORS.join("\n"),
+                    APPROVED_LANGUAGE_RULE
+                )
+                .as_bytes(),
+            )?;
+            self.instructions_written = true;
+        }
+        Ok(())
+    }
+
+    fn prompt(&mut self, prompt: &str) -> std::io::Result<Option<String>> {
+        self.output.write_all(prompt.as_bytes())?;
+        self.output.flush()?;
+        let mut line = String::new();
+        if self.input.read_line(&mut line)? == 0 {
+            return Ok(None);
+        }
+        while line.ends_with(['\n', '\r']) {
+            line.pop();
+        }
+        Ok(Some(line))
+    }
+}
+
+impl<R: BufRead, W: Write> EvaluatorUi for ScriptedLineEvaluator<'_, R, W> {
+    fn rate(&mut self, view: RatingView<'_>) -> std::io::Result<RatingOutcome> {
+        self.ensure_instructions()?;
+        self.output.write_all(b"\n")?;
+        self.output.write_all(view.note().as_bytes())?;
+        self.output.write_all(b"\n")?;
+        self.output.flush()?;
+        loop {
+            let Some(line) = self.prompt(APPROVED_INPUT_PROMPT)? else {
+                return Ok(RatingOutcome::Paused);
+            };
+            let value = line.trim();
+            if let Some(submission) = parse_scripted_submission(value) {
+                return Ok(RatingOutcome::Submitted(submission));
+            }
+            let guidance = if value == "q" {
+                "Rate the displayed note, then append `q` to stop (for example, `6q` or `lq`).\n"
+            } else {
+                "Enter 1 to 7 or `l`; append `q` to save that decision and stop.\n"
+            };
+            self.output.write_all(guidance.as_bytes())?;
+        }
+    }
+
+    fn recover(&mut self, _view: RecoveryView) -> std::io::Result<RecoveryOutcome> {
+        self.ensure_instructions()?;
+        loop {
+            let prompt = "Recovery: this note may have been shown before the prior run stopped. Enter its rating, `l` for wrong_language, or `r` to explicitly redisplay it; use `6q` or `lq` to save that decision and stop: ";
+            let Some(line) = self.prompt(prompt)? else {
+                return Ok(RecoveryOutcome::Paused);
+            };
+            let value = line.trim();
+            if value == "r" {
+                return Ok(RecoveryOutcome::Redisplay);
+            }
+            if let Some(submission) = parse_scripted_submission(value) {
+                return Ok(RecoveryOutcome::Submitted(submission));
+            }
+            self.output.write_all(
+                b"Enter 1 to 7, `l`, or `r`; use `6q` or `lq` to save that decision and stop.\n",
+            )?;
+        }
+    }
+
+    fn rest(&mut self, _view: RestView) -> std::io::Result<RestOutcome> {
+        Ok(RestOutcome::Continue)
+    }
+
+    fn preparing(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+
+    fn complete(&mut self, view: CompletionView) -> std::io::Result<()> {
+        self.output.write_all(
+            format!(
+                "\nPhase 3 learning complete: {} presentations are safely stored.\n",
+                view.presentations_stored()
+            )
+            .as_bytes(),
+        )
+    }
+}
+
+fn parse_scripted_submission(value: &str) -> Option<EvaluatorSubmission> {
+    let (decision, pause_after) = value
+        .strip_suffix('q')
+        .map_or((value, false), |decision| (decision, true));
+    let decision = if decision == "l" {
+        EvaluatorDecision::WrongLanguage
+    } else {
+        EvaluatorDecision::Rating(
+            decision
+                .parse::<u8>()
+                .ok()
+                .filter(|rating| (1..=7).contains(rating))?,
+        )
+    };
+    Some(EvaluatorSubmission::new(decision, pause_after))
+}
+
+fn persisted_failure_reason(path: &std::path::Path) -> Option<String> {
+    let value: serde_json::Value = serde_json::from_slice(&std::fs::read(path).ok()?).ok()?;
+    if value.get("phase")?.as_str()? != "failed" {
+        return None;
+    }
+    value
+        .get("failure")?
+        .get("reason")?
+        .as_str()
+        .map(str::to_owned)
+}
 
 #[derive(Default)]
 struct FailOnRawNoteOutput {
@@ -129,36 +294,61 @@ impl BufRead for FailOnTerminalInput {
 }
 
 #[test]
-fn terminal_and_session_binding_use_the_exact_frozen_evaluator_protocol() {
+fn session_binding_records_the_exact_production_tui_protocol() {
     let fixture = RunnerFixture::new();
     let session_path = fixture.temp.path().join("evaluator-protocol-session.json");
     let config = fixture.config(session_path.clone());
     let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
-    let mut output = Vec::new();
+    let mut evaluator = RecordingEvaluator::default();
 
-    let outcome = run_adaptive_learning(&config, &mut oracle, Cursor::new(b""), &mut output)
-        .expect("pause at the first evaluator prompt");
+    let outcome = run_adaptive_learning_with_ui(&config, &mut oracle, &mut evaluator)
+        .expect("pause at the first production evaluator decision");
     assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
-    let transcript = String::from_utf8(output).expect("UTF-8 transcript");
-    assert!(transcript.contains(APPROVED_RATING_PROMPT));
-    for anchor in APPROVED_RATING_ANCHORS {
-        assert!(transcript.contains(anchor), "missing anchor `{anchor}`");
-    }
-    assert!(transcript.contains(APPROVED_LANGUAGE_RULE));
-    assert!(!transcript.contains("extremely sorry you saw it"));
 
     let session = read_session(&session_path);
+    let fixed = &session["binding"]["fixed"];
     assert_eq!(
-        session["binding"]["fixed"]["rating_prompt"],
-        APPROVED_INPUT_PROMPT
+        fixed["evaluator_protocol"],
+        serde_json::json!({
+            "question": APPROVED_RATING_PROMPT,
+            "rating_anchors": APPROVED_RATING_ANCHORS,
+            "wrong_language_rule": APPROVED_LANGUAGE_RULE,
+            "controls": {
+                "accepted_ratings": [1, 2, 3, 4, 5, 6, 7],
+                "wrong_language_key": "L",
+                "pause_after_decision_key": "P",
+                "recovery_redisplay_key": "R",
+                "letter_keys_case_insensitive": true,
+                "rest_continue_keys": ["Enter", "Space", "C"],
+                "rest_pause_keys": ["P", "Q", "Escape"],
+                "immediate_pause_key": "Ctrl-C"
+            },
+            "input_policy": {
+                "fresh_key_press_only": true,
+                "paste_accepted": false,
+                "repeat_accepted": false,
+                "release_accepted": false,
+                "command_modifiers_accepted": false,
+                "stale_input_discarded_before_screen": true,
+                "queued_ctrl_c_pause_preserved": true
+            },
+            "wrong_language_counts_toward_rest": true,
+            "rest_interval": 20
+        })
     );
-    assert_eq!(
-        session["binding"]["fixed"]["rating_instructions"],
-        format!(
-            "{}\n{}\n",
-            APPROVED_RATING_ANCHORS.join("\n"),
-            APPROVED_LANGUAGE_RULE
-        )
+    assert!(
+        fixed.get("rating_prompt").is_none(),
+        "the removed line prompt must not remain persisted"
+    );
+    assert!(
+        fixed.get("rating_instructions").is_none(),
+        "rendered line-mode instructions must not remain persisted"
+    );
+    assert!(
+        !serde_json::to_string(fixed)
+            .expect("encode fixed binding")
+            .contains("append `q`"),
+        "stale line-mode UI copy must not be persisted"
     );
 }
 
@@ -177,8 +367,8 @@ fn resume_rejects_a_changed_evaluator_protocol_before_oracle_work() {
     .expect("create bound evaluator session");
 
     let mut changed = read_session(&session_path);
-    changed["binding"]["fixed"]["rating_prompt"] =
-        serde_json::json!("a different evaluator question");
+    changed["binding"]["fixed"]["evaluator_protocol"]["input_policy"]["fresh_key_press_only"] =
+        serde_json::json!(false);
     std::fs::write(
         &session_path,
         serde_json::to_vec_pretty(&changed).expect("encode changed session"),
@@ -927,9 +1117,41 @@ fn concealed_order_is_deterministic_and_displays_only_raw_note_content() {
     let first_session = read_session(&first_session_path);
     let second_session = read_session(&second_session_path);
     assert_eq!(
+        first_session["binding"]["presentation_order_identity_sha256"],
+        "2893124c8716be08b5495fb7824dbdeeb5c69de1abe6f6fe8d991f5f0b8a8e29",
+        "UI-only changes must not reshuffle the frozen presentation order"
+    );
+    assert_ne!(
+        first_session["binding"]["identity_sha256"],
+        first_session["binding"]["presentation_order_identity_sha256"],
+        "the complete current binding and compatibility order identity have separate jobs"
+    );
+    assert_eq!(
         first_session["rounds"][0]["waves"][0]["presentation_order"],
         second_session["rounds"][0]["waves"][0]["presentation_order"]
     );
+
+    let changed_session_path = first_fixture
+        .temp
+        .path()
+        .join("changed-order-binding-session.json");
+    let mut changed_config = first_fixture.config(changed_session_path.clone());
+    changed_config.corpus_identity = "fixture-corpus-v2".to_owned();
+    let mut changed_oracle = FixtureOracle::new(first_fixture.event_ids.clone());
+    run_adaptive_learning(
+        &changed_config,
+        &mut changed_oracle,
+        Cursor::new(b"4q\n"),
+        &mut Vec::new(),
+    )
+    .expect("start a session with a distinct order binding");
+    let changed_session = read_session(&changed_session_path);
+    assert_ne!(
+        first_session["binding"]["presentation_order_identity_sha256"],
+        changed_session["binding"]["presentation_order_identity_sha256"],
+        "the order identity must be derived from the session inputs, not a global fixture seed"
+    );
+
     let coordinator_ids = first_session["rounds"][0]["waves"][0]["coordinator_event_ids"]
         .as_array()
         .unwrap();
@@ -1105,6 +1327,9 @@ fn resume_recovers_the_boundary_between_a_submitted_wave_and_its_replacement() {
         .as_array_mut()
         .expect("waves")
         .truncate(1);
+    boundary["rest_checkpoints"] = serde_json::json!([]);
+    boundary["pause_checkpoints"] = serde_json::json!([]);
+    boundary["pause_reason"] = serde_json::Value::Null;
     std::fs::write(
         &session_path,
         serde_json::to_vec_pretty(&boundary).expect("encode boundary"),
@@ -1196,6 +1421,9 @@ fn an_orphaned_completed_oracle_call_preserves_responses_metrics_and_matrix_work
     before_publication["rounds"] = serde_json::json!([]);
     before_publication["oracle_calls"] = serde_json::json!([]);
     before_publication["oracle_responses"] = serde_json::json!([]);
+    before_publication["rest_checkpoints"] = serde_json::json!([]);
+    before_publication["pause_checkpoints"] = serde_json::json!([]);
+    before_publication["pause_reason"] = serde_json::Value::Null;
     std::fs::write(
         &session_path,
         serde_json::to_vec_pretty(&before_publication).expect("encode crash state"),
@@ -1547,6 +1775,600 @@ fn completed_learning_round_seal_rejects_drift_before_next_input() {
     assert!(error.to_string().contains("completed round diagnostic"));
     assert_eq!(rejecting_oracle.matrix_passes, 0);
     assert_eq!(rejecting_oracle.logical_wave_calls, 0);
+}
+
+#[test]
+fn every_note_is_pending_on_disk_and_the_prior_decision_is_durable_before_render() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture
+        .temp
+        .path()
+        .join("durable-before-render-session.json");
+    let config = fixture.config(session_path.clone());
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut evaluator = DurabilityInspectingEvaluator {
+        session_path,
+        outcomes: VecDeque::from([
+            submitted(EvaluatorDecision::Rating(6), false),
+            submitted(EvaluatorDecision::Rating(5), true),
+        ]),
+        observations: Vec::new(),
+    };
+
+    let outcome = run_adaptive_learning_with_ui(&config, &mut oracle, &mut evaluator)
+        .expect("persist two presentations and pause");
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+    assert_eq!(evaluator.observations.len(), 2);
+    for (expected_decisions, (stored_decisions, pending_event_id, rendered_note)) in
+        evaluator.observations.iter().enumerate()
+    {
+        assert_eq!(*stored_decisions, expected_decisions);
+        assert_eq!(fixture.content_for(*pending_event_id), *rendered_note);
+    }
+    assert_ne!(
+        evaluator.observations[0].1, evaluator.observations[1].1,
+        "successive renders must belong to distinct pending events"
+    );
+
+    let final_session = read_session(&config.session_path);
+    assert_eq!(stored_decision_count(&final_session), 2);
+    assert!(final_session["pending_presentation"].is_null());
+}
+
+#[test]
+fn a_missing_later_note_does_not_block_or_misidentify_the_available_prefix() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture
+        .temp
+        .path()
+        .join("preloaded-wave-error-session.json");
+    let config = fixture.config(session_path.clone());
+    let mut initial_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut initial_evaluator = RecordingEvaluator::default();
+    initial_evaluator
+        .ratings
+        .push_back(submitted(EvaluatorDecision::Rating(6), true));
+    let outcome =
+        run_adaptive_learning_with_ui(&config, &mut initial_oracle, &mut initial_evaluator)
+            .expect("freeze the first wave and persist its first decision");
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+
+    let frozen = read_session(&session_path);
+    let order = frozen["rounds"][0]["waves"][0]["presentation_order"]
+        .as_array()
+        .expect("frozen first-wave order");
+    let available_event_id = value_event_id(&order[1]);
+    let missing_event_id = value_event_id(&order[2]);
+    rebuild_fixture_corpus_without(&fixture, missing_event_id);
+
+    let mut resumed_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut resumed_evaluator = RecordingEvaluator::default();
+    resumed_evaluator
+        .ratings
+        .push_back(submitted(EvaluatorDecision::Rating(5), false));
+    let outcome =
+        run_adaptive_learning_with_ui(&config, &mut resumed_oracle, &mut resumed_evaluator)
+            .expect("rate the available prefix, then pause at the actual missing note");
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+    assert_eq!(
+        resumed_evaluator.presented_notes,
+        vec![fixture.content_for(available_event_id)]
+    );
+
+    let paused = read_session(&session_path);
+    assert_eq!(stored_decision_count(&paused), 2);
+    assert!(paused["pending_presentation"].is_null());
+    let reason = paused["pause_reason"]
+        .as_str()
+        .expect("durable pause reason");
+    assert!(
+        reason.contains(&event_id_hex(missing_event_id)),
+        "pause must name the event that actually failed to preload: {reason}"
+    );
+    assert!(
+        !reason.contains(&event_id_hex(available_event_id)),
+        "pause must not blame the earlier available event: {reason}"
+    );
+}
+
+#[test]
+fn twentieth_presentation_is_stored_before_a_durable_rest_checkpoint() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("durable-rest-session.json");
+    let config = fixture.config(session_path.clone());
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut evaluator = RecordingEvaluator::default();
+    evaluator
+        .ratings
+        .extend((0..19).map(|_| submitted(EvaluatorDecision::Rating(6), false)));
+    evaluator
+        .ratings
+        .push_back(submitted(EvaluatorDecision::WrongLanguage, false));
+    evaluator.rests.push_back(RestOutcome::Paused);
+
+    let outcome = run_adaptive_learning_with_ui(&config, &mut oracle, &mut evaluator)
+        .expect("pause at the first durable rest");
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+    assert_eq!(evaluator.presented_notes.len(), 20);
+    assert_eq!(evaluator.rest_views, vec![20]);
+
+    let rested = read_session(&session_path);
+    let decisions = rested["rounds"][0]["waves"][0]["decisions"]
+        .as_array()
+        .expect("first-wave decisions");
+    assert_eq!(decisions.len(), 20);
+    assert!(rested["pending_presentation"].is_null());
+    assert_eq!(
+        rested["rest_checkpoints"],
+        serde_json::json!([{
+            "after_presentations": 20,
+            "continued": false
+        }])
+    );
+
+    let already_presented = evaluator.presented_notes.clone();
+    let mut resumed_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut resumed = RecordingEvaluator::default();
+    resumed.rests.push_back(RestOutcome::Continue);
+    resumed
+        .ratings
+        .push_back(submitted(EvaluatorDecision::Rating(7), true));
+    let outcome = run_adaptive_learning_with_ui(&config, &mut resumed_oracle, &mut resumed)
+        .expect("continue the rest, then pause after the next stored decision");
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+    assert_eq!(resumed.rest_views, vec![20]);
+    assert_eq!(resumed.presented_notes.len(), 1);
+    assert!(!already_presented.contains(&resumed.presented_notes[0]));
+
+    let continued = read_session(&session_path);
+    assert_eq!(continued["rest_checkpoints"][0]["continued"], true);
+    assert!(continued["pending_presentation"].is_null());
+    assert_eq!(stored_decision_count(&continued), 21);
+}
+
+#[test]
+fn persisted_rests_cover_every_completed_twenty_presentation_boundary() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("complete-rest-boundaries.json");
+    let config = persist_decisions_then_pause(&fixture, session_path.clone(), 41);
+    let session = read_session(&session_path);
+
+    assert_eq!(
+        session["rest_checkpoints"],
+        serde_json::json!([
+            { "after_presentations": 20, "continued": true },
+            { "after_presentations": 40, "continued": true }
+        ])
+    );
+
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut evaluator = RecordingEvaluator::default();
+    let outcome = run_adaptive_learning_with_ui(&config, &mut oracle, &mut evaluator)
+        .expect("resume a session with every completed rest boundary");
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+}
+
+#[test]
+fn persisted_rests_reject_a_missing_or_uncontinued_older_boundary() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("invalid-older-rest.json");
+    let config = persist_decisions_then_pause(&fixture, session_path.clone(), 41);
+    let valid = read_session(&session_path);
+
+    let mut missing = valid.clone();
+    missing["rest_checkpoints"] = serde_json::json!([
+        { "after_presentations": 40, "continued": true }
+    ]);
+    write_session(&session_path, &missing);
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut evaluator = RecordingEvaluator::default();
+    let error = run_adaptive_learning_with_ui(&config, &mut oracle, &mut evaluator)
+        .err()
+        .expect("reject a missing completed rest boundary");
+    assert!(error.to_string().contains("rest checkpoints"));
+    assert_eq!(oracle.matrix_passes, 0);
+    assert_eq!(oracle.vector_lookups, 0);
+
+    let mut uncontinued = valid;
+    uncontinued["rest_checkpoints"][0]["continued"] = serde_json::json!(false);
+    write_session(&session_path, &uncontinued);
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut evaluator = RecordingEvaluator::default();
+    let error = run_adaptive_learning_with_ui(&config, &mut oracle, &mut evaluator)
+        .err()
+        .expect("reject an uncontinued completed rest boundary");
+    assert!(error.to_string().contains("rest checkpoints"));
+    assert_eq!(oracle.matrix_passes, 0);
+    assert_eq!(oracle.vector_lookups, 0);
+}
+
+#[test]
+fn current_exact_rest_boundary_may_be_absent_uncontinued_or_continued() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("current-rest-boundary.json");
+    let config = persist_decisions_then_pause(&fixture, session_path.clone(), 40);
+    let boundary_absent = read_session(&session_path);
+    assert_eq!(
+        boundary_absent["rest_checkpoints"],
+        serde_json::json!([
+            { "after_presentations": 20, "continued": true }
+        ])
+    );
+
+    for current_checkpoint in [
+        None,
+        Some(serde_json::json!({
+            "after_presentations": 40,
+            "continued": false
+        })),
+        Some(serde_json::json!({
+            "after_presentations": 40,
+            "continued": true
+        })),
+    ] {
+        let mut session = boundary_absent.clone();
+        if let Some(checkpoint) = current_checkpoint {
+            session["rest_checkpoints"]
+                .as_array_mut()
+                .expect("rest checkpoints")
+                .push(checkpoint);
+        }
+        write_session(&session_path, &session);
+
+        let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+        let mut evaluator = RecordingEvaluator::default();
+        let outcome = run_adaptive_learning_with_ui(&config, &mut oracle, &mut evaluator)
+            .expect("accept a valid current exact rest-boundary state");
+        assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+    }
+}
+
+#[test]
+fn persisted_rest_checkpoints_must_be_exact_increasing_and_have_no_extras() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("malformed-rest-checkpoints.json");
+    let config = persist_decisions_then_pause(&fixture, session_path.clone(), 40);
+    let valid = read_session(&session_path);
+
+    for checkpoints in [
+        serde_json::json!([
+            { "after_presentations": 20, "continued": true },
+            { "after_presentations": 21, "continued": true }
+        ]),
+        serde_json::json!([
+            { "after_presentations": 20, "continued": true },
+            { "after_presentations": 20, "continued": true }
+        ]),
+        serde_json::json!([
+            { "after_presentations": 20, "continued": true },
+            { "after_presentations": 60, "continued": true }
+        ]),
+    ] {
+        let mut malformed = valid.clone();
+        malformed["rest_checkpoints"] = checkpoints;
+        write_session(&session_path, &malformed);
+
+        let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+        let mut evaluator = RecordingEvaluator::default();
+        let error = run_adaptive_learning_with_ui(&config, &mut oracle, &mut evaluator)
+            .err()
+            .expect("reject malformed rest checkpoints");
+        assert!(error.to_string().contains("rest checkpoints"));
+        assert_eq!(oracle.matrix_passes, 0);
+        assert_eq!(oracle.vector_lookups, 0);
+    }
+}
+
+#[test]
+fn pending_presentation_cannot_bypass_a_due_rest() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("pending-during-rest.json");
+    let config = fixture.config(session_path.clone());
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut evaluator = RecordingEvaluator::default();
+    evaluator
+        .ratings
+        .extend((0..19).map(|_| submitted(EvaluatorDecision::Rating(6), false)));
+    evaluator
+        .ratings
+        .push_back(submitted(EvaluatorDecision::WrongLanguage, false));
+    evaluator.rests.push_back(RestOutcome::Paused);
+    let outcome = run_adaptive_learning_with_ui(&config, &mut oracle, &mut evaluator)
+        .expect("pause at the first scheduled rest");
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+
+    let session = read_session(&session_path);
+    let replacement_wave_id = session["rounds"][0]["waves"][1]["wave_id"].clone();
+    let replacement_event_id = session["rounds"][0]["waves"][1]["presentation_order"][0].clone();
+    assert_eq!(stored_decision_count(&session), 20);
+    assert_eq!(
+        session["rest_checkpoints"],
+        serde_json::json!([
+            { "after_presentations": 20, "continued": false }
+        ])
+    );
+    let pending_presentation = serde_json::json!({
+        "round": 1,
+        "wave_id": replacement_wave_id,
+        "event_id": replacement_event_id
+    });
+    for rest_checkpoints in [serde_json::json!([]), session["rest_checkpoints"].clone()] {
+        let mut pending_during_rest = session.clone();
+        pending_during_rest["rest_checkpoints"] = rest_checkpoints;
+        pending_during_rest["pending_presentation"] = pending_presentation.clone();
+        write_session(&session_path, &pending_during_rest);
+
+        let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+        let mut evaluator = RecordingEvaluator::default();
+        let error = run_adaptive_learning_with_ui(&config, &mut oracle, &mut evaluator)
+            .err()
+            .expect("reject a pending presentation while the scheduled rest is due");
+        assert!(error.to_string().contains("pending evaluator rest"));
+        assert_eq!(oracle.matrix_passes, 0);
+        assert_eq!(oracle.vector_lookups, 0);
+    }
+}
+
+#[test]
+fn persisted_pause_checkpoints_reject_empty_future_or_decreasing_entries() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("invalid-pause-checkpoints.json");
+    let config = persist_decisions_then_pause(&fixture, session_path.clone(), 1);
+    let valid = read_session(&session_path);
+
+    for checkpoints in [
+        serde_json::json!([
+            { "after_presentations": 1, "reason": "   " }
+        ]),
+        serde_json::json!([
+            { "after_presentations": 2, "reason": "future pause" }
+        ]),
+        serde_json::json!([
+            { "after_presentations": 1, "reason": "later" },
+            { "after_presentations": 0, "reason": "earlier" }
+        ]),
+    ] {
+        let mut malformed = valid.clone();
+        malformed["pause_checkpoints"] = checkpoints;
+        write_session(&session_path, &malformed);
+
+        let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+        let mut evaluator = RecordingEvaluator::default();
+        let error = run_adaptive_learning_with_ui(&config, &mut oracle, &mut evaluator)
+            .err()
+            .expect("reject malformed pause checkpoints");
+        assert!(error.to_string().contains("pause checkpoints"));
+        assert_eq!(oracle.matrix_passes, 0);
+        assert_eq!(oracle.vector_lookups, 0);
+    }
+}
+
+#[test]
+fn persisted_pause_checkpoints_allow_multiple_reasons_at_the_same_count() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture
+        .temp
+        .path()
+        .join("same-count-pause-checkpoints.json");
+    let config = persist_decisions_then_pause(&fixture, session_path.clone(), 1);
+    let mut session = read_session(&session_path);
+    session["pause_checkpoints"] = serde_json::json!([
+        { "after_presentations": 1, "reason": "first pause" },
+        { "after_presentations": 1, "reason": "second pause" }
+    ]);
+    write_session(&session_path, &session);
+
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut evaluator = RecordingEvaluator::default();
+    let outcome = run_adaptive_learning_with_ui(&config, &mut oracle, &mut evaluator)
+        .expect("accept meaningful pause checkpoints at the same presentation count");
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+}
+
+#[test]
+fn pause_after_rating_never_advances_to_an_unstored_next_presentation() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("pause-after-rating-session.json");
+    let config = fixture.config(session_path.clone());
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut evaluator = RecordingEvaluator::default();
+    evaluator
+        .ratings
+        .push_back(submitted(EvaluatorDecision::Rating(5), true));
+
+    let outcome = run_adaptive_learning_with_ui(&config, &mut oracle, &mut evaluator)
+        .expect("store the rating and pause");
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+    assert_eq!(evaluator.presented_notes.len(), 1);
+
+    let session = read_session(&session_path);
+    assert_eq!(stored_decision_count(&session), 1);
+    assert!(session["pending_presentation"].is_null());
+    assert_eq!(
+        session["pause_reason"],
+        "evaluator chose to pause after the accepted decision"
+    );
+}
+
+#[test]
+fn uncertain_presentation_requires_an_explicit_redisplay() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("explicit-redisplay-session.json");
+    let config = fixture.config(session_path.clone());
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut failing = RecordingEvaluator::default();
+    failing.fail_next_rating = true;
+
+    let outcome = run_adaptive_learning_with_ui(&config, &mut oracle, &mut failing)
+        .expect("a failed terminal interaction leaves an uncertain presentation");
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+    let pending = read_session(&session_path);
+    assert!(!pending["pending_presentation"].is_null());
+
+    let mut paused_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut pause_without_redisplay = RecordingEvaluator::default();
+    pause_without_redisplay
+        .recoveries
+        .push_back(RecoveryOutcome::Paused);
+    let outcome =
+        run_adaptive_learning_with_ui(&config, &mut paused_oracle, &mut pause_without_redisplay)
+            .expect("pause without redisplaying uncertain content");
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+    assert!(pause_without_redisplay.presented_notes.is_empty());
+    assert_eq!(pause_without_redisplay.recovery_views, 1);
+
+    let mut resumed_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut redisplay = RecordingEvaluator::default();
+    redisplay.recoveries.push_back(RecoveryOutcome::Redisplay);
+    redisplay
+        .ratings
+        .push_back(submitted(EvaluatorDecision::Rating(6), true));
+    let outcome = run_adaptive_learning_with_ui(&config, &mut resumed_oracle, &mut redisplay)
+        .expect("explicitly redisplay, store, and pause");
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+    assert_eq!(redisplay.recovery_views, 1);
+    assert_eq!(redisplay.presented_notes.len(), 1);
+    let recovered = read_session(&session_path);
+    assert!(recovered["pending_presentation"].is_null());
+    assert_eq!(stored_decision_count(&recovered), 1);
+}
+
+fn submitted(decision: EvaluatorDecision, pause_after: bool) -> RatingOutcome {
+    RatingOutcome::Submitted(EvaluatorSubmission::new(decision, pause_after))
+}
+
+struct DurabilityInspectingEvaluator {
+    session_path: std::path::PathBuf,
+    outcomes: VecDeque<RatingOutcome>,
+    observations: Vec<(usize, EventId, String)>,
+}
+
+impl EvaluatorUi for DurabilityInspectingEvaluator {
+    fn rate(&mut self, view: RatingView<'_>) -> std::io::Result<RatingOutcome> {
+        let session = read_session(&self.session_path);
+        let pending_event_id = value_event_id(&session["pending_presentation"]["event_id"]);
+        self.observations.push((
+            stored_decision_count(&session),
+            pending_event_id,
+            view.note().to_owned(),
+        ));
+        Ok(self.outcomes.pop_front().unwrap_or(RatingOutcome::Paused))
+    }
+
+    fn recover(&mut self, _view: RecoveryView) -> std::io::Result<RecoveryOutcome> {
+        Ok(RecoveryOutcome::Paused)
+    }
+
+    fn rest(&mut self, _view: RestView) -> std::io::Result<RestOutcome> {
+        Ok(RestOutcome::Continue)
+    }
+
+    fn preparing(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+
+    fn complete(&mut self, _view: CompletionView) -> std::io::Result<()> {
+        Ok(())
+    }
+}
+
+#[derive(Default)]
+struct RecordingEvaluator {
+    ratings: VecDeque<RatingOutcome>,
+    recoveries: VecDeque<RecoveryOutcome>,
+    rests: VecDeque<RestOutcome>,
+    presented_notes: Vec<String>,
+    rest_views: Vec<usize>,
+    recovery_views: usize,
+    preparing_calls: usize,
+    completion_views: Vec<usize>,
+    fail_next_rating: bool,
+}
+
+impl EvaluatorUi for RecordingEvaluator {
+    fn rate(&mut self, view: RatingView<'_>) -> std::io::Result<RatingOutcome> {
+        self.presented_notes.push(view.note().to_owned());
+        if std::mem::take(&mut self.fail_next_rating) {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::BrokenPipe,
+                "injected full-screen evaluator failure",
+            ));
+        }
+        Ok(self.ratings.pop_front().unwrap_or(RatingOutcome::Paused))
+    }
+
+    fn recover(&mut self, _view: RecoveryView) -> std::io::Result<RecoveryOutcome> {
+        self.recovery_views += 1;
+        Ok(self
+            .recoveries
+            .pop_front()
+            .unwrap_or(RecoveryOutcome::Paused))
+    }
+
+    fn rest(&mut self, view: RestView) -> std::io::Result<RestOutcome> {
+        self.rest_views.push(view.presentations_stored());
+        Ok(self.rests.pop_front().unwrap_or(RestOutcome::Paused))
+    }
+
+    fn preparing(&mut self) -> std::io::Result<()> {
+        self.preparing_calls += 1;
+        Ok(())
+    }
+
+    fn complete(&mut self, view: CompletionView) -> std::io::Result<()> {
+        self.completion_views.push(view.presentations_stored());
+        Ok(())
+    }
+}
+
+fn stored_decision_count(session: &serde_json::Value) -> usize {
+    session["rounds"]
+        .as_array()
+        .expect("stored rounds")
+        .iter()
+        .flat_map(|round| round["waves"].as_array().expect("stored waves"))
+        .map(|wave| {
+            wave["decisions"]
+                .as_array()
+                .expect("stored decisions")
+                .len()
+        })
+        .sum()
+}
+
+fn persist_decisions_then_pause(
+    fixture: &RunnerFixture,
+    session_path: std::path::PathBuf,
+    decision_count: usize,
+) -> AdaptiveLearningRunnerConfig {
+    assert!(decision_count > 0);
+    let config = fixture.config(session_path.clone());
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut evaluator = RecordingEvaluator::default();
+    evaluator.ratings.extend(
+        (0..decision_count)
+            .map(|index| submitted(EvaluatorDecision::Rating(6), index + 1 == decision_count)),
+    );
+    evaluator
+        .rests
+        .extend((0..(decision_count - 1) / 20).map(|_| RestOutcome::Continue));
+
+    let outcome = run_adaptive_learning_with_ui(&config, &mut oracle, &mut evaluator)
+        .expect("persist requested evaluator decisions");
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+    assert_eq!(
+        stored_decision_count(&read_session(&session_path)),
+        decision_count
+    );
+    config
+}
+
+fn write_session(path: &std::path::Path, session: &serde_json::Value) {
+    std::fs::write(
+        path,
+        serde_json::to_vec_pretty(session).expect("encode durable session"),
+    )
+    .expect("write durable session");
 }
 
 fn completed(
@@ -2039,6 +2861,26 @@ fn open_ndb(path: &std::path::Path) -> Ndb {
         &Config::new().set_mapsize(2 * 1_024 * 1_024 * 1_024),
     )
     .expect("open NostrDB")
+}
+
+fn rebuild_fixture_corpus_without(fixture: &RunnerFixture, missing_event_id: EventId) {
+    std::fs::remove_dir_all(&fixture.corpus_path).expect("remove complete fixture corpus");
+    let ndb = open_ndb(&fixture.corpus_path);
+    let mut inserted = 0;
+    for (index, content) in fixture.contents.iter().enumerate() {
+        let event = signed_event(content, index as u64);
+        if event_id(&event) == missing_event_id {
+            continue;
+        }
+        ndb.process_event(&event)
+            .expect("submit retained fixture event");
+        inserted += 1;
+    }
+    wait_for_count(&ndb, inserted);
+}
+
+fn event_id_hex(event_id: EventId) -> String {
+    event_id.iter().map(|byte| format!("{byte:02x}")).collect()
 }
 
 fn wait_for_count(ndb: &Ndb, expected: usize) {

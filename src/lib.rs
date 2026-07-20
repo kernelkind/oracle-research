@@ -14,6 +14,8 @@ pub mod embedding;
 pub mod english_corpus;
 pub mod english_filter;
 pub mod english_filter_pilot;
+pub mod evaluator;
+pub mod evaluator_tui;
 pub mod event;
 pub mod fp32_oracle;
 pub mod gte;

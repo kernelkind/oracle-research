@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs::{self, File, OpenOptions};
-use std::io::{BufRead, BufWriter, Write};
+use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
 
 use nostrdb::{Ndb, Transaction};
@@ -17,6 +17,12 @@ use crate::artifact::hash_bytes;
 use crate::candidate_order::{
     B16Boundary, CANDIDATE_DEPTH, CandidateOrderAttempt, CandidateOrderOracle, CandidateOrderPhase,
 };
+use crate::evaluator::{
+    CompletionView, EvaluatorDecision, EvaluatorSubmission, EvaluatorUi, RATING_ANCHORS,
+    RATING_QUESTION, RatingOutcome, RatingView, RecoveryOutcome, RecoveryView, RestOutcome,
+    RestView, WRONG_LANGUAGE_RULE,
+};
+use crate::evaluator_tui::FullScreenEvaluator;
 use crate::fp32_oracle::{
     SimilarNotesRequest, SimilarNotesResponse, SimilarNotesWaveMetrics, SimilarNotesWaveResponse,
     VectorsForNotesResponse,
@@ -33,13 +39,28 @@ use crate::snapshot::{
     require_directory,
 };
 
-const SESSION_SCHEMA_VERSION: u32 = 5;
+const SESSION_SCHEMA_VERSION: u32 = 6;
 const ORACLE_RESPONSE_CONTRACT: &str = "candidate-order-oracle-v1";
 const SHUFFLE_POLICY: &str = "phase3-learning-sha256-concealed-v1";
 const SCORER_POLICY: &str = "compact-rbf-forward-only-h64-h256-fallback-v2";
 const DIAGNOSTIC_SEAL_DOMAIN: &[u8] = b"oracle-mvp-phase3-diagnostic-v1\0";
-const RATING_INSTRUCTIONS: &str = "1: Actively wish it had not been shown.\n2: Clearly not worth seeing.\n3: Little personal value.\n4: Indifferent.\n5: Mildly glad to have seen it.\n6: Clearly glad; personally valuable.\n7: Exceptionally valuable.\nUse wrong_language only when the note is clearly primarily non-English. Mixed-language, code-heavy, and ambiguous notes remain eligible and must be rated.\n";
-const RATING_PROMPT: &str = "Considering the attention it required, how glad are you that you saw this note? [1–7, `l` = wrong_language; append `q` to save and stop]: ";
+const REST_INTERVAL: usize = 20;
+// Schema-5 serialized compatibility values. These reproduce the already-frozen
+// presentation-order identity and must never be used as current evaluator copy.
+const LEGACY_ORDER_RATING_QUESTION: &str =
+    "Considering the attention it required, how glad are you that you saw this note?";
+const LEGACY_ORDER_RATING_ANCHORS: [&str; 7] = [
+    "1: Actively wish it had not been shown.",
+    "2: Clearly not worth seeing.",
+    "3: Little personal value.",
+    "4: Indifferent.",
+    "5: Mildly glad to have seen it.",
+    "6: Clearly glad; personally valuable.",
+    "7: Exceptionally valuable.",
+];
+const LEGACY_ORDER_WRONG_LANGUAGE_RULE: &str = "Use wrong_language only when the note is clearly primarily non-English. Mixed-language, code-heavy, and ambiguous notes remain eligible and must be rated.";
+const LEGACY_ORDER_RATING_SUFFIX: &str =
+    " [1–7, `l` = wrong_language; append `q` to save and stop]: ";
 
 /// One verified positive note used to initialize both personalizers.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -89,7 +110,7 @@ pub struct AdaptiveLearningRunnerConfig {
 
 /// Result of one terminal invocation.
 pub enum AdaptiveLearningRunnerOutcome {
-    /// Input ended or the evaluator chose to stop; all accepted input is durable.
+    /// The evaluator paused; all accepted decisions are durable.
     Paused,
     /// All ten rounds completed and the frozen handoff was reconstructed.
     Complete(Box<CompletedAdaptiveLearning>),
@@ -106,14 +127,47 @@ struct StaticSessionBinding {
     b16_bits: u64,
     seeds: Vec<PersistedSeed>,
     scorer_policy: String,
-    rating_prompt: String,
-    rating_instructions: String,
+    evaluator_protocol: EvaluatorProtocolBinding,
     shuffle_policy: String,
     candidate_depth: usize,
     learning_rounds: usize,
     learning_primary: usize,
     learning_reserve: usize,
     maximum_wrong_language_presentations: usize,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+struct EvaluatorProtocolBinding {
+    question: String,
+    rating_anchors: [String; 7],
+    wrong_language_rule: String,
+    controls: EvaluatorControlsBinding,
+    input_policy: EvaluatorInputPolicyBinding,
+    wrong_language_counts_toward_rest: bool,
+    rest_interval: usize,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+struct EvaluatorControlsBinding {
+    accepted_ratings: [u8; 7],
+    wrong_language_key: String,
+    pause_after_decision_key: String,
+    recovery_redisplay_key: String,
+    letter_keys_case_insensitive: bool,
+    rest_continue_keys: [String; 3],
+    rest_pause_keys: [String; 3],
+    immediate_pause_key: String,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+struct EvaluatorInputPolicyBinding {
+    fresh_key_press_only: bool,
+    paste_accepted: bool,
+    repeat_accepted: bool,
+    release_accepted: bool,
+    command_modifiers_accepted: bool,
+    stale_input_discarded_before_screen: bool,
+    queued_ctrl_c_pause_preserved: bool,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -128,6 +182,30 @@ struct SessionBinding {
     fixed: StaticSessionBinding,
     seed_evidence: SeedEvidenceBinding,
     identity_sha256: String,
+    presentation_order_identity_sha256: String,
+}
+
+/// Unpersisted compatibility projection used only to keep the already-frozen
+/// presentation order stable while evaluator metadata becomes structured.
+#[derive(Serialize)]
+struct LegacyPresentationOrderBinding<'a> {
+    corpus_identity: &'a str,
+    representation_version: &'a str,
+    oracle_response_contract: &'a str,
+    compact_scale_bits: [u64; 3],
+    compact_initial_scale: u16,
+    rbf_scale_bits: [u64; 3],
+    b16_bits: u64,
+    seeds: &'a [PersistedSeed],
+    scorer_policy: &'a str,
+    rating_prompt: String,
+    rating_instructions: String,
+    shuffle_policy: &'a str,
+    candidate_depth: usize,
+    learning_rounds: usize,
+    learning_primary: usize,
+    learning_reserve: usize,
+    maximum_wrong_language_presentations: usize,
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -160,9 +238,23 @@ struct AdaptiveLearningSession {
     oracle_responses: Vec<CachedResponseRef>,
     vector_responses: Vec<CachedVectorResponseRef>,
     pending_presentation: Option<PendingPresentation>,
+    rest_checkpoints: Vec<RestCheckpoint>,
+    pause_checkpoints: Vec<PauseCheckpoint>,
     completion: Option<CompletedHandoff>,
     pause_reason: Option<String>,
     failure: Option<PersistedFailure>,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+struct RestCheckpoint {
+    after_presentations: usize,
+    continued: bool,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+struct PauseCheckpoint {
+    after_presentations: usize,
+    reason: String,
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -170,6 +262,11 @@ struct PendingPresentation {
     round: usize,
     wave_id: u64,
     event_id: EventId,
+}
+
+enum PreloadedNoteContent {
+    Available(String),
+    Unavailable(String),
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -251,12 +348,6 @@ enum PersistedFailureTransition {
     StartRound { round: usize },
     SubmitLanguage { round: usize, wave_id: u64 },
     SubmitRatings { round: usize },
-}
-
-impl PersistedFailure {
-    fn reason(&self) -> &str {
-        &self.reason
-    }
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
@@ -366,17 +457,69 @@ struct SessionOracle<'a, O> {
     loaded_vectors: BTreeMap<VectorResponseCacheKey, VectorsForNotesResponse>,
 }
 
-/// Run a new session or resume its first incomplete evaluator input.
-pub fn run_adaptive_learning<O, R, W>(
+/// Run Phase 3 with the production full-screen terminal evaluator.
+pub fn run_adaptive_learning_tui<O>(
     config: &AdaptiveLearningRunnerConfig,
     oracle: &mut O,
-    mut input: R,
-    output: &mut W,
 ) -> Result<AdaptiveLearningRunnerOutcome>
 where
     O: CandidateOrderOracle,
-    R: BufRead,
-    W: Write,
+{
+    let mut evaluator = FullScreenEvaluator::new()
+        .map_err(|source| io_error("initialize", "<terminal>", source))?;
+    run_adaptive_learning(config, oracle, &mut evaluator)
+}
+
+fn legacy_order_rating_instructions() -> String {
+    format!(
+        "{}\n{LEGACY_ORDER_WRONG_LANGUAGE_RULE}\n",
+        LEGACY_ORDER_RATING_ANCHORS.join("\n")
+    )
+}
+
+fn legacy_order_rating_prompt() -> String {
+    format!("{LEGACY_ORDER_RATING_QUESTION}{LEGACY_ORDER_RATING_SUFFIX}")
+}
+
+fn evaluator_protocol_binding() -> EvaluatorProtocolBinding {
+    EvaluatorProtocolBinding {
+        question: RATING_QUESTION.to_owned(),
+        rating_anchors: RATING_ANCHORS.map(str::to_owned),
+        wrong_language_rule: WRONG_LANGUAGE_RULE.to_owned(),
+        controls: EvaluatorControlsBinding {
+            accepted_ratings: [1, 2, 3, 4, 5, 6, 7],
+            wrong_language_key: "L".to_owned(),
+            pause_after_decision_key: "P".to_owned(),
+            recovery_redisplay_key: "R".to_owned(),
+            letter_keys_case_insensitive: true,
+            rest_continue_keys: ["Enter".to_owned(), "Space".to_owned(), "C".to_owned()],
+            rest_pause_keys: ["P".to_owned(), "Q".to_owned(), "Escape".to_owned()],
+            immediate_pause_key: "Ctrl-C".to_owned(),
+        },
+        input_policy: EvaluatorInputPolicyBinding {
+            fresh_key_press_only: true,
+            paste_accepted: false,
+            repeat_accepted: false,
+            release_accepted: false,
+            command_modifiers_accepted: false,
+            stale_input_discarded_before_screen: true,
+            queued_ctrl_c_pause_preserved: true,
+        },
+        wrong_language_counts_toward_rest: true,
+        rest_interval: REST_INTERVAL,
+    }
+}
+
+/// Run a new session or resume its first incomplete evaluator input through a
+/// provenance-free evaluator boundary.
+pub fn run_adaptive_learning<O, U>(
+    config: &AdaptiveLearningRunnerConfig,
+    oracle: &mut O,
+    evaluator: &mut U,
+) -> Result<AdaptiveLearningRunnerOutcome>
+where
+    O: CandidateOrderOracle,
+    U: EvaluatorUi,
 {
     let fixed_binding = validate_config(config, oracle)?;
     let _session_lock = acquire_session_lock(&config.session_path)?;
@@ -391,6 +534,10 @@ where
     } else {
         None
     };
+
+    evaluator
+        .preparing()
+        .map_err(|source| io_error("write", "<terminal-output>", source))?;
 
     let mut corpus = None;
     let mut session_oracle = SessionOracle::new(
@@ -431,6 +578,8 @@ where
                 oracle_responses: Vec::new(),
                 vector_responses: Vec::new(),
                 pending_presentation: None,
+                rest_checkpoints: Vec::new(),
+                pause_checkpoints: Vec::new(),
                 completion: None,
                 pause_reason: None,
                 failure: None,
@@ -449,10 +598,6 @@ where
         let failure = session.failure.as_ref().ok_or_else(|| {
             Error::Invariant("replayed failure has no persisted failure".to_owned())
         })?;
-        write_output(
-            output,
-            &format!("Phase 3 learning is stopped: {}\n", failure.reason()),
-        )?;
         return Err(Error::ExperimentState(failure.reason.clone()));
     }
     if session_oracle.call_cursor != session_oracle.calls.len() {
@@ -461,13 +606,15 @@ where
         ));
     }
 
-    if coordinator.progress() != AdaptiveLearningProgress::Complete {
-        write_output(output, RATING_INSTRUCTIONS)?;
-    }
-
     loop {
         match coordinator.progress() {
             AdaptiveLearningProgress::Ready => {
+                if !take_due_rest(config, &mut session, &session_oracle, evaluator)? {
+                    return Ok(AdaptiveLearningRunnerOutcome::Paused);
+                }
+                if !show_preparing(config, &mut session, &session_oracle, evaluator)? {
+                    return Ok(AdaptiveLearningRunnerOutcome::Paused);
+                }
                 let round = coordinator.next_round().ok_or_else(|| {
                     Error::Invariant("ready learning coordinator has no next round".to_owned())
                 })?;
@@ -479,7 +626,6 @@ where
                         &session_oracle,
                         &coordinator,
                         PersistedFailureTransition::StartRound { round },
-                        output,
                         error,
                     );
                 }
@@ -519,6 +665,9 @@ where
                     .last()
                     .is_some_and(|wave| wave.submitted);
                 if needs_derived_wave {
+                    if !show_preparing(config, &mut session, &session_oracle, evaluator)? {
+                        return Ok(AdaptiveLearningRunnerOutcome::Paused);
+                    }
                     let pending = coordinator.pending_language_wave().ok_or_else(|| {
                         Error::Invariant(
                             "language replacement state has no pending wave".to_owned(),
@@ -537,8 +686,7 @@ where
                     &mut corpus,
                     &mut session,
                     &session_oracle,
-                    &mut input,
-                    output,
+                    evaluator,
                 )? {
                     return Ok(AdaptiveLearningRunnerOutcome::Paused);
                 }
@@ -561,13 +709,15 @@ where
                                 round: round_number,
                                 wave_id,
                             },
-                            output,
                             error,
                         );
                     }
                 }
                 match coordinator.progress() {
                     AdaptiveLearningProgress::AwaitingLanguage => {
+                        if !show_preparing(config, &mut session, &session_oracle, evaluator)? {
+                            return Ok(AdaptiveLearningRunnerOutcome::Paused);
+                        }
                         let wave = coordinator.pending_language_wave().ok_or_else(|| {
                             Error::Invariant(
                                 "language replacement state has no pending wave".to_owned(),
@@ -616,7 +766,6 @@ where
                         PersistedFailureTransition::SubmitRatings {
                             round: round_number,
                         },
-                        output,
                         error,
                     );
                 }
@@ -647,7 +796,11 @@ where
                     sync_oracle_state(&mut session, &session_oracle);
                     save_session(&config.session_path, &session)?;
                 }
-                write_summary(output, &completed, &config.session_path)?;
+                if let Err(error) =
+                    evaluator.complete(CompletionView::new(stored_presentation_count(&session)))
+                {
+                    return Err(io_error("write", "<terminal-output>", error));
+                }
                 return Ok(AdaptiveLearningRunnerOutcome::Complete(Box::new(completed)));
             }
             AdaptiveLearningProgress::Paused => {
@@ -726,8 +879,7 @@ fn validate_config<O: CandidateOrderOracle>(
             })
             .collect(),
         scorer_policy: SCORER_POLICY.to_owned(),
-        rating_prompt: RATING_PROMPT.to_owned(),
-        rating_instructions: RATING_INSTRUCTIONS.to_owned(),
+        evaluator_protocol: evaluator_protocol_binding(),
         shuffle_policy: SHUFFLE_POLICY.to_owned(),
         candidate_depth: CANDIDATE_DEPTH,
         learning_rounds: LEARNING_ROUNDS,
@@ -758,6 +910,13 @@ fn validate_loaded_static_session(
     if session.binding.identity_sha256 != expected_identity {
         return Err(Error::ExperimentState(
             "the stored Phase 3 session binding identity is invalid".to_owned(),
+        ));
+    }
+    let expected_order_identity =
+        presentation_order_identity(&session.binding.fixed, &session.binding.seed_evidence)?;
+    if session.binding.presentation_order_identity_sha256 != expected_order_identity {
+        return Err(Error::ExperimentState(
+            "the stored Phase 3 presentation-order identity is invalid".to_owned(),
         ));
     }
     let phase_is_valid = match session.phase {
@@ -817,6 +976,65 @@ fn validate_loaded_static_session(
         }
     }
     validate_pending_presentation(session)?;
+    validate_rest_checkpoints(session)?;
+    validate_pause_checkpoints(session)?;
+    Ok(())
+}
+
+fn validate_rest_checkpoints(session: &AdaptiveLearningSession) -> Result<()> {
+    let presentations = stored_presentation_count(session);
+    let completed_boundary_count = presentations.saturating_sub(1) / REST_INTERVAL;
+    let current_boundary_count =
+        usize::from(presentations != 0 && presentations % REST_INTERVAL == 0);
+    let checkpoint_count = session.rest_checkpoints.len();
+    if checkpoint_count < completed_boundary_count
+        || checkpoint_count > completed_boundary_count + current_boundary_count
+    {
+        return Err(Error::ExperimentState(
+            "the stored evaluator rest checkpoints are invalid".to_owned(),
+        ));
+    }
+    for (index, checkpoint) in session.rest_checkpoints.iter().enumerate() {
+        let expected_boundary = (index + 1).checked_mul(REST_INTERVAL).ok_or_else(|| {
+            Error::ExperimentState("the stored evaluator rest checkpoints are invalid".to_owned())
+        })?;
+        if checkpoint.after_presentations != expected_boundary
+            || checkpoint.after_presentations > presentations
+            || (checkpoint.after_presentations < presentations && !checkpoint.continued)
+        {
+            return Err(Error::ExperimentState(
+                "the stored evaluator rest checkpoints are invalid".to_owned(),
+            ));
+        }
+    }
+    let current_rest_continued = session.rest_checkpoints.last().is_some_and(|checkpoint| {
+        checkpoint.after_presentations == presentations && checkpoint.continued
+    });
+    if session.pending_presentation.is_some()
+        && current_boundary_count != 0
+        && !current_rest_continued
+    {
+        return Err(Error::ExperimentState(
+            "a pending evaluator rest cannot coexist with a pending presentation".to_owned(),
+        ));
+    }
+    Ok(())
+}
+
+fn validate_pause_checkpoints(session: &AdaptiveLearningSession) -> Result<()> {
+    let presentations = stored_presentation_count(session);
+    let mut previous = None;
+    for checkpoint in &session.pause_checkpoints {
+        if checkpoint.reason.trim().is_empty()
+            || checkpoint.after_presentations > presentations
+            || previous.is_some_and(|previous| checkpoint.after_presentations < previous)
+        {
+            return Err(Error::ExperimentState(
+                "the stored evaluator pause checkpoints are invalid".to_owned(),
+            ));
+        }
+        previous = Some(checkpoint.after_presentations);
+    }
     Ok(())
 }
 
@@ -931,10 +1149,12 @@ fn build_session_binding(
     seed_evidence: SeedEvidenceBinding,
 ) -> Result<SessionBinding> {
     let identity_sha256 = binding_identity(&fixed, &seed_evidence)?;
+    let presentation_order_identity_sha256 = presentation_order_identity(&fixed, &seed_evidence)?;
     Ok(SessionBinding {
         fixed,
         seed_evidence,
         identity_sha256,
+        presentation_order_identity_sha256,
     })
 }
 
@@ -947,6 +1167,38 @@ fn binding_identity(
         path: PathBuf::from("<phase3-session-binding>"),
         source,
     })?;
+    Ok(hash_bytes(&bytes))
+}
+
+fn presentation_order_identity(
+    fixed: &StaticSessionBinding,
+    seed_evidence: &SeedEvidenceBinding,
+) -> Result<String> {
+    let compatibility = LegacyPresentationOrderBinding {
+        corpus_identity: &fixed.corpus_identity,
+        representation_version: &fixed.representation_version,
+        oracle_response_contract: &fixed.oracle_response_contract,
+        compact_scale_bits: fixed.compact_scale_bits,
+        compact_initial_scale: fixed.compact_initial_scale,
+        rbf_scale_bits: fixed.rbf_scale_bits,
+        b16_bits: fixed.b16_bits,
+        seeds: &fixed.seeds,
+        scorer_policy: &fixed.scorer_policy,
+        rating_prompt: legacy_order_rating_prompt(),
+        rating_instructions: legacy_order_rating_instructions(),
+        shuffle_policy: &fixed.shuffle_policy,
+        candidate_depth: fixed.candidate_depth,
+        learning_rounds: fixed.learning_rounds,
+        learning_primary: fixed.learning_primary,
+        learning_reserve: fixed.learning_reserve,
+        maximum_wrong_language_presentations: fixed.maximum_wrong_language_presentations,
+    };
+    let bytes =
+        serde_json::to_vec(&(compatibility, seed_evidence)).map_err(|source| Error::Manifest {
+            operation: "encode",
+            path: PathBuf::from("<phase3-presentation-order-binding>"),
+            source,
+        })?;
     Ok(hash_bytes(&bytes))
 }
 
@@ -1291,7 +1543,7 @@ fn presentation_key(
     let mut hasher = Sha256::new();
     hasher.update(SHUFFLE_POLICY.as_bytes());
     hasher.update([0]);
-    hasher.update(binding.identity_sha256.as_bytes());
+    hasher.update(binding.presentation_order_identity_sha256.as_bytes());
     hasher.update([0]);
     hasher.update(round.to_le_bytes());
     hasher.update(wave_id.to_le_bytes());
@@ -1299,19 +1551,133 @@ fn presentation_key(
     hasher.finalize().into()
 }
 
-fn collect_current_wave<O, R, W>(
+fn stored_presentation_count(session: &AdaptiveLearningSession) -> usize {
+    session
+        .rounds
+        .iter()
+        .flat_map(|round| &round.waves)
+        .map(|wave| wave.decisions.len())
+        .sum()
+}
+
+fn presentations_until_rest(session: &AdaptiveLearningSession) -> usize {
+    let remainder = stored_presentation_count(session) % REST_INTERVAL;
+    if remainder == 0 {
+        REST_INTERVAL
+    } else {
+        REST_INTERVAL - remainder
+    }
+}
+
+fn record_pause_checkpoint(session: &mut AdaptiveLearningSession, reason: &str) {
+    let checkpoint = PauseCheckpoint {
+        after_presentations: stored_presentation_count(session),
+        reason: reason.to_owned(),
+    };
+    if session.pause_checkpoints.last() != Some(&checkpoint) {
+        session.pause_checkpoints.push(checkpoint);
+    }
+}
+
+fn show_preparing<O, U>(
+    config: &AdaptiveLearningRunnerConfig,
+    session: &mut AdaptiveLearningSession,
+    oracle: &SessionOracle<'_, O>,
+    evaluator: &mut U,
+) -> Result<bool>
+where
+    O: CandidateOrderOracle,
+    U: EvaluatorUi,
+{
+    match evaluator.preparing() {
+        Ok(()) => Ok(true),
+        Err(error) => {
+            persist_recoverable_pause(
+                config,
+                session,
+                oracle,
+                &format!("terminal failed while preparing the next wave: {error}"),
+            )?;
+            Ok(false)
+        }
+    }
+}
+
+fn take_due_rest<O, U>(
+    config: &AdaptiveLearningRunnerConfig,
+    session: &mut AdaptiveLearningSession,
+    oracle: &SessionOracle<'_, O>,
+    evaluator: &mut U,
+) -> Result<bool>
+where
+    O: CandidateOrderOracle,
+    U: EvaluatorUi,
+{
+    let presentations = stored_presentation_count(session);
+    if presentations == 0 || presentations % REST_INTERVAL != 0 {
+        return Ok(true);
+    }
+    let checkpoint_index = match session
+        .rest_checkpoints
+        .iter()
+        .position(|checkpoint| checkpoint.after_presentations == presentations)
+    {
+        Some(index) => index,
+        None => {
+            session.rest_checkpoints.push(RestCheckpoint {
+                after_presentations: presentations,
+                continued: false,
+            });
+            sync_oracle_state(session, oracle);
+            save_session(&config.session_path, session)?;
+            session.rest_checkpoints.len() - 1
+        }
+    };
+    if session.rest_checkpoints[checkpoint_index].continued {
+        return Ok(true);
+    }
+
+    match evaluator.rest(RestView::new(presentations)) {
+        Ok(RestOutcome::Continue) => {
+            session.rest_checkpoints[checkpoint_index].continued = true;
+            session.pause_reason = None;
+            sync_oracle_state(session, oracle);
+            save_session(&config.session_path, session)?;
+            Ok(true)
+        }
+        Ok(RestOutcome::Paused) => {
+            persist_recoverable_pause(
+                config,
+                session,
+                oracle,
+                "evaluator paused at a scheduled rest",
+            )?;
+            Ok(false)
+        }
+        Err(error) => {
+            persist_recoverable_pause(
+                config,
+                session,
+                oracle,
+                &format!("terminal failed at a scheduled rest: {error}"),
+            )?;
+            Ok(false)
+        }
+    }
+}
+
+fn collect_current_wave<O, U>(
     config: &AdaptiveLearningRunnerConfig,
     corpus: &mut Option<Ndb>,
     session: &mut AdaptiveLearningSession,
     oracle: &SessionOracle<'_, O>,
-    input: &mut R,
-    output: &mut W,
+    evaluator: &mut U,
 ) -> Result<bool>
 where
     O: CandidateOrderOracle,
-    R: BufRead,
-    W: Write,
+    U: EvaluatorUi,
 {
+    let mut loaded_contents = None;
     loop {
         let round_index = session.rounds.len().checked_sub(1).ok_or_else(|| {
             Error::Invariant("pending language input has no session round".to_owned())
@@ -1343,49 +1709,28 @@ where
             ));
         }
 
-        let mut recovered_decision = None;
+        let mut submission = None;
         let mut display_requested = session.pending_presentation.is_none();
         if session.pending_presentation.is_some() {
-            loop {
-                let prompt = format!(
-                    "Recovery: event {} may have been shown before the prior run stopped. Enter its rating, `l` for wrong_language, or `r` to explicitly redisplay it; use `6q` or `lq` to save that decision and stop: ",
-                    hex_event_id(event_id)
-                );
-                let line = match prompt_line(output, input, &prompt) {
-                    Ok(Some(line)) => line,
-                    Ok(None) => {
-                        record_evaluator_pause(
-                            config,
-                            session,
-                            oracle,
-                            output,
-                            "terminal input closed with an uncertain presentation",
-                        )?;
-                        return Ok(false);
-                    }
-                    Err(error) => {
-                        persist_recoverable_pause(
-                            config,
-                            session,
-                            oracle,
-                            &format!("terminal failed during presentation recovery: {error}"),
-                        )?;
-                        return Ok(false);
-                    }
-                };
-                let value = line.trim();
-                if value == "r" {
+            let view = RecoveryView::new(
+                stored_presentation_count(session) + 1,
+                presentations_until_rest(session),
+            );
+            match evaluator.recover(view) {
+                Ok(RecoveryOutcome::Submitted(value)) => submission = Some(value),
+                Ok(RecoveryOutcome::Redisplay) => {
                     display_requested = true;
-                    break;
                 }
-                if let Some(decision) = parse_staged_decision(value, event_id) {
-                    recovered_decision = Some(decision);
-                    break;
+                Ok(RecoveryOutcome::Paused) => {
+                    persist_recoverable_pause(
+                        config,
+                        session,
+                        oracle,
+                        "evaluator paused with an uncertain presentation",
+                    )?;
+                    return Ok(false);
                 }
-                if let Err(error) = write_output(
-                    output,
-                    "Enter 1 to 7, `l`, or `r`; use `6q` or `lq` to save that decision and stop.\n",
-                ) {
+                Err(error) => {
                     persist_recoverable_pause(
                         config,
                         session,
@@ -1395,51 +1740,77 @@ where
                     return Ok(false);
                 }
             }
-        }
-        if display_requested
-            && !display_next_note(
-                config, corpus, session, oracle, output, round, wave_id, event_id,
-            )?
-        {
+        } else if !take_due_rest(config, session, oracle, evaluator)? {
             return Ok(false);
         }
 
-        let (decision, stop_after) = if let Some(decision) = recovered_decision {
-            decision
-        } else {
-            loop {
-                let line = match prompt_line(output, input, RATING_PROMPT) {
-                    Ok(Some(line)) => line,
-                    Ok(None) => {
-                        record_evaluator_pause(
-                            config,
-                            session,
-                            oracle,
-                            output,
-                            "terminal input closed",
-                        )?;
-                        return Ok(false);
-                    }
-                    Err(error) => {
-                        persist_recoverable_pause(
-                            config,
-                            session,
-                            oracle,
-                            &format!("terminal failed while requesting a rating: {error}"),
-                        )?;
-                        return Ok(false);
-                    }
-                };
-                let value = line.trim();
-                if let Some(decision) = parse_staged_decision(value, event_id) {
-                    break decision;
+        if display_requested {
+            if loaded_contents.is_none() {
+                let remaining = session.rounds[round_index].waves[wave_index].presentation_order
+                    [session.rounds[round_index].waves[wave_index]
+                        .decisions
+                        .len()..]
+                    .to_vec();
+                let contents =
+                    match preload_raw_note_contents(corpus, &config.corpus_path, &remaining) {
+                        Ok(contents) => contents,
+                        Err(error) => {
+                            let reason = format!(
+                                "display corpus unavailable for learning event {}: {error}",
+                                hex_event_id(event_id)
+                            );
+                            persist_recoverable_pause(config, session, oracle, &reason)?;
+                            return Ok(false);
+                        }
+                    };
+                loaded_contents = Some(contents);
+            }
+            let content = match loaded_contents
+                .as_ref()
+                .and_then(|contents| contents.get(&event_id))
+            {
+                Some(PreloadedNoteContent::Available(content)) => content,
+                Some(PreloadedNoteContent::Unavailable(error)) => {
+                    let reason = format!(
+                        "display corpus unavailable for learning event {}: {error}",
+                        hex_event_id(event_id)
+                    );
+                    persist_recoverable_pause(config, session, oracle, &reason)?;
+                    return Ok(false);
                 }
-                let guidance = if value == "q" {
-                    "Rate the displayed note, then append `q` to stop (for example, `6q` or `lq`).\n"
-                } else {
-                    "Enter 1 to 7 or `l`; append `q` to save that decision and stop.\n"
-                };
-                if let Err(error) = write_output(output, guidance) {
+                None => {
+                    return Err(Error::Invariant(
+                        "preloaded display wave is missing its next event".to_owned(),
+                    ));
+                }
+            };
+            if session.pending_presentation.is_none() {
+                session.pending_presentation = Some(PendingPresentation {
+                    round,
+                    wave_id,
+                    event_id,
+                });
+                session.pause_reason = None;
+                sync_oracle_state(session, oracle);
+                save_session(&config.session_path, session)?;
+            }
+            let view = RatingView::new(
+                content,
+                stored_presentation_count(session) + 1,
+                presentations_until_rest(session),
+            );
+            match evaluator.rate(view) {
+                Ok(RatingOutcome::Submitted(value)) => submission = Some(value),
+                Ok(RatingOutcome::Paused) => {
+                    persist_recoverable_pause(
+                        config,
+                        session,
+                        oracle,
+                        "evaluator paused before rating the pending presentation",
+                    )?;
+                    return Ok(false);
+                }
+                Err(error) => {
                     persist_recoverable_pause(
                         config,
                         session,
@@ -1449,108 +1820,63 @@ where
                     return Ok(false);
                 }
             }
-        };
-        session.rounds[round_index].waves[wave_index]
-            .decisions
-            .push(decision);
-        session.pending_presentation = None;
-        session.pause_reason =
-            stop_after.then(|| "evaluator chose to stop after the accepted decision".to_owned());
-        sync_oracle_state(session, oracle);
-        save_session(&config.session_path, session)?;
-        if stop_after {
-            write_output(
-                output,
-                "Phase 3 learning paused: evaluator chose to stop after the accepted decision.\n",
-            )?;
-            return Ok(false);
         }
-    }
-}
 
-fn parse_staged_decision(value: &str, event_id: EventId) -> Option<(StagedDecision, bool)> {
-    let (decision_value, stop_after) = value
-        .strip_suffix('q')
-        .map_or((value, false), |decision| (decision, true));
-    if decision_value == "l" {
-        return Some((StagedDecision::WrongLanguage { event_id }, stop_after));
-    }
-    decision_value
-        .parse::<u8>()
-        .ok()
-        .filter(|rating| (1..=7).contains(rating))
-        .map(|rating| (StagedDecision::Rated { event_id, rating }, stop_after))
-}
-
-#[allow(clippy::too_many_arguments)]
-fn display_next_note<O, W>(
-    config: &AdaptiveLearningRunnerConfig,
-    corpus: &mut Option<Ndb>,
-    session: &mut AdaptiveLearningSession,
-    oracle: &SessionOracle<'_, O>,
-    output: &mut W,
-    round: usize,
-    wave_id: u64,
-    event_id: EventId,
-) -> Result<bool>
-where
-    O: CandidateOrderOracle,
-    W: Write,
-{
-    let content = match load_raw_note_content(corpus, &config.corpus_path, event_id) {
-        Ok(content) => content,
-        Err(error) => {
-            let reason = format!(
-                "display corpus unavailable for learning event {}: {error}",
-                hex_event_id(event_id)
-            );
-            persist_recoverable_pause(config, session, oracle, &reason)?;
-            let _ = write_output(output, &format!("Phase 3 learning paused: {reason}.\n"));
-            return Ok(false);
-        }
-    };
-    if session.pending_presentation.is_none() {
-        session.pending_presentation = Some(PendingPresentation {
-            round,
-            wave_id,
-            event_id,
-        });
-        session.pause_reason = None;
-        sync_oracle_state(session, oracle);
-        save_session(&config.session_path, session)?;
-    }
-    if let Err(error) = display_raw_note(output, &content).and_then(|()| {
-        output
-            .flush()
-            .map_err(|source| io_error("flush", "<terminal-output>", source))
-    }) {
-        persist_recoverable_pause(
+        let submission = submission.ok_or_else(|| {
+            Error::Invariant("evaluator returned no decision for the current note".to_owned())
+        })?;
+        store_evaluator_submission(
             config,
             session,
             oracle,
-            &format!(
-                "terminal failed while displaying learning event {}: {error}",
-                hex_event_id(event_id)
-            ),
+            round_index,
+            wave_index,
+            event_id,
+            submission,
         )?;
-        return Ok(false);
+        if submission.pause_after() {
+            return Ok(false);
+        }
     }
-    Ok(true)
 }
 
-fn record_evaluator_pause<O, W>(
+#[allow(clippy::too_many_arguments)]
+fn store_evaluator_submission<O>(
     config: &AdaptiveLearningRunnerConfig,
     session: &mut AdaptiveLearningSession,
     oracle: &SessionOracle<'_, O>,
-    output: &mut W,
-    reason: &str,
+    round_index: usize,
+    wave_index: usize,
+    event_id: EventId,
+    submission: EvaluatorSubmission,
 ) -> Result<()>
 where
     O: CandidateOrderOracle,
-    W: Write,
 {
-    persist_recoverable_pause(config, session, oracle, reason)?;
-    write_output(output, &format!("Phase 3 learning paused: {reason}.\n"))
+    let decision = match submission.decision() {
+        EvaluatorDecision::Rating(rating) if (1..=7).contains(&rating) => {
+            StagedDecision::Rated { event_id, rating }
+        }
+        EvaluatorDecision::Rating(_) => {
+            return Err(Error::ExperimentState(
+                "the evaluator returned a rating outside 1–7".to_owned(),
+            ));
+        }
+        EvaluatorDecision::WrongLanguage => StagedDecision::WrongLanguage { event_id },
+    };
+    session.rounds[round_index].waves[wave_index]
+        .decisions
+        .push(decision);
+    session.pending_presentation = None;
+    if submission.pause_after() {
+        let reason = "evaluator chose to pause after the accepted decision";
+        session.pause_reason = Some(reason.to_owned());
+        record_pause_checkpoint(session, reason);
+    } else {
+        session.pause_reason = None;
+    }
+    sync_oracle_state(session, oracle);
+    save_session(&config.session_path, session)
 }
 
 fn persist_recoverable_pause<O>(
@@ -1563,6 +1889,7 @@ where
     O: CandidateOrderOracle,
 {
     session.pause_reason = Some(reason.to_owned());
+    record_pause_checkpoint(session, reason);
     sync_oracle_state(session, oracle);
     save_session(&config.session_path, session)
 }
@@ -1631,11 +1958,11 @@ fn ratings_for_round(
         .collect()
 }
 
-fn load_raw_note_content(
+fn preload_raw_note_contents(
     corpus: &mut Option<Ndb>,
     corpus_path: &Path,
-    event_id: EventId,
-) -> Result<String> {
+    event_ids: &[EventId],
+) -> Result<BTreeMap<EventId, PreloadedNoteContent>> {
     if corpus.is_none() {
         require_directory(corpus_path)?;
         *corpus = Some(open_existing_ndb(corpus_path, Validation::TrustedSource)?);
@@ -1643,16 +1970,19 @@ fn load_raw_note_content(
     let corpus = corpus.as_ref().expect("display corpus was opened");
     let transaction = Transaction::new(corpus)
         .map_err(|source| ndb_error("open transaction on", corpus_path, source))?;
-    let note = corpus
-        .get_note_by_id(&transaction, &event_id)
-        .map_err(|source| ndb_error("load event from", corpus_path, source))?;
-    Ok(terminal_safe(note.content()))
-}
-
-fn display_raw_note<W: Write>(output: &mut W, content: &str) -> Result<()> {
-    write_output(output, "\n")?;
-    write_output(output, content)?;
-    write_output(output, "\n")
+    Ok(event_ids
+        .iter()
+        .copied()
+        .map(|event_id| {
+            let content = match corpus.get_note_by_id(&transaction, &event_id) {
+                Ok(note) => PreloadedNoteContent::Available(terminal_safe(note.content())),
+                Err(source) => PreloadedNoteContent::Unavailable(
+                    ndb_error("load event from", corpus_path, source).to_string(),
+                ),
+            };
+            (event_id, content)
+        })
+        .collect())
 }
 
 fn terminal_safe(content: &str) -> String {
@@ -1920,23 +2250,6 @@ fn persisted_ledger_entry(event_id: EventId, state: &PriorPresentation) -> Persi
     }
 }
 
-fn write_summary<W: Write>(
-    output: &mut W,
-    completed: &CompletedAdaptiveLearning,
-    session_path: &Path,
-) -> Result<()> {
-    write_output(
-        output,
-        &format!(
-            "\nPhase 3 learning complete: {} rounds, {} rated notes, {} wrong-language presentations.\nSession: {}\n",
-            completed.round_records().len(),
-            completed.ratings().len(),
-            completed.language_totals().wrong_language_presentations(),
-            session_path.display()
-        ),
-    )
-}
-
 fn persisted_failure_record(
     coordinator: &AdaptiveLearningCoordinator,
     reason: String,
@@ -1960,18 +2273,16 @@ fn persisted_failure_record(
     })
 }
 
-fn record_coordinator_failure<O, W>(
+fn record_coordinator_failure<O>(
     config: &AdaptiveLearningRunnerConfig,
     session: &mut AdaptiveLearningSession,
     oracle: &SessionOracle<'_, O>,
     coordinator: &AdaptiveLearningCoordinator,
     transition: PersistedFailureTransition,
-    output: &mut W,
     error: AdaptiveLearningError,
 ) -> Result<AdaptiveLearningRunnerOutcome>
 where
     O: CandidateOrderOracle,
-    W: Write,
 {
     let reason = error.to_string();
     if !matches!(&error, AdaptiveLearningError::PhasePaused(_)) {
@@ -1990,7 +2301,6 @@ where
     session.failure = Some(failure);
     sync_oracle_state(session, oracle);
     save_session(&config.session_path, session)?;
-    write_output(output, &format!("Phase 3 learning stopped: {reason}\n"))?;
     Err(Error::ExperimentState(reason))
 }
 
@@ -2620,34 +2930,6 @@ fn acquire_session_lock(session_path: &Path) -> Result<File> {
         ))),
         Err(fs::TryLockError::Error(source)) => Err(io_error("lock", &path, source)),
     }
-}
-
-fn prompt_line<R: BufRead, W: Write>(
-    output: &mut W,
-    input: &mut R,
-    prompt: &str,
-) -> Result<Option<String>> {
-    write_output(output, prompt)?;
-    output
-        .flush()
-        .map_err(|source| io_error("flush", "<terminal-output>", source))?;
-    let mut line = String::new();
-    let bytes = input
-        .read_line(&mut line)
-        .map_err(|source| io_error("read", "<terminal-input>", source))?;
-    if bytes == 0 {
-        return Ok(None);
-    }
-    while line.ends_with(['\n', '\r']) {
-        line.pop();
-    }
-    Ok(Some(line))
-}
-
-fn write_output(output: &mut impl Write, value: &str) -> Result<()> {
-    output
-        .write_all(value.as_bytes())
-        .map_err(|source| io_error("write", "<terminal-output>", source))
 }
 
 fn save_session(path: &Path, session: &AdaptiveLearningSession) -> Result<()> {
