@@ -79,7 +79,7 @@ class FullBuildPackageTest(unittest.TestCase):
             "is_bid": False,
             "verification": "verified",
             "vericode": 1,
-            "dph_total": 1.3592592592592592,
+            "dph_total": 1.499998,
         }
         invalid = {
             "gpu_name": "RTX 4090",
@@ -102,7 +102,7 @@ class FullBuildPackageTest(unittest.TestCase):
             "is_bid": True,
             "verification": "unverified",
             "vericode": 0,
-            "dph_total": 1.3592600001,
+            "dph_total": 1.5,
         }
 
         with tempfile.TemporaryDirectory() as temporary:
@@ -145,7 +145,7 @@ class FullBuildPackageTest(unittest.TestCase):
                 )
 
             for field, value in (
-                ("dph_total", 1.3592593),
+                ("dph_total", 1.4999985),
                 ("inet_down_cost", 0.008),
                 ("inet_up_cost", 0.008),
             ):

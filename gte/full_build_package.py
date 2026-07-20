@@ -17,7 +17,7 @@ from pathlib import Path
 SCHEMA_VERSION = 1
 MODEL_PAYLOAD_KIND = "gte-stable-model-payload"
 HASH_BUFFER_BYTES = 8 * 1024 * 1024
-MAXIMUM_FULL_BUILD_RATE_MICRO_USD = 1_359_260
+MAXIMUM_FULL_BUILD_RATE_MICRO_USD = 1_499_999
 
 
 def sha256_file(path: Path) -> str:
