@@ -15,6 +15,9 @@ import termios
 import time
 import unittest
 from pathlib import Path
+from unittest import mock
+
+import vast_full_build
 
 
 CLI = Path(__file__).with_name("vast_full_build.py")
@@ -2233,6 +2236,28 @@ class VastFullBuildCliTest(unittest.TestCase):
         self.assertEqual(json.loads(second.stdout)["state"], "running")
         self.assertEqual(pid_path.read_text(encoding="utf-8"), f"{os.getpid()}\n")
         self.assertFalse((attempt / "preparation.exit").exists())
+
+    def test_spawned_remote_child_runs_from_the_operation_root(self):
+        context = vast_full_build.Context(
+            root=self.root,
+            config_path=self.config,
+            ledger=self.ledger,
+            config={},
+        )
+        child = mock.Mock(pid=1234)
+        with mock.patch.object(
+            vast_full_build.subprocess, "Popen", return_value=child
+        ) as popen:
+            pid = vast_full_build.spawn_remote_child(
+                context,
+                "_remote-prepare-worker",
+                ["--start-lock-fd", "7"],
+                self.root / "preparation-attempts/001/preparation.log",
+                inherited_fds=(7,),
+            )
+
+        self.assertEqual(pid, 1234)
+        self.assertEqual(popen.call_args.kwargs["cwd"], self.root)
 
     def test_dead_remote_preparation_owner_becomes_durable_terminal_evidence(self):
         remote = self.base / "remote-preparation-dead"

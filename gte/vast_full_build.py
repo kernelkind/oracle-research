@@ -2286,6 +2286,7 @@ def spawn_remote_child(
                 operation,
                 *arguments,
             ],
+            cwd=context.root,
             stdin=subprocess.DEVNULL,
             stdout=log,
             stderr=subprocess.STDOUT,
