@@ -322,8 +322,12 @@ where
     R: BufRead,
     W: Write,
 {
-    let _session_lock = acquire_session_lock(&config.session_path)?;
     let fixed_binding = validate_config(config, oracle)?;
+    let _session_lock = acquire_session_lock(&config.session_path)?;
+    protect_existing_private_file(&config.session_path)?;
+    protect_existing_private_file(&atomic_temporary_path(&config.session_path)?)?;
+    let cache_dir = oracle_cache_dir(&config.session_path)?;
+    prepare_private_cache_directory(&cache_dir)?;
     let loaded = if config.session_path.exists() {
         let session: AdaptiveLearningSession = read_manifest(&config.session_path)?;
         validate_loaded_static_session(&session, &fixed_binding)?;
@@ -344,7 +348,6 @@ where
     }
 
     let mut corpus = None;
-    let cache_dir = oracle_cache_dir(&config.session_path)?;
     let mut session_oracle = SessionOracle::new(
         oracle,
         cache_dir,
@@ -1920,15 +1923,16 @@ fn acquire_session_lock(session_path: &Path) -> Result<File> {
         .and_then(|name| name.to_str())
         .ok_or_else(|| Error::NonUtf8Path(session_path.to_owned()))?;
     let parent = session_path.parent().unwrap_or_else(|| Path::new("."));
-    fs::create_dir_all(parent).map_err(|source| io_error("create", parent, source))?;
+    create_private_directories(parent)?;
     let path = parent.join(format!(".{name}.lock"));
-    let file = OpenOptions::new()
-        .create(true)
-        .read(true)
-        .write(true)
-        .truncate(false)
+    protect_existing_private_file(&path)?;
+    let mut options = OpenOptions::new();
+    options.create(true).read(true).write(true).truncate(false);
+    set_private_creation_mode(&mut options);
+    let file = options
         .open(&path)
         .map_err(|source| io_error("open", &path, source))?;
+    set_private_file_permissions(&file, &path)?;
     match file.try_lock() {
         Ok(()) => Ok(file),
         Err(fs::TryLockError::WouldBlock) => Err(Error::ExperimentState(format!(
@@ -1980,19 +1984,18 @@ fn save_session(path: &Path, session: &AdaptiveLearningSession) -> Result<()> {
 
 fn save_bytes_atomic(path: &Path, bytes: &[u8]) -> Result<()> {
     if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent).map_err(|source| io_error("create", parent, source))?;
+        create_private_directories(parent)?;
     }
-    let name = path
-        .file_name()
-        .and_then(|name| name.to_str())
-        .ok_or_else(|| Error::NonUtf8Path(path.to_owned()))?;
-    let temporary = path.with_file_name(format!(".{name}.tmp"));
-    let file = OpenOptions::new()
-        .create(true)
-        .truncate(true)
-        .write(true)
+    protect_existing_private_file(path)?;
+    let temporary = atomic_temporary_path(path)?;
+    remove_stale_private_temporary(&temporary)?;
+    let mut options = OpenOptions::new();
+    options.create_new(true).write(true);
+    set_private_creation_mode(&mut options);
+    let file = options
         .open(&temporary)
         .map_err(|source| io_error("create", &temporary, source))?;
+    set_private_file_permissions(&file, &temporary)?;
     let mut writer = BufWriter::new(file);
     writer
         .write_all(bytes)
@@ -2010,6 +2013,119 @@ fn save_bytes_atomic(path: &Path, bytes: &[u8]) -> Result<()> {
             .and_then(|directory| directory.sync_all())
             .map_err(|source| io_error("sync", parent, source))?;
     }
+    Ok(())
+}
+
+fn atomic_temporary_path(path: &Path) -> Result<PathBuf> {
+    let name = path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .ok_or_else(|| Error::NonUtf8Path(path.to_owned()))?;
+    Ok(path.with_file_name(format!(".{name}.tmp")))
+}
+
+fn create_private_directories(path: &Path) -> Result<()> {
+    let mut builder = fs::DirBuilder::new();
+    builder.recursive(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::DirBuilderExt as _;
+        builder.mode(0o700);
+    }
+    builder
+        .create(path)
+        .map_err(|source| io_error("create", path, source))
+}
+
+fn prepare_private_cache_directory(path: &Path) -> Result<()> {
+    create_private_directories(path)?;
+    let metadata =
+        fs::symlink_metadata(path).map_err(|source| io_error("inspect", path, source))?;
+    if !metadata.file_type().is_dir() {
+        return Err(Error::ExperimentState(format!(
+            "private Phase 3 cache `{}` is not a directory",
+            path.display()
+        )));
+    }
+    set_private_directory_permissions(path)?;
+    for entry in fs::read_dir(path).map_err(|source| io_error("read", path, source))? {
+        let entry = entry.map_err(|source| io_error("read", path, source))?;
+        protect_existing_private_file(&entry.path())?;
+    }
+    Ok(())
+}
+
+fn protect_existing_private_file(path: &Path) -> Result<()> {
+    let metadata = match fs::symlink_metadata(path) {
+        Ok(metadata) => metadata,
+        Err(source) if source.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+        Err(source) => return Err(io_error("inspect", path, source)),
+    };
+    if !metadata.file_type().is_file() {
+        return Err(Error::ExperimentState(format!(
+            "private Phase 3 artifact `{}` is not a regular file",
+            path.display()
+        )));
+    }
+    set_private_path_permissions(path)
+}
+
+fn remove_stale_private_temporary(path: &Path) -> Result<()> {
+    let metadata = match fs::symlink_metadata(path) {
+        Ok(metadata) => metadata,
+        Err(source) if source.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+        Err(source) => return Err(io_error("inspect", path, source)),
+    };
+    if !metadata.file_type().is_file() {
+        return Err(Error::ExperimentState(format!(
+            "private Phase 3 temporary `{}` is not a regular file",
+            path.display()
+        )));
+    }
+    fs::remove_file(path).map_err(|source| io_error("remove", path, source))
+}
+
+fn set_private_creation_mode(options: &mut OpenOptions) {
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt as _;
+        options.mode(0o600);
+    }
+}
+
+fn set_private_file_permissions(file: &File, path: &Path) -> Result<()> {
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt as _;
+        file.set_permissions(fs::Permissions::from_mode(0o600))
+            .map_err(|source| io_error("protect", path, source))?;
+    }
+    #[cfg(not(unix))]
+    let _ = (file, path);
+    Ok(())
+}
+
+fn set_private_path_permissions(path: &Path) -> Result<()> {
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt as _;
+        fs::set_permissions(path, fs::Permissions::from_mode(0o600))
+            .map_err(|source| io_error("protect", path, source))?;
+    }
+    #[cfg(not(unix))]
+    let _ = path;
+    Ok(())
+}
+
+fn set_private_directory_permissions(path: &Path) -> Result<()> {
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt as _;
+        fs::set_permissions(path, fs::Permissions::from_mode(0o700))
+            .map_err(|source| io_error("protect", path, source))?;
+    }
+    #[cfg(not(unix))]
+    let _ = path;
     Ok(())
 }
 

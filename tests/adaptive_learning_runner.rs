@@ -104,6 +104,106 @@ fn resume_rejects_a_changed_evaluator_protocol_before_oracle_work() {
     assert_eq!(resumed_oracle.matrix_passes, 0);
 }
 
+#[cfg(unix)]
+#[test]
+fn phase3_session_and_oracle_artifacts_remain_owner_only() {
+    use std::os::unix::fs::PermissionsExt as _;
+
+    fn mode(path: &std::path::Path) -> u32 {
+        std::fs::symlink_metadata(path)
+            .expect("private artifact metadata")
+            .permissions()
+            .mode()
+            & 0o777
+    }
+
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("private-session.json");
+    let config = fixture.config(session_path.clone());
+    let lock_path = fixture.temp.path().join(".private-session.json.lock");
+    let cache_dir = fixture
+        .temp
+        .path()
+        .join(".private-session.json.oracle-responses");
+    let session_temporary = fixture.temp.path().join(".private-session.json.tmp");
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    run_adaptive_learning(&config, &mut oracle, Cursor::new(b"7q\n"), &mut Vec::new())
+        .expect("create private Phase 3 artifacts");
+
+    assert_eq!(mode(&session_path), 0o600);
+    assert_eq!(mode(&lock_path), 0o600);
+    assert_eq!(mode(&cache_dir), 0o700);
+    let cache_files = std::fs::read_dir(&cache_dir)
+        .expect("read private cache")
+        .map(|entry| entry.expect("cache entry").path())
+        .collect::<Vec<_>>();
+    assert!(!cache_files.is_empty());
+    for path in &cache_files {
+        assert_eq!(mode(path), 0o600, "cache artifact {}", path.display());
+        std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o644))
+            .expect("make cache artifact permissive");
+    }
+    std::fs::set_permissions(&session_path, std::fs::Permissions::from_mode(0o644))
+        .expect("make session permissive");
+    std::fs::set_permissions(&lock_path, std::fs::Permissions::from_mode(0o644))
+        .expect("make lock permissive");
+    std::fs::set_permissions(&cache_dir, std::fs::Permissions::from_mode(0o755))
+        .expect("make cache directory permissive");
+    std::fs::write(&session_temporary, b"stale private temporary")
+        .expect("create stale session temporary");
+    std::fs::set_permissions(&session_temporary, std::fs::Permissions::from_mode(0o644))
+        .expect("make temporary permissive");
+    let orphaned_cache_temporary = cache_dir.join(".orphaned-response.tmp");
+    std::fs::write(&orphaned_cache_temporary, b"stale cache temporary")
+        .expect("create stale cache temporary");
+    std::fs::set_permissions(
+        &orphaned_cache_temporary,
+        std::fs::Permissions::from_mode(0o644),
+    )
+    .expect("make cache temporary permissive");
+
+    let mut resumed_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let resumed = run_adaptive_learning(
+        &config,
+        &mut resumed_oracle,
+        Cursor::new(b""),
+        &mut Vec::new(),
+    )
+    .expect("repair and resume private Phase 3 artifacts");
+    assert!(matches!(resumed, AdaptiveLearningRunnerOutcome::Paused));
+    assert_eq!(mode(&session_path), 0o600);
+    assert_eq!(mode(&lock_path), 0o600);
+    assert_eq!(mode(&cache_dir), 0o700);
+    assert_eq!(mode(&orphaned_cache_temporary), 0o600);
+    assert!(!session_temporary.exists());
+    for path in cache_files {
+        assert_eq!(mode(&path), 0o600, "cache artifact {}", path.display());
+    }
+}
+
+#[cfg(unix)]
+#[test]
+fn phase3_rejects_a_private_artifact_symlink_without_touching_its_target() {
+    use std::os::unix::fs::symlink;
+
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("symlinked-session.json");
+    let target_path = fixture.temp.path().join("unrelated-target.txt");
+    let original = b"must remain unchanged";
+    std::fs::write(&target_path, original).expect("write unrelated target");
+    symlink(&target_path, &session_path).expect("create session symlink");
+    let config = fixture.config(session_path);
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+
+    let error = run_adaptive_learning(&config, &mut oracle, Cursor::new(b""), &mut Vec::new())
+        .err()
+        .expect("reject private artifact symlink");
+    assert!(error.to_string().contains("not a regular file"));
+    assert_eq!(std::fs::read(&target_path).expect("read target"), original);
+    assert_eq!(oracle.vector_lookups, 0);
+    assert_eq!(oracle.matrix_passes, 0);
+}
+
 #[test]
 fn accepted_rating_is_staged_and_resume_continues_at_the_next_event() {
     let fixture = RunnerFixture::new();
