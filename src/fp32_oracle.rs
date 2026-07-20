@@ -12,14 +12,14 @@ use crate::representation::{
 };
 use crate::snapshot::{Error, Result, Validation, ndb_error, open_existing_ndb, require_file};
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, serde::Deserialize, PartialEq, serde::Serialize)]
 pub struct Fp32Candidate {
     pub event_id: EventId,
     pub rank: usize,
     pub cosine_score: f32,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, serde::Deserialize, PartialEq, serde::Serialize)]
 pub struct SimilarNotesResponse {
     pub representation_version: String,
     pub represented_rows: u64,
@@ -28,13 +28,13 @@ pub struct SimilarNotesResponse {
     pub candidates: Vec<Fp32Candidate>,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, serde::Deserialize, Eq, PartialEq, serde::Serialize)]
 pub struct SimilarNotesRequest {
     pub note_id: EventId,
     pub candidate_depth: usize,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq, serde::Serialize)]
+#[derive(Clone, Debug, serde::Deserialize, Eq, PartialEq, serde::Serialize)]
 pub struct SimilarNotesWaveMetrics {
     pub source_loading_ns: u64,
     pub query_encoding_ns: u64,
@@ -53,13 +53,13 @@ pub struct SimilarNotesWaveResponse {
     pub metrics: SimilarNotesWaveMetrics,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, serde::Deserialize, PartialEq, serde::Serialize)]
 pub struct StoredNoteVector {
     pub event_id: EventId,
     pub vector: Vec<f32>,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, serde::Deserialize, PartialEq, serde::Serialize)]
 pub struct VectorsForNotesResponse {
     pub representation_version: String,
     pub represented_rows: u64,

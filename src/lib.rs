@@ -1,6 +1,7 @@
 //! Offline infrastructure for the recommendation oracle MVP.
 
 pub mod adaptive_learning;
+pub mod adaptive_learning_runner;
 pub mod artifact;
 pub mod benchmark;
 pub mod budget;

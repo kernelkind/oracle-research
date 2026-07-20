@@ -26,9 +26,9 @@ use crate::shared_learning_round::{
 };
 use crate::snapshot::Error as SnapshotError;
 
-const SEED_COUNT: usize = 5;
-const LEARNING_ROUNDS: usize = 10;
-const MAX_WRONG_LANGUAGE_PRESENTATIONS: usize = 21;
+pub(crate) const SEED_COUNT: usize = 5;
+pub(crate) const LEARNING_ROUNDS: usize = 10;
+pub(crate) const MAX_WRONG_LANGUAGE_PRESENTATIONS: usize = 21;
 
 pub type Result<T> = std::result::Result<T, AdaptiveLearningError>;
 
