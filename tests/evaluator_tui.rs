@@ -26,7 +26,7 @@ fn rating_screen_keeps_the_frozen_protocol_visible_neutral_and_blinded() {
     assert_eq!(RATING_ANCHORS, EXPECTED_ANCHORS);
 
     let model = EvaluatorTuiModel::rating("A plain Nostr note about Rust ownership.", 143, 7);
-    let buffer = render(&model, 100, 30);
+    let buffer = render(&model, 120, 30);
     let text = buffer_text(&buffer);
 
     assert!(text.contains(EXPECTED_QUESTION));
@@ -38,27 +38,65 @@ fn rating_screen_keeps_the_frozen_protocol_visible_neutral_and_blinded() {
         assert!(text.contains(anchor), "missing rating anchor `{anchor}`");
     }
 
-    let anchor_styles = EXPECTED_ANCHORS.map(|anchor| style_at(&buffer, anchor));
+    let anchor_styles =
+        ["1:", "2:", "3:", "4:", "5:", "6:", "7:"].map(|anchor| style_at(&buffer, anchor));
     assert!(
         anchor_styles.windows(2).all(|pair| pair[0] == pair[1]),
         "the rating scale must not visually favor an answer"
     );
-    for required_text in [
-        EXPECTED_QUESTION,
-        EXPECTED_ANCHORS[0],
-        EXPECTED_ANCHORS[1],
-        EXPECTED_ANCHORS[2],
-        EXPECTED_ANCHORS[3],
-        EXPECTED_ANCHORS[4],
-        EXPECTED_ANCHORS[5],
-        EXPECTED_ANCHORS[6],
-        "Use wrong_language only",
-    ] {
+    assert_eq!(anchor_styles[0].fg, Some(Color::Cyan));
+    assert!(anchor_styles[0].add_modifier.contains(Modifier::BOLD));
+    let anchor_descriptions = EXPECTED_ANCHORS.map(|anchor| {
+        anchor
+            .split_once(": ")
+            .expect("every frozen anchor has a key and description")
+            .1
+    });
+    let description_styles = anchor_descriptions.map(|description| style_at(&buffer, description));
+    assert!(
+        description_styles.windows(2).all(|pair| pair[0] == pair[1]),
+        "the rating descriptions must have identical styling"
+    );
+    for (description, style) in anchor_descriptions.into_iter().zip(description_styles) {
         assert_eq!(
-            style_at(&buffer, required_text).fg,
+            style.fg,
             Some(Color::Reset),
-            "required text `{required_text}` must use the terminal's default foreground"
+            "anchor description `{description}` must remain neutral"
         );
+        assert!(
+            style.add_modifier.is_empty(),
+            "anchor description `{description}` must not be emphasized"
+        );
+    }
+
+    let question_style = style_at(&buffer, EXPECTED_QUESTION);
+    assert_eq!(question_style.fg, Some(Color::Cyan));
+    assert!(question_style.add_modifier.contains(Modifier::BOLD));
+    assert!(
+        position_of(&buffer, EXPECTED_QUESTION).1 < position_of(&buffer, EXPECTED_ANCHORS[0]).1,
+        "the question must introduce the rating scale"
+    );
+
+    assert_eq!(position_of(&buffer, "┌Note").0, 19);
+    assert_eq!(position_of(&buffer, "┐").0, 100);
+    assert_eq!(position_of(&buffer, "A plain Nostr note").0, 21);
+    assert_eq!(style_at(&buffer, "┌Note").fg, Some(Color::DarkGray));
+    assert_eq!(style_at(&buffer, "Note").fg, Some(Color::Cyan));
+    assert_eq!(
+        style_at(&buffer, "A plain Nostr note").fg,
+        Some(Color::Reset)
+    );
+
+    let language_rule_style = style_at(&buffer, "Use wrong_language only");
+    assert_eq!(language_rule_style.fg, Some(Color::Reset));
+    assert!(language_rule_style.add_modifier.contains(Modifier::DIM));
+    for key in ["[1–7]", "[L]", "[P]"] {
+        assert_eq!(style_at(&buffer, key).fg, Some(Color::Cyan));
+    }
+    for help in ["Rate", "Wrong language", "Pause after decision"] {
+        let style = style_at(&buffer, help);
+        assert_eq!(style.fg, Some(Color::Reset));
+        assert!(style.add_modifier.contains(Modifier::DIM));
     }
 
     assert!(text.contains("142 reviewed"));
@@ -69,7 +107,8 @@ fn rating_screen_keeps_the_frozen_protocol_visible_neutral_and_blinded() {
     assert!(text.contains("[P]"));
     let header_style = style_at(&buffer, "142 reviewed");
     assert_eq!(header_style.fg, Some(Color::Reset));
-    assert!(header_style.add_modifier.contains(Modifier::BOLD));
+    assert!(header_style.add_modifier.contains(Modifier::DIM));
+    assert!(!header_style.add_modifier.contains(Modifier::BOLD));
 
     let lowercase = text.to_lowercase();
     for concealed in [
@@ -365,7 +404,20 @@ fn minimum_supported_preview_size_can_scroll_an_overflowing_note() {
     let before = render(&model, 72, 24);
     let before_text = buffer_text(&before);
     assert!(before_text.contains("more below"));
-    assert!(before_text.contains("[P] Pause after decision"));
+    assert!(normalized_words(&before_text).contains(&normalized_words(EXPECTED_QUESTION)));
+    for anchor in EXPECTED_ANCHORS {
+        assert!(
+            before_text.contains(anchor),
+            "missing rating anchor `{anchor}`"
+        );
+    }
+    assert!(
+        normalized_words(&before_text).contains(&normalized_words(WRONG_LANGUAGE_RULE)),
+        "the complete wrong-language rule must fit at the minimum size"
+    );
+    for control in ["[1–7]", "[L]", "[P] Pause after decision", "[↑/↓] Scroll"] {
+        assert!(before_text.contains(control), "missing control `{control}`");
+    }
 
     assert_eq!(
         model.handle_event(key(KeyCode::PageDown, KeyEventKind::Press)),
@@ -459,11 +511,17 @@ fn normalized_words(value: &str) -> String {
 fn position_of(buffer: &Buffer, needle: &str) -> (u16, u16) {
     for y in buffer.area.top()..buffer.area.bottom() {
         let mut row = String::new();
+        let mut cell_starts = Vec::new();
         for x in buffer.area.left()..buffer.area.right() {
+            cell_starts.push((row.len(), x));
             row.push_str(buffer[(x, y)].symbol());
         }
-        if let Some(column) = row.find(needle) {
-            return (u16::try_from(column).expect("column fits u16"), y);
+        if let Some(byte_offset) = row.find(needle) {
+            let (_, column) = cell_starts
+                .into_iter()
+                .find(|(start, _)| *start == byte_offset)
+                .expect("rendered text begins on a terminal cell boundary");
+            return (column, y);
         }
     }
     panic!("rendered buffer is missing `{needle}`")

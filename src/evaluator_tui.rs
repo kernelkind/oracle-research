@@ -17,10 +17,10 @@ use crossterm::terminal::{
 use ratatui::Frame;
 use ratatui::Terminal;
 use ratatui::backend::CrosstermBackend;
-use ratatui::layout::{Constraint, Direction, Layout};
-use ratatui::style::{Modifier, Style};
-use ratatui::text::Line;
-use ratatui::widgets::{Block, Borders, Paragraph, Wrap};
+use ratatui::layout::{Constraint, Direction, Layout, Rect};
+use ratatui::style::{Color, Modifier, Style};
+use ratatui::text::{Line, Span};
+use ratatui::widgets::{Block, Borders, Padding, Paragraph, Wrap};
 
 use crate::evaluator::{
     CompletionView, EvaluatorDecision, EvaluatorSubmission, EvaluatorUi, RATING_ANCHORS,
@@ -30,6 +30,7 @@ use crate::evaluator::{
 
 const MIN_WIDTH: u16 = 72;
 const MIN_HEIGHT: u16 = 24;
+const MAX_CONTENT_WIDTH: u16 = 82;
 const PAGE_LINES: u16 = 10;
 // A press-only terminal cannot identify one isolated late autorepeat. This
 // short confirmation window rejects ordinary continuous repeat streams while
@@ -425,13 +426,14 @@ fn render_rating(
     pause_after_rating: bool,
     recovery: bool,
 ) {
+    let area = centered_reading_area(area);
     let rows = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
             Constraint::Length(1),
             Constraint::Min(3),
-            Constraint::Length(7),
             Constraint::Length(2),
+            Constraint::Length(7),
             Constraint::Length(3),
             Constraint::Length(1),
         ])
@@ -442,17 +444,19 @@ fn render_rating(
             "{} reviewed · break in {break_in}",
             presentation_number.saturating_sub(1)
         ))
-        .style(Style::default().add_modifier(Modifier::BOLD)),
+        .style(secondary_style()),
         rows[0],
     );
-    let sizing_panel = Paragraph::new(note)
+    let note_block = Block::default()
+        .borders(Borders::ALL)
+        .border_style(border_style())
+        .padding(Padding::horizontal(1));
+    let note_inner = note_block.inner(rows[1]);
+    let rendered_lines = Paragraph::new(note)
         .wrap(Wrap { trim: false })
-        .block(Block::default().borders(Borders::ALL).title("Note"));
-    let rendered_lines = sizing_panel.line_count(rows[1].width.saturating_sub(2));
-    let visible_lines = rows[1].height.saturating_sub(2) as usize;
-    let maximum_scroll = rendered_lines
-        .saturating_sub(2)
-        .saturating_sub(visible_lines);
+        .line_count(note_inner.width);
+    let visible_lines = note_inner.height as usize;
+    let maximum_scroll = rendered_lines.saturating_sub(visible_lines);
     *scroll = (*scroll).min(u16::try_from(maximum_scroll).unwrap_or(u16::MAX));
     let note_title = match (*scroll > 0, usize::from(*scroll) < maximum_scroll) {
         (false, true) => "Note · more below",
@@ -462,45 +466,111 @@ fn render_rating(
     };
     let note_panel = Paragraph::new(note)
         .wrap(Wrap { trim: false })
-        .block(Block::default().borders(Borders::ALL).title(note_title));
+        .block(note_block.title(note_title).title_style(accent_style()));
     frame.render_widget(note_panel.scroll((*scroll, 0)), rows[1]);
 
-    let anchors = RATING_ANCHORS
-        .iter()
-        .map(|anchor| Line::from(*anchor))
-        .collect::<Vec<_>>();
-    frame.render_widget(Paragraph::new(anchors), rows[2]);
     frame.render_widget(
         Paragraph::new(RATING_QUESTION)
-            .style(Style::default().add_modifier(Modifier::BOLD))
+            .style(accent_style())
             .wrap(Wrap { trim: false }),
-        rows[3],
+        rows[2],
     );
+    let anchors = RATING_ANCHORS
+        .iter()
+        .map(|anchor| {
+            let (key, description) = anchor.split_at(2);
+            Line::from(vec![
+                Span::styled(key, accent_style()),
+                Span::raw(description),
+            ])
+        })
+        .collect::<Vec<_>>();
+    frame.render_widget(Paragraph::new(anchors), rows[3]);
     frame.render_widget(
-        Paragraph::new(WRONG_LANGUAGE_RULE).wrap(Wrap { trim: false }),
+        Paragraph::new(WRONG_LANGUAGE_RULE)
+            .style(secondary_style())
+            .wrap(Wrap { trim: false }),
         rows[4],
     );
 
-    let pause = if pause_after_rating {
-        "[P] Pause armed"
-    } else {
-        "[P] Pause after decision"
-    };
-    let controls = if recovery {
-        format!("[1–7] Rate  [L] Wrong language  [R] Redisplay  {pause}")
-    } else {
-        format!("[1–7] Rate  [L] Wrong language  {pause}  [↑/↓] Scroll")
-    };
-    frame.render_widget(Paragraph::new(controls), rows[5]);
+    frame.render_widget(
+        Paragraph::new(control_line(recovery, pause_after_rating)),
+        rows[5],
+    );
 }
 
 fn render_message(frame: &mut Frame<'_>, area: ratatui::layout::Rect, title: &str, text: &str) {
+    let area = centered_reading_area(area);
     frame.render_widget(
         Paragraph::new(text)
-            .block(Block::default().borders(Borders::ALL).title(title))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .border_style(border_style())
+                    .title(title)
+                    .title_style(accent_style()),
+            )
             .wrap(Wrap { trim: false }),
         area,
     );
+}
+
+fn centered_reading_area(area: Rect) -> Rect {
+    let width = area.width.min(MAX_CONTENT_WIDTH);
+    Rect {
+        x: area.x + area.width.saturating_sub(width) / 2,
+        width,
+        ..area
+    }
+}
+
+fn accent_style() -> Style {
+    Style::default()
+        .fg(Color::Cyan)
+        .add_modifier(Modifier::BOLD)
+}
+
+fn secondary_style() -> Style {
+    Style::default().add_modifier(Modifier::DIM)
+}
+
+fn border_style() -> Style {
+    Style::default().fg(Color::DarkGray)
+}
+
+fn control_line(recovery: bool, pause_after_rating: bool) -> Line<'static> {
+    let mut controls = vec![
+        Span::styled("[1–7]", accent_style()),
+        Span::styled(" Rate  ", secondary_style()),
+        Span::styled("[L]", accent_style()),
+        Span::styled(" Wrong language  ", secondary_style()),
+    ];
+    if recovery {
+        controls.extend([
+            Span::styled("[R]", accent_style()),
+            Span::styled(" Redisplay  ", secondary_style()),
+        ]);
+    }
+    controls.push(Span::styled("[P]", accent_style()));
+    controls.push(Span::styled(
+        if pause_after_rating {
+            " Pause armed"
+        } else {
+            " Pause after decision"
+        },
+        if pause_after_rating {
+            accent_style()
+        } else {
+            secondary_style()
+        },
+    ));
+    if !recovery {
+        controls.extend([
+            Span::styled("  [↑/↓]", accent_style()),
+            Span::styled(" Scroll", secondary_style()),
+        ]);
+    }
+    Line::from(controls)
 }
 
 fn terminal_safe(content: &str) -> String {
