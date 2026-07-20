@@ -15,6 +15,7 @@ import shutil
 import signal
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.parse
 from dataclasses import dataclass
@@ -515,26 +516,45 @@ def verify_reviewed_artifacts(
         )
     if context.operator_path.read_bytes() != Path(__file__).resolve().read_bytes():
         raise OperationError("invoked operator differs from transported operator")
-    package_config_path = (
-        context.path("execution/package/run/full-build-config.json")
-        if require_local_execution_package
-        else context.path("transport/package-skeleton/run/full-build-config.json")
-    )
-    package_config = read_json(package_config_path)
-    if not isinstance(package_config, dict):
-        raise OperationError("frozen full-build config is invalid")
-    full_build = package_config.get("full_build")
-    if not isinstance(full_build, dict):
-        raise OperationError("frozen full-build config has no full_build settings")
-    for field in (
-        "artifact_storage_and_transfer_micro_usd",
-        "one_cold_restart_micro_usd",
-        "one_lost_shard_micro_usd",
-    ):
-        if full_build.get(field) != context.limit(field):
-            raise OperationError(
-                f"operation contract and frozen full-build config differ on {field}"
+    package_config_paths = [
+        context.path("transport/package-skeleton/run/full-build-config.json")
+    ]
+    if require_local_execution_package:
+        package_config_paths.insert(
+            0, context.path("execution/package/run/full-build-config.json")
+        )
+    try:
+        launch_image = calibration_package.immutable_image_ref(context.image)
+    except ValueError as error:
+        raise OperationError(f"frozen launch container image is invalid: {error}") from error
+    for package_config_path in package_config_paths:
+        package_config = read_json(package_config_path)
+        if not isinstance(package_config, dict):
+            raise OperationError("frozen full-build config is invalid")
+        try:
+            package_image = calibration_package.immutable_image_ref(
+                package_config.get("container_image")
             )
+        except ValueError as error:
+            raise OperationError(
+                f"frozen full-build container image is invalid: {error}"
+            ) from error
+        if package_image != launch_image:
+            raise OperationError(
+                "operation contract and frozen full-build config differ on container image"
+            )
+        full_build = package_config.get("full_build")
+        if not isinstance(full_build, dict):
+            raise OperationError("frozen full-build config has no full_build settings")
+        for field in (
+            "artifact_storage_and_transfer_micro_usd",
+            "one_cold_restart_micro_usd",
+            "one_lost_shard_micro_usd",
+        ):
+            if full_build.get(field) != context.limit(field):
+                raise OperationError(
+                    f"operation contract and frozen full-build config differ on {field}"
+                )
 
 
 def vast_json(arguments: list[str]) -> object:
@@ -629,7 +649,7 @@ def verify_image(context: Context) -> None:
             "--network",
             "none",
             "--entrypoint",
-            "/usr/bin/rsync",
+            "/usr/bin/tar",
             context.image,
             "--version",
         ]
@@ -1337,96 +1357,214 @@ def ssh_options(context: Context, private_key: Path) -> list[str]:
     ]
 
 
-def rsync_ssh_transport(
-    context: Context, private_key: Path, target: list[str]
-) -> tuple[str, str]:
-    if len(target) == 3:
-        port_flag, port, host = target
-        if port_flag != "-p":
-            raise OperationError("Vast SSH target has no usable rsync port")
-    elif len(target) == 1:
+def stream_processes(
+    producer_arguments: list[str],
+    consumer_arguments: list[str],
+    description: str,
+    timeout_seconds: int,
+) -> None:
+    if timeout_seconds <= 0:
+        raise OperationError("stream timeout must be positive")
+    producer: subprocess.Popen[bytes] | None = None
+    consumer: subprocess.Popen[bytes] | None = None
+    previous_handlers: dict[signal.Signals, object] = {}
+    completed = False
+
+    def interrupted(signum: int, _frame: object) -> NoReturn:
+        raise InterruptedError(f"signal {signum}")
+
+    def terminate(process: subprocess.Popen[bytes] | None) -> None:
+        if process is None or process.poll() is not None:
+            return
+        with contextlib.suppress(ProcessLookupError):
+            os.killpg(process.pid, signal.SIGTERM)
         try:
-            parsed = urllib.parse.urlparse(target[0])
-            hostname = parsed.hostname
-            port = parsed.port
-            username = parsed.username
-        except ValueError as error:
-            raise OperationError("Vast SSH target is invalid for rsync") from error
-        if hostname is None or port is None or username != "root":
-            raise OperationError("Vast SSH target is invalid for rsync")
-        if ":" in hostname:
-            hostname = f"[{hostname}]"
-        host = f"{username}@{hostname}"
-    else:
-        raise OperationError("Vast SSH target is invalid for rsync")
-    command = shlex.join([*ssh_options(context, private_key), "-p", str(port)])
-    return command, host
+            process.wait(timeout=5)
+            return
+        except subprocess.TimeoutExpired:
+            pass
+        with contextlib.suppress(ProcessLookupError):
+            os.killpg(process.pid, signal.SIGKILL)
+        with contextlib.suppress(subprocess.TimeoutExpired):
+            process.wait(timeout=5)
+
+    with (
+        tempfile.TemporaryFile() as producer_error,
+        tempfile.TemporaryFile() as consumer_output,
+        tempfile.TemporaryFile() as consumer_error,
+    ):
+        try:
+            for handled_signal in (signal.SIGINT, signal.SIGTERM):
+                previous_handlers[handled_signal] = signal.getsignal(handled_signal)
+                signal.signal(handled_signal, interrupted)
+            producer = subprocess.Popen(
+                producer_arguments,
+                stdout=subprocess.PIPE,
+                stderr=producer_error,
+                start_new_session=True,
+            )
+            assert producer.stdout is not None
+            consumer = subprocess.Popen(
+                consumer_arguments,
+                stdin=producer.stdout,
+                stdout=consumer_output,
+                stderr=consumer_error,
+                start_new_session=True,
+            )
+            producer.stdout.close()
+            deadline = time.monotonic() + timeout_seconds
+            consumer_status = consumer.wait(
+                timeout=max(0.001, deadline - time.monotonic())
+            )
+            producer_status = producer.wait(
+                timeout=max(0.001, deadline - time.monotonic())
+            )
+            completed = True
+        except InterruptedError as error:
+            raise OperationError(f"{description} was interrupted") from error
+        except OSError as error:
+            command = (
+                producer_arguments[0]
+                if producer is None
+                else consumer_arguments[0]
+            )
+            raise OperationError(f"could not execute {command}: {error}") from error
+        except subprocess.TimeoutExpired as error:
+            raise OperationError(
+                f"{description} exceeded its {timeout_seconds}-second limit"
+            ) from error
+        finally:
+            if not completed:
+                terminate(consumer)
+                terminate(producer)
+            for handled_signal, previous in previous_handlers.items():
+                signal.signal(handled_signal, previous)
+        if producer_status == 0 and consumer_status == 0:
+            return
+        producer_error.seek(0)
+        consumer_error.seek(0)
+        details = b"\n".join(
+            value.strip()
+            for value in (producer_error.read(), consumer_error.read())
+            if value.strip()
+        ).decode("utf-8", errors="replace")
+        suffix = f": {details}" if details else ""
+        raise OperationError(
+            f"{description} failed with producer status {producer_status} "
+            f"and consumer status {consumer_status}{suffix}"
+        )
 
 
-def rsync_upload_directory(
+def validated_remote_directory(remote_directory: str) -> str:
+    directory = remote_directory.rstrip("/")
+    if (
+        not directory.startswith("/workspace/oracle-full-build/")
+        or any(character.isspace() for character in directory)
+        or any(part in ("", ".", "..") for part in directory.split("/")[1:])
+    ):
+        raise OperationError("remote transfer directory is invalid")
+    return directory
+
+
+def tar_upload_directory(
     context: Context,
     private_key: Path,
     target: list[str],
     source: Path,
     remote_directory: str,
 ) -> None:
-    if not source.is_dir() or not remote_directory.startswith("/"):
-        raise OperationError("rsync upload directories are invalid")
-    remote_shell, host = rsync_ssh_transport(context, private_key, target)
+    if not source.is_dir():
+        raise OperationError("tar upload source is not a directory")
+    remote_directory = validated_remote_directory(remote_directory)
+    completed_process(
+        [
+            *ssh_arguments(context, private_key, target),
+            "rm",
+            "-rf",
+            "--",
+            remote_directory,
+        ]
+    )
     completed_process(
         [
             *ssh_arguments(context, private_key, target),
             "mkdir",
             "-p",
             "--",
-            remote_directory.rstrip("/"),
+            remote_directory,
         ]
     )
-    completed_process(
+    stream_processes(
+        ["tar", "-C", str(source), "-cf", "-", "."],
         [
-            "rsync",
-            "--archive",
-            "--no-owner",
-            "--no-group",
-            "--partial",
-            "--delete",
-            "--timeout=60",
-            "--rsync-path=/usr/bin/rsync",
-            "--rsh",
-            remote_shell,
-            f"{source}/",
-            f"{host}:{remote_directory.rstrip('/')}/",
-        ]
+            *ssh_arguments(context, private_key, target),
+            "/usr/bin/tar",
+            "-C",
+            remote_directory,
+            "--no-same-owner",
+            "-xf",
+            "-",
+        ],
+        "tar upload",
+        3_600,
     )
 
 
-def rsync_download_directory(
+def tar_download_directory(
     context: Context,
     private_key: Path,
     target: list[str],
     remote_directory: str,
     destination: Path,
 ) -> None:
-    if not remote_directory.startswith("/"):
-        raise OperationError("rsync download directory is invalid")
-    destination.mkdir(parents=True, exist_ok=True, mode=0o700)
-    remote_shell, host = rsync_ssh_transport(context, private_key, target)
-    completed_process(
-        [
-            "rsync",
-            "--archive",
-            "--no-owner",
-            "--no-group",
-            "--partial",
-            "--delete",
-            "--timeout=60",
-            "--rsync-path=/usr/bin/rsync",
-            "--rsh",
-            remote_shell,
-            f"{host}:{remote_directory.rstrip('/')}/",
-            f"{destination}/",
-        ]
-    )
+    remote_directory = validated_remote_directory(remote_directory)
+    destination.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    if destination.exists():
+        if not destination.is_dir() or destination.is_symlink():
+            raise OperationError("tar download destination is not a directory")
+    else:
+        destination.mkdir(mode=0o700)
+    staging = destination.with_name(f".{destination.name}.tar-download")
+    if staging.exists():
+        shutil.rmtree(staging)
+    staging.mkdir(mode=0o700)
+    try:
+        stream_processes(
+            [
+                *ssh_arguments(context, private_key, target),
+                "/usr/bin/tar",
+                "-C",
+                remote_directory,
+                "-cf",
+                "-",
+                ".",
+            ],
+            [
+                "tar",
+                "-C",
+                str(staging),
+                "--no-same-owner",
+                "-xf",
+                "-",
+            ],
+            "tar download",
+            21_600,
+        )
+        try:
+            for child in destination.iterdir():
+                if child.is_dir() and not child.is_symlink():
+                    shutil.rmtree(child)
+                else:
+                    child.unlink()
+            for child in staging.iterdir():
+                os.replace(child, destination / child.name)
+            sync_directory(destination)
+            sync_directory(destination.parent)
+        except OSError as error:
+            raise OperationError(f"could not publish tar download: {error}") from error
+    finally:
+        if staging.exists():
+            shutil.rmtree(staging)
 
 
 def ensure_ssh(context: Context, instance_id: str) -> tuple[Path, list[str]]:
@@ -1615,7 +1753,7 @@ def retrieve_preparation_failure(
             shutil.rmtree(staging)
         staging.mkdir(parents=True, exist_ok=True, mode=0o700)
         try:
-            rsync_download_directory(
+            tar_download_directory(
                 context,
                 private_key,
                 target,
@@ -1699,7 +1837,7 @@ def ensure_remote_prepared(
         completed_process(
             [
                 *ssh_arguments(context, private_key, target),
-                "/usr/bin/rsync",
+                "/usr/bin/tar",
                 "--version",
             ]
         )
@@ -1707,14 +1845,14 @@ def ensure_remote_prepared(
         transfer: object = None
         for copy_attempt in range(2):
             try:
-                rsync_upload_directory(
+                tar_upload_directory(
                     context,
                     private_key,
                     target,
                     context.path("transport"),
                     "/workspace/oracle-full-build/transport/",
                 )
-                rsync_upload_directory(
+                tar_upload_directory(
                     context,
                     private_key,
                     target,
@@ -2957,7 +3095,7 @@ def ensure_retrieved(
     destination = context.path("result.next")
     if not destination.is_dir():
         raise OperationError("result.next is missing before retrieval")
-    rsync_download_directory(
+    tar_download_directory(
         context,
         private_key,
         target,
@@ -2968,7 +3106,7 @@ def ensure_retrieved(
     verified_preparation: list[dict[str, object]] = []
     if preparation_records is not None:
         preparation_destination = destination / "audit/preparation-attempts"
-        rsync_download_directory(
+        tar_download_directory(
             context,
             private_key,
             target,
@@ -4189,7 +4327,7 @@ def prepare(context: Context) -> dict[str, object]:
     with operation_lock(context.root):
         verify_reviewed_artifacts(context)
         verify_image(context)
-        completed_process(["rsync", "--version"])
+        completed_process(["tar", "--version"])
         ledger_sha256 = verify_baseline_ledgers(context)
         descriptor = context.controller(
             "execution",

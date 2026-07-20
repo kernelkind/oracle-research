@@ -5,7 +5,6 @@ import os
 import fcntl
 import pty
 import select
-import shlex
 import signal
 import shutil
 import subprocess
@@ -340,6 +339,19 @@ if tool == "docker":
     if (
         args[:4] == ["run", "--rm", "--network", "none"]
         and "--entrypoint" in args
+        and args[args.index("--entrypoint") + 1] == "/usr/bin/tar"
+        and args[-1] == "--version"
+    ):
+        state["image_tar_checks"] += 1
+        write_state(state)
+        if not state.get("image_tar_available", True):
+            print("/usr/bin/tar: not found", file=sys.stderr)
+            raise SystemExit(127)
+        print("tar (GNU tar) 1.35")
+        raise SystemExit(0)
+    if (
+        args[:4] == ["run", "--rm", "--network", "none"]
+        and "--entrypoint" in args
         and args[args.index("--entrypoint") + 1] == "/usr/bin/rsync"
         and args[-1] == "--version"
     ):
@@ -489,6 +501,59 @@ if tool == "ssh-keygen":
     )
     raise SystemExit(0)
 
+if tool == "tar":
+    if args == ["--version"]:
+        state["local_tar_checks"] += 1
+        write_state(state)
+        if not state.get("local_tar_available", True):
+            print("tar: not found", file=sys.stderr)
+            raise SystemExit(127)
+        print("tar (GNU tar) 1.35")
+        raise SystemExit(0)
+    if "-cf" in args and args[-1] == ".":
+        print("fixture tar stream")
+        raise SystemExit(0)
+    if "-xf" in args and "-C" in args:
+        marker = sys.stdin.buffer.read().decode("utf-8", errors="replace")
+        destination = Path(args[args.index("-C") + 1])
+        destination.mkdir(parents=True, exist_ok=True)
+        if "FAKE_TAR_WORK" in marker:
+            payload = b"complete vectors\n"
+            if state.get("retrieval_mode") == "corrupt":
+                payload = b"corrupt vectors\n"
+            (destination / "result.bin").write_bytes(payload)
+            attempt = destination / "full-build-attempts/001"
+            attempt.mkdir(parents=True, exist_ok=True)
+            terminal_kind = state.get("remote_terminal_kind", "full-build.exit")
+            terminal_status = 0 if terminal_kind == "full-build.exit" else 74
+            (attempt / terminal_kind).write_text(
+                f"{terminal_status}\n", encoding="utf-8"
+            )
+            (destination / "budget-ledger.json").write_bytes(
+                (root / "launch/reserved-budget-ledger.json").read_bytes()
+            )
+        elif "FAKE_TAR_PREPARATION" in marker:
+            attempt = destination / "001"
+            attempt.mkdir(parents=True, exist_ok=True)
+            failed = state.get("remote_prepare_mode") == "failed"
+            log = (
+                "fixture model preparation failed\n"
+                if failed
+                else "fixture model preparation complete\n"
+            )
+            if state.get("preparation_retrieval_mode") == "corrupt":
+                log = "corrupt preparation evidence\n"
+            (attempt / "preparation.log").write_text(log, encoding="utf-8")
+            (attempt / "preparation.exit").write_text(
+                "75\n" if failed else "0\n", encoding="utf-8"
+            )
+        else:
+            print("unrecognized fixture tar stream", file=sys.stderr)
+            raise SystemExit(75)
+        raise SystemExit(0)
+    print("unsupported fixture tar invocation", file=sys.stderr)
+    raise SystemExit(64)
+
 if tool == "rsync":
     if args == ["--version"]:
         state["local_rsync_checks"] += 1
@@ -557,13 +622,72 @@ if tool == "ssh":
     if state.get("fail_all_ssh"):
         print("ssh unavailable", file=sys.stderr)
         raise SystemExit(75)
-    if "/usr/bin/rsync --version" in joined:
+    if "/usr/bin/tar --version" in joined:
+        state["remote_tar_checks"] += 1
+        write_state(state)
+        if not state.get("remote_tar_available", True):
+            print("/usr/bin/tar: not found", file=sys.stderr)
+            raise SystemExit(127)
+        print("tar (GNU tar) 1.35")
+    elif "/usr/bin/rsync --version" in joined:
         state["remote_rsync_checks"] += 1
         write_state(state)
         if not state.get("remote_rsync_available", True):
             print("/usr/bin/rsync: not found", file=sys.stderr)
             raise SystemExit(127)
         print("rsync  version 3.2.7  protocol version 31")
+    elif "rm -rf -- /workspace/oracle-full-build/" in joined:
+        remote_directory = args[-1]
+        if remote_directory.endswith("/transport"):
+            state["transport_clean_calls"] += 1
+            if state.get("remote_transport_dirty"):
+                state["transport_clean_after_interruption"] += 1
+            state["remote_transport_dirty"] = False
+            state["remote_transport_complete"] = False
+        elif remote_directory.endswith("/launch"):
+            state["launch_clean_calls"] += 1
+        write_state(state)
+    elif "/usr/bin/tar" in args and "-xf" in args:
+        remote_directory = args[args.index("-C") + 1]
+        sys.stdin.buffer.read()
+        state["copy_calls"] += 1
+        if remote_directory.endswith("/transport"):
+            state["transport_copy_calls"] += 1
+            interrupted = state.get("fail_transport_tar") or (
+                state.get("fail_transport_tar_once")
+                and state["transport_copy_calls"] == 1
+            )
+            incomplete = (
+                state.get("simulate_incomplete_transport_once")
+                and state["transport_copy_calls"] == 1
+            )
+            state["remote_transport_complete"] = not (interrupted or incomplete)
+            state["remote_transport_dirty"] = interrupted or incomplete
+            write_state(state)
+            if interrupted:
+                print("transport tar stream interrupted", file=sys.stderr)
+                raise SystemExit(75)
+        elif remote_directory.endswith("/launch"):
+            state["launch_copy_calls"] += 1
+            write_state(state)
+    elif "/usr/bin/tar" in args and "-cf" in args:
+        remote_directory = args[args.index("-C") + 1]
+        state["copy_calls"] += 1
+        if remote_directory.endswith("/preparation-attempts"):
+            state["preparation_evidence_copy_calls"] += 1
+            write_state(state)
+            if state.get("fail_preparation_evidence_copy"):
+                print("preparation evidence copy interrupted", file=sys.stderr)
+                raise SystemExit(75)
+            print("FAKE_TAR_PREPARATION")
+        elif remote_directory.endswith("/work"):
+            state["work_evidence_copy_calls"] += 1
+            write_state(state)
+            print("FAKE_TAR_WORK")
+            crash_parent_once(state, "crash_after_retrieval_copy")
+        else:
+            print("unknown remote tar source", file=sys.stderr)
+            raise SystemExit(75)
     elif "_remote-verify-transfer" in joined:
         state["remote_verification_calls"] += 1
         verified = state.get("remote_transport_complete", False)
@@ -589,7 +713,23 @@ if tool == "ssh":
         state["remote_prepare_calls"] += 1
         write_state(state)
         if state.get("remote_prepare_mode") == "failed":
-            emit({"prepared": False, "state": "failed", "exit_status": 75})
+            payloads = {
+                "001/preparation.log": b"fixture model preparation failed\n",
+                "001/preparation.exit": b"75\n",
+            }
+            emit({
+                "prepared": False,
+                "state": "failed",
+                "exit_status": 75,
+                "evidence_files": [
+                    {
+                        "path": path,
+                        "bytes": len(payload),
+                        "sha256": hashlib.sha256(payload).hexdigest(),
+                    }
+                    for path, payload in payloads.items()
+                ],
+            })
         elif state["remote_prepare_calls"] <= state.get(
             "remote_prepare_running_polls", 0
         ):
@@ -718,9 +858,17 @@ class VastFullBuildCliTest(unittest.TestCase):
                 "copy_calls": 0,
                 "transport_copy_calls": 0,
                 "preparation_evidence_copy_calls": 0,
+                "work_evidence_copy_calls": 0,
+                "local_tar_checks": 0,
+                "image_tar_checks": 0,
+                "remote_tar_checks": 0,
                 "local_rsync_checks": 0,
                 "image_rsync_checks": 0,
                 "remote_rsync_checks": 0,
+                "transport_clean_calls": 0,
+                "transport_clean_after_interruption": 0,
+                "launch_clean_calls": 0,
+                "launch_copy_calls": 0,
                 "destroy_request_calls": 0,
                 "destroy_calls": 0,
                 "invoice_calls": 0,
@@ -746,6 +894,7 @@ class VastFullBuildCliTest(unittest.TestCase):
         fake.chmod(0o755)
         for name in (
             "docker",
+            "tar",
             "rsync",
             "vastai",
             "uvx",
@@ -839,6 +988,11 @@ class VastFullBuildCliTest(unittest.TestCase):
         (package / "payload.bin").write_bytes(b"execution payload\n")
         (self.root / "execution/work").mkdir(parents=True)
         shutil.copy2(self.ledger, self.root / "execution/work/budget-ledger.json")
+        skeleton_config = (
+            self.root / "transport/package-skeleton/run/full-build-config.json"
+        )
+        skeleton_config.parent.mkdir(parents=True)
+        shutil.copy2(package / "run/full-build-config.json", skeleton_config)
 
         write_manifest(
             self.root / "transport",
@@ -1226,24 +1380,198 @@ class VastFullBuildCliTest(unittest.TestCase):
         self.assertEqual(self.ledger.read_bytes(), ledger_before)
         self.assert_no_paid_call(self.calls())
 
-    def test_prepare_refuses_missing_local_rsync_before_provider_use(self):
-        self.set_provider(local_rsync_available=False)
+    def test_interrupted_stream_terminates_both_transfer_children(self):
+        def pid_alive(pid):
+            try:
+                os.kill(pid, 0)
+            except ProcessLookupError:
+                return False
+            return True
+
+        producer_pid = self.base / "producer.pid"
+        consumer_pid = self.base / "consumer.pid"
+        module_directory = Path(vast_full_build.__file__).resolve().parent
+        producer = (
+            "import os,sys,time; "
+            f"open({str(producer_pid)!r},'w').write(str(os.getpid())); "
+            "sys.stdout.buffer.write(b'x'); sys.stdout.buffer.flush(); time.sleep(60)"
+        )
+        consumer = (
+            "import os,sys,time; "
+            f"open({str(consumer_pid)!r},'w').write(str(os.getpid())); "
+            "sys.stdin.buffer.read(1); time.sleep(60)"
+        )
+        parent = (
+            "import sys; "
+            f"sys.path.insert(0,{str(module_directory)!r}); "
+            "import vast_full_build; "
+            f"vast_full_build.stream_processes([sys.executable,'-c',{producer!r}],"
+            f"[sys.executable,'-c',{consumer!r}],'fixture transfer',60)"
+        )
+        process = subprocess.Popen(
+            [sys.executable, "-c", parent],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        child_pids = []
+        try:
+            deadline = time.monotonic() + 5
+            while time.monotonic() < deadline:
+                if producer_pid.is_file() and consumer_pid.is_file():
+                    break
+                time.sleep(0.01)
+            self.assertTrue(producer_pid.is_file())
+            self.assertTrue(consumer_pid.is_file())
+            child_pids = [
+                int(producer_pid.read_text(encoding="utf-8")),
+                int(consumer_pid.read_text(encoding="utf-8")),
+            ]
+            process.send_signal(signal.SIGTERM)
+            process.wait(timeout=5)
+            deadline = time.monotonic() + 5
+            while time.monotonic() < deadline:
+                if all(not pid_alive(pid) for pid in child_pids):
+                    break
+                time.sleep(0.01)
+            self.assertTrue(
+                all(not pid_alive(pid) for pid in child_pids), child_pids
+            )
+        finally:
+            if process.poll() is None:
+                process.kill()
+                process.wait()
+            for pid in child_pids:
+                if pid_alive(pid):
+                    os.kill(pid, signal.SIGKILL)
+
+    def test_stream_deadline_terminates_both_transfer_children(self):
+        producer = "import sys,time; sys.stdout.write('x'); sys.stdout.flush(); time.sleep(60)"
+        consumer = "import sys,time; sys.stdin.read(1); time.sleep(60)"
+
+        started = time.monotonic()
+        with self.assertRaisesRegex(vast_full_build.OperationError, "1-second limit"):
+            vast_full_build.stream_processes(
+                [sys.executable, "-c", producer],
+                [sys.executable, "-c", consumer],
+                "fixture deadline",
+                1,
+            )
+
+        self.assertLess(time.monotonic() - started, 5)
+
+    def test_interrupted_download_publication_keeps_retryable_destination(self):
+        context = vast_full_build.Context(
+            root=self.root,
+            config_path=self.config,
+            ledger=self.ledger,
+            config=json.loads(self.config.read_text(encoding="utf-8")),
+        )
+        private_key = self.root / "launch/ssh/id_ed25519"
+        private_key.parent.mkdir(parents=True, exist_ok=True)
+        private_key.write_text("fixture private key\n", encoding="utf-8")
+        reserved = self.root / "launch/reserved-budget-ledger.json"
+        shutil.copy2(self.ledger, reserved)
+        destination = self.base / "downloaded-work"
+        destination.mkdir()
+        (destination / "old-file").write_text("old\n", encoding="utf-8")
+        download_staging = destination.with_name(
+            f".{destination.name}.tar-download"
+        )
+        real_replace = os.replace
+
+        def interrupt_first_child(source, target):
+            if Path(source).parent == download_staging:
+                raise OSError("fixture publication interruption")
+            return real_replace(source, target)
+
+        with (
+            mock.patch.dict(os.environ, self.environment),
+            mock.patch("vast_full_build.os.replace", side_effect=interrupt_first_child),
+            self.assertRaisesRegex(
+                vast_full_build.OperationError, "could not publish tar download"
+            ),
+        ):
+            vast_full_build.tar_download_directory(
+                context,
+                private_key,
+                ["-p", "2222", "root@fake.example"],
+                "/workspace/oracle-full-build/work/",
+                destination,
+            )
+
+        self.assertTrue(destination.is_dir())
+        with mock.patch.dict(os.environ, self.environment):
+            vast_full_build.tar_download_directory(
+                context,
+                private_key,
+                ["-p", "2222", "root@fake.example"],
+                "/workspace/oracle-full-build/work/",
+                destination,
+            )
+        self.assertTrue((destination / "result.bin").is_file())
+
+    def test_prepare_refuses_package_image_that_differs_from_launch_image(self):
+        package = self.root / "execution/package"
+        config = package / "run/full-build-config.json"
+        document = json.loads(config.read_text(encoding="utf-8"))
+        document["container_image"] = (
+            "docker.io/kernelkind/oracle-mvp@sha256:" + "8" * 64
+        )
+        write_json(config, document)
+        write_manifest(
+            package,
+            package / "package-manifest.json",
+            "gte-full-build-execution-package",
+        )
+        contract = self.operation_contract()
+        contract["pins"]["execution_package_manifest_sha256"] = sha256(
+            package / "package-manifest.json"
+        )
+        write_json(self.config, contract)
+
+        rejected = self.invoke("prepare")
+
+        self.assertNotEqual(rejected.returncode, 0)
+        self.assertIn("container image", rejected.stderr.lower())
+        self.assertFalse(self.calls(), self.calls())
+
+    def test_prepare_uses_tar_without_requiring_rsync(self):
+        self.set_provider(
+            local_rsync_available=False,
+            image_rsync_available=False,
+        )
+
+        prepared = self.prepare()
+
+        self.assertEqual(prepared["state"], "awaiting_approval")
+        state = self.provider()
+        self.assertEqual(state["local_tar_checks"], 1)
+        self.assertEqual(state["image_tar_checks"], 1)
+        self.assertEqual(state["local_rsync_checks"], 0)
+        self.assertEqual(state["image_rsync_checks"], 0)
+        self.assertFalse(
+            any(call["tool"] == "rsync" for call in self.calls()),
+            self.calls(),
+        )
+
+    def test_prepare_refuses_missing_local_tar_before_provider_use(self):
+        self.set_provider(local_tar_available=False)
         rejected = self.invoke("prepare")
         self.assertNotEqual(rejected.returncode, 0)
-        self.assertIn("rsync", rejected.stderr.lower())
-        self.assertEqual(self.provider()["local_rsync_checks"], 1)
+        self.assertIn("tar", rejected.stderr.lower())
+        self.assertEqual(self.provider()["local_tar_checks"], 1)
         self.assertFalse(
             any(call["tool"] == "vastai" for call in self.calls()),
             self.calls(),
         )
 
-    def test_prepare_refuses_image_without_rsync_before_provider_use(self):
-        self.set_provider(image_rsync_available=False)
+    def test_prepare_refuses_image_without_tar_before_provider_use(self):
+        self.set_provider(image_tar_available=False)
         rejected = self.invoke("prepare")
         self.assertNotEqual(rejected.returncode, 0)
-        self.assertIn("rsync", rejected.stderr.lower())
-        self.assertEqual(self.provider()["image_rsync_checks"], 1)
-        self.assertEqual(self.provider()["local_rsync_checks"], 0)
+        self.assertIn("tar", rejected.stderr.lower())
+        self.assertEqual(self.provider()["image_tar_checks"], 1)
+        self.assertEqual(self.provider()["local_tar_checks"], 0)
         self.assertFalse(
             any(call["tool"] == "vastai" for call in self.calls()),
             self.calls(),
@@ -2023,64 +2351,27 @@ class VastFullBuildCliTest(unittest.TestCase):
         )
         self.assertNotEqual(self.ledger.read_bytes(), ledger_before)
 
-        remote_shell = shlex.join(
-            [
-                "ssh",
-                "-i",
-                str(self.root / "launch/ssh/id_ed25519"),
-                "-o",
-                "BatchMode=yes",
-                "-o",
-                "IdentitiesOnly=yes",
-                "-o",
-                "ConnectTimeout=15",
-                "-o",
-                "ConnectionAttempts=2",
-                "-o",
-                "ServerAliveInterval=15",
-                "-o",
-                "ServerAliveCountMax=3",
-                "-o",
-                "StrictHostKeyChecking=accept-new",
-                "-o",
-                f"UserKnownHostsFile={self.root / 'launch/ssh/known_hosts'}",
-                "-p",
-                "2222",
-            ]
-        )
-        common = [
-            "--archive",
-            "--no-owner",
-            "--no-group",
-            "--partial",
-            "--delete",
-            "--timeout=60",
-            "--rsync-path=/usr/bin/rsync",
-            "--rsh",
-            remote_shell,
-        ]
         downloads = [
-            call["argv"]
+            call
             for call in self.calls()
-            if call["tool"] == "rsync"
-            and len(call["argv"]) >= 2
-            and call["argv"][-2].startswith("root@fake.example:")
+            if call["tool"] == "ssh"
+            and "/usr/bin/tar" in call["argv"]
+            and "-cf" in call["argv"]
         ]
-        self.assertCountEqual(
+        self.assertEqual(
+            {
+                call["argv"][call["argv"].index("-C") + 1]
+                for call in downloads
+            },
+            {
+                "/workspace/oracle-full-build/work",
+                "/workspace/oracle-full-build/preparation-attempts",
+            },
             downloads,
-            [
-                [
-                    *common,
-                    "root@fake.example:/workspace/oracle-full-build/work/",
-                    f"{self.root / 'result.next/work'}/",
-                ],
-                [
-                    *common,
-                    "root@fake.example:/workspace/oracle-full-build/preparation-attempts/",
-                    f"{self.root / 'result.next/audit/preparation-attempts'}/",
-                ],
-            ],
         )
+        self.assertEqual(state["work_evidence_copy_calls"], 1)
+        self.assertEqual(state["preparation_evidence_copy_calls"], 1)
+        self.assertFalse(any(call["tool"] == "rsync" for call in self.calls()))
 
         commands = [f'{call["tool"]} {" ".join(call["argv"])}' for call in self.calls()]
         destroy_index = next(index for index, value in enumerate(commands) if "destroy instance" in value)
@@ -2542,15 +2833,9 @@ exit_path.write_text("143\\n", encoding="utf-8")
         running = self.invoke("run")
         self.assertEqual(running.returncode, 0, running.stderr)
         self.assertEqual(self.output_json(running)["state"], "running")
-        transport_source = f"{self.root / 'transport'}/"
-        transport_copies = [
-            call
-            for call in self.calls()
-            if call["tool"] == "rsync"
-            and len(call["argv"]) >= 2
-            and call["argv"][-2] == transport_source
-        ]
-        self.assertEqual(len(transport_copies), 1, transport_copies)
+        state = self.provider()
+        self.assertEqual(state["transport_copy_calls"], 1)
+        self.assertEqual(state["launch_copy_calls"], 1)
         remote_prepare_calls = self.provider()["remote_prepare_calls"]
         remote_verification_calls = self.provider()["remote_verification_calls"]
         self.assertEqual(remote_verification_calls, 1)
@@ -2565,20 +2850,11 @@ exit_path.write_text("143\\n", encoding="utf-8")
             self.provider()["remote_verification_calls"],
             remote_verification_calls,
         )
-        self.assertEqual(
-            len(
-                [
-                    call
-                    for call in self.calls()
-                    if call["tool"] == "rsync"
-                    and len(call["argv"]) >= 2
-                    and call["argv"][-2] == transport_source
-                ]
-            ),
-            1,
-        )
+        state = self.provider()
+        self.assertEqual(state["transport_copy_calls"], 1)
+        self.assertEqual(state["launch_copy_calls"], 1)
 
-    def test_initial_upload_uses_direct_rsync_instead_of_vast_copy(self):
+    def test_initial_upload_streams_tar_over_hardened_ssh(self):
         prepared = self.prepare()
         started = self.invoke_with_tty_secret(
             "run", "--approve", prepared["approval_sha256"]
@@ -2593,42 +2869,40 @@ exit_path.write_text("143\\n", encoding="utf-8")
             ),
             calls,
         )
-        self.assertTrue(
-            any(call["tool"] == "rsync" for call in calls),
-            calls,
-        )
-        rsync_calls = [
-            call for call in calls
-            if call["tool"] == "rsync" and call["argv"] != ["--version"]
+        self.assertFalse(any(call["tool"] == "rsync" for call in calls), calls)
+        tar_producers = [
+            call
+            for call in calls
+            if call["tool"] == "tar" and "-cf" in call["argv"]
         ]
-        self.assertEqual(len(rsync_calls), 2, rsync_calls)
-        expected_sources = {
-            f"{self.root / 'transport'}/",
-            f"{self.root / 'launch/remote'}/",
-        }
-        expected_destinations = {
-            "root@fake.example:/workspace/oracle-full-build/transport/",
-            "root@fake.example:/workspace/oracle-full-build/launch/",
-        }
+        self.assertEqual(len(tar_producers), 2, tar_producers)
         self.assertEqual(
-            {call["argv"][-2] for call in rsync_calls}, expected_sources
+            {
+                call["argv"][call["argv"].index("-C") + 1]
+                for call in tar_producers
+            },
+            {str(self.root / "transport"), str(self.root / "launch/remote")},
         )
+        tar_consumers = [
+            call
+            for call in calls
+            if call["tool"] == "ssh"
+            and "/usr/bin/tar" in call["argv"]
+            and "-xf" in call["argv"]
+        ]
+        self.assertEqual(len(tar_consumers), 2, tar_consumers)
         self.assertEqual(
-            {call["argv"][-1] for call in rsync_calls}, expected_destinations
+            {
+                call["argv"][call["argv"].index("-C") + 1]
+                for call in tar_consumers
+            },
+            {
+                "/workspace/oracle-full-build/transport",
+                "/workspace/oracle-full-build/launch",
+            },
         )
-        for call in rsync_calls:
+        for call in tar_consumers:
             arguments = call["argv"]
-            for option in (
-                "--archive",
-                "--no-owner",
-                "--no-group",
-                "--partial",
-                "--delete",
-                "--timeout=60",
-                "--rsync-path=/usr/bin/rsync",
-            ):
-                self.assertIn(option, arguments)
-            remote_shell = arguments[arguments.index("--rsh") + 1]
             for option in (
                 "BatchMode=yes",
                 "IdentitiesOnly=yes",
@@ -2637,26 +2911,19 @@ exit_path.write_text("143\\n", encoding="utf-8")
                 "ServerAliveInterval=15",
                 "ServerAliveCountMax=3",
                 "StrictHostKeyChecking=accept-new",
-                "UserKnownHostsFile=",
-                "-p 2222",
             ):
-                self.assertIn(option, remote_shell)
-        mkdir_commands = [
-            call for call in calls
-            if call["tool"] == "ssh" and "mkdir" in call["argv"]
-        ]
-        self.assertEqual(len(mkdir_commands), 2, mkdir_commands)
-        self.assertEqual(
-            {call["argv"][-1] for call in mkdir_commands},
-            {
-                "/workspace/oracle-full-build/transport",
-                "/workspace/oracle-full-build/launch",
-            },
-        )
+                self.assertIn(option, arguments, arguments)
+            self.assertTrue(
+                any(value.startswith("UserKnownHostsFile=") for value in arguments),
+                arguments,
+            )
+        state = self.provider()
+        self.assertEqual(state["transport_clean_calls"], 1)
+        self.assertEqual(state["launch_clean_calls"], 1)
 
-    def test_failed_rsync_never_advances_to_remote_verification_or_worker(self):
+    def test_interrupted_tar_upload_never_verifies_prepares_or_starts(self):
         prepared = self.prepare()
-        self.set_provider(fail_transport_rsync=True)
+        self.set_provider(fail_transport_tar=True)
         waiting = self.invoke_with_tty_secret(
             "run", "--approve", prepared["approval_sha256"]
         )
@@ -2665,18 +2932,40 @@ exit_path.write_text("143\\n", encoding="utf-8")
         state = self.provider()
         self.assertEqual(state["transport_copy_calls"], 2)
         self.assertEqual(state["remote_verification_calls"], 0)
+        self.assertEqual(state["remote_prepare_calls"], 0)
         self.assertEqual(state["worker_start_calls"], 0)
+        self.assertFalse(
+            (self.root / "launch/remote-transfer-verified.json").exists()
+        )
 
-    def test_missing_remote_rsync_never_starts_transfer_or_worker(self):
+    def test_interrupted_tar_upload_retry_cleans_remote_directory(self):
         prepared = self.prepare()
-        self.set_provider(remote_rsync_available=False)
+        self.set_provider(fail_transport_tar_once=True)
+
+        running = self.invoke_with_tty_secret(
+            "run", "--approve", prepared["approval_sha256"]
+        )
+
+        self.assertEqual(running.returncode, 0, running.stderr)
+        self.assertEqual(self.output_json(running)["state"], "running")
+        state = self.provider()
+        self.assertEqual(state["transport_copy_calls"], 2)
+        self.assertEqual(state["transport_clean_calls"], 2)
+        self.assertEqual(state["transport_clean_after_interruption"], 1)
+        self.assertEqual(state["remote_verification_calls"], 1)
+        self.assertEqual(state["remote_prepare_calls"], 1)
+        self.assertEqual(state["worker_start_calls"], 1)
+
+    def test_missing_remote_tar_never_starts_transfer_or_worker(self):
+        prepared = self.prepare()
+        self.set_provider(remote_tar_available=False)
         rejected = self.invoke_with_tty_secret(
             "run", "--approve", prepared["approval_sha256"]
         )
         self.assertEqual(rejected.returncode, 0, rejected.stderr)
         self.assertEqual(self.output_json(rejected)["state"], "settled")
         state = self.provider()
-        self.assertEqual(state["remote_rsync_checks"], 1)
+        self.assertEqual(state["remote_tar_checks"], 1)
         self.assertEqual(state["copy_calls"], 0)
         self.assertEqual(state["remote_verification_calls"], 0)
         self.assertEqual(state["worker_start_calls"], 0)
@@ -3077,9 +3366,11 @@ exit_path.write_text("143\\n", encoding="utf-8")
         evidence_copies = [
             index
             for index, call in enumerate(commands)
-            if call["tool"] == "rsync"
-            and len(call["argv"]) >= 2
-            and "/preparation-attempts/" in call["argv"][-2]
+            if call["tool"] == "ssh"
+            and "/usr/bin/tar" in call["argv"]
+            and "-cf" in call["argv"]
+            and "/workspace/oracle-full-build/preparation-attempts"
+            in call["argv"]
         ]
         self.assertEqual(len(evidence_copies), 2, evidence_copies)
         destroy = next(
@@ -3119,9 +3410,11 @@ exit_path.write_text("143\\n", encoding="utf-8")
         evidence_copy = next(
             index
             for index, call in enumerate(commands)
-            if call["tool"] == "rsync"
-            and len(call["argv"]) >= 2
-            and "/preparation-attempts/" in call["argv"][-2]
+            if call["tool"] == "ssh"
+            and "/usr/bin/tar" in call["argv"]
+            and "-cf" in call["argv"]
+            and "/workspace/oracle-full-build/preparation-attempts"
+            in call["argv"]
         )
         destroy = next(
             index
@@ -3138,6 +3431,29 @@ exit_path.write_text("143\\n", encoding="utf-8")
             in path.read_text(encoding="utf-8")
         ]
         self.assertTrue(logs)
+        self.assert_one_finalized_paid_run("failed_full_build_settlement")
+
+    def test_corrupt_preparation_evidence_is_not_published_as_verified(self):
+        prepared = self.prepare()
+        self.set_provider(
+            remote_prepare_mode="failed",
+            preparation_retrieval_mode="corrupt",
+        )
+
+        completed = self.invoke_with_tty_secret(
+            "run", "--approve", prepared["approval_sha256"]
+        )
+
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertEqual(self.output_json(completed)["state"], "settled")
+        self.assertFalse(
+            (self.root / "launch/preparation-failure-retrieval.json").exists()
+        )
+        self.assertFalse((self.root / "launch/preparation-failure").exists())
+        self.assertTrue(
+            (self.root / "launch/preparation-failure-irretrievable.json").is_file()
+        )
+        self.assertEqual(self.provider()["preparation_evidence_copy_calls"], 2)
         self.assert_one_finalized_paid_run("failed_full_build_settlement")
 
     def test_status_refuses_settled_state_when_canonical_ledger_differs(self):
@@ -3185,6 +3501,8 @@ exit_path.write_text("143\\n", encoding="utf-8")
         self.assertEqual(self.output_json(running)["state"], "running")
         state = self.provider()
         self.assertEqual(state["transport_copy_calls"], 2)
+        self.assertEqual(state["transport_clean_calls"], 2)
+        self.assertEqual(state["transport_clean_after_interruption"], 1)
         self.assertEqual(state["remote_verification_calls"], 2)
         self.assertFalse(state["transfer_receipt_on_failed_verification"])
         self.assertEqual(state["prepare_calls_on_failed_verification"], 0)
