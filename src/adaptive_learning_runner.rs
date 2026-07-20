@@ -39,7 +39,7 @@ use crate::snapshot::{
     require_directory,
 };
 
-const SESSION_SCHEMA_VERSION: u32 = 6;
+const SESSION_SCHEMA_VERSION: u32 = 7;
 const ORACLE_RESPONSE_CONTRACT: &str = "candidate-order-oracle-v1";
 const SHUFFLE_POLICY: &str = "phase3-learning-sha256-concealed-v1";
 const SCORER_POLICY: &str = "compact-rbf-forward-only-h64-h256-fallback-v2";
@@ -152,6 +152,8 @@ struct EvaluatorControlsBinding {
     accepted_ratings: [u8; 7],
     wrong_language_key: String,
     pause_after_decision_key: String,
+    #[serde(default)]
+    pause_after_decision_cancel_key: String,
     recovery_redisplay_key: String,
     letter_keys_case_insensitive: bool,
     rest_continue_keys: [String; 3],
@@ -490,6 +492,7 @@ fn evaluator_protocol_binding() -> EvaluatorProtocolBinding {
             accepted_ratings: [1, 2, 3, 4, 5, 6, 7],
             wrong_language_key: "L".to_owned(),
             pause_after_decision_key: "P".to_owned(),
+            pause_after_decision_cancel_key: "Escape".to_owned(),
             recovery_redisplay_key: "R".to_owned(),
             letter_keys_case_insensitive: true,
             rest_continue_keys: ["Enter".to_owned(), "Space".to_owned(), "C".to_owned()],

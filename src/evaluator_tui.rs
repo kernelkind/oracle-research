@@ -316,6 +316,10 @@ impl EvaluatorTuiModel {
                 self.pause_after_rating = true;
                 EvaluatorTuiAction::None
             }
+            KeyCode::Esc if self.pause_after_rating => {
+                self.pause_after_rating = false;
+                EvaluatorTuiAction::None
+            }
             KeyCode::Char('r' | 'R') if recovery => EvaluatorTuiAction::Redisplay {
                 pause_after: self.pause_after_rating,
             },
@@ -551,19 +555,17 @@ fn control_line(recovery: bool, pause_after_rating: bool) -> Line<'static> {
             Span::styled(" Redisplay  ", secondary_style()),
         ]);
     }
-    controls.push(Span::styled("[P]", accent_style()));
-    controls.push(Span::styled(
-        if pause_after_rating {
-            " Pause armed"
-        } else {
-            " Pause after decision"
-        },
-        if pause_after_rating {
-            accent_style()
-        } else {
-            secondary_style()
-        },
-    ));
+    if pause_after_rating {
+        controls.extend([
+            Span::styled("[Esc]", accent_style()),
+            Span::styled(" Cancel pause", accent_style()),
+        ]);
+    } else {
+        controls.extend([
+            Span::styled("[P]", accent_style()),
+            Span::styled(" Pause after decision", secondary_style()),
+        ]);
+    }
     if !recovery {
         controls.extend([
             Span::styled("  [↑/↓]", accent_style()),

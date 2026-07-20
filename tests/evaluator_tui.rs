@@ -231,6 +231,56 @@ fn pause_is_armed_then_attached_to_the_next_accepted_decision() {
 }
 
 #[test]
+fn armed_pause_can_be_cancelled_before_the_decision() {
+    let mut model = rating_model();
+
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('p'), KeyEventKind::Press)),
+        EvaluatorTuiAction::None
+    );
+    assert!(model.pause_after_rating());
+    let armed_text = buffer_text(&render(&model, 72, 24));
+    assert!(armed_text.contains("[Esc] Cancel pause"));
+    assert!(armed_text.contains("[↑/↓] Scroll"));
+    assert!(!armed_text.contains("[P] Pause after decision"));
+
+    assert_eq!(
+        model.handle_event(key(KeyCode::Esc, KeyEventKind::Press)),
+        EvaluatorTuiAction::None
+    );
+    assert!(!model.pause_after_rating());
+    let disarmed_text = buffer_text(&render(&model, 72, 24));
+    assert!(disarmed_text.contains("[P] Pause after decision"));
+    assert!(!disarmed_text.contains("[Esc] Cancel pause"));
+
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('6'), KeyEventKind::Press)),
+        EvaluatorTuiAction::Submit {
+            decision: EvaluatorDecision::Rating(6),
+            pause_after: false,
+        }
+    );
+}
+
+#[test]
+fn carried_armed_pause_can_be_cancelled_before_the_decision() {
+    let mut model = EvaluatorTuiModel::rating_with_pause("A recovered note.", 21, 20, true);
+
+    assert_eq!(
+        model.handle_event(key(KeyCode::Esc, KeyEventKind::Press)),
+        EvaluatorTuiAction::None
+    );
+    assert!(!model.pause_after_rating());
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('5'), KeyEventKind::Press)),
+        EvaluatorTuiAction::Submit {
+            decision: EvaluatorDecision::Rating(5),
+            pause_after: false,
+        }
+    );
+}
+
+#[test]
 fn scrolling_changes_the_note_body_without_moving_the_controls() {
     let note = (0..80)
         .map(|line| format!("distinct note line {line:02}"))

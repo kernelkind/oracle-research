@@ -317,6 +317,7 @@ fn session_binding_records_the_exact_production_tui_protocol() {
                 "accepted_ratings": [1, 2, 3, 4, 5, 6, 7],
                 "wrong_language_key": "L",
                 "pause_after_decision_key": "P",
+                "pause_after_decision_cancel_key": "Escape",
                 "recovery_redisplay_key": "R",
                 "letter_keys_case_insensitive": true,
                 "rest_continue_keys": ["Enter", "Space", "C"],
@@ -350,6 +351,48 @@ fn session_binding_records_the_exact_production_tui_protocol() {
             .contains("append `q`"),
         "stale line-mode UI copy must not be persisted"
     );
+}
+
+#[test]
+fn schema_six_session_without_pause_cancel_is_rejected_by_version() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("schema-six-session.json");
+    let config = fixture.config(session_path.clone());
+    let mut first_oracle = FixtureOracle::new(fixture.event_ids.clone());
+
+    run_adaptive_learning(
+        &config,
+        &mut first_oracle,
+        Cursor::new(b""),
+        &mut Vec::new(),
+    )
+    .expect("create a current session");
+
+    let mut old_session = read_session(&session_path);
+    assert_eq!(old_session["schema_version"], 7);
+    old_session["schema_version"] = 6.into();
+    old_session["binding"]["fixed"]["evaluator_protocol"]["controls"]
+        .as_object_mut()
+        .expect("controls object")
+        .remove("pause_after_decision_cancel_key");
+    std::fs::write(
+        &session_path,
+        serde_json::to_vec_pretty(&old_session).expect("encode schema-six session"),
+    )
+    .expect("write schema-six session");
+
+    let mut resumed_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let error = run_adaptive_learning(
+        &config,
+        &mut resumed_oracle,
+        Cursor::new(b""),
+        &mut Vec::new(),
+    )
+    .err()
+    .expect("reject schema-six session");
+    assert!(error.to_string().contains("schema 6 does not match 7"));
+    assert_eq!(resumed_oracle.vector_lookups, 0);
+    assert_eq!(resumed_oracle.matrix_passes, 0);
 }
 
 #[test]
