@@ -8,13 +8,13 @@ pub const RATING_QUESTION: &str =
 
 /// The frozen, equally weighted meanings of the seven accepted ratings.
 pub const RATING_ANCHORS: [&str; 7] = [
-    "1: Actively wish it had not been shown.",
-    "2: Clearly not worth seeing.",
-    "3: Little personal value.",
-    "4: Indifferent.",
-    "5: Mildly glad to have seen it.",
-    "6: Clearly glad; personally valuable.",
-    "7: Exceptionally valuable.",
+    "[1] Strongly regret seeing it",
+    "[2] Regret seeing it",
+    "[3] Slightly regret seeing it",
+    "[4] Indifferent",
+    "[5] Slightly glad I saw it",
+    "[6] Glad I saw it",
+    "[7] Exceptionally glad I saw it",
 ];
 
 /// The frozen rule for removing a presented note from numeric evaluation.

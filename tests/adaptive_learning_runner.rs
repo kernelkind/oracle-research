@@ -27,13 +27,13 @@ const APPROVED_RATING_PROMPT: &str =
     "Considering the attention it required, how glad are you that you saw this note?";
 const APPROVED_INPUT_PROMPT: &str = "Considering the attention it required, how glad are you that you saw this note? [1–7, `l` = wrong_language; append `q` to save and stop]: ";
 const APPROVED_RATING_ANCHORS: [&str; 7] = [
-    "1: Actively wish it had not been shown.",
-    "2: Clearly not worth seeing.",
-    "3: Little personal value.",
-    "4: Indifferent.",
-    "5: Mildly glad to have seen it.",
-    "6: Clearly glad; personally valuable.",
-    "7: Exceptionally valuable.",
+    "[1] Strongly regret seeing it",
+    "[2] Regret seeing it",
+    "[3] Slightly regret seeing it",
+    "[4] Indifferent",
+    "[5] Slightly glad I saw it",
+    "[6] Glad I saw it",
+    "[7] Exceptionally glad I saw it",
 ];
 const APPROVED_LANGUAGE_RULE: &str = "Use wrong_language only when the note is clearly primarily non-English. Mixed-language, code-heavy, and ambiguous notes remain eligible and must be rated.";
 

@@ -11,13 +11,13 @@ use ratatui::style::{Color, Modifier};
 const EXPECTED_QUESTION: &str =
     "Considering the attention it required, how glad are you that you saw this note?";
 const EXPECTED_ANCHORS: [&str; 7] = [
-    "1: Actively wish it had not been shown.",
-    "2: Clearly not worth seeing.",
-    "3: Little personal value.",
-    "4: Indifferent.",
-    "5: Mildly glad to have seen it.",
-    "6: Clearly glad; personally valuable.",
-    "7: Exceptionally valuable.",
+    "[1] Strongly regret seeing it",
+    "[2] Regret seeing it",
+    "[3] Slightly regret seeing it",
+    "[4] Indifferent",
+    "[5] Slightly glad I saw it",
+    "[6] Glad I saw it",
+    "[7] Exceptionally glad I saw it",
 ];
 
 #[test]
@@ -39,7 +39,7 @@ fn rating_screen_keeps_the_frozen_protocol_visible_neutral_and_blinded() {
     }
 
     let anchor_styles =
-        ["1:", "2:", "3:", "4:", "5:", "6:", "7:"].map(|anchor| style_at(&buffer, anchor));
+        ["[1]", "[2]", "[3]", "[4]", "[5]", "[6]", "[7]"].map(|anchor| style_at(&buffer, anchor));
     assert!(
         anchor_styles.windows(2).all(|pair| pair[0] == pair[1]),
         "the rating scale must not visually favor an answer"
@@ -48,7 +48,7 @@ fn rating_screen_keeps_the_frozen_protocol_visible_neutral_and_blinded() {
     assert!(anchor_styles[0].add_modifier.contains(Modifier::BOLD));
     let anchor_descriptions = EXPECTED_ANCHORS.map(|anchor| {
         anchor
-            .split_once(": ")
+            .split_once("] ")
             .expect("every frozen anchor has a key and description")
             .1
     });

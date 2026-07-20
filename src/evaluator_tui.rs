@@ -482,9 +482,12 @@ fn render_rating(
     let anchors = RATING_ANCHORS
         .iter()
         .map(|anchor| {
-            let (key, description) = anchor.split_at(2);
+            let (key, description) = anchor
+                .split_once(' ')
+                .expect("a frozen rating anchor has a key and description");
             Line::from(vec![
                 Span::styled(key, accent_style()),
+                Span::raw(" "),
                 Span::raw(description),
             ])
         })
