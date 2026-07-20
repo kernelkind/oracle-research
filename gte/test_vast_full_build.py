@@ -5,6 +5,7 @@ import os
 import fcntl
 import pty
 import select
+import shlex
 import signal
 import shutil
 import subprocess
@@ -228,59 +229,6 @@ if tool == "vastai":
             emit({"success": True})
     elif args and args[0] == "ssh-url":
         print("root@fake.example -p 2222")
-    elif args and args[0] == "copy":
-        state["copy_calls"] += 1
-        if args[1].startswith("local:") and "/transport/" in args[1]:
-            state["transport_copy_calls"] += 1
-            state["remote_transport_complete"] = not (
-                state.get("simulate_incomplete_transport_once")
-                and state["transport_copy_calls"] == 1
-            )
-            write_state(state)
-        if (
-            args[1].startswith("C.900000024:")
-            and "/preparation-attempts/" in args[1]
-        ):
-            state["preparation_evidence_copy_calls"] += 1
-            raw_destination = args[2]
-            if raw_destination.startswith("local:"):
-                raw_destination = raw_destination[len("local:"):]
-            destination = Path(raw_destination) / "001"
-            destination.mkdir(parents=True, exist_ok=True)
-            (destination / "preparation.log").write_text(
-                "fixture model preparation failed\n", encoding="utf-8"
-            )
-            (destination / "preparation.exit").write_text(
-                "75\n", encoding="utf-8"
-            )
-            if state.get("fail_preparation_evidence_copy"):
-                write_state(state)
-                print("preparation evidence copy interrupted", file=sys.stderr)
-                raise SystemExit(75)
-        elif args[1].startswith("C.900000024:"):
-            raw_destination = args[2]
-            if raw_destination.startswith("local:"):
-                raw_destination = raw_destination[len("local:"):]
-            destination = Path(raw_destination)
-            destination.mkdir(parents=True, exist_ok=True)
-            payload = b"complete vectors\n"
-            if state.get("retrieval_mode") == "corrupt":
-                payload = b"corrupt vectors\n"
-            (destination / "result.bin").write_bytes(payload)
-            attempt = destination / "full-build-attempts/001"
-            attempt.mkdir(parents=True, exist_ok=True)
-            terminal_kind = state.get("remote_terminal_kind", "full-build.exit")
-            terminal_status = 0 if terminal_kind == "full-build.exit" else 74
-            (attempt / terminal_kind).write_text(
-                f"{terminal_status}\n", encoding="utf-8"
-            )
-            (destination / "budget-ledger.json").write_bytes(
-                (root / "launch/reserved-budget-ledger.json").read_bytes()
-            )
-        write_state(state)
-        if args[1].startswith("C.900000024:"):
-            crash_parent_once(state, "crash_after_retrieval_copy")
-        emit({"success": True})
     elif args[:2] == ["destroy", "instance"]:
         if not (
             (root / "launch/retrieval-verification.json").is_file()
@@ -385,6 +333,19 @@ if tool == "uvx":
 if tool == "docker":
     if args[:2] == ["image", "inspect"]:
         print("fixture-image-source-commit")
+        raise SystemExit(0)
+    if (
+        args[:4] == ["run", "--rm", "--network", "none"]
+        and "--entrypoint" in args
+        and args[args.index("--entrypoint") + 1] == "/usr/bin/rsync"
+        and args[-1] == "--version"
+    ):
+        state["image_rsync_checks"] += 1
+        write_state(state)
+        if not state.get("image_rsync_available", True):
+            print("/usr/bin/rsync: not found", file=sys.stderr)
+            raise SystemExit(127)
+        print("rsync  version 3.2.7  protocol version 31")
         raise SystemExit(0)
     joined = " ".join(args)
     if "describe-representation" in args:
@@ -525,12 +486,82 @@ if tool == "ssh-keygen":
     )
     raise SystemExit(0)
 
+if tool == "rsync":
+    if args == ["--version"]:
+        state["local_rsync_checks"] += 1
+        write_state(state)
+        if not state.get("local_rsync_available", True):
+            print("rsync: not found", file=sys.stderr)
+            raise SystemExit(127)
+        print("rsync  version 3.2.7  protocol version 31")
+        raise SystemExit(0)
+    source = args[-2]
+    destination = args[-1]
+    state["copy_calls"] += 1
+    if source == str(root / "transport") + "/":
+        state["transport_copy_calls"] += 1
+        state["remote_transport_complete"] = not (
+            state.get("simulate_incomplete_transport_once")
+            and state["transport_copy_calls"] == 1
+        )
+        if state.get("fail_transport_rsync"):
+            write_state(state)
+            print("transport rsync interrupted", file=sys.stderr)
+            raise SystemExit(75)
+    elif source.endswith(":/workspace/oracle-full-build/preparation-attempts/"):
+        state["preparation_evidence_copy_calls"] += 1
+        local_destination = Path(destination.rstrip("/")) / "001"
+        local_destination.mkdir(parents=True, exist_ok=True)
+        failed = state.get("remote_prepare_mode") == "failed"
+        log = (
+            "fixture model preparation failed\n"
+            if failed
+            else "fixture model preparation complete\n"
+        )
+        (local_destination / "preparation.log").write_text(log, encoding="utf-8")
+        (local_destination / "preparation.exit").write_text(
+            "75\n" if failed else "0\n", encoding="utf-8"
+        )
+        write_state(state)
+        if state.get("fail_preparation_evidence_copy"):
+            print("preparation evidence copy interrupted", file=sys.stderr)
+            raise SystemExit(75)
+    elif source.endswith(":/workspace/oracle-full-build/work/"):
+        local_destination = Path(destination.rstrip("/"))
+        local_destination.mkdir(parents=True, exist_ok=True)
+        payload = b"complete vectors\n"
+        if state.get("retrieval_mode") == "corrupt":
+            payload = b"corrupt vectors\n"
+        (local_destination / "result.bin").write_bytes(payload)
+        attempt = local_destination / "full-build-attempts/001"
+        attempt.mkdir(parents=True, exist_ok=True)
+        terminal_kind = state.get("remote_terminal_kind", "full-build.exit")
+        terminal_status = 0 if terminal_kind == "full-build.exit" else 74
+        (attempt / terminal_kind).write_text(
+            f"{terminal_status}\n", encoding="utf-8"
+        )
+        (local_destination / "budget-ledger.json").write_bytes(
+            (root / "launch/reserved-budget-ledger.json").read_bytes()
+        )
+        write_state(state)
+        crash_parent_once(state, "crash_after_retrieval_copy")
+    write_state(state)
+    emit({"success": True})
+    raise SystemExit(0)
+
 if tool == "ssh":
     joined = " ".join(args)
     if state.get("fail_all_ssh"):
         print("ssh unavailable", file=sys.stderr)
         raise SystemExit(75)
-    if "_remote-verify-transfer" in joined:
+    if "/usr/bin/rsync --version" in joined:
+        state["remote_rsync_checks"] += 1
+        write_state(state)
+        if not state.get("remote_rsync_available", True):
+            print("/usr/bin/rsync: not found", file=sys.stderr)
+            raise SystemExit(127)
+        print("rsync  version 3.2.7  protocol version 31")
+    elif "_remote-verify-transfer" in joined:
         state["remote_verification_calls"] += 1
         verified = state.get("remote_transport_complete", False)
         if not verified:
@@ -599,6 +630,10 @@ if tool == "ssh":
             ),
             "budget-ledger.json": (root / "launch/reserved-budget-ledger.json").read_bytes(),
         }
+        preparation_payloads = {
+            "001/preparation.log": b"fixture model preparation complete\n",
+            "001/preparation.exit": b"0\n",
+        }
         emit({
             "terminal": True,
             "terminal_record": {
@@ -612,6 +647,14 @@ if tool == "ssh":
                     "sha256": hashlib.sha256(payload).hexdigest(),
                 }
                 for path, payload in payloads.items()
+            ],
+            "preparation_files": [
+                {
+                    "path": path,
+                    "bytes": len(payload),
+                    "sha256": hashlib.sha256(payload).hexdigest(),
+                }
+                for path, payload in preparation_payloads.items()
             ],
         })
     elif "_remote-stop" in joined:
@@ -672,6 +715,9 @@ class VastFullBuildCliTest(unittest.TestCase):
                 "copy_calls": 0,
                 "transport_copy_calls": 0,
                 "preparation_evidence_copy_calls": 0,
+                "local_rsync_checks": 0,
+                "image_rsync_checks": 0,
+                "remote_rsync_checks": 0,
                 "destroy_request_calls": 0,
                 "destroy_calls": 0,
                 "invoice_calls": 0,
@@ -697,6 +743,7 @@ class VastFullBuildCliTest(unittest.TestCase):
         fake.chmod(0o755)
         for name in (
             "docker",
+            "rsync",
             "vastai",
             "uvx",
             "ssh",
@@ -1176,6 +1223,29 @@ class VastFullBuildCliTest(unittest.TestCase):
         self.assertEqual(self.ledger.read_bytes(), ledger_before)
         self.assert_no_paid_call(self.calls())
 
+    def test_prepare_refuses_missing_local_rsync_before_provider_use(self):
+        self.set_provider(local_rsync_available=False)
+        rejected = self.invoke("prepare")
+        self.assertNotEqual(rejected.returncode, 0)
+        self.assertIn("rsync", rejected.stderr.lower())
+        self.assertEqual(self.provider()["local_rsync_checks"], 1)
+        self.assertFalse(
+            any(call["tool"] == "vastai" for call in self.calls()),
+            self.calls(),
+        )
+
+    def test_prepare_refuses_image_without_rsync_before_provider_use(self):
+        self.set_provider(image_rsync_available=False)
+        rejected = self.invoke("prepare")
+        self.assertNotEqual(rejected.returncode, 0)
+        self.assertIn("rsync", rejected.stderr.lower())
+        self.assertEqual(self.provider()["image_rsync_checks"], 1)
+        self.assertEqual(self.provider()["local_rsync_checks"], 0)
+        self.assertFalse(
+            any(call["tool"] == "vastai" for call in self.calls()),
+            self.calls(),
+        )
+
     def test_public_ledger_override_is_rejected_before_any_mutation(self):
         identical_copy = self.base / "byte-identical-budget-ledger.json"
         shutil.copy2(self.ledger, identical_copy)
@@ -1440,6 +1510,7 @@ class VastFullBuildCliTest(unittest.TestCase):
         self.assertTrue(ssh_calls)
         required_options = (
             "BatchMode=yes",
+            "IdentitiesOnly=yes",
             "ConnectTimeout=15",
             "ConnectionAttempts=2",
             "ServerAliveInterval=15",
@@ -1940,7 +2011,73 @@ class VastFullBuildCliTest(unittest.TestCase):
         self.assertEqual(state["settle_calls"], 1)
         self.assertTrue((self.root / "result").is_dir())
         self.assertFalse((self.root / "result.next").exists())
+        self.assertEqual(
+            (
+                self.root
+                / "result/audit/preparation-attempts/001/preparation.exit"
+            ).read_text(encoding="utf-8"),
+            "0\n",
+        )
         self.assertNotEqual(self.ledger.read_bytes(), ledger_before)
+
+        remote_shell = shlex.join(
+            [
+                "ssh",
+                "-i",
+                str(self.root / "launch/ssh/id_ed25519"),
+                "-o",
+                "BatchMode=yes",
+                "-o",
+                "IdentitiesOnly=yes",
+                "-o",
+                "ConnectTimeout=15",
+                "-o",
+                "ConnectionAttempts=2",
+                "-o",
+                "ServerAliveInterval=15",
+                "-o",
+                "ServerAliveCountMax=3",
+                "-o",
+                "StrictHostKeyChecking=accept-new",
+                "-o",
+                f"UserKnownHostsFile={self.root / 'launch/ssh/known_hosts'}",
+                "-p",
+                "2222",
+            ]
+        )
+        common = [
+            "--archive",
+            "--no-owner",
+            "--no-group",
+            "--partial",
+            "--delete",
+            "--timeout=60",
+            "--rsync-path=/usr/bin/rsync",
+            "--rsh",
+            remote_shell,
+        ]
+        downloads = [
+            call["argv"]
+            for call in self.calls()
+            if call["tool"] == "rsync"
+            and len(call["argv"]) >= 2
+            and call["argv"][-2].startswith("root@fake.example:")
+        ]
+        self.assertCountEqual(
+            downloads,
+            [
+                [
+                    *common,
+                    "root@fake.example:/workspace/oracle-full-build/work/",
+                    f"{self.root / 'result.next/work'}/",
+                ],
+                [
+                    *common,
+                    "root@fake.example:/workspace/oracle-full-build/preparation-attempts/",
+                    f"{self.root / 'result.next/audit/preparation-attempts'}/",
+                ],
+            ],
+        )
 
         commands = [f'{call["tool"]} {" ".join(call["argv"])}' for call in self.calls()]
         destroy_index = next(index for index, value in enumerate(commands) if "destroy instance" in value)
@@ -2380,13 +2517,13 @@ exit_path.write_text("143\\n", encoding="utf-8")
         running = self.invoke("run")
         self.assertEqual(running.returncode, 0, running.stderr)
         self.assertEqual(self.output_json(running)["state"], "running")
-        transport_source = f"local:{self.root / 'transport'}/"
+        transport_source = f"{self.root / 'transport'}/"
         transport_copies = [
             call
             for call in self.calls()
-            if call["tool"] == "vastai"
-            and call["argv"][:1] == ["copy"]
-            and call["argv"][1] == transport_source
+            if call["tool"] == "rsync"
+            and len(call["argv"]) >= 2
+            and call["argv"][-2] == transport_source
         ]
         self.assertEqual(len(transport_copies), 1, transport_copies)
         remote_prepare_calls = self.provider()["remote_prepare_calls"]
@@ -2408,13 +2545,119 @@ exit_path.write_text("143\\n", encoding="utf-8")
                 [
                     call
                     for call in self.calls()
-                    if call["tool"] == "vastai"
-                    and call["argv"][:1] == ["copy"]
-                    and call["argv"][1] == transport_source
+                    if call["tool"] == "rsync"
+                    and len(call["argv"]) >= 2
+                    and call["argv"][-2] == transport_source
                 ]
             ),
             1,
         )
+
+    def test_initial_upload_uses_direct_rsync_instead_of_vast_copy(self):
+        prepared = self.prepare()
+        started = self.invoke_with_tty_secret(
+            "run", "--approve", prepared["approval_sha256"]
+        )
+        self.assertEqual(started.returncode, 0, started.stderr)
+
+        calls = self.calls()
+        self.assertFalse(
+            any(
+                call["tool"] == "vastai" and call["argv"][:1] == ["copy"]
+                for call in calls
+            ),
+            calls,
+        )
+        self.assertTrue(
+            any(call["tool"] == "rsync" for call in calls),
+            calls,
+        )
+        rsync_calls = [
+            call for call in calls
+            if call["tool"] == "rsync" and call["argv"] != ["--version"]
+        ]
+        self.assertEqual(len(rsync_calls), 2, rsync_calls)
+        expected_sources = {
+            f"{self.root / 'transport'}/",
+            f"{self.root / 'launch/remote'}/",
+        }
+        expected_destinations = {
+            "root@fake.example:/workspace/oracle-full-build/transport/",
+            "root@fake.example:/workspace/oracle-full-build/launch/",
+        }
+        self.assertEqual(
+            {call["argv"][-2] for call in rsync_calls}, expected_sources
+        )
+        self.assertEqual(
+            {call["argv"][-1] for call in rsync_calls}, expected_destinations
+        )
+        for call in rsync_calls:
+            arguments = call["argv"]
+            for option in (
+                "--archive",
+                "--no-owner",
+                "--no-group",
+                "--partial",
+                "--delete",
+                "--timeout=60",
+                "--rsync-path=/usr/bin/rsync",
+            ):
+                self.assertIn(option, arguments)
+            remote_shell = arguments[arguments.index("--rsh") + 1]
+            for option in (
+                "BatchMode=yes",
+                "IdentitiesOnly=yes",
+                "ConnectTimeout=15",
+                "ConnectionAttempts=2",
+                "ServerAliveInterval=15",
+                "ServerAliveCountMax=3",
+                "StrictHostKeyChecking=accept-new",
+                "UserKnownHostsFile=",
+                "-p 2222",
+            ):
+                self.assertIn(option, remote_shell)
+        mkdir_commands = [
+            call for call in calls
+            if call["tool"] == "ssh" and "mkdir" in call["argv"]
+        ]
+        self.assertEqual(len(mkdir_commands), 2, mkdir_commands)
+        self.assertEqual(
+            {call["argv"][-1] for call in mkdir_commands},
+            {
+                "/workspace/oracle-full-build/transport",
+                "/workspace/oracle-full-build/launch",
+            },
+        )
+
+    def test_failed_rsync_never_advances_to_remote_verification_or_worker(self):
+        prepared = self.prepare()
+        self.set_provider(fail_transport_rsync=True)
+        waiting = self.invoke_with_tty_secret(
+            "run", "--approve", prepared["approval_sha256"]
+        )
+        self.assertEqual(waiting.returncode, 0, waiting.stderr)
+        self.assertEqual(self.output_json(waiting)["state"], "preparing")
+        state = self.provider()
+        self.assertEqual(state["transport_copy_calls"], 2)
+        self.assertEqual(state["remote_verification_calls"], 0)
+        self.assertEqual(state["worker_start_calls"], 0)
+
+    def test_missing_remote_rsync_never_starts_transfer_or_worker(self):
+        prepared = self.prepare()
+        self.set_provider(remote_rsync_available=False)
+        rejected = self.invoke_with_tty_secret(
+            "run", "--approve", prepared["approval_sha256"]
+        )
+        self.assertEqual(rejected.returncode, 0, rejected.stderr)
+        self.assertEqual(self.output_json(rejected)["state"], "settled")
+        state = self.provider()
+        self.assertEqual(state["remote_rsync_checks"], 1)
+        self.assertEqual(state["copy_calls"], 0)
+        self.assertEqual(state["remote_verification_calls"], 0)
+        self.assertEqual(state["worker_start_calls"], 0)
+        self.assertEqual(state["destroy_calls"], 1)
+        self.assertEqual(state["instances"], [])
+        self.assert_one_finalized_paid_run("failed_full_build_settlement")
 
     def test_unstarted_unresolved_worker_refreshes_cost_before_any_retry(self):
         prepared = self.prepare()
@@ -2809,9 +3052,9 @@ exit_path.write_text("143\\n", encoding="utf-8")
         evidence_copies = [
             index
             for index, call in enumerate(commands)
-            if call["tool"] == "vastai"
-            and call["argv"][:1] == ["copy"]
-            and "/preparation-attempts/" in call["argv"][1]
+            if call["tool"] == "rsync"
+            and len(call["argv"]) >= 2
+            and "/preparation-attempts/" in call["argv"][-2]
         ]
         self.assertEqual(len(evidence_copies), 2, evidence_copies)
         destroy = next(
@@ -2851,9 +3094,9 @@ exit_path.write_text("143\\n", encoding="utf-8")
         evidence_copy = next(
             index
             for index, call in enumerate(commands)
-            if call["tool"] == "vastai"
-            and call["argv"][:1] == ["copy"]
-            and "/preparation-attempts/" in call["argv"][1]
+            if call["tool"] == "rsync"
+            and len(call["argv"]) >= 2
+            and "/preparation-attempts/" in call["argv"][-2]
         )
         destroy = next(
             index

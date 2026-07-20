@@ -621,6 +621,19 @@ def verify_image(context: Context) -> None:
     revision = result.stdout.decode("utf-8", errors="strict").strip()
     if revision != required_string(context.pins, "image_source_commit"):
         raise OperationError("local image does not match its frozen source commit")
+    completed_process(
+        [
+            "docker",
+            "run",
+            "--rm",
+            "--network",
+            "none",
+            "--entrypoint",
+            "/usr/bin/rsync",
+            context.image,
+            "--version",
+        ]
+    )
 
 
 def ensure_retrieval_destination(context: Context) -> None:
@@ -1295,11 +1308,20 @@ def ssh_arguments(
     context: Context, private_key: Path, target: list[str]
 ) -> list[str]:
     return [
+        *ssh_options(context, private_key),
+        *target,
+    ]
+
+
+def ssh_options(context: Context, private_key: Path) -> list[str]:
+    return [
         "ssh",
         "-i",
         str(private_key),
         "-o",
         "BatchMode=yes",
+        "-o",
+        "IdentitiesOnly=yes",
         "-o",
         "ConnectTimeout=15",
         "-o",
@@ -1312,8 +1334,99 @@ def ssh_arguments(
         "StrictHostKeyChecking=accept-new",
         "-o",
         f"UserKnownHostsFile={context.path('launch/ssh/known_hosts')}",
-        *target,
     ]
+
+
+def rsync_ssh_transport(
+    context: Context, private_key: Path, target: list[str]
+) -> tuple[str, str]:
+    if len(target) == 3:
+        port_flag, port, host = target
+        if port_flag != "-p":
+            raise OperationError("Vast SSH target has no usable rsync port")
+    elif len(target) == 1:
+        try:
+            parsed = urllib.parse.urlparse(target[0])
+            hostname = parsed.hostname
+            port = parsed.port
+            username = parsed.username
+        except ValueError as error:
+            raise OperationError("Vast SSH target is invalid for rsync") from error
+        if hostname is None or port is None or username != "root":
+            raise OperationError("Vast SSH target is invalid for rsync")
+        if ":" in hostname:
+            hostname = f"[{hostname}]"
+        host = f"{username}@{hostname}"
+    else:
+        raise OperationError("Vast SSH target is invalid for rsync")
+    command = shlex.join([*ssh_options(context, private_key), "-p", str(port)])
+    return command, host
+
+
+def rsync_upload_directory(
+    context: Context,
+    private_key: Path,
+    target: list[str],
+    source: Path,
+    remote_directory: str,
+) -> None:
+    if not source.is_dir() or not remote_directory.startswith("/"):
+        raise OperationError("rsync upload directories are invalid")
+    remote_shell, host = rsync_ssh_transport(context, private_key, target)
+    completed_process(
+        [
+            *ssh_arguments(context, private_key, target),
+            "mkdir",
+            "-p",
+            "--",
+            remote_directory.rstrip("/"),
+        ]
+    )
+    completed_process(
+        [
+            "rsync",
+            "--archive",
+            "--no-owner",
+            "--no-group",
+            "--partial",
+            "--delete",
+            "--timeout=60",
+            "--rsync-path=/usr/bin/rsync",
+            "--rsh",
+            remote_shell,
+            f"{source}/",
+            f"{host}:{remote_directory.rstrip('/')}/",
+        ]
+    )
+
+
+def rsync_download_directory(
+    context: Context,
+    private_key: Path,
+    target: list[str],
+    remote_directory: str,
+    destination: Path,
+) -> None:
+    if not remote_directory.startswith("/"):
+        raise OperationError("rsync download directory is invalid")
+    destination.mkdir(parents=True, exist_ok=True, mode=0o700)
+    remote_shell, host = rsync_ssh_transport(context, private_key, target)
+    completed_process(
+        [
+            "rsync",
+            "--archive",
+            "--no-owner",
+            "--no-group",
+            "--partial",
+            "--delete",
+            "--timeout=60",
+            "--rsync-path=/usr/bin/rsync",
+            "--rsh",
+            remote_shell,
+            f"{host}:{remote_directory.rstrip('/')}/",
+            f"{destination}/",
+        ]
+    )
 
 
 def ensure_ssh(context: Context, instance_id: str) -> tuple[Path, list[str]]:
@@ -1485,6 +1598,7 @@ def retrieve_preparation_failure(
     context: Context,
     instance_id: str,
     private_key: Path,
+    target: list[str],
     response: dict[str, object],
 ) -> None:
     receipt = context.path("launch/preparation-failure-retrieval.json")
@@ -1501,15 +1615,12 @@ def retrieve_preparation_failure(
             shutil.rmtree(staging)
         staging.mkdir(parents=True, exist_ok=True, mode=0o700)
         try:
-            completed_process(
-                [
-                    "vastai",
-                    "copy",
-                    f"C.{instance_id}:/workspace/oracle-full-build/preparation-attempts/",
-                    f"local:{staging}/",
-                    "-i",
-                    str(private_key),
-                ]
+            rsync_download_directory(
+                context,
+                private_key,
+                target,
+                "/workspace/oracle-full-build/preparation-attempts/",
+                staging,
             )
             records = response.get("evidence_files")
             if records is not None:
@@ -1585,29 +1696,30 @@ def ensure_remote_prepared(
         ):
             raise OperationError("remote transfer receipt is invalid")
     else:
+        completed_process(
+            [
+                *ssh_arguments(context, private_key, target),
+                "/usr/bin/rsync",
+                "--version",
+            ]
+        )
         verify_reviewed_artifacts(context)
         transfer: object = None
         for copy_attempt in range(2):
             try:
-                completed_process(
-                    [
-                        "vastai",
-                        "copy",
-                        f"local:{context.path('transport')}/",
-                        f"C.{instance_id}:/workspace/oracle-full-build/transport/",
-                        "-i",
-                        str(private_key),
-                    ]
+                rsync_upload_directory(
+                    context,
+                    private_key,
+                    target,
+                    context.path("transport"),
+                    "/workspace/oracle-full-build/transport/",
                 )
-                completed_process(
-                    [
-                        "vastai",
-                        "copy",
-                        f"local:{remote_receipts}/",
-                        f"C.{instance_id}:/workspace/oracle-full-build/launch/",
-                        "-i",
-                        str(private_key),
-                    ]
+                rsync_upload_directory(
+                    context,
+                    private_key,
+                    target,
+                    remote_receipts,
+                    "/workspace/oracle-full-build/launch/",
                 )
                 transfer = remote_json(
                     context, private_key, target, "_remote-verify-transfer"
@@ -1647,7 +1759,7 @@ def ensure_remote_prepared(
             break
         if isinstance(response, dict) and response.get("state") == "failed":
             retrieve_preparation_failure(
-                context, instance_id, private_key, response
+                context, instance_id, private_key, target, response
             )
             raise RemotePreparationFailed("remote preparation failed")
         if interval:
@@ -2844,29 +2956,23 @@ def ensure_retrieved(
     destination = context.path("result.next")
     if not destination.is_dir():
         raise OperationError("result.next is missing before retrieval")
-    completed_process(
-        [
-            "vastai",
-            "copy",
-            f"C.{instance_id}:/workspace/oracle-full-build/work/",
-            f"local:{destination / 'work'}/",
-            "-i",
-            str(private_key),
-        ]
+    rsync_download_directory(
+        context,
+        private_key,
+        target,
+        "/workspace/oracle-full-build/work/",
+        destination / "work",
     )
     verified_work = validate_file_records(destination / "work", work_records)
     verified_preparation: list[dict[str, object]] = []
     if preparation_records is not None:
         preparation_destination = destination / "audit/preparation-attempts"
-        completed_process(
-            [
-                "vastai",
-                "copy",
-                f"C.{instance_id}:/workspace/oracle-full-build/preparation-attempts/",
-                f"local:{preparation_destination}/",
-                "-i",
-                str(private_key),
-            ]
+        rsync_download_directory(
+            context,
+            private_key,
+            target,
+            "/workspace/oracle-full-build/preparation-attempts/",
+            preparation_destination,
         )
         verified_preparation = validate_file_records(
             preparation_destination, preparation_records
@@ -4082,6 +4188,7 @@ def prepare(context: Context) -> dict[str, object]:
     with operation_lock(context.root):
         verify_reviewed_artifacts(context)
         verify_image(context)
+        completed_process(["rsync", "--version"])
         ledger_sha256 = verify_baseline_ledgers(context)
         descriptor = context.controller(
             "execution",

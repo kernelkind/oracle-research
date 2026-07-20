@@ -16,6 +16,10 @@ ARG ORACLE_MVP_SOURCE_COMMIT
 RUN test -n "$ORACLE_MVP_SOURCE_COMMIT"
 LABEL org.opencontainers.image.revision="$ORACLE_MVP_SOURCE_COMMIT"
 
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends rsync \
+    && rm -rf /var/lib/apt/lists/*
+
 ENV CUBLAS_WORKSPACE_CONFIG=:4096:8 \
     HF_HUB_DISABLE_TELEMETRY=1 \
     HF_HUB_OFFLINE=1 \
