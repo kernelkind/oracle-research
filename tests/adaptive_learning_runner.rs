@@ -19,6 +19,91 @@ use oracle_mvp::snapshot::{Error as SnapshotError, Result as SnapshotResult};
 
 const VERSION: &str = "runner-representation-v1";
 
+const APPROVED_RATING_PROMPT: &str =
+    "Considering the attention it required, how glad are you that you saw this note?";
+const APPROVED_INPUT_PROMPT: &str = "Considering the attention it required, how glad are you that you saw this note? [1–7, `l` = wrong_language; append `q` to save and stop]: ";
+const APPROVED_RATING_ANCHORS: [&str; 7] = [
+    "1: Actively wish it had not been shown.",
+    "2: Clearly not worth seeing.",
+    "3: Little personal value.",
+    "4: Indifferent.",
+    "5: Mildly glad to have seen it.",
+    "6: Clearly glad; personally valuable.",
+    "7: Exceptionally valuable.",
+];
+const APPROVED_LANGUAGE_RULE: &str = "Use wrong_language only when the note is clearly primarily non-English. Mixed-language, code-heavy, and ambiguous notes remain eligible and must be rated.";
+
+#[test]
+fn terminal_and_session_binding_use_the_exact_frozen_evaluator_protocol() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("evaluator-protocol-session.json");
+    let config = fixture.config(session_path.clone());
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut output = Vec::new();
+
+    let outcome = run_adaptive_learning(&config, &mut oracle, Cursor::new(b""), &mut output)
+        .expect("pause at the first evaluator prompt");
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+    let transcript = String::from_utf8(output).expect("UTF-8 transcript");
+    assert!(transcript.contains(APPROVED_RATING_PROMPT));
+    for anchor in APPROVED_RATING_ANCHORS {
+        assert!(transcript.contains(anchor), "missing anchor `{anchor}`");
+    }
+    assert!(transcript.contains(APPROVED_LANGUAGE_RULE));
+    assert!(!transcript.contains("extremely sorry you saw it"));
+
+    let session = read_session(&session_path);
+    assert_eq!(
+        session["binding"]["fixed"]["rating_prompt"],
+        APPROVED_INPUT_PROMPT
+    );
+    assert_eq!(
+        session["binding"]["fixed"]["rating_instructions"],
+        format!(
+            "{}\n{}\n",
+            APPROVED_RATING_ANCHORS.join("\n"),
+            APPROVED_LANGUAGE_RULE
+        )
+    );
+}
+
+#[test]
+fn resume_rejects_a_changed_evaluator_protocol_before_oracle_work() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("changed-protocol-session.json");
+    let config = fixture.config(session_path.clone());
+    let mut first_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    run_adaptive_learning(
+        &config,
+        &mut first_oracle,
+        Cursor::new(b""),
+        &mut Vec::new(),
+    )
+    .expect("create bound evaluator session");
+
+    let mut changed = read_session(&session_path);
+    changed["binding"]["fixed"]["rating_prompt"] =
+        serde_json::json!("a different evaluator question");
+    std::fs::write(
+        &session_path,
+        serde_json::to_vec_pretty(&changed).expect("encode changed session"),
+    )
+    .expect("write changed session");
+
+    let mut resumed_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let error = run_adaptive_learning(
+        &config,
+        &mut resumed_oracle,
+        Cursor::new(b""),
+        &mut Vec::new(),
+    )
+    .err()
+    .expect("reject changed evaluator protocol");
+    assert!(error.to_string().contains("immutable configuration"));
+    assert_eq!(resumed_oracle.vector_lookups, 0);
+    assert_eq!(resumed_oracle.matrix_passes, 0);
+}
+
 #[test]
 fn accepted_rating_is_staged_and_resume_continues_at_the_next_event() {
     let fixture = RunnerFixture::new();

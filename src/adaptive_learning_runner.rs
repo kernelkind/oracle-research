@@ -31,13 +31,12 @@ use crate::snapshot::{
     Error, Result, Validation, io_error, ndb_error, open_existing_ndb, read_manifest,
 };
 
-const SESSION_SCHEMA_VERSION: u32 = 1;
+const SESSION_SCHEMA_VERSION: u32 = 2;
 const ORACLE_RESPONSE_CONTRACT: &str = "candidate-order-oracle-v1";
 const SHUFFLE_POLICY: &str = "phase3-learning-sha256-concealed-v1";
 const SCORER_POLICY: &str = "compact-rbf-forward-only-h64-h256-fallback-v2";
-const RATING_POLICY: &str = "attention-adjusted-gladness-1-to-7-v1";
-const RATING_INSTRUCTIONS: &str = "Use the same attention-adjusted scale for every note: 1 = extremely sorry you saw it; 2 = sorry; 3 = slightly sorry; 4 = neither glad nor sorry; 5 = slightly glad; 6 = glad; 7 = extremely glad.\n";
-const RATING_PROMPT: &str = "Considering the attention it required, how glad are you that you saw this note? [1–7, `l` = wrong language; append `q` to save and stop]: ";
+const RATING_INSTRUCTIONS: &str = "1: Actively wish it had not been shown.\n2: Clearly not worth seeing.\n3: Little personal value.\n4: Indifferent.\n5: Mildly glad to have seen it.\n6: Clearly glad; personally valuable.\n7: Exceptionally valuable.\nUse wrong_language only when the note is clearly primarily non-English. Mixed-language, code-heavy, and ambiguous notes remain eligible and must be rated.\n";
+const RATING_PROMPT: &str = "Considering the attention it required, how glad are you that you saw this note? [1–7, `l` = wrong_language; append `q` to save and stop]: ";
 
 /// One verified positive note used to initialize both personalizers.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -104,7 +103,8 @@ struct StaticSessionBinding {
     b16_bits: u64,
     seeds: Vec<PersistedSeed>,
     scorer_policy: String,
-    rating_policy: String,
+    rating_prompt: String,
+    rating_instructions: String,
     shuffle_policy: String,
     candidate_depth: usize,
     learning_rounds: usize,
@@ -650,7 +650,8 @@ fn validate_config<O: CandidateOrderOracle>(
             })
             .collect(),
         scorer_policy: SCORER_POLICY.to_owned(),
-        rating_policy: RATING_POLICY.to_owned(),
+        rating_prompt: RATING_PROMPT.to_owned(),
+        rating_instructions: RATING_INSTRUCTIONS.to_owned(),
         shuffle_policy: SHUFFLE_POLICY.to_owned(),
         candidate_depth: CANDIDATE_DEPTH,
         learning_rounds: LEARNING_ROUNDS,
