@@ -64,7 +64,7 @@ pub enum PersonalizerLearningError {
     MissingRating { event_id: EventId },
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Serialize)]
 pub struct GladnessRating(u8);
 
 impl GladnessRating {
@@ -187,7 +187,7 @@ impl CandidateBatch {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Serialize)]
 pub struct BatchRating {
     event_id: EventId,
     rating: GladnessRating,
@@ -210,7 +210,8 @@ impl BatchRating {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, serde::Serialize)]
+#[serde(rename_all = "snake_case")]
 pub enum ScaleLevel {
     Mass16,
     Mass64,
@@ -307,7 +308,7 @@ impl RbfLearningSettings {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize)]
 pub struct CompactTuple {
     scale_level: ScaleLevel,
     parameters: CompactParameters,
@@ -335,7 +336,7 @@ impl CompactTuple {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize)]
 pub struct RbfTuple {
     scale_level: ScaleLevel,
     parameters: RbfKernelRidgeParameters,
@@ -359,7 +360,7 @@ impl RbfTuple {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, serde::Serialize)]
 pub struct EvidenceIdentity {
     representation_version: String,
     event_count: usize,
@@ -385,7 +386,7 @@ impl EvidenceIdentity {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct RatedOutcome {
     event_id: EventId,
     rating: GladnessRating,
@@ -406,7 +407,7 @@ impl RatedOutcome {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct CompactTuplePredictions {
     parameter_tuple: CompactTuple,
     scores: Vec<f64>,
@@ -422,7 +423,7 @@ impl CompactTuplePredictions {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct RbfTuplePredictions {
     parameter_tuple: RbfTuple,
     scores: Vec<RbfKernelRidgeScore>,
@@ -438,7 +439,7 @@ impl RbfTuplePredictions {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct CompactFrozenBatch {
     round: usize,
     evidence_identity: EvidenceIdentity,
@@ -469,7 +470,7 @@ impl CompactFrozenBatch {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct RbfFrozenBatch {
     round: usize,
     evidence_identity: EvidenceIdentity,
@@ -500,7 +501,7 @@ impl RbfFrozenBatch {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize)]
 pub struct CompactTupleError {
     parameter_tuple: CompactTuple,
     batch_mse: f64,
@@ -521,7 +522,7 @@ impl CompactTupleError {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize)]
 pub struct RbfTupleError {
     parameter_tuple: RbfTuple,
     batch_mse: f64,

@@ -70,7 +70,8 @@ pub enum SharedLearningRoundError {
     InternalInvariant(String),
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
+#[serde(rename_all = "snake_case", tag = "kind")]
 pub enum SharedLearningAuditEvent {
     BatchesFrozen {
         round: usize,

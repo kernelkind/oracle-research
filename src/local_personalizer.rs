@@ -58,13 +58,14 @@ impl RatedVector {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Serialize)]
+#[serde(rename_all = "snake_case", tag = "kind", content = "count")]
 pub enum CompactNeighborCount {
     Finite(usize),
     Infinite,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize)]
 pub struct CompactParameters {
     neighbor_count: CompactNeighborCount,
     maximum_distance: f64,
@@ -212,7 +213,7 @@ fn compact_weighted_support(
     (weighted_targets, total_weight)
 }
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize)]
 pub struct RbfKernelRidgeParameters {
     scale: f64,
     regularization: f64,
@@ -246,7 +247,7 @@ impl RbfKernelRidgeParameters {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize)]
 pub struct RbfKernelRidgeScore {
     pub raw: f64,
     pub deployed: f64,

@@ -12,19 +12,23 @@ use crate::representation::EventId;
 
 pub type Result<T> = std::result::Result<T, QuotaResolutionError>;
 
-#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+#[derive(
+    Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, serde::Deserialize, serde::Serialize,
+)]
+#[serde(rename_all = "snake_case")]
 pub enum PersonalizerId {
     Compact,
     Rbf,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Serialize)]
+#[serde(rename_all = "snake_case")]
 pub enum LanguageEligibility {
     Eligible,
     WrongLanguage,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Serialize)]
 pub struct EventLanguageOutcome {
     event_id: EventId,
     eligibility: LanguageEligibility,
@@ -47,7 +51,8 @@ impl EventLanguageOutcome {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+#[serde(rename_all = "snake_case", tag = "kind")]
 pub enum PriorPresentation {
     Rated {
         selected_by: BTreeSet<PersonalizerId>,
@@ -117,7 +122,7 @@ impl PresentationWave {
     }
 }
 
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, serde::Serialize)]
 pub struct LanguageDelta {
     eligible_presentations: usize,
     wrong_language_presentations: usize,
@@ -137,7 +142,7 @@ impl LanguageDelta {
     }
 }
 
-#[derive(Clone, Debug, Default, Eq, PartialEq)]
+#[derive(Clone, Debug, Default, Eq, PartialEq, serde::Serialize)]
 pub struct PresentationLedgerDelta {
     outcomes: Vec<EventLanguageOutcome>,
 }
@@ -160,7 +165,8 @@ impl PresentationLedgerDelta {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Serialize)]
+#[serde(rename_all = "snake_case", tag = "kind")]
 pub enum ClaimOrigin {
     Primary,
     ReservePromotion {
@@ -169,13 +175,15 @@ pub enum ClaimOrigin {
     },
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Serialize)]
+#[serde(rename_all = "snake_case", tag = "kind")]
 pub enum ChoiceRatingSource {
     NewRating { first_presentation_wave: u64 },
     StoredRating,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, serde::Serialize)]
+#[serde(rename_all = "snake_case", tag = "kind")]
 pub enum QuotaAuditEvent {
     Claimed {
         personalizer: PersonalizerId,
@@ -206,7 +214,7 @@ pub enum QuotaAuditEvent {
     Failed(QuotaResolutionFailure),
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, serde::Serialize)]
 pub struct StoredRatingReuseRoute {
     event_id: EventId,
     personalizer: PersonalizerId,
@@ -222,7 +230,7 @@ impl StoredRatingReuseRoute {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, serde::Serialize)]
 pub struct NewRatingRoute {
     event_id: EventId,
     selected_by: BTreeSet<PersonalizerId>,
@@ -238,7 +246,7 @@ impl NewRatingRoute {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct QuotaResolutionMetadata {
     presentation_ledger_delta: PresentationLedgerDelta,
     stored_rating_reuse_routes: Vec<StoredRatingReuseRoute>,
@@ -357,7 +365,8 @@ impl ResolvedQuota {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, serde::Serialize)]
+#[serde(rename_all = "snake_case", tag = "kind")]
 pub enum QuotaResolutionFailure {
     ReserveExhausted {
         personalizer: PersonalizerId,

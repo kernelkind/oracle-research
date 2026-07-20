@@ -619,6 +619,141 @@ fn h256_fallback_is_durably_replayed_without_new_oracle_work() {
 }
 
 #[test]
+fn candidate_order_failure_persists_complete_attempts_and_replays_from_cache() {
+    let fixture = RunnerFixture::with_note_count(45);
+    let session_path = fixture.temp.path().join("candidate-failure-session.json");
+    let config = fixture.config(session_path.clone());
+    let mut first_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let error = run_adaptive_learning(
+        &config,
+        &mut first_oracle,
+        Cursor::new(b""),
+        &mut Vec::new(),
+    )
+    .err()
+    .expect("forty non-seed notes cannot satisfy the 41-note order");
+    assert!(
+        error.to_string().contains("CompactGeometryMismatch"),
+        "unexpected failure: {error}"
+    );
+
+    let failed = read_session(&session_path);
+    assert_eq!(failed["phase"], "failed");
+    assert_eq!(failed["failure"]["transition"], "candidate_order");
+    let attempts = failed["failure"]["candidate_order_attempts"]
+        .as_array()
+        .expect("failed candidate-order attempts must be structured");
+    assert_eq!(attempts.len(), 2);
+    assert_eq!(
+        attempts[0]["record"]["accepted"].as_array().unwrap().len(),
+        40
+    );
+    assert_eq!(
+        attempts[1]["record"]["accepted"].as_array().unwrap().len(),
+        40
+    );
+    assert_eq!(
+        attempts[0]["record"]["active_parameters"]["kind"],
+        "compact"
+    );
+    assert_eq!(
+        attempts[0]["record"]["active_parameters"]["parameter_tuple"]["scale_level"],
+        "mass64"
+    );
+    assert_eq!(
+        attempts[1]["record"]["active_parameters"]["parameter_tuple"]["scale_level"],
+        "mass256"
+    );
+    for attempt in attempts {
+        assert_eq!(attempt["sha256"].as_str().unwrap().len(), 64);
+        assert!(
+            !attempt["record"]["source_responses"]
+                .as_array()
+                .unwrap()
+                .is_empty()
+        );
+        assert!(
+            !attempt["record"]["candidates"]
+                .as_array()
+                .unwrap()
+                .is_empty()
+        );
+        assert!(attempt["record"]["accepted"][0]["vector"].is_array());
+    }
+
+    let mut replay_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut replay_output = Vec::new();
+    let replay_error = run_adaptive_learning(
+        &config,
+        &mut replay_oracle,
+        Cursor::new(b""),
+        &mut replay_output,
+    )
+    .err()
+    .expect("reproduce the stopped transition from cached artifacts");
+    assert_eq!(replay_error.to_string(), error.to_string());
+    assert_eq!(replay_oracle.matrix_passes, 0);
+    assert_eq!(replay_oracle.vector_lookups, 0);
+    assert!(
+        String::from_utf8(replay_output)
+            .unwrap()
+            .contains("Phase 3 learning is stopped")
+    );
+
+    let mut corrupt = failed.clone();
+    let score =
+        corrupt["failure"]["candidate_order_attempts"][0]["record"]["accepted"][0]["raw_score"]
+            .as_f64()
+            .expect("stored raw score");
+    corrupt["failure"]["candidate_order_attempts"][0]["record"]["accepted"][0]["raw_score"] =
+        serde_json::json!(score + 0.25);
+    std::fs::write(
+        &session_path,
+        serde_json::to_vec_pretty(&corrupt).expect("encode corrupt failure diagnostic"),
+    )
+    .expect("write corrupt failure diagnostic");
+    let mut rejecting_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut rejecting_output = Vec::new();
+    let corrupt_error = run_adaptive_learning(
+        &config,
+        &mut rejecting_oracle,
+        Cursor::new(b""),
+        &mut rejecting_output,
+    )
+    .err()
+    .expect("reject a corrupted failed-attempt diagnostic");
+    assert!(corrupt_error.to_string().contains("failed its checksum"));
+    assert_eq!(rejecting_oracle.matrix_passes, 0);
+    assert_eq!(rejecting_oracle.vector_lookups, 0);
+    assert!(rejecting_output.is_empty());
+
+    std::fs::write(
+        &session_path,
+        serde_json::to_vec_pretty(&failed).expect("restore failed session"),
+    )
+    .expect("restore failed session");
+    let mut transition_corrupt = failed;
+    transition_corrupt["failure"]["transition"] = serde_json::json!("other");
+    std::fs::write(
+        &session_path,
+        serde_json::to_vec_pretty(&transition_corrupt).expect("encode corrupt failure transition"),
+    )
+    .expect("write corrupt failure transition");
+    let mut transition_rejecting_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let transition_error = run_adaptive_learning(
+        &config,
+        &mut transition_rejecting_oracle,
+        Cursor::new(b""),
+        &mut Vec::new(),
+    )
+    .err()
+    .expect("reject a corrupted failure transition");
+    assert!(transition_error.to_string().contains("failed its checksum"));
+    assert_eq!(transition_rejecting_oracle.matrix_passes, 0);
+    assert_eq!(transition_rejecting_oracle.vector_lookups, 0);
+}
+
+#[test]
 fn concealed_order_is_deterministic_and_displays_only_raw_note_content() {
     let first_fixture = RunnerFixture::new();
     let first_session_path = first_fixture.temp.path().join("first-session.json");
@@ -963,6 +1098,28 @@ fn resumed_and_uninterrupted_ten_round_runs_freeze_the_same_handoff() {
     )
     .expect("complete uninterrupted learning");
     let uninterrupted_handoff = completed(uninterrupted);
+    let sealed = read_session(&uninterrupted_path);
+    assert!(sealed["completion"]["compact_active_tuple"].is_object());
+    assert!(sealed["completion"]["rbf_active_tuple"].is_object());
+    let sealed_rounds = sealed["completion"]["ordered_rounds"]
+        .as_array()
+        .expect("sealed completed rounds");
+    assert_eq!(sealed_rounds.len(), 10);
+    for round in sealed_rounds {
+        for field in [
+            "frozen_predictions_sha256",
+            "errors_sha256",
+            "next_tuples_sha256",
+            "candidate_order_audit_sha256",
+            "shared_round_audit_sha256",
+        ] {
+            assert_eq!(
+                round[field].as_str().map(str::len),
+                Some(64),
+                "round diagnostic `{field}` must be cryptographically sealed"
+            );
+        }
+    }
 
     let resumed_fixture = RunnerFixture::new();
     let resumed_path = resumed_fixture.temp.path().join("resumed-session.json");
@@ -1079,6 +1236,59 @@ fn resumed_and_uninterrupted_ten_round_runs_freeze_the_same_handoff() {
     assert!(transcript.contains("Phase 3 learning complete"));
     assert!(!transcript.contains("raw runner fixture note"));
 
+    let mut tuple_corrupted = read_session(&resumed_path);
+    tuple_corrupted["completion"]["compact_active_tuple"]["parameters"]["maximum_distance"] =
+        serde_json::json!(0.0);
+    std::fs::write(
+        &resumed_path,
+        serde_json::to_vec_pretty(&tuple_corrupted).expect("encode corrupted final tuple"),
+    )
+    .expect("write corrupted final tuple");
+    let mut tuple_rejecting_oracle = FixtureOracle::new(resumed_fixture.event_ids.clone());
+    let tuple_error = run_adaptive_learning(
+        &resumed_config,
+        &mut tuple_rejecting_oracle,
+        Cursor::new(b""),
+        &mut Vec::new(),
+    )
+    .err()
+    .expect("reject a corrupted final active tuple");
+    assert!(
+        tuple_error
+            .to_string()
+            .contains("does not match deterministic replay")
+    );
+    assert_eq!(tuple_rejecting_oracle.matrix_passes, 0);
+    assert_eq!(tuple_rejecting_oracle.vector_lookups, 0);
+    std::fs::write(&resumed_path, &before_reopen).expect("restore completed session");
+
+    let mut diagnostic_corrupted = read_session(&resumed_path);
+    diagnostic_corrupted["completion"]["ordered_rounds"][0]["candidate_order_audit_sha256"] =
+        serde_json::json!("0".repeat(64));
+    std::fs::write(
+        &resumed_path,
+        serde_json::to_vec_pretty(&diagnostic_corrupted)
+            .expect("encode corrupted round diagnostic"),
+    )
+    .expect("write corrupted round diagnostic");
+    let mut diagnostic_rejecting_oracle = FixtureOracle::new(resumed_fixture.event_ids.clone());
+    let diagnostic_error = run_adaptive_learning(
+        &resumed_config,
+        &mut diagnostic_rejecting_oracle,
+        Cursor::new(b""),
+        &mut Vec::new(),
+    )
+    .err()
+    .expect("reject a corrupted round diagnostic seal");
+    assert!(
+        diagnostic_error
+            .to_string()
+            .contains("does not match deterministic replay")
+    );
+    assert_eq!(diagnostic_rejecting_oracle.matrix_passes, 0);
+    assert_eq!(diagnostic_rejecting_oracle.vector_lookups, 0);
+    std::fs::write(&resumed_path, &before_reopen).expect("restore completed session");
+
     let mut corrupted = read_session(&resumed_path);
     corrupted["completion"]["eligible_presentations"] = serde_json::json!(999);
     std::fs::write(
@@ -1135,6 +1345,59 @@ fn an_all_stored_cross_personalizer_round_completes_without_input_or_redisplay()
         serde_json::json!([]),
         "the next evaluator input belongs to round three, not stored-reuse round two"
     );
+}
+
+#[test]
+fn completed_learning_round_seal_rejects_drift_before_next_input() {
+    let fixture = DivergentFixture::new();
+    let session_path = fixture.temp.path().join("completed-round-seal.json");
+    let config = fixture.config(session_path.clone());
+    let mut oracle = DivergentOracle::new(&fixture);
+
+    run_adaptive_learning(
+        &config,
+        &mut oracle,
+        Cursor::new(ratings_then_quit(40, 7)),
+        &mut Vec::new(),
+    )
+    .expect("save first-round ratings");
+    run_adaptive_learning(&config, &mut oracle, Cursor::new(b""), &mut Vec::new())
+        .expect("complete stored rounds and pause before more input");
+
+    let mut session = read_session(&session_path);
+    assert_eq!(session["phase"], "learning");
+    assert_eq!(session["rounds"][0]["ratings_submitted"], true);
+    assert_eq!(
+        session["rounds"][0]["diagnostic_seal"]["candidate_order_audit_sha256"]
+            .as_str()
+            .map(str::len),
+        Some(64),
+        "every completed learning round must be sealed before the next round starts"
+    );
+    assert_eq!(
+        session["rounds"][0]["diagnostic_seal"]["presentation_ledger"][0]["state"]["kind"], "rated",
+        "presentation state must use stable structured data rather than Debug text"
+    );
+    session["rounds"][0]["diagnostic_seal"]["candidate_order_audit_sha256"] =
+        serde_json::json!("0".repeat(64));
+    std::fs::write(
+        &session_path,
+        serde_json::to_vec_pretty(&session).expect("encode corrupted round seal"),
+    )
+    .expect("write corrupted round seal");
+
+    let mut rejecting_oracle = DivergentOracle::new(&fixture);
+    let error = run_adaptive_learning(
+        &config,
+        &mut rejecting_oracle,
+        Cursor::new(b""),
+        &mut Vec::new(),
+    )
+    .err()
+    .expect("reject completed-round drift before requesting more input");
+    assert!(error.to_string().contains("completed round diagnostic"));
+    assert_eq!(rejecting_oracle.matrix_passes, 0);
+    assert_eq!(rejecting_oracle.logical_wave_calls, 0);
 }
 
 fn completed(

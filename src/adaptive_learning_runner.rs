@@ -10,12 +10,13 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
 use crate::adaptive_learning::{
-    AdaptiveLearningCoordinator, AdaptiveLearningError, AdaptiveLearningProgress,
-    CompletedAdaptiveLearning, LEARNING_ROUNDS, MAX_WRONG_LANGUAGE_PRESENTATIONS, SEED_COUNT,
+    AdaptiveLearningCoordinator, AdaptiveLearningError, AdaptiveLearningFailure,
+    AdaptiveLearningProgress, CompletedAdaptiveLearning, LEARNING_ROUNDS,
+    MAX_WRONG_LANGUAGE_PRESENTATIONS, SEED_COUNT,
 };
 use crate::artifact::hash_bytes;
 use crate::candidate_order::{
-    B16Boundary, CANDIDATE_DEPTH, CandidateOrderOracle, CandidateOrderPhase,
+    B16Boundary, CANDIDATE_DEPTH, CandidateOrderAttempt, CandidateOrderOracle, CandidateOrderPhase,
 };
 use crate::fp32_oracle::{
     SimilarNotesRequest, SimilarNotesResponse, SimilarNotesWaveMetrics, SimilarNotesWaveResponse,
@@ -27,15 +28,17 @@ use crate::personalizer_learning::{
 };
 use crate::quota_resolution::{EventLanguageOutcome, LanguageEligibility, PriorPresentation};
 use crate::representation::{EventId, FP32_SCAN_BLOCK_ROWS};
+use crate::shared_learning_round::SharedLearningRoundRecord;
 use crate::snapshot::{
     Error, Result, Validation, io_error, ndb_error, open_existing_ndb, read_manifest,
     require_directory,
 };
 
-const SESSION_SCHEMA_VERSION: u32 = 3;
+const SESSION_SCHEMA_VERSION: u32 = 4;
 const ORACLE_RESPONSE_CONTRACT: &str = "candidate-order-oracle-v1";
 const SHUFFLE_POLICY: &str = "phase3-learning-sha256-concealed-v1";
 const SCORER_POLICY: &str = "compact-rbf-forward-only-h64-h256-fallback-v2";
+const DIAGNOSTIC_SEAL_DOMAIN: &[u8] = b"oracle-mvp-phase3-diagnostic-v1\0";
 const RATING_INSTRUCTIONS: &str = "1: Actively wish it had not been shown.\n2: Clearly not worth seeing.\n3: Little personal value.\n4: Indifferent.\n5: Mildly glad to have seen it.\n6: Clearly glad; personally valuable.\n7: Exceptionally valuable.\nUse wrong_language only when the note is clearly primarily non-English. Mixed-language, code-heavy, and ambiguous notes remain eligible and must be rated.\n";
 const RATING_PROMPT: &str = "Considering the attention it required, how glad are you that you saw this note? [1–7, `l` = wrong_language; append `q` to save and stop]: ";
 
@@ -154,7 +157,7 @@ struct AdaptiveLearningSession {
     pending_presentation: Option<PendingPresentation>,
     completion: Option<CompletedHandoff>,
     pause_reason: Option<String>,
-    failure: Option<String>,
+    failure: Option<PersistedFailure>,
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -169,6 +172,7 @@ struct RoundTranscript {
     round: usize,
     waves: Vec<WaveTranscript>,
     ratings_submitted: bool,
+    diagnostic_seal: Option<PersistedRoundSeal>,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -214,6 +218,8 @@ struct CompletedHandoff {
     binding_identity_sha256: String,
     compact_evidence: SeedEvidenceBinding,
     rbf_evidence: SeedEvidenceBinding,
+    compact_active_tuple: serde_json::Value,
+    rbf_active_tuple: serde_json::Value,
     compact_rounds: usize,
     rbf_rounds: usize,
     presentation_ledger: Vec<PersistedLedgerEntry>,
@@ -221,13 +227,35 @@ struct CompletedHandoff {
     eligible_presentations: usize,
     wrong_language_presentations: usize,
     source_waves: Vec<PersistedSourceWave>,
+    failed_candidate_order_attempts: Vec<SealedCandidateOrderAttempt>,
     ordered_rounds: Vec<PersistedRoundSeal>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+struct PersistedFailure {
+    sha256: String,
+    reason: String,
+    transition: PersistedFailureTransition,
+    candidate_order_attempts: Vec<SealedCandidateOrderAttempt>,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+enum PersistedFailureTransition {
+    CandidateOrder,
+    Other,
+}
+
+impl PersistedFailure {
+    fn reason(&self) -> &str {
+        &self.reason
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 struct PersistedLedgerEntry {
     event_id: EventId,
-    state: String,
+    state: PriorPresentation,
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, PartialEq, Serialize)]
@@ -255,6 +283,17 @@ struct PersistedRoundSeal {
     rbf_evidence_after: SeedEvidenceBinding,
     ratings: Vec<PersistedRating>,
     presentation_ledger: Vec<PersistedLedgerEntry>,
+    frozen_predictions_sha256: String,
+    errors_sha256: String,
+    next_tuples_sha256: String,
+    candidate_order_audit_sha256: String,
+    shared_round_audit_sha256: String,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+struct SealedCandidateOrderAttempt {
+    sha256: String,
+    record: serde_json::Value,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
@@ -347,10 +386,15 @@ where
 
     if let Some(session) = &loaded
         && session.phase == SessionPhase::Failed
+        && session
+            .failure
+            .as_ref()
+            .is_none_or(|failure| failure.transition != PersistedFailureTransition::CandidateOrder)
     {
         let reason = session
             .failure
-            .as_deref()
+            .as_ref()
+            .map(PersistedFailure::reason)
             .unwrap_or("the learning session previously failed");
         write_output(output, &format!("Phase 3 learning is stopped: {reason}\n"))?;
         return Err(Error::ExperimentState(reason.to_owned()));
@@ -408,6 +452,14 @@ where
         AdaptiveLearningCoordinator::new(&session_oracle, compact, rbf, config.b16.clone())
             .map_err(adaptive_error)?;
     replay_session(&mut coordinator, &session, &mut session_oracle)?;
+    if session.phase == SessionPhase::Failed {
+        return replay_candidate_order_failure(
+            &mut coordinator,
+            &session,
+            &mut session_oracle,
+            output,
+        );
+    }
     if session_oracle.call_cursor != session_oracle.calls.len() {
         return Err(Error::ExperimentState(
             "the stored Oracle call tape extends beyond the replayed learning state".to_owned(),
@@ -430,16 +482,19 @@ where
                         config,
                         &mut session,
                         &session_oracle,
+                        &coordinator,
                         output,
                         error,
                     );
                 }
                 sync_oracle_state(&mut session, &session_oracle);
                 if coordinator.round_records().len() == completed_before + 1 {
+                    let diagnostic_seal = completed_round_seal(&coordinator, round)?;
                     session.rounds.push(RoundTranscript {
                         round,
                         waves: Vec::new(),
                         ratings_submitted: true,
+                        diagnostic_seal: Some(diagnostic_seal),
                     });
                     save_session(&config.session_path, &session)?;
                     continue;
@@ -455,6 +510,7 @@ where
                     round,
                     waves: vec![transcript],
                     ratings_submitted: false,
+                    diagnostic_seal: None,
                 });
                 save_session(&config.session_path, &session)?;
             }
@@ -503,6 +559,7 @@ where
                             config,
                             &mut session,
                             &session_oracle,
+                            &coordinator,
                             output,
                             error,
                         );
@@ -524,6 +581,9 @@ where
                     }
                     AdaptiveLearningProgress::Ready | AdaptiveLearningProgress::Complete => {
                         session.rounds[round_index].ratings_submitted = true;
+                        let round = session.rounds[round_index].round;
+                        session.rounds[round_index].diagnostic_seal =
+                            Some(completed_round_seal(&coordinator, round)?);
                     }
                     AdaptiveLearningProgress::AwaitingRatings => {}
                     AdaptiveLearningProgress::Paused => {
@@ -541,6 +601,7 @@ where
                         config,
                         &mut session,
                         &session_oracle,
+                        &coordinator,
                         output,
                         error,
                     );
@@ -549,13 +610,14 @@ where
                     Error::Invariant("ratings are pending without a session round".to_owned())
                 })?;
                 round.ratings_submitted = true;
+                round.diagnostic_seal = Some(completed_round_seal(&coordinator, round.round)?);
                 save_session(&config.session_path, &session)?;
             }
             AdaptiveLearningProgress::Complete => {
                 let completed = coordinator.into_completed().map_err(|_| {
                     Error::Invariant("complete coordinator rejected its handoff".to_owned())
                 })?;
-                let handoff = completed_handoff(&session.binding, &completed);
+                let handoff = completed_handoff(&session.binding, &completed, &session.rounds)?;
                 if session.phase == SessionPhase::Complete {
                     if session.completion.as_ref() != Some(&handoff) {
                         return Err(Error::ExperimentState(
@@ -575,13 +637,16 @@ where
                 return Ok(AdaptiveLearningRunnerOutcome::Complete(Box::new(completed)));
             }
             AdaptiveLearningProgress::Paused => {
-                let reason = coordinator
-                    .pause_reason()
-                    .map(|reason| format!("{reason:?}"))
-                    .unwrap_or_else(|| "unknown coordinator pause".to_owned());
+                let pause = coordinator.pause_reason().cloned().unwrap_or_else(|| {
+                    AdaptiveLearningFailure::InternalInvariant(
+                        "unknown coordinator pause".to_owned(),
+                    )
+                });
+                let failure = persisted_failure(&coordinator, &pause)?;
+                let reason = failure.reason.clone();
                 session.phase = SessionPhase::Failed;
                 session.pause_reason = None;
-                session.failure = Some(reason.clone());
+                session.failure = Some(failure);
                 sync_oracle_state(&mut session, &session_oracle);
                 save_session(&config.session_path, &session)?;
                 write_output(output, &format!("Phase 3 learning stopped: {reason}\n"))?;
@@ -709,7 +774,50 @@ fn validate_loaded_static_session(
             "the stored Phase 3 session phase markers are inconsistent".to_owned(),
         ));
     }
+    if let Some(failure) = &session.failure {
+        let expected = persisted_failure_sha256(
+            &failure.reason,
+            failure.transition,
+            &failure.candidate_order_attempts,
+        )?;
+        if failure.sha256 != expected {
+            return Err(Error::ExperimentState(
+                "the persisted Phase 3 failure failed its checksum".to_owned(),
+            ));
+        }
+        validate_candidate_order_attempt_seals(&failure.candidate_order_attempts)?;
+    }
+    if let Some(completion) = &session.completion {
+        validate_candidate_order_attempt_seals(&completion.failed_candidate_order_attempts)?;
+    }
+    for round in &session.rounds {
+        if round.ratings_submitted != round.diagnostic_seal.is_some() {
+            return Err(Error::ExperimentState(
+                "a completed round diagnostic does not match its stored completion marker"
+                    .to_owned(),
+            ));
+        }
+        if let Some(seal) = &round.diagnostic_seal
+            && seal.round != round.round
+        {
+            return Err(Error::ExperimentState(
+                "a completed round diagnostic identifies the wrong learning round".to_owned(),
+            ));
+        }
+    }
     validate_pending_presentation(session)?;
+    Ok(())
+}
+
+fn validate_candidate_order_attempt_seals(attempts: &[SealedCandidateOrderAttempt]) -> Result<()> {
+    for attempt in attempts {
+        let expected = diagnostic_sha256("candidate-order-attempt", &attempt.record)?;
+        if attempt.sha256 != expected {
+            return Err(Error::ExperimentState(
+                "a persisted candidate-order diagnostic failed its checksum".to_owned(),
+            ));
+        }
+    }
     Ok(())
 }
 
@@ -863,6 +971,7 @@ fn replay_session<O: CandidateOrderOracle>(
                     "a no-input learning round does not match coordinator replay".to_owned(),
                 ));
             }
+            verify_completed_round_seal(coordinator, transcript)?;
             continue;
         }
 
@@ -907,7 +1016,13 @@ fn replay_session<O: CandidateOrderOracle>(
                         .to_owned(),
                 ));
             }
+            verify_completed_round_seal(coordinator, transcript)?;
         } else {
+            if transcript.diagnostic_seal.is_some() {
+                return Err(Error::ExperimentState(
+                    "an incomplete learning round has a completed round diagnostic".to_owned(),
+                ));
+            }
             if round_index + 1 != session.rounds.len()
                 || !matches!(
                     coordinator.progress(),
@@ -935,6 +1050,41 @@ fn replay_session<O: CandidateOrderOracle>(
         }
         _ => Ok(()),
     }
+}
+
+fn completed_round_seal(
+    coordinator: &AdaptiveLearningCoordinator,
+    expected_round: usize,
+) -> Result<PersistedRoundSeal> {
+    let record = coordinator.round_records().last().ok_or_else(|| {
+        Error::Invariant("a completed learning round has no round record".to_owned())
+    })?;
+    if record.round() != expected_round {
+        return Err(Error::Invariant(format!(
+            "completed round record {} does not match expected round {expected_round}",
+            record.round()
+        )));
+    }
+    persisted_round_seal(record, coordinator.failed_candidate_order_attempts())
+}
+
+fn verify_completed_round_seal(
+    coordinator: &AdaptiveLearningCoordinator,
+    transcript: &RoundTranscript,
+) -> Result<()> {
+    let stored = transcript.diagnostic_seal.as_ref().ok_or_else(|| {
+        Error::ExperimentState(
+            "a completed learning round is missing its completed round diagnostic".to_owned(),
+        )
+    })?;
+    let replayed = completed_round_seal(coordinator, transcript.round)?;
+    if stored != &replayed {
+        return Err(Error::ExperimentState(format!(
+            "completed round diagnostic for learning round {} does not match deterministic replay",
+            transcript.round
+        )));
+    }
+    Ok(())
 }
 
 fn freeze_wave(
@@ -1387,7 +1537,8 @@ fn terminal_safe(content: &str) -> String {
 fn completed_handoff(
     binding: &SessionBinding,
     completed: &CompletedAdaptiveLearning,
-) -> CompletedHandoff {
+    transcripts: &[RoundTranscript],
+) -> Result<CompletedHandoff> {
     let presentation_ledger = completed
         .presentation_ledger()
         .iter()
@@ -1401,10 +1552,33 @@ fn completed_handoff(
             rating: rating.value(),
         })
         .collect();
-    CompletedHandoff {
+    if transcripts.len() != completed.round_records().len() {
+        return Err(Error::Invariant(
+            "completed transcript and coordinator contain different round counts".to_owned(),
+        ));
+    }
+    let ordered_rounds = transcripts
+        .iter()
+        .zip(completed.round_records())
+        .map(|(transcript, record)| {
+            if transcript.round != record.round() {
+                return Err(Error::Invariant(
+                    "completed transcript and coordinator round order differ".to_owned(),
+                ));
+            }
+            transcript.diagnostic_seal.clone().ok_or_else(|| {
+                Error::Invariant("completed handoff contains an unsealed round".to_owned())
+            })
+        })
+        .collect::<Result<Vec<_>>>()?;
+    let compact_active_tuple = diagnostic_value(completed.compact_controller().active_tuple())?;
+    let rbf_active_tuple = diagnostic_value(completed.rbf_controller().active_tuple())?;
+    Ok(CompletedHandoff {
         binding_identity_sha256: binding.identity_sha256.clone(),
         compact_evidence: evidence_binding(completed.compact_controller().evidence_identity()),
         rbf_evidence: evidence_binding(completed.rbf_controller().evidence_identity()),
+        compact_active_tuple,
+        rbf_active_tuple,
         compact_rounds: completed.compact_controller().history().len(),
         rbf_rounds: completed.rbf_controller().history().len(),
         presentation_ledger,
@@ -1421,61 +1595,166 @@ fn completed_handoff(
                 accepted: record.accepted(),
             })
             .collect(),
-        ordered_rounds: completed
-            .round_records()
+        failed_candidate_order_attempts: seal_candidate_order_attempts(
+            completed.failed_candidate_order_attempts(),
+        )?,
+        ordered_rounds,
+    })
+}
+
+fn persisted_round_seal(
+    record: &SharedLearningRoundRecord,
+    failed_candidate_order_attempts: &[CandidateOrderAttempt],
+) -> Result<PersistedRoundSeal> {
+    Ok(PersistedRoundSeal {
+        round: record.round(),
+        compact_candidate_pool_sha256: record
+            .compact_order()
+            .attempt()
+            .candidate_pool_identity_sha256()
+            .to_owned(),
+        compact_accepted_event_ids: record
+            .compact_order()
+            .accepted()
             .iter()
-            .map(|record| PersistedRoundSeal {
-                round: record.round(),
-                compact_candidate_pool_sha256: record
-                    .compact_order()
-                    .attempt()
-                    .candidate_pool_identity_sha256()
-                    .to_owned(),
-                compact_accepted_event_ids: record
-                    .compact_order()
-                    .accepted()
-                    .iter()
-                    .map(|candidate| candidate.event_id())
-                    .collect(),
-                compact_evidence_after: evidence_binding(record.compact_round().evidence_after()),
-                rbf_candidate_pool_sha256: record
-                    .rbf_order()
-                    .attempt()
-                    .candidate_pool_identity_sha256()
-                    .to_owned(),
-                rbf_accepted_event_ids: record
-                    .rbf_order()
-                    .accepted()
-                    .iter()
-                    .map(|candidate| candidate.event_id())
-                    .collect(),
-                rbf_evidence_after: evidence_binding(record.rbf_round().evidence_after()),
-                ratings: record
-                    .ratings()
-                    .iter()
-                    .map(|rating| PersistedRating {
-                        event_id: rating.event_id(),
-                        rating: rating.rating().value(),
-                    })
-                    .collect(),
-                presentation_ledger: record
-                    .presentation_ledger_entries()
-                    .iter()
-                    .map(|(event_id, state)| persisted_ledger_entry(*event_id, state))
-                    .collect(),
+            .map(|candidate| candidate.event_id())
+            .collect(),
+        compact_evidence_after: evidence_binding(record.compact_round().evidence_after()),
+        rbf_candidate_pool_sha256: record
+            .rbf_order()
+            .attempt()
+            .candidate_pool_identity_sha256()
+            .to_owned(),
+        rbf_accepted_event_ids: record
+            .rbf_order()
+            .accepted()
+            .iter()
+            .map(|candidate| candidate.event_id())
+            .collect(),
+        rbf_evidence_after: evidence_binding(record.rbf_round().evidence_after()),
+        ratings: record
+            .ratings()
+            .iter()
+            .map(|rating| PersistedRating {
+                event_id: rating.event_id(),
+                rating: rating.rating().value(),
             })
             .collect(),
+        presentation_ledger: record
+            .presentation_ledger_entries()
+            .iter()
+            .map(|(event_id, state)| persisted_ledger_entry(*event_id, state))
+            .collect(),
+        frozen_predictions_sha256: diagnostic_sha256(
+            "frozen-predictions",
+            &(
+                record.round(),
+                record.compact_round().frozen_batch(),
+                record.rbf_round().frozen_batch(),
+            ),
+        )?,
+        errors_sha256: diagnostic_sha256(
+            "tuple-errors",
+            &(
+                record.round(),
+                record.compact_round().outcomes(),
+                record.compact_round().errors(),
+                record.rbf_round().outcomes(),
+                record.rbf_round().errors(),
+            ),
+        )?,
+        next_tuples_sha256: diagnostic_sha256(
+            "next-tuples",
+            &(
+                record.round(),
+                record.compact_round().next_tuple(),
+                record.rbf_round().next_tuple(),
+            ),
+        )?,
+        candidate_order_audit_sha256: diagnostic_sha256(
+            "candidate-order-audit",
+            &(
+                record.round(),
+                record.compact_order().attempt(),
+                record.rbf_order().attempt(),
+                failed_candidate_order_attempts,
+            ),
+        )?,
+        shared_round_audit_sha256: diagnostic_sha256(
+            "shared-round-audit",
+            &(record.round(), record.quota_metadata(), record.audit()),
+        )?,
+    })
+}
+
+fn diagnostic_sha256<T: Serialize>(kind: &str, record: &T) -> Result<String> {
+    struct Sha256Writer(Sha256);
+
+    impl Write for Sha256Writer {
+        fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+            self.0.update(bytes);
+            Ok(bytes.len())
+        }
+
+        fn flush(&mut self) -> std::io::Result<()> {
+            Ok(())
+        }
     }
+
+    let mut writer = Sha256Writer(Sha256::new());
+    writer
+        .write_all(DIAGNOSTIC_SEAL_DOMAIN)
+        .expect("SHA-256 writer cannot fail");
+    writer
+        .write_all(kind.as_bytes())
+        .expect("SHA-256 writer cannot fail");
+    writer.write_all(&[0]).expect("SHA-256 writer cannot fail");
+    serde_json::to_writer(&mut writer, record).map_err(|source| Error::Manifest {
+        operation: "encode",
+        path: PathBuf::from("<phase3-diagnostic>"),
+        source,
+    })?;
+    Ok(format!("{:x}", writer.0.finalize()))
+}
+
+fn persisted_failure_sha256(
+    reason: &str,
+    transition: PersistedFailureTransition,
+    attempts: &[SealedCandidateOrderAttempt],
+) -> Result<String> {
+    diagnostic_sha256("failure", &(reason, transition, attempts))
+}
+
+fn diagnostic_value<T: Serialize>(record: T) -> Result<serde_json::Value> {
+    let bytes = serde_json::to_vec(&record).map_err(|source| Error::Manifest {
+        operation: "encode",
+        path: PathBuf::from("<phase3-diagnostic>"),
+        source,
+    })?;
+    serde_json::from_slice(&bytes).map_err(|source| Error::Manifest {
+        operation: "decode",
+        path: PathBuf::from("<phase3-diagnostic>"),
+        source,
+    })
+}
+
+fn seal_candidate_order_attempts(
+    attempts: &[CandidateOrderAttempt],
+) -> Result<Vec<SealedCandidateOrderAttempt>> {
+    attempts
+        .iter()
+        .map(|attempt| {
+            let record = diagnostic_value(attempt)?;
+            let sha256 = diagnostic_sha256("candidate-order-attempt", &record)?;
+            Ok(SealedCandidateOrderAttempt { sha256, record })
+        })
+        .collect()
 }
 
 fn persisted_ledger_entry(event_id: EventId, state: &PriorPresentation) -> PersistedLedgerEntry {
     PersistedLedgerEntry {
         event_id,
-        state: match state {
-            PriorPresentation::Rated { selected_by } => format!("rated:{selected_by:?}"),
-            PriorPresentation::EligibleUnrated => "eligible_unrated".to_owned(),
-            PriorPresentation::WrongLanguage => "wrong_language".to_owned(),
-        },
+        state: state.clone(),
     }
 }
 
@@ -1496,10 +1775,101 @@ fn write_summary<W: Write>(
     )
 }
 
+fn is_candidate_order_failure(failure: &AdaptiveLearningFailure) -> bool {
+    matches!(
+        failure,
+        AdaptiveLearningFailure::InsufficientCandidateOrder { .. }
+            | AdaptiveLearningFailure::CompactGeometryMismatch { .. }
+    )
+}
+
+fn persisted_failure_record(
+    coordinator: &AdaptiveLearningCoordinator,
+    reason: String,
+    transition: PersistedFailureTransition,
+) -> Result<PersistedFailure> {
+    let candidate_order_attempts =
+        seal_candidate_order_attempts(coordinator.failed_candidate_order_attempts())?;
+    let sha256 = persisted_failure_sha256(&reason, transition, &candidate_order_attempts)?;
+    Ok(PersistedFailure {
+        sha256,
+        reason,
+        transition,
+        candidate_order_attempts,
+    })
+}
+
+fn persisted_failure(
+    coordinator: &AdaptiveLearningCoordinator,
+    failure: &AdaptiveLearningFailure,
+) -> Result<PersistedFailure> {
+    persisted_failure_record(
+        coordinator,
+        format!("{failure:?}"),
+        if is_candidate_order_failure(failure) {
+            PersistedFailureTransition::CandidateOrder
+        } else {
+            PersistedFailureTransition::Other
+        },
+    )
+}
+
+fn replay_candidate_order_failure<O, W>(
+    coordinator: &mut AdaptiveLearningCoordinator,
+    session: &AdaptiveLearningSession,
+    oracle: &mut SessionOracle<'_, O>,
+    output: &mut W,
+) -> Result<AdaptiveLearningRunnerOutcome>
+where
+    O: CandidateOrderOracle,
+    W: Write,
+{
+    let stored = session.failure.as_ref().ok_or_else(|| {
+        Error::ExperimentState("a failed session has no persisted failure".to_owned())
+    })?;
+    if stored.transition != PersistedFailureTransition::CandidateOrder {
+        return Err(Error::Invariant(
+            "non-candidate failure entered candidate-order replay".to_owned(),
+        ));
+    }
+    let reproduced_error = coordinator.start_next_round(oracle).err().ok_or_else(|| {
+        Error::ExperimentState(
+            "the persisted candidate-order failure did not recur during deterministic replay"
+                .to_owned(),
+        )
+    })?;
+    let reproduced_failure = match &reproduced_error {
+        AdaptiveLearningError::PhasePaused(failure) if is_candidate_order_failure(failure) => {
+            persisted_failure_record(
+                coordinator,
+                reproduced_error.to_string(),
+                PersistedFailureTransition::CandidateOrder,
+            )?
+        }
+        _ => {
+            return Err(Error::ExperimentState(
+                "the persisted candidate-order failure replayed as a different transition"
+                    .to_owned(),
+            ));
+        }
+    };
+    if &reproduced_failure != stored || oracle.call_cursor != oracle.calls.len() {
+        return Err(Error::ExperimentState(
+            "the persisted candidate-order failure does not match deterministic replay".to_owned(),
+        ));
+    }
+    write_output(
+        output,
+        &format!("Phase 3 learning is stopped: {}\n", stored.reason()),
+    )?;
+    Err(Error::ExperimentState(stored.reason.clone()))
+}
+
 fn record_coordinator_failure<O, W>(
     config: &AdaptiveLearningRunnerConfig,
     session: &mut AdaptiveLearningSession,
     oracle: &SessionOracle<'_, O>,
+    coordinator: &AdaptiveLearningCoordinator,
     output: &mut W,
     error: AdaptiveLearningError,
 ) -> Result<AdaptiveLearningRunnerOutcome>
@@ -1508,9 +1878,16 @@ where
     W: Write,
 {
     let reason = error.to_string();
+    let transition = match &error {
+        AdaptiveLearningError::PhasePaused(failure) if is_candidate_order_failure(failure) => {
+            PersistedFailureTransition::CandidateOrder
+        }
+        _ => PersistedFailureTransition::Other,
+    };
+    let failure = persisted_failure_record(coordinator, reason.clone(), transition)?;
     session.phase = SessionPhase::Failed;
     session.pause_reason = None;
-    session.failure = Some(reason.clone());
+    session.failure = Some(failure);
     sync_oracle_state(session, oracle);
     save_session(&config.session_path, session)?;
     write_output(output, &format!("Phase 3 learning stopped: {reason}\n"))?;

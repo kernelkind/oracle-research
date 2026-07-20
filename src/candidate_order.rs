@@ -64,7 +64,8 @@ pub enum CandidateOrderError {
     AuditLengthOverflow,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Serialize)]
+#[serde(rename_all = "snake_case")]
 pub enum CandidateOrderPhase {
     Learning,
     Final,
@@ -87,7 +88,7 @@ impl CandidateOrderPhase {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct B16Boundary {
     representation_version: String,
     distance: f64,
@@ -275,13 +276,14 @@ impl CandidateVectorCache {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize)]
+#[serde(rename_all = "snake_case", tag = "kind", content = "parameter_tuple")]
 pub enum ActivePersonalizerParameters {
     Compact(CompactTuple),
     Rbf(RbfTuple),
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct CandidateSourceAttribution {
     source_event_id: EventId,
     response_identity_sha256: String,
@@ -307,7 +309,7 @@ impl CandidateSourceAttribution {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct SourceResponseAudit {
     source_event_id: EventId,
     response_identity_sha256: String,
@@ -328,13 +330,15 @@ impl SourceResponseAudit {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, serde::Serialize)]
+#[serde(rename_all = "snake_case")]
 pub enum CandidateExclusionReason {
     ExistingEvidence,
     CallerDisallowed,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
+#[serde(rename_all = "snake_case", tag = "kind")]
 pub enum CandidateDisposition {
     Excluded {
         reasons: Vec<CandidateExclusionReason>,
@@ -363,7 +367,7 @@ pub enum CandidateDisposition {
     },
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct CandidateAudit {
     event_id: EventId,
     attributions: Vec<CandidateSourceAttribution>,
@@ -406,7 +410,7 @@ impl CandidateAudit {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct FrozenCandidate {
     event_id: EventId,
     vector: Vec<f32>,
@@ -442,7 +446,7 @@ impl FrozenCandidate {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct CandidateOrderAttempt {
     phase: CandidateOrderPhase,
     representation_version: String,
