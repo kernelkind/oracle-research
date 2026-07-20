@@ -16,9 +16,10 @@ use oracle_mvp::gte_budget::{
     FullBuildNonComputeCosts, FullBuildResultPaths, VerifiedCalibrationEvidence,
     claim_calibration_execution, claim_or_resume_full_build_execution, project_full_build,
     read_active_calibration_reservation, read_calibration_execution_identity,
-    read_unclaimed_calibration_reservation, reserve_calibration_with_non_runtime_reserve,
-    reserve_full_build, settle_calibration, settle_failed_calibration, settle_failed_full_build,
-    settle_full_build, validate_calibration_selection,
+    read_unclaimed_calibration_reservation, reconcile_calibration_finalized_charge,
+    reserve_calibration_with_non_runtime_reserve, reserve_full_build, settle_calibration,
+    settle_failed_calibration, settle_failed_full_build, settle_full_build,
+    validate_calibration_selection,
 };
 use oracle_mvp::ordered_gte_token_audit::{OrderedGteTokenAuditConfig, audit_ordered_gte_tokens};
 use oracle_mvp::representation::{
@@ -57,6 +58,7 @@ fn run() -> Result<(), String> {
         "reserve-calibration"
             | "calibrate-shards"
             | "settle-calibration"
+            | "reconcile-calibration-finalized-charge"
             | "settle-failed-calibration"
             | "project-full-build"
             | "reserve-full-build"
@@ -124,6 +126,31 @@ fn run() -> Result<(), String> {
                 &calibration.reservation_id,
                 &evidence,
                 actual_charge,
+                &recorded_at_utc,
+            )
+            .map_err(|error| error.to_string())?;
+            print_budget_ledger(&ledger)
+        }
+        "reconcile-calibration-finalized-charge" => {
+            let provider_invoice_path = PathBuf::from(arguments.next().ok_or_else(usage)?);
+            let provider_invoice_sha256 = parse_string(
+                &arguments.next().ok_or_else(usage)?,
+                "PROVIDER_INVOICE_SHA256",
+            )?;
+            let recorded_at_utc =
+                parse_string(&arguments.next().ok_or_else(usage)?, "RECORDED_AT_UTC")?;
+            require_no_more(arguments)?;
+            let calibration = config.calibration.as_ref().ok_or_else(|| {
+                "reconcile-calibration-finalized-charge requires calibration settings in the run config"
+                    .to_owned()
+            })?;
+            let evidence = calibration.open_evidence(&config)?;
+            let ledger = reconcile_calibration_finalized_charge(
+                &calibration.ledger_path,
+                &calibration.reservation_id,
+                &evidence,
+                &provider_invoice_path,
+                &provider_invoice_sha256,
                 &recorded_at_utc,
             )
             .map_err(|error| error.to_string())?;
@@ -1289,6 +1316,6 @@ fn print_budget_ledger(ledger: &BudgetLedger) -> Result<(), String> {
 }
 
 fn usage() -> String {
-    "usage: gte-oracle <operation> CONFIG_JSON [arguments]\n\noperations:\n  reserve-calibration CONFIG_JSON RECORDED_AT_UTC\n  calibrate-shards CONFIG_JSON SHARD_ORDINALS\n  settle-calibration CONFIG_JSON ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  settle-failed-calibration CONFIG_JSON FAILURE_EVIDENCE ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  project-full-build CONFIG_JSON NON_COMPUTE_COSTS_JSON\n  reserve-full-build CONFIG_JSON RECORDED_AT_UTC\n  run-full-build CONFIG_JSON\n  settle-full-build CONFIG_JSON ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  settle-failed-full-build CONFIG_JSON FAILURE_EVIDENCE ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  describe-representation CONFIG_JSON\n  model-smoke CONFIG_JSON\n  prepare-semantic-order CONFIG_JSON\n  audit-tokens CONFIG_JSON\n  plan-batches CONFIG_JSON\n  prepare-representation CONFIG_JSON\n  validate-calibration-selection CONFIG_JSON SHARD_ORDINALS TOKEN_RANGE_UPPER_BOUNDS\n  embed-shards CONFIG_JSON SHARD_ORDINALS\n  verify-representation CONFIG_JSON\n  similar-notes CONFIG_JSON EVENT_IDS DEPTH REPRESENTATION_VERSION\n  vectors-for-notes CONFIG_JSON EVENT_IDS REPRESENTATION_VERSION"
+    "usage: gte-oracle <operation> CONFIG_JSON [arguments]\n\noperations:\n  reserve-calibration CONFIG_JSON RECORDED_AT_UTC\n  calibrate-shards CONFIG_JSON SHARD_ORDINALS\n  settle-calibration CONFIG_JSON ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  reconcile-calibration-finalized-charge CONFIG_JSON PROVIDER_INVOICE_JSON PROVIDER_INVOICE_SHA256 RECORDED_AT_UTC\n  settle-failed-calibration CONFIG_JSON FAILURE_EVIDENCE ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  project-full-build CONFIG_JSON NON_COMPUTE_COSTS_JSON\n  reserve-full-build CONFIG_JSON RECORDED_AT_UTC\n  run-full-build CONFIG_JSON\n  settle-full-build CONFIG_JSON ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  settle-failed-full-build CONFIG_JSON FAILURE_EVIDENCE ACTUAL_CHARGE_MICRO_USD RECORDED_AT_UTC\n  describe-representation CONFIG_JSON\n  model-smoke CONFIG_JSON\n  prepare-semantic-order CONFIG_JSON\n  audit-tokens CONFIG_JSON\n  plan-batches CONFIG_JSON\n  prepare-representation CONFIG_JSON\n  validate-calibration-selection CONFIG_JSON SHARD_ORDINALS TOKEN_RANGE_UPPER_BOUNDS\n  embed-shards CONFIG_JSON SHARD_ORDINALS\n  verify-representation CONFIG_JSON\n  similar-notes CONFIG_JSON EVENT_IDS DEPTH REPRESENTATION_VERSION\n  vectors-for-notes CONFIG_JSON EVENT_IDS REPRESENTATION_VERSION"
         .to_owned()
 }

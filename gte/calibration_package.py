@@ -257,6 +257,7 @@ INSTANCE_RECORD_FIELDS = (
     "dph_total",
     "is_bid",
     "verification",
+    "label",
 )
 
 TEMPLATE_RECORD_FIELDS = (
@@ -315,6 +316,133 @@ def freeze_instance_record(create_result: object, raw_instance: object) -> dict[
     if str(instance.get("id")) != expected_id:
         raise ValueError("actual instance does not match the Vast create result")
     return {field: instance.get(field) for field in INSTANCE_RECORD_FIELDS}
+
+
+def sanitize_instance_list(raw_instances: object) -> list[dict[str, object]]:
+    """Project a Vast instance inventory onto non-secret audit fields."""
+    if isinstance(raw_instances, dict) and "instances" in raw_instances:
+        raw_instances = raw_instances.get("instances")
+    if not isinstance(raw_instances, list):
+        raise ValueError("Vast instance inventory must be a list")
+    records = []
+    for instance in raw_instances:
+        if not isinstance(instance, dict):
+            raise ValueError("Vast instance inventory contains a non-object row")
+        records.append({field: instance.get(field) for field in INSTANCE_RECORD_FIELDS})
+    return records
+
+
+def validate_instance_against_offer(
+    offer: object,
+    create_result: object,
+    instance: object,
+    expected_image: str,
+    maximum_rate_micro_usd: int,
+    *,
+    expected_label: str | None = None,
+    require_running: bool = True,
+) -> dict[str, object]:
+    """Bind one running instance to the exact approved offer before staging."""
+    if not isinstance(offer, dict):
+        raise ValueError("approved Vast offer must be one object")
+    if maximum_rate_micro_usd <= 0:
+        raise ValueError("maximum Vast instance rate must be positive")
+    instance = instance_from_document(instance)
+    expected_instance_id = created_instance_id(create_result)
+    offer_id = offer.get("id")
+    offer_machine_id = offer.get("machine_id")
+    offer_bundle_id = offer.get("bundle_id")
+    if any(
+        isinstance(value, bool)
+        or not isinstance(value, (int, str))
+        or not str(value).isdecimal()
+        or int(value) <= 0
+        for value in (offer_id, offer_machine_id, offer_bundle_id)
+    ):
+        raise ValueError("approved Vast offer identifiers must be positive integers")
+    offer_rate = int(
+        (require_number(offer.get("dph_total"), "dph_total") * 1_000_000)
+        .to_integral_value(rounding=ROUND_CEILING)
+    )
+    instance_rate = int(
+        (
+            require_number(instance.get("dph_total"), "instance dph_total")
+            * 1_000_000
+        ).to_integral_value(rounding=ROUND_CEILING)
+    )
+    instance_id = instance.get("id")
+    instance_bundle_id = instance.get("bundle_id")
+    if (
+        isinstance(instance_id, bool)
+        or not isinstance(instance_id, (int, str))
+        or str(instance_id) != expected_instance_id
+        or instance.get("machine_id") != offer_machine_id
+        or (instance_bundle_id is not None and instance_bundle_id != offer_bundle_id)
+        or (require_running and instance.get("actual_status") != "running")
+        or instance.get("intended_status") != "running"
+        or immutable_image_ref(instance.get("image_uuid"))
+        != immutable_image_ref(expected_image)
+        or instance.get("gpu_name") != offer.get("gpu_name")
+        or instance.get("num_gpus") != offer.get("num_gpus")
+        or require_number(instance.get("disk_space"), "instance disk_space") < 200
+        or instance_rate <= 0
+        or instance_rate > offer_rate
+        or instance_rate > maximum_rate_micro_usd
+        or instance.get("is_bid") is not False
+        or instance.get("verification") != "verified"
+        or (
+            expected_label is not None
+            and (not expected_label.strip() or instance.get("label") != expected_label)
+        )
+    ):
+        raise ValueError("actual Vast instance does not match the approved offer and image")
+    return {
+        "schema_version": 1,
+        "artifact_kind": "gte-approved-vast-instance",
+        "offer_id": str(offer_id),
+        "instance_id": str(instance_id),
+        "machine_id": str(offer_machine_id),
+        "bundle_id": None if instance_bundle_id is None else str(instance_bundle_id),
+        "image": immutable_image_ref(expected_image),
+        "rate_micro_usd_per_hour": instance_rate,
+        "maximum_rate_micro_usd_per_hour": maximum_rate_micro_usd,
+        "on_demand": True,
+        "label": instance.get("label"),
+    }
+
+
+def recover_create_result(
+    raw_instances: object,
+    offer: object,
+    expected_image: str,
+    expected_label: str,
+    maximum_rate_micro_usd: int,
+) -> dict[str, object]:
+    """Recover one ambiguous create only from one validated live label match."""
+    if not expected_label.strip():
+        raise ValueError("recovery label must be nonempty")
+    if isinstance(raw_instances, dict) and isinstance(raw_instances.get("instances"), list):
+        raw_instances = raw_instances["instances"]
+    if not isinstance(raw_instances, list):
+        raise ValueError("Vast instance recovery requires an instance list")
+    matches = [
+        row
+        for row in raw_instances
+        if isinstance(row, dict) and row.get("label") == expected_label
+    ]
+    if len(matches) != 1:
+        raise ValueError("instance recovery requires exactly one matching live label")
+    create_result = {"success": True, "new_contract": matches[0].get("id")}
+    validate_instance_against_offer(
+        offer,
+        create_result,
+        matches[0],
+        expected_image,
+        maximum_rate_micro_usd,
+        expected_label=expected_label,
+        require_running=False,
+    )
+    return create_result
 
 
 def normalized_image_ref(value: object) -> str:
@@ -429,33 +557,10 @@ def build_execution_identity(
     ):
         raise ValueError("Vast offer does not satisfy the approved calibration contract")
 
-    instance_rate = int(
-        (
-            require_number(instance.get("dph_total"), "instance dph_total")
-            * 1_000_000
-        ).to_integral_value(rounding=ROUND_CEILING)
+    launch = validate_instance_against_offer(
+        offer, create_result, instance, descriptor_image, offer_rate
     )
-    if (
-        isinstance(instance_id, bool)
-        or not isinstance(instance_id, (int, str))
-        or not str(instance_id).strip()
-        or str(instance_id) != expected_instance_id
-        or instance.get("machine_id") != offer_machine_id
-        or (
-            instance_bundle_id is not None
-            and instance_bundle_id != offer_bundle_id
-        )
-        or instance.get("actual_status") != "running"
-        or instance.get("intended_status") != "running"
-        or immutable_image_ref(instance.get("image_uuid")) != descriptor_image
-        or instance.get("gpu_name") != APPROVED_OFFER_GPU_MODEL
-        or instance.get("num_gpus") != 1
-        or require_number(instance.get("disk_space"), "instance disk_space") < 200
-        or instance_rate <= 0
-        or instance.get("is_bid") is not False
-        or instance.get("verification") != "verified"
-    ):
-        raise ValueError("actual Vast instance does not match the approved offer and image")
+    instance_rate = launch["rate_micro_usd_per_hour"]
     if (
         host.gpu_model != APPROVED_GPU_MODEL
         or host.gpu_count != 1
@@ -564,6 +669,27 @@ def parse_args() -> argparse.Namespace:
     freeze_create.add_argument("raw_create_result", type=Path)
     freeze_create.add_argument("output", type=Path)
 
+    sanitize_instances = subparsers.add_parser("sanitize-instances")
+    sanitize_instances.add_argument("raw_instances", type=Path)
+    sanitize_instances.add_argument("output", type=Path)
+
+    validate_instance = subparsers.add_parser("validate-instance")
+    validate_instance.add_argument("offer", type=Path)
+    validate_instance.add_argument("create_result", type=Path)
+    validate_instance.add_argument("instance", type=Path)
+    validate_instance.add_argument("expected_image")
+    validate_instance.add_argument("expected_label")
+    validate_instance.add_argument("maximum_rate_micro_usd", type=int)
+    validate_instance.add_argument("output", type=Path)
+
+    recover_create = subparsers.add_parser("recover-create")
+    recover_create.add_argument("instances", type=Path)
+    recover_create.add_argument("offer", type=Path)
+    recover_create.add_argument("expected_image")
+    recover_create.add_argument("expected_label")
+    recover_create.add_argument("maximum_rate_micro_usd", type=int)
+    recover_create.add_argument("output", type=Path)
+
     freeze_template = subparsers.add_parser("freeze-template")
     freeze_template.add_argument("raw_templates", type=Path)
     freeze_template.add_argument("expected_hash")
@@ -594,6 +720,28 @@ def main() -> int:
         atomic_write_json(args.output, result)
     elif args.operation == "freeze-create":
         result = freeze_create_result(read_json(args.raw_create_result))
+        atomic_write_json(args.output, result)
+    elif args.operation == "sanitize-instances":
+        result = sanitize_instance_list(read_json(args.raw_instances))
+        atomic_write_json(args.output, result)
+    elif args.operation == "validate-instance":
+        result = validate_instance_against_offer(
+            load_one_offer(args.offer),
+            read_json(args.create_result),
+            load_one_instance(args.instance),
+            args.expected_image,
+            args.maximum_rate_micro_usd,
+            expected_label=args.expected_label,
+        )
+        atomic_write_json(args.output, result)
+    elif args.operation == "recover-create":
+        result = recover_create_result(
+            read_json(args.instances),
+            load_one_offer(args.offer),
+            args.expected_image,
+            args.expected_label,
+            args.maximum_rate_micro_usd,
+        )
         atomic_write_json(args.output, result)
     elif args.operation == "freeze-template":
         result = freeze_template_record(

@@ -14,10 +14,10 @@ use oracle_mvp::gte_budget::{
     CALIBRATION_LIFETIME_CAP, CalibrationEvidencePaths, CalibrationExecutionIdentity,
     CalibrationRecorder, CalibrationRecorderConfig, FullBuildNonComputeCosts, FullBuildResultPaths,
     MVP_LIFETIME_CAP, MonotonicCostGuard, VerifiedCalibrationEvidence, claim_calibration_execution,
-    claim_or_resume_full_build_execution, read_active_calibration_reservation,
-    read_active_full_build_reservation, read_budget_ledger, reserve_calibration,
-    reserve_full_build, settle_calibration, settle_failed_calibration, settle_failed_full_build,
-    settle_full_build, validate_calibration_selection,
+    claim_or_resume_full_build_execution, project_full_build, read_active_calibration_reservation,
+    read_active_full_build_reservation, read_budget_ledger, reconcile_calibration_finalized_charge,
+    reserve_calibration, reserve_full_build, settle_calibration, settle_failed_calibration,
+    settle_failed_full_build, settle_full_build, validate_calibration_selection,
 };
 use oracle_mvp::ordered_gte_token_audit::{
     OrderedGteTokenAuditConfig, OrderedGteTokenCounter, audit_ordered_gte_tokens,
@@ -41,7 +41,8 @@ fn checked_in_ledger_freezes_both_caps_and_settled_calibration_spend() {
 
     assert_eq!(ledger.lifetime_cap, MVP_LIFETIME_CAP);
     assert_eq!(ledger.calibration_lifetime_cap, CALIBRATION_LIFETIME_CAP);
-    assert_eq!(ledger.calibration_actual_spend, MicroUsd(1_210_000));
+    assert_eq!(ledger.actual_spend, MicroUsd(1_270_000));
+    assert_eq!(ledger.calibration_actual_spend, MicroUsd(1_270_000));
     assert_eq!(ledger.calibration_outstanding_commitments, MicroUsd(0));
 }
 
@@ -246,6 +247,54 @@ fn cli_success_settlement_verifies_evidence_and_releases_commitment() {
         fs::read(&fixture.path).expect("read duplicate settlement ledger"),
         settled_bytes
     );
+}
+
+#[test]
+fn cli_reconciles_a_pinned_finalized_provider_invoice() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let config_path = write_calibration_cli_config(
+        &fixture,
+        CalibrationCliConfigState::MissingInputs,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    );
+    assert_command_succeeded(&run_gte_oracle(&[
+        "reserve-calibration",
+        config_path.to_str().expect("UTF-8 config path"),
+        "2026-07-17T12:00:00Z",
+    ]));
+    fixture.write_calibration_evidence();
+    claim_calibration_via_cli(
+        &fixture,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    );
+    write_calibration_cli_config(
+        &fixture,
+        CalibrationCliConfigState::CompletedCalibrationOutput,
+        MicroUsd::from_dollars(10),
+        MicroUsd::from_dollars(2),
+    );
+    assert_command_succeeded(&run_gte_oracle(&[
+        "settle-calibration",
+        config_path.to_str().expect("UTF-8 config path"),
+        "1205996",
+        "2026-07-17T13:00:00Z",
+    ]));
+    let invoice_path = fixture.write_finalized_provider_invoice("fixture-instance", "1.262");
+    let invoice_sha256 = sha256_file(&invoice_path);
+
+    let output = run_gte_oracle(&[
+        "reconcile-calibration-finalized-charge",
+        config_path.to_str().expect("UTF-8 config path"),
+        invoice_path.to_str().expect("UTF-8 invoice path"),
+        &invoice_sha256,
+        "2026-07-18T00:00:00Z",
+    ]);
+    assert_command_succeeded(&output);
+    let ledger = read_budget_ledger(&fixture.path).expect("read reconciled ledger");
+    assert_eq!(ledger.actual_spend, MicroUsd::from_cents(127));
+    assert_eq!(ledger.calibration_actual_spend, MicroUsd::from_cents(127));
 }
 
 #[test]
@@ -594,6 +643,273 @@ fn calibration_settlement_atomically_records_actual_spend_and_releases_the_commi
         "2026-07-16T20:32:00Z",
     )
     .expect("settlement makes the full-build budget review reachable");
+}
+
+#[test]
+fn finalized_provider_invoice_adds_only_the_rounded_calibration_delta_once() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    reserve_calibration(
+        &fixture.path,
+        "finalized-charge",
+        MicroUsd::from_dollars(10),
+        "2026-07-16T20:00:00Z",
+    )
+    .expect("reserve calibration");
+    claim_calibration_execution(
+        &fixture.path,
+        "finalized-charge",
+        MicroUsd::from_dollars(10),
+        MicroUsd(0),
+    )
+    .expect("claim calibration");
+    let calibration = fixture.write_calibration_evidence();
+    let evidence =
+        VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
+            .expect("verify calibration evidence");
+    settle_calibration(
+        &fixture.path,
+        "finalized-charge",
+        &evidence,
+        MicroUsd(1_205_996),
+        "2026-07-16T20:30:00Z",
+    )
+    .expect("settle from the preliminary provider charge");
+    let predecessor = read_budget_ledger(&fixture.path)
+        .expect("read preliminary settlement")
+        .ledger_sha256;
+    let invoice_path = fixture.write_finalized_provider_invoice("fixture-instance", "1.262");
+    let invoice_sha256 = sha256_file(&invoice_path);
+
+    let reconciled = reconcile_calibration_finalized_charge(
+        &fixture.path,
+        "finalized-charge",
+        &evidence,
+        &invoice_path,
+        &invoice_sha256,
+        "2026-07-17T00:00:00Z",
+    )
+    .expect("reconcile the finalized provider invoice");
+    assert_eq!(reconciled.actual_spend, MicroUsd::from_cents(127));
+    assert_eq!(
+        reconciled.calibration_actual_spend,
+        MicroUsd::from_cents(127)
+    );
+    assert_eq!(reconciled.outstanding_commitments, MicroUsd(0));
+    assert_eq!(reconciled.calibration_outstanding_commitments, MicroUsd(0));
+
+    let entry = ledger_entries(&fixture.path)
+        .into_iter()
+        .find(|entry| entry["kind"] == "calibration_finalized_charge_reconciliation")
+        .expect("finalized-charge reconciliation entry");
+    assert_eq!(entry["reservation_id"], "finalized-charge");
+    assert_eq!(
+        entry["calibration_evidence_sha256"],
+        evidence.evidence_sha256()
+    );
+    assert_eq!(entry["provider_invoice_sha256"], invoice_sha256);
+    assert_eq!(entry["provider_instance_id"], "fixture-instance");
+    assert_eq!(entry["previous_ledger_sha256"], predecessor);
+    assert_eq!(entry["previous_actual_charge_micro_usd"], 1_205_996_u64);
+    assert_eq!(entry["previous_recorded_charge_cents"], 121_u64);
+    assert_eq!(entry["finalized_actual_charge_micro_usd"], 1_262_000_u64);
+    assert_eq!(entry["finalized_recorded_charge_cents"], 127_u64);
+    assert_eq!(entry["added_actual_spend_cents"], 6_u64);
+
+    let reconciled_bytes = fs::read(&fixture.path).expect("read reconciled ledger");
+    let duplicate = reconcile_calibration_finalized_charge(
+        &fixture.path,
+        "finalized-charge",
+        &evidence,
+        &invoice_path,
+        &invoice_sha256,
+        "2026-07-17T00:01:00Z",
+    )
+    .expect_err("one settlement cannot be reconciled twice");
+    assert!(
+        duplicate.to_string().contains("already reconciled"),
+        "{duplicate}"
+    );
+    assert_eq!(
+        fs::read(&fixture.path).expect("read duplicate-rejected ledger"),
+        reconciled_bytes
+    );
+}
+
+#[test]
+fn finalized_charge_reconciliation_rejects_unbound_or_non_increasing_evidence() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    reserve_calibration(
+        &fixture.path,
+        "strict-finalized-charge",
+        MicroUsd::from_dollars(10),
+        "2026-07-16T20:00:00Z",
+    )
+    .expect("reserve calibration");
+    claim_calibration_execution(
+        &fixture.path,
+        "strict-finalized-charge",
+        MicroUsd::from_dollars(10),
+        MicroUsd(0),
+    )
+    .expect("claim calibration");
+    let calibration = fixture.write_calibration_evidence();
+    let evidence =
+        VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
+            .expect("verify calibration evidence");
+    settle_calibration(
+        &fixture.path,
+        "strict-finalized-charge",
+        &evidence,
+        MicroUsd(1_210_000),
+        "2026-07-16T20:30:00Z",
+    )
+    .expect("settle calibration");
+    let settled_bytes = fs::read(&fixture.path).expect("read settled ledger");
+
+    let wrong_instance = fixture.write_finalized_provider_invoice("other-instance", "1.262");
+    let error = reconcile_calibration_finalized_charge(
+        &fixture.path,
+        "strict-finalized-charge",
+        &evidence,
+        &wrong_instance,
+        &sha256_file(&wrong_instance),
+        "2026-07-17T00:00:00Z",
+    )
+    .expect_err("invoice must name the calibrated rental instance");
+    assert!(error.to_string().contains("instance"), "{error}");
+
+    let non_increasing = fixture.write_finalized_provider_invoice("fixture-instance", "1.210");
+    let error = reconcile_calibration_finalized_charge(
+        &fixture.path,
+        "strict-finalized-charge",
+        &evidence,
+        &non_increasing,
+        &sha256_file(&non_increasing),
+        "2026-07-17T00:00:00Z",
+    )
+    .expect_err("finalized charge must increase rounded spend");
+    assert!(error.to_string().contains("increase"), "{error}");
+
+    let increasing = fixture.write_finalized_provider_invoice("fixture-instance", "1.262");
+    let error = reconcile_calibration_finalized_charge(
+        &fixture.path,
+        "strict-finalized-charge",
+        &evidence,
+        &increasing,
+        &"0".repeat(64),
+        "2026-07-17T00:00:00Z",
+    )
+    .expect_err("caller must pin the exact provider invoice bytes");
+    assert!(error.to_string().contains("SHA-256"), "{error}");
+    assert_eq!(
+        fs::read(&fixture.path).expect("read evidence-rejected ledger"),
+        settled_bytes
+    );
+}
+
+#[test]
+fn finalized_charge_reconciliation_records_spend_that_exceeds_a_budget_cap() {
+    let fixture = LedgerFixture::new(49_000, 0, 2_300, 0);
+    reserve_calibration(
+        &fixture.path,
+        "cap-bound-finalized-charge",
+        MicroUsd::from_dollars(2),
+        "2026-07-16T20:00:00Z",
+    )
+    .expect("reserve the remaining calibration allowance");
+    claim_calibration_execution(
+        &fixture.path,
+        "cap-bound-finalized-charge",
+        MicroUsd::from_dollars(2),
+        MicroUsd(0),
+    )
+    .expect("claim calibration");
+    let calibration = fixture.write_calibration_evidence();
+    let evidence =
+        VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
+            .expect("verify calibration evidence");
+    settle_calibration(
+        &fixture.path,
+        "cap-bound-finalized-charge",
+        &evidence,
+        MicroUsd::from_dollars(2),
+        "2026-07-16T20:30:00Z",
+    )
+    .expect("settle at both remaining caps");
+    let invoice_path = fixture.write_finalized_provider_invoice("fixture-instance", "2.01");
+    let reconciled = reconcile_calibration_finalized_charge(
+        &fixture.path,
+        "cap-bound-finalized-charge",
+        &evidence,
+        &invoice_path,
+        &sha256_file(&invoice_path),
+        "2026-07-17T00:00:00Z",
+    )
+    .expect("already-incurred finalized spend must be recorded");
+    assert_eq!(reconciled.actual_spend, MicroUsd::from_cents(49_201));
+    assert_eq!(
+        reconciled.calibration_actual_spend,
+        MicroUsd::from_cents(2_501)
+    );
+    let error = reserve_calibration(
+        &fixture.path,
+        "after-calibration-overrun",
+        MicroUsd::from_cents(1),
+        "2026-07-17T00:01:00Z",
+    )
+    .expect_err("an over-cap ledger must reject new reservations");
+    assert!(error.to_string().contains("calibration cap"), "{error}");
+
+    let fixture = LedgerFixture::new(49_800, 0, 0, 0);
+    reserve_calibration(
+        &fixture.path,
+        "lifetime-cap-finalized-charge",
+        MicroUsd::from_dollars(2),
+        "2026-07-16T20:00:00Z",
+    )
+    .expect("reserve the remaining lifetime allowance");
+    claim_calibration_execution(
+        &fixture.path,
+        "lifetime-cap-finalized-charge",
+        MicroUsd::from_dollars(2),
+        MicroUsd(0),
+    )
+    .expect("claim calibration");
+    let calibration = fixture.write_calibration_evidence();
+    let evidence =
+        VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
+            .expect("verify calibration evidence");
+    settle_calibration(
+        &fixture.path,
+        "lifetime-cap-finalized-charge",
+        &evidence,
+        MicroUsd::from_dollars(2),
+        "2026-07-16T20:30:00Z",
+    )
+    .expect("settle at the lifetime cap");
+    let invoice_path = fixture.write_finalized_provider_invoice("fixture-instance", "2.01");
+    let reconciled = reconcile_calibration_finalized_charge(
+        &fixture.path,
+        "lifetime-cap-finalized-charge",
+        &evidence,
+        &invoice_path,
+        &sha256_file(&invoice_path),
+        "2026-07-17T00:00:00Z",
+    )
+    .expect("already-incurred finalized spend must be recorded");
+    assert_eq!(reconciled.actual_spend, MicroUsd::from_cents(50_001));
+    assert_eq!(
+        reconciled.calibration_actual_spend,
+        MicroUsd::from_cents(201)
+    );
+    let error = reserve_calibration(
+        &fixture.path,
+        "after-lifetime-overrun",
+        MicroUsd::from_cents(1),
+        "2026-07-17T00:01:00Z",
+    )
+    .expect_err("an over-cap ledger must reject new reservations");
+    assert!(error.to_string().contains("$500 MVP cap"), "{error}");
 }
 
 #[test]
@@ -1277,7 +1593,7 @@ fn successful_full_build_settlement_requires_the_complete_verified_representatio
         one_cold_restart: MicroUsd(1),
         one_lost_shard: MicroUsd(1),
     };
-    reserve_full_build(
+    let admission = reserve_full_build(
         &fixture.path,
         "settlement-build",
         &evidence,
@@ -1345,17 +1661,33 @@ fn successful_full_build_settlement_requires_the_complete_verified_representatio
     )
     .expect("finish the representation");
 
+    let reserved = admission
+        .projection
+        .total()
+        .expect("full-build reservation");
+    let actual = MicroUsd(
+        reserved
+            .0
+            .checked_add(MicroUsd::from_dollars(1).0)
+            .expect("successful provider overrun"),
+    );
     let settled = settle_full_build(
         &fixture.path,
         "settlement-build",
         &evidence,
         &paths,
-        MicroUsd::from_dollars(2),
+        actual,
         "2026-07-16T04:01:00Z",
     )
-    .expect("settle complete full build");
-    assert_eq!(settled.actual_spend, MicroUsd::from_dollars(3));
+    .expect("settle complete full build despite provider overrun");
+    assert_eq!(
+        settled.actual_spend,
+        MicroUsd(actual.0 + MicroUsd::from_dollars(1).0)
+    );
     assert_eq!(settled.outstanding_commitments, MicroUsd(0));
+    let error = project_full_build(&fixture.path, &evidence, full_build_costs)
+        .expect_err("a completed full build prohibits another corpus pass");
+    assert!(error.to_string().contains("already completed"), "{error}");
 }
 
 #[test]
@@ -1387,16 +1719,17 @@ fn failed_full_build_settlement_records_the_real_provider_overrun() {
         "2026-07-16T02:00:00Z",
     )
     .expect("settle calibration");
+    let full_build_costs = FullBuildNonComputeCosts {
+        artifact_storage_and_transfer: MicroUsd(0),
+        paid_lazy_inference: MicroUsd(0),
+        one_cold_restart: MicroUsd(1),
+        one_lost_shard: MicroUsd(1),
+    };
     let admission = reserve_full_build(
         &fixture.path,
         "failed-build",
         &evidence,
-        FullBuildNonComputeCosts {
-            artifact_storage_and_transfer: MicroUsd(0),
-            paid_lazy_inference: MicroUsd(0),
-            one_cold_restart: MicroUsd(1),
-            one_lost_shard: MicroUsd(1),
-        },
+        full_build_costs.clone(),
         "2026-07-16T03:00:00Z",
     )
     .expect("reserve full build");
@@ -1436,6 +1769,17 @@ fn failed_full_build_settlement_records_the_real_provider_overrun() {
         entry["failure_evidence_sha256"],
         sha256_file(&failure_evidence)
     );
+
+    project_full_build(&fixture.path, &evidence, full_build_costs.clone())
+        .expect("a terminal failed attempt permits another reviewed projection");
+    reserve_full_build(
+        &fixture.path,
+        "failed-build-retry",
+        &evidence,
+        full_build_costs,
+        "2026-07-16T05:00:00Z",
+    )
+    .expect("a different reservation may retry the same incomplete representation");
 }
 
 #[test]
@@ -2275,6 +2619,39 @@ impl LedgerFixture {
 
     fn write_calibration_evidence(&self) -> CalibrationFixture {
         self.write_calibration_evidence_with_rate(MicroUsd::from_dollars(360))
+    }
+
+    fn write_finalized_provider_invoice(&self, instance_id: &str, amount: &str) -> PathBuf {
+        let path = self.directory.path().join(format!(
+            "finalized-provider-invoice-{instance_id}-{}.json",
+            amount.replace('.', "-")
+        ));
+        fs::write(
+            &path,
+            format!(
+                r#"{{
+  "count": 1,
+  "next_token": null,
+  "results": [
+    {{
+      "amount": {amount},
+      "description": "Instance {instance_id} Charges - 1 day",
+      "end": 1784419200,
+      "items": [],
+      "metadata": {{"label": "fixture-calibration"}},
+      "source": "instance-{instance_id}",
+      "start": 1784419200,
+      "type": "instance"
+    }}
+  ],
+  "success": true,
+  "total": 1
+}}
+"#
+            ),
+        )
+        .expect("write finalized provider invoice");
+        path
     }
 
     fn write_calibration_evidence_with_rate(

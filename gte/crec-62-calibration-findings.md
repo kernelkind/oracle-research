@@ -13,10 +13,12 @@ The run artifacts are under:
 ## Conclusion
 
 The exact full-quality GTE representation is comfortably affordable. The
-complete eligible corpus is projected to cost about **$39.21 total**, including
-the completed calibration, on the measured rental configuration. Compute cost
-is therefore not a reason to reduce model quality, vector dimensions, or
-numeric precision for the Oracle MVP.
+original post-calibration projection was **$39.21 total**, but it used a `$1`
+artifact allowance and a provisional live charge. The final CREC-72 launch
+audit replaced those assumptions with the finalized provider invoice and a
+conservative `$10` non-worker allowance. The current complete-build projection
+is **$48.27 lifetime total**. Compute cost is therefore not a reason to reduce
+model quality, vector dimensions, or numeric precision for the Oracle MVP.
 
 This run established computational and operational feasibility only. It did
 not test semantic-neighbor quality, personalization, or recommendation quality.
@@ -39,7 +41,8 @@ not test semantic-neighbor quality, personalization, or recommendation quality.
 - Host: AMD Ryzen 9 9950X, about 202 GB RAM, 200 GB local NVMe
 - Vast offer: `45236567`, Texas, US
 - Rental instance: `[private ID removed]`
-- Total rental rate: $1.359259/hour
+- Raw total rental rate: $1.359259259.../hour
+- Conservative identity and future-offer gate: $1.359260/hour
 
 This was embedding inference, not model training or fine-tuning.
 
@@ -142,26 +145,34 @@ still cannot predict multi-hour provider instability or thermal throttling.
 
 ## Cost result
 
-The measured calibration-cost estimate was:
+The measured resource-cost estimate was:
 
 - Provider runtime snapshot: about $0.924
 - Provider transfer charge: about $0.272
 - Conservative resource charge: $1.205996
 
+The final provider-reported resource cost was `$1.262`.
 
-Projected additional full-build cost:
+`launch/finalized-charge-reconciliation-result.json` and
+`launch/current-full-build-projection.json` are authoritative.
+`launch/provisional-artifacts-superseded.json` identifies the older provisional
+settlement and projection artifacts retained only as audit history.
+
+
+The original additional projection was `$37.998327`; its `$1` artifact
+allowance is superseded. The current CREC-72 projection is:
 
 - Remaining compute: $36.676185
-- Artifact storage and transfer allowance: $1.00
+- Artifact storage, transfer, preparation, and teardown allowance: $10.00
 - One cold-restart reserve: $0.148419
 - One lost-shard reserve: $0.173723
-- Additional total: $37.998327
-- Projected total including calibration: **$39.21**
+- Additional total: $46.998327
+- Projected total including finalized calibration: **$48.27**
 
-The $1 artifact allowance is an input assumption, not a measured complete-build
-charge. A future build may cost modestly more if it repeats slow setup and then
-retrieves the complete 50.61 GB matrix. The margin to the $500 ceiling remains
-large.
+The `$10` allowance bounds the exact image, compressed transport, direct model
+download, complete 50.61 GB result retrieval, storage, preparation, and
+teardown at the admitted network-price ceilings. It is a reservation, not a
+spending target.
 
 ## Operational findings
 
@@ -188,8 +199,8 @@ The compressed database upload took about 13 minutes at roughly 2.3 MB/s.
 Retrieving about 362 MB of results took about 13 seconds at roughly 25.7 MB/s.
 Input staging, not result retrieval, was the operational bottleneck.
 
-This successful transfer path is not yet fully represented in the committed
-runbook and must be made explicit before a complete build.
+CREC-72 now makes this exact transfer and reconstruction path explicit and
+locally verifies the package and transport manifests before launch.
 
 ### Model cache metadata is not stable identity
 
@@ -240,6 +251,20 @@ destroy response body.
 - Ephemeral SSH material and the temporary transport archive were removed.
 - Commit `b031209` recorded the settlement; 46 targeted budget tests passed.
 
+### CREC-72 closed the partial-artifact API gap
+
+A later free local smoke test used the exact frozen controller, image, GTE
+model, corpus, and calibrated shard on a disposable copy. `vectors_for_notes`
+returned the exact stored 3,584-dimensional vector. `similar_notes` performed a
+real query-role encoding, scanned the 16,384 represented rows once, excluded
+the source, and returned five ranked candidates. The source artifact was not
+modified.
+
+This proves both production operations behave correctly on the calibrated
+shard. It does not estimate complete-matrix latency or recommendation quality.
+The exact event IDs, scores, timings, and artifact identities are recorded in
+`../damus_snapshot/runs/crec-72-gte-full-build/preflight/report.json`.
+
 ## What remains unknown
 
 This calibration did not test:
@@ -249,8 +274,9 @@ This calibration did not test:
   usefulness, stance, style, originality, or humor.
 - Whether private positive and negative evidence can become accurate personal
   recommendations over this geometry.
-- `similar_notes`, query-vector, or complete-matrix search latency.
-- `vectors_for_notes` behavior.
+- Complete-matrix `similar_notes` latency. A free CREC-72 smoke test proved
+  query-role encoding, exact scan, source exclusion, and ranked output over the
+  calibrated shard only.
 - Local personalization, adaptive learning, feed construction, or final ratings.
 - GTE quality relative to another embedding model.
 - Stability, restart/resume behavior, and exact cost across a continuous
@@ -268,7 +294,8 @@ recommendation quality.
   GPU comparison work merely to satisfy the budget. The exact FP32 build already
   fits comfortably.
 - Preserve and reuse shard 157.
-- Rebuild the private image with the live `bundle_id` correction before renting.
+- Keep the calibrated private image unchanged and transport the corrected,
+  checksum-pinned identity helper and controller separately.
 - Replace the naïve complete-package upload with the verified remote-model plus
   compressed-corpus staging path.
 - Bind model identity to stable payloads rather than Hugging Face cache metadata.

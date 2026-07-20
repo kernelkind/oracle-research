@@ -1600,6 +1600,172 @@ pub fn settle_calibration(
     ledger_from_document(&document, ledger_sha256)
 }
 
+/// Reconcile one successful calibration settlement against the provider's
+/// finalized invoice. The caller pins the exact invoice bytes; the invoice is
+/// also bound to the rental instance recorded in the verified calibration
+/// evidence. This transition can only add the newly discovered rounded cents.
+pub fn reconcile_calibration_finalized_charge(
+    ledger_path: &Path,
+    reservation_id: &str,
+    calibration_evidence: &VerifiedCalibrationEvidence,
+    provider_invoice_path: &Path,
+    expected_provider_invoice_sha256: &str,
+    recorded_at_utc: &str,
+) -> Result<BudgetLedger> {
+    validate_reservation_input(reservation_id, recorded_at_utc)?;
+    calibration_evidence.reverify()?;
+    if calibration_evidence.reservation.reservation_id != reservation_id {
+        return Err(Error::Budget(format!(
+            "calibration evidence is bound to reservation `{}` rather than `{reservation_id}`",
+            calibration_evidence.reservation.reservation_id
+        )));
+    }
+    if !is_sha256(expected_provider_invoice_sha256) {
+        return Err(Error::Budget(
+            "finalized provider invoice requires a lowercase SHA-256".to_owned(),
+        ));
+    }
+    let provider_invoice_bytes = fs::read(provider_invoice_path)
+        .map_err(|source| io_error("read", provider_invoice_path, source))?;
+    let provider_invoice_sha256 = hash_bytes(&provider_invoice_bytes);
+    if provider_invoice_sha256 != expected_provider_invoice_sha256 {
+        return Err(Error::Budget(
+            "finalized provider invoice does not match its expected SHA-256".to_owned(),
+        ));
+    }
+    let provider_invoice: FinalizedProviderInvoiceDocument =
+        serde_json::from_slice(&provider_invoice_bytes).map_err(|source| Error::Manifest {
+            operation: "decode",
+            path: provider_invoice_path.to_owned(),
+            source,
+        })?;
+    let finalized_charge = provider_invoice
+        .finalized_instance_charge(&calibration_evidence.execution_identity.rental_instance_id)?;
+    let finalized_cents = ceiling_cents(finalized_charge)?;
+
+    let _lock = LedgerLock::acquire(ledger_path)?;
+    let (previous_bytes, mut document) = read_ledger_document(ledger_path)?;
+    let previous_ledger_sha256 = hash_bytes(&previous_bytes);
+    if document.entries.iter().any(|entry| {
+        entry.get("kind").and_then(serde_json::Value::as_str)
+            == Some("calibration_finalized_charge_reconciliation")
+            && entry
+                .get("reservation_id")
+                .and_then(serde_json::Value::as_str)
+                == Some(reservation_id)
+    }) {
+        return Err(Error::Budget(format!(
+            "calibration reservation `{reservation_id}` already reconciled its finalized provider charge"
+        )));
+    }
+
+    let settlements = document
+        .entries
+        .iter()
+        .filter(|entry| {
+            entry.get("kind").and_then(serde_json::Value::as_str) == Some("calibration_settlement")
+                && entry
+                    .get("reservation_id")
+                    .and_then(serde_json::Value::as_str)
+                    == Some(reservation_id)
+        })
+        .collect::<Vec<_>>();
+    let [settlement] = settlements.as_slice() else {
+        return Err(Error::Budget(format!(
+            "calibration reservation `{reservation_id}` requires exactly one successful settlement before finalized-charge reconciliation"
+        )));
+    };
+    let settlement_bindings = [
+        (
+            "calibration_evidence_sha256",
+            calibration_evidence.evidence_sha256(),
+        ),
+        (
+            "representation_build_identity_sha256",
+            calibration_evidence.representation_build_identity_sha256(),
+        ),
+        (
+            "batch_plan_manifest_sha256",
+            calibration_evidence.batch_plan_manifest_sha256(),
+        ),
+        (
+            "execution_identity_sha256",
+            calibration_evidence.execution_identity_sha256(),
+        ),
+    ];
+    if settlement_bindings.iter().any(|(field, expected)| {
+        settlement.get(field).and_then(serde_json::Value::as_str) != Some(*expected)
+    }) {
+        return Err(Error::Budget(
+            "finalized provider invoice does not match the calibration settlement evidence"
+                .to_owned(),
+        ));
+    }
+    let previous_actual_charge = settlement
+        .get("actual_charge_micro_usd")
+        .and_then(serde_json::Value::as_u64)
+        .map(MicroUsd)
+        .ok_or_else(|| {
+            Error::Budget("calibration settlement has no valid actual provider charge".to_owned())
+        })?;
+    let previous_cents = settlement
+        .get("recorded_actual_charge_cents")
+        .and_then(serde_json::Value::as_u64)
+        .ok_or_else(|| {
+            Error::Budget("calibration settlement has no valid rounded provider charge".to_owned())
+        })?;
+    if ceiling_cents(previous_actual_charge)? != previous_cents {
+        return Err(Error::Budget(
+            "calibration settlement does not conservatively round its provider charge".to_owned(),
+        ));
+    }
+    if finalized_cents <= previous_cents {
+        return Err(Error::Budget(
+            "finalized provider charge must increase the previously recorded rounded charge"
+                .to_owned(),
+        ));
+    }
+    let added_cents = finalized_cents - previous_cents;
+    let projected_calibration_actual_cents = document
+        .calibration_actual_spend_cents
+        .checked_add(added_cents)
+        .ok_or_else(|| Error::Budget("calibration actual-spend cents overflowed".to_owned()))?;
+    let projected_actual_cents = document
+        .actual_spend_cents
+        .checked_add(added_cents)
+        .ok_or_else(|| Error::Budget("lifetime actual-spend cents overflowed".to_owned()))?;
+
+    let settlement_sha256 =
+        hash_bytes(
+            &serde_json::to_vec(settlement).map_err(|source| Error::Manifest {
+                operation: "encode",
+                path: PathBuf::from("calibration-settlement"),
+                source,
+            })?,
+        );
+    document.actual_spend_cents = projected_actual_cents;
+    document.calibration_actual_spend_cents = projected_calibration_actual_cents;
+    document.reconciled_through_utc = recorded_at_utc.to_owned();
+    document.entries.push(json!({
+        "kind": "calibration_finalized_charge_reconciliation",
+        "reservation_id": reservation_id,
+        "recorded_at_utc": recorded_at_utc,
+        "calibration_evidence_sha256": calibration_evidence.evidence_sha256(),
+        "calibration_settlement_sha256": settlement_sha256,
+        "provider": APPROVED_PROVIDER,
+        "provider_instance_id": calibration_evidence.execution_identity.rental_instance_id,
+        "provider_invoice_sha256": provider_invoice_sha256,
+        "previous_actual_charge_micro_usd": previous_actual_charge.0,
+        "previous_recorded_charge_cents": previous_cents,
+        "finalized_actual_charge_micro_usd": finalized_charge.0,
+        "finalized_recorded_charge_cents": finalized_cents,
+        "added_actual_spend_cents": added_cents,
+        "previous_ledger_sha256": previous_ledger_sha256,
+    }));
+    let ledger_sha256 = publish_ledger_document(ledger_path, &document)?;
+    ledger_from_document(&document, ledger_sha256)
+}
+
 /// Reconcile a failed or interrupted calibration attempt against provider
 /// evidence without making it eligible to unlock a full-corpus build.
 pub fn settle_failed_calibration(
@@ -1649,9 +1815,14 @@ pub fn project_full_build(
     let projection = derive_full_build_projection(calibration_evidence, non_compute_costs)?;
     let _lock = LedgerLock::acquire(ledger_path)?;
     let (ledger_bytes, document) = read_ledger_document(ledger_path)?;
-    if has_reservation_kind(&document, "full_build_reservation") {
+    if has_successful_full_build_settlement(&document) {
         return Err(Error::Budget(
-            "a full-build reservation already exists".to_owned(),
+            "the full build is already completed".to_owned(),
+        ));
+    }
+    if has_active_full_build_reservation(&document) {
+        return Err(Error::Budget(
+            "an active full-build reservation already exists".to_owned(),
         ));
     }
     full_build_projection_review(
@@ -1662,8 +1833,10 @@ pub fn project_full_build(
     )
 }
 
-/// Atomically reserve the one full-corpus build. Remaining compute is derived
-/// from the verified per-range measurements rather than supplied by the caller.
+/// Atomically reserve the full-corpus build. A terminal infrastructure failure
+/// may be followed by another explicitly reviewed reservation, but a completed
+/// representation permanently closes admission. Remaining compute is derived
+/// from verified per-range measurements rather than supplied by the caller.
 pub fn reserve_full_build(
     ledger_path: &Path,
     reservation_id: &str,
@@ -1678,9 +1851,14 @@ pub fn reserve_full_build(
     let _lock = LedgerLock::acquire(ledger_path)?;
     let (previous_bytes, mut document) = read_ledger_document(ledger_path)?;
     reject_existing_reservation(&document, reservation_id)?;
-    if has_reservation_kind(&document, "full_build_reservation") {
+    if has_successful_full_build_settlement(&document) {
         return Err(Error::Budget(
-            "a full-build reservation already exists".to_owned(),
+            "the full build is already completed".to_owned(),
+        ));
+    }
+    if has_active_full_build_reservation(&document) {
+        return Err(Error::Budget(
+            "an active full-build reservation already exists".to_owned(),
         ));
     }
     let review = full_build_projection_review(
@@ -1927,17 +2105,13 @@ pub fn settle_full_build(
         .to_owned();
     let reserved_cents = ceiling_cents(active.binding.maximum_charge)?;
     let actual_cents = ceiling_cents(actual_charge)?;
-    if actual_cents > reserved_cents {
-        return Err(Error::Budget(format!(
-            "full-build actual charge of {actual_cents} cents exceeds its {reserved_cents}-cent reservation"
-        )));
-    }
+    let provider_overrun_cents = actual_cents.saturating_sub(reserved_cents);
     let released_cents = apply_full_build_charge(
         &mut document,
         reserved_cents,
         actual_cents,
         recorded_at_utc,
-        false,
+        true,
     )?;
     let previous_ledger_sha256 = hash_bytes(&previous_bytes);
     document.entries.push(json!({
@@ -1953,6 +2127,7 @@ pub fn settle_full_build(
         "control_binary_sha256": control_binary_sha256,
         "actual_charge_micro_usd": actual_charge.0,
         "recorded_actual_charge_cents": actual_cents,
+        "provider_overrun_cents": provider_overrun_cents,
         "released_commitment_cents": released_cents,
         "previous_ledger_sha256": previous_ledger_sha256,
     }));
@@ -1961,8 +2136,8 @@ pub fn settle_full_build(
 }
 
 /// Reconcile a failed or interrupted complete-build reservation against the
-/// provider's actual charge. This is terminal even when the provider exceeded
-/// the reservation; it never authorizes another complete build.
+/// provider's actual charge. This attempt is terminal even when the provider
+/// exceeded the reservation; a later attempt requires a new reviewed reservation.
 pub fn settle_failed_full_build(
     ledger_path: &Path,
     reservation_id: &str,
@@ -2862,11 +3037,35 @@ fn reject_existing_reservation(
     Ok(())
 }
 
-fn has_reservation_kind(document: &BudgetLedgerDocument, kind: &str) -> bool {
-    document
-        .entries
-        .iter()
-        .any(|entry| entry.get("kind").and_then(serde_json::Value::as_str) == Some(kind))
+fn has_successful_full_build_settlement(document: &BudgetLedgerDocument) -> bool {
+    document.entries.iter().any(|entry| {
+        entry.get("kind").and_then(serde_json::Value::as_str) == Some("full_build_settlement")
+    })
+}
+
+fn has_active_full_build_reservation(document: &BudgetLedgerDocument) -> bool {
+    document.entries.iter().any(|reservation| {
+        if reservation.get("kind").and_then(serde_json::Value::as_str)
+            != Some("full_build_reservation")
+        {
+            return false;
+        }
+        let Some(reservation_id) = reservation
+            .get("reservation_id")
+            .and_then(serde_json::Value::as_str)
+        else {
+            return true;
+        };
+        !document.entries.iter().any(|entry| {
+            matches!(
+                entry.get("kind").and_then(serde_json::Value::as_str),
+                Some("full_build_settlement" | "failed_full_build_settlement")
+            ) && entry
+                .get("reservation_id")
+                .and_then(serde_json::Value::as_str)
+                == Some(reservation_id)
+        })
+    })
 }
 
 fn calibration_runtime_charge(
@@ -3063,4 +3262,96 @@ struct BudgetLedgerDocument {
     reserved_remaining_work_cents: Option<u64>,
     reconciled_through_utc: String,
     entries: Vec<serde_json::Value>,
+}
+
+#[derive(Debug, Deserialize)]
+struct FinalizedProviderInvoiceDocument {
+    count: u64,
+    next_token: Option<serde_json::Value>,
+    results: Vec<FinalizedProviderInvoice>,
+    success: bool,
+    total: u64,
+}
+
+impl FinalizedProviderInvoiceDocument {
+    fn finalized_instance_charge(&self, rental_instance_id: &str) -> Result<MicroUsd> {
+        if !self.success
+            || self.count != 1
+            || self.total != 1
+            || self.next_token.is_some()
+            || self.results.len() != 1
+        {
+            return Err(Error::Budget(
+                "finalized provider invoice must be one complete successful invoice result"
+                    .to_owned(),
+            ));
+        }
+        let invoice = &self.results[0];
+        let expected_source = format!("instance-{rental_instance_id}");
+        if invoice.kind != "instance" || invoice.source != expected_source {
+            return Err(Error::Budget(format!(
+                "finalized provider invoice does not name calibrated instance `{rental_instance_id}`"
+            )));
+        }
+        provider_usd_to_micro_usd(&invoice.amount)
+    }
+}
+
+#[derive(Debug, Deserialize)]
+struct FinalizedProviderInvoice {
+    amount: serde_json::Number,
+    source: String,
+    #[serde(rename = "type")]
+    kind: String,
+}
+
+fn provider_usd_to_micro_usd(amount: &serde_json::Number) -> Result<MicroUsd> {
+    let amount = amount.to_string();
+    if amount.starts_with('-') || amount.contains(['e', 'E']) {
+        return Err(Error::Budget(
+            "finalized provider invoice amount must be a nonnegative decimal USD value".to_owned(),
+        ));
+    }
+    let mut pieces = amount.split('.');
+    let dollars = pieces.next().unwrap_or_default();
+    let fractional = pieces.next().unwrap_or_default();
+    if pieces.next().is_some()
+        || dollars.is_empty()
+        || !dollars.bytes().all(|byte| byte.is_ascii_digit())
+        || fractional.len() > 6
+        || !fractional.bytes().all(|byte| byte.is_ascii_digit())
+    {
+        return Err(Error::Budget(
+            "finalized provider invoice amount is not exact to micro-USD".to_owned(),
+        ));
+    }
+    let dollars = dollars.parse::<u64>().map_err(|_| {
+        Error::Budget("finalized provider invoice amount does not fit micro-USD".to_owned())
+    })?;
+    let fractional_digits = fractional.len();
+    let fractional = if fractional.is_empty() {
+        0
+    } else {
+        fractional.parse::<u64>().map_err(|_| {
+            Error::Budget("finalized provider invoice amount does not fit micro-USD".to_owned())
+        })?
+    };
+    let scale = 10_u64
+        .checked_pow(u32::try_from(6 - fractional_digits).map_err(|_| {
+            Error::Budget("finalized provider invoice amount does not fit micro-USD".to_owned())
+        })?)
+        .ok_or_else(|| {
+            Error::Budget("finalized provider invoice amount does not fit micro-USD".to_owned())
+        })?;
+    let whole = dollars.checked_mul(1_000_000).ok_or_else(|| {
+        Error::Budget("finalized provider invoice amount does not fit micro-USD".to_owned())
+    })?;
+    whole
+        .checked_add(fractional.checked_mul(scale).ok_or_else(|| {
+            Error::Budget("finalized provider invoice amount does not fit micro-USD".to_owned())
+        })?)
+        .map(MicroUsd)
+        .ok_or_else(|| {
+            Error::Budget("finalized provider invoice amount does not fit micro-USD".to_owned())
+        })
 }

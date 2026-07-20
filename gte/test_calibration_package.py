@@ -10,7 +10,10 @@ from calibration_package import (
     build_execution_identity,
     freeze_create_result,
     freeze_instance_record,
+    sanitize_instance_list,
     freeze_template_record,
+    recover_create_result,
+    validate_instance_against_offer,
     verify_package,
     write_package_manifest,
 )
@@ -115,7 +118,7 @@ class CalibrationPackageTest(unittest.TestCase):
             "gpu_name": "RTX PRO 6000 WS",
             "num_gpus": 1,
             "disk_space": 200.0,
-            "dph_total": 1.6400001,
+            "dph_total": 1.5407001,
             "is_bid": False,
             "verification": "verified",
         }
@@ -141,7 +144,7 @@ class CalibrationPackageTest(unittest.TestCase):
         )
         self.assertEqual(identity["rental_offer_id"], "33693061")
         self.assertEqual(identity["rental_instance_id"], "88001234")
-        self.assertEqual(identity["rental_rate_per_hour"], 1_640_001)
+        self.assertEqual(identity["rental_rate_per_hour"], 1_540_701)
         self.assertEqual(identity["reliability_millionths"], 998_640)
         self.assertEqual(identity["local_nvme_bandwidth_bytes_per_second"], 8_615_000_000)
         self.assertEqual(identity["available_duration_seconds"], 86_400)
@@ -166,10 +169,116 @@ class CalibrationPackageTest(unittest.TestCase):
             )
 
         instance["machine_id"] = offer["machine_id"]
+        instance["dph_total"] = 1.540702
+        with self.assertRaisesRegex(ValueError, "actual Vast instance"):
+            build_execution_identity(
+                descriptor_result, offer, create_result, instance, host
+            )
+
+        instance["dph_total"] = offer["dph_total"]
         offer["duration"] = 86399.9
         with self.assertRaisesRegex(ValueError, "approved calibration contract"):
             build_execution_identity(
                 descriptor_result, offer, create_result, instance, host
+            )
+
+    def test_instance_launch_is_bound_to_the_approved_offer_before_transfer(self):
+        image = "docker.io/kernelkind/oracle-mvp@sha256:" + "4" * 64
+        offer = {
+            "id": 45236567,
+            "machine_id": 37297,
+            "bundle_id": 1075352023,
+            "gpu_name": "RTX PRO 6000 WS",
+            "num_gpus": 1,
+            "dph_total": 1.359259259,
+        }
+        create_result = {"success": True, "new_contract": 900000024}
+        instance = {
+            "id": 900000024,
+            "machine_id": 37297,
+            "bundle_id": None,
+            "actual_status": "running",
+            "intended_status": "running",
+            "image_uuid": image,
+            "gpu_name": "RTX PRO 6000 WS",
+            "num_gpus": 1,
+            "disk_space": 200,
+            "dph_total": 1.359259259,
+            "is_bid": False,
+            "verification": "verified",
+            "label": "crec-72-gte-full-build",
+        }
+
+        record = validate_instance_against_offer(
+            offer,
+            create_result,
+            instance,
+            image,
+            1_359_260,
+            expected_label="crec-72-gte-full-build",
+        )
+        self.assertEqual(record["offer_id"], "45236567")
+        self.assertEqual(record["instance_id"], "900000024")
+        self.assertEqual(record["label"], "crec-72-gte-full-build")
+
+        for field, value in (
+            ("machine_id", 1),
+            ("image_uuid", "kernelkind/oracle-mvp@sha256:" + "5" * 64),
+            ("is_bid", True),
+            ("dph_total", 1.359261),
+            ("label", "wrong-label"),
+        ):
+            with self.subTest(field=field):
+                rejected = dict(instance)
+                rejected[field] = value
+                with self.assertRaisesRegex(ValueError, "actual Vast instance"):
+                    validate_instance_against_offer(
+                        offer,
+                        create_result,
+                        rejected,
+                        image,
+                        1_359_260,
+                        expected_label="crec-72-gte-full-build",
+                    )
+
+        recovered = recover_create_result(
+            [instance],
+            offer,
+            image,
+            "crec-72-gte-full-build",
+            1_359_260,
+        )
+        self.assertEqual(recovered, create_result)
+
+        loading = dict(instance)
+        loading["actual_status"] = "loading"
+        self.assertEqual(
+            recover_create_result(
+                [loading],
+                offer,
+                image,
+                "crec-72-gte-full-build",
+                1_359_260,
+            ),
+            create_result,
+        )
+        with self.assertRaisesRegex(ValueError, "actual Vast instance"):
+            validate_instance_against_offer(
+                offer,
+                create_result,
+                loading,
+                image,
+                1_359_260,
+                expected_label="crec-72-gte-full-build",
+            )
+
+        with self.assertRaisesRegex(ValueError, "exactly one"):
+            recover_create_result(
+                [instance, dict(instance)],
+                offer,
+                image,
+                "crec-72-gte-full-build",
+                1_359_260,
             )
 
     def test_instance_record_binds_the_create_result_and_discards_secrets(self):
@@ -188,17 +297,56 @@ class CalibrationPackageTest(unittest.TestCase):
                 "dph_total": 1.64,
                 "is_bid": False,
                 "verification": "verified",
+                "label": "crec-72-gte-full-build",
                 "jupyter_token": "must-not-survive",
             }
         }
 
         record = freeze_instance_record(create_result, raw)
         self.assertEqual(record["id"], 88001234)
+        self.assertEqual(record["label"], "crec-72-gte-full-build")
         self.assertNotIn("jupyter_token", record)
 
         create_result["new_contract"] = 99999
         with self.assertRaisesRegex(ValueError, "create result"):
             freeze_instance_record(create_result, raw)
+
+    def test_instance_inventory_discards_credentials_and_connection_data(self):
+        raw = {
+            "instances": [
+                {
+                    "id": 88001234,
+                    "machine_id": 21555,
+                    "bundle_id": 1075358098,
+                    "actual_status": "running",
+                    "intended_status": "running",
+                    "image_uuid": "kernelkind/oracle-mvp@sha256:" + "4" * 64,
+                    "gpu_name": "RTX PRO 6000 WS",
+                    "num_gpus": 1,
+                    "disk_space": 200.0,
+                    "dph_total": 1.64,
+                    "is_bid": False,
+                    "verification": "verified",
+                    "label": "crec-72-gte-full-build",
+                    "jupyter_token": "must-not-survive",
+                    "extra_env": [["-e", "DOCKER_LOGIN=must-not-survive"]],
+                    "ssh_host": "must-not-survive",
+                    "ssh_port": 12345,
+                }
+            ]
+        }
+
+        records = sanitize_instance_list(raw)
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]["id"], 88001234)
+        self.assertEqual(records[0]["label"], "crec-72-gte-full-build")
+        self.assertNotIn("jupyter_token", records[0])
+        self.assertNotIn("extra_env", records[0])
+        self.assertNotIn("ssh_host", records[0])
+        self.assertNotIn("ssh_port", records[0])
+
+        with self.assertRaisesRegex(ValueError, "list"):
+            sanitize_instance_list({"instances": {"id": 88001234}})
 
     def test_create_result_discards_instance_credentials(self):
         raw = {
