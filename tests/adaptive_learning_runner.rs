@@ -82,6 +82,43 @@ fn accepted_rating_is_staged_and_resume_continues_at_the_next_event() {
 }
 
 #[test]
+fn h256_fallback_is_durably_replayed_without_new_oracle_work() {
+    let fixture = DivergentFixture::new();
+    let session_path = fixture.temp.path().join("fallback-session.json");
+    let mut config = fixture.config(session_path.clone());
+    config.compact_settings =
+        CompactLearningSettings::new(VERSION, 0.005, 0.01, 2.0, ScaleLevel::Mass64)
+            .expect("fallback Compact settings");
+
+    let mut first_oracle = DivergentOracle::new(&fixture);
+    let first = run_adaptive_learning(
+        &config,
+        &mut first_oracle,
+        Cursor::new(b"7q\n"),
+        &mut Vec::new(),
+    )
+    .expect("start fallback round");
+    assert!(matches!(first, AdaptiveLearningRunnerOutcome::Paused));
+    assert_eq!(first_oracle.matrix_passes, 1);
+    assert_eq!(first_oracle.logical_wave_calls, 1);
+
+    let session = read_session(&session_path);
+    assert_eq!(session["oracle_calls"].as_array().unwrap().len(), 4);
+
+    let mut resumed_oracle = DivergentOracle::new(&fixture);
+    let resumed = run_adaptive_learning(
+        &config,
+        &mut resumed_oracle,
+        Cursor::new(b""),
+        &mut Vec::new(),
+    )
+    .expect("replay fallback round");
+    assert!(matches!(resumed, AdaptiveLearningRunnerOutcome::Paused));
+    assert_eq!(resumed_oracle.matrix_passes, 0);
+    assert_eq!(resumed_oracle.logical_wave_calls, 0);
+}
+
+#[test]
 fn concealed_order_is_deterministic_and_displays_only_raw_note_content() {
     let first_fixture = RunnerFixture::new();
     let first_session_path = first_fixture.temp.path().join("first-session.json");
@@ -720,6 +757,8 @@ struct DivergentOracle {
     vectors: BTreeMap<EventId, Vec<f32>>,
     responses: BTreeMap<EventId, SimilarNotesResponse>,
     rows: u64,
+    matrix_passes: usize,
+    logical_wave_calls: usize,
 }
 
 impl DivergentOracle {
@@ -729,6 +768,8 @@ impl DivergentOracle {
             vectors: fixture.vectors.clone(),
             responses: BTreeMap::new(),
             rows: fixture.event_ids.len() as u64,
+            matrix_passes: 0,
+            logical_wave_calls: 0,
         }
     }
 
@@ -765,6 +806,7 @@ impl CandidateOrderOracle for DivergentOracle {
         requests: &[SimilarNotesRequest],
         representation_version: &str,
     ) -> SnapshotResult<SimilarNotesWaveResponse> {
+        self.logical_wave_calls += 1;
         if representation_version != VERSION || requests.is_empty() {
             return Err(SnapshotError::InvalidQuery(
                 "unexpected divergent query".to_owned(),
@@ -775,6 +817,9 @@ impl CandidateOrderOracle for DivergentOracle {
             .filter(|request| !self.responses.contains_key(&request.note_id))
             .map(|request| request.note_id)
             .collect::<Vec<_>>();
+        if !missing.is_empty() {
+            self.matrix_passes += 1;
+        }
         for event_id in missing.iter().copied() {
             let response = self.response(event_id);
             self.responses.insert(event_id, response);

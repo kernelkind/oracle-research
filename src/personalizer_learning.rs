@@ -740,6 +740,18 @@ pub struct CompactLearningController {
     history: Vec<CompactRoundRecord>,
 }
 
+pub(crate) struct PreparedCompactInitialScaleFallback {
+    expected_active_index: usize,
+    fallback_index: usize,
+    fallback_tuple: CompactTuple,
+}
+
+impl PreparedCompactInitialScaleFallback {
+    pub(crate) fn fallback_tuple(&self) -> CompactTuple {
+        self.fallback_tuple
+    }
+}
+
 impl CompactLearningController {
     pub fn new(settings: CompactLearningSettings, evidence: Vec<EvidenceNote>) -> Result<Self> {
         let grid = compact_grid(&settings)?;
@@ -792,6 +804,40 @@ impl CompactLearningController {
 
     pub fn history(&self) -> &[CompactRoundRecord] {
         &self.history
+    }
+
+    pub(crate) fn prepare_initial_scale_fallback(
+        &self,
+    ) -> Option<PreparedCompactInitialScaleFallback> {
+        let active = self.active_tuple();
+        if !self.history.is_empty()
+            || self.pending.is_some()
+            || active.scale_level() != ScaleLevel::Mass64
+            || active.neighbor_count() != CompactNeighborCount::Finite(1)
+            || active.neutral_weight() != 1.0
+        {
+            return None;
+        }
+        let fallback_index = self.grid.iter().position(|parameter_tuple| {
+            parameter_tuple.scale_level() == ScaleLevel::Mass256
+                && parameter_tuple.neighbor_count() == CompactNeighborCount::Finite(1)
+                && parameter_tuple.neutral_weight() == 1.0
+        })?;
+        Some(PreparedCompactInitialScaleFallback {
+            expected_active_index: self.active_index,
+            fallback_index,
+            fallback_tuple: self.grid[fallback_index],
+        })
+    }
+
+    pub(crate) fn commit_initial_scale_fallback(
+        &mut self,
+        prepared: PreparedCompactInitialScaleFallback,
+    ) {
+        debug_assert_eq!(self.active_index, prepared.expected_active_index);
+        debug_assert!(self.history.is_empty());
+        debug_assert!(self.pending.is_none());
+        self.active_index = prepared.fallback_index;
     }
 
     pub(crate) fn evidence_event_ids(&self) -> &[EventId] {

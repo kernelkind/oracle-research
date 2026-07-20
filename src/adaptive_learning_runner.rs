@@ -34,7 +34,7 @@ use crate::snapshot::{
 const SESSION_SCHEMA_VERSION: u32 = 1;
 const ORACLE_RESPONSE_CONTRACT: &str = "candidate-order-oracle-v1";
 const SHUFFLE_POLICY: &str = "phase3-learning-sha256-concealed-v1";
-const SCORER_POLICY: &str = "compact-rbf-forward-only-v1";
+const SCORER_POLICY: &str = "compact-rbf-forward-only-h64-h256-fallback-v2";
 const RATING_POLICY: &str = "attention-adjusted-gladness-1-to-7-v1";
 const RATING_INSTRUCTIONS: &str = "Use the same attention-adjusted scale for every note: 1 = extremely sorry you saw it; 2 = sorry; 3 = slightly sorry; 4 = neither glad nor sorry; 5 = slightly glad; 6 = glad; 7 = extremely glad.\n";
 const RATING_PROMPT: &str = "Considering the attention it required, how glad are you that you saw this note? [1–7, `l` = wrong language; append `q` to save and stop]: ";

@@ -554,6 +554,10 @@ impl InsufficientCandidateOrder {
     pub fn required_count(&self) -> usize {
         self.required_count
     }
+
+    pub(crate) fn into_attempt(self) -> CandidateOrderAttempt {
+        self.attempt
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -568,13 +572,27 @@ pub fn build_compact_candidate_order<O: CandidateOrderOracle>(
     cache: &mut CandidateVectorCache,
     request: &CandidateOrderRequest,
 ) -> Result<CandidateOrderOutcome> {
+    build_compact_candidate_order_with_tuple(
+        controller,
+        controller.active_tuple(),
+        oracle,
+        cache,
+        request,
+    )
+}
+
+pub(crate) fn build_compact_candidate_order_with_tuple<O: CandidateOrderOracle>(
+    controller: &CompactLearningController,
+    parameter_tuple: CompactTuple,
+    oracle: &mut O,
+    cache: &mut CandidateVectorCache,
+    request: &CandidateOrderRequest,
+) -> Result<CandidateOrderOutcome> {
     if controller.pending_batch().is_some() {
         return Err(CandidateOrderError::LearningBatchPending);
     }
-    let scorer = CompactSupportScorer::new(
-        controller.evidence_vectors(),
-        controller.active_tuple().parameters(),
-    )?;
+    let scorer =
+        CompactSupportScorer::new(controller.evidence_vectors(), parameter_tuple.parameters())?;
     build_candidate_order(
         PersonalizerView {
             representation_version: controller.representation_version(),
@@ -582,7 +600,7 @@ pub fn build_compact_candidate_order<O: CandidateOrderOracle>(
             evidence_event_ids: controller.evidence_event_ids(),
             evidence_ratings: controller.evidence_ratings(),
             evidence_vectors: controller.evidence_vectors(),
-            active_parameters: ActivePersonalizerParameters::Compact(controller.active_tuple()),
+            active_parameters: ActivePersonalizerParameters::Compact(parameter_tuple),
         },
         oracle,
         cache,

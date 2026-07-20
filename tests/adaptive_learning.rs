@@ -5,7 +5,9 @@ use oracle_mvp::adaptive_learning::{
     AdaptiveLearningCoordinator, AdaptiveLearningError, AdaptiveLearningProgress,
     CompletedAdaptiveLearning,
 };
-use oracle_mvp::candidate_order::{B16Boundary, CandidateOrderOracle};
+use oracle_mvp::candidate_order::{
+    ActivePersonalizerParameters, B16Boundary, CandidateOrderAttempt, CandidateOrderOracle,
+};
 use oracle_mvp::fp32_oracle::{
     Fp32Candidate, SimilarNotesRequest, SimilarNotesResponse, SimilarNotesWaveMetrics,
     SimilarNotesWaveResponse, StoredNoteVector, VectorsForNotesResponse,
@@ -83,6 +85,13 @@ fn id_value(event_id: EventId) -> u16 {
     u16::from_le_bytes([event_id[0], event_id[1]])
 }
 
+fn compact_attempt_scale(attempt: &CandidateOrderAttempt) -> ScaleLevel {
+    match attempt.active_parameters() {
+        ActivePersonalizerParameters::Compact(parameter_tuple) => parameter_tuple.scale_level(),
+        ActivePersonalizerParameters::Rbf(_) => panic!("expected Compact attempt"),
+    }
+}
+
 fn vector_for(_event_id: EventId) -> Vec<f32> {
     vec![1.0, 0.0]
 }
@@ -106,12 +115,41 @@ fn controllers() -> (CompactLearningController, RbfLearningController) {
     (compact, rbf)
 }
 
+fn h256_fallback_controllers() -> (CompactLearningController, RbfLearningController) {
+    let evidence = || {
+        (1..=5)
+            .map(|event_id| {
+                let vector = if event_id == 1 {
+                    vec![1.0, 0.0]
+                } else {
+                    vec![0.0, -1.0]
+                };
+                EvidenceNote::new(id(event_id), vector, 7).expect("positive seed")
+            })
+            .collect()
+    };
+    let compact = CompactLearningController::new(
+        CompactLearningSettings::new(VERSION, 0.5, 1.0, 2.0, ScaleLevel::Mass64)
+            .expect("compact settings"),
+        evidence(),
+    )
+    .expect("compact controller");
+    let rbf = RbfLearningController::new(
+        RbfLearningSettings::new(VERSION, 0.5, 1.0, 2.0).expect("RBF settings"),
+        evidence(),
+    )
+    .expect("RBF controller");
+    (compact, rbf)
+}
+
 /// A fixed public similarity graph with an immutable response cache.
 struct RoundOracle {
     cache: BTreeMap<EventId, SimilarNotesResponse>,
     matrix_passes: usize,
+    logical_wave_calls: usize,
     wrong_seed: Option<EventId>,
     positive_candidates: usize,
+    h256_only_candidates: bool,
     version: &'static str,
 }
 
@@ -120,8 +158,10 @@ impl RoundOracle {
         Self {
             cache: BTreeMap::new(),
             matrix_passes: 0,
+            logical_wave_calls: 0,
             wrong_seed: None,
             positive_candidates: usize::MAX,
+            h256_only_candidates: false,
             version: VERSION,
         }
     }
@@ -157,6 +197,7 @@ impl CandidateOrderOracle for RoundOracle {
         requests: &[SimilarNotesRequest],
         representation_version: &str,
     ) -> SnapshotResult<SimilarNotesWaveResponse> {
+        self.logical_wave_calls += 1;
         if representation_version != VERSION || requests.is_empty() {
             return Err(SnapshotError::InvalidQuery(
                 "unexpected cached test query".to_owned(),
@@ -222,10 +263,16 @@ impl CandidateOrderOracle for RoundOracle {
                     event_id: *event_id,
                     vector: if self.wrong_seed == Some(*event_id) {
                         vec![1.0, -0.0]
+                    } else if self.h256_only_candidates && id_value(*event_id) == 1 {
+                        vec![1.0, 0.0]
+                    } else if self.h256_only_candidates && (2..=5).contains(&id_value(*event_id)) {
+                        vec![0.0, -1.0]
                     } else if id_value(*event_id) >= 1_000
                         && usize::from(id_value(*event_id) - 1_000) >= self.positive_candidates
                     {
                         vec![-1.0, 0.0]
+                    } else if id_value(*event_id) >= 1_000 && self.h256_only_candidates {
+                        vec![0.0, 1.0]
                     } else {
                         vector_for(*event_id)
                     },
@@ -589,16 +636,107 @@ fn seed_vectors_are_verified_and_all_new_sources_share_one_matrix_pass() {
     .expect("cached coordinator");
     coordinator.start_next_round().expect("start cached round");
     assert_eq!(coordinator.oracle().matrix_passes, 1);
+    assert_eq!(coordinator.oracle().logical_wave_calls, 3);
     assert_eq!(coordinator.source_wave_records().len(), 1);
     let source_wave = &coordinator.source_wave_records()[0];
     assert_eq!(source_wave.round(), 1);
     assert_eq!(source_wave.source_event_ids().len(), 5);
     assert_eq!(source_wave.metrics().matrix_passes, 1);
     assert!(source_wave.accepted());
+    assert_eq!(
+        coordinator
+            .compact_controller()
+            .active_tuple()
+            .scale_level(),
+        ScaleLevel::Mass64,
+        "an available H64 order must not activate the fallback"
+    );
 }
 
 #[test]
-fn candidate_insufficiency_pauses_before_any_presentation_or_learning() {
+fn adaptive_learning_requires_h64_as_the_compact_initial_scale() {
+    let compact = CompactLearningController::new(
+        CompactLearningSettings::new(VERSION, 0.5, 1.0, 2.0, ScaleLevel::Mass256)
+            .expect("standalone Compact settings may select H256"),
+        (1..=5).map(seed).collect(),
+    )
+    .expect("standalone Compact controller");
+    let rbf = RbfLearningController::new(
+        RbfLearningSettings::new(VERSION, 0.5, 1.0, 2.0).expect("RBF settings"),
+        (1..=5).map(seed).collect(),
+    )
+    .expect("RBF controller");
+
+    assert!(matches!(
+        CoordinatorFixture::new(
+            RoundOracle::new(),
+            compact,
+            rbf,
+            B16Boundary::new(VERSION, 0.0).expect("B16")
+        ),
+        Err(AdaptiveLearningError::InvalidInitialCompactScale)
+    ));
+}
+
+#[test]
+fn first_round_retries_h256_before_any_presentation_or_learning() {
+    let (compact, rbf) = h256_fallback_controllers();
+    let mut oracle = RoundOracle::new();
+    oracle.h256_only_candidates = true;
+    let mut coordinator = CoordinatorFixture::new(
+        oracle,
+        compact,
+        rbf,
+        B16Boundary::new(VERSION, 0.0).expect("B16"),
+    )
+    .expect("fallback coordinator");
+
+    coordinator
+        .start_next_round()
+        .expect("H256 must rescue the unavailable H64 first round");
+
+    assert_eq!(
+        coordinator
+            .compact_controller()
+            .active_tuple()
+            .scale_level(),
+        ScaleLevel::Mass256
+    );
+    assert_eq!(
+        coordinator.progress(),
+        AdaptiveLearningProgress::AwaitingLanguage
+    );
+    assert_eq!(coordinator.presentation_ledger().len(), 5);
+    assert_eq!(coordinator.language_totals().unique_presentations(), 0);
+    assert!(coordinator.compact_controller().history().is_empty());
+    assert!(coordinator.rbf_controller().history().is_empty());
+    assert_eq!(coordinator.oracle().matrix_passes, 1);
+    assert_eq!(coordinator.oracle().logical_wave_calls, 4);
+    assert_eq!(coordinator.failed_candidate_order_attempts().len(), 1);
+    assert_eq!(
+        compact_attempt_scale(&coordinator.failed_candidate_order_attempts()[0]),
+        ScaleLevel::Mass64
+    );
+
+    resolve_current_wave(&mut coordinator);
+    let rating_ids = coordinator
+        .pending_rating_event_ids()
+        .expect("fallback round ratings")
+        .to_vec();
+    coordinator
+        .submit_ratings(positive_ratings(&rating_ids))
+        .expect("complete fallback round");
+    let first_round = &coordinator.round_records()[0];
+    assert_eq!(
+        compact_attempt_scale(first_round.compact_order().attempt()),
+        ScaleLevel::Mass256,
+        "the causally frozen round must record the tuple that generated its order"
+    );
+    assert_eq!(coordinator.failed_candidate_order_attempts().len(), 1);
+}
+
+#[test]
+fn h64_and_h256_insufficiency_pauses_before_any_presentation_or_learning() {
     let (compact, rbf) = controllers();
     let mut oracle = RoundOracle::new();
     oracle.positive_candidates = 40;
@@ -613,9 +751,9 @@ fn candidate_insufficiency_pauses_before_any_presentation_or_learning() {
     assert!(matches!(
         coordinator.start_next_round(),
         Err(AdaptiveLearningError::PhasePaused(
-            oracle_mvp::adaptive_learning::AdaptiveLearningFailure::InsufficientCandidateOrder {
-                personalizer: oracle_mvp::quota_resolution::PersonalizerId::Compact,
-                accepted: 40,
+            oracle_mvp::adaptive_learning::AdaptiveLearningFailure::CompactGeometryMismatch {
+                h64_accepted: 40,
+                h256_accepted: 40,
                 required: 41,
             }
         ))
@@ -627,6 +765,34 @@ fn candidate_insufficiency_pauses_before_any_presentation_or_learning() {
     assert!(coordinator.rbf_controller().history().is_empty());
     assert!(coordinator.compact_controller().pending_batch().is_none());
     assert!(coordinator.rbf_controller().pending_batch().is_none());
+    assert_eq!(
+        coordinator
+            .compact_controller()
+            .active_tuple()
+            .scale_level(),
+        ScaleLevel::Mass64,
+        "an unsuccessful speculative fallback must not mutate the controller"
+    );
+    let attempts = coordinator.failed_candidate_order_attempts();
+    assert_eq!(attempts.len(), 2);
+    assert_eq!(compact_attempt_scale(&attempts[0]), ScaleLevel::Mass64);
+    assert_eq!(compact_attempt_scale(&attempts[1]), ScaleLevel::Mass256);
+    assert_eq!(
+        attempts[0].evidence_identity(),
+        attempts[1].evidence_identity()
+    );
+    assert_eq!(attempts[0].b16(), attempts[1].b16());
+    assert_eq!(
+        attempts[0].candidate_pool_identity_sha256(),
+        attempts[1].candidate_pool_identity_sha256()
+    );
+    assert_eq!(
+        attempts[0].source_responses(),
+        attempts[1].source_responses()
+    );
+    assert_eq!(attempts[0].accepted().len(), 40);
+    assert_eq!(attempts[1].accepted().len(), 40);
+    assert_eq!(coordinator.oracle().logical_wave_calls, 3);
     assert_eq!(coordinator.source_wave_records().len(), 1);
     assert!(!coordinator.source_wave_records()[0].accepted());
 }

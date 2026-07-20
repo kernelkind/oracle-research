@@ -5,9 +5,10 @@ use std::collections::{BTreeMap, BTreeSet};
 use thiserror::Error;
 
 use crate::candidate_order::{
-    B16Boundary, CANDIDATE_DEPTH, CandidateOrderError, CandidateOrderOracle, CandidateOrderOutcome,
-    CandidateOrderPhase, CandidateOrderRequest, CandidateVectorCache,
-    build_compact_candidate_order, build_rbf_candidate_order,
+    B16Boundary, CANDIDATE_DEPTH, CandidateOrderAttempt, CandidateOrderError, CandidateOrderOracle,
+    CandidateOrderOutcome, CandidateOrderPhase, CandidateOrderRequest, CandidateVectorCache,
+    build_compact_candidate_order, build_compact_candidate_order_with_tuple,
+    build_rbf_candidate_order,
 };
 use crate::fp32_oracle::{SimilarNotesRequest, SimilarNotesWaveMetrics};
 use crate::personalizer_learning::{
@@ -51,6 +52,11 @@ pub enum AdaptiveLearningFailure {
         accepted: usize,
         required: usize,
     },
+    CompactGeometryMismatch {
+        h64_accepted: usize,
+        h256_accepted: usize,
+        required: usize,
+    },
     QuotaResolution(QuotaResolutionFailure),
     WrongLanguageLimit {
         wrong_language: usize,
@@ -78,6 +84,8 @@ pub enum AdaptiveLearningError {
     InvalidSeedCount,
     #[error("both personalizers must start from the same ordered seed evidence")]
     SeedEvidenceMismatch,
+    #[error("adaptive learning must start Compact at H64")]
+    InvalidInitialCompactScale,
     #[error("seed {event_id:?} is not positive evidence")]
     NonPositiveSeed { event_id: EventId },
     #[error("adaptive learning requires empty histories and no pending batches")]
@@ -175,6 +183,7 @@ pub struct AdaptiveLearningCoordinator {
     ratings: BTreeMap<EventId, GladnessRating>,
     language_totals: LearningLanguageTotals,
     source_wave_records: Vec<LearningSourceWaveRecord>,
+    failed_candidate_order_attempts: Vec<CandidateOrderAttempt>,
     round_records: Vec<SharedLearningRoundRecord>,
     seed_vectors_verified: bool,
     state: LearningState,
@@ -206,6 +215,10 @@ impl AdaptiveLearningCoordinator {
         }
         if compact.evidence_identity() != rbf.evidence_identity() {
             return Err(AdaptiveLearningError::SeedEvidenceMismatch);
+        }
+        if compact.active_tuple().scale_level() != crate::personalizer_learning::ScaleLevel::Mass64
+        {
+            return Err(AdaptiveLearningError::InvalidInitialCompactScale);
         }
         for (event_id, rating) in compact
             .evidence_event_ids()
@@ -243,6 +256,7 @@ impl AdaptiveLearningCoordinator {
             ratings,
             language_totals: LearningLanguageTotals::default(),
             source_wave_records: Vec::new(),
+            failed_candidate_order_attempts: Vec::new(),
             round_records: Vec::with_capacity(LEARNING_ROUNDS),
             seed_vectors_verified: false,
             state: LearningState::Ready,
@@ -291,6 +305,10 @@ impl AdaptiveLearningCoordinator {
         &self.source_wave_records
     }
 
+    pub fn failed_candidate_order_attempts(&self) -> &[CandidateOrderAttempt] {
+        &self.failed_candidate_order_attempts
+    }
+
     pub fn pause_reason(&self) -> Option<&AdaptiveLearningFailure> {
         match &self.state {
             LearningState::Paused(reason) => Some(reason),
@@ -321,6 +339,8 @@ impl AdaptiveLearningCoordinator {
         let disallowed = self.learning_disallowed_event_ids();
         let request =
             CandidateOrderRequest::new(CandidateOrderPhase::Learning, self.b16.clone(), disallowed);
+        let mut compact_fallback = None;
+        let mut failed_attempts = Vec::new();
         let compact_order = match build_compact_candidate_order(
             &self.compact,
             oracle,
@@ -329,21 +349,63 @@ impl AdaptiveLearningCoordinator {
         )? {
             CandidateOrderOutcome::Frozen(order) => order,
             CandidateOrderOutcome::Insufficient(insufficient) => {
-                return self.pause(AdaptiveLearningFailure::InsufficientCandidateOrder {
-                    personalizer: PersonalizerId::Compact,
-                    accepted: insufficient.accepted_count(),
-                    required: insufficient.required_count(),
-                });
+                let h64_accepted = insufficient.accepted_count();
+                let required = insufficient.required_count();
+                let Some(prepared) = (self.round_records.is_empty())
+                    .then(|| self.compact.prepare_initial_scale_fallback())
+                    .flatten()
+                else {
+                    self.failed_candidate_order_attempts
+                        .push(insufficient.into_attempt());
+                    return self.pause(AdaptiveLearningFailure::InsufficientCandidateOrder {
+                        personalizer: PersonalizerId::Compact,
+                        accepted: h64_accepted,
+                        required,
+                    });
+                };
+                failed_attempts.push(insufficient.into_attempt());
+                match build_compact_candidate_order_with_tuple(
+                    &self.compact,
+                    prepared.fallback_tuple(),
+                    oracle,
+                    &mut self.vector_cache,
+                    &request,
+                )? {
+                    CandidateOrderOutcome::Frozen(order) => {
+                        compact_fallback = Some(prepared);
+                        order
+                    }
+                    CandidateOrderOutcome::Insufficient(insufficient) => {
+                        let h256_accepted = insufficient.accepted_count();
+                        failed_attempts.push(insufficient.into_attempt());
+                        self.failed_candidate_order_attempts.extend(failed_attempts);
+                        return self.pause(AdaptiveLearningFailure::CompactGeometryMismatch {
+                            h64_accepted,
+                            h256_accepted,
+                            required,
+                        });
+                    }
+                }
             }
         };
+        let successful_fallback_attempt = compact_fallback
+            .as_ref()
+            .map(|_| compact_order.attempt().clone());
         let rbf_order =
             match build_rbf_candidate_order(&self.rbf, oracle, &mut self.vector_cache, &request)? {
                 CandidateOrderOutcome::Frozen(order) => order,
                 CandidateOrderOutcome::Insufficient(insufficient) => {
+                    let accepted = insufficient.accepted_count();
+                    let required = insufficient.required_count();
+                    if let Some(attempt) = successful_fallback_attempt {
+                        failed_attempts.push(attempt);
+                    }
+                    failed_attempts.push(insufficient.into_attempt());
+                    self.failed_candidate_order_attempts.extend(failed_attempts);
                     return self.pause(AdaptiveLearningFailure::InsufficientCandidateOrder {
                         personalizer: PersonalizerId::Rbf,
-                        accepted: insufficient.accepted_count(),
-                        required: insufficient.required_count(),
+                        accepted,
+                        required,
                     });
                 }
             };
@@ -351,11 +413,19 @@ impl AdaptiveLearningCoordinator {
         let resolver = match SharedQuotaResolver::new(compact_order, rbf_order, ledger) {
             Ok(resolver) => resolver,
             Err(error) => {
+                if let Some(attempt) = successful_fallback_attempt {
+                    failed_attempts.push(attempt);
+                }
+                self.failed_candidate_order_attempts.extend(failed_attempts);
                 return self.pause(AdaptiveLearningFailure::InternalInvariant(
                     error.to_string(),
                 ));
             }
         };
+        if let Some(prepared) = compact_fallback {
+            self.compact.commit_initial_scale_fallback(prepared);
+        }
+        self.failed_candidate_order_attempts.extend(failed_attempts);
         self.source_wave_records[source_wave_index].accepted = true;
         let progress = resolver.progress();
         self.state = LearningState::Resolving(Box::new(resolver));
@@ -524,6 +594,7 @@ impl AdaptiveLearningCoordinator {
             ratings: self.ratings,
             language_totals: self.language_totals,
             source_wave_records: self.source_wave_records,
+            failed_candidate_order_attempts: self.failed_candidate_order_attempts,
             round_records: self.round_records,
         })
     }
@@ -737,6 +808,7 @@ pub struct CompletedAdaptiveLearning {
     ratings: BTreeMap<EventId, GladnessRating>,
     language_totals: LearningLanguageTotals,
     source_wave_records: Vec<LearningSourceWaveRecord>,
+    failed_candidate_order_attempts: Vec<CandidateOrderAttempt>,
     round_records: Vec<SharedLearningRoundRecord>,
 }
 
@@ -775,6 +847,10 @@ impl CompletedAdaptiveLearning {
 
     pub fn source_wave_records(&self) -> &[LearningSourceWaveRecord] {
         &self.source_wave_records
+    }
+
+    pub fn failed_candidate_order_attempts(&self) -> &[CandidateOrderAttempt] {
+        &self.failed_candidate_order_attempts
     }
 }
 
