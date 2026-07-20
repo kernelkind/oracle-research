@@ -1,0 +1,58 @@
+{
+  "artifact_kind": "gte-vast-full-build-operation",
+  "canonical_ledger_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp/budget-ledger.json",
+  "corpus": {
+    "bytes": 3921338368,
+    "sha256": "8c6e8b7798a52639f78bd4a0ba4276d72784e4d1f149e3d5925d95289ae62bad"
+  },
+  "expected": {
+    "build_identity_sha256": "9531c232e7ad8e3c18e46f5d51aba5102930ff879639fe6bdfd12691cd73a21e",
+    "checkpoint_shard_ordinal": 157,
+    "checkpoint_vector_sha256": "9dbc6eeadc4446ee3d135bbece07765d2c67a163afef6025826b1f9300c4dd49",
+    "completed_shards": 216,
+    "final_vector_bytes": 50612602880,
+    "represented_rows": 16384,
+    "total_rows": 3530455
+  },
+  "image": "docker.io/kernelkind/oracle-mvp@sha256:96a60fd4caf87afadf0546636af6eeefee72d327dc95dde1714f86ea14fb435a",
+  "label": "crec-72-gte-full-build-v5",
+  "limits": {
+    "artifact_storage_and_transfer_micro_usd": 10000000,
+    "disk_gb": 200,
+    "lifetime_budget_micro_usd": 500000000,
+    "manual_stop_cost_micro_usd": 42000000,
+    "maximum_rental_rate_micro_usd_per_hour": 1499999,
+    "one_cold_restart_micro_usd": 148419,
+    "one_lost_shard_micro_usd": 173723,
+    "reservation_ceiling_micro_usd": 47000000,
+    "setup_cost_micro_usd": 4000000
+  },
+  "offer_queries": {
+    "global": "gpu_name=RTX_PRO_6000_WS num_gpus=1 gpu_max_power=600 reliability>=0.995 cpu_arch=amd64 cpu_ram>=137.439 disk_space>=200 disk_bw>=1000 inet_down>=500 inet_down_cost<=0.02 inet_up>=100 inet_up_cost<=0.02 direct_port_count>=1 driver_version>=580.95.05 duration>=2 rentable=true rented=false verified=true dph_total<1.500000 geolocation notin [AF,AM,AZ,BH,BD,BT,BN,KH,CN,HK,MO,TW,CY,GE,IN,ID,IR,IQ,IL,JP,JO,KZ,KW,KG,LA,LB,MY,MV,MN,MM,NP,KP,OM,PK,PS,PH,QA,SA,SG,KR,LK,SY,TJ,TH,TL,TM,TR,AE,UZ,VN,YE,RU]",
+    "us": "gpu_name=RTX_PRO_6000_WS num_gpus=1 gpu_max_power=600 reliability>=0.995 cpu_arch=amd64 cpu_ram>=137.439 disk_space>=200 disk_bw>=1000 inet_down>=500 inet_down_cost<=0.02 inet_up>=100 inet_up_cost<=0.02 direct_port_count>=1 driver_version>=580.95.05 duration>=2 rentable=true rented=false verified=true dph_total<1.500000 geolocation in [US]"
+  },
+  "pins": {
+    "control_sha256s_sha256": "039891f0f38f4c690c85f7613af57f119dd8f6ee57e3e759de66b70f17e8d7da",
+    "controller_sha256": "300b31511a0bbd4faf85171f78f66101796ddc8a68b7205a99ea4599e74da2a9",
+    "controller_source_commit": "32de39729ae530d92a8aff644c96f6645979e2a9",
+    "descriptor_sha256": "bef8f7f8948ce11d9685f51acdd94486b9df1f992d4a18d1ee57787951db9c4d",
+    "execution_package_manifest_sha256": "2f090b8e1b4b0443a4a8938be40010280d78f198d6045ccba582063323ed4bf2",
+    "image_source_commit": "c9861a60cd6706ecd5a8f255914ebd10390bc444",
+    "operator_sha256": "949e747fa74e87b359c940edaa89668cda24f80095142c950550591f5209ed9f",
+    "transport_manifest_sha256": "e9b974cf009a3ae599f616f8f61e70eb2bedf9691dcd653750af284ff6272e23"
+  },
+  "schema_version": 1,
+  "timing": {
+    "destroy_attempts": 120,
+    "destroy_poll_seconds": 5,
+    "invoice_confirmation_seconds": 300,
+    "invoice_not_before_seconds": 88200,
+    "invoice_retry_attempts": 12,
+    "invoice_retry_seconds": 5,
+    "preparation_attempts": 120,
+    "preparation_poll_seconds": 30,
+    "provider_attempts": 120,
+    "provider_poll_seconds": 5,
+    "status_watch_seconds": 900
+  }
+}
