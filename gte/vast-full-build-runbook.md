@@ -1,4 +1,4 @@
-# CREC-72 complete-build runbook
+# CREC-72 v2 complete-build runbook
 
 This runbook documents the one reviewed path for the frozen GTE complete build.
 The executable owns the commands, retries, receipts, and recovery logic. Do not
@@ -18,8 +18,8 @@ contract, frozen package, offer, projected cost, and canonical ledger.
 Set the three local paths once:
 
 ```sh
-ROOT=/home/dev/src/notedeck_worktrees/algos/damus_snapshot/runs/crec-72-gte-full-build
-CONTRACT=/home/dev/src/notedeck_worktrees/algos/oracle-mvp/gte/vast-full-build-operation.json
+ROOT=/home/dev/src/notedeck_worktrees/algos/damus_snapshot/runs/crec-72-gte-full-build-v2
+CONTRACT=/home/dev/src/notedeck_worktrees/algos/oracle-mvp/gte/vast-full-build-operation-v2.json
 OPERATOR="$ROOT/transport/control/vast_full_build.py"
 ```
 
