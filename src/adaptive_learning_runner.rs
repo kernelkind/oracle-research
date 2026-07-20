@@ -10,9 +10,8 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
 use crate::adaptive_learning::{
-    AdaptiveLearningCoordinator, AdaptiveLearningError, AdaptiveLearningFailure,
-    AdaptiveLearningProgress, CompletedAdaptiveLearning, LEARNING_ROUNDS,
-    MAX_WRONG_LANGUAGE_PRESENTATIONS, SEED_COUNT,
+    AdaptiveLearningCoordinator, AdaptiveLearningError, AdaptiveLearningProgress,
+    CompletedAdaptiveLearning, LEARNING_ROUNDS, MAX_WRONG_LANGUAGE_PRESENTATIONS, SEED_COUNT,
 };
 use crate::artifact::hash_bytes;
 use crate::candidate_order::{
@@ -34,7 +33,7 @@ use crate::snapshot::{
     require_directory,
 };
 
-const SESSION_SCHEMA_VERSION: u32 = 4;
+const SESSION_SCHEMA_VERSION: u32 = 5;
 const ORACLE_RESPONSE_CONTRACT: &str = "candidate-order-oracle-v1";
 const SHUFFLE_POLICY: &str = "phase3-learning-sha256-concealed-v1";
 const SCORER_POLICY: &str = "compact-rbf-forward-only-h64-h256-fallback-v2";
@@ -145,6 +144,12 @@ enum SessionPhase {
     Failed,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum SessionReplayOutcome {
+    Current,
+    Failed,
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 struct AdaptiveLearningSession {
     schema_version: u32,
@@ -236,14 +241,16 @@ struct PersistedFailure {
     sha256: String,
     reason: String,
     transition: PersistedFailureTransition,
+    transition_input_sha256: String,
     candidate_order_attempts: Vec<SealedCandidateOrderAttempt>,
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[serde(rename_all = "snake_case")]
+#[serde(rename_all = "snake_case", tag = "kind")]
 enum PersistedFailureTransition {
-    CandidateOrder,
-    Other,
+    StartRound { round: usize },
+    SubmitLanguage { round: usize, wave_id: u64 },
+    SubmitRatings { round: usize },
 }
 
 impl PersistedFailure {
@@ -275,6 +282,7 @@ struct PersistedSourceWave {
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 struct PersistedRoundSeal {
     round: usize,
+    round_record_sha256: String,
     compact_candidate_pool_sha256: String,
     compact_accepted_event_ids: Vec<EventId>,
     compact_evidence_after: SeedEvidenceBinding,
@@ -384,22 +392,6 @@ where
         None
     };
 
-    if let Some(session) = &loaded
-        && session.phase == SessionPhase::Failed
-        && session
-            .failure
-            .as_ref()
-            .is_none_or(|failure| failure.transition != PersistedFailureTransition::CandidateOrder)
-    {
-        let reason = session
-            .failure
-            .as_ref()
-            .map(PersistedFailure::reason)
-            .unwrap_or("the learning session previously failed");
-        write_output(output, &format!("Phase 3 learning is stopped: {reason}\n"))?;
-        return Err(Error::ExperimentState(reason.to_owned()));
-    }
-
     let mut corpus = None;
     let mut session_oracle = SessionOracle::new(
         oracle,
@@ -451,14 +443,17 @@ where
     let mut coordinator =
         AdaptiveLearningCoordinator::new(&session_oracle, compact, rbf, config.b16.clone())
             .map_err(adaptive_error)?;
-    replay_session(&mut coordinator, &session, &mut session_oracle)?;
-    if session.phase == SessionPhase::Failed {
-        return replay_candidate_order_failure(
-            &mut coordinator,
-            &session,
-            &mut session_oracle,
+    if replay_session(&mut coordinator, &session, &mut session_oracle)?
+        == SessionReplayOutcome::Failed
+    {
+        let failure = session.failure.as_ref().ok_or_else(|| {
+            Error::Invariant("replayed failure has no persisted failure".to_owned())
+        })?;
+        write_output(
             output,
-        );
+            &format!("Phase 3 learning is stopped: {}\n", failure.reason()),
+        )?;
+        return Err(Error::ExperimentState(failure.reason.clone()));
     }
     if session_oracle.call_cursor != session_oracle.calls.len() {
         return Err(Error::ExperimentState(
@@ -483,6 +478,7 @@ where
                         &mut session,
                         &session_oracle,
                         &coordinator,
+                        PersistedFailureTransition::StartRound { round },
                         output,
                         error,
                     );
@@ -549,6 +545,7 @@ where
                 let wave_index = session.rounds[round_index].waves.len() - 1;
                 let outcomes = language_outcomes(&session.rounds[round_index].waves[wave_index])?;
                 let wave_id = session.rounds[round_index].waves[wave_index].wave_id;
+                let round_number = session.rounds[round_index].round;
                 match coordinator.submit_language_outcomes(wave_id, outcomes) {
                     Ok(()) => {
                         session.rounds[round_index].waves[wave_index].submitted = true;
@@ -560,6 +557,10 @@ where
                             &mut session,
                             &session_oracle,
                             &coordinator,
+                            PersistedFailureTransition::SubmitLanguage {
+                                round: round_number,
+                                wave_id,
+                            },
                             output,
                             error,
                         );
@@ -595,6 +596,16 @@ where
                 save_session(&config.session_path, &session)?;
             }
             AdaptiveLearningProgress::AwaitingRatings => {
+                let round_number =
+                    session
+                        .rounds
+                        .last()
+                        .map(|round| round.round)
+                        .ok_or_else(|| {
+                            Error::Invariant(
+                                "ratings are pending without a session round".to_owned(),
+                            )
+                        })?;
                 let ratings = ratings_for_pending_round(&coordinator, &session)?;
                 if let Err(error) = coordinator.submit_ratings(ratings) {
                     return record_coordinator_failure(
@@ -602,6 +613,9 @@ where
                         &mut session,
                         &session_oracle,
                         &coordinator,
+                        PersistedFailureTransition::SubmitRatings {
+                            round: round_number,
+                        },
                         output,
                         error,
                     );
@@ -637,20 +651,10 @@ where
                 return Ok(AdaptiveLearningRunnerOutcome::Complete(Box::new(completed)));
             }
             AdaptiveLearningProgress::Paused => {
-                let pause = coordinator.pause_reason().cloned().unwrap_or_else(|| {
-                    AdaptiveLearningFailure::InternalInvariant(
-                        "unknown coordinator pause".to_owned(),
-                    )
-                });
-                let failure = persisted_failure(&coordinator, &pause)?;
-                let reason = failure.reason.clone();
-                session.phase = SessionPhase::Failed;
-                session.pause_reason = None;
-                session.failure = Some(failure);
-                sync_oracle_state(&mut session, &session_oracle);
-                save_session(&config.session_path, &session)?;
-                write_output(output, &format!("Phase 3 learning stopped: {reason}\n"))?;
-                return Err(Error::ExperimentState(reason));
+                return Err(Error::Invariant(
+                    "learning coordinator entered a paused state without returning its failed transition"
+                        .to_owned(),
+                ));
             }
         }
     }
@@ -778,11 +782,18 @@ fn validate_loaded_static_session(
         let expected = persisted_failure_sha256(
             &failure.reason,
             failure.transition,
+            &failure.transition_input_sha256,
             &failure.candidate_order_attempts,
         )?;
         if failure.sha256 != expected {
             return Err(Error::ExperimentState(
                 "the persisted Phase 3 failure failed its checksum".to_owned(),
+            ));
+        }
+        let transition_input_sha256 = failed_transition_input_sha256(session, failure.transition)?;
+        if failure.transition_input_sha256 != transition_input_sha256 {
+            return Err(Error::ExperimentState(
+                "the persisted Phase 3 failed transition input failed its checksum".to_owned(),
             ));
         }
         validate_candidate_order_attempt_seals(&failure.candidate_order_attempts)?;
@@ -951,7 +962,7 @@ fn replay_session<O: CandidateOrderOracle>(
     coordinator: &mut AdaptiveLearningCoordinator,
     session: &AdaptiveLearningSession,
     oracle: &mut SessionOracle<'_, O>,
-) -> Result<()> {
+) -> Result<SessionReplayOutcome> {
     for (round_index, transcript) in session.rounds.iter().enumerate() {
         if transcript.round != round_index + 1 || coordinator.next_round() != Some(transcript.round)
         {
@@ -960,9 +971,17 @@ fn replay_session<O: CandidateOrderOracle>(
             ));
         }
         let completed_before = coordinator.round_records().len();
-        coordinator
-            .start_next_round(oracle)
-            .map_err(adaptive_error)?;
+        if let Err(error) = coordinator.start_next_round(oracle) {
+            return verify_replayed_failure(
+                coordinator,
+                session,
+                oracle,
+                PersistedFailureTransition::StartRound {
+                    round: transcript.round,
+                },
+                error,
+            );
+        }
         if transcript.waves.is_empty() {
             if !transcript.ratings_submitted
                 || coordinator.round_records().len() != completed_before + 1
@@ -991,24 +1010,43 @@ fn replay_session<O: CandidateOrderOracle>(
                         "an incomplete language wave is not the final stored transition".to_owned(),
                     ));
                 }
-                return Ok(());
+                return Ok(SessionReplayOutcome::Current);
             }
             if wave.decisions.len() != wave.presentation_order.len() {
                 return Err(Error::ExperimentState(
                     "a submitted language wave is missing staged decisions".to_owned(),
                 ));
             }
-            coordinator
-                .submit_language_outcomes(wave.wave_id, language_outcomes(wave)?)
-                .map_err(adaptive_error)?;
+            if let Err(error) =
+                coordinator.submit_language_outcomes(wave.wave_id, language_outcomes(wave)?)
+            {
+                return verify_replayed_failure(
+                    coordinator,
+                    session,
+                    oracle,
+                    PersistedFailureTransition::SubmitLanguage {
+                        round: transcript.round,
+                        wave_id: wave.wave_id,
+                    },
+                    error,
+                );
+            }
         }
 
         if transcript.ratings_submitted {
             if coordinator.progress() == AdaptiveLearningProgress::AwaitingRatings {
                 let ratings = ratings_for_round(coordinator, transcript)?;
-                coordinator
-                    .submit_ratings(ratings)
-                    .map_err(adaptive_error)?;
+                if let Err(error) = coordinator.submit_ratings(ratings) {
+                    return verify_replayed_failure(
+                        coordinator,
+                        session,
+                        oracle,
+                        PersistedFailureTransition::SubmitRatings {
+                            round: transcript.round,
+                        },
+                        error,
+                    );
+                }
             }
             if coordinator.round_records().len() != completed_before + 1 {
                 return Err(Error::ExperimentState(
@@ -1017,6 +1055,40 @@ fn replay_session<O: CandidateOrderOracle>(
                 ));
             }
             verify_completed_round_seal(coordinator, transcript)?;
+        } else if session.failure.as_ref().is_some_and(|failure| {
+            failure.transition
+                == PersistedFailureTransition::SubmitRatings {
+                    round: transcript.round,
+                }
+        }) {
+            if round_index + 1 != session.rounds.len()
+                || coordinator.progress() != AdaptiveLearningProgress::AwaitingRatings
+            {
+                return Err(Error::ExperimentState(
+                    "the persisted failed rating transition is not the final replay state"
+                        .to_owned(),
+                ));
+            }
+            let ratings = ratings_for_round(coordinator, transcript)?;
+            match coordinator.submit_ratings(ratings) {
+                Err(error) => {
+                    return verify_replayed_failure(
+                        coordinator,
+                        session,
+                        oracle,
+                        PersistedFailureTransition::SubmitRatings {
+                            round: transcript.round,
+                        },
+                        error,
+                    );
+                }
+                Ok(()) => {
+                    return Err(Error::ExperimentState(
+                        "the persisted failed rating transition did not recur during deterministic replay"
+                            .to_owned(),
+                    ));
+                }
+            }
         } else {
             if transcript.diagnostic_seal.is_some() {
                 return Err(Error::ExperimentState(
@@ -1034,8 +1106,44 @@ fn replay_session<O: CandidateOrderOracle>(
                     "an incomplete rating transition is not the final stored state".to_owned(),
                 ));
             }
-            return Ok(());
+            if session.phase == SessionPhase::Failed {
+                return Err(Error::ExperimentState(
+                    "the persisted failed transition did not recur during deterministic replay"
+                        .to_owned(),
+                ));
+            }
+            return Ok(SessionReplayOutcome::Current);
         }
+    }
+
+    if session.phase == SessionPhase::Failed {
+        let failure = session.failure.as_ref().ok_or_else(|| {
+            Error::ExperimentState("a failed session has no persisted failure".to_owned())
+        })?;
+        let PersistedFailureTransition::StartRound { round } = failure.transition else {
+            return Err(Error::ExperimentState(
+                "the persisted failed transition did not recur during deterministic replay"
+                    .to_owned(),
+            ));
+        };
+        if coordinator.next_round() != Some(round) {
+            return Err(Error::ExperimentState(
+                "the persisted failed start-round transition identifies the wrong round".to_owned(),
+            ));
+        }
+        return match coordinator.start_next_round(oracle) {
+            Err(error) => verify_replayed_failure(
+                coordinator,
+                session,
+                oracle,
+                PersistedFailureTransition::StartRound { round },
+                error,
+            ),
+            Ok(()) => Err(Error::ExperimentState(
+                "the persisted failed start-round transition did not recur during deterministic replay"
+                    .to_owned(),
+            )),
+        };
     }
 
     match session.phase {
@@ -1046,10 +1154,34 @@ fn replay_session<O: CandidateOrderOracle>(
             ))
         }
         SessionPhase::Learning if coordinator.progress() == AdaptiveLearningProgress::Complete => {
-            Ok(())
+            Ok(SessionReplayOutcome::Current)
         }
-        _ => Ok(()),
+        _ => Ok(SessionReplayOutcome::Current),
     }
+}
+
+fn verify_replayed_failure<O: CandidateOrderOracle>(
+    coordinator: &AdaptiveLearningCoordinator,
+    session: &AdaptiveLearningSession,
+    oracle: &SessionOracle<'_, O>,
+    transition: PersistedFailureTransition,
+    error: AdaptiveLearningError,
+) -> Result<SessionReplayOutcome> {
+    let Some(stored) = session.failure.as_ref() else {
+        return Err(adaptive_error(error));
+    };
+    let replayed = persisted_failure_record(
+        coordinator,
+        error.to_string(),
+        transition,
+        failed_transition_input_sha256(session, transition)?,
+    )?;
+    if &replayed != stored || oracle.call_cursor != oracle.calls.len() {
+        return Err(Error::ExperimentState(
+            "the persisted Phase 3 failure does not match deterministic replay".to_owned(),
+        ));
+    }
+    Ok(SessionReplayOutcome::Failed)
 }
 
 fn completed_round_seal(
@@ -1608,6 +1740,7 @@ fn persisted_round_seal(
 ) -> Result<PersistedRoundSeal> {
     Ok(PersistedRoundSeal {
         round: record.round(),
+        round_record_sha256: diagnostic_sha256("shared-learning-round", record)?,
         compact_candidate_pool_sha256: record
             .compact_order()
             .attempt()
@@ -1720,9 +1853,38 @@ fn diagnostic_sha256<T: Serialize>(kind: &str, record: &T) -> Result<String> {
 fn persisted_failure_sha256(
     reason: &str,
     transition: PersistedFailureTransition,
+    transition_input_sha256: &str,
     attempts: &[SealedCandidateOrderAttempt],
 ) -> Result<String> {
-    diagnostic_sha256("failure", &(reason, transition, attempts))
+    diagnostic_sha256(
+        "failure",
+        &(reason, transition, transition_input_sha256, attempts),
+    )
+}
+
+fn failed_transition_input_sha256(
+    session: &AdaptiveLearningSession,
+    transition: PersistedFailureTransition,
+) -> Result<String> {
+    match transition {
+        PersistedFailureTransition::StartRound { .. } => {
+            diagnostic_sha256("failed-transition-input", &transition)
+        }
+        PersistedFailureTransition::SubmitLanguage { round, .. }
+        | PersistedFailureTransition::SubmitRatings { round } => {
+            let transcript = session
+                .rounds
+                .iter()
+                .find(|transcript| transcript.round == round)
+                .ok_or_else(|| {
+                    Error::ExperimentState(
+                        "the persisted failed transition has no matching round transcript"
+                            .to_owned(),
+                    )
+                })?;
+            diagnostic_sha256("failed-transition-input", &(transition, transcript))
+        }
+    }
 }
 
 fn diagnostic_value<T: Serialize>(record: T) -> Result<serde_json::Value> {
@@ -1775,94 +1937,27 @@ fn write_summary<W: Write>(
     )
 }
 
-fn is_candidate_order_failure(failure: &AdaptiveLearningFailure) -> bool {
-    matches!(
-        failure,
-        AdaptiveLearningFailure::InsufficientCandidateOrder { .. }
-            | AdaptiveLearningFailure::CompactGeometryMismatch { .. }
-    )
-}
-
 fn persisted_failure_record(
     coordinator: &AdaptiveLearningCoordinator,
     reason: String,
     transition: PersistedFailureTransition,
+    transition_input_sha256: String,
 ) -> Result<PersistedFailure> {
     let candidate_order_attempts =
         seal_candidate_order_attempts(coordinator.failed_candidate_order_attempts())?;
-    let sha256 = persisted_failure_sha256(&reason, transition, &candidate_order_attempts)?;
+    let sha256 = persisted_failure_sha256(
+        &reason,
+        transition,
+        &transition_input_sha256,
+        &candidate_order_attempts,
+    )?;
     Ok(PersistedFailure {
         sha256,
         reason,
         transition,
+        transition_input_sha256,
         candidate_order_attempts,
     })
-}
-
-fn persisted_failure(
-    coordinator: &AdaptiveLearningCoordinator,
-    failure: &AdaptiveLearningFailure,
-) -> Result<PersistedFailure> {
-    persisted_failure_record(
-        coordinator,
-        format!("{failure:?}"),
-        if is_candidate_order_failure(failure) {
-            PersistedFailureTransition::CandidateOrder
-        } else {
-            PersistedFailureTransition::Other
-        },
-    )
-}
-
-fn replay_candidate_order_failure<O, W>(
-    coordinator: &mut AdaptiveLearningCoordinator,
-    session: &AdaptiveLearningSession,
-    oracle: &mut SessionOracle<'_, O>,
-    output: &mut W,
-) -> Result<AdaptiveLearningRunnerOutcome>
-where
-    O: CandidateOrderOracle,
-    W: Write,
-{
-    let stored = session.failure.as_ref().ok_or_else(|| {
-        Error::ExperimentState("a failed session has no persisted failure".to_owned())
-    })?;
-    if stored.transition != PersistedFailureTransition::CandidateOrder {
-        return Err(Error::Invariant(
-            "non-candidate failure entered candidate-order replay".to_owned(),
-        ));
-    }
-    let reproduced_error = coordinator.start_next_round(oracle).err().ok_or_else(|| {
-        Error::ExperimentState(
-            "the persisted candidate-order failure did not recur during deterministic replay"
-                .to_owned(),
-        )
-    })?;
-    let reproduced_failure = match &reproduced_error {
-        AdaptiveLearningError::PhasePaused(failure) if is_candidate_order_failure(failure) => {
-            persisted_failure_record(
-                coordinator,
-                reproduced_error.to_string(),
-                PersistedFailureTransition::CandidateOrder,
-            )?
-        }
-        _ => {
-            return Err(Error::ExperimentState(
-                "the persisted candidate-order failure replayed as a different transition"
-                    .to_owned(),
-            ));
-        }
-    };
-    if &reproduced_failure != stored || oracle.call_cursor != oracle.calls.len() {
-        return Err(Error::ExperimentState(
-            "the persisted candidate-order failure does not match deterministic replay".to_owned(),
-        ));
-    }
-    write_output(
-        output,
-        &format!("Phase 3 learning is stopped: {}\n", stored.reason()),
-    )?;
-    Err(Error::ExperimentState(stored.reason.clone()))
 }
 
 fn record_coordinator_failure<O, W>(
@@ -1870,6 +1965,7 @@ fn record_coordinator_failure<O, W>(
     session: &mut AdaptiveLearningSession,
     oracle: &SessionOracle<'_, O>,
     coordinator: &AdaptiveLearningCoordinator,
+    transition: PersistedFailureTransition,
     output: &mut W,
     error: AdaptiveLearningError,
 ) -> Result<AdaptiveLearningRunnerOutcome>
@@ -1878,13 +1974,17 @@ where
     W: Write,
 {
     let reason = error.to_string();
-    let transition = match &error {
-        AdaptiveLearningError::PhasePaused(failure) if is_candidate_order_failure(failure) => {
-            PersistedFailureTransition::CandidateOrder
-        }
-        _ => PersistedFailureTransition::Other,
-    };
-    let failure = persisted_failure_record(coordinator, reason.clone(), transition)?;
+    if !matches!(&error, AdaptiveLearningError::PhasePaused(_)) {
+        persist_recoverable_pause(config, session, oracle, &reason)?;
+        return Err(adaptive_error(error));
+    }
+    let transition_input_sha256 = failed_transition_input_sha256(session, transition)?;
+    let failure = persisted_failure_record(
+        coordinator,
+        reason.clone(),
+        transition,
+        transition_input_sha256,
+    )?;
     session.phase = SessionPhase::Failed;
     session.pause_reason = None;
     session.failure = Some(failure);

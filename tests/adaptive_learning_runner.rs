@@ -639,7 +639,8 @@ fn candidate_order_failure_persists_complete_attempts_and_replays_from_cache() {
 
     let failed = read_session(&session_path);
     assert_eq!(failed["phase"], "failed");
-    assert_eq!(failed["failure"]["transition"], "candidate_order");
+    assert_eq!(failed["failure"]["transition"]["kind"], "start_round");
+    assert_eq!(failed["failure"]["transition"]["round"], 1);
     let attempts = failed["failure"]["candidate_order_attempts"]
         .as_array()
         .expect("failed candidate-order attempts must be structured");
@@ -733,7 +734,7 @@ fn candidate_order_failure_persists_complete_attempts_and_replays_from_cache() {
     )
     .expect("restore failed session");
     let mut transition_corrupt = failed;
-    transition_corrupt["failure"]["transition"] = serde_json::json!("other");
+    transition_corrupt["failure"]["transition"]["kind"] = serde_json::json!("submit_ratings");
     std::fs::write(
         &session_path,
         serde_json::to_vec_pretty(&transition_corrupt).expect("encode corrupt failure transition"),
@@ -748,9 +749,149 @@ fn candidate_order_failure_persists_complete_attempts_and_replays_from_cache() {
     )
     .err()
     .expect("reject a corrupted failure transition");
-    assert!(transition_error.to_string().contains("failed its checksum"));
+    assert!(
+        transition_error
+            .to_string()
+            .contains("failure failed its checksum"),
+        "unexpected transition-tamper error: {transition_error}"
+    );
     assert_eq!(transition_rejecting_oracle.matrix_passes, 0);
     assert_eq!(transition_rejecting_oracle.vector_lookups, 0);
+}
+
+#[test]
+fn language_limit_failure_replays_prior_rounds_and_the_failed_transition() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("language-limit-failure.json");
+    let config = fixture.config(session_path.clone());
+    let mut input = "7\n".repeat(20);
+    input.push_str(&"l\n".repeat(22));
+    input.push_str(&"7\n".repeat(18));
+
+    let mut first_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let first_error = run_adaptive_learning(
+        &config,
+        &mut first_oracle,
+        Cursor::new(input.into_bytes()),
+        &mut Vec::new(),
+    )
+    .err()
+    .expect("the twenty-second wrong-language result stops learning");
+    assert!(first_error.to_string().contains("WrongLanguageLimit"));
+
+    let failed = read_session(&session_path);
+    assert_eq!(failed["phase"], "failed");
+    assert_eq!(failed["rounds"][0]["ratings_submitted"], true);
+    assert_eq!(failed["rounds"][1]["ratings_submitted"], false);
+    assert_eq!(failed["failure"]["transition"]["kind"], "submit_language");
+
+    let mut replay_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let replay_error = run_adaptive_learning(
+        &config,
+        &mut replay_oracle,
+        Cursor::new(b""),
+        &mut Vec::new(),
+    )
+    .err()
+    .expect("replay the failed language transition");
+    assert_eq!(replay_error.to_string(), first_error.to_string());
+    assert_eq!(replay_oracle.matrix_passes, 0);
+    assert_eq!(replay_oracle.vector_lookups, 0);
+
+    let mut judgment_corrupt = failed.clone();
+    let decisions = judgment_corrupt["rounds"][1]["waves"][1]["decisions"]
+        .as_array_mut()
+        .expect("failed-wave decisions");
+    let wrong_index = decisions
+        .iter()
+        .position(|decision| decision["outcome"] == "wrong_language")
+        .expect("wrong-language decision");
+    let rated_index = decisions
+        .iter()
+        .position(|decision| decision["outcome"] == "rated")
+        .expect("rated decision");
+    let wrong_event_id = decisions[wrong_index]["event_id"].clone();
+    let rated_event_id = decisions[rated_index]["event_id"].clone();
+    let rating = decisions[rated_index]["rating"].clone();
+    decisions[wrong_index] = serde_json::json!({
+        "outcome": "rated",
+        "event_id": wrong_event_id,
+        "rating": rating,
+    });
+    decisions[rated_index] = serde_json::json!({
+        "outcome": "wrong_language",
+        "event_id": rated_event_id,
+    });
+    std::fs::write(
+        &session_path,
+        serde_json::to_vec_pretty(&judgment_corrupt).expect("encode swapped failed-wave judgments"),
+    )
+    .expect("write swapped failed-wave judgments");
+    let mut judgment_rejecting_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let judgment_error = run_adaptive_learning(
+        &config,
+        &mut judgment_rejecting_oracle,
+        Cursor::new(b""),
+        &mut Vec::new(),
+    )
+    .err()
+    .expect("reject changed judgments with unchanged failure counts");
+    assert!(
+        judgment_error
+            .to_string()
+            .contains("failed transition input")
+    );
+    assert_eq!(judgment_rejecting_oracle.matrix_passes, 0);
+    assert_eq!(judgment_rejecting_oracle.vector_lookups, 0);
+
+    let mut corrupt = failed;
+    corrupt["rounds"][0]["diagnostic_seal"]["errors_sha256"] = serde_json::json!("0".repeat(64));
+    std::fs::write(
+        &session_path,
+        serde_json::to_vec_pretty(&corrupt).expect("encode corrupt prior round seal"),
+    )
+    .expect("write corrupt prior round seal");
+    let mut rejecting_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let error = run_adaptive_learning(
+        &config,
+        &mut rejecting_oracle,
+        Cursor::new(b""),
+        &mut Vec::new(),
+    )
+    .err()
+    .expect("reject prior-round drift before accepting the failed session");
+    assert!(error.to_string().contains("completed round diagnostic"));
+    assert_eq!(rejecting_oracle.matrix_passes, 0);
+    assert_eq!(rejecting_oracle.vector_lookups, 0);
+}
+
+#[test]
+fn transient_oracle_error_keeps_the_learning_session_retryable() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("transient-oracle-error.json");
+    let config = fixture.config(session_path.clone());
+    let mut oracle = FailOnceOracle::new(fixture.event_ids.clone());
+
+    let error = run_adaptive_learning(&config, &mut oracle, Cursor::new(b""), &mut Vec::new())
+        .err()
+        .expect("surface the injected transient Oracle error");
+    assert!(
+        error
+            .to_string()
+            .contains("injected transient Oracle failure")
+    );
+    let retryable = read_session(&session_path);
+    assert_eq!(retryable["phase"], "learning");
+    assert!(retryable["failure"].is_null());
+    assert!(!retryable["pause_reason"].is_null());
+
+    let resumed =
+        run_adaptive_learning(&config, &mut oracle, Cursor::new(b"7q\n"), &mut Vec::new())
+            .expect("retry the same transition after the Oracle recovers");
+    assert!(matches!(resumed, AdaptiveLearningRunnerOutcome::Paused));
+    let recovered = read_session(&session_path);
+    assert_eq!(recovered["phase"], "learning");
+    assert!(recovered["failure"].is_null());
 }
 
 #[test]
@@ -1107,6 +1248,7 @@ fn resumed_and_uninterrupted_ten_round_runs_freeze_the_same_handoff() {
     assert_eq!(sealed_rounds.len(), 10);
     for round in sealed_rounds {
         for field in [
+            "round_record_sha256",
             "frozen_predictions_sha256",
             "errors_sha256",
             "next_tuples_sha256",
@@ -1373,6 +1515,13 @@ fn completed_learning_round_seal_rejects_drift_before_next_input() {
             .map(str::len),
         Some(64),
         "every completed learning round must be sealed before the next round starts"
+    );
+    assert_eq!(
+        session["rounds"][0]["diagnostic_seal"]["round_record_sha256"]
+            .as_str()
+            .map(str::len),
+        Some(64),
+        "the complete round record must have one authoritative seal"
     );
     assert_eq!(
         session["rounds"][0]["diagnostic_seal"]["presentation_ledger"][0]["state"]["kind"], "rated",
@@ -1712,6 +1861,50 @@ struct FixtureOracle {
     responses: BTreeMap<EventId, SimilarNotesResponse>,
     matrix_passes: usize,
     vector_lookups: usize,
+}
+
+struct FailOnceOracle {
+    inner: FixtureOracle,
+    fail_next_wave: bool,
+}
+
+impl FailOnceOracle {
+    fn new(event_ids: Vec<EventId>) -> Self {
+        Self {
+            inner: FixtureOracle::new(event_ids),
+            fail_next_wave: true,
+        }
+    }
+}
+
+impl CandidateOrderOracle for FailOnceOracle {
+    fn representation_version(&self) -> &str {
+        self.inner.representation_version()
+    }
+
+    fn similar_notes_wave(
+        &mut self,
+        requests: &[SimilarNotesRequest],
+        representation_version: &str,
+    ) -> SnapshotResult<SimilarNotesWaveResponse> {
+        if self.fail_next_wave {
+            self.fail_next_wave = false;
+            return Err(SnapshotError::Invariant(
+                "injected transient Oracle failure".to_owned(),
+            ));
+        }
+        self.inner
+            .similar_notes_wave(requests, representation_version)
+    }
+
+    fn vectors_for_notes(
+        &mut self,
+        note_ids: &[EventId],
+        representation_version: &str,
+    ) -> SnapshotResult<VectorsForNotesResponse> {
+        self.inner
+            .vectors_for_notes(note_ids, representation_version)
+    }
 }
 
 impl FixtureOracle {

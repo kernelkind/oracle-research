@@ -2,6 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
+use serde::ser::SerializeSeq;
 use thiserror::Error;
 
 use crate::candidate_order::{
@@ -92,7 +93,7 @@ pub enum SharedLearningAuditEvent {
     },
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct SharedLearningRoundRecord {
     round: usize,
     compact_order: FrozenCandidateOrder,
@@ -101,8 +102,23 @@ pub struct SharedLearningRoundRecord {
     compact_round: CompactRoundRecord,
     rbf_round: RbfRoundRecord,
     ratings: Vec<BatchRating>,
+    #[serde(serialize_with = "serialize_presentation_ledger_entries")]
     presentation_ledger_entries: BTreeMap<EventId, PriorPresentation>,
     audit: Vec<SharedLearningAuditEvent>,
+}
+
+fn serialize_presentation_ledger_entries<S>(
+    entries: &BTreeMap<EventId, PriorPresentation>,
+    serializer: S,
+) -> std::result::Result<S::Ok, S::Error>
+where
+    S: serde::Serializer,
+{
+    let mut sequence = serializer.serialize_seq(Some(entries.len()))?;
+    for entry in entries {
+        sequence.serialize_element(&entry)?;
+    }
+    sequence.end()
 }
 
 impl SharedLearningRoundRecord {

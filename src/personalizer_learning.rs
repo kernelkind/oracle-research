@@ -543,7 +543,7 @@ impl RbfTupleError {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct CompactRoundRecord {
     frozen_batch: CompactFrozenBatch,
     outcomes: Vec<RatedOutcome>,
@@ -574,7 +574,7 @@ impl CompactRoundRecord {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct RbfRoundRecord {
     frozen_batch: RbfFrozenBatch,
     outcomes: Vec<RatedOutcome>,

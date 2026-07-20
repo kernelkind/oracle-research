@@ -509,7 +509,7 @@ impl CandidateOrderAttempt {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct FrozenCandidateOrder {
     attempt: CandidateOrderAttempt,
 }
