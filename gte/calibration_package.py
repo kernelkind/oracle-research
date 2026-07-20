@@ -342,7 +342,7 @@ def validate_instance_against_offer(
     expected_label: str | None = None,
     require_running: bool = True,
 ) -> dict[str, object]:
-    """Bind one running instance to the exact approved offer before staging."""
+    """Bind one instance to the exact approved offer and optionally require running."""
     if not isinstance(offer, dict):
         raise ValueError("approved Vast offer must be one object")
     if maximum_rate_micro_usd <= 0:
@@ -378,8 +378,13 @@ def validate_instance_against_offer(
         or str(instance_id) != expected_instance_id
         or instance.get("machine_id") != offer_machine_id
         or (instance_bundle_id is not None and instance_bundle_id != offer_bundle_id)
-        or (require_running and instance.get("actual_status") != "running")
-        or instance.get("intended_status") != "running"
+        or (
+            require_running
+            and (
+                instance.get("actual_status") != "running"
+                or instance.get("intended_status") != "running"
+            )
+        )
         or immutable_image_ref(instance.get("image_uuid"))
         != immutable_image_ref(expected_image)
         or instance.get("gpu_name") != offer.get("gpu_name")
