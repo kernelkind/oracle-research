@@ -629,6 +629,34 @@ def merge_provider_invoice_pages(
     return merged
 
 
+def validate_provider_invoice_page(page_path: Path) -> dict[str, object]:
+    """Reject empty or error output before one fetched invoice page is published."""
+    try:
+        page = read_json(page_path)
+    except ValueError as error:
+        raise ValueError(f"provider invoice page is invalid: {error}") from error
+    if not isinstance(page, dict) or not isinstance(page.get("results"), list):
+        raise ValueError("provider invoice page is invalid")
+    count = page.get("count")
+    total = page.get("total")
+    next_token = page.get("next_token")
+    if (
+        page.get("success") is not True
+        or "next_token" not in page
+        or isinstance(count, bool)
+        or not isinstance(count, int)
+        or count != len(page["results"])
+        or isinstance(total, bool)
+        or not isinstance(total, int)
+        or total < count
+        or (next_token is not None and not isinstance(next_token, str))
+        or isinstance(next_token, str)
+        and not next_token
+    ):
+        raise ValueError("provider invoice page is invalid")
+    return page
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="operation", required=True)
@@ -681,6 +709,9 @@ def parse_args() -> argparse.Namespace:
     merge_invoices = subparsers.add_parser("merge-provider-invoice-pages")
     merge_invoices.add_argument("output", type=Path)
     merge_invoices.add_argument("pages", nargs="+", type=Path)
+
+    validate_invoice_page = subparsers.add_parser("validate-provider-invoice-page")
+    validate_invoice_page.add_argument("page", type=Path)
     return parser.parse_args()
 
 
@@ -720,8 +751,10 @@ def main() -> int:
             args.confirmation_observed_at_utc,
             args.output,
         )
-    else:
+    elif args.operation == "merge-provider-invoice-pages":
         result = merge_provider_invoice_pages(args.pages, args.output)
+    else:
+        result = validate_provider_invoice_page(args.page)
     print(json.dumps(result, sort_keys=True))
     return 0
 

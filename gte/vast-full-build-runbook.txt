@@ -66,11 +66,11 @@ Cost contract
   export CANONICAL_LEDGER=/home/dev/src/notedeck_worktrees/algos/oracle-mvp/budget-ledger.json
   export IMAGE_REF='docker.io/kernelkind/oracle-mvp@sha256:96a60fd4caf87afadf0546636af6eeefee72d327dc95dde1714f86ea14fb435a'
   export IMAGE_SOURCE_COMMIT=c9861a60cd6706ecd5a8f255914ebd10390bc444
-  export CONTROLLER_SOURCE_COMMIT=dac1f3edcc52aa82d3ea5053395f572e5c2955da
-  export CONTROLLER_SHA256=824a1b195d8c644dd5163cd446f13802d732dd44144275799f74aad4891821c8
-  export CONTROL_SHA256SUMS_SHA256=d8b8bd7776849af0d2ca127fedea950e68257b878ce5127be326417a695aef3e
-  export TRANSPORT_MANIFEST_SHA256=7d4d1eb3d5044f2c4a9d187b235b9e68e169b8cbd9a6754de90a7fb86f380998
-  export EXECUTION_PACKAGE_MANIFEST_SHA256=f89a429330a0f5654788f1848a28f342b8d07e42e89e399de4d865ede7cd7844
+  export CONTROLLER_SOURCE_COMMIT=63f0a9834101ced0a9dcf4f0395ea93d1335c9db
+  export CONTROLLER_SHA256=fdad544857afe4e3a04253e3ba04a075279725fb0d097e558d694019d99505b9
+  export CONTROL_SHA256SUMS_SHA256=4027920ad7159da32336ac5ba2a0f7425be789bd8ae84824995b9690f3db10e9
+  export TRANSPORT_MANIFEST_SHA256=10dc26d8a76daf80c01150fbd33bc71ea563c036a2456d5ce5cd35429b619fdf
+  export EXECUTION_PACKAGE_MANIFEST_SHA256=6883eb9725a9272e637b8ae24d55bf0aa3c5b85a8ff8575363ec4034a5fa0528
 
   set -euo pipefail
   umask 077
@@ -78,7 +78,7 @@ Cost contract
   verify_control_files() {
     test "$(sha256sum "$LOCAL_ROOT/transport/control/SHA256SUMS" | cut -d' ' -f1)" \
       = "$CONTROL_SHA256SUMS_SHA256"
-    (cd "$LOCAL_ROOT" && sha256sum -c transport/control/SHA256SUMS)
+    (cd "$LOCAL_ROOT" && sha256sum --status -c transport/control/SHA256SUMS)
   }
 
   controller() {
@@ -289,10 +289,21 @@ PAID BOUNDARY -- STOP HERE DURING CREC-72
   Immediately after approval, preserve the exact pre-reservation ledger and
   reserve once through the pinned controller:
 
-  cp "$CANONICAL_LEDGER" \
-    "$LOCAL_ROOT/launch/pre-reservation-budget-ledger.json"
-  test "$(sha256sum "$CANONICAL_LEDGER" | cut -d' ' -f1)" \
-    = "$(sha256sum "$LOCAL_ROOT/execution/work/budget-ledger.json" | cut -d' ' -f1)"
+  if test ! -e "$LOCAL_ROOT/launch/pre-reservation-budget-ledger.json"; then
+    test "$(sha256sum "$CANONICAL_LEDGER" | cut -d' ' -f1)" \
+      = "$(sha256sum "$LOCAL_ROOT/execution/work/budget-ledger.json" | cut -d' ' -f1)"
+    install -m 600 "$CANONICAL_LEDGER" \
+      "$LOCAL_ROOT/launch/pre-reservation-budget-ledger.json.next"
+    mv "$LOCAL_ROOT/launch/pre-reservation-budget-ledger.json.next" \
+      "$LOCAL_ROOT/launch/pre-reservation-budget-ledger.json"
+  fi
+  PRE_RESERVATION_LEDGER_SHA="$(sha256sum \
+    "$LOCAL_ROOT/launch/pre-reservation-budget-ledger.json" | cut -d' ' -f1)"
+  EXECUTION_LEDGER_SHA="$(sha256sum \
+    "$LOCAL_ROOT/execution/work/budget-ledger.json" | cut -d' ' -f1)"
+  CANONICAL_LEDGER_SHA="$(sha256sum "$CANONICAL_LEDGER" | cut -d' ' -f1)"
+  test "$CANONICAL_LEDGER_SHA" = "$PRE_RESERVATION_LEDGER_SHA" \
+    || test "$CANONICAL_LEDGER_SHA" = "$EXECUTION_LEDGER_SHA"
   RECORDED_AT_UTC=$(date -u +%Y-%m-%dT%H:%M:%SZ)
   controller execution reserve-full-build \
     package/run/full-build-config.json \
@@ -308,15 +319,28 @@ PAID BOUNDARY -- STOP HERE DURING CREC-72
   RESERVED_LEDGER_SHA="$(python3 -c \
     'import json,sys; print(json.load(open(sys.argv[1]))["ledger_sha256"])' \
     "$LOCAL_ROOT/launch/full-build-reservation.json")"
+  RESERVATION_PREVIOUS_LEDGER_SHA="$(python3 -c \
+    'import json,sys; print(json.load(open(sys.argv[1]))["previous_ledger_sha256"])' \
+    "$LOCAL_ROOT/launch/full-build-reservation.json")"
+  test "$RESERVATION_PREVIOUS_LEDGER_SHA" = "$PRE_RESERVATION_LEDGER_SHA"
   test "$(sha256sum "$LOCAL_ROOT/execution/work/budget-ledger.json" | cut -d' ' -f1)" \
     = "$RESERVED_LEDGER_SHA"
 
+  CANONICAL_LEDGER_SHA="$(sha256sum "$CANONICAL_LEDGER" | cut -d' ' -f1)"
+  if test "$CANONICAL_LEDGER_SHA" = "$PRE_RESERVATION_LEDGER_SHA"; then
+    install -m 600 "$LOCAL_ROOT/execution/work/budget-ledger.json" \
+      "$(dirname "$CANONICAL_LEDGER")/.budget-ledger.json.next"
+    mv "$(dirname "$CANONICAL_LEDGER")/.budget-ledger.json.next" \
+      "$CANONICAL_LEDGER"
+  else
+    test "$CANONICAL_LEDGER_SHA" = "$RESERVED_LEDGER_SHA"
+  fi
   install -m 600 "$LOCAL_ROOT/execution/work/budget-ledger.json" \
-    "$(dirname "$CANONICAL_LEDGER")/.budget-ledger.json.next"
-  mv "$(dirname "$CANONICAL_LEDGER")/.budget-ledger.json.next" \
-    "$CANONICAL_LEDGER"
-  cp "$LOCAL_ROOT/execution/work/budget-ledger.json" \
+    "$LOCAL_ROOT/launch/reserved-budget-ledger.json.next"
+  mv "$LOCAL_ROOT/launch/reserved-budget-ledger.json.next" \
     "$LOCAL_ROOT/launch/reserved-budget-ledger.json"
+  test "$(sha256sum "$LOCAL_ROOT/launch/reserved-budget-ledger.json" | cut -d' ' -f1)" \
+    = "$RESERVED_LEDGER_SHA"
   verify_reviewed_artifacts
 
   The reviewed transport remains byte-for-byte unchanged. The reserved ledger
@@ -324,6 +348,51 @@ PAID BOUNDARY -- STOP HERE DURING CREC-72
   remote transport manifest has verified.
 
 5. Create exactly one private-image instance
+
+  export INSTANCE_ID=
+  INSTANCE_BILLING=possible
+
+  post_create_stop() {
+    stage=$1
+    vastai show instance "$INSTANCE_ID" --raw \
+      2>/dev/null \
+      | calibration_helper freeze-instance \
+          launch/create-result.json \
+          /dev/stdin \
+          "launch/post-create-stop-$stage.json" \
+      || true
+    printf '%s\n' \
+      "INSTANCE $INSTANCE_ID MAY STILL BE BILLING; continue it or destroy/retrieve/settle it before stopping" \
+      >&2
+  }
+
+  unexpected_exit_warning() {
+    status=$?
+    trap - EXIT
+    if test "${INSTANCE_BILLING:-}" != no \
+      && test ! -f "$LOCAL_ROOT/launch/destruction-confirmation.json" \
+      && test -f "$LOCAL_ROOT/launch/create-request-attempted.txt"
+    then
+      if test -z "${INSTANCE_ID:-}" \
+        && test -f "$LOCAL_ROOT/launch/create-result.json"
+      then
+        INSTANCE_ID="$(python3 -c \
+          'import json,sys; print(json.load(open(sys.argv[1]))["new_contract"])' \
+          "$LOCAL_ROOT/launch/create-result.json" 2>/dev/null)" \
+          || INSTANCE_ID=
+      fi
+      if test -n "${INSTANCE_ID:-}"; then
+        post_create_stop unexpected-exit
+      else
+        printf '%s\n' \
+          'CREATE STATE MAY BE BILLING; resolve the unique crec-72-gte-full-build label before rerunning or settling' \
+          >&2
+      fi
+    fi
+    exit "$status"
+  }
+
+  trap unexpected_exit_warning EXIT
 
   set +e
   env -u DOCKER_PULL_PAT bash <<'DIRECT_LAUNCH'
@@ -468,6 +537,7 @@ PY
       fi
       if test "$create_outcome" = definitive_rejection; then
         record_zero_charge_create_failure "provider definitively rejected create"
+        INSTANCE_BILLING=no
         printf '%s\n' \
           'NO INSTANCE WAS CREATED; skip sections 6-9 and continue at section 10' \
           >&2
@@ -483,22 +553,9 @@ PY
   export INSTANCE_ID="$(python3 -c \
     'import json,sys; print(json.load(open(sys.argv[1]))["new_contract"])' \
     "$LOCAL_ROOT/launch/create-result.json")"
+  INSTANCE_BILLING=yes
   printf '%s instance_id=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
     "$INSTANCE_ID" >> "$LOCAL_ROOT/launch/attempt.log"
-
-  post_create_stop() {
-    stage=$1
-    vastai show instance "$INSTANCE_ID" --raw \
-      2>/dev/null \
-      | calibration_helper freeze-instance \
-          launch/create-result.json \
-          /dev/stdin \
-          "launch/post-create-stop-$stage.json" \
-      || true
-    printf '%s\n' \
-      "INSTANCE $INSTANCE_ID MAY STILL BE BILLING; continue it or destroy/retrieve/settle it before stopping" \
-      >&2
-  }
 
   destroy_instance() {
     stage=$1
@@ -532,6 +589,7 @@ PY
             "$LOCAL_ROOT/launch/destroyed-at.txt"
           mv "$LOCAL_ROOT/launch/live-instances.json.next" \
             "$LOCAL_ROOT/launch/destruction-confirmation.json"
+          INSTANCE_BILLING=no
           instance_gone=yes
           break
         fi
@@ -1109,6 +1167,10 @@ set -euo pipefail
 cd /workspace/oracle-full-build
 ATTEMPT_ID=$1
 ATTEMPT="work/full-build-attempts/$ATTEMPT_ID"
+exec 8>work/full-build-start.lock
+flock --nonblock --conflict-exit-code 75 8
+exec 9>work/full-build.lock
+flock --nonblock --conflict-exit-code 75 9
 terminal_records=0
 if test -f "$ATTEMPT/full-build.exit"; then
   [[ "$(cat "$ATTEMPT/full-build.exit")" =~ ^[0-9]+$ ]]
@@ -1124,14 +1186,20 @@ if test -e "$ATTEMPT/full-build.orphaned"; then
   terminal_records=$((terminal_records + 1))
 fi
 test "$terminal_records" = 1
-flock --nonblock --conflict-exit-code 75 work/full-build.lock bash -c '
+(
   cd work
   find . -type f ! -name retrieval.sha256 -print0 \
     | sort -z \
     | xargs -0 sha256sum \
     > ../retrieval.sha256.next
   mv ../retrieval.sha256.next retrieval.sha256
-'
+)
+find preparation-attempts -type f ! -name retrieval.sha256 -print0 \
+  | sort -z \
+  | xargs -0 sha256sum \
+  > preparation-retrieval.sha256.next
+mv preparation-retrieval.sha256.next \
+  preparation-attempts/retrieval.sha256
 REMOTE_SEAL
 
   vastai copy \
@@ -1146,6 +1214,9 @@ REMOTE_SEAL
     || { post_create_stop preparation-audit-copy; false; }
   (cd "$LOCAL_ROOT/result.next/work" && sha256sum -c retrieval.sha256) \
     || { post_create_stop result-integrity; false; }
+  (cd "$LOCAL_ROOT/result.next/audit" \
+    && sha256sum -c preparation-attempts/retrieval.sha256) \
+    || { post_create_stop preparation-integrity; false; }
 
   The whole work directory is mandatory. It carries calibration-evidence.json,
   calibration-execution-identity.json, execution-identity.json, the
@@ -1280,7 +1351,10 @@ PY
       fi
       page_fetched=
       for _ in $(seq 1 12); do
-        if vastai "${invoice_args[@]}" > "$page_absolute.next"; then
+        if vastai "${invoice_args[@]}" > "$page_absolute.next" \
+          && package_helper validate-provider-invoice-page \
+            "$page_relative.next" >/dev/null
+        then
           mv "$page_absolute.next" "$page_absolute"
           page_fetched=yes
           break
@@ -1351,29 +1425,49 @@ PY
     "$LOCAL_ROOT/launch/provider-final-charge.json")"
   export SETTLED_AT_UTC="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
-  Keep retrieved work immutable. Settlement uses a separate ledger and a copy
-  of the run config whose two ledger paths point into settlement/:
+  Keep retrieved work immutable. A settlement is built and verified under a
+  unique attempt directory, then atomically renamed to settlement/. An
+  interrupted attempt is never authoritative and a retry uses a new directory.
+  The verified final package contains settlement/full-build-config.json:
+
+  SETTLED_LAYOUT=
+  for candidate_layout in result result.next execution; do
+    if test -d "$LOCAL_ROOT/$candidate_layout/settlement"; then
+      test -z "$SETTLED_LAYOUT"
+      package_helper verify \
+        "$candidate_layout/settlement" \
+        "$candidate_layout/settlement/settlement-manifest.json"
+      SETTLED_LAYOUT=$candidate_layout
+    fi
+  done
+
+  if test -z "$SETTLED_LAYOUT"; then
+    SETTLEMENT_ATTEMPT_ID="$(date -u +%Y%m%dT%H%M%S%NZ)-$$"
+    SETTLEMENT_STAGE="settlement-attempts/$SETTLEMENT_ATTEMPT_ID"
 
   prepare_settlement_state() {
     layout=$1
     test ! -e "$LOCAL_ROOT/$layout/settlement"
-    mkdir "$LOCAL_ROOT/$layout/settlement"
+    mkdir -p "$LOCAL_ROOT/$layout/settlement-attempts"
+    test ! -e "$LOCAL_ROOT/$layout/$SETTLEMENT_STAGE"
+    mkdir "$LOCAL_ROOT/$layout/$SETTLEMENT_STAGE"
     cp "$LOCAL_ROOT/$layout/work/budget-ledger.json" \
-      "$LOCAL_ROOT/$layout/settlement/pre-settlement-budget-ledger.json"
+      "$LOCAL_ROOT/$layout/$SETTLEMENT_STAGE/pre-settlement-budget-ledger.json"
     cp "$LOCAL_ROOT/$layout/work/budget-ledger.json" \
-      "$LOCAL_ROOT/$layout/settlement/budget-ledger.json"
+      "$LOCAL_ROOT/$layout/$SETTLEMENT_STAGE/budget-ledger.json"
     python3 - \
       "$LOCAL_ROOT/$layout/package/run/full-build-config.json" \
-      "$LOCAL_ROOT/$layout/settlement/full-build-config.json" <<'PY'
+      "$LOCAL_ROOT/$layout/$SETTLEMENT_STAGE/full-build-config.json" \
+      "$SETTLEMENT_STAGE" <<'PY'
 import json
 import os
 import sys
 from pathlib import Path
 
-source, destination = Path(sys.argv[1]), Path(sys.argv[2])
+source, destination, stage = Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3]
 document = json.load(source.open(encoding="utf-8"))
-document["calibration"]["ledger_path"] = "settlement/budget-ledger.json"
-document["full_build"]["ledger_path"] = "settlement/budget-ledger.json"
+document["calibration"]["ledger_path"] = f"{stage}/budget-ledger.json"
+document["full_build"]["ledger_path"] = f"{stage}/budget-ledger.json"
 temporary = destination.with_name(f".{destination.name}.next")
 with temporary.open("x", encoding="utf-8") as output:
     json.dump(document, output, sort_keys=True, indent=2)
@@ -1393,10 +1487,10 @@ PY
     test -s "$LOCAL_ROOT/result/audit/local-verification.json"
     prepare_settlement_state result
     controller result settle-full-build \
-      settlement/full-build-config.json \
+      "$SETTLEMENT_STAGE/full-build-config.json" \
       "$ACTUAL_CHARGE_MICRO_USD" \
       "$SETTLED_AT_UTC" \
-      > "$LOCAL_ROOT/launch/settlement-result.json.next"
+      > "$LOCAL_ROOT/result/$SETTLEMENT_STAGE/settlement-result.json.next"
     SETTLED_LAYOUT=result
   elif test -d "$LOCAL_ROOT/launch/worker-invocations" \
     && find "$LOCAL_ROOT/launch/worker-invocations" -maxdepth 1 \
@@ -1427,71 +1521,88 @@ PY
     (cd "$LOCAL_ROOT/result.next/work" && sha256sum -c retrieval.sha256)
     prepare_settlement_state result.next
     controller result.next settle-failed-full-build \
-      settlement/full-build-config.json \
+      "$SETTLEMENT_STAGE/full-build-config.json" \
       "$FAILURE_EVIDENCE" \
       "$ACTUAL_CHARGE_MICRO_USD" \
       "$SETTLED_AT_UTC" \
-      > "$LOCAL_ROOT/launch/settlement-result.json.next"
+      > "$LOCAL_ROOT/result.next/$SETTLEMENT_STAGE/settlement-result.json.next"
     SETTLED_LAYOUT=result.next
   else
     test -s "$LOCAL_ROOT/launch/preclaim-failure.log"
     prepare_settlement_state execution
     controller execution settle-failed-full-build \
-      settlement/full-build-config.json \
+      "$SETTLEMENT_STAGE/full-build-config.json" \
       ../launch/preclaim-failure.log \
       "$ACTUAL_CHARGE_MICRO_USD" \
       "$SETTLED_AT_UTC" \
-      > "$LOCAL_ROOT/launch/settlement-result.json.next"
+      > "$LOCAL_ROOT/execution/$SETTLEMENT_STAGE/settlement-result.json.next"
     SETTLED_LAYOUT=execution
   fi
-  mv "$LOCAL_ROOT/launch/settlement-result.json.next" \
-    "$LOCAL_ROOT/launch/settlement-result.json"
+
+  mv "$LOCAL_ROOT/$SETTLED_LAYOUT/$SETTLEMENT_STAGE/settlement-result.json.next" \
+    "$LOCAL_ROOT/$SETTLED_LAYOUT/$SETTLEMENT_STAGE/settlement-result.json"
+
+  SETTLED_LEDGER="$LOCAL_ROOT/$SETTLED_LAYOUT/$SETTLEMENT_STAGE/budget-ledger.json"
+  SETTLEMENT_LEDGER_SHA="$(python3 -c \
+    'import json,sys; print(json.load(open(sys.argv[1]))["ledger_sha256"])' \
+    "$LOCAL_ROOT/$SETTLED_LAYOUT/$SETTLEMENT_STAGE/settlement-result.json")"
+  test "$(sha256sum "$SETTLED_LEDGER" | cut -d' ' -f1)" \
+    = "$SETTLEMENT_LEDGER_SHA"
+  cp "$LOCAL_ROOT/launch/provider-final-charge.json" \
+    "$LOCAL_ROOT/$SETTLED_LAYOUT/$SETTLEMENT_STAGE/provider-final-charge.json"
+  if test -f "$LOCAL_ROOT/launch/provider-final-invoice-first.json"; then
+    cp "$LOCAL_ROOT/launch/provider-final-invoice-first.json" \
+      "$LOCAL_ROOT/$SETTLED_LAYOUT/$SETTLEMENT_STAGE/provider-final-invoice-first.json"
+    cp "$LOCAL_ROOT/launch/provider-final-invoice-confirmation.json" \
+      "$LOCAL_ROOT/$SETTLED_LAYOUT/$SETTLEMENT_STAGE/provider-final-invoice-confirmation.json"
+    cp "$LOCAL_ROOT/launch/invoice-not-before-utc.txt" \
+      "$LOCAL_ROOT/$SETTLED_LAYOUT/$SETTLEMENT_STAGE/invoice-not-before-utc.txt"
+    cp "$LOCAL_ROOT/launch/provider-final-invoice-first-observed-at.txt" \
+      "$LOCAL_ROOT/$SETTLED_LAYOUT/$SETTLEMENT_STAGE/provider-final-invoice-first-observed-at.txt"
+    cp "$LOCAL_ROOT/launch/provider-final-invoice-confirmation-observed-at.txt" \
+      "$LOCAL_ROOT/$SETTLED_LAYOUT/$SETTLEMENT_STAGE/provider-final-invoice-confirmation-observed-at.txt"
+  fi
+  if test -f "$LOCAL_ROOT/launch/destruction-confirmation.json"; then
+    cp "$LOCAL_ROOT/launch/destruction-confirmation.json" \
+      "$LOCAL_ROOT/$SETTLED_LAYOUT/$SETTLEMENT_STAGE/destruction-confirmation.json"
+    cp "$LOCAL_ROOT/launch/destroyed-at.txt" \
+      "$LOCAL_ROOT/$SETTLED_LAYOUT/$SETTLEMENT_STAGE/destroyed-at.txt"
+  fi
+  package_helper manifest \
+    "$SETTLED_LAYOUT/$SETTLEMENT_STAGE" \
+    "$SETTLED_LAYOUT/$SETTLEMENT_STAGE/settlement-manifest.json" \
+    gte-full-build-settlement
+  package_helper verify \
+    "$SETTLED_LAYOUT/$SETTLEMENT_STAGE" \
+    "$SETTLED_LAYOUT/$SETTLEMENT_STAGE/settlement-manifest.json"
+  mv "$LOCAL_ROOT/$SETTLED_LAYOUT/$SETTLEMENT_STAGE" \
+    "$LOCAL_ROOT/$SETTLED_LAYOUT/settlement"
+  fi
 
   SETTLED_LEDGER="$LOCAL_ROOT/$SETTLED_LAYOUT/settlement/budget-ledger.json"
   SETTLEMENT_LEDGER_SHA="$(python3 -c \
     'import json,sys; print(json.load(open(sys.argv[1]))["ledger_sha256"])' \
-    "$LOCAL_ROOT/launch/settlement-result.json")"
+    "$LOCAL_ROOT/$SETTLED_LAYOUT/settlement/settlement-result.json")"
   test "$(sha256sum "$SETTLED_LEDGER" | cut -d' ' -f1)" \
     = "$SETTLEMENT_LEDGER_SHA"
-  cp "$LOCAL_ROOT/launch/settlement-result.json" \
-    "$LOCAL_ROOT/$SETTLED_LAYOUT/settlement/settlement-result.json"
-  cp "$LOCAL_ROOT/launch/provider-final-charge.json" \
-    "$LOCAL_ROOT/$SETTLED_LAYOUT/settlement/provider-final-charge.json"
-  if test -f "$LOCAL_ROOT/launch/provider-final-invoice-first.json"; then
-    cp "$LOCAL_ROOT/launch/provider-final-invoice-first.json" \
-      "$LOCAL_ROOT/$SETTLED_LAYOUT/settlement/provider-final-invoice-first.json"
-    cp "$LOCAL_ROOT/launch/provider-final-invoice-confirmation.json" \
-      "$LOCAL_ROOT/$SETTLED_LAYOUT/settlement/provider-final-invoice-confirmation.json"
-    cp "$LOCAL_ROOT/launch/invoice-not-before-utc.txt" \
-      "$LOCAL_ROOT/$SETTLED_LAYOUT/settlement/invoice-not-before-utc.txt"
-    cp "$LOCAL_ROOT/launch/provider-final-invoice-first-observed-at.txt" \
-      "$LOCAL_ROOT/$SETTLED_LAYOUT/settlement/provider-final-invoice-first-observed-at.txt"
-    cp "$LOCAL_ROOT/launch/provider-final-invoice-confirmation-observed-at.txt" \
-      "$LOCAL_ROOT/$SETTLED_LAYOUT/settlement/provider-final-invoice-confirmation-observed-at.txt"
-  fi
-  if test -f "$LOCAL_ROOT/launch/destruction-confirmation.json"; then
-    cp "$LOCAL_ROOT/launch/destruction-confirmation.json" \
-      "$LOCAL_ROOT/$SETTLED_LAYOUT/settlement/destruction-confirmation.json"
-    cp "$LOCAL_ROOT/launch/destroyed-at.txt" \
-      "$LOCAL_ROOT/$SETTLED_LAYOUT/settlement/destroyed-at.txt"
-  fi
-  package_helper manifest \
-    "$SETTLED_LAYOUT/settlement" \
-    "$SETTLED_LAYOUT/settlement/settlement-manifest.json" \
-    gte-full-build-settlement
-  package_helper verify \
-    "$SETTLED_LAYOUT/settlement" \
-    "$SETTLED_LAYOUT/settlement/settlement-manifest.json"
+  install -m 600 \
+    "$LOCAL_ROOT/$SETTLED_LAYOUT/settlement/settlement-result.json" \
+    "$LOCAL_ROOT/launch/settlement-result.json.next"
+  mv "$LOCAL_ROOT/launch/settlement-result.json.next" \
+    "$LOCAL_ROOT/launch/settlement-result.json"
 
   if test "$SETTLED_LAYOUT" = execution; then
-    cp -a "$LOCAL_ROOT/execution/settlement" \
+    test ! -e "$LOCAL_ROOT/result.next/settlement"
+    mv "$LOCAL_ROOT/execution/settlement" \
       "$LOCAL_ROOT/result.next/settlement"
-    SETTLED_LEDGER="$LOCAL_ROOT/result.next/settlement/budget-ledger.json"
-    mv "$LOCAL_ROOT/result.next" "$LOCAL_ROOT/result"
-  elif test "$SETTLED_LAYOUT" = result.next; then
-    mv "$LOCAL_ROOT/result.next" "$LOCAL_ROOT/result"
-    SETTLED_LEDGER="$LOCAL_ROOT/result/settlement/budget-ledger.json"
+    SETTLED_LAYOUT=result.next
   fi
+  if test "$SETTLED_LAYOUT" = result.next; then
+    test ! -e "$LOCAL_ROOT/result"
+    mv "$LOCAL_ROOT/result.next" "$LOCAL_ROOT/result"
+    SETTLED_LAYOUT=result
+  fi
+  SETTLED_LEDGER="$LOCAL_ROOT/result/settlement/budget-ledger.json"
 
   If the claimed remote ledger is irretrievable, stop for explicit ledger
   remediation. Leave the canonical budget-ledger.json in its reserved state.
@@ -1504,17 +1615,20 @@ PY
   RESERVED_LEDGER_SHA="$(python3 -c \
     'import json,sys; print(json.load(open(sys.argv[1]))["ledger_sha256"])' \
     "$LOCAL_ROOT/launch/full-build-reservation.json")"
-  test "$(sha256sum "$CANONICAL_LEDGER" | cut -d' ' -f1)" \
-    = "$RESERVED_LEDGER_SHA"
-  cp "$CANONICAL_LEDGER" \
-    "$LOCAL_ROOT/launch/pre-publication-budget-ledger.json"
   python3 -m json.tool "$SETTLED_LEDGER" >/dev/null
   test "$(sha256sum "$SETTLED_LEDGER" | cut -d' ' -f1)" \
     = "$SETTLEMENT_LEDGER_SHA"
-  install -m 600 "$SETTLED_LEDGER" \
-    "$(dirname "$CANONICAL_LEDGER")/.budget-ledger.json.next"
-  mv "$(dirname "$CANONICAL_LEDGER")/.budget-ledger.json.next" \
-    "$CANONICAL_LEDGER"
+  CANONICAL_LEDGER_SHA="$(sha256sum "$CANONICAL_LEDGER" | cut -d' ' -f1)"
+  if test "$CANONICAL_LEDGER_SHA" = "$RESERVED_LEDGER_SHA"; then
+    cp "$CANONICAL_LEDGER" \
+      "$LOCAL_ROOT/launch/pre-publication-budget-ledger.json"
+    install -m 600 "$SETTLED_LEDGER" \
+      "$(dirname "$CANONICAL_LEDGER")/.budget-ledger.json.next"
+    mv "$(dirname "$CANONICAL_LEDGER")/.budget-ledger.json.next" \
+      "$CANONICAL_LEDGER"
+  else
+    test "$CANONICAL_LEDGER_SHA" = "$SETTLEMENT_LEDGER_SHA"
+  fi
   test "$(sha256sum "$CANONICAL_LEDGER" | cut -d' ' -f1)" \
     = "$SETTLEMENT_LEDGER_SHA"
   if test -f "$LOCAL_ROOT/result/work/retrieval.sha256"; then

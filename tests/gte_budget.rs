@@ -1,4 +1,4 @@
-use std::fs::{self, File};
+use std::fs::{self, File, OpenOptions};
 use std::io::Write;
 use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
@@ -1285,6 +1285,50 @@ fn calibration_evidence_must_be_a_verified_file_and_drives_compute_projection() 
         MicroUsd::from_cents(5_210)
     );
 
+    let ledger_after_admission =
+        fs::read(&fixture.path).expect("read ledger after full-build admission");
+    let repeated_admission = reserve_full_build(
+        &fixture.path,
+        "complete-gte-build",
+        &evidence,
+        FullBuildNonComputeCosts {
+            artifact_storage_and_transfer: MicroUsd::from_dollars(10),
+            paid_lazy_inference: MicroUsd::from_dollars(5),
+            one_cold_restart: MicroUsd::from_dollars(20),
+            one_lost_shard: MicroUsd::from_dollars(15),
+        },
+        "2026-07-16T21:00:30Z",
+    )
+    .expect("an exact interrupted admission retry is read-only");
+    assert_eq!(repeated_admission, admission);
+    assert_eq!(
+        fs::read(&fixture.path).expect("read ledger after admission retry"),
+        ledger_after_admission,
+        "an exact retry must not publish another reservation",
+    );
+
+    let error = reserve_full_build(
+        &fixture.path,
+        "complete-gte-build",
+        &evidence,
+        FullBuildNonComputeCosts {
+            artifact_storage_and_transfer: MicroUsd::from_dollars(9),
+            paid_lazy_inference: MicroUsd::from_dollars(5),
+            one_cold_restart: MicroUsd::from_dollars(20),
+            one_lost_shard: MicroUsd::from_dollars(15),
+        },
+        "2026-07-16T21:00:31Z",
+    )
+    .expect_err("the same id cannot authorize a different projection");
+    assert!(
+        error.to_string().contains("different projection"),
+        "{error}"
+    );
+    assert_eq!(
+        fs::read(&fixture.path).expect("read ledger after rejected changed retry"),
+        ledger_after_admission,
+    );
+
     let error = reserve_full_build(
         &fixture.path,
         "another-complete-build",
@@ -1884,6 +1928,55 @@ fn cold_restart_reserve_includes_discovering_the_existing_representation() {
         admission.projection.remaining_compute(),
         MicroUsd(2_100_000)
     );
+}
+
+#[test]
+fn a_stale_ledger_lock_file_cannot_wedge_budget_recovery() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let lock_path = fixture.path.with_file_name(".budget-ledger.json.lock");
+    fs::write(&lock_path, b"process died before cleanup\n").expect("write a stale lock artifact");
+
+    reserve_calibration(
+        &fixture.path,
+        "recovered-after-process-death",
+        MicroUsd::from_dollars(1),
+        "2026-07-16T22:00:00Z",
+    )
+    .expect("an advisory lock survives a stale lock artifact");
+    let ledger = read_budget_ledger(&fixture.path).expect("read recovered ledger");
+    assert_eq!(ledger.outstanding_commitments, MicroUsd::from_dollars(1));
+    assert!(
+        lock_path.is_file(),
+        "the reusable advisory lock file persists"
+    );
+}
+
+#[test]
+fn a_live_ledger_lock_fails_fast_instead_of_waiting() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let lock_path = fixture.path.with_file_name(".budget-ledger.json.lock");
+    let held_lock = OpenOptions::new()
+        .create(true)
+        .read(true)
+        .write(true)
+        .open(&lock_path)
+        .expect("open live lock file");
+    held_lock.lock().expect("hold live advisory lock");
+
+    let started = Instant::now();
+    let error = reserve_calibration(
+        &fixture.path,
+        "must-not-wait",
+        MicroUsd::from_dollars(1),
+        "2026-07-16T22:00:00Z",
+    )
+    .expect_err("a live controller must retain exclusive ledger ownership");
+    assert!(started.elapsed() < Duration::from_secs(1));
+    assert!(
+        error.to_string().contains("acquire budget-ledger lock"),
+        "{error}"
+    );
+    held_lock.unlock().expect("release live advisory lock");
 }
 
 #[test]

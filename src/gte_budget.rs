@@ -1850,6 +1850,37 @@ pub fn reserve_full_build(
 
     let _lock = LedgerLock::acquire(ledger_path)?;
     let (previous_bytes, mut document) = read_ledger_document(ledger_path)?;
+    let existing_full_build_reservation = document.entries.iter().any(|entry| {
+        entry.get("kind").and_then(serde_json::Value::as_str) == Some("full_build_reservation")
+            && entry
+                .get("reservation_id")
+                .and_then(serde_json::Value::as_str)
+                == Some(reservation_id)
+    });
+    if existing_full_build_reservation {
+        let ledger_sha256 = hash_bytes(&previous_bytes);
+        let active =
+            active_full_build_reservation(&document, reservation_id, calibration_evidence)?;
+        if active.projection != projection {
+            return Err(Error::Budget(format!(
+                "full-build reservation `{reservation_id}` already exists with a different projection"
+            )));
+        }
+        let ledger = ledger_from_document(&document, ledger_sha256.clone())?;
+        let projected_lifetime_total =
+            checked_sum(&[ledger.actual_spend, ledger.outstanding_commitments])?;
+        require_lifetime_cap(projected_lifetime_total)?;
+        return Ok(FullBuildAdmission {
+            reservation_id: reservation_id.to_owned(),
+            previous_ledger_sha256: active.binding.previous_ledger_sha256,
+            authorization_sha256: active.binding.authorization_sha256,
+            ledger_sha256,
+            calibration_evidence_sha256: active.calibration_evidence_sha256,
+            projection: active.projection,
+            projected_lifetime_total,
+            remaining_lifetime_budget: subtract(MVP_LIFETIME_CAP, projected_lifetime_total),
+        });
+    }
     reject_existing_reservation(&document, reservation_id)?;
     if has_successful_full_build_settlement(&document) {
         return Err(Error::Budget(
@@ -3097,7 +3128,6 @@ fn ceiling_cents(value: MicroUsd) -> Result<u64> {
 }
 
 struct LedgerLock {
-    path: PathBuf,
     _file: File,
 }
 
@@ -3105,21 +3135,20 @@ impl LedgerLock {
     fn acquire(ledger_path: &Path) -> Result<Self> {
         let path = sibling_path(ledger_path, "lock")?;
         let file = OpenOptions::new()
-            .create_new(true)
+            .create(true)
+            .read(true)
             .write(true)
             .open(&path)
-            .map_err(|source| io_error("acquire budget-ledger lock at", &path, source))?;
-        let mut lock = Self { path, _file: file };
-        writeln!(lock._file, "{}", std::process::id())
-            .and_then(|()| lock._file.sync_all())
-            .map_err(|source| io_error("write", &lock.path, source))?;
-        Ok(lock)
+            .map_err(|source| io_error("open budget-ledger lock at", &path, source))?;
+        file.try_lock()
+            .map_err(|source| io_error("acquire budget-ledger lock at", &path, source.into()))?;
+        Ok(Self { _file: file })
     }
 }
 
 impl Drop for LedgerLock {
     fn drop(&mut self) {
-        let _ = fs::remove_file(&self.path);
+        let _ = self._file.unlock();
     }
 }
 

@@ -16,6 +16,7 @@ from full_build_package import (
     restore_model_metadata,
     verify_manifest,
     verify_model_payload,
+    validate_provider_invoice_page,
     write_manifest,
     write_model_payload_identity,
 )
@@ -27,6 +28,32 @@ def sha256(data):
 
 
 class FullBuildPackageTest(unittest.TestCase):
+    def test_provider_invoice_page_validation_rejects_cli_error_output(self):
+        valid = {
+            "success": True,
+            "count": 1,
+            "total": 3,
+            "next_token": "next-page",
+            "results": [{"amount": "1.25", "source": "instance-1"}],
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            page = Path(temporary) / "page.json"
+            page.write_text(json.dumps(valid), encoding="utf-8")
+            self.assertEqual(validate_provider_invoice_page(page), valid)
+
+            for invalid in (
+                "",
+                "not JSON",
+                json.dumps({"success": False, "msg": "temporary API error"}),
+                json.dumps(dict(valid, count=0)),
+                json.dumps(dict(valid, total=0)),
+                json.dumps(dict(valid, next_token="")),
+            ):
+                with self.subTest(invalid=invalid):
+                    page.write_text(invalid, encoding="utf-8")
+                    with self.assertRaisesRegex(ValueError, "invoice page"):
+                        validate_provider_invoice_page(page)
+
     def test_full_build_offer_is_frozen_only_after_every_paid_gate_passes(self):
         offer = {
             "id": 45236567,
@@ -528,6 +555,10 @@ class FullBuildPackageTest(unittest.TestCase):
         self.assertIn("destroy_status", runbook)
         self.assertIn("live-list absence is the proof", runbook)
         self.assertIn("IMAGE_SOURCE_COMMIT=c9861a60cd6706ecd5a8f255914ebd10390bc444", runbook)
+        self.assertIn(
+            "CONTROLLER_SOURCE_COMMIT=63f0a9834101ced0a9dcf4f0395ea93d1335c9db",
+            runbook,
+        )
         self.assertIn("gte-oracle-source-commit.txt", runbook)
         self.assertIn("settlement/full-build-config.json", runbook)
         self.assertIn("settlement/settlement-manifest.json", runbook)
@@ -535,6 +566,22 @@ class FullBuildPackageTest(unittest.TestCase):
         self.assertNotIn('if test ! -f "$SETTLED_LEDGER"', runbook)
         self.assertIn('rm -rf "$LOCAL_ROOT/launch/ssh"', runbook)
         self.assertIn("destroy_instance", runbook)
+        self.assertIn("unexpected_exit_warning", runbook)
+        self.assertIn("INSTANCE_BILLING=yes", runbook)
+        self.assertIn("INSTANCE_BILLING=no", runbook)
+        self.assertIn("trap unexpected_exit_warning EXIT", runbook)
+        self.assertLess(
+            runbook.index("trap unexpected_exit_warning EXIT"),
+            runbook.index("<<'DIRECT_LAUNCH'"),
+        )
+        self.assertIn("create-request-attempted.txt", runbook)
+        self.assertIn("CREATE STATE MAY BE BILLING", runbook)
+        create_guard = runbook[
+            runbook.index("  unexpected_exit_warning() {") : runbook.index(
+                "  set +e\n  env -u DOCKER_PULL_PAT", runbook.index("  unexpected_exit_warning() {")
+            )
+        ]
+        self.assertNotIn('test "$status" -ne 0', create_guard)
         self.assertLess(
             runbook.index(
                 'mv "$LOCAL_ROOT/launch/destroyed-at.txt.next" '
@@ -549,11 +596,127 @@ class FullBuildPackageTest(unittest.TestCase):
         self.assertIn("CONTROLLER_SHA256", runbook)
         self.assertIn("CONTROL_SHA256SUMS_SHA256", runbook)
         self.assertGreaterEqual(runbook.count("verify_control_files"), 4)
+        self.assertIn(
+            "sha256sum --status -c transport/control/SHA256SUMS", runbook
+        )
+        self.assertNotIn(
+            "&& sha256sum -c transport/control/SHA256SUMS)", runbook
+        )
         self.assertIn("TRANSPORT_MANIFEST_SHA256", runbook)
         self.assertIn("EXECUTION_PACKAGE_MANIFEST_SHA256", runbook)
         self.assertGreaterEqual(runbook.count("verify_reviewed_artifacts"), 4)
+        self.assertIn(
+            "CONTROLLER_SHA256=fdad544857afe4e3a04253e3ba04a075279725fb0d097e558d694019d99505b9",
+            runbook,
+        )
+        self.assertIn(
+            "CONTROL_SHA256SUMS_SHA256=4027920ad7159da32336ac5ba2a0f7425be789bd8ae84824995b9690f3db10e9",
+            runbook,
+        )
+        self.assertIn(
+            "TRANSPORT_MANIFEST_SHA256=10dc26d8a76daf80c01150fbd33bc71ea563c036a2456d5ce5cd35429b619fdf",
+            runbook,
+        )
+        self.assertIn(
+            "EXECUTION_PACKAGE_MANIFEST_SHA256=6883eb9725a9272e637b8ae24d55bf0aa3c5b85a8ff8575363ec4034a5fa0528",
+            runbook,
+        )
         paid = runbook.split("PAID BOUNDARY -- STOP HERE DURING CREC-72", 1)[1]
         self.assertNotIn("package_helper manifest \\\n    transport", paid)
+
+    def test_runbook_publishes_only_verified_invoice_pages(self):
+        runbook = Path(__file__).with_name("vast-full-build-runbook.txt").read_text(
+            encoding="utf-8"
+        )
+        fetch = runbook[runbook.index("  fetch_complete_invoice() {") :]
+        validate = fetch.index("package_helper validate-provider-invoice-page")
+        self.assertLess(validate, fetch.index('"$page_relative.next"', validate))
+        publish = fetch.index('mv "$page_absolute.next" "$page_absolute"')
+        self.assertLess(validate, publish)
+
+    def test_runbook_seals_every_retrieved_remote_file_under_both_start_locks(self):
+        runbook = Path(__file__).with_name("vast-full-build-runbook.txt").read_text(
+            encoding="utf-8"
+        )
+        start = runbook.index("<<'REMOTE_SEAL'")
+        end = runbook.index("\nREMOTE_SEAL", start)
+        seal = runbook[start:end]
+        start_lock = seal.index("exec 8>work/full-build-start.lock")
+        worker_lock = seal.index("exec 9>work/full-build.lock")
+        terminal_check = seal.index("terminal_records=0")
+        work_hash = seal.index("find . -type f ! -name retrieval.sha256")
+        preparation_hash = seal.index(
+            "find preparation-attempts -type f ! -name retrieval.sha256"
+        )
+        self.assertLess(start_lock, worker_lock)
+        self.assertLess(worker_lock, terminal_check)
+        self.assertLess(terminal_check, work_hash)
+        self.assertLess(terminal_check, preparation_hash)
+        self.assertIn(
+            '(cd "$LOCAL_ROOT/result.next/audit" \\\n'
+            "    && sha256sum -c preparation-attempts/retrieval.sha256)",
+            runbook,
+        )
+
+    def test_runbook_publishes_settlement_only_after_complete_verification(self):
+        runbook = Path(__file__).with_name("vast-full-build-runbook.txt").read_text(
+            encoding="utf-8"
+        )
+        section = runbook[runbook.index("10. Settle according") :]
+        self.assertIn("settlement-attempts/$SETTLEMENT_ATTEMPT_ID", section)
+        self.assertNotIn('mkdir "$LOCAL_ROOT/$layout/settlement"', section)
+        manifest = section.index("gte-full-build-settlement")
+        verify = section.index(
+            '  package_helper verify \\\n'
+            '    "$SETTLED_LAYOUT/$SETTLEMENT_STAGE"',
+            manifest,
+        )
+        publish = section.index(
+            'mv "$LOCAL_ROOT/$SETTLED_LAYOUT/$SETTLEMENT_STAGE" \\\n'
+            '    "$LOCAL_ROOT/$SETTLED_LAYOUT/settlement"'
+        )
+        self.assertLess(manifest, verify)
+        self.assertLess(verify, publish)
+        self.assertIn(
+            'test "$CANONICAL_LEDGER_SHA" = "$SETTLEMENT_LEDGER_SHA"', section
+        )
+
+    def test_runbook_recovers_an_interrupted_reservation_receipt(self):
+        runbook = Path(__file__).with_name("vast-full-build-runbook.txt").read_text(
+            encoding="utf-8"
+        )
+        section = runbook[
+            runbook.index("4. Reserve and publish") : runbook.index(
+                "5. Create exactly one", runbook.index("4. Reserve and publish")
+            )
+        ]
+        self.assertIn(
+            'if test ! -e "$LOCAL_ROOT/launch/pre-reservation-budget-ledger.json"',
+            section,
+        )
+        baseline = section.index(
+            'if test ! -e "$LOCAL_ROOT/launch/pre-reservation-budget-ledger.json"'
+        )
+        first_equality = section.index(
+            '"$LOCAL_ROOT/execution/work/budget-ledger.json"', baseline
+        )
+        baseline_publish = section.index(
+            '"$LOCAL_ROOT/launch/pre-reservation-budget-ledger.json"',
+            first_equality,
+        )
+        self.assertLess(first_equality, baseline_publish)
+        self.assertIn(
+            'test "$CANONICAL_LEDGER_SHA" = "$PRE_RESERVATION_LEDGER_SHA"',
+            section,
+        )
+        self.assertIn(
+            'test "$RESERVATION_PREVIOUS_LEDGER_SHA" = '
+            '"$PRE_RESERVATION_LEDGER_SHA"',
+            section,
+        )
+        self.assertIn(
+            'test "$CANONICAL_LEDGER_SHA" = "$RESERVED_LEDGER_SHA"', section
+        )
 
     def test_worker_start_returns_only_after_its_lock_is_acquired(self):
         runbook = Path(__file__).with_name("vast-full-build-runbook.txt").read_text(
