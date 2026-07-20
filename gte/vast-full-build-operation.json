@@ -32,14 +32,14 @@
     "us": "gpu_name=RTX_PRO_6000_WS num_gpus=1 gpu_max_power=600 reliability>=0.995 cpu_arch=amd64 cpu_ram>=137.439 disk_space>=200 disk_bw>=1000 inet_down>=500 inet_down_cost<=0.02 inet_up>=100 inet_up_cost<=0.02 direct_port_count>=1 driver_version>=580.95.05 duration>=2 rentable=true rented=false verified=true dph_total<=1.359260 geolocation in [US]"
   },
   "pins": {
-    "control_sha256s_sha256": "fdfb333e05fd43b6ff61269cddda6b5497bb64064b0486da243db33894b6e694",
+    "control_sha256s_sha256": "bf5b1e79f23e856fec1de43a615e7779f772f483c0bbbefebca3e8ef05a91e91",
     "controller_sha256": "1b5d00e515a4f2b69e41c03a28dd950d9d541be1d6e11b35b0d3c1575fcce722",
     "controller_source_commit": "e6514b020aa7dfca95bcaf65cd25f74c5e5e169a",
     "descriptor_sha256": "bef8f7f8948ce11d9685f51acdd94486b9df1f992d4a18d1ee57787951db9c4d",
     "execution_package_manifest_sha256": "4904c450f726bd4b2adb710ba51d75b03f610d634408f7f03fadecc4c328bff5",
     "image_source_commit": "c9861a60cd6706ecd5a8f255914ebd10390bc444",
     "operator_sha256": "1e3b01bdb2afe257f53cb268f2ad61101eafbcd4f5fb02b9b2a78a63236388b3",
-    "transport_manifest_sha256": "9f0c8fb42329977538e7f26c9d80c8461f304c29f4db308f6d80e3a4317bc12d"
+    "transport_manifest_sha256": "aa21f2773ff03ff196358da601656e31139692d477a85afdcf8eb158976ef182"
   },
   "schema_version": 1,
   "timing": {
