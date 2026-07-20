@@ -556,7 +556,7 @@ class FullBuildPackageTest(unittest.TestCase):
         self.assertIn("live-list absence is the proof", runbook)
         self.assertIn("IMAGE_SOURCE_COMMIT=c9861a60cd6706ecd5a8f255914ebd10390bc444", runbook)
         self.assertIn(
-            "CONTROLLER_SOURCE_COMMIT=63f0a9834101ced0a9dcf4f0395ea93d1335c9db",
+            "CONTROLLER_SOURCE_COMMIT=e6514b020aa7dfca95bcaf65cd25f74c5e5e169a",
             runbook,
         )
         self.assertIn("gte-oracle-source-commit.txt", runbook)
@@ -606,19 +606,19 @@ class FullBuildPackageTest(unittest.TestCase):
         self.assertIn("EXECUTION_PACKAGE_MANIFEST_SHA256", runbook)
         self.assertGreaterEqual(runbook.count("verify_reviewed_artifacts"), 4)
         self.assertIn(
-            "CONTROLLER_SHA256=fdad544857afe4e3a04253e3ba04a075279725fb0d097e558d694019d99505b9",
+            "CONTROLLER_SHA256=1b5d00e515a4f2b69e41c03a28dd950d9d541be1d6e11b35b0d3c1575fcce722",
             runbook,
         )
         self.assertIn(
-            "CONTROL_SHA256SUMS_SHA256=4027920ad7159da32336ac5ba2a0f7425be789bd8ae84824995b9690f3db10e9",
+            "CONTROL_SHA256SUMS_SHA256=da73ead3d652e4f78fb4360bceaa985cab6c0b7e3974b10fb69ce18675115b5c",
             runbook,
         )
         self.assertIn(
-            "TRANSPORT_MANIFEST_SHA256=10dc26d8a76daf80c01150fbd33bc71ea563c036a2456d5ce5cd35429b619fdf",
+            "TRANSPORT_MANIFEST_SHA256=97dd3c595427d1823a95e02f2fdaa53fc968bb792b09bfad0e565652fb709474",
             runbook,
         )
         self.assertIn(
-            "EXECUTION_PACKAGE_MANIFEST_SHA256=6883eb9725a9272e637b8ae24d55bf0aa3c5b85a8ff8575363ec4034a5fa0528",
+            "EXECUTION_PACKAGE_MANIFEST_SHA256=4904c450f726bd4b2adb710ba51d75b03f610d634408f7f03fadecc4c328bff5",
             runbook,
         )
         paid = runbook.split("PAID BOUNDARY -- STOP HERE DURING CREC-72", 1)[1]
