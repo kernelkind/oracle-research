@@ -12,12 +12,14 @@ use oracle_mvp::budget::MicroUsd;
 use oracle_mvp::gte::TokenRole;
 use oracle_mvp::gte_budget::{
     CALIBRATION_LIFETIME_CAP, CalibrationEvidencePaths, CalibrationExecutionIdentity,
-    CalibrationRecorder, CalibrationRecorderConfig, FullBuildNonComputeCosts, FullBuildResultPaths,
-    MVP_LIFETIME_CAP, MonotonicCostGuard, VerifiedCalibrationEvidence, claim_calibration_execution,
-    claim_or_resume_full_build_execution, project_full_build, read_active_calibration_reservation,
-    read_active_full_build_reservation, read_budget_ledger, reconcile_calibration_finalized_charge,
+    CalibrationRecorder, CalibrationRecorderConfig, FullBuildAdmission, FullBuildNonComputeCosts,
+    FullBuildResultPaths, MVP_LIFETIME_CAP, MonotonicCostGuard, VerifiedCalibrationEvidence,
+    claim_calibration_execution, claim_or_resume_full_build_execution, project_full_build,
+    read_active_calibration_reservation, read_active_full_build_reservation, read_budget_ledger,
+    reconcile_calibration_finalized_charge, reconcile_failed_full_build_provider_charge,
     reserve_calibration, reserve_full_build, settle_calibration, settle_failed_calibration,
-    settle_failed_full_build, settle_full_build, validate_calibration_selection,
+    settle_failed_full_build, settle_full_build, settle_provisional_failed_full_build,
+    validate_calibration_selection,
 };
 use oracle_mvp::ordered_gte_token_audit::{
     OrderedGteTokenAuditConfig, OrderedGteTokenCounter, audit_ordered_gte_tokens,
@@ -1827,6 +1829,459 @@ fn failed_full_build_settlement_records_the_real_provider_overrun() {
 }
 
 #[test]
+fn provisional_failed_full_build_settlement_retains_the_unbilled_commitment_and_admits_v2() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let (_calibration, evidence, full_build_costs, admission) =
+        reserve_test_full_build(&fixture, "provisional-build-v1");
+    let reserved_cents = admission
+        .projection
+        .total()
+        .expect("full-build reservation")
+        .0
+        .div_ceil(10_000);
+    let failure_evidence = fixture.directory.path().join("preworker-failure.log");
+    fs::write(&failure_evidence, b"transport failed before worker claim")
+        .expect("write failure evidence");
+    let ownership =
+        fixture.write_instance_ownership_validation("900000026", "crec-72-gte-full-build");
+    let destruction = fixture.write_destroyed_instance_evidence("900000026");
+    let invoice =
+        fixture.write_provider_invoice_with_label("900000026", "crec-72-gte-full-build", "0.23");
+    let invoice_sha256 = sha256_file(&invoice);
+    let expected_ledger_sha256 = sha256_file(&fixture.path);
+
+    let stale = settle_provisional_failed_full_build(
+        &fixture.path,
+        &"0".repeat(64),
+        "provisional-build-v1",
+        &evidence,
+        &failure_evidence,
+        &ownership,
+        &destruction,
+        &invoice,
+        &invoice_sha256,
+        "crec-72-gte-full-build",
+        "2026-07-20T14:10:00Z",
+    )
+    .expect_err("settlement must compare-and-swap the reviewed ledger");
+    assert!(stale.to_string().contains("ledger SHA-256"), "{stale}");
+
+    let wrong_ownership =
+        fixture.write_instance_ownership_validation("900000026", "another-operation");
+    let ownership_error = settle_provisional_failed_full_build(
+        &fixture.path,
+        &expected_ledger_sha256,
+        "provisional-build-v1",
+        &evidence,
+        &failure_evidence,
+        &wrong_ownership,
+        &destruction,
+        &invoice,
+        &invoice_sha256,
+        "crec-72-gte-full-build",
+        "2026-07-20T14:10:00Z",
+    )
+    .expect_err("ownership must bind the exact provider label");
+    assert!(
+        ownership_error.to_string().contains("ownership"),
+        "{ownership_error}"
+    );
+
+    let excessive_invoice =
+        fixture.write_provider_invoice_with_label("900000026", "crec-72-gte-full-build", "499.00");
+    let excessive = settle_provisional_failed_full_build(
+        &fixture.path,
+        &expected_ledger_sha256,
+        "provisional-build-v1",
+        &evidence,
+        &failure_evidence,
+        &ownership,
+        &destruction,
+        &excessive_invoice,
+        &sha256_file(&excessive_invoice),
+        "crec-72-gte-full-build",
+        "2026-07-20T14:10:00Z",
+    )
+    .expect_err("a preliminary charge cannot consume more than its reservation");
+    assert!(excessive.to_string().contains("exceeds"), "{excessive}");
+
+    let settled = settle_provisional_failed_full_build(
+        &fixture.path,
+        &expected_ledger_sha256,
+        "provisional-build-v1",
+        &evidence,
+        &failure_evidence,
+        &ownership,
+        &destruction,
+        &invoice,
+        &invoice_sha256,
+        "crec-72-gte-full-build",
+        "2026-07-20T14:10:00Z",
+    )
+    .expect("terminalize the destroyed pre-worker attempt");
+    assert_eq!(settled.actual_spend, MicroUsd::from_cents(123));
+    assert_eq!(
+        settled.outstanding_commitments,
+        MicroUsd::from_cents(reserved_cents - 23)
+    );
+
+    let entry = ledger_entries(&fixture.path)
+        .into_iter()
+        .find(|entry| {
+            entry["kind"] == "failed_full_build_settlement"
+                && entry["reservation_id"] == "provisional-build-v1"
+        })
+        .expect("provisional failed settlement entry");
+    assert_eq!(entry["provider_charge_status"], "preliminary");
+    assert_eq!(entry["provider_instance_id"], "900000026");
+    assert_eq!(entry["provider_label"], "crec-72-gte-full-build");
+    assert_eq!(entry["provider_invoice_sha256"], invoice_sha256);
+    assert_eq!(entry["preliminary_actual_charge_micro_usd"], 230_000_u64);
+    assert_eq!(entry["recorded_actual_charge_cents"], 23_u64);
+    assert_eq!(
+        entry["pending_invoice_adjustment_commitment_cents"],
+        reserved_cents - 23
+    );
+    assert_eq!(
+        entry["failure_evidence_sha256"],
+        sha256_file(&failure_evidence)
+    );
+    assert_eq!(
+        entry["destruction_evidence_sha256"],
+        sha256_file(&destruction)
+    );
+    assert_eq!(
+        entry["instance_ownership_validation_sha256"],
+        sha256_file(&ownership)
+    );
+    assert_eq!(entry["provider_offer_id"], "900000025");
+    assert_eq!(entry["provider_machine_id"], "900000035");
+    assert_eq!(entry["provider_on_demand"], true);
+    assert!(entry["execution_claim_sha256"].is_null());
+
+    let settled_bytes = fs::read(&fixture.path).expect("read provisional settlement");
+    let duplicate = settle_provisional_failed_full_build(
+        &fixture.path,
+        &sha256_file(&fixture.path),
+        "provisional-build-v1",
+        &evidence,
+        &failure_evidence,
+        &ownership,
+        &destruction,
+        &invoice,
+        &invoice_sha256,
+        "crec-72-gte-full-build",
+        "2026-07-20T14:11:00Z",
+    )
+    .expect_err("one reservation cannot be provisionally settled twice");
+    assert!(
+        duplicate.to_string().contains("already settled"),
+        "{duplicate}"
+    );
+    assert_eq!(
+        fs::read(&fixture.path).expect("read duplicate-rejected ledger"),
+        settled_bytes
+    );
+
+    let v2 = reserve_full_build(
+        &fixture.path,
+        "provisional-build-v2",
+        &evidence,
+        full_build_costs,
+        "2026-07-20T14:12:00Z",
+    )
+    .expect("the terminal v1 attempt permits a separately reviewed v2");
+    assert_eq!(
+        v2.projected_lifetime_total,
+        MicroUsd::from_cents(123 + (reserved_cents - 23) + reserved_cents)
+    );
+}
+
+#[test]
+fn provisional_full_build_charge_reconciliation_waits_for_v2_then_adds_only_the_delta() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let (_calibration, evidence, full_build_costs, admission) =
+        reserve_test_full_build(&fixture, "invoice-build-v1");
+    let reserved_cents = admission
+        .projection
+        .total()
+        .expect("full-build reservation")
+        .0
+        .div_ceil(10_000);
+    let failure_evidence = fixture.directory.path().join("invoice-v1-failure.log");
+    fs::write(&failure_evidence, b"transport failed before worker claim")
+        .expect("write failure evidence");
+    let ownership =
+        fixture.write_instance_ownership_validation("900000026", "crec-72-gte-full-build");
+    let destruction = fixture.write_destroyed_instance_evidence("900000026");
+    let preliminary =
+        fixture.write_provider_invoice_with_label("900000026", "crec-72-gte-full-build", "0.23");
+    settle_provisional_failed_full_build(
+        &fixture.path,
+        &sha256_file(&fixture.path),
+        "invoice-build-v1",
+        &evidence,
+        &failure_evidence,
+        &ownership,
+        &destruction,
+        &preliminary,
+        &sha256_file(&preliminary),
+        "crec-72-gte-full-build",
+        "2026-07-20T14:10:00Z",
+    )
+    .expect("provisionally settle v1");
+    reserve_full_build(
+        &fixture.path,
+        "invoice-build-v2",
+        &evidence,
+        full_build_costs,
+        "2026-07-20T14:12:00Z",
+    )
+    .expect("reserve v2");
+
+    let adjusted =
+        fixture.write_provider_invoice_with_label("900000026", "crec-72-gte-full-build", "500.00");
+    let before_rejected_reconciliation =
+        fs::read(&fixture.path).expect("read ledger with active v2");
+    let error = reconcile_failed_full_build_provider_charge(
+        &fixture.path,
+        "invoice-build-v1",
+        &adjusted,
+        &sha256_file(&adjusted),
+        "2026-07-20T15:00:00Z",
+    )
+    .expect_err("v1 reconciliation must not invalidate an active v2 ledger");
+    assert!(error.to_string().contains("active full-build"), "{error}");
+    assert_eq!(
+        fs::read(&fixture.path).expect("read reconciliation-rejected ledger"),
+        before_rejected_reconciliation
+    );
+
+    let v2_failure = fixture.directory.path().join("invoice-v2-failure.log");
+    fs::write(&v2_failure, b"v2 stopped without provider charge")
+        .expect("write v2 failure evidence");
+    settle_failed_full_build(
+        &fixture.path,
+        "invoice-build-v2",
+        &evidence,
+        &v2_failure,
+        MicroUsd(0),
+        "2026-07-20T15:01:00Z",
+    )
+    .expect("terminalize v2 before reconciling v1");
+    assert_eq!(
+        read_budget_ledger(&fixture.path)
+            .expect("read pending adjustment")
+            .outstanding_commitments,
+        MicroUsd::from_cents(reserved_cents - 23)
+    );
+
+    let lower =
+        fixture.write_provider_invoice_with_label("900000026", "crec-72-gte-full-build", "0.22");
+    let before_lower = fs::read(&fixture.path).expect("read pre-reconciliation ledger");
+    let lower_error = reconcile_failed_full_build_provider_charge(
+        &fixture.path,
+        "invoice-build-v1",
+        &lower,
+        &sha256_file(&lower),
+        "2026-07-20T15:02:00Z",
+    )
+    .expect_err("later provider charge cannot move preliminary spend backward");
+    assert!(lower_error.to_string().contains("lower"), "{lower_error}");
+    assert_eq!(
+        fs::read(&fixture.path).expect("read lower-charge-rejected ledger"),
+        before_lower
+    );
+
+    let reconciled = reconcile_failed_full_build_provider_charge(
+        &fixture.path,
+        "invoice-build-v1",
+        &adjusted,
+        &sha256_file(&adjusted),
+        "2026-07-20T15:02:00Z",
+    )
+    .expect("reconcile v1 after v2 is terminal");
+    assert_eq!(reconciled.actual_spend, MicroUsd::from_cents(50_100));
+    assert_eq!(reconciled.outstanding_commitments, MicroUsd(0));
+    let entry = ledger_entries(&fixture.path)
+        .into_iter()
+        .find(|entry| entry["kind"] == "failed_full_build_provider_charge_reconciliation")
+        .expect("provider-charge reconciliation entry");
+    assert_eq!(entry["reservation_id"], "invoice-build-v1");
+    assert_eq!(entry["previous_recorded_charge_cents"], 23_u64);
+    assert_eq!(entry["reconciled_recorded_charge_cents"], 50_000_u64);
+    assert_eq!(entry["added_actual_spend_cents"], 49_977_u64);
+    assert_eq!(
+        entry["released_invoice_adjustment_commitment_cents"],
+        reserved_cents - 23
+    );
+}
+
+#[test]
+fn provisional_failed_full_build_rejects_an_unpinned_or_wrongly_labeled_invoice() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let (_calibration, evidence, _costs, _admission) =
+        reserve_test_full_build(&fixture, "invoice-binding-v1");
+    let failure = fixture.directory.path().join("invoice-binding-failure.log");
+    fs::write(&failure, b"transport failed before worker claim").expect("write failure evidence");
+    let ownership =
+        fixture.write_instance_ownership_validation("900000026", "crec-72-gte-full-build");
+    let destruction = fixture.write_destroyed_instance_evidence("900000026");
+    let invoice =
+        fixture.write_provider_invoice_with_label("900000026", "crec-72-gte-full-build", "0.23");
+    let reserved_ledger = fs::read(&fixture.path).expect("read reserved ledger");
+
+    let wrong_hash = settle_provisional_failed_full_build(
+        &fixture.path,
+        &sha256_file(&fixture.path),
+        "invoice-binding-v1",
+        &evidence,
+        &failure,
+        &ownership,
+        &destruction,
+        &invoice,
+        &"0".repeat(64),
+        "crec-72-gte-full-build",
+        "2026-07-20T14:10:00Z",
+    )
+    .expect_err("untrusted invoice bytes cannot settle a reservation");
+    assert!(
+        wrong_hash.to_string().contains("expected SHA-256"),
+        "{wrong_hash}"
+    );
+    assert_eq!(
+        fs::read(&fixture.path).expect("read hash-rejected ledger"),
+        reserved_ledger
+    );
+
+    let wrong_label_ownership =
+        fixture.write_instance_ownership_validation("900000026", "another-full-build");
+    let wrong_label = settle_provisional_failed_full_build(
+        &fixture.path,
+        &sha256_file(&fixture.path),
+        "invoice-binding-v1",
+        &evidence,
+        &failure,
+        &wrong_label_ownership,
+        &destruction,
+        &invoice,
+        &sha256_file(&invoice),
+        "another-full-build",
+        "2026-07-20T14:11:00Z",
+    )
+    .expect_err("another launch label cannot settle this instance");
+    assert!(
+        wrong_label.to_string().contains("exactly bind"),
+        "{wrong_label}"
+    );
+    assert_eq!(
+        fs::read(&fixture.path).expect("read label-rejected ledger"),
+        reserved_ledger
+    );
+}
+
+#[test]
+fn cli_settles_and_reconciles_a_provisional_failed_full_build_from_pinned_invoices() {
+    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let (calibration, _evidence, costs, _admission) =
+        reserve_test_full_build(&fixture, "cli-provisional-build");
+    let config = write_full_build_settlement_cli_config(
+        &fixture,
+        &calibration,
+        "cli-provisional-build",
+        &costs,
+    );
+    let failure = fixture.directory.path().join("cli-preworker-failure.log");
+    fs::write(&failure, b"transport failed before worker claim")
+        .expect("write CLI failure evidence");
+    let ownership =
+        fixture.write_instance_ownership_validation("900000026", "crec-72-gte-full-build");
+    let destruction = fixture.write_destroyed_instance_evidence("900000026");
+    let preliminary =
+        fixture.write_provider_invoice_with_label("900000026", "crec-72-gte-full-build", "0.23");
+    let settled = run_gte_oracle(&[
+        "settle-provisional-failed-full-build",
+        config.to_str().expect("UTF-8 config path"),
+        &sha256_file(&fixture.path),
+        failure.to_str().expect("UTF-8 failure path"),
+        ownership.to_str().expect("UTF-8 ownership path"),
+        destruction.to_str().expect("UTF-8 destruction path"),
+        preliminary.to_str().expect("UTF-8 invoice path"),
+        &sha256_file(&preliminary),
+        "crec-72-gte-full-build",
+        "2026-07-20T14:10:00Z",
+    ]);
+    assert_command_succeeded(&settled);
+
+    let adjusted =
+        fixture.write_provider_invoice_with_label("900000026", "crec-72-gte-full-build", "0.27");
+    let reconciled = run_gte_oracle(&[
+        "reconcile-failed-full-build-provider-charge",
+        config.to_str().expect("UTF-8 config path"),
+        adjusted.to_str().expect("UTF-8 invoice path"),
+        &sha256_file(&adjusted),
+        "2026-07-20T15:00:00Z",
+    ]);
+    assert_command_succeeded(&reconciled);
+    let ledger = read_budget_ledger(&fixture.path).expect("read CLI-reconciled ledger");
+    assert_eq!(ledger.actual_spend, MicroUsd::from_cents(127));
+    assert_eq!(ledger.outstanding_commitments, MicroUsd(0));
+}
+
+fn reserve_test_full_build(
+    fixture: &LedgerFixture,
+    reservation_id: &str,
+) -> (
+    CalibrationFixture,
+    VerifiedCalibrationEvidence,
+    FullBuildNonComputeCosts,
+    FullBuildAdmission,
+) {
+    let calibration_id = format!("{reservation_id}-calibration");
+    reserve_calibration(
+        &fixture.path,
+        &calibration_id,
+        MicroUsd::from_dollars(25),
+        "2026-07-20T13:00:00Z",
+    )
+    .expect("reserve calibration");
+    claim_calibration_execution(
+        &fixture.path,
+        &calibration_id,
+        MicroUsd::from_dollars(25),
+        MicroUsd(0),
+    )
+    .expect("claim calibration");
+    let calibration = fixture.write_calibration_evidence();
+    let evidence =
+        VerifiedCalibrationEvidence::open(&calibration.evidence_path, &calibration.paths)
+            .expect("verify calibration evidence");
+    settle_calibration(
+        &fixture.path,
+        &calibration_id,
+        &evidence,
+        MicroUsd::from_dollars(1),
+        "2026-07-20T13:30:00Z",
+    )
+    .expect("settle calibration");
+    let costs = FullBuildNonComputeCosts {
+        artifact_storage_and_transfer: MicroUsd(0),
+        paid_lazy_inference: MicroUsd(0),
+        one_cold_restart: MicroUsd(1),
+        one_lost_shard: MicroUsd(1),
+    };
+    let admission = reserve_full_build(
+        &fixture.path,
+        reservation_id,
+        &evidence,
+        costs.clone(),
+        "2026-07-20T14:00:00Z",
+    )
+    .expect("reserve full build");
+    (calibration, evidence, costs, admission)
+}
+
+#[test]
 fn full_build_projection_includes_checkpoint_finalization_and_failure_overhead() {
     let fixture = LedgerFixture::new(0, 0, 0, 0);
     reserve_calibration(
@@ -2639,6 +3094,56 @@ fn write_calibration_cli_config(
     config_path
 }
 
+fn write_full_build_settlement_cli_config(
+    fixture: &LedgerFixture,
+    calibration: &CalibrationFixture,
+    reservation_id: &str,
+    costs: &FullBuildNonComputeCosts,
+) -> PathBuf {
+    let root = fixture.directory.path();
+    let config_path = root.join(format!("{reservation_id}-run.json"));
+    fs::write(
+        &config_path,
+        serde_json::to_vec_pretty(&serde_json::json!({
+            "corpus_path": root.join("english.ndb"),
+            "ordered_event_ids_path": calibration.paths.ordered_event_ids_path,
+            "token_audit_path": calibration.paths.token_audit_path,
+            "batch_plan_path": calibration.paths.batch_plan_path,
+            "representation_path": calibration.paths.representation_path,
+            "model_lock_path": root.join("unused-model-lock.json"),
+            "worker_source_path": root.join("unused-worker.py"),
+            "dependency_lock_path": root.join("unused-dependencies.lock"),
+            "container_image": format!("fixture@sha256:{}", "5".repeat(64)),
+            "torch_version": "2.12.1",
+            "transformers_version": "4.41.2",
+            "cuda_version": "13.0.2",
+            "worker": {
+                "program": root.join("unused-worker.py"),
+                "model_dir": root.join("unused-model"),
+                "model_lock_path": root.join("unused-model-lock.json"),
+                "dependency_lock_path": root.join("unused-dependencies.lock"),
+                "device": "cuda"
+            },
+            "batch_size": 2,
+            "shard_rows": 4,
+            "full_build": {
+                "ledger_path": fixture.path,
+                "reservation_id": reservation_id,
+                "calibration_evidence_path": calibration.evidence_path,
+                "calibration_execution_identity_path": calibration.paths.execution_identity_path,
+                "execution_identity_path": root.join("unused-full-build-execution.json"),
+                "control_binary_sha256": "6".repeat(64),
+                "artifact_storage_and_transfer_micro_usd": costs.artifact_storage_and_transfer.0,
+                "one_cold_restart_micro_usd": costs.one_cold_restart.0,
+                "one_lost_shard_micro_usd": costs.one_lost_shard.0
+            }
+        }))
+        .expect("encode full-build settlement CLI config"),
+    )
+    .expect("write full-build settlement CLI config");
+    config_path
+}
+
 fn run_gte_oracle(arguments: &[&str]) -> std::process::Output {
     Command::new(env!("CARGO_BIN_EXE_gte-oracle"))
         .args(arguments)
@@ -2715,8 +3220,18 @@ impl LedgerFixture {
     }
 
     fn write_finalized_provider_invoice(&self, instance_id: &str, amount: &str) -> PathBuf {
+        self.write_provider_invoice_with_label(instance_id, "fixture-calibration", amount)
+    }
+
+    fn write_provider_invoice_with_label(
+        &self,
+        instance_id: &str,
+        label: &str,
+        amount: &str,
+    ) -> PathBuf {
         let path = self.directory.path().join(format!(
-            "finalized-provider-invoice-{instance_id}-{}.json",
+            "provider-invoice-{instance_id}-{}-{}.json",
+            label.replace(|character: char| !character.is_ascii_alphanumeric(), "-"),
             amount.replace('.', "-")
         ));
         fs::write(
@@ -2731,7 +3246,7 @@ impl LedgerFixture {
       "description": "Instance {instance_id} Charges - 1 day",
       "end": 1784419200,
       "items": [],
-      "metadata": {{"label": "fixture-calibration"}},
+      "metadata": {{"label": {label:?}}},
       "source": "instance-{instance_id}",
       "start": 1784419200,
       "type": "instance"
@@ -2744,6 +3259,58 @@ impl LedgerFixture {
             ),
         )
         .expect("write finalized provider invoice");
+        path
+    }
+
+    fn write_destroyed_instance_evidence(&self, instance_id: &str) -> PathBuf {
+        let path = self
+            .directory
+            .path()
+            .join(format!("destroyed-instance-{instance_id}.json"));
+        fs::write(
+            &path,
+            format!(
+                r#"{{
+  "absence_observations": 2,
+  "absent_from_complete_inventory": true,
+  "destroy_request_attempted": true,
+  "destroy_request_exit_zero": true,
+  "destroyed_at_utc": "2026-07-20T14:06:42Z",
+  "instance_id": "{instance_id}",
+  "instance_previously_observed": true,
+  "inventory": [],
+  "schema_version": 1
+}}
+"#
+            ),
+        )
+        .expect("write destroyed-instance evidence");
+        path
+    }
+
+    fn write_instance_ownership_validation(&self, instance_id: &str, label: &str) -> PathBuf {
+        let path = self.directory.path().join(format!(
+            "instance-ownership-{instance_id}-{}.json",
+            label.replace(|character: char| !character.is_ascii_alphanumeric(), "-")
+        ));
+        fs::write(
+            &path,
+            serde_json::to_vec_pretty(&serde_json::json!({
+                "artifact_kind": "gte-approved-vast-instance",
+                "bundle_id": null,
+                "image": format!("fixture@sha256:{}", "5".repeat(64)),
+                "instance_id": instance_id,
+                "label": label,
+                "machine_id": "900000035",
+                "maximum_rate_micro_usd_per_hour": 1_359_260_u64,
+                "offer_id": "900000025",
+                "on_demand": true,
+                "rate_micro_usd_per_hour": 1_183_704_u64,
+                "schema_version": 1
+            }))
+            .expect("encode instance ownership validation"),
+        )
+        .expect("write instance ownership validation");
         path
     }
 

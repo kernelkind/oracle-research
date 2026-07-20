@@ -2228,6 +2228,290 @@ pub fn settle_failed_full_build(
     ledger_from_document(&document, ledger_sha256)
 }
 
+/// Terminalize a destroyed full-build rental that failed before its worker
+/// claimed the reservation. The current provider invoice becomes preliminary
+/// spend, while every unused reserved cent remains outstanding until a later
+/// exact-invoice reconciliation.
+#[allow(clippy::too_many_arguments)]
+pub fn settle_provisional_failed_full_build(
+    ledger_path: &Path,
+    expected_ledger_sha256: &str,
+    reservation_id: &str,
+    calibration_evidence: &VerifiedCalibrationEvidence,
+    failure_evidence_path: &Path,
+    instance_ownership_validation_path: &Path,
+    destruction_evidence_path: &Path,
+    provider_invoice_path: &Path,
+    expected_provider_invoice_sha256: &str,
+    expected_provider_label: &str,
+    recorded_at_utc: &str,
+) -> Result<BudgetLedger> {
+    validate_reservation_input(reservation_id, recorded_at_utc)?;
+    if !is_sha256(expected_ledger_sha256) {
+        return Err(Error::Budget(
+            "provisional settlement requires a lowercase expected ledger SHA-256".to_owned(),
+        ));
+    }
+    calibration_evidence.reverify()?;
+    validate_provider_label(expected_provider_label)?;
+    let failure_evidence_sha256 = hash_file(failure_evidence_path)?;
+    let (instance_ownership_validation_sha256, ownership) =
+        read_instance_ownership_validation(instance_ownership_validation_path)?;
+    let (destruction_evidence_sha256, destroyed) =
+        read_destroyed_provider_instance(destruction_evidence_path)?;
+    if ownership.instance_id != destroyed.instance_id || ownership.label != expected_provider_label
+    {
+        return Err(Error::Budget(
+            "instance ownership does not match the destroyed instance and provider label"
+                .to_owned(),
+        ));
+    }
+    let (provider_invoice_sha256, provider_invoice) =
+        read_pinned_provider_invoice(provider_invoice_path, expected_provider_invoice_sha256)?;
+    let preliminary_charge =
+        provider_invoice.exact_instance_charge(&destroyed.instance_id, expected_provider_label)?;
+
+    let _lock = LedgerLock::acquire(ledger_path)?;
+    let (previous_bytes, mut document) = read_ledger_document(ledger_path)?;
+    let current_ledger_sha256 = hash_bytes(&previous_bytes);
+    if current_ledger_sha256 != expected_ledger_sha256 {
+        return Err(Error::Budget(
+            "locked ledger bytes do not match the expected ledger SHA-256".to_owned(),
+        ));
+    }
+    ledger_from_document(&document, current_ledger_sha256)?;
+    let active = active_full_build_reservation(&document, reservation_id, calibration_evidence)?;
+    let execution_claims = document
+        .entries
+        .iter()
+        .filter(|entry| {
+            entry.get("kind").and_then(serde_json::Value::as_str)
+                == Some("full_build_execution_claim")
+                && entry
+                    .get("reservation_id")
+                    .and_then(serde_json::Value::as_str)
+                    == Some(reservation_id)
+        })
+        .count();
+    if execution_claims != 0 {
+        return Err(Error::Budget(
+            "provisional failed full-build settlement requires an unclaimed reservation".to_owned(),
+        ));
+    }
+
+    let reserved_cents = ceiling_cents(active.binding.maximum_charge)?;
+    let preliminary_cents = ceiling_cents(preliminary_charge)?;
+    if preliminary_cents > reserved_cents {
+        return Err(Error::Budget(format!(
+            "preliminary full-build charge of {preliminary_cents} cents exceeds its {reserved_cents}-cent reservation"
+        )));
+    }
+    if document.outstanding_commitments_cents < reserved_cents {
+        return Err(Error::Budget(
+            "full-build reservation exceeds the ledger's outstanding commitment".to_owned(),
+        ));
+    }
+    let pending_adjustment_cents = reserved_cents - preliminary_cents;
+    document.outstanding_commitments_cents -= reserved_cents;
+    document.outstanding_commitments_cents = document
+        .outstanding_commitments_cents
+        .checked_add(pending_adjustment_cents)
+        .ok_or_else(|| Error::Budget("lifetime commitment cents overflowed".to_owned()))?;
+    document.actual_spend_cents = document
+        .actual_spend_cents
+        .checked_add(preliminary_cents)
+        .ok_or_else(|| Error::Budget("lifetime actual-spend cents overflowed".to_owned()))?;
+    document.reconciled_through_utc = recorded_at_utc.to_owned();
+
+    let previous_ledger_sha256 = hash_bytes(&previous_bytes);
+    document.entries.push(json!({
+        "kind": "failed_full_build_settlement",
+        "provider_charge_status": "preliminary",
+        "reservation_id": reservation_id,
+        "recorded_at_utc": recorded_at_utc,
+        "calibration_evidence_sha256": calibration_evidence.evidence_sha256(),
+        "failure_evidence_sha256": failure_evidence_sha256,
+        "instance_ownership_validation_sha256": instance_ownership_validation_sha256,
+        "destruction_evidence_sha256": destruction_evidence_sha256,
+        "destroyed_at_utc": destroyed.destroyed_at_utc,
+        "execution_claim_sha256": serde_json::Value::Null,
+        "provider": APPROVED_PROVIDER,
+        "provider_instance_id": destroyed.instance_id,
+        "provider_label": expected_provider_label,
+        "provider_offer_id": ownership.offer_id,
+        "provider_machine_id": ownership.machine_id,
+        "provider_image": ownership.image,
+        "provider_on_demand": ownership.on_demand,
+        "provider_rate_micro_usd_per_hour": ownership.rate_micro_usd_per_hour,
+        "provider_maximum_rate_micro_usd_per_hour": ownership.maximum_rate_micro_usd_per_hour,
+        "provider_invoice_sha256": provider_invoice_sha256,
+        "actual_charge_micro_usd": preliminary_charge.0,
+        "preliminary_actual_charge_micro_usd": preliminary_charge.0,
+        "recorded_actual_charge_cents": preliminary_cents,
+        "reserved_maximum_charge_cents": reserved_cents,
+        "pending_invoice_adjustment_commitment_cents": pending_adjustment_cents,
+        "provider_overrun_cents": preliminary_cents.saturating_sub(reserved_cents),
+        "previous_ledger_sha256": previous_ledger_sha256,
+    }));
+    let ledger_sha256 = publish_ledger_document(ledger_path, &document)?;
+    ledger_from_document(&document, ledger_sha256)
+}
+
+/// Replace one preliminary failed-build charge with a later exact provider
+/// invoice. Reconciliation is deliberately serialized after every other
+/// full-build reservation so it cannot invalidate that attempt's ledger base.
+pub fn reconcile_failed_full_build_provider_charge(
+    ledger_path: &Path,
+    reservation_id: &str,
+    provider_invoice_path: &Path,
+    expected_provider_invoice_sha256: &str,
+    recorded_at_utc: &str,
+) -> Result<BudgetLedger> {
+    validate_reservation_input(reservation_id, recorded_at_utc)?;
+    let (provider_invoice_sha256, provider_invoice) =
+        read_pinned_provider_invoice(provider_invoice_path, expected_provider_invoice_sha256)?;
+
+    let _lock = LedgerLock::acquire(ledger_path)?;
+    let (previous_bytes, mut document) = read_ledger_document(ledger_path)?;
+    ledger_from_document(&document, hash_bytes(&previous_bytes))?;
+    if has_active_full_build_reservation(&document) {
+        return Err(Error::Budget(
+            "failed full-build provider charge cannot be reconciled while an active full-build reservation exists"
+                .to_owned(),
+        ));
+    }
+    if document.entries.iter().any(|entry| {
+        entry.get("kind").and_then(serde_json::Value::as_str)
+            == Some("failed_full_build_provider_charge_reconciliation")
+            && entry
+                .get("reservation_id")
+                .and_then(serde_json::Value::as_str)
+                == Some(reservation_id)
+    }) {
+        return Err(Error::Budget(format!(
+            "full-build reservation `{reservation_id}` already reconciled its provider charge"
+        )));
+    }
+    let settlements = document
+        .entries
+        .iter()
+        .filter(|entry| {
+            entry.get("kind").and_then(serde_json::Value::as_str)
+                == Some("failed_full_build_settlement")
+                && entry
+                    .get("reservation_id")
+                    .and_then(serde_json::Value::as_str)
+                    == Some(reservation_id)
+                && entry
+                    .get("provider_charge_status")
+                    .and_then(serde_json::Value::as_str)
+                    == Some("preliminary")
+        })
+        .collect::<Vec<_>>();
+    let [settlement] = settlements.as_slice() else {
+        return Err(Error::Budget(format!(
+            "full-build reservation `{reservation_id}` requires exactly one preliminary failed settlement"
+        )));
+    };
+    let provider_instance_id = settlement
+        .get("provider_instance_id")
+        .and_then(serde_json::Value::as_str)
+        .ok_or_else(|| {
+            Error::Budget("preliminary failed settlement has no provider instance".to_owned())
+        })?;
+    let provider_label = settlement
+        .get("provider_label")
+        .and_then(serde_json::Value::as_str)
+        .ok_or_else(|| {
+            Error::Budget("preliminary failed settlement has no provider label".to_owned())
+        })?;
+    let reconciled_charge =
+        provider_invoice.exact_instance_charge(provider_instance_id, provider_label)?;
+    let reconciled_cents = ceiling_cents(reconciled_charge)?;
+    let previous_charge = settlement
+        .get("preliminary_actual_charge_micro_usd")
+        .and_then(serde_json::Value::as_u64)
+        .map(MicroUsd)
+        .ok_or_else(|| {
+            Error::Budget("preliminary failed settlement has no provider charge".to_owned())
+        })?;
+    let previous_cents = settlement
+        .get("recorded_actual_charge_cents")
+        .and_then(serde_json::Value::as_u64)
+        .ok_or_else(|| {
+            Error::Budget("preliminary failed settlement has no rounded provider charge".to_owned())
+        })?;
+    if ceiling_cents(previous_charge)? != previous_cents {
+        return Err(Error::Budget(
+            "preliminary failed settlement does not conservatively round its provider charge"
+                .to_owned(),
+        ));
+    }
+    let pending_adjustment_cents = settlement
+        .get("pending_invoice_adjustment_commitment_cents")
+        .and_then(serde_json::Value::as_u64)
+        .ok_or_else(|| {
+            Error::Budget(
+                "preliminary failed settlement has no pending invoice-adjustment commitment"
+                    .to_owned(),
+            )
+        })?;
+    if document.outstanding_commitments_cents < pending_adjustment_cents {
+        return Err(Error::Budget(
+            "pending invoice-adjustment commitment exceeds the ledger's outstanding commitment"
+                .to_owned(),
+        ));
+    }
+    if reconciled_cents < previous_cents {
+        return Err(Error::Budget(
+            "reconciled provider charge is lower than the preliminary charge".to_owned(),
+        ));
+    }
+    let added_cents = reconciled_cents - previous_cents;
+    document.outstanding_commitments_cents -= pending_adjustment_cents;
+    document.actual_spend_cents = document
+        .actual_spend_cents
+        .checked_add(added_cents)
+        .ok_or_else(|| Error::Budget("lifetime actual-spend cents overflowed".to_owned()))?;
+    document.reconciled_through_utc = recorded_at_utc.to_owned();
+
+    let reserved_cents = settlement
+        .get("reserved_maximum_charge_cents")
+        .and_then(serde_json::Value::as_u64)
+        .ok_or_else(|| {
+            Error::Budget("preliminary failed settlement has no reserved charge".to_owned())
+        })?;
+    let settlement_sha256 =
+        hash_bytes(
+            &serde_json::to_vec(settlement).map_err(|source| Error::Manifest {
+                operation: "encode",
+                path: PathBuf::from("failed-full-build-settlement"),
+                source,
+            })?,
+        );
+    let previous_ledger_sha256 = hash_bytes(&previous_bytes);
+    document.entries.push(json!({
+        "kind": "failed_full_build_provider_charge_reconciliation",
+        "reservation_id": reservation_id,
+        "recorded_at_utc": recorded_at_utc,
+        "failed_full_build_settlement_sha256": settlement_sha256,
+        "provider": APPROVED_PROVIDER,
+        "provider_instance_id": provider_instance_id,
+        "provider_label": provider_label,
+        "provider_invoice_sha256": provider_invoice_sha256,
+        "previous_actual_charge_micro_usd": previous_charge.0,
+        "previous_recorded_charge_cents": previous_cents,
+        "reconciled_actual_charge_micro_usd": reconciled_charge.0,
+        "reconciled_recorded_charge_cents": reconciled_cents,
+        "added_actual_spend_cents": added_cents,
+        "released_invoice_adjustment_commitment_cents": pending_adjustment_cents,
+        "provider_overrun_cents": reconciled_cents.saturating_sub(reserved_cents),
+        "previous_ledger_sha256": previous_ledger_sha256,
+    }));
+    let ledger_sha256 = publish_ledger_document(ledger_path, &document)?;
+    ledger_from_document(&document, ledger_sha256)
+}
+
 impl FullBuildCostProjection {
     pub fn total(&self) -> Result<MicroUsd> {
         checked_sum(&[
@@ -3324,14 +3608,200 @@ impl FinalizedProviderInvoiceDocument {
         }
         provider_usd_to_micro_usd(&invoice.amount)
     }
+
+    fn exact_instance_charge(
+        &self,
+        rental_instance_id: &str,
+        expected_label: &str,
+    ) -> Result<MicroUsd> {
+        validate_provider_instance_id(rental_instance_id)?;
+        validate_provider_label(expected_label)?;
+        if !self.success
+            || self.count != self.results.len() as u64
+            || self.total != self.results.len() as u64
+            || self.next_token.is_some()
+        {
+            return Err(Error::Budget(
+                "provider invoice must be one complete successful result set".to_owned(),
+            ));
+        }
+        let expected_source = format!("instance-{rental_instance_id}");
+        let matches = self
+            .results
+            .iter()
+            .filter(|invoice| invoice.source == expected_source)
+            .collect::<Vec<_>>();
+        if matches.is_empty() {
+            return Err(Error::Budget(format!(
+                "provider invoice does not contain instance `{rental_instance_id}`"
+            )));
+        }
+        matches.into_iter().try_fold(MicroUsd(0), |total, invoice| {
+            let label = invoice
+                .metadata
+                .get("label")
+                .and_then(serde_json::Value::as_str);
+            if invoice.kind != "instance" || label != Some(expected_label) {
+                return Err(Error::Budget(format!(
+                    "provider invoice does not exactly bind instance `{rental_instance_id}` to label `{expected_label}`"
+                )));
+            }
+            let charge = provider_usd_to_micro_usd(&invoice.amount)?;
+            total
+                .0
+                .checked_add(charge.0)
+                .map(MicroUsd)
+                .ok_or_else(|| Error::Budget("provider invoice charge overflowed".to_owned()))
+        })
+    }
 }
 
 #[derive(Debug, Deserialize)]
 struct FinalizedProviderInvoice {
     amount: serde_json::Number,
+    #[serde(default)]
+    metadata: serde_json::Value,
     source: String,
     #[serde(rename = "type")]
     kind: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct DestroyedProviderInstanceDocument {
+    absence_observations: u64,
+    absent_from_complete_inventory: bool,
+    destroy_request_attempted: bool,
+    destroy_request_exit_zero: bool,
+    destroyed_at_utc: String,
+    instance_id: String,
+    instance_previously_observed: bool,
+    inventory: Vec<serde_json::Value>,
+    schema_version: u32,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct InstanceOwnershipValidationDocument {
+    artifact_kind: String,
+    #[serde(rename = "bundle_id")]
+    _bundle_id: Option<serde_json::Value>,
+    image: String,
+    instance_id: String,
+    label: String,
+    machine_id: String,
+    maximum_rate_micro_usd_per_hour: u64,
+    offer_id: String,
+    on_demand: bool,
+    rate_micro_usd_per_hour: u64,
+    schema_version: u32,
+}
+
+fn read_instance_ownership_validation(
+    path: &Path,
+) -> Result<(String, InstanceOwnershipValidationDocument)> {
+    let bytes = fs::read(path).map_err(|source| io_error("read", path, source))?;
+    let sha256 = hash_bytes(&bytes);
+    let document: InstanceOwnershipValidationDocument =
+        serde_json::from_slice(&bytes).map_err(|source| Error::Manifest {
+            operation: "decode",
+            path: path.to_owned(),
+            source,
+        })?;
+    validate_provider_instance_id(&document.instance_id)?;
+    validate_provider_label(&document.label)?;
+    if document.schema_version != 1
+        || document.artifact_kind != "gte-approved-vast-instance"
+        || !document.on_demand
+        || document.image.is_empty()
+        || document.machine_id.is_empty()
+        || document.offer_id.is_empty()
+        || document.maximum_rate_micro_usd_per_hour == 0
+        || document.rate_micro_usd_per_hour == 0
+        || document.rate_micro_usd_per_hour > document.maximum_rate_micro_usd_per_hour
+    {
+        return Err(Error::Budget(
+            "instance ownership validation is not an approved on-demand instance".to_owned(),
+        ));
+    }
+    Ok((sha256, document))
+}
+
+fn read_destroyed_provider_instance(
+    path: &Path,
+) -> Result<(String, DestroyedProviderInstanceDocument)> {
+    let bytes = fs::read(path).map_err(|source| io_error("read", path, source))?;
+    let sha256 = hash_bytes(&bytes);
+    let document: DestroyedProviderInstanceDocument =
+        serde_json::from_slice(&bytes).map_err(|source| Error::Manifest {
+            operation: "decode",
+            path: path.to_owned(),
+            source,
+        })?;
+    validate_provider_instance_id(&document.instance_id)?;
+    if document.schema_version != 1
+        || document.absence_observations < 2
+        || !document.absent_from_complete_inventory
+        || !document.destroy_request_attempted
+        || !document.destroy_request_exit_zero
+        || !document.instance_previously_observed
+        || !document.inventory.is_empty()
+        || document.destroyed_at_utc.is_empty()
+    {
+        return Err(Error::Budget(
+            "destroyed provider instance evidence does not prove terminal absence".to_owned(),
+        ));
+    }
+    Ok((sha256, document))
+}
+
+fn read_pinned_provider_invoice(
+    path: &Path,
+    expected_sha256: &str,
+) -> Result<(String, FinalizedProviderInvoiceDocument)> {
+    if !is_sha256(expected_sha256) {
+        return Err(Error::Budget(
+            "provider invoice requires a lowercase SHA-256".to_owned(),
+        ));
+    }
+    let bytes = fs::read(path).map_err(|source| io_error("read", path, source))?;
+    let sha256 = hash_bytes(&bytes);
+    if sha256 != expected_sha256 {
+        return Err(Error::Budget(
+            "provider invoice does not match its expected SHA-256".to_owned(),
+        ));
+    }
+    let document = serde_json::from_slice(&bytes).map_err(|source| Error::Manifest {
+        operation: "decode",
+        path: path.to_owned(),
+        source,
+    })?;
+    Ok((sha256, document))
+}
+
+fn validate_provider_instance_id(instance_id: &str) -> Result<()> {
+    if instance_id.is_empty()
+        || !instance_id.bytes().all(|byte| byte.is_ascii_digit())
+        || instance_id
+            .parse::<u64>()
+            .ok()
+            .filter(|value| *value > 0)
+            .is_none()
+    {
+        return Err(Error::Budget(
+            "provider instance ID must be a positive decimal integer".to_owned(),
+        ));
+    }
+    Ok(())
+}
+
+fn validate_provider_label(label: &str) -> Result<()> {
+    if label.is_empty() || label.len() > 128 || label.trim() != label {
+        return Err(Error::Budget(
+            "provider label must be one nonempty bounded value".to_owned(),
+        ));
+    }
+    Ok(())
 }
 
 fn provider_usd_to_micro_usd(amount: &serde_json::Number) -> Result<MicroUsd> {
