@@ -29,9 +29,10 @@ use crate::quota_resolution::{EventLanguageOutcome, LanguageEligibility, PriorPr
 use crate::representation::{EventId, FP32_SCAN_BLOCK_ROWS};
 use crate::snapshot::{
     Error, Result, Validation, io_error, ndb_error, open_existing_ndb, read_manifest,
+    require_directory,
 };
 
-const SESSION_SCHEMA_VERSION: u32 = 2;
+const SESSION_SCHEMA_VERSION: u32 = 3;
 const ORACLE_RESPONSE_CONTRACT: &str = "candidate-order-oracle-v1";
 const SHUFFLE_POLICY: &str = "phase3-learning-sha256-concealed-v1";
 const SCORER_POLICY: &str = "compact-rbf-forward-only-h64-h256-fallback-v2";
@@ -150,9 +151,17 @@ struct AdaptiveLearningSession {
     oracle_calls: Vec<PersistedOracleCall>,
     oracle_responses: Vec<CachedResponseRef>,
     vector_responses: Vec<CachedVectorResponseRef>,
+    pending_presentation: Option<PendingPresentation>,
     completion: Option<CompletedHandoff>,
     pause_reason: Option<String>,
     failure: Option<String>,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+struct PendingPresentation {
+    round: usize,
+    wave_id: u64,
+    event_id: EventId,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -385,6 +394,7 @@ where
                 oracle_calls: Vec::new(),
                 oracle_responses: Vec::new(),
                 vector_responses: Vec::new(),
+                pending_presentation: None,
                 completion: None,
                 pause_reason: None,
                 failure: None,
@@ -449,12 +459,6 @@ where
                 save_session(&config.session_path, &session)?;
             }
             AdaptiveLearningProgress::AwaitingLanguage => {
-                if corpus.is_none() {
-                    corpus = Some(open_existing_ndb(
-                        &config.corpus_path,
-                        Validation::TrustedSource,
-                    )?);
-                }
                 let round_index = session.rounds.len().checked_sub(1).ok_or_else(|| {
                     Error::Invariant("pending language state has no session round".to_owned())
                 })?;
@@ -478,7 +482,7 @@ where
                 }
                 if !collect_current_wave(
                     config,
-                    corpus.as_ref().expect("display corpus was opened"),
+                    &mut corpus,
                     &mut session,
                     &session_oracle,
                     &mut input,
@@ -703,6 +707,36 @@ fn validate_loaded_static_session(
     if !phase_is_valid {
         return Err(Error::ExperimentState(
             "the stored Phase 3 session phase markers are inconsistent".to_owned(),
+        ));
+    }
+    validate_pending_presentation(session)?;
+    Ok(())
+}
+
+fn validate_pending_presentation(session: &AdaptiveLearningSession) -> Result<()> {
+    let Some(pending) = session.pending_presentation else {
+        return Ok(());
+    };
+    if session.phase != SessionPhase::Learning {
+        return Err(Error::ExperimentState(
+            "only an active learning session may retain a pending presentation".to_owned(),
+        ));
+    }
+    let round = session.rounds.last().ok_or_else(|| {
+        Error::ExperimentState("pending presentation has no learning round".to_owned())
+    })?;
+    let wave = round.waves.last().ok_or_else(|| {
+        Error::ExperimentState("pending presentation has no learning wave".to_owned())
+    })?;
+    let next_event_id = wave.presentation_order.get(wave.decisions.len()).copied();
+    if wave.submitted
+        || round.round != pending.round
+        || wave.wave_id != pending.wave_id
+        || next_event_id != Some(pending.event_id)
+    {
+        return Err(Error::ExperimentState(
+            "pending presentation does not identify the next event in the final frozen wave"
+                .to_owned(),
         ));
     }
     Ok(())
@@ -985,7 +1019,7 @@ fn presentation_key(
 
 fn collect_current_wave<O, R, W>(
     config: &AdaptiveLearningRunnerConfig,
-    corpus: &Ndb,
+    corpus: &mut Option<Ndb>,
     session: &mut AdaptiveLearningSession,
     oracle: &SessionOracle<'_, O>,
     input: &mut R,
@@ -1015,51 +1049,129 @@ where
             return Ok(true);
         }
         let event_id = wave.presentation_order[wave.decisions.len()];
-        if let Err(error) = display_raw_note(output, corpus, &config.corpus_path, event_id) {
-            let reason = format!(
-                "failed while displaying learning event {}: {error}",
-                hex_event_id(event_id)
-            );
-            session.phase = SessionPhase::Failed;
-            session.pause_reason = None;
-            session.failure = Some(reason.clone());
-            sync_oracle_state(session, oracle);
-            save_session(&config.session_path, session)?;
-            let _ = write_output(output, &format!("Phase 3 learning stopped: {reason}\n"));
-            return Err(error);
+        let round = session.rounds[round_index].round;
+        let wave_id = wave.wave_id;
+        if let Some(pending) = session.pending_presentation
+            && (pending.round != round
+                || pending.wave_id != wave_id
+                || pending.event_id != event_id)
+        {
+            return Err(Error::Invariant(
+                "pending presentation does not match the next frozen event".to_owned(),
+            ));
         }
-        let (decision, stop_after) = loop {
-            let Some(line) = prompt_line(output, input, RATING_PROMPT)? else {
-                record_evaluator_pause(config, session, oracle, output, "terminal input closed")?;
-                return Ok(false);
-            };
-            let value = line.trim();
-            if value == "q" {
-                write_output(
+
+        let mut recovered_decision = None;
+        let mut display_requested = session.pending_presentation.is_none();
+        if session.pending_presentation.is_some() {
+            loop {
+                let prompt = format!(
+                    "Recovery: event {} may have been shown before the prior run stopped. Enter its rating, `l` for wrong_language, or `r` to explicitly redisplay it; use `6q` or `lq` to save that decision and stop: ",
+                    hex_event_id(event_id)
+                );
+                let line = match prompt_line(output, input, &prompt) {
+                    Ok(Some(line)) => line,
+                    Ok(None) => {
+                        record_evaluator_pause(
+                            config,
+                            session,
+                            oracle,
+                            output,
+                            "terminal input closed with an uncertain presentation",
+                        )?;
+                        return Ok(false);
+                    }
+                    Err(error) => {
+                        persist_recoverable_pause(
+                            config,
+                            session,
+                            oracle,
+                            &format!("terminal failed during presentation recovery: {error}"),
+                        )?;
+                        return Ok(false);
+                    }
+                };
+                let value = line.trim();
+                if value == "r" {
+                    display_requested = true;
+                    break;
+                }
+                if let Some(decision) = parse_staged_decision(value, event_id) {
+                    recovered_decision = Some(decision);
+                    break;
+                }
+                if let Err(error) = write_output(
                     output,
-                    "Rate the displayed note, then append `q` to stop (for example, `6q` or `lq`).\n",
-                )?;
-                continue;
+                    "Enter 1 to 7, `l`, or `r`; use `6q` or `lq` to save that decision and stop.\n",
+                ) {
+                    persist_recoverable_pause(
+                        config,
+                        session,
+                        oracle,
+                        &format!("terminal failed during presentation recovery: {error}"),
+                    )?;
+                    return Ok(false);
+                }
             }
-            let (decision_value, stop_after) = value
-                .strip_suffix('q')
-                .map_or((value, false), |decision| (decision, true));
-            if decision_value == "l" {
-                break (StagedDecision::WrongLanguage { event_id }, stop_after);
+        }
+        if display_requested
+            && !display_next_note(
+                config, corpus, session, oracle, output, round, wave_id, event_id,
+            )?
+        {
+            return Ok(false);
+        }
+
+        let (decision, stop_after) = if let Some(decision) = recovered_decision {
+            decision
+        } else {
+            loop {
+                let line = match prompt_line(output, input, RATING_PROMPT) {
+                    Ok(Some(line)) => line,
+                    Ok(None) => {
+                        record_evaluator_pause(
+                            config,
+                            session,
+                            oracle,
+                            output,
+                            "terminal input closed",
+                        )?;
+                        return Ok(false);
+                    }
+                    Err(error) => {
+                        persist_recoverable_pause(
+                            config,
+                            session,
+                            oracle,
+                            &format!("terminal failed while requesting a rating: {error}"),
+                        )?;
+                        return Ok(false);
+                    }
+                };
+                let value = line.trim();
+                if let Some(decision) = parse_staged_decision(value, event_id) {
+                    break decision;
+                }
+                let guidance = if value == "q" {
+                    "Rate the displayed note, then append `q` to stop (for example, `6q` or `lq`).\n"
+                } else {
+                    "Enter 1 to 7 or `l`; append `q` to save that decision and stop.\n"
+                };
+                if let Err(error) = write_output(output, guidance) {
+                    persist_recoverable_pause(
+                        config,
+                        session,
+                        oracle,
+                        &format!("terminal failed while requesting a rating: {error}"),
+                    )?;
+                    return Ok(false);
+                }
             }
-            if let Ok(rating) = decision_value.parse::<u8>()
-                && (1..=7).contains(&rating)
-            {
-                break (StagedDecision::Rated { event_id, rating }, stop_after);
-            }
-            write_output(
-                output,
-                "Enter 1 to 7 or `l`; append `q` to save that decision and stop.\n",
-            )?;
         };
         session.rounds[round_index].waves[wave_index]
             .decisions
             .push(decision);
+        session.pending_presentation = None;
         session.pause_reason =
             stop_after.then(|| "evaluator chose to stop after the accepted decision".to_owned());
         sync_oracle_state(session, oracle);
@@ -1074,6 +1186,76 @@ where
     }
 }
 
+fn parse_staged_decision(value: &str, event_id: EventId) -> Option<(StagedDecision, bool)> {
+    let (decision_value, stop_after) = value
+        .strip_suffix('q')
+        .map_or((value, false), |decision| (decision, true));
+    if decision_value == "l" {
+        return Some((StagedDecision::WrongLanguage { event_id }, stop_after));
+    }
+    decision_value
+        .parse::<u8>()
+        .ok()
+        .filter(|rating| (1..=7).contains(rating))
+        .map(|rating| (StagedDecision::Rated { event_id, rating }, stop_after))
+}
+
+#[allow(clippy::too_many_arguments)]
+fn display_next_note<O, W>(
+    config: &AdaptiveLearningRunnerConfig,
+    corpus: &mut Option<Ndb>,
+    session: &mut AdaptiveLearningSession,
+    oracle: &SessionOracle<'_, O>,
+    output: &mut W,
+    round: usize,
+    wave_id: u64,
+    event_id: EventId,
+) -> Result<bool>
+where
+    O: CandidateOrderOracle,
+    W: Write,
+{
+    let content = match load_raw_note_content(corpus, &config.corpus_path, event_id) {
+        Ok(content) => content,
+        Err(error) => {
+            let reason = format!(
+                "display corpus unavailable for learning event {}: {error}",
+                hex_event_id(event_id)
+            );
+            persist_recoverable_pause(config, session, oracle, &reason)?;
+            let _ = write_output(output, &format!("Phase 3 learning paused: {reason}.\n"));
+            return Ok(false);
+        }
+    };
+    if session.pending_presentation.is_none() {
+        session.pending_presentation = Some(PendingPresentation {
+            round,
+            wave_id,
+            event_id,
+        });
+        session.pause_reason = None;
+        sync_oracle_state(session, oracle);
+        save_session(&config.session_path, session)?;
+    }
+    if let Err(error) = display_raw_note(output, &content).and_then(|()| {
+        output
+            .flush()
+            .map_err(|source| io_error("flush", "<terminal-output>", source))
+    }) {
+        persist_recoverable_pause(
+            config,
+            session,
+            oracle,
+            &format!(
+                "terminal failed while displaying learning event {}: {error}",
+                hex_event_id(event_id)
+            ),
+        )?;
+        return Ok(false);
+    }
+    Ok(true)
+}
+
 fn record_evaluator_pause<O, W>(
     config: &AdaptiveLearningRunnerConfig,
     session: &mut AdaptiveLearningSession,
@@ -1085,10 +1267,22 @@ where
     O: CandidateOrderOracle,
     W: Write,
 {
+    persist_recoverable_pause(config, session, oracle, reason)?;
+    write_output(output, &format!("Phase 3 learning paused: {reason}.\n"))
+}
+
+fn persist_recoverable_pause<O>(
+    config: &AdaptiveLearningRunnerConfig,
+    session: &mut AdaptiveLearningSession,
+    oracle: &SessionOracle<'_, O>,
+    reason: &str,
+) -> Result<()>
+where
+    O: CandidateOrderOracle,
+{
     session.pause_reason = Some(reason.to_owned());
     sync_oracle_state(session, oracle);
-    save_session(&config.session_path, session)?;
-    write_output(output, &format!("Phase 3 learning paused: {reason}.\n"))
+    save_session(&config.session_path, session)
 }
 
 fn language_outcomes(wave: &WaveTranscript) -> Result<Vec<EventLanguageOutcome>> {
@@ -1155,19 +1349,27 @@ fn ratings_for_round(
         .collect()
 }
 
-fn display_raw_note<W: Write>(
-    output: &mut W,
-    corpus: &Ndb,
+fn load_raw_note_content(
+    corpus: &mut Option<Ndb>,
     corpus_path: &Path,
     event_id: EventId,
-) -> Result<()> {
+) -> Result<String> {
+    if corpus.is_none() {
+        require_directory(corpus_path)?;
+        *corpus = Some(open_existing_ndb(corpus_path, Validation::TrustedSource)?);
+    }
+    let corpus = corpus.as_ref().expect("display corpus was opened");
     let transaction = Transaction::new(corpus)
         .map_err(|source| ndb_error("open transaction on", corpus_path, source))?;
     let note = corpus
         .get_note_by_id(&transaction, &event_id)
         .map_err(|source| ndb_error("load event from", corpus_path, source))?;
+    Ok(terminal_safe(note.content()))
+}
+
+fn display_raw_note<W: Write>(output: &mut W, content: &str) -> Result<()> {
     write_output(output, "\n")?;
-    write_output(output, &terminal_safe(note.content()))?;
+    write_output(output, content)?;
     write_output(output, "\n")
 }
 

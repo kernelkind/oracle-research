@@ -1,5 +1,5 @@
 use std::collections::BTreeMap;
-use std::io::Cursor;
+use std::io::{BufRead, Cursor, Read, Write};
 use std::thread;
 use std::time::{Duration, Instant};
 
@@ -32,6 +32,101 @@ const APPROVED_RATING_ANCHORS: [&str; 7] = [
     "7: Exceptionally valuable.",
 ];
 const APPROVED_LANGUAGE_RULE: &str = "Use wrong_language only when the note is clearly primarily non-English. Mixed-language, code-heavy, and ambiguous notes remain eligible and must be rated.";
+
+#[derive(Default)]
+struct FailOnRawNoteOutput {
+    bytes: Vec<u8>,
+    fail_next_write: bool,
+}
+
+impl Write for FailOnRawNoteOutput {
+    fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+        if self.fail_next_write {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::BrokenPipe,
+                "injected terminal failure after a partial note",
+            ));
+        }
+        if bytes
+            .windows(b"raw runner fixture note".len())
+            .any(|window| window == b"raw runner fixture note")
+        {
+            let partial = bytes.len().div_ceil(2);
+            self.bytes.extend_from_slice(&bytes[..partial]);
+            self.fail_next_write = true;
+            return Ok(partial);
+        }
+        self.bytes.extend_from_slice(bytes);
+        Ok(bytes.len())
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+}
+
+#[derive(Default)]
+struct FailBeforeRawNoteOutput {
+    bytes: Vec<u8>,
+}
+
+impl Write for FailBeforeRawNoteOutput {
+    fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+        if bytes == b"\n" {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::BrokenPipe,
+                "injected terminal failure before the raw note",
+            ));
+        }
+        self.bytes.extend_from_slice(bytes);
+        Ok(bytes.len())
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+}
+
+#[derive(Default)]
+struct FailAfterRawNoteOutput {
+    bytes: Vec<u8>,
+}
+
+impl Write for FailAfterRawNoteOutput {
+    fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+        self.bytes.extend_from_slice(bytes);
+        Ok(bytes.len())
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        Err(std::io::Error::new(
+            std::io::ErrorKind::BrokenPipe,
+            "injected terminal flush failure after the raw note",
+        ))
+    }
+}
+
+struct FailOnTerminalInput;
+
+impl Read for FailOnTerminalInput {
+    fn read(&mut self, _bytes: &mut [u8]) -> std::io::Result<usize> {
+        Err(std::io::Error::new(
+            std::io::ErrorKind::BrokenPipe,
+            "injected terminal input failure",
+        ))
+    }
+}
+
+impl BufRead for FailOnTerminalInput {
+    fn fill_buf(&mut self) -> std::io::Result<&[u8]> {
+        Err(std::io::Error::new(
+            std::io::ErrorKind::BrokenPipe,
+            "injected terminal input failure",
+        ))
+    }
+
+    fn consume(&mut self, _amount: usize) {}
+}
 
 #[test]
 fn terminal_and_session_binding_use_the_exact_frozen_evaluator_protocol() {
@@ -264,6 +359,226 @@ fn accepted_rating_is_staged_and_resume_continues_at_the_next_event() {
         1
     );
     assert_eq!(session["rounds"][0]["ratings_submitted"], false);
+}
+
+#[test]
+fn a_displayed_unrated_note_is_not_redisplayed_after_resume() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("displayed-session.json");
+    let config = fixture.config(session_path.clone());
+    let mut first_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut first_output = Vec::new();
+    let first = run_adaptive_learning(
+        &config,
+        &mut first_oracle,
+        Cursor::new(b""),
+        &mut first_output,
+    )
+    .expect("pause after displaying the first note");
+    assert!(matches!(first, AdaptiveLearningRunnerOutcome::Paused));
+    let first_session = read_session(&session_path);
+    assert!(!first_session["pending_presentation"].is_null());
+    let pending_id = value_event_id(&first_session["pending_presentation"]["event_id"]);
+    let content = fixture.content_for(pending_id);
+    assert!(String::from_utf8(first_output).unwrap().contains(&content));
+
+    let mut resumed_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut resumed_output = Vec::new();
+    let resumed = run_adaptive_learning(
+        &config,
+        &mut resumed_oracle,
+        Cursor::new(b"7q\n"),
+        &mut resumed_output,
+    )
+    .expect("rate the already displayed note");
+    assert!(matches!(resumed, AdaptiveLearningRunnerOutcome::Paused));
+    let resumed_transcript = String::from_utf8(resumed_output).expect("UTF-8 transcript");
+    assert!(!resumed_transcript.contains(&content));
+    assert!(
+        resumed_transcript.contains("`lq`"),
+        "recovery instructions must say how to save a wrong-language decision and stop"
+    );
+    let resumed_session = read_session(&session_path);
+    assert!(resumed_session["pending_presentation"].is_null());
+    assert_eq!(
+        value_event_id(&resumed_session["rounds"][0]["waves"][0]["decisions"][0]["event_id"]),
+        pending_id
+    );
+}
+
+#[test]
+fn uncertain_partial_display_and_transient_corpus_failure_resume_same_event() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("uncertain-session.json");
+    let config = fixture.config(session_path.clone());
+    let mut first_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut failing_output = FailOnRawNoteOutput::default();
+    let first = run_adaptive_learning(
+        &config,
+        &mut first_oracle,
+        Cursor::new(b""),
+        &mut failing_output,
+    )
+    .expect("terminal failure pauses an uncertain presentation");
+    assert!(matches!(first, AdaptiveLearningRunnerOutcome::Paused));
+    let first_session = read_session(&session_path);
+    assert!(!first_session["pending_presentation"].is_null());
+    assert_eq!(first_session["phase"], "learning");
+    assert!(first_session["failure"].is_null());
+    let pending_id = value_event_id(&first_session["pending_presentation"]["event_id"]);
+    let content = fixture.content_for(pending_id);
+
+    let unavailable = fixture.temp.path().join("temporarily-unavailable.ndb");
+    std::fs::rename(&fixture.corpus_path, &unavailable).expect("hide display corpus");
+    let mut missing_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut missing_output = Vec::new();
+    let missing = run_adaptive_learning(
+        &config,
+        &mut missing_oracle,
+        Cursor::new(b"r\n"),
+        &mut missing_output,
+    )
+    .expect("missing corpus pauses instead of failing the session");
+    assert!(matches!(missing, AdaptiveLearningRunnerOutcome::Paused));
+    let missing_session = read_session(&session_path);
+    assert_eq!(
+        missing_session["pending_presentation"]["event_id"],
+        first_session["pending_presentation"]["event_id"]
+    );
+    assert_eq!(missing_session["phase"], "learning");
+    assert!(missing_session["failure"].is_null());
+    assert!(
+        !fixture.corpus_path.exists(),
+        "a transiently missing corpus must not be replaced with an empty database"
+    );
+
+    std::fs::rename(&unavailable, &fixture.corpus_path).expect("restore display corpus");
+    let mut resumed_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut resumed_output = Vec::new();
+    let resumed = run_adaptive_learning(
+        &config,
+        &mut resumed_oracle,
+        Cursor::new(b"r\n7q\n"),
+        &mut resumed_output,
+    )
+    .expect("explicitly authorize redisplay and rate the same event");
+    assert!(matches!(resumed, AdaptiveLearningRunnerOutcome::Paused));
+    let transcript = String::from_utf8(resumed_output).expect("UTF-8 transcript");
+    assert!(transcript.contains("may have been shown"));
+    assert_eq!(transcript.matches(&content).count(), 1);
+    let resumed_session = read_session(&session_path);
+    assert!(resumed_session["pending_presentation"].is_null());
+    assert_eq!(
+        value_event_id(&resumed_session["rounds"][0]["waves"][0]["decisions"][0]["event_id"]),
+        pending_id
+    );
+}
+
+#[test]
+fn output_failure_before_note_bytes_leaves_a_recoverable_pending_event() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("before-output-session.json");
+    let config = fixture.config(session_path.clone());
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut output = FailBeforeRawNoteOutput::default();
+    let outcome = run_adaptive_learning(&config, &mut oracle, Cursor::new(b""), &mut output)
+        .expect("terminal failure before note bytes pauses the presentation");
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+
+    let session = read_session(&session_path);
+    let pending_id = value_event_id(&session["pending_presentation"]["event_id"]);
+    assert_eq!(session["phase"], "learning");
+    assert!(session["failure"].is_null());
+    assert!(
+        !String::from_utf8(output.bytes)
+            .unwrap()
+            .contains(&fixture.content_for(pending_id))
+    );
+}
+
+#[test]
+fn flush_failure_after_note_bytes_leaves_a_recoverable_pending_event() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("flush-output-session.json");
+    let config = fixture.config(session_path.clone());
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut output = FailAfterRawNoteOutput::default();
+    let outcome = run_adaptive_learning(&config, &mut oracle, Cursor::new(b""), &mut output)
+        .expect("terminal flush failure pauses the presentation");
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+
+    let session = read_session(&session_path);
+    let pending_id = value_event_id(&session["pending_presentation"]["event_id"]);
+    assert_eq!(session["phase"], "learning");
+    assert!(session["failure"].is_null());
+    assert!(
+        String::from_utf8(output.bytes)
+            .unwrap()
+            .contains(&fixture.content_for(pending_id))
+    );
+}
+
+#[test]
+fn terminal_input_failure_after_display_leaves_a_recoverable_pending_event() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("input-failure-session.json");
+    let config = fixture.config(session_path.clone());
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut output = Vec::new();
+    let outcome = run_adaptive_learning(&config, &mut oracle, FailOnTerminalInput, &mut output)
+        .expect("terminal input failure pauses the presentation");
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+
+    let session = read_session(&session_path);
+    let pending_id = value_event_id(&session["pending_presentation"]["event_id"]);
+    assert_eq!(session["phase"], "learning");
+    assert!(session["failure"].is_null());
+    assert!(
+        String::from_utf8(output)
+            .unwrap()
+            .contains(&fixture.content_for(pending_id))
+    );
+}
+
+#[test]
+fn a_corrupt_pending_presentation_is_rejected_before_output_or_oracle_work() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture
+        .temp
+        .path()
+        .join("corrupt-presentation-session.json");
+    let config = fixture.config(session_path.clone());
+    let mut first_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    run_adaptive_learning(
+        &config,
+        &mut first_oracle,
+        Cursor::new(b""),
+        &mut Vec::new(),
+    )
+    .expect("create pending presentation");
+    let mut corrupt = read_session(&session_path);
+    corrupt["pending_presentation"]["event_id"] =
+        serde_json::to_value(fixture.event_ids[0]).expect("encode wrong event ID");
+    std::fs::write(
+        &session_path,
+        serde_json::to_vec_pretty(&corrupt).expect("encode corrupt session"),
+    )
+    .expect("write corrupt session");
+
+    let mut resumed_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut output = Vec::new();
+    let error = run_adaptive_learning(
+        &config,
+        &mut resumed_oracle,
+        Cursor::new(b"7q\n"),
+        &mut output,
+    )
+    .err()
+    .expect("reject corrupt pending presentation");
+    assert!(error.to_string().contains("final frozen wave"));
+    assert!(output.is_empty());
+    assert_eq!(resumed_oracle.vector_lookups, 0);
+    assert_eq!(resumed_oracle.matrix_passes, 0);
 }
 
 #[test]
