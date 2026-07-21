@@ -5,6 +5,7 @@ from __future__ import annotations
 import tempfile
 import unittest
 import json
+import sys
 from pathlib import Path
 from types import SimpleNamespace
 from unittest import mock
@@ -77,6 +78,27 @@ class FakeOperator:
 
 
 class TerminalGuardTests(unittest.TestCase):
+    def test_loading_frozen_operator_does_not_modify_its_package(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            control = root / "transport/control"
+            control.mkdir(parents=True)
+            helper_name = f"terminal_guard_helper_{root.name.replace('-', '_')}"
+            (control / f"{helper_name}.py").write_text(
+                "VALUE = 7\n", encoding="utf-8"
+            )
+            (control / "vast_full_build.py").write_text(
+                f"import {helper_name}\nLOADED = {helper_name}.VALUE\n",
+                encoding="utf-8",
+            )
+            try:
+                with mock.patch.object(sys, "dont_write_bytecode", False):
+                    module = terminal_guard.load_frozen_operator(root)
+                self.assertEqual(module.LOADED, 7)
+                self.assertFalse((control / "__pycache__").exists())
+            finally:
+                sys.modules.pop(helper_name, None)
+
     def test_manual_summary_contains_every_final_release_gate(self) -> None:
         report = {
             "review_sha256": "0" * 64,

@@ -151,7 +151,12 @@ def load_frozen_operator(root: Path) -> ModuleType:
         raise GuardError(f"could not load frozen operator: {source}")
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
+    previous_dont_write_bytecode = sys.dont_write_bytecode
+    sys.dont_write_bytecode = True
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        sys.dont_write_bytecode = previous_dont_write_bytecode
     return module
 
 
