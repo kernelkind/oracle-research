@@ -414,19 +414,20 @@ fn render_rating(
                 == Some(EvaluatorDecision::Rating(
                     u8::try_from(index + 1).expect("the rating scale has seven entries"),
                 ));
-            let key_style = if selected {
-                accent_style().bg(Color::DarkGray)
-            } else {
-                accent_style()
-            };
             let answer_style = if selected {
-                Style::default().bg(Color::DarkGray)
+                Style::default().add_modifier(Modifier::BOLD)
             } else {
                 Style::default()
             };
+            let marker = if selected {
+                Span::styled("› ", accent_style())
+            } else {
+                Span::raw("  ")
+            };
             Line::from(vec![
-                Span::styled(key, key_style),
-                Span::styled(" ", answer_style),
+                marker,
+                Span::styled(key, accent_style()),
+                Span::raw(" "),
                 Span::styled(description, answer_style),
             ])
         })
@@ -502,18 +503,19 @@ fn control_lines(
         Span::styled(" Confirm", secondary_style()),
     ]);
     let wrong_language_selected = selected_decision == Some(EvaluatorDecision::WrongLanguage);
-    let wrong_language_key_style = if wrong_language_selected {
-        accent_style().bg(Color::DarkGray)
-    } else {
-        accent_style()
-    };
     let wrong_language_text_style = if wrong_language_selected {
-        Style::default().bg(Color::DarkGray)
+        Style::default().add_modifier(Modifier::BOLD)
     } else {
         secondary_style()
     };
+    let wrong_language_marker = if wrong_language_selected {
+        Span::styled("› ", accent_style())
+    } else {
+        Span::raw("  ")
+    };
     let mut controls = vec![
-        Span::styled("[L]", wrong_language_key_style),
+        wrong_language_marker,
+        Span::styled("[L]", accent_style()),
         Span::styled(" Wrong language", wrong_language_text_style),
         Span::raw("  "),
     ];

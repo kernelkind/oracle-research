@@ -155,14 +155,35 @@ fn rating_selection_is_visible_revisable_and_requires_enter() {
     );
 
     let selected = render(&model, 120, 30);
+    let selected_text = buffer_text(&selected);
+    assert!(selected_text.contains("  [2] Regret seeing it"));
+    assert!(selected_text.contains("› [6] Glad I saw it"));
     assert_eq!(style_at(&selected, "[2]").bg, Some(Color::Reset));
-    assert_eq!(style_at(&selected, "[6]").bg, Some(Color::DarkGray));
+    assert!(
+        !style_at(&selected, "Regret seeing it")
+            .add_modifier
+            .contains(Modifier::BOLD),
+        "unselected answers must remain neutral"
+    );
+    assert_eq!(style_at(&selected, "[6]").bg, Some(Color::Reset));
     assert_eq!(
         style_at(&selected, "Glad I saw it").bg,
-        Some(Color::DarkGray),
-        "the complete selected answer must be highlighted"
+        Some(Color::Reset),
+        "selection must not use a heavy background block"
     );
-    assert!(buffer_text(&selected).contains("[Enter] Confirm"));
+    assert!(
+        style_at(&selected, "Glad I saw it")
+            .add_modifier
+            .contains(Modifier::BOLD),
+        "the selected answer text must be emphasized"
+    );
+    assert_eq!(style_at(&selected, "›").fg, Some(Color::Cyan));
+    assert!(
+        style_at(&selected, "›")
+            .add_modifier
+            .contains(Modifier::BOLD)
+    );
+    assert!(selected_text.contains("[Enter] Confirm"));
     assert_eq!(
         model.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
         EvaluatorTuiAction::Submit {
@@ -176,9 +197,16 @@ fn rating_selection_is_visible_revisable_and_requires_enter() {
         wrong_language.handle_event(key(KeyCode::Char('l'), KeyEventKind::Press)),
         EvaluatorTuiAction::None
     );
+    let wrong_language_render = render(&wrong_language, 120, 30);
+    assert!(buffer_text(&wrong_language_render).contains("› [L] Wrong language"));
     assert_eq!(
-        style_at(&render(&wrong_language, 120, 30), "[L]").bg,
-        Some(Color::DarkGray)
+        style_at(&wrong_language_render, "[L]").bg,
+        Some(Color::Reset)
+    );
+    assert!(
+        style_at(&wrong_language_render, "Wrong language")
+            .add_modifier
+            .contains(Modifier::BOLD)
     );
     assert_eq!(
         wrong_language.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
