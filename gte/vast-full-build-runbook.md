@@ -65,22 +65,37 @@ While it runs, watch:
 - `cost.conservative_observed_total_micro_usd` and
   `manual_stop_recommended`; stop at the reviewed $42 boundary.
 
-`status --watch` exits when the worker becomes terminal. Promptly invoke `run`
-again to seal, retrieve, verify, destroy, obtain the finalized invoice, and
-settle. If it returns `invoice_pending`, rerun it after
-`next_eligible_observation_utc`.
+`status --watch` exits when the worker becomes terminal. Do **not** invoke the
+frozen operator's `run` or `stop` command after that point. Their terminal
+cleanup path does not fail closed when local publication fails.
 
-To stop a running worker explicitly and enter the same verified cleanup path:
+Use the separate terminal guard to retrieve and verify the result without any
+ability to destroy the instance:
 
 ```sh
-python3 "$OPERATOR" --root "$ROOT" --config "$CONTRACT" stop
+GUARD=/home/dev/src/notedeck_worktrees/algos/oracle-mvp/gte/vast_full_build_terminal_guard.py
+python3 "$GUARD" --root "$ROOT" --config "$CONTRACT" review
 ```
 
-`stop` requests a terminal worker record, then uses the same retrieval,
-verification, destruction, invoice, and settlement path. If verified result
-retrieval is impossible, it destroys the instance but returns
-`ledger_reconciliation_required` and deliberately leaves settlement for
-review.
+The review command verifies the remote result, retrieves it, verifies the
+complete local payload, runs remote and local functional smoke checks, flushes
+the local filesystem, writes a content-addressed review report, and exits with
+the instance still alive.
+
+Manually inspect that report and its raw evidence. Destruction is a separate
+interactive command bound to the exact report SHA-256:
+
+```sh
+python3 "$GUARD" --root "$ROOT" --config "$CONTRACT" \
+  destroy --review-sha256 REVIEW_SHA256
+```
+
+The destroy command revalidates the report and payload, freshly checks the
+remote seal and live instance, then displays the retrieval, hash, remote,
+local, payload, and live-instance evidence on `/dev/tty` immediately before
+requiring the exact printed challenge. It records that authorization durably
+before its sole destroy call. If any check or confirmation fails, the instance
+remains alive.
 
 ## Recovery rule
 
@@ -89,5 +104,5 @@ appropriate command. A mismatch between receipts, the provider, the remote
 machine, or the canonical ledger is a hard stop requiring review.
 
 There is no automatic relaunch, provider failover, watchdog, or cost-triggered
-termination. `status` warns at the reviewed cost boundary; only `stop` ends a
-running worker.
+termination. `status` only observes and warns. After successful worker exit,
+only the reviewed terminal guard may retrieve or destroy this instance.
