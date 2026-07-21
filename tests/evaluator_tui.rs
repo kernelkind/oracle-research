@@ -90,7 +90,7 @@ fn rating_screen_keeps_the_frozen_protocol_visible_neutral_and_blinded() {
     let language_rule_style = style_at(&buffer, "Use wrong_language only");
     assert_eq!(language_rule_style.fg, Some(Color::Reset));
     assert!(language_rule_style.add_modifier.contains(Modifier::DIM));
-    for key in ["[1–7]", "[Ctrl-N/P]", "[Enter]", "[L]", "[P]"] {
+    for key in ["[1–7]", "[Ctrl-N/P]", "[Enter]", "[L]", "[P]", "[Ctrl-D/U]"] {
         assert_eq!(style_at(&buffer, key).fg, Some(Color::Cyan));
     }
     for help in [
@@ -99,6 +99,7 @@ fn rating_screen_keeps_the_frozen_protocol_visible_neutral_and_blinded() {
         "Confirm",
         "Wrong language",
         "Pause after decision",
+        "Half-page",
     ] {
         let style = style_at(&buffer, help);
         assert_eq!(style.fg, Some(Color::Reset));
@@ -345,6 +346,8 @@ fn only_fresh_unmodified_keys_select_ratings_and_wrong_language() {
             KeyCode::Char('L'),
             KeyCode::Char('p'),
             KeyCode::Char('P'),
+            KeyCode::Char('d'),
+            KeyCode::Char('u'),
         ] {
             let mut model = rating_model();
             assert_eq!(
@@ -432,7 +435,8 @@ fn armed_pause_can_be_cancelled_before_the_decision() {
     assert!(model.pause_after_rating());
     let armed_text = buffer_text(&render(&model, 72, 24));
     assert!(armed_text.contains("[Esc] Cancel pause"));
-    assert!(armed_text.contains("[↑/↓] Scroll"));
+    assert!(armed_text.contains("[↑/↓] Line"));
+    assert!(armed_text.contains("[Ctrl-D/U] Half-page"));
     assert!(!armed_text.contains("[P] Pause after decision"));
 
     assert_eq!(
@@ -524,6 +528,63 @@ fn scrolling_changes_the_note_body_without_moving_the_controls() {
         .map(|text| position_of(&after, text)),
         fixed_positions
     );
+}
+
+#[test]
+fn control_d_and_u_scroll_half_the_visible_note_panel() {
+    let note = (0..80)
+        .map(|line| format!("half-page note line {line:02}"))
+        .collect::<Vec<_>>()
+        .join("\n");
+    let mut model = EvaluatorTuiModel::rating(note.clone(), 1, 20);
+    let before = render_mut(&mut model, 100, 30);
+    assert!(buffer_text(&before).contains("half-page note line 00"));
+
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('6'), KeyEventKind::Press)),
+        EvaluatorTuiAction::None
+    );
+    assert_eq!(
+        model.handle_event(key_with_modifiers(
+            KeyCode::Char('d'),
+            KeyModifiers::CONTROL,
+            KeyEventKind::Press,
+        )),
+        EvaluatorTuiAction::None
+    );
+    let down = render_mut(&mut model, 100, 30);
+    let down_text = buffer_text(&down);
+    assert!(!down_text.contains("half-page note line 00"));
+    assert!(down_text.contains("half-page note line 06"));
+    assert!(down_text.contains("› [6] Glad I saw it"));
+    assert!(
+        down_text.contains("[Ctrl-D/U] Half-page"),
+        "missing half-page help from:\n{down_text}"
+    );
+
+    assert_eq!(
+        model.handle_event(key_with_modifiers(
+            KeyCode::Char('u'),
+            KeyModifiers::CONTROL,
+            KeyEventKind::Press,
+        )),
+        EvaluatorTuiAction::None
+    );
+    assert!(buffer_text(&render_mut(&mut model, 100, 30)).contains("half-page note line 00"));
+
+    let mut minimum = EvaluatorTuiModel::rating(note, 1, 20);
+    let _ = render_mut(&mut minimum, 72, 24);
+    assert_eq!(
+        minimum.handle_event(key_with_modifiers(
+            KeyCode::Char('d'),
+            KeyModifiers::CONTROL,
+            KeyEventKind::Press,
+        )),
+        EvaluatorTuiAction::None
+    );
+    let minimum_down = buffer_text(&render_mut(&mut minimum, 72, 24));
+    assert!(!minimum_down.contains("half-page note line 00"));
+    assert!(minimum_down.contains("half-page note line 03"));
 }
 
 #[test]
@@ -644,6 +705,16 @@ fn pre_screen_input_preserves_only_a_fresh_control_c_pause() {
             KeyEventKind::Press,
         ),
         key_with_modifiers(
+            KeyCode::Char('d'),
+            KeyModifiers::CONTROL,
+            KeyEventKind::Press,
+        ),
+        key_with_modifiers(
+            KeyCode::Char('u'),
+            KeyModifiers::CONTROL,
+            KeyEventKind::Press,
+        ),
+        key_with_modifiers(
             KeyCode::Char('c'),
             KeyModifiers::CONTROL,
             KeyEventKind::Repeat,
@@ -690,7 +761,8 @@ fn minimum_supported_preview_size_can_scroll_an_overflowing_note() {
         "[Enter] Confirm",
         "[L] Wrong language",
         "[P] Pause after decision",
-        "[↑/↓] Scroll",
+        "[↑/↓] Line",
+        "[Ctrl-D/U] Half-page",
     ] {
         assert!(before_text.contains(control), "missing control `{control}`");
     }

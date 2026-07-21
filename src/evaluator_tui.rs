@@ -71,6 +71,7 @@ enum EvaluatorScreen {
 pub struct EvaluatorTuiModel {
     screen: EvaluatorScreen,
     scroll: u16,
+    half_page_lines: u16,
     selected_decision: Option<EvaluatorDecision>,
     pause_after_rating: bool,
     interaction_enabled: bool,
@@ -124,6 +125,7 @@ impl EvaluatorTuiModel {
         Self {
             screen,
             scroll: 0,
+            half_page_lines: 1,
             selected_decision: None,
             pause_after_rating: false,
             interaction_enabled: true,
@@ -173,6 +175,14 @@ impl EvaluatorTuiModel {
                 }
                 KeyCode::Char('p' | 'P') => {
                     self.move_rating_selection(-1);
+                    return EvaluatorTuiAction::None;
+                }
+                KeyCode::Char('d' | 'D') => {
+                    self.scroll = self.scroll.saturating_add(self.half_page_lines);
+                    return EvaluatorTuiAction::None;
+                }
+                KeyCode::Char('u' | 'U') => {
+                    self.scroll = self.scroll.saturating_sub(self.half_page_lines);
                     return EvaluatorTuiAction::None;
                 }
                 _ => {}
@@ -294,6 +304,7 @@ impl EvaluatorTuiModel {
                 *presentation_number,
                 *break_in,
                 &mut self.scroll,
+                &mut self.half_page_lines,
                 self.selected_decision,
                 self.pause_after_rating,
                 false,
@@ -308,6 +319,7 @@ impl EvaluatorTuiModel {
                 *presentation_number,
                 *break_in,
                 &mut self.scroll,
+                &mut self.half_page_lines,
                 self.selected_decision,
                 self.pause_after_rating,
                 true,
@@ -350,6 +362,7 @@ fn render_rating(
     presentation_number: usize,
     break_in: usize,
     scroll: &mut u16,
+    half_page_lines: &mut u16,
     selected_decision: Option<EvaluatorDecision>,
     pause_after_rating: bool,
     recovery: bool,
@@ -380,6 +393,7 @@ fn render_rating(
         .border_style(border_style())
         .padding(Padding::horizontal(1));
     let note_inner = note_block.inner(rows[1]);
+    *half_page_lines = (note_inner.height / 2).max(1);
     let rendered_lines = Paragraph::new(note)
         .wrap(Wrap { trim: false })
         .line_count(note_inner.width);
@@ -500,7 +514,9 @@ fn control_lines(
         Span::styled("[Ctrl-N/P]", accent_style()),
         Span::styled(" Move  ", secondary_style()),
         Span::styled("[Enter]", accent_style()),
-        Span::styled(" Confirm", secondary_style()),
+        Span::styled(" Confirm  ", secondary_style()),
+        Span::styled("[Ctrl-D/U]", accent_style()),
+        Span::styled(" Half-page", secondary_style()),
     ]);
     let wrong_language_selected = selected_decision == Some(EvaluatorDecision::WrongLanguage);
     let wrong_language_text_style = if wrong_language_selected {
@@ -539,7 +555,7 @@ fn control_lines(
     if !recovery {
         controls.extend([
             Span::styled("  [↑/↓]", accent_style()),
-            Span::styled(" Scroll", secondary_style()),
+            Span::styled(" Line", secondary_style()),
         ]);
     }
     vec![primary, Line::from(controls)]
