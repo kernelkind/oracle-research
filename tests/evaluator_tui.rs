@@ -44,8 +44,8 @@ fn rating_screen_keeps_the_frozen_protocol_visible_neutral_and_blinded() {
         anchor_styles.windows(2).all(|pair| pair[0] == pair[1]),
         "the rating scale must not visually favor an answer"
     );
-    assert_eq!(anchor_styles[0].fg, Some(Color::Cyan));
-    assert!(anchor_styles[0].add_modifier.contains(Modifier::BOLD));
+    assert_eq!(anchor_styles[0].fg, Some(Color::Reset));
+    assert!(anchor_styles[0].add_modifier.is_empty());
     let anchor_descriptions = EXPECTED_ANCHORS.map(|anchor| {
         anchor
             .split_once("] ")
@@ -158,7 +158,8 @@ fn rating_selection_is_visible_revisable_and_requires_enter() {
     let selected = render(&model, 120, 30);
     let selected_text = buffer_text(&selected);
     assert!(selected_text.contains("  [2] Regret seeing it"));
-    assert!(selected_text.contains("› [6] Glad I saw it"));
+    assert!(selected_text.contains("▶ [6] Glad I saw it"));
+    assert_eq!(style_at(&selected, "[2]").fg, Some(Color::Reset));
     assert_eq!(style_at(&selected, "[2]").bg, Some(Color::Reset));
     assert!(
         !style_at(&selected, "Regret seeing it")
@@ -166,7 +167,19 @@ fn rating_selection_is_visible_revisable_and_requires_enter() {
             .contains(Modifier::BOLD),
         "unselected answers must remain neutral"
     );
+    assert_eq!(style_at(&selected, "[6]").fg, Some(Color::Cyan));
     assert_eq!(style_at(&selected, "[6]").bg, Some(Color::Reset));
+    assert!(
+        style_at(&selected, "[6]")
+            .add_modifier
+            .contains(Modifier::BOLD),
+        "the selected answer key must be emphasized"
+    );
+    assert_eq!(
+        style_at(&selected, "Glad I saw it").fg,
+        Some(Color::Cyan),
+        "the complete selected answer must use the selection accent"
+    );
     assert_eq!(
         style_at(&selected, "Glad I saw it").bg,
         Some(Color::Reset),
@@ -178,9 +191,9 @@ fn rating_selection_is_visible_revisable_and_requires_enter() {
             .contains(Modifier::BOLD),
         "the selected answer text must be emphasized"
     );
-    assert_eq!(style_at(&selected, "›").fg, Some(Color::Cyan));
+    assert_eq!(style_at(&selected, "▶").fg, Some(Color::Cyan));
     assert!(
-        style_at(&selected, "›")
+        style_at(&selected, "▶")
             .add_modifier
             .contains(Modifier::BOLD)
     );
@@ -199,10 +212,23 @@ fn rating_selection_is_visible_revisable_and_requires_enter() {
         EvaluatorTuiAction::None
     );
     let wrong_language_render = render(&wrong_language, 120, 30);
-    assert!(buffer_text(&wrong_language_render).contains("› [L] Wrong language"));
+    assert!(buffer_text(&wrong_language_render).contains("▶ [L] Wrong language"));
+    assert_eq!(
+        style_at(&wrong_language_render, "[L]").fg,
+        Some(Color::Cyan)
+    );
     assert_eq!(
         style_at(&wrong_language_render, "[L]").bg,
         Some(Color::Reset)
+    );
+    assert!(
+        style_at(&wrong_language_render, "[L]")
+            .add_modifier
+            .contains(Modifier::BOLD)
+    );
+    assert_eq!(
+        style_at(&wrong_language_render, "Wrong language").fg,
+        Some(Color::Cyan)
     );
     assert!(
         style_at(&wrong_language_render, "Wrong language")
@@ -556,7 +582,7 @@ fn control_d_and_u_scroll_half_the_visible_note_panel() {
     let down_text = buffer_text(&down);
     assert!(!down_text.contains("half-page note line 00"));
     assert!(down_text.contains("half-page note line 06"));
-    assert!(down_text.contains("› [6] Glad I saw it"));
+    assert!(down_text.contains("▶ [6] Glad I saw it"));
     assert!(
         down_text.contains("[Ctrl-D/U] Half-page"),
         "missing half-page help from:\n{down_text}"

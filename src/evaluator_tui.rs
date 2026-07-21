@@ -429,18 +429,18 @@ fn render_rating(
                     u8::try_from(index + 1).expect("the rating scale has seven entries"),
                 ));
             let answer_style = if selected {
-                Style::default().add_modifier(Modifier::BOLD)
+                accent_style()
             } else {
                 Style::default()
             };
             let marker = if selected {
-                Span::styled("› ", accent_style())
+                Span::styled("▶ ", accent_style())
             } else {
                 Span::raw("  ")
             };
             Line::from(vec![
                 marker,
-                Span::styled(key, accent_style()),
+                Span::styled(key, answer_style),
                 Span::raw(" "),
                 Span::styled(description, answer_style),
             ])
@@ -520,12 +520,12 @@ fn control_lines(
     ]);
     let wrong_language_selected = selected_decision == Some(EvaluatorDecision::WrongLanguage);
     let wrong_language_text_style = if wrong_language_selected {
-        Style::default().add_modifier(Modifier::BOLD)
+        accent_style()
     } else {
         secondary_style()
     };
     let wrong_language_marker = if wrong_language_selected {
-        Span::styled("› ", accent_style())
+        Span::styled("▶ ", accent_style())
     } else {
         Span::raw("  ")
     };
