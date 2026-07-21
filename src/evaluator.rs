@@ -162,10 +162,10 @@ pub enum RestOutcome {
 /// score, rank, or experiment phase.
 ///
 /// Implementations used for a real experiment must present the exact constants
-/// in this module and enforce the frozen single-key, recovery, pause, and rest
-/// behavior. The runner records that behavioral contract and trusts the
-/// implementation to honor it; [`crate::evaluator_tui::FullScreenEvaluator`] is
-/// the shipped implementation.
+/// in this module and enforce the frozen selection, confirmation, recovery,
+/// pause, and rest behavior. The runner records that behavioral contract and
+/// trusts the implementation to honor it;
+/// [`crate::evaluator_tui::FullScreenEvaluator`] is the shipped implementation.
 pub trait EvaluatorUi {
     fn rate(&mut self, view: RatingView<'_>) -> io::Result<RatingOutcome>;
 

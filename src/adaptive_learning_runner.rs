@@ -39,7 +39,7 @@ use crate::snapshot::{
     require_directory,
 };
 
-const SESSION_SCHEMA_VERSION: u32 = 7;
+const SESSION_SCHEMA_VERSION: u32 = 8;
 const ORACLE_RESPONSE_CONTRACT: &str = "candidate-order-oracle-v1";
 const SHUFFLE_POLICY: &str = "phase3-learning-sha256-concealed-v1";
 const SCORER_POLICY: &str = "compact-rbf-forward-only-h64-h256-fallback-v2";
@@ -151,6 +151,16 @@ struct EvaluatorProtocolBinding {
 struct EvaluatorControlsBinding {
     accepted_ratings: [u8; 7],
     wrong_language_key: String,
+    #[serde(default)]
+    decision_confirmation_key: String,
+    #[serde(default)]
+    next_rating_key: String,
+    #[serde(default)]
+    previous_rating_key: String,
+    #[serde(default)]
+    next_rating_from_non_rating_selection: u8,
+    #[serde(default)]
+    previous_rating_from_non_rating_selection: u8,
     pause_after_decision_key: String,
     #[serde(default)]
     pause_after_decision_cancel_key: String,
@@ -167,7 +177,18 @@ struct EvaluatorInputPolicyBinding {
     paste_accepted: bool,
     repeat_accepted: bool,
     release_accepted: bool,
-    command_modifiers_accepted: bool,
+    #[serde(default)]
+    unlisted_command_modifiers_accepted: bool,
+    #[serde(default)]
+    selection_confirmation_required: bool,
+    #[serde(default)]
+    new_selection_replaces_unconfirmed: bool,
+    #[serde(default)]
+    selection_discarded_on_screen_exit: bool,
+    #[serde(default)]
+    pause_cancel_preserves_selection: bool,
+    #[serde(default)]
+    rating_navigation_wraps: bool,
     stale_input_discarded_before_screen: bool,
     queued_ctrl_c_pause_preserved: bool,
 }
@@ -491,6 +512,11 @@ fn evaluator_protocol_binding() -> EvaluatorProtocolBinding {
         controls: EvaluatorControlsBinding {
             accepted_ratings: [1, 2, 3, 4, 5, 6, 7],
             wrong_language_key: "L".to_owned(),
+            decision_confirmation_key: "Enter".to_owned(),
+            next_rating_key: "Ctrl-N".to_owned(),
+            previous_rating_key: "Ctrl-P".to_owned(),
+            next_rating_from_non_rating_selection: 1,
+            previous_rating_from_non_rating_selection: 7,
             pause_after_decision_key: "P".to_owned(),
             pause_after_decision_cancel_key: "Escape".to_owned(),
             recovery_redisplay_key: "R".to_owned(),
@@ -504,7 +530,12 @@ fn evaluator_protocol_binding() -> EvaluatorProtocolBinding {
             paste_accepted: false,
             repeat_accepted: false,
             release_accepted: false,
-            command_modifiers_accepted: false,
+            unlisted_command_modifiers_accepted: false,
+            selection_confirmation_required: true,
+            new_selection_replaces_unconfirmed: true,
+            selection_discarded_on_screen_exit: true,
+            pause_cancel_preserves_selection: true,
+            rating_navigation_wraps: false,
             stale_input_discarded_before_screen: true,
             queued_ctrl_c_pause_preserved: true,
         },

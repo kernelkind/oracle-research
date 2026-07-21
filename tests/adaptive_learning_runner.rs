@@ -316,6 +316,11 @@ fn session_binding_records_the_exact_production_tui_protocol() {
             "controls": {
                 "accepted_ratings": [1, 2, 3, 4, 5, 6, 7],
                 "wrong_language_key": "L",
+                "decision_confirmation_key": "Enter",
+                "next_rating_key": "Ctrl-N",
+                "previous_rating_key": "Ctrl-P",
+                "next_rating_from_non_rating_selection": 1,
+                "previous_rating_from_non_rating_selection": 7,
                 "pause_after_decision_key": "P",
                 "pause_after_decision_cancel_key": "Escape",
                 "recovery_redisplay_key": "R",
@@ -329,7 +334,12 @@ fn session_binding_records_the_exact_production_tui_protocol() {
                 "paste_accepted": false,
                 "repeat_accepted": false,
                 "release_accepted": false,
-                "command_modifiers_accepted": false,
+                "unlisted_command_modifiers_accepted": false,
+                "selection_confirmation_required": true,
+                "new_selection_replaces_unconfirmed": true,
+                "selection_discarded_on_screen_exit": true,
+                "pause_cancel_preserves_selection": true,
+                "rating_navigation_wraps": false,
                 "stale_input_discarded_before_screen": true,
                 "queued_ctrl_c_pause_preserved": true
             },
@@ -354,9 +364,9 @@ fn session_binding_records_the_exact_production_tui_protocol() {
 }
 
 #[test]
-fn schema_six_session_without_pause_cancel_is_rejected_by_version() {
+fn schema_seven_session_without_selection_confirmation_is_rejected_by_version() {
     let fixture = RunnerFixture::new();
-    let session_path = fixture.temp.path().join("schema-six-session.json");
+    let session_path = fixture.temp.path().join("schema-seven-session.json");
     let config = fixture.config(session_path.clone());
     let mut first_oracle = FixtureOracle::new(fixture.event_ids.clone());
 
@@ -369,17 +379,42 @@ fn schema_six_session_without_pause_cancel_is_rejected_by_version() {
     .expect("create a current session");
 
     let mut old_session = read_session(&session_path);
-    assert_eq!(old_session["schema_version"], 7);
-    old_session["schema_version"] = 6.into();
-    old_session["binding"]["fixed"]["evaluator_protocol"]["controls"]
+    assert_eq!(old_session["schema_version"], 8);
+    old_session["schema_version"] = 7.into();
+    let controls = old_session["binding"]["fixed"]["evaluator_protocol"]["controls"]
         .as_object_mut()
-        .expect("controls object")
-        .remove("pause_after_decision_cancel_key");
+        .expect("controls object");
+    for field in [
+        "decision_confirmation_key",
+        "next_rating_key",
+        "previous_rating_key",
+        "next_rating_from_non_rating_selection",
+        "previous_rating_from_non_rating_selection",
+    ] {
+        controls.remove(field);
+    }
+    let input_policy = old_session["binding"]["fixed"]["evaluator_protocol"]["input_policy"]
+        .as_object_mut()
+        .expect("input policy object");
+    input_policy.remove("unlisted_command_modifiers_accepted");
+    input_policy.insert(
+        "command_modifiers_accepted".to_owned(),
+        serde_json::json!(false),
+    );
+    for field in [
+        "selection_confirmation_required",
+        "new_selection_replaces_unconfirmed",
+        "selection_discarded_on_screen_exit",
+        "pause_cancel_preserves_selection",
+        "rating_navigation_wraps",
+    ] {
+        input_policy.remove(field);
+    }
     std::fs::write(
         &session_path,
-        serde_json::to_vec_pretty(&old_session).expect("encode schema-six session"),
+        serde_json::to_vec_pretty(&old_session).expect("encode schema-seven session"),
     )
-    .expect("write schema-six session");
+    .expect("write schema-seven session");
 
     let mut resumed_oracle = FixtureOracle::new(fixture.event_ids.clone());
     let error = run_adaptive_learning(
@@ -389,8 +424,8 @@ fn schema_six_session_without_pause_cancel_is_rejected_by_version() {
         &mut Vec::new(),
     )
     .err()
-    .expect("reject schema-six session");
-    assert!(error.to_string().contains("schema 6 does not match 7"));
+    .expect("reject schema-seven session");
+    assert!(error.to_string().contains("schema 7 does not match 8"));
     assert_eq!(resumed_oracle.vector_lookups, 0);
     assert_eq!(resumed_oracle.matrix_passes, 0);
 }

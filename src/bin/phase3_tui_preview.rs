@@ -8,7 +8,7 @@ use oracle_mvp::adaptive_learning_runner::AdaptiveLearningRunnerOutcome;
 use oracle_mvp::evaluator_tui::FullScreenEvaluator;
 use oracle_mvp::phase3_preview::run_phase3_preview;
 
-const PREVIEW_STATE_DIRECTORY: &str = "phase3-tui-preview-state-v2";
+const PREVIEW_STATE_DIRECTORY: &str = "phase3-tui-preview-state-v3";
 
 fn main() -> ExitCode {
     match run() {

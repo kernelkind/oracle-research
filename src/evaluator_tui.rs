@@ -1,18 +1,16 @@
 //! Full-screen terminal implementation of the evaluator protocol.
 
 use std::io::{self, Stdout};
-use std::time::{Duration, Instant};
+use std::time::Duration;
 
 use crossterm::cursor::{Hide, Show};
 use crossterm::event::{
     self, DisableBracketedPaste, EnableBracketedPaste, Event, KeyCode, KeyEvent, KeyEventKind,
-    KeyModifiers, KeyboardEnhancementFlags, PopKeyboardEnhancementFlags,
-    PushKeyboardEnhancementFlags,
+    KeyModifiers,
 };
 use crossterm::execute;
 use crossterm::terminal::{
     EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode,
-    supports_keyboard_enhancement,
 };
 use ratatui::Frame;
 use ratatui::Terminal;
@@ -32,125 +30,7 @@ const MIN_WIDTH: u16 = 72;
 const MIN_HEIGHT: u16 = 24;
 const MAX_CONTENT_WIDTH: u16 = 82;
 const PAGE_LINES: u16 = 10;
-// A press-only terminal cannot identify one isolated late autorepeat. This
-// short confirmation window rejects ordinary continuous repeat streams while
-// preserving the one-key evaluator flow.
-const PRESS_ONLY_DECISION_WINDOW: Duration = Duration::from_millis(150);
-const PRESS_ONLY_DRAIN_QUIET: Duration = Duration::from_millis(100);
 const RECOVERY_NOTE: &str = "This note may already have appeared before the previous session stopped.\n\nRate it from memory, or press R to explicitly redisplay it.";
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-enum KeyboardReporting {
-    PressRepeatRelease,
-    PressOnly,
-}
-
-fn keyboard_reporting(support: io::Result<bool>) -> KeyboardReporting {
-    match support {
-        Ok(true) => KeyboardReporting::PressRepeatRelease,
-        Ok(false) | Err(_) => KeyboardReporting::PressOnly,
-    }
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-enum PressOnlyDecisionOutcome {
-    Waiting,
-    Resolved(EvaluatorTuiAction),
-    Cancelled,
-}
-
-#[derive(Clone, Copy, Debug)]
-enum PressOnlyDecisionPhase {
-    Confirming { deadline: Instant },
-    Draining { quiet_deadline: Instant },
-}
-
-#[derive(Clone, Debug)]
-struct PressOnlyDecisionState {
-    code: KeyCode,
-    action: EvaluatorTuiAction,
-    phase: PressOnlyDecisionPhase,
-}
-
-impl PressOnlyDecisionState {
-    fn new(code: KeyCode, action: EvaluatorTuiAction, now: Instant) -> Self {
-        Self {
-            code,
-            action,
-            phase: PressOnlyDecisionPhase::Confirming {
-                deadline: now + PRESS_ONLY_DECISION_WINDOW,
-            },
-        }
-    }
-
-    fn wait_duration(&self, now: Instant) -> Duration {
-        self.deadline().saturating_duration_since(now)
-    }
-
-    fn on_timeout(&self, now: Instant) -> PressOnlyDecisionOutcome {
-        if now < self.deadline() {
-            return PressOnlyDecisionOutcome::Waiting;
-        }
-        match self.phase {
-            PressOnlyDecisionPhase::Confirming { .. } => {
-                PressOnlyDecisionOutcome::Resolved(self.action)
-            }
-            PressOnlyDecisionPhase::Draining { .. } => PressOnlyDecisionOutcome::Cancelled,
-        }
-    }
-
-    fn on_event(&mut self, event: &Event, now: Instant) -> PressOnlyDecisionOutcome {
-        if EvaluatorTuiModel::pre_screen_action(event.clone()) == EvaluatorTuiAction::Pause {
-            return PressOnlyDecisionOutcome::Resolved(match self.phase {
-                PressOnlyDecisionPhase::Confirming { .. } => pause_after(self.action),
-                PressOnlyDecisionPhase::Draining { .. } => EvaluatorTuiAction::Pause,
-            });
-        }
-
-        match self.phase {
-            PressOnlyDecisionPhase::Confirming { .. } => {
-                let Event::Key(key) = event else {
-                    return PressOnlyDecisionOutcome::Waiting;
-                };
-                if key.code != self.code {
-                    return PressOnlyDecisionOutcome::Waiting;
-                }
-                match key.kind {
-                    KeyEventKind::Release => PressOnlyDecisionOutcome::Resolved(self.action),
-                    KeyEventKind::Press | KeyEventKind::Repeat => {
-                        self.phase = PressOnlyDecisionPhase::Draining {
-                            quiet_deadline: now + PRESS_ONLY_DRAIN_QUIET,
-                        };
-                        PressOnlyDecisionOutcome::Waiting
-                    }
-                }
-            }
-            PressOnlyDecisionPhase::Draining { .. } => {
-                self.phase = PressOnlyDecisionPhase::Draining {
-                    quiet_deadline: now + PRESS_ONLY_DRAIN_QUIET,
-                };
-                PressOnlyDecisionOutcome::Waiting
-            }
-        }
-    }
-
-    fn deadline(&self) -> Instant {
-        match self.phase {
-            PressOnlyDecisionPhase::Confirming { deadline } => deadline,
-            PressOnlyDecisionPhase::Draining { quiet_deadline } => quiet_deadline,
-        }
-    }
-}
-
-fn pause_after(action: EvaluatorTuiAction) -> EvaluatorTuiAction {
-    match action {
-        EvaluatorTuiAction::Submit { decision, .. } => EvaluatorTuiAction::Submit {
-            decision,
-            pause_after: true,
-        },
-        action => action,
-    }
-}
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum EvaluatorTuiAction {
@@ -191,6 +71,7 @@ enum EvaluatorScreen {
 pub struct EvaluatorTuiModel {
     screen: EvaluatorScreen,
     scroll: u16,
+    selected_decision: Option<EvaluatorDecision>,
     pause_after_rating: bool,
     interaction_enabled: bool,
 }
@@ -243,6 +124,7 @@ impl EvaluatorTuiModel {
         Self {
             screen,
             scroll: 0,
+            selected_decision: None,
             pause_after_rating: false,
             interaction_enabled: true,
         }
@@ -275,10 +157,28 @@ impl EvaluatorTuiModel {
         if is_control_c(key) {
             return EvaluatorTuiAction::Pause;
         }
-        if has_command_modifier(key.modifiers) {
+        if !self.interaction_enabled {
             return EvaluatorTuiAction::None;
         }
-        if !self.interaction_enabled {
+
+        if matches!(
+            self.screen,
+            EvaluatorScreen::Rating { .. } | EvaluatorScreen::Recovery { .. }
+        ) && key.modifiers == KeyModifiers::CONTROL
+        {
+            match key.code {
+                KeyCode::Char('n' | 'N') => {
+                    self.move_rating_selection(1);
+                    return EvaluatorTuiAction::None;
+                }
+                KeyCode::Char('p' | 'P') => {
+                    self.move_rating_selection(-1);
+                    return EvaluatorTuiAction::None;
+                }
+                _ => {}
+            }
+        }
+        if has_command_modifier(key.modifiers) {
             return EvaluatorTuiAction::None;
         }
 
@@ -304,14 +204,22 @@ impl EvaluatorTuiModel {
 
     fn handle_rating_key(&mut self, key: KeyEvent, recovery: bool) -> EvaluatorTuiAction {
         match key.code {
-            KeyCode::Char(value @ '1'..='7') => EvaluatorTuiAction::Submit {
-                decision: EvaluatorDecision::Rating(value as u8 - b'0'),
-                pause_after: self.pause_after_rating,
-            },
-            KeyCode::Char('l' | 'L') => EvaluatorTuiAction::Submit {
-                decision: EvaluatorDecision::WrongLanguage,
-                pause_after: self.pause_after_rating,
-            },
+            KeyCode::Char(value @ '1'..='7') => {
+                self.selected_decision = Some(EvaluatorDecision::Rating(value as u8 - b'0'));
+                EvaluatorTuiAction::None
+            }
+            KeyCode::Char('l' | 'L') => {
+                self.selected_decision = Some(EvaluatorDecision::WrongLanguage);
+                EvaluatorTuiAction::None
+            }
+            KeyCode::Enter => self
+                .selected_decision
+                .map_or(EvaluatorTuiAction::None, |decision| {
+                    EvaluatorTuiAction::Submit {
+                        decision,
+                        pause_after: self.pause_after_rating,
+                    }
+                }),
             KeyCode::Char('p' | 'P') => {
                 self.pause_after_rating = true;
                 EvaluatorTuiAction::None
@@ -347,6 +255,19 @@ impl EvaluatorTuiModel {
         }
     }
 
+    fn move_rating_selection(&mut self, change: i8) {
+        let rating = match self.selected_decision {
+            Some(EvaluatorDecision::Rating(rating)) => {
+                u8::try_from(i16::from(rating) + i16::from(change))
+                    .unwrap_or(rating)
+                    .clamp(1, 7)
+            }
+            Some(EvaluatorDecision::WrongLanguage) | None if change > 0 => 1,
+            Some(EvaluatorDecision::WrongLanguage) | None => 7,
+        };
+        self.selected_decision = Some(EvaluatorDecision::Rating(rating));
+    }
+
     pub fn render(&mut self, frame: &mut Frame<'_>) {
         let area = frame.area();
         self.interaction_enabled = area.width >= MIN_WIDTH && area.height >= MIN_HEIGHT;
@@ -373,6 +294,7 @@ impl EvaluatorTuiModel {
                 *presentation_number,
                 *break_in,
                 &mut self.scroll,
+                self.selected_decision,
                 self.pause_after_rating,
                 false,
             ),
@@ -386,6 +308,7 @@ impl EvaluatorTuiModel {
                 *presentation_number,
                 *break_in,
                 &mut self.scroll,
+                self.selected_decision,
                 self.pause_after_rating,
                 true,
             ),
@@ -427,6 +350,7 @@ fn render_rating(
     presentation_number: usize,
     break_in: usize,
     scroll: &mut u16,
+    selected_decision: Option<EvaluatorDecision>,
     pause_after_rating: bool,
     recovery: bool,
 ) {
@@ -439,7 +363,7 @@ fn render_rating(
             Constraint::Length(2),
             Constraint::Length(7),
             Constraint::Length(3),
-            Constraint::Length(1),
+            Constraint::Length(2),
         ])
         .split(area);
 
@@ -481,14 +405,29 @@ fn render_rating(
     );
     let anchors = RATING_ANCHORS
         .iter()
-        .map(|anchor| {
+        .enumerate()
+        .map(|(index, anchor)| {
             let (key, description) = anchor
                 .split_once(' ')
                 .expect("a frozen rating anchor has a key and description");
+            let selected = selected_decision
+                == Some(EvaluatorDecision::Rating(
+                    u8::try_from(index + 1).expect("the rating scale has seven entries"),
+                ));
+            let key_style = if selected {
+                accent_style().bg(Color::DarkGray)
+            } else {
+                accent_style()
+            };
+            let answer_style = if selected {
+                Style::default().bg(Color::DarkGray)
+            } else {
+                Style::default()
+            };
             Line::from(vec![
-                Span::styled(key, accent_style()),
-                Span::raw(" "),
-                Span::raw(description),
+                Span::styled(key, key_style),
+                Span::styled(" ", answer_style),
+                Span::styled(description, answer_style),
             ])
         })
         .collect::<Vec<_>>();
@@ -501,7 +440,11 @@ fn render_rating(
     );
 
     frame.render_widget(
-        Paragraph::new(control_line(recovery, pause_after_rating)),
+        Paragraph::new(control_lines(
+            recovery,
+            selected_decision,
+            pause_after_rating,
+        )),
         rows[5],
     );
 }
@@ -545,12 +488,34 @@ fn border_style() -> Style {
     Style::default().fg(Color::DarkGray)
 }
 
-fn control_line(recovery: bool, pause_after_rating: bool) -> Line<'static> {
-    let mut controls = vec![
+fn control_lines(
+    recovery: bool,
+    selected_decision: Option<EvaluatorDecision>,
+    pause_after_rating: bool,
+) -> Vec<Line<'static>> {
+    let primary = Line::from(vec![
         Span::styled("[1–7]", accent_style()),
-        Span::styled(" Rate  ", secondary_style()),
-        Span::styled("[L]", accent_style()),
-        Span::styled(" Wrong language  ", secondary_style()),
+        Span::styled(" Select  ", secondary_style()),
+        Span::styled("[Ctrl-N/P]", accent_style()),
+        Span::styled(" Move  ", secondary_style()),
+        Span::styled("[Enter]", accent_style()),
+        Span::styled(" Confirm", secondary_style()),
+    ]);
+    let wrong_language_selected = selected_decision == Some(EvaluatorDecision::WrongLanguage);
+    let wrong_language_key_style = if wrong_language_selected {
+        accent_style().bg(Color::DarkGray)
+    } else {
+        accent_style()
+    };
+    let wrong_language_text_style = if wrong_language_selected {
+        Style::default().bg(Color::DarkGray)
+    } else {
+        secondary_style()
+    };
+    let mut controls = vec![
+        Span::styled("[L]", wrong_language_key_style),
+        Span::styled(" Wrong language", wrong_language_text_style),
+        Span::raw("  "),
     ];
     if recovery {
         controls.extend([
@@ -575,7 +540,7 @@ fn control_line(recovery: bool, pause_after_rating: bool) -> Line<'static> {
             Span::styled(" Scroll", secondary_style()),
         ]);
     }
-    Line::from(controls)
+    vec![primary, Line::from(controls)]
 }
 
 fn terminal_safe(content: &str) -> String {
@@ -607,50 +572,31 @@ fn has_command_modifier(modifiers: KeyModifiers) -> bool {
 pub struct FullScreenEvaluator {
     terminal: Terminal<CrosstermBackend<Stdout>>,
     pause_after_redisplay: bool,
-    keyboard_reporting: KeyboardReporting,
 }
 
 impl FullScreenEvaluator {
     pub fn new() -> io::Result<Self> {
         enable_raw_mode()?;
-        let keyboard_reporting = keyboard_reporting(supports_keyboard_enhancement());
         let mut stdout = io::stdout();
-        if keyboard_reporting == KeyboardReporting::PressRepeatRelease
-            && let Err(error) = execute!(
-                &mut stdout,
-                PushKeyboardEnhancementFlags(
-                    KeyboardEnhancementFlags::DISAMBIGUATE_ESCAPE_CODES
-                        | KeyboardEnhancementFlags::REPORT_ALL_KEYS_AS_ESCAPE_CODES
-                        | KeyboardEnhancementFlags::REPORT_EVENT_TYPES
-                )
-            )
-        {
-            // `execute!` may have written the push sequence before a later
-            // write or flush failed. Balance that possible mutation first.
-            let _ = execute!(&mut stdout, PopKeyboardEnhancementFlags);
-            let _ = disable_raw_mode();
-            return Err(error);
-        }
         if let Err(error) = execute!(
             &mut stdout,
             EnterAlternateScreen,
             EnableBracketedPaste,
             Hide
         ) {
-            restore_terminal(keyboard_reporting);
+            restore_terminal();
             return Err(error);
         }
         let terminal = match Terminal::new(CrosstermBackend::new(stdout)) {
             Ok(terminal) => terminal,
             Err(error) => {
-                restore_terminal(keyboard_reporting);
+                restore_terminal();
                 return Err(error);
             }
         };
         Ok(Self {
             terminal,
             pause_after_redisplay: false,
-            keyboard_reporting,
         })
     }
 
@@ -674,49 +620,9 @@ impl FullScreenEvaluator {
         loop {
             self.draw(&mut model)?;
             let input = event::read()?;
-            let decision_key = match &input {
-                Event::Key(key) => Some(key.code),
-                _ => None,
-            };
             let action = model.handle_event(input);
             if action != EvaluatorTuiAction::None {
-                if self.keyboard_reporting == KeyboardReporting::PressOnly
-                    && matches!(action, EvaluatorTuiAction::Submit { .. })
-                {
-                    if let Some(action) = self.confirm_press_only_decision(
-                        decision_key.expect("a submission always comes from a key event"),
-                        action,
-                    )? {
-                        return Ok(action);
-                    }
-                    continue;
-                }
                 return Ok(action);
-            }
-        }
-    }
-
-    fn confirm_press_only_decision(
-        &mut self,
-        code: KeyCode,
-        action: EvaluatorTuiAction,
-    ) -> io::Result<Option<EvaluatorTuiAction>> {
-        let mut state = PressOnlyDecisionState::new(code, action, Instant::now());
-        loop {
-            let now = Instant::now();
-            match state.on_timeout(now) {
-                PressOnlyDecisionOutcome::Resolved(action) => return Ok(Some(action)),
-                PressOnlyDecisionOutcome::Cancelled => return Ok(None),
-                PressOnlyDecisionOutcome::Waiting => {}
-            }
-            if !event::poll(state.wait_duration(now))? {
-                continue;
-            }
-            let input = event::read()?;
-            match state.on_event(&input, Instant::now()) {
-                PressOnlyDecisionOutcome::Resolved(action) => return Ok(Some(action)),
-                PressOnlyDecisionOutcome::Cancelled => return Ok(None),
-                PressOnlyDecisionOutcome::Waiting => {}
             }
         }
     }
@@ -800,14 +706,11 @@ impl EvaluatorUi for FullScreenEvaluator {
 impl Drop for FullScreenEvaluator {
     fn drop(&mut self) {
         let _ = self.terminal.show_cursor();
-        restore_terminal(self.keyboard_reporting);
+        restore_terminal();
     }
 }
 
-fn restore_terminal(keyboard_reporting: KeyboardReporting) {
-    if keyboard_reporting == KeyboardReporting::PressRepeatRelease {
-        let _ = execute!(io::stdout(), PopKeyboardEnhancementFlags);
-    }
+fn restore_terminal() {
     let _ = execute!(
         io::stdout(),
         DisableBracketedPaste,
@@ -815,105 +718,4 @@ fn restore_terminal(keyboard_reporting: KeyboardReporting) {
         LeaveAlternateScreen
     );
     let _ = disable_raw_mode();
-}
-
-#[test]
-fn terminals_without_event_type_reporting_use_the_press_only_path() {
-    assert_eq!(
-        keyboard_reporting(Ok(true)),
-        KeyboardReporting::PressRepeatRelease
-    );
-    assert_eq!(keyboard_reporting(Ok(false)), KeyboardReporting::PressOnly);
-    assert_eq!(
-        keyboard_reporting(Err(io::Error::other("terminal did not answer"))),
-        KeyboardReporting::PressOnly
-    );
-}
-
-#[test]
-fn press_only_input_does_not_apply_a_held_decision_to_the_next_note() {
-    let started_at = Instant::now();
-    let submit_seven = EvaluatorTuiAction::Submit {
-        decision: EvaluatorDecision::Rating(7),
-        pause_after: false,
-    };
-    let held_seven = Event::Key(KeyEvent::new_with_kind(
-        KeyCode::Char('7'),
-        KeyModifiers::NONE,
-        KeyEventKind::Press,
-    ));
-
-    let first_note = PressOnlyDecisionState::new(KeyCode::Char('7'), submit_seven, started_at);
-    assert_eq!(
-        first_note.on_timeout(started_at + PRESS_ONLY_DECISION_WINDOW),
-        PressOnlyDecisionOutcome::Resolved(submit_seven),
-        "a normal tap remains a one-key decision"
-    );
-
-    let mut next_note = PressOnlyDecisionState::new(
-        KeyCode::Char('7'),
-        submit_seven,
-        started_at + Duration::from_millis(500),
-    );
-    assert_eq!(
-        next_note.on_event(&held_seven, started_at + Duration::from_millis(550)),
-        PressOnlyDecisionOutcome::Waiting,
-        "the second press starts draining the repeating stream"
-    );
-    assert_eq!(
-        next_note.on_timeout(started_at + Duration::from_millis(550) + PRESS_ONLY_DRAIN_QUIET),
-        PressOnlyDecisionOutcome::Cancelled,
-        "the repeated candidate is cancelled after the stream becomes quiet"
-    );
-
-    let deliberate_same_rating = PressOnlyDecisionState::new(
-        KeyCode::Char('7'),
-        submit_seven,
-        started_at + Duration::from_millis(800),
-    );
-    assert_eq!(
-        deliberate_same_rating
-            .on_timeout(started_at + Duration::from_millis(800) + PRESS_ONLY_DECISION_WINDOW,),
-        PressOnlyDecisionOutcome::Resolved(submit_seven),
-        "a later deliberate press of the same rating still needs only one key"
-    );
-}
-
-#[test]
-fn control_c_during_press_only_confirmation_keeps_the_entered_rating() {
-    let started_at = Instant::now();
-    let submit = EvaluatorTuiAction::Submit {
-        decision: EvaluatorDecision::Rating(6),
-        pause_after: false,
-    };
-    let mut state = PressOnlyDecisionState::new(KeyCode::Char('6'), submit, started_at);
-    let control_c = Event::Key(KeyEvent::new_with_kind(
-        KeyCode::Char('c'),
-        KeyModifiers::CONTROL,
-        KeyEventKind::Press,
-    ));
-
-    assert_eq!(
-        state.on_event(&control_c, started_at + Duration::from_millis(10)),
-        PressOnlyDecisionOutcome::Resolved(EvaluatorTuiAction::Submit {
-            decision: EvaluatorDecision::Rating(6),
-            pause_after: true,
-        })
-    );
-
-    let held_six = Event::Key(KeyEvent::new_with_kind(
-        KeyCode::Char('6'),
-        KeyModifiers::NONE,
-        KeyEventKind::Press,
-    ));
-    let mut draining = PressOnlyDecisionState::new(KeyCode::Char('6'), submit, started_at);
-    assert_eq!(
-        draining.on_event(&held_six, started_at + Duration::from_millis(10)),
-        PressOnlyDecisionOutcome::Waiting
-    );
-    assert_eq!(
-        draining.on_event(&control_c, started_at + Duration::from_millis(20)),
-        PressOnlyDecisionOutcome::Resolved(EvaluatorTuiAction::Pause),
-        "Ctrl-C pauses without accepting a candidate already proven to be a repeat"
-    );
 }

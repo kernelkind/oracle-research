@@ -90,10 +90,16 @@ fn rating_screen_keeps_the_frozen_protocol_visible_neutral_and_blinded() {
     let language_rule_style = style_at(&buffer, "Use wrong_language only");
     assert_eq!(language_rule_style.fg, Some(Color::Reset));
     assert!(language_rule_style.add_modifier.contains(Modifier::DIM));
-    for key in ["[1–7]", "[L]", "[P]"] {
+    for key in ["[1–7]", "[Ctrl-N/P]", "[Enter]", "[L]", "[P]"] {
         assert_eq!(style_at(&buffer, key).fg, Some(Color::Cyan));
     }
-    for help in ["Rate", "Wrong language", "Pause after decision"] {
+    for help in [
+        "Select",
+        "Move",
+        "Confirm",
+        "Wrong language",
+        "Pause after decision",
+    ] {
         let style = style_at(&buffer, help);
         assert_eq!(style.fg, Some(Color::Reset));
         assert!(style.add_modifier.contains(Modifier::DIM));
@@ -103,6 +109,8 @@ fn rating_screen_keeps_the_frozen_protocol_visible_neutral_and_blinded() {
     assert!(!text.contains("Rating 143"));
     assert!(text.contains("break in 7"));
     assert!(text.contains("[1–7]"));
+    assert!(text.contains("[Ctrl-N/P]"));
+    assert!(text.contains("[Enter]"));
     assert!(text.contains("[L]"));
     assert!(text.contains("[P]"));
     let header_style = style_at(&buffer, "142 reviewed");
@@ -129,7 +137,130 @@ fn rating_screen_keeps_the_frozen_protocol_visible_neutral_and_blinded() {
 }
 
 #[test]
-fn only_fresh_single_key_ratings_and_wrong_language_are_accepted() {
+fn rating_selection_is_visible_revisable_and_requires_enter() {
+    let mut model = rating_model();
+    assert_eq!(
+        model.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
+        EvaluatorTuiAction::None,
+        "Enter cannot submit without an explicit selection"
+    );
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('2'), KeyEventKind::Press)),
+        EvaluatorTuiAction::None
+    );
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('6'), KeyEventKind::Press)),
+        EvaluatorTuiAction::None,
+        "a later rating replaces the unconfirmed selection"
+    );
+
+    let selected = render(&model, 120, 30);
+    assert_eq!(style_at(&selected, "[2]").bg, Some(Color::Reset));
+    assert_eq!(style_at(&selected, "[6]").bg, Some(Color::DarkGray));
+    assert_eq!(
+        style_at(&selected, "Glad I saw it").bg,
+        Some(Color::DarkGray),
+        "the complete selected answer must be highlighted"
+    );
+    assert!(buffer_text(&selected).contains("[Enter] Confirm"));
+    assert_eq!(
+        model.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
+        EvaluatorTuiAction::Submit {
+            decision: EvaluatorDecision::Rating(6),
+            pause_after: false,
+        }
+    );
+
+    let mut wrong_language = rating_model();
+    assert_eq!(
+        wrong_language.handle_event(key(KeyCode::Char('l'), KeyEventKind::Press)),
+        EvaluatorTuiAction::None
+    );
+    assert_eq!(
+        style_at(&render(&wrong_language, 120, 30), "[L]").bg,
+        Some(Color::DarkGray)
+    );
+    assert_eq!(
+        wrong_language.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
+        EvaluatorTuiAction::Submit {
+            decision: EvaluatorDecision::WrongLanguage,
+            pause_after: false,
+        }
+    );
+}
+
+#[test]
+fn control_n_and_p_navigate_ratings_without_wrapping() {
+    let mut from_start = rating_model();
+    assert_eq!(
+        from_start.handle_event(key_with_modifiers(
+            KeyCode::Char('n'),
+            KeyModifiers::CONTROL,
+            KeyEventKind::Press,
+        )),
+        EvaluatorTuiAction::None
+    );
+    assert_eq!(
+        from_start.handle_event(key_with_modifiers(
+            KeyCode::Char('p'),
+            KeyModifiers::CONTROL,
+            KeyEventKind::Press,
+        )),
+        EvaluatorTuiAction::None
+    );
+    assert_eq!(
+        from_start.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
+        EvaluatorTuiAction::Submit {
+            decision: EvaluatorDecision::Rating(1),
+            pause_after: false,
+        },
+        "Ctrl-N starts at 1 and Ctrl-P clamps there"
+    );
+
+    let mut from_end = rating_model();
+    for code in ['p', 'n', 'p'] {
+        assert_eq!(
+            from_end.handle_event(key_with_modifiers(
+                KeyCode::Char(code),
+                KeyModifiers::CONTROL,
+                KeyEventKind::Press,
+            )),
+            EvaluatorTuiAction::None
+        );
+    }
+    assert_eq!(
+        from_end.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
+        EvaluatorTuiAction::Submit {
+            decision: EvaluatorDecision::Rating(6),
+            pause_after: false,
+        },
+        "Ctrl-P starts at 7, Ctrl-N clamps there, and Ctrl-P then selects 6"
+    );
+
+    let mut from_wrong_language = rating_model();
+    assert_eq!(
+        from_wrong_language.handle_event(key(KeyCode::Char('l'), KeyEventKind::Press)),
+        EvaluatorTuiAction::None
+    );
+    assert_eq!(
+        from_wrong_language.handle_event(key_with_modifiers(
+            KeyCode::Char('n'),
+            KeyModifiers::CONTROL,
+            KeyEventKind::Press,
+        )),
+        EvaluatorTuiAction::None
+    );
+    assert_eq!(
+        from_wrong_language.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
+        EvaluatorTuiAction::Submit {
+            decision: EvaluatorDecision::Rating(1),
+            pause_after: false,
+        }
+    );
+}
+
+#[test]
+fn only_fresh_unmodified_keys_select_ratings_and_wrong_language() {
     for rating in 1..=7 {
         let mut model = rating_model();
         assert_eq!(
@@ -137,10 +268,14 @@ fn only_fresh_single_key_ratings_and_wrong_language_are_accepted() {
                 KeyCode::Char(char::from(b'0' + rating)),
                 KeyEventKind::Press
             )),
+            EvaluatorTuiAction::None
+        );
+        assert_eq!(
+            model.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
             EvaluatorTuiAction::Submit {
                 decision: EvaluatorDecision::Rating(rating),
                 pause_after: false,
-            }
+            },
         );
     }
 
@@ -148,10 +283,14 @@ fn only_fresh_single_key_ratings_and_wrong_language_are_accepted() {
         let mut model = rating_model();
         assert_eq!(
             model.handle_event(key(key_code, KeyEventKind::Press)),
+            EvaluatorTuiAction::None
+        );
+        assert_eq!(
+            model.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
             EvaluatorTuiAction::Submit {
                 decision: EvaluatorDecision::WrongLanguage,
                 pause_after: false,
-            }
+            },
         );
     }
 
@@ -166,7 +305,6 @@ fn only_fresh_single_key_ratings_and_wrong_language_are_accepted() {
     }
 
     for modifiers in [
-        KeyModifiers::CONTROL,
         KeyModifiers::ALT,
         KeyModifiers::SUPER,
         KeyModifiers::HYPER,
@@ -190,6 +328,23 @@ fn only_fresh_single_key_ratings_and_wrong_language_are_accepted() {
         }
     }
 
+    for code in [KeyCode::Char('7'), KeyCode::Char('l'), KeyCode::Char('L')] {
+        let mut model = rating_model();
+        assert_eq!(
+            model.handle_event(key_with_modifiers(
+                code,
+                KeyModifiers::CONTROL,
+                KeyEventKind::Press,
+            )),
+            EvaluatorTuiAction::None,
+            "Ctrl+{code:?} must not select a decision"
+        );
+        assert_eq!(
+            model.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
+            EvaluatorTuiAction::None
+        );
+    }
+
     let mut shifted = rating_model();
     assert_eq!(
         shifted.handle_event(key_with_modifiers(
@@ -197,6 +352,10 @@ fn only_fresh_single_key_ratings_and_wrong_language_are_accepted() {
             KeyModifiers::SHIFT,
             KeyEventKind::Press,
         )),
+        EvaluatorTuiAction::None
+    );
+    assert_eq!(
+        shifted.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
         EvaluatorTuiAction::Submit {
             decision: EvaluatorDecision::WrongLanguage,
             pause_after: false,
@@ -223,6 +382,10 @@ fn pause_is_armed_then_attached_to_the_next_accepted_decision() {
     );
     assert_eq!(
         model.handle_event(key(KeyCode::Char('6'), KeyEventKind::Press)),
+        EvaluatorTuiAction::None
+    );
+    assert_eq!(
+        model.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
         EvaluatorTuiAction::Submit {
             decision: EvaluatorDecision::Rating(6),
             pause_after: true,
@@ -245,6 +408,11 @@ fn armed_pause_can_be_cancelled_before_the_decision() {
     assert!(!armed_text.contains("[P] Pause after decision"));
 
     assert_eq!(
+        model.handle_event(key(KeyCode::Char('6'), KeyEventKind::Press)),
+        EvaluatorTuiAction::None
+    );
+
+    assert_eq!(
         model.handle_event(key(KeyCode::Esc, KeyEventKind::Press)),
         EvaluatorTuiAction::None
     );
@@ -254,7 +422,7 @@ fn armed_pause_can_be_cancelled_before_the_decision() {
     assert!(!disarmed_text.contains("[Esc] Cancel pause"));
 
     assert_eq!(
-        model.handle_event(key(KeyCode::Char('6'), KeyEventKind::Press)),
+        model.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
         EvaluatorTuiAction::Submit {
             decision: EvaluatorDecision::Rating(6),
             pause_after: false,
@@ -273,6 +441,10 @@ fn carried_armed_pause_can_be_cancelled_before_the_decision() {
     assert!(!model.pause_after_rating());
     assert_eq!(
         model.handle_event(key(KeyCode::Char('5'), KeyEventKind::Press)),
+        EvaluatorTuiAction::None
+    );
+    assert_eq!(
+        model.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
         EvaluatorTuiAction::Submit {
             decision: EvaluatorDecision::Rating(5),
             pause_after: false,
@@ -357,6 +529,10 @@ fn recovery_and_rest_accept_only_their_explicit_controls() {
     );
     assert_eq!(
         recovery.handle_event(key(KeyCode::Char('6'), KeyEventKind::Press)),
+        EvaluatorTuiAction::None
+    );
+    assert_eq!(
+        recovery.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
         EvaluatorTuiAction::Submit {
             decision: EvaluatorDecision::Rating(6),
             pause_after: false,
@@ -402,6 +578,10 @@ fn recovery_pause_state_survives_explicit_redisplay() {
         EvaluatorTuiModel::rating_with_pause("The redisplayed note.", 21, 20, pause_after);
     assert_eq!(
         redisplayed.handle_event(key(KeyCode::Char('6'), KeyEventKind::Press)),
+        EvaluatorTuiAction::None
+    );
+    assert_eq!(
+        redisplayed.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
         EvaluatorTuiAction::Submit {
             decision: EvaluatorDecision::Rating(6),
             pause_after: true,
@@ -424,6 +604,17 @@ fn pre_screen_input_preserves_only_a_fresh_control_c_pause() {
         key(KeyCode::Char('7'), KeyEventKind::Press),
         key(KeyCode::Char('l'), KeyEventKind::Press),
         key(KeyCode::Char('p'), KeyEventKind::Press),
+        key(KeyCode::Enter, KeyEventKind::Press),
+        key_with_modifiers(
+            KeyCode::Char('n'),
+            KeyModifiers::CONTROL,
+            KeyEventKind::Press,
+        ),
+        key_with_modifiers(
+            KeyCode::Char('p'),
+            KeyModifiers::CONTROL,
+            KeyEventKind::Press,
+        ),
         key_with_modifiers(
             KeyCode::Char('c'),
             KeyModifiers::CONTROL,
@@ -465,7 +656,14 @@ fn minimum_supported_preview_size_can_scroll_an_overflowing_note() {
         normalized_words(&before_text).contains(&normalized_words(WRONG_LANGUAGE_RULE)),
         "the complete wrong-language rule must fit at the minimum size"
     );
-    for control in ["[1–7]", "[L]", "[P] Pause after decision", "[↑/↓] Scroll"] {
+    for control in [
+        "[1–7] Select",
+        "[Ctrl-N/P] Move",
+        "[Enter] Confirm",
+        "[L] Wrong language",
+        "[P] Pause after decision",
+        "[↑/↓] Scroll",
+    ] {
         assert!(before_text.contains(control), "missing control `{control}`");
     }
 
@@ -494,6 +692,10 @@ fn a_terminal_too_small_to_show_the_protocol_refuses_decisions() {
     );
     assert_eq!(
         model.handle_event(key(KeyCode::Char('l'), KeyEventKind::Press)),
+        EvaluatorTuiAction::None
+    );
+    assert_eq!(
+        model.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
         EvaluatorTuiAction::None
     );
 }
