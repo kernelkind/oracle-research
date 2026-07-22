@@ -31,6 +31,7 @@ pub mod phase3_capacity_stress;
 pub mod phase3_cost_preflight;
 pub mod phase3_learning_launch;
 pub mod phase3_preview;
+pub mod phase3_seed_selection;
 pub mod pplx;
 pub mod preflight;
 pub mod quota_resolution;

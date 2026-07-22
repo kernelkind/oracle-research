@@ -126,6 +126,8 @@ struct StaticSessionBinding {
     rbf_scale_bits: [u64; 3],
     b16_bits: u64,
     seeds: Vec<PersistedSeed>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    initial_presentations: Vec<PersistedLedgerEntry>,
     scorer_policy: String,
     evaluator_protocol: EvaluatorProtocolBinding,
     shuffle_policy: String,
@@ -373,7 +375,7 @@ enum PersistedFailureTransition {
     SubmitRatings { round: usize },
 }
 
-#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 struct PersistedLedgerEntry {
     event_id: EventId,
     state: PriorPresentation,
@@ -493,6 +495,25 @@ where
     run_adaptive_learning(config, oracle, &mut evaluator)
 }
 
+/// Run Phase 3 with screening-only exact-ID no-repeat state.
+pub fn run_adaptive_learning_tui_with_initial_presentations<O>(
+    config: &AdaptiveLearningRunnerConfig,
+    initial_presentations: &BTreeMap<EventId, PriorPresentation>,
+    oracle: &mut O,
+) -> Result<AdaptiveLearningRunnerOutcome>
+where
+    O: CandidateOrderOracle,
+{
+    let mut evaluator = FullScreenEvaluator::new()
+        .map_err(|source| io_error("initialize", "<terminal>", source))?;
+    run_adaptive_learning_with_initial_presentations(
+        config,
+        initial_presentations,
+        oracle,
+        &mut evaluator,
+    )
+}
+
 fn legacy_order_rating_instructions() -> String {
     format!(
         "{}\n{LEGACY_ORDER_WRONG_LANGUAGE_RULE}\n",
@@ -555,7 +576,22 @@ where
     O: CandidateOrderOracle,
     U: EvaluatorUi,
 {
-    let fixed_binding = validate_config(config, oracle)?;
+    run_adaptive_learning_with_initial_presentations(config, &BTreeMap::new(), oracle, evaluator)
+}
+
+/// Run a session whose immutable initial no-repeat ledger came from seed
+/// screening. The entries affect only exact-ID presentation eligibility.
+pub fn run_adaptive_learning_with_initial_presentations<O, U>(
+    config: &AdaptiveLearningRunnerConfig,
+    initial_presentations: &BTreeMap<EventId, PriorPresentation>,
+    oracle: &mut O,
+    evaluator: &mut U,
+) -> Result<AdaptiveLearningRunnerOutcome>
+where
+    O: CandidateOrderOracle,
+    U: EvaluatorUi,
+{
+    let fixed_binding = validate_config(config, initial_presentations, oracle)?;
     let _session_lock = acquire_session_lock(&config.session_path)?;
     protect_existing_private_file(&config.session_path)?;
     protect_existing_private_file(&atomic_temporary_path(&config.session_path)?)?;
@@ -623,9 +659,14 @@ where
             session
         }
     };
-    let mut coordinator =
-        AdaptiveLearningCoordinator::new(&session_oracle, compact, rbf, config.b16.clone())
-            .map_err(adaptive_error)?;
+    let mut coordinator = AdaptiveLearningCoordinator::new_with_initial_presentations(
+        &session_oracle,
+        compact,
+        rbf,
+        config.b16.clone(),
+        initial_presentations.clone(),
+    )
+    .map_err(adaptive_error)?;
     if replay_session(&mut coordinator, &session, &mut session_oracle)?
         == SessionReplayOutcome::Failed
     {
@@ -849,6 +890,7 @@ where
 
 fn validate_config<O: CandidateOrderOracle>(
     config: &AdaptiveLearningRunnerConfig,
+    initial_presentations: &BTreeMap<EventId, PriorPresentation>,
     oracle: &O,
 ) -> Result<StaticSessionBinding> {
     if config.corpus_identity.trim().is_empty() {
@@ -871,6 +913,18 @@ fn validate_config<O: CandidateOrderOracle>(
         if seed.rating <= 4 || seed.rating > 7 {
             return Err(Error::ExperimentState(
                 "Phase 3 seeds must have positive 5–7 ratings".to_owned(),
+            ));
+        }
+    }
+    for (event_id, presentation) in initial_presentations {
+        if seed_ids.contains(event_id) {
+            return Err(Error::ExperimentState(
+                "an initial screening presentation overlaps positive seed evidence".to_owned(),
+            ));
+        }
+        if matches!(presentation, PriorPresentation::Rated { .. }) {
+            return Err(Error::ExperimentState(
+                "initial screening presentations must not contain rated evidence".to_owned(),
             ));
         }
     }
@@ -910,6 +964,13 @@ fn validate_config<O: CandidateOrderOracle>(
             .map(|seed| PersistedSeed {
                 event_id: seed.event_id,
                 rating: seed.rating,
+            })
+            .collect(),
+        initial_presentations: initial_presentations
+            .iter()
+            .map(|(event_id, state)| PersistedLedgerEntry {
+                event_id: *event_id,
+                state: state.clone(),
             })
             .collect(),
         scorer_policy: SCORER_POLICY.to_owned(),

@@ -1,5 +1,6 @@
 //! Serialized binding between verified public artifacts and one Phase 3 session.
 
+use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
@@ -7,6 +8,7 @@ use serde::{Deserialize, Serialize};
 use crate::adaptive_learning_runner::{AdaptiveLearningRunnerConfig, AdaptiveLearningSeed};
 use crate::candidate_order::B16Boundary;
 use crate::personalizer_learning::{CompactLearningSettings, RbfLearningSettings, ScaleLevel};
+use crate::quota_resolution::PriorPresentation;
 use crate::representation::EventId;
 use crate::representation_geometry::RepresentationGeometryArtifact;
 
@@ -19,6 +21,36 @@ pub const PHASE3_RUNNER_BINDING_SCHEMA_VERSION: u32 = 1;
 pub struct Phase3SeedBinding {
     event_id: String,
     rating: u8,
+}
+
+/// One screening-only event retained solely in the exact-ID no-repeat ledger.
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct Phase3InitialPresentationBinding {
+    event_id: String,
+    state: PriorPresentation,
+}
+
+impl Phase3InitialPresentationBinding {
+    pub fn new(event_id: impl Into<String>, state: PriorPresentation) -> Result<Self, String> {
+        if matches!(state, PriorPresentation::Rated { .. }) {
+            return Err("initial screening presentation cannot contain rated evidence".to_owned());
+        }
+        let binding = Self {
+            event_id: event_id.into(),
+            state,
+        };
+        binding.event_id()?;
+        Ok(binding)
+    }
+
+    pub fn event_id(&self) -> Result<EventId, String> {
+        parse_event_id(&self.event_id)
+    }
+
+    pub fn state(&self) -> &PriorPresentation {
+        &self.state
+    }
 }
 
 impl Phase3SeedBinding {
@@ -62,6 +94,8 @@ pub struct Phase3RunnerBinding {
     s64_bits: String,
     s256_bits: String,
     seeds: Vec<Phase3SeedBinding>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    initial_presentations: Vec<Phase3InitialPresentationBinding>,
 }
 
 impl Phase3RunnerBinding {
@@ -72,6 +106,22 @@ impl Phase3RunnerBinding {
         corpus_path: PathBuf,
         session_path: PathBuf,
         seeds: Vec<Phase3SeedBinding>,
+    ) -> Self {
+        Self::from_geometry_with_initial_presentations(
+            geometry,
+            corpus_path,
+            session_path,
+            seeds,
+            Vec::new(),
+        )
+    }
+
+    pub fn from_geometry_with_initial_presentations(
+        geometry: &RepresentationGeometryArtifact,
+        corpus_path: PathBuf,
+        session_path: PathBuf,
+        seeds: Vec<Phase3SeedBinding>,
+        initial_presentations: Vec<Phase3InitialPresentationBinding>,
     ) -> Self {
         let manifest = geometry.manifest();
         let values = &manifest.values;
@@ -90,6 +140,7 @@ impl Phase3RunnerBinding {
             s64_bits: values.s64.bits.clone(),
             s256_bits: values.s256.bits.clone(),
             seeds,
+            initial_presentations,
         }
     }
 
@@ -119,6 +170,31 @@ impl Phase3RunnerBinding {
 
     pub fn seeds(&self) -> &[Phase3SeedBinding] {
         &self.seeds
+    }
+
+    pub fn initial_presentations(&self) -> Result<BTreeMap<EventId, PriorPresentation>, String> {
+        let seed_ids = self
+            .seeds
+            .iter()
+            .map(Phase3SeedBinding::event_id)
+            .collect::<Result<std::collections::BTreeSet<_>, _>>()?;
+        let mut presentations = BTreeMap::new();
+        for binding in &self.initial_presentations {
+            let event_id = binding.event_id()?;
+            if seed_ids.contains(&event_id) {
+                return Err("initial screening presentation overlaps a positive seed".to_owned());
+            }
+            if matches!(binding.state, PriorPresentation::Rated { .. }) {
+                return Err("initial screening presentation contains rated evidence".to_owned());
+            }
+            if presentations
+                .insert(event_id, binding.state.clone())
+                .is_some()
+            {
+                return Err("initial screening presentation IDs must be unique".to_owned());
+            }
+        }
+        Ok(presentations)
     }
 
     /// Reconstruct the runner at the paths serialized in this binding.
@@ -164,6 +240,7 @@ impl Phase3RunnerBinding {
                     .map_err(|error| error.to_string())
             })
             .collect::<Result<Vec<_>, _>>()?;
+        self.initial_presentations()?;
         Ok(AdaptiveLearningRunnerConfig {
             corpus_path: corpus_path.as_ref().to_owned(),
             corpus_identity: self.corpus_identity.clone(),

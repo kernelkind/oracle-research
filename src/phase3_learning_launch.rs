@@ -13,23 +13,30 @@ use nostrdb::Transaction;
 use serde::{Deserialize, Serialize};
 
 use crate::adaptive_learning_runner::{
-    AdaptiveLearningRunnerOutcome, run_adaptive_learning, run_adaptive_learning_tui,
+    AdaptiveLearningRunnerOutcome, run_adaptive_learning_tui_with_initial_presentations,
+    run_adaptive_learning_with_initial_presentations,
 };
 use crate::artifact::hash_file;
 use crate::evaluator::EvaluatorUi;
 use crate::fp32_oracle::Fp32OfflineOracle;
-use crate::phase3_binding::{Phase3RunnerBinding, Phase3SeedBinding};
+use crate::phase3_binding::{
+    Phase3InitialPresentationBinding, Phase3RunnerBinding, Phase3SeedBinding,
+};
 use crate::phase3_cost_preflight::{
     create_private_preflight_directory, immutable_content_tree_identity,
     immutable_tree_metadata_fingerprint, prepare_disposable_representation_view,
     write_private_json_atomic,
+};
+use crate::phase3_seed_selection::{
+    Phase3SeedSelectionHandoff, read_phase3_seed_selection_handoff,
 };
 use crate::representation::{RepresentationEncoder, verify_representation};
 use crate::representation_geometry::open_representation_geometry;
 use crate::snapshot::{Error, Result, Validation, ndb_error, open_existing_ndb};
 
 const GIB: u64 = 1024 * 1024 * 1024;
-const CONFIG_SCHEMA_VERSION: u32 = 1;
+const LEGACY_CONFIG_SCHEMA_VERSION: u32 = 1;
+const CONFIG_SCHEMA_VERSION: u32 = 2;
 const INITIALIZATION_SCHEMA_VERSION: u32 = 1;
 const INITIALIZATION_FILE: &str = "initialization.json";
 const FROZEN_CONFIG_FILE: &str = "frozen-config.json";
@@ -39,6 +46,7 @@ const ORDERED_EVENT_IDS_FILE: &str = "ordered-event-ids.bin";
 const REPRESENTATION_DIRECTORY: &str = "representation";
 const SESSION_FILE: &str = "phase3-session.json";
 const LAUNCH_RECEIPT_FILE: &str = "launch.json";
+const SEED_SELECTION_HANDOFF_FILE: &str = "seed-selection-handoff.json";
 const LAUNCH_SCHEMA_VERSION: u32 = 1;
 
 pub const HUMAN_LEARNING_PURPOSE: &str = "human-phase3-learning-v1";
@@ -64,7 +72,10 @@ pub struct Phase3LearningLaunchConfig {
     expected_representation_version: String,
     expected_geometry_version: String,
     host_memory_reserve_bytes: u64,
+    #[serde(default)]
     seeds: Vec<Phase3SeedBinding>,
+    #[serde(default)]
+    seed_selection_handoff_path: Option<PathBuf>,
 }
 
 impl Phase3LearningLaunchConfig {
@@ -120,8 +131,15 @@ impl Phase3LearningLaunchConfig {
         &self.seeds
     }
 
+    pub fn seed_selection_handoff_path(&self) -> Option<&Path> {
+        self.seed_selection_handoff_path.as_deref()
+    }
+
     fn validate(&self) -> Result<()> {
-        if self.schema_version != CONFIG_SCHEMA_VERSION {
+        if !matches!(
+            self.schema_version,
+            LEGACY_CONFIG_SCHEMA_VERSION | CONFIG_SCHEMA_VERSION
+        ) {
             return Err(Error::ExperimentState(
                 "Phase 3 learning config has the wrong schema".to_owned(),
             ));
@@ -153,6 +171,9 @@ impl Phase3LearningLaunchConfig {
         ] {
             require_absolute_normalized(path, label)?;
         }
+        if let Some(path) = &self.seed_selection_handoff_path {
+            require_absolute_normalized(path, "seed-selection handoff")?;
+        }
         for source in [
             &self.source_corpus_data_path,
             &self.source_ordered_event_ids_path,
@@ -168,6 +189,15 @@ impl Phase3LearningLaunchConfig {
                 )));
             }
         }
+        if let Some(source) = &self.seed_selection_handoff_path
+            && (source.starts_with(&self.workspace_path) || self.workspace_path.starts_with(source))
+        {
+            return Err(Error::ExperimentState(format!(
+                "Phase 3 seed-selection handoff `{}` overlaps private workspace `{}`",
+                source.display(),
+                self.workspace_path.display()
+            )));
+        }
         validate_container_name(&self.container_name)?;
         require_image_id(&self.controller_image)?;
         require_sha256(
@@ -175,28 +205,46 @@ impl Phase3LearningLaunchConfig {
             "expected representation version",
         )?;
         require_sha256(&self.expected_geometry_version, "expected geometry version")?;
-        if self.seeds.len() != 5 {
+        if self.schema_version == LEGACY_CONFIG_SCHEMA_VERSION
+            && self.seed_selection_handoff_path.is_some()
+        {
+            return Err(Error::ExperimentState(
+                "legacy Phase 3 configs cannot reference a seed-selection handoff".to_owned(),
+            ));
+        }
+        if self.schema_version == CONFIG_SCHEMA_VERSION
+            && (self.seed_selection_handoff_path.is_none() || !self.seeds.is_empty())
+        {
+            return Err(Error::ExperimentState(
+                "Phase 3 schema 2 requires one seed-selection handoff and no duplicated inline seeds"
+                    .to_owned(),
+            ));
+        }
+        if self.schema_version == LEGACY_CONFIG_SCHEMA_VERSION && self.seeds.len() != 5 {
             return Err(Error::ExperimentState(
                 "Phase 3 requires exactly five positive seeds".to_owned(),
             ));
         }
-        let mut event_ids = self
-            .seeds
-            .iter()
-            .map(Phase3SeedBinding::event_id)
-            .collect::<std::result::Result<Vec<_>, _>>()
-            .map_err(Error::ExperimentState)?;
-        event_ids.sort_unstable();
-        event_ids.dedup();
-        if event_ids.len() != 5
-            || self
+        if self.schema_version == LEGACY_CONFIG_SCHEMA_VERSION {
+            let mut event_ids = self
                 .seeds
                 .iter()
-                .any(|seed| !(5..=7).contains(&seed.rating()))
-        {
-            return Err(Error::ExperimentState(
-                "Phase 3 seeds must be five distinct positive notes rated 5 through 7".to_owned(),
-            ));
+                .map(Phase3SeedBinding::event_id)
+                .collect::<std::result::Result<Vec<_>, _>>()
+                .map_err(Error::ExperimentState)?;
+            event_ids.sort_unstable();
+            event_ids.dedup();
+            if event_ids.len() != 5
+                || self
+                    .seeds
+                    .iter()
+                    .any(|seed| !(5..=7).contains(&seed.rating()))
+            {
+                return Err(Error::ExperimentState(
+                    "Phase 3 seeds must be five distinct positive notes rated 5 through 7"
+                        .to_owned(),
+                ));
+            }
         }
         Ok(())
     }
@@ -225,6 +273,8 @@ struct LearningInitializationReceipt {
     source_representation_metadata_sha256: String,
     source_geometry_content_sha256: String,
     source_model_metadata_sha256: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    seed_selection_handoff_sha256: Option<String>,
     created_unix_time_ns: u128,
 }
 
@@ -240,6 +290,7 @@ pub struct PreparedLearningWorkspace {
     session_path: PathBuf,
     oracle_cache_path: PathBuf,
     launch_receipt_path: PathBuf,
+    seed_selection_handoff_path: PathBuf,
     created: bool,
 }
 
@@ -286,6 +337,10 @@ impl PreparedLearningWorkspace {
 
     pub fn launch_receipt_path(&self) -> &Path {
         &self.launch_receipt_path
+    }
+
+    pub fn seed_selection_handoff_path(&self) -> &Path {
+        &self.seed_selection_handoff_path
     }
 }
 
@@ -457,13 +512,21 @@ where
     require_bound_learning_run(prepared, config)?;
     let binding: Phase3RunnerBinding = read_json(&prepared.runner_binding_path)?;
     let runner_config = binding.runner_config().map_err(Error::ExperimentState)?;
+    let initial_presentations = binding
+        .initial_presentations()
+        .map_err(Error::ExperimentState)?;
     let mut oracle = Fp32OfflineOracle::open(
         &prepared.corpus_path,
         &prepared.ordered_event_ids_path,
         &prepared.representation_path,
         encoder,
     )?;
-    run_adaptive_learning(&runner_config, &mut oracle, evaluator)
+    run_adaptive_learning_with_initial_presentations(
+        &runner_config,
+        &initial_presentations,
+        &mut oracle,
+        evaluator,
+    )
 }
 
 /// Real full-screen entrypoint over the same verified production path.
@@ -478,13 +541,20 @@ where
     require_bound_learning_run(prepared, config)?;
     let binding: Phase3RunnerBinding = read_json(&prepared.runner_binding_path)?;
     let runner_config = binding.runner_config().map_err(Error::ExperimentState)?;
+    let initial_presentations = binding
+        .initial_presentations()
+        .map_err(Error::ExperimentState)?;
     let mut oracle = Fp32OfflineOracle::open(
         &prepared.corpus_path,
         &prepared.ordered_event_ids_path,
         &prepared.representation_path,
         encoder,
     )?;
-    run_adaptive_learning_tui(&runner_config, &mut oracle)
+    run_adaptive_learning_tui_with_initial_presentations(
+        &runner_config,
+        &initial_presentations,
+        &mut oracle,
+    )
 }
 
 fn require_bound_learning_run(
@@ -547,6 +617,12 @@ fn initialize_learning_workspace(
         canonical_exact(&config.source_representation_path, "source representation")?;
     let source_geometry = canonical_exact(&config.source_geometry_path, "source geometry")?;
     let model_bundle = canonical_exact(&config.model_bundle_path, "model bundle")?;
+    let source_seed_handoff = config
+        .seed_selection_handoff_path
+        .as_deref()
+        .map(|path| canonical_exact(path, "seed-selection handoff"))
+        .transpose()?;
+    let source_seed_handoff_before = source_seed_handoff.as_deref().map(hash_file).transpose()?;
     let source_representation_before = immutable_tree_metadata_fingerprint(&source_representation)?;
     let source_geometry_before = immutable_content_tree_identity(&source_geometry)?;
     let source_model_before = immutable_tree_metadata_fingerprint(&model_bundle)?;
@@ -569,6 +645,9 @@ fn initialize_learning_workspace(
         create_owner_only_directory(&staged.corpus_path)?;
         copy_private_file(&source_corpus, &staged.corpus_path.join("data.mdb"))?;
         copy_private_file(&source_ordered, &staged.ordered_event_ids_path)?;
+        if let Some(source) = &source_seed_handoff {
+            copy_private_file(source, &staged.seed_selection_handoff_path)?;
+        }
         prepare_disposable_representation_view(
             &source_representation,
             &staged.representation_path,
@@ -597,18 +676,20 @@ fn initialize_learning_workspace(
                 "prepared geometry has the wrong version".to_owned(),
             ));
         }
-        require_seed_membership(config, &staged, &store)?;
+        let (seeds, initial_presentations) = seed_material(config, &staged, &store)?;
+        require_seed_membership(&seeds, &staged, &store)?;
         let model_lock = model_bundle.join("model-lock.json");
         if hash_file(&model_lock)? != store.manifest().descriptor.model_lock_sha256 {
             return Err(Error::ExperimentState(
                 "model bundle does not match the prepared representation".to_owned(),
             ));
         }
-        let binding = Phase3RunnerBinding::from_geometry(
+        let binding = Phase3RunnerBinding::from_geometry_with_initial_presentations(
             &geometry,
             final_layout.corpus_path.clone(),
             final_layout.session_path.clone(),
-            config.seeds.clone(),
+            seeds,
+            initial_presentations,
         );
         write_private_json_atomic(&staged.runner_binding_path, &binding)?;
         copy_private_file(config_path, &staged.frozen_config_path)?;
@@ -616,9 +697,12 @@ fn initialize_learning_workspace(
             immutable_tree_metadata_fingerprint(&source_representation)?;
         let source_geometry_after = immutable_content_tree_identity(&source_geometry)?;
         let source_model_after = immutable_tree_metadata_fingerprint(&model_bundle)?;
+        let source_seed_handoff_after =
+            source_seed_handoff.as_deref().map(hash_file).transpose()?;
         if source_representation_after != source_representation_before
             || source_geometry_after != source_geometry_before
             || source_model_after != source_model_before
+            || source_seed_handoff_after != source_seed_handoff_before
         {
             return Err(Error::Invariant(
                 "a Phase 3 source artifact changed during initialization".to_owned(),
@@ -645,6 +729,7 @@ fn initialize_learning_workspace(
             source_representation_metadata_sha256: source_representation_before,
             source_geometry_content_sha256: source_geometry_before,
             source_model_metadata_sha256: source_model_before,
+            seed_selection_handoff_sha256: source_seed_handoff_before,
             created_unix_time_ns: unix_time_ns()?,
         };
         write_private_json_atomic(stage.join(INITIALIZATION_FILE), &receipt)?;
@@ -725,6 +810,26 @@ fn verify_initialized_workspace(
             )));
         }
     }
+    match &receipt.seed_selection_handoff_sha256 {
+        Some(expected) => {
+            require_private_file(
+                &layout.seed_selection_handoff_path,
+                "Phase 3 seed-selection handoff",
+            )?;
+            if hash_file(&layout.seed_selection_handoff_path)? != *expected {
+                return Err(Error::ExperimentState(
+                    "Phase 3 seed-selection handoff does not match its initialization receipt"
+                        .to_owned(),
+                ));
+            }
+        }
+        None if layout.seed_selection_handoff_path.exists() => {
+            return Err(Error::ExperimentState(
+                "legacy Phase 3 workspace contains an unexpected seed-selection handoff".to_owned(),
+            ));
+        }
+        None => {}
+    }
     require_private_file(&layout.frozen_config_path, "Phase 3 frozen config")?;
     require_private_file(&layout.runner_binding_path, "Phase 3 runner binding")?;
     let frozen: Phase3LearningLaunchConfig = read_json(&layout.frozen_config_path)?;
@@ -763,11 +868,25 @@ fn verify_initialized_workspace(
         ));
     }
     let binding: Phase3RunnerBinding = read_json(&layout.runner_binding_path)?;
+    let (seeds, initial_presentations) = seed_material(config, &layout, &store)?;
+    let expected_initial = initial_presentations
+        .iter()
+        .map(|presentation| {
+            Ok((
+                presentation.event_id().map_err(Error::ExperimentState)?,
+                presentation.state().clone(),
+            ))
+        })
+        .collect::<Result<std::collections::BTreeMap<_, _>>>()?;
     if binding.corpus_path() != layout.corpus_path
         || binding.session_path() != layout.session_path
         || binding.representation_version() != receipt.representation_version
         || binding.geometry_version() != receipt.geometry_version
-        || binding.seeds() != config.seeds
+        || binding.seeds() != seeds
+        || binding
+            .initial_presentations()
+            .map_err(Error::ExperimentState)?
+            != expected_initial
     {
         return Err(Error::ExperimentState(
             "Phase 3 runner binding does not match the initialized human run".to_owned(),
@@ -797,18 +916,18 @@ fn verify_initialized_workspace(
             "model bundle does not match the prepared representation".to_owned(),
         ));
     }
-    require_seed_membership(config, &layout, &store)
+    require_seed_membership(&seeds, &layout, &store)
 }
 
 fn require_seed_membership(
-    config: &Phase3LearningLaunchConfig,
+    seeds: &[Phase3SeedBinding],
     layout: &PreparedLearningWorkspace,
     store: &crate::representation::RepresentationStore,
 ) -> Result<()> {
     let corpus = open_existing_ndb(&layout.corpus_path, Validation::TrustedSource)?;
     let transaction = Transaction::new(&corpus)
         .map_err(|source| ndb_error("open transaction on", &layout.corpus_path, source))?;
-    for seed in &config.seeds {
+    for seed in seeds {
         let event_id = seed.event_id().map_err(Error::ExperimentState)?;
         if store.row_for_event(event_id)?.is_none() {
             return Err(Error::ExperimentState(format!(
@@ -828,6 +947,41 @@ fn require_seed_membership(
     Ok(())
 }
 
+fn seed_material(
+    config: &Phase3LearningLaunchConfig,
+    layout: &PreparedLearningWorkspace,
+    store: &crate::representation::RepresentationStore,
+) -> Result<(
+    Vec<Phase3SeedBinding>,
+    Vec<Phase3InitialPresentationBinding>,
+)> {
+    if config.schema_version == LEGACY_CONFIG_SCHEMA_VERSION {
+        return Ok((config.seeds.clone(), Vec::new()));
+    }
+    let handoff: Phase3SeedSelectionHandoff =
+        read_phase3_seed_selection_handoff(&layout.seed_selection_handoff_path)?;
+    let expected_corpus_identity = format!("sha256:{}", store.manifest().corpus_data_sha256);
+    if handoff.corpus_identity() != expected_corpus_identity
+        || handoff.representation_version() != store.representation_version()
+        || handoff.candidate_depth() != crate::candidate_order::CANDIDATE_DEPTH
+    {
+        return Err(Error::ExperimentState(
+            "seed-selection handoff does not match the prepared Phase 3 corpus and representation"
+                .to_owned(),
+        ));
+    }
+    let initial_presentations = handoff
+        .initial_presentations()
+        .map_err(Error::ExperimentState)?
+        .into_iter()
+        .map(|(event_id, state)| {
+            Phase3InitialPresentationBinding::new(event_id_hex(event_id), state)
+                .map_err(Error::ExperimentState)
+        })
+        .collect::<Result<Vec<_>>>()?;
+    Ok((handoff.seeds().to_vec(), initial_presentations))
+}
+
 fn prepared_layout(workspace_path: PathBuf, created: bool) -> PreparedLearningWorkspace {
     let corpus_path = workspace_path.join(CORPUS_DIRECTORY);
     let ordered_event_ids_path = workspace_path.join(ORDERED_EVENT_IDS_FILE);
@@ -837,6 +991,7 @@ fn prepared_layout(workspace_path: PathBuf, created: bool) -> PreparedLearningWo
     let session_path = workspace_path.join(SESSION_FILE);
     let oracle_cache_path = workspace_path.join(format!(".{SESSION_FILE}.oracle-responses"));
     let launch_receipt_path = workspace_path.join(LAUNCH_RECEIPT_FILE);
+    let seed_selection_handoff_path = workspace_path.join(SEED_SELECTION_HANDOFF_FILE);
     PreparedLearningWorkspace {
         workspace_path,
         corpus_path,
@@ -847,8 +1002,13 @@ fn prepared_layout(workspace_path: PathBuf, created: bool) -> PreparedLearningWo
         session_path,
         oracle_cache_path,
         launch_receipt_path,
+        seed_selection_handoff_path,
         created,
     }
+}
+
+fn event_id_hex(event_id: crate::representation::EventId) -> String {
+    event_id.iter().map(|byte| format!("{byte:02x}")).collect()
 }
 
 pub fn read_learning_launch_config(path: impl AsRef<Path>) -> Result<Phase3LearningLaunchConfig> {

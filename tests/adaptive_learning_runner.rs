@@ -7,6 +7,7 @@ use nostrdb::{Config, Filter, Ndb, NoteBuilder, Transaction};
 use oracle_mvp::adaptive_learning_runner::{
     AdaptiveLearningRunnerConfig, AdaptiveLearningRunnerOutcome, AdaptiveLearningSeed,
     run_adaptive_learning as run_adaptive_learning_with_ui,
+    run_adaptive_learning_with_initial_presentations,
 };
 use oracle_mvp::candidate_order::{B16Boundary, CandidateOrderOracle};
 use oracle_mvp::evaluator::{
@@ -24,6 +25,7 @@ use oracle_mvp::phase3_capacity_stress::{
 use oracle_mvp::phase3_cost_preflight::{
     replay_first_round_cost_preflight, run_first_round_cost_preflight,
 };
+use oracle_mvp::quota_resolution::PriorPresentation;
 use oracle_mvp::representation::EventId;
 use oracle_mvp::snapshot::{Error as SnapshotError, Result as SnapshotResult};
 
@@ -42,6 +44,46 @@ const APPROVED_RATING_ANCHORS: [&str; 7] = [
     "[7] Exceptionally glad I saw it",
 ];
 const APPROVED_LANGUAGE_RULE: &str = "Use wrong_language only when the note is clearly primarily non-English. Mixed-language, code-heavy, and ambiguous notes remain eligible and must be rated.";
+
+#[test]
+fn runner_binds_screening_no_repeat_state_without_adding_seed_evidence() {
+    let fixture = RunnerFixture::new();
+    let config = fixture.config(fixture.temp.path().join("screening-ledger-session.json"));
+    let screened = BTreeMap::from([
+        (fixture.event_ids[5], PriorPresentation::EligibleUnrated),
+        (fixture.event_ids[6], PriorPresentation::WrongLanguage),
+    ]);
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let mut evaluator = RecordingEvaluator::default();
+
+    let outcome = run_adaptive_learning_with_initial_presentations(
+        &config,
+        &screened,
+        &mut oracle,
+        &mut evaluator,
+    )
+    .expect("freeze first learning presentation with screening exclusions");
+
+    assert!(matches!(outcome, AdaptiveLearningRunnerOutcome::Paused));
+    assert_eq!(evaluator.presented_notes.len(), 1);
+    assert_ne!(evaluator.presented_notes[0], fixture.contents[5]);
+    assert_ne!(evaluator.presented_notes[0], fixture.contents[6]);
+    let session = read_session(&config.session_path);
+    assert_eq!(
+        session["binding"]["fixed"]["seeds"]
+            .as_array()
+            .unwrap()
+            .len(),
+        5
+    );
+    assert_eq!(
+        session["binding"]["fixed"]["initial_presentations"]
+            .as_array()
+            .unwrap()
+            .len(),
+        2
+    );
+}
 
 #[test]
 fn cost_preflight_freezes_the_real_first_wave_without_accepting_a_decision() {

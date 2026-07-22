@@ -293,6 +293,40 @@ fn coordinator() -> CoordinatorFixture<RoundOracle> {
     .expect("adaptive-learning coordinator")
 }
 
+#[test]
+fn screening_presentations_are_no_repeat_state_without_becoming_evidence_or_language_counts() {
+    let oracle = RoundOracle::new();
+    let (compact, rbf) = controllers();
+    let mut initial_presentations = BTreeMap::new();
+    initial_presentations.insert(id(1_000), PriorPresentation::EligibleUnrated);
+    initial_presentations.insert(id(1_001), PriorPresentation::WrongLanguage);
+    let coordinator = AdaptiveLearningCoordinator::new_with_initial_presentations(
+        &oracle,
+        compact,
+        rbf,
+        B16Boundary::new(VERSION, 0.0).expect("B16"),
+        initial_presentations,
+    )
+    .expect("coordinator with screening ledger");
+    let mut fixture = CoordinatorFixture {
+        coordinator,
+        oracle,
+    };
+
+    assert_eq!(fixture.compact_controller().evidence_count(), 5);
+    assert_eq!(fixture.rbf_controller().evidence_count(), 5);
+    assert_eq!(fixture.presentation_ledger().len(), 7);
+    assert_eq!(fixture.language_totals().unique_presentations(), 0);
+
+    fixture.start_next_round().expect("start first round");
+    let presented = fixture
+        .pending_language_wave()
+        .expect("first presentation wave")
+        .event_ids();
+    assert!(!presented.contains(&id(1_000)));
+    assert!(!presented.contains(&id(1_001)));
+}
+
 fn eligible(event_ids: &[EventId]) -> Vec<EventLanguageOutcome> {
     event_ids
         .iter()

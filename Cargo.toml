@@ -28,6 +28,10 @@ name = "phase3-learning"
 path = "src/bin/phase3_learning.rs"
 
 [[bin]]
+name = "phase3-seed-selection"
+path = "src/bin/phase3_seed_selection.rs"
+
+[[bin]]
 name = "representation-geometry"
 path = "src/bin/representation_geometry.rs"
 

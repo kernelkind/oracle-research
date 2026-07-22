@@ -8,7 +8,7 @@ WORKDIR /source
 COPY Cargo.toml Cargo.lock ./
 COPY models ./models
 COPY src ./src
-RUN cargo build --locked --release --bin phase3-learning
+RUN cargo build --locked --release --bin phase3-learning --bin phase3-seed-selection
 
 FROM docker.io/kernelkind/oracle-mvp@sha256:96a60fd4caf87afadf0546636af6eeefee72d327dc95dde1714f86ea14fb435a
 
@@ -17,5 +17,6 @@ RUN test -n "$ORACLE_MVP_SOURCE_COMMIT"
 LABEL org.opencontainers.image.revision="$ORACLE_MVP_SOURCE_COMMIT"
 
 COPY --from=rust-builder /source/target/release/phase3-learning /usr/local/bin/phase3-learning
+COPY --from=rust-builder /source/target/release/phase3-seed-selection /usr/local/bin/phase3-seed-selection
 
 ENTRYPOINT ["/usr/local/bin/phase3-learning"]

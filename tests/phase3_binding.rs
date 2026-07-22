@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use oracle_mvp::phase3_binding::Phase3RunnerBinding;
+use oracle_mvp::quota_resolution::PriorPresentation;
 
 const LEGACY_BINDING_JSON: &str = r#"{
   "schema_version": 1,
@@ -92,5 +93,34 @@ fn shared_binding_can_relocate_only_the_fresh_corpus_and_session_paths() {
             ([4_u8; 32], 5),
             ([5_u8; 32], 6),
         ]
+    );
+}
+
+#[test]
+fn shared_binding_carries_screening_no_repeat_state_separately_from_seeds() {
+    let mut json: serde_json::Value =
+        serde_json::from_str(LEGACY_BINDING_JSON).expect("decode binding JSON");
+    json["initial_presentations"] = serde_json::json!([
+        {
+            "event_id": "0606060606060606060606060606060606060606060606060606060606060606",
+            "state": { "kind": "eligible_unrated" }
+        },
+        {
+            "event_id": "0707070707070707070707070707070707070707070707070707070707070707",
+            "state": { "kind": "wrong_language" }
+        }
+    ]);
+    let binding: Phase3RunnerBinding =
+        serde_json::from_value(json).expect("decode binding with screening ledger");
+
+    assert_eq!(binding.seeds().len(), 5);
+    assert_eq!(
+        binding
+            .initial_presentations()
+            .expect("decode screening ledger"),
+        std::collections::BTreeMap::from([
+            ([6_u8; 32], PriorPresentation::EligibleUnrated),
+            ([7_u8; 32], PriorPresentation::WrongLanguage),
+        ])
     );
 }

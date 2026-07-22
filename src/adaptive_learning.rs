@@ -90,6 +90,10 @@ pub enum AdaptiveLearningError {
     NonPositiveSeed { event_id: EventId },
     #[error("adaptive learning requires empty histories and no pending batches")]
     LearningAlreadyStarted,
+    #[error("initial screening presentation {event_id:?} overlaps positive seed evidence")]
+    InitialPresentationOverlapsSeed { event_id: EventId },
+    #[error("initial screening presentation {event_id:?} is already marked as rated evidence")]
+    RatedInitialPresentation { event_id: EventId },
     #[error("adaptive learning is {actual:?}; expected {expected:?}")]
     InvalidProgress {
         expected: AdaptiveLearningProgress,
@@ -196,6 +200,20 @@ impl AdaptiveLearningCoordinator {
         rbf: RbfLearningController,
         b16: B16Boundary,
     ) -> Result<Self> {
+        Self::new_with_initial_presentations(oracle, compact, rbf, b16, BTreeMap::new())
+    }
+
+    /// Start learning with screening-only exact-ID no-repeat state.
+    ///
+    /// These entries never enter either personalizer's evidence, language
+    /// totals, or evaluator presentation count.
+    pub fn new_with_initial_presentations<O: CandidateOrderOracle>(
+        oracle: &O,
+        compact: CompactLearningController,
+        rbf: RbfLearningController,
+        b16: B16Boundary,
+        initial_presentations: BTreeMap<EventId, PriorPresentation>,
+    ) -> Result<Self> {
         let version = compact.representation_version();
         if rbf.representation_version() != version
             || oracle.representation_version() != version
@@ -233,7 +251,25 @@ impl AdaptiveLearningCoordinator {
 
         let vector_cache = CandidateVectorCache::new(version)?;
 
-        let mut presentation_ledger = BTreeMap::new();
+        let seed_event_ids = compact
+            .evidence_event_ids()
+            .iter()
+            .copied()
+            .collect::<BTreeSet<_>>();
+        for (event_id, presentation) in &initial_presentations {
+            if seed_event_ids.contains(event_id) {
+                return Err(AdaptiveLearningError::InitialPresentationOverlapsSeed {
+                    event_id: *event_id,
+                });
+            }
+            if matches!(presentation, PriorPresentation::Rated { .. }) {
+                return Err(AdaptiveLearningError::RatedInitialPresentation {
+                    event_id: *event_id,
+                });
+            }
+        }
+
+        let mut presentation_ledger = initial_presentations;
         let mut ratings = BTreeMap::new();
         for (event_id, rating) in compact
             .evidence_event_ids()

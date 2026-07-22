@@ -8,9 +8,14 @@ use std::time::{Duration, Instant};
 
 use nostrdb::{Config, Filter, Ndb, NoteBuilder, Transaction};
 use oracle_mvp::adaptive_learning_runner::AdaptiveLearningRunnerOutcome;
+use oracle_mvp::candidate_order::CandidateOrderOracle;
 use oracle_mvp::evaluator::{
-    CompletionView, EvaluatorUi, RatingOutcome, RatingView, RecoveryOutcome, RecoveryView,
-    RestOutcome, RestView,
+    CompletionView, EvaluatorDecision, EvaluatorSubmission, EvaluatorUi, RatingOutcome, RatingView,
+    RecoveryOutcome, RecoveryView, RestOutcome, RestView,
+};
+use oracle_mvp::fp32_oracle::{
+    Fp32Candidate, SimilarNotesRequest, SimilarNotesResponse, SimilarNotesWaveMetrics,
+    SimilarNotesWaveResponse, VectorsForNotesResponse,
 };
 use oracle_mvp::gte::TokenRole;
 use oracle_mvp::ordered_gte_token_audit::{
@@ -23,6 +28,10 @@ use oracle_mvp::phase3_learning_launch::{
     prepare_learning_workspace, read_learning_launch_config, read_learning_launch_receipt,
     run_prepared_learning,
 };
+use oracle_mvp::phase3_seed_selection::{
+    Phase3SeedSelectionConfig, Phase3SeedSelectionOutcome, run_phase3_seed_selection,
+};
+use oracle_mvp::quota_resolution::PriorPresentation;
 use oracle_mvp::representation::{
     RepresentationBuildConfig, RepresentationDescriptor, RepresentationEncoder,
     build_representation_shards,
@@ -35,6 +44,95 @@ use oracle_mvp::snapshot::{Error, Result};
 use sha2::{Digest, Sha256};
 
 const ROWS: usize = 513;
+
+#[test]
+fn schema_two_learning_workspace_consumes_the_completed_seed_handoff() {
+    let fixture = Fixture::new();
+    let handoff_path = fixture.temp.path().join("seed-selection-handoff.json");
+    let selection_config = Phase3SeedSelectionConfig {
+        corpus_path: fixture.ndb_path.clone(),
+        corpus_identity: format!("sha256:{}", hash_file(&fixture.ndb_path.join("data.mdb"))),
+        session_path: fixture.temp.path().join("seed-selection-session.json"),
+        handoff_path: handoff_path.clone(),
+        representation_version: fixture.representation_version.clone(),
+        candidate_event_ids: fixture.ids[..7].to_vec(),
+    };
+    let mut oracle = SeedSelectionOracle {
+        version: fixture.representation_version.clone(),
+        corpus_ids: fixture.ids.clone(),
+    };
+    let mut evaluator = SeedSelectionEvaluator {
+        decisions: [
+            EvaluatorDecision::Rating(1),
+            EvaluatorDecision::WrongLanguage,
+            EvaluatorDecision::Rating(5),
+            EvaluatorDecision::Rating(6),
+            EvaluatorDecision::Rating(7),
+            EvaluatorDecision::Rating(5),
+            EvaluatorDecision::Rating(6),
+        ]
+        .into_iter(),
+    };
+    let outcome = run_phase3_seed_selection(&selection_config, &mut oracle, &mut evaluator)
+        .expect("complete fixture seed selection");
+    assert!(matches!(outcome, Phase3SeedSelectionOutcome::Complete(_)));
+
+    let config_path = fixture.write_handoff_config("handoff-learning", &handoff_path);
+    let config = read_learning_launch_config(&config_path).expect("read handoff learning config");
+    let prepared = prepare_learning_workspace(&config_path, &config)
+        .expect("prepare workspace from seed handoff");
+    let binding: Phase3RunnerBinding = serde_json::from_slice(
+        &fs::read(prepared.runner_binding_path()).expect("read runner binding"),
+    )
+    .expect("decode runner binding");
+
+    assert_eq!(binding.seeds().len(), 5);
+    assert_eq!(
+        binding.initial_presentations().expect("screening ledger"),
+        std::collections::BTreeMap::from([
+            (fixture.ids[0], PriorPresentation::EligibleUnrated),
+            (fixture.ids[1], PriorPresentation::WrongLanguage),
+        ])
+    );
+    assert_eq!(
+        fs::read(prepared.seed_selection_handoff_path()).expect("frozen handoff"),
+        fs::read(handoff_path).expect("source handoff")
+    );
+
+    bind_learning_launch(
+        &prepared,
+        &config,
+        &format!("sha256:{}", "d".repeat(64)),
+        68 * 1024_u64.pow(3),
+    )
+    .expect("bind handoff learning launch");
+    let mut learning_evaluator = PausingEvaluator::default();
+    let learning = run_prepared_learning(
+        &prepared,
+        &config,
+        FixtureEncoder {
+            descriptor: fixture_descriptor(&fixture.model_bundle.join("model-lock.json")),
+        },
+        &mut learning_evaluator,
+    )
+    .expect("enter learning from selector handoff");
+    assert!(matches!(learning, AdaptiveLearningRunnerOutcome::Paused));
+    assert_eq!(learning_evaluator.presented_notes.len(), 1);
+    assert_ne!(learning_evaluator.presented_notes[0], "note-0");
+    assert_ne!(learning_evaluator.presented_notes[0], "note-1");
+    let session: serde_json::Value = serde_json::from_slice(
+        &fs::read(prepared.session_path()).expect("read handoff learning session"),
+    )
+    .expect("decode handoff learning session");
+    assert_eq!(session["binding"]["seed_evidence"]["event_count"], 5);
+    assert_eq!(
+        session["binding"]["fixed"]["initial_presentations"]
+            .as_array()
+            .expect("stored screening ledger")
+            .len(),
+        2
+    );
+}
 
 #[test]
 fn initialization_is_atomic_source_preserving_and_exactly_resumable() {
@@ -370,11 +468,102 @@ fn resume_rejects_drift_in_every_frozen_input_without_touching_the_session() {
 struct PausingEvaluator {
     rating_presentations: Vec<usize>,
     recovery_presentations: Vec<usize>,
+    presented_notes: Vec<String>,
+}
+
+struct SeedSelectionEvaluator {
+    decisions: std::array::IntoIter<EvaluatorDecision, 7>,
+}
+
+impl EvaluatorUi for SeedSelectionEvaluator {
+    fn rate(&mut self, _view: RatingView<'_>) -> io::Result<RatingOutcome> {
+        Ok(RatingOutcome::Submitted(EvaluatorSubmission::new(
+            self.decisions.next().expect("fixture seed decision"),
+            false,
+        )))
+    }
+
+    fn recover(&mut self, _view: RecoveryView) -> io::Result<RecoveryOutcome> {
+        Ok(RecoveryOutcome::Paused)
+    }
+
+    fn rest(&mut self, _view: RestView) -> io::Result<RestOutcome> {
+        Ok(RestOutcome::Continue)
+    }
+
+    fn preparing(&mut self) -> io::Result<()> {
+        Ok(())
+    }
+
+    fn complete(&mut self, _view: CompletionView) -> io::Result<()> {
+        Ok(())
+    }
+}
+
+struct SeedSelectionOracle {
+    version: String,
+    corpus_ids: Vec<[u8; 32]>,
+}
+
+impl CandidateOrderOracle for SeedSelectionOracle {
+    fn representation_version(&self) -> &str {
+        &self.version
+    }
+
+    fn similar_notes_wave(
+        &mut self,
+        requests: &[SimilarNotesRequest],
+        _representation_version: &str,
+    ) -> Result<SimilarNotesWaveResponse> {
+        Ok(SimilarNotesWaveResponse {
+            responses: requests
+                .iter()
+                .map(|request| SimilarNotesResponse {
+                    representation_version: self.version.clone(),
+                    represented_rows: ROWS as u64,
+                    total_rows: ROWS as u64,
+                    complete: true,
+                    candidates: self
+                        .corpus_ids
+                        .iter()
+                        .copied()
+                        .filter(|event_id| *event_id != request.note_id)
+                        .enumerate()
+                        .map(|(index, event_id)| Fp32Candidate {
+                            event_id,
+                            rank: index + 1,
+                            cosine_score: 1.0 - index as f32 / ROWS as f32,
+                        })
+                        .collect(),
+                })
+                .collect(),
+            metrics: SimilarNotesWaveMetrics {
+                source_loading_ns: 0,
+                query_encoding_ns: 0,
+                matrix_scan_ns: 0,
+                result_merge_ns: 0,
+                encoded_queries: requests.len() as u64,
+                cache_hits: 0,
+                matrix_passes: 1,
+                scanned_rows: ROWS as u64,
+                scan_block_rows: ROWS as u64,
+            },
+        })
+    }
+
+    fn vectors_for_notes(
+        &mut self,
+        _note_ids: &[[u8; 32]],
+        _representation_version: &str,
+    ) -> Result<VectorsForNotesResponse> {
+        panic!("seed selector must not request document vectors")
+    }
 }
 
 impl EvaluatorUi for PausingEvaluator {
     fn rate(&mut self, view: RatingView<'_>) -> io::Result<RatingOutcome> {
         self.rating_presentations.push(view.presentation_number());
+        self.presented_notes.push(view.note().to_owned());
         Ok(RatingOutcome::Paused)
     }
 
@@ -528,6 +717,30 @@ impl Fixture {
         });
         fs::write(&config_path, serde_json::to_vec_pretty(&config).unwrap())
             .expect("write learning config");
+        config_path
+    }
+
+    fn write_handoff_config(&self, workspace_name: &str, handoff_path: &Path) -> PathBuf {
+        let config_path = self.temp.path().join(format!("{workspace_name}.json"));
+        let config = serde_json::json!({
+            "schema_version": 2,
+            "purpose": HUMAN_LEARNING_PURPOSE,
+            "workspace_path": self.temp.path().join(workspace_name),
+            "source_corpus_data_path": self.ndb_path.join("data.mdb"),
+            "source_ordered_event_ids_path": self.ordered_path,
+            "source_representation_path": self.representation,
+            "source_geometry_path": self.geometry,
+            "model_bundle_path": self.model_bundle,
+            "container_runtime": self.runtime,
+            "container_name": format!("phase3-{workspace_name}"),
+            "controller_image": format!("sha256:{}", "d".repeat(64)),
+            "expected_representation_version": self.representation_version,
+            "expected_geometry_version": self.geometry_version,
+            "host_memory_reserve_bytes": 12 * 1024_u64.pow(3),
+            "seed_selection_handoff_path": handoff_path,
+        });
+        fs::write(&config_path, serde_json::to_vec_pretty(&config).unwrap())
+            .expect("write handoff learning config");
         config_path
     }
 }
