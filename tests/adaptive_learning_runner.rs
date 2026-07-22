@@ -18,6 +18,9 @@ use oracle_mvp::fp32_oracle::{
     SimilarNotesWaveResponse, StoredNoteVector, VectorsForNotesResponse,
 };
 use oracle_mvp::personalizer_learning::{CompactLearningSettings, RbfLearningSettings, ScaleLevel};
+use oracle_mvp::phase3_cost_preflight::{
+    replay_first_round_cost_preflight, run_first_round_cost_preflight,
+};
 use oracle_mvp::representation::EventId;
 use oracle_mvp::snapshot::{Error as SnapshotError, Result as SnapshotResult};
 
@@ -36,6 +39,75 @@ const APPROVED_RATING_ANCHORS: [&str; 7] = [
     "[7] Exceptionally glad I saw it",
 ];
 const APPROVED_LANGUAGE_RULE: &str = "Use wrong_language only when the note is clearly primarily non-English. Mixed-language, code-heavy, and ambiguous notes remain eligible and must be rated.";
+
+#[test]
+fn cost_preflight_freezes_the_real_first_wave_without_accepting_a_decision() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("cost-preflight-session.json");
+    let config = fixture.config(session_path.clone());
+    let corpus_before = std::fs::read(fixture.corpus_path.join("data.mdb"))
+        .expect("read immutable fixture corpus before preflight");
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+
+    let observation = run_first_round_cost_preflight(&config, &mut oracle)
+        .expect("freeze the first production wave and pause");
+
+    assert_eq!(observation.preparing_calls(), 2);
+    assert_eq!(observation.rating_requests(), 1);
+    assert_eq!(observation.accepted_decisions(), 0);
+    assert_eq!(observation.presentation_number(), 1);
+    assert_eq!(observation.frozen_wave_size(), 20);
+    assert_eq!(oracle.matrix_passes, 1);
+
+    let session = read_session(&session_path);
+    assert_eq!(stored_decision_count(&session), 0);
+    assert!(session["pending_presentation"].is_object());
+    assert_eq!(
+        session["rounds"][0]["waves"][0]["presentation_order"]
+            .as_array()
+            .expect("frozen presentation order")
+            .len(),
+        20
+    );
+    assert_eq!(
+        std::fs::read(fixture.corpus_path.join("data.mdb"))
+            .expect("read immutable fixture corpus after preflight"),
+        corpus_before,
+    );
+}
+
+#[test]
+fn cost_preflight_restart_recovers_the_pending_wave_from_cache_only() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("cost-preflight-restart.json");
+    let config = fixture.config(session_path.clone());
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    run_first_round_cost_preflight(&config, &mut oracle).expect("create cached first wave");
+
+    let observation = replay_first_round_cost_preflight(&config)
+        .expect("recover the pending first wave without an Oracle backend");
+
+    assert_eq!(observation.preparing_calls(), 1);
+    assert_eq!(observation.recovery_requests(), 1);
+    assert_eq!(observation.rating_requests(), 0);
+    assert_eq!(observation.accepted_decisions(), 0);
+    assert_eq!(stored_decision_count(&read_session(&session_path)), 0);
+}
+
+#[test]
+fn cost_preflight_accepts_the_deduplicated_union_of_both_personalizer_batches() {
+    let fixture = DivergentFixture::new();
+    let session_path = fixture.temp.path().join("cost-preflight-union.json");
+    let config = fixture.config(session_path.clone());
+    let mut oracle = DivergentOracle::new(&fixture);
+
+    let observation = run_first_round_cost_preflight(&config, &mut oracle)
+        .expect("freeze the shared first-wave union and pause");
+
+    assert_eq!(observation.frozen_wave_size(), 40);
+    assert_eq!(observation.accepted_decisions(), 0);
+    assert_eq!(stored_decision_count(&read_session(&session_path)), 0);
+}
 
 fn run_adaptive_learning<O, R, W>(
     config: &AdaptiveLearningRunnerConfig,

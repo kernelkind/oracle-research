@@ -16,6 +16,10 @@ name = "phase3-tui-preview"
 path = "src/bin/phase3_tui_preview.rs"
 
 [[bin]]
+name = "phase3-cost-preflight"
+path = "src/bin/phase3_cost_preflight.rs"
+
+[[bin]]
 name = "representation-geometry"
 path = "src/bin/representation_geometry.rs"
 
