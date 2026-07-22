@@ -26,6 +26,7 @@ pub mod oracle;
 pub mod ordered_embedding;
 pub mod ordered_gte_token_audit;
 pub mod personalizer_learning;
+pub mod phase3_capacity_stress;
 pub mod phase3_cost_preflight;
 pub mod phase3_preview;
 pub mod pplx;

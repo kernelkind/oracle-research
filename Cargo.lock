@@ -1198,6 +1198,7 @@ dependencies = [
  "bech32",
  "crossterm",
  "fasttext",
+ "libc",
  "linkify",
  "memmap2",
  "nostrdb",

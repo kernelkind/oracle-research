@@ -20,6 +20,10 @@ name = "phase3-cost-preflight"
 path = "src/bin/phase3_cost_preflight.rs"
 
 [[bin]]
+name = "phase3-capacity-stress"
+path = "src/bin/phase3_capacity_stress.rs"
+
+[[bin]]
 name = "representation-geometry"
 path = "src/bin/representation_geometry.rs"
 
@@ -28,6 +32,7 @@ bech32 = "=0.11.1"
 crossterm = "=0.29.0"
 fasttext = "=0.8.0"
 linkify = "=0.11.0"
+libc = "0.2"
 memmap2 = "=0.9.11"
 nostrdb = { git = "https://github.com/kernelkind/nostrdb-rs", rev = "aca2f66e3579dee0c9245e4c66100dd12cd940d6" }
 ort = { version = "=2.0.0-rc.12", default-features = false, features = ["api-24", "cuda", "load-dynamic", "std"] }

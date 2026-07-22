@@ -18,6 +18,9 @@ use oracle_mvp::fp32_oracle::{
     SimilarNotesWaveResponse, StoredNoteVector, VectorsForNotesResponse,
 };
 use oracle_mvp::personalizer_learning::{CompactLearningSettings, RbfLearningSettings, ScaleLevel};
+use oracle_mvp::phase3_capacity_stress::{
+    CapacityReachedCounts, audited_capacity_maxima, capacity_boundary_log_path, run_capacity_stress,
+};
 use oracle_mvp::phase3_cost_preflight::{
     replay_first_round_cost_preflight, run_first_round_cost_preflight,
 };
@@ -107,6 +110,128 @@ fn cost_preflight_accepts_the_deduplicated_union_of_both_personalizer_batches() 
     assert_eq!(observation.frozen_wave_size(), 40);
     assert_eq!(observation.accepted_decisions(), 0);
     assert_eq!(stored_decision_count(&read_session(&session_path)), 0);
+}
+
+#[test]
+fn capacity_stress_completes_all_ten_rounds_with_only_synthetic_sevens() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("capacity-stress-session.json");
+    let config = fixture.config(session_path);
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+
+    let run = run_capacity_stress(&config, &mut oracle)
+        .expect("complete the production learning path with synthetic ratings");
+    let completed = run.completed();
+
+    assert_eq!(completed.round_records().len(), 10);
+    assert!(
+        completed
+            .ratings()
+            .values()
+            .all(|rating| rating.value() == 7)
+    );
+    assert_eq!(
+        completed.language_totals().wrong_language_presentations(),
+        0
+    );
+    assert_eq!(
+        completed.presentation_ledger().len(),
+        config.seeds.len() + completed.language_totals().eligible_presentations()
+    );
+    assert_eq!(run.observation().completion_presentations(), Some(200));
+    assert_eq!(run.observation().preparing_calls(), 11);
+    assert_eq!(run.observation().preparing_boundaries().len(), 11);
+    assert!(run.observation().completion_boundary().is_some());
+    assert_eq!(
+        run.observation().rating_requests() + run.observation().recovery_requests(),
+        completed.language_totals().eligible_presentations()
+    );
+    let counts = CapacityReachedCounts::from_completed(
+        completed,
+        &config
+            .seeds
+            .iter()
+            .map(|seed| seed.event_id())
+            .collect::<Vec<_>>(),
+    )
+    .expect("derive reached capacity counts");
+    assert_eq!(counts.rounds(), 10);
+    assert_eq!(counts.logical_oracle_calls(), 30);
+    assert_eq!(counts.source_response_deliveries(), 2_850);
+    assert_eq!(counts.cached_vectors(), completed.cached_vector_count());
+    assert_eq!(counts.eligible_presentations(), 200);
+    assert!(counts.retained_attributions() > 0);
+    let maxima = audited_capacity_maxima();
+    maxima
+        .require_not_exceeded(&counts, 416, 365, 31, 20)
+        .expect("fixture remains under every audited maximum");
+    assert!(
+        maxima
+            .require_not_exceeded(&counts, 417, 365, 31, 20)
+            .expect_err("reject excess cache growth")
+            .to_string()
+            .contains("total cache files")
+    );
+    assert!(
+        maxima
+            .require_not_exceeded(&counts, 416, 366, 31, 20)
+            .expect_err("reject excess durable source responses")
+            .to_string()
+            .contains("source response files")
+    );
+    let boundaries = std::fs::read_to_string(
+        capacity_boundary_log_path(&config.session_path).expect("capacity boundary path"),
+    )
+    .expect("read durable capacity boundaries");
+    assert_eq!(boundaries.lines().count(), 12);
+}
+
+#[test]
+fn capacity_stress_resumes_a_pending_production_presentation() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("capacity-stress-resume.json");
+    let config = fixture.config(session_path);
+    let mut initial_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    run_first_round_cost_preflight(&config, &mut initial_oracle)
+        .expect("leave one production presentation pending");
+
+    let mut resumed_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let run = run_capacity_stress(&config, &mut resumed_oracle)
+        .expect("resume and complete the capacity run");
+
+    assert_eq!(run.completed().round_records().len(), 10);
+    assert_eq!(run.observation().recovery_requests(), 1);
+    assert_eq!(run.observation().completion_presentations(), Some(200));
+}
+
+#[test]
+fn capacity_stress_resumes_after_stored_synthetic_decisions() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture
+        .temp
+        .path()
+        .join("capacity-stress-stored-resume.json");
+    let config = fixture.config(session_path);
+    let mut initial_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let paused = run_adaptive_learning(
+        &config,
+        &mut initial_oracle,
+        Cursor::new(ratings_then_quit(37, 7)),
+        &mut Vec::new(),
+    )
+    .expect("persist synthetic decisions before restart");
+    assert!(matches!(paused, AdaptiveLearningRunnerOutcome::Paused));
+
+    let mut resumed_oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let run = run_capacity_stress(&config, &mut resumed_oracle)
+        .expect("complete after stored synthetic decisions");
+
+    assert_eq!(run.completed().round_records().len(), 10);
+    assert_eq!(run.observation().completion_presentations(), Some(200));
+    assert_eq!(
+        run.observation().rating_requests() + run.observation().recovery_requests(),
+        163
+    );
 }
 
 fn run_adaptive_learning<O, R, W>(
