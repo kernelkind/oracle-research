@@ -511,6 +511,23 @@ fn carried_armed_pause_can_be_cancelled_before_the_decision() {
 }
 
 #[test]
+fn unicode_line_separators_render_as_newlines() {
+    let model = EvaluatorTuiModel::rating("before\u{2028}middle\u{2029}after", 1, 20);
+    let buffer = render(&model, 100, 30);
+    let text = buffer_text(&buffer);
+
+    assert!(!text.contains(['\u{2028}', '\u{2029}']));
+    assert_eq!(
+        position_of(&buffer, "middle").1,
+        position_of(&buffer, "before").1 + 1
+    );
+    assert_eq!(
+        position_of(&buffer, "after").1,
+        position_of(&buffer, "before").1 + 2
+    );
+}
+
+#[test]
 fn scrolling_changes_the_note_body_without_moving_the_controls() {
     let note = (0..80)
         .map(|line| format!("distinct note line {line:02}"))

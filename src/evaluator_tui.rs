@@ -566,6 +566,7 @@ fn terminal_safe(content: &str) -> String {
         .chars()
         .map(|character| match character {
             '\n' | '\t' => character,
+            '\u{2028}' | '\u{2029}' => '\n',
             _ if character.is_control() => ' ',
             _ => character,
         })
