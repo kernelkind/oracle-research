@@ -562,15 +562,17 @@ fn control_lines(
 }
 
 fn terminal_safe(content: &str) -> String {
-    content
-        .chars()
-        .map(|character| match character {
-            '\n' | '\t' => character,
-            '\u{2028}' | '\u{2029}' => '\n',
-            _ if character.is_control() => ' ',
-            _ => character,
-        })
-        .collect()
+    let mut output = String::with_capacity(content.len());
+    for character in content.chars() {
+        match character {
+            '\n' => output.push(character),
+            '\t' => output.push_str("    "),
+            '\u{2028}' | '\u{2029}' => output.push('\n'),
+            _ if character.is_control() => output.push(' '),
+            _ => output.push(character),
+        }
+    }
+    output
 }
 
 fn is_control_c(key: KeyEvent) -> bool {

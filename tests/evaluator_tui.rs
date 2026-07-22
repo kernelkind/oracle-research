@@ -528,6 +528,17 @@ fn unicode_line_separators_render_as_newlines() {
 }
 
 #[test]
+fn tabs_render_as_four_spaces() {
+    let model = EvaluatorTuiModel::rating("left\tright", 1, 20);
+    let buffer = render(&model, 100, 30);
+
+    assert_eq!(
+        position_of(&buffer, "right").0,
+        position_of(&buffer, "left").0 + 8
+    );
+}
+
+#[test]
 fn scrolling_changes_the_note_body_without_moving_the_controls() {
     let note = (0..80)
         .map(|line| format!("distinct note line {line:02}"))
