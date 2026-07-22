@@ -10,11 +10,12 @@ use std::process::{Command, ExitCode, Stdio};
 use std::thread;
 use std::time::{Duration, Instant};
 
-use oracle_mvp::adaptive_learning_runner::{AdaptiveLearningRunnerConfig, AdaptiveLearningSeed};
-use oracle_mvp::candidate_order::{B16Boundary, CANDIDATE_DEPTH, CandidateOrderPhase};
+use oracle_mvp::candidate_order::{CANDIDATE_DEPTH, CandidateOrderPhase};
 use oracle_mvp::fp32_oracle::{Fp32OfflineOracle, SimilarNotesRequest, SimilarNotesWaveMetrics};
 use oracle_mvp::gte::{GteProcessEncoder, GteWorkerConfig};
-use oracle_mvp::personalizer_learning::{CompactLearningSettings, RbfLearningSettings, ScaleLevel};
+use oracle_mvp::phase3_binding::{
+    PHASE3_RUNNER_BINDING_SCHEMA_VERSION, Phase3RunnerBinding, Phase3SeedBinding,
+};
 use oracle_mvp::phase3_cost_preflight::{
     FirstRoundCostObservation, FirstRoundReplayObservation, RepresentationViewObservation,
     create_private_preflight_directory, gte_container_prefix_arguments,
@@ -25,15 +26,13 @@ use oracle_mvp::phase3_cost_preflight::{
 use oracle_mvp::representation::{
     EventId, FP32_SCAN_BLOCK_ROWS, RepresentationManifest, verify_representation,
 };
-use oracle_mvp::representation_geometry::{
-    RepresentationGeometryArtifact, open_representation_geometry,
-};
+use oracle_mvp::representation_geometry::open_representation_geometry;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
 const CONFIG_SCHEMA_VERSION: u32 = 1;
 const REPORT_SCHEMA_VERSION: u32 = 1;
-const BINDING_SCHEMA_VERSION: u32 = 1;
+const BINDING_SCHEMA_VERSION: u32 = PHASE3_RUNNER_BINDING_SCHEMA_VERSION;
 const REPLAY_SCHEMA_VERSION: u32 = 1;
 const SESSION_FILE: &str = "phase3-session.json";
 const RUNNER_BINDING_FILE: &str = "runner-binding.json";
@@ -143,12 +142,12 @@ fn run_full_preflight(config_path: &Path) -> Result<(), String> {
         return Err("geometry artifact version does not match the configured version".to_owned());
     }
     let geometry_open_elapsed_ns = elapsed_ns(geometry_started);
-    let binding = RunnerBinding::from_verified_inputs(
-        &config,
+    let binding = Phase3RunnerBinding::from_geometry(
         &geometry,
         corpus_path.clone(),
         outputs.workspace_path.join(SESSION_FILE),
-    )?;
+        config.seeds.clone(),
+    );
     let binding_path = outputs.workspace_path.join(RUNNER_BINDING_FILE);
     write_private_json_atomic(&binding_path, &binding).map_err(|error| error.to_string())?;
     let binding_sha256 = hash_file(&binding_path)?;
@@ -216,9 +215,9 @@ fn run_full_preflight(config_path: &Path) -> Result<(), String> {
     }
 
     let seed_ids = binding
-        .seeds
+        .seeds()
         .iter()
-        .map(|seed| parse_event_id(&seed.event_id))
+        .map(Phase3SeedBinding::event_id)
         .collect::<Result<Vec<_>, _>>()?;
     let session_metrics = read_session_metrics(
         &runner_config.session_path,
@@ -310,18 +309,18 @@ fn replay_in_fresh_process(config_path: &Path) -> Result<(), String> {
     config.validate()?;
     let workspace_path = require_existing_output_outside_inputs(&config, &config.workspace_path)?;
     let binding_path = workspace_path.join(RUNNER_BINDING_FILE);
-    let binding: RunnerBinding = read_json(&binding_path)?;
-    if binding.schema_version != BINDING_SCHEMA_VERSION {
+    let binding: Phase3RunnerBinding = read_json(&binding_path)?;
+    if binding.schema_version() != BINDING_SCHEMA_VERSION {
         return Err("runner binding has the wrong schema".to_owned());
     }
     let source_manifest: RepresentationManifest =
         read_json(&config.source_representation_path.join("manifest.json"))?;
-    if binding.corpus_path != workspace_path.join("corpus.ndb")
-        || binding.session_path != workspace_path.join(SESSION_FILE)
-        || binding.corpus_identity != format!("sha256:{}", source_manifest.corpus_data_sha256)
-        || binding.representation_version != config.expected_representation_version
-        || binding.geometry_version != config.expected_geometry_version
-        || binding.seeds != config.seeds
+    if binding.corpus_path() != workspace_path.join("corpus.ndb")
+        || binding.session_path() != workspace_path.join(SESSION_FILE)
+        || binding.corpus_identity() != format!("sha256:{}", source_manifest.corpus_data_sha256)
+        || binding.representation_version() != config.expected_representation_version
+        || binding.geometry_version() != config.expected_geometry_version
+        || binding.seeds() != config.seeds
     {
         return Err(
             "runner binding does not match the configured disposable replay inputs".to_owned(),
@@ -355,7 +354,7 @@ struct FullScalePreflightConfig {
     container_image: String,
     expected_representation_version: String,
     expected_geometry_version: String,
-    seeds: Vec<SeedConfig>,
+    seeds: Vec<Phase3SeedBinding>,
 }
 
 impl FullScalePreflightConfig {
@@ -405,7 +404,7 @@ impl FullScalePreflightConfig {
         let mut parsed = self
             .seeds
             .iter()
-            .map(|seed| parse_event_id(&seed.event_id))
+            .map(Phase3SeedBinding::event_id)
             .collect::<Result<Vec<_>, _>>()?;
         parsed.sort_unstable();
         parsed.dedup();
@@ -413,7 +412,7 @@ impl FullScalePreflightConfig {
             || self
                 .seeds
                 .iter()
-                .any(|seed| !(5..=7).contains(&seed.rating))
+                .any(|seed| !(5..=7).contains(&seed.rating()))
         {
             return Err("preflight seeds must be five distinct positive notes".to_owned());
         }
@@ -504,109 +503,6 @@ fn immutable_input_roots(config: &FullScalePreflightConfig) -> Result<Vec<PathBu
         })
     })
     .collect()
-}
-
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[serde(deny_unknown_fields)]
-struct SeedConfig {
-    event_id: String,
-    rating: u8,
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-struct RunnerBinding {
-    schema_version: u32,
-    corpus_path: PathBuf,
-    corpus_identity: String,
-    session_path: PathBuf,
-    representation_version: String,
-    geometry_version: String,
-    b16_bits: String,
-    h16_bits: String,
-    h64_bits: String,
-    h256_bits: String,
-    s16_bits: String,
-    s64_bits: String,
-    s256_bits: String,
-    seeds: Vec<SeedConfig>,
-}
-
-impl RunnerBinding {
-    fn from_verified_inputs(
-        config: &FullScalePreflightConfig,
-        geometry: &RepresentationGeometryArtifact,
-        corpus_path: PathBuf,
-        session_path: PathBuf,
-    ) -> Result<Self, String> {
-        let values = &geometry.manifest().values;
-        Ok(Self {
-            schema_version: BINDING_SCHEMA_VERSION,
-            corpus_path,
-            corpus_identity: format!(
-                "sha256:{}",
-                geometry.manifest().representation.corpus_data_sha256
-            ),
-            session_path,
-            representation_version: geometry
-                .manifest()
-                .representation
-                .representation_version
-                .clone(),
-            geometry_version: geometry.geometry_version().to_owned(),
-            b16_bits: values.b16.bits.clone(),
-            h16_bits: values.h16.bits.clone(),
-            h64_bits: values.h64.bits.clone(),
-            h256_bits: values.h256.bits.clone(),
-            s16_bits: values.s16.bits.clone(),
-            s64_bits: values.s64.bits.clone(),
-            s256_bits: values.s256.bits.clone(),
-            seeds: config.seeds.clone(),
-        })
-    }
-
-    fn runner_config(&self) -> Result<AdaptiveLearningRunnerConfig, String> {
-        if self.schema_version != BINDING_SCHEMA_VERSION {
-            return Err("runner binding has the wrong schema".to_owned());
-        }
-        let compact_settings = CompactLearningSettings::new(
-            self.representation_version.clone(),
-            decode_f64_bits(&self.h16_bits, "h16")?,
-            decode_f64_bits(&self.h64_bits, "h64")?,
-            decode_f64_bits(&self.h256_bits, "h256")?,
-            ScaleLevel::Mass64,
-        )
-        .map_err(|error| error.to_string())?;
-        let rbf_settings = RbfLearningSettings::new(
-            self.representation_version.clone(),
-            decode_f64_bits(&self.s16_bits, "s16")?,
-            decode_f64_bits(&self.s64_bits, "s64")?,
-            decode_f64_bits(&self.s256_bits, "s256")?,
-        )
-        .map_err(|error| error.to_string())?;
-        let b16 = B16Boundary::new(
-            self.representation_version.clone(),
-            decode_f64_bits(&self.b16_bits, "b16")?,
-        )
-        .map_err(|error| error.to_string())?;
-        let seeds = self
-            .seeds
-            .iter()
-            .map(|seed| {
-                AdaptiveLearningSeed::new(parse_event_id(&seed.event_id)?, seed.rating)
-                    .map_err(|error| error.to_string())
-            })
-            .collect::<Result<Vec<_>, _>>()?;
-        Ok(AdaptiveLearningRunnerConfig {
-            corpus_path: self.corpus_path.clone(),
-            corpus_identity: self.corpus_identity.clone(),
-            session_path: self.session_path.clone(),
-            compact_settings,
-            rbf_settings,
-            b16,
-            seeds,
-        })
-    }
 }
 
 #[derive(Debug, Serialize)]
@@ -1110,44 +1006,6 @@ fn oracle_cache_path(session_path: &Path) -> Result<PathBuf, String> {
         .parent()
         .unwrap_or_else(|| Path::new("."))
         .join(format!(".{name}.oracle-responses")))
-}
-
-fn parse_event_id(value: &str) -> Result<EventId, String> {
-    if value.len() != 64 {
-        return Err("event ID must contain 64 hexadecimal characters".to_owned());
-    }
-    let mut event_id = [0_u8; 32];
-    for (index, pair) in value.as_bytes().chunks_exact(2).enumerate() {
-        event_id[index] = (decode_hex(pair[0])? << 4) | decode_hex(pair[1])?;
-    }
-    Ok(event_id)
-}
-
-fn decode_hex(byte: u8) -> Result<u8, String> {
-    match byte {
-        b'0'..=b'9' => Ok(byte - b'0'),
-        b'a'..=b'f' => Ok(byte - b'a' + 10),
-        _ => Err("event ID must use lowercase hexadecimal".to_owned()),
-    }
-}
-
-fn decode_f64_bits(bits: &str, label: &str) -> Result<f64, String> {
-    if bits.len() != 16
-        || !bits
-            .bytes()
-            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
-    {
-        return Err(format!(
-            "{label} is not a lowercase 16-digit f64 bit pattern"
-        ));
-    }
-    let value = f64::from_bits(
-        u64::from_str_radix(bits, 16).map_err(|error| format!("invalid {label}: {error}"))?,
-    );
-    if !value.is_finite() || value < 0.0 {
-        return Err(format!("{label} is not a finite nonnegative f64"));
-    }
-    Ok(value)
 }
 
 fn read_json<T: for<'de> Deserialize<'de>>(path: &Path) -> Result<T, String> {

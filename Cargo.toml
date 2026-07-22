@@ -24,6 +24,10 @@ name = "phase3-capacity-stress"
 path = "src/bin/phase3_capacity_stress.rs"
 
 [[bin]]
+name = "phase3-learning"
+path = "src/bin/phase3_learning.rs"
+
+[[bin]]
 name = "representation-geometry"
 path = "src/bin/representation_geometry.rs"
 
