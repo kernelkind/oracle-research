@@ -390,6 +390,85 @@ impl RepresentationStore {
         )
     }
 
+    /// Visit represented vectors in corpus-row order without materializing the matrix.
+    pub(crate) fn scan_vector_blocks(
+        &self,
+        block_rows: usize,
+        mut visitor: impl FnMut(u64, &[f32]) -> Result<()>,
+    ) -> Result<()> {
+        if block_rows == 0 {
+            return Err(Error::InvalidQuery(
+                "vector scan block size must be positive".to_owned(),
+            ));
+        }
+
+        let mapped = self.mapped.as_ref().ok_or_else(unsealed_lookup_error)?;
+        let dimensions = usize::try_from(self.manifest.descriptor.dimensions)
+            .map_err(|_| Error::Invariant("dimensions do not fit usize".to_owned()))?;
+        let row_bytes = dimensions
+            .checked_mul(size_of::<f32>())
+            .ok_or_else(|| Error::Invariant("vector row width overflowed".to_owned()))?;
+        let capacity_rows = mapped
+            .shards
+            .iter()
+            .try_fold(0_usize, |maximum, shard| {
+                usize::try_from(shard.rows)
+                    .map(|rows| maximum.max(rows))
+                    .map_err(|_| Error::Invariant("mapped shard rows do not fit usize".to_owned()))
+            })?
+            .min(block_rows);
+        let capacity = capacity_rows
+            .checked_mul(dimensions)
+            .ok_or_else(|| Error::Invariant("vector scan block size overflowed".to_owned()))?;
+        let mut decoded = Vec::with_capacity(capacity);
+
+        for shard in &mapped.shards {
+            let shard_rows = usize::try_from(shard.rows)
+                .map_err(|_| Error::Invariant("mapped shard rows do not fit usize".to_owned()))?;
+            let mut block_start = 0_usize;
+            while block_start < shard_rows {
+                let rows = block_rows.min(shard_rows - block_start);
+                let values = rows.checked_mul(dimensions).ok_or_else(|| {
+                    Error::Invariant("vector scan block size overflowed".to_owned())
+                })?;
+                let start = block_start.checked_mul(row_bytes).ok_or_else(|| {
+                    Error::Invariant("mapped vector block offset overflowed".to_owned())
+                })?;
+                let bytes = values.checked_mul(size_of::<f32>()).ok_or_else(|| {
+                    Error::Invariant("mapped vector block width overflowed".to_owned())
+                })?;
+                let end = start.checked_add(bytes).ok_or_else(|| {
+                    Error::Invariant("mapped vector block end overflowed".to_owned())
+                })?;
+                let encoded = shard.vectors.get(start..end).ok_or_else(|| {
+                    Error::Invariant("mapped vector shard is shorter than its manifest".to_owned())
+                })?;
+
+                decoded.clear();
+                for bytes in encoded.chunks_exact(size_of::<f32>()) {
+                    let value = f32::from_le_bytes(bytes.try_into().expect("f32 width"));
+                    if !value.is_finite() {
+                        return Err(Error::Invariant(
+                            "stored vector contains a non-finite value".to_owned(),
+                        ));
+                    }
+                    decoded.push(value);
+                }
+
+                let start_row = shard
+                    .start_row
+                    .checked_add(u64::try_from(block_start).map_err(|_| {
+                        Error::Invariant("vector block row does not fit u64".to_owned())
+                    })?)
+                    .ok_or_else(|| Error::Invariant("vector block row overflowed".to_owned()))?;
+                visitor(start_row, &decoded)?;
+                block_start += rows;
+            }
+        }
+
+        Ok(())
+    }
+
     /// Scan every represented row once for a co-scheduled group of independent queries.
     pub(crate) fn search_many(
         &self,

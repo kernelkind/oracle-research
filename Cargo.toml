@@ -15,6 +15,10 @@ path = "src/bin/gte_oracle.rs"
 name = "phase3-tui-preview"
 path = "src/bin/phase3_tui_preview.rs"
 
+[[bin]]
+name = "representation-geometry"
+path = "src/bin/representation_geometry.rs"
+
 [dependencies]
 bech32 = "=0.11.1"
 crossterm = "=0.29.0"

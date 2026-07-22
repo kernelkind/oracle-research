@@ -32,6 +32,7 @@ pub mod preflight;
 pub mod quota_resolution;
 pub mod representation;
 pub mod representation_batch_plan;
+pub mod representation_geometry;
 pub mod retrieval;
 pub mod runner;
 pub mod semantic_order;
