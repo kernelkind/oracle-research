@@ -566,6 +566,14 @@ impl SharedQuotaResolver {
         self.pending.as_ref().map(|pending| &pending.wave)
     }
 
+    pub(crate) fn compact_order(&self) -> &FrozenCandidateOrder {
+        &self.compact.order
+    }
+
+    pub(crate) fn rbf_order(&self) -> &FrozenCandidateOrder {
+        &self.rbf.order
+    }
+
     pub fn failure(&self) -> Option<&QuotaResolutionFailure> {
         self.failure.as_ref()
     }

@@ -6,8 +6,10 @@ use oracle_mvp::adaptive_learning::{
     CompletedAdaptiveLearning,
 };
 use oracle_mvp::candidate_order::{
-    ActivePersonalizerParameters, B16Boundary, CandidateOrderAttempt, CandidateOrderOracle,
+    ActivePersonalizerParameters, B16Boundary, CandidateExclusionReason, CandidateOrderAttempt,
+    CandidateOrderError, CandidateOrderOracle, CandidateOrderPhase,
 };
+use oracle_mvp::final_evaluation::{FinalEvaluationCoordinator, FinalEvaluationFailure};
 use oracle_mvp::fp32_oracle::{
     Fp32Candidate, SimilarNotesRequest, SimilarNotesResponse, SimilarNotesWaveMetrics,
     SimilarNotesWaveResponse, StoredNoteVector, VectorsForNotesResponse,
@@ -16,7 +18,9 @@ use oracle_mvp::personalizer_learning::{
     BatchCandidate, BatchRating, CandidateBatch, CompactLearningController,
     CompactLearningSettings, EvidenceNote, RbfLearningController, RbfLearningSettings, ScaleLevel,
 };
-use oracle_mvp::quota_resolution::{EventLanguageOutcome, LanguageEligibility, PriorPresentation};
+use oracle_mvp::quota_resolution::{
+    EventLanguageOutcome, LanguageEligibility, PersonalizerId, PriorPresentation, QuotaAuditEvent,
+};
 use oracle_mvp::representation::EventId;
 use oracle_mvp::snapshot::{Error as SnapshotError, Result as SnapshotResult};
 
@@ -148,7 +152,9 @@ struct RoundOracle {
     matrix_passes: usize,
     logical_wave_calls: usize,
     wrong_seed: Option<EventId>,
+    invalid_vector: Option<EventId>,
     positive_candidates: usize,
+    new_candidate_start: u16,
     h256_only_candidates: bool,
     version: &'static str,
 }
@@ -160,20 +166,22 @@ impl RoundOracle {
             matrix_passes: 0,
             logical_wave_calls: 0,
             wrong_seed: None,
+            invalid_vector: None,
             positive_candidates: usize::MAX,
+            new_candidate_start: 1_000,
             h256_only_candidates: false,
             version: VERSION,
         }
     }
 
-    fn response(source_event_id: EventId) -> SimilarNotesResponse {
+    fn response(source_event_id: EventId, candidate_start: u16) -> SimilarNotesResponse {
         SimilarNotesResponse {
             representation_version: VERSION.to_owned(),
             represented_rows: CORPUS_ROWS,
             total_rows: CORPUS_ROWS,
             complete: true,
             candidates: (0..1_025)
-                .map(|offset| id(1_000 + u16::try_from(offset).expect("cached offset")))
+                .map(|offset| id(candidate_start + u16::try_from(offset).expect("cached offset")))
                 .filter(|event_id| *event_id != source_event_id)
                 .take(1_024)
                 .enumerate()
@@ -219,7 +227,10 @@ impl CandidateOrderOracle for RoundOracle {
         if !missing.is_empty() {
             self.matrix_passes += 1;
             for event_id in &missing {
-                self.cache.insert(*event_id, Self::response(*event_id));
+                self.cache.insert(
+                    *event_id,
+                    Self::response(*event_id, self.new_candidate_start),
+                );
             }
         }
         Ok(SimilarNotesWaveResponse {
@@ -261,7 +272,9 @@ impl CandidateOrderOracle for RoundOracle {
                 .iter()
                 .map(|event_id| StoredNoteVector {
                     event_id: *event_id,
-                    vector: if self.wrong_seed == Some(*event_id) {
+                    vector: if self.invalid_vector == Some(*event_id) {
+                        vec![f32::NAN, 0.0]
+                    } else if self.wrong_seed == Some(*event_id) {
                         vec![1.0, -0.0]
                     } else if self.h256_only_candidates && id_value(*event_id) == 1 {
                         vec![1.0, 0.0]
@@ -513,6 +526,288 @@ fn ten_real_rounds_complete_once_without_repeated_presentations() {
                 .contains_key(&candidate.event_id())
         }));
     }
+}
+
+fn complete_learning_for_final_evaluation() -> (Box<CompletedAdaptiveLearning>, RoundOracle) {
+    let mut initial_presentations = BTreeMap::new();
+    initial_presentations.insert(id(1_000), PriorPresentation::EligibleUnrated);
+    initial_presentations.insert(id(1_001), PriorPresentation::WrongLanguage);
+    let oracle = RoundOracle::new();
+    let (compact, rbf) = controllers();
+    let coordinator = AdaptiveLearningCoordinator::new_with_initial_presentations(
+        &oracle,
+        compact,
+        rbf,
+        B16Boundary::new(VERSION, 0.0).expect("B16"),
+        initial_presentations,
+    )
+    .expect("adaptive-learning coordinator");
+    complete_learning(CoordinatorFixture {
+        coordinator,
+        oracle,
+    })
+}
+
+fn complete_learning(
+    mut fixture: CoordinatorFixture<RoundOracle>,
+) -> (Box<CompletedAdaptiveLearning>, RoundOracle) {
+    for _ in 0..10 {
+        fixture.start_next_round().expect("start learning round");
+        resolve_current_wave(&mut fixture);
+        let rating_ids = fixture
+            .pending_rating_event_ids()
+            .expect("pending new rating IDs")
+            .to_vec();
+        fixture
+            .submit_ratings(positive_ratings(&rating_ids))
+            .expect("complete learning round");
+    }
+    let CoordinatorFixture {
+        coordinator,
+        oracle,
+    } = fixture;
+    let completed = coordinator
+        .into_completed()
+        .unwrap_or_else(|_| panic!("ten rounds must produce a completed handoff"));
+    (Box::new(completed), oracle)
+}
+
+#[test]
+fn completed_learning_freezes_fresh_attributed_final_orders_without_updating_profiles() {
+    let (completed, mut oracle) = complete_learning_for_final_evaluation();
+    let prior_presentations = completed
+        .presentation_ledger()
+        .keys()
+        .copied()
+        .collect::<BTreeSet<_>>();
+    let compact_identity_before = completed.compact_controller().evidence_identity().clone();
+    let rbf_identity_before = completed.rbf_controller().evidence_identity().clone();
+    let compact_tuple_before = completed.compact_controller().active_tuple();
+    let rbf_tuple_before = completed.rbf_controller().active_tuple();
+    let compact_history_before = completed.compact_controller().history().to_vec();
+    let rbf_history_before = completed.rbf_controller().history().to_vec();
+    let ledger_before = completed.presentation_ledger().clone();
+    let ratings_before = completed.ratings().clone();
+    let language_totals_before = completed.language_totals();
+    let learning_rounds_before = completed.round_records().to_vec();
+    let source_waves_before = completed.source_wave_records().to_vec();
+    let failed_attempts_before = completed.failed_candidate_order_attempts().to_vec();
+
+    let final_evaluation =
+        FinalEvaluationCoordinator::begin(completed, &mut oracle).expect("freeze final orders");
+    let completed = final_evaluation.completed_learning();
+
+    for order in [
+        final_evaluation.compact_order(),
+        final_evaluation.rbf_order(),
+    ] {
+        assert_eq!(order.attempt().phase(), CandidateOrderPhase::Final);
+        assert_eq!(order.primary().len(), 200);
+        assert_eq!(order.reserve().len(), 21);
+        assert_eq!(order.accepted().len(), 221);
+        assert!(
+            order
+                .accepted()
+                .iter()
+                .all(|candidate| !prior_presentations.contains(&candidate.event_id()))
+        );
+        for screened_id in [id(1_000), id(1_001)] {
+            assert_eq!(
+                order
+                    .candidate_audit(screened_id)
+                    .expect("screened event remains auditable")
+                    .exclusion_reasons(),
+                &[CandidateExclusionReason::CallerDisallowed]
+            );
+        }
+    }
+
+    let compact_primary = final_evaluation
+        .compact_order()
+        .primary()
+        .iter()
+        .map(|candidate| candidate.event_id())
+        .collect::<BTreeSet<_>>();
+    let rbf_primary = final_evaluation
+        .rbf_order()
+        .primary()
+        .iter()
+        .map(|candidate| candidate.event_id())
+        .collect::<BTreeSet<_>>();
+    let expected_presentations = compact_primary
+        .union(&rbf_primary)
+        .copied()
+        .collect::<BTreeSet<_>>();
+    let pending = final_evaluation
+        .pending_wave()
+        .expect("deduplicated final presentation wave");
+    assert_eq!(pending.event_ids().len(), expected_presentations.len());
+    assert_eq!(
+        pending.event_ids().iter().copied().collect::<BTreeSet<_>>(),
+        expected_presentations
+    );
+
+    let mut claims = BTreeMap::<EventId, BTreeSet<PersonalizerId>>::new();
+    for event in final_evaluation.audit() {
+        if let QuotaAuditEvent::Claimed {
+            personalizer,
+            event_id,
+            ..
+        } = event
+        {
+            claims.entry(*event_id).or_default().insert(*personalizer);
+        }
+    }
+    for event_id in &expected_presentations {
+        let expected_selectors = [
+            compact_primary
+                .contains(event_id)
+                .then_some(PersonalizerId::Compact),
+            rbf_primary
+                .contains(event_id)
+                .then_some(PersonalizerId::Rbf),
+        ]
+        .into_iter()
+        .flatten()
+        .collect::<BTreeSet<_>>();
+        assert_eq!(claims.get(event_id), Some(&expected_selectors));
+    }
+    assert!(
+        compact_primary.intersection(&rbf_primary).next().is_some(),
+        "fixture must exercise overlap"
+    );
+
+    assert_eq!(
+        completed.compact_controller().evidence_identity(),
+        &compact_identity_before
+    );
+    assert_eq!(
+        completed.rbf_controller().evidence_identity(),
+        &rbf_identity_before
+    );
+    assert_eq!(
+        completed.compact_controller().active_tuple(),
+        compact_tuple_before
+    );
+    assert_eq!(completed.rbf_controller().active_tuple(), rbf_tuple_before);
+    assert_eq!(
+        completed.compact_controller().history(),
+        compact_history_before
+    );
+    assert_eq!(completed.rbf_controller().history(), rbf_history_before);
+    assert!(completed.compact_controller().pending_batch().is_none());
+    assert!(completed.rbf_controller().pending_batch().is_none());
+    assert_eq!(completed.presentation_ledger(), &ledger_before);
+    assert_eq!(completed.ratings(), &ratings_before);
+    assert_eq!(completed.language_totals(), language_totals_before);
+    assert_eq!(completed.round_records(), learning_rounds_before);
+    assert_eq!(completed.source_wave_records(), source_waves_before);
+    assert_eq!(
+        completed.failed_candidate_order_attempts(),
+        failed_attempts_before
+    );
+}
+
+#[test]
+fn final_evaluation_rejects_a_mismatched_oracle_before_querying_it() {
+    let (completed, mut oracle) = complete_learning_for_final_evaluation();
+    oracle.version = "representation-v2";
+    let wave_calls_before = oracle.logical_wave_calls;
+
+    let error = FinalEvaluationCoordinator::begin(completed, &mut oracle)
+        .err()
+        .expect("mismatched Oracle must fail");
+
+    assert!(matches!(
+        error.failure(),
+        FinalEvaluationFailure::CandidateOrder {
+            personalizer: PersonalizerId::Compact,
+            source: CandidateOrderError::RepresentationVersionMismatch {
+                context: "Oracle",
+                ..
+            },
+        }
+    ));
+    assert_eq!(oracle.logical_wave_calls, wave_calls_before);
+    let completed = error.completed_learning();
+    assert!(completed.compact_controller().pending_batch().is_none());
+    assert!(completed.rbf_controller().pending_batch().is_none());
+}
+
+#[test]
+fn final_evaluation_reports_invalid_new_candidate_vectors_with_the_personalizer() {
+    let (completed, mut oracle) = complete_learning_for_final_evaluation();
+    oracle.new_candidate_start = 3_000;
+    oracle.invalid_vector = Some(id(3_000));
+
+    let error = FinalEvaluationCoordinator::begin(completed, &mut oracle)
+        .err()
+        .expect("invalid final candidate vector must fail");
+
+    assert!(matches!(
+        error.failure(),
+        FinalEvaluationFailure::CandidateOrder {
+            personalizer: PersonalizerId::Compact,
+            source: CandidateOrderError::InvalidVectorResponse { .. },
+        }
+    ));
+    assert!(
+        error
+            .completed_learning()
+            .compact_controller()
+            .pending_batch()
+            .is_none()
+    );
+    assert!(
+        error
+            .completed_learning()
+            .rbf_controller()
+            .pending_batch()
+            .is_none()
+    );
+}
+
+#[test]
+fn final_evaluation_preserves_an_auditable_incomplete_compact_order_and_stops() {
+    let mut oracle = RoundOracle::new();
+    oracle.positive_candidates = 300;
+    let (compact, rbf) = controllers();
+    let completed_fixture = CoordinatorFixture::new(
+        oracle,
+        compact,
+        rbf,
+        B16Boundary::new(VERSION, 0.0).expect("B16"),
+    )
+    .expect("adaptive-learning coordinator");
+    let (completed, mut oracle) = complete_learning(completed_fixture);
+    let wave_calls_before = oracle.logical_wave_calls;
+
+    let error = FinalEvaluationCoordinator::begin(completed, &mut oracle)
+        .err()
+        .expect("insufficient final pool must fail");
+    let (error, completed) = error.into_parts();
+
+    let FinalEvaluationFailure::InsufficientCandidateOrder {
+        personalizer,
+        accepted,
+        required,
+        attempt,
+    } = error
+    else {
+        panic!("expected an auditable incomplete final order");
+    };
+    assert_eq!(personalizer, PersonalizerId::Compact);
+    assert_eq!(required, 221);
+    assert!(accepted < required);
+    assert_eq!(attempt.phase(), CandidateOrderPhase::Final);
+    assert_eq!(attempt.accepted().len(), accepted);
+    assert_eq!(
+        oracle.logical_wave_calls,
+        wave_calls_before + 1,
+        "the failed Compact order must not trigger an RBF query"
+    );
+    assert!(completed.compact_controller().pending_batch().is_none());
+    assert!(completed.rbf_controller().pending_batch().is_none());
 }
 
 #[test]

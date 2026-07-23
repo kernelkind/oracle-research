@@ -7,8 +7,8 @@ use thiserror::Error;
 use crate::candidate_order::{
     B16Boundary, CANDIDATE_DEPTH, CandidateOrderAttempt, CandidateOrderError, CandidateOrderOracle,
     CandidateOrderOutcome, CandidateOrderPhase, CandidateOrderRequest, CandidateVectorCache,
-    build_compact_candidate_order, build_compact_candidate_order_with_tuple,
-    build_rbf_candidate_order,
+    FrozenCandidateOrder, InsufficientCandidateOrder, build_compact_candidate_order,
+    build_compact_candidate_order_with_tuple, build_rbf_candidate_order,
 };
 use crate::fp32_oracle::{SimilarNotesRequest, SimilarNotesWaveMetrics};
 use crate::personalizer_learning::{
@@ -848,6 +848,17 @@ pub struct CompletedAdaptiveLearning {
     round_records: Vec<SharedLearningRoundRecord>,
 }
 
+pub(crate) enum FinalCandidateOrderBuildError {
+    CandidateOrder {
+        personalizer: PersonalizerId,
+        source: CandidateOrderError,
+    },
+    Insufficient {
+        personalizer: PersonalizerId,
+        failure: Box<InsufficientCandidateOrder>,
+    },
+}
+
 impl CompletedAdaptiveLearning {
     pub fn compact_controller(&self) -> &CompactLearningController {
         &self.compact
@@ -887,6 +898,49 @@ impl CompletedAdaptiveLearning {
 
     pub fn failed_candidate_order_attempts(&self) -> &[CandidateOrderAttempt] {
         &self.failed_candidate_order_attempts
+    }
+
+    pub(crate) fn build_final_candidate_orders<O: CandidateOrderOracle>(
+        &mut self,
+        oracle: &mut O,
+    ) -> std::result::Result<
+        (FrozenCandidateOrder, FrozenCandidateOrder),
+        FinalCandidateOrderBuildError,
+    > {
+        let request = CandidateOrderRequest::new(
+            CandidateOrderPhase::Final,
+            self.b16.clone(),
+            self.presentation_ledger.keys().copied().collect(),
+        );
+        let compact =
+            build_compact_candidate_order(&self.compact, oracle, &mut self.vector_cache, &request)
+                .map_err(|source| FinalCandidateOrderBuildError::CandidateOrder {
+                    personalizer: PersonalizerId::Compact,
+                    source,
+                })?;
+        let compact = require_final_candidate_order(PersonalizerId::Compact, compact)?;
+        let rbf = build_rbf_candidate_order(&self.rbf, oracle, &mut self.vector_cache, &request)
+            .map_err(|source| FinalCandidateOrderBuildError::CandidateOrder {
+                personalizer: PersonalizerId::Rbf,
+                source,
+            })?;
+        let rbf = require_final_candidate_order(PersonalizerId::Rbf, rbf)?;
+        Ok((compact, rbf))
+    }
+}
+
+fn require_final_candidate_order(
+    personalizer: PersonalizerId,
+    outcome: CandidateOrderOutcome,
+) -> std::result::Result<FrozenCandidateOrder, FinalCandidateOrderBuildError> {
+    match outcome {
+        CandidateOrderOutcome::Frozen(order) => Ok(order),
+        CandidateOrderOutcome::Insufficient(failure) => {
+            Err(FinalCandidateOrderBuildError::Insufficient {
+                personalizer,
+                failure: Box::new(failure),
+            })
+        }
     }
 }
 

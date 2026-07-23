@@ -17,6 +17,7 @@ pub mod english_filter_pilot;
 pub mod evaluator;
 pub mod evaluator_tui;
 pub mod event;
+pub mod final_evaluation;
 pub mod fp32_oracle;
 pub mod gte;
 pub mod gte_budget;
