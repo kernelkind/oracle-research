@@ -10,19 +10,25 @@ use oracle_mvp::candidate_order::{
     CandidateOrderError, CandidateOrderOracle, CandidateOrderPhase,
 };
 use oracle_mvp::final_evaluation::{FinalEvaluationCoordinator, FinalEvaluationFailure};
+use oracle_mvp::final_evaluation_report::{
+    FinalEvaluationReportError, FinalEvaluationReportProvenance, build_final_evaluation_report,
+};
 use oracle_mvp::fp32_oracle::{
     Fp32Candidate, SimilarNotesRequest, SimilarNotesResponse, SimilarNotesWaveMetrics,
     SimilarNotesWaveResponse, StoredNoteVector, VectorsForNotesResponse,
 };
 use oracle_mvp::personalizer_learning::{
     BatchCandidate, BatchRating, CandidateBatch, CompactLearningController,
-    CompactLearningSettings, EvidenceNote, RbfLearningController, RbfLearningSettings, ScaleLevel,
+    CompactLearningSettings, EvidenceNote, GladnessRating, RbfLearningController,
+    RbfLearningSettings, ScaleLevel,
 };
 use oracle_mvp::quota_resolution::{
     EventLanguageOutcome, LanguageEligibility, PersonalizerId, PriorPresentation, QuotaAuditEvent,
+    QuotaResolutionFailure, QuotaResolutionProgress,
 };
 use oracle_mvp::representation::EventId;
 use oracle_mvp::snapshot::{Error as SnapshotError, Result as SnapshotResult};
+use sha2::{Digest, Sha256};
 
 const VERSION: &str = "representation-v1";
 const CORPUS_ROWS: u64 = 10_000;
@@ -706,6 +712,469 @@ fn completed_learning_freezes_fresh_attributed_final_orders_without_updating_pro
         completed.failed_candidate_order_attempts(),
         failed_attempts_before
     );
+}
+
+#[test]
+fn final_evaluation_coordinator_delegates_resolution_and_retains_the_learning_handoff() {
+    let (completed, mut oracle) = complete_learning_for_final_evaluation();
+    let expected_rounds = completed.round_records().len();
+    let mut final_evaluation =
+        FinalEvaluationCoordinator::begin(completed, &mut oracle).expect("freeze final orders");
+
+    assert_eq!(
+        final_evaluation.progress(),
+        QuotaResolutionProgress::AwaitingLanguage
+    );
+    assert!(final_evaluation.failure().is_none());
+    assert_eq!(final_evaluation.language_delta().unique_presentations(), 0);
+
+    while let Some(wave) = final_evaluation.pending_wave().cloned() {
+        final_evaluation
+            .submit_language_outcomes(wave.wave_id(), eligible(wave.event_ids()))
+            .expect("resolve eligible final wave");
+    }
+
+    assert_eq!(
+        final_evaluation.progress(),
+        QuotaResolutionProgress::Complete
+    );
+    assert!(final_evaluation.failure().is_none());
+    assert_eq!(
+        final_evaluation.language_delta().eligible_presentations(),
+        final_evaluation
+            .audit()
+            .iter()
+            .filter(|event| matches!(event, QuotaAuditEvent::LanguageRecorded { .. }))
+            .count()
+    );
+
+    let resolved = final_evaluation
+        .into_result()
+        .expect("consume complete final evaluation");
+    assert_eq!(
+        resolved.completed_learning().round_records().len(),
+        expected_rounds
+    );
+    assert_eq!(resolved.quota().compact_batch().candidates().len(), 200);
+    assert_eq!(resolved.quota().rbf_batch().candidates().len(), 200);
+}
+
+#[test]
+fn final_evaluation_coordinator_exposes_terminal_quota_failure_and_retains_the_handoff() {
+    let (completed, mut oracle) = complete_learning_for_final_evaluation();
+    let expected_rounds = completed.round_records().len();
+    let mut final_evaluation =
+        FinalEvaluationCoordinator::begin(completed, &mut oracle).expect("freeze final orders");
+
+    while let Some(wave) = final_evaluation.pending_wave().cloned() {
+        let outcomes = wave
+            .event_ids()
+            .iter()
+            .map(|event_id| {
+                EventLanguageOutcome::new(*event_id, LanguageEligibility::WrongLanguage)
+            })
+            .collect();
+        final_evaluation
+            .submit_language_outcomes(wave.wave_id(), outcomes)
+            .expect("record frozen wave outcomes");
+    }
+
+    assert_eq!(final_evaluation.progress(), QuotaResolutionProgress::Failed);
+    assert!(matches!(
+        final_evaluation.failure(),
+        Some(QuotaResolutionFailure::ReserveExhausted { .. })
+    ));
+    assert!(final_evaluation.pending_wave().is_none());
+    assert!(
+        final_evaluation
+            .language_delta()
+            .wrong_language_presentations()
+            > 0
+    );
+
+    let error = final_evaluation
+        .into_result()
+        .err()
+        .expect("failed quota cannot become a resolved final evaluation");
+    assert_eq!(
+        error.completed_learning().round_records().len(),
+        expected_rounds
+    );
+    assert!(matches!(
+        error.source_error(),
+        oracle_mvp::quota_resolution::QuotaResolutionError::ResolutionFailed(_)
+    ));
+}
+
+fn quota_audit_identity(quota: &oracle_mvp::quota_resolution::ResolvedQuota) -> String {
+    let bytes = serde_json::to_vec(quota.audit()).expect("serialize quota audit");
+    format!("{:x}", Sha256::digest(bytes))
+}
+
+fn final_report_provenance(
+    quota: &oracle_mvp::quota_resolution::ResolvedQuota,
+) -> FinalEvaluationReportProvenance {
+    FinalEvaluationReportProvenance::new(
+        format!("sha256:{}", "1".repeat(64)),
+        VERSION,
+        "geometry-v1",
+        "4".repeat(64),
+        "5".repeat(64),
+        "6".repeat(64),
+        "7".repeat(64),
+        "8".repeat(64),
+        quota_audit_identity(quota),
+    )
+    .expect("valid report provenance")
+}
+
+#[test]
+fn final_report_routes_one_overlap_rating_to_both_exact_personalizer_results() {
+    let (completed, mut oracle) = complete_learning_for_final_evaluation();
+    let mut final_evaluation =
+        FinalEvaluationCoordinator::begin(completed, &mut oracle).expect("freeze final orders");
+    while let Some(wave) = final_evaluation.pending_wave().cloned() {
+        final_evaluation
+            .submit_language_outcomes(wave.wave_id(), eligible(wave.event_ids()))
+            .expect("resolve eligible final wave");
+    }
+    let resolved = final_evaluation
+        .into_result()
+        .expect("resolved final quota");
+    let overlap = resolved
+        .quota()
+        .new_rating_routes()
+        .iter()
+        .find(|route| route.selected_by().len() == 2)
+        .expect("fixture must include a shared choice")
+        .event_id();
+    let ratings = resolved
+        .quota()
+        .new_rating_routes()
+        .iter()
+        .map(|route| {
+            (
+                route.event_id(),
+                GladnessRating::new(if route.event_id() == overlap { 7 } else { 5 })
+                    .expect("valid rating"),
+            )
+        })
+        .collect::<BTreeMap<_, _>>();
+
+    let report = build_final_evaluation_report(
+        resolved.quota(),
+        &ratings,
+        final_report_provenance(resolved.quota()),
+    )
+    .expect("build exact final report");
+
+    assert_eq!(report.compact().ratings().len(), 200);
+    assert_eq!(report.rbf().ratings().len(), 200);
+    assert_eq!(
+        report.compact().rating_distribution(),
+        &[0, 0, 0, 0, 199, 0, 1]
+    );
+    assert_eq!(report.rbf().rating_distribution(), &[0, 0, 0, 0, 199, 0, 1]);
+    assert_eq!(report.compact().rating_sum(), 1_002);
+    assert_eq!(report.rbf().rating_sum(), 1_002);
+    assert_eq!(report.compact().mean_rating(), 5.01);
+    assert_eq!(report.rbf().mean_rating(), 5.01);
+    assert_eq!(report.compact().wrong_language_presentations(), 0);
+    assert_eq!(report.rbf().wrong_language_presentations(), 0);
+    assert!(report.compact().passed());
+    assert!(report.rbf().passed());
+    assert!(report.passed());
+    assert_eq!(report.quota_audit(), resolved.quota().audit());
+    assert!(
+        report
+            .compact()
+            .ratings()
+            .iter()
+            .any(|record| record.event_id() == overlap && record.rating().value() == 7)
+    );
+    assert!(
+        report
+            .rbf()
+            .ratings()
+            .iter()
+            .any(|record| record.event_id() == overlap && record.rating().value() == 7)
+    );
+    assert_eq!(report.language().eligible_presentations(), ratings.len());
+    assert_eq!(report.language().wrong_language_presentations(), 0);
+    assert_eq!(report.language().wrong_language_percentage(), 0.0);
+    assert_eq!(report.provenance().representation_version(), VERSION);
+}
+
+#[test]
+fn final_report_retains_global_and_per_personalizer_language_diagnostics() {
+    let (completed, mut oracle) = complete_learning_for_final_evaluation();
+    let mut final_evaluation =
+        FinalEvaluationCoordinator::begin(completed, &mut oracle).expect("freeze final orders");
+    let initial = final_evaluation
+        .pending_wave()
+        .expect("initial final wave")
+        .clone();
+    let wrong_language = initial.event_ids()[0];
+    let initial_outcomes = initial
+        .event_ids()
+        .iter()
+        .map(|event_id| {
+            EventLanguageOutcome::new(
+                *event_id,
+                if *event_id == wrong_language {
+                    LanguageEligibility::WrongLanguage
+                } else {
+                    LanguageEligibility::Eligible
+                },
+            )
+        })
+        .collect();
+    final_evaluation
+        .submit_language_outcomes(initial.wave_id(), initial_outcomes)
+        .expect("record one language rejection");
+    while let Some(wave) = final_evaluation.pending_wave().cloned() {
+        final_evaluation
+            .submit_language_outcomes(wave.wave_id(), eligible(wave.event_ids()))
+            .expect("resolve eligible reserve wave");
+    }
+    let rejected_by = final_evaluation
+        .audit()
+        .iter()
+        .filter_map(|event| match event {
+            QuotaAuditEvent::WrongLanguageRejected {
+                personalizer,
+                event_id,
+                ..
+            } if *event_id == wrong_language => Some(*personalizer),
+            _ => None,
+        })
+        .collect::<BTreeSet<_>>();
+    let resolved = final_evaluation
+        .into_result()
+        .expect("resolved final quota");
+    let ratings = resolved
+        .quota()
+        .new_rating_routes()
+        .iter()
+        .map(|route| {
+            (
+                route.event_id(),
+                GladnessRating::new(5).expect("valid rating"),
+            )
+        })
+        .collect::<BTreeMap<_, _>>();
+
+    let report = build_final_evaluation_report(
+        resolved.quota(),
+        &ratings,
+        final_report_provenance(resolved.quota()),
+    )
+    .expect("build report with language diagnostics");
+
+    assert_eq!(report.language().wrong_language_presentations(), 1);
+    assert_eq!(
+        report.language().wrong_language_event_ids(),
+        &[wrong_language]
+    );
+    assert_eq!(report.language().eligible_presentations(), ratings.len());
+    for (personalizer, personalizer_report) in [
+        (PersonalizerId::Compact, report.compact()),
+        (PersonalizerId::Rbf, report.rbf()),
+    ] {
+        if rejected_by.contains(&personalizer) {
+            assert_eq!(
+                personalizer_report.wrong_language_event_ids(),
+                &[wrong_language]
+            );
+            assert_eq!(
+                personalizer_report.wrong_language_percentage(),
+                100.0 / 201.0
+            );
+        } else {
+            assert!(personalizer_report.wrong_language_event_ids().is_empty());
+            assert_eq!(personalizer_report.wrong_language_percentage(), 0.0);
+        }
+    }
+}
+
+#[test]
+fn final_report_applies_both_frozen_pass_thresholds() {
+    let (completed, mut oracle) = complete_learning_for_final_evaluation();
+    let mut final_evaluation =
+        FinalEvaluationCoordinator::begin(completed, &mut oracle).expect("freeze final orders");
+    while let Some(wave) = final_evaluation.pending_wave().cloned() {
+        final_evaluation
+            .submit_language_outcomes(wave.wave_id(), eligible(wave.event_ids()))
+            .expect("resolve eligible final wave");
+    }
+    let resolved = final_evaluation
+        .into_result()
+        .expect("resolved final quota");
+    let mut ratings = resolved
+        .quota()
+        .new_rating_routes()
+        .iter()
+        .map(|route| {
+            (
+                route.event_id(),
+                GladnessRating::new(7).expect("valid rating"),
+            )
+        })
+        .collect::<BTreeMap<_, _>>();
+    let compact_ids = resolved
+        .quota()
+        .compact_batch()
+        .candidates()
+        .iter()
+        .map(BatchCandidate::event_id)
+        .collect::<Vec<_>>();
+    for event_id in &compact_ids[..20] {
+        ratings.insert(*event_id, GladnessRating::new(1).expect("valid rating"));
+    }
+
+    let at_limit = build_final_evaluation_report(
+        resolved.quota(),
+        &ratings,
+        final_report_provenance(resolved.quota()),
+    )
+    .expect("build threshold report");
+    assert_eq!(at_limit.compact().low_rating_count(), 20);
+    assert_eq!(at_limit.compact().low_rating_percentage(), 10.0);
+    assert!(at_limit.compact().rating_sum() >= 1_000);
+    assert!(at_limit.compact().passed());
+
+    ratings.insert(
+        compact_ids[20],
+        GladnessRating::new(1).expect("valid rating"),
+    );
+    let over_limit = build_final_evaluation_report(
+        resolved.quota(),
+        &ratings,
+        final_report_provenance(resolved.quota()),
+    )
+    .expect("build over-limit report");
+    assert_eq!(over_limit.compact().low_rating_count(), 21);
+    assert!(over_limit.compact().rating_sum() >= 1_000);
+    assert!(!over_limit.compact().passed());
+
+    for rating in ratings.values_mut() {
+        *rating = GladnessRating::new(4).expect("valid rating");
+    }
+    let below_mean = build_final_evaluation_report(
+        resolved.quota(),
+        &ratings,
+        final_report_provenance(resolved.quota()),
+    )
+    .expect("build below-mean report");
+    assert_eq!(below_mean.compact().low_rating_count(), 0);
+    assert_eq!(below_mean.compact().rating_sum(), 800);
+    assert!(!below_mean.compact().passed());
+    assert!(!below_mean.rbf().passed());
+    assert!(!below_mean.passed());
+}
+
+#[test]
+fn final_report_rejects_missing_ratings_and_invalid_audit_provenance() {
+    let error = FinalEvaluationReportProvenance::new(
+        format!("sha256:{}", "1".repeat(64)),
+        VERSION,
+        "geometry-v1",
+        "not-a-sha256",
+        "5".repeat(64),
+        "6".repeat(64),
+        "7".repeat(64),
+        "8".repeat(64),
+        "9".repeat(64),
+    )
+    .expect_err("invalid handoff identity");
+    assert!(matches!(
+        error,
+        FinalEvaluationReportError::InvalidProvenance {
+            field: "phase3_handoff_identity_sha256"
+        }
+    ));
+
+    let (completed, mut oracle) = complete_learning_for_final_evaluation();
+    let mut final_evaluation =
+        FinalEvaluationCoordinator::begin(completed, &mut oracle).expect("freeze final orders");
+    while let Some(wave) = final_evaluation.pending_wave().cloned() {
+        final_evaluation
+            .submit_language_outcomes(wave.wave_id(), eligible(wave.event_ids()))
+            .expect("resolve eligible final wave");
+    }
+    let resolved = final_evaluation
+        .into_result()
+        .expect("resolved final quota");
+    let mut ratings = resolved
+        .quota()
+        .new_rating_routes()
+        .iter()
+        .map(|route| {
+            (
+                route.event_id(),
+                GladnessRating::new(5).expect("valid rating"),
+            )
+        })
+        .collect::<BTreeMap<_, _>>();
+
+    let wrong_audit_identity = FinalEvaluationReportProvenance::new(
+        format!("sha256:{}", "1".repeat(64)),
+        VERSION,
+        "geometry-v1",
+        "4".repeat(64),
+        "5".repeat(64),
+        "6".repeat(64),
+        "7".repeat(64),
+        "8".repeat(64),
+        "9".repeat(64),
+    )
+    .expect("well-formed but incorrect audit identity");
+    let audit_mismatch =
+        build_final_evaluation_report(resolved.quota(), &ratings, wrong_audit_identity)
+            .expect_err("report must bind the exact quota audit");
+    assert!(matches!(
+        audit_mismatch,
+        FinalEvaluationReportError::QuotaAuditIdentityMismatch {
+            expected,
+            actual
+        } if expected == quota_audit_identity(resolved.quota()) && actual == "9".repeat(64)
+    ));
+
+    let missing = *ratings.keys().next().expect("at least one final rating");
+    ratings.remove(&missing);
+
+    let mismatched_provenance = FinalEvaluationReportProvenance::new(
+        format!("sha256:{}", "1".repeat(64)),
+        "other-representation",
+        "geometry-v1",
+        "4".repeat(64),
+        "5".repeat(64),
+        "6".repeat(64),
+        "7".repeat(64),
+        "8".repeat(64),
+        quota_audit_identity(resolved.quota()),
+    )
+    .expect("well-formed but mismatched provenance");
+    let mismatch = build_final_evaluation_report(resolved.quota(), &ratings, mismatched_provenance)
+        .expect_err("mismatched representation provenance must fail");
+    assert!(matches!(
+        mismatch,
+        FinalEvaluationReportError::RepresentationVersionMismatch {
+            expected,
+            actual
+        } if expected == VERSION && actual == "other-representation"
+    ));
+
+    let error = build_final_evaluation_report(
+        resolved.quota(),
+        &ratings,
+        final_report_provenance(resolved.quota()),
+    )
+    .expect_err("missing final rating must fail");
+    assert!(matches!(
+        error,
+        FinalEvaluationReportError::MissingRating { event_id } if event_id == missing
+    ));
 }
 
 #[test]

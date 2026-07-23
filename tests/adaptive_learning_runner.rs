@@ -6,7 +6,7 @@ use std::time::{Duration, Instant};
 use nostrdb::{Config, Filter, Ndb, NoteBuilder, Transaction};
 use oracle_mvp::adaptive_learning_runner::{
     AdaptiveLearningRunnerConfig, AdaptiveLearningRunnerOutcome, AdaptiveLearningSeed,
-    run_adaptive_learning as run_adaptive_learning_with_ui,
+    replay_completed_adaptive_learning, run_adaptive_learning as run_adaptive_learning_with_ui,
     run_adaptive_learning_with_initial_presentations,
 };
 use oracle_mvp::candidate_order::{B16Boundary, CandidateOrderOracle};
@@ -28,6 +28,7 @@ use oracle_mvp::phase3_cost_preflight::{
 use oracle_mvp::quota_resolution::PriorPresentation;
 use oracle_mvp::representation::EventId;
 use oracle_mvp::snapshot::{Error as SnapshotError, Result as SnapshotResult};
+use sha2::{Digest, Sha256};
 
 const VERSION: &str = "runner-representation-v1";
 
@@ -226,6 +227,61 @@ fn capacity_stress_completes_all_ten_rounds_with_only_synthetic_sevens() {
     )
     .expect("read durable capacity boundaries");
     assert_eq!(boundaries.lines().count(), 12);
+}
+
+#[test]
+fn completed_phase3_replay_is_strictly_read_only_and_requires_manifested_cache() {
+    let fixture = RunnerFixture::new();
+    let session_path = fixture.temp.path().join("read-only-replay.json");
+    let config = fixture.config(session_path.clone());
+    let mut oracle = FixtureOracle::new(fixture.event_ids.clone());
+    let original = run_capacity_stress(&config, &mut oracle)
+        .expect("create a valid completed Phase 3 session");
+    let expected_identity = original
+        .completed()
+        .compact_controller()
+        .evidence_identity()
+        .clone();
+    let cache_dir = oracle_cache_path(&session_path);
+    let lock_path = session_lock_path(&session_path);
+    std::fs::remove_file(&lock_path).expect("remove writable runner lock before read-only replay");
+    make_tree_read_only(&session_path, &cache_dir);
+    let before = artifact_tree_snapshot(&session_path, &cache_dir);
+
+    let replayed = replay_completed_adaptive_learning(&config, &BTreeMap::new())
+        .expect("replay completed Phase 3 from immutable artifacts");
+
+    assert_eq!(
+        replayed.compact_controller().evidence_identity(),
+        &expected_identity
+    );
+    assert_eq!(artifact_tree_snapshot(&session_path, &cache_dir), before);
+    assert!(
+        !lock_path.exists(),
+        "read-only replay must not acquire or recreate the runner lock"
+    );
+    restore_tree_permissions(&session_path, &cache_dir);
+
+    let missing = first_manifested_cache_path(&session_path, &cache_dir);
+    std::fs::remove_file(&missing).expect("remove one manifested cache response");
+    make_tree_read_only(&session_path, &cache_dir);
+    let before = artifact_tree_snapshot(&session_path, &cache_dir);
+
+    let error = replay_completed_adaptive_learning(&config, &BTreeMap::new())
+        .err()
+        .expect("reject an incomplete immutable Oracle cache");
+
+    assert!(
+        error.to_string().contains("failed to read")
+            && error.to_string().contains(".oracle-responses"),
+        "unexpected error: {error}"
+    );
+    assert!(
+        !missing.exists(),
+        "read-only replay must not repair cache files"
+    );
+    assert_eq!(artifact_tree_snapshot(&session_path, &cache_dir), before);
+    restore_tree_permissions(&session_path, &cache_dir);
 }
 
 #[test]
@@ -3161,6 +3217,117 @@ impl CandidateOrderOracle for FixtureOracle {
 fn read_session(path: &std::path::Path) -> serde_json::Value {
     serde_json::from_reader(std::fs::File::open(path).expect("open durable session"))
         .expect("decode durable session")
+}
+
+fn oracle_cache_path(session_path: &std::path::Path) -> std::path::PathBuf {
+    let name = session_path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .expect("UTF-8 session filename");
+    session_path
+        .parent()
+        .expect("session parent")
+        .join(format!(".{name}.oracle-responses"))
+}
+
+fn session_lock_path(session_path: &std::path::Path) -> std::path::PathBuf {
+    let name = session_path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .expect("UTF-8 session filename");
+    session_path
+        .parent()
+        .expect("session parent")
+        .join(format!(".{name}.lock"))
+}
+
+fn first_manifested_cache_path(
+    session_path: &std::path::Path,
+    cache_dir: &std::path::Path,
+) -> std::path::PathBuf {
+    let session = read_session(session_path);
+    let expected_sha256 = session["vector_responses"]
+        .as_array()
+        .expect("vector response manifest")
+        .first()
+        .expect("completed session must manifest its seed-vector response")["sha256"]
+        .as_str()
+        .expect("manifested vector checksum");
+    std::fs::read_dir(cache_dir)
+        .expect("read Oracle cache")
+        .map(|entry| entry.expect("cache entry").path())
+        .find(|path| {
+            path.file_name()
+                .and_then(|name| name.to_str())
+                .is_some_and(|name| name.starts_with("vectors-"))
+                && format!(
+                    "{:x}",
+                    Sha256::digest(std::fs::read(path).expect("read vector cache file"))
+                ) == expected_sha256
+        })
+        .expect("manifested vector cache file must exist")
+}
+
+fn make_tree_read_only(session_path: &std::path::Path, cache_dir: &std::path::Path) {
+    use std::os::unix::fs::PermissionsExt;
+
+    std::fs::set_permissions(session_path, std::fs::Permissions::from_mode(0o400))
+        .expect("protect session as read-only");
+    for entry in std::fs::read_dir(cache_dir).expect("read Oracle cache") {
+        let path = entry.expect("cache entry").path();
+        std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o400))
+            .expect("protect cache file as read-only");
+    }
+    std::fs::set_permissions(cache_dir, std::fs::Permissions::from_mode(0o500))
+        .expect("protect cache directory as read-only");
+}
+
+fn restore_tree_permissions(session_path: &std::path::Path, cache_dir: &std::path::Path) {
+    use std::os::unix::fs::PermissionsExt;
+
+    std::fs::set_permissions(cache_dir, std::fs::Permissions::from_mode(0o700))
+        .expect("restore cache directory permissions");
+    for entry in std::fs::read_dir(cache_dir).expect("read Oracle cache") {
+        let path = entry.expect("cache entry").path();
+        std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o600))
+            .expect("restore cache file permissions");
+    }
+    std::fs::set_permissions(session_path, std::fs::Permissions::from_mode(0o600))
+        .expect("restore session permissions");
+}
+
+fn artifact_tree_snapshot(
+    session_path: &std::path::Path,
+    cache_dir: &std::path::Path,
+) -> BTreeMap<std::path::PathBuf, (Vec<u8>, u32)> {
+    use std::os::unix::fs::PermissionsExt;
+
+    let mut snapshot = BTreeMap::new();
+    let session_metadata = std::fs::metadata(session_path).expect("read session metadata");
+    snapshot.insert(
+        session_path.to_owned(),
+        (
+            std::fs::read(session_path).expect("read session bytes"),
+            session_metadata.permissions().mode(),
+        ),
+    );
+    let cache_metadata = std::fs::metadata(cache_dir).expect("read cache metadata");
+    snapshot.insert(
+        cache_dir.to_owned(),
+        (Vec::new(), cache_metadata.permissions().mode()),
+    );
+    for entry in std::fs::read_dir(cache_dir).expect("read Oracle cache") {
+        let path = entry.expect("cache entry").path();
+        let metadata = std::fs::metadata(&path).expect("read cache-file metadata");
+        snapshot.insert(
+            path.clone(),
+            (
+                std::fs::read(&path).expect("read cache-file bytes"),
+                metadata.permissions().mode(),
+            ),
+        );
+    }
+    snapshot
 }
 
 fn value_event_id(value: &serde_json::Value) -> EventId {

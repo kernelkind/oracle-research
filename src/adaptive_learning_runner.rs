@@ -470,8 +470,8 @@ struct PersistedOracleCallEnvelope {
     responses: Vec<SimilarNotesResponse>,
 }
 
-struct SessionOracle<'a, O> {
-    inner: &'a mut O,
+struct SessionOracle<'a, O: ?Sized> {
+    inner: Option<&'a mut O>,
     representation_version: String,
     cache_dir: PathBuf,
     calls: Vec<PersistedOracleCall>,
@@ -512,6 +512,78 @@ where
         oracle,
         &mut evaluator,
     )
+}
+
+/// Reconstruct a completed Phase 3 handoff from its immutable session and
+/// manifested Oracle cache.
+///
+/// This path is intentionally read-only: it does not acquire a session lock,
+/// change permissions, recover orphaned files, create artifacts, or delegate
+/// missing work to an Oracle backend.
+pub fn replay_completed_adaptive_learning(
+    config: &AdaptiveLearningRunnerConfig,
+    initial_presentations: &BTreeMap<EventId, PriorPresentation>,
+) -> Result<Box<CompletedAdaptiveLearning>> {
+    let representation_version = config.compact_settings.representation_version();
+    let fixed_binding =
+        validate_config_for_representation(config, initial_presentations, representation_version)?;
+    let session: AdaptiveLearningSession = read_manifest(&config.session_path)?;
+    validate_loaded_static_session(&session, &fixed_binding)?;
+    if session.phase != SessionPhase::Complete {
+        return Err(Error::ExperimentState(
+            "read-only Phase 3 replay requires a completed session".to_owned(),
+        ));
+    }
+    let cache_dir = oracle_cache_dir(&config.session_path)?;
+    let mut session_oracle = SessionOracle::<dyn CandidateOrderOracle>::new_read_only(
+        representation_version.to_owned(),
+        cache_dir,
+        session.oracle_calls.clone(),
+        session.oracle_responses.clone(),
+        session.vector_responses.clone(),
+    )?;
+    let (compact, rbf, seed_evidence) = build_seed_controllers(config, &mut session_oracle)?;
+    let binding = build_session_binding(fixed_binding, seed_evidence)?;
+    if session.binding != binding {
+        return Err(Error::ExperimentState(
+            "the stored seed evidence does not match this immutable session".to_owned(),
+        ));
+    }
+    let mut coordinator = AdaptiveLearningCoordinator::new_with_initial_presentations(
+        &session_oracle,
+        compact,
+        rbf,
+        config.b16.clone(),
+        initial_presentations.clone(),
+    )
+    .map_err(adaptive_error)?;
+    if replay_session(&mut coordinator, &session, &mut session_oracle)?
+        != SessionReplayOutcome::Current
+    {
+        return Err(Error::ExperimentState(
+            "a completed Phase 3 session replayed as failed".to_owned(),
+        ));
+    }
+    if session_oracle.call_cursor != session_oracle.calls.len() {
+        return Err(Error::ExperimentState(
+            "the stored Oracle call tape extends beyond the replayed learning state".to_owned(),
+        ));
+    }
+    if coordinator.progress() != AdaptiveLearningProgress::Complete {
+        return Err(Error::ExperimentState(
+            "the stored complete session does not reconstruct a complete coordinator".to_owned(),
+        ));
+    }
+    let completed = coordinator.into_completed().map_err(|_| {
+        Error::Invariant("complete coordinator rejected its read-only handoff".to_owned())
+    })?;
+    let handoff = completed_handoff(&session.binding, &completed, &session.rounds)?;
+    if session.completion.as_ref() != Some(&handoff) {
+        return Err(Error::ExperimentState(
+            "the persisted Phase 3 handoff does not match deterministic replay".to_owned(),
+        ));
+    }
+    Ok(Box::new(completed))
 }
 
 fn legacy_order_rating_instructions() -> String {
@@ -893,6 +965,18 @@ fn validate_config<O: CandidateOrderOracle>(
     initial_presentations: &BTreeMap<EventId, PriorPresentation>,
     oracle: &O,
 ) -> Result<StaticSessionBinding> {
+    validate_config_for_representation(
+        config,
+        initial_presentations,
+        oracle.representation_version(),
+    )
+}
+
+fn validate_config_for_representation(
+    config: &AdaptiveLearningRunnerConfig,
+    initial_presentations: &BTreeMap<EventId, PriorPresentation>,
+    oracle_representation_version: &str,
+) -> Result<StaticSessionBinding> {
     if config.corpus_identity.trim().is_empty() {
         return Err(Error::ExperimentState(
             "corpus identity must not be empty".to_owned(),
@@ -931,7 +1015,7 @@ fn validate_config<O: CandidateOrderOracle>(
     let version = config.compact_settings.representation_version();
     if config.rbf_settings.representation_version() != version
         || config.b16.representation_version() != version
-        || oracle.representation_version() != version
+        || oracle_representation_version != version
     {
         return Err(Error::ExperimentState(
             "the Oracle, scorer settings, and B16 must use one representation version".to_owned(),
@@ -1305,7 +1389,7 @@ fn evidence_binding(identity: &EvidenceIdentity) -> SeedEvidenceBinding {
     }
 }
 
-fn replay_session<O: CandidateOrderOracle>(
+fn replay_session<O: CandidateOrderOracle + ?Sized>(
     coordinator: &mut AdaptiveLearningCoordinator,
     session: &AdaptiveLearningSession,
     oracle: &mut SessionOracle<'_, O>,
@@ -1507,7 +1591,7 @@ fn replay_session<O: CandidateOrderOracle>(
     }
 }
 
-fn verify_replayed_failure<O: CandidateOrderOracle>(
+fn verify_replayed_failure<O: CandidateOrderOracle + ?Sized>(
     coordinator: &AdaptiveLearningCoordinator,
     session: &AdaptiveLearningSession,
     oracle: &SessionOracle<'_, O>,
@@ -1681,7 +1765,7 @@ fn show_preparing<O, U>(
     evaluator: &mut U,
 ) -> Result<bool>
 where
-    O: CandidateOrderOracle,
+    O: CandidateOrderOracle + ?Sized,
     U: EvaluatorUi,
 {
     match evaluator.preparing() {
@@ -1705,7 +1789,7 @@ fn take_due_rest<O, U>(
     evaluator: &mut U,
 ) -> Result<bool>
 where
-    O: CandidateOrderOracle,
+    O: CandidateOrderOracle + ?Sized,
     U: EvaluatorUi,
 {
     let presentations = stored_presentation_count(session);
@@ -1769,7 +1853,7 @@ fn collect_current_wave<O, U>(
     evaluator: &mut U,
 ) -> Result<bool>
 where
-    O: CandidateOrderOracle,
+    O: CandidateOrderOracle + ?Sized,
     U: EvaluatorUi,
 {
     let mut loaded_contents = None;
@@ -1946,7 +2030,7 @@ fn store_evaluator_submission<O>(
     submission: EvaluatorSubmission,
 ) -> Result<()>
 where
-    O: CandidateOrderOracle,
+    O: CandidateOrderOracle + ?Sized,
 {
     let decision = match submission.decision() {
         EvaluatorDecision::Rating(rating) if (1..=7).contains(&rating) => {
@@ -1981,7 +2065,7 @@ fn persist_recoverable_pause<O>(
     reason: &str,
 ) -> Result<()>
 where
-    O: CandidateOrderOracle,
+    O: CandidateOrderOracle + ?Sized,
 {
     session.pause_reason = Some(reason.to_owned());
     record_pause_checkpoint(session, reason);
@@ -2377,7 +2461,7 @@ fn record_coordinator_failure<O>(
     error: AdaptiveLearningError,
 ) -> Result<AdaptiveLearningRunnerOutcome>
 where
-    O: CandidateOrderOracle,
+    O: CandidateOrderOracle + ?Sized,
 {
     let reason = error.to_string();
     if !matches!(&error, AdaptiveLearningError::PhasePaused(_)) {
@@ -2403,7 +2487,7 @@ fn adaptive_error(error: AdaptiveLearningError) -> Error {
     Error::ExperimentState(error.to_string())
 }
 
-impl<'a, O: CandidateOrderOracle> SessionOracle<'a, O> {
+impl<'a, O: CandidateOrderOracle + ?Sized> SessionOracle<'a, O> {
     fn new(
         inner: &'a mut O,
         cache_dir: PathBuf,
@@ -2412,6 +2496,24 @@ impl<'a, O: CandidateOrderOracle> SessionOracle<'a, O> {
         vector_response_refs: Vec<CachedVectorResponseRef>,
     ) -> Result<Self> {
         let representation_version = inner.representation_version().to_owned();
+        Self::from_parts(
+            Some(inner),
+            representation_version,
+            cache_dir,
+            calls,
+            response_refs,
+            vector_response_refs,
+        )
+    }
+
+    fn from_parts(
+        inner: Option<&'a mut O>,
+        representation_version: String,
+        cache_dir: PathBuf,
+        calls: Vec<PersistedOracleCall>,
+        response_refs: Vec<CachedResponseRef>,
+        vector_response_refs: Vec<CachedVectorResponseRef>,
+    ) -> Result<Self> {
         let mut indexed = BTreeMap::new();
         for response_ref in response_refs {
             if response_ref.key.representation_version != representation_version {
@@ -2757,7 +2859,26 @@ impl<'a, O: CandidateOrderOracle> SessionOracle<'a, O> {
     }
 }
 
-impl<O: CandidateOrderOracle> CandidateOrderOracle for SessionOracle<'_, O> {
+impl SessionOracle<'static, dyn CandidateOrderOracle> {
+    fn new_read_only(
+        representation_version: String,
+        cache_dir: PathBuf,
+        calls: Vec<PersistedOracleCall>,
+        response_refs: Vec<CachedResponseRef>,
+        vector_response_refs: Vec<CachedVectorResponseRef>,
+    ) -> Result<Self> {
+        Self::from_parts(
+            None,
+            representation_version,
+            cache_dir,
+            calls,
+            response_refs,
+            vector_response_refs,
+        )
+    }
+}
+
+impl<O: CandidateOrderOracle + ?Sized> CandidateOrderOracle for SessionOracle<'_, O> {
     fn representation_version(&self) -> &str {
         &self.representation_version
     }
@@ -2789,6 +2910,11 @@ impl<O: CandidateOrderOracle> CandidateOrderOracle for SessionOracle<'_, O> {
             });
         }
 
+        if self.inner.is_none() {
+            return Err(Error::ExperimentState(
+                "read-only Phase 3 replay is missing a persisted Oracle call".to_owned(),
+            ));
+        }
         if let Some(call) = self.recover_call(requests, representation_version)? {
             let responses = requests
                 .iter()
@@ -2828,6 +2954,12 @@ impl<O: CandidateOrderOracle> CandidateOrderOracle for SessionOracle<'_, O> {
         } else {
             let delegated = self
                 .inner
+                .as_deref_mut()
+                .ok_or_else(|| {
+                    Error::Invariant(
+                        "writable Phase 3 Oracle has no backing implementation".to_owned(),
+                    )
+                })?
                 .similar_notes_wave(&missing_requests, representation_version)?;
             if delegated.responses.len() != missing_requests.len() {
                 return Err(Error::InvalidOracleResponse(
@@ -2887,11 +3019,23 @@ impl<O: CandidateOrderOracle> CandidateOrderOracle for SessionOracle<'_, O> {
             representation_version: representation_version.to_owned(),
             note_ids: note_ids.to_vec(),
         };
+        if self.vector_response_refs.contains_key(&key) {
+            return self.load_cached_vectors(&key);
+        }
+        if self.inner.is_none() {
+            return Err(Error::ExperimentState(
+                "read-only Phase 3 replay is missing a manifested vector response".to_owned(),
+            ));
+        }
         if self.recover_cached_vectors(&key)? {
             return self.load_cached_vectors(&key);
         }
         let response = self
             .inner
+            .as_deref_mut()
+            .ok_or_else(|| {
+                Error::Invariant("writable Phase 3 Oracle has no backing implementation".to_owned())
+            })?
             .vectors_for_notes(note_ids, representation_version)?;
         self.store_vector_response(key, response.clone())?;
         Ok(response)
@@ -2981,7 +3125,7 @@ fn validate_cached_vector_response(
     Ok(())
 }
 
-fn sync_oracle_state<O: CandidateOrderOracle>(
+fn sync_oracle_state<O: CandidateOrderOracle + ?Sized>(
     session: &mut AdaptiveLearningSession,
     oracle: &SessionOracle<'_, O>,
 ) {

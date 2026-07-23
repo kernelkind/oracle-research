@@ -32,6 +32,10 @@ name = "phase3-seed-selection"
 path = "src/bin/phase3_seed_selection.rs"
 
 [[bin]]
+name = "phase4-final-evaluation"
+path = "src/bin/phase4_final_evaluation.rs"
+
+[[bin]]
 name = "representation-geometry"
 path = "src/bin/representation_geometry.rs"
 

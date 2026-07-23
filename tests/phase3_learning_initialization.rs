@@ -31,6 +31,11 @@ use oracle_mvp::phase3_learning_launch::{
 use oracle_mvp::phase3_seed_selection::{
     Phase3SeedSelectionConfig, Phase3SeedSelectionOutcome, run_phase3_seed_selection,
 };
+use oracle_mvp::phase4_final_launch::{
+    FINAL_EVALUATION_PURPOSE, FinalEvaluationWorkspaceState, bind_final_evaluation_launch,
+    prepare_final_evaluation_workspace, read_final_evaluation_launch_config,
+    read_final_evaluation_launch_receipt,
+};
 use oracle_mvp::quota_resolution::PriorPresentation;
 use oracle_mvp::representation::{
     RepresentationBuildConfig, RepresentationDescriptor, RepresentationEncoder,
@@ -242,6 +247,145 @@ fn initialization_is_atomic_source_preserving_and_exactly_resumable() {
     assert_eq!(
         fs::read(resumed.launch_receipt_path()).expect("read unchanged launch receipt"),
         launch_before
+    );
+}
+
+#[test]
+fn phase4_initialization_and_launch_bind_the_exact_phase3_source_without_changing_it() {
+    let fixture = Fixture::new();
+    let phase3_config_path =
+        fixture.write_config("phase4-source", &fixture.ids[..5], &[5, 6, 7, 5, 6]);
+    let phase3_config =
+        read_learning_launch_config(&phase3_config_path).expect("read Phase 3 source config");
+    let phase3 = prepare_learning_workspace(&phase3_config_path, &phase3_config)
+        .expect("prepare exact Phase 3 source");
+    bind_learning_launch(
+        &phase3,
+        &phase3_config,
+        &format!("sha256:{}", "d".repeat(64)),
+        68 * 1024_u64.pow(3),
+    )
+    .expect("bind exact Phase 3 source launch");
+
+    fs::write(
+        phase3.session_path(),
+        b"{\"schema_version\":8,\"phase\":\"complete\"}\n",
+    )
+    .expect("write completed-session identity fixture");
+    fs::set_permissions(phase3.session_path(), fs::Permissions::from_mode(0o600))
+        .expect("protect Phase 3 session");
+    fs::create_dir(phase3.oracle_cache_path()).expect("create Phase 3 Oracle cache");
+    fs::set_permissions(
+        phase3.oracle_cache_path(),
+        fs::Permissions::from_mode(0o700),
+    )
+    .expect("protect Phase 3 Oracle cache");
+    let cached_response = phase3.oracle_cache_path().join("response.json");
+    fs::write(&cached_response, b"{\"response\":\"frozen\"}\n")
+        .expect("write Phase 3 cached response");
+    fs::set_permissions(&cached_response, fs::Permissions::from_mode(0o600))
+        .expect("protect Phase 3 cached response");
+
+    let source_workspace_before =
+        immutable_tree_metadata_fingerprint(phase3.workspace_path()).expect("fingerprint Phase 3");
+    let source_workspace_bytes_before = snapshot_tree(phase3.workspace_path());
+    let source_representation_before = immutable_tree_metadata_fingerprint(&fixture.representation)
+        .expect("fingerprint source representation");
+    let source_model_before = immutable_tree_metadata_fingerprint(&fixture.model_bundle)
+        .expect("fingerprint source model");
+
+    let phase4_config_path = fixture.temp.path().join("phase4-final.json");
+    let phase4_workspace = fixture.temp.path().join("phase4-final");
+    let phase4_image = format!("sha256:{}", "e".repeat(64));
+    let phase4_config = serde_json::json!({
+        "schema_version": 1,
+        "purpose": FINAL_EVALUATION_PURPOSE,
+        "workspace_path": phase4_workspace,
+        "source_phase3_workspace_path": phase3.workspace_path(),
+        "source_representation_path": fixture.representation,
+        "source_model_bundle_path": fixture.model_bundle,
+        "container_runtime": fixture.runtime,
+        "container_name": "phase4-final-fixture",
+        "controller_image": phase4_image,
+        "source_phase3_session_sha256": hash_file(phase3.session_path()),
+        "expected_representation_version": fixture.representation_version,
+        "host_memory_reserve_bytes": 12 * 1024_u64.pow(3),
+    });
+    fs::write(
+        &phase4_config_path,
+        serde_json::to_vec_pretty(&phase4_config).expect("encode Phase 4 config"),
+    )
+    .expect("write Phase 4 config");
+    let phase4_config =
+        read_final_evaluation_launch_config(&phase4_config_path).expect("read Phase 4 config");
+
+    let prepared = prepare_final_evaluation_workspace(&phase4_config_path, &phase4_config)
+        .expect("prepare Phase 4 from the exact Phase 3 source");
+
+    assert!(prepared.created());
+    assert_eq!(prepared.state(), FinalEvaluationWorkspaceState::Initialized);
+    assert_eq!(
+        fs::read(prepared.corpus_path().join("data.mdb")).expect("read Phase 4 corpus"),
+        fs::read(phase3.corpus_path().join("data.mdb")).expect("read Phase 3 corpus")
+    );
+    assert_eq!(
+        fs::read(prepared.ordered_event_ids_path()).expect("read Phase 4 ordered IDs"),
+        fs::read(phase3.ordered_event_ids_path()).expect("read Phase 3 ordered IDs")
+    );
+    assert!(!prepared.session_path().exists());
+    assert!(!prepared.orders_path().exists());
+    assert!(!prepared.report_path().exists());
+    assert!(!prepared.oracle_cache_path().exists());
+
+    let launch = bind_final_evaluation_launch(
+        &prepared,
+        &phase4_config,
+        &phase4_image,
+        68 * 1024_u64.pow(3),
+    )
+    .expect("bind the exact Phase 4 launch");
+    assert_eq!(launch.controller_image_id(), phase4_image);
+    assert_eq!(launch.memory_limit_bytes(), 68 * 1024_u64.pow(3));
+    assert_eq!(
+        read_final_evaluation_launch_receipt(&prepared, &phase4_config)
+            .expect("read Phase 4 launch receipt"),
+        Some(launch.clone())
+    );
+
+    let phase4_workspace_before = snapshot_tree(prepared.workspace_path());
+    let resumed = prepare_final_evaluation_workspace(&phase4_config_path, &phase4_config)
+        .expect("verify exact Phase 4 resume");
+    assert!(!resumed.created());
+    assert_eq!(
+        snapshot_tree(resumed.workspace_path()),
+        phase4_workspace_before
+    );
+    assert_eq!(
+        bind_final_evaluation_launch(
+            &resumed,
+            &phase4_config,
+            &phase4_image,
+            68 * 1024_u64.pow(3),
+        )
+        .expect("reuse exact Phase 4 launch"),
+        launch
+    );
+
+    assert_eq!(
+        immutable_tree_metadata_fingerprint(phase3.workspace_path()).unwrap(),
+        source_workspace_before
+    );
+    assert_eq!(
+        snapshot_tree(phase3.workspace_path()),
+        source_workspace_bytes_before
+    );
+    assert_eq!(
+        immutable_tree_metadata_fingerprint(&fixture.representation).unwrap(),
+        source_representation_before
+    );
+    assert_eq!(
+        immutable_tree_metadata_fingerprint(&fixture.model_bundle).unwrap(),
+        source_model_before
     );
 }
 

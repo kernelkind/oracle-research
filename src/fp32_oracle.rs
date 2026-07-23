@@ -47,7 +47,7 @@ pub struct SimilarNotesWaveMetrics {
     pub scan_block_rows: u64,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, serde::Deserialize, PartialEq, serde::Serialize)]
 pub struct SimilarNotesWaveResponse {
     pub responses: Vec<SimilarNotesResponse>,
     pub metrics: SimilarNotesWaveMetrics,
