@@ -59,7 +59,14 @@ fn learning_container_keeps_controller_and_worker_under_one_zero_swap_guard() {
     assert!(joined.contains("--read-only"));
     assert!(joined.contains(&format!("--memory={limit}")));
     assert!(joined.contains(&format!("--memory-swap={limit}")));
-    assert!(joined.contains("--memory-swappiness=0"));
+    assert!(!joined.contains("--memory-swappiness"));
+    assert!(joined.contains(
+        "--tmpfs=/runtime-tmp:rw,noexec,nosuid,nodev,size=1g,uid=1000,gid=1000,mode=0700"
+    ));
+    assert!(
+        joined
+            .contains("--tmpfs=/runtime-home:rw,nosuid,nodev,size=2g,uid=1000,gid=1000,mode=0700")
+    );
     assert!(joined.contains("--detach-keys=ctrl-]"));
     assert!(joined.contains(&format!(
         "--label=io.notedeck.phase3.launch={}",

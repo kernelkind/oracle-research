@@ -1335,11 +1335,16 @@ pub fn learning_container_arguments(
         "--read-only".into(),
         format!("--memory={memory_limit_bytes}").into(),
         format!("--memory-swap={memory_limit_bytes}").into(),
-        "--memory-swappiness=0".into(),
         "--pids-limit=4096".into(),
         "--shm-size=1g".into(),
-        "--tmpfs=/runtime-tmp:rw,noexec,nosuid,nodev,size=1g".into(),
-        "--tmpfs=/runtime-home:rw,nosuid,nodev,size=2g".into(),
+        format!(
+            "--tmpfs=/runtime-tmp:rw,noexec,nosuid,nodev,size=1g,uid={user_id},gid={group_id},mode=0700"
+        )
+        .into(),
+        format!(
+            "--tmpfs=/runtime-home:rw,nosuid,nodev,size=2g,uid={user_id},gid={group_id},mode=0700"
+        )
+        .into(),
         format!("--user={user_id}:{group_id}").into(),
         "--env=HOME=/runtime-home".into(),
         "--env=TMPDIR=/runtime-tmp".into(),
