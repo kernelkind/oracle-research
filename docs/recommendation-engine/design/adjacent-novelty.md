@@ -102,8 +102,6 @@ After a probe is shown:
   budget, plus the presentation-based decay function and horizon.
 - The support calculation and minimum support floor.
 - The number and placement of bounded probe positions.
-- Whether the Oracle vectors preserve the broad themes people experience as
-  repetitive.
 - How to avoid interpreting a low rating caused by temporary saturation as a
   permanent dislike.
 - How disconnected interests can be discovered when they are unreachable from
@@ -111,6 +109,14 @@ After a probe is shown:
 
 Freshness, public quality signals, and stale source data remain separate
 problems.
+
+## Necessary-Condition Result
+
+[CREC-101](../experiments/adjacent-novelty/crec-101-theme-vector-separation.md)
+found strong separation for three distinct reported theme families in the
+valid Phase 4 prefix. This resolves only whether the current document vectors
+contain usable broad-theme structure. It authorizes a frozen-sequence exposure
+replay; it does not validate an exposure formula or the complete loop.
 
 ## Research Basis
 
