@@ -20,10 +20,21 @@ pub const RATING_ANCHORS: [&str; 7] = [
 /// The frozen rule for removing a presented note from numeric evaluation.
 pub const WRONG_LANGUAGE_RULE: &str = "Use wrong_language only when the note is clearly primarily non-English. Mixed-language, code-heavy, and ambiguous notes remain eligible and must be rated.";
 
+/// The frozen diagnostic asked after a probe rating is durable.
+pub const REPETITION_QUESTION: &str =
+    "Did this feel like more of a broad subject this run had already shown too much of?";
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum EvaluatorDecision {
     Rating(u8),
     WrongLanguage,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum RepetitionAnswer {
+    Yes,
+    No,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -137,9 +148,42 @@ impl CompletionView {
     }
 }
 
+/// Only the presentation identity needed by the repetition diagnostic.
+///
+/// The note has already been displayed and its rating made durable before this
+/// view is issued.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct RepetitionView<'a> {
+    note: &'a str,
+    presentation_number: usize,
+}
+
+impl<'a> RepetitionView<'a> {
+    pub const fn new(note: &'a str, presentation_number: usize) -> Self {
+        Self {
+            note,
+            presentation_number,
+        }
+    }
+
+    pub const fn note(self) -> &'a str {
+        self.note
+    }
+
+    pub const fn presentation_number(self) -> usize {
+        self.presentation_number
+    }
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum RatingOutcome {
     Submitted(EvaluatorSubmission),
+    Paused,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum RepetitionOutcome {
+    Answered(RepetitionAnswer),
     Paused,
 }
 
@@ -176,4 +220,12 @@ pub trait EvaluatorUi {
     fn preparing(&mut self) -> io::Result<()>;
 
     fn complete(&mut self, view: CompletionView) -> io::Result<()>;
+}
+
+/// The separate evaluator protocol for the post-rating repetition diagnostic.
+///
+/// Keeping this outside [`EvaluatorUi`] prevents the diagnostic answer from
+/// becoming a rating decision or affecting existing rating-only evaluators.
+pub trait RepetitionUi {
+    fn repetition(&mut self, view: RepetitionView<'_>) -> io::Result<RepetitionOutcome>;
 }

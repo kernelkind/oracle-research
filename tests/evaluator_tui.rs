@@ -1,6 +1,7 @@
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers};
 use oracle_mvp::evaluator::{
-    EvaluatorDecision, RATING_ANCHORS, RATING_QUESTION, WRONG_LANGUAGE_RULE,
+    EvaluatorDecision, RATING_ANCHORS, RATING_QUESTION, REPETITION_QUESTION, RepetitionAnswer,
+    WRONG_LANGUAGE_RULE,
 };
 use oracle_mvp::evaluator_tui::{EvaluatorTuiAction, EvaluatorTuiModel};
 use ratatui::Terminal;
@@ -10,6 +11,8 @@ use ratatui::style::{Color, Modifier};
 
 const EXPECTED_QUESTION: &str =
     "Considering the attention it required, how glad are you that you saw this note?";
+const EXPECTED_REPETITION_QUESTION: &str =
+    "Did this feel like more of a broad subject this run had already shown too much of?";
 const EXPECTED_ANCHORS: [&str; 7] = [
     "[1] Strongly regret seeing it",
     "[2] Regret seeing it",
@@ -19,6 +22,129 @@ const EXPECTED_ANCHORS: [&str; 7] = [
     "[6] Glad I saw it",
     "[7] Exceptionally glad I saw it",
 ];
+
+#[test]
+fn repetition_screen_keeps_its_exact_question_visible_and_requires_confirmed_selection() {
+    assert_eq!(REPETITION_QUESTION, EXPECTED_REPETITION_QUESTION);
+
+    let mut model = EvaluatorTuiModel::repetition_with_note("rated note", 1);
+    let initial = render(&model, 120, 30);
+    let initial_text = buffer_text(&initial);
+    assert!(
+        normalized_words(&initial_text).contains(&normalized_words(EXPECTED_REPETITION_QUESTION))
+    );
+    assert!(initial_text.contains("  [Y] Yes"));
+    assert!(initial_text.contains("  [N] No"));
+    assert!(initial_text.contains("[Enter] Confirm"));
+    assert_eq!(
+        model.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
+        EvaluatorTuiAction::None,
+        "Enter cannot submit without an explicit repetition answer"
+    );
+
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('y'), KeyEventKind::Press)),
+        EvaluatorTuiAction::None
+    );
+    let yes_selected = render(&model, 120, 30);
+    assert!(buffer_text(&yes_selected).contains("▶ [Y] Yes"));
+    assert_eq!(style_at(&yes_selected, "[Y]").fg, Some(Color::Cyan));
+    assert!(
+        style_at(&yes_selected, "[Y]")
+            .add_modifier
+            .contains(Modifier::BOLD)
+    );
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('n'), KeyEventKind::Press)),
+        EvaluatorTuiAction::None,
+        "a later answer must replace the unconfirmed selection"
+    );
+    let no_selected = render(&model, 120, 30);
+    let no_selected_text = buffer_text(&no_selected);
+    assert!(no_selected_text.contains("  [Y] Yes"));
+    assert!(no_selected_text.contains("▶ [N] No"));
+    assert_eq!(style_at(&no_selected, "[N]").fg, Some(Color::Cyan));
+    assert_eq!(
+        model.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
+        EvaluatorTuiAction::SubmitRepetition {
+            answer: RepetitionAnswer::No,
+        }
+    );
+
+    let mut yes = EvaluatorTuiModel::repetition_with_note("rated note", 1);
+    assert_eq!(
+        yes.handle_event(key(KeyCode::Char('Y'), KeyEventKind::Press)),
+        EvaluatorTuiAction::None
+    );
+    assert_eq!(
+        yes.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
+        EvaluatorTuiAction::SubmitRepetition {
+            answer: RepetitionAnswer::Yes,
+        }
+    );
+}
+
+#[test]
+fn repetition_screen_ignores_stale_and_non_press_input_but_control_c_pauses() {
+    for stale in [
+        key(KeyCode::Char('y'), KeyEventKind::Press),
+        key(KeyCode::Char('n'), KeyEventKind::Press),
+        key(KeyCode::Enter, KeyEventKind::Press),
+        key(KeyCode::Char('y'), KeyEventKind::Repeat),
+        key(KeyCode::Char('n'), KeyEventKind::Release),
+        Event::Paste("y".to_owned()),
+    ] {
+        assert_eq!(
+            EvaluatorTuiModel::pre_screen_action(stale),
+            EvaluatorTuiAction::None
+        );
+    }
+
+    let mut model = EvaluatorTuiModel::repetition_with_note("rated note", 1);
+    for ignored in [
+        key(KeyCode::Char('y'), KeyEventKind::Repeat),
+        key(KeyCode::Char('n'), KeyEventKind::Release),
+        Event::Paste("n".to_owned()),
+    ] {
+        assert_eq!(model.handle_event(ignored), EvaluatorTuiAction::None);
+    }
+    assert_eq!(
+        model.handle_event(key(KeyCode::Enter, KeyEventKind::Press)),
+        EvaluatorTuiAction::None,
+        "ignored input must not leave a hidden answer selected"
+    );
+    assert_eq!(
+        model.handle_event(key_with_modifiers(
+            KeyCode::Char('c'),
+            KeyModifiers::CONTROL,
+            KeyEventKind::Press,
+        )),
+        EvaluatorTuiAction::Pause
+    );
+    assert_eq!(
+        EvaluatorTuiModel::pre_screen_action(key_with_modifiers(
+            KeyCode::Char('c'),
+            KeyModifiers::CONTROL,
+            KeyEventKind::Press,
+        )),
+        EvaluatorTuiAction::Pause
+    );
+}
+
+#[test]
+fn production_repetition_screen_keeps_the_rated_note_visible() {
+    let model = EvaluatorTuiModel::repetition_with_note(
+        "The exact note whose broad subject is being judged.",
+        12,
+    );
+
+    let rendered = render(&model, 120, 30);
+    let text = buffer_text(&rendered);
+
+    assert!(text.contains("The exact note whose broad subject is being judged."));
+    assert!(normalized_words(&text).contains(&normalized_words(EXPECTED_REPETITION_QUESTION)));
+    assert!(text.contains("12 reviewed"));
+}
 
 #[test]
 fn rating_screen_keeps_the_frozen_protocol_visible_neutral_and_blinded() {

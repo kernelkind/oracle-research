@@ -876,6 +876,10 @@ impl CompletedAdaptiveLearning {
         self.vector_cache.vector_count()
     }
 
+    pub(crate) fn cached_vector(&self, event_id: EventId) -> Option<&[f32]> {
+        self.vector_cache.vector(event_id)
+    }
+
     pub fn presentation_ledger(&self) -> &BTreeMap<EventId, PriorPresentation> {
         &self.presentation_ledger
     }

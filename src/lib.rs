@@ -2,6 +2,7 @@
 
 pub mod adaptive_learning;
 pub mod adaptive_learning_runner;
+pub mod adjacent_novelty;
 pub mod artifact;
 pub mod benchmark;
 pub mod budget;
@@ -48,6 +49,8 @@ pub mod semantic_order;
 pub mod shared_learning_round;
 pub mod snapshot;
 pub mod stage;
+pub mod static_exposure_probe_launch;
+pub mod static_exposure_probe_runner;
 pub mod theme_exposure_replay;
 pub mod theme_exposure_replay_artifact;
 pub mod theme_geometry_artifact;

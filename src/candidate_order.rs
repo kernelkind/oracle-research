@@ -220,6 +220,10 @@ impl CandidateVectorCache {
         self.vectors.len()
     }
 
+    pub(crate) fn vector(&self, event_id: EventId) -> Option<&[f32]> {
+        self.vectors.get(&event_id).map(Vec::as_slice)
+    }
+
     pub(crate) fn insert_verified_vectors(
         &mut self,
         response: VectorsForNotesResponse,

@@ -5,14 +5,14 @@ use std::time::{Duration, Instant};
 
 use nostrdb::{Config, Filter, Ndb, NoteBuilder, Transaction};
 use oracle_mvp::adaptive_learning::{AdaptiveLearningCoordinator, CompletedAdaptiveLearning};
-use oracle_mvp::candidate_order::{B16Boundary, CandidateOrderOracle};
+use oracle_mvp::candidate_order::{B16Boundary, CandidateDisposition, CandidateOrderOracle};
 use oracle_mvp::evaluator::{
     CompletionView, EvaluatorDecision, EvaluatorSubmission, EvaluatorUi, RatingOutcome, RatingView,
     RecoveryOutcome, RecoveryView, RestOutcome, RestView,
 };
 use oracle_mvp::final_evaluation_runner::{
-    FinalEvaluationRunnerConfig, FinalEvaluationRunnerOutcome, resume_final_evaluation,
-    run_final_evaluation,
+    FinalEvaluationRunnerConfig, FinalEvaluationRunnerOutcome, replay_frozen_final_evaluation,
+    resume_final_evaluation, run_final_evaluation,
 };
 use oracle_mvp::fp32_oracle::{
     Fp32Candidate, SimilarNotesRequest, SimilarNotesResponse, SimilarNotesWaveMetrics,
@@ -25,6 +25,8 @@ use oracle_mvp::personalizer_learning::{
 use oracle_mvp::quota_resolution::{EventLanguageOutcome, LanguageEligibility};
 use oracle_mvp::representation::EventId;
 use oracle_mvp::snapshot::{Error as SnapshotError, Result as SnapshotResult};
+use oracle_mvp::static_exposure_probe_runner::build_static_exposure_probe_input;
+use sha2::{Digest, Sha256};
 
 const VERSION: &str = "final-runner-representation-v1";
 
@@ -336,9 +338,217 @@ fn pause_after_final_decision_completes_to_a_stably_verifiable_report() {
     );
 }
 
+#[test]
+fn frozen_final_replay_is_read_only_and_exposes_compact_vectors_and_all_presented_ids() {
+    let fixture = Fixture::new();
+    let config = FinalEvaluationRunnerConfig {
+        corpus_path: fixture.corpus_path.clone(),
+        corpus_identity: format!("sha256:{}", "17".repeat(32)),
+        session_path: fixture.temp.path().join("replay-session.json"),
+        frozen_orders_path: fixture.temp.path().join("replay-orders.json"),
+        report_path: fixture.temp.path().join("replay-report.json"),
+        oracle_cache_path: fixture.temp.path().join("replay-oracle-cache"),
+        phase3_handoff_identity_sha256: "28".repeat(32),
+        guarded_launch_identity_sha256: "aa".repeat(32),
+        geometry_version: "39".repeat(32),
+    };
+    let (completed, mut oracle) = fixture.completed_learning();
+    let mut expected_presented = completed
+        .presentation_ledger()
+        .keys()
+        .copied()
+        .collect::<std::collections::BTreeSet<_>>();
+    let mut evaluator = RateOnceThenPause::default();
+    assert_eq!(
+        run_final_evaluation(&config, completed, &mut oracle, &mut evaluator)
+            .expect("freeze Phase 4 and store one decision plus one pending presentation"),
+        FinalEvaluationRunnerOutcome::Paused
+    );
+
+    let session: serde_json::Value = serde_json::from_reader(
+        std::fs::File::open(&config.session_path).expect("open frozen Phase 4 session"),
+    )
+    .expect("decode frozen Phase 4 session");
+    let decisions = session["waves"][0]["decisions"]
+        .as_array()
+        .expect("stored Phase 4 decisions");
+    assert_eq!(decisions.len(), 1);
+    expected_presented.insert(value_event_id(&decisions[0]["event_id"]));
+    expected_presented.insert(value_event_id(&session["pending_presentation"]["event_id"]));
+
+    let inputs_before = frozen_replay_inputs(&config);
+    let (completed, _) = fixture.completed_learning();
+    let replay = replay_frozen_final_evaluation(&config, completed)
+        .expect("replay only existing Phase 3 and frozen Phase 4 state");
+
+    assert_eq!(
+        replay.historical_presented_event_ids(),
+        &expected_presented,
+        "the no-repeat set must contain Phase 3 history, committed Phase 4 decisions, and the pending presentation"
+    );
+    assert_eq!(replay.compact_order().accepted().len(), 221);
+    for candidate in replay.compact_order().attempt().candidates() {
+        if !matches!(
+            candidate.disposition(),
+            CandidateDisposition::Excluded { .. }
+        ) {
+            assert!(
+                replay.candidate_vector(candidate.event_id()).is_some(),
+                "every scored Compact candidate must retain its reconstructed vector"
+            );
+        }
+    }
+    for accepted in replay.compact_order().accepted() {
+        assert_eq!(
+            replay
+                .candidate_vector(accepted.event_id())
+                .expect("every accepted Compact candidate has a reconstructed vector"),
+            accepted.vector()
+        );
+    }
+    assert_eq!(
+        frozen_replay_inputs(&config),
+        inputs_before,
+        "read-only replay must not rewrite the frozen orders, session, or Oracle cache"
+    );
+    assert!(
+        !config.report_path.exists(),
+        "replaying incomplete frozen state must not publish a Phase 4 report"
+    );
+
+    let original_orders =
+        std::fs::read(&config.frozen_orders_path).expect("read original frozen orders");
+    let mut corrupted_orders: serde_json::Value =
+        serde_json::from_slice(&original_orders).expect("decode original frozen orders");
+    corrupted_orders["compact_order"]["attempt"]["candidate_pool_identity_sha256"] =
+        serde_json::json!("00".repeat(32));
+    write_json(&config.frozen_orders_path, &corrupted_orders);
+    let (completed, _) = fixture.completed_learning();
+    let error = match replay_frozen_final_evaluation(&config, completed) {
+        Ok(_) => panic!("replay accepted a frozen order that differs from reconstruction"),
+        Err(error) => error,
+    };
+    assert!(
+        error.to_string().contains("frozen order"),
+        "unexpected frozen-order verification error: {error}"
+    );
+    std::fs::write(&config.frozen_orders_path, original_orders)
+        .expect("restore original frozen orders");
+
+    let original_session =
+        std::fs::read(&config.session_path).expect("read original frozen session");
+    let mut corrupted_session: serde_json::Value =
+        serde_json::from_slice(&original_session).expect("decode original frozen session");
+    corrupted_session["waves"][0]["decisions"][0]["rating"] = serde_json::json!(1);
+    write_json(&config.session_path, &corrupted_session);
+    let (completed, _) = fixture.completed_learning();
+    let error = match replay_frozen_final_evaluation(&config, completed) {
+        Ok(_) => panic!("replay accepted a decision that differs from its session checksum"),
+        Err(error) => error,
+    };
+    assert!(
+        error.to_string().contains("decision checksum"),
+        "unexpected frozen-session verification error: {error}"
+    );
+    std::fs::write(&config.session_path, original_session)
+        .expect("restore original frozen session");
+}
+
+#[test]
+fn static_probe_input_uses_every_positive_compact_candidate_in_frozen_score_order() {
+    let fixture = Fixture::new();
+    let config = FinalEvaluationRunnerConfig {
+        corpus_path: fixture.corpus_path.clone(),
+        corpus_identity: format!("sha256:{}", "17".repeat(32)),
+        session_path: fixture.temp.path().join("probe-source-session.json"),
+        frozen_orders_path: fixture.temp.path().join("probe-source-orders.json"),
+        report_path: fixture.temp.path().join("probe-source-report.json"),
+        oracle_cache_path: fixture.temp.path().join("probe-source-oracle-cache"),
+        phase3_handoff_identity_sha256: "28".repeat(32),
+        guarded_launch_identity_sha256: "aa".repeat(32),
+        geometry_version: "39".repeat(32),
+    };
+    let (completed, mut oracle) = fixture.completed_learning();
+    let mut evaluator = RateOnceThenPause::default();
+    run_final_evaluation(&config, completed, &mut oracle, &mut evaluator)
+        .expect("freeze a source order and session");
+    let (completed, _) = fixture.completed_learning();
+    let replay =
+        replay_frozen_final_evaluation(&config, completed).expect("replay frozen source state");
+    let frozen_order_identity = format!(
+        "{:x}",
+        Sha256::digest(
+            std::fs::read(&config.frozen_orders_path).expect("read frozen order for identity")
+        )
+    );
+
+    let input = build_static_exposure_probe_input(&replay, frozen_order_identity)
+        .expect("build the static probe input");
+
+    assert_eq!(input.representation_version(), VERSION);
+    assert_eq!(
+        input.historical_presented_event_ids(),
+        replay.historical_presented_event_ids()
+    );
+    assert!(
+        input.candidates().len() > replay.compact_order().accepted().len(),
+        "the probe must retain positive near-duplicate and not-walked candidates, not only the old 221-order quota"
+    );
+    for pair in input.candidates().windows(2) {
+        assert!(
+            pair[0].frozen_support_score() >= pair[1].frozen_support_score(),
+            "probe input must preserve descending frozen Compact support"
+        );
+    }
+    for candidate in input.candidates() {
+        assert!(candidate.frozen_support_score() > 0.0);
+        assert_eq!(
+            candidate.vector(),
+            replay
+                .candidate_vector(candidate.event_id())
+                .expect("every positive Compact candidate retains its public vector")
+        );
+    }
+}
+
 #[derive(Default)]
 struct FailOnFirstDisplay {
     presented_notes: Vec<String>,
+}
+
+#[derive(Default)]
+struct RateOnceThenPause {
+    presentations: usize,
+}
+
+impl EvaluatorUi for RateOnceThenPause {
+    fn rate(&mut self, _view: RatingView<'_>) -> io::Result<RatingOutcome> {
+        self.presentations += 1;
+        if self.presentations == 1 {
+            Ok(RatingOutcome::Submitted(EvaluatorSubmission::new(
+                EvaluatorDecision::Rating(5),
+                false,
+            )))
+        } else {
+            Ok(RatingOutcome::Paused)
+        }
+    }
+
+    fn recover(&mut self, _view: RecoveryView) -> io::Result<RecoveryOutcome> {
+        panic!("an uninterrupted fixture must not recover")
+    }
+
+    fn rest(&mut self, _view: RestView) -> io::Result<RestOutcome> {
+        panic!("two presentations do not reach a rest boundary")
+    }
+
+    fn preparing(&mut self) -> io::Result<()> {
+        Ok(())
+    }
+
+    fn complete(&mut self, _view: CompletionView) -> io::Result<()> {
+        panic!("a paused fixture is not complete")
+    }
 }
 
 impl EvaluatorUi for FailOnFirstDisplay {
@@ -824,6 +1034,28 @@ fn assert_completed_resume_fails(
         error.to_string().contains(expected),
         "unexpected completed-session error: {error}"
     );
+}
+
+fn frozen_replay_inputs(
+    config: &FinalEvaluationRunnerConfig,
+) -> BTreeMap<std::path::PathBuf, Vec<u8>> {
+    let mut files = vec![
+        config.session_path.clone(),
+        config.frozen_orders_path.clone(),
+    ];
+    files.extend(
+        std::fs::read_dir(&config.oracle_cache_path)
+            .expect("read frozen Phase 4 Oracle cache")
+            .map(|entry| entry.expect("read cache entry").path()),
+    );
+    files.sort();
+    files
+        .into_iter()
+        .map(|path| {
+            let bytes = std::fs::read(&path).expect("read frozen replay input");
+            (path, bytes)
+        })
+        .collect()
 }
 
 fn assert_cache_mutation_fails_closed(

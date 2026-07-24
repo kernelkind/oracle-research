@@ -22,8 +22,9 @@ use ratatui::widgets::{Block, Borders, Padding, Paragraph, Wrap};
 
 use crate::evaluator::{
     CompletionView, EvaluatorDecision, EvaluatorSubmission, EvaluatorUi, RATING_ANCHORS,
-    RATING_QUESTION, RatingOutcome, RatingView, RecoveryOutcome, RecoveryView, RestOutcome,
-    RestView, WRONG_LANGUAGE_RULE,
+    RATING_QUESTION, REPETITION_QUESTION, RatingOutcome, RatingView, RecoveryOutcome, RecoveryView,
+    RepetitionAnswer, RepetitionOutcome, RepetitionUi, RepetitionView, RestOutcome, RestView,
+    WRONG_LANGUAGE_RULE,
 };
 
 const MIN_WIDTH: u16 = 72;
@@ -38,6 +39,9 @@ pub enum EvaluatorTuiAction {
     Submit {
         decision: EvaluatorDecision,
         pause_after: bool,
+    },
+    SubmitRepetition {
+        answer: RepetitionAnswer,
     },
     Pause,
     Redisplay {
@@ -57,6 +61,10 @@ enum EvaluatorScreen {
         presentation_number: usize,
         break_in: usize,
     },
+    Repetition {
+        note: String,
+        presentation_number: usize,
+    },
     Rest {
         presentations_stored: usize,
     },
@@ -73,6 +81,7 @@ pub struct EvaluatorTuiModel {
     scroll: u16,
     half_page_lines: u16,
     selected_decision: Option<EvaluatorDecision>,
+    selected_repetition: Option<RepetitionAnswer>,
     pause_after_rating: bool,
     interaction_enabled: bool,
 }
@@ -105,6 +114,13 @@ impl EvaluatorTuiModel {
         })
     }
 
+    pub fn repetition_with_note(note: impl AsRef<str>, presentation_number: usize) -> Self {
+        Self::new(EvaluatorScreen::Repetition {
+            note: terminal_safe(note.as_ref()),
+            presentation_number,
+        })
+    }
+
     pub fn rest(presentations_stored: usize) -> Self {
         Self::new(EvaluatorScreen::Rest {
             presentations_stored,
@@ -127,6 +143,7 @@ impl EvaluatorTuiModel {
             scroll: 0,
             half_page_lines: 1,
             selected_decision: None,
+            selected_repetition: None,
             pause_after_rating: false,
             interaction_enabled: true,
         }
@@ -163,6 +180,21 @@ impl EvaluatorTuiModel {
             return EvaluatorTuiAction::None;
         }
 
+        if matches!(self.screen, EvaluatorScreen::Repetition { .. })
+            && key.modifiers == KeyModifiers::CONTROL
+        {
+            match key.code {
+                KeyCode::Char('d' | 'D') => {
+                    self.scroll = self.scroll.saturating_add(self.half_page_lines);
+                    return EvaluatorTuiAction::None;
+                }
+                KeyCode::Char('u' | 'U') => {
+                    self.scroll = self.scroll.saturating_sub(self.half_page_lines);
+                    return EvaluatorTuiAction::None;
+                }
+                _ => {}
+            }
+        }
         if matches!(
             self.screen,
             EvaluatorScreen::Rating { .. } | EvaluatorScreen::Recovery { .. }
@@ -195,6 +227,7 @@ impl EvaluatorTuiModel {
         match self.screen {
             EvaluatorScreen::Rating { .. } => self.handle_rating_key(key, false),
             EvaluatorScreen::Recovery { .. } => self.handle_rating_key(key, true),
+            EvaluatorScreen::Repetition { .. } => self.handle_repetition_key(key),
             EvaluatorScreen::Rest { .. } => match key.code {
                 KeyCode::Enter | KeyCode::Char(' ') | KeyCode::Char('c' | 'C') => {
                     EvaluatorTuiAction::Continue
@@ -241,6 +274,45 @@ impl EvaluatorTuiModel {
             KeyCode::Char('r' | 'R') if recovery => EvaluatorTuiAction::Redisplay {
                 pause_after: self.pause_after_rating,
             },
+            KeyCode::Down | KeyCode::Char('j' | 'J') => {
+                self.scroll = self.scroll.saturating_add(1);
+                EvaluatorTuiAction::None
+            }
+            KeyCode::Up | KeyCode::Char('k' | 'K') => {
+                self.scroll = self.scroll.saturating_sub(1);
+                EvaluatorTuiAction::None
+            }
+            KeyCode::PageDown => {
+                self.scroll = self.scroll.saturating_add(PAGE_LINES);
+                EvaluatorTuiAction::None
+            }
+            KeyCode::PageUp => {
+                self.scroll = self.scroll.saturating_sub(PAGE_LINES);
+                EvaluatorTuiAction::None
+            }
+            KeyCode::Home => {
+                self.scroll = 0;
+                EvaluatorTuiAction::None
+            }
+            _ => EvaluatorTuiAction::None,
+        }
+    }
+
+    fn handle_repetition_key(&mut self, key: KeyEvent) -> EvaluatorTuiAction {
+        match key.code {
+            KeyCode::Char('y' | 'Y') => {
+                self.selected_repetition = Some(RepetitionAnswer::Yes);
+                EvaluatorTuiAction::None
+            }
+            KeyCode::Char('n' | 'N') => {
+                self.selected_repetition = Some(RepetitionAnswer::No);
+                EvaluatorTuiAction::None
+            }
+            KeyCode::Enter => self
+                .selected_repetition
+                .map_or(EvaluatorTuiAction::None, |answer| {
+                    EvaluatorTuiAction::SubmitRepetition { answer }
+                }),
             KeyCode::Down | KeyCode::Char('j' | 'J') => {
                 self.scroll = self.scroll.saturating_add(1);
                 EvaluatorTuiAction::None
@@ -324,6 +396,20 @@ impl EvaluatorTuiModel {
                 self.pause_after_rating,
                 true,
             ),
+            EvaluatorScreen::Repetition {
+                note,
+                presentation_number,
+            } => {
+                render_repetition(
+                    frame,
+                    area,
+                    note,
+                    *presentation_number,
+                    &mut self.scroll,
+                    &mut self.half_page_lines,
+                    self.selected_repetition,
+                );
+            }
             EvaluatorScreen::Rest {
                 presentations_stored,
             } => render_message(
@@ -462,6 +548,105 @@ fn render_rating(
         )),
         rows[5],
     );
+}
+
+fn render_repetition(
+    frame: &mut Frame<'_>,
+    area: ratatui::layout::Rect,
+    note: &str,
+    presentation_number: usize,
+    scroll: &mut u16,
+    half_page_lines: &mut u16,
+    selected: Option<RepetitionAnswer>,
+) {
+    let area = centered_reading_area(area);
+    let answer_line = |answer, key, description| {
+        let selected = selected == Some(answer);
+        let style = if selected {
+            accent_style()
+        } else {
+            Style::default()
+        };
+        let marker = if selected {
+            Span::styled("▶ ", accent_style())
+        } else {
+            Span::raw("  ")
+        };
+        Line::from(vec![
+            marker,
+            Span::styled(key, style),
+            Span::raw(" "),
+            Span::styled(description, style),
+        ])
+    };
+    let answers = vec![
+        answer_line(RepetitionAnswer::Yes, "[Y]", "Yes"),
+        answer_line(RepetitionAnswer::No, "[N]", "No"),
+    ];
+    let controls = Line::from(vec![
+        Span::styled("[Y/N]", accent_style()),
+        Span::styled(" Select  ", secondary_style()),
+        Span::styled("[Enter]", accent_style()),
+        Span::styled(" Confirm  ", secondary_style()),
+        Span::styled("[Ctrl-D/U]", accent_style()),
+        Span::styled(" Half-page  ", secondary_style()),
+        Span::styled("[Ctrl-C]", accent_style()),
+        Span::styled(" Pause", secondary_style()),
+    ]);
+    let rows = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([
+            Constraint::Length(1),
+            Constraint::Min(3),
+            Constraint::Length(3),
+            Constraint::Length(2),
+            Constraint::Length(2),
+        ])
+        .split(area);
+    frame.render_widget(
+        Paragraph::new(format!("{presentation_number} reviewed")).style(secondary_style()),
+        rows[0],
+    );
+    render_note_panel(frame, rows[1], note, scroll, half_page_lines);
+    frame.render_widget(
+        Paragraph::new(REPETITION_QUESTION)
+            .style(accent_style())
+            .wrap(Wrap { trim: false }),
+        rows[2],
+    );
+    frame.render_widget(Paragraph::new(answers), rows[3]);
+    frame.render_widget(Paragraph::new(controls), rows[4]);
+}
+
+fn render_note_panel(
+    frame: &mut Frame<'_>,
+    area: ratatui::layout::Rect,
+    note: &str,
+    scroll: &mut u16,
+    half_page_lines: &mut u16,
+) {
+    let note_block = Block::default()
+        .borders(Borders::ALL)
+        .border_style(border_style())
+        .padding(Padding::horizontal(1));
+    let note_inner = note_block.inner(area);
+    *half_page_lines = (note_inner.height / 2).max(1);
+    let rendered_lines = Paragraph::new(note)
+        .wrap(Wrap { trim: false })
+        .line_count(note_inner.width);
+    let visible_lines = note_inner.height as usize;
+    let maximum_scroll = rendered_lines.saturating_sub(visible_lines);
+    *scroll = (*scroll).min(u16::try_from(maximum_scroll).unwrap_or(u16::MAX));
+    let note_title = match (*scroll > 0, usize::from(*scroll) < maximum_scroll) {
+        (false, true) => "Note · more below",
+        (true, true) => "Note · more above and below",
+        (true, false) => "Note · more above",
+        _ => "Note",
+    };
+    let note_panel = Paragraph::new(note)
+        .wrap(Wrap { trim: false })
+        .block(note_block.title(note_title).title_style(accent_style()));
+    frame.render_widget(note_panel.scroll((*scroll, 0)), area);
 }
 
 fn render_message(frame: &mut Frame<'_>, area: ratatui::layout::Rect, title: &str, text: &str) {
@@ -719,6 +904,23 @@ impl EvaluatorUi for FullScreenEvaluator {
             EvaluatorTuiAction::Continue | EvaluatorTuiAction::Pause => Ok(()),
             _ => Err(io::Error::other(
                 "completion screen returned an invalid evaluator action",
+            )),
+        }
+    }
+}
+
+impl RepetitionUi for FullScreenEvaluator {
+    fn repetition(&mut self, view: RepetitionView<'_>) -> io::Result<RepetitionOutcome> {
+        match self.run(EvaluatorTuiModel::repetition_with_note(
+            view.note(),
+            view.presentation_number(),
+        ))? {
+            EvaluatorTuiAction::SubmitRepetition { answer } => {
+                Ok(RepetitionOutcome::Answered(answer))
+            }
+            EvaluatorTuiAction::Pause => Ok(RepetitionOutcome::Paused),
+            _ => Err(io::Error::other(
+                "repetition screen returned an invalid evaluator action",
             )),
         }
     }

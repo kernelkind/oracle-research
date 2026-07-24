@@ -11,7 +11,7 @@ use sha2::{Digest, Sha256};
 
 use crate::adaptive_learning::CompletedAdaptiveLearning;
 use crate::artifact::hash_bytes;
-use crate::candidate_order::CandidateOrderOracle;
+use crate::candidate_order::{CandidateOrderOracle, FrozenCandidateOrder};
 use crate::evaluator::{
     CompletionView, EvaluatorDecision, EvaluatorSubmission, EvaluatorUi, RATING_ANCHORS,
     RATING_QUESTION, RatingOutcome, RatingView, RecoveryOutcome, RecoveryView, RestOutcome,
@@ -72,6 +72,32 @@ pub enum FinalEvaluationRunnerOutcome {
     Paused,
     /// Both frozen 200-rating result sets and the final report are complete.
     Complete,
+}
+
+/// Verified read-only reconstruction of one already-frozen final evaluation.
+///
+/// The reconstruction owns the completed Phase 3 state so its full public
+/// candidate-vector cache remains available without reopening the embedding
+/// model or mutating any persisted Phase 4 input.
+pub struct FrozenFinalEvaluationReplay {
+    coordinator: FinalEvaluationCoordinator,
+    historical_presented_event_ids: BTreeSet<EventId>,
+}
+
+impl FrozenFinalEvaluationReplay {
+    pub fn compact_order(&self) -> &FrozenCandidateOrder {
+        self.coordinator.compact_order()
+    }
+
+    pub fn candidate_vector(&self, event_id: EventId) -> Option<&[f32]> {
+        self.coordinator
+            .completed_learning()
+            .cached_vector(event_id)
+    }
+
+    pub fn historical_presented_event_ids(&self) -> &BTreeSet<EventId> {
+        &self.historical_presented_event_ids
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -332,6 +358,81 @@ where
         representation_version,
     };
     run_final_evaluation(config, completed_learning, &mut oracle, evaluator)
+}
+
+/// Reconstruct and verify an existing Phase 4 state without performing Oracle
+/// work, acquiring a session lock, changing permissions, or writing artifacts.
+pub fn replay_frozen_final_evaluation(
+    config: &FinalEvaluationRunnerConfig,
+    completed_learning: Box<CompletedAdaptiveLearning>,
+) -> Result<FrozenFinalEvaluationReplay> {
+    let representation_version = completed_learning
+        .compact_controller()
+        .representation_version()
+        .to_owned();
+    let mut cache_only = CacheOnlyOracle {
+        representation_version,
+    };
+    validate_config(config, &completed_learning, &cache_only)?;
+    for path in [&config.session_path, &config.frozen_orders_path] {
+        if !path.is_file() {
+            return Err(Error::ArtifactMissing(path.clone()));
+        }
+    }
+    require_directory(&config.oracle_cache_path)?;
+
+    let mut durable_oracle =
+        FinalEvaluationOracle::new(&mut cache_only, config.oracle_cache_path.clone(), false)?;
+    let mut coordinator =
+        FinalEvaluationCoordinator::begin(completed_learning, &mut durable_oracle)
+            .map_err(|error| Error::ExperimentState(error.to_string()))?;
+
+    let reconstructed_orders = frozen_orders_bytes(config, &coordinator)?;
+    let stored_orders = fs::read(&config.frozen_orders_path)
+        .map_err(|source| io_error("read", &config.frozen_orders_path, source))?;
+    if stored_orders != reconstructed_orders {
+        return Err(Error::ExperimentState(
+            "stored frozen orders differ from deterministic reconstruction".to_owned(),
+        ));
+    }
+    let binding = build_binding(config, &coordinator, hash_bytes(&stored_orders))?;
+    let session: FinalEvaluationSession = read_manifest(&config.session_path)?;
+    if session.schema_version != SESSION_SCHEMA_VERSION || session.binding != binding {
+        return Err(Error::ExperimentState(
+            "stored Phase 4 session differs from the frozen inputs".to_owned(),
+        ));
+    }
+    validate_session_shape(&session)?;
+    replay_session(&mut coordinator, &session)?;
+
+    let mut historical_presented_event_ids = coordinator
+        .completed_learning()
+        .presentation_ledger()
+        .keys()
+        .copied()
+        .collect::<BTreeSet<_>>();
+    for event_id in session
+        .waves
+        .iter()
+        .flat_map(|wave| wave.decisions.iter().map(|decision| decision.event_id()))
+        .chain(
+            session
+                .pending_presentation
+                .iter()
+                .map(|pending| pending.event_id),
+        )
+    {
+        if !historical_presented_event_ids.insert(event_id) {
+            return Err(Error::ExperimentState(
+                "frozen Phase 4 history repeats an earlier presented event".to_owned(),
+            ));
+        }
+    }
+
+    Ok(FrozenFinalEvaluationReplay {
+        coordinator,
+        historical_presented_event_ids,
+    })
 }
 
 /// Start or exactly resume the frozen final evaluation.
