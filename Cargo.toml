@@ -43,6 +43,10 @@ path = "src/bin/representation_geometry.rs"
 name = "full-pool-escape-probe"
 path = "src/bin/full_pool_escape_probe.rs"
 
+[[bin]]
+name = "semantic-branch-diagnostic"
+path = "src/bin/semantic_branch_diagnostic.rs"
+
 [dependencies]
 bech32 = "=0.11.1"
 crossterm = "=0.29.0"

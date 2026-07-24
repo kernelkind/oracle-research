@@ -3,9 +3,12 @@
 ## Status
 
 This is an approved working direction, not a complete architecture. CREC-109
-is complete. It found partial adjacent value but showed that one scalar
-whole-note exposure gate is not sufficient. No successor experiment or
-product setting is approved. Oracle MVP v1 remains frozen.
+found partial adjacent value but showed that one scalar whole-note exposure
+gate is not sufficient. CREC-110 then tested whether a valued mixed-theme note
+exposed multiple recoverable semantic directions; its result was
+underdetermined because the blind sample lacked enough exclusive anchors. No
+successor experiment or product setting is approved. Oracle MVP v1 remains
+frozen.
 
 ## Why
 
@@ -132,6 +135,13 @@ accepted exposure scores weakly separated those live repetition answers, and
 lowering the scalar ceiling would discard several observed successes.
 Whole-note vector exposure can help, but this gate alone cannot reliably
 preserve worthwhile new angles while blocking exhausted treatments.
+
+[CREC-110](../experiments/adjacent-novelty/crec-110-semantic-branch-recovery.md)
+tested whether the current single-vector Oracle preserved multiple recoverable
+directions around one valued note with explicit physical, mental, and spiritual
+themes. Mental/learning was significantly separated under both independent
+label sets. Physical-only and spiritual-only notes did not reach the frozen
+minimum supply, so the multi-branch question remains unresolved.
 
 ## Research Basis
 
