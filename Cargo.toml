@@ -39,6 +39,10 @@ path = "src/bin/phase4_final_evaluation.rs"
 name = "representation-geometry"
 path = "src/bin/representation_geometry.rs"
 
+[[bin]]
+name = "full-pool-escape-probe"
+path = "src/bin/full_pool_escape_probe.rs"
+
 [dependencies]
 bech32 = "=0.11.1"
 crossterm = "=0.29.0"

@@ -10,7 +10,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::adjacent_novelty::{
     CREC_102_EXPOSURE_HALF_LIFE, CREC_102_TYPICAL_PAIR_COSINE, ExposureCandidate,
-    ExposureSelection, STATIC_EXPOSURE_TRANCHE_SIZE, StaticExposureSelector,
+    ExposureSelection, FullPoolExposureGateSelector, FullPoolExposureSelection,
+    STATIC_EXPOSURE_TRANCHE_SIZE, StaticExposureSelector,
 };
 use crate::artifact::hash_bytes;
 use crate::candidate_order::CandidateDisposition;
@@ -32,6 +33,124 @@ pub const STATIC_EXPOSURE_PROBE_PURPOSE: &str = "static-pool-exposure-aware-live
 const VALID_RATING_QUOTA: usize = 40;
 const REST_INTERVAL: usize = 10;
 const MAXIMUM_WRONG_LANGUAGE_PRESENTATIONS: usize = 2;
+pub const FULL_POOL_ESCAPE_PROBE_PURPOSE: &str = "full-pool-exposure-gated-escape-probe-v1";
+const FULL_POOL_VALID_RATING_QUOTA: usize = 20;
+const FULL_POOL_MAXIMUM_WRONG_LANGUAGE_PRESENTATIONS: usize = 1;
+const FULL_POOL_SEEDED_HISTORY_SIZE: usize = 40;
+pub const CREC_109_EXPOSURE_CEILING: f64 = 0.326_866_384_608_866_58;
+
+/// One verified CREC-108 presentation used only as the new probe's starting
+/// exposure history and ceiling-calibration evidence.
+#[derive(Clone, Debug, Serialize)]
+pub struct FullPoolExposureSeed {
+    event_id: EventId,
+    source_exposure: f64,
+    source_repetition: RepetitionAnswer,
+}
+
+impl FullPoolExposureSeed {
+    pub fn new(
+        event_id: EventId,
+        source_exposure: f64,
+        source_repetition: RepetitionAnswer,
+    ) -> Result<Self> {
+        if !source_exposure.is_finite() || source_exposure < 0.0 {
+            return Err(Error::ExperimentState(
+                "full-pool seed source exposure must be finite and non-negative".to_owned(),
+            ));
+        }
+        Ok(Self {
+            event_id,
+            source_exposure,
+            source_repetition,
+        })
+    }
+
+    pub const fn event_id(&self) -> EventId {
+        self.event_id
+    }
+
+    pub const fn source_exposure(&self) -> f64 {
+        self.source_exposure
+    }
+
+    pub const fn source_repetition(&self) -> RepetitionAnswer {
+        self.source_repetition
+    }
+}
+
+/// Frozen protocol inputs that distinguish CREC-109 from the earlier
+/// top-64 static exposure probe.
+#[derive(Clone, Debug, Serialize)]
+pub struct FullPoolExposureGateProtocol {
+    seeded_history: Vec<FullPoolExposureSeed>,
+    source_probe_config_sha256: String,
+    source_probe_session_sha256: String,
+    source_probe_report_sha256: String,
+    source_probe_input_identity_sha256: String,
+}
+
+impl FullPoolExposureGateProtocol {
+    pub fn new(
+        seeded_history: Vec<FullPoolExposureSeed>,
+        source_probe_config_sha256: String,
+        source_probe_session_sha256: String,
+        source_probe_report_sha256: String,
+        source_probe_input_identity_sha256: String,
+    ) -> Result<Self> {
+        if seeded_history.len() != FULL_POOL_SEEDED_HISTORY_SIZE {
+            return Err(Error::ExperimentState(format!(
+                "full-pool probe requires exactly {FULL_POOL_SEEDED_HISTORY_SIZE} ordered source presentations"
+            )));
+        }
+        let mut event_ids = BTreeSet::new();
+        for seed in &seeded_history {
+            if !event_ids.insert(seed.event_id) {
+                return Err(Error::ExperimentState(
+                    "full-pool probe seeded history repeats an event".to_owned(),
+                ));
+            }
+        }
+        require_sha256(&source_probe_config_sha256, "source probe config")?;
+        require_sha256(&source_probe_session_sha256, "source probe session")?;
+        require_sha256(&source_probe_report_sha256, "source probe report")?;
+        require_sha256(
+            &source_probe_input_identity_sha256,
+            "source probe input identity",
+        )?;
+        Ok(Self {
+            seeded_history,
+            source_probe_config_sha256,
+            source_probe_session_sha256,
+            source_probe_report_sha256,
+            source_probe_input_identity_sha256,
+        })
+    }
+
+    pub fn seeded_history(&self) -> &[FullPoolExposureSeed] {
+        &self.seeded_history
+    }
+
+    pub const fn exposure_ceiling(&self) -> f64 {
+        CREC_109_EXPOSURE_CEILING
+    }
+
+    pub fn source_probe_config_sha256(&self) -> &str {
+        &self.source_probe_config_sha256
+    }
+
+    pub fn source_probe_session_sha256(&self) -> &str {
+        &self.source_probe_session_sha256
+    }
+
+    pub fn source_probe_report_sha256(&self) -> &str {
+        &self.source_probe_report_sha256
+    }
+
+    pub fn source_probe_input_identity_sha256(&self) -> &str {
+        &self.source_probe_input_identity_sha256
+    }
+}
 
 /// One candidate in the already-frozen descending Compact support order.
 #[derive(Clone, Debug, Serialize)]
@@ -79,6 +198,8 @@ pub struct StaticExposureProbeInput {
     historical_presented_event_ids: BTreeSet<EventId>,
     #[serde(skip_serializing_if = "Option::is_none")]
     source_provenance: Option<StaticExposureProbeSourceProvenance>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    full_pool_exposure_gate: Option<FullPoolExposureGateProtocol>,
 }
 
 impl StaticExposureProbeInput {
@@ -134,6 +255,7 @@ impl StaticExposureProbeInput {
             candidates,
             historical_presented_event_ids,
             source_provenance: None,
+            full_pool_exposure_gate: None,
         })
     }
 
@@ -163,6 +285,79 @@ impl StaticExposureProbeInput {
 
     pub fn source_provenance(&self) -> Option<&StaticExposureProbeSourceProvenance> {
         self.source_provenance.as_ref()
+    }
+
+    pub fn with_full_pool_exposure_gate(
+        mut self,
+        protocol: FullPoolExposureGateProtocol,
+    ) -> Result<Self> {
+        if self.full_pool_exposure_gate.is_some() {
+            return Err(Error::ExperimentState(
+                "static probe input already has a full-pool protocol".to_owned(),
+            ));
+        }
+        if self.identity_sha256()? != protocol.source_probe_input_identity_sha256() {
+            return Err(Error::ExperimentState(
+                "full-pool protocol is bound to a different source probe input".to_owned(),
+            ));
+        }
+        let candidates = self
+            .candidates
+            .iter()
+            .map(|candidate| (candidate.event_id, candidate))
+            .collect::<BTreeMap<_, _>>();
+        for seed in protocol.seeded_history() {
+            if self
+                .historical_presented_event_ids
+                .contains(&seed.event_id())
+            {
+                return Err(Error::ExperimentState(
+                    "full-pool seeded history overlaps the older presentation exclusions"
+                        .to_owned(),
+                ));
+            }
+            candidates.get(&seed.event_id()).ok_or_else(|| {
+                Error::ExperimentState(
+                    "full-pool seeded history contains an event outside the frozen candidate pool"
+                        .to_owned(),
+                )
+            })?;
+        }
+        let seeded_event_ids = protocol
+            .seeded_history()
+            .iter()
+            .map(FullPoolExposureSeed::event_id)
+            .collect::<BTreeSet<_>>();
+        let available = self
+            .candidates
+            .iter()
+            .filter(|candidate| {
+                !self
+                    .historical_presented_event_ids
+                    .contains(&candidate.event_id)
+                    && !seeded_event_ids.contains(&candidate.event_id)
+            })
+            .count();
+        if available < FULL_POOL_VALID_RATING_QUOTA + FULL_POOL_MAXIMUM_WRONG_LANGUAGE_PRESENTATIONS
+        {
+            return Err(Error::ExperimentState(
+                "full-pool probe has fewer than 21 candidates before applying its exposure ceiling"
+                    .to_owned(),
+            ));
+        }
+        self.full_pool_exposure_gate = Some(protocol);
+        Ok(self)
+    }
+
+    pub fn full_pool_exposure_gate(&self) -> Option<&FullPoolExposureGateProtocol> {
+        self.full_pool_exposure_gate.as_ref()
+    }
+
+    pub fn identity_sha256(&self) -> Result<String> {
+        let bytes = serde_json::to_vec(self).map_err(|error| {
+            Error::ExperimentState(format!("could not encode static probe input: {error}"))
+        })?;
+        Ok(hash_bytes(&bytes))
     }
 }
 
@@ -236,6 +431,97 @@ pub enum StaticExposureProbeVerification {
         presentations: usize,
         valid_ratings: usize,
     },
+}
+
+/// One presentation recovered from a completed and fully verified CREC-108
+/// transcript.
+#[derive(Clone, Debug)]
+pub struct CompletedStaticExposurePresentation {
+    event_id: EventId,
+    vector_identity_sha256: String,
+    source_exposure: f64,
+    source_repetition: RepetitionAnswer,
+}
+
+impl CompletedStaticExposurePresentation {
+    pub const fn event_id(&self) -> EventId {
+        self.event_id
+    }
+
+    pub fn vector_identity_sha256(&self) -> &str {
+        &self.vector_identity_sha256
+    }
+
+    pub const fn source_exposure(&self) -> f64 {
+        self.source_exposure
+    }
+
+    pub const fn source_repetition(&self) -> RepetitionAnswer {
+        self.source_repetition
+    }
+}
+
+/// Immutable handoff from a completed static exposure probe.
+#[derive(Clone, Debug)]
+pub struct CompletedStaticExposureProbeReplay {
+    input_identity_sha256: String,
+    presentations: Vec<CompletedStaticExposurePresentation>,
+}
+
+impl CompletedStaticExposureProbeReplay {
+    pub fn input_identity_sha256(&self) -> &str {
+        &self.input_identity_sha256
+    }
+
+    pub fn presentations(&self) -> &[CompletedStaticExposurePresentation] {
+        &self.presentations
+    }
+}
+
+/// Verify a completed legacy probe and recover its exact presentation order
+/// without writing or requesting evaluator input.
+pub fn replay_completed_static_exposure_probe(
+    config: &StaticExposureProbeRunnerConfig,
+    input: &StaticExposureProbeInput,
+) -> Result<CompletedStaticExposureProbeReplay> {
+    if input.full_pool_exposure_gate().is_some() {
+        return Err(Error::ExperimentState(
+            "completed static exposure handoff requires the legacy probe protocol".to_owned(),
+        ));
+    }
+    match verify_static_exposure_probe(config, input)? {
+        StaticExposureProbeVerification::Complete {
+            presentations: VALID_RATING_QUOTA,
+            valid_ratings: VALID_RATING_QUOTA,
+        } => {}
+        _ => {
+            return Err(Error::ExperimentState(
+                "source static exposure probe is not complete".to_owned(),
+            ));
+        }
+    }
+    let session: ProbeSession = crate::snapshot::read_manifest(&config.session_path)?;
+    let presentations = session
+        .presentations
+        .iter()
+        .map(|presentation| {
+            let source_repetition = presentation.repetition.ok_or_else(|| {
+                Error::Invariant(
+                    "completed static exposure presentation lacks repetition feedback".to_owned(),
+                )
+            })?;
+            Ok(CompletedStaticExposurePresentation {
+                event_id: presentation.event_id,
+                vector_identity_sha256: presentation.vector_identity_sha256.clone(),
+                source_exposure: presentation.exposure,
+                source_repetition,
+            })
+        })
+        .collect::<Result<Vec<_>>>()?;
+    Ok(CompletedStaticExposureProbeReplay {
+        input_identity_sha256: session.binding.input_identity_sha256,
+        presentations,
+    })
 }
 
 /// Derive the probe's complete positive Compact support order from a verified
@@ -330,9 +616,26 @@ struct ProbeBinding {
     valid_rating_quota: usize,
     rest_interval: usize,
     maximum_wrong_language_presentations: usize,
-    tranche_size: usize,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    tranche_size: Option<usize>,
     typical_pair_cosine_bits: String,
     exposure_half_life: u32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    full_pool_exposure_gate: Option<FullPoolExposureGateBinding>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+struct FullPoolExposureGateBinding {
+    protocol_identity_sha256: String,
+    source_probe_config_sha256: String,
+    source_probe_session_sha256: String,
+    source_probe_report_sha256: String,
+    source_probe_input_identity_sha256: String,
+    candidate_pool_size: usize,
+    seeded_history_size: usize,
+    exposure_ceiling_bits: String,
+    eligibility_comparator: String,
+    calibration_policy: String,
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -364,6 +667,8 @@ struct StoredSelection {
     frozen_support_score: f64,
     exposure: f64,
     tranche: Vec<StoredTrancheEntry>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    full_pool_audit: Option<FullPoolSelectionAudit>,
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, PartialEq, Serialize)]
@@ -391,9 +696,17 @@ struct StoredPresentation {
     frozen_support_score: f64,
     exposure: f64,
     tranche: Vec<StoredTrancheEntry>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    full_pool_audit: Option<FullPoolSelectionAudit>,
     rating: Option<u8>,
     wrong_language: bool,
     repetition: Option<RepetitionAnswer>,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+struct FullPoolSelectionAudit {
+    survivor_count: usize,
+    rejected_by_ceiling_count: usize,
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -414,6 +727,16 @@ struct CompletionSeal {
     report_sha256: String,
     presentations: usize,
     valid_ratings: usize,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    termination: Option<ProbeTermination>,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+enum ProbeTermination {
+    ValidRatingQuotaReached,
+    CandidateSupplyExhausted,
+    WrongLanguageReserveExhausted,
 }
 
 #[derive(Serialize)]
@@ -431,13 +754,15 @@ struct ProbeTranscript<'a> {
 #[derive(Serialize)]
 struct ProbeReport<'a> {
     schema_version: u32,
-    purpose: &'static str,
+    purpose: &'a str,
     binding: &'a ProbeBinding,
     presentations: usize,
     valid_ratings: usize,
     ratings: BTreeMap<String, usize>,
     repetition_answers: BTreeMap<&'static str, usize>,
     wrong_language_presentations: usize,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    termination: Option<ProbeTermination>,
     selection: SelectionReport,
     presentation_audit: &'a [StoredPresentation],
     rest_checkpoints: &'a [RestCheckpoint],
@@ -447,14 +772,41 @@ struct ProbeReport<'a> {
 #[derive(Serialize)]
 struct SelectionReport {
     policy: &'static str,
-    tranche_size: usize,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    tranche_size: Option<usize>,
     typical_pair_cosine: f64,
     half_life: u32,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    exposure_ceiling: Option<f64>,
 }
 
 /// Verify an absent, active, or completed probe without acquiring its lock,
 /// writing artifacts, or requesting evaluator input.
 pub fn verify_static_exposure_probe(
+    config: &StaticExposureProbeRunnerConfig,
+    input: &StaticExposureProbeInput,
+) -> Result<StaticExposureProbeVerification> {
+    if input.full_pool_exposure_gate().is_some() {
+        return Err(Error::ExperimentState(
+            "legacy static probe entrypoint received a full-pool probe input".to_owned(),
+        ));
+    }
+    verify_probe(config, input)
+}
+
+pub fn verify_full_pool_exposure_probe(
+    config: &StaticExposureProbeRunnerConfig,
+    input: &StaticExposureProbeInput,
+) -> Result<StaticExposureProbeVerification> {
+    if input.full_pool_exposure_gate().is_none() {
+        return Err(Error::ExperimentState(
+            "full-pool probe entrypoint requires a full-pool probe input".to_owned(),
+        ));
+    }
+    verify_probe(config, input)
+}
+
+fn verify_probe(
     config: &StaticExposureProbeRunnerConfig,
     input: &StaticExposureProbeInput,
 ) -> Result<StaticExposureProbeVerification> {
@@ -476,10 +828,15 @@ pub fn verify_static_exposure_probe(
     }
     verify_session_checksum(&config.session_path, &session)?;
     validate_session(&session)?;
-    let _selector = replay_selector(input, &session)?;
+    let mut selector = replay_selector(input, &session)?;
     match session.phase {
         ProbePhase::Evaluating => {
-            if config.report_path.exists() && valid_rating_count(&session) < VALID_RATING_QUOTA {
+            if config.report_path.exists()
+                && valid_rating_count(&session) < session.binding.valid_rating_quota
+                && !(session.binding.full_pool_exposure_gate.is_some()
+                    && session.pending_presentation.is_none()
+                    && selector.select_next(input)?.is_none())
+            {
                 return Err(Error::ExperimentState(
                     "an incomplete static probe unexpectedly has a report".to_owned(),
                 ));
@@ -491,7 +848,7 @@ pub fn verify_static_exposure_probe(
             })
         }
         ProbePhase::Complete => {
-            verify_complete(config, &session)?;
+            verify_complete(config, input, &session, &mut selector)?;
             Ok(StaticExposureProbeVerification::Complete {
                 presentations: session.presentations.len(),
                 valid_ratings: valid_rating_count(&session),
@@ -502,6 +859,38 @@ pub fn verify_static_exposure_probe(
 
 /// Run or exactly resume the static exposure-aware probe.
 pub fn run_static_exposure_probe<U>(
+    config: &StaticExposureProbeRunnerConfig,
+    input: &StaticExposureProbeInput,
+    evaluator: &mut U,
+) -> Result<StaticExposureProbeRunnerOutcome>
+where
+    U: EvaluatorUi + RepetitionUi,
+{
+    if input.full_pool_exposure_gate().is_some() {
+        return Err(Error::ExperimentState(
+            "legacy static probe entrypoint received a full-pool probe input".to_owned(),
+        ));
+    }
+    run_probe(config, input, evaluator)
+}
+
+pub fn run_full_pool_exposure_probe<U>(
+    config: &StaticExposureProbeRunnerConfig,
+    input: &StaticExposureProbeInput,
+    evaluator: &mut U,
+) -> Result<StaticExposureProbeRunnerOutcome>
+where
+    U: EvaluatorUi + RepetitionUi,
+{
+    if input.full_pool_exposure_gate().is_none() {
+        return Err(Error::ExperimentState(
+            "full-pool probe entrypoint requires a full-pool probe input".to_owned(),
+        ));
+    }
+    run_probe(config, input, evaluator)
+}
+
+fn run_probe<U>(
     config: &StaticExposureProbeRunnerConfig,
     input: &StaticExposureProbeInput,
     evaluator: &mut U,
@@ -521,7 +910,7 @@ where
     let mut selector = replay_selector(input, &session)?;
 
     if session.phase == ProbePhase::Complete {
-        verify_complete(config, &session)?;
+        verify_complete(config, input, &session, &mut selector)?;
         evaluator
             .complete(CompletionView::new(session.presentations.len()))
             .map_err(|source| io_error("write", "<terminal-output>", source))?;
@@ -530,8 +919,21 @@ where
 
     let mut corpus = None;
     loop {
-        if valid_rating_count(&session) == VALID_RATING_QUOTA {
-            return complete_probe(config, &mut session, evaluator);
+        if wrong_language_count(&session) > session.binding.maximum_wrong_language_presentations {
+            return complete_probe(
+                config,
+                &mut session,
+                evaluator,
+                ProbeTermination::WrongLanguageReserveExhausted,
+            );
+        }
+        if valid_rating_count(&session) == session.binding.valid_rating_quota {
+            return complete_probe(
+                config,
+                &mut session,
+                evaluator,
+                ProbeTermination::ValidRatingQuotaReached,
+            );
         }
         if session.pending_presentation.is_none()
             && !take_due_rest(config, &mut session, evaluator)?
@@ -539,19 +941,23 @@ where
             return Ok(StaticExposureProbeRunnerOutcome::Paused);
         }
         if session.pending_presentation.is_none() {
-            let selection = selector
-                .select_next()
-                .map_err(|error| Error::ExperimentState(error.to_string()))?
-                .ok_or_else(|| {
-                    Error::ExperimentState(
-                        "static probe exhausted candidate supply before 40 valid ratings"
-                            .to_owned(),
-                    )
-                })?;
+            let Some(selection) = selector.select_next(input)? else {
+                if session.binding.full_pool_exposure_gate.is_some() {
+                    return complete_probe(
+                        config,
+                        &mut session,
+                        evaluator,
+                        ProbeTermination::CandidateSupplyExhausted,
+                    );
+                }
+                return Err(Error::ExperimentState(
+                    "static probe exhausted candidate supply before 40 valid ratings".to_owned(),
+                ));
+            };
             let content =
-                load_raw_note_content(&mut corpus, &config.corpus_path, selection.event_id())?;
+                load_raw_note_content(&mut corpus, &config.corpus_path, selection.event_id)?;
             session.pending_presentation = Some(PendingPresentation {
-                selection: store_selection(input, &selection)?,
+                selection,
                 rating: None,
                 wrong_language: false,
                 repetition: None,
@@ -713,8 +1119,40 @@ fn build_binding(
         path: config.session_path.clone(),
         source,
     })?;
+    let full_pool_exposure_gate = input
+        .full_pool_exposure_gate()
+        .map(|protocol| {
+            let bytes = serde_json::to_vec(protocol).map_err(|source| Error::Manifest {
+                operation: "encode",
+                path: config.session_path.clone(),
+                source,
+            })?;
+            Ok(FullPoolExposureGateBinding {
+                protocol_identity_sha256: hash_bytes(&bytes),
+                source_probe_config_sha256: protocol.source_probe_config_sha256().to_owned(),
+                source_probe_session_sha256: protocol.source_probe_session_sha256().to_owned(),
+                source_probe_report_sha256: protocol.source_probe_report_sha256().to_owned(),
+                source_probe_input_identity_sha256: protocol
+                    .source_probe_input_identity_sha256()
+                    .to_owned(),
+                candidate_pool_size: input.candidates.len(),
+                seeded_history_size: protocol.seeded_history().len(),
+                exposure_ceiling_bits: format!("{:016x}", protocol.exposure_ceiling().to_bits()),
+                eligibility_comparator: "exposure < ceiling".to_owned(),
+                calibration_policy:
+                    "maximize-balanced-accuracy-over-adjacent-score-midpoints-ties-higher-v1"
+                        .to_owned(),
+            })
+        })
+        .transpose()?;
+    let is_full_pool = full_pool_exposure_gate.is_some();
     Ok(ProbeBinding {
-        purpose: STATIC_EXPOSURE_PROBE_PURPOSE.to_owned(),
+        purpose: if is_full_pool {
+            FULL_POOL_ESCAPE_PROBE_PURPOSE
+        } else {
+            STATIC_EXPOSURE_PROBE_PURPOSE
+        }
+        .to_owned(),
         corpus_identity: config.corpus_identity.clone(),
         representation_version: input.representation_version.clone(),
         frozen_compact_order_identity_sha256: input.frozen_compact_order_identity_sha256.clone(),
@@ -724,12 +1162,25 @@ fn build_binding(
         rating_anchors: RATING_ANCHORS.map(str::to_owned),
         wrong_language_rule: WRONG_LANGUAGE_RULE.to_owned(),
         repetition_question: REPETITION_QUESTION.to_owned(),
-        valid_rating_quota: VALID_RATING_QUOTA,
+        valid_rating_quota: if is_full_pool {
+            FULL_POOL_VALID_RATING_QUOTA
+        } else {
+            VALID_RATING_QUOTA
+        },
         rest_interval: REST_INTERVAL,
-        maximum_wrong_language_presentations: MAXIMUM_WRONG_LANGUAGE_PRESENTATIONS,
-        tranche_size: STATIC_EXPOSURE_TRANCHE_SIZE,
+        maximum_wrong_language_presentations: if is_full_pool {
+            FULL_POOL_MAXIMUM_WRONG_LANGUAGE_PRESENTATIONS
+        } else {
+            MAXIMUM_WRONG_LANGUAGE_PRESENTATIONS
+        },
+        tranche_size: if is_full_pool {
+            None
+        } else {
+            Some(STATIC_EXPOSURE_TRANCHE_SIZE)
+        },
         typical_pair_cosine_bits: format!("{:016x}", CREC_102_TYPICAL_PAIR_COSINE.to_bits()),
         exposure_half_life: CREC_102_EXPOSURE_HALF_LIFE,
+        full_pool_exposure_gate,
     })
 }
 
@@ -760,50 +1211,109 @@ fn load_or_create_session(path: &Path, binding: ProbeBinding) -> Result<ProbeSes
     Ok(session)
 }
 
+enum ProbeSelector {
+    Static(StaticExposureSelector),
+    FullPool(FullPoolExposureGateSelector),
+}
+
+impl ProbeSelector {
+    fn select_next(&mut self, input: &StaticExposureProbeInput) -> Result<Option<StoredSelection>> {
+        match self {
+            Self::Static(selector) => selector
+                .select_next()
+                .map_err(|error| Error::ExperimentState(error.to_string()))?
+                .map(|selection| store_static_selection(input, &selection))
+                .transpose(),
+            Self::FullPool(selector) => selector
+                .select_next()
+                .map_err(|error| Error::ExperimentState(error.to_string()))?
+                .map(|selection| store_full_pool_selection(input, &selection))
+                .transpose(),
+        }
+    }
+
+    fn record_presentation(&mut self) -> Result<()> {
+        match self {
+            Self::Static(selector) => selector.record_presentation(),
+            Self::FullPool(selector) => selector.record_presentation(),
+        }
+        .map_err(|error| Error::ExperimentState(error.to_string()))
+    }
+}
+
 fn replay_selector(
     input: &StaticExposureProbeInput,
     session: &ProbeSession,
-) -> Result<StaticExposureSelector> {
+) -> Result<ProbeSelector> {
     let candidates = input
         .candidates
         .iter()
         .map(|candidate| ExposureCandidate::new(candidate.event_id, candidate.vector.clone()))
         .collect::<std::result::Result<Vec<_>, _>>()
         .map_err(|error| Error::ExperimentState(error.to_string()))?;
-    let mut selector = StaticExposureSelector::with_presentation_quota(
-        candidates,
-        input.historical_presented_event_ids.clone(),
-        VALID_RATING_QUOTA + MAXIMUM_WRONG_LANGUAGE_PRESENTATIONS,
-    )
-    .map_err(|error| Error::ExperimentState(error.to_string()))?;
-    for stored in &session.presentations {
-        let selected = selector
-            .select_next()
-            .map_err(|error| Error::ExperimentState(error.to_string()))?
-            .ok_or_else(|| {
-                Error::ExperimentState(
-                    "stored probe presentation extends beyond deterministic selection".to_owned(),
+    let mut selector = match input.full_pool_exposure_gate() {
+        None => ProbeSelector::Static(
+            StaticExposureSelector::with_presentation_quota(
+                candidates,
+                input.historical_presented_event_ids.clone(),
+                session.binding.valid_rating_quota
+                    + session.binding.maximum_wrong_language_presentations,
+            )
+            .map_err(|error| Error::ExperimentState(error.to_string()))?,
+        ),
+        Some(protocol) => {
+            let vectors_by_event_id = input
+                .candidates
+                .iter()
+                .map(|candidate| (candidate.event_id, candidate.vector()))
+                .collect::<BTreeMap<_, _>>();
+            let seeded_history = protocol
+                .seeded_history()
+                .iter()
+                .map(|seed| {
+                    let vector = vectors_by_event_id.get(&seed.event_id()).ok_or_else(|| {
+                        Error::Invariant(
+                            "validated full-pool seed is missing from the candidate pool"
+                                .to_owned(),
+                        )
+                    })?;
+                    ExposureCandidate::new(seed.event_id(), vector.to_vec())
+                        .map_err(|error| Error::ExperimentState(error.to_string()))
+                })
+                .collect::<Result<Vec<_>>>()?;
+            ProbeSelector::FullPool(
+                FullPoolExposureGateSelector::new(
+                    candidates,
+                    input.historical_presented_event_ids.clone(),
+                    seeded_history,
+                    protocol.exposure_ceiling(),
+                    session.binding.valid_rating_quota
+                        + session.binding.maximum_wrong_language_presentations,
                 )
-            })?;
-        if store_selection(input, &selected)? != selection_from_presentation(stored) {
+                .map_err(|error| Error::ExperimentState(error.to_string()))?,
+            )
+        }
+    };
+    for stored in &session.presentations {
+        let selected = selector.select_next(input)?.ok_or_else(|| {
+            Error::ExperimentState(
+                "stored probe presentation extends beyond deterministic selection".to_owned(),
+            )
+        })?;
+        if selected != selection_from_presentation(stored) {
             return Err(Error::ExperimentState(
                 "stored probe presentation differs from deterministic replay".to_owned(),
             ));
         }
-        selector
-            .record_presentation()
-            .map_err(|error| Error::ExperimentState(error.to_string()))?;
+        selector.record_presentation()?;
     }
     if let Some(pending) = &session.pending_presentation {
-        let selected = selector
-            .select_next()
-            .map_err(|error| Error::ExperimentState(error.to_string()))?
-            .ok_or_else(|| {
-                Error::ExperimentState(
-                    "pending probe presentation extends beyond deterministic selection".to_owned(),
-                )
-            })?;
-        if store_selection(input, &selected)? != pending.selection {
+        let selected = selector.select_next(input)?.ok_or_else(|| {
+            Error::ExperimentState(
+                "pending probe presentation extends beyond deterministic selection".to_owned(),
+            )
+        })?;
+        if selected != pending.selection {
             return Err(Error::ExperimentState(
                 "pending probe presentation differs from deterministic replay".to_owned(),
             ));
@@ -812,7 +1322,7 @@ fn replay_selector(
     Ok(selector)
 }
 
-fn store_selection(
+fn store_static_selection(
     input: &StaticExposureProbeInput,
     selection: &ExposureSelection,
 ) -> Result<StoredSelection> {
@@ -842,6 +1352,35 @@ fn store_selection(
                 exposure: entry.exposure(),
             })
             .collect(),
+        full_pool_audit: None,
+    })
+}
+
+fn store_full_pool_selection(
+    input: &StaticExposureProbeInput,
+    selection: &FullPoolExposureSelection,
+) -> Result<StoredSelection> {
+    let candidate = input
+        .candidates
+        .get(selection.support_order_index())
+        .ok_or_else(|| Error::Invariant("selection support index is out of range".to_owned()))?;
+    if candidate.event_id != selection.event_id() {
+        return Err(Error::Invariant(
+            "selection event differs from its frozen support index".to_owned(),
+        ));
+    }
+    Ok(StoredSelection {
+        event_id: selection.event_id(),
+        vector_identity_sha256: vector_identity(input.representation_version(), candidate.vector()),
+        support_order_index: selection.support_order_index(),
+        support_rank: selection.support_order_index() + 1,
+        frozen_support_score: candidate.frozen_support_score,
+        exposure: selection.exposure(),
+        tranche: Vec::new(),
+        full_pool_audit: Some(FullPoolSelectionAudit {
+            survivor_count: selection.survivor_count(),
+            rejected_by_ceiling_count: selection.rejected_by_ceiling_count(),
+        }),
     })
 }
 
@@ -854,6 +1393,7 @@ fn selection_from_presentation(stored: &StoredPresentation) -> StoredSelection {
         frozen_support_score: stored.frozen_support_score,
         exposure: stored.exposure,
         tranche: stored.tranche.clone(),
+        full_pool_audit: stored.full_pool_audit,
     }
 }
 
@@ -915,7 +1455,7 @@ fn store_submission(
 fn commit_pending(
     config: &StaticExposureProbeRunnerConfig,
     session: &mut ProbeSession,
-    selector: &mut StaticExposureSelector,
+    selector: &mut ProbeSelector,
 ) -> Result<()> {
     let pending = session.pending_presentation.take().ok_or_else(|| {
         Error::Invariant("probe has no pending presentation to commit".to_owned())
@@ -929,19 +1469,23 @@ fn commit_pending(
         frozen_support_score: pending.selection.frozen_support_score,
         exposure: pending.selection.exposure,
         tranche: pending.selection.tranche,
+        full_pool_audit: pending.selection.full_pool_audit,
         rating: pending.rating,
         wrong_language: pending.wrong_language,
         repetition: pending.repetition,
     };
     session.presentations.push(stored);
     save_session(&config.session_path, session)?;
-    selector
-        .record_presentation()
-        .map_err(|error| Error::ExperimentState(error.to_string()))?;
-    if wrong_language_count(session) > MAXIMUM_WRONG_LANGUAGE_PRESENTATIONS {
-        return Err(Error::ExperimentState(format!(
-            "static probe exceeded {MAXIMUM_WRONG_LANGUAGE_PRESENTATIONS} wrong-language presentations"
-        )));
+    selector.record_presentation()?;
+    if wrong_language_count(session) > session.binding.maximum_wrong_language_presentations {
+        let maximum = session.binding.maximum_wrong_language_presentations;
+        let full_pool_terminal_transition = session.binding.full_pool_exposure_gate.is_some()
+            && wrong_language_count(session) == maximum + 1;
+        if !full_pool_terminal_transition {
+            return Err(Error::ExperimentState(format!(
+                "static probe exceeded {maximum} wrong-language presentations"
+            )));
+        }
     }
     Ok(())
 }
@@ -953,8 +1497,8 @@ fn take_due_rest<U: EvaluatorUi>(
 ) -> Result<bool> {
     let valid_ratings = valid_rating_count(session);
     if valid_ratings == 0
-        || valid_ratings == VALID_RATING_QUOTA
-        || !valid_ratings.is_multiple_of(REST_INTERVAL)
+        || valid_ratings == session.binding.valid_rating_quota
+        || !valid_ratings.is_multiple_of(session.binding.rest_interval)
     {
         return Ok(true);
     }
@@ -1005,20 +1549,48 @@ fn complete_probe<U: EvaluatorUi>(
     config: &StaticExposureProbeRunnerConfig,
     session: &mut ProbeSession,
     evaluator: &mut U,
+    termination: ProbeTermination,
 ) -> Result<StaticExposureProbeRunnerOutcome> {
-    if session.pending_presentation.is_some() || valid_rating_count(session) != VALID_RATING_QUOTA {
+    let valid_ratings = valid_rating_count(session);
+    let valid_termination = match termination {
+        ProbeTermination::ValidRatingQuotaReached => {
+            valid_ratings == session.binding.valid_rating_quota
+        }
+        ProbeTermination::CandidateSupplyExhausted => {
+            session.binding.full_pool_exposure_gate.is_some()
+                && valid_ratings < session.binding.valid_rating_quota
+        }
+        ProbeTermination::WrongLanguageReserveExhausted => {
+            session.binding.full_pool_exposure_gate.is_some()
+                && valid_ratings < session.binding.valid_rating_quota
+                && wrong_language_count(session)
+                    == session.binding.maximum_wrong_language_presentations + 1
+        }
+    };
+    if session.pending_presentation.is_some() || !valid_termination {
         return Err(Error::Invariant(
-            "static probe completion was requested before exactly 40 valid ratings".to_owned(),
+            "static probe completion contradicts its frozen termination condition".to_owned(),
         ));
     }
-    let report_bytes = build_report_bytes(config, session)?;
-    publish_or_verify(&config.report_path, &report_bytes)?;
+    let stored_termination = session
+        .binding
+        .full_pool_exposure_gate
+        .as_ref()
+        .map(|_| termination);
     session.phase = ProbePhase::Complete;
     session.completion = Some(CompletionSeal {
-        report_sha256: hash_bytes(&report_bytes),
+        report_sha256: String::new(),
         presentations: session.presentations.len(),
-        valid_ratings: VALID_RATING_QUOTA,
+        valid_ratings,
+        termination: stored_termination,
     });
+    let report_bytes = build_report_bytes(config, session)?;
+    publish_or_verify(&config.report_path, &report_bytes)?;
+    session
+        .completion
+        .as_mut()
+        .expect("completion was initialized")
+        .report_sha256 = hash_bytes(&report_bytes);
     save_session(&config.session_path, session)?;
     evaluator
         .complete(CompletionView::new(session.presentations.len()))
@@ -1056,7 +1628,7 @@ fn build_report_bytes(
     }
     let report = ProbeReport {
         schema_version: REPORT_SCHEMA_VERSION,
-        purpose: STATIC_EXPOSURE_PROBE_PURPOSE,
+        purpose: &session.binding.purpose,
         binding: &session.binding,
         presentations: session.presentations.len(),
         valid_ratings: valid_rating_count(session),
@@ -1067,11 +1639,28 @@ fn build_report_bytes(
             .iter()
             .filter(|presentation| presentation.wrong_language)
             .count(),
+        termination: session
+            .completion
+            .as_ref()
+            .and_then(|completion| completion.termination),
         selection: SelectionReport {
-            policy: "minimum-exposure-within-frozen-compact-top-64-v1",
-            tranche_size: STATIC_EXPOSURE_TRANCHE_SIZE,
+            policy: if session.binding.full_pool_exposure_gate.is_some() {
+                "highest-frozen-support-below-full-pool-exposure-ceiling-v1"
+            } else {
+                "minimum-exposure-within-frozen-compact-top-64-v1"
+            },
+            tranche_size: session.binding.tranche_size,
             typical_pair_cosine: CREC_102_TYPICAL_PAIR_COSINE,
             half_life: CREC_102_EXPOSURE_HALF_LIFE,
+            exposure_ceiling: session
+                .binding
+                .full_pool_exposure_gate
+                .as_ref()
+                .map(|binding| {
+                    u64::from_str_radix(&binding.exposure_ceiling_bits, 16)
+                        .map(f64::from_bits)
+                        .expect("validated binding stores f64 bits")
+                }),
         },
         presentation_audit: &session.presentations,
         rest_checkpoints: &session.rest_checkpoints,
@@ -1080,17 +1669,30 @@ fn build_report_bytes(
     pretty_json_bytes(&path_config.report_path, &report)
 }
 
-fn verify_complete(config: &StaticExposureProbeRunnerConfig, session: &ProbeSession) -> Result<()> {
+fn verify_complete(
+    config: &StaticExposureProbeRunnerConfig,
+    input: &StaticExposureProbeInput,
+    session: &ProbeSession,
+    selector: &mut ProbeSelector,
+) -> Result<()> {
     let completion = session.completion.as_ref().ok_or_else(|| {
         Error::ExperimentState("completed static probe has no completion seal".to_owned())
     })?;
     if session.pending_presentation.is_some()
         || completion.presentations != session.presentations.len()
         || completion.valid_ratings != valid_rating_count(session)
-        || completion.valid_ratings != VALID_RATING_QUOTA
     {
         return Err(Error::ExperimentState(
             "completed static probe transcript contradicts its completion seal".to_owned(),
+        ));
+    }
+    validate_completion_termination(session, completion)?;
+    if completion.termination == Some(ProbeTermination::CandidateSupplyExhausted)
+        && selector.select_next(input)?.is_some()
+    {
+        return Err(Error::ExperimentState(
+            "completed full-pool probe claims exhaustion while an eligible candidate remains"
+                .to_owned(),
         ));
     }
     let expected = build_report_bytes(config, session)?;
@@ -1102,6 +1704,41 @@ fn verify_complete(config: &StaticExposureProbeRunnerConfig, session: &ProbeSess
         ));
     }
     Ok(())
+}
+
+fn validate_completion_termination(
+    session: &ProbeSession,
+    completion: &CompletionSeal,
+) -> Result<()> {
+    let binding = &session.binding;
+    let valid = match (
+        binding.full_pool_exposure_gate.is_some(),
+        completion.termination,
+    ) {
+        (false, None) => completion.valid_ratings == binding.valid_rating_quota,
+        (true, Some(ProbeTermination::ValidRatingQuotaReached)) => {
+            completion.valid_ratings == binding.valid_rating_quota
+        }
+        (true, Some(ProbeTermination::CandidateSupplyExhausted)) => {
+            completion.valid_ratings < binding.valid_rating_quota
+        }
+        (true, Some(ProbeTermination::WrongLanguageReserveExhausted)) => {
+            if wrong_language_count(session) != binding.maximum_wrong_language_presentations + 1 {
+                return Err(Error::ExperimentState(
+                    "completed full-pool probe claims wrong-language reserve exhaustion without the required rejection count".to_owned(),
+                ));
+            }
+            completion.valid_ratings < binding.valid_rating_quota
+        }
+        _ => false,
+    };
+    if valid {
+        Ok(())
+    } else {
+        Err(Error::ExperimentState(
+            "completed static probe transcript contradicts its termination seal".to_owned(),
+        ))
+    }
 }
 
 fn validate_session(session: &ProbeSession) -> Result<()> {
@@ -1122,15 +1759,28 @@ fn validate_session(session: &ProbeSession) -> Result<()> {
         }
         validate_pending_partial(pending)?;
     }
-    if valid_rating_count(session) > VALID_RATING_QUOTA {
+    if valid_rating_count(session) > session.binding.valid_rating_quota {
         return Err(Error::ExperimentState(
             "static probe session exceeds its valid-rating quota".to_owned(),
         ));
     }
-    if wrong_language_count(session) > MAXIMUM_WRONG_LANGUAGE_PRESENTATIONS {
-        return Err(Error::ExperimentState(format!(
-            "static probe exceeds its {MAXIMUM_WRONG_LANGUAGE_PRESENTATIONS}-presentation wrong-language ceiling"
-        )));
+    if wrong_language_count(session) > session.binding.maximum_wrong_language_presentations {
+        let maximum = session.binding.maximum_wrong_language_presentations;
+        let recoverable_or_complete_full_pool_overflow =
+            session.binding.full_pool_exposure_gate.is_some()
+                && wrong_language_count(session) == maximum + 1
+                && match session.phase {
+                    ProbePhase::Evaluating => session.completion.is_none(),
+                    ProbePhase::Complete => session.completion.as_ref().is_some_and(|completion| {
+                        completion.termination
+                            == Some(ProbeTermination::WrongLanguageReserveExhausted)
+                    }),
+                };
+        if !recoverable_or_complete_full_pool_overflow {
+            return Err(Error::ExperimentState(format!(
+                "static probe exceeds its {maximum}-presentation wrong-language ceiling"
+            )));
+        }
     }
     validate_rest_checkpoints(session)?;
     validate_pause_checkpoints(session)?;
@@ -1213,7 +1863,11 @@ fn validate_rest_checkpoints(session: &ProbeSession) -> Result<()> {
     let valid_ratings = valid_rating_count(session);
     let mut previous = 0;
     for checkpoint in &session.rest_checkpoints {
-        if ![10, 20, 30].contains(&checkpoint.after_valid_ratings)
+        if checkpoint.after_valid_ratings == 0
+            || !checkpoint
+                .after_valid_ratings
+                .is_multiple_of(session.binding.rest_interval)
+            || checkpoint.after_valid_ratings >= session.binding.valid_rating_quota
             || checkpoint.after_valid_ratings <= previous
             || checkpoint.after_valid_ratings > valid_ratings
         {
@@ -1224,14 +1878,16 @@ fn validate_rest_checkpoints(session: &ProbeSession) -> Result<()> {
         }
         previous = checkpoint.after_valid_ratings;
     }
-    for boundary in [10, 20, 30] {
+    for boundary in (session.binding.rest_interval..session.binding.valid_rating_quota)
+        .step_by(session.binding.rest_interval)
+    {
         let checkpoint = session
             .rest_checkpoints
             .iter()
             .find(|checkpoint| checkpoint.after_valid_ratings == boundary);
         let must_have_continued = valid_ratings > boundary
             || (valid_ratings == boundary && session.pending_presentation.is_some())
-            || session.phase == ProbePhase::Complete;
+            || (session.phase == ProbePhase::Complete && valid_ratings >= boundary);
         if must_have_continued && !checkpoint.is_some_and(|checkpoint| checkpoint.continued) {
             return Err(Error::ExperimentState(format!(
                 "static probe is missing its continued rest after {boundary} valid ratings"
@@ -1269,11 +1925,11 @@ fn validate_pause_checkpoints(session: &ProbeSession) -> Result<()> {
 }
 
 fn valid_ratings_until_rest(session: &ProbeSession) -> usize {
-    let remainder = valid_rating_count(session) % REST_INTERVAL;
+    let remainder = valid_rating_count(session) % session.binding.rest_interval;
     if remainder == 0 {
-        REST_INTERVAL
+        session.binding.rest_interval
     } else {
-        REST_INTERVAL - remainder
+        session.binding.rest_interval - remainder
     }
 }
 

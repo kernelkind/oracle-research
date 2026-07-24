@@ -2,9 +2,10 @@
 
 ## Status
 
-This is an approved working direction, not a complete architecture or an
-approved experiment. Exact thresholds and algorithms remain undecided. Oracle
-MVP v1 remains frozen.
+This is an approved working direction, not a complete architecture. CREC-109
+is the approved next experiment. Its fixed threshold and selector are
+experiment settings, not accepted product settings. Oracle MVP v1 remains
+frozen.
 
 ## Why
 
@@ -72,8 +73,8 @@ probe even when it remains personally supported.
 
 Exposure fades according to the number of subsequent presentations, not
 wall-clock time. It must never be converted into permanent negative preference
-evidence. The exact similarity function, decay function, horizon, and budget
-remain undecided.
+evidence. CREC-109 freezes one formula and budget only to test the mechanism;
+the eventual product settings remain undecided.
 
 ### Controlled
 
@@ -123,6 +124,11 @@ three families in the frozen presentation sequence. This authorizes a short
 live adjacent-novelty mechanism test. It does not show that the score measures
 human saturation, establish a live exposure budget, prove candidate
 availability, or validate the complete loop.
+
+[CREC-109](../experiments/adjacent-novelty/crec-109-full-pool-exposure-gated-escape-probe.md)
+tests the next narrow question: after seeding exposure with the genuine
+CREC-108 history, can a strict full-pool gate find personally valuable notes
+that do not feel like another overexposed broad subject?
 
 ## Research Basis
 

@@ -11,10 +11,13 @@ use oracle_mvp::evaluator::{
 };
 use oracle_mvp::representation::EventId;
 use oracle_mvp::static_exposure_probe_runner::{
-    StaticExposureProbeCandidate, StaticExposureProbeInput, StaticExposureProbeRunnerConfig,
-    StaticExposureProbeRunnerOutcome, StaticExposureProbeSourceProvenance,
-    StaticExposureProbeVerification, run_static_exposure_probe, verify_static_exposure_probe,
+    FullPoolExposureGateProtocol, FullPoolExposureSeed, StaticExposureProbeCandidate,
+    StaticExposureProbeInput, StaticExposureProbeRunnerConfig, StaticExposureProbeRunnerOutcome,
+    StaticExposureProbeSourceProvenance, StaticExposureProbeVerification,
+    replay_completed_static_exposure_probe, run_full_pool_exposure_probe,
+    run_static_exposure_probe, verify_full_pool_exposure_probe, verify_static_exposure_probe,
 };
+use sha2::{Digest, Sha256};
 
 #[test]
 fn complete_probe_records_forty_unique_ratings_and_separate_repetition_answers() {
@@ -77,6 +80,113 @@ fn complete_probe_records_forty_unique_ratings_and_separate_repetition_answers()
 }
 
 #[test]
+fn full_pool_gate_reuses_the_durable_runner_with_twenty_ratings_and_one_rest() {
+    let fixture = Fixture::new();
+    let config = fixture.config("full-pool-complete");
+    let input = fixture.full_pool_input(false);
+    let mut evaluator = CompleteEvaluator::default();
+
+    let outcome = run_full_pool_exposure_probe(&config, &input, &mut evaluator)
+        .expect("complete the full-pool exposure-gated probe");
+
+    assert_eq!(outcome, StaticExposureProbeRunnerOutcome::Complete);
+    assert_eq!(evaluator.presented.len(), 20);
+    assert_eq!(
+        evaluator.presented.iter().collect::<BTreeSet<_>>().len(),
+        20
+    );
+    assert_eq!(evaluator.repetition_prompts, 20);
+    assert_eq!(evaluator.rests, 1);
+    assert_eq!(evaluator.completed, Some(20));
+
+    let report: serde_json::Value = serde_json::from_reader(
+        std::fs::File::open(&config.report_path).expect("open full-pool report"),
+    )
+    .expect("decode full-pool report");
+    assert_eq!(report["valid_ratings"], 20);
+    assert_eq!(
+        report["selection"]["policy"],
+        "highest-frozen-support-below-full-pool-exposure-ceiling-v1"
+    );
+    assert_eq!(
+        report["selection"]["exposure_ceiling"],
+        serde_json::json!(0.32686638460886658_f64)
+    );
+    assert_eq!(report["termination"], "valid_rating_quota_reached");
+}
+
+#[test]
+fn full_pool_gate_seals_candidate_exhaustion_without_relaxing_the_ceiling() {
+    let fixture = Fixture::new();
+    let config = fixture.config("full-pool-exhausted");
+    let input = fixture.full_pool_input(true);
+    let mut evaluator = CompletionOnlyEvaluator::default();
+
+    let outcome = run_full_pool_exposure_probe(&config, &input, &mut evaluator)
+        .expect("seal the exhausted full-pool probe");
+
+    assert_eq!(outcome, StaticExposureProbeRunnerOutcome::Complete);
+    assert_eq!(evaluator.completed, Some(0));
+    let report: serde_json::Value = serde_json::from_reader(
+        std::fs::File::open(&config.report_path).expect("open exhausted report"),
+    )
+    .expect("decode exhausted report");
+    assert_eq!(report["termination"], "candidate_supply_exhausted");
+    assert_eq!(report["valid_ratings"], 0);
+    assert_eq!(
+        verify_full_pool_exposure_probe(&config, &input).expect("verify deterministic exhaustion"),
+        StaticExposureProbeVerification::Complete {
+            presentations: 0,
+            valid_ratings: 0,
+        }
+    );
+}
+
+#[test]
+fn full_pool_gate_seals_the_second_wrong_language_without_corrupting_resume() {
+    let fixture = Fixture::new();
+    let config = fixture.config("full-pool-language-reserve");
+    let input = fixture.full_pool_input(false);
+    let mut evaluator = WrongLanguageUntilComplete::default();
+
+    let outcome = run_full_pool_exposure_probe(&config, &input, &mut evaluator)
+        .expect("seal the exhausted language reserve");
+
+    assert_eq!(outcome, StaticExposureProbeRunnerOutcome::Complete);
+    assert_eq!(evaluator.presented, 2);
+    assert_eq!(evaluator.completed, Some(2));
+    let report: serde_json::Value = serde_json::from_reader(
+        std::fs::File::open(&config.report_path).expect("open language-reserve report"),
+    )
+    .expect("decode language-reserve report");
+    assert_eq!(report["termination"], "wrong_language_reserve_exhausted");
+    assert_eq!(report["wrong_language_presentations"], 2);
+    assert_eq!(
+        verify_full_pool_exposure_probe(&config, &input)
+            .expect("verify durable language-reserve termination"),
+        StaticExposureProbeVerification::Complete {
+            presentations: 2,
+            valid_ratings: 0,
+        }
+    );
+}
+
+#[test]
+fn completed_full_pool_probe_cannot_claim_language_reserve_exhaustion_after_one_rejection() {
+    let fixture = Fixture::new();
+    let config = fixture.config("forged-language-reserve");
+    let input = fixture.full_pool_input(false);
+    run_full_pool_exposure_probe(&config, &input, &mut WrongLanguageUntilComplete::default())
+        .expect("create a legitimate exhausted language-reserve artifact");
+    forge_one_rejection_language_reserve_completion(&config);
+
+    let error = verify_full_pool_exposure_probe(&config, &input)
+        .expect_err("one wrong-language rejection must not exhaust a reserve of one");
+
+    assert!(error.to_string().contains("wrong-language"));
+}
+
+#[test]
 fn source_provenance_is_retained_in_the_frozen_probe_input() {
     let fixture = Fixture::new();
     let provenance = StaticExposureProbeSourceProvenance::new(
@@ -92,6 +202,48 @@ fn source_provenance_is_retained_in_the_frozen_probe_input() {
     let input = fixture.input().with_source_provenance(provenance.clone());
 
     assert_eq!(input.source_provenance(), Some(&provenance));
+}
+
+#[test]
+fn full_pool_protocol_rejects_a_different_source_input_identity() {
+    let fixture = Fixture::new();
+    let input = fixture.input();
+    let protocol = full_pool_protocol(&input, "ff".repeat(32));
+
+    let error = input
+        .with_full_pool_exposure_gate(protocol)
+        .expect_err("source input identity must be enforced");
+
+    assert!(error.to_string().contains("different source probe input"));
+}
+
+#[test]
+fn completed_source_replay_returns_the_verified_ordered_presentations() {
+    let fixture = Fixture::new();
+    let config = fixture.config("completed-replay");
+    let input = fixture.input();
+    run_static_exposure_probe(&config, &input, &mut CompleteEvaluator::default())
+        .expect("complete source probe");
+
+    let replay =
+        replay_completed_static_exposure_probe(&config, &input).expect("replay completed source");
+
+    assert_eq!(replay.presentations().len(), 40);
+    assert_eq!(
+        replay
+            .presentations()
+            .iter()
+            .map(|presentation| presentation.event_id())
+            .collect::<BTreeSet<_>>()
+            .len(),
+        40
+    );
+    assert!(
+        replay
+            .presentations()
+            .iter()
+            .all(|presentation| presentation.source_exposure().is_finite())
+    );
 }
 
 #[test]
@@ -136,6 +288,110 @@ fn pause_after_rating_resumes_at_the_unanswered_repetition_prompt_without_redisp
         session["pending_presentation"].is_object(),
         "the next displayed note remains durably pending"
     );
+}
+
+#[test]
+fn full_pool_pause_after_rating_resumes_the_same_repetition_prompt() {
+    let fixture = Fixture::new();
+    let config = fixture.config("full-pool-resume");
+    let input = fixture.full_pool_input(false);
+    let mut pausing = PauseAfterFirstRating::default();
+
+    assert_eq!(
+        run_full_pool_exposure_probe(&config, &input, &mut pausing)
+            .expect("pause after durable full-pool rating"),
+        StaticExposureProbeRunnerOutcome::Paused
+    );
+    let mut resuming = ResumeAtRepetition::default();
+    assert_eq!(
+        run_full_pool_exposure_probe(&config, &input, &mut resuming)
+            .expect("resume full-pool repetition"),
+        StaticExposureProbeRunnerOutcome::Paused
+    );
+
+    assert_eq!(resuming.repetition_prompts, 1);
+    assert_eq!(resuming.rating_prompts, 1);
+    let session: serde_json::Value = serde_json::from_reader(
+        std::fs::File::open(&config.session_path).expect("open resumed full-pool session"),
+    )
+    .expect("decode resumed full-pool session");
+    assert_eq!(session["presentations"].as_array().unwrap().len(), 1);
+    assert_eq!(session["presentations"][0]["rating"], 5);
+    assert_eq!(session["presentations"][0]["repetition"], "no");
+}
+
+#[test]
+fn full_pool_unrated_pending_note_recovers_without_changing_selection() {
+    let fixture = Fixture::new();
+    let config = fixture.config("full-pool-unrated-recovery");
+    let input = fixture.full_pool_input(false);
+
+    assert_eq!(
+        run_full_pool_exposure_probe(&config, &input, &mut PauseBeforeRating)
+            .expect("pause with a durable unrated selection"),
+        StaticExposureProbeRunnerOutcome::Paused
+    );
+    let pending_before: serde_json::Value = serde_json::from_reader(
+        std::fs::File::open(&config.session_path).expect("open paused session"),
+    )
+    .expect("decode paused session");
+    let selected_before = pending_before["pending_presentation"]["selection"]["event_id"].clone();
+
+    let mut resuming = RecoverRatingThenPauseNext::default();
+    assert_eq!(
+        run_full_pool_exposure_probe(&config, &input, &mut resuming)
+            .expect("recover the durable selection"),
+        StaticExposureProbeRunnerOutcome::Paused
+    );
+    let resumed: serde_json::Value = serde_json::from_reader(
+        std::fs::File::open(&config.session_path).expect("open recovered session"),
+    )
+    .expect("decode recovered session");
+    assert_eq!(resumed["presentations"][0]["event_id"], selected_before);
+    assert_eq!(resuming.recoveries, 1);
+    assert_eq!(resuming.repetitions, 1);
+    assert_eq!(resuming.next_rating_prompts, 1);
+}
+
+#[test]
+fn full_pool_selection_order_is_independent_of_ratings_and_repetition_answers() {
+    let fixture = Fixture::new();
+    let input = fixture.full_pool_input(false);
+    let low_config = fixture.config("full-pool-low-outcomes");
+    let high_config = fixture.config("full-pool-high-outcomes");
+
+    run_full_pool_exposure_probe(
+        &low_config,
+        &input,
+        &mut FixedCompleteEvaluator::new(1, RepetitionAnswer::Yes),
+    )
+    .expect("complete low-outcome probe");
+    run_full_pool_exposure_probe(
+        &high_config,
+        &input,
+        &mut FixedCompleteEvaluator::new(7, RepetitionAnswer::No),
+    )
+    .expect("complete high-outcome probe");
+
+    let low: serde_json::Value = serde_json::from_reader(
+        std::fs::File::open(&low_config.report_path).expect("open low report"),
+    )
+    .expect("decode low report");
+    let high: serde_json::Value = serde_json::from_reader(
+        std::fs::File::open(&high_config.report_path).expect("open high report"),
+    )
+    .expect("decode high report");
+    let event_order = |report: &serde_json::Value| {
+        report["presentation_audit"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|presentation| presentation["event_id"].clone())
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(event_order(&low), event_order(&high));
+    assert_ne!(low["ratings"], high["ratings"]);
+    assert_ne!(low["repetition_answers"], high["repetition_answers"]);
 }
 
 #[test]
@@ -249,6 +505,60 @@ impl Fixture {
         )
         .expect("valid frozen probe input")
     }
+
+    fn full_pool_input(&self, exhaust_remaining: bool) -> StaticExposureProbeInput {
+        let candidates = self
+            .event_ids
+            .iter()
+            .copied()
+            .enumerate()
+            .map(|(index, event_id)| {
+                let mut vector = vec![0.0; self.event_ids.len()];
+                if index < 43 || exhaust_remaining {
+                    vector[0] = 1.0;
+                } else {
+                    vector[index - 42] = 1.0;
+                }
+                StaticExposureProbeCandidate::new(event_id, vector, 1.0 - index as f64 / 100.0)
+                    .expect("valid full-pool candidate")
+            })
+            .collect();
+        let input = StaticExposureProbeInput::new(
+            "static-probe-representation-v1",
+            "22".repeat(32),
+            candidates,
+            self.event_ids[..3].iter().copied().collect(),
+        )
+        .expect("valid base full-pool input");
+        let source_input_identity = input
+            .identity_sha256()
+            .expect("identify source full-pool input");
+        let protocol = full_pool_protocol(&input, source_input_identity);
+        input
+            .with_full_pool_exposure_gate(protocol)
+            .expect("bind full-pool protocol")
+    }
+}
+
+fn full_pool_protocol(
+    input: &StaticExposureProbeInput,
+    source_input_identity: String,
+) -> FullPoolExposureGateProtocol {
+    let seeded_history = input.candidates()[3..43]
+        .iter()
+        .map(|candidate| {
+            FullPoolExposureSeed::new(candidate.event_id(), 0.0, RepetitionAnswer::No)
+                .expect("valid seeded presentation")
+        })
+        .collect();
+    FullPoolExposureGateProtocol::new(
+        seeded_history,
+        "40".repeat(32),
+        "41".repeat(32),
+        "42".repeat(32),
+        source_input_identity,
+    )
+    .expect("valid full-pool protocol")
 }
 
 #[derive(Default)]
@@ -296,6 +606,48 @@ impl RepetitionUi for CompleteEvaluator {
             RepetitionAnswer::No
         };
         Ok(RepetitionOutcome::Answered(answer))
+    }
+}
+
+struct FixedCompleteEvaluator {
+    rating: u8,
+    repetition: RepetitionAnswer,
+}
+
+impl FixedCompleteEvaluator {
+    const fn new(rating: u8, repetition: RepetitionAnswer) -> Self {
+        Self { rating, repetition }
+    }
+}
+
+impl EvaluatorUi for FixedCompleteEvaluator {
+    fn rate(&mut self, _view: RatingView<'_>) -> io::Result<RatingOutcome> {
+        Ok(RatingOutcome::Submitted(EvaluatorSubmission::new(
+            EvaluatorDecision::Rating(self.rating),
+            false,
+        )))
+    }
+
+    fn recover(&mut self, _view: RecoveryView) -> io::Result<RecoveryOutcome> {
+        panic!("uninterrupted fixed-outcome run must not recover")
+    }
+
+    fn rest(&mut self, _view: RestView) -> io::Result<RestOutcome> {
+        Ok(RestOutcome::Continue)
+    }
+
+    fn preparing(&mut self) -> io::Result<()> {
+        Ok(())
+    }
+
+    fn complete(&mut self, _view: CompletionView) -> io::Result<()> {
+        Ok(())
+    }
+}
+
+impl RepetitionUi for FixedCompleteEvaluator {
+    fn repetition(&mut self, _view: RepetitionView) -> io::Result<RepetitionOutcome> {
+        Ok(RepetitionOutcome::Answered(self.repetition))
     }
 }
 
@@ -443,6 +795,150 @@ impl RepetitionUi for NeverCalled {
     }
 }
 
+#[derive(Default)]
+struct CompletionOnlyEvaluator {
+    completed: Option<usize>,
+}
+
+impl EvaluatorUi for CompletionOnlyEvaluator {
+    fn rate(&mut self, _view: RatingView<'_>) -> io::Result<RatingOutcome> {
+        panic!("an exhausted selector must not request a rating")
+    }
+
+    fn recover(&mut self, _view: RecoveryView) -> io::Result<RecoveryOutcome> {
+        panic!("an exhausted selector must not recover a presentation")
+    }
+
+    fn rest(&mut self, _view: RestView) -> io::Result<RestOutcome> {
+        panic!("an exhausted selector must not request a rest")
+    }
+
+    fn preparing(&mut self) -> io::Result<()> {
+        Ok(())
+    }
+
+    fn complete(&mut self, view: CompletionView) -> io::Result<()> {
+        self.completed = Some(view.presentations_stored());
+        Ok(())
+    }
+}
+
+impl RepetitionUi for CompletionOnlyEvaluator {
+    fn repetition(&mut self, _view: RepetitionView) -> io::Result<RepetitionOutcome> {
+        panic!("an exhausted selector must not request repetition feedback")
+    }
+}
+
+#[derive(Default)]
+struct WrongLanguageUntilComplete {
+    presented: usize,
+    completed: Option<usize>,
+}
+
+impl EvaluatorUi for WrongLanguageUntilComplete {
+    fn rate(&mut self, _view: RatingView<'_>) -> io::Result<RatingOutcome> {
+        self.presented += 1;
+        Ok(RatingOutcome::Submitted(EvaluatorSubmission::new(
+            EvaluatorDecision::WrongLanguage,
+            false,
+        )))
+    }
+
+    fn recover(&mut self, _view: RecoveryView) -> io::Result<RecoveryOutcome> {
+        panic!("uninterrupted language-reserve run must not recover")
+    }
+
+    fn rest(&mut self, _view: RestView) -> io::Result<RestOutcome> {
+        panic!("wrong-language presentations do not reach a rest")
+    }
+
+    fn preparing(&mut self) -> io::Result<()> {
+        Ok(())
+    }
+
+    fn complete(&mut self, view: CompletionView) -> io::Result<()> {
+        self.completed = Some(view.presentations_stored());
+        Ok(())
+    }
+}
+
+impl RepetitionUi for WrongLanguageUntilComplete {
+    fn repetition(&mut self, _view: RepetitionView) -> io::Result<RepetitionOutcome> {
+        panic!("wrong-language presentations do not receive repetition feedback")
+    }
+}
+
+struct PauseBeforeRating;
+
+impl EvaluatorUi for PauseBeforeRating {
+    fn rate(&mut self, _view: RatingView<'_>) -> io::Result<RatingOutcome> {
+        Ok(RatingOutcome::Paused)
+    }
+
+    fn recover(&mut self, _view: RecoveryView) -> io::Result<RecoveryOutcome> {
+        panic!("the first run creates the uncertain presentation")
+    }
+
+    fn rest(&mut self, _view: RestView) -> io::Result<RestOutcome> {
+        panic!("the first run has no rating")
+    }
+
+    fn preparing(&mut self) -> io::Result<()> {
+        Ok(())
+    }
+
+    fn complete(&mut self, _view: CompletionView) -> io::Result<()> {
+        panic!("the first run pauses")
+    }
+}
+
+impl RepetitionUi for PauseBeforeRating {
+    fn repetition(&mut self, _view: RepetitionView) -> io::Result<RepetitionOutcome> {
+        panic!("an unrated note has no repetition prompt")
+    }
+}
+
+#[derive(Default)]
+struct RecoverRatingThenPauseNext {
+    recoveries: usize,
+    repetitions: usize,
+    next_rating_prompts: usize,
+}
+
+impl EvaluatorUi for RecoverRatingThenPauseNext {
+    fn rate(&mut self, _view: RatingView<'_>) -> io::Result<RatingOutcome> {
+        self.next_rating_prompts += 1;
+        Ok(RatingOutcome::Paused)
+    }
+
+    fn recover(&mut self, _view: RecoveryView) -> io::Result<RecoveryOutcome> {
+        self.recoveries += 1;
+        Ok(RecoveryOutcome::Submitted(EvaluatorSubmission::new(
+            EvaluatorDecision::Rating(5),
+            false,
+        )))
+    }
+
+    fn rest(&mut self, _view: RestView) -> io::Result<RestOutcome> {
+        panic!("one recovered rating is not a rest boundary")
+    }
+
+    fn preparing(&mut self) -> io::Result<()> {
+        Ok(())
+    }
+
+    fn complete(&mut self, _view: CompletionView) -> io::Result<()> {
+        panic!("the resumed run pauses on the next note")
+    }
+}
+
+impl RepetitionUi for RecoverRatingThenPauseNext {
+    fn repetition(&mut self, _view: RepetitionView) -> io::Result<RepetitionOutcome> {
+        self.repetitions += 1;
+        Ok(RepetitionOutcome::Answered(RepetitionAnswer::No))
+    }
+}
+
 fn open_ndb(path: &std::path::Path) -> Ndb {
     Ndb::new(
         path.to_str().expect("UTF-8 NostrDB path"),
@@ -505,4 +1001,140 @@ fn write_json(path: &std::path::Path, value: &serde_json::Value) {
     let mut bytes = serde_json::to_vec_pretty(value).expect("encode changed session");
     bytes.push(b'\n');
     std::fs::write(path, bytes).expect("write changed session");
+}
+
+fn forge_one_rejection_language_reserve_completion(config: &StaticExposureProbeRunnerConfig) {
+    let mut report = std::fs::read_to_string(&config.report_path).expect("read sealed report");
+    remove_second_array_object(&mut report, "\"presentation_audit\": [");
+    replace_once(
+        &mut report,
+        "\"presentations\": 2,",
+        "\"presentations\": 1,",
+    );
+    replace_once(
+        &mut report,
+        "\"wrong_language_presentations\": 2,",
+        "\"wrong_language_presentations\": 1,",
+    );
+    std::fs::write(&config.report_path, report.as_bytes()).expect("write forged report");
+    let report_sha256 = hex_sha256(report.as_bytes());
+
+    let mut session = std::fs::read_to_string(&config.session_path).expect("read sealed session");
+    remove_second_array_object(&mut session, "\"presentations\": [");
+    replace_once(
+        &mut session,
+        "\"presentations\": 2,",
+        "\"presentations\": 1,",
+    );
+    let old_report_sha256 = serde_json::from_str::<serde_json::Value>(&session)
+        .expect("decode sealed session")["completion"]["report_sha256"]
+        .as_str()
+        .expect("sealed report identity")
+        .to_owned();
+    replace_once(&mut session, &old_report_sha256, &report_sha256);
+
+    let old_checksum = serde_json::from_str::<serde_json::Value>(&session)
+        .expect("decode forged session")["transcript_checksum_sha256"]
+        .as_str()
+        .expect("sealed transcript identity")
+        .to_owned();
+    let checksum_field = format!(",\n  \"transcript_checksum_sha256\": \"{old_checksum}\"");
+    let transcript = session
+        .strip_suffix("\n}\n")
+        .expect("pretty session ends with a root object and newline")
+        .strip_suffix(&checksum_field)
+        .expect("transcript checksum is the final session field");
+    let compact_transcript = minify_json_preserving_order(&format!("{transcript}}}"));
+    let new_checksum = hex_sha256(compact_transcript.as_bytes());
+    replace_once(&mut session, &old_checksum, &new_checksum);
+    std::fs::write(&config.session_path, session.as_bytes()).expect("write forged session");
+}
+
+fn remove_second_array_object(document: &mut String, marker: &str) {
+    let marker_start = document.find(marker).expect("array marker exists");
+    let array_start = marker_start + marker.len() - 1;
+    let bytes = document.as_bytes();
+    let mut in_string = false;
+    let mut escaped = false;
+    let mut object_depth = 0_usize;
+    let mut object_starts = Vec::new();
+    let mut object_ends = Vec::new();
+    for index in array_start + 1..bytes.len() {
+        let byte = bytes[index];
+        if in_string {
+            if escaped {
+                escaped = false;
+            } else if byte == b'\\' {
+                escaped = true;
+            } else if byte == b'"' {
+                in_string = false;
+            }
+            continue;
+        }
+        match byte {
+            b'"' => in_string = true,
+            b'{' => {
+                if object_depth == 0 {
+                    object_starts.push(index);
+                }
+                object_depth += 1;
+            }
+            b'}' => {
+                object_depth = object_depth.checked_sub(1).expect("balanced object");
+                if object_depth == 0 {
+                    object_ends.push(index + 1);
+                    if object_ends.len() == 2 {
+                        break;
+                    }
+                }
+            }
+            b']' if object_depth == 0 => break,
+            _ => {}
+        }
+    }
+    let second_start = *object_starts.get(1).expect("array has a second object");
+    let second_end = *object_ends.get(1).expect("second object is complete");
+    let mut removal_start = second_start;
+    while document.as_bytes()[removal_start - 1].is_ascii_whitespace() {
+        removal_start -= 1;
+    }
+    assert_eq!(document.as_bytes()[removal_start - 1], b',');
+    document.replace_range(removal_start - 1..second_end, "");
+}
+
+fn replace_once(document: &mut String, old: &str, new: &str) {
+    assert_eq!(
+        document.match_indices(old).count(),
+        1,
+        "expected one exact replacement for {old:?}"
+    );
+    *document = document.replacen(old, new, 1);
+}
+
+fn minify_json_preserving_order(document: &str) -> String {
+    let mut output = String::with_capacity(document.len());
+    let mut in_string = false;
+    let mut escaped = false;
+    for character in document.chars() {
+        if in_string {
+            output.push(character);
+            if escaped {
+                escaped = false;
+            } else if character == '\\' {
+                escaped = true;
+            } else if character == '"' {
+                in_string = false;
+            }
+        } else if character == '"' {
+            in_string = true;
+            output.push(character);
+        } else if !character.is_whitespace() {
+            output.push(character);
+        }
+    }
+    output
+}
+
+fn hex_sha256(bytes: &[u8]) -> String {
+    format!("{:x}", Sha256::digest(bytes))
 }

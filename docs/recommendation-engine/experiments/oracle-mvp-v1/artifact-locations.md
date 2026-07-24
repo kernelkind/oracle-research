@@ -16,6 +16,10 @@ preview state; it must not contain durable experiment evidence.
   `crec-96-phase3-learning-v1/`
 - Phase 4 final evaluation:
   `crec-99-phase4-final-v1/`
+- Completed static exposure probe:
+  `crec-108-static-exposure-live-v1/`
+- Prepared full-pool escape probe:
+  `crec-109-full-pool-escape-v1/`
 
 `crec-92-seeds-v1/` contains private reaction history. Its directory remains
 owner-only, and its `retained-files.sha256` inventory covers the 107 relocated
