@@ -53,6 +53,7 @@ If a later experiment succeeds, its result should become the quality target. Pro
 - [Embedding-model decision](experiments/oracle-mvp-v1/design/oracle-embedding-model-research.md)
 - [Experiment result and autopsy](experiments/oracle-mvp-v1/results/recommendation-mvp-autopsy.md)
 - [Detailed rating analysis](experiments/oracle-mvp-v1/results/recommendation-mvp-rating-analysis.md)
+- [Artifact locations](experiments/oracle-mvp-v1/artifact-locations.md)
 
 ### Research
 
