@@ -63,6 +63,18 @@ budget. Every shown note contributes, regardless of its rating, so many
 moderately related presentations can exhaust a region. This must measure a
 broader region than exact or near-duplicate suppression.
 
+#### Temporary exposure state
+
+Every shown note adds its vector to temporary exposure state. A candidate's
+exposure is the accumulated similarity between its vector and those recently
+shown vectors. High exposure blocks the candidate from acting as an adjacent
+probe even when it remains personally supported.
+
+Exposure fades according to the number of subsequent presentations, not
+wall-clock time. It must never be converted into permanent negative preference
+evidence. The exact similarity function, decay function, horizon, and budget
+remain undecided.
+
 ### Controlled
 
 The candidate has not already opened a neighborhood, and a bounded probe
@@ -87,10 +99,9 @@ After a probe is shown:
 ## Unknowns
 
 - The exposure similarity function, its semantic scale or scales, and its
-  budget.
+  budget, plus the presentation-based decay function and horizon.
 - The support calculation and minimum support floor.
 - The number and placement of bounded probe positions.
-- Whether and how temporary exposure decays or rebounds.
 - Whether the Oracle vectors preserve the broad themes people experience as
   repetitive.
 - How to avoid interpreting a low rating caused by temporary saturation as a
