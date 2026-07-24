@@ -1217,7 +1217,7 @@ A later production evaluation could report:
 If the MVP succeeds, production constraints can be introduced one at a time
 and measured against that combined retrieval-and-personalization result, as
 required by
-[private-decentralized-recommendation-engine.md](./private-decentralized-recommendation-engine.md).
+[the recommendation-engine goal](../README.md).
 
 ## Research Bottom Line for Later Product Work
 

@@ -9,18 +9,19 @@ successful mechanisms with the proposed Nostr meaning-map oracle, and determine
 which improvements remain compatible with its privacy boundary and the `$500`
 lifetime paid-compute ceiling for the complete MVP.
 
-The concrete Nostr design is documented in
-[oracle-mvp.md](./oracle-mvp.md).
+The completed v1 Nostr design is documented in
+[oracle-mvp.md](../experiments/oracle-mvp-v1/design/oracle-mvp.md).
 
-> **Current-plan boundary (2026-07-16):** The PPLX/GTE-Large bake-off,
+> **Frozen-v1 boundary (2026-07-16):** The PPLX/GTE-Large bake-off,
 > 25-million-note assumptions, compact-vector sizing, and one-million-note
-> experiments later in this research are historical proposals, not current
-> requirements. The current evidence review and sequential
-> GTE-then-conditional-Grit decision are recorded in
-> [oracle-embedding-model-research.md](./oracle-embedding-model-research.md).
-> That decision, [oracle-mvp.md](./oracle-mvp.md), and
-> [local-personalizer.md](./local-personalizer.md) control wherever this older
-> survey conflicts.
+> experiments later in this research were historical proposals, not v1
+> requirements. The evidence review and sequential GTE-then-conditional-Grit
+> decision used by v1 are recorded in
+> [oracle-embedding-model-research.md](../experiments/oracle-mvp-v1/design/oracle-embedding-model-research.md).
+> That decision,
+> [oracle-mvp.md](../experiments/oracle-mvp-v1/design/oracle-mvp.md), and
+> [local-personalizer.md](../experiments/oracle-mvp-v1/design/local-personalizer.md)
+> record what v1 used wherever this older survey conflicts.
 
 ## Conclusion
 
@@ -37,11 +38,11 @@ main advantage is that their representations are trained for recommendation on
 domain-specific behavioral evidence rather than used as generic semantic
 embeddings.
 
-The current MVP does not run the model, dimension, or architecture bake-offs
-proposed below. It calibrates one GTE-Qwen2-7B-Instruct complete-corpus build,
-then compares two inexpensive local personalizers before one untouched final
-evaluation. Nostr-adapted encoders and additional public candidate sources are
-possible later experiments, not parts of this one.
+The completed v1 MVP did not run the model, dimension, or architecture
+bake-offs proposed below. It calibrated one GTE-Qwen2-7B-Instruct
+complete-corpus build, then compared two inexpensive local personalizers before
+one untouched final evaluation. Nostr-adapted encoders and additional public
+candidate sources remain possible later experiments, not parts of v1.
 
 ## Evidence Boundary
 

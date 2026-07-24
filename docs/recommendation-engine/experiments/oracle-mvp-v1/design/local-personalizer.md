@@ -1,5 +1,8 @@
 # Instance-Based Local Personalizer
 
+> **Status:** Frozen v1 personalizer design. It is not an approved next-phase
+> architecture.
+
 ## Purpose
 
 This document records the current direction for the private personalization stage of the recommendation MVP.

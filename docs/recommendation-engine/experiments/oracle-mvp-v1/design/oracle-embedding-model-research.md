@@ -1,5 +1,7 @@
 # Oracle Embedding Model Research
 
+> **Status:** Frozen record of the v1 embedding-model decision.
+
 ## Decision
 
 The Oracle needs to answer this relation:
