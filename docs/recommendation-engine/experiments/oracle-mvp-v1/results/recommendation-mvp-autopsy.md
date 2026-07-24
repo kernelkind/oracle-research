@@ -285,6 +285,62 @@ were uninteresting or expressed ideas they considered poor. These observations
 show that topical relation alone did not guarantee a positive judgment. They do
 not establish which representation or algorithmic component failed.
 
+## Failure Localization
+
+The full measurements are preserved in the
+[Recommendation MVP Rating Analysis](recommendation-mvp-rating-analysis.md).
+The following separates the observed state transitions from their
+interpretation.
+
+### Derived pipeline facts
+
+1. **Seed retrieval:** The five seed queries returned `5,105` distinct events
+   from `5,120` result slots, with almost no event-ID overlap between seed
+   pairs. A retrieval-stage surface-form audit nevertheless classified `72.6%`
+   of the initial union as mentioning Nostr or Bitcoin/Monero.
+2. **Adaptive discovery:** Every note rated `5`–`7` became a discovery source
+   with the same `1,024`-candidate retrieval limit. About `87%` of the final
+   discovery sources were rated only `5`.
+3. **Final candidate pools:** Compact and RBF together reached `42,473` unique
+   events. The same retrieval-stage audit classified `82.1%` as mentioning
+   Nostr or Bitcoin/Monero.
+4. **Local selection:** Compact and RBF shared only four event IDs in their
+   primary `200`-note orders. Compact's order was `80.0%` Nostr and `16.5%`
+   LLM/AI by the audit; RBF's was `44.5%` Nostr and `35.0%`
+   Bitcoin/Monero.
+5. **Individual amplification:** One original rating-`5` seed solely supplied
+   `66` of RBF's `200` primary recommendations. One rating-`5` note added in
+   Compact's final adaptive round supplied `26` of Compact's `200`.
+6. **Feed construction:** Phase 4 removed repeated event IDs and shuffled the
+   two frozen orders. It had no input representing recently shown subjects and
+   could not change after later ratings. Every consecutive `20`-note block in
+   the valid prefix was at least half Nostr-related under the separate
+   valid-prefix audit.
+7. **Freshness:** Every valid-prefix note was between approximately `500` and
+   `1,092` days old. Creation time had almost no rank correlation with rating
+   inside that already historical range.
+
+The keyword categories above are surface-form measurements. They do not
+identify every subject or substitute for human semantic judgment.
+
+### Localization boundary
+
+Concentration was observable in the initial retrieval union, changed
+differently under the two personalizers, and remained present throughout the
+frozen feed. The historical corpus separately bounded currentness. This traces
+where the observed conditions entered or persisted; it does not establish
+independent causal failures at every stage. One upstream limitation could have
+produced downstream symptoms.
+
+The final shuffle distributed already selected groups through the session.
+`B16` filtered close vectors, but close-vector diversity did not prevent the
+reported thematic repetition.
+
+The causal hypotheses and unresolved questions remain separated below. In
+particular, most unshown candidates were never rated. The analysis therefore
+does not justify rebuilding the Oracle representation or establish that
+changing only the local ranker would be sufficient.
+
 ## Directly Supported Conclusions
 
 The following conclusions require no causal assumption beyond the recorded

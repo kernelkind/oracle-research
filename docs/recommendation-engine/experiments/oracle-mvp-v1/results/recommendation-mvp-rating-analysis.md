@@ -217,11 +217,47 @@ After the last ratings were added, the frozen Phase 4 pools contained:
 
 More sources and larger pools did not produce improving shown quality.
 
+### Initial retrieval was distinct by note ID but narrow by subject
+
+The five seed queries returned `5,105` distinct events from `5,120` total
+result slots. Eight of the ten seed-pair intersections contained no shared
+event IDs; the other two contained only six and nine. The initial seed
+neighborhoods were therefore not collapsing onto the same notes.
+
+A consistent, case-insensitive surface-form audit across every retrieval stage
+found that `3,705` of those `5,105` events, `72.6%`, mentioned Nostr or
+Bitcoin/Monero. This is a keyword result, not a semantic classification, but it
+shows that distinct retrieval neighborhoods did not imply broad subject
+coverage.
+
+By the final freeze:
+
+- `50` of Compact's `65` positive sources, `76.9%`, mentioned Nostr;
+- `56` of RBF's `72` positive sources, `77.8%`, mentioned Nostr;
+- the union of both final candidate pools contained `42,473` unique events;
+- `34,851` of those events, `82.1%`, mentioned Nostr or Bitcoin/Monero.
+
+The two final candidate pools shared `15,150` events, a Jaccard overlap of
+`35.7%`. Their broad public reach therefore overlapped substantially, while
+their selected primary orders did not: only four event IDs appeared in both
+top-`200` orders.
+
+The same audit found different concentration after local selection:
+
+| Frozen primary order | Nostr | Bitcoin/Monero | LLM/AI |
+|---|---:|---:|---:|
+| Compact | `80.0%` | `3.0%` | `16.5%` |
+| RBF | `44.5%` | `35.0%` | `0.5%` |
+
+These categories can overlap. They identify surface concentration, not every
+subject or the semantic reason a note was selected.
+
 ### Concrete source failures
 
-In RBF's frozen order, one of the five original shared seeds, rated `5`, was the
-sole recorded source attribution for `23` of RBF's first `66` valid Phase 4
-recommendations:
+In RBF's frozen primary order, one of the five original shared seeds, rated
+`5`, was the sole recorded source attribution for `66` of `200`
+recommendations. It was the sole attribution for `23` of RBF's first `66`
+valid Phase 4 recommendations:
 
 - mean rating: `2.57`;
 - ratings `1`–`2`: `16`;
@@ -230,9 +266,12 @@ recommendations:
 That one neighborhood contributed two-thirds of RBF's low ratings in the valid
 prefix.
 
-Compact was less concentrated, but its most common strongest source was itself
-rated `5` and was the strongest attribution for nine valid-prefix candidates.
-Eight were rated `1`–`2`, with a mean of `2.22`.
+Compact was less concentrated. Its largest frozen-primary source was a note
+rated `5` in the final adaptive round. It supplied `26` of Compact's `200`
+primary recommendations and was the strongest attribution for nine
+valid-prefix candidates. Eight were rated `1`–`2`, with a mean of `2.22`.
+Because that source entered in the last adaptive round, another adaptive round
+never tested its descendants before the order was frozen.
 
 Across Phase 3 primary sources that supplied at least five selected
 descendants:
@@ -269,6 +308,11 @@ Among the first `140` Phase 4 vectors:
 - only `11` of `9,730` pairs reached cosine `0.75`;
 - none reached cosine `0.80`.
 
+During frozen-order construction, `B16` recorded only `54` Compact and `32`
+RBF rejections as too close to an already accepted candidate. It prevented
+close-vector repetition inside each new order; it did not represent subjects
+or recent exposure.
+
 The valid prefix came from `114` authors. The most frequent author supplied six
 notes, and the five most frequent authors supplied `22` of `140`.
 
@@ -287,6 +331,17 @@ only source attribution.
 This identifies one source-linked Bitcoin-or-Monero-heavy retrieval group
 occupying approximately `16%` of the complete valid prefix despite broad
 author diversity.
+
+Across consecutive `20`-note blocks of the valid prefix, the Nostr surface-form
+audit counted:
+
+```text
+15, 12, 13, 10, 16, 13, 14
+```
+
+Every block was therefore at least half Nostr-related. The deterministic final
+shuffle spread the concentration through the session; ratings during Phase 4
+could not change the remaining order.
 
 ## Contextual Value Was Stored as Persistent Preference
 
@@ -403,6 +458,10 @@ remains unproven.
 9. Longer notes were associated with higher ratings for this evaluator.
 10. The experiment does not establish that the Oracle geometry contains no
     preference-relevant signal.
+11. The initial and final candidate sets were large and mostly distinct by
+    event ID while remaining concentrated in a few surface subject families.
+12. Compact and RBF amplified different narrow regions, yet both failed
+    similarly.
 
 ## Interpretations Worth Preserving
 
@@ -479,3 +538,34 @@ The analysis:
 - used a disposable copy of the Phase 4 NostrDB corpus for note timestamps,
   content length, pubkeys, and keyword counts;
 - left the frozen experiment and rental artifacts unchanged.
+
+Both surface audits used raw note content without stripping URLs or Nostr
+identifiers.
+
+For the retrieval-stage audit, content was matched case-insensitively with word
+boundaries:
+
+- **Nostr:** `nostr`, `damus`, `nostrdb`, or `nip` followed by a number, with
+  an optional hyphen or space;
+- **Bitcoin/Monero:** `bitcoin`, `btc`, `monero`, or `xmr`;
+- **LLM/AI:** `llm` or `llms`, `gpt`, `chatgpt`, `claude`, `llama`,
+  `artificial intelligence`, `generative ai`, or `ai`.
+
+The combined Nostr-or-Bitcoin/Monero count is the set union of the first two
+matches. These rules count visible terms only; they can miss semantically
+related notes and include notes that mention a term without being about it.
+
+The earlier valid-prefix audit used Python
+`re.search(pattern, content, re.IGNORECASE)` and counted each matching note
+once. Its exact patterns were:
+
+```text
+Nostr/Damus:      nostr|damus
+Bitcoin/Monero:  bitcoin|monero|\bbtc\b|\bxmr\b
+LLM/AI:           \bllms?\b|large language|chatgpt|\bgpt(?:-|\s)?\d|#ai\b|deepseek|ollama|deberta|\bcursor\b|ai models?
+Alcohol/recovery: alcohol|alcoholic|\bsober\b|sobriety|\brecovery\b|addiction|\bdrinking\b
+```
+
+The valid-prefix Nostr/Damus pattern intentionally includes surface forms such
+as `nostriches` and Nostr URLs or identifiers. It produced the documented
+`93`-note total and the seven consecutive-block counts.
