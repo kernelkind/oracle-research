@@ -110,13 +110,19 @@ After a probe is shown:
 Freshness, public quality signals, and stale source data remain separate
 problems.
 
-## Necessary-Condition Result
+## Necessary-Condition Results
 
 [CREC-101](../experiments/adjacent-novelty/crec-101-theme-vector-separation.md)
 found strong separation for three distinct reported theme families in the
 valid Phase 4 prefix. This resolves only whether the current document vectors
-contain usable broad-theme structure. It authorizes a frozen-sequence exposure
-replay; it does not validate an exposure formula or the complete loop.
+contain usable broad-theme structure.
+
+[CREC-102](../experiments/adjacent-novelty/crec-102-cumulative-theme-exposure-replay.md)
+then found that a decayed vector-only score tracked recent recurrence of all
+three families in the frozen presentation sequence. This authorizes a short
+live adjacent-novelty mechanism test. It does not show that the score measures
+human saturation, establish a live exposure budget, prove candidate
+availability, or validate the complete loop.
 
 ## Research Basis
 

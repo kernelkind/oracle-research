@@ -48,6 +48,8 @@ pub mod semantic_order;
 pub mod shared_learning_round;
 pub mod snapshot;
 pub mod stage;
+pub mod theme_exposure_replay;
+pub mod theme_exposure_replay_artifact;
 pub mod theme_geometry_artifact;
 pub mod theme_geometry_diagnostic;
 pub mod token_audit;
