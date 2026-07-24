@@ -11,7 +11,9 @@ vector proximity retained some relationship to the evaluator's judgments, but
 the tested system did not convert that signal into a sufficiently valuable,
 varied feed.
 
-No replacement architecture or next experiment has been approved.
+No complete replacement architecture or next experiment has been approved.
+The current approved design direction is a feedback-gated adjacent-novelty
+loop. Its unresolved choices are documented separately.
 
 ## Goal
 
@@ -45,6 +47,10 @@ The v1 result is strong evidence against its exact tested configuration. It does
 If a later experiment succeeds, its result should become the quality target. Production constraints should then be introduced one at a time: fit the public representation and private personalization onto supported devices, then distribute and update the public inputs through a decentralized protocol. Recommendation quality must be compared with that result at each stage so the cost of every constraint is known.
 
 ## Document Map
+
+### Current design work
+
+- [Adjacent-novelty design direction](design/adjacent-novelty.md)
 
 ### Frozen Oracle MVP v1
 
