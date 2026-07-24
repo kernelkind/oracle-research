@@ -3,9 +3,9 @@
 ## Status
 
 This is an approved working direction, not a complete architecture. CREC-109
-is the approved next experiment. Its fixed threshold and selector are
-experiment settings, not accepted product settings. Oracle MVP v1 remains
-frozen.
+is complete. It found partial adjacent value but showed that one scalar
+whole-note exposure gate is not sufficient. No successor experiment or
+product setting is approved. Oracle MVP v1 remains frozen.
 
 ## Why
 
@@ -126,9 +126,12 @@ human saturation, establish a live exposure budget, prove candidate
 availability, or validate the complete loop.
 
 [CREC-109](../experiments/adjacent-novelty/crec-109-full-pool-exposure-gated-escape-probe.md)
-tests the next narrow question: after seeding exposure with the genuine
-CREC-108 history, can a strict full-pool gate find personally valuable notes
-that do not feel like another overexposed broad subject?
+found `6/20` mildly valuable, non-repetitive escapes. It also found `7/20`
+low-value thematic escapes and `7/20` notes that still felt repetitive. The
+accepted exposure scores weakly separated those live repetition answers, and
+lowering the scalar ceiling would discard several observed successes.
+Whole-note vector exposure can help, but this gate alone cannot reliably
+preserve worthwhile new angles while blocking exhausted treatments.
 
 ## Research Basis
 
