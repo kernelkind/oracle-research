@@ -2,44 +2,23 @@
 
 ## Status
 
-Literature review complete. This is research, not an approved architecture or
-experiment.
+Literature evidence record. This document reports what published methods
+demonstrate, cross-study synthesis, and remaining evidence gaps. It does not
+contain project requirements, recommend an architecture, select a method, or
+approve an experiment.
 
-An earlier version of this review misunderstood *dynamic* to mean clustering a
-person's rated notes or the results of a query. That is not the target.
+Project inferences and the current technical proposal are kept separately in
+[Corpus-Induced Subject Map Hypothesis](../design/corpus-induced-subject-map-hypothesis.md).
 
-## Accepted Problem
-
-The public corpus is embedded first. A public process then derives semantic
-structure from the complete embedded corpus:
-
-- no subject taxonomy is supplied beforehand;
-- subjects emerge from relationships among public notes;
-- every eligible note participates in the versioned public structure;
-- a note may belong to several regions or remain an explicit fine-grained
-  outlier;
-- descriptions are generated after regions are discovered;
-- private ratings do not create the public subjects;
-- private evidence may overlay the public structure and rank or select notes
-  locally without redefining its regions.
-
-The user-facing list may still be dynamic. A client can choose a useful
-resolution, order regions against private evidence, and describe the displayed
-choices without reclustering the corpus around that person.
-
-Query-result clustering, rated-note clustering, and a fixed external ontology
-do not satisfy this requirement.
-
-## Central Finding
+## Limits of the Evidence
 
 This is a recognized family of problems: corpus-wide clustering, hierarchical
 clustering, and topic discovery over document representations. The literature
-makes useful structure plausible after embeddings exist. It does not establish
-that useful structure exists in this Nostr corpus or its current embedding
-geometry.
+contains methods that construct semantic structure after documents are
+represented. It does not establish that any reviewed method will produce useful
+subjects for Nostr notes, nor which text representation should be used.
 
-It does **not** support the existence of one objectively correct subject map.
-Every method still chooses a notion of region, scale, overlap, and outlier:
+Every reviewed method chooses a notion of region, scale, overlap, and outlier:
 
 - spherical k-means chooses a number of partitions;
 - density methods choose density and minimum-size rules;
@@ -51,15 +30,8 @@ Every method still chooses a notion of region, scale, overlap, and outlier:
 shows that a distance-based clustering function cannot simultaneously satisfy
 its scale-invariance, richness, and consistency axioms. Methods that infer a
 topic count move the choice into assumptions; they do not reveal a unique
-truth.
-
-The defensible requirement is therefore:
-
-> Derive a reproducible, versioned, corpus-wide structure that yields
-> human-validated semantic regions at useful granularities.
-
-Region names are outputs, not inputs. A region earns the name *subject* only
-when its membership and description survive human validation.
+solution under those axioms. This theorem does not prove that no objectively
+correct human subject map exists.
 
 ## Evidence That Corpus-Induced Regions Are Plausible
 
@@ -70,10 +42,11 @@ into a hierarchy.
 
 [BERTopic](https://arxiv.org/abs/2203.05794) follows a related
 embedding-to-density-cluster pipeline and derives descriptions with
-class-based TF-IDF. Both are strong precedents for subjects emerging after
-documents are represented.
+class-based TF-IDF. Both demonstrate automatically derived topic clusters and
+descriptions after documents are represented. They do not establish that those
+clusters match human-recognized subjects.
 
-Direct clustering is not merely a toy baseline.
+Direct clustering has competitive published results.
 [Zhang et al.](https://aclanthology.org/2022.naacl-main.285/) found that
 clustering high-quality sentence embeddings with a suitable term-selection
 method matched or beat the tested neural topic models on automatic coherence
@@ -102,8 +75,7 @@ The conclusion is narrow:
 
 ### Spherical or bisecting k-means
 
-The Oracle vectors are L2-normalized. Spherical k-means is therefore a natural
-simple baseline because it partitions by cosine geometry.
+Spherical k-means partitions normalized vectors by cosine geometry.
 [Banerjee et al.](https://www.jmlr.org/papers/v6/banerjee05a.html) derive
 spherical k-means as a special case of mixtures of von Mises-Fisher
 distributions for directional data.
@@ -123,8 +95,6 @@ Limitations:
 - one note follows one hard path;
 - uneven and rare subjects can be absorbed by larger regions.
 
-This is the right sanity baseline, not the presumed final design.
-
 ### Scalable corpus-wide hierarchy
 
 [The Sub-Cluster Component Algorithm](https://arxiv.org/abs/2010.11821) builds
@@ -142,12 +112,12 @@ Its scale evidence comes from two materially different settings:
   clusters.
 
 It did not human-validate a hierarchy over million-scale text embeddings or a
-navigation interface. It remains a strong scale precedent for a first
-corpus-wide hierarchy test because it:
+navigation interface. Its demonstrated properties include:
 
 - operates on embedding relationships;
 - produces reusable multiple granularities;
-- has direct million-scale and human-evaluation precedent;
+- has a million-scale hierarchy benchmark;
+- separately has human evaluation of fine-grained flat query clusters;
 - does not require predefined subjects or a fixed region count.
 
 It still makes consequential choices. Its published benchmarks used a 25-NN
@@ -159,9 +129,6 @@ generally:
 - membership is hard and nested;
 - hubs and outliers can still be assigned misleadingly;
 - no result establishes Nostr subject fidelity.
-
-It is a scalable candidate to test, not an established winner or architecture
-decision.
 
 ### Density hierarchy
 
@@ -180,9 +147,8 @@ reduce dimensions before clustering. That transformation can change local
 density and boundaries. The SCC study could not scale HDBSCAN to its
 1.3-million-point benchmark.
 
-HDBSCAN remains a credible comparator if explicit fine-grained outliers prove
-important. It is not automatically the best first method for the current
-3,584-dimensional corpus.
+The reviewed evidence does not establish its behavior on a million-scale
+short-note corpus.
 
 ### Neighbor graph and community detection
 
@@ -201,9 +167,8 @@ The graph is not a neutral compression of the original matrix:
   Leiden with the Constant Potts Model replaces that global limit with an
   explicit resolution parameter.
 
-Graph methods are plausible, but they add choices without yet offering a clear
-advantage over a hierarchy designed directly for embedding clustering. Leiden
-should not be adopted merely because it scales.
+The reviewed studies establish scalability and graph-partition properties, not
+that graph communities correspond to useful Nostr subjects.
 
 ### Probabilistic and additive topics
 
@@ -218,22 +183,48 @@ traverse different paths in a shared hierarchy. The
 reports a published experiment on 2.7 million Wikipedia documents.
 
 These methods provide a principled account of multi-topic documents. They also
-introduce a new bag-of-words or token representation instead of simply
-organizing the existing Oracle vectors. Short informal notes are sparse, and
-topic priors still determine the resulting structure.
+introduce a bag-of-words or token representation instead of operating only on a
+single frozen document embedding. Short informal notes are sparse, and topic
+priors still determine the resulting structure.
 
 [FASTopic](https://proceedings.neurips.cc/paper_files/paper/2024/hash/998f8d8ff2697da2eae5f87143668754-Abstract-Conference.html)
 combines frozen document embeddings, learned topic prototypes, and soft
-document-to-topic weights. It is attractive in form, but requires a chosen
-topic count, materializes document-topic relations, was evaluated at much
-smaller scale, and lacks human navigation evidence.
+document-to-topic weights. It requires a chosen topic count, materializes
+document-topic relations, was evaluated at much smaller scale, and lacks human
+navigation evidence.
 
-These are important compositional comparators, not the simplest first
-full-corpus construction.
+### Sparse topic atoms over document embeddings
+
+[SAE-TM](https://arxiv.org/abs/2511.16309) derives the sparse-autoencoder
+objective as maximum a posteriori inference in a continuous topic model. It
+trains a sparse autoencoder over document embeddings, interprets learned
+features as reusable topic atoms, and merges those atoms into different
+numbers of topics without retraining the autoencoder. A document may activate
+several atoms.
+
+Its text experiments used News-20K, IMDB, Yelp, DailyMail, and a filtered
+Twitter corpus containing 1,183,728 tweets. The Twitter experiment excluded
+tweets without at least seven non-stopword lemmas among the 5,000-word
+vocabulary, so its reported result does not cover the shortest and sparsest
+social posts. The paper used Granite-R2 document embeddings and evaluated
+topic coherence, diversity, and document-topic relevance primarily with
+automatic and LLM judgments.
+
+SAE-TM reported higher topic-coherence scores than the tested baselines and
+second-place topic diversity. Its Phi-4 relevance evaluation reported 66.5%
+accuracy when distinguishing one active from one inactive topic, but only
+38.3% of active topics were judged relevant to their documents, compared with
+29.0% for the strongest baseline. It did not provide a corpus hierarchy,
+human-validated exhaustive membership for mixed short posts, or a navigation
+study.
+
+[BatchTopK sparse autoencoders](https://arxiv.org/abs/2412.06410) relax fixed
+per-sample TopK activation to a batch-level sparsity budget. The method permits
+different samples to activate different numbers of features while controlling
+average sparsity. Its published evaluation concerns reconstruction of language
+model activations, not document topic recovery.
 
 ## One Note, Several Subjects
-
-This requirement is not solved by ordinary soft clustering.
 
 A whole-note embedding is one point. If that point is between two regions,
 multiple weights can mean either:
@@ -241,9 +232,11 @@ multiple weights can mean either:
 1. the note genuinely contains both subjects; or
 2. the model is uncertain which single subject fits.
 
-GMM, von Mises-Fisher, fuzzy, and HDBSCAN membership scores generally cannot
-distinguish those cases. The scores describe proximity or uncertainty around
-one pooled representation, not proof of compositional meaning.
+Soft membership over one pooled representation does not by itself identify
+which interpretation is correct. GMM, von Mises-Fisher, fuzzy, and HDBSCAN
+membership scores describe proximity or uncertainty around that pooled
+representation; additional evidence is needed to interpret several memberships
+as compositional meaning.
 
 [Semantic Component Analysis](https://aclanthology.org/2025.findings-emnlp.964/)
 is the most direct reviewed attempt to recover several semantic components
@@ -252,7 +245,7 @@ and subtracts each sample's projection onto its assigned centroid component.
 It was tested on up to 1.463 million tweets and produced multiple components
 with competitive automatic metrics.
 
-Its evidence is promising but insufficient:
+Its reported evidence has these limits:
 
 - it had no navigation user study;
 - component count varied substantially with configuration;
@@ -263,88 +256,59 @@ Its evidence is promising but insufficient:
 Token- or span-level approaches such as
 [contextual token clustering](https://arxiv.org/abs/2010.12626) and
 [Contextual-Top2Vec](https://aclanthology.org/2024.findings-emnlp.790/) can
-associate different text spans with different regions. That makes a mixed
-note's assignments more auditable, but requires another public representation
-and considerably more computation.
+associate different text spans with different regions, preserving source-text
+provenance for each assignment. They require token- or span-level
+representations and note-level aggregation. The reviewed work did not report
+compute or storage measurements at Nostr scale.
 
-The current whole-note matrix may be sufficient for broad navigation. It has
-not been shown sufficient for faithful multi-subject membership. That is a
-prerequisite to test rather than a reason to redesign the Oracle now.
+No reviewed evidence establishes whether a whole-note representation preserves
+enough separable information for faithful multi-subject membership on Nostr
+notes. No reviewed evidence establishes that a span-level representation is
+necessary for them either.
 
-## Complete Coverage Without False Certainty
-
-"Map every note" must not mean "force every note into a confident fine-grained
-subject."
-
-Every eligible note should remain addressable and browsable in the versioned
-structure. At a given resolution it can have:
-
-- one or more supported memberships;
-- a coarse membership but no reliable fine membership;
-- a boundary or residual state;
-- an explicit outlier state.
-
-An outlier is a mapping state, not a subject. It may still retain a reliable
-coarse placement and must remain discoverable. This preserves complete corpus
-access without manufacturing a fine subject for garbage, bridges, one-off
-ideas, or genuinely rare content.
-
-Rare content creates an unavoidable tradeoff:
-
-- hard partitioning forces it into some region; chosen splits determine
-  whether it forms a rare region or is absorbed;
-- density methods may classify it as noise;
-- aggressive component discovery may invent weak generic subjects.
-
-Long-tail access therefore has to be evaluated directly. It cannot be inferred
-from total assignment coverage.
-
-## Granularity and Hierarchy
-
-The public structure should support several useful granularities rather than
-claim one true level.
-
-A coarse region such as *software* and a narrower region such as *Rust
-compiler tooling* can both be valid navigation choices. The important claims
-are:
-
-- children are coherent refinements of their parent;
-- siblings are meaningfully distinct;
-- at least one level is useful for choosing where to explore;
-- rare areas are not erased at every level.
+## Hierarchy Evidence
 
 [Stability analysis](https://arxiv.org/abs/1404.4606) can identify brittle
 resolutions by comparing results across seeds or corpus perturbations.
 [Clustering-stability research](https://arxiv.org/abs/1007.1075) also warns
-that stability alone can favor the wrong structure. It is a rejection screen,
-not semantic proof.
+that stability alone can favor the wrong structure. Stability does not
+establish semantic correctness.
 
-## Labels Come After Regions
+[BoxTM](https://aclanthology.org/2024.tacl-1.77/) represents topics and words
+as boxes whose volume models semantic scope. It uses a symmetric overlap
+measure for relatedness and an asymmetric containment measure for broad-to-
+narrow relations, then recursively constructs upper-level topics from lower-
+level topics. Its document encoder consumes TF-IDF representations, and the
+paper does not establish scale or human navigation quality for millions of
+short social notes.
 
-A plausible label does not validate a region. Region construction,
-note-to-region membership, hierarchy, and label quality are four separate
-claims.
+[Hierarchical Overlapping Clustering](https://proceedings.mlr.press/v267/pan25a.html)
+constructs an overlapping hierarchy in which an item may have multiple
+parents. The paper reports processing a graph with 1.13 million nodes and 2.99
+million edges in under 12 minutes on an 8 GB machine. Its semantic hierarchy
+quality was evaluated on synthetic data; the real datasets supplied scale
+evidence rather than human semantic validation.
 
-Post-hoc descriptions should be grounded in:
+These papers establish two distinct hierarchy mechanisms: asymmetric semantic
+containment and scalable overlapping graph structure. They do not establish
+that either mechanism yields correct parent-child subjects for Nostr.
 
-- representative member notes;
-- terms or phrases distinctive relative to parent and sibling regions;
-- an explicit short inclusion description;
-- examples near the center and boundary.
+## Evidence About Labels
 
-An LLM may draft a label from those public inputs. The label remains a
-proposal. [Human topic-label research](https://aclanthology.org/Q17-1001/)
-found automatic labels weaker than human labels and validated labels against
-the documents they described.
+A plausible label does not establish region coherence, note-to-region
+membership, or hierarchy quality. Those are separate empirical claims.
 
-A label drafted from one fixed member sample should predict other members that
-were hidden from the drafting step and reject nearby nonmembers. Fluency is not
-evidence of faithfulness.
+[Human topic-label research](https://aclanthology.org/Q17-1001/) found the
+tested automatic labels weaker than human labels and evaluated labels against
+the documents they described. Reviewed labeling methods use representative
+members, distinctive words or phrases, and contrasts with nearby topics as
+inputs. The literature does not establish that a fluent generated label is
+faithful to all members of its region.
 
 ## Human Validation
 
-Automatic coherence, clustering loss, likelihood, and stability cannot decide
-whether the regions are useful subjects.
+Automatic coherence, clustering loss, likelihood, and stability are
+insufficient by themselves to establish whether regions are useful subjects.
 
 [Reading Tea Leaves](https://proceedings.neurips.cc/paper_files/paper/2009/hash/f92586a25bb3145facd64ab20fd554ff-Abstract.html)
 found that likelihood can prefer topics people find less interpretable.
@@ -352,117 +316,46 @@ found that likelihood can prefer topics people find less interpretable.
 found that automatic coherence measures can select winners that human
 judgments do not support.
 
-A Nostr validation must keep these questions separate:
-
-1. **Region coherence:** do randomly sampled members that were not chosen as
-   exemplars belong together?
-2. **Assignment fidelity:** does a representative, boundary, or mixed note
-   actually belong to every claimed region?
-3. **Distinctness:** can nearby nonmembers and sibling regions be rejected?
-4. **Hierarchy:** do children refine rather than merely rename parents?
-5. **Granularity:** is the level useful for choosing what to explore?
-6. **Long-tail behavior:** are sparse meanings preserved or honestly marked as
-   residuals?
-7. **Label fidelity:** does a description drafted from one visible member
-   sample predict other members hidden from that drafting step?
-8. **Stability:** do reruns and modest corpus changes preserve understandable
-   structure?
-9. **Navigation:** does selecting a region lead to the kind of notes expected?
-
-Notes hidden from label drafting test label fidelity. A separately resampled
-construction can test assignment and stability. These are audit devices, not
-permanent omissions; the final public artifact still covers the complete
-corpus.
-
-## Scale Against the Existing Oracle
-
-The frozen Oracle representation contains:
-
-- 3,530,455 notes;
-- 3,584 dimensions;
-- L2-normalized FP32 vectors;
-- about 47.1 GiB of raw vector data.
-
-GTE-Qwen2 was selected and tested here for semantic retrieval, not unsupervised
-topic clusterability. Good nearest neighbors do not prove that the full
-geometry separates into coherent subjects. This is the central
-artifact-specific unknown.
-
-A sparse directed neighbor graph is small relative to the matrix: storing a
-32-bit note index and FP32 similarity for 32 neighbors per note is about
-0.84 GiB before symmetrization, index state, and library overhead. Exact
-all-pairs construction is infeasible. Approximate index construction, search
-cost, and achieved neighbor recall over this 3,584-dimensional matrix must be
-calibrated; final edge storage is not the difficult part.
-
-[FAISS](https://arxiv.org/abs/1702.08734) demonstrates that much larger
-similarity-search and kNN-graph workloads are feasible on GPUs. That establishes
-general feasibility, not this build's runtime, neighbor recall, or semantic
-quality.
-
-Dimension reduction may make clustering practical.
-[Recent prompt-embedding analysis](https://aclanthology.org/2025.findings-acl.1330/)
-found substantial redundant dimensions with the same 3,584-dimensional
-gte-Qwen2 model. Its strong clustering result used a clustering-task
-instruction, whereas the Oracle's public notes are unprompted document
-encodings. Reduction quality for this matrix remains unproven and must be
-measured.
-
-Versioned immutable rebuilds are the conservative correctness baseline, not an
-approved update design. Incremental assignment, rebuild frequency, and stable
-region identities across changing corpora remain unresolved.
+The reviewed evidence evaluates different claims with different instruments:
+topic coherence, document-topic relevance, hierarchy quality, label quality,
+stability, or downstream task performance. No reviewed metric jointly
+establishes region coherence, complete mixed-note membership, correct
+hierarchy, faithful labels, and useful navigation. The project evaluation
+proposal is therefore recorded separately from this evidence review.
 
 ## Comparison
 
-| Family | What it gives | Main unresolved risk |
-| --- | --- | --- |
-| Spherical/bisecting k-means | Cheapest full assignment and multilevel baseline | Chosen splits, forced outliers, hard one-path membership |
-| SCC hierarchy | Scalable corpus-induced hierarchy without fixed topic count | Graph and threshold choices; hard membership |
-| HDBSCAN | Density hierarchy and explicit outliers | Dimension reduction, density parameters, scale and long-tail loss |
-| Leiden on a neighbor graph | Scalable communities at several resolutions | Graph construction and resolution redefine the result |
-| LDA/HDP/nHDP | Compositional corpus-wide topics | New token model, priors, short-note sparsity |
-| FASTopic | Soft topics over frozen embeddings | Fixed topic count and unproven scale/human utility |
-| SCA | Multiple components from existing whole-note vectors | Unproven human fidelity and linear-decomposition assumption |
-| Token/span methods | Auditable multiple meanings | New expensive public representation |
+| Family | Input | Membership and hierarchy | Evidence boundary in reviewed work |
+| --- | --- | --- | --- |
+| Spherical/bisecting k-means | Normalized point vectors | One hard assignment per level; recursive splits can form a tree | Method properties; no Nostr evaluation |
+| SCC | Nearest-neighbor graph over point vectors | Hard nested hierarchy | 1.3M-point ImageNet hierarchy benchmark; separate human review of flat proprietary query clusters |
+| HDBSCAN | Usually reduced point vectors | Density hierarchy, noise state, and soft membership scores | Human study on 10K news articles; SCC study did not scale it to 1.3M points |
+| Leiden | Weighted graph | Flat hard communities per resolution | Scalable graph partitioning; no reviewed Nostr subject evaluation |
+| LDA/HDP/nHDP | Token counts | Mixed word-level topics; nHDP supplies a shared hierarchy | nHDP reported 2.7M Wikipedia documents; bag-of-words representation |
+| FASTopic | Document embeddings and learned topic prototypes | Soft flat topic weights | Chosen topic count; no reviewed human navigation study |
+| SAE-TM | Document embeddings | Sparse atom activations; atoms can be merged after training | 1.18M filtered tweets; automatic and Phi-4 evaluation; no hierarchy study |
+| BatchTopK SAE | Model activations | Variable active-feature count; no topic hierarchy | Reconstruction evaluation on language-model activations |
+| SCA | Whole-document embeddings | Several residual semantic components; flat | Up to 1.463M tweets; automatic evaluation |
+| Contextual token/span methods | Contextual token or span embeddings | Span-level topic assignments; Contextual-Top2Vec merges topics hierarchically | Evaluated on corpora up to 50K documents; primarily automatic evaluation |
+| BoxTM | TF-IDF documents and learned word/topic boxes | Soft topic mixtures and asymmetric topic hierarchy | Intrinsic, extrinsic, and limited human evaluation; no million-note study |
+| Hierarchical overlapping clustering | Graph | Overlapping hierarchy with multiple parents | 1.13M-node scale result; semantic quality evaluated synthetically |
 
-## Recommendation
+## Questions the Literature Does Not Decide
 
-Do not predefine subjects, generate them from private ratings, or build a
-navigation interface yet.
+The reviewed evidence does not decide:
 
-The first architecture-neutral question is:
+- which text representation preserves the subjects that people perceive in
+  short, informal Nostr notes;
+- whether one whole-note embedding can support faithful multi-subject
+  membership;
+- whether sparse topic atoms, contextual spans, probabilistic topics, or
+  another construction yields faithful subjects for short notes;
+- how many useful granularities exist in the corpus;
+- whether broad-to-narrow relationships require a tree or overlapping graph;
+- which residual or outlier policy preserves rare notes without inventing
+  subjects;
+- whether generated labels predict the contents of their regions;
+- whether any resulting map improves user-directed discovery.
 
-> Does the complete Nostr embedding corpus contain stable, coherent, and
-> distinguishable regions at meaningful granularities?
-
-The smallest credible next experiment would compare:
-
-1. **SCC hierarchy** as a published million-scale hierarchy candidate; and
-2. **bisecting spherical k-means** as the simple scalable baseline.
-
-Both would use the same frozen public vectors and be evaluated across several
-resolutions. Human review of representative members, boundary notes, rare
-notes, mixed notes, and nearby nonmembers would test only region coherence,
-distinctness, and assignment fidelity. Internal metrics would only reject
-obviously brittle outputs.
-
-If a construction passes that prerequisite, a separate labeling test would
-draft descriptions from a fixed visible sample and judge whether they predict
-other members hidden from label drafting while rejecting nearby nonmembers.
-Only then would a navigation test ask whether the described choices behave as
-the person expects.
-
-SCA should be tested separately on the mixed-note cases if the hierarchy works
-but one-path membership proves inadequate. A token/span representation is
-warranted only if whole-note methods cannot recover meanings humans clearly
-see.
-
-This sequence eliminates unnecessary parts:
-
-- first prove useful corpus-wide regions exist in the artifact already paid
-  for;
-- then test whether one vector per note is sufficient for overlap;
-- then validate labels;
-- only then design user ordering or navigation.
-
-No new architecture or experiment is approved by this review.
+Those are project decisions and empirical questions. The current project
+hypothesis is documented separately; it is not a conclusion of this review.

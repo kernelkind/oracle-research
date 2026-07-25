@@ -10,7 +10,8 @@ technology, implementation, or experiment has been chosen.
 A note rating and a request for more content from the same subject are
 different statements:
 
-- Rating a note says that the particular note was or was not valuable.
+- Rating records how glad the person was that this note was presented at that
+  time.
 - Selecting a semantic region says what the person wants to explore now.
 - Being shown a note records exposure; it does not establish preference.
 
@@ -21,15 +22,16 @@ whether the person wants more of a subject or has become tired of it.
 ## Possible Responsibility Boundary
 
 Public computation could derive a versioned semantic structure from the
-complete public embedding corpus. No subject ontology exists beforehand: the
-regions emerge from relationships among the embedded notes. The structure must
-support different levels of specificity, and one note may belong to more than
-one region.
+complete public note corpus. No subject ontology exists beforehand. The public
+mapping representation and construction are owned by
+[Corpus-Induced Subject Map Hypothesis](corpus-induced-subject-map-hypothesis.md),
+not by this navigation hypothesis.
 
 Every eligible public note must be considered by this mapping. A note may have
-graded membership in several regions or be recorded as an explicit outlier; it
-must not disappear merely because it is outside the neighborhoods reached from
-private positive examples.
+graded membership in several regions, a coarse-only placement, a boundary or
+residual state, or an explicit outlier state. It must not disappear merely
+because it is outside the neighborhoods reached from private positive
+examples.
 
 Private local state could use that public map without turning note ratings into
 region preferences:
@@ -53,8 +55,10 @@ local task of selecting worthwhile, varied notes within that region.
 
 We do not currently know how to produce the required note-to-region mapping.
 
-The current Oracle provides one vector for each whole note and similarity
-between notes. It does not provide:
+Oracle MVP v1 stores one candidate/document-role vector for each represented
+note. `similar_notes` encodes a source note in the query role and returns
+directional retrieval scores; `vectors_for_notes` returns candidate/document
+vectors for local comparison. Neither interface provides:
 
 - a reliable way to produce useful semantic-region choices when needed;
 - accurate descriptive labels for those regions;
@@ -76,7 +80,9 @@ be treated as the next architecture.
 
 See
 [Corpus-Induced Semantic Region Discovery](../research/semantic-region-discovery-and-labeling.md)
-for the literature review.
+for the neutral literature record. See
+[Corpus-Induced Subject Map Hypothesis](corpus-induced-subject-map-hypothesis.md)
+for the separate project prescription currently under consideration.
 
 ## Decisions Not Yet Made
 
