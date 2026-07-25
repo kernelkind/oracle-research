@@ -20,19 +20,29 @@ whether the person wants more of a subject or has become tired of it.
 
 ## Possible Responsibility Boundary
 
-Public computation could derive human-understandable semantic regions from
-public notes. Regions may exist at different levels of specificity, and one
-note may belong to more than one region.
+Public computation could derive a versioned semantic structure from the
+complete public embedding corpus. No subject ontology exists beforehand: the
+regions emerge from relationships among the embedded notes. The structure must
+support different levels of specificity, and one note may belong to more than
+one region.
 
-Private local state could overlay the person's ratings onto that public map:
+Every eligible public note must be considered by this mapping. A note may have
+graded membership in several regions or be recorded as an explicit outlier; it
+must not disappear merely because it is outside the neighborhoods reached from
+private positive examples.
 
-- supported regions contain repeated positive evidence;
-- rejected regions contain meaningful negative evidence;
-- unexplored regions contain insufficient evidence;
+Private local state could use that public map without turning note ratings into
+region preferences:
+
+- each rating remains evidence about that particular note;
+- repeated positive or negative evidence near a region may inform local
+  ranking, but does not mean "show more" or "show less" of the region;
+- being shown a note records exposure only;
 - explicit region selection represents temporary current intent.
 
-The interface could present supported regions first, followed by unexplored
-regions that become increasingly distant from demonstrated interests. Different
+The interface could order regions by how much positive note-level evidence they
+contain, followed by unexplored regions that become increasingly distant from
+that evidence. This ordering would not authorize automatic expansion. Different
 semantic directions must remain visible so one dense subject cannot fill the
 list. Disconnected regions must also remain browsable.
 
@@ -54,21 +64,26 @@ between notes. It does not provide:
 A whole-note vector may blend several subjects. The mapping must not assume
 that each note has exactly one subject.
 
-The literature does not establish that the regions must be a permanent,
-corpus-wide subject inventory. They could be precomputed, generated
-dynamically, or assembled dynamically from reusable public structure. The
-choice remains unresolved.
+The subjects are corpus-induced rather than predefined. This does not imply one
+objectively correct partition: the construction still chooses granularity,
+overlap, and outlier behavior. What remains unresolved is which construction
+produces useful regions and whether public definitions, cuts, labels, and note
+memberships must be materialized after discovery or can be computed lazily from
+a versioned public structure.
 
 Until this prerequisite is demonstrated, semantic-region navigation must not
 be treated as the next architecture.
 
 See
-[Semantic Region Discovery and Labeling](../research/semantic-region-discovery-and-labeling.md)
+[Corpus-Induced Semantic Region Discovery](../research/semantic-region-discovery-and-labeling.md)
 for the literature review.
 
 ## Decisions Not Yet Made
 
-- Whether semantic regions are precomputed, generated dynamically, or hybrid.
+- Which corpus-wide construction derives the public semantic structure.
+- Which public cuts, labels, and memberships are materialized or computed
+  lazily.
+- How private evidence orders and selects among those public regions.
 - How regions at different levels of specificity relate.
 - How labels are generated and grounded in representative notes.
 - How one note contributes to multiple regions.
