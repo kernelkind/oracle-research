@@ -46,7 +46,7 @@ We do not currently know how to produce the required note-to-region mapping.
 The current Oracle provides one vector for each whole note and similarity
 between notes. It does not provide:
 
-- a reliable set of semantic regions;
+- a reliable way to produce useful semantic-region choices when needed;
 - accurate descriptive labels for those regions;
 - membership strengths when a note expresses several subjects;
 - evidence that the resulting mapping matches human interpretation.
@@ -54,12 +54,21 @@ between notes. It does not provide:
 A whole-note vector may blend several subjects. The mapping must not assume
 that each note has exactly one subject.
 
+The literature does not establish that the regions must be a permanent,
+corpus-wide subject inventory. They could be precomputed, generated
+dynamically, or assembled dynamically from reusable public structure. The
+choice remains unresolved.
+
 Until this prerequisite is demonstrated, semantic-region navigation must not
 be treated as the next architecture.
 
+See
+[Semantic Region Discovery and Labeling](../research/semantic-region-discovery-and-labeling.md)
+for the literature review.
+
 ## Decisions Not Yet Made
 
-- How semantic regions are discovered or represented.
+- Whether semantic regions are precomputed, generated dynamically, or hybrid.
 - How regions at different levels of specificity relate.
 - How labels are generated and grounded in representative notes.
 - How one note contributes to multiple regions.

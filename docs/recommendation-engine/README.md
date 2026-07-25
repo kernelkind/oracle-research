@@ -69,6 +69,7 @@ If a later experiment succeeds, its result should become the quality target. Pro
 
 ### Research
 
+- [Semantic region discovery and labeling](research/semantic-region-discovery-and-labeling.md)
 - [Leading production recommendation systems](research/leading-content-recommendation-systems.md)
 - [General semantic recommendation systems](research/general-semantic-recommendation-systems.md)
 - [Existing Nostr recommendation systems](research/existing-nostr-recommendation-systems.md)
