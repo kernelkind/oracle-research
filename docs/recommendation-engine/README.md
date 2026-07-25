@@ -12,8 +12,10 @@ the tested system did not convert that signal into a sufficiently valuable,
 varied feed.
 
 No complete replacement architecture or next experiment has been approved.
-The current approved design direction is a feedback-gated adjacent-novelty
-loop. Its unresolved choices are documented separately.
+Current design work includes the previously approved feedback-gated
+adjacent-novelty direction and a newer user-directed semantic-region navigation
+hypothesis. The newer hypothesis is not an architecture yet: reliable
+note-to-region mapping has not been solved or validated.
 
 ## Goal
 
@@ -51,6 +53,7 @@ If a later experiment succeeds, its result should become the quality target. Pro
 ### Current design work
 
 - [Adjacent-novelty design direction](design/adjacent-novelty.md)
+- [User-directed semantic-region navigation](design/semantic-region-navigation.md)
 - [Theme-vector necessary-condition result](experiments/adjacent-novelty/crec-101-theme-vector-separation.md)
 - [Cumulative theme-exposure replay](experiments/adjacent-novelty/crec-102-cumulative-theme-exposure-replay.md)
 - [Semantic-branch recovery diagnostic](experiments/adjacent-novelty/crec-110-semantic-branch-recovery.md)
