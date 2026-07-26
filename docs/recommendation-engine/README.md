@@ -58,6 +58,10 @@ If a later experiment succeeds, its result should become the quality target. Pro
 - [Cumulative theme-exposure replay](experiments/adjacent-novelty/crec-102-cumulative-theme-exposure-replay.md)
 - [Semantic-branch recovery diagnostic](experiments/adjacent-novelty/crec-110-semantic-branch-recovery.md)
 
+### Operational guidance
+
+- [Disk I/O pressure control](disk-io-pressure-control.md)
+
 ### Frozen Oracle MVP v1
 
 - [Experiment design](experiments/oracle-mvp-v1/design/oracle-mvp.md)
