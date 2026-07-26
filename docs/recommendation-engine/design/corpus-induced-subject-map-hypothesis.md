@@ -115,13 +115,58 @@ It read 14,303,232 bytes from RAM, wrote a 2,785,550-byte relation to RAM, and
 completed in 10.0 seconds on CPU. This is resource evidence only. Synthetic
 vectors provide no topic-quality evidence.
 
-The guarded runner requires RAM-backed output and verifies cgroup limits of
-8 MiB/s reads, 2 MiB/s writes, 256 read IOPS, and 64 write IOPS before opening
-experiment input. It also caps memory, CPU, and runtime.
+The synthetic runner requires RAM-backed output and verifies fixed cgroup
+limits of 8 MiB/s reads, 2 MiB/s writes, 256 read IOPS, and 64 write IOPS before
+opening experiment input. It also caps memory, CPU, and runtime.
 
-The next stage requires a real, disjoint Nostr sample and fresh embeddings from
-the selected topic-recovery encoder. It must not begin until its model download
-and host I/O are reviewed separately.
+The real-note sampler is a separate bounded path:
+
+- it consumes only a prefix of the deterministically hash-ordered semantic
+  event-ID order;
+- one pressure permit covers one logical 32-byte event-ID read, one read-only
+  LMDB lookup, and copying that note into memory;
+- the source `data.mdb` is opened read-only, while the sampler's LMDB lock,
+  mutable files, and artifacts stay on tmpfs;
+- learning and evaluation authors are assigned by one frozen deterministic
+  hash;
+- it stops as soon as both quotas fill and also has hard examined-row and
+  serialized-byte limits;
+- it records the hash of the exact ID prefix it consumed;
+- the complete-corpus hashes in its output are explicitly declarations copied
+  from the previously verified semantic manifest. It does not reread 3.9 GiB
+  merely to repeat that verification.
+
+The sampler uses the adaptive cgroup `io.pressure` policy in
+[Disk I/O Pressure-Control Guidance](../disk-io-pressure-control.md). It does
+not stack fixed device throttles on that controller because an artificial
+throttle can itself create pressure and prevent recovery.
+
+This sampler establishes author isolation only. Duplicate-family isolation
+must still be defined and applied before a formal learning/evaluation split, so
+its current output is not a formal experiment artifact.
+
+The pinned tiny real-note materialization preflight completed:
+
+- 82 ordered IDs were consumed to retain 64 learning and 16 evaluation notes;
+- the run was bounded to at most 256 consumed IDs and a 2 MiB serialized
+  sample;
+- those notes represented 56 learning authors and 14 evaluation authors, with
+  no author overlap;
+- the learning-first JSONL contained 80 records and 31,493 bytes;
+- the exact consumed ID-prefix hash was
+  `594aaf66e537654729de8a5a1935da2f14b7144b2bde3b6daddcd869b156f3ea`;
+- the sample hash was
+  `da9c38b4141d062b1c4ecfb242182a2c532f9fa83cf3659866b985a5679fb8b7`;
+- the source `data.mdb` size, inode, modification time, and change time were
+  unchanged before and after the read-only container run;
+- the artifact was produced in a dedicated tmpfs directory from the frozen
+  configuration in
+  `topic_map/crec-113-real-sample-preflight.json`.
+
+This establishes only that bounded real-note materialization works under the
+pressure controller. No real note has yet been encoded or used to train the
+topic model. It supplies no topic-quality evidence and does not satisfy the
+still-unresolved duplicate-family isolation requirement.
 
 ## Main Risks
 
