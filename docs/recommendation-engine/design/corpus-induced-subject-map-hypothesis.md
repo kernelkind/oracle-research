@@ -129,6 +129,8 @@ The real-note sampler is a separate bounded path:
   mutable files, and artifacts stay on tmpfs;
 - learning and evaluation authors are assigned by one frozen deterministic
   hash;
+- a retained note is rejected if it is a high-confidence textual copy of a
+  retained note in the opposite split;
 - it stops as soon as both quotas fill and also has hard examined-row and
   serialized-byte limits;
 - it records the hash of the exact ID prefix it consumed;
@@ -141,9 +143,27 @@ The sampler uses the adaptive cgroup `io.pressure` policy in
 not stack fixed device throttles on that controller because an artificial
 throttle can itself create pressure and prevent recovery.
 
-This sampler establishes author isolation only. Duplicate-family isolation
-must still be defined and applied before a formal learning/evaluation split, so
-its current output is not a formal experiment artifact.
+The copy rule is deliberately textual rather than semantic:
+
+- normalize to Unicode NFC, lowercase, and collapse whitespace;
+- normalized-equal notes are copies at every length;
+- notes shorter than 100 Unicode characters receive no fuzzy matching;
+- notes of at least 100 Unicode characters are copies only when their
+  character-count ratio is at least 90% and their unique
+  five-character-shingle Jaccard overlap is at least 90%;
+- punctuation, URLs, Nostr identifiers, and all other meaning-bearing text
+  remain in the normalized comparison rather than being stripped. Lowercasing
+  may alter case-sensitive URL paths;
+- notes are compared only across learning and evaluation. Semantic neighbors
+  and notes merely discussing the same subject remain separate.
+
+This operationalizes the experiment's duplicate-family requirement as pairwise
+high-confidence textual-copy isolation. The rule prevents copied text from
+crossing the held-out boundary. It does not delete or rewrite source notes,
+perform semantic clustering, or construct transitive families. Byte-identical
+content was already removed upstream. Lowercasing and whitespace collapsing can
+conflate case- or indentation-sensitive code; the rule therefore establishes
+copy isolation, not semantic identity.
 
 The pinned tiny real-note materialization preflight completed:
 
@@ -152,6 +172,7 @@ The pinned tiny real-note materialization preflight completed:
   sample;
 - those notes represented 56 learning authors and 14 evaluation authors, with
   no author overlap;
+- no high-confidence textual copy crossed the split;
 - the learning-first JSONL contained 80 records and 31,493 bytes;
 - the exact consumed ID-prefix hash was
   `594aaf66e537654729de8a5a1935da2f14b7144b2bde3b6daddcd869b156f3ea`;
@@ -164,9 +185,9 @@ The pinned tiny real-note materialization preflight completed:
   `topic_map/crec-113-real-sample-preflight.json`.
 
 This establishes only that bounded real-note materialization works under the
-pressure controller. No real note has yet been encoded or used to train the
-topic model. It supplies no topic-quality evidence and does not satisfy the
-still-unresolved duplicate-family isolation requirement.
+pressure controller and that this tiny split satisfies the frozen author and
+textual-copy isolation rules. No real note has yet been encoded or used to
+train the topic model. It supplies no topic-quality evidence.
 
 ## Main Risks
 

@@ -14,10 +14,11 @@ use lmdb::{
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use thiserror::Error;
+use unicode_normalization::UnicodeNormalization;
 
 use crate::io_pressure::{IoPressureController, IoPressureError};
 
-const SCHEMA_VERSION: u32 = 1;
+const SCHEMA_VERSION: u32 = 2;
 const EVENT_ID_BYTES: usize = 32;
 const NDB_NOTE_MINIMUM_BYTES: usize = 160;
 const NDB_NOTE_ID_OFFSET: usize = 4;
@@ -30,8 +31,16 @@ const NDB_MAP_SIZE: usize = 256 * 1_024 * 1_024 * 1_024;
 const SAMPLE_FILE: &str = "sample.jsonl";
 const MANIFEST_FILE: &str = "manifest.json";
 const AUTHOR_SPLIT_DOMAIN: &[u8] = b"oracle-mvp/topic-sample-author-split/v1\0";
-const SELECTION_RULE: &str = "semantic-order-prefix-author-hash-disjoint-learning-first-v1";
+const SELECTION_RULE: &str =
+    "semantic-order-prefix-author-hash-text-copy-disjoint-learning-first-v2";
 const SEMANTIC_ORDER_RULE: &str = "preserve-source-order-exclude-raw-content-trim-empty-v1";
+const TEXTUAL_COPY_RULE: &str = "nfc-lower-nfc-trim-collapse-unicode-whitespace-exact-all-\
+fuzzy-both-ge100-codepoints-codepoint5-set-sha256-prefix128-codepoint-length-ge90-\
+jaccard-ge90-v1";
+const COPY_SHINGLE_CHARACTERS: usize = 5;
+const FUZZY_COPY_MINIMUM_CHARACTERS: usize = 100;
+const COPY_SIMILARITY_NUMERATOR: usize = 9;
+const COPY_SIMILARITY_DENOMINATOR: usize = 10;
 const TMPFS_MAGIC: libc::c_long = 0x0102_1994;
 
 /// Configuration for one bounded real-note sample.
@@ -120,6 +129,10 @@ pub struct TopicSampleManifest {
     pub evaluation_authors: u64,
     /// Rows skipped because their deterministic split was already full.
     pub skipped_filled_split_rows: u64,
+    /// Frozen high-precision textual copy rule.
+    pub textual_copy_rule: String,
+    /// Rows rejected because they copied a retained note in the opposite split.
+    pub skipped_cross_split_textual_copy_rows: u64,
     /// Serialized sample artifact.
     pub sample: TopicSampleFile,
     /// Exact pressure-policy identity.
@@ -179,6 +192,12 @@ struct OwnedNote {
     event_id: [u8; 32],
     pubkey: [u8; 32],
     content: String,
+}
+
+struct TextualCopyFingerprint {
+    normalized: String,
+    character_count: usize,
+    shingles: Vec<[u8; 16]>,
 }
 
 struct ReadOnlyCorpus {
@@ -294,9 +313,12 @@ fn materialize_in_stage(
     let mut evaluation_rows = 0_u64;
     let mut examined_rows = 0_u64;
     let mut skipped_filled_split_rows = 0_u64;
+    let mut skipped_cross_split_textual_copy_rows = 0_u64;
     let mut serialized_bytes = 0_u64;
     let mut learning_authors = BTreeSet::new();
     let mut evaluation_authors = BTreeSet::new();
+    let mut learning_fingerprints = Vec::<TextualCopyFingerprint>::new();
+    let mut evaluation_fingerprints = Vec::<TextualCopyFingerprint>::new();
     let mut sampled_order_prefix = Sha256::new();
 
     while learning_rows != config.learning_rows || evaluation_rows != config.evaluation_rows {
@@ -322,12 +344,14 @@ fn materialize_in_stage(
 
         let evaluation =
             is_evaluation_author(&seed, &owned.pubkey, config.evaluation_rows, total_target);
-        let (split, rows, quota, authors) = if evaluation {
+        let (split, rows, quota, authors, fingerprints, opposite_fingerprints) = if evaluation {
             (
                 "evaluation",
                 &mut evaluation_rows,
                 config.evaluation_rows,
                 &mut evaluation_authors,
+                &mut evaluation_fingerprints,
+                &learning_fingerprints,
             )
         } else {
             (
@@ -335,10 +359,20 @@ fn materialize_in_stage(
                 &mut learning_rows,
                 config.learning_rows,
                 &mut learning_authors,
+                &mut learning_fingerprints,
+                &evaluation_fingerprints,
             )
         };
         if *rows == quota {
             skipped_filled_split_rows += 1;
+            continue;
+        }
+        let fingerprint = textual_copy_fingerprint(&owned.content);
+        if opposite_fingerprints
+            .iter()
+            .any(|opposite| are_textual_copies(&fingerprint, opposite))
+        {
+            skipped_cross_split_textual_copy_rows += 1;
             continue;
         }
         let record = TopicSampleRecord {
@@ -374,8 +408,10 @@ fn materialize_in_stage(
                 .map_err(|source| io_error("write", &sample_temporary_path, source))?;
         }
         authors.insert(owned.pubkey);
+        fingerprints.push(fingerprint);
         *rows += 1;
     }
+    verify_textual_copy_isolation(&learning_fingerprints, &evaluation_fingerprints)?;
     learning_output
         .write_all(&evaluation_output)
         .map_err(|source| io_error("write", &sample_temporary_path, source))?;
@@ -430,6 +466,8 @@ fn materialize_in_stage(
             TopicSampleError::Invariant("evaluation author count does not fit u64".to_owned())
         })?,
         skipped_filled_split_rows,
+        textual_copy_rule: TEXTUAL_COPY_RULE.to_owned(),
+        skipped_cross_split_textual_copy_rows,
         sample: TopicSampleFile {
             file: SAMPLE_FILE.to_owned(),
             bytes: sample_bytes,
@@ -446,6 +484,107 @@ fn materialize_in_stage(
     serde_json::to_writer_pretty(manifest_file, &manifest)
         .map_err(|source| json_error("encode", &manifest_path, source))?;
     Ok(manifest)
+}
+
+fn textual_copy_fingerprint(content: &str) -> TextualCopyFingerprint {
+    let lowered = content
+        .nfc()
+        .flat_map(char::to_lowercase)
+        .collect::<String>();
+    let mut normalized = String::with_capacity(lowered.len());
+    let mut pending_space = false;
+    for character in lowered.nfc() {
+        if character.is_whitespace() {
+            pending_space = !normalized.is_empty();
+        } else {
+            if pending_space {
+                normalized.push(' ');
+                pending_space = false;
+            }
+            normalized.push(character);
+        }
+    }
+
+    let characters = normalized.chars().collect::<Vec<_>>();
+    let mut shingles = Vec::<[u8; 16]>::with_capacity(
+        characters.len().saturating_sub(COPY_SHINGLE_CHARACTERS - 1),
+    );
+    for window in characters.windows(COPY_SHINGLE_CHARACTERS) {
+        let mut hasher = Sha256::new();
+        for character in window {
+            hasher.update(u32::from(*character).to_be_bytes());
+        }
+        let digest = hasher.finalize();
+        shingles.push(digest[..16].try_into().expect("SHA-256 prefix"));
+    }
+    shingles.sort_unstable();
+    shingles.dedup();
+    shingles.shrink_to_fit();
+
+    TextualCopyFingerprint {
+        normalized,
+        character_count: characters.len(),
+        shingles,
+    }
+}
+
+fn are_textual_copies(left: &TextualCopyFingerprint, right: &TextualCopyFingerprint) -> bool {
+    if left.normalized == right.normalized {
+        return true;
+    }
+    if left.character_count < FUZZY_COPY_MINIMUM_CHARACTERS
+        || right.character_count < FUZZY_COPY_MINIMUM_CHARACTERS
+        || !ratio_at_least(
+            left.character_count.min(right.character_count),
+            left.character_count.max(right.character_count),
+        )
+    {
+        return false;
+    }
+
+    let mut left_index = 0;
+    let mut right_index = 0;
+    let mut intersection = 0_usize;
+    while left_index < left.shingles.len() && right_index < right.shingles.len() {
+        match left.shingles[left_index].cmp(&right.shingles[right_index]) {
+            std::cmp::Ordering::Less => left_index += 1,
+            std::cmp::Ordering::Greater => right_index += 1,
+            std::cmp::Ordering::Equal => {
+                intersection += 1;
+                left_index += 1;
+                right_index += 1;
+            }
+        }
+    }
+    let union = left
+        .shingles
+        .len()
+        .checked_add(right.shingles.len())
+        .and_then(|total| total.checked_sub(intersection))
+        .unwrap_or(usize::MAX);
+    ratio_at_least(intersection, union)
+}
+
+fn ratio_at_least(numerator: usize, denominator: usize) -> bool {
+    denominator != 0
+        && (numerator as u128) * (COPY_SIMILARITY_DENOMINATOR as u128)
+            >= (denominator as u128) * (COPY_SIMILARITY_NUMERATOR as u128)
+}
+
+fn verify_textual_copy_isolation(
+    learning: &[TextualCopyFingerprint],
+    evaluation: &[TextualCopyFingerprint],
+) -> Result<(), TopicSampleError> {
+    if learning.iter().any(|left| {
+        evaluation
+            .iter()
+            .any(|right| are_textual_copies(left, right))
+    }) {
+        return Err(TopicSampleError::Invariant(
+            "learning and evaluation contain a cross-split textual copy".to_owned(),
+        ));
+    }
+    Ok(())
 }
 
 fn open_read_only_corpus(path: &Path) -> Result<ReadOnlyCorpus, TopicSampleError> {

@@ -2,7 +2,7 @@
   "source_corpus_path": "/home/dev/src/notedeck_worktrees/algos/damus_snapshot/runs/crec-9-complete-cpu-audit-v6/work/english-eligible/ndb",
   "ordered_event_ids_path": "/home/dev/src/notedeck_worktrees/algos/damus_snapshot/runs/crec-61-gte-local/semantic-corpus/ordered-event-ids.bin",
   "semantic_manifest_path": "/home/dev/src/notedeck_worktrees/algos/damus_snapshot/runs/crec-61-gte-local/semantic-corpus/manifest.json",
-  "output_path": "/dev/shm/oracle-mvp-crec113-real-sample-preflight-v2/sample",
+  "output_path": "/dev/shm/oracle-mvp-crec113-real-sample-preflight-v5/sample",
   "learning_rows": 64,
   "evaluation_rows": 16,
   "max_examined_rows": 256,
