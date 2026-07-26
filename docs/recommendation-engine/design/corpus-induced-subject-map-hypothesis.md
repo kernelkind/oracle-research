@@ -1,225 +1,139 @@
-# Corpus-Induced Subject Map Hypothesis
+# Corpus-Induced Weighted Note-Topic Map
 
 ## Status
 
-Working technical hypothesis. This document records the project's current
-prescription and the reasoning behind it. It is not a literature finding, an
-approved architecture, or an approved experiment.
+Current hypothesis and approved prerequisite experiment, tracked by CREC-113.
+This is not an approved product architecture.
 
-The neutral evidence record is
+The neutral literature record is
 [Corpus-Induced Semantic Region Discovery](../research/semantic-region-discovery-and-labeling.md).
-The citations below establish properties of individual methods. They do not
-establish that the proposed composition will work for Nostr.
 
-## Goal
+## Why
 
-Derive a public semantic structure from the complete public Nostr note corpus
-so a person can deliberately move among understandable subjects instead of
-being trapped in repeatedly expanded note neighborhoods.
+The proposed subject-navigation direction requires a public relation learned
+from the Nostr corpus:
 
-The structure must:
+```text
+w(note, topic)
+```
 
-- derive subjects from the corpus rather than a predefined taxonomy;
-- keep every eligible note addressable;
-- let one note belong to several subjects with different strengths;
-- support broad and narrow views;
-- preserve uncertainty instead of forcing a false narrow subject;
-- generate descriptions only after the semantic structure exists;
-- remain independent of private ratings.
+The same relation must support both views:
 
-Private evidence may order or select among public subjects locally. It does not
-define those subjects.
+```text
+NoteId  -> {TopicId -> Weight}
+TopicId -> {NoteId  -> Weight}
+```
+
+Topics must emerge from public note content. They are not predefined, and
+private ratings do not create them.
+
+Before considering labels, hierarchy, navigation, or personalization, we must
+establish that this base relation can represent the subjects people recognize
+in Nostr notes.
 
 ## Current Hypothesis
 
-The simplest architecture worth testing is a corpus-trained sparse semantic
-representation over purpose-selected whole-note embeddings.
+Use one strong whole-note embedding representation and train an
+SAE-TM-style sparse autoencoder with BatchTopK sparsity over a disjoint learning
+sample.
 
-This proposal starts from the raw public notes. The existing Oracle matrix is
-one optional representation candidate, not a constraint. It is reused only if
-it proves suitable for subject recovery.
+- One non-dead learned feature is one topic candidate.
+- One note may activate several topic candidates.
+- A feature becomes a `TopicId` only if it activates on at least one learning
+  note.
+- Evaluation-only activations cannot create new topics.
+- All such learning features remain in the result, including singleton,
+  incoherent, or non-semantic features. Those failures must be counted.
+- Compact `TopicId` values retain a mapping to the original SAE feature IDs.
 
-### Existing Oracle artifact
+[SAE-TM](https://arxiv.org/abs/2511.16309) supports treating sparse learned
+features as unnamed topic atoms. [BatchTopK](https://arxiv.org/abs/2412.06410)
+supports variable active-feature counts per note while controlling average
+sparsity. Neither paper establishes that this combination will recover
+human-recognized topics from short Nostr notes.
 
-The existing matrix contains 3,530,455 normalized, 3,584-dimensional FP32 note
-vectors and occupies about 47.1 GiB. GTE-Qwen2 was selected for semantic
-retrieval; the project did not validate its geometry for topic decomposition or
-hierarchy construction.
+The existing Oracle retrieval matrix is not forced into this experiment. It
+was built for semantic retrieval, not topic recovery.
 
-These facts affect the cost of evaluating that matrix. They do not make it the
-input to this hypothesis.
+## Frozen Relation Semantics
 
-### 1. Select a representation for subject recovery
+For a positive inferred activation `a(note, topic)`, the experiment stores:
 
-Choose or train a text representation by testing whether it preserves the
-subjects people perceive in Nostr notes. Semantic-search performance alone
-does not answer this question.
+```text
+w(note, topic) = a(note, topic) / sum(a(note, every active topic))
+```
 
-The test material must include:
+This is the SAE-TM document-topic proportion. An all-zero note remains
+addressable but unassigned.
 
-- notes with one clear subject;
-- notes with several subjects;
-- short and ambiguous notes;
-- code, URLs, jargon, and informal language;
-- rare meanings and genuine outliers.
+Only ordinal meaning is claimed: within the learned relation, a larger weight
+means stronger membership. Numeric calibration is not claimed.
 
-### 2. Learn sparse semantic components from the corpus
+The note-major and topic-major indexes are derived from this one sparse matrix.
+They are not learned or generated independently.
 
-Train a sparse autoencoder over the chosen note embeddings.
+## Experiment Boundary
 
-[SAE-TM](https://arxiv.org/abs/2511.16309) provides the relevant mechanism:
-the model learns reusable, unnamed topic atoms from document embeddings, and
-each document can activate several atoms. Nothing supplies the subjects in
-advance.
+The formal experiment must:
 
-[BatchTopK](https://arxiv.org/abs/2412.06410) is the current sparsity
-hypothesis because it allows different notes to activate different numbers of
-components while controlling average sparsity.
+- split learning and evaluation notes before training;
+- keep evaluation notes disjoint by author and duplicate family;
+- bind every matrix row to its actual 32-byte `NoteId`;
+- freeze corpus, encoder, model, runtime, seed, and evaluation identities;
+- use a batch-independent frozen inference threshold;
+- select formal cases without inspecting attractive examples;
+- count dead, singleton, universal, duplicate, incoherent, and non-semantic
+  topics rather than hiding them;
+- report topic-to-note and note-to-topic judgments separately.
 
-For example, a note about writing Rust software for a Bitcoin wallet could
-activate separate corpus-learned components corresponding to Rust, software
-development, and Bitcoin, with different strengths. Those names would be
-assigned only after examining what the components actually represent.
+CREC-113 contains the formal human evaluation and supplementary audit.
 
-A learned component is not automatically a subject. It may instead represent
-language, style, syntax, format, author patterns, or an embedding artifact. Only
-components whose note memberships match human semantic interpretation become
-subject candidates.
+## Not in Scope
 
-### 3. Preserve sparse membership and residual uncertainty
+- predefined topics;
+- topic labels;
+- a hierarchy or graph;
+- navigation UI;
+- a contextual-span or multi-vector competitor;
+- private ratings or a personalizer;
+- recommendation or feed quality;
+- a complete-corpus map.
 
-The public base representation would contain:
+Those parts are considered only if the base weighted relation works.
 
-- sparse note-to-component activation weights;
-- component-to-note inverted membership;
-- a separately calibrated semantic-membership confidence, if one can be
-  validated;
-- representative notes and grounded phrases used to interpret each component;
-- immutable corpus, encoder, and model version identifiers.
+## Resource Preflight
 
-Every note remains addressable regardless of reconstruction error or assignment
-confidence. Reconstruction error is not semantic uncertainty: a note can
-reconstruct well from misleading components, or reconstruct poorly because of
-model capacity. It may be retained as an audit metric, but it does not belong in
-the mapping unless later evidence gives it a semantic use. A boundary,
-coarse-only, residual, or outlier mapping requires semantic evidence rather
-than an error threshold chosen for convenience.
+A discarded synthetic preflight exercised the production numerical and
+artifact path with:
 
-### 4. Derive broader regions only after base membership works
+- 4,096 learning rows and 512 held-out rows;
+- 768-dimensional FP32 inputs;
+- 3,072 BatchTopK features and average `k = 32`;
+- batch size 1,000 and 20 training steps.
 
-If the learned components match human interpretation, broader and narrower
-regions can be derived afterward.
+It read 14,303,232 bytes from RAM, wrote a 2,785,550-byte relation to RAM, and
+completed in 10.0 seconds on CPU. This is resource evidence only. Synthetic
+vectors provide no topic-quality evidence.
 
-The hierarchy hypothesis combines:
+The guarded runner requires RAM-backed output and verifies cgroup limits of
+8 MiB/s reads, 2 MiB/s writes, 256 read IOPS, and 64 write IOPS before opening
+experiment input. It also caps memory, CPU, and runtime.
 
-- semantic relatedness between components;
-- their note-level co-activation patterns;
-- asymmetric containment, where a narrower component appears largely within a
-  broader semantic scope.
-
-Co-activation establishes association, not containment. Sibling subjects may
-co-activate frequently. It can propose relationships, but every parent-child
-rule must separately demonstrate that the parent is semantically broader than
-the child.
-
-A subject may need several parents, so the result may be an overlapping graph
-rather than a strict tree. [BoxTM](https://aclanthology.org/2024.tacl-1.77/)
-supports asymmetric semantic containment as a broad-to-narrow model;
-[Hierarchical Overlapping Clustering](https://proceedings.mlr.press/v267/pan25a.html)
-demonstrates a scalable overlapping structure. Neither paper proves this
-combination for Nostr.
-
-No hierarchy mechanism is selected until the underlying note-to-component
-membership is validated.
-
-### 5. Describe regions after discovery
-
-Descriptions would be generated from:
-
-- diverse representative notes;
-- phrases grounded in those notes;
-- contrasts with parent, sibling, and nearby nonmember regions.
-
-The description is metadata for navigation. It does not determine membership.
-
-## Principal Competing Hypothesis
-
-A whole-note embedding may blend several meanings before the sparse model sees
-them. Sparse decomposition cannot recover information the embedding discarded.
-
-The competing representation keeps several contextual spans or semantic units
-per note. [Contextual-Top2Vec](https://aclanthology.org/2024.findings-emnlp.790/)
-shows that contextual token embeddings can support topic spans, hierarchical
-topics, and phrase labels.
-
-This representation is more expensive and complex:
-
-- one note produces several public vectors;
-- segmentation or contextual-unit construction becomes a new failure point;
-- storage, indexing, and note-level aggregation increase.
-
-That complexity is justified only if it recovers human-recognized subjects that
-the whole-note sparse representation loses.
-
-## Proposed Prerequisite System Comparison
-
-Before constructing a full corpus map, compare:
-
-1. a purpose-selected whole-note representation plus a sparse topic model; and
-2. a grounded contextual span or multi-vector representation.
-
-Both complete pipelines must emit the same observable contract: weighted
-note-to-component memberships, component exemplars, and an explicit
-unassigned or uncertain state. The comparison asks:
-
-> Which complete pipeline more faithfully recovers the subjects people
-> recognize in short and mixed Nostr notes?
-
-The existing Oracle matrix may participate as one whole-note representation.
-It does not define the comparison.
-
-This comparison does not isolate representation as the sole causal variable:
-the pipelines also differ in their component-discovery and aggregation
-machinery. A winning pipeline selects a better system candidate; it does not
-prove which internal part caused the difference. A causal claim would require a
-later controlled ablation.
-
-Judge the two candidates separately on:
-
-1. whether every claimed subject is actually present in a note;
-2. whether every important subject in a mixed note is recovered;
-3. whether stronger memberships reflect the note's emphasis;
-4. whether ambiguous and outlier notes retain honest uncertainty.
-
-Hierarchy, labels, navigation, and recommendation quality are later claims.
-They must not decide this representation comparison.
-
-## Decision Rule
-
-- If the whole-note sparse representation faithfully recovers mixed-note
-  subjects, retain it because it removes the span pipeline and its cost.
-- If it consistently blends or loses subjects that the grounded representation
-  recovers, retain the grounded pipeline as the stronger system candidate. This
-  result alone does not prove that multi-vector representation caused the gain.
-- If neither representation produces faithful membership, do not build a
-  hierarchy on top of either one.
-
-No sample size, model, threshold, budget, or implementation is approved by this
-document.
+The next stage requires a real, disjoint Nostr sample and fresh embeddings from
+the selected topic-recovery encoder. It must not begin until its model download
+and host I/O are reviewed separately.
 
 ## Main Risks
 
-- The selected encoder may preserve retrieval similarity but not separable
-  subjects.
-- Sparse components may capture language, style, syntax, format, author
-  patterns, or embedding artifacts instead of subjects.
-- Sparse components may be coherent globally yet be falsely assigned to
-  individual notes.
-- Generic components may activate broadly and obscure specific meanings.
-- Co-activation may mistake associated sibling subjects for parent-child
-  containment.
-- A hierarchy built from symmetric similarity may confuse “related” with
-  “broader than.”
-- Generated labels may sound plausible while misdescribing boundary members.
-- Rare meanings may be absorbed, mislabeled, or left with excessive residual
-  uncertainty.
+- Whole-note embeddings may blend meanings before the sparse model sees them.
+- Features may represent author, language, style, syntax, format, or
+  boilerplate instead of semantic topics.
+- A coherent global feature may still be assigned incorrectly to individual
+  notes.
+- Generic features may obscure narrow meanings.
+- Rare meanings may be absorbed or left unassigned.
+- Row-normalized topic proportions may not order representative notes as a
+  person expects.
+
+A failure rejects this corpus, representation, and method. It does not prove
+that every possible corpus-induced topic model is impossible.

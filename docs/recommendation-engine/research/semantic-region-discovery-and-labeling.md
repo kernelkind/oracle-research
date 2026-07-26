@@ -8,7 +8,7 @@ contain project requirements, recommend an architecture, select a method, or
 approve an experiment.
 
 Project inferences and the current technical proposal are kept separately in
-[Corpus-Induced Subject Map Hypothesis](../design/corpus-induced-subject-map-hypothesis.md).
+[Corpus-Induced Weighted Note-Topic Map](../design/corpus-induced-subject-map-hypothesis.md).
 
 ## Limits of the Evidence
 

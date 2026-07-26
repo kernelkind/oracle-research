@@ -11,11 +11,10 @@ vector proximity retained some relationship to the evaluator's judgments, but
 the tested system did not convert that signal into a sufficiently valuable,
 varied feed.
 
-No complete replacement architecture or next experiment has been approved.
-Current design work includes the previously approved feedback-gated
-adjacent-novelty direction and a newer user-directed semantic-region navigation
-hypothesis. The newer hypothesis is not an architecture yet: reliable
-note-to-region mapping has not been solved or validated.
+No complete replacement architecture has been approved. The current
+prerequisite experiment asks whether public Nostr notes can support one
+corpus-induced weighted note-topic relation. Hierarchy, labels, navigation, and
+another personalizer remain out of scope until that relation is validated.
 
 ## Goal
 
@@ -54,7 +53,7 @@ If a later experiment succeeds, its result should become the quality target. Pro
 
 - [Adjacent-novelty design direction](design/adjacent-novelty.md)
 - [User-directed semantic-region navigation](design/semantic-region-navigation.md)
-- [Corpus-induced subject-map hypothesis](design/corpus-induced-subject-map-hypothesis.md)
+- [Corpus-induced weighted note-topic map](design/corpus-induced-subject-map-hypothesis.md)
 - [Theme-vector necessary-condition result](experiments/adjacent-novelty/crec-101-theme-vector-separation.md)
 - [Cumulative theme-exposure replay](experiments/adjacent-novelty/crec-102-cumulative-theme-exposure-replay.md)
 - [Semantic-branch recovery diagnostic](experiments/adjacent-novelty/crec-110-semantic-branch-recovery.md)
