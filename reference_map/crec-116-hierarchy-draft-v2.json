@@ -387,7 +387,7 @@
     },
     {
       "node_id": "nostr-protocol-engineering",
-      "label": "Nostr protocols and engineering",
+      "label": "Nostr technical design and implementation",
       "scope": "Nostr keys, relay-selection behavior, content retrieval, and application implementation.",
       "children": [],
       "memberships": [

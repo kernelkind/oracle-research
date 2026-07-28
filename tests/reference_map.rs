@@ -2213,6 +2213,29 @@ fn tracked_crec_116_draft_uses_independent_overlapping_subjects() {
 }
 
 #[test]
+fn tracked_nostr_technical_subject_uses_one_coherent_label() {
+    let draft: HierarchyDraft = serde_json::from_slice(
+        &fs::read("reference_map/crec-116-hierarchy-draft-v2.json")
+            .expect("read tracked hierarchy draft"),
+    )
+    .expect("decode hierarchy draft");
+    let subject = draft
+        .nodes
+        .iter()
+        .find(|node| node.node_id == "nostr-protocol-engineering")
+        .expect("tracked Nostr technical subject");
+
+    assert_eq!(subject.label, "Nostr technical design and implementation");
+    assert!(
+        draft
+            .nodes
+            .iter()
+            .all(|node| node.label != "Nostr protocols and engineering"),
+        "the misleading combined label is absent"
+    );
+}
+
+#[test]
 fn tracked_books_and_history_subjects_are_separate() {
     let draft: HierarchyDraft = serde_json::from_slice(
         &fs::read("reference_map/crec-116-hierarchy-draft-v2.json")
