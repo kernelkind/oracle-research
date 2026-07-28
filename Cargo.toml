@@ -51,6 +51,10 @@ path = "src/bin/semantic_branch_diagnostic.rs"
 name = "topic-map-sample"
 path = "src/bin/topic_map_sample.rs"
 
+[[bin]]
+name = "reference-map"
+path = "src/bin/reference_map.rs"
+
 [dependencies]
 bech32 = "=0.11.1"
 crossterm = "=0.29.0"

@@ -1,0 +1,843 @@
+{
+  "schema_version": 1,
+  "proposal_id": "crec-115-note-selection-v1",
+  "source": {
+    "sample_path": "../target/crec-113-formal-v1/sample/sample.jsonl",
+    "sample_sha256": "8edb8a51246201100e6ba7cf7bf1bbf9cd501881d7c70b8a9cfc7a380d1b168e",
+    "split": "learning"
+  },
+  "notes": [
+    {
+      "slot": 1,
+      "note_id": "d420e4335f2fe7fc94992b2cf3604432f56b55d737a497d5dfae00f771dc223b",
+      "pubkey": "baa09c021f1ee1b1db17e86c1db0122a47ad2a4dcf52b9139be9edb4eda1c403",
+      "content": "Most present day books have an air of having been made in one day from others read the night before.\n\n—Chamfort (1741-1794)",
+      "composition": "single",
+      "selection_rationale": "A compact, self-contained judgment about originality in contemporary books.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 2,
+      "note_id": "7ca5c1f52e285dff5e45c81734e663d79743ce9743c9d239f2d36e7b9c3946d1",
+      "pubkey": "d9590d95a7811e1cb312be66edd664d7e3e6ed57822ad9f213ed620fc6748be8",
+      "content": "#asknostr Hey nostr good morning! I was thinking... it is possible to sign and verify software with our nostr public keys?  I mean how different it is from the traditional method? Is it less secure anyhow?",
+      "composition": "single",
+      "selection_rationale": "A narrow technical question about using Nostr keys for software signatures.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 3,
+      "note_id": "9583cdf21d51c763aee19412335850b41bf5909960013b64329aababfcdd6a6f",
+      "pubkey": "d34e832d42ad8b93c1a1c3c8400934405f30bcbf857f39ea2f008c26383f78d0",
+      "content": "Digitizing an Antinet\n\nMy Naming Convention to digitize\r\n[Category].[Section].[Number]-[YYYYMMDD]\r\n---\r\nAfter Digitizing Zettels - Start inventory report\r\nVia Windows Powershell\r\n----\r\nGet-ChildItem -Path \".\\directory\" -Recurse -File | \r\nSelect-Object Name, LastWriteTime, Length | \r\nExport-Csv -Path \".\\inventory.csv\" -NoTypeInformation",
+      "composition": "single",
+      "selection_rationale": "A concrete naming and inventory method for digitizing an Antinet.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": "digital Antinet inventory"
+    },
+    {
+      "slot": 4,
+      "note_id": "847fc9177c6f12db9f76bd970d55cc2cd30f1ddc0fa20bc832aefe7fb589b7ae",
+      "pubkey": "9751bdc4d12ff6e4cc6b61b102f71e445ef245bc830bf40af6566a6a246137c6",
+      "content": "Anyone know what’s the fastest embedded key/value store ? (Which is written in Rust or has a Rust wrapper)\n\nI don’t care about safety and consistency, I need pure speed and disk space efficiency \n\nSatonomics has been using for a while now Sanakirja which is quite good but needs a ton of space. Ive tried in the past heed (lmdb) and redb but they were worse performance wise, at least then, I might need to try again, am I missing another player ?",
+      "composition": "single",
+      "selection_rationale": "A precise comparison request for Rust-accessible embedded databases under speed and storage constraints.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 5,
+      "note_id": "056e6466257003453c3065421db88270511cb13ec8c860e3cb4d4b22edf3ba77",
+      "pubkey": "f647c9568d09596e323fdd0144b8e2f35aaf5daa43f9eb59b502e99d90f43673",
+      "content": "You’ve had coffee. But have you had your coffee?”\nhttps://blossom.primal.net/1379b90996b8ecb2f4fdef6756fd61c4ab964fa19f9e1505950e10a4d97640dd.jpg\nRoasting your own beans means discovering a taste profile that’s uniquely yours. It’s a personal journey that no bag of pre-roasted coffee can replicate.\n\nSipping  @ #coffeechain \n\n#HotTake ☕",
+      "composition": "single",
+      "selection_rationale": "A focused account of controlling coffee flavor by roasting one's own beans.",
+      "contrast_pair": {
+        "pair_id": "contrast-08",
+        "partner_slot": 11,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 6,
+      "note_id": "ef6193a59a35304759d1f58b629466c2a4a7289d92261e91078a1c9b3e05de71",
+      "pubkey": "fb67e428f2d0f152a37b25d44b5447268e7bdf9c1220a6500ac8c5e3d719442f",
+      "content": "In your begining, your parents are the parents, but in time and as nature plays out, you will become their parent. It is both a beautiful and a somber reality. \n\n#RandomThoughts #AgingParents",
+      "composition": "single",
+      "selection_rationale": "One coherent observation about the reversal of caregiving roles as parents age.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 7,
+      "note_id": "0c17e6b047755f2329110c6df3542b5a7e753fa4ef055c75b858ca1682bbfee5",
+      "pubkey": "93a3121b7be7538a58cf4cf126e802bb675a5737ca7063687e0816b90b495182",
+      "content": "I think of stamina as distinct from endurance. Stamina is the capacity to stand firm over long stretches of time and suggests continuing strength. Endurance is the ability to maintain forward momentum over time.\n\nStamina is key to running a marathon (or ultra). Endurance is key at 5k or 10k distance.\n\nEndurance has an “active verb” form — I endure.\n\nIt doesn’t seem to me that stamina has a similar active verb form. Or does it?\n\nHelp?",
+      "composition": "single",
+      "selection_rationale": "A focused distinction between stamina and endurance in running.",
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-03",
+        "partner_slot": 10,
+        "broad_narrow_role": "narrow"
+      },
+      "niche_subject": null
+    },
+    {
+      "slot": 8,
+      "note_id": "2a1c279f820c19a78aed198d135340416f445aa10c9951ae3d3c77f366f225d8",
+      "pubkey": "1987f7a6dab8428d8fd14721fbaf1ff28a2c61817f86dce8b8de9074f40d0c2b",
+      "content": "It is with children that we have the best chance of studying the development of logical knowledge, mathematical knowledge, physical knowledge, and so forth. - Jean Piaget\n\n\n- #zap this if you like to see more. #Quote",
+      "composition": "single",
+      "selection_rationale": "A single claim about studying the development of knowledge in children.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 9,
+      "note_id": "a57c8f036092116e0a0f4c142a855a7c0565e9b67b2fc21cfd86908c16759da8",
+      "pubkey": "234e96d5158000bd4c0f9c6089d0ddf78c2678a8926c74eef8aa2df47543d966",
+      "content": "Wow.. just found out #Apple #Music searches lyrics when searching for music… this is briljant.. how many times you don’t know the song or artist but know a line from the song? \n\nAnd since when does this feature exists? No one ever tells me anything around here!",
+      "composition": "single",
+      "selection_rationale": "One specific music-discovery feature and its use case.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 10,
+      "note_id": "ee2cca149a7d031817911a9e202bb23ae77c11dc9c22056bd9f3b766498ac770",
+      "pubkey": "74ffc51cc30150cf79b6cb316d3a15cf332ab29a38fec9eb484ab1551d6d1856",
+      "content": "You cannot \"nutrition science\" your way out of an inactive lifestyle.\n\nGotta actually move.",
+      "composition": "single",
+      "selection_rationale": "One direct claim that physical activity is indispensable to health.",
+      "contrast_pair": {
+        "pair_id": "contrast-07",
+        "partner_slot": 43,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": {
+        "pair_id": "breadth-03",
+        "partner_slot": 7,
+        "broad_narrow_role": "broad"
+      },
+      "niche_subject": null
+    },
+    {
+      "slot": 11,
+      "note_id": "fbac11c36101d6513cc632ef2ddc7fa17883cbd667da7fc75196bcabd9d31ea3",
+      "pubkey": "845ee75bddf14a51e7d3c1476cd51955dbb3052f38806efce88bd3e2ffff9736",
+      "content": "Bought this bag of Tim Hortons medium roast whole bean coffee because it was 300g for $9. \n\nAnd I asked myself, “Would this be better if I ground the beans myself and put it through an Aeropress?”\n\nWell, kind of. Somehow, the Aeropress brings out some sour notes. And it transformed something that was once terrible into something tolerable. \n\nBut this is still Tim Hortons coffee and it still sacks you over the head with bitterness. Still better than Starbucks, but only barely. And if your choice is between Maxwell House and whole bean Tim Hortons, well, grab this bag. \n\nHowever, this is still not premium coffee—not by a long shot.",
+      "composition": "single",
+      "selection_rationale": "A detailed but semantically narrow coffee-brewing and tasting review.",
+      "contrast_pair": {
+        "pair_id": "contrast-08",
+        "partner_slot": 5,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 12,
+      "note_id": "e62f24bb7124d1d208658b1b5b68bf2b259274c2bc2add538fdb1c1814c9d0bc",
+      "pubkey": "47d593859ddb41f53e38a3c2948e95235c40622587fac9ccfed0f131be6ce640",
+      "content": "Does anyone know of an open source tool to remove scratches and repair an old B&W photo, potentially even converting it to colour, presumably using AI? #photography #FOSS",
+      "composition": "single",
+      "selection_rationale": "One narrow request for an open-source photo-restoration tool.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 13,
+      "note_id": "24b6fb2f442d31e9db1274119ad424252577b27a88f59f69d43b92cd072b5a4e",
+      "pubkey": "4c800257a588a82849d049817c2bdaad984b25a45ad9f6dad66e47d3b47e3b2f",
+      "content": "making a proper note with a kaval (end blown flute) is impossible\n\nbut eventually you learn how to do it\n\nmight be a while before i can present me playing music",
+      "composition": "single",
+      "selection_rationale": "A focused account of learning to produce a note on a kaval.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": "kaval embouchure technique"
+    },
+    {
+      "slot": 14,
+      "note_id": "57ce561cfd0a569a981061a5461ae684e831a63d2e009b1822b2f7b16a9533b2",
+      "pubkey": "bd1e19980e2c91e6dc657e92c25762ca882eb9272d2579e221f037f93788de91",
+      "content": "My son (8) and I are reading books beside each other, sharing a blanket, in silence drinking tea….parenthood is constantly changing and amazing. I never imagined this moment but I’m so grateful for it 💜 anyone else have unexpected times like these? #kidstr",
+      "composition": "single",
+      "selection_rationale": "One specific experience of quiet parent-child connection through reading.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 15,
+      "note_id": "337569d3f73ff93019040a32d9f5e537f4c8c0a836db8d05bd70a614d8f06e2e",
+      "pubkey": "3443fe6375fbc9966105d1142b460e9cf92bc7052057fdbb02b1fef7c52b5d48",
+      "content": "Reflect sky so grey,\nMirror flat, slick on pavement.\nNever disappear.\n\n#DailyHaikuPrompt - puddle #Poetry #haiku #PoetryCommunity  #amWriting",
+      "composition": "single",
+      "selection_rationale": "A self-contained haiku centered on a puddle's reflection.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": "puddle haiku"
+    },
+    {
+      "slot": 16,
+      "note_id": "eb4e7b0341e6544b6ef0de8dcef80f52b550948b988cd9be6a9247a11b06d46b",
+      "pubkey": "b6d5c392e557533e162f8ba9a258f07987e7cd174fa1f60300ca72b2b8e0e3a9",
+      "content": "If our small minds, for some convenience, divide this universe, into parts — physics, biology, geology, astronomy, psychology, and so on — remember that nature does not know it!",
+      "composition": "single",
+      "selection_rationale": "One argument against treating academic disciplines as divisions in nature itself.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 17,
+      "note_id": "d4b14dd9f6959e29c95888d56e0a1b4e49aecfec9a79268f4369ea726f009d2c",
+      "pubkey": "1c9dcd8fd2d2fb879d6f02d6cc56aeefd74a9678ae48434b0f0de7a21852f704",
+      "content": "What is the logic behind having to 'borrow' a book from a digital library, like archive.org for example? It doesn't make any sense that only one person at a time can have access to a digital book, why are they implementing that? \nI know that there is some bullshit reason for it, and somewhere at the back of my mind there is that awful story about Aaron Schwartz committing suicide  because he was being tried for terrorism or something for taking a fucking book out of the library. \n\n#AskNostr\n\n#AskNostr",
+      "composition": "single",
+      "selection_rationale": "A focused objection to one-at-a-time lending of digital books.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 18,
+      "note_id": "650ee6fe1a6ecc43bb374cb27b50d1317899f6780f2e628beb4b5e93199149bb",
+      "pubkey": "6c428526f52377af0114e3da2d226a6b4789cda1c27fa59303f33e04ed10c640",
+      "content": "What books would you recommend to someone who’s 18? \n\n#bookstr",
+      "composition": "single",
+      "selection_rationale": "A minimal, unambiguous request for age-relevant book recommendations.",
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-02",
+        "partner_slot": 23,
+        "broad_narrow_role": "broad"
+      },
+      "niche_subject": null
+    },
+    {
+      "slot": 19,
+      "note_id": "3e5568db003be02ab4b79daf695c02fdeaf35644bf99606d8c6572aa40a72223",
+      "pubkey": "672fc957fa0f2ac63568aa17b368163dfdba702a2649516834999a0c869146c1",
+      "content": "On today's date in 750: In the Battle of the Zab, the Abbasid rebels defeat the Umayyad Caliphate, leading to the overthrow of the dynasty. #history #grownostr",
+      "composition": "single",
+      "selection_rationale": "One discrete historical event and its consequence.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": "Battle of the Zab"
+    },
+    {
+      "slot": 20,
+      "note_id": "099596d9b7cbdd24b080a1293214978a05a3c4a1a3152675e8af3ff7febc9c0a",
+      "pubkey": "17538dc2a62769d09443f18c37cbe358fab5bbf981173542aa7c5ff171ed77c4",
+      "content": "In your experience, what is the difference between nostr apps with outbox, vs nostr apps without outbox implementation, in terms of rate of notes not found?\n\n#asknostr",
+      "composition": "single",
+      "selection_rationale": "A narrow technical question about outbox routing and missing Nostr notes.",
+      "contrast_pair": {
+        "pair_id": "contrast-04",
+        "partner_slot": 28,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": {
+        "pair_id": "breadth-06",
+        "partner_slot": 55,
+        "broad_narrow_role": "narrow"
+      },
+      "niche_subject": null
+    },
+    {
+      "slot": 21,
+      "note_id": "1830964db8182776dc0a7ddbc014a09c6c968a2c982ebd5f6da320deef2b92dc",
+      "pubkey": "3f38abf7bdffa03222f162e537f573c6b399e2024092f1e7119a66d507d6465d",
+      "content": "the only food i hade yesterday (dinner)\n\n10 eggs\nsome butter\nsome raw beef liver\n800 grams of bbq beef\n100 gram of fat cream\nhttps://m.primal.net/PAUN.jpg",
+      "composition": "single",
+      "selection_rationale": "A concrete description of one carnivore-style meal.",
+      "contrast_pair": {
+        "pair_id": "contrast-06",
+        "partner_slot": 52,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 22,
+      "note_id": "503fb92faf6694b631484d0be57344ed29f7bfd324a2e5c5fa38183751b830e6",
+      "pubkey": "8d418aba917a085a318aca0bfdc1932e422a4f553a5befc37300b57243669d46",
+      "content": "LLMs like ChatGPT can't \"think\" and we need to stop pretending that they can\n\nPeople talk about LLMs and reasoning, but the truth is that LLMs can't think, and they're just operating off of patterns. #press\n\nhttps://www.xda-developers.com/bit-by-bit-llms-think/?utm_source=press.coop\n\nhttps://static1.xdaimages.com/wordpress/wp-content/uploads/2024/10/badge_bit_by_bit_featured_image.png",
+      "composition": "single",
+      "selection_rationale": "One clear argument that language models pattern-match rather than think.",
+      "contrast_pair": {
+        "pair_id": "contrast-01",
+        "partner_slot": 29,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 23,
+      "note_id": "7d52bf12d1dba7ef59001b7d70189cd7139fd12b9e2972c6faa5b634d5166217",
+      "pubkey": "8aafa7d540d9f24704477eba0f39ec24b7d65439bcf588b04d69cc428aff4c2a",
+      "content": "Any history book recommendations? \n\nI just finished Powers & Thrones, which was about the Middle Ages. I like the old stuff\n\n#asknostr",
+      "composition": "single",
+      "selection_rationale": "A narrow request for history books, especially about older eras.",
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-02",
+        "partner_slot": 18,
+        "broad_narrow_role": "narrow"
+      },
+      "niche_subject": null
+    },
+    {
+      "slot": 24,
+      "note_id": "693fa0a077527d025eeece4918f530e316cd9b88ccdbe9b3385111095ed15e4f",
+      "pubkey": "597022b3c20de92675ad38e490aa9b80cda1beed34e044ecc73d8e00c42c63eb",
+      "content": "#Linux chaos from bad to worse:\n\n# sort /dev/urandom\n# :(){ :|:& };:\n# chmod -x $(command -v chmod)\n# [ $[ $RANDOM % 6 ] == 0 ] && rm -rf /* || echo \"click\"",
+      "composition": "single",
+      "selection_rationale": "A self-contained set of destructive Linux-command examples presented as humor.",
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-08",
+        "partner_slot": 56,
+        "broad_narrow_role": "narrow"
+      },
+      "niche_subject": "destructive Linux command humor"
+    },
+    {
+      "slot": 25,
+      "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13",
+      "pubkey": "ccc1cca7c7a2a7b0418823e1934548c461f83461d70a349f3c2202e6c0f3896b",
+      "content": "This week I just let the miner running to keep temperatures for a minimum and save the #statistics.\nI want to find the best way how to run the miner. So far it only starts when it is below a specific temperature (with a day/night mode) \n \nMeanwhile I do a bit of programming to start up the miner when I have #solar #energy  left. And to have statistics how much solar energy is used for the miner.\n\nAnyhow in the winter days almost everything is required to heat the house so it won’t be much anyhow.\n\n#orangery #greenhouse   #grownostr #miner #bitcoin #nostr #btc",
+      "composition": "mixed",
+      "selection_rationale": "Combines Bitcoin mining, automation, solar-energy management, greenhouse temperature, and home heating.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 26,
+      "note_id": "7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e",
+      "pubkey": "f589350e4e4e51b1c5298a1cb87ff686ec8e06e09cee62c27dbaeb04afd83e60",
+      "content": "they want to control everything..\n..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger picture.. ..all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices.. ..i'm still on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible).. ..i've already switched to #Linux computer-wise.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty ",
+      "composition": "mixed",
+      "selection_rationale": "Combines operating systems, open-source software, surveillance, mobile security, and Nostr-key sovereignty.",
+      "contrast_pair": {
+        "pair_id": "contrast-03",
+        "partner_slot": 56,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 27,
+      "note_id": "7a2204bdc296c3650502c19814243aaa550a240c3863083514933e2ea9e8ab43",
+      "pubkey": "b9e76546ba06456ed301d9e52bc49fa48e70a6bf2282be7a1ae72947612023dc",
+      "content": "It's difficult to comprehend just how dangerous & suffocating it is to have a few, highly controlled avenues for broad communication.\n\nSimilarly, its extremely difficult to explain the astonishing power of having broad communication networks that cannot be controlled, and where people can speak freely.\n\nThe future is going to be awesome, and it's explicitly because of tools like #Bitcoin, #Nostr, #RSS, and #Pear whether most realize it or not.",
+      "composition": "mixed",
+      "selection_rationale": "Connects communication control, free expression, political power, and several decentralized protocols.",
+      "contrast_pair": {
+        "pair_id": "contrast-05",
+        "partner_slot": 33,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 28,
+      "note_id": "061343e9c2a99b6b4dd09f661c2c855d7277ce8b60089c1a4e5252965abf5344",
+      "pubkey": "c6f7077f1699d50cf92a9652bfebffac05fc6842b9ee391089d959b8ad5d48fd",
+      "content": "NostrDB is probably one of the most important projects on Nostr. \n\nIf we can make it easily portable for Android, web apps, and PC, it will truly provide developers with a way to offer a more reliable and smooth experience.\n\nIMO, we should do everything we can to make this possible.\nnostr:note1xlauve4xxvhcnjgmw5qexeuja58qvkgvggrrsl4slxpmwh2sllyqv33f8s",
+      "composition": "mixed",
+      "selection_rationale": "Connects local Nostr storage, portability across platforms, and client reliability.",
+      "contrast_pair": {
+        "pair_id": "contrast-04",
+        "partner_slot": 20,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 29,
+      "note_id": "17f7820bcee57f62c4a6f43a924db573a941173852bfa1c820180f1fecffc4f0",
+      "pubkey": "f9bc87972f21b3be38b8e1795e2acc246a90ca8b7c1c25d8c372b4101e3a4a57",
+      "content": "Damn I’m sharing my deep and personal Journal entries via voice prompt with the ChatGPT app , and its ability to console me is soul enriching. \nIts beautiful 🥺💐",
+      "composition": "mixed",
+      "selection_rationale": "Connects voice journaling, intimate disclosure, language models, and emotional support.",
+      "contrast_pair": {
+        "pair_id": "contrast-01",
+        "partner_slot": 22,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 30,
+      "note_id": "5f2f81bee2dcbe09b5cb51a6cd0f4283083e30d2832c9a8a6c95ef7eb951c5d9",
+      "pubkey": "5f8cbe4f487d8ee6359f87ddb6e4acf36584d2a03b353a54247dac4a04950394",
+      "content": "Apple has taken a significant step forward in cloud AI compute security with the introduction of Private Cloud Compute (PCC). This innovative technology provides groundbreaking privacy and security protections by bringing Apple's industry-leading device security model into the cloud. To build public trust, Apple is making resources available for security and privacy researchers to inspect and verify PCC's end-to-end security and privacy promises.\n\nSource: https://security.apple.com/blog/pcc-security-research/",
+      "composition": "mixed",
+      "selection_rationale": "Combines cloud AI, device-derived security models, privacy, and public verification by researchers.",
+      "contrast_pair": {
+        "pair_id": "contrast-02",
+        "partner_slot": 31,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 31,
+      "note_id": "b18908c0bd3cfe51e01028096a94c609c02575f0c1e534e500b302af5eaa6e23",
+      "pubkey": "496d38f69865530028c7d212314d3ce6d605f3528a6c4020a067c9b5bc49fb13",
+      "content": "🤭\n\nGurman: iOS 18 AI features to be powered by 'entirely on-device' LLM, offering privacy and speed benefits https://9to5mac.com/2024/04/21/gurman-ios-18-ai-features-on-device/",
+      "composition": "mixed",
+      "selection_rationale": "Connects mobile AI, on-device execution, privacy, and performance.",
+      "contrast_pair": {
+        "pair_id": "contrast-02",
+        "partner_slot": 30,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 32,
+      "note_id": "a75a2144c72724ad02ed57524a33a8750477135d03c55f5e7eee7ff314e48ae4",
+      "pubkey": "67acd72103fe3e830b6ec7ab4f5b61ffe91ab02245be12c9cf406c880ae7b2fb",
+      "content": "A take I keep seeing from the Rust/Linux controversy is like, \"Sure Rust developers are right on the technical points, but Rust devs are always such complete assholes [compared to the angelic C devs who would never].\" \n\nI mean I've seen that take a hundred times before this week, too, but it's wild to watch a video like the one that started this and come away with, \"The Rust guys are the ones being rude.\"\n\n#RustLang",
+      "composition": "mixed",
+      "selection_rationale": "Combines Rust adoption, Linux development, technical disagreement, and community behavior.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 33,
+      "note_id": "cca270685401385322e2a062def0562545284bcd6babe5a8763ed28b73e79407",
+      "pubkey": "df8985217136232a7c09c2165ebcc11afe23e42926548aa79ed63672312ec472",
+      "content": "My top reasons why #nostr is goated:\n\n- The network is never down\n- I don't have to pay for a better algo spot\n- There is no CEO\n- I can send a #zap to a friend\n- The community supports one another\n- The applications are limitless\n- There is far less spam\n- Data integrity is fully maintained\n- User privacy is at the forefront",
+      "composition": "mixed",
+      "selection_rationale": "Combines protocol resilience, incentives, community, governance, spam, integrity, and privacy as reasons to value Nostr.",
+      "contrast_pair": {
+        "pair_id": "contrast-05",
+        "partner_slot": 27,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 34,
+      "note_id": "48aade19331bde2d6463b41d0346d03feb9bed6a345543b87f6e85b94bf55744",
+      "pubkey": "d30ea98ea65e953f91ab93f6b30ea51eb33c506f87d49f600a139aef00aa9511",
+      "content": "Today's menu:\n\n- 100% whole wheat bread, homemade\n- Homegrown rosemary\n- Homemade garlic infused olive oil (the infusing part, not the oil part)\n\nIn the future, we will also be using home grown garlic for the infusion.\n\nNot going to grow and press our own olives into oil though. That's where we are drawing the line (at least, for now 😅)\n\n#GrowNostr #Foodstr #Food #Yum #gardening #homestead #homesteading #garden #cooking",
+      "composition": "mixed",
+      "selection_rationale": "Combines cooking, baking, gardening, ingredient production, and homesteading boundaries.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 35,
+      "note_id": "4611090a5fbd6acd54162e7cd29930ce6799a8461c70f0c417d6a982281f78f8",
+      "pubkey": "ca86d55ab426d52de1732413d69b9b1b063a7980968b8b69635a89a562af1bec",
+      "content": "I neglected to mention… this night sky mug glazed with a scintillating, sparkling glaze is for #sale\n\nFood- and dishwasher-safe!\n\n$40 or Bitcoin equivalent of $36\nShipping anywhere in the U.S. $10 or Bitcoin equivalent of $10\n\nText is from Yuan Zhen’s famous Pagoda Poem about tea:\n“Inviting the moon at night for company, \nFacing alone the twilight before the sunrise.”\n\nPerfect for your cup of tea on introspective evenings or all-night study sessions!\nContact me if interested. \n\n#茶杯 #陶瓷 #艺术 #pottery #ceramics #clay #wrensnest #handmade #art #artstr #mug #tea #茶 #poetry nostr:note1atjpxz0rupeqphgsaffn9l7ya6gsaq8nh223h0tq4zyuwku24vrqhuas2n",
+      "composition": "mixed",
+      "selection_rationale": "Combines handmade pottery, tea culture, Chinese poetry, Bitcoin pricing, and direct online commerce.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": "Yuan Zhen tea-poem pottery"
+    },
+    {
+      "slot": 36,
+      "note_id": "068a9e104f99a51d46a65674d05b3ead194564961534a90b0922b968e78c29d9",
+      "pubkey": "659a74f6cfbc7c252c58d93452b9d9575e36c464aa6544c6375227c9166a6ed9",
+      "content": "Hey there, folks! So, I've got this idea to start sharing daily updates on Nostr, kind of like a journal, about my journey to break free from the typical American grind. The plan? Well, by 04/20/2025, my wife and I are hoping to hop on a plane to Argentina with just the essentials we can carry onboard.\n\nAfter some thinking, we've come to the conclusion that life might just be sweeter elsewhere. We're pretty keen on this whole flag theory concept and are excited about stacking passports.\n\nI figure sharing online will not only keep us on track but maybe also show others that there's more to life than the usual rat race. Let's see where this adventure takes us!",
+      "composition": "mixed",
+      "selection_rationale": "Combines international migration, rejection of work culture, passport strategy, marriage, and public journaling.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 37,
+      "note_id": "a2a24cc7157cea99688a9479dcb23c150448819efa930e83a9542f39aa06174f",
+      "pubkey": "a3c488ec1906c556aef094f0c4fd8eeb79dd6909badd500a303234f26e33f6bd",
+      "content": "I was in AA for a while. Abstinence can become a religion. So can drugs and alcohol. So can politics. Choose wisely. I'm stoned right now.",
+      "composition": "mixed",
+      "selection_rationale": "Compares addiction, abstinence, religion, politics, and present drug use.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 38,
+      "note_id": "88b8490e40edacb25ce1a55d288e4387cfb6c2d56d801aad8c7fa5074132c678",
+      "pubkey": "81b26cb98224311ea520a9042bf9c7cc78d2725d0a99f9797afd9a8a35970aaa",
+      "content": "Google's greenhouse gas emissions spiked nearly 50% in 5 years due to AI-driven energy demands from data centers, as detailed in their 2024 Environmental Report, challenging their carbon-neutrality goal for 2030. #AI #Tech #Sustainability #ClimateChange #BigData",
+      "composition": "mixed",
+      "selection_rationale": "Connects AI infrastructure, data-center energy use, corporate climate targets, and emissions.",
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-07",
+        "partner_slot": 39,
+        "broad_narrow_role": "narrow"
+      },
+      "niche_subject": null
+    },
+    {
+      "slot": 39,
+      "note_id": "87f1cb51d8abb755bc2526f0129afcf079acbaea323ee8181d121fd7040a300e",
+      "pubkey": "13406aa56a4492cc0ffb29758002d89210c6a0da543fbdee317345fd65904092",
+      "content": "New wave, new introduction!\n\nI'm an engineer and physicist working in renewable energy, focused on energy storage. I'm all about renewables, electrification, sustainability, and circular economies.\n\nStarted in physics and someday hope to return, but currently focused on our great task. \n\nI also like helping people find ways to get involved in climate work. Always happy to chat!\n\nI toot about other stuff too, frequent topics in my bio.\n\n#introduction",
+      "composition": "mixed",
+      "selection_rationale": "Combines physics, engineering, renewable energy, storage, circular economics, and climate organizing.",
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-07",
+        "partner_slot": 38,
+        "broad_narrow_role": "broad"
+      },
+      "niche_subject": null
+    },
+    {
+      "slot": 40,
+      "note_id": "9e7e70ce7f5829599a353238ea8972b681eda34f9ce72ab62657be8a4f62b87b",
+      "pubkey": "aac372fa68ba58149250dfbbe15551958f9023494049ab7d3bd084d64b018828",
+      "content": "Does anyone know of a 3-D printing file for making some sort of case, that would hold multiple bit axes? I am thinking of something similar to a boombox from the 1980s… size wise.\n\nI am new to 3-D printing, and I’m thinking about learning to make my own bitaxes. As a trucker with a hotspot, I was thinking I could bring this boombox sized carry case in my semi, and be mining bitcoin (slowly!) as I roll down the highway all week.\n\ndoes anyone have any info, or might be able to help design one? \n\n#grownostr  #3dprinting",
+      "composition": "mixed",
+      "selection_rationale": "Combines 3-D printing, hardware design, mobile work, and small-scale Bitcoin mining.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 41,
+      "note_id": "506b157432cfa7ff7d8fc681c4a29848a3398fedd724f2543e43820b6b9bffb4",
+      "pubkey": "0d0547de422dfbc821247725bfc761c3efd11da98f6fef0ec3dc213465155c5a",
+      "content": "I just learned that schools now have Esports teams where kids compete against other schools playing video games. Why is this a thing? If I was a parent, I would oppose school resources and time being wasted on this, but I could be wrong and biased since I hate video games.",
+      "composition": "mixed",
+      "selection_rationale": "Combines school resource allocation, esports, video games, and parenting judgments.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 42,
+      "note_id": "584ee5a8eeaaa88833d1e761b01db6122197f2677df55ebf4c615f71144cbcd8",
+      "pubkey": "5edbd885d69b1f0352883b5ffbe337002e93cad9d0daa82e891bc28b5fbc291e",
+      "content": "Almost 10 years teaching on YouTube\nNever had sponsors, never will\n\nLeft a lot of money on the table\nBut my opinion is not for sale\n\nAs a \"content creator\" I'm very exited about middleman-free #v4v and other new permissionless value exchange models emerging through the #Bitcoin and #Nostr ecosystems ✨ ",
+      "composition": "mixed",
+      "selection_rationale": "Connects teaching, video platforms, sponsorship independence, value-for-value, Bitcoin, and Nostr.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 43,
+      "note_id": "f0ff44e2ad7556bc51ffc56aed7658b6b20f81e93856e2382d2b8187e44db4c7",
+      "pubkey": "53781be8729e975d3f2b85620fddbb2dcf91c6bc04afe7c7137de7a1cd6842e7",
+      "content": "Dealing with some Achilles pain lately as #running season gets rolling. That does NOT mean I’m doing absolutely nothing and letting it “rest.” It DOES mean, I’m managing load on the tendon, modifying my training plan, and accumulating volume on the tendon through low intensity work.\n\nFar too often I see active folks get some form of tendon pain, then get instructed to take a few weeks off and magically the pain is gone! So they get right back to what they were doing and the pain inevitably comes back and this cycle is repeated until a more dramatic injury happens. \n\nDon’t be like that, pain does not mean you’re broken, in most cases you can, and should, work through some level of pain to stimulate “regeneration” in the irritated tissue, “motion is lotion “🧴.\n\nLong duration isometrics (as pictured above), and low level plyometrics are great ways to manage, and get out of, tendon pain. These are also components that should be present in a well rounded training program all year long to help prevent injuries/flair ups in the first place.\n\nReach out if you’re sick of dealing with nagging injuries that keep you from doing the activities/sports you enjoy doing! And want to prevent them from happening all together. 🤙\nhttps://m.primal.net/Hqhm.png",
+      "composition": "mixed",
+      "selection_rationale": "Combines running, tendon pain, load management, rehabilitation, and injury prevention.",
+      "contrast_pair": {
+        "pair_id": "contrast-07",
+        "partner_slot": 10,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 44,
+      "note_id": "7055434f1770e9a1dc571801d3bc5bc71f861fa46c35bfad1a135f2bd992504e",
+      "pubkey": "c230edd34ca5c8318bf4592ac056cde37519d395c0904c37ea1c650b8ad4a712",
+      "content": "It's been a great day. Everything worked so I was able to actually accomplish something, weather's great, garden hit a growth spurt. A tiny blue butterfly landed in my hair. I tried to get a picture but I scared it. Grilling steak & listening to Tom Waits. It doesn't feel like a Wednesday 😊",
+      "composition": "mixed",
+      "selection_rationale": "Combines work satisfaction, weather, gardening, wildlife, cooking, and music in one lived moment.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 45,
+      "note_id": "4ef54cc08e5c02387af7521929d17d9af73e262fccebd3d4cbbd36190136a4f7",
+      "pubkey": "f0c387141559f1cdc6ce2f7c9d470960b4e6310aa5b97296bbe4590550b06599",
+      "content": "That’s another productive weekend in the books. \n\nLanded a garden and chicken run project from a consultation Saturday morning. #OrganixLandscapes\n\nFinished forming the last in ground #garden beds and they’re ready for some berry bushes and other food forest perennials. \n\nFinished the last #swale install on the property. Can now say virtually 100% of rainfall on our 3.5 acres will now be soaked in rather than ran off. \n\nWent to 2 different bday parties for my nieces which was a joy to see both sides of the family. \n\n#Weekendwarrior is an understatement. I hope y’all were able to continue building that better future for yourselves.",
+      "composition": "mixed",
+      "selection_rationale": "Combines landscape work, gardening, chicken keeping, water conservation, and family celebrations.",
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-04",
+        "partner_slot": 46,
+        "broad_narrow_role": "broad"
+      },
+      "niche_subject": null
+    },
+    {
+      "slot": 46,
+      "note_id": "b843720355752d704f1a167b7b0625d4d28833461c5c6d27c76e8e5b0648aca6",
+      "pubkey": "feb2cefbe04f933f15da0803436aa62cbaacefa1cb03af1275b9acd16a14230d",
+      "content": "Nostr #gardening masters, a question to you.\n\nRose cuttings, those can go in compost right?\nSomeone advised me against doing that, but it feels like a waste to not use all of that material 🤔\n\nPs. I am not a fan of roses in the garden, but I love my wife -> wife loves roses \n\nLove is having  roses in the garden 🌹",
+      "composition": "mixed",
+      "selection_rationale": "Combines composting, rose gardening, waste avoidance, and accommodating a spouse.",
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-04",
+        "partner_slot": 45,
+        "broad_narrow_role": "narrow"
+      },
+      "niche_subject": "rose-cutting composting"
+    },
+    {
+      "slot": 47,
+      "note_id": "d0b234703ff891dced7ea2392c7b9315c1b5c5520c2a192bc0e0c3e7ea19e4ee",
+      "pubkey": "d26ad6158bc3014e1aa75a5e545ec03347eca700074fbb503c3e50f412abacb8",
+      "content": "The past version of myself would've probably reacted to all the stuff I've seen posted on social media today regarding what's currently happening in the UK, would've most likely engaged in online discourse and come backs, and unfollowed people whose opinion I usually respect...\n\nBut just couldn't be arsed with it tbh and wasn't going to get sucked into the division & engagement which is what the algorithms want.",
+      "composition": "mixed",
+      "selection_rationale": "Combines political discourse, emotional self-regulation, social media, and engagement algorithms.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 48,
+      "note_id": "6ff1885941473b9f6941624769aef78307093cec8d55530b566dec60ce8ad0a6",
+      "pubkey": "958b754a1d3de5b5eca0fe31d2d555f451325f8498a83da1997b7fcd5c39e88c",
+      "content": "i tried designing before I started to make memes I was asss but recently started designing again n wow everything I learned making memes somehow makes this process much easier now, it’s like not taking it seriously somehow makes it flow much smoother n the end result is unique each time",
+      "composition": "mixed",
+      "selection_rationale": "Combines graphic design, meme-making, playfulness, and creative skill transfer.",
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-05",
+        "partner_slot": 54,
+        "broad_narrow_role": "narrow"
+      },
+      "niche_subject": null
+    },
+    {
+      "slot": 49,
+      "note_id": "8adc047bd3030501802d8afc9b950466c66853f3e9ceaafb5f3c17ae76292b5d",
+      "pubkey": "a87b402ac081c8849b9d5bd4e39f2287f25709d3e3f79e784af1e8b38fefbdf1",
+      "content": "In economics, competition is a very important concept. Competition is one of the main determining factors in a product's price. That's why when I am looking to buy a car, I always set up multiple test drives on the same day. Then, as a power move, I stop in the middle of the first test drive to start checking out the second vehicle.",
+      "composition": "mixed",
+      "selection_rationale": "Combines economic competition, automobile shopping, negotiation, and humor.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 50,
+      "note_id": "33552028ba4f99b8bd56ce99bbb7c727849062c8d4ab4d556d58da855104239f",
+      "pubkey": "d8a6ecf0c396eaa8f79a4497fe9b77dc977633451f3ca5c634e208659116647b",
+      "content": "Supremely bored by bitcoin Twitter's book recommendations. It's always the same thing – Hayek, Mises, Rothbard, Ayn Rand, that sovereign individual, yawn, yawn, yawn. \n\nI want books that make me think, not books that reinforce what I already know. Give me niche post-structuralists, anarchists and revolutionaries. Give me poets and weirdos and outcasts, not CIA funded neocon thinkbois. Escape the echo chamber, anon. ",
+      "composition": "mixed",
+      "selection_rationale": "Combines book discovery, Bitcoin culture, ideological echo chambers, political philosophy, and poetry.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 51,
+      "note_id": "5dc1419732892345b1242e5c99aa8cfefb5b159a0ff9075349cba2fbe01f2806",
+      "pubkey": "c43d6de3de463a1e5d508926f1e0fa3c316bbc1ddf8340d565b70e71a6583169",
+      "content": "Im reading the Epic of Gilgamesh atm and the forward to the penguin random house publication describes how the poems that form the epic were discovered. \n\nIts interesting to see how some of the oldest writing in human history could survive so many thousands of years. \n\nHuman interaction is characterized by labor and love and we have an innate drive to cast that into the future. What better way than to write about it and here you are drawing parallels between the oldest known written language and the most breakthrough technologies in social media and writing!\n\nGreat article!",
+      "composition": "mixed",
+      "selection_rationale": "Connects ancient literature, archaeology of writing, cultural preservation, labor, love, and social technology.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 52,
+      "note_id": "c01a24e6604834c025907d715314b547956d90488f95229707c4bad6354e5fa7",
+      "pubkey": "c69b71dc564fdc350acddff929f25d7202ac1470c87488608bd6d98e426ba763",
+      "content": "Enjoying my creations 😋 \nSalad with sprouts, onions and olives and my raw vegan carrot falafels. It's so good and so filling and so delicious and so... It's peace food, it's living food, it's colourful, it's alkaline, it's homemade, it's organic... what more could you want 💚⚡️\n\nGood night Nostrfam and keep the vibes high 💜🧡\n\nhttps://nostr.photos/p/food/Falafel_Salad.jpg\n\n#peacefood #rawvegan #vegan #veganfood #foodstr #healthy #veganlife #food #livingfood",
+      "composition": "mixed",
+      "selection_rationale": "Combines food preparation, raw vegan diet, health claims, ethics, and lifestyle identity.",
+      "contrast_pair": {
+        "pair_id": "contrast-06",
+        "partner_slot": 21,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 53,
+      "note_id": "2c37330aa014895f53b7e774edf49823e6e3b5ad47939e64fcb81735b726240c",
+      "pubkey": "e864066f4aa10779dd364a7787c0b399aecbaed13fc6a29522e793ca4e020f45",
+      "content": "Travel #photography transcends mere documentation. It's about capturing a place's soul: the fleeting light, a culture's heartbeat, the whispers of history. Each click etches memory and transforms the transient into art. The world unfolds through a viewfinder.\n\n#visualstorytelling\n",
+      "composition": "mixed",
+      "selection_rationale": "Combines travel, photography, cultural observation, history, memory, and art.",
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-01",
+        "partner_slot": 57,
+        "broad_narrow_role": "narrow"
+      },
+      "niche_subject": null
+    },
+    {
+      "slot": 54,
+      "note_id": "48582ca7a1747eec62b877c408909df34d2ceed7477e14be62b86981425bd379",
+      "pubkey": "f6c49e1b7b7106b27a88254b16fee0d835fc8aca1db78e2a0cb9a3f789c41ac9",
+      "content": "Alright I’m gonna lay it down here. Saifedean is a legend. But his art take is below par. \n\nTime preference has nothing to do with art. \n\nArt can have nothing to do with money. And everything to do with money.\n\nJust because it takes 300 years to build a cathedral doesn’t mean it has any more significance than something that took 3 seconds. It’s the message the work transmits.\n\nThe revolution with art is within or without. It either changes you or it changes the world.\n \nSaifedean knows this. He’s a good lad. He respects beauty. And craft. And architecture that can take us forward. But he sneeds a p97 update. Modern art has brought us here. #bitcoin art will take us beyond. \n\nArt is the message. \n\nMoney is the signal. \n\nBeauty is the soul. \n\nCreate the space and things will thrive. \n\n\nSimply money\n#bitcoin\n\nSimply message\n#nostr\n\n\n#artstr\n\n#freepalestine #freeross #freeassange",
+      "composition": "mixed",
+      "selection_rationale": "Combines art theory, money and time preference, architecture, Bitcoin, beauty, craft, and politics.",
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-05",
+        "partner_slot": 48,
+        "broad_narrow_role": "broad"
+      },
+      "niche_subject": null
+    },
+    {
+      "slot": 55,
+      "note_id": "7d4d4ff7c53353d1561051b304908061824faae370289314a227d8f8367a1a00",
+      "pubkey": "d36e8083fa7b36daee646cb8b3f99feaa3d89e5a396508741f003e21ac0b6bec",
+      "content": "Almost all of what we do on the internet (and as a species, for that matter) boils down to communication and commerce. #Nostr and #Bitcoin are a step-function change from how either was done in the past, as long as we build and design the tools to have them exist and survive outside of the systems we've been confined to.",
+      "composition": "mixed",
+      "selection_rationale": "Combines communication, commerce, protocols, money, tool design, and institutional independence.",
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-06",
+        "partner_slot": 20,
+        "broad_narrow_role": "broad"
+      },
+      "niche_subject": null
+    },
+    {
+      "slot": 56,
+      "note_id": "5162cc3e6ed6756c0d95ac8f1340fc244532ba347c3b7da431453c602b671731",
+      "pubkey": "ac115d52edd62c6b7128ca5017363e8960e993b2cfe69f0e5a087aaa2de190d4",
+      "content": "Here's some reasons why I think Linux is a FANTASTIC operating system:\n\n* Software Updates & OS Upgrades are done on YOUR schedule\n* The decision about which features YOU get and don't get belongs to YOU.\n* Nobody is forcing you to pay them anything. There is no for-profit motive programmed into the OS.\n* It is literally some of the highest quality software to exist on the planet. Made by the most brilliant minds of the planet.\n* I am genuinely just thankful for every level of the stack of software supporting every single computing use case I could think of and in any thinkable format. Servers run Linux. Gaming PC's run Linux. TV's run Linux. Phones run Linux. A fucking 5g modem inside a smartphone runs Linux. It's everywhere.\n* What is your excuse to not learn everything you can about it? It's the Bitcoin of operating systems.\n\n#linux #opensource #bitcoin #debian ",
+      "composition": "mixed",
+      "selection_rationale": "Combines Linux, user control, open-source economics, software quality, deployment contexts, and a Bitcoin analogy.",
+      "contrast_pair": {
+        "pair_id": "contrast-03",
+        "partner_slot": 26,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": {
+        "pair_id": "breadth-08",
+        "partner_slot": 24,
+        "broad_narrow_role": "broad"
+      },
+      "niche_subject": null
+    },
+    {
+      "slot": 57,
+      "note_id": "5df22809eda64af11774ed317671a3a2ecba24082119254fc4af2251d307a734",
+      "pubkey": "63d59db8d29abe29db7380beb912b8f600237332b6c9978b208694e4be170f6f",
+      "content": "Which is it:\n\nMaking pictures \nor\nFinding pictures \n\n?\n\n#photography #photostr #noicemag #artstr",
+      "composition": "ambiguous",
+      "selection_rationale": "May concern photographic technique, artistic authorship, perception, or discovery versus creation.",
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-01",
+        "partner_slot": 53,
+        "broad_narrow_role": "broad"
+      },
+      "niche_subject": null
+    },
+    {
+      "slot": 58,
+      "note_id": "29d3f1a0b514395c6e01963812954f95036d8ede264b7f48b47d36f43d40b5c7",
+      "pubkey": "4984db1bff87bf67cb3ddfef84625dca922fb6fb2ec343d59fa026fc9c2985c9",
+      "content": "Thirty spokes share the wheel's hub;\nIt is the center hole that makes it useful.\nShape clay into a vessel;\nIt is the space within that makes it useful.\nCut doors and windows for a room;\nIt is the holes which make it useful.\nTherefore profit comes from what is there;\nUsefulness from what is not there.\n\nLao Tzu",
+      "composition": "ambiguous",
+      "selection_rationale": "Can be read as Taoism, design, architecture, negative space, or a philosophy of absence.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 59,
+      "note_id": "cf7808d6b49128280cea20117375d3702268925160ff9e8d0df5d7727a368e2e",
+      "pubkey": "a4b795e2b111464cfe70b6848fbbbc1c7ba63475d5c6626f6062ee5d025b58e3",
+      "content": "Fighting is a form of dancing\n\nYou try to keep your rhythm and break theres\n\n#fightstr",
+      "composition": "ambiguous",
+      "selection_rationale": "The analogy equally invokes combat strategy, bodily rhythm, dance, and competitive psychology.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 60,
+      "note_id": "8894b71ab618459a3c40e9637d2cad57cb3347b758911a94da50d8f84db53aa8",
+      "pubkey": "ab7d91705025289d6149ad9ea1abc4ce4c49555df71904f29136c223785ea6f7",
+      "content": "Pouch or tin \n\nChewing tobacco\n-though quite rare today \nMemories of you laughing \nI saw you again\n\nMaxwell house coffee\n-small amount \nEncased in plastic\nAlone\nAtop grocery shelf \nNo longer in a tin \n   I brought it home  \nSo I could remember \nYou \nEach day. \n\n-Uncle E.\n\n#poetry",
+      "composition": "ambiguous",
+      "selection_rationale": "Its subject could be grief, remembrance, consumer objects as memory triggers, an uncle, or poetic form.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": "tobacco-tin remembrance poem"
+    },
+    {
+      "slot": 61,
+      "note_id": "00000293edfb4e696ca58b21be636b59b0e8327d03bee0371a95ef5c2c62e63b",
+      "pubkey": "4f47fc9248595f9540679fe79e391e660cf24811e6236813be2bd595e79f126c",
+      "content": "Billions live within an experience crafted not by their own hands, but by the unseen architects of systems and structures, shaping a life not truly their own.",
+      "composition": "ambiguous",
+      "selection_rationale": "The unnamed architects and systems leave open politics, social conditioning, institutions, technology, or conspiracy.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 62,
+      "note_id": "929387e5ad195b4ec36fa8a715e3e49c1eba229f04ea7f5117677cb63d10536d",
+      "pubkey": "7881b7e17529283107551a5b21b5d4c38349c0fb62836b23032699081f2b9db1",
+      "content": "Truth cannot be borrowed. It cannot be studied in books. Nobody can inform you about it. You have to sharpen your intelligence yourself, so that you can look into existence and find it ~ Osho",
+      "composition": "ambiguous",
+      "selection_rationale": "Sits at the boundary of epistemology, spirituality, education, independent thought, and experience.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 63,
+      "note_id": "103248806f4a9701f2e8dc91164a725e3e9871c528c3e55710fab407da807d2a",
+      "pubkey": "45cf4b71595a1d96b2fdb1836bbfd15da38151c0fb529c37ce03a87b13543fab",
+      "content": "“The one essential condition of human existence is that man should always be able to bow down before something infinitely great. If men are deprived of the infinitely great, they will not go on living and will die of despair. The Infinite and the Eternal are as essential for man as the little planet on which he dwells.”\n\n— Fyodor Dostoevsky",
+      "composition": "ambiguous",
+      "selection_rationale": "The infinitely great may indicate religion, transcendence, existential purpose, awe, or cosmology.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    },
+    {
+      "slot": 64,
+      "note_id": "2e71ddd392d345b990d34163a1c68cf7f2c787af7ff9661fa241d3925a5adf86",
+      "pubkey": "66f47e3dcfe5c9281b436bf4ae443c4893d3c1b17ce503223f8043d3bfbdfb2f",
+      "content": "If you're afraid that reading a book might change someone's thinking, then you're not afraid of books, you're afraid of thinking. ",
+      "composition": "ambiguous",
+      "selection_rationale": "Can be read as censorship, education, intellectual freedom, persuasion, or fear of social change.",
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_subject": null
+    }
+  ]
+}
