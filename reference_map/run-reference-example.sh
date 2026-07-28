@@ -32,7 +32,7 @@ if [[ ! -f "$approved_hierarchy" ]]; then
     exec target/release/reference-map hierarchy \
         "$approved_notes" \
         "$draft" \
-        "$run_dir/hierarchy-review-session.json" \
+        "$run_dir/hierarchy-note-branch-review-session.json" \
         "$approved_hierarchy"
 fi
 

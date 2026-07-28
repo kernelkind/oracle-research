@@ -625,39 +625,37 @@ impl HierarchyDraft {
         canonical_sha256(self)
     }
 
-    fn leaf_map_revision(&self, approved_notes: &ApprovedNoteSet) -> Result<String> {
-        let mut leaves = self
-            .nodes
-            .iter()
-            .filter(|node| node.is_leaf())
+    fn focus_coverage_revision(&self, approved_notes: &ApprovedNoteSet) -> Result<String> {
+        let mut notes = approved_notes.notes.iter().collect::<Vec<_>>();
+        notes.sort_unstable_by_key(|note| note.slot);
+        let evidence = notes
+            .into_iter()
+            .map(|note| {
+                let mut memberships = self
+                    .nodes
+                    .iter()
+                    .filter(|node| node.is_leaf())
+                    .flat_map(|node| {
+                        node.memberships
+                            .iter()
+                            .filter(move |membership| membership.note_id == note.note_id)
+                            .map(move |membership| (node.label.as_str(), membership.strength))
+                    })
+                    .collect::<Vec<_>>();
+                memberships.sort_unstable_by(|left, right| {
+                    right
+                        .1
+                        .rank()
+                        .cmp(&left.1.rank())
+                        .then_with(|| left.0.cmp(right.0))
+                });
+                (note.slot, memberships)
+            })
             .collect::<Vec<_>>();
-        leaves.sort_unstable_by(|left, right| left.node_id.cmp(&right.node_id));
-        canonical_sha256(&(canonical_sha256(approved_notes)?, leaves))
+        canonical_sha256(&("focus-coverage-review-v2", evidence))
     }
 
-    fn membership_revision(
-        &self,
-        approved_notes: &ApprovedNoteSet,
-        subject_id: &str,
-        note_id: &str,
-    ) -> Result<String> {
-        let subject = self.node(subject_id).ok_or_else(|| {
-            Error::ExperimentState(format!("hierarchy subject {subject_id} is missing"))
-        })?;
-        if !subject.is_leaf() {
-            return invalid(format!(
-                "hierarchy subject {subject_id} does not contain direct note memberships"
-            ));
-        }
-        let membership = subject
-            .memberships
-            .iter()
-            .find(|membership| membership.note_id == note_id)
-            .ok_or_else(|| {
-                Error::ExperimentState(format!(
-                    "hierarchy subject {subject_id} does not contain note {note_id}"
-                ))
-            })?;
+    fn note_map_revision(&self, approved_notes: &ApprovedNoteSet, note_id: &str) -> Result<String> {
         let note = approved_notes
             .notes
             .iter()
@@ -665,99 +663,85 @@ impl HierarchyDraft {
             .ok_or_else(|| {
                 Error::ExperimentState(format!("approved hierarchy note {note_id} is missing"))
             })?;
+        let mut memberships = self
+            .nodes
+            .iter()
+            .filter(|node| node.is_leaf())
+            .flat_map(|node| {
+                node.memberships
+                    .iter()
+                    .filter(move |membership| membership.note_id == note_id)
+                    .map(move |membership| {
+                        (
+                            node.node_id.as_str(),
+                            node.label.as_str(),
+                            node.scope.as_str(),
+                            membership.strength,
+                        )
+                    })
+            })
+            .collect::<Vec<_>>();
+        memberships.sort_unstable_by_key(|(node_id, _, _, _)| *node_id);
+        if memberships.is_empty() {
+            return invalid(format!(
+                "approved hierarchy note {note_id} has no subject memberships"
+            ));
+        }
+        let mut subject_vocabulary = self
+            .nodes
+            .iter()
+            .filter(|node| node.is_leaf())
+            .map(|node| {
+                (
+                    node.node_id.as_str(),
+                    node.label.as_str(),
+                    node.scope.as_str(),
+                )
+            })
+            .collect::<Vec<_>>();
+        subject_vocabulary.sort_unstable_by_key(|(node_id, _, _)| *node_id);
         canonical_sha256(&(
-            "membership-v1",
-            subject.node_id.as_str(),
-            subject.label.as_str(),
-            subject.scope.as_str(),
-            membership,
+            "note-map-review-v1",
+            note.slot,
+            note.note_id.as_str(),
             note.content.as_str(),
+            subject_vocabulary,
+            memberships,
         ))
     }
 
-    fn subject_revision(&self, approved_notes: &ApprovedNoteSet, node_id: &str) -> Result<String> {
+    fn branch_revision(&self, node_id: &str) -> Result<String> {
+        let root = self
+            .node(self.root_node_id.as_str())
+            .ok_or_else(|| Error::ExperimentState("hierarchy hidden root is missing".to_owned()))?;
+        if !root.children.iter().any(|child_id| child_id == node_id) {
+            return Err(Error::ExperimentState(format!(
+                "hierarchy subject {node_id} is not a top-level branch"
+            )));
+        }
+        let mut nodes = Vec::new();
+        self.collect_branch_revision_nodes(node_id, &mut nodes)?;
+        canonical_sha256(&("hierarchy-branch-review-v1", nodes))
+    }
+
+    fn collect_branch_revision_nodes(
+        &self,
+        node_id: &str,
+        nodes: &mut Vec<(String, String, String, Vec<String>)>,
+    ) -> Result<()> {
         let node = self.node(node_id).ok_or_else(|| {
             Error::ExperimentState(format!("hierarchy subject {node_id} is missing"))
         })?;
-        if node.is_leaf() {
-            let mut memberships = node
-                .memberships
-                .iter()
-                .map(|membership| {
-                    self.membership_revision(
-                        approved_notes,
-                        node.node_id.as_str(),
-                        membership.note_id.as_str(),
-                    )
-                })
-                .collect::<Result<Vec<_>>>()?;
-            memberships.sort_unstable();
-            canonical_sha256(&(
-                "leaf-subject-v1",
-                node.node_id.as_str(),
-                node.label.as_str(),
-                node.scope.as_str(),
-                memberships,
-            ))
-        } else {
-            let mut children = node
-                .children
-                .iter()
-                .map(|child_id| {
-                    let child = self.node(child_id).ok_or_else(|| {
-                        Error::ExperimentState(format!(
-                            "hierarchy subject {node_id} names missing child {child_id}"
-                        ))
-                    })?;
-                    Ok((
-                        child.node_id.as_str(),
-                        child.label.as_str(),
-                        child.scope.as_str(),
-                    ))
-                })
-                .collect::<Result<Vec<_>>>()?;
-            children.sort_unstable_by_key(|(child_id, _, _)| *child_id);
-            canonical_sha256(&(
-                "parent-subject-v1",
-                node.node_id.as_str(),
-                node.label.as_str(),
-                node.scope.as_str(),
-                children,
-            ))
+        nodes.push((
+            node.node_id.clone(),
+            node.label.clone(),
+            node.scope.clone(),
+            node.children.clone(),
+        ));
+        for child_id in &node.children {
+            self.collect_branch_revision_nodes(child_id, nodes)?;
         }
-    }
-
-    fn parent_child_revision(&self, parent_id: &str, child_id: &str) -> Result<String> {
-        let parent = self.node(parent_id).ok_or_else(|| {
-            Error::ExperimentState(format!("hierarchy parent {parent_id} is missing"))
-        })?;
-        if !parent.children.iter().any(|child| child == child_id) {
-            return invalid(format!(
-                "hierarchy subject {child_id} is not a direct child of {parent_id}"
-            ));
-        }
-        let child = self.node(child_id).ok_or_else(|| {
-            Error::ExperimentState(format!("hierarchy child {child_id} is missing"))
-        })?;
-        if parent.node_id == self.root_node_id {
-            canonical_sha256(&(
-                "top-level-choice-v1",
-                parent.node_id.as_str(),
-                child.node_id.as_str(),
-                child.label.as_str(),
-                child.scope.as_str(),
-            ))
-        } else {
-            canonical_sha256(&(
-                "parent-child-v1",
-                parent.node_id.as_str(),
-                parent.label.as_str(),
-                parent.scope.as_str(),
-                child.node_id.as_str(),
-                child.label.as_str(),
-                child.scope.as_str(),
-            ))
-        }
+        Ok(())
     }
 
     fn target_revision(
@@ -766,17 +750,15 @@ impl HierarchyDraft {
         target: &HierarchyReviewTarget,
     ) -> Result<String> {
         match target {
-            HierarchyReviewTarget::Membership {
-                subject_id,
-                note_id,
-            } => self.membership_revision(approved_notes, subject_id, note_id),
-            HierarchyReviewTarget::Subject { node_id } => {
-                self.subject_revision(approved_notes, node_id)
+            HierarchyReviewTarget::NoteMap { note_id } => {
+                self.note_map_revision(approved_notes, note_id)
             }
-            HierarchyReviewTarget::ParentChild {
-                parent_id,
-                child_id,
-            } => self.parent_child_revision(parent_id, child_id),
+            HierarchyReviewTarget::Branch { node_id } => self.branch_revision(node_id),
+            HierarchyReviewTarget::Membership { .. }
+            | HierarchyReviewTarget::Subject { .. }
+            | HierarchyReviewTarget::ParentChild { .. } => {
+                invalid("legacy hierarchy review targets have no grouped revision")
+            }
         }
     }
 }
@@ -814,6 +796,8 @@ pub struct HierarchyReviewDecision {
 #[derive(Clone, Debug, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
 #[serde(rename_all = "snake_case", tag = "kind")]
 pub enum HierarchyReviewTarget {
+    NoteMap { note_id: String },
+    Branch { node_id: String },
     Membership { subject_id: String, note_id: String },
     Subject { node_id: String },
     ParentChild { parent_id: String, child_id: String },
@@ -845,6 +829,7 @@ enum HierarchyReviewRecord {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(deny_unknown_fields)]
 struct FocusCoverageReviewRecord {
+    // The serialized name is retained so prior session envelopes can verify before migration.
     pub leaf_map_revision_sha256: String,
     pub decision: HierarchyReviewDecision,
 }
@@ -861,7 +846,7 @@ impl HierarchyReviewSession {
     pub fn new(draft: &HierarchyDraft, approved_notes: &ApprovedNoteSet) -> Result<Self> {
         draft.validate(approved_notes)?;
         Ok(Self {
-            schema_version: 3,
+            schema_version: 4,
             history: Vec::new(),
             focus_coverage_history: Vec::new(),
         })
@@ -869,21 +854,30 @@ impl HierarchyReviewSession {
 
     pub fn reconcile_legacy_empty(&mut self) -> Result<()> {
         match self.schema_version {
-            2 if self.history.is_empty() && self.focus_coverage_history.is_empty() => {
-                self.schema_version = 3;
+            2 | 3 if self.history.is_empty() && self.focus_coverage_history.is_empty() => {
+                self.schema_version = 4;
                 Ok(())
             }
-            2 => invalid(
-                "the old bundled hierarchy review contains decisions and cannot be migrated to atomic decisions",
+            2 | 3 => invalid(
+                "the prior hierarchy review contains decisions and cannot be reinterpreted as note-map and branch reviews",
             ),
-            3 if self
+            4 if self
                 .history
                 .iter()
-                .all(|record| matches!(record, HierarchyReviewRecord::Atomic(_))) =>
+                .all(|record| {
+                    matches!(
+                        record,
+                        HierarchyReviewRecord::Atomic(AtomicHierarchyReviewRecord {
+                            target: HierarchyReviewTarget::NoteMap { .. }
+                                | HierarchyReviewTarget::Branch { .. },
+                            ..
+                        })
+                    )
+                }) =>
             {
                 Ok(())
             }
-            3 => invalid("an atomic hierarchy review contains a legacy bundled decision"),
+            4 => invalid("a grouped hierarchy review contains a legacy decision"),
             version => invalid(format!(
                 "hierarchy review session schema {version} is unsupported"
             )),
@@ -898,7 +892,7 @@ impl HierarchyReviewSession {
         decision: HierarchyReviewDecision,
     ) -> Result<()> {
         draft.validate(approved_notes)?;
-        if self.schema_version != 3 {
+        if self.schema_version != 4 {
             return invalid("hierarchy review session must be migrated before recording decisions");
         }
         validate_review_decision(decision.outcome, &decision.comment)?;
@@ -944,101 +938,16 @@ impl HierarchyReviewSession {
             .is_some_and(|decision| decision.outcome == ReviewOutcome::Approved)
     }
 
-    fn membership_target(subject_id: &str, note_id: &str) -> HierarchyReviewTarget {
-        HierarchyReviewTarget::Membership {
-            subject_id: subject_id.to_owned(),
+    fn note_map_target(note_id: &str) -> HierarchyReviewTarget {
+        HierarchyReviewTarget::NoteMap {
             note_id: note_id.to_owned(),
         }
     }
 
-    fn subject_target(node_id: &str) -> HierarchyReviewTarget {
-        HierarchyReviewTarget::Subject {
+    fn branch_target(node_id: &str) -> HierarchyReviewTarget {
+        HierarchyReviewTarget::Branch {
             node_id: node_id.to_owned(),
         }
-    }
-
-    fn parent_child_target(parent_id: &str, child_id: &str) -> HierarchyReviewTarget {
-        HierarchyReviewTarget::ParentChild {
-            parent_id: parent_id.to_owned(),
-            child_id: child_id.to_owned(),
-        }
-    }
-
-    fn membership_is_approved(
-        &self,
-        draft: &HierarchyDraft,
-        approved_notes: &ApprovedNoteSet,
-        subject_id: &str,
-        note_id: &str,
-    ) -> bool {
-        self.is_approved(
-            draft,
-            approved_notes,
-            &Self::membership_target(subject_id, note_id),
-        )
-    }
-
-    fn subject_is_approved(
-        &self,
-        draft: &HierarchyDraft,
-        approved_notes: &ApprovedNoteSet,
-        node_id: &str,
-    ) -> bool {
-        self.is_approved(draft, approved_notes, &Self::subject_target(node_id))
-    }
-
-    fn parent_child_is_approved(
-        &self,
-        draft: &HierarchyDraft,
-        approved_notes: &ApprovedNoteSet,
-        parent_id: &str,
-        child_id: &str,
-    ) -> bool {
-        self.is_approved(
-            draft,
-            approved_notes,
-            &Self::parent_child_target(parent_id, child_id),
-        )
-    }
-
-    fn leaf_is_approved(
-        &self,
-        draft: &HierarchyDraft,
-        approved_notes: &ApprovedNoteSet,
-        leaf: &SubjectNode,
-    ) -> bool {
-        leaf.memberships.iter().all(|membership| {
-            self.membership_is_approved(
-                draft,
-                approved_notes,
-                leaf.node_id.as_str(),
-                membership.note_id.as_str(),
-            )
-        }) && self.subject_is_approved(draft, approved_notes, leaf.node_id.as_str())
-    }
-
-    fn node_is_approved(
-        &self,
-        draft: &HierarchyDraft,
-        approved_notes: &ApprovedNoteSet,
-        node_id: &str,
-    ) -> bool {
-        let node = draft
-            .node(node_id)
-            .expect("validated hierarchy contains every node");
-        if node.is_leaf() {
-            return self.leaf_is_approved(draft, approved_notes, node);
-        }
-        node.children.iter().all(|child_id| {
-            self.node_is_approved(draft, approved_notes, child_id)
-                && self.parent_child_is_approved(
-                    draft,
-                    approved_notes,
-                    node.node_id.as_str(),
-                    child_id,
-                )
-        }) && (node.node_id == draft.root_node_id
-            || self.subject_is_approved(draft, approved_notes, node.node_id.as_str()))
     }
 
     fn current_outcome(
@@ -1051,49 +960,23 @@ impl HierarchyReviewSession {
             .map(|decision| decision.outcome)
     }
 
-    fn leaf_targets(
-        &self,
-        draft: &HierarchyDraft,
-        approved_notes: &ApprovedNoteSet,
-        leaf: &SubjectNode,
-    ) -> Vec<HierarchyReviewTarget> {
-        let mut memberships = leaf.memberships.iter().collect::<Vec<_>>();
-        memberships.sort_unstable_by(|left, right| {
-            right
-                .strength
-                .rank()
-                .cmp(&left.strength.rank())
-                .then_with(|| left.note_id.cmp(&right.note_id))
-        });
-        let membership_targets = memberships
+    fn note_map_targets(approved_notes: &ApprovedNoteSet) -> Vec<HierarchyReviewTarget> {
+        let mut notes = approved_notes.notes.iter().collect::<Vec<_>>();
+        notes.sort_unstable_by_key(|note| note.slot);
+        notes
             .into_iter()
-            .map(|membership| {
-                Self::membership_target(leaf.node_id.as_str(), membership.note_id.as_str())
-            })
-            .collect::<Vec<_>>();
-        let pending = membership_targets
+            .map(|note| Self::note_map_target(note.note_id.as_str()))
+            .collect()
+    }
+
+    fn branch_targets(draft: &HierarchyDraft) -> Vec<HierarchyReviewTarget> {
+        draft
+            .node(draft.root_node_id.as_str())
+            .expect("validated hierarchy contains the hidden root")
+            .children
             .iter()
-            .filter(|target| {
-                self.current_decision(draft, approved_notes, target)
-                    .is_none()
-            })
-            .cloned()
-            .collect::<Vec<_>>();
-        if !pending.is_empty() {
-            return pending;
-        }
-        if membership_targets.iter().all(|target| {
-            self.current_outcome(draft, approved_notes, target) == Some(ReviewOutcome::Approved)
-        }) {
-            let subject = Self::subject_target(leaf.node_id.as_str());
-            if self
-                .current_decision(draft, approved_notes, &subject)
-                .is_none()
-            {
-                return vec![subject];
-            }
-        }
-        Vec::new()
+            .map(|node_id| Self::branch_target(node_id.as_str()))
+            .collect()
     }
 
     pub fn reviewable_targets(
@@ -1102,96 +985,37 @@ impl HierarchyReviewSession {
         approved_notes: &ApprovedNoteSet,
     ) -> Result<Vec<HierarchyReviewTarget>> {
         draft.validate(approved_notes)?;
-        if self.schema_version != 3 {
+        if self.schema_version != 4 {
             return invalid("hierarchy review session must be migrated before review");
         }
 
-        let mut tree_order = Vec::with_capacity(draft.nodes.len());
-        collect_all_node_ids_in_tree_order(draft, draft.root_node_id.as_str(), &mut tree_order);
-        for node_id in &tree_order {
-            let node = draft
-                .node(node_id)
-                .expect("validated hierarchy contains every node");
-            if !node.is_leaf() {
-                continue;
-            }
-            let targets = self.leaf_targets(draft, approved_notes, node);
-            if !targets.is_empty() {
-                return Ok(targets);
-            }
-        }
-
-        if !self.all_leaves_approved(draft, approved_notes)
-            || !self.focus_coverage_is_approved(draft, approved_notes)
-        {
-            return Ok(Vec::new());
-        }
-
-        let maximum_height = draft
-            .nodes
+        let note_targets = Self::note_map_targets(approved_notes);
+        let pending_notes = note_targets
             .iter()
-            .map(|node| node_height(draft, node.node_id.as_str()))
-            .max()
-            .unwrap_or(0);
-        for height in 1..maximum_height {
-            for node_id in &tree_order {
-                let node = draft
-                    .node(node_id)
-                    .expect("validated hierarchy contains every node");
-                if node.node_id == draft.root_node_id
-                    || node.is_leaf()
-                    || node_height(draft, node.node_id.as_str()) != height
-                {
-                    continue;
-                }
-                let edge_targets = node
-                    .children
-                    .iter()
-                    .filter(|child| self.node_is_approved(draft, approved_notes, child))
-                    .map(|child| Self::parent_child_target(node.node_id.as_str(), child.as_str()))
-                    .collect::<Vec<_>>();
-                let pending_edges = edge_targets
-                    .iter()
-                    .filter(|target| {
-                        self.current_decision(draft, approved_notes, target)
-                            .is_none()
-                    })
-                    .cloned()
-                    .collect::<Vec<_>>();
-                if !pending_edges.is_empty() {
-                    return Ok(pending_edges);
-                }
-                if edge_targets.len() == node.children.len()
-                    && edge_targets.iter().all(|target| {
-                        self.current_outcome(draft, approved_notes, target)
-                            == Some(ReviewOutcome::Approved)
-                    })
-                {
-                    let subject = Self::subject_target(node.node_id.as_str());
-                    if self
-                        .current_decision(draft, approved_notes, &subject)
-                        .is_none()
-                    {
-                        return Ok(vec![subject]);
-                    }
-                }
-            }
-        }
-
-        let root = draft
-            .node(draft.root_node_id.as_str())
-            .expect("validated hierarchy contains the hidden root");
-        let pending_root_edges = root
-            .children
-            .iter()
-            .filter(|child| self.node_is_approved(draft, approved_notes, child))
-            .map(|child| Self::parent_child_target(root.node_id.as_str(), child.as_str()))
             .filter(|target| {
                 self.current_decision(draft, approved_notes, target)
                     .is_none()
             })
+            .cloned()
             .collect::<Vec<_>>();
-        Ok(pending_root_edges)
+        if !pending_notes.is_empty() {
+            return Ok(pending_notes);
+        }
+        if !note_targets.iter().all(|target| {
+            self.current_outcome(draft, approved_notes, target) == Some(ReviewOutcome::Approved)
+        }) {
+            return Ok(Vec::new());
+        }
+
+        let branch_targets = Self::branch_targets(draft);
+        Ok(branch_targets
+            .iter()
+            .filter(|target| {
+                self.current_decision(draft, approved_notes, target)
+                    .is_none()
+            })
+            .cloned()
+            .collect())
     }
 
     pub fn decision_counts(
@@ -1199,7 +1023,7 @@ impl HierarchyReviewSession {
         draft: &HierarchyDraft,
         approved_notes: &ApprovedNoteSet,
     ) -> Result<(usize, usize, usize)> {
-        let targets = all_review_targets(draft);
+        let targets = all_review_targets(draft, approved_notes);
         let mut approved = 0;
         let mut rejected = 0;
         for target in &targets {
@@ -1226,7 +1050,8 @@ impl HierarchyReviewSession {
         approved_notes: &ApprovedNoteSet,
     ) -> bool {
         self.focus_coverage_is_approved(draft, approved_notes)
-            && self.node_is_approved(draft, approved_notes, draft.root_node_id.as_str())
+            && self.all_note_maps_approved(draft, approved_notes)
+            && self.all_branches_approved(draft, approved_notes)
     }
 
     pub fn record_focus_coverage(
@@ -1236,13 +1061,15 @@ impl HierarchyReviewSession {
         decision: HierarchyReviewDecision,
     ) -> Result<()> {
         draft.validate(approved_notes)?;
-        if self.schema_version != 3 {
+        if self.schema_version != 4 {
             return invalid("hierarchy review session must be migrated before recording decisions");
         }
         validate_review_decision(decision.outcome, &decision.comment)?;
-        if !self.all_leaves_approved(draft, approved_notes) {
+        if !self.all_note_maps_approved(draft, approved_notes)
+            || !self.all_branches_approved(draft, approved_notes)
+        {
             return invalid(
-                "focus-concentration coverage cannot be reviewed until every leaf mapping is approved",
+                "focus-concentration coverage cannot be reviewed until every note map and hierarchy branch is approved",
             );
         }
         if self
@@ -1250,11 +1077,11 @@ impl HierarchyReviewSession {
             .is_some()
         {
             return invalid(
-                "focus-concentration coverage already has a decision for the current leaf map",
+                "focus-concentration coverage already has a decision for the current summary",
             );
         }
         self.focus_coverage_history.push(FocusCoverageReviewRecord {
-            leaf_map_revision_sha256: draft.leaf_map_revision(approved_notes)?,
+            leaf_map_revision_sha256: draft.focus_coverage_revision(approved_notes)?,
             decision,
         });
         Ok(())
@@ -1265,7 +1092,7 @@ impl HierarchyReviewSession {
         draft: &HierarchyDraft,
         approved_notes: &ApprovedNoteSet,
     ) -> Option<&HierarchyReviewDecision> {
-        let revision = draft.leaf_map_revision(approved_notes).ok()?;
+        let revision = draft.focus_coverage_revision(approved_notes).ok()?;
         self.focus_coverage_history
             .iter()
             .rev()
@@ -1282,16 +1109,24 @@ impl HierarchyReviewSession {
             .is_some_and(|decision| decision.outcome == ReviewOutcome::Approved)
     }
 
-    pub fn all_leaves_approved(
+    pub fn all_note_maps_approved(
         &self,
         draft: &HierarchyDraft,
         approved_notes: &ApprovedNoteSet,
     ) -> bool {
-        draft
-            .nodes
+        Self::note_map_targets(approved_notes)
             .iter()
-            .filter(|node| node.is_leaf())
-            .all(|node| self.leaf_is_approved(draft, approved_notes, node))
+            .all(|target| self.is_approved(draft, approved_notes, target))
+    }
+
+    pub fn all_branches_approved(
+        &self,
+        draft: &HierarchyDraft,
+        approved_notes: &ApprovedNoteSet,
+    ) -> bool {
+        Self::branch_targets(draft)
+            .iter()
+            .all(|target| self.is_approved(draft, approved_notes, target))
     }
 }
 
@@ -1302,89 +1137,12 @@ fn validate_review_decision(outcome: ReviewOutcome, comment: &str) -> Result<()>
     Ok(())
 }
 
-fn node_height(draft: &HierarchyDraft, node_id: &str) -> usize {
-    let node = draft
-        .node(node_id)
-        .expect("validated hierarchy contains every child");
-    node.children
-        .iter()
-        .map(|child| node_height(draft, child))
-        .max()
-        .map_or(0, |height| height + 1)
-}
-
-fn collect_all_node_ids_in_tree_order(
+fn all_review_targets(
     draft: &HierarchyDraft,
-    node_id: &str,
-    ordered: &mut Vec<String>,
-) {
-    ordered.push(node_id.to_owned());
-    let node = draft
-        .node(node_id)
-        .expect("validated hierarchy contains every child");
-    for child in &node.children {
-        collect_all_node_ids_in_tree_order(draft, child, ordered);
-    }
-}
-
-fn all_review_targets(draft: &HierarchyDraft) -> Vec<HierarchyReviewTarget> {
-    let mut tree_order = Vec::with_capacity(draft.nodes.len());
-    collect_all_node_ids_in_tree_order(draft, draft.root_node_id.as_str(), &mut tree_order);
-    let mut targets = Vec::new();
-    for node_id in tree_order.iter().filter(|node_id| {
-        draft
-            .node(node_id)
-            .expect("validated hierarchy contains every node")
-            .is_leaf()
-    }) {
-        let node = draft
-            .node(node_id)
-            .expect("validated hierarchy contains every node");
-        let mut memberships = node.memberships.iter().collect::<Vec<_>>();
-        memberships.sort_unstable_by(|left, right| {
-            right
-                .strength
-                .rank()
-                .cmp(&left.strength.rank())
-                .then_with(|| left.note_id.cmp(&right.note_id))
-        });
-        targets.extend(memberships.into_iter().map(|membership| {
-            HierarchyReviewSession::membership_target(
-                node.node_id.as_str(),
-                membership.note_id.as_str(),
-            )
-        }));
-        targets.push(HierarchyReviewSession::subject_target(
-            node.node_id.as_str(),
-        ));
-    }
-    let maximum_height = draft
-        .nodes
-        .iter()
-        .map(|node| node_height(draft, node.node_id.as_str()))
-        .max()
-        .unwrap_or(0);
-    for height in 1..=maximum_height {
-        for node_id in &tree_order {
-            let node = draft
-                .node(node_id)
-                .expect("validated hierarchy contains every node");
-            if node.is_leaf() || node_height(draft, node.node_id.as_str()) != height {
-                continue;
-            }
-            targets.extend(node.children.iter().map(|child_id| {
-                HierarchyReviewSession::parent_child_target(
-                    node.node_id.as_str(),
-                    child_id.as_str(),
-                )
-            }));
-            if node.node_id != draft.root_node_id {
-                targets.push(HierarchyReviewSession::subject_target(
-                    node.node_id.as_str(),
-                ));
-            }
-        }
-    }
+    approved_notes: &ApprovedNoteSet,
+) -> Vec<HierarchyReviewTarget> {
+    let mut targets = HierarchyReviewSession::note_map_targets(approved_notes);
+    targets.extend(HierarchyReviewSession::branch_targets(draft));
     targets
 }
 
@@ -1421,7 +1179,7 @@ impl ApprovedHierarchy {
         }
         if !session.review_is_complete(draft, approved_notes) {
             return invalid(
-                "cannot publish hierarchy while atomic memberships, subjects, or relationships remain unapproved",
+                "cannot publish hierarchy while note maps or hierarchy branches remain unapproved",
             );
         }
         let notes = approved_notes
