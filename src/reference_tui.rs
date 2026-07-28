@@ -35,12 +35,19 @@ pub struct ApprovalEvidence {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
+pub struct ApprovalGuidance {
+    pub title: String,
+    pub body: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ApprovalScreen {
     pub heading: String,
     pub title: String,
     pub scope: String,
     pub approve_label: String,
     pub reject_label: String,
+    pub guidance: Option<ApprovalGuidance>,
     pub evidence: Vec<ApprovalEvidence>,
 }
 
@@ -59,6 +66,8 @@ pub struct ApprovalTuiModel {
     screen: ApprovalScreen,
     evidence_index: usize,
     scroll: u16,
+    guidance_scroll: u16,
+    guidance_visible: bool,
     half_page_lines: u16,
     pending_outcome: Option<ReviewOutcome>,
     comment: String,
@@ -72,6 +81,10 @@ impl ApprovalTuiModel {
         screen.scope = terminal_safe(&screen.scope);
         screen.approve_label = terminal_safe(&screen.approve_label);
         screen.reject_label = terminal_safe(&screen.reject_label);
+        if let Some(guidance) = &mut screen.guidance {
+            guidance.title = terminal_safe(&guidance.title);
+            guidance.body = terminal_safe(&guidance.body);
+        }
         for evidence in &mut screen.evidence {
             evidence.title = terminal_safe(&evidence.title);
             evidence.annotation = terminal_safe(&evidence.annotation);
@@ -81,6 +94,8 @@ impl ApprovalTuiModel {
             screen,
             evidence_index: 0,
             scroll: 0,
+            guidance_scroll: 0,
+            guidance_visible: false,
             half_page_lines: 1,
             pending_outcome: None,
             comment: String::new(),
@@ -107,10 +122,20 @@ impl ApprovalTuiModel {
         if key.modifiers == KeyModifiers::CONTROL {
             match key.code {
                 KeyCode::Char('d' | 'D') => {
-                    self.scroll = self.scroll.saturating_add(self.half_page_lines);
+                    let scroll = if self.guidance_visible {
+                        &mut self.guidance_scroll
+                    } else {
+                        &mut self.scroll
+                    };
+                    *scroll = scroll.saturating_add(self.half_page_lines);
                 }
                 KeyCode::Char('u' | 'U') => {
-                    self.scroll = self.scroll.saturating_sub(self.half_page_lines);
+                    let scroll = if self.guidance_visible {
+                        &mut self.guidance_scroll
+                    } else {
+                        &mut self.scroll
+                    };
+                    *scroll = scroll.saturating_sub(self.half_page_lines);
                 }
                 _ => {}
             }
@@ -119,7 +144,34 @@ impl ApprovalTuiModel {
         if has_command_modifier(key.modifiers) {
             return ApprovalTuiAction::None;
         }
+        if self.guidance_visible {
+            match key.code {
+                KeyCode::Char('?') | KeyCode::Esc => {
+                    self.guidance_visible = false;
+                    self.guidance_scroll = 0;
+                }
+                KeyCode::Down | KeyCode::Char('j' | 'J') => {
+                    self.guidance_scroll = self.guidance_scroll.saturating_add(1);
+                }
+                KeyCode::Up | KeyCode::Char('k' | 'K') => {
+                    self.guidance_scroll = self.guidance_scroll.saturating_sub(1);
+                }
+                KeyCode::PageDown => {
+                    self.guidance_scroll = self.guidance_scroll.saturating_add(PAGE_LINES);
+                }
+                KeyCode::PageUp => {
+                    self.guidance_scroll = self.guidance_scroll.saturating_sub(PAGE_LINES);
+                }
+                KeyCode::Home => self.guidance_scroll = 0,
+                _ => {}
+            }
+            return ApprovalTuiAction::None;
+        }
         match key.code {
+            KeyCode::Char('?') if self.screen.guidance.is_some() => {
+                self.guidance_visible = true;
+                self.guidance_scroll = 0;
+            }
             KeyCode::Char('a' | 'A') => {
                 self.pending_outcome = Some(ReviewOutcome::Approved);
                 self.comment.clear();
@@ -238,7 +290,21 @@ impl ApprovalTuiModel {
         );
         frame.render_widget(scope, rows[2]);
 
-        if let Some(evidence) = self.screen.evidence.get(self.evidence_index) {
+        if self.guidance_visible {
+            let guidance = self
+                .screen
+                .guidance
+                .as_ref()
+                .expect("visible guidance must be present");
+            render_scrollable_panel(
+                frame,
+                rows[3],
+                &guidance.title,
+                &guidance.body,
+                &mut self.guidance_scroll,
+                &mut self.half_page_lines,
+            );
+        } else if let Some(evidence) = self.screen.evidence.get(self.evidence_index) {
             let title = if self.screen.evidence.len() > 1 {
                 format!(
                     "{} · {} of {}",
@@ -269,7 +335,22 @@ impl ApprovalTuiModel {
             );
         }
 
-        let footer = if let Some(outcome) = self.pending_outcome {
+        let footer = if self.guidance_visible {
+            vec![
+                Line::from(vec![
+                    Span::styled("[?]/[Esc]", accent_style()),
+                    Span::styled(" Back to note", secondary_style()),
+                ]),
+                Line::from(vec![
+                    Span::styled("[↑/↓]", accent_style()),
+                    Span::styled(" Scroll  ", secondary_style()),
+                    Span::styled("[Ctrl-D/U]", accent_style()),
+                    Span::styled(" Half-page  ", secondary_style()),
+                    Span::styled("[Ctrl-C]", accent_style()),
+                    Span::styled(" Pause", secondary_style()),
+                ]),
+            ]
+        } else if let Some(outcome) = self.pending_outcome {
             let decision = match outcome {
                 ReviewOutcome::Approved => "Approve",
                 ReviewOutcome::Rejected => "Reject",
@@ -300,6 +381,24 @@ impl ApprovalTuiModel {
                 ]),
             ]
         } else {
+            let mut navigation_controls = vec![
+                Span::styled("[Tab/←/→]", accent_style()),
+                Span::styled(" Evidence  ", secondary_style()),
+            ];
+            if self.screen.guidance.is_some() {
+                navigation_controls.extend([
+                    Span::styled("[?]", accent_style()),
+                    Span::styled(" Rejection guide  ", secondary_style()),
+                ]);
+            }
+            navigation_controls.extend([
+                Span::styled("[↑/↓]", accent_style()),
+                Span::styled(" Scroll  ", secondary_style()),
+                Span::styled("[Ctrl-D/U]", accent_style()),
+                Span::styled(" Half-page  ", secondary_style()),
+                Span::styled("[Ctrl-C]", accent_style()),
+                Span::styled(" Pause", secondary_style()),
+            ]);
             vec![
                 Line::from(vec![
                     Span::styled("[A]", accent_style()),
@@ -313,16 +412,7 @@ impl ApprovalTuiModel {
                         secondary_style(),
                     ),
                 ]),
-                Line::from(vec![
-                    Span::styled("[Tab/←/→]", accent_style()),
-                    Span::styled(" Evidence  ", secondary_style()),
-                    Span::styled("[↑/↓]", accent_style()),
-                    Span::styled(" Scroll  ", secondary_style()),
-                    Span::styled("[Ctrl-D/U]", accent_style()),
-                    Span::styled(" Half-page  ", secondary_style()),
-                    Span::styled("[Ctrl-C]", accent_style()),
-                    Span::styled(" Pause", secondary_style()),
-                ]),
+                Line::from(navigation_controls),
             ]
         };
         let footer = Paragraph::new(footer).wrap(Wrap { trim: false });

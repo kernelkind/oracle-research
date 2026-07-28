@@ -16,7 +16,7 @@ use crate::reference_map::{
     NoteReviewSession, PairMembership, ProposedNote, ReviewOutcome, SelectionSource, SubjectNode,
 };
 use crate::reference_tui::{
-    ApprovalEvidence, ApprovalScreen, ApprovalTuiAction, ReferenceTerminal,
+    ApprovalEvidence, ApprovalGuidance, ApprovalScreen, ApprovalTuiAction, ReferenceTerminal,
 };
 use crate::snapshot::{io_error, Error, Result};
 
@@ -406,6 +406,7 @@ fn focus_coverage_screen(
                 .to_owned(),
         approve_label: "Approve — no known coverage gap".to_owned(),
         reject_label: "Reject — describe the gap".to_owned(),
+        guidance: None,
         evidence,
     }
 }
@@ -486,12 +487,26 @@ fn note_screen(
     Ok(ApprovalScreen {
         heading: format!("Candidate {slot} of 64 · {approved} approved · {rejected} rejected"),
         title: format!("Slot {slot:02}"),
-        scope: "Is there a concrete reason this note should not be included in the 64-note reference set?\n\
-                Reject: corrupt/truncated/empty text · language you cannot judge · missing essential context · duplicate/near-duplicate · wrong diagnostic annotation\n\
-                Not defects: disagreement · several subjects · niche/ambiguous · old · uninteresting"
-            .to_owned(),
+        scope:
+            "Is there a concrete reason this note should not be included in the 64-note reference set?"
+                .to_owned(),
         approve_label: "Approve — no disqualifying problem".to_owned(),
         reject_label: "Reject — explain the problem".to_owned(),
+        guidance: Some(ApprovalGuidance {
+            title: "Rejection guide".to_owned(),
+            body: "Reject only when:\n\n\
+                   • Text is corrupt, truncated, or effectively empty.\n\
+                   • The note is in a language you cannot judge.\n\
+                   • Essential meaning depends on missing context.\n\
+                   • It duplicates or nearly duplicates another selected note.\n\
+                   • A diagnostic annotation is wrong.\n\n\
+                   Do not reject merely because:\n\n\
+                   • You disagree with it.\n\
+                   • It has several subjects.\n\
+                   • It is niche, ambiguous, old, or personally uninteresting.\n\n\
+                   A URL is only a problem when its contents are necessary to understand the note."
+                .to_owned(),
+        }),
         evidence,
     })
 }
@@ -620,6 +635,7 @@ fn hierarchy_screen(
         scope: node.scope.clone(),
         approve_label: "Approve — no concrete problem".to_owned(),
         reject_label: "Reject — explain the problem".to_owned(),
+        guidance: None,
         evidence,
     })
 }

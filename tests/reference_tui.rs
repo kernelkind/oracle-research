@@ -4,8 +4,8 @@ use oracle_mvp::reference_map::{
     SubjectNode,
 };
 use oracle_mvp::reference_tui::{
-    ApprovalEvidence, ApprovalScreen, ApprovalTuiAction, ApprovalTuiModel, NavigationTuiAction,
-    ReferenceNavigationTuiModel,
+    ApprovalEvidence, ApprovalGuidance, ApprovalScreen, ApprovalTuiAction, ApprovalTuiModel,
+    NavigationTuiAction, ReferenceNavigationTuiModel,
 };
 use ratatui::backend::TestBackend;
 use ratatui::Terminal;
@@ -19,12 +19,26 @@ fn approval_screen() -> ApprovalScreen {
     ApprovalScreen {
         heading: "Candidate 7 of 64 · 4 approved · 2 rejected".to_owned(),
         title: "Slot 07".to_owned(),
-        scope: "Is there a concrete reason this note should not be included in the 64-note reference set?\n\
-                Reject: corrupt/truncated/empty text · language you cannot judge · missing essential context · duplicate/near-duplicate · wrong diagnostic annotation\n\
-                Not defects: disagreement · several subjects · niche/ambiguous · old · uninteresting"
-            .to_owned(),
+        scope:
+            "Is there a concrete reason this note should not be included in the 64-note reference set?"
+                .to_owned(),
         approve_label: "Approve — no disqualifying problem".to_owned(),
         reject_label: "Reject — explain the problem".to_owned(),
+        guidance: Some(ApprovalGuidance {
+            title: "Rejection guide".to_owned(),
+            body: "Reject only when:\n\n\
+                   • Text is corrupt, truncated, or effectively empty.\n\
+                   • The note is in a language you cannot judge.\n\
+                   • Essential meaning depends on missing context.\n\
+                   • It duplicates or nearly duplicates another selected note.\n\
+                   • A diagnostic annotation is wrong.\n\n\
+                   Do not reject merely because:\n\n\
+                   • You disagree with it.\n\
+                   • It has several subjects.\n\
+                   • It is niche, ambiguous, old, or personally uninteresting.\n\n\
+                   A URL is only a problem when its contents are necessary to understand the note."
+                .to_owned(),
+        }),
         evidence: vec![
             ApprovalEvidence {
                 title: "Candidate note".to_owned(),
@@ -66,11 +80,11 @@ fn compact_guidance_preserves_the_note_and_controls_at_minimum_terminal_size() {
     let rendered = render_approval_at(&mut model, 72, 24);
     let normalized = rendered.split_whitespace().collect::<Vec<_>>().join(" ");
 
+    assert!(normalized.contains("[?] Rejection guide"), "{rendered}");
     assert!(
-        normalized.contains("wrong diagnostic annotation"),
+        !normalized.contains("missing essential context"),
         "{rendered}"
     );
-    assert!(normalized.contains("old · uninteresting"), "{rendered}");
     assert!(normalized.contains("Rust programmer"), "{rendered}");
     assert!(normalized.contains("[A] Approve"), "{rendered}");
 }
@@ -86,13 +100,8 @@ fn approval_ui_shows_the_negative_review_question_and_switches_to_the_comparison
         normalized.contains("Is there a concrete reason this note should not be included"),
         "{first}"
     );
-    assert!(normalized.contains("missing essential context"), "{first}");
-    assert!(
-        normalized.contains("wrong diagnostic annotation"),
-        "{first}"
-    );
-    assert!(normalized.contains("Not defects: disagreement"), "{first}");
-    assert!(normalized.contains("niche/ambiguous"), "{first}");
+    assert!(normalized.contains("[?] Rejection guide"), "{first}");
+    assert!(!normalized.contains("missing essential context"), "{first}");
     assert!(
         first.contains("Approve — no disqualifying problem"),
         "{first}"
@@ -108,6 +117,93 @@ fn approval_ui_shows_the_negative_review_question_and_switches_to_the_comparison
     assert!(second.contains("Comparison note"), "{second}");
     assert!(second.contains("reviewed separately"), "{second}");
     assert!(second.contains("memory models"), "{second}");
+}
+
+#[test]
+fn rejection_guide_temporarily_replaces_the_note_without_changing_review_state() {
+    let mut model = ApprovalTuiModel::new(approval_screen());
+
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('?'))),
+        ApprovalTuiAction::None
+    );
+    let guide = render_approval_at(&mut model, 100, 40);
+    let normalized = guide.split_whitespace().collect::<Vec<_>>().join(" ");
+    assert!(normalized.contains("Rejection guide"), "{guide}");
+    assert!(normalized.contains("missing context"), "{guide}");
+    assert!(normalized.contains("A URL is only a problem"), "{guide}");
+    assert!(!guide.contains("Rust programmer"), "{guide}");
+    assert!(normalized.contains("[?]/[Esc] Back to note"), "{guide}");
+
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('a'))),
+        ApprovalTuiAction::None
+    );
+    assert_eq!(
+        model.handle_event(key(KeyCode::Tab)),
+        ApprovalTuiAction::None
+    );
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('?'))),
+        ApprovalTuiAction::None
+    );
+
+    let restored = render_approval(&mut model);
+    assert!(restored.contains("Candidate note · 1 of 2"), "{restored}");
+    assert!(restored.contains("Rust programmer"), "{restored}");
+    assert!(!restored.contains("Approve comment"), "{restored}");
+
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('?'))),
+        ApprovalTuiAction::None
+    );
+    assert_eq!(
+        model.handle_event(key(KeyCode::Esc)),
+        ApprovalTuiAction::None
+    );
+    let restored_with_escape = render_approval(&mut model);
+    assert!(
+        restored_with_escape.contains("Rust programmer"),
+        "{restored_with_escape}"
+    );
+}
+
+#[test]
+fn screens_without_guidance_do_not_advertise_or_open_it() {
+    let mut screen = approval_screen();
+    screen.guidance = None;
+    let mut model = ApprovalTuiModel::new(screen);
+
+    let initial = render_approval(&mut model);
+    assert!(!initial.contains("Rejection guide"), "{initial}");
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('?'))),
+        ApprovalTuiAction::None
+    );
+    let unchanged = render_approval(&mut model);
+    assert!(unchanged.contains("Rust programmer"), "{unchanged}");
+    assert!(!unchanged.contains("Rejection guide"), "{unchanged}");
+}
+
+#[test]
+fn rejection_guide_scrolls_at_the_minimum_terminal_size() {
+    let mut model = ApprovalTuiModel::new(approval_screen());
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('?'))),
+        ApprovalTuiAction::None
+    );
+
+    let top = render_approval_at(&mut model, 72, 24);
+    assert!(top.contains("Rejection guide · more below"), "{top}");
+    assert_eq!(
+        model.handle_event(Event::Key(KeyEvent::new(
+            KeyCode::Char('d'),
+            KeyModifiers::CONTROL,
+        ))),
+        ApprovalTuiAction::None
+    );
+    let scrolled = render_approval_at(&mut model, 72, 24);
+    assert!(scrolled.contains("more above"), "{scrolled}");
 }
 
 #[test]

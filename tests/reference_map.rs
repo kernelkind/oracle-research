@@ -829,15 +829,25 @@ fn note_review_screen_asks_only_for_a_concrete_disqualifying_problem() {
     assert_eq!(ui.screens[0].title, "Slot 01");
     assert_eq!(
         ui.screens[0].scope,
-        "Is there a concrete reason this note should not be included in the 64-note reference set?\n\
-         Reject: corrupt/truncated/empty text · language you cannot judge · missing essential context · duplicate/near-duplicate · wrong diagnostic annotation\n\
-         Not defects: disagreement · several subjects · niche/ambiguous · old · uninteresting"
+        "Is there a concrete reason this note should not be included in the 64-note reference set?"
     );
     assert_eq!(
         ui.screens[0].approve_label,
         "Approve — no disqualifying problem"
     );
     assert_eq!(ui.screens[0].reject_label, "Reject — explain the problem");
+    let guidance = ui.screens[0]
+        .guidance
+        .as_ref()
+        .expect("note review must provide an optional rejection guide");
+    assert_eq!(guidance.title, "Rejection guide");
+    assert!(guidance.body.contains("missing context"));
+    assert!(guidance.body.contains("Do not reject merely because"));
+    assert!(
+        guidance
+            .body
+            .contains("A URL is only a problem when its contents are necessary")
+    );
     let rendered = format!("{:?}", ui.screens[0]).to_lowercase();
     assert!(
         !rendered.contains("single subject")
