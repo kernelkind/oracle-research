@@ -1185,6 +1185,47 @@ fn tracked_crec_115_proposal_is_complete_and_source_bound() {
 }
 
 #[test]
+fn tracked_crec_115_revision_uses_the_balanced_candidate_set() {
+    let proposal = load_verified_note_proposal("reference_map/crec-115-note-proposal-v2.json")
+        .expect("tracked CREC-115 proposal");
+    let expected = [
+        (
+            55,
+            "f82b8f1742cf74cb2ab19bdbfa249e9685f035b1856c17673444686919ca7807",
+        ),
+        (
+            58,
+            "58e8c1ebebaf100ee5e3d1a217912c2723bf8b1ecd3543e3db28f1a81b7cdf92",
+        ),
+        (
+            61,
+            "474a14dc8aab2970ad2efed18be1e4f000322bf269ad90e8586e6847c0ca95c9",
+        ),
+        (
+            62,
+            "d2dfe7c80ca031b768e525e904f3c5d1d962faf297158f59a1959b06d585225d",
+        ),
+        (
+            63,
+            "8384ac9f054d38e55628cea9395080dce3fa2f8be7a2fa9bd9f2ab9acc0c94ae",
+        ),
+        (
+            64,
+            "54646e5fe43713934c879371c5ce462337b78d7db728c68f088614e27844f7db",
+        ),
+    ];
+
+    for (slot, note_id) in expected {
+        let note = proposal
+            .notes
+            .iter()
+            .find(|note| note.slot == slot)
+            .expect("expected proposal slot");
+        assert_eq!(note.note_id, note_id, "unexpected note in slot {slot}");
+    }
+}
+
+#[test]
 fn tracked_crec_115_plan_matches_the_source_bound_proposal() {
     let plan: serde_json::Value = serde_json::from_slice(
         &fs::read("reference_map/crec-115-note-metadata-v2.json").expect("read selection plan"),

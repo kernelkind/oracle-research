@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "draft_id": "crec-116-reference-hierarchy-v2",
-  "approved_notes_sha256": "12f676adeb6b7c682a16a05911c9714ea5bf3dfe034c7b85d11808757332e599",
+  "approved_notes_sha256": "56443d18c9f63931c39a13caf14dccade37d68ba4a8de8f8b9ae730052ac95b9",
   "root_node_id": "root",
   "nodes": [
     {
@@ -21,15 +21,15 @@
     {
       "node_id": "technology",
       "label": "Technology",
-      "scope": "Software, protocols, AI systems, and physical computing.",
-      "children": ["programming-storage", "linux", "nostr-engineering", "ai-use", "ai-deployment", "maker-computing"],
+      "scope": "Software, protocols, AI systems, physical computing, and mechanical repair.",
+      "children": ["programming-storage", "linux", "nostr-engineering", "ai-use", "ai-deployment", "maker-computing", "repair-maintenance"],
       "memberships": []
     },
     {
       "node_id": "society",
       "label": "Society and exchange",
-      "scope": "Communication, autonomy, attention, markets, and decentralized exchange.",
-      "children": ["open-communication", "sovereignty", "attention-discourse", "creator-exchange", "markets", "bitcoin-applications"],
+      "scope": "Communication, autonomy, attention, language access, work norms, markets, and decentralized exchange.",
+      "children": ["open-communication", "sovereignty", "attention-discourse", "creator-exchange", "markets", "bitcoin-applications", "language-access", "work-culture"],
       "memberships": []
     },
     {
@@ -42,8 +42,8 @@
     {
       "node_id": "wellbeing",
       "label": "Health and personal life",
-      "scope": "Movement, recovery, family, substances, life changes, and everyday fulfillment.",
-      "children": ["activity", "injury-recovery", "family", "substances", "emotional-support", "life-change", "ordinary-joy"],
+      "scope": "Movement, healthcare, recovery, family, substances, life changes, and everyday fulfillment.",
+      "children": ["activity", "health-systems", "injury-recovery", "family", "substances", "emotional-support", "life-change", "ordinary-joy"],
       "memberships": []
     },
     {
@@ -56,8 +56,8 @@
     {
       "node_id": "environment-place",
       "label": "Energy, travel, and nature",
-      "scope": "Energy and climate, movement between places, and encounters with the natural world.",
-      "children": ["energy-climate", "travel-place", "nature-moments"],
+      "scope": "Energy and climate, movement between places, sailing, and encounters with the natural world.",
+      "children": ["energy-climate", "travel-place", "sailing-boats", "nature-moments"],
       "memberships": []
     },
     {
@@ -71,8 +71,7 @@
         {"note_id": "650ee6fe1a6ecc43bb374cb27b50d1317899f6780f2e628beb4b5e93199149bb", "strength": "central"},
         {"note_id": "7d52bf12d1dba7ef59001b7d70189cd7139fd12b9e2972c6faa5b634d5166217", "strength": "substantive"},
         {"note_id": "33552028ba4f99b8bd56ce99bbb7c727849062c8d4ab4d556d58da855104239f", "strength": "central"},
-        {"note_id": "5dc1419732892345b1242e5c99aa8cfefb5b159a0ff9075349cba2fbe01f2806", "strength": "substantive"},
-        {"note_id": "2e71ddd392d345b990d34163a1c68cf7f2c787af7ff9661fa241d3925a5adf86", "strength": "central"}
+        {"note_id": "5dc1419732892345b1242e5c99aa8cfefb5b159a0ff9075349cba2fbe01f2806", "strength": "substantive"}
       ]
     },
     {
@@ -95,9 +94,7 @@
       "children": [],
       "memberships": [
         {"note_id": "2a1c279f820c19a78aed198d135340416f445aa10c9951ae3d3c77f366f225d8", "strength": "central"},
-        {"note_id": "eb4e7b0341e6544b6ef0de8dcef80f52b550948b988cd9be6a9247a11b06d46b", "strength": "substantive"},
-        {"note_id": "929387e5ad195b4ec36fa8a715e3e49c1eba229f04ea7f5117677cb63d10536d", "strength": "central"},
-        {"note_id": "2e71ddd392d345b990d34163a1c68cf7f2c787af7ff9661fa241d3925a5adf86", "strength": "central"}
+        {"note_id": "eb4e7b0341e6544b6ef0de8dcef80f52b550948b988cd9be6a9247a11b06d46b", "strength": "substantive"}
       ]
     },
     {
@@ -108,11 +105,7 @@
       "memberships": [
         {"note_id": "eb4e7b0341e6544b6ef0de8dcef80f52b550948b988cd9be6a9247a11b06d46b", "strength": "central"},
         {"note_id": "a2a24cc7157cea99688a9479dcb23c150448819efa930e83a9542f39aa06174f", "strength": "substantive"},
-        {"note_id": "48582ca7a1747eec62b877c408909df34d2ceed7477e14be62b86981425bd379", "strength": "substantive"},
-        {"note_id": "29d3f1a0b514395c6e01963812954f95036d8ede264b7f48b47d36f43d40b5c7", "strength": "central"},
-        {"note_id": "00000293edfb4e696ca58b21be636b59b0e8327d03bee0371a95ef5c2c62e63b", "strength": "central"},
-        {"note_id": "929387e5ad195b4ec36fa8a715e3e49c1eba229f04ea7f5117677cb63d10536d", "strength": "substantive"},
-        {"note_id": "103248806f4a9701f2e8dc91164a725e3e9871c528c3e55710fab407da807d2a", "strength": "central"}
+        {"note_id": "48582ca7a1747eec62b877c408909df34d2ceed7477e14be62b86981425bd379", "strength": "substantive"}
       ]
     },
     {
@@ -159,7 +152,7 @@
         {"note_id": "099596d9b7cbdd24b080a1293214978a05a3c4a1a3152675e8af3ff7febc9c0a", "strength": "central"},
         {"note_id": "061343e9c2a99b6b4dd09f661c2c855d7277ce8b60089c1a4e5252965abf5344", "strength": "central"},
         {"note_id": "cca270685401385322e2a062def0562545284bcd6babe5a8763ed28b73e79407", "strength": "substantive"},
-        {"note_id": "7d4d4ff7c53353d1561051b304908061824faae370289314a227d8f8367a1a00", "strength": "substantive"}
+        {"note_id": "f82b8f1742cf74cb2ab19bdbfa249e9685f035b1856c17673444686919ca7807", "strength": "central"}
       ]
     },
     {
@@ -169,7 +162,8 @@
       "children": [],
       "memberships": [
         {"note_id": "503fb92faf6694b631484d0be57344ed29f7bfd324a2e5c5fa38183751b830e6", "strength": "central"},
-        {"note_id": "17f7820bcee57f62c4a6f43a924db573a941173852bfa1c820180f1fecffc4f0", "strength": "central"}
+        {"note_id": "17f7820bcee57f62c4a6f43a924db573a941173852bfa1c820180f1fecffc4f0", "strength": "central"},
+        {"note_id": "8384ac9f054d38e55628cea9395080dce3fa2f8be7a2fa9bd9f2ab9acc0c94ae", "strength": "central"}
       ]
     },
     {
@@ -194,6 +188,15 @@
       ]
     },
     {
+      "node_id": "repair-maintenance",
+      "label": "Repair and maintenance",
+      "scope": "Diagnosing, removing, replacing, and restoring mechanical equipment.",
+      "children": [],
+      "memberships": [
+        {"note_id": "474a14dc8aab2970ad2efed18be1e4f000322bf269ad90e8586e6847c0ca95c9", "strength": "central"}
+      ]
+    },
+    {
       "node_id": "open-communication",
       "label": "Open communication networks",
       "scope": "Communication systems resistant to control or indispensable intermediaries.",
@@ -202,7 +205,7 @@
         {"note_id": "7a2204bdc296c3650502c19814243aaa550a240c3863083514933e2ea9e8ab43", "strength": "central"},
         {"note_id": "cca270685401385322e2a062def0562545284bcd6babe5a8763ed28b73e79407", "strength": "central"},
         {"note_id": "584ee5a8eeaaa88833d1e761b01db6122197f2677df55ebf4c615f71144cbcd8", "strength": "substantive"},
-        {"note_id": "7d4d4ff7c53353d1561051b304908061824faae370289314a227d8f8367a1a00", "strength": "central"}
+        {"note_id": "f82b8f1742cf74cb2ab19bdbfa249e9685f035b1856c17673444686919ca7807", "strength": "central"}
       ]
     },
     {
@@ -216,7 +219,8 @@
         {"note_id": "b18908c0bd3cfe51e01028096a94c609c02575f0c1e534e500b302af5eaa6e23", "strength": "substantive"},
         {"note_id": "068a9e104f99a51d46a65674d05b3ead194564961534a90b0922b968e78c29d9", "strength": "substantive"},
         {"note_id": "5162cc3e6ed6756c0d95ac8f1340fc244532ba347c3b7da431453c602b671731", "strength": "substantive"},
-        {"note_id": "00000293edfb4e696ca58b21be636b59b0e8327d03bee0371a95ef5c2c62e63b", "strength": "substantive"}
+        {"note_id": "f82b8f1742cf74cb2ab19bdbfa249e9685f035b1856c17673444686919ca7807", "strength": "substantive"},
+        {"note_id": "8384ac9f054d38e55628cea9395080dce3fa2f8be7a2fa9bd9f2ab9acc0c94ae", "strength": "central"}
       ]
     },
     {
@@ -238,8 +242,7 @@
       "children": [],
       "memberships": [
         {"note_id": "4611090a5fbd6acd54162e7cd29930ce6799a8461c70f0c417d6a982281f78f8", "strength": "central"},
-        {"note_id": "584ee5a8eeaaa88833d1e761b01db6122197f2677df55ebf4c615f71144cbcd8", "strength": "central"},
-        {"note_id": "7d4d4ff7c53353d1561051b304908061824faae370289314a227d8f8367a1a00", "strength": "substantive"}
+        {"note_id": "584ee5a8eeaaa88833d1e761b01db6122197f2677df55ebf4c615f71144cbcd8", "strength": "central"}
       ]
     },
     {
@@ -268,6 +271,24 @@
       ]
     },
     {
+      "node_id": "language-access",
+      "label": "Language accessibility",
+      "scope": "Whether technology works across languages and local contexts.",
+      "children": [],
+      "memberships": [
+        {"note_id": "8384ac9f054d38e55628cea9395080dce3fa2f8be7a2fa9bd9f2ab9acc0c94ae", "strength": "substantive"}
+      ]
+    },
+    {
+      "node_id": "work-culture",
+      "label": "Work norms across countries",
+      "scope": "Employment policies and practices compared across places.",
+      "children": [],
+      "memberships": [
+        {"note_id": "d2dfe7c80ca031b768e525e904f3c5d1d962faf297158f59a1959b06d585225d", "strength": "substantive"}
+      ]
+    },
+    {
       "node_id": "poetry",
       "label": "Poetry and literary imagery",
       "scope": "Poems, quotations, and ideas expressed through literary imagery.",
@@ -275,9 +296,7 @@
       "memberships": [
         {"note_id": "337569d3f73ff93019040a32d9f5e537f4c8c0a836db8d05bd70a614d8f06e2e", "strength": "central"},
         {"note_id": "4611090a5fbd6acd54162e7cd29930ce6799a8461c70f0c417d6a982281f78f8", "strength": "substantive"},
-        {"note_id": "29d3f1a0b514395c6e01963812954f95036d8ede264b7f48b47d36f43d40b5c7", "strength": "substantive"},
-        {"note_id": "8894b71ab618459a3c40e9637d2cad57cb3347b758911a94da50d8f84db53aa8", "strength": "central"},
-        {"note_id": "103248806f4a9701f2e8dc91164a725e3e9871c528c3e55710fab407da807d2a", "strength": "substantive"}
+        {"note_id": "8894b71ab618459a3c40e9637d2cad57cb3347b758911a94da50d8f84db53aa8", "strength": "central"}
       ]
     },
     {
@@ -345,7 +364,17 @@
         {"note_id": "0c17e6b047755f2329110c6df3542b5a7e753fa4ef055c75b858ca1682bbfee5", "strength": "central"},
         {"note_id": "ee2cca149a7d031817911a9e202bb23ae77c11dc9c22056bd9f3b766498ac770", "strength": "central"},
         {"note_id": "f0ff44e2ad7556bc51ffc56aed7658b6b20f81e93856e2382d2b8187e44db4c7", "strength": "substantive"},
-        {"note_id": "cf7808d6b49128280cea20117375d3702268925160ff9e8d0df5d7727a368e2e", "strength": "substantive"}
+        {"note_id": "cf7808d6b49128280cea20117375d3702268925160ff9e8d0df5d7727a368e2e", "strength": "substantive"},
+        {"note_id": "58e8c1ebebaf100ee5e3d1a217912c2723bf8b1ecd3543e3db28f1a81b7cdf92", "strength": "central"}
+      ]
+    },
+    {
+      "node_id": "health-systems",
+      "label": "Healthcare and donation",
+      "scope": "Healthcare practices, blood donation, and the policies surrounding them.",
+      "children": [],
+      "memberships": [
+        {"note_id": "d2dfe7c80ca031b768e525e904f3c5d1d962faf297158f59a1959b06d585225d", "strength": "central"}
       ]
     },
     {
@@ -366,7 +395,9 @@
         {"note_id": "ef6193a59a35304759d1f58b629466c2a4a7289d92261e91078a1c9b3e05de71", "strength": "central"},
         {"note_id": "57ce561cfd0a569a981061a5461ae684e831a63d2e009b1822b2f7b16a9533b2", "strength": "central"},
         {"note_id": "4ef54cc08e5c02387af7521929d17d9af73e262fccebd3d4cbbd36190136a4f7", "strength": "substantive"},
-        {"note_id": "b843720355752d704f1a167b7b0625d4d28833461c5c6d27c76e8e5b0648aca6", "strength": "substantive"}
+        {"note_id": "b843720355752d704f1a167b7b0625d4d28833461c5c6d27c76e8e5b0648aca6", "strength": "substantive"},
+        {"note_id": "474a14dc8aab2970ad2efed18be1e4f000322bf269ad90e8586e6847c0ca95c9", "strength": "incidental"},
+        {"note_id": "54646e5fe43713934c879371c5ce462337b78d7db728c68f088614e27844f7db", "strength": "central"}
       ]
     },
     {
@@ -395,8 +426,7 @@
       "memberships": [
         {"note_id": "068a9e104f99a51d46a65674d05b3ead194564961534a90b0922b968e78c29d9", "strength": "central"},
         {"note_id": "87f1cb51d8abb755bc2526f0129afcf079acbaea323ee8181d121fd7040a300e", "strength": "substantive"},
-        {"note_id": "d0b234703ff891dced7ea2392c7b9315c1b5c5520c2a192bc0e0c3e7ea19e4ee", "strength": "substantive"},
-        {"note_id": "00000293edfb4e696ca58b21be636b59b0e8327d03bee0371a95ef5c2c62e63b", "strength": "substantive"}
+        {"note_id": "d0b234703ff891dced7ea2392c7b9315c1b5c5520c2a192bc0e0c3e7ea19e4ee", "strength": "substantive"}
       ]
     },
     {
@@ -408,7 +438,8 @@
         {"note_id": "57ce561cfd0a569a981061a5461ae684e831a63d2e009b1822b2f7b16a9533b2", "strength": "substantive"},
         {"note_id": "7055434f1770e9a1dc571801d3bc5bc71f861fa46c35bfad1a135f2bd992504e", "strength": "central"},
         {"note_id": "4ef54cc08e5c02387af7521929d17d9af73e262fccebd3d4cbbd36190136a4f7", "strength": "substantive"},
-        {"note_id": "c01a24e6604834c025907d715314b547956d90488f95229707c4bad6354e5fa7", "strength": "substantive"}
+        {"note_id": "c01a24e6604834c025907d715314b547956d90488f95229707c4bad6354e5fa7", "strength": "substantive"},
+        {"note_id": "54646e5fe43713934c879371c5ce462337b78d7db728c68f088614e27844f7db", "strength": "substantive"}
       ]
     },
     {
@@ -431,7 +462,8 @@
         {"note_id": "1830964db8182776dc0a7ddbc014a09c6c968a2c982ebd5f6da320deef2b92dc", "strength": "central"},
         {"note_id": "48aade19331bde2d6463b41d0346d03feb9bed6a345543b87f6e85b94bf55744", "strength": "substantive"},
         {"note_id": "7055434f1770e9a1dc571801d3bc5bc71f861fa46c35bfad1a135f2bd992504e", "strength": "substantive"},
-        {"note_id": "c01a24e6604834c025907d715314b547956d90488f95229707c4bad6354e5fa7", "strength": "central"}
+        {"note_id": "c01a24e6604834c025907d715314b547956d90488f95229707c4bad6354e5fa7", "strength": "central"},
+        {"note_id": "54646e5fe43713934c879371c5ce462337b78d7db728c68f088614e27844f7db", "strength": "central"}
       ]
     },
     {
@@ -444,7 +476,8 @@
         {"note_id": "48aade19331bde2d6463b41d0346d03feb9bed6a345543b87f6e85b94bf55744", "strength": "central"},
         {"note_id": "7055434f1770e9a1dc571801d3bc5bc71f861fa46c35bfad1a135f2bd992504e", "strength": "substantive"},
         {"note_id": "4ef54cc08e5c02387af7521929d17d9af73e262fccebd3d4cbbd36190136a4f7", "strength": "central"},
-        {"note_id": "b843720355752d704f1a167b7b0625d4d28833461c5c6d27c76e8e5b0648aca6", "strength": "central"}
+        {"note_id": "b843720355752d704f1a167b7b0625d4d28833461c5c6d27c76e8e5b0648aca6", "strength": "central"},
+        {"note_id": "58e8c1ebebaf100ee5e3d1a217912c2723bf8b1ecd3543e3db28f1a81b7cdf92", "strength": "central"}
       ]
     },
     {
@@ -468,6 +501,15 @@
         {"note_id": "068a9e104f99a51d46a65674d05b3ead194564961534a90b0922b968e78c29d9", "strength": "central"},
         {"note_id": "9e7e70ce7f5829599a353238ea8972b681eda34f9ce72ab62657be8a4f62b87b", "strength": "substantive"},
         {"note_id": "2c37330aa014895f53b7e774edf49823e6e3b5ad47939e64fcb81735b726240c", "strength": "central"}
+      ]
+    },
+    {
+      "node_id": "sailing-boats",
+      "label": "Sailing and boats",
+      "scope": "Owning, operating, and maintaining sailboats.",
+      "children": [],
+      "memberships": [
+        {"note_id": "474a14dc8aab2970ad2efed18be1e4f000322bf269ad90e8586e6847c0ca95c9", "strength": "substantive"}
       ]
     },
     {
