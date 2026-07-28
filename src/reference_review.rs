@@ -547,16 +547,12 @@ fn hierarchy_screen(
         memberships
             .into_iter()
             .map(|membership| ApprovalEvidence {
-                title: format!("Member note · {}", strength_label(membership.strength)),
+                title: "Note".to_owned(),
                 annotation: format!(
-                    "Current leaf membership: {}",
-                    strength_label(membership.strength)
+                    "Memberships:\n{}",
+                    format_note_memberships(&membership_inventory[membership.note_id.as_str()])
                 ),
-                body: format!(
-                    "Complete proposed map:\n{}\n\nNote:\n{}",
-                    format_note_memberships(&membership_inventory[membership.note_id.as_str()]),
-                    note_by_id[membership.note_id.as_str()]
-                ),
+                body: note_by_id[membership.note_id.as_str()].to_owned(),
             })
             .collect()
     } else {

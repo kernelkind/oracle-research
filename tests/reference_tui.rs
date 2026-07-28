@@ -186,6 +186,30 @@ fn screens_without_guidance_do_not_advertise_or_open_it() {
 }
 
 #[test]
+fn multiline_evidence_annotation_is_fully_visible() {
+    let mut screen = approval_screen();
+    screen.scope.clear();
+    screen.guidance = None;
+    screen.evidence = vec![ApprovalEvidence {
+        title: "Note".to_owned(),
+        annotation: "Memberships:\n\
+                     • Everyday fulfillment — Central\n\
+                     • Nature and fleeting moments — Central\n\
+                     • Meals and diets — Substantive\n\
+                     • Gardening and homesteading — Substantive\n\
+                     • Music and rhythm — Incidental"
+            .to_owned(),
+        body: "The exact note text remains the primary evidence.".to_owned(),
+    }];
+    let mut model = ApprovalTuiModel::new(screen);
+
+    let rendered = render_approval_at(&mut model, 100, 32);
+    assert!(rendered.contains("exact note text"), "{rendered}");
+    assert!(rendered.contains("Everyday fulfillment"), "{rendered}");
+    assert!(rendered.contains("Music and rhythm"), "{rendered}");
+}
+
+#[test]
 fn rejection_guide_scrolls_at_the_minimum_terminal_size() {
     let mut model = ApprovalTuiModel::new(approval_screen());
     assert_eq!(

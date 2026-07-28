@@ -273,6 +273,27 @@ impl ApprovalTuiModel {
                 .unwrap_or(u16::MAX)
                 .clamp(3, 7)
         };
+        let annotation_text = if self.guidance_visible {
+            ""
+        } else {
+            self.screen
+                .evidence
+                .get(self.evidence_index)
+                .map_or("", |evidence| evidence.annotation.as_str())
+        };
+        let annotation = Paragraph::new(annotation_text)
+            .style(secondary_style())
+            .wrap(Wrap { trim: false });
+        let maximum_annotation_height = area
+            .height
+            .saturating_sub(1 + 2 + scope_height + 6 + footer_height);
+        let annotation_height = if annotation_text.is_empty() {
+            0
+        } else {
+            u16::try_from(annotation.line_count(area.width))
+                .unwrap_or(u16::MAX)
+                .min(maximum_annotation_height)
+        };
         let rows = Layout::default()
             .direction(Direction::Vertical)
             .constraints([
@@ -280,7 +301,7 @@ impl ApprovalTuiModel {
                 Constraint::Length(2),
                 Constraint::Length(scope_height),
                 Constraint::Min(6),
-                Constraint::Length(2),
+                Constraint::Length(annotation_height),
                 Constraint::Length(footer_height),
             ])
             .split(area);
@@ -327,10 +348,7 @@ impl ApprovalTuiModel {
                 &mut self.scroll,
                 &mut self.half_page_lines,
             );
-            frame.render_widget(
-                Paragraph::new(evidence.annotation.as_str()).style(secondary_style()),
-                rows[4],
-            );
+            frame.render_widget(annotation, rows[4]);
         } else {
             frame.render_widget(
                 Paragraph::new("No evidence was provided.")

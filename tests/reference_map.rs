@@ -1180,12 +1180,47 @@ fn leaf_review_shows_each_notes_complete_proposed_membership_map() {
     );
     assert!(
         ui.screens[0].evidence.iter().any(|evidence| {
-            evidence.body.contains("Complete proposed map:")
-                && evidence.body.contains("Software — Central")
-                && evidence.body.contains("Food — Substantive")
+            evidence.annotation.contains("Software — Central")
+                && evidence.annotation.contains("Food — Substantive")
         }),
         "a leaf-only strength cannot reveal the note's complete weighted map"
     );
+}
+
+#[test]
+fn leaf_review_keeps_note_text_primary_and_memberships_secondary() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    let notes = approved_notes();
+    let draft = hierarchy(&notes);
+    let notes_path = temp.path().join("approved-notes.json");
+    let draft_path = temp.path().join("hierarchy-draft.json");
+    write_json(&notes_path, &notes);
+    write_json(&draft_path, &draft);
+    let mut ui = ScriptedUi::new([ApprovalTuiAction::Pause]);
+
+    assert_eq!(
+        run_hierarchy_review(
+            &notes_path,
+            &draft_path,
+            temp.path().join("hierarchy-session.json"),
+            temp.path().join("approved-hierarchy.json"),
+            &mut ui,
+        )
+        .expect("open first leaf"),
+        ReviewRunOutcome::Paused
+    );
+    let evidence = ui.screens[0]
+        .evidence
+        .iter()
+        .find(|evidence| evidence.annotation.contains("Food — Substantive"))
+        .expect("multi-membership note evidence");
+    assert_eq!(evidence.title, "Note");
+    assert!(evidence.body.starts_with("Real diagnostic note number"));
+    assert!(!evidence.body.contains("Complete proposed map:"));
+    assert!(!evidence.body.contains("\nNote:\n"));
+    assert!(evidence.annotation.starts_with("Memberships:\n"));
+    assert!(evidence.annotation.contains("Software — Central"));
+    assert!(evidence.annotation.contains("Food — Substantive"));
 }
 
 #[test]
