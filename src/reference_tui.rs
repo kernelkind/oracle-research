@@ -266,9 +266,13 @@ impl ApprovalTuiModel {
         let scope = Paragraph::new(self.screen.scope.as_str())
             .style(secondary_style())
             .wrap(Wrap { trim: false });
-        let scope_height = u16::try_from(scope.line_count(area.width))
-            .unwrap_or(u16::MAX)
-            .clamp(3, 7);
+        let scope_height = if self.screen.scope.is_empty() {
+            0
+        } else {
+            u16::try_from(scope.line_count(area.width))
+                .unwrap_or(u16::MAX)
+                .clamp(3, 7)
+        };
         let rows = Layout::default()
             .direction(Direction::Vertical)
             .constraints([

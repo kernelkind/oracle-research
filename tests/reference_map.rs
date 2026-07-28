@@ -1026,6 +1026,10 @@ fn hierarchy_runner_reviews_leaves_then_parents_then_hidden_root() {
             "Root choices",
         ]
     );
+    assert!(
+        ui.screens[..4].iter().all(|screen| screen.scope.is_empty()),
+        "leaf review must show the subject label and note evidence without a redundant scope sentence"
+    );
     let life_screen = &ui.screens[6];
     let life_overview = life_screen
         .evidence

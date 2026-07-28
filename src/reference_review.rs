@@ -627,7 +627,11 @@ fn hierarchy_screen(
             draft.nodes.len()
         ),
         title,
-        scope: node.scope.clone(),
+        scope: if node.is_leaf() {
+            String::new()
+        } else {
+            node.scope.clone()
+        },
         approve_label: "Approve — no concrete problem".to_owned(),
         reject_label: "Reject — explain the problem".to_owned(),
         guidance: None,
