@@ -486,9 +486,10 @@ fn note_screen(
     Ok(ApprovalScreen {
         heading: format!("Candidate {slot} of 64 · {approved} approved · {rejected} rejected"),
         title: format!("Slot {slot:02}"),
-        scope:
-            "Is there a concrete reason this note should not be included in the 64-note reference set?"
-                .to_owned(),
+        scope: "Is there a concrete reason this note should not be included in the 64-note reference set?\n\
+                Reject: corrupt/truncated/empty text · language you cannot judge · missing essential context · duplicate/near-duplicate · wrong diagnostic annotation\n\
+                Not defects: disagreement · several subjects · niche/ambiguous · old · uninteresting"
+            .to_owned(),
         approve_label: "Approve — no disqualifying problem".to_owned(),
         reject_label: "Reject — explain the problem".to_owned(),
         evidence,

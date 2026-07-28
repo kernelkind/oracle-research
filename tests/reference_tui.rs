@@ -19,9 +19,10 @@ fn approval_screen() -> ApprovalScreen {
     ApprovalScreen {
         heading: "Candidate 7 of 64 · 4 approved · 2 rejected".to_owned(),
         title: "Slot 07".to_owned(),
-        scope:
-            "Is there a concrete reason this note should not be included in the 64-note reference set?"
-                .to_owned(),
+        scope: "Is there a concrete reason this note should not be included in the 64-note reference set?\n\
+                Reject: corrupt/truncated/empty text · language you cannot judge · missing essential context · duplicate/near-duplicate · wrong diagnostic annotation\n\
+                Not defects: disagreement · several subjects · niche/ambiguous · old · uninteresting"
+            .to_owned(),
         approve_label: "Approve — no disqualifying problem".to_owned(),
         reject_label: "Reject — explain the problem".to_owned(),
         evidence: vec![
@@ -41,7 +42,11 @@ fn approval_screen() -> ApprovalScreen {
 }
 
 fn render_approval(model: &mut ApprovalTuiModel) -> String {
-    let backend = TestBackend::new(100, 32);
+    render_approval_at(model, 100, 32)
+}
+
+fn render_approval_at(model: &mut ApprovalTuiModel, width: u16, height: u16) -> String {
+    let backend = TestBackend::new(width, height);
     let mut terminal = Terminal::new(backend).expect("test terminal");
     terminal
         .draw(|frame| model.render(frame))
@@ -56,15 +61,38 @@ fn render_approval(model: &mut ApprovalTuiModel) -> String {
 }
 
 #[test]
+fn compact_guidance_preserves_the_note_and_controls_at_minimum_terminal_size() {
+    let mut model = ApprovalTuiModel::new(approval_screen());
+    let rendered = render_approval_at(&mut model, 72, 24);
+    let normalized = rendered.split_whitespace().collect::<Vec<_>>().join(" ");
+
+    assert!(
+        normalized.contains("wrong diagnostic annotation"),
+        "{rendered}"
+    );
+    assert!(normalized.contains("old · uninteresting"), "{rendered}");
+    assert!(normalized.contains("Rust programmer"), "{rendered}");
+    assert!(normalized.contains("[A] Approve"), "{rendered}");
+}
+
+#[test]
 fn approval_ui_shows_the_negative_review_question_and_switches_to_the_comparison_note() {
     let mut model = ApprovalTuiModel::new(approval_screen());
     let first = render_approval(&mut model);
+    let normalized = first.split_whitespace().collect::<Vec<_>>().join(" ");
     assert!(first.contains("Candidate note"), "{first}");
     assert!(first.contains("Rust programmer"), "{first}");
     assert!(
-        first.contains("Is there a concrete reason this note should not be included"),
+        normalized.contains("Is there a concrete reason this note should not be included"),
         "{first}"
     );
+    assert!(normalized.contains("missing essential context"), "{first}");
+    assert!(
+        normalized.contains("wrong diagnostic annotation"),
+        "{first}"
+    );
+    assert!(normalized.contains("Not defects: disagreement"), "{first}");
+    assert!(normalized.contains("niche/ambiguous"), "{first}");
     assert!(
         first.contains("Approve — no disqualifying problem"),
         "{first}"

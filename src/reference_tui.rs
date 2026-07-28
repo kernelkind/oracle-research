@@ -211,12 +211,18 @@ impl ApprovalTuiModel {
         }
         let area = centered(area);
         let footer_height = if self.pending_outcome.is_some() { 8 } else { 4 };
+        let scope = Paragraph::new(self.screen.scope.as_str())
+            .style(secondary_style())
+            .wrap(Wrap { trim: false });
+        let scope_height = u16::try_from(scope.line_count(area.width))
+            .unwrap_or(u16::MAX)
+            .clamp(3, 7);
         let rows = Layout::default()
             .direction(Direction::Vertical)
             .constraints([
                 Constraint::Length(1),
                 Constraint::Length(2),
-                Constraint::Length(3),
+                Constraint::Length(scope_height),
                 Constraint::Min(6),
                 Constraint::Length(2),
                 Constraint::Length(footer_height),
@@ -230,12 +236,7 @@ impl ApprovalTuiModel {
             Paragraph::new(self.screen.title.as_str()).style(accent_style()),
             rows[1],
         );
-        frame.render_widget(
-            Paragraph::new(self.screen.scope.as_str())
-                .style(secondary_style())
-                .wrap(Wrap { trim: false }),
-            rows[2],
-        );
+        frame.render_widget(scope, rows[2]);
 
         if let Some(evidence) = self.screen.evidence.get(self.evidence_index) {
             let title = if self.screen.evidence.len() > 1 {
