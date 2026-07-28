@@ -2256,6 +2256,395 @@ fn tracked_crec_116_draft_uses_independent_overlapping_subjects() {
     }
 }
 
+fn tracked_memberships_for_slot(
+    proposal: &NoteProposal,
+    draft: &HierarchyDraft,
+    slot: u8,
+) -> BTreeSet<(String, MembershipStrength)> {
+    let note_id = &proposal.note(slot).expect("tracked note slot").note_id;
+    draft
+        .nodes
+        .iter()
+        .filter(|node| node.is_leaf())
+        .flat_map(|node| {
+            node.memberships
+                .iter()
+                .filter(move |membership| &membership.note_id == note_id)
+                .map(move |membership| (node.label.clone(), membership.strength))
+        })
+        .collect()
+}
+
+fn tracked_maps_sha256(proposal: &NoteProposal, draft: &HierarchyDraft, slots: &[u8]) -> String {
+    let mut snapshot = String::new();
+    for slot in slots {
+        for (label, strength) in tracked_memberships_for_slot(proposal, draft, *slot) {
+            let strength = match strength {
+                MembershipStrength::Incidental => "incidental",
+                MembershipStrength::Substantive => "substantive",
+                MembershipStrength::Central => "central",
+            };
+            snapshot.push_str(&format!("{slot}\t{label}\t{strength}\n"));
+        }
+    }
+    format!("{:x}", Sha256::digest(snapshot.as_bytes()))
+}
+
+#[test]
+fn tracked_crec_116_correction_pass_uses_the_accepted_note_maps() {
+    let proposal = load_verified_note_proposal("reference_map/crec-116-note-proposal-v3.json")
+        .expect("tracked CREC-116 proposal");
+    let draft: HierarchyDraft = serde_json::from_slice(
+        &fs::read("reference_map/crec-116-hierarchy-draft-v3.json")
+            .expect("read tracked hierarchy draft"),
+    )
+    .expect("decode hierarchy draft");
+    let expected = |memberships: &[(&str, MembershipStrength)]| {
+        memberships
+            .iter()
+            .map(|(label, strength)| ((*label).to_owned(), *strength))
+            .collect::<BTreeSet<_>>()
+    };
+
+    let expected_maps = [
+        (
+            2,
+            expected(&[
+                (
+                    "Cryptographic security comparison",
+                    MembershipStrength::Substantive,
+                ),
+                (
+                    "Software signing and verification",
+                    MembershipStrength::Central,
+                ),
+                (
+                    "Using Nostr keys outside messaging",
+                    MembershipStrength::Central,
+                ),
+            ]),
+        ),
+        (
+            3,
+            expected(&[
+                (
+                    "Digitizing and organizing personal notes",
+                    MembershipStrength::Central,
+                ),
+                (
+                    "PowerShell file-inventory automation",
+                    MembershipStrength::Substantive,
+                ),
+            ]),
+        ),
+        (
+            6,
+            expected(&[
+                (
+                    "Aging and family role reversal",
+                    MembershipStrength::Central,
+                ),
+                (
+                    "Family and close relationships",
+                    MembershipStrength::Central,
+                ),
+            ]),
+        ),
+        (
+            7,
+            expected(&[
+                (
+                    "Exercise and physical training",
+                    MembershipStrength::Substantive,
+                ),
+                ("Language and word usage", MembershipStrength::Central),
+            ]),
+        ),
+        (
+            8,
+            expected(&[("Child cognitive development", MembershipStrength::Central)]),
+        ),
+        (
+            9,
+            expected(&[
+                ("Music search and discovery", MembershipStrength::Central),
+                ("Music streaming services", MembershipStrength::Substantive),
+            ]),
+        ),
+        (
+            10,
+            expected(&[
+                (
+                    "Exercise and physical training",
+                    MembershipStrength::Central,
+                ),
+                ("Nutrition and health", MembershipStrength::Substantive),
+            ]),
+        ),
+        (
+            11,
+            expected(&[
+                ("Coffee", MembershipStrength::Central),
+                (
+                    "Coffee brewing and preparation",
+                    MembershipStrength::Substantive,
+                ),
+                ("Coffee product comparison", MembershipStrength::Substantive),
+                (
+                    "Coffee taste and product quality",
+                    MembershipStrength::Central,
+                ),
+            ]),
+        ),
+        (
+            13,
+            expected(&[
+                (
+                    "Creative practice and skill development",
+                    MembershipStrength::Central,
+                ),
+                ("Learning a musical instrument", MembershipStrength::Central),
+                (
+                    "Persistence in learning a skill",
+                    MembershipStrength::Substantive,
+                ),
+            ]),
+        ),
+        (
+            16,
+            expected(&[("Philosophy of science", MembershipStrength::Central)]),
+        ),
+        (
+            17,
+            expected(&[
+                ("Books and reading", MembershipStrength::Substantive),
+                (
+                    "Criticism of digital access restrictions",
+                    MembershipStrength::Central,
+                ),
+            ]),
+        ),
+        (
+            18,
+            expected(&[
+                ("Book recommendations", MembershipStrength::Central),
+                ("Books and reading", MembershipStrength::Central),
+            ]),
+        ),
+        (
+            19,
+            expected(&[
+                ("Early Islamic history", MembershipStrength::Central),
+                ("History", MembershipStrength::Central),
+            ]),
+        ),
+        (
+            22,
+            expected(&[("AI cognition and reasoning", MembershipStrength::Central)]),
+        ),
+        (
+            23,
+            expected(&[
+                ("Book recommendations", MembershipStrength::Central),
+                ("Books and reading", MembershipStrength::Central),
+                ("History", MembershipStrength::Central),
+                ("Medieval history", MembershipStrength::Substantive),
+            ]),
+        ),
+        (
+            24,
+            expected(&[
+                (
+                    "Linux and open-source software",
+                    MembershipStrength::Central,
+                ),
+                ("Shell scripting", MembershipStrength::Central),
+            ]),
+        ),
+        (
+            25,
+            expected(&[
+                (
+                    "Energy systems and renewable power",
+                    MembershipStrength::Central,
+                ),
+                (
+                    "Homesteading and self-sufficient living",
+                    MembershipStrength::Substantive,
+                ),
+                ("Practical Bitcoin mining", MembershipStrength::Central),
+                ("Resource conservation", MembershipStrength::Substantive),
+                (
+                    "Software development and automation",
+                    MembershipStrength::Substantive,
+                ),
+            ]),
+        ),
+        (
+            27,
+            expected(&[
+                ("Open communication", MembershipStrength::Central),
+                (
+                    "Open protocols and decentralized networks",
+                    MembershipStrength::Substantive,
+                ),
+                (
+                    "Resistance to online censorship",
+                    MembershipStrength::Central,
+                ),
+            ]),
+        ),
+        (
+            30,
+            expected(&[
+                ("AI privacy and security", MembershipStrength::Central),
+                ("Cloud AI infrastructure", MembershipStrength::Central),
+                ("Privacy and surveillance", MembershipStrength::Central),
+            ]),
+        ),
+        (
+            31,
+            expected(&[
+                ("AI privacy and security", MembershipStrength::Substantive),
+                ("On-device AI", MembershipStrength::Central),
+                ("Privacy and surveillance", MembershipStrength::Substantive),
+            ]),
+        ),
+        (
+            32,
+            expected(&[
+                (
+                    "Developer stereotypes and interpersonal behavior",
+                    MembershipStrength::Central,
+                ),
+                (
+                    "Linux and open-source software",
+                    MembershipStrength::Substantive,
+                ),
+            ]),
+        ),
+        (
+            33,
+            expected(&[
+                (
+                    "Algorithmic attention and echo chambers",
+                    MembershipStrength::Incidental,
+                ),
+                (
+                    "Creator funding and direct value exchange",
+                    MembershipStrength::Incidental,
+                ),
+                ("Nostr platform and ecosystem", MembershipStrength::Central),
+                ("Open communication", MembershipStrength::Substantive),
+                ("Privacy and surveillance", MembershipStrength::Incidental),
+            ]),
+        ),
+        (
+            35,
+            expected(&[
+                ("Art and aesthetics", MembershipStrength::Substantive),
+                ("Poetry", MembershipStrength::Incidental),
+                ("Product advertising and sales", MembershipStrength::Central),
+                ("Pottery", MembershipStrength::Central),
+            ]),
+        ),
+        (
+            36,
+            expected(&[
+                (
+                    "Family and close relationships",
+                    MembershipStrength::Incidental,
+                ),
+                (
+                    "Geographic and jurisdictional autonomy",
+                    MembershipStrength::Central,
+                ),
+                (
+                    "Public journaling and self-documentation",
+                    MembershipStrength::Substantive,
+                ),
+                ("Relocation and moving abroad", MembershipStrength::Central),
+            ]),
+        ),
+        (
+            46,
+            expected(&[
+                ("Composting", MembershipStrength::Central),
+                (
+                    "Family and close relationships",
+                    MembershipStrength::Substantive,
+                ),
+                ("Gardening and growing plants", MembershipStrength::Central),
+            ]),
+        ),
+        (
+            53,
+            expected(&[
+                ("Art and aesthetics", MembershipStrength::Substantive),
+                ("Photography", MembershipStrength::Central),
+                ("Travel", MembershipStrength::Central),
+                ("Visual storytelling", MembershipStrength::Substantive),
+            ]),
+        ),
+    ];
+
+    for (slot, expected_memberships) in expected_maps {
+        assert_eq!(
+            tracked_memberships_for_slot(&proposal, &draft, slot),
+            expected_memberships,
+            "corrected note map changed for slot {slot}"
+        );
+    }
+
+    let approved_slots = [
+        1, 4, 5, 12, 14, 15, 20, 21, 26, 28, 29, 38, 39, 43, 45, 48, 52, 54, 55, 56, 57, 60,
+    ];
+    assert_eq!(
+        tracked_maps_sha256(&proposal, &draft, &approved_slots),
+        "cd156ff6b90f1280ca1b15a03132f7fa315e354e37e1a532a1369cf7030c86de",
+        "the 22 approved visible note maps must remain unchanged"
+    );
+}
+
+#[test]
+fn tracked_crec_116_uses_bounded_grouping_nodes_without_duplicate_leaf_labels() {
+    let draft: HierarchyDraft = serde_json::from_slice(
+        &fs::read("reference_map/crec-116-hierarchy-draft-v3.json")
+            .expect("read tracked hierarchy draft"),
+    )
+    .expect("decode hierarchy draft");
+
+    for subject_id in [
+        "book-topics",
+        "history-topics",
+        "software-security",
+        "visual-art",
+        "creative-learning",
+        "personal-life",
+        "resource-use",
+    ] {
+        let subject = draft.node(subject_id).expect("tracked grouping subject");
+        assert!(
+            !subject.is_leaf(),
+            "{subject_id} must organize its displayed subject choices"
+        );
+        assert!(subject.memberships.is_empty());
+        assert!((2..=8).contains(&subject.children.len()));
+    }
+
+    let leaf_labels = draft
+        .nodes
+        .iter()
+        .filter(|node| node.is_leaf())
+        .map(|node| node.label.as_str())
+        .collect::<Vec<_>>();
+    assert_eq!(
+        leaf_labels.iter().copied().collect::<BTreeSet<_>>().len(),
+        leaf_labels.len(),
+        "note-map revisions use visible labels, so every leaf label must be unique"
+    );
+}
+
 #[test]
 fn tracked_nostr_technical_subject_uses_one_coherent_label() {
     let draft: HierarchyDraft = serde_json::from_slice(
