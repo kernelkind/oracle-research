@@ -594,7 +594,6 @@ impl HierarchyDraft {
         let mut covered = BTreeSet::new();
         for node in self.nodes.iter().filter(|node| node.is_leaf()) {
             let mut local = BTreeSet::new();
-            let mut strengths = BTreeSet::new();
             for membership in &node.memberships {
                 if !approved_ids.contains(membership.note_id.as_str()) {
                     return invalid(format!(
@@ -608,20 +607,7 @@ impl HierarchyDraft {
                         node.node_id, membership.note_id
                     ));
                 }
-                strengths.insert(membership.strength);
                 covered.insert(membership.note_id.as_str());
-            }
-            for required in [
-                MembershipStrength::Central,
-                MembershipStrength::Substantive,
-                MembershipStrength::Incidental,
-            ] {
-                if !strengths.contains(&required) {
-                    return invalid(format!(
-                        "leaf {} is missing the {required:?} membership strength",
-                        node.node_id
-                    ));
-                }
             }
         }
         if covered != approved_ids {

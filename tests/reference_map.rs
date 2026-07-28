@@ -492,7 +492,7 @@ fn hierarchy_validation_enforces_grounded_bounded_tree() {
 }
 
 #[test]
-fn hierarchy_validation_requires_every_leaf_to_demonstrate_all_membership_strengths() {
+fn hierarchy_validation_allows_an_honest_leaf_with_sparse_strength_coverage() {
     let approved = approved_notes();
     let mut hierarchy = hierarchy(&approved);
     let software = hierarchy
@@ -501,16 +501,12 @@ fn hierarchy_validation_requires_every_leaf_to_demonstrate_all_membership_streng
         .find(|node| node.node_id == "software")
         .expect("software leaf");
     for membership in &mut software.memberships {
-        if membership.strength == MembershipStrength::Incidental {
-            membership.strength = MembershipStrength::Substantive;
-        }
+        membership.strength = MembershipStrength::Central;
     }
 
-    let error = hierarchy
+    hierarchy
         .validate(&approved)
-        .expect_err("a reference leaf without every membership strength is incomplete");
-    assert!(error.to_string().contains("software"), "{error}");
-    assert!(error.to_string().contains("Incidental"), "{error}");
+        .expect("a real subject does not require artificial examples at every strength");
 }
 
 #[test]
@@ -1934,7 +1930,7 @@ fn tracked_crec_115_plan_matches_the_source_bound_proposal() {
 }
 
 #[test]
-fn tracked_crec_116_draft_is_bound_and_preserves_weighted_multi_membership() {
+fn tracked_crec_116_draft_uses_independent_overlapping_subjects() {
     let proposal = load_verified_note_proposal("reference_map/crec-115-note-proposal-v2.json")
         .expect("tracked CREC-115 proposal");
     let mut review = NoteReviewSession::new(&proposal).expect("create complete review");
@@ -1960,26 +1956,6 @@ fn tracked_crec_116_draft_is_bound_and_preserves_weighted_multi_membership() {
     draft
         .validate(&approved)
         .expect("tracked draft is bound and structurally valid");
-
-    for leaf in draft.nodes.iter().filter(|node| node.is_leaf()) {
-        let strengths = leaf
-            .memberships
-            .iter()
-            .map(|membership| membership.strength)
-            .collect::<std::collections::BTreeSet<_>>();
-        assert_eq!(
-            strengths,
-            [
-                MembershipStrength::Incidental,
-                MembershipStrength::Substantive,
-                MembershipStrength::Central,
-            ]
-            .into_iter()
-            .collect(),
-            "leaf {} must demonstrate every membership strength",
-            leaf.node_id
-        );
-    }
 
     let memberships = draft
         .nodes
@@ -2012,22 +1988,83 @@ fn tracked_crec_116_draft_is_bound_and_preserves_weighted_multi_membership() {
         }),
         "the reference must exercise different membership strengths"
     );
+
+    let all_strengths = memberships
+        .iter()
+        .map(|membership| membership.strength)
+        .collect::<std::collections::BTreeSet<_>>();
+    assert_eq!(
+        all_strengths,
+        [
+            MembershipStrength::Incidental,
+            MembershipStrength::Substantive,
+            MembershipStrength::Central,
+        ]
+        .into_iter()
+        .collect(),
+        "the complete map must exercise the ordinal scale"
+    );
+    assert!(
+        draft
+            .nodes
+            .iter()
+            .filter(|node| node.is_leaf())
+            .any(|leaf| {
+                leaf.memberships
+                    .iter()
+                    .map(|membership| membership.strength)
+                    .collect::<std::collections::BTreeSet<_>>()
+                    == [MembershipStrength::Central].into_iter().collect()
+            }),
+        "an honestly sparse subject must not be padded with artificial weak memberships"
+    );
+
+    let history_books_note = "7d52bf12d1dba7ef59001b7d70189cd7139fd12b9e2972c6faa5b634d5166217";
+    for subject_id in ["books-reading", "history"] {
+        let subject = draft.node(subject_id).expect("independent subject");
+        assert!(
+            subject.memberships.iter().any(|membership| {
+                membership.note_id == history_books_note
+                    && membership.strength == MembershipStrength::Central
+            }),
+            "the note must independently map to {subject_id}"
+        );
+    }
+    for obsolete_compound in [
+        "books",
+        "programming-storage",
+        "markets",
+        "visual-design",
+        "music-rhythm",
+        "activity",
+        "family",
+        "substances",
+        "energy-climate",
+        "travel-place",
+    ] {
+        assert!(
+            draft.node(obsolete_compound).is_none(),
+            "compound subject {obsolete_compound} must not remain"
+        );
+    }
 }
 
 #[test]
-fn tracked_books_subject_uses_concrete_navigation_language() {
+fn tracked_books_and_history_subjects_are_separate() {
     let draft: HierarchyDraft = serde_json::from_slice(
         &fs::read("reference_map/crec-116-hierarchy-draft-v2.json")
             .expect("read tracked hierarchy draft"),
     )
     .expect("decode hierarchy draft");
-    let books = draft.node("books").expect("books subject");
+    let books = draft.node("books-reading").expect("books subject");
+    let history = draft.node("history").expect("history subject");
 
-    assert_eq!(books.label, "Books, reading, and history");
+    assert_eq!(books.label, "Books and reading");
     assert_eq!(
         books.scope,
-        "Books and reading, historical knowledge, and the preservation and accessibility of written works."
+        "Choosing, reading, recommending, accessing, and discussing books."
     );
+    assert_eq!(history.label, "History");
 }
 
 #[test]
