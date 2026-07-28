@@ -73,7 +73,6 @@ fn reference_map_cli_prepares_a_source_bound_review_proposal() {
             serde_json::json!({
                 "slot": slot,
                 "note_id": note_id,
-                "interpretive_ambiguity": index >= 56,
                 "contrast_pair": contrast_pair,
                 "broad_narrow_pair": broad_narrow_pair,
                 "niche_or_sparse_case": ((32..40).contains(&index))
@@ -83,7 +82,7 @@ fn reference_map_cli_prepares_a_source_bound_review_proposal() {
         .collect::<Vec<_>>();
     fs::write(&sample_path, sample.as_bytes()).expect("write sample");
     let plan = serde_json::json!({
-        "schema_version": 2,
+        "schema_version": 3,
         "proposal_id": "cli-preparation-test",
         "source": {
             "sample_path": "sample.jsonl",
@@ -111,9 +110,18 @@ fn reference_map_cli_prepares_a_source_bound_review_proposal() {
         "{}",
         String::from_utf8_lossy(&output.stderr)
     );
+    let proposal_bytes = fs::read(&proposal_path).expect("read generated proposal");
+    let proposal_json: serde_json::Value =
+        serde_json::from_slice(&proposal_bytes).expect("decode generated proposal");
+    assert!(
+        proposal_json["notes"]
+            .as_array()
+            .expect("proposal notes")
+            .iter()
+            .all(|note| note.get("interpretive_ambiguity").is_none())
+    );
     let proposal: NoteProposal =
-        serde_json::from_slice(&fs::read(&proposal_path).expect("read generated proposal"))
-            .expect("decode generated proposal");
+        serde_json::from_slice(&proposal_bytes).expect("decode typed proposal");
     proposal.validate().expect("generated proposal is valid");
     assert_eq!(proposal.notes[0].content, "Source-bound reference note 1");
 }

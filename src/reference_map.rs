@@ -8,7 +8,6 @@ use sha2::{Digest, Sha256};
 use crate::snapshot::{Error, Result};
 
 pub const REFERENCE_NOTE_COUNT: usize = 64;
-pub const MIN_INTERPRETIVE_AMBIGUITY_COUNT: usize = 8;
 pub const CONTRAST_PAIR_COUNT: usize = 8;
 pub const BROAD_NARROW_PAIR_COUNT: usize = 8;
 pub const NICHE_OR_SPARSE_CASE_COUNT: usize = 8;
@@ -35,7 +34,6 @@ pub struct ProposedNote {
     pub note_id: String,
     pub pubkey: String,
     pub content: String,
-    pub interpretive_ambiguity: bool,
     pub contrast_pair: Option<PairMembership>,
     pub broad_narrow_pair: Option<PairMembership>,
     pub niche_or_sparse_case: Option<String>,
@@ -60,8 +58,8 @@ pub struct NoteProposal {
 
 impl NoteProposal {
     pub fn validate(&self) -> Result<()> {
-        if self.schema_version != 2 {
-            return invalid("note proposal schema_version must be 2");
+        if self.schema_version != 3 {
+            return invalid("note proposal schema_version must be 3");
         }
         if self.proposal_id.trim().is_empty() {
             return invalid("note proposal_id must not be empty");
@@ -82,7 +80,6 @@ impl NoteProposal {
 
         let mut slots = BTreeSet::new();
         let mut note_ids = BTreeSet::new();
-        let mut interpretively_ambiguous = 0;
         let mut niche_or_sparse_cases = BTreeSet::new();
         let mut contrast = BTreeMap::<&str, Vec<&ProposedNote>>::new();
         let mut broad_narrow = BTreeMap::<&str, Vec<&ProposedNote>>::new();
@@ -102,9 +99,6 @@ impl NoteProposal {
             }
             if note.content.trim().is_empty() {
                 return invalid(format!("note slot {} must contain text", note.slot));
-            }
-            if note.interpretive_ambiguity {
-                interpretively_ambiguous += 1;
             }
             if let Some(pair) = &note.contrast_pair {
                 validate_pair_fields(note, pair, false)?;
@@ -134,12 +128,6 @@ impl NoteProposal {
             .collect::<BTreeSet<_>>();
         if slots != expected_slots {
             return invalid("note slots must be exactly 1 through 64");
-        }
-        if interpretively_ambiguous < MIN_INTERPRETIVE_AMBIGUITY_COUNT {
-            return invalid(format!(
-                "note proposal must mark at least {MIN_INTERPRETIVE_AMBIGUITY_COUNT} \
-                 interpretively ambiguous notes"
-            ));
         }
         validate_pair_groups("contrast", &contrast, CONTRAST_PAIR_COUNT, false)?;
         validate_pair_groups("broad/narrow", &broad_narrow, BROAD_NARROW_PAIR_COUNT, true)?;
@@ -269,11 +257,23 @@ pub struct NoteReviewSession {
     decisions: BTreeMap<u8, StoredNoteDecision>,
 }
 
+#[derive(Serialize)]
+struct LegacyProposedNote<'a> {
+    slot: u8,
+    note_id: &'a str,
+    pubkey: &'a str,
+    content: &'a str,
+    interpretive_ambiguity: bool,
+    contrast_pair: &'a Option<PairMembership>,
+    broad_narrow_pair: &'a Option<PairMembership>,
+    niche_or_sparse_case: &'a Option<String>,
+}
+
 impl NoteReviewSession {
     pub fn new(proposal: &NoteProposal) -> Result<Self> {
         proposal.validate()?;
         Ok(Self {
-            schema_version: 1,
+            schema_version: 2,
             decisions: BTreeMap::new(),
         })
     }
@@ -301,11 +301,44 @@ impl NoteReviewSession {
 
     pub fn reconcile(&mut self, proposal: &NoteProposal) -> Result<()> {
         proposal.validate()?;
-        self.decisions.retain(|slot, stored| {
-            proposal.note(*slot).is_some_and(|note| {
-                canonical_sha256(note).is_ok_and(|identity| identity == stored.note_sha256)
-            })
-        });
+        match self.schema_version {
+            1 => {
+                let mut migrated = BTreeMap::new();
+                for (slot, mut stored) in std::mem::take(&mut self.decisions) {
+                    let Some(note) = proposal.note(slot) else {
+                        continue;
+                    };
+                    let current_identity = canonical_sha256(note)?;
+                    if stored.note_sha256 == current_identity {
+                        migrated.insert(slot, stored);
+                        continue;
+                    }
+                    let legacy_match = [false, true].into_iter().any(|ambiguity| {
+                        legacy_note_identity(note, ambiguity)
+                            .is_ok_and(|identity| identity == stored.note_sha256)
+                    });
+                    if legacy_match && stored.decision.outcome == ReviewOutcome::Approved {
+                        stored.note_sha256 = current_identity;
+                        migrated.insert(slot, stored);
+                    }
+                }
+                self.decisions = migrated;
+                self.schema_version = 2;
+            }
+            2 => {
+                self.decisions.retain(|slot, stored| {
+                    proposal.note(*slot).is_some_and(|note| {
+                        canonical_sha256(note)
+                            .is_ok_and(|identity| identity == stored.note_sha256)
+                    })
+                });
+            }
+            version => {
+                return invalid(format!(
+                    "note review session schema_version {version} is unsupported"
+                ));
+            }
+        }
         Ok(())
     }
 
@@ -358,7 +391,7 @@ impl ApprovedNoteSet {
             ));
         }
         Ok(Self {
-            schema_version: 2,
+            schema_version: 3,
             proposal_sha256: proposal.identity()?,
             source: proposal.source.clone(),
             notes: proposal.notes.clone(),
@@ -366,11 +399,11 @@ impl ApprovedNoteSet {
     }
 
     pub fn validate(&self) -> Result<()> {
-        if self.schema_version != 2 || !is_lower_hex(&self.proposal_sha256, 64) {
+        if self.schema_version != 3 || !is_lower_hex(&self.proposal_sha256, 64) {
             return invalid("approved note set identity is invalid");
         }
         let proposal = NoteProposal {
-            schema_version: 2,
+            schema_version: 3,
             proposal_id: "approved-note-set-validation".to_owned(),
             source: self.source.clone(),
             notes: self.notes.clone(),
@@ -386,6 +419,19 @@ impl ApprovedNoteSet {
         self.validate()?;
         canonical_sha256(self)
     }
+}
+
+fn legacy_note_identity(note: &ProposedNote, interpretive_ambiguity: bool) -> Result<String> {
+    canonical_sha256(&LegacyProposedNote {
+        slot: note.slot,
+        note_id: &note.note_id,
+        pubkey: &note.pubkey,
+        content: &note.content,
+        interpretive_ambiguity,
+        contrast_pair: &note.contrast_pair,
+        broad_narrow_pair: &note.broad_narrow_pair,
+        niche_or_sparse_case: &note.niche_or_sparse_case,
+    })
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]

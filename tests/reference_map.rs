@@ -21,7 +21,6 @@ fn proposed_note(index: usize) -> ProposedNote {
         note_id: format!("{:064x}", index + 1),
         pubkey: format!("{:064x}", index + 10_000),
         content: format!("Real diagnostic note number {index}"),
-        interpretive_ambiguity: index >= 56,
         contrast_pair: (index < 16).then(|| PairMembership {
             pair_id: format!("contrast-{:02}", index / 2 + 1),
             partner_slot: u8::try_from(index ^ 1).expect("fixture partner fits u8") + 1,
@@ -44,7 +43,7 @@ fn proposed_note(index: usize) -> ProposedNote {
 
 fn proposal() -> NoteProposal {
     NoteProposal {
-        schema_version: 2,
+        schema_version: 3,
         proposal_id: "crec-115-selection-v2".to_owned(),
         source: SelectionSource {
             sample_path: "target/crec-113-formal-v1/sample/sample.jsonl".to_owned(),
@@ -57,22 +56,9 @@ fn proposal() -> NoteProposal {
 }
 
 #[test]
-fn proposal_validation_enforces_nonexclusive_diagnostic_coverage() {
+fn proposal_validation_enforces_diagnostic_coverage() {
     let proposal = proposal();
     proposal.validate().expect("approved fixture is valid");
-
-    let mut additional_ambiguity = proposal.clone();
-    additional_ambiguity.notes[0].interpretive_ambiguity = true;
-    additional_ambiguity
-        .validate()
-        .expect("interpretive ambiguity is a nonexclusive minimum, not a fixed category");
-
-    let mut too_few_ambiguous = proposal.clone();
-    too_few_ambiguous.notes[56].interpretive_ambiguity = false;
-    let error = too_few_ambiguous
-        .validate()
-        .expect_err("at least eight interpretively ambiguous notes are required");
-    assert!(error.to_string().contains("at least 8"), "{error}");
 
     let mut missing_pair = proposal.clone();
     missing_pair.notes[0].contrast_pair = None;
@@ -130,6 +116,50 @@ fn changed_candidates_reopen_without_discarding_unchanged_approvals() {
             == ReviewOutcome::Approved
     );
     assert!(session.decision_for(&revised, 8).is_none());
+}
+
+#[test]
+fn removing_legacy_ambiguity_metadata_preserves_approvals_and_reopens_rejections() {
+    let proposal = proposal();
+    let approved_sha256 = legacy_note_sha256(&proposal.notes[0], true);
+    let rejected_sha256 = legacy_note_sha256(&proposal.notes[1], true);
+    let mut session: NoteReviewSession = serde_json::from_value(serde_json::json!({
+        "schema_version": 1,
+        "decisions": {
+            "1": {
+                "note_sha256": approved_sha256,
+                "decision": {
+                    "outcome": "approved",
+                    "comment": ""
+                }
+            },
+            "2": {
+                "note_sha256": rejected_sha256,
+                "decision": {
+                    "outcome": "rejected",
+                    "comment": "Why is this interpretively ambiguous?"
+                }
+            }
+        }
+    }))
+    .expect("decode legacy review session");
+
+    session
+        .reconcile(&proposal)
+        .expect("migrate legacy review session");
+
+    assert_eq!(session.approved_count(&proposal), 1);
+    assert_eq!(
+        session
+            .decision_for(&proposal, 1)
+            .expect("legacy approval remains current")
+            .outcome,
+        ReviewOutcome::Approved
+    );
+    assert!(
+        session.decision_for(&proposal, 2).is_none(),
+        "a rejection of the removed annotation must be reviewed again"
+    );
 }
 
 #[test]
@@ -209,7 +239,7 @@ fn approved_set_requires_all_64_current_candidates_to_be_approved() {
                         ReviewOutcome::Approved
                     },
                     comment: if note.slot == 64 {
-                        "This is not semantically ambiguous.".to_owned()
+                        "The candidate text is truncated.".to_owned()
                     } else {
                         String::new()
                     },
@@ -784,6 +814,34 @@ fn sha256(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
 }
 
+fn legacy_note_sha256(note: &ProposedNote, interpretive_ambiguity: bool) -> String {
+    #[derive(serde::Serialize)]
+    struct LegacyProposedNote<'a> {
+        slot: u8,
+        note_id: &'a str,
+        pubkey: &'a str,
+        content: &'a str,
+        interpretive_ambiguity: bool,
+        contrast_pair: &'a Option<PairMembership>,
+        broad_narrow_pair: &'a Option<PairMembership>,
+        niche_or_sparse_case: &'a Option<String>,
+    }
+
+    sha256(
+        &serde_json::to_vec(&LegacyProposedNote {
+            slot: note.slot,
+            note_id: &note.note_id,
+            pubkey: &note.pubkey,
+            content: &note.content,
+            interpretive_ambiguity,
+            contrast_pair: &note.contrast_pair,
+            broad_narrow_pair: &note.broad_narrow_pair,
+            niche_or_sparse_case: &note.niche_or_sparse_case,
+        })
+        .expect("encode legacy proposed note"),
+    )
+}
+
 fn write_source_bound_proposal(directory: &std::path::Path) -> (std::path::PathBuf, NoteProposal) {
     let sample_path = directory.join("sample.jsonl");
     let proposal_path = directory.join("proposal.json");
@@ -1248,7 +1306,6 @@ fn tracked_crec_115_plan_matches_the_source_bound_proposal() {
             serde_json::json!({
                 "slot": note["slot"],
                 "note_id": note["note_id"],
-                "interpretive_ambiguity": note["interpretive_ambiguity"],
                 "contrast_pair": note["contrast_pair"],
                 "broad_narrow_pair": note["broad_narrow_pair"],
                 "niche_or_sparse_case": note["niche_or_sparse_case"],

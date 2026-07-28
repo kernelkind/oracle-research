@@ -51,7 +51,6 @@ struct NoteSelectionPlan {
 struct PlannedNote {
     slot: u8,
     note_id: String,
-    interpretive_ambiguity: bool,
     contrast_pair: Option<PairMembership>,
     broad_narrow_pair: Option<PairMembership>,
     niche_or_sparse_case: Option<String>,
@@ -70,7 +69,7 @@ pub fn prepare_note_proposal(
         ));
     }
     let plan: NoteSelectionPlan = load_json(plan_path)?;
-    if plan.schema_version != 2
+    if plan.schema_version != 3
         || plan.proposal_id.trim().is_empty()
         || plan.notes.len() != crate::reference_map::REFERENCE_NOTE_COUNT
     {
@@ -94,7 +93,6 @@ pub fn prepare_note_proposal(
                 note_id: planned.note_id,
                 pubkey: row.pubkey.clone(),
                 content: row.content.clone(),
-                interpretive_ambiguity: planned.interpretive_ambiguity,
                 contrast_pair: planned.contrast_pair,
                 broad_narrow_pair: planned.broad_narrow_pair,
                 niche_or_sparse_case: planned.niche_or_sparse_case,
@@ -102,7 +100,7 @@ pub fn prepare_note_proposal(
         })
         .collect::<Result<Vec<_>>>()?;
     let proposal = NoteProposal {
-        schema_version: 2,
+        schema_version: 3,
         proposal_id: plan.proposal_id,
         source: plan.source,
         notes,
@@ -430,9 +428,6 @@ fn note_screen(
         })
         .count();
     let mut categories = Vec::new();
-    if note.interpretive_ambiguity {
-        categories.push("Interpretive-ambiguity coverage case".to_owned());
-    }
     if let Some(pair) = &note.contrast_pair {
         categories.push(format!("Related-but-different pair · {}", pair.pair_id));
     }
