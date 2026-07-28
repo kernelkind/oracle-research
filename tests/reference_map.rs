@@ -2015,6 +2015,22 @@ fn tracked_crec_116_draft_is_bound_and_preserves_weighted_multi_membership() {
 }
 
 #[test]
+fn tracked_books_subject_uses_concrete_navigation_language() {
+    let draft: HierarchyDraft = serde_json::from_slice(
+        &fs::read("reference_map/crec-116-hierarchy-draft-v2.json")
+            .expect("read tracked hierarchy draft"),
+    )
+    .expect("decode hierarchy draft");
+    let books = draft.node("books").expect("books subject");
+
+    assert_eq!(books.label, "Books, reading, and history");
+    assert_eq!(
+        books.scope,
+        "Books and reading, historical knowledge, and the preservation and accessibility of written works."
+    );
+}
+
+#[test]
 fn approved_hierarchy_detects_changes_to_frozen_notes_and_subjects() {
     let frozen = frozen_hierarchy();
 

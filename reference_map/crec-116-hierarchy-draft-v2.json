@@ -95,8 +95,8 @@
     },
     {
       "node_id": "books",
-      "label": "Reading and written memory",
-      "scope": "Books, reading, history, and the preservation of written memory.",
+      "label": "Books, reading, and history",
+      "scope": "Books and reading, historical knowledge, and the preservation and accessibility of written works.",
       "children": [],
       "memberships": [
         {
