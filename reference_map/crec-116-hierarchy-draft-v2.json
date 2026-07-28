@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
-  "draft_id": "crec-116-reference-hierarchy-v1",
-  "approved_notes_sha256": "11f78f2c05dbf821e9997ccaed26e5320bf6ea252cef04d59503803fa779d7d9",
+  "draft_id": "crec-116-reference-hierarchy-v2",
+  "approved_notes_sha256": "12f676adeb6b7c682a16a05911c9714ea5bf3dfe034c7b85d11808757332e599",
   "root_node_id": "root",
   "nodes": [
     {
       "node_id": "root",
       "label": "All subjects",
-      "scope": "Hidden root joining the six broad navigation choices.",
+      "scope": "Hidden root joining the seven broad navigation choices.",
       "children": ["ideas", "technology", "society", "arts", "wellbeing", "food-home", "environment-place"],
       "memberships": []
     },

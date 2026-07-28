@@ -12,7 +12,7 @@ use sha2::{Digest, Sha256};
 
 use crate::reference_map::{
     ApprovedHierarchy, ApprovedNoteSet, BroadNarrowRole, HierarchyDraft, HierarchyReviewDecision,
-    HierarchyReviewSession, MembershipStrength, NoteComposition, NoteProposal, NoteReviewDecision,
+    HierarchyReviewSession, MembershipStrength, NoteProposal, NoteReviewDecision,
     NoteReviewSession, PairMembership, ProposedNote, ReviewOutcome, SelectionSource, SubjectNode,
 };
 use crate::reference_tui::{
@@ -51,11 +51,10 @@ struct NoteSelectionPlan {
 struct PlannedNote {
     slot: u8,
     note_id: String,
-    composition: NoteComposition,
-    selection_rationale: String,
+    interpretive_ambiguity: bool,
     contrast_pair: Option<PairMembership>,
     broad_narrow_pair: Option<PairMembership>,
-    niche_subject: Option<String>,
+    niche_or_sparse_case: Option<String>,
 }
 
 pub fn prepare_note_proposal(
@@ -71,7 +70,7 @@ pub fn prepare_note_proposal(
         ));
     }
     let plan: NoteSelectionPlan = load_json(plan_path)?;
-    if plan.schema_version != 1
+    if plan.schema_version != 2
         || plan.proposal_id.trim().is_empty()
         || plan.notes.len() != crate::reference_map::REFERENCE_NOTE_COUNT
     {
@@ -95,16 +94,15 @@ pub fn prepare_note_proposal(
                 note_id: planned.note_id,
                 pubkey: row.pubkey.clone(),
                 content: row.content.clone(),
-                composition: planned.composition,
-                selection_rationale: planned.selection_rationale,
+                interpretive_ambiguity: planned.interpretive_ambiguity,
                 contrast_pair: planned.contrast_pair,
                 broad_narrow_pair: planned.broad_narrow_pair,
-                niche_subject: planned.niche_subject,
+                niche_or_sparse_case: planned.niche_or_sparse_case,
             })
         })
         .collect::<Result<Vec<_>>>()?;
     let proposal = NoteProposal {
-        schema_version: 1,
+        schema_version: 2,
         proposal_id: plan.proposal_id,
         source: plan.source,
         notes,
@@ -272,32 +270,65 @@ pub fn run_hierarchy_review(
         .unwrap_or(HierarchyReviewSession::new(&draft, &approved_notes)?);
     save_session(session_path, &session)?;
 
-    while let Some(node_id) = session
-        .reviewable_node_ids(&draft, &approved_notes)
-        .first()
-        .cloned()
-    {
-        let screen = hierarchy_screen(&draft, &approved_notes, &session, &node_id)?;
-        match ui
-            .review(screen)
-            .map_err(|source| io_error("run hierarchy review UI for", draft_path, source))?
+    loop {
+        if let Some(node_id) = session
+            .reviewable_node_ids(&draft, &approved_notes)
+            .first()
+            .cloned()
         {
-            ApprovalTuiAction::None => {
-                return Err(Error::ExperimentState(
-                    "approval UI returned without a decision".to_owned(),
-                ));
+            let screen = hierarchy_screen(&draft, &approved_notes, &session, &node_id)?;
+            match ui
+                .review(screen)
+                .map_err(|source| io_error("run hierarchy review UI for", draft_path, source))?
+            {
+                ApprovalTuiAction::None => {
+                    return Err(Error::ExperimentState(
+                        "approval UI returned without a decision".to_owned(),
+                    ));
+                }
+                ApprovalTuiAction::Pause => return Ok(ReviewRunOutcome::Paused),
+                ApprovalTuiAction::Submit { outcome, comment } => {
+                    session.record(
+                        &draft,
+                        &approved_notes,
+                        &node_id,
+                        HierarchyReviewDecision { outcome, comment },
+                    )?;
+                    save_session(session_path, &session)?;
+                }
             }
-            ApprovalTuiAction::Pause => return Ok(ReviewRunOutcome::Paused),
-            ApprovalTuiAction::Submit { outcome, comment } => {
-                session.record(
-                    &draft,
-                    &approved_notes,
-                    &node_id,
-                    HierarchyReviewDecision { outcome, comment },
-                )?;
-                save_session(session_path, &session)?;
-            }
+            continue;
         }
+
+        if session.all_leaves_approved(&draft, &approved_notes)
+            && session
+                .current_focus_coverage_decision(&draft, &approved_notes)
+                .is_none()
+        {
+            let screen = focus_coverage_screen(&draft, &approved_notes);
+            match ui
+                .review(screen)
+                .map_err(|source| io_error("run hierarchy review UI for", draft_path, source))?
+            {
+                ApprovalTuiAction::None => {
+                    return Err(Error::ExperimentState(
+                        "approval UI returned without a decision".to_owned(),
+                    ));
+                }
+                ApprovalTuiAction::Pause => return Ok(ReviewRunOutcome::Paused),
+                ApprovalTuiAction::Submit { outcome, comment } => {
+                    session.record_focus_coverage(
+                        &draft,
+                        &approved_notes,
+                        HierarchyReviewDecision { outcome, comment },
+                    )?;
+                    save_session(session_path, &session)?;
+                }
+            }
+            continue;
+        }
+
+        break;
     }
 
     let approved = draft
@@ -313,13 +344,70 @@ pub fn run_hierarchy_review(
                 .current_decision(&draft, &approved_notes, node.node_id.as_str())
                 .is_some_and(|decision| decision.outcome == ReviewOutcome::Rejected)
         })
-        .count();
-    if approved != draft.nodes.len() {
+        .count()
+        + usize::from(
+            session
+                .current_focus_coverage_decision(&draft, &approved_notes)
+                .is_some_and(|decision| decision.outcome == ReviewOutcome::Rejected),
+        );
+    if approved != draft.nodes.len() || !session.focus_coverage_is_approved(&draft, &approved_notes)
+    {
         return Ok(ReviewRunOutcome::NeedsRevision { approved, rejected });
     }
     let artifact = ApprovedHierarchy::from_review(&draft, &approved_notes, &session)?;
     publish_json(approved_hierarchy_path, &artifact)?;
     Ok(ReviewRunOutcome::Approved)
+}
+
+fn focus_coverage_screen(
+    draft: &HierarchyDraft,
+    approved_notes: &ApprovedNoteSet,
+) -> ApprovalScreen {
+    let membership_inventory = note_membership_inventory(draft);
+    let mut groups = BTreeMap::<Vec<MembershipStrength>, Vec<String>>::new();
+    for note in &approved_notes.notes {
+        let memberships = &membership_inventory[note.note_id.as_str()];
+        let mut signature = memberships
+            .iter()
+            .map(|(_, strength)| *strength)
+            .collect::<Vec<_>>();
+        signature.sort_unstable_by(|left, right| right.rank().cmp(&left.rank()));
+        groups.entry(signature).or_default().push(format!(
+            "Slot {:02}\n{}\n\n{}",
+            note.slot,
+            format_note_memberships(memberships),
+            note.content
+        ));
+    }
+    let evidence = groups
+        .into_iter()
+        .map(|(signature, notes)| {
+            let note_count = notes.len();
+            let membership_count = signature.len();
+            ApprovalEvidence {
+                title: format!(
+                    "{membership_count} membership{} · {}",
+                    if membership_count == 1 { "" } else { "s" },
+                    format_membership_signature(&signature)
+                ),
+                annotation: format!(
+                    "{note_count} note{} · exact ordinal signature",
+                    if note_count == 1 { "" } else { "s" }
+                ),
+                body: notes.join("\n\n────────────────────────────────────────\n\n"),
+            }
+        })
+        .collect();
+    ApprovalScreen {
+        heading: "Hierarchy review · all leaf mappings approved".to_owned(),
+        title: "Focus-concentration coverage".to_owned(),
+        scope:
+            "Is any part of the focus-concentration spectrum missing from this 64-note reference set?"
+                .to_owned(),
+        approve_label: "Approve — no known coverage gap".to_owned(),
+        reject_label: "Reject — describe the gap".to_owned(),
+        evidence,
+    }
 }
 
 fn note_screen(
@@ -340,10 +428,12 @@ fn note_screen(
                 .is_some_and(|decision| decision.outcome == ReviewOutcome::Rejected)
         })
         .count();
-    let composition = composition_label(note.composition);
-    let mut categories = vec![composition.to_owned()];
+    let mut categories = Vec::new();
+    if note.interpretive_ambiguity {
+        categories.push("Interpretive-ambiguity coverage case".to_owned());
+    }
     if let Some(pair) = &note.contrast_pair {
-        categories.push(format!("contrast pair {}", pair.pair_id));
+        categories.push(format!("Related-but-different pair · {}", pair.pair_id));
     }
     if let Some(pair) = &note.broad_narrow_pair {
         let role = match pair
@@ -353,10 +443,10 @@ fn note_screen(
             BroadNarrowRole::Broad => "broad",
             BroadNarrowRole::Narrow => "narrow",
         };
-        categories.push(format!("{role} member of {}", pair.pair_id));
+        categories.push(format!("Broad/narrow pair · {role} · {}", pair.pair_id));
     }
-    if let Some(subject) = &note.niche_subject {
-        categories.push(format!("niche subject: {subject}"));
+    if let Some(case) = &note.niche_or_sparse_case {
+        categories.push(format!("Niche/sparse coverage case · {case}"));
     }
     let mut evidence = vec![ApprovalEvidence {
         title: "Candidate note".to_owned(),
@@ -367,7 +457,7 @@ fn note_screen(
     if let Some(pair) = &note.contrast_pair {
         partner_slots.push((
             pair.partner_slot,
-            format!("Contrast partner · {}", pair.pair_id),
+            format!("Related-but-different pair · {}", pair.pair_id),
         ));
     }
     if let Some(pair) = &note.broad_narrow_pair {
@@ -385,19 +475,22 @@ fn note_screen(
             ))
         })?;
         evidence.push(ApprovalEvidence {
-            title: format!("Paired note · Slot {partner_slot:02}"),
+            title: format!("Comparison note · Slot {partner_slot:02}"),
             annotation,
-            body: partner.content.clone(),
+            body: format!(
+                "Shown only to judge this relationship; reviewed separately at its own slot.\n\n{}",
+                partner.content
+            ),
         });
     }
     Ok(ApprovalScreen {
         heading: format!("Candidate {slot} of 64 · {approved} approved · {rejected} rejected"),
-        title: format!("Slot {slot:02} · {composition}"),
-        scope: format!(
-            "Why selected: {} — {}",
-            selection_category_label(note.composition),
-            note.selection_rationale.trim()
-        ),
+        title: format!("Slot {slot:02}"),
+        scope:
+            "Is there a concrete reason this note should not be included in the 64-note reference set?"
+                .to_owned(),
+        approve_label: "Approve — no disqualifying problem".to_owned(),
+        reject_label: "Reject — explain the problem".to_owned(),
         evidence,
     })
 }
@@ -430,6 +523,7 @@ fn hierarchy_screen(
         .iter()
         .map(|note| (note.note_id.as_str(), note.content.as_str()))
         .collect::<BTreeMap<_, _>>();
+    let membership_inventory = note_membership_inventory(draft);
     let evidence = if node.is_leaf() {
         let mut memberships = node.memberships.iter().collect::<Vec<_>>();
         memberships.sort_by(|left, right| {
@@ -443,8 +537,15 @@ fn hierarchy_screen(
             .into_iter()
             .map(|membership| ApprovalEvidence {
                 title: format!("Member note · {}", strength_label(membership.strength)),
-                annotation: format!("{} membership", strength_label(membership.strength)),
-                body: note_by_id[membership.note_id.as_str()].to_owned(),
+                annotation: format!(
+                    "Current leaf membership: {}",
+                    strength_label(membership.strength)
+                ),
+                body: format!(
+                    "Complete proposed map:\n{}\n\nNote:\n{}",
+                    format_note_memberships(&membership_inventory[membership.note_id.as_str()]),
+                    note_by_id[membership.note_id.as_str()]
+                ),
             })
             .collect()
     } else {
@@ -516,8 +617,50 @@ fn hierarchy_screen(
         ),
         title,
         scope: node.scope.clone(),
+        approve_label: "Approve — no concrete problem".to_owned(),
+        reject_label: "Reject — explain the problem".to_owned(),
         evidence,
     })
+}
+
+fn note_membership_inventory(
+    draft: &HierarchyDraft,
+) -> BTreeMap<&str, Vec<(&str, MembershipStrength)>> {
+    let mut memberships = BTreeMap::<&str, Vec<(&str, MembershipStrength)>>::new();
+    for node in draft.nodes.iter().filter(|node| node.is_leaf()) {
+        for membership in &node.memberships {
+            memberships
+                .entry(membership.note_id.as_str())
+                .or_default()
+                .push((node.label.as_str(), membership.strength));
+        }
+    }
+    for note_memberships in memberships.values_mut() {
+        note_memberships.sort_unstable_by(|left, right| {
+            right
+                .1
+                .rank()
+                .cmp(&left.1.rank())
+                .then_with(|| left.0.cmp(right.0))
+        });
+    }
+    memberships
+}
+
+fn format_note_memberships(memberships: &[(&str, MembershipStrength)]) -> String {
+    memberships
+        .iter()
+        .map(|(label, strength)| format!("• {label} — {}", strength_label(*strength)))
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+fn format_membership_signature(signature: &[MembershipStrength]) -> String {
+    signature
+        .iter()
+        .map(|strength| strength_label(*strength))
+        .collect::<Vec<_>>()
+        .join(" + ")
 }
 
 fn representative_note_ids(
@@ -573,22 +716,6 @@ fn representative_note_ids(
         }
     }
     Ok(note_ids)
-}
-
-fn composition_label(composition: NoteComposition) -> &'static str {
-    match composition {
-        NoteComposition::Single => "Single subject",
-        NoteComposition::Mixed => "Mixed subject",
-        NoteComposition::Ambiguous => "Ambiguous",
-    }
-}
-
-fn selection_category_label(composition: NoteComposition) -> &'static str {
-    match composition {
-        NoteComposition::Single => "Clear single-subject example",
-        NoteComposition::Mixed => "Clear mixed-subject example",
-        NoteComposition::Ambiguous => "Genuinely ambiguous example",
-    }
 }
 
 fn strength_label(strength: MembershipStrength) -> &'static str {

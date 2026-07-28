@@ -7,8 +7,8 @@ use oracle_mvp::reference_tui::{
     ApprovalEvidence, ApprovalScreen, ApprovalTuiAction, ApprovalTuiModel, NavigationTuiAction,
     ReferenceNavigationTuiModel,
 };
-use ratatui::Terminal;
 use ratatui::backend::TestBackend;
+use ratatui::Terminal;
 use sha2::{Digest, Sha256};
 
 fn key(code: KeyCode) -> Event {
@@ -18,17 +18,22 @@ fn key(code: KeyCode) -> Event {
 fn approval_screen() -> ApprovalScreen {
     ApprovalScreen {
         heading: "Candidate 7 of 64 · 4 approved · 2 rejected".to_owned(),
-        title: "Slot 07 · Mixed subject".to_owned(),
-        scope: "Chosen as one half of contrast pair contrast-03.".to_owned(),
+        title: "Slot 07".to_owned(),
+        scope:
+            "Is there a concrete reason this note should not be included in the 64-note reference set?"
+                .to_owned(),
+        approve_label: "Approve — no disqualifying problem".to_owned(),
+        reject_label: "Reject — explain the problem".to_owned(),
         evidence: vec![
             ApprovalEvidence {
                 title: "Candidate note".to_owned(),
-                annotation: "Mixed · niche: none".to_owned(),
+                annotation: "Related-but-different pair · contrast-03".to_owned(),
                 body: "A Rust programmer makes sourdough while listening to jazz.".to_owned(),
             },
             ApprovalEvidence {
-                title: "Paired note".to_owned(),
-                annotation: "Contrast pair contrast-03".to_owned(),
+                title: "Comparison note · Slot 08".to_owned(),
+                annotation:
+                    "Shown only to judge the relationship; reviewed separately.".to_owned(),
                 body: "A systems programmer compares Rust and C memory models.".to_owned(),
             },
         ],
@@ -51,19 +56,29 @@ fn render_approval(model: &mut ApprovalTuiModel) -> String {
 }
 
 #[test]
-fn approval_ui_shows_context_and_switches_to_the_paired_note() {
+fn approval_ui_shows_the_negative_review_question_and_switches_to_the_comparison_note() {
     let mut model = ApprovalTuiModel::new(approval_screen());
     let first = render_approval(&mut model);
     assert!(first.contains("Candidate note"), "{first}");
     assert!(first.contains("Rust programmer"), "{first}");
-    assert!(first.contains("Chosen as one half"), "{first}");
+    assert!(
+        first.contains("Is there a concrete reason this note should not be included"),
+        "{first}"
+    );
+    assert!(
+        first.contains("Approve — no disqualifying problem"),
+        "{first}"
+    );
+    assert!(first.contains("Reject — explain the problem"), "{first}");
+    assert!(!first.contains("Mixed subject"), "{first}");
 
     assert_eq!(
         model.handle_event(key(KeyCode::Tab)),
         ApprovalTuiAction::None
     );
     let second = render_approval(&mut model);
-    assert!(second.contains("Paired note"), "{second}");
+    assert!(second.contains("Comparison note"), "{second}");
+    assert!(second.contains("reviewed separately"), "{second}");
     assert!(second.contains("memory models"), "{second}");
 }
 
@@ -74,7 +89,7 @@ fn approval_ui_collects_a_unicode_comment_before_confirming() {
         model.handle_event(key(KeyCode::Char('r'))),
         ApprovalTuiAction::None
     );
-    for character in "Wrong category 🤔".chars() {
+    for character in "The note is truncated 🤔".chars() {
         assert_eq!(
             model.handle_event(key(KeyCode::Char(character))),
             ApprovalTuiAction::None
@@ -92,7 +107,7 @@ fn approval_ui_collects_a_unicode_comment_before_confirming() {
         model.handle_event(key(KeyCode::Enter)),
         ApprovalTuiAction::Submit {
             outcome: ReviewOutcome::Rejected,
-            comment: "Wrong category .".to_owned(),
+            comment: "The note is truncated .".to_owned(),
         }
     );
 }

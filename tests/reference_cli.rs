@@ -73,22 +73,17 @@ fn reference_map_cli_prepares_a_source_bound_review_proposal() {
             serde_json::json!({
                 "slot": slot,
                 "note_id": note_id,
-                "composition": match index {
-                    0..24 => "single",
-                    24..56 => "mixed",
-                    _ => "ambiguous",
-                },
-                "selection_rationale": format!("Diagnostic semantic case {slot}"),
+                "interpretive_ambiguity": index >= 56,
                 "contrast_pair": contrast_pair,
                 "broad_narrow_pair": broad_narrow_pair,
-                "niche_subject": ((32..40).contains(&index))
+                "niche_or_sparse_case": ((32..40).contains(&index))
                     .then(|| format!("niche-{slot}")),
             })
         })
         .collect::<Vec<_>>();
     fs::write(&sample_path, sample.as_bytes()).expect("write sample");
     let plan = serde_json::json!({
-        "schema_version": 1,
+        "schema_version": 2,
         "proposal_id": "cli-preparation-test",
         "source": {
             "sample_path": "sample.jsonl",

@@ -8,20 +8,10 @@ use sha2::{Digest, Sha256};
 use crate::snapshot::{Error, Result};
 
 pub const REFERENCE_NOTE_COUNT: usize = 64;
-pub const SINGLE_NOTE_COUNT: usize = 24;
-pub const MIXED_NOTE_COUNT: usize = 32;
-pub const AMBIGUOUS_NOTE_COUNT: usize = 8;
+pub const MIN_INTERPRETIVE_AMBIGUITY_COUNT: usize = 8;
 pub const CONTRAST_PAIR_COUNT: usize = 8;
 pub const BROAD_NARROW_PAIR_COUNT: usize = 8;
-pub const NICHE_SUBJECT_COUNT: usize = 8;
-
-#[derive(Clone, Copy, Debug, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
-#[serde(rename_all = "snake_case")]
-pub enum NoteComposition {
-    Single,
-    Mixed,
-    Ambiguous,
-}
+pub const NICHE_OR_SPARSE_CASE_COUNT: usize = 8;
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -45,11 +35,10 @@ pub struct ProposedNote {
     pub note_id: String,
     pub pubkey: String,
     pub content: String,
-    pub composition: NoteComposition,
-    pub selection_rationale: String,
+    pub interpretive_ambiguity: bool,
     pub contrast_pair: Option<PairMembership>,
     pub broad_narrow_pair: Option<PairMembership>,
-    pub niche_subject: Option<String>,
+    pub niche_or_sparse_case: Option<String>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -71,8 +60,8 @@ pub struct NoteProposal {
 
 impl NoteProposal {
     pub fn validate(&self) -> Result<()> {
-        if self.schema_version != 1 {
-            return invalid("note proposal schema_version must be 1");
+        if self.schema_version != 2 {
+            return invalid("note proposal schema_version must be 2");
         }
         if self.proposal_id.trim().is_empty() {
             return invalid("note proposal_id must not be empty");
@@ -93,10 +82,8 @@ impl NoteProposal {
 
         let mut slots = BTreeSet::new();
         let mut note_ids = BTreeSet::new();
-        let mut single = 0;
-        let mut mixed = 0;
-        let mut ambiguous = 0;
-        let mut niches = BTreeSet::new();
+        let mut interpretively_ambiguous = 0;
+        let mut niche_or_sparse_cases = BTreeSet::new();
         let mut contrast = BTreeMap::<&str, Vec<&ProposedNote>>::new();
         let mut broad_narrow = BTreeMap::<&str, Vec<&ProposedNote>>::new();
 
@@ -113,16 +100,11 @@ impl NoteProposal {
                     note.slot
                 ));
             }
-            if note.content.trim().is_empty() || note.selection_rationale.trim().is_empty() {
-                return invalid(format!(
-                    "note slot {} must contain text and a selection rationale",
-                    note.slot
-                ));
+            if note.content.trim().is_empty() {
+                return invalid(format!("note slot {} must contain text", note.slot));
             }
-            match note.composition {
-                NoteComposition::Single => single += 1,
-                NoteComposition::Mixed => mixed += 1,
-                NoteComposition::Ambiguous => ambiguous += 1,
+            if note.interpretive_ambiguity {
+                interpretively_ambiguous += 1;
             }
             if let Some(pair) = &note.contrast_pair {
                 validate_pair_fields(note, pair, false)?;
@@ -138,9 +120,11 @@ impl NoteProposal {
                     .or_default()
                     .push(note);
             }
-            if let Some(subject) = &note.niche_subject {
-                if subject.trim().is_empty() || !niches.insert(subject.as_str()) {
-                    return invalid("every niche subject marker must be nonempty and distinct");
+            if let Some(case) = &note.niche_or_sparse_case {
+                if case.trim().is_empty() || !niche_or_sparse_cases.insert(case.as_str()) {
+                    return invalid(
+                        "every niche or sparse case marker must be nonempty and distinct",
+                    );
                 }
             }
         }
@@ -151,18 +135,17 @@ impl NoteProposal {
         if slots != expected_slots {
             return invalid("note slots must be exactly 1 through 64");
         }
-        if (single, mixed, ambiguous) != (SINGLE_NOTE_COUNT, MIXED_NOTE_COUNT, AMBIGUOUS_NOTE_COUNT)
-        {
+        if interpretively_ambiguous < MIN_INTERPRETIVE_AMBIGUITY_COUNT {
             return invalid(format!(
-                "note proposal must contain exactly {SINGLE_NOTE_COUNT} single, \
-                 {MIXED_NOTE_COUNT} mixed, and {AMBIGUOUS_NOTE_COUNT} ambiguous notes"
+                "note proposal must mark at least {MIN_INTERPRETIVE_AMBIGUITY_COUNT} \
+                 interpretively ambiguous notes"
             ));
         }
         validate_pair_groups("contrast", &contrast, CONTRAST_PAIR_COUNT, false)?;
         validate_pair_groups("broad/narrow", &broad_narrow, BROAD_NARROW_PAIR_COUNT, true)?;
-        if niches.len() != NICHE_SUBJECT_COUNT {
+        if niche_or_sparse_cases.len() != NICHE_OR_SPARSE_CASE_COUNT {
             return invalid(format!(
-                "note proposal must mark exactly {NICHE_SUBJECT_COUNT} distinct niche subjects"
+                "note proposal must mark exactly {NICHE_OR_SPARSE_CASE_COUNT} distinct niche or sparse cases"
             ));
         }
         Ok(())
@@ -375,7 +358,7 @@ impl ApprovedNoteSet {
             ));
         }
         Ok(Self {
-            schema_version: 1,
+            schema_version: 2,
             proposal_sha256: proposal.identity()?,
             source: proposal.source.clone(),
             notes: proposal.notes.clone(),
@@ -383,11 +366,11 @@ impl ApprovedNoteSet {
     }
 
     pub fn validate(&self) -> Result<()> {
-        if self.schema_version != 1 || !is_lower_hex(&self.proposal_sha256, 64) {
+        if self.schema_version != 2 || !is_lower_hex(&self.proposal_sha256, 64) {
             return invalid("approved note set identity is invalid");
         }
         let proposal = NoteProposal {
-            schema_version: 1,
+            schema_version: 2,
             proposal_id: "approved-note-set-validation".to_owned(),
             source: self.source.clone(),
             notes: self.notes.clone(),
@@ -596,6 +579,17 @@ impl HierarchyDraft {
         canonical_sha256(self)
     }
 
+    fn leaf_map_revision(&self, approved_notes: &ApprovedNoteSet) -> Result<String> {
+        self.validate(approved_notes)?;
+        let mut leaves = self
+            .nodes
+            .iter()
+            .filter(|node| node.is_leaf())
+            .collect::<Vec<_>>();
+        leaves.sort_unstable_by(|left, right| left.node_id.cmp(&right.node_id));
+        canonical_sha256(&(approved_notes.identity()?, leaves))
+    }
+
     pub fn node_revision(&self, approved_notes: &ApprovedNoteSet, node_id: &str) -> Result<String> {
         self.validate(approved_notes)?;
         let nodes = self
@@ -698,17 +692,26 @@ pub struct HierarchyReviewRecord {
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(deny_unknown_fields)]
+struct FocusCoverageReviewRecord {
+    pub leaf_map_revision_sha256: String,
+    pub decision: HierarchyReviewDecision,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
 pub struct HierarchyReviewSession {
     schema_version: u32,
     history: Vec<HierarchyReviewRecord>,
+    focus_coverage_history: Vec<FocusCoverageReviewRecord>,
 }
 
 impl HierarchyReviewSession {
     pub fn new(draft: &HierarchyDraft, approved_notes: &ApprovedNoteSet) -> Result<Self> {
         draft.validate(approved_notes)?;
         Ok(Self {
-            schema_version: 1,
+            schema_version: 2,
             history: Vec::new(),
+            focus_coverage_history: Vec::new(),
         })
     }
 
@@ -741,6 +744,34 @@ impl HierarchyReviewSession {
         Ok(())
     }
 
+    pub fn record_focus_coverage(
+        &mut self,
+        draft: &HierarchyDraft,
+        approved_notes: &ApprovedNoteSet,
+        decision: HierarchyReviewDecision,
+    ) -> Result<()> {
+        draft.validate(approved_notes)?;
+        validate_review_decision(decision.outcome, &decision.comment)?;
+        if !self.all_leaves_approved(draft, approved_notes) {
+            return invalid(
+                "focus-concentration coverage cannot be reviewed until every leaf mapping is approved",
+            );
+        }
+        if self
+            .current_focus_coverage_decision(draft, approved_notes)
+            .is_some()
+        {
+            return invalid(
+                "focus-concentration coverage already has a decision for the current leaf map",
+            );
+        }
+        self.focus_coverage_history.push(FocusCoverageReviewRecord {
+            leaf_map_revision_sha256: draft.leaf_map_revision(approved_notes)?,
+            decision,
+        });
+        Ok(())
+    }
+
     pub fn current_decision(
         &self,
         draft: &HierarchyDraft,
@@ -765,11 +796,50 @@ impl HierarchyReviewSession {
             .is_some_and(|decision| decision.outcome == ReviewOutcome::Approved)
     }
 
+    pub fn current_focus_coverage_decision(
+        &self,
+        draft: &HierarchyDraft,
+        approved_notes: &ApprovedNoteSet,
+    ) -> Option<&HierarchyReviewDecision> {
+        let revision = draft.leaf_map_revision(approved_notes).ok()?;
+        self.focus_coverage_history
+            .iter()
+            .rev()
+            .find(|record| record.leaf_map_revision_sha256 == revision)
+            .map(|record| &record.decision)
+    }
+
+    pub fn focus_coverage_is_approved(
+        &self,
+        draft: &HierarchyDraft,
+        approved_notes: &ApprovedNoteSet,
+    ) -> bool {
+        self.current_focus_coverage_decision(draft, approved_notes)
+            .is_some_and(|decision| decision.outcome == ReviewOutcome::Approved)
+    }
+
+    pub fn all_leaves_approved(
+        &self,
+        draft: &HierarchyDraft,
+        approved_notes: &ApprovedNoteSet,
+    ) -> bool {
+        draft
+            .nodes
+            .iter()
+            .filter(|node| node.is_leaf())
+            .all(|node| self.is_approved(draft, approved_notes, node.node_id.as_str()))
+    }
+
     pub fn reviewable_node_ids(
         &self,
         draft: &HierarchyDraft,
         approved_notes: &ApprovedNoteSet,
     ) -> Vec<String> {
+        if self.all_leaves_approved(draft, approved_notes)
+            && !self.focus_coverage_is_approved(draft, approved_notes)
+        {
+            return Vec::new();
+        }
         let eligible = draft
             .nodes
             .iter()
@@ -872,6 +942,11 @@ impl ApprovedHierarchy {
         session: &HierarchyReviewSession,
     ) -> Result<Self> {
         draft.validate(approved_notes)?;
+        if !session.focus_coverage_is_approved(draft, approved_notes) {
+            return invalid(
+                "cannot publish hierarchy until focus-concentration coverage is approved",
+            );
+        }
         if !session.is_approved(draft, approved_notes, &draft.root_node_id) {
             return invalid("cannot publish hierarchy until the current hidden root is approved");
         }

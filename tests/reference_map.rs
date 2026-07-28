@@ -4,9 +4,9 @@ use std::io;
 
 use oracle_mvp::reference_map::{
     ApprovedHierarchy, ApprovedNoteSet, BroadNarrowRole, HierarchyDraft, HierarchyReviewDecision,
-    HierarchyReviewSession, LeafMembership, MembershipStrength, NoteComposition, NoteProposal,
-    NoteReviewDecision, NoteReviewSession, PairMembership, ProposedNote, ReferenceNavigation,
-    ReviewOutcome, SelectionSource, SubjectNode,
+    HierarchyReviewSession, LeafMembership, MembershipStrength, NoteProposal, NoteReviewDecision,
+    NoteReviewSession, PairMembership, ProposedNote, ReferenceNavigation, ReviewOutcome,
+    SelectionSource, SubjectNode,
 };
 use oracle_mvp::reference_review::{
     load_verified_note_proposal, run_hierarchy_review, run_note_review, ApprovalUi,
@@ -16,18 +16,12 @@ use oracle_mvp::reference_tui::{ApprovalScreen, ApprovalTuiAction};
 use sha2::{Digest, Sha256};
 
 fn proposed_note(index: usize) -> ProposedNote {
-    let composition = match index {
-        0..24 => NoteComposition::Single,
-        24..56 => NoteComposition::Mixed,
-        _ => NoteComposition::Ambiguous,
-    };
     ProposedNote {
         slot: u8::try_from(index + 1).expect("fixture slot fits u8"),
         note_id: format!("{:064x}", index + 1),
         pubkey: format!("{:064x}", index + 10_000),
         content: format!("Real diagnostic note number {index}"),
-        composition,
-        selection_rationale: format!("Exercises {composition:?} subject semantics"),
+        interpretive_ambiguity: index >= 56,
         contrast_pair: (index < 16).then(|| PairMembership {
             pair_id: format!("contrast-{:02}", index / 2 + 1),
             partner_slot: u8::try_from(index ^ 1).expect("fixture partner fits u8") + 1,
@@ -42,16 +36,16 @@ fn proposed_note(index: usize) -> ProposedNote {
                 BroadNarrowRole::Narrow
             }),
         }),
-        niche_subject: (32..40)
+        niche_or_sparse_case: (32..40)
             .contains(&index)
-            .then(|| format!("niche-subject-{:02}", index - 31)),
+            .then(|| format!("niche-or-sparse-case-{:02}", index - 31)),
     }
 }
 
 fn proposal() -> NoteProposal {
     NoteProposal {
-        schema_version: 1,
-        proposal_id: "crec-115-selection-v1".to_owned(),
+        schema_version: 2,
+        proposal_id: "crec-115-selection-v2".to_owned(),
         source: SelectionSource {
             sample_path: "target/crec-113-formal-v1/sample/sample.jsonl".to_owned(),
             sample_sha256: "8edb8a51246201100e6ba7cf7bf1bbf9cd501881d7c70b8a9cfc7a380d1b168e"
@@ -63,21 +57,22 @@ fn proposal() -> NoteProposal {
 }
 
 #[test]
-fn proposal_validation_enforces_every_approved_count() {
+fn proposal_validation_enforces_nonexclusive_diagnostic_coverage() {
     let proposal = proposal();
     proposal.validate().expect("approved fixture is valid");
 
-    let mut wrong_composition = proposal.clone();
-    wrong_composition.notes[0].composition = NoteComposition::Mixed;
-    let error = wrong_composition
+    let mut additional_ambiguity = proposal.clone();
+    additional_ambiguity.notes[0].interpretive_ambiguity = true;
+    additional_ambiguity
         .validate()
-        .expect_err("the exact primary composition counts are required");
-    assert!(
-        error
-            .to_string()
-            .contains("24 single, 32 mixed, and 8 ambiguous"),
-        "{error}"
-    );
+        .expect("interpretive ambiguity is a nonexclusive minimum, not a fixed category");
+
+    let mut too_few_ambiguous = proposal.clone();
+    too_few_ambiguous.notes[56].interpretive_ambiguity = false;
+    let error = too_few_ambiguous
+        .validate()
+        .expect_err("at least eight interpretively ambiguous notes are required");
+    assert!(error.to_string().contains("at least 8"), "{error}");
 
     let mut missing_pair = proposal.clone();
     missing_pair.notes[0].contrast_pair = None;
@@ -87,11 +82,15 @@ fn proposal_validation_enforces_every_approved_count() {
     assert!(error.to_string().contains("contrast pair"), "{error}");
 
     let mut duplicated_niche = proposal;
-    duplicated_niche.notes[33].niche_subject = duplicated_niche.notes[32].niche_subject.clone();
+    duplicated_niche.notes[33].niche_or_sparse_case =
+        duplicated_niche.notes[32].niche_or_sparse_case.clone();
     let error = duplicated_niche
         .validate()
-        .expect_err("niche markers identify eight distinct subjects");
-    assert!(error.to_string().contains("niche subject"), "{error}");
+        .expect_err("niche/sparse markers identify eight distinct cases");
+    assert!(
+        error.to_string().contains("niche or sparse case"),
+        "{error}"
+    );
 }
 
 #[test]
@@ -164,6 +163,33 @@ fn rejection_decisions_require_an_actionable_comment() {
             },
         )
         .expect_err("blank hierarchy rejection is not actionable");
+    assert!(error.to_string().contains("rejection comment"), "{error}");
+
+    let mut focus_session =
+        HierarchyReviewSession::new(&draft, &approved).expect("create focus session");
+    for leaf in ["software", "hardware", "food", "outdoors"] {
+        focus_session
+            .record(
+                &draft,
+                &approved,
+                leaf,
+                HierarchyReviewDecision {
+                    outcome: ReviewOutcome::Approved,
+                    comment: String::new(),
+                },
+            )
+            .expect("approve leaf");
+    }
+    let error = focus_session
+        .record_focus_coverage(
+            &draft,
+            &approved,
+            HierarchyReviewDecision {
+                outcome: ReviewOutcome::Rejected,
+                comment: String::new(),
+            },
+        )
+        .expect_err("blank focus-coverage rejection is not actionable");
     assert!(error.to_string().contains("rejection comment"), "{error}");
 }
 
@@ -302,11 +328,47 @@ fn hierarchy(approved: &ApprovedNoteSet) -> HierarchyDraft {
         .find(|node| node.node_id == "food")
         .expect("food leaf")
         .memberships
-        .push(LeafMembership {
-            note_id: approved.notes[24].note_id.clone(),
-            strength: MembershipStrength::Central,
-        });
+        .extend([
+            LeafMembership {
+                note_id: approved.notes[2].note_id.clone(),
+                strength: MembershipStrength::Substantive,
+            },
+            LeafMembership {
+                note_id: approved.notes[24].note_id.clone(),
+                strength: MembershipStrength::Central,
+            },
+        ]);
     draft
+}
+
+fn approve_all_leaf_mappings_and_focus(
+    session: &mut HierarchyReviewSession,
+    hierarchy: &HierarchyDraft,
+    approved: &ApprovedNoteSet,
+) {
+    for leaf in ["software", "hardware", "food", "outdoors"] {
+        session
+            .record(
+                hierarchy,
+                approved,
+                leaf,
+                HierarchyReviewDecision {
+                    outcome: ReviewOutcome::Approved,
+                    comment: String::new(),
+                },
+            )
+            .expect("approve leaf mapping");
+    }
+    session
+        .record_focus_coverage(
+            hierarchy,
+            approved,
+            HierarchyReviewDecision {
+                outcome: ReviewOutcome::Approved,
+                comment: String::new(),
+            },
+        )
+        .expect("approve focus-concentration coverage");
 }
 
 #[test]
@@ -362,6 +424,25 @@ fn hierarchy_validation_enforces_grounded_bounded_tree() {
 }
 
 #[test]
+fn hierarchy_allows_a_diffuse_note_without_a_central_membership() {
+    let approved = approved_notes();
+    let mut hierarchy = hierarchy(&approved);
+    let diffuse_note_id = approved.notes[24].note_id.as_str();
+    for membership in hierarchy
+        .nodes
+        .iter_mut()
+        .flat_map(|node| &mut node.memberships)
+        .filter(|membership| membership.note_id == diffuse_note_id)
+    {
+        membership.strength = MembershipStrength::Substantive;
+    }
+
+    hierarchy
+        .validate(&approved)
+        .expect("several substantive memberships are a valid diffuse focus pattern");
+}
+
+#[test]
 fn hierarchy_review_unlocks_parents_only_after_approved_children() {
     let approved = approved_notes();
     let hierarchy = hierarchy(&approved);
@@ -401,6 +482,22 @@ fn hierarchy_review_unlocks_parents_only_after_approved_children() {
             )
             .expect("approve leaf");
     }
+    assert!(
+        session
+            .reviewable_node_ids(&hierarchy, &approved)
+            .is_empty(),
+        "parent review stays locked until focus coverage is approved"
+    );
+    session
+        .record_focus_coverage(
+            &hierarchy,
+            &approved,
+            HierarchyReviewDecision {
+                outcome: ReviewOutcome::Approved,
+                comment: String::new(),
+            },
+        )
+        .expect("approve focus coverage");
     assert_eq!(
         session.reviewable_node_ids(&hierarchy, &approved),
         vec!["technology", "life"]
@@ -419,19 +516,7 @@ fn hierarchy_review_groups_each_height_in_root_tree_order() {
         vec!["software", "hardware", "food", "outdoors"],
         "leaves follow depth-first root and sibling order"
     );
-    for leaf in ["software", "hardware", "food", "outdoors"] {
-        session
-            .record(
-                &hierarchy,
-                &approved,
-                leaf,
-                HierarchyReviewDecision {
-                    outcome: ReviewOutcome::Approved,
-                    comment: String::new(),
-                },
-            )
-            .expect("approve leaf");
-    }
+    approve_all_leaf_mappings_and_focus(&mut session, &hierarchy, &approved);
     assert_eq!(
         session.reviewable_node_ids(&hierarchy, &approved),
         vec!["technology", "life"],
@@ -445,19 +530,7 @@ fn changed_leaf_invalidates_only_that_leaf_and_its_ancestors() {
     let hierarchy = hierarchy(&approved);
     let mut session =
         HierarchyReviewSession::new(&hierarchy, &approved).expect("create hierarchy session");
-    for node in ["food", "hardware", "outdoors", "software"] {
-        session
-            .record(
-                &hierarchy,
-                &approved,
-                node,
-                HierarchyReviewDecision {
-                    outcome: ReviewOutcome::Approved,
-                    comment: String::new(),
-                },
-            )
-            .expect("approve leaf");
-    }
+    approve_all_leaf_mappings_and_focus(&mut session, &hierarchy, &approved);
     for node in ["life", "technology", "all-subjects"] {
         session
             .record(
@@ -489,6 +562,81 @@ fn changed_leaf_invalidates_only_that_leaf_and_its_ancestors() {
     assert!(session.is_approved(&revised, &approved, "food"));
     assert!(session.is_approved(&revised, &approved, "outdoors"));
     assert!(session.is_approved(&revised, &approved, "life"));
+    assert!(
+        !session.focus_coverage_is_approved(&revised, &approved),
+        "changing a leaf mapping invalidates the focus-coverage decision"
+    );
+}
+
+#[test]
+fn parent_only_revision_preserves_the_approved_focus_coverage_gate() {
+    let approved = approved_notes();
+    let hierarchy = hierarchy(&approved);
+    let mut session =
+        HierarchyReviewSession::new(&hierarchy, &approved).expect("create hierarchy session");
+    approve_all_leaf_mappings_and_focus(&mut session, &hierarchy, &approved);
+
+    let mut revised = hierarchy;
+    revised.draft_id = "crec-116-parent-revision".to_owned();
+    revised
+        .nodes
+        .iter_mut()
+        .find(|node| node.node_id == "technology")
+        .expect("technology parent")
+        .scope = "Software and hardware systems".to_owned();
+    revised
+        .validate(&approved)
+        .expect("revised parent is valid");
+
+    assert!(
+        session.focus_coverage_is_approved(&revised, &approved),
+        "a parent-only edit does not change the reviewed leaf membership map"
+    );
+    assert_eq!(
+        session.reviewable_node_ids(&revised, &approved),
+        vec!["technology", "life"]
+    );
+}
+
+#[test]
+fn rejected_focus_coverage_blocks_parent_review_and_publication() {
+    let approved = approved_notes();
+    let hierarchy = hierarchy(&approved);
+    let mut session =
+        HierarchyReviewSession::new(&hierarchy, &approved).expect("create hierarchy session");
+    for leaf in ["software", "hardware", "food", "outdoors"] {
+        session
+            .record(
+                &hierarchy,
+                &approved,
+                leaf,
+                HierarchyReviewDecision {
+                    outcome: ReviewOutcome::Approved,
+                    comment: String::new(),
+                },
+            )
+            .expect("approve leaf");
+    }
+    session
+        .record_focus_coverage(
+            &hierarchy,
+            &approved,
+            HierarchyReviewDecision {
+                outcome: ReviewOutcome::Rejected,
+                comment: "The set lacks a note with several substantive memberships.".to_owned(),
+            },
+        )
+        .expect("record the concrete coverage gap");
+
+    assert!(session
+        .reviewable_node_ids(&hierarchy, &approved)
+        .is_empty());
+    let error = ApprovedHierarchy::from_review(&hierarchy, &approved, &session)
+        .expect_err("rejected focus coverage prevents publication");
+    assert!(
+        error.to_string().contains("focus-concentration coverage"),
+        "{error}"
+    );
 }
 
 #[test]
@@ -497,14 +645,8 @@ fn hierarchy_publication_requires_the_current_hidden_root_approval() {
     let hierarchy = hierarchy(&approved);
     let mut session =
         HierarchyReviewSession::new(&hierarchy, &approved).expect("create hierarchy session");
-    for node in [
-        "food",
-        "hardware",
-        "outdoors",
-        "software",
-        "life",
-        "technology",
-    ] {
+    approve_all_leaf_mappings_and_focus(&mut session, &hierarchy, &approved);
+    for node in ["life", "technology"] {
         session
             .record(
                 &hierarchy,
@@ -543,15 +685,8 @@ fn frozen_hierarchy() -> ApprovedHierarchy {
     let hierarchy = hierarchy(&approved);
     let mut session =
         HierarchyReviewSession::new(&hierarchy, &approved).expect("create hierarchy session");
-    for node in [
-        "food",
-        "hardware",
-        "outdoors",
-        "software",
-        "life",
-        "technology",
-        "all-subjects",
-    ] {
+    approve_all_leaf_mappings_and_focus(&mut session, &hierarchy, &approved);
+    for node in ["life", "technology", "all-subjects"] {
         session
             .record(
                 &hierarchy,
@@ -592,7 +727,7 @@ fn navigation_advances_one_edge_and_back_restores_each_cursor() {
 }
 
 #[test]
-fn leaf_notes_use_strength_then_note_id_and_mixed_notes_remain_multi_path() {
+fn leaf_notes_use_strength_then_note_id_and_multi_membership_remains_multi_path() {
     let hierarchy = frozen_hierarchy();
     let food = hierarchy
         .leaf_notes("food")
@@ -600,7 +735,7 @@ fn leaf_notes_use_strength_then_note_id_and_mixed_notes_remain_multi_path() {
     assert_eq!(
         food.first().expect("food leaf has notes").note_id,
         hierarchy.notes[24].note_id,
-        "the added central mixed note leads the leaf"
+        "the added central multi-membership note leads the leaf"
     );
     let hardware = hierarchy
         .leaf_notes("hardware")
@@ -609,7 +744,7 @@ fn leaf_notes_use_strength_then_note_id_and_mixed_notes_remain_multi_path() {
         hardware
             .iter()
             .any(|note| note.note_id == hierarchy.notes[24].note_id),
-        "the same mixed note remains reachable from its other approved leaf"
+        "the same note remains reachable from its other approved leaf"
     );
 }
 
@@ -676,7 +811,7 @@ fn write_source_bound_proposal(directory: &std::path::Path) -> (std::path::PathB
 }
 
 #[test]
-fn note_review_screen_plainly_explains_why_the_candidate_was_selected() {
+fn note_review_screen_asks_only_for_a_concrete_disqualifying_problem() {
     let temp = tempfile::tempdir().expect("tempdir");
     let (proposal_path, _) = write_source_bound_proposal(temp.path());
     let mut ui = ScriptedUi::new([ApprovalTuiAction::Pause]);
@@ -691,9 +826,22 @@ fn note_review_screen_plainly_explains_why_the_candidate_was_selected() {
         .expect("open the first review screen"),
         ReviewRunOutcome::Paused
     );
+    assert_eq!(ui.screens[0].title, "Slot 01");
     assert_eq!(
         ui.screens[0].scope,
-        "Why selected: Clear single-subject example — Exercises Single subject semantics"
+        "Is there a concrete reason this note should not be included in the 64-note reference set?"
+    );
+    assert_eq!(
+        ui.screens[0].approve_label,
+        "Approve — no disqualifying problem"
+    );
+    assert_eq!(ui.screens[0].reject_label, "Reject — explain the problem");
+    let rendered = format!("{:?}", ui.screens[0]).to_lowercase();
+    assert!(
+        !rendered.contains("single subject")
+            && !rendered.contains("mixed subject")
+            && !rendered.contains("why selected"),
+        "the review must not claim a discrete focus category"
     );
 }
 
@@ -766,7 +914,7 @@ fn hierarchy_runner_reviews_leaves_then_parents_then_hidden_root() {
     write_json(&notes_path, &notes);
     write_json(&draft_path, &draft);
 
-    let mut ui = ScriptedUi::new((0..7).map(|_| ApprovalTuiAction::Submit {
+    let mut ui = ScriptedUi::new((0..8).map(|_| ApprovalTuiAction::Submit {
         outcome: ReviewOutcome::Approved,
         comment: String::new(),
     }));
@@ -791,12 +939,13 @@ fn hierarchy_runner_reviews_leaves_then_parents_then_hidden_root() {
             "Leaf subject · Hardware",
             "Leaf subject · Food",
             "Leaf subject · Outdoors",
+            "Focus-concentration coverage",
             "Parent subject · Technology",
             "Parent subject · Everyday life",
             "Root choices",
         ]
     );
-    let life_screen = &ui.screens[5];
+    let life_screen = &ui.screens[6];
     let life_overview = life_screen
         .evidence
         .first()
@@ -861,6 +1010,100 @@ fn hierarchy_runner_reviews_leaves_then_parents_then_hidden_root() {
 }
 
 #[test]
+fn hierarchy_runner_audits_focus_coverage_after_leaf_weights_and_before_parents() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    let notes = approved_notes();
+    let draft = hierarchy(&notes);
+    let notes_path = temp.path().join("approved-notes.json");
+    let draft_path = temp.path().join("hierarchy-draft.json");
+    let session_path = temp.path().join("hierarchy-session.json");
+    let approved_path = temp.path().join("approved-hierarchy.json");
+    write_json(&notes_path, &notes);
+    write_json(&draft_path, &draft);
+
+    let leaf_count = draft.nodes.iter().filter(|node| node.is_leaf()).count();
+    let mut actions = (0..leaf_count)
+        .map(|_| ApprovalTuiAction::Submit {
+            outcome: ReviewOutcome::Approved,
+            comment: String::new(),
+        })
+        .collect::<Vec<_>>();
+    actions.push(ApprovalTuiAction::Pause);
+    let mut ui = ScriptedUi::new(actions);
+
+    assert_eq!(
+        run_hierarchy_review(
+            &notes_path,
+            &draft_path,
+            &session_path,
+            &approved_path,
+            &mut ui,
+        )
+        .expect("pause at focus coverage"),
+        ReviewRunOutcome::Paused
+    );
+    assert_eq!(ui.screens[leaf_count].title, "Focus-concentration coverage");
+    assert_eq!(
+        ui.screens[leaf_count].scope,
+        "Is any part of the focus-concentration spectrum missing from this 64-note reference set?"
+    );
+    let rendered_inventory = ui.screens[leaf_count]
+        .evidence
+        .iter()
+        .map(|evidence| format!("{}\n{}", evidence.annotation, evidence.body))
+        .collect::<Vec<_>>()
+        .join("\n");
+    assert!(rendered_inventory.contains("Central"));
+    assert!(rendered_inventory.contains("Substantive"));
+    assert!(rendered_inventory.contains("Incidental"));
+    assert!(
+        !rendered_inventory.contains('%'),
+        "ordinal memberships must not be presented as invented percentages"
+    );
+    let coverage_panels = ui.screens[leaf_count]
+        .evidence
+        .iter()
+        .map(|evidence| evidence.title.as_str())
+        .collect::<Vec<_>>();
+    assert!(coverage_panels.contains(&"1 membership · Central"));
+    assert!(coverage_panels.contains(&"1 membership · Substantive"));
+    assert!(coverage_panels.contains(&"1 membership · Incidental"));
+    assert!(coverage_panels.contains(&"2 memberships · Central + Substantive"));
+}
+
+#[test]
+fn leaf_review_shows_each_notes_complete_proposed_membership_map() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    let notes = approved_notes();
+    let draft = hierarchy(&notes);
+    let notes_path = temp.path().join("approved-notes.json");
+    let draft_path = temp.path().join("hierarchy-draft.json");
+    write_json(&notes_path, &notes);
+    write_json(&draft_path, &draft);
+    let mut ui = ScriptedUi::new([ApprovalTuiAction::Pause]);
+
+    assert_eq!(
+        run_hierarchy_review(
+            &notes_path,
+            &draft_path,
+            temp.path().join("hierarchy-session.json"),
+            temp.path().join("approved-hierarchy.json"),
+            &mut ui,
+        )
+        .expect("open first leaf"),
+        ReviewRunOutcome::Paused
+    );
+    assert!(
+        ui.screens[0].evidence.iter().any(|evidence| {
+            evidence.body.contains("Complete proposed map:")
+                && evidence.body.contains("Software — Central")
+                && evidence.body.contains("Food — Substantive")
+        }),
+        "a leaf-only strength cannot reveal the note's complete weighted map"
+    );
+}
+
+#[test]
 fn verified_note_proposal_is_bound_to_the_real_learning_sample() {
     let temp = tempfile::tempdir().expect("tempdir");
     let sample_path = temp.path().join("sample.jsonl");
@@ -904,7 +1147,7 @@ fn verified_note_proposal_is_bound_to_the_real_learning_sample() {
 
 #[test]
 fn tracked_crec_115_proposal_is_complete_and_source_bound() {
-    let proposal = load_verified_note_proposal("reference_map/crec-115-note-proposal-v1.json")
+    let proposal = load_verified_note_proposal("reference_map/crec-115-note-proposal-v2.json")
         .expect("tracked CREC-115 proposal");
     assert_eq!(proposal.notes.len(), 64);
     assert_eq!(
@@ -921,11 +1164,11 @@ fn tracked_crec_115_proposal_is_complete_and_source_bound() {
 #[test]
 fn tracked_crec_115_plan_matches_the_source_bound_proposal() {
     let plan: serde_json::Value = serde_json::from_slice(
-        &fs::read("reference_map/crec-115-note-metadata-v1.json").expect("read selection plan"),
+        &fs::read("reference_map/crec-115-note-metadata-v2.json").expect("read selection plan"),
     )
     .expect("decode selection plan");
     let proposal: serde_json::Value = serde_json::from_slice(
-        &fs::read("reference_map/crec-115-note-proposal-v1.json").expect("read note proposal"),
+        &fs::read("reference_map/crec-115-note-proposal-v2.json").expect("read note proposal"),
     )
     .expect("decode note proposal");
 
@@ -941,11 +1184,10 @@ fn tracked_crec_115_plan_matches_the_source_bound_proposal() {
             serde_json::json!({
                 "slot": note["slot"],
                 "note_id": note["note_id"],
-                "composition": note["composition"],
-                "selection_rationale": note["selection_rationale"],
+                "interpretive_ambiguity": note["interpretive_ambiguity"],
                 "contrast_pair": note["contrast_pair"],
                 "broad_narrow_pair": note["broad_narrow_pair"],
-                "niche_subject": note["niche_subject"],
+                "niche_or_sparse_case": note["niche_or_sparse_case"],
             })
         })
         .collect::<Vec<_>>();
@@ -956,8 +1198,8 @@ fn tracked_crec_115_plan_matches_the_source_bound_proposal() {
 }
 
 #[test]
-fn tracked_crec_116_draft_is_bound_and_preserves_mixed_membership() {
-    let proposal = load_verified_note_proposal("reference_map/crec-115-note-proposal-v1.json")
+fn tracked_crec_116_draft_is_bound_and_preserves_weighted_multi_membership() {
+    let proposal = load_verified_note_proposal("reference_map/crec-115-note-proposal-v2.json")
         .expect("tracked CREC-115 proposal");
     let mut review = NoteReviewSession::new(&proposal).expect("create complete review");
     for note in &proposal.notes {
@@ -975,7 +1217,7 @@ fn tracked_crec_116_draft_is_bound_and_preserves_mixed_membership() {
     let approved =
         ApprovedNoteSet::from_review(&proposal, &review).expect("derive expected approved set");
     let draft: HierarchyDraft = serde_json::from_slice(
-        &fs::read("reference_map/crec-116-hierarchy-draft-v1.json")
+        &fs::read("reference_map/crec-116-hierarchy-draft-v2.json")
             .expect("read tracked hierarchy draft"),
     )
     .expect("decode hierarchy draft");
@@ -995,22 +1237,12 @@ fn tracked_crec_116_draft_is_bound_and_preserves_mixed_membership() {
                 *counts.entry(membership.note_id.as_str()).or_default() += 1;
                 counts
             });
-    for note in &proposal.notes {
-        assert!(
-            memberships.iter().any(|membership| {
-                membership.note_id == note.note_id
-                    && membership.strength == MembershipStrength::Central
-            }),
-            "slot {} must be central to at least one fine subject",
-            note.slot
-        );
-    }
     assert!(
-        proposal.notes.iter().any(|note| {
-            note.composition == NoteComposition::Mixed
-                && memberships_per_note[note.note_id.as_str()] >= 2
-        }),
-        "the reference must preserve genuine mixed-note membership"
+        proposal
+            .notes
+            .iter()
+            .any(|note| memberships_per_note[note.note_id.as_str()] >= 2),
+        "the reference must contain at least one note with multiple weighted memberships"
     );
     assert!(
         proposal.notes.iter().any(|note| {
@@ -1051,15 +1283,8 @@ fn hierarchy_approvals_are_invalidated_when_their_note_evidence_changes() {
     let original_draft = hierarchy(&original_notes);
     let mut session = HierarchyReviewSession::new(&original_draft, &original_notes)
         .expect("create hierarchy session");
-    for node_id in [
-        "food",
-        "hardware",
-        "outdoors",
-        "software",
-        "life",
-        "technology",
-        "all-subjects",
-    ] {
+    approve_all_leaf_mappings_and_focus(&mut session, &original_draft, &original_notes);
+    for node_id in ["life", "technology", "all-subjects"] {
         session
             .record(
                 &original_draft,

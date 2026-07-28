@@ -1,0 +1,651 @@
+{
+  "schema_version": 2,
+  "proposal_id": "crec-115-note-selection-v2",
+  "source": {
+    "sample_path": "../target/crec-113-formal-v1/sample/sample.jsonl",
+    "sample_sha256": "8edb8a51246201100e6ba7cf7bf1bbf9cd501881d7c70b8a9cfc7a380d1b168e",
+    "split": "learning"
+  },
+  "notes": [
+    {
+      "slot": 1,
+      "note_id": "d420e4335f2fe7fc94992b2cf3604432f56b55d737a497d5dfae00f771dc223b",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 2,
+      "note_id": "7ca5c1f52e285dff5e45c81734e663d79743ce9743c9d239f2d36e7b9c3946d1",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 3,
+      "note_id": "9583cdf21d51c763aee19412335850b41bf5909960013b64329aababfcdd6a6f",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": "digital Antinet inventory"
+    },
+    {
+      "slot": 4,
+      "note_id": "847fc9177c6f12db9f76bd970d55cc2cd30f1ddc0fa20bc832aefe7fb589b7ae",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 5,
+      "note_id": "056e6466257003453c3065421db88270511cb13ec8c860e3cb4d4b22edf3ba77",
+      "interpretive_ambiguity": false,
+      "contrast_pair": {
+        "pair_id": "contrast-08",
+        "partner_slot": 11,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 6,
+      "note_id": "ef6193a59a35304759d1f58b629466c2a4a7289d92261e91078a1c9b3e05de71",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 7,
+      "note_id": "0c17e6b047755f2329110c6df3542b5a7e753fa4ef055c75b858ca1682bbfee5",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-03",
+        "partner_slot": 10,
+        "broad_narrow_role": "narrow"
+      },
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 8,
+      "note_id": "2a1c279f820c19a78aed198d135340416f445aa10c9951ae3d3c77f366f225d8",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 9,
+      "note_id": "a57c8f036092116e0a0f4c142a855a7c0565e9b67b2fc21cfd86908c16759da8",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 10,
+      "note_id": "ee2cca149a7d031817911a9e202bb23ae77c11dc9c22056bd9f3b766498ac770",
+      "interpretive_ambiguity": false,
+      "contrast_pair": {
+        "pair_id": "contrast-07",
+        "partner_slot": 43,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": {
+        "pair_id": "breadth-03",
+        "partner_slot": 7,
+        "broad_narrow_role": "broad"
+      },
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 11,
+      "note_id": "fbac11c36101d6513cc632ef2ddc7fa17883cbd667da7fc75196bcabd9d31ea3",
+      "interpretive_ambiguity": false,
+      "contrast_pair": {
+        "pair_id": "contrast-08",
+        "partner_slot": 5,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 12,
+      "note_id": "e62f24bb7124d1d208658b1b5b68bf2b259274c2bc2add538fdb1c1814c9d0bc",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 13,
+      "note_id": "24b6fb2f442d31e9db1274119ad424252577b27a88f59f69d43b92cd072b5a4e",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": "kaval embouchure technique"
+    },
+    {
+      "slot": 14,
+      "note_id": "57ce561cfd0a569a981061a5461ae684e831a63d2e009b1822b2f7b16a9533b2",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 15,
+      "note_id": "337569d3f73ff93019040a32d9f5e537f4c8c0a836db8d05bd70a614d8f06e2e",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": "puddle haiku"
+    },
+    {
+      "slot": 16,
+      "note_id": "eb4e7b0341e6544b6ef0de8dcef80f52b550948b988cd9be6a9247a11b06d46b",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 17,
+      "note_id": "d4b14dd9f6959e29c95888d56e0a1b4e49aecfec9a79268f4369ea726f009d2c",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 18,
+      "note_id": "650ee6fe1a6ecc43bb374cb27b50d1317899f6780f2e628beb4b5e93199149bb",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-02",
+        "partner_slot": 23,
+        "broad_narrow_role": "broad"
+      },
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 19,
+      "note_id": "3e5568db003be02ab4b79daf695c02fdeaf35644bf99606d8c6572aa40a72223",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": "Battle of the Zab"
+    },
+    {
+      "slot": 20,
+      "note_id": "099596d9b7cbdd24b080a1293214978a05a3c4a1a3152675e8af3ff7febc9c0a",
+      "interpretive_ambiguity": false,
+      "contrast_pair": {
+        "pair_id": "contrast-04",
+        "partner_slot": 28,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": {
+        "pair_id": "breadth-06",
+        "partner_slot": 55,
+        "broad_narrow_role": "narrow"
+      },
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 21,
+      "note_id": "1830964db8182776dc0a7ddbc014a09c6c968a2c982ebd5f6da320deef2b92dc",
+      "interpretive_ambiguity": false,
+      "contrast_pair": {
+        "pair_id": "contrast-06",
+        "partner_slot": 52,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 22,
+      "note_id": "503fb92faf6694b631484d0be57344ed29f7bfd324a2e5c5fa38183751b830e6",
+      "interpretive_ambiguity": false,
+      "contrast_pair": {
+        "pair_id": "contrast-01",
+        "partner_slot": 29,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 23,
+      "note_id": "7d52bf12d1dba7ef59001b7d70189cd7139fd12b9e2972c6faa5b634d5166217",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-02",
+        "partner_slot": 18,
+        "broad_narrow_role": "narrow"
+      },
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 24,
+      "note_id": "693fa0a077527d025eeece4918f530e316cd9b88ccdbe9b3385111095ed15e4f",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-08",
+        "partner_slot": 56,
+        "broad_narrow_role": "narrow"
+      },
+      "niche_or_sparse_case": "destructive Linux command humor"
+    },
+    {
+      "slot": 25,
+      "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 26,
+      "note_id": "7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e",
+      "interpretive_ambiguity": false,
+      "contrast_pair": {
+        "pair_id": "contrast-03",
+        "partner_slot": 56,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 27,
+      "note_id": "7a2204bdc296c3650502c19814243aaa550a240c3863083514933e2ea9e8ab43",
+      "interpretive_ambiguity": false,
+      "contrast_pair": {
+        "pair_id": "contrast-05",
+        "partner_slot": 33,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 28,
+      "note_id": "061343e9c2a99b6b4dd09f661c2c855d7277ce8b60089c1a4e5252965abf5344",
+      "interpretive_ambiguity": false,
+      "contrast_pair": {
+        "pair_id": "contrast-04",
+        "partner_slot": 20,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 29,
+      "note_id": "17f7820bcee57f62c4a6f43a924db573a941173852bfa1c820180f1fecffc4f0",
+      "interpretive_ambiguity": false,
+      "contrast_pair": {
+        "pair_id": "contrast-01",
+        "partner_slot": 22,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 30,
+      "note_id": "5f2f81bee2dcbe09b5cb51a6cd0f4283083e30d2832c9a8a6c95ef7eb951c5d9",
+      "interpretive_ambiguity": false,
+      "contrast_pair": {
+        "pair_id": "contrast-02",
+        "partner_slot": 31,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 31,
+      "note_id": "b18908c0bd3cfe51e01028096a94c609c02575f0c1e534e500b302af5eaa6e23",
+      "interpretive_ambiguity": false,
+      "contrast_pair": {
+        "pair_id": "contrast-02",
+        "partner_slot": 30,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 32,
+      "note_id": "a75a2144c72724ad02ed57524a33a8750477135d03c55f5e7eee7ff314e48ae4",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 33,
+      "note_id": "cca270685401385322e2a062def0562545284bcd6babe5a8763ed28b73e79407",
+      "interpretive_ambiguity": false,
+      "contrast_pair": {
+        "pair_id": "contrast-05",
+        "partner_slot": 27,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 34,
+      "note_id": "48aade19331bde2d6463b41d0346d03feb9bed6a345543b87f6e85b94bf55744",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 35,
+      "note_id": "4611090a5fbd6acd54162e7cd29930ce6799a8461c70f0c417d6a982281f78f8",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": "Yuan Zhen tea-poem pottery"
+    },
+    {
+      "slot": 36,
+      "note_id": "068a9e104f99a51d46a65674d05b3ead194564961534a90b0922b968e78c29d9",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 37,
+      "note_id": "a2a24cc7157cea99688a9479dcb23c150448819efa930e83a9542f39aa06174f",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 38,
+      "note_id": "88b8490e40edacb25ce1a55d288e4387cfb6c2d56d801aad8c7fa5074132c678",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-07",
+        "partner_slot": 39,
+        "broad_narrow_role": "narrow"
+      },
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 39,
+      "note_id": "87f1cb51d8abb755bc2526f0129afcf079acbaea323ee8181d121fd7040a300e",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-07",
+        "partner_slot": 38,
+        "broad_narrow_role": "broad"
+      },
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 40,
+      "note_id": "9e7e70ce7f5829599a353238ea8972b681eda34f9ce72ab62657be8a4f62b87b",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 41,
+      "note_id": "506b157432cfa7ff7d8fc681c4a29848a3398fedd724f2543e43820b6b9bffb4",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 42,
+      "note_id": "584ee5a8eeaaa88833d1e761b01db6122197f2677df55ebf4c615f71144cbcd8",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 43,
+      "note_id": "f0ff44e2ad7556bc51ffc56aed7658b6b20f81e93856e2382d2b8187e44db4c7",
+      "interpretive_ambiguity": false,
+      "contrast_pair": {
+        "pair_id": "contrast-07",
+        "partner_slot": 10,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 44,
+      "note_id": "7055434f1770e9a1dc571801d3bc5bc71f861fa46c35bfad1a135f2bd992504e",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 45,
+      "note_id": "4ef54cc08e5c02387af7521929d17d9af73e262fccebd3d4cbbd36190136a4f7",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-04",
+        "partner_slot": 46,
+        "broad_narrow_role": "broad"
+      },
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 46,
+      "note_id": "b843720355752d704f1a167b7b0625d4d28833461c5c6d27c76e8e5b0648aca6",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-04",
+        "partner_slot": 45,
+        "broad_narrow_role": "narrow"
+      },
+      "niche_or_sparse_case": "rose-cutting composting"
+    },
+    {
+      "slot": 47,
+      "note_id": "d0b234703ff891dced7ea2392c7b9315c1b5c5520c2a192bc0e0c3e7ea19e4ee",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 48,
+      "note_id": "6ff1885941473b9f6941624769aef78307093cec8d55530b566dec60ce8ad0a6",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-05",
+        "partner_slot": 54,
+        "broad_narrow_role": "narrow"
+      },
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 49,
+      "note_id": "8adc047bd3030501802d8afc9b950466c66853f3e9ceaafb5f3c17ae76292b5d",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 50,
+      "note_id": "33552028ba4f99b8bd56ce99bbb7c727849062c8d4ab4d556d58da855104239f",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 51,
+      "note_id": "5dc1419732892345b1242e5c99aa8cfefb5b159a0ff9075349cba2fbe01f2806",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 52,
+      "note_id": "c01a24e6604834c025907d715314b547956d90488f95229707c4bad6354e5fa7",
+      "interpretive_ambiguity": false,
+      "contrast_pair": {
+        "pair_id": "contrast-06",
+        "partner_slot": 21,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 53,
+      "note_id": "2c37330aa014895f53b7e774edf49823e6e3b5ad47939e64fcb81735b726240c",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-01",
+        "partner_slot": 57,
+        "broad_narrow_role": "narrow"
+      },
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 54,
+      "note_id": "48582ca7a1747eec62b877c408909df34d2ceed7477e14be62b86981425bd379",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-05",
+        "partner_slot": 48,
+        "broad_narrow_role": "broad"
+      },
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 55,
+      "note_id": "7d4d4ff7c53353d1561051b304908061824faae370289314a227d8f8367a1a00",
+      "interpretive_ambiguity": false,
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-06",
+        "partner_slot": 20,
+        "broad_narrow_role": "broad"
+      },
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 56,
+      "note_id": "5162cc3e6ed6756c0d95ac8f1340fc244532ba347c3b7da431453c602b671731",
+      "interpretive_ambiguity": false,
+      "contrast_pair": {
+        "pair_id": "contrast-03",
+        "partner_slot": 26,
+        "broad_narrow_role": null
+      },
+      "broad_narrow_pair": {
+        "pair_id": "breadth-08",
+        "partner_slot": 24,
+        "broad_narrow_role": "broad"
+      },
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 57,
+      "note_id": "5df22809eda64af11774ed317671a3a2ecba24082119254fc4af2251d307a734",
+      "interpretive_ambiguity": true,
+      "contrast_pair": null,
+      "broad_narrow_pair": {
+        "pair_id": "breadth-01",
+        "partner_slot": 53,
+        "broad_narrow_role": "broad"
+      },
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 58,
+      "note_id": "29d3f1a0b514395c6e01963812954f95036d8ede264b7f48b47d36f43d40b5c7",
+      "interpretive_ambiguity": true,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 59,
+      "note_id": "cf7808d6b49128280cea20117375d3702268925160ff9e8d0df5d7727a368e2e",
+      "interpretive_ambiguity": true,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 60,
+      "note_id": "8894b71ab618459a3c40e9637d2cad57cb3347b758911a94da50d8f84db53aa8",
+      "interpretive_ambiguity": true,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": "tobacco-tin remembrance poem"
+    },
+    {
+      "slot": 61,
+      "note_id": "00000293edfb4e696ca58b21be636b59b0e8327d03bee0371a95ef5c2c62e63b",
+      "interpretive_ambiguity": true,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 62,
+      "note_id": "929387e5ad195b4ec36fa8a715e3e49c1eba229f04ea7f5117677cb63d10536d",
+      "interpretive_ambiguity": true,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 63,
+      "note_id": "103248806f4a9701f2e8dc91164a725e3e9871c528c3e55710fab407da807d2a",
+      "interpretive_ambiguity": true,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    },
+    {
+      "slot": 64,
+      "note_id": "2e71ddd392d345b990d34163a1c68cf7f2c787af7ff9661fa241d3925a5adf86",
+      "interpretive_ambiguity": true,
+      "contrast_pair": null,
+      "broad_narrow_pair": null,
+      "niche_or_sparse_case": null
+    }
+  ]
+}

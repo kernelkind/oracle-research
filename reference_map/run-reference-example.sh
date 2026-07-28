@@ -2,10 +2,10 @@
 set -euo pipefail
 
 root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
-run_dir="$root/target/reference-map-example-v1"
-plan="$root/reference_map/crec-115-note-metadata-v1.json"
-proposal="$root/reference_map/crec-115-note-proposal-v1.json"
-draft="$root/reference_map/crec-116-hierarchy-draft-v1.json"
+run_dir="$root/target/reference-map-example-v2"
+plan="$root/reference_map/crec-115-note-metadata-v2.json"
+proposal="$root/reference_map/crec-115-note-proposal-v2.json"
+draft="$root/reference_map/crec-116-hierarchy-draft-v2.json"
 approved_notes="$run_dir/approved-notes.json"
 approved_hierarchy="$run_dir/approved-hierarchy.json"
 

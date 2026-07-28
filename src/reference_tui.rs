@@ -39,6 +39,8 @@ pub struct ApprovalScreen {
     pub heading: String,
     pub title: String,
     pub scope: String,
+    pub approve_label: String,
+    pub reject_label: String,
     pub evidence: Vec<ApprovalEvidence>,
 }
 
@@ -68,6 +70,8 @@ impl ApprovalTuiModel {
         screen.heading = terminal_safe(&screen.heading);
         screen.title = terminal_safe(&screen.title);
         screen.scope = terminal_safe(&screen.scope);
+        screen.approve_label = terminal_safe(&screen.approve_label);
+        screen.reject_label = terminal_safe(&screen.reject_label);
         for evidence in &mut screen.evidence {
             evidence.title = terminal_safe(&evidence.title);
             evidence.annotation = terminal_safe(&evidence.annotation);
@@ -298,13 +302,19 @@ impl ApprovalTuiModel {
             vec![
                 Line::from(vec![
                     Span::styled("[A]", accent_style()),
-                    Span::styled(" Approve  ", secondary_style()),
+                    Span::styled(
+                        format!(" {}  ", self.screen.approve_label),
+                        secondary_style(),
+                    ),
                     Span::styled("[R]", accent_style()),
-                    Span::styled(" Reject  ", secondary_style()),
-                    Span::styled("[Tab/←/→]", accent_style()),
-                    Span::styled(" Evidence", secondary_style()),
+                    Span::styled(
+                        format!(" {}  ", self.screen.reject_label),
+                        secondary_style(),
+                    ),
                 ]),
                 Line::from(vec![
+                    Span::styled("[Tab/←/→]", accent_style()),
+                    Span::styled(" Evidence  ", secondary_style()),
                     Span::styled("[↑/↓]", accent_style()),
                     Span::styled(" Scroll  ", secondary_style()),
                     Span::styled("[Ctrl-D/U]", accent_style()),
