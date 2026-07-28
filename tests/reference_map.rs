@@ -454,6 +454,28 @@ fn hierarchy_validation_enforces_grounded_bounded_tree() {
 }
 
 #[test]
+fn hierarchy_validation_requires_every_leaf_to_demonstrate_all_membership_strengths() {
+    let approved = approved_notes();
+    let mut hierarchy = hierarchy(&approved);
+    let software = hierarchy
+        .nodes
+        .iter_mut()
+        .find(|node| node.node_id == "software")
+        .expect("software leaf");
+    for membership in &mut software.memberships {
+        if membership.strength == MembershipStrength::Incidental {
+            membership.strength = MembershipStrength::Substantive;
+        }
+    }
+
+    let error = hierarchy
+        .validate(&approved)
+        .expect_err("a reference leaf without every membership strength is incomplete");
+    assert!(error.to_string().contains("software"), "{error}");
+    assert!(error.to_string().contains("Incidental"), "{error}");
+}
+
+#[test]
 fn hierarchy_allows_a_diffuse_note_without_a_central_membership() {
     let approved = approved_notes();
     let mut hierarchy = hierarchy(&approved);
@@ -1131,6 +1153,14 @@ fn hierarchy_runner_audits_focus_coverage_after_leaf_weights_and_before_parents(
         ui.screens[leaf_count].scope,
         "Is any part of the focus-concentration spectrum missing from this 64-note reference set?"
     );
+    let guidance = ui.screens[leaf_count]
+        .guidance
+        .as_ref()
+        .expect("focus coverage explains the membership scale");
+    assert_eq!(guidance.title, "Membership scale");
+    assert!(guidance.body.contains("Central"));
+    assert!(guidance.body.contains("Substantive"));
+    assert!(guidance.body.contains("Incidental"));
     let rendered_inventory = ui.screens[leaf_count]
         .evidence
         .iter()
@@ -1246,6 +1276,18 @@ fn leaf_review_states_the_exact_decision_and_only_current_membership() {
     assert_eq!(
         screen.approve_label,
         "Approve — subject and memberships are correct"
+    );
+    let guidance = screen
+        .guidance
+        .as_ref()
+        .expect("leaf review explains the membership scale");
+    assert_eq!(guidance.title, "Membership scale");
+    assert_eq!(
+        guidance.body,
+        "Central: the subject is one of the note’s main points.\n\n\
+         Substantive: the subject materially matters to the note, but is not a main point.\n\n\
+         Incidental: the subject appears only as a minor or supporting detail.\n\n\
+         These are ordered categories, not percentages."
     );
     assert!(screen
         .evidence
@@ -1421,6 +1463,26 @@ fn tracked_crec_116_draft_is_bound_and_preserves_weighted_multi_membership() {
     draft
         .validate(&approved)
         .expect("tracked draft is bound and structurally valid");
+
+    for leaf in draft.nodes.iter().filter(|node| node.is_leaf()) {
+        let strengths = leaf
+            .memberships
+            .iter()
+            .map(|membership| membership.strength)
+            .collect::<std::collections::BTreeSet<_>>();
+        assert_eq!(
+            strengths,
+            [
+                MembershipStrength::Incidental,
+                MembershipStrength::Substantive,
+                MembershipStrength::Central,
+            ]
+            .into_iter()
+            .collect(),
+            "leaf {} must demonstrate every membership strength",
+            leaf.node_id
+        );
+    }
 
     let memberships = draft
         .nodes

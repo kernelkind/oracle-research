@@ -404,7 +404,7 @@ fn focus_coverage_screen(
                 .to_owned(),
         approve_label: "Approve — no known coverage gap".to_owned(),
         reject_label: "Reject — describe the gap".to_owned(),
-        guidance: None,
+        guidance: Some(membership_strength_guidance()),
         evidence,
     }
 }
@@ -645,9 +645,20 @@ fn hierarchy_screen(
         scope,
         approve_label,
         reject_label,
-        guidance: None,
+        guidance: node.is_leaf().then(membership_strength_guidance),
         evidence,
     })
+}
+
+fn membership_strength_guidance() -> ApprovalGuidance {
+    ApprovalGuidance {
+        title: "Membership scale".to_owned(),
+        body: "Central: the subject is one of the note’s main points.\n\n\
+               Substantive: the subject materially matters to the note, but is not a main point.\n\n\
+               Incidental: the subject appears only as a minor or supporting detail.\n\n\
+               These are ordered categories, not percentages."
+            .to_owned(),
+    }
 }
 
 fn note_membership_inventory(

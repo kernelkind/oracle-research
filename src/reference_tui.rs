@@ -408,9 +408,16 @@ impl ApprovalTuiModel {
                 Span::styled(" Evidence  ", secondary_style()),
             ];
             if self.screen.guidance.is_some() {
+                let guidance_title = self
+                    .screen
+                    .guidance
+                    .as_ref()
+                    .expect("guidance presence was just checked")
+                    .title
+                    .as_str();
                 navigation_controls.extend([
                     Span::styled("[?]", accent_style()),
-                    Span::styled(" Rejection guide  ", secondary_style()),
+                    Span::styled(format!(" {guidance_title}  "), secondary_style()),
                 ]);
             }
             navigation_controls.extend([

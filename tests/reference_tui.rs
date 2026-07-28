@@ -169,6 +169,33 @@ fn rejection_guide_temporarily_replaces_the_note_without_changing_review_state()
 }
 
 #[test]
+fn approval_help_uses_the_screen_specific_title() {
+    let mut screen = approval_screen();
+    screen.guidance = Some(ApprovalGuidance {
+        title: "Membership scale".to_owned(),
+        body: "Central: one of the note's main points.\n\
+               Substantive: materially matters, but is not a main point.\n\
+               Incidental: minor or supporting detail."
+            .to_owned(),
+    });
+    let mut model = ApprovalTuiModel::new(screen);
+
+    let initial = render_approval(&mut model);
+    assert!(initial.contains("[?] Membership scale"), "{initial}");
+    assert!(!initial.contains("[?] Rejection guide"), "{initial}");
+
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('?'))),
+        ApprovalTuiAction::None
+    );
+    let help = render_approval(&mut model);
+    assert!(help.contains("Membership scale"), "{help}");
+    assert!(help.contains("Central:"), "{help}");
+    assert!(help.contains("Substantive:"), "{help}");
+    assert!(help.contains("Incidental:"), "{help}");
+}
+
+#[test]
 fn screens_without_guidance_do_not_advertise_or_open_it() {
     let mut screen = approval_screen();
     screen.guidance = None;
