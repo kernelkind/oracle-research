@@ -477,11 +477,11 @@ fn note_screen(
         })?;
         evidence.push(ApprovalEvidence {
             title: format!("Comparison note · Slot {partner_slot:02}"),
-            annotation,
-            body: format!(
-                "Shown only to judge this relationship; reviewed separately at its own slot.\n\n{}",
-                partner.content
+            annotation: format!(
+                "{annotation}\n\
+                 Shown only to judge this relationship; reviewed separately at its own slot."
             ),
+            body: partner.content.clone(),
         });
     }
     Ok(ApprovalScreen {

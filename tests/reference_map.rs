@@ -836,6 +836,17 @@ fn note_review_screen_asks_only_for_a_concrete_disqualifying_problem() {
         "Approve — no disqualifying problem"
     );
     assert_eq!(ui.screens[0].reject_label, "Reject — explain the problem");
+    let comparison = &ui.screens[0].evidence[1];
+    assert_eq!(
+        comparison.body, "Real diagnostic note number 1",
+        "the comparison panel must contain only the exact note text"
+    );
+    assert!(
+        comparison
+            .annotation
+            .contains("Shown only to judge this relationship"),
+        "the comparison explanation belongs outside the note panel"
+    );
     let guidance = ui.screens[0]
         .guidance
         .as_ref()
