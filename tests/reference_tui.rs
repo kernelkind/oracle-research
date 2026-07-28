@@ -4,8 +4,8 @@ use oracle_mvp::reference_map::{
     SubjectNode,
 };
 use oracle_mvp::reference_tui::{
-    ApprovalEvidence, ApprovalGuidance, ApprovalScreen, ApprovalTuiAction, ApprovalTuiModel,
-    NavigationTuiAction, ReferenceNavigationTuiModel,
+    ApprovalEvidence, ApprovalEvidenceLayout, ApprovalGuidance, ApprovalScreen, ApprovalTuiAction,
+    ApprovalTuiModel, NavigationTuiAction, ReferenceNavigationTuiModel,
 };
 use ratatui::backend::TestBackend;
 use ratatui::Terminal;
@@ -52,7 +52,28 @@ fn approval_screen() -> ApprovalScreen {
                 body: "A systems programmer compares Rust and C memory models.".to_owned(),
             },
         ],
+        evidence_layout: ApprovalEvidenceLayout::Paged,
     }
+}
+
+fn stacked_approval_screen(note: &str, subject_map: &str) -> ApprovalScreen {
+    let mut screen = approval_screen();
+    screen.scope = "Are these subject assignments correct?".to_owned();
+    screen.approve_label = "Approve these assignments".to_owned();
+    screen.evidence_layout = ApprovalEvidenceLayout::Stacked;
+    screen.evidence = vec![
+        ApprovalEvidence {
+            title: "Note".to_owned(),
+            annotation: String::new(),
+            body: note.to_owned(),
+        },
+        ApprovalEvidence {
+            title: "Proposed subject map".to_owned(),
+            annotation: String::new(),
+            body: subject_map.to_owned(),
+        },
+    ];
+    screen
 }
 
 fn render_approval(model: &mut ApprovalTuiModel) -> String {
@@ -97,6 +118,96 @@ fn a_single_evidence_claim_does_not_advertise_evidence_navigation() {
 
     let rendered = render_approval(&mut model);
     assert!(!rendered.contains("[Tab/←/→] Evidence"), "{rendered}");
+}
+
+#[test]
+fn stacked_evidence_shows_the_note_and_subject_map_together() {
+    let mut model = ApprovalTuiModel::new(stacked_approval_screen(
+        "The exact raw note text.",
+        "Books and reading — Central",
+    ));
+
+    let rendered = render_approval(&mut model);
+    assert!(rendered.contains("┌Note"), "{rendered}");
+    assert!(rendered.contains("The exact raw note text."), "{rendered}");
+    assert!(rendered.contains("┌Proposed subject map"), "{rendered}");
+    assert!(
+        rendered.contains("Books and reading — Central"),
+        "{rendered}"
+    );
+    assert!(
+        !rendered.contains("Note · 1 of 2"),
+        "stacked panels are not paged evidence: {rendered}"
+    );
+    assert!(rendered.contains("Approve these assignments"), "{rendered}");
+}
+
+#[test]
+fn stacked_evidence_keeps_both_panels_visible_and_scrolls_them_independently() {
+    let note = (1..=30)
+        .map(|line| format!("note line {line:02}"))
+        .collect::<Vec<_>>()
+        .join("\n");
+    let subject_map = (1..=30)
+        .map(|line| format!("Subject {line:02} — Central"))
+        .collect::<Vec<_>>()
+        .join("\n");
+    let mut model = ApprovalTuiModel::new(stacked_approval_screen(&note, &subject_map));
+
+    let initial = render_approval_at(&mut model, 72, 24);
+    assert!(initial.contains("Note · more below"), "{initial}");
+    assert!(
+        initial.contains("Proposed subject map · more below"),
+        "{initial}"
+    );
+    assert!(initial.contains("[Tab/←/→] Panel"), "{initial}");
+    assert!(!initial.contains("[Tab/←/→] Evidence"), "{initial}");
+
+    assert_eq!(
+        model.handle_event(key(KeyCode::Down)),
+        ApprovalTuiAction::None
+    );
+    let note_scrolled = render_approval_at(&mut model, 72, 24);
+    assert!(
+        note_scrolled.contains("Note · more above and below"),
+        "{note_scrolled}"
+    );
+    assert!(
+        note_scrolled.contains("Proposed subject map · more below"),
+        "{note_scrolled}"
+    );
+
+    assert_eq!(
+        model.handle_event(key(KeyCode::Tab)),
+        ApprovalTuiAction::None
+    );
+    assert_eq!(
+        model.handle_event(key(KeyCode::Down)),
+        ApprovalTuiAction::None
+    );
+    let both_scrolled = render_approval_at(&mut model, 72, 24);
+    assert!(
+        both_scrolled.contains("Note · more above and below"),
+        "{both_scrolled}"
+    );
+    assert!(
+        both_scrolled.contains("Proposed subject map · more above and below"),
+        "{both_scrolled}"
+    );
+
+    assert_eq!(
+        model.handle_event(key(KeyCode::Home)),
+        ApprovalTuiAction::None
+    );
+    let map_reset = render_approval_at(&mut model, 72, 24);
+    assert!(
+        map_reset.contains("Note · more above and below"),
+        "{map_reset}"
+    );
+    assert!(
+        map_reset.contains("Proposed subject map · more below"),
+        "{map_reset}"
+    );
 }
 
 #[test]

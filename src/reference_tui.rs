@@ -40,6 +40,12 @@ pub struct ApprovalGuidance {
     pub body: String,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum ApprovalEvidenceLayout {
+    Paged,
+    Stacked,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ApprovalScreen {
     pub heading: String,
@@ -49,6 +55,7 @@ pub struct ApprovalScreen {
     pub reject_label: String,
     pub guidance: Option<ApprovalGuidance>,
     pub evidence: Vec<ApprovalEvidence>,
+    pub evidence_layout: ApprovalEvidenceLayout,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -65,7 +72,7 @@ pub enum ApprovalTuiAction {
 pub struct ApprovalTuiModel {
     screen: ApprovalScreen,
     evidence_index: usize,
-    scroll: u16,
+    evidence_scrolls: Vec<u16>,
     guidance_scroll: u16,
     guidance_visible: bool,
     half_page_lines: u16,
@@ -90,10 +97,11 @@ impl ApprovalTuiModel {
             evidence.annotation = terminal_safe(&evidence.annotation);
             evidence.body = terminal_safe(&evidence.body);
         }
+        let evidence_scrolls = vec![0; screen.evidence.len()];
         Self {
             screen,
             evidence_index: 0,
-            scroll: 0,
+            evidence_scrolls,
             guidance_scroll: 0,
             guidance_visible: false,
             half_page_lines: 1,
@@ -122,20 +130,26 @@ impl ApprovalTuiModel {
         if key.modifiers == KeyModifiers::CONTROL {
             match key.code {
                 KeyCode::Char('d' | 'D') => {
-                    let scroll = if self.guidance_visible {
-                        &mut self.guidance_scroll
+                    if self.guidance_visible {
+                        self.guidance_scroll =
+                            self.guidance_scroll.saturating_add(self.half_page_lines);
                     } else {
-                        &mut self.scroll
-                    };
-                    *scroll = scroll.saturating_add(self.half_page_lines);
+                        let half_page_lines = self.half_page_lines;
+                        if let Some(scroll) = self.evidence_scrolls.get_mut(self.evidence_index) {
+                            *scroll = scroll.saturating_add(half_page_lines);
+                        }
+                    }
                 }
                 KeyCode::Char('u' | 'U') => {
-                    let scroll = if self.guidance_visible {
-                        &mut self.guidance_scroll
+                    if self.guidance_visible {
+                        self.guidance_scroll =
+                            self.guidance_scroll.saturating_sub(self.half_page_lines);
                     } else {
-                        &mut self.scroll
-                    };
-                    *scroll = scroll.saturating_sub(self.half_page_lines);
+                        let half_page_lines = self.half_page_lines;
+                        if let Some(scroll) = self.evidence_scrolls.get_mut(self.evidence_index) {
+                            *scroll = scroll.saturating_sub(half_page_lines);
+                        }
+                    }
                 }
                 _ => {}
             }
@@ -183,14 +197,30 @@ impl ApprovalTuiModel {
             KeyCode::Tab | KeyCode::Right => self.next_evidence(),
             KeyCode::BackTab | KeyCode::Left => self.previous_evidence(),
             KeyCode::Down | KeyCode::Char('j' | 'J') => {
-                self.scroll = self.scroll.saturating_add(1);
+                if let Some(scroll) = self.evidence_scrolls.get_mut(self.evidence_index) {
+                    *scroll = scroll.saturating_add(1);
+                }
             }
             KeyCode::Up | KeyCode::Char('k' | 'K') => {
-                self.scroll = self.scroll.saturating_sub(1);
+                if let Some(scroll) = self.evidence_scrolls.get_mut(self.evidence_index) {
+                    *scroll = scroll.saturating_sub(1);
+                }
             }
-            KeyCode::PageDown => self.scroll = self.scroll.saturating_add(PAGE_LINES),
-            KeyCode::PageUp => self.scroll = self.scroll.saturating_sub(PAGE_LINES),
-            KeyCode::Home => self.scroll = 0,
+            KeyCode::PageDown => {
+                if let Some(scroll) = self.evidence_scrolls.get_mut(self.evidence_index) {
+                    *scroll = scroll.saturating_add(PAGE_LINES);
+                }
+            }
+            KeyCode::PageUp => {
+                if let Some(scroll) = self.evidence_scrolls.get_mut(self.evidence_index) {
+                    *scroll = scroll.saturating_sub(PAGE_LINES);
+                }
+            }
+            KeyCode::Home => {
+                if let Some(scroll) = self.evidence_scrolls.get_mut(self.evidence_index) {
+                    *scroll = 0;
+                }
+            }
             _ => {}
         }
         ApprovalTuiAction::None
@@ -239,7 +269,9 @@ impl ApprovalTuiModel {
             return;
         }
         self.evidence_index = (self.evidence_index + 1) % self.screen.evidence.len();
-        self.scroll = 0;
+        if self.screen.evidence_layout == ApprovalEvidenceLayout::Paged {
+            self.evidence_scrolls[self.evidence_index] = 0;
+        }
     }
 
     fn previous_evidence(&mut self) {
@@ -251,7 +283,9 @@ impl ApprovalTuiModel {
         } else {
             self.evidence_index - 1
         };
-        self.scroll = 0;
+        if self.screen.evidence_layout == ApprovalEvidenceLayout::Paged {
+            self.evidence_scrolls[self.evidence_index] = 0;
+        }
     }
 
     pub fn render(&mut self, frame: &mut Frame<'_>) {
@@ -328,7 +362,31 @@ impl ApprovalTuiModel {
                 &guidance.body,
                 &mut self.guidance_scroll,
                 &mut self.half_page_lines,
+                false,
             );
+        } else if self.screen.evidence_layout == ApprovalEvidenceLayout::Stacked
+            && self.screen.evidence.len() == 2
+        {
+            let panels = stacked_evidence_areas(rows[3], &self.screen.evidence[1].body);
+            for (index, area) in panels.into_iter().enumerate() {
+                let evidence = &self.screen.evidence[index];
+                let mut inactive_half_page_lines = 1;
+                let half_page_lines = if index == self.evidence_index {
+                    &mut self.half_page_lines
+                } else {
+                    &mut inactive_half_page_lines
+                };
+                render_scrollable_panel(
+                    frame,
+                    area,
+                    &evidence.title,
+                    &evidence.body,
+                    &mut self.evidence_scrolls[index],
+                    half_page_lines,
+                    index == self.evidence_index,
+                );
+            }
+            frame.render_widget(annotation, rows[4]);
         } else if let Some(evidence) = self.screen.evidence.get(self.evidence_index) {
             let title = if self.screen.evidence.len() > 1 {
                 format!(
@@ -345,8 +403,9 @@ impl ApprovalTuiModel {
                 rows[3],
                 &title,
                 &evidence.body,
-                &mut self.scroll,
+                &mut self.evidence_scrolls[self.evidence_index],
                 &mut self.half_page_lines,
+                false,
             );
             frame.render_widget(annotation, rows[4]);
         } else {
@@ -405,9 +464,13 @@ impl ApprovalTuiModel {
         } else {
             let mut navigation_controls = Vec::new();
             if self.screen.evidence.len() > 1 {
+                let target = match self.screen.evidence_layout {
+                    ApprovalEvidenceLayout::Paged => " Evidence  ",
+                    ApprovalEvidenceLayout::Stacked => " Panel  ",
+                };
                 navigation_controls.extend([
                     Span::styled("[Tab/←/→]", accent_style()),
-                    Span::styled(" Evidence  ", secondary_style()),
+                    Span::styled(target, secondary_style()),
                 ]);
             }
             if self.screen.guidance.is_some() {
@@ -695,6 +758,7 @@ impl ReferenceNavigationTuiModel {
             &note.content,
             &mut self.scroll,
             &mut self.half_page_lines,
+            false,
         );
         frame.render_widget(
             Paragraph::new(Line::from(vec![
@@ -800,6 +864,26 @@ fn drain_stale_input() -> io::Result<ApprovalTuiAction> {
     Ok(ApprovalTuiAction::None)
 }
 
+fn stacked_evidence_areas(area: Rect, secondary_content: &str) -> [Rect; 2] {
+    let inner_width = area.width.saturating_sub(4).max(1);
+    let secondary_lines = Paragraph::new(secondary_content)
+        .wrap(Wrap { trim: false })
+        .line_count(inner_width);
+    let maximum_secondary_height = area.height.saturating_sub(6).max(3);
+    let desired_secondary_height = u16::try_from(secondary_lines.saturating_add(2))
+        .unwrap_or(u16::MAX)
+        .clamp(3, maximum_secondary_height);
+    let rows = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([
+            Constraint::Min(5),
+            Constraint::Length(1),
+            Constraint::Length(desired_secondary_height),
+        ])
+        .split(area);
+    [rows[0], rows[2]]
+}
+
 fn render_scrollable_panel(
     frame: &mut Frame<'_>,
     area: Rect,
@@ -807,10 +891,16 @@ fn render_scrollable_panel(
     content: &str,
     scroll: &mut u16,
     half_page_lines: &mut u16,
+    focused: bool,
 ) {
+    let panel_border_style = if focused {
+        accent_style()
+    } else {
+        border_style()
+    };
     let block = Block::default()
         .borders(Borders::ALL)
-        .border_style(border_style())
+        .border_style(panel_border_style)
         .padding(Padding::horizontal(1));
     let inner = block.inner(area);
     *half_page_lines = (inner.height / 2).max(1);

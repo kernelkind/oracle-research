@@ -17,7 +17,8 @@ use crate::reference_map::{
     SelectionSource,
 };
 use crate::reference_tui::{
-    ApprovalEvidence, ApprovalGuidance, ApprovalScreen, ApprovalTuiAction, ReferenceTerminal,
+    ApprovalEvidence, ApprovalEvidenceLayout, ApprovalGuidance, ApprovalScreen, ApprovalTuiAction,
+    ReferenceTerminal,
 };
 use crate::snapshot::{io_error, Error, Result};
 
@@ -401,6 +402,7 @@ fn focus_coverage_screen(
                 .to_owned(),
             body: summary,
         }],
+        evidence_layout: ApprovalEvidenceLayout::Paged,
     })
 }
 
@@ -498,6 +500,7 @@ fn note_screen(
                 .to_owned(),
         }),
         evidence,
+        evidence_layout: ApprovalEvidenceLayout::Paged,
     })
 }
 
@@ -523,21 +526,23 @@ fn hierarchy_target_screen(
             Ok(ApprovalScreen {
                 heading,
                 title: format!("Note map · Slot {:02}", note.slot),
-                scope: "Does this note’s complete proposed subject map contain a concrete problem?"
-                    .to_owned(),
-                approve_label: "Approve — complete map is correct".to_owned(),
+                scope: "Are these subject assignments correct?".to_owned(),
+                approve_label: "Approve these assignments".to_owned(),
                 reject_label: "Reject — name the exact correction".to_owned(),
                 guidance: Some(note_map_guidance()),
-                evidence: vec![ApprovalEvidence {
-                    title: "Note and complete proposed map".to_owned(),
-                    annotation: "The note is shown once with every proposed subject and strength."
-                        .to_owned(),
-                    body: format!(
-                        "Note:\n{}\n\nProposed subject map:\n\n{}",
-                        note.content,
-                        format_complete_note_map(&memberships)
-                    ),
-                }],
+                evidence: vec![
+                    ApprovalEvidence {
+                        title: "Note".to_owned(),
+                        annotation: String::new(),
+                        body: note.content.clone(),
+                    },
+                    ApprovalEvidence {
+                        title: "Proposed subject map".to_owned(),
+                        annotation: String::new(),
+                        body: format_note_assignments(&memberships),
+                    },
+                ],
+                evidence_layout: ApprovalEvidenceLayout::Stacked,
             })
         }
         HierarchyReviewTarget::Branch { node_id } => {
@@ -570,6 +575,7 @@ fn hierarchy_target_screen(
                             .to_owned(),
                     body: format_hierarchy_branch(draft, node_id)?,
                 }],
+                evidence_layout: ApprovalEvidenceLayout::Paged,
             })
         }
         HierarchyReviewTarget::Membership { .. }
@@ -605,23 +611,14 @@ fn note_map_memberships<'a>(
     memberships
 }
 
-fn format_complete_note_map(
+fn format_note_assignments(
     memberships: &[(&crate::reference_map::SubjectNode, MembershipStrength)],
 ) -> String {
     memberships
         .iter()
-        .enumerate()
-        .map(|(index, (subject, strength))| {
-            format!(
-                "[{}] {} — {}\n    {}",
-                index + 1,
-                subject.label,
-                strength_label(*strength),
-                subject.scope
-            )
-        })
+        .map(|(subject, strength)| format!("{} — {}", subject.label, strength_label(*strength)))
         .collect::<Vec<_>>()
-        .join("\n\n")
+        .join("\n")
 }
 
 fn format_hierarchy_branch(draft: &HierarchyDraft, node_id: &str) -> Result<String> {
@@ -670,13 +667,12 @@ fn focus_coverage_guidance() -> ApprovalGuidance {
 fn note_map_guidance() -> ApprovalGuidance {
     ApprovalGuidance {
         title: "Note-map review".to_owned(),
-        body: "Approving accepts every listed subject and strength and confirms that no subject is missing.\n\n\
+        body: "Approving accepts each listed subject and strength.\n\n\
                Reject only when:\n\n\
-               • A subject the note expresses is missing.\n\
                • A listed subject is not actually expressed.\n\
                • A membership strength is wrong.\n\
-               • A subject label or description makes the mapping impossible to judge.\n\n\
-               Name the exact numbered mapping or missing subject in the rejection comment.\n\n\
+               • A subject label makes the assignment impossible to judge.\n\n\
+               Name the subject and exact correction in the rejection comment.\n\n\
                Strength scale:\n\n\
                Central: one of the note’s main points.\n\
                Substantive: materially matters, but is not a main point.\n\

@@ -671,41 +671,26 @@ impl HierarchyDraft {
                 node.memberships
                     .iter()
                     .filter(move |membership| membership.note_id == note_id)
-                    .map(move |membership| {
-                        (
-                            node.node_id.as_str(),
-                            node.label.as_str(),
-                            node.scope.as_str(),
-                            membership.strength,
-                        )
-                    })
+                    .map(move |membership| (node.label.as_str(), membership.strength))
             })
             .collect::<Vec<_>>();
-        memberships.sort_unstable_by_key(|(node_id, _, _, _)| *node_id);
+        memberships.sort_unstable_by(|left, right| {
+            right
+                .1
+                .rank()
+                .cmp(&left.1.rank())
+                .then_with(|| left.0.cmp(right.0))
+        });
         if memberships.is_empty() {
             return invalid(format!(
                 "approved hierarchy note {note_id} has no subject memberships"
             ));
         }
-        let mut subject_vocabulary = self
-            .nodes
-            .iter()
-            .filter(|node| node.is_leaf())
-            .map(|node| {
-                (
-                    node.node_id.as_str(),
-                    node.label.as_str(),
-                    node.scope.as_str(),
-                )
-            })
-            .collect::<Vec<_>>();
-        subject_vocabulary.sort_unstable_by_key(|(node_id, _, _)| *node_id);
         canonical_sha256(&(
-            "note-map-review-v1",
+            "note-map-review-v2",
             note.slot,
             note.note_id.as_str(),
             note.content.as_str(),
-            subject_vocabulary,
             memberships,
         ))
     }

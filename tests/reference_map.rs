@@ -12,7 +12,7 @@ use oracle_mvp::reference_review::{
     load_verified_note_proposal, run_hierarchy_review, run_note_review, ApprovalUi,
     ReviewRunOutcome,
 };
-use oracle_mvp::reference_tui::{ApprovalScreen, ApprovalTuiAction};
+use oracle_mvp::reference_tui::{ApprovalEvidenceLayout, ApprovalScreen, ApprovalTuiAction};
 use sha2::{Digest, Sha256};
 
 fn proposed_note(index: usize) -> ProposedNote {
@@ -712,10 +712,10 @@ fn rejected_note_map_keeps_other_notes_reviewable_but_blocks_branches() {
             rejected_target,
             HierarchyReviewDecision {
                 outcome: ReviewOutcome::Rejected,
-                comment: "The Food membership is missing.".to_owned(),
+                comment: "The Software assignment is not expressed.".to_owned(),
             },
         )
-        .expect("reject the first complete note map");
+        .expect("reject the first note map");
 
     let remaining = session
         .reviewable_targets(&hierarchy, &approved)
@@ -746,7 +746,7 @@ fn rejected_note_map_keeps_other_notes_reviewable_but_blocks_branches() {
 }
 
 #[test]
-fn changed_leaf_definition_invalidates_every_complete_note_map_and_its_root_branch() {
+fn changed_leaf_definition_preserves_note_assignments_but_reopens_its_root_branch() {
     let approved = approved_notes();
     let hierarchy = hierarchy(&approved);
     let mut session =
@@ -765,14 +765,14 @@ fn changed_leaf_definition_invalidates_every_complete_note_map_and_its_root_bran
 
     for note in &approved.notes {
         assert!(
-            !session.is_approved(
+            session.is_approved(
                 &revised,
                 &approved,
                 &HierarchyReviewTarget::NoteMap {
                     note_id: note.note_id.clone(),
                 }
             ),
-            "each complete map also decided that no other defined subject was missing"
+            "a hidden definition does not change displayed subject assignments"
         );
     }
     assert!(!session.is_approved(
@@ -795,11 +795,46 @@ fn changed_leaf_definition_invalidates_every_complete_note_map_and_its_root_bran
     );
     let next_targets = session
         .reviewable_targets(&revised, &approved)
-        .expect("list reopened note maps");
-    assert_eq!(next_targets.len(), 64);
-    assert!(next_targets
-        .iter()
-        .all(|target| matches!(target, HierarchyReviewTarget::NoteMap { .. })));
+        .expect("list reopened branch");
+    assert_eq!(
+        next_targets,
+        vec![HierarchyReviewTarget::Branch {
+            node_id: "technology".to_owned(),
+        }]
+    );
+}
+
+#[test]
+fn note_map_revision_matches_only_the_displayed_v2_evidence() {
+    let approved = approved_notes();
+    let hierarchy = hierarchy(&approved);
+    let note = &approved.notes[0];
+    let target = HierarchyReviewTarget::NoteMap {
+        note_id: note.note_id.clone(),
+    };
+    let mut session =
+        HierarchyReviewSession::new(&hierarchy, &approved).expect("create hierarchy session");
+    session
+        .record(&hierarchy, &approved, target, approved_hierarchy_decision())
+        .expect("approve first note assignments");
+
+    let serialized = serde_json::to_value(&session).expect("serialize hierarchy session");
+    let actual_revision = serialized["history"][0]["target_revision_sha256"]
+        .as_str()
+        .expect("stored note-map revision");
+    let displayed_assignments = vec![("Software", MembershipStrength::Substantive)];
+    let expected_revision = sha256(
+        &serde_json::to_vec(&(
+            "note-map-review-v2",
+            note.slot,
+            note.note_id.as_str(),
+            note.content.as_str(),
+            displayed_assignments,
+        ))
+        .expect("encode displayed note-map evidence"),
+    );
+
+    assert_eq!(actual_revision, expected_revision);
 }
 
 #[test]
@@ -1228,7 +1263,7 @@ fn write_source_bound_proposal(directory: &std::path::Path) -> (std::path::PathB
 }
 
 #[test]
-fn hierarchy_runner_reviews_one_complete_note_map_per_action() {
+fn hierarchy_runner_reviews_one_note_map_per_action() {
     let temp = tempfile::tempdir().expect("tempdir");
     let notes = approved_notes();
     let draft = hierarchy(&notes);
@@ -1246,26 +1281,19 @@ fn hierarchy_runner_reviews_one_complete_note_map_per_action() {
             temp.path().join("approved-hierarchy.json"),
             &mut ui,
         )
-        .expect("approve one complete note map, then pause"),
+        .expect("approve one note map, then pause"),
         ReviewRunOutcome::Paused
     );
     assert_eq!(ui.screens.len(), 2);
     let first = &ui.screens[0];
     assert_eq!(first.title, "Note map · Slot 01");
-    assert_eq!(
-        first.scope,
-        "Does this note’s complete proposed subject map contain a concrete problem?"
-    );
-    assert_eq!(first.approve_label, "Approve — complete map is correct");
+    assert_eq!(first.scope, "Are these subject assignments correct?");
+    assert_eq!(first.approve_label, "Approve these assignments");
     assert_eq!(first.reject_label, "Reject — name the exact correction");
-    assert_eq!(
-        first.evidence.len(),
-        1,
-        "one action reviews one note and its complete map"
-    );
-    assert!(first.evidence[0]
-        .body
-        .contains("Real diagnostic note number 0"));
+    assert_eq!(first.evidence_layout, ApprovalEvidenceLayout::Stacked);
+    assert_eq!(first.evidence.len(), 2);
+    assert_eq!(first.evidence[0].body, "Real diagnostic note number 0");
+    assert!(first.evidence[1].body.contains("Software — Substantive"));
     assert!(!first.evidence[0]
         .body
         .contains("Real diagnostic note number 1"));
@@ -1628,12 +1656,12 @@ fn hierarchy_runner_reviews_each_note_once_then_each_root_branch_once_then_cover
     let multi_subject = &ui.screens[2];
     assert_eq!(
         multi_subject.scope,
-        "Does this note’s complete proposed subject map contain a concrete problem?"
+        "Are these subject assignments correct?"
     );
-    assert!(multi_subject.evidence[0]
+    assert!(multi_subject.evidence[1]
         .body
         .contains("Software — Central"));
-    assert!(multi_subject.evidence[0]
+    assert!(multi_subject.evidence[1]
         .body
         .contains("Food — Substantive"));
 
@@ -1769,13 +1797,13 @@ fn note_map_review_shows_every_current_membership_and_strength() {
     );
     let screen = &ui.screens[2];
     assert_eq!(screen.title, "Note map · Slot 03");
-    assert_eq!(screen.evidence.len(), 1);
-    assert!(screen.evidence[0].body.contains("Software — Central"));
-    assert!(screen.evidence[0].body.contains("Food — Substantive"));
+    assert_eq!(screen.evidence.len(), 2);
+    assert!(screen.evidence[1].body.contains("Software — Central"));
+    assert!(screen.evidence[1].body.contains("Food — Substantive"));
 }
 
 #[test]
-fn note_map_review_shows_one_exact_note_and_its_complete_map() {
+fn note_map_review_shows_one_exact_note_and_its_assignments() {
     let temp = tempfile::tempdir().expect("tempdir");
     let notes = approved_notes();
     let draft = hierarchy(&notes);
@@ -1796,25 +1824,73 @@ fn note_map_review_shows_one_exact_note_and_its_complete_map() {
         .expect("open first note map"),
         ReviewRunOutcome::Paused
     );
-    let evidence = &ui.screens[0].evidence[0];
-    assert_eq!(evidence.title, "Note and complete proposed map");
-    assert_eq!(
-        evidence
-            .body
-            .matches("Real diagnostic note number 0")
-            .count(),
-        1,
-        "the current note is shown once"
-    );
-    assert!(evidence.body.contains("Proposed subject map:"));
-    assert!(evidence.body.contains("Software — Substantive"));
+    let screen = &ui.screens[0];
+    assert_eq!(screen.evidence_layout, ApprovalEvidenceLayout::Stacked);
+    assert_eq!(screen.evidence.len(), 2);
+    let note = &screen.evidence[0];
+    let assignments = &screen.evidence[1];
+    assert_eq!(note.title, "Note");
+    assert_eq!(note.body, "Real diagnostic note number 0");
+    assert_eq!(assignments.title, "Proposed subject map");
+    assert!(assignments.body.contains("Software — Substantive"));
     assert!(
-        !evidence.body.contains("Food —"),
+        !assignments.body.contains("Food —"),
         "only this note's proposed memberships are listed"
     );
     assert!(
-        !evidence.body.contains("Real diagnostic note number 1"),
+        !assignments.body.contains("Real diagnostic note number 0")
+            && !assignments.body.contains("Real diagnostic note number 1"),
+        "note text never appears in the proposed subject map"
+    );
+    assert!(
+        !assignments.body.contains("Notes about Software"),
+        "subject definitions never appear in the proposed subject map"
+    );
+    assert!(
+        !note.body.contains("Real diagnostic note number 1"),
         "another note is never mixed into the grouped decision"
+    );
+}
+
+#[test]
+fn note_map_review_separates_raw_note_from_compact_subject_assignments() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    let notes = approved_notes();
+    let draft = hierarchy(&notes);
+    let notes_path = temp.path().join("approved-notes.json");
+    let draft_path = temp.path().join("hierarchy-draft.json");
+    write_json(&notes_path, &notes);
+    write_json(&draft_path, &draft);
+    let mut ui = ScriptedUi::new([ApprovalTuiAction::Pause]);
+
+    assert_eq!(
+        run_hierarchy_review(
+            &notes_path,
+            &draft_path,
+            temp.path().join("hierarchy-session.json"),
+            temp.path().join("approved-hierarchy.json"),
+            &mut ui,
+        )
+        .expect("open first note map"),
+        ReviewRunOutcome::Paused
+    );
+
+    let screen = &ui.screens[0];
+    assert_eq!(screen.scope, "Are these subject assignments correct?");
+    assert_eq!(screen.approve_label, "Approve these assignments");
+    assert_eq!(screen.evidence_layout, ApprovalEvidenceLayout::Stacked);
+    assert_eq!(screen.evidence.len(), 2);
+    assert_eq!(screen.evidence[0].title, "Note");
+    assert_eq!(screen.evidence[0].body, notes.notes[0].content);
+    assert_eq!(screen.evidence[1].title, "Proposed subject map");
+    assert_eq!(screen.evidence[1].body, "Software — Substantive");
+    assert!(
+        !screen.evidence[1].body.contains("Notes about Software"),
+        "subject definitions are not part of note-map review"
+    );
+    assert!(
+        !screen.scope.contains("complete") && !screen.approve_label.contains("complete"),
+        "the UI must not claim the proposed assignments exhaust the note's meaning"
     );
 }
 
@@ -1841,23 +1917,17 @@ fn note_map_review_states_the_grouped_decision_and_rejection_criteria() {
         ReviewRunOutcome::Paused
     );
     let screen = &ui.screens[2];
-    assert_eq!(
-        screen.scope,
-        "Does this note’s complete proposed subject map contain a concrete problem?"
-    );
-    assert_eq!(screen.approve_label, "Approve — complete map is correct");
+    assert_eq!(screen.scope, "Are these subject assignments correct?");
+    assert_eq!(screen.approve_label, "Approve these assignments");
     assert_eq!(screen.reject_label, "Reject — name the exact correction");
     let guidance = screen
         .guidance
         .as_ref()
-        .expect("note-map review explains the complete decision");
+        .expect("note-map review explains the grouped decision");
     assert_eq!(guidance.title, "Note-map review");
-    assert!(guidance.body.contains(
-        "Approving accepts every listed subject and strength and confirms that no subject is missing."
-    ));
     assert!(guidance
         .body
-        .contains("subject the note expresses is missing"));
+        .contains("Approving accepts each listed subject and strength."));
     assert!(guidance
         .body
         .contains("listed subject is not actually expressed"));
@@ -1865,9 +1935,17 @@ fn note_map_review_states_the_grouped_decision_and_rejection_criteria() {
     assert!(guidance.body.contains("Central:"));
     assert!(guidance.body.contains("Substantive:"));
     assert!(guidance.body.contains("Incidental:"));
-    assert_eq!(screen.evidence.len(), 1);
-    assert!(screen.evidence[0].body.contains("[1] Software — Central"));
-    assert!(screen.evidence[0].body.contains("[2] Food — Substantive"));
+    assert!(
+        !guidance.body.contains("missing") && !guidance.body.contains("description"),
+        "assignment approval does not claim exhaustiveness or depend on hidden definitions"
+    );
+    assert_eq!(screen.evidence.len(), 2);
+    assert!(screen.evidence[1].body.contains("Software — Central"));
+    assert!(screen.evidence[1].body.contains("Food — Substantive"));
+    assert!(
+        !screen.evidence[1].body.contains("[1]"),
+        "the compact map contains only subject labels and strengths"
+    );
 }
 
 #[test]
