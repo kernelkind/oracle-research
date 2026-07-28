@@ -1,0 +1,985 @@
+{
+  "schema_version": 1,
+  "draft_id": "crec-116-stratified-48-hierarchy-v1",
+  "approved_notes_sha256": "2b4b06cde7182932bdf1729daa1a4946bc7294eb3ada024d31ac931275a8f99e",
+  "root_node_id": "root",
+  "nodes": [
+    {
+      "node_id": "root",
+      "label": "All subjects",
+      "scope": "Hidden root joining the eight broad navigation choices.",
+      "children": [
+        "knowledge-written-culture",
+        "computing",
+        "society",
+        "art-expression",
+        "health-movement",
+        "daily-life",
+        "environment",
+        "movement-place"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "knowledge-written-culture",
+      "label": "Knowledge and written culture",
+      "scope": "Books, historical knowledge, education, scientific thought, and systems for preserving or organizing knowledge.",
+      "children": [
+        "books-reading",
+        "history",
+        "digital-knowledge-access",
+        "cognitive-development",
+        "personal-knowledge-management",
+        "philosophy-of-science"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "computing",
+      "label": "Computing and technical systems",
+      "scope": "Software, protocols, AI systems, Bitcoin mining, digital fabrication, and machinery.",
+      "children": [
+        "software-systems",
+        "nostr-protocol-engineering",
+        "artificial-intelligence",
+        "bitcoin-mining"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "software-systems",
+      "label": "Software systems",
+      "scope": "Operating systems, software development, data systems, and developer communities.",
+      "children": [
+        "linux-open-source",
+        "data-storage-systems",
+        "software-development",
+        "developer-communities"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "artificial-intelligence",
+      "label": "Artificial intelligence",
+      "scope": "AI capabilities, applications, deployment, privacy, and resource effects.",
+      "children": [
+        "ai-capabilities",
+        "ai-applications",
+        "ai-privacy-deployment",
+        "ai-resource-impact"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "society",
+      "label": "Society",
+      "scope": "Communication rights, control of technology, markets, and direct economic exchange.",
+      "children": [
+        "communication-rights",
+        "economy-exchange"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "communication-rights",
+      "label": "Communication and digital rights",
+      "scope": "Open communication, attention systems, privacy, censorship resistance, and user control of technology.",
+      "children": [
+        "open-communication",
+        "algorithmic-attention",
+        "privacy-surveillance",
+        "technology-autonomy",
+        "censorship-resistance"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "economy-exchange",
+      "label": "Markets and direct exchange",
+      "scope": "Commerce and direct economic relationships between creators, audiences, buyers, and sellers.",
+      "children": [
+        "markets-commerce",
+        "creator-value-exchange"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "art-expression",
+      "label": "Art and expression",
+      "scope": "Distinct forms of artistic work, their interpretation, their economics, and the process of developing creative skill.",
+      "children": [
+        "poetry",
+        "photography",
+        "art-aesthetics",
+        "graphic-design",
+        "craft-pottery",
+        "music",
+        "creative-practice",
+        "art-economics"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "health-movement",
+      "label": "Health and physical movement",
+      "scope": "Physical activity, rehabilitation, healthcare, recovery, emotional support, and embodied rhythm.",
+      "children": [
+        "exercise-training",
+        "injury-rehabilitation",
+        "emotional-support"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "daily-life",
+      "label": "Daily life",
+      "scope": "Family relationships, everyday contentment, food, cooking, gardening, and household production.",
+      "children": [
+        "family-relationships",
+        "everyday-contentment",
+        "coffee",
+        "food-meals",
+        "cooking",
+        "gardening",
+        "homesteading"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "environment",
+      "label": "Environment",
+      "scope": "Energy systems, emissions, resource conservation, and natural landscapes.",
+      "children": [
+        "energy-systems",
+        "climate-emissions",
+        "resource-conservation",
+        "nature-landscapes"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "movement-place",
+      "label": "Travel and places",
+      "scope": "Travel, relocation, life in different countries, boats, and geographic autonomy.",
+      "children": [
+        "travel",
+        "relocation",
+        "countries-ways-of-life",
+        "geographic-autonomy"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "books-reading",
+      "label": "Books and reading",
+      "scope": "Choosing, reading, recommending, accessing, and discussing books.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "d420e4335f2fe7fc94992b2cf3604432f56b55d737a497d5dfae00f771dc223b",
+          "strength": "central"
+        },
+        {
+          "note_id": "d4b14dd9f6959e29c95888d56e0a1b4e49aecfec9a79268f4369ea726f009d2c",
+          "strength": "central"
+        },
+        {
+          "note_id": "650ee6fe1a6ecc43bb374cb27b50d1317899f6780f2e628beb4b5e93199149bb",
+          "strength": "central"
+        },
+        {
+          "note_id": "7d52bf12d1dba7ef59001b7d70189cd7139fd12b9e2972c6faa5b634d5166217",
+          "strength": "central"
+        },
+        {
+          "note_id": "57ce561cfd0a569a981061a5461ae684e831a63d2e009b1822b2f7b16a9533b2",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "history",
+      "label": "History",
+      "scope": "Past people, periods, and events, including the study of history.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "3e5568db003be02ab4b79daf695c02fdeaf35644bf99606d8c6572aa40a72223",
+          "strength": "central"
+        },
+        {
+          "note_id": "7d52bf12d1dba7ef59001b7d70189cd7139fd12b9e2972c6faa5b634d5166217",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "digital-knowledge-access",
+      "label": "Access to digital knowledge",
+      "scope": "Rules and systems that restrict or enable access to digitized books and knowledge.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "d4b14dd9f6959e29c95888d56e0a1b4e49aecfec9a79268f4369ea726f009d2c",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "cognitive-development",
+      "label": "Learning and cognitive development",
+      "scope": "How human knowledge and reasoning develop.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "2a1c279f820c19a78aed198d135340416f445aa10c9951ae3d3c77f366f225d8",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "personal-knowledge-management",
+      "label": "Personal knowledge management",
+      "scope": "Methods and tools for naming, organizing, and inventorying personal knowledge.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "9583cdf21d51c763aee19412335850b41bf5909960013b64329aababfcdd6a6f",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "philosophy-of-science",
+      "label": "Scientific disciplines and nature",
+      "scope": "How scientific disciplines divide and describe a unified natural world.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "eb4e7b0341e6544b6ef0de8dcef80f52b550948b988cd9be6a9247a11b06d46b",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "linux-open-source",
+      "label": "Linux and open-source software",
+      "scope": "Linux, open-source software, and user-controlled operating systems.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "693fa0a077527d025eeece4918f530e316cd9b88ccdbe9b3385111095ed15e4f",
+          "strength": "central"
+        },
+        {
+          "note_id": "7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e",
+          "strength": "central"
+        },
+        {
+          "note_id": "5162cc3e6ed6756c0d95ac8f1340fc244532ba347c3b7da431453c602b671731",
+          "strength": "central"
+        },
+        {
+          "note_id": "e62f24bb7124d1d208658b1b5b68bf2b259274c2bc2add538fdb1c1814c9d0bc",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "a75a2144c72724ad02ed57524a33a8750477135d03c55f5e7eee7ff314e48ae4",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "data-storage-systems",
+      "label": "Databases and local data systems",
+      "scope": "Database engines, embedded key-value stores, and local application data systems.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "847fc9177c6f12db9f76bd970d55cc2cd30f1ddc0fa20bc832aefe7fb589b7ae",
+          "strength": "central"
+        },
+        {
+          "note_id": "061343e9c2a99b6b4dd09f661c2c855d7277ce8b60089c1a4e5252965abf5344",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "software-development",
+      "label": "Software development and automation",
+      "scope": "Writing, automating, porting, and evaluating software.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "9583cdf21d51c763aee19412335850b41bf5909960013b64329aababfcdd6a6f",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "847fc9177c6f12db9f76bd970d55cc2cd30f1ddc0fa20bc832aefe7fb589b7ae",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "061343e9c2a99b6b4dd09f661c2c855d7277ce8b60089c1a4e5252965abf5344",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "developer-communities",
+      "label": "Software developer communities",
+      "scope": "Norms, conflict, and reputation within software-development communities.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "a75a2144c72724ad02ed57524a33a8750477135d03c55f5e7eee7ff314e48ae4",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "nostr-protocol-engineering",
+      "label": "Nostr technical design and implementation",
+      "scope": "Nostr keys, relay-selection behavior, content retrieval, and application implementation.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7ca5c1f52e285dff5e45c81734e663d79743ce9743c9d239f2d36e7b9c3946d1",
+          "strength": "central"
+        },
+        {
+          "note_id": "099596d9b7cbdd24b080a1293214978a05a3c4a1a3152675e8af3ff7febc9c0a",
+          "strength": "central"
+        },
+        {
+          "note_id": "061343e9c2a99b6b4dd09f661c2c855d7277ce8b60089c1a4e5252965abf5344",
+          "strength": "central"
+        },
+        {
+          "note_id": "f82b8f1742cf74cb2ab19bdbfa249e9685f035b1856c17673444686919ca7807",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "ai-capabilities",
+      "label": "AI capabilities and limitations",
+      "scope": "Claims and questions about what AI systems can understand, reason about, or accomplish.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "503fb92faf6694b631484d0be57344ed29f7bfd324a2e5c5fa38183751b830e6",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "ai-applications",
+      "label": "AI applications",
+      "scope": "Using AI systems for personal assistance, emotional support, or practical tasks.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "17f7820bcee57f62c4a6f43a924db573a941173852bfa1c820180f1fecffc4f0",
+          "strength": "central"
+        },
+        {
+          "note_id": "e62f24bb7124d1d208658b1b5b68bf2b259274c2bc2add538fdb1c1814c9d0bc",
+          "strength": "incidental"
+        }
+      ]
+    },
+    {
+      "node_id": "ai-privacy-deployment",
+      "label": "AI privacy and deployment",
+      "scope": "Where AI computation runs and the privacy and security properties of AI services.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "5f2f81bee2dcbe09b5cb51a6cd0f4283083e30d2832c9a8a6c95ef7eb951c5d9",
+          "strength": "central"
+        },
+        {
+          "note_id": "b18908c0bd3cfe51e01028096a94c609c02575f0c1e534e500b302af5eaa6e23",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "ai-resource-impact",
+      "label": "AI energy and environmental impact",
+      "scope": "Energy use and environmental consequences of AI infrastructure.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "88b8490e40edacb25ce1a55d288e4387cfb6c2d56d801aad8c7fa5074132c678",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "bitcoin-mining",
+      "label": "Practical Bitcoin mining",
+      "scope": "Bitcoin mining hardware and its integration with energy, heat, mobility, or automation.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "open-communication",
+      "label": "Open communication",
+      "scope": "Communication networks that enable broad participation without centralized control.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7a2204bdc296c3650502c19814243aaa550a240c3863083514933e2ea9e8ab43",
+          "strength": "central"
+        },
+        {
+          "note_id": "f82b8f1742cf74cb2ab19bdbfa249e9685f035b1856c17673444686919ca7807",
+          "strength": "central"
+        },
+        {
+          "note_id": "cca270685401385322e2a062def0562545284bcd6babe5a8763ed28b73e79407",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "algorithmic-attention",
+      "label": "Algorithmic attention and echo chambers",
+      "scope": "Recommendation and engagement systems, echo chambers, and their effects on online discourse.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "cca270685401385322e2a062def0562545284bcd6babe5a8763ed28b73e79407",
+          "strength": "incidental"
+        }
+      ]
+    },
+    {
+      "node_id": "privacy-surveillance",
+      "label": "Privacy and surveillance",
+      "scope": "Privacy risks, surveillance mechanisms, and technical approaches intended to keep personal computation or data private.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e",
+          "strength": "central"
+        },
+        {
+          "note_id": "5f2f81bee2dcbe09b5cb51a6cd0f4283083e30d2832c9a8a6c95ef7eb951c5d9",
+          "strength": "central"
+        },
+        {
+          "note_id": "b18908c0bd3cfe51e01028096a94c609c02575f0c1e534e500b302af5eaa6e23",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "cca270685401385322e2a062def0562545284bcd6babe5a8763ed28b73e79407",
+          "strength": "incidental"
+        }
+      ]
+    },
+    {
+      "node_id": "technology-autonomy",
+      "label": "User control of technology",
+      "scope": "Control over devices, operating systems, software choices, and dependence on technology vendors.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e",
+          "strength": "central"
+        },
+        {
+          "note_id": "5162cc3e6ed6756c0d95ac8f1340fc244532ba347c3b7da431453c602b671731",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "censorship-resistance",
+      "label": "Resistance to online censorship",
+      "scope": "Systems and practices intended to preserve access to online speech when content is censored or blocked.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "f82b8f1742cf74cb2ab19bdbfa249e9685f035b1856c17673444686919ca7807",
+          "strength": "central"
+        },
+        {
+          "note_id": "7a2204bdc296c3650502c19814243aaa550a240c3863083514933e2ea9e8ab43",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "markets-commerce",
+      "label": "Markets and commerce",
+      "scope": "Buying, selling, price competition, and consumer transactions.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "4611090a5fbd6acd54162e7cd29930ce6799a8461c70f0c417d6a982281f78f8",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "creator-value-exchange",
+      "label": "Creator funding and direct value exchange",
+      "scope": "Payment and support models connecting creators directly with audiences or buyers.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "4611090a5fbd6acd54162e7cd29930ce6799a8461c70f0c417d6a982281f78f8",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "poetry",
+      "label": "Poetry",
+      "scope": "Poems and discussion of poetry.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "337569d3f73ff93019040a32d9f5e537f4c8c0a836db8d05bd70a614d8f06e2e",
+          "strength": "central"
+        },
+        {
+          "note_id": "8894b71ab618459a3c40e9637d2cad57cb3347b758911a94da50d8f84db53aa8",
+          "strength": "central"
+        },
+        {
+          "note_id": "4611090a5fbd6acd54162e7cd29930ce6799a8461c70f0c417d6a982281f78f8",
+          "strength": "incidental"
+        }
+      ]
+    },
+    {
+      "node_id": "photography",
+      "label": "Photography",
+      "scope": "Creating, interpreting, or restoring photographs and visual stories made with cameras.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "e62f24bb7124d1d208658b1b5b68bf2b259274c2bc2add538fdb1c1814c9d0bc",
+          "strength": "central"
+        },
+        {
+          "note_id": "2c37330aa014895f53b7e774edf49823e6e3b5ad47939e64fcb81735b726240c",
+          "strength": "central"
+        },
+        {
+          "note_id": "5df22809eda64af11774ed317671a3a2ecba24082119254fc4af2251d307a734",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "art-aesthetics",
+      "label": "Art and aesthetics",
+      "scope": "The meaning, interpretation, beauty, and significance of visual art.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "48582ca7a1747eec62b877c408909df34d2ceed7477e14be62b86981425bd379",
+          "strength": "central"
+        },
+        {
+          "note_id": "2c37330aa014895f53b7e774edf49823e6e3b5ad47939e64fcb81735b726240c",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "5df22809eda64af11774ed317671a3a2ecba24082119254fc4af2251d307a734",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "4611090a5fbd6acd54162e7cd29930ce6799a8461c70f0c417d6a982281f78f8",
+          "strength": "incidental"
+        }
+      ]
+    },
+    {
+      "node_id": "graphic-design",
+      "label": "Graphic design and meme-making",
+      "scope": "Creating visual designs and applying skills learned through graphic or meme production.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "6ff1885941473b9f6941624769aef78307093cec8d55530b566dec60ce8ad0a6",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "craft-pottery",
+      "label": "Pottery and handmade craft",
+      "scope": "Making and describing handmade material objects, especially pottery and ceramics.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "4611090a5fbd6acd54162e7cd29930ce6799a8461c70f0c417d6a982281f78f8",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "music",
+      "label": "Music",
+      "scope": "Musical instruments, songs, listening, and music discovery.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "a57c8f036092116e0a0f4c142a855a7c0565e9b67b2fc21cfd86908c16759da8",
+          "strength": "central"
+        },
+        {
+          "note_id": "24b6fb2f442d31e9db1274119ad424252577b27a88f59f69d43b92cd072b5a4e",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "creative-practice",
+      "label": "Creative practice and skill development",
+      "scope": "How repeated making, experimentation, and learning shape a person's creative ability and process.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "6ff1885941473b9f6941624769aef78307093cec8d55530b566dec60ce8ad0a6",
+          "strength": "central"
+        },
+        {
+          "note_id": "24b6fb2f442d31e9db1274119ad424252577b27a88f59f69d43b92cd072b5a4e",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "5df22809eda64af11774ed317671a3a2ecba24082119254fc4af2251d307a734",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "art-economics",
+      "label": "Economics and value of art",
+      "scope": "Arguments about how money, time preference, and economic value relate to artistic significance.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "48582ca7a1747eec62b877c408909df34d2ceed7477e14be62b86981425bd379",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "exercise-training",
+      "label": "Exercise and physical training",
+      "scope": "Exercise, endurance, deliberate movement, and physical training practices.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "ee2cca149a7d031817911a9e202bb23ae77c11dc9c22056bd9f3b766498ac770",
+          "strength": "central"
+        },
+        {
+          "note_id": "0c17e6b047755f2329110c6df3542b5a7e753fa4ef055c75b858ca1682bbfee5",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "f0ff44e2ad7556bc51ffc56aed7658b6b20f81e93856e2382d2b8187e44db4c7",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "injury-rehabilitation",
+      "label": "Injury rehabilitation",
+      "scope": "Managing pain and restoring physical capacity through graded movement and rehabilitation work.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "f0ff44e2ad7556bc51ffc56aed7658b6b20f81e93856e2382d2b8187e44db4c7",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "family-relationships",
+      "label": "Family and close relationships",
+      "scope": "Relationships between partners, parents, children, and other close family members.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "ef6193a59a35304759d1f58b629466c2a4a7289d92261e91078a1c9b3e05de71",
+          "strength": "central"
+        },
+        {
+          "note_id": "57ce561cfd0a569a981061a5461ae684e831a63d2e009b1822b2f7b16a9533b2",
+          "strength": "central"
+        },
+        {
+          "note_id": "b843720355752d704f1a167b7b0625d4d28833461c5c6d27c76e8e5b0648aca6",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "068a9e104f99a51d46a65674d05b3ead194564961534a90b0922b968e78c29d9",
+          "strength": "incidental"
+        },
+        {
+          "note_id": "4ef54cc08e5c02387af7521929d17d9af73e262fccebd3d4cbbd36190136a4f7",
+          "strength": "incidental"
+        }
+      ]
+    },
+    {
+      "node_id": "emotional-support",
+      "label": "Emotional support",
+      "scope": "Receiving comfort, consolation, or emotional help from another person or system.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "17f7820bcee57f62c4a6f43a924db573a941173852bfa1c820180f1fecffc4f0",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "everyday-contentment",
+      "label": "Gratitude and everyday contentment",
+      "scope": "Ordinary experiences discussed as sources of gratitude, satisfaction, or joy.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "57ce561cfd0a569a981061a5461ae684e831a63d2e009b1822b2f7b16a9533b2",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "4ef54cc08e5c02387af7521929d17d9af73e262fccebd3d4cbbd36190136a4f7",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "c01a24e6604834c025907d715314b547956d90488f95229707c4bad6354e5fa7",
+          "strength": "incidental"
+        }
+      ]
+    },
+    {
+      "node_id": "coffee",
+      "label": "Coffee",
+      "scope": "Coffee beans, brewing, taste, and coffee as a meaningful object or experience.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "056e6466257003453c3065421db88270511cb13ec8c860e3cb4d4b22edf3ba77",
+          "strength": "central"
+        },
+        {
+          "note_id": "fbac11c36101d6513cc632ef2ddc7fa17883cbd667da7fc75196bcabd9d31ea3",
+          "strength": "central"
+        },
+        {
+          "note_id": "8894b71ab618459a3c40e9637d2cad57cb3347b758911a94da50d8f84db53aa8",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "food-meals",
+      "label": "Food and meals",
+      "scope": "Food choices, meals, and experiences of eating.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "1830964db8182776dc0a7ddbc014a09c6c968a2c982ebd5f6da320deef2b92dc",
+          "strength": "central"
+        },
+        {
+          "note_id": "c01a24e6604834c025907d715314b547956d90488f95229707c4bad6354e5fa7",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "cooking",
+      "label": "Cooking and food preparation",
+      "scope": "Preparing ingredients, dishes, and meals.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "c01a24e6604834c025907d715314b547956d90488f95229707c4bad6354e5fa7",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "gardening",
+      "label": "Gardening and growing plants",
+      "scope": "Growing and tending plants, gardens, and food crops.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "4ef54cc08e5c02387af7521929d17d9af73e262fccebd3d4cbbd36190136a4f7",
+          "strength": "central"
+        },
+        {
+          "note_id": "b843720355752d704f1a167b7b0625d4d28833461c5c6d27c76e8e5b0648aca6",
+          "strength": "central"
+        },
+        {
+          "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13",
+          "strength": "incidental"
+        }
+      ]
+    },
+    {
+      "node_id": "homesteading",
+      "label": "Homesteading and self-sufficient living",
+      "scope": "Maintaining land and producing food, heat, or other necessities through household projects.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "4ef54cc08e5c02387af7521929d17d9af73e262fccebd3d4cbbd36190136a4f7",
+          "strength": "central"
+        },
+        {
+          "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "energy-systems",
+      "label": "Energy systems and renewable power",
+      "scope": "Producing, storing, consuming, and controlling energy, including renewable power.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13",
+          "strength": "central"
+        },
+        {
+          "note_id": "87f1cb51d8abb755bc2526f0129afcf079acbaea323ee8181d121fd7040a300e",
+          "strength": "central"
+        },
+        {
+          "note_id": "88b8490e40edacb25ce1a55d288e4387cfb6c2d56d801aad8c7fa5074132c678",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "climate-emissions",
+      "label": "Climate change and emissions",
+      "scope": "Greenhouse-gas emissions, climate effects, and work intended to address climate change.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "88b8490e40edacb25ce1a55d288e4387cfb6c2d56d801aad8c7fa5074132c678",
+          "strength": "central"
+        },
+        {
+          "note_id": "87f1cb51d8abb755bc2526f0129afcf079acbaea323ee8181d121fd7040a300e",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "resource-conservation",
+      "label": "Resource conservation",
+      "scope": "Conserving water, energy, or materials through reuse and deliberate resource management.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "4ef54cc08e5c02387af7521929d17d9af73e262fccebd3d4cbbd36190136a4f7",
+          "strength": "central"
+        },
+        {
+          "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "87f1cb51d8abb755bc2526f0129afcf079acbaea323ee8181d121fd7040a300e",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "nature-landscapes",
+      "label": "Nature and landscapes",
+      "scope": "Natural places, weather, plants, water, and encounters with the outdoors.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "337569d3f73ff93019040a32d9f5e537f4c8c0a836db8d05bd70a614d8f06e2e",
+          "strength": "central"
+        },
+        {
+          "note_id": "2c37330aa014895f53b7e774edf49823e6e3b5ad47939e64fcb81735b726240c",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "travel",
+      "label": "Travel",
+      "scope": "Journeys and experiences of visiting or moving through places.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "2c37330aa014895f53b7e774edf49823e6e3b5ad47939e64fcb81735b726240c",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "relocation",
+      "label": "Relocation and moving abroad",
+      "scope": "Changing where one lives, especially a move to another country.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "068a9e104f99a51d46a65674d05b3ead194564961534a90b0922b968e78c29d9",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "countries-ways-of-life",
+      "label": "Life in different countries",
+      "scope": "Differences between countries, local customs, and what life is like in particular places.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "068a9e104f99a51d46a65674d05b3ead194564961534a90b0922b968e78c29d9",
+          "strength": "central"
+        },
+        {
+          "note_id": "2c37330aa014895f53b7e774edf49823e6e3b5ad47939e64fcb81735b726240c",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "geographic-autonomy",
+      "label": "Geographic and jurisdictional autonomy",
+      "scope": "Relocation, passports, and jurisdictional choice used to exit constraining social or economic conditions.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "068a9e104f99a51d46a65674d05b3ead194564961534a90b0922b968e78c29d9",
+          "strength": "central"
+        }
+      ]
+    }
+  ]
+}

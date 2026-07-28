@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, VecDeque};
+use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::fs;
 use std::io;
 
@@ -6,7 +6,7 @@ use oracle_mvp::reference_map::{
     ApprovedHierarchy, ApprovedNoteSet, BroadNarrowRole, HierarchyDraft, HierarchyReviewDecision,
     HierarchyReviewSession, HierarchyReviewTarget, LeafMembership, MembershipStrength,
     NoteProposal, NoteReviewDecision, NoteReviewSession, PairMembership, ProposedNote,
-    ReferenceNavigation, ReviewOutcome, SelectionSource, SubjectNode,
+    ReferenceNavigation, ReviewOutcome, SelectionSource, SubjectNode, REFERENCE_NOTE_COUNT,
 };
 use oracle_mvp::reference_review::{
     load_verified_note_proposal, run_hierarchy_review, run_note_review, ApprovalUi,
@@ -42,6 +42,9 @@ fn proposed_note(index: usize) -> ProposedNote {
 }
 
 fn proposal() -> NoteProposal {
+    let retained_slots = (1_u8..=40)
+        .chain([42, 44, 46, 48, 52, 54, 57, 60])
+        .collect::<BTreeSet<_>>();
     NoteProposal {
         schema_version: 3,
         proposal_id: "crec-115-selection-v2".to_owned(),
@@ -51,8 +54,18 @@ fn proposal() -> NoteProposal {
                 .to_owned(),
             split: "learning".to_owned(),
         },
-        notes: (0..64).map(proposed_note).collect(),
+        notes: (0..64)
+            .map(proposed_note)
+            .filter(|note| retained_slots.contains(&note.slot))
+            .collect(),
     }
+}
+
+#[test]
+fn stratified_reference_proposal_accepts_sparse_source_slots() {
+    proposal()
+        .validate()
+        .expect("the 48-note subset preserves stable source slots");
 }
 
 #[test]
@@ -95,7 +108,7 @@ fn changed_candidates_reopen_without_discarding_unchanged_approvals() {
             )
             .expect("record approval");
     }
-    assert_eq!(session.approved_count(&original), 64);
+    assert_eq!(session.approved_count(&original), REFERENCE_NOTE_COUNT);
 
     let mut revised = original.clone();
     revised.proposal_id = "crec-115-selection-v2".to_owned();
@@ -106,7 +119,7 @@ fn changed_candidates_reopen_without_discarding_unchanged_approvals() {
     session
         .reconcile(&revised)
         .expect("reconcile revised proposal");
-    assert_eq!(session.approved_count(&revised), 63);
+    assert_eq!(session.approved_count(&revised), REFERENCE_NOTE_COUNT - 1);
     assert_eq!(session.pending_slots(&revised), vec![8]);
     assert!(
         session
@@ -219,8 +232,9 @@ fn rejection_decisions_require_an_actionable_comment() {
 }
 
 #[test]
-fn approved_set_requires_all_64_current_candidates_to_be_approved() {
+fn approved_set_requires_all_current_candidates_to_be_approved() {
     let proposal = proposal();
+    let last_slot = proposal.notes.last().expect("last candidate").slot;
     let mut session = NoteReviewSession::new(&proposal).expect("create session");
     for note in &proposal.notes {
         session
@@ -228,12 +242,12 @@ fn approved_set_requires_all_64_current_candidates_to_be_approved() {
                 &proposal,
                 note.slot,
                 NoteReviewDecision {
-                    outcome: if note.slot == 64 {
+                    outcome: if note.slot == last_slot {
                         ReviewOutcome::Rejected
                     } else {
                         ReviewOutcome::Approved
                     },
-                    comment: if note.slot == 64 {
+                    comment: if note.slot == last_slot {
                         "The candidate text is truncated.".to_owned()
                     } else {
                         String::new()
@@ -244,12 +258,18 @@ fn approved_set_requires_all_64_current_candidates_to_be_approved() {
     }
     let error = ApprovedNoteSet::from_review(&proposal, &session)
         .expect_err("one rejection prevents publication");
-    assert!(error.to_string().contains("63 of 64"), "{error}");
+    assert!(
+        error.to_string().contains(&format!(
+            "{} of {REFERENCE_NOTE_COUNT}",
+            REFERENCE_NOTE_COUNT - 1
+        )),
+        "{error}"
+    );
 
     session
         .record(
             &proposal,
-            64,
+            last_slot,
             NoteReviewDecision {
                 outcome: ReviewOutcome::Approved,
                 comment: "Approved after reconsideration.".to_owned(),
@@ -258,7 +278,7 @@ fn approved_set_requires_all_64_current_candidates_to_be_approved() {
         .expect("replace the current decision");
     let approved = ApprovedNoteSet::from_review(&proposal, &session)
         .expect("all current candidates are approved");
-    assert_eq!(approved.notes.len(), 64);
+    assert_eq!(approved.notes.len(), REFERENCE_NOTE_COUNT);
     assert_eq!(
         approved
             .notes
@@ -266,7 +286,7 @@ fn approved_set_requires_all_64_current_candidates_to_be_approved() {
             .map(|note| (note.slot, note.note_id.clone()))
             .collect::<BTreeMap<_, _>>()
             .len(),
-        64
+        REFERENCE_NOTE_COUNT
     );
 
     let mut tampered_identity = approved.clone();
@@ -341,10 +361,10 @@ fn hierarchy(approved: &ApprovedNoteSet) -> HierarchyDraft {
                 children: vec!["food".to_owned(), "outdoors".to_owned()],
                 memberships: vec![],
             },
-            leaf("software", "Software", 1..=16),
-            leaf("hardware", "Hardware", 17..=32),
-            leaf("food", "Food", 33..=48),
-            leaf("outdoors", "Outdoors", 49..=64),
+            leaf("software", "Software", 1..=12),
+            leaf("hardware", "Hardware", 13..=24),
+            leaf("food", "Food", 25..=36),
+            leaf("outdoors", "Outdoors", 37..=48),
         ],
     };
     draft
@@ -359,7 +379,7 @@ fn hierarchy(approved: &ApprovedNoteSet) -> HierarchyDraft {
                 strength: MembershipStrength::Substantive,
             },
             LeafMembership {
-                note_id: approved.notes[24].note_id.clone(),
+                note_id: approved.notes[12].note_id.clone(),
                 strength: MembershipStrength::Central,
             },
         ]);
@@ -505,7 +525,7 @@ fn hierarchy_validation_allows_an_honest_leaf_with_sparse_strength_coverage() {
 fn hierarchy_allows_a_diffuse_note_without_a_central_membership() {
     let approved = approved_notes();
     let mut hierarchy = hierarchy(&approved);
-    let diffuse_note_id = approved.notes[24].note_id.as_str();
+    let diffuse_note_id = approved.notes[12].note_id.as_str();
     for membership in hierarchy
         .nodes
         .iter_mut()
@@ -530,7 +550,7 @@ fn hierarchy_review_unlocks_branches_only_after_all_note_maps_are_approved() {
     let initial_targets = session
         .reviewable_targets(&hierarchy, &approved)
         .expect("list initial reviewable items");
-    assert_eq!(initial_targets.len(), 64);
+    assert_eq!(initial_targets.len(), REFERENCE_NOTE_COUNT);
     assert_eq!(
         initial_targets.first(),
         Some(&HierarchyReviewTarget::NoteMap {
@@ -540,7 +560,7 @@ fn hierarchy_review_unlocks_branches_only_after_all_note_maps_are_approved() {
     assert_eq!(
         initial_targets.last(),
         Some(&HierarchyReviewTarget::NoteMap {
-            note_id: approved.notes[63].note_id.clone(),
+            note_id: approved.notes[REFERENCE_NOTE_COUNT - 1].note_id.clone(),
         })
     );
     assert!(
@@ -720,7 +740,7 @@ fn rejected_note_map_keeps_other_notes_reviewable_but_blocks_branches() {
     let remaining = session
         .reviewable_targets(&hierarchy, &approved)
         .expect("list remaining note maps");
-    assert_eq!(remaining.len(), 63);
+    assert_eq!(remaining.len(), REFERENCE_NOTE_COUNT - 1);
     assert!(remaining
         .iter()
         .all(|target| matches!(target, HierarchyReviewTarget::NoteMap { .. })));
@@ -741,7 +761,7 @@ fn rejected_note_map_keeps_other_notes_reviewable_but_blocks_branches() {
         session
             .decision_counts(&hierarchy, &approved)
             .expect("count grouped decisions"),
-        (63, 1, 67)
+        (REFERENCE_NOTE_COUNT - 1, 1, REFERENCE_NOTE_COUNT + 3,)
     );
 }
 
@@ -1032,7 +1052,7 @@ fn hierarchy_publication_requires_each_current_root_branch() {
         .expect("approve final coverage check");
     let frozen = ApprovedHierarchy::from_review(&hierarchy, &approved, &session)
         .expect("publish approved hierarchy");
-    assert_eq!(frozen.notes.len(), 64);
+    assert_eq!(frozen.notes.len(), REFERENCE_NOTE_COUNT);
     assert_eq!(frozen.nodes.len(), 7);
 }
 
@@ -1119,7 +1139,7 @@ fn leaf_notes_use_strength_then_note_id_and_multi_membership_remains_multi_path(
         .expect("resolve ordered food notes");
     assert_eq!(
         food.first().expect("food leaf has notes").note_id,
-        hierarchy.notes[24].note_id,
+        hierarchy.notes[12].note_id,
         "the added central multi-membership note leads the leaf"
     );
     let hardware = hierarchy
@@ -1128,7 +1148,7 @@ fn leaf_notes_use_strength_then_note_id_and_multi_membership_remains_multi_path(
     assert!(
         hardware
             .iter()
-            .any(|note| note.note_id == hierarchy.notes[24].note_id),
+            .any(|note| note.note_id == hierarchy.notes[12].note_id),
         "the same note remains reachable from its other approved leaf"
     );
 }
@@ -1309,7 +1329,9 @@ fn hierarchy_runner_opens_first_root_branch_after_all_note_maps() {
     let draft_path = temp.path().join("hierarchy-draft.json");
     write_json(&notes_path, &notes);
     write_json(&draft_path, &draft);
-    let mut actions = (0..64).map(|_| approve_action()).collect::<Vec<_>>();
+    let mut actions = (0..REFERENCE_NOTE_COUNT)
+        .map(|_| approve_action())
+        .collect::<Vec<_>>();
     actions.push(ApprovalTuiAction::Pause);
     let mut ui = ScriptedUi::new(actions);
 
@@ -1346,7 +1368,9 @@ fn hierarchy_runner_reviews_a_complete_root_branch_once() {
     let draft_path = temp.path().join("hierarchy-draft.json");
     write_json(&notes_path, &notes);
     write_json(&draft_path, &draft);
-    let mut actions = (0..65).map(|_| approve_action()).collect::<Vec<_>>();
+    let mut actions = (0..REFERENCE_NOTE_COUNT + 1)
+        .map(|_| approve_action())
+        .collect::<Vec<_>>();
     actions.push(ApprovalTuiAction::Pause);
     let mut ui = ScriptedUi::new(actions);
 
@@ -1361,7 +1385,7 @@ fn hierarchy_runner_reviews_a_complete_root_branch_once() {
         .expect("approve the first complete branch, then pause"),
         ReviewRunOutcome::Paused
     );
-    let technology = &ui.screens[64];
+    let technology = &ui.screens[REFERENCE_NOTE_COUNT];
     assert_eq!(technology.title, "Hierarchy branch · Technology");
     assert_eq!(technology.evidence.len(), 1);
     assert!(technology
@@ -1377,7 +1401,8 @@ fn hierarchy_runner_reviews_a_complete_root_branch_once() {
     assert!(branch.contains("[02] Software"));
     assert!(branch.contains("[03] Hardware"));
     assert_eq!(
-        ui.screens[65].title, "Hierarchy branch · Everyday life",
+        ui.screens[REFERENCE_NOTE_COUNT + 1].title,
+        "Hierarchy branch · Everyday life",
         "one branch approval advances directly to the next root branch"
     );
 }
@@ -1521,7 +1546,7 @@ fn note_review_screen_asks_only_for_a_concrete_disqualifying_problem() {
     assert_eq!(ui.screens[0].title, "Slot 01");
     assert_eq!(
         ui.screens[0].scope,
-        "Is there a concrete reason this note should not be included in the 64-note reference set?"
+        "Is there a concrete reason this note should not be included in the 48-note reference set?"
     );
     assert_eq!(
         ui.screens[0].approve_label,
@@ -1594,6 +1619,32 @@ fn note_review_runner_resumes_at_the_first_undecided_slot() {
 }
 
 #[test]
+fn sparse_source_slot_uses_its_review_position_in_the_candidate_counter() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    let (proposal_path, _) = write_source_bound_proposal(temp.path());
+    let mut actions = (0..40).map(|_| approve_action()).collect::<Vec<_>>();
+    actions.push(ApprovalTuiAction::Pause);
+    let mut ui = ScriptedUi::new(actions);
+
+    assert_eq!(
+        run_note_review(
+            &proposal_path,
+            temp.path().join("session.json"),
+            temp.path().join("approved.json"),
+            &mut ui,
+        )
+        .expect("reach the first sparse source slot"),
+        ReviewRunOutcome::Paused
+    );
+    let screen = ui.screens.last().expect("sparse-slot review screen");
+    assert_eq!(screen.title, "Slot 42");
+    assert_eq!(
+        screen.heading,
+        "Candidate 41 of 48 · 40 approved · 0 rejected"
+    );
+}
+
+#[test]
 fn note_review_runner_rejects_content_not_present_in_its_bound_source() {
     let temp = tempfile::tempdir().expect("tempdir");
     let (proposal_path, mut fixture) = write_source_bound_proposal(temp.path());
@@ -1643,12 +1694,12 @@ fn hierarchy_runner_reviews_each_note_once_then_each_root_branch_once_then_cover
     );
     assert_eq!(ui.screens.len(), decision_count);
 
-    for (index, screen) in ui.screens[..64].iter().enumerate() {
-        assert_eq!(screen.title, format!("Note map · Slot {:02}", index + 1));
+    for (note, screen) in notes.notes.iter().zip(&ui.screens[..REFERENCE_NOTE_COUNT]) {
+        assert_eq!(screen.title, format!("Note map · Slot {:02}", note.slot));
         assert!(
             screen.evidence[0]
                 .body
-                .contains(&format!("Real diagnostic note number {index}")),
+                .contains(&format!("Real diagnostic note number {}", note.slot - 1)),
             "each note is read exactly once in approved-note order"
         );
     }
@@ -1666,7 +1717,7 @@ fn hierarchy_runner_reviews_each_note_once_then_each_root_branch_once_then_cover
         .contains("Food — Substantive"));
 
     assert_eq!(
-        ui.screens[64..66]
+        ui.screens[REFERENCE_NOTE_COUNT..REFERENCE_NOTE_COUNT + 2]
             .iter()
             .map(|screen| screen.title.as_str())
             .collect::<Vec<_>>(),
@@ -1676,11 +1727,14 @@ fn hierarchy_runner_reviews_each_note_once_then_each_root_branch_once_then_cover
         ],
         "each top-level branch is loaded once"
     );
-    assert_eq!(ui.screens[66].title, "Focus-concentration coverage");
+    assert_eq!(
+        ui.screens[REFERENCE_NOTE_COUNT + 2].title,
+        "Focus-concentration coverage"
+    );
     assert!(
         ui.screens
             .iter()
-            .all(|screen| screen.heading.contains("67 total")),
+            .all(|screen| screen.heading.contains("51 total")),
         "the UI must state the reduced interaction count"
     );
     assert!(approved_path.is_file());
@@ -1698,7 +1752,7 @@ fn hierarchy_runner_audits_focus_coverage_after_note_maps_and_branches() {
     write_json(&notes_path, &notes);
     write_json(&draft_path, &draft);
 
-    let decisions_before_coverage = 64 + 2;
+    let decisions_before_coverage = REFERENCE_NOTE_COUNT + 2;
     let mut actions = (0..decisions_before_coverage)
         .map(|_| ApprovalTuiAction::Submit {
             outcome: ReviewOutcome::Approved,
@@ -1725,7 +1779,7 @@ fn hierarchy_runner_audits_focus_coverage_after_note_maps_and_branches() {
     );
     assert_eq!(
         ui.screens[decisions_before_coverage].scope,
-        "Do the 64 note maps include both concentrated and distributed focus patterns?"
+        "Do the 48 note maps include both concentrated and distributed focus patterns?"
     );
     assert_eq!(
         ui.screens[decisions_before_coverage].approve_label,
@@ -1991,10 +2045,10 @@ fn verified_note_proposal_is_bound_to_the_real_learning_sample() {
 }
 
 #[test]
-fn tracked_crec_115_proposal_is_complete_and_source_bound() {
-    let proposal = load_verified_note_proposal("reference_map/crec-115-note-proposal-v2.json")
-        .expect("tracked CREC-115 proposal");
-    assert_eq!(proposal.notes.len(), 64);
+fn tracked_crec_116_proposal_is_complete_and_source_bound() {
+    let proposal = load_verified_note_proposal("reference_map/crec-116-note-proposal-v3.json")
+        .expect("tracked CREC-116 proposal");
+    assert_eq!(proposal.notes.len(), REFERENCE_NOTE_COUNT);
     assert_eq!(
         proposal
             .notes
@@ -2002,59 +2056,49 @@ fn tracked_crec_115_proposal_is_complete_and_source_bound() {
             .map(|note| note.note_id.as_str())
             .collect::<std::collections::BTreeSet<_>>()
             .len(),
-        64
+        REFERENCE_NOTE_COUNT
     );
 }
 
 #[test]
-fn tracked_crec_115_revision_uses_the_balanced_candidate_set() {
-    let proposal = load_verified_note_proposal("reference_map/crec-115-note-proposal-v2.json")
-        .expect("tracked CREC-115 proposal");
-    let expected = [
-        (
-            55,
-            "f82b8f1742cf74cb2ab19bdbfa249e9685f035b1856c17673444686919ca7807",
-        ),
-        (
-            58,
-            "58e8c1ebebaf100ee5e3d1a217912c2723bf8b1ecd3543e3db28f1a81b7cdf92",
-        ),
-        (
-            61,
-            "474a14dc8aab2970ad2efed18be1e4f000322bf269ad90e8586e6847c0ca95c9",
-        ),
-        (
-            62,
-            "d2dfe7c80ca031b768e525e904f3c5d1d962faf297158f59a1959b06d585225d",
-        ),
-        (
-            63,
-            "8384ac9f054d38e55628cea9395080dce3fa2f8be7a2fa9bd9f2ab9acc0c94ae",
-        ),
-        (
-            64,
-            "54646e5fe43713934c879371c5ce462337b78d7db728c68f088614e27844f7db",
-        ),
-    ];
-
-    for (slot, note_id) in expected {
-        let note = proposal
+fn tracked_crec_116_revision_uses_the_stratified_48_candidate_set() {
+    let proposal = load_verified_note_proposal("reference_map/crec-116-note-proposal-v3.json")
+        .expect("tracked CREC-116 proposal");
+    assert_eq!(
+        proposal
             .notes
             .iter()
-            .find(|note| note.slot == slot)
-            .expect("expected proposal slot");
-        assert_eq!(note.note_id, note_id, "unexpected note in slot {slot}");
+            .map(|note| note.slot)
+            .collect::<Vec<_>>(),
+        vec![
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+            25, 26, 27, 28, 29, 30, 31, 32, 33, 35, 36, 38, 39, 43, 45, 46, 48, 52, 53, 54, 55, 56,
+            57, 60,
+        ]
+    );
+
+    let prior: NoteProposal = serde_json::from_slice(
+        &fs::read("reference_map/crec-115-note-proposal-v2.json")
+            .expect("read prior 64-note proposal"),
+    )
+    .expect("decode prior proposal");
+    for slot in 1..=33 {
+        assert_eq!(
+            proposal.note(slot),
+            prior.note(slot),
+            "existing review evidence changed in slot {slot}"
+        );
     }
 }
 
 #[test]
-fn tracked_crec_115_plan_matches_the_source_bound_proposal() {
+fn tracked_crec_116_plan_matches_the_source_bound_proposal() {
     let plan: serde_json::Value = serde_json::from_slice(
-        &fs::read("reference_map/crec-115-note-metadata-v2.json").expect("read selection plan"),
+        &fs::read("reference_map/crec-116-note-metadata-v3.json").expect("read selection plan"),
     )
     .expect("decode selection plan");
     let proposal: serde_json::Value = serde_json::from_slice(
-        &fs::read("reference_map/crec-115-note-proposal-v2.json").expect("read note proposal"),
+        &fs::read("reference_map/crec-116-note-proposal-v3.json").expect("read note proposal"),
     )
     .expect("decode note proposal");
 
@@ -2084,8 +2128,8 @@ fn tracked_crec_115_plan_matches_the_source_bound_proposal() {
 
 #[test]
 fn tracked_crec_116_draft_uses_independent_overlapping_subjects() {
-    let proposal = load_verified_note_proposal("reference_map/crec-115-note-proposal-v2.json")
-        .expect("tracked CREC-115 proposal");
+    let proposal = load_verified_note_proposal("reference_map/crec-116-note-proposal-v3.json")
+        .expect("tracked CREC-116 proposal");
     let mut review = NoteReviewSession::new(&proposal).expect("create complete review");
     for note in &proposal.notes {
         review
@@ -2102,7 +2146,7 @@ fn tracked_crec_116_draft_uses_independent_overlapping_subjects() {
     let approved =
         ApprovedNoteSet::from_review(&proposal, &review).expect("derive expected approved set");
     let draft: HierarchyDraft = serde_json::from_slice(
-        &fs::read("reference_map/crec-116-hierarchy-draft-v2.json")
+        &fs::read("reference_map/crec-116-hierarchy-draft-v3.json")
             .expect("read tracked hierarchy draft"),
     )
     .expect("decode hierarchy draft");
@@ -2116,8 +2160,8 @@ fn tracked_crec_116_draft_uses_independent_overlapping_subjects() {
             .decision_counts(&draft, &approved)
             .expect("count tracked review decisions")
             .2,
-        73,
-        "the tracked review is 64 note maps, 8 root branches, and one coverage check"
+        57,
+        "the tracked review is 48 note maps, 8 root branches, and one coverage check"
     );
 
     let memberships = draft
@@ -2215,7 +2259,7 @@ fn tracked_crec_116_draft_uses_independent_overlapping_subjects() {
 #[test]
 fn tracked_nostr_technical_subject_uses_one_coherent_label() {
     let draft: HierarchyDraft = serde_json::from_slice(
-        &fs::read("reference_map/crec-116-hierarchy-draft-v2.json")
+        &fs::read("reference_map/crec-116-hierarchy-draft-v3.json")
             .expect("read tracked hierarchy draft"),
     )
     .expect("decode hierarchy draft");
@@ -2238,7 +2282,7 @@ fn tracked_nostr_technical_subject_uses_one_coherent_label() {
 #[test]
 fn tracked_books_and_history_subjects_are_separate() {
     let draft: HierarchyDraft = serde_json::from_slice(
-        &fs::read("reference_map/crec-116-hierarchy-draft-v2.json")
+        &fs::read("reference_map/crec-116-hierarchy-draft-v3.json")
             .expect("read tracked hierarchy draft"),
     )
     .expect("decode hierarchy draft");
@@ -2351,10 +2395,12 @@ fn approved_artifact_publication_never_replaces_an_existing_directory_entry() {
     let (proposal_path, _) = write_source_bound_proposal(temp.path());
     let approved_path = temp.path().join("approved.json");
     symlink("missing-original-artifact", &approved_path).expect("create dangling artifact link");
-    let mut ui = ScriptedUi::new((0..64).map(|_| ApprovalTuiAction::Submit {
-        outcome: ReviewOutcome::Approved,
-        comment: String::new(),
-    }));
+    let mut ui = ScriptedUi::new(
+        (0..REFERENCE_NOTE_COUNT).map(|_| ApprovalTuiAction::Submit {
+            outcome: ReviewOutcome::Approved,
+            comment: String::new(),
+        }),
+    );
 
     let error = run_note_review(
         &proposal_path,

@@ -7,7 +7,8 @@ use sha2::{Digest, Sha256};
 
 use crate::snapshot::{Error, Result};
 
-pub const REFERENCE_NOTE_COUNT: usize = 64;
+pub const REFERENCE_NOTE_COUNT: usize = 48;
+pub const REFERENCE_SOURCE_SLOT_COUNT: usize = 64;
 pub const CONTRAST_PAIR_COUNT: usize = 8;
 pub const BROAD_NARROW_PAIR_COUNT: usize = 8;
 pub const NICHE_OR_SPARSE_CASE_COUNT: usize = 8;
@@ -88,6 +89,12 @@ impl NoteProposal {
             if !slots.insert(note.slot) {
                 return invalid(format!("note slot {} is duplicated", note.slot));
             }
+            if note.slot == 0 || usize::from(note.slot) > REFERENCE_SOURCE_SLOT_COUNT {
+                return invalid(format!(
+                    "note slot {} is outside the original 1 through {REFERENCE_SOURCE_SLOT_COUNT} source-slot range",
+                    note.slot
+                ));
+            }
             if !note_ids.insert(note.note_id.as_str()) {
                 return invalid(format!("note_id {} is duplicated", note.note_id));
             }
@@ -123,12 +130,6 @@ impl NoteProposal {
             }
         }
 
-        let expected_slots = (1..=REFERENCE_NOTE_COUNT)
-            .map(|slot| u8::try_from(slot).expect("64 slots fit u8"))
-            .collect::<BTreeSet<_>>();
-        if slots != expected_slots {
-            return invalid("note slots must be exactly 1 through 64");
-        }
         validate_pair_groups("contrast", &contrast, CONTRAST_PAIR_COUNT, false)?;
         validate_pair_groups("broad/narrow", &broad_narrow, BROAD_NARROW_PAIR_COUNT, true)?;
         if niche_or_sparse_cases.len() != NICHE_OR_SPARSE_CASE_COUNT {
@@ -328,8 +329,7 @@ impl NoteReviewSession {
             2 => {
                 self.decisions.retain(|slot, stored| {
                     proposal.note(*slot).is_some_and(|note| {
-                        canonical_sha256(note)
-                            .is_ok_and(|identity| identity == stored.note_sha256)
+                        canonical_sha256(note).is_ok_and(|identity| identity == stored.note_sha256)
                     })
                 });
             }

@@ -1,4 +1,4 @@
-//! Full-screen review and navigation interfaces for the 64-note reference map.
+//! Full-screen review and navigation interfaces for the reference map.
 
 use std::io::{self, Stdout};
 use std::time::Duration;

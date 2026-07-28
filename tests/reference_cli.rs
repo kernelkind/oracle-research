@@ -40,7 +40,7 @@ fn reference_map_cli_prepares_a_source_bound_review_proposal() {
     let plan_path = temp.path().join("plan.json");
     let proposal_path = temp.path().join("proposal.json");
     let mut sample = String::new();
-    let notes = (0..64)
+    let notes = (0..48)
         .map(|index| {
             let slot = index + 1;
             let note_id = format!("{slot:064x}");
@@ -113,13 +113,11 @@ fn reference_map_cli_prepares_a_source_bound_review_proposal() {
     let proposal_bytes = fs::read(&proposal_path).expect("read generated proposal");
     let proposal_json: serde_json::Value =
         serde_json::from_slice(&proposal_bytes).expect("decode generated proposal");
-    assert!(
-        proposal_json["notes"]
-            .as_array()
-            .expect("proposal notes")
-            .iter()
-            .all(|note| note.get("interpretive_ambiguity").is_none())
-    );
+    assert!(proposal_json["notes"]
+        .as_array()
+        .expect("proposal notes")
+        .iter()
+        .all(|note| note.get("interpretive_ambiguity").is_none()));
     let proposal: NoteProposal =
         serde_json::from_slice(&proposal_bytes).expect("decode typed proposal");
     proposal.validate().expect("generated proposal is valid");

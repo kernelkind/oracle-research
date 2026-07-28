@@ -1,4 +1,4 @@
-//! Interactive approval and navigation entrypoints for the 64-note reference map.
+//! Interactive approval and navigation entrypoints for the reference map.
 
 use std::env;
 use std::fs::File;
@@ -8,8 +8,8 @@ use std::process::ExitCode;
 
 use oracle_mvp::reference_map::ApprovedHierarchy;
 use oracle_mvp::reference_review::{
-    ReviewRunOutcome, load_verified_note_proposal, prepare_note_proposal, run_hierarchy_review,
-    run_note_review,
+    load_verified_note_proposal, prepare_note_proposal, run_hierarchy_review, run_note_review,
+    ReviewRunOutcome,
 };
 use oracle_mvp::reference_tui::ReferenceTerminal;
 

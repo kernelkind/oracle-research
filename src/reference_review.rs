@@ -1,4 +1,4 @@
-//! Durable approval runners for the 64-note selection and reference hierarchy.
+//! Durable approval runners for the selected notes and reference hierarchy.
 
 use std::collections::BTreeMap;
 use std::fs::{self, File, OpenOptions};
@@ -391,8 +391,10 @@ fn focus_coverage_screen(
             "Hierarchy review · {approved} approved · {rejected} rejected · {total} total"
         ),
         title: "Focus-concentration coverage".to_owned(),
-        scope: "Do the 64 note maps include both concentrated and distributed focus patterns?"
-            .to_owned(),
+        scope: format!(
+            "Do the {} note maps include both concentrated and distributed focus patterns?",
+            approved_notes.notes.len()
+        ),
         approve_label: "Approve — both patterns are represented".to_owned(),
         reject_label: "Reject — describe the missing pattern".to_owned(),
         guidance: Some(focus_coverage_guidance()),
@@ -414,6 +416,12 @@ fn note_screen(
     let note = proposal
         .note(slot)
         .ok_or_else(|| Error::ExperimentState(format!("note slot {slot} is missing")))?;
+    let ordinal = proposal
+        .notes
+        .iter()
+        .position(|candidate| candidate.slot == slot)
+        .expect("the reviewed slot belongs to the validated proposal")
+        + 1;
     let approved = session.approved_count(proposal);
     let rejected = proposal
         .notes
@@ -477,11 +485,15 @@ fn note_screen(
         });
     }
     Ok(ApprovalScreen {
-        heading: format!("Candidate {slot} of 64 · {approved} approved · {rejected} rejected"),
+        heading: format!(
+            "Candidate {ordinal} of {} · {approved} approved · {rejected} rejected",
+            proposal.notes.len()
+        ),
         title: format!("Slot {slot:02}"),
-        scope:
-            "Is there a concrete reason this note should not be included in the 64-note reference set?"
-                .to_owned(),
+        scope: format!(
+            "Is there a concrete reason this note should not be included in the {}-note reference set?",
+            proposal.notes.len()
+        ),
         approve_label: "Approve — no disqualifying problem".to_owned(),
         reject_label: "Reject — explain the problem".to_owned(),
         guidance: Some(ApprovalGuidance {
@@ -655,7 +667,7 @@ fn focus_coverage_guidance() -> ApprovalGuidance {
         title: "Coverage check".to_owned(),
         body: "Concentrated: one subject carries most of the note’s meaning.\n\n\
                Distributed: several subjects materially carry the note’s meaning.\n\n\
-               Approve only when the 64 maps include both patterns.\n\n\
+               Approve only when all displayed maps include both patterns.\n\n\
                Central: the subject is one of the note’s main points.\n\n\
                Substantive: the subject materially matters to the note, but is not a main point.\n\n\
                Incidental: the subject appears only as a minor or supporting detail.\n\n\

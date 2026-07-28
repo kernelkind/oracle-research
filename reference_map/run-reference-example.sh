@@ -2,10 +2,11 @@
 set -euo pipefail
 
 root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
-run_dir="$root/target/reference-map-example-v2"
-plan="$root/reference_map/crec-115-note-metadata-v2.json"
-proposal="$root/reference_map/crec-115-note-proposal-v2.json"
-draft="$root/reference_map/crec-116-hierarchy-draft-v2.json"
+run_dir="$root/target/reference-map-example-v3"
+prior_run_dir="$root/target/reference-map-example-v2"
+plan="$root/reference_map/crec-116-note-metadata-v3.json"
+proposal="$root/reference_map/crec-116-note-proposal-v3.json"
+draft="$root/reference_map/crec-116-hierarchy-draft-v3.json"
 approved_notes="$run_dir/approved-notes.json"
 approved_hierarchy="$run_dir/approved-hierarchy.json"
 
@@ -14,6 +15,10 @@ cd "$root"
 nix develop -c cargo build --release --bin reference-map
 
 if [[ ! -f "$approved_notes" ]]; then
+    if [[ ! -f "$run_dir/note-review-session.json" \
+        && -f "$prior_run_dir/note-review-session.json" ]]; then
+        cp "$prior_run_dir/note-review-session.json" "$run_dir/note-review-session.json"
+    fi
     if [[ ! -f "$proposal" ]]; then
         target/release/reference-map prepare-notes "$plan" "$proposal"
     fi
@@ -24,9 +29,15 @@ if [[ ! -f "$approved_notes" ]]; then
 fi
 
 if [[ ! -f "$approved_hierarchy" ]]; then
+    if [[ ! -f "$run_dir/hierarchy-note-branch-review-session.json" \
+        && -f "$prior_run_dir/hierarchy-note-branch-review-session.json" ]]; then
+        cp \
+            "$prior_run_dir/hierarchy-note-branch-review-session.json" \
+            "$run_dir/hierarchy-note-branch-review-session.json"
+    fi
     if [[ ! -f "$draft" ]]; then
         printf '%s\n' \
-            "The 64 notes are approved. The hierarchy draft must now be prepared from that exact set."
+            "The 48 notes are approved. The hierarchy draft must now be prepared from that exact set."
         exit 2
     fi
     exec target/release/reference-map hierarchy \

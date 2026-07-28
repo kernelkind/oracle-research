@@ -17,10 +17,10 @@ fn key(code: KeyCode) -> Event {
 
 fn approval_screen() -> ApprovalScreen {
     ApprovalScreen {
-        heading: "Candidate 7 of 64 · 4 approved · 2 rejected".to_owned(),
+        heading: "Candidate 7 of 48 · 4 approved · 2 rejected".to_owned(),
         title: "Slot 07".to_owned(),
         scope:
-            "Is there a concrete reason this note should not be included in the 64-note reference set?"
+            "Is there a concrete reason this note should not be included in the 48-note reference set?"
                 .to_owned(),
         approve_label: "Approve — no disqualifying problem".to_owned(),
         reject_label: "Reject — explain the problem".to_owned(),
@@ -455,7 +455,7 @@ fn queued_control_c_is_preserved_as_a_pause_request() {
 }
 
 fn hierarchy() -> ApprovedHierarchy {
-    let notes = (0..64)
+    let notes = (0..48)
         .map(|index| HierarchyNote {
             note_id: format!("{:064x}", index + 1),
             content: format!("Reference note {index}"),
@@ -473,8 +473,8 @@ fn hierarchy() -> ApprovedHierarchy {
             })
             .collect()
     };
-    let technology_memberships = memberships(0..32);
-    let cooking_memberships = memberships(32..64);
+    let technology_memberships = memberships(0..24);
+    let cooking_memberships = memberships(24..48);
     let approved_notes_sha256 = "a".repeat(64);
     let hierarchy_draft_sha256 = "b".repeat(64);
     let root_node_id = "root".to_owned();
