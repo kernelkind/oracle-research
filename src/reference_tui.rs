@@ -9,15 +9,15 @@ use crossterm::event::{
 };
 use crossterm::execute;
 use crossterm::terminal::{
-    EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode,
+    disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen,
 };
-use ratatui::Frame;
-use ratatui::Terminal;
 use ratatui::backend::CrosstermBackend;
 use ratatui::layout::{Constraint, Direction, Layout, Rect};
 use ratatui::style::{Color, Modifier, Style};
 use ratatui::text::{Line, Span};
 use ratatui::widgets::{Block, Borders, List, ListItem, ListState, Padding, Paragraph, Wrap};
+use ratatui::Frame;
+use ratatui::Terminal;
 
 use crate::reference_map::{ApprovedHierarchy, ReferenceNavigation, ReviewOutcome};
 use crate::snapshot::{Error, Result};
@@ -212,7 +212,7 @@ impl ApprovalTuiModel {
             .constraints([
                 Constraint::Length(1),
                 Constraint::Length(2),
-                Constraint::Length(2),
+                Constraint::Length(3),
                 Constraint::Min(6),
                 Constraint::Length(2),
                 Constraint::Length(footer_height),

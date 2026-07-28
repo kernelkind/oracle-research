@@ -5,9 +5,9 @@ use std::fs::{self, File, OpenOptions};
 use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
 use std::path::Path;
 
+use serde::de::DeserializeOwned;
 use serde::Deserialize;
 use serde::Serialize;
-use serde::de::DeserializeOwned;
 use sha2::{Digest, Sha256};
 
 use crate::reference_map::{
@@ -18,7 +18,7 @@ use crate::reference_map::{
 use crate::reference_tui::{
     ApprovalEvidence, ApprovalScreen, ApprovalTuiAction, ReferenceTerminal,
 };
-use crate::snapshot::{Error, Result, io_error};
+use crate::snapshot::{io_error, Error, Result};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum ReviewRunOutcome {
@@ -393,7 +393,11 @@ fn note_screen(
     Ok(ApprovalScreen {
         heading: format!("Candidate {slot} of 64 · {approved} approved · {rejected} rejected"),
         title: format!("Slot {slot:02} · {composition}"),
-        scope: note.selection_rationale.clone(),
+        scope: format!(
+            "Why selected: {} — {}",
+            selection_category_label(note.composition),
+            note.selection_rationale.trim()
+        ),
         evidence,
     })
 }
@@ -576,6 +580,14 @@ fn composition_label(composition: NoteComposition) -> &'static str {
         NoteComposition::Single => "Single subject",
         NoteComposition::Mixed => "Mixed subject",
         NoteComposition::Ambiguous => "Ambiguous",
+    }
+}
+
+fn selection_category_label(composition: NoteComposition) -> &'static str {
+    match composition {
+        NoteComposition::Single => "Clear single-subject example",
+        NoteComposition::Mixed => "Clear mixed-subject example",
+        NoteComposition::Ambiguous => "Genuinely ambiguous example",
     }
 }
 

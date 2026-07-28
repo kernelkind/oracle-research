@@ -9,8 +9,8 @@ use oracle_mvp::reference_map::{
     ReviewOutcome, SelectionSource, SubjectNode,
 };
 use oracle_mvp::reference_review::{
-    ApprovalUi, ReviewRunOutcome, load_verified_note_proposal, run_hierarchy_review,
-    run_note_review,
+    load_verified_note_proposal, run_hierarchy_review, run_note_review, ApprovalUi,
+    ReviewRunOutcome,
 };
 use oracle_mvp::reference_tui::{ApprovalScreen, ApprovalTuiAction};
 use sha2::{Digest, Sha256};
@@ -676,6 +676,28 @@ fn write_source_bound_proposal(directory: &std::path::Path) -> (std::path::PathB
 }
 
 #[test]
+fn note_review_screen_plainly_explains_why_the_candidate_was_selected() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    let (proposal_path, _) = write_source_bound_proposal(temp.path());
+    let mut ui = ScriptedUi::new([ApprovalTuiAction::Pause]);
+
+    assert_eq!(
+        run_note_review(
+            &proposal_path,
+            temp.path().join("session.json"),
+            temp.path().join("approved.json"),
+            &mut ui,
+        )
+        .expect("open the first review screen"),
+        ReviewRunOutcome::Paused
+    );
+    assert_eq!(
+        ui.screens[0].scope,
+        "Why selected: Clear single-subject example — Exercises Single subject semantics"
+    );
+}
+
+#[test]
 fn note_review_runner_resumes_at_the_first_undecided_slot() {
     let temp = tempfile::tempdir().expect("tempdir");
     let (proposal_path, _) = write_source_bound_proposal(temp.path());
@@ -1109,10 +1131,8 @@ fn approved_artifact_publication_never_replaces_an_existing_directory_entry() {
     )
     .expect_err("create-once publication must not replace any directory entry");
     assert!(error.to_string().contains("already exists"), "{error}");
-    assert!(
-        fs::symlink_metadata(&approved_path)
-            .expect("artifact link remains")
-            .file_type()
-            .is_symlink()
-    );
+    assert!(fs::symlink_metadata(&approved_path)
+        .expect("artifact link remains")
+        .file_type()
+        .is_symlink());
 }
