@@ -1,6 +1,6 @@
 //! Durable approval runners for the 64-note selection and reference hierarchy.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 use std::fs::{self, File, OpenOptions};
 use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
 use std::path::Path;
@@ -12,8 +12,9 @@ use sha2::{Digest, Sha256};
 
 use crate::reference_map::{
     ApprovedHierarchy, ApprovedNoteSet, BroadNarrowRole, HierarchyDraft, HierarchyReviewDecision,
-    HierarchyReviewSession, MembershipStrength, NoteProposal, NoteReviewDecision,
-    NoteReviewSession, PairMembership, ProposedNote, ReviewOutcome, SelectionSource, SubjectNode,
+    HierarchyReviewSession, HierarchyReviewTarget, MembershipStrength, NoteProposal,
+    NoteReviewDecision, NoteReviewSession, PairMembership, ProposedNote, ReviewOutcome,
+    SelectionSource,
 };
 use crate::reference_tui::{
     ApprovalEvidence, ApprovalGuidance, ApprovalScreen, ApprovalTuiAction, ReferenceTerminal,
@@ -266,15 +267,16 @@ pub fn run_hierarchy_review(
     let _lock = acquire_session_lock(session_path)?;
     let mut session = load_session::<HierarchyReviewSession>(session_path)?
         .unwrap_or(HierarchyReviewSession::new(&draft, &approved_notes)?);
+    session.reconcile_legacy_empty()?;
     save_session(session_path, &session)?;
 
     loop {
-        if let Some(node_id) = session
-            .reviewable_node_ids(&draft, &approved_notes)
+        if let Some(target) = session
+            .reviewable_targets(&draft, &approved_notes)?
             .first()
             .cloned()
         {
-            let screen = hierarchy_screen(&draft, &approved_notes, &session, &node_id)?;
+            let screen = hierarchy_target_screen(&draft, &approved_notes, &session, &target)?;
             match ui
                 .review(screen)
                 .map_err(|source| io_error("run hierarchy review UI for", draft_path, source))?
@@ -289,7 +291,7 @@ pub fn run_hierarchy_review(
                     session.record(
                         &draft,
                         &approved_notes,
-                        &node_id,
+                        target,
                         HierarchyReviewDecision { outcome, comment },
                     )?;
                     save_session(session_path, &session)?;
@@ -329,27 +331,8 @@ pub fn run_hierarchy_review(
         break;
     }
 
-    let approved = draft
-        .nodes
-        .iter()
-        .filter(|node| session.is_approved(&draft, &approved_notes, node.node_id.as_str()))
-        .count();
-    let rejected = draft
-        .nodes
-        .iter()
-        .filter(|node| {
-            session
-                .current_decision(&draft, &approved_notes, node.node_id.as_str())
-                .is_some_and(|decision| decision.outcome == ReviewOutcome::Rejected)
-        })
-        .count()
-        + usize::from(
-            session
-                .current_focus_coverage_decision(&draft, &approved_notes)
-                .is_some_and(|decision| decision.outcome == ReviewOutcome::Rejected),
-        );
-    if approved != draft.nodes.len() || !session.focus_coverage_is_approved(&draft, &approved_notes)
-    {
+    let (approved, rejected, _) = session.decision_counts(&draft, &approved_notes)?;
+    if !session.review_is_complete(&draft, &approved_notes) {
         return Ok(ReviewRunOutcome::NeedsRevision { approved, rejected });
     }
     let artifact = ApprovedHierarchy::from_review(&draft, &approved_notes, &session)?;
@@ -506,148 +489,202 @@ fn note_screen(
     })
 }
 
-fn hierarchy_screen(
+fn hierarchy_target_screen(
     draft: &HierarchyDraft,
     approved_notes: &ApprovedNoteSet,
     session: &HierarchyReviewSession,
-    node_id: &str,
+    target: &HierarchyReviewTarget,
 ) -> Result<ApprovalScreen> {
-    let node = draft
-        .node(node_id)
-        .ok_or_else(|| Error::ExperimentState(format!("hierarchy node {node_id} is missing")))?;
-    let approved = draft
-        .nodes
-        .iter()
-        .filter(|candidate| session.is_approved(draft, approved_notes, candidate.node_id.as_str()))
-        .count();
-    let rejected = draft
-        .nodes
-        .iter()
-        .filter(|candidate| {
-            session
-                .current_decision(draft, approved_notes, candidate.node_id.as_str())
-                .is_some_and(|decision| decision.outcome == ReviewOutcome::Rejected)
-        })
-        .count();
-    let note_by_id = approved_notes
-        .notes
-        .iter()
-        .map(|note| (note.note_id.as_str(), note.content.as_str()))
-        .collect::<BTreeMap<_, _>>();
-    let evidence = if node.is_leaf() {
-        let mut memberships = node.memberships.iter().collect::<Vec<_>>();
-        memberships.sort_by(|left, right| {
-            right
-                .strength
-                .rank()
-                .cmp(&left.strength.rank())
-                .then_with(|| left.note_id.cmp(&right.note_id))
-        });
-        memberships
-            .into_iter()
-            .map(|membership| ApprovalEvidence {
-                title: "Note".to_owned(),
-                annotation: format!(
-                    "{} membership: {}",
-                    node.label,
-                    strength_label(membership.strength)
-                ),
-                body: note_by_id[membership.note_id.as_str()].to_owned(),
-            })
-            .collect()
-    } else {
-        let children = node
-            .children
-            .iter()
-            .map(|child_id| {
-                draft.node(child_id).ok_or_else(|| {
+    let (approved, rejected, total) = session.decision_counts(draft, approved_notes)?;
+    let heading =
+        format!("Hierarchy review · {approved} approved · {rejected} rejected · {total} total");
+    match target {
+        HierarchyReviewTarget::Membership {
+            subject_id,
+            note_id,
+        } => {
+            let subject = draft.node(subject_id).ok_or_else(|| {
+                Error::ExperimentState(format!("hierarchy subject {subject_id} is missing"))
+            })?;
+            let membership = subject
+                .memberships
+                .iter()
+                .find(|membership| membership.note_id == *note_id)
+                .ok_or_else(|| {
                     Error::ExperimentState(format!(
-                        "hierarchy node {} names missing child {child_id}",
-                        node.node_id
+                        "hierarchy subject {subject_id} does not contain note {note_id}"
                     ))
-                })
+                })?;
+            let note = approved_notes
+                .notes
+                .iter()
+                .find(|note| note.note_id == *note_id)
+                .ok_or_else(|| {
+                    Error::ExperimentState(format!("approved reference note {note_id} is missing"))
+                })?;
+            let strength = strength_label(membership.strength);
+            Ok(ApprovalScreen {
+                heading,
+                title: format!("Membership · {} · {strength}", subject.label),
+                scope: format!(
+                    "Does this note express “{}” at {strength} strength?",
+                    subject.label
+                ),
+                approve_label: "Approve — yes".to_owned(),
+                reject_label: "Reject — no, explain".to_owned(),
+                guidance: Some(membership_strength_guidance()),
+                evidence: vec![ApprovalEvidence {
+                    title: "Candidate note".to_owned(),
+                    annotation: format!(
+                        "Subject: {}\nDescription: {}\n\nThis action decides only this note’s {strength} membership.",
+                        subject.label, subject.scope
+                    ),
+                    body: note.content.clone(),
+                }],
             })
-            .collect::<Result<Vec<_>>>()?;
-        let overview = children
-            .iter()
-            .map(|child| format!("• {}\n  {}", child.label, child.scope))
-            .collect::<Vec<_>>()
-            .join("\n\n");
-        let mut evidence = Vec::with_capacity(children.len() + 1);
-        evidence.push(ApprovalEvidence {
-            title: "All child subjects".to_owned(),
-            annotation: format!(
-                "{} choices · review the complete sibling set first",
-                children.len()
-            ),
-            body: overview,
-        });
-        evidence.extend(
-            children
-                .into_iter()
-                .map(|child| {
-                    let note_ids = representative_note_ids(draft, child, 3)?;
-                    let examples = note_ids
-                        .into_iter()
-                        .filter_map(|note_id| note_by_id.get(note_id.as_str()).copied())
-                        .map(|content| format!("• {content}"))
-                        .collect::<Vec<_>>()
-                        .join("\n\n");
-                    Ok(ApprovalEvidence {
-                        title: format!("Child subject · {}", child.label),
-                        annotation: child.scope.clone(),
-                        body: if examples.is_empty() {
-                            child.scope.clone()
-                        } else {
-                            format!(
-                                "{}\n\nRepresentative member notes:\n\n{examples}",
-                                child.scope
-                            )
-                        },
-                    })
+        }
+        HierarchyReviewTarget::Subject { node_id } => {
+            let subject = draft.node(node_id).ok_or_else(|| {
+                Error::ExperimentState(format!("hierarchy subject {node_id} is missing"))
+            })?;
+            if subject.node_id == draft.root_node_id {
+                return Err(Error::ExperimentState(
+                    "the hidden root is not a reviewable subject".to_owned(),
+                ));
+            }
+            if subject.is_leaf() {
+                let counts = membership_strength_counts(subject);
+                Ok(ApprovalScreen {
+                    heading,
+                    title: format!("Leaf subject · {}", subject.label),
+                    scope: format!(
+                        "Should “{}” remain as a leaf navigation choice?",
+                        subject.label
+                    ),
+                    approve_label: "Approve — keep this leaf".to_owned(),
+                    reject_label: "Reject — explain what should change".to_owned(),
+                    guidance: None,
+                    evidence: vec![ApprovalEvidence {
+                        title: "Subject definition".to_owned(),
+                        annotation:
+                            "This action approves only this subject’s label and description."
+                                .to_owned(),
+                        body: format!(
+                            "Label: {}\nDescription: {}\n\nApproved memberships: {}\n• Central: {}\n• Substantive: {}\n• Incidental: {}",
+                            subject.label,
+                            subject.scope,
+                            subject.memberships.len(),
+                            counts[0],
+                            counts[1],
+                            counts[2]
+                        ),
+                    }],
                 })
-                .collect::<Result<Vec<_>>>()?,
-        );
-        evidence
-    };
-    let title = if node.node_id == draft.root_node_id {
-        "Root choices".to_owned()
-    } else if node.is_leaf() {
-        format!("Leaf subject · {}", node.label)
-    } else {
-        format!("Parent subject · {}", node.label)
-    };
-    let (scope, approve_label, reject_label) = if node.is_leaf() {
-        let note_count = node.memberships.len();
-        (
-            format!(
-                "Review all {note_count} note{}. Approve only if “{}” is a useful subject and \
-                 every shown note belongs to it at the displayed strength.",
-                if note_count == 1 { "" } else { "s" },
-                node.label
-            ),
-            "Approve — subject and memberships are correct".to_owned(),
-            "Reject — explain what is incorrect".to_owned(),
-        )
-    } else {
-        (
-            node.scope.clone(),
-            "Approve — no concrete problem".to_owned(),
-            "Reject — explain the problem".to_owned(),
-        )
-    };
-    Ok(ApprovalScreen {
-        heading: format!(
-            "Hierarchy review · {approved} approved · {rejected} rejected · {} total",
-            draft.nodes.len()
-        ),
-        title,
-        scope,
-        approve_label,
-        reject_label,
-        guidance: node.is_leaf().then(membership_strength_guidance),
-        evidence,
-    })
+            } else {
+                let children = subject
+                    .children
+                    .iter()
+                    .map(|child_id| {
+                        let child = draft.node(child_id).ok_or_else(|| {
+                            Error::ExperimentState(format!(
+                                "hierarchy subject {} names missing child {child_id}",
+                                subject.node_id
+                            ))
+                        })?;
+                        Ok(format!("• {}\n  {}", child.label, child.scope))
+                    })
+                    .collect::<Result<Vec<_>>>()?
+                    .join("\n\n");
+                Ok(ApprovalScreen {
+                    heading,
+                    title: format!("Parent subject · {}", subject.label),
+                    scope: format!(
+                        "Should “{}” remain as a parent navigation choice for these approved children?",
+                        subject.label
+                    ),
+                    approve_label: "Approve — keep this parent".to_owned(),
+                    reject_label: "Reject — explain what should change".to_owned(),
+                    guidance: None,
+                    evidence: vec![ApprovalEvidence {
+                        title: "Subject definition".to_owned(),
+                        annotation:
+                            "This action approves only this parent’s label and description."
+                                .to_owned(),
+                        body: format!(
+                            "Label: {}\nDescription: {}\n\nApproved direct children:\n\n{children}",
+                            subject.label, subject.scope
+                        ),
+                    }],
+                })
+            }
+        }
+        HierarchyReviewTarget::ParentChild {
+            parent_id,
+            child_id,
+        } => {
+            let parent = draft.node(parent_id).ok_or_else(|| {
+                Error::ExperimentState(format!("hierarchy parent {parent_id} is missing"))
+            })?;
+            let child = draft.node(child_id).ok_or_else(|| {
+                Error::ExperimentState(format!("hierarchy child {child_id} is missing"))
+            })?;
+            let top_level = parent.node_id == draft.root_node_id;
+            Ok(ApprovalScreen {
+                heading,
+                title: if top_level {
+                    format!("Top-level choice · {}", child.label)
+                } else {
+                    format!("Relationship · {} → {}", parent.label, child.label)
+                },
+                scope: if top_level {
+                    format!(
+                        "Should “{}” appear as a top-level navigation choice?",
+                        child.label
+                    )
+                } else {
+                    format!(
+                        "Does “{}” belong directly under “{}”?",
+                        child.label, parent.label
+                    )
+                },
+                approve_label: if top_level {
+                    "Approve — keep this top-level choice".to_owned()
+                } else {
+                    "Approve — keep this relationship".to_owned()
+                },
+                reject_label: "Reject — explain where it belongs".to_owned(),
+                guidance: None,
+                evidence: vec![ApprovalEvidence {
+                    title: if top_level {
+                        "Top-level choice".to_owned()
+                    } else {
+                        "Parent–child relationship".to_owned()
+                    },
+                    annotation: "This action approves only this relationship.".to_owned(),
+                    body: if top_level {
+                        format!("Choice: {}\nDescription: {}", child.label, child.scope)
+                    } else {
+                        format!(
+                            "Parent: {}\nDescription: {}\n\nChild: {}\nDescription: {}",
+                            parent.label, parent.scope, child.label, child.scope
+                        )
+                    },
+                }],
+            })
+        }
+    }
+}
+
+fn membership_strength_counts(subject: &crate::reference_map::SubjectNode) -> [usize; 3] {
+    let mut counts = [0; 3];
+    for membership in &subject.memberships {
+        match membership.strength {
+            MembershipStrength::Central => counts[0] += 1,
+            MembershipStrength::Substantive => counts[1] += 1,
+            MembershipStrength::Incidental => counts[2] += 1,
+        }
+    }
+    counts
 }
 
 fn membership_strength_guidance() -> ApprovalGuidance {
@@ -699,61 +736,6 @@ fn format_membership_signature(signature: &[MembershipStrength]) -> String {
         .map(|strength| strength_label(*strength))
         .collect::<Vec<_>>()
         .join(" + ")
-}
-
-fn representative_note_ids(
-    draft: &HierarchyDraft,
-    node: &SubjectNode,
-    limit: usize,
-) -> Result<Vec<String>> {
-    if node.is_leaf() {
-        let mut memberships = node.memberships.iter().collect::<Vec<_>>();
-        memberships.sort_by(|left, right| {
-            right
-                .strength
-                .rank()
-                .cmp(&left.strength.rank())
-                .then_with(|| left.note_id.cmp(&right.note_id))
-        });
-        return Ok(memberships
-            .into_iter()
-            .take(limit)
-            .map(|membership| membership.note_id.clone())
-            .collect());
-    }
-
-    let mut child_representatives = Vec::with_capacity(node.children.len());
-    for child_id in &node.children {
-        let child = draft.node(child_id).ok_or_else(|| {
-            Error::ExperimentState(format!(
-                "hierarchy node {} names missing child {child_id}",
-                node.node_id
-            ))
-        })?;
-        child_representatives.push(representative_note_ids(draft, child, limit)?);
-    }
-
-    let mut note_ids = Vec::with_capacity(limit);
-    let mut seen = BTreeSet::new();
-    let maximum_child_notes = child_representatives
-        .iter()
-        .map(Vec::len)
-        .max()
-        .unwrap_or(0);
-    for index in 0..maximum_child_notes {
-        for representatives in &child_representatives {
-            let Some(note_id) = representatives.get(index) else {
-                continue;
-            };
-            if seen.insert(note_id.as_str()) {
-                note_ids.push(note_id.clone());
-                if note_ids.len() == limit {
-                    return Ok(note_ids);
-                }
-            }
-        }
-    }
-    Ok(note_ids)
 }
 
 fn strength_label(strength: MembershipStrength) -> &'static str {

@@ -403,10 +403,13 @@ impl ApprovalTuiModel {
                 ]),
             ]
         } else {
-            let mut navigation_controls = vec![
-                Span::styled("[Tab/←/→]", accent_style()),
-                Span::styled(" Evidence  ", secondary_style()),
-            ];
+            let mut navigation_controls = Vec::new();
+            if self.screen.evidence.len() > 1 {
+                navigation_controls.extend([
+                    Span::styled("[Tab/←/→]", accent_style()),
+                    Span::styled(" Evidence  ", secondary_style()),
+                ]);
+            }
             if self.screen.guidance.is_some() {
                 let guidance_title = self
                     .screen

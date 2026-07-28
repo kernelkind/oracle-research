@@ -90,6 +90,16 @@ fn compact_guidance_preserves_the_note_and_controls_at_minimum_terminal_size() {
 }
 
 #[test]
+fn a_single_evidence_claim_does_not_advertise_evidence_navigation() {
+    let mut screen = approval_screen();
+    screen.evidence.truncate(1);
+    let mut model = ApprovalTuiModel::new(screen);
+
+    let rendered = render_approval(&mut model);
+    assert!(!rendered.contains("[Tab/←/→] Evidence"), "{rendered}");
+}
+
+#[test]
 fn approval_ui_shows_the_negative_review_question_and_switches_to_the_comparison_note() {
     let mut model = ApprovalTuiModel::new(approval_screen());
     let first = render_approval(&mut model);
