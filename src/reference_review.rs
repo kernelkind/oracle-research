@@ -534,7 +534,6 @@ fn hierarchy_screen(
         .iter()
         .map(|note| (note.note_id.as_str(), note.content.as_str()))
         .collect::<BTreeMap<_, _>>();
-    let membership_inventory = note_membership_inventory(draft);
     let evidence = if node.is_leaf() {
         let mut memberships = node.memberships.iter().collect::<Vec<_>>();
         memberships.sort_by(|left, right| {
@@ -549,8 +548,9 @@ fn hierarchy_screen(
             .map(|membership| ApprovalEvidence {
                 title: "Note".to_owned(),
                 annotation: format!(
-                    "Memberships:\n{}",
-                    format_note_memberships(&membership_inventory[membership.note_id.as_str()])
+                    "{} membership: {}",
+                    node.label,
+                    strength_label(membership.strength)
                 ),
                 body: note_by_id[membership.note_id.as_str()].to_owned(),
             })
@@ -617,19 +617,34 @@ fn hierarchy_screen(
     } else {
         format!("Parent subject · {}", node.label)
     };
+    let (scope, approve_label, reject_label) = if node.is_leaf() {
+        let note_count = node.memberships.len();
+        (
+            format!(
+                "Review all {note_count} note{}. Approve only if “{}” is a useful subject and \
+                 every shown note belongs to it at the displayed strength.",
+                if note_count == 1 { "" } else { "s" },
+                node.label
+            ),
+            "Approve — subject and memberships are correct".to_owned(),
+            "Reject — explain what is incorrect".to_owned(),
+        )
+    } else {
+        (
+            node.scope.clone(),
+            "Approve — no concrete problem".to_owned(),
+            "Reject — explain the problem".to_owned(),
+        )
+    };
     Ok(ApprovalScreen {
         heading: format!(
             "Hierarchy review · {approved} approved · {rejected} rejected · {} total",
             draft.nodes.len()
         ),
         title,
-        scope: if node.is_leaf() {
-            String::new()
-        } else {
-            node.scope.clone()
-        },
-        approve_label: "Approve — no concrete problem".to_owned(),
-        reject_label: "Reject — explain the problem".to_owned(),
+        scope,
+        approve_label,
+        reject_label,
         guidance: None,
         evidence,
     })

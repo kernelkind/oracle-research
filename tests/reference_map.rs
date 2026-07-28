@@ -1026,10 +1026,9 @@ fn hierarchy_runner_reviews_leaves_then_parents_then_hidden_root() {
             "Root choices",
         ]
     );
-    assert!(
-        ui.screens[..4].iter().all(|screen| screen.scope.is_empty()),
-        "leaf review must show the subject label and note evidence without a redundant scope sentence"
-    );
+    assert!(ui.screens[..4]
+        .iter()
+        .all(|screen| screen.scope.starts_with("Review all ")));
     let life_screen = &ui.screens[6];
     let life_overview = life_screen
         .evidence
@@ -1157,7 +1156,7 @@ fn hierarchy_runner_audits_focus_coverage_after_leaf_weights_and_before_parents(
 }
 
 #[test]
-fn leaf_review_shows_each_notes_complete_proposed_membership_map() {
+fn leaf_review_shows_each_notes_current_membership_strength() {
     let temp = tempfile::tempdir().expect("tempdir");
     let notes = approved_notes();
     let draft = hierarchy(&notes);
@@ -1179,11 +1178,11 @@ fn leaf_review_shows_each_notes_complete_proposed_membership_map() {
         ReviewRunOutcome::Paused
     );
     assert!(
-        ui.screens[0].evidence.iter().any(|evidence| {
-            evidence.annotation.contains("Software — Central")
-                && evidence.annotation.contains("Food — Substantive")
-        }),
-        "a leaf-only strength cannot reveal the note's complete weighted map"
+        ui.screens[0]
+            .evidence
+            .iter()
+            .all(|evidence| evidence.annotation.starts_with("Software membership: ")),
+        "each note must show the strength being approved in the current leaf"
     );
 }
 
@@ -1209,18 +1208,56 @@ fn leaf_review_keeps_note_text_primary_and_memberships_secondary() {
         .expect("open first leaf"),
         ReviewRunOutcome::Paused
     );
-    let evidence = ui.screens[0]
-        .evidence
-        .iter()
-        .find(|evidence| evidence.annotation.contains("Food — Substantive"))
-        .expect("multi-membership note evidence");
+    let evidence = &ui.screens[0].evidence[0];
     assert_eq!(evidence.title, "Note");
     assert!(evidence.body.starts_with("Real diagnostic note number"));
     assert!(!evidence.body.contains("Complete proposed map:"));
     assert!(!evidence.body.contains("\nNote:\n"));
-    assert!(evidence.annotation.starts_with("Memberships:\n"));
-    assert!(evidence.annotation.contains("Software — Central"));
-    assert!(evidence.annotation.contains("Food — Substantive"));
+    assert!(evidence.annotation.starts_with("Software membership: "));
+}
+
+#[test]
+fn leaf_review_states_the_exact_decision_and_only_current_membership() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    let notes = approved_notes();
+    let draft = hierarchy(&notes);
+    let notes_path = temp.path().join("approved-notes.json");
+    let draft_path = temp.path().join("hierarchy-draft.json");
+    write_json(&notes_path, &notes);
+    write_json(&draft_path, &draft);
+    let mut ui = ScriptedUi::new([ApprovalTuiAction::Pause]);
+
+    assert_eq!(
+        run_hierarchy_review(
+            &notes_path,
+            &draft_path,
+            temp.path().join("hierarchy-session.json"),
+            temp.path().join("approved-hierarchy.json"),
+            &mut ui,
+        )
+        .expect("open first leaf"),
+        ReviewRunOutcome::Paused
+    );
+    let screen = &ui.screens[0];
+    assert_eq!(
+        screen.scope,
+        "Review all 16 notes. Approve only if “Software” is a useful subject and every shown note belongs to it at the displayed strength."
+    );
+    assert_eq!(
+        screen.approve_label,
+        "Approve — subject and memberships are correct"
+    );
+    assert!(screen
+        .evidence
+        .iter()
+        .all(|evidence| evidence.annotation.starts_with("Software membership: ")));
+    assert!(
+        screen
+            .evidence
+            .iter()
+            .all(|evidence| !evidence.annotation.contains("Food")),
+        "memberships reviewed on other leaf screens are not part of this decision"
+    );
 }
 
 #[test]
