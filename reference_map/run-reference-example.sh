@@ -7,6 +7,7 @@ prior_run_dir="$root/target/reference-map-example-v2"
 plan="$root/reference_map/crec-116-note-metadata-v3.json"
 proposal="$root/reference_map/crec-116-note-proposal-v3.json"
 draft="$root/reference_map/crec-116-hierarchy-draft-v3.json"
+hierarchy_review_session="$root/reference_map/crec-116-hierarchy-note-branch-review-session-v1.json"
 approved_notes="$run_dir/approved-notes.json"
 approved_hierarchy="$run_dir/approved-hierarchy.json"
 
@@ -29,12 +30,6 @@ if [[ ! -f "$approved_notes" ]]; then
 fi
 
 if [[ ! -f "$approved_hierarchy" ]]; then
-    if [[ ! -f "$run_dir/hierarchy-note-branch-review-session.json" \
-        && -f "$prior_run_dir/hierarchy-note-branch-review-session.json" ]]; then
-        cp \
-            "$prior_run_dir/hierarchy-note-branch-review-session.json" \
-            "$run_dir/hierarchy-note-branch-review-session.json"
-    fi
     if [[ ! -f "$draft" ]]; then
         printf '%s\n' \
             "The 48 notes are approved. The hierarchy draft must now be prepared from that exact set."
@@ -43,7 +38,7 @@ if [[ ! -f "$approved_hierarchy" ]]; then
     exec target/release/reference-map hierarchy \
         "$approved_notes" \
         "$draft" \
-        "$run_dir/hierarchy-note-branch-review-session.json" \
+        "$hierarchy_review_session" \
         "$approved_hierarchy"
 fi
 

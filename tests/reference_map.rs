@@ -3006,6 +3006,101 @@ fn tracked_crec_116_hierarchy_applies_the_approved_parent_corrections() {
 }
 
 #[test]
+fn tracked_crec_116_review_session_preserves_the_human_hierarchy_decisions() {
+    let tracked_session = "reference_map/crec-116-hierarchy-note-branch-review-session-v1.json";
+    let envelope: serde_json::Value = serde_json::from_slice(
+        &fs::read(tracked_session).expect("read tracked CREC-116 review session"),
+    )
+    .expect("decode tracked CREC-116 review session");
+    let parent_history = envelope["session"]["history"]
+        .as_array()
+        .expect("review history")
+        .iter()
+        .filter(|record| record["target"]["kind"] == "parent")
+        .collect::<Vec<_>>();
+
+    assert_eq!(
+        envelope["state_sha256"],
+        "c309b819681ede8aec143baae98a1ab01c9a6df2897ff789f4439f149f67e85e"
+    );
+    assert_eq!(
+        envelope["session"]["history"]
+            .as_array()
+            .expect("review history")
+            .len(),
+        101,
+        "only recorded human decisions belong in the tracked checkpoint"
+    );
+    assert_eq!(parent_history.len(), 24);
+    assert_eq!(
+        parent_history
+            .iter()
+            .filter(|record| record["decision"]["outcome"] == "approved")
+            .count(),
+        16
+    );
+    assert_eq!(
+        parent_history
+            .iter()
+            .filter(|record| record["decision"]["outcome"] == "rejected")
+            .count(),
+        8
+    );
+    assert!(parent_history.iter().any(|record| {
+        record["target"]["node_id"] == "scientific-thought"
+            && record["decision"]["outcome"] == "rejected"
+            && record["decision"]["comment"] == "unity of nature does not belong"
+    }));
+    assert!(parent_history.iter().any(|record| {
+        record["target"]["node_id"] == "root" && record["decision"]["outcome"] == "approved"
+    }));
+
+    let proposal = load_verified_note_proposal("reference_map/crec-116-note-proposal-v3.json")
+        .expect("tracked CREC-116 proposal");
+    let mut note_review = NoteReviewSession::new(&proposal).expect("create note review");
+    for note in &proposal.notes {
+        note_review
+            .record(
+                &proposal,
+                note.slot,
+                NoteReviewDecision {
+                    outcome: ReviewOutcome::Approved,
+                    comment: String::new(),
+                },
+            )
+            .expect("approve tracked note");
+    }
+    let approved_notes =
+        ApprovedNoteSet::from_review(&proposal, &note_review).expect("derive approved notes");
+    let draft: HierarchyDraft = serde_json::from_slice(
+        &fs::read("reference_map/crec-116-hierarchy-draft-v3.json")
+            .expect("read tracked hierarchy draft"),
+    )
+    .expect("decode tracked hierarchy draft");
+    let temp = tempfile::tempdir().expect("tempdir");
+    let approved_notes_path = temp.path().join("approved-notes.json");
+    let draft_path = temp.path().join("draft.json");
+    let session_path = temp.path().join("session.json");
+    write_json(&approved_notes_path, &approved_notes);
+    write_json(&draft_path, &draft);
+    fs::copy(tracked_session, &session_path).expect("copy tracked session");
+    let mut ui = ScriptedUi::new([ApprovalTuiAction::Pause]);
+
+    assert_eq!(
+        run_hierarchy_review(
+            approved_notes_path,
+            draft_path,
+            session_path,
+            temp.path().join("approved-hierarchy.json"),
+            &mut ui,
+        )
+        .expect("resume the production hierarchy review from tracked state"),
+        ReviewRunOutcome::Paused
+    );
+    assert_eq!(ui.screens.len(), 1);
+}
+
+#[test]
 fn tracked_nostr_technical_subject_uses_one_coherent_label() {
     let draft: HierarchyDraft = serde_json::from_slice(
         &fs::read("reference_map/crec-116-hierarchy-draft-v3.json")

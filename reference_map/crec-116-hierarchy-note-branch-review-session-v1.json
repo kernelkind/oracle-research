@@ -1,0 +1,1121 @@
+{
+  "schema_version": 1,
+  "state_sha256": "c309b819681ede8aec143baae98a1ab01c9a6df2897ff789f4439f149f67e85e",
+  "session": {
+    "schema_version": 5,
+    "history": [
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "d420e4335f2fe7fc94992b2cf3604432f56b55d737a497d5dfae00f771dc223b"
+        },
+        "target_revision_sha256": "4edd57eb787f91bbaaee6f207e3e6da95e6b7f893fbeaa3fb86cad3a60eb6384",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "7ca5c1f52e285dff5e45c81734e663d79743ce9743c9d239f2d36e7b9c3946d1"
+        },
+        "target_revision_sha256": "2bb1e7aaaf518a129e08a8df12f4d5af3ba57d8cb78af9ed2b0ef2cca0717f1f",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "this note is a question of how to do a basic thing with nostr, not it's design or impl"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "9583cdf21d51c763aee19412335850b41bf5909960013b64329aababfcdd6a6f"
+        },
+        "target_revision_sha256": "6a7b45e057cd258b81059922d86b4d2b82e0a5b9b0c6eff26079f875de9cc2f9",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "i would flip the ratings. it is mostly about the software. the PKM is not what most of the note is about"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "847fc9177c6f12db9f76bd970d55cc2cd30f1ddc0fa20bc832aefe7fb589b7ae"
+        },
+        "target_revision_sha256": "5852979f661ffc2e716439037218c646eb60507ca50e5c8542f5aac673765cf4",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "056e6466257003453c3065421db88270511cb13ec8c860e3cb4d4b22edf3ba77"
+        },
+        "target_revision_sha256": "735d8e6e509c5802e7a044eddcaf4f0491648b414bacfdc1d2fb3d46a96616cc",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "ef6193a59a35304759d1f58b629466c2a4a7289d92261e91078a1c9b3e05de71"
+        },
+        "target_revision_sha256": "8928be3c541d353a61484f22ede4b6851c2846418e31dcf359dc69bfbd12e948",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "i would also add philosophy or psychology"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "0c17e6b047755f2329110c6df3542b5a7e753fa4ef055c75b858ca1682bbfee5"
+        },
+        "target_revision_sha256": "30e51f4dbbb15b593db1335a6d8edfbb548b40522a48a804351c1a3eae783d84",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "i would also add something to do with english vocabulary or something like that, for the last couple lines"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "2a1c279f820c19a78aed198d135340416f445aa10c9951ae3d3c77f366f225d8"
+        },
+        "target_revision_sha256": "ead8bfde9f3e612865be088ea17af5db1195d6696e8ffe0aadb877f7b8edc9fd",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "would also add something related to children and quotes"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "a57c8f036092116e0a0f4c142a855a7c0565e9b67b2fc21cfd86908c16759da8"
+        },
+        "target_revision_sha256": "db7a0466056ea3f7892948fd2035aa15caae8120231e64dd91241036aca15984",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "i would also add music discovery and streaming services"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "ee2cca149a7d031817911a9e202bb23ae77c11dc9c22056bd9f3b766498ac770"
+        },
+        "target_revision_sha256": "284fac4f081fa388ba1958588a3821c94c1ae517770ebdda1df281e5c29a9ed6",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "would add lifestyle or something along those lines"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "fbac11c36101d6513cc632ef2ddc7fa17883cbd667da7fc75196bcabd9d31ea3"
+        },
+        "target_revision_sha256": "a70d8dc088360d0fdf4c4c69b1264e140164fd90dabee6341497ecedb3c89c36",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "add coffee preparation. also, i'm sure there's more. cmon, you're just being lazy here"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "e62f24bb7124d1d208658b1b5b68bf2b259274c2bc2add538fdb1c1814c9d0bc"
+        },
+        "target_revision_sha256": "ce086bd77f8455e7e3afa73930191ba458283b7b56895187b9d62d218cd385bc",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "24b6fb2f442d31e9db1274119ad424252577b27a88f59f69d43b92cd072b5a4e"
+        },
+        "target_revision_sha256": "5da951bee220c5574547011afe00332154acd16d2bbd1540d858dddf12733fc1",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "add musical instruments & determination"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "57ce561cfd0a569a981061a5461ae684e831a63d2e009b1822b2f7b16a9533b2"
+        },
+        "target_revision_sha256": "219c0ea31138759c287969584deb9cd4039afcf1f09e7726b8c06e982908a99b",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "337569d3f73ff93019040a32d9f5e537f4c8c0a836db8d05bd70a614d8f06e2e"
+        },
+        "target_revision_sha256": "13e7cee6053b3f7fd8d67e47b4dd8ee7fcf6fbf8c98548afb6149f8933b17be8",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "eb4e7b0341e6544b6ef0de8dcef80f52b550948b988cd9be6a9247a11b06d46b"
+        },
+        "target_revision_sha256": "331169a7b5e79e30ee386083a22e0847418af3d841bde40c45e0b20d9ecf18cf",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "i do not think that subject is appropriate. maybe philosopy"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "d4b14dd9f6959e29c95888d56e0a1b4e49aecfec9a79268f4369ea726f009d2c"
+        },
+        "target_revision_sha256": "8b7048b20f99274b95acf5b805876a453738f6fbae58b53d79191ff5614243fe",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "also, frustration with the system or something along those lines"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "650ee6fe1a6ecc43bb374cb27b50d1317899f6780f2e628beb4b5e93199149bb"
+        },
+        "target_revision_sha256": "644a6fe87e9d23b79ab90f57aea94f1a09cc2fb39b68e020c3c37ae1ae91ab1d",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "also, book recommendation request"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "3e5568db003be02ab4b79daf695c02fdeaf35644bf99606d8c6572aa40a72223"
+        },
+        "target_revision_sha256": "e0eb27928fa0b85fd7ab0e6f58d6604b114133d8e23a146643b1520436bf974b",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "also, history of whatever timeperiod the 750s were in"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "099596d9b7cbdd24b080a1293214978a05a3c4a1a3152675e8af3ff7febc9c0a"
+        },
+        "target_revision_sha256": "b353f110dcfef2f805a0165cea4601c04e4b645e7c1a8c31a65c20d335d9e9c0",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "1830964db8182776dc0a7ddbc014a09c6c968a2c982ebd5f6da320deef2b92dc"
+        },
+        "target_revision_sha256": "3c83f89cd1df6aa0c7054d8903f980d7f765de8c6d007478edb1ff7ca9565b68",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "503fb92faf6694b631484d0be57344ed29f7bfd324a2e5c5fa38183751b830e6"
+        },
+        "target_revision_sha256": "10b01acad08288dea5c2b163235465af5822c7e2ba2f0379a2bf90ca6cb171aa",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "AI philosopy as well"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "7d52bf12d1dba7ef59001b7d70189cd7139fd12b9e2972c6faa5b634d5166217"
+        },
+        "target_revision_sha256": "b9572ec538648e9cb556a7604c6e937271245129dd689ae846a8d54b62a1e7e6",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "and book recommendation request"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "693fa0a077527d025eeece4918f530e316cd9b88ccdbe9b3385111095ed15e4f"
+        },
+        "target_revision_sha256": "2bca5eddafcf98fb5ea3847a2aa37a1d5e65cab7856829aba7e057c347bbd36a",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "and bash scripts"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13"
+        },
+        "target_revision_sha256": "ad490c654f0bb501748b9a118f02c271a86c361694cd68df823b1360c1273411",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "i would not include gardening and growing plants. the other seem fine"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e"
+        },
+        "target_revision_sha256": "cea0e6a6ad5f266b923b7e080806681aad30e0acc3e0ef3480b75162565665f3",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "7a2204bdc296c3650502c19814243aaa550a240c3863083514933e2ea9e8ab43"
+        },
+        "target_revision_sha256": "e1fbf6b5c9071013decab24981670c8558ef099d52b23adc65b17d7f583992cc",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "need bitcoin and nostr as incidental"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "061343e9c2a99b6b4dd09f661c2c855d7277ce8b60089c1a4e5252965abf5344"
+        },
+        "target_revision_sha256": "c42b23889756e25e68248b00e073ecb539c5c1f4dcf7af041d10fbd1c0fa2eba",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "17f7820bcee57f62c4a6f43a924db573a941173852bfa1c820180f1fecffc4f0"
+        },
+        "target_revision_sha256": "76eb4a56bff05dcbf706e0fcba85159ee8173b4f510255174615c55375221382",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "5f2f81bee2dcbe09b5cb51a6cd0f4283083e30d2832c9a8a6c95ef7eb951c5d9"
+        },
+        "target_revision_sha256": "0d5bc02b88be1a8dedcf74aa52ddb101cca294e9058d31cec0f1122256366e5d",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "i would seperate AI privacy and AI deployment"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "b18908c0bd3cfe51e01028096a94c609c02575f0c1e534e500b302af5eaa6e23"
+        },
+        "target_revision_sha256": "c97af8c5b82ba9400a1f67b8994a7c766befb2e8adc4cb908809a60ce904d139",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "i would add local AI"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "a75a2144c72724ad02ed57524a33a8750477135d03c55f5e7eee7ff314e48ae4"
+        },
+        "target_revision_sha256": "944c7f2fdb36e9568439f30ac70a399cc5b9d01544d61e7a922c08834230d724",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "add personality types in programming"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "cca270685401385322e2a062def0562545284bcd6babe5a8763ed28b73e79407"
+        },
+        "target_revision_sha256": "2be15cff42040e74e74f605c884eeaa3d6c2fd7700402e92fde7c15dd39dc8c0",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "this needs work"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "4611090a5fbd6acd54162e7cd29930ce6799a8461c70f0c417d6a982281f78f8"
+        },
+        "target_revision_sha256": "47d7eee829fe7fb02895c32e784ffa880b7dda6cf88de5e71637daa862932906",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "reject markets & commerce. it is not *about* markets & commerce, it is an ad for a product"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "068a9e104f99a51d46a65674d05b3ead194564961534a90b0922b968e78c29d9"
+        },
+        "target_revision_sha256": "32de40573dce8e844de2054bfa98967cbdf07243a2f30b8b07d7b15a43404b0e",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "add journaling or something along those lines"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "88b8490e40edacb25ce1a55d288e4387cfb6c2d56d801aad8c7fa5074132c678"
+        },
+        "target_revision_sha256": "220ad5c8f56c46b55a1c2b33bf865e39d5ad8553ffc96a222d7794475a01f249",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "87f1cb51d8abb755bc2526f0129afcf079acbaea323ee8181d121fd7040a300e"
+        },
+        "target_revision_sha256": "afa22a0ad46b80322d0e6899f3b0166343c6db2e8b62032cc870b0944c0ab4a3",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "f0ff44e2ad7556bc51ffc56aed7658b6b20f81e93856e2382d2b8187e44db4c7"
+        },
+        "target_revision_sha256": "747cc334f2ab43153e57c012f8a92e7c90531cd1ce638e47baafd7d72f64afa9",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "4ef54cc08e5c02387af7521929d17d9af73e262fccebd3d4cbbd36190136a4f7"
+        },
+        "target_revision_sha256": "dbf0da89e2db238aa5110160baa4cd2773f970b84ec6fb0341fb4f847ebaf59a",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "b843720355752d704f1a167b7b0625d4d28833461c5c6d27c76e8e5b0648aca6"
+        },
+        "target_revision_sha256": "48acf8b0c2bba525b89c37631de2b475bec096cc2bcd4a2fcca933551c4afdc0",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "add composting"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "6ff1885941473b9f6941624769aef78307093cec8d55530b566dec60ce8ad0a6"
+        },
+        "target_revision_sha256": "025e3d1df82fb718191db0723255eeb85789ac0719bbf330c70349e1f781dc64",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "c01a24e6604834c025907d715314b547956d90488f95229707c4bad6354e5fa7"
+        },
+        "target_revision_sha256": "c9a030afa78a97ffcd77cd1b9dece99d3442d5ca43dc8a97c9ff6c977c40dcf1",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "2c37330aa014895f53b7e774edf49823e6e3b5ad47939e64fcb81735b726240c"
+        },
+        "target_revision_sha256": "6ddd9d5f75859803ff1575c46cdaf7cfed4e15861a2059924b4f3d40dc5e1eb3",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "hm this one's subjs seem problematic"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "48582ca7a1747eec62b877c408909df34d2ceed7477e14be62b86981425bd379"
+        },
+        "target_revision_sha256": "8915ea624df040b42c41571b99f9d720582de486681dbdcb30e568fac2a756f9",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "f82b8f1742cf74cb2ab19bdbfa249e9685f035b1856c17673444686919ca7807"
+        },
+        "target_revision_sha256": "dd81f63df4a8cb8e989aebdc8a316ad05c8430bea4a07a8019807a4f32747f62",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "5162cc3e6ed6756c0d95ac8f1340fc244532ba347c3b7da431453c602b671731"
+        },
+        "target_revision_sha256": "52f62b44957ace256cbc12bc52cbefd16fef911351e2d5abb358eab1fd3be494",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "5df22809eda64af11774ed317671a3a2ecba24082119254fc4af2251d307a734"
+        },
+        "target_revision_sha256": "5a46d2caa0215f9da6c3aeda919b0f95d92c85289e96fe7d962d284c5f1a7f5f",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "8894b71ab618459a3c40e9637d2cad57cb3347b758911a94da50d8f84db53aa8"
+        },
+        "target_revision_sha256": "ab0e9f2cf1f2fcf625930f8eb05c7c9c0ca63ae0e86518802b3a66e2a91621fc",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "7ca5c1f52e285dff5e45c81734e663d79743ce9743c9d239f2d36e7b9c3946d1"
+        },
+        "target_revision_sha256": "0de78e9434deb73f8a7efbccda23f6635c4773612d2307913f6fc8b3b5c2cfe5",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "9583cdf21d51c763aee19412335850b41bf5909960013b64329aababfcdd6a6f"
+        },
+        "target_revision_sha256": "bc6f09d7fd303d09d4cacd0ed19258875eb012d8d0de9b18c5fed94ee6f0f350",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "ef6193a59a35304759d1f58b629466c2a4a7289d92261e91078a1c9b3e05de71"
+        },
+        "target_revision_sha256": "d26fdc4f15add1a2915a36d0d3c325db74fe11da7035cc82c9a72530d3a12397",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "0c17e6b047755f2329110c6df3542b5a7e753fa4ef055c75b858ca1682bbfee5"
+        },
+        "target_revision_sha256": "ad2a48aa82749c2bf4cc5a58deda7167dd275a3dc0d0422203fcd5b8bff7e08b",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "2a1c279f820c19a78aed198d135340416f445aa10c9951ae3d3c77f366f225d8"
+        },
+        "target_revision_sha256": "2d38b882dff93a5aec43ffee068cbaf53080e0ae06ecd2a6e6b379238c73bb9b",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "also something along the lines of understanding intelligence"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "a57c8f036092116e0a0f4c142a855a7c0565e9b67b2fc21cfd86908c16759da8"
+        },
+        "target_revision_sha256": "84197039c8adbf95df35d64bb8d1abc7255522d09b4b9dfc1e37c523a98974a6",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "ee2cca149a7d031817911a9e202bb23ae77c11dc9c22056bd9f3b766498ac770"
+        },
+        "target_revision_sha256": "739f92eb97baff8b540aabd99aa2a95883d3291a74c47f478a19a5c306b6836e",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "fbac11c36101d6513cc632ef2ddc7fa17883cbd667da7fc75196bcabd9d31ea3"
+        },
+        "target_revision_sha256": "ab3e295bd1db06a8efdeaf02a9df466fb844cd583e7e4192609313d11e563c57",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "24b6fb2f442d31e9db1274119ad424252577b27a88f59f69d43b92cd072b5a4e"
+        },
+        "target_revision_sha256": "ce9d5079ea4928ea38c6c3f51132de4e485f825e2ca23d6cfbf76360d6bf4fe4",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "eb4e7b0341e6544b6ef0de8dcef80f52b550948b988cd9be6a9247a11b06d46b"
+        },
+        "target_revision_sha256": "82df505be97fcd1460597f5fbc29442f60c9169f194b83ee422d0fb65ef129c6",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "agree, but i think we can possibly think of more subjects"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "d4b14dd9f6959e29c95888d56e0a1b4e49aecfec9a79268f4369ea726f009d2c"
+        },
+        "target_revision_sha256": "a3fc156826eb37c5db98d996664abbc79e50b5c20c8ad7928efabe329f6a3e1c",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "650ee6fe1a6ecc43bb374cb27b50d1317899f6780f2e628beb4b5e93199149bb"
+        },
+        "target_revision_sha256": "704b291a42ecdd2bd619685785353e55a6d0593d7303b4fde67c6e7bc3375af2",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "3e5568db003be02ab4b79daf695c02fdeaf35644bf99606d8c6572aa40a72223"
+        },
+        "target_revision_sha256": "33ad5cfc9e1327741776e73339afdee786b222e48899a062556e1831f84815af",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "503fb92faf6694b631484d0be57344ed29f7bfd324a2e5c5fa38183751b830e6"
+        },
+        "target_revision_sha256": "bb7d65dd3a63c9fac102f4a4058118483c310e1bbb6cb5aecc4173f679bca44f",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "7d52bf12d1dba7ef59001b7d70189cd7139fd12b9e2972c6faa5b634d5166217"
+        },
+        "target_revision_sha256": "6fc126ef34696ceb039f8a7efcb48f0954b62a2d33af638d53275ea6bd5fe2f3",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "693fa0a077527d025eeece4918f530e316cd9b88ccdbe9b3385111095ed15e4f"
+        },
+        "target_revision_sha256": "ada2023e9e5bfafaf783840a45c8747b75aec620ccaffa431cdb420c73520cab",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13"
+        },
+        "target_revision_sha256": "b85bcf93a90f8b5a58b80b376bc704facc8194bc3cf51311a9d76515b8735029",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "7a2204bdc296c3650502c19814243aaa550a240c3863083514933e2ea9e8ab43"
+        },
+        "target_revision_sha256": "3072d3f47d404bd4f538c3a906fbe3f5e91cc78c8a9430fd0135230ecb2e8888",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "5f2f81bee2dcbe09b5cb51a6cd0f4283083e30d2832c9a8a6c95ef7eb951c5d9"
+        },
+        "target_revision_sha256": "ffcf0a347924da09682cb682398e1cd9b05ac3d3fb55a0b1e3225212b7398d45",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "b18908c0bd3cfe51e01028096a94c609c02575f0c1e534e500b302af5eaa6e23"
+        },
+        "target_revision_sha256": "b25c49c3fd7a1ddee991422a302b90554a4604136b663821b2349b23089f77a4",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "a75a2144c72724ad02ed57524a33a8750477135d03c55f5e7eee7ff314e48ae4"
+        },
+        "target_revision_sha256": "ac7cd4687283f6d2733686d702b5065673dcfa46491900bec02f0a3cc9220351",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "cca270685401385322e2a062def0562545284bcd6babe5a8763ed28b73e79407"
+        },
+        "target_revision_sha256": "a975d13d5eb602096c2173b23e324e67f8209d4f72014a016eb7d9922e20ab05",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "4611090a5fbd6acd54162e7cd29930ce6799a8461c70f0c417d6a982281f78f8"
+        },
+        "target_revision_sha256": "3491423e3284672b92216ba4918b9ef38961ac567f271be953b0d0ce911149d2",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "we must be careful about distinguising between notes *about*  Product advertising and sales  vs notes that *are*  Product advertising and sales"
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "068a9e104f99a51d46a65674d05b3ead194564961534a90b0922b968e78c29d9"
+        },
+        "target_revision_sha256": "b3678666297879bf22271ddd366c946d8014279de7a6e132c8ed2093a3b9f8f3",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "b843720355752d704f1a167b7b0625d4d28833461c5c6d27c76e8e5b0648aca6"
+        },
+        "target_revision_sha256": "d16de43f15577d8882ff0d2ad17d76bb7108f63ba2712ac8b72f1161f03e47b4",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "2c37330aa014895f53b7e774edf49823e6e3b5ad47939e64fcb81735b726240c"
+        },
+        "target_revision_sha256": "91ac5793f8554cc69cbb90474a01e7423d9e699b78b2c2fa7ae0afb2a416024b",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "2a1c279f820c19a78aed198d135340416f445aa10c9951ae3d3c77f366f225d8"
+        },
+        "target_revision_sha256": "46da3e6ec32e615b08c1ed3edca51081d73827b59dded0ccca11e37273343e4c",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "eb4e7b0341e6544b6ef0de8dcef80f52b550948b988cd9be6a9247a11b06d46b"
+        },
+        "target_revision_sha256": "a2d894dc15ef17e40dac13bcd33c3ffbd1c7d83b28037d47a8877f50cbdf9aa3",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "4611090a5fbd6acd54162e7cd29930ce6799a8461c70f0c417d6a982281f78f8"
+        },
+        "target_revision_sha256": "a47e5006d65d6e9888b78f43da21bb340f7c41572cc19859556e9d3ef3b28533",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "book-topics"
+        },
+        "target_revision_sha256": "6f6d4f024481ebe9e76dce48a9db81c09a0eb696f7b001ae66897ea4c3fe9f5d",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "i'm not sure 'Criticism of digital access restrictions ' belongs in the category"
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "history-topics"
+        },
+        "target_revision_sha256": "ed1e37774ec69ef43264bd05a5c6ec4a5c7af7e10beea23583089ed724565c2c",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "scientific-thought"
+        },
+        "target_revision_sha256": "c18fb7315c4e3e5624f551be967b548f20ed3195d93ffb0b82a82b34d6c544c3",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "unity of nature does not belong"
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "knowledge-written-culture"
+        },
+        "target_revision_sha256": "e51c287e7adfbe18d0d6a69c3e6945e091434c1211d8d7171cfd4bff06a1566c",
+        "decision": {
+          "outcome": "approved",
+          "comment": "hm the abstraction level differences are odd, but they are subsumed by 'knowledge and written culture'"
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "software-systems"
+        },
+        "target_revision_sha256": "de23faf9135b608ba19c3cfa4dbcf67c4eb7ff6e74fa63fd342e36688ec714b3",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "'Developer stereotypes and interpersonal behavior    ' does not belong"
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "nostr-technology"
+        },
+        "target_revision_sha256": "d205c10dbd7378f537c1e3bcf32315d880cd55373ccfd3f4a9754f136d8b13f8",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "artificial-intelligence"
+        },
+        "target_revision_sha256": "f6c67e2c2ba5def0d0af9b75526516637bd7bcccb6eda716f3fb7ad0d611bb9e",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "software-security"
+        },
+        "target_revision_sha256": "0c17c9fbdc274da7cdf8bd7b178a68f2d70d0fdbb471fd2e522a1eef299313bb",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "computing"
+        },
+        "target_revision_sha256": "534a49e75a4304c1459b6378707d8a2a4e06cafcff920943ed549b839976b4fc",
+        "decision": {
+          "outcome": "approved",
+          "comment": "again, the abstraction levels are odd but it is correct"
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "communication-rights"
+        },
+        "target_revision_sha256": "93c7bae0ebb6173577f7bfc6c6d05ade904a8826b61745a5c3c899e57a1107e1",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "hmm i'm not sure about this one"
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "economy-exchange"
+        },
+        "target_revision_sha256": "5acb1af5bcc88b6ff38983e8ef857e3ba1b6421760073a65bbcfe6871c90285e",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "society"
+        },
+        "target_revision_sha256": "b9f0c053e547daabadf1c26a88b0d4da09e1f1679f14e2b6f0e05517aeca519d",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "hmmm idk about this"
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "visual-art"
+        },
+        "target_revision_sha256": "d48098f1254f67ad5838ec70b9fb27cf5aee90dd8c16e2105e94031f950db1da",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "music"
+        },
+        "target_revision_sha256": "011348e4fad07d9e2df03f6ab7a20a7513f32c8c8d013982e9840d3069a378e7",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "creative-learning"
+        },
+        "target_revision_sha256": "942d863965404ea59ff8fa32c7799d4bffef68db6a8a8ea3856396c587a3f1bf",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "art-expression"
+        },
+        "target_revision_sha256": "73f0f5d05edf59dc6bfb8daedbe0a51b4c4d4239ebaa095187227dba64d00f0a",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "health-movement"
+        },
+        "target_revision_sha256": "e6aa12020645eb0bacca13740156a82d1c1d17275e22429b8c73b72caa7199fa",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "not sure ' Emotional support ' belongs"
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "personal-life"
+        },
+        "target_revision_sha256": "a8c44377bd3d2d5b47296a43ae5c7763ba70d69f4c95c7a06b47ae06d0917121",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "not sure 'personal life' makes sense to me"
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "coffee-topics"
+        },
+        "target_revision_sha256": "cf4bf71e5b2b9183ef25ae319a1ab45e253015d37139f8741c329fb0b9b680f5",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "it is weird having 'coffee' as a child here imo. wdyt?"
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "daily-life"
+        },
+        "target_revision_sha256": "32615fe0b33b998295030c61bfe89b494f8193b21136a5ab3a77ab9bb98dc5dc",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "resource-use"
+        },
+        "target_revision_sha256": "05385ccb6923a0d3fa427bc9be80917075a318e26b9898075c52914ee0ff30c8",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "environment"
+        },
+        "target_revision_sha256": "fe883a48bb6e6877520ebe22fafdb2ff75bc72818feeffe95a2ad5d7d9e6670f",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "movement-place"
+        },
+        "target_revision_sha256": "ffda83028ec87d20fca63f037739b547f15a7d39541d6131a94dd0fdb2ee5dae",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "root"
+        },
+        "target_revision_sha256": "74f65fa68e3f1d9f84d10676771b3cf41f3c5d001bd6741d4ba342ddb0c5bbb1",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      }
+    ],
+    "focus_coverage_history": []
+  }
+}
