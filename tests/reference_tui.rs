@@ -24,6 +24,7 @@ fn approval_screen() -> ApprovalScreen {
                 .to_owned(),
         approve_label: "Approve — no disqualifying problem".to_owned(),
         reject_label: "Reject — explain the problem".to_owned(),
+        rejection_help: "Explain what must change before rejecting.".to_owned(),
         guidance: Some(ApprovalGuidance {
             title: "Rejection guide".to_owned(),
             body: "Reject only when:\n\n\
@@ -424,6 +425,30 @@ fn approval_ui_requires_a_reason_for_rejection() {
         rendered.contains("Explain what must change before rejecting."),
         "{rendered}"
     );
+}
+
+#[test]
+fn approval_ui_shows_screen_specific_rejection_help() {
+    let mut screen = approval_screen();
+    screen.rejection_help = "Examples:\n\
+                             [02] Title is unclear.\n\
+                             [03] Does not belong under [01].\n\
+                             Missing \"Expected subject\" under [01]."
+        .to_owned();
+    let mut model = ApprovalTuiModel::new(screen);
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('r'))),
+        ApprovalTuiAction::None
+    );
+
+    let rendered = render_approval(&mut model);
+    for expected in [
+        "[02] Title is unclear.",
+        "[03] Does not belong under [01].",
+        "Missing \"Expected subject\" under [01].",
+    ] {
+        assert!(rendered.contains(expected), "{rendered}");
+    }
 }
 
 #[test]

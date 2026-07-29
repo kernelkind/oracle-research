@@ -397,6 +397,7 @@ fn focus_coverage_screen(
         ),
         approve_label: "Approve — both patterns are represented".to_owned(),
         reject_label: "Reject — describe the missing pattern".to_owned(),
+        rejection_help: "Describe the missing focus pattern.".to_owned(),
         guidance: Some(focus_coverage_guidance()),
         evidence: vec![ApprovalEvidence {
             title: "All focus patterns".to_owned(),
@@ -496,6 +497,7 @@ fn note_screen(
         ),
         approve_label: "Approve — no disqualifying problem".to_owned(),
         reject_label: "Reject — explain the problem".to_owned(),
+        rejection_help: "Explain the concrete disqualifying problem.".to_owned(),
         guidance: Some(ApprovalGuidance {
             title: "Rejection guide".to_owned(),
             body: "Reject only when:\n\n\
@@ -541,6 +543,9 @@ fn hierarchy_target_screen(
                 scope: "Are these subject assignments correct?".to_owned(),
                 approve_label: "Approve these assignments".to_owned(),
                 reject_label: "Reject — name the exact correction".to_owned(),
+                rejection_help:
+                    "Name the incorrect subject or strength and state the exact correction."
+                        .to_owned(),
                 guidance: Some(note_map_guidance()),
                 evidence: vec![
                     ApprovalEvidence {
@@ -561,14 +566,37 @@ fn hierarchy_target_screen(
             let branch = draft.node(node_id).ok_or_else(|| {
                 Error::ExperimentState(format!("hierarchy branch {node_id} is missing"))
             })?;
+            let root = draft.node(draft.root_node_id.as_str()).ok_or_else(|| {
+                Error::ExperimentState("hierarchy hidden root is missing".to_owned())
+            })?;
+            let branch_index = root
+                .children
+                .iter()
+                .position(|child_id| child_id == node_id)
+                .ok_or_else(|| {
+                    Error::ExperimentState(format!(
+                        "hierarchy branch {node_id} is not a root branch"
+                    ))
+                })?
+                + 1;
+            let (branch_tree, subject_count) = format_hierarchy_branch(draft, node_id)?;
             Ok(ApprovalScreen {
-                heading,
-                title: format!("Hierarchy branch · {}", branch.label),
+                heading: format!(
+                    "Hierarchy review · Branch {branch_index} of {} · {} note maps approved",
+                    root.children.len(),
+                    approved_notes.notes.len()
+                ),
+                title: branch.label.clone(),
                 scope:
-                    "Does this complete branch contain a concrete subject or hierarchy problem?"
+                    "Is any subject title unclear, or is any subject under the wrong parent?"
                         .to_owned(),
-                approve_label: "Approve — all subjects and relationships are correct".to_owned(),
-                reject_label: "Reject — name the exact correction".to_owned(),
+                approve_label: "No problems".to_owned(),
+                reject_label: "Describe a problem".to_owned(),
+                rejection_help: "Examples:\n\
+                                 [02] Title is unclear.\n\
+                                 [03] Does not belong under [01].\n\
+                                 Missing \"Expected subject\" under [01]."
+                    .to_owned(),
                 guidance: Some(ApprovalGuidance {
                     title: "Branch review".to_owned(),
                     body: "Approving accepts every displayed subject title and parent–child relationship.\n\n\
@@ -581,9 +609,15 @@ fn hierarchy_target_screen(
                         .to_owned(),
                 }),
                 evidence: vec![ApprovalEvidence {
-                    title: "Complete branch".to_owned(),
-                    annotation: "Indentation shows every parent–child relationship.".to_owned(),
-                    body: format_hierarchy_branch(draft, node_id)?,
+                    title: format!(
+                        "Branch tree · {subject_count} subject{}",
+                        if subject_count == 1 { "" } else { "s" }
+                    ),
+                    annotation:
+                        "Approving accepts every displayed title and parent–child relationship.\n\
+                         Use the numbers when describing a problem."
+                            .to_owned(),
+                    body: branch_tree,
                 }],
                 evidence_layout: ApprovalEvidenceLayout::Paged,
             })
@@ -631,28 +665,45 @@ fn format_note_assignments(
         .join("\n")
 }
 
-fn format_hierarchy_branch(draft: &HierarchyDraft, node_id: &str) -> Result<String> {
+fn format_hierarchy_branch(draft: &HierarchyDraft, node_id: &str) -> Result<(String, usize)> {
     let mut lines = Vec::new();
     let mut number = 1;
-    append_hierarchy_branch(draft, node_id, 0, &mut number, &mut lines)?;
-    Ok(lines.join("\n"))
+    append_hierarchy_branch(draft, node_id, "", None, &mut number, &mut lines)?;
+    Ok((lines.join("\n"), number - 1))
 }
 
 fn append_hierarchy_branch(
     draft: &HierarchyDraft,
     node_id: &str,
-    depth: usize,
+    prefix: &str,
+    is_last: Option<bool>,
     number: &mut usize,
     lines: &mut Vec<String>,
 ) -> Result<()> {
     let node = draft
         .node(node_id)
         .ok_or_else(|| Error::ExperimentState(format!("hierarchy subject {node_id} is missing")))?;
-    let indent = "  ".repeat(depth);
-    lines.push(format!("{indent}[{number:02}] {}", node.label));
+    let connector = match is_last {
+        None => "",
+        Some(false) => "├─ ",
+        Some(true) => "└─ ",
+    };
+    lines.push(format!("{prefix}{connector}[{number:02}] {}", node.label));
     *number += 1;
-    for child_id in &node.children {
-        append_hierarchy_branch(draft, child_id, depth + 1, number, lines)?;
+    let child_prefix = match is_last {
+        None => prefix.to_owned(),
+        Some(false) => format!("{prefix}│  "),
+        Some(true) => format!("{prefix}   "),
+    };
+    for (index, child_id) in node.children.iter().enumerate() {
+        append_hierarchy_branch(
+            draft,
+            child_id,
+            child_prefix.as_str(),
+            Some(index + 1 == node.children.len()),
+            number,
+            lines,
+        )?;
     }
     Ok(())
 }

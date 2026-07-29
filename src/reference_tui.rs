@@ -53,6 +53,7 @@ pub struct ApprovalScreen {
     pub scope: String,
     pub approve_label: String,
     pub reject_label: String,
+    pub rejection_help: String,
     pub guidance: Option<ApprovalGuidance>,
     pub evidence: Vec<ApprovalEvidence>,
     pub evidence_layout: ApprovalEvidenceLayout,
@@ -88,6 +89,7 @@ impl ApprovalTuiModel {
         screen.scope = terminal_safe(&screen.scope);
         screen.approve_label = terminal_safe(&screen.approve_label);
         screen.reject_label = terminal_safe(&screen.reject_label);
+        screen.rejection_help = terminal_safe(&screen.rejection_help);
         if let Some(guidance) = &mut screen.guidance {
             guidance.title = terminal_safe(&guidance.title);
             guidance.body = terminal_safe(&guidance.body);
@@ -440,27 +442,30 @@ impl ApprovalTuiModel {
                 ReviewOutcome::Approved => " (optional)",
                 ReviewOutcome::Rejected => " (required)",
             };
-            vec![
-                Line::from(vec![
-                    Span::styled(format!("{decision} comment"), accent_style()),
-                    Span::styled(comment_requirement, secondary_style()),
-                ]),
+            let mut lines = vec![Line::from(vec![
+                Span::styled(format!("{decision} comment"), accent_style()),
+                Span::styled(comment_requirement, secondary_style()),
+            ])];
+            if outcome == ReviewOutcome::Rejected {
+                lines.extend(
+                    self.screen
+                        .rejection_help
+                        .lines()
+                        .map(|line| Line::styled(line.to_owned(), secondary_style())),
+                );
+            } else {
+                lines.push(Line::raw(""));
+            }
+            lines.extend([
                 Line::raw(format!("> {}", self.comment)),
-                if outcome == ReviewOutcome::Rejected && self.comment.trim().is_empty() {
-                    Line::styled(
-                        "Explain what must change before rejecting.",
-                        Style::default().fg(Color::Yellow),
-                    )
-                } else {
-                    Line::raw("")
-                },
                 Line::from(vec![
                     Span::styled("[Enter]", accent_style()),
                     Span::styled(" Confirm  ", secondary_style()),
                     Span::styled("[Esc]", accent_style()),
                     Span::styled(" Cancel", secondary_style()),
                 ]),
-            ]
+            ]);
+            lines
         } else {
             let mut navigation_controls = Vec::new();
             if self.screen.evidence.len() > 1 {

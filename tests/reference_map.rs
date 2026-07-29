@@ -1368,16 +1368,13 @@ fn hierarchy_runner_opens_first_root_branch_after_all_note_maps() {
         ReviewRunOutcome::Paused
     );
     let branch = ui.screens.last().expect("first root branch screen");
-    assert_eq!(branch.title, "Hierarchy branch · Technology");
+    assert_eq!(branch.title, "Technology");
     assert_eq!(
         branch.scope,
-        "Does this complete branch contain a concrete subject or hierarchy problem?"
+        "Is any subject title unclear, or is any subject under the wrong parent?"
     );
-    assert_eq!(
-        branch.approve_label,
-        "Approve — all subjects and relationships are correct"
-    );
-    assert_eq!(branch.reject_label, "Reject — name the exact correction");
+    assert_eq!(branch.approve_label, "No problems");
+    assert_eq!(branch.reject_label, "Describe a problem");
 }
 
 #[test]
@@ -1407,8 +1404,31 @@ fn hierarchy_runner_reviews_a_complete_root_branch_once() {
         ReviewRunOutcome::Paused
     );
     let technology = &ui.screens[REFERENCE_NOTE_COUNT];
-    assert_eq!(technology.title, "Hierarchy branch · Technology");
+    assert_eq!(
+        technology.heading,
+        "Hierarchy review · Branch 1 of 2 · 48 note maps approved"
+    );
+    assert_eq!(technology.title, "Technology");
+    assert_eq!(
+        technology.scope,
+        "Is any subject title unclear, or is any subject under the wrong parent?"
+    );
+    assert_eq!(technology.approve_label, "No problems");
+    assert_eq!(technology.reject_label, "Describe a problem");
+    assert_eq!(
+        technology.rejection_help,
+        "Examples:\n\
+         [02] Title is unclear.\n\
+         [03] Does not belong under [01].\n\
+         Missing \"Expected subject\" under [01]."
+    );
     assert_eq!(technology.evidence.len(), 1);
+    assert_eq!(technology.evidence[0].title, "Branch tree · 3 subjects");
+    assert_eq!(
+        technology.evidence[0].annotation,
+        "Approving accepts every displayed title and parent–child relationship.\n\
+         Use the numbers when describing a problem."
+    );
     assert!(technology
         .guidance
         .as_ref()
@@ -1419,12 +1439,12 @@ fn hierarchy_runner_reviews_a_complete_root_branch_once() {
         ));
     let branch = &technology.evidence[0].body;
     assert_eq!(
-        branch, "[01] Technology\n  [02] Software\n  [03] Hardware",
+        branch, "[01] Technology\n├─ [02] Software\n└─ [03] Hardware",
         "branch review must show only subject titles and indentation"
     );
     assert_eq!(
         ui.screens[REFERENCE_NOTE_COUNT + 1].title,
-        "Hierarchy branch · Everyday life",
+        "Everyday life",
         "one branch approval advances directly to the next root branch"
     );
 }
@@ -1743,10 +1763,7 @@ fn hierarchy_runner_reviews_each_note_once_then_each_root_branch_once_then_cover
             .iter()
             .map(|screen| screen.title.as_str())
             .collect::<Vec<_>>(),
-        vec![
-            "Hierarchy branch · Technology",
-            "Hierarchy branch · Everyday life",
-        ],
+        vec!["Technology", "Everyday life"],
         "each top-level branch is loaded once"
     );
     assert_eq!(
@@ -1754,10 +1771,18 @@ fn hierarchy_runner_reviews_each_note_once_then_each_root_branch_once_then_cover
         "Focus-concentration coverage"
     );
     assert!(
-        ui.screens
+        ui.screens[..REFERENCE_NOTE_COUNT]
             .iter()
             .all(|screen| screen.heading.contains("51 total")),
-        "the UI must state the reduced interaction count"
+        "note-map review retains the complete interaction count"
+    );
+    assert_eq!(
+        ui.screens[REFERENCE_NOTE_COUNT].heading,
+        "Hierarchy review · Branch 1 of 2 · 48 note maps approved"
+    );
+    assert_eq!(
+        ui.screens[REFERENCE_NOTE_COUNT + 1].heading,
+        "Hierarchy review · Branch 2 of 2 · 48 note maps approved"
     );
     assert!(approved_path.is_file());
 }
