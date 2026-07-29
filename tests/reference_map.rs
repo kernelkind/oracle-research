@@ -234,7 +234,7 @@ fn rejection_decisions_require_an_actionable_comment() {
     let mut focus_session =
         HierarchyReviewSession::new(&draft, &approved).expect("create focus session");
     approve_all_note_maps(&mut focus_session, &draft, &approved);
-    approve_all_branches(&mut focus_session, &draft, &approved);
+    approve_all_parents(&mut focus_session, &draft, &approved);
     let error = focus_session
         .record_focus_coverage(
             &draft,
@@ -399,13 +399,13 @@ fn hierarchy(approved: &ApprovedNoteSet) -> HierarchyDraft {
     draft
 }
 
-fn approve_all_note_maps_branches_and_focus(
+fn approve_all_note_maps_parents_and_focus(
     session: &mut HierarchyReviewSession,
     hierarchy: &HierarchyDraft,
     approved: &ApprovedNoteSet,
 ) {
     approve_all_note_maps(session, hierarchy, approved);
-    approve_all_branches(session, hierarchy, approved);
+    approve_all_parents(session, hierarchy, approved);
     session
         .record_focus_coverage(hierarchy, approved, approved_hierarchy_decision())
         .expect("approve focus-concentration coverage");
@@ -430,22 +430,22 @@ fn approve_all_note_maps(
     }
 }
 
-fn approve_all_branches(
+fn approve_all_parents(
     session: &mut HierarchyReviewSession,
     hierarchy: &HierarchyDraft,
     approved: &ApprovedNoteSet,
 ) {
-    while !session.all_branches_approved(hierarchy, approved) {
+    while !session.all_parents_approved(hierarchy, approved) {
         let target = session
             .reviewable_targets(hierarchy, approved)
-            .expect("list reviewable hierarchy branches")
+            .expect("list reviewable hierarchy parents")
             .into_iter()
             .next()
-            .expect("an incomplete hierarchy has a reviewable branch");
-        assert!(matches!(target, HierarchyReviewTarget::Branch { .. }));
+            .expect("an incomplete hierarchy has a reviewable parent");
+        assert!(matches!(target, HierarchyReviewTarget::Parent { .. }));
         session
             .record(hierarchy, approved, target, approved_hierarchy_decision())
-            .expect("approve hierarchy branch");
+            .expect("approve hierarchy parent");
     }
 }
 
@@ -454,7 +454,7 @@ fn approve_complete_hierarchy(
     hierarchy: &HierarchyDraft,
     approved: &ApprovedNoteSet,
 ) {
-    approve_all_note_maps_branches_and_focus(session, hierarchy, approved);
+    approve_all_note_maps_parents_and_focus(session, hierarchy, approved);
 }
 
 fn approved_hierarchy_decision() -> HierarchyReviewDecision {
@@ -552,7 +552,7 @@ fn hierarchy_allows_a_diffuse_note_without_a_central_membership() {
 }
 
 #[test]
-fn hierarchy_review_unlocks_branches_only_after_all_note_maps_are_approved() {
+fn hierarchy_review_unlocks_parents_only_after_all_note_maps_are_approved() {
     let approved = approved_notes();
     let hierarchy = hierarchy(&approved);
     let mut session =
@@ -584,15 +584,15 @@ fn hierarchy_review_unlocks_branches_only_after_all_note_maps_are_approved() {
         .record(
             &hierarchy,
             &approved,
-            HierarchyReviewTarget::Branch {
-                node_id: "technology".to_owned(),
+            HierarchyReviewTarget::Parent {
+                node_id: "all-subjects".to_owned(),
             },
             HierarchyReviewDecision {
                 outcome: ReviewOutcome::Approved,
                 comment: String::new(),
             },
         )
-        .expect_err("a branch cannot be judged before every note map");
+        .expect_err("a parent cannot be judged before every note map");
     assert!(
         error.to_string().contains("not currently reviewable"),
         "{error}"
@@ -602,12 +602,15 @@ fn hierarchy_review_unlocks_branches_only_after_all_note_maps_are_approved() {
     assert_eq!(
         session
             .reviewable_targets(&hierarchy, &approved)
-            .expect("list root branches"),
+            .expect("list parents"),
         vec![
-            HierarchyReviewTarget::Branch {
+            HierarchyReviewTarget::Parent {
+                node_id: "all-subjects".to_owned(),
+            },
+            HierarchyReviewTarget::Parent {
                 node_id: "technology".to_owned(),
             },
-            HierarchyReviewTarget::Branch {
+            HierarchyReviewTarget::Parent {
                 node_id: "life".to_owned(),
             },
         ]
@@ -621,17 +624,17 @@ fn hierarchy_review_unlocks_branches_only_after_all_note_maps_are_approved() {
                 comment: String::new(),
             },
         )
-        .expect_err("coverage remains locked until every branch is approved");
+        .expect_err("coverage remains locked until every parent is approved");
     assert!(
         error
             .to_string()
-            .contains("every note map and hierarchy branch"),
+            .contains("every note map and hierarchy parent"),
         "{error}"
     );
 }
 
 #[test]
-fn hierarchy_review_orders_note_maps_then_root_branches() {
+fn hierarchy_review_orders_note_maps_then_parents() {
     let approved = approved_notes();
     let hierarchy = hierarchy(&approved);
     let mut session =
@@ -655,21 +658,24 @@ fn hierarchy_review_orders_note_maps_then_root_branches() {
     assert_eq!(
         session
             .reviewable_targets(&hierarchy, &approved)
-            .expect("list root branches"),
+            .expect("list hierarchy parents"),
         vec![
-            HierarchyReviewTarget::Branch {
+            HierarchyReviewTarget::Parent {
+                node_id: "all-subjects".to_owned(),
+            },
+            HierarchyReviewTarget::Parent {
                 node_id: "technology".to_owned(),
             },
-            HierarchyReviewTarget::Branch {
+            HierarchyReviewTarget::Parent {
                 node_id: "life".to_owned(),
             },
         ],
-        "branch reviews follow hidden-root child order"
+        "parent reviews follow navigation order"
     );
 }
 
 #[test]
-fn rejected_branch_keeps_its_sibling_reviewable_but_blocks_coverage() {
+fn rejected_parent_keeps_other_parents_reviewable_but_blocks_coverage() {
     let approved = approved_notes();
     let hierarchy = hierarchy(&approved);
     let mut session =
@@ -680,55 +686,70 @@ fn rejected_branch_keeps_its_sibling_reviewable_but_blocks_coverage() {
         .record(
             &hierarchy,
             &approved,
-            HierarchyReviewTarget::Branch {
-                node_id: "technology".to_owned(),
+            HierarchyReviewTarget::Parent {
+                node_id: "all-subjects".to_owned(),
             },
             HierarchyReviewDecision {
                 outcome: ReviewOutcome::Rejected,
-                comment: "Item 2 does not belong under this branch.".to_owned(),
+                comment: "Item 2 does not belong under this parent.".to_owned(),
             },
         )
-        .expect("reject one branch");
+        .expect("reject one parent");
     assert_eq!(
         session
             .reviewable_targets(&hierarchy, &approved)
-            .expect("list sibling branch after rejection"),
-        vec![HierarchyReviewTarget::Branch {
-            node_id: "life".to_owned(),
-        }],
-        "one rejected branch must not suppress its undecided sibling"
+            .expect("list other parents after rejection"),
+        vec![
+            HierarchyReviewTarget::Parent {
+                node_id: "technology".to_owned(),
+            },
+            HierarchyReviewTarget::Parent {
+                node_id: "life".to_owned(),
+            },
+        ],
+        "one rejected parent must not suppress undecided parents"
     );
 
     session
         .record(
             &hierarchy,
             &approved,
-            HierarchyReviewTarget::Branch {
+            HierarchyReviewTarget::Parent {
+                node_id: "technology".to_owned(),
+            },
+            approved_hierarchy_decision(),
+        )
+        .expect("approve the next parent");
+    session
+        .record(
+            &hierarchy,
+            &approved,
+            HierarchyReviewTarget::Parent {
                 node_id: "life".to_owned(),
             },
             approved_hierarchy_decision(),
         )
-        .expect("approve the sibling branch");
+        .expect("approve the final parent");
     assert!(
         session
             .reviewable_targets(&hierarchy, &approved)
-            .expect("list targets after both branch decisions")
+            .expect("list targets after every parent decision")
             .is_empty(),
-        "a rejected branch blocks the final coverage check"
+        "a rejected parent blocks the final coverage check"
     );
     let error = session
         .record_focus_coverage(&hierarchy, &approved, approved_hierarchy_decision())
-        .expect_err("coverage cannot approve a rejected branch");
+        .expect_err("coverage cannot approve a rejected parent");
     assert!(
         error
             .to_string()
-            .contains("every note map and hierarchy branch"),
+            .contains("every note map and hierarchy parent"),
         "{error}"
     );
 }
 
 #[test]
-fn rejected_note_map_keeps_other_notes_reviewable_but_blocks_branches() {
+fn rejected_note_map_keeps_other_notes_reviewable_but_blocks_parents() {
     let approved = approved_notes();
     let hierarchy = hierarchy(&approved);
     let mut session =
@@ -766,18 +787,18 @@ fn rejected_note_map_keeps_other_notes_reviewable_but_blocks_branches() {
             .reviewable_targets(&hierarchy, &approved)
             .expect("list targets after all note-map decisions")
             .is_empty(),
-        "a rejected note map blocks branch review after the remaining notes are gathered"
+        "a rejected note map blocks parent review after the remaining notes are gathered"
     );
     assert_eq!(
         session
             .decision_counts(&hierarchy, &approved)
             .expect("count grouped decisions"),
-        (REFERENCE_NOTE_COUNT - 1, 1, REFERENCE_NOTE_COUNT + 3,)
+        (REFERENCE_NOTE_COUNT - 1, 1, REFERENCE_NOTE_COUNT + 4,)
     );
 }
 
 #[test]
-fn changed_leaf_identifier_preserves_note_assignments_but_reopens_its_root_branch() {
+fn changed_leaf_identifier_preserves_note_assignments_but_reopens_its_parent() {
     let approved = approved_notes();
     let hierarchy = hierarchy(&approved);
     let mut session =
@@ -796,7 +817,7 @@ fn changed_leaf_identifier_preserves_note_assignments_but_reopens_its_root_branc
         .nodes
         .iter_mut()
         .find(|node| node.node_id == "technology")
-        .expect("technology branch");
+        .expect("technology parent");
     let software_child = technology
         .children
         .iter_mut()
@@ -820,14 +841,21 @@ fn changed_leaf_identifier_preserves_note_assignments_but_reopens_its_root_branc
     assert!(!session.is_approved(
         &revised,
         &approved,
-        &HierarchyReviewTarget::Branch {
+        &HierarchyReviewTarget::Parent {
             node_id: "technology".to_owned(),
         }
     ));
     assert!(session.is_approved(
         &revised,
         &approved,
-        &HierarchyReviewTarget::Branch {
+        &HierarchyReviewTarget::Parent {
+            node_id: "all-subjects".to_owned(),
+        }
+    ));
+    assert!(session.is_approved(
+        &revised,
+        &approved,
+        &HierarchyReviewTarget::Parent {
             node_id: "life".to_owned(),
         }
     ));
@@ -837,10 +865,10 @@ fn changed_leaf_identifier_preserves_note_assignments_but_reopens_its_root_branc
     );
     let next_targets = session
         .reviewable_targets(&revised, &approved)
-        .expect("list reopened branch");
+        .expect("list reopened parent");
     assert_eq!(
         next_targets,
-        vec![HierarchyReviewTarget::Branch {
+        vec![HierarchyReviewTarget::Parent {
             node_id: "technology".to_owned(),
         }]
     );
@@ -880,7 +908,7 @@ fn note_map_revision_matches_only_the_displayed_v2_evidence() {
 }
 
 #[test]
-fn changed_membership_invalidates_its_note_map_and_focus_but_not_branches() {
+fn changed_membership_invalidates_its_note_map_and_focus_but_not_parents() {
     let approved = approved_notes();
     let hierarchy = hierarchy(&approved);
     let mut session =
@@ -916,11 +944,11 @@ fn changed_membership_invalidates_its_note_map_and_focus_but_not_branches() {
             note_id: approved.notes[1].note_id.clone(),
         }
     ));
-    for node_id in ["technology", "life"] {
+    for node_id in ["all-subjects", "technology", "life"] {
         assert!(session.is_approved(
             &revised,
             &approved,
-            &HierarchyReviewTarget::Branch {
+            &HierarchyReviewTarget::Parent {
                 node_id: node_id.to_owned(),
             }
         ));
@@ -950,10 +978,31 @@ fn changed_leaf_label_invalidates_the_displayed_coverage_summary() {
         !session.focus_coverage_is_approved(&revised, &approved),
         "the final summary visibly contains subject labels"
     );
+    assert!(session.is_approved(
+        &revised,
+        &approved,
+        &HierarchyReviewTarget::Parent {
+            node_id: "all-subjects".to_owned(),
+        }
+    ));
+    assert!(session.is_approved(
+        &revised,
+        &approved,
+        &HierarchyReviewTarget::Parent {
+            node_id: "technology".to_owned(),
+        }
+    ));
+    assert!(!session.is_approved(
+        &revised,
+        &approved,
+        &HierarchyReviewTarget::Parent {
+            node_id: "life".to_owned(),
+        }
+    ));
 }
 
 #[test]
-fn changed_parent_label_preserves_note_maps_and_focus_but_reopens_its_branch() {
+fn changed_parent_label_reopens_its_own_and_its_parent_review() {
     let approved = approved_notes();
     let hierarchy = hierarchy(&approved);
     let mut session =
@@ -983,15 +1032,20 @@ fn changed_parent_label_preserves_note_maps_and_focus_but_reopens_its_branch() {
     assert_eq!(
         session
             .reviewable_targets(&revised, &approved)
-            .expect("list reopened branch"),
-        vec![HierarchyReviewTarget::Branch {
-            node_id: "technology".to_owned(),
-        }]
+            .expect("list reopened parent reviews"),
+        vec![
+            HierarchyReviewTarget::Parent {
+                node_id: "all-subjects".to_owned(),
+            },
+            HierarchyReviewTarget::Parent {
+                node_id: "technology".to_owned(),
+            },
+        ]
     );
     assert!(session.is_approved(
         &revised,
         &approved,
-        &HierarchyReviewTarget::Branch {
+        &HierarchyReviewTarget::Parent {
             node_id: "life".to_owned(),
         }
     ));
@@ -1004,7 +1058,7 @@ fn rejected_focus_coverage_blocks_grouped_publication() {
     let mut session =
         HierarchyReviewSession::new(&hierarchy, &approved).expect("create hierarchy session");
     approve_all_note_maps(&mut session, &hierarchy, &approved);
-    approve_all_branches(&mut session, &hierarchy, &approved);
+    approve_all_parents(&mut session, &hierarchy, &approved);
     session
         .record_focus_coverage(
             &hierarchy,
@@ -1030,7 +1084,7 @@ fn rejected_focus_coverage_blocks_grouped_publication() {
 }
 
 #[test]
-fn hierarchy_publication_requires_each_current_root_branch() {
+fn hierarchy_publication_requires_each_current_parent() {
     let approved = approved_notes();
     let hierarchy = hierarchy(&approved);
     let mut session =
@@ -1040,35 +1094,50 @@ fn hierarchy_publication_requires_each_current_root_branch() {
         .record(
             &hierarchy,
             &approved,
-            HierarchyReviewTarget::Branch {
-                node_id: "technology".to_owned(),
+            HierarchyReviewTarget::Parent {
+                node_id: "all-subjects".to_owned(),
             },
             approved_hierarchy_decision(),
         )
-        .expect("approve first root branch");
+        .expect("approve top-level parent");
     assert_eq!(
         session
             .reviewable_targets(&hierarchy, &approved)
-            .expect("list remaining root branch"),
-        vec![HierarchyReviewTarget::Branch {
-            node_id: "life".to_owned(),
-        }]
+            .expect("list remaining parents"),
+        vec![
+            HierarchyReviewTarget::Parent {
+                node_id: "technology".to_owned(),
+            },
+            HierarchyReviewTarget::Parent {
+                node_id: "life".to_owned(),
+            },
+        ]
     );
     let error = session
         .record_focus_coverage(&hierarchy, &approved, approved_hierarchy_decision())
-        .expect_err("coverage cannot bypass an unapproved root branch");
-    assert!(error.to_string().contains("hierarchy branch"), "{error}");
+        .expect_err("coverage cannot bypass an unapproved parent");
+    assert!(error.to_string().contains("hierarchy parent"), "{error}");
 
     session
         .record(
             &hierarchy,
             &approved,
-            HierarchyReviewTarget::Branch {
+            HierarchyReviewTarget::Parent {
+                node_id: "technology".to_owned(),
+            },
+            approved_hierarchy_decision(),
+        )
+        .expect("approve technology parent");
+    session
+        .record(
+            &hierarchy,
+            &approved,
+            HierarchyReviewTarget::Parent {
                 node_id: "life".to_owned(),
             },
             approved_hierarchy_decision(),
         )
-        .expect("approve final root branch");
+        .expect("approve final parent");
     session
         .record_focus_coverage(&hierarchy, &approved, approved_hierarchy_decision())
         .expect("approve final coverage check");
@@ -1079,7 +1148,7 @@ fn hierarchy_publication_requires_each_current_root_branch() {
 }
 
 #[test]
-fn changing_hidden_root_metadata_preserves_root_branch_approvals() {
+fn changing_hidden_root_order_reopens_only_the_top_level_review() {
     let approved = approved_notes();
     let hierarchy = hierarchy(&approved);
     let mut session =
@@ -1099,24 +1168,27 @@ fn changing_hidden_root_metadata_preserves_root_branch_approvals() {
         .validate(&approved)
         .expect("hidden-root definition may change structurally");
 
-    for child_id in ["technology", "life"] {
+    for parent_id in ["technology", "life"] {
         assert!(
             session.is_approved(
                 &revised,
                 &approved,
-                &HierarchyReviewTarget::Branch {
-                    node_id: child_id.to_owned(),
+                &HierarchyReviewTarget::Parent {
+                    node_id: parent_id.to_owned(),
                 }
             ),
-            "changing unseen root metadata or ordering must not invalidate {child_id}'s visible branch"
+            "changing the top-level order must not invalidate {parent_id}'s child list"
         );
     }
-    assert!(
-        session.review_is_complete(&revised, &approved),
-        "the hidden root has no review screen of its own"
+    assert_eq!(
+        session
+            .reviewable_targets(&revised, &approved)
+            .expect("list reopened top-level review"),
+        vec![HierarchyReviewTarget::Parent {
+            node_id: "all-subjects".to_owned(),
+        }]
     );
-    ApprovedHierarchy::from_review(&revised, &approved, &session)
-        .expect("publish after changing only unseen hidden-root fields");
+    assert!(!session.review_is_complete(&revised, &approved));
 }
 
 fn frozen_hierarchy() -> ApprovedHierarchy {
@@ -1245,6 +1317,20 @@ struct LegacyFocusCoverageRecordFixture {
     decision: HierarchyReviewDecision,
 }
 
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+struct AtomicHierarchyRecordFixture {
+    target: HierarchyReviewTarget,
+    target_revision_sha256: String,
+    decision: HierarchyReviewDecision,
+}
+
+#[derive(serde::Serialize)]
+struct GroupedHierarchySessionFixture {
+    schema_version: u32,
+    history: Vec<AtomicHierarchyRecordFixture>,
+    focus_coverage_history: Vec<LegacyFocusCoverageRecordFixture>,
+}
+
 fn sha256(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
 }
@@ -1342,7 +1428,7 @@ fn hierarchy_runner_reviews_one_note_map_per_action() {
 }
 
 #[test]
-fn hierarchy_runner_opens_first_root_branch_after_all_note_maps() {
+fn hierarchy_runner_opens_top_level_parent_after_all_note_maps() {
     let temp = tempfile::tempdir().expect("tempdir");
     let notes = approved_notes();
     let draft = hierarchy(&notes);
@@ -1367,18 +1453,16 @@ fn hierarchy_runner_opens_first_root_branch_after_all_note_maps() {
         .expect("approve every note map, then pause"),
         ReviewRunOutcome::Paused
     );
-    let branch = ui.screens.last().expect("first root branch screen");
-    assert_eq!(branch.title, "Technology");
-    assert_eq!(
-        branch.scope,
-        "Is any subject title unclear, or is any subject under the wrong parent?"
-    );
-    assert_eq!(branch.approve_label, "No problems");
-    assert_eq!(branch.reject_label, "Describe a problem");
+    let parent = ui.screens.last().expect("top-level parent screen");
+    assert_eq!(parent.title, "Top-level subjects");
+    assert_eq!(parent.scope, "Are these immediate child subjects correct?");
+    assert_eq!(parent.approve_label, "No problems");
+    assert_eq!(parent.reject_label, "Describe a problem");
+    assert_eq!(parent.evidence[0].body, "[1] Technology\n[2] Everyday life");
 }
 
 #[test]
-fn hierarchy_runner_reviews_a_complete_root_branch_once() {
+fn hierarchy_runner_reviews_one_parent_level_at_a_time() {
     let temp = tempfile::tempdir().expect("tempdir");
     let notes = approved_notes();
     let draft = hierarchy(&notes);
@@ -1400,57 +1484,55 @@ fn hierarchy_runner_reviews_a_complete_root_branch_once() {
             temp.path().join("approved-hierarchy.json"),
             &mut ui,
         )
-        .expect("approve the first complete branch, then pause"),
+        .expect("approve the top-level choices, then pause"),
         ReviewRunOutcome::Paused
     );
-    let technology = &ui.screens[REFERENCE_NOTE_COUNT];
+    let top_level = &ui.screens[REFERENCE_NOTE_COUNT];
     assert_eq!(
-        technology.heading,
-        "Hierarchy review · Branch 1 of 2 · 48 note maps approved"
+        top_level.heading,
+        "Hierarchy review · Parent 1 of 3 · 48 note maps approved"
     );
-    assert_eq!(technology.title, "Technology");
+    assert_eq!(top_level.title, "Top-level subjects");
     assert_eq!(
-        technology.scope,
-        "Is any subject title unclear, or is any subject under the wrong parent?"
+        top_level.scope,
+        "Are these immediate child subjects correct?"
     );
-    assert_eq!(technology.approve_label, "No problems");
-    assert_eq!(technology.reject_label, "Describe a problem");
+    assert_eq!(top_level.approve_label, "No problems");
+    assert_eq!(top_level.reject_label, "Describe a problem");
     assert_eq!(
-        technology.rejection_help,
+        top_level.rejection_help,
         "Examples:\n\
-         [02] Title is unclear.\n\
-         [03] Does not belong under [01].\n\
-         Missing \"Expected subject\" under [01]."
+         [2] Title is unclear.\n\
+         [3] Does not belong under this parent.\n\
+         Missing \"Expected subject\"."
     );
-    assert_eq!(technology.evidence.len(), 1);
-    assert_eq!(technology.evidence[0].title, "Branch tree · 3 subjects");
+    assert_eq!(top_level.evidence.len(), 1);
+    assert_eq!(top_level.evidence[0].title, "Children · 2 subjects");
     assert_eq!(
-        technology.evidence[0].annotation,
-        "Approving accepts every displayed title and parent–child relationship.\n\
+        top_level.evidence[0].annotation,
+        "Approving accepts these titles, their order, and their direct placement under this parent.\n\
          Use the numbers when describing a problem."
     );
-    assert!(technology
+    assert!(top_level
         .guidance
         .as_ref()
-        .expect("branch decision is explained")
+        .expect("parent decision is explained")
         .body
-        .contains(
-            "Approving accepts every displayed subject title and parent–child relationship."
-        ));
-    let branch = &technology.evidence[0].body;
+        .contains("Only this one level is being reviewed."));
     assert_eq!(
-        branch, "[01] Technology\n├─ [02] Software\n└─ [03] Hardware",
-        "branch review must show only subject titles and indentation"
+        top_level.evidence[0].body,
+        "[1] Technology\n[2] Everyday life"
     );
+    let technology = &ui.screens[REFERENCE_NOTE_COUNT + 1];
     assert_eq!(
-        ui.screens[REFERENCE_NOTE_COUNT + 1].title,
-        "Everyday life",
-        "one branch approval advances directly to the next root branch"
+        technology.title, "Technology",
+        "one parent approval advances to the next internal parent"
     );
+    assert_eq!(technology.evidence[0].body, "[1] Software\n[2] Hardware");
 }
 
 #[test]
-fn hierarchy_runner_migrates_only_empty_prior_sessions_to_schema_four() {
+fn hierarchy_runner_migrates_empty_prior_sessions_to_schema_five() {
     let temp = tempfile::tempdir().expect("tempdir");
     let notes = approved_notes();
     let draft = hierarchy(&notes);
@@ -1488,13 +1570,121 @@ fn hierarchy_runner_migrates_only_empty_prior_sessions_to_schema_four() {
         let migrated: serde_json::Value =
             serde_json::from_slice(&fs::read(&session_path).expect("read migrated session"))
                 .expect("decode migrated session");
-        assert_eq!(migrated["session"]["schema_version"], 4);
+        assert_eq!(migrated["session"]["schema_version"], 5);
         assert_eq!(migrated["session"]["history"], serde_json::json!([]));
         assert_eq!(
             migrated["session"]["focus_coverage_history"],
             serde_json::json!([])
         );
     }
+}
+
+#[test]
+fn hierarchy_runner_migrates_schema_four_note_maps_without_repeating_them() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    let notes = approved_notes();
+    let draft = hierarchy(&notes);
+    let notes_path = temp.path().join("approved-notes.json");
+    let draft_path = temp.path().join("hierarchy-draft.json");
+    let session_path = temp.path().join("hierarchy-session.json");
+    write_json(&notes_path, &notes);
+    write_json(&draft_path, &draft);
+
+    let mut initial_actions = (0..REFERENCE_NOTE_COUNT)
+        .map(|_| approve_action())
+        .collect::<Vec<_>>();
+    initial_actions.push(ApprovalTuiAction::Pause);
+    let mut initial_ui = ScriptedUi::new(initial_actions);
+    run_hierarchy_review(
+        &notes_path,
+        &draft_path,
+        &session_path,
+        temp.path().join("unused-approved-hierarchy.json"),
+        &mut initial_ui,
+    )
+    .expect("record all note-map approvals");
+
+    let envelope: serde_json::Value =
+        serde_json::from_slice(&fs::read(&session_path).expect("read schema-five session"))
+            .expect("decode schema-five session");
+    let prior_history: Vec<AtomicHierarchyRecordFixture> =
+        serde_json::from_value(envelope["session"]["history"].clone())
+            .expect("decode schema-five note-map history");
+    write_review_session_value(
+        &session_path,
+        &GroupedHierarchySessionFixture {
+            schema_version: 4,
+            history: prior_history.clone(),
+            focus_coverage_history: Vec::new(),
+        },
+    );
+
+    let mut resumed_ui = ScriptedUi::new([ApprovalTuiAction::Pause]);
+    assert_eq!(
+        run_hierarchy_review(
+            &notes_path,
+            &draft_path,
+            &session_path,
+            temp.path().join("approved-hierarchy.json"),
+            &mut resumed_ui,
+        )
+        .expect("migrate note-only schema-four session"),
+        ReviewRunOutcome::Paused
+    );
+    assert_eq!(resumed_ui.screens.len(), 1);
+    assert_eq!(resumed_ui.screens[0].title, "Top-level subjects");
+
+    let migrated: serde_json::Value =
+        serde_json::from_slice(&fs::read(&session_path).expect("read migrated session"))
+            .expect("decode migrated session");
+    assert_eq!(migrated["session"]["schema_version"], 5);
+    assert_eq!(
+        migrated["session"]["history"],
+        serde_json::to_value(prior_history).expect("encode prior history")
+    );
+}
+
+#[test]
+fn hierarchy_runner_refuses_schema_four_branch_approvals() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    let notes = approved_notes();
+    let draft = hierarchy(&notes);
+    let notes_path = temp.path().join("approved-notes.json");
+    let draft_path = temp.path().join("hierarchy-draft.json");
+    let session_path = temp.path().join("hierarchy-session.json");
+    write_json(&notes_path, &notes);
+    write_json(&draft_path, &draft);
+    write_review_session_value(
+        &session_path,
+        &GroupedHierarchySessionFixture {
+            schema_version: 4,
+            history: vec![AtomicHierarchyRecordFixture {
+                target: HierarchyReviewTarget::Branch {
+                    node_id: "technology".to_owned(),
+                },
+                target_revision_sha256: "0".repeat(64),
+                decision: approved_hierarchy_decision(),
+            }],
+            focus_coverage_history: Vec::new(),
+        },
+    );
+
+    let mut ui = ScriptedUi::new([]);
+    let error = run_hierarchy_review(
+        &notes_path,
+        &draft_path,
+        &session_path,
+        temp.path().join("approved-hierarchy.json"),
+        &mut ui,
+    )
+    .expect_err("a whole-branch approval cannot become a parent approval");
+    assert!(
+        error
+            .to_string()
+            .contains("cannot be reinterpreted as parent reviews"),
+        "{error}"
+    );
+    assert!(ui.screens.is_empty());
 }
 
 #[test]
@@ -1559,7 +1749,7 @@ fn hierarchy_runner_refuses_nonempty_prior_review_state() {
         assert!(
             error
                 .to_string()
-                .contains("cannot be reinterpreted as note-map and branch reviews"),
+                .contains("cannot be reinterpreted as note-map and parent reviews"),
             "{name}: {error}"
         );
         assert!(
@@ -1709,7 +1899,7 @@ fn note_review_runner_rejects_content_not_present_in_its_bound_source() {
 }
 
 #[test]
-fn hierarchy_runner_reviews_each_note_once_then_each_root_branch_once_then_coverage() {
+fn hierarchy_runner_reviews_each_note_then_each_parent_then_coverage() {
     let temp = tempfile::tempdir().expect("tempdir");
     let notes = approved_notes();
     let draft = hierarchy(&notes);
@@ -1720,8 +1910,12 @@ fn hierarchy_runner_reviews_each_note_once_then_each_root_branch_once_then_cover
     write_json(&notes_path, &notes);
     write_json(&draft_path, &draft);
 
-    let root = draft.node(&draft.root_node_id).expect("hidden root");
-    let decision_count = notes.notes.len() + root.children.len() + 1;
+    let parent_count = draft
+        .nodes
+        .iter()
+        .filter(|node| !node.children.is_empty())
+        .count();
+    let decision_count = notes.notes.len() + parent_count + 1;
     let mut ui = ScriptedUi::new((0..decision_count).map(|_| approve_action()));
     assert_eq!(
         run_hierarchy_review(
@@ -1759,36 +1953,40 @@ fn hierarchy_runner_reviews_each_note_once_then_each_root_branch_once_then_cover
         .contains("Food — Substantive"));
 
     assert_eq!(
-        ui.screens[REFERENCE_NOTE_COUNT..REFERENCE_NOTE_COUNT + 2]
+        ui.screens[REFERENCE_NOTE_COUNT..REFERENCE_NOTE_COUNT + 3]
             .iter()
             .map(|screen| screen.title.as_str())
             .collect::<Vec<_>>(),
-        vec!["Technology", "Everyday life"],
-        "each top-level branch is loaded once"
+        vec!["Top-level subjects", "Technology", "Everyday life"],
+        "each internal parent is loaded once in navigation order"
     );
     assert_eq!(
-        ui.screens[REFERENCE_NOTE_COUNT + 2].title,
+        ui.screens[REFERENCE_NOTE_COUNT + 3].title,
         "Focus-concentration coverage"
     );
     assert!(
         ui.screens[..REFERENCE_NOTE_COUNT]
             .iter()
-            .all(|screen| screen.heading.contains("51 total")),
+            .all(|screen| screen.heading.contains("52 total")),
         "note-map review retains the complete interaction count"
     );
     assert_eq!(
         ui.screens[REFERENCE_NOTE_COUNT].heading,
-        "Hierarchy review · Branch 1 of 2 · 48 note maps approved"
+        "Hierarchy review · Parent 1 of 3 · 48 note maps approved"
     );
     assert_eq!(
         ui.screens[REFERENCE_NOTE_COUNT + 1].heading,
-        "Hierarchy review · Branch 2 of 2 · 48 note maps approved"
+        "Hierarchy review · Parent 2 of 3 · 48 note maps approved"
+    );
+    assert_eq!(
+        ui.screens[REFERENCE_NOTE_COUNT + 2].heading,
+        "Hierarchy review · Parent 3 of 3 · 48 note maps approved"
     );
     assert!(approved_path.is_file());
 }
 
 #[test]
-fn hierarchy_runner_audits_focus_coverage_after_note_maps_and_branches() {
+fn hierarchy_runner_audits_focus_coverage_after_note_maps_and_parents() {
     let temp = tempfile::tempdir().expect("tempdir");
     let notes = approved_notes();
     let draft = hierarchy(&notes);
@@ -1799,7 +1997,7 @@ fn hierarchy_runner_audits_focus_coverage_after_note_maps_and_branches() {
     write_json(&notes_path, &notes);
     write_json(&draft_path, &draft);
 
-    let decisions_before_coverage = REFERENCE_NOTE_COUNT + 2;
+    let decisions_before_coverage = REFERENCE_NOTE_COUNT + 3;
     let mut actions = (0..decisions_before_coverage)
         .map(|_| ApprovalTuiAction::Submit {
             outcome: ReviewOutcome::Approved,
@@ -2207,8 +2405,8 @@ fn tracked_crec_116_draft_uses_independent_overlapping_subjects() {
             .decision_counts(&draft, &approved)
             .expect("count tracked review decisions")
             .2,
-        57,
-        "the tracked review is 48 note maps, 8 root branches, and one coverage check"
+        73,
+        "the tracked review is 48 note maps, 24 internal parents, and one coverage check"
     );
 
     let memberships = draft
@@ -2821,14 +3019,21 @@ fn changed_note_evidence_invalidates_only_its_note_map() {
     assert!(session.is_approved(
         &revised_draft,
         &revised_notes,
-        &HierarchyReviewTarget::Branch {
+        &HierarchyReviewTarget::Parent {
+            node_id: "all-subjects".to_owned(),
+        }
+    ));
+    assert!(session.is_approved(
+        &revised_draft,
+        &revised_notes,
+        &HierarchyReviewTarget::Parent {
             node_id: "technology".to_owned(),
         }
     ));
     assert!(session.is_approved(
         &revised_draft,
         &revised_notes,
-        &HierarchyReviewTarget::Branch {
+        &HierarchyReviewTarget::Parent {
             node_id: "life".to_owned(),
         }
     ));
@@ -2838,7 +3043,7 @@ fn changed_note_evidence_invalidates_only_its_note_map() {
     );
     assert!(
         !session.review_is_complete(&revised_draft, &revised_notes),
-        "preserved branch decisions must not hide an invalidated note map"
+        "preserved parent decisions must not hide an invalidated note map"
     );
 }
 

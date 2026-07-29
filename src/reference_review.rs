@@ -302,7 +302,7 @@ pub fn run_hierarchy_review(
         }
 
         if session.all_note_maps_approved(&draft, &approved_notes)
-            && session.all_branches_approved(&draft, &approved_notes)
+            && session.all_parents_approved(&draft, &approved_notes)
             && session
                 .current_focus_coverage_decision(&draft, &approved_notes)
                 .is_none()
@@ -562,70 +562,76 @@ fn hierarchy_target_screen(
                 evidence_layout: ApprovalEvidenceLayout::Stacked,
             })
         }
-        HierarchyReviewTarget::Branch { node_id } => {
-            let branch = draft.node(node_id).ok_or_else(|| {
-                Error::ExperimentState(format!("hierarchy branch {node_id} is missing"))
+        HierarchyReviewTarget::Parent { node_id } => {
+            let parent = draft.node(node_id).ok_or_else(|| {
+                Error::ExperimentState(format!("hierarchy parent {node_id} is missing"))
             })?;
-            let root = draft.node(draft.root_node_id.as_str()).ok_or_else(|| {
-                Error::ExperimentState("hierarchy hidden root is missing".to_owned())
-            })?;
-            let branch_index = root
-                .children
+            let parent_targets = HierarchyReviewSession::parent_targets(draft);
+            let parent_index = parent_targets
                 .iter()
-                .position(|child_id| child_id == node_id)
+                .position(|target| {
+                    target
+                        == &HierarchyReviewTarget::Parent {
+                            node_id: node_id.clone(),
+                        }
+                })
                 .ok_or_else(|| {
                     Error::ExperimentState(format!(
-                        "hierarchy branch {node_id} is not a root branch"
+                        "hierarchy parent {node_id} has no review target"
                     ))
                 })?
                 + 1;
-            let (branch_tree, subject_count) = format_hierarchy_branch(draft, node_id)?;
+            let child_list = format_immediate_children(draft, node_id)?;
+            let child_count = parent.children.len();
             Ok(ApprovalScreen {
                 heading: format!(
-                    "Hierarchy review · Branch {branch_index} of {} · {} note maps approved",
-                    root.children.len(),
+                    "Hierarchy review · Parent {parent_index} of {} · {} note maps approved",
+                    parent_targets.len(),
                     approved_notes.notes.len()
                 ),
-                title: branch.label.clone(),
-                scope:
-                    "Is any subject title unclear, or is any subject under the wrong parent?"
-                        .to_owned(),
+                title: if node_id == &draft.root_node_id {
+                    "Top-level subjects".to_owned()
+                } else {
+                    parent.label.clone()
+                },
+                scope: "Are these immediate child subjects correct?".to_owned(),
                 approve_label: "No problems".to_owned(),
                 reject_label: "Describe a problem".to_owned(),
                 rejection_help: "Examples:\n\
-                                 [02] Title is unclear.\n\
-                                 [03] Does not belong under [01].\n\
-                                 Missing \"Expected subject\" under [01]."
+                                 [2] Title is unclear.\n\
+                                 [3] Does not belong under this parent.\n\
+                                 Missing \"Expected subject\"."
                     .to_owned(),
                 guidance: Some(ApprovalGuidance {
-                    title: "Branch review".to_owned(),
-                    body: "Approving accepts every displayed subject title and parent–child relationship.\n\n\
-                           The numbered, indented list is the complete branch.\n\n\
+                    title: "Parent review".to_owned(),
+                    body: "Approving accepts the displayed child titles, their order, and their direct placement under this parent.\n\n\
+                           Only this one level is being reviewed.\n\n\
                            Reject when:\n\n\
-                           • A subject title is unclear or combines unrelated meanings.\n\
-                           • A child does not genuinely belong under its parent.\n\
-                           • A necessary subject or relationship is missing.\n\n\
-                           Name the numbered item or relationship. For something missing, describe it and where it belongs."
+                           • A child title is unclear or combines unrelated meanings.\n\
+                           • A child does not genuinely belong under this parent.\n\
+                           • A necessary immediate child is missing.\n\n\
+                           Name the numbered child. For something missing, name it."
                         .to_owned(),
                 }),
                 evidence: vec![ApprovalEvidence {
                     title: format!(
-                        "Branch tree · {subject_count} subject{}",
-                        if subject_count == 1 { "" } else { "s" }
+                        "Children · {child_count} subject{}",
+                        if child_count == 1 { "" } else { "s" }
                     ),
                     annotation:
-                        "Approving accepts every displayed title and parent–child relationship.\n\
+                        "Approving accepts these titles, their order, and their direct placement under this parent.\n\
                          Use the numbers when describing a problem."
                             .to_owned(),
-                    body: branch_tree,
+                    body: child_list,
                 }],
                 evidence_layout: ApprovalEvidenceLayout::Paged,
             })
         }
-        HierarchyReviewTarget::Membership { .. }
+        HierarchyReviewTarget::Branch { .. }
+        | HierarchyReviewTarget::Membership { .. }
         | HierarchyReviewTarget::Subject { .. }
         | HierarchyReviewTarget::ParentChild { .. } => Err(Error::ExperimentState(
-            "a legacy atomic hierarchy target reached the grouped review UI".to_owned(),
+            "a legacy hierarchy target reached the parent review UI".to_owned(),
         )),
     }
 }
@@ -665,47 +671,22 @@ fn format_note_assignments(
         .join("\n")
 }
 
-fn format_hierarchy_branch(draft: &HierarchyDraft, node_id: &str) -> Result<(String, usize)> {
-    let mut lines = Vec::new();
-    let mut number = 1;
-    append_hierarchy_branch(draft, node_id, "", None, &mut number, &mut lines)?;
-    Ok((lines.join("\n"), number - 1))
-}
-
-fn append_hierarchy_branch(
-    draft: &HierarchyDraft,
-    node_id: &str,
-    prefix: &str,
-    is_last: Option<bool>,
-    number: &mut usize,
-    lines: &mut Vec<String>,
-) -> Result<()> {
-    let node = draft
+fn format_immediate_children(draft: &HierarchyDraft, node_id: &str) -> Result<String> {
+    let parent = draft
         .node(node_id)
-        .ok_or_else(|| Error::ExperimentState(format!("hierarchy subject {node_id} is missing")))?;
-    let connector = match is_last {
-        None => "",
-        Some(false) => "├─ ",
-        Some(true) => "└─ ",
-    };
-    lines.push(format!("{prefix}{connector}[{number:02}] {}", node.label));
-    *number += 1;
-    let child_prefix = match is_last {
-        None => prefix.to_owned(),
-        Some(false) => format!("{prefix}│  "),
-        Some(true) => format!("{prefix}   "),
-    };
-    for (index, child_id) in node.children.iter().enumerate() {
-        append_hierarchy_branch(
-            draft,
-            child_id,
-            child_prefix.as_str(),
-            Some(index + 1 == node.children.len()),
-            number,
-            lines,
-        )?;
-    }
-    Ok(())
+        .ok_or_else(|| Error::ExperimentState(format!("hierarchy parent {node_id} is missing")))?;
+    parent
+        .children
+        .iter()
+        .enumerate()
+        .map(|(index, child_id)| {
+            let child = draft.node(child_id).ok_or_else(|| {
+                Error::ExperimentState(format!("hierarchy child {child_id} is missing"))
+            })?;
+            Ok(format!("[{}] {}", index + 1, child.label))
+        })
+        .collect::<Result<Vec<_>>>()
+        .map(|lines| lines.join("\n"))
 }
 
 fn focus_coverage_guidance() -> ApprovalGuidance {
