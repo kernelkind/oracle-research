@@ -3003,6 +3003,21 @@ fn tracked_crec_116_hierarchy_applies_the_approved_parent_corrections() {
         ]
     );
     assert!(draft.node("coffee").is_none());
+    assert_eq!(
+        child_ids("daily-life"),
+        vec!["personal-life", "coffee-topics", "food-meals", "cooking",]
+    );
+    assert_eq!(
+        child_ids("environment"),
+        vec![
+            "energy-systems",
+            "climate-emissions",
+            "resource-use",
+            "nature-landscapes",
+            "gardening",
+            "homesteading",
+        ]
+    );
 }
 
 #[test]
@@ -3021,30 +3036,30 @@ fn tracked_crec_116_review_session_preserves_the_human_hierarchy_decisions() {
 
     assert_eq!(
         envelope["state_sha256"],
-        "c309b819681ede8aec143baae98a1ab01c9a6df2897ff789f4439f149f67e85e"
+        "0a7653d63a9127075e445c22cbce4e7700ce664cb2db053da8e6ced2575e1c63"
     );
     assert_eq!(
         envelope["session"]["history"]
             .as_array()
             .expect("review history")
             .len(),
-        101,
+        118,
         "only recorded human decisions belong in the tracked checkpoint"
     );
-    assert_eq!(parent_history.len(), 24);
+    assert_eq!(parent_history.len(), 37);
     assert_eq!(
         parent_history
             .iter()
             .filter(|record| record["decision"]["outcome"] == "approved")
             .count(),
-        16
+        28
     );
     assert_eq!(
         parent_history
             .iter()
             .filter(|record| record["decision"]["outcome"] == "rejected")
             .count(),
-        8
+        9
     );
     assert!(parent_history.iter().any(|record| {
         record["target"]["node_id"] == "scientific-thought"
@@ -3053,6 +3068,11 @@ fn tracked_crec_116_review_session_preserves_the_human_hierarchy_decisions() {
     }));
     assert!(parent_history.iter().any(|record| {
         record["target"]["node_id"] == "root" && record["decision"]["outcome"] == "approved"
+    }));
+    assert!(parent_history.iter().any(|record| {
+        record["target"]["node_id"] == "daily-life"
+            && record["decision"]["outcome"] == "rejected"
+            && record["decision"]["comment"] == "disagree w 5 & 6"
     }));
 
     let proposal = load_verified_note_proposal("reference_map/crec-116-note-proposal-v3.json")
@@ -3084,7 +3104,7 @@ fn tracked_crec_116_review_session_preserves_the_human_hierarchy_decisions() {
     write_json(&approved_notes_path, &approved_notes);
     write_json(&draft_path, &draft);
     fs::copy(tracked_session, &session_path).expect("copy tracked session");
-    let mut ui = ScriptedUi::new([ApprovalTuiAction::Pause]);
+    let mut ui = ScriptedUi::new([approve_action(), approve_action(), ApprovalTuiAction::Pause]);
 
     assert_eq!(
         run_hierarchy_review(
@@ -3097,7 +3117,13 @@ fn tracked_crec_116_review_session_preserves_the_human_hierarchy_decisions() {
         .expect("resume the production hierarchy review from tracked state"),
         ReviewRunOutcome::Paused
     );
-    assert_eq!(ui.screens.len(), 1);
+    assert_eq!(
+        ui.screens
+            .iter()
+            .map(|screen| screen.title.as_str())
+            .collect::<Vec<_>>(),
+        ["Daily life", "Environment", "Focus-concentration coverage"]
+    );
 }
 
 #[test]

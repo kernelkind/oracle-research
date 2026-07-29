@@ -1,3 +1,4 @@
 /target/
+/reference_map/.*.lock
 __pycache__/
 .budget-ledger.json.lock

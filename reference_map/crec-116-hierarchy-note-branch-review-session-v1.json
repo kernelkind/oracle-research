@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "state_sha256": "c309b819681ede8aec143baae98a1ab01c9a6df2897ff789f4439f149f67e85e",
+  "state_sha256": "0a7653d63a9127075e445c22cbce4e7700ce664cb2db053da8e6ced2575e1c63",
   "session": {
     "schema_version": 5,
     "history": [
@@ -1110,6 +1110,193 @@
           "node_id": "root"
         },
         "target_revision_sha256": "74f65fa68e3f1d9f84d10676771b3cf41f3c5d001bd6741d4ba342ddb0c5bbb1",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "056e6466257003453c3065421db88270511cb13ec8c860e3cb4d4b22edf3ba77"
+        },
+        "target_revision_sha256": "8bfb27c8721ae3751eb7b95a5ecdecfebab550ebec39285a2aa6f24d0db7d012",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "fbac11c36101d6513cc632ef2ddc7fa17883cbd667da7fc75196bcabd9d31ea3"
+        },
+        "target_revision_sha256": "53b5e68f002fd9896ec272fb24228aa142bb2dec8744585548925ce6430f4399",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "eb4e7b0341e6544b6ef0de8dcef80f52b550948b988cd9be6a9247a11b06d46b"
+        },
+        "target_revision_sha256": "1ba1dc34d3e1d4e740d55ae648efccbf1061a71f49b6a9d694ad88d2abcdd045",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "note_map",
+          "note_id": "8894b71ab618459a3c40e9637d2cad57cb3347b758911a94da50d8f84db53aa8"
+        },
+        "target_revision_sha256": "eecd34fe43d0315fa026734ead571fd5d387d4173b3976151f143b803c116edc",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "book-topics"
+        },
+        "target_revision_sha256": "d301d050594a78ad00d2fa41cd2f642ffc47c5e591b02f01de22b6a7658a3770",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "knowledge-written-culture"
+        },
+        "target_revision_sha256": "5f1aee76ca3b9d9ce67a38027dab771df654a080b6ddf9317bc309135492178e",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "software-systems"
+        },
+        "target_revision_sha256": "e19bc0514f8fefe7e515dbac8703be7a9fa02ab52f2d8d0e6651d3d11db5ebfe",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "nostr-technology"
+        },
+        "target_revision_sha256": "cc2f61aa5662a695858fd3deade16c781618282f3a15312f8fb4c88eead59771",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "computing"
+        },
+        "target_revision_sha256": "a26594f9d22a7156b8f81a167fc96066cf0f997a987740685be700f801c67116",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "freedom-expression"
+        },
+        "target_revision_sha256": "f91d55d1bb4922f7f492ec51e71137535c8b154974dc850df7f83c6bd98248db",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "digital-autonomy"
+        },
+        "target_revision_sha256": "6cc58fa99bc95b94b69edd1e14af58fa600a0ca0b182561a0854baaca7b72fb7",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "society"
+        },
+        "target_revision_sha256": "8fd1141bcefed47abd8884418cd57cb66288b5b14e5f7bc930d337550f8025bf",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "health-movement"
+        },
+        "target_revision_sha256": "e972c29bb01a03b2ed34337d506dfdcd44539392cd81f8634ec26e64a12d6376",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "personal-life"
+        },
+        "target_revision_sha256": "be2fdc4f786e466c3e2927e621c2a5c80bb1c5ebb1f79dab2c0131269fc65b8e",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "coffee-topics"
+        },
+        "target_revision_sha256": "4e332cee1ec441df189625731090ec175103a67c73f714bf7796d66ef7ba1b55",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "daily-life"
+        },
+        "target_revision_sha256": "02dcac629d81944e0c0c714784166d65a26723baea63e2b3f58e026bbde51cb9",
+        "decision": {
+          "outcome": "rejected",
+          "comment": "disagree w 5 & 6"
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "root"
+        },
+        "target_revision_sha256": "c962b4ac6c04b687c9ff34783dd52a1b95e7fafac5ce5d6f1b28e9b920da4020",
         "decision": {
           "outcome": "approved",
           "comment": ""

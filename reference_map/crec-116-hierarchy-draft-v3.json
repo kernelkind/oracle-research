@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "draft_id": "crec-116-stratified-48-hierarchy-v5",
+  "draft_id": "crec-116-stratified-48-hierarchy-v6",
   "approved_notes_sha256": "2b4b06cde7182932bdf1729daa1a4946bc7294eb3ada024d31ac931275a8f99e",
   "root_node_id": "root",
   "nodes": [
@@ -933,9 +933,7 @@
         "personal-life",
         "coffee-topics",
         "food-meals",
-        "cooking",
-        "gardening",
-        "homesteading"
+        "cooking"
       ],
       "memberships": []
     },
@@ -1148,7 +1146,9 @@
         "energy-systems",
         "climate-emissions",
         "resource-use",
-        "nature-landscapes"
+        "nature-landscapes",
+        "gardening",
+        "homesteading"
       ],
       "memberships": []
     },
