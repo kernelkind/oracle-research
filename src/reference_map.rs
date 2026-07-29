@@ -975,10 +975,10 @@ impl HierarchyReviewSession {
             if node.children.is_empty() {
                 return;
             }
-            targets.push(HierarchyReviewSession::parent_target(node_id));
             for child_id in &node.children {
                 append(draft, child_id, targets);
             }
+            targets.push(HierarchyReviewSession::parent_target(node_id));
         }
 
         let mut targets = Vec::new();

@@ -605,13 +605,13 @@ fn hierarchy_review_unlocks_parents_only_after_all_note_maps_are_approved() {
             .expect("list parents"),
         vec![
             HierarchyReviewTarget::Parent {
-                node_id: "all-subjects".to_owned(),
-            },
-            HierarchyReviewTarget::Parent {
                 node_id: "technology".to_owned(),
             },
             HierarchyReviewTarget::Parent {
                 node_id: "life".to_owned(),
+            },
+            HierarchyReviewTarget::Parent {
+                node_id: "all-subjects".to_owned(),
             },
         ]
     );
@@ -661,16 +661,16 @@ fn hierarchy_review_orders_note_maps_then_parents() {
             .expect("list hierarchy parents"),
         vec![
             HierarchyReviewTarget::Parent {
-                node_id: "all-subjects".to_owned(),
-            },
-            HierarchyReviewTarget::Parent {
                 node_id: "technology".to_owned(),
             },
             HierarchyReviewTarget::Parent {
                 node_id: "life".to_owned(),
             },
+            HierarchyReviewTarget::Parent {
+                node_id: "all-subjects".to_owned(),
+            },
         ],
-        "parent reviews follow navigation order"
+        "parent reviews proceed from the deepest groupings to the hidden root"
     );
 }
 
@@ -1035,10 +1035,10 @@ fn changed_parent_label_reopens_its_own_and_its_parent_review() {
             .expect("list reopened parent reviews"),
         vec![
             HierarchyReviewTarget::Parent {
-                node_id: "all-subjects".to_owned(),
+                node_id: "technology".to_owned(),
             },
             HierarchyReviewTarget::Parent {
-                node_id: "technology".to_owned(),
+                node_id: "all-subjects".to_owned(),
             },
         ]
     );
@@ -1428,7 +1428,7 @@ fn hierarchy_runner_reviews_one_note_map_per_action() {
 }
 
 #[test]
-fn hierarchy_runner_opens_top_level_parent_after_all_note_maps() {
+fn hierarchy_runner_opens_a_deepest_parent_after_all_note_maps() {
     let temp = tempfile::tempdir().expect("tempdir");
     let notes = approved_notes();
     let draft = hierarchy(&notes);
@@ -1453,12 +1453,12 @@ fn hierarchy_runner_opens_top_level_parent_after_all_note_maps() {
         .expect("approve every note map, then pause"),
         ReviewRunOutcome::Paused
     );
-    let parent = ui.screens.last().expect("top-level parent screen");
-    assert_eq!(parent.title, "Top-level subjects");
+    let parent = ui.screens.last().expect("first bottom-up parent screen");
+    assert_eq!(parent.title, "Technology");
     assert_eq!(parent.scope, "Are these immediate child subjects correct?");
     assert_eq!(parent.approve_label, "No problems");
     assert_eq!(parent.reject_label, "Describe a problem");
-    assert_eq!(parent.evidence[0].body, "[1] Technology\n[2] Everyday life");
+    assert_eq!(parent.evidence[0].body, "[1] Software\n[2] Hardware");
 }
 
 #[test]
@@ -1484,51 +1484,48 @@ fn hierarchy_runner_reviews_one_parent_level_at_a_time() {
             temp.path().join("approved-hierarchy.json"),
             &mut ui,
         )
-        .expect("approve the top-level choices, then pause"),
+        .expect("approve the first bottom-up parent, then pause"),
         ReviewRunOutcome::Paused
     );
-    let top_level = &ui.screens[REFERENCE_NOTE_COUNT];
+    let technology = &ui.screens[REFERENCE_NOTE_COUNT];
     assert_eq!(
-        top_level.heading,
+        technology.heading,
         "Hierarchy review · Parent 1 of 3 · 48 note maps approved"
     );
-    assert_eq!(top_level.title, "Top-level subjects");
+    assert_eq!(technology.title, "Technology");
     assert_eq!(
-        top_level.scope,
+        technology.scope,
         "Are these immediate child subjects correct?"
     );
-    assert_eq!(top_level.approve_label, "No problems");
-    assert_eq!(top_level.reject_label, "Describe a problem");
+    assert_eq!(technology.approve_label, "No problems");
+    assert_eq!(technology.reject_label, "Describe a problem");
     assert_eq!(
-        top_level.rejection_help,
+        technology.rejection_help,
         "Examples:\n\
          [2] Title is unclear.\n\
          [3] Does not belong under this parent.\n\
          Missing \"Expected subject\"."
     );
-    assert_eq!(top_level.evidence.len(), 1);
-    assert_eq!(top_level.evidence[0].title, "Children · 2 subjects");
+    assert_eq!(technology.evidence.len(), 1);
+    assert_eq!(technology.evidence[0].title, "Children · 2 subjects");
     assert_eq!(
-        top_level.evidence[0].annotation,
+        technology.evidence[0].annotation,
         "Approving accepts these titles, their order, and their direct placement under this parent.\n\
          Use the numbers when describing a problem."
     );
-    assert!(top_level
+    assert!(technology
         .guidance
         .as_ref()
         .expect("parent decision is explained")
         .body
         .contains("Only this one level is being reviewed."));
+    assert_eq!(technology.evidence[0].body, "[1] Software\n[2] Hardware");
+    let everyday_life = &ui.screens[REFERENCE_NOTE_COUNT + 1];
     assert_eq!(
-        top_level.evidence[0].body,
-        "[1] Technology\n[2] Everyday life"
-    );
-    let technology = &ui.screens[REFERENCE_NOTE_COUNT + 1];
-    assert_eq!(
-        technology.title, "Technology",
+        everyday_life.title, "Everyday life",
         "one parent approval advances to the next internal parent"
     );
-    assert_eq!(technology.evidence[0].body, "[1] Software\n[2] Hardware");
+    assert_eq!(everyday_life.evidence[0].body, "[1] Food\n[2] Outdoors");
 }
 
 #[test]
@@ -1632,7 +1629,7 @@ fn hierarchy_runner_migrates_schema_four_note_maps_without_repeating_them() {
         ReviewRunOutcome::Paused
     );
     assert_eq!(resumed_ui.screens.len(), 1);
-    assert_eq!(resumed_ui.screens[0].title, "Top-level subjects");
+    assert_eq!(resumed_ui.screens[0].title, "Technology");
 
     let migrated: serde_json::Value =
         serde_json::from_slice(&fs::read(&session_path).expect("read migrated session"))
@@ -1957,8 +1954,8 @@ fn hierarchy_runner_reviews_each_note_then_each_parent_then_coverage() {
             .iter()
             .map(|screen| screen.title.as_str())
             .collect::<Vec<_>>(),
-        vec!["Top-level subjects", "Technology", "Everyday life"],
-        "each internal parent is loaded once in navigation order"
+        vec!["Technology", "Everyday life", "Top-level subjects"],
+        "each internal parent is loaded bottom-up"
     );
     assert_eq!(
         ui.screens[REFERENCE_NOTE_COUNT + 3].title,
@@ -1981,6 +1978,11 @@ fn hierarchy_runner_reviews_each_note_then_each_parent_then_coverage() {
     assert_eq!(
         ui.screens[REFERENCE_NOTE_COUNT + 2].heading,
         "Hierarchy review · Parent 3 of 3 · 48 note maps approved"
+    );
+    assert_eq!(
+        ui.screens[REFERENCE_NOTE_COUNT + 2].evidence[0].body,
+        "[1] Technology\n[2] Everyday life",
+        "the top-level choices are reviewed only after their child structures"
     );
     assert!(approved_path.is_file());
 }
