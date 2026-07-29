@@ -349,60 +349,76 @@ fn focus_coverage_screen(
 ) -> Result<ApprovalScreen> {
     let (approved, rejected, total) = session.decision_counts(draft, approved_notes)?;
     let membership_inventory = note_membership_inventory(draft);
-    let mut groups = BTreeMap::<Vec<MembershipStrength>, Vec<String>>::new();
+    let mut narrow_focus = Vec::new();
+    let mut multi_focus = Vec::new();
     let mut notes = approved_notes.notes.iter().collect::<Vec<_>>();
     notes.sort_unstable_by_key(|note| note.slot);
     for note in notes {
         let memberships = &membership_inventory[note.note_id.as_str()];
-        let mut signature = memberships
+        let meaningful_subject_count = memberships
             .iter()
-            .map(|(_, strength)| *strength)
-            .collect::<Vec<_>>();
-        signature.sort_unstable_by(|left, right| right.rank().cmp(&left.rank()));
-        groups.entry(signature).or_default().push(format!(
-            "Slot {:02}\n{}",
+            .filter(|(_, strength)| {
+                matches!(
+                    strength,
+                    MembershipStrength::Central | MembershipStrength::Substantive
+                )
+            })
+            .count();
+        let example = format!(
+            "Example · Slot {:02}\n{}",
             note.slot,
             format_note_memberships(memberships)
-        ));
+        );
+        if meaningful_subject_count <= 1 {
+            narrow_focus.push(example);
+        } else {
+            multi_focus.push(example);
+        }
     }
-    let summary = groups
-        .into_iter()
-        .map(|(signature, notes)| {
-            let note_count = notes.len();
-            let membership_count = signature.len();
-            format!(
-                "{}\n{}\n\n{}",
-                format!(
-                    "{membership_count} membership{} · {}",
-                    if membership_count == 1 { "" } else { "s" },
-                    format_membership_signature(&signature)
-                ),
-                format!(
-                    "{note_count} note{} · exact ordinal signature",
-                    if note_count == 1 { "" } else { "s" }
-                ),
-                notes.join("\n\n────────────────────────────────────────\n\n")
-            )
-        })
-        .collect::<Vec<_>>()
-        .join("\n\n════════════════════════════════════════\n\n");
+    let format_examples = |examples: &[String]| {
+        if examples.is_empty() {
+            "No examples".to_owned()
+        } else {
+            examples
+                .iter()
+                .take(3)
+                .cloned()
+                .collect::<Vec<_>>()
+                .join("\n\n────────────────────────────────────────\n\n")
+        }
+    };
+    let summary = format!(
+        "Narrow-focus notes · {}\n\
+         At most one subject is Central or Substantive.\n\n\
+         {}\n\n\
+         ════════════════════════════════════════\n\n\
+         Multi-focus notes · {}\n\
+         Two or more subjects are Central or Substantive.\n\n\
+         {}",
+        narrow_focus.len(),
+        format_examples(&narrow_focus),
+        multi_focus.len(),
+        format_examples(&multi_focus),
+    );
     Ok(ApprovalScreen {
         heading: format!(
             "Hierarchy review · {approved} approved · {rejected} rejected · {total} total"
         ),
-        title: "Focus-concentration coverage".to_owned(),
+        title: "Focus coverage".to_owned(),
         scope: format!(
-            "Do the {} note maps include both concentrated and distributed focus patterns?",
+            "Do the {} note maps include both narrow-focus and multi-focus notes?",
             approved_notes.notes.len()
         ),
-        approve_label: "Approve — both patterns are represented".to_owned(),
-        reject_label: "Reject — describe the missing pattern".to_owned(),
-        rejection_help: "Describe the missing focus pattern.".to_owned(),
+        approve_label: "Yes — both kinds are represented".to_owned(),
+        reject_label: "No — describe what is missing".to_owned(),
+        rejection_help:
+            "State whether narrow-focus or multi-focus notes are missing or too sparse.".to_owned(),
         guidance: Some(focus_coverage_guidance()),
         evidence: vec![ApprovalEvidence {
-            title: "All focus patterns".to_owned(),
-            annotation: "Every note map, grouped by its exact membership-strength signature."
-                .to_owned(),
+            title: "Coverage summary".to_owned(),
+            annotation:
+                "Each note map was already reviewed. This screen only checks the mix of focus patterns."
+                    .to_owned(),
             body: summary,
         }],
         evidence_layout: ApprovalEvidenceLayout::Paged,
@@ -692,13 +708,13 @@ fn format_immediate_children(draft: &HierarchyDraft, node_id: &str) -> Result<St
 fn focus_coverage_guidance() -> ApprovalGuidance {
     ApprovalGuidance {
         title: "Coverage check".to_owned(),
-        body: "Concentrated: one subject carries most of the note’s meaning.\n\n\
-               Distributed: several subjects materially carry the note’s meaning.\n\n\
-               Approve only when all displayed maps include both patterns.\n\n\
+        body: "Narrow-focus: at most one subject is Central or Substantive.\n\n\
+               Multi-focus: two or more subjects are Central or Substantive.\n\n\
+               Incidental subjects are minor details and do not make a note multi-focus.\n\n\
+               You already approved each note’s subject assignments. This check only confirms that the set contains both kinds.\n\n\
                Central: the subject is one of the note’s main points.\n\n\
                Substantive: the subject materially matters to the note, but is not a main point.\n\n\
-               Incidental: the subject appears only as a minor or supporting detail.\n\n\
-               These are ordered categories, not percentages."
+               Incidental: the subject appears only as a minor or supporting detail."
             .to_owned(),
     }
 }
@@ -750,14 +766,6 @@ fn format_note_memberships(memberships: &[(&str, MembershipStrength)]) -> String
         .map(|(label, strength)| format!("• {label} — {}", strength_label(*strength)))
         .collect::<Vec<_>>()
         .join("\n")
-}
-
-fn format_membership_signature(signature: &[MembershipStrength]) -> String {
-    signature
-        .iter()
-        .map(|strength| strength_label(*strength))
-        .collect::<Vec<_>>()
-        .join(" + ")
 }
 
 fn strength_label(strength: MembershipStrength) -> &'static str {

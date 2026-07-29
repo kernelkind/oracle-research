@@ -1957,10 +1957,7 @@ fn hierarchy_runner_reviews_each_note_then_each_parent_then_coverage() {
         vec!["Technology", "Everyday life", "Top-level subjects"],
         "each internal parent is loaded bottom-up"
     );
-    assert_eq!(
-        ui.screens[REFERENCE_NOTE_COUNT + 3].title,
-        "Focus-concentration coverage"
-    );
+    assert_eq!(ui.screens[REFERENCE_NOTE_COUNT + 3].title, "Focus coverage");
     assert!(
         ui.screens[..REFERENCE_NOTE_COUNT]
             .iter()
@@ -2022,27 +2019,27 @@ fn hierarchy_runner_audits_focus_coverage_after_note_maps_and_parents() {
     );
     assert_eq!(
         ui.screens[decisions_before_coverage].title,
-        "Focus-concentration coverage"
+        "Focus coverage"
     );
     assert_eq!(
         ui.screens[decisions_before_coverage].scope,
-        "Do the 48 note maps include both concentrated and distributed focus patterns?"
+        "Do the 48 note maps include both narrow-focus and multi-focus notes?"
     );
     assert_eq!(
         ui.screens[decisions_before_coverage].approve_label,
-        "Approve — both patterns are represented"
+        "Yes — both kinds are represented"
     );
     assert_eq!(
         ui.screens[decisions_before_coverage].reject_label,
-        "Reject — describe the missing pattern"
+        "No — describe what is missing"
     );
     let guidance = ui.screens[decisions_before_coverage]
         .guidance
         .as_ref()
         .expect("focus coverage explains its decision");
     assert_eq!(guidance.title, "Coverage check");
-    assert!(guidance.body.contains("Concentrated"));
-    assert!(guidance.body.contains("Distributed"));
+    assert!(guidance.body.contains("Narrow-focus"));
+    assert!(guidance.body.contains("Multi-focus"));
     assert!(guidance.body.contains("Central"));
     assert!(guidance.body.contains("Substantive"));
     assert!(guidance.body.contains("Incidental"));
@@ -2066,12 +2063,21 @@ fn hierarchy_runner_audits_focus_coverage_after_note_maps_and_parents() {
     assert_eq!(
         ui.screens[decisions_before_coverage].evidence.len(),
         1,
-        "the reviewer scrolls one complete coverage summary instead of switching panels"
+        "the reviewer sees one summary instead of switching panels"
     );
-    assert!(rendered_inventory.contains("1 membership · Central"));
-    assert!(rendered_inventory.contains("1 membership · Substantive"));
-    assert!(rendered_inventory.contains("1 membership · Incidental"));
-    assert!(rendered_inventory.contains("2 memberships · Central + Substantive"));
+    assert_eq!(
+        ui.screens[decisions_before_coverage].evidence[0].title,
+        "Coverage summary"
+    );
+    assert!(rendered_inventory.contains("Narrow-focus notes"));
+    assert!(rendered_inventory.contains("Multi-focus notes"));
+    assert!(rendered_inventory.contains("Example · Slot"));
+    assert!(
+        rendered_inventory.matches("Example · Slot").count() <= 6,
+        "the summary uses a few examples instead of repeating all 48 maps"
+    );
+    assert!(!rendered_inventory.contains("ordinal signature"));
+    assert!(!rendered_inventory.contains("membership ·"));
 }
 
 #[test]
@@ -3036,23 +3042,23 @@ fn tracked_crec_116_review_session_preserves_the_human_hierarchy_decisions() {
 
     assert_eq!(
         envelope["state_sha256"],
-        "0a7653d63a9127075e445c22cbce4e7700ce664cb2db053da8e6ced2575e1c63"
+        "79a483264702a6aeaee6d2710e6d9499d28609c8b4b74a8f219996813399fc4f"
     );
     assert_eq!(
         envelope["session"]["history"]
             .as_array()
             .expect("review history")
             .len(),
-        118,
+        120,
         "only recorded human decisions belong in the tracked checkpoint"
     );
-    assert_eq!(parent_history.len(), 37);
+    assert_eq!(parent_history.len(), 39);
     assert_eq!(
         parent_history
             .iter()
             .filter(|record| record["decision"]["outcome"] == "approved")
             .count(),
-        28
+        30
     );
     assert_eq!(
         parent_history
@@ -3104,7 +3110,7 @@ fn tracked_crec_116_review_session_preserves_the_human_hierarchy_decisions() {
     write_json(&approved_notes_path, &approved_notes);
     write_json(&draft_path, &draft);
     fs::copy(tracked_session, &session_path).expect("copy tracked session");
-    let mut ui = ScriptedUi::new([approve_action(), approve_action(), ApprovalTuiAction::Pause]);
+    let mut ui = ScriptedUi::new([ApprovalTuiAction::Pause]);
 
     assert_eq!(
         run_hierarchy_review(
@@ -3122,8 +3128,12 @@ fn tracked_crec_116_review_session_preserves_the_human_hierarchy_decisions() {
             .iter()
             .map(|screen| screen.title.as_str())
             .collect::<Vec<_>>(),
-        ["Daily life", "Environment", "Focus-concentration coverage"]
+        ["Focus coverage"]
     );
+    let coverage = &ui.screens[0].evidence[0].body;
+    assert!(coverage.contains("Narrow-focus notes · 6"));
+    assert!(coverage.contains("Multi-focus notes · 42"));
+    assert!(!coverage.contains("ordinal signature"));
 }
 
 #[test]

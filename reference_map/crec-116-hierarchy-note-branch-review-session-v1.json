@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "state_sha256": "0a7653d63a9127075e445c22cbce4e7700ce664cb2db053da8e6ced2575e1c63",
+  "state_sha256": "79a483264702a6aeaee6d2710e6d9499d28609c8b4b74a8f219996813399fc4f",
   "session": {
     "schema_version": 5,
     "history": [
@@ -1297,6 +1297,28 @@
           "node_id": "root"
         },
         "target_revision_sha256": "c962b4ac6c04b687c9ff34783dd52a1b95e7fafac5ce5d6f1b28e9b920da4020",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "daily-life"
+        },
+        "target_revision_sha256": "1aa9ef922c7a0762560041d5d1964690d0a978acc0e699cb6c248f19002e40a7",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      },
+      {
+        "target": {
+          "kind": "parent",
+          "node_id": "environment"
+        },
+        "target_revision_sha256": "78b509f314b470bff7206f925bf7fa4daaea26230f3acf29213ccffcfee4194b",
         "decision": {
           "outcome": "approved",
           "comment": ""
