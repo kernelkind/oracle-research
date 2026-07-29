@@ -571,10 +571,10 @@ fn hierarchy_target_screen(
                 reject_label: "Reject — name the exact correction".to_owned(),
                 guidance: Some(ApprovalGuidance {
                     title: "Branch review".to_owned(),
-                    body: "Approving accepts every displayed subject definition and parent–child relationship.\n\n\
+                    body: "Approving accepts every displayed subject title and parent–child relationship.\n\n\
                            The numbered, indented list is the complete branch.\n\n\
                            Reject when:\n\n\
-                           • A subject label or description combines unrelated meanings.\n\
+                           • A subject title is unclear or combines unrelated meanings.\n\
                            • A child does not genuinely belong under its parent.\n\
                            • A necessary subject or relationship is missing.\n\n\
                            Name the numbered item or relationship. For something missing, describe it and where it belongs."
@@ -582,9 +582,7 @@ fn hierarchy_target_screen(
                 }),
                 evidence: vec![ApprovalEvidence {
                     title: "Complete branch".to_owned(),
-                    annotation:
-                        "Indentation shows every parent–child relationship. Definitions appear directly below their subjects."
-                            .to_owned(),
+                    annotation: "Indentation shows every parent–child relationship.".to_owned(),
                     body: format_hierarchy_branch(draft, node_id)?,
                 }],
                 evidence_layout: ApprovalEvidenceLayout::Paged,
@@ -637,7 +635,7 @@ fn format_hierarchy_branch(draft: &HierarchyDraft, node_id: &str) -> Result<Stri
     let mut lines = Vec::new();
     let mut number = 1;
     append_hierarchy_branch(draft, node_id, 0, &mut number, &mut lines)?;
-    Ok(lines.join("\n\n"))
+    Ok(lines.join("\n"))
 }
 
 fn append_hierarchy_branch(
@@ -651,10 +649,7 @@ fn append_hierarchy_branch(
         .node(node_id)
         .ok_or_else(|| Error::ExperimentState(format!("hierarchy subject {node_id} is missing")))?;
     let indent = "  ".repeat(depth);
-    lines.push(format!(
-        "{indent}[{number:02}] {}\n{indent}     {}",
-        node.label, node.scope
-    ));
+    lines.push(format!("{indent}[{number:02}] {}", node.label));
     *number += 1;
     for child_id in &node.children {
         append_hierarchy_branch(draft, child_id, depth + 1, number, lines)?;

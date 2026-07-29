@@ -464,10 +464,11 @@ pub struct LeafMembership {
 pub struct SubjectNode {
     pub node_id: String,
     pub label: String,
-    pub scope: String,
     pub children: Vec<String>,
     pub memberships: Vec<LeafMembership>,
 }
+
+const HIERARCHY_SCHEMA_VERSION: u32 = 2;
 
 impl SubjectNode {
     pub fn is_leaf(&self) -> bool {
@@ -488,7 +489,7 @@ pub struct HierarchyDraft {
 impl HierarchyDraft {
     pub fn validate(&self, approved_notes: &ApprovedNoteSet) -> Result<()> {
         approved_notes.validate()?;
-        if self.schema_version != 1 || self.draft_id.trim().is_empty() {
+        if self.schema_version != HIERARCHY_SCHEMA_VERSION || self.draft_id.trim().is_empty() {
             return invalid("hierarchy draft schema and ID are invalid");
         }
         if self.approved_notes_sha256 != canonical_sha256(approved_notes)? {
@@ -500,11 +501,8 @@ impl HierarchyDraft {
 
         let mut nodes = BTreeMap::new();
         for node in &self.nodes {
-            if node.node_id.trim().is_empty()
-                || node.label.trim().is_empty()
-                || node.scope.trim().is_empty()
-            {
-                return invalid("every hierarchy node must have an ID, label, and scope");
+            if node.node_id.trim().is_empty() || node.label.trim().is_empty() {
+                return invalid("every hierarchy node must have an ID and label");
             }
             if nodes.insert(node.node_id.as_str(), node).is_some() {
                 return invalid(format!("hierarchy node {} is duplicated", node.node_id));
@@ -712,7 +710,7 @@ impl HierarchyDraft {
     fn collect_branch_revision_nodes(
         &self,
         node_id: &str,
-        nodes: &mut Vec<(String, String, String, Vec<String>)>,
+        nodes: &mut Vec<(String, String, Vec<String>)>,
     ) -> Result<()> {
         let node = self.node(node_id).ok_or_else(|| {
             Error::ExperimentState(format!("hierarchy subject {node_id} is missing"))
@@ -720,7 +718,6 @@ impl HierarchyDraft {
         nodes.push((
             node.node_id.clone(),
             node.label.clone(),
-            node.scope.clone(),
             node.children.clone(),
         ));
         for child_id in &node.children {
@@ -1178,7 +1175,7 @@ impl ApprovedHierarchy {
         let approved_notes_sha256 = approved_notes.identity()?;
         let hierarchy_draft_sha256 = draft.identity(approved_notes)?;
         let artifact_sha256 = canonical_sha256(&(
-            1_u32,
+            HIERARCHY_SCHEMA_VERSION,
             approved_notes_sha256.as_str(),
             hierarchy_draft_sha256.as_str(),
             draft.root_node_id.as_str(),
@@ -1186,7 +1183,7 @@ impl ApprovedHierarchy {
             draft.nodes.as_slice(),
         ))?;
         Ok(Self {
-            schema_version: 1,
+            schema_version: HIERARCHY_SCHEMA_VERSION,
             approved_notes_sha256,
             hierarchy_draft_sha256,
             artifact_sha256,
@@ -1197,7 +1194,7 @@ impl ApprovedHierarchy {
     }
 
     pub fn validate(&self) -> Result<()> {
-        if self.schema_version != 1
+        if self.schema_version != HIERARCHY_SCHEMA_VERSION
             || !is_lower_hex(&self.approved_notes_sha256, 64)
             || !is_lower_hex(&self.hierarchy_draft_sha256, 64)
             || !is_lower_hex(&self.artifact_sha256, 64)
@@ -1234,7 +1231,6 @@ impl ApprovedHierarchy {
         for node in &self.nodes {
             if node.node_id.trim().is_empty()
                 || node.label.trim().is_empty()
-                || node.scope.trim().is_empty()
                 || nodes.insert(node.node_id.as_str(), node).is_some()
             {
                 return invalid("approved hierarchy contains an invalid or duplicate node");

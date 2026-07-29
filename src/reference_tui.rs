@@ -658,7 +658,6 @@ impl ReferenceNavigationTuiModel {
             .constraints([
                 Constraint::Length(2),
                 Constraint::Min(6),
-                Constraint::Length(3),
                 Constraint::Length(2),
             ])
             .split(area);
@@ -692,17 +691,6 @@ impl ReferenceNavigationTuiModel {
             rows[1],
             &mut state,
         );
-        let selected_scope = node
-            .children
-            .get(self.navigation.selected_index())
-            .and_then(|child| self.hierarchy.node(child))
-            .map_or("", |child| child.scope.as_str());
-        frame.render_widget(
-            Paragraph::new(selected_scope)
-                .style(secondary_style())
-                .wrap(Wrap { trim: false }),
-            rows[2],
-        );
         frame.render_widget(
             Paragraph::new(Line::from(vec![
                 Span::styled("[↑/↓]", accent_style()),
@@ -714,7 +702,7 @@ impl ReferenceNavigationTuiModel {
                 Span::styled("[Esc]", accent_style()),
                 Span::styled(" Close", secondary_style()),
             ])),
-            rows[3],
+            rows[2],
         );
     }
 

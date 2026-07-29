@@ -69,6 +69,23 @@ fn stratified_reference_proposal_accepts_sparse_source_slots() {
 }
 
 #[test]
+fn subject_nodes_serialize_as_titles_relationships_and_memberships_only() {
+    let approved = approved_notes();
+    let draft = hierarchy(&approved);
+    assert_eq!(
+        draft.schema_version, 2,
+        "removing a serialized subject field requires a new hierarchy schema"
+    );
+    let encoded = serde_json::to_value(&draft).expect("encode hierarchy draft");
+    let nodes = encoded["nodes"].as_array().expect("encoded subject nodes");
+
+    assert!(
+        nodes.iter().all(|node| node.get("scope").is_none()),
+        "subject descriptions must not exist in serialized hierarchy data"
+    );
+}
+
+#[test]
 fn proposal_validation_enforces_diagnostic_coverage() {
     let proposal = proposal();
     proposal.validate().expect("approved fixture is valid");
@@ -319,7 +336,6 @@ fn hierarchy(approved: &ApprovedNoteSet) -> HierarchyDraft {
     let leaf = |id: &str, label: &str, slots: std::ops::RangeInclusive<usize>| SubjectNode {
         node_id: id.to_owned(),
         label: label.to_owned(),
-        scope: format!("Notes about {label}"),
         children: vec![],
         memberships: slots
             .map(|slot| LeafMembership {
@@ -335,7 +351,7 @@ fn hierarchy(approved: &ApprovedNoteSet) -> HierarchyDraft {
             .collect(),
     };
     let mut draft = HierarchyDraft {
-        schema_version: 1,
+        schema_version: 2,
         draft_id: "crec-116-reference-v1".to_owned(),
         approved_notes_sha256: approved.identity().expect("approved notes identity"),
         root_node_id: "all-subjects".to_owned(),
@@ -343,21 +359,18 @@ fn hierarchy(approved: &ApprovedNoteSet) -> HierarchyDraft {
             SubjectNode {
                 node_id: "all-subjects".to_owned(),
                 label: "All subjects".to_owned(),
-                scope: "Hidden navigation root".to_owned(),
                 children: vec!["technology".to_owned(), "life".to_owned()],
                 memberships: vec![],
             },
             SubjectNode {
                 node_id: "technology".to_owned(),
                 label: "Technology".to_owned(),
-                scope: "Computing and engineered systems".to_owned(),
                 children: vec!["software".to_owned(), "hardware".to_owned()],
                 memberships: vec![],
             },
             SubjectNode {
                 node_id: "life".to_owned(),
                 label: "Everyday life".to_owned(),
-                scope: "Daily activities and personal experience".to_owned(),
                 children: vec!["food".to_owned(), "outdoors".to_owned()],
                 memberships: vec![],
             },
@@ -466,7 +479,6 @@ fn hierarchy_validation_enforces_grounded_bounded_tree() {
         too_wide.nodes.push(SubjectNode {
             node_id: id,
             label: format!("Extra {index}"),
-            scope: "Deliberately exceeds the child bound".to_owned(),
             children: vec![],
             memberships: vec![LeafMembership {
                 note_id: approved.notes[0].note_id.clone(),
@@ -483,7 +495,6 @@ fn hierarchy_validation_enforces_grounded_bounded_tree() {
     root_leaf.nodes = vec![SubjectNode {
         node_id: root_leaf.root_node_id.clone(),
         label: "Everything".to_owned(),
-        scope: "A flat list without subject navigation".to_owned(),
         children: vec![],
         memberships: approved
             .notes
@@ -766,7 +777,7 @@ fn rejected_note_map_keeps_other_notes_reviewable_but_blocks_branches() {
 }
 
 #[test]
-fn changed_leaf_definition_preserves_note_assignments_but_reopens_its_root_branch() {
+fn changed_leaf_identifier_preserves_note_assignments_but_reopens_its_root_branch() {
     let approved = approved_notes();
     let hierarchy = hierarchy(&approved);
     let mut session =
@@ -775,12 +786,23 @@ fn changed_leaf_definition_preserves_note_assignments_but_reopens_its_root_branc
 
     let mut revised = hierarchy.clone();
     revised.draft_id = "crec-116-reference-v2".to_owned();
-    revised
+    let software = revised
         .nodes
         .iter_mut()
         .find(|node| node.node_id == "software")
-        .expect("software leaf")
-        .scope = "Software construction and programming tools".to_owned();
+        .expect("software leaf");
+    software.node_id = "software-development".to_owned();
+    let technology = revised
+        .nodes
+        .iter_mut()
+        .find(|node| node.node_id == "technology")
+        .expect("technology branch");
+    let software_child = technology
+        .children
+        .iter_mut()
+        .find(|child| child.as_str() == "software")
+        .expect("software child");
+    *software_child = "software-development".to_owned();
     revised.validate(&approved).expect("revised hierarchy");
 
     for note in &approved.notes {
@@ -792,7 +814,7 @@ fn changed_leaf_definition_preserves_note_assignments_but_reopens_its_root_branc
                     note_id: note.note_id.clone(),
                 }
             ),
-            "a hidden definition does not change displayed subject assignments"
+            "a hidden node identifier does not change displayed subject assignments"
         );
     }
     assert!(!session.is_approved(
@@ -811,7 +833,7 @@ fn changed_leaf_definition_preserves_note_assignments_but_reopens_its_root_branc
     ));
     assert!(
         session.focus_coverage_is_approved(&revised, &approved),
-        "a scope-only edit does not change the membership summary shown by the coverage check"
+        "a hidden node identifier does not change the displayed membership summary"
     );
     let next_targets = session
         .reviewable_targets(&revised, &approved)
@@ -931,7 +953,7 @@ fn changed_leaf_label_invalidates_the_displayed_coverage_summary() {
 }
 
 #[test]
-fn parent_only_revision_preserves_note_maps_and_focus_but_reopens_its_branch() {
+fn changed_parent_label_preserves_note_maps_and_focus_but_reopens_its_branch() {
     let approved = approved_notes();
     let hierarchy = hierarchy(&approved);
     let mut session =
@@ -945,7 +967,7 @@ fn parent_only_revision_preserves_note_maps_and_focus_but_reopens_its_branch() {
         .iter_mut()
         .find(|node| node.node_id == "technology")
         .expect("technology parent")
-        .scope = "Software and hardware systems".to_owned();
+        .label = "Computing technology".to_owned();
     revised
         .validate(&approved)
         .expect("revised parent is valid");
@@ -1057,7 +1079,7 @@ fn hierarchy_publication_requires_each_current_root_branch() {
 }
 
 #[test]
-fn changing_the_hidden_root_definition_preserves_root_branch_approvals() {
+fn changing_hidden_root_metadata_preserves_root_branch_approvals() {
     let approved = approved_notes();
     let hierarchy = hierarchy(&approved);
     let mut session =
@@ -1072,7 +1094,6 @@ fn changing_the_hidden_root_definition_preserves_root_branch_approvals() {
         .find(|node| node.node_id == root_node_id)
         .expect("hidden root");
     root.label = "Unseen internal root label".to_owned();
-    root.scope = "Unseen internal root description".to_owned();
     root.children.reverse();
     revised
         .validate(&approved)
@@ -1394,12 +1415,13 @@ fn hierarchy_runner_reviews_a_complete_root_branch_once() {
         .expect("branch decision is explained")
         .body
         .contains(
-            "Approving accepts every displayed subject definition and parent–child relationship."
+            "Approving accepts every displayed subject title and parent–child relationship."
         ));
     let branch = &technology.evidence[0].body;
-    assert!(branch.contains("[01] Technology"));
-    assert!(branch.contains("[02] Software"));
-    assert!(branch.contains("[03] Hardware"));
+    assert_eq!(
+        branch, "[01] Technology\n  [02] Software\n  [03] Hardware",
+        "branch review must show only subject titles and indentation"
+    );
     assert_eq!(
         ui.screens[REFERENCE_NOTE_COUNT + 1].title,
         "Hierarchy branch · Everyday life",
@@ -2703,10 +2725,6 @@ fn tracked_books_and_history_subjects_are_separate() {
     let history = draft.node("history").expect("history subject");
 
     assert_eq!(books.label, "Books and reading");
-    assert_eq!(
-        books.scope,
-        "Choosing, reading, recommending, accessing, and discussing books."
-    );
     assert_eq!(history.label, "History");
 }
 

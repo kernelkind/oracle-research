@@ -482,21 +482,18 @@ fn hierarchy() -> ApprovedHierarchy {
         SubjectNode {
             node_id: "root".to_owned(),
             label: "All subjects".to_owned(),
-            scope: "Hidden root".to_owned(),
             children: vec!["technology".to_owned(), "cooking".to_owned()],
             memberships: vec![],
         },
         SubjectNode {
             node_id: "technology".to_owned(),
             label: "Technology".to_owned(),
-            scope: "Software and engineered systems".to_owned(),
             children: vec![],
             memberships: technology_memberships,
         },
         SubjectNode {
             node_id: "cooking".to_owned(),
             label: "Food and cooking".to_owned(),
-            scope: "Preparing and understanding food".to_owned(),
             children: vec![],
             memberships: cooking_memberships,
         },
@@ -505,7 +502,7 @@ fn hierarchy() -> ApprovedHierarchy {
         "{:x}",
         Sha256::digest(
             serde_json::to_vec(&(
-                1_u32,
+                2_u32,
                 approved_notes_sha256.as_str(),
                 hierarchy_draft_sha256.as_str(),
                 root_node_id.as_str(),
@@ -516,7 +513,7 @@ fn hierarchy() -> ApprovedHierarchy {
         )
     );
     ApprovedHierarchy {
-        schema_version: 1,
+        schema_version: 2,
         approved_notes_sha256,
         hierarchy_draft_sha256,
         artifact_sha256,
@@ -547,6 +544,7 @@ fn finished_navigation_uses_subject_choices_then_hidden_weight_note_browsing() {
     let root = render_navigation(&mut model);
     assert!(root.contains("What would you like to explore?"), "{root}");
     assert!(root.contains("Technology"), "{root}");
+    assert!(!root.contains("engineered systems"), "{root}");
 
     assert_eq!(
         model.handle_event(key(KeyCode::Enter)),

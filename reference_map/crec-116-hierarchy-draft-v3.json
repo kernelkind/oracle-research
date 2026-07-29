@@ -1,13 +1,12 @@
 {
-  "schema_version": 1,
-  "draft_id": "crec-116-stratified-48-hierarchy-v3",
+  "schema_version": 2,
+  "draft_id": "crec-116-stratified-48-hierarchy-v4",
   "approved_notes_sha256": "2b4b06cde7182932bdf1729daa1a4946bc7294eb3ada024d31ac931275a8f99e",
   "root_node_id": "root",
   "nodes": [
     {
       "node_id": "root",
       "label": "All subjects",
-      "scope": "Hidden root joining the eight broad navigation choices.",
       "children": [
         "knowledge-written-culture",
         "computing",
@@ -23,7 +22,6 @@
     {
       "node_id": "knowledge-written-culture",
       "label": "Knowledge and written culture",
-      "scope": "Books, history, language, education, scientific thought, and systems for organizing knowledge.",
       "children": [
         "book-topics",
         "history-topics",
@@ -38,7 +36,6 @@
     {
       "node_id": "book-topics",
       "label": "Books and written works",
-      "scope": "Independent subjects concerning books, reading, recommendations, and access.",
       "children": [
         "books-reading",
         "digital-knowledge-access",
@@ -49,7 +46,6 @@
     {
       "node_id": "history-topics",
       "label": "Historical knowledge",
-      "scope": "Independent subjects concerning history and particular historical periods.",
       "children": [
         "history",
         "early-islamic-history",
@@ -60,7 +56,6 @@
     {
       "node_id": "books-reading",
       "label": "Books and reading",
-      "scope": "Choosing, reading, recommending, accessing, and discussing books.",
       "children": [],
       "memberships": [
         {
@@ -88,7 +83,6 @@
     {
       "node_id": "history",
       "label": "History",
-      "scope": "Past people, periods, and events, including the study of history.",
       "children": [],
       "memberships": [
         {
@@ -104,7 +98,6 @@
     {
       "node_id": "digital-knowledge-access",
       "label": "Criticism of digital access restrictions",
-      "scope": "Criticism of rules that artificially restrict access to digital knowledge.",
       "children": [],
       "memberships": [
         {
@@ -116,7 +109,6 @@
     {
       "node_id": "book-recommendations",
       "label": "Book recommendations",
-      "scope": "Seeking or providing recommendations for books.",
       "children": [],
       "memberships": [
         {
@@ -132,7 +124,6 @@
     {
       "node_id": "early-islamic-history",
       "label": "Early Islamic history",
-      "scope": "People, dynasties, and conflicts in early Islamic history.",
       "children": [],
       "memberships": [
         {
@@ -144,7 +135,6 @@
     {
       "node_id": "medieval-history",
       "label": "Medieval history",
-      "scope": "People, societies, and events of the Middle Ages.",
       "children": [],
       "memberships": [
         {
@@ -156,7 +146,6 @@
     {
       "node_id": "language-word-usage",
       "label": "Language and word usage",
-      "scope": "Word meanings, grammatical forms, and distinctions in usage.",
       "children": [],
       "memberships": [
         {
@@ -168,7 +157,6 @@
     {
       "node_id": "child-cognitive-development",
       "label": "Child cognitive development",
-      "scope": "How children's knowledge and reasoning develop.",
       "children": [],
       "memberships": [
         {
@@ -180,7 +168,6 @@
     {
       "node_id": "knowledge-reasoning-development",
       "label": "Development of knowledge and reasoning",
-      "scope": "How knowledge and reasoning develop.",
       "children": [],
       "memberships": [
         {
@@ -192,7 +179,6 @@
     {
       "node_id": "personal-knowledge-management",
       "label": "Digitizing and organizing personal notes",
-      "scope": "Digitizing, naming, inventorying, and organizing personal notes.",
       "children": [],
       "memberships": [
         {
@@ -204,7 +190,6 @@
     {
       "node_id": "scientific-thought",
       "label": "Scientific thought",
-      "scope": "Philosophy of science, scientific disciplines, and the unity of nature.",
       "children": [
         "philosophy-of-science",
         "scientific-discipline-boundaries",
@@ -215,7 +200,6 @@
     {
       "node_id": "philosophy-of-science",
       "label": "Philosophy of science",
-      "scope": "How scientific categories relate to reality and to one another.",
       "children": [],
       "memberships": [
         {
@@ -227,7 +211,6 @@
     {
       "node_id": "scientific-discipline-boundaries",
       "label": "Scientific disciplines and their boundaries",
-      "scope": "How scientific disciplines divide and organize the study of nature.",
       "children": [],
       "memberships": [
         {
@@ -239,7 +222,6 @@
     {
       "node_id": "unity-of-nature",
       "label": "Unity of nature",
-      "scope": "Nature understood as a unified whole rather than separate disciplines.",
       "children": [],
       "memberships": [
         {
@@ -251,7 +233,6 @@
     {
       "node_id": "computing",
       "label": "Computing and technical systems",
-      "scope": "Software, protocols, AI systems, cryptographic tools, and Bitcoin mining.",
       "children": [
         "software-systems",
         "nostr-technology",
@@ -264,7 +245,6 @@
     {
       "node_id": "software-systems",
       "label": "Software systems",
-      "scope": "Operating systems, software development, data systems, automation, and developer communities.",
       "children": [
         "linux-open-source",
         "data-storage-systems",
@@ -278,7 +258,6 @@
     {
       "node_id": "linux-open-source",
       "label": "Linux and open-source software",
-      "scope": "Linux, free software, and open-source tools and operating systems.",
       "children": [],
       "memberships": [
         {
@@ -306,7 +285,6 @@
     {
       "node_id": "data-storage-systems",
       "label": "Databases and local data systems",
-      "scope": "Embedded databases, local storage, and data-system performance.",
       "children": [],
       "memberships": [
         {
@@ -322,7 +300,6 @@
     {
       "node_id": "software-development",
       "label": "Software development and automation",
-      "scope": "Writing, integrating, automating, and porting software.",
       "children": [],
       "memberships": [
         {
@@ -342,7 +319,6 @@
     {
       "node_id": "powershell-file-inventory",
       "label": "PowerShell file-inventory automation",
-      "scope": "Using PowerShell to generate and export an inventory of files.",
       "children": [],
       "memberships": [
         {
@@ -354,7 +330,6 @@
     {
       "node_id": "developer-stereotypes",
       "label": "Developer stereotypes and interpersonal behavior",
-      "scope": "Stereotypes, civility, and conflict among software-developer communities.",
       "children": [],
       "memberships": [
         {
@@ -366,7 +341,6 @@
     {
       "node_id": "shell-scripting",
       "label": "Shell scripting",
-      "scope": "Shell commands and scripts used to control Unix-like systems.",
       "children": [],
       "memberships": [
         {
@@ -378,7 +352,6 @@
     {
       "node_id": "nostr-technology",
       "label": "Nostr technology",
-      "scope": "Technical systems and uses built around Nostr protocols and keys.",
       "children": [
         "nostr-protocol-engineering",
         "nostr-key-reuse"
@@ -388,7 +361,6 @@
     {
       "node_id": "nostr-protocol-engineering",
       "label": "Nostr technical design and implementation",
-      "scope": "Technical behavior, implementation, and portability of Nostr infrastructure.",
       "children": [],
       "memberships": [
         {
@@ -408,7 +380,6 @@
     {
       "node_id": "nostr-key-reuse",
       "label": "Using Nostr keys outside messaging",
-      "scope": "Using Nostr key pairs for purposes beyond signing Nostr messages.",
       "children": [],
       "memberships": [
         {
@@ -420,7 +391,6 @@
     {
       "node_id": "artificial-intelligence",
       "label": "Artificial intelligence",
-      "scope": "AI capabilities, applications, deployment, privacy, and resource effects.",
       "children": [
         "ai-cognition-reasoning",
         "ai-applications",
@@ -434,7 +404,6 @@
     {
       "node_id": "ai-cognition-reasoning",
       "label": "AI cognition and reasoning",
-      "scope": "Whether and how AI systems think or reason.",
       "children": [],
       "memberships": [
         {
@@ -446,7 +415,6 @@
     {
       "node_id": "ai-applications",
       "label": "AI applications",
-      "scope": "Practical uses of artificial-intelligence systems.",
       "children": [],
       "memberships": [
         {
@@ -462,7 +430,6 @@
     {
       "node_id": "ai-privacy-security",
       "label": "AI privacy and security",
-      "scope": "Privacy and security properties of AI systems.",
       "children": [],
       "memberships": [
         {
@@ -478,7 +445,6 @@
     {
       "node_id": "cloud-ai-infrastructure",
       "label": "Cloud AI infrastructure",
-      "scope": "Cloud systems used to execute AI workloads.",
       "children": [],
       "memberships": [
         {
@@ -490,7 +456,6 @@
     {
       "node_id": "on-device-ai",
       "label": "On-device AI",
-      "scope": "AI models and features executed directly on a user's device.",
       "children": [],
       "memberships": [
         {
@@ -502,7 +467,6 @@
     {
       "node_id": "ai-resource-impact",
       "label": "AI energy and environmental impact",
-      "scope": "Energy use and environmental effects of AI infrastructure.",
       "children": [],
       "memberships": [
         {
@@ -514,7 +478,6 @@
     {
       "node_id": "bitcoin-mining",
       "label": "Practical Bitcoin mining",
-      "scope": "Operating and controlling Bitcoin-mining hardware in practical settings.",
       "children": [],
       "memberships": [
         {
@@ -526,7 +489,6 @@
     {
       "node_id": "software-security",
       "label": "Software security",
-      "scope": "Signing, verifying, and comparing the security of software and cryptographic keys.",
       "children": [
         "software-signing-verification",
         "cryptographic-security-comparison"
@@ -536,7 +498,6 @@
     {
       "node_id": "software-signing-verification",
       "label": "Software signing and verification",
-      "scope": "Cryptographically signing software and verifying its origin or integrity.",
       "children": [],
       "memberships": [
         {
@@ -548,7 +509,6 @@
     {
       "node_id": "cryptographic-security-comparison",
       "label": "Cryptographic security comparison",
-      "scope": "Comparing the security properties of cryptographic methods.",
       "children": [],
       "memberships": [
         {
@@ -560,7 +520,6 @@
     {
       "node_id": "society",
       "label": "Society",
-      "scope": "Communication rights, control of technology, markets, and social platforms.",
       "children": [
         "communication-rights",
         "economy-exchange",
@@ -571,7 +530,6 @@
     {
       "node_id": "communication-rights",
       "label": "Communication and digital rights",
-      "scope": "Open communication, attention systems, privacy, censorship resistance, and user control of technology.",
       "children": [
         "open-communication",
         "algorithmic-attention",
@@ -585,7 +543,6 @@
     {
       "node_id": "open-communication",
       "label": "Open communication",
-      "scope": "Broad communication systems that allow people to speak and connect freely.",
       "children": [],
       "memberships": [
         {
@@ -605,7 +562,6 @@
     {
       "node_id": "algorithmic-attention",
       "label": "Algorithmic attention and echo chambers",
-      "scope": "How ranking systems distribute attention and shape what people see.",
       "children": [],
       "memberships": [
         {
@@ -617,7 +573,6 @@
     {
       "node_id": "privacy-surveillance",
       "label": "Privacy and surveillance",
-      "scope": "Privacy protections, telemetry, and surveillance in digital systems.",
       "children": [],
       "memberships": [
         {
@@ -641,7 +596,6 @@
     {
       "node_id": "technology-autonomy",
       "label": "User control of technology",
-      "scope": "User control over operating systems, software, and personal devices.",
       "children": [],
       "memberships": [
         {
@@ -657,7 +611,6 @@
     {
       "node_id": "censorship-resistance",
       "label": "Resistance to online censorship",
-      "scope": "Systems and techniques for keeping communication available despite censorship.",
       "children": [],
       "memberships": [
         {
@@ -673,7 +626,6 @@
     {
       "node_id": "decentralized-protocols",
       "label": "Open protocols and decentralized networks",
-      "scope": "Open protocols and decentralized networks used as public infrastructure.",
       "children": [],
       "memberships": [
         {
@@ -685,7 +637,6 @@
     {
       "node_id": "economy-exchange",
       "label": "Markets and direct exchange",
-      "scope": "Product sales and direct economic relationships between people.",
       "children": [
         "goods-offered-for-sale",
         "creator-value-exchange"
@@ -695,7 +646,6 @@
     {
       "node_id": "goods-offered-for-sale",
       "label": "Goods offered for sale",
-      "scope": "Offering concrete products for sale and explaining their terms.",
       "children": [],
       "memberships": [
         {
@@ -707,7 +657,6 @@
     {
       "node_id": "creator-value-exchange",
       "label": "Creator funding and direct value exchange",
-      "scope": "Direct payments and support exchanged between creators, audiences, and peers.",
       "children": [],
       "memberships": [
         {
@@ -719,7 +668,6 @@
     {
       "node_id": "nostr-platform-ecosystem",
       "label": "Nostr platform and ecosystem",
-      "scope": "The overall properties, community, applications, and governance of Nostr.",
       "children": [],
       "memberships": [
         {
@@ -731,7 +679,6 @@
     {
       "node_id": "art-expression",
       "label": "Art and expression",
-      "scope": "Artistic work, interpretation, craft, creative development, and artistic economics.",
       "children": [
         "poetry",
         "visual-art",
@@ -746,7 +693,6 @@
     {
       "node_id": "poetry",
       "label": "Poetry",
-      "scope": "Poems and poetic expression.",
       "children": [],
       "memberships": [
         {
@@ -766,7 +712,6 @@
     {
       "node_id": "visual-art",
       "label": "Visual art",
-      "scope": "Photography, visual aesthetics, and visual storytelling.",
       "children": [
         "photography",
         "art-aesthetics",
@@ -777,7 +722,6 @@
     {
       "node_id": "photography",
       "label": "Photography",
-      "scope": "Making, restoring, interpreting, and discussing photographs.",
       "children": [],
       "memberships": [
         {
@@ -797,7 +741,6 @@
     {
       "node_id": "art-aesthetics",
       "label": "Art and aesthetics",
-      "scope": "Beauty, meaning, interpretation, and aesthetic qualities of art.",
       "children": [],
       "memberships": [
         {
@@ -821,7 +764,6 @@
     {
       "node_id": "visual-storytelling",
       "label": "Visual storytelling",
-      "scope": "Using images to communicate stories, culture, place, and memory.",
       "children": [],
       "memberships": [
         {
@@ -833,7 +775,6 @@
     {
       "node_id": "graphic-design",
       "label": "Graphic design and meme-making",
-      "scope": "Graphic design, meme-making, and transfer of skills between them.",
       "children": [],
       "memberships": [
         {
@@ -845,7 +786,6 @@
     {
       "node_id": "craft-pottery",
       "label": "Pottery",
-      "scope": "Making and presenting ceramic objects.",
       "children": [],
       "memberships": [
         {
@@ -857,7 +797,6 @@
     {
       "node_id": "music",
       "label": "Music",
-      "scope": "Music discovery, services, instruments, and learning.",
       "children": [
         "music-search-discovery",
         "music-streaming-services",
@@ -868,7 +807,6 @@
     {
       "node_id": "music-search-discovery",
       "label": "Music search and discovery",
-      "scope": "Finding music through lyrics or other remembered information.",
       "children": [],
       "memberships": [
         {
@@ -880,7 +818,6 @@
     {
       "node_id": "music-streaming-services",
       "label": "Music streaming services",
-      "scope": "Features and behavior of services used to stream music.",
       "children": [],
       "memberships": [
         {
@@ -892,7 +829,6 @@
     {
       "node_id": "learning-musical-instrument",
       "label": "Learning a musical instrument",
-      "scope": "Learning the technique needed to play a musical instrument.",
       "children": [],
       "memberships": [
         {
@@ -904,7 +840,6 @@
     {
       "node_id": "creative-learning",
       "label": "Creative learning",
-      "scope": "Developing creative skill through practice, persistence, and experimentation.",
       "children": [
         "creative-practice",
         "persistence-learning-skill"
@@ -914,7 +849,6 @@
     {
       "node_id": "creative-practice",
       "label": "Creative practice and skill development",
-      "scope": "Developing creative ability through repeated work and experimentation.",
       "children": [],
       "memberships": [
         {
@@ -934,7 +868,6 @@
     {
       "node_id": "persistence-learning-skill",
       "label": "Persistence in learning a skill",
-      "scope": "Continuing through difficulty while learning a skill.",
       "children": [],
       "memberships": [
         {
@@ -946,7 +879,6 @@
     {
       "node_id": "art-economics",
       "label": "Economics and value of art",
-      "scope": "Relationships among art, money, time, value, and economic theory.",
       "children": [],
       "memberships": [
         {
@@ -958,7 +890,6 @@
     {
       "node_id": "health-movement",
       "label": "Health and physical movement",
-      "scope": "Physical activity, rehabilitation, nutrition, healthcare, and emotional support.",
       "children": [
         "exercise-training",
         "injury-rehabilitation",
@@ -970,7 +901,6 @@
     {
       "node_id": "exercise-training",
       "label": "Exercise and physical training",
-      "scope": "Exercise, training practices, and physical conditioning.",
       "children": [],
       "memberships": [
         {
@@ -990,7 +920,6 @@
     {
       "node_id": "injury-rehabilitation",
       "label": "Injury rehabilitation",
-      "scope": "Managing pain, restoring function, and preventing recurring injury.",
       "children": [],
       "memberships": [
         {
@@ -1002,7 +931,6 @@
     {
       "node_id": "nutrition-health",
       "label": "Nutrition and health",
-      "scope": "The relationship between food, nutrition, and physical health.",
       "children": [],
       "memberships": [
         {
@@ -1014,7 +942,6 @@
     {
       "node_id": "emotional-support",
       "label": "Emotional support",
-      "scope": "Comfort, reassurance, and emotional support from people or systems.",
       "children": [],
       "memberships": [
         {
@@ -1026,7 +953,6 @@
     {
       "node_id": "daily-life",
       "label": "Daily life",
-      "scope": "Personal life, family, food, coffee, gardening, and household production.",
       "children": [
         "personal-life",
         "coffee-topics",
@@ -1040,7 +966,6 @@
     {
       "node_id": "personal-life",
       "label": "Personal life",
-      "scope": "Relationships, contentment, and journaling in everyday life.",
       "children": [
         "family-relationships",
         "aging-family-role-reversal",
@@ -1052,7 +977,6 @@
     {
       "node_id": "family-relationships",
       "label": "Family and close relationships",
-      "scope": "Relationships and shared experiences among partners, parents, children, and extended family.",
       "children": [],
       "memberships": [
         {
@@ -1080,7 +1004,6 @@
     {
       "node_id": "aging-family-role-reversal",
       "label": "Aging and family role reversal",
-      "scope": "How aging changes caregiving roles between parents and children.",
       "children": [],
       "memberships": [
         {
@@ -1092,7 +1015,6 @@
     {
       "node_id": "everyday-contentment",
       "label": "Gratitude and everyday contentment",
-      "scope": "Gratitude, satisfaction, and meaningful everyday experiences.",
       "children": [],
       "memberships": [
         {
@@ -1112,7 +1034,6 @@
     {
       "node_id": "public-journaling",
       "label": "Public journaling and self-documentation",
-      "scope": "Publishing an ongoing personal account of plans, changes, and experience.",
       "children": [],
       "memberships": [
         {
@@ -1124,7 +1045,6 @@
     {
       "node_id": "coffee-topics",
       "label": "Coffee, preparation, and products",
-      "scope": "Coffee itself and more specific subjects concerning its taste, preparation, and products.",
       "children": [
         "coffee",
         "coffee-taste-quality",
@@ -1136,7 +1056,6 @@
     {
       "node_id": "coffee",
       "label": "Coffee",
-      "scope": "Coffee as a drink, product, practice, or meaningful everyday object.",
       "children": [],
       "memberships": [
         {
@@ -1156,7 +1075,6 @@
     {
       "node_id": "coffee-taste-quality",
       "label": "Coffee taste and product quality",
-      "scope": "Coffee flavor, bitterness, quality, and personal taste.",
       "children": [],
       "memberships": [
         {
@@ -1168,7 +1086,6 @@
     {
       "node_id": "coffee-brewing-preparation",
       "label": "Coffee brewing and preparation",
-      "scope": "Methods and tools used to grind and brew coffee.",
       "children": [],
       "memberships": [
         {
@@ -1180,7 +1097,6 @@
     {
       "node_id": "coffee-product-comparison",
       "label": "Coffee product comparison",
-      "scope": "Comparing coffee brands, products, and value.",
       "children": [],
       "memberships": [
         {
@@ -1192,7 +1108,6 @@
     {
       "node_id": "food-meals",
       "label": "Food and meals",
-      "scope": "Foods, meals, and eating practices.",
       "children": [],
       "memberships": [
         {
@@ -1208,7 +1123,6 @@
     {
       "node_id": "cooking",
       "label": "Cooking and food preparation",
-      "scope": "Preparing food and assembling meals.",
       "children": [],
       "memberships": [
         {
@@ -1220,7 +1134,6 @@
     {
       "node_id": "gardening",
       "label": "Gardening and growing plants",
-      "scope": "Garden plants, garden projects, and questions about plant care.",
       "children": [],
       "memberships": [
         {
@@ -1236,7 +1149,6 @@
     {
       "node_id": "homesteading",
       "label": "Homesteading and self-sufficient living",
-      "scope": "Household and land projects that increase practical self-sufficiency.",
       "children": [],
       "memberships": [
         {
@@ -1252,7 +1164,6 @@
     {
       "node_id": "environment",
       "label": "Environment",
-      "scope": "Energy systems, emissions, resource conservation, composting, and natural scenes.",
       "children": [
         "energy-systems",
         "climate-emissions",
@@ -1264,7 +1175,6 @@
     {
       "node_id": "energy-systems",
       "label": "Energy systems and renewable power",
-      "scope": "Energy generation, storage, electrification, and practical energy use.",
       "children": [],
       "memberships": [
         {
@@ -1284,7 +1194,6 @@
     {
       "node_id": "climate-emissions",
       "label": "Climate change and emissions",
-      "scope": "Greenhouse-gas emissions, climate goals, and climate work.",
       "children": [],
       "memberships": [
         {
@@ -1300,7 +1209,6 @@
     {
       "node_id": "resource-use",
       "label": "Resource conservation and reuse",
-      "scope": "Conserving resources and returning useful material to ongoing cycles.",
       "children": [
         "resource-conservation",
         "composting"
@@ -1310,7 +1218,6 @@
     {
       "node_id": "resource-conservation",
       "label": "Resource conservation",
-      "scope": "Conserving, reusing, and redirecting physical resources.",
       "children": [],
       "memberships": [
         {
@@ -1330,7 +1237,6 @@
     {
       "node_id": "composting",
       "label": "Composting",
-      "scope": "Turning plant material and other organic matter into compost.",
       "children": [],
       "memberships": [
         {
@@ -1342,7 +1248,6 @@
     {
       "node_id": "nature-landscapes",
       "label": "Nature and landscapes",
-      "scope": "Natural scenes, weather, land, water, and outdoor imagery.",
       "children": [],
       "memberships": [
         {
@@ -1354,7 +1259,6 @@
     {
       "node_id": "movement-place",
       "label": "Travel and places",
-      "scope": "Travel, relocation, and geographic autonomy.",
       "children": [
         "travel",
         "relocation",
@@ -1365,7 +1269,6 @@
     {
       "node_id": "travel",
       "label": "Travel",
-      "scope": "Travel and encounters with places away from home.",
       "children": [],
       "memberships": [
         {
@@ -1377,7 +1280,6 @@
     {
       "node_id": "relocation",
       "label": "Relocation and moving abroad",
-      "scope": "Planning and carrying out a move to another country.",
       "children": [],
       "memberships": [
         {
@@ -1389,7 +1291,6 @@
     {
       "node_id": "geographic-autonomy",
       "label": "Geographic and jurisdictional autonomy",
-      "scope": "Choosing locations and jurisdictions to increase personal autonomy.",
       "children": [],
       "memberships": [
         {
