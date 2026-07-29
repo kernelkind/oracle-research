@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "draft_id": "crec-116-stratified-48-hierarchy-v2",
+  "draft_id": "crec-116-stratified-48-hierarchy-v3",
   "approved_notes_sha256": "2b4b06cde7182932bdf1729daa1a4946bc7294eb3ada024d31ac931275a8f99e",
   "root_node_id": "root",
   "nodes": [
@@ -29,8 +29,9 @@
         "history-topics",
         "language-word-usage",
         "child-cognitive-development",
+        "knowledge-reasoning-development",
         "personal-knowledge-management",
-        "philosophy-of-science"
+        "scientific-thought"
       ],
       "memberships": []
     },
@@ -177,6 +178,18 @@
       ]
     },
     {
+      "node_id": "knowledge-reasoning-development",
+      "label": "Development of knowledge and reasoning",
+      "scope": "How knowledge and reasoning develop.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "2a1c279f820c19a78aed198d135340416f445aa10c9951ae3d3c77f366f225d8",
+          "strength": "central"
+        }
+      ]
+    },
+    {
       "node_id": "personal-knowledge-management",
       "label": "Digitizing and organizing personal notes",
       "scope": "Digitizing, naming, inventorying, and organizing personal notes.",
@@ -189,9 +202,44 @@
       ]
     },
     {
+      "node_id": "scientific-thought",
+      "label": "Scientific thought",
+      "scope": "Philosophy of science, scientific disciplines, and the unity of nature.",
+      "children": [
+        "philosophy-of-science",
+        "scientific-discipline-boundaries",
+        "unity-of-nature"
+      ],
+      "memberships": []
+    },
+    {
       "node_id": "philosophy-of-science",
       "label": "Philosophy of science",
       "scope": "How scientific categories relate to reality and to one another.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "eb4e7b0341e6544b6ef0de8dcef80f52b550948b988cd9be6a9247a11b06d46b",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "scientific-discipline-boundaries",
+      "label": "Scientific disciplines and their boundaries",
+      "scope": "How scientific disciplines divide and organize the study of nature.",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "eb4e7b0341e6544b6ef0de8dcef80f52b550948b988cd9be6a9247a11b06d46b",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "unity-of-nature",
+      "label": "Unity of nature",
+      "scope": "Nature understood as a unified whole rather than separate disciplines.",
       "children": [],
       "memberships": [
         {
@@ -639,14 +687,14 @@
       "label": "Markets and direct exchange",
       "scope": "Product sales and direct economic relationships between people.",
       "children": [
-        "product-advertising-sales",
+        "goods-offered-for-sale",
         "creator-value-exchange"
       ],
       "memberships": []
     },
     {
-      "node_id": "product-advertising-sales",
-      "label": "Product advertising and sales",
+      "node_id": "goods-offered-for-sale",
+      "label": "Goods offered for sale",
       "scope": "Offering concrete products for sale and explaining their terms.",
       "children": [],
       "memberships": [

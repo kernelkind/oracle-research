@@ -2362,7 +2362,13 @@ fn tracked_crec_116_correction_pass_uses_the_accepted_note_maps() {
         ),
         (
             8,
-            expected(&[("Child cognitive development", MembershipStrength::Central)]),
+            expected(&[
+                ("Child cognitive development", MembershipStrength::Central),
+                (
+                    "Development of knowledge and reasoning",
+                    MembershipStrength::Central,
+                ),
+            ]),
         ),
         (
             9,
@@ -2412,7 +2418,14 @@ fn tracked_crec_116_correction_pass_uses_the_accepted_note_maps() {
         ),
         (
             16,
-            expected(&[("Philosophy of science", MembershipStrength::Central)]),
+            expected(&[
+                ("Philosophy of science", MembershipStrength::Central),
+                (
+                    "Scientific disciplines and their boundaries",
+                    MembershipStrength::Central,
+                ),
+                ("Unity of nature", MembershipStrength::Central),
+            ]),
         ),
         (
             17,
@@ -2543,8 +2556,8 @@ fn tracked_crec_116_correction_pass_uses_the_accepted_note_maps() {
             35,
             expected(&[
                 ("Art and aesthetics", MembershipStrength::Substantive),
+                ("Goods offered for sale", MembershipStrength::Central),
                 ("Poetry", MembershipStrength::Incidental),
-                ("Product advertising and sales", MembershipStrength::Central),
                 ("Pottery", MembershipStrength::Central),
             ]),
         ),
@@ -2604,6 +2617,16 @@ fn tracked_crec_116_correction_pass_uses_the_accepted_note_maps() {
         "cd156ff6b90f1280ca1b15a03132f7fa315e354e37e1a532a1369cf7030c86de",
         "the 22 approved visible note maps must remain unchanged"
     );
+
+    let accepted_slots = [
+        1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+        28, 29, 30, 31, 32, 33, 36, 38, 39, 43, 45, 46, 48, 52, 53, 54, 55, 56, 57, 60,
+    ];
+    assert_eq!(
+        tracked_maps_sha256(&proposal, &draft, &accepted_slots),
+        "6ca665a7929da02e56a3bf6930188fe0bdc58478f099f31e54300be7ab1bbed8",
+        "the 45 currently accepted visible note maps must remain unchanged"
+    );
 }
 
 #[test]
@@ -2622,6 +2645,7 @@ fn tracked_crec_116_uses_bounded_grouping_nodes_without_duplicate_leaf_labels() 
         "creative-learning",
         "personal-life",
         "resource-use",
+        "scientific-thought",
     ] {
         let subject = draft.node(subject_id).expect("tracked grouping subject");
         assert!(
