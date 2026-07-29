@@ -2538,7 +2538,7 @@ fn tracked_maps_sha256(proposal: &NoteProposal, draft: &HierarchyDraft, slots: &
 }
 
 #[test]
-fn tracked_crec_116_correction_pass_uses_the_accepted_note_maps() {
+fn tracked_crec_116_correction_pass_preserves_or_explicitly_revises_note_maps() {
     let proposal = load_verified_note_proposal("reference_map/crec-116-note-proposal-v3.json")
         .expect("tracked CREC-116 proposal");
     let draft: HierarchyDraft = serde_json::from_slice(
@@ -2554,6 +2554,13 @@ fn tracked_crec_116_correction_pass_uses_the_accepted_note_maps() {
     };
 
     let expected_maps = [
+        (
+            5,
+            expected(&[(
+                "Coffee roasting and personal taste",
+                MembershipStrength::Central,
+            )]),
+        ),
         (
             2,
             expected(&[
@@ -2637,7 +2644,6 @@ fn tracked_crec_116_correction_pass_uses_the_accepted_note_maps() {
         (
             11,
             expected(&[
-                ("Coffee", MembershipStrength::Central),
                 (
                     "Coffee brewing and preparation",
                     MembershipStrength::Substantive,
@@ -2665,14 +2671,10 @@ fn tracked_crec_116_correction_pass_uses_the_accepted_note_maps() {
         ),
         (
             16,
-            expected(&[
-                ("Philosophy of science", MembershipStrength::Central),
-                (
-                    "Scientific disciplines and their boundaries",
-                    MembershipStrength::Central,
-                ),
-                ("Unity of nature", MembershipStrength::Central),
-            ]),
+            expected(&[(
+                "Artificial boundaries between scientific disciplines",
+                MembershipStrength::Central,
+            )]),
         ),
         (
             17,
@@ -2846,6 +2848,13 @@ fn tracked_crec_116_correction_pass_uses_the_accepted_note_maps() {
                 ("Visual storytelling", MembershipStrength::Substantive),
             ]),
         ),
+        (
+            60,
+            expected(&[
+                ("Coffee and memory", MembershipStrength::Substantive),
+                ("Poetry", MembershipStrength::Central),
+            ]),
+        ),
     ];
 
     for (slot, expected_memberships) in expected_maps {
@@ -2861,8 +2870,8 @@ fn tracked_crec_116_correction_pass_uses_the_accepted_note_maps() {
     ];
     assert_eq!(
         tracked_maps_sha256(&proposal, &draft, &approved_slots),
-        "cd156ff6b90f1280ca1b15a03132f7fa315e354e37e1a532a1369cf7030c86de",
-        "the 22 approved visible note maps must remain unchanged"
+        "60de22f2fcdfa20f7ebf7abb770414330fd97ac37103275621418c6958f06226",
+        "the 22 reviewed note maps must match the explicit correction pass"
     );
 
     let accepted_slots = [
@@ -2871,8 +2880,8 @@ fn tracked_crec_116_correction_pass_uses_the_accepted_note_maps() {
     ];
     assert_eq!(
         tracked_maps_sha256(&proposal, &draft, &accepted_slots),
-        "6ca665a7929da02e56a3bf6930188fe0bdc58478f099f31e54300be7ab1bbed8",
-        "the 45 currently accepted visible note maps must remain unchanged"
+        "df9a04e6c1f924ae35abf211a4be06b5cdd23c15017bc77e9946b350a4d4f594",
+        "the 45 reviewed note maps must match the explicit correction pass"
     );
 }
 
@@ -2892,7 +2901,8 @@ fn tracked_crec_116_uses_bounded_grouping_nodes_without_duplicate_leaf_labels() 
         "creative-learning",
         "personal-life",
         "resource-use",
-        "scientific-thought",
+        "freedom-expression",
+        "digital-autonomy",
     ] {
         let subject = draft.node(subject_id).expect("tracked grouping subject");
         assert!(
@@ -2914,6 +2924,85 @@ fn tracked_crec_116_uses_bounded_grouping_nodes_without_duplicate_leaf_labels() 
         leaf_labels.len(),
         "note-map revisions use visible labels, so every leaf label must be unique"
     );
+}
+
+#[test]
+fn tracked_crec_116_hierarchy_applies_the_approved_parent_corrections() {
+    let draft: HierarchyDraft = serde_json::from_slice(
+        &fs::read("reference_map/crec-116-hierarchy-draft-v3.json")
+            .expect("read tracked hierarchy draft"),
+    )
+    .expect("decode hierarchy draft");
+    let child_ids = |node_id: &str| {
+        draft
+            .node(node_id)
+            .expect("tracked parent subject")
+            .children
+            .clone()
+    };
+
+    assert_eq!(
+        child_ids("book-topics"),
+        vec!["books-reading", "book-recommendations"]
+    );
+    assert!(child_ids("knowledge-written-culture").contains(&"digital-knowledge-access".to_owned()));
+    assert!(child_ids("knowledge-written-culture")
+        .contains(&"scientific-discipline-boundaries".to_owned()));
+    assert_eq!(
+        draft
+            .node("scientific-discipline-boundaries")
+            .expect("precise scientific subject")
+            .label,
+        "Artificial boundaries between scientific disciplines"
+    );
+    assert!(draft.node("scientific-thought").is_none());
+    assert!(draft.node("philosophy-of-science").is_none());
+    assert!(draft.node("unity-of-nature").is_none());
+
+    assert!(!child_ids("software-systems").contains(&"developer-stereotypes".to_owned()));
+    assert_eq!(
+        child_ids("society"),
+        vec![
+            "freedom-expression",
+            "digital-autonomy",
+            "economy-exchange",
+            "developer-stereotypes",
+        ]
+    );
+    assert_eq!(
+        child_ids("freedom-expression"),
+        vec!["open-communication", "censorship-resistance"]
+    );
+    assert_eq!(
+        child_ids("digital-autonomy"),
+        vec![
+            "privacy-surveillance",
+            "technology-autonomy",
+            "algorithmic-attention",
+        ]
+    );
+    assert!(child_ids("computing").contains(&"decentralized-protocols".to_owned()));
+    assert!(child_ids("nostr-technology").contains(&"nostr-platform-ecosystem".to_owned()));
+
+    assert_eq!(
+        draft.node("health-movement").expect("health parent").label,
+        "Health and wellbeing"
+    );
+    assert_eq!(
+        draft.node("personal-life").expect("personal parent").label,
+        "Personal experiences and relationships"
+    );
+    assert_eq!(
+        child_ids("coffee-topics"),
+        vec![
+            "coffee-roasting-personal-taste",
+            "coffee-taste-quality",
+            "coffee-brewing-preparation",
+            "coffee-product-comparison",
+            "coffee-memory",
+        ]
+    );
+    assert!(draft.node("coffee").is_none());
 }
 
 #[test]

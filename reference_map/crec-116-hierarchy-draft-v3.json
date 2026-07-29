@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "draft_id": "crec-116-stratified-48-hierarchy-v4",
+  "draft_id": "crec-116-stratified-48-hierarchy-v5",
   "approved_notes_sha256": "2b4b06cde7182932bdf1729daa1a4946bc7294eb3ada024d31ac931275a8f99e",
   "root_node_id": "root",
   "nodes": [
@@ -29,7 +29,8 @@
         "child-cognitive-development",
         "knowledge-reasoning-development",
         "personal-knowledge-management",
-        "scientific-thought"
+        "digital-knowledge-access",
+        "scientific-discipline-boundaries"
       ],
       "memberships": []
     },
@@ -38,7 +39,6 @@
       "label": "Books and written works",
       "children": [
         "books-reading",
-        "digital-knowledge-access",
         "book-recommendations"
       ],
       "memberships": []
@@ -188,40 +188,8 @@
       ]
     },
     {
-      "node_id": "scientific-thought",
-      "label": "Scientific thought",
-      "children": [
-        "philosophy-of-science",
-        "scientific-discipline-boundaries",
-        "unity-of-nature"
-      ],
-      "memberships": []
-    },
-    {
-      "node_id": "philosophy-of-science",
-      "label": "Philosophy of science",
-      "children": [],
-      "memberships": [
-        {
-          "note_id": "eb4e7b0341e6544b6ef0de8dcef80f52b550948b988cd9be6a9247a11b06d46b",
-          "strength": "central"
-        }
-      ]
-    },
-    {
       "node_id": "scientific-discipline-boundaries",
-      "label": "Scientific disciplines and their boundaries",
-      "children": [],
-      "memberships": [
-        {
-          "note_id": "eb4e7b0341e6544b6ef0de8dcef80f52b550948b988cd9be6a9247a11b06d46b",
-          "strength": "central"
-        }
-      ]
-    },
-    {
-      "node_id": "unity-of-nature",
-      "label": "Unity of nature",
+      "label": "Artificial boundaries between scientific disciplines",
       "children": [],
       "memberships": [
         {
@@ -238,7 +206,8 @@
         "nostr-technology",
         "artificial-intelligence",
         "bitcoin-mining",
-        "software-security"
+        "software-security",
+        "decentralized-protocols"
       ],
       "memberships": []
     },
@@ -250,7 +219,6 @@
         "data-storage-systems",
         "software-development",
         "powershell-file-inventory",
-        "developer-stereotypes",
         "shell-scripting"
       ],
       "memberships": []
@@ -354,7 +322,8 @@
       "label": "Nostr technology",
       "children": [
         "nostr-protocol-engineering",
-        "nostr-key-reuse"
+        "nostr-key-reuse",
+        "nostr-platform-ecosystem"
       ],
       "memberships": []
     },
@@ -521,22 +490,29 @@
       "node_id": "society",
       "label": "Society",
       "children": [
-        "communication-rights",
+        "freedom-expression",
+        "digital-autonomy",
         "economy-exchange",
-        "nostr-platform-ecosystem"
+        "developer-stereotypes"
       ],
       "memberships": []
     },
     {
-      "node_id": "communication-rights",
-      "label": "Communication and digital rights",
+      "node_id": "freedom-expression",
+      "label": "Freedom of expression",
       "children": [
         "open-communication",
-        "algorithmic-attention",
+        "censorship-resistance"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "digital-autonomy",
+      "label": "Digital autonomy",
+      "children": [
         "privacy-surveillance",
         "technology-autonomy",
-        "censorship-resistance",
-        "decentralized-protocols"
+        "algorithmic-attention"
       ],
       "memberships": []
     },
@@ -889,7 +865,7 @@
     },
     {
       "node_id": "health-movement",
-      "label": "Health and physical movement",
+      "label": "Health and wellbeing",
       "children": [
         "exercise-training",
         "injury-rehabilitation",
@@ -965,7 +941,7 @@
     },
     {
       "node_id": "personal-life",
-      "label": "Personal life",
+      "label": "Personal experiences and relationships",
       "children": [
         "family-relationships",
         "aging-family-role-reversal",
@@ -1046,29 +1022,22 @@
       "node_id": "coffee-topics",
       "label": "Coffee, preparation, and products",
       "children": [
-        "coffee",
+        "coffee-roasting-personal-taste",
         "coffee-taste-quality",
         "coffee-brewing-preparation",
-        "coffee-product-comparison"
+        "coffee-product-comparison",
+        "coffee-memory"
       ],
       "memberships": []
     },
     {
-      "node_id": "coffee",
-      "label": "Coffee",
+      "node_id": "coffee-roasting-personal-taste",
+      "label": "Coffee roasting and personal taste",
       "children": [],
       "memberships": [
         {
           "note_id": "056e6466257003453c3065421db88270511cb13ec8c860e3cb4d4b22edf3ba77",
           "strength": "central"
-        },
-        {
-          "note_id": "fbac11c36101d6513cc632ef2ddc7fa17883cbd667da7fc75196bcabd9d31ea3",
-          "strength": "central"
-        },
-        {
-          "note_id": "8894b71ab618459a3c40e9637d2cad57cb3347b758911a94da50d8f84db53aa8",
-          "strength": "substantive"
         }
       ]
     },
@@ -1101,6 +1070,17 @@
       "memberships": [
         {
           "note_id": "fbac11c36101d6513cc632ef2ddc7fa17883cbd667da7fc75196bcabd9d31ea3",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "coffee-memory",
+      "label": "Coffee and memory",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "8894b71ab618459a3c40e9637d2cad57cb3347b758911a94da50d8f84db53aa8",
           "strength": "substantive"
         }
       ]
