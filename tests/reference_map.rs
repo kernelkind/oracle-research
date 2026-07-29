@@ -3042,7 +3042,7 @@ fn tracked_crec_116_review_session_preserves_the_human_hierarchy_decisions() {
 
     assert_eq!(
         envelope["state_sha256"],
-        "79a483264702a6aeaee6d2710e6d9499d28609c8b4b74a8f219996813399fc4f"
+        "5dcdae305ad4108be785440c37746d0712af4e813c1fbfca9c522ef9bc527da1"
     );
     assert_eq!(
         envelope["session"]["history"]
@@ -3080,6 +3080,10 @@ fn tracked_crec_116_review_session_preserves_the_human_hierarchy_decisions() {
             && record["decision"]["outcome"] == "rejected"
             && record["decision"]["comment"] == "disagree w 5 & 6"
     }));
+    assert_eq!(
+        envelope["session"]["focus_coverage_history"][0]["decision"]["outcome"],
+        "approved"
+    );
 
     let proposal = load_verified_note_proposal("reference_map/crec-116-note-proposal-v3.json")
         .expect("tracked CREC-116 proposal");
@@ -3110,30 +3114,100 @@ fn tracked_crec_116_review_session_preserves_the_human_hierarchy_decisions() {
     write_json(&approved_notes_path, &approved_notes);
     write_json(&draft_path, &draft);
     fs::copy(tracked_session, &session_path).expect("copy tracked session");
-    let mut ui = ScriptedUi::new([ApprovalTuiAction::Pause]);
+    let approved_hierarchy_path = temp.path().join("approved-hierarchy.json");
+    let mut ui = ScriptedUi::default();
 
     assert_eq!(
         run_hierarchy_review(
             approved_notes_path,
             draft_path,
             session_path,
-            temp.path().join("approved-hierarchy.json"),
+            &approved_hierarchy_path,
             &mut ui,
         )
         .expect("resume the production hierarchy review from tracked state"),
-        ReviewRunOutcome::Paused
+        ReviewRunOutcome::Approved
+    );
+    assert!(ui.screens.is_empty());
+    assert!(approved_hierarchy_path.is_file());
+}
+
+#[test]
+fn tracked_crec_116_approved_hierarchy_is_complete_and_source_bound() {
+    let hierarchy: ApprovedHierarchy = serde_json::from_slice(
+        &fs::read("reference_map/crec-116-approved-hierarchy-v1.json")
+            .expect("read tracked CREC-116 approved hierarchy"),
+    )
+    .expect("decode tracked CREC-116 approved hierarchy");
+    hierarchy
+        .validate()
+        .expect("tracked CREC-116 approved hierarchy");
+
+    let proposal = load_verified_note_proposal("reference_map/crec-116-note-proposal-v3.json")
+        .expect("tracked CREC-116 proposal");
+    let mut note_review = NoteReviewSession::new(&proposal).expect("create note review");
+    for note in &proposal.notes {
+        note_review
+            .record(
+                &proposal,
+                note.slot,
+                NoteReviewDecision {
+                    outcome: ReviewOutcome::Approved,
+                    comment: String::new(),
+                },
+            )
+            .expect("approve tracked note");
+    }
+    let approved_notes =
+        ApprovedNoteSet::from_review(&proposal, &note_review).expect("derive approved notes");
+    let draft: HierarchyDraft = serde_json::from_slice(
+        &fs::read("reference_map/crec-116-hierarchy-draft-v3.json")
+            .expect("read tracked hierarchy draft"),
+    )
+    .expect("decode tracked hierarchy draft");
+
+    assert_eq!(
+        hierarchy.approved_notes_sha256,
+        approved_notes.identity().expect("approved-note identity")
     );
     assert_eq!(
-        ui.screens
-            .iter()
-            .map(|screen| screen.title.as_str())
-            .collect::<Vec<_>>(),
-        ["Focus coverage"]
+        hierarchy.hierarchy_draft_sha256,
+        draft.identity(&approved_notes).expect("hierarchy identity")
     );
-    let coverage = &ui.screens[0].evidence[0].body;
-    assert!(coverage.contains("Narrow-focus notes · 6"));
-    assert!(coverage.contains("Multi-focus notes · 42"));
-    assert!(!coverage.contains("ordinal signature"));
+    assert_eq!(hierarchy.notes.len(), REFERENCE_NOTE_COUNT);
+    assert_eq!(hierarchy.nodes, draft.nodes);
+
+    let meaningful_subjects = hierarchy
+        .nodes
+        .iter()
+        .filter(|node| node.is_leaf())
+        .flat_map(|node| &node.memberships)
+        .filter(|membership| {
+            matches!(
+                membership.strength,
+                MembershipStrength::Central | MembershipStrength::Substantive
+            )
+        })
+        .fold(BTreeMap::<&str, usize>::new(), |mut counts, membership| {
+            *counts.entry(membership.note_id.as_str()).or_default() += 1;
+            counts
+        });
+    assert_eq!(
+        hierarchy
+            .notes
+            .iter()
+            .filter(|note| meaningful_subjects[note.note_id.as_str()] == 1)
+            .count(),
+        6
+    );
+    assert_eq!(
+        hierarchy
+            .notes
+            .iter()
+            .filter(|note| meaningful_subjects[note.note_id.as_str()] >= 2)
+            .count(),
+        42
+    );
 }
 
 #[test]

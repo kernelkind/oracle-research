@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "state_sha256": "79a483264702a6aeaee6d2710e6d9499d28609c8b4b74a8f219996813399fc4f",
+  "state_sha256": "5dcdae305ad4108be785440c37746d0712af4e813c1fbfca9c522ef9bc527da1",
   "session": {
     "schema_version": 5,
     "history": [
@@ -1325,6 +1325,14 @@
         }
       }
     ],
-    "focus_coverage_history": []
+    "focus_coverage_history": [
+      {
+        "leaf_map_revision_sha256": "772def381453d374b3e58393336c9139a924769aa7f9a25d82d343d922cfa69d",
+        "decision": {
+          "outcome": "approved",
+          "comment": ""
+        }
+      }
+    ]
   }
 }

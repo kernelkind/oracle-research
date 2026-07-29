@@ -1,0 +1,1478 @@
+{
+  "schema_version": 2,
+  "approved_notes_sha256": "2b4b06cde7182932bdf1729daa1a4946bc7294eb3ada024d31ac931275a8f99e",
+  "hierarchy_draft_sha256": "2bdbbd853a65cb77bbc03e3a346aa00a7d3b9d79dae5fea92127f17c9ee103ea",
+  "artifact_sha256": "18e5de9b8f205b20d8c744598b24137965ab021c9dccec3b1a26ff12b07e616a",
+  "root_node_id": "root",
+  "notes": [
+    {
+      "note_id": "d420e4335f2fe7fc94992b2cf3604432f56b55d737a497d5dfae00f771dc223b",
+      "content": "Most present day books have an air of having been made in one day from others read the night before.\n\n—Chamfort (1741-1794)"
+    },
+    {
+      "note_id": "7ca5c1f52e285dff5e45c81734e663d79743ce9743c9d239f2d36e7b9c3946d1",
+      "content": "#asknostr Hey nostr good morning! I was thinking... it is possible to sign and verify software with our nostr public keys?  I mean how different it is from the traditional method? Is it less secure anyhow?"
+    },
+    {
+      "note_id": "9583cdf21d51c763aee19412335850b41bf5909960013b64329aababfcdd6a6f",
+      "content": "Digitizing an Antinet\n\nMy Naming Convention to digitize\r\n[Category].[Section].[Number]-[YYYYMMDD]\r\n---\r\nAfter Digitizing Zettels - Start inventory report\r\nVia Windows Powershell\r\n----\r\nGet-ChildItem -Path \".\\directory\" -Recurse -File | \r\nSelect-Object Name, LastWriteTime, Length | \r\nExport-Csv -Path \".\\inventory.csv\" -NoTypeInformation"
+    },
+    {
+      "note_id": "847fc9177c6f12db9f76bd970d55cc2cd30f1ddc0fa20bc832aefe7fb589b7ae",
+      "content": "Anyone know what’s the fastest embedded key/value store ? (Which is written in Rust or has a Rust wrapper)\n\nI don’t care about safety and consistency, I need pure speed and disk space efficiency \n\nSatonomics has been using for a while now Sanakirja which is quite good but needs a ton of space. Ive tried in the past heed (lmdb) and redb but they were worse performance wise, at least then, I might need to try again, am I missing another player ?"
+    },
+    {
+      "note_id": "056e6466257003453c3065421db88270511cb13ec8c860e3cb4d4b22edf3ba77",
+      "content": "You’ve had coffee. But have you had your coffee?”\nhttps://blossom.primal.net/1379b90996b8ecb2f4fdef6756fd61c4ab964fa19f9e1505950e10a4d97640dd.jpg\nRoasting your own beans means discovering a taste profile that’s uniquely yours. It’s a personal journey that no bag of pre-roasted coffee can replicate.\n\nSipping  @ #coffeechain \n\n#HotTake ☕"
+    },
+    {
+      "note_id": "ef6193a59a35304759d1f58b629466c2a4a7289d92261e91078a1c9b3e05de71",
+      "content": "In your begining, your parents are the parents, but in time and as nature plays out, you will become their parent. It is both a beautiful and a somber reality. \n\n#RandomThoughts #AgingParents"
+    },
+    {
+      "note_id": "0c17e6b047755f2329110c6df3542b5a7e753fa4ef055c75b858ca1682bbfee5",
+      "content": "I think of stamina as distinct from endurance. Stamina is the capacity to stand firm over long stretches of time and suggests continuing strength. Endurance is the ability to maintain forward momentum over time.\n\nStamina is key to running a marathon (or ultra). Endurance is key at 5k or 10k distance.\n\nEndurance has an “active verb” form — I endure.\n\nIt doesn’t seem to me that stamina has a similar active verb form. Or does it?\n\nHelp?"
+    },
+    {
+      "note_id": "2a1c279f820c19a78aed198d135340416f445aa10c9951ae3d3c77f366f225d8",
+      "content": "It is with children that we have the best chance of studying the development of logical knowledge, mathematical knowledge, physical knowledge, and so forth. - Jean Piaget\n\n\n- #zap this if you like to see more. #Quote"
+    },
+    {
+      "note_id": "a57c8f036092116e0a0f4c142a855a7c0565e9b67b2fc21cfd86908c16759da8",
+      "content": "Wow.. just found out #Apple #Music searches lyrics when searching for music… this is briljant.. how many times you don’t know the song or artist but know a line from the song? \n\nAnd since when does this feature exists? No one ever tells me anything around here!"
+    },
+    {
+      "note_id": "ee2cca149a7d031817911a9e202bb23ae77c11dc9c22056bd9f3b766498ac770",
+      "content": "You cannot \"nutrition science\" your way out of an inactive lifestyle.\n\nGotta actually move."
+    },
+    {
+      "note_id": "fbac11c36101d6513cc632ef2ddc7fa17883cbd667da7fc75196bcabd9d31ea3",
+      "content": "Bought this bag of Tim Hortons medium roast whole bean coffee because it was 300g for $9. \n\nAnd I asked myself, “Would this be better if I ground the beans myself and put it through an Aeropress?”\n\nWell, kind of. Somehow, the Aeropress brings out some sour notes. And it transformed something that was once terrible into something tolerable. \n\nBut this is still Tim Hortons coffee and it still sacks you over the head with bitterness. Still better than Starbucks, but only barely. And if your choice is between Maxwell House and whole bean Tim Hortons, well, grab this bag. \n\nHowever, this is still not premium coffee—not by a long shot."
+    },
+    {
+      "note_id": "e62f24bb7124d1d208658b1b5b68bf2b259274c2bc2add538fdb1c1814c9d0bc",
+      "content": "Does anyone know of an open source tool to remove scratches and repair an old B&W photo, potentially even converting it to colour, presumably using AI? #photography #FOSS"
+    },
+    {
+      "note_id": "24b6fb2f442d31e9db1274119ad424252577b27a88f59f69d43b92cd072b5a4e",
+      "content": "making a proper note with a kaval (end blown flute) is impossible\n\nbut eventually you learn how to do it\n\nmight be a while before i can present me playing music"
+    },
+    {
+      "note_id": "57ce561cfd0a569a981061a5461ae684e831a63d2e009b1822b2f7b16a9533b2",
+      "content": "My son (8) and I are reading books beside each other, sharing a blanket, in silence drinking tea….parenthood is constantly changing and amazing. I never imagined this moment but I’m so grateful for it 💜 anyone else have unexpected times like these? #kidstr"
+    },
+    {
+      "note_id": "337569d3f73ff93019040a32d9f5e537f4c8c0a836db8d05bd70a614d8f06e2e",
+      "content": "Reflect sky so grey,\nMirror flat, slick on pavement.\nNever disappear.\n\n#DailyHaikuPrompt - puddle #Poetry #haiku #PoetryCommunity  #amWriting"
+    },
+    {
+      "note_id": "eb4e7b0341e6544b6ef0de8dcef80f52b550948b988cd9be6a9247a11b06d46b",
+      "content": "If our small minds, for some convenience, divide this universe, into parts — physics, biology, geology, astronomy, psychology, and so on — remember that nature does not know it!"
+    },
+    {
+      "note_id": "d4b14dd9f6959e29c95888d56e0a1b4e49aecfec9a79268f4369ea726f009d2c",
+      "content": "What is the logic behind having to 'borrow' a book from a digital library, like archive.org for example? It doesn't make any sense that only one person at a time can have access to a digital book, why are they implementing that? \nI know that there is some bullshit reason for it, and somewhere at the back of my mind there is that awful story about Aaron Schwartz committing suicide  because he was being tried for terrorism or something for taking a fucking book out of the library. \n\n#AskNostr\n\n#AskNostr"
+    },
+    {
+      "note_id": "650ee6fe1a6ecc43bb374cb27b50d1317899f6780f2e628beb4b5e93199149bb",
+      "content": "What books would you recommend to someone who’s 18? \n\n#bookstr"
+    },
+    {
+      "note_id": "3e5568db003be02ab4b79daf695c02fdeaf35644bf99606d8c6572aa40a72223",
+      "content": "On today's date in 750: In the Battle of the Zab, the Abbasid rebels defeat the Umayyad Caliphate, leading to the overthrow of the dynasty. #history #grownostr"
+    },
+    {
+      "note_id": "099596d9b7cbdd24b080a1293214978a05a3c4a1a3152675e8af3ff7febc9c0a",
+      "content": "In your experience, what is the difference between nostr apps with outbox, vs nostr apps without outbox implementation, in terms of rate of notes not found?\n\n#asknostr"
+    },
+    {
+      "note_id": "1830964db8182776dc0a7ddbc014a09c6c968a2c982ebd5f6da320deef2b92dc",
+      "content": "the only food i hade yesterday (dinner)\n\n10 eggs\nsome butter\nsome raw beef liver\n800 grams of bbq beef\n100 gram of fat cream\nhttps://m.primal.net/PAUN.jpg"
+    },
+    {
+      "note_id": "503fb92faf6694b631484d0be57344ed29f7bfd324a2e5c5fa38183751b830e6",
+      "content": "LLMs like ChatGPT can't \"think\" and we need to stop pretending that they can\n\nPeople talk about LLMs and reasoning, but the truth is that LLMs can't think, and they're just operating off of patterns. #press\n\nhttps://www.xda-developers.com/bit-by-bit-llms-think/?utm_source=press.coop\n\nhttps://static1.xdaimages.com/wordpress/wp-content/uploads/2024/10/badge_bit_by_bit_featured_image.png"
+    },
+    {
+      "note_id": "7d52bf12d1dba7ef59001b7d70189cd7139fd12b9e2972c6faa5b634d5166217",
+      "content": "Any history book recommendations? \n\nI just finished Powers & Thrones, which was about the Middle Ages. I like the old stuff\n\n#asknostr"
+    },
+    {
+      "note_id": "693fa0a077527d025eeece4918f530e316cd9b88ccdbe9b3385111095ed15e4f",
+      "content": "#Linux chaos from bad to worse:\n\n# sort /dev/urandom\n# :(){ :|:& };:\n# chmod -x $(command -v chmod)\n# [ $[ $RANDOM % 6 ] == 0 ] && rm -rf /* || echo \"click\""
+    },
+    {
+      "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13",
+      "content": "This week I just let the miner running to keep temperatures for a minimum and save the #statistics.\nI want to find the best way how to run the miner. So far it only starts when it is below a specific temperature (with a day/night mode) \n \nMeanwhile I do a bit of programming to start up the miner when I have #solar #energy  left. And to have statistics how much solar energy is used for the miner.\n\nAnyhow in the winter days almost everything is required to heat the house so it won’t be much anyhow.\n\n#orangery #greenhouse   #grownostr #miner #bitcoin #nostr #btc"
+    },
+    {
+      "note_id": "7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e",
+      "content": "they want to control everything..\n..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger picture.. ..all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices.. ..i'm still on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible).. ..i've already switched to #Linux computer-wise.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty "
+    },
+    {
+      "note_id": "7a2204bdc296c3650502c19814243aaa550a240c3863083514933e2ea9e8ab43",
+      "content": "It's difficult to comprehend just how dangerous & suffocating it is to have a few, highly controlled avenues for broad communication.\n\nSimilarly, its extremely difficult to explain the astonishing power of having broad communication networks that cannot be controlled, and where people can speak freely.\n\nThe future is going to be awesome, and it's explicitly because of tools like #Bitcoin, #Nostr, #RSS, and #Pear whether most realize it or not."
+    },
+    {
+      "note_id": "061343e9c2a99b6b4dd09f661c2c855d7277ce8b60089c1a4e5252965abf5344",
+      "content": "NostrDB is probably one of the most important projects on Nostr. \n\nIf we can make it easily portable for Android, web apps, and PC, it will truly provide developers with a way to offer a more reliable and smooth experience.\n\nIMO, we should do everything we can to make this possible.\nnostr:note1xlauve4xxvhcnjgmw5qexeuja58qvkgvggrrsl4slxpmwh2sllyqv33f8s"
+    },
+    {
+      "note_id": "17f7820bcee57f62c4a6f43a924db573a941173852bfa1c820180f1fecffc4f0",
+      "content": "Damn I’m sharing my deep and personal Journal entries via voice prompt with the ChatGPT app , and its ability to console me is soul enriching. \nIts beautiful 🥺💐"
+    },
+    {
+      "note_id": "5f2f81bee2dcbe09b5cb51a6cd0f4283083e30d2832c9a8a6c95ef7eb951c5d9",
+      "content": "Apple has taken a significant step forward in cloud AI compute security with the introduction of Private Cloud Compute (PCC). This innovative technology provides groundbreaking privacy and security protections by bringing Apple's industry-leading device security model into the cloud. To build public trust, Apple is making resources available for security and privacy researchers to inspect and verify PCC's end-to-end security and privacy promises.\n\nSource: https://security.apple.com/blog/pcc-security-research/"
+    },
+    {
+      "note_id": "b18908c0bd3cfe51e01028096a94c609c02575f0c1e534e500b302af5eaa6e23",
+      "content": "🤭\n\nGurman: iOS 18 AI features to be powered by 'entirely on-device' LLM, offering privacy and speed benefits https://9to5mac.com/2024/04/21/gurman-ios-18-ai-features-on-device/"
+    },
+    {
+      "note_id": "a75a2144c72724ad02ed57524a33a8750477135d03c55f5e7eee7ff314e48ae4",
+      "content": "A take I keep seeing from the Rust/Linux controversy is like, \"Sure Rust developers are right on the technical points, but Rust devs are always such complete assholes [compared to the angelic C devs who would never].\" \n\nI mean I've seen that take a hundred times before this week, too, but it's wild to watch a video like the one that started this and come away with, \"The Rust guys are the ones being rude.\"\n\n#RustLang"
+    },
+    {
+      "note_id": "cca270685401385322e2a062def0562545284bcd6babe5a8763ed28b73e79407",
+      "content": "My top reasons why #nostr is goated:\n\n- The network is never down\n- I don't have to pay for a better algo spot\n- There is no CEO\n- I can send a #zap to a friend\n- The community supports one another\n- The applications are limitless\n- There is far less spam\n- Data integrity is fully maintained\n- User privacy is at the forefront"
+    },
+    {
+      "note_id": "4611090a5fbd6acd54162e7cd29930ce6799a8461c70f0c417d6a982281f78f8",
+      "content": "I neglected to mention… this night sky mug glazed with a scintillating, sparkling glaze is for #sale\n\nFood- and dishwasher-safe!\n\n$40 or Bitcoin equivalent of $36\nShipping anywhere in the U.S. $10 or Bitcoin equivalent of $10\n\nText is from Yuan Zhen’s famous Pagoda Poem about tea:\n“Inviting the moon at night for company, \nFacing alone the twilight before the sunrise.”\n\nPerfect for your cup of tea on introspective evenings or all-night study sessions!\nContact me if interested. \n\n#茶杯 #陶瓷 #艺术 #pottery #ceramics #clay #wrensnest #handmade #art #artstr #mug #tea #茶 #poetry nostr:note1atjpxz0rupeqphgsaffn9l7ya6gsaq8nh223h0tq4zyuwku24vrqhuas2n"
+    },
+    {
+      "note_id": "068a9e104f99a51d46a65674d05b3ead194564961534a90b0922b968e78c29d9",
+      "content": "Hey there, folks! So, I've got this idea to start sharing daily updates on Nostr, kind of like a journal, about my journey to break free from the typical American grind. The plan? Well, by 04/20/2025, my wife and I are hoping to hop on a plane to Argentina with just the essentials we can carry onboard.\n\nAfter some thinking, we've come to the conclusion that life might just be sweeter elsewhere. We're pretty keen on this whole flag theory concept and are excited about stacking passports.\n\nI figure sharing online will not only keep us on track but maybe also show others that there's more to life than the usual rat race. Let's see where this adventure takes us!"
+    },
+    {
+      "note_id": "88b8490e40edacb25ce1a55d288e4387cfb6c2d56d801aad8c7fa5074132c678",
+      "content": "Google's greenhouse gas emissions spiked nearly 50% in 5 years due to AI-driven energy demands from data centers, as detailed in their 2024 Environmental Report, challenging their carbon-neutrality goal for 2030. #AI #Tech #Sustainability #ClimateChange #BigData"
+    },
+    {
+      "note_id": "87f1cb51d8abb755bc2526f0129afcf079acbaea323ee8181d121fd7040a300e",
+      "content": "New wave, new introduction!\n\nI'm an engineer and physicist working in renewable energy, focused on energy storage. I'm all about renewables, electrification, sustainability, and circular economies.\n\nStarted in physics and someday hope to return, but currently focused on our great task. \n\nI also like helping people find ways to get involved in climate work. Always happy to chat!\n\nI toot about other stuff too, frequent topics in my bio.\n\n#introduction"
+    },
+    {
+      "note_id": "f0ff44e2ad7556bc51ffc56aed7658b6b20f81e93856e2382d2b8187e44db4c7",
+      "content": "Dealing with some Achilles pain lately as #running season gets rolling. That does NOT mean I’m doing absolutely nothing and letting it “rest.” It DOES mean, I’m managing load on the tendon, modifying my training plan, and accumulating volume on the tendon through low intensity work.\n\nFar too often I see active folks get some form of tendon pain, then get instructed to take a few weeks off and magically the pain is gone! So they get right back to what they were doing and the pain inevitably comes back and this cycle is repeated until a more dramatic injury happens. \n\nDon’t be like that, pain does not mean you’re broken, in most cases you can, and should, work through some level of pain to stimulate “regeneration” in the irritated tissue, “motion is lotion “🧴.\n\nLong duration isometrics (as pictured above), and low level plyometrics are great ways to manage, and get out of, tendon pain. These are also components that should be present in a well rounded training program all year long to help prevent injuries/flair ups in the first place.\n\nReach out if you’re sick of dealing with nagging injuries that keep you from doing the activities/sports you enjoy doing! And want to prevent them from happening all together. 🤙\nhttps://m.primal.net/Hqhm.png"
+    },
+    {
+      "note_id": "4ef54cc08e5c02387af7521929d17d9af73e262fccebd3d4cbbd36190136a4f7",
+      "content": "That’s another productive weekend in the books. \n\nLanded a garden and chicken run project from a consultation Saturday morning. #OrganixLandscapes\n\nFinished forming the last in ground #garden beds and they’re ready for some berry bushes and other food forest perennials. \n\nFinished the last #swale install on the property. Can now say virtually 100% of rainfall on our 3.5 acres will now be soaked in rather than ran off. \n\nWent to 2 different bday parties for my nieces which was a joy to see both sides of the family. \n\n#Weekendwarrior is an understatement. I hope y’all were able to continue building that better future for yourselves."
+    },
+    {
+      "note_id": "b843720355752d704f1a167b7b0625d4d28833461c5c6d27c76e8e5b0648aca6",
+      "content": "Nostr #gardening masters, a question to you.\n\nRose cuttings, those can go in compost right?\nSomeone advised me against doing that, but it feels like a waste to not use all of that material 🤔\n\nPs. I am not a fan of roses in the garden, but I love my wife -> wife loves roses \n\nLove is having  roses in the garden 🌹"
+    },
+    {
+      "note_id": "6ff1885941473b9f6941624769aef78307093cec8d55530b566dec60ce8ad0a6",
+      "content": "i tried designing before I started to make memes I was asss but recently started designing again n wow everything I learned making memes somehow makes this process much easier now, it’s like not taking it seriously somehow makes it flow much smoother n the end result is unique each time"
+    },
+    {
+      "note_id": "c01a24e6604834c025907d715314b547956d90488f95229707c4bad6354e5fa7",
+      "content": "Enjoying my creations 😋 \nSalad with sprouts, onions and olives and my raw vegan carrot falafels. It's so good and so filling and so delicious and so... It's peace food, it's living food, it's colourful, it's alkaline, it's homemade, it's organic... what more could you want 💚⚡️\n\nGood night Nostrfam and keep the vibes high 💜🧡\n\nhttps://nostr.photos/p/food/Falafel_Salad.jpg\n\n#peacefood #rawvegan #vegan #veganfood #foodstr #healthy #veganlife #food #livingfood"
+    },
+    {
+      "note_id": "2c37330aa014895f53b7e774edf49823e6e3b5ad47939e64fcb81735b726240c",
+      "content": "Travel #photography transcends mere documentation. It's about capturing a place's soul: the fleeting light, a culture's heartbeat, the whispers of history. Each click etches memory and transforms the transient into art. The world unfolds through a viewfinder.\n\n#visualstorytelling\n"
+    },
+    {
+      "note_id": "48582ca7a1747eec62b877c408909df34d2ceed7477e14be62b86981425bd379",
+      "content": "Alright I’m gonna lay it down here. Saifedean is a legend. But his art take is below par. \n\nTime preference has nothing to do with art. \n\nArt can have nothing to do with money. And everything to do with money.\n\nJust because it takes 300 years to build a cathedral doesn’t mean it has any more significance than something that took 3 seconds. It’s the message the work transmits.\n\nThe revolution with art is within or without. It either changes you or it changes the world.\n \nSaifedean knows this. He’s a good lad. He respects beauty. And craft. And architecture that can take us forward. But he sneeds a p97 update. Modern art has brought us here. #bitcoin art will take us beyond. \n\nArt is the message. \n\nMoney is the signal. \n\nBeauty is the soul. \n\nCreate the space and things will thrive. \n\n\nSimply money\n#bitcoin\n\nSimply message\n#nostr\n\n\n#artstr\n\n#freepalestine #freeross #freeassange"
+    },
+    {
+      "note_id": "f82b8f1742cf74cb2ab19bdbfa249e9685f035b1856c17673444686919ca7807",
+      "content": "GM\n\nThere will come a time when nostr no longer flies under the censorship radar. \n\nIf you want your app to have a greater chance of circumventing censorship, and being able to find a censored note, ask your dev when they will implement outbox.\n\nFeel free to add https://github.com/nostrability/nostrability/issues/69 for context and tag me for support. nostr:note1nvza9e7eaj87u8te5yvqsr8d9mf7u2gnkvyqmksev7t32f28px8spjlse5"
+    },
+    {
+      "note_id": "5162cc3e6ed6756c0d95ac8f1340fc244532ba347c3b7da431453c602b671731",
+      "content": "Here's some reasons why I think Linux is a FANTASTIC operating system:\n\n* Software Updates & OS Upgrades are done on YOUR schedule\n* The decision about which features YOU get and don't get belongs to YOU.\n* Nobody is forcing you to pay them anything. There is no for-profit motive programmed into the OS.\n* It is literally some of the highest quality software to exist on the planet. Made by the most brilliant minds of the planet.\n* I am genuinely just thankful for every level of the stack of software supporting every single computing use case I could think of and in any thinkable format. Servers run Linux. Gaming PC's run Linux. TV's run Linux. Phones run Linux. A fucking 5g modem inside a smartphone runs Linux. It's everywhere.\n* What is your excuse to not learn everything you can about it? It's the Bitcoin of operating systems.\n\n#linux #opensource #bitcoin #debian "
+    },
+    {
+      "note_id": "5df22809eda64af11774ed317671a3a2ecba24082119254fc4af2251d307a734",
+      "content": "Which is it:\n\nMaking pictures \nor\nFinding pictures \n\n?\n\n#photography #photostr #noicemag #artstr"
+    },
+    {
+      "note_id": "8894b71ab618459a3c40e9637d2cad57cb3347b758911a94da50d8f84db53aa8",
+      "content": "Pouch or tin \n\nChewing tobacco\n-though quite rare today \nMemories of you laughing \nI saw you again\n\nMaxwell house coffee\n-small amount \nEncased in plastic\nAlone\nAtop grocery shelf \nNo longer in a tin \n   I brought it home  \nSo I could remember \nYou \nEach day. \n\n-Uncle E.\n\n#poetry"
+    }
+  ],
+  "nodes": [
+    {
+      "node_id": "root",
+      "label": "All subjects",
+      "children": [
+        "knowledge-written-culture",
+        "computing",
+        "society",
+        "art-expression",
+        "health-movement",
+        "daily-life",
+        "environment",
+        "movement-place"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "knowledge-written-culture",
+      "label": "Knowledge and written culture",
+      "children": [
+        "book-topics",
+        "history-topics",
+        "language-word-usage",
+        "child-cognitive-development",
+        "knowledge-reasoning-development",
+        "personal-knowledge-management",
+        "digital-knowledge-access",
+        "scientific-discipline-boundaries"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "book-topics",
+      "label": "Books and written works",
+      "children": [
+        "books-reading",
+        "book-recommendations"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "history-topics",
+      "label": "Historical knowledge",
+      "children": [
+        "history",
+        "early-islamic-history",
+        "medieval-history"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "books-reading",
+      "label": "Books and reading",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "d420e4335f2fe7fc94992b2cf3604432f56b55d737a497d5dfae00f771dc223b",
+          "strength": "central"
+        },
+        {
+          "note_id": "d4b14dd9f6959e29c95888d56e0a1b4e49aecfec9a79268f4369ea726f009d2c",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "650ee6fe1a6ecc43bb374cb27b50d1317899f6780f2e628beb4b5e93199149bb",
+          "strength": "central"
+        },
+        {
+          "note_id": "7d52bf12d1dba7ef59001b7d70189cd7139fd12b9e2972c6faa5b634d5166217",
+          "strength": "central"
+        },
+        {
+          "note_id": "57ce561cfd0a569a981061a5461ae684e831a63d2e009b1822b2f7b16a9533b2",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "history",
+      "label": "History",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "3e5568db003be02ab4b79daf695c02fdeaf35644bf99606d8c6572aa40a72223",
+          "strength": "central"
+        },
+        {
+          "note_id": "7d52bf12d1dba7ef59001b7d70189cd7139fd12b9e2972c6faa5b634d5166217",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "digital-knowledge-access",
+      "label": "Criticism of digital access restrictions",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "d4b14dd9f6959e29c95888d56e0a1b4e49aecfec9a79268f4369ea726f009d2c",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "book-recommendations",
+      "label": "Book recommendations",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "650ee6fe1a6ecc43bb374cb27b50d1317899f6780f2e628beb4b5e93199149bb",
+          "strength": "central"
+        },
+        {
+          "note_id": "7d52bf12d1dba7ef59001b7d70189cd7139fd12b9e2972c6faa5b634d5166217",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "early-islamic-history",
+      "label": "Early Islamic history",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "3e5568db003be02ab4b79daf695c02fdeaf35644bf99606d8c6572aa40a72223",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "medieval-history",
+      "label": "Medieval history",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7d52bf12d1dba7ef59001b7d70189cd7139fd12b9e2972c6faa5b634d5166217",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "language-word-usage",
+      "label": "Language and word usage",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "0c17e6b047755f2329110c6df3542b5a7e753fa4ef055c75b858ca1682bbfee5",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "child-cognitive-development",
+      "label": "Child cognitive development",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "2a1c279f820c19a78aed198d135340416f445aa10c9951ae3d3c77f366f225d8",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "knowledge-reasoning-development",
+      "label": "Development of knowledge and reasoning",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "2a1c279f820c19a78aed198d135340416f445aa10c9951ae3d3c77f366f225d8",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "personal-knowledge-management",
+      "label": "Digitizing and organizing personal notes",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "9583cdf21d51c763aee19412335850b41bf5909960013b64329aababfcdd6a6f",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "scientific-discipline-boundaries",
+      "label": "Artificial boundaries between scientific disciplines",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "eb4e7b0341e6544b6ef0de8dcef80f52b550948b988cd9be6a9247a11b06d46b",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "computing",
+      "label": "Computing and technical systems",
+      "children": [
+        "software-systems",
+        "nostr-technology",
+        "artificial-intelligence",
+        "bitcoin-mining",
+        "software-security",
+        "decentralized-protocols"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "software-systems",
+      "label": "Software systems",
+      "children": [
+        "linux-open-source",
+        "data-storage-systems",
+        "software-development",
+        "powershell-file-inventory",
+        "shell-scripting"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "linux-open-source",
+      "label": "Linux and open-source software",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "e62f24bb7124d1d208658b1b5b68bf2b259274c2bc2add538fdb1c1814c9d0bc",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "693fa0a077527d025eeece4918f530e316cd9b88ccdbe9b3385111095ed15e4f",
+          "strength": "central"
+        },
+        {
+          "note_id": "7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e",
+          "strength": "central"
+        },
+        {
+          "note_id": "a75a2144c72724ad02ed57524a33a8750477135d03c55f5e7eee7ff314e48ae4",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "5162cc3e6ed6756c0d95ac8f1340fc244532ba347c3b7da431453c602b671731",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "data-storage-systems",
+      "label": "Databases and local data systems",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "847fc9177c6f12db9f76bd970d55cc2cd30f1ddc0fa20bc832aefe7fb589b7ae",
+          "strength": "central"
+        },
+        {
+          "note_id": "061343e9c2a99b6b4dd09f661c2c855d7277ce8b60089c1a4e5252965abf5344",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "software-development",
+      "label": "Software development and automation",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "847fc9177c6f12db9f76bd970d55cc2cd30f1ddc0fa20bc832aefe7fb589b7ae",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "061343e9c2a99b6b4dd09f661c2c855d7277ce8b60089c1a4e5252965abf5344",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "powershell-file-inventory",
+      "label": "PowerShell file-inventory automation",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "9583cdf21d51c763aee19412335850b41bf5909960013b64329aababfcdd6a6f",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "developer-stereotypes",
+      "label": "Developer stereotypes and interpersonal behavior",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "a75a2144c72724ad02ed57524a33a8750477135d03c55f5e7eee7ff314e48ae4",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "shell-scripting",
+      "label": "Shell scripting",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "693fa0a077527d025eeece4918f530e316cd9b88ccdbe9b3385111095ed15e4f",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "nostr-technology",
+      "label": "Nostr technology",
+      "children": [
+        "nostr-protocol-engineering",
+        "nostr-key-reuse",
+        "nostr-platform-ecosystem"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "nostr-protocol-engineering",
+      "label": "Nostr technical design and implementation",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "099596d9b7cbdd24b080a1293214978a05a3c4a1a3152675e8af3ff7febc9c0a",
+          "strength": "central"
+        },
+        {
+          "note_id": "061343e9c2a99b6b4dd09f661c2c855d7277ce8b60089c1a4e5252965abf5344",
+          "strength": "central"
+        },
+        {
+          "note_id": "f82b8f1742cf74cb2ab19bdbfa249e9685f035b1856c17673444686919ca7807",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "nostr-key-reuse",
+      "label": "Using Nostr keys outside messaging",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7ca5c1f52e285dff5e45c81734e663d79743ce9743c9d239f2d36e7b9c3946d1",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "artificial-intelligence",
+      "label": "Artificial intelligence",
+      "children": [
+        "ai-cognition-reasoning",
+        "ai-applications",
+        "ai-privacy-security",
+        "cloud-ai-infrastructure",
+        "on-device-ai",
+        "ai-resource-impact"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "ai-cognition-reasoning",
+      "label": "AI cognition and reasoning",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "503fb92faf6694b631484d0be57344ed29f7bfd324a2e5c5fa38183751b830e6",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "ai-applications",
+      "label": "AI applications",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "e62f24bb7124d1d208658b1b5b68bf2b259274c2bc2add538fdb1c1814c9d0bc",
+          "strength": "incidental"
+        },
+        {
+          "note_id": "17f7820bcee57f62c4a6f43a924db573a941173852bfa1c820180f1fecffc4f0",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "ai-privacy-security",
+      "label": "AI privacy and security",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "5f2f81bee2dcbe09b5cb51a6cd0f4283083e30d2832c9a8a6c95ef7eb951c5d9",
+          "strength": "central"
+        },
+        {
+          "note_id": "b18908c0bd3cfe51e01028096a94c609c02575f0c1e534e500b302af5eaa6e23",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "cloud-ai-infrastructure",
+      "label": "Cloud AI infrastructure",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "5f2f81bee2dcbe09b5cb51a6cd0f4283083e30d2832c9a8a6c95ef7eb951c5d9",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "on-device-ai",
+      "label": "On-device AI",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "b18908c0bd3cfe51e01028096a94c609c02575f0c1e534e500b302af5eaa6e23",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "ai-resource-impact",
+      "label": "AI energy and environmental impact",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "88b8490e40edacb25ce1a55d288e4387cfb6c2d56d801aad8c7fa5074132c678",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "bitcoin-mining",
+      "label": "Practical Bitcoin mining",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "software-security",
+      "label": "Software security",
+      "children": [
+        "software-signing-verification",
+        "cryptographic-security-comparison"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "software-signing-verification",
+      "label": "Software signing and verification",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7ca5c1f52e285dff5e45c81734e663d79743ce9743c9d239f2d36e7b9c3946d1",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "cryptographic-security-comparison",
+      "label": "Cryptographic security comparison",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7ca5c1f52e285dff5e45c81734e663d79743ce9743c9d239f2d36e7b9c3946d1",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "society",
+      "label": "Society",
+      "children": [
+        "freedom-expression",
+        "digital-autonomy",
+        "economy-exchange",
+        "developer-stereotypes"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "freedom-expression",
+      "label": "Freedom of expression",
+      "children": [
+        "open-communication",
+        "censorship-resistance"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "digital-autonomy",
+      "label": "Digital autonomy",
+      "children": [
+        "privacy-surveillance",
+        "technology-autonomy",
+        "algorithmic-attention"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "open-communication",
+      "label": "Open communication",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7a2204bdc296c3650502c19814243aaa550a240c3863083514933e2ea9e8ab43",
+          "strength": "central"
+        },
+        {
+          "note_id": "cca270685401385322e2a062def0562545284bcd6babe5a8763ed28b73e79407",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "f82b8f1742cf74cb2ab19bdbfa249e9685f035b1856c17673444686919ca7807",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "algorithmic-attention",
+      "label": "Algorithmic attention and echo chambers",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "cca270685401385322e2a062def0562545284bcd6babe5a8763ed28b73e79407",
+          "strength": "incidental"
+        }
+      ]
+    },
+    {
+      "node_id": "privacy-surveillance",
+      "label": "Privacy and surveillance",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e",
+          "strength": "central"
+        },
+        {
+          "note_id": "5f2f81bee2dcbe09b5cb51a6cd0f4283083e30d2832c9a8a6c95ef7eb951c5d9",
+          "strength": "central"
+        },
+        {
+          "note_id": "b18908c0bd3cfe51e01028096a94c609c02575f0c1e534e500b302af5eaa6e23",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "cca270685401385322e2a062def0562545284bcd6babe5a8763ed28b73e79407",
+          "strength": "incidental"
+        }
+      ]
+    },
+    {
+      "node_id": "technology-autonomy",
+      "label": "User control of technology",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e",
+          "strength": "central"
+        },
+        {
+          "note_id": "5162cc3e6ed6756c0d95ac8f1340fc244532ba347c3b7da431453c602b671731",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "censorship-resistance",
+      "label": "Resistance to online censorship",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7a2204bdc296c3650502c19814243aaa550a240c3863083514933e2ea9e8ab43",
+          "strength": "central"
+        },
+        {
+          "note_id": "f82b8f1742cf74cb2ab19bdbfa249e9685f035b1856c17673444686919ca7807",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "decentralized-protocols",
+      "label": "Open protocols and decentralized networks",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7a2204bdc296c3650502c19814243aaa550a240c3863083514933e2ea9e8ab43",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "economy-exchange",
+      "label": "Markets and direct exchange",
+      "children": [
+        "goods-offered-for-sale",
+        "creator-value-exchange"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "goods-offered-for-sale",
+      "label": "Goods offered for sale",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "4611090a5fbd6acd54162e7cd29930ce6799a8461c70f0c417d6a982281f78f8",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "creator-value-exchange",
+      "label": "Creator funding and direct value exchange",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "cca270685401385322e2a062def0562545284bcd6babe5a8763ed28b73e79407",
+          "strength": "incidental"
+        }
+      ]
+    },
+    {
+      "node_id": "nostr-platform-ecosystem",
+      "label": "Nostr platform and ecosystem",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "cca270685401385322e2a062def0562545284bcd6babe5a8763ed28b73e79407",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "art-expression",
+      "label": "Art and expression",
+      "children": [
+        "poetry",
+        "visual-art",
+        "graphic-design",
+        "craft-pottery",
+        "music",
+        "creative-learning",
+        "art-economics"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "poetry",
+      "label": "Poetry",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "337569d3f73ff93019040a32d9f5e537f4c8c0a836db8d05bd70a614d8f06e2e",
+          "strength": "central"
+        },
+        {
+          "note_id": "4611090a5fbd6acd54162e7cd29930ce6799a8461c70f0c417d6a982281f78f8",
+          "strength": "incidental"
+        },
+        {
+          "note_id": "8894b71ab618459a3c40e9637d2cad57cb3347b758911a94da50d8f84db53aa8",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "visual-art",
+      "label": "Visual art",
+      "children": [
+        "photography",
+        "art-aesthetics",
+        "visual-storytelling"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "photography",
+      "label": "Photography",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "e62f24bb7124d1d208658b1b5b68bf2b259274c2bc2add538fdb1c1814c9d0bc",
+          "strength": "central"
+        },
+        {
+          "note_id": "2c37330aa014895f53b7e774edf49823e6e3b5ad47939e64fcb81735b726240c",
+          "strength": "central"
+        },
+        {
+          "note_id": "5df22809eda64af11774ed317671a3a2ecba24082119254fc4af2251d307a734",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "art-aesthetics",
+      "label": "Art and aesthetics",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "4611090a5fbd6acd54162e7cd29930ce6799a8461c70f0c417d6a982281f78f8",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "2c37330aa014895f53b7e774edf49823e6e3b5ad47939e64fcb81735b726240c",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "48582ca7a1747eec62b877c408909df34d2ceed7477e14be62b86981425bd379",
+          "strength": "central"
+        },
+        {
+          "note_id": "5df22809eda64af11774ed317671a3a2ecba24082119254fc4af2251d307a734",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "visual-storytelling",
+      "label": "Visual storytelling",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "2c37330aa014895f53b7e774edf49823e6e3b5ad47939e64fcb81735b726240c",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "graphic-design",
+      "label": "Graphic design and meme-making",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "6ff1885941473b9f6941624769aef78307093cec8d55530b566dec60ce8ad0a6",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "craft-pottery",
+      "label": "Pottery",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "4611090a5fbd6acd54162e7cd29930ce6799a8461c70f0c417d6a982281f78f8",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "music",
+      "label": "Music",
+      "children": [
+        "music-search-discovery",
+        "music-streaming-services",
+        "learning-musical-instrument"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "music-search-discovery",
+      "label": "Music search and discovery",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "a57c8f036092116e0a0f4c142a855a7c0565e9b67b2fc21cfd86908c16759da8",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "music-streaming-services",
+      "label": "Music streaming services",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "a57c8f036092116e0a0f4c142a855a7c0565e9b67b2fc21cfd86908c16759da8",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "learning-musical-instrument",
+      "label": "Learning a musical instrument",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "24b6fb2f442d31e9db1274119ad424252577b27a88f59f69d43b92cd072b5a4e",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "creative-learning",
+      "label": "Creative learning",
+      "children": [
+        "creative-practice",
+        "persistence-learning-skill"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "creative-practice",
+      "label": "Creative practice and skill development",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "24b6fb2f442d31e9db1274119ad424252577b27a88f59f69d43b92cd072b5a4e",
+          "strength": "central"
+        },
+        {
+          "note_id": "6ff1885941473b9f6941624769aef78307093cec8d55530b566dec60ce8ad0a6",
+          "strength": "central"
+        },
+        {
+          "note_id": "5df22809eda64af11774ed317671a3a2ecba24082119254fc4af2251d307a734",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "persistence-learning-skill",
+      "label": "Persistence in learning a skill",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "24b6fb2f442d31e9db1274119ad424252577b27a88f59f69d43b92cd072b5a4e",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "art-economics",
+      "label": "Economics and value of art",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "48582ca7a1747eec62b877c408909df34d2ceed7477e14be62b86981425bd379",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "health-movement",
+      "label": "Health and wellbeing",
+      "children": [
+        "exercise-training",
+        "injury-rehabilitation",
+        "nutrition-health",
+        "emotional-support"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "exercise-training",
+      "label": "Exercise and physical training",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "0c17e6b047755f2329110c6df3542b5a7e753fa4ef055c75b858ca1682bbfee5",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "ee2cca149a7d031817911a9e202bb23ae77c11dc9c22056bd9f3b766498ac770",
+          "strength": "central"
+        },
+        {
+          "note_id": "f0ff44e2ad7556bc51ffc56aed7658b6b20f81e93856e2382d2b8187e44db4c7",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "injury-rehabilitation",
+      "label": "Injury rehabilitation",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "f0ff44e2ad7556bc51ffc56aed7658b6b20f81e93856e2382d2b8187e44db4c7",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "nutrition-health",
+      "label": "Nutrition and health",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "ee2cca149a7d031817911a9e202bb23ae77c11dc9c22056bd9f3b766498ac770",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "emotional-support",
+      "label": "Emotional support",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "17f7820bcee57f62c4a6f43a924db573a941173852bfa1c820180f1fecffc4f0",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "daily-life",
+      "label": "Daily life",
+      "children": [
+        "personal-life",
+        "coffee-topics",
+        "food-meals",
+        "cooking"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "personal-life",
+      "label": "Personal experiences and relationships",
+      "children": [
+        "family-relationships",
+        "aging-family-role-reversal",
+        "everyday-contentment",
+        "public-journaling"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "family-relationships",
+      "label": "Family and close relationships",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "ef6193a59a35304759d1f58b629466c2a4a7289d92261e91078a1c9b3e05de71",
+          "strength": "central"
+        },
+        {
+          "note_id": "57ce561cfd0a569a981061a5461ae684e831a63d2e009b1822b2f7b16a9533b2",
+          "strength": "central"
+        },
+        {
+          "note_id": "068a9e104f99a51d46a65674d05b3ead194564961534a90b0922b968e78c29d9",
+          "strength": "incidental"
+        },
+        {
+          "note_id": "4ef54cc08e5c02387af7521929d17d9af73e262fccebd3d4cbbd36190136a4f7",
+          "strength": "incidental"
+        },
+        {
+          "note_id": "b843720355752d704f1a167b7b0625d4d28833461c5c6d27c76e8e5b0648aca6",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "aging-family-role-reversal",
+      "label": "Aging and family role reversal",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "ef6193a59a35304759d1f58b629466c2a4a7289d92261e91078a1c9b3e05de71",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "everyday-contentment",
+      "label": "Gratitude and everyday contentment",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "57ce561cfd0a569a981061a5461ae684e831a63d2e009b1822b2f7b16a9533b2",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "4ef54cc08e5c02387af7521929d17d9af73e262fccebd3d4cbbd36190136a4f7",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "c01a24e6604834c025907d715314b547956d90488f95229707c4bad6354e5fa7",
+          "strength": "incidental"
+        }
+      ]
+    },
+    {
+      "node_id": "public-journaling",
+      "label": "Public journaling and self-documentation",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "068a9e104f99a51d46a65674d05b3ead194564961534a90b0922b968e78c29d9",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "coffee-topics",
+      "label": "Coffee, preparation, and products",
+      "children": [
+        "coffee-roasting-personal-taste",
+        "coffee-taste-quality",
+        "coffee-brewing-preparation",
+        "coffee-product-comparison",
+        "coffee-memory"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "coffee-roasting-personal-taste",
+      "label": "Coffee roasting and personal taste",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "056e6466257003453c3065421db88270511cb13ec8c860e3cb4d4b22edf3ba77",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "coffee-taste-quality",
+      "label": "Coffee taste and product quality",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "fbac11c36101d6513cc632ef2ddc7fa17883cbd667da7fc75196bcabd9d31ea3",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "coffee-brewing-preparation",
+      "label": "Coffee brewing and preparation",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "fbac11c36101d6513cc632ef2ddc7fa17883cbd667da7fc75196bcabd9d31ea3",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "coffee-product-comparison",
+      "label": "Coffee product comparison",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "fbac11c36101d6513cc632ef2ddc7fa17883cbd667da7fc75196bcabd9d31ea3",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "coffee-memory",
+      "label": "Coffee and memory",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "8894b71ab618459a3c40e9637d2cad57cb3347b758911a94da50d8f84db53aa8",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "food-meals",
+      "label": "Food and meals",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "1830964db8182776dc0a7ddbc014a09c6c968a2c982ebd5f6da320deef2b92dc",
+          "strength": "central"
+        },
+        {
+          "note_id": "c01a24e6604834c025907d715314b547956d90488f95229707c4bad6354e5fa7",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "cooking",
+      "label": "Cooking and food preparation",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "c01a24e6604834c025907d715314b547956d90488f95229707c4bad6354e5fa7",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "gardening",
+      "label": "Gardening and growing plants",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "4ef54cc08e5c02387af7521929d17d9af73e262fccebd3d4cbbd36190136a4f7",
+          "strength": "central"
+        },
+        {
+          "note_id": "b843720355752d704f1a167b7b0625d4d28833461c5c6d27c76e8e5b0648aca6",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "homesteading",
+      "label": "Homesteading and self-sufficient living",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "4ef54cc08e5c02387af7521929d17d9af73e262fccebd3d4cbbd36190136a4f7",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "environment",
+      "label": "Environment",
+      "children": [
+        "energy-systems",
+        "climate-emissions",
+        "resource-use",
+        "nature-landscapes",
+        "gardening",
+        "homesteading"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "energy-systems",
+      "label": "Energy systems and renewable power",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13",
+          "strength": "central"
+        },
+        {
+          "note_id": "88b8490e40edacb25ce1a55d288e4387cfb6c2d56d801aad8c7fa5074132c678",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "87f1cb51d8abb755bc2526f0129afcf079acbaea323ee8181d121fd7040a300e",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "climate-emissions",
+      "label": "Climate change and emissions",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "88b8490e40edacb25ce1a55d288e4387cfb6c2d56d801aad8c7fa5074132c678",
+          "strength": "central"
+        },
+        {
+          "note_id": "87f1cb51d8abb755bc2526f0129afcf079acbaea323ee8181d121fd7040a300e",
+          "strength": "substantive"
+        }
+      ]
+    },
+    {
+      "node_id": "resource-use",
+      "label": "Resource conservation and reuse",
+      "children": [
+        "resource-conservation",
+        "composting"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "resource-conservation",
+      "label": "Resource conservation",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "87f1cb51d8abb755bc2526f0129afcf079acbaea323ee8181d121fd7040a300e",
+          "strength": "substantive"
+        },
+        {
+          "note_id": "4ef54cc08e5c02387af7521929d17d9af73e262fccebd3d4cbbd36190136a4f7",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "composting",
+      "label": "Composting",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "b843720355752d704f1a167b7b0625d4d28833461c5c6d27c76e8e5b0648aca6",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "nature-landscapes",
+      "label": "Nature and landscapes",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "337569d3f73ff93019040a32d9f5e537f4c8c0a836db8d05bd70a614d8f06e2e",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "movement-place",
+      "label": "Travel and places",
+      "children": [
+        "travel",
+        "relocation",
+        "geographic-autonomy"
+      ],
+      "memberships": []
+    },
+    {
+      "node_id": "travel",
+      "label": "Travel",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "2c37330aa014895f53b7e774edf49823e6e3b5ad47939e64fcb81735b726240c",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "relocation",
+      "label": "Relocation and moving abroad",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "068a9e104f99a51d46a65674d05b3ead194564961534a90b0922b968e78c29d9",
+          "strength": "central"
+        }
+      ]
+    },
+    {
+      "node_id": "geographic-autonomy",
+      "label": "Geographic and jurisdictional autonomy",
+      "children": [],
+      "memberships": [
+        {
+          "note_id": "068a9e104f99a51d46a65674d05b3ead194564961534a90b0922b968e78c29d9",
+          "strength": "central"
+        }
+      ]
+    }
+  ]
+}

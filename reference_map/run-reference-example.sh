@@ -9,7 +9,7 @@ proposal="$root/reference_map/crec-116-note-proposal-v3.json"
 draft="$root/reference_map/crec-116-hierarchy-draft-v3.json"
 hierarchy_review_session="$root/reference_map/crec-116-hierarchy-note-branch-review-session-v1.json"
 approved_notes="$run_dir/approved-notes.json"
-approved_hierarchy="$run_dir/approved-hierarchy.json"
+approved_hierarchy="$root/reference_map/crec-116-approved-hierarchy-v1.json"
 
 mkdir -p "$run_dir"
 cd "$root"
