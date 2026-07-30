@@ -32,8 +32,8 @@ const PROPOSAL_SCHEMA_VERSION: u32 = 2;
 const REVIEW_SESSION_SCHEMA_VERSION: u32 = 2;
 const APPROVED_SCHEMA_VERSION: u32 = 2;
 const PAGE_LINES: u16 = 10;
-const SUBJECT_INSTRUCTION: &str = "Enumerate every distinct, independently meaningful subject explicitly discussed in this text. Use the narrowest description directly supported by the text. Split compound subjects whose parts can meaningfully occur independently. Do not include broader ancestor subjects or merely related context.";
-const MASK_INSTRUCTION: &str = "Return the smallest exact text span or spans that directly express this subject. Spans may be discontinuous. Exclude text that belongs only to another subject. If the subject is not directly supported, return unsupported.";
+const SUBJECT_INSTRUCTION: &str = "Enumerate every atomic subject explicitly and substantively discussed in the provided text.\n\nAn atomic subject is the smallest coherent semantic idea that remains meaningful as a distinct focus.\n\n<RAW NOTE>\n\nReturn only a JSON array of subject strings.";
+const MASK_INSTRUCTION: &str = "Mask only the narrowest portion or portions of the provided text that directly express the provided atomic subject.\n\nAtomic subject:\n<SUBJECT>\n\nText:\n<RAW NOTE>\n\nReturn only a JSON array of exact substrings copied from the text, in source order. If the subject is not expressed, return \"unsupported\".";
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(deny_unknown_fields)]
