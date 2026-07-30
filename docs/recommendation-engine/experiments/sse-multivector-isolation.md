@@ -49,10 +49,58 @@ only when every span directly expresses the same subject.
 This audit makes the set usable as controlled inputs. It does not establish
 that subject enumeration or masking can operate autonomously.
 
-The later SSE test asks whether separate masks from one note lead to
-meaningfully separate semantic representations. That test does not cover
+The SSE analysis asks whether separate masks from one note lead to
+meaningfully separate semantic representations. That analysis does not cover
 corpus-wide subject discovery, hierarchy construction, content recommendation,
 or ranking.
 
-The numerical SSE evaluation design and pass threshold remain undecided. They
-must be frozen before any similarity result is inspected.
+## Diagnostic Analysis
+
+This is exploratory analysis, not a pass/fail evaluation. It characterizes the
+geometry produced by SSE so that a later experiment can ask a precise question
+without inventing a threshold first.
+
+The first analysis uses only the 187 audited subject masks:
+
+1. Pin the SSE checkpoint, tokenizer, revision, pooling behavior, runtime
+   configuration, and artifact hashes.
+2. Generate one vector for each subject by giving SSE the complete note and
+   that subject's mask. Subject labels are report metadata and must never be
+   encoder input.
+3. Verify one consistent dimension, finite values, and nonzero norms, then
+   retain both the raw and L2-normalized vectors.
+4. Calculate the complete exact cosine matrix: 17,391 unordered pairs,
+   consisting of 638 same-note pairs and 16,753 cross-note pairs.
+5. For every same-note pair, record its cosine and selected-token overlap.
+   Disjoint masks must be interpreted separately from overlapping or nested
+   masks.
+6. For every subject, report its five nearest subjects from other notes with
+   their labels, exact fragments, cosine values, and global cross-note
+   percentile.
+7. Summarize the raw same-note and cross-note similarity distributions. Split
+   same-note pairs by mask overlap, and report whether each subject's nearest
+   overall neighbor came from its own note or another note.
+8. Retain the complete matrix and rankings so the five-neighbor display is not
+   a data cutoff.
+
+The written report must keep measurements separate from interpretation. It
+should identify concrete examples of:
+
+- useful separation: subjects from one note lead to different external
+  neighborhoods;
+- useful convergence: independently worded subjects from different notes are
+  close;
+- blending: distinct masks from one note remain effectively inseparable;
+- context or lexical leakage: neighbors reflect surrounding or shared wording
+  instead of the masked subject.
+
+Same-note subjects may legitimately be related, and overlapping masks
+mechanically share evidence. The generated labels are audited descriptions,
+not independent ground truth. The 32 notes are diagnostic cases, not a
+representative Nostr sample, and cosine has no universal semantic cutoff.
+
+Do not add a pass threshold, expected-positive pair labels, clustering,
+hierarchy construction, model comparison, whole-note or span-only baselines,
+or dimensionality-reduction plots to the first analysis. Add a narrower
+follow-up only when the first report exposes a specific ambiguity it can
+resolve.
