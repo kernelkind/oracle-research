@@ -7,7 +7,10 @@ It has not been executed.
 
 The 32-note set is approved and frozen in
 [`sse-multivector-note-set-v1.json`](./sse-multivector-note-set-v1.json).
-Token masks and the numerical pass threshold remain unfrozen.
+The 40 primary masks are proposed in
+[`mask-proposal-v1.json`](../../../sse_multivector/mask-proposal-v1.json) and
+remain unfrozen until human review is complete. The numerical pass threshold
+also remains unfrozen.
 
 The approved constraints are:
 

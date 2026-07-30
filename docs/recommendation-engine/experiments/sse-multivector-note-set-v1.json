@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "approved",
   "source": {
-    "path": "target/crec-113-formal-v1/sample/sample.jsonl",
+    "path": "../../../target/crec-113-formal-v1/sample/sample.jsonl",
     "sha256": "8edb8a51246201100e6ba7cf7bf1bbf9cd501881d7c70b8a9cfc7a380d1b168e"
   },
   "subjects": [
