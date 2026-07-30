@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "status": "approved",
+  "source": {
+    "path": "target/crec-113-formal-v1/sample/sample.jsonl",
+    "sha256": "8edb8a51246201100e6ba7cf7bf1bbf9cd501881d7c70b8a9cfc7a380d1b168e"
+  },
+  "subjects": [
+    {
+      "id": "free_open_source_software",
+      "label": "Free/open-source software",
+      "reference_note_ids": [
+        "bbe63b10f768805ec48388c80ef55650928ccef876a5c8a63f543ec266175c26",
+        "735104aa3dfc5d1c38d6bde1d9296ea25e1c0d0339dfce9ea6cc35fbcb931217",
+        "709b25103a422d0bbaaad8fa9a8247930cd763dc1cf248ee90b083ce3f728f32"
+      ]
+    },
+    {
+      "id": "digital_privacy",
+      "label": "Digital privacy",
+      "reference_note_ids": [
+        "6635a341ab0d45e1b714c8660f4d36ff1141c4f01da8fd8a5ccda1a2b90445e4",
+        "ae8091a7b44d6612f721fd347e0bfeb9a966ca7fe241706adefd08e01f4d1d54",
+        "e024cd0013688f5298aa5d937672d45491d0e85d53c4ee35a26c8d81de1df1b8"
+      ]
+    },
+    {
+      "id": "solar_power",
+      "label": "Solar power",
+      "reference_note_ids": [
+        "974dd5c02c7a9ca9b89685e344d8d103abbbab420e0faf22875f9d08e1c0534a",
+        "2e8f58657b49a8f4892ef439861d8aacd43165f9e6ad9460f59b51676c4ce618",
+        "a59ca772c1639d52f79fc05caeff4abc973418043cdac1600a5f75a82e5c1a58"
+      ]
+    },
+    {
+      "id": "home_bitcoin_mining",
+      "label": "Home Bitcoin mining",
+      "reference_note_ids": [
+        "e09b8c19f52ae0ed68f05874c91e2982eb9a9684a812a49e67d872cb805caa39",
+        "84aba98daa2c1ce749395dc7c2249e5072c3c84d73573e37f61e15228fc0ae9d",
+        "dcd6544eba8ec98a2a535ac0bd40c7b5e02e2457fa86d46fff2437ca8fa56bdb"
+      ]
+    },
+    {
+      "id": "coffee_preparation",
+      "label": "Coffee preparation",
+      "reference_note_ids": [
+        "f81f01d4d50f287bfff56ea9c675f29c202f9b518d3c5540966bd4a1f7da4553",
+        "f4c5aa5f18026412caa17c21c3fad6056c82b80de57ad70003074ff622adc496",
+        "e1b9153e2006fb77384475cbe034cdb6224ffd06d1bdee46ca8fd6dfd867d407"
+      ]
+    },
+    {
+      "id": "coffee_flavor",
+      "label": "Coffee flavor",
+      "reference_note_ids": [
+        "2dc50a304a2f029231506e3ad15f9dc9f1ce72db2bc4f74d31566cb0259e38f1",
+        "2c054d399715c118387a16ab9d3960d3dcb27cd8c3ee33cea2ac3336138a1b6a",
+        "f15fe96ab816afc518ccdb6eb6e5bf874a88768ce2aee7ab8eb8a82a80665126"
+      ]
+    },
+    {
+      "id": "reading_books",
+      "label": "Reading books",
+      "reference_note_ids": [
+        "4166411750a2af3e1a7c982abe7022901467a7150f04992634d6e6560cd18789",
+        "38c864c0553553db2e494dd02f0dce4144106597b1127f3a77f2517aef3b8685",
+        "2e71ddd392d345b990d34163a1c68cf7f2c787af7ff9661fa241d3925a5adf86"
+      ]
+    },
+    {
+      "id": "parent_child_interaction",
+      "label": "Parent-child interaction",
+      "reference_note_ids": [
+        "7e7eeee72ee15c8861c69a89d9af01f78fe14cafb38ac98e47988260ef6ffa3e",
+        "e7ae9fb36fb692f8473beeb41b4e1dd794bc219ccc1e1e9b460f80ebef066c4f",
+        "a530656af6c5fe8c1ee2ce8bdd33e9f7312334a68e1cdff7483c381a251a7ac4"
+      ]
+    }
+  ],
+  "mixed_notes": [
+    {
+      "note_id": "7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e",
+      "subject_ids": [
+        "free_open_source_software",
+        "digital_privacy"
+      ]
+    },
+    {
+      "note_id": "aa269973db710939d2cdc6f8582c94b2f0e5f472f3e07b8f9e684140bd341376",
+      "subject_ids": [
+        "free_open_source_software",
+        "digital_privacy"
+      ]
+    },
+    {
+      "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13",
+      "subject_ids": [
+        "solar_power",
+        "home_bitcoin_mining"
+      ]
+    },
+    {
+      "note_id": "74694da41f367535d230dec539a9316b3c6536f4f295f61743a7a5b51d97aa99",
+      "subject_ids": [
+        "solar_power",
+        "home_bitcoin_mining"
+      ]
+    },
+    {
+      "note_id": "056e6466257003453c3065421db88270511cb13ec8c860e3cb4d4b22edf3ba77",
+      "subject_ids": [
+        "coffee_preparation",
+        "coffee_flavor"
+      ]
+    },
+    {
+      "note_id": "fbac11c36101d6513cc632ef2ddc7fa17883cbd667da7fc75196bcabd9d31ea3",
+      "subject_ids": [
+        "coffee_preparation",
+        "coffee_flavor"
+      ]
+    },
+    {
+      "note_id": "57ce561cfd0a569a981061a5461ae684e831a63d2e009b1822b2f7b16a9533b2",
+      "subject_ids": [
+        "reading_books",
+        "parent_child_interaction"
+      ]
+    },
+    {
+      "note_id": "87e99a6dc058683da25ba9a5cbbbcd853c38a3d32d652246dd9334e8872c4b4c",
+      "subject_ids": [
+        "reading_books",
+        "parent_child_interaction"
+      ]
+    }
+  ],
+  "invariants": {
+    "subject_count": 8,
+    "reference_notes_per_subject": 3,
+    "reference_note_count": 24,
+    "mixed_note_count": 8,
+    "subjects_per_mixed_note": 2,
+    "mixed_masks_per_subject": 2,
+    "total_note_count": 32,
+    "unique_note_count": 32,
+    "unique_author_count": 32,
+    "required_split": "learning"
+  }
+}
