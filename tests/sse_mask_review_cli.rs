@@ -10,7 +10,8 @@ fn sse_mask_review_cli_explains_its_required_artifacts() {
     let stderr = String::from_utf8(output.stderr).expect("utf-8 stderr");
     assert!(
         stderr.contains(
-            "usage: sse-mask-review <mask-proposal.json> <session.json> <approved-masks.json>"
+            "usage: sse-mask-review <subject-mask-proposal.json> <session.json> \
+             <approved-subject-masks.json>"
         ),
         "{stderr}"
     );

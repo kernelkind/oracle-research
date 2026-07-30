@@ -2,10 +2,10 @@
 set -euo pipefail
 
 root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
-proposal="$root/sse_multivector/mask-proposal-v1.json"
-run_dir="$root/target/sse-multivector-isolation-v1"
-session="$run_dir/mask-review-session.json"
-approved="$run_dir/approved-masks.json"
+proposal="$root/sse_multivector/subject-mask-proposal-v2.json"
+run_dir="$root/target/sse-multivector-isolation-v2"
+session="$run_dir/subject-mask-review-session.json"
+approved="$run_dir/approved-subject-masks.json"
 
 mkdir -p "$run_dir"
 cd "$root"

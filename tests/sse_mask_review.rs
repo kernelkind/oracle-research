@@ -3,16 +3,25 @@ use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
 
+use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
 use oracle_mvp::reference_map::ReviewOutcome;
 use oracle_mvp::reference_review::ApprovalUi;
-use oracle_mvp::reference_tui::{ApprovalScreen, ApprovalTuiAction, ApprovalTuiModel};
+use oracle_mvp::reference_tui::{ApprovalScreen, ApprovalTuiAction};
 use oracle_mvp::sse_mask_review::{
-    MaskReviewRunOutcome, load_verified_mask_proposal, run_mask_review,
+    ReviewStage, SubjectMaskReviewRunOutcome, SubjectMaskReviewUi, SubjectReviewAction,
+    SubjectReviewScreen, SubjectReviewTuiModel, load_verified_subject_mask_proposal,
+    run_subject_mask_review,
 };
 use ratatui::Terminal;
 use ratatui::backend::TestBackend;
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
+
+const SUBJECT_INSTRUCTION: &str = "Enumerate every distinct, independently meaningful subject explicitly discussed in this text. Use the narrowest description directly supported by the text. Split compound subjects whose parts can meaningfully occur independently. Do not include broader ancestor subjects or merely related context.";
+const MASK_INSTRUCTION: &str = "Return the smallest exact text span or spans that directly express this subject. Spans may be discontinuous. Exclude text that belongs only to another subject. If the subject is not directly supported, return unsupported.";
+const SUBJECT_1: &str = "1111111111111111";
+const SUBJECT_2: &str = "2222222222222222";
+const SUBJECT_3: &str = "3333333333333333";
 
 struct Fixture {
     _temporary: tempfile::TempDir,
@@ -26,27 +35,23 @@ impl Fixture {
         let temporary = tempfile::tempdir().expect("create fixture directory");
         let sample_path = temporary.path().join("sample.jsonl");
         let note_set_path = temporary.path().join("note-set.json");
-        let proposal_path = temporary.path().join("mask-proposal.json");
-        let session_path = temporary.path().join("mask-session.json");
-        let approved_path = temporary.path().join("approved-masks.json");
+        let proposal_path = temporary.path().join("subject-mask-proposal.json");
+        let session_path = temporary.path().join("review-session.json");
+        let approved_path = temporary.path().join("approved-subject-masks.json");
+        let first_note_id = format!("{:064x}", 1);
+        let second_note_id = format!("{:064x}", 2);
         let rows = [
             json!({
                 "split": "learning",
-                "note_id": format!("{:064x}", 1),
+                "note_id": first_note_id,
                 "pubkey": format!("{:064x}", 101),
-                "content": "Open-source tools are reusable."
+                "content": "pypush is serverless; pypush is open-source."
             }),
             json!({
                 "split": "learning",
-                "note_id": format!("{:064x}", 2),
+                "note_id": second_note_id,
                 "pubkey": format!("{:064x}", 102),
-                "content": "Private browsing protects users."
-            }),
-            json!({
-                "split": "learning",
-                "note_id": format!("{:064x}", 3),
-                "pubkey": format!("{:064x}", 103),
-                "content": "Open-source apps can protect private messages."
+                "content": "Solar power will dominate future electricity generation."
             }),
         ];
         let mut sample = rows
@@ -57,72 +62,70 @@ impl Fixture {
         sample.push('\n');
         fs::write(&sample_path, sample.as_bytes()).expect("write sample");
         let note_set = json!({
-            "schema_version": 1,
+            "schema_version": 2,
             "status": "approved",
             "source": {
                 "path": "sample.jsonl",
                 "sha256": sha256(sample.as_bytes())
             },
-            "subjects": [
-                {
-                    "id": "open_source",
-                    "label": "Open-source software",
-                    "reference_note_ids": [format!("{:064x}", 1)]
-                },
-                {
-                    "id": "privacy",
-                    "label": "Digital privacy",
-                    "reference_note_ids": [format!("{:064x}", 2)]
-                }
-            ],
-            "mixed_notes": [
-                {
-                    "note_id": format!("{:064x}", 3),
-                    "subject_ids": ["open_source", "privacy"]
-                }
-            ],
+            "note_ids": [first_note_id, second_note_id],
             "invariants": {
-                "subject_count": 2,
-                "reference_notes_per_subject": 1,
-                "reference_note_count": 2,
-                "mixed_note_count": 1,
-                "subjects_per_mixed_note": 2,
-                "mixed_masks_per_subject": 1,
-                "total_note_count": 3,
-                "unique_note_count": 3,
-                "unique_author_count": 3,
+                "note_count": 2,
+                "unique_note_count": 2,
+                "unique_author_count": 2,
                 "required_split": "learning"
             }
         });
         write_json(&note_set_path, &note_set);
         let note_set_bytes = fs::read(&note_set_path).expect("read note set");
         let proposal = json!({
-            "schema_version": 1,
-            "proposal_id": "test-mask-proposal",
+            "schema_version": 2,
+            "proposal_id": "test-generated-subject-masks",
             "note_set": {
                 "path": "note-set.json",
                 "sha256": sha256(&note_set_bytes)
             },
-            "masks": [
+            "subject_instruction": SUBJECT_INSTRUCTION,
+            "mask_instruction": MASK_INSTRUCTION,
+            "notes": [
                 {
                     "note_id": format!("{:064x}", 1),
-                    "subject_id": "open_source",
-                    "fragments": ["Open-source tools"]
+                    "subjects": [
+                        {
+                            "subject_id": SUBJECT_1,
+                            "label": "Serverless operation of pypush",
+                            "status": "masked",
+                            "fragments": [
+                                {"text": "pypush", "occurrence": 1},
+                                {"text": "serverless", "occurrence": 1}
+                            ]
+                        },
+                        {
+                            "subject_id": SUBJECT_2,
+                            "label": "Open-source availability of pypush",
+                            "status": "masked",
+                            "fragments": [
+                                {"text": "pypush", "occurrence": 2},
+                                {"text": "open-source", "occurrence": 1}
+                            ]
+                        }
+                    ]
                 },
                 {
                     "note_id": format!("{:064x}", 2),
-                    "subject_id": "privacy",
-                    "fragments": ["Private browsing"]
-                },
-                {
-                    "note_id": format!("{:064x}", 3),
-                    "subject_id": "open_source",
-                    "fragments": ["Open-source apps"]
-                },
-                {
-                    "note_id": format!("{:064x}", 3),
-                    "subject_id": "privacy",
-                    "fragments": ["protect private messages"]
+                    "subjects": [
+                        {
+                            "subject_id": SUBJECT_3,
+                            "label": "Future dominance of solar power generation",
+                            "status": "masked",
+                            "fragments": [
+                                {
+                                    "text": "Solar power will dominate future electricity generation",
+                                    "occurrence": 1
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         });
@@ -147,37 +150,61 @@ impl Fixture {
 
 #[derive(Default)]
 struct ScriptedUi {
-    actions: VecDeque<ApprovalTuiAction>,
-    screens: Vec<ApprovalScreen>,
+    subject_actions: VecDeque<SubjectReviewAction>,
+    approval_actions: VecDeque<ApprovalTuiAction>,
+    subject_screens: Vec<SubjectReviewScreen>,
+    approval_screens: Vec<ApprovalScreen>,
 }
 
 impl ScriptedUi {
-    fn with_actions(actions: impl IntoIterator<Item = ApprovalTuiAction>) -> Self {
+    fn with_actions(
+        subject_actions: impl IntoIterator<Item = SubjectReviewAction>,
+        approval_actions: impl IntoIterator<Item = ApprovalTuiAction>,
+    ) -> Self {
         Self {
-            actions: actions.into_iter().collect(),
-            screens: Vec::new(),
+            subject_actions: subject_actions.into_iter().collect(),
+            approval_actions: approval_actions.into_iter().collect(),
+            ..Self::default()
         }
     }
 }
 
 impl ApprovalUi for ScriptedUi {
     fn review(&mut self, screen: ApprovalScreen) -> io::Result<ApprovalTuiAction> {
-        self.screens.push(screen);
+        self.approval_screens.push(screen);
         Ok(self
-            .actions
+            .approval_actions
             .pop_front()
-            .expect("script contains one action per shown screen"))
+            .expect("script contains one action per mask screen"))
     }
 }
 
-fn approval() -> ApprovalTuiAction {
+impl SubjectMaskReviewUi for ScriptedUi {
+    fn review_subjects(&mut self, screen: SubjectReviewScreen) -> io::Result<SubjectReviewAction> {
+        self.subject_screens.push(screen);
+        Ok(self
+            .subject_actions
+            .pop_front()
+            .expect("script contains one action per subject screen"))
+    }
+}
+
+fn subject_approval(subject_id: &str) -> SubjectReviewAction {
+    SubjectReviewAction::Decide {
+        subject_id: subject_id.to_owned(),
+        outcome: ReviewOutcome::Approved,
+        comment: String::new(),
+    }
+}
+
+fn mask_approval() -> ApprovalTuiAction {
     ApprovalTuiAction::Submit {
         outcome: ReviewOutcome::Approved,
         comment: String::new(),
     }
 }
 
-fn rejection(comment: &str) -> ApprovalTuiAction {
+fn mask_rejection(comment: &str) -> ApprovalTuiAction {
     ApprovalTuiAction::Submit {
         outcome: ReviewOutcome::Rejected,
         comment: comment.to_owned(),
@@ -185,158 +212,362 @@ fn rejection(comment: &str) -> ApprovalTuiAction {
 }
 
 #[test]
-fn runner_shows_one_source_bound_mask_and_pauses_without_approving_it() {
+fn generated_subjects_and_note_completeness_are_reviewed_before_any_mask() {
     let fixture = Fixture::new();
-    let mut ui = ScriptedUi::with_actions([ApprovalTuiAction::Pause]);
-
-    let outcome = run_mask_review(
-        &fixture.proposal_path,
-        &fixture.session_path,
-        &fixture.approved_path,
-        &mut ui,
-    )
-    .expect("run review");
-
-    assert_eq!(outcome, MaskReviewRunOutcome::Paused);
-    assert_eq!(ui.screens.len(), 1);
-    let screen = &ui.screens[0];
-    assert!(screen.heading.contains("Primary mask 1 of 4"));
-    assert_eq!(screen.title, "Reference note · only mask");
-    assert!(screen.scope.contains("Subject: Open-source software"));
-    assert!(
-        screen
-            .scope
-            .contains("Does the highlight faithfully isolate “Open-source software”?")
+    let mut first = ScriptedUi::with_actions(
+        [subject_approval(SUBJECT_1), SubjectReviewAction::Pause],
+        [],
     );
-    assert_eq!(screen.evidence.len(), 1);
-    assert_eq!(screen.evidence[0].title, "Note");
-    assert_eq!(screen.evidence[0].body, "⟦Open-source tools⟧ are reusable.");
-    assert!(fixture.session_path.exists(), "pause state is durable");
-    assert!(!fixture.approved_path.exists());
-}
 
-#[test]
-fn mixed_note_masks_are_reviewed_separately_and_resume_at_the_only_pending_mask() {
-    let fixture = Fixture::new();
-    let mut first =
-        ScriptedUi::with_actions([approval(), approval(), approval(), ApprovalTuiAction::Pause]);
-    let outcome = run_mask_review(
+    let outcome = run_subject_mask_review(
         &fixture.proposal_path,
         &fixture.session_path,
         &fixture.approved_path,
         &mut first,
     )
-    .expect("run first review");
-    assert_eq!(outcome, MaskReviewRunOutcome::Paused);
-    assert_eq!(first.screens[2].title, "Mixed note · first of two masks");
-    assert_eq!(first.screens[3].title, "Mixed note · second of two masks");
+    .expect("run first subject review");
 
-    let mut resumed = ScriptedUi::with_actions([approval()]);
-    let outcome = run_mask_review(
+    assert_eq!(outcome, SubjectMaskReviewRunOutcome::Paused);
+    assert_eq!(first.subject_screens.len(), 2);
+    assert!(first.approval_screens.is_empty());
+    let first_screen = &first.subject_screens[0];
+    assert_eq!(
+        first_screen.note,
+        "pypush is serverless; pypush is open-source."
+    );
+    assert_eq!(first_screen.choices.len(), 2);
+    assert_eq!(first_screen.choices[0].subject_id, SUBJECT_1);
+    assert_eq!(first_screen.choices[1].subject_id, SUBJECT_2);
+    assert_eq!(first_screen.choices[0].outcome, None);
+    assert_eq!(
+        first.subject_screens[1].choices[0].outcome,
+        Some(ReviewOutcome::Approved)
+    );
+
+    let mut resumed = ScriptedUi::with_actions(
+        [
+            subject_approval(SUBJECT_2),
+            SubjectReviewAction::Complete,
+            SubjectReviewAction::Pause,
+        ],
+        [],
+    );
+    let outcome = run_subject_mask_review(
         &fixture.proposal_path,
         &fixture.session_path,
         &fixture.approved_path,
         &mut resumed,
     )
-    .expect("resume review");
-    assert_eq!(outcome, MaskReviewRunOutcome::Approved);
-    assert_eq!(resumed.screens.len(), 1);
-    assert!(
-        resumed.screens[0]
-            .scope
-            .contains("Subject: Digital privacy")
+    .expect("resume subject review");
+
+    assert_eq!(outcome, SubjectMaskReviewRunOutcome::Paused);
+    assert!(resumed.approval_screens.is_empty());
+    assert_eq!(
+        resumed
+            .subject_screens
+            .last()
+            .expect("second note screen")
+            .note,
+        "Solar power will dominate future electricity generation."
     );
-    assert!(fixture.approved_path.exists());
+}
+
+#[test]
+fn all_subjects_and_completeness_unlock_individual_mask_review_and_publication() {
+    let fixture = Fixture::new();
+    let mut ui = ScriptedUi::with_actions(
+        [
+            subject_approval(SUBJECT_1),
+            subject_approval(SUBJECT_2),
+            SubjectReviewAction::Complete,
+            subject_approval(SUBJECT_3),
+            SubjectReviewAction::Complete,
+        ],
+        [mask_approval(), mask_approval(), mask_approval()],
+    );
+
+    let outcome = run_subject_mask_review(
+        &fixture.proposal_path,
+        &fixture.session_path,
+        &fixture.approved_path,
+        &mut ui,
+    )
+    .expect("run complete review");
+
+    assert_eq!(outcome, SubjectMaskReviewRunOutcome::Approved);
+    assert_eq!(ui.approval_screens.len(), 3);
+    assert_eq!(
+        ui.approval_screens[1].evidence[0].body,
+        "pypush is serverless; ⟦pypush⟧ is ⟦open-source⟧."
+    );
+    let approved: Value =
+        serde_json::from_slice(&fs::read(&fixture.approved_path).expect("read approved artifact"))
+            .expect("decode approved artifact");
+    assert_eq!(
+        approved["notes"].as_array().expect("approved notes").len(),
+        2
+    );
+}
+
+#[test]
+fn rejected_or_missing_subjects_block_mask_review() {
+    let fixture = Fixture::new();
+    let mut ui = ScriptedUi::with_actions(
+        [
+            subject_approval(SUBJECT_1),
+            SubjectReviewAction::Decide {
+                subject_id: SUBJECT_2.to_owned(),
+                outcome: ReviewOutcome::Rejected,
+                comment: "This combines availability with the software subject.".to_owned(),
+            },
+            subject_approval(SUBJECT_3),
+            SubjectReviewAction::Missing {
+                comment: "The note also discusses electricity generation.".to_owned(),
+            },
+        ],
+        [],
+    );
+
+    let outcome = run_subject_mask_review(
+        &fixture.proposal_path,
+        &fixture.session_path,
+        &fixture.approved_path,
+        &mut ui,
+    )
+    .expect("run subject rejection");
+
+    assert_eq!(
+        outcome,
+        SubjectMaskReviewRunOutcome::NeedsRevision {
+            stage: ReviewStage::Subjects,
+            approved: 2,
+            rejected: 1,
+            missing_subject_notes: 1,
+        }
+    );
+    assert!(ui.approval_screens.is_empty());
+    assert!(!fixture.approved_path.exists());
 }
 
 #[test]
 fn revising_one_rejected_mask_reopens_only_that_mask() {
     let fixture = Fixture::new();
-    let mut ui = ScriptedUi::with_actions([
-        approval(),
-        rejection("Select the actual privacy claim."),
-        approval(),
-        approval(),
-    ]);
-    let outcome = run_mask_review(
+    let mut first = ScriptedUi::with_actions(
+        [
+            subject_approval(SUBJECT_1),
+            subject_approval(SUBJECT_2),
+            SubjectReviewAction::Complete,
+            subject_approval(SUBJECT_3),
+            SubjectReviewAction::Complete,
+        ],
+        [
+            mask_approval(),
+            mask_rejection("Remove the repeated software name."),
+            mask_approval(),
+        ],
+    );
+    let outcome = run_subject_mask_review(
         &fixture.proposal_path,
         &fixture.session_path,
         &fixture.approved_path,
-        &mut ui,
+        &mut first,
     )
-    .expect("run rejected review");
+    .expect("run rejected mask review");
     assert_eq!(
         outcome,
-        MaskReviewRunOutcome::NeedsRevision {
-            approved: 3,
-            rejected: 1
+        SubjectMaskReviewRunOutcome::NeedsRevision {
+            stage: ReviewStage::Masks,
+            approved: 2,
+            rejected: 1,
+            missing_subject_notes: 0,
         }
     );
 
     let mut revised = fixture.proposal_json();
-    revised["masks"][1]["fragments"] = json!(["protects users"]);
+    revised["notes"][0]["subjects"][1]["fragments"] =
+        json!([{"text": "open-source", "occurrence": 1}]);
     fixture.replace_proposal(&revised);
-
-    let mut resumed = ScriptedUi::with_actions([ApprovalTuiAction::Pause]);
-    let outcome = run_mask_review(
+    let mut resumed = ScriptedUi::with_actions([], [ApprovalTuiAction::Pause]);
+    let outcome = run_subject_mask_review(
         &fixture.proposal_path,
         &fixture.session_path,
         &fixture.approved_path,
         &mut resumed,
     )
-    .expect("reconcile revised proposal");
-    assert_eq!(outcome, MaskReviewRunOutcome::Paused);
-    assert_eq!(resumed.screens.len(), 1);
+    .expect("reconcile revised mask");
+
+    assert_eq!(outcome, SubjectMaskReviewRunOutcome::Paused);
+    assert!(resumed.subject_screens.is_empty());
+    assert_eq!(resumed.approval_screens.len(), 1);
     assert_eq!(
-        resumed.screens[0].evidence[0].body,
-        "Private browsing ⟦protects users⟧."
+        resumed.approval_screens[0].evidence[0].body,
+        "pypush is serverless; pypush is ⟦open-source⟧."
     );
 }
 
 #[test]
-fn proposal_validation_rejects_missing_fragments_overlaps_and_wrong_assignments() {
+fn unsupported_masks_and_invalid_occurrences_fail_before_review() {
     let fixture = Fixture::new();
-    let mut missing = fixture.proposal_json();
-    missing["masks"][0]["fragments"] = json!(["not present"]);
-    fixture.replace_proposal(&missing);
-    let error =
-        load_verified_mask_proposal(&fixture.proposal_path).expect_err("fragment must exist");
-    assert!(error.to_string().contains("absent from note"), "{error}");
+    let mut unsupported = fixture.proposal_json();
+    unsupported["notes"][0]["subjects"][0]["status"] = json!("unsupported");
+    unsupported["notes"][0]["subjects"][0]["fragments"] = json!([]);
+    fixture.replace_proposal(&unsupported);
+    let error = load_verified_subject_mask_proposal(&fixture.proposal_path)
+        .expect_err("unsupported result must stop before review");
+    assert!(
+        error
+            .to_string()
+            .contains("mask agent returned unsupported"),
+        "{error}"
+    );
 
     let fixture = Fixture::new();
-    let mut overlapping = fixture.proposal_json();
-    overlapping["masks"][0]["fragments"] = json!(["Open-source tools", "tools are"]);
-    fixture.replace_proposal(&overlapping);
-    let error =
-        load_verified_mask_proposal(&fixture.proposal_path).expect_err("spans must not overlap");
-    assert!(error.to_string().contains("overlap"), "{error}");
-
-    let fixture = Fixture::new();
-    let mut wrong = fixture.proposal_json();
-    wrong["masks"][0]["subject_id"] = json!("privacy");
-    fixture.replace_proposal(&wrong);
-    let error = load_verified_mask_proposal(&fixture.proposal_path)
-        .expect_err("mask assignments must match the frozen note set");
-    assert!(error.to_string().contains("review order"), "{error}");
+    let mut invalid_occurrence = fixture.proposal_json();
+    invalid_occurrence["notes"][0]["subjects"][1]["fragments"][0]["occurrence"] = json!(3);
+    fixture.replace_proposal(&invalid_occurrence);
+    let error = load_verified_subject_mask_proposal(&fixture.proposal_path)
+        .expect_err("missing occurrence must fail");
+    assert!(error.to_string().contains("occurrence 3"), "{error}");
 }
 
 #[test]
-fn production_screen_renders_the_subject_highlight_and_deliberate_controls() {
+fn proposal_validation_rejects_empty_overlapping_and_out_of_order_masks() {
     let fixture = Fixture::new();
-    let mut ui = ScriptedUi::with_actions([ApprovalTuiAction::Pause]);
-    run_mask_review(
+    let mut empty = fixture.proposal_json();
+    empty["notes"][0]["subjects"][0]["fragments"] = json!([]);
+    fixture.replace_proposal(&empty);
+    let error = load_verified_subject_mask_proposal(&fixture.proposal_path)
+        .expect_err("empty mask must fail");
+    assert!(
+        error.to_string().contains("contains no fragments"),
+        "{error}"
+    );
+
+    let fixture = Fixture::new();
+    let mut overlapping = fixture.proposal_json();
+    overlapping["notes"][0]["subjects"][0]["fragments"] = json!([
+        {"text": "pypush", "occurrence": 1},
+        {"text": "pypush is serverless", "occurrence": 1}
+    ]);
+    fixture.replace_proposal(&overlapping);
+    let error = load_verified_subject_mask_proposal(&fixture.proposal_path)
+        .expect_err("overlapping mask must fail");
+    assert!(error.to_string().contains("overlap"), "{error}");
+
+    let fixture = Fixture::new();
+    let mut out_of_order = fixture.proposal_json();
+    out_of_order["notes"][0]["subjects"][1]["fragments"] = json!([
+        {"text": "open-source", "occurrence": 1},
+        {"text": "pypush", "occurrence": 2}
+    ]);
+    fixture.replace_proposal(&out_of_order);
+    let error = load_verified_subject_mask_proposal(&fixture.proposal_path)
+        .expect_err("out-of-order mask must fail");
+    assert!(error.to_string().contains("not in source order"), "{error}");
+}
+
+#[test]
+fn proposal_validation_pins_both_approved_generation_prompts() {
+    let fixture = Fixture::new();
+    let mut changed_subject_prompt = fixture.proposal_json();
+    changed_subject_prompt["subject_instruction"] = json!("List some topics that seem relevant.");
+    fixture.replace_proposal(&changed_subject_prompt);
+    let error = load_verified_subject_mask_proposal(&fixture.proposal_path)
+        .expect_err("changed subject prompt must fail");
+    assert!(error.to_string().contains("generation prompts"), "{error}");
+
+    let fixture = Fixture::new();
+    let mut changed_mask_prompt = fixture.proposal_json();
+    changed_mask_prompt["mask_instruction"] = json!("Highlight words related to the subject.");
+    fixture.replace_proposal(&changed_mask_prompt);
+    let error = load_verified_subject_mask_proposal(&fixture.proposal_path)
+        .expect_err("changed mask prompt must fail");
+    assert!(error.to_string().contains("generation prompts"), "{error}");
+}
+
+#[test]
+fn subject_tui_selects_one_proposal_and_keeps_the_note_box_note_only() {
+    let fixture = Fixture::new();
+    let proposal =
+        load_verified_subject_mask_proposal(&fixture.proposal_path).expect("verified proposal");
+    let mut ui = ScriptedUi::with_actions([SubjectReviewAction::Pause], []);
+    run_subject_mask_review(
         &fixture.proposal_path,
         &fixture.session_path,
         &fixture.approved_path,
         &mut ui,
     )
-    .expect("build production screen");
-    let mut model = ApprovalTuiModel::new(ui.screens.remove(0));
+    .expect("build production subject screen");
+    let screen = ui.subject_screens.remove(0);
+    assert_eq!(screen.note, "pypush is serverless; pypush is open-source.");
+    assert!(!screen.note.contains("Proposed subjects"));
+    assert_eq!(proposal.note_count(), 2);
+    assert_eq!(proposal.subject_count(), 3);
+
+    let mut model = SubjectReviewTuiModel::new(screen);
+    assert_eq!(
+        model.handle_event(Event::Key(KeyEvent::new(KeyCode::Down, KeyModifiers::NONE))),
+        SubjectReviewAction::None
+    );
+    assert_eq!(
+        model.handle_event(Event::Key(KeyEvent::new(
+            KeyCode::Char('a'),
+            KeyModifiers::NONE
+        ))),
+        subject_approval(SUBJECT_2)
+    );
+
     let backend = TestBackend::new(100, 32);
     let mut terminal = Terminal::new(backend).expect("test terminal");
     terminal
         .draw(|frame| model.render(frame))
-        .expect("render screen");
+        .expect("render subject review");
+    let rendered = terminal
+        .backend()
+        .buffer()
+        .content()
+        .iter()
+        .map(|cell| cell.symbol())
+        .collect::<String>();
+    let normalized = rendered.split_whitespace().collect::<Vec<_>>().join(" ");
+    assert!(normalized.contains("Proposed subjects"), "{rendered}");
+    assert!(
+        normalized.contains("Serverless operation of pypush"),
+        "{rendered}"
+    );
+    assert!(
+        normalized.contains("Open-source availability of pypush"),
+        "{rendered}"
+    );
+    assert!(normalized.contains("[A] Approve selected"), "{rendered}");
+    assert!(normalized.contains("[R] Reject and explain"), "{rendered}");
+}
+
+#[test]
+fn subject_tui_switches_to_a_distinct_completeness_question() {
+    let screen = SubjectReviewScreen {
+        heading: "SSE subject review · Note 1 of 1 · 2 of 2 decided".to_owned(),
+        note: "pypush is serverless; pypush is open-source.".to_owned(),
+        choices: vec![
+            oracle_mvp::sse_mask_review::SubjectReviewChoice {
+                subject_id: SUBJECT_1.to_owned(),
+                label: "Serverless operation of pypush".to_owned(),
+                outcome: Some(ReviewOutcome::Approved),
+            },
+            oracle_mvp::sse_mask_review::SubjectReviewChoice {
+                subject_id: SUBJECT_2.to_owned(),
+                label: "Open-source availability of pypush".to_owned(),
+                outcome: Some(ReviewOutcome::Approved),
+            },
+        ],
+        selected_index: 0,
+    };
+    let mut model = SubjectReviewTuiModel::new(screen);
+    let backend = TestBackend::new(100, 32);
+    let mut terminal = Terminal::new(backend).expect("test terminal");
+    terminal
+        .draw(|frame| model.render(frame))
+        .expect("render completeness screen");
     let rendered = terminal
         .backend()
         .buffer()
@@ -346,14 +577,18 @@ fn production_screen_renders_the_subject_highlight_and_deliberate_controls() {
         .collect::<String>();
     let normalized = rendered.split_whitespace().collect::<Vec<_>>().join(" ");
 
-    assert!(rendered.contains("⟦Open-source tools⟧"), "{rendered}");
     assert!(
-        normalized.contains("Subject: Open-source software"),
+        normalized.contains(
+            "Does this list include every narrow, independent subject explicitly discussed by this note?"
+        ),
         "{rendered}"
     );
-    assert!(normalized.contains("[A] No problem"), "{rendered}");
-    assert!(normalized.contains("[R] Needs revision"), "{rendered}");
-    assert!(normalized.contains("[Ctrl-C] Pause"), "{rendered}");
+    assert!(normalized.contains("[Enter] List complete"), "{rendered}");
+    assert!(
+        normalized.contains("[M] Report missing subject"),
+        "{rendered}"
+    );
+    assert!(!normalized.contains("[A] Approve selected"), "{rendered}");
 }
 
 fn write_json(path: &Path, value: &Value) {

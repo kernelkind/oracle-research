@@ -9,21 +9,21 @@ use crossterm::event::{
 };
 use crossterm::execute;
 use crossterm::terminal::{
-    disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen,
+    EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode,
 };
+use ratatui::Frame;
+use ratatui::Terminal;
 use ratatui::backend::CrosstermBackend;
 use ratatui::layout::{Constraint, Direction, Layout, Rect};
 use ratatui::style::{Color, Modifier, Style};
 use ratatui::text::{Line, Span};
 use ratatui::widgets::{Block, Borders, List, ListItem, ListState, Padding, Paragraph, Wrap};
-use ratatui::Frame;
-use ratatui::Terminal;
 
 use crate::reference_map::{ApprovedHierarchy, ReferenceNavigation, ReviewOutcome};
 use crate::snapshot::{Error, Result};
 
-const MIN_WIDTH: u16 = 72;
-const MIN_HEIGHT: u16 = 24;
+pub(crate) const MIN_WIDTH: u16 = 72;
+pub(crate) const MIN_HEIGHT: u16 = 24;
 const MAX_CONTENT_WIDTH: u16 = 100;
 const PAGE_LINES: u16 = 10;
 
@@ -67,6 +67,15 @@ pub enum ApprovalTuiAction {
         comment: String,
     },
     Pause,
+}
+
+pub(crate) trait InteractiveReviewModel {
+    type Action: Eq;
+
+    fn none_action() -> Self::Action;
+    fn pause_action() -> Self::Action;
+    fn handle_terminal_event(&mut self, event: Event) -> Self::Action;
+    fn render_terminal(&mut self, frame: &mut Frame<'_>);
 }
 
 #[derive(Clone, Debug)]
@@ -525,6 +534,26 @@ impl ApprovalTuiModel {
     }
 }
 
+impl InteractiveReviewModel for ApprovalTuiModel {
+    type Action = ApprovalTuiAction;
+
+    fn none_action() -> Self::Action {
+        ApprovalTuiAction::None
+    }
+
+    fn pause_action() -> Self::Action {
+        ApprovalTuiAction::Pause
+    }
+
+    fn handle_terminal_event(&mut self, event: Event) -> Self::Action {
+        self.handle_event(event)
+    }
+
+    fn render_terminal(&mut self, frame: &mut Frame<'_>) {
+        self.render(frame);
+    }
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum NavigationTuiAction {
     None,
@@ -797,14 +826,20 @@ impl ReferenceTerminal {
     }
 
     pub fn review(&mut self, screen: ApprovalScreen) -> io::Result<ApprovalTuiAction> {
-        let mut model = ApprovalTuiModel::new(screen);
-        if drain_stale_input()? == ApprovalTuiAction::Pause {
-            return Ok(ApprovalTuiAction::Pause);
+        self.run_review_model(ApprovalTuiModel::new(screen))
+    }
+
+    pub(crate) fn run_review_model<M>(&mut self, mut model: M) -> io::Result<M::Action>
+    where
+        M: InteractiveReviewModel,
+    {
+        if drain_stale_input()? {
+            return Ok(M::pause_action());
         }
         loop {
-            self.terminal.draw(|frame| model.render(frame))?;
-            let action = model.handle_event(event::read()?);
-            if action != ApprovalTuiAction::None {
+            self.terminal.draw(|frame| model.render_terminal(frame))?;
+            let action = model.handle_terminal_event(event::read()?);
+            if action != M::none_action() {
                 return Ok(action);
             }
         }
@@ -817,7 +852,7 @@ impl ReferenceTerminal {
             path: "<reference-navigation-terminal>".into(),
             source,
         })?;
-        if stale_action == ApprovalTuiAction::Pause {
+        if stale_action {
             return Ok(());
         }
         loop {
@@ -847,14 +882,14 @@ impl Drop for ReferenceTerminal {
     }
 }
 
-fn drain_stale_input() -> io::Result<ApprovalTuiAction> {
+fn drain_stale_input() -> io::Result<bool> {
     while event::poll(Duration::ZERO)? {
         let event = event::read()?;
         if is_control_c_event(&event) {
-            return Ok(ApprovalTuiAction::Pause);
+            return Ok(true);
         }
     }
-    Ok(ApprovalTuiAction::None)
+    Ok(false)
 }
 
 fn stacked_evidence_areas(area: Rect, secondary_content: &str) -> [Rect; 2] {
@@ -877,7 +912,7 @@ fn stacked_evidence_areas(area: Rect, secondary_content: &str) -> [Rect; 2] {
     [rows[0], rows[2]]
 }
 
-fn render_scrollable_panel(
+pub(crate) fn render_scrollable_panel(
     frame: &mut Frame<'_>,
     area: Rect,
     base_title: &str,
@@ -917,7 +952,7 @@ fn render_scrollable_panel(
     );
 }
 
-fn render_too_small(frame: &mut Frame<'_>, area: Rect) {
+pub(crate) fn render_too_small(frame: &mut Frame<'_>, area: Rect) {
     frame.render_widget(
         Paragraph::new(format!(
             "Terminal too small\nResize to at least {MIN_WIDTH} × {MIN_HEIGHT}."
@@ -931,7 +966,7 @@ fn render_too_small(frame: &mut Frame<'_>, area: Rect) {
     );
 }
 
-fn centered(area: Rect) -> Rect {
+pub(crate) fn centered(area: Rect) -> Rect {
     let width = area.width.min(MAX_CONTENT_WIDTH);
     Rect {
         x: area.x + area.width.saturating_sub(width) / 2,
@@ -940,7 +975,7 @@ fn centered(area: Rect) -> Rect {
     }
 }
 
-fn terminal_safe(content: &str) -> String {
+pub(crate) fn terminal_safe(content: &str) -> String {
     let mut output = String::with_capacity(content.len());
     for character in content.chars() {
         match character {
@@ -954,21 +989,21 @@ fn terminal_safe(content: &str) -> String {
     output
 }
 
-fn accent_style() -> Style {
+pub(crate) fn accent_style() -> Style {
     Style::default()
         .fg(Color::Cyan)
         .add_modifier(Modifier::BOLD)
 }
 
-fn secondary_style() -> Style {
+pub(crate) fn secondary_style() -> Style {
     Style::default().add_modifier(Modifier::DIM)
 }
 
-fn border_style() -> Style {
+pub(crate) fn border_style() -> Style {
     Style::default().fg(Color::DarkGray)
 }
 
-fn is_control_c_event(event: &Event) -> bool {
+pub(crate) fn is_control_c_event(event: &Event) -> bool {
     matches!(
         event,
         Event::Key(key)
@@ -978,7 +1013,7 @@ fn is_control_c_event(event: &Event) -> bool {
     )
 }
 
-fn has_command_modifier(modifiers: KeyModifiers) -> bool {
+pub(crate) fn has_command_modifier(modifiers: KeyModifiers) -> bool {
     modifiers.intersects(
         KeyModifiers::CONTROL
             | KeyModifiers::ALT
