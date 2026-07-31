@@ -105,15 +105,15 @@ neighbors:
 - unspecified actors wanting control versus automatic backups: `0.4175`;
 - timed miner control versus automatic app locking: `0.4040`.
 
-The complete notes, generated takeaways, exact masks, rankings, and separate
-diagnosis for each pair are collected in
-[Four Bad SSE Matches](./sse-communicated-meaning-failure-cases.md).
+The complete notes, generated takeaways, masks, rankings, and analysis for
+these failures are collected in
+[Five SSE Failures](./sse-communicated-meaning-failure-cases.md).
 
-Some masked vectors also retained unrelated surrounding-note context. A
-takeaway about choices made without pressure ranked several coffee takeaways
-high because its source note also discussed coffee. A non-consumption-based
-retirement takeaway remained close to solar and miner takeaways from its
-source note's greenhouse context.
+Some results are also consistent with unrelated surrounding-note context
+affecting masked vectors. A takeaway about choices made without pressure ranked
+several coffee takeaways high while its source note also discussed coffee. A
+non-consumption-based retirement takeaway remained close to solar and miner
+takeaways while its source note discussed a greenhouse.
 
 ## Interpretation
 

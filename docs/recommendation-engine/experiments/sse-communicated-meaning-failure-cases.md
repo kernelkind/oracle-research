@@ -1,4 +1,4 @@
-# Four SSE Failures
+# Five SSE Failures
 
 `⟦...⟧` marks the exact text selected by the mask. The rest of each note was
 still visible to SSE as context. The agent-generated takeaway explains what
@@ -102,8 +102,8 @@ takeaways.
 
 **Likely problem:** Context from the rest of each note may have affected the
 masked vectors. The first mask is also vague: its surrounding text suggests
-what “they” and “everything” refer to without identifying the actors. This is
-the clearest context-leakage candidate, but only a span-only run can confirm it.
+what “they” and “everything” refer to without identifying the actors. This may
+be context leakage, but only a span-only run can confirm it.
 
 ## 4. Miner control matched automatic app locking
 
@@ -149,18 +149,66 @@ app locking are not the same takeaway.
 actual content. Context from the Molly note may also matter, but it is not
 needed to explain this match.
 
+## 5. An autonomy takeaway matched coffee
+
+Cosine `0.4347` · autonomy → coffee rank 2 · coffee → autonomy rank 7
+
+**A takeaway:** Only choices made without pressure define a person; the rest
+is a facade.
+
+> Annie's Saturday Morning Thoughts
+>
+> Don't assume that everyone who agrees with you in public agrees with you in private. 😏
+>
+> The wren on the fence has been chirping for a while. Must have good lungs.
+>
+> ⟦Only the things you choose without pressure define you.⟧ ⟦The rest is a facade.⟧ 🤥
+>
+> Flavored coffee is nice but can get old if you have it every day.
+>
+> Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday. 🤗
+
+**B takeaway:** Roasting your own coffee beans creates a uniquely personal
+flavor profile that pre-roasted coffee cannot replicate.
+
+> You’ve had coffee. But have you had your coffee?”
+> https://blossom.primal.net/1379b90996b8ecb2f4fdef6756fd61c4ab964fa19f9e1505950e10a4d97640dd.jpg
+> ⟦Roasting your own beans means discovering a taste profile that’s uniquely yours. It’s a personal journey that no bag of pre-roasted coffee can replicate.⟧
+>
+> Sipping  @ #coffeechain
+>
+> #HotTake ☕
+
+**What happened:** The autonomy mask contains nothing about coffee, but three
+of its five closest takeaways from other notes were about coffee:
+
+1. fear of books changing someone's thinking: `0.4349`;
+2. roasting coffee for a personal flavor profile: `0.4347`;
+3. decaf drinkers valuing flavor and experience: `0.3875`;
+4. Molly containing no proprietary code: `0.3851`;
+5. Tim Hortons coffee not being premium: `0.3277`.
+
+**Why it is wrong:** The selected passage is about autonomy and social
+pressure. Coffee appears elsewhere in the same note, not inside the mask.
+
+**Likely problem:** The unmasked coffee sentence may have affected the autonomy
+vector. This is the clearest context-leakage example in the run, although a
+span-only comparison is still required to prove it.
+
 ## Bottom line
 
-These are not four copies of one bug:
+These are not five copies of one bug:
 
 - Case 1 matched a broad category.
 - Case 2 matched a shared attribute.
 - Case 3 may have matched surrounding-note context.
 - Case 4 matched a shared functional pattern.
+- Case 5 appears to have carried coffee context into an autonomy vector.
 
-Only case 3 strongly suggests context leakage. The other cases show a broader
-problem: cosine measures how similar two vectors are, but not *why* they are
-similar or whether the similarity is precise enough for our use.
+Cases 3 and 5 suggest context leakage, with case 5 providing the clearer
+example. The other cases show a broader problem: cosine measures how similar
+two vectors are, but not *why* they are similar or whether the similarity is
+precise enough for our use.
 
 Raw inputs:
 [`communicated-meaning-full-proposal-v1.json`](../../../sse_multivector/communicated-meaning-full-proposal-v1.json) ·
