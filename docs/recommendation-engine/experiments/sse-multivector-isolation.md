@@ -251,3 +251,8 @@ The separate
 [communicated-meaning triplet](./sse-communicated-meaning-triplet.md) records a
 small follow-up using semantic takeaways rather than narrow subject labels. It
 does not modify or replace this baseline.
+
+The later
+[full communicated-meaning diagnostic](./sse-communicated-meaning-full.md)
+applies the locked takeaway representation to all 32 frozen notes and compares
+the resulting geometry with this preserved baseline.
