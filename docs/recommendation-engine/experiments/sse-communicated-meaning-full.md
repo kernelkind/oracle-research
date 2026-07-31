@@ -97,17 +97,21 @@ Some cross-note relationships were precise and useful:
   stack: `0.7177`;
 - two quiet parent-child reading experiences: `0.4394`.
 
-The complete analysis also contains strong incorrect or overly coarse
-neighbors:
+The complete analysis also contains cross-domain relationships that must be
+judged against the proposed segmentation system rather than as interchangeable
+takeaways:
 
-- an easy-to-prepare affogato versus a picky-eating child: `0.5487`;
-- a repeatedly loud fan versus a long-chirping wren: `0.4665`;
-- unspecified actors wanting control versus automatic backups: `0.4175`;
-- timed miner control versus automatic app locking: `0.4040`.
+- affogato versus picky eating is valid broad food signal: `0.5487`;
+- recurring fan noise versus a long-chirping wren is useful persistent-sound
+  signal: `0.4665`;
+- unspecified actors wanting control versus automatic backups has no
+  defensible common subject and is a failure: `0.4175`;
+- timed miner control versus automatic app locking is useful
+  condition-triggered device-behavior signal: `0.4040`.
 
 The complete notes, generated takeaways, masks, rankings, and analysis for
-these failures are collected in
-[SSE Failure Analysis](./sse-communicated-meaning-failure-cases.md).
+these cases are collected in
+[SSE Similarity Analysis](./sse-communicated-meaning-failure-cases.md).
 
 Some results are also consistent with unrelated surrounding-note context
 affecting masked vectors. A takeaway about choices made without pressure ranked
@@ -122,16 +126,17 @@ takeaways over maximally narrow subject fragments. It removes redundant mask
 overlap, sharply weakens the four known lexical failures, and preserves the
 four semantic controls.
 
-It does not establish that this SSE checkpoint reliably represents the exact
-meaning being communicated. Its geometry still follows broad subject matter,
-surface analogies, and unselected full-note context often enough to produce
-wrong reciprocal nearest neighbors even when better candidates exist.
+It does not establish that this SSE checkpoint reliably isolates the selected
+meaning from full-note context. Broad subject matches and cross-domain
+relationships are useful inputs to the proposed segmentation stage, but some
+vectors also appear to follow unselected context strongly enough to produce
+neighbors with no defensible common subject.
 
 The defensible conclusion is:
 
-> Coherent takeaways are better SSE inputs than overly atomic subject
-> fragments, but the released SSE representation is not yet a reliable map of
-> communicated meaning.
+> Coherent takeaways preserve useful subject and relational signal, but the
+> released SSE representation still produces some strong similarities for
+> which the selected meanings have no defensible common subject.
 
 The remaining load-bearing ambiguity is whether the largest errors primarily
 come from the model's use of complete-note context or from its underlying

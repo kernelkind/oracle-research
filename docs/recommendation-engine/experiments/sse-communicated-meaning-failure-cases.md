@@ -1,12 +1,18 @@
-# SSE Failure Analysis
+# SSE Similarity Analysis
 
 `⟦...⟧` marks the exact text selected by the mask. The rest of each note was
 still visible to SSE as context. The agent-generated takeaway explains what
 the mask was meant to represent; SSE did not receive that takeaway.
 
+This analysis uses the criterion required by the proposed segmentation system:
+a match is useful when the selected spans share a real subject that a later
+labeling step could name. The two takeaways do not need to be interchangeable
+or come from the same application domain. A pairwise cosine also does not prove
+that the complete corpus would place both vectors in the same segment.
+
 Scores are rounded to four decimal places.
 
-## 1. Affogato matched picky eating
+## 1. Affogato matched picky eating — valid signal
 
 Cosine `0.5487` · each was the other's closest takeaway from another note
 
@@ -26,13 +32,13 @@ to get her to try new foods.
 
 **What happened:** SSE matched the broad idea of food and eating.
 
-**Why it is wrong:** The affogato takeaway is specifically about coffee. Two
-actual coffee takeaways scored `0.5086` and `0.4904`, below picky eating.
+**Assessment:** This is not a failure. Affogato is food, and the other passage
+is about getting someone to try new foods. Their shared subject is broad but
+real. Two more specific coffee matches scored `0.5086` and `0.4904`; the later
+segmentation step, using the complete corpus, must determine whether these
+signals belong in the same final region.
 
-**Likely problem:** The model favored a broad category over the precise
-meaning. This does not look like context leakage.
-
-## 2. A loud fan matched a chirping wren
+## 2. A loud fan matched a chirping wren — success
 
 Cosine `0.4665` · fan → wren rank 2 · wren → fan rank 1
 
@@ -61,14 +67,12 @@ to have strong lungs.
 **What happened:** Both masks describe a sound that persists or returns over
 time.
 
-**Why it is wrong:** A recurring fan noise and a bird chirping are not the same
-takeaway. The fan did correctly match another mining-device noise takeaway at
-`0.6724`, but the wren still became its second match and ranked the fan first.
+**Assessment:** This is useful cross-domain signal. A later labeling step could
+name their common subject “persistent sounds.” “Annoying sounds” would be too
+strong because the wren passage does not express annoyance. The fan also
+matched another mining-device noise takeaway more strongly at `0.6724`.
 
-**Likely problem:** The model favored a shared attribute—persistent sound—over
-what each takeaway was actually about.
-
-## 3. “They want to control everything” matched automatic backups
+## 3. “They want to control everything” matched automatic backups — failure
 
 Cosine `0.4175` · each was the other's closest takeaway from another note
 
@@ -97,15 +101,15 @@ Cosine `0.4175` · each was the other's closest takeaway from another note
 **What happened:** The two masks say different things and share no meaningful
 wording. Their full notes both discuss open-source, security-oriented software.
 
-**Why it is wrong:** Wanting control and supporting backups are unrelated
-takeaways.
+**Assessment:** The selected spans have no defensible common subject. Their
+full notes share software and security context, which may have affected the
+vectors. Only a span-only run can confirm that explanation.
 
-**Likely problem:** Context from the rest of each note may have affected the
-masked vectors. The first mask is also vague: its surrounding text suggests
-what “they” and “everything” refer to without identifying the actors. This may
-be context leakage, but only a span-only run can confirm it.
+**Separate mask problem:** “They” and “everything” cannot be interpreted from
+the selected span alone. The surrounding note suggests their meaning without
+identifying the actors.
 
-## 4. Miner control matched automatic app locking
+## 4. Miner control matched automatic app locking — success
 
 Cosine `0.4040` · miner → app rank 1 · app → miner rank 2
 
@@ -142,14 +146,12 @@ inactivity.
 **What happened:** Both masks describe a device automatically changing state
 when a condition is met.
 
-**Why it is wrong:** Temperature-based miner operation and inactivity-based
-app locking are not the same takeaway.
+**Assessment:** This is useful cross-domain signal. “Condition-triggered
+automatic device behavior” is a defensible common subject. The fact that one
+device is a miner and the other is an app does not make the relationship
+wrong.
 
-**Likely problem:** The model favored a shared trigger/action pattern over the
-actual content. Context from the Molly note may also matter, but it is not
-needed to explain this match.
-
-## 5. An autonomy takeaway matched coffee
+## 5. An autonomy vector developed a coffee-heavy neighborhood — failure
 
 Cosine `0.4347` · autonomy → coffee rank 2 · coffee → autonomy rank 7
 
@@ -188,14 +190,25 @@ of its five closest takeaways from other notes were about coffee:
 4. Molly containing no proprietary code: `0.3851`;
 5. Tim Hortons coffee not being premium: `0.3277`.
 
-**Why it is wrong:** The selected passage is about autonomy and social
-pressure. Coffee appears elsewhere in the same note, not inside the mask.
+**Assessment:** The first result—fear of books changing someone's thinking—is
+a valid neighbor. The coffee-roasting result also has a possible cross-domain
+connection through personal authenticity or self-directed choice, so that pair
+alone does not prove failure.
+
+The corpus has few close autonomy examples, but it is not empty. Other
+plausible candidates include deceptive cookie controls (`0.2842`), FOSS
+sovereignty (`0.2368`), and unspecified actors seeking control (`0.1945`).
+Sparsity and corpus composition may worsen the ranking. Even so, the
+combination of three coffee results and an unmasked coffee sentence in the
+source note is suspicious. The Tim Hortons result has no defensible autonomy
+connection.
 
 **Likely problem:** The unmasked coffee sentence may have affected the autonomy
 vector. This is the clearest context-leakage example in the run, although a
-span-only comparison is still required to prove it.
+span-only comparison or suitable baseline is still required to distinguish
+that explanation from corpus composition or the model's underlying geometry.
 
-## 6. A retirement takeaway followed greenhouse and energy context
+## 6. A retirement takeaway followed greenhouse and energy context — inconclusive
 
 Cosine `0.3690` · retirement → solar rank 1 · solar → retirement rank 5
 
@@ -219,34 +232,34 @@ notes were:
 4. preparing affogato at home: `0.3161`;
 5. programming a miner around surplus solar energy: `0.3104`.
 
-**Why it is suspicious:** Three of the top five follow the note's solar and
-mining context, while none concern retirement. However, the 73-takeaway corpus
-contains no other retirement or non-consumption takeaway that could have
-provided a clearly better match.
+**Assessment:** The 73-takeaway corpus contains no other retirement or
+non-consumption example. The generated takeaway also explicitly includes the
+greenhouse project, making some solar and greenhouse similarity legitimate.
+The result is consistent with context outweighing the retirement meaning, but
+it cannot establish that failure.
 
-**What we can say:** The mask depends on the word “This,” so its greenhouse
-context is necessary. The ranking follows that greenhouse and energy meaning.
-It is consistent with context outweighing the retirement meaning, but this
-corpus cannot prove that happened or that the ranking itself was wrong.
+**Separate mask problem:** The selected span still communicates
+non-consumption-based retirement, but “This” is unresolved. A labeling step
+given only that span cannot recover that the complete takeaway refers to the
+greenhouse project.
 
-## Bottom line
+## Conclusion
 
-The first five are wrong or overly coarse matches. Case 6 is a context
-diagnostic, not a proven bad match:
+- Valid broad signal: case 1.
+- Successes: cases 2 and 4.
+- Failures: cases 3 and 5.
+- Inconclusive: case 6.
 
-- Case 1 matched a broad category.
-- Case 2 matched a shared attribute.
-- Case 3 may have matched surrounding-note context.
-- Case 4 matched a shared functional pattern.
-- Case 5 appears to have carried coffee context into an autonomy vector.
-- Case 6 follows context needed to resolve a vague mask; we cannot tell whether
-  it follows that context too strongly.
+The previous analysis incorrectly treated “different takeaways with a real
+common subject” as failure. That is precisely the signal the proposed segment
+and labeling stages need. A genuine failure is a high similarity for which the
+selected spans have no defensible common subject, especially when the match
+instead follows unselected source-note context.
 
-Cases 3 and 5 suggest context leakage, with case 5 providing the clearer
-example. Case 6 shows the related uncertainty created by necessary context.
-The other cases show that cosine measures how similar two vectors are, but not
-*why* they are similar or whether the similarity is precise enough for our
-use.
+Cases 1, 3, and 6 also contain unresolved references in their masks. Case 1
+still supports the subject of picky eating. In cases 3 and 6, a labeling step
+given only the span could recover a partial subject, but not the actors or
+referent needed for the complete generated takeaway.
 
 Raw inputs:
 [`communicated-meaning-full-proposal-v1.json`](../../../sse_multivector/communicated-meaning-full-proposal-v1.json) ·
