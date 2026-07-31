@@ -1,7 +1,5 @@
 # Four Bad SSE Matches
 
-## What this contains
-
 This document puts all the evidence for four bad matches in one place. Each
 case includes:
 
@@ -25,21 +23,15 @@ text outside the mask could still affect the resulting vector.
 
 ## 1. Affogato versus a picky-eating child
 
-**Cosine:** `0.548712659889978`
+Cosine `0.548712659889978` · A → B rank 1 · B → A rank 1
 
-Each vector ranked the other first among all takeaways from other notes.
-
-### Note A · Affogato
-
-Note ID: `e1b9153e2006fb77384475cbe034cdb6224ffd06d1bdee46ca8fd6dfd867d407`
-
-#### Full note
+**A — Affogato** · `e1b9153e2006fb77384475cbe034cdb6224ffd06d1bdee46ca8fd6dfd867d407`
 
 ```text
 Wants a kick off during the day?  Affogato is easy to prepare and always available at your kitchen! #coolerstr @ #coffeestr https://image.nostr.build/ff4853ba4171c95546a55f17ac7e6712e8a4c34077f77c74c10fac32de518f45.jpg
 ```
 
-#### Agent takeaways and masks
+Takeaways and masks:
 
 **Compared takeaway:** Affogato is an easy-to-prepare daytime pick-me-up that
 can be made at home.
@@ -50,11 +42,7 @@ Mask:
 Wants a kick off during the day?  Affogato is easy to prepare and always available at your kitchen!
 ```
 
-### Note B · Daughter, car seat, and eating
-
-Note ID: `a530656af6c5fe8c1ee2ce8bdd33e9f7312334a68e1cdff7483c381a251a7ac4`
-
-#### Full note
+**B — Daughter, car seat, and eating** · `a530656af6c5fe8c1ee2ce8bdd33e9f7312334a68e1cdff7483c381a251a7ac4`
 
 ```text
 Another great sleepover with my daughter.
@@ -64,7 +52,7 @@ She’s such picky eater…
 Gotta get her to start eating new foods somehow…
 ```
 
-#### Agent takeaways and masks
+Takeaways and masks:
 
 **Takeaway:** The author had another great sleepover with their daughter.
 
@@ -100,7 +88,7 @@ She’s such picky eater…
 Gotta get her to start eating new foods somehow…
 ```
 
-### Closest results
+**Closest results**
 
 The affogato vector's closest cross-note results were:
 
@@ -116,14 +104,14 @@ The picky-eating vector's closest cross-note results were:
 3. flavored coffee becoming tiresome: `0.430594`;
 4. roasting beans for a personal flavor profile: `0.428911`.
 
-### What we know
+**What we know**
 
 The affogato mask contains all prose in the note; it excludes only the hashtags
 and image URL. The picky-eating mask excludes the sleepover and car-seat
 passages. The two masks both concern food and eating. The affogato vector's
 more precise coffee matches received lower scores.
 
-### What it likely means
+**What it likely means**
 
 SSE probably matched these because both concern food and eating. That is a
 real connection, but it is too broad: the coffee notes should have ranked
@@ -132,16 +120,9 @@ cannot distinguish a broad shared category from the same precise meaning.
 
 ## 2. A repeatedly loud fan versus a long-chirping wren
 
-**Cosine:** `0.4665483233395116`
+Cosine `0.4665483233395116` · A → B rank 2 · B → A rank 1
 
-The fan ranked the wren second among cross-note takeaways. The wren ranked the
-fan first.
-
-### Note A · BitAxe fan
-
-Note ID: `84aba98daa2c1ce749395dc7c2249e5072c3c84d73573e37f61e15228fc0ae9d`
-
-#### Full note
+**A — BitAxe fan** · `84aba98daa2c1ce749395dc7c2249e5072c3c84d73573e37f61e15228fc0ae9d`
 
 ```text
 Has anyone replaced the fan on their BitAxe? If so, what did you use? I'd normally go with a Noctua but I hate that the NF-A4x20 is the stupid beige/brown colorway.
@@ -149,7 +130,7 @@ Has anyone replaced the fan on their BitAxe? If so, what did you use? I'd normal
 The stock fan is just getting too loud to deal with. I clean it and within a day or two, it's right back to being loud as hell.
 ```
 
-#### Agent takeaways and masks
+Takeaways and masks:
 
 **Takeaway:** The user is seeking recommendations from people who have
 replaced a BitAxe fan.
@@ -178,11 +159,7 @@ Mask:
 The stock fan is just getting too loud to deal with. I clean it and within a day or two, it's right back to being loud as hell.
 ```
 
-### Note B · Saturday thoughts
-
-Note ID: `2c054d399715c118387a16ab9d3960d3dcb27cd8c3ee33cea2ac3336138a1b6a`
-
-#### Full note
+**B — Saturday thoughts** · `2c054d399715c118387a16ab9d3960d3dcb27cd8c3ee33cea2ac3336138a1b6a`
 
 ```text
 Annie's Saturday Morning Thoughts
@@ -198,7 +175,7 @@ Flavored coffee is nice but can get old if you have it every day.
 Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday. 🤗
 ```
 
-#### Agent takeaways and masks
+Takeaways and masks:
 
 **Takeaway:** Public agreement does not necessarily mean private agreement.
 
@@ -256,7 +233,7 @@ Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree a
 This is the recipe for a good Saturday.
 ```
 
-### Closest results
+**Closest results**
 
 The fan vector correctly ranked the Avalon/Bitaxe noise comparison first at
 `0.672400`, followed by the wren at `0.466548`.
@@ -267,14 +244,14 @@ The wren vector ranked:
 2. the Avalon/Bitaxe noise comparison: `0.428812`;
 3. Aeropress taste improvement: `0.273537`.
 
-### What we know
+**What we know**
 
 Outside the masks, the first note discusses BitAxe hardware and the second
 contains several unrelated Saturday thoughts. The masks both describe a sound
 that persists or returns over time: the fan becomes loud again within days,
 while the wren has been chirping for a while.
 
-### What it likely means
+**What it likely means**
 
 SSE probably matched the shared pattern of a sound continuing or recurring
 over time. That relation is real, but the takeaways are about different things.
@@ -283,22 +260,16 @@ a shared attribute or analogy over the actual subject.
 
 ## 3. “They want to control everything” versus automatic backups
 
-**Cosine:** `0.41754547551075744`
+Cosine `0.41754547551075744` · A → B rank 1 · B → A rank 1
 
-Each vector ranked the other first among all takeaways from other notes.
-
-### Note A · Proprietary systems and surveillance
-
-Note ID: `7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e`
-
-#### Full note
+**A — Proprietary systems and surveillance** · `7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e`
 
 ```text
 they want to control everything..
 ..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger picture.. ..all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices.. ..i'm still on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible).. ..i've already switched to #Linux computer-wise.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty
 ```
 
-#### Agent takeaways and masks
+Takeaways and masks:
 
 **Compared takeaway:** Unspecified actors want to control everything.
 
@@ -352,11 +323,7 @@ Mask:
 free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty
 ```
 
-### Note B · Molly secure-messaging features
-
-Note ID: `aa269973db710939d2cdc6f8582c94b2f0e5f472f3e07b8f9e684140bd341376`
-
-#### Full note
+**B — Molly secure-messaging features** · `aa269973db710939d2cdc6f8582c94b2f0e5f472f3e07b8f9e684140bd341376`
 
 ```text
 I'm thinking I'll regularly post about open source tech I find useful.
@@ -375,7 +342,7 @@ Available on their own Fdroid repo:
 https://molly.im/
 ```
 
-#### Agent takeaways and masks
+Takeaways and masks:
 
 **Takeaway:** The user plans to regularly share useful open-source technology.
 
@@ -452,7 +419,7 @@ Available on their own Fdroid repo:
 https://molly.im/
 ```
 
-### Closest results
+**Closest results**
 
 The “control everything” vector's closest cross-note results were:
 
@@ -469,7 +436,7 @@ The automatic-backup vector ranked:
 3. Ledger interaction tracking: `0.314357`;
 4. programming a miner around surplus solar power: `0.266802`.
 
-### What we know
+**What we know**
 
 One mask says unspecified people want control. The other says Molly can make
 automatic backups. They share no meaningful wording and say different things.
@@ -479,7 +446,7 @@ first also discusses privacy and surveillance.
 The surrounding OS and surveillance text suggests what “they” and “everything”
 refer to, but never identifies the actors.
 
-### What it likely means
+**What it likely means**
 
 This is the clearest case where the rest of the note may have affected the
 masked vector. The fragment “they want to control everything” also depends on
@@ -489,17 +456,9 @@ match.
 
 ## 4. Timed miner control versus automatic app locking
 
-**Cosine:** `0.404047938171206`
+Cosine `0.404047938171206` · A → B rank 1 · B → A rank 2
 
-The miner-control vector ranked the app-lock vector first among cross-note
-takeaways. The app-lock vector ranked miner control second, behind Ledger
-interaction tracking at `0.448268`.
-
-### Note A · Miner control
-
-Note ID: `7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13`
-
-#### Full note
+**A — Miner control** · `7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13`
 
 ```text
 This week I just let the miner running to keep temperatures for a minimum and save the #statistics.
@@ -512,7 +471,7 @@ Anyhow in the winter days almost everything is required to heat the house so it 
 #orangery #greenhouse   #grownostr #miner #bitcoin #nostr #btc
 ```
 
-#### Agent takeaways and masks
+Takeaways and masks:
 
 **Takeaway:** The user left the miner running this week to maintain a minimum
 temperature and record statistics.
@@ -550,11 +509,7 @@ Mask:
 Anyhow in the winter days almost everything is required to heat the house so it won’t be much anyhow.
 ```
 
-### Note B · Molly secure-messaging features
-
-Note ID: `aa269973db710939d2cdc6f8582c94b2f0e5f472f3e07b8f9e684140bd341376`
-
-#### Full note
+**B — Molly secure-messaging features** · `aa269973db710939d2cdc6f8582c94b2f0e5f472f3e07b8f9e684140bd341376`
 
 ```text
 I'm thinking I'll regularly post about open source tech I find useful.
@@ -573,7 +528,7 @@ Available on their own Fdroid repo:
 https://molly.im/
 ```
 
-#### Agent takeaways and masks
+Takeaways and masks:
 
 **Takeaway:** The user plans to regularly share useful open-source technology.
 
@@ -650,7 +605,7 @@ Available on their own Fdroid repo:
 https://molly.im/
 ```
 
-### Closest results
+**Closest results**
 
 The miner-control vector's closest cross-note results were:
 
@@ -668,7 +623,7 @@ The automatic-lock vector ranked:
 4. finishing a book in one night if work allowed: `0.359352`;
 5. recurring BitAxe fan noise after days: `0.307509`.
 
-### What we know
+**What we know**
 
 Both masks describe automatic behavior triggered by a condition. The miner
 starts below a temperature threshold and varies by day/night mode. The app
@@ -678,7 +633,7 @@ Outside these masks, the two notes discuss different subjects. The app-lock
 vector's nearest result was Ledger tracking. That could reflect app/privacy
 context from the Molly note, but this result alone does not prove it.
 
-### What it likely means
+**What it likely means**
 
 SSE probably matched both as automatic device behavior triggered by time or a
 condition. That is a real structural similarity, but not the same takeaway.
