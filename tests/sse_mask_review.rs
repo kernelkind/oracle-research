@@ -19,6 +19,8 @@ use sha2::{Digest, Sha256};
 
 const SUBJECT_INSTRUCTION: &str = "Enumerate every atomic subject explicitly and substantively discussed in the provided text.\n\nAn atomic subject is the smallest coherent semantic idea that remains meaningful as a distinct focus.\n\n<RAW NOTE>\n\nReturn only a JSON array of subject strings.";
 const MASK_INSTRUCTION: &str = "Mask only the narrowest portion or portions of the provided text that directly express the provided atomic subject.\n\nAtomic subject:\n<SUBJECT>\n\nText:\n<RAW NOTE>\n\nReturn only a JSON array of exact substrings copied from the text, in source order. If the subject is not expressed, return \"unsupported\".";
+const TAKEAWAY_INSTRUCTION: &str = "This text is a social media post. Identify each substantive point the user communicates. Summarize every independent point as a separate, concise takeaway in your own words. Combine details when they jointly express one point. Ground each takeaway in the text itself.\n\nReturn only a JSON array of strings.";
+const TAKEAWAY_MASK_INSTRUCTION: &str = "Mask only the narrowest portion or portions of the provided text that directly express the provided takeaway.\n\nTakeaway:\n<TAKEAWAY>\n\nText:\n<RAW NOTE>\n\nReturn only a JSON array of exact substrings copied from the text, in source order. If the takeaway is not expressed, return \"unsupported\".";
 const SUBJECT_1: &str = "1111111111111111";
 const SUBJECT_2: &str = "2222222222222222";
 const SUBJECT_3: &str = "3333333333333333";
@@ -471,6 +473,39 @@ fn proposal_validation_accepts_the_approved_generation_prompts() {
     let fixture = Fixture::new();
     load_verified_subject_mask_proposal(&fixture.proposal_path)
         .expect("the proposal must accept the exact approved generation prompts");
+}
+
+#[test]
+fn proposal_validation_accepts_the_approved_takeaway_generation_profile() {
+    let fixture = Fixture::new();
+    let mut proposal = fixture.proposal_json();
+    proposal["subject_instruction"] = json!(TAKEAWAY_INSTRUCTION);
+    proposal["mask_instruction"] = json!(TAKEAWAY_MASK_INSTRUCTION);
+    fixture.replace_proposal(&proposal);
+
+    load_verified_subject_mask_proposal(&fixture.proposal_path)
+        .expect("the proposal must accept the exact approved takeaway generation profile");
+}
+
+#[test]
+fn proposal_validation_rejects_a_mixed_generation_profile() {
+    let fixture = Fixture::new();
+    let mut proposal = fixture.proposal_json();
+    proposal["subject_instruction"] = json!(TAKEAWAY_INSTRUCTION);
+    fixture.replace_proposal(&proposal);
+
+    let error = load_verified_subject_mask_proposal(&fixture.proposal_path)
+        .expect_err("prompts from different approved profiles must not be mixed");
+    assert!(error.to_string().contains("generation prompts"), "{error}");
+
+    let fixture = Fixture::new();
+    let mut proposal = fixture.proposal_json();
+    proposal["mask_instruction"] = json!(TAKEAWAY_MASK_INSTRUCTION);
+    fixture.replace_proposal(&proposal);
+
+    let error = load_verified_subject_mask_proposal(&fixture.proposal_path)
+        .expect_err("prompts from different approved profiles must not be mixed");
+    assert!(error.to_string().contains("generation prompts"), "{error}");
 }
 
 #[test]

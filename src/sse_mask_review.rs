@@ -34,6 +34,8 @@ const APPROVED_SCHEMA_VERSION: u32 = 2;
 const PAGE_LINES: u16 = 10;
 const SUBJECT_INSTRUCTION: &str = "Enumerate every atomic subject explicitly and substantively discussed in the provided text.\n\nAn atomic subject is the smallest coherent semantic idea that remains meaningful as a distinct focus.\n\n<RAW NOTE>\n\nReturn only a JSON array of subject strings.";
 const MASK_INSTRUCTION: &str = "Mask only the narrowest portion or portions of the provided text that directly express the provided atomic subject.\n\nAtomic subject:\n<SUBJECT>\n\nText:\n<RAW NOTE>\n\nReturn only a JSON array of exact substrings copied from the text, in source order. If the subject is not expressed, return \"unsupported\".";
+const TAKEAWAY_INSTRUCTION: &str = "This text is a social media post. Identify each substantive point the user communicates. Summarize every independent point as a separate, concise takeaway in your own words. Combine details when they jointly express one point. Ground each takeaway in the text itself.\n\nReturn only a JSON array of strings.";
+const TAKEAWAY_MASK_INSTRUCTION: &str = "Mask only the narrowest portion or portions of the provided text that directly express the provided takeaway.\n\nTakeaway:\n<TAKEAWAY>\n\nText:\n<RAW NOTE>\n\nReturn only a JSON array of exact substrings copied from the text, in source order. If the takeaway is not expressed, return \"unsupported\".";
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -293,8 +295,7 @@ pub fn load_verified_subject_mask_proposal(
     {
         return invalid("subject-mask proposal schema, ID, or note-set identity is invalid");
     }
-    if proposal.subject_instruction != SUBJECT_INSTRUCTION
-        || proposal.mask_instruction != MASK_INSTRUCTION
+    if !uses_approved_generation_profile(&proposal.subject_instruction, &proposal.mask_instruction)
     {
         return invalid("subject-mask proposal does not use the approved generation prompts");
     }
@@ -378,6 +379,12 @@ pub fn load_verified_subject_mask_proposal(
         note_set_sha256: hash_file(&note_set_path)?,
         notes,
     })
+}
+
+fn uses_approved_generation_profile(subject_instruction: &str, mask_instruction: &str) -> bool {
+    (subject_instruction == SUBJECT_INSTRUCTION && mask_instruction == MASK_INSTRUCTION)
+        || (subject_instruction == TAKEAWAY_INSTRUCTION
+            && mask_instruction == TAKEAWAY_MASK_INSTRUCTION)
 }
 
 pub fn run_subject_mask_review(

@@ -1,0 +1,19 @@
+{
+  "schema_version": 2,
+  "status": "approved",
+  "source": {
+    "path": "../../../target/crec-113-formal-v1/sample/sample.jsonl",
+    "sha256": "8edb8a51246201100e6ba7cf7bf1bbf9cd501881d7c70b8a9cfc7a380d1b168e"
+  },
+  "note_ids": [
+    "650ee6fe1a6ecc43bb374cb27b50d1317899f6780f2e628beb4b5e93199149bb",
+    "f99bddc5a0b075c5c0fa6e0a2e7afb0d91a012c9841aed150c07b9a6edfd575c",
+    "c26040a4d7b85ee80d17ef61c9c6c33b7e848de24c27c95179f36884638ca61a"
+  ],
+  "invariants": {
+    "note_count": 3,
+    "unique_note_count": 3,
+    "unique_author_count": 3,
+    "required_split": "learning"
+  }
+}

@@ -244,3 +244,10 @@ masked subject, and how much represents surface wording or surrounding note
 context? A later focused comparison may test that ambiguity. This run alone
 does not justify clustering, hierarchy construction, or corpus-scale
 processing.
+
+## Follow-up
+
+The separate
+[communicated-meaning triplet](./sse-communicated-meaning-triplet.md) records a
+small follow-up using semantic takeaways rather than narrow subject labels. It
+does not modify or replace this baseline.
