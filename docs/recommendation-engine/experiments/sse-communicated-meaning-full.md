@@ -107,7 +107,7 @@ neighbors:
 
 The complete notes, generated takeaways, masks, rankings, and analysis for
 these failures are collected in
-[Five SSE Failures](./sse-communicated-meaning-failure-cases.md).
+[SSE Failure Analysis](./sse-communicated-meaning-failure-cases.md).
 
 Some results are also consistent with unrelated surrounding-note context
 affecting masked vectors. A takeaway about choices made without pressure ranked

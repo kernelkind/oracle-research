@@ -1,4 +1,4 @@
-# Five SSE Failures
+# SSE Failure Analysis
 
 `⟦...⟧` marks the exact text selected by the mask. The rest of each note was
 still visible to SSE as context. The agent-generated takeaway explains what
@@ -195,20 +195,58 @@ pressure. Coffee appears elsewhere in the same note, not inside the mask.
 vector. This is the clearest context-leakage example in the run, although a
 span-only comparison is still required to prove it.
 
+## 6. A retirement takeaway followed greenhouse and energy context
+
+Cosine `0.3690` · retirement → solar rank 1 · solar → retirement rank 5
+
+**A takeaway:** The greenhouse project is the author's first step toward a
+non-consumption-based retirement.
+
+> Flexicables installed for our geothermal solar powered greenhouse. The greenhouse they have in Aliance Nebraska grows pineapple and dates and citrus.
+> ⟦This will be the first steps to my non consumption based retirement.⟧ https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
+
+**B takeaway:** Solar power will provide the vast majority of future power
+generation.
+
+> ⟦Solar power will be the vast majority of power generation in the future⟧
+
+**What happened:** The retirement vector's five closest takeaways from other
+notes were:
+
+1. future solar power generation: `0.3690`;
+2. running a miner to maintain temperature and record statistics: `0.3626`;
+3. Molly supporting automatic backups: `0.3392`;
+4. preparing affogato at home: `0.3161`;
+5. programming a miner around surplus solar energy: `0.3104`.
+
+**Why it is suspicious:** Three of the top five follow the note's solar and
+mining context, while none concern retirement. However, the 73-takeaway corpus
+contains no other retirement or non-consumption takeaway that could have
+provided a clearly better match.
+
+**What we can say:** The mask depends on the word “This,” so its greenhouse
+context is necessary. The ranking follows that greenhouse and energy meaning.
+It is consistent with context outweighing the retirement meaning, but this
+corpus cannot prove that happened or that the ranking itself was wrong.
+
 ## Bottom line
 
-These are not five copies of one bug:
+The first five are wrong or overly coarse matches. Case 6 is a context
+diagnostic, not a proven bad match:
 
 - Case 1 matched a broad category.
 - Case 2 matched a shared attribute.
 - Case 3 may have matched surrounding-note context.
 - Case 4 matched a shared functional pattern.
 - Case 5 appears to have carried coffee context into an autonomy vector.
+- Case 6 follows context needed to resolve a vague mask; we cannot tell whether
+  it follows that context too strongly.
 
 Cases 3 and 5 suggest context leakage, with case 5 providing the clearer
-example. The other cases show a broader problem: cosine measures how similar
-two vectors are, but not *why* they are similar or whether the similarity is
-precise enough for our use.
+example. Case 6 shows the related uncertainty created by necessary context.
+The other cases show that cosine measures how similar two vectors are, but not
+*why* they are similar or whether the similarity is precise enough for our
+use.
 
 Raw inputs:
 [`communicated-meaning-full-proposal-v1.json`](../../../sse_multivector/communicated-meaning-full-proposal-v1.json) ·
