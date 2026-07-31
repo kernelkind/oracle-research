@@ -107,7 +107,7 @@ neighbors:
 
 The complete notes, generated takeaways, exact masks, rankings, and separate
 diagnosis for each pair are collected in
-[SSE Communicated-Meaning Failure Cases](./sse-communicated-meaning-failure-cases.md).
+[Four Bad SSE Matches](./sse-communicated-meaning-failure-cases.md).
 
 Some masked vectors also retained unrelated surrounding-note context. A
 takeaway about choices made without pressure ranked several coffee takeaways

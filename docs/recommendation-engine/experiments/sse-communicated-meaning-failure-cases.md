@@ -1,30 +1,27 @@
-# SSE Communicated-Meaning Failure Cases
+# Four Bad SSE Matches
 
-## How to read this document
+## What this contains
 
-For every failure below, this document shows:
+This document puts all the evidence for four bad matches in one place. Each
+case includes:
 
-1. both complete notes seen by SSE;
-2. every takeaway generated for each note;
-3. the exact source fragment or fragments masked for every takeaway;
-4. which two masked takeaways were compared;
-5. their cosine, cross-note ranks, and the evidence supporting the diagnosis.
+- both full notes;
+- every takeaway produced by the agent;
+- the exact mask used for each takeaway;
+- the two takeaways being compared;
+- their cosine scores and ranks;
+- what the evidence does and does not show.
 
-The compared-pair cosines are preserved at full recorded precision.
-Neighborhood scores are rounded to six decimal places. Invisible trailing
-whitespace in the complete notes is omitted; the wording and line breaks are
-otherwise preserved.
+The main cosine for each pair is shown at full precision. Other scores are
+rounded to six decimal places. Invisible trailing spaces are omitted from the
+notes; their wording and line breaks are unchanged.
 
-The generated takeaway text was never given to SSE. SSE contextualized every
-token using the complete note, then pooled only the token states selected by
-the mask. Therefore, an unselected sentence can influence a selected token's
-vector through the model's attention.
+SSE never saw the takeaway text. It encoded the full note, then pooled the
+token states selected by the mask. Because it encoded the full note first,
+text outside the mask could still affect the resulting vector.
 
-All inputs come from
-[`communicated-meaning-full-proposal-v1.json`](../../../sse_multivector/communicated-meaning-full-proposal-v1.json),
-and all scores and ranks come from the deterministically verified full-run
-analysis preserved in
-[`communicated-meaning-full-v1`](../../../sse_multivector/baselines/communicated-meaning-full-v1/).
+- Inputs: [`communicated-meaning-full-proposal-v1.json`](../../../sse_multivector/communicated-meaning-full-proposal-v1.json)
+- Results: [`communicated-meaning-full-v1`](../../../sse_multivector/baselines/communicated-meaning-full-v1/)
 
 ## 1. Affogato versus a picky-eating child
 
@@ -36,13 +33,13 @@ Each vector ranked the other first among all takeaways from other notes.
 
 Note ID: `e1b9153e2006fb77384475cbe034cdb6224ffd06d1bdee46ca8fd6dfd867d407`
 
-#### Complete note
+#### Full note
 
 ```text
 Wants a kick off during the day?  Affogato is easy to prepare and always available at your kitchen! #coolerstr @ #coffeestr https://image.nostr.build/ff4853ba4171c95546a55f17ac7e6712e8a4c34077f77c74c10fac32de518f45.jpg
 ```
 
-#### Generated takeaways and masks
+#### Agent takeaways and masks
 
 **Compared takeaway:** Affogato is an easy-to-prepare daytime pick-me-up that
 can be made at home.
@@ -57,7 +54,7 @@ Wants a kick off during the day?  Affogato is easy to prepare and always availab
 
 Note ID: `a530656af6c5fe8c1ee2ce8bdd33e9f7312334a68e1cdff7483c381a251a7ac4`
 
-#### Complete note
+#### Full note
 
 ```text
 Another great sleepover with my daughter.
@@ -67,7 +64,7 @@ She’s such picky eater…
 Gotta get her to start eating new foods somehow…
 ```
 
-#### Generated takeaways and masks
+#### Agent takeaways and masks
 
 **Takeaway:** The author had another great sleepover with their daughter.
 
@@ -103,7 +100,7 @@ She’s such picky eater…
 Gotta get her to start eating new foods somehow…
 ```
 
-### Measured neighborhood
+### Closest results
 
 The affogato vector's closest cross-note results were:
 
@@ -119,23 +116,19 @@ The picky-eating vector's closest cross-note results were:
 3. flavored coffee becoming tiresome: `0.430594`;
 4. roasting beans for a personal flavor profile: `0.428911`.
 
-### Observed facts
+### What we know
 
-The affogato mask contains nearly all meaningful text in its note. The other
-note's unselected text concerns a sleepover and a car seat. There is no shared
-unselected subject that obviously explains the high score.
+The affogato mask contains all prose in the note; it excludes only the hashtags
+and image URL. The picky-eating mask excludes the sleepover and car-seat
+passages. The two masks both concern food and eating. The affogato vector's
+more precise coffee matches received lower scores.
 
-The selected passages share the broad domain of food and eating. The affogato
-passage's more precise coffee neighbors received lower scores.
+### What it likely means
 
-### Working interpretation
-
-SSE appears to have emphasized the real broad relationship above the more
-precise coffee relationships available in the corpus.
-
-**Working diagnosis:** broad-domain or granularity collapse, rather than an
-obvious context-leakage case. A single cosine does not distinguish sharing a
-broad parent such as food from expressing the same fine meaning.
+SSE probably matched these because both concern food and eating. That is a
+real connection, but it is too broad: the coffee notes should have ranked
+higher. This does not look like context leakage. It shows that cosine alone
+cannot distinguish a broad shared category from the same precise meaning.
 
 ## 2. A repeatedly loud fan versus a long-chirping wren
 
@@ -148,7 +141,7 @@ fan first.
 
 Note ID: `84aba98daa2c1ce749395dc7c2249e5072c3c84d73573e37f61e15228fc0ae9d`
 
-#### Complete note
+#### Full note
 
 ```text
 Has anyone replaced the fan on their BitAxe? If so, what did you use? I'd normally go with a Noctua but I hate that the NF-A4x20 is the stupid beige/brown colorway.
@@ -156,7 +149,7 @@ Has anyone replaced the fan on their BitAxe? If so, what did you use? I'd normal
 The stock fan is just getting too loud to deal with. I clean it and within a day or two, it's right back to being loud as hell.
 ```
 
-#### Generated takeaways and masks
+#### Agent takeaways and masks
 
 **Takeaway:** The user is seeking recommendations from people who have
 replaced a BitAxe fan.
@@ -189,7 +182,7 @@ The stock fan is just getting too loud to deal with. I clean it and within a day
 
 Note ID: `2c054d399715c118387a16ab9d3960d3dcb27cd8c3ee33cea2ac3336138a1b6a`
 
-#### Complete note
+#### Full note
 
 ```text
 Annie's Saturday Morning Thoughts
@@ -205,7 +198,7 @@ Flavored coffee is nice but can get old if you have it every day.
 Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday. 🤗
 ```
 
-#### Generated takeaways and masks
+#### Agent takeaways and masks
 
 **Takeaway:** Public agreement does not necessarily mean private agreement.
 
@@ -263,7 +256,7 @@ Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree a
 This is the recipe for a good Saturday.
 ```
 
-### Measured neighborhood
+### Closest results
 
 The fan vector correctly ranked the Avalon/Bitaxe noise comparison first at
 `0.672400`, followed by the wren at `0.466548`.
@@ -274,22 +267,19 @@ The wren vector ranked:
 2. the Avalon/Bitaxe noise comparison: `0.428812`;
 3. Aeropress taste improvement: `0.273537`.
 
-### Observed facts
+### What we know
 
-The complete notes otherwise concern unrelated domains. Their selected
-passages, however, both describe a sound-producing thing continuing over time:
-the fan becomes loud again within days, while the wren has been chirping for a
-while and appears to have strong lungs.
+Outside the masks, the first note discusses BitAxe hardware and the second
+contains several unrelated Saturday thoughts. The masks both describe a sound
+that persists or returns over time: the fan becomes loud again within days,
+while the wren has been chirping for a while.
 
-### Working interpretation
+### What it likely means
 
-SSE appears to have captured an acoustic-and-duration analogy. That analogy is
-real on one semantic axis but wrong as a fine communicated-meaning neighbor.
-
-**Working diagnosis:** relational or attribute similarity at the wrong level,
-rather than primarily context leakage. Cosine exposes closeness but cannot say
-whether the closeness comes from subject identity, a shared attribute, or an
-analogy.
+SSE probably matched the shared pattern of a sound continuing or recurring
+over time. That relation is real, but the takeaways are about different things.
+This does not mainly look like context leakage. It shows that cosine can favor
+a shared attribute or analogy over the actual subject.
 
 ## 3. “They want to control everything” versus automatic backups
 
@@ -301,14 +291,14 @@ Each vector ranked the other first among all takeaways from other notes.
 
 Note ID: `7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e`
 
-#### Complete note
+#### Full note
 
 ```text
 they want to control everything..
 ..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger picture.. ..all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices.. ..i'm still on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible).. ..i've already switched to #Linux computer-wise.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty
 ```
 
-#### Generated takeaways and masks
+#### Agent takeaways and masks
 
 **Compared takeaway:** Unspecified actors want to control everything.
 
@@ -366,7 +356,7 @@ free and opensource is the only way to navigate this tech surveillance state wit
 
 Note ID: `aa269973db710939d2cdc6f8582c94b2f0e5f472f3e07b8f9e684140bd341376`
 
-#### Complete note
+#### Full note
 
 ```text
 I'm thinking I'll regularly post about open source tech I find useful.
@@ -385,7 +375,7 @@ Available on their own Fdroid repo:
 https://molly.im/
 ```
 
-#### Generated takeaways and masks
+#### Agent takeaways and masks
 
 **Takeaway:** The user plans to regularly share useful open-source technology.
 
@@ -462,7 +452,7 @@ Available on their own Fdroid repo:
 https://molly.im/
 ```
 
-### Measured neighborhood
+### Closest results
 
 The “control everything” vector's closest cross-note results were:
 
@@ -479,27 +469,23 @@ The automatic-backup vector ranked:
 3. Ledger interaction tracking: `0.314357`;
 4. programming a miner around surplus solar power: `0.266802`.
 
-### Observed facts
+### What we know
 
-The selected fragments share no substantive wording and communicate apparently
-different things. Their complete notes do share substantial unselected
-context: both discuss open-source, security-oriented software. The first note
-additionally discusses privacy and surveillance.
+One mask says unspecified people want control. The other says Molly can make
+automatic backups. They share no meaningful wording and say different things.
+Their full notes both concern open-source, security-oriented software. The
+first also discusses privacy and surveillance.
 
-The “control everything” fragment is also not self-contained. Its pronoun and
-object acquire meaning only from the proprietary-OS and surveillance text
-around it.
+The surrounding OS and surveillance text suggests what “they” and “everything”
+refer to, but never identifies the actors.
 
-### Working interpretation
+### What it likely means
 
-The score is consistent with SSE carrying the broader source-note domain into
-the selected vector strongly enough that an unrelated Molly feature becomes
-its nearest neighbor. A span-only ablation is required to establish whether
-that surrounding context caused the score.
-
-**Working diagnosis:** the strongest context-leakage candidate among these
-four failures, compounded by an underspecified selected fragment. Context
-leakage remains unproven.
+This is the clearest case where the rest of the note may have affected the
+masked vector. The fragment “they want to control everything” also depends on
+the surrounding text to explain who “they” are and what they control. We still
+need a span-only run to prove whether that surrounding context caused the
+match.
 
 ## 4. Timed miner control versus automatic app locking
 
@@ -513,7 +499,7 @@ interaction tracking at `0.448268`.
 
 Note ID: `7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13`
 
-#### Complete note
+#### Full note
 
 ```text
 This week I just let the miner running to keep temperatures for a minimum and save the #statistics.
@@ -526,7 +512,7 @@ Anyhow in the winter days almost everything is required to heat the house so it 
 #orangery #greenhouse   #grownostr #miner #bitcoin #nostr #btc
 ```
 
-#### Generated takeaways and masks
+#### Agent takeaways and masks
 
 **Takeaway:** The user left the miner running this week to maintain a minimum
 temperature and record statistics.
@@ -568,7 +554,7 @@ Anyhow in the winter days almost everything is required to heat the house so it 
 
 Note ID: `aa269973db710939d2cdc6f8582c94b2f0e5f472f3e07b8f9e684140bd341376`
 
-#### Complete note
+#### Full note
 
 ```text
 I'm thinking I'll regularly post about open source tech I find useful.
@@ -587,7 +573,7 @@ Available on their own Fdroid repo:
 https://molly.im/
 ```
 
-#### Generated takeaways and masks
+#### Agent takeaways and masks
 
 **Takeaway:** The user plans to regularly share useful open-source technology.
 
@@ -664,7 +650,7 @@ Available on their own Fdroid repo:
 https://molly.im/
 ```
 
-### Measured neighborhood
+### Closest results
 
 The miner-control vector's closest cross-note results were:
 
@@ -682,41 +668,36 @@ The automatic-lock vector ranked:
 4. finishing a book in one night if work allowed: `0.359352`;
 5. recurring BitAxe fan noise after days: `0.307509`.
 
-### Observed facts
+### What we know
 
-The selected fragments themselves share an abstract relation: a device
-automatically changes state when a time or condition threshold is met. The
-miner starts below a temperature threshold and varies by day/night mode; the
-app locks after a period of inactivity.
+Both masks describe automatic behavior triggered by a condition. The miner
+starts below a temperature threshold and varies by day/night mode. The app
+locks after a period of inactivity.
 
-The full notes otherwise concern different domains. The app-lock vector's
-nearest result was Ledger tracking, which is consistent with—but does not
-prove—retained app/privacy context.
+Outside these masks, the two notes discuss different subjects. The app-lock
+vector's nearest result was Ledger tracking. That could reflect app/privacy
+context from the Molly note, but this result alone does not prove it.
 
-### Working interpretation
+### What it likely means
 
-The functional similarity between the selected passages is sufficient to
-explain much of their closeness without relying on context leakage.
+SSE probably matched both as automatic device behavior triggered by time or a
+condition. That is a real structural similarity, but not the same takeaway.
+The rest of the Molly note may also influence its vector, but we do not need
+context leakage to explain this match.
 
-**Working diagnosis:** primarily relational or functional-structure similarity
-at the wrong semantic level, with possible secondary context influence. A
-scalar cosine does not distinguish “these implement analogous conditional
-behavior” from “these communicate the same subject.”
+## What these examples show
 
-## Combined conclusion
+These do not look like four instances of one bug:
 
-The four pairs are not all best explained by the same mechanism:
+1. Affogato versus picky eating matched on the broad idea of food.
+2. Fan noise versus a chirping wren matched on recurring sound.
+3. “Control everything” versus backups may reflect surrounding-note context.
+4. Miner control versus app locking matched on conditional automation.
 
-1. **Broad-domain collapse:** affogato versus picky eating.
-2. **Attribute or analogy collapse:** persistent fan noise versus persistent
-   bird sound.
-3. **Leading context-leakage candidate:** control rhetoric versus automatic
-   backups.
-4. **Functional-relation collapse:** conditional miner control versus
-   conditional app locking.
+Only the third case gives a clear reason to suspect that text outside the mask
+affected the vector, and even that is not proven yet. Removing full-note
+context might fix it without fixing the other three.
 
-The third pair is the one most consistent with surrounding-context influence,
-but the current run cannot prove that cause. Removing complete-note context
-may reduce that failure, but it would not necessarily fix the other three.
-Those expose a more general limitation: one cosine value cannot identify which
-semantic axis or level of specificity produced the similarity.
+The broader problem is that cosine says how strongly two vectors resemble each
+other. It does not say which feature made them similar, or whether that
+similarity is precise enough for our use.
