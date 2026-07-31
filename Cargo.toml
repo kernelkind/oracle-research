@@ -59,6 +59,10 @@ path = "src/bin/reference_map.rs"
 name = "sse-mask-review"
 path = "src/bin/sse_mask_review.rs"
 
+[[bin]]
+name = "sse-vector-diagnostic"
+path = "src/bin/sse_vector_diagnostic.rs"
+
 [dependencies]
 bech32 = "=0.11.1"
 crossterm = "=0.29.0"

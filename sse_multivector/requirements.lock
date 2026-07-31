@@ -1,0 +1,16 @@
+# Exact wheels added to the immutable PyTorch base image. All other Python
+# dependencies are pinned by the base image digest and inherited read-only.
+huggingface-hub==0.23.2 \
+    --hash=sha256:48727a16e704d409c4bb5913613308499664f22a99743435dc3a13b23c485827
+regex==2024.5.15 \
+    --hash=sha256:4a605586358893b483976cffc1723fb0f83e526e8f14c6e6614e75919d9862cf
+safetensors==0.4.3 \
+    --hash=sha256:2d603846a8585b9432a0fd415db1d4c57c0f860eb4aea21f92559ff9902bae4d
+sentencepiece==0.2.0 \
+    --hash=sha256:f295105c6bdbb05bd5e1b0cafbd78ff95036f5d3641e7949455a3f4e5e7c3109
+tokenizers==0.19.1 \
+    --hash=sha256:7c9d5b6c0e7a1e979bec10ff960fae925e947aab95619a6fdb4c1d8ff3708ce3
+tqdm==4.66.4 \
+    --hash=sha256:b75ca56b413b030bc3f00af51fd2c1a1a5eac6a0c1cca83cbb37a5c52abce644
+transformers==4.41.2 \
+    --hash=sha256:05555d20e43f808de1ef211ab64803cdb513170cef70d29a888b589caebefc67

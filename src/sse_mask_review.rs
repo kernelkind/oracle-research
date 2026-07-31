@@ -128,6 +128,23 @@ pub struct VerifiedSubjectMaskProposal {
     notes: Vec<VerifiedNoteSubjects>,
 }
 
+/// One verified subject mask ready for model input preparation.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct VerifiedSubjectEncodingMask {
+    pub subject_id: String,
+    pub label: String,
+    pub fragments: Vec<ProposedMaskFragment>,
+    pub byte_spans: Vec<(usize, usize)>,
+}
+
+/// One source-bound note and all of its ordered verified subject masks.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct VerifiedSubjectEncodingNote {
+    pub note_id: String,
+    pub content: String,
+    pub subjects: Vec<VerifiedSubjectEncodingMask>,
+}
+
 impl VerifiedSubjectMaskProposal {
     pub fn note_count(&self) -> usize {
         self.notes.len()
@@ -135,6 +152,32 @@ impl VerifiedSubjectMaskProposal {
 
     pub fn subject_count(&self) -> usize {
         self.notes.iter().map(|note| note.subjects.len()).sum()
+    }
+
+    /// SHA-256 of the frozen note set bound by this verified proposal.
+    pub fn note_set_sha256(&self) -> &str {
+        &self.note_set_sha256
+    }
+
+    /// Return the complete source text and ordered masks needed by an encoder.
+    pub fn encoding_notes(&self) -> Vec<VerifiedSubjectEncodingNote> {
+        self.notes
+            .iter()
+            .map(|note| VerifiedSubjectEncodingNote {
+                note_id: note.note_id.clone(),
+                content: note.note.content.clone(),
+                subjects: note
+                    .subjects
+                    .iter()
+                    .map(|subject| VerifiedSubjectEncodingMask {
+                        subject_id: subject.proposal.subject_id.clone(),
+                        label: subject.proposal.label.clone(),
+                        fragments: subject.proposal.fragments.clone(),
+                        byte_spans: subject.spans.clone(),
+                    })
+                    .collect(),
+            })
+            .collect()
     }
 }
 

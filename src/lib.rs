@@ -57,6 +57,7 @@ pub mod semantic_order;
 pub mod shared_learning_round;
 pub mod snapshot;
 pub mod sse_mask_review;
+pub mod sse_vector_diagnostic;
 pub mod stage;
 pub mod static_exposure_probe_launch;
 pub mod static_exposure_probe_runner;
