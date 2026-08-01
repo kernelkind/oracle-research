@@ -99,6 +99,8 @@ The run directory contains:
 
 - `manifest.json`: exact input, prompt, schema, model, effort, Codex-version, and
   wrapper hashes;
+- `model-instructions.md`: the exact minimal replacement for Codex's built-in
+  coding-agent instructions;
 - `results.jsonl`: one auditable success or failure record per attempt, including
   token usage, duration, event stream, stderr, and raw final output;
 - `output.json`: published atomically only after every takeaway and mask job

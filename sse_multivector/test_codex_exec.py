@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import subprocess
@@ -345,6 +346,25 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertEqual("candidate/mask", manifest["mask"]["model"])
         self.assertEqual("medium", manifest["mask"]["reasoning_effort"])
         self.assertEqual("codex-cli fixture-1.0", manifest["codex_version"])
+        self.assertEqual(
+            "Follow the user's instructions.\n",
+            manifest["isolation"]["model_instructions"],
+        )
+        self.assertEqual(
+            hashlib.sha256(b"Follow the user's instructions.\n").hexdigest(),
+            manifest["isolation"]["model_instructions_sha256"],
+        )
+        self.assertEqual(
+            [
+                "agents.enabled=false",
+                "include_permissions_instructions=false",
+                "include_apps_instructions=false",
+                "include_collaboration_mode_instructions=false",
+                "include_environment_context=false",
+                "skills.include_instructions=false",
+            ],
+            manifest["isolation"]["runtime_context_overrides"],
+        )
 
     def test_refuses_the_users_normal_codex_home_before_spawning(self) -> None:
         self.write_config(codex_home=Path.home() / ".codex")
