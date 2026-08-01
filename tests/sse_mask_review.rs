@@ -21,6 +21,36 @@ const SUBJECT_INSTRUCTION: &str = "Enumerate every atomic subject explicitly and
 const MASK_INSTRUCTION: &str = "Mask only the narrowest portion or portions of the provided text that directly express the provided atomic subject.\n\nAtomic subject:\n<SUBJECT>\n\nText:\n<RAW NOTE>\n\nReturn only a JSON array of exact substrings copied from the text, in source order. If the subject is not expressed, return \"unsupported\".";
 const TAKEAWAY_INSTRUCTION: &str = "This text is a social media post. Identify each substantive point the user communicates. Summarize every independent point as a separate, concise takeaway in your own words. Combine details when they jointly express one point. Ground each takeaway in the text itself.\n\nReturn only a JSON array of strings.";
 const TAKEAWAY_MASK_INSTRUCTION: &str = "Mask only the narrowest portion or portions of the provided text that directly express the provided takeaway.\n\nTakeaway:\n<TAKEAWAY>\n\nText:\n<RAW NOTE>\n\nReturn only a JSON array of exact substrings copied from the text, in source order. If the takeaway is not expressed, return \"unsupported\".";
+const TPV3_81_INSTRUCTION: &str = r#"Read this social-media post as a whole and determine everything the author communicates.
+
+Using the complete post, resolve each context-dependent reference or expression to the most specific descriptive meaning clearly supported by the post. When an exact identity is unavailable, use a supported descriptive referent. Express relationships only at the specificity supported by the complete post.
+
+Identify every substantive meaning the author communicates. Information the post merely leaves unidentified, unexplained, unstated, or unresolved is not itself a meaning to output.
+
+Rewrite each identified meaning in your own words as a distinct, standalone takeaway. Omit exact user handles, URLs, and hashtag syntax. Preserve any substantive meaning they contribute using ordinary language.
+
+Evaluate the final wording of each takeaway in isolation, assuming its reader cannot see the original post or any other takeaway. Revise it until it contains the referents, relationships, and context needed to preserve the same meaning without adding meaning.
+
+Return only a JSON array of takeaway strings."#;
+const MPV3_3_INSTRUCTION: &str = r#"Align one fixed takeaway to its source social-media post.
+
+Read the complete post and takeaway first. Resolve context-dependent source expressions using the complete post.
+
+Select exact source fragments that satisfy this criterion: when read together without any unselected text, they preserve the takeaway’s complete meaning—including its referents, relationships, and qualifications—without adding unrelated meaning. Complete the selection before minimizing it.
+
+Do not select URLs, exact user handles, or long encoded Nostr identifiers beginning with prefixes such as `npub1…`, `nprofile1…`, `note1…`, `nevent1…`, `naddr1…`, or `nsec1…`. These identifiers may be prefixed by `nostr:`, the Nostr URI scheme, as in `nostr:npub1…`.
+
+Before returning, verify that the selected fragments alone satisfy the criterion above.
+
+Return only a JSON array of exact substrings copied from the post, in source order.
+
+<post>
+{POST}
+</post>
+
+<takeaway>
+{TAKEAWAY}
+</takeaway>"#;
 const SUBJECT_1: &str = "1111111111111111";
 const SUBJECT_2: &str = "2222222222222222";
 const SUBJECT_3: &str = "3333333333333333";
@@ -485,6 +515,35 @@ fn proposal_validation_accepts_the_approved_takeaway_generation_profile() {
 
     load_verified_subject_mask_proposal(&fixture.proposal_path)
         .expect("the proposal must accept the exact approved takeaway generation profile");
+}
+
+#[test]
+fn proposal_validation_accepts_tpv3_81_with_mpv3_3() {
+    let fixture = Fixture::new();
+    let mut proposal = fixture.proposal_json();
+    let takeaway_registry: Value = serde_json::from_slice(
+        &fs::read(
+            Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("sse_multivector/takeaway-prompt-versions.json"),
+        )
+        .expect("read takeaway prompt registry"),
+    )
+    .expect("parse takeaway prompt registry");
+    let mask_registry: Value = serde_json::from_slice(
+        &fs::read(
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("sse_multivector/mask-prompt-versions.json"),
+        )
+        .expect("read mask prompt registry"),
+    )
+    .expect("parse mask prompt registry");
+    assert_eq!(takeaway_registry["TPv3.81"], json!(TPV3_81_INSTRUCTION));
+    assert_eq!(mask_registry["MPv3.3"], json!(MPV3_3_INSTRUCTION));
+    proposal["subject_instruction"] = takeaway_registry["TPv3.81"].clone();
+    proposal["mask_instruction"] = mask_registry["MPv3.3"].clone();
+    fixture.replace_proposal(&proposal);
+
+    load_verified_subject_mask_proposal(&fixture.proposal_path)
+        .expect("the proposal must accept the frozen TEv4.1 generation profile");
 }
 
 #[test]
