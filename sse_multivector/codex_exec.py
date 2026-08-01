@@ -201,6 +201,18 @@ def _prepare_codex_home(path: Path) -> None:
         os.chmod(workspaces, 0o700)
 
 
+def _validate_file_credentials(codex_home: Path) -> None:
+    auth_path = codex_home / "auth.json"
+    if not auth_path.is_file():
+        raise RunnerError(f"dedicated CODEX_HOME auth.json is missing: {auth_path}")
+    mode = stat.S_IMODE(auth_path.stat().st_mode)
+    if mode != 0o600:
+        raise RunnerError(
+            "dedicated CODEX_HOME auth.json must have mode 0600, not "
+            f"{mode:04o}"
+        )
+
+
 def _isolated_environment(codex_home: Path) -> dict[str, str]:
     environment = {
         key: value
@@ -770,6 +782,7 @@ def run(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
     config = RunnerConfig.load(config_path)
     notes = _load_notes(config.input_path)
     _prepare_codex_home(config.codex_home)
+    _validate_file_credentials(config.codex_home)
     codex_version = _codex_version(config)
     manifest = _build_manifest(config, codex_version)
     manifest_sha256 = _prepare_run_directory(config, manifest)

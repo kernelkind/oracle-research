@@ -108,6 +108,10 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.fake_codex.chmod(0o755)
         self.log_path = self.root / "codex-calls.json"
         self.codex_home = self.root / "dedicated-codex-home"
+        self.codex_home.mkdir(mode=0o700)
+        self.auth_path = self.codex_home / "auth.json"
+        self.auth_path.write_text("fixture credentials", encoding="utf-8")
+        self.auth_path.chmod(0o600)
         self.run_directory = self.root / "run"
         self.notes_path = self.root / "notes.json"
         self.notes_path.write_text(
@@ -330,7 +334,6 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertFalse(self.run_directory.exists())
 
     def test_does_not_chmod_or_use_an_existing_insecure_codex_home(self) -> None:
-        self.codex_home.mkdir(mode=0o755)
         self.codex_home.chmod(0o755)
 
         completed = self.invoke()
@@ -338,6 +341,27 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertNotEqual(0, completed.returncode)
         self.assertIn("must have mode 0700", completed.stderr)
         self.assertEqual(0o755, self.codex_home.stat().st_mode & 0o777)
+        self.assertEqual([], self.calls())
+
+    def test_refuses_to_run_without_file_credentials(self) -> None:
+        self.auth_path.unlink()
+
+        completed = self.invoke()
+
+        self.assertNotEqual(0, completed.returncode)
+        self.assertIn("auth.json is missing", completed.stderr)
+        self.assertEqual([], self.calls())
+
+    def test_refuses_insecure_file_credential_permissions_without_changing_them(
+        self,
+    ) -> None:
+        self.auth_path.chmod(0o644)
+
+        completed = self.invoke()
+
+        self.assertNotEqual(0, completed.returncode)
+        self.assertIn("auth.json must have mode 0600", completed.stderr)
+        self.assertEqual(0o644, self.auth_path.stat().st_mode & 0o777)
         self.assertEqual([], self.calls())
 
     def test_requires_model_and_reasoning_effort_before_spawning(self) -> None:

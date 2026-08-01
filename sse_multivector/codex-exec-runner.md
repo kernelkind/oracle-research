@@ -19,7 +19,9 @@ python3 sse_multivector/codex_exec.py login \
 ```
 
 The directory is required to have mode `0700`. Login credentials are stored there
-as a file and must never be placed inside the repository.
+as `auth.json`, which Codex creates with mode `0600`, and must never be placed
+inside the repository. The runner refuses to start generation if that file is
+missing or has any other permission mode.
 
 ## Input
 
