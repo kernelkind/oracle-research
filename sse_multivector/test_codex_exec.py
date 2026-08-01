@@ -256,6 +256,20 @@ class CodexExecRunnerTests(unittest.TestCase):
             self.assertIn('approval_policy="never"', argv)
             self.assertIn('shell_environment_policy.inherit="none"', argv)
             self.assertIn("project_root_markers=[]", argv)
+            model_instructions = self.run_directory / "model-instructions.md"
+            self.assertIn(
+                f"model_instructions_file={json.dumps(str(model_instructions))}",
+                argv,
+            )
+            for context_override in (
+                "agents.enabled=false",
+                "include_permissions_instructions=false",
+                "include_apps_instructions=false",
+                "include_collaboration_mode_instructions=false",
+                "include_environment_context=false",
+                "skills.include_instructions=false",
+            ):
+                self.assertIn(context_override, argv)
             adjacent_arguments = set(zip(argv, argv[1:]))
             for feature in (
                 "shell_tool",
@@ -289,6 +303,12 @@ class CodexExecRunnerTests(unittest.TestCase):
             calls[1]["prompt"],
         )
         self.assertEqual(0o700, self.codex_home.stat().st_mode & 0o777)
+        self.assertEqual(
+            "Follow the user's instructions.\n",
+            (self.run_directory / "model-instructions.md").read_text(
+                encoding="utf-8"
+            ),
+        )
 
         output = json.loads(
             (self.run_directory / "output.json").read_text(encoding="utf-8")

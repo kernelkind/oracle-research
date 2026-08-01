@@ -81,6 +81,9 @@ Every generation uses:
 - a new empty working directory outside the repository;
 - an ephemeral session;
 - ignored user configuration and execution rules;
+- a one-line replacement for Codex's built-in coding-agent instructions;
+- disabled Codex agent orchestration, plus suppressed permissions, apps,
+  collaboration, skills, and environment-context instruction blocks;
 - read-only sandboxing with approvals disabled;
 - disabled shell, multi-agent, apps, plugins, browser, computer-use, image, and web
   search tools;

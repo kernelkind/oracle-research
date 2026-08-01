@@ -23,6 +23,15 @@ SCHEMA_VERSION = 1
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CODEX_HOME = Path("~/.local/state/oracle-mvp/codex-home").expanduser()
 TAKEAWAY_ENVELOPE_VERSION = "xml-post-v1"
+MINIMAL_MODEL_INSTRUCTIONS = "Follow the user's instructions.\n"
+RUNTIME_CONTEXT_OVERRIDES = (
+    "agents.enabled=false",
+    "include_permissions_instructions=false",
+    "include_apps_instructions=false",
+    "include_collaboration_mode_instructions=false",
+    "include_environment_context=false",
+    "skills.include_instructions=false",
+)
 DISABLED_FEATURES = (
     "shell_tool",
     "unified_exec",
@@ -456,6 +465,11 @@ def _build_manifest(
             "sandbox": "read-only",
             "web_search": "disabled",
             "shell_environment_inherit": "none",
+            "model_instructions": MINIMAL_MODEL_INSTRUCTIONS,
+            "model_instructions_sha256": _sha256_bytes(
+                MINIMAL_MODEL_INSTRUCTIONS.encode("utf-8")
+            ),
+            "runtime_context_overrides": list(RUNTIME_CONTEXT_OVERRIDES),
             "disabled_features": list(DISABLED_FEATURES),
         },
     }
@@ -497,6 +511,10 @@ def _prepare_run_directory(
     _atomic_write(
         run_directory / "mask-output-schema.json",
         _canonical_json_bytes(MASK_SCHEMA),
+    )
+    _atomic_write(
+        run_directory / "model-instructions.md",
+        MINIMAL_MODEL_INSTRUCTIONS.encode("utf-8"),
     )
     return _sha256_bytes(manifest_bytes)
 
@@ -647,6 +665,9 @@ def _build_exec_argv(
         "-c",
         f'model_reasoning_effort="{stage.reasoning_effort}"',
         "-c",
+        "model_instructions_file="
+        f"{json.dumps(str(config.run_directory / 'model-instructions.md'))}",
+        "-c",
         'approval_policy="never"',
         "-c",
         'web_search="disabled"',
@@ -657,6 +678,8 @@ def _build_exec_argv(
         "-c",
         'cli_auth_credentials_store="file"',
     ]
+    for override in RUNTIME_CONTEXT_OVERRIDES:
+        arguments.extend(("-c", override))
     for feature in DISABLED_FEATURES:
         arguments.extend(("--disable", feature))
     arguments.extend(
