@@ -73,7 +73,10 @@ elif "The author finds Rust pleasant." in prompt:
 else:
     response = ["Tea helps"]
 
-output_path.write_text(json.dumps(response), encoding="utf-8")
+response_object = {
+    "fragments" if stage == "mask" else "takeaways": response,
+}
+output_path.write_text(json.dumps(response_object), encoding="utf-8")
 print(json.dumps({"type": "thread.started", "thread_id": "fixture-thread"}))
 print(json.dumps({"type": "turn.started"}))
 if os.environ.get("FAKE_CODEX_MISSING_COMPLETION") == "1":
@@ -83,7 +86,7 @@ print(json.dumps({
     "item": {
         "id": "fixture-message",
         "type": "agent_message",
-        "text": json.dumps(response),
+        "text": json.dumps(response_object),
     },
 }))
 print(json.dumps({
@@ -363,6 +366,27 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertIn("auth.json must have mode 0600", completed.stderr)
         self.assertEqual(0o644, self.auth_path.stat().st_mode & 0o777)
         self.assertEqual([], self.calls())
+
+    def test_uses_object_root_output_schemas_required_by_codex(self) -> None:
+        completed = self.invoke()
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        takeaway_schema = json.loads(
+            (self.run_directory / "takeaway-output-schema.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        mask_schema = json.loads(
+            (self.run_directory / "mask-output-schema.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual("object", takeaway_schema["type"])
+        self.assertEqual(["takeaways"], takeaway_schema["required"])
+        self.assertEqual("array", takeaway_schema["properties"]["takeaways"]["type"])
+        self.assertEqual("object", mask_schema["type"])
+        self.assertEqual(["fragments"], mask_schema["required"])
+        self.assertEqual("array", mask_schema["properties"]["fragments"]["type"])
 
     def test_requires_model_and_reasoning_effort_before_spawning(self) -> None:
         self.write_config(takeaway_effort=None)

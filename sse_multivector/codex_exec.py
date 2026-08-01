@@ -36,13 +36,27 @@ DISABLED_FEATURES = (
 IDENTIFIER = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/+\-]*$")
 
 TAKEAWAY_SCHEMA: dict[str, object] = {
-    "type": "array",
-    "items": {"type": "string", "minLength": 1},
+    "type": "object",
+    "properties": {
+        "takeaways": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+        }
+    },
+    "required": ["takeaways"],
+    "additionalProperties": False,
 }
 MASK_SCHEMA: dict[str, object] = {
-    "type": "array",
-    "items": {"type": "string", "minLength": 1},
-    "minItems": 1,
+    "type": "object",
+    "properties": {
+        "fragments": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "minItems": 1,
+        }
+    },
+    "required": ["fragments"],
+    "additionalProperties": False,
 }
 
 
@@ -568,7 +582,7 @@ def _validate_string_array(
     return result
 
 
-def _validate_response(
+def _validate_result_items(
     stage_name: str,
     value: object,
     note_text: str,
@@ -586,6 +600,17 @@ def _validate_response(
             )
         cursor = position + len(fragment)
     return fragments
+
+
+def _validate_response(
+    stage_name: str,
+    value: object,
+    note_text: str,
+) -> list[str]:
+    response_object = _expect_object(value, f"codex {stage_name} response")
+    field = "takeaways" if stage_name == "takeaway" else "fragments"
+    _expect_fields(response_object, f"codex {stage_name} response", {field})
+    return _validate_result_items(stage_name, response_object[field], note_text)
 
 
 def _job_key(
@@ -668,7 +693,11 @@ def _run_job(
     job_key = _job_key(stage_name, note.note_id, takeaway_index)
     previous = latest.get(job_key)
     if previous is not None and previous["status"] == "succeeded":
-        return _validate_response(stage_name, previous.get("response"), note.text)
+        return _validate_result_items(
+            stage_name,
+            previous.get("response"),
+            note.text,
+        )
     if previous is not None and not retry_failed:
         raise RunnerError(
             f"job `{job_key}` previously failed; inspect results.jsonl and "
