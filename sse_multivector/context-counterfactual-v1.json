@@ -1,0 +1,792 @@
+{
+  "schema_version": 1,
+  "fixture_id": "sse-context-counterfactual-v1",
+  "review_status": "proposed",
+  "inference_authorized": false,
+  "originating_assumption": "The multi-vector model must turn a note into separate, context-grounded idea vectors rather than blended or redundant vectors.",
+  "current_interpretation": "Each intended meaning must remain distinguishable and use surrounding context appropriately; complete vector uniqueness is not required.",
+  "question": "Can SSE use surrounding text when it is necessary to interpret a selected idea while preventing unrelated surrounding text from taking over the selected idea?",
+  "stage": {
+    "name": "manual-sse-only",
+    "takeaway_prompt": null,
+    "mask_prompt": null,
+    "purpose": "Isolate SSE from takeaway generation and mask extraction.",
+    "target_encoding": "Feed only the target's complete text to SSE and pool only tokens selected by its mask; do not encode IDs, labels, construction notes, provenance, or comparison metadata.",
+    "reference_encoding": "Encode each reference as standalone text with its entire text selected."
+  },
+  "sse_execution_contract": {
+    "base_model": "sentence-transformers/sentence-t5-base",
+    "base_model_artifact_tree_sha256": "bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d",
+    "checkpoint_sha256": "ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d",
+    "container_image": "local/oracle-mvp-sse@sha256:a6c9674dca720e1f094b7feeb1397b6e6b0a97e10f13e0a6555deebf4b70ddaa",
+    "device": "cpu",
+    "note_batch_size": 8,
+    "dimensions": 768,
+    "maximum_tokens": 512,
+    "pooling": "selected-contextual-token-mean-linear-relu-linear-v1",
+    "base_model_tree_hash_rule": "sorted-relative-path-type-size-content-sha256-v1",
+    "cosine": "f64-dot-and-f64-norms-over-ordered-raw-f32-coordinates-v1; compare unrounded f64 values",
+    "invalid_vector_result": "Stage 1 fails if any required vector is missing, zero-norm, or non-finite."
+  },
+  "target_contract": {
+    "order": "self_contained_cases in file order, then context_resolution_cases in file order, then mixed_note_cases in file order",
+    "reference_order": "reference_groups in file order, then each group's references in file order",
+    "self_contained_target": "each variants[] entry is one target; target_id is fixture_note_id; preferred and alternative groups are inherited from its case",
+    "context_resolution_target": "each variants[] entry is one target; target_id is fixture_note_id; preferred and alternative groups are stored on the variant",
+    "mixed_note_target": "each meanings[] entry is one target; target_id is meaning_id; preferred and alternative groups are stored on the meaning"
+  },
+  "counts": {
+    "constructed_note_instances": 15,
+    "untouched_mixed_notes": 2,
+    "target_vectors": 24,
+    "reference_groups": 19,
+    "references_per_group": 3,
+    "reference_vectors": 57,
+    "total_vectors": 81,
+    "predeclared_predictions": 24
+  },
+  "rules": {
+    "support": "median cosine similarity to the three members of one reference group",
+    "prediction": "the preferred reference group must have strictly greater support than every listed alternative group",
+    "stage_1_success": "all 24 predeclared predictions pass",
+    "self_contained_scope": "The selected focal meaning is unchanged while unrelated full-note context is added; its own meaning must continue to win.",
+    "context_resolution_scope": "The selected mask intentionally remains the same ambiguous focal phrase while only its unselected resolving context changes; this tests conditional use of full-note context, not mask-extraction completeness.",
+    "absolute_cosine_threshold": null,
+    "record": "retain every target-to-reference cosine, every group median, and every predeclared prediction result",
+    "mixed_note_relatedness": [
+      {
+        "left_group_id": "public-private-agreement",
+        "right_group_id": "self-directed-authenticity",
+        "reason": "Publicly expressed agreement and authentic private belief are legitimately related."
+      },
+      {
+        "left_group_id": "persistent-wren-chirping",
+        "right_group_id": "pleasant-outdoor-saturday",
+        "reason": "The same bird and outdoor setting make these meanings legitimately related."
+      }
+    ],
+    "redundancy_policy": "Related or duplicate vectors are recorded but are not failures unless a distinct intended meaning is omitted or another meaning wins its predeclared comparison.",
+    "result_scope": "Passing supports this mechanism on these controlled cases; it does not establish corpus-wide reliability."
+  },
+  "source_artifacts": [
+    {
+      "path": "target/sse-communicated-meaning-tev4.1/input.json",
+      "path_base": "repository root",
+      "sha256": "c26797319316d5f8b8d10ab7207dc3a63e305c0c43d0bd91b1f6b21df01c7836",
+      "provides": "all listed real source notes except the book-switch note"
+    },
+    {
+      "path": "target/crec-113-formal-v1/sample/sample.jsonl",
+      "path_base": "repository root",
+      "sha256": "8edb8a51246201100e6ba7cf7bf1bbf9cd501881d7c70b8a9cfc7a380d1b168e",
+      "provides": "the book-switch note"
+    }
+  ],
+  "source_notes": [
+    {
+      "note_id": "2c054d399715c118387a16ab9d3960d3dcb27cd8c3ee33cea2ac3336138a1b6a",
+      "role": "self-directed target and untouched mixed note"
+    },
+    {
+      "note_id": "974dd5c02c7a9ca9b89685e344d8d103abbbab420e0faf22875f9d08e1c0534a",
+      "role": "future-solar target"
+    },
+    {
+      "note_id": "c26040a4d7b85ee80d17ef61c9c6c33b7e848de24c27c95179f36884638ca61a",
+      "role": "book-switch target"
+    },
+    {
+      "note_id": "f4c5aa5f18026412caa17c21c3fad6056c82b80de57ad70003074ff622adc496",
+      "role": "neutral coffee context"
+    },
+    {
+      "note_id": "709b25103a422d0bbaaad8fa9a8247930cd763dc1cf248ee90b083ce3f728f32",
+      "role": "neutral software context"
+    },
+    {
+      "note_id": "a59ca772c1639d52f79fc05caeff4abc973418043cdac1600a5f75a82e5c1a58",
+      "role": "greenhouse-retirement target and context"
+    },
+    {
+      "note_id": "e79637da76e4e969c3d3ec079f159a705faea0cdb22ddbd61b172a9ed7f4cb6e",
+      "role": "minimalism context"
+    },
+    {
+      "note_id": "7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e",
+      "role": "technology-surveillance control target and context"
+    },
+    {
+      "note_id": "c36ed58c0f533ce9840a7cabe2a425b8d1f5b84f137b360bf58cfd270e6df268",
+      "role": "real financial-control source for the controlled alternate context"
+    },
+    {
+      "note_id": "74694da41f367535d230dec539a9316b3c6536f4f295f61743a7a5b51d97aa99",
+      "role": "rooftop-panel target and context"
+    },
+    {
+      "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13",
+      "role": "untouched related mixed note"
+    }
+  ],
+  "reference_groups": [
+    {
+      "group_id": "self-directed-authenticity",
+      "label": "Choices made freely define authentic character",
+      "references": [
+        "A person is defined by choices made freely rather than under social pressure.",
+        "Only self-directed decisions reveal who someone genuinely is.",
+        "Actions imposed by others do not express an individual's authentic character."
+      ]
+    },
+    {
+      "group_id": "future-solar-dominance",
+      "label": "Solar power will dominate future electricity generation",
+      "references": [
+        "Most electricity generation will eventually come from solar energy.",
+        "Photovoltaic power is expected to dominate the future energy supply.",
+        "In the long run, sunlight will provide the majority of generated electricity."
+      ]
+    },
+    {
+      "group_id": "book-switch-request",
+      "label": "Seeking a different book after listening to a Napoleon book",
+      "references": [
+        "After spending the day with a Napoleon book, the author wants suggestions for a different book.",
+        "The reader is seeking a new book recommendation after listening to a work about Napoleon.",
+        "After the Napoleon title, the author wants a change and asks what book to try next."
+      ]
+    },
+    {
+      "group_id": "coffee-with-raw-cream-and-yolk",
+      "label": "Preparing coffee with raw cream and a raw egg yolk",
+      "references": [
+        "The author prepared coffee with raw cream and an uncooked egg yolk.",
+        "They mixed raw dairy cream and a raw egg yolk into their coffee.",
+        "Coffee was made using raw cream together with a raw egg yolk."
+      ]
+    },
+    {
+      "group_id": "doom-gpl-license-change",
+      "label": "Doom 1 and 2 changing from GPL-and-DSL dual licensing to GPL licensing",
+      "references": [
+        "Doom and Doom II are now GPL-licensed rather than dual-licensed under GPL and DSL.",
+        "The first two Doom games dropped the DSL half of their dual license and retained the GPL.",
+        "Doom 1 and 2 now carry the GPL instead of both the GPL and the DSL."
+      ]
+    },
+    {
+      "group_id": "greenhouse-enabled-retirement",
+      "label": "A geothermal solar greenhouse beginning a low-consumption retirement",
+      "references": [
+        "Building a geothermal, solar-powered greenhouse begins the author's plan for a low-consumption retirement.",
+        "The author sees the renewable-energy greenhouse as the first step toward retirement without consumption dependence.",
+        "A greenhouse powered by geothermal and solar energy starts the author's path to a less consumption-based retirement."
+      ]
+    },
+    {
+      "group_id": "minimalism-enabled-retirement",
+      "label": "Choosing minimalism beginning a low-consumption retirement",
+      "references": [
+        "Actively choosing minimalism is the first step toward a retirement based on reduced consumption.",
+        "The author begins a low-consumption retirement plan by deliberately embracing minimalism.",
+        "A conscious commitment to minimalism starts the author's path to retirement without consumption dependence."
+      ]
+    },
+    {
+      "group_id": "technology-surveillance-control",
+      "label": "Unspecified actors associated with proprietary-system surveillance seeking comprehensive control",
+      "references": [
+        "Unspecified actors associated with telemetry-heavy proprietary operating systems are said to seek comprehensive control.",
+        "The author says unidentified forces connected to a proprietary-software surveillance system want control over everything.",
+        "The described technology-surveillance state is associated with an unspecified group seeking total control."
+      ]
+    },
+    {
+      "group_id": "financial-system-control",
+      "label": "Programmable money and mandatory identity enabling comprehensive financial control",
+      "references": [
+        "Programmable money and mandatory digital identity are described as instruments of total financial control.",
+        "The actors imposing spending restrictions and transaction tracking seek comprehensive control over people's finances.",
+        "Expiring funds and compulsory identification are presented as a system for controlling financial independence."
+      ]
+    },
+    {
+      "group_id": "four-rooftop-solar-panels",
+      "label": "Four solar panels operating on a roof",
+      "references": [
+        "Four solar panels are operating on the roof.",
+        "A group of four rooftop photovoltaic modules is currently working.",
+        "There are four functioning solar-energy panels mounted above the building."
+      ]
+    },
+    {
+      "group_id": "four-roof-workers",
+      "label": "Four people working on a roof",
+      "references": [
+        "Four members of the roofing crew are working on top of the building.",
+        "The roof currently has four workers doing the job.",
+        "Four roofers are carrying out work overhead."
+      ]
+    },
+    {
+      "group_id": "public-private-agreement",
+      "label": "Public agreement not guaranteeing private agreement",
+      "references": [
+        "Someone's public agreement does not guarantee that they privately hold the same view.",
+        "People may voice support openly while disagreeing in private.",
+        "An outward show of agreement can conceal a different personal opinion."
+      ]
+    },
+    {
+      "group_id": "persistent-wren-chirping",
+      "label": "A wren chirping for a long time",
+      "references": [
+        "A wren on the fence has continued chirping for a long time.",
+        "The fence-perched bird has been chirping for a while and seems to have strong lungs.",
+        "A wren's prolonged chirping suggests unusual vocal endurance."
+      ]
+    },
+    {
+      "group_id": "daily-flavored-coffee-fatigue",
+      "label": "Flavored coffee becoming tiresome when consumed daily",
+      "references": [
+        "Flavored coffee is enjoyable occasionally but becomes tiresome as an everyday drink.",
+        "Having flavored coffee daily makes its novelty wear off.",
+        "The author likes flavored coffee yet grows bored when consuming it every day."
+      ]
+    },
+    {
+      "group_id": "pleasant-outdoor-saturday",
+      "label": "Enjoying a pleasant Saturday outdoors among mild weather, animals, and plants",
+      "references": [
+        "Sunshine, cool air, wildlife, shade, and flowers make an ideal Saturday.",
+        "A pleasant Saturday consists of mild weather, birds and squirrels, trees, and blooming vines.",
+        "The author enjoys a sunny, breezy day surrounded by animals and flowering plants."
+      ]
+    },
+    {
+      "group_id": "miner-maintains-minimum-temperature",
+      "label": "Running a miner to maintain a minimum temperature",
+      "references": [
+        "The miner is kept running to maintain a minimum temperature.",
+        "Operating the mining device prevents the temperature from falling too low.",
+        "The author uses the miner's operation to keep conditions above a temperature floor."
+      ]
+    },
+    {
+      "group_id": "miner-temperature-day-night-control",
+      "label": "Starting a miner below a temperature threshold with day and night modes",
+      "references": [
+        "The miner starts below a temperature threshold and uses separate daytime and nighttime modes.",
+        "Temperature and time of day determine when the mining device switches on.",
+        "The miner's automatic startup rule combines a low-temperature trigger with day and night settings."
+      ]
+    },
+    {
+      "group_id": "miner-surplus-solar-startup",
+      "label": "Starting a miner when surplus solar energy is available",
+      "references": [
+        "The author is programming the miner to start when surplus solar energy is available.",
+        "Excess photovoltaic power will trigger the mining device to turn on.",
+        "The miner's startup is being automated around leftover solar generation."
+      ]
+    },
+    {
+      "group_id": "miner-solar-use-measurement",
+      "label": "Measuring how much solar energy a miner uses",
+      "references": [
+        "The author intends to record how much solar energy the miner consumes.",
+        "The author wants statistics on the mining device's use of photovoltaic power.",
+        "The author plans to measure and log the solar electricity allocated to the miner."
+      ]
+    }
+  ],
+  "self_contained_cases": [
+    {
+      "case_id": "self-contained-autonomy",
+      "target_source_note_id": "2c054d399715c118387a16ab9d3960d3dcb27cd8c3ee33cea2ac3336138a1b6a",
+      "target_group_id": "self-directed-authenticity",
+      "focal_text": "Only the things you choose without pressure define you. The rest is a facade.",
+      "variants": [
+        {
+          "fixture_note_id": "autonomy-alone",
+          "construction": "Exact real focal text alone.",
+          "source_note_ids": [
+            "2c054d399715c118387a16ab9d3960d3dcb27cd8c3ee33cea2ac3336138a1b6a"
+          ],
+          "text": "Only the things you choose without pressure define you. The rest is a facade.",
+          "mask": [
+            {
+              "text": "Only the things you choose without pressure define you. The rest is a facade.",
+              "occurrence": 1
+            }
+          ]
+        },
+        {
+          "fixture_note_id": "autonomy-plus-coffee",
+          "construction": "Exact real focal text followed by the exact real coffee context.",
+          "source_note_ids": [
+            "2c054d399715c118387a16ab9d3960d3dcb27cd8c3ee33cea2ac3336138a1b6a",
+            "f4c5aa5f18026412caa17c21c3fad6056c82b80de57ad70003074ff622adc496"
+          ],
+          "text": "Only the things you choose without pressure define you. The rest is a facade.\n\nMade my coffee with raw cream and a raw egg yolk today #coffeechain",
+          "mask": [
+            {
+              "text": "Only the things you choose without pressure define you. The rest is a facade.",
+              "occurrence": 1
+            }
+          ]
+        },
+        {
+          "fixture_note_id": "autonomy-plus-software",
+          "construction": "Exact real focal text followed by the exact real software context.",
+          "source_note_ids": [
+            "2c054d399715c118387a16ab9d3960d3dcb27cd8c3ee33cea2ac3336138a1b6a",
+            "709b25103a422d0bbaaad8fa9a8247930cd763dc1cf248ee90b083ce3f728f32"
+          ],
+          "text": "Only the things you choose without pressure define you. The rest is a facade.\n\nDoom 1 and 2 are now officially licensed under the #GPL, no longer dual-licensed with the DSL :)",
+          "mask": [
+            {
+              "text": "Only the things you choose without pressure define you. The rest is a facade.",
+              "occurrence": 1
+            }
+          ]
+        }
+      ],
+      "alternative_group_ids": [
+        "coffee-with-raw-cream-and-yolk",
+        "doom-gpl-license-change"
+      ]
+    },
+    {
+      "case_id": "self-contained-future-solar",
+      "target_source_note_id": "974dd5c02c7a9ca9b89685e344d8d103abbbab420e0faf22875f9d08e1c0534a",
+      "target_group_id": "future-solar-dominance",
+      "focal_text": "Solar power will be the vast majority of power generation in the future",
+      "variants": [
+        {
+          "fixture_note_id": "future-solar-alone",
+          "construction": "Complete real note alone.",
+          "source_note_ids": [
+            "974dd5c02c7a9ca9b89685e344d8d103abbbab420e0faf22875f9d08e1c0534a"
+          ],
+          "text": "Solar power will be the vast majority of power generation in the future",
+          "mask": [
+            {
+              "text": "Solar power will be the vast majority of power generation in the future",
+              "occurrence": 1
+            }
+          ]
+        },
+        {
+          "fixture_note_id": "future-solar-plus-coffee",
+          "construction": "Complete real note followed by the exact real coffee context.",
+          "source_note_ids": [
+            "974dd5c02c7a9ca9b89685e344d8d103abbbab420e0faf22875f9d08e1c0534a",
+            "f4c5aa5f18026412caa17c21c3fad6056c82b80de57ad70003074ff622adc496"
+          ],
+          "text": "Solar power will be the vast majority of power generation in the future\n\nMade my coffee with raw cream and a raw egg yolk today #coffeechain",
+          "mask": [
+            {
+              "text": "Solar power will be the vast majority of power generation in the future",
+              "occurrence": 1
+            }
+          ]
+        },
+        {
+          "fixture_note_id": "future-solar-plus-software",
+          "construction": "Complete real note followed by the exact real software context.",
+          "source_note_ids": [
+            "974dd5c02c7a9ca9b89685e344d8d103abbbab420e0faf22875f9d08e1c0534a",
+            "709b25103a422d0bbaaad8fa9a8247930cd763dc1cf248ee90b083ce3f728f32"
+          ],
+          "text": "Solar power will be the vast majority of power generation in the future\n\nDoom 1 and 2 are now officially licensed under the #GPL, no longer dual-licensed with the DSL :)",
+          "mask": [
+            {
+              "text": "Solar power will be the vast majority of power generation in the future",
+              "occurrence": 1
+            }
+          ]
+        }
+      ],
+      "alternative_group_ids": [
+        "coffee-with-raw-cream-and-yolk",
+        "doom-gpl-license-change"
+      ]
+    },
+    {
+      "case_id": "self-contained-book-switch",
+      "target_source_note_id": "c26040a4d7b85ee80d17ef61c9c6c33b7e848de24c27c95179f36884638ca61a",
+      "target_group_id": "book-switch-request",
+      "focal_text": "I’ve been listening to a book on Napoleon all day, but I wanna switch it up. Any good book recommendations?",
+      "variants": [
+        {
+          "fixture_note_id": "book-switch-alone",
+          "construction": "Exact real focal paragraph alone.",
+          "source_note_ids": [
+            "c26040a4d7b85ee80d17ef61c9c6c33b7e848de24c27c95179f36884638ca61a"
+          ],
+          "text": "I’ve been listening to a book on Napoleon all day, but I wanna switch it up. Any good book recommendations?",
+          "mask": [
+            {
+              "text": "I’ve been listening to a book on Napoleon all day, but I wanna switch it up. Any good book recommendations?",
+              "occurrence": 1
+            }
+          ]
+        },
+        {
+          "fixture_note_id": "book-switch-plus-coffee",
+          "construction": "Exact real focal paragraph followed by the exact real coffee context.",
+          "source_note_ids": [
+            "c26040a4d7b85ee80d17ef61c9c6c33b7e848de24c27c95179f36884638ca61a",
+            "f4c5aa5f18026412caa17c21c3fad6056c82b80de57ad70003074ff622adc496"
+          ],
+          "text": "I’ve been listening to a book on Napoleon all day, but I wanna switch it up. Any good book recommendations?\n\nMade my coffee with raw cream and a raw egg yolk today #coffeechain",
+          "mask": [
+            {
+              "text": "I’ve been listening to a book on Napoleon all day, but I wanna switch it up. Any good book recommendations?",
+              "occurrence": 1
+            }
+          ]
+        },
+        {
+          "fixture_note_id": "book-switch-plus-software",
+          "construction": "Exact real focal paragraph followed by the exact real software context.",
+          "source_note_ids": [
+            "c26040a4d7b85ee80d17ef61c9c6c33b7e848de24c27c95179f36884638ca61a",
+            "709b25103a422d0bbaaad8fa9a8247930cd763dc1cf248ee90b083ce3f728f32"
+          ],
+          "text": "I’ve been listening to a book on Napoleon all day, but I wanna switch it up. Any good book recommendations?\n\nDoom 1 and 2 are now officially licensed under the #GPL, no longer dual-licensed with the DSL :)",
+          "mask": [
+            {
+              "text": "I’ve been listening to a book on Napoleon all day, but I wanna switch it up. Any good book recommendations?",
+              "occurrence": 1
+            }
+          ]
+        }
+      ],
+      "alternative_group_ids": [
+        "coffee-with-raw-cream-and-yolk",
+        "doom-gpl-license-change"
+      ]
+    }
+  ],
+  "context_resolution_cases": [
+    {
+      "case_id": "context-resolved-retirement",
+      "focal_text": "This will be the first steps to my non consumption based retirement.",
+      "variants": [
+        {
+          "fixture_note_id": "retirement-greenhouse-context",
+          "construction": "Exact real greenhouse context shortened to its resolving sentence, followed by the exact real focal sentence.",
+          "source_note_ids": [
+            "a59ca772c1639d52f79fc05caeff4abc973418043cdac1600a5f75a82e5c1a58"
+          ],
+          "text": "Flexicables installed for our geothermal solar powered greenhouse.\nThis will be the first steps to my non consumption based retirement.",
+          "mask": [
+            {
+              "text": "This will be the first steps to my non consumption based retirement.",
+              "occurrence": 1
+            }
+          ],
+          "preferred_group_id": "greenhouse-enabled-retirement",
+          "alternative_group_ids": [
+            "minimalism-enabled-retirement"
+          ]
+        },
+        {
+          "fixture_note_id": "retirement-minimalism-context",
+          "construction": "Exact real minimalism sentence followed by the exact real focal sentence.",
+          "source_note_ids": [
+            "a59ca772c1639d52f79fc05caeff4abc973418043cdac1600a5f75a82e5c1a58",
+            "e79637da76e4e969c3d3ec079f159a705faea0cdb22ddbd61b172a9ed7f4cb6e"
+          ],
+          "text": "This is why minimalism is an active choice.\nThis will be the first steps to my non consumption based retirement.",
+          "mask": [
+            {
+              "text": "This will be the first steps to my non consumption based retirement.",
+              "occurrence": 1
+            }
+          ],
+          "preferred_group_id": "minimalism-enabled-retirement",
+          "alternative_group_ids": [
+            "greenhouse-enabled-retirement"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "context-resolved-control",
+      "focal_text": "they want to control everything",
+      "variants": [
+        {
+          "fixture_note_id": "control-technology-surveillance-context",
+          "construction": "Exact real focal phrase followed by a shortened paraphrase of the real technology-surveillance context.",
+          "source_note_ids": [
+            "7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e"
+          ],
+          "text": "they want to control everything..\nProprietary operating systems contain telemetry mechanisms and APIs that can access everything on a device.\nFree and open-source software is presented as the only sovereign way through this technology-surveillance state.",
+          "mask": [
+            {
+              "text": "they want to control everything",
+              "occurrence": 1
+            }
+          ],
+          "preferred_group_id": "technology-surveillance-control",
+          "alternative_group_ids": [
+            "financial-system-control"
+          ],
+          "ground_truth_limit": "The context supports actors behind the described technology-surveillance system; it does not identify exact actors."
+        },
+        {
+          "fixture_note_id": "control-financial-system-context",
+          "construction": "Exact real focal phrase followed by a shortened paraphrase of the real financial-control context.",
+          "source_note_ids": [
+            "7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e",
+            "c36ed58c0f533ce9840a7cabe2a425b8d1f5b84f137b360bf58cfd270e6df268"
+          ],
+          "text": "they want to control everything..\nProgrammable money will let government policies make funds expire or restrict their use.\nForced digital identity will require compliance and tracking for every transaction.",
+          "mask": [
+            {
+              "text": "they want to control everything",
+              "occurrence": 1
+            }
+          ],
+          "preferred_group_id": "financial-system-control",
+          "alternative_group_ids": [
+            "technology-surveillance-control"
+          ],
+          "ground_truth_limit": "The context supports actors behind the described financial-control system; it does not identify exact actors."
+        }
+      ]
+    },
+    {
+      "case_id": "context-resolved-rooftop-four",
+      "focal_text": "four that are working up top on the roof",
+      "variants": [
+        {
+          "fixture_note_id": "rooftop-four-panels-context",
+          "construction": "A shortened, lightly normalized real context preserving the exact real focal phrase.",
+          "source_note_ids": [
+            "74694da41f367535d230dec539a9316b3c6536f4f295f61743a7a5b51d97aa99"
+          ],
+          "text": "There are six extra panels out back and four that are working up top on the roof.",
+          "mask": [
+            {
+              "text": "four that are working up top on the roof",
+              "occurrence": 1
+            }
+          ],
+          "preferred_group_id": "four-rooftop-solar-panels",
+          "alternative_group_ids": [
+            "four-roof-workers"
+          ]
+        },
+        {
+          "fixture_note_id": "rooftop-four-workers-context",
+          "construction": "The resolving noun is changed while preserving the exact real focal phrase and matched sentence structure.",
+          "source_note_ids": [
+            "74694da41f367535d230dec539a9316b3c6536f4f295f61743a7a5b51d97aa99"
+          ],
+          "text": "There are six extra roofers out back and four that are working up top on the roof.",
+          "mask": [
+            {
+              "text": "four that are working up top on the roof",
+              "occurrence": 1
+            }
+          ],
+          "preferred_group_id": "four-roof-workers",
+          "alternative_group_ids": [
+            "four-rooftop-solar-panels"
+          ]
+        }
+      ]
+    }
+  ],
+  "mixed_note_cases": [
+    {
+      "case_id": "mixed-saturday-thoughts",
+      "fixture_note_id": "mixed-saturday-thoughts",
+      "construction": "Untouched real note.",
+      "source_note_ids": [
+        "2c054d399715c118387a16ab9d3960d3dcb27cd8c3ee33cea2ac3336138a1b6a"
+      ],
+      "text": "Annie's Saturday Morning Thoughts\n\nDon't assume that everyone who agrees with you in public agrees with you in private. 😏\n\nThe wren on the fence has been chirping for a while. Must have good lungs.\n\nOnly the things you choose without pressure define you. The rest is a facade. 🤥\n\nFlavored coffee is nice but can get old if you have it every day.\n\nSunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday. 🤗",
+      "meanings": [
+        {
+          "meaning_id": "mixed-public-private-agreement",
+          "label": "Public agreement does not guarantee private agreement",
+          "mask": [
+            {
+              "text": "Don't assume that everyone who agrees with you in public agrees with you in private.",
+              "occurrence": 1
+            }
+          ],
+          "preferred_group_id": "public-private-agreement",
+          "alternative_group_ids": [
+            "persistent-wren-chirping",
+            "self-directed-authenticity",
+            "daily-flavored-coffee-fatigue",
+            "pleasant-outdoor-saturday"
+          ]
+        },
+        {
+          "meaning_id": "mixed-persistent-wren-chirping",
+          "label": "A wren has been chirping for a long time",
+          "mask": [
+            {
+              "text": "The wren on the fence has been chirping for a while.",
+              "occurrence": 1
+            },
+            {
+              "text": "Must have good lungs.",
+              "occurrence": 1
+            }
+          ],
+          "preferred_group_id": "persistent-wren-chirping",
+          "alternative_group_ids": [
+            "public-private-agreement",
+            "self-directed-authenticity",
+            "daily-flavored-coffee-fatigue",
+            "pleasant-outdoor-saturday"
+          ]
+        },
+        {
+          "meaning_id": "mixed-self-directed-authenticity",
+          "label": "Freely made choices define authentic character",
+          "mask": [
+            {
+              "text": "Only the things you choose without pressure define you.",
+              "occurrence": 1
+            },
+            {
+              "text": "The rest is a facade.",
+              "occurrence": 1
+            }
+          ],
+          "preferred_group_id": "self-directed-authenticity",
+          "alternative_group_ids": [
+            "public-private-agreement",
+            "persistent-wren-chirping",
+            "daily-flavored-coffee-fatigue",
+            "pleasant-outdoor-saturday"
+          ]
+        },
+        {
+          "meaning_id": "mixed-daily-flavored-coffee-fatigue",
+          "label": "Daily flavored coffee becomes tiresome",
+          "mask": [
+            {
+              "text": "Flavored coffee is nice but can get old if you have it every day.",
+              "occurrence": 1
+            }
+          ],
+          "preferred_group_id": "daily-flavored-coffee-fatigue",
+          "alternative_group_ids": [
+            "public-private-agreement",
+            "persistent-wren-chirping",
+            "self-directed-authenticity",
+            "pleasant-outdoor-saturday"
+          ]
+        },
+        {
+          "meaning_id": "mixed-pleasant-outdoor-saturday",
+          "label": "Pleasant weather, animals, and plants make a good Saturday",
+          "mask": [
+            {
+              "text": "Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday.",
+              "occurrence": 1
+            }
+          ],
+          "preferred_group_id": "pleasant-outdoor-saturday",
+          "alternative_group_ids": [
+            "public-private-agreement",
+            "persistent-wren-chirping",
+            "self-directed-authenticity",
+            "daily-flavored-coffee-fatigue"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "mixed-related-miner-control",
+      "fixture_note_id": "mixed-miner-control",
+      "construction": "Untouched real note.",
+      "source_note_ids": [
+        "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13"
+      ],
+      "text": "This week I just let the miner running to keep temperatures for a minimum and save the #statistics.\nI want to find the best way how to run the miner. So far it only starts when it is below a specific temperature (with a day/night mode) \n \nMeanwhile I do a bit of programming to start up the miner when I have #solar #energy  left. And to have statistics how much solar energy is used for the miner.\n\nAnyhow in the winter days almost everything is required to heat the house so it won’t be much anyhow.\n\n#orangery #greenhouse   #grownostr #miner #bitcoin #nostr #btc",
+      "meanings": [
+        {
+          "meaning_id": "mixed-miner-maintains-minimum-temperature",
+          "label": "Running the miner to maintain a minimum temperature",
+          "mask": [
+            {
+              "text": "let the miner running to keep temperatures for a minimum",
+              "occurrence": 1
+            }
+          ],
+          "preferred_group_id": "miner-maintains-minimum-temperature",
+          "alternative_group_ids": [
+            "miner-temperature-day-night-control",
+            "miner-surplus-solar-startup",
+            "miner-solar-use-measurement"
+          ]
+        },
+        {
+          "meaning_id": "mixed-miner-temperature-day-night-control",
+          "label": "Starting the miner below a temperature threshold with day and night modes",
+          "mask": [
+            {
+              "text": "it only starts when it is below a specific temperature (with a day/night mode)",
+              "occurrence": 1
+            }
+          ],
+          "preferred_group_id": "miner-temperature-day-night-control",
+          "alternative_group_ids": [
+            "miner-maintains-minimum-temperature",
+            "miner-surplus-solar-startup",
+            "miner-solar-use-measurement"
+          ]
+        },
+        {
+          "meaning_id": "mixed-miner-surplus-solar-startup",
+          "label": "Starting the miner when surplus solar energy is available",
+          "mask": [
+            {
+              "text": "start up the miner when I have #solar #energy  left",
+              "occurrence": 1
+            }
+          ],
+          "preferred_group_id": "miner-surplus-solar-startup",
+          "alternative_group_ids": [
+            "miner-maintains-minimum-temperature",
+            "miner-temperature-day-night-control",
+            "miner-solar-use-measurement"
+          ]
+        },
+        {
+          "meaning_id": "mixed-miner-solar-use-measurement",
+          "label": "Measuring how much solar energy the miner uses",
+          "mask": [
+            {
+              "text": "statistics how much solar energy is used for the miner",
+              "occurrence": 1
+            }
+          ],
+          "preferred_group_id": "miner-solar-use-measurement",
+          "alternative_group_ids": [
+            "miner-maintains-minimum-temperature",
+            "miner-temperature-day-night-control",
+            "miner-surplus-solar-startup"
+          ]
+        }
+      ]
+    }
+  ],
+  "stage_2_boundary": {
+    "trigger": "Stage 1 passes the frozen directional checks and the user explicitly authorizes Stage 2.",
+    "method": "Run TPv3.81 and MPv3.3 on these same note instances with a fresh clean subagent for every call.",
+    "success": "Every frozen focal meaning is recovered with a supporting mask whose vector wins the same comparison. Extra or redundant takeaways are not failures by themselves."
+  }
+}
