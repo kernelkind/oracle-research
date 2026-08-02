@@ -106,9 +106,17 @@ therefore be described using the English evidence attached to its member
 vectors rather than by attempting to decode an opaque vector directly.
 
 For one fine region, a scoped language-model operation receives grounded source
-evidence from that region. It must return the most precise and concise subject
-label that accurately describes the region, or reject the region as
-incoherent.
+evidence from that region. Each vector instance is one numbered item. When one
+vector has several source fragments, those fragments remain in source order and
+are separated with semicolons inside that item.
+
+The frozen title prompt is:
+
+> What is the most precise and concise title for the semantic similarity among
+> these instances?
+
+The exact text is also preserved in
+[`fine-region-title-prompt-versions.json`](../../../sse_multivector/fine-region-title-prompt-versions.json).
 
 For example, a region grounded in spans such as:
 
@@ -125,8 +133,8 @@ might receive the label:
 Rust development and tooling
 ```
 
-The label does not define the region. It is a human-readable description of a
-region already established from corpus vectors.
+The title does not define, validate, reject, or change the region. It only maps
+a region already established from corpus vectors into human language.
 
 The conceptual evidence is the set of source spans attached to the region's
 member vectors. How large regions are batched or sampled without producing a
@@ -223,8 +231,9 @@ broad, order-sensitive merging. The result is preserved in
 ### C. Fine-region labeling
 
 Grounded source evidence must be sufficient to produce a concise label that
-accurately predicts the region's members. The labeler must reject incoherent
-regions rather than inventing a plausible description.
+accurately predicts the region's members. Region membership remains the
+partitioner's responsibility; the labeler must not conceal a partitioning
+failure by changing membership or inventing a broader region.
 
 ### D. Hierarchy construction
 

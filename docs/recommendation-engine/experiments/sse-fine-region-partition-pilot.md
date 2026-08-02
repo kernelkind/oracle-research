@@ -191,6 +191,41 @@ The report binds the frozen input manifests, config, partition source, pilot
 source, every order-specific DP-vMF partition, and every exact source-fragment
 occurrence.
 
+## Follow-up title-prompt probe
+
+After the partition audit, a separate probe tested only the mapping from a
+fixed segment to a human-facing title. It did not change or validate segment
+membership.
+
+Each segment member was presented as one numbered instance. Multiple source
+fragments belonging to one vector were separated with semicolons. Fresh,
+isolated `gpt-5.6-sol` calls at low reasoning effort received this exact frozen
+prompt:
+
+> What is the most precise and concise title for the semantic similarity among
+> these instances?
+
+The five P80 segments produced:
+
+| Segment | Title |
+|---|---|
+| S003 | `Coffee Preparation and Consumption` |
+| S004 | `Coffee Connoisseurship as Personal Identity` |
+| S007 | `Proprietary Platform Control and Access` |
+| S015 | `Public Conformity and Private Dissent` |
+| S019 | `Solar Power Generation` |
+
+The three P90 segments produced:
+
+| Segment | Title |
+|---|---|
+| S005 | `Coffee Chain` |
+| S008 | `Commitment to Free and Open-Source Software for Technological Sovereignty` |
+| S020 | `Authenticity and Individuality` |
+
+These outputs support using the prompt to title an already-fixed segment. They
+do not establish that the partition producing a segment is correct.
+
 ## Scientific conclusion
 
 This pilot supports:
