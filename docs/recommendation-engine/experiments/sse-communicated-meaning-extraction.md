@@ -25,6 +25,8 @@ The pipeline is:
 The takeaway text itself is not passed to SSE. It only guides mask selection.
 Within the same fixed SSE configuration, identical source text and identical
 masks produce identical vectors even if the takeaways are worded differently.
+In every note below, `⟦…⟧` marks text selected by the mask; the surrounding
+text is visible context that was not selected for pooling.
 
 TEv3.1 and TEv4.1 used the same ordered 50 notes, SSE checkpoint,
 Sentence-T5 base model, worker, 768 dimensions, and inference batch size.
@@ -57,74 +59,89 @@ vectors wherever possible.
 
 1. **Takeaway:** Unspecified actors want to control everything.
 
-   **Mask:** `they want to control everything`
-2. **Takeaway:** The author believes Nostr nsec keys are unsafe on proprietary
-   operating systems because their telemetry and APIs can access everything on
-   a device.
+   **Mask over the complete original note:**
 
-   **Mask:** `if you think your #Nostr nsec key is safe on a proprietary OS (
-   #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger
-   picture` + `all those OS's are saturated with telemetry mechanisms and APIs
-   that have access to everything on your devices`
-3. **Takeaway:** The author plans to leave iOS, likely for GrapheneOS, and
-   already minimizes phone use.
+   > ⟦they want to control everything⟧..
+   > ..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger picture.. ..all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices.. ..i'm still on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible).. ..i've already switched to #Linux computer-wise.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty
 
-   **Mask:** `i'm still on iOS phone-wise, but my days are numbered with that` +
-   `likely moving to #GrapheneOS (although i already try to use my phone as
-   little as possible)`
+2. **Takeaway:** The author believes Nostr nsec keys are unsafe on proprietary operating systems because their telemetry and APIs can access everything on a device.
+
+   **Mask over the complete original note:**
+
+   > they want to control everything..
+   > ..⟦if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger picture⟧.. ..⟦all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices⟧.. ..i'm still on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible).. ..i've already switched to #Linux computer-wise.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty
+
+3. **Takeaway:** The author plans to leave iOS, likely for GrapheneOS, and already minimizes phone use.
+
+   **Mask over the complete original note:**
+
+   > they want to control everything..
+   > ..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger picture.. ..all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices.. ..⟦i'm still on iOS phone-wise, but my days are numbered with that⟧.. ..⟦likely moving to #GrapheneOS (although i already try to use my phone as little as possible)⟧.. ..i've already switched to #Linux computer-wise.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty
+
 4. **Takeaway:** The author has already switched to Linux on computers.
 
-   **Mask:** `i've already switched to #Linux computer-wise`
-5. **Takeaway:** The author considers free and open-source software the only way
-   to retain sovereignty in a technology surveillance state.
+   **Mask over the complete original note:**
 
-   **Mask:** `free and opensource is the only way to navigate this tech
-   surveillance state with any level of sovereignty`
+   > they want to control everything..
+   > ..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger picture.. ..all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices.. ..i'm still on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible).. ..⟦i've already switched to #Linux computer-wise⟧.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty
+
+5. **Takeaway:** The author considers free and open-source software the only way to retain sovereignty in a technology surveillance state.
+
+   **Mask over the complete original note:**
+
+   > they want to control everything..
+   > ..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger picture.. ..all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices.. ..i'm still on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible).. ..i've already switched to #Linux computer-wise.. ..⟦free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty⟧
 
 ### Everything TEv4.1 generated from this note
 
-1. **Takeaway:** The author believes that the forces behind pervasive
-   proprietary-technology surveillance seek total control.
+1. **Takeaway:** The author believes that the forces behind pervasive proprietary-technology surveillance seek total control.
 
-   **Mask:** `they want to control everything` + `a proprietary OS ( #Windows,
-   #macOS, #iOS, #Android, etc.)` + `all those OS's are saturated with telemetry
-   mechanisms and APIs that have access to everything on your devices` + `this
-   tech surveillance state`
-2. **Takeaway:** The author warns that treating a Nostr nsec private key as
-   secure on an operating system they regard as proprietary—such as Windows,
-   macOS, iOS, or Android—ignores broader surveillance and device-access risks.
+   **Mask over the complete original note:**
 
-   **Mask:** `if you think your #Nostr nsec key is safe on a proprietary OS (
-   #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger
-   picture` + `all those OS's are saturated with telemetry mechanisms and APIs
-   that have access to everything on your devices`
-3. **Takeaway:** The author claims that Windows, macOS, iOS, Android, and
-   similar operating systems are saturated with telemetry mechanisms and APIs
-   capable of accessing everything on a user's device.
+   > ⟦they want to control everything⟧..
+   > ..if you think your #Nostr nsec key is safe on ⟦a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.)⟧ then you are missing the bigger picture.. ..⟦all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices⟧.. ..i'm still on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible).. ..i've already switched to #Linux computer-wise.. ..free and opensource is the only way to navigate ⟦this tech surveillance state⟧ with any level of sovereignty
 
-   **Mask:** `#Windows, #macOS, #iOS, #Android, etc.` + `all those OS's are
-   saturated with telemetry mechanisms and APIs that have access to everything
-   on your devices`
-4. **Takeaway:** The author still uses iOS on their phone but expects to stop
-   soon.
+2. **Takeaway:** The author warns that treating a Nostr nsec private key as secure on an operating system they regard as proprietary—such as Windows, macOS, iOS, or Android—ignores broader surveillance and device-access risks.
 
-   **Mask:** `i'm still on iOS phone-wise, but my days are numbered with that`
-5. **Takeaway:** The author will likely replace iOS with GrapheneOS, despite
-   already trying to use their phone as little as possible.
+   **Mask over the complete original note:**
 
-   **Mask:** `i'm still on iOS phone-wise, but my days are numbered with that..
-   ..likely moving to #GrapheneOS (although i already try to use my phone as
-   little as possible)`
-6. **Takeaway:** The author has already switched their computer operating
-   system to Linux.
+   > they want to control everything..
+   > ..⟦if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger picture⟧.. ..⟦all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices⟧.. ..i'm still on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible).. ..i've already switched to #Linux computer-wise.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty
 
-   **Mask:** `i've already switched to #Linux computer-wise`
-7. **Takeaway:** The author believes free and open-source software is the only
-   way to retain any degree of technological sovereignty within what they view
-   as a technology-surveillance state.
+3. **Takeaway:** The author claims that Windows, macOS, iOS, Android, and similar operating systems are saturated with telemetry mechanisms and APIs capable of accessing everything on a user's device.
 
-   **Mask:** `free and opensource is the only way to navigate this tech
-   surveillance state with any level of sovereignty`
+   **Mask over the complete original note:**
+
+   > they want to control everything..
+   > ..if you think your #Nostr nsec key is safe on a proprietary OS ( ⟦#Windows, #macOS, #iOS, #Android, etc.⟧) then you are missing the bigger picture.. ..⟦all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices⟧.. ..i'm still on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible).. ..i've already switched to #Linux computer-wise.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty
+
+4. **Takeaway:** The author still uses iOS on their phone but expects to stop soon.
+
+   **Mask over the complete original note:**
+
+   > they want to control everything..
+   > ..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger picture.. ..all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices.. ..⟦i'm still on iOS phone-wise, but my days are numbered with that⟧.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible).. ..i've already switched to #Linux computer-wise.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty
+
+5. **Takeaway:** The author will likely replace iOS with GrapheneOS, despite already trying to use their phone as little as possible.
+
+   **Mask over the complete original note:**
+
+   > they want to control everything..
+   > ..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger picture.. ..all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices.. ..⟦i'm still on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible)⟧.. ..i've already switched to #Linux computer-wise.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty
+
+6. **Takeaway:** The author has already switched their computer operating system to Linux.
+
+   **Mask over the complete original note:**
+
+   > they want to control everything..
+   > ..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger picture.. ..all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices.. ..i'm still on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible).. ..⟦i've already switched to #Linux computer-wise⟧.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty
+
+7. **Takeaway:** The author believes free and open-source software is the only way to retain any degree of technological sovereignty within what they view as a technology-surveillance state.
+
+   **Mask over the complete original note:**
+
+   > they want to control everything..
+   > ..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger picture.. ..all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices.. ..i'm still on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible).. ..i've already switched to #Linux computer-wise.. ..⟦free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty⟧
 
 ### The vector being tested
 
@@ -149,11 +166,18 @@ vectors have cosine `0.5209`, so this changed the vector substantially.
 >
 > https://hell.twtr.plus/media/cf6857f1982ee096057b3c09692a162778dd08f6e86e47e845309425238d567a.file
 
-The relevant candidate vector selected the same source text in both runs:
+The relevant candidate vector selected the same source text in both runs.
 
-> The CCC warns that the German left-green-liberal government wants to
+**Shared mask over the complete original note:**
+
+> NEW - ⟦The CCC warns that the German left-green-liberal government wants to
 > "effectively end anonymity" and make all citizens "identifiable at all times
-> and in all places,"
+> and in all places,"⟧ including by opening doors to Palantir and other
+> surveillance software.
+>
+> https://www.ccc.de/en/updates/2024/biometrischer-uberwachungsexzess-der-bundesregierung
+>
+> https://hell.twtr.plus/media/cf6857f1982ee096057b3c09692a162778dd08f6e86e47e845309425238d567a.file
 
 Its generated takeaway changed wording, but its source mask and vector were
 byte-identical:
@@ -179,8 +203,10 @@ Both runs selected the entire note. The vector was byte-identical.
   free and open source.`
 - TEv4.1 takeaway: `The author is nearing the point where their entire software
   stack consists of free and open-source software.`
-- Mask in both runs: `Getting close to 100% of my software stack being free and
-  open source.`
+
+**Shared mask over the complete original note:**
+
+> ⟦Getting close to 100% of my software stack being free and open source.⟧
 
 Cosine to the control target rose from `0.3763` to `0.4650`. Because the
 candidate did not change, the added software and operating-system text in the
@@ -199,21 +225,53 @@ TEv3.1 generated one vector:
 
 - **Takeaway:** pypush can now send and receive iMessages on any platform as a
   serverless, open-source project.
-- **Mask:** `#pypush can now send and receive #iMessage, on any platform,
-  completely server-less and open-source!`
+
+  **Mask over the complete original note:**
+
+  > It's ready! ⟦#pypush can now send and receive #iMessage, on any platform,
+  > completely server-less and open-source!⟧ 🎉
+  >
+  > https://github.com/JJTech0130/pypush
 
 TEv4.1 generated four vectors:
 
 1. **Takeaway:** The author announces that the pypush project is ready.
-   **Mask:** `It's ready! #pypush`
+
+   **Mask over the complete original note:**
+
+   > ⟦It's ready! #pypush⟧ can now send and receive #iMessage, on any platform,
+   > completely server-less and open-source! 🎉
+   >
+   > https://github.com/JJTech0130/pypush
+
 2. **Takeaway:** Pypush can now send and receive messages through Apple’s
    iMessage service on any platform.
-   **Mask:** `#pypush can now send and receive #iMessage, on any platform`
+
+   **Mask over the complete original note:**
+
+   > It's ready! ⟦#pypush can now send and receive #iMessage, on any platform⟧,
+   > completely server-less and open-source! 🎉
+   >
+   > https://github.com/JJTech0130/pypush
+
 3. **Takeaway:** Pypush is entirely serverless and open-source.
-   **Mask:** `#pypush` + `completely server-less and open-source`
+
+   **Mask over the complete original note:**
+
+   > It's ready! ⟦#pypush⟧ can now send and receive #iMessage, on any platform,
+   > ⟦completely server-less and open-source⟧! 🎉
+   >
+   > https://github.com/JJTech0130/pypush
+
 4. **Takeaway:** The author provides a link to the pypush project’s GitHub
    repository.
-   **Mask:** `pypush`
+
+   **Mask over the complete original note:**
+
+   > It's ready! #⟦pypush⟧ can now send and receive #iMessage, on any platform,
+   > completely server-less and open-source! 🎉
+   >
+   > https://github.com/JJTech0130/pypush
 
 The TEv4.1 platform-only vector became the new target's rank-1 cross-note
 neighbor at `0.6889`. Comparing every old/new combination shows where the
@@ -253,8 +311,39 @@ It came from this complete note:
 > Available on their own Fdroid repo:
 > https://molly.im/
 
-- TEv3.1 mask: `You can create automatic backups`
-- TEv4.1 mask: `Molly` + `can create automatic backups`
+**TEv3.1 mask over the complete original note:**
+
+> I'm thinking I'll regularly post about open source tech I find useful.
+>
+> Molly is a fork of Signal, made to be more secure.
+>
+> Some of it's features include:
+> No proprietary blobs/code.
+> Molly protects your messages with passphrase encryption.
+> The app can lock down automatically after a set time of not being opened.
+> Molly, "Securely shreds sensitive data from RAM."
+> ⟦You can create automatic backups⟧
+> It even supports setting an app proxy through Tor via Orbot.
+>
+> Available on their own Fdroid repo:
+> https://molly.im/
+
+**TEv4.1 mask over the complete original note:**
+
+> I'm thinking I'll regularly post about open source tech I find useful.
+>
+> ⟦Molly⟧ is a fork of Signal, made to be more secure.
+>
+> Some of it's features include:
+> No proprietary blobs/code.
+> Molly protects your messages with passphrase encryption.
+> The app can lock down automatically after a set time of not being opened.
+> Molly, "Securely shreds sensitive data from RAM."
+> You ⟦can create automatic backups⟧
+> It even supports setting an app proxy through Tor via Orbot.
+>
+> Available on their own Fdroid repo:
+> https://molly.im/
 
 It moved from rank 2 at `0.4175` to rank 43 at `0.1723`. This looks better, but
 both the target and candidate masks changed, so this pair cannot show which
@@ -280,45 +369,56 @@ than disappearing.
 
 ### Everything TEv3.1 generated from this note
 
-1. **Takeaway:** Flexicables have been installed for the author's geothermal,
-   solar-powered greenhouse.
+1. **Takeaway:** Flexicables have been installed for the author's geothermal, solar-powered greenhouse.
 
-   **Mask:** `Flexicables installed for our geothermal solar powered
-   greenhouse.`
-2. **Takeaway:** A greenhouse in Aliance, Nebraska grows pineapples, dates, and
-   citrus.
+   **Mask over the complete original note:**
 
-   **Mask:** `The greenhouse they have in Aliance Nebraska grows pineapple and
-   dates and citrus.`
-3. **Takeaway:** The greenhouse project is the author's first step toward a
-   non-consumption-based retirement.
+   > ⟦Flexicables installed for our geothermal solar powered greenhouse.⟧ The greenhouse they have in Aliance Nebraska grows pineapple and dates and citrus.
+   > This will be the first steps to my non consumption based retirement. https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
 
-   **Mask:** `This will be the first steps to my non consumption based
-   retirement.`
+2. **Takeaway:** A greenhouse in Aliance, Nebraska grows pineapples, dates, and citrus.
+
+   **Mask over the complete original note:**
+
+   > Flexicables installed for our geothermal solar powered greenhouse. ⟦The greenhouse they have in Aliance Nebraska grows pineapple and dates and citrus.⟧
+   > This will be the first steps to my non consumption based retirement. https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
+
+3. **Takeaway:** The greenhouse project is the author's first step toward a non-consumption-based retirement.
+
+   **Mask over the complete original note:**
+
+   > Flexicables installed for our geothermal solar powered greenhouse. The greenhouse they have in Aliance Nebraska grows pineapple and dates and citrus.
+   > ⟦This will be the first steps to my non consumption based retirement.⟧ https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
 
 ### Everything TEv4.1 generated from this note
 
-1. **Takeaway:** Flexible cables have been installed as part of a greenhouse
-   project shared by the author and others.
+1. **Takeaway:** Flexible cables have been installed as part of a greenhouse project shared by the author and others.
 
-   **Mask:** `Flexicables installed for our ` + `greenhouse.`
-2. **Takeaway:** The shared greenhouse is designed to use geothermal and solar
-   energy.
+   **Mask over the complete original note:**
 
-   **Mask:** `our geothermal solar powered greenhouse`
-3. **Takeaway:** An existing greenhouse in Alliance, Nebraska, grows
-   pineapples, dates, and citrus fruit.
+   > ⟦Flexicables installed for our ⟧geothermal solar powered ⟦greenhouse.⟧ The greenhouse they have in Aliance Nebraska grows pineapple and dates and citrus.
+   > This will be the first steps to my non consumption based retirement. https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
 
-   **Mask:** `The greenhouse they have in Aliance Nebraska grows pineapple and
-   dates and citrus.`
-4. **Takeaway:** The author views the greenhouse project as an initial step
-   toward a retirement that is not consumption-based.
+2. **Takeaway:** The shared greenhouse is designed to use geothermal and solar energy.
 
-   **Mask:** `our geothermal solar powered greenhouse` + `This will be the first
-   steps to my non consumption based retirement.`
+   **Mask over the complete original note:**
 
-The first TEv4.1 takeaway also incorrectly rewrote the name `Flexicables` as
-generic flexible cables. That is a separate extraction error.
+   > Flexicables installed for ⟦our geothermal solar powered greenhouse⟧. The greenhouse they have in Aliance Nebraska grows pineapple and dates and citrus.
+   > This will be the first steps to my non consumption based retirement. https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
+
+3. **Takeaway:** An existing greenhouse in Alliance, Nebraska, grows pineapples, dates, and citrus fruit.
+
+   **Mask over the complete original note:**
+
+   > Flexicables installed for our geothermal solar powered greenhouse. ⟦The greenhouse they have in Aliance Nebraska grows pineapple and dates and citrus.⟧
+   > This will be the first steps to my non consumption based retirement. https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
+
+4. **Takeaway:** The author views the greenhouse project as an initial step toward a retirement that is not consumption-based.
+
+   **Mask over the complete original note:**
+
+   > Flexicables installed for ⟦our geothermal solar powered greenhouse⟧. The greenhouse they have in Aliance Nebraska grows pineapple and dates and citrus.
+   > ⟦This will be the first steps to my non consumption based retirement.⟧ https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
 
 ### The vector being tested
 
@@ -343,8 +443,10 @@ byte-identical.
   generation.`
 - TEv4.1 takeaway: `In the future, solar energy will account for the vast
   majority of power generation.`
-- Mask in both runs: `Solar power will be the vast majority of power generation
-  in the future`
+
+**Shared mask over the complete original note:**
+
+> ⟦Solar power will be the vast majority of power generation in the future⟧
 
 Cosine to the retirement target rose from `0.3690` to `0.6565`. Because the
 candidate did not change, adding the greenhouse fragment to the retirement
@@ -371,8 +473,22 @@ The TEv3.1 candidate was:
 
 - **Takeaway:** The user plans to post daily Nostr updates documenting an
   effort to leave the conventional American grind.
-- **Mask:** `start sharing daily updates on Nostr` + `about my journey to break
-  free from the typical American grind`
+
+  **Mask over the complete original note:**
+
+  > Hey there, folks! So, I've got this idea to ⟦start sharing daily updates on
+  > Nostr⟧, kind of like a journal, ⟦about my journey to break free from the
+  > typical American grind⟧. The plan? Well, by 04/20/2025, my wife and I are
+  > hoping to hop on a plane to Argentina with just the essentials we can carry
+  > onboard.
+  >
+  > After some thinking, we've come to the conclusion that life might just be
+  > sweeter elsewhere. We're pretty keen on this whole flag theory concept and
+  > are excited about stacking passports.
+  >
+  > I figure sharing online will not only keep us on track but maybe also show
+  > others that there's more to life than the usual rat race. Let's see where
+  > this adventure takes us!
 
 Holding that TEv3.1 candidate fixed, its cosine to the retirement target fell
 from `0.3957` to `0.2486` when only the target changed.
@@ -382,9 +498,22 @@ TEv4.1 regenerated the candidate as:
 - **Takeaway:** The author intends to publish daily, journal-style updates on
   Nostr documenting an effort to escape the conventional American work-centered
   grind.
-- **Mask:** `I've got this idea to start sharing daily updates on Nostr, kind
-  of like a journal, about my journey to break free from the typical American
-  grind.`
+
+  **Mask over the complete original note:**
+
+  > Hey there, folks! So, ⟦I've got this idea to start sharing daily updates on
+  > Nostr, kind of like a journal, about my journey to break free from the
+  > typical American grind.⟧ The plan? Well, by 04/20/2025, my wife and I are
+  > hoping to hop on a plane to Argentina with just the essentials we can carry
+  > onboard.
+  >
+  > After some thinking, we've come to the conclusion that life might just be
+  > sweeter elsewhere. We're pretty keen on this whole flag theory concept and
+  > are excited about stacking passports.
+  >
+  > I figure sharing online will not only keep us on track but maybe also show
+  > others that there's more to life than the usual rat race. Let's see where
+  > this adventure takes us!
 
 That regenerated candidate ranked 32 at `0.2282` against the new target.
 
@@ -472,64 +601,197 @@ selecting the greenhouse subject matter.
 
 1. **Takeaway:** Public agreement does not necessarily mean private agreement.
 
-   **Mask:** `Don't assume that everyone who agrees with you in public agrees
-   with you in private.`
-2. **Takeaway:** A wren has been chirping on the fence for a long time and seems
-   to have strong lungs.
+   **Mask over the complete original note:**
 
-   **Mask:** `The wren on the fence has been chirping for a while.` + `Must have
-   good lungs.`
-3. **Takeaway:** Only choices made without pressure define a person; the rest
-   is a facade.
+   > Annie's Saturday Morning Thoughts
+   >
+   > ⟦Don't assume that everyone who agrees with you in public agrees with you in private.⟧ 😏
+   >
+   > The wren on the fence has been chirping for a while. Must have good lungs.
+   >
+   > Only the things you choose without pressure define you. The rest is a facade. 🤥
+   >
+   > Flavored coffee is nice but can get old if you have it every day.
+   >
+   > Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday. 🤗
 
-   **Mask:** `Only the things you choose without pressure define you.` + `The
-   rest is a facade.`
-4. **Takeaway:** Flavored coffee is enjoyable but becomes tiresome when
-   consumed every day.
+2. **Takeaway:** A wren has been chirping on the fence for a long time and seems to have strong lungs.
 
-   **Mask:** `Flavored coffee is nice but can get old if you have it every day.`
-5. **Takeaway:** Sunshine, a cool breeze, wildlife, tree shade, and blooming
-   crossvine make for a good Saturday.
+   **Mask over the complete original note:**
 
-   **Mask:** `Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from
-   an oak tree and a crossvine in bloom.` + `This is the recipe for a good
-   Saturday.`
+   > Annie's Saturday Morning Thoughts
+   >
+   > Don't assume that everyone who agrees with you in public agrees with you in private. 😏
+   >
+   > ⟦The wren on the fence has been chirping for a while.⟧ ⟦Must have good lungs.⟧
+   >
+   > Only the things you choose without pressure define you. The rest is a facade. 🤥
+   >
+   > Flavored coffee is nice but can get old if you have it every day.
+   >
+   > Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday. 🤗
+
+3. **Takeaway:** Only choices made without pressure define a person; the rest is a facade.
+
+   **Mask over the complete original note:**
+
+   > Annie's Saturday Morning Thoughts
+   >
+   > Don't assume that everyone who agrees with you in public agrees with you in private. 😏
+   >
+   > The wren on the fence has been chirping for a while. Must have good lungs.
+   >
+   > ⟦Only the things you choose without pressure define you.⟧ ⟦The rest is a facade.⟧ 🤥
+   >
+   > Flavored coffee is nice but can get old if you have it every day.
+   >
+   > Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday. 🤗
+
+4. **Takeaway:** Flavored coffee is enjoyable but becomes tiresome when consumed every day.
+
+   **Mask over the complete original note:**
+
+   > Annie's Saturday Morning Thoughts
+   >
+   > Don't assume that everyone who agrees with you in public agrees with you in private. 😏
+   >
+   > The wren on the fence has been chirping for a while. Must have good lungs.
+   >
+   > Only the things you choose without pressure define you. The rest is a facade. 🤥
+   >
+   > ⟦Flavored coffee is nice but can get old if you have it every day.⟧
+   >
+   > Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday. 🤗
+
+5. **Takeaway:** Sunshine, a cool breeze, wildlife, tree shade, and blooming crossvine make for a good Saturday.
+
+   **Mask over the complete original note:**
+
+   > Annie's Saturday Morning Thoughts
+   >
+   > Don't assume that everyone who agrees with you in public agrees with you in private. 😏
+   >
+   > The wren on the fence has been chirping for a while. Must have good lungs.
+   >
+   > Only the things you choose without pressure define you. The rest is a facade. 🤥
+   >
+   > Flavored coffee is nice but can get old if you have it every day.
+   >
+   > ⟦Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom.⟧ ⟦This is the recipe for a good Saturday.⟧ 🤗
 
 ### Everything TEv4.1 generated from this note
 
-1. **Takeaway:** The post is framed as Annie’s reflections from a Saturday
-   morning.
+1. **Takeaway:** The post is framed as Annie’s reflections from a Saturday morning.
 
-   **Mask:** `Annie's Saturday Morning Thoughts`
-2. **Takeaway:** A person should not assume that everyone who publicly expresses
-   agreement with them privately holds the same view.
+   **Mask over the complete original note:**
 
-   **Mask:** `Don't assume that everyone who agrees with you in public agrees
-   with you in private.`
-3. **Takeaway:** A wren on a fence has been chirping for some time, which the
-   author takes as evidence that the bird has strong lungs.
+   > ⟦Annie's Saturday Morning Thoughts⟧
+   >
+   > Don't assume that everyone who agrees with you in public agrees with you in private. 😏
+   >
+   > The wren on the fence has been chirping for a while. Must have good lungs.
+   >
+   > Only the things you choose without pressure define you. The rest is a facade. 🤥
+   >
+   > Flavored coffee is nice but can get old if you have it every day.
+   >
+   > Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday. 🤗
 
-   **Mask:** `The wren on the fence has been chirping for a while. Must have good
-   lungs.`
-4. **Takeaway:** The author believes that only choices made freely and without
-   pressure reveal a person’s true character.
+2. **Takeaway:** A person should not assume that everyone who publicly expresses agreement with them privately holds the same view.
 
-   **Mask:** `Only the things you choose without pressure define you.`
-5. **Takeaway:** The author believes that choices made under pressure create a
-   false outward image rather than authentically defining the person.
+   **Mask over the complete original note:**
 
-   **Mask:** `Only the things you choose without pressure define you. The rest
-   is a facade.`
-6. **Takeaway:** Flavored coffee can be enjoyable, but drinking it every day can
-   make it tiresome.
+   > Annie's Saturday Morning Thoughts
+   >
+   > ⟦Don't assume that everyone who agrees with you in public agrees with you in private.⟧ 😏
+   >
+   > The wren on the fence has been chirping for a while. Must have good lungs.
+   >
+   > Only the things you choose without pressure define you. The rest is a facade. 🤥
+   >
+   > Flavored coffee is nice but can get old if you have it every day.
+   >
+   > Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday. 🤗
 
-   **Mask:** `Flavored coffee is nice but can get old if you have it every day.`
-7. **Takeaway:** The author says that sunshine, a cool breeze, doves, wrens,
-   robins, squirrels, shade from an oak tree, and a blooming crossvine together
-   make for a good Saturday.
+3. **Takeaway:** A wren on a fence has been chirping for some time, which the author takes as evidence that the bird has strong lungs.
 
-   **Mask:** `Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from
-   an oak tree and a crossvine in bloom. This is the recipe for a good Saturday.`
+   **Mask over the complete original note:**
+
+   > Annie's Saturday Morning Thoughts
+   >
+   > Don't assume that everyone who agrees with you in public agrees with you in private. 😏
+   >
+   > ⟦The wren on the fence has been chirping for a while. Must have good lungs.⟧
+   >
+   > Only the things you choose without pressure define you. The rest is a facade. 🤥
+   >
+   > Flavored coffee is nice but can get old if you have it every day.
+   >
+   > Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday. 🤗
+
+4. **Takeaway:** The author believes that only choices made freely and without pressure reveal a person’s true character.
+
+   **Mask over the complete original note:**
+
+   > Annie's Saturday Morning Thoughts
+   >
+   > Don't assume that everyone who agrees with you in public agrees with you in private. 😏
+   >
+   > The wren on the fence has been chirping for a while. Must have good lungs.
+   >
+   > ⟦Only the things you choose without pressure define you.⟧ The rest is a facade. 🤥
+   >
+   > Flavored coffee is nice but can get old if you have it every day.
+   >
+   > Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday. 🤗
+
+5. **Takeaway:** The author believes that choices made under pressure create a false outward image rather than authentically defining the person.
+
+   **Mask over the complete original note:**
+
+   > Annie's Saturday Morning Thoughts
+   >
+   > Don't assume that everyone who agrees with you in public agrees with you in private. 😏
+   >
+   > The wren on the fence has been chirping for a while. Must have good lungs.
+   >
+   > ⟦Only the things you choose without pressure define you. The rest is a facade.⟧ 🤥
+   >
+   > Flavored coffee is nice but can get old if you have it every day.
+   >
+   > Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday. 🤗
+
+6. **Takeaway:** Flavored coffee can be enjoyable, but drinking it every day can make it tiresome.
+
+   **Mask over the complete original note:**
+
+   > Annie's Saturday Morning Thoughts
+   >
+   > Don't assume that everyone who agrees with you in public agrees with you in private. 😏
+   >
+   > The wren on the fence has been chirping for a while. Must have good lungs.
+   >
+   > Only the things you choose without pressure define you. The rest is a facade. 🤥
+   >
+   > ⟦Flavored coffee is nice but can get old if you have it every day.⟧
+   >
+   > Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday. 🤗
+
+7. **Takeaway:** The author says that sunshine, a cool breeze, doves, wrens, robins, squirrels, shade from an oak tree, and a blooming crossvine together make for a good Saturday.
+
+   **Mask over the complete original note:**
+
+   > Annie's Saturday Morning Thoughts
+   >
+   > Don't assume that everyone who agrees with you in public agrees with you in private. 😏
+   >
+   > The wren on the fence has been chirping for a while. Must have good lungs.
+   >
+   > Only the things you choose without pressure define you. The rest is a facade. 🤥
+   >
+   > Flavored coffee is nice but can get old if you have it every day.
+   >
+   > ⟦Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday.⟧ 🤗
 
 ### The duplicate autonomy representation
 
@@ -569,9 +831,18 @@ The relevant coffee vector was byte-identical between runs:
 - TEv4.1 takeaway: `The author views self-roasting and discovering a personal
   coffee profile as an individual journey that pre-roasted coffee cannot
   reproduce.`
-- Mask in both runs: `Roasting your own beans means discovering a taste profile
-  that’s uniquely yours. It’s a personal journey that no bag of pre-roasted
-  coffee can replicate.`
+
+**Shared mask over the complete original note:**
+
+> You’ve had coffee. But have you had your coffee?”
+> https://blossom.primal.net/1379b90996b8ecb2f4fdef6756fd61c4ab964fa19f9e1505950e10a4d97640dd.jpg
+> ⟦Roasting your own beans means discovering a taste profile that’s uniquely
+> yours. It’s a personal journey that no bag of pre-roasted coffee can
+> replicate.⟧
+>
+> Sipping @ #coffeechain
+>
+> #HotTake ☕
 
 For the unchanged full autonomy vector, the coffee cosine remains exactly
 `0.4347354678`, and coffee remains rank 10. TEv3.1's added autonomy coverage
@@ -620,12 +891,62 @@ it does not choose the better one.
 
 These are independent prompt or mask failures observed in the same run:
 
-| Generated takeaway | Selected mask | Problem |
-|---|---|---|
-| `The post links to id Software’s Doom source-code repository and a separate Doom-related social-media post as references for the licensing update.` | `Doom 1 and 2 are now officially licensed under the #GPL, no longer dual-licensed with the DSL :)` | The licensing sentence does not contain either link's meaning. |
-| `The post also links to a Hacker News discussion of the article.` | `Comments` | `Comments` does not identify Hacker News or the article. |
-| `The author provides a link to the pypush project’s GitHub repository.` | `pypush` | The project name does not establish that the omitted link is a GitHub repository. |
-| `Flexible cables have been installed as part of a greenhouse project shared by the author and others.` | `Flexicables installed for our ` + `greenhouse.` | `Flexicables` was rewritten as generic flexible cables. |
+1. **Takeaway:** The post links to id Software’s Doom source-code repository
+   and a separate Doom-related social-media post as references for the
+   licensing update.
+
+   **Mask over the complete original note:**
+
+   > ⟦Doom 1 and 2 are now officially licensed under the #GPL, no longer
+   > dual-licensed with the DSL :)⟧
+   >
+   > https://github.com/id-Software/DOOM/
+   >
+   > https://nitter.woodland.cafe/doom_txt/status/1747398603209883882
+   >
+   > #FOSS #OpenSource #Games #Gaming #GameNews
+
+   **Problem:** The selected licensing sentence does not contain either link's
+   meaning.
+
+2. **Takeaway:** The post also links to a Hacker News discussion of the
+   article.
+
+   **Mask over the complete original note:**
+
+   > Why a spritz of water before grinding coffee yields better results
+   >
+   > ⟦Comments⟧ ( https://news.ycombinator.com/item?id=38554310 )
+   >
+   > https://arstechnica.com/science/2023/12/study-why-a-spritz-of-water-before-grinding-coffee-yields-less-waste-tastier-espresso/
+
+   **Problem:** `Comments` does not identify Hacker News or the article.
+
+3. **Takeaway:** The author provides a link to the pypush project’s GitHub
+   repository.
+
+   **Mask over the complete original note:**
+
+   > It's ready! #⟦pypush⟧ can now send and receive #iMessage, on any platform,
+   > completely server-less and open-source! 🎉
+   >
+   > https://github.com/JJTech0130/pypush
+
+   **Problem:** The project name does not establish that the omitted link is a
+   GitHub repository.
+
+4. **Takeaway:** Flexible cables have been installed as part of a greenhouse
+   project shared by the author and others.
+
+   **Mask over the complete original note:**
+
+   > ⟦Flexicables installed for our ⟧geothermal solar powered ⟦greenhouse.⟧ The
+   > greenhouse they have in Aliance Nebraska grows pineapple and dates and
+   > citrus.
+   > This will be the first steps to my non consumption based retirement.
+   > https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
+
+   **Problem:** `Flexicables` was rewritten as generic flexible cables.
 
 The first three expose a mismatch between the prompts:
 
