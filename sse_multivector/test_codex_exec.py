@@ -255,6 +255,48 @@ class CodexExecRunnerTests(unittest.TestCase):
             timeout=30,
         )
 
+    def invoke_direct_prompt(
+        self,
+        text: str,
+        *,
+        stdin: str | None = None,
+        include_model: bool = True,
+        include_effort: bool = True,
+        extra_environment: dict[str, str] | None = None,
+    ) -> subprocess.CompletedProcess[str]:
+        temporary_root = self.root / "direct-temporary-files"
+        temporary_root.mkdir(exist_ok=True)
+        environment = os.environ.copy()
+        environment["FAKE_CODEX_LOG"] = str(self.log_path)
+        environment["TMPDIR"] = str(temporary_root)
+        environment["CODEX_URL"] = "https://ambient-codex.invalid"
+        environment["OPENAI_API_KEY"] = "ambient-openai-key"
+        environment.update(extra_environment or {})
+        arguments = [
+            sys.executable,
+            str(RUNNER),
+            "prompt",
+            "--codex-home",
+            str(self.codex_home),
+            "--codex-binary",
+            str(self.fake_codex),
+            "--text",
+            text,
+        ]
+        if include_model:
+            arguments.extend(("--model", "candidate/label"))
+        if include_effort:
+            arguments.extend(("--reasoning-effort", "low"))
+        return subprocess.run(
+            arguments,
+            input=stdin,
+            check=False,
+            capture_output=True,
+            text=True,
+            env=environment,
+            timeout=30,
+        )
+
     def calls(self) -> list[dict[str, object]]:
         if not self.log_path.exists():
             return []
@@ -475,6 +517,64 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertEqual("low", manifest["reasoning_effort"])
         self.assertEqual(prompts, manifest["prompts"])
 
+    def test_direct_prompt_prints_response_without_persistent_run_files(self) -> None:
+        completed = self.invoke_direct_prompt("GENERIC PROMPT DIRECT")
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        self.assertEqual("Response to: GENERIC PROMPT DIRECT", completed.stdout)
+        calls = [call for call in self.calls() if call["kind"] == "exec"]
+        self.assertEqual(1, len(calls))
+        call = calls[0]
+        self.assertEqual("GENERIC PROMPT DIRECT", call["prompt"])
+        self.assertIn("candidate/label", call["argv"])
+        self.assertIn('model_reasoning_effort="low"', call["argv"])
+        self.assertEqual([], call["cwd_entries"])
+        self.assertEqual(
+            {"CODEX_HOME": str(self.codex_home)},
+            call["credential_environment"],
+        )
+        self.assertEqual([], list((self.root / "direct-temporary-files").iterdir()))
+        self.assertEqual([], list((self.codex_home / "job-workspaces").iterdir()))
+        self.assertFalse(self.run_directory.exists())
+
+    def test_direct_prompt_reads_text_from_stdin(self) -> None:
+        completed = self.invoke_direct_prompt("-", stdin="GENERIC PROMPT FROM STDIN")
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        self.assertEqual("Response to: GENERIC PROMPT FROM STDIN", completed.stdout)
+        calls = [call for call in self.calls() if call["kind"] == "exec"]
+        self.assertEqual("GENERIC PROMPT FROM STDIN", calls[0]["prompt"])
+
+    def test_direct_prompt_surfaces_child_failure_without_persistent_files(
+        self,
+    ) -> None:
+        completed = self.invoke_direct_prompt(
+            "GENERIC PROMPT DIRECT",
+            extra_environment={"FAKE_CODEX_FAIL_STAGE": "prompt"},
+        )
+
+        self.assertNotEqual(0, completed.returncode)
+        self.assertIn("codex exec exited with status 23", completed.stderr)
+        self.assertIn("fixture child failure", completed.stderr)
+        self.assertEqual([], list((self.root / "direct-temporary-files").iterdir()))
+        self.assertEqual([], list((self.codex_home / "job-workspaces").iterdir()))
+
+    def test_direct_prompt_requires_explicit_model_and_effort(self) -> None:
+        missing_model = self.invoke_direct_prompt(
+            "GENERIC PROMPT DIRECT",
+            include_model=False,
+        )
+        missing_effort = self.invoke_direct_prompt(
+            "GENERIC PROMPT DIRECT",
+            include_effort=False,
+        )
+
+        self.assertNotEqual(0, missing_model.returncode)
+        self.assertIn("--model", missing_model.stderr)
+        self.assertNotEqual(0, missing_effort.returncode)
+        self.assertIn("--reasoning-effort", missing_effort.stderr)
+        self.assertEqual([], self.calls())
+
     def test_generic_prompt_failure_is_audited_and_requires_explicit_retry(
         self,
     ) -> None:
@@ -634,6 +734,9 @@ class CodexExecRunnerTests(unittest.TestCase):
             .splitlines()
         ]
         self.assertEqual(["succeeded", "failed"], [row["status"] for row in records])
+        self.assertEqual("codex exec exited with status 23", records[-1]["error"])
+        self.assertEqual("fixture child failure\n", records[-1]["stderr"])
+        self.assertNotIn("fixture child failure", failed.stderr)
 
         calls_before = len(self.calls())
         blocked = self.invoke()

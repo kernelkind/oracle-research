@@ -5,8 +5,8 @@ exec`. It supports arbitrary prompt batches as well as the takeaway-and-mask
 pipeline used by the SSE experiments.
 
 The runner does not choose a model. Model IDs and reasoning efforts are required
-in every run configuration. This lets us compare configurations without changing
-code or silently falling back to another model.
+in every direct command or run configuration. This lets us compare configurations
+without changing code or silently falling back to another model.
 
 ## One-time login
 
@@ -23,9 +23,43 @@ as `auth.json`, which Codex creates with mode `0600`, and must never be placed
 inside the repository. The runner refuses to start generation if that file is
 missing or has any other permission mode.
 
-## Generic prompt mode
+## Direct prompt
 
-Use generic prompt mode when each independent input is already a complete prompt:
+Pass one prompt directly on the command line when no persistent audit artifacts
+are needed:
+
+```sh
+python3 sse_multivector/codex_exec.py prompt \
+  --model gpt-5.6-sol \
+  --reasoning-effort low \
+  --text "What is the narrowest common subject?"
+```
+
+Use `--text -` to read a multiline prompt from standard input without creating an
+input file:
+
+```sh
+python3 sse_multivector/codex_exec.py prompt \
+  --model gpt-5.6-sol \
+  --reasoning-effort low \
+  --text - <<'EOF'
+Instances:
+
+1. First instance
+2. Second instance
+
+What do these have in common?
+EOF
+```
+
+The exact response is written directly to standard output without a wrapper or an
+added newline. Internally generated config, audit, and response files exist only in
+a temporary directory and are deleted before the command exits. Child-process errors
+are printed before those temporary diagnostics are removed.
+
+## Preserved prompt batch
+
+Use config-based prompt mode when the exact inputs and outputs should be retained:
 
 ```json
 {
@@ -51,8 +85,8 @@ python3 sse_multivector/codex_exec.py prompt path/to/config.json
 ```
 
 Each configured prompt is passed to a new isolated process exactly as written.
-Generic mode does not add a prompt envelope or response schema. It records the raw
-final response under that prompt's stable ID.
+Config-based prompt mode does not add a prompt envelope or response schema. It
+records the raw final response under that prompt's stable ID.
 
 ## Takeaway and mask mode
 
@@ -127,9 +161,10 @@ The configured prompt is still untrusted model input. The isolation contract
 prevents it from turning the generation job into a general Codex tool-using
 session.
 
-## Results and resume behavior
+## Preserved results and resume behavior
 
-The run directory contains:
+Config-based prompt batches and takeaway-and-mask runs create a run directory
+containing:
 
 - `manifest.json`: exact inputs and prompts, model, effort, Codex version, wrapper
   hash, and any response schema used by the selected mode;

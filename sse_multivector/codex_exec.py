@@ -1055,6 +1055,74 @@ def run_prompts(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
     return output
 
 
+def run_direct_prompt(
+    prompt: str,
+    *,
+    codex_binary: str,
+    codex_home: Path,
+    model: str | None,
+    reasoning_effort: str | None,
+) -> str:
+    prompt = _expect_string(prompt, "--text")
+    resolved_binary = _resolve_executable(
+        codex_binary,
+        "--codex-binary",
+        Path.cwd(),
+    )
+    resolved_home = codex_home.expanduser().resolve()
+    model = _expect_identifier(model, "--model")
+    reasoning_effort = _expect_identifier(
+        reasoning_effort,
+        "--reasoning-effort",
+    )
+
+    with tempfile.TemporaryDirectory(prefix="codex-direct-") as temporary:
+        temporary_root = Path(temporary).resolve()
+        config_path = temporary_root / "config.json"
+        run_directory = temporary_root / "run"
+        _atomic_write(
+            config_path,
+            _canonical_json_bytes(
+                {
+                    "schema_version": SCHEMA_VERSION,
+                    "codex_binary": str(resolved_binary),
+                    "codex_home": str(resolved_home),
+                    "run_directory": str(run_directory),
+                    "model": model,
+                    "reasoning_effort": reasoning_effort,
+                    "prompts": [{"prompt_id": "direct", "text": prompt}],
+                }
+            ),
+        )
+        try:
+            output = run_prompts(config_path, retry_failed=False)
+        except RunnerError as error:
+            results_path = run_directory / "results.jsonl"
+            last_record: object = None
+            if results_path.is_file():
+                try:
+                    lines = results_path.read_text(encoding="utf-8").splitlines()
+                    if lines:
+                        last_record = json.loads(lines[-1])
+                except (OSError, UnicodeError, json.JSONDecodeError):
+                    pass
+            if isinstance(last_record, dict):
+                detail = last_record.get("stderr")
+                if isinstance(detail, str) and detail.strip():
+                    raise RunnerError(f"{error}: {detail.strip()}") from error
+            raise
+        responses = output.get("responses")
+        if not isinstance(responses, list) or len(responses) != 1:
+            raise AssertionError("direct prompt returned an invalid response list")
+        response = responses[0]
+        if not isinstance(response, dict) or response.get("prompt_id") != "direct":
+            raise AssertionError("direct prompt returned an invalid response record")
+        text = response.get("response")
+        if not isinstance(text, str) or not text.strip():
+            raise AssertionError("direct prompt returned an empty response")
+        return text
+
+
 def login(codex_home: Path, codex_binary: str) -> int:
     resolved_home = codex_home.expanduser().resolve()
     binary = _resolve_executable(codex_binary, "codex_binary", Path.cwd())
@@ -1085,13 +1153,26 @@ def _argument_parser() -> argparse.ArgumentParser:
         help="explicitly retry the latest failed attempt for each failed job",
     )
     prompt_parser = subcommands.add_parser(
-        "prompt", help="run isolated arbitrary prompt jobs"
+        "prompt", help="run one direct prompt or a preserved prompt batch"
     )
-    prompt_parser.add_argument("config", type=Path)
+    prompt_parser.add_argument(
+        "config",
+        type=Path,
+        nargs="?",
+        help="batch configuration; omit when using --text",
+    )
+    prompt_parser.add_argument(
+        "--text",
+        help="direct prompt text, or - to read it from stdin",
+    )
+    prompt_parser.add_argument("--model")
+    prompt_parser.add_argument("--reasoning-effort")
+    prompt_parser.add_argument("--codex-home", type=Path)
+    prompt_parser.add_argument("--codex-binary")
     prompt_parser.add_argument(
         "--retry-failed",
         action="store_true",
-        help="explicitly retry the latest failed attempt for each failed job",
+        help="explicitly retry failed jobs in config-based batch mode",
     )
     login_parser = subcommands.add_parser(
         "login", help="authenticate the dedicated Codex home"
@@ -1107,6 +1188,36 @@ def main(arguments: Sequence[str] | None = None) -> int:
         if parsed.command == "login":
             return login(parsed.codex_home, parsed.codex_binary)
         if parsed.command == "prompt":
+            if parsed.text is not None:
+                if parsed.config is not None:
+                    raise RunnerError("use either a config path or --text, not both")
+                if parsed.retry_failed:
+                    raise RunnerError("--retry-failed is only valid with a config path")
+                prompt = sys.stdin.read() if parsed.text == "-" else parsed.text
+                response = run_direct_prompt(
+                    prompt,
+                    codex_binary=parsed.codex_binary or "codex",
+                    codex_home=parsed.codex_home or DEFAULT_CODEX_HOME,
+                    model=parsed.model,
+                    reasoning_effort=parsed.reasoning_effort,
+                )
+                sys.stdout.write(response)
+                return 0
+            if parsed.config is None:
+                raise RunnerError("provide a config path or use --text")
+            if any(
+                value is not None
+                for value in (
+                    parsed.model,
+                    parsed.reasoning_effort,
+                    parsed.codex_home,
+                    parsed.codex_binary,
+                )
+            ):
+                raise RunnerError(
+                    "--model, --reasoning-effort, --codex-home, and "
+                    "--codex-binary are only valid with --text"
+                )
             output = run_prompts(parsed.config, retry_failed=parsed.retry_failed)
             print(json.dumps({"prompts": len(output["responses"])}, sort_keys=True))
             return 0
