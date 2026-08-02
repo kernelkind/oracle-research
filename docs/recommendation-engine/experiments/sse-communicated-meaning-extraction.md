@@ -2,15 +2,18 @@
 
 ## Result
 
-No—not reliably.
+TEv4.1 did not support the hypothesis.
 
-TEv4.1 tested whether making a mask self-contained would make SSE represent the
-intended takeaway more cleanly. In the surveillance and retirement cases below,
-the added fragments made previously unresolved references understandable to a
-person. But that source text also changed the vectors' meaning.
+TEv4.1 tested whether making a mask self-contained would make SSE represent its
+takeaway more cleanly. The evidence shows that adding a referent to a mask can
+move its vector toward the referent's subject matter. It does not establish that
+self-contained masks are always worse, nor that atomic vectors are already the
+correct solution.
 
-The three concrete failures are documented below with their complete source
-notes, generated takeaways, masks, measured neighbors, and interpretation.
+The main argument below is deliberately sequential. Each claim presents its
+evidence before its analysis. Complete generation records for the three
+inspected source notes follow afterward; the immutable archive preserves the
+full 50-note run.
 
 ## What the experiment changed
 
@@ -41,7 +44,300 @@ is not a controlled comparison: the number and identity of competing vectors
 also changed. The cases below use raw cosines and byte-identical candidate
 vectors wherever possible.
 
-## Failure #3 — Clarifying surveillance shifted the vector toward software
+## Logical argument
+
+### Claim 1 — The retirement intervention added solar-greenhouse meaning
+
+#### Evidence
+
+Both target vectors came from this exact note:
+
+> Flexicables installed for our geothermal solar powered greenhouse. The
+> greenhouse they have in Aliance Nebraska grows pineapple and dates and
+> citrus.
+> This will be the first steps to my non consumption based retirement.
+> https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
+
+TEv3.1 selected only the retirement sentence:
+
+> Flexicables installed for our geothermal solar powered greenhouse. The
+> greenhouse they have in Aliance Nebraska grows pineapple and dates and
+> citrus.
+> ⟦This will be the first steps to my non consumption based retirement.⟧
+> https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
+
+TEv4.1 selected the same sentence and added its referent:
+
+> Flexicables installed for ⟦our geothermal solar powered greenhouse⟧. The
+> greenhouse they have in Aliance Nebraska grows pineapple and dates and
+> citrus.
+> ⟦This will be the first steps to my non consumption based retirement.⟧
+> https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
+
+The note, SSE checkpoint, and inference configuration were fixed. The old and
+new target vectors have cosine `0.8002`, so adding the referent changed the
+vector.
+
+#### Analysis
+
+This evidence establishes the intervention: TEv4.1 directly pooled the words
+`our geothermal solar powered greenhouse`, while TEv3.1 did not. It does not
+yet establish whether that change was helpful or harmful.
+
+### Claim 2 — The changed target became more similar to one fixed solar vector
+
+#### Evidence
+
+The controlled candidate was this one-sentence note:
+
+> ⟦Solar power will be the vast majority of power generation in the future⟧
+
+Both runs selected that complete sentence. Its vector was byte-identical across
+runs. Its cosine to the target was:
+
+| Target | Cosine to the fixed solar candidate |
+|---|---:|
+| TEv3.1 retirement sentence | `0.3690` |
+| TEv4.1 retirement sentence plus greenhouse referent | `0.6565` |
+
+#### Analysis
+
+Because the candidate did not change, the target-mask change caused the
+increase. This proves only that the new target became more similar to this one
+solar vector. It does not, by itself, show that retirement meaning became
+weaker or that the new vector was worse.
+
+### Claim 3 — The changed target became less similar to one fixed retirement vector
+
+#### Evidence
+
+The controlled retirement candidate came from this note:
+
+> When I joined my current company, I was provided a retirement packet to fill
+> out.
+>
+> In it, I wrote that I planned on retiring in 2029, and then declined opening a
+> retirement account with them.
+>
+> #JustBitcoinerThings
+
+The fixed candidate vector selected:
+
+> ⟦When I joined my current company, I was provided a retirement packet⟧ to fill
+> out.
+>
+> In it, I wrote that I planned on retiring in 2029, and then declined opening a
+> retirement account with them.
+>
+> #JustBitcoinerThings
+
+The TEv3.1 candidate vector was held fixed while only the target changed:
+
+| Fixed candidate meaning | TEv3.1 target | TEv4.1 target |
+|---|---:|---:|
+| Receiving a retirement packet | `0.3562099685` | `0.2455033805` |
+
+#### Analysis
+
+This explicitly retirement-related candidate became less similar to the
+changed target. That is direct retirement evidence, unlike the weaker “break
+free from the typical American grind” comparison. It is still only one
+candidate and does not establish movement away from every retirement meaning.
+
+Claims 2 and 3 together establish the direction of this one target's movement:
+adding the greenhouse referent made it more similar to the fixed solar vector
+and less similar to the fixed retirement vector above.
+
+This does not prove that the new vector misrepresented the complete compound
+claim. A solar greenhouse genuinely is part of that claim. It shows that making
+the mask self-contained traded away similarity to the fixed retirement
+representation used in this comparison.
+
+### Claim 4 — The surveillance target showed the same kind of tradeoff
+
+#### Evidence
+
+Both targets came from this note:
+
+> they want to control everything..
+> ..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows,
+> #macOS, #iOS, #Android, etc.) then you are missing the bigger picture.. ..all
+> those OS's are saturated with telemetry mechanisms and APIs that have access
+> to everything on your devices.. ..i'm still on iOS phone-wise, but my days are
+> numbered with that.. ..likely moving to #GrapheneOS (although i already try to
+> use my phone as little as possible).. ..i've already switched to #Linux
+> computer-wise.. ..free and opensource is the only way to navigate this tech
+> surveillance state with any level of sovereignty
+
+TEv3.1 selected only:
+
+> ⟦they want to control everything⟧..
+> ..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows,
+> #macOS, #iOS, #Android, etc.) then you are missing the bigger picture.. ..all
+> those OS's are saturated with telemetry mechanisms and APIs that have access
+> to everything on your devices.. ..i'm still on iOS phone-wise, but my days are
+> numbered with that.. ..likely moving to #GrapheneOS (although i already try to
+> use my phone as little as possible).. ..i've already switched to #Linux
+> computer-wise.. ..free and opensource is the only way to navigate this tech
+> surveillance state with any level of sovereignty
+
+TEv4.1 added proprietary-OS, telemetry, and surveillance-state fragments:
+
+> ⟦they want to control everything⟧..
+> ..if you think your #Nostr nsec key is safe on ⟦a proprietary OS ( #Windows,
+> #macOS, #iOS, #Android, etc.)⟧ then you are missing the bigger picture..
+> ..⟦all those OS's are saturated with telemetry mechanisms and APIs that have
+> access to everything on your devices⟧.. ..i'm still on iOS phone-wise, but my
+> days are numbered with that.. ..likely moving to #GrapheneOS (although i
+> already try to use my phone as little as possible).. ..i've already switched
+> to #Linux computer-wise.. ..free and opensource is the only way to navigate
+> ⟦this tech surveillance state⟧ with any level of sovereignty
+
+Three candidate vectors were held fixed:
+
+1. Direct government control:
+
+   > NEW - ⟦The CCC warns that the German left-green-liberal government wants to
+   > "effectively end anonymity" and make all citizens "identifiable at all
+   > times and in all places,"⟧ including by opening doors to Palantir and other
+   > surveillance software.
+   >
+   > https://www.ccc.de/en/updates/2024/biometrischer-uberwachungsexzess-der-bundesregierung
+   >
+   > https://hell.twtr.plus/media/cf6857f1982ee096057b3c09692a162778dd08f6e86e47e845309425238d567a.file
+
+2. Generic free software:
+
+   > ⟦Getting close to 100% of my software stack being free and open source.⟧
+
+3. A cross-platform open-source application:
+
+   > It's ready! ⟦#pypush can now send and receive #iMessage, on any platform,
+   > completely server-less and open-source!⟧ 🎉
+   >
+   > https://github.com/JJTech0130/pypush
+
+Their cosines changed as follows:
+
+| Fixed candidate meaning | TEv3.1 target | TEv4.1 target |
+|---|---:|---:|
+| Government ending anonymity | `0.5067` | `0.3327` |
+| Free and open-source software stack | `0.3763` | `0.4650` |
+| Cross-platform open-source iMessage application | `0.4005` | `0.6599` |
+
+#### Analysis
+
+The changed target moved away from the direct government-control candidate and
+toward the two software candidates. Because all three candidates were held
+fixed, the target change caused those movements.
+
+This is a second concrete example of referent or explanatory source text
+changing which part of a compound meaning dominates the resulting geometry. It
+does not prove that every self-contained mask behaves this way.
+
+### Claim 5 — TEv4.1 also changed the number of vectors produced per note
+
+#### Evidence
+
+TEv3.1 represented this source passage once:
+
+> ⟦Only the things you choose without pressure define you.⟧ ⟦The rest is a
+> facade.⟧
+
+TEv4.1 represented it twice:
+
+> ⟦Only the things you choose without pressure define you.⟧ The rest is a
+> facade.
+
+and:
+
+> ⟦Only the things you choose without pressure define you. The rest is a
+> facade.⟧
+
+The second TEv4.1 vector is byte-identical to the TEv3.1 vector. The two TEv4.1
+vectors have cosine `0.9225` with each other.
+
+Across all 50 notes:
+
+| Measurement | TEv3.1 | TEv4.1 |
+|---|---:|---:|
+| Vectors | 131 | 194 |
+| Mean vectors per note | 2.62 | 3.88 |
+| Same-note pairs with overlapping selected tokens | 6 | 192 |
+| All same-note pairs | 193 | 410 |
+
+Forty notes gained takeaways; no note lost takeaways.
+
+#### Analysis
+
+TEv4.1 was not merely the old decomposition with clearer masks. It also emitted
+more meanings and reused source spans much more often. Some overlap can be
+legitimate, but the example above gives nearly the same source meaning two
+opportunities to enter retrieval results.
+
+Therefore, aggregate TEv3.1-versus-TEv4.1 changes cannot be attributed only to
+mask clarification. Controlled target/candidate comparisons are required.
+
+### Claim 6 — Some generated takeaways were not supported by selectable text
+
+#### Evidence
+
+One generated takeaway was:
+
+> The post also links to a Hacker News discussion of the article.
+
+Its complete source and selected mask were:
+
+> Why a spritz of water before grinding coffee yields better results
+>
+> ⟦Comments⟧ ( https://news.ycombinator.com/item?id=38554310 )
+>
+> https://arstechnica.com/science/2023/12/study-why-a-spritz-of-water-before-grinding-coffee-yields-less-waste-tastier-espresso/
+
+MPv3.3 was forbidden from selecting URLs. The word `Comments` alone does not
+identify Hacker News or the linked article.
+
+#### Analysis
+
+This mask is mechanically valid—the selected substring exists—but it does not
+contain the takeaway's meaning. Exact-substring validation cannot detect that
+semantic failure.
+
+This is separate from SSE geometry. It shows that TPv3.81 can generate meaning
+from a URL that MPv3.3 is then unable to ground under its selection rules.
+
+### What the claims jointly establish
+
+The controlled evidence establishes that:
+
+1. Adding referent text can change a vector.
+2. In the greenhouse case, the target became more similar to one fixed solar
+   vector and less similar to one fixed retirement vector.
+3. In the surveillance case, the target became less similar to one fixed
+   government-control vector and more similar to two fixed software vectors.
+4. TEv4.1 changed decomposition granularity as well as mask context.
+5. Some generated takeaways could not be supported by the permitted source
+   fragments.
+
+The evidence does **not** establish that:
+
+- self-contained masks are always worse;
+- SSE cannot represent independently searchable meanings;
+- atomic vectors are already proven to be the right solution;
+- TPv3.81 or MPv3.3 individually caused every observed change;
+- these 50 diagnostic notes estimate corpus-wide performance.
+
+The next hypothesis suggested by these results is:
+
+> One vector should represent one independently searchable meaning, while one
+> note may produce several such vectors.
+
+For the greenhouse note, that could mean separate vectors for `geothermal solar
+powered greenhouse` and `non consumption based retirement`, rather than adding
+the greenhouse phrase merely to make the retirement sentence self-contained.
+That is a hypothesis for a later experiment, not a TEv4.1 result.
+
+## Detailed evidence A — Surveillance
 
 ### Complete source note
 
@@ -151,7 +447,7 @@ TEv3.1 represented the control claim using only:
 
 TEv4.1 tried to resolve who `they` meant by also selecting the proprietary-OS,
 telemetry, and technology-surveillance-state fragments. The old and new target
-vectors have cosine `0.5209`, so this changed the vector substantially.
+vectors have cosine `0.5209`, so this changed the vector.
 
 ### Controlled neighbor 1 — direct government control moved away
 
@@ -349,15 +645,18 @@ It moved from rank 2 at `0.4175` to rank 43 at `0.1723`. This looks better, but
 both the target and candidate masks changed, so this pair cannot show which
 change caused the improvement.
 
-### What failed
+### Analysis
 
-The clearer target did not become a cleaner representation of systemic control
-and surveillance. Direct government-control content moved away. Generic
-free-software and cross-platform application content moved closer. The original
-automatic-backup mismatch fell to rank 43, but the failure changed form rather
-than disappearing.
+If the goal is an independently searchable `powerful actors seeking control`
+meaning, these controls did not improve: cosine to the fixed government-control
+vector fell, while cosines to the fixed free-software and cross-platform-
+application vectors rose. This does not establish the intrinsic quality of the
+complete compound surveillance representation.
 
-## Failure #6 — Clarifying retirement shifted the vector toward solar energy
+The automatic-backup result is not part of that controlled conclusion because
+both its candidate mask and the target mask changed.
+
+## Detailed evidence B — Retirement and greenhouse
 
 ### Complete source note
 
@@ -427,8 +726,8 @@ The old retirement mask contained `This` without its referent. TEv4.1 added
 the retirement sentence referred to.
 
 The old and new target vectors have cosine `0.8002`: they remain related, but
-the added greenhouse fragment moved the new vector strongly toward greenhouse
-and energy content.
+they are not identical. This comparison alone does not establish the direction
+of the change.
 
 ### Controlled neighbor — future solar generation
 
@@ -452,7 +751,40 @@ Cosine to the retirement target rose from `0.3690` to `0.6565`. Because the
 candidate did not change, adding the greenhouse fragment to the retirement
 target caused the increase.
 
-### Retirement-related neighbor — leaving the conventional grind
+### Controlled candidate — explicit retirement
+
+**Complete candidate note**
+
+> When I joined my current company, I was provided a retirement packet to fill
+> out.
+>
+> In it, I wrote that I planned on retiring in 2029, and then declined opening a
+> retirement account with them.
+>
+> #JustBitcoinerThings
+
+The fixed TEv3.1 candidate selected:
+
+> ⟦When I joined my current company, I was provided a retirement packet⟧ to fill
+> out.
+>
+> In it, I wrote that I planned on retiring in 2029, and then declined opening a
+> retirement account with them.
+>
+> #JustBitcoinerThings
+
+Holding that exact TEv3.1 candidate vector fixed, its cosine was
+`0.3562099685` with the TEv3.1 target and `0.2455033805` with the TEv4.1
+target.
+
+This candidate is explicitly about retirement. It replaces the weaker
+American-grind proxy in the logical argument.
+
+### Excluded proxy — leaving the conventional American grind
+
+This comparison is preserved for audit, but it is not evidence that retirement
+meaning weakened. Leaving the conventional American grind does not necessarily
+mean retiring.
 
 **Complete candidate note**
 
@@ -566,19 +898,26 @@ Direct retirement results begin at rank 13. Other relevant placements include:
 - minimalism: rank 77, `0.1197`;
 - being largely retired: rank 102, `0.0759`.
 
-### What failed
+The rank-29 packet result uses TEv4.1's separately regenerated candidate, whose
+mask differs from the fixed TEv3.1 packet vector used in the controlled
+`0.3562099685` versus `0.2455033805` comparison. The values answer different
+questions and should not be compared as though the candidate were unchanged.
 
-The new mask correctly resolved what `This` meant for a human. But SSE pooled
+### Analysis
+
+The new mask correctly resolved what `This` meant for a human, and SSE pooled
 the newly selected `geothermal solar powered greenhouse` tokens as part of the
-target meaning. The result became much better at retrieving solar, greenhouse,
-and mining content and much worse at isolating retirement and non-consumption.
+target meaning. Its cosine to one fixed solar vector rose, while its cosine to
+one fixed retirement-packet vector fell.
 
-This is not hidden whole-note context leakage: the energy meaning was explicitly
-added to the selected mask. TEv4.1 has no separate retirement-only takeaway for
-this note, so it cannot represent the resolved retirement claim without also
-selecting the greenhouse subject matter.
+The explicitly selected energy phrase provides a direct mechanism for the
+change. SSE also contextualizes selected tokens against the complete note, so
+this experiment does not isolate or rule out additional whole-note context
+effects. This run emitted no separate retirement-only vector for this note.
+Whether a more atomic extraction would preserve both meanings better remains an
+untested hypothesis.
 
-## Failure #5 — One meaning became multiple overlapping vectors
+## Detailed evidence C — Overlapping vectors
 
 ### Complete source note
 
@@ -879,15 +1218,15 @@ But this run often represented almost the same passage more than once, as the
 two autonomy vectors demonstrate. That adds computation and gives one source
 meaning multiple opportunities to occupy retrieval results.
 
-### What failed
+### Analysis
 
 The new pipeline did not merely clarify masks. It changed how many meanings it
 claimed each note communicated and frequently reused the same source tokens.
 The autonomy example is now represented twice, and those two vectors have
-materially different cross-note neighborhoods. The pipeline emits and uses both;
+different cross-note neighborhoods. The pipeline emits and uses both;
 it does not choose the better one.
 
-## Other extraction failures
+## Detailed evidence D — Unsupported or distorted extractions
 
 These are independent prompt or mask failures observed in the same run:
 
@@ -961,7 +1300,7 @@ takeaway's meaning.
 
 ## Aggregate measurements
 
-The cross-note cosine distribution barely changed:
+The cross-note cosine distributions were:
 
 | Measurement | TEv3.1 | TEv4.1 |
 |---|---:|---:|
@@ -969,33 +1308,36 @@ The cross-note cosine distribution barely changed:
 | Mean | `0.0728` | `0.0701` |
 | p95 | `0.3214` | `0.3169` |
 
-These measurements do not show a global geometry improvement.
+These summaries barely changed, but they are not quality metrics. They cannot
+establish or refute a semantic improvement.
 
-## Conclusion
+## Final interpretation
 
-TEv4.1 tested:
+TEv4.1 asked whether resolving ambiguous masks by adding enough exact source
+text to reconstruct a takeaway would improve SSE's representation.
 
-> Resolving ambiguous masks by adding all source context needed to reconstruct
-> the takeaway will improve the SSE geometry.
+The controlled evidence showed two direction changes:
 
-The evidence does not support that hypothesis.
+- The greenhouse-retirement target became more similar to one fixed solar
+  vector and less similar to one fixed retirement vector.
+- The surveillance-control target became more similar to two fixed software
+  vectors and less similar to one fixed government-control vector.
 
-- The surveillance target moved away from direct government control and toward
-  generic software and platforms.
-- The retirement target moved strongly toward solar, greenhouse, and mining
-  content.
-- The new prompts produced many more overlapping vectors, including multiple
-  vectors for nearly the same source meaning.
-- Additional unsupported and distorted extractions remained.
+Separately, TEv4.1 generated more overlapping vectors and some
+takeaways that its mask rules could not support.
 
-This does not reject communicated-meaning vectors or SSE generally. It rejects
-the simpler assumption that a source mask that is more self-contained for a
-person will necessarily produce a better-isolated SSE vector.
+Therefore, TEv4.1 does not provide evidence that making masks self-contained
+improves independently searchable meanings. It also does not prove the opposite
+for all notes: these are two controlled examples inside a 50-note diagnostic
+set, not a population estimate.
 
-Both prompts changed together, so TEv4.1 cannot attribute the result to
-TPv3.81 or MPv3.3 alone. Generation was one run, and these 50 notes are a
-diagnostic set rather than a representative sample. The experiment does not
-establish population-level accuracy.
+The experiment does not reject SSE or multi-vector representations. It exposes
+a narrower problem: exact source text needed to explain a reference can carry
+additional subject matter that changes the vector's retrieval behavior.
+
+The atomic-vector idea is a response to that problem, not a result already
+established by TEv4.1. Both prompts changed together, so this run also cannot
+attribute every effect specifically to TPv3.81 or MPv3.3.
 
 ## Exact controls and preserved evidence
 
@@ -1026,3 +1368,16 @@ preserve:
 - the source-bound proposal and SSE worker request;
 - the raw vectors and worker receipt;
 - the complete pairwise cosine analysis and manifests.
+
+The cross-run retirement control uses normalized vectors directly:
+
+- TEv3.1 retirement target: ordinal 64;
+- TEv4.1 retirement-plus-greenhouse target: ordinal 101;
+- fixed TEv3.1 retirement-packet candidate: ordinal 96;
+- old-target cosine: `0.3562099685`;
+- new-target cosine: `0.2455033805`.
+
+Each cosine is the dot product of the fixed candidate row from TEv3.1's
+`normalized-vectors.f32le` and the corresponding old or new normalized target
+row. The solar control uses the same calculation with a byte-identical
+candidate vector and yields `0.3690140084` and `0.6565306208`.
