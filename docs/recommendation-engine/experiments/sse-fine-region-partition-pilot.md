@@ -182,6 +182,11 @@ The machine-readable report and the complete raw-membership audit are in:
 sse_multivector/fine-region-partition-result-v1/
 ```
 
+Every exact complete-link cross-note merge in the P40–P60 audit window is also
+presented without a correctness verdict, together with all takeaways, masks,
+and complete source notes, in
+[`sse-fine-region-complete-merge-review.md`](sse-fine-region-complete-merge-review.md).
+
 The report binds the frozen input manifests, config, partition source, pilot
 source, every order-specific DP-vMF partition, and every exact source-fragment
 occurrence.
