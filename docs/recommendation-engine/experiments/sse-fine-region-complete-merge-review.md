@@ -7,10 +7,10 @@ representations of meaning. It then grouped representations that pointed in
 similar directions. Each resulting group is a **segment**. A segment may
 contain one vector or many vectors.
 
-This document shows every segment produced at P40, P50, or P60 by the grouping
-procedure explained below that contains meaning from at least two original
-notes. It does not decide whether any segment is good or bad. It supplies the
-complete evidence needed to make that judgment.
+This document shows every segment produced from P40 through P90 by the
+grouping procedure explained below that contains meaning from at least two
+original notes. It does not decide whether any segment is good or bad. It
+supplies the complete evidence needed to make that judgment.
 
 **Frozen** below means saved before anyone judged the groupings and left
 unchanged during the review.
@@ -49,24 +49,28 @@ segments whose least-similar pair has the highest score, provided that score
 meets the chosen minimum. It repeats until no remaining join meets the
 minimum. The code calls this rule complete linkage.
 
-The same frozen vectors were grouped three times with increasingly strict
-minimums:
+At the six settings covered here, the same frozen vectors were grouped with
+increasingly strict minimums:
 
 | Setting | Every pair in one segment must score at least |
 |---|---:|
 | P40 | `0.479168` |
 | P50 | `0.505010` |
 | P60 | `0.538475` |
+| P70 | `0.569165` |
+| P80 | `0.648779` |
+| P90 | `0.687749` |
 
-The three names come from the data. For each of the 194 pieces, the experiment
+The six names come from the data. For each of the 194 pieces, the experiment
 found its most similar piece from a different note. It sorted those 194 scores.
 P40 uses the 40th-percentile score as its minimum, P50 uses the 50th, and P60
-uses the 60th. These three adjacent settings were chosen before anyone judged
-the meanings, so the review would not depend on one conveniently selected
-minimum.
+uses the 60th; P70 through P90 follow the same rule. P40 through P60 were the
+three adjacent settings chosen before anyone judged the meanings. P70 through
+P90 are the stricter levels from the same frozen diagnostic sweep, included
+here so the higher-resolution segments are not omitted.
 
-P40, P50, and P60 are not probabilities, confidence scores, or accuracy
-measurements. They are three stopping points in the same sequence of segment
+P40 through P90 are not probabilities, confidence scores, or accuracy
+measurements. They are six stopping points in the same sequence of segment
 joins. Raising the minimum can only split an earlier segment. No setting
 changes or deletes a meaning piece.
 
@@ -79,11 +83,11 @@ changes or deletes a meaning piece.
   appear under several vectors or segments. The hexadecimal text beside it is
   the beginning of that note's stable ID.
 - `SXXX` identifies one exact segment in this frozen review. Two appearances
-  share an ID only when they contain exactly the same vectors. The 18 IDs are
-  assigned deterministically by the first audited setting where the segment
+  share an ID only when they contain exactly the same vectors. The 20 IDs are
+  assigned deterministically by the first included setting where the segment
   appears, then by ascending vector membership.
 
-This document assigns `SXXX` IDs only to the 18 segments that contain vectors
+This document assigns `SXXX` IDs only to the 20 segments that contain vectors
 from at least two notes. The complete output also contains one-vector and
 same-note segments, whose vectors all come from one original note, but they
 are outside this multi-note review.
@@ -104,26 +108,29 @@ Base that decision on each takeaway and its selected source words.
 
 ## What is included
 
-Across the three settings, the frozen result contains:
+Across the six settings, the frozen result contains:
 
 - 17 segments containing pieces from different original notes at P40;
 - 14 at P50;
 - 11 at P60;
-- 42 segment appearances when each setting is counted separately;
-- 18 distinct multi-note segments;
+- 10 at P70;
+- 8 at P80;
+- 3 at P90;
+- 63 segment appearances when each setting is counted separately;
+- 20 distinct multi-note segments;
 - 52 meaning pieces from 27 original notes.
 
-The same exact segment may exist at more than one setting, so the 42
-appearances reduce to 18 distinct segments. `S018` is the only new multi-note
-segment created by a split inside the P40–P60 window: it contains three of
-`S002`'s five vectors at P60.
+The same exact segment may exist at more than one setting, so the 63
+appearances reduce to 20 distinct segments. Three new multi-note segments are
+created by splits as the minimum rises: S018 at P60 from S002, S019 at P80
+from S018, and S020 at P80 from S016.
 
 A segment containing vectors from only one original note does not contribute
-to the 17, 14, or 11 multi-note totals. It remains a valid segment in the full
+to the multi-note totals above. It remains a valid segment in the full
 partition.
 
 Only 52 of the 194 pieces, from 27 of the 50 notes, appear below. The others
-never entered a multi-note segment at these three settings.
+never entered a multi-note segment at these six settings.
 
 The pilot also ran an alternative grouping procedure. It is excluded here
 because changing the input order changed its segments, and it was not the
@@ -137,26 +144,28 @@ the segment evidence below explains any split.
 
 **Source notes** lists the set of original notes represented in each segment.
 
-| Segment | Exact vectors | Source notes | P40 | P50 | P60 |
-|---|---|---|:---:|:---:|:---:|
-| S001 | `V001 V102 V103 V104` | `N01 N02` | Yes | Yes | — |
-| S002 | `V003 V004 V023 V099 V101` | `N01 N03 N04` | Yes | Yes | — |
-| S003 | `V005 V116` | `N05 N06` | Yes | Yes | Yes |
-| S004 | `V007 V008 V009 V105 V106 V107` | `N07 N08` | Yes | Yes | Yes |
-| S005 | `V010 V028` | `N07 N09` | Yes | Yes | Yes |
-| S006 | `V013 V152` | `N10 N11` | Yes | — | — |
-| S007 | `V029 V030 V031 V050` | `N12 N13` | Yes | Yes | Yes |
-| S008 | `V035 V051 V060` | `N12 N13 N14` | Yes | Yes | Yes |
-| S009 | `V062 V186` | `N15 N16` | Yes | Yes | Yes |
-| S010 | `V063 V170` | `N15 N17` | Yes | — | — |
-| S011 | `V076 V095 V096 V097` | `N18 N19` | Yes | Yes | Yes |
-| S012 | `V078 V092` | `N20 N21` | Yes | — | — |
-| S013 | `V094 V119` | `N21 N22` | Yes | Yes | Yes |
-| S014 | `V100 V114` | `N04 N23` | Yes | Yes | — |
-| S015 | `V109 V123` | `N23 N24` | Yes | Yes | Yes |
-| S016 | `V118 V127 V133 V136` | `N22 N24 N25` | Yes | Yes | Yes |
-| S017 | `V174 V175 V192 V193` | `N26 N27` | Yes | Yes | — |
-| S018 | `V023 V099 V101` | `N03 N04` | — | — | Yes |
+| Segment | Exact vectors | Source notes | P40 | P50 | P60 | P70 | P80 | P90 |
+|---|---|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| S001 | `V001 V102 V103 V104` | `N01 N02` | Yes | Yes | — | — | — | — |
+| S002 | `V003 V004 V023 V099 V101` | `N01 N03 N04` | Yes | Yes | — | — | — | — |
+| S003 | `V005 V116` | `N05 N06` | Yes | Yes | Yes | Yes | Yes | — |
+| S004 | `V007 V008 V009 V105 V106 V107` | `N07 N08` | Yes | Yes | Yes | Yes | Yes | — |
+| S005 | `V010 V028` | `N07 N09` | Yes | Yes | Yes | Yes | Yes | Yes |
+| S006 | `V013 V152` | `N10 N11` | Yes | — | — | — | — | — |
+| S007 | `V029 V030 V031 V050` | `N12 N13` | Yes | Yes | Yes | Yes | Yes | — |
+| S008 | `V035 V051 V060` | `N12 N13 N14` | Yes | Yes | Yes | Yes | Yes | Yes |
+| S009 | `V062 V186` | `N15 N16` | Yes | Yes | Yes | Yes | — | — |
+| S010 | `V063 V170` | `N15 N17` | Yes | — | — | — | — | — |
+| S011 | `V076 V095 V096 V097` | `N18 N19` | Yes | Yes | Yes | Yes | — | — |
+| S012 | `V078 V092` | `N20 N21` | Yes | — | — | — | — | — |
+| S013 | `V094 V119` | `N21 N22` | Yes | Yes | Yes | — | — | — |
+| S014 | `V100 V114` | `N04 N23` | Yes | Yes | — | — | — | — |
+| S015 | `V109 V123` | `N23 N24` | Yes | Yes | Yes | Yes | Yes | — |
+| S016 | `V118 V127 V133 V136` | `N22 N24 N25` | Yes | Yes | Yes | Yes | — | — |
+| S017 | `V174 V175 V192 V193` | `N26 N27` | Yes | Yes | — | — | — | — |
+| S018 | `V023 V099 V101` | `N03 N04` | — | — | Yes | Yes | — | — |
+| S019 | `V023 V099` | `N03 N04` | — | — | — | — | Yes | — |
+| S020 | `V118 V127` | `N22 N24` | — | — | — | — | Yes | Yes |
 
 ## Segment evidence
 
@@ -165,15 +174,12 @@ marks the exact source words selected by its mask. All unmarked text is
 still shown because SSE received the complete note as context, but that
 text was not selected by this vector's mask.
 
-Spaces at line endings and blank lines at the end of a note are normalized.
-All words and internal line breaks remain unchanged.
-
 ### S001
 
 - **Vectors:** `V001 V102 V103 V104`
 - **Exists at:** P40 and P50
 - **Least-similar member pair:** `V001 ↔ V103` · cosine `0.537917`
-- **Other audited settings:** At P60, these vectors form the one-vector segment `[V001]` and the same-note segment `[V102 V103 V104]`, whose vectors all come from N02.
+- **Other included settings:** At P60, these vectors form the one-vector segment `[V001]` and the same-note segment `[V102 V103 V104]`, whose vectors all come from N02.
 
 #### V001 · source N01 · `7e2e4e93cf8f…`
 
@@ -219,7 +225,7 @@ All words and internal line breaks remain unchanged.
 - **Vectors:** `V003 V004 V023 V099 V101`
 - **Exists at:** P40 and P50
 - **Least-similar member pair:** `V004 ↔ V099` · cosine `0.517907`
-- **Other audited settings:** At P60, these vectors form the same-note segment `[V003 V004]`, whose vectors both come from N01, and S018, whose membership is `[V023 V099 V101]`.
+- **Other included settings:** At P60, these vectors form the same-note segment `[V003 V004]`, whose vectors both come from N01, and S018, whose membership is `[V023 V099 V101]`.
 
 #### V003 · source N01 · `7e2e4e93cf8f…`
 
@@ -280,8 +286,9 @@ All words and internal line breaks remain unchanged.
 ### S003
 
 - **Vectors:** `V005 V116`
-- **Exists at:** P40, P50, and P60
+- **Exists at:** P40, P50, P60, P70, and P80
 - **Least-similar member pair:** `V005 ↔ V116` · cosine `0.656710`
+- **Other included settings:** At P90, these vectors form two one-vector segments: `[V005]` and `[V116]`.
 
 #### V005 · source N05 · `f81f01d4d50f…`
 
@@ -306,8 +313,9 @@ All words and internal line breaks remain unchanged.
 ### S004
 
 - **Vectors:** `V007 V008 V009 V105 V106 V107`
-- **Exists at:** P40, P50, and P60
+- **Exists at:** P40, P50, P60, P70, and P80
 - **Least-similar member pair:** `V008 ↔ V107` · cosine `0.682637`
+- **Other included settings:** At P90, these vectors form the same-note segment `[V007 V008 V009]` from N07 and the same-note segment `[V105 V106 V107]` from N08.
 
 #### V007 · source N07 · `056e64662570…`
 
@@ -378,7 +386,7 @@ All words and internal line breaks remain unchanged.
 ### S005
 
 - **Vectors:** `V010 V028`
-- **Exists at:** P40, P50, and P60
+- **Exists at:** P40, P50, P60, P70, P80, and P90
 - **Least-similar member pair:** `V010 ↔ V028` · cosine `0.759397`
 
 #### V010 · source N07 · `056e64662570…`
@@ -408,7 +416,7 @@ All words and internal line breaks remain unchanged.
 - **Vectors:** `V013 V152`
 - **Exists at:** P40
 - **Least-similar member pair:** `V013 ↔ V152` · cosine `0.501598`
-- **Other audited settings:** At P50 and P60, these vectors form two one-vector segments: `[V013]` and `[V152]`.
+- **Other included settings:** At P50 through P90, these vectors form two one-vector segments: `[V013]` and `[V152]`.
 
 #### V013 · source N10 · `74694da41f36…`
 
@@ -435,8 +443,9 @@ All words and internal line breaks remain unchanged.
 ### S007
 
 - **Vectors:** `V029 V030 V031 V050`
-- **Exists at:** P40, P50, and P60
+- **Exists at:** P40, P50, P60, P70, and P80
 - **Least-similar member pair:** `V030 ↔ V050` · cosine `0.664877`
+- **Other included settings:** At P90, these vectors form the same-note segment `[V029 V030 V031]` from N12 and the one-vector segment `[V050]`.
 
 #### V029 · source N12 · `7adcfe1ab26f…`
 
@@ -478,7 +487,7 @@ All words and internal line breaks remain unchanged.
 ### S008
 
 - **Vectors:** `V035 V051 V060`
-- **Exists at:** P40, P50, and P60
+- **Exists at:** P40, P50, P60, P70, P80, and P90
 - **Least-similar member pair:** `V035 ↔ V060` · cosine `0.717748`
 
 #### V035 · source N12 · `7adcfe1ab26f…`
@@ -511,8 +520,9 @@ All words and internal line breaks remain unchanged.
 ### S009
 
 - **Vectors:** `V062 V186`
-- **Exists at:** P40, P50, and P60
+- **Exists at:** P40, P50, P60, and P70
 - **Least-similar member pair:** `V062 ↔ V186` · cosine `0.569165`
+- **Other included settings:** At P80 and P90, these vectors form two one-vector segments: `[V062]` and `[V186]`.
 
 #### V062 · source N15 · `aa269973db71…`
 
@@ -549,14 +559,11 @@ All words and internal line breaks remain unchanged.
 - **Vectors:** `V063 V170`
 - **Exists at:** P40
 - **Least-similar member pair:** `V063 ↔ V170` · cosine `0.498993`
-- **Other audited settings:** At P50 and P60, these vectors form two one-vector segments: `[V063]` and `[V170]`.
+- **Other included settings:** At P50 through P90, these vectors form two one-vector segments: `[V063]` and `[V170]`.
 
 #### V063 · source N15 · `aa269973db71…`
 
 **Takeaway:** Molly contains no proprietary code or binary blobs.
-
-**Occurrence note:** The mask selects the first of three occurrences of
-`Molly`.
 
 **Complete source note with this vector's mask:**
 
@@ -601,8 +608,9 @@ All words and internal line breaks remain unchanged.
 ### S011
 
 - **Vectors:** `V076 V095 V096 V097`
-- **Exists at:** P40, P50, and P60
+- **Exists at:** P40, P50, P60, and P70
 - **Least-similar member pair:** `V076 ↔ V096` · cosine `0.610311`
+- **Other included settings:** At P80 and P90, these vectors form the one-vector segment `[V076]` and the same-note segment `[V095 V096 V097]`, whose vectors all come from N19.
 
 #### V076 · source N18 · `84aba98daa2c…`
 
@@ -643,7 +651,7 @@ All words and internal line breaks remain unchanged.
 - **Vectors:** `V078 V092`
 - **Exists at:** P40
 - **Least-similar member pair:** `V078 ↔ V092` · cosine `0.482704`
-- **Other audited settings:** At P50 and P60, these vectors form two one-vector segments: `[V078]` and `[V092]`.
+- **Other included settings:** At P50 through P90, these vectors form two one-vector segments: `[V078]` and `[V092]`.
 
 #### V078 · source N20 · `4166411750a2…`
 
@@ -679,6 +687,7 @@ All words and internal line breaks remain unchanged.
 - **Vectors:** `V094 V119`
 - **Exists at:** P40, P50, and P60
 - **Least-similar member pair:** `V094 ↔ V119` · cosine `0.538615`
+- **Other included settings:** At P70 through P90, these vectors form two one-vector segments: `[V094]` and `[V119]`.
 
 #### V094 · source N21 · `38c864c05535…`
 
@@ -704,7 +713,7 @@ All words and internal line breaks remain unchanged.
 - **Vectors:** `V100 V114`
 - **Exists at:** P40 and P50
 - **Least-similar member pair:** `V100 ↔ V114` · cosine `0.507426`
-- **Other audited settings:** At P60, these vectors form two one-vector segments: `[V100]` and `[V114]`.
+- **Other included settings:** At P60 through P90, these vectors form two one-vector segments: `[V100]` and `[V114]`.
 
 #### V100 · source N04 · `a59ca772c163…`
 
@@ -736,8 +745,9 @@ All words and internal line breaks remain unchanged.
 ### S015
 
 - **Vectors:** `V109 V123`
-- **Exists at:** P40, P50, and P60
+- **Exists at:** P40, P50, P60, P70, and P80
 - **Least-similar member pair:** `V109 ↔ V123` · cosine `0.656426`
+- **Other included settings:** At P90, these vectors form two one-vector segments: `[V109]` and `[V123]`.
 
 #### V109 · source N23 · `2c054d399715…`
 
@@ -770,8 +780,9 @@ All words and internal line breaks remain unchanged.
 ### S016
 
 - **Vectors:** `V118 V127 V133 V136`
-- **Exists at:** P40, P50, and P60
+- **Exists at:** P40, P50, P60, and P70
 - **Least-similar member pair:** `V118 ↔ V133` · cosine `0.577648`
+- **Other included settings:** At P80, these vectors form S020 (`[V118 V127]`) and the one-vector segments `[V133]` and `[V136]`. At P90, S020 remains unchanged.
 
 #### V118 · source N22 · `075b407e91d5…`
 
@@ -812,7 +823,7 @@ All words and internal line breaks remain unchanged.
 - **Vectors:** `V174 V175 V192 V193`
 - **Exists at:** P40 and P50
 - **Least-similar member pair:** `V175 ↔ V193` · cosine `0.518401`
-- **Other audited settings:** At P60, these vectors form the same-note segment `[V174 V175]` from N26 and the same-note segment `[V192 V193]` from N27.
+- **Other included settings:** At P60 through P90, these vectors form the same-note segment `[V174 V175]` from N26 and the same-note segment `[V192 V193]` from N27.
 
 #### V174 · source N26 · `c36ed58c0f53…`
 
@@ -903,9 +914,9 @@ All words and internal line breaks remain unchanged.
 ### S018
 
 - **Vectors:** `V023 V099 V101`
-- **Exists at:** P60
+- **Exists at:** P60 and P70
 - **Least-similar member pair:** `V099 ↔ V101` · cosine `0.611745`
-- **Other audited settings:** At P40 and P50, these vectors are part of S002.
+- **Other included settings:** At P40 and P50, these vectors are part of S002. At P80, they form S019 (`[V023 V099]`) and the one-vector segment `[V101]`; at P90, S019 also splits into one-vector segments.
 
 #### V023 · source N03 · `974dd5c02c7a…`
 
@@ -932,6 +943,55 @@ All words and internal line breaks remain unchanged.
 
 > Flexicables installed for ⟦our geothermal solar powered greenhouse⟧. The greenhouse they have in Aliance Nebraska grows pineapple and dates and citrus.
 > ⟦This will be the first steps to my non consumption based retirement.⟧ https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
+
+### S019
+
+- **Vectors:** `V023 V099`
+- **Exists at:** P80
+- **Least-similar member pair:** `V023 ↔ V099` · cosine `0.674224`
+- **Other included settings:** At P40 and P50, these vectors are part of S002; at P60 and P70, they are part of S018. At P90, they form two one-vector segments: `[V023]` and `[V099]`.
+
+#### V023 · source N03 · `974dd5c02c7a…`
+
+**Takeaway:** In the future, solar energy will account for the vast majority of power generation.
+
+**Complete source note with this vector's mask:**
+
+> ⟦Solar power will be the vast majority of power generation in the future⟧
+
+#### V099 · source N04 · `a59ca772c163…`
+
+**Takeaway:** The shared greenhouse is designed to use geothermal and solar energy.
+
+**Complete source note with this vector's mask:**
+
+> Flexicables installed for ⟦our geothermal solar powered greenhouse⟧. The greenhouse they have in Aliance Nebraska grows pineapple and dates and citrus.
+> This will be the first steps to my non consumption based retirement. https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
+
+### S020
+
+- **Vectors:** `V118 V127`
+- **Exists at:** P80 and P90
+- **Least-similar member pair:** `V118 ↔ V127` · cosine `0.716208`
+- **Other included settings:** At P40 through P70, these vectors are part of S016.
+
+#### V118 · source N22 · `075b407e91d5…`
+
+**Takeaway:** The seemingly obvious advice to remain true to oneself contains profound wisdom that is easy to overlook.
+
+**Complete source note with this vector's mask:**
+
+> ⟦"Just be yourself"⟧ is the best of all the bad advice you ever got. ⟦Wisdom hidden in plain sight.⟧ It took me a lifetime to understand why ⟦this is deep.⟧
+
+#### V127 · source N24 · `4a3184dbd492…`
+
+**Takeaway:** People who feel like outsiders should not fear being themselves or following their own paths, because the world needs their unique perspectives.
+
+**Complete source note with this vector's mask:**
+
+> In a society that values conformity and obedience, the individual who dares to think for themselves is often ostracized and ridiculed. These nonconformists, these outcasts, are the true pioneers of society, the ones who push us to question our assumptions and expand our horizons.
+> They are the ones who are not afraid to be different, to be themselves.
+> ⟦If you find yourself feeling like an outsider⟧, like you don't fit in with the crowd, that's a good thing. It means that you have the potential to make a real difference in the world. ⟦Don't be afraid to be yourself, to follow your own path. The world needs your unique perspective.⟧ https://image.nostr.build/8a30d246bf5f8ece1abf2a5a6798252c868e7c58a0def48102453d52675533b9.jpg
 
 ## Provenance
 
