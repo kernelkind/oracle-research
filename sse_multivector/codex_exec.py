@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run isolated, auditable takeaway and mask generation through codex exec."""
+"""Run isolated, auditable model prompts through codex exec."""
 
 from __future__ import annotations
 
@@ -380,6 +380,80 @@ class Note:
     text: str
 
 
+@dataclass(frozen=True)
+class PromptJob:
+    prompt_id: str
+    text: str
+
+
+@dataclass(frozen=True)
+class PromptRunnerConfig:
+    config_path: Path
+    codex_binary: Path
+    codex_home: Path
+    run_directory: Path
+    model: str
+    reasoning_effort: str
+    prompts: tuple[PromptJob, ...]
+
+    @classmethod
+    def load(cls, path: Path) -> "PromptRunnerConfig":
+        config_path = path.expanduser().resolve()
+        base = config_path.parent
+        value = _expect_object(_load_json(config_path, "config"), "config")
+        _expect_fields(
+            value,
+            "config",
+            {
+                "schema_version",
+                "codex_binary",
+                "codex_home",
+                "run_directory",
+                "model",
+                "reasoning_effort",
+                "prompts",
+            },
+        )
+        if value["schema_version"] != SCHEMA_VERSION:
+            raise RunnerError("unsupported config schema version")
+        raw_prompts = value["prompts"]
+        if not isinstance(raw_prompts, list) or not raw_prompts:
+            raise RunnerError("`config.prompts` must be a nonempty array")
+        prompts: list[PromptJob] = []
+        seen_ids: set[str] = set()
+        for index, raw_prompt in enumerate(raw_prompts):
+            name = f"config.prompts[{index}]"
+            prompt = _expect_object(raw_prompt, name)
+            _expect_fields(prompt, name, {"prompt_id", "text"})
+            prompt_id = _expect_identifier(prompt["prompt_id"], f"{name}.prompt_id")
+            if prompt_id in seen_ids:
+                raise RunnerError(f"duplicate prompt_id `{prompt_id}`")
+            seen_ids.add(prompt_id)
+            prompts.append(
+                PromptJob(
+                    prompt_id=prompt_id,
+                    text=_expect_string(prompt["text"], f"{name}.text"),
+                )
+            )
+        config = cls(
+            config_path=config_path,
+            codex_binary=_resolve_executable(
+                value["codex_binary"], "codex_binary", base
+            ),
+            codex_home=_resolve_path(value["codex_home"], "codex_home", base),
+            run_directory=_resolve_path(
+                value["run_directory"], "run_directory", base
+            ),
+            model=_expect_identifier(value["model"], "config.model"),
+            reasoning_effort=_expect_identifier(
+                value["reasoning_effort"], "config.reasoning_effort"
+            ),
+            prompts=tuple(prompts),
+        )
+        _validate_codex_home(config.codex_home)
+        return config
+
+
 def _load_notes(path: Path) -> tuple[Note, ...]:
     value = _expect_object(_load_json(path, "input_path"), "input")
     _expect_fields(value, "input", {"schema_version", "notes"})
@@ -403,7 +477,7 @@ def _load_notes(path: Path) -> tuple[Note, ...]:
     return tuple(notes)
 
 
-def _codex_version(config: RunnerConfig) -> str:
+def _codex_version(config: RunnerConfig | PromptRunnerConfig) -> str:
     completed = subprocess.run(
         [str(config.codex_binary), "--version"],
         check=False,
@@ -440,6 +514,26 @@ def _stage_manifest(
     }
 
 
+def _isolation_manifest() -> dict[str, object]:
+    return {
+        "fresh_process_per_job": True,
+        "ephemeral": True,
+        "sterile_working_directory_per_job": True,
+        "ignore_user_config": True,
+        "ignore_rules": True,
+        "approval_policy": "never",
+        "sandbox": "read-only",
+        "web_search": "disabled",
+        "shell_environment_inherit": "none",
+        "model_instructions": MINIMAL_MODEL_INSTRUCTIONS,
+        "model_instructions_sha256": _sha256_bytes(
+            MINIMAL_MODEL_INSTRUCTIONS.encode("utf-8")
+        ),
+        "runtime_context_overrides": list(RUNTIME_CONTEXT_OVERRIDES),
+        "disabled_features": list(DISABLED_FEATURES),
+    }
+
+
 def _build_manifest(
     config: RunnerConfig,
     codex_version: str,
@@ -455,31 +549,37 @@ def _build_manifest(
         "takeaway_envelope_version": TAKEAWAY_ENVELOPE_VERSION,
         "takeaway": _stage_manifest(config.takeaway, TAKEAWAY_SCHEMA),
         "mask": _stage_manifest(config.mask, MASK_SCHEMA),
-        "isolation": {
-            "fresh_process_per_job": True,
-            "ephemeral": True,
-            "sterile_working_directory_per_job": True,
-            "ignore_user_config": True,
-            "ignore_rules": True,
-            "approval_policy": "never",
-            "sandbox": "read-only",
-            "web_search": "disabled",
-            "shell_environment_inherit": "none",
-            "model_instructions": MINIMAL_MODEL_INSTRUCTIONS,
-            "model_instructions_sha256": _sha256_bytes(
-                MINIMAL_MODEL_INSTRUCTIONS.encode("utf-8")
-            ),
-            "runtime_context_overrides": list(RUNTIME_CONTEXT_OVERRIDES),
-            "disabled_features": list(DISABLED_FEATURES),
-        },
+        "isolation": _isolation_manifest(),
     }
 
 
-def _prepare_run_directory(
-    config: RunnerConfig,
+def _build_prompt_manifest(
+    config: PromptRunnerConfig,
+    codex_version: str,
+) -> dict[str, object]:
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "mode": "prompt",
+        "wrapper_sha256": _sha256_file(Path(__file__).resolve()),
+        "config_path": str(config.config_path),
+        "config_sha256": _sha256_file(config.config_path),
+        "codex_binary": str(config.codex_binary),
+        "codex_version": codex_version,
+        "codex_home": str(config.codex_home),
+        "model": config.model,
+        "reasoning_effort": config.reasoning_effort,
+        "prompts": [
+            {"prompt_id": prompt.prompt_id, "text": prompt.text}
+            for prompt in config.prompts
+        ],
+        "isolation": _isolation_manifest(),
+    }
+
+
+def _prepare_manifest_directory(
+    run_directory: Path,
     manifest: dict[str, object],
 ) -> str:
-    run_directory = config.run_directory
     manifest_path = run_directory / "manifest.json"
     if run_directory.exists() and not run_directory.is_dir():
         raise RunnerError(f"run_directory is not a directory: {run_directory}")
@@ -505,18 +605,26 @@ def _prepare_run_directory(
     else:
         _atomic_write(manifest_path, manifest_bytes)
     _atomic_write(
-        run_directory / "takeaway-output-schema.json",
-        _canonical_json_bytes(TAKEAWAY_SCHEMA),
-    )
-    _atomic_write(
-        run_directory / "mask-output-schema.json",
-        _canonical_json_bytes(MASK_SCHEMA),
-    )
-    _atomic_write(
         run_directory / "model-instructions.md",
         MINIMAL_MODEL_INSTRUCTIONS.encode("utf-8"),
     )
     return _sha256_bytes(manifest_bytes)
+
+
+def _prepare_run_directory(
+    config: RunnerConfig,
+    manifest: dict[str, object],
+) -> str:
+    manifest_sha256 = _prepare_manifest_directory(config.run_directory, manifest)
+    _atomic_write(
+        config.run_directory / "takeaway-output-schema.json",
+        _canonical_json_bytes(TAKEAWAY_SCHEMA),
+    )
+    _atomic_write(
+        config.run_directory / "mask-output-schema.json",
+        _canonical_json_bytes(MASK_SCHEMA),
+    )
+    return manifest_sha256
 
 
 def _load_latest_results(path: Path, manifest_sha256: str) -> dict[str, dict[str, Any]]:
@@ -636,16 +744,18 @@ def _job_key(
     note_id: str,
     takeaway_index: int | None,
 ) -> str:
+    if stage_name == "prompt":
+        return f"prompt:{note_id}"
     if takeaway_index is None:
         return f"takeaway:{note_id}"
     return f"mask:{note_id}:{takeaway_index}"
 
 
 def _build_exec_argv(
-    config: RunnerConfig,
-    stage: StageConfig,
+    config: RunnerConfig | PromptRunnerConfig,
+    stage: StageConfig | PromptRunnerConfig,
     workspace: Path,
-    schema_path: Path,
+    schema_path: Path | None,
     response_path: Path,
 ) -> list[str]:
     arguments = [
@@ -682,10 +792,10 @@ def _build_exec_argv(
         arguments.extend(("-c", override))
     for feature in DISABLED_FEATURES:
         arguments.extend(("--disable", feature))
+    if schema_path is not None:
+        arguments.extend(("--output-schema", str(schema_path)))
     arguments.extend(
         (
-            "--output-schema",
-            str(schema_path),
             "--output-last-message",
             str(response_path),
             "--json",
@@ -699,23 +809,30 @@ def _build_exec_argv(
 
 def _run_job(
     *,
-    config: RunnerConfig,
+    config: RunnerConfig | PromptRunnerConfig,
     manifest_sha256: str,
     codex_version: str,
     stage_name: str,
-    stage: StageConfig,
+    stage: StageConfig | PromptRunnerConfig,
     note: Note,
     takeaway_index: int | None,
     prompt: str,
-    schema_path: Path,
-    schema: dict[str, object],
+    schema_path: Path | None,
+    schema: dict[str, object] | None,
     results_path: Path,
     latest: dict[str, dict[str, Any]],
     retry_failed: bool,
-) -> list[str]:
+) -> list[str] | str:
     job_key = _job_key(stage_name, note.note_id, takeaway_index)
     previous = latest.get(job_key)
     if previous is not None and previous["status"] == "succeeded":
+        if stage_name == "prompt":
+            response = previous.get("response")
+            if not isinstance(response, str) or not response.strip():
+                raise RunnerError(
+                    f"saved response for job `{job_key}` is not nonempty text"
+                )
+            return response
         return _validate_result_items(
             stage_name,
             previous.get("response"),
@@ -734,7 +851,7 @@ def _run_job(
     exit_code: int | None = None
     thread_id: str | None = None
     usage: object = None
-    response: list[str] | None = None
+    response: list[str] | str | None = None
     error_message: str | None = None
     argv: list[str] = []
     started_at = time.monotonic()
@@ -767,13 +884,18 @@ def _run_job(
             thread_id, usage = _parse_event_stream(stdout)
             if output_raw is None:
                 raise RunnerError("codex exec did not write its final response")
-            try:
-                raw_response = json.loads(output_raw)
-            except json.JSONDecodeError as error:
-                raise RunnerError(
-                    f"codex final response is not valid JSON: {error}"
-                ) from error
-            response = _validate_response(stage_name, raw_response, note.text)
+            if stage_name == "prompt":
+                if not output_raw.strip():
+                    raise RunnerError("codex final response is empty")
+                response = output_raw
+            else:
+                try:
+                    raw_response = json.loads(output_raw)
+                except json.JSONDecodeError as error:
+                    raise RunnerError(
+                        f"codex final response is not valid JSON: {error}"
+                    ) from error
+                response = _validate_response(stage_name, raw_response, note.text)
         except (OSError, UnicodeError, RunnerError) as error:
             error_message = str(error)
 
@@ -791,7 +913,11 @@ def _run_job(
         "reasoning_effort": stage.reasoning_effort,
         "codex_version": codex_version,
         "prompt_sha256": _sha256_bytes(prompt.encode("utf-8")),
-        "response_schema_sha256": _sha256_bytes(_canonical_json_bytes(schema)),
+        "response_schema_sha256": (
+            None
+            if schema is None
+            else _sha256_bytes(_canonical_json_bytes(schema))
+        ),
         "argv": argv,
         "exit_code": exit_code,
         "elapsed_seconds": elapsed_seconds,
@@ -888,6 +1014,47 @@ def run(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
     return output
 
 
+def run_prompts(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
+    config = PromptRunnerConfig.load(config_path)
+    _prepare_codex_home(config.codex_home)
+    _validate_file_credentials(config.codex_home)
+    codex_version = _codex_version(config)
+    manifest = _build_prompt_manifest(config, codex_version)
+    manifest_sha256 = _prepare_manifest_directory(config.run_directory, manifest)
+    results_path = config.run_directory / "results.jsonl"
+    latest = _load_latest_results(results_path, manifest_sha256)
+    (config.run_directory / "output.json").unlink(missing_ok=True)
+    responses: list[dict[str, str]] = []
+
+    for prompt in config.prompts:
+        response = _run_job(
+            config=config,
+            manifest_sha256=manifest_sha256,
+            codex_version=codex_version,
+            stage_name="prompt",
+            stage=config,
+            note=Note(note_id=prompt.prompt_id, text=""),
+            takeaway_index=None,
+            prompt=prompt.text,
+            schema_path=None,
+            schema=None,
+            results_path=results_path,
+            latest=latest,
+            retry_failed=retry_failed,
+        )
+        if not isinstance(response, str):
+            raise AssertionError("successful prompt job returned structured output")
+        responses.append({"prompt_id": prompt.prompt_id, "response": response})
+
+    output: dict[str, object] = {
+        "schema_version": SCHEMA_VERSION,
+        "manifest_sha256": manifest_sha256,
+        "responses": responses,
+    }
+    _atomic_write(config.run_directory / "output.json", _canonical_json_bytes(output))
+    return output
+
+
 def login(codex_home: Path, codex_binary: str) -> int:
     resolved_home = codex_home.expanduser().resolve()
     binary = _resolve_executable(codex_binary, "codex_binary", Path.cwd())
@@ -907,14 +1074,21 @@ def login(codex_home: Path, codex_binary: str) -> int:
 
 def _argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description=(
-            "Run takeaway and exact-mask prompts through isolated codex exec jobs"
-        )
+        description="Run isolated, auditable prompts through codex exec jobs"
     )
     subcommands = parser.add_subparsers(dest="command", required=True)
     run_parser = subcommands.add_parser("run", help="run or resume a batch")
     run_parser.add_argument("config", type=Path)
     run_parser.add_argument(
+        "--retry-failed",
+        action="store_true",
+        help="explicitly retry the latest failed attempt for each failed job",
+    )
+    prompt_parser = subcommands.add_parser(
+        "prompt", help="run isolated arbitrary prompt jobs"
+    )
+    prompt_parser.add_argument("config", type=Path)
+    prompt_parser.add_argument(
         "--retry-failed",
         action="store_true",
         help="explicitly retry the latest failed attempt for each failed job",
@@ -932,6 +1106,10 @@ def main(arguments: Sequence[str] | None = None) -> int:
     try:
         if parsed.command == "login":
             return login(parsed.codex_home, parsed.codex_binary)
+        if parsed.command == "prompt":
+            output = run_prompts(parsed.config, retry_failed=parsed.retry_failed)
+            print(json.dumps({"prompts": len(output["responses"])}, sort_keys=True))
+            return 0
         output = run(parsed.config, retry_failed=parsed.retry_failed)
         takeaway_count = sum(len(note["takeaways"]) for note in output["notes"])
         print(

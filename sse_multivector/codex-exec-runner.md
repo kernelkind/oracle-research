@@ -1,12 +1,12 @@
 # Isolated Codex generation runner
 
-`codex_exec.py` runs the takeaway and mask prompts through subscription-authenticated
-`codex exec`. It is intended for batches larger than the manually orchestrated
-32-note experiment.
+`codex_exec.py` runs isolated prompts through subscription-authenticated `codex
+exec`. It supports arbitrary prompt batches as well as the takeaway-and-mask
+pipeline used by the SSE experiments.
 
-The runner does not choose a model. Takeaway and mask model IDs and reasoning
-efforts are required in every run configuration. This lets us compare configurations
-without changing code or silently falling back to another model.
+The runner does not choose a model. Model IDs and reasoning efforts are required
+in every run configuration. This lets us compare configurations without changing
+code or silently falling back to another model.
 
 ## One-time login
 
@@ -23,7 +23,40 @@ as `auth.json`, which Codex creates with mode `0600`, and must never be placed
 inside the repository. The runner refuses to start generation if that file is
 missing or has any other permission mode.
 
-## Input
+## Generic prompt mode
+
+Use generic prompt mode when each independent input is already a complete prompt:
+
+```json
+{
+  "schema_version": 1,
+  "codex_binary": "codex",
+  "codex_home": "~/.local/state/oracle-mvp/codex-home",
+  "run_directory": "run-subject-labels-1",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "prompts": [
+    {
+      "prompt_id": "S003",
+      "text": "Instances:\n\n1. …\n2. …\n\nWhat is the common thread?"
+    }
+  ]
+}
+```
+
+Run it with:
+
+```sh
+python3 sse_multivector/codex_exec.py prompt path/to/config.json
+```
+
+Each configured prompt is passed to a new isolated process exactly as written.
+Generic mode does not add a prompt envelope or response schema. It records the raw
+final response under that prompt's stable ID.
+
+## Takeaway and mask mode
+
+### Input
 
 ```json
 {
@@ -37,7 +70,7 @@ missing or has any other permission mode.
 }
 ```
 
-## Run configuration
+### Run configuration
 
 Paths may be absolute or relative to the configuration file.
 
@@ -90,21 +123,21 @@ Every generation uses:
 - a subprocess environment with inherited `CODEX_*`, `OPENAI_*`, and `CHATGPT_*`
   variables removed.
 
-The note is still untrusted model input. The isolation contract prevents it from
-turning the generation job into a general Codex tool-using session.
+The configured prompt is still untrusted model input. The isolation contract
+prevents it from turning the generation job into a general Codex tool-using
+session.
 
 ## Results and resume behavior
 
 The run directory contains:
 
-- `manifest.json`: exact input, prompt, schema, model, effort, Codex-version, and
-  wrapper hashes;
+- `manifest.json`: exact inputs and prompts, model, effort, Codex version, wrapper
+  hash, and any response schema used by the selected mode;
 - `model-instructions.md`: the exact minimal replacement for Codex's built-in
   coding-agent instructions;
 - `results.jsonl`: one auditable success or failure record per attempt, including
   token usage, duration, event stream, stderr, and raw final output;
-- `output.json`: published atomically only after every takeaway and mask job
-  succeeds.
+- `output.json`: published atomically only after every configured job succeeds.
 
 Completed jobs are reused when the same command is run again. Failed jobs are not
 retried automatically. After inspecting the failure, explicitly create a new
@@ -112,6 +145,7 @@ recorded attempt with:
 
 ```sh
 python3 sse_multivector/codex_exec.py run path/to/config.json --retry-failed
+python3 sse_multivector/codex_exec.py prompt path/to/config.json --retry-failed
 ```
 
 Changing an input, prompt, model, effort, Codex version, or wrapper implementation

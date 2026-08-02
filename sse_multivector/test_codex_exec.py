@@ -42,7 +42,12 @@ if len(sys.argv) > 1 and sys.argv[1] == "login":
 prompt = sys.stdin.read()
 argv = sys.argv[1:]
 output_path = Path(argv[argv.index("--output-last-message") + 1])
-stage = "mask" if prompt.startswith("MASK INSTRUCTION") else "takeaway"
+if prompt.startswith("GENERIC PROMPT"):
+    stage = "prompt"
+elif prompt.startswith("MASK INSTRUCTION"):
+    stage = "mask"
+else:
+    stage = "takeaway"
 append_log({
     "kind": "exec",
     "stage": stage,
@@ -62,7 +67,10 @@ if os.environ.get("FAKE_CODEX_FAIL_STAGE") == stage:
     print("fixture child failure", file=sys.stderr)
     raise SystemExit(23)
 
-if stage == "takeaway":
+if stage == "prompt":
+    response_object = None
+    output_text = f"Response to: {prompt}"
+elif stage == "takeaway":
     response = [
         "The author finds Rust pleasant.",
         "Tea helps the author.",
@@ -74,10 +82,12 @@ elif "The author finds Rust pleasant." in prompt:
 else:
     response = ["Tea helps"]
 
-response_object = {
-    "fragments" if stage == "mask" else "takeaways": response,
-}
-output_path.write_text(json.dumps(response_object), encoding="utf-8")
+if stage != "prompt":
+    response_object = {
+        "fragments" if stage == "mask" else "takeaways": response,
+    }
+    output_text = json.dumps(response_object)
+output_path.write_text(output_text, encoding="utf-8")
 print(json.dumps({"type": "thread.started", "thread_id": "fixture-thread"}))
 print(json.dumps({"type": "turn.started"}))
 if os.environ.get("FAKE_CODEX_MISSING_COMPLETION") == "1":
@@ -87,7 +97,7 @@ print(json.dumps({
     "item": {
         "id": "fixture-message",
         "type": "agent_message",
-        "text": json.dumps(response_object),
+        "text": output_text,
     },
 }))
 print(json.dumps({
@@ -210,6 +220,32 @@ class CodexExecRunnerTests(unittest.TestCase):
                 str(RUNNER),
                 "run",
                 str(self.config_path),
+                *extra_arguments,
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            env=environment,
+            timeout=30,
+        )
+
+    def invoke_prompt_config(
+        self,
+        config_path: Path,
+        *extra_arguments: str,
+        extra_environment: dict[str, str] | None = None,
+    ) -> subprocess.CompletedProcess[str]:
+        environment = os.environ.copy()
+        environment["FAKE_CODEX_LOG"] = str(self.log_path)
+        environment["CODEX_URL"] = "https://ambient-codex.invalid"
+        environment["OPENAI_API_KEY"] = "ambient-openai-key"
+        environment.update(extra_environment or {})
+        return subprocess.run(
+            [
+                sys.executable,
+                str(RUNNER),
+                "prompt",
+                str(config_path),
                 *extra_arguments,
             ],
             check=False,
@@ -365,6 +401,154 @@ class CodexExecRunnerTests(unittest.TestCase):
             ],
             manifest["isolation"]["runtime_context_overrides"],
         )
+
+    def test_runs_generic_prompts_without_adding_tools_or_prompt_text(self) -> None:
+        prompt_run_directory = self.root / "prompt-run"
+        prompts = [
+            {"prompt_id": "segment-1", "text": "GENERIC PROMPT ONE"},
+            {"prompt_id": "segment-2", "text": "GENERIC PROMPT TWO"},
+        ]
+        config_path = self.root / "prompt-config.json"
+        config_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "codex_binary": str(self.fake_codex),
+                    "codex_home": str(self.codex_home),
+                    "run_directory": str(prompt_run_directory),
+                    "model": "candidate/label",
+                    "reasoning_effort": "low",
+                    "prompts": prompts,
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        completed = self.invoke_prompt_config(config_path)
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        calls = [call for call in self.calls() if call["kind"] == "exec"]
+        self.assertEqual(["prompt", "prompt"], [call["stage"] for call in calls])
+        self.assertEqual([row["text"] for row in prompts], [call["prompt"] for call in calls])
+        self.assertEqual(2, len({call["cwd"] for call in calls}))
+        for call in calls:
+            argv = call["argv"]
+            self.assertNotIn("--output-schema", argv)
+            self.assertIn("--output-last-message", argv)
+            self.assertIn('web_search="disabled"', argv)
+            self.assertIn('approval_policy="never"', argv)
+            self.assertIn("candidate/label", argv)
+            self.assertIn('model_reasoning_effort="low"', argv)
+            self.assertEqual([], call["cwd_entries"])
+            self.assertEqual(
+                {"CODEX_HOME": str(self.codex_home)},
+                call["credential_environment"],
+            )
+            adjacent_arguments = set(zip(argv, argv[1:]))
+            for feature in (
+                "shell_tool",
+                "unified_exec",
+                "multi_agent",
+                "apps",
+                "plugins",
+                "browser_use",
+                "computer_use",
+                "image_generation",
+            ):
+                self.assertIn(("--disable", feature), adjacent_arguments)
+
+        output = json.loads(
+            (prompt_run_directory / "output.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            [
+                {"prompt_id": "segment-1", "response": "Response to: GENERIC PROMPT ONE"},
+                {"prompt_id": "segment-2", "response": "Response to: GENERIC PROMPT TWO"},
+            ],
+            output["responses"],
+        )
+        manifest = json.loads(
+            (prompt_run_directory / "manifest.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual("prompt", manifest["mode"])
+        self.assertEqual("candidate/label", manifest["model"])
+        self.assertEqual("low", manifest["reasoning_effort"])
+        self.assertEqual(prompts, manifest["prompts"])
+
+    def test_generic_prompt_failure_is_audited_and_requires_explicit_retry(
+        self,
+    ) -> None:
+        prompt_run_directory = self.root / "prompt-run"
+        config_path = self.root / "prompt-config.json"
+        config_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "codex_binary": str(self.fake_codex),
+                    "codex_home": str(self.codex_home),
+                    "run_directory": str(prompt_run_directory),
+                    "model": "candidate/label",
+                    "reasoning_effort": "low",
+                    "prompts": [
+                        {"prompt_id": "segment-1", "text": "GENERIC PROMPT ONE"}
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        failed = self.invoke_prompt_config(
+            config_path,
+            extra_environment={"FAKE_CODEX_FAIL_STAGE": "prompt"},
+        )
+
+        self.assertNotEqual(0, failed.returncode)
+        self.assertFalse((prompt_run_directory / "output.json").exists())
+        record = json.loads(
+            (prompt_run_directory / "results.jsonl")
+            .read_text(encoding="utf-8")
+            .splitlines()[0]
+        )
+        self.assertEqual("failed", record["status"])
+        self.assertIsNone(record["response_schema_sha256"])
+
+        calls_before = len(self.calls())
+        blocked = self.invoke_prompt_config(config_path)
+        self.assertNotEqual(0, blocked.returncode)
+        self.assertIn("--retry-failed", blocked.stderr)
+        self.assertEqual(calls_before, len(self.calls()))
+
+        retried = self.invoke_prompt_config(config_path, "--retry-failed")
+        self.assertEqual(0, retried.returncode, retried.stderr)
+        self.assertTrue((prompt_run_directory / "output.json").is_file())
+
+    def test_generic_prompt_config_rejects_duplicate_ids_before_spawning(
+        self,
+    ) -> None:
+        config_path = self.root / "prompt-config.json"
+        config_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "codex_binary": str(self.fake_codex),
+                    "codex_home": str(self.codex_home),
+                    "run_directory": str(self.root / "prompt-run"),
+                    "model": "candidate/label",
+                    "reasoning_effort": "low",
+                    "prompts": [
+                        {"prompt_id": "duplicate", "text": "GENERIC PROMPT ONE"},
+                        {"prompt_id": "duplicate", "text": "GENERIC PROMPT TWO"},
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        completed = self.invoke_prompt_config(config_path)
+
+        self.assertNotEqual(0, completed.returncode)
+        self.assertIn("duplicate prompt_id", completed.stderr)
+        self.assertEqual([], self.calls())
 
     def test_refuses_the_users_normal_codex_home_before_spawning(self) -> None:
         self.write_config(codex_home=Path.home() / ".codex")
