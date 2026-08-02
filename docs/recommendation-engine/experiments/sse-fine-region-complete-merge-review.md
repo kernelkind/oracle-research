@@ -1,116 +1,165 @@
-# Complete Cross-Note Merge Review
+# Every Multi-Note Bucket, With Its Evidence
 
-## Purpose
+## What this document shows
 
-This document exposes every cross-note merge produced by exact complete
-linkage in the predeclared P40, P50, and P60 audit window of the SSE
-fine-region pilot.
+The experiment turned parts of 50 notes into 194 separate numerical
+representations of meaning. It then grouped representations that pointed in
+similar directions.
 
-It does not classify any merge as correct or incorrect. Its purpose is to make
-the evidence easy to judge without relying on the earlier semantic labels.
+This document shows every bucket produced at P40, P50, or P60 by the grouping
+procedure explained below that contains meaning from at least two original
+notes. It does not decide whether any bucket is good or bad. It supplies the
+complete evidence needed to make that judgment.
 
-## Scope and completeness
+**Frozen** below means saved before anyone judged the groupings and left
+unchanged during the review.
 
-The frozen result contains:
+## How one note became several meaning pieces
 
-- 17 cross-note regions at P40;
-- 14 cross-note regions at P50;
-- 11 cross-note regions at P60;
-- 42 threshold-specific occurrences in total;
-- 18 unique exact memberships;
-- 52 unique vectors from 27 source notes.
+For each original note:
 
-One P40/P50 region narrows at P60. Treating that as one evolving case produces
-the 17 cases below without omitting any membership.
+1. The frozen TPv3.81 prompt wrote separate **takeaways** describing the
+   meanings communicated by the note.
+2. For each takeaway, the frozen MPv3.3 prompt selected the exact words in the
+   original note that support that meaning. Those selected words are the
+   **mask**.
+3. The SSE embedding model read the complete note for context, but used the
+   selected words to calculate one numerical vector for that meaning.
 
-DP-vMF regions are not included. They were order-dependent and were not the
-population from which the earlier complete-link semantic judgments were made.
+The frozen experiment produced 194 such meaning pieces, numbered `V000`
+through `V193`. The takeaway explains what a piece is intended to mean; its
+words were not used to calculate the vector.
 
-## How to read the evidence
+All numbered fragments listed under one `VXXX` jointly form that piece's
+mask. Masks for different pieces from the same note may overlap because each
+piece is calculated independently. Every stored fragment selects its first
+occurrence in the note; `V063` explicitly calls this out because its fragment
+`Molly` appears three times.
 
-### Identifier legend
+## How the pieces were grouped
 
-- `VXXX` identifies one of the 194 meaning-vectors in the frozen result,
-  numbered `V000` through `V193`. Each vector corresponds to one takeaway,
-  one source mask, and one source note.
-- `FXX` identifies a review case in this document. Each case starts with one
-  P40 cross-note region and follows that same membership through P50 and P60,
-  avoiding repeated copies of the same evidence. A review case is not an
-  algorithm output, segment ID, or learned subject.
-- `NXX` is a document-local label for one source note. The note's content
-  appears once in the appendix, and its hash prefix appears beside the label.
+The grouping procedure starts with all 194 meaning pieces in separate
+buckets. It compares the direction of every pair of vectors using cosine
+similarity: a higher score means the two represented meanings point in more
+similar directions.
 
-The three cuts require every pair in a region to have at least the following
-cosine similarity:
+For every possible pair of buckets, the procedure looks at the least-similar
+pair of meaning pieces that would be brought together. It joins the two
+buckets whose least-similar pair has the highest score, provided that score
+meets the chosen minimum. It repeats until no remaining join meets the
+minimum. The code calls this rule complete linkage.
 
-| Cut | Minimum pair cosine |
+The same frozen vectors were grouped three times with increasingly strict
+minimums:
+
+| Setting | Every pair in one bucket must score at least |
 |---|---:|
 | P40 | `0.479168` |
 | P50 | `0.505010` |
 | P60 | `0.538475` |
 
-For each vector:
+The three names come from the data. For each of the 194 pieces, the experiment
+found its most similar piece from a different note. It sorted those 194 scores.
+P40 uses the 40th-percentile score as its minimum, P50 uses the 50th, and P60
+uses the 60th. These three adjacent settings were chosen before anyone judged
+the meanings, so the review would not depend on one conveniently selected
+minimum.
 
-- **Takeaway** is the TPv3.81 paraphrase used to define the meaning whose
-  source evidence MPv3.3 must select. The paraphrase itself was not embedded.
-- **Mask** lists the exact source fragments selected by MPv3.3. All listed
-  fragments jointly form one mask.
-- SSE received the complete source note for context, but pooled the selected
-  mask tokens into that vector.
-- The complete source notes appear once in the appendix and are linked from
-  every case that uses them.
-- Every stored fragment has occurrence `1`. If the same fragment text appears
-  more than once in a note, this means the first occurrence; this matters for
-  `V063`, whose selected fragment `Molly` appears three times.
-- A fragment may appear under several vectors from the same note. That
-  repetition is intentional because each vector has its own complete mask.
+P40, P50, and P60 are not probabilities, confidence scores, or accuracy
+measurements. They are three stopping points in the same sequence of bucket
+joins. Raising the minimum can only split an earlier bucket; a piece cannot
+move into a different P40 case. No setting changes or deletes a meaning piece.
 
-The **weakest internal cosine** is the least similar pair inside that region.
-The vector IDs forming that pair are shown beside it. This describes geometry,
-not semantic correctness.
+For example, F01 begins at P40 with `V001`, `V102`, `V103`, and `V104` in one
+bucket. They remain together at P50. At P60, `V001` stands alone while
+`V102`, `V103`, and `V104` remain together. All four pieces still exist.
 
-Use each complete source note only to resolve its selected evidence. Do not
-import unrelated, unselected claims into the vector's meaning.
+## What the labels mean
 
-Apply the same criterion to every case:
+- `VXXX` identifies one meaning piece produced by SSE. Its section shows the
+  generated takeaway and selected source words, and links to the original
+  note.
+- `NXX` identifies one original note within this document. Its complete text
+  appears once in the appendix. The hexadecimal text beside `NXX` is the
+  beginning of that note's stable ID.
+- `FXX` is only a label for one review case in this document. It lets us
+  follow the same P40 bucket as the rule becomes stricter without repeating
+  all of its evidence. It is not a model output, bucket ID, or description of
+  the pieces' subject.
 
-> At each listed threshold, do all member vectors express one narrow,
-> recognizable meaning? Base the decision on each takeaway and selected mask.
+The **least-similar pair still kept together** is the pair with the lowest
+cosine score inside a bucket. That score explains what the grouping procedure
+did; it does not prove that the meanings belong together.
+
+Use a complete source note only to resolve what its selected words refer to.
+Do not import meaning from unselected parts of the note.
+
+Judge every bucket with the same question:
+
+> Could one precise subject description accurately cover every meaning piece
+> in this bucket without becoming vague?
+
+Base that decision on each takeaway and its selected source words.
+
+## What is included
+
+Across the three settings, the frozen result contains:
+
+- 17 buckets containing pieces from different original notes at P40;
+- 14 at P50;
+- 11 at P60;
+- 42 bucket appearances when each setting is counted separately;
+- 18 different combinations of meaning pieces;
+- 52 meaning pieces from 27 original notes.
+
+Following each P40 bucket through the stricter settings produces the 17 cases
+below without omitting any bucket. There are 18 combinations but 17 cases
+because F02's five-piece P40/P50 bucket becomes a three-piece bucket at P60;
+both combinations are shown together in F02. A bucket containing pieces from
+only one original note after a split no longer contributes to the 17, 14, or
+11 multi-note totals, although its pieces remain listed in the case history.
+
+Only 52 of the 194 pieces, from 27 of the 50 notes, appear below. The others
+never entered a multi-note bucket at these three settings.
+
+The pilot also ran an alternative grouping procedure. It is excluded here
+because changing the input order changed its buckets, and it was not the
+procedure behind the groupings being reviewed in this document.
 
 ## Case index
 
-In this table, **same** means the membership is unchanged from the previous
-column. **No cross-note merge** means the listed vectors no longer share a
-region containing more than one source note.
+Every cell states where all of that case's pieces are at that setting.
 
-| Case | P40 membership | P50 membership | P60 membership |
+| Case | P40 | P50 | P60 |
 |---|---|---|---|
-| [F01](#f01) | `V001 V102 V103 V104` | same | no cross-note merge |
-| [F02](#f02) | `V003 V004 V023 V099 V101` | same | `V023 V099 V101` |
-| [F03](#f03) | `V005 V116` | same | same |
-| [F04](#f04) | `V007 V008 V009 V105 V106 V107` | same | same |
-| [F05](#f05) | `V010 V028` | same | same |
-| [F06](#f06) | `V013 V152` | no cross-note merge | no cross-note merge |
-| [F07](#f07) | `V029 V030 V031 V050` | same | same |
-| [F08](#f08) | `V035 V051 V060` | same | same |
-| [F09](#f09) | `V062 V186` | same | same |
-| [F10](#f10) | `V063 V170` | no cross-note merge | no cross-note merge |
-| [F11](#f11) | `V076 V095 V096 V097` | same | same |
-| [F12](#f12) | `V078 V092` | no cross-note merge | no cross-note merge |
-| [F13](#f13) | `V094 V119` | same | same |
-| [F14](#f14) | `V100 V114` | same | no cross-note merge |
-| [F15](#f15) | `V109 V123` | same | same |
-| [F16](#f16) | `V118 V127 V133 V136` | same | same |
-| [F17](#f17) | `V174 V175 V192 V193` | same | no cross-note merge |
+| [F01](#f01) | `V001 V102 V103 V104` together | `V001 V102 V103 V104` together | `V001` alone; `V102 V103 V104` together, all from N02 |
+| [F02](#f02) | `V003 V004 V023 V099 V101` together | `V003 V004 V023 V099 V101` together | `V023 V099 V101` together; `V003 V004` together, both from N01 |
+| [F03](#f03) | `V005 V116` together | `V005 V116` together | `V005 V116` together |
+| [F04](#f04) | `V007 V008 V009 V105 V106 V107` together | `V007 V008 V009 V105 V106 V107` together | `V007 V008 V009 V105 V106 V107` together |
+| [F05](#f05) | `V010 V028` together | `V010 V028` together | `V010 V028` together |
+| [F06](#f06) | `V013 V152` together | `V013` alone; `V152` alone | `V013` alone; `V152` alone |
+| [F07](#f07) | `V029 V030 V031 V050` together | `V029 V030 V031 V050` together | `V029 V030 V031 V050` together |
+| [F08](#f08) | `V035 V051 V060` together | `V035 V051 V060` together | `V035 V051 V060` together |
+| [F09](#f09) | `V062 V186` together | `V062 V186` together | `V062 V186` together |
+| [F10](#f10) | `V063 V170` together | `V063` alone; `V170` alone | `V063` alone; `V170` alone |
+| [F11](#f11) | `V076 V095 V096 V097` together | `V076 V095 V096 V097` together | `V076 V095 V096 V097` together |
+| [F12](#f12) | `V078 V092` together | `V078` alone; `V092` alone | `V078` alone; `V092` alone |
+| [F13](#f13) | `V094 V119` together | `V094 V119` together | `V094 V119` together |
+| [F14](#f14) | `V100 V114` together | `V100 V114` together | `V100` alone; `V114` alone |
+| [F15](#f15) | `V109 V123` together | `V109 V123` together | `V109 V123` together |
+| [F16](#f16) | `V118 V127 V133 V136` together | `V118 V127 V133 V136` together | `V118 V127 V133 V136` together |
+| [F17](#f17) | `V174 V175 V192 V193` together | `V174 V175 V192 V193` together | `V174 V175` together, both from N26; `V192 V193` together, both from N27 |
 
 ## F01
 
-**Membership trace**
+**What happened as the rule became stricter**
 
-- P40 and P50: `V001 V102 V103 V104`
-- P60: no cross-note merge; `V001` becomes a singleton while `V102–V104`
-  remain together because they come from one note.
-- Weakest internal pair at P40/P50: `V001 ↔ V103` · cosine `0.537917`.
+- P40: `V001 V102 V103 V104` were together in one bucket.
+- P50: `V001 V102 V103 V104` remained together.
+- P60: `V001` stood alone. `V102 V103 V104` remained together, but all three
+  came from N02.
+- Least-similar pair still kept together at P40 and P50:
+  `V001 ↔ V103` · cosine `0.537917`.
 
 ### `V001` · [source N01](#n01--7e2e4e93cf8f)
 
@@ -154,14 +203,16 @@ computing power to the Bitcoin network.
 
 ## F02
 
-**Membership trace**
+**What happened as the rule became stricter**
 
-- P40 and P50: `V003 V004 V023 V099 V101`
-- P60: `V023 V099 V101`
-- At P60, `V003 V004` remain together only within source N01; they no longer
-  merge across notes.
-- Weakest internal pair at P40/P50: `V004 ↔ V099` · cosine `0.517907`.
-- Weakest internal pair at P60: `V099 ↔ V101` · cosine `0.611745`.
+- P40: `V003 V004 V023 V099 V101` were together in one bucket.
+- P50: `V003 V004 V023 V099 V101` remained together.
+- P60: `V023 V099 V101` remained together. `V003 V004` formed a separate
+  bucket, but both came from N01.
+- Least-similar pair still kept together at P40 and P50:
+  `V004 ↔ V099` · cosine `0.517907`.
+- Least-similar pair still kept together in the P60 bucket containing pieces
+  from different notes: `V099 ↔ V101` · cosine `0.611745`.
 
 ### `V003` · [source N01](#n01--7e2e4e93cf8f)
 
@@ -216,10 +267,12 @@ toward a retirement that is not consumption-based.
 
 ## F03
 
-**Membership trace**
+**What happened as the rule became stricter**
 
-- P40, P50, and P60: `V005 V116`
-- Weakest internal pair: `V005 ↔ V116` · cosine `0.656710`.
+- P40: `V005 V116` were together in one bucket.
+- P50: `V005 V116` remained together.
+- P60: `V005 V116` remained together.
+- Least-similar pair still kept together: `V005 ↔ V116` · cosine `0.656710`.
 
 ### `V005` · [source N05](#n05--f81f01d4d50f)
 
@@ -242,10 +295,12 @@ they consider delicious.
 
 ## F04
 
-**Membership trace**
+**What happened as the rule became stricter**
 
-- P40, P50, and P60: `V007 V008 V009 V105 V106 V107`
-- Weakest internal pair: `V008 ↔ V107` · cosine `0.682637`.
+- P40: `V007 V008 V009 V105 V106 V107` were together in one bucket.
+- P50: `V007 V008 V009 V105 V106 V107` remained together.
+- P60: `V007 V008 V009 V105 V106 V107` remained together.
+- Least-similar pair still kept together: `V008 ↔ V107` · cosine `0.682637`.
 
 ### `V007` · [source N07](#n07--056e64662570)
 
@@ -309,10 +364,12 @@ decaffeinated-coffee drinkers.
 
 ## F05
 
-**Membership trace**
+**What happened as the rule became stricter**
 
-- P40, P50, and P60: `V010 V028`
-- Weakest internal pair: `V010 ↔ V028` · cosine `0.759397`.
+- P40: `V010 V028` were together in one bucket.
+- P50: `V010 V028` remained together.
+- P60: `V010 V028` remained together.
+- Least-similar pair still kept together: `V010 ↔ V028` · cosine `0.759397`.
 
 ### `V010` · [source N07](#n07--056e64662570)
 
@@ -336,11 +393,13 @@ chain.
 
 ## F06
 
-**Membership trace**
+**What happened as the rule became stricter**
 
-- P40: `V013 V152`
-- P50 and P60: no cross-note merge; both vectors become singletons.
-- Weakest internal pair at P40: `V013 ↔ V152` · cosine `0.501598`.
+- P40: `V013 V152` were together in one bucket.
+- P50: `V013` stood alone and `V152` stood alone.
+- P60: `V013` stood alone and `V152` stood alone.
+- Least-similar pair still kept together at P40:
+  `V013 ↔ V152` · cosine `0.501598`.
 
 ### `V013` · [source N10](#n10--74694da41f36)
 
@@ -362,10 +421,12 @@ digger they share or own with others.
 
 ## F07
 
-**Membership trace**
+**What happened as the rule became stricter**
 
-- P40, P50, and P60: `V029 V030 V031 V050`
-- Weakest internal pair: `V030 ↔ V050` · cosine `0.664877`.
+- P40: `V029 V030 V031 V050` were together in one bucket.
+- P50: `V029 V030 V031 V050` remained together.
+- P60: `V029 V030 V031 V050` remained together.
+- Least-similar pair still kept together: `V030 ↔ V050` · cosine `0.664877`.
 
 ### `V029` · [source N12](#n12--7adcfe1ab26f)
 
@@ -412,10 +473,12 @@ iMessage service on any platform.
 
 ## F08
 
-**Membership trace**
+**What happened as the rule became stricter**
 
-- P40, P50, and P60: `V035 V051 V060`
-- Weakest internal pair: `V035 ↔ V060` · cosine `0.717748`.
+- P40: `V035 V051 V060` were together in one bucket.
+- P50: `V035 V051 V060` remained together.
+- P60: `V035 V051 V060` remained together.
+- Least-similar pair still kept together: `V035 ↔ V060` · cosine `0.717748`.
 
 ### `V035` · [source N12](#n12--7adcfe1ab26f)
 
@@ -447,10 +510,12 @@ stack consists of free and open-source software.
 
 ## F09
 
-**Membership trace**
+**What happened as the rule became stricter**
 
-- P40, P50, and P60: `V062 V186`
-- Weakest internal pair: `V062 ↔ V186` · cosine `0.569165`.
+- P40: `V062 V186` were together in one bucket.
+- P50: `V062 V186` remained together.
+- P60: `V062 V186` remained together.
+- Least-similar pair still kept together: `V062 ↔ V186` · cosine `0.569165`.
 
 ### `V062` · [source N15](#n15--aa269973db71)
 
@@ -473,11 +538,13 @@ because it keeps people’s behavior in check.
 
 ## F10
 
-**Membership trace**
+**What happened as the rule became stricter**
 
-- P40: `V063 V170`
-- P50 and P60: no cross-note merge; both vectors become singletons.
-- Weakest internal pair at P40: `V063 ↔ V170` · cosine `0.498993`.
+- P40: `V063 V170` were together in one bucket.
+- P50: `V063` stood alone and `V170` stood alone.
+- P60: `V063` stood alone and `V170` stood alone.
+- Least-similar pair still kept together at P40:
+  `V063 ↔ V170` · cosine `0.498993`.
 
 ### `V063` · [source N15](#n15--aa269973db71)
 
@@ -500,10 +567,12 @@ use the author's preferred communication protocol.
 
 ## F11
 
-**Membership trace**
+**What happened as the rule became stricter**
 
-- P40, P50, and P60: `V076 V095 V096 V097`
-- Weakest internal pair: `V076 ↔ V096` · cosine `0.610311`.
+- P40: `V076 V095 V096 V097` were together in one bucket.
+- P50: `V076 V095 V096 V097` remained together.
+- P60: `V076 V095 V096 V097` remained together.
+- Least-similar pair still kept together: `V076 ↔ V096` · cosine `0.610311`.
 
 ### `V076` · [source N18](#n18--84aba98daa2c)
 
@@ -549,11 +618,13 @@ consistent noise levels over roughly the same period in which the Avalon Nano
 
 ## F12
 
-**Membership trace**
+**What happened as the rule became stricter**
 
-- P40: `V078 V092`
-- P50 and P60: no cross-note merge; both vectors become singletons.
-- Weakest internal pair at P40: `V078 ↔ V092` · cosine `0.482704`.
+- P40: `V078 V092` were together in one bucket.
+- P50: `V078` stood alone and `V092` stood alone.
+- P60: `V078` stood alone and `V092` stood alone.
+- Least-similar pair still kept together at P40:
+  `V078 ↔ V092` · cosine `0.482704`.
 
 ### `V078` · [source N20](#n20--4166411750a2)
 
@@ -576,10 +647,12 @@ Elizondo’s book “Imminent” authentic, well written, and gripping.
 
 ## F13
 
-**Membership trace**
+**What happened as the rule became stricter**
 
-- P40, P50, and P60: `V094 V119`
-- Weakest internal pair: `V094 ↔ V119` · cosine `0.538615`.
+- P40: `V094 V119` were together in one bucket.
+- P50: `V094 V119` remained together.
+- P60: `V094 V119` remained together.
+- Least-similar pair still kept together: `V094 ↔ V119` · cosine `0.538615`.
 
 ### `V094` · [source N21](#n21--38c864c05535)
 
@@ -606,11 +679,13 @@ remaining true to oneself is profound advice.
 
 ## F14
 
-**Membership trace**
+**What happened as the rule became stricter**
 
-- P40 and P50: `V100 V114`
-- P60: no cross-note merge; both vectors become singletons.
-- Weakest internal pair at P40/P50: `V100 ↔ V114` · cosine `0.507426`.
+- P40: `V100 V114` were together in one bucket.
+- P50: `V100 V114` remained together.
+- P60: `V100` stood alone and `V114` stood alone.
+- Least-similar pair still kept together at P40 and P50:
+  `V100 ↔ V114` · cosine `0.507426`.
 
 ### `V100` · [source N04](#n04--a59ca772c163)
 
@@ -633,10 +708,12 @@ make for a good Saturday.
 
 ## F15
 
-**Membership trace**
+**What happened as the rule became stricter**
 
-- P40, P50, and P60: `V109 V123`
-- Weakest internal pair: `V109 ↔ V123` · cosine `0.656426`.
+- P40: `V109 V123` were together in one bucket.
+- P50: `V109 V123` remained together.
+- P60: `V109 V123` remained together.
+- Least-similar pair still kept together: `V109 ↔ V123` · cosine `0.656426`.
 
 ### `V109` · [source N23](#n23--2c054d399715)
 
@@ -658,10 +735,12 @@ dare to think independently are often excluded and mocked.
 
 ## F16
 
-**Membership trace**
+**What happened as the rule became stricter**
 
-- P40, P50, and P60: `V118 V127 V133 V136`
-- Weakest internal pair: `V118 ↔ V133` · cosine `0.577648`.
+- P40: `V118 V127 V133 V136` were together in one bucket.
+- P50: `V118 V127 V133 V136` remained together.
+- P60: `V118 V127 V133 V136` remained together.
+- Least-similar pair still kept together: `V118 ↔ V133` · cosine `0.577648`.
 
 ### `V118` · [source N22](#n22--075b407e91d5)
 
@@ -706,12 +785,14 @@ aspects of life will fall into place.
 
 ## F17
 
-**Membership trace**
+**What happened as the rule became stricter**
 
-- P40 and P50: `V174 V175 V192 V193`
-- P60: no cross-note merge. `V174 V175` remain together within source N26,
-  and `V192 V193` remain together within source N27.
-- Weakest internal pair at P40/P50: `V175 ↔ V193` · cosine `0.518401`.
+- P40: `V174 V175 V192 V193` were together in one bucket.
+- P50: `V174 V175 V192 V193` remained together.
+- P60: `V174 V175` formed one bucket, but both came from N26. `V192 V193`
+  formed another bucket, but both came from N27.
+- Least-similar pair still kept together at P40 and P50:
+  `V175 ↔ V193` · cosine `0.518401`.
 
 ### `V174` · [source N26](#n26--c36ed58c0f53)
 
@@ -1090,11 +1171,12 @@ We're at a crossroads: government surveillance money or free, open, private peop
 
 ## Provenance
 
-All memberships, takeaways, masks, source notes, and cosine values come from
-the immutable pilot result:
+All bucket contents, takeaways, masks, source notes, and cosine values come
+from this saved JSON output:
 
 ```text
 sse_multivector/fine-region-partition-result-v1/analysis.json
 ```
 
-The underlying TEv4.1 archive and the partition artifact remain unchanged.
+The saved note, takeaway, and mask inputs and the saved grouping output remain
+unchanged.
