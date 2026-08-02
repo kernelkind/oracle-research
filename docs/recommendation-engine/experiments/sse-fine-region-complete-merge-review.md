@@ -1,14 +1,15 @@
-# Every Multi-Note Bucket, With Its Evidence
+# Every Multi-Note Segment, With Its Evidence
 
 ## What this document shows
 
 The experiment turned parts of 50 notes into 194 separate numerical
 representations of meaning. It then grouped representations that pointed in
-similar directions.
+similar directions. Each resulting group is a **segment**. A segment may
+contain one vector or many vectors.
 
-This document shows every bucket produced at P40, P50, or P60 by the grouping
+This document shows every segment produced at P40, P50, or P60 by the grouping
 procedure explained below that contains meaning from at least two original
-notes. It does not decide whether any bucket is good or bad. It supplies the
+notes. It does not decide whether any segment is good or bad. It supplies the
 complete evidence needed to make that judgment.
 
 **Frozen** below means saved before anyone judged the groupings and left
@@ -32,27 +33,26 @@ words were not used to calculate the vector.
 
 All numbered fragments listed under one `VXXX` jointly form that piece's
 mask. Masks for different pieces from the same note may overlap because each
-piece is calculated independently. Every stored fragment selects its first
-occurrence in the note; `V063` explicitly calls this out because its fragment
-`Molly` appears three times.
+piece is calculated independently. Every fragment listed below selects its
+first occurrence in the note; `V063` explicitly calls this out because its
+fragment `Molly` appears three times.
 
 ## How the pieces were grouped
 
-The grouping procedure starts with all 194 meaning pieces in separate
-buckets. It compares the direction of every pair of vectors using cosine
-similarity: a higher score means the two represented meanings point in more
-similar directions.
+The grouping procedure starts with 194 one-vector segments. It compares the
+direction of every pair of vectors using cosine similarity: a higher score
+means the two represented meanings point in more similar directions.
 
-For every possible pair of buckets, the procedure looks at the least-similar
+For every possible pair of segments, the procedure looks at the least-similar
 pair of meaning pieces that would be brought together. It joins the two
-buckets whose least-similar pair has the highest score, provided that score
+segments whose least-similar pair has the highest score, provided that score
 meets the chosen minimum. It repeats until no remaining join meets the
 minimum. The code calls this rule complete linkage.
 
 The same frozen vectors were grouped three times with increasingly strict
 minimums:
 
-| Setting | Every pair in one bucket must score at least |
+| Setting | Every pair in one segment must score at least |
 |---|---:|
 | P40 | `0.479168` |
 | P50 | `0.505010` |
@@ -66,13 +66,9 @@ the meanings, so the review would not depend on one conveniently selected
 minimum.
 
 P40, P50, and P60 are not probabilities, confidence scores, or accuracy
-measurements. They are three stopping points in the same sequence of bucket
-joins. Raising the minimum can only split an earlier bucket; a piece cannot
-move into a different P40 case. No setting changes or deletes a meaning piece.
-
-For example, F01 begins at P40 with `V001`, `V102`, `V103`, and `V104` in one
-bucket. They remain together at P50. At P60, `V001` stands alone while
-`V102`, `V103`, and `V104` remain together. All four pieces still exist.
+measurements. They are three stopping points in the same sequence of segment
+joins. Raising the minimum can only split an earlier segment. No setting
+changes or deletes a meaning piece.
 
 ## What the labels mean
 
@@ -82,22 +78,27 @@ bucket. They remain together at P50. At P60, `V001` stands alone while
 - `NXX` identifies one original note within this document. Its complete text
   appears once in the appendix. The hexadecimal text beside `NXX` is the
   beginning of that note's stable ID.
-- `FXX` is only a label for one review case in this document. It lets us
-  follow the same P40 bucket as the rule becomes stricter without repeating
-  all of its evidence. It is not a model output, bucket ID, or description of
-  the pieces' subject.
+- `SXXX` identifies one exact segment in this frozen review. Two appearances
+  share an ID only when they contain exactly the same vectors. The 18 IDs are
+  assigned deterministically by the first audited setting where the segment
+  appears, then by ascending vector membership.
 
-The **least-similar pair still kept together** is the pair with the lowest
-cosine score inside a bucket. That score explains what the grouping procedure
+This document assigns `SXXX` IDs only to the 18 segments that contain vectors
+from at least two notes. The complete output also contains one-vector and
+same-note segments, whose vectors all come from one original note, but they
+are outside this multi-note review.
+
+The **least-similar member pair** is the pair with the lowest cosine score
+inside a segment. That score explains what the grouping procedure
 did; it does not prove that the meanings belong together.
 
 Use a complete source note only to resolve what its selected words refer to.
 Do not import meaning from unselected parts of the note.
 
-Judge every bucket with the same question:
+Judge every segment with the same question:
 
 > Could one precise subject description accurately cover every meaning piece
-> in this bucket without becoming vague?
+> in this segment without becoming vague?
 
 Base that decision on each takeaway and its selected source words.
 
@@ -105,61 +106,166 @@ Base that decision on each takeaway and its selected source words.
 
 Across the three settings, the frozen result contains:
 
-- 17 buckets containing pieces from different original notes at P40;
+- 17 segments containing pieces from different original notes at P40;
 - 14 at P50;
 - 11 at P60;
-- 42 bucket appearances when each setting is counted separately;
-- 18 different combinations of meaning pieces;
+- 42 segment appearances when each setting is counted separately;
+- 18 distinct multi-note segments;
 - 52 meaning pieces from 27 original notes.
 
-Following each P40 bucket through the stricter settings produces the 17 cases
-below without omitting any bucket. There are 18 combinations but 17 cases
-because F02's five-piece P40/P50 bucket becomes a three-piece bucket at P60;
-both combinations are shown together in F02. A bucket containing pieces from
-only one original note after a split no longer contributes to the 17, 14, or
-11 multi-note totals, although its pieces remain listed in the case history.
+The same exact segment may exist at more than one setting, so the 42
+appearances reduce to 18 distinct segments. `S018` is the only new multi-note
+segment created by a split inside the P40–P60 window: it contains three of
+`S002`'s five vectors at P60.
+
+A segment containing vectors from only one original note does not contribute
+to the 17, 14, or 11 multi-note totals. It remains a valid segment in the full
+partition.
 
 Only 52 of the 194 pieces, from 27 of the 50 notes, appear below. The others
-never entered a multi-note bucket at these three settings.
+never entered a multi-note segment at these three settings.
 
 The pilot also ran an alternative grouping procedure. It is excluded here
-because changing the input order changed its buckets, and it was not the
+because changing the input order changed its segments, and it was not the
 procedure behind the groupings being reviewed in this document.
 
-## Case index
+## Segment registry
 
-Every cell states where all of that case's pieces are at that setting.
+Each section below identifies one exact segment. **Vectors** states its entire
+membership. **Exists at** states every audited setting where that exact
+membership is produced. Square brackets show another segment's entire
+membership: `[V001 V002]` means one segment containing exactly those two
+vectors.
 
-| Case | P40 | P50 | P60 |
-|---|---|---|---|
-| [F01](#f01) | `V001 V102 V103 V104` together | `V001 V102 V103 V104` together | `V001` alone; `V102 V103 V104` together, all from N02 |
-| [F02](#f02) | `V003 V004 V023 V099 V101` together | `V003 V004 V023 V099 V101` together | `V023 V099 V101` together; `V003 V004` together, both from N01 |
-| [F03](#f03) | `V005 V116` together | `V005 V116` together | `V005 V116` together |
-| [F04](#f04) | `V007 V008 V009 V105 V106 V107` together | `V007 V008 V009 V105 V106 V107` together | `V007 V008 V009 V105 V106 V107` together |
-| [F05](#f05) | `V010 V028` together | `V010 V028` together | `V010 V028` together |
-| [F06](#f06) | `V013 V152` together | `V013` alone; `V152` alone | `V013` alone; `V152` alone |
-| [F07](#f07) | `V029 V030 V031 V050` together | `V029 V030 V031 V050` together | `V029 V030 V031 V050` together |
-| [F08](#f08) | `V035 V051 V060` together | `V035 V051 V060` together | `V035 V051 V060` together |
-| [F09](#f09) | `V062 V186` together | `V062 V186` together | `V062 V186` together |
-| [F10](#f10) | `V063 V170` together | `V063` alone; `V170` alone | `V063` alone; `V170` alone |
-| [F11](#f11) | `V076 V095 V096 V097` together | `V076 V095 V096 V097` together | `V076 V095 V096 V097` together |
-| [F12](#f12) | `V078 V092` together | `V078` alone; `V092` alone | `V078` alone; `V092` alone |
-| [F13](#f13) | `V094 V119` together | `V094 V119` together | `V094 V119` together |
-| [F14](#f14) | `V100 V114` together | `V100 V114` together | `V100` alone; `V114` alone |
-| [F15](#f15) | `V109 V123` together | `V109 V123` together | `V109 V123` together |
-| [F16](#f16) | `V118 V127 V133 V136` together | `V118 V127 V133 V136` together | `V118 V127 V133 V136` together |
-| [F17](#f17) | `V174 V175 V192 V193` together | `V174 V175 V192 V193` together | `V174 V175` together, both from N26; `V192 V193` together, both from N27 |
+### S001
 
-## F01
+- **Vectors:** `V001 V102 V103 V104`
+- **Exists at:** P40 and P50
+- **Least-similar member pair:** `V001 ↔ V103` · cosine `0.537917`
+- **At P60:** these vectors form the one-vector segment `[V001]` and the
+  same-note segment `[V102 V103 V104]`, whose vectors all come from N02.
 
-**What happened as the rule became stricter**
+### S002
 
-- P40: `V001 V102 V103 V104` were together in one bucket.
-- P50: `V001 V102 V103 V104` remained together.
-- P60: `V001` stood alone. `V102 V103 V104` remained together, but all three
-  came from N02.
-- Least-similar pair still kept together at P40 and P50:
-  `V001 ↔ V103` · cosine `0.537917`.
+- **Vectors:** `V003 V004 V023 V099 V101`
+- **Exists at:** P40 and P50
+- **Least-similar member pair:** `V004 ↔ V099` · cosine `0.517907`
+- **At P60:** these vectors form the same-note segment `[V003 V004]`, whose
+  vectors both come from N01, and [S018](#s018), whose membership is
+  `[V023 V099 V101]`.
+
+### S003
+
+- **Vectors:** `V005 V116`
+- **Exists at:** P40, P50, and P60
+- **Least-similar member pair:** `V005 ↔ V116` · cosine `0.656710`
+
+### S004
+
+- **Vectors:** `V007 V008 V009 V105 V106 V107`
+- **Exists at:** P40, P50, and P60
+- **Least-similar member pair:** `V008 ↔ V107` · cosine `0.682637`
+
+### S005
+
+- **Vectors:** `V010 V028`
+- **Exists at:** P40, P50, and P60
+- **Least-similar member pair:** `V010 ↔ V028` · cosine `0.759397`
+
+### S006
+
+- **Vectors:** `V013 V152`
+- **Exists at:** P40
+- **Least-similar member pair:** `V013 ↔ V152` · cosine `0.501598`
+- **At P50 and P60:** these vectors form two one-vector segments: `[V013]`
+  and `[V152]`.
+
+### S007
+
+- **Vectors:** `V029 V030 V031 V050`
+- **Exists at:** P40, P50, and P60
+- **Least-similar member pair:** `V030 ↔ V050` · cosine `0.664877`
+
+### S008
+
+- **Vectors:** `V035 V051 V060`
+- **Exists at:** P40, P50, and P60
+- **Least-similar member pair:** `V035 ↔ V060` · cosine `0.717748`
+
+### S009
+
+- **Vectors:** `V062 V186`
+- **Exists at:** P40, P50, and P60
+- **Least-similar member pair:** `V062 ↔ V186` · cosine `0.569165`
+
+### S010
+
+- **Vectors:** `V063 V170`
+- **Exists at:** P40
+- **Least-similar member pair:** `V063 ↔ V170` · cosine `0.498993`
+- **At P50 and P60:** these vectors form two one-vector segments: `[V063]`
+  and `[V170]`.
+
+### S011
+
+- **Vectors:** `V076 V095 V096 V097`
+- **Exists at:** P40, P50, and P60
+- **Least-similar member pair:** `V076 ↔ V096` · cosine `0.610311`
+
+### S012
+
+- **Vectors:** `V078 V092`
+- **Exists at:** P40
+- **Least-similar member pair:** `V078 ↔ V092` · cosine `0.482704`
+- **At P50 and P60:** these vectors form two one-vector segments: `[V078]`
+  and `[V092]`.
+
+### S013
+
+- **Vectors:** `V094 V119`
+- **Exists at:** P40, P50, and P60
+- **Least-similar member pair:** `V094 ↔ V119` · cosine `0.538615`
+
+### S014
+
+- **Vectors:** `V100 V114`
+- **Exists at:** P40 and P50
+- **Least-similar member pair:** `V100 ↔ V114` · cosine `0.507426`
+- **At P60:** these vectors form two one-vector segments: `[V100]` and
+  `[V114]`.
+
+### S015
+
+- **Vectors:** `V109 V123`
+- **Exists at:** P40, P50, and P60
+- **Least-similar member pair:** `V109 ↔ V123` · cosine `0.656426`
+
+### S016
+
+- **Vectors:** `V118 V127 V133 V136`
+- **Exists at:** P40, P50, and P60
+- **Least-similar member pair:** `V118 ↔ V133` · cosine `0.577648`
+
+### S017
+
+- **Vectors:** `V174 V175 V192 V193`
+- **Exists at:** P40 and P50
+- **Least-similar member pair:** `V175 ↔ V193` · cosine `0.518401`
+- **At P60:** these vectors form the same-note segment `[V174 V175]` from N26
+  and the same-note segment `[V192 V193]` from N27.
+
+### S018
+
+- **Vectors:** `V023 V099 V101`
+- **Exists at:** P60
+- **Least-similar member pair:** `V099 ↔ V101` · cosine `0.611745`
+- **At P40 and P50:** these vectors are part of [S002](#s002).
+
+## Meaning-piece evidence
+
+The 52 meaning pieces used by the 18 segments appear once below. Each entry
+contains its generated takeaway, exact source mask, and a link to its complete
+source note.
 
 ### `V001` · [source N01](#n01--7e2e4e93cf8f)
 
@@ -200,19 +306,6 @@ computing power to the Bitcoin network.
 
 1. `BitAxe`
 2. `start mining at home and contributing to the network`
-
-## F02
-
-**What happened as the rule became stricter**
-
-- P40: `V003 V004 V023 V099 V101` were together in one bucket.
-- P50: `V003 V004 V023 V099 V101` remained together.
-- P60: `V023 V099 V101` remained together. `V003 V004` formed a separate
-  bucket, but both came from N01.
-- Least-similar pair still kept together at P40 and P50:
-  `V004 ↔ V099` · cosine `0.517907`.
-- Least-similar pair still kept together in the P60 bucket containing pieces
-  from different notes: `V099 ↔ V101` · cosine `0.611745`.
 
 ### `V003` · [source N01](#n01--7e2e4e93cf8f)
 
@@ -265,15 +358,6 @@ toward a retirement that is not consumption-based.
 1. `our geothermal solar powered greenhouse`
 2. `This will be the first steps to my non consumption based retirement.`
 
-## F03
-
-**What happened as the rule became stricter**
-
-- P40: `V005 V116` were together in one bucket.
-- P50: `V005 V116` remained together.
-- P60: `V005 V116` remained together.
-- Least-similar pair still kept together: `V005 ↔ V116` · cosine `0.656710`.
-
 ### `V005` · [source N05](#n05--f81f01d4d50f)
 
 **Takeaway:** A linked science article discusses research showing that
@@ -292,15 +376,6 @@ they consider delicious.
 **Mask:**
 
 1. `I’m typing this while drinking my delicious coffee.`
-
-## F04
-
-**What happened as the rule became stricter**
-
-- P40: `V007 V008 V009 V105 V106 V107` were together in one bucket.
-- P50: `V007 V008 V009 V105 V106 V107` remained together.
-- P60: `V007 V008 V009 V105 V106 V107` remained together.
-- Least-similar pair still kept together: `V008 ↔ V107` · cosine `0.682637`.
 
 ### `V007` · [source N07](#n07--056e64662570)
 
@@ -362,15 +437,6 @@ decaffeinated-coffee drinkers.
 1. `Decafe coffee drinkers are the purist coffee enthusiasts of them all as they do it for the experience and flavour. Unlike the caffeine addicted heathens.`
 2. `Change my mind.`
 
-## F05
-
-**What happened as the rule became stricter**
-
-- P40: `V010 V028` were together in one bucket.
-- P50: `V010 V028` remained together.
-- P60: `V010 V028` remained together.
-- Least-similar pair still kept together: `V010 ↔ V028` · cosine `0.759397`.
-
 ### `V010` · [source N07](#n07--056e64662570)
 
 **Takeaway:** The author says they are sipping coffee and frames the post as a
@@ -391,16 +457,6 @@ chain.
 
 1. `#coffeechain`
 
-## F06
-
-**What happened as the rule became stricter**
-
-- P40: `V013 V152` were together in one bucket.
-- P50: `V013` stood alone and `V152` stood alone.
-- P60: `V013` stood alone and `V152` stood alone.
-- Least-similar pair still kept together at P40:
-  `V013 ↔ V152` · cosine `0.501598`.
-
 ### `V013` · [source N10](#n10--74694da41f36)
 
 **Takeaway:** The author needs to retrieve wire from a personal trailer
@@ -418,15 +474,6 @@ digger they share or own with others.
 **Mask:**
 
 1. `We need to replace a grommet on the fuel tank of our post hole digger.`
-
-## F07
-
-**What happened as the rule became stricter**
-
-- P40: `V029 V030 V031 V050` were together in one bucket.
-- P50: `V029 V030 V031 V050` remained together.
-- P60: `V029 V030 V031 V050` remained together.
-- Least-similar pair still kept together: `V030 ↔ V050` · cosine `0.664877`.
 
 ### `V029` · [source N12](#n12--7adcfe1ab26f)
 
@@ -471,15 +518,6 @@ iMessage service on any platform.
 
 1. `#pypush can now send and receive #iMessage, on any platform`
 
-## F08
-
-**What happened as the rule became stricter**
-
-- P40: `V035 V051 V060` were together in one bucket.
-- P50: `V035 V051 V060` remained together.
-- P60: `V035 V051 V060` remained together.
-- Least-similar pair still kept together: `V035 ↔ V060` · cosine `0.717748`.
-
 ### `V035` · [source N12](#n12--7adcfe1ab26f)
 
 **Takeaway:** The author believes free and open-source software is the only
@@ -508,15 +546,6 @@ stack consists of free and open-source software.
 
 1. `Getting close to 100% of my software stack being free and open source.`
 
-## F09
-
-**What happened as the rule became stricter**
-
-- P40: `V062 V186` were together in one bucket.
-- P50: `V062 V186` remained together.
-- P60: `V062 V186` remained together.
-- Least-similar pair still kept together: `V062 ↔ V186` · cosine `0.569165`.
-
 ### `V062` · [source N15](#n15--aa269973db71)
 
 **Takeaway:** Molly is a fork of the Signal messaging app designed to offer
@@ -536,16 +565,6 @@ because it keeps people’s behavior in check.
 1. `Larry Ellison`
 2. `said real-time surveillance is good for keeping us in check`
 
-## F10
-
-**What happened as the rule became stricter**
-
-- P40: `V063 V170` were together in one bucket.
-- P50: `V063` stood alone and `V170` stood alone.
-- P60: `V063` stood alone and `V170` stood alone.
-- Least-similar pair still kept together at P40:
-  `V063 ↔ V170` · cosine `0.498993`.
-
 ### `V063` · [source N15](#n15--aa269973db71)
 
 **Takeaway:** Molly contains no proprietary code or binary blobs.
@@ -564,15 +583,6 @@ use the author's preferred communication protocol.
 
 1. `Here's my core message:`
 2. `This isn't about me trying to force you to use my favorite protocol.`
-
-## F11
-
-**What happened as the rule became stricter**
-
-- P40: `V076 V095 V096 V097` were together in one bucket.
-- P50: `V076 V095 V096 V097` remained together.
-- P60: `V076 V095 V096 V097` remained together.
-- Least-similar pair still kept together: `V076 ↔ V096` · cosine `0.610311`.
 
 ### `V076` · [source N18](#n18--84aba98daa2c)
 
@@ -616,16 +626,6 @@ consistent noise levels over roughly the same period in which the Avalon Nano
 2. `In comparison, I’ve had the 4 #Bitaxe for about the same period, and its noise level has remained consistent.`
 3. `My prediction is that Avalons gonna die much more faster than Bitaxe`
 
-## F12
-
-**What happened as the rule became stricter**
-
-- P40: `V078 V092` were together in one bucket.
-- P50: `V078` stood alone and `V092` stood alone.
-- P60: `V078` stood alone and `V092` stood alone.
-- Least-similar pair still kept together at P40:
-  `V078 ↔ V092` · cosine `0.482704`.
-
 ### `V078` · [source N20](#n20--4166411750a2)
 
 **Takeaway:** The author directs the book-choice question to Nostr users,
@@ -644,15 +644,6 @@ Elizondo’s book “Imminent” authentic, well written, and gripping.
 **Mask:**
 
 1. `Elizondo’s Imminent is an authentic, well-written page turner so far as I’ve read.`
-
-## F13
-
-**What happened as the rule became stricter**
-
-- P40: `V094 V119` were together in one bucket.
-- P50: `V094 V119` remained together.
-- P60: `V094 V119` remained together.
-- Least-similar pair still kept together: `V094 ↔ V119` · cosine `0.538615`.
 
 ### `V094` · [source N21](#n21--38c864c05535)
 
@@ -677,16 +668,6 @@ remaining true to oneself is profound advice.
 2. `advice`
 3. `It took me a lifetime to understand why this is deep.`
 
-## F14
-
-**What happened as the rule became stricter**
-
-- P40: `V100 V114` were together in one bucket.
-- P50: `V100 V114` remained together.
-- P60: `V100` stood alone and `V114` stood alone.
-- Least-similar pair still kept together at P40 and P50:
-  `V100 ↔ V114` · cosine `0.507426`.
-
 ### `V100` · [source N04](#n04--a59ca772c163)
 
 **Takeaway:** An existing greenhouse in Alliance, Nebraska, grows pineapples,
@@ -706,15 +687,6 @@ make for a good Saturday.
 
 1. `Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday.`
 
-## F15
-
-**What happened as the rule became stricter**
-
-- P40: `V109 V123` were together in one bucket.
-- P50: `V109 V123` remained together.
-- P60: `V109 V123` remained together.
-- Least-similar pair still kept together: `V109 ↔ V123` · cosine `0.656426`.
-
 ### `V109` · [source N23](#n23--2c054d399715)
 
 **Takeaway:** A person should not assume that everyone who publicly expresses
@@ -732,15 +704,6 @@ dare to think independently are often excluded and mocked.
 **Mask:**
 
 1. `In a society that values conformity and obedience, the individual who dares to think for themselves is often ostracized and ridiculed.`
-
-## F16
-
-**What happened as the rule became stricter**
-
-- P40: `V118 V127 V133 V136` were together in one bucket.
-- P50: `V118 V127 V133 V136` remained together.
-- P60: `V118 V127 V133 V136` remained together.
-- Least-similar pair still kept together: `V118 ↔ V133` · cosine `0.577648`.
 
 ### `V118` · [source N22](#n22--075b407e91d5)
 
@@ -782,17 +745,6 @@ aspects of life will fall into place.
 **Mask:**
 
 1. `Stay true to yourself, and the rest will fall into place.`
-
-## F17
-
-**What happened as the rule became stricter**
-
-- P40: `V174 V175 V192 V193` were together in one bucket.
-- P50: `V174 V175 V192 V193` remained together.
-- P60: `V174 V175` formed one bucket, but both came from N26. `V192 V193`
-  formed another bucket, but both came from N27.
-- Least-similar pair still kept together at P40 and P50:
-  `V175 ↔ V193` · cosine `0.518401`.
 
 ### `V174` · [source N26](#n26--c36ed58c0f53)
 
@@ -843,12 +795,10 @@ government money.
 
 The substantive text below is copied from the frozen artifact. Trailing spaces
 and excess blank lines are normalized. Each source is shown once so the mask
-fragments above can be evaluated in complete context without repeating long
-notes inside every case.
+fragments above can be evaluated in complete context without repeating each
+note under every meaning piece.
 
 ### N01 · `7e2e4e93cf8f…`
-
-Used by F01 and F02.
 
 ```text
 This week I just let the miner running to keep temperatures for a minimum and save the #statistics.
@@ -863,15 +813,11 @@ Anyhow in the winter days almost everything is required to heat the house so it 
 
 ### N02 · `e09b8c19f52a…`
 
-Used by F01.
-
 ```text
 Just ordered a BitAxe. Super excited to finally start mining at home and contributing to the network.
 ```
 
 ### N03 · `974dd5c02c7a…`
-
-Used by F02.
 
 ```text
 Solar power will be the vast majority of power generation in the future
@@ -879,16 +825,12 @@ Solar power will be the vast majority of power generation in the future
 
 ### N04 · `a59ca772c163…`
 
-Used by F02 and F14.
-
 ```text
 Flexicables installed for our geothermal solar powered greenhouse. The greenhouse they have in Aliance Nebraska grows pineapple and dates and citrus.
 This will be the first steps to my non consumption based retirement. https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
 ```
 
 ### N05 · `f81f01d4d50f…`
-
-Used by F03.
 
 ```text
 Why a spritz of water before grinding coffee yields better results
@@ -900,15 +842,11 @@ https://arstechnica.com/science/2023/12/study-why-a-spritz-of-water-before-grind
 
 ### N06 · `f15fe96ab816…`
 
-Used by F03.
-
 ```text
 I was about to say good morning but I’m not, instead I’m typing this while drinking my delicious coffee.
 ```
 
 ### N07 · `056e64662570…`
-
-Used by F04 and F05.
 
 ```text
 You’ve had coffee. But have you had your coffee?”
@@ -922,23 +860,17 @@ Sipping  @ #coffeechain
 
 ### N08 · `2dc50a304a2f…`
 
-Used by F04.
-
 ```text
 Decafe coffee drinkers are the purist coffee enthusiasts of them all as they do it for the experience and flavour. Unlike the caffeine addicted heathens. Change my mind.
 ```
 
 ### N09 · `f4c5aa5f1802…`
 
-Used by F05.
-
 ```text
 Made my coffee with raw cream and a raw egg yolk today #coffeechain
 ```
 
 ### N10 · `74694da41f36…`
-
-Used by F06.
 
 ```text
 #proofofwork
@@ -950,8 +882,6 @@ https://m.primal.net/Mkft.jpg
 
 ### N11 · `e79637da76e4…`
 
-Used by F06.
-
 ```text
 We need to replace a grommet on the fuel tank of our post hole digger.
 Searching Amazon and eBay the part I need to buy is $11 OR you can get a 70 piece spares kit for $7.
@@ -960,16 +890,12 @@ Why is it like this? This is why minimalism is an active choice.
 
 ### N12 · `7adcfe1ab26f…`
 
-Used by F07 and F08.
-
 ```text
 they want to control everything..
 ..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger picture.. ..all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices.. ..i'm still on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible).. ..i've already switched to #Linux computer-wise.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty
 ```
 
 ### N13 · `735104aa3dfc…`
-
-Used by F07 and F08.
 
 ```text
 It's ready! #pypush can now send and receive #iMessage, on any platform, completely server-less and open-source! 🎉
@@ -979,15 +905,11 @@ https://github.com/JJTech0130/pypush
 
 ### N14 · `bbe63b10f768…`
 
-Used by F08.
-
 ```text
 Getting close to 100% of my software stack being free and open source.
 ```
 
 ### N15 · `aa269973db71…`
-
-Used by F09 and F10.
 
 ```text
 I'm thinking I'll regularly post about open source tech I find useful.
@@ -1008,16 +930,12 @@ https://molly.im/
 
 ### N16 · `d94ef8a432ec…`
 
-Used by F09.
-
 ```text
 Larry Ellison wants to put all US data in one big AI system - From the billionaire who said real-time surveillance is good for keeping us in check
 https://www.theregister.com/2025/02/12/larry_ellison_wants_all_data/
 ```
 
 ### N17 · `53b0f8fe4650…`
-
-Used by F10.
 
 ```text
 Despite it being easier to self-host XMPP and less expensive on resources, Matrix is more popular.  Why?
@@ -1040,8 +958,6 @@ Then public SimpleX/Session servers are right for you.  That's fine.  This isn't
 
 ### N18 · `84aba98daa2c…`
 
-Used by F11.
-
 ```text
 Has anyone replaced the fan on their BitAxe? If so, what did you use? I'd normally go with a Noctua but I hate that the NF-A4x20 is the stupid beige/brown colorway.
 
@@ -1050,15 +966,11 @@ The stock fan is just getting too loud to deal with. I clean it and within a day
 
 ### N19 · `dcd6544eba8e…`
 
-Used by F11.
-
 ```text
 After nearly a year of mining with the #AvalonNano3, it’s noticeably getting louder over time-even though I keep it clean. The difference is clear! In comparison, I’ve had the 4 #Bitaxe for about the same period, and its noise level has remained consistent. My prediction is that Avalons gonna die much more faster than Bitaxe ⏳
 ```
 
 ### N20 · `4166411750a2…`
-
-Used by F12.
 
 ```text
 Trying to decide what book I should read next 🤔 What one would you read?
@@ -1076,8 +988,6 @@ Bitcoin is Venice
 
 ### N21 · `38c864c05535…`
 
-Used by F12 and F13.
-
 ```text
 Elizondo’s Imminent is an authentic, well-written page turner so far as I’ve read. If I didn’t have to work tomorrow I’d finish the whole dang thing tonight. Lots of puzzle pieces shifting into place in the back of my mind 🛸
 
@@ -1087,15 +997,11 @@ Elizondo’s Imminent is an authentic, well-written page turner so far as I’ve
 
 ### N22 · `075b407e91d5…`
 
-Used by F13 and F16.
-
 ```text
 "Just be yourself" is the best of all the bad advice you ever got. Wisdom hidden in plain sight. It took me a lifetime to understand why this is deep.
 ```
 
 ### N23 · `2c054d399715…`
-
-Used by F14 and F15.
 
 ```text
 Annie's Saturday Morning Thoughts
@@ -1113,8 +1019,6 @@ Sunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree a
 
 ### N24 · `4a3184dbd492…`
 
-Used by F15 and F16.
-
 ```text
 In a society that values conformity and obedience, the individual who dares to think for themselves is often ostracized and ridiculed. These nonconformists, these outcasts, are the true pioneers of society, the ones who push us to question our assumptions and expand our horizons.
 They are the ones who are not afraid to be different, to be themselves.
@@ -1123,15 +1027,11 @@ If you find yourself feeling like an outsider, like you don't fit in with the cr
 
 ### N25 · `adb5912a5214…`
 
-Used by F16.
-
 ```text
 In a world where titles and positions often dictate power dynamics, it's easy to feel overshadowed or intimidated by those in authority. But here's a simple truth: if your daily actions and intentions stem from an ethical and moral foundation, you need not worry or be bothered by anyone else, regardless of their temporary title or status. Your integrity, authenticity, and inner compass will guide you through any challenge or confrontation, ensuring that you remain steadfast in your convictions and true to yourself. So, trust in the strength of your character and the righteousness of your deeds, and let go of the need for external validation or approval. When you walk with integrity, you walk with unwavering confidence and peace of mind, unshaken by the winds of authority or influence. Stay true to yourself, and the rest will fall into place.
 ```
 
 ### N26 · `c36ed58c0f53…`
-
-Used by F17.
 
 ```text
 The Next Phase: Total Financial Control
@@ -1163,15 +1063,13 @@ Will you wait until it’s too late?
 
 ### N27 · `f55043b51692…`
 
-Used by F17.
-
 ```text
 We're at a crossroads: government surveillance money or free, open, private people's money. Choose wisely.
 ```
 
 ## Provenance
 
-All bucket contents, takeaways, masks, source notes, and cosine values come
+All segment contents, takeaways, masks, source notes, and cosine values come
 from this saved JSON output:
 
 ```text
