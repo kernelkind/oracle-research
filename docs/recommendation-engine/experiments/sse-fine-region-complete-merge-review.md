@@ -135,26 +135,28 @@ procedure behind the groupings being reviewed in this document.
 that setting. A dash means that exact segment does not exist at that setting;
 the segment evidence below explains any split.
 
-| Segment | Exact vectors | P40 | P50 | P60 |
-|---|---|:---:|:---:|:---:|
-| S001 | `V001 V102 V103 V104` | Yes | Yes | — |
-| S002 | `V003 V004 V023 V099 V101` | Yes | Yes | — |
-| S003 | `V005 V116` | Yes | Yes | Yes |
-| S004 | `V007 V008 V009 V105 V106 V107` | Yes | Yes | Yes |
-| S005 | `V010 V028` | Yes | Yes | Yes |
-| S006 | `V013 V152` | Yes | — | — |
-| S007 | `V029 V030 V031 V050` | Yes | Yes | Yes |
-| S008 | `V035 V051 V060` | Yes | Yes | Yes |
-| S009 | `V062 V186` | Yes | Yes | Yes |
-| S010 | `V063 V170` | Yes | — | — |
-| S011 | `V076 V095 V096 V097` | Yes | Yes | Yes |
-| S012 | `V078 V092` | Yes | — | — |
-| S013 | `V094 V119` | Yes | Yes | Yes |
-| S014 | `V100 V114` | Yes | Yes | — |
-| S015 | `V109 V123` | Yes | Yes | Yes |
-| S016 | `V118 V127 V133 V136` | Yes | Yes | Yes |
-| S017 | `V174 V175 V192 V193` | Yes | Yes | — |
-| S018 | `V023 V099 V101` | — | — | Yes |
+**Source notes** lists the set of original notes represented in each segment.
+
+| Segment | Exact vectors | Source notes | P40 | P50 | P60 |
+|---|---|---|:---:|:---:|:---:|
+| S001 | `V001 V102 V103 V104` | `N01 N02` | Yes | Yes | — |
+| S002 | `V003 V004 V023 V099 V101` | `N01 N03 N04` | Yes | Yes | — |
+| S003 | `V005 V116` | `N05 N06` | Yes | Yes | Yes |
+| S004 | `V007 V008 V009 V105 V106 V107` | `N07 N08` | Yes | Yes | Yes |
+| S005 | `V010 V028` | `N07 N09` | Yes | Yes | Yes |
+| S006 | `V013 V152` | `N10 N11` | Yes | — | — |
+| S007 | `V029 V030 V031 V050` | `N12 N13` | Yes | Yes | Yes |
+| S008 | `V035 V051 V060` | `N12 N13 N14` | Yes | Yes | Yes |
+| S009 | `V062 V186` | `N15 N16` | Yes | Yes | Yes |
+| S010 | `V063 V170` | `N15 N17` | Yes | — | — |
+| S011 | `V076 V095 V096 V097` | `N18 N19` | Yes | Yes | Yes |
+| S012 | `V078 V092` | `N20 N21` | Yes | — | — |
+| S013 | `V094 V119` | `N21 N22` | Yes | Yes | Yes |
+| S014 | `V100 V114` | `N04 N23` | Yes | Yes | — |
+| S015 | `V109 V123` | `N23 N24` | Yes | Yes | Yes |
+| S016 | `V118 V127 V133 V136` | `N22 N24 N25` | Yes | Yes | Yes |
+| S017 | `V174 V175 V192 V193` | `N26 N27` | Yes | Yes | — |
+| S018 | `V023 V099 V101` | `N03 N04` | — | — | Yes |
 
 ## Segment evidence
 
