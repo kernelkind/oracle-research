@@ -46,11 +46,11 @@ vectors wherever possible.
 
 ## Logical argument
 
-### Claim 1 — The retirement intervention added solar-greenhouse meaning
+### Claim 1 — `RET-NEW` adds solar-greenhouse text to `RET-OLD`
 
 #### Evidence
 
-Both target vectors came from this exact note:
+Both retirement target vectors came from this exact note:
 
 > Flexicables installed for our geothermal solar powered greenhouse. The
 > greenhouse they have in Aliance Nebraska grows pineapple and dates and
@@ -58,7 +58,7 @@ Both target vectors came from this exact note:
 > This will be the first steps to my non consumption based retirement.
 > https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
 
-TEv3.1 selected only the retirement sentence:
+**`RET-OLD` — TEv3.1 target mask:**
 
 > Flexicables installed for our geothermal solar powered greenhouse. The
 > greenhouse they have in Aliance Nebraska grows pineapple and dates and
@@ -66,7 +66,7 @@ TEv3.1 selected only the retirement sentence:
 > ⟦This will be the first steps to my non consumption based retirement.⟧
 > https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
 
-TEv4.1 selected the same sentence and added its referent:
+**`RET-NEW` — TEv4.1 target mask:**
 
 > Flexicables installed for ⟦our geothermal solar powered greenhouse⟧. The
 > greenhouse they have in Aliance Nebraska grows pineapple and dates and
@@ -74,17 +74,16 @@ TEv4.1 selected the same sentence and added its referent:
 > ⟦This will be the first steps to my non consumption based retirement.⟧
 > https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
 
-The note, SSE checkpoint, and inference configuration were fixed. The old and
-new target vectors have cosine `0.8002`, so adding the referent changed the
-vector.
+The note, SSE checkpoint, and inference configuration were fixed. `RET-OLD` and
+`RET-NEW` have cosine `0.8002`, so adding the referent changed the vector.
 
 #### Analysis
 
-This evidence establishes the intervention: TEv4.1 directly pooled the words
-`our geothermal solar powered greenhouse`, while TEv3.1 did not. It does not
+This evidence establishes the intervention: `RET-NEW` directly pooled the words
+`our geothermal solar powered greenhouse`, while `RET-OLD` did not. It does not
 yet establish whether that change was helpful or harmful.
 
-### Claim 2 — The changed target became more similar to one fixed solar vector
+### Claim 2 — `RET-NEW` became more similar to one fixed solar vector
 
 #### Evidence
 
@@ -97,17 +96,17 @@ runs. Its cosine to the target was:
 
 | Target | Cosine to the fixed solar candidate |
 |---|---:|
-| TEv3.1 retirement sentence | `0.3690` |
-| TEv4.1 retirement sentence plus greenhouse referent | `0.6565` |
+| `RET-OLD` | `0.3690` |
+| `RET-NEW` | `0.6565` |
 
 #### Analysis
 
 Because the candidate did not change, the target-mask change caused the
-increase. This proves only that the new target became more similar to this one
+increase. This proves only that `RET-NEW` became more similar to this one
 solar vector. It does not, by itself, show that retirement meaning became
 weaker or that the new vector was worse.
 
-### Claim 3 — The changed target became less similar to one fixed retirement vector
+### Claim 3 — `RET-NEW` became less similar to one fixed retirement vector
 
 #### Evidence
 
@@ -133,14 +132,14 @@ The fixed candidate vector selected:
 
 The TEv3.1 candidate vector was held fixed while only the target changed:
 
-| Fixed candidate meaning | TEv3.1 target | TEv4.1 target |
+| Fixed candidate meaning | `RET-OLD` | `RET-NEW` |
 |---|---:|---:|
 | Receiving a retirement packet | `0.3562099685` | `0.2455033805` |
 
 #### Analysis
 
-This explicitly retirement-related candidate became less similar to the
-changed target. That is direct retirement evidence, unlike the weaker “break
+This explicitly retirement-related candidate was less similar to `RET-NEW`
+than to `RET-OLD`. That is direct retirement evidence, unlike the weaker “break
 free from the typical American grind” comparison. It is still only one
 candidate and does not establish movement away from every retirement meaning.
 
@@ -153,11 +152,11 @@ claim. A solar greenhouse genuinely is part of that claim. It shows that making
 the mask self-contained traded away similarity to the fixed retirement
 representation used in this comparison.
 
-### Claim 4 — The surveillance target showed the same kind of tradeoff
+### Claim 4 — `CTRL-NEW` showed the same kind of tradeoff
 
 #### Evidence
 
-Both targets came from this note:
+Both control targets came from this note:
 
 > they want to control everything..
 > ..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows,
@@ -169,7 +168,7 @@ Both targets came from this note:
 > computer-wise.. ..free and opensource is the only way to navigate this tech
 > surveillance state with any level of sovereignty
 
-TEv3.1 selected only:
+**`CTRL-OLD` — TEv3.1 target mask:**
 
 > ⟦they want to control everything⟧..
 > ..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows,
@@ -181,7 +180,7 @@ TEv3.1 selected only:
 > computer-wise.. ..free and opensource is the only way to navigate this tech
 > surveillance state with any level of sovereignty
 
-TEv4.1 added proprietary-OS, telemetry, and surveillance-state fragments:
+**`CTRL-NEW` — TEv4.1 target mask:**
 
 > ⟦they want to control everything⟧..
 > ..if you think your #Nostr nsec key is safe on ⟦a proprietary OS ( #Windows,
@@ -219,7 +218,7 @@ Three candidate vectors were held fixed:
 
 Their cosines changed as follows:
 
-| Fixed candidate meaning | TEv3.1 target | TEv4.1 target |
+| Fixed candidate meaning | `CTRL-OLD` | `CTRL-NEW` |
 |---|---:|---:|
 | Government ending anonymity | `0.5067` | `0.3327` |
 | Free and open-source software stack | `0.3763` | `0.4650` |
@@ -227,9 +226,10 @@ Their cosines changed as follows:
 
 #### Analysis
 
-The changed target moved away from the direct government-control candidate and
-toward the two software candidates. Because all three candidates were held
-fixed, the target change caused those movements.
+`CTRL-NEW` was less similar than `CTRL-OLD` to the direct government-control
+candidate and more similar than `CTRL-OLD` to the two software candidates.
+Because all three candidates were held fixed, the target change caused those
+differences.
 
 This is a second concrete example of referent or explanatory source text
 changing which part of a compound meaning dominates the resulting geometry. It
@@ -439,15 +439,15 @@ That is a hypothesis for a later experiment, not a TEv4.1 result.
    > they want to control everything..
    > ..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger picture.. ..all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices.. ..i'm still on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible).. ..i've already switched to #Linux computer-wise.. ..⟦free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty⟧
 
-### The vector being tested
+### Target masks — `CTRL-OLD` and `CTRL-NEW`
 
 TEv3.1 represented the control claim using only:
 
 > they want to control everything
 
 TEv4.1 tried to resolve who `they` meant by also selecting the proprietary-OS,
-telemetry, and technology-surveillance-state fragments. The old and new target
-vectors have cosine `0.5209`, so this changed the vector.
+telemetry, and technology-surveillance-state fragments. `CTRL-OLD` and
+`CTRL-NEW` have cosine `0.5209`, so this changed the vector.
 
 ### Controlled neighbor 1 — direct government control moved away
 
@@ -484,8 +484,9 @@ byte-identical:
   governing coalition wants to effectively eliminate anonymity by making every
   citizen identifiable at all times and in all places.`
 
-Cosine to the control target fell from `0.5067` to `0.3327`. Because the
-candidate vector did not change, the changed target caused the decrease.
+The candidate's cosine was `0.5067` with `CTRL-OLD` and `0.3327` with
+`CTRL-NEW`. Because the candidate vector did not change, replacing `CTRL-OLD`
+with `CTRL-NEW` caused the decrease.
 
 ### Controlled neighbor 2 — generic free software moved closer
 
@@ -504,9 +505,9 @@ Both runs selected the entire note. The vector was byte-identical.
 
 > ⟦Getting close to 100% of my software stack being free and open source.⟧
 
-Cosine to the control target rose from `0.3763` to `0.4650`. Because the
-candidate did not change, the added software and operating-system text in the
-new target caused the increase.
+The candidate's cosine was `0.3763` with `CTRL-OLD` and `0.4650` with
+`CTRL-NEW`. Because the candidate did not change, replacing `CTRL-OLD` with
+`CTRL-NEW` caused the increase.
 
 ### New rank-1 neighbor — cross-platform iMessage
 
@@ -569,24 +570,24 @@ TEv4.1 generated four vectors:
    >
    > https://github.com/JJTech0130/pypush
 
-The TEv4.1 platform-only vector became the new target's rank-1 cross-note
+The TEv4.1 platform-only vector became `CTRL-NEW`'s rank-1 cross-note
 neighbor at `0.6889`. Comparing every old/new combination shows where the
 increase came from:
 
 | Control target | iMessage candidate | Cosine |
 |---|---|---:|
-| TEv3.1 | TEv3.1 combined vector | `0.4005` |
-| TEv3.1 | TEv4.1 platform-only vector | `0.2810` |
-| TEv4.1 | TEv3.1 combined vector | `0.6599` |
-| TEv4.1 | TEv4.1 platform-only vector | `0.6889` |
+| `CTRL-OLD` | TEv3.1 combined vector | `0.4005` |
+| `CTRL-OLD` | TEv4.1 platform-only vector | `0.2810` |
+| `CTRL-NEW` | TEv3.1 combined vector | `0.6599` |
+| `CTRL-NEW` | TEv4.1 platform-only vector | `0.6889` |
 
-Even with the old iMessage vector held fixed, changing only the target raised
-the cosine from `0.4005` to `0.6599`. The target's added operating-system and
-platform context caused most of the increase.
+Even with the TEv3.1 iMessage vector held fixed, replacing `CTRL-OLD` with
+`CTRL-NEW` raised the cosine from `0.4005` to `0.6599`. The source text added to
+`CTRL-NEW` caused most of the increase.
 
 ### Automatic-backup observation — not a controlled comparison
 
-The old control target's second-nearest cross-note result was this takeaway:
+`CTRL-OLD`'s second-nearest cross-note result was this takeaway:
 
 > Molly supports automatic backups.
 
@@ -641,17 +642,17 @@ It came from this complete note:
 > Available on their own Fdroid repo:
 > https://molly.im/
 
-It moved from rank 2 at `0.4175` to rank 43 at `0.1723`. This looks better, but
-both the target and candidate masks changed, so this pair cannot show which
-change caused the improvement.
+It was rank 2 at `0.4175` under `CTRL-OLD` and rank 43 at `0.1723` under
+`CTRL-NEW`. This looks better, but both the target and candidate masks changed,
+so this pair cannot show which change caused the improvement.
 
 ### Analysis
 
-If the goal is an independently searchable `powerful actors seeking control`
-meaning, these controls did not improve: cosine to the fixed government-control
-vector fell, while cosines to the fixed free-software and cross-platform-
-application vectors rose. This does not establish the intrinsic quality of the
-complete compound surveillance representation.
+If `CTRL-NEW` is intended to preserve an independently searchable `powerful
+actors seeking control` meaning, these controls did not improve: cosine to the
+fixed government-control vector fell, while cosines to the fixed free-software
+and cross-platform-application vectors rose. This does not establish the
+intrinsic quality of the complete compound surveillance representation.
 
 The automatic-backup result is not part of that controlled conclusion because
 both its candidate mask and the target mask changed.
@@ -719,15 +720,15 @@ both its candidate mask and the target mask changed.
    > Flexicables installed for ⟦our geothermal solar powered greenhouse⟧. The greenhouse they have in Aliance Nebraska grows pineapple and dates and citrus.
    > ⟦This will be the first steps to my non consumption based retirement.⟧ https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg
 
-### The vector being tested
+### Target masks — `RET-OLD` and `RET-NEW`
 
-The old retirement mask contained `This` without its referent. TEv4.1 added
-`our geothermal solar powered greenhouse` so a person could understand what
-the retirement sentence referred to.
+`RET-OLD` contained `This` without its referent. `RET-NEW` added `our geothermal
+solar powered greenhouse` so a person could understand what the retirement
+sentence referred to.
 
-The old and new target vectors have cosine `0.8002`: they remain related, but
-they are not identical. This comparison alone does not establish the direction
-of the change.
+`RET-OLD` and `RET-NEW` have cosine `0.8002`: they remain related, but they are
+not identical. This comparison alone does not establish the direction of the
+change.
 
 ### Controlled neighbor — future solar generation
 
@@ -747,9 +748,9 @@ byte-identical.
 
 > ⟦Solar power will be the vast majority of power generation in the future⟧
 
-Cosine to the retirement target rose from `0.3690` to `0.6565`. Because the
-candidate did not change, adding the greenhouse fragment to the retirement
-target caused the increase.
+The candidate's cosine was `0.3690` with `RET-OLD` and `0.6565` with `RET-NEW`.
+Because the candidate did not change, the source text added to `RET-NEW` caused
+the increase.
 
 ### Controlled candidate — explicit retirement
 
@@ -774,8 +775,7 @@ The fixed TEv3.1 candidate selected:
 > #JustBitcoinerThings
 
 Holding that exact TEv3.1 candidate vector fixed, its cosine was
-`0.3562099685` with the TEv3.1 target and `0.2455033805` with the TEv4.1
-target.
+`0.3562099685` with `RET-OLD` and `0.2455033805` with `RET-NEW`.
 
 This candidate is explicitly about retirement. It replaces the weaker
 American-grind proxy in the logical argument.
@@ -822,8 +822,8 @@ The TEv3.1 candidate was:
   > others that there's more to life than the usual rat race. Let's see where
   > this adventure takes us!
 
-Holding that TEv3.1 candidate fixed, its cosine to the retirement target fell
-from `0.3957` to `0.2486` when only the target changed.
+Holding that TEv3.1 candidate fixed, its cosine was `0.3957` with `RET-OLD` and
+`0.2486` with `RET-NEW`.
 
 TEv4.1 regenerated the candidate as:
 
@@ -847,9 +847,9 @@ TEv4.1 regenerated the candidate as:
   > others that there's more to life than the usual rat race. Let's see where
   > this adventure takes us!
 
-That regenerated candidate ranked 32 at `0.2282` against the new target.
+That regenerated candidate ranked 32 at `0.2282` against `RET-NEW`.
 
-### The old target's leading cross-note neighbors
+### `RET-OLD`'s leading cross-note neighbors
 
 | Rank | Neighbor meaning | Cosine |
 |---:|---|---:|
@@ -866,10 +866,10 @@ That regenerated candidate ranked 32 at `0.2282` against the new target.
 | 11 | Simple living | `0.3128` |
 | 12 | A miner using surplus solar energy | `0.3104` |
 
-The old mask was imperfect, but its leading neighborhood contained several
+`RET-OLD` was imperfect, but its leading neighborhood contained several
 financial-independence, retirement, and alternative-lifestyle meanings.
 
-### The new target's leading cross-note neighbors
+### `RET-NEW`'s leading cross-note neighbors
 
 | Rank | Neighbor meaning | Cosine |
 |---:|---|---:|
@@ -1318,10 +1318,10 @@ text to reconstruct a takeaway would improve SSE's representation.
 
 The controlled evidence showed two direction changes:
 
-- The greenhouse-retirement target became more similar to one fixed solar
-  vector and less similar to one fixed retirement vector.
-- The surveillance-control target became more similar to two fixed software
-  vectors and less similar to one fixed government-control vector.
+- `RET-NEW` was more similar than `RET-OLD` to one fixed solar vector and less
+  similar than `RET-OLD` to one fixed retirement vector.
+- `CTRL-NEW` was more similar than `CTRL-OLD` to two fixed software vectors and
+  less similar than `CTRL-OLD` to one fixed government-control vector.
 
 Separately, TEv4.1 generated more overlapping vectors and some
 takeaways that its mask rules could not support.
@@ -1371,13 +1371,13 @@ preserve:
 
 The cross-run retirement control uses normalized vectors directly:
 
-- TEv3.1 retirement target: ordinal 64;
-- TEv4.1 retirement-plus-greenhouse target: ordinal 101;
+- `RET-OLD`: TEv3.1 ordinal 64;
+- `RET-NEW`: TEv4.1 ordinal 101;
 - fixed TEv3.1 retirement-packet candidate: ordinal 96;
-- old-target cosine: `0.3562099685`;
-- new-target cosine: `0.2455033805`.
+- `RET-OLD` cosine: `0.3562099685`;
+- `RET-NEW` cosine: `0.2455033805`.
 
 Each cosine is the dot product of the fixed candidate row from TEv3.1's
-`normalized-vectors.f32le` and the corresponding old or new normalized target
-row. The solar control uses the same calculation with a byte-identical
-candidate vector and yields `0.3690140084` and `0.6565306208`.
+`normalized-vectors.f32le` and the corresponding `RET-OLD` or `RET-NEW`
+normalized target row. The solar control uses the same calculation with a
+byte-identical candidate vector and yields `0.3690140084` and `0.6565306208`.
