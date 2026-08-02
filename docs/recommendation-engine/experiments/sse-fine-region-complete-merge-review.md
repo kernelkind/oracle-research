@@ -129,6 +129,33 @@ The pilot also ran an alternative grouping procedure. It is excluded here
 because changing the input order changed its segments, and it was not the
 procedure behind the groupings being reviewed in this document.
 
+## Segment comparison across settings
+
+**Yes** means that the exact vectors shown in that row form one segment at
+that setting. A dash means that exact segment does not exist at that setting;
+the segment registry below explains any split.
+
+| Segment | Exact vectors | P40 | P50 | P60 |
+|---|---|:---:|:---:|:---:|
+| S001 | `V001 V102 V103 V104` | Yes | Yes | — |
+| S002 | `V003 V004 V023 V099 V101` | Yes | Yes | — |
+| S003 | `V005 V116` | Yes | Yes | Yes |
+| S004 | `V007 V008 V009 V105 V106 V107` | Yes | Yes | Yes |
+| S005 | `V010 V028` | Yes | Yes | Yes |
+| S006 | `V013 V152` | Yes | — | — |
+| S007 | `V029 V030 V031 V050` | Yes | Yes | Yes |
+| S008 | `V035 V051 V060` | Yes | Yes | Yes |
+| S009 | `V062 V186` | Yes | Yes | Yes |
+| S010 | `V063 V170` | Yes | — | — |
+| S011 | `V076 V095 V096 V097` | Yes | Yes | Yes |
+| S012 | `V078 V092` | Yes | — | — |
+| S013 | `V094 V119` | Yes | Yes | Yes |
+| S014 | `V100 V114` | Yes | Yes | — |
+| S015 | `V109 V123` | Yes | Yes | Yes |
+| S016 | `V118 V127 V133 V136` | Yes | Yes | Yes |
+| S017 | `V174 V175 V192 V193` | Yes | Yes | — |
+| S018 | `V023 V099 V101` | — | — | Yes |
+
 ## Segment registry
 
 Each section below identifies one exact segment. **Vectors** states its entire
