@@ -1,5 +1,9 @@
 # SSE context counterfactual result
 
+The immutable formal result is reported below. The subsequent review of what
+the three failed comparisons scientifically establish is recorded in
+[`scientific-interpretation.md`](scientific-interpretation.md).
+
 ## Question
 
 Can SSE use surrounding text when that text is necessary to interpret a selected meaning, while preventing unrelated surrounding text from taking over the selected meaning?

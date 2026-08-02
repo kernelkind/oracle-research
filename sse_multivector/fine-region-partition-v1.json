@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "pilot_id": "sse-fine-region-partition-v1",
+  "baseline_archive_sha256": "fff03a8b1ed76e45413def0049cdd9fc3c948ae014d5ac94d72fa62f41f8cfa6",
+  "generation_manifest": {
+    "path": "generation-manifest.json",
+    "sha256": "a57f4ea2f3293694dab969f0ac1a9e1b50edff4019aa000af4c339fedb015700"
+  },
+  "analysis_manifest": {
+    "path": "analysis/manifest.json",
+    "sha256": "0174db8bed425446d7e8bfacfbbd5d4bb2084cdb28c3a6178452f4e1cb6917bc"
+  },
+  "resolution_percentiles": [10, 20, 30, 40, 50, 60, 70, 80, 90],
+  "audit_percentiles": [40, 50, 60],
+  "dp_vmf_order_count": 32,
+  "shuffle_seed": 20260802
+}

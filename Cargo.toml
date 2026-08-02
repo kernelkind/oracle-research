@@ -67,6 +67,10 @@ path = "src/bin/sse_vector_diagnostic.rs"
 name = "sse-context-counterfactual"
 path = "src/bin/sse_context_counterfactual.rs"
 
+[[bin]]
+name = "sse-fine-region-pilot"
+path = "src/bin/sse_fine_region_pilot.rs"
+
 [dependencies]
 bech32 = "=0.11.1"
 crossterm = "=0.29.0"
