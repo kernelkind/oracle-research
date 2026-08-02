@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "fixture_id": "sse-context-counterfactual-v1",
-  "review_status": "proposed",
-  "inference_authorized": false,
+  "review_status": "approved",
+  "inference_authorized": true,
   "originating_assumption": "The multi-vector model must turn a note into separate, context-grounded idea vectors rather than blended or redundant vectors.",
   "current_interpretation": "Each intended meaning must remain distinguishable and use surrounding context appropriately; complete vector uniqueness is not required.",
   "question": "Can SSE use surrounding text when it is necessary to interpret a selected idea while preventing unrelated surrounding text from taking over the selected idea?",
@@ -19,11 +19,13 @@
     "base_model_artifact_tree_sha256": "bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d",
     "checkpoint_sha256": "ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d",
     "container_image": "local/oracle-mvp-sse@sha256:a6c9674dca720e1f094b7feeb1397b6e6b0a97e10f13e0a6555deebf4b70ddaa",
+    "worker_sha256": "fe4dc92d834c5aa6e2c15072cd2cb57db3c03ea0062cde32bcb84b4a466f9421",
     "device": "cpu",
     "note_batch_size": 8,
     "dimensions": 768,
     "maximum_tokens": 512,
     "pooling": "selected-contextual-token-mean-linear-relu-linear-v1",
+    "vector_format": "row-major-f32le-v1",
     "base_model_tree_hash_rule": "sorted-relative-path-type-size-content-sha256-v1",
     "cosine": "f64-dot-and-f64-norms-over-ordered-raw-f32-coordinates-v1; compare unrounded f64 values",
     "invalid_vector_result": "Stage 1 fails if any required vector is missing, zero-norm, or non-finite."
@@ -31,9 +33,34 @@
   "target_contract": {
     "order": "self_contained_cases in file order, then context_resolution_cases in file order, then mixed_note_cases in file order",
     "reference_order": "reference_groups in file order, then each group's references in file order",
+    "worker_row_order": "all targets in target order, then all references in reference order",
     "self_contained_target": "each variants[] entry is one target; target_id is fixture_note_id; preferred and alternative groups are inherited from its case",
     "context_resolution_target": "each variants[] entry is one target; target_id is fixture_note_id; preferred and alternative groups are stored on the variant",
-    "mixed_note_target": "each meanings[] entry is one target; target_id is meaning_id; preferred and alternative groups are stored on the meaning"
+    "mixed_note_target": "each meanings[] entry is one target; target_id is meaning_id; preferred and alternative groups are stored on the meaning",
+    "verdict_rule": "a verdict passes exactly when every listed target prediction and every listed required verdict passes",
+    "id_derivation": {
+      "algorithm": "sha256-domain-and-u64be-length-prefixed-utf8-fields-v1",
+      "note_domain": "oracle-mvp-sse-context-counterfactual-note-id-v1\u0000",
+      "subject_domain": "oracle-mvp-sse-context-counterfactual-subject-id-v1\u0000",
+      "target_note_fields": [
+        "fixture_id",
+        "target",
+        "fixture_note_id"
+      ],
+      "target_subject_fields": [
+        "fixture_id",
+        "target",
+        "target_id"
+      ],
+      "reference_note_and_subject_fields": [
+        "fixture_id",
+        "reference",
+        "group_id",
+        "one-based reference index as ASCII"
+      ],
+      "note_digest_bytes": 32,
+      "subject_digest_bytes": 8
+    }
   },
   "counts": {
     "constructed_note_instances": 15,
@@ -75,7 +102,7 @@
         "future-solar-alone",
         "book-switch-alone"
       ],
-      "passes_when": "all 3 predictions pass",
+      "requires": [],
       "role": "prerequisite showing that each focal meaning is recognizable before unrelated context is added"
     },
     "unrelated_context_resistance": {
@@ -87,7 +114,9 @@
         "book-switch-plus-coffee",
         "book-switch-plus-software"
       ],
-      "passes_when": "the self_contained_baseline verdict passes and all 6 predictions pass"
+      "requires": [
+        "self_contained_baseline"
+      ]
     },
     "context_grounded": {
       "target_ids": [
@@ -98,7 +127,7 @@
         "rooftop-four-panels-context",
         "rooftop-four-workers-context"
       ],
-      "passes_when": "all 6 predictions pass"
+      "requires": []
     },
     "mixed_note_separation": {
       "target_ids": [
@@ -112,21 +141,21 @@
         "mixed-miner-surplus-solar-startup",
         "mixed-miner-solar-use-measurement"
       ],
-      "passes_when": "all 9 predictions pass"
+      "requires": []
     },
     "not_blended": {
+      "target_ids": [],
       "requires": [
         "unrelated_context_resistance",
         "mixed_note_separation"
-      ],
-      "passes_when": "both required verdicts pass"
+      ]
     },
     "overall": {
+      "target_ids": [],
       "requires": [
         "context_grounded",
         "not_blended"
-      ],
-      "passes_when": "both required verdicts pass; equivalently, all 24 predeclared predictions pass"
+      ]
     }
   },
   "source_artifacts": [
