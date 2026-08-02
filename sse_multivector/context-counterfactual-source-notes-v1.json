@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "evidence_id": "sse-context-counterfactual-source-notes-v1",
+  "notes": [
+    {
+      "note_id": "2c054d399715c118387a16ab9d3960d3dcb27cd8c3ee33cea2ac3336138a1b6a",
+      "text": "Annie's Saturday Morning Thoughts\n\nDon't assume that everyone who agrees with you in public agrees with you in private. 😏\n\nThe wren on the fence has been chirping for a while. Must have good lungs.\n\nOnly the things you choose without pressure define you. The rest is a facade. 🤥\n\nFlavored coffee is nice but can get old if you have it every day.\n\nSunshine, cool breeze, doves, wrens, robins, squirrels, shade from an oak tree and a crossvine in bloom. This is the recipe for a good Saturday. 🤗"
+    },
+    {
+      "note_id": "974dd5c02c7a9ca9b89685e344d8d103abbbab420e0faf22875f9d08e1c0534a",
+      "text": "Solar power will be the vast majority of power generation in the future"
+    },
+    {
+      "note_id": "c26040a4d7b85ee80d17ef61c9c6c33b7e848de24c27c95179f36884638ca61a",
+      "text": "Hope the day is going well my nostrichez, I’ve scratched 5 things off my list so far. Gonna spend the rest of the day puttering in the garden.\n\nI’ve been listening to a book on Napoleon all day, but I wanna switch it up. Any good book recommendations? \n\nBtw nostr:npub1dgpt04w4c88wc0g262xaw8zvlm4mvwtmjhl0tn2sxtyjywsn6q4qt8ka3a I finished Germs, Guns & steel, that was a great recommend https://image.nostr.build/0f42f72c9f6af262a5fd8d861fb6ee46287f1764dfd631dd65327655a84bb4b2.jpg "
+    },
+    {
+      "note_id": "f4c5aa5f18026412caa17c21c3fad6056c82b80de57ad70003074ff622adc496",
+      "text": "Made my coffee with raw cream and a raw egg yolk today #coffeechain "
+    },
+    {
+      "note_id": "709b25103a422d0bbaaad8fa9a8247930cd763dc1cf248ee90b083ce3f728f32",
+      "text": "Doom 1 and 2 are now officially licensed under the #GPL, no longer dual-licensed with the DSL :)\n\nhttps://github.com/id-Software/DOOM/\n\nhttps://nitter.woodland.cafe/doom_txt/status/1747398603209883882\n\n#FOSS #OpenSource #Games #Gaming #GameNews"
+    },
+    {
+      "note_id": "a59ca772c1639d52f79fc05caeff4abc973418043cdac1600a5f75a82e5c1a58",
+      "text": "Flexicables installed for our geothermal solar powered greenhouse. The greenhouse they have in Aliance Nebraska grows pineapple and dates and citrus. \nThis will be the first steps to my non consumption based retirement. https://image.nostr.build/21c798c130ea79bcc6fd7c1a30126a8177d0810275f4011af6c0592e6e62084c.jpg"
+    },
+    {
+      "note_id": "e79637da76e4e969c3d3ec079f159a705faea0cdb22ddbd61b172a9ed7f4cb6e",
+      "text": "We need to replace a grommet on the fuel tank of our post hole digger. \nSearching Amazon and eBay the part I need to buy is $11 OR you can get a 70 piece spares kit for $7. \nWhy is it like this? This is why minimalism is an active choice.  "
+    },
+    {
+      "note_id": "7adcfe1ab26f770b6ff5968fda1d6ef7d5a0fe63a946af714d44178a3470712e",
+      "text": "they want to control everything..\n..if you think your #Nostr nsec key is safe on a proprietary OS ( #Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger picture.. ..all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices.. ..i'm still on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS (although i already try to use my phone as little as possible).. ..i've already switched to #Linux computer-wise.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty "
+    },
+    {
+      "note_id": "c36ed58c0f533ce9840a7cabe2a425b8d1f5b84f137b360bf58cfd270e6df268",
+      "text": "The Next Phase: Total Financial Control\n\nThey’re not just restricting access to money. They’re building a system where you’ll never truly own it again.\n\nHere’s what’s coming next:\n\nProgrammable Money – Your funds will expire or be restricted based on government policies.\n\nSocial Credit Systems – Your spending could be limited if your behavior doesn’t align with the system.\n\nForced Digital ID – No transactions without full compliance and tracking.\n\n\nThis is no longer a theory. It’s happening right now in different parts of the world.\n\nBitcoin is the last escape before total financial surveillance.\n\nNo expiration dates on your wealth.\n\nNo restrictions on where and how you spend.\n\nNo authority deciding if you \"deserve\" access to your own money.\n\n\nThey’re not coming for your money. They’re coming for your financial independence.\n\nWill you wait until it’s too late?\n\n"
+    },
+    {
+      "note_id": "74694da41f367535d230dec539a9316b3c6536f4f295f61743a7a5b51d97aa99",
+      "text": "#proofofwork\n\nGot 14 460w solar panels series and ready to connect. Have to grab some wire out of my trailer on one of the jobs. This weekend project. might be able to charge a car or run a Bitcoin miner off this successfully. I still have six extra panels back there and four that are working up top on the roof.\n\nhttps://m.primal.net/Mkft.jpg\n"
+    },
+    {
+      "note_id": "7e2e4e93cf8f88476ffe5fe2d4f6c89e6af1efed33de7e18802d6cbcee0f7a13",
+      "text": "This week I just let the miner running to keep temperatures for a minimum and save the #statistics.\nI want to find the best way how to run the miner. So far it only starts when it is below a specific temperature (with a day/night mode) \n \nMeanwhile I do a bit of programming to start up the miner when I have #solar #energy  left. And to have statistics how much solar energy is used for the miner.\n\nAnyhow in the winter days almost everything is required to heat the house so it won’t be much anyhow.\n\n#orangery #greenhouse   #grownostr #miner #bitcoin #nostr #btc"
+    }
+  ]
+}

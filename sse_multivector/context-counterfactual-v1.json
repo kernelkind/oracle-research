@@ -160,16 +160,10 @@
   },
   "source_artifacts": [
     {
-      "path": "target/sse-communicated-meaning-tev4.1/input.json",
+      "path": "sse_multivector/context-counterfactual-source-notes-v1.json",
       "path_base": "repository root",
-      "sha256": "c26797319316d5f8b8d10ab7207dc3a63e305c0c43d0bd91b1f6b21df01c7836",
-      "provides": "all listed real source notes except the book-switch note"
-    },
-    {
-      "path": "target/crec-113-formal-v1/sample/sample.jsonl",
-      "path_base": "repository root",
-      "sha256": "8edb8a51246201100e6ba7cf7bf1bbf9cd501881d7c70b8a9cfc7a380d1b168e",
-      "provides": "the book-switch note"
+      "sha256": "080cc4b7ea8934e7361ac17bda3d73c53d75f0338a1f0884fddb6acefe0f7cc8",
+      "provides": "the complete text of every real source note named by the frozen fixture"
     }
   ],
   "source_notes": [

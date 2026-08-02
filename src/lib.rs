@@ -56,6 +56,7 @@ pub mod semantic_branch_geometry;
 pub mod semantic_order;
 pub mod shared_learning_round;
 pub mod snapshot;
+pub mod sse_context_counterfactual;
 pub mod sse_mask_review;
 pub mod sse_vector_diagnostic;
 pub mod stage;

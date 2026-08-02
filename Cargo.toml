@@ -63,6 +63,10 @@ path = "src/bin/sse_mask_review.rs"
 name = "sse-vector-diagnostic"
 path = "src/bin/sse_vector_diagnostic.rs"
 
+[[bin]]
+name = "sse-context-counterfactual"
+path = "src/bin/sse_context_counterfactual.rs"
+
 [dependencies]
 bech32 = "=0.11.1"
 crossterm = "=0.29.0"
