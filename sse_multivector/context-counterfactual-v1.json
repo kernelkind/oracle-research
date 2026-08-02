@@ -48,7 +48,7 @@
   "rules": {
     "support": "median cosine similarity to the three members of one reference group",
     "prediction": "the preferred reference group must have strictly greater support than every listed alternative group",
-    "stage_1_success": "all 24 predeclared predictions pass",
+    "stage_1_success": "the overall verdict passes",
     "self_contained_scope": "The selected focal meaning is unchanged while unrelated full-note context is added; its own meaning must continue to win.",
     "context_resolution_scope": "The selected mask intentionally remains the same ambiguous focal phrase while only its unselected resolving context changes; this tests conditional use of full-note context, not mask-extraction completeness.",
     "absolute_cosine_threshold": null,
@@ -67,6 +67,67 @@
     ],
     "redundancy_policy": "Related or duplicate vectors are recorded but are not failures unless a distinct intended meaning is omitted or another meaning wins its predeclared comparison.",
     "result_scope": "Passing supports this mechanism on these controlled cases; it does not establish corpus-wide reliability."
+  },
+  "verdicts": {
+    "self_contained_baseline": {
+      "target_ids": [
+        "autonomy-alone",
+        "future-solar-alone",
+        "book-switch-alone"
+      ],
+      "passes_when": "all 3 predictions pass",
+      "role": "prerequisite showing that each focal meaning is recognizable before unrelated context is added"
+    },
+    "unrelated_context_resistance": {
+      "target_ids": [
+        "autonomy-plus-coffee",
+        "autonomy-plus-software",
+        "future-solar-plus-coffee",
+        "future-solar-plus-software",
+        "book-switch-plus-coffee",
+        "book-switch-plus-software"
+      ],
+      "passes_when": "the self_contained_baseline verdict passes and all 6 predictions pass"
+    },
+    "context_grounded": {
+      "target_ids": [
+        "retirement-greenhouse-context",
+        "retirement-minimalism-context",
+        "control-technology-surveillance-context",
+        "control-financial-system-context",
+        "rooftop-four-panels-context",
+        "rooftop-four-workers-context"
+      ],
+      "passes_when": "all 6 predictions pass"
+    },
+    "mixed_note_separation": {
+      "target_ids": [
+        "mixed-public-private-agreement",
+        "mixed-persistent-wren-chirping",
+        "mixed-self-directed-authenticity",
+        "mixed-daily-flavored-coffee-fatigue",
+        "mixed-pleasant-outdoor-saturday",
+        "mixed-miner-maintains-minimum-temperature",
+        "mixed-miner-temperature-day-night-control",
+        "mixed-miner-surplus-solar-startup",
+        "mixed-miner-solar-use-measurement"
+      ],
+      "passes_when": "all 9 predictions pass"
+    },
+    "not_blended": {
+      "requires": [
+        "unrelated_context_resistance",
+        "mixed_note_separation"
+      ],
+      "passes_when": "both required verdicts pass"
+    },
+    "overall": {
+      "requires": [
+        "context_grounded",
+        "not_blended"
+      ],
+      "passes_when": "both required verdicts pass; equivalently, all 24 predeclared predictions pass"
+    }
   },
   "source_artifacts": [
     {
