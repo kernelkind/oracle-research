@@ -1,4 +1,12 @@
 {
   "frozen_version": "v1",
-  "v1": "What is the most precise and concise title for the semantic similarity among these instances?"
+  "v1": {
+    "prompt_template": "Instances:\n\n{NUMBERED_INSTANCES}\n\nWhat is the most precise and concise title for the semantic similarity among these instances?",
+    "numbered_instance_template": "{INDEX}. {QUOTED_FRAGMENTS}",
+    "fragment_template": "“{EXACT_SOURCE_FRAGMENT}”",
+    "fragment_separator": "; ",
+    "instance_separator": "\n",
+    "fragment_order": "source_order",
+    "instance_unit": "one_vector"
+  }
 }

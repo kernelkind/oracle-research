@@ -106,14 +106,21 @@ therefore be described using the English evidence attached to its member
 vectors rather than by attempting to decode an opaque vector directly.
 
 For one fine region, a scoped language-model operation receives grounded source
-evidence from that region. Each vector instance is one numbered item. When one
-vector has several source fragments, those fragments remain in source order and
-are separated with semicolons inside that item.
+evidence from that region. The complete frozen input format is:
 
-The frozen title prompt is:
+```text
+Instances:
 
-> What is the most precise and concise title for the semantic similarity among
-> these instances?
+1. “{fragment}”; “{fragment}”
+2. “{fragment}”
+
+What is the most precise and concise title for the semantic similarity among these instances?
+```
+
+Each vector is one numbered instance. Every exact source fragment is enclosed
+in curly double quotes. Multiple fragments from one vector remain in source
+order and are joined with `; `. Instances are joined with one newline. The
+blank lines shown above are part of the prompt.
 
 The exact text is also preserved in
 [`fine-region-title-prompt-versions.json`](../../../sse_multivector/fine-region-title-prompt-versions.json).
