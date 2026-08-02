@@ -28,6 +28,18 @@ population from which the earlier complete-link semantic judgments were made.
 
 ## How to read the evidence
 
+### Identifier legend
+
+- `VXXX` identifies one of the 194 meaning-vectors in the frozen result,
+  numbered `V000` through `V193`. Each vector corresponds to one takeaway,
+  one source mask, and one source note.
+- `FXX` identifies a review case in this document. Each case starts with one
+  P40 cross-note region and follows that same membership through P50 and P60,
+  avoiding repeated copies of the same evidence. A review case is not an
+  algorithm output, segment ID, or learned subject.
+- `NXX` is a document-local label for one source note. The note's content
+  appears once in the appendix, and its hash prefix appears beside the label.
+
 The three cuts require every pair in a region to have at least the following
 cosine similarity:
 
