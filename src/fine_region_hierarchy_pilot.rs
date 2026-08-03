@@ -11,11 +11,12 @@ use thiserror::Error;
 use crate::artifact::{hash_bytes, hash_file};
 use crate::fine_region_hierarchy::{
     FineRegionHierarchy, FineSegment, HierarchyNode, average_linkage_hierarchy,
+    average_linkage_hierarchy_over_selected_segments,
 };
 use crate::fine_region_partition::{CosineMatrix, complete_linkage_partition};
 
-const CONFIG_SCHEMA_VERSION: u32 = 1;
-const REPORT_SCHEMA_VERSION: u32 = 1;
+const CONFIG_SCHEMA_VERSION: u32 = 2;
+const REPORT_SCHEMA_VERSION: u32 = 2;
 const MANIFEST_SCHEMA_VERSION: u32 = 1;
 const ANALYSIS_FILE: &str = "analysis.json";
 const AUDIT_FILE: &str = "audit.md";
@@ -72,6 +73,8 @@ pub enum FineRegionHierarchyPilotError {
 struct PilotConfig {
     schema_version: u32,
     pilot_id: String,
+    #[serde(default)]
+    fine_segment_selection: FineSegmentSelection,
     baseline_archive_sha256: String,
     analysis_manifest_sha256: String,
     normalized_vectors: BoundFile,
@@ -79,6 +82,14 @@ struct PilotConfig {
     review_decisions_sha256: String,
     vector_count: usize,
     dimensions: usize,
+}
+
+#[derive(Clone, Copy, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum FineSegmentSelection {
+    #[default]
+    CompleteReviewedCut,
+    MaximalCrossNoteSets,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -150,10 +161,16 @@ pub struct FineRegionHierarchyPilotReport {
     pub accepted_review_count: usize,
     pub accepted_minimum_cosine: f64,
     pub first_rejected_minimum_cosine: f64,
+    pub partition_cutoff_cosine: f64,
+    pub fine_segment_selection: FineSegmentSelection,
+    pub cross_note_candidate_segment_count: usize,
     pub cross_note_fine_segment_count: usize,
+    pub excluded_strict_subset_segment_count: usize,
     pub singleton_fine_segment_count: usize,
     pub unreviewed_same_note_group_count: usize,
     pub unreviewed_same_note_vector_count: usize,
+    pub hierarchy_vector_count: usize,
+    pub hierarchy_note_count: usize,
     pub rules: HierarchyPilotRules,
     pub hierarchy: FineRegionHierarchy,
 }
@@ -358,7 +375,15 @@ fn ordered_note_ids(
 }
 
 fn validate_config(config: &PilotConfig) -> Result<()> {
-    if config.schema_version != CONFIG_SCHEMA_VERSION
+    let schema_and_selection_are_valid = matches!(
+        (config.schema_version, config.fine_segment_selection),
+        (1, FineSegmentSelection::CompleteReviewedCut)
+            | (
+                CONFIG_SCHEMA_VERSION,
+                FineSegmentSelection::MaximalCrossNoteSets
+            )
+    );
+    if !schema_and_selection_are_valid
         || config.pilot_id.trim().is_empty()
         || config.vector_count < 2
         || config.dimensions == 0
@@ -430,27 +455,80 @@ fn validate_review(review: &ReviewRecord) -> Result<(usize, f64, f64)> {
 
 fn build_report(loaded: &LoadedPilot) -> Result<FineRegionHierarchyPilotReport> {
     let cosines = CosineMatrix::from_normalized_vectors(&loaded.vectors)?;
-    let partition = complete_linkage_partition(&cosines, loaded.accepted_minimum_cosine)?;
-    let mut cross_note_fine_segment_count = 0;
+    let partition_cutoff_cosine = loaded.first_rejected_minimum_cosine
+        + (loaded.accepted_minimum_cosine - loaded.first_rejected_minimum_cosine) / 2.0;
+    if !partition_cutoff_cosine.is_finite()
+        || partition_cutoff_cosine <= loaded.first_rejected_minimum_cosine
+        || partition_cutoff_cosine >= loaded.accepted_minimum_cosine
+    {
+        return Err(invalid(
+            "the reviewed pass and failure do not define a representable partition cutoff",
+        ));
+    }
+    let partition = complete_linkage_partition(&cosines, partition_cutoff_cosine)?;
+    let mut cross_note_candidates = Vec::new();
     let mut unreviewed_same_note_group_count = 0;
     let mut unreviewed_same_note_vector_count = 0;
-    let mut groups = Vec::new();
     for members in partition.regions() {
         let distinct_notes = members
             .iter()
             .map(|member| loaded.note_ids[*member].as_str())
             .collect::<BTreeSet<_>>();
         if distinct_notes.len() > 1 {
-            cross_note_fine_segment_count += 1;
-            groups.push(members.clone());
-        } else {
-            if members.len() > 1 {
-                unreviewed_same_note_group_count += 1;
-                unreviewed_same_note_vector_count += members.len();
-            }
-            groups.extend(members.iter().map(|member| vec![*member]));
+            cross_note_candidates.push((members.clone(), distinct_notes));
+        } else if members.len() > 1 {
+            unreviewed_same_note_group_count += 1;
+            unreviewed_same_note_vector_count += members.len();
         }
     }
+
+    let cross_note_candidate_segment_count = cross_note_candidates.len();
+    let (mut groups, excluded_strict_subset_segment_count) =
+        match loaded.config.fine_segment_selection {
+            FineSegmentSelection::CompleteReviewedCut => {
+                let mut groups = Vec::new();
+                for members in partition.regions() {
+                    let distinct_note_count = members
+                        .iter()
+                        .map(|member| loaded.note_ids[*member].as_str())
+                        .collect::<BTreeSet<_>>()
+                        .len();
+                    if distinct_note_count > 1 {
+                        groups.push(members.clone());
+                    } else {
+                        groups.extend(members.iter().map(|member| vec![*member]));
+                    }
+                }
+                (groups, 0)
+            }
+            FineSegmentSelection::MaximalCrossNoteSets => {
+                if cross_note_candidates
+                    .iter()
+                    .enumerate()
+                    .any(|(index, left)| {
+                        cross_note_candidates
+                            .iter()
+                            .skip(index + 1)
+                            .any(|right| left.1 == right.1)
+                    })
+                {
+                    return Err(invalid(
+                        "multiple cross-note candidate segments resolve to the same note set",
+                    ));
+                }
+                let groups = cross_note_candidates
+                    .iter()
+                    .filter(|candidate| {
+                        !cross_note_candidates.iter().any(|other| {
+                            candidate.1.len() < other.1.len() && candidate.1.is_subset(&other.1)
+                        })
+                    })
+                    .map(|candidate| candidate.0.clone())
+                    .collect::<Vec<_>>();
+                let excluded = cross_note_candidate_segment_count - groups.len();
+                (groups, excluded)
+            }
+        };
     groups.sort_by_key(|members| members[0]);
     let fine_segments = groups
         .into_iter()
@@ -464,7 +542,36 @@ fn build_report(loaded: &LoadedPilot) -> Result<FineRegionHierarchyPilotReport> 
         .iter()
         .filter(|segment| segment.members.len() == 1)
         .count();
-    let hierarchy = average_linkage_hierarchy(&loaded.vectors, &fine_segments)?;
+    let hierarchy_vector_count = fine_segments
+        .iter()
+        .map(|segment| segment.members.len())
+        .sum();
+    let hierarchy_note_count = fine_segments
+        .iter()
+        .flat_map(|segment| segment.members.iter())
+        .map(|member| loaded.note_ids[*member].as_str())
+        .collect::<BTreeSet<_>>()
+        .len();
+    let hierarchy = match loaded.config.fine_segment_selection {
+        FineSegmentSelection::CompleteReviewedCut => {
+            average_linkage_hierarchy(&loaded.vectors, &fine_segments)?
+        }
+        FineSegmentSelection::MaximalCrossNoteSets => {
+            average_linkage_hierarchy_over_selected_segments(&loaded.vectors, &fine_segments)?
+        }
+    };
+    let cross_note_fine_segment_count = fine_segments
+        .iter()
+        .filter(|segment| {
+            segment
+                .members
+                .iter()
+                .map(|member| loaded.note_ids[*member].as_str())
+                .collect::<BTreeSet<_>>()
+                .len()
+                > 1
+        })
+        .count();
 
     Ok(FineRegionHierarchyPilotReport {
         schema_version: REPORT_SCHEMA_VERSION,
@@ -484,13 +591,22 @@ fn build_report(loaded: &LoadedPilot) -> Result<FineRegionHierarchyPilotReport> 
         accepted_review_count: loaded.accepted_review_count,
         accepted_minimum_cosine: loaded.accepted_minimum_cosine,
         first_rejected_minimum_cosine: loaded.first_rejected_minimum_cosine,
+        partition_cutoff_cosine,
+        fine_segment_selection: loaded.config.fine_segment_selection,
+        cross_note_candidate_segment_count,
         cross_note_fine_segment_count,
+        excluded_strict_subset_segment_count,
         singleton_fine_segment_count,
         unreviewed_same_note_group_count,
         unreviewed_same_note_vector_count,
+        hierarchy_vector_count,
+        hierarchy_note_count,
         rules: HierarchyPilotRules {
-            fine_segments: "retain cross-note complete-linkage groups at the lowest reviewed pass before the first explicit failure; leave every other vector singleton".to_owned(),
-            higher_groups: "exact average linkage over the complete fine-segment partition; preserve all binary merges".to_owned(),
+            fine_segments: match loaded.config.fine_segment_selection {
+                FineSegmentSelection::CompleteReviewedCut => "retain cross-note complete-linkage groups at the lowest reviewed pass before the first explicit failure; leave every other vector singleton".to_owned(),
+                FineSegmentSelection::MaximalCrossNoteSets => "from the complete-linkage cut, retain only groups spanning at least two distinct notes whose note set is not a strict subset of another eligible group".to_owned(),
+            },
+            higher_groups: "exact average linkage over the selected fine segments; preserve all binary merges".to_owned(),
             fine_segment_weighting: "each fine segment is one equally weighted observation, regardless of vector-member count".to_owned(),
             labels_used_for_geometry: false,
         },
@@ -503,17 +619,22 @@ fn render_audit(report: &FineRegionHierarchyPilotReport) -> String {
     output.push_str("# Fine-segment hierarchy pilot\n\n");
     output.push_str("This artifact preserves geometry only. No generated title influenced a segment or hierarchy merge.\n\n");
     output.push_str(&format!(
-        "- Input: {} vectors in {} dimensions\n- Reviewed boundary: {} passes through `{:.6}`, then first failure at `{:.6}`\n- Reviewed cross-note fine segments: {}\n- Singleton fine segments: {}\n- Unreviewed same-note groups split apart: {} groups containing {} vectors\n- Fine segments total: {}\n- Higher merges: {}\n\n",
+        "- Input: {} vectors in {} dimensions\n- Reviewed boundary: {} passes through `{:.6}`, then first failure at `{:.6}`\n- Partition cutoff between those decisions: `{:.6}`\n- Fine-segment selection: `{:?}`\n- Cross-note candidates before maximal filtering: {}\n- Strict-subset candidates excluded: {}\n- Fine segments selected: {}\n- Source notes represented: {}\n- Vectors represented: {}\n- Singleton fine segments selected: {}\n- Unreviewed same-note groups retained only in the source artifact: {} groups containing {} vectors\n- Higher merges: {}\n\n",
         report.vector_count,
         report.dimensions,
         report.accepted_review_count,
         report.accepted_minimum_cosine,
         report.first_rejected_minimum_cosine,
+        report.partition_cutoff_cosine,
+        report.fine_segment_selection,
+        report.cross_note_candidate_segment_count,
+        report.excluded_strict_subset_segment_count,
         report.cross_note_fine_segment_count,
+        report.hierarchy_note_count,
+        report.hierarchy_vector_count,
         report.singleton_fine_segment_count,
         report.unreviewed_same_note_group_count,
         report.unreviewed_same_note_vector_count,
-        report.hierarchy.fine_segments.len(),
         report.hierarchy.merges.len(),
     ));
 

@@ -1,6 +1,7 @@
 {
-  "schema_version": 1,
-  "pilot_id": "sse-fine-region-hierarchy-v1",
+  "schema_version": 2,
+  "pilot_id": "sse-fine-region-hierarchy-v2",
+  "fine_segment_selection": "maximal_cross_note_sets",
   "baseline_archive_sha256": "fff03a8b1ed76e45413def0049cdd9fc3c948ae014d5ac94d72fa62f41f8cfa6",
   "analysis_manifest_sha256": "0174db8bed425446d7e8bfacfbbd5d4bb2084cdb28c3a6178452f4e1cb6917bc",
   "normalized_vectors": {

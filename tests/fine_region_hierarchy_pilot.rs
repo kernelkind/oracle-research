@@ -129,6 +129,105 @@ fn fixture() -> Fixture {
     }
 }
 
+fn maximal_cross_note_fixture() -> Fixture {
+    let temp = TempDir::new().expect("temporary fixture");
+    let baseline = temp.path().join("baseline");
+    fs::create_dir(&baseline).expect("baseline directory");
+    let vector_path = baseline.join("normalized-vectors.f32le");
+    let vectors = [
+        unit_vector(0.0),
+        unit_vector(1.0),
+        unit_vector(2.0),
+        unit_vector(90.0),
+        unit_vector(91.0),
+        unit_vector(180.0),
+        unit_vector(181.0),
+    ];
+    let bytes = vectors
+        .iter()
+        .flatten()
+        .flat_map(|value| value.to_le_bytes())
+        .collect::<Vec<_>>();
+    fs::write(&vector_path, bytes).expect("vector fixture");
+
+    let partition_analysis = temp.path().join("partition-analysis.json");
+    write_json(
+        &partition_analysis,
+        &json!({
+            "schema_version": 1,
+            "pilot_id": "fixture-partition",
+            "baseline_archive_sha256": "a".repeat(64),
+            "analysis_manifest_sha256": "b".repeat(64),
+            "note_count": 5,
+            "vector_count": 7,
+            "dimensions": 2,
+            "vectors": [
+                {"ordinal": 0, "note_id": "note-a"},
+                {"ordinal": 1, "note_id": "note-b"},
+                {"ordinal": 2, "note_id": "note-c"},
+                {"ordinal": 3, "note_id": "note-a"},
+                {"ordinal": 4, "note_id": "note-b"},
+                {"ordinal": 5, "note_id": "note-d"},
+                {"ordinal": 6, "note_id": "note-e"}
+            ]
+        }),
+    );
+
+    let review_decisions = temp.path().join("review-decisions.json");
+    write_json(
+        &review_decisions,
+        &json!({
+            "schema_version": 1,
+            "criterion": "expected members",
+            "decision_owner": "user",
+            "decisions": [
+                {
+                    "segment_id": "accepted",
+                    "minimum_cosine": 0.9995,
+                    "title_reviewed": "accepted",
+                    "decision": "pass"
+                },
+                {
+                    "segment_id": "rejected",
+                    "minimum_cosine": 0.9,
+                    "title_reviewed": "rejected",
+                    "decision": "fail"
+                }
+            ]
+        }),
+    );
+
+    let config = temp.path().join("config.json");
+    write_json(
+        &config,
+        &json!({
+            "schema_version": 2,
+            "pilot_id": "fixture-hierarchy-maximal-cross-note",
+            "fine_segment_selection": "maximal_cross_note_sets",
+            "baseline_archive_sha256": "a".repeat(64),
+            "analysis_manifest_sha256": "b".repeat(64),
+            "normalized_vectors": {
+                "path": "normalized-vectors.f32le",
+                "sha256": sha256(&vector_path)
+            },
+            "partition_analysis_sha256": sha256(&partition_analysis),
+            "review_decisions_sha256": sha256(&review_decisions),
+            "vector_count": 7,
+            "dimensions": 2
+        }),
+    );
+
+    let output = temp.path().join("result");
+    Fixture {
+        _temp: temp,
+        config,
+        baseline,
+        partition_analysis,
+        review_decisions,
+        output,
+    }
+}
+
 #[test]
 fn pilot_publishes_and_replays_the_review_bounded_complete_hierarchy() {
     let fixture = fixture();
@@ -143,8 +242,11 @@ fn pilot_publishes_and_replays_the_review_bounded_complete_hierarchy() {
     .expect("run hierarchy pilot");
 
     assert_eq!(report.vector_count, 4);
+    assert_eq!(report.schema_version, 2);
     assert_eq!(report.accepted_minimum_cosine, 0.99);
     assert_eq!(report.first_rejected_minimum_cosine, 0.5);
+    assert!(report.partition_cutoff_cosine < report.accepted_minimum_cosine);
+    assert!(report.partition_cutoff_cosine > report.first_rejected_minimum_cosine);
     assert_eq!(
         report
             .hierarchy
@@ -240,4 +342,38 @@ fn ensure_publishes_once_then_verifies_the_existing_artifact() {
     .expect("verify existing artifact");
 
     assert_eq!(verified, published);
+}
+
+#[test]
+fn maximal_cross_note_selection_excludes_singletons_and_strict_subsets() {
+    let fixture = maximal_cross_note_fixture();
+
+    let report = run_fine_region_hierarchy_pilot(
+        &fixture.config,
+        &fixture.baseline,
+        &fixture.partition_analysis,
+        &fixture.review_decisions,
+        &fixture.output,
+    )
+    .expect("run maximal cross-note hierarchy pilot");
+
+    assert_eq!(
+        report
+            .hierarchy
+            .fine_segments
+            .iter()
+            .map(|segment| segment.members.as_slice())
+            .collect::<Vec<_>>(),
+        vec![&[0, 1, 2][..], &[5, 6][..]]
+    );
+    assert_eq!(report.hierarchy.merges.len(), 1);
+    assert_eq!(report.hierarchy.root, HierarchyNode::Merge(0));
+    assert_eq!(report.cross_note_candidate_segment_count, 3);
+    assert_eq!(report.cross_note_fine_segment_count, 2);
+    assert_eq!(report.excluded_strict_subset_segment_count, 1);
+    assert_eq!(report.singleton_fine_segment_count, 0);
+    assert_eq!(report.hierarchy_vector_count, 5);
+    assert_eq!(report.hierarchy_note_count, 5);
+    assert!(report.partition_cutoff_cosine < report.accepted_minimum_cosine);
+    assert!(report.partition_cutoff_cosine > report.first_rejected_minimum_cosine);
 }

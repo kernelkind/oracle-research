@@ -3,10 +3,10 @@ set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 archive="$repo_root/sse_multivector/baselines/communicated-meaning-tev4-1/baseline.tar.zst"
-config="$repo_root/sse_multivector/fine-region-hierarchy-v1.json"
+config="$repo_root/sse_multivector/fine-region-hierarchy-v2.json"
 partition="$repo_root/sse_multivector/fine-region-partition-result-v1/analysis.json"
 review="$repo_root/sse_multivector/fine-region-title-cutoff-audit-v1/review-decisions.json"
-output="${1:-$repo_root/sse_multivector/fine-region-hierarchy-result-v1}"
+output="${1:-$repo_root/sse_multivector/fine-region-hierarchy-result-v2}"
 baseline="$(mktemp -d -t sse-fine-region-hierarchy.XXXXXXXX)"
 
 cleanup() {

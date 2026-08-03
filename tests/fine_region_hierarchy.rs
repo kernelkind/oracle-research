@@ -1,4 +1,7 @@
-use oracle_mvp::fine_region_hierarchy::{FineSegment, HierarchyNode, average_linkage_hierarchy};
+use oracle_mvp::fine_region_hierarchy::{
+    FineSegment, HierarchyNode, average_linkage_hierarchy,
+    average_linkage_hierarchy_over_selected_segments,
+};
 use oracle_mvp::fine_region_partition::CosineMatrix;
 
 fn unit_vector(degrees: f64) -> Vec<f64> {
@@ -122,4 +125,17 @@ fn average_linkage_rejects_invalid_fine_segment_partitions() {
         let error = average_linkage_hierarchy(&vectors, &segments).expect_err(name);
         assert!(error.to_string().contains(expected), "{name}: {error}");
     }
+}
+
+#[test]
+fn selected_segment_hierarchy_keeps_unselected_vectors_outside_the_tree() {
+    let vectors = vec![unit_vector(0.0), unit_vector(30.0), unit_vector(60.0)];
+    let segments = vec![segment("A", &[0]), segment("B", &[2])];
+
+    let hierarchy = average_linkage_hierarchy_over_selected_segments(&vectors, &segments)
+        .expect("selected hierarchy");
+
+    assert_eq!(hierarchy.fine_segments, segments);
+    assert_eq!(hierarchy.merges.len(), 1);
+    assert_eq!(hierarchy.root, HierarchyNode::Merge(0));
 }

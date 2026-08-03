@@ -51,8 +51,27 @@ pub fn average_linkage_hierarchy(
     normalized_vectors: &[Vec<f64>],
     fine_segments: &[FineSegment],
 ) -> Result<FineRegionHierarchy> {
+    build_average_linkage_hierarchy(normalized_vectors, fine_segments, true)
+}
+
+pub fn average_linkage_hierarchy_over_selected_segments(
+    normalized_vectors: &[Vec<f64>],
+    fine_segments: &[FineSegment],
+) -> Result<FineRegionHierarchy> {
+    build_average_linkage_hierarchy(normalized_vectors, fine_segments, false)
+}
+
+fn build_average_linkage_hierarchy(
+    normalized_vectors: &[Vec<f64>],
+    fine_segments: &[FineSegment],
+    require_complete_vector_partition: bool,
+) -> Result<FineRegionHierarchy> {
     let vectors = normalized_copy(normalized_vectors)?;
-    let fine_segments = validate_and_canonicalize(vectors.len(), fine_segments)?;
+    let fine_segments = validate_and_canonicalize(
+        vectors.len(),
+        fine_segments,
+        require_complete_vector_partition,
+    )?;
     let count = fine_segments.len();
     if count == 1 {
         return Ok(FineRegionHierarchy {
@@ -123,6 +142,7 @@ pub fn average_linkage_hierarchy(
 fn validate_and_canonicalize(
     vector_count: usize,
     fine_segments: &[FineSegment],
+    require_complete_vector_partition: bool,
 ) -> Result<Vec<FineSegment>> {
     if fine_segments.is_empty() {
         return Err(invalid("the fine-segment partition is empty"));
@@ -164,7 +184,14 @@ fn validate_and_canonicalize(
         .iter()
         .map(|segment| segment.members.len())
         .sum::<usize>();
-    if occurrence_count != vector_count || members != (0..vector_count).collect() {
+    if occurrence_count != members.len() {
+        return Err(invalid(
+            "the selected fine segments do not contain each referenced vector exactly once",
+        ));
+    }
+    if require_complete_vector_partition
+        && (occurrence_count != vector_count || members != (0..vector_count).collect())
+    {
         return Err(invalid(
             "the fine-segment partition does not contain every vector exactly once",
         ));
