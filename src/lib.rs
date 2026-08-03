@@ -21,6 +21,8 @@ pub mod event;
 pub mod final_evaluation;
 pub mod final_evaluation_report;
 pub mod final_evaluation_runner;
+pub mod fine_region_hierarchy;
+pub mod fine_region_hierarchy_pilot;
 pub mod fine_region_partition;
 pub mod fine_region_pilot;
 pub mod fp32_oracle;
