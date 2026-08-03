@@ -73,6 +73,7 @@ If a later experiment succeeds, its result should become the quality target. Pro
 
 ### Research
 
+- [Direct note-to-mask extractor](research/direct-note-to-mask-extractor.md)
 - [Corpus-induced semantic region discovery](research/semantic-region-discovery-and-labeling.md)
 - [Leading production recommendation systems](research/leading-content-recommendation-systems.md)
 - [General semantic recommendation systems](research/general-semantic-recommendation-systems.md)

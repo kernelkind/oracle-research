@@ -74,6 +74,10 @@ evidence, not a claim that the decomposition is universally correct. The
 preserved interpretation is in
 [`scientific-interpretation.md`](../../../sse_multivector/context-counterfactual-result-v1/scientific-interpretation.md).
 
+Research on replacing per-note frontier-model extraction with a trained local
+`note -> grouped masks` model is preserved in
+[`direct-note-to-mask-extractor.md`](../research/direct-note-to-mask-extractor.md).
+
 ## 2. Hard-Partition Atomic Vectors into Fine Subjects
 
 All atomic vector instances from the corpus are partitioned into fine semantic
