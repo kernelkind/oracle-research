@@ -75,6 +75,10 @@ path = "src/bin/sse_fine_region_pilot.rs"
 name = "sse-fine-region-hierarchy-pilot"
 path = "src/bin/sse_fine_region_hierarchy_pilot.rs"
 
+[[bin]]
+name = "sse-subject-navigation"
+path = "src/bin/sse_subject_navigation.rs"
+
 [dependencies]
 bech32 = "=0.11.1"
 crossterm = "=0.29.0"

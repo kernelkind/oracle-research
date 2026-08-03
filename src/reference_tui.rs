@@ -19,8 +19,9 @@ use ratatui::style::{Color, Modifier, Style};
 use ratatui::text::{Line, Span};
 use ratatui::widgets::{Block, Borders, List, ListItem, ListState, Padding, Paragraph, Wrap};
 
-use crate::reference_map::{ApprovedHierarchy, ReferenceNavigation, ReviewOutcome};
+use crate::reference_map::{ApprovedHierarchy, ReviewOutcome};
 use crate::snapshot::{Error, Result};
+use crate::subject_navigation::{NavigationHierarchy, SubjectNavigation};
 
 pub(crate) const MIN_WIDTH: u16 = 72;
 pub(crate) const MIN_HEIGHT: u16 = 24;
@@ -562,8 +563,8 @@ pub enum NavigationTuiAction {
 
 #[derive(Clone, Debug)]
 pub struct ReferenceNavigationTuiModel {
-    hierarchy: ApprovedHierarchy,
-    navigation: ReferenceNavigation,
+    hierarchy: NavigationHierarchy,
+    navigation: SubjectNavigation,
     scroll: u16,
     half_page_lines: u16,
     interaction_enabled: bool,
@@ -571,7 +572,11 @@ pub struct ReferenceNavigationTuiModel {
 
 impl ReferenceNavigationTuiModel {
     pub fn new(hierarchy: ApprovedHierarchy) -> Result<Self> {
-        let navigation = ReferenceNavigation::new(&hierarchy)?;
+        Self::from_navigation_hierarchy(NavigationHierarchy::try_from(&hierarchy)?)
+    }
+
+    pub fn from_navigation_hierarchy(hierarchy: NavigationHierarchy) -> Result<Self> {
+        let navigation = SubjectNavigation::new(&hierarchy)?;
         Ok(Self {
             hierarchy,
             navigation,
@@ -846,7 +851,11 @@ impl ReferenceTerminal {
     }
 
     pub fn navigate(&mut self, hierarchy: ApprovedHierarchy) -> Result<()> {
-        let mut model = ReferenceNavigationTuiModel::new(hierarchy)?;
+        self.navigate_subjects(NavigationHierarchy::try_from(&hierarchy)?)
+    }
+
+    pub fn navigate_subjects(&mut self, hierarchy: NavigationHierarchy) -> Result<()> {
+        let mut model = ReferenceNavigationTuiModel::from_navigation_hierarchy(hierarchy)?;
         let stale_action = drain_stale_input().map_err(|source| Error::Io {
             operation: "drain terminal input for",
             path: "<reference-navigation-terminal>".into(),
