@@ -57,6 +57,7 @@ pub mod runner;
 pub mod semantic_branch_analysis;
 pub mod semantic_branch_artifact;
 pub mod semantic_branch_geometry;
+pub mod semantic_map_sample;
 pub mod semantic_order;
 pub mod shared_learning_round;
 pub mod snapshot;

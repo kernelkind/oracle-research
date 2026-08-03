@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "selection_rule": "bottom-domain-separated-sha256-then-event-id-over-usable-fresh-english-event-ids-v1",
+  "selection_domain": "oracle-mvp/scaled-semantic-map-sample/v1\u0000",
+  "usable_text_normalization_policy": "remove-urls-and-structurally-valid-nip19-references-collapse-whitespace-v2",
+  "source_classification_policy": "empty-is-neutral-otherwise-glotlid-v3-top1-eng-or-zxx-v1",
+  "source_manifest": {
+    "file": "manifest.json",
+    "records": 0,
+    "bytes": 976,
+    "sha256": "6ff004865abf4dea946997bba57f6103d5e2fe682b2e1299b2d0a675bd759752"
+  },
+  "declared_source_ndb_data_sha256": "3b19f650035fbb71c09bc51e06957f64ca421df948bac3b4751fa4809ffe73e4",
+  "source_derivation_ledger_sha256": "adcf8f016f6a34021859550dd2cc6c8f7e846ee1ff4c82e52412405bc6fb93c7",
+  "source_dedup_manifest_sha256": "c5a1d6e4d1530072f39763ccd2e2bed8e8ffe60e006d783be9dddaed9a660777",
+  "source_pre_english_ordered_event_ids_sha256": "53b33c5fc991553eb98bae5a8f2a63f18d594933613487535ff9f010af58c561",
+  "source_english_ordered_event_ids_sha256": "4166d105437ab82fda75c3a10bbd4bc53b4aaf9560990a89981a98122543625d",
+  "scanned_english_events": 3774156,
+  "usable_text_events": 3510335,
+  "excluded_no_usable_text": 263821,
+  "selected_events": 1000,
+  "initial_rows": 500,
+  "extension_rows": 500,
+  "ordered_event_ids": {
+    "file": "ordered-event-ids.bin",
+    "records": 1000,
+    "bytes": 32000,
+    "sha256": "8b0ce45049ed10cfebccab6db15c665f3e2598f5efbb5ef0fc5813dba899bfd5"
+  }
+}

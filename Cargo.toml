@@ -79,6 +79,10 @@ path = "src/bin/sse_fine_region_hierarchy_pilot.rs"
 name = "sse-subject-navigation"
 path = "src/bin/sse_subject_navigation.rs"
 
+[[bin]]
+name = "freeze-semantic-map-sample"
+path = "src/bin/freeze_semantic_map_sample.rs"
+
 [dependencies]
 bech32 = "=0.11.1"
 crossterm = "=0.29.0"

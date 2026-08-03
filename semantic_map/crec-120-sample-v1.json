@@ -1,0 +1,6 @@
+{
+  "source_corpus_path": "../damus_snapshot/runs/crec-105-fresh-corpus-v9/derivation/cumulative-filtered.ndb",
+  "source_ordered_event_ids_path": "../damus_snapshot/runs/crec-105-fresh-corpus-v9/publication/10m-adcf8f016f6a-v1/english-eligible/ordered-event-ids.bin",
+  "source_manifest_path": "../damus_snapshot/runs/crec-105-fresh-corpus-v9/publication/10m-adcf8f016f6a-v1/english-eligible/manifest.json",
+  "output_path": "semantic_map/crec-120-sample-v1"
+}
