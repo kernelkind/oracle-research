@@ -444,6 +444,44 @@ class CodexExecRunnerTests(unittest.TestCase):
             manifest["isolation"]["runtime_context_overrides"],
         )
 
+    def test_takeaway_generation_removes_metadata_but_masks_original_text(
+        self,
+    ) -> None:
+        original = (
+            "Rust is pleasant.\n    Tea helps. @Override "
+            "nostr:npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq "
+            "https://example.com/source docs.example.org/path "
+            "#GPL #OpenSource npub1friend"
+        )
+        self.notes_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "notes": [{"note_id": "note-1", "text": original}],
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        completed = self.invoke()
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        calls = [call for call in self.calls() if call["kind"] == "exec"]
+        takeaway_prompt = calls[0]["prompt"]
+        self.assertIn("\n    Tea helps. @Override", takeaway_prompt)
+        self.assertNotIn("nostr:npub1", takeaway_prompt)
+        self.assertIn("https://example.com/source", takeaway_prompt)
+        self.assertIn("docs.example.org/path", takeaway_prompt)
+        self.assertIn("#GPL #OpenSource npub1friend", takeaway_prompt)
+        self.assertIn(f"<post>\n{original}\n</post>", calls[1]["prompt"])
+        manifest = json.loads(
+            (self.run_directory / "manifest.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            "remove-long-nip19-identifiers-v1",
+            manifest["takeaway_input_normalization_version"],
+        )
+
     def test_runs_generic_prompts_without_adding_tools_or_prompt_text(self) -> None:
         prompt_run_directory = self.root / "prompt-run"
         prompts = [

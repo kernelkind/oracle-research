@@ -51,6 +51,44 @@ Return only a JSON array of exact substrings copied from the post, in source ord
 <takeaway>
 {TAKEAWAY}
 </takeaway>"#;
+const TPV3_82_INSTRUCTION: &str = r#"Read this social-media post as a whole and determine everything the author communicates.
+
+Using the complete post, resolve each context-dependent reference or expression to the most specific descriptive meaning clearly supported by the post. When an exact identity is unavailable, use a supported descriptive referent. Express relationships only at the specificity supported by the complete post.
+
+A URL, exact user handle, or hashtag syntax cannot by itself establish a destination, relationship, or activity that the surrounding text does not state. Hashtag words may supply subject context, but do not otherwise add a claim.
+
+Identify every substantive meaning the author communicates. Information the post merely leaves unidentified, unexplained, unstated, or unresolved is not itself a meaning to output.
+
+Rewrite each identified meaning in your own words as a distinct takeaway that stands alone as a separate document. Other takeaways do not provide context. A takeaway passes only when a reader who sees that one string and nothing else can identify every participant, event, claim, and relationship needed to recover its meaning. If a takeaway communicates a response to or evaluation of another meaning in the post, restate that meaning inside the takeaway. Repeat source-grounded context when necessary.
+
+Before returning, test every takeaway against that success criterion and revise any item that does not pass without adding meaning.
+
+Omit exact user handles, URLs, and hashtag syntax.
+
+Return only a JSON array of takeaway strings."#;
+const MPV3_4_INSTRUCTION: &str = r#"Align one fixed takeaway to its source social-media post.
+
+Read the complete post and takeaway first. Treat the takeaway as the fixed target meaning.
+
+The returned fragments will be read together as a standalone excerpt, without the complete post or the takeaway. Select exact source fragments so that this excerpt explicitly preserves the takeaway’s complete meaning—including its referents, relationships, and qualifications—without adding unrelated meaning.
+
+Judge support only from meaning explicitly stated by the selected text. A name identifies an entity but does not supply its type, attributes, or relationships. Unselected text and external knowledge supply nothing.
+
+Complete the evidence needed for the whole takeaway before minimizing. Then remove selected text whose meaning is not part of the takeaway.
+
+Do not select URLs, exact user handles, or long encoded Nostr identifiers beginning with prefixes such as `npub1…`, `nprofile1…`, `note1…`, `nevent1…`, `naddr1…`, or `nsec1…`. These identifiers may be prefixed by `nostr:`, the Nostr URI scheme, as in `nostr:npub1…`.
+
+Before returning, read only the selected fragments and verify that they explicitly support every part of the takeaway and no additional meaning.
+
+Return only a JSON array of exact substrings copied from the post, in source order.
+
+<post>
+{POST}
+</post>
+
+<takeaway>
+{TAKEAWAY}
+</takeaway>"#;
 const SUBJECT_1: &str = "1111111111111111";
 const SUBJECT_2: &str = "2222222222222222";
 const SUBJECT_3: &str = "3333333333333333";
@@ -544,6 +582,43 @@ fn proposal_validation_accepts_tpv3_81_with_mpv3_3() {
 
     load_verified_subject_mask_proposal(&fixture.proposal_path)
         .expect("the proposal must accept the frozen TEv4.1 generation profile");
+}
+
+#[test]
+fn proposal_validation_accepts_tpv3_82_with_mpv3_4() {
+    let fixture = Fixture::new();
+    let mut proposal = fixture.proposal_json();
+    let takeaway_registry: Value = serde_json::from_slice(
+        &fs::read(
+            Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("sse_multivector/takeaway-prompt-versions.json"),
+        )
+        .expect("read takeaway prompt registry"),
+    )
+    .expect("parse takeaway prompt registry");
+    let mask_registry: Value = serde_json::from_slice(
+        &fs::read(
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("sse_multivector/mask-prompt-versions.json"),
+        )
+        .expect("read mask prompt registry"),
+    )
+    .expect("parse mask prompt registry");
+    assert_eq!(
+        takeaway_registry["frozen_takeaway_prompt_version"],
+        json!("TPv3.82")
+    );
+    assert_eq!(
+        mask_registry["frozen_mask_prompt_version"],
+        json!("MPv3.4")
+    );
+    assert_eq!(takeaway_registry["TPv3.82"], json!(TPV3_82_INSTRUCTION));
+    assert_eq!(mask_registry["MPv3.4"], json!(MPV3_4_INSTRUCTION));
+    proposal["subject_instruction"] = takeaway_registry["TPv3.82"].clone();
+    proposal["mask_instruction"] = mask_registry["MPv3.4"].clone();
+    fixture.replace_proposal(&proposal);
+
+    load_verified_subject_mask_proposal(&fixture.proposal_path)
+        .expect("the proposal must accept the corrected generation profile");
 }
 
 #[test]

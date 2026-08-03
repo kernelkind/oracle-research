@@ -23,6 +23,7 @@ SCHEMA_VERSION = 1
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CODEX_HOME = Path("~/.local/state/oracle-mvp/codex-home").expanduser()
 TAKEAWAY_ENVELOPE_VERSION = "xml-post-v1"
+TAKEAWAY_INPUT_NORMALIZATION_VERSION = "remove-long-nip19-identifiers-v1"
 MINIMAL_MODEL_INSTRUCTIONS = "Follow the user's instructions.\n"
 RUNTIME_CONTEXT_OVERRIDES = (
     "agents.enabled=false",
@@ -43,6 +44,11 @@ DISABLED_FEATURES = (
     "image_generation",
 )
 IDENTIFIER = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/+\-]*$")
+NIP19_IDENTIFIER = re.compile(
+    r"(?i)(?<!\w)(?:nostr:)?(?:nprofile|nevent|nrelay|naddr|npub|nsec|note)1"
+    r"[023456789acdefghjklmnpqrstuvwxyz]{20,}"
+    r"(?:[?#][^\s<>\"']*)?(?=$|[^\w])"
+)
 
 TAKEAWAY_SCHEMA: dict[str, object] = {
     "type": "object",
@@ -547,6 +553,9 @@ def _build_manifest(
         "input_path": str(config.input_path),
         "input_sha256": _sha256_file(config.input_path),
         "takeaway_envelope_version": TAKEAWAY_ENVELOPE_VERSION,
+        "takeaway_input_normalization_version": (
+            TAKEAWAY_INPUT_NORMALIZATION_VERSION
+        ),
         "takeaway": _stage_manifest(config.takeaway, TAKEAWAY_SCHEMA),
         "mask": _stage_manifest(config.mask, MASK_SCHEMA),
         "isolation": _isolation_manifest(),
@@ -943,8 +952,12 @@ def _run_job(
     return response
 
 
+def _takeaway_input(text: str) -> str:
+    return NIP19_IDENTIFIER.sub("", text)
+
+
 def _render_takeaway_prompt(prompt: str, note: Note) -> str:
-    return f"{prompt}\n\n<post>\n{note.text}\n</post>"
+    return f"{prompt}\n\n<post>\n{_takeaway_input(note.text)}\n</post>"
 
 
 def _render_mask_prompt(prompt: str, note: Note, takeaway: str) -> str:

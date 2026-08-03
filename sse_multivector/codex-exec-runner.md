@@ -117,13 +117,13 @@ Paths may be absolute or relative to the configuration file.
   "run_directory": "run-model-probe-1",
   "takeaway": {
     "prompt_registry_path": "sse_multivector/takeaway-prompt-versions.json",
-    "prompt_version": "TPv3.81",
+    "prompt_version": "TPv3.82",
     "model": "replace-with-model-id",
     "reasoning_effort": "replace-with-effort"
   },
   "mask": {
     "prompt_registry_path": "sse_multivector/mask-prompt-versions.json",
-    "prompt_version": "MP3.2",
+    "prompt_version": "MPv3.4",
     "model": "replace-with-model-id",
     "reasoning_effort": "replace-with-effort"
   }
@@ -139,6 +139,16 @@ python3 sse_multivector/codex_exec.py run path/to/config.json
 Each note receives one fresh takeaway process. Each resulting takeaway receives one
 fresh mask process containing only its source note, fixed takeaway, and frozen mask
 prompt. No Codex conversation is resumed or shared.
+
+The takeaway process receives a derived view with long NIP-19 identifiers removed.
+All other text and layout remain unchanged. TPv3.82 handles URLs, ordinary handles,
+and hashtag syntax under its evidence rule. Removing only the opaque Nostr identifier
+prevents it from creating a relationship that the mask stage cannot ground without
+damaging code or meaningful surrounding text.
+
+The mask process still receives the untouched source note. Exact returned fragments
+are validated against that original text. The run manifest records the takeaway-input
+normalization version so a generated artifact remains reproducible.
 
 ## Isolation
 
