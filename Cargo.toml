@@ -76,6 +76,10 @@ name = "sse-fine-region-hierarchy-pilot"
 path = "src/bin/sse_fine_region_hierarchy_pilot.rs"
 
 [[bin]]
+name = "sse-fine-region-scc-preflight"
+path = "src/bin/sse_fine_region_scc_preflight.rs"
+
+[[bin]]
 name = "sse-subject-navigation"
 path = "src/bin/sse_subject_navigation.rs"
 

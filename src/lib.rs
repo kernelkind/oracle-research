@@ -25,6 +25,8 @@ pub mod fine_region_hierarchy;
 pub mod fine_region_hierarchy_pilot;
 pub mod fine_region_partition;
 pub mod fine_region_pilot;
+pub mod fine_region_scc;
+pub mod fine_region_scc_preflight;
 pub mod fp32_oracle;
 pub mod gte;
 pub mod gte_budget;

@@ -139,7 +139,7 @@ fn build_average_linkage_hierarchy(
     })
 }
 
-fn validate_and_canonicalize(
+pub(crate) fn validate_and_canonicalize(
     vector_count: usize,
     fine_segments: &[FineSegment],
     require_complete_vector_partition: bool,
@@ -200,7 +200,7 @@ fn validate_and_canonicalize(
     Ok(segments)
 }
 
-fn normalized_copy(vectors: &[Vec<f64>]) -> Result<Vec<Vec<f64>>> {
+pub(crate) fn normalized_copy(vectors: &[Vec<f64>]) -> Result<Vec<Vec<f64>>> {
     if vectors.is_empty() || vectors[0].is_empty() {
         return Err(invalid("the normalized vector input is empty"));
     }
@@ -223,7 +223,7 @@ fn normalized_copy(vectors: &[Vec<f64>]) -> Result<Vec<Vec<f64>>> {
         .collect()
 }
 
-fn raw_mean(vectors: &[Vec<f64>], members: &[usize]) -> Vec<f64> {
+pub(crate) fn raw_mean(vectors: &[Vec<f64>], members: &[usize]) -> Vec<f64> {
     let mut mean = vec![0.0; vectors[0].len()];
     for member in members {
         for (sum, coordinate) in mean.iter_mut().zip(&vectors[*member]) {
@@ -236,13 +236,13 @@ fn raw_mean(vectors: &[Vec<f64>], members: &[usize]) -> Vec<f64> {
     mean
 }
 
-fn dot(left: &[f64], right: &[f64]) -> f64 {
+pub(crate) fn dot(left: &[f64], right: &[f64]) -> f64 {
     left.iter()
         .zip(right)
         .map(|(left, right)| left * right)
         .sum()
 }
 
-fn invalid(message: impl Into<String>) -> FineRegionHierarchyError {
+pub(crate) fn invalid(message: impl Into<String>) -> FineRegionHierarchyError {
     FineRegionHierarchyError::Invariant(message.into())
 }
