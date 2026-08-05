@@ -19,10 +19,7 @@ from pathlib import Path
 from typing import Any, Sequence
 
 
-PIPELINE_SCHEMA_VERSION = 2
-PROMPT_SCHEMA_VERSION = 1
-NOTE_INPUT_SCHEMA_VERSION = 1
-RESULT_SCHEMA_VERSION = 1
+SCHEMA_VERSION = 1
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CODEX_HOME = Path("~/.local/state/oracle-mvp/codex-home").expanduser()
 TAKEAWAY_ENVELOPE_VERSION = "xml-post-v1"
@@ -74,17 +71,6 @@ MASK_SCHEMA: dict[str, object] = {
         }
     },
     "required": ["fragments"],
-    "additionalProperties": False,
-}
-PROMINENCE_SCHEMA: dict[str, object] = {
-    "type": "object",
-    "properties": {
-        "prominence": {
-            "type": "array",
-            "items": {"type": "integer", "minimum": 0, "maximum": 100},
-        }
-    },
-    "required": ["prominence"],
     "additionalProperties": False,
 }
 
@@ -357,7 +343,6 @@ class RunnerConfig:
     input_path: Path
     run_directory: Path
     takeaway: StageConfig
-    prominence: StageConfig
     mask: StageConfig
 
     @classmethod
@@ -365,8 +350,6 @@ class RunnerConfig:
         config_path = path.expanduser().resolve()
         base = config_path.parent
         value = _expect_object(_load_json(config_path, "config"), "config")
-        if value.get("schema_version") != PIPELINE_SCHEMA_VERSION:
-            raise RunnerError("unsupported pipeline config schema version")
         _expect_fields(
             value,
             "config",
@@ -377,10 +360,11 @@ class RunnerConfig:
                 "input_path",
                 "run_directory",
                 "takeaway",
-                "prominence",
                 "mask",
             },
         )
+        if value["schema_version"] != SCHEMA_VERSION:
+            raise RunnerError("unsupported config schema version")
         config = cls(
             config_path=config_path,
             codex_binary=_resolve_executable(
@@ -390,7 +374,6 @@ class RunnerConfig:
             input_path=_resolve_path(value["input_path"], "input_path", base),
             run_directory=_resolve_path(value["run_directory"], "run_directory", base),
             takeaway=StageConfig.load(value["takeaway"], "takeaway", base),
-            prominence=StageConfig.load(value["prominence"], "prominence", base),
             mask=StageConfig.load(value["mask"], "mask", base),
         )
         _validate_codex_home(config.codex_home)
@@ -437,8 +420,8 @@ class PromptRunnerConfig:
                 "prompts",
             },
         )
-        if value["schema_version"] != PROMPT_SCHEMA_VERSION:
-            raise RunnerError("unsupported prompt config schema version")
+        if value["schema_version"] != SCHEMA_VERSION:
+            raise RunnerError("unsupported config schema version")
         raw_prompts = value["prompts"]
         if not isinstance(raw_prompts, list) or not raw_prompts:
             raise RunnerError("`config.prompts` must be a nonempty array")
@@ -480,8 +463,8 @@ class PromptRunnerConfig:
 def _load_notes(path: Path) -> tuple[Note, ...]:
     value = _expect_object(_load_json(path, "input_path"), "input")
     _expect_fields(value, "input", {"schema_version", "notes"})
-    if value["schema_version"] != NOTE_INPUT_SCHEMA_VERSION:
-        raise RunnerError("unsupported note input schema version")
+    if value["schema_version"] != SCHEMA_VERSION:
+        raise RunnerError("unsupported input schema version")
     raw_notes = value["notes"]
     if not isinstance(raw_notes, list) or not raw_notes:
         raise RunnerError("`input.notes` must be a nonempty array")
@@ -562,7 +545,7 @@ def _build_manifest(
     codex_version: str,
 ) -> dict[str, object]:
     return {
-        "schema_version": PIPELINE_SCHEMA_VERSION,
+        "schema_version": SCHEMA_VERSION,
         "wrapper_sha256": _sha256_file(Path(__file__).resolve()),
         "codex_binary": str(config.codex_binary),
         "codex_version": codex_version,
@@ -574,7 +557,6 @@ def _build_manifest(
             TAKEAWAY_INPUT_NORMALIZATION_VERSION
         ),
         "takeaway": _stage_manifest(config.takeaway, TAKEAWAY_SCHEMA),
-        "prominence": _stage_manifest(config.prominence, PROMINENCE_SCHEMA),
         "mask": _stage_manifest(config.mask, MASK_SCHEMA),
         "isolation": _isolation_manifest(),
     }
@@ -585,7 +567,7 @@ def _build_prompt_manifest(
     codex_version: str,
 ) -> dict[str, object]:
     return {
-        "schema_version": PROMPT_SCHEMA_VERSION,
+        "schema_version": SCHEMA_VERSION,
         "mode": "prompt",
         "wrapper_sha256": _sha256_file(Path(__file__).resolve()),
         "config_path": str(config.config_path),
@@ -646,10 +628,6 @@ def _prepare_run_directory(
     _atomic_write(
         config.run_directory / "takeaway-output-schema.json",
         _canonical_json_bytes(TAKEAWAY_SCHEMA),
-    )
-    _atomic_write(
-        config.run_directory / "prominence-output-schema.json",
-        _canonical_json_bytes(PROMINENCE_SCHEMA),
     )
     _atomic_write(
         config.run_directory / "mask-output-schema.json",
@@ -743,32 +721,9 @@ def _validate_result_items(
     stage_name: str,
     value: object,
     note_text: str,
-    expected_takeaway_count: int | None,
-) -> list[str] | list[int]:
+) -> list[str]:
     if stage_name == "takeaway":
         return _validate_string_array(value, "takeaway", allow_empty=True)
-    if stage_name == "prominence":
-        if not isinstance(value, list):
-            raise RunnerError("codex prominence response must be an array of integers")
-        if expected_takeaway_count is None:
-            raise AssertionError("prominence validation requires a takeaway count")
-        if len(value) != expected_takeaway_count:
-            raise RunnerError(
-                "codex prominence response contains "
-                f"{len(value)} scores for {expected_takeaway_count} takeaways"
-            )
-        scores: list[int] = []
-        for index, score in enumerate(value):
-            if isinstance(score, bool) or not isinstance(score, int):
-                raise RunnerError(
-                    f"codex prominence response item {index} must be an integer"
-                )
-            if not 0 <= score <= 100:
-                raise RunnerError(
-                    f"codex prominence response item {index} must be between 0 and 100"
-                )
-            scores.append(score)
-        return scores
     fragments = _validate_string_array(value, "mask", allow_empty=False)
     cursor = 0
     for index, fragment in enumerate(fragments):
@@ -786,21 +741,11 @@ def _validate_response(
     stage_name: str,
     value: object,
     note_text: str,
-    expected_takeaway_count: int | None,
-) -> list[str] | list[int]:
+) -> list[str]:
     response_object = _expect_object(value, f"codex {stage_name} response")
-    field = {
-        "takeaway": "takeaways",
-        "prominence": "prominence",
-        "mask": "fragments",
-    }[stage_name]
+    field = "takeaways" if stage_name == "takeaway" else "fragments"
     _expect_fields(response_object, f"codex {stage_name} response", {field})
-    return _validate_result_items(
-        stage_name,
-        response_object[field],
-        note_text,
-        expected_takeaway_count,
-    )
+    return _validate_result_items(stage_name, response_object[field], note_text)
 
 
 def _job_key(
@@ -810,8 +755,6 @@ def _job_key(
 ) -> str:
     if stage_name == "prompt":
         return f"prompt:{note_id}"
-    if stage_name == "prominence":
-        return f"prominence:{note_id}"
     if takeaway_index is None:
         return f"takeaway:{note_id}"
     return f"mask:{note_id}:{takeaway_index}"
@@ -888,8 +831,7 @@ def _run_job(
     results_path: Path,
     latest: dict[str, dict[str, Any]],
     retry_failed: bool,
-    expected_takeaway_count: int | None = None,
-) -> list[str] | list[int] | str:
+) -> list[str] | str:
     job_key = _job_key(stage_name, note.note_id, takeaway_index)
     previous = latest.get(job_key)
     if previous is not None and previous["status"] == "succeeded":
@@ -904,7 +846,6 @@ def _run_job(
             stage_name,
             previous.get("response"),
             note.text,
-            expected_takeaway_count,
         )
     if previous is not None and not retry_failed:
         raise RunnerError(
@@ -919,7 +860,7 @@ def _run_job(
     exit_code: int | None = None
     thread_id: str | None = None
     usage: object = None
-    response: list[str] | list[int] | str | None = None
+    response: list[str] | str | None = None
     error_message: str | None = None
     argv: list[str] = []
     started_at = time.monotonic()
@@ -963,18 +904,13 @@ def _run_job(
                     raise RunnerError(
                         f"codex final response is not valid JSON: {error}"
                     ) from error
-                response = _validate_response(
-                    stage_name,
-                    raw_response,
-                    note.text,
-                    expected_takeaway_count,
-                )
+                response = _validate_response(stage_name, raw_response, note.text)
         except (OSError, UnicodeError, RunnerError) as error:
             error_message = str(error)
 
     elapsed_seconds = time.monotonic() - started_at
     record: dict[str, object] = {
-        "schema_version": RESULT_SCHEMA_VERSION,
+        "schema_version": SCHEMA_VERSION,
         "manifest_sha256": manifest_sha256,
         "job_key": job_key,
         "stage": stage_name,
@@ -1033,20 +969,6 @@ def _render_mask_prompt(prompt: str, note: Note, takeaway: str) -> str:
     )
 
 
-def _render_prominence_prompt(
-    prompt: str,
-    note: Note,
-    takeaways: Sequence[str],
-) -> str:
-    numbered = "\n".join(
-        f"{index}. {takeaway}" for index, takeaway in enumerate(takeaways, start=1)
-    )
-    return (
-        f"{prompt}\n\n<post>\n{_takeaway_input(note.text)}\n</post>\n\n"
-        f"<takeaways>\n{numbered}\n</takeaways>"
-    )
-
-
 def run(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
     config = RunnerConfig.load(config_path)
     notes = _load_notes(config.input_path)
@@ -1076,38 +998,6 @@ def run(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
             latest=latest,
             retry_failed=retry_failed,
         )
-        if not isinstance(takeaways, list) or not all(
-            isinstance(takeaway, str) for takeaway in takeaways
-        ):
-            raise AssertionError("takeaway job returned an invalid response")
-        if takeaways:
-            prominence = _run_job(
-                config=config,
-                manifest_sha256=manifest_sha256,
-                codex_version=codex_version,
-                stage_name="prominence",
-                stage=config.prominence,
-                note=note,
-                takeaway_index=None,
-                prompt=_render_prominence_prompt(
-                    config.prominence.prompt,
-                    note,
-                    takeaways,
-                ),
-                schema_path=config.run_directory / "prominence-output-schema.json",
-                schema=PROMINENCE_SCHEMA,
-                results_path=results_path,
-                latest=latest,
-                retry_failed=retry_failed,
-                expected_takeaway_count=len(takeaways),
-            )
-            if not isinstance(prominence, list) or not all(
-                isinstance(score, int) and not isinstance(score, bool)
-                for score in prominence
-            ):
-                raise AssertionError("prominence job returned an invalid response")
-        else:
-            prominence = []
         output_takeaways: list[dict[str, object]] = []
         for index, takeaway in enumerate(takeaways):
             fragments = _run_job(
@@ -1125,17 +1015,11 @@ def run(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
                 latest=latest,
                 retry_failed=retry_failed,
             )
-            output_takeaways.append(
-                {
-                    "text": takeaway,
-                    "prominence": prominence[index],
-                    "fragments": fragments,
-                }
-            )
+            output_takeaways.append({"text": takeaway, "fragments": fragments})
         output_notes.append({"note_id": note.note_id, "takeaways": output_takeaways})
 
     output: dict[str, object] = {
-        "schema_version": PIPELINE_SCHEMA_VERSION,
+        "schema_version": SCHEMA_VERSION,
         "manifest_sha256": manifest_sha256,
         "notes": output_notes,
     }
@@ -1176,7 +1060,7 @@ def run_prompts(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
         responses.append({"prompt_id": prompt.prompt_id, "response": response})
 
     output: dict[str, object] = {
-        "schema_version": PROMPT_SCHEMA_VERSION,
+        "schema_version": SCHEMA_VERSION,
         "manifest_sha256": manifest_sha256,
         "responses": responses,
     }
@@ -1213,7 +1097,7 @@ def run_direct_prompt(
             config_path,
             _canonical_json_bytes(
                 {
-                    "schema_version": PROMPT_SCHEMA_VERSION,
+                    "schema_version": SCHEMA_VERSION,
                     "codex_binary": str(resolved_binary),
                     "codex_home": str(resolved_home),
                     "run_directory": str(run_directory),

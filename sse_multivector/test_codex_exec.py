@@ -46,8 +46,6 @@ if prompt.startswith("GENERIC PROMPT"):
     stage = "prompt"
 elif prompt.startswith("MASK INSTRUCTION"):
     stage = "mask"
-elif prompt.startswith("PROMINENCE INSTRUCTION"):
-    stage = "prominence"
 else:
     stage = "takeaway"
 append_log({
@@ -73,21 +71,10 @@ if stage == "prompt":
     response_object = None
     output_text = f"Response to: {prompt}"
 elif stage == "takeaway":
-    response = (
-        []
-        if os.environ.get("FAKE_CODEX_EMPTY_TAKEAWAYS") == "1"
-        else [
-            "The author finds Rust pleasant.",
-            "Tea helps the author.",
-        ]
-    )
-elif stage == "prominence":
-    invalid_prominence = os.environ.get("FAKE_CODEX_INVALID_PROMINENCE")
-    response = {
-        "count": [85],
-        "type": [True, 25],
-        "range": [101, 25],
-    }.get(invalid_prominence, [85, 25])
+    response = [
+        "The author finds Rust pleasant.",
+        "Tea helps the author.",
+    ]
 elif os.environ.get("FAKE_CODEX_INVALID_MASK") == "1":
     response = ["not present in the source note"]
 elif "The author finds Rust pleasant." in prompt:
@@ -97,11 +84,7 @@ else:
 
 if stage != "prompt":
     response_object = {
-        {
-            "takeaway": "takeaways",
-            "prominence": "prominence",
-            "mask": "fragments",
-        }[stage]: response,
+        "fragments" if stage == "mask" else "takeaways": response,
     }
     output_text = json.dumps(response_object)
 output_path.write_text(output_text, encoding="utf-8")
@@ -181,16 +164,6 @@ class CodexExecRunnerTests(unittest.TestCase):
             ),
             encoding="utf-8",
         )
-        self.prominence_prompts = self.root / "prominence-prompts.json"
-        self.prominence_prompts.write_text(
-            json.dumps(
-                {
-                    "frozen_prominence_prompt_version": "PP-test",
-                    "PP-test": "PROMINENCE INSTRUCTION",
-                }
-            ),
-            encoding="utf-8",
-        )
         self.config_path = self.root / "config.json"
         self.write_config()
 
@@ -200,7 +173,6 @@ class CodexExecRunnerTests(unittest.TestCase):
         codex_home: Path | None = None,
         takeaway_effort: str | None = "high",
         takeaway_model: str = "candidate/takeaway",
-        pipeline_schema_version: int = 2,
     ) -> None:
         takeaway = {
             "prompt_registry_path": str(self.takeaway_prompts),
@@ -212,18 +184,12 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.config_path.write_text(
             json.dumps(
                 {
-                    "schema_version": pipeline_schema_version,
+                    "schema_version": 1,
                     "codex_binary": str(self.fake_codex),
                     "codex_home": str(codex_home or self.codex_home),
                     "input_path": str(self.notes_path),
                     "run_directory": str(self.run_directory),
                     "takeaway": takeaway,
-                    "prominence": {
-                        "prompt_registry_path": str(self.prominence_prompts),
-                        "prompt_version": "PP-test",
-                        "model": "candidate/prominence",
-                        "reasoning_effort": "high",
-                    },
                     "mask": {
                         "prompt_registry_path": str(self.mask_prompts),
                         "prompt_version": "MP-test",
@@ -341,12 +307,12 @@ class CodexExecRunnerTests(unittest.TestCase):
 
         self.assertEqual(0, completed.returncode, completed.stderr)
         calls = [call for call in self.calls() if call["kind"] == "exec"]
-        self.assertEqual(4, len(calls))
+        self.assertEqual(3, len(calls))
         self.assertEqual(
-            ["takeaway", "prominence", "mask", "mask"],
+            ["takeaway", "mask", "mask"],
             [call["stage"] for call in calls],
         )
-        self.assertEqual(4, len({call["cwd"] for call in calls}))
+        self.assertEqual(3, len({call["cwd"] for call in calls}))
         for call in calls:
             argv = call["argv"]
             self.assertIn("exec", argv)
@@ -405,26 +371,15 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertIn("--model", calls[0]["argv"])
         self.assertIn("candidate/takeaway", calls[0]["argv"])
         self.assertIn('model_reasoning_effort="high"', calls[0]["argv"])
-        self.assertIn("candidate/prominence", calls[1]["argv"])
-        self.assertIn('model_reasoning_effort="high"', calls[1]["argv"])
-        self.assertIn("candidate/mask", calls[2]["argv"])
-        self.assertIn('model_reasoning_effort="medium"', calls[2]["argv"])
+        self.assertIn("candidate/mask", calls[1]["argv"])
+        self.assertIn('model_reasoning_effort="medium"', calls[1]["argv"])
         self.assertEqual(
             "TAKEAWAY INSTRUCTION\n\n" "<post>\nRust is pleasant. Tea helps.\n</post>",
             calls[0]["prompt"],
         )
         self.assertIn(
-            "<post>\nRust is pleasant. Tea helps.\n</post>",
-            calls[1]["prompt"],
-        )
-        self.assertIn(
-            "<takeaways>\n1. The author finds Rust pleasant.\n"
-            "2. Tea helps the author.\n</takeaways>",
-            calls[1]["prompt"],
-        )
-        self.assertIn(
             "<takeaway>\nThe author finds Rust pleasant.\n</takeaway>",
-            calls[2]["prompt"],
+            calls[1]["prompt"],
         )
         self.assertEqual(0o700, self.codex_home.stat().st_mode & 0o777)
         self.assertEqual(
@@ -439,19 +394,17 @@ class CodexExecRunnerTests(unittest.TestCase):
         )
         self.assertEqual(
             {
-                "schema_version": 2,
+                "schema_version": 1,
                 "notes": [
                     {
                         "note_id": "note-1",
                         "takeaways": [
                             {
                                 "text": "The author finds Rust pleasant.",
-                                "prominence": 85,
                                 "fragments": ["Rust is pleasant"],
                             },
                             {
                                 "text": "Tea helps the author.",
-                                "prominence": 25,
                                 "fragments": ["Tea helps"],
                             },
                         ],
@@ -468,8 +421,6 @@ class CodexExecRunnerTests(unittest.TestCase):
         )
         self.assertEqual("candidate/takeaway", manifest["takeaway"]["model"])
         self.assertEqual("high", manifest["takeaway"]["reasoning_effort"])
-        self.assertEqual("candidate/prominence", manifest["prominence"]["model"])
-        self.assertEqual("high", manifest["prominence"]["reasoning_effort"])
         self.assertEqual("candidate/mask", manifest["mask"]["model"])
         self.assertEqual("medium", manifest["mask"]["reasoning_effort"])
         self.assertEqual("codex-cli fixture-1.0", manifest["codex_version"])
@@ -522,8 +473,7 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertIn("https://example.com/source", takeaway_prompt)
         self.assertIn("docs.example.org/path", takeaway_prompt)
         self.assertIn("#GPL #OpenSource npub1friend", takeaway_prompt)
-        self.assertNotIn("nostr:npub1", calls[1]["prompt"])
-        self.assertIn(f"<post>\n{original}\n</post>", calls[2]["prompt"])
+        self.assertIn(f"<post>\n{original}\n</post>", calls[1]["prompt"])
         manifest = json.loads(
             (self.run_directory / "manifest.json").read_text(encoding="utf-8")
         )
@@ -793,20 +743,9 @@ class CodexExecRunnerTests(unittest.TestCase):
                 encoding="utf-8"
             )
         )
-        prominence_schema = json.loads(
-            (self.run_directory / "prominence-output-schema.json").read_text(
-                encoding="utf-8"
-            )
-        )
         self.assertEqual("object", takeaway_schema["type"])
         self.assertEqual(["takeaways"], takeaway_schema["required"])
         self.assertEqual("array", takeaway_schema["properties"]["takeaways"]["type"])
-        self.assertEqual("object", prominence_schema["type"])
-        self.assertEqual(["prominence"], prominence_schema["required"])
-        self.assertEqual(
-            "integer",
-            prominence_schema["properties"]["prominence"]["items"]["type"],
-        )
         self.assertEqual("object", mask_schema["type"])
         self.assertEqual(["fragments"], mask_schema["required"])
         self.assertEqual("array", mask_schema["properties"]["fragments"]["type"])
@@ -832,10 +771,7 @@ class CodexExecRunnerTests(unittest.TestCase):
             .read_text(encoding="utf-8")
             .splitlines()
         ]
-        self.assertEqual(
-            ["succeeded", "succeeded", "failed"],
-            [row["status"] for row in records],
-        )
+        self.assertEqual(["succeeded", "failed"], [row["status"] for row in records])
         self.assertEqual("codex exec exited with status 23", records[-1]["error"])
         self.assertEqual("fixture child failure\n", records[-1]["stderr"])
         self.assertNotIn("fixture child failure", failed.stderr)
@@ -857,65 +793,6 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertNotEqual(0, completed.returncode)
         self.assertIn("is not present in the source note", completed.stderr)
         self.assertFalse((self.run_directory / "output.json").exists())
-
-    def test_rejects_prominence_count_that_does_not_match_takeaways(self) -> None:
-        completed = self.invoke(
-            extra_environment={"FAKE_CODEX_INVALID_PROMINENCE": "count"}
-        )
-
-        self.assertNotEqual(0, completed.returncode)
-        self.assertIn(
-            "prominence response contains 1 scores for 2 takeaways",
-            completed.stderr,
-        )
-        calls = [call for call in self.calls() if call["kind"] == "exec"]
-        self.assertEqual(["takeaway", "prominence"], [call["stage"] for call in calls])
-        self.assertFalse((self.run_directory / "output.json").exists())
-
-    def test_rejects_invalid_prominence_value_type_and_range(self) -> None:
-        for invalid, expected in (
-            ("type", "prominence response item 0 must be an integer"),
-            ("range", "prominence response item 0 must be between 0 and 100"),
-        ):
-            with self.subTest(invalid=invalid):
-                self.run_directory = self.root / f"run-{invalid}"
-                self.write_config()
-                completed = self.invoke(
-                    extra_environment={"FAKE_CODEX_INVALID_PROMINENCE": invalid}
-                )
-
-                self.assertNotEqual(0, completed.returncode)
-                self.assertIn(expected, completed.stderr)
-                self.assertFalse((self.run_directory / "output.json").exists())
-
-    def test_empty_takeaways_skip_prominence_and_masks(self) -> None:
-        completed = self.invoke(
-            extra_environment={"FAKE_CODEX_EMPTY_TAKEAWAYS": "1"}
-        )
-
-        self.assertEqual(0, completed.returncode, completed.stderr)
-        calls = [call for call in self.calls() if call["kind"] == "exec"]
-        self.assertEqual(["takeaway"], [call["stage"] for call in calls])
-        output = json.loads(
-            (self.run_directory / "output.json").read_text(encoding="utf-8")
-        )
-        self.assertEqual(2, output["schema_version"])
-        self.assertEqual(
-            [{"note_id": "note-1", "takeaways": []}],
-            output["notes"],
-        )
-
-    def test_rejects_pipeline_config_v1_before_spawning(self) -> None:
-        self.write_config(pipeline_schema_version=1)
-        config = json.loads(self.config_path.read_text(encoding="utf-8"))
-        del config["prominence"]
-        self.config_path.write_text(json.dumps(config), encoding="utf-8")
-
-        completed = self.invoke()
-
-        self.assertNotEqual(0, completed.returncode)
-        self.assertIn("unsupported pipeline config schema version", completed.stderr)
-        self.assertEqual([], self.calls())
 
     def test_exit_zero_without_a_completed_turn_is_still_audited_as_failure(
         self,
