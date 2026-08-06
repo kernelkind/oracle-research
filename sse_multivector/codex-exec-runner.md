@@ -1,8 +1,8 @@
 # Isolated Codex generation runner
 
 `codex_exec.py` runs isolated prompts through subscription-authenticated `codex
-exec`. It supports arbitrary prompt batches as well as the takeaway-and-mask
-pipeline used by the SSE experiments.
+exec`. It supports arbitrary prompt batches as well as the takeaway, prominence,
+and mask pipeline used by the SSE experiments.
 
 The runner does not choose a model. Model IDs and reasoning efforts are required
 in every direct command or run configuration. This lets us compare configurations
@@ -88,7 +88,7 @@ Each configured prompt is passed to a new isolated process exactly as written.
 Config-based prompt mode does not add a prompt envelope or response schema. It
 records the raw final response under that prompt's stable ID.
 
-## Takeaway and mask mode
+## Takeaway, prominence, and mask mode
 
 ### Input
 
@@ -110,7 +110,7 @@ Paths may be absolute or relative to the configuration file.
 
 ```json
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "codex_binary": "codex",
   "codex_home": "~/.local/state/oracle-mvp/codex-home",
   "input_path": "notes.json",
@@ -118,6 +118,12 @@ Paths may be absolute or relative to the configuration file.
   "takeaway": {
     "prompt_registry_path": "sse_multivector/takeaway-prompt-versions.json",
     "prompt_version": "TPv3.82",
+    "model": "replace-with-model-id",
+    "reasoning_effort": "replace-with-effort"
+  },
+  "prominence": {
+    "prompt_registry_path": "sse_multivector/prominence-prompt-versions.json",
+    "prompt_version": "PPv2",
     "model": "replace-with-model-id",
     "reasoning_effort": "replace-with-effort"
   },
@@ -136,9 +142,15 @@ Run it with:
 python3 sse_multivector/codex_exec.py run path/to/config.json
 ```
 
-Each note receives one fresh takeaway process. Each resulting takeaway receives one
-fresh mask process containing only its source note, fixed takeaway, and frozen mask
-prompt. No Codex conversation is resumed or shared.
+Each note receives one fresh takeaway process. Each resulting takeaway then receives
+one fresh prominence process and one fresh mask process. Both receive only that
+takeaway and its source note; sibling takeaways are never included. No Codex
+conversation is resumed or shared.
+
+PPv2 assigns one integer from 0 through 100. It measures how strongly the complete
+note is about the complete takeaway meaning so a later fine-subject result can order
+its notes. Scores are independent, do not sum to 100, and are retained without a
+cutoff in the 500-note experiment.
 
 The takeaway process receives a derived view with long NIP-19 identifiers removed.
 All other text and layout remain unchanged. TPv3.82 handles URLs, ordinary handles,
@@ -146,9 +158,14 @@ and hashtag syntax under its evidence rule. Removing only the opaque Nostr ident
 prevents it from creating a relationship that the mask stage cannot ground without
 damaging code or meaningful surrounding text.
 
+The prominence process receives the same normalized note view as takeaway generation.
 The mask process still receives the untouched source note. Exact returned fragments
-are validated against that original text. The run manifest records the takeaway-input
-normalization version so a generated artifact remains reproducible.
+are validated against that original text. The run manifest records the prompt,
+envelope, model, effort, response schema, and input normalization used by every
+stage.
+
+Pipeline schema 1 remains supported only to reproduce earlier takeaway-and-mask runs.
+New runs that generate prominence use schema 2.
 
 ## Isolation
 

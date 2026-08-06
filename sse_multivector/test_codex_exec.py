@@ -9,6 +9,24 @@ from pathlib import Path
 
 
 RUNNER = Path(__file__).with_name("codex_exec.py")
+APPROVED_PROMINENCE_PROMPT = """Assign a prominence score to the one fixed takeaway below.
+
+The score has one downstream meaning: the takeaway's vector may place this complete post in a fine-subject result matching the takeaway's complete meaning. Score how strongly the complete post is about that complete meaning so the score can help order notes within that result.
+
+Read the complete post and the takeaway first. Judge this pair independently; no other takeaway exists. Consider the takeaway's complete meaning, including its subject, relationships, qualifications, and stance. Count any part of the post that directly states, explains, supports, exemplifies, evaluates, or applies that complete meaning. Do not reduce the score because some of the same source meaning could also support a different takeaway.
+
+Distinguish semantic focus from scope. A framing meaning can apply to the entire post without the post being about it. Content merely contained within a frame does not count as developing that frame.
+
+Choose any integer from 0 through 100:
+- 90-100: The post is centrally and extensively about this complete meaning.
+- 70-89: This complete meaning is a major focus of the post.
+- 40-69: This complete meaning is a clear secondary focus.
+- 10-39: This complete meaning is genuine but brief or incidental.
+- 0-9: This complete meaning is unsupported or effectively absent.
+
+Use the full integer range rather than treating the scale anchors as the only allowed values. Judge semantic prominence only, not quality, value, seriousness, or personal interest. Do not rewrite the takeaway.
+
+Return only a JSON object: {"prominence":0}"""
 
 
 FAKE_CODEX = r"""#!/usr/bin/env python3
@@ -46,6 +64,8 @@ if prompt.startswith("GENERIC PROMPT"):
     stage = "prompt"
 elif prompt.startswith("MASK INSTRUCTION"):
     stage = "mask"
+elif prompt.startswith("PROMINENCE INSTRUCTION"):
+    stage = "prominence"
 else:
     stage = "takeaway"
 append_log({
@@ -71,10 +91,26 @@ if stage == "prompt":
     response_object = None
     output_text = f"Response to: {prompt}"
 elif stage == "takeaway":
-    response = [
-        "The author finds Rust pleasant.",
-        "Tea helps the author.",
-    ]
+    response = (
+        []
+        if os.environ.get("FAKE_CODEX_EMPTY_TAKEAWAYS") == "1"
+        else [
+            "The author finds Rust pleasant.",
+            "Tea helps the author.",
+        ]
+    )
+elif stage == "prominence":
+    invalid_prominence = os.environ.get("FAKE_CODEX_INVALID_PROMINENCE")
+    response = {
+        "bool": True,
+        "string": "85",
+        "low": -1,
+        "high": 101,
+        "zero": 0,
+    }.get(
+        invalid_prominence,
+        85 if "The author finds Rust pleasant." in prompt else 25,
+    )
 elif os.environ.get("FAKE_CODEX_INVALID_MASK") == "1":
     response = ["not present in the source note"]
 elif "The author finds Rust pleasant." in prompt:
@@ -84,7 +120,11 @@ else:
 
 if stage != "prompt":
     response_object = {
-        "fragments" if stage == "mask" else "takeaways": response,
+        {
+            "takeaway": "takeaways",
+            "prominence": "prominence",
+            "mask": "fragments",
+        }[stage]: response,
     }
     output_text = json.dumps(response_object)
 output_path.write_text(output_text, encoding="utf-8")
@@ -302,6 +342,27 @@ class CodexExecRunnerTests(unittest.TestCase):
             return []
         return json.loads(self.log_path.read_text(encoding="utf-8"))
 
+    def enable_prominence(self) -> None:
+        prominence_prompts = self.root / "prominence-prompts.json"
+        prominence_prompts.write_text(
+            json.dumps(
+                {
+                    "frozen_prominence_prompt_version": "PP-test",
+                    "PP-test": "PROMINENCE INSTRUCTION",
+                }
+            ),
+            encoding="utf-8",
+        )
+        config = json.loads(self.config_path.read_text(encoding="utf-8"))
+        config["schema_version"] = 2
+        config["prominence"] = {
+            "prompt_registry_path": str(prominence_prompts),
+            "prompt_version": "PP-test",
+            "model": "candidate/prominence",
+            "reasoning_effort": "high",
+        }
+        self.config_path.write_text(json.dumps(config), encoding="utf-8")
+
     def test_runs_each_generation_in_a_fresh_isolated_codex_exec(self) -> None:
         completed = self.invoke()
 
@@ -443,6 +504,235 @@ class CodexExecRunnerTests(unittest.TestCase):
             ],
             manifest["isolation"]["runtime_context_overrides"],
         )
+
+    def test_pipeline_v2_scores_each_takeaway_in_its_own_process(self) -> None:
+        self.enable_prominence()
+
+        completed = self.invoke()
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        calls = [call for call in self.calls() if call["kind"] == "exec"]
+        self.assertEqual(
+            ["takeaway", "prominence", "mask", "prominence", "mask"],
+            [call["stage"] for call in calls],
+        )
+        self.assertEqual(5, len({call["cwd"] for call in calls}))
+        first_prominence = calls[1]
+        second_prominence = calls[3]
+        self.assertIn("candidate/prominence", first_prominence["argv"])
+        self.assertIn('model_reasoning_effort="high"', first_prominence["argv"])
+        self.assertIn(
+            "<complete_post>\nRust is pleasant. Tea helps.\n</complete_post>",
+            first_prominence["prompt"],
+        )
+        self.assertIn(
+            "<takeaway>\nThe author finds Rust pleasant.\n</takeaway>",
+            first_prominence["prompt"],
+        )
+        self.assertNotIn("Tea helps the author.", first_prominence["prompt"])
+        self.assertIn(
+            "<takeaway>\nTea helps the author.\n</takeaway>",
+            second_prominence["prompt"],
+        )
+        self.assertNotIn(
+            "The author finds Rust pleasant.", second_prominence["prompt"]
+        )
+        output = json.loads(
+            (self.run_directory / "output.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(2, output["schema_version"])
+        self.assertEqual(
+            [85, 25],
+            [item["prominence"] for item in output["notes"][0]["takeaways"]],
+        )
+        prominence_schema = json.loads(
+            (self.run_directory / "prominence-output-schema.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(
+            {"type": "integer", "minimum": 0, "maximum": 100},
+            prominence_schema["properties"]["prominence"],
+        )
+        manifest = json.loads(
+            (self.run_directory / "manifest.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual("PP-test", manifest["prominence"]["prompt_version"])
+        self.assertEqual("candidate/prominence", manifest["prominence"]["model"])
+        self.assertEqual(
+            "xml-complete-post-takeaway-v1",
+            manifest["prominence_envelope_version"],
+        )
+
+    def test_ppv2_registry_contains_the_approved_prompt(self) -> None:
+        registry = json.loads(
+            (RUNNER.parent / "prominence-prompt-versions.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        self.assertEqual("PPv2", registry["frozen_prominence_prompt_version"])
+        self.assertEqual(APPROVED_PROMINENCE_PROMPT, registry["PPv2"])
+
+    def test_pipeline_v2_rejects_invalid_prominence_scores(self) -> None:
+        for invalid, expected in (
+            ("bool", "prominence response must be an integer"),
+            ("string", "prominence response must be an integer"),
+            ("low", "prominence response must be between 0 and 100"),
+            ("high", "prominence response must be between 0 and 100"),
+        ):
+            with self.subTest(invalid=invalid):
+                self.run_directory = self.root / f"run-{invalid}"
+                self.write_config()
+                self.enable_prominence()
+
+                completed = self.invoke(
+                    extra_environment={"FAKE_CODEX_INVALID_PROMINENCE": invalid}
+                )
+
+                self.assertNotEqual(0, completed.returncode)
+                self.assertIn(expected, completed.stderr)
+                self.assertFalse((self.run_directory / "output.json").exists())
+
+    def test_pipeline_v2_preserves_zero_prominence(self) -> None:
+        self.enable_prominence()
+
+        completed = self.invoke(
+            extra_environment={"FAKE_CODEX_INVALID_PROMINENCE": "zero"}
+        )
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        output = json.loads(
+            (self.run_directory / "output.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            [0, 0],
+            [item["prominence"] for item in output["notes"][0]["takeaways"]],
+        )
+
+    def test_pipeline_v2_skips_later_stages_for_empty_takeaways(self) -> None:
+        self.enable_prominence()
+
+        completed = self.invoke(
+            extra_environment={"FAKE_CODEX_EMPTY_TAKEAWAYS": "1"}
+        )
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        calls = [call for call in self.calls() if call["kind"] == "exec"]
+        self.assertEqual(["takeaway"], [call["stage"] for call in calls])
+        output = json.loads(
+            (self.run_directory / "output.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual([], output["notes"][0]["takeaways"])
+
+    def test_pipeline_v2_requires_prominence_before_spawning(self) -> None:
+        config = json.loads(self.config_path.read_text(encoding="utf-8"))
+        config["schema_version"] = 2
+        self.config_path.write_text(json.dumps(config), encoding="utf-8")
+
+        completed = self.invoke()
+
+        self.assertNotEqual(0, completed.returncode)
+        self.assertIn("config.prominence", completed.stderr)
+        self.assertEqual([], self.calls())
+
+    def test_pipeline_v2_reuses_prominence_when_resuming_a_failed_mask(self) -> None:
+        self.enable_prominence()
+
+        failed = self.invoke(extra_environment={"FAKE_CODEX_FAIL_STAGE": "mask"})
+
+        self.assertNotEqual(0, failed.returncode)
+        self.assertEqual(
+            ["takeaway", "prominence", "mask"],
+            [call["stage"] for call in self.calls() if call["kind"] == "exec"],
+        )
+
+        resumed = self.invoke("--retry-failed")
+
+        self.assertEqual(0, resumed.returncode, resumed.stderr)
+        calls = [call for call in self.calls() if call["kind"] == "exec"]
+        self.assertEqual(
+            [
+                "takeaway",
+                "prominence",
+                "mask",
+                "mask",
+                "prominence",
+                "mask",
+            ],
+            [call["stage"] for call in calls],
+        )
+        records = [
+            json.loads(line)
+            for line in (self.run_directory / "results.jsonl")
+            .read_text(encoding="utf-8")
+            .splitlines()
+        ]
+        self.assertEqual(
+            [
+                "takeaway:note-1",
+                "prominence:note-1:0",
+                "mask:note-1:0",
+                "mask:note-1:0",
+                "prominence:note-1:1",
+                "mask:note-1:1",
+            ],
+            [record["job_key"] for record in records],
+        )
+
+    def test_pipeline_v2_normalizes_prominence_input_but_not_mask_input(
+        self,
+    ) -> None:
+        identifier = (
+            "nostr:npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"
+        )
+        original = f"Rust is pleasant. {identifier} Tea helps."
+        self.notes_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "notes": [{"note_id": "note-1", "text": original}],
+                }
+            ),
+            encoding="utf-8",
+        )
+        self.enable_prominence()
+
+        completed = self.invoke()
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        calls = [call for call in self.calls() if call["kind"] == "exec"]
+        for call in (calls[1], calls[3]):
+            self.assertEqual("prominence", call["stage"])
+            self.assertNotIn(identifier, call["prompt"])
+        for call in (calls[2], calls[4]):
+            self.assertEqual("mask", call["stage"])
+            self.assertIn(identifier, call["prompt"])
+        manifest = json.loads(
+            (self.run_directory / "manifest.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            "remove-long-nip19-identifiers-v1",
+            manifest["prominence_input_normalization_version"],
+        )
+
+    def test_pipeline_rejects_non_integer_schema_versions(self) -> None:
+        for invalid in (True, 1.0):
+            with self.subTest(invalid=invalid):
+                self.run_directory = self.root / f"run-schema-{type(invalid).__name__}"
+                self.write_config()
+                config = json.loads(self.config_path.read_text(encoding="utf-8"))
+                config["schema_version"] = invalid
+                self.config_path.write_text(json.dumps(config), encoding="utf-8")
+
+                completed = self.invoke()
+
+                self.assertNotEqual(0, completed.returncode)
+                self.assertIn(
+                    "unsupported pipeline config schema version",
+                    completed.stderr,
+                )
+                self.assertEqual([], self.calls())
 
     def test_takeaway_generation_removes_metadata_but_masks_original_text(
         self,
