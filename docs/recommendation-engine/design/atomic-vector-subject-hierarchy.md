@@ -155,6 +155,12 @@ misleading label is unresolved.
 
 The fine-subject regions become the leaves of the hierarchy.
 
+The corrected literature review for grouping frozen fine segments is recorded
+in
+[`hierarchical-grouping-of-fine-semantic-segments.md`](../research/hierarchical-grouping-of-fine-semantic-segments.md).
+It treats every higher subject as an exact union of complete fine segments and
+does not assume that a parent is one filled geometric region.
+
 A separate partitioning process groups related leaf subjects. For each proposed
 group, a scoped language-model operation receives the children's grounded
 English representations and must either:
