@@ -92,6 +92,9 @@ if stage == "prompt":
     output_text = f"Response to: {prompt}"
 elif stage == "takeaway":
     response = (
+        ["Tea helps the author."]
+        if os.environ.get("FAKE_CODEX_REVISED_TAKEAWAYS") == "1"
+        else
         []
         if os.environ.get("FAKE_CODEX_EMPTY_TAKEAWAYS") == "1"
         else [
@@ -680,6 +683,148 @@ class CodexExecRunnerTests(unittest.TestCase):
             [record["job_key"] for record in records],
         )
 
+    def test_audited_retry_of_semantically_invalid_success_rebuilds_changed_children(
+        self,
+    ) -> None:
+        self.enable_prominence()
+        initial = self.invoke()
+        self.assertEqual(0, initial.returncode, initial.stderr)
+
+        retried = self.invoke(
+            "--retry-job",
+            "takeaway:note-1",
+            "--retry-reason",
+            "semantic output contradicted the frozen prompt",
+            "--max-new-jobs",
+            "1",
+            extra_environment={"FAKE_CODEX_REVISED_TAKEAWAYS": "1"},
+        )
+        self.assertEqual(0, retried.returncode, retried.stderr)
+        records = [
+            json.loads(line)
+            for line in (self.run_directory / "results.jsonl")
+            .read_text(encoding="utf-8")
+            .splitlines()
+        ]
+        self.assertEqual("takeaway:note-1", records[-1]["job_key"])
+        self.assertEqual(2, records[-1]["attempt"])
+        self.assertEqual(
+            "semantic output contradicted the frozen prompt",
+            records[-1]["retry_reason"],
+        )
+
+        blocked = self.invoke()
+        self.assertNotEqual(0, blocked.returncode)
+        self.assertIn("rendered prompt changed", blocked.stderr)
+
+        rebuilt = self.invoke("--retry-failed")
+        self.assertEqual(0, rebuilt.returncode, rebuilt.stderr)
+        output = json.loads(
+            (self.run_directory / "output.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            ["Tea helps the author."],
+            [item["text"] for item in output["notes"][0]["takeaways"]],
+        )
+        records = [
+            json.loads(line)
+            for line in (self.run_directory / "results.jsonl")
+            .read_text(encoding="utf-8")
+            .splitlines()
+        ]
+        self.assertEqual(
+            ["upstream rendered prompt changed", "upstream rendered prompt changed"],
+            [record["retry_reason"] for record in records[-2:]],
+        )
+
+    def test_runner_upgrade_is_explicit_and_bound_to_new_result_records(self) -> None:
+        initial = self.invoke()
+        self.assertEqual(0, initial.returncode, initial.stderr)
+
+        manifest_path = self.run_directory / "manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        original_wrapper = "f" * 64
+        manifest["wrapper_sha256"] = original_wrapper
+        manifest_path.write_text(
+            json.dumps(manifest, sort_keys=True, separators=(",", ":")) + "\n",
+            encoding="utf-8",
+        )
+        manifest_sha256 = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+        results_path = self.run_directory / "results.jsonl"
+        records = [
+            json.loads(line)
+            for line in results_path.read_text(encoding="utf-8").splitlines()
+        ]
+        for record in records:
+            record["manifest_sha256"] = manifest_sha256
+            record.pop("wrapper_sha256", None)
+        results_path.write_text(
+            "".join(json.dumps(record) + "\n" for record in records),
+            encoding="utf-8",
+        )
+        results_prefix = results_path.read_bytes()
+        (self.run_directory / "output.json").unlink()
+
+        blocked = self.invoke(
+            "--retry-job",
+            "takeaway:note-1",
+            "--retry-reason",
+            "replace a semantically invalid result",
+            "--max-new-jobs",
+            "1",
+        )
+        self.assertNotEqual(0, blocked.returncode)
+        self.assertIn("--runner-upgrade-reason", blocked.stderr)
+
+        resumed = self.invoke(
+            "--retry-job",
+            "takeaway:note-1",
+            "--retry-reason",
+            "replace a semantically invalid result",
+            "--runner-upgrade-reason",
+            "add audited semantic retries",
+            "--max-new-jobs",
+            "1",
+        )
+        self.assertEqual(0, resumed.returncode, resumed.stderr)
+        current_wrapper = hashlib.sha256(RUNNER.read_bytes()).hexdigest()
+        upgrade = json.loads(
+            (self.run_directory / "runner-upgrades.jsonl")
+            .read_text(encoding="utf-8")
+            .strip()
+        )
+        self.assertEqual(original_wrapper, upgrade["from_wrapper_sha256"])
+        self.assertEqual(current_wrapper, upgrade["to_wrapper_sha256"])
+        self.assertEqual("add audited semantic retries", upgrade["reason"])
+        self.assertEqual(len(records) + 1, upgrade["first_result_line"])
+        self.assertEqual(len(results_prefix), upgrade["results_prefix_bytes"])
+        self.assertEqual(
+            hashlib.sha256(results_prefix).hexdigest(),
+            upgrade["results_prefix_sha256"],
+        )
+        latest = json.loads(results_path.read_text(encoding="utf-8").splitlines()[-1])
+        self.assertEqual(current_wrapper, latest["wrapper_sha256"])
+
+        upgrade_bytes = (self.run_directory / "runner-upgrades.jsonl").read_bytes()
+        calls_before = len(self.calls())
+        same_wrapper = self.invoke()
+        self.assertEqual(0, same_wrapper.returncode, same_wrapper.stderr)
+        self.assertEqual(calls_before, len(self.calls()))
+        self.assertEqual(
+            upgrade_bytes,
+            (self.run_directory / "runner-upgrades.jsonl").read_bytes(),
+        )
+
+        valid_results = results_path.read_bytes()
+        tampered = bytearray(valid_results)
+        tampered[0] = ord("{") if tampered[0] != ord("{") else ord("[")
+        results_path.write_bytes(tampered)
+        rejected = self.invoke()
+        self.assertNotEqual(0, rejected.returncode)
+        self.assertIn("results prefix", rejected.stderr)
+        self.assertEqual(calls_before, len(self.calls()))
+        results_path.write_bytes(valid_results)
+
     def test_pipeline_v2_normalizes_prominence_input_but_not_mask_input(
         self,
     ) -> None:
@@ -1076,6 +1221,54 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertEqual(0, resumed.returncode, resumed.stderr)
         self.assertTrue((self.run_directory / "output.json").is_file())
         self.assertEqual(calls_before + 2, len(self.calls()))
+
+    def test_max_new_jobs_pauses_and_resumes_without_replaying_cached_jobs(self) -> None:
+        self.enable_prominence()
+
+        expected_stages = [
+            "takeaway",
+            "prominence",
+            "mask",
+            "prominence",
+            "mask",
+        ]
+        for expected_call_count, expected_stage in enumerate(expected_stages, start=1):
+            completed = self.invoke("--max-new-jobs", "1")
+
+            self.assertEqual(0, completed.returncode, completed.stderr)
+            calls = [call for call in self.calls() if call["kind"] == "exec"]
+            self.assertEqual(expected_call_count, len(calls))
+            self.assertEqual(expected_stage, calls[-1]["stage"])
+            status = json.loads(completed.stdout)
+            self.assertEqual(1, status["new_jobs"])
+            self.assertEqual(
+                1 if expected_call_count == len(expected_stages) else 0,
+                status["completed_notes"],
+            )
+            self.assertEqual(
+                expected_call_count == len(expected_stages),
+                status["complete"],
+            )
+            self.assertEqual(
+                expected_call_count == len(expected_stages),
+                (self.run_directory / "output.json").exists(),
+            )
+
+        completed = self.invoke("--max-new-jobs", "1")
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        self.assertEqual(
+            {
+                "complete": True,
+                "completed_notes": 1,
+                "completed_takeaways": 2,
+                "new_jobs": 0,
+                "notes": 1,
+                "takeaways": 2,
+            },
+            json.loads(completed.stdout),
+        )
+        self.assertEqual(5, len([call for call in self.calls() if call["kind"] == "exec"]))
 
     def test_rejects_mask_fragments_absent_from_the_source_note(self) -> None:
         completed = self.invoke(extra_environment={"FAKE_CODEX_INVALID_MASK": "1"})

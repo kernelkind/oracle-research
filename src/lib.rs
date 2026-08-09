@@ -61,6 +61,7 @@ pub mod semantic_branch_artifact;
 pub mod semantic_branch_geometry;
 pub mod semantic_map_sample;
 pub mod semantic_order;
+pub mod scaled_fine_segments;
 pub mod shared_learning_round;
 pub mod snapshot;
 pub mod sse_context_counterfactual;

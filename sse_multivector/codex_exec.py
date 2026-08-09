@@ -88,6 +88,58 @@ class RunnerError(Exception):
     """A user-actionable wrapper failure."""
 
 
+class NewJobLimitReached(Exception):
+    """The caller-requested limit on newly spawned Codex jobs was reached."""
+
+
+@dataclass
+class RetryDirective:
+    job_key: str
+    reason: str
+    matched: bool = False
+
+
+@dataclass
+class NewJobBudget:
+    limit: int | None
+    used: int = 0
+    completed_notes: int = 0
+    completed_takeaways: int = 0
+
+    @property
+    def exhausted(self) -> bool:
+        return self.limit is not None and self.used >= self.limit
+
+    def claim(self) -> None:
+        if self.limit is not None and self.used >= self.limit:
+            raise NewJobLimitReached
+        self.used += 1
+
+
+@dataclass(frozen=True)
+class PipelineRunOutcome:
+    complete: bool
+    new_jobs: int
+    completed_notes: int
+    completed_takeaways: int
+    output: dict[str, object] | None
+
+
+@dataclass(frozen=True)
+class RunnerProvenance:
+    initial_wrapper_sha256: str
+    active_wrapper_sha256: str
+    boundaries: tuple[tuple[int, str], ...]
+
+
+@dataclass(frozen=True)
+class PreparedManifest:
+    manifest_sha256: str
+    provenance: RunnerProvenance
+    pending_wrapper_sha256: str | None
+    pending_reason: str | None
+
+
 def _canonical_json_bytes(value: object) -> bytes:
     return (
         json.dumps(
@@ -144,6 +196,15 @@ def _expect_identifier(value: object, name: str) -> str:
     if not IDENTIFIER.fullmatch(identifier):
         raise RunnerError(f"`{name}` contains unsupported characters")
     return identifier
+
+
+def _expect_sha256(value: object, name: str) -> str:
+    digest = _expect_string(value, name)
+    if len(digest) != 64 or any(
+        character not in "0123456789abcdef" for character in digest
+    ):
+        raise RunnerError(f"`{name}` must be a lowercase SHA-256 digest")
+    return digest
 
 
 def _resolve_path(value: object, name: str, base: Path) -> Path:
@@ -630,10 +691,115 @@ def _build_prompt_manifest(
     }
 
 
+def _load_runner_upgrades(
+    run_directory: Path,
+    *,
+    manifest_sha256: str,
+    initial_wrapper_sha256: str,
+) -> RunnerProvenance:
+    path = run_directory / "runner-upgrades.jsonl"
+    if not path.exists():
+        return RunnerProvenance(initial_wrapper_sha256, initial_wrapper_sha256, ())
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeError) as error:
+        raise RunnerError(f"could not read runner upgrade ledger {path}: {error}") from error
+    current_wrapper = initial_wrapper_sha256
+    previous_first_result_line = 0
+    result_path = run_directory / "results.jsonl"
+    result_bytes = result_path.read_bytes() if result_path.exists() else b""
+    result_line_count = len(result_bytes.splitlines())
+    boundaries: list[tuple[int, str]] = []
+    for line_number, line in enumerate(lines, start=1):
+        try:
+            raw = json.loads(line)
+        except json.JSONDecodeError as error:
+            raise RunnerError(
+                f"runner upgrade ledger line {line_number} is not valid JSON: {error}"
+            ) from error
+        record = _expect_object(raw, f"runner upgrade ledger line {line_number}")
+        _expect_fields(
+            record,
+            f"runner upgrade ledger line {line_number}",
+            {
+                "schema_version",
+                "manifest_sha256",
+                "from_wrapper_sha256",
+                "to_wrapper_sha256",
+                "first_result_line",
+                "results_prefix_bytes",
+                "results_prefix_sha256",
+                "reason",
+            },
+        )
+        if record["schema_version"] != 2:
+            raise RunnerError(
+                f"runner upgrade ledger line {line_number} has unsupported schema"
+            )
+        if record["manifest_sha256"] != manifest_sha256:
+            raise RunnerError(
+                f"runner upgrade ledger line {line_number} belongs to another manifest"
+            )
+        from_wrapper = _expect_sha256(
+            record["from_wrapper_sha256"],
+            f"runner upgrade ledger line {line_number}.from_wrapper_sha256",
+        )
+        to_wrapper = _expect_sha256(
+            record["to_wrapper_sha256"],
+            f"runner upgrade ledger line {line_number}.to_wrapper_sha256",
+        )
+        if from_wrapper != current_wrapper or to_wrapper == from_wrapper:
+            raise RunnerError(
+                f"runner upgrade ledger line {line_number} does not continue its chain"
+            )
+        first_result_line = record["first_result_line"]
+        prefix_bytes = record["results_prefix_bytes"]
+        if (
+            isinstance(first_result_line, bool)
+            or not isinstance(first_result_line, int)
+            or first_result_line < 1
+            or first_result_line < previous_first_result_line
+            or first_result_line > result_line_count + 1
+            or isinstance(prefix_bytes, bool)
+            or not isinstance(prefix_bytes, int)
+            or prefix_bytes < 0
+            or prefix_bytes > len(result_bytes)
+        ):
+            raise RunnerError(
+                f"runner upgrade ledger line {line_number} has invalid first_result_line"
+            )
+        prefix = result_bytes[:prefix_bytes]
+        if (
+            _expect_sha256(
+                record["results_prefix_sha256"],
+                f"runner upgrade ledger line {line_number}.results_prefix_sha256",
+            )
+            != _sha256_bytes(prefix)
+            or len(prefix.splitlines()) != first_result_line - 1
+            or (prefix and not prefix.endswith(b"\n"))
+        ):
+            raise RunnerError(
+                f"runner upgrade ledger line {line_number} does not match its results prefix"
+            )
+        _expect_string(
+            record["reason"], f"runner upgrade ledger line {line_number}.reason"
+        )
+        current_wrapper = to_wrapper
+        previous_first_result_line = first_result_line
+        boundaries.append((first_result_line, to_wrapper))
+    return RunnerProvenance(
+        initial_wrapper_sha256,
+        current_wrapper,
+        tuple(boundaries),
+    )
+
+
 def _prepare_manifest_directory(
     run_directory: Path,
     manifest: dict[str, object],
-) -> str:
+    *,
+    runner_upgrade_reason: str | None = None,
+) -> PreparedManifest:
     manifest_path = run_directory / "manifest.json"
     if run_directory.exists() and not run_directory.is_dir():
         raise RunnerError(f"run_directory is not a directory: {run_directory}")
@@ -650,26 +816,84 @@ def _prepare_manifest_directory(
     run_directory.mkdir(parents=True, exist_ok=True)
     manifest_bytes = _canonical_json_bytes(manifest)
     if manifest_path.exists():
-        existing = _load_json(manifest_path, "run manifest")
-        if existing != manifest:
+        existing = _expect_object(
+            _load_json(manifest_path, "run manifest"), "run manifest"
+        )
+        existing_bytes = _canonical_json_bytes(existing)
+        manifest_sha256 = _sha256_bytes(existing_bytes)
+        existing_without_wrapper = dict(existing)
+        proposed_without_wrapper = dict(manifest)
+        existing_wrapper = _expect_sha256(
+            existing_without_wrapper.pop("wrapper_sha256", None),
+            "run manifest.wrapper_sha256",
+        )
+        proposed_wrapper = _expect_sha256(
+            proposed_without_wrapper.pop("wrapper_sha256", None),
+            "proposed run manifest.wrapper_sha256",
+        )
+        if existing_without_wrapper != proposed_without_wrapper:
             raise RunnerError(
                 "run manifest does not match this configuration; use a new "
                 "run_directory for different inputs, prompts, models, or effort"
             )
+        provenance = _load_runner_upgrades(
+            run_directory,
+            manifest_sha256=manifest_sha256,
+            initial_wrapper_sha256=existing_wrapper,
+        )
+        pending_wrapper: str | None = None
+        pending_reason: str | None = None
+        if provenance.active_wrapper_sha256 != proposed_wrapper:
+            if runner_upgrade_reason is None:
+                raise RunnerError(
+                    "run was created by another wrapper version; inspect the code "
+                    "change and use --runner-upgrade-reason to append an audited "
+                    "runner transition"
+                )
+            pending_wrapper = proposed_wrapper
+            pending_reason = runner_upgrade_reason
+        elif runner_upgrade_reason is not None:
+            raise RunnerError(
+                "--runner-upgrade-reason was provided, but this run already uses "
+                "the current wrapper"
+            )
+        manifest_bytes = existing_bytes
     else:
+        if runner_upgrade_reason is not None:
+            raise RunnerError(
+                "--runner-upgrade-reason requires an existing run from another wrapper"
+            )
         _atomic_write(manifest_path, manifest_bytes)
+        manifest_sha256 = _sha256_bytes(manifest_bytes)
+        proposed_wrapper = _expect_sha256(
+            manifest["wrapper_sha256"], "proposed run manifest.wrapper_sha256"
+        )
+        provenance = RunnerProvenance(proposed_wrapper, proposed_wrapper, ())
+        pending_wrapper = None
+        pending_reason = None
     _atomic_write(
         run_directory / "model-instructions.md",
         MINIMAL_MODEL_INSTRUCTIONS.encode("utf-8"),
     )
-    return _sha256_bytes(manifest_bytes)
+    return PreparedManifest(
+        manifest_sha256,
+        provenance,
+        pending_wrapper,
+        pending_reason,
+    )
 
 
 def _prepare_run_directory(
     config: RunnerConfig,
     manifest: dict[str, object],
-) -> str:
-    manifest_sha256 = _prepare_manifest_directory(config.run_directory, manifest)
+    *,
+    runner_upgrade_reason: str | None = None,
+) -> PreparedManifest:
+    prepared = _prepare_manifest_directory(
+        config.run_directory,
+        manifest,
+        runner_upgrade_reason=runner_upgrade_reason,
+    )
     _atomic_write(
         config.run_directory / "takeaway-output-schema.json",
         _canonical_json_bytes(TAKEAWAY_SCHEMA),
@@ -683,10 +907,14 @@ def _prepare_run_directory(
             config.run_directory / "prominence-output-schema.json",
             _canonical_json_bytes(PROMINENCE_SCHEMA),
         )
-    return manifest_sha256
+    return prepared
 
 
-def _load_latest_results(path: Path, manifest_sha256: str) -> dict[str, dict[str, Any]]:
+def _load_latest_results(
+    path: Path,
+    manifest_sha256: str,
+    provenance: RunnerProvenance,
+) -> dict[str, dict[str, Any]]:
     if not path.exists():
         return {}
     latest: dict[str, dict[str, Any]] = {}
@@ -694,7 +922,15 @@ def _load_latest_results(path: Path, manifest_sha256: str) -> dict[str, dict[str
         lines = path.read_text(encoding="utf-8").splitlines()
     except (OSError, UnicodeError) as error:
         raise RunnerError(f"could not read results ledger {path}: {error}") from error
+    active_wrapper = provenance.initial_wrapper_sha256
+    boundary_index = 0
     for line_number, line in enumerate(lines, start=1):
+        while (
+            boundary_index < len(provenance.boundaries)
+            and provenance.boundaries[boundary_index][0] <= line_number
+        ):
+            active_wrapper = provenance.boundaries[boundary_index][1]
+            boundary_index += 1
         try:
             raw = json.loads(line)
         except json.JSONDecodeError as error:
@@ -705,6 +941,18 @@ def _load_latest_results(path: Path, manifest_sha256: str) -> dict[str, dict[str
         if record.get("manifest_sha256") != manifest_sha256:
             raise RunnerError(
                 f"results ledger line {line_number} belongs to another manifest"
+            )
+        recorded_wrapper = record.get("wrapper_sha256")
+        if recorded_wrapper is None:
+            if active_wrapper != provenance.initial_wrapper_sha256:
+                raise RunnerError(
+                    f"results ledger line {line_number} has invalid wrapper provenance"
+                )
+        elif _expect_sha256(
+            recorded_wrapper, f"results ledger line {line_number}.wrapper_sha256"
+        ) != active_wrapper:
+            raise RunnerError(
+                f"results ledger line {line_number} has invalid wrapper provenance"
             )
         job_key = _expect_string(
             record.get("job_key"), f"results ledger line {line_number}.job_key"
@@ -721,6 +969,38 @@ def _load_latest_results(path: Path, manifest_sha256: str) -> dict[str, dict[str
             )
         latest[job_key] = record
     return latest
+
+
+def _append_runner_upgrade(
+    run_directory: Path,
+    prepared: PreparedManifest,
+) -> RunnerProvenance:
+    if prepared.pending_wrapper_sha256 is None:
+        return prepared.provenance
+    if prepared.pending_reason is None:
+        raise AssertionError("pending runner upgrade has no audit reason")
+    results_path = run_directory / "results.jsonl"
+    result_bytes = results_path.read_bytes() if results_path.exists() else b""
+    first_result_line = len(result_bytes.splitlines()) + 1
+    _append_json_line(
+        run_directory / "runner-upgrades.jsonl",
+        {
+            "schema_version": 2,
+            "manifest_sha256": prepared.manifest_sha256,
+            "from_wrapper_sha256": prepared.provenance.active_wrapper_sha256,
+            "to_wrapper_sha256": prepared.pending_wrapper_sha256,
+            "first_result_line": first_result_line,
+            "results_prefix_bytes": len(result_bytes),
+            "results_prefix_sha256": _sha256_bytes(result_bytes),
+            "reason": prepared.pending_reason,
+        },
+    )
+    return RunnerProvenance(
+        prepared.provenance.initial_wrapper_sha256,
+        prepared.pending_wrapper_sha256,
+        prepared.provenance.boundaries
+        + ((first_result_line, prepared.pending_wrapper_sha256),),
+    )
 
 
 def _parse_event_stream(stdout: str) -> tuple[str, object]:
@@ -895,27 +1175,51 @@ def _run_job(
     results_path: Path,
     latest: dict[str, dict[str, Any]],
     retry_failed: bool,
+    execution_wrapper_sha256: str,
+    retry_directive: RetryDirective | None = None,
+    new_job_budget: NewJobBudget | None = None,
 ) -> list[str] | int | str:
     job_key = _job_key(stage_name, note.note_id, takeaway_index)
     previous = latest.get(job_key)
+    prompt_sha256 = _sha256_bytes(prompt.encode("utf-8"))
+    retry_reason: str | None = None
     if previous is not None and previous["status"] == "succeeded":
-        if stage_name == "prompt":
-            response = previous.get("response")
-            if not isinstance(response, str) or not response.strip():
+        if retry_directive is not None and retry_directive.job_key == job_key:
+            retry_directive.matched = True
+            retry_reason = retry_directive.reason
+        elif previous.get("prompt_sha256") != prompt_sha256:
+            if not retry_failed:
+                if new_job_budget is not None and new_job_budget.exhausted:
+                    raise NewJobLimitReached
                 raise RunnerError(
-                    f"saved response for job `{job_key}` is not nonempty text"
+                    f"cached result for job `{job_key}` has a rendered prompt changed "
+                    "by an upstream retry; inspect the superseding output and rerun "
+                    "with --retry-failed"
                 )
-            return response
-        return _validate_result_items(
-            stage_name,
-            previous.get("response"),
-            note.text,
-        )
+            retry_reason = "upstream rendered prompt changed"
+        else:
+            if stage_name == "prompt":
+                response = previous.get("response")
+                if not isinstance(response, str) or not response.strip():
+                    raise RunnerError(
+                        f"saved response for job `{job_key}` is not nonempty text"
+                    )
+                return response
+            return _validate_result_items(
+                stage_name,
+                previous.get("response"),
+                note.text,
+            )
     if previous is not None and not retry_failed:
-        raise RunnerError(
-            f"job `{job_key}` previously failed; inspect results.jsonl and "
-            "rerun with --retry-failed to create a new audited attempt"
-        )
+        if retry_reason is None:
+            raise RunnerError(
+                f"job `{job_key}` previously failed; inspect results.jsonl and "
+                "rerun with --retry-failed to create a new audited attempt"
+            )
+    if previous is not None and retry_reason is None:
+        retry_reason = "retry after failed attempt"
+    if new_job_budget is not None:
+        new_job_budget.claim()
     attempt = 1 if previous is None else previous["attempt"] + 1
     workspace_root = config.codex_home / "job-workspaces"
     output_raw: str | None = None
@@ -985,7 +1289,8 @@ def _run_job(
         "model": stage.model,
         "reasoning_effort": stage.reasoning_effort,
         "codex_version": codex_version,
-        "prompt_sha256": _sha256_bytes(prompt.encode("utf-8")),
+        "wrapper_sha256": execution_wrapper_sha256,
+        "prompt_sha256": prompt_sha256,
         "response_schema_sha256": (
             None
             if schema is None
@@ -1007,6 +1312,8 @@ def _run_job(
         "response": response,
         "error": error_message,
     }
+    if retry_reason is not None:
+        record["retry_reason"] = retry_reason
     _append_json_line(results_path, record)
     latest[job_key] = record
     if error_message is not None:
@@ -1040,17 +1347,19 @@ def _render_mask_prompt(prompt: str, note: Note, takeaway: str) -> str:
     )
 
 
-def run(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
-    config = RunnerConfig.load(config_path)
-    notes = _load_notes(config.input_path)
-    _prepare_codex_home(config.codex_home)
-    _validate_file_credentials(config.codex_home)
-    codex_version = _codex_version(config)
-    manifest = _build_manifest(config, codex_version)
-    manifest_sha256 = _prepare_run_directory(config, manifest)
-    results_path = config.run_directory / "results.jsonl"
-    latest = _load_latest_results(results_path, manifest_sha256)
-    (config.run_directory / "output.json").unlink(missing_ok=True)
+def _execute_pipeline_jobs(
+    *,
+    config: RunnerConfig,
+    notes: tuple[Note, ...],
+    manifest_sha256: str,
+    codex_version: str,
+    results_path: Path,
+    latest: dict[str, dict[str, Any]],
+    retry_failed: bool,
+    execution_wrapper_sha256: str,
+    retry_directive: RetryDirective | None,
+    new_job_budget: NewJobBudget,
+) -> list[dict[str, object]]:
     output_notes: list[dict[str, object]] = []
 
     for note in notes:
@@ -1068,6 +1377,9 @@ def run(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
             results_path=results_path,
             latest=latest,
             retry_failed=retry_failed,
+            execution_wrapper_sha256=execution_wrapper_sha256,
+            retry_directive=retry_directive,
+            new_job_budget=new_job_budget,
         )
         if not isinstance(takeaways, list) or not all(
             isinstance(takeaway, str) for takeaway in takeaways
@@ -1097,6 +1409,9 @@ def run(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
                     results_path=results_path,
                     latest=latest,
                     retry_failed=retry_failed,
+                    execution_wrapper_sha256=execution_wrapper_sha256,
+                    retry_directive=retry_directive,
+                    new_job_budget=new_job_budget,
                 )
                 if isinstance(prominence_result, bool) or not isinstance(
                     prominence_result, int
@@ -1119,6 +1434,9 @@ def run(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
                 results_path=results_path,
                 latest=latest,
                 retry_failed=retry_failed,
+                execution_wrapper_sha256=execution_wrapper_sha256,
+                retry_directive=retry_directive,
+                new_job_budget=new_job_budget,
             )
             output_takeaway: dict[str, object] = {
                 "text": takeaway,
@@ -1128,14 +1446,103 @@ def run(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
                 output_takeaway["prominence"] = prominence
             output_takeaways.append(output_takeaway)
         output_notes.append({"note_id": note.note_id, "takeaways": output_takeaways})
+        new_job_budget.completed_notes += 1
+        new_job_budget.completed_takeaways += len(output_takeaways)
 
+    return output_notes
+
+
+def run(
+    config_path: Path,
+    *,
+    retry_failed: bool,
+    max_new_jobs: int | None = None,
+    retry_job: str | None = None,
+    retry_reason: str | None = None,
+    runner_upgrade_reason: str | None = None,
+) -> PipelineRunOutcome:
+    if max_new_jobs is not None and max_new_jobs < 1:
+        raise RunnerError("--max-new-jobs must be at least 1")
+    config = RunnerConfig.load(config_path)
+    notes = _load_notes(config.input_path)
+    _prepare_codex_home(config.codex_home)
+    _validate_file_credentials(config.codex_home)
+    codex_version = _codex_version(config)
+    manifest = _build_manifest(config, codex_version)
+    prepared_manifest = _prepare_run_directory(
+        config,
+        manifest,
+        runner_upgrade_reason=runner_upgrade_reason,
+    )
+    results_path = config.run_directory / "results.jsonl"
+    latest = _load_latest_results(
+        results_path,
+        prepared_manifest.manifest_sha256,
+        prepared_manifest.provenance,
+    )
+    execution_provenance = _append_runner_upgrade(
+        config.run_directory,
+        prepared_manifest,
+    )
+    manifest_sha256 = prepared_manifest.manifest_sha256
+    retry_directive: RetryDirective | None = None
+    if retry_job is not None:
+        previous = latest.get(retry_job)
+        if previous is None:
+            raise RunnerError(f"--retry-job `{retry_job}` has no saved result")
+        if previous.get("status") != "succeeded":
+            raise RunnerError(
+                f"--retry-job `{retry_job}` is not a successful result; use "
+                "--retry-failed instead"
+            )
+        retry_directive = RetryDirective(retry_job, retry_reason or "")
+    (config.run_directory / "output.json").unlink(missing_ok=True)
+    new_job_budget = NewJobBudget(max_new_jobs)
+
+    try:
+        output_notes = _execute_pipeline_jobs(
+            config=config,
+            notes=notes,
+            manifest_sha256=manifest_sha256,
+            codex_version=codex_version,
+            results_path=results_path,
+            latest=latest,
+            retry_failed=retry_failed,
+            execution_wrapper_sha256=execution_provenance.active_wrapper_sha256,
+            retry_directive=retry_directive,
+            new_job_budget=new_job_budget,
+        )
+    except NewJobLimitReached:
+        if retry_directive is not None and not retry_directive.matched:
+            raise RunnerError(
+                f"--retry-job `{retry_directive.job_key}` was not reached before "
+                "--max-new-jobs"
+            )
+        return PipelineRunOutcome(
+            complete=False,
+            new_jobs=new_job_budget.used,
+            completed_notes=new_job_budget.completed_notes,
+            completed_takeaways=new_job_budget.completed_takeaways,
+            output=None,
+        )
+
+    if retry_directive is not None and not retry_directive.matched:
+        raise RunnerError(
+            f"--retry-job `{retry_directive.job_key}` is not part of the current pipeline"
+        )
     output: dict[str, object] = {
         "schema_version": config.schema_version,
         "manifest_sha256": manifest_sha256,
         "notes": output_notes,
     }
     _atomic_write(config.run_directory / "output.json", _canonical_json_bytes(output))
-    return output
+    return PipelineRunOutcome(
+        complete=True,
+        new_jobs=new_job_budget.used,
+        completed_notes=new_job_budget.completed_notes,
+        completed_takeaways=new_job_budget.completed_takeaways,
+        output=output,
+    )
 
 
 def run_prompts(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
@@ -1144,9 +1551,14 @@ def run_prompts(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
     _validate_file_credentials(config.codex_home)
     codex_version = _codex_version(config)
     manifest = _build_prompt_manifest(config, codex_version)
-    manifest_sha256 = _prepare_manifest_directory(config.run_directory, manifest)
+    prepared_manifest = _prepare_manifest_directory(config.run_directory, manifest)
+    manifest_sha256 = prepared_manifest.manifest_sha256
     results_path = config.run_directory / "results.jsonl"
-    latest = _load_latest_results(results_path, manifest_sha256)
+    latest = _load_latest_results(
+        results_path,
+        manifest_sha256,
+        prepared_manifest.provenance,
+    )
     (config.run_directory / "output.json").unlink(missing_ok=True)
     responses: list[dict[str, str]] = []
 
@@ -1165,6 +1577,7 @@ def run_prompts(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
             results_path=results_path,
             latest=latest,
             retry_failed=retry_failed,
+            execution_wrapper_sha256=prepared_manifest.provenance.active_wrapper_sha256,
         )
         if not isinstance(response, str):
             raise AssertionError("successful prompt job returned structured output")
@@ -1276,6 +1689,23 @@ def _argument_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="explicitly retry the latest failed attempt for each failed job",
     )
+    run_parser.add_argument(
+        "--max-new-jobs",
+        type=int,
+        help="pause successfully after spawning at most this many uncached jobs",
+    )
+    run_parser.add_argument(
+        "--retry-job",
+        help="explicitly rerun one saved successful job after semantic review",
+    )
+    run_parser.add_argument(
+        "--retry-reason",
+        help="required audit reason for --retry-job",
+    )
+    run_parser.add_argument(
+        "--runner-upgrade-reason",
+        help="audit reason for resuming an existing run with changed wrapper code",
+    )
     prompt_parser = subcommands.add_parser(
         "prompt", help="run one direct prompt or a preserved prompt batch"
     )
@@ -1345,17 +1775,42 @@ def main(arguments: Sequence[str] | None = None) -> int:
             output = run_prompts(parsed.config, retry_failed=parsed.retry_failed)
             print(json.dumps({"prompts": len(output["responses"])}, sort_keys=True))
             return 0
-        output = run(parsed.config, retry_failed=parsed.retry_failed)
-        takeaway_count = sum(len(note["takeaways"]) for note in output["notes"])
-        print(
-            json.dumps(
-                {
-                    "notes": len(output["notes"]),
-                    "takeaways": takeaway_count,
-                },
-                sort_keys=True,
-            )
+        if (parsed.retry_job is None) != (parsed.retry_reason is None):
+            raise RunnerError("--retry-job and --retry-reason must be used together")
+        if parsed.retry_job is not None and parsed.retry_failed:
+            raise RunnerError("--retry-job cannot be combined with --retry-failed")
+        if parsed.retry_reason is not None and not parsed.retry_reason.strip():
+            raise RunnerError("--retry-reason must not be empty")
+        if (
+            parsed.runner_upgrade_reason is not None
+            and not parsed.runner_upgrade_reason.strip()
+        ):
+            raise RunnerError("--runner-upgrade-reason must not be empty")
+        outcome = run(
+            parsed.config,
+            retry_failed=parsed.retry_failed,
+            max_new_jobs=parsed.max_new_jobs,
+            retry_job=parsed.retry_job,
+            retry_reason=parsed.retry_reason,
+            runner_upgrade_reason=parsed.runner_upgrade_reason,
         )
+        status: dict[str, object] = {}
+        if parsed.max_new_jobs is not None:
+            status.update(
+                {
+                    "complete": outcome.complete,
+                    "new_jobs": outcome.new_jobs,
+                    "completed_notes": outcome.completed_notes,
+                    "completed_takeaways": outcome.completed_takeaways,
+                }
+            )
+        if outcome.output is not None:
+            notes = outcome.output["notes"]
+            if not isinstance(notes, list):
+                raise AssertionError("pipeline output contains invalid notes")
+            status["notes"] = len(notes)
+            status["takeaways"] = sum(len(note["takeaways"]) for note in notes)
+        print(json.dumps(status, sort_keys=True))
         return 0
     except RunnerError as error:
         print(f"codex exec wrapper failed: {error}", file=sys.stderr)

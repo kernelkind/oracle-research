@@ -1,6 +1,7 @@
 //! Hard partitions over normalized semantic idea vectors.
 
-use std::collections::BTreeSet;
+use std::cmp::Ordering;
+use std::collections::{BTreeSet, BinaryHeap};
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -68,16 +69,6 @@ impl CosineMatrix {
             }
         }
         minimum
-    }
-
-    fn cross_minimum(&self, left: &[usize], right: &[usize]) -> f64 {
-        left.iter()
-            .flat_map(|left| {
-                right
-                    .iter()
-                    .map(move |right| self.values[*left * self.count + *right])
-            })
-            .fold(1.0, f64::min)
     }
 }
 
@@ -175,42 +166,142 @@ pub fn complete_linkage_partition(
     pairwise_min_cosine: f64,
 ) -> Result<RegionPartition> {
     validate_threshold(pairwise_min_cosine)?;
-    let mut regions = (0..cosines.count)
-        .map(|ordinal| vec![ordinal])
-        .collect::<Vec<_>>();
-
-    loop {
-        let mut best: Option<(f64, usize, usize)> = None;
-        for left in 0..regions.len() {
-            for right in (left + 1)..regions.len() {
-                let similarity = cosines.cross_minimum(&regions[left], &regions[right]);
-                let replace = best.is_none_or(|(current, current_left, current_right)| {
-                    similarity > current
-                        || (similarity == current
-                            && (regions[left].as_slice(), regions[right].as_slice())
-                                < (
-                                    regions[current_left].as_slice(),
-                                    regions[current_right].as_slice(),
-                                ))
-                });
-                if replace {
-                    best = Some((similarity, left, right));
-                }
+    let count = cosines.count;
+    let mut similarities = Vec::with_capacity(count.saturating_mul(2).saturating_sub(1));
+    let mut candidates = BinaryHeap::new();
+    for right in 0..count {
+        let mut row = Vec::with_capacity(right);
+        for left in 0..right {
+            let similarity = cosines.values[right * count + left];
+            row.push(similarity);
+            if similarity >= pairwise_min_cosine {
+                candidates.push(LinkCandidate::new(similarity, left, right, left, right));
             }
         }
-
-        let Some((similarity, left, right)) = best else {
-            break;
-        };
-        if similarity < pairwise_min_cosine {
-            break;
-        }
-        let right_members = regions.remove(right);
-        regions[left].extend(right_members);
-        regions[left].sort_unstable();
+        similarities.push(row);
     }
 
-    RegionPartition::new(cosines.count, regions)
+    let mut members = (0..count).map(|ordinal| vec![ordinal]).collect::<Vec<_>>();
+    let mut active = vec![true; count];
+    while let Some(candidate) = candidates.pop() {
+        if !active[candidate.left] || !active[candidate.right] {
+            continue;
+        }
+        let left = candidate.left;
+        let right = candidate.right;
+        active[left] = false;
+        active[right] = false;
+
+        let mut merged = Vec::with_capacity(members[left].len() + members[right].len());
+        merged.extend_from_slice(&members[left]);
+        merged.extend_from_slice(&members[right]);
+        merged.sort_unstable();
+        let merged_id = members.len();
+        let merged_first = merged[0];
+        members.push(merged);
+        active.push(true);
+
+        let mut row = vec![f64::NAN; merged_id];
+        for other in 0..merged_id {
+            if !active[other] {
+                continue;
+            }
+            let similarity = triangular_get(&similarities, left, other).min(triangular_get(
+                &similarities,
+                right,
+                other,
+            ));
+            row[other] = similarity;
+            if similarity >= pairwise_min_cosine {
+                candidates.push(LinkCandidate::new(
+                    similarity,
+                    merged_id,
+                    other,
+                    merged_first,
+                    members[other][0],
+                ));
+            }
+        }
+        similarities.push(row);
+    }
+
+    RegionPartition::new(
+        count,
+        active
+            .iter()
+            .enumerate()
+            .filter(|(_, active)| **active)
+            .map(|(id, _)| members[id].clone())
+            .collect(),
+    )
+}
+
+#[derive(Clone, Copy, Debug)]
+struct LinkCandidate {
+    similarity: f64,
+    left: usize,
+    right: usize,
+    left_first: usize,
+    right_first: usize,
+}
+
+impl LinkCandidate {
+    fn new(
+        similarity: f64,
+        first_id: usize,
+        second_id: usize,
+        first_member: usize,
+        second_member: usize,
+    ) -> Self {
+        if first_member < second_member {
+            Self {
+                similarity,
+                left: first_id,
+                right: second_id,
+                left_first: first_member,
+                right_first: second_member,
+            }
+        } else {
+            Self {
+                similarity,
+                left: second_id,
+                right: first_id,
+                left_first: second_member,
+                right_first: first_member,
+            }
+        }
+    }
+}
+
+impl Eq for LinkCandidate {}
+
+impl PartialEq for LinkCandidate {
+    fn eq(&self, other: &Self) -> bool {
+        self.cmp(other) == Ordering::Equal
+    }
+}
+
+impl Ord for LinkCandidate {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.similarity
+            .total_cmp(&other.similarity)
+            .then_with(|| other.left_first.cmp(&self.left_first))
+            .then_with(|| other.right_first.cmp(&self.right_first))
+    }
+}
+
+impl PartialOrd for LinkCandidate {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+fn triangular_get(similarities: &[Vec<f64>], left: usize, right: usize) -> f64 {
+    if left > right {
+        similarities[left][right]
+    } else {
+        similarities[right][left]
+    }
 }
 
 pub fn dp_vmf_partition(

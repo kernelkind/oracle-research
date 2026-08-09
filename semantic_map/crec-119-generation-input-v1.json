@@ -1,0 +1,6 @@
+{
+  "source_corpus_path": "../damus_snapshot/runs/crec-105-fresh-corpus-v9/derivation/cumulative-filtered.ndb",
+  "sample_path": "semantic_map/crec-120-sample-v1",
+  "rows": 500,
+  "output_path": "target/crec-119-500-note-v1/input"
+}

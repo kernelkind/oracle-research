@@ -87,6 +87,14 @@ path = "src/bin/sse_subject_navigation.rs"
 name = "freeze-semantic-map-sample"
 path = "src/bin/freeze_semantic_map_sample.rs"
 
+[[bin]]
+name = "materialize-semantic-map-input"
+path = "src/bin/materialize_semantic_map_input.rs"
+
+[[bin]]
+name = "scaled-fine-segments"
+path = "src/bin/scaled_fine_segments.rs"
+
 [dependencies]
 bech32 = "=0.11.1"
 crossterm = "=0.29.0"

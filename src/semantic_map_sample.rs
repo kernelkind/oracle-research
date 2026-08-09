@@ -33,6 +33,8 @@ const ORDERED_EVENT_IDS_FILE: &str = "ordered-event-ids.bin";
 const ORDERED_EVENT_IDS_CHECKSUM_FILE: &str = "ordered-event-ids.sha256";
 const RUNTIME_NDB_DIRECTORY: &str = ".runtime-ndb";
 const SELECTION_DOMAIN: &[u8] = b"oracle-mvp/scaled-semantic-map-sample/v1\0";
+const GENERATION_NOTES_FILE: &str = "notes.json";
+const GENERATION_INPUT_RULE: &str = "first-rows-of-frozen-semantic-map-sample-v1";
 
 /// Exact deterministic selection rule frozen by CREC-120.
 pub const SELECTION_RULE: &str =
@@ -112,6 +114,54 @@ pub struct SemanticMapSampleManifest {
     pub extension_rows: u64,
     /// Frozen ordered event-ID output.
     pub ordered_event_ids: SemanticMapSampleFile,
+}
+
+/// Inputs for materializing an exact prefix of the frozen sample for model calls.
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct SemanticMapGenerationInputConfig {
+    /// Sealed NostrDB named by the frozen sample manifest.
+    pub source_corpus_path: PathBuf,
+    /// Frozen CREC-120 sample artifact directory.
+    pub sample_path: PathBuf,
+    /// Number of leading frozen sample rows to materialize.
+    pub rows: usize,
+    /// Create-once output artifact directory.
+    pub output_path: PathBuf,
+}
+
+/// Identity of a materialized generation input.
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct SemanticMapGenerationInputManifest {
+    /// Artifact schema version.
+    pub schema_version: u32,
+    /// Exact prefix-selection rule.
+    pub selection_rule: String,
+    /// Source NostrDB data identity inherited from the frozen sample.
+    pub source_ndb_data_sha256: String,
+    /// Frozen sample manifest identity.
+    pub sample_manifest_sha256: String,
+    /// Frozen ordered event-ID identity.
+    pub sample_ordered_event_ids_sha256: String,
+    /// Number of notes in the materialized prefix.
+    pub rows: u64,
+    /// Exact runner-compatible note input.
+    pub notes: SemanticMapSampleFile,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
+struct GenerationInput {
+    schema_version: u32,
+    notes: Vec<GenerationNote>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
+struct GenerationNote {
+    note_id: String,
+    text: String,
 }
 
 /// A deterministic sample derivation or verification failure.
@@ -295,6 +345,281 @@ pub fn verify_semantic_map_sample(
         &output_file.sha256,
     )?;
     Ok(manifest)
+}
+
+/// Materialize and atomically publish an exact prefix of the frozen sample.
+pub fn materialize_semantic_map_generation_input(
+    config: &SemanticMapGenerationInputConfig,
+) -> Result<SemanticMapGenerationInputManifest, SemanticMapSampleError> {
+    validate_generation_input_config(config)?;
+    if config.output_path.exists() {
+        return verify_semantic_map_generation_input(config);
+    }
+
+    let parent = config
+        .output_path
+        .parent()
+        .unwrap_or_else(|| Path::new("."));
+    fs::create_dir_all(parent).map_err(|source| io_error("create", parent, source))?;
+    let stage = stage_path(&config.output_path)?;
+    match fs::create_dir(&stage) {
+        Ok(()) => {}
+        Err(source) if source.kind() == std::io::ErrorKind::AlreadyExists => {
+            return Err(SemanticMapSampleError::IncompleteStage(stage));
+        }
+        Err(source) => return Err(io_error("create", &stage, source)),
+    }
+
+    let result = materialize_generation_input_in_stage(config, &stage);
+    let manifest = match result {
+        Ok(manifest) => manifest,
+        Err(error) => {
+            let _ = fs::remove_dir_all(&stage);
+            return Err(error);
+        }
+    };
+    publish_no_replace(&stage, &config.output_path)?;
+    sync_directory(parent)?;
+    Ok(manifest)
+}
+
+/// Deeply verify an existing materialized generation input.
+pub fn verify_semantic_map_generation_input(
+    config: &SemanticMapGenerationInputConfig,
+) -> Result<SemanticMapGenerationInputManifest, SemanticMapSampleError> {
+    validate_generation_input_config(config)?;
+    verify_generation_input_entries(&config.output_path)?;
+    let stored: SemanticMapGenerationInputManifest =
+        read_json(&config.output_path.join(MANIFEST_FILE))?;
+    validate_generation_input_manifest(&stored, config.rows)?;
+
+    let runtime = verification_runtime_path(&config.output_path)?;
+    if runtime.exists() {
+        return Err(SemanticMapSampleError::IncompleteStage(runtime));
+    }
+    fs::create_dir(&runtime).map_err(|source| io_error("create", &runtime, source))?;
+    let expected_input = load_generation_input(config, &runtime);
+    let cleanup = fs::remove_dir_all(&runtime);
+    let (input, sample) = expected_input?;
+    cleanup.map_err(|source| io_error("remove", &runtime, source))?;
+
+    let notes_path = config.output_path.join(GENERATION_NOTES_FILE);
+    let actual_input: GenerationInput = read_json(&notes_path)?;
+    if actual_input != input {
+        return Err(SemanticMapSampleError::Invariant(
+            "stored generation notes do not match the frozen sample prefix".to_owned(),
+        ));
+    }
+    let notes = file_manifest(&notes_path, config.rows as u64)?;
+    let expected = generation_input_manifest(config, &sample, notes)?;
+    if stored != expected {
+        return Err(SemanticMapSampleError::Invariant(
+            "stored generation-input manifest does not match its sources".to_owned(),
+        ));
+    }
+    Ok(stored)
+}
+
+fn materialize_generation_input_in_stage(
+    config: &SemanticMapGenerationInputConfig,
+    stage: &Path,
+) -> Result<SemanticMapGenerationInputManifest, SemanticMapSampleError> {
+    let runtime = stage.join(RUNTIME_NDB_DIRECTORY);
+    fs::create_dir(&runtime).map_err(|source| io_error("create", &runtime, source))?;
+    let loaded = load_generation_input(config, &runtime);
+    let cleanup = fs::remove_dir_all(&runtime);
+    let (input, sample) = loaded?;
+    cleanup.map_err(|source| io_error("remove", &runtime, source))?;
+
+    let notes_path = stage.join(GENERATION_NOTES_FILE);
+    write_json(&notes_path, &input)?;
+    let notes = file_manifest(&notes_path, config.rows as u64)?;
+    let manifest = generation_input_manifest(config, &sample, notes)?;
+    write_json(&stage.join(MANIFEST_FILE), &manifest)?;
+    verify_generation_input_entries(stage)?;
+    sync_directory(stage)?;
+    Ok(manifest)
+}
+
+fn load_generation_input(
+    config: &SemanticMapGenerationInputConfig,
+    runtime: &Path,
+) -> Result<(GenerationInput, SemanticMapSampleManifest), SemanticMapSampleError> {
+    verify_output_entries(&config.sample_path)?;
+    let sample_manifest_path = config.sample_path.join(MANIFEST_FILE);
+    let sample: SemanticMapSampleManifest = read_json(&sample_manifest_path)?;
+    validate_output_manifest(&sample)?;
+    if config.rows == 0 || config.rows as u64 > sample.initial_rows {
+        return Err(SemanticMapSampleError::Invariant(format!(
+            "generation rows must be between 1 and the frozen initial prefix of {}",
+            sample.initial_rows
+        )));
+    }
+    let ordered_path = config.sample_path.join(ORDERED_EVENT_IDS_FILE);
+    let ordered_file = file_manifest(&ordered_path, SAMPLE_ROWS as u64)?;
+    if ordered_file != sample.ordered_event_ids {
+        return Err(SemanticMapSampleError::Invariant(
+            "frozen sample ordered-ID identity differs from its manifest".to_owned(),
+        ));
+    }
+    verify_checksum_sidecar(
+        &config.sample_path.join(ORDERED_EVENT_IDS_CHECKSUM_FILE),
+        &ordered_file.sha256,
+    )?;
+    let ids = read_event_ids(&ordered_path)?;
+    if ids.len() != SAMPLE_ROWS || ids.iter().copied().collect::<BTreeSet<_>>().len() != SAMPLE_ROWS
+    {
+        return Err(SemanticMapSampleError::Invariant(
+            "frozen sample event IDs are not complete and unique".to_owned(),
+        ));
+    }
+
+    let source_data_path = config.source_corpus_path.join("data.mdb");
+    let source_before = file_state(&source_data_path)?;
+    let source_sha256 = sha256_file(&source_data_path)?;
+    if source_sha256 != sample.declared_source_ndb_data_sha256 {
+        return Err(SemanticMapSampleError::Invariant(format!(
+            "source NostrDB data SHA-256 is {source_sha256}; frozen sample declares {}",
+            sample.declared_source_ndb_data_sha256
+        )));
+    }
+    let canonical_data = fs::canonicalize(&source_data_path)
+        .map_err(|source| io_error("resolve", &source_data_path, source))?;
+    symlink(&canonical_data, runtime.join("data.mdb"))
+        .map_err(|source| io_error("link", runtime.join("data.mdb"), source))?;
+
+    let corpus = open_read_only_corpus(runtime)?;
+    let transaction = corpus.environment.begin_ro_txn()?;
+    let mut note_id_cursor = transaction.open_ro_cursor(corpus.note_id)?;
+    let notes = ids[..config.rows]
+        .iter()
+        .map(|id| {
+            Ok(GenerationNote {
+                note_id: hex(id),
+                text: load_content(&transaction, &mut note_id_cursor, corpus.note, *id)?.to_owned(),
+            })
+        })
+        .collect::<Result<Vec<_>, SemanticMapSampleError>>()?;
+    drop(note_id_cursor);
+    drop(transaction);
+    drop(corpus);
+    require_same_file(
+        "source NostrDB data",
+        source_before,
+        file_state(&source_data_path)?,
+    )?;
+    Ok((
+        GenerationInput {
+            schema_version: SCHEMA_VERSION,
+            notes,
+        },
+        sample,
+    ))
+}
+
+fn generation_input_manifest(
+    config: &SemanticMapGenerationInputConfig,
+    sample: &SemanticMapSampleManifest,
+    notes: SemanticMapSampleFile,
+) -> Result<SemanticMapGenerationInputManifest, SemanticMapSampleError> {
+    Ok(SemanticMapGenerationInputManifest {
+        schema_version: SCHEMA_VERSION,
+        selection_rule: GENERATION_INPUT_RULE.to_owned(),
+        source_ndb_data_sha256: sample.declared_source_ndb_data_sha256.clone(),
+        sample_manifest_sha256: sha256_file(&config.sample_path.join(MANIFEST_FILE))?,
+        sample_ordered_event_ids_sha256: sample.ordered_event_ids.sha256.clone(),
+        rows: config.rows as u64,
+        notes,
+    })
+}
+
+fn validate_generation_input_config(
+    config: &SemanticMapGenerationInputConfig,
+) -> Result<(), SemanticMapSampleError> {
+    if config.rows == 0 || config.rows > SAMPLE_ROWS {
+        return Err(SemanticMapSampleError::Invariant(format!(
+            "generation rows must be between 1 and {SAMPLE_ROWS}"
+        )));
+    }
+    if !config.source_corpus_path.join("data.mdb").is_file() {
+        return Err(SemanticMapSampleError::Invariant(format!(
+            "source NostrDB data is missing: {}",
+            config.source_corpus_path.join("data.mdb").display()
+        )));
+    }
+    if fs::symlink_metadata(&config.output_path)
+        .is_ok_and(|metadata| metadata.file_type().is_symlink())
+    {
+        return Err(SemanticMapSampleError::Invariant(
+            "generation-input output path must not be a symlink".to_owned(),
+        ));
+    }
+    let source = fs::canonicalize(&config.source_corpus_path)
+        .map_err(|source| io_error("resolve", &config.source_corpus_path, source))?;
+    let sample = fs::canonicalize(&config.sample_path)
+        .map_err(|source| io_error("resolve", &config.sample_path, source))?;
+    let output = resolve_for_comparison(&config.output_path)?;
+    if output.starts_with(&source)
+        || source.starts_with(&output)
+        || output.starts_with(&sample)
+        || sample.starts_with(&output)
+    {
+        return Err(SemanticMapSampleError::Invariant(
+            "generation-input output overlaps a source artifact".to_owned(),
+        ));
+    }
+    Ok(())
+}
+
+fn validate_generation_input_manifest(
+    manifest: &SemanticMapGenerationInputManifest,
+    rows: usize,
+) -> Result<(), SemanticMapSampleError> {
+    if manifest.schema_version != SCHEMA_VERSION
+        || manifest.selection_rule != GENERATION_INPUT_RULE
+        || manifest.rows != rows as u64
+        || !valid_sha256(&manifest.source_ndb_data_sha256)
+        || !valid_sha256(&manifest.sample_manifest_sha256)
+        || !valid_sha256(&manifest.sample_ordered_event_ids_sha256)
+        || manifest.notes.file != GENERATION_NOTES_FILE
+        || manifest.notes.records != rows as u64
+        || !valid_sha256(&manifest.notes.sha256)
+    {
+        return Err(SemanticMapSampleError::Invariant(
+            "stored generation-input manifest violates its contract".to_owned(),
+        ));
+    }
+    Ok(())
+}
+
+fn verify_generation_input_entries(path: &Path) -> Result<(), SemanticMapSampleError> {
+    let actual = fs::read_dir(path)
+        .map_err(|source| io_error("read", path, source))?
+        .map(|entry| {
+            let entry = entry.map_err(|source| io_error("read", path, source))?;
+            let file_type = entry
+                .file_type()
+                .map_err(|source| io_error("read metadata for", entry.path(), source))?;
+            if !file_type.is_file() {
+                return Err(SemanticMapSampleError::Invariant(
+                    "generation-input entries must be non-symlink regular files".to_owned(),
+                ));
+            }
+            entry.file_name().into_string().map_err(|name| {
+                SemanticMapSampleError::Invariant(format!(
+                    "generation input contains a non-UTF-8 entry: {}",
+                    name.to_string_lossy()
+                ))
+            })
+        })
+        .collect::<Result<BTreeSet<_>, _>>()?;
+    let expected = BTreeSet::from([GENERATION_NOTES_FILE.to_owned(), MANIFEST_FILE.to_owned()]);
+    if actual != expected {
+        return Err(SemanticMapSampleError::Invariant(
+            "generation-input output must contain exactly notes.json and manifest.json".to_owned(),
+        ));
+    }
+    Ok(())
 }
 
 fn freeze_in_stage(
