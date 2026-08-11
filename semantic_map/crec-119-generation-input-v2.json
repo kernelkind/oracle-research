@@ -1,0 +1,16 @@
+{
+  "source_corpus_path": "../damus_snapshot/runs/crec-105-fresh-corpus-v9/derivation/cumulative-filtered.ndb",
+  "sample_path": "semantic_map/crec-120-sample-v1",
+  "rows": 500,
+  "excluded_note_ids": [
+    "8f192720e14a6f29b83ab40a3ef49e9e0f64aa4d05dbf3293650b514daea9e24",
+    "882af9383d95065862513373a67b2a7a56b1d4aa374219a2f41308addef76c65",
+    "663681adbd2c98ba33a883e55d750f5fdc0f368c5dd4aa09b8865085bf884fc5",
+    "f7ce19eb47cf14651987f3d35255d2111b5d8012d24dd49ee23cf95766abf210",
+    "02509f39a5302a9d41ffc021bb0727345656926962de7e1355ef0a33296a1217",
+    "e08cd521dd16c6a1c544fca2edff551a32fa7e3e12dc7f32d35ee5cc77502210",
+    "72333d732fd150fef678fde171284248a3f1af049476cffeb510f6c736a572f9",
+    "6f1be6b82705a1a56afa3d792ac1b8569c1a8a8cde392120f23b99eadefe8114"
+  ],
+  "output_path": "target/crec-119-500-note-v2/input"
+}

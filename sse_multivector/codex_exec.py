@@ -21,6 +21,7 @@ from typing import Any, Sequence
 
 SCHEMA_VERSION = 1
 PIPELINE_SCHEMA_VERSION = 2
+REUSE_PIPELINE_SCHEMA_VERSION = 3
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CODEX_HOME = Path("~/.local/state/oracle-mvp/codex-home").expanduser()
 TAKEAWAY_ENVELOPE_VERSION = "xml-post-v1"
@@ -34,6 +35,8 @@ RUNTIME_CONTEXT_OVERRIDES = (
     "include_environment_context=false",
     "skills.include_instructions=false",
 )
+URL_FREE_MASK_PROMPT_VERSIONS = frozenset({"MPv3.4"})
+URL_SCHEME_PATTERN = re.compile(r"(?:https?|wss?)://", re.IGNORECASE)
 DISABLED_FEATURES = (
     "shell_tool",
     "unified_exec",
@@ -138,6 +141,103 @@ class PreparedManifest:
     provenance: RunnerProvenance
     pending_wrapper_sha256: str | None
     pending_reason: str | None
+
+
+@dataclass(frozen=True)
+class ReuseSourceConfig:
+    input_path: Path
+    input_sha256: str
+    run_directory: Path
+    manifest_sha256: str
+    results_sha256: str
+    runner_upgrades_sha256: str | None
+    output_sha256: str
+
+    @classmethod
+    def load(cls, raw: object, base: Path) -> "ReuseSourceConfig":
+        value = _expect_object(raw, "reuse_source")
+        _expect_fields(
+            value,
+            "reuse_source",
+            {
+                "input_path",
+                "input_sha256",
+                "run_directory",
+                "manifest_sha256",
+                "results_sha256",
+                "runner_upgrades_sha256",
+                "output_sha256",
+            },
+        )
+        upgrades = value["runner_upgrades_sha256"]
+        if upgrades is not None:
+            upgrades = _expect_sha256(
+                upgrades, "reuse_source.runner_upgrades_sha256"
+            )
+        return cls(
+            input_path=_resolve_path(
+                value["input_path"], "reuse_source.input_path", base
+            ),
+            input_sha256=_expect_sha256(
+                value["input_sha256"], "reuse_source.input_sha256"
+            ),
+            run_directory=_resolve_path(
+                value["run_directory"], "reuse_source.run_directory", base
+            ),
+            manifest_sha256=_expect_sha256(
+                value["manifest_sha256"], "reuse_source.manifest_sha256"
+            ),
+            results_sha256=_expect_sha256(
+                value["results_sha256"], "reuse_source.results_sha256"
+            ),
+            runner_upgrades_sha256=upgrades,
+            output_sha256=_expect_sha256(
+                value["output_sha256"], "reuse_source.output_sha256"
+            ),
+        )
+
+    def manifest_value(self) -> dict[str, object]:
+        return {
+            "input_path": str(self.input_path),
+            "input_sha256": self.input_sha256,
+            "run_directory": str(self.run_directory),
+            "manifest_sha256": self.manifest_sha256,
+            "results_sha256": self.results_sha256,
+            "runner_upgrades_sha256": self.runner_upgrades_sha256,
+            "output_sha256": self.output_sha256,
+        }
+
+
+@dataclass(frozen=True)
+class SourceResultReference:
+    line: int
+    sha256: str
+    attempt: int
+
+
+@dataclass(frozen=True)
+class SourceStageContract:
+    prompt_version: str
+    prompt: str
+    prompt_sha256: str
+    model: str
+    reasoning_effort: str
+    response_schema_sha256: str
+
+
+@dataclass(frozen=True)
+class ReusableJob:
+    note_text: str
+    rendered_prompt_sha256: str
+    response: list[str] | int
+    reference: SourceResultReference
+
+
+@dataclass(frozen=True)
+class LoadedReuseSource:
+    config: ReuseSourceConfig
+    stages: dict[str, SourceStageContract]
+    jobs: dict[str, ReusableJob]
 
 
 def _canonical_json_bytes(value: object) -> bytes:
@@ -416,6 +516,7 @@ class RunnerConfig:
     takeaway: StageConfig
     prominence: StageConfig | None
     mask: StageConfig
+    reuse_source: ReuseSourceConfig | None
 
     @classmethod
     def load(cls, path: Path) -> "RunnerConfig":
@@ -450,6 +551,19 @@ class RunnerConfig:
                 "prominence",
                 "mask",
             }
+        elif raw_schema_version == REUSE_PIPELINE_SCHEMA_VERSION:
+            schema_version = REUSE_PIPELINE_SCHEMA_VERSION
+            expected_fields = {
+                "schema_version",
+                "codex_binary",
+                "codex_home",
+                "input_path",
+                "run_directory",
+                "takeaway",
+                "prominence",
+                "mask",
+                "reuse_source",
+            }
         else:
             raise RunnerError("unsupported pipeline config schema version")
         _expect_fields(value, "config", expected_fields)
@@ -469,8 +583,20 @@ class RunnerConfig:
                 else StageConfig.load(value["prominence"], "prominence", base)
             ),
             mask=StageConfig.load(value["mask"], "mask", base),
+            reuse_source=(
+                None
+                if schema_version != REUSE_PIPELINE_SCHEMA_VERSION
+                else ReuseSourceConfig.load(value["reuse_source"], base)
+            ),
         )
         _validate_codex_home(config.codex_home)
+        if (
+            config.reuse_source is not None
+            and config.run_directory == config.reuse_source.run_directory
+        ):
+            raise RunnerError(
+                "reuse_source.run_directory must differ from run_directory"
+            )
         return config
 
 
@@ -665,6 +791,8 @@ def _build_manifest(
         manifest["prominence_input_normalization_version"] = (
             TAKEAWAY_INPUT_NORMALIZATION_VERSION
         )
+    if config.reuse_source is not None:
+        manifest["reuse_source"] = config.reuse_source.manifest_value()
     return manifest
 
 
@@ -914,12 +1042,13 @@ def _load_latest_results(
     path: Path,
     manifest_sha256: str,
     provenance: RunnerProvenance,
+    references: dict[str, SourceResultReference] | None = None,
 ) -> dict[str, dict[str, Any]]:
     if not path.exists():
         return {}
     latest: dict[str, dict[str, Any]] = {}
     try:
-        lines = path.read_text(encoding="utf-8").splitlines()
+        lines = path.read_bytes().splitlines(keepends=True)
     except (OSError, UnicodeError) as error:
         raise RunnerError(f"could not read results ledger {path}: {error}") from error
     active_wrapper = provenance.initial_wrapper_sha256
@@ -933,7 +1062,7 @@ def _load_latest_results(
             boundary_index += 1
         try:
             raw = json.loads(line)
-        except json.JSONDecodeError as error:
+        except (UnicodeError, json.JSONDecodeError) as error:
             raise RunnerError(
                 f"results ledger line {line_number} is not valid JSON: {error}"
             ) from error
@@ -968,7 +1097,366 @@ def _load_latest_results(
                 f"results ledger has a nonconsecutive attempt for `{job_key}`"
             )
         latest[job_key] = record
+        if references is not None:
+            references[job_key] = SourceResultReference(
+                line=line_number,
+                sha256=_sha256_bytes(line),
+                attempt=attempt,
+            )
     return latest
+
+
+def _verify_pinned_reuse_file(
+    path: Path,
+    expected_sha256: str,
+    label: str,
+) -> None:
+    try:
+        actual_sha256 = _sha256_file(path)
+    except OSError as error:
+        raise RunnerError(f"could not verify reuse source {label} at {path}: {error}")
+    if actual_sha256 != expected_sha256:
+        raise RunnerError(
+            f"reuse source {label} hash does not match its pinned SHA-256"
+        )
+
+
+def _verify_reuse_source_hashes(config: ReuseSourceConfig) -> None:
+    _verify_pinned_reuse_file(
+        config.input_path,
+        config.input_sha256,
+        "input",
+    )
+    _verify_pinned_reuse_file(
+        config.run_directory / "manifest.json",
+        config.manifest_sha256,
+        "manifest",
+    )
+    _verify_pinned_reuse_file(
+        config.run_directory / "results.jsonl",
+        config.results_sha256,
+        "results",
+    )
+    upgrades_path = config.run_directory / "runner-upgrades.jsonl"
+    if config.runner_upgrades_sha256 is None:
+        if upgrades_path.exists():
+            raise RunnerError(
+                "reuse source runner upgrades exist but no SHA-256 was pinned"
+            )
+    else:
+        _verify_pinned_reuse_file(
+            upgrades_path,
+            config.runner_upgrades_sha256,
+            "runner upgrades",
+        )
+    _verify_pinned_reuse_file(
+        config.run_directory / "output.json",
+        config.output_sha256,
+        "output",
+    )
+
+
+def _source_stage_contracts(
+    manifest: dict[str, Any],
+) -> dict[str, SourceStageContract]:
+    stages: dict[str, SourceStageContract] = {}
+    for stage_name in ("takeaway", "prominence", "mask"):
+        stage = _expect_object(
+            manifest.get(stage_name), f"reuse source manifest.{stage_name}"
+        )
+        prompt = _expect_string(
+            stage.get("prompt"), f"reuse source manifest.{stage_name}.prompt"
+        )
+        prompt_sha256 = _expect_sha256(
+            stage.get("prompt_sha256"),
+            f"reuse source manifest.{stage_name}.prompt_sha256",
+        )
+        if prompt_sha256 != _sha256_bytes(prompt.encode("utf-8")):
+            raise RunnerError(
+                f"reuse source manifest.{stage_name} prompt hash is invalid"
+            )
+        response_schema = _expect_object(
+            stage.get("response_schema"),
+            f"reuse source manifest.{stage_name}.response_schema",
+        )
+        response_schema_sha256 = _expect_sha256(
+            stage.get("response_schema_sha256"),
+            f"reuse source manifest.{stage_name}.response_schema_sha256",
+        )
+        if response_schema_sha256 != _sha256_bytes(
+            _canonical_json_bytes(response_schema)
+        ):
+            raise RunnerError(
+                f"reuse source manifest.{stage_name} response schema hash is invalid"
+            )
+        stages[stage_name] = SourceStageContract(
+            prompt_version=_expect_string(
+                stage.get("prompt_version"),
+                f"reuse source manifest.{stage_name}.prompt_version",
+            ),
+            prompt=prompt,
+            prompt_sha256=prompt_sha256,
+            model=_expect_identifier(
+                stage.get("model"), f"reuse source manifest.{stage_name}.model"
+            ),
+            reasoning_effort=_expect_identifier(
+                stage.get("reasoning_effort"),
+                f"reuse source manifest.{stage_name}.reasoning_effort",
+            ),
+            response_schema_sha256=response_schema_sha256,
+        )
+    return stages
+
+
+def _compile_reusable_job(
+    *,
+    latest: dict[str, dict[str, Any]],
+    references: dict[str, SourceResultReference],
+    source_codex_version: str,
+    stage_name: str,
+    stage: SourceStageContract,
+    note: Note,
+    takeaway_index: int | None,
+    rendered_prompt: str,
+    output_response: list[str] | int,
+) -> ReusableJob:
+    job_key = _job_key(stage_name, note.note_id, takeaway_index)
+    record = latest.get(job_key)
+    if record is None or record.get("status") != "succeeded":
+        raise RunnerError(
+            f"reuse source output has no successful result for `{job_key}`"
+        )
+    if (
+        record.get("schema_version") != SCHEMA_VERSION
+        or record.get("execution") is not None
+        or record.get("job_key") != job_key
+        or record.get("stage") != stage_name
+        or record.get("note_id") != note.note_id
+        or record.get("takeaway_index") != takeaway_index
+    ):
+        raise RunnerError(f"reuse source result `{job_key}` has invalid job identity")
+    rendered_prompt_sha256 = _sha256_bytes(rendered_prompt.encode("utf-8"))
+    if record.get("model") != stage.model:
+        raise RunnerError(f"reuse source result `{job_key}` has an invalid model")
+    if record.get("reasoning_effort") != stage.reasoning_effort:
+        raise RunnerError(
+            f"reuse source result `{job_key}` has invalid reasoning effort"
+        )
+    if record.get("response_schema_sha256") != stage.response_schema_sha256:
+        raise RunnerError(
+            f"reuse source result `{job_key}` has an invalid response schema"
+        )
+    if record.get("prompt_sha256") != rendered_prompt_sha256:
+        raise RunnerError(
+            f"reuse source result `{job_key}` has an invalid rendered prompt hash"
+        )
+    if record.get("codex_version") != source_codex_version:
+        raise RunnerError(
+            f"reuse source result `{job_key}` has an invalid Codex version"
+        )
+    if record.get("response") != output_response:
+        raise RunnerError(
+            f"reuse source result `{job_key}` does not match its output artifact"
+        )
+    reference = references.get(job_key)
+    if reference is None:
+        raise RunnerError(f"reuse source result `{job_key}` has no ledger reference")
+    return ReusableJob(
+        note_text=note.text,
+        rendered_prompt_sha256=rendered_prompt_sha256,
+        response=output_response,
+        reference=reference,
+    )
+
+
+def _load_reuse_source(
+    config: ReuseSourceConfig,
+    target_notes: list[Note],
+) -> LoadedReuseSource:
+    _verify_reuse_source_hashes(config)
+    source_notes = _load_notes(config.input_path)
+    manifest = _expect_object(
+        _load_json(config.run_directory / "manifest.json", "reuse source manifest"),
+        "reuse source manifest",
+    )
+    if manifest.get("schema_version") != PIPELINE_SCHEMA_VERSION:
+        raise RunnerError("reuse source manifest must use pipeline schema version 2")
+    if manifest.get("isolation") != _isolation_manifest():
+        raise RunnerError("reuse source isolation contract is incompatible")
+    _expect_string(manifest.get("input_path"), "reuse source manifest.input_path")
+    if manifest.get("input_sha256") != config.input_sha256:
+        raise RunnerError(
+            "reuse source manifest input hash does not match the pinned input"
+        )
+    initial_wrapper_sha256 = _expect_sha256(
+        manifest.get("wrapper_sha256"), "reuse source manifest.wrapper_sha256"
+    )
+    if manifest.get("takeaway_envelope_version") != TAKEAWAY_ENVELOPE_VERSION:
+        raise RunnerError("reuse source takeaway envelope is incompatible")
+    if (
+        manifest.get("takeaway_input_normalization_version")
+        != TAKEAWAY_INPUT_NORMALIZATION_VERSION
+    ):
+        raise RunnerError("reuse source takeaway normalization is incompatible")
+    if manifest.get("prominence_envelope_version") != "xml-complete-post-takeaway-v1":
+        raise RunnerError("reuse source prominence envelope is incompatible")
+    if (
+        manifest.get("prominence_input_normalization_version")
+        != TAKEAWAY_INPUT_NORMALIZATION_VERSION
+    ):
+        raise RunnerError("reuse source prominence normalization is incompatible")
+    stages = _source_stage_contracts(manifest)
+    source_codex_version = _expect_string(
+        manifest.get("codex_version"), "reuse source manifest.codex_version"
+    )
+
+    provenance = _load_runner_upgrades(
+        config.run_directory,
+        manifest_sha256=config.manifest_sha256,
+        initial_wrapper_sha256=initial_wrapper_sha256,
+    )
+    results_path = config.run_directory / "results.jsonl"
+    references: dict[str, SourceResultReference] = {}
+    latest = _load_latest_results(
+        results_path,
+        config.manifest_sha256,
+        provenance,
+        references,
+    )
+
+    output = _expect_object(
+        _load_json(config.run_directory / "output.json", "reuse source output"),
+        "reuse source output",
+    )
+    _expect_fields(
+        output,
+        "reuse source output",
+        {"schema_version", "manifest_sha256", "notes"},
+    )
+    if output["schema_version"] != PIPELINE_SCHEMA_VERSION:
+        raise RunnerError("reuse source output must use pipeline schema version 2")
+    if output["manifest_sha256"] != config.manifest_sha256:
+        raise RunnerError(
+            "reuse source output does not belong to the pinned manifest"
+        )
+    raw_output_notes = output["notes"]
+    if not isinstance(raw_output_notes, list):
+        raise RunnerError("reuse source output.notes must be an array")
+    if len(raw_output_notes) != len(source_notes):
+        raise RunnerError(
+            "reuse source output note order does not match its pinned input"
+        )
+    target_note_texts = {note.note_id: note.text for note in target_notes}
+    jobs: dict[str, ReusableJob] = {}
+    for index, (source_note, raw_note) in enumerate(
+        zip(source_notes, raw_output_notes, strict=True)
+    ):
+        output_note = _expect_object(
+            raw_note, f"reuse source output.notes[{index}]"
+        )
+        _expect_fields(
+            output_note,
+            f"reuse source output.notes[{index}]",
+            {"note_id", "takeaways"},
+        )
+        note_id = _expect_string(
+            output_note["note_id"], f"reuse source output.notes[{index}].note_id"
+        )
+        if note_id != source_note.note_id:
+            raise RunnerError(
+                "reuse source output note order does not match its pinned input"
+            )
+        raw_takeaways = output_note["takeaways"]
+        if not isinstance(raw_takeaways, list):
+            raise RunnerError(
+                f"reuse source output.notes[{index}].takeaways must be an array"
+            )
+        if target_note_texts.get(note_id) != source_note.text:
+            continue
+        takeaway_texts: list[str] = []
+        validated_takeaways: list[tuple[str, int, list[str]]] = []
+        for takeaway_index, raw_takeaway in enumerate(raw_takeaways):
+            name = (
+                f"reuse source output note `{note_id}` takeaway {takeaway_index}"
+            )
+            takeaway = _expect_object(raw_takeaway, name)
+            _expect_fields(
+                takeaway, name, {"text", "prominence", "fragments"}
+            )
+            text = _expect_string(takeaway["text"], f"{name}.text")
+            prominence = _validate_result_items(
+                "prominence",
+                takeaway["prominence"],
+                source_note.text,
+                stages["prominence"].prompt_version,
+            )
+            fragments = _validate_result_items(
+                "mask",
+                takeaway["fragments"],
+                source_note.text,
+                stages["mask"].prompt_version,
+            )
+            if not isinstance(prominence, int) or not isinstance(fragments, list):
+                raise AssertionError("validated reuse source output has invalid types")
+            takeaway_texts.append(text)
+            validated_takeaways.append((text, prominence, fragments))
+        takeaway_response = _validate_result_items(
+            "takeaway",
+            takeaway_texts,
+            source_note.text,
+            stages["takeaway"].prompt_version,
+        )
+        if not isinstance(takeaway_response, list):
+            raise AssertionError("validated reuse source takeaways are not an array")
+        takeaway_key = _job_key("takeaway", note_id, None)
+        jobs[takeaway_key] = _compile_reusable_job(
+            latest=latest,
+            references=references,
+            source_codex_version=source_codex_version,
+            stage_name="takeaway",
+            stage=stages["takeaway"],
+            note=source_note,
+            takeaway_index=None,
+            rendered_prompt=_render_takeaway_prompt(
+                stages["takeaway"].prompt, source_note
+            ),
+            output_response=takeaway_response,
+        )
+        for takeaway_index, (text, prominence, fragments) in enumerate(
+            validated_takeaways
+        ):
+            for stage_name, response, rendered_prompt in (
+                (
+                    "prominence",
+                    prominence,
+                    _render_prominence_prompt(
+                        stages["prominence"].prompt, source_note, text
+                    ),
+                ),
+                (
+                    "mask",
+                    fragments,
+                    _render_mask_prompt(stages["mask"].prompt, source_note, text),
+                ),
+            ):
+                job_key = _job_key(stage_name, note_id, takeaway_index)
+                jobs[job_key] = _compile_reusable_job(
+                    latest=latest,
+                    references=references,
+                    source_codex_version=source_codex_version,
+                    stage_name=stage_name,
+                    stage=stages[stage_name],
+                    note=source_note,
+                    takeaway_index=takeaway_index,
+                    rendered_prompt=rendered_prompt,
+                    output_response=response,
+                )
+
+    return LoadedReuseSource(
+        config=config,
+        stages=stages,
+        jobs=jobs,
+    )
 
 
 def _append_runner_upgrade(
@@ -1051,6 +1539,7 @@ def _validate_result_items(
     stage_name: str,
     value: object,
     note_text: str,
+    prompt_version: str,
 ) -> list[str] | int:
     if stage_name == "takeaway":
         return _validate_string_array(value, "takeaway", allow_empty=True)
@@ -1063,6 +1552,13 @@ def _validate_result_items(
             )
         return value
     fragments = _validate_string_array(value, "mask", allow_empty=False)
+    if prompt_version in URL_FREE_MASK_PROMPT_VERSIONS:
+        for index, fragment in enumerate(fragments):
+            if URL_SCHEME_PATTERN.search(fragment):
+                raise RunnerError(
+                    f"mask fragment {index} must not contain a URL under "
+                    f"the frozen {prompt_version} contract"
+                )
     cursor = 0
     for index, fragment in enumerate(fragments):
         position = note_text.find(fragment, cursor)
@@ -1079,6 +1575,7 @@ def _validate_response(
     stage_name: str,
     value: object,
     note_text: str,
+    prompt_version: str,
 ) -> list[str] | int:
     response_object = _expect_object(value, f"codex {stage_name} response")
     field = {
@@ -1087,7 +1584,12 @@ def _validate_response(
         "mask": "fragments",
     }[stage_name]
     _expect_fields(response_object, f"codex {stage_name} response", {field})
-    return _validate_result_items(stage_name, response_object[field], note_text)
+    return _validate_result_items(
+        stage_name,
+        response_object[field],
+        note_text,
+        prompt_version,
+    )
 
 
 def _job_key(
@@ -1178,12 +1680,24 @@ def _run_job(
     execution_wrapper_sha256: str,
     retry_directive: RetryDirective | None = None,
     new_job_budget: NewJobBudget | None = None,
+    reuse_source: LoadedReuseSource | None = None,
 ) -> list[str] | int | str:
     job_key = _job_key(stage_name, note.note_id, takeaway_index)
     previous = latest.get(job_key)
     prompt_sha256 = _sha256_bytes(prompt.encode("utf-8"))
     retry_reason: str | None = None
     if previous is not None and previous["status"] == "succeeded":
+        _validate_cached_reuse_record(
+            previous,
+            reuse_source,
+            job_key=job_key,
+            stage_name=stage_name,
+            stage=stage,
+            note=note,
+            takeaway_index=takeaway_index,
+            prompt_sha256=prompt_sha256,
+            schema=schema,
+        )
         if retry_directive is not None and retry_directive.job_key == job_key:
             retry_directive.matched = True
             retry_reason = retry_directive.reason
@@ -1209,6 +1723,7 @@ def _run_job(
                 stage_name,
                 previous.get("response"),
                 note.text,
+                stage.prompt_version,
             )
     if previous is not None and not retry_failed:
         if retry_reason is None:
@@ -1218,6 +1733,39 @@ def _run_job(
             )
     if previous is not None and retry_reason is None:
         retry_reason = "retry after failed attempt"
+    if (
+        previous is None
+        and reuse_source is not None
+        and isinstance(stage, StageConfig)
+        and schema is not None
+    ):
+        reusable = _find_reusable_response(
+            reuse_source,
+            stage_name=stage_name,
+            stage=stage,
+            note=note,
+            takeaway_index=takeaway_index,
+            prompt_sha256=prompt_sha256,
+            schema=schema,
+        )
+        if reusable is not None:
+            response, reference = reusable
+            _append_reused_result(
+                source=reuse_source,
+                manifest_sha256=manifest_sha256,
+                execution_wrapper_sha256=execution_wrapper_sha256,
+                stage_name=stage_name,
+                stage=stage,
+                note=note,
+                takeaway_index=takeaway_index,
+                prompt_sha256=prompt_sha256,
+                schema=schema,
+                response=response,
+                reference=reference,
+                results_path=results_path,
+                latest=latest,
+            )
+            return response
     if new_job_budget is not None:
         new_job_budget.claim()
     attempt = 1 if previous is None else previous["attempt"] + 1
@@ -1272,7 +1820,12 @@ def _run_job(
                     raise RunnerError(
                         f"codex final response is not valid JSON: {error}"
                     ) from error
-                response = _validate_response(stage_name, raw_response, note.text)
+                response = _validate_response(
+                    stage_name,
+                    raw_response,
+                    note.text,
+                    stage.prompt_version,
+                )
         except (OSError, UnicodeError, RunnerError) as error:
             error_message = str(error)
 
@@ -1347,6 +1900,194 @@ def _render_mask_prompt(prompt: str, note: Note, takeaway: str) -> str:
     )
 
 
+def _find_reusable_response(
+    source: LoadedReuseSource,
+    *,
+    stage_name: str,
+    stage: StageConfig,
+    note: Note,
+    takeaway_index: int | None,
+    prompt_sha256: str,
+    schema: dict[str, object],
+) -> tuple[list[str] | int, SourceResultReference] | None:
+    job_key = _job_key(stage_name, note.note_id, takeaway_index)
+    reusable = source.jobs.get(job_key)
+    if reusable is None or reusable.note_text != note.text:
+        return None
+    source_stage = source.stages[stage_name]
+    target_schema_sha256 = _sha256_bytes(_canonical_json_bytes(schema))
+    if (
+        source_stage.prompt_version != stage.prompt_version
+        or source_stage.model != stage.model
+        or source_stage.reasoning_effort != stage.reasoning_effort
+        or source_stage.response_schema_sha256 != target_schema_sha256
+        or source_stage.prompt_sha256 != stage.prompt_sha256
+        or reusable.rendered_prompt_sha256 != prompt_sha256
+    ):
+        return None
+    response = _validate_result_items(
+        stage_name,
+        reusable.response,
+        note.text,
+        stage.prompt_version,
+    )
+    return response, reusable.reference
+
+
+def _append_reused_result(
+    *,
+    source: LoadedReuseSource,
+    manifest_sha256: str,
+    execution_wrapper_sha256: str,
+    stage_name: str,
+    stage: StageConfig,
+    note: Note,
+    takeaway_index: int | None,
+    prompt_sha256: str,
+    schema: dict[str, object],
+    response: list[str] | int,
+    reference: SourceResultReference,
+    results_path: Path,
+    latest: dict[str, dict[str, Any]],
+) -> None:
+    job_key = _job_key(stage_name, note.note_id, takeaway_index)
+    empty_sha256 = _sha256_bytes(b"")
+    record: dict[str, object] = {
+        "schema_version": SCHEMA_VERSION,
+        "manifest_sha256": manifest_sha256,
+        "job_key": job_key,
+        "stage": stage_name,
+        "note_id": note.note_id,
+        "takeaway_index": takeaway_index,
+        "attempt": 1,
+        "status": "succeeded",
+        "execution": "reused",
+        "model": stage.model,
+        "reasoning_effort": stage.reasoning_effort,
+        "codex_version": None,
+        "wrapper_sha256": execution_wrapper_sha256,
+        "prompt_sha256": prompt_sha256,
+        "response_schema_sha256": _sha256_bytes(_canonical_json_bytes(schema)),
+        "argv": [],
+        "exit_code": None,
+        "elapsed_seconds": 0.0,
+        "thread_id": None,
+        "usage": {
+            "input_tokens": 0,
+            "cached_input_tokens": 0,
+            "output_tokens": 0,
+            "reasoning_output_tokens": 0,
+        },
+        "stdout_jsonl": "",
+        "stdout_sha256": empty_sha256,
+        "stderr": "",
+        "stderr_sha256": empty_sha256,
+        "final_output_raw": None,
+        "final_output_sha256": None,
+        "response": response,
+        "error": None,
+        "reused_from": {
+            "input_sha256": source.config.input_sha256,
+            "manifest_sha256": source.config.manifest_sha256,
+            "results_sha256": source.config.results_sha256,
+            "output_sha256": source.config.output_sha256,
+            "result_line": reference.line,
+            "result_sha256": reference.sha256,
+            "result_attempt": reference.attempt,
+        },
+    }
+    _append_json_line(results_path, record)
+    latest[job_key] = record
+
+
+def _validate_cached_reuse_record(
+    record: dict[str, Any],
+    source: LoadedReuseSource | None,
+    *,
+    job_key: str,
+    stage_name: str,
+    stage: StageConfig | PromptRunnerConfig,
+    note: Note,
+    takeaway_index: int | None,
+    prompt_sha256: str,
+    schema: dict[str, object] | None,
+) -> None:
+    execution = record.get("execution")
+    if source is None:
+        if execution is None:
+            return
+        raise RunnerError(f"cached result for job `{job_key}` has invalid reuse provenance")
+    if not isinstance(stage, StageConfig) or schema is None:
+        raise RunnerError(f"cached result for job `{job_key}` has invalid reuse stage")
+    reusable_response = _find_reusable_response(
+        source,
+        stage_name=stage_name,
+        stage=stage,
+        note=note,
+        takeaway_index=takeaway_index,
+        prompt_sha256=prompt_sha256,
+        schema=schema,
+    )
+    if execution is None:
+        if reusable_response is not None and record.get("attempt") == 1:
+            raise RunnerError(
+                f"cached result for job `{job_key}` is missing required reuse provenance"
+            )
+        return
+    if execution != "reused" or reusable_response is None:
+        raise RunnerError(f"cached result for job `{job_key}` has invalid reuse provenance")
+    reusable = source.jobs[job_key]
+    reference = reusable.reference
+    expected_provenance = {
+        "input_sha256": source.config.input_sha256,
+        "manifest_sha256": source.config.manifest_sha256,
+        "results_sha256": source.config.results_sha256,
+        "output_sha256": source.config.output_sha256,
+        "result_line": reference.line,
+        "result_sha256": reference.sha256,
+        "result_attempt": reference.attempt,
+    }
+    empty_sha256 = _sha256_bytes(b"")
+    expected_fields: dict[str, object] = {
+        "schema_version": SCHEMA_VERSION,
+        "job_key": job_key,
+        "stage": stage_name,
+        "note_id": note.note_id,
+        "takeaway_index": takeaway_index,
+        "attempt": 1,
+        "status": "succeeded",
+        "execution": "reused",
+        "model": stage.model,
+        "reasoning_effort": stage.reasoning_effort,
+        "codex_version": None,
+        "prompt_sha256": prompt_sha256,
+        "response_schema_sha256": _sha256_bytes(_canonical_json_bytes(schema)),
+        "argv": [],
+        "exit_code": None,
+        "elapsed_seconds": 0.0,
+        "thread_id": None,
+        "usage": {
+            "input_tokens": 0,
+            "cached_input_tokens": 0,
+            "output_tokens": 0,
+            "reasoning_output_tokens": 0,
+        },
+        "stdout_jsonl": "",
+        "stdout_sha256": empty_sha256,
+        "stderr": "",
+        "stderr_sha256": empty_sha256,
+        "final_output_raw": None,
+        "final_output_sha256": None,
+        "response": reusable.response,
+        "error": None,
+        "reused_from": expected_provenance,
+    }
+    if any(record.get(field) != value for field, value in expected_fields.items()):
+        raise RunnerError(
+            f"cached result for job `{job_key}` does not match its reuse source"
+        )
+
+
 def _execute_pipeline_jobs(
     *,
     config: RunnerConfig,
@@ -1359,6 +2100,7 @@ def _execute_pipeline_jobs(
     execution_wrapper_sha256: str,
     retry_directive: RetryDirective | None,
     new_job_budget: NewJobBudget,
+    reuse_source: LoadedReuseSource | None,
 ) -> list[dict[str, object]]:
     output_notes: list[dict[str, object]] = []
 
@@ -1380,6 +2122,7 @@ def _execute_pipeline_jobs(
             execution_wrapper_sha256=execution_wrapper_sha256,
             retry_directive=retry_directive,
             new_job_budget=new_job_budget,
+            reuse_source=reuse_source,
         )
         if not isinstance(takeaways, list) or not all(
             isinstance(takeaway, str) for takeaway in takeaways
@@ -1412,6 +2155,7 @@ def _execute_pipeline_jobs(
                     execution_wrapper_sha256=execution_wrapper_sha256,
                     retry_directive=retry_directive,
                     new_job_budget=new_job_budget,
+                    reuse_source=reuse_source,
                 )
                 if isinstance(prominence_result, bool) or not isinstance(
                     prominence_result, int
@@ -1437,6 +2181,7 @@ def _execute_pipeline_jobs(
                 execution_wrapper_sha256=execution_wrapper_sha256,
                 retry_directive=retry_directive,
                 new_job_budget=new_job_budget,
+                reuse_source=reuse_source,
             )
             output_takeaway: dict[str, object] = {
                 "text": takeaway,
@@ -1465,6 +2210,11 @@ def run(
         raise RunnerError("--max-new-jobs must be at least 1")
     config = RunnerConfig.load(config_path)
     notes = _load_notes(config.input_path)
+    reuse_source = (
+        None
+        if config.reuse_source is None
+        else _load_reuse_source(config.reuse_source, notes)
+    )
     _prepare_codex_home(config.codex_home)
     _validate_file_credentials(config.codex_home)
     codex_version = _codex_version(config)
@@ -1500,49 +2250,56 @@ def run(
     new_job_budget = NewJobBudget(max_new_jobs)
 
     try:
-        output_notes = _execute_pipeline_jobs(
-            config=config,
-            notes=notes,
-            manifest_sha256=manifest_sha256,
-            codex_version=codex_version,
-            results_path=results_path,
-            latest=latest,
-            retry_failed=retry_failed,
-            execution_wrapper_sha256=execution_provenance.active_wrapper_sha256,
-            retry_directive=retry_directive,
-            new_job_budget=new_job_budget,
-        )
-    except NewJobLimitReached:
+        try:
+            output_notes = _execute_pipeline_jobs(
+                config=config,
+                notes=notes,
+                manifest_sha256=manifest_sha256,
+                codex_version=codex_version,
+                results_path=results_path,
+                latest=latest,
+                retry_failed=retry_failed,
+                execution_wrapper_sha256=execution_provenance.active_wrapper_sha256,
+                retry_directive=retry_directive,
+                new_job_budget=new_job_budget,
+                reuse_source=reuse_source,
+            )
+        except NewJobLimitReached:
+            if retry_directive is not None and not retry_directive.matched:
+                raise RunnerError(
+                    f"--retry-job `{retry_directive.job_key}` was not reached before "
+                    "--max-new-jobs"
+                )
+            return PipelineRunOutcome(
+                complete=False,
+                new_jobs=new_job_budget.used,
+                completed_notes=new_job_budget.completed_notes,
+                completed_takeaways=new_job_budget.completed_takeaways,
+                output=None,
+            )
+
         if retry_directive is not None and not retry_directive.matched:
             raise RunnerError(
-                f"--retry-job `{retry_directive.job_key}` was not reached before "
-                "--max-new-jobs"
+                f"--retry-job `{retry_directive.job_key}` is not part of the current pipeline"
             )
+        output: dict[str, object] = {
+            "schema_version": config.schema_version,
+            "manifest_sha256": manifest_sha256,
+            "notes": output_notes,
+        }
+        _atomic_write(
+            config.run_directory / "output.json", _canonical_json_bytes(output)
+        )
         return PipelineRunOutcome(
-            complete=False,
+            complete=True,
             new_jobs=new_job_budget.used,
             completed_notes=new_job_budget.completed_notes,
             completed_takeaways=new_job_budget.completed_takeaways,
-            output=None,
+            output=output,
         )
-
-    if retry_directive is not None and not retry_directive.matched:
-        raise RunnerError(
-            f"--retry-job `{retry_directive.job_key}` is not part of the current pipeline"
-        )
-    output: dict[str, object] = {
-        "schema_version": config.schema_version,
-        "manifest_sha256": manifest_sha256,
-        "notes": output_notes,
-    }
-    _atomic_write(config.run_directory / "output.json", _canonical_json_bytes(output))
-    return PipelineRunOutcome(
-        complete=True,
-        new_jobs=new_job_budget.used,
-        completed_notes=new_job_budget.completed_notes,
-        completed_takeaways=new_job_budget.completed_takeaways,
-        output=output,
-    )
+    finally:
+        if config.reuse_source is not None:
+            _verify_reuse_source_hashes(config.reuse_source)
 
 
 def run_prompts(config_path: Path, *, retry_failed: bool) -> dict[str, object]:

@@ -78,6 +78,7 @@ fn materializes_the_requested_frozen_prefix_without_mutating_the_source() {
         source_corpus_path: source_path.clone(),
         sample_path: sample_path.clone(),
         rows: 3,
+        excluded_note_ids: Vec::new(),
         output_path: output_path.clone(),
     };
     let manifest =
@@ -105,6 +106,67 @@ fn materializes_the_requested_frozen_prefix_without_mutating_the_source() {
     assert_eq!(
         manifest,
         materialize_semantic_map_generation_input(&config).expect("verify replay")
+    );
+
+    let excluded_output_path = root.path().join("generation-input-with-exclusions");
+    let excluded_ids = vec![hex(&sample_ids[0]), hex(&sample_ids[2])];
+    let excluded_config: SemanticMapGenerationInputConfig =
+        serde_json::from_value(serde_json::json!({
+            "source_corpus_path": source_path,
+            "sample_path": sample_path,
+            "rows": 3,
+            "excluded_note_ids": excluded_ids,
+            "output_path": excluded_output_path,
+        }))
+        .expect("generation input config accepts explicit exclusions");
+    let excluded_manifest = materialize_semantic_map_generation_input(&excluded_config)
+        .expect("materialize generation input with exclusions");
+    let excluded_manifest_value =
+        serde_json::to_value(&excluded_manifest).expect("encode exclusion manifest");
+    assert_eq!(
+        "first-retained-rows-after-explicit-event-id-exclusions-from-frozen-semantic-map-sample-v1",
+        excluded_manifest_value["selection_rule"]
+    );
+    assert_eq!(
+        serde_json::json!([hex(&sample_ids[0]), hex(&sample_ids[2])]),
+        excluded_manifest_value["excluded_note_ids"]
+    );
+    assert_eq!(5, excluded_manifest_value["scanned_sample_rows"]);
+    let excluded_input: serde_json::Value = serde_json::from_slice(
+        &fs::read(excluded_output_path.join("notes.json")).expect("read excluded notes input"),
+    )
+    .expect("decode excluded notes input");
+    assert_eq!(
+        vec![
+            hex(&sample_ids[1]),
+            hex(&sample_ids[3]),
+            hex(&sample_ids[4])
+        ],
+        excluded_input["notes"]
+            .as_array()
+            .expect("excluded notes array")
+            .iter()
+            .map(|note| note["note_id"].as_str().expect("note ID").to_owned())
+            .collect::<Vec<_>>()
+    );
+    assert_eq!(
+        excluded_manifest,
+        materialize_semantic_map_generation_input(&excluded_config)
+            .expect("verify exclusion replay")
+    );
+
+    let unused_exclusion_error =
+        materialize_semantic_map_generation_input(&SemanticMapGenerationInputConfig {
+            excluded_note_ids: vec![hex(&sample_ids[10])],
+            output_path: root.path().join("generation-input-with-unused-exclusion"),
+            ..excluded_config
+        })
+        .expect_err("an exclusion that does not affect the retained rows is invalid");
+    assert!(
+        unused_exclusion_error
+            .to_string()
+            .contains("was not encountered"),
+        "{unused_exclusion_error}"
     );
 
     let alias_path = root.path().join("generation-input-alias");

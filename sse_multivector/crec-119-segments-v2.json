@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "artifact_id": "crec-119-500-note-fine-segments-v2",
+  "vector_artifact_path": "../target/crec-119-500-note-v2/vector-artifact",
+  "pairwise_min_cosine": 0.44995143471140225,
+  "output_path": "../target/crec-119-500-note-v2/fine-segments"
+}

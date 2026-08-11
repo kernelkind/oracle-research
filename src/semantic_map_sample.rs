@@ -35,6 +35,8 @@ const RUNTIME_NDB_DIRECTORY: &str = ".runtime-ndb";
 const SELECTION_DOMAIN: &[u8] = b"oracle-mvp/scaled-semantic-map-sample/v1\0";
 const GENERATION_NOTES_FILE: &str = "notes.json";
 const GENERATION_INPUT_RULE: &str = "first-rows-of-frozen-semantic-map-sample-v1";
+const GENERATION_INPUT_EXCLUSION_RULE: &str =
+    "first-retained-rows-after-explicit-event-id-exclusions-from-frozen-semantic-map-sample-v1";
 
 /// Exact deterministic selection rule frozen by CREC-120.
 pub const SELECTION_RULE: &str =
@@ -126,6 +128,9 @@ pub struct SemanticMapGenerationInputConfig {
     pub sample_path: PathBuf,
     /// Number of leading frozen sample rows to materialize.
     pub rows: usize,
+    /// Explicit frozen-sample note IDs omitted before taking the requested rows.
+    #[serde(default)]
+    pub excluded_note_ids: Vec<String>,
     /// Create-once output artifact directory.
     pub output_path: PathBuf,
 }
@@ -146,6 +151,12 @@ pub struct SemanticMapGenerationInputManifest {
     pub sample_ordered_event_ids_sha256: String,
     /// Number of notes in the materialized prefix.
     pub rows: u64,
+    /// Explicit note IDs skipped, recorded in frozen-sample order.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub excluded_note_ids: Vec<String>,
+    /// Frozen-sample rows examined to obtain the retained rows after exclusions.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub scanned_sample_rows: Option<u64>,
     /// Exact runner-compatible note input.
     pub notes: SemanticMapSampleFile,
 }
@@ -162,6 +173,12 @@ struct GenerationInput {
 struct GenerationNote {
     note_id: String,
     text: String,
+}
+
+struct GenerationSelection {
+    ids: Vec<EventId>,
+    excluded_note_ids: Vec<String>,
+    scanned_sample_rows: u64,
 }
 
 /// A deterministic sample derivation or verification failure.
@@ -391,7 +408,7 @@ pub fn verify_semantic_map_generation_input(
     verify_generation_input_entries(&config.output_path)?;
     let stored: SemanticMapGenerationInputManifest =
         read_json(&config.output_path.join(MANIFEST_FILE))?;
-    validate_generation_input_manifest(&stored, config.rows)?;
+    validate_generation_input_manifest(&stored, config)?;
 
     let runtime = verification_runtime_path(&config.output_path)?;
     if runtime.exists() {
@@ -400,7 +417,7 @@ pub fn verify_semantic_map_generation_input(
     fs::create_dir(&runtime).map_err(|source| io_error("create", &runtime, source))?;
     let expected_input = load_generation_input(config, &runtime);
     let cleanup = fs::remove_dir_all(&runtime);
-    let (input, sample) = expected_input?;
+    let (input, sample, selection) = expected_input?;
     cleanup.map_err(|source| io_error("remove", &runtime, source))?;
 
     let notes_path = config.output_path.join(GENERATION_NOTES_FILE);
@@ -411,7 +428,7 @@ pub fn verify_semantic_map_generation_input(
         ));
     }
     let notes = file_manifest(&notes_path, config.rows as u64)?;
-    let expected = generation_input_manifest(config, &sample, notes)?;
+    let expected = generation_input_manifest(config, &sample, &selection, notes)?;
     if stored != expected {
         return Err(SemanticMapSampleError::Invariant(
             "stored generation-input manifest does not match its sources".to_owned(),
@@ -428,13 +445,13 @@ fn materialize_generation_input_in_stage(
     fs::create_dir(&runtime).map_err(|source| io_error("create", &runtime, source))?;
     let loaded = load_generation_input(config, &runtime);
     let cleanup = fs::remove_dir_all(&runtime);
-    let (input, sample) = loaded?;
+    let (input, sample, selection) = loaded?;
     cleanup.map_err(|source| io_error("remove", &runtime, source))?;
 
     let notes_path = stage.join(GENERATION_NOTES_FILE);
     write_json(&notes_path, &input)?;
     let notes = file_manifest(&notes_path, config.rows as u64)?;
-    let manifest = generation_input_manifest(config, &sample, notes)?;
+    let manifest = generation_input_manifest(config, &sample, &selection, notes)?;
     write_json(&stage.join(MANIFEST_FILE), &manifest)?;
     verify_generation_input_entries(stage)?;
     sync_directory(stage)?;
@@ -444,7 +461,14 @@ fn materialize_generation_input_in_stage(
 fn load_generation_input(
     config: &SemanticMapGenerationInputConfig,
     runtime: &Path,
-) -> Result<(GenerationInput, SemanticMapSampleManifest), SemanticMapSampleError> {
+) -> Result<
+    (
+        GenerationInput,
+        SemanticMapSampleManifest,
+        GenerationSelection,
+    ),
+    SemanticMapSampleError,
+> {
     verify_output_entries(&config.sample_path)?;
     let sample_manifest_path = config.sample_path.join(MANIFEST_FILE);
     let sample: SemanticMapSampleManifest = read_json(&sample_manifest_path)?;
@@ -491,7 +515,9 @@ fn load_generation_input(
     let corpus = open_read_only_corpus(runtime)?;
     let transaction = corpus.environment.begin_ro_txn()?;
     let mut note_id_cursor = transaction.open_ro_cursor(corpus.note_id)?;
-    let notes = ids[..config.rows]
+    let selection = select_generation_ids(&ids, config)?;
+    let notes = selection
+        .ids
         .iter()
         .map(|id| {
             Ok(GenerationNote {
@@ -514,22 +540,81 @@ fn load_generation_input(
             notes,
         },
         sample,
+        selection,
     ))
 }
 
 fn generation_input_manifest(
     config: &SemanticMapGenerationInputConfig,
     sample: &SemanticMapSampleManifest,
+    selection: &GenerationSelection,
     notes: SemanticMapSampleFile,
 ) -> Result<SemanticMapGenerationInputManifest, SemanticMapSampleError> {
+    let has_exclusions = !selection.excluded_note_ids.is_empty();
     Ok(SemanticMapGenerationInputManifest {
         schema_version: SCHEMA_VERSION,
-        selection_rule: GENERATION_INPUT_RULE.to_owned(),
+        selection_rule: if has_exclusions {
+            GENERATION_INPUT_EXCLUSION_RULE
+        } else {
+            GENERATION_INPUT_RULE
+        }
+        .to_owned(),
         source_ndb_data_sha256: sample.declared_source_ndb_data_sha256.clone(),
         sample_manifest_sha256: sha256_file(&config.sample_path.join(MANIFEST_FILE))?,
         sample_ordered_event_ids_sha256: sample.ordered_event_ids.sha256.clone(),
         rows: config.rows as u64,
+        excluded_note_ids: selection.excluded_note_ids.clone(),
+        scanned_sample_rows: has_exclusions.then_some(selection.scanned_sample_rows),
         notes,
+    })
+}
+
+fn select_generation_ids(
+    ids: &[EventId],
+    config: &SemanticMapGenerationInputConfig,
+) -> Result<GenerationSelection, SemanticMapSampleError> {
+    let excluded = config
+        .excluded_note_ids
+        .iter()
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    let mut selected = Vec::with_capacity(config.rows);
+    let mut encountered_exclusions = Vec::with_capacity(excluded.len());
+    let mut scanned_sample_rows = 0_u64;
+    for id in ids {
+        if selected.len() == config.rows {
+            break;
+        }
+        scanned_sample_rows = increment(scanned_sample_rows, "generation sample rows")?;
+        let note_id = hex(id);
+        if excluded.contains(&note_id) {
+            encountered_exclusions.push(note_id);
+        } else {
+            selected.push(*id);
+        }
+    }
+    if selected.len() != config.rows {
+        return Err(SemanticMapSampleError::Invariant(format!(
+            "only {} frozen sample notes remain after exclusions; requested {}",
+            selected.len(),
+            config.rows
+        )));
+    }
+    if encountered_exclusions.len() != excluded.len() {
+        let encountered = encountered_exclusions.iter().collect::<BTreeSet<_>>();
+        let unused = excluded
+            .iter()
+            .filter(|note_id| !encountered.contains(note_id))
+            .next()
+            .expect("different exclusion counts imply one unused ID");
+        return Err(SemanticMapSampleError::Invariant(format!(
+            "excluded note ID {unused} was not encountered before the requested retained rows were complete"
+        )));
+    }
+    Ok(GenerationSelection {
+        ids: selected,
+        excluded_note_ids: encountered_exclusions,
+        scanned_sample_rows,
     })
 }
 
@@ -539,6 +624,28 @@ fn validate_generation_input_config(
     if config.rows == 0 || config.rows > SAMPLE_ROWS {
         return Err(SemanticMapSampleError::Invariant(format!(
             "generation rows must be between 1 and {SAMPLE_ROWS}"
+        )));
+    }
+    let unique_exclusions = config.excluded_note_ids.iter().collect::<BTreeSet<_>>();
+    if unique_exclusions.len() != config.excluded_note_ids.len() {
+        return Err(SemanticMapSampleError::Invariant(
+            "generation input repeats an excluded note ID".to_owned(),
+        ));
+    }
+    if let Some(note_id) = config
+        .excluded_note_ids
+        .iter()
+        .find(|note_id| !valid_sha256(note_id))
+    {
+        return Err(SemanticMapSampleError::Invariant(format!(
+            "excluded note ID is not 64 lowercase hexadecimal characters: {note_id}"
+        )));
+    }
+    if config.excluded_note_ids.len() > SAMPLE_ROWS - config.rows {
+        return Err(SemanticMapSampleError::Invariant(format!(
+            "{} retained rows plus {} exclusions exceed the {SAMPLE_ROWS}-note frozen sample",
+            config.rows,
+            config.excluded_note_ids.len()
         )));
     }
     if !config.source_corpus_path.join("data.mdb").is_file() {
@@ -573,16 +680,36 @@ fn validate_generation_input_config(
 
 fn validate_generation_input_manifest(
     manifest: &SemanticMapGenerationInputManifest,
-    rows: usize,
+    config: &SemanticMapGenerationInputConfig,
 ) -> Result<(), SemanticMapSampleError> {
+    let has_exclusions = !config.excluded_note_ids.is_empty();
+    let expected_rule = if has_exclusions {
+        GENERATION_INPUT_EXCLUSION_RULE
+    } else {
+        GENERATION_INPUT_RULE
+    };
+    let excluded = manifest.excluded_note_ids.iter().collect::<BTreeSet<_>>();
+    let configured_exclusions = config.excluded_note_ids.iter().collect::<BTreeSet<_>>();
     if manifest.schema_version != SCHEMA_VERSION
-        || manifest.selection_rule != GENERATION_INPUT_RULE
-        || manifest.rows != rows as u64
+        || manifest.selection_rule != expected_rule
+        || manifest.rows != config.rows as u64
         || !valid_sha256(&manifest.source_ndb_data_sha256)
         || !valid_sha256(&manifest.sample_manifest_sha256)
         || !valid_sha256(&manifest.sample_ordered_event_ids_sha256)
+        || excluded.len() != manifest.excluded_note_ids.len()
+        || excluded != configured_exclusions
+        || manifest
+            .excluded_note_ids
+            .iter()
+            .any(|note_id| !valid_sha256(note_id))
+        || (has_exclusions
+            && !manifest.scanned_sample_rows.is_some_and(|rows| {
+                rows == manifest.rows + manifest.excluded_note_ids.len() as u64
+            }))
+        || (!has_exclusions
+            && (!manifest.excluded_note_ids.is_empty() || manifest.scanned_sample_rows.is_some()))
         || manifest.notes.file != GENERATION_NOTES_FILE
-        || manifest.notes.records != rows as u64
+        || manifest.notes.records != config.rows as u64
         || !valid_sha256(&manifest.notes.sha256)
     {
         return Err(SemanticMapSampleError::Invariant(

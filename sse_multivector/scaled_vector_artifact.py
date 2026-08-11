@@ -8,6 +8,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import shutil
 import struct
 import tempfile
@@ -27,6 +28,7 @@ EXPECTED_STAGES = {
     "prominence": ("PPv2", "gpt-5.6-sol", "max"),
     "mask": ("MPv3.4", "gpt-5.6-sol", "max"),
 }
+URL_SCHEME_PATTERN = re.compile(r"(?:https?|wss?)://", re.IGNORECASE)
 
 
 def _sha256(path: Path) -> str:
@@ -251,7 +253,9 @@ def _load_notes(config: ArtifactConfig) -> list[dict[str, str]]:
 def _validate_generation_manifest(config: ArtifactConfig) -> tuple[dict[str, Any], str]:
     path = config.generation_run_directory / "manifest.json"
     manifest = _object(_load_json(path, "generation manifest"), "generation manifest")
-    if manifest.get("schema_version") != 2 or manifest.get("input_sha256") != _sha256(config.input_path):
+    if manifest.get("schema_version") not in {2, 3} or manifest.get(
+        "input_sha256"
+    ) != _sha256(config.input_path):
         raise ValueError("generation manifest is not bound to the configured input")
     for stage_name, expected in EXPECTED_STAGES.items():
         stage = _object(manifest.get(stage_name), f"generation manifest.{stage_name}")
@@ -264,6 +268,7 @@ def _validate_generation_manifest(config: ArtifactConfig) -> tuple[dict[str, Any
 @dataclass(frozen=True)
 class GenerationLedger:
     latest: dict[str, dict[str, Any]]
+    records: tuple[dict[str, Any], ...]
     superseded_jobs: frozenset[str]
 
 
@@ -367,6 +372,7 @@ def _load_latest_results(
     runner_boundaries: list[tuple[int, str]],
 ) -> GenerationLedger:
     latest: dict[str, dict[str, Any]] = {}
+    records: list[dict[str, Any]] = []
     history: dict[str, list[tuple[int, dict[str, Any]]]] = {}
     active_wrapper = initial_wrapper
     boundary_index = 0
@@ -400,11 +406,14 @@ def _load_latest_results(
             job_key = _string(record.get("job_key"), f"generation result line {line_number}.job_key")
             attempt = _integer(record.get("attempt"), f"generation result {job_key}.attempt", minimum=1)
             previous = latest.get(job_key)
+            if previous is None and attempt != 1:
+                raise ValueError(f"generation result {job_key} must begin with attempt 1")
             if previous is not None and attempt != previous["attempt"] + 1:
                 raise ValueError(f"generation result {job_key} has nonconsecutive attempts")
             usage = _object(record.get("usage"), f"generation result {job_key}.usage")
             if not usage or any(isinstance(item, bool) or not isinstance(item, int) or item < 0 for item in usage.values()):
                 raise ValueError(f"generation result {job_key} has invalid token usage")
+            records.append(record)
             latest[job_key] = record
             history.setdefault(job_key, []).append((line_number, record))
 
@@ -435,10 +444,20 @@ def _load_latest_results(
                 child_attempts = history.get(child_key)
                 if child_attempts and child_attempts[-1][0] < current_line:
                     superseded_jobs.add(child_key)
-    return GenerationLedger(latest=latest, superseded_jobs=frozenset(superseded_jobs))
+    return GenerationLedger(
+        latest=latest,
+        records=tuple(records),
+        superseded_jobs=frozenset(superseded_jobs),
+    )
 
 
-def _byte_spans(text: str, fragments: object, name: str) -> tuple[list[str], list[list[int]]]:
+def _byte_spans(
+    text: str,
+    fragments: object,
+    name: str,
+    *,
+    reject_urls: bool,
+) -> tuple[list[str], list[list[int]]]:
     if not isinstance(fragments, list) or not fragments:
         raise ValueError(f"{name} must contain at least one source fragment")
     result: list[str] = []
@@ -446,6 +465,8 @@ def _byte_spans(text: str, fragments: object, name: str) -> tuple[list[str], lis
     cursor = 0
     for index, raw_fragment in enumerate(fragments):
         fragment = _string(raw_fragment, f"{name}[{index}]")
+        if reject_urls and URL_SCHEME_PATTERN.search(fragment):
+            raise ValueError(f"{name}[{index}] must not contain a URL")
         start = text.find(fragment, cursor)
         if start < 0:
             raise ValueError(f"{name}[{index}] is absent or out of source order")
@@ -454,6 +475,353 @@ def _byte_spans(text: str, fragments: object, name: str) -> tuple[list[str], lis
         result.append(fragment)
         cursor = end
     return result, spans
+
+
+def _reuse_source_path(value: object, name: str, run_directory: Path) -> Path:
+    try:
+        return _resolve(value, name, run_directory)
+    except ValueError as error:
+        raise ValueError(f"reuse source has an invalid {name}: {error}") from error
+
+
+def _verify_reuse_file(path: Path, expected_sha256: str, name: str) -> None:
+    try:
+        actual_sha256 = _sha256(path)
+    except OSError as error:
+        raise ValueError(f"reuse source {name} cannot be opened at {path}: {error}") from error
+    if actual_sha256 != expected_sha256:
+        raise ValueError(f"reuse source {name} differs from its pinned SHA-256")
+
+
+def _validate_reused_generation_results(
+    config: ArtifactConfig,
+    manifest: dict[str, Any],
+    records: tuple[dict[str, Any], ...],
+    notes: list[dict[str, str]],
+    generated_notes: list[object],
+) -> None:
+    if manifest["schema_version"] != 3:
+        return
+    reuse = _object(manifest.get("reuse_source"), "generation manifest.reuse_source")
+    expected_fields = {
+        "input_path",
+        "input_sha256",
+        "run_directory",
+        "manifest_sha256",
+        "results_sha256",
+        "runner_upgrades_sha256",
+        "output_sha256",
+    }
+    if set(reuse) != expected_fields:
+        raise ValueError("reuse source manifest fields are invalid")
+
+    source_input_sha256 = _sha(reuse["input_sha256"], "reuse source.input_sha256")
+    source_manifest_sha256 = _sha(
+        reuse["manifest_sha256"], "reuse source.manifest_sha256"
+    )
+    source_results_sha256 = _sha(
+        reuse["results_sha256"], "reuse source.results_sha256"
+    )
+    source_output_sha256 = _sha(
+        reuse["output_sha256"], "reuse source.output_sha256"
+    )
+    source_input = _reuse_source_path(
+        reuse["input_path"], "input_path", config.generation_run_directory
+    )
+    source_run = _reuse_source_path(
+        reuse["run_directory"], "run_directory", config.generation_run_directory
+    )
+    source_manifest_path = source_run / "manifest.json"
+    source_results = source_run / "results.jsonl"
+    source_output = source_run / "output.json"
+    source_upgrades = source_run / "runner-upgrades.jsonl"
+
+    _verify_reuse_file(source_input, source_input_sha256, "input")
+    _verify_reuse_file(source_manifest_path, source_manifest_sha256, "manifest")
+    _verify_reuse_file(source_results, source_results_sha256, "results ledger")
+    _verify_reuse_file(source_output, source_output_sha256, "output")
+    upgrades_sha256 = reuse["runner_upgrades_sha256"]
+    if upgrades_sha256 is None:
+        if source_upgrades.exists():
+            raise ValueError(
+                "reuse source runner-upgrades ledger exists without a pinned SHA-256"
+            )
+    else:
+        _verify_reuse_file(
+            source_upgrades,
+            _sha(upgrades_sha256, "reuse source.runner_upgrades_sha256"),
+            "runner-upgrades ledger",
+        )
+
+    try:
+        source_lines = source_results.read_bytes().splitlines(keepends=True)
+    except OSError as error:
+        raise ValueError(f"reuse source results ledger cannot be reopened: {error}") from error
+    source_manifest = _object(
+        _load_json(source_manifest_path, "reuse source manifest"),
+        "reuse source manifest",
+    )
+    source_input_value = _object(
+        _load_json(source_input, "reuse source input"), "reuse source input"
+    )
+    if (
+        set(source_input_value) != {"schema_version", "notes"}
+        or source_input_value.get("schema_version") != 1
+        or not isinstance(source_input_value.get("notes"), list)
+    ):
+        raise ValueError("reuse source input violates schema version 1")
+    source_note_texts: dict[str, str] = {}
+    for index, raw_note in enumerate(source_input_value["notes"]):
+        source_note = _object(raw_note, f"reuse source input note {index}")
+        if set(source_note) != {"note_id", "text"}:
+            raise ValueError(f"reuse source input note {index} has invalid fields")
+        note_id = _string(source_note["note_id"], f"reuse source input note {index}.note_id")
+        if note_id in source_note_texts:
+            raise ValueError(f"reuse source input repeats note ID {note_id}")
+        source_note_texts[note_id] = _string(
+            source_note["text"], f"reuse source input note {index}.text"
+        )
+
+    source_output_value = _object(
+        _load_json(source_output, "reuse source output"), "reuse source output"
+    )
+    if (
+        set(source_output_value) != {"schema_version", "manifest_sha256", "notes"}
+        or source_output_value.get("schema_version") != 2
+        or source_output_value.get("manifest_sha256") != source_manifest_sha256
+        or not isinstance(source_output_value.get("notes"), list)
+    ):
+        raise ValueError("reuse source output is not bound to its manifest")
+    source_generated: dict[str, dict[str, Any]] = {}
+    for index, raw_note in enumerate(source_output_value["notes"]):
+        source_note = _object(raw_note, f"reuse source output note {index}")
+        if set(source_note) != {"note_id", "takeaways"}:
+            raise ValueError(f"reuse source output note {index} has invalid fields")
+        note_id = _string(source_note["note_id"], f"reuse source output note {index}.note_id")
+        if note_id in source_generated or note_id not in source_note_texts:
+            raise ValueError("reuse source output note set differs from its input")
+        if not isinstance(source_note["takeaways"], list):
+            raise ValueError(f"reuse source output note {index} has invalid takeaways")
+        source_generated[note_id] = source_note
+    if set(source_generated) != set(source_note_texts):
+        raise ValueError("reuse source output note set differs from its input")
+
+    source_latest: dict[str, dict[str, Any]] = {}
+    for line_number, source_line in enumerate(source_lines, 1):
+        try:
+            source_record = _object(
+                json.loads(source_line), f"reuse source result line {line_number}"
+            )
+        except json.JSONDecodeError as error:
+            raise ValueError(
+                f"reuse source result line {line_number} is invalid JSON"
+            ) from error
+        source_job_key = _string(
+            source_record.get("job_key"),
+            f"reuse source result line {line_number}.job_key",
+        )
+        source_attempt = _integer(
+            source_record.get("attempt"),
+            f"reuse source result line {line_number}.attempt",
+            minimum=1,
+        )
+        previous = source_latest.get(source_job_key)
+        if previous is None and source_attempt != 1:
+            raise ValueError(
+                f"reuse source result {source_job_key} must begin with attempt 1"
+            )
+        if previous is not None and source_attempt != previous["attempt"] + 1:
+            raise ValueError(
+                f"reuse source result {source_job_key} has nonconsecutive attempts"
+            )
+        source_latest[source_job_key] = source_record
+
+    def matching_stage_contract(stage_name: str) -> bool:
+        if manifest.get(stage_name) != source_manifest.get(stage_name):
+            return False
+        if manifest.get("isolation") != source_manifest.get("isolation"):
+            return False
+        if stage_name == "takeaway":
+            fields = (
+                "takeaway_envelope_version",
+                "takeaway_input_normalization_version",
+            )
+        elif stage_name == "prominence":
+            fields = (
+                "prominence_envelope_version",
+                "prominence_input_normalization_version",
+            )
+        else:
+            fields = ()
+        return all(manifest.get(field) == source_manifest.get(field) for field in fields)
+
+    def source_result_supports(
+        job_key: str,
+        stage_name: str,
+        note_id: str,
+        takeaway_index: int | None,
+        response: object,
+    ) -> bool:
+        source_record = source_latest.get(job_key)
+        if source_record is None or source_record.get("status") != "succeeded":
+            return False
+        return (
+            source_record.get("manifest_sha256") == source_manifest_sha256
+            and source_record.get("job_key") == job_key
+            and source_record.get("stage") == stage_name
+            and source_record.get("note_id") == note_id
+            and source_record.get("takeaway_index") == takeaway_index
+            and source_record.get("response") == response
+        )
+
+    eligible_attempt_one_jobs: set[str] = set()
+    for note, raw_generated_note in zip(notes, generated_notes, strict=True):
+        note_id = note["note_id"]
+        if source_note_texts.get(note_id) != note["text"]:
+            continue
+        source_generated_note = source_generated.get(note_id)
+        if source_generated_note is None:
+            continue
+        source_takeaways = source_generated_note["takeaways"]
+        source_texts = [
+            item.get("text") if isinstance(item, dict) else None
+            for item in source_takeaways
+        ]
+        takeaway_job = f"takeaway:{note_id}"
+        if matching_stage_contract("takeaway") and source_result_supports(
+            takeaway_job,
+            "takeaway",
+            note_id,
+            None,
+            source_texts,
+        ):
+            eligible_attempt_one_jobs.add(takeaway_job)
+
+        current_generated_note = _object(
+            raw_generated_note, f"generated note {note_id}"
+        )
+        current_takeaways = current_generated_note.get("takeaways")
+        if not isinstance(current_takeaways, list):
+            continue
+        for index, current_takeaway in enumerate(current_takeaways):
+            if index >= len(source_takeaways):
+                continue
+            current_takeaway = _object(
+                current_takeaway, f"takeaway {note_id}:{index}"
+            )
+            source_takeaway = _object(
+                source_takeaways[index],
+                f"reuse source takeaway {note_id}:{index}",
+            )
+            if current_takeaway.get("text") != source_takeaway.get("text"):
+                continue
+            for stage_name, field in (
+                ("prominence", "prominence"),
+                ("mask", "fragments"),
+            ):
+                job_key = f"{stage_name}:{note_id}:{index}"
+                if matching_stage_contract(stage_name) and source_result_supports(
+                    job_key,
+                    stage_name,
+                    note_id,
+                    index,
+                    source_takeaway.get(field),
+                ):
+                    eligible_attempt_one_jobs.add(job_key)
+
+    common_reference = {
+        "input_sha256": source_input_sha256,
+        "manifest_sha256": source_manifest_sha256,
+        "results_sha256": source_results_sha256,
+        "output_sha256": source_output_sha256,
+    }
+    for record in records:
+        job_key = _string(record.get("job_key"), "generation result.job_key")
+        attempt = _integer(
+            record.get("attempt"), f"generation result {job_key}.attempt", minimum=1
+        )
+        requires_reuse = attempt == 1 and job_key in eligible_attempt_one_jobs
+        execution = record.get("execution")
+        if execution is None:
+            if "reused_from" in record:
+                raise ValueError(
+                    f"generation result {job_key} has reuse source provenance without reuse execution"
+                )
+            if requires_reuse:
+                raise ValueError(
+                    f"generation result {job_key} must carry reuse source provenance"
+                )
+            continue
+        if execution != "reused":
+            raise ValueError(f"generation result {job_key} has invalid reuse execution")
+        if not requires_reuse:
+            raise ValueError(f"generation result {job_key} is not eligible for reuse")
+        reference = _object(
+            record.get("reused_from"), f"generation result {job_key}.reused_from"
+        )
+        if set(reference) != {
+            *common_reference,
+            "result_line",
+            "result_sha256",
+            "result_attempt",
+        }:
+            raise ValueError(f"reuse source reference for {job_key} has invalid fields")
+        if any(reference.get(name) != value for name, value in common_reference.items()):
+            raise ValueError(f"reuse source reference for {job_key} differs from the manifest")
+        result_line = _integer(
+            reference.get("result_line"),
+            f"reuse source reference for {job_key}.result_line",
+            minimum=1,
+        )
+        if result_line > len(source_lines):
+            raise ValueError(f"reuse source reference for {job_key} names a missing ledger line")
+        source_line = source_lines[result_line - 1]
+        if _sha(
+            reference.get("result_sha256"),
+            f"reuse source reference for {job_key}.result_sha256",
+        ) != hashlib.sha256(source_line).hexdigest():
+            raise ValueError(f"reuse source reference for {job_key} has the wrong line hash")
+        try:
+            source_record = _object(
+                json.loads(source_line), f"reuse source result line {result_line}"
+            )
+        except json.JSONDecodeError as error:
+            raise ValueError(
+                f"reuse source result line {result_line} is invalid JSON"
+            ) from error
+        result_attempt = _integer(
+            reference.get("result_attempt"),
+            f"reuse source reference for {job_key}.result_attempt",
+            minimum=1,
+        )
+        source_attempt = _integer(
+            source_record.get("attempt"),
+            f"reuse source result line {result_line}.attempt",
+            minimum=1,
+        )
+        if (
+            source_record.get("manifest_sha256") != source_manifest_sha256
+            or source_record.get("job_key") != job_key
+            or source_record.get("stage") != record.get("stage")
+            or source_record.get("note_id") != record.get("note_id")
+            or source_record.get("takeaway_index") != record.get("takeaway_index")
+            or any(
+                source_record.get(field) != record.get(field)
+                for field in (
+                    "model",
+                    "reasoning_effort",
+                    "prompt_sha256",
+                    "response_schema_sha256",
+                )
+            )
+            or source_attempt != result_attempt
+            or source_record.get("status") != "succeeded"
+            or record.get("status") != source_record.get("status")
+            or source_record.get("response") != record.get("response")
+        ):
+            raise ValueError(
+                f"reuse source result line {result_line} does not support {job_key}"
+            )
 
 
 def _subject_id(note_id: str, index: int, takeaway: str) -> str:
@@ -465,7 +833,11 @@ def _prepared_values(config: ArtifactConfig) -> tuple[dict[str, object], dict[st
     manifest, manifest_sha256 = _validate_generation_manifest(config)
     output_path = config.generation_run_directory / "output.json"
     output = _object(_load_json(output_path, "generation output"), "generation output")
-    if set(output) != {"schema_version", "manifest_sha256", "notes"} or output.get("schema_version") != 2 or output.get("manifest_sha256") != manifest_sha256:
+    if (
+        set(output) != {"schema_version", "manifest_sha256", "notes"}
+        or output.get("schema_version") != manifest["schema_version"]
+        or output.get("manifest_sha256") != manifest_sha256
+    ):
         raise ValueError("generation output is not bound to its manifest")
     raw_generated = output["notes"]
     if not isinstance(raw_generated, list) or [item.get("note_id") if isinstance(item, dict) else None for item in raw_generated] != [note["note_id"] for note in notes]:
@@ -485,6 +857,13 @@ def _prepared_values(config: ArtifactConfig) -> tuple[dict[str, object], dict[st
         runner_boundaries,
     )
     latest = ledger.latest
+    _validate_reused_generation_results(
+        config,
+        manifest,
+        ledger.records,
+        notes,
+        raw_generated,
+    )
     expected_jobs: set[str] = set()
     request_notes = []
     vectors = []
@@ -511,7 +890,12 @@ def _prepared_values(config: ArtifactConfig) -> tuple[dict[str, object], dict[st
             prominence = _integer(takeaway["prominence"], f"takeaway {note['note_id']}:{index}.prominence")
             if prominence > 100:
                 raise ValueError(f"takeaway {note['note_id']}:{index} prominence exceeds 100")
-            fragments, spans = _byte_spans(note["text"], takeaway["fragments"], f"takeaway {note['note_id']}:{index}.fragments")
+            fragments, spans = _byte_spans(
+                note["text"],
+                takeaway["fragments"],
+                f"takeaway {note['note_id']}:{index}.fragments",
+                reject_urls=manifest["schema_version"] == 3,
+            )
             for stage, response in (("prominence", prominence), ("mask", fragments)):
                 job_key = f"{stage}:{note['note_id']}:{index}"
                 expected_jobs.add(job_key)

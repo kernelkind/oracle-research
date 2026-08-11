@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -83,6 +84,11 @@ append_log({
     },
 })
 
+mutation_path = os.environ.get("FAKE_CODEX_MUTATE_PATH")
+if mutation_path is not None:
+    path = Path(mutation_path)
+    path.write_bytes(path.read_bytes() + b"\n")
+
 if os.environ.get("FAKE_CODEX_FAIL_STAGE") == stage:
     print("fixture child failure", file=sys.stderr)
     raise SystemExit(23)
@@ -116,6 +122,8 @@ elif stage == "prominence":
     )
 elif os.environ.get("FAKE_CODEX_INVALID_MASK") == "1":
     response = ["not present in the source note"]
+elif os.environ.get("FAKE_CODEX_URL_MASK") == "1":
+    response = ["https://example.com/source"]
 elif "The author finds Rust pleasant." in prompt:
     response = ["Rust is pleasant"]
 else:
@@ -365,6 +373,70 @@ class CodexExecRunnerTests(unittest.TestCase):
             "reasoning_effort": "high",
         }
         self.config_path.write_text(json.dumps(config), encoding="utf-8")
+
+    def enable_prior_run_reuse(
+        self,
+        *,
+        source_input: Path,
+        source_run: Path,
+    ) -> dict[str, object]:
+        runner_upgrades = source_run / "runner-upgrades.jsonl"
+        provenance = {
+            "input_path": str(source_input),
+            "input_sha256": hashlib.sha256(source_input.read_bytes()).hexdigest(),
+            "run_directory": str(source_run),
+            "manifest_sha256": hashlib.sha256(
+                (source_run / "manifest.json").read_bytes()
+            ).hexdigest(),
+            "results_sha256": hashlib.sha256(
+                (source_run / "results.jsonl").read_bytes()
+            ).hexdigest(),
+            "runner_upgrades_sha256": (
+                hashlib.sha256(runner_upgrades.read_bytes()).hexdigest()
+                if runner_upgrades.exists()
+                else None
+            ),
+            "output_sha256": hashlib.sha256(
+                (source_run / "output.json").read_bytes()
+            ).hexdigest(),
+        }
+        config = json.loads(self.config_path.read_text(encoding="utf-8"))
+        self.assertEqual(2, config["schema_version"])
+        config["schema_version"] = 3
+        config["reuse_source"] = provenance
+        self.config_path.write_text(json.dumps(config), encoding="utf-8")
+        return provenance
+
+    def prepare_prior_run_reuse(self) -> tuple[Path, Path, dict[str, object]]:
+        self.enable_prominence()
+        original_input = self.notes_path
+        original_run = self.run_directory
+        completed = self.invoke()
+        self.assertEqual(0, completed.returncode, completed.stderr)
+
+        source_root = self.root / "extracted-source"
+        source_root.mkdir()
+        source_input = source_root / "notes.json"
+        source_run = source_root / "run"
+        shutil.copy2(original_input, source_input)
+        shutil.copytree(original_run, source_run)
+        source_manifest = json.loads(
+            (source_run / "manifest.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(str(original_input), source_manifest["input_path"])
+        self.assertNotEqual(str(source_input), source_manifest["input_path"])
+
+        target_input = self.root / "corrected-notes.json"
+        target_input.write_bytes(source_input.read_bytes())
+        self.notes_path = target_input
+        self.run_directory = self.root / "corrected-run"
+        self.write_config()
+        self.enable_prominence()
+        provenance = self.enable_prior_run_reuse(
+            source_input=source_input,
+            source_run=source_run,
+        )
+        return source_input, source_run, provenance
 
     def test_runs_each_generation_in_a_fresh_isolated_codex_exec(self) -> None:
         completed = self.invoke()
@@ -1270,11 +1342,356 @@ class CodexExecRunnerTests(unittest.TestCase):
         )
         self.assertEqual(5, len([call for call in self.calls() if call["kind"] == "exec"]))
 
+    def test_pipeline_v3_reuses_identical_prior_jobs_without_codex_calls(self) -> None:
+        _, source_run, provenance = self.prepare_prior_run_reuse()
+        calls_before = len(self.calls())
+        source_references = {}
+        for line_number, line in enumerate(
+            (source_run / "results.jsonl").read_bytes().splitlines(keepends=True),
+            start=1,
+        ):
+            record = json.loads(line)
+            source_references[record["job_key"]] = {
+                "result_line": line_number,
+                "result_sha256": hashlib.sha256(line).hexdigest(),
+                "result_attempt": record["attempt"],
+            }
+
+        completed = self.invoke()
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        self.assertEqual(calls_before, len(self.calls()))
+        source_output = json.loads(
+            (source_run / "output.json").read_text(encoding="utf-8")
+        )
+        output = json.loads(
+            (self.run_directory / "output.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(source_output["notes"], output["notes"])
+        manifest = json.loads(
+            (self.run_directory / "manifest.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(provenance, manifest["reuse_source"])
+        records = [
+            json.loads(line)
+            for line in (self.run_directory / "results.jsonl")
+            .read_text(encoding="utf-8")
+            .splitlines()
+        ]
+        self.assertEqual(5, len(records))
+        for record in records:
+            reused_from = record["reused_from"]
+            self.assertEqual("reused", record["execution"])
+            self.assertEqual(
+                {
+                    "input_tokens": 0,
+                    "cached_input_tokens": 0,
+                    "output_tokens": 0,
+                    "reasoning_output_tokens": 0,
+                },
+                record["usage"],
+            )
+            self.assertEqual(
+                provenance["results_sha256"],
+                reused_from["results_sha256"],
+            )
+            for field, expected in source_references[record["job_key"]].items():
+                self.assertEqual(expected, reused_from[field])
+
+    def test_pipeline_v3_requires_the_same_prompt_version_for_reuse(self) -> None:
+        self.prepare_prior_run_reuse()
+        calls_before = len(self.calls())
+        registry = json.loads(self.mask_prompts.read_text(encoding="utf-8"))
+        registry["MP-alias"] = registry["MP-test"]
+        self.mask_prompts.write_text(json.dumps(registry), encoding="utf-8")
+        config = json.loads(self.config_path.read_text(encoding="utf-8"))
+        config["mask"]["prompt_version"] = "MP-alias"
+        self.config_path.write_text(json.dumps(config), encoding="utf-8")
+
+        completed = self.invoke(
+            extra_environment={"FAKE_CODEX_FAIL_STAGE": "mask"}
+        )
+
+        self.assertNotEqual(0, completed.returncode)
+        new_calls = self.calls()[calls_before:]
+        self.assertEqual(1, len(new_calls))
+        self.assertEqual("mask", new_calls[0]["stage"])
+
+    def test_pipeline_v3_rejects_a_tampered_cached_reused_response(self) -> None:
+        self.prepare_prior_run_reuse()
+        completed = self.invoke()
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        calls_before = len(self.calls())
+        results_path = self.run_directory / "results.jsonl"
+        records = [
+            json.loads(line)
+            for line in results_path.read_text(encoding="utf-8").splitlines()
+        ]
+        for record in records:
+            if record["job_key"] == "mask:note-1:0":
+                self.assertEqual(["Rust is pleasant"], record["response"])
+                record["response"] = ["Tea helps"]
+                break
+        else:
+            self.fail("fixture reused mask result is missing")
+        results_path.write_text(
+            "".join(json.dumps(record) + "\n" for record in records),
+            encoding="utf-8",
+        )
+
+        resumed = self.invoke()
+
+        self.assertNotEqual(0, resumed.returncode)
+        self.assertIn("does not match its reuse source", resumed.stderr)
+        self.assertEqual(calls_before, len(self.calls()))
+
+    def test_pipeline_v3_cannot_hide_tampered_reuse_by_removing_its_marker(
+        self,
+    ) -> None:
+        self.prepare_prior_run_reuse()
+        completed = self.invoke()
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        calls_before = len(self.calls())
+        results_path = self.run_directory / "results.jsonl"
+        records = [
+            json.loads(line)
+            for line in results_path.read_text(encoding="utf-8").splitlines()
+        ]
+        for record in records:
+            if record["job_key"] == "mask:note-1:0":
+                record["response"] = ["Tea helps"]
+                del record["execution"]
+                del record["reused_from"]
+                break
+        else:
+            self.fail("fixture reused mask result is missing")
+        results_path.write_text(
+            "".join(json.dumps(record) + "\n" for record in records),
+            encoding="utf-8",
+        )
+
+        resumed = self.invoke()
+
+        self.assertNotEqual(0, resumed.returncode)
+        self.assertIn("is missing required reuse provenance", resumed.stderr)
+        self.assertEqual(calls_before, len(self.calls()))
+
+    def test_pipeline_v3_validates_all_source_output_before_target_jobs(self) -> None:
+        _, source_run, _ = self.prepare_prior_run_reuse()
+        output_path = source_run / "output.json"
+        output = json.loads(output_path.read_text(encoding="utf-8"))
+        output["notes"][0]["takeaways"][0]["text"] = "tampered takeaway"
+        output_path.write_text(json.dumps(output), encoding="utf-8")
+        config = json.loads(self.config_path.read_text(encoding="utf-8"))
+        config["reuse_source"]["output_sha256"] = hashlib.sha256(
+            output_path.read_bytes()
+        ).hexdigest()
+        self.config_path.write_text(json.dumps(config), encoding="utf-8")
+        calls_before = len(self.calls())
+
+        completed = self.invoke(
+            extra_environment={"FAKE_CODEX_FAIL_STAGE": "takeaway"}
+        )
+
+        self.assertNotEqual(0, completed.returncode)
+        self.assertIn("does not match its output artifact", completed.stderr)
+        self.assertEqual(calls_before, len(self.calls()))
+
+    def test_pipeline_v3_ignores_invalid_jobs_for_notes_excluded_from_target(
+        self,
+    ) -> None:
+        self.mask_prompts.write_text(
+            json.dumps(
+                {
+                    "MP-test": (
+                        "MASK INSTRUCTION\n\n<post>\n{POST}\n</post>\n\n"
+                        "<takeaway>\n{TAKEAWAY}\n</takeaway>"
+                    ),
+                    "MPv3.4": (
+                        "MASK INSTRUCTION\n\n<post>\n{POST}\n</post>\n\n"
+                        "<takeaway>\n{TAKEAWAY}\n</takeaway>"
+                    )
+                }
+            ),
+            encoding="utf-8",
+        )
+        config = json.loads(self.config_path.read_text(encoding="utf-8"))
+        config["mask"]["prompt_version"] = "MPv3.4"
+        self.config_path.write_text(json.dumps(config), encoding="utf-8")
+        source_notes = json.loads(self.notes_path.read_text(encoding="utf-8"))
+        source_notes["notes"].append(
+            {
+                "note_id": "note-2",
+                "text": (
+                    "Rust is pleasant. Tea helps. "
+                    "https://example.com/source"
+                ),
+            }
+        )
+        self.notes_path.write_text(json.dumps(source_notes), encoding="utf-8")
+        _, source_run, _ = self.prepare_prior_run_reuse()
+
+        output_path = source_run / "output.json"
+        output = json.loads(output_path.read_text(encoding="utf-8"))
+        output["notes"][1]["takeaways"][0]["fragments"] = [
+            "https://example.com/source"
+        ]
+        output_path.write_text(json.dumps(output), encoding="utf-8")
+        results_path = source_run / "results.jsonl"
+        records = [
+            json.loads(line)
+            for line in results_path.read_text(encoding="utf-8").splitlines()
+        ]
+        for record in records:
+            if record["job_key"] == "mask:note-2:0":
+                record["response"] = ["https://example.com/source"]
+        results_path.write_text(
+            "".join(json.dumps(record) + "\n" for record in records),
+            encoding="utf-8",
+        )
+        target = json.loads(self.notes_path.read_text(encoding="utf-8"))
+        target["notes"] = target["notes"][:1]
+        self.notes_path.write_text(json.dumps(target), encoding="utf-8")
+        config = json.loads(self.config_path.read_text(encoding="utf-8"))
+        config["mask"]["prompt_version"] = "MPv3.4"
+        config["reuse_source"]["results_sha256"] = hashlib.sha256(
+            results_path.read_bytes()
+        ).hexdigest()
+        config["reuse_source"]["output_sha256"] = hashlib.sha256(
+            output_path.read_bytes()
+        ).hexdigest()
+        self.config_path.write_text(json.dumps(config), encoding="utf-8")
+        calls_before = len(self.calls())
+
+        completed = self.invoke()
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        self.assertEqual(calls_before, len(self.calls()))
+        target_output = json.loads(
+            (self.run_directory / "output.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(["note-1"], [note["note_id"] for note in target_output["notes"]])
+
+    def test_pipeline_v3_rechecks_source_hashes_when_a_partial_run_exits(self) -> None:
+        _, source_run, _ = self.prepare_prior_run_reuse()
+        registry = json.loads(self.mask_prompts.read_text(encoding="utf-8"))
+        registry["MP-test"] = (
+            "MASK INSTRUCTION CHANGED\n\n<post>\n{POST}\n</post>\n\n"
+            "<takeaway>\n{TAKEAWAY}\n</takeaway>"
+        )
+        self.mask_prompts.write_text(json.dumps(registry), encoding="utf-8")
+        source_results = source_run / "results.jsonl"
+
+        completed = self.invoke(
+            "--max-new-jobs",
+            "1",
+            extra_environment={"FAKE_CODEX_MUTATE_PATH": str(source_results)},
+        )
+
+        self.assertNotEqual(0, completed.returncode)
+        self.assertIn("reuse source results hash", completed.stderr)
+        self.assertTrue((self.run_directory / "results.jsonl").is_file())
+
+    def test_pipeline_v3_does_not_reuse_a_changed_note(self) -> None:
+        self.prepare_prior_run_reuse()
+        calls_before = len(self.calls())
+        notes = json.loads(self.notes_path.read_text(encoding="utf-8"))
+        notes["notes"][0]["text"] = "Rust changed. Tea helps."
+        self.notes_path.write_text(json.dumps(notes), encoding="utf-8")
+
+        completed = self.invoke(
+            extra_environment={"FAKE_CODEX_FAIL_STAGE": "takeaway"}
+        )
+
+        self.assertNotEqual(0, completed.returncode)
+        new_calls = self.calls()[calls_before:]
+        self.assertEqual(1, len(new_calls))
+        self.assertEqual("takeaway", new_calls[0]["stage"])
+
+    def test_pipeline_v3_does_not_reuse_a_changed_rendered_prompt(self) -> None:
+        self.prepare_prior_run_reuse()
+        calls_before = len(self.calls())
+        registry = json.loads(self.mask_prompts.read_text(encoding="utf-8"))
+        registry["MP-test"] = (
+            "MASK INSTRUCTION CHANGED\n\n<post>\n{POST}\n</post>\n\n"
+            "<takeaway>\n{TAKEAWAY}\n</takeaway>"
+        )
+        self.mask_prompts.write_text(json.dumps(registry), encoding="utf-8")
+
+        completed = self.invoke(
+            extra_environment={"FAKE_CODEX_FAIL_STAGE": "mask"}
+        )
+
+        self.assertNotEqual(0, completed.returncode)
+        new_calls = self.calls()[calls_before:]
+        self.assertEqual(1, len(new_calls))
+        self.assertEqual("mask", new_calls[0]["stage"])
+
+    def test_pipeline_v3_rejects_tampered_prior_results_and_manifest(self) -> None:
+        _, source_run, _ = self.prepare_prior_run_reuse()
+        calls_before = len(self.calls())
+        results_path = source_run / "results.jsonl"
+        manifest_path = source_run / "manifest.json"
+        original_results = results_path.read_bytes()
+        original_manifest = manifest_path.read_bytes()
+
+        results_path.write_bytes(original_results + b"\n")
+        tampered_results = self.invoke()
+        self.assertNotEqual(0, tampered_results.returncode)
+        self.assertIn("reuse source results hash", tampered_results.stderr)
+        self.assertEqual(calls_before, len(self.calls()))
+
+        results_path.write_bytes(original_results)
+        manifest_path.write_bytes(original_manifest + b"\n")
+        tampered_manifest = self.invoke()
+        self.assertNotEqual(0, tampered_manifest.returncode)
+        self.assertIn("reuse source manifest hash", tampered_manifest.stderr)
+        self.assertEqual(calls_before, len(self.calls()))
+
     def test_rejects_mask_fragments_absent_from_the_source_note(self) -> None:
         completed = self.invoke(extra_environment={"FAKE_CODEX_INVALID_MASK": "1"})
 
         self.assertNotEqual(0, completed.returncode)
         self.assertIn("is not present in the source note", completed.stderr)
+        self.assertFalse((self.run_directory / "output.json").exists())
+
+    def test_rejects_url_mask_fragments_for_the_frozen_mask_contract(self) -> None:
+        self.mask_prompts.write_text(
+            json.dumps(
+                {
+                    "MPv3.4": (
+                        "MASK INSTRUCTION\n\n<post>\n{POST}\n</post>\n\n"
+                        "<takeaway>\n{TAKEAWAY}\n</takeaway>"
+                    )
+                }
+            ),
+            encoding="utf-8",
+        )
+        config = json.loads(self.config_path.read_text(encoding="utf-8"))
+        config["mask"]["prompt_version"] = "MPv3.4"
+        self.config_path.write_text(json.dumps(config), encoding="utf-8")
+        self.notes_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "notes": [
+                        {
+                            "note_id": "note-1",
+                            "text": (
+                                "Rust is pleasant. Tea helps. "
+                                "https://example.com/source"
+                            ),
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        completed = self.invoke(extra_environment={"FAKE_CODEX_URL_MASK": "1"})
+
+        self.assertNotEqual(0, completed.returncode)
+        self.assertIn("must not contain a URL", completed.stderr)
         self.assertFalse((self.run_directory / "output.json").exists())
 
     def test_exit_zero_without_a_completed_turn_is_still_audited_as_failure(
