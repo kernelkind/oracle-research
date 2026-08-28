@@ -8,37 +8,86 @@ before encoding**.
 > Nearby but meaningfully distinct fine subjects are resolved.
 
 We do not yet know how fine the segmentation must be. Each ladder therefore
-defines four concrete semantic rungs:
+defines four concrete semantic rungs over the same vectors:
 
-- **Rung 0:** all four cohorts remain under one broad subject;
-- **Rung 1:** the most conservative boundary is resolved;
-- **Rung 2:** an intermediate boundary is also resolved;
-- **Rung 3:** the closest pair is resolved.
+- **Rung 0:** one broad group;
+- **Rung 1:** two coarse groups;
+- **Rung 2:** four narrower groups;
+- **Rung 3:** eight finest groups.
+
+Rung 1 is the mandatory minimum. Its boundary is deliberately coarse and
+unambiguous. Rungs 2 and 3 measure progressively finer resolving power.
 
 This sweeps semantic distinctions in the fixture. It does not tune or sweep an
 algorithm-specific setting. One candidate and configuration remain frozen.
 
 ## Fixture
 
-The fixture contains 64 vectors: four ladders, four subject cohorts per ladder,
-and four independently worded instances per cohort. Every concept is ordinary
-and stated directly in the note; no rung depends on obscure facts or
-compositional role ordering.
+The fixture contains 128 vectors: four ladders, eight finest-subject cohorts
+per ladder, and four independently worded instances per cohort. Every complete
+note is also its complete mask. Every concept is ordinary and stated directly;
+no rung depends on obscure facts or compositional role ordering.
 
-| Ladder | Rung 0 | Rung 1 | Rung 2 | Rung 3 |
-|---|---|---|---|---|
-| Coffee | Coffee preparation | Preparing beans / brewing | Roasting / grinding / brewing | Light roast / dark roast / grinding / brewing |
-| Photos | Working with photos | Replicating / cropping | Backup / synchronization / cropping | Local backup / cloud backup / synchronization / cropping |
-| Produce | Eating produce | Fruit / carrots | Apples / oranges / carrots | Red apples / green apples / oranges / carrots |
-| Media | Consuming published media | Reading publications / listening to podcasts | Books / magazines / podcasts | Fiction books / nonfiction books / magazines / podcasts |
+The hierarchy is balanced by construction:
 
-Each complete note is also its complete mask. Density is balanced. The
-candidate receives only opaque IDs and vectors, not the ladder or rung
-information.
+| Rung | Groups per ladder | Vectors per group |
+|---|---:|---:|
+| 0 | 1 | 32 |
+| 1 | 2 | 16 |
+| 2 | 4 | 8 |
+| 3 | 8 | 4 |
+
+This controls sample-count density inside this experiment. Unequal density and
+sparsity are tested separately in Experiment 5. The candidate receives only
+opaque IDs and vectors, not the ladder or rung information.
+
+## Intended ladders
 
 ### Coffee
 
-#### `LIGHT-ROAST`: roasting coffee beans to a light roast
+- **Rung 0 — one group:** Coffee activities
+- **Rung 1 — two groups:** Coffee preparation; Drinking coffee
+- **Rung 2 — four groups:** Roasting coffee; Brewing coffee; Drinking hot
+  coffee; Drinking cold coffee
+- **Rung 3 — eight groups:** Light-roast preparation; Dark-roast preparation;
+  Pour-over brewing; Espresso brewing; Drinking hot black coffee; Drinking hot
+  coffee with milk; Drinking iced coffee; Drinking cold-brew coffee
+
+### Photos
+
+- **Rung 0 — one group:** Working with photos
+- **Rung 1 — two groups:** Making and editing photos; Storing and sharing
+  photos
+- **Rung 2 — four groups:** Taking photos; Editing photos; Backing up photos;
+  Sharing photos
+- **Rung 3 — eight groups:** Taking portraits; Taking landscape photos;
+  Cropping photos; Adjusting photo colors; Local photo backups; Cloud photo
+  backups; Sharing photos by email; Sharing photos by link
+
+### Produce
+
+- **Rung 0 — one group:** Eating produce
+- **Rung 1 — two groups:** Eating fruit; Eating vegetables
+- **Rung 2 — four groups:** Eating apples; Eating citrus fruit; Eating carrots;
+  Eating leafy greens
+- **Rung 3 — eight groups:** Eating red apples; Eating green apples; Eating
+  oranges; Eating grapefruit; Eating raw carrots; Eating cooked carrots; Eating
+  lettuce; Eating spinach
+
+### Media
+
+- **Rung 0 — one group:** Consuming media
+- **Rung 1 — two groups:** Reading; Listening
+- **Rung 2 — four groups:** Reading books; Reading magazines; Listening to
+  podcasts; Listening to audiobooks
+- **Rung 3 — eight groups:** Reading fiction books; Reading nonfiction books;
+  Reading print magazines; Reading digital magazines; Listening to news
+  podcasts; Listening to interview podcasts; Listening to fiction audiobooks;
+  Listening to nonfiction audiobooks
+
+## Coffee inputs
+
+### `LIGHT-ROAST`: preparing light-roast coffee beans
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -47,7 +96,7 @@ information.
 | `LIGHT-ROAST-3` | ⟦I stopped roasting the coffee beans at the light-roast stage.⟧ |
 | `LIGHT-ROAST-4` | ⟦The coffee beans were roasted until they reached a light roast.⟧ |
 
-#### `DARK-ROAST`: roasting coffee beans to a dark roast
+### `DARK-ROAST`: preparing dark-roast coffee beans
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -56,54 +105,81 @@ information.
 | `DARK-ROAST-3` | ⟦I continued roasting the coffee beans to the dark-roast stage.⟧ |
 | `DARK-ROAST-4` | ⟦The coffee beans were roasted until they reached a dark roast.⟧ |
 
-#### `GRIND`: grinding coffee beans
+### `POUR-OVER`: brewing pour-over coffee
 
 | ID | Complete note and exact mask |
 |---|---|
-| `GRIND-1` | ⟦I ground whole coffee beans into coffee grounds.⟧ |
-| `GRIND-2` | ⟦Milling reduced whole coffee beans to small particles.⟧ |
-| `GRIND-3` | ⟦I used a grinder to turn whole coffee beans into grounds.⟧ |
-| `GRIND-4` | ⟦Mechanical crushing broke whole coffee beans down into coffee grounds.⟧ |
+| `POUR-OVER-1` | ⟦I brewed coffee with a pour-over dripper.⟧ |
+| `POUR-OVER-2` | ⟦I prepared a cup of pour-over coffee.⟧ |
+| `POUR-OVER-3` | ⟦My coffee was brewed using the pour-over method.⟧ |
+| `POUR-OVER-4` | ⟦I used pour-over brewing to make coffee.⟧ |
 
-#### `BREW`: brewing coffee
-
-| ID | Complete note and exact mask |
-|---|---|
-| `BREW-1` | ⟦I brewed coffee from grounds and hot water.⟧ |
-| `BREW-2` | ⟦Hot water extracted a coffee drink from coffee grounds.⟧ |
-| `BREW-3` | ⟦I prepared coffee by passing hot water through grounds.⟧ |
-| `BREW-4` | ⟦Coffee grounds and hot water were used to brew coffee.⟧ |
-
-### Photos
-
-#### `LOCAL-BACKUP`: backing up photos to local storage
+### `ESPRESSO`: brewing espresso
 
 | ID | Complete note and exact mask |
 |---|---|
-| `LOCAL-BACKUP-1` | ⟦I created a recovery backup of my photo library on a local external drive.⟧ |
-| `LOCAL-BACKUP-2` | ⟦A drive connected to my computer holds a backup copy of my photos.⟧ |
-| `LOCAL-BACKUP-3` | ⟦I copied my photo library to a locally attached disk for recovery.⟧ |
-| `LOCAL-BACKUP-4` | ⟦A local USB storage device stores my photo backup.⟧ |
+| `ESPRESSO-1` | ⟦I brewed a shot of espresso.⟧ |
+| `ESPRESSO-2` | ⟦I used an espresso machine to prepare espresso.⟧ |
+| `ESPRESSO-3` | ⟦My coffee preparation produced a shot of espresso.⟧ |
+| `ESPRESSO-4` | ⟦I made espresso with an espresso brewer.⟧ |
 
-#### `CLOUD-BACKUP`: backing up photos to cloud storage
-
-| ID | Complete note and exact mask |
-|---|---|
-| `CLOUD-BACKUP-1` | ⟦I created a recovery backup of my photo library in remote cloud storage.⟧ |
-| `CLOUD-BACKUP-2` | ⟦A cloud storage service holds a backup copy of my photos.⟧ |
-| `CLOUD-BACKUP-3` | ⟦I copied my photo library to remote online storage for recovery.⟧ |
-| `CLOUD-BACKUP-4` | ⟦An off-site cloud service stores my photo backup.⟧ |
-
-#### `PHOTO-SYNC`: synchronizing photos between devices
+### `BLACK-HOT`: drinking hot black coffee
 
 | ID | Complete note and exact mask |
 |---|---|
-| `PHOTO-SYNC-1` | ⟦I synchronized photo-library changes between my phone and laptop.⟧ |
-| `PHOTO-SYNC-2` | ⟦A photo-library change on either device is propagated to the other.⟧ |
-| `PHOTO-SYNC-3` | ⟦My phone and tablet exchange photo updates to stay synchronized.⟧ |
-| `PHOTO-SYNC-4` | ⟦Photo-library updates are synchronized across my personal devices.⟧ |
+| `BLACK-HOT-1` | ⟦I drank a cup of hot black coffee.⟧ |
+| `BLACK-HOT-2` | ⟦I sipped hot coffee without milk or cream.⟧ |
+| `BLACK-HOT-3` | ⟦I drank hot coffee served black.⟧ |
+| `BLACK-HOT-4` | ⟦I drank black coffee while it was hot.⟧ |
 
-#### `CROP-PHOTO`: cropping photos
+### `MILK-HOT`: drinking hot coffee with milk
+
+| ID | Complete note and exact mask |
+|---|---|
+| `MILK-HOT-1` | ⟦I drank hot coffee with milk.⟧ |
+| `MILK-HOT-2` | ⟦I drank a hot coffee that contained milk.⟧ |
+| `MILK-HOT-3` | ⟦I sipped a cup of hot coffee with milk.⟧ |
+| `MILK-HOT-4` | ⟦I sipped a hot, milky coffee.⟧ |
+
+### `ICED-COFFEE`: drinking iced coffee
+
+| ID | Complete note and exact mask |
+|---|---|
+| `ICED-COFFEE-1` | ⟦I drank coffee served over ice.⟧ |
+| `ICED-COFFEE-2` | ⟦I sipped an iced coffee.⟧ |
+| `ICED-COFFEE-3` | ⟦I drank cold coffee with ice cubes in it.⟧ |
+| `ICED-COFFEE-4` | ⟦I drank a chilled cup of iced coffee.⟧ |
+
+### `COLD-BREW`: drinking cold-brew coffee
+
+| ID | Complete note and exact mask |
+|---|---|
+| `COLD-BREW-1` | ⟦I drank a cup of cold-brew coffee.⟧ |
+| `COLD-BREW-2` | ⟦I drank cold-brew coffee as a cold drink.⟧ |
+| `COLD-BREW-3` | ⟦I sipped a cold-brew coffee.⟧ |
+| `COLD-BREW-4` | ⟦I chose cold-brew coffee as my drink.⟧ |
+
+## Photo inputs
+
+### `PORTRAIT`: taking portrait photos
+
+| ID | Complete note and exact mask |
+|---|---|
+| `PORTRAIT-1` | ⟦I took a portrait photograph of a person.⟧ |
+| `PORTRAIT-2` | ⟦My camera captured a person's portrait.⟧ |
+| `PORTRAIT-3` | ⟦I photographed someone for a portrait.⟧ |
+| `PORTRAIT-4` | ⟦The photo I took was a portrait of a person.⟧ |
+
+### `LANDSCAPE`: taking landscape photos
+
+| ID | Complete note and exact mask |
+|---|---|
+| `LANDSCAPE-1` | ⟦I took a landscape photograph of the scenery.⟧ |
+| `LANDSCAPE-2` | ⟦My camera captured a wide outdoor landscape.⟧ |
+| `LANDSCAPE-3` | ⟦I photographed the natural scenery as a landscape.⟧ |
+| `LANDSCAPE-4` | ⟦The photo I took showed a broad landscape.⟧ |
+
+### `CROP-PHOTO`: cropping photos
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -112,9 +188,54 @@ information.
 | `CROP-PHOTO-3` | ⟦Cropping removed the unwanted edges of the picture.⟧ |
 | `CROP-PHOTO-4` | ⟦I reframed an image by cutting away its outside area.⟧ |
 
-### Produce
+### `COLOR-ADJUST`: adjusting photo colors
 
-#### `RED-APPLE`: eating red apples
+| ID | Complete note and exact mask |
+|---|---|
+| `COLOR-ADJUST-1` | ⟦I adjusted the colors in a photo.⟧ |
+| `COLOR-ADJUST-2` | ⟦I edited a photograph's color balance.⟧ |
+| `COLOR-ADJUST-3` | ⟦Changing the color settings altered the picture's appearance.⟧ |
+| `COLOR-ADJUST-4` | ⟦I corrected the colors while editing an image.⟧ |
+
+### `LOCAL-BACKUP`: backing up photos to local storage
+
+| ID | Complete note and exact mask |
+|---|---|
+| `LOCAL-BACKUP-1` | ⟦I created a recovery backup of my photo library on a local external drive.⟧ |
+| `LOCAL-BACKUP-2` | ⟦A drive connected to my computer holds a backup copy of my photos.⟧ |
+| `LOCAL-BACKUP-3` | ⟦I copied my photo library to a locally attached disk for recovery.⟧ |
+| `LOCAL-BACKUP-4` | ⟦A local USB storage device stores my photo backup.⟧ |
+
+### `CLOUD-BACKUP`: backing up photos to cloud storage
+
+| ID | Complete note and exact mask |
+|---|---|
+| `CLOUD-BACKUP-1` | ⟦I created a recovery backup of my photo library in remote cloud storage.⟧ |
+| `CLOUD-BACKUP-2` | ⟦A cloud storage service holds a backup copy of my photos.⟧ |
+| `CLOUD-BACKUP-3` | ⟦I copied my photo library to remote online storage for recovery.⟧ |
+| `CLOUD-BACKUP-4` | ⟦An off-site cloud service stores my photo backup.⟧ |
+
+### `EMAIL-SHARE`: sharing photos by email
+
+| ID | Complete note and exact mask |
+|---|---|
+| `EMAIL-SHARE-1` | ⟦I shared a photo by attaching it to an email.⟧ |
+| `EMAIL-SHARE-2` | ⟦I emailed a photograph to someone.⟧ |
+| `EMAIL-SHARE-3` | ⟦An email attachment carried the photo I shared.⟧ |
+| `EMAIL-SHARE-4` | ⟦I sent someone a picture through email.⟧ |
+
+### `LINK-SHARE`: sharing photos by link
+
+| ID | Complete note and exact mask |
+|---|---|
+| `LINK-SHARE-1` | ⟦I shared a photo by sending its online link.⟧ |
+| `LINK-SHARE-2` | ⟦I gave someone a web link to a photograph.⟧ |
+| `LINK-SHARE-3` | ⟦A shared link opened the online photo.⟧ |
+| `LINK-SHARE-4` | ⟦I sent someone a link for viewing my picture.⟧ |
+
+## Produce inputs
+
+### `RED-APPLE`: eating red apples
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -123,7 +244,7 @@ information.
 | `RED-APPLE-3` | ⟦My snack was a red apple.⟧ |
 | `RED-APPLE-4` | ⟦A red apple was what I ate.⟧ |
 
-#### `GREEN-APPLE`: eating green apples
+### `GREEN-APPLE`: eating green apples
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -132,7 +253,7 @@ information.
 | `GREEN-APPLE-3` | ⟦My snack was a green apple.⟧ |
 | `GREEN-APPLE-4` | ⟦A green apple was what I ate.⟧ |
 
-#### `ORANGE`: eating oranges
+### `ORANGE`: eating oranges
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -141,18 +262,54 @@ information.
 | `ORANGE-3` | ⟦My snack was an orange.⟧ |
 | `ORANGE-4` | ⟦An orange was what I ate.⟧ |
 
-#### `CARROT`: eating carrots
+### `GRAPEFRUIT`: eating grapefruit
 
 | ID | Complete note and exact mask |
 |---|---|
-| `CARROT-1` | ⟦I ate a carrot.⟧ |
-| `CARROT-2` | ⟦I was eating a fresh carrot.⟧ |
-| `CARROT-3` | ⟦My snack was a carrot.⟧ |
-| `CARROT-4` | ⟦A carrot was what I ate.⟧ |
+| `GRAPEFRUIT-1` | ⟦I ate a grapefruit.⟧ |
+| `GRAPEFRUIT-2` | ⟦I was eating fresh grapefruit.⟧ |
+| `GRAPEFRUIT-3` | ⟦My snack was a grapefruit.⟧ |
+| `GRAPEFRUIT-4` | ⟦A grapefruit was what I ate.⟧ |
 
-### Media
+### `RAW-CARROT`: eating raw carrots
 
-#### `FICTION-BOOK`: reading fiction books
+| ID | Complete note and exact mask |
+|---|---|
+| `RAW-CARROT-1` | ⟦I ate a raw carrot.⟧ |
+| `RAW-CARROT-2` | ⟦I snacked on an uncooked carrot.⟧ |
+| `RAW-CARROT-3` | ⟦I crunched on a fresh raw carrot.⟧ |
+| `RAW-CARROT-4` | ⟦I ate a carrot without cooking it.⟧ |
+
+### `COOKED-CARROT`: eating cooked carrots
+
+| ID | Complete note and exact mask |
+|---|---|
+| `COOKED-CARROT-1` | ⟦I ate a cooked carrot.⟧ |
+| `COOKED-CARROT-2` | ⟦I ate a carrot after cooking it.⟧ |
+| `COOKED-CARROT-3` | ⟦I had a soft cooked carrot with my meal.⟧ |
+| `COOKED-CARROT-4` | ⟦I ate a carrot that had been cooked.⟧ |
+
+### `LETTUCE`: eating lettuce
+
+| ID | Complete note and exact mask |
+|---|---|
+| `LETTUCE-1` | ⟦I ate some lettuce.⟧ |
+| `LETTUCE-2` | ⟦I was eating fresh lettuce leaves.⟧ |
+| `LETTUCE-3` | ⟦My food included crisp lettuce.⟧ |
+| `LETTUCE-4` | ⟦Lettuce leaves were what I ate.⟧ |
+
+### `SPINACH`: eating spinach
+
+| ID | Complete note and exact mask |
+|---|---|
+| `SPINACH-1` | ⟦I ate some spinach.⟧ |
+| `SPINACH-2` | ⟦I was eating fresh spinach leaves.⟧ |
+| `SPINACH-3` | ⟦My food included leafy spinach.⟧ |
+| `SPINACH-4` | ⟦Spinach leaves were what I ate.⟧ |
+
+## Media inputs
+
+### `FICTION-BOOK`: reading fiction books
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -161,7 +318,7 @@ information.
 | `FICTION-BOOK-3` | ⟦My reading was a fictional book.⟧ |
 | `FICTION-BOOK-4` | ⟦I read a book that told an invented story.⟧ |
 
-#### `NONFICTION-BOOK`: reading nonfiction books
+### `NONFICTION-BOOK`: reading nonfiction books
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -170,42 +327,78 @@ information.
 | `NONFICTION-BOOK-3` | ⟦My reading was a work of nonfiction.⟧ |
 | `NONFICTION-BOOK-4` | ⟦I read a book about real events and facts.⟧ |
 
-#### `MAGAZINE`: reading magazines
+### `PRINT-MAGAZINE`: reading print magazines
 
 | ID | Complete note and exact mask |
 |---|---|
-| `MAGAZINE-1` | ⟦I read a magazine.⟧ |
-| `MAGAZINE-2` | ⟦I spent time reading an issue of a magazine.⟧ |
-| `MAGAZINE-3` | ⟦My reading was a printed magazine.⟧ |
-| `MAGAZINE-4` | ⟦I read articles in a magazine.⟧ |
+| `PRINT-MAGAZINE-1` | ⟦I read a printed magazine.⟧ |
+| `PRINT-MAGAZINE-2` | ⟦I turned the paper pages while reading a magazine.⟧ |
+| `PRINT-MAGAZINE-3` | ⟦My reading was a physical magazine issue.⟧ |
+| `PRINT-MAGAZINE-4` | ⟦I read articles in a magazine printed on paper.⟧ |
 
-#### `PODCAST`: listening to podcasts
+### `DIGITAL-MAGAZINE`: reading digital magazines
 
 | ID | Complete note and exact mask |
 |---|---|
-| `PODCAST-1` | ⟦I listened to a podcast.⟧ |
-| `PODCAST-2` | ⟦I spent time listening to a podcast episode.⟧ |
-| `PODCAST-3` | ⟦My media choice was an audio podcast.⟧ |
-| `PODCAST-4` | ⟦I played and listened to a podcast program.⟧ |
+| `DIGITAL-MAGAZINE-1` | ⟦I read a digital magazine.⟧ |
+| `DIGITAL-MAGAZINE-2` | ⟦I used a screen to read an electronic magazine issue.⟧ |
+| `DIGITAL-MAGAZINE-3` | ⟦My reading was an online magazine edition.⟧ |
+| `DIGITAL-MAGAZINE-4` | ⟦I read magazine articles in a digital publication.⟧ |
+
+### `NEWS-PODCAST`: listening to news podcasts
+
+| ID | Complete note and exact mask |
+|---|---|
+| `NEWS-PODCAST-1` | ⟦I listened to a news podcast.⟧ |
+| `NEWS-PODCAST-2` | ⟦I played a podcast episode about current news.⟧ |
+| `NEWS-PODCAST-3` | ⟦My listening choice was a news podcast.⟧ |
+| `NEWS-PODCAST-4` | ⟦I heard the latest news in a podcast episode.⟧ |
+
+### `INTERVIEW-PODCAST`: listening to interview podcasts
+
+| ID | Complete note and exact mask |
+|---|---|
+| `INTERVIEW-PODCAST-1` | ⟦I listened to an interview podcast.⟧ |
+| `INTERVIEW-PODCAST-2` | ⟦I played a podcast episode featuring an interview.⟧ |
+| `INTERVIEW-PODCAST-3` | ⟦My listening choice was a podcast conversation with a guest.⟧ |
+| `INTERVIEW-PODCAST-4` | ⟦I heard a host interview someone on a podcast.⟧ |
+
+### `FICTION-AUDIOBOOK`: listening to fiction audiobooks
+
+| ID | Complete note and exact mask |
+|---|---|
+| `FICTION-AUDIOBOOK-1` | ⟦I listened to a fiction audiobook.⟧ |
+| `FICTION-AUDIOBOOK-2` | ⟦I listened to a narrator tell a fictional story.⟧ |
+| `FICTION-AUDIOBOOK-3` | ⟦My listening was an audiobook of a novel.⟧ |
+| `FICTION-AUDIOBOOK-4` | ⟦I played an audiobook that told an invented story.⟧ |
+
+### `NONFICTION-AUDIOBOOK`: listening to nonfiction audiobooks
+
+| ID | Complete note and exact mask |
+|---|---|
+| `NONFICTION-AUDIOBOOK-1` | ⟦I listened to a nonfiction audiobook.⟧ |
+| `NONFICTION-AUDIOBOOK-2` | ⟦I listened to a narrator tell factual material.⟧ |
+| `NONFICTION-AUDIOBOOK-3` | ⟦My listening was an audiobook of nonfiction.⟧ |
+| `NONFICTION-AUDIOBOOK-4` | ⟦I played an audiobook about real events and facts.⟧ |
 
 ## Scoring one ladder
 
-For scoring only, call the four cohorts `A`, `B`, `C`, and `D`:
+For scoring only, call the eight finest cohorts `A` through `H`:
 
-| Ladder | `A` | `B` | `C` | `D` |
-|---|---|---|---|---|
-| Coffee | Light roast | Dark roast | Grinding | Brewing |
-| Photos | Local backup | Cloud backup | Synchronization | Cropping |
-| Produce | Red apples | Green apples | Oranges | Carrots |
-| Media | Fiction books | Nonfiction books | Magazines | Podcasts |
+| Ladder | `A` | `B` | `C` | `D` | `E` | `F` | `G` | `H` |
+|---|---|---|---|---|---|---|---|---|
+| Coffee | Light roast | Dark roast | Pour-over | Espresso | Hot black | Hot with milk | Iced | Cold brew |
+| Photos | Portrait | Landscape | Crop | Color adjustment | Local backup | Cloud backup | Email sharing | Link sharing |
+| Produce | Red apple | Green apple | Orange | Grapefruit | Raw carrot | Cooked carrot | Lettuce | Spinach |
+| Media | Fiction book | Nonfiction book | Print magazine | Digital magazine | News podcast | Interview podcast | Fiction audiobook | Nonfiction audiobook |
 
 The canonical grouping at each rung is:
 
 ```text
-Rung 0: {A ∪ B ∪ C ∪ D}
-Rung 1: {A ∪ B ∪ C}, {D}
-Rung 2: {A ∪ B}, {C}, {D}
-Rung 3: {A}, {B}, {C}, {D}
+Rung 0: {A B C D E F G H}
+Rung 1: {A B C D}, {E F G H}
+Rung 2: {A B}, {C D}, {E F}, {G H}
+Rung 3: {A}, {B}, {C}, {D}, {E}, {F}, {G}, {H}
 ```
 
 A returned segment **crosses** a boundary when it contains vectors from two
@@ -213,47 +406,44 @@ groups that the rung keeps separate.
 
 A result reaches **Rung 1** when:
 
-1. one returned fine segment equals exactly `D`;
-2. the remaining cohorts appear as one of these complete refinements:
-   - one segment equal to `A ∪ B ∪ C`;
-   - segments equal to `A ∪ B` and `C`;
-   - segments equal to `A`, `B`, and `C`;
-3. no returned fine segment crosses the `(A ∪ B ∪ C) / D` boundary.
+1. `A B C D` appears as one exact segment, as exact `A B` and `C D` segments,
+   or as exact `A`, `B`, `C`, and `D` segments;
+2. `E F G H` appears as one exact segment, as exact `E F` and `G H` segments,
+   or as exact `E`, `F`, `G`, and `H` segments;
+3. no returned segment crosses the `A B C D` and `E F G H` boundary.
 
 A result reaches **Rung 2** when:
 
-1. one returned fine segment equals exactly `C`;
-2. one returned fine segment equals exactly `D`;
-3. either one segment equals exactly `A ∪ B`, or separate segments equal
-   exactly `A` and exactly `B`;
-4. no returned fine segment crosses the `(A ∪ B) / C / D` boundaries.
+1. each of `A B`, `C D`, `E F`, and `G H` appears either as one exact segment
+   or as two exact finest-cohort segments;
+2. no returned segment crosses any Rung 2 boundary.
 
 A result reaches **Rung 3** when:
 
-1. separate returned fine segments equal exactly `A`, `B`, `C`, and `D`;
-2. no returned fine segment crosses any of the four subject boundaries.
+1. separate returned segments equal exactly `A`, `B`, `C`, `D`, `E`, `F`,
+   `G`, and `H`;
+2. no returned segment crosses any finest-subject boundary.
 
-Additional segments contained inside one cohort are allowed. Segments mixing
-different ladders are recorded separately and do not affect this experiment
-unless they also cross a scored boundary inside one ladder. The verdict does
-not require every vector globally to have only one membership.
+Additional segments contained inside one finest cohort are allowed. Segments
+mixing different ladders are recorded separately and do not affect this
+experiment unless they also cross a scored boundary inside one ladder. The
+verdict does not require every vector globally to have only one membership.
 
 ## Overall result
 
-The proposed conservative MVP requirement is Rung 1 on all four ladders. This
-requirement still needs human approval before the experiment is frozen.
+The mandatory minimum is Rung 1 on all four ladders. Rungs 2 and 3 measure
+additional resolving power and are not minimum requirements.
 
 Report the highest verified rung for every ladder. A result that does not reach
-Rung 1 is reported as **below Rung 1**; the experiment must not infer that its
-output cleanly matches Rung 0. Rungs 2 and 3 measure additional resolving power
-and are not MVP requirements.
+Rung 1 is reported as **below minimum**; the experiment must not infer that its
+output cleanly matches Rung 0.
 
 ## Run
 
 1. Approve and freeze every note, mask, cohort identity, and ladder ordering.
 2. Freeze one candidate, configuration, seed, fine-output selector, and opaque
    shuffled input order before encoding or exposing vector diagnostics.
-3. Encode all 64 inputs once under the shared contract in README.md.
+3. Encode all 128 inputs once under the shared contract in README.md.
 4. Run once and preserve the complete output before restoring fixture IDs.
 5. Score each ladder independently.
 
