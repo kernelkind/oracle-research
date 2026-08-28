@@ -1,150 +1,124 @@
 # Experiment 1: repeated fine-subject recovery
 
-Status: **draft; notes, masks, and expected relationships require human
-approval before encoding**.
+Status: **draft; every subject identity and mask requires human approval before
+encoding**.
 
-## Assumption under test
+## Assumption
 
 > Repeated instances of the same fine subject form recoverable groups.
 
-## Question
+## Fixture
 
-Can one frozen fine-segmentation candidate recover a complete segment from
-three differently worded vectors representing the same fine subject?
+The fixture contains 36 vectors: six clearly different fine subjects with six
+independently worded instances each. Density is balanced. Each complete note is
+also its complete mask, so unmasked context cannot affect this experiment.
 
-## Why this fixture exists
+The candidate receives only opaque IDs and vectors. It does not receive the
+subject names or expected groups.
 
-A pair could match accidentally. Three instances require a recurring group.
-Two unrelated subjects prevent a candidate from passing by putting every input
-in one segment.
+### `ORIGAMI`: folding an origami paper crane
 
-The fixture therefore contains two subjects with three independently worded
-instances each: six vectors total. Every note uses a simple carrier so this
-experiment does not intentionally vary surrounding context. This is an easy
-recurrence control: its subjects retain recognizable shared vocabulary. It
-does not independently establish that grouping is semantic rather than
-lexical; Experiment 3 tests that separately.
+| ID | Complete note and exact mask |
+|---|---|
+| `ORIGAMI-1` | ⟦I folded a paper crane using origami.⟧ |
+| `ORIGAMI-2` | ⟦A square sheet of paper became an origami crane through folding.⟧ |
+| `ORIGAMI-3` | ⟦I made the traditional origami crane from one piece of paper.⟧ |
+| `ORIGAMI-4` | ⟦Careful creases turned my paper square into an origami crane.⟧ |
+| `ORIGAMI-5` | ⟦I constructed an origami crane with a sequence of paper folds.⟧ |
+| `ORIGAMI-6` | ⟦My origami project was folding a sheet of paper into a crane.⟧ |
 
-## Synthetic notes and masks
+### `BIKE-TUBE`: repairing a punctured bicycle inner tube
 
-### Subject `STARTER`: feeding a sourdough starter
+| ID | Complete note and exact mask |
+|---|---|
+| `BIKE-TUBE-1` | ⟦I patched a punctured bicycle inner tube.⟧ |
+| `BIKE-TUBE-2` | ⟦I sealed a hole in my bike's inner tube with a repair patch.⟧ |
+| `BIKE-TUBE-3` | ⟦I fixed a flat bicycle tube by applying a vulcanizing patch.⟧ |
+| `BIKE-TUBE-4` | ⟦I mended the puncture in the tube inside my bicycle tire.⟧ |
+| `BIKE-TUBE-5` | ⟦I repaired a puncture in the inner tube from my bike.⟧ |
+| `BIKE-TUBE-6` | ⟦A patch closed the leak caused by a puncture in my bicycle tube.⟧ |
 
-**STARTER-1**
+### `ECLIPSE`: observing a lunar eclipse
 
-> This note concerns ⟦feeding a sourdough starter with fresh flour and water⟧.
+| ID | Complete note and exact mask |
+|---|---|
+| `ECLIPSE-1` | ⟦I observed a lunar eclipse.⟧ |
+| `ECLIPSE-2` | ⟦I watched Earth's shadow move across the Moon during an eclipse.⟧ |
+| `ECLIPSE-3` | ⟦I viewed an eclipse of the Moon.⟧ |
+| `ECLIPSE-4` | ⟦I watched the Moon pass through Earth's shadow.⟧ |
+| `ECLIPSE-5` | ⟦I observed Earth darken the full Moon by blocking sunlight.⟧ |
+| `ECLIPSE-6` | ⟦I watched the Moon become eclipsed by Earth.⟧ |
 
-**STARTER-2**
+### `STARTER`: feeding a sourdough starter
 
-> This note concerns ⟦refreshing a sourdough starter with fresh flour and
-> water⟧.
+| ID | Complete note and exact mask |
+|---|---|
+| `STARTER-1` | ⟦I fed my sourdough starter with flour and water.⟧ |
+| `STARTER-2` | ⟦I refreshed the sourdough culture by mixing in fresh flour and water.⟧ |
+| `STARTER-3` | ⟦I added new flour and water to maintain my bread starter.⟧ |
+| `STARTER-4` | ⟦My active sourdough culture received its regular flour-and-water feeding.⟧ |
+| `STARTER-5` | ⟦I fed the fermented sourdough starter with fresh flour and water.⟧ |
+| `STARTER-6` | ⟦I refreshed the wild-yeast sourdough starter with flour and water.⟧ |
 
-**STARTER-3**
+### `PIANO`: tuning an acoustic piano
 
-> This note concerns ⟦adding flour and water to maintain a sourdough starter⟧.
+| ID | Complete note and exact mask |
+|---|---|
+| `PIANO-1` | ⟦I tuned an acoustic piano.⟧ |
+| `PIANO-2` | ⟦I adjusted an acoustic piano's string tension to correct its pitch.⟧ |
+| `PIANO-3` | ⟦I brought the strings of the piano back into tune.⟧ |
+| `PIANO-4` | ⟦I corrected the piano's notes by tuning its strings.⟧ |
+| `PIANO-5` | ⟦I set each string in the acoustic piano to the proper pitch.⟧ |
+| `PIANO-6` | ⟦I used the tuning pins to bring every piano note to pitch.⟧ |
 
-### Subject `CHAIN`: lubricating a bicycle chain
+### `TOMATO`: transplanting tomato seedlings into garden soil
 
-**CHAIN-1**
-
-> This note concerns ⟦putting fresh lubricant on a bicycle chain⟧.
-
-**CHAIN-2**
-
-> This note concerns ⟦oiling the links of a bike chain⟧.
-
-**CHAIN-3**
-
-> This note concerns ⟦applying lubricant to the drive chain on a bicycle⟧.
-
-The subject IDs and descriptions are scoring data. The candidate does not
-receive them.
-
-## Frozen hypothesis
-
-The candidate will return:
-
-1. at least one fine segment containing all three `STARTER` vectors and no
-   `CHAIN` vector;
-2. at least one fine segment containing all three `CHAIN` vectors and no
-   `STARTER` vector.
-
-The required group must appear as one segment. Three separate two-vector
-segments do not count as recovery.
-
-A separate segment containing members of both subjects is recorded as a
-coarse false merge, but it does not change this assumption's verdict. This
-experiment asks whether the two correct groups are recoverable; it does not
-assume that a vector may belong to only one segment.
-
-## Frozen system boundary
-
-Use the shared 768-dimensional Sentence-T5-base SSE checkpoint identified in:
-
-README.md
-
-Preserve its raw outputs exactly. Any normalization, distance, or other
-preprocessing belongs to the candidate's frozen configuration.
-
-The candidate receives only opaque IDs and vectors. It may return overlapping
-fine segments and leave vectors unassigned. If it also returns coarser levels,
-the rule selecting the claimed fine-segment collection must be frozen before
-results are inspected; parent regions are not scored as fine segments.
-
-This is a visible development fixture, not held-out confirmation.
-
-## Protocol
-
-1. Obtain human approval of every note, mask, subject identity, and expected
-   relationship in this document.
-2. Freeze this document, the candidate implementation, its complete
-   configuration, and any random seed.
-3. Generate the six SSE vectors once and preserve their exact bytes and
-   provenance.
-4. Replace the fixture IDs with opaque IDs and apply a frozen shuffled order.
-5. Give only those IDs and vectors to the candidate.
-6. Preserve the candidate's complete fine-segment output before revealing the
-   fixture identities.
-7. Score the frozen hypothesis and render every returned segment using the
-   original IDs, notes, and masks.
+| ID | Complete note and exact mask |
+|---|---|
+| `TOMATO-1` | ⟦I transplanted tomato seedlings into a garden bed.⟧ |
+| `TOMATO-2` | ⟦I moved young tomato plants from seed trays into garden soil.⟧ |
+| `TOMATO-3` | ⟦I replanted tomato starts in the outdoor vegetable bed.⟧ |
+| `TOMATO-4` | ⟦I transferred tomato seedlings from nursery cells into prepared ground.⟧ |
+| `TOMATO-5` | ⟦I moved young tomato starts from pots into their final garden rows.⟧ |
+| `TOMATO-6` | ⟦I planted nursery-grown tomato seedlings out in the garden.⟧ |
 
 ## Pass rule
 
-The experiment passes only if both frozen recovery hypotheses pass.
+The candidate's predeclared fine-segment output must contain these six exact
+member sets:
 
-A failure is one of:
+```text
+{ORIGAMI-1 ... ORIGAMI-6}
+{BIKE-TUBE-1 ... BIKE-TUBE-6}
+{ECLIPSE-1 ... ECLIPSE-6}
+{STARTER-1 ... STARTER-6}
+{PIANO-1 ... PIANO-6}
+{TOMATO-1 ... TOMATO-6}
+```
 
-- **split:** no segment contains every vector belonging to a subject;
-- **contamination:** a segment needed to recover a subject also contains the
-  other subject;
-- **omission:** a required vector receives no membership that completes its
-  subject's segment.
+Every returned fine segment containing at least two fixture vectors must be a
+subset of one of those six sets. This still permits additional overlapping or
+partial same-subject segments and singleton segments. It rejects one giant
+segment, mixed-subject segments, and an algorithm that emits every possible
+subset. Recovering all six exact sets necessarily assigns every fixture vector.
 
-Extra overlapping segments, including cross-subject segments, are reported as
-diagnostics but do not change Assumption 1's verdict.
+## Run
 
-## Required record
+1. Approve and freeze every note, mask, and expected group.
+2. Encode all 36 inputs once under the shared contract in README.md.
+3. Freeze the candidate, configuration, seed, fine-output selector, and one
+   shuffled opaque-ID order.
+4. Run the candidate and preserve its complete output before restoring the
+   fixture identities.
+5. Apply the pass rule.
 
-Preserve:
+Record the frozen inputs and hashes, raw vectors, input order, candidate
+configuration, complete returned memberships, unassigned IDs, and the verdict
+for each expected group. Preserve the raw-vector cosine matrix for diagnosis;
+it does not determine the verdict.
 
-- every returned segment and membership;
-- whether each subject was completely recovered;
-- the best partial segment for any unrecovered subject;
-- every cross-subject membership as a non-scoring diagnostic;
-- unassigned vectors;
-- the exact shuffled input order;
-- the cosine matrix and nearest-neighbor order computed from the immutable raw
-  SSE outputs;
-- the candidate version, configuration, preprocessing, and seed;
-- the raw SSE artifact and its hashes.
+## Scope
 
-Cosine is diagnostic evidence. It does not determine the verdict.
-
-## What a result means
-
-A pass supports this assumption only for these two controlled subjects. It
-does not establish resolution between nearby subjects, lexical robustness,
-context robustness, density robustness, stability, or corpus-wide behavior.
-
-A failure applies to the complete SSE-vector-plus-candidate system. This
-experiment alone cannot determine whether the repeated meaning was absent from
-the vectors or present but missed by the segmentation algorithm.
+A pass supports repeated-subject recovery for six balanced and deliberately
+separated subjects. Experiments 2–6 separately test nearby subjects, lexical
+traps, unmasked context, unequal density, and irrelevant changes.
