@@ -44,44 +44,23 @@ This controls sample-count density inside this experiment. Unequal density and
 sparsity are tested separately in Experiment 5. The candidate receives only
 opaque IDs and vectors, not the branch or rung information.
 
-Read the fixture below from top to bottom. Each parent immediately names its
-children, then the document shows everything inside the first child before
-moving to the next. Each Rung 4 subject contains its four exact input masks.
-Every higher group is the union of the Rung 4 inputs nested beneath it; later
-rungs do not introduce new vectors.
+Read the fixture below from top to bottom. Each heading is nested beneath its
+parent; the heading depth is the hierarchy. Each R4 subject contains its four
+exact input masks. Every higher group is the union of the R4 inputs nested
+beneath it; later rungs do not introduce new vectors.
 
-## Rung 0 · Complete corpus · 128 vectors
+## Complete corpus · R0 · 128 vectors
 
 Rung 0 is the unsegmented input set. It is a non-semantic root, not a claim
 that every vector shares one subject.
 
-Its immediate children are:
+### Coffee activities · R1 · 32 vectors
 
-- Coffee activities · 32 vectors
-- Working with photos · 32 vectors
-- Eating produce · 32 vectors
-- Consuming media · 32 vectors
+#### Coffee preparation · R2 · 16 vectors
 
-### Rung 1 · Coffee activities · 32 vectors
+##### Roasting coffee · R3 · 8 vectors
 
-Its immediate children are:
-
-- Coffee preparation · 16 vectors
-- Drinking coffee · 16 vectors
-
-#### Rung 2 · Coffee preparation · 16 vectors
-
-Its immediate children are:
-
-- Roasting coffee · 8 vectors
-- Brewing coffee · 8 vectors
-
-##### Rung 3 · Roasting coffee · 8 vectors
-
-Its immediate children are Light-roast preparation and Dark-roast
-preparation, each containing four vectors.
-
-###### Rung 4 · Light-roast preparation · 4 vectors
+###### Light-roast preparation · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -90,7 +69,7 @@ preparation, each containing four vectors.
 | `LIGHT-ROAST-3` | ⟦I stopped roasting the coffee beans at the light-roast stage.⟧ |
 | `LIGHT-ROAST-4` | ⟦The coffee beans were roasted until they reached a light roast.⟧ |
 
-###### Rung 4 · Dark-roast preparation · 4 vectors
+###### Dark-roast preparation · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -99,12 +78,9 @@ preparation, each containing four vectors.
 | `DARK-ROAST-3` | ⟦I continued roasting the coffee beans to the dark-roast stage.⟧ |
 | `DARK-ROAST-4` | ⟦The coffee beans were roasted until they reached a dark roast.⟧ |
 
-##### Rung 3 · Brewing coffee · 8 vectors
+##### Brewing coffee · R3 · 8 vectors
 
-Its immediate children are Pour-over brewing and Espresso brewing, each
-containing four vectors.
-
-###### Rung 4 · Pour-over brewing · 4 vectors
+###### Pour-over brewing · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -113,7 +89,7 @@ containing four vectors.
 | `POUR-OVER-3` | ⟦My coffee was brewed using the pour-over method.⟧ |
 | `POUR-OVER-4` | ⟦I used pour-over brewing to make coffee.⟧ |
 
-###### Rung 4 · Espresso brewing · 4 vectors
+###### Espresso brewing · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -122,19 +98,11 @@ containing four vectors.
 | `ESPRESSO-3` | ⟦My coffee preparation produced a shot of espresso.⟧ |
 | `ESPRESSO-4` | ⟦I made espresso with an espresso brewer.⟧ |
 
-#### Rung 2 · Drinking coffee · 16 vectors
+#### Drinking coffee · R2 · 16 vectors
 
-Its immediate children are:
+##### Drinking hot coffee · R3 · 8 vectors
 
-- Drinking hot coffee · 8 vectors
-- Drinking cold coffee · 8 vectors
-
-##### Rung 3 · Drinking hot coffee · 8 vectors
-
-Its immediate children are Drinking hot black coffee and Drinking hot coffee
-with milk, each containing four vectors.
-
-###### Rung 4 · Drinking hot black coffee · 4 vectors
+###### Drinking hot black coffee · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -143,7 +111,7 @@ with milk, each containing four vectors.
 | `BLACK-HOT-3` | ⟦I drank hot coffee served black.⟧ |
 | `BLACK-HOT-4` | ⟦I drank black coffee while it was hot.⟧ |
 
-###### Rung 4 · Drinking hot coffee with milk · 4 vectors
+###### Drinking hot coffee with milk · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -152,12 +120,9 @@ with milk, each containing four vectors.
 | `MILK-HOT-3` | ⟦I sipped a cup of hot coffee with milk.⟧ |
 | `MILK-HOT-4` | ⟦I sipped a hot, milky coffee.⟧ |
 
-##### Rung 3 · Drinking cold coffee · 8 vectors
+##### Drinking cold coffee · R3 · 8 vectors
 
-Its immediate children are Drinking iced coffee and Drinking cold-brew coffee,
-each containing four vectors.
-
-###### Rung 4 · Drinking iced coffee · 4 vectors
+###### Drinking iced coffee · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -166,7 +131,7 @@ each containing four vectors.
 | `ICED-COFFEE-3` | ⟦I drank cold coffee with ice cubes in it.⟧ |
 | `ICED-COFFEE-4` | ⟦I drank a chilled cup of iced coffee.⟧ |
 
-###### Rung 4 · Drinking cold-brew coffee · 4 vectors
+###### Drinking cold-brew coffee · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -175,26 +140,13 @@ each containing four vectors.
 | `COLD-BREW-3` | ⟦I sipped a cold-brew coffee.⟧ |
 | `COLD-BREW-4` | ⟦I chose cold-brew coffee as my drink.⟧ |
 
-### Rung 1 · Working with photos · 32 vectors
+### Working with photos · R1 · 32 vectors
 
-Its immediate children are:
+#### Making and editing photos · R2 · 16 vectors
 
-- Making and editing photos · 16 vectors
-- Storing and sharing photos · 16 vectors
+##### Taking photos · R3 · 8 vectors
 
-#### Rung 2 · Making and editing photos · 16 vectors
-
-Its immediate children are:
-
-- Taking photos · 8 vectors
-- Editing photos · 8 vectors
-
-##### Rung 3 · Taking photos · 8 vectors
-
-Its immediate children are Taking portraits and Taking landscape photos, each
-containing four vectors.
-
-###### Rung 4 · Taking portraits · 4 vectors
+###### Taking portraits · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -203,7 +155,7 @@ containing four vectors.
 | `PORTRAIT-3` | ⟦I photographed someone for a portrait.⟧ |
 | `PORTRAIT-4` | ⟦The photo I took was a portrait of a person.⟧ |
 
-###### Rung 4 · Taking landscape photos · 4 vectors
+###### Taking landscape photos · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -212,12 +164,9 @@ containing four vectors.
 | `LANDSCAPE-3` | ⟦I photographed the natural scenery as a landscape.⟧ |
 | `LANDSCAPE-4` | ⟦The photo I took showed a broad landscape.⟧ |
 
-##### Rung 3 · Editing photos · 8 vectors
+##### Editing photos · R3 · 8 vectors
 
-Its immediate children are Cropping photos and Adjusting photo colors, each
-containing four vectors.
-
-###### Rung 4 · Cropping photos · 4 vectors
+###### Cropping photos · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -226,7 +175,7 @@ containing four vectors.
 | `CROP-PHOTO-3` | ⟦Cropping removed the unwanted edges of the picture.⟧ |
 | `CROP-PHOTO-4` | ⟦I reframed an image by cutting away its outside area.⟧ |
 
-###### Rung 4 · Adjusting photo colors · 4 vectors
+###### Adjusting photo colors · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -235,19 +184,11 @@ containing four vectors.
 | `COLOR-ADJUST-3` | ⟦Changing the color settings altered the picture's appearance.⟧ |
 | `COLOR-ADJUST-4` | ⟦I corrected the colors while editing an image.⟧ |
 
-#### Rung 2 · Storing and sharing photos · 16 vectors
+#### Storing and sharing photos · R2 · 16 vectors
 
-Its immediate children are:
+##### Backing up photos · R3 · 8 vectors
 
-- Backing up photos · 8 vectors
-- Sharing photos · 8 vectors
-
-##### Rung 3 · Backing up photos · 8 vectors
-
-Its immediate children are Local photo backups and Cloud photo backups, each
-containing four vectors.
-
-###### Rung 4 · Local photo backups · 4 vectors
+###### Local photo backups · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -256,7 +197,7 @@ containing four vectors.
 | `LOCAL-BACKUP-3` | ⟦I copied my photo library to a locally attached disk for recovery.⟧ |
 | `LOCAL-BACKUP-4` | ⟦A local USB storage device stores my photo backup.⟧ |
 
-###### Rung 4 · Cloud photo backups · 4 vectors
+###### Cloud photo backups · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -265,12 +206,9 @@ containing four vectors.
 | `CLOUD-BACKUP-3` | ⟦I copied my photo library to remote online storage for recovery.⟧ |
 | `CLOUD-BACKUP-4` | ⟦An off-site cloud service stores my photo backup.⟧ |
 
-##### Rung 3 · Sharing photos · 8 vectors
+##### Sharing photos · R3 · 8 vectors
 
-Its immediate children are Sharing photos by email and Sharing photos by link,
-each containing four vectors.
-
-###### Rung 4 · Sharing photos by email · 4 vectors
+###### Sharing photos by email · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -279,7 +217,7 @@ each containing four vectors.
 | `EMAIL-SHARE-3` | ⟦An email attachment carried the photo I shared.⟧ |
 | `EMAIL-SHARE-4` | ⟦I sent someone a picture through email.⟧ |
 
-###### Rung 4 · Sharing photos by link · 4 vectors
+###### Sharing photos by link · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -288,26 +226,13 @@ each containing four vectors.
 | `LINK-SHARE-3` | ⟦A shared link opened the online photo.⟧ |
 | `LINK-SHARE-4` | ⟦I sent someone a link for viewing my picture.⟧ |
 
-### Rung 1 · Eating produce · 32 vectors
+### Eating produce · R1 · 32 vectors
 
-Its immediate children are:
+#### Eating fruit · R2 · 16 vectors
 
-- Eating fruit · 16 vectors
-- Eating vegetables · 16 vectors
+##### Eating apples · R3 · 8 vectors
 
-#### Rung 2 · Eating fruit · 16 vectors
-
-Its immediate children are:
-
-- Eating apples · 8 vectors
-- Eating citrus fruit · 8 vectors
-
-##### Rung 3 · Eating apples · 8 vectors
-
-Its immediate children are Eating red apples and Eating green apples, each
-containing four vectors.
-
-###### Rung 4 · Eating red apples · 4 vectors
+###### Eating red apples · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -316,7 +241,7 @@ containing four vectors.
 | `RED-APPLE-3` | ⟦My snack was a red apple.⟧ |
 | `RED-APPLE-4` | ⟦A red apple was what I ate.⟧ |
 
-###### Rung 4 · Eating green apples · 4 vectors
+###### Eating green apples · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -325,12 +250,9 @@ containing four vectors.
 | `GREEN-APPLE-3` | ⟦My snack was a green apple.⟧ |
 | `GREEN-APPLE-4` | ⟦A green apple was what I ate.⟧ |
 
-##### Rung 3 · Eating citrus fruit · 8 vectors
+##### Eating citrus fruit · R3 · 8 vectors
 
-Its immediate children are Eating oranges and Eating grapefruit, each
-containing four vectors.
-
-###### Rung 4 · Eating oranges · 4 vectors
+###### Eating oranges · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -339,7 +261,7 @@ containing four vectors.
 | `ORANGE-3` | ⟦My snack was an orange.⟧ |
 | `ORANGE-4` | ⟦An orange was what I ate.⟧ |
 
-###### Rung 4 · Eating grapefruit · 4 vectors
+###### Eating grapefruit · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -348,19 +270,11 @@ containing four vectors.
 | `GRAPEFRUIT-3` | ⟦My snack was a grapefruit.⟧ |
 | `GRAPEFRUIT-4` | ⟦A grapefruit was what I ate.⟧ |
 
-#### Rung 2 · Eating vegetables · 16 vectors
+#### Eating vegetables · R2 · 16 vectors
 
-Its immediate children are:
+##### Eating carrots · R3 · 8 vectors
 
-- Eating carrots · 8 vectors
-- Eating leafy greens · 8 vectors
-
-##### Rung 3 · Eating carrots · 8 vectors
-
-Its immediate children are Eating raw carrots and Eating cooked carrots, each
-containing four vectors.
-
-###### Rung 4 · Eating raw carrots · 4 vectors
+###### Eating raw carrots · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -369,7 +283,7 @@ containing four vectors.
 | `RAW-CARROT-3` | ⟦I crunched on a fresh raw carrot.⟧ |
 | `RAW-CARROT-4` | ⟦I ate a carrot without cooking it.⟧ |
 
-###### Rung 4 · Eating cooked carrots · 4 vectors
+###### Eating cooked carrots · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -378,12 +292,9 @@ containing four vectors.
 | `COOKED-CARROT-3` | ⟦I had a soft cooked carrot with my meal.⟧ |
 | `COOKED-CARROT-4` | ⟦I ate a carrot that had been cooked.⟧ |
 
-##### Rung 3 · Eating leafy greens · 8 vectors
+##### Eating leafy greens · R3 · 8 vectors
 
-Its immediate children are Eating lettuce and Eating spinach, each containing
-four vectors.
-
-###### Rung 4 · Eating lettuce · 4 vectors
+###### Eating lettuce · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -392,7 +303,7 @@ four vectors.
 | `LETTUCE-3` | ⟦My food included crisp lettuce.⟧ |
 | `LETTUCE-4` | ⟦Lettuce leaves were what I ate.⟧ |
 
-###### Rung 4 · Eating spinach · 4 vectors
+###### Eating spinach · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -401,26 +312,13 @@ four vectors.
 | `SPINACH-3` | ⟦My food included leafy spinach.⟧ |
 | `SPINACH-4` | ⟦Spinach leaves were what I ate.⟧ |
 
-### Rung 1 · Consuming media · 32 vectors
+### Consuming media · R1 · 32 vectors
 
-Its immediate children are:
+#### Reading · R2 · 16 vectors
 
-- Reading · 16 vectors
-- Listening · 16 vectors
+##### Reading books · R3 · 8 vectors
 
-#### Rung 2 · Reading · 16 vectors
-
-Its immediate children are:
-
-- Reading books · 8 vectors
-- Reading magazines · 8 vectors
-
-##### Rung 3 · Reading books · 8 vectors
-
-Its immediate children are Reading fiction books and Reading nonfiction books,
-each containing four vectors.
-
-###### Rung 4 · Reading fiction books · 4 vectors
+###### Reading fiction books · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -429,7 +327,7 @@ each containing four vectors.
 | `FICTION-BOOK-3` | ⟦My reading was a fictional book.⟧ |
 | `FICTION-BOOK-4` | ⟦I read a book that told an invented story.⟧ |
 
-###### Rung 4 · Reading nonfiction books · 4 vectors
+###### Reading nonfiction books · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -438,12 +336,9 @@ each containing four vectors.
 | `NONFICTION-BOOK-3` | ⟦My reading was a work of nonfiction.⟧ |
 | `NONFICTION-BOOK-4` | ⟦I read a book about real events and facts.⟧ |
 
-##### Rung 3 · Reading magazines · 8 vectors
+##### Reading magazines · R3 · 8 vectors
 
-Its immediate children are Reading print magazines and Reading digital
-magazines, each containing four vectors.
-
-###### Rung 4 · Reading print magazines · 4 vectors
+###### Reading print magazines · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -452,7 +347,7 @@ magazines, each containing four vectors.
 | `PRINT-MAGAZINE-3` | ⟦My reading was a physical magazine issue.⟧ |
 | `PRINT-MAGAZINE-4` | ⟦I read articles in a magazine printed on paper.⟧ |
 
-###### Rung 4 · Reading digital magazines · 4 vectors
+###### Reading digital magazines · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -461,19 +356,11 @@ magazines, each containing four vectors.
 | `DIGITAL-MAGAZINE-3` | ⟦My reading was an online magazine edition.⟧ |
 | `DIGITAL-MAGAZINE-4` | ⟦I read magazine articles in a digital publication.⟧ |
 
-#### Rung 2 · Listening · 16 vectors
+#### Listening · R2 · 16 vectors
 
-Its immediate children are:
+##### Listening to podcasts · R3 · 8 vectors
 
-- Listening to podcasts · 8 vectors
-- Listening to audiobooks · 8 vectors
-
-##### Rung 3 · Listening to podcasts · 8 vectors
-
-Its immediate children are Listening to news podcasts and Listening to
-interview podcasts, each containing four vectors.
-
-###### Rung 4 · Listening to news podcasts · 4 vectors
+###### Listening to news podcasts · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -482,7 +369,7 @@ interview podcasts, each containing four vectors.
 | `NEWS-PODCAST-3` | ⟦My listening choice was a news podcast.⟧ |
 | `NEWS-PODCAST-4` | ⟦I heard the latest news in a podcast episode.⟧ |
 
-###### Rung 4 · Listening to interview podcasts · 4 vectors
+###### Listening to interview podcasts · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -491,12 +378,9 @@ interview podcasts, each containing four vectors.
 | `INTERVIEW-PODCAST-3` | ⟦My listening choice was a podcast conversation with a guest.⟧ |
 | `INTERVIEW-PODCAST-4` | ⟦I heard a host interview someone on a podcast.⟧ |
 
-##### Rung 3 · Listening to audiobooks · 8 vectors
+##### Listening to audiobooks · R3 · 8 vectors
 
-Its immediate children are Listening to fiction audiobooks and Listening to
-nonfiction audiobooks, each containing four vectors.
-
-###### Rung 4 · Listening to fiction audiobooks · 4 vectors
+###### Listening to fiction audiobooks · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -505,7 +389,7 @@ nonfiction audiobooks, each containing four vectors.
 | `FICTION-AUDIOBOOK-3` | ⟦My listening was an audiobook of a novel.⟧ |
 | `FICTION-AUDIOBOOK-4` | ⟦I played an audiobook that told an invented story.⟧ |
 
-###### Rung 4 · Listening to nonfiction audiobooks · 4 vectors
+###### Listening to nonfiction audiobooks · R4 · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -516,10 +400,10 @@ nonfiction audiobooks, each containing four vectors.
 
 ## Scoring the corpus
 
-The nested structure above is the complete expected hierarchy. Every named
-heading is one required group; its vectors are exactly the vectors beneath that
-heading. Scoring uses those subject names directly rather than separate
-aliases.
+The nested structure from R0 through R4 is the complete expected hierarchy.
+Every subject heading is one required group; its vectors are exactly the
+vectors beneath that heading. Scoring uses those subject names directly rather
+than separate aliases.
 
 A returned segment **crosses** a boundary when it contains vectors from two
 groups that the rung keeps separate.
