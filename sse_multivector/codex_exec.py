@@ -66,6 +66,17 @@ TAKEAWAY_SCHEMA: dict[str, object] = {
     "required": ["takeaways"],
     "additionalProperties": False,
 }
+SUBJECT_SCHEMA: dict[str, object] = {
+    "type": "object",
+    "properties": {
+        "subjects": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+        }
+    },
+    "required": ["subjects"],
+    "additionalProperties": False,
+}
 MASK_SCHEMA: dict[str, object] = {
     "type": "object",
     "properties": {
@@ -126,6 +137,14 @@ class PipelineRunOutcome:
     new_jobs: int
     completed_notes: int
     completed_takeaways: int
+    output: dict[str, object] | None
+
+
+@dataclass(frozen=True)
+class SubjectRunOutcome:
+    complete: bool
+    new_jobs: int
+    completed_notes: int
     output: dict[str, object] | None
 
 
@@ -602,6 +621,55 @@ class RunnerConfig:
 
 
 @dataclass(frozen=True)
+class SubjectRunnerConfig:
+    config_path: Path
+    codex_binary: Path
+    codex_home: Path
+    input_path: Path
+    run_directory: Path
+    subject: StageConfig
+
+    @classmethod
+    def load(cls, path: Path) -> "SubjectRunnerConfig":
+        config_path = path.expanduser().resolve()
+        base = config_path.parent
+        value = _expect_object(_load_json(config_path, "config"), "config")
+        _expect_fields(
+            value,
+            "config",
+            {
+                "schema_version",
+                "codex_binary",
+                "codex_home",
+                "input_path",
+                "run_directory",
+                "subject",
+            },
+        )
+        schema_version = value["schema_version"]
+        if (
+            isinstance(schema_version, bool)
+            or not isinstance(schema_version, int)
+            or schema_version != SCHEMA_VERSION
+        ):
+            raise RunnerError("unsupported subject config schema version")
+        config = cls(
+            config_path=config_path,
+            codex_binary=_resolve_executable(
+                value["codex_binary"], "codex_binary", base
+            ),
+            codex_home=_resolve_path(value["codex_home"], "codex_home", base),
+            input_path=_resolve_path(value["input_path"], "input_path", base),
+            run_directory=_resolve_path(
+                value["run_directory"], "run_directory", base
+            ),
+            subject=StageConfig.load(value["subject"], "subject", base),
+        )
+        _validate_codex_home(config.codex_home)
+        return config
+
+
+@dataclass(frozen=True)
 class Note:
     note_id: str
     text: str
@@ -704,7 +772,9 @@ def _load_notes(path: Path) -> tuple[Note, ...]:
     return tuple(notes)
 
 
-def _codex_version(config: RunnerConfig | PromptRunnerConfig) -> str:
+def _codex_version(
+    config: RunnerConfig | SubjectRunnerConfig | PromptRunnerConfig,
+) -> str:
     completed = subprocess.run(
         [str(config.codex_binary), "--version"],
         check=False,
@@ -816,6 +886,28 @@ def _build_prompt_manifest(
             {"prompt_id": prompt.prompt_id, "text": prompt.text}
             for prompt in config.prompts
         ],
+        "isolation": _isolation_manifest(),
+    }
+
+
+def _build_subject_manifest(
+    config: SubjectRunnerConfig,
+    codex_version: str,
+) -> dict[str, object]:
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "mode": "atomic_subject_generation",
+        "wrapper_sha256": _sha256_file(Path(__file__).resolve()),
+        "codex_binary": str(config.codex_binary),
+        "codex_version": codex_version,
+        "codex_home": str(config.codex_home),
+        "input_path": str(config.input_path),
+        "input_sha256": _sha256_file(config.input_path),
+        "subject_envelope_version": TAKEAWAY_ENVELOPE_VERSION,
+        "subject_input_normalization_version": (
+            TAKEAWAY_INPUT_NORMALIZATION_VERSION
+        ),
+        "subject": _stage_manifest(config.subject, SUBJECT_SCHEMA),
         "isolation": _isolation_manifest(),
     }
 
@@ -1036,6 +1128,18 @@ def _prepare_run_directory(
             config.run_directory / "prominence-output-schema.json",
             _canonical_json_bytes(PROMINENCE_SCHEMA),
         )
+    return prepared
+
+
+def _prepare_subject_run_directory(
+    config: SubjectRunnerConfig,
+    manifest: dict[str, object],
+) -> PreparedManifest:
+    prepared = _prepare_manifest_directory(config.run_directory, manifest)
+    _atomic_write(
+        config.run_directory / "subject-output-schema.json",
+        _canonical_json_bytes(SUBJECT_SCHEMA),
+    )
     return prepared
 
 
@@ -1542,8 +1646,8 @@ def _validate_result_items(
     note_text: str,
     prompt_version: str,
 ) -> list[str] | int:
-    if stage_name == "takeaway":
-        return _validate_string_array(value, "takeaway", allow_empty=True)
+    if stage_name in {"takeaway", "subject"}:
+        return _validate_string_array(value, stage_name, allow_empty=True)
     if stage_name == "prominence":
         if isinstance(value, bool) or not isinstance(value, int):
             raise RunnerError("codex prominence response must be an integer")
@@ -1581,6 +1685,7 @@ def _validate_response(
     response_object = _expect_object(value, f"codex {stage_name} response")
     field = {
         "takeaway": "takeaways",
+        "subject": "subjects",
         "prominence": "prominence",
         "mask": "fragments",
     }[stage_name]
@@ -1600,6 +1705,8 @@ def _job_key(
 ) -> str:
     if stage_name == "prompt":
         return f"prompt:{note_id}"
+    if stage_name == "subject":
+        return f"subject:{note_id}"
     if stage_name == "takeaway":
         return f"takeaway:{note_id}"
     if takeaway_index is None:
@@ -1608,7 +1715,7 @@ def _job_key(
 
 
 def _build_exec_argv(
-    config: RunnerConfig | PromptRunnerConfig,
+    config: RunnerConfig | SubjectRunnerConfig | PromptRunnerConfig,
     stage: StageConfig | PromptRunnerConfig,
     workspace: Path,
     schema_path: Path | None,
@@ -1665,7 +1772,7 @@ def _build_exec_argv(
 
 def _run_job(
     *,
-    config: RunnerConfig | PromptRunnerConfig,
+    config: RunnerConfig | SubjectRunnerConfig | PromptRunnerConfig,
     manifest_sha256: str,
     codex_version: str,
     stage_name: str,
@@ -1837,7 +1944,6 @@ def _run_job(
         "job_key": job_key,
         "stage": stage_name,
         "note_id": note.note_id,
-        "takeaway_index": takeaway_index,
         "attempt": attempt,
         "status": "failed" if error_message is not None else "succeeded",
         "model": stage.model,
@@ -1866,6 +1972,8 @@ def _run_job(
         "response": response,
         "error": error_message,
     }
+    if stage_name != "subject":
+        record["takeaway_index"] = takeaway_index
     if retry_reason is not None:
         record["retry_reason"] = retry_reason
     _append_json_line(results_path, record)
@@ -1882,6 +1990,10 @@ def _takeaway_input(text: str) -> str:
 
 
 def _render_takeaway_prompt(prompt: str, note: Note) -> str:
+    return f"{prompt}\n\n<post>\n{_takeaway_input(note.text)}\n</post>"
+
+
+def _render_subject_prompt(prompt: str, note: Note) -> str:
     return f"{prompt}\n\n<post>\n{_takeaway_input(note.text)}\n</post>"
 
 
@@ -2303,6 +2415,117 @@ def run(
             _verify_reuse_source_hashes(config.reuse_source)
 
 
+def _execute_subject_jobs(
+    *,
+    config: SubjectRunnerConfig,
+    notes: tuple[Note, ...],
+    manifest_sha256: str,
+    codex_version: str,
+    results_path: Path,
+    latest: dict[str, dict[str, Any]],
+    retry_failed: bool,
+    execution_wrapper_sha256: str,
+    new_job_budget: NewJobBudget,
+) -> list[dict[str, object]]:
+    output_notes: list[dict[str, object]] = []
+    for note in notes:
+        subjects = _run_job(
+            config=config,
+            manifest_sha256=manifest_sha256,
+            codex_version=codex_version,
+            stage_name="subject",
+            stage=config.subject,
+            note=note,
+            takeaway_index=None,
+            prompt=_render_subject_prompt(config.subject.prompt, note),
+            schema_path=config.run_directory / "subject-output-schema.json",
+            schema=SUBJECT_SCHEMA,
+            results_path=results_path,
+            latest=latest,
+            retry_failed=retry_failed,
+            execution_wrapper_sha256=execution_wrapper_sha256,
+            new_job_budget=new_job_budget,
+        )
+        if not isinstance(subjects, list) or not all(
+            isinstance(subject, str) for subject in subjects
+        ):
+            raise AssertionError("subject job returned an invalid response")
+        output_notes.append(
+            {
+                "note_id": note.note_id,
+                "text": note.text,
+                "subjects": [
+                    {"source_index": index, "text": subject}
+                    for index, subject in enumerate(subjects)
+                ],
+            }
+        )
+        new_job_budget.completed_notes += 1
+    return output_notes
+
+
+def run_subjects(
+    config_path: Path,
+    *,
+    retry_failed: bool,
+    max_new_jobs: int | None = None,
+) -> SubjectRunOutcome:
+    if max_new_jobs is not None and max_new_jobs < 1:
+        raise RunnerError("--max-new-jobs must be at least 1")
+    config = SubjectRunnerConfig.load(config_path)
+    notes = _load_notes(config.input_path)
+    _prepare_codex_home(config.codex_home)
+    _validate_file_credentials(config.codex_home)
+    codex_version = _codex_version(config)
+    manifest = _build_subject_manifest(config, codex_version)
+    prepared = _prepare_subject_run_directory(config, manifest)
+    manifest_sha256 = prepared.manifest_sha256
+    results_path = config.run_directory / "results.jsonl"
+    latest = _load_latest_results(
+        results_path,
+        manifest_sha256,
+        prepared.provenance,
+    )
+    (config.run_directory / "output.json").unlink(missing_ok=True)
+    new_job_budget = NewJobBudget(max_new_jobs)
+
+    try:
+        output_notes = _execute_subject_jobs(
+            config=config,
+            notes=notes,
+            manifest_sha256=manifest_sha256,
+            codex_version=codex_version,
+            results_path=results_path,
+            latest=latest,
+            retry_failed=retry_failed,
+            execution_wrapper_sha256=prepared.provenance.active_wrapper_sha256,
+            new_job_budget=new_job_budget,
+        )
+    except NewJobLimitReached:
+        return SubjectRunOutcome(
+            complete=False,
+            new_jobs=new_job_budget.used,
+            completed_notes=new_job_budget.completed_notes,
+            output=None,
+        )
+
+    output: dict[str, object] = {
+        "schema_version": SCHEMA_VERSION,
+        "manifest_sha256": manifest_sha256,
+        "notes": output_notes,
+    }
+    _atomic_write(
+        config.run_directory / "output.json",
+        _canonical_json_bytes(output),
+    )
+    return SubjectRunOutcome(
+        complete=True,
+        new_jobs=new_job_budget.used,
+        completed_notes=new_job_budget.completed_notes,
+        output=output,
+    )
+
+
 def run_prompts(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
     config = PromptRunnerConfig.load(config_path)
     _prepare_codex_home(config.codex_home)
@@ -2464,6 +2687,20 @@ def _argument_parser() -> argparse.ArgumentParser:
         "--runner-upgrade-reason",
         help="audit reason for resuming an existing run with changed wrapper code",
     )
+    subjects_parser = subcommands.add_parser(
+        "subjects", help="generate atomic subjects without generating masks"
+    )
+    subjects_parser.add_argument("config", type=Path)
+    subjects_parser.add_argument(
+        "--retry-failed",
+        action="store_true",
+        help="explicitly retry the latest failed attempt for each failed subject job",
+    )
+    subjects_parser.add_argument(
+        "--max-new-jobs",
+        type=int,
+        help="pause successfully after spawning at most this many uncached jobs",
+    )
     prompt_parser = subcommands.add_parser(
         "prompt", help="run one direct prompt or a preserved prompt batch"
     )
@@ -2532,6 +2769,31 @@ def main(arguments: Sequence[str] | None = None) -> int:
                 )
             output = run_prompts(parsed.config, retry_failed=parsed.retry_failed)
             print(json.dumps({"prompts": len(output["responses"])}, sort_keys=True))
+            return 0
+        if parsed.command == "subjects":
+            outcome = run_subjects(
+                parsed.config,
+                retry_failed=parsed.retry_failed,
+                max_new_jobs=parsed.max_new_jobs,
+            )
+            status: dict[str, object] = {}
+            if parsed.max_new_jobs is not None:
+                status.update(
+                    {
+                        "complete": outcome.complete,
+                        "new_jobs": outcome.new_jobs,
+                        "completed_notes": outcome.completed_notes,
+                    }
+                )
+            if outcome.output is not None:
+                notes = outcome.output["notes"]
+                if not isinstance(notes, list):
+                    raise AssertionError("subject output contains invalid notes")
+                status["notes"] = len(notes)
+                status["subjects"] = sum(
+                    len(note["subjects"]) for note in notes
+                )
+            print(json.dumps(status, sort_keys=True))
             return 0
         if (parsed.retry_job is None) != (parsed.retry_reason is None):
             raise RunnerError("--retry-job and --retry-reason must be used together")

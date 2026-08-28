@@ -7,7 +7,7 @@ use std::process::ExitCode;
 use oracle_mvp::reference_tui::ReferenceTerminal;
 use oracle_mvp::sse_mask_review::{
     PromptReviewRunOutcome, ReviewStage, SubjectMaskReviewRunOutcome,
-    load_verified_subject_mask_proposal, run_subject_mask_prompt_review, run_subject_mask_review,
+    load_verified_subject_mask_proposal, run_atomic_subject_prompt_review, run_subject_mask_review,
 };
 
 const USAGE: &str = "usage: sse-mask-review \
@@ -35,19 +35,21 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             );
         }
         let mut terminal = ReferenceTerminal::new()?;
-        let outcome = run_subject_mask_prompt_review(generation_run, session, &mut terminal)?;
+        let outcome = run_atomic_subject_prompt_review(generation_run, session, &mut terminal)?;
         drop(terminal);
         match outcome {
-            PromptReviewRunOutcome::Paused => println!("SSE prompt review paused safely"),
+            PromptReviewRunOutcome::Paused => {
+                println!("SSE atomic-subject prompt review paused safely")
+            }
             PromptReviewRunOutcome::Completed {
-                pairs,
+                subjects,
                 subject_lists,
             } => println!(
-                "SSE prompt review complete: pairs {} approved, {} rejected, {} skipped; \
+                "SSE atomic-subject prompt review complete: subjects {} approved, {} rejected, {} skipped; \
                  subject lists {} approved, {} rejected, {} skipped",
-                pairs.approved,
-                pairs.rejected,
-                pairs.skipped,
+                subjects.approved,
+                subjects.rejected,
+                subjects.skipped,
                 subject_lists.approved,
                 subject_lists.rejected,
                 subject_lists.skipped,

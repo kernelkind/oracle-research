@@ -200,9 +200,9 @@ pub struct VerifiedSubjectMaskProposal {
 }
 
 #[derive(Clone, Debug)]
-struct VerifiedPromptReviewRun {
+struct VerifiedAtomicSubjectReviewRun {
     identity_sha256: String,
-    notes: Vec<VerifiedNoteSubjects>,
+    items: Vec<VerifiedPromptReviewItem>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -221,18 +221,18 @@ struct PromptGenerationStage {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct PromptGenerationManifest {
+struct AtomicSubjectGenerationManifest {
     schema_version: u32,
+    mode: String,
     wrapper_sha256: String,
     codex_binary: String,
     codex_version: String,
     codex_home: String,
     input_path: String,
     input_sha256: String,
-    takeaway_envelope_version: String,
-    takeaway_input_normalization_version: String,
-    takeaway: PromptGenerationStage,
-    mask: PromptGenerationStage,
+    subject_envelope_version: String,
+    subject_input_normalization_version: String,
+    subject: PromptGenerationStage,
     isolation: serde_json::Value,
 }
 
@@ -252,24 +252,25 @@ struct PromptGenerationInputNote {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct PromptGenerationOutput {
+struct AtomicSubjectGenerationOutput {
     schema_version: u32,
     manifest_sha256: String,
-    notes: Vec<PromptGenerationOutputNote>,
+    notes: Vec<AtomicSubjectGenerationOutputNote>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct PromptGenerationOutputNote {
+struct AtomicSubjectGenerationOutputNote {
     note_id: String,
-    takeaways: Vec<PromptGenerationOutputSubject>,
+    text: String,
+    subjects: Vec<AtomicSubjectGenerationOutputSubject>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct PromptGenerationOutputSubject {
+struct AtomicSubjectGenerationOutputSubject {
+    source_index: usize,
     text: String,
-    fragments: Vec<String>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -279,7 +280,6 @@ struct PromptGenerationResult {
     job_key: String,
     stage: String,
     note_id: String,
-    takeaway_index: Option<usize>,
     attempt: u32,
     status: String,
     wrapper_sha256: String,
@@ -355,14 +355,18 @@ impl VerifiedSubjectMaskProposal {
     }
 }
 
-impl VerifiedPromptReviewRun {
-    fn note_count(&self) -> usize {
-        self.notes.len()
-    }
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum PromptReviewItemKind {
+    Subject,
+    SubjectList,
+}
 
-    fn subject_count(&self) -> usize {
-        self.notes.iter().map(|note| note.subjects.len()).sum()
-    }
+#[derive(Clone, Debug)]
+struct VerifiedPromptReviewItem {
+    item_id: String,
+    item_sha256: String,
+    kind: PromptReviewItemKind,
+    screen: ApprovalScreen,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -443,7 +447,7 @@ pub enum SubjectMaskReviewRunOutcome {
 pub enum PromptReviewRunOutcome {
     Paused,
     Completed {
-        pairs: PromptReviewCounts,
+        subjects: PromptReviewCounts,
         subject_lists: PromptReviewCounts,
     },
 }
@@ -510,26 +514,10 @@ enum PromptReviewStatus {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(deny_unknown_fields)]
 struct PromptReviewItemState {
+    item_id: String,
     item_sha256: String,
     status: PromptReviewStatus,
     comment: String,
-}
-
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[serde(deny_unknown_fields)]
-struct PromptReviewPairState {
-    subject_id: String,
-    item_sha256: String,
-    status: PromptReviewStatus,
-    comment: String,
-}
-
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[serde(deny_unknown_fields)]
-struct PromptReviewNoteState {
-    note_id: String,
-    pairs: Vec<PromptReviewPairState>,
-    subject_list: PromptReviewItemState,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -538,15 +526,13 @@ struct PromptReviewSession {
     schema_version: u32,
     review_protocol: String,
     generation_run_sha256: String,
-    notes: Vec<PromptReviewNoteState>,
+    items: Vec<PromptReviewItemState>,
 }
 
 const PROMPT_REVIEW_SESSION_SCHEMA_VERSION: u32 = 1;
-const PROMPT_REVIEW_PROTOCOL: &str = "atomic-subject-pair-review-v1";
-const TAKEAWAY_RESPONSE_SCHEMA_SHA256: &str =
-    "81840eb6f10337de473a8ba0698b7549107857321deb1fc59d6e1c9e10fceb90";
-const MASK_RESPONSE_SCHEMA_SHA256: &str =
-    "8a6b8dbcba24d155a62f55d30a5bd038c0144f99fa4af9c3d72dcb5541dd3b43";
+const PROMPT_REVIEW_PROTOCOL: &str = "atomic-subject-review-v1";
+const SUBJECT_RESPONSE_SCHEMA_SHA256: &str =
+    "ffa0aa2d4a52a1b30f41f0a1761e455471a5127c0e20d74aaeea575a0df2226a";
 
 pub fn load_verified_subject_mask_proposal(
     proposal_path: impl AsRef<Path>,
@@ -773,14 +759,18 @@ pub fn run_subject_mask_review(
     Ok(SubjectMaskReviewRunOutcome::Approved)
 }
 
-fn load_verified_prompt_review_run(run_directory: &Path) -> Result<VerifiedPromptReviewRun> {
+fn load_verified_atomic_subject_review_run(
+    run_directory: &Path,
+) -> Result<VerifiedAtomicSubjectReviewRun> {
     if run_directory.join("runner-upgrades.jsonl").exists() {
-        return invalid("prompt review requires a fresh generation run without runner upgrades");
+        return invalid(
+            "subject prompt review requires a fresh generation run without runner upgrades",
+        );
     }
     let manifest_path = run_directory.join("manifest.json");
-    let (manifest, manifest_sha256): (PromptGenerationManifest, String) =
+    let (manifest, manifest_sha256): (AtomicSubjectGenerationManifest, String) =
         load_json_snapshot(&manifest_path)?;
-    validate_prompt_generation_manifest(&manifest)?;
+    validate_atomic_subject_generation_manifest(&manifest)?;
 
     let input_path = resolve_relative(&manifest_path, &manifest.input_path);
     let (input, input_sha256): (PromptGenerationInput, String) = load_json_snapshot(&input_path)?;
@@ -795,13 +785,13 @@ fn load_verified_prompt_review_run(run_directory: &Path) -> Result<VerifiedPromp
     }
 
     let output_path = run_directory.join("output.json");
-    let (output, output_sha256): (PromptGenerationOutput, String) =
+    let (output, output_sha256): (AtomicSubjectGenerationOutput, String) =
         load_json_snapshot(&output_path)?;
     if output.schema_version != 1 || output.manifest_sha256 != manifest_sha256 {
-        return invalid("prompt generation output does not match its manifest");
+        return invalid("subject generation output does not match its manifest");
     }
     if output.notes.len() != input.notes.len() {
-        return invalid("prompt generation output does not match its input note count");
+        return invalid("subject generation output does not match its input note count");
     }
 
     let results_path = run_directory.join("results.jsonl");
@@ -814,127 +804,6 @@ fn load_verified_prompt_review_run(run_directory: &Path) -> Result<VerifiedPromp
         &input,
     )?;
 
-    let mut seen_note_ids = BTreeSet::<String>::new();
-    let mut seen_subject_ids = BTreeSet::<String>::new();
-    let mut notes = Vec::with_capacity(input.notes.len());
-    for (note_index, (input_note, output_note)) in input.notes.iter().zip(&output.notes).enumerate()
-    {
-        if input_note.note_id.trim().is_empty()
-            || input_note.text.trim().is_empty()
-            || !seen_note_ids.insert(input_note.note_id.clone())
-        {
-            return invalid(format!(
-                "prompt generation input note {} has an invalid or duplicate identity",
-                note_index + 1
-            ));
-        }
-        if output_note.note_id != input_note.note_id {
-            return invalid(format!(
-                "prompt generation output note {} does not match the input order",
-                note_index + 1
-            ));
-        }
-
-        let labels = output_note
-            .takeaways
-            .iter()
-            .map(|subject| subject.text.clone())
-            .collect::<Vec<_>>();
-        let takeaway_key = format!("takeaway:{}", input_note.note_id);
-        let takeaway_result = take_generation_result(&mut results, &takeaway_key)?;
-        let rendered_takeaway_prompt =
-            render_takeaway_prompt(&manifest.takeaway.prompt, &input_note.text);
-        validate_generation_result(
-            &takeaway_result,
-            &manifest,
-            &manifest_sha256,
-            &takeaway_key,
-            "takeaway",
-            &input_note.note_id,
-            None,
-            &manifest.takeaway,
-            &rendered_takeaway_prompt,
-            &serde_json::to_value(&labels).map_err(|source| Error::Manifest {
-                operation: "encode",
-                path: output_path.clone(),
-                source,
-            })?,
-        )?;
-
-        let mut subjects = Vec::with_capacity(output_note.takeaways.len());
-        for (subject_index, generated) in output_note.takeaways.iter().enumerate() {
-            if generated.text.trim().is_empty() {
-                return invalid(format!(
-                    "prompt generation output note {} subject {} is empty",
-                    input_note.note_id,
-                    subject_index + 1
-                ));
-            }
-            let mask_key = format!("mask:{}:{subject_index}", input_note.note_id);
-            let mask_result = take_generation_result(&mut results, &mask_key)?;
-            let rendered_mask_prompt =
-                render_mask_prompt(&manifest.mask.prompt, &input_note.text, &generated.text);
-            validate_generation_result(
-                &mask_result,
-                &manifest,
-                &manifest_sha256,
-                &mask_key,
-                "mask",
-                &input_note.note_id,
-                Some(subject_index),
-                &manifest.mask,
-                &rendered_mask_prompt,
-                &serde_json::to_value(&generated.fragments).map_err(|source| Error::Manifest {
-                    operation: "encode",
-                    path: output_path.clone(),
-                    source,
-                })?,
-            )?;
-
-            let fragments = prompt_review_fragments(&input_note.text, &generated.fragments)?;
-            let subject_identity = value_sha256(&(
-                manifest_sha256.as_str(),
-                input_note.note_id.as_str(),
-                subject_index,
-                generated.text.as_str(),
-                &fragments,
-            ))?;
-            let subject_id = subject_identity[..16].to_owned();
-            if !seen_subject_ids.insert(subject_id.clone()) {
-                return invalid("generated prompt-review subject identities collided");
-            }
-            let proposal = ProposedSubjectMask {
-                subject_id,
-                label: generated.text.clone(),
-                status: MaskGenerationStatus::Masked,
-                fragments,
-            };
-            let spans = resolve_fragments(&proposal, &input_note.text, &input_note.note_id)?;
-            subjects.push(VerifiedSubjectMask { proposal, spans });
-        }
-        notes.push(VerifiedNoteSubjects {
-            note_id: input_note.note_id.clone(),
-            note: SourceNote {
-                pubkey: String::new(),
-                content: input_note.text.clone(),
-            },
-            subjects,
-        });
-    }
-    let current_subject_counts = output
-        .notes
-        .iter()
-        .map(|note| (note.note_id.as_str(), note.takeaways.len()))
-        .collect::<BTreeMap<_, _>>();
-    for result in results.values() {
-        validate_obsolete_mask_result(
-            result,
-            &manifest,
-            &manifest_sha256,
-            &current_subject_counts,
-        )?;
-    }
-
     let identity_sha256 = value_sha256(&PromptReviewRunIdentity {
         review_protocol: PROMPT_REVIEW_PROTOCOL,
         manifest_sha256: &manifest_sha256,
@@ -942,15 +811,139 @@ fn load_verified_prompt_review_run(run_directory: &Path) -> Result<VerifiedPromp
         results_sha256: &results_sha256,
         output_sha256: &output_sha256,
     })?;
-    Ok(VerifiedPromptReviewRun {
+    let subject_count = output.notes.iter().map(|note| note.subjects.len()).sum();
+    let mut seen_note_ids = BTreeSet::<String>::new();
+    let mut seen_item_ids = BTreeSet::<String>::new();
+    let mut items = Vec::with_capacity(subject_count + input.notes.len());
+    let mut global_subject_index = 0;
+    for (note_index, (input_note, output_note)) in input.notes.iter().zip(&output.notes).enumerate()
+    {
+        if input_note.note_id.trim().is_empty()
+            || input_note.text.trim().is_empty()
+            || !seen_note_ids.insert(input_note.note_id.clone())
+        {
+            return invalid(format!(
+                "subject generation input note {} has an invalid or duplicate identity",
+                note_index + 1
+            ));
+        }
+        if output_note.note_id != input_note.note_id {
+            return invalid(format!(
+                "subject generation output note {} does not match the input order",
+                note_index + 1
+            ));
+        }
+        if output_note.text != input_note.text {
+            return invalid(format!(
+                "subject generation output note {} does not preserve its source text",
+                note_index + 1
+            ));
+        }
+
+        let labels = output_note
+            .subjects
+            .iter()
+            .map(|subject| subject.text.clone())
+            .collect::<Vec<_>>();
+        let subject_key = format!("subject:{}", input_note.note_id);
+        let subject_result = take_generation_result(&mut results, &subject_key)?;
+        let rendered_subject_prompt =
+            render_subject_prompt(&manifest.subject.prompt, &input_note.text);
+        validate_generation_result(
+            &subject_result,
+            &manifest,
+            &manifest_sha256,
+            &subject_key,
+            &input_note.note_id,
+            &manifest.subject,
+            &rendered_subject_prompt,
+            &serde_json::to_value(&labels).map_err(|source| Error::Manifest {
+                operation: "encode",
+                path: output_path.clone(),
+                source,
+            })?,
+        )?;
+
+        for (subject_index, generated) in output_note.subjects.iter().enumerate() {
+            if generated.text.trim().is_empty() {
+                return invalid(format!(
+                    "subject generation output note {} subject {} is empty",
+                    input_note.note_id,
+                    subject_index + 1
+                ));
+            }
+            if generated.source_index != subject_index {
+                return invalid(format!(
+                    "subject generation output note {} has invalid source index {}",
+                    input_note.note_id, generated.source_index
+                ));
+            }
+            let item_id = format!("subject:{}:{subject_index}", input_note.note_id);
+            if !seen_item_ids.insert(item_id.clone()) {
+                return invalid("generated subject review item identities collided");
+            }
+            let item_sha256 = value_sha256(&(
+                identity_sha256.as_str(),
+                "subject",
+                input_note.note_id.as_str(),
+                input_note.text.as_str(),
+                subject_index,
+                generated.text.as_str(),
+            ))?;
+            items.push(VerifiedPromptReviewItem {
+                item_id,
+                item_sha256,
+                kind: PromptReviewItemKind::Subject,
+                screen: atomic_subject_screen(
+                    note_index,
+                    input.notes.len(),
+                    global_subject_index,
+                    subject_count,
+                    &input_note.text,
+                    &generated.text,
+                ),
+            });
+            global_subject_index += 1;
+        }
+        let item_id = format!("subject-list:{}", input_note.note_id);
+        if !seen_item_ids.insert(item_id.clone()) {
+            return invalid("generated subject-list review item identities collided");
+        }
+        let item_sha256 = value_sha256(&(
+            identity_sha256.as_str(),
+            "subject_list",
+            input_note.note_id.as_str(),
+            input_note.text.as_str(),
+            &labels,
+        ))?;
+        items.push(VerifiedPromptReviewItem {
+            item_id,
+            item_sha256,
+            kind: PromptReviewItemKind::SubjectList,
+            screen: atomic_subject_list_screen(
+                note_index,
+                input.notes.len(),
+                &input_note.text,
+                &labels,
+            ),
+        });
+    }
+    if let Some(unexpected) = results.keys().next() {
+        return invalid(format!(
+            "subject generation ledger contains unexpected latest result `{unexpected}`"
+        ));
+    }
+    Ok(VerifiedAtomicSubjectReviewRun {
         identity_sha256,
-        notes,
+        items,
     })
 }
 
-fn validate_prompt_generation_manifest(manifest: &PromptGenerationManifest) -> Result<()> {
-    if manifest.schema_version != 1 {
-        return invalid("prompt review requires a completed schema-1 two-stage generation run");
+fn validate_atomic_subject_generation_manifest(
+    manifest: &AtomicSubjectGenerationManifest,
+) -> Result<()> {
+    if manifest.schema_version != 1 || manifest.mode != "atomic_subject_generation" {
+        return invalid("subject prompt review requires an atomic-subject generation run");
     }
     let wrapper_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("sse_multivector")
@@ -962,12 +955,10 @@ fn validate_prompt_generation_manifest(manifest: &PromptGenerationManifest) -> R
         || manifest.codex_version.trim().is_empty()
         || manifest.codex_home.trim().is_empty()
         || manifest.input_path.trim().is_empty()
-        || manifest.takeaway_envelope_version != "xml-post-v1"
-        || manifest.takeaway_input_normalization_version != "remove-long-ascii-nip19-identifiers-v2"
-        || !manifest.mask.prompt.contains("{POST}")
-        || !manifest.mask.prompt.contains("{TAKEAWAY}")
+        || manifest.subject_envelope_version != "xml-post-v1"
+        || manifest.subject_input_normalization_version != "remove-long-ascii-nip19-identifiers-v2"
     {
-        return invalid("prompt generation manifest is incomplete");
+        return invalid("subject generation manifest is incomplete");
     }
     if manifest.isolation != expected_prompt_generation_isolation() {
         return invalid(
@@ -975,16 +966,10 @@ fn validate_prompt_generation_manifest(manifest: &PromptGenerationManifest) -> R
         );
     }
     validate_prompt_generation_stage(
-        &manifest.takeaway,
-        "takeaway",
-        expected_takeaway_response_schema(),
-        TAKEAWAY_RESPONSE_SCHEMA_SHA256,
-    )?;
-    validate_prompt_generation_stage(
-        &manifest.mask,
-        "mask",
-        expected_mask_response_schema(),
-        MASK_RESPONSE_SCHEMA_SHA256,
+        &manifest.subject,
+        "subject",
+        expected_subject_response_schema(),
+        SUBJECT_RESPONSE_SCHEMA_SHA256,
     )?;
     Ok(())
 }
@@ -1046,31 +1031,16 @@ fn expected_prompt_generation_isolation() -> serde_json::Value {
     })
 }
 
-fn expected_takeaway_response_schema() -> serde_json::Value {
+fn expected_subject_response_schema() -> serde_json::Value {
     serde_json::json!({
         "type": "object",
         "properties": {
-            "takeaways": {
+            "subjects": {
                 "type": "array",
                 "items": {"type": "string", "minLength": 1}
             }
         },
-        "required": ["takeaways"],
-        "additionalProperties": false
-    })
-}
-
-fn expected_mask_response_schema() -> serde_json::Value {
-    serde_json::json!({
-        "type": "object",
-        "properties": {
-            "fragments": {
-                "type": "array",
-                "items": {"type": "string", "minLength": 1},
-                "minItems": 1
-            }
-        },
-        "required": ["fragments"],
+        "required": ["subjects"],
         "additionalProperties": false
     })
 }
@@ -1078,7 +1048,7 @@ fn expected_mask_response_schema() -> serde_json::Value {
 fn latest_prompt_generation_results(
     bytes: &[u8],
     path: &Path,
-    manifest: &PromptGenerationManifest,
+    manifest: &AtomicSubjectGenerationManifest,
     manifest_sha256: &str,
     input: &PromptGenerationInput,
 ) -> Result<BTreeMap<String, PromptGenerationResult>> {
@@ -1094,7 +1064,6 @@ fn latest_prompt_generation_results(
         }
     }
     let mut latest = BTreeMap::<String, PromptGenerationResult>::new();
-    let mut successful_takeaways = BTreeMap::<String, Vec<String>>::new();
     let lines = bytes.split(|byte| *byte == b'\n').collect::<Vec<_>>();
     for (index, line) in lines.iter().enumerate() {
         if line.is_empty() {
@@ -1138,55 +1107,14 @@ fn latest_prompt_generation_results(
                 result.job_key
             ));
         };
-        let (stage, rendered_prompt) = match result.stage.as_str() {
-            "takeaway" => {
-                if result.takeaway_index.is_some()
-                    || result.job_key != format!("takeaway:{}", result.note_id)
-                {
-                    return invalid(format!(
-                        "prompt generation result `{}` has an invalid takeaway identity",
-                        result.job_key
-                    ));
-                }
-                (
-                    &manifest.takeaway,
-                    render_takeaway_prompt(&manifest.takeaway.prompt, note_text),
-                )
-            }
-            "mask" => {
-                let Some(takeaway_index) = result.takeaway_index else {
-                    return invalid(format!(
-                        "prompt generation result `{}` has no mask index",
-                        result.job_key
-                    ));
-                };
-                if result.job_key != format!("mask:{}:{takeaway_index}", result.note_id) {
-                    return invalid(format!(
-                        "prompt generation result `{}` has an invalid mask identity",
-                        result.job_key
-                    ));
-                }
-                let takeaway = successful_takeaways
-                    .get(result.note_id.as_str())
-                    .and_then(|takeaways| takeaways.get(takeaway_index))
-                    .ok_or_else(|| {
-                        Error::ExperimentState(format!(
-                            "prompt generation result `{}` uses a mask index absent from the preceding successful subject list",
-                            result.job_key
-                        ))
-                    })?;
-                (
-                    &manifest.mask,
-                    render_mask_prompt(&manifest.mask.prompt, note_text, takeaway),
-                )
-            }
-            _ => {
-                return invalid(format!(
-                    "prompt generation result `{}` has an unknown stage",
-                    result.job_key
-                ));
-            }
-        };
+        if result.stage != "subject" || result.job_key != format!("subject:{}", result.note_id) {
+            return invalid(format!(
+                "prompt generation result `{}` has an invalid subject identity",
+                result.job_key
+            ));
+        }
+        let stage = &manifest.subject;
+        let rendered_prompt = render_subject_prompt(&manifest.subject.prompt, note_text);
         if result.wrapper_sha256 != manifest.wrapper_sha256
             || result.codex_version != manifest.codex_version
             || result.model != stage.model
@@ -1201,8 +1129,8 @@ fn latest_prompt_generation_results(
             ));
         }
         if result.status == "succeeded" {
-            validate_result_output(&result, &result.stage, &result.response, &result.job_key)?;
-            let items = result
+            validate_result_output(&result, &result.response, &result.job_key)?;
+            result
                 .response
                 .as_array()
                 .ok_or_else(|| {
@@ -1224,11 +1152,6 @@ fn latest_prompt_generation_results(
                         })
                 })
                 .collect::<Result<Vec<_>>>()?;
-            if result.stage == "takeaway" {
-                successful_takeaways.insert(result.note_id.clone(), items);
-            } else {
-                prompt_review_fragments(note_text, &items)?;
-            }
         } else {
             validate_failed_result_output(&result)?;
         }
@@ -1273,12 +1196,10 @@ fn take_generation_result(
 #[allow(clippy::too_many_arguments)]
 fn validate_generation_result(
     result: &PromptGenerationResult,
-    manifest: &PromptGenerationManifest,
+    manifest: &AtomicSubjectGenerationManifest,
     manifest_sha256: &str,
     job_key: &str,
-    stage_name: &str,
     note_id: &str,
-    takeaway_index: Option<usize>,
     stage: &PromptGenerationStage,
     rendered_prompt: &str,
     expected_response: &serde_json::Value,
@@ -1286,9 +1207,8 @@ fn validate_generation_result(
     if result.schema_version != 1
         || result.manifest_sha256 != manifest_sha256
         || result.job_key != job_key
-        || result.stage != stage_name
+        || result.stage != "subject"
         || result.note_id != note_id
-        || result.takeaway_index != takeaway_index
         || result.status != "succeeded"
         || result.wrapper_sha256 != manifest.wrapper_sha256
         || result.codex_version != manifest.codex_version
@@ -1302,63 +1222,12 @@ fn validate_generation_result(
             "prompt generation output does not match preserved result or rendered prompt `{job_key}`"
         ));
     }
-    validate_result_output(result, stage_name, expected_response, job_key)?;
-    Ok(())
-}
-
-fn validate_obsolete_mask_result(
-    result: &PromptGenerationResult,
-    manifest: &PromptGenerationManifest,
-    manifest_sha256: &str,
-    current_subject_counts: &BTreeMap<&str, usize>,
-) -> Result<()> {
-    let Some(current_count) = current_subject_counts.get(result.note_id.as_str()) else {
-        return invalid(format!(
-            "prompt generation ledger contains unexpected latest result `{}`",
-            result.job_key
-        ));
-    };
-    let Some(takeaway_index) = result.takeaway_index else {
-        return invalid(format!(
-            "prompt generation ledger contains unexpected latest result `{}`",
-            result.job_key
-        ));
-    };
-    if result.job_key != format!("mask:{}:{takeaway_index}", result.note_id)
-        || result.schema_version != 1
-        || result.manifest_sha256 != manifest_sha256
-        || result.stage != "mask"
-        || takeaway_index < *current_count
-        || result.wrapper_sha256 != manifest.wrapper_sha256
-        || result.codex_version != manifest.codex_version
-        || result.model != manifest.mask.model
-        || result.reasoning_effort != manifest.mask.reasoning_effort
-        || !is_lower_hex(&result.prompt_sha256, 64)
-        || result.response_schema_sha256 != manifest.mask.response_schema_sha256
-        || !matches!(result.status.as_str(), "succeeded" | "failed")
-    {
-        return invalid(format!(
-            "prompt generation ledger contains unexpected latest result `{}`",
-            result.job_key
-        ));
-    }
-    if result.status == "succeeded" {
-        validate_result_output(result, "mask", &result.response, &result.job_key)?;
-    } else if let (Some(raw), Some(expected_sha256)) =
-        (&result.final_output_raw, &result.final_output_sha256)
-        && sha256_bytes(raw.as_bytes()) != *expected_sha256
-    {
-        return invalid(format!(
-            "prompt generation failed result `{}` has invalid final output provenance",
-            result.job_key
-        ));
-    }
+    validate_result_output(result, expected_response, job_key)?;
     Ok(())
 }
 
 fn validate_result_output(
     result: &PromptGenerationResult,
-    stage_name: &str,
     expected_response: &serde_json::Value,
     job_key: &str,
 ) -> Result<()> {
@@ -1383,11 +1252,7 @@ fn validate_result_output(
             path: PathBuf::from(job_key),
             source,
         })?;
-    let expected_final_output = match stage_name {
-        "takeaway" => serde_json::json!({"takeaways": expected_response}),
-        "mask" => serde_json::json!({"fragments": expected_response}),
-        _ => return invalid(format!("unknown prompt generation stage `{stage_name}`")),
-    };
+    let expected_final_output = serde_json::json!({"subjects": expected_response});
     if raw_response != expected_final_output {
         return invalid(format!(
             "prompt generation result `{job_key}` final output does not match its response"
@@ -1396,41 +1261,13 @@ fn validate_result_output(
     Ok(())
 }
 
-fn render_takeaway_prompt(prompt: &str, note: &str) -> String {
+fn render_subject_prompt(prompt: &str, note: &str) -> String {
     format!(
         "{prompt}\n\n<post>\n{}\n</post>",
-        normalize_takeaway_input(note)
+        normalize_subject_input(note)
     )
 }
-
-fn render_mask_prompt(prompt: &str, note: &str, takeaway: &str) -> String {
-    let mut rendered = String::with_capacity(prompt.len() + note.len() + takeaway.len());
-    let mut cursor = 0;
-    while cursor < prompt.len() {
-        let post = prompt[cursor..]
-            .find("{POST}")
-            .map(|offset| (offset, note, 6));
-        let takeaway_placeholder = prompt[cursor..]
-            .find("{TAKEAWAY}")
-            .map(|offset| (offset, takeaway, 10));
-        let next = match (post, takeaway_placeholder) {
-            (Some(left), Some(right)) => Some(if left.0 <= right.0 { left } else { right }),
-            (Some(found), None) | (None, Some(found)) => Some(found),
-            (None, None) => None,
-        };
-        let Some((offset, replacement, placeholder_len)) = next else {
-            rendered.push_str(&prompt[cursor..]);
-            break;
-        };
-        let start = cursor + offset;
-        rendered.push_str(&prompt[cursor..start]);
-        rendered.push_str(replacement);
-        cursor = start + placeholder_len;
-    }
-    rendered
-}
-
-fn normalize_takeaway_input(note: &str) -> String {
+fn normalize_subject_input(note: &str) -> String {
     let mut normalized = String::with_capacity(note.len());
     let mut copied_until = 0;
     let mut cursor = 0;
@@ -1531,67 +1368,31 @@ fn is_ascii_regex_word_character(character: char) -> bool {
     character.is_ascii_alphanumeric() || character == '_'
 }
 
-fn prompt_review_fragments(
-    note: &str,
-    generated_fragments: &[String],
-) -> Result<Vec<ProposedMaskFragment>> {
-    if generated_fragments.is_empty() {
-        return invalid("prompt generation mask contains no fragments");
-    }
-    let mut cursor = 0;
-    let mut fragments = Vec::with_capacity(generated_fragments.len());
-    for fragment in generated_fragments {
-        if fragment.trim().is_empty() {
-            return invalid("prompt generation mask contains an empty fragment");
-        }
-        let Some(relative_start) = note[cursor..].find(fragment) else {
-            return invalid(format!(
-                "prompt generation mask fragment `{fragment}` is absent or out of source order"
-            ));
-        };
-        let start = cursor + relative_start;
-        let occurrence = note[..start].match_indices(fragment).count() + 1;
-        cursor = start + fragment.len();
-        fragments.push(ProposedMaskFragment {
-            text: fragment.clone(),
-            occurrence,
-        });
-    }
-    Ok(fragments)
-}
-
-pub fn run_subject_mask_prompt_review(
+pub fn run_atomic_subject_prompt_review(
     generation_run_directory: impl AsRef<Path>,
     session_path: impl AsRef<Path>,
     ui: &mut impl PromptReviewUi,
 ) -> Result<PromptReviewRunOutcome> {
     let generation_run_directory = generation_run_directory.as_ref();
     let session_path = session_path.as_ref();
-    let run = load_verified_prompt_review_run(generation_run_directory)?;
+    let run = load_verified_atomic_subject_review_run(generation_run_directory)?;
     let _lock = acquire_session_lock(session_path)?;
     let mut session = match load_session::<PromptReviewSession>(session_path)? {
         Some(session) => {
             session.validate(&run)?;
             session
         }
-        None => PromptReviewSession::new(&run)?,
+        None => PromptReviewSession::new(&run),
     };
     save_session(session_path, &session)?;
 
-    while let Some(target) = session.next_target() {
-        let screen = match target {
-            PromptReviewTarget::Pair {
-                note_index,
-                subject_index,
-                global_index,
-            } => prompt_pair_screen(&run, &session, note_index, subject_index, global_index)?,
-            PromptReviewTarget::SubjectList { note_index } => {
-                prompt_subject_list_screen(&run, note_index)?
-            }
-        };
+    while let Some(item_index) = session.next_pending_item() {
+        let item = run.items.get(item_index).ok_or_else(|| {
+            Error::ExperimentState(format!("prompt-review item {item_index} is absent"))
+        })?;
         let screen = PromptReviewScreen {
-            screen,
-            comment: session.comment(target)?.to_owned(),
+            screen: item.screen.clone(),
+            comment: session.comment(item_index)?.to_owned(),
         };
         let action = ui.review_prompt(screen).map_err(|source| {
             io_error(
@@ -1606,7 +1407,7 @@ pub fn run_subject_mask_prompt_review(
             }
             ApprovalTuiAction::Pause => return Ok(PromptReviewRunOutcome::Paused),
             ApprovalTuiAction::SaveComment { comment } => {
-                session.record_comment(target, comment)?;
+                session.record_comment(item_index, comment)?;
                 save_session(session_path, &session)?;
             }
             ApprovalTuiAction::Submit { outcome, comment } => {
@@ -1614,73 +1415,45 @@ pub fn run_subject_mask_prompt_review(
                     ReviewOutcome::Approved => PromptReviewStatus::Approved,
                     ReviewOutcome::Rejected => PromptReviewStatus::Rejected,
                 };
-                session.record(target, status, comment)?;
+                session.record(item_index, status, comment)?;
                 save_session(session_path, &session)?;
             }
             ApprovalTuiAction::Skip { comment } => {
-                session.record(target, PromptReviewStatus::Skipped, comment)?;
+                session.record(item_index, PromptReviewStatus::Skipped, comment)?;
                 save_session(session_path, &session)?;
             }
         }
     }
 
-    let pairs = session.pair_decision_counts();
-    let subject_lists = session.subject_list_decision_counts();
+    let subjects = session.decision_counts(&run, PromptReviewItemKind::Subject);
+    let subject_lists = session.decision_counts(&run, PromptReviewItemKind::SubjectList);
     Ok(PromptReviewRunOutcome::Completed {
-        pairs,
+        subjects,
         subject_lists,
     })
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-enum PromptReviewTarget {
-    Pair {
-        note_index: usize,
-        subject_index: usize,
-        global_index: usize,
-    },
-    SubjectList {
-        note_index: usize,
-    },
-}
-
 impl PromptReviewSession {
-    fn new(run: &VerifiedPromptReviewRun) -> Result<Self> {
-        let notes = run
-            .notes
+    fn new(run: &VerifiedAtomicSubjectReviewRun) -> Self {
+        let items = run
+            .items
             .iter()
-            .map(|note| {
-                Ok(PromptReviewNoteState {
-                    note_id: note.note_id.clone(),
-                    pairs: note
-                        .subjects
-                        .iter()
-                        .map(|subject| {
-                            Ok(PromptReviewPairState {
-                                subject_id: subject.proposal.subject_id.clone(),
-                                item_sha256: mask_identity(note, subject)?,
-                                status: PromptReviewStatus::Pending,
-                                comment: String::new(),
-                            })
-                        })
-                        .collect::<Result<Vec<_>>>()?,
-                    subject_list: PromptReviewItemState {
-                        item_sha256: completeness_identity(note)?,
-                        status: PromptReviewStatus::Pending,
-                        comment: String::new(),
-                    },
-                })
+            .map(|item| PromptReviewItemState {
+                item_id: item.item_id.clone(),
+                item_sha256: item.item_sha256.clone(),
+                status: PromptReviewStatus::Pending,
+                comment: String::new(),
             })
-            .collect::<Result<Vec<_>>>()?;
-        Ok(Self {
+            .collect();
+        Self {
             schema_version: PROMPT_REVIEW_SESSION_SCHEMA_VERSION,
             review_protocol: PROMPT_REVIEW_PROTOCOL.to_owned(),
             generation_run_sha256: run.identity_sha256.clone(),
-            notes,
-        })
+            items,
+        }
     }
 
-    fn validate(&self, run: &VerifiedPromptReviewRun) -> Result<()> {
+    fn validate(&self, run: &VerifiedAtomicSubjectReviewRun) -> Result<()> {
         if self.schema_version != PROMPT_REVIEW_SESSION_SCHEMA_VERSION {
             return invalid(format!(
                 "prompt review session schema {} is unsupported",
@@ -1693,60 +1466,33 @@ impl PromptReviewSession {
         if self.generation_run_sha256 != run.identity_sha256 {
             return invalid("prompt review session belongs to a different generation run");
         }
-        if self.notes.len() != run.notes.len() {
-            return invalid("prompt review session has a different note count");
+        if self.items.len() != run.items.len() {
+            return invalid("prompt review session has a different item count");
         }
-        for (stored_note, note) in self.notes.iter().zip(&run.notes) {
-            if stored_note.note_id != note.note_id || stored_note.pairs.len() != note.subjects.len()
-            {
-                return invalid(
-                    "prompt review session does not match the generation run structure",
-                );
-            }
-            if stored_note.subject_list.item_sha256 != completeness_identity(note)? {
-                return invalid("prompt review subject-list identity is invalid");
-            }
-            for (stored_pair, subject) in stored_note.pairs.iter().zip(&note.subjects) {
-                if stored_pair.subject_id != subject.proposal.subject_id
-                    || stored_pair.item_sha256 != mask_identity(note, subject)?
-                {
-                    return invalid("prompt review pair identity is invalid");
-                }
+        for (stored, item) in self.items.iter().zip(&run.items) {
+            if stored.item_id != item.item_id || stored.item_sha256 != item.item_sha256 {
+                return invalid("prompt review item identity is invalid");
             }
         }
         Ok(())
     }
 
-    fn next_target(&self) -> Option<PromptReviewTarget> {
-        let mut global_index = 0;
-        for (note_index, note) in self.notes.iter().enumerate() {
-            for (subject_index, pair) in note.pairs.iter().enumerate() {
-                if pair.status == PromptReviewStatus::Pending {
-                    return Some(PromptReviewTarget::Pair {
-                        note_index,
-                        subject_index,
-                        global_index,
-                    });
-                }
-                global_index += 1;
-            }
-            if note.subject_list.status == PromptReviewStatus::Pending {
-                return Some(PromptReviewTarget::SubjectList { note_index });
-            }
-        }
-        None
+    fn next_pending_item(&self) -> Option<usize> {
+        self.items
+            .iter()
+            .position(|item| item.status == PromptReviewStatus::Pending)
     }
 
     fn record(
         &mut self,
-        target: PromptReviewTarget,
+        item_index: usize,
         status: PromptReviewStatus,
         comment: String,
     ) -> Result<()> {
         if status == PromptReviewStatus::Pending {
             return invalid("cannot record a pending prompt-review decision");
         }
-        let (current_status, current_comment) = self.item_mut(target)?;
+        let (current_status, current_comment) = self.item_mut(item_index)?;
         if *current_status != PromptReviewStatus::Pending {
             return invalid("prompt-review item was already decided");
         }
@@ -1755,8 +1501,8 @@ impl PromptReviewSession {
         Ok(())
     }
 
-    fn record_comment(&mut self, target: PromptReviewTarget, comment: String) -> Result<()> {
-        let (status, current_comment) = self.item_mut(target)?;
+    fn record_comment(&mut self, item_index: usize, comment: String) -> Result<()> {
+        let (status, current_comment) = self.item_mut(item_index)?;
         if *status != PromptReviewStatus::Pending {
             return invalid("cannot change the comment on a decided prompt-review item");
         }
@@ -1764,64 +1510,32 @@ impl PromptReviewSession {
         Ok(())
     }
 
-    fn comment(&self, target: PromptReviewTarget) -> Result<&str> {
-        match target {
-            PromptReviewTarget::Pair {
-                note_index,
-                subject_index,
-                ..
-            } => self
-                .notes
-                .get(note_index)
-                .and_then(|note| note.pairs.get(subject_index))
-                .map(|pair| pair.comment.as_str())
-                .ok_or_else(|| Error::ExperimentState("prompt-review pair is absent".to_owned())),
-            PromptReviewTarget::SubjectList { note_index } => self
-                .notes
-                .get(note_index)
-                .map(|note| note.subject_list.comment.as_str())
-                .ok_or_else(|| Error::ExperimentState("prompt-review note is absent".to_owned())),
-        }
+    fn comment(&self, item_index: usize) -> Result<&str> {
+        self.items
+            .get(item_index)
+            .map(|item| item.comment.as_str())
+            .ok_or_else(|| Error::ExperimentState("prompt-review item is absent".to_owned()))
     }
 
-    fn item_mut(
-        &mut self,
-        target: PromptReviewTarget,
-    ) -> Result<(&mut PromptReviewStatus, &mut String)> {
-        match target {
-            PromptReviewTarget::Pair {
-                note_index,
-                subject_index,
-                ..
-            } => self
-                .notes
-                .get_mut(note_index)
-                .and_then(|note| note.pairs.get_mut(subject_index))
-                .map(|pair| (&mut pair.status, &mut pair.comment))
-                .ok_or_else(|| Error::ExperimentState("prompt-review pair is absent".to_owned())),
-            PromptReviewTarget::SubjectList { note_index } => self
-                .notes
-                .get_mut(note_index)
-                .map(|note| {
-                    (
-                        &mut note.subject_list.status,
-                        &mut note.subject_list.comment,
-                    )
-                })
-                .ok_or_else(|| Error::ExperimentState("prompt-review note is absent".to_owned())),
-        }
+    fn item_mut(&mut self, item_index: usize) -> Result<(&mut PromptReviewStatus, &mut String)> {
+        self.items
+            .get_mut(item_index)
+            .map(|item| (&mut item.status, &mut item.comment))
+            .ok_or_else(|| Error::ExperimentState("prompt-review item is absent".to_owned()))
     }
 
-    fn pair_decision_counts(&self) -> PromptReviewCounts {
+    fn decision_counts(
+        &self,
+        run: &VerifiedAtomicSubjectReviewRun,
+        kind: PromptReviewItemKind,
+    ) -> PromptReviewCounts {
         prompt_review_counts(
-            self.notes
+            self.items
                 .iter()
-                .flat_map(|note| note.pairs.iter().map(|pair| pair.status)),
+                .zip(&run.items)
+                .filter(|(_, item)| item.kind == kind)
+                .map(|(stored, _)| stored.status),
         )
-    }
-
-    fn subject_list_decision_counts(&self) -> PromptReviewCounts {
-        prompt_review_counts(self.notes.iter().map(|note| note.subject_list.status))
     }
 }
 
@@ -2189,37 +1903,26 @@ fn mask_screen(
     })
 }
 
-fn prompt_pair_screen(
-    run: &VerifiedPromptReviewRun,
-    session: &PromptReviewSession,
+fn atomic_subject_screen(
     note_index: usize,
-    subject_index: usize,
-    global_index: usize,
-) -> Result<ApprovalScreen> {
-    let note = run
-        .notes
-        .get(note_index)
-        .ok_or_else(|| Error::ExperimentState(format!("note index {note_index} is absent")))?;
-    let subject = note.subjects.get(subject_index).ok_or_else(|| {
-        Error::ExperimentState(format!(
-            "subject index {subject_index} is absent from note {}",
-            note.note_id
-        ))
-    })?;
-    let PromptReviewCounts {
-        approved,
-        rejected,
-        skipped,
-    } = session.pair_decision_counts();
-    Ok(ApprovalScreen {
+    note_count: usize,
+    global_subject_index: usize,
+    subject_count: usize,
+    note: &str,
+    subject: &str,
+) -> ApprovalScreen {
+    ApprovalScreen {
         heading: format!(
-            "Atomic-subject prompt review · Pair {} of {} · {approved} approved · {rejected} rejected · {skipped} skipped",
-            global_index + 1,
-            run.subject_count()
+            "Atomic-subject prompt review · Subject {} of {} · Note {} of {}",
+            global_subject_index + 1,
+            subject_count,
+            note_index + 1,
+            note_count,
         ),
-        title: subject.proposal.label.clone(),
-        scope: "Is this one valid atomic subject, with only the text expressing it masked?"
-            .to_owned(),
+        title: subject.to_owned(),
+        scope:
+            "Is this a valid atomic subject explicitly and substantively discussed in this note?"
+                .to_owned(),
         approve_label: "Approve".to_owned(),
         reject_label: "Disapprove".to_owned(),
         rejection_help: String::new(),
@@ -2227,35 +1930,33 @@ fn prompt_pair_screen(
         evidence: vec![ApprovalEvidence {
             title: "Note".to_owned(),
             annotation: String::new(),
-            body: highlighted_note(&note.note.content, &subject.spans),
+            body: note.to_owned(),
         }],
         evidence_layout: ApprovalEvidenceLayout::Paged,
-    })
+    }
 }
 
-fn prompt_subject_list_screen(
-    run: &VerifiedPromptReviewRun,
+fn atomic_subject_list_screen(
     note_index: usize,
-) -> Result<ApprovalScreen> {
-    let note = run
-        .notes
-        .get(note_index)
-        .ok_or_else(|| Error::ExperimentState(format!("note index {note_index} is absent")))?;
-    let subjects = if note.subjects.is_empty() {
+    note_count: usize,
+    note: &str,
+    labels: &[String],
+) -> ApprovalScreen {
+    let subjects = if labels.is_empty() {
         "No atomic subjects generated.".to_owned()
     } else {
-        note.subjects
+        labels
             .iter()
             .enumerate()
-            .map(|(index, subject)| format!("{}. {}", index + 1, subject.proposal.label))
+            .map(|(index, subject)| format!("{}. {}", index + 1, subject))
             .collect::<Vec<_>>()
             .join("\n")
     };
-    Ok(ApprovalScreen {
+    ApprovalScreen {
         heading: format!(
             "Atomic-subject list review · Note {} of {}",
             note_index + 1,
-            run.note_count()
+            note_count
         ),
         title: "Atomic-subject list".to_owned(),
         scope: "Does this list include every atomic subject in the note without redundant entries?"
@@ -2268,7 +1969,7 @@ fn prompt_subject_list_screen(
             ApprovalEvidence {
                 title: "Note".to_owned(),
                 annotation: String::new(),
-                body: note.note.content.clone(),
+                body: note.to_owned(),
             },
             ApprovalEvidence {
                 title: "Proposed atomic subjects".to_owned(),
@@ -2277,7 +1978,7 @@ fn prompt_subject_list_screen(
             },
         ],
         evidence_layout: ApprovalEvidenceLayout::Stacked,
-    })
+    }
 }
 
 #[derive(Clone, Debug)]

@@ -7,17 +7,15 @@ use oracle_mvp::reference_map::ReviewOutcome;
 use oracle_mvp::reference_tui::ApprovalTuiAction;
 use oracle_mvp::sse_mask_review::{
     PromptReviewCounts, PromptReviewRunOutcome, PromptReviewScreen, PromptReviewUi,
-    run_subject_mask_prompt_review,
+    run_atomic_subject_prompt_review,
 };
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 
 const SUBJECT_PROMPT: &str = "Candidate atomic-subject prompt.";
-const MASK_PROMPT: &str = "Candidate atomic-subject mask prompt with {POST} and {TAKEAWAY}.";
 const CODEX_VERSION: &str = "codex-cli test-version";
-const TAKEAWAY_SCHEMA_SHA256: &str =
-    "81840eb6f10337de473a8ba0698b7549107857321deb1fc59d6e1c9e10fceb90";
-const MASK_SCHEMA_SHA256: &str = "8a6b8dbcba24d155a62f55d30a5bd038c0144f99fa4af9c3d72dcb5541dd3b43";
+const SUBJECT_SCHEMA_SHA256: &str =
+    "ffa0aa2d4a52a1b30f41f0a1761e455471a5127c0e20d74aaeea575a0df2226a";
 const FIXTURE_NIP19: &str = "nostr:npub1qqqqqqqqqqqqqqqqqqqq?relay=test";
 const FIXTURE_QUERY_NIP19: &str = "npub1qqqqqqqqqqqqqqqqqqqq?relay=x";
 const FIXTURE_COMBINING_BOUNDARY_NIP19: &str = "npub1pppppppppppppppppppp";
@@ -44,22 +42,14 @@ impl Fixture {
                         "note_id": format!("{:064x}", 1),
                         "text": "pypush is serverless; pypush is open-source."
                     },
-                    {
-                        "note_id": format!("{:064x}", 2),
-                        "text": SECOND_NOTE
-                    }
+                    {"note_id": format!("{:064x}", 2), "text": SECOND_NOTE}
                 ]
             }),
         );
-        let takeaway_registry_path = temporary.path().join("takeaway-prompts.json");
-        let mask_registry_path = temporary.path().join("mask-prompts.json");
+        let subject_registry_path = temporary.path().join("subject-prompts.json");
         write_json(
-            &takeaway_registry_path,
+            &subject_registry_path,
             &json!({"atomic-subject-candidate-1": SUBJECT_PROMPT}),
-        );
-        write_json(
-            &mask_registry_path,
-            &json!({"atomic-mask-candidate-1": MASK_PROMPT}),
         );
         let wrapper_path = Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("sse_multivector")
@@ -68,35 +58,25 @@ impl Fixture {
             &run_directory.join("manifest.json"),
             &json!({
                 "schema_version": 1,
+                "mode": "atomic_subject_generation",
                 "wrapper_sha256": sha256(&fs::read(wrapper_path).expect("read wrapper")),
                 "codex_binary": "/test/codex",
                 "codex_version": CODEX_VERSION,
                 "codex_home": "/test/codex-home",
                 "input_path": input_path,
                 "input_sha256": sha256(&fs::read(&input_path).expect("read input")),
-                "takeaway_envelope_version": "xml-post-v1",
-                "takeaway_input_normalization_version": "remove-long-ascii-nip19-identifiers-v2",
-                "takeaway": {
-                    "prompt_registry_path": takeaway_registry_path,
-                    "prompt_registry_sha256": sha256(&fs::read(&takeaway_registry_path).expect("read takeaway registry")),
+                "subject_envelope_version": "xml-post-v1",
+                "subject_input_normalization_version": "remove-long-ascii-nip19-identifiers-v2",
+                "subject": {
+                    "prompt_registry_path": subject_registry_path,
+                    "prompt_registry_sha256": sha256(&fs::read(&subject_registry_path).expect("read subject registry")),
                     "prompt_version": "atomic-subject-candidate-1",
                     "prompt": SUBJECT_PROMPT,
                     "prompt_sha256": sha256(SUBJECT_PROMPT.as_bytes()),
                     "model": "candidate-subject-model",
                     "reasoning_effort": "high",
-                    "response_schema": takeaway_schema(),
-                    "response_schema_sha256": TAKEAWAY_SCHEMA_SHA256
-                },
-                "mask": {
-                    "prompt_registry_path": mask_registry_path,
-                    "prompt_registry_sha256": sha256(&fs::read(&mask_registry_path).expect("read mask registry")),
-                    "prompt_version": "atomic-mask-candidate-1",
-                    "prompt": MASK_PROMPT,
-                    "prompt_sha256": sha256(MASK_PROMPT.as_bytes()),
-                    "model": "candidate-mask-model",
-                    "reasoning_effort": "medium",
-                    "response_schema": mask_schema(),
-                    "response_schema_sha256": MASK_SCHEMA_SHA256
+                    "response_schema": subject_schema(),
+                    "response_schema_sha256": SUBJECT_SCHEMA_SHA256
                 },
                 "isolation": isolation_contract()
             }),
@@ -115,23 +95,24 @@ impl Fixture {
     }
 
     fn change_subject_prompt(&self) {
-        let mut manifest = read_json(&self.run_directory.join("manifest.json"));
+        let manifest_path = self.run_directory.join("manifest.json");
+        let mut manifest = read_json(&manifest_path);
         let revised = "A revised candidate atomic-subject prompt.";
         let registry_path = PathBuf::from(
-            manifest["takeaway"]["prompt_registry_path"]
+            manifest["subject"]["prompt_registry_path"]
                 .as_str()
-                .expect("takeaway registry path"),
+                .expect("subject registry path"),
         );
         write_json(
             &registry_path,
             &json!({"atomic-subject-candidate-1": revised}),
         );
-        manifest["takeaway"]["prompt"] = json!(revised);
-        manifest["takeaway"]["prompt_sha256"] = json!(sha256(revised.as_bytes()));
-        manifest["takeaway"]["prompt_registry_sha256"] = json!(sha256(
+        manifest["subject"]["prompt"] = json!(revised);
+        manifest["subject"]["prompt_sha256"] = json!(sha256(revised.as_bytes()));
+        manifest["subject"]["prompt_registry_sha256"] = json!(sha256(
             &fs::read(&registry_path).expect("read revised registry")
         ));
-        write_json(&self.run_directory.join("manifest.json"), &manifest);
+        write_json(&manifest_path, &manifest);
         let notes = read_json(&self.run_directory.join("output.json"))["notes"].clone();
         self.publish_output_with_subject_prompt(notes, revised);
     }
@@ -141,11 +122,7 @@ impl Fixture {
         let manifest_sha256 = sha256(&fs::read(&manifest_path).expect("read manifest"));
         write_json(
             &self.run_directory.join("output.json"),
-            &json!({
-                "schema_version": 1,
-                "manifest_sha256": manifest_sha256,
-                "notes": notes
-            }),
+            &json!({"schema_version": 1, "manifest_sha256": manifest_sha256, "notes": notes}),
         );
         let manifest = read_json(&manifest_path);
         let input = read_json(Path::new(
@@ -163,43 +140,34 @@ impl Fixture {
             })
             .collect::<BTreeMap<_, _>>();
         let output = read_json(&self.run_directory.join("output.json"));
-        let mut records = Vec::new();
-        for note in output["notes"].as_array().expect("output notes") {
-            let note_id = note["note_id"].as_str().expect("note ID");
-            let source = note_text[note_id];
-            let takeaways = note["takeaways"].as_array().expect("takeaways");
-            let response =
-                Value::Array(takeaways.iter().map(|item| item["text"].clone()).collect());
-            records.push(succeeded_result(
-                &manifest,
-                &manifest_sha256,
-                "takeaway",
-                note_id,
-                None,
-                1,
-                &format!(
-                    "{prompt}\n\n<post>\n{}\n</post>",
-                    fixture_takeaway_input(source)
-                ),
-                response,
-            ));
-            for (index, takeaway) in takeaways.iter().enumerate() {
-                let rendered_prompt = MASK_PROMPT.replace("{POST}", source).replace(
-                    "{TAKEAWAY}",
-                    takeaway["text"].as_str().expect("takeaway text"),
+        let records = output["notes"]
+            .as_array()
+            .expect("output notes")
+            .iter()
+            .map(|note| {
+                let note_id = note["note_id"].as_str().expect("note ID");
+                let source = note_text[note_id];
+                let response = Value::Array(
+                    note["subjects"]
+                        .as_array()
+                        .expect("subjects")
+                        .iter()
+                        .map(|item| item["text"].clone())
+                        .collect(),
                 );
-                records.push(succeeded_result(
+                succeeded_result(
                     &manifest,
                     &manifest_sha256,
-                    "mask",
                     note_id,
-                    Some(index),
                     1,
-                    &rendered_prompt,
-                    takeaway["fragments"].clone(),
-                ));
-            }
-        }
+                    &format!(
+                        "{prompt}\n\n<post>\n{}\n</post>",
+                        fixture_subject_input(source)
+                    ),
+                    response,
+                )
+            })
+            .collect::<Vec<_>>();
         write_json_lines(&self.run_directory.join("results.jsonl"), &records);
     }
 }
@@ -207,45 +175,34 @@ impl Fixture {
 fn succeeded_result(
     manifest: &Value,
     manifest_sha256: &str,
-    stage_name: &str,
     note_id: &str,
-    takeaway_index: Option<usize>,
     attempt: u32,
     rendered_prompt: &str,
     response: Value,
 ) -> Value {
-    let stage = &manifest[stage_name];
-    let final_output = match stage_name {
-        "takeaway" => json!({"takeaways": response}),
-        "mask" => json!({"fragments": response}),
-        _ => panic!("unsupported fixture stage"),
-    };
+    let final_output = json!({"subjects": response});
     let final_output_raw = final_output.to_string();
     json!({
         "schema_version": 1,
         "manifest_sha256": manifest_sha256,
-        "job_key": match takeaway_index {
-            Some(index) => format!("{stage_name}:{note_id}:{index}"),
-            None => format!("{stage_name}:{note_id}"),
-        },
-        "stage": stage_name,
+        "job_key": format!("subject:{note_id}"),
+        "stage": "subject",
         "note_id": note_id,
-        "takeaway_index": takeaway_index,
         "attempt": attempt,
         "status": "succeeded",
         "wrapper_sha256": manifest["wrapper_sha256"],
         "codex_version": manifest["codex_version"],
-        "model": stage["model"],
-        "reasoning_effort": stage["reasoning_effort"],
+        "model": manifest["subject"]["model"],
+        "reasoning_effort": manifest["subject"]["reasoning_effort"],
         "prompt_sha256": sha256(rendered_prompt.as_bytes()),
-        "response_schema_sha256": stage["response_schema_sha256"],
+        "response_schema_sha256": manifest["subject"]["response_schema_sha256"],
         "final_output_raw": final_output_raw,
         "final_output_sha256": sha256(final_output_raw.as_bytes()),
         "response": response
     })
 }
 
-fn fixture_takeaway_input(note: &str) -> String {
+fn fixture_subject_input(note: &str) -> String {
     note.replace(FIXTURE_NIP19, "")
         .replace(FIXTURE_QUERY_NIP19, "")
         .replace(FIXTURE_COMBINING_BOUNDARY_NIP19, "")
@@ -273,43 +230,22 @@ fn isolation_contract() -> Value {
             "skills.include_instructions=false"
         ],
         "disabled_features": [
-            "shell_tool",
-            "unified_exec",
-            "multi_agent",
-            "apps",
-            "plugins",
-            "browser_use",
-            "computer_use",
-            "image_generation"
+            "shell_tool", "unified_exec", "multi_agent", "apps", "plugins",
+            "browser_use", "computer_use", "image_generation"
         ]
     })
 }
 
-fn takeaway_schema() -> Value {
+fn subject_schema() -> Value {
     json!({
         "type": "object",
         "properties": {
-            "takeaways": {
+            "subjects": {
                 "type": "array",
                 "items": {"type": "string", "minLength": 1}
             }
         },
-        "required": ["takeaways"],
-        "additionalProperties": false
-    })
-}
-
-fn mask_schema() -> Value {
-    json!({
-        "type": "object",
-        "properties": {
-            "fragments": {
-                "type": "array",
-                "items": {"type": "string", "minLength": 1},
-                "minItems": 1
-            }
-        },
-        "required": ["fragments"],
+        "required": ["subjects"],
         "additionalProperties": false
     })
 }
@@ -318,23 +254,18 @@ fn default_output_notes() -> Value {
     json!([
         {
             "note_id": format!("{:064x}", 1),
-            "takeaways": [
-                {
-                    "text": "Serverless operation of pypush",
-                    "fragments": ["pypush", "serverless"]
-                },
-                {
-                    "text": "Open-source availability of pypush",
-                    "fragments": ["pypush", "open-source"]
-                }
+            "text": "pypush is serverless; pypush is open-source.",
+            "subjects": [
+                {"source_index": 0, "text": "Serverless operation of pypush"},
+                {"source_index": 1, "text": "Open-source availability of pypush"}
             ]
         },
         {
             "note_id": format!("{:064x}", 2),
-            "takeaways": [{
-                "text": "Future dominance of solar power generation",
-                "fragments": ["Solar power will dominate future electricity generation"]
-            }]
+            "text": SECOND_NOTE,
+            "subjects": [
+                {"source_index": 0, "text": "Future dominance of solar power generation"}
+            ]
         }
     ])
 }
@@ -384,11 +315,11 @@ fn skipped(comment: &str) -> ApprovalTuiAction {
 }
 
 #[test]
-fn prompt_iteration_reviews_bound_run_pairs_and_persists_partial_statuses() {
+fn subject_prompt_review_uses_flat_items_and_never_shows_masks() {
     let fixture = Fixture::new();
     let mut first = ScriptedUi::new([
         approved(""),
-        skipped("Need a clearer subject label"),
+        skipped("Needs a clearer subject label"),
         ApprovalTuiAction::SaveComment {
             comment: "Potential missing subject".to_owned(),
         },
@@ -396,8 +327,8 @@ fn prompt_iteration_reviews_bound_run_pairs_and_persists_partial_statuses() {
     ]);
 
     let outcome =
-        run_subject_mask_prompt_review(&fixture.run_directory, &fixture.session_path, &mut first)
-            .expect("run prompt review");
+        run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut first)
+            .expect("run subject prompt review");
 
     assert_eq!(outcome, PromptReviewRunOutcome::Paused);
     assert_eq!(first.screens.len(), 4);
@@ -407,13 +338,12 @@ fn prompt_iteration_reviews_bound_run_pairs_and_persists_partial_statuses() {
     );
     assert_eq!(
         first.screens[0].screen.evidence[0].body,
-        "⟦pypush⟧ is ⟦serverless⟧; pypush is open-source."
+        "pypush is serverless; pypush is open-source."
     );
-    assert!(
-        first.screens[0]
-            .screen
-            .scope
-            .contains("valid atomic subject")
+    assert!(!first.screens[0].screen.evidence[0].body.contains('⟦'));
+    assert_eq!(
+        first.screens[0].screen.scope,
+        "Is this a valid atomic subject explicitly and substantively discussed in this note?"
     );
     assert_eq!(first.screens[2].screen.title, "Atomic-subject list");
     assert_eq!(
@@ -428,32 +358,36 @@ fn prompt_iteration_reviews_bound_run_pairs_and_persists_partial_statuses() {
     assert_eq!(first.screens[3].comment, "Potential missing subject");
 
     let session = read_session(&fixture.session_path);
-    assert_eq!(session["notes"][0]["pairs"][0]["status"], "approved");
-    assert_eq!(session["notes"][0]["pairs"][1]["status"], "skipped");
+    assert!(session.get("notes").is_none());
+    assert!(session.get("pairs").is_none());
+    assert!(session.get("phase").is_none());
+    assert!(!session.to_string().contains("mask"));
+    assert_eq!(session["items"].as_array().expect("flat items").len(), 5);
+    assert_eq!(session["items"][0]["status"], "approved");
+    assert_eq!(session["items"][1]["status"], "skipped");
     assert_eq!(
-        session["notes"][0]["pairs"][1]["comment"],
-        "Need a clearer subject label"
+        session["items"][1]["comment"],
+        "Needs a clearer subject label"
     );
-    assert_eq!(session["notes"][0]["subject_list"]["status"], "pending");
-    assert_eq!(
-        session["notes"][0]["subject_list"]["comment"],
-        "Potential missing subject"
-    );
-    assert_eq!(session["notes"][1]["pairs"][0]["status"], "pending");
+    assert_eq!(session["items"][2]["status"], "pending");
+    assert_eq!(session["items"][2]["comment"], "Potential missing subject");
 
     let mut resumed = ScriptedUi::new([
         rejected("Potential missing subject"),
         approved("Useful control"),
         skipped("Not checking completeness yet"),
     ]);
-    let outcome =
-        run_subject_mask_prompt_review(&fixture.run_directory, &fixture.session_path, &mut resumed)
-            .expect("resume prompt review");
+    let outcome = run_atomic_subject_prompt_review(
+        &fixture.run_directory,
+        &fixture.session_path,
+        &mut resumed,
+    )
+    .expect("resume subject prompt review");
 
     assert_eq!(
         outcome,
         PromptReviewRunOutcome::Completed {
-            pairs: PromptReviewCounts {
+            subjects: PromptReviewCounts {
                 approved: 2,
                 rejected: 0,
                 skipped: 1,
@@ -469,18 +403,20 @@ fn prompt_iteration_reviews_bound_run_pairs_and_persists_partial_statuses() {
 }
 
 #[test]
-fn prompt_iteration_refuses_to_resume_after_the_generation_run_changes() {
+fn subject_prompt_review_refuses_to_resume_after_the_run_changes() {
     let fixture = Fixture::new();
     let mut first = ScriptedUi::new([ApprovalTuiAction::Pause]);
-    run_subject_mask_prompt_review(&fixture.run_directory, &fixture.session_path, &mut first)
+    run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut first)
         .expect("create prompt review session");
-
     fixture.change_subject_prompt();
 
     let mut resumed = ScriptedUi::new([]);
-    let error =
-        run_subject_mask_prompt_review(&fixture.run_directory, &fixture.session_path, &mut resumed)
-            .expect_err("a session must stay bound to one immutable generation run");
+    let error = run_atomic_subject_prompt_review(
+        &fixture.run_directory,
+        &fixture.session_path,
+        &mut resumed,
+    )
+    .expect_err("a session must stay bound to one immutable generation run");
     assert!(
         error.to_string().contains("different generation run"),
         "{error}"
@@ -488,69 +424,93 @@ fn prompt_iteration_refuses_to_resume_after_the_generation_run_changes() {
 }
 
 #[test]
-fn prompt_iteration_resume_does_not_depend_on_the_live_prompt_registry() {
+fn subject_prompt_review_resume_uses_the_prompt_frozen_in_the_manifest() {
     let fixture = Fixture::new();
     let mut first = ScriptedUi::new([ApprovalTuiAction::Pause]);
-    run_subject_mask_prompt_review(&fixture.run_directory, &fixture.session_path, &mut first)
+    run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut first)
         .expect("create prompt review session");
-
     let manifest = read_json(&fixture.run_directory.join("manifest.json"));
     let registry_path = Path::new(
-        manifest["takeaway"]["prompt_registry_path"]
+        manifest["subject"]["prompt_registry_path"]
             .as_str()
-            .expect("takeaway registry path"),
+            .expect("subject registry path"),
     );
     let mut registry = read_json(registry_path);
-    registry["a-later-prompt-version"] = json!("A prompt added after this run completed.");
+    registry["a-later-prompt-version"] = json!("A later prompt.");
     write_json(registry_path, &registry);
 
     let mut resumed = ScriptedUi::new([ApprovalTuiAction::Pause]);
-    run_subject_mask_prompt_review(&fixture.run_directory, &fixture.session_path, &mut resumed)
-        .expect("resume must use the prompt frozen in the generation manifest");
+    run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut resumed)
+        .expect("resume must not reread the mutable registry");
 }
 
 #[test]
-fn prompt_iteration_rejects_output_that_does_not_match_preserved_results() {
+fn subject_prompt_review_rejects_output_not_preserved_in_results() {
     let fixture = Fixture::new();
     let output_path = fixture.run_directory.join("output.json");
     let mut output = read_json(&output_path);
-    output["notes"][0]["takeaways"][0]["text"] = json!("Fabricated subject");
+    output["notes"][0]["subjects"][0]["text"] = json!("Fabricated subject");
     write_json(&output_path, &output);
     let mut ui = ScriptedUi::new([]);
-
     let error =
-        run_subject_mask_prompt_review(&fixture.run_directory, &fixture.session_path, &mut ui)
-            .expect_err("review output must match the model result ledger");
+        run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut ui)
+            .expect_err("review output must match the result ledger");
     assert!(error.to_string().contains("preserved result"), "{error}");
 }
 
 #[test]
-fn prompt_iteration_rejects_a_result_bound_to_another_rendered_prompt() {
+fn subject_prompt_review_rejects_changed_source_text_in_output() {
+    let fixture = Fixture::new();
+    let output_path = fixture.run_directory.join("output.json");
+    let mut output = read_json(&output_path);
+    output["notes"][0]["text"] = json!("Changed note text");
+    write_json(&output_path, &output);
+    let mut ui = ScriptedUi::new([]);
+    let error =
+        run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut ui)
+            .expect_err("the output must preserve the exact source note");
+    assert!(error.to_string().contains("source text"), "{error}");
+}
+
+#[test]
+fn subject_prompt_review_rejects_invalid_source_indices() {
+    let fixture = Fixture::new();
+    let output_path = fixture.run_directory.join("output.json");
+    let mut output = read_json(&output_path);
+    output["notes"][0]["subjects"][1]["source_index"] = json!(7);
+    write_json(&output_path, &output);
+    let mut ui = ScriptedUi::new([]);
+    let error =
+        run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut ui)
+            .expect_err("source indices must preserve model order");
+    assert!(error.to_string().contains("source index"), "{error}");
+}
+
+#[test]
+fn subject_prompt_review_rejects_result_bound_to_another_prompt() {
     let fixture = Fixture::new();
     let results_path = fixture.run_directory.join("results.jsonl");
     let mut records = read_json_lines(&results_path);
     records[0]["prompt_sha256"] = json!("f".repeat(64));
     write_json_lines(&results_path, &records);
-    let mut ui = ScriptedUi::new([ApprovalTuiAction::Pause]);
-
+    let mut ui = ScriptedUi::new([]);
     let error =
-        run_subject_mask_prompt_review(&fixture.run_directory, &fixture.session_path, &mut ui)
-            .expect_err("the recorded job must use the manifest prompt and bound note");
+        run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut ui)
+            .expect_err("the job must use the frozen prompt and note");
     assert!(error.to_string().contains("rendered prompt"), "{error}");
 }
 
 #[test]
-fn prompt_iteration_rejects_a_truncated_result_history() {
+fn subject_prompt_review_rejects_truncated_result_history() {
     let fixture = Fixture::new();
     let results_path = fixture.run_directory.join("results.jsonl");
     let mut records = read_json_lines(&results_path);
     records[0]["attempt"] = json!(2);
     write_json_lines(&results_path, &records);
-    let mut ui = ScriptedUi::new([ApprovalTuiAction::Pause]);
-
+    let mut ui = ScriptedUi::new([]);
     let error =
-        run_subject_mask_prompt_review(&fixture.run_directory, &fixture.session_path, &mut ui)
-            .expect_err("result attempts must start at one and remain consecutive");
+        run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut ui)
+            .expect_err("attempts must start at one and remain consecutive");
     assert!(
         error.to_string().contains("nonconsecutive attempt"),
         "{error}"
@@ -558,71 +518,7 @@ fn prompt_iteration_rejects_a_truncated_result_history() {
 }
 
 #[test]
-fn prompt_iteration_accepts_an_obsolete_mask_after_a_retry_shrinks_the_subject_list() {
-    let fixture = Fixture::new();
-    let manifest_path = fixture.run_directory.join("manifest.json");
-    let manifest = read_json(&manifest_path);
-    let manifest_sha256 = sha256(&fs::read(&manifest_path).expect("read manifest"));
-    let output_path = fixture.run_directory.join("output.json");
-    let mut output = read_json(&output_path);
-    output["notes"][0]["takeaways"] = json!([output["notes"][0]["takeaways"][0].clone()]);
-    write_json(&output_path, &output);
-
-    let note_id = format!("{:064x}", 1);
-    let source = "pypush is serverless; pypush is open-source.";
-    let response = json!(["Serverless operation of pypush"]);
-    let mut records = read_json_lines(&fixture.run_directory.join("results.jsonl"));
-    records.push(succeeded_result(
-        &manifest,
-        &manifest_sha256,
-        "takeaway",
-        &note_id,
-        None,
-        2,
-        &format!("{SUBJECT_PROMPT}\n\n<post>\n{source}\n</post>"),
-        response,
-    ));
-    write_json_lines(&fixture.run_directory.join("results.jsonl"), &records);
-
-    let mut ui = ScriptedUi::new([ApprovalTuiAction::Pause]);
-    run_subject_mask_prompt_review(&fixture.run_directory, &fixture.session_path, &mut ui)
-        .expect("the old second mask was valid before the subject-list retry");
-    assert_eq!(ui.screens[0].screen.title, "Serverless operation of pypush");
-}
-
-#[test]
-fn prompt_iteration_rejects_an_obsolete_mask_index_that_never_existed() {
-    let fixture = Fixture::new();
-    let manifest_path = fixture.run_directory.join("manifest.json");
-    let manifest = read_json(&manifest_path);
-    let manifest_sha256 = sha256(&fs::read(&manifest_path).expect("read manifest"));
-    let note_id = format!("{:064x}", 1);
-    let source = "pypush is serverless; pypush is open-source.";
-    let rendered_prompt = MASK_PROMPT
-        .replace("{POST}", source)
-        .replace("{TAKEAWAY}", "Fabricated subject");
-    let mut records = read_json_lines(&fixture.run_directory.join("results.jsonl"));
-    records.push(succeeded_result(
-        &manifest,
-        &manifest_sha256,
-        "mask",
-        &note_id,
-        Some(5),
-        1,
-        &rendered_prompt,
-        json!(["pypush"]),
-    ));
-    write_json_lines(&fixture.run_directory.join("results.jsonl"), &records);
-
-    let mut ui = ScriptedUi::new([]);
-    let error =
-        run_subject_mask_prompt_review(&fixture.run_directory, &fixture.session_path, &mut ui)
-            .expect_err("a stale mask must have belonged to an earlier generated list");
-    assert!(error.to_string().contains("mask index"), "{error}");
-}
-
-#[test]
-fn prompt_iteration_requires_fresh_isolated_generation_jobs() {
+fn subject_prompt_review_requires_fresh_isolated_jobs() {
     let fixture = Fixture::new();
     let manifest_path = fixture.run_directory.join("manifest.json");
     let mut manifest = read_json(&manifest_path);
@@ -631,21 +527,20 @@ fn prompt_iteration_requires_fresh_isolated_generation_jobs() {
     let notes = read_json(&fixture.run_directory.join("output.json"))["notes"].clone();
     fixture.publish_output(notes);
     let mut ui = ScriptedUi::new([]);
-
     let error =
-        run_subject_mask_prompt_review(&fixture.run_directory, &fixture.session_path, &mut ui)
+        run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut ui)
             .expect_err("every prompt must use a fresh isolated process");
     assert!(error.to_string().contains("fresh process"), "{error}");
 }
 
 #[test]
-fn prompt_iteration_surfaces_empty_and_duplicate_subject_lists() {
+fn subject_prompt_review_surfaces_empty_and_duplicate_lists() {
     let fixture = Fixture::new();
     let mut notes = default_output_notes();
-    notes[0]["takeaways"] = json!([]);
+    notes[0]["subjects"] = json!([]);
     fixture.publish_output(notes);
     let mut empty = ScriptedUi::new([ApprovalTuiAction::Pause]);
-    run_subject_mask_prompt_review(&fixture.run_directory, &fixture.session_path, &mut empty)
+    run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut empty)
         .expect("show empty generated subject list");
     assert_eq!(empty.screens[0].screen.title, "Atomic-subject list");
     assert_eq!(
@@ -655,10 +550,10 @@ fn prompt_iteration_surfaces_empty_and_duplicate_subject_lists() {
 
     let fixture = Fixture::new();
     let mut notes = default_output_notes();
-    notes[0]["takeaways"][1]["text"] = notes[0]["takeaways"][0]["text"].clone();
+    notes[0]["subjects"][1]["text"] = notes[0]["subjects"][0]["text"].clone();
     fixture.publish_output(notes);
     let mut duplicate = ScriptedUi::new([skipped(""), skipped(""), ApprovalTuiAction::Pause]);
-    run_subject_mask_prompt_review(
+    run_atomic_subject_prompt_review(
         &fixture.run_directory,
         &fixture.session_path,
         &mut duplicate,
@@ -669,20 +564,18 @@ fn prompt_iteration_surfaces_empty_and_duplicate_subject_lists() {
 }
 
 #[test]
-fn prompt_iteration_stops_when_generation_did_not_publish_output() {
+fn subject_prompt_review_stops_without_complete_output() {
     let fixture = Fixture::new();
     fs::remove_file(fixture.run_directory.join("output.json")).expect("remove output");
     let mut ui = ScriptedUi::new([]);
-
     let error =
-        run_subject_mask_prompt_review(&fixture.run_directory, &fixture.session_path, &mut ui)
+        run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut ui)
             .expect_err("a failed generation run must stop before review");
     assert!(error.to_string().contains("output.json"), "{error}");
 }
 
 fn read_session(path: &Path) -> Value {
-    let envelope = read_json(path);
-    envelope["session"].clone()
+    read_json(path)["session"].clone()
 }
 
 fn read_json(path: &Path) -> Value {

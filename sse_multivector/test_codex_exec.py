@@ -63,6 +63,8 @@ argv = sys.argv[1:]
 output_path = Path(argv[argv.index("--output-last-message") + 1])
 if prompt.startswith("GENERIC PROMPT"):
     stage = "prompt"
+elif prompt.startswith("SUBJECT INSTRUCTION"):
+    stage = "subject"
 elif prompt.startswith("MASK INSTRUCTION"):
     stage = "mask"
 elif prompt.startswith("PROMINENCE INSTRUCTION"):
@@ -108,6 +110,12 @@ elif stage == "takeaway":
             "Tea helps the author.",
         ]
     )
+elif stage == "subject":
+    response = (
+        ["Solar power generation."]
+        if "Solar power" in prompt
+        else ["Rust programming.", "Tea drinking."]
+    )
 elif stage == "prominence":
     invalid_prominence = os.environ.get("FAKE_CODEX_INVALID_PROMINENCE")
     response = {
@@ -133,6 +141,7 @@ if stage != "prompt":
     response_object = {
         {
             "takeaway": "takeaways",
+            "subject": "subjects",
             "prominence": "prominence",
             "mask": "fragments",
         }[stage]: response,
@@ -215,8 +224,16 @@ class CodexExecRunnerTests(unittest.TestCase):
             ),
             encoding="utf-8",
         )
+        self.subject_prompts = self.root / "subject-prompts.json"
+        self.subject_prompts.write_text(
+            json.dumps({"AS-test": "SUBJECT INSTRUCTION"}),
+            encoding="utf-8",
+        )
+        self.subject_config_path = self.root / "subject-config.json"
+        self.subject_run_directory = self.root / "subject-run"
         self.config_path = self.root / "config.json"
         self.write_config()
+        self.write_subject_config()
 
     def write_config(
         self,
@@ -271,6 +288,51 @@ class CodexExecRunnerTests(unittest.TestCase):
                 str(RUNNER),
                 "run",
                 str(self.config_path),
+                *extra_arguments,
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            env=environment,
+            timeout=30,
+        )
+
+    def write_subject_config(self) -> None:
+        self.subject_config_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "codex_binary": str(self.fake_codex),
+                    "codex_home": str(self.codex_home),
+                    "input_path": str(self.notes_path),
+                    "run_directory": str(self.subject_run_directory),
+                    "subject": {
+                        "prompt_registry_path": str(self.subject_prompts),
+                        "prompt_version": "AS-test",
+                        "model": "candidate/subject",
+                        "reasoning_effort": "low",
+                    },
+                }
+            ),
+            encoding="utf-8",
+        )
+
+    def invoke_subjects(
+        self,
+        *extra_arguments: str,
+        extra_environment: dict[str, str] | None = None,
+    ) -> subprocess.CompletedProcess[str]:
+        environment = os.environ.copy()
+        environment["FAKE_CODEX_LOG"] = str(self.log_path)
+        environment["CODEX_URL"] = "https://ambient-codex.invalid"
+        environment["OPENAI_API_KEY"] = "ambient-openai-key"
+        environment.update(extra_environment or {})
+        return subprocess.run(
+            [
+                sys.executable,
+                str(RUNNER),
+                "subjects",
+                str(self.subject_config_path),
                 *extra_arguments,
             ],
             check=False,
@@ -437,6 +499,214 @@ class CodexExecRunnerTests(unittest.TestCase):
             source_run=source_run,
         )
         return source_input, source_run, provenance
+
+    def test_subjects_generates_only_ordered_subjects_in_fresh_processes(
+        self,
+    ) -> None:
+        self.notes_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "notes": [
+                        {
+                            "note_id": "note-1",
+                            "text": "Rust is pleasant. Tea helps.",
+                        },
+                        {
+                            "note_id": "note-2",
+                            "text": "Solar power will dominate electricity generation.",
+                        },
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        completed = self.invoke_subjects()
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        calls = [call for call in self.calls() if call["kind"] == "exec"]
+        self.assertEqual(["subject", "subject"], [call["stage"] for call in calls])
+        self.assertEqual(2, len({call["cwd"] for call in calls}))
+        for call in calls:
+            self.assertIn("--output-schema", call["argv"])
+            self.assertEqual([], call["cwd_entries"])
+            self.assertIn("candidate/subject", call["argv"])
+            self.assertIn('model_reasoning_effort="low"', call["argv"])
+        self.assertEqual(
+            "SUBJECT INSTRUCTION\n\n"
+            "<post>\nRust is pleasant. Tea helps.\n</post>",
+            calls[0]["prompt"],
+        )
+        self.assertEqual(
+            "SUBJECT INSTRUCTION\n\n"
+            "<post>\nSolar power will dominate electricity generation.\n</post>",
+            calls[1]["prompt"],
+        )
+
+        output = json.loads(
+            (self.subject_run_directory / "output.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            [
+                {
+                    "note_id": "note-1",
+                    "text": "Rust is pleasant. Tea helps.",
+                    "subjects": [
+                        {"source_index": 0, "text": "Rust programming."},
+                        {"source_index": 1, "text": "Tea drinking."},
+                    ],
+                },
+                {
+                    "note_id": "note-2",
+                    "text": "Solar power will dominate electricity generation.",
+                    "subjects": [
+                        {"source_index": 0, "text": "Solar power generation."}
+                    ],
+                },
+            ],
+            output["notes"],
+        )
+        manifest = json.loads(
+            (self.subject_run_directory / "manifest.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual("atomic_subject_generation", manifest["mode"])
+        self.assertEqual("AS-test", manifest["subject"]["prompt_version"])
+        self.assertEqual("candidate/subject", manifest["subject"]["model"])
+        self.assertEqual("xml-post-v1", manifest["subject_envelope_version"])
+        self.assertEqual(
+            "remove-long-ascii-nip19-identifiers-v2",
+            manifest["subject_input_normalization_version"],
+        )
+        self.assertNotIn("mask", manifest)
+        self.assertTrue(
+            (self.subject_run_directory / "subject-output-schema.json").is_file()
+        )
+        subject_schema = json.loads(
+            (self.subject_run_directory / "subject-output-schema.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(["subjects"], subject_schema["required"])
+        self.assertEqual(
+            "array", subject_schema["properties"]["subjects"]["type"]
+        )
+        self.assertFalse(
+            (self.subject_run_directory / "mask-output-schema.json").exists()
+        )
+        records = [
+            json.loads(line)
+            for line in (self.subject_run_directory / "results.jsonl")
+            .read_text(encoding="utf-8")
+            .splitlines()
+        ]
+        self.assertEqual(
+            ["subject:note-1", "subject:note-2"],
+            [record["job_key"] for record in records],
+        )
+        self.assertTrue(all("subject_index" not in record for record in records))
+        self.assertTrue(all("takeaway_index" not in record for record in records))
+        self.assertEqual(
+            [["Rust programming.", "Tea drinking."], ["Solar power generation."]],
+            [record["response"] for record in records],
+        )
+        self.assertEqual(
+            {"subjects": ["Rust programming.", "Tea drinking."]},
+            json.loads(records[0]["final_output_raw"]),
+        )
+
+    def test_subjects_rejects_a_mask_stage_before_spawning(self) -> None:
+        config = json.loads(self.subject_config_path.read_text(encoding="utf-8"))
+        config["mask"] = {
+            "prompt_registry_path": str(self.mask_prompts),
+            "prompt_version": "MP-test",
+            "model": "candidate/mask",
+            "reasoning_effort": "medium",
+        }
+        self.subject_config_path.write_text(json.dumps(config), encoding="utf-8")
+
+        completed = self.invoke_subjects()
+
+        self.assertNotEqual(0, completed.returncode)
+        self.assertIn("`config.mask` is not supported", completed.stderr)
+        self.assertEqual([], self.calls())
+        self.assertFalse(self.subject_run_directory.exists())
+
+    def test_subjects_resumes_and_retries_only_failed_jobs(self) -> None:
+        failed = self.invoke_subjects(
+            extra_environment={"FAKE_CODEX_FAIL_STAGE": "subject"}
+        )
+
+        self.assertNotEqual(0, failed.returncode)
+        self.assertFalse((self.subject_run_directory / "output.json").exists())
+        self.assertEqual(1, len([call for call in self.calls() if call["kind"] == "exec"]))
+
+        blocked = self.invoke_subjects()
+
+        self.assertNotEqual(0, blocked.returncode)
+        self.assertIn("--retry-failed", blocked.stderr)
+        self.assertEqual(1, len([call for call in self.calls() if call["kind"] == "exec"]))
+
+        retried = self.invoke_subjects("--retry-failed")
+
+        self.assertEqual(0, retried.returncode, retried.stderr)
+        self.assertTrue((self.subject_run_directory / "output.json").is_file())
+        self.assertEqual(2, len([call for call in self.calls() if call["kind"] == "exec"]))
+
+        records = [
+            json.loads(line)
+            for line in (self.subject_run_directory / "results.jsonl")
+            .read_text(encoding="utf-8")
+            .splitlines()
+        ]
+        self.assertEqual([1, 2], [record["attempt"] for record in records])
+        self.assertEqual(["failed", "succeeded"], [record["status"] for record in records])
+
+        calls_before = len(self.calls())
+        resumed = self.invoke_subjects()
+        self.assertEqual(0, resumed.returncode, resumed.stderr)
+        self.assertEqual(calls_before, len(self.calls()))
+
+    def test_subjects_max_new_jobs_pauses_between_notes(self) -> None:
+        self.notes_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "notes": [
+                        {"note_id": "note-1", "text": "Rust is pleasant."},
+                        {"note_id": "note-2", "text": "Solar power is useful."},
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        first = self.invoke_subjects("--max-new-jobs", "1")
+
+        self.assertEqual(0, first.returncode, first.stderr)
+        self.assertEqual(
+            {"complete": False, "completed_notes": 1, "new_jobs": 1},
+            json.loads(first.stdout),
+        )
+        self.assertFalse((self.subject_run_directory / "output.json").exists())
+
+        second = self.invoke_subjects("--max-new-jobs", "1")
+
+        self.assertEqual(0, second.returncode, second.stderr)
+        self.assertEqual(
+            {
+                "complete": True,
+                "completed_notes": 2,
+                "new_jobs": 1,
+                "notes": 2,
+                "subjects": 3,
+            },
+            json.loads(second.stdout),
+        )
+        self.assertTrue((self.subject_run_directory / "output.json").is_file())
+        self.assertEqual(2, len([call for call in self.calls() if call["kind"] == "exec"]))
 
     def test_runs_each_generation_in_a_fresh_isolated_codex_exec(self) -> None:
         completed = self.invoke()
