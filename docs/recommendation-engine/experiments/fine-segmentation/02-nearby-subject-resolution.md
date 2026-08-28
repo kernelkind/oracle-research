@@ -44,23 +44,17 @@ This controls sample-count density inside this experiment. Unequal density and
 sparsity are tested separately in Experiment 5. The candidate receives only
 opaque IDs and vectors, not the branch or rung information.
 
-Read the fixture below from top to bottom. Each heading is nested beneath its
-parent; the heading depth is the hierarchy. Each R4 subject contains its four
-exact input masks. Every higher group is the union of the R4 inputs nested
-beneath it; later rungs do not introduce new vectors.
+Each input table below has one complete hierarchy path in its title. Reading a
+path from left to right gives its R1, R2, R3, and R4 subjects. Every higher
+group is the union of all input tables sharing that path prefix; later rungs do
+not introduce new vectors.
 
 ## Complete corpus · R0 · 128 vectors
 
 Rung 0 is the unsegmented input set. It is a non-semantic root, not a claim
 that every vector shares one subject.
 
-### Coffee activities · R1 · 32 vectors
-
-#### Coffee preparation · R2 · 16 vectors
-
-##### Roasting coffee · R3 · 8 vectors
-
-###### Light-roast preparation · R4 · 4 vectors
+### Coffee activities > Coffee preparation > Roasting coffee > Light-roast preparation · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -69,7 +63,7 @@ that every vector shares one subject.
 | `LIGHT-ROAST-3` | ⟦I stopped roasting the coffee beans at the light-roast stage.⟧ |
 | `LIGHT-ROAST-4` | ⟦The coffee beans were roasted until they reached a light roast.⟧ |
 
-###### Dark-roast preparation · R4 · 4 vectors
+### Coffee activities > Coffee preparation > Roasting coffee > Dark-roast preparation · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -78,9 +72,7 @@ that every vector shares one subject.
 | `DARK-ROAST-3` | ⟦I continued roasting the coffee beans to the dark-roast stage.⟧ |
 | `DARK-ROAST-4` | ⟦The coffee beans were roasted until they reached a dark roast.⟧ |
 
-##### Brewing coffee · R3 · 8 vectors
-
-###### Pour-over brewing · R4 · 4 vectors
+### Coffee activities > Coffee preparation > Brewing coffee > Pour-over brewing · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -89,7 +81,7 @@ that every vector shares one subject.
 | `POUR-OVER-3` | ⟦My coffee was brewed using the pour-over method.⟧ |
 | `POUR-OVER-4` | ⟦I used pour-over brewing to make coffee.⟧ |
 
-###### Espresso brewing · R4 · 4 vectors
+### Coffee activities > Coffee preparation > Brewing coffee > Espresso brewing · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -98,11 +90,7 @@ that every vector shares one subject.
 | `ESPRESSO-3` | ⟦My coffee preparation produced a shot of espresso.⟧ |
 | `ESPRESSO-4` | ⟦I made espresso with an espresso brewer.⟧ |
 
-#### Drinking coffee · R2 · 16 vectors
-
-##### Drinking hot coffee · R3 · 8 vectors
-
-###### Drinking hot black coffee · R4 · 4 vectors
+### Coffee activities > Drinking coffee > Drinking hot coffee > Drinking hot black coffee · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -111,7 +99,7 @@ that every vector shares one subject.
 | `BLACK-HOT-3` | ⟦I drank hot coffee served black.⟧ |
 | `BLACK-HOT-4` | ⟦I drank black coffee while it was hot.⟧ |
 
-###### Drinking hot coffee with milk · R4 · 4 vectors
+### Coffee activities > Drinking coffee > Drinking hot coffee > Drinking hot coffee with milk · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -120,9 +108,7 @@ that every vector shares one subject.
 | `MILK-HOT-3` | ⟦I sipped a cup of hot coffee with milk.⟧ |
 | `MILK-HOT-4` | ⟦I sipped a hot, milky coffee.⟧ |
 
-##### Drinking cold coffee · R3 · 8 vectors
-
-###### Drinking iced coffee · R4 · 4 vectors
+### Coffee activities > Drinking coffee > Drinking cold coffee > Drinking iced coffee · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -131,7 +117,7 @@ that every vector shares one subject.
 | `ICED-COFFEE-3` | ⟦I drank cold coffee with ice cubes in it.⟧ |
 | `ICED-COFFEE-4` | ⟦I drank a chilled cup of iced coffee.⟧ |
 
-###### Drinking cold-brew coffee · R4 · 4 vectors
+### Coffee activities > Drinking coffee > Drinking cold coffee > Drinking cold-brew coffee · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -140,13 +126,7 @@ that every vector shares one subject.
 | `COLD-BREW-3` | ⟦I sipped a cold-brew coffee.⟧ |
 | `COLD-BREW-4` | ⟦I chose cold-brew coffee as my drink.⟧ |
 
-### Working with photos · R1 · 32 vectors
-
-#### Making and editing photos · R2 · 16 vectors
-
-##### Taking photos · R3 · 8 vectors
-
-###### Taking portraits · R4 · 4 vectors
+### Working with photos > Making and editing photos > Taking photos > Taking portraits · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -155,7 +135,7 @@ that every vector shares one subject.
 | `PORTRAIT-3` | ⟦I photographed someone for a portrait.⟧ |
 | `PORTRAIT-4` | ⟦The photo I took was a portrait of a person.⟧ |
 
-###### Taking landscape photos · R4 · 4 vectors
+### Working with photos > Making and editing photos > Taking photos > Taking landscape photos · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -164,9 +144,7 @@ that every vector shares one subject.
 | `LANDSCAPE-3` | ⟦I photographed the natural scenery as a landscape.⟧ |
 | `LANDSCAPE-4` | ⟦The photo I took showed a broad landscape.⟧ |
 
-##### Editing photos · R3 · 8 vectors
-
-###### Cropping photos · R4 · 4 vectors
+### Working with photos > Making and editing photos > Editing photos > Cropping photos · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -175,7 +153,7 @@ that every vector shares one subject.
 | `CROP-PHOTO-3` | ⟦Cropping removed the unwanted edges of the picture.⟧ |
 | `CROP-PHOTO-4` | ⟦I reframed an image by cutting away its outside area.⟧ |
 
-###### Adjusting photo colors · R4 · 4 vectors
+### Working with photos > Making and editing photos > Editing photos > Adjusting photo colors · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -184,11 +162,7 @@ that every vector shares one subject.
 | `COLOR-ADJUST-3` | ⟦Changing the color settings altered the picture's appearance.⟧ |
 | `COLOR-ADJUST-4` | ⟦I corrected the colors while editing an image.⟧ |
 
-#### Storing and sharing photos · R2 · 16 vectors
-
-##### Backing up photos · R3 · 8 vectors
-
-###### Local photo backups · R4 · 4 vectors
+### Working with photos > Storing and sharing photos > Backing up photos > Local photo backups · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -197,7 +171,7 @@ that every vector shares one subject.
 | `LOCAL-BACKUP-3` | ⟦I copied my photo library to a locally attached disk for recovery.⟧ |
 | `LOCAL-BACKUP-4` | ⟦A local USB storage device stores my photo backup.⟧ |
 
-###### Cloud photo backups · R4 · 4 vectors
+### Working with photos > Storing and sharing photos > Backing up photos > Cloud photo backups · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -206,9 +180,7 @@ that every vector shares one subject.
 | `CLOUD-BACKUP-3` | ⟦I copied my photo library to remote online storage for recovery.⟧ |
 | `CLOUD-BACKUP-4` | ⟦An off-site cloud service stores my photo backup.⟧ |
 
-##### Sharing photos · R3 · 8 vectors
-
-###### Sharing photos by email · R4 · 4 vectors
+### Working with photos > Storing and sharing photos > Sharing photos > Sharing photos by email · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -217,7 +189,7 @@ that every vector shares one subject.
 | `EMAIL-SHARE-3` | ⟦An email attachment carried the photo I shared.⟧ |
 | `EMAIL-SHARE-4` | ⟦I sent someone a picture through email.⟧ |
 
-###### Sharing photos by link · R4 · 4 vectors
+### Working with photos > Storing and sharing photos > Sharing photos > Sharing photos by link · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -226,13 +198,7 @@ that every vector shares one subject.
 | `LINK-SHARE-3` | ⟦A shared link opened the online photo.⟧ |
 | `LINK-SHARE-4` | ⟦I sent someone a link for viewing my picture.⟧ |
 
-### Eating produce · R1 · 32 vectors
-
-#### Eating fruit · R2 · 16 vectors
-
-##### Eating apples · R3 · 8 vectors
-
-###### Eating red apples · R4 · 4 vectors
+### Eating produce > Eating fruit > Eating apples > Eating red apples · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -241,7 +207,7 @@ that every vector shares one subject.
 | `RED-APPLE-3` | ⟦My snack was a red apple.⟧ |
 | `RED-APPLE-4` | ⟦A red apple was what I ate.⟧ |
 
-###### Eating green apples · R4 · 4 vectors
+### Eating produce > Eating fruit > Eating apples > Eating green apples · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -250,9 +216,7 @@ that every vector shares one subject.
 | `GREEN-APPLE-3` | ⟦My snack was a green apple.⟧ |
 | `GREEN-APPLE-4` | ⟦A green apple was what I ate.⟧ |
 
-##### Eating citrus fruit · R3 · 8 vectors
-
-###### Eating oranges · R4 · 4 vectors
+### Eating produce > Eating fruit > Eating citrus fruit > Eating oranges · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -261,7 +225,7 @@ that every vector shares one subject.
 | `ORANGE-3` | ⟦My snack was an orange.⟧ |
 | `ORANGE-4` | ⟦An orange was what I ate.⟧ |
 
-###### Eating grapefruit · R4 · 4 vectors
+### Eating produce > Eating fruit > Eating citrus fruit > Eating grapefruit · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -270,11 +234,7 @@ that every vector shares one subject.
 | `GRAPEFRUIT-3` | ⟦My snack was a grapefruit.⟧ |
 | `GRAPEFRUIT-4` | ⟦A grapefruit was what I ate.⟧ |
 
-#### Eating vegetables · R2 · 16 vectors
-
-##### Eating carrots · R3 · 8 vectors
-
-###### Eating raw carrots · R4 · 4 vectors
+### Eating produce > Eating vegetables > Eating carrots > Eating raw carrots · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -283,7 +243,7 @@ that every vector shares one subject.
 | `RAW-CARROT-3` | ⟦I crunched on a fresh raw carrot.⟧ |
 | `RAW-CARROT-4` | ⟦I ate a carrot without cooking it.⟧ |
 
-###### Eating cooked carrots · R4 · 4 vectors
+### Eating produce > Eating vegetables > Eating carrots > Eating cooked carrots · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -292,9 +252,7 @@ that every vector shares one subject.
 | `COOKED-CARROT-3` | ⟦I had a soft cooked carrot with my meal.⟧ |
 | `COOKED-CARROT-4` | ⟦I ate a carrot that had been cooked.⟧ |
 
-##### Eating leafy greens · R3 · 8 vectors
-
-###### Eating lettuce · R4 · 4 vectors
+### Eating produce > Eating vegetables > Eating leafy greens > Eating lettuce · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -303,7 +261,7 @@ that every vector shares one subject.
 | `LETTUCE-3` | ⟦My food included crisp lettuce.⟧ |
 | `LETTUCE-4` | ⟦Lettuce leaves were what I ate.⟧ |
 
-###### Eating spinach · R4 · 4 vectors
+### Eating produce > Eating vegetables > Eating leafy greens > Eating spinach · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -312,13 +270,7 @@ that every vector shares one subject.
 | `SPINACH-3` | ⟦My food included leafy spinach.⟧ |
 | `SPINACH-4` | ⟦Spinach leaves were what I ate.⟧ |
 
-### Consuming media · R1 · 32 vectors
-
-#### Reading · R2 · 16 vectors
-
-##### Reading books · R3 · 8 vectors
-
-###### Reading fiction books · R4 · 4 vectors
+### Consuming media > Reading > Reading books > Reading fiction books · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -327,7 +279,7 @@ that every vector shares one subject.
 | `FICTION-BOOK-3` | ⟦My reading was a fictional book.⟧ |
 | `FICTION-BOOK-4` | ⟦I read a book that told an invented story.⟧ |
 
-###### Reading nonfiction books · R4 · 4 vectors
+### Consuming media > Reading > Reading books > Reading nonfiction books · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -336,9 +288,7 @@ that every vector shares one subject.
 | `NONFICTION-BOOK-3` | ⟦My reading was a work of nonfiction.⟧ |
 | `NONFICTION-BOOK-4` | ⟦I read a book about real events and facts.⟧ |
 
-##### Reading magazines · R3 · 8 vectors
-
-###### Reading print magazines · R4 · 4 vectors
+### Consuming media > Reading > Reading magazines > Reading print magazines · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -347,7 +297,7 @@ that every vector shares one subject.
 | `PRINT-MAGAZINE-3` | ⟦My reading was a physical magazine issue.⟧ |
 | `PRINT-MAGAZINE-4` | ⟦I read articles in a magazine printed on paper.⟧ |
 
-###### Reading digital magazines · R4 · 4 vectors
+### Consuming media > Reading > Reading magazines > Reading digital magazines · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -356,11 +306,7 @@ that every vector shares one subject.
 | `DIGITAL-MAGAZINE-3` | ⟦My reading was an online magazine edition.⟧ |
 | `DIGITAL-MAGAZINE-4` | ⟦I read magazine articles in a digital publication.⟧ |
 
-#### Listening · R2 · 16 vectors
-
-##### Listening to podcasts · R3 · 8 vectors
-
-###### Listening to news podcasts · R4 · 4 vectors
+### Consuming media > Listening > Listening to podcasts > Listening to news podcasts · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -369,7 +315,7 @@ that every vector shares one subject.
 | `NEWS-PODCAST-3` | ⟦My listening choice was a news podcast.⟧ |
 | `NEWS-PODCAST-4` | ⟦I heard the latest news in a podcast episode.⟧ |
 
-###### Listening to interview podcasts · R4 · 4 vectors
+### Consuming media > Listening > Listening to podcasts > Listening to interview podcasts · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -378,9 +324,7 @@ that every vector shares one subject.
 | `INTERVIEW-PODCAST-3` | ⟦My listening choice was a podcast conversation with a guest.⟧ |
 | `INTERVIEW-PODCAST-4` | ⟦I heard a host interview someone on a podcast.⟧ |
 
-##### Listening to audiobooks · R3 · 8 vectors
-
-###### Listening to fiction audiobooks · R4 · 4 vectors
+### Consuming media > Listening > Listening to audiobooks > Listening to fiction audiobooks · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -389,7 +333,7 @@ that every vector shares one subject.
 | `FICTION-AUDIOBOOK-3` | ⟦My listening was an audiobook of a novel.⟧ |
 | `FICTION-AUDIOBOOK-4` | ⟦I played an audiobook that told an invented story.⟧ |
 
-###### Listening to nonfiction audiobooks · R4 · 4 vectors
+### Consuming media > Listening > Listening to audiobooks > Listening to nonfiction audiobooks · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -400,10 +344,11 @@ that every vector shares one subject.
 
 ## Scoring the corpus
 
-The nested structure from R0 through R4 is the complete expected hierarchy.
-Every subject heading is one required group; its vectors are exactly the
-vectors beneath that heading. Scoring uses those subject names directly rather
-than separate aliases.
+The 32 path headings above define the complete expected hierarchy. The first
+subject in a path is its R1 group, the first two subjects identify its R2
+group, the first three identify its R3 group, and the complete path identifies
+its R4 group. A group contains every input table sharing that path prefix.
+Scoring uses those subject names directly rather than separate aliases.
 
 A returned segment **crosses** a boundary when it contains vectors from two
 groups that the rung keeps separate.
