@@ -8,12 +8,11 @@ approval before encoding**.
 > Nearby but meaningfully distinct fine subjects are resolved.
 
 We do not yet know how fine the segmentation must be. This experiment therefore
-measures resolution at two predeclared levels instead of requiring every
-distinction:
+defines three concrete rungs for each semantic ladder:
 
-- **Minimum:** separate a conservatively different subject from two very close
-  subjects.
-- **Fine:** also separate the two very close subjects from each other.
+- **Rung 0:** all three cohorts remain under one broad subject;
+- **Rung 1:** a conservative boundary is resolved;
+- **Rung 2:** a narrower boundary is also resolved.
 
 This is a semantic sweep over fixed inputs. It does not tune or sweep any
 algorithm-specific setting. The candidate and its configuration remain frozen.
@@ -21,18 +20,20 @@ algorithm-specific setting. The candidate and its configuration remain frozen.
 ## Fixture
 
 The fixture contains 48 vectors: four resolution ladders, three subject cohorts
-per ladder, and four independently worded instances per cohort.
+per ladder, and four independently worded instances per cohort. These are the
+actual ladder rungs:
 
-| Ladder | Close pair | Conservatively different subject |
-|---|---|---|
-| Coffee | Light roast / dark roast | Grinding coffee beans |
-| Photos | Local backup / cloud backup | Synchronizing photos |
-| Kitchen | Parent teaches child / child teaches parent | Washing dishes together |
-| Files | AES encryption / ChaCha20 encryption | File compression |
+| Ladder | Rung 0 | Rung 1 | Rung 2 |
+|---|---|---|---|
+| Coffee | Coffee-bean processing | Roasting / grinding | Light roast / dark roast / grinding |
+| Photos | Photo-library replication | Backup / synchronization | Local backup / cloud backup / synchronization |
+| Raptors | Observing birds of prey | Eagles / hawks | Bald eagles / golden eagles / red-tailed hawks |
+| Files | File-data transformation | Encryption / compression | AES encryption / ChaCha20 encryption / compression |
 
 Each complete note is also its complete mask. Density is balanced. The
 candidate receives only opaque IDs and vectors, not the ladder, subject, or
-boundary information.
+boundary information. No ladder depends on preserving actor/recipient order or
+other compositional structure.
 
 ### Coffee
 
@@ -45,7 +46,7 @@ boundary information.
 | `LIGHT-ROAST-3` | ⟦A batch of green coffee beans was roasted until lightly browned.⟧ |
 | `LIGHT-ROAST-4` | ⟦I stopped roasting the coffee beans at the light stage.⟧ |
 
-#### `DARK-ROAST`: darkly roasting coffee beans
+#### `DARK-ROAST`: roasting coffee beans to a dark roast
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -92,34 +93,34 @@ boundary information.
 | `PHOTO-SYNC-3` | ⟦My phone and tablet exchange photo-library updates so both stay synchronized.⟧ |
 | `PHOTO-SYNC-4` | ⟦A photo-library change made on either device is copied to the other device.⟧ |
 
-### Kitchen
+### Raptors
 
-#### `PARENT-TEACHES`: a parent teaching a child to cook
-
-| ID | Complete note and exact mask |
-|---|---|
-| `PARENT-TEACHES-1` | ⟦A parent taught their child how to prepare a meal.⟧ |
-| `PARENT-TEACHES-2` | ⟦A child learned how to cook through instruction from their parent.⟧ |
-| `PARENT-TEACHES-3` | ⟦Cooking instruction passed from a parent to their child.⟧ |
-| `PARENT-TEACHES-4` | ⟦The parent gave the child a lesson in meal preparation.⟧ |
-
-#### `CHILD-TEACHES`: a child teaching a parent to cook
+#### `BALD-EAGLE`: observing bald eagles
 
 | ID | Complete note and exact mask |
 |---|---|
-| `CHILD-TEACHES-1` | ⟦A child taught their parent how to prepare a meal.⟧ |
-| `CHILD-TEACHES-2` | ⟦A parent learned how to cook through instruction from their child.⟧ |
-| `CHILD-TEACHES-3` | ⟦Cooking instruction passed from a child to their parent.⟧ |
-| `CHILD-TEACHES-4` | ⟦The child gave the parent a lesson in meal preparation.⟧ |
+| `BALD-EAGLE-1` | ⟦I observed a bald eagle.⟧ |
+| `BALD-EAGLE-2` | ⟦I watched a bald eagle.⟧ |
+| `BALD-EAGLE-3` | ⟦I spent time viewing a bald eagle.⟧ |
+| `BALD-EAGLE-4` | ⟦My birdwatching focused on a bald eagle.⟧ |
 
-#### `WASH-DISHES`: a parent and child washing dishes together
+#### `GOLDEN-EAGLE`: observing golden eagles
 
 | ID | Complete note and exact mask |
 |---|---|
-| `WASH-DISHES-1` | ⟦A parent and child washed the dishes together.⟧ |
-| `WASH-DISHES-2` | ⟦A parent and child jointly cleaned the dirty dishes.⟧ |
-| `WASH-DISHES-3` | ⟦Dishwashing was shared between a parent and child.⟧ |
-| `WASH-DISHES-4` | ⟦The parent and child worked together to clean the dishes.⟧ |
+| `GOLDEN-EAGLE-1` | ⟦I observed a golden eagle.⟧ |
+| `GOLDEN-EAGLE-2` | ⟦I watched a golden eagle.⟧ |
+| `GOLDEN-EAGLE-3` | ⟦I spent time viewing a golden eagle.⟧ |
+| `GOLDEN-EAGLE-4` | ⟦My birdwatching focused on a golden eagle.⟧ |
+
+#### `REDTAIL-HAWK`: observing red-tailed hawks
+
+| ID | Complete note and exact mask |
+|---|---|
+| `REDTAIL-HAWK-1` | ⟦I observed a red-tailed hawk.⟧ |
+| `REDTAIL-HAWK-2` | ⟦I watched a red-tailed hawk.⟧ |
+| `REDTAIL-HAWK-3` | ⟦I spent time viewing a red-tailed hawk.⟧ |
+| `REDTAIL-HAWK-4` | ⟦My birdwatching focused on a red-tailed hawk.⟧ |
 
 ### Files
 
@@ -152,36 +153,52 @@ boundary information.
 
 ## Scoring one ladder
 
-Call the two close four-vector cohorts `A` and `B`, and the conservatively
-different four-vector cohort `C`.
+For scoring only, call the two closest four-vector cohorts `A` and `B`, and the
+other four-vector cohort `C`. Their meanings in each ladder are:
 
-The ladder meets **minimum resolution** when:
+| Ladder | `A` | `B` | `C` |
+|---|---|---|---|
+| Coffee | Light roast | Dark roast | Grinding |
+| Photos | Local backup | Cloud backup | Synchronization |
+| Raptors | Bald eagles | Golden eagles | Red-tailed hawks |
+| Files | AES encryption | ChaCha20 encryption | Compression |
 
-1. one returned fine segment `R` satisfies `A ⊆ R ⊆ A ∪ B`;
-2. one returned fine segment `R` satisfies `B ⊆ R ⊆ A ∪ B`;
-3. one returned fine segment equals exactly `C`;
-4. no returned fine segment contains both a `C` vector and an `A` or `B`
-   vector.
+The canonical grouping at each rung is:
 
-`A` and `B` may share one segment at minimum resolution.
+```text
+Rung 0: {A ∪ B ∪ C}
+Rung 1: {A ∪ B}, {C}
+Rung 2: {A}, {B}, {C}
+```
 
-The ladder reaches **fine resolution** when it meets minimum resolution and:
+A result reaches **Rung 1** when:
+
+1. one returned fine segment equals exactly `C`;
+2. either one segment equals exactly `A ∪ B`, or separate segments equal
+   exactly `A` and exactly `B`;
+3. no returned fine segment crosses the `(A ∪ B) / C` boundary.
+
+A result reaches **Rung 2** when:
 
 1. one returned fine segment equals exactly `A`;
 2. one returned fine segment equals exactly `B`;
-3. no returned fine segment contains both an `A` vector and a `B` vector.
+3. one returned fine segment equals exactly `C`;
+4. no returned fine segment crosses any of the three subject boundaries.
 
-Additional segments contained inside one cohort are allowed. The verdict does
+Additional segments contained inside one cohort are allowed. Segments mixing
+different ladders are recorded separately and do not affect this experiment
+unless they also cross a scored boundary inside one ladder. The verdict does
 not require every vector globally to have only one membership.
 
 ## Overall result
 
-The proposed conservative MVP requirement is minimum resolution on all four
-ladders. This requirement still needs human approval before the experiment is
-frozen. Failure on any ladder places the candidate below that proposed minimum.
+The proposed conservative MVP requirement is Rung 1 on all four ladders. This
+requirement still needs human approval before the experiment is frozen.
 
-Fine resolution is reported separately as `0/4` through `4/4` ladders. It is
-not required to pass this experiment.
+Report the highest verified rung for every ladder. A result that does not reach
+Rung 1 is reported as **below Rung 1**; the experiment must not infer that its
+output cleanly matches Rung 0. Rung 2 is additional resolving power, not an MVP
+requirement.
 
 ## Run
 
