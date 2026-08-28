@@ -15,4 +15,10 @@ fn sse_mask_review_cli_explains_its_required_artifacts() {
         ),
         "{stderr}"
     );
+    assert!(
+        stderr.contains(
+            "sse-mask-review iterate <generation-run-directory> <prompt-review-session.json>"
+        ),
+        "{stderr}"
+    );
 }

@@ -25,7 +25,7 @@ REUSE_PIPELINE_SCHEMA_VERSION = 3
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CODEX_HOME = Path("~/.local/state/oracle-mvp/codex-home").expanduser()
 TAKEAWAY_ENVELOPE_VERSION = "xml-post-v1"
-TAKEAWAY_INPUT_NORMALIZATION_VERSION = "remove-long-nip19-identifiers-v1"
+TAKEAWAY_INPUT_NORMALIZATION_VERSION = "remove-long-ascii-nip19-identifiers-v2"
 MINIMAL_MODEL_INSTRUCTIONS = "Follow the user's instructions.\n"
 RUNTIME_CONTEXT_OVERRIDES = (
     "agents.enabled=false",
@@ -49,9 +49,10 @@ DISABLED_FEATURES = (
 )
 IDENTIFIER = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/+\-]*$")
 NIP19_IDENTIFIER = re.compile(
-    r"(?i)(?<!\w)(?:nostr:)?(?:nprofile|nevent|nrelay|naddr|npub|nsec|note)1"
-    r"[023456789acdefghjklmnpqrstuvwxyz]{20,}"
-    r"(?:[?#][^\s<>\"']*)?(?=$|[^\w])"
+    r"(?<![A-Za-z0-9_])"
+    r"(?ai:(?:nostr:)?(?:nprofile|nevent|nrelay|naddr|npub|nsec|note)1"
+    r"[023456789acdefghjklmnpqrstuvwxyz]{20,})"
+    r"(?:[?#][^\s<>\"']*)?(?=$|[^A-Za-z0-9_])"
 )
 
 TAKEAWAY_SCHEMA: dict[str, object] = {

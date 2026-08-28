@@ -67,7 +67,19 @@ pub enum ApprovalTuiAction {
         outcome: ReviewOutcome,
         comment: String,
     },
+    SaveComment {
+        comment: String,
+    },
+    Skip {
+        comment: String,
+    },
     Pause,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum ApprovalInteraction {
+    Production,
+    PromptIteration,
 }
 
 pub(crate) trait InteractiveReviewModel {
@@ -82,6 +94,7 @@ pub(crate) trait InteractiveReviewModel {
 #[derive(Clone, Debug)]
 pub struct ApprovalTuiModel {
     screen: ApprovalScreen,
+    interaction: ApprovalInteraction,
     evidence_index: usize,
     evidence_scrolls: Vec<u16>,
     guidance_scroll: u16,
@@ -89,11 +102,25 @@ pub struct ApprovalTuiModel {
     half_page_lines: u16,
     pending_outcome: Option<ReviewOutcome>,
     comment: String,
+    comment_before_edit: String,
+    editing_prompt_comment: bool,
     interaction_enabled: bool,
 }
 
 impl ApprovalTuiModel {
-    pub fn new(mut screen: ApprovalScreen) -> Self {
+    pub fn new(screen: ApprovalScreen) -> Self {
+        Self::with_interaction(screen, ApprovalInteraction::Production, String::new())
+    }
+
+    pub fn new_prompt_iteration(screen: ApprovalScreen, comment: String) -> Self {
+        Self::with_interaction(screen, ApprovalInteraction::PromptIteration, comment)
+    }
+
+    fn with_interaction(
+        mut screen: ApprovalScreen,
+        interaction: ApprovalInteraction,
+        comment: String,
+    ) -> Self {
         screen.heading = terminal_safe(&screen.heading);
         screen.title = terminal_safe(&screen.title);
         screen.scope = terminal_safe(&screen.scope);
@@ -112,13 +139,16 @@ impl ApprovalTuiModel {
         let evidence_scrolls = vec![0; screen.evidence.len()];
         Self {
             screen,
+            interaction,
             evidence_index: 0,
             evidence_scrolls,
             guidance_scroll: 0,
             guidance_visible: false,
             half_page_lines: 1,
             pending_outcome: None,
-            comment: String::new(),
+            comment: terminal_safe(&comment),
+            comment_before_edit: String::new(),
+            editing_prompt_comment: false,
             interaction_enabled: true,
         }
     }
@@ -129,6 +159,9 @@ impl ApprovalTuiModel {
         }
         if !self.interaction_enabled {
             return ApprovalTuiAction::None;
+        }
+        if self.editing_prompt_comment {
+            return self.handle_prompt_comment_event(event);
         }
         if self.pending_outcome.is_some() {
             return self.handle_comment_event(event);
@@ -199,12 +232,37 @@ impl ApprovalTuiModel {
                 self.guidance_scroll = 0;
             }
             KeyCode::Char('a' | 'A') => {
+                if self.interaction == ApprovalInteraction::PromptIteration {
+                    return ApprovalTuiAction::Submit {
+                        outcome: ReviewOutcome::Approved,
+                        comment: self.comment.trim().to_owned(),
+                    };
+                }
                 self.pending_outcome = Some(ReviewOutcome::Approved);
                 self.comment.clear();
             }
             KeyCode::Char('r' | 'R') => {
+                if self.interaction == ApprovalInteraction::PromptIteration {
+                    return ApprovalTuiAction::Submit {
+                        outcome: ReviewOutcome::Rejected,
+                        comment: self.comment.trim().to_owned(),
+                    };
+                }
                 self.pending_outcome = Some(ReviewOutcome::Rejected);
                 self.comment.clear();
+            }
+            KeyCode::Char('c' | 'C')
+                if self.interaction == ApprovalInteraction::PromptIteration =>
+            {
+                self.comment_before_edit.clone_from(&self.comment);
+                self.editing_prompt_comment = true;
+            }
+            KeyCode::Char('s' | 'S')
+                if self.interaction == ApprovalInteraction::PromptIteration =>
+            {
+                return ApprovalTuiAction::Skip {
+                    comment: self.comment.trim().to_owned(),
+                };
             }
             KeyCode::Tab | KeyCode::Right => self.next_evidence(),
             KeyCode::BackTab | KeyCode::Left => self.previous_evidence(),
@@ -233,6 +291,38 @@ impl ApprovalTuiModel {
                     *scroll = 0;
                 }
             }
+            _ => {}
+        }
+        ApprovalTuiAction::None
+    }
+
+    fn handle_prompt_comment_event(&mut self, event: Event) -> ApprovalTuiAction {
+        match event {
+            Event::Paste(text) => {
+                self.comment.push_str(&terminal_safe(&text));
+            }
+            Event::Key(key) if key.kind == KeyEventKind::Press => match key.code {
+                KeyCode::Enter => {
+                    self.comment = self.comment.trim().to_owned();
+                    self.comment_before_edit.clear();
+                    self.editing_prompt_comment = false;
+                    return ApprovalTuiAction::SaveComment {
+                        comment: self.comment.clone(),
+                    };
+                }
+                KeyCode::Esc => {
+                    self.comment.clone_from(&self.comment_before_edit);
+                    self.comment_before_edit.clear();
+                    self.editing_prompt_comment = false;
+                }
+                KeyCode::Backspace if !has_command_modifier(key.modifiers) => {
+                    self.comment.pop();
+                }
+                KeyCode::Char(character) if !has_command_modifier(key.modifiers) => {
+                    self.comment.push(character);
+                }
+                _ => {}
+            },
             _ => {}
         }
         ApprovalTuiAction::None
@@ -300,6 +390,35 @@ impl ApprovalTuiModel {
         }
     }
 
+    fn navigation_controls(&self, exit_label: &'static str) -> Vec<Span<'static>> {
+        let mut controls = Vec::new();
+        if self.screen.evidence.len() > 1 {
+            let target = match self.screen.evidence_layout {
+                ApprovalEvidenceLayout::Paged => " Evidence  ",
+                ApprovalEvidenceLayout::Stacked => " Panel  ",
+            };
+            controls.extend([
+                Span::styled("[Tab/←/→]", accent_style()),
+                Span::styled(target, secondary_style()),
+            ]);
+        }
+        if let Some(guidance) = &self.screen.guidance {
+            controls.extend([
+                Span::styled("[?]", accent_style()),
+                Span::styled(format!(" {}  ", guidance.title), secondary_style()),
+            ]);
+        }
+        controls.extend([
+            Span::styled("[↑/↓]", accent_style()),
+            Span::styled(" Scroll  ", secondary_style()),
+            Span::styled("[Ctrl-D/U]", accent_style()),
+            Span::styled(" Half-page  ", secondary_style()),
+            Span::styled("[Ctrl-C]", accent_style()),
+            Span::styled(exit_label, secondary_style()),
+        ]);
+        controls
+    }
+
     pub fn render(&mut self, frame: &mut Frame<'_>) {
         let area = frame.area();
         self.interaction_enabled = area.width >= MIN_WIDTH && area.height >= MIN_HEIGHT;
@@ -308,7 +427,13 @@ impl ApprovalTuiModel {
             return;
         }
         let area = centered(area);
-        let footer_height = if self.pending_outcome.is_some() { 8 } else { 4 };
+        let footer_height = if self.pending_outcome.is_some() {
+            8
+        } else if self.editing_prompt_comment {
+            6
+        } else {
+            4
+        };
         let scope = Paragraph::new(self.screen.scope.as_str())
             .style(secondary_style())
             .wrap(Wrap { trim: false });
@@ -443,6 +568,20 @@ impl ApprovalTuiModel {
                     Span::styled(" Pause", secondary_style()),
                 ]),
             ]
+        } else if self.editing_prompt_comment {
+            vec![
+                Line::from(vec![
+                    Span::styled("Comment", accent_style()),
+                    Span::styled(" (optional)", secondary_style()),
+                ]),
+                Line::raw(format!("> {}", self.comment)),
+                Line::from(vec![
+                    Span::styled("[Enter]", accent_style()),
+                    Span::styled(" Save  ", secondary_style()),
+                    Span::styled("[Esc]", accent_style()),
+                    Span::styled(" Cancel", secondary_style()),
+                ]),
+            ]
         } else if let Some(outcome) = self.pending_outcome {
             let decision = match outcome {
                 ReviewOutcome::Approved => "Approve",
@@ -476,39 +615,30 @@ impl ApprovalTuiModel {
                 ]),
             ]);
             lines
+        } else if self.interaction == ApprovalInteraction::PromptIteration {
+            let navigation_controls = self.navigation_controls(" Save/exit");
+            let mut lines = vec![
+                Line::from(vec![
+                    Span::styled("[A]", accent_style()),
+                    Span::styled(" Approve  ", secondary_style()),
+                    Span::styled("[R]", accent_style()),
+                    Span::styled(" Disapprove  ", secondary_style()),
+                    Span::styled("[C]", accent_style()),
+                    Span::styled(" Comment  ", secondary_style()),
+                    Span::styled("[S]", accent_style()),
+                    Span::styled(" Skip", secondary_style()),
+                ]),
+                Line::from(navigation_controls),
+            ];
+            if !self.comment.is_empty() {
+                lines.insert(
+                    1,
+                    Line::styled(format!("Comment: {}", self.comment), secondary_style()),
+                );
+            }
+            lines
         } else {
-            let mut navigation_controls = Vec::new();
-            if self.screen.evidence.len() > 1 {
-                let target = match self.screen.evidence_layout {
-                    ApprovalEvidenceLayout::Paged => " Evidence  ",
-                    ApprovalEvidenceLayout::Stacked => " Panel  ",
-                };
-                navigation_controls.extend([
-                    Span::styled("[Tab/←/→]", accent_style()),
-                    Span::styled(target, secondary_style()),
-                ]);
-            }
-            if self.screen.guidance.is_some() {
-                let guidance_title = self
-                    .screen
-                    .guidance
-                    .as_ref()
-                    .expect("guidance presence was just checked")
-                    .title
-                    .as_str();
-                navigation_controls.extend([
-                    Span::styled("[?]", accent_style()),
-                    Span::styled(format!(" {guidance_title}  "), secondary_style()),
-                ]);
-            }
-            navigation_controls.extend([
-                Span::styled("[↑/↓]", accent_style()),
-                Span::styled(" Scroll  ", secondary_style()),
-                Span::styled("[Ctrl-D/U]", accent_style()),
-                Span::styled(" Half-page  ", secondary_style()),
-                Span::styled("[Ctrl-C]", accent_style()),
-                Span::styled(" Pause", secondary_style()),
-            ]);
+            let navigation_controls = self.navigation_controls(" Pause");
             vec![
                 Line::from(vec![
                     Span::styled("[A]", accent_style()),
@@ -832,6 +962,14 @@ impl ReferenceTerminal {
 
     pub fn review(&mut self, screen: ApprovalScreen) -> io::Result<ApprovalTuiAction> {
         self.run_review_model(ApprovalTuiModel::new(screen))
+    }
+
+    pub fn review_prompt_iteration(
+        &mut self,
+        screen: ApprovalScreen,
+        comment: String,
+    ) -> io::Result<ApprovalTuiAction> {
+        self.run_review_model(ApprovalTuiModel::new_prompt_iteration(screen, comment))
     }
 
     pub(crate) fn run_review_model<M>(&mut self, mut model: M) -> io::Result<M::Action>

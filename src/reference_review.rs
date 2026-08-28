@@ -226,6 +226,16 @@ pub fn run_note_review(
                 ));
             }
             ApprovalTuiAction::Pause => return Ok(ReviewRunOutcome::Paused),
+            ApprovalTuiAction::SaveComment { .. } => {
+                return Err(Error::ExperimentState(
+                    "production note review cannot save a draft comment".to_owned(),
+                ));
+            }
+            ApprovalTuiAction::Skip { .. } => {
+                return Err(Error::ExperimentState(
+                    "production note review cannot skip a decision".to_owned(),
+                ));
+            }
             ApprovalTuiAction::Submit { outcome, comment } => {
                 session.record(&proposal, slot, NoteReviewDecision { outcome, comment })?;
                 save_session(session_path, &session)?;
@@ -289,6 +299,16 @@ pub fn run_hierarchy_review(
                     ));
                 }
                 ApprovalTuiAction::Pause => return Ok(ReviewRunOutcome::Paused),
+                ApprovalTuiAction::SaveComment { .. } => {
+                    return Err(Error::ExperimentState(
+                        "production hierarchy review cannot save a draft comment".to_owned(),
+                    ));
+                }
+                ApprovalTuiAction::Skip { .. } => {
+                    return Err(Error::ExperimentState(
+                        "production hierarchy review cannot skip a decision".to_owned(),
+                    ));
+                }
                 ApprovalTuiAction::Submit { outcome, comment } => {
                     session.record(
                         &draft,
@@ -319,6 +339,16 @@ pub fn run_hierarchy_review(
                     ));
                 }
                 ApprovalTuiAction::Pause => return Ok(ReviewRunOutcome::Paused),
+                ApprovalTuiAction::SaveComment { .. } => {
+                    return Err(Error::ExperimentState(
+                        "production hierarchy review cannot save a draft comment".to_owned(),
+                    ));
+                }
+                ApprovalTuiAction::Skip { .. } => {
+                    return Err(Error::ExperimentState(
+                        "production hierarchy review cannot skip a decision".to_owned(),
+                    ));
+                }
                 ApprovalTuiAction::Submit { outcome, comment } => {
                     session.record_focus_coverage(
                         &draft,

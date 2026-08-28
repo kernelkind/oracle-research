@@ -486,6 +486,67 @@ fn queued_control_c_is_preserved_as_a_pause_request() {
     assert_eq!(model.handle_event(event), ApprovalTuiAction::Pause);
 }
 
+#[test]
+fn prompt_iteration_controls_make_decisions_directly_and_keep_comments_optional() {
+    let mut approved = ApprovalTuiModel::new_prompt_iteration(approval_screen(), String::new());
+    let rendered = render_approval(&mut approved);
+    assert!(rendered.contains("[A] Approve"), "{rendered}");
+    assert!(rendered.contains("[R] Disapprove"), "{rendered}");
+    assert!(rendered.contains("[C] Comment"), "{rendered}");
+    assert!(rendered.contains("[S] Skip"), "{rendered}");
+    assert_eq!(
+        approved.handle_event(key(KeyCode::Char('a'))),
+        ApprovalTuiAction::Submit {
+            outcome: ReviewOutcome::Approved,
+            comment: String::new(),
+        }
+    );
+
+    let mut rejected = ApprovalTuiModel::new_prompt_iteration(approval_screen(), String::new());
+    assert_eq!(
+        rejected.handle_event(key(KeyCode::Char('r'))),
+        ApprovalTuiAction::Submit {
+            outcome: ReviewOutcome::Rejected,
+            comment: String::new(),
+        }
+    );
+
+    let mut commented = ApprovalTuiModel::new_prompt_iteration(approval_screen(), String::new());
+    assert_eq!(
+        commented.handle_event(key(KeyCode::Char('c'))),
+        ApprovalTuiAction::None
+    );
+    assert_eq!(
+        commented.handle_event(Event::Paste("Mask includes extra context".to_owned())),
+        ApprovalTuiAction::None
+    );
+    assert_eq!(
+        commented.handle_event(key(KeyCode::Enter)),
+        ApprovalTuiAction::SaveComment {
+            comment: "Mask includes extra context".to_owned(),
+        }
+    );
+    let mut commented = ApprovalTuiModel::new_prompt_iteration(
+        approval_screen(),
+        "Mask includes extra context".to_owned(),
+    );
+    assert_eq!(
+        commented.handle_event(key(KeyCode::Char('r'))),
+        ApprovalTuiAction::Submit {
+            outcome: ReviewOutcome::Rejected,
+            comment: "Mask includes extra context".to_owned(),
+        }
+    );
+
+    let mut skipped = ApprovalTuiModel::new_prompt_iteration(approval_screen(), String::new());
+    assert_eq!(
+        skipped.handle_event(key(KeyCode::Char('s'))),
+        ApprovalTuiAction::Skip {
+            comment: String::new(),
+        }
+    );
+}
+
 fn hierarchy() -> ApprovedHierarchy {
     let notes = (0..48)
         .map(|index| HierarchyNote {

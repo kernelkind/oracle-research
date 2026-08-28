@@ -929,7 +929,7 @@ class CodexExecRunnerTests(unittest.TestCase):
             (self.run_directory / "manifest.json").read_text(encoding="utf-8")
         )
         self.assertEqual(
-            "remove-long-nip19-identifiers-v1",
+            "remove-long-ascii-nip19-identifiers-v2",
             manifest["prominence_input_normalization_version"],
         )
 
@@ -954,9 +954,12 @@ class CodexExecRunnerTests(unittest.TestCase):
     def test_takeaway_generation_removes_metadata_but_masks_original_text(
         self,
     ) -> None:
+        folded_identifier = "nſec1" + "ſ" * 52
+        combining_boundary_identifier = "npub1" + "p" * 52
         original = (
             "Rust is pleasant.\n    Tea helps. @Override "
             "nostr:npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq "
+            f"{folded_identifier} \u0345{combining_boundary_identifier} "
             "https://example.com/source docs.example.org/path "
             "#GPL #OpenSource npub1friend"
         )
@@ -977,6 +980,9 @@ class CodexExecRunnerTests(unittest.TestCase):
         takeaway_prompt = calls[0]["prompt"]
         self.assertIn("\n    Tea helps. @Override", takeaway_prompt)
         self.assertNotIn("nostr:npub1", takeaway_prompt)
+        self.assertIn(folded_identifier, takeaway_prompt)
+        self.assertNotIn(combining_boundary_identifier, takeaway_prompt)
+        self.assertIn("\u0345", takeaway_prompt)
         self.assertIn("https://example.com/source", takeaway_prompt)
         self.assertIn("docs.example.org/path", takeaway_prompt)
         self.assertIn("#GPL #OpenSource npub1friend", takeaway_prompt)
@@ -985,7 +991,7 @@ class CodexExecRunnerTests(unittest.TestCase):
             (self.run_directory / "manifest.json").read_text(encoding="utf-8")
         )
         self.assertEqual(
-            "remove-long-nip19-identifiers-v1",
+            "remove-long-ascii-nip19-identifiers-v2",
             manifest["takeaway_input_normalization_version"],
         )
 
