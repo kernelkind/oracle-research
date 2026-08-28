@@ -7,80 +7,93 @@ before encoding**.
 
 > Nearby but meaningfully distinct fine subjects are resolved.
 
-We do not yet know how fine the segmentation must be. Each ladder therefore
-defines four concrete semantic rungs over the same vectors:
+We do not yet know how fine the segmentation must be. The experiment therefore
+defines five concrete rungs over one corpus:
 
-- **Rung 0:** one broad group;
-- **Rung 1:** two coarse groups;
-- **Rung 2:** four narrower groups;
-- **Rung 3:** eight finest groups.
+- **Rung 0:** the complete unsegmented input set;
+- **Rung 1:** four broad groups;
+- **Rung 2:** eight narrower groups;
+- **Rung 3:** sixteen still-narrower groups;
+- **Rung 4:** thirty-two finest groups.
 
-Rung 1 is the mandatory minimum. Its boundary is deliberately coarse and
-unambiguous. Rungs 2 and 3 measure progressively finer resolving power.
+Rung 1 is the mandatory minimum. Its boundaries are deliberately coarse and
+unambiguous. Rungs 2 through 4 measure progressively finer resolving power.
 
 This sweeps semantic distinctions in the fixture. It does not tune or sweep an
 algorithm-specific setting. One candidate and configuration remain frozen.
 
 ## Fixture
 
-The fixture contains 128 vectors: four ladders, eight finest-subject cohorts
-per ladder, and four independently worded instances per cohort. Every complete
-note is also its complete mask. Every concept is ordinary and stated directly;
-no rung depends on obscure facts or compositional role ordering.
+The fixture is one corpus containing 128 vectors. It has four broad branches,
+eight finest-subject cohorts per branch, and four independently worded
+instances per finest cohort. Every complete note is also its complete mask.
+Every concept is ordinary and stated directly; no rung depends on obscure
+facts or compositional role ordering.
 
 The hierarchy is balanced by construction:
 
-| Rung | Groups per ladder | Vectors per group |
+| Rung | Groups in the corpus | Vectors per group |
 |---|---:|---:|
-| 0 | 1 | 32 |
-| 1 | 2 | 16 |
-| 2 | 4 | 8 |
-| 3 | 8 | 4 |
+| 0 | 1 | 128 |
+| 1 | 4 | 32 |
+| 2 | 8 | 16 |
+| 3 | 16 | 8 |
+| 4 | 32 | 4 |
 
 This controls sample-count density inside this experiment. Unequal density and
 sparsity are tested separately in Experiment 5. The candidate receives only
-opaque IDs and vectors, not the ladder or rung information.
+opaque IDs and vectors, not the branch or rung information.
 
-## Intended ladders
+## Intended hierarchy
+
+### Rung 0
+
+Rung 0 is the complete 128-vector input set. It is a non-semantic root, not a
+claim that all inputs share one subject.
+
+### Rung 1
+
+Rung 1 contains four groups: Coffee activities; Working with photos; Eating
+produce; Consuming media.
 
 ### Coffee
 
-- **Rung 0 — one group:** Coffee activities
-- **Rung 1 — two groups:** Coffee preparation; Drinking coffee
-- **Rung 2 — four groups:** Roasting coffee; Brewing coffee; Drinking hot
+- **Rung 1:** Coffee activities
+- **Rung 2 — two groups:** Coffee preparation; Drinking coffee
+- **Rung 3 — four groups:** Roasting coffee; Brewing coffee; Drinking hot
   coffee; Drinking cold coffee
-- **Rung 3 — eight groups:** Light-roast preparation; Dark-roast preparation;
+- **Rung 4 — eight groups:** Light-roast preparation; Dark-roast preparation;
   Pour-over brewing; Espresso brewing; Drinking hot black coffee; Drinking hot
   coffee with milk; Drinking iced coffee; Drinking cold-brew coffee
 
 ### Photos
 
-- **Rung 0 — one group:** Working with photos
-- **Rung 1 — two groups:** Making and editing photos; Storing and sharing
+- **Rung 1:** Working with photos
+- **Rung 2 — two groups:** Making and editing photos; Storing and sharing
   photos
-- **Rung 2 — four groups:** Taking photos; Editing photos; Backing up photos;
+- **Rung 3 — four groups:** Taking photos; Editing photos; Backing up photos;
   Sharing photos
-- **Rung 3 — eight groups:** Taking portraits; Taking landscape photos;
+- **Rung 4 — eight groups:** Taking portraits; Taking landscape photos;
   Cropping photos; Adjusting photo colors; Local photo backups; Cloud photo
   backups; Sharing photos by email; Sharing photos by link
 
 ### Produce
 
-- **Rung 0 — one group:** Eating produce
-- **Rung 1 — two groups:** Eating fruit; Eating vegetables
-- **Rung 2 — four groups:** Eating apples; Eating citrus fruit; Eating carrots;
+- **Rung 1:** Eating produce
+- **Rung 2 — two groups:** Eating fruit; Eating vegetables
+- **Rung 3 — four groups:** Eating apples; Eating citrus fruit; Eating carrots;
   Eating leafy greens
-- **Rung 3 — eight groups:** Eating red apples; Eating green apples; Eating
+- **Rung 4 — eight groups:** Eating red apples; Eating green apples; Eating
   oranges; Eating grapefruit; Eating raw carrots; Eating cooked carrots; Eating
   lettuce; Eating spinach
 
 ### Media
 
-- **Rung 0 — one group:** Consuming media
-- **Rung 1 — two groups:** Reading; Listening
-- **Rung 2 — four groups:** Reading books; Reading magazines; Listening to
+- **Rung 1:** Consuming media
+- **Rung 2 — two groups:** Reading; Listening
+- **Rung 3 — four groups:** Reading books; Reading magazines; Listening to
   podcasts; Listening to audiobooks
-- **Rung 3 — eight groups:** Reading fiction books; Reading nonfiction books;
+- **Rung 4 — eight groups:** Reading fiction books; Reading nonfiction books;
   Reading print magazines; Reading digital magazines; Listening to news
   podcasts; Listening to interview podcasts; Listening to fiction audiobooks;
   Listening to nonfiction audiobooks
@@ -381,11 +394,12 @@ opaque IDs and vectors, not the ladder or rung information.
 | `NONFICTION-AUDIOBOOK-3` | ⟦My listening was an audiobook of nonfiction.⟧ |
 | `NONFICTION-AUDIOBOOK-4` | ⟦I played an audiobook about real events and facts.⟧ |
 
-## Scoring one ladder
+## Scoring the corpus
 
-For scoring only, call the eight finest cohorts `A` through `H`:
+For compact scoring notation, call the eight finest cohorts inside each Rung 1
+branch `A` through `H`:
 
-| Ladder | `A` | `B` | `C` | `D` | `E` | `F` | `G` | `H` |
+| Rung 1 branch | `A` | `B` | `C` | `D` | `E` | `F` | `G` | `H` |
 |---|---|---|---|---|---|---|---|---|
 | Coffee | Light roast | Dark roast | Pour-over | Espresso | Hot black | Hot with milk | Iced | Cold brew |
 | Photos | Portrait | Landscape | Crop | Color adjustment | Local backup | Cloud backup | Email sharing | Link sharing |
@@ -395,65 +409,74 @@ For scoring only, call the eight finest cohorts `A` through `H`:
 The canonical grouping at each rung is:
 
 ```text
-Rung 0: {A B C D E F G H}
-Rung 1: {A B C D}, {E F G H}
-Rung 2: {A B}, {C D}, {E F}, {G H}
-Rung 3: {A}, {B}, {C}, {D}, {E}, {F}, {G}, {H}
+Rung 0: {all 128 vectors}
+Rung 1: {Coffee A-H}, {Photos A-H}, {Produce A-H}, {Media A-H}
+Rung 2 inside each Rung 1 branch: {A B C D}, {E F G H}
+Rung 3 inside each Rung 1 branch: {A B}, {C D}, {E F}, {G H}
+Rung 4 inside each Rung 1 branch: {A}, {B}, {C}, {D}, {E}, {F}, {G}, {H}
 ```
 
 A returned segment **crosses** a boundary when it contains vectors from two
 groups that the rung keeps separate.
 
-A result reaches **Rung 1** when:
+A required group is **recovered** when either:
 
-1. `A B C D` appears as one exact segment, as exact `A B` and `C D` segments,
-   or as exact `A`, `B`, `C`, and `D` segments;
-2. `E F G H` appears as one exact segment, as exact `E F` and `G H` segments,
-   or as exact `E`, `F`, `G`, and `H` segments;
-3. no returned segment crosses the `A B C D` and `E F G H` boundary.
+1. one returned segment equals that group exactly; or
+2. all of its immediate child groups are recovered.
 
-A result reaches **Rung 2** when:
+At Rung 4, a group is recovered only when one returned segment equals its four
+vectors exactly. For example, the 16-vector Coffee preparation group is
+recovered by any of these complete outputs:
 
-1. each of `A B`, `C D`, `E F`, and `G H` appears either as one exact segment
-   or as two exact finest-cohort segments;
-2. no returned segment crosses any Rung 2 boundary.
+- one exact Coffee preparation segment;
+- exact Roasting coffee and Brewing coffee segments;
+- exact Light roast, Dark roast, Pour-over, and Espresso segments.
 
-A result reaches **Rung 3** when:
+A partial subset does not recover its parent group.
 
-1. separate returned segments equal exactly `A`, `B`, `C`, `D`, `E`, `F`,
-   `G`, and `H`;
-2. no returned segment crosses any finest-subject boundary.
+A result reaches a rung when every required group at that rung is recovered and
+no returned segment crosses any boundary at that rung:
+
+- **Rung 1:** all four 32-vector branches are recovered, and no segment mixes
+  Coffee, Photos, Produce, or Media;
+- **Rung 2:** all eight 16-vector groups are recovered, with no Rung 2 boundary
+  crossed;
+- **Rung 3:** all sixteen 8-vector groups are recovered, with no Rung 3
+  boundary crossed;
+- **Rung 4:** all thirty-two 4-vector finest cohorts are recovered, with no
+  finest-cohort boundary crossed.
 
 Additional segments contained inside one finest cohort are allowed. Segments
-mixing different ladders are recorded separately and do not affect this
-experiment unless they also cross a scored boundary inside one ladder. The
-verdict does not require every vector globally to have only one membership.
+crossing a required boundary prevent that rung from passing even if valid
+segments also exist. The verdict does not otherwise require every vector to
+have only one membership.
 
 ## Overall result
 
-The mandatory minimum is Rung 1 on all four ladders. Rungs 2 and 3 measure
-additional resolving power and are not minimum requirements.
+The mandatory minimum is Rung 1 for the complete corpus. Rungs 2 through 4
+measure additional resolving power and are not minimum requirements.
 
-Report the highest verified rung for every ladder. A result that does not reach
-Rung 1 is reported as **below minimum**; the experiment must not infer that its
-output cleanly matches Rung 0.
+Report the highest verified rung for the complete corpus and separately for
+each Rung 1 branch. A result that does not reach Rung 1 is reported as **below
+minimum**; Rung 0 is the input state, not a successful segmentation result.
 
 ## Run
 
-1. Approve and freeze every note, mask, cohort identity, and ladder ordering.
+1. Approve and freeze every note, mask, cohort identity, and hierarchy rung.
 2. Freeze one candidate, configuration, seed, fine-output selector, and opaque
    shuffled input order before encoding or exposing vector diagnostics.
 3. Encode all 128 inputs once under the shared contract in README.md.
 4. Run once and preserve the complete output before restoring fixture IDs.
-5. Score each ladder independently.
+5. Score the one corpus against Rungs 1 through 4.
 
 Record the frozen inputs and hashes, raw vectors, input order, candidate
-configuration, complete returned memberships, and highest verified rung per
-ladder. Preserve raw-vector cosine values for diagnosis only.
+configuration, complete returned memberships, the highest verified global
+rung, and the highest rung reached inside each Rung 1 branch. Preserve
+raw-vector cosine values for diagnosis only.
 
 ## Scope
 
-The rung labels refer only to the human-approved boundaries in these four
-ladders. They are not universal semantic-distance thresholds. Experiments 3–6
-separately test lexical traps, unmasked context, unequal density, and irrelevant
-changes.
+The rung labels refer only to the human-approved boundaries in this synthetic
+hierarchy. They are not universal semantic-distance thresholds. Experiments
+3–6 separately test lexical traps, unmasked context, unequal density, and
+irrelevant changes.
