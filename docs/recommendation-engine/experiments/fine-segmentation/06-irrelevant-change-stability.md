@@ -139,10 +139,12 @@ vectors and no vector from another declared subject.
 
 ## Frozen system boundary
 
-Use the shared 768-dimensional Sentence-T5-base SSE checkpoint identified in
-the [suite index](README.md). Preserve its raw outputs exactly. Any
-normalization, distance, or other preprocessing belongs to the candidate's
-frozen configuration.
+Use the shared 768-dimensional Sentence-T5-base SSE checkpoint identified in:
+
+README.md
+
+Preserve its raw outputs exactly. Any normalization, distance, or other
+preprocessing belongs to the candidate's frozen configuration.
 
 The candidate receives only opaque IDs and vectors. It may return overlapping
 fine segments and leave vectors unassigned. Scoring consumes only its

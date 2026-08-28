@@ -2,10 +2,13 @@
 
 Status: **draft; do not encode or run yet**.
 
-These six experiments test the six canonical assumptions in
-[`MY-NOTES.md`](../../../notes/MY-NOTES.md). Each experiment has its own
-purpose-built synthetic notes and manually specified masks. The old 53-vector
-collection is not reused merely because it already exists.
+These six experiments test the six canonical assumptions recorded in:
+
+../../../notes/MY-NOTES.md
+
+Each experiment has its own purpose-built synthetic notes and manually
+specified masks. The old 53-vector collection is not reused merely because it
+already exists.
 
 Before any experiment runs, the user must approve:
 
@@ -16,12 +19,13 @@ Before any experiment runs, the user must approve:
 
 The experiments are:
 
-1. [Repeated instances of the same fine subject](01-repeated-subject-recovery.md)
-2. [Nearby but distinct fine subjects](02-nearby-subject-resolution.md)
-3. [Lexical coincidences](03-lexical-coincidence.md)
-4. [Changes to unmasked material](04-unmasked-context.md)
-5. [Unequal density and sparsity](05-density-and-sparsity.md)
-6. [Irrelevant-change stability](06-irrelevant-change-stability.md)
+1. 01-repeated-subject-recovery.md — repeated instances of the same fine
+   subject
+2. 02-nearby-subject-resolution.md — nearby but distinct fine subjects
+3. 03-lexical-coincidence.md — lexical coincidences
+4. 04-unmasked-context.md — changes to unmasked material
+5. 05-density-and-sparsity.md — unequal density and sparsity
+6. 06-irrelevant-change-stability.md — irrelevant-change stability
 
 ## Boundary shared by all six experiments
 
