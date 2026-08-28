@@ -1,40 +1,58 @@
-# Experiment 2: nearby fine-subject resolution
+# Experiment 2: fine-subject resolution spectrum
 
-Status: **draft; every subject identity, sibling boundary, and mask requires
-human approval before encoding**.
+Status: **draft; every subject identity, boundary, and mask requires human
+approval before encoding**.
 
 ## Assumption
 
 > Nearby but meaningfully distinct fine subjects are resolved.
 
+We do not yet know how fine the segmentation must be. This experiment therefore
+measures resolution at two predeclared levels instead of requiring every
+distinction:
+
+- **Minimum:** separate a conservatively different subject from two very close
+  subjects.
+- **Fine:** also separate the two very close subjects from each other.
+
+This is a semantic sweep over fixed inputs. It does not tune or sweep any
+algorithm-specific setting. The candidate and its configuration remain frozen.
+
 ## Fixture
 
-The fixture contains 48 vectors: six sibling pairs with four independently
-worded instances per fine subject. Each pair tests a different boundary:
+The fixture contains 48 vectors: four resolution ladders, three subject cohorts
+per ladder, and four independently worded instances per cohort.
 
-| Pair | Boundary |
-|---|---|
-| Coffee | Different operations on the same material |
-| Photo backup | Different storage destinations |
-| Cooking lesson | Reversed teacher and learner roles |
-| Greenhouse miner | Different resource relationships among shared entities |
-| File cryptography | Opposite transformation directions |
-| Bird photography | Different purposes for the same activity |
+| Ladder | Close pair | Conservatively different subject |
+|---|---|---|
+| Coffee | Light roast / dark roast | Grinding coffee beans |
+| Photos | Local backup / cloud backup | Synchronizing photos |
+| Kitchen | Parent teaches child / child teaches parent | Washing dishes together |
+| Files | AES encryption / ChaCha20 encryption | File compression |
 
 Each complete note is also its complete mask. Density is balanced. The
-candidate receives only opaque IDs and vectors, not the pair names, subject
-names, or expected groups.
+candidate receives only opaque IDs and vectors, not the ladder, subject, or
+boundary information.
 
-### Coffee: different operations
+### Coffee
 
-#### `ROAST`: roasting coffee beans
+#### `LIGHT-ROAST`: lightly roasting coffee beans
 
 | ID | Complete note and exact mask |
 |---|---|
-| `ROAST-1` | ⟦I heated green coffee beans until they were roasted.⟧ |
-| `ROAST-2` | ⟦Applying heat transformed my raw coffee beans into roasted beans.⟧ |
-| `ROAST-3` | ⟦I used heat to roast a batch of unroasted coffee beans.⟧ |
-| `ROAST-4` | ⟦My green coffee beans became roasted coffee through heating.⟧ |
+| `LIGHT-ROAST-1` | ⟦I gave green coffee beans a light roast.⟧ |
+| `LIGHT-ROAST-2` | ⟦I heated raw coffee beans only to a light-roast level.⟧ |
+| `LIGHT-ROAST-3` | ⟦A batch of green coffee beans was roasted until lightly browned.⟧ |
+| `LIGHT-ROAST-4` | ⟦I stopped roasting the coffee beans at the light stage.⟧ |
+
+#### `DARK-ROAST`: darkly roasting coffee beans
+
+| ID | Complete note and exact mask |
+|---|---|
+| `DARK-ROAST-1` | ⟦I gave green coffee beans a dark roast.⟧ |
+| `DARK-ROAST-2` | ⟦I heated raw coffee beans until they reached a dark-roast level.⟧ |
+| `DARK-ROAST-3` | ⟦A batch of green coffee beans was roasted until deeply browned.⟧ |
+| `DARK-ROAST-4` | ⟦I continued roasting the coffee beans to the dark stage.⟧ |
 
 #### `GRIND`: grinding coffee beans
 
@@ -43,29 +61,38 @@ names, or expected groups.
 | `GRIND-1` | ⟦I mechanically ground whole coffee beans into small particles.⟧ |
 | `GRIND-2` | ⟦Milling reduced my whole coffee beans to coffee grounds.⟧ |
 | `GRIND-3` | ⟦I used a grinder to turn whole coffee beans into grounds.⟧ |
-| `GRIND-4` | ⟦Mechanical crushing broke the whole coffee beans into coffee grounds.⟧ |
+| `GRIND-4` | ⟦Mechanical crushing broke whole coffee beans into coffee grounds.⟧ |
 
-### Photo backup: different destinations
+### Photos
 
 #### `LOCAL-BACKUP`: backing up photos to local storage
 
 | ID | Complete note and exact mask |
 |---|---|
-| `LOCAL-BACKUP-1` | ⟦I created a backup of my photo library on an external drive attached to my computer.⟧ |
-| `LOCAL-BACKUP-2` | ⟦A locally connected disk now stores a recovery copy of my photo collection.⟧ |
-| `LOCAL-BACKUP-3` | ⟦I duplicated my photo library onto a local storage drive for recovery.⟧ |
-| `LOCAL-BACKUP-4` | ⟦An external drive at home holds an offline backup of all my photos.⟧ |
+| `LOCAL-BACKUP-1` | ⟦I created a recovery backup of my photo library on an external drive connected to my computer.⟧ |
+| `LOCAL-BACKUP-2` | ⟦A locally attached storage drive holds a backup copy of my photo collection.⟧ |
+| `LOCAL-BACKUP-3` | ⟦I copied my photo library to a local external disk for recovery.⟧ |
+| `LOCAL-BACKUP-4` | ⟦A USB storage device connected to my computer stores my photo backup.⟧ |
 
 #### `CLOUD-BACKUP`: backing up photos to cloud storage
 
 | ID | Complete note and exact mask |
 |---|---|
-| `CLOUD-BACKUP-1` | ⟦I created a backup of my photo library in remote cloud storage.⟧ |
-| `CLOUD-BACKUP-2` | ⟦An online storage service now holds a recovery copy of my photo collection.⟧ |
-| `CLOUD-BACKUP-3` | ⟦I uploaded a recovery copy of my photo library to remote internet storage.⟧ |
-| `CLOUD-BACKUP-4` | ⟦An off-site cloud account holds an online backup of all my photos.⟧ |
+| `CLOUD-BACKUP-1` | ⟦I created a recovery backup of my photo library in remote cloud storage.⟧ |
+| `CLOUD-BACKUP-2` | ⟦A cloud storage service holds a backup copy of my photo collection.⟧ |
+| `CLOUD-BACKUP-3` | ⟦I copied my photo library to remote online storage for recovery.⟧ |
+| `CLOUD-BACKUP-4` | ⟦An off-site cloud service stores my photo backup.⟧ |
 
-### Cooking lesson: reversed participant roles
+#### `PHOTO-SYNC`: synchronizing photos between devices
+
+| ID | Complete note and exact mask |
+|---|---|
+| `PHOTO-SYNC-1` | ⟦I synchronized photo-library changes between my phone and laptop in both directions.⟧ |
+| `PHOTO-SYNC-2` | ⟦Photo additions and edits on either of my devices now propagate to the other.⟧ |
+| `PHOTO-SYNC-3` | ⟦My phone and tablet exchange photo-library updates so both stay synchronized.⟧ |
+| `PHOTO-SYNC-4` | ⟦A photo-library change made on either device is copied to the other device.⟧ |
+
+### Kitchen
 
 #### `PARENT-TEACHES`: a parent teaching a child to cook
 
@@ -85,99 +112,93 @@ names, or expected groups.
 | `CHILD-TEACHES-3` | ⟦Cooking instruction passed from a child to their parent.⟧ |
 | `CHILD-TEACHES-4` | ⟦The child gave the parent a lesson in meal preparation.⟧ |
 
-### Greenhouse miner: different resource relationships
-
-#### `MINER-HEAT`: using Bitcoin-miner waste heat to warm a greenhouse
+#### `WASH-DISHES`: a parent and child washing dishes together
 
 | ID | Complete note and exact mask |
 |---|---|
-| `MINER-HEAT-1` | ⟦Waste heat from a running Bitcoin miner warmed the greenhouse.⟧ |
-| `MINER-HEAT-2` | ⟦The greenhouse was heated by excess thermal output from Bitcoin mining hardware.⟧ |
-| `MINER-HEAT-3` | ⟦Thermal energy released during Bitcoin mining maintained the greenhouse temperature.⟧ |
-| `MINER-HEAT-4` | ⟦Discarded heat from the Bitcoin miner supplied warmth to the greenhouse.⟧ |
+| `WASH-DISHES-1` | ⟦A parent and child washed the dishes together.⟧ |
+| `WASH-DISHES-2` | ⟦A parent and child jointly cleaned the dirty dishes.⟧ |
+| `WASH-DISHES-3` | ⟦Dishwashing was shared between a parent and child.⟧ |
+| `WASH-DISHES-4` | ⟦The parent and child worked together to clean the dishes.⟧ |
 
-#### `SOLAR-MINER`: using greenhouse solar infrastructure to power a Bitcoin miner
+### Files
 
-| ID | Complete note and exact mask |
-|---|---|
-| `SOLAR-MINER-1` | ⟦Solar panels installed for the greenhouse supplied surplus electricity to a Bitcoin miner.⟧ |
-| `SOLAR-MINER-2` | ⟦A Bitcoin miner ran on excess power from the solar installation serving the greenhouse.⟧ |
-| `SOLAR-MINER-3` | ⟦Unused output from solar panels serving the greenhouse supplied electricity to Bitcoin mining hardware.⟧ |
-| `SOLAR-MINER-4` | ⟦Extra power from the greenhouse's solar array operated a Bitcoin miner.⟧ |
-
-### File cryptography: opposite transformations
-
-#### `ENCRYPT`: encrypting a file
+#### `AES-ENCRYPT`: encrypting a file with AES
 
 | ID | Complete note and exact mask |
 |---|---|
-| `ENCRYPT-1` | ⟦I encrypted a plaintext file into ciphertext.⟧ |
-| `ENCRYPT-2` | ⟦A cryptographic key transformed the readable file into encrypted data.⟧ |
-| `ENCRYPT-3` | ⟦I used encryption to make the document's contents unreadable.⟧ |
-| `ENCRYPT-4` | ⟦The file was converted from plaintext to ciphertext with encryption.⟧ |
+| `AES-ENCRYPT-1` | ⟦I encrypted a file with AES.⟧ |
+| `AES-ENCRYPT-2` | ⟦AES encryption converted a plaintext file into ciphertext.⟧ |
+| `AES-ENCRYPT-3` | ⟦I applied AES to encrypt the readable contents of a file.⟧ |
+| `AES-ENCRYPT-4` | ⟦The file became AES ciphertext through encryption.⟧ |
 
-#### `DECRYPT`: decrypting a file
-
-| ID | Complete note and exact mask |
-|---|---|
-| `DECRYPT-1` | ⟦I decrypted a ciphertext file into plaintext.⟧ |
-| `DECRYPT-2` | ⟦A cryptographic key transformed the encrypted file into readable data.⟧ |
-| `DECRYPT-3` | ⟦I used decryption to recover the document's readable contents.⟧ |
-| `DECRYPT-4` | ⟦The file was converted from ciphertext to plaintext with decryption.⟧ |
-
-### Bird photography: different purposes
-
-#### `BIRD-SURVEY`: photographing birds for scientific research
+#### `CHACHA-ENCRYPT`: encrypting a file with ChaCha20
 
 | ID | Complete note and exact mask |
 |---|---|
-| `BIRD-SURVEY-1` | ⟦I photographed birds to document species for a scientific survey.⟧ |
-| `BIRD-SURVEY-2` | ⟦Bird pictures were taken as observations for an ecological field study.⟧ |
-| `BIRD-SURVEY-3` | ⟦I recorded birds with a camera to contribute data to a wildlife census.⟧ |
-| `BIRD-SURVEY-4` | ⟦The purpose of my bird photography was collecting scientific evidence for wildlife research.⟧ |
+| `CHACHA-ENCRYPT-1` | ⟦I encrypted a file with ChaCha20.⟧ |
+| `CHACHA-ENCRYPT-2` | ⟦ChaCha20 encryption converted a plaintext file into ciphertext.⟧ |
+| `CHACHA-ENCRYPT-3` | ⟦I applied ChaCha20 to encrypt the readable contents of a file.⟧ |
+| `CHACHA-ENCRYPT-4` | ⟦The file became ChaCha20 ciphertext through encryption.⟧ |
 
-#### `BIRD-ART`: photographing birds to create art
+#### `COMPRESS`: compressing a file
 
 | ID | Complete note and exact mask |
 |---|---|
-| `BIRD-ART-1` | ⟦I photographed birds to create artistic images.⟧ |
-| `BIRD-ART-2` | ⟦Bird pictures were taken for their visual composition and beauty.⟧ |
-| `BIRD-ART-3` | ⟦I used bird photography as a form of artistic expression.⟧ |
-| `BIRD-ART-4` | ⟦The purpose of my bird photography was producing aesthetic photographs.⟧ |
+| `COMPRESS-1` | ⟦I compressed a file to reduce its size.⟧ |
+| `COMPRESS-2` | ⟦Data compression converted the file into a smaller representation.⟧ |
+| `COMPRESS-3` | ⟦I applied compression so the file would occupy fewer bytes.⟧ |
+| `COMPRESS-4` | ⟦The file's storage size was reduced through compression.⟧ |
 
-## Pass rule
+## Scoring one ladder
 
-The candidate's predeclared fine-segment output must contain one segment equal
-to each of the 12 four-vector subject sets above.
+Call the two close four-vector cohorts `A` and `B`, and the conservatively
+different four-vector cohort `C`.
 
-The six sibling boundaries are also frozen before encoding. A boundary is
-crossed when one returned fine segment contains at least one vector from each
-subject in that pair. The experiment requires zero crossings across all 96
-forbidden sibling-vector pairs.
+The ladder meets **minimum resolution** when:
 
-Additional segments contained within one expected subject are allowed.
-Cross-family segments are recorded but do not affect this assumption's
-verdict. A universal or indiscriminate segment still fails because it crosses
-all six sibling boundaries.
+1. one returned fine segment `R` satisfies `A ⊆ R ⊆ A ∪ B`;
+2. one returned fine segment `R` satisfies `B ⊆ R ⊆ A ∪ B`;
+3. one returned fine segment equals exactly `C`;
+4. no returned fine segment contains both a `C` vector and an `A` or `B`
+   vector.
+
+`A` and `B` may share one segment at minimum resolution.
+
+The ladder reaches **fine resolution** when it meets minimum resolution and:
+
+1. one returned fine segment equals exactly `A`;
+2. one returned fine segment equals exactly `B`;
+3. no returned fine segment contains both an `A` vector and a `B` vector.
+
+Additional segments contained inside one cohort are allowed. The verdict does
+not require every vector globally to have only one membership.
+
+## Overall result
+
+The proposed conservative MVP requirement is minimum resolution on all four
+ladders. This requirement still needs human approval before the experiment is
+frozen. Failure on any ladder places the candidate below that proposed minimum.
+
+Fine resolution is reported separately as `0/4` through `4/4` ladders. It is
+not required to pass this experiment.
 
 ## Run
 
-1. Approve and freeze every note, mask, subject identity, and sibling boundary.
-2. Encode all 48 inputs once under the shared contract in README.md.
-3. Freeze the candidate, configuration, seed, fine-output selector, and one
-   shuffled opaque-ID order.
-4. Run the candidate and preserve its complete output before restoring the
-   fixture identities.
-5. Score all 12 expected groups and six sibling boundaries.
+1. Approve and freeze every note, mask, cohort identity, and ladder ordering.
+2. Freeze one candidate, configuration, seed, fine-output selector, and opaque
+   shuffled input order before encoding or exposing vector diagnostics.
+3. Encode all 48 inputs once under the shared contract in README.md.
+4. Run once and preserve the complete output before restoring fixture IDs.
+5. Score each ladder independently.
 
 Record the frozen inputs and hashes, raw vectors, input order, candidate
-configuration, complete returned memberships, missing expected groups, and
-every crossed boundary. Preserve the raw-vector cosine matrix for diagnosis;
-it does not determine the verdict.
+configuration, complete returned memberships, and both resolution verdicts per
+ladder. Preserve raw-vector cosine values for diagnosis only.
 
 ## Scope
 
-A pass supports only these 12 human-approved fine subjects and six sibling
-boundaries. It does not define a universal boundary for every possible subject
-pair. Experiments 3–6 separately test lexical traps, unmasked context, unequal
+The words “minimum” and “fine” refer only to the human-approved boundaries in
+these four ladders. They are not universal semantic-distance thresholds.
+Experiments 3–6 separately test lexical traps, unmasked context, unequal
 density, and irrelevant changes.
