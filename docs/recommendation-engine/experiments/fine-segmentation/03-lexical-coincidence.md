@@ -1,215 +1,255 @@
 # Experiment 3: lexical coincidence
 
-Status: **draft; every subject identity and every baseline, placebo, and
-collision mask requires human approval before encoding**.
+Status: **draft; every proposition and every `B`, `P`, and `C` mask requires
+human approval before encoding**.
 
 ## Assumption
 
 > Lexical coincidences do not substitute for semantic relationships.
 
-## Test
+## Question
 
-The fixture contains three ambiguous words: `coach`, `pitcher`, and `bank`.
-Each word has two unrelated meanings. Each meaning has four independently
-worded instances, for 24 vector positions in total.
+If two unrelated fine subjects happen to use the same ambiguous word, does the
+fine-segmentation result change *because both subjects now share that word*?
 
-Every position has three versions:
+The experiment uses three ambiguous words:
 
-- **Baseline (`B`)** uses an unambiguous alias.
-- **Placebo (`P`)** replaces that alias with a different unambiguous alias.
-- **Collision (`C`)** replaces it with the ambiguous word shared by both
-  meanings.
+| Trap | First subject | Second subject |
+|---|---|---|
+| `COACH` | a swim-team instructor correcting freestyle arm motion | an intercity passenger vehicle carrying travelers overnight |
+| `PITCHER` | a ballgame's starting player striking out nine batters | a handled ceramic vessel holding cold water |
+| `BANK` | a financial institution approving a mortgage after reviewing wages | a river edge losing soil after heavy rain |
 
-Within each trap, baseline repeats one unambiguous alias four times for the
-first meaning and a different alias four times for the second. Placebo does the
-same with two new unambiguous aliases. Collision preserves that within-subject
-repetition but uses the same ambiguous word for both meanings. Shared identity
-across the two meanings is therefore the collision's only structural change.
-Each alias occurs only at the substituted position; the fixed wording contains
-none of that subject's aliases.
+Each subject has four paraphrases of one fixed proposition. The event,
+participants, relationships, and qualifications stay the same within the four
+paraphrases. This prevents ordinary content differences inside a subject from
+being mistaken for lexical sensitivity.
 
-Every complete note is also its complete mask. In every position, `B`, `P`,
-and `C` differ at exactly one tokenizer position. Every substituted alias is
-one piece under the frozen Sentence-T5 tokenizer, so the number of selected
-token representations averaged by SSE stays fixed.
+## Intervention
+
+Every one of the 24 vector positions has three versions:
+
+- `B` uses the baseline noun;
+- `P` replaces it with a different noun used only for that subject;
+- `C` replaces it with the ambiguous noun shared by the trap's two subjects.
+
+Within one position, the three complete masks differ only at that noun. Every
+substituted noun is one tokenizer piece under the frozen Sentence-T5 tokenizer,
+so `B`, `P`, and `C` average the same number of selected token
+representations. This controls token position, token count, and the pooling
+denominator. It does not assume that the three nouns have identical learned
+representations.
+
+A design-time check against the pinned tokenizer found 72 masks, 24 complete
+`B/P/C` trios, equal selected-piece counts within every trio, and exactly one
+changed token position in every `B`-to-`P` and `B`-to-`C` comparison. The
+selected counts range from 21 to 34 pieces. The executable experiment must
+repeat and preserve this check.
+
+The rest of each mask states the complete proposition. Each complete synthetic
+note is also its complete mask. The system receives only opaque position IDs
+and vectors; the subject identities and version names are scoring data.
 
 ## Fixture
 
-The system receives only opaque IDs and vectors. The subject names and the
-`B`/`P`/`C` labels are scoring data.
+### `COACH-SPORTS`
 
-### `COACH-SPORTS`: a swim-team coach correcting freestyle technique
+Fixed proposition: the speaker's swim-team instructor corrected the speaker's
+freestyle arm motion during practice.
 
-`COACH-SPORTS-1` · 21 pieces in every version
+`COACH-SPORTS-1`
 
-- `B` ⟦The trainer—the swimming squad's stroke specialist—corrected my freestyle technique during practice.⟧
-- `P` ⟦The mentor—the swimming squad's stroke specialist—corrected my freestyle technique during practice.⟧
-- `C` ⟦The coach—the swimming squad's stroke specialist—corrected my freestyle technique during practice.⟧
+- `B` ⟦The trainer—our pool squad's instructor—corrected my freestyle arm movement during practice.⟧
+- `P` ⟦The mentor—our pool squad's instructor—corrected my freestyle arm movement during practice.⟧
+- `C` ⟦The coach—our pool squad's instructor—corrected my freestyle arm movement during practice.⟧
 
-`COACH-SPORTS-2` · 29 pieces in every version
+`COACH-SPORTS-2`
 
-- `B` ⟦During pool practice, the trainer—the person teaching our swimmers—showed me how to improve front-crawl form.⟧
-- `P` ⟦During pool practice, the mentor—the person teaching our swimmers—showed me how to improve front-crawl form.⟧
-- `C` ⟦During pool practice, the coach—the person teaching our swimmers—showed me how to improve front-crawl form.⟧
+- `B` ⟦At an aquatic rehearsal, the trainer—the person teaching my group—fixed how I moved my upper limbs in front crawl.⟧
+- `P` ⟦At an aquatic rehearsal, the mentor—the person teaching my group—fixed how I moved my upper limbs in front crawl.⟧
+- `C` ⟦At an aquatic rehearsal, the coach—the person teaching my group—fixed how I moved my upper limbs in front crawl.⟧
 
-`COACH-SPORTS-3` · 28 pieces in every version
+`COACH-SPORTS-3`
 
-- `B` ⟦The trainer—the leader responsible for aquatic training—adjusted my arm motion while I rehearsed freestyle.⟧
-- `P` ⟦The mentor—the leader responsible for aquatic training—adjusted my arm motion while I rehearsed freestyle.⟧
-- `C` ⟦The coach—the leader responsible for aquatic training—adjusted my arm motion while I rehearsed freestyle.⟧
+- `B` ⟦While I worked on the freestyle stroke, the trainer—the guide assigned to our swimmers—adjusted the action of my arms.⟧
+- `P` ⟦While I worked on the freestyle stroke, the mentor—the guide assigned to our swimmers—adjusted the action of my arms.⟧
+- `C` ⟦While I worked on the freestyle stroke, the coach—the guide assigned to our swimmers—adjusted the action of my arms.⟧
 
-`COACH-SPORTS-4` · 22 pieces in every version
+`COACH-SPORTS-4`
 
-- `B` ⟦I improved my crawl stroke after the trainer—the person guiding the swim squad—fixed my body position.⟧
-- `P` ⟦I improved my crawl stroke after the mentor—the person guiding the swim squad—fixed my body position.⟧
-- `C` ⟦I improved my crawl stroke after the coach—the person guiding the swim squad—fixed my body position.⟧
+- `B` ⟦The trainer—who leads my team's water sessions—corrected the swing of my upper limbs while I performed freestyle.⟧
+- `P` ⟦The mentor—who leads my team's water sessions—corrected the swing of my upper limbs while I performed freestyle.⟧
+- `C` ⟦The coach—who leads my team's water sessions—corrected the swing of my upper limbs while I performed freestyle.⟧
 
-### `COACH-VEHICLE`: an intercity passenger coach making an overnight trip
+### `COACH-VEHICLE`
 
-`COACH-VEHICLE-1` · 21 pieces in every version
+Fixed proposition: an intercity passenger road vehicle carried the speaker's
+party overnight between two cities.
 
-- `B` ⟦The bus—a long-distance passenger conveyance—took us overnight between two cities.⟧
-- `P` ⟦The vehicle—a long-distance passenger conveyance—took us overnight between two cities.⟧
-- `C` ⟦The coach—a long-distance passenger conveyance—took us overnight between two cities.⟧
+`COACH-VEHICLE-1`
 
-`COACH-VEHICLE-2` · 19 pieces in every version
+- `B` ⟦The bus—a long-distance road conveyance for passengers—carried us overnight from one city to another.⟧
+- `P` ⟦The vehicle—a long-distance road conveyance for passengers—carried us overnight from one city to another.⟧
+- `C` ⟦The coach—a long-distance road conveyance for passengers—carried us overnight from one city to another.⟧
 
-- `B` ⟦We crossed the region after dark in the bus—a road service built for intercity travelers.⟧
-- `P` ⟦We crossed the region after dark in the vehicle—a road service built for intercity travelers.⟧
-- `C` ⟦We crossed the region after dark in the coach—a road service built for intercity travelers.⟧
+`COACH-VEHICLE-2`
 
-`COACH-VEHICLE-3` · 21 pieces in every version
+- `B` ⟦We spent the hours of darkness traveling between two urban centers aboard the bus—an intercity road service for people.⟧
+- `P` ⟦We spent the hours of darkness traveling between two urban centers aboard the vehicle—an intercity road service for people.⟧
+- `C` ⟦We spent the hours of darkness traveling between two urban centers aboard the coach—an intercity road service for people.⟧
 
-- `B` ⟦The bus—a motorized means of public travel between distant urban centers—left the terminal near midnight.⟧
-- `P` ⟦The vehicle—a motorized means of public travel between distant urban centers—left the terminal near midnight.⟧
-- `C` ⟦The coach—a motorized means of public travel between distant urban centers—left the terminal near midnight.⟧
+`COACH-VEHICLE-3`
 
-`COACH-VEHICLE-4` · 20 pieces in every version
+- `B` ⟦During the night, the bus—motorized road transport for passengers making intercity journeys—took our party from one city to a different city.⟧
+- `P` ⟦During the night, the vehicle—motorized road transport for passengers making intercity journeys—took our party from one city to a different city.⟧
+- `C` ⟦During the night, the coach—motorized road transport for passengers making intercity journeys—took our party from one city to a different city.⟧
 
-- `B` ⟦Our bus—a large roadway conveyance for people taking extended journeys—arrived at dawn.⟧
-- `P` ⟦Our vehicle—a large roadway conveyance for people taking extended journeys—arrived at dawn.⟧
-- `C` ⟦Our coach—a large roadway conveyance for people taking extended journeys—arrived at dawn.⟧
+`COACH-VEHICLE-4`
 
-### `PITCHER-BASEBALL`: a baseball pitcher performing in a game
+- `B` ⟦Our trip connecting a pair of distant cities continued through the night until morning inside the bus—a large roadway carrier for passengers.⟧
+- `P` ⟦Our trip connecting a pair of distant cities continued through the night until morning inside the vehicle—a large roadway carrier for passengers.⟧
+- `C` ⟦Our trip connecting a pair of distant cities continued through the night until morning inside the coach—a large roadway carrier for passengers.⟧
 
-`PITCHER-BASEBALL-1` · 19 pieces in every version
+### `PITCHER-BALLGAME`
 
-- `B` ⟦The player—the baseball team's opening thrower—struck out nine batters.⟧
-- `P` ⟦The athlete—the baseball team's opening thrower—struck out nine batters.⟧
-- `C` ⟦The pitcher—the baseball team's opening thrower—struck out nine batters.⟧
+Fixed proposition: a team's starting thrower struck out nine batters in a
+ballgame.
 
-`PITCHER-BASEBALL-2` · 27 pieces in every version
+`PITCHER-BALLGAME-1`
 
-- `B` ⟦In the first inning, the player—the person delivering balls from the mound—retired all three hitters.⟧
-- `P` ⟦In the first inning, the athlete—the person delivering balls from the mound—retired all three hitters.⟧
-- `C` ⟦In the first inning, the pitcher—the person delivering balls from the mound—retired all three hitters.⟧
+- `B` ⟦The player—the team's starting thrower in the ballgame—struck out nine batters.⟧
+- `P` ⟦The athlete—the team's starting thrower in the ballgame—struck out nine batters.⟧
+- `C` ⟦The pitcher—the team's starting thrower in the ballgame—struck out nine batters.⟧
 
-`PITCHER-BASEBALL-3` · 20 pieces in every version
+`PITCHER-BALLGAME-2`
 
-- `B` ⟦The player—the diamond-sport participant assigned to begin on defense—allowed only two hits.⟧
-- `P` ⟦The athlete—the diamond-sport participant assigned to begin on defense—allowed only two hits.⟧
-- `C` ⟦The pitcher—the diamond-sport participant assigned to begin on defense—allowed only two hits.⟧
+- `B` ⟦Nine hitters went down on strikes against the player—the mound performer who opened the ballgame for the club.⟧
+- `P` ⟦Nine hitters went down on strikes against the athlete—the mound performer who opened the ballgame for the club.⟧
+- `C` ⟦Nine hitters went down on strikes against the pitcher—the mound performer who opened the ballgame for the club.⟧
 
-`PITCHER-BASEBALL-4` · 25 pieces in every version
+`PITCHER-BALLGAME-3`
 
-- `B` ⟦After seven frames, the player—the person launching each pitch toward home plate—had recorded ten strikeouts.⟧
-- `P` ⟦After seven frames, the athlete—the person launching each pitch toward home plate—had recorded ten strikeouts.⟧
-- `C` ⟦After seven frames, the pitcher—the person launching each pitch toward home plate—had recorded ten strikeouts.⟧
+- `B` ⟦The player—our side's first defensive launcher—recorded nine strikeouts in the diamond contest.⟧
+- `P` ⟦The athlete—our side's first defensive launcher—recorded nine strikeouts in the diamond contest.⟧
+- `C` ⟦The pitcher—our side's first defensive launcher—recorded nine strikeouts in the diamond contest.⟧
 
-### `PITCHER-CONTAINER`: a handled pitcher holding or serving a drink
+`PITCHER-BALLGAME-4`
 
-`PITCHER-CONTAINER-1` · 22 pieces in every version
+- `B` ⟦Beginning the match as the person sending deliveries toward home plate, the player retired nine opponents through missed swings and called strikes.⟧
+- `P` ⟦Beginning the match as the person sending deliveries toward home plate, the athlete retired nine opponents through missed swings and called strikes.⟧
+- `C` ⟦Beginning the match as the person sending deliveries toward home plate, the pitcher retired nine opponents through missed swings and called strikes.⟧
 
-- `B` ⟦The vessel—a ceramic piece with a handle and pouring spout—held cold water.⟧
-- `P` ⟦The container—a ceramic piece with a handle and pouring spout—held cold water.⟧
-- `C` ⟦The pitcher—a ceramic piece with a handle and pouring spout—held cold water.⟧
+### `PITCHER-CONTAINER`
 
-`PITCHER-CONTAINER-2` · 30 pieces in every version
+Fixed proposition: a handled, spouted ceramic vessel held cold water.
 
-- `B` ⟦She poured lemonade from the vessel—a wide-mouthed receptacle with a grip and pouring lip.⟧
-- `P` ⟦She poured lemonade from the container—a wide-mouthed receptacle with a grip and pouring lip.⟧
-- `C` ⟦She poured lemonade from the pitcher—a wide-mouthed receptacle with a grip and pouring lip.⟧
+`PITCHER-CONTAINER-1`
 
-`PITCHER-CONTAINER-3` · 28 pieces in every version
+- `B` ⟦The vessel—a ceramic item with a handle and pouring spout—held cold water.⟧
+- `P` ⟦The container—a ceramic item with a handle and pouring spout—held cold water.⟧
+- `C` ⟦The pitcher—a ceramic item with a handle and pouring spout—held cold water.⟧
 
-- `B` ⟦The vessel—tableware shaped with a handle and spout for serving beverages—was filled with iced tea.⟧
-- `P` ⟦The container—tableware shaped with a handle and spout for serving beverages—was filled with iced tea.⟧
-- `C` ⟦The pitcher—tableware shaped with a handle and spout for serving beverages—was filled with iced tea.⟧
+`PITCHER-CONTAINER-2`
 
-`PITCHER-CONTAINER-4` · 27 pieces in every version
+- `B` ⟦Chilled water filled the vessel—an earthenware receptacle bearing a grip and a projecting lip.⟧
+- `P` ⟦Chilled water filled the container—an earthenware receptacle bearing a grip and a projecting lip.⟧
+- `C` ⟦Chilled water filled the pitcher—an earthenware receptacle bearing a grip and a projecting lip.⟧
 
-- `B` ⟦We set the vessel—a ceramic holder whose handle and lip make it suitable for pouring liquids—on the table.⟧
-- `P` ⟦We set the container—a ceramic holder whose handle and lip make it suitable for pouring liquids—on the table.⟧
-- `C` ⟦We set the pitcher—a ceramic holder whose handle and lip make it suitable for pouring liquids—on the table.⟧
+`PITCHER-CONTAINER-3`
 
-### `BANK-FINANCIAL`: approving a mortgage after reviewing the borrower
+- `B` ⟦The vessel—a pottery piece shaped with a loop and projecting mouth for pouring—was full of refrigerated water.⟧
+- `P` ⟦The container—a pottery piece shaped with a loop and projecting mouth for pouring—was full of refrigerated water.⟧
+- `C` ⟦The pitcher—a pottery piece shaped with a loop and projecting mouth for pouring—was full of refrigerated water.⟧
 
-`BANK-FINANCIAL-1` · 17 pieces in every version
+`PITCHER-CONTAINER-4`
 
-- `B` ⟦The lender—the regulated organization financing our home purchase—approved the mortgage application.⟧
-- `P` ⟦The institution—the regulated organization financing our home purchase—approved the mortgage application.⟧
-- `C` ⟦The bank—the regulated organization financing our home purchase—approved the mortgage application.⟧
+- `B` ⟦We kept low-temperature water inside the vessel—a fired-clay holder whose side grasp and projecting lip permit pouring.⟧
+- `P` ⟦We kept low-temperature water inside the container—a fired-clay holder whose side grasp and projecting lip permit pouring.⟧
+- `C` ⟦We kept low-temperature water inside the pitcher—a fired-clay holder whose side grasp and projecting lip permit pouring.⟧
 
-`BANK-FINANCIAL-2` · 25 pieces in every version
+### `BANK-FINANCIAL`
 
-- `B` ⟦After checking our wages, the lender—the business supplying borrowed money for a residence—granted the requested funds.⟧
-- `P` ⟦After checking our wages, the institution—the business supplying borrowed money for a residence—granted the requested funds.⟧
-- `C` ⟦After checking our wages, the bank—the business supplying borrowed money for a residence—granted the requested funds.⟧
+Fixed proposition: a regulated financial organization approved the speaker's
+mortgage application after reviewing wages.
 
-`BANK-FINANCIAL-3` · 22 pieces in every version
+`BANK-FINANCIAL-1`
 
-- `B` ⟦Our request for credit to buy a house was accepted by the lender—the corporate source of the capital.⟧
-- `P` ⟦Our request for credit to buy a house was accepted by the institution—the corporate source of the capital.⟧
-- `C` ⟦Our request for credit to buy a house was accepted by the bank—the corporate source of the capital.⟧
+- `B` ⟦The lender—the regulated organization financing our home purchase—approved our mortgage application after reviewing our wages.⟧
+- `P` ⟦The institution—the regulated organization financing our home purchase—approved our mortgage application after reviewing our wages.⟧
+- `C` ⟦The bank—the regulated organization financing our home purchase—approved our mortgage application after reviewing our wages.⟧
 
-`BANK-FINANCIAL-4` · 21 pieces in every version
+`BANK-FINANCIAL-2`
 
-- `B` ⟦The lender—the financial organization funding the property acquisition—authorized our housing loan after reviewing repayment history.⟧
-- `P` ⟦The institution—the financial organization funding the property acquisition—authorized our housing loan after reviewing repayment history.⟧
-- `C` ⟦The bank—the financial organization funding the property acquisition—authorized our housing loan after reviewing repayment history.⟧
+- `B` ⟦After examining what we earned from work, the lender—the regulated financial business supplying money for a residence—approved our application for a housing loan.⟧
+- `P` ⟦After examining what we earned from work, the institution—the regulated financial business supplying money for a residence—approved our application for a housing loan.⟧
+- `C` ⟦After examining what we earned from work, the bank—the regulated financial business supplying money for a residence—approved our application for a housing loan.⟧
 
-### `BANK-RIVER`: river-edge soil eroding after a storm
+`BANK-FINANCIAL-3`
 
-`BANK-RIVER-1` · 24 pieces in every version
+- `B` ⟦Following its review of our earnings, the lender—a supervised provider of residential credit—gave consent to our home-loan petition.⟧
+- `P` ⟦Following its review of our earnings, the institution—a supervised provider of residential credit—gave consent to our home-loan petition.⟧
+- `C` ⟦Following its review of our earnings, the bank—a supervised provider of residential credit—gave consent to our home-loan petition.⟧
 
-- `B` ⟦After the storm, the shore—the strip of ground next to the river—lost soil to rushing water.⟧
-- `P` ⟦After the storm, the edge—the strip of ground next to the river—lost soil to rushing water.⟧
-- `C` ⟦After the storm, the bank—the strip of ground next to the river—lost soil to rushing water.⟧
+`BANK-FINANCIAL-4`
 
-`BANK-RIVER-2` · 19 pieces in every version
+- `B` ⟦The lender—the regulated company providing credit for our property acquisition—looked over our salaries and approved the proposed mortgage application.⟧
+- `P` ⟦The institution—the regulated company providing credit for our property acquisition—looked over our salaries and approved the proposed mortgage application.⟧
+- `C` ⟦The bank—the regulated company providing credit for our property acquisition—looked over our salaries and approved the proposed mortgage application.⟧
 
-- `B` ⟦Floodwater washed earth from the shore—the sloped terrain adjoining the stream.⟧
-- `P` ⟦Floodwater washed earth from the edge—the sloped terrain adjoining the stream.⟧
-- `C` ⟦Floodwater washed earth from the bank—the sloped terrain adjoining the stream.⟧
+### `BANK-RIVER`
 
-`BANK-RIVER-3` · 24 pieces in every version
+Fixed proposition: after heavy rain, soil at a river's edge was removed by
+fast water.
 
-- `B` ⟦As the channel rose, erosion cut into the shore—the soil separating a watercourse from a field.⟧
-- `P` ⟦As the channel rose, erosion cut into the edge—the soil separating a watercourse from a field.⟧
-- `C` ⟦As the channel rose, erosion cut into the bank—the soil separating a watercourse from a field.⟧
+`BANK-RIVER-1`
 
-`BANK-RIVER-4` · 27 pieces in every version
+- `B` ⟦After heavy rain, the shore—the ground beside the river—lost soil to rushing water.⟧
+- `P` ⟦After heavy rain, the edge—the ground beside the river—lost soil to rushing water.⟧
+- `C` ⟦After heavy rain, the bank—the ground beside the river—lost soil to rushing water.⟧
 
-- `B` ⟦Heavy rain caused the shore—the land following the course of flowing freshwater—to crumble into the swollen current.⟧
-- `P` ⟦Heavy rain caused the edge—the land following the course of flowing freshwater—to crumble into the swollen current.⟧
-- `C` ⟦Heavy rain caused the bank—the land following the course of flowing freshwater—to crumble into the swollen current.⟧
+`BANK-RIVER-2`
 
-## Seven collections
+- `B` ⟦A swollen river washed earth from the shore—the sloping land along its channel—following a downpour.⟧
+- `P` ⟦A swollen river washed earth from the edge—the sloping land along its channel—following a downpour.⟧
+- `C` ⟦A swollen river washed earth from the bank—the sloping land along its channel—following a downpour.⟧
 
-Run the candidate on these seven 24-vector collections:
+`BANK-RIVER-3`
 
-| Collection | Versions used |
-|---|---|
-| `BASELINE` | `B` at all 24 positions |
-| `COACH-PLACEBO` | `P` for the eight `COACH` positions; `B` elsewhere |
-| `COACH-COLLISION` | `C` for the eight `COACH` positions; `B` elsewhere |
-| `PITCHER-PLACEBO` | `P` for the eight `PITCHER` positions; `B` elsewhere |
-| `PITCHER-COLLISION` | `C` for the eight `PITCHER` positions; `B` elsewhere |
-| `BANK-PLACEBO` | `P` for the eight `BANK` positions; `B` elsewhere |
-| `BANK-COLLISION` | `C` for the eight `BANK` positions; `B` elsewhere |
+- `B` ⟦The shore—the strip of terrain bordering the river—eroded when runoff from a downpour made the current race.⟧
+- `P` ⟦The edge—the strip of terrain bordering the river—eroded when runoff from a downpour made the current race.⟧
+- `C` ⟦The bank—the strip of terrain bordering the river—eroded when runoff from a downpour made the current race.⟧
 
-Corresponding positions keep the same opaque ID, input order, configuration,
-and seed in every collection. Only the eight stated vectors change.
+`BANK-RIVER-4`
+
+- `B` ⟦Torrential rain caused a rapid freshwater current to carry dirt away from the shore—the margin separating the moving river water from a field.⟧
+- `P` ⟦Torrential rain caused a rapid freshwater current to carry dirt away from the edge—the margin separating the moving river water from a field.⟧
+- `C` ⟦Torrential rain caused a rapid freshwater current to carry dirt away from the bank—the margin separating the moving river water from a field.⟧
+
+## Thirteen collections
+
+`BASELINE` uses `B` at all 24 positions. For each trap, four additional
+collections change only that trap's eight positions:
+
+| Collection | First subject | Second subject | What it controls |
+|---|---:|---:|---|
+| `COACH-PLACEBO` | `P` | `P` | two ordinary noun substitutions |
+| `COACH-SPORTS-ONLY` | `C` | `B` | `coach` in the sports meaning only |
+| `COACH-VEHICLE-ONLY` | `B` | `C` | `coach` in the vehicle meaning only |
+| `COACH-BOTH` | `C` | `C` | shared `coach` identity across both meanings |
+| `PITCHER-PLACEBO` | `P` | `P` | two ordinary noun substitutions |
+| `PITCHER-BALLGAME-ONLY` | `C` | `B` | `pitcher` in the ballgame meaning only |
+| `PITCHER-CONTAINER-ONLY` | `B` | `C` | `pitcher` in the container meaning only |
+| `PITCHER-BOTH` | `C` | `C` | shared `pitcher` identity across both meanings |
+| `BANK-PLACEBO` | `P` | `P` | two ordinary noun substitutions |
+| `BANK-FINANCIAL-ONLY` | `C` | `B` | `bank` in the financial meaning only |
+| `BANK-RIVER-ONLY` | `B` | `C` | `bank` in the river meaning only |
+| `BANK-BOTH` | `C` | `C` | shared `bank` identity across both meanings |
+
+All other positions remain `B`. Corresponding positions retain the same
+opaque ID, input order, candidate configuration, and seed. The one-sided runs
+show whether an ambiguous noun changes either subject before the noun is shared
+across subjects. Only the `BOTH` run makes the designated substituted noun
+identical across the two subjects.
 
 ## Lexical-baseline gate
 
@@ -227,124 +267,159 @@ text, including punctuation. Fit TF-IDF vocabulary and document frequencies
 once on the union of every distinct `B`, `P`, and `C` mask. Use
 `idf = log((1 + N) / (1 + df)) + 1`, raw term counts, and L2 normalization.
 
-For each representation, sweep every distinct pairwise-similarity threshold
-plus the no-edge boundary above the largest similarity. At one fixed threshold
-for all seven collections, connect two positions when their similarity meets
-or exceeds the threshold and return the connected components. The fixture
-fails this gate if any representation and threshold qualifies `BASELINE` and
-returns the same complete components in all six variants.
+For each representation, sweep every distinct similarity occurring between
+any pair of the 72 masks, plus the no-edge boundary above the largest
+similarity. At one fixed threshold for all 13 collections, connect two
+positions when their similarity meets or exceeds the threshold and return the
+connected components. The fixture fails this gate if any representation and
+threshold qualifies `BASELINE` and returns the same six exact four-position
+components in all 12 variants.
 
-This is intentionally favorable to the lexical baselines: their best threshold
-is selected after seeing the fixture. The gate does not prove that no possible
-lexical method could pass. It rejects a fixture that is already solvable by
-three obvious lexical shortcuts.
+The gate is intentionally favorable to the lexical baselines: their best
+threshold is selected after seeing the fixture. It does not prove that no
+possible lexical method could pass. It rejects a fixture already solved by
+three obvious lexical shortcuts. A gate failure requires fixture redesign and
+new human approval before any SSE run.
 
-If the fixture fails this gate, redesign and reapprove it before any SSE run.
+The exact draft fixture above passed a design-time preflight. Exact-token
+Jaccard had no threshold that recovered `BASELINE`. Word and character TF-IDF
+each recovered `BASELINE` at some thresholds, but neither preserved the six
+exact four-position components across all 13 collections. The executable
+experiment must rerun and preserve this gate; the preflight is not an
+experimental result.
 
-The exact draft fixture above has passed a design-time preflight. Exact-token
-Jaccard had no threshold that recovered the six baseline subjects. Word and
-character TF-IDF each recovered the baseline at some thresholds, but no
-threshold preserved those groups across all six variants. The executable
-experiment must rerun and preserve the gate rather than treating this
-preflight as its result.
+## Two output comparisons
 
-## Complete-output comparison
+Every raw candidate output is preserved. Score it in two separate ways.
 
-Canonicalize each candidate output without discarding information:
+### 1. Subject relationships
+
+Record:
+
+1. whether each of the six approved four-position subject segments exists;
+2. every pair of positions from different approved subjects that appears
+   together in any returned segment.
+
+This detects lost recovery of an approved subject and new cross-subject
+grouping. It deliberately ignores duplicate segments, singleton changes, and
+extra segments contained entirely inside one approved subject.
+
+### 2. Complete output
+
+Canonicalize without discarding information:
 
 1. sort the member IDs inside each returned segment;
-2. sort the complete list of segments, retaining overlaps, singleton segments,
-   and duplicate segments;
-3. derive and sort the IDs that occur in no returned segment.
+2. sort the complete list of segments while retaining overlaps, singleton
+   segments, and duplicate segments;
+3. derive and sort IDs that occur in no returned segment.
 
 Segment IDs and output order are ignored because they carry no meaning. An
 empty segment, an unknown ID, or a repeated member inside one segment makes the
 output invalid.
 
-### Baseline qualification
+Relative to `BASELINE`, classify every valid arm as:
 
-`BASELINE` qualifies only when its complete output contains these six exact
-four-position segments:
+- **exactly stable** when its complete canonical output is equal;
+- **shape-only change** when its complete output differs but the recorded
+  subject relationships are equal;
+- **semantic change** when its recorded subject relationships differ.
+
+Shape-only changes are reported as stability diagnostics. They do not decide
+whether shared spelling replaced a semantic relationship.
+
+## Baseline qualification
+
+`BASELINE` qualifies only when it contains these six exact segments:
 
 ```text
 {COACH-SPORTS-1 ... COACH-SPORTS-4}
 {COACH-VEHICLE-1 ... COACH-VEHICLE-4}
-{PITCHER-BASEBALL-1 ... PITCHER-BASEBALL-4}
+{PITCHER-BALLGAME-1 ... PITCHER-BALLGAME-4}
 {PITCHER-CONTAINER-1 ... PITCHER-CONTAINER-4}
 {BANK-FINANCIAL-1 ... BANK-FINANCIAL-4}
 {BANK-RIVER-1 ... BANK-RIVER-4}
 ```
 
 Every other returned segment containing two or more positions must be a subset
-of exactly one declared subject. Extra same-subject subsegments and singleton
-segments are allowed. The six exact segments necessarily assign every
-position.
+of one approved subject. Extra same-subject subsegments and singleton segments
+are allowed.
 
-If `BASELINE` does not qualify, the experiment stops with **baseline recovery
-failure**. A system that did not first recover the intended subjects cannot
-show whether the substitutions preserved them.
+If `BASELINE` does not qualify, stop with **baseline recovery failure**. A
+system that did not recover the intended subjects cannot show whether the noun
+substitutions preserved them.
 
-### Trap verdict
+## Trap verdict
 
-For each trap, compare the complete canonical outputs:
+For one trap:
 
-- If its placebo output is invalid or differs from `BASELINE`, record
-  **inconclusive**. An ordinary matched alias substitution already changed the
-  result.
-- If its placebo output equals `BASELINE` and its collision output also equals
-  `BASELINE`, record **pass**.
-- If its placebo output equals `BASELINE` but its collision output is invalid
-  or differs, record **lexical-collision failure**.
+1. Its `PLACEBO`, first-subject-only, and second-subject-only runs must be valid
+   and preserve the baseline subject relationships. Otherwise the trap is
+   **inconclusive** because ordinary substitution or one isolated use of the
+   ambiguous noun already changed the semantic result.
+2. If those three controls hold and `BOTH` is valid with the same subject
+   relationships, record **pass**.
+3. If those three controls hold and `BOTH` is invalid or changes the subject
+   relationships, record **both-side-only lexical failure**.
 
-Overall support requires all three traps to pass. Do not average them.
+Overall support requires all three traps to pass; do not average them. Report
+all shape-only changes and the full segments added or removed.
 
-For diagnosis, list the multiset of segment member sets added or removed. For
-each position, also compare the multiset of returned member sets containing
-it. This remains well-defined when segments overlap or repeat. Distinguish a
-new cross-meaning segment from lost or changed same-subject recovery, but both
-are lexical-collision failures because the shared alias was the collision's
-only structural change. Pairwise together/apart relations and cosine changes
-are diagnostics only; they do not replace the complete-output verdict.
+A both-side-only failure is strong evidence that the simultaneous shared noun
+matters in this fixture. It is not universal mechanistic proof: two
+individually subthreshold vector shifts could combine across a candidate's
+decision boundary.
 
 ## Protocol
 
-1. Obtain human approval of all six subject identities and all 72 masks.
-2. Run and preserve the complete lexical-baseline gate.
-3. Freeze this document, the shared SSE contract from [README.md](README.md),
-   and the complete fine-segmentation candidate.
-4. Encode each distinct `B`, `P`, and `C` mask once. Preserve the exact input,
-   tokenizer positions, raw vector bytes, and hashes.
-5. Assign one frozen shuffled order of 24 opaque position IDs.
-6. Run the seven collections in separate clean processes with the same
-   configuration and seed.
-7. Preserve all seven raw outputs before restoring fixture identities or
-   calculating a verdict.
-8. Qualify `BASELINE`, then apply the three trap verdicts.
+1. Human-approve and freeze the six propositions, all 72 masks, the 13 arm
+   assignments, both output comparisons, and the verdict rules.
+2. Freeze the shared SSE contract from [README.md](README.md), the complete
+   fine-segmentation candidate, preprocessing, fine-output selector,
+   configuration, seed, and one shuffled opaque-ID order. Freeze these before
+   rerunning the label-informed lexical gate or inspecting any vectors or
+   candidate output.
+3. Run and preserve the complete lexical-baseline gate. If it fails, discard
+   the fixture without tuning the frozen candidate against the failure.
+4. Encode each distinct `B`, `P`, and `C` mask once. Preserve and reuse the
+   exact vectors in every applicable collection.
+5. Run every collection twice in separate clean processes with the identical
+   frozen vectors, opaque-ID order, selector, configuration, and seed.
+6. Preserve all 26 raw outputs while identities remain hidden.
+7. Canonical outputs from the two identical runs of each collection must
+   match. Any mismatch stops the whole experiment as **nondeterministic**; it
+   is not a lexical result.
+8. Restore fixture identities, qualify `BASELINE`, and apply the three trap
+   verdicts.
+
+The fixture is controlled development evidence because its labels are visible
+while candidate algorithms may still be developed. If its result changes the
+candidate, independent support requires a newly frozen holdout fixture.
 
 ## Required record
 
 Preserve:
 
-- every approved subject identity and mask;
+- every approved proposition and `B`, `P`, and `C` mask;
 - tokenizer IDs, selected positions, and piece counts for every mask;
 - raw SSE vectors and hashes;
 - the lexical representations, similarity matrices, threshold sweep, and
   outputs;
-- the candidate implementation, preprocessing, configuration, seed, input
-  order, and fine-output selector;
-- all seven raw and canonical candidate outputs;
-- the baseline qualification and three trap verdicts;
-- all complete-output and assignment differences;
-- the raw-vector cosine matrices and matched `B`/`P`/`C` cosine changes.
+- the candidate implementation, preprocessing, configuration, seed, opaque-ID
+   order, and fine-output selector;
+- all 26 raw outputs and their complete canonical forms;
+- both deterministic-replay comparisons;
+- baseline qualification and all three trap verdicts;
+- every subject-relationship and complete-output difference;
+- raw-vector cosine matrices and matched `B`/`P`/`C` cosine changes.
 
 ## Meaning of a result
 
-A pass supports one narrow claim: in these three common-word traps, replacing
-unambiguous aliases with one shared ambiguous word did not change recovered
-fine segments, even though matched unambiguous substitutions also did not
-change them.
+A pass supports one narrow claim: in these three explicit, proposition-level
+traps, sharing one ambiguous noun across two unrelated meanings did not change
+the recovered subject relationships after the paired placebo and both
+one-sided ambiguous-noun conditions preserved them.
 
-An inconclusive result means ordinary alias replacement was not controlled. A
-lexical-collision failure means the shared ambiguous word changed the complete
-output after that control held. A baseline recovery failure means this fixture
-never reached the state needed to test lexical robustness.
+An inconclusive result means those controls did not hold. A both-side-only
+lexical failure means only the simultaneous shared-noun condition changed the
+semantic result. A baseline recovery failure means the fixture never reached
+the state needed to test lexical robustness.
