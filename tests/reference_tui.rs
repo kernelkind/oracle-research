@@ -117,6 +117,56 @@ fn compact_guidance_preserves_the_note_and_controls_at_minimum_terminal_size() {
 }
 
 #[test]
+fn long_approval_title_wraps_without_clipping_at_minimum_terminal_size() {
+    let title = "Wistful nostalgia for a simpler time when evil could be defeated by throwing a piece of jewelry into an active volcano";
+    let mut screen = approval_screen();
+    screen.title = Some(title.to_owned());
+    screen.scope =
+        "Is this a valid atomic subject explicitly and substantively discussed in this note?"
+            .to_owned();
+    screen.approve_label = "Approve".to_owned();
+    screen.reject_label = "Disapprove".to_owned();
+    screen.evidence = ApprovalEvidenceLayout::Paged(vec![ApprovalEvidence {
+        title: "Note".to_owned(),
+        annotation: String::new(),
+        body: "Wistfully remembering a time when we could defeat evil by throwing a piece of jewelry into a live volcano ...".to_owned(),
+    }]);
+    let mut model = ApprovalTuiModel::new_prompt_iteration(screen, String::new());
+
+    let rendered = render_approval_at(&mut model, 72, 24);
+    let normalized = rendered.split_whitespace().collect::<Vec<_>>().join(" ");
+
+    assert!(normalized.contains(title), "{rendered}");
+    assert!(normalized.contains("into a live volcano"), "{rendered}");
+    assert!(normalized.contains("[C] Comment"), "{rendered}");
+    assert!(normalized.contains("[S] Skip"), "{rendered}");
+    assert!(normalized.contains("Save/exit"), "{rendered}");
+}
+
+#[test]
+fn title_area_grows_beyond_two_lines_without_hiding_the_note_or_controls() {
+    let title = "Wistful nostalgia for a simpler time when evil could be defeated by throwing a piece of jewelry into an active volcano, expressed through a deliberately long generated atomic-subject description that needs a third terminal line";
+    let mut screen = approval_screen();
+    screen.title = Some(title.to_owned());
+    screen.evidence = ApprovalEvidenceLayout::Paged(vec![ApprovalEvidence {
+        title: "Note".to_owned(),
+        annotation: String::new(),
+        body: "The complete note remains visible.".to_owned(),
+    }]);
+    let mut model = ApprovalTuiModel::new_prompt_iteration(screen, String::new());
+
+    let rendered = render_approval_at(&mut model, 72, 24);
+    let normalized = rendered.split_whitespace().collect::<Vec<_>>().join(" ");
+
+    assert!(normalized.contains(title), "{rendered}");
+    assert!(
+        normalized.contains("The complete note remains visible."),
+        "{rendered}"
+    );
+    assert!(normalized.contains("Save/exit"), "{rendered}");
+}
+
+#[test]
 fn a_single_evidence_claim_does_not_advertise_evidence_navigation() {
     let mut screen = approval_screen();
     let first = match &screen.evidence {

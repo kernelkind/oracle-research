@@ -492,7 +492,20 @@ impl ApprovalTuiModel {
         let annotation = Paragraph::new(annotation_text)
             .style(secondary_style())
             .wrap(Wrap { trim: false });
-        let title_height = if self.screen.title.is_some() { 2 } else { 0 };
+        let title = self.screen.title.as_deref().map(|title| {
+            Paragraph::new(title)
+                .style(accent_style())
+                .wrap(Wrap { trim: false })
+        });
+        let maximum_title_height = area
+            .height
+            .saturating_sub(1 + scope_height + 6 + footer_height);
+        let title_height = title.as_ref().map_or(0, |title| {
+            u16::try_from(title.line_count(area.width))
+                .unwrap_or(u16::MAX)
+                .saturating_add(1)
+                .min(maximum_title_height)
+        });
         let maximum_annotation_height = area
             .height
             .saturating_sub(1 + title_height + scope_height + 6 + footer_height);
@@ -518,11 +531,8 @@ impl ApprovalTuiModel {
             Paragraph::new(self.screen.heading.as_str()).style(secondary_style()),
             rows[0],
         );
-        if let Some(title) = &self.screen.title {
-            frame.render_widget(
-                Paragraph::new(title.as_str()).style(accent_style()),
-                rows[1],
-            );
+        if let Some(title) = title {
+            frame.render_widget(title, rows[1]);
         }
         frame.render_widget(scope, rows[2]);
 
