@@ -1,58 +1,58 @@
-# Experiment 2: fine-subject resolution spectrum
+# Experiment 2: exploratory nearby-subject segmentation
 
-Status: **draft; every subject identity, rung, and mask requires human approval
-before encoding**.
+Status: **draft; every atomic-subject cohort, diagnostic annotation, and mask
+requires human approval before encoding**.
 
-## Assumption
+## Purpose
 
 > Nearby but meaningfully distinct fine subjects are resolved.
 
-We do not yet know how fine the segmentation must be. The experiment therefore
-defines five concrete rungs over one corpus:
+This experiment characterizes what one frozen fine-segmentation candidate does
+inside several densely sampled semantic neighborhoods. It does not prescribe
+one correct partition, one mandatory semantic boundary, or one required
+hierarchy.
 
-- **Rung 0:** the complete unsegmented input set;
-- **Rung 1:** four broad groups;
-- **Rung 2:** eight narrower groups;
-- **Rung 3:** sixteen still-narrower groups;
-- **Rung 4:** thirty-two finest groups.
+The primary question is:
 
-Rung 1 is the mandatory minimum. Its boundaries are deliberately coarse and
-unambiguous. Rungs 2 through 4 measure progressively finer resolving power.
+> For each returned multi-vector segment, what is the narrowest recognizable
+> subject for which every instance is a valid refinement?
 
-This sweeps semantic distinctions in the fixture. It does not tune or sweep an
-algorithm-specific setting. One candidate and configuration remain frozen.
+If no such subject exists, the returned segment is a false merge. Coherent
+broader grouping, coherent narrower splitting, overlapping segments, and
+unassigned vectors are recorded rather than forced into a predetermined
+verdict.
 
 ## Fixture
 
-The fixture is one corpus containing 128 vectors. It has four broad branches,
-eight finest-subject cohorts per branch, and four independently worded
-instances per finest cohort. Every complete note is also its complete mask.
-Every concept is ordinary and stated directly; no rung depends on obscure
-facts or compositional role ordering.
+The fixture is one corpus containing 128 vectors. It has four annotated broad
+areas, eight annotated atomic-subject cohorts per area, and four independently
+worded instances per atomic-subject cohort. Every complete note is also its
+complete mask. Every concept is ordinary and stated directly; no relationship
+depends on obscure facts or compositional role ordering.
 
-The hierarchy is balanced by construction:
+The diagnostic annotations are balanced by construction:
 
-| Rung | Groups in the corpus | Vectors per group |
+| Path depth | Annotated groups | Vectors per group |
 |---|---:|---:|
-| 0 | 1 | 128 |
-| 1 | 4 | 32 |
-| 2 | 8 | 16 |
-| 3 | 16 | 8 |
-| 4 | 32 | 4 |
+| Complete corpus | 1 | 128 |
+| First path term | 4 | 32 |
+| First two path terms | 8 | 16 |
+| First three path terms | 16 | 8 |
+| Complete path | 32 | 4 |
 
-This controls sample-count density inside this experiment. Unequal density and
-sparsity are tested separately in Experiment 5. The candidate receives only
-opaque IDs and vectors, not the branch or rung information.
+This balances support among peer annotations. Unequal density and sparsity are
+tested separately in Experiment 5. The candidate receives only opaque IDs and
+vectors, not the annotations.
 
-Each input table below has one complete hierarchy path in its title. Reading a
-path from left to right gives its R1, R2, R3, and R4 subjects. Every higher
-group is the union of all input tables sharing that path prefix; later rungs do
-not introduce new vectors.
+Each input table below has one complete diagnostic path in its title. Reading a
+path from left to right gives progressively narrower human interpretations of
+the masks. These paths help diagnose returned segments after their blind
+review. They are not expected output and do not determine correctness.
 
-## Complete corpus · R0 · 128 vectors
+## Complete corpus · 128 vectors
 
-Rung 0 is the unsegmented input set. It is a non-semantic root, not a claim
-that every vector shares one subject.
+The complete input set is a non-semantic container, not a claim that every
+vector shares one subject.
 
 ### Coffee activities > Coffee preparation > Roasting coffee > Light-roast preparation · 4 vectors
 
@@ -124,7 +124,7 @@ that every vector shares one subject.
 | `COLD-BREW-1` | ⟦I drank a cup of cold-brew coffee.⟧ |
 | `COLD-BREW-2` | ⟦I drank cold-brew coffee as a cold drink.⟧ |
 | `COLD-BREW-3` | ⟦I sipped a cold-brew coffee.⟧ |
-| `COLD-BREW-4` | ⟦I chose cold-brew coffee as my drink.⟧ |
+| `COLD-BREW-4` | ⟦I finished drinking a cold-brew coffee.⟧ |
 
 ### Working with photos > Making and editing photos > Taking photos > Taking portraits · 4 vectors
 
@@ -329,7 +329,7 @@ that every vector shares one subject.
 | ID | Complete note and exact mask |
 |---|---|
 | `FICTION-AUDIOBOOK-1` | ⟦I listened to a fiction audiobook.⟧ |
-| `FICTION-AUDIOBOOK-2` | ⟦I listened to a narrator tell a fictional story.⟧ |
+| `FICTION-AUDIOBOOK-2` | ⟦I listened to a narrated audiobook telling a fictional story.⟧ |
 | `FICTION-AUDIOBOOK-3` | ⟦My listening was an audiobook of a novel.⟧ |
 | `FICTION-AUDIOBOOK-4` | ⟦I played an audiobook that told an invented story.⟧ |
 
@@ -338,80 +338,70 @@ that every vector shares one subject.
 | ID | Complete note and exact mask |
 |---|---|
 | `NONFICTION-AUDIOBOOK-1` | ⟦I listened to a nonfiction audiobook.⟧ |
-| `NONFICTION-AUDIOBOOK-2` | ⟦I listened to a narrator tell factual material.⟧ |
+| `NONFICTION-AUDIOBOOK-2` | ⟦I listened to a narrated audiobook presenting factual material.⟧ |
 | `NONFICTION-AUDIOBOOK-3` | ⟦My listening was an audiobook of nonfiction.⟧ |
 | `NONFICTION-AUDIOBOOK-4` | ⟦I played an audiobook about real events and facts.⟧ |
 
-## Scoring the corpus
+## Reviewing the returned segments
 
-The 32 path headings above define the complete expected hierarchy. The first
-subject in a path is its R1 group, the first two subjects identify its R2
-group, the first three identify its R3 group, and the complete path identifies
-its R4 group. A group contains every input table sharing that path prefix.
-Scoring uses those subject names directly rather than separate aliases.
+Freeze and preserve the candidate's complete output before restoring fixture
+identities. Review every returned segment containing at least two vectors.
 
-A returned segment **crosses** a boundary when it contains vectors from two
-groups that the rung keeps separate.
+The primary review is blind to the fixture IDs, cohort identities, and path
+annotations. Give each vector a neutral temporary label, show all of the
+segment's complete masks, and ask:
 
-A required group is **recovered** when either:
+> What is the narrowest recognizable subject for which every instance is a
+> valid refinement?
 
-1. one returned segment equals that group exactly; or
-2. all of its immediate child groups are recovered.
+Record the proposed subject and whether every mask genuinely fits it. If no
+precise recognizable subject covers every member, record a false merge and the
+specific masks that make it false. Do not rescue a false merge with a vague
+umbrella, a list of unrelated subjects, or the hidden diagnostic paths.
 
-At Rung 4, a group is recovered only when one returned segment equals its four
-vectors exactly. For example, the 16-vector Coffee preparation group is
-recovered by any of these complete outputs:
+After the primary review is frozen, reveal the cohort and path annotations for
+diagnosis. Record:
 
-- one exact Coffee preparation segment;
-- exact Roasting coffee and Brewing coffee segments;
-- exact Light-roast preparation, Dark-roast preparation, Pour-over brewing,
-  and Espresso brewing segments.
+- every returned multi-vector segment and its complete masks;
+- every proposed segment subject and review judgment;
+- every false merge and the members responsible;
+- where the four paraphrases of each annotated atomic subject appeared;
+- singleton and unassigned vectors;
+- overlapping memberships;
+- memberships spanning diagnostic path prefixes;
+- raw-vector cosine values as diagnostics only.
 
-A partial subset does not recover its parent group.
+A split annotated cohort is not automatically a failure. A segment spanning
+different diagnostic paths is not automatically a false merge. The masks and
+the primary review determine whether one coherent fine subject exists.
 
-A result reaches a rung when every required group at that rung is recovered and
-no returned segment crosses any boundary at that rung:
-
-- **Rung 1:** all four 32-vector branches are recovered, and no segment mixes
-  Coffee, Photos, Produce, or Media;
-- **Rung 2:** all eight 16-vector groups are recovered, with no Rung 2 boundary
-  crossed;
-- **Rung 3:** all sixteen 8-vector groups are recovered, with no Rung 3
-  boundary crossed;
-- **Rung 4:** all thirty-two 4-vector finest cohorts are recovered, with no
-  finest-cohort boundary crossed.
-
-Additional segments contained inside one finest cohort are allowed. Segments
-crossing a required boundary prevent that rung from passing even if valid
-segments also exist. The verdict does not otherwise require every vector to
-have only one membership.
-
-## Overall result
-
-The mandatory minimum is Rung 1 for the complete corpus. Rungs 2 through 4
-measure additional resolving power and are not minimum requirements.
-
-Report the highest verified rung for the complete corpus and separately for
-each Rung 1 branch. A result that does not reach Rung 1 is reported as **below
-minimum**; Rung 0 is the input state, not a successful segmentation result.
+This experiment has no mandatory semantic-boundary score, highest rung, or
+binary pass/fail verdict. It characterizes a development candidate. Any
+candidate or configuration changed after inspecting the result requires a new
+unseen fixture for subsequent validation.
 
 ## Run
 
-1. Approve and freeze every note, mask, cohort identity, and hierarchy rung.
+1. Approve and freeze every note, mask, atomic-subject cohort, and diagnostic
+   path annotation.
 2. Freeze one candidate, configuration, seed, fine-output selector, and opaque
    shuffled input order before encoding or exposing vector diagnostics.
 3. Encode all 128 inputs once under the shared contract in README.md.
 4. Run once and preserve the complete output before restoring fixture IDs.
-5. Score the one corpus against Rungs 1 through 4.
+5. Complete and freeze the blind segment review.
+6. Reveal the diagnostic annotations and complete the diagnostic record.
 
 Record the frozen inputs and hashes, raw vectors, input order, candidate
-configuration, complete returned memberships, the highest verified global
-rung, and the highest rung reached inside each Rung 1 branch. Preserve
-raw-vector cosine values for diagnosis only.
+configuration, complete returned memberships, blind review judgments,
+annotation-based diagnostics, and all generated artifact hashes.
 
 ## Scope
 
-The rung labels refer only to the human-approved boundaries in this synthetic
-hierarchy. They are not universal semantic-distance thresholds. Experiments
+This is an exploratory test of the complete frozen SSE-plus-segmentation
+system. A failure may originate in the SSE geometry, the candidate, or their
+interaction; cosine diagnostics cannot conclusively attribute causation.
+
+The diagnostic paths are human interpretations of this synthetic corpus, not
+universal semantic-distance thresholds or a required hierarchy. Experiments
 3–6 separately test lexical traps, unmasked context, unequal density, and
 irrelevant changes.
