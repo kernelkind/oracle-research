@@ -8,9 +8,9 @@ requires human approval before encoding**.
 > Nearby but meaningfully distinct fine subjects are resolved.
 
 This experiment characterizes what one frozen fine-segmentation candidate does
-inside several densely sampled semantic neighborhoods and whether surrounding
-semantic material changes those results. It does not prescribe one correct
-partition, one mandatory semantic boundary, or one required hierarchy.
+inside several densely sampled semantic neighborhoods. It does not prescribe
+one correct partition, one mandatory semantic boundary, or one required
+hierarchy.
 
 The primary question is:
 
@@ -22,49 +22,46 @@ broader grouping, coherent narrower splitting, overlapping segments, and
 unassigned vectors are recorded rather than forced into a predetermined
 verdict.
 
-## Probe fixture
+## Fixture
 
-The probe fixture contains 128 vectors. It has four annotated broad areas,
-eight annotated atomic-subject cohorts per area, and four controlled
-formulations per atomic-subject cohort. Every complete note is also its complete
-mask. Every concept is ordinary and stated directly; no relationship depends
-on obscure facts or compositional role ordering.
+The fixture contains 192 vectors in 48 annotated atomic-subject cohorts, with
+four controlled formulations per cohort. Every complete note is also its
+complete mask. Every concept is ordinary and stated directly; no relationship
+depends on obscure facts or compositional role ordering.
+
+The first 128 vectors form four densely structured neighborhoods. Another 32
+vectors add nearby subjects, and the final 32 add precise subjects that combine
+attributes already represented in those neighborhoods. Together, these inputs
+provide varied nearby-subject relationships for one segmentation run.
 
 The diagnostic annotations are balanced by construction:
 
 | Path depth | Annotated groups | Vectors per group |
 |---|---:|---:|
-| Complete corpus | 1 | 128 |
+| Structured core | 1 | 128 |
 | First path term | 4 | 32 |
 | First two path terms | 8 | 16 |
 | First three path terms | 16 | 8 |
 | Complete path | 32 | 4 |
 
-This balances support among peer annotations. Unequal density and sparsity are
-tested separately in Experiment 5.
+This balances support among peer annotations in the structured core. Unequal
+density and sparsity are tested separately in Experiment 5. Stability under
+irrelevant corpus changes is tested separately in Experiment 6.
 
-Three synthetic background layers add 32 vectors each:
+The candidate receives only opaque IDs and vectors, not the cohort identities
+or diagnostic annotations.
 
-| Layer | Purpose | Cohorts | Vectors |
-|---|---|---:|---:|
-| `D` | Subjects deliberately distant from the four probe areas | 8 | 32 |
-| `A` | New subjects adjacent to the probe neighborhoods | 8 | 32 |
-| `B` | Precise subjects connecting attributes from existing neighborhoods | 8 | 32 |
+Each structured-neighborhood table has one complete diagnostic path in its
+title. Reading a path from left to right gives progressively narrower human
+interpretations of the masks. The additional table titles identify adjacent or
+cross-cutting relationships. These annotations help diagnose returned segments
+after their blind review. They are not expected output and do not determine
+correctness.
 
-Equal layer sizes prevent the intervention type from being confused with the
-number of added vectors. All 224 inputs are encoded once. The candidate
-receives only opaque IDs and vectors, not the probe identities, layer roles,
-cohort identities, or annotations.
+## Structured subject neighborhoods · 128 vectors
 
-Each input table below has one complete diagnostic path in its title. Reading a
-path from left to right gives progressively narrower human interpretations of
-the masks. These paths help diagnose returned segments after their blind
-review. They are not expected output and do not determine correctness.
-
-## Probe corpus · 128 vectors
-
-The complete input set is a non-semantic container, not a claim that every
-vector shares one subject.
+The structured core is a diagnostic collection, not a claim that every vector
+shares one subject.
 
 ### Coffee activities > Coffee preparation > Roasting coffee > Light-roast preparation · 4 vectors
 
@@ -354,97 +351,13 @@ vector shares one subject.
 | `NONFICTION-AUDIOBOOK-3` | ⟦My listening was an audiobook of nonfiction.⟧ |
 | `NONFICTION-AUDIOBOOK-4` | ⟦I played an audiobook about real events and facts.⟧ |
 
-## Synthetic background layers · 96 vectors
+## Additional adjacent subjects · 32 vectors
 
-The three layer roles are human-defined interventions, not claims about where
-SSE must place the vectors. Layer membership is frozen before encoding and is
-not changed after inspecting vector geometry.
+These subjects belong near the four structured areas without intentionally
+joining two existing cohorts. They add further nearby distinctions to the same
+corpus.
 
-### Layer `D` · distant subjects · 32 vectors
-
-These eight subjects are deliberately outside coffee, photos, eating produce,
-and consuming media. They test whether adding semantically remote material
-changes the probe result.
-
-#### Replacing a faucet washer to stop a drip · 4 vectors
-
-| ID | Complete note and exact mask |
-|---|---|
-| `DIST-FAUCET-1` | ⟦The bathroom faucet kept dripping, so I replaced its worn washer.⟧ |
-| `DIST-FAUCET-2` | ⟦A fresh washer stopped the slow leak from the sink tap.⟧ |
-| `DIST-FAUCET-3` | ⟦I changed the damaged washer that was causing my faucet to drip.⟧ |
-| `DIST-FAUCET-4` | ⟦The tap finally quit leaking after I fitted it with a new washer.⟧ |
-
-#### Renewing a passport · 4 vectors
-
-| ID | Complete note and exact mask |
-|---|---|
-| `DIST-PASSPORT-1` | ⟦My passport expires this autumn, so I submitted a renewal application.⟧ |
-| `DIST-PASSPORT-2` | ⟦I mailed the forms and my old passport in for renewal.⟧ |
-| `DIST-PASSPORT-3` | ⟦Before my current passport lapses, I filed the paperwork to renew it.⟧ |
-| `DIST-PASSPORT-4` | ⟦I sent in my expiring passport to have it renewed.⟧ |
-
-#### Training a dog to sit on command · 4 vectors
-
-| ID | Complete note and exact mask |
-|---|---|
-| `DIST-DOG-SIT-1` | ⟦I am teaching my dog to sit when I give the command.⟧ |
-| `DIST-DOG-SIT-2` | ⟦We practiced until the dog would sit whenever it heard the cue.⟧ |
-| `DIST-DOG-SIT-3` | ⟦At training today, my dog got a treat each time it sat after hearing “sit.”⟧ |
-| `DIST-DOG-SIT-4` | ⟦My dog is learning to sit in response to the signal without any help.⟧ |
-
-#### Receiving a professional teeth cleaning · 4 vectors
-
-| ID | Complete note and exact mask |
-|---|---|
-| `DIST-DENTAL-CLEAN-1` | ⟦I went to the dentist for a routine teeth cleaning.⟧ |
-| `DIST-DENTAL-CLEAN-2` | ⟦At my checkup, the dental hygienist removed plaque and polished my teeth.⟧ |
-| `DIST-DENTAL-CLEAN-3` | ⟦Today’s dental appointment was for a professional cleaning.⟧ |
-| `DIST-DENTAL-CLEAN-4` | ⟦I had my teeth cleaned by the hygienist this morning.⟧ |
-
-#### Waiting at a station for a delayed train · 4 vectors
-
-| ID | Complete note and exact mask |
-|---|---|
-| `DIST-DELAYED-TRAIN-1` | ⟦My train was running late, so I waited on the platform.⟧ |
-| `DIST-DELAYED-TRAIN-2` | ⟦The train’s scheduled departure time passed while I was still waiting at the station.⟧ |
-| `DIST-DELAYED-TRAIN-3` | ⟦A station announcement said my train was delayed, so I stayed on the platform.⟧ |
-| `DIST-DELAYED-TRAIN-4` | ⟦I waited well past the timetable before the late train finally arrived.⟧ |
-
-#### Clearing snow from a driveway · 4 vectors
-
-| ID | Complete note and exact mask |
-|---|---|
-| `DIST-SNOW-DRIVEWAY-1` | ⟦After the overnight snowfall, I shoveled the driveway clear.⟧ |
-| `DIST-SNOW-DRIVEWAY-2` | ⟦I used a snow shovel to open the driveway again.⟧ |
-| `DIST-SNOW-DRIVEWAY-3` | ⟦The driveway was buried, so I spent the morning clearing off the snow.⟧ |
-| `DIST-SNOW-DRIVEWAY-4` | ⟦I pushed the fresh snow aside until the whole driveway was passable.⟧ |
-
-#### Swimming laps in a pool · 4 vectors
-
-| ID | Complete note and exact mask |
-|---|---|
-| `DIST-POOL-LAPS-1` | ⟦I swam several laps in the pool before work.⟧ |
-| `DIST-POOL-LAPS-2` | ⟦At the aquatic center, I swam back and forth along one lane.⟧ |
-| `DIST-POOL-LAPS-3` | ⟦My workout was a steady series of lengths across the pool.⟧ |
-| `DIST-POOL-LAPS-4` | ⟦I spent half an hour swimming laps without leaving my lane.⟧ |
-
-#### Participating in a workplace fire drill · 4 vectors
-
-| ID | Complete note and exact mask |
-|---|---|
-| `DIST-FIRE-DRILL-1` | ⟦When the fire drill alarm sounded, everyone in our office evacuated.⟧ |
-| `DIST-FIRE-DRILL-2` | ⟦Our workplace ran a scheduled drill, and we followed the fire exit route outside.⟧ |
-| `DIST-FIRE-DRILL-3` | ⟦During the practice evacuation, staff left the building and met at the fire assembly point.⟧ |
-| `DIST-FIRE-DRILL-4` | ⟦We rehearsed getting out of the office safely as though there were a fire.⟧ |
-
-### Layer `A` · adjacent subjects · 32 vectors
-
-These subjects belong near the four probe areas without intentionally joining
-two existing probe cohorts. They test the effect of adding local semantic
-density.
-
-#### Cleaning a burr coffee grinder · adjacent to coffee preparation · 4 vectors
+### Cleaning a burr coffee grinder · adjacent to coffee preparation · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -453,7 +366,7 @@ density.
 | `ADJ-GRINDER-CLEAN-3` | ⟦Trapped grounds had collected around the burrs, so I cleaned the coffee grinder.⟧ |
 | `ADJ-GRINDER-CLEAN-4` | ⟦I opened my burr coffee grinder and cleared away the stale dust inside.⟧ |
 
-#### Descaling an automatic drip coffee maker · adjacent to coffee preparation · 4 vectors
+### Descaling an automatic drip coffee maker · adjacent to coffee preparation · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -462,7 +375,7 @@ density.
 | `ADJ-DRIP-DESCALE-3` | ⟦Cleaning out the mineral deposits left my automatic drip coffee brewer free of scale.⟧ |
 | `ADJ-DRIP-DESCALE-4` | ⟦I descaled the automatic drip coffee brewer to clear the chalky buildup inside it.⟧ |
 
-#### Straightening a tilted photograph · adjacent to photo editing · 4 vectors
+### Straightening a tilted photograph · adjacent to photo editing · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -471,7 +384,7 @@ density.
 | `ADJ-PHOTO-STRAIGHTEN-3` | ⟦A small rotation corrected the slant in the photograph.⟧ |
 | `ADJ-PHOTO-STRAIGHTEN-4` | ⟦I leveled a photo that had been tilted noticeably to one side.⟧ |
 
-#### Adding descriptive keyword tags to photos · adjacent to photo-library organization · 4 vectors
+### Adding descriptive keyword tags to photos · adjacent to photo-library organization · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -480,7 +393,7 @@ density.
 | `ADJ-PHOTO-TAG-3` | ⟦Going through the folder, I tagged every photograph with words describing its contents.⟧ |
 | `ADJ-PHOTO-TAG-4` | ⟦The photo collection became easier to search after I assigned keyword labels to its images.⟧ |
 
-#### Eating blueberries · adjacent to eating fruit · 4 vectors
+### Eating blueberries · adjacent to eating fruit · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -489,7 +402,7 @@ density.
 | `ADJ-BLUEBERRY-3` | ⟦One by one, I finished the blueberries I had packed for lunch.⟧ |
 | `ADJ-BLUEBERRY-4` | ⟦After dinner, I ate the fresh blueberries left in the bowl.⟧ |
 
-#### Eating steamed broccoli · adjacent to eating vegetables · 4 vectors
+### Eating steamed broccoli · adjacent to eating vegetables · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -498,7 +411,7 @@ density.
 | `ADJ-STEAMED-BROCCOLI-3` | ⟦I ate broccoli that had just come out of the steamer basket.⟧ |
 | `ADJ-STEAMED-BROCCOLI-4` | ⟦I finished a bowl of steamed broccoli as my vegetable side.⟧ |
 
-#### Watching a feature-length film · adjacent to consuming media · 4 vectors
+### Watching a feature-length film · adjacent to consuming media · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -507,7 +420,7 @@ density.
 | `ADJ-FEATURE-FILM-3` | ⟦The feature-length movie kept me watching all the way through the closing credits.⟧ |
 | `ADJ-FEATURE-FILM-4` | ⟦I put on a feature-length film and watched the whole thing.⟧ |
 
-#### Watching a live sports broadcast · adjacent to consuming media · 4 vectors
+### Watching a live sports broadcast · adjacent to consuming media · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -516,14 +429,14 @@ density.
 | `ADJ-LIVE-SPORTS-3` | ⟦I tuned in to watch the live broadcast of the sports game.⟧ |
 | `ADJ-LIVE-SPORTS-4` | ⟦Watching the live sports coverage let me see every play in real time.⟧ |
 
-### Layer `B` · bridging subjects · 32 vectors
+## Cross-cutting subjects · 32 vectors
 
 Each subject is one precise intersection of attributes already present in the
-probe neighborhoods. These are not expected to occupy any predetermined
-geometric position. They test how legitimate semantic connections affect the
-probe segments.
+structured neighborhoods. These are not expected to occupy any predetermined
+geometric position. They expose relationships that a useful fine segmentation
+may represent through broader, narrower, or overlapping segments.
 
-#### Drinking iced cold-brew coffee · bridges iced coffee and cold-brew coffee · 4 vectors
+### Drinking iced cold-brew coffee · bridges iced coffee and cold-brew coffee · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -532,7 +445,7 @@ probe segments.
 | `BRIDGE-ICED-COLD-BREW-3` | ⟦The iced coffee I drank had been prepared by cold brewing.⟧ |
 | `BRIDGE-ICED-COLD-BREW-4` | ⟦The coffee I finished was cold-brewed and chilled with ice cubes.⟧ |
 
-#### Pour-over brewing with dark-roast beans · bridges dark roast and pour-over · 4 vectors
+### Pour-over brewing with dark-roast beans · bridges dark roast and pour-over · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -541,7 +454,7 @@ probe segments.
 | `BRIDGE-DARK-POUR-OVER-3` | ⟦I made a pour-over using dark-roasted coffee beans.⟧ |
 | `BRIDGE-DARK-POUR-OVER-4` | ⟦My pour-over was brewed from dark-roast coffee grounds.⟧ |
 
-#### Cropping a portrait photograph · bridges portraits and cropping · 4 vectors
+### Cropping a portrait photograph · bridges portraits and cropping · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -550,7 +463,7 @@ probe segments.
 | `BRIDGE-CROPPED-PORTRAIT-3` | ⟦I reframed the person’s portrait by cutting away the outer parts of the image.⟧ |
 | `BRIDGE-CROPPED-PORTRAIT-4` | ⟦The portrait was cropped so the person filled more of the frame.⟧ |
 
-#### Sharing a photo link by email · bridges email and link sharing · 4 vectors
+### Sharing a photo link by email · bridges email and link sharing · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -559,7 +472,7 @@ probe segments.
 | `BRIDGE-EMAILED-PHOTO-LINK-3` | ⟦The email I sent contained a link that opened the photograph.⟧ |
 | `BRIDGE-EMAILED-PHOTO-LINK-4` | ⟦I shared the online photo through an emailed link.⟧ |
 
-#### Eating raw spinach · bridges raw produce and spinach · 4 vectors
+### Eating raw spinach · bridges raw produce and spinach · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -568,7 +481,7 @@ probe segments.
 | `BRIDGE-RAW-SPINACH-3` | ⟦I snacked on spinach without cooking it.⟧ |
 | `BRIDGE-RAW-SPINACH-4` | ⟦I ate spinach served raw with my meal.⟧ |
 
-#### Eating cooked lettuce · bridges cooked produce and lettuce · 4 vectors
+### Eating cooked lettuce · bridges cooked produce and lettuce · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -577,7 +490,7 @@ probe segments.
 | `BRIDGE-COOKED-LETTUCE-3` | ⟦I ate cooked lettuce as a dinner side.⟧ |
 | `BRIDGE-COOKED-LETTUCE-4` | ⟦I braised lettuce before eating it.⟧ |
 
-#### Listening to a news-interview podcast · bridges news and interview podcasts · 4 vectors
+### Listening to a news-interview podcast · bridges news and interview podcasts · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -586,7 +499,7 @@ probe segments.
 | `BRIDGE-NEWS-INTERVIEW-PODCAST-3` | ⟦I heard a host interview an expert about the day’s news on a podcast.⟧ |
 | `BRIDGE-NEWS-INTERVIEW-PODCAST-4` | ⟦My news podcast featured a conversation with a guest about current events.⟧ |
 
-#### Reading a digital nonfiction book · bridges nonfiction books and digital media · 4 vectors
+### Reading a digital nonfiction book · bridges nonfiction books and digital media · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
@@ -597,13 +510,8 @@ probe segments.
 
 ## Reviewing the returned segments
 
-Freeze and preserve every run's complete output before restoring fixture
-identities.
-
-For the probe-only run, review every returned segment containing at least two
-probe vectors. For each background intervention, review every returned segment
-that contains at least one probe and at least two total vectors. Background-only
-segments are preserved but are outside this composition comparison.
+Freeze and preserve the complete output before restoring fixture identities.
+Review every returned segment containing at least two vectors.
 
 The primary review is blind to the fixture IDs, cohort identities, and path
 annotations. Give each vector a neutral temporary label, show all of the
@@ -617,10 +525,10 @@ precise recognizable subject covers every member, record a false merge and the
 specific masks that make it false. Do not rescue a false merge with a vague
 umbrella, a list of unrelated subjects, or the hidden diagnostic paths.
 
-After the primary review is frozen, reveal the probe paths, cohort identities,
-and background-layer roles for diagnosis. Record:
+After the primary review is frozen, reveal the diagnostic paths and cohort
+identities. Record:
 
-- every returned probe-containing segment and its complete masks;
+- every returned multi-vector segment and its complete masks;
 - every proposed segment subject and review judgment;
 - every false merge and the members responsible;
 - where the four paraphrases of each annotated atomic subject appeared;
@@ -633,52 +541,6 @@ A split annotated cohort is not automatically a failure. A segment spanning
 different diagnostic paths is not automatically a false merge. The masks and
 the primary review determine whether one coherent fine subject exists.
 
-### Comparing background interventions
-
-Let `P` be the 128 probe IDs. For each returned segment in each run:
-
-1. intersect its members with `P`;
-2. discard an empty intersection;
-3. retain one-probe intersections because a probe may share the full segment
-   with background vectors;
-4. remove duplicate projected member sets.
-
-Compare each intervention with the probe-only result. Record:
-
-- projected probe-member sets added or removed from the complete collection;
-- probe pairs that begin sharing a segment;
-- probe pairs that stop sharing a segment;
-- probes that become assigned or unassigned;
-- background vectors added to every probe-containing segment;
-- changes in overlapping memberships;
-- the complete masks and semantic review for every changed segment.
-
-The exact projected member-set collection is the primary structural
-comparison. Pairwise and assignment summaries diagnose that comparison but do
-not replace it, because different overlapping segment collections can produce
-the same probe-pair relationships.
-
-Also compare the three equal-count intervention runs directly:
-
-- `P+A` against `P+D` contrasts adjacent additions with an equal number of
-  distant additions;
-- `P+B` against `P+D` contrasts bridging additions with an equal number of
-  distant additions;
-- `P+B` against `P+A` contrasts cross-cutting bridges with ordinary local
-  additions at equal count.
-
-A change shared by `P+D`, `P+A`, and `P+B` cannot be attributed to one layer's
-semantic role; it may be a generic collection-size or composition effect.
-Differences between these runs apply to the exact frozen layer fixtures. Count
-is controlled, but wording and subject content necessarily differ, so the
-contrasts do not establish a universal effect for “distant,” “adjacent,” or
-“bridging” material.
-
-A change is not automatically a failure. Added context can expose an artificial
-probe-only grouping, connect valid additional instances, create a false merge,
-or fragment a coherent segment. The masks and frozen review establish which
-occurred.
-
 This experiment has no mandatory semantic-boundary score, highest rung, or
 binary pass/fail verdict. It characterizes a development candidate. Any
 candidate or configuration changed after inspecting the result requires a new
@@ -686,34 +548,19 @@ unseen fixture for subsequent validation.
 
 ## Run
 
-1. Approve and freeze all 224 notes and masks, atomic-subject cohorts, probe
-   paths, and background-layer roles.
-2. Freeze one candidate, configuration, seed, fine-output selector, and all
-   opaque input orders before encoding or exposing vector diagnostics.
-3. Encode all 224 inputs once under the shared contract in README.md.
-4. Run these five fixed collections without retuning or re-encoding:
-
-   | Run | Inputs | Count | Purpose |
-   |---|---|---:|---|
-   | `P` | probes | 128 | probe-only baseline |
-   | `P+D` | probes plus distant layer | 160 | distant composition |
-   | `P+A` | probes plus adjacent layer | 160 | local semantic density |
-   | `P+B` | probes plus bridging layer | 160 | legitimate semantic connections |
-   | `P+D+A+B` | probes plus all layers | 224 | combined background composition |
-
-5. Preserve every complete output before restoring fixture identities.
-6. Complete and freeze the blind segment reviews and intervention comparisons.
+1. Approve and freeze all 192 notes and masks, atomic-subject cohorts, and
+   diagnostic paths.
+2. Freeze one candidate, configuration, seed, fine-output selector, and one
+   shuffled opaque input order before encoding or exposing vector diagnostics.
+3. Encode all 192 inputs once under the shared contract in README.md.
+4. Run the frozen candidate once without retuning.
+5. Preserve the complete output before restoring fixture identities.
+6. Complete and freeze the blind segment review.
 7. Reveal the diagnostic annotations and complete the diagnostic record.
 
-One frozen shuffled probe order occupies the first 128 positions in every run.
-Each added layer has its own frozen shuffled order after the probes. The
-combined run appends `D`, then `A`, then `B`. This preserves every probe's input
-ordinal across runs; Experiment 6 separately tests order sensitivity.
-
 Record the frozen inputs and hashes, raw vectors, input order, candidate
-configuration, all five complete returned memberships, blind review judgments,
-projected probe comparisons, annotation-based diagnostics, and all generated
-artifact hashes.
+configuration, complete returned memberships, blind review judgments,
+annotation-based diagnostics, and all generated artifact hashes.
 
 ## Scope
 
@@ -721,9 +568,7 @@ This is an exploratory test of the complete frozen SSE-plus-segmentation
 system. A failure may originate in the SSE geometry, the candidate, or their
 interaction; cosine diagnostics cannot conclusively attribute causation.
 
-The diagnostic paths and background roles are human interpretations of this
+The diagnostic paths and cohort identities are human interpretations of this
 synthetic corpus, not universal semantic-distance thresholds or a required
-hierarchy. The interventions establish sensitivity only to these three
-32-vector additions; they do not reproduce production-scale corpus
-composition. Experiments 3–6 separately test lexical traps, unmasked context,
-unequal density, and broader irrelevant-change stability.
+hierarchy. Experiments 3–6 separately test lexical traps, unmasked context,
+unequal density, and irrelevant-change stability.
