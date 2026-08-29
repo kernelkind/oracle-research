@@ -1,271 +1,411 @@
-# Experiment 5: unequal density and sparsity
+# Experiment 5: unequal subject support and sparsity
 
-Status: **draft; notes, masks, and expected relationships require human
-approval before encoding**.
+Status: **draft; every note, mask, subject identity, and expected relationship
+requires human approval before encoding**.
 
 ## Assumption under test
 
 > Region recovery survives unequal density and sparsity.
 
-In particular, a rare repeated subject must not disappear into a common nearby
-subject, and one unmatched subject instance must not be forced into an
-incorrect recurring segment.
+This experiment operationalizes density as the number of distinct vectors
+supporting one subject inside a fixed-size local collection. It tests unequal
+subject support and singleton sparsity. It does not claim to manipulate every
+possible geometric notion of density.
 
 ## Question
 
-After one frozen candidate recovers three nearby subjects under equal support,
-does changing which frozen instances remain—and therefore each subject's
-density—cause incorrect splits or merges?
+> Holding the collection size at twelve vectors, how does changing subject
+> support from `4:4:4` to `8:2:2`, `6:5:1`, or `8:3:1` change recovery,
+> absorption, omission, and fragmentation?
 
-## Why this fixture exists
+## Design
 
-All three subjects are stages of coffee preparation, making density pressure
-meaningful rather than trivial:
+The fixture contains four independent semantic neighborhoods:
 
-- roasting coffee beans;
-- grinding coffee beans;
-- extracting espresso.
+1. processing coffee beans;
+2. editing photographs;
+3. caring for rose bushes;
+4. developing software.
 
-Each subject has six frozen formulations. SSE runs only once. The
-experiment then presents different subsets of those same frozen vectors to the
-same candidate. No note, mask, vector, candidate setting, or preprocessing
-changes between runs.
+Each neighborhood contains three nearby but meaningfully different atomic
+subjects, with eight independently worded instances per subject. This gives 24
+vectors per neighborhood and 96 vectors total.
 
-## Synthetic notes and masks
+Each candidate run contains vectors from one neighborhood only. Experiment 6
+separately tests mixing unrelated semantic areas.
 
-Every note uses the same neutral carrier. Only the masked subject phrase
-changes.
+Every complete note is also its complete mask. The formulations avoid aligned
+sentence templates across sibling subjects. Shared words remain only where they
+directly express the subject.
 
-### Subject `R`: roasting coffee beans
+Because every run contains twelve vectors, these are complete support
+**allocations**: increasing one subject's support necessarily reduces another's.
+The experiment compares behavior under each allocation. It does not claim to
+identify the independent causal effect of one subject's support count.
 
-**R1**
+## Fixture
 
-> This note concerns ⟦roasting green coffee beans⟧.
+### Coffee processing
 
-**R2**
+#### `COFFEE-R`: roasting green coffee beans
 
-> This note concerns ⟦coffee-bean roasting⟧.
+| ID | Complete note and exact mask |
+|---|---|
+| `COFFEE-R1` | ⟦I’m roasting green coffee beans.⟧ |
+| `COFFEE-R2` | ⟦Green coffee beans are turning brown under roasting heat.⟧ |
+| `COFFEE-R3` | ⟦I put unroasted coffee beans through a roast.⟧ |
+| `COFFEE-R4` | ⟦The green beans in my coffee roaster are being roasted.⟧ |
+| `COFFEE-R5` | ⟦A batch of green coffee beans is going through the roasting process.⟧ |
+| `COFFEE-R6` | ⟦I’ve got raw coffee beans roasting.⟧ |
+| `COFFEE-R7` | ⟦Heat is roasting these unroasted coffee beans.⟧ |
+| `COFFEE-R8` | ⟦The beans I roasted were green coffee beans.⟧ |
 
-**R3**
+#### `COFFEE-G`: grinding roasted coffee beans
 
-> This note concerns ⟦turning green coffee beans into roasted coffee⟧.
+| ID | Complete note and exact mask |
+|---|---|
+| `COFFEE-G1` | ⟦I grind roasted coffee beans.⟧ |
+| `COFFEE-G2` | ⟦Roasted coffee beans are going through the grinder.⟧ |
+| `COFFEE-G3` | ⟦The grinder is reducing roasted beans into coffee grounds.⟧ |
+| `COFFEE-G4` | ⟦It’s roasted coffee beans that I’m grinding.⟧ |
+| `COFFEE-G5` | ⟦I’ve ground the roasted coffee beans.⟧ |
+| `COFFEE-G6` | ⟦The roasted beans are being milled into grounds.⟧ |
+| `COFFEE-G7` | ⟦I’m breaking roasted coffee beans into smaller particles with a grinder.⟧ |
+| `COFFEE-G8` | ⟦I reduced roasted coffee beans to grounds.⟧ |
 
-**R4**
+#### `COFFEE-E`: extracting espresso
 
-> This note concerns ⟦home-roasting a batch of coffee beans⟧.
+| ID | Complete note and exact mask |
+|---|---|
+| `COFFEE-E1` | ⟦I pulled a shot of espresso.⟧ |
+| `COFFEE-E2` | ⟦Pressurized water is extracting coffee from fine grounds into a small shot.⟧ |
+| `COFFEE-E3` | ⟦Espresso is being extracted.⟧ |
+| `COFFEE-E4` | ⟦What I’m pulling from the machine is espresso.⟧ |
+| `COFFEE-E5` | ⟦I extracted the espresso.⟧ |
+| `COFFEE-E6` | ⟦The espresso machine is extracting a concentrated shot of espresso.⟧ |
+| `COFFEE-E7` | ⟦The machine is pulling espresso from compacted grounds.⟧ |
+| `COFFEE-E8` | ⟦I am making espresso by pressure-extracting coffee grounds.⟧ |
 
-**R5**
+### Photograph editing
 
-> This note concerns ⟦heating green coffee beans through a full roast cycle⟧.
+#### `PHOTO-C`: cropping a photograph
 
-**R6**
+| ID | Complete note and exact mask |
+|---|---|
+| `PHOTO-C1` | ⟦I cropped the photograph.⟧ |
+| `PHOTO-C2` | ⟦The picture has been cropped.⟧ |
+| `PHOTO-C3` | ⟦We changed the crop on this photo.⟧ |
+| `PHOTO-C4` | ⟦She trimmed the image.⟧ |
+| `PHOTO-C5` | ⟦This photograph is being cropped.⟧ |
+| `PHOTO-C6` | ⟦He adjusted the picture’s crop.⟧ |
+| `PHOTO-C7` | ⟦I am trimming the photo.⟧ |
+| `PHOTO-C8` | ⟦They made a crop adjustment to the image.⟧ |
 
-> This note concerns ⟦roasting unprocessed coffee beans until browned and
-> aromatic⟧.
+#### `PHOTO-A`: adjusting a photograph’s colors
 
-### Subject `G`: grinding coffee beans
+| ID | Complete note and exact mask |
+|---|---|
+| `PHOTO-A1` | ⟦I changed the picture’s color balance.⟧ |
+| `PHOTO-A2` | ⟦I am tuning the colors in this photograph.⟧ |
+| `PHOTO-A3` | ⟦I’m applying color correction to this image.⟧ |
+| `PHOTO-A4` | ⟦Editing altered this picture’s colors.⟧ |
+| `PHOTO-A5` | ⟦The hues in this image are being adjusted.⟧ |
+| `PHOTO-A6` | ⟦I color-graded the photo.⟧ |
+| `PHOTO-A7` | ⟦The photograph underwent a color adjustment.⟧ |
+| `PHOTO-A8` | ⟦Color editing changed the photo.⟧ |
 
-**G1**
+#### `PHOTO-S`: straightening a tilted photograph
 
-> This note concerns ⟦grinding roasted coffee beans⟧.
+| ID | Complete note and exact mask |
+|---|---|
+| `PHOTO-S1` | ⟦Correcting its tilt brought this picture level.⟧ |
+| `PHOTO-S2` | ⟦The picture is now straight after I corrected its tilt.⟧ |
+| `PHOTO-S3` | ⟦They are straightening a crooked image.⟧ |
+| `PHOTO-S4` | ⟦I took the tilt out of the photograph.⟧ |
+| `PHOTO-S5` | ⟦I leveled the picture by correcting its slant.⟧ |
+| `PHOTO-S6` | ⟦Straightening removed the photograph’s tilt.⟧ |
+| `PHOTO-S7` | ⟦Rotation brought this tilted photograph back to level.⟧ |
+| `PHOTO-S8` | ⟦Leveling removed the slant from this photo.⟧ |
 
-**G2**
+### Rose-bush care
 
-> This note concerns ⟦crushing roasted coffee beans in a burr grinder⟧.
+#### `ROSE-P`: pruning a rose bush
 
-**G3**
+| ID | Complete note and exact mask |
+|---|---|
+| `ROSE-P1` | ⟦I pruned the rose bush.⟧ |
+| `ROSE-P2` | ⟦I gave the rose bush a trim.⟧ |
+| `ROSE-P3` | ⟦The rose bush got pruned.⟧ |
+| `ROSE-P4` | ⟦I cut back a rose bush.⟧ |
+| `ROSE-P5` | ⟦I did some pruning on the rose bush.⟧ |
+| `ROSE-P6` | ⟦The bush I trimmed was a rose bush.⟧ |
+| `ROSE-P7` | ⟦I was the one who pruned the rose bush.⟧ |
+| `ROSE-P8` | ⟦What I cut back was the rose bush.⟧ |
 
-> This note concerns ⟦turning roasted coffee beans into coffee grounds⟧.
+#### `ROSE-W`: watering a rose bush
 
-**G4**
+| ID | Complete note and exact mask |
+|---|---|
+| `ROSE-W1` | ⟦I watered the rose bush.⟧ |
+| `ROSE-W2` | ⟦The rose bush received watering.⟧ |
+| `ROSE-W3` | ⟦I supplied water to a rose bush.⟧ |
+| `ROSE-W4` | ⟦Watering is underway for the rose bush.⟧ |
+| `ROSE-W5` | ⟦A rose bush is being irrigated.⟧ |
+| `ROSE-W6` | ⟦I irrigated the rose bush.⟧ |
+| `ROSE-W7` | ⟦The watering I did was for a rose bush.⟧ |
+| `ROSE-W8` | ⟦This rose bush has been watered.⟧ |
 
-> This note concerns ⟦grinding beans for coffee brewing⟧.
+#### `ROSE-F`: fertilizing a rose bush
 
-**G5**
+| ID | Complete note and exact mask |
+|---|---|
+| `ROSE-F1` | ⟦Fertilizer now feeds my rose bush.⟧ |
+| `ROSE-F2` | ⟦My rose bush got a dose of plant nutrients.⟧ |
+| `ROSE-F3` | ⟦Feeding the rose bush required adding fertilizer.⟧ |
+| `ROSE-F4` | ⟦The fertilizer went onto my rose bush.⟧ |
+| `ROSE-F5` | ⟦Plant food is nourishing this rose bush.⟧ |
+| `ROSE-F6` | ⟦Fertilizer application is complete for the rose bush.⟧ |
+| `ROSE-F7` | ⟦I treated the rose bush with plant nutrients.⟧ |
+| `ROSE-F8` | ⟦Adding nutrients fertilized my rose bush.⟧ |
 
-> This note concerns ⟦grinding a batch of whole roasted coffee beans⟧.
+### Software development
 
-**G6**
+#### `SOFTWARE-C`: compiling source code
 
-> This note concerns ⟦reducing roasted coffee beans to coarse grounds⟧.
+| ID | Complete note and exact mask |
+|---|---|
+| `SOFTWARE-C1` | ⟦The compiler is processing my source code.⟧ |
+| `SOFTWARE-C2` | ⟦I’m compiling the program from source.⟧ |
+| `SOFTWARE-C3` | ⟦My source files are being passed through the compiler.⟧ |
+| `SOFTWARE-C4` | ⟦The program’s source is undergoing compilation.⟧ |
+| `SOFTWARE-C5` | ⟦I’m putting the source code through a compiler.⟧ |
+| `SOFTWARE-C6` | ⟦I’ve run the program’s source files through a compiler.⟧ |
+| `SOFTWARE-C7` | ⟦The source code is in the process of being compiled.⟧ |
+| `SOFTWARE-C8` | ⟦I compiled the program’s source.⟧ |
 
-### Subject `E`: extracting espresso
+#### `SOFTWARE-T`: running automated software tests
 
-**E1**
+| ID | Complete note and exact mask |
+|---|---|
+| `SOFTWARE-T1` | ⟦I kicked off the software’s automated test suite.⟧ |
+| `SOFTWARE-T2` | ⟦Automated test cases are running against the program.⟧ |
+| `SOFTWARE-T3` | ⟦I have the software going through its automated tests.⟧ |
+| `SOFTWARE-T4` | ⟦The program is being tested automatically.⟧ |
+| `SOFTWARE-T5` | ⟦I’m executing the automated software tests.⟧ |
+| `SOFTWARE-T6` | ⟦The software’s test suite is running automatically.⟧ |
+| `SOFTWARE-T7` | ⟦An automated test run is under way for the program.⟧ |
+| `SOFTWARE-T8` | ⟦I ran the software’s automated test suite.⟧ |
 
-> This note concerns ⟦extracting espresso under pressure⟧.
+#### `SOFTWARE-D`: debugging a program
 
-**E2**
+| ID | Complete note and exact mask |
+|---|---|
+| `SOFTWARE-D1` | ⟦I’m investigating a defect in the program.⟧ |
+| `SOFTWARE-D2` | ⟦I’m tracing bugs through the program.⟧ |
+| `SOFTWARE-D3` | ⟦I’ve got a program that I’m debugging.⟧ |
+| `SOFTWARE-D4` | ⟦Debugging is what I’m doing with the program.⟧ |
+| `SOFTWARE-D5` | ⟦I’m working the bugs out of the program.⟧ |
+| `SOFTWARE-D6` | ⟦I have been debugging the program.⟧ |
+| `SOFTWARE-D7` | ⟦I’m doing some debugging on a program.⟧ |
+| `SOFTWARE-D8` | ⟦I debugged the program.⟧ |
 
-> This note concerns ⟦pulling an espresso shot⟧.
+The subject names and human-readable IDs are scoring data. The candidate never
+receives them.
 
-**E3**
+## Neighborhood eligibility
 
-> This note concerns ⟦forcing hot water through fine coffee grounds to make
-> espresso⟧.
+Human semantic proximity does not prove proximity in the frozen SSE geometry.
+During fixture development, before any segmentation output exists, rank every
+provisional vector against the other 23 vectors in its neighborhood by raw
+cosine similarity.
 
-**E4**
+A neighborhood is eligible only when, for each of its three subjects, at least
+two of the eight vectors have a different-subject vector among their seven
+nearest neighbors. Seven is used because each vector has exactly seven
+same-subject peers. This requires cross-subject proximity to displace at least
+one same-subject peer and prevents one isolated outlier from qualifying an
+otherwise trivial neighborhood.
 
-> This note concerns ⟦brewing espresso with a pressurized machine⟧.
+This screen excludes an obviously separated neighborhood; it does not prove
+that every subject pair or every scheduled run is difficult. Preserve the
+cross-subject neighbor ranks for each run as diagnostics. Cosine does not
+determine the returned segments or their verdicts.
 
-**E5**
+The SSE contract, segmentation candidate, and eligibility rule are frozen
+before this screen. If a provisional neighborhood is ineligible, replace and
+rescreen it without changing those frozen components. Only the final eligible,
+human-approved 96-vector fixture enters the experiment.
 
-> This note concerns ⟦extracting a shot of espresso from compacted grounds⟧.
+## Fixed support conditions
 
-**E6**
+Every candidate run contains exactly twelve vectors:
 
-> This note concerns ⟦making espresso by pressurized extraction⟧.
+| Condition | Support | Primary contrast |
+|---|---:|---|
+| Balanced | `4:4:4` | Equal-support control |
+| Imbalanced | `8:2:2` | One common subject and two rare repeated subjects |
+| Singleton | `6:5:1` | One unmatched instance with two similarly supported subjects |
+| Combined | `8:3:1` | A common subject, a rare repeated subject, and a singleton |
 
-The three subject identities are scoring data. The candidate does not receive
-them.
+The `6:5:1` condition runs both orders of the recurring subjects. The one-vector
+role is the only intentionally unmatched subject.
 
-## Frozen hypothesis
+## Frozen formulation schedule
 
-1. With six vectors from every subject, all three subjects will be cleanly
-   recovered and remain separate.
-2. With support changed to `6:2:1`, the six-vector subject and the two-vector
-   subject will each remain cleanly recovered.
-3. The one unmatched vector will share no fine segment with either recurring
-   subject.
-4. The result will hold regardless of which subject is dense, rare, or
-   unmatched and regardless of which wording supplies the rare pair or
-   singleton.
+Number each subject’s formulations `1` through `8`. For start index `s` and
+length `k`, let `W(k, s)` be the `k` consecutive indices beginning at `s`,
+wrapping after `8`. For example:
 
-A currently present subject is **cleanly recovered** when one returned segment
-contains every currently present vector from that subject and no vector from
-another declared subject. The candidate may return overlapping segments and
-leave vectors unassigned, but no returned fine segment may cross a declared
-subject boundary.
+```text
+W(3, 7) = {7, 8, 1}
+```
 
-## Frozen system boundary
+Run every condition for `s = 1 ... 8`:
 
-Use the shared 768-dimensional Sentence-T5-base SSE checkpoint identified in:
+- Balanced: the three subjects use `W(4, s)`, `W(4, s+2)`, and `W(4, s+4)`.
+- Imbalanced: each subject takes one turn as the eight-vector subject; the
+  other two use `W(2, s)` and `W(2, s+4)` in fixed subject order.
+- Singleton: run all six ordered assignments to the `6`, `5`, and `1` roles,
+  using `W(6, s)`, `W(5, s+2)`, and `{s+4}` respectively.
+- Combined: run all six ordered assignments to the `8`, `3`, and `1` roles,
+  using all eight vectors, `W(3, s)`, and `{s+4}` respectively.
 
-README.md
+All index arithmetic wraps into `1 ... 8`. Across the eight schedules, every
+formulation appears equally often in each role that its subject occupies.
+Subject order means the order in which the three subject cohorts appear in the
+fixture. The cyclic blocks provide controlled wording coverage; they are not
+independent statistical replicates and do not exhaust every possible subset.
 
-Preserve its raw outputs exactly. Any normalization, distance, or other
-preprocessing belongs to the candidate's frozen configuration.
+This produces 128 runs per neighborhood and 512 inexpensive FSA calls total:
 
-The candidate receives only opaque IDs and vectors. Scoring consumes only its
-predeclared fine-segment collection; coarser parents are excluded.
+| Condition | Runs per neighborhood |
+|---|---:|
+| Balanced | 8 |
+| Imbalanced | 24 |
+| Singleton | 48 |
+| Combined | 48 |
 
-This is a visible development fixture, not held-out confirmation.
+The final 96 SSE vectors are generated once. No candidate run re-encodes text.
+
+## Blinding and run isolation
+
+After the final fixture is frozen and before any candidate run:
+
+1. map every human-readable fixture ID to a frozen random opaque ID;
+2. assign every opaque ID one frozen random rank within its neighborhood;
+3. order each run by filtering the neighborhood’s master rank order.
+
+The candidate receives no condition name, role, support count, subject name, or
+human-readable ID. Dense, rare, and singleton vectors are never deliberately
+placed in contiguous blocks.
+
+Freeze one random execution order over all 512 run specifications. Every run
+starts from the same fresh candidate state and declared seed. No run can train
+or prime another run.
+
+This experiment uses one frozen within-run order and therefore requires the
+candidate either to be permutation-invariant by construction or to have passed
+Experiment 6's input-order stability check. Otherwise Experiment 5 is not
+interpretable; do not duplicate that separate test by adding ad hoc order
+variants here.
+
+## Evaluation
+
+This is a characterization experiment, not an all-runs-must-pass test. Its unit
+of comparison is a complete support allocation, not one support count in
+isolation.
+
+For each run, record these separate outcomes:
+
+1. **Reference recovery:** for each declared subject with at least two present
+   vectors, whether one segment contains all of them and no vector from another
+   declared subject.
+2. **Cross-subject membership:** every segment containing vectors from more
+   than one declared subject, plus whether it contains a low-support vector.
+3. **Omission:** which vectors receive no fine-segment membership.
+4. **Fragmentation and extra segments:** every same-subject member set,
+   including partial sets that coexist with a complete recovered segment.
+5. **Singleton disposition:** independently record whether a one-member segment
+   exists, whether the singleton has no membership, every multi-member segment
+   it joins, and whether any such membership is invalid. These fields are not
+   mutually exclusive.
+
+A segment spanning declared subjects does not count as reference recovery, but
+it is not automatically invalid: the candidate may return overlapping subjects
+that differ from the declared reference cohorts. Review each unique
+cross-subject member set with its run, condition, support roles, fixture IDs,
+and declared subjects hidden. Show only its complete masks under neutral labels
+and ask:
+
+> What is the narrowest recognizable subject for which every instance is a
+> valid refinement?
+
+The neighborhood umbrella alone—`coffee processing`, `photograph editing`,
+`rose-bush care`, or `software development`—is too broad to validate a fine
+segment. Record `invalid cross-subject membership` when no more specific valid
+fine subject covers every member. When an invalid member set contains a rare or
+singleton vector, additionally record `false absorption`; this does not assert
+which vector entered which pre-existing segment. Review an identical member set
+once and reuse that frozen judgment wherever it recurs.
+
+This review is metadata-blind, not source-blind: the synthetic wording may be
+recognizable. Declared-cohort recovery and alternative semantic validity remain
+separate measurements. An accepted alternative segment never changes the
+declared allocation used to describe that run.
+
+Compare outcome rates by neighborhood, declared subject, support count, role,
+allocation, and formulation schedule. Report every schedule and aggregate only
+with schedule as a repeated block; do not treat the 512 overlapping runs as 512
+independent samples. Do not average away a neighborhood-specific failure. The
+fixed raw-vector cosine matrix is diagnostic evidence, not the verdict.
 
 ## Protocol
 
-1. Obtain human approval of all eighteen notes, masks, subject identities, and
-   expected boundaries.
-2. Freeze this document and the candidate's implementation, preprocessing,
-   configuration, fine-output rule, and seed.
-3. Generate all eighteen SSE vectors once and preserve their exact bytes.
-4. Run the balanced baseline.
-5. If the baseline fails, record that prerequisite failure and stop. The
-   candidate did not recover the subjects before density changed, so this
-   fixture cannot attribute the failure to unequal density.
-6. If the baseline passes, run all 540 frozen `6:2:1` variants below without
-   retuning or re-encoding.
-7. Preserve and score every returned fine-segment collection separately. Do
-   not average failures away.
-
-## Balanced baseline
-
-The baseline contains all eighteen vectors:
-
-```text
-R1 R2 R3 R4 R5 R6
-G1 G2 G3 G4 G5 G6
-E1 E2 E3 E4 E5 E6
-```
-
-It passes only when each six-vector subject is cleanly recovered and no segment
-contains vectors from two subjects.
-
-## The 540 skewed runs
-
-Every skewed run has:
-
-- every vector from one **dense** subject;
-- one of the fifteen possible two-vector subsets from one **rare** subject;
-- one of the six vectors from the **unmatched** subject.
-
-Run all six assignments of `R`, `G`, and `E` to the three roles:
-
-| Assignment | Dense | Rare | Unmatched |
-|---|---|---|---|
-| A1 | `R1–R6` | `G` | `E` |
-| A2 | `R1–R6` | `E` | `G` |
-| A3 | `G1–G6` | `R` | `E` |
-| A4 | `G1–G6` | `E` | `R` |
-| A5 | `E1–E6` | `R` | `G` |
-| A6 | `E1–E6` | `G` | `R` |
-
-Within each assignment, enumerate:
-
-1. every rare pair `(i, j)` for `1 <= i < j <= 6`;
-2. every unmatched index `k` from `1` through `6`.
-
-That gives `15 × 6 = 90` runs per role assignment and `6 × 90 = 540`
-runs total.
-
-The exact candidate input order in every run is:
-
-1. all six dense IDs in ascending numeric order;
-2. the two rare IDs in ascending numeric order;
-3. the unmatched ID last.
-
-For example:
-
-```text
-A1 / pair 1,2 / singleton 1:
-R1 R2 R3 R4 R5 R6 G1 G2 E1
-
-A2 / pair 2,5 / singleton 6:
-R1 R2 R3 R4 R5 R6 E2 E5 G6
-
-A6 / pair 5,6 / singleton 4:
-E1 E2 E3 E4 E5 E6 G5 G6 R4
-```
-
-This exhausts every assignment of subjects to roles, every possible rare pair,
-and every possible unmatched wording. These runs are cheap FSA calls over nine
-already-generated vectors; they do not rerun SSE.
-
-## Pass rule for one skewed run
-
-A skewed run passes only when:
-
-1. one segment contains all six dense vectors and no other subject;
-2. one segment contains both rare vectors and no other subject;
-3. no segment contains vectors from two declared subjects;
-4. the unmatched vector shares no fine segment with any other vector.
-
-The complete experiment passes only if the balanced baseline and all 540
-skewed runs pass.
+1. Obtain provisional human approval of all 96 notes, masks, subject
+   identities, nearby relationships, and wording independence.
+2. Freeze the SSE contract, candidate source and build, preprocessing,
+   configuration, fine-output selector, seed, and eligibility rule.
+3. Encode and screen the provisional neighborhoods. Replace and rescreen an
+   ineligible neighborhood without changing the frozen system. Rejected
+   provisional vectors are development artifacts, not experiment inputs.
+4. Obtain final human approval, then freeze this document, the final 96 vector
+   bytes, opaque-ID mapping, master ranks, and randomized run order.
+5. Execute every run from fresh candidate state without retuning or
+   re-encoding, and preserve every output before restoring fixture identities.
+6. Score all allocations. Balanced outcomes establish the reference behavior;
+   they do not gate execution or create an exact counterfactual for a stress
+   run. Do not attribute a difference solely to one support count.
+7. Complete the metadata-blind reviews and condition comparisons.
 
 ## Required record
 
-For every run, preserve:
+Preserve:
 
-- the exact input IDs and order;
-- every returned segment, overlap, and omission;
-- dense- and rare-subject recovery;
-- every cross-subject membership;
-- whether the unmatched vector was absorbed;
-- whether the exact rare pair belonged to the correct six-member segment in
-  the balanced baseline but failed when only that pair remained;
-- the fixed cosine matrix for all eighteen immutable raw SSE outputs;
-- the candidate configuration and seed;
-- the raw SSE artifact and hashes.
-
-For a failure, show whether the same vectors were correctly grouped in the
-balanced baseline. Cosine is diagnostic evidence, not the pass rule.
+- every complete note, mask, raw vector, and artifact hash;
+- every provisional eligibility result and replacement;
+- the opaque-ID mapping and master rank order;
+- the frozen execution order and every run’s condition, roles, schedule, exact
+  inputs, and candidate order;
+- every complete returned segment, overlap, singleton, and omission;
+- reference recovery, all cross-subject memberships, false absorption,
+  omission, fragmentation, extra segments, and singleton disposition fields;
+- every blind-review judgment and the masks supporting it;
+- the immutable raw-vector cosine matrix;
+- candidate source, build, configuration, preprocessing, selector, and seed
+  hashes.
 
 ## What a result means
 
-A pass supports the specific claim that changing support from balanced `6:6:6`
-to all tested `6:2:1` views did not destroy these nearby coffee-preparation
-subjects or absorb the unmatched instance.
+The result describes how one frozen SSE-plus-segmentation system responds to
+subject-support imbalance and singleton sparsity across four controlled local
+semantic neighborhoods.
 
-It does not establish production-scale density behavior, every real frequency
-ratio, how unmatched vectors should later be surfaced, automatic mask quality,
-or hierarchy quality.
+Evidence is stronger when declared cohorts that recover under balanced support
+continue to recover under stress allocations without new invalid membership,
+omission, or fragmentation involving low-support vectors. The document does
+not impose one binary threshold; it preserves the full failure profile for
+candidate comparison and later threshold selection.
+
+It does not establish production-scale behavior, every geometric density
+pattern, natural-corpus mask quality, mixed-area stability, or hierarchy
+quality.
