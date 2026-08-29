@@ -1,6 +1,6 @@
-# Experiment 4: unmasked-context crossover
+# Experiment 4: unmasked-context coexistence
 
-Status: **draft; notes, masks, and expected relationships require human
+Status: **draft; all notes, masks, and expected relationships require human
 approval before encoding**.
 
 ## Assumption under test
@@ -10,206 +10,226 @@ approval before encoding**.
 
 SSE processes the complete note before pooling the selected token positions.
 Unmasked text can therefore influence the vector. The requirement is not zero
-numeric influence; it is that the surrounding material does not determine the
-fine-segment membership.
+numeric influence. It is that the surrounding material must not determine the
+vector's fine-segment membership.
 
 ## Question
 
-When the exact same masked subject appears inside three very different
-contexts, does returned membership follow the masked atomic subject rather
-than the shared unmasked material?
+When several vectors have the exact same masked atomic subject but different
+unmasked contexts, do they enter the region for the masked subject and remain
+outside the regions represented only by those contexts?
 
-## Why this fixture exists
+## Design
 
-This is a balanced `3 × 3` crossover:
+All 27 vectors coexist in one candidate run:
 
-- three exact masked subjects;
-- three exact unmasked contexts;
-- every masked subject appears once in every context;
-- every context surrounds all three masked subjects.
+- nine fully masked anchors for the three target subjects;
+- nine fully masked anchors for the three context subjects;
+- nine mixed targets crossing every target subject with every context subject.
 
-The design creates both the desired subject grouping and an equally repeated
-but invalid context grouping. No mask wording, subject frequency, or sentence
-shape changes across a subject's three treatment instances.
+The anchor cohorts establish six recoverable fine-subject regions. The mixed
+targets then have both a correct destination and a competing context
+destination in the same vector collection.
 
-Three fixed context-anchor cohorts represent the telescope, sourdough, and
-passport meanings directly. They appear unchanged in both runs. Without these
-anchors, the fixture contains no corresponding context region for a target to
-enter. It could therefore pass even if that target would be misassigned in a
-corpus containing telescope, sourdough, or passport vectors. The anchors make
-that possible membership error observable.
+There is no separate neutral run. Separate runs could conceal a split in which
+bare and context-loaded instances form different regions while each run looks
+internally coherent.
 
-A separate neutral-context prerequisite uses the same three masked subjects.
-It first establishes that the candidate separates these subjects when no
-competing substantive context is present. Without that prerequisite, a
-treatment failure could be ordinary over-merging rather than an effect of the
-unmasked material.
+## Lexical controls
 
-## Neutral-context prerequisite notes and masks
+- Every anchor's substantive text is fully masked. Terminal punctuation stays
+  outside the selected span, matching the mixed-target masks. There is no
+  repeated unmasked carrier in the anchor cohorts.
+- Each target-subject cohort contains one exact fully masked control and two
+  semantic paraphrases. The control holds the selected token text fixed when
+  its membership is compared with the mixed targets.
+- The three context-subject anchors express that subject with different
+  wording.
+- The three mixed contexts representing one context subject use different
+  clauses. No complete source clause is copied from another mixed note or from
+  an anchor. Subject-defining words and short phrases may repeat when removing
+  them would distort the meaning.
+- Three outer sentence forms are assigned as a Latin square. Each form appears
+  once with every target subject and once with every context subject. Sentence
+  form is therefore not associated with either semantic factor.
+- Necessary content words such as `telescope`, `sourdough`, and `passport` are
+  not artificially removed. The test avoids copied phrases; it does not turn
+  the notes into unnatural thesaurus substitutions.
 
-### Neutral subject `COFFEE`: roasting green coffee beans
+The three outer forms are:
 
-**COFFEE-NEUTRAL-1**
+```text
+A: After <context>, I spent the evening <masked subject>.
+B: Once <context>, I moved on to <masked subject>.
+C: I finished the day <masked subject> after <context>.
+```
 
-> This note concerns ⟦roasting green coffee beans⟧.
+## Fully masked target-subject anchors
 
-**COFFEE-NEUTRAL-2**
+### `COFFEE`: roasting green coffee beans
 
-> The selected topic is ⟦roasting green coffee beans⟧.
+**COFFEE-CONTROL**
 
-**COFFEE-NEUTRAL-3**
-
-> The subject here is ⟦roasting green coffee beans⟧.
-
-### Neutral subject `BICYCLE`: repairing a bicycle drivetrain
-
-**BICYCLE-NEUTRAL-1**
-
-> This note concerns ⟦repairing a bicycle drivetrain⟧.
-
-**BICYCLE-NEUTRAL-2**
-
-> The selected topic is ⟦repairing a bicycle drivetrain⟧.
-
-**BICYCLE-NEUTRAL-3**
-
-> The subject here is ⟦repairing a bicycle drivetrain⟧.
-
-### Neutral subject `WATERCOLOR`: painting a watercolor landscape
-
-**WATERCOLOR-NEUTRAL-1**
-
-> This note concerns ⟦painting a watercolor landscape⟧.
-
-**WATERCOLOR-NEUTRAL-2**
-
-> The selected topic is ⟦painting a watercolor landscape⟧.
-
-**WATERCOLOR-NEUTRAL-3**
-
-> The subject here is ⟦painting a watercolor landscape⟧.
-
-## Crossover treatment notes and masks
-
-### Masked subject `COFFEE`: roasting green coffee beans
-
-**COFFEE-TELESCOPE**
-
-> After aligning the telescope's equatorial mount, I spent the evening
 > ⟦roasting green coffee beans⟧.
 
-**COFFEE-SOURDOUGH**
+**COFFEE-ANCHOR-2**
 
-> After feeding a sourdough starter with flour and water, I spent the evening
-> ⟦roasting green coffee beans⟧.
+> ⟦Applying heat to unroasted coffee beans until they become roasted⟧.
 
-**COFFEE-PASSPORT**
+**COFFEE-ANCHOR-3**
 
-> After submitting the paperwork to renew my passport, I spent the evening
-> ⟦roasting green coffee beans⟧.
+> ⟦Turning raw coffee beans into roasted beans⟧.
 
-### Masked subject `BICYCLE`: repairing a bicycle drivetrain
+### `BICYCLE`: repairing a bicycle drivetrain
 
-**BICYCLE-TELESCOPE**
+**BICYCLE-CONTROL**
 
-> After aligning the telescope's equatorial mount, I spent the evening
 > ⟦repairing a bicycle drivetrain⟧.
 
-**BICYCLE-SOURDOUGH**
+**BICYCLE-ANCHOR-2**
 
-> After feeding a sourdough starter with flour and water, I spent the evening
-> ⟦repairing a bicycle drivetrain⟧.
+> ⟦Fixing the drivetrain of a bicycle⟧.
 
-**BICYCLE-PASSPORT**
+**BICYCLE-ANCHOR-3**
 
-> After submitting the paperwork to renew my passport, I spent the evening
-> ⟦repairing a bicycle drivetrain⟧.
+> ⟦Restoring a bike's chain-and-gear drive system to working order⟧.
 
-### Masked subject `WATERCOLOR`: painting a watercolor landscape
+### `WATERCOLOR`: painting a watercolor landscape
 
-**WATERCOLOR-TELESCOPE**
+**WATERCOLOR-CONTROL**
 
-> After aligning the telescope's equatorial mount, I spent the evening
 > ⟦painting a watercolor landscape⟧.
 
-**WATERCOLOR-SOURDOUGH**
+**WATERCOLOR-ANCHOR-2**
 
-> After feeding a sourdough starter with flour and water, I spent the evening
-> ⟦painting a watercolor landscape⟧.
+> ⟦Creating a landscape picture with watercolor paint⟧.
 
-**WATERCOLOR-PASSPORT**
+**WATERCOLOR-ANCHOR-3**
 
-> After submitting the paperwork to renew my passport, I spent the evening
-> ⟦painting a watercolor landscape⟧.
+> ⟦Rendering landscape scenery in watercolors⟧.
 
-The three masked-subject identities are scoring data. The telescope,
-sourdough, and passport text is deliberately unmasked.
+## Fully masked context-subject anchors
 
-## Fixed context-anchor notes and masks
-
-These nine vectors appear unchanged in both runs.
-
-### Anchor subject `TELESCOPE`: aligning an equatorial telescope mount
+### `TELESCOPE`: aligning an equatorial telescope mount
 
 **TELESCOPE-ANCHOR-1**
 
-> ⟦I aligned the telescope's equatorial mount.⟧
+> ⟦Aligning the equatorial mount of a telescope⟧.
 
 **TELESCOPE-ANCHOR-2**
 
-> ⟦I adjusted the telescope's equatorial mount until its axes were aligned.⟧
+> ⟦Setting a telescope's equatorial mounting axis parallel to Earth's rotation
+> axis⟧.
 
 **TELESCOPE-ANCHOR-3**
 
-> ⟦I completed the alignment of an equatorial telescope mount.⟧
+> ⟦Adjusting an equatorial telescope mount for correct polar alignment⟧.
 
-### Anchor subject `SOURDOUGH`: feeding a sourdough starter
+### `SOURDOUGH`: feeding a sourdough starter
 
 **SOURDOUGH-ANCHOR-1**
 
-> ⟦I fed my sourdough starter with flour and water.⟧
+> ⟦Feeding a sourdough starter with flour and water⟧.
 
 **SOURDOUGH-ANCHOR-2**
 
-> ⟦Fresh flour and water were added to feed the sourdough starter.⟧
+> ⟦Refreshing a sourdough culture by adding fresh flour and water⟧.
 
 **SOURDOUGH-ANCHOR-3**
 
-> ⟦I refreshed the sourdough culture by giving it flour and water.⟧
+> ⟦Adding flour and water to keep a sourdough starter active⟧.
 
-### Anchor subject `PASSPORT`: submitting passport-renewal paperwork
+### `PASSPORT`: submitting passport-renewal paperwork
 
 **PASSPORT-ANCHOR-1**
 
-> ⟦I submitted the paperwork to renew my passport.⟧
+> ⟦Submitting paperwork to renew a passport⟧.
 
 **PASSPORT-ANCHOR-2**
 
-> ⟦I filed a passport-renewal application.⟧
+> ⟦Filing the forms required for passport renewal⟧.
 
 **PASSPORT-ANCHOR-3**
 
-> ⟦I sent in the required forms to have my passport renewed.⟧
+> ⟦Sending in a passport-renewal application⟧.
+
+## Mixed targets
+
+The masked text is identical across all three contexts for a target subject.
+The context is deliberately unmasked.
+
+### Telescope context
+
+**COFFEE-TELESCOPE · form A**
+
+> After pointing my telescope mount's right-ascension axis toward the celestial
+> pole for accurate tracking, I spent the evening ⟦roasting green coffee
+> beans⟧.
+
+**BICYCLE-TELESCOPE · form B**
+
+> Once I had aimed the polar axis of my stargazing mount at the fixed point
+> around which the stars appear to turn, I moved on to ⟦repairing a bicycle
+> drivetrain⟧.
+
+**WATERCOLOR-TELESCOPE · form C**
+
+> I finished the day ⟦painting a watercolor landscape⟧ after correcting the
+> orientation of my star-tracking mount toward the celestial pole.
+
+### Sourdough context
+
+**COFFEE-SOURDOUGH · form B**
+
+> Once I had mixed a fresh portion of flour and water into my sourdough
+> starter, I moved on to ⟦roasting green coffee beans⟧.
+
+**BICYCLE-SOURDOUGH · form C**
+
+> I finished the day ⟦repairing a bicycle drivetrain⟧ after giving my
+> sourdough culture its regular meal of flour and water.
+
+**WATERCOLOR-SOURDOUGH · form A**
+
+> After replenishing my sourdough starter with new flour and water, I spent
+> the evening ⟦painting a watercolor landscape⟧.
+
+### Passport context
+
+**COFFEE-PASSPORT · form C**
+
+> I finished the day ⟦roasting green coffee beans⟧ after mailing the completed
+> forms for my passport renewal.
+
+**BICYCLE-PASSPORT · form A**
+
+> After lodging an application to have my passport renewed, I spent the
+> evening ⟦repairing a bicycle drivetrain⟧.
+
+**WATERCOLOR-PASSPORT · form B**
+
+> Once I had sent in the documents required to renew my passport, I moved on
+> to ⟦painting a watercolor landscape⟧.
 
 ## Frozen relationships
 
-The required neutral same-subject groups are:
+Each mixed target's declared atomic subject is its masked subject. Its
+unmasked context is not an additional vector subject.
+
+The required target-subject groups are:
 
 ```text
-COFFEE-NEUTRAL-1, COFFEE-NEUTRAL-2, COFFEE-NEUTRAL-3
-BICYCLE-NEUTRAL-1, BICYCLE-NEUTRAL-2, BICYCLE-NEUTRAL-3
-WATERCOLOR-NEUTRAL-1, WATERCOLOR-NEUTRAL-2, WATERCOLOR-NEUTRAL-3
-```
-
-The required treatment same-subject groups are:
-
-```text
+COFFEE-CONTROL, COFFEE-ANCHOR-2, COFFEE-ANCHOR-3,
 COFFEE-TELESCOPE, COFFEE-SOURDOUGH, COFFEE-PASSPORT
+
+BICYCLE-CONTROL, BICYCLE-ANCHOR-2, BICYCLE-ANCHOR-3,
 BICYCLE-TELESCOPE, BICYCLE-SOURDOUGH, BICYCLE-PASSPORT
+
+WATERCOLOR-CONTROL, WATERCOLOR-ANCHOR-2, WATERCOLOR-ANCHOR-3,
 WATERCOLOR-TELESCOPE, WATERCOLOR-SOURDOUGH, WATERCOLOR-PASSPORT
 ```
 
-The required fixed anchor groups are:
+The required context-anchor groups are:
 
 ```text
 TELESCOPE-ANCHOR-1, TELESCOPE-ANCHOR-2, TELESCOPE-ANCHOR-3
@@ -217,7 +237,7 @@ SOURDOUGH-ANCHOR-1, SOURDOUGH-ANCHOR-2, SOURDOUGH-ANCHOR-3
 PASSPORT-ANCHOR-1, PASSPORT-ANCHOR-2, PASSPORT-ANCHOR-3
 ```
 
-The three context lures are:
+The invalid context-lure groups are:
 
 ```text
 COFFEE-TELESCOPE, BICYCLE-TELESCOPE, WATERCOLOR-TELESCOPE
@@ -225,31 +245,45 @@ COFFEE-SOURDOUGH, BICYCLE-SOURDOUGH, WATERCOLOR-SOURDOUGH
 COFFEE-PASSPORT, BICYCLE-PASSPORT, WATERCOLOR-PASSPORT
 ```
 
-Vectors in a context lure share exact unmasked wording but have different
-masked atomic subjects. That shared context must not create a fine segment.
+The invalid form-lure groups are:
 
-Each treatment target must also remain separate from every anchor vector for
-its own unmasked context. For example, `COFFEE-TELESCOPE` must not share a fine
-segment with any `TELESCOPE-ANCHOR-*` vector. Such a membership would show that
-the telescope context, rather than the coffee mask, determined a fine-region
-assignment even if the three telescope-conditioned targets did not group with
-one another.
+```text
+COFFEE-TELESCOPE, WATERCOLOR-SOURDOUGH, BICYCLE-PASSPORT
+BICYCLE-TELESCOPE, COFFEE-SOURDOUGH, WATERCOLOR-PASSPORT
+WATERCOLOR-TELESCOPE, BICYCLE-SOURDOUGH, COFFEE-PASSPORT
+```
+
+For each mixed target, the three anchors belonging to its unmasked context are
+its matching context anchors. For example, the matching context anchors for
+`COFFEE-TELESCOPE` are `TELESCOPE-ANCHOR-1` through
+`TELESCOPE-ANCHOR-3`. There are 27 such target-to-context-anchor pairs.
+
+## Prerequisites
+
+The candidate must already have passed the experiments for recovering repeated
+subjects and resolving distinct subjects. In this fixture:
+
+1. each exact target control and its two paraphrase anchors must share at least
+   one segment;
+2. each three-vector context-anchor cohort must share at least one segment;
+3. every segment containing an exact target control must also contain at least
+   one of its two correct paraphrase anchors and no vector declared as another
+   atomic subject.
+
+These conditions establish that each exact control already has a recovered,
+semantically supported reference membership. If a prerequisite fails,
+Experiment 4 has no verdict. Record which prerequisite failed instead of
+attributing that failure to unmasked context.
 
 ## Frozen hypothesis
 
-1. In the neutral prerequisite, all three neutral subjects and all three fixed
-   anchor subjects will be cleanly recovered, and no two different subjects
-   will share a fine segment.
-2. In the crossover treatment, all three masked-subject groups and all three
-   fixed anchor groups will be cleanly recovered as complete three-vector fine
-   segments.
-3. In the treatment, no two vectors from different declared subjects will
-   share a fine segment. This includes every pair inside the three context
-   lures and every target-to-matching-anchor pair.
+For each target subject, the exact fully masked control and all three mixed
+targets will have identical, nonempty fine-segment membership signatures.
 
-A subject is **cleanly recovered** when one segment contains all three of its
-vectors and no vector from another declared subject. Other pure subsets may
-overlap that segment.
+A vector's **membership signature** is the set of returned fine-segment IDs
+that contain it. Comparing every mixed target directly with the exact control
+detects context-specific, sentence-form-specific, and mixed-only segments even
+when a complete correct-subject segment also exists.
 
 ## Frozen system boundary
 
@@ -271,103 +305,77 @@ This is a visible development fixture, not held-out confirmation.
 1. Obtain human approval of all 27 notes, masks, subject identities, and
    expected relationships.
 2. Freeze this document and the candidate's implementation, preprocessing,
-   configuration, fine-output rule, and seed.
-3. Generate all 27 full-note SSE vectors once and preserve their exact
-   bytes.
-4. Run the nine neutral-context vectors and nine fixed anchors in the frozen
-   position order below.
-5. If the neutral prerequisite fails, record that failure and stop. There is no
-   valid separated baseline from which to attribute a treatment change.
-6. If it passes, replace each neutral vector with its paired treatment vector
-   at the same position and rerun with the unchanged anchors, candidate, and
-   seed.
-7. Preserve both complete fine-segment collections and the shared position
-   order.
-8. Reveal the identities and score the masked-subject groups, fixed anchor
-   groups, context lures, and target-to-matching-anchor relationships.
-
-The candidate receives the stable opaque IDs `P01` through `P18`. Positions
-`P01` through `P09` retain their IDs while their neutral vectors are replaced
-by the paired treatment vectors. Positions `P10` through `P18` contain the
-same anchor vectors in both runs.
-
-The shared positions are:
-
-| Candidate ID | Neutral run | Treatment run |
-|---:|---|---|
-| `P01` | `COFFEE-NEUTRAL-1` | `COFFEE-TELESCOPE` |
-| `P02` | `BICYCLE-NEUTRAL-1` | `BICYCLE-TELESCOPE` |
-| `P03` | `WATERCOLOR-NEUTRAL-1` | `WATERCOLOR-TELESCOPE` |
-| `P04` | `COFFEE-NEUTRAL-2` | `COFFEE-SOURDOUGH` |
-| `P05` | `BICYCLE-NEUTRAL-2` | `BICYCLE-SOURDOUGH` |
-| `P06` | `WATERCOLOR-NEUTRAL-2` | `WATERCOLOR-SOURDOUGH` |
-| `P07` | `COFFEE-NEUTRAL-3` | `COFFEE-PASSPORT` |
-| `P08` | `BICYCLE-NEUTRAL-3` | `BICYCLE-PASSPORT` |
-| `P09` | `WATERCOLOR-NEUTRAL-3` | `WATERCOLOR-PASSPORT` |
-| `P10` | `TELESCOPE-ANCHOR-1` | `TELESCOPE-ANCHOR-1` |
-| `P11` | `SOURDOUGH-ANCHOR-1` | `SOURDOUGH-ANCHOR-1` |
-| `P12` | `PASSPORT-ANCHOR-1` | `PASSPORT-ANCHOR-1` |
-| `P13` | `TELESCOPE-ANCHOR-2` | `TELESCOPE-ANCHOR-2` |
-| `P14` | `SOURDOUGH-ANCHOR-2` | `SOURDOUGH-ANCHOR-2` |
-| `P15` | `PASSPORT-ANCHOR-2` | `PASSPORT-ANCHOR-2` |
-| `P16` | `TELESCOPE-ANCHOR-3` | `TELESCOPE-ANCHOR-3` |
-| `P17` | `SOURDOUGH-ANCHOR-3` | `SOURDOUGH-ANCHOR-3` |
-| `P18` | `PASSPORT-ANCHOR-3` | `PASSPORT-ANCHOR-3` |
-
-Input order therefore cannot explain a difference between the two runs.
+   configuration, fine-output rule, and candidate seed.
+3. Generate all 27 full-note SSE vectors once and preserve their exact bytes.
+4. After freezing the candidate, draw one 32-byte blinding seed from the
+   operating system CSPRNG. Draw it exactly once. Derive each opaque ID as
+   `HMAC-SHA-256(seed, "experiment-4-id-v1\0" || fixture_id_utf8)` and its order
+   key as
+   `HMAC-SHA-256(seed, "experiment-4-order-v1\0" || fixture_id_utf8)`.
+5. Record
+   `SHA-256("experiment-4-blinding-v1\0" || seed)` in the run manifest. Keep
+   the seed and fixture mapping in the scorer's private artifact, which the
+   candidate cannot read. Sort by ascending order key. Reveal the seed and
+   mapping only after preserving the candidate output.
+6. Give all 27 vectors to one freshly initialized candidate invocation in that
+   frozen order.
+7. Require the candidate to be deterministic for identical input,
+   configuration, and candidate seed before interpreting this run.
+8. Preserve the complete returned fine-segment collection.
+9. Reveal the fixture identities, check the prerequisites, and then score the
+   frozen hypothesis when the prerequisites hold.
 
 ## Pass rule
 
-The neutral prerequisite passes only if all three neutral subjects and all
-three fixed anchor subjects are cleanly recovered, with no shared
-fine-segment membership between different subjects.
+The experiment passes only if all three prerequisites hold and the frozen
+hypothesis holds for all three target subjects. Report these result classes
+separately:
 
-The experiment passes only if that prerequisite passes and then:
+- target-subject prerequisite failure;
+- context-subject prerequisite failure;
+- different control-versus-mixed membership signatures within one masked
+  subject;
+- an empty shared signature;
+- a target-to-matching-context-anchor merge;
+- context-lure merges;
+- form-lure merges;
+- every other cross-subject merge.
 
-- all three masked-subject groups and all three fixed anchor groups are
-  cleanly recovered;
-- no pair from different declared subjects shares a fine segment.
-
-Report context-lure false merges, target-to-matching-anchor merges, and other
-cross-subject merges separately. One failure is not averaged away.
+One control-versus-mixed signature mismatch is not averaged away.
 
 ## Required record
 
 Preserve:
 
-- recovery status for every masked subject;
-- recovery status for every fixed anchor subject;
-- all returned segments, overlaps, and omissions in both runs;
-- every same-subject split;
-- every context-lure merge;
-- every target-to-matching-anchor merge;
-- every other treatment cross-subject merge;
-- the exact shared position order;
+- the complete returned fine-segment collection;
+- every vector's complete membership signature;
+- prerequisite status for every target-subject and context-anchor group;
+- every control-versus-mixed signature difference;
+- every target-to-matching-context-anchor merge;
+- every context-lure, form-lure, and other cross-subject merge;
+- the exact opaque-ID mapping and candidate input order;
+- the blinding seed, its pre-run commitment, and successful post-run
+  verification of every derived ID and order key;
 - cosine matrices and nearest-neighbor orders computed from immutable raw SSE
   outputs;
-- the within-subject cosines across changing contexts;
-- the different-subject cosines under identical contexts;
 - the raw SSE artifact and hashes;
-- the candidate configuration and seed.
+- the candidate configuration and candidate seed.
 
 Cosine is diagnostic evidence. The verdict is determined by returned
 fine-segment membership.
 
 ## What a result means
 
-A pass shows that these three strong, repeated context signals did not overturn
-membership for three exact masked subjects, form a context-lure segment, or
-pull a target into the matching fixed context region. It does not show that
-unmasked text has no effect on vector coordinates.
+A pass shows that, in this fixture, adding each lexically varied unmasked
+context left the vector's complete fine-segment membership identical to the
+semantically supported exact control.
 
-After a passing neutral prerequisite, a treatment failure is evidence that the
-complete treatment framing changed a required fine relationship in this
-fixture. It does not by itself isolate whether semantic context, carrier
-wording, sentence length, or another changed property caused the failure. A
-shared-context lure or target-to-matching-anchor merge identifies context
-attraction more specifically. A later experiment can isolate the cause if this
-fixture fails.
+A control-versus-mixed signature difference directly shows that some part of
+the complete unmasked framing changed membership. A prerequisite failure has
+no Experiment 4 interpretation. The recorded lure classes provide diagnostics,
+not a mechanism proof. A smaller matched follow-up should isolate semantic
+meaning, syntax, length, or position only after a failure occurs.
 
-This does not test masks whose meaning requires surrounding context, automatic
-mask generation, natural correlated notes, unequal density, or hierarchy
-quality.
+This experiment does not test automatically generated masks, natural
+correlated notes, unequal density, every possible context position, or
+hierarchy quality.
