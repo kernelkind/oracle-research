@@ -345,15 +345,18 @@ fn subject_prompt_review_uses_flat_items_and_never_shows_masks() {
         first.screens[0].screen.scope,
         "Is this a valid atomic subject explicitly and substantively discussed in this note?"
     );
-    assert_eq!(first.screens[2].screen.title, "Atomic-subject list");
+    assert_eq!(
+        first.screens[2].screen.title,
+        "Missing or repeated subjects"
+    );
     assert_eq!(
         first.screens[2].screen.evidence[0].body,
         "pypush is serverless; pypush is open-source."
     );
     assert!(
-        first.screens[2].screen.evidence[1]
+        first.screens[2].screen.evidence[2]
             .body
-            .contains("Open-source availability of pypush")
+            .contains("[Skipped] Open-source availability of pypush")
     );
     assert_eq!(first.screens[3].comment, "Potential missing subject");
 
@@ -400,6 +403,74 @@ fn subject_prompt_review_uses_flat_items_and_never_shows_masks() {
         }
     );
     assert_eq!(resumed.screens.len(), 3);
+}
+
+#[test]
+fn subject_list_review_shows_the_subject_decisions_without_changing_them() {
+    let fixture = Fixture::new();
+    let mut notes = default_output_notes();
+    notes[0]["subjects"] = json!([
+        {"source_index": 0, "text": "Serverless operation of pypush"},
+        {"source_index": 1, "text": "Open-source availability of pypush"},
+        {"source_index": 2, "text": "Software distribution"}
+    ]);
+    fixture.publish_output(notes);
+
+    let mut first = ScriptedUi::new([
+        approved(""),
+        rejected("This is availability, not a separate subject"),
+        skipped("Needs another look"),
+        ApprovalTuiAction::Pause,
+    ]);
+    let outcome =
+        run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut first)
+            .expect("reach the subject-list review");
+
+    assert_eq!(outcome, PromptReviewRunOutcome::Paused);
+    let list = &first.screens[3].screen;
+    assert_eq!(
+        list.scope,
+        "Considering only the accepted subjects, is any atomic subject missing, or do any express the same thing?"
+    );
+    assert_eq!(list.title, "Missing or repeated subjects");
+    assert_eq!(list.approve_label, "Nothing missing or repeated");
+    assert_eq!(list.reject_label, "Something missing or repeated");
+    assert_eq!(list.evidence[1].title, "Accepted atomic subjects");
+    assert_eq!(list.evidence[1].body, "1. Serverless operation of pypush");
+    assert_eq!(list.evidence[2].title, "Disapproved or skipped subjects");
+    assert!(
+        list.evidence[2]
+            .body
+            .contains("2. [Disapproved] Open-source availability of pypush")
+    );
+    assert!(
+        list.evidence[2]
+            .body
+            .contains("Comment: This is availability, not a separate subject")
+    );
+    assert!(
+        list.evidence[2]
+            .body
+            .contains("3. [Skipped] Software distribution")
+    );
+    assert!(
+        list.evidence[2]
+            .body
+            .contains("Comment: Needs another look")
+    );
+    assert_eq!(
+        list.guidance.as_ref().expect("decision guidance").body,
+        "This decision records only whether an atomic subject is missing or repeated. It does not change any earlier subject decision."
+    );
+
+    let mut resumed = ScriptedUi::new([approved(""), ApprovalTuiAction::Pause]);
+    run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut resumed)
+        .expect("record the independent subject-list decision");
+    let session = read_session(&fixture.session_path);
+    assert_eq!(session["items"][0]["status"], "approved");
+    assert_eq!(session["items"][1]["status"], "rejected");
+    assert_eq!(session["items"][2]["status"], "skipped");
+    assert_eq!(session["items"][3]["status"], "approved");
 }
 
 #[test]
@@ -542,7 +613,10 @@ fn subject_prompt_review_surfaces_empty_and_duplicate_lists() {
     let mut empty = ScriptedUi::new([ApprovalTuiAction::Pause]);
     run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut empty)
         .expect("show empty generated subject list");
-    assert_eq!(empty.screens[0].screen.title, "Atomic-subject list");
+    assert_eq!(
+        empty.screens[0].screen.title,
+        "Missing or repeated subjects"
+    );
     assert_eq!(
         empty.screens[0].screen.evidence[1].body,
         "No atomic subjects generated."
@@ -559,7 +633,7 @@ fn subject_prompt_review_surfaces_empty_and_duplicate_lists() {
         &mut duplicate,
     )
     .expect("show duplicate generated labels for review");
-    let list = &duplicate.screens[2].screen.evidence[1].body;
+    let list = &duplicate.screens[2].screen.evidence[2].body;
     assert_eq!(list.matches("Serverless operation of pypush").count(), 2);
 }
 
