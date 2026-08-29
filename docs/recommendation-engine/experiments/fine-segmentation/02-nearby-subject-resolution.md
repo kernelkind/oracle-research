@@ -59,8 +59,10 @@ Each subject uses the same eight wording forms:
 | G | ongoing-process, canonical wording |
 | H | ongoing-process, equivalent paraphrase |
 
-Within one neighborhood, the three subjects use the same form at each numeric
-schedule index. Across neighborhoods, the form order is staggered:
+The eight formulations for every subject remain one frozen pool. Within a
+neighborhood, the three subjects begin at different positions in that pool;
+the exact phase rule is defined under **Frozen formulation schedule**. Across
+neighborhoods, the form order is also staggered:
 
 | Neighborhood | Forms at indices 1 through 8 |
 |---|---|
@@ -69,12 +71,12 @@ schedule index. Across neighborhoods, the form order is staggered:
 | Rose bush | E, F, G, H, A, B, C, D |
 | Software | G, H, A, B, C, D, E, F |
 
-This crossing prevents a wording form from identifying one subject. It also
-means every 48-vector combined run contains exactly six instances of each
-wording form instead of multiplying one form alongside the semantic areas.
-Necessary subject words may repeat; incidental carrier phrases or writing
-styles may not identify one subject. Freeze both the numeric schedule index and
-wording form as fixture metadata.
+The neighborhood staggering and subject phases prevent subjects with the same
+support role from automatically receiving identical wording-form windows.
+They also mean every 48-vector combined balanced run contains exactly six
+instances of each wording form. Necessary subject words may repeat; incidental
+carrier phrases or writing styles may not identify one subject. Freeze the
+numeric schedule index, subject phase, and wording form as fixture metadata.
 
 The candidate sees four kinds of run:
 
@@ -313,13 +315,30 @@ role is the only intentionally unmatched subject.
 
 ## Frozen formulation schedule
 
-Number each subject's formulations `1` through `8`. For subject `q`, start
-index `s`, and length `k`, let `Wq(k, s)` be the `k` consecutive formulations
-of `q` beginning at `s`, wrapping after `8`. For example:
+Number each subject's formulations `1` through `8`. Within every neighborhood,
+call the subjects `q1`, `q2`, and `q3` in the order in which they appear in the
+fixture. Give them these frozen phase offsets:
 
-```text
-Wq(3, 7) = {q7, q8, q1}
-```
+| Subject position | Phase offset |
+|---|---:|
+| `q1` | `0` |
+| `q2` | `3` |
+| `q3` | `6` |
+
+For subject `q`, schedule index `s`, and support length `k`, start at
+`s + phase(q)` and take `k` consecutive formulations, wrapping after `8`.
+Call that set `Wq(k, s)`. For example, at `s = 1`:
+
+| Subject | `Wq(2, 1)` |
+|---|---|
+| `q1` | formulations `1–2` |
+| `q2` | formulations `4–5` |
+| `q3` | formulations `7–8` |
+
+Thus, in an `8:2:2` run where `q1` is dense, `q1` contributes all eight
+formulations while the two rare subjects contribute formulations `4–5` and
+`7–8`. The two rare subjects do not share one wording-form pair merely because
+they share one support role.
 
 Run every condition for `s = 1 ... 8`:
 
@@ -331,11 +350,40 @@ Run every condition for `s = 1 ... 8`:
 - Dense-and-singleton stress `8:3:1`: run all six ordered role assignments,
   using all eight vectors, `Wq(3, s)`, and `Wq(1, s)`.
 
-All index arithmetic wraps into `1 ... 8`. Across the eight schedules, every
-formulation appears equally often in each role that its subject occupies.
-Subject order means the order in which the three subject cohorts appear in the
-fixture. The cyclic blocks provide controlled wording coverage; they are not
-independent statistical replicates and do not exhaust every possible subset.
+All index arithmetic wraps into `1 ... 8`. The same subject phase is used in
+every matched balanced and unequal run. Therefore, when `k <= 4`, the unequal
+run's vectors are a subset of the matched balanced run's vectors; when
+`k >= 4`, the balanced vectors are a subset of the unequal run's vectors.
+
+Across the eight schedules, every one of a subject's eight frozen vectors
+appears exactly `k` times whenever that subject occupies a support role of
+length `k`. Consequently:
+
+- balanced `4:4:4` contributes four appearances per vector;
+- imbalanced `8:2:2` contributes twelve appearances per vector: `8 + 2 + 2`;
+- singleton `6:5:1` contributes twenty-four appearances per vector:
+  `2 × (6 + 5 + 1)`;
+- dense and singleton `8:3:1` contributes twenty-four appearances per vector:
+  `2 × (8 + 3 + 1)`.
+
+Every frozen vector therefore appears exactly 64 times across the 512 local
+runs. The eight combined balanced runs contribute four more appearances, so
+every one of the 96 vectors appears exactly 68 times in the complete protocol.
+No formulation is systematically assigned to common, rare, or singleton
+support.
+
+For any one subject position, the four neighborhoods' balanced length-four
+windows contain each wording form twice because their form orders are shifted
+by `0`, `2`, `4`, and `6`. Across all three subject positions, every combined
+balanced run therefore contains six instances of each form.
+
+The eight cyclic schedules are the complete frozen schedule family and every
+one is reported. They provide balanced individual-vector coverage, but they
+are not independent statistical replicates and do not exhaust every possible
+subset or every possible pairing of formulations. The fixed phases eliminate
+identical wording-form windows between subjects; they do not equalize every
+pairwise co-occurrence of forms. Preserve that residual limitation when
+interpreting a form-specific output difference.
 
 These local schedules produce 128 runs per neighborhood and 512 inexpensive
 candidate calls total:
@@ -470,9 +518,14 @@ Analysts may describe a change as a gain, loss, split, merge, omission, or
 absorption, but those are qualitative annotations. The preserved inputs,
 outputs, projections, and exact set difference are the authoritative record.
 
-The matched comparison isolates the complete collection-membership
-intervention. It does not isolate the effect of a single support count: total
-size remains twelve and several subject counts change together.
+The matched comparison measures how segmentation changes under each complete
+support allocation. It does not isolate the causal effect of support count:
+adding distinct examples necessarily changes both the number and the sampled
+vector geometry, total size remains twelve, and several subject counts change
+together. Exact duplicate vectors would hold the set of distinct vector
+locations fixed while changing their multiplicities, but that would test
+duplicate sensitivity rather than realistic unequal subject support;
+Experiment 6 owns duplicate stability.
 
 Compare results by neighborhood, declared subject, support role, allocation,
 and formulation schedule. Report every schedule and aggregate only with
@@ -507,8 +560,8 @@ Preserve:
 
 - every complete note, mask, raw vector, and artifact hash;
 - the atomic-subject equivalence audit for every mask;
-- every numeric schedule index, wording form, and recorded structural
-  attribute;
+- every numeric schedule index, subject phase, wording form, and recorded
+  structural attribute;
 - the opaque-ID mapping and global master rank order;
 - the frozen execution order and every run’s condition, roles, schedule, exact
   inputs, and candidate order;
@@ -527,7 +580,8 @@ Preserve:
 The result describes how one frozen SSE-plus-segmentation system organizes four
 controlled collections of nearby subjects under balanced support, whether that
 organization changes when unrelated neighborhoods are present, and how it
-responds to support imbalance and singleton sparsity.
+changes under the complete unequal-support and singleton allocations. It does
+not attribute those changes to support count alone.
 
 Evidence is stronger when declared cohorts that recover under balanced support
 continue to recover under stress allocations without new invalid membership,
