@@ -3,20 +3,20 @@
 Status: **draft; the crossed wording fixture and every atomic proposition and
 mask require human approval before encoding**.
 
-## Assumptions explored
+## Characterization target
 
-> Nearby but meaningfully distinct fine subjects are resolved.
+> Organization of nearby but meaningfully distinct fine subjects.
 
-> Region recovery survives unequal density and sparsity.
+> Changes in organization under unequal density and sparsity.
 
 The experiment first observes how one frozen candidate organizes nearby
 subjects under balanced support. It then changes only which already-encoded
-vectors enter the collection. This establishes the balanced behavior before
-showing how that behavior changes under unequal support and singleton
-sparsity.
+vectors enter the collection. The balanced observations provide the baseline
+for describing what changes under unequal support and singleton sparsity.
 
-It is exploratory. It does not prescribe one universally correct boundary
-between nearby subjects or one binary pass threshold.
+This is a characterization protocol. It has no confirmation verdict, model
+ranking, or selection threshold. It does not prescribe one universally correct
+boundary between nearby subjects.
 
 ## Questions
 
@@ -28,6 +28,11 @@ between nearby subjects or one binary pass threshold.
    `4:4:4` to `8:2:2`, `6:5:1`, or `8:3:1` change those segments?
 
 ## Design
+
+Encoding, candidate construction, candidate I/O, fine-output selection, and
+artifact freezing follow the [shared contract](README.md). This document adds
+only the fixture, schedule, blinding, replay, and evaluation rules specific to
+Experiment 2.
 
 The fixture contains four independent semantic neighborhoods:
 
@@ -366,11 +371,11 @@ length `k`. Consequently:
 - dense and singleton `8:3:1` contributes twenty-four appearances per vector:
   `2 × (8 + 3 + 1)`.
 
-Every frozen vector therefore appears exactly 64 times across the 512 local
-runs. The eight combined balanced runs contribute four more appearances, so
-every one of the 96 vectors appears exactly 68 times in the complete protocol.
-No formulation is systematically assigned to common, rare, or singleton
-support.
+Every frozen vector therefore appears in exactly 64 of the 512 unique local
+configurations. The eight combined balanced configurations contribute four
+more appearances, so every one of the 96 vectors appears in exactly 68 of the
+520 unique configurations and 136 of the repeated invocations. No formulation
+is systematically assigned to common, rare, or singleton support.
 
 For any one subject position, the four neighborhoods' balanced length-four
 windows contain each wording form twice because their form orders are shifted
@@ -385,58 +390,94 @@ identical wording-form windows between subjects; they do not equalize every
 pairwise co-occurrence of forms. Preserve that residual limitation when
 interpreting a form-specific output difference.
 
-These local schedules produce 128 runs per neighborhood and 512 inexpensive
-candidate calls total:
+These local schedules produce 128 unique configurations per neighborhood and
+512 unique local configurations total:
 
-| Condition | Runs per neighborhood |
+| Condition | Unique configurations per neighborhood |
 |---|---:|
 | Balanced | 8 |
 | Imbalanced | 24 |
 | Singleton | 48 |
 | Dense and singleton | 48 |
 
-For each `s`, also form one **combined balanced** 48-vector run by taking the
-union of that schedule's four local balanced runs. These eight runs expose the
-exact same local vectors in the presence of the other three semantic areas.
+For each `s`, also form one **combined balanced** 48-vector configuration by
+taking the union of that schedule's four local balanced configurations. These
+eight configurations expose the exact same local vectors in the presence of
+the other three semantic areas.
 
-The complete protocol therefore makes 520 candidate calls per frozen candidate
-and seed: 512 local allocation calls plus eight combined balanced calls. The 96
-SSE vectors are generated once. No candidate run re-encodes text.
+The complete protocol therefore defines 520 unique input/run configurations per
+frozen candidate and seed: 512 local allocation configurations plus eight
+combined balanced configurations. Each configuration is invoked twice from
+fresh candidate state, for 1,040 invocations total. The 96 SSE vectors are
+generated once. No candidate invocation re-encodes text.
 
 ## Blinding and run isolation
 
-After the final fixture is frozen and before any candidate run:
-
-1. map every human-readable fixture ID to a frozen random opaque ID;
-2. assign every opaque ID one frozen random global rank;
-3. order every local or combined run by filtering the global master rank order.
+Use `02-nearby-subject-resolution` as the shared blinding namespace. The HMAC
+mapping and order in `README.md` define every opaque ID and its frozen global
+rank. Order each local or combined run by filtering that global order.
 
 The candidate receives no condition name, role, support count, subject name, or
 human-readable ID. Dense, rare, and singleton vectors are never deliberately
 placed in contiguous blocks.
 
-Freeze one random execution order over all 520 run specifications. Every run
-starts from the same fresh candidate state and declared seed. No run can train
-or prime another run.
+Create two invocation records for each of the 520 configurations and freeze one
+random execution order over all 1,040 records. Represent one configuration as
+compact UTF-8 JSON with no trailing newline:
 
-This experiment uses one frozen within-run order and therefore requires the
-candidate either to be permutation-invariant by construction or to have passed
-Experiment 6's input-order stability check. Otherwise the results are not
-interpretable; do not duplicate that separate test by adding ad hoc order
-variants here.
+- a local run is
+  `["local", neighborhood, condition, s, role_assignment]`; and
+- a combined run is `["combined-balanced", s]`.
+
+Use the neighborhood codes `coffee`, `photograph`, `rose`, and `software`; the
+condition codes `balanced`, `imbalanced`, `singleton`, and
+`dense-singleton`; and JSON integers `1` through `8` for `s`. For balanced,
+`role_assignment` is `["q1","q2","q3"]`. For imbalanced it is the one-element
+array containing the dense subject. For singleton it lists the `6`, `5`, and
+`1` subjects in that order. For dense-singleton it lists the `8`, `3`, and `1`
+subjects in that order.
+
+Represent an invocation record as compact JSON
+`[configuration, repetition]`, where repetition is integer `1` or `2`. Derive:
+
+```text
+execution_key = HMAC-SHA-256(
+  shared_blinding_seed,
+  "fine-segmentation-exp2-execution-order-v1\0" ||
+  "02-nearby-subject-resolution\0" || invocation_record_bytes
+)
+```
+
+Sort by the 32 digest bytes, breaking a collision by the invocation-record
+bytes. Every invocation starts in a fresh process from the same candidate
+state and declared candidate seed. No invocation can train or prime another.
+
+For replay comparison, first validate and then canonicalize each complete
+opaque-ID output under the shared contract. A duplicate raw member set is an
+output-contract failure, not multiplicity to preserve. The two valid canonical
+outputs for a configuration must match byte for byte. If they do not, mark it
+`non-repeatable`, preserve both outputs, and mark every outcome or comparison
+that depends on that configuration `unevaluable`; never choose one invocation
+as authoritative.
+
+This experiment uses one frozen within-invocation input order. The candidate
+must meet the shared contract's construction-level permutation-invariance
+requirement. An empirical input-order result from Experiment 6 is not a
+substitute for that invariant, and this experiment does not add ad hoc order
+variants.
 
 ## Evaluation
 
 This is a characterization experiment, not an all-runs-must-pass test. The
-balanced local runs establish the behavior that the two later comparisons may
-change. The declared subjects are reference cohorts, not prescribed segment
-boundaries.
+balanced local configurations establish the baseline behavior that the two
+later comparisons may change. The declared subjects are reference cohorts,
+not prescribed segment boundaries.
 
-For each run, record these separate outcomes:
+For each repeatable configuration, record these separate outcomes:
 
-1. **Reference-cohort recovery:** for each declared subject with at least two present
-   vectors, whether one segment contains all of them and no vector from another
-   declared subject.
+1. **Reference-cohort recovery:** for each declared subject with at least two
+   present vectors, whether one returned member set is exactly the set of its
+   present vectors. A one-vector subject has no cohort-recovery verdict.
 2. **Cross-subject membership:** every segment containing vectors from more
    than one declared subject, plus whether it contains a low-support vector.
 3. **Omission:** which vectors receive no fine-segment membership.
@@ -449,56 +490,143 @@ For each run, record these separate outcomes:
 
 A segment spanning declared subjects does not count as reference-cohort
 recovery, but it is not automatically invalid: the candidate may return
-overlapping subjects that differ from the declared reference cohorts. Review
-each unique
-cross-subject member set with its run, condition, support roles, fixture IDs,
-and declared subjects hidden. Show only its complete masks under neutral labels
-and ask:
+overlapping subjects that differ from the declared reference cohorts.
 
-> What is the narrowest recognizable subject for which every instance is a
-> valid refinement?
+Freeze the semantic-review rubric, one primary human reviewer, reviewer
+procedure, and review shuffle seed before candidate execution. After all
+candidate outputs are immutable, pool all unique segments from valid raw
+outputs across both invocations of the one frozen candidate. Uniqueness is the
+canonical fixture-member set, so an identical member set is reviewed once and
+its frozen verdict is reused for every occurrence. Segments from a valid but
+non-repeatable output may receive diagnostic review, but they cannot make a
+dependent comparison evaluable.
 
-Freeze one random instance order for each unique member set. The reviewer must
-either supply that subject or record `no valid fine subject`.
+Build the review packets only after that pool is fixed. Hide the candidate,
+invocation, run configuration, condition, schedule, support roles, declared
+subject and neighborhood labels, fixture IDs, opaque IDs, and the opaque-ID
+mapping. A packet contains only the segment's complete masks under packet-local
+neutral labels. Draw and freeze one independent 32-byte review seed before
+candidate execution and record:
+
+```text
+review_seed_commitment = SHA-256(
+  "fine-segmentation-exp2-review-seed-v1\0" ||
+  "02-nearby-subject-resolution\0" || review_seed
+)
+```
+
+For ordering only, a packet's canonical opaque member-set bytes are the compact
+JSON array of its lowercase opaque IDs sorted by decoded 32-byte ID value, with
+no trailing newline. Derive:
+
+```text
+packet_key = HMAC-SHA-256(
+  review_seed,
+  "fine-segmentation-exp2-review-packet-v1\0" ||
+  "02-nearby-subject-resolution\0" || packet_member_set_bytes
+)
+
+member_key = HMAC-SHA-256(
+  review_seed,
+  "fine-segmentation-exp2-review-member-v1\0" ||
+  "02-nearby-subject-resolution\0" || packet_member_set_bytes || "\0" ||
+  member_opaque_id_bytes
+)
+```
+
+Sort packets and members by their 32 digest bytes. Break a packet-key collision
+by packet-member-set bytes and a member-key collision by opaque-ID bytes. The
+primary reviewer sees only those fixed orders.
+
+For each packet, ask whether all members are recognizable as refinements of one
+fine subject. The verdict must be exactly one of:
+
+- **valid:** record one recognizable fine subject in a non-disjunctive form,
+  and every member is a valid refinement of it;
+- **invalid:** no one recognizable, non-disjunctive fine subject covers every
+  member;
+- **uncertain:** the reviewer cannot decide between `valid` and `invalid` from
+  the masks.
+
+A disjunction or list of member subjects is not one subject. Do not coerce
+`uncertain` to `invalid`; report uncertain segments and every occurrence of
+them separately. The primary reviewer completes each packet once; there is no
+post-output adjudication or replacement reviewer.
 
 The neighborhood umbrella alone—`coffee processing`, `photograph editing`,
 `rose-bush care`, or `software development`—is too broad to validate a fine
-segment. Record `invalid cross-subject membership` when no more specific valid
-fine subject covers every member. When an invalid member set contains a rare or
-singleton vector, additionally record `false absorption`; this does not assert
-which vector entered which pre-existing segment. Review an identical member set
-once and reuse that frozen judgment wherever it recurs.
+segment. Record `invalid cross-subject membership` when a cross-subject segment
+receives `invalid`. When such a segment contains a rare or singleton vector,
+additionally record `false absorption`; this does not assert which vector
+entered which pre-existing segment. An `uncertain` cross-subject segment is
+reported separately and is not counted as invalid or false absorption.
 
 This review is metadata-blind, not source-blind: the synthetic wording may be
 recognizable. Declared-cohort recovery and alternative semantic validity remain
-separate measurements. An accepted alternative segment never changes the
-declared allocation used to describe that run.
+separate measurements. A valid alternative segment never changes the declared
+allocation used to describe that configuration.
+
+### Balanced-baseline conditioning
+
+For each neighborhood, declared subject, and schedule `s`, its repeatable local
+balanced configuration is the balanced baseline. Describe recovery as
+**surviving** a combined or unequal-support condition only when that subject's
+reference cohort recovered in this matched balanced baseline and the compared
+configuration is also repeatable. If the balanced baseline did not recover the
+cohort, record all later recovery, fragmentation, omission, membership, and
+semantic-review outcomes, but make no survival claim. If either required
+configuration is non-repeatable, the dependent survival comparison is
+`unevaluable`. For an eligible comparison, record `survived` exactly when the
+cohort also meets the reference-cohort recovery rule in the compared
+configuration; otherwise record `did not survive`. A one-vector subject has
+disposition fields rather than a recovery-survival claim.
+
+### Canonical projection rule
+
+For an output and retained-ID set `K`, intersect each source segment with `K`
+and discard every empty projection. Canonicalize each remaining projected
+member set by the frozen global ID rank. The projected output is the multiset
+of those canonical member sets: identical projected sets retain one count per
+source-segment occurrence.
+
+Compare projected outputs as multisets, including multiplicity. For every
+canonical member set, the exact signed difference is its count in the first
+multiset minus its count in the second. Separately retain a provenance row for
+each projected occurrence containing its complete unprojected source segment,
+source configuration, and source invocation. Source provenance is not part of
+the canonical multiset and must not be used to make otherwise equal
+projections unequal.
 
 ### Balanced local organization
 
-For the 32 balanced local runs, preserve every returned member set and the
-metadata-blind semantic judgment above. Describe whether the candidate tends to
-recover the three declared cohorts, combine nearby cohorts into valid broader
-fine subjects, fragment them, overlap them, or omit vectors. No one of those
-shapes is declared correct in advance.
+For the 32 unique balanced local configurations, preserve both invocations,
+every returned member set, and the blinded semantic judgment above. For each
+repeatable configuration, describe whether the candidate recovers the three
+declared cohorts, combines nearby cohorts into valid broader fine subjects,
+fragments them, overlaps them, or omits vectors. No one of those shapes is
+declared correct in advance.
 
 ### Local versus combined balanced organization
 
 For each neighborhood and schedule `s`, compare its local balanced output with
 the combined balanced output for the same `s`:
 
-1. project each combined-output segment onto that neighborhood's twelve IDs;
-2. compare the resulting nonempty member sets with the local output's member
-   sets;
-3. separately preserve every combined-output segment that crosses semantic
+1. apply the canonical projection rule to the combined output with that
+   neighborhood's twelve IDs as `K`;
+2. represent the local output as the canonical member-set multiset on those
+   same IDs;
+3. compare the two multisets, including every member-set multiplicity and the
+   exact signed difference `combined projection count - local count`;
+4. retain source-segment provenance separately for every projected occurrence;
+5. separately preserve every combined-output segment that crosses semantic
    neighborhoods.
 
 Projection shows whether the local organization changed. The separate
 cross-neighborhood record prevents projection from hiding contamination. This
 comparison uses identical local vectors, schedule indices, and relative order;
-only the other three balanced neighborhoods were added.
-Retain the source combined segment for every projection; do not deduplicate
-identical projected member sets.
+only the other three balanced neighborhoods were added. Empty projections are
+discarded; identical nonempty projections remain present through their
+multiplicity.
 
 ### Balanced versus unequal support
 
@@ -507,16 +635,19 @@ run with that neighborhood's balanced run for the same `s`. Record:
 
 1. the IDs shared by the two inputs;
 2. each run's complete output;
-3. both outputs projected onto the shared IDs;
-4. the exact set difference between those projected member-set collections;
-5. the ordinary semantic review of every new cross-subject member set.
-
-Retain the source segment for every projection and treat projected outputs as
-source-linked lists; never deduplicate identical projected member sets.
+3. each output's canonical projected member-set multiset on those shared IDs,
+   after discarding empty projections;
+4. the exact signed difference `unequal projection count - balanced projection
+   count` for every member set;
+5. source-segment provenance for every projected occurrence, retained
+   separately from the canonical multisets;
+6. every new cross-subject member-set occurrence and its frozen blinded
+   semantic-review verdict.
 
 Analysts may describe a change as a gain, loss, split, merge, omission, or
 absorption, but those are qualitative annotations. The preserved inputs,
-outputs, projections, and exact set difference are the authoritative record.
+outputs, projected multisets, and exact multiplicity difference are the
+authoritative record.
 
 The matched comparison measures how segmentation changes under each complete
 support allocation. It does not isolate the causal effect of support count:
@@ -529,9 +660,10 @@ Experiment 6 owns duplicate stability.
 
 Compare results by neighborhood, declared subject, support role, allocation,
 and formulation schedule. Report every schedule and aggregate only with
-schedule as a repeated block; do not treat the 520 overlapping runs as 520
-independent samples. Do not average away a neighborhood-specific failure. Raw
-cosine and lexical measurements are diagnostics, not semantic verdicts.
+schedule as a repeated block; do not treat the 520 overlapping configurations
+as 520 independent samples. Do not average away a neighborhood-specific
+outcome. Raw cosine and lexical measurements are diagnostics, not semantic
+verdicts.
 
 ## Protocol
 
@@ -541,18 +673,29 @@ cosine and lexical measurements are diagnostics, not semantic verdicts.
    the combined run.
    Correct clear incidental-template imbalances without purging necessary
    subject words or forcing unnatural synonyms.
-3. Obtain human approval of all 96 notes, masks, atomic propositions, and the
-   intended nearby relationships.
-4. Freeze the fixture wording before encoding or inspecting candidate output.
-5. Freeze the SSE contract, candidate source and build, preprocessing,
-   configuration, fine-output selector, seed, and diagnostics.
-6. Encode the 96 inputs once, then freeze the vector bytes, opaque-ID mapping,
-   global master rank, all 520 run specifications, and randomized run order.
-7. Execute every run from fresh candidate state without retuning or
-   re-encoding, and preserve every output before restoring fixture identities.
-8. Compute the frozen representation and lexical diagnostics.
-9. Complete the metadata-blind semantic reviews, local-versus-combined
-   comparisons, and matched support-allocation comparisons.
+3. Obtain human approval of all 96 notes, masks, atomic propositions, intended
+   nearby relationships, and the semantic-review rubric and procedure.
+4. Freeze the fixture wording and every scoring rule.
+5. Freeze the candidate identity and document its construction-level
+   permutation invariance.
+6. Derive and commit the shared opaque-ID mapping and global order. Freeze all
+   520 unique configurations, two invocation records per configuration, and
+   the randomized execution order of all 1,040 invocations. Draw and freeze the
+   independent review seed.
+7. Freeze the SSE boundary and exact input bytes, then encode the 96 inputs
+   once and record the vector dimensions and hashes.
+8. Invoke every configuration twice in separate fresh processes without
+   retuning or re-encoding. Make all 1,040 raw outputs immutable before
+   restoring fixture identities.
+9. Validate and compare the two canonical complete outputs for every
+   configuration and mark
+   non-repeatable configurations and all dependent outcomes `unevaluable`.
+10. Compute the frozen representation and lexical diagnostics.
+11. Fix the unique-segment pool, build the blinded packets in their frozen
+    random order, and complete the three-way semantic review.
+12. For repeatable configurations, complete the balanced-baseline-conditioned
+    recovery descriptions, local-versus-combined comparisons, and matched
+    support-allocation comparisons.
 
 ## Required record
 
@@ -563,31 +706,47 @@ Preserve:
 - every numeric schedule index, subject phase, wording form, and recorded
   structural attribute;
 - the opaque-ID mapping and global master rank order;
-- the frozen execution order and every run’s condition, roles, schedule, exact
-  inputs, and candidate order;
-- every complete returned segment, overlap, singleton, and omission;
+- the 520 unique configurations, all 1,040 invocation records in their frozen
+  execution order, and every condition, role, schedule, exact input, and
+  within-invocation order;
+- all 1,040 raw outputs, canonical outputs and hashes for every valid raw
+  output, and every output-contract, repeatability, or `unevaluable` finding;
+- every complete returned segment, overlap, singleton, and omission from both
+  invocations;
 - reference-cohort recovery, all cross-subject memberships, false absorption,
   omission, fragmentation, extra segments, and singleton disposition fields;
-- every blind-review judgment and the masks supporting it;
-- every local-versus-combined projection and cross-neighborhood segment;
-- every balanced-versus-unequal shared-ID projection and membership change;
+- the frozen semantic-review rubric, procedure, shuffle seed, its commitment
+  and verification, unique-segment pool, packet and member orders, every
+  `valid`, `invalid`, and `uncertain` judgment, the valid subject text, and the
+  masks supporting each judgment;
+- every balanced-baseline recovery prerequisite and every resulting survival,
+  no-survival-claim, or `unevaluable` record;
+- every local-versus-combined canonical projected multiset, exact multiplicity
+  difference, separate source-segment provenance row, and cross-neighborhood
+  segment;
+- every balanced-versus-unequal shared-ID set, canonical projected multiset,
+  exact multiplicity difference, separate source-segment provenance row, and
+  membership change;
 - the immutable raw-vector cosine matrix and all lexical diagnostics;
-- candidate source, build, configuration, preprocessing, selector, and seed
-  hashes.
+- every artifact and candidate identity required by the shared contract.
 
 ## What a result means
 
-The result describes how one frozen SSE-plus-segmentation system organizes four
-controlled collections of nearby subjects under balanced support, whether that
-organization changes when unrelated neighborhoods are present, and how it
+The result characterizes how one frozen SSE-plus-segmentation system organizes
+four controlled collections of nearby subjects under balanced support, whether
+that organization changes when unrelated neighborhoods are present, and how it
 changes under the complete unequal-support and singleton allocations. It does
 not attribute those changes to support count alone.
 
-Evidence is stronger when declared cohorts that recover under balanced support
-continue to recover under stress allocations without new invalid membership,
-omission, or fragmentation involving low-support vectors. The document does
-not impose one binary threshold; it preserves the full failure profile for
-candidate comparison and later threshold selection.
+For a declared subject that recovered in its matched balanced baseline, the
+record can state whether recovery survived a repeatable stress or combined
+condition. When balanced recovery was absent, the later output remains an
+observation but supports no survival statement. Non-repeatable configurations
+leave their dependent comparisons unevaluable.
+
+The protocol has no binary confirmation result and does not rank or select
+candidates. Its returned shapes, semantic verdicts, and changes are reported
+as characterization data.
 
 It does not establish one universally correct fine-subject boundary,
 production-scale behavior, every geometric density pattern, natural-corpus

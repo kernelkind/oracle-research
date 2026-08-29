@@ -31,6 +31,11 @@ to identify the internal mechanism behind a failure. In particular:
 
 Those changes are part of the intervention, not separate causal claims.
 
+The shared contract already requires a candidate whose construction is
+permutation-invariant. The two order conditions here are concrete
+implementation checks for two frozen permutations; they are not evidence that
+arbitrary order-sensitive candidates may enter the other experiments.
+
 ## Fixture design
 
 The fixture contains two nine-vector baselines:
@@ -55,11 +60,11 @@ The brackets show the exact selected text. The brackets are not sent to SSE.
 
 **A1**
 
-> ⟦I roasted green coffee beans in a small drum roaster.⟧
+> ⟦I roasted green coffee beans.⟧
 
 **A2**
 
-> ⟦I used a home roaster to turn raw coffee beans brown.⟧
+> ⟦I turned raw coffee beans into roasted beans.⟧
 
 **A3**
 
@@ -69,31 +74,29 @@ The brackets show the exact selected text. The brackets are not sent to SSE.
 
 **B1**
 
-> ⟦I ground whole coffee beans with a burr grinder.⟧
+> ⟦I ground whole coffee beans.⟧
 
 **B2**
 
-> ⟦I used a hand mill to turn roasted coffee beans into grounds.⟧
+> ⟦I turned roasted coffee beans into grounds.⟧
 
 **B3**
 
-> ⟦I crushed whole coffee beans into an even grind before brewing.⟧
+> ⟦I crushed roasted coffee beans into an even grind.⟧
 
 #### Subject `C`: brewing pour-over coffee
 
 **C1**
 
-> ⟦I brewed pour-over coffee by slowly pouring hot water over grounds in a
-> filter.⟧
+> ⟦I brewed pour-over coffee.⟧
 
 **C2**
 
-> ⟦I made coffee with a cone dripper and a controlled hand pour.⟧
+> ⟦I made coffee using the pour-over method.⟧
 
 **C3**
 
-> ⟦I prepared a pour-over by passing hot water through coffee grounds and a
-> paper filter.⟧
+> ⟦I prepared coffee by pouring hot water through grounds in a filter.⟧
 
 ### Baseline `R`: photography work
 
@@ -101,43 +104,43 @@ The brackets show the exact selected text. The brackets are not sent to SSE.
 
 **D1**
 
-> ⟦I took a portrait photograph of my friend using soft window light.⟧
+> ⟦I took a portrait photograph.⟧
 
 **D2**
 
-> ⟦I made a head-and-shoulders portrait with the person facing the camera.⟧
+> ⟦I photographed a person for a portrait.⟧
 
 **D3**
 
-> ⟦I photographed a person's face for a formal portrait.⟧
+> ⟦I made a photographic portrait of a person.⟧
 
 #### Subject `E`: cropping photographs
 
 **E1**
 
-> ⟦I cropped a photograph to remove empty space around the subject.⟧
+> ⟦I cropped a photograph.⟧
 
 **E2**
 
-> ⟦I trimmed the edges of a photo to improve its composition.⟧
+> ⟦I trimmed the edges of a photo.⟧
 
 **E3**
 
-> ⟦I reframed an image by cutting away unnecessary parts around its subject.⟧
+> ⟦I reframed an image by cutting away its outer parts.⟧
 
 #### Subject `F`: backing up photograph files
 
 **F1**
 
-> ⟦I backed up my photo library to an external drive.⟧
+> ⟦I backed up my photograph files.⟧
 
 **F2**
 
-> ⟦I copied my photographs to separate storage for safekeeping.⟧
+> ⟦I copied my photographs to separate storage.⟧
 
 **F3**
 
-> ⟦I made a second copy of my photo files in case the originals were lost.⟧
+> ⟦I made backup copies of my photo files.⟧
 
 ## Human approval required
 
@@ -149,58 +152,49 @@ Before encoding, human review must confirm:
 4. `D`, `E`, and `F` are distinct fine subjects within photography work;
 5. the coffee and photography areas are semantically unrelated at the intended
    fine resolution;
-6. the exact expected baseline collections below are correct.
+6. the exact expected baseline collections below are correct;
+7. permuting a baseline must preserve every membership;
+8. each exact duplicate must inherit every membership of its original;
+9. adding subject `D` to baseline `L` must preserve `L` without placing a `D`
+   vector in an `A`–`C` segment;
+10. combining `L` and `R` must preserve both baselines without creating a
+    cross-subject segment.
 
 These judgments apply only to this fixture. They do not impose a global
 partition requirement on the architecture.
 
 ## Frozen system boundary
 
-Use the shared 768-dimensional Sentence-T5-base SSE checkpoint identified in:
+Use the shared 768-dimensional Sentence-T5-base SSE checkpoint identified in
+[README.md](README.md).
 
-README.md
+Follow the lifecycle, candidate-identity, blinding, output-validation, and
+canonicalization contract in `README.md`.
 
 Generate each of the eighteen vectors once and preserve its raw bytes. Every
 condition reuses those bytes. Duplicate aliases also reuse their original
 vector bytes and are never encoded again.
 
-Before the first candidate run, create and freeze a mapping from the readable
-scoring aliases to unrelated opaque runtime IDs. The same runtime ID follows
-each vector through every condition. Duplicate aliases receive new opaque IDs
-that do not reveal which originals they duplicate.
+Before encoding, create and commit to the mapping from readable scoring aliases
+to unrelated opaque runtime IDs. The same runtime ID follows each vector
+through every condition. Duplicate aliases receive new opaque IDs that do not
+reveal which originals they duplicate. Do not reveal the mapping until all raw
+candidate outputs are immutable.
 
 The candidate receives only opaque IDs and vectors. It does not receive notes,
 masks, subject names, scoring aliases, expected segment counts, expected
 segment sizes, or relationships between duplicate IDs.
 
-Freeze the candidate implementation, preprocessing, configuration, seed,
-fine-output rule, and deterministic tie rules before inspecting any result.
-Coarser hierarchy output is excluded.
+Freeze the candidate identity defined by `README.md` before encoding. Coarser
+hierarchy output is excluded.
 
 ## What counts as one output
 
-A segment is a set of opaque vector IDs. A candidate output is an unordered
-collection of those member sets.
-
-- Every segment must be nonempty.
-- Every member ID must occur in that run's input.
-- A raw segment must not repeat one member ID.
-- Segment IDs and output order have no meaning.
-- One-member segments remain part of the output.
-- Two segments with exactly the same members make the output invalid; the
-  scorer must not silently remove one.
-- The scorer maps opaque IDs back to readable aliases only after the run.
-
-Validate those rules before projection. An invalid segment cannot disappear
-through projection and allow a run to pass.
-
-To canonicalize one valid output for comparison and hashing:
-
-1. map each runtime ID back to its scoring alias;
-2. sort the aliases within each segment;
-3. sort the complete segments by their sorted alias lists;
-4. serialize the resulting nested lists as canonical JSON;
-5. compute SHA-256 over those exact JSON bytes.
+Validate and canonicalize the opaque-ID output exactly as specified in
+`README.md`, before projection or semantic scoring. An invalid segment cannot
+disappear through projection and allow a run to pass. Reveal the alias mapping
+only after both raw outputs for every exact input are immutable and their
+opaque canonical bytes and hashes have been recorded.
 
 Although the architecture may allow overlap or unassigned vectors generally,
 this purpose-built fixture has exact expected outputs.
@@ -221,8 +215,10 @@ Baseline `R` must return exactly:
 {F1 F2 F3}
 ```
 
-No additional segment is allowed. A baseline failure ends its dependent
-comparisons because there is no correct output to preserve.
+No additional segment is allowed. A baseline failure withholds verdicts for
+its dependent comparisons because there is no correct output to preserve. It
+does not suppress an independent baseline or its conditions, and it does not
+cancel already frozen runs.
 
 ## Projection used by addition conditions
 
@@ -241,28 +237,41 @@ vectors from two declared subjects.
 
 ## Fresh-run requirement
 
-Run every exact input twice. Each repetition must start a fresh candidate
-process with no mutable cache or state from another run. Vector bytes,
-configuration, seed, tie rules, and input order remain identical.
-
-Canonical output hashes from the two repetitions must match. If they differ,
-record a reproducibility failure and do not attribute any between-condition
-difference to the tested intervention.
-
-Two matching repetitions establish only repeatability for those two runs, not
+Apply the shared two-invocation fresh-process requirement to every exact input.
+Repeatability gates only that input and comparisons that depend on it. Two
+matching invocations establish repeatability only for those exact runs, not
 general determinism.
 
 ## Protocol
 
 1. Obtain the required human approval.
-2. Freeze this document and the complete system boundary.
-3. Generate and preserve all eighteen vector bytes once.
-4. Generate and freeze the opaque runtime-ID mapping.
-5. Run each exact input below twice in fresh processes.
-6. Validate both baselines before scoring their dependent conditions.
+2. Freeze this document and the complete candidate identity.
+3. Generate the opaque runtime-ID mapping and record its commitment. Freeze
+   every explicit order listed below as an Experiment 6 order intervention.
+4. Freeze the SSE boundary and exact input bytes.
+5. Generate and preserve all eighteen vector bytes once, then record their
+   dimensions and hashes.
+6. Run every exact input below twice in fresh processes, even if one baseline
+   later fails.
+7. Validate and canonicalize every opaque output before revealing the mapping.
+8. Score each condition using the dependency graph below.
 
-The sequences below use scoring aliases for readability. Executable inputs use
-only their mapped opaque IDs.
+## Verdict dependency graph
+
+- Baseline `L0` gates permuted `L`, the duplicate condition, and the unrelated
+  addition condition.
+- Baseline `R0` gates permuted `R`.
+- Both baselines gate the combined-area condition.
+- A validity or repeatability failure for one exact input gates that input and
+  comparisons depending on it, but not independent branches.
+
+Always record every raw run. A gated condition is reported as **no verdict**,
+not as a stability pass or failure.
+
+The sequences below use scoring aliases for readability. They override the
+shared default HMAC order for this experiment only. An executable input replaces
+each alias with its mapped opaque ID while preserving the listed sequence; the
+candidate never receives an alias.
 
 ## Baselines
 
@@ -377,7 +386,7 @@ not part of this experiment.
 The experiment passes only if:
 
 1. both baselines produce their exact expected collections;
-2. every repeated exact input is reproducible;
+2. every repeated exact input is repeatable;
 3. both order conditions pass;
 4. the exact-duplicate condition passes;
 5. the unrelated-subject addition passes;
@@ -389,16 +398,25 @@ Classify a non-pass before interpreting it:
 
 - **output-contract failure:** any raw output contains an empty segment, an
   unknown ID, a repeated member, or a duplicate member set;
-- **reproducibility failure:** two valid fresh-process outputs for one exact
-  input have different canonical hashes;
+- **repeatability failure:** two valid fresh-process outputs for one exact
+  input have different canonical bytes;
 - **prerequisite failure:** both valid baseline repetitions agree but do not
   return the exact expected baseline collection;
-- **stability failure:** both baselines are valid, exact, and reproducible, but
-  a reproducible intervention output violates its frozen expectation.
+- **permutation-invariance contract failure:** a valid, repeatable permuted
+  input differs from its valid, repeatable baseline; this invalidates the
+  candidate's construction-level eligibility rather than supplying a semantic
+  stability verdict;
+- **stability failure:** every prerequisite for that condition is valid,
+  exact, and repeatable, but the repeatable intervention output violates
+  its frozen expectation. This class applies to the duplicate, unrelated-addition,
+  and combined-area conditions, not the two order checks.
 
-An output-contract, reproducibility, or prerequisite failure does not support
-a conclusion about stability. Record all applicable failures, but do not
-reinterpret one as another.
+An output-contract, repeatability, or prerequisite failure does not support
+a stability conclusion for the affected branch. Record all applicable
+failures and every independent branch verdict, but do not reinterpret one as
+another. A permutation-invariance contract failure invalidates the candidate
+for this entire suite, even when other recorded branches happen to match their
+expectations.
 
 ## Required record
 
@@ -406,13 +424,13 @@ Preserve:
 
 - every note, mask, declared subject, and human approval;
 - raw SSE bytes, artifact hashes, and the cosine matrix;
-- the private scoring-alias-to-runtime-ID mapping;
+- the private scoring-alias-to-runtime-ID mapping and its pre-run commitment;
 - candidate implementation and configuration identities;
 - every exact ordered input;
 - both raw outputs, canonical JSON, and SHA-256 hashes for every condition;
 - every projected collection;
 - every added, removed, split, merged, duplicated, or cross-subject segment;
-- every prerequisite, reproducibility, and condition verdict.
+- every prerequisite, repeatability, and condition verdict.
 
 ## What a result means
 
@@ -423,11 +441,13 @@ near-duplicates, changes to configuration or seed, automatic mask quality, or
 hierarchy quality.
 
 A baseline failure does not disprove stability. It means the candidate failed
-the semantic prerequisite, so the dependent stability conditions cannot be
-interpreted.
+that branch's semantic prerequisite, so only its dependent stability
+conditions cannot be interpreted.
 
 A condition failure proves that its complete frozen intervention changed the
-output. An input-order failure isolates order and therefore establishes order
-sensitivity. Duplicate, addition, and combined-area failures do not identify
-which bundled mechanism—such as density, collection size, or semantic
-composition—caused the change.
+output. An input-order difference demonstrates that the implementation violates
+the suite's required construction-level permutation invariance, so the
+candidate is ineligible and the experiment has no semantic stability verdict.
+Duplicate, addition, and combined-area failures do not identify which bundled
+mechanism—such as density, collection size, or semantic composition—caused the
+change.

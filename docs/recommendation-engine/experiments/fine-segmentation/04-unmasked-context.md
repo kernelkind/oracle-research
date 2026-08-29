@@ -35,6 +35,12 @@ those references survive and whether each mixed vector enters the reference
 for its masked subject instead of a competing reference supported by its
 unmasked context.
 
+Each mixed target is compared with its target subject's exact fully masked
+control in that same joint run. This matched control separates a collection-wide
+change caused by adding nine vectors from a change specific to the mixed
+target's unmasked context. The three controls already declared below provide
+all nine comparisons; no additional input condition or control arm is needed.
+
 The anchor-only baseline does not replace the joint run. Comparing separately
 clustered control and treatment collections could conceal a split in which
 bare and context-loaded instances form different regions while each collection
@@ -49,9 +55,10 @@ the references, and the joint run tests coexistence against them.
 - Each target-subject cohort contains one exact fully masked control and two
   semantic paraphrases. The exact control supplies one fixed-wording anchor;
   the paraphrases prevent the subject reference from being established by
-  literal repetition alone. Scoring uses their connected anchor-supported
-  subject reference rather than requiring every mixed target to share one
-  segment directly with the exact control.
+  literal repetition alone. Scoring compares each mixed target with that exact
+  control in the same joint output. Meaningful membership still uses the
+  anchor-supported subject reference; the mixed target and control need not
+  share one segment directly.
 - The three context-subject anchors express that subject with different
   wording.
 - The three mixed contexts representing one context subject use different
@@ -238,6 +245,17 @@ WATERCOLOR-CONTROL, WATERCOLOR-ANCHOR-2, WATERCOLOR-ANCHOR-3,
 WATERCOLOR-TELESCOPE, WATERCOLOR-SOURDOUGH, WATERCOLOR-PASSPORT
 ```
 
+The frozen within-run control matches are:
+
+```text
+COFFEE-TELESCOPE, COFFEE-SOURDOUGH, COFFEE-PASSPORT
+  -> COFFEE-CONTROL
+BICYCLE-TELESCOPE, BICYCLE-SOURDOUGH, BICYCLE-PASSPORT
+  -> BICYCLE-CONTROL
+WATERCOLOR-TELESCOPE, WATERCOLOR-SOURDOUGH, WATERCOLOR-PASSPORT
+  -> WATERCOLOR-CONTROL
+```
+
 The declared context-anchor identities are:
 
 ```text
@@ -304,46 +322,62 @@ anchors and mixed vectors for one subject to appear in one six-vector segment,
 nor does it require their complete sets of segment IDs to match. Different
 anchor-supported pure segments can represent the same declared subject.
 
-## Anchor-only baseline
+## Anchor-only baseline qualification
 
-The anchor-only baseline is valid only when the reference anchor graph for
-each of the six subjects is connected. Other baseline segments, including
-singletons and unsupported overlaps, remain in the diagnostic record. They do
-not establish or invalidate a reference subject by themselves.
+First apply the shared output-validity and repeatability checks. A valid,
+repeatable anchor-only baseline qualifies only when:
+
+1. the reference anchor graph for each of the six declared subjects is
+   connected; and
+2. no anchor has competing supported membership in another declared subject.
+
+Other baseline segments, including singletons and unsupported overlaps,
+remain in the diagnostic record. They do not establish or invalidate a
+reference subject by themselves.
 
 The six connected anchor graphs and their reference segments are the baseline
-references. If the anchor-only baseline is invalid, Experiment 4 has no
-verdict. Baseline eligibility uses only output preserved before the mixed
-vectors enter the joint candidate run.
+references. An invalid raw output is an **output-contract failure**; disagreeing
+valid repetitions are a **repeatability failure**; a valid, repeatable baseline
+that fails either qualification above is a **prerequisite failure**. None
+receives a semantic verdict. Baseline qualification uses only output preserved
+before the mixed vectors enter the joint candidate run.
 
 ## Frozen hypothesis
 
-In the joint coexistence run:
+In the joint coexistence run, each mixed target is scored only after its
+matched exact fully masked control qualifies. A control qualifies when it has
+meaningful membership in its declared target subject and no competing
+supported membership. Once that control qualifies:
 
-1. every baseline reference subject still has a connected reference anchor
-   graph;
-2. every mixed target has meaningful membership in its masked target subject;
-3. no mixed target has competing supported membership in one of the other
+1. the mixed target has meaningful membership in its masked target subject;
+2. the mixed target has no competing supported membership in one of the other
    five declared subjects; and
-4. no returned segment contains mixed targets from two or more different
-   declared target subjects.
+3. no control-qualified cross-target mixed segment occurs.
 
-The third condition includes the matching unmasked-context subject. It also
+If a control that qualified in the anchor-only baseline loses meaningful
+membership in its target subject or gains competing supported membership in
+the joint run, classify **collection instability** and withhold the
+unmasked-context verdict for each mixed target matched to that control. Do not
+use a mixed target's result to reinterpret its failed control.
+
+The second condition includes the matching unmasked-context subject. It also
 catches support from an unrelated target or context subject. Complete
 segment-ID signatures are not compared: an auxiliary singleton or unsupported
 overlap does not by itself show that unmasked material changed meaningful
-subject membership. The fourth condition is different: mixed vectors with
+subject membership. The third condition is different: mixed vectors with
 different masked subjects recurring together form a treatment-only
 cross-subject region even without anchors. The frozen context-lure and
 form-lure groups identify two specific mechanisms for such a failure; other
 cross-target mixed segments catch generic compound-note framing and
-unanticipated interactions.
+unanticipated interactions. Such a segment is a context failure only when the
+matched controls for every represented target subject qualify; otherwise it
+remains diagnostic while the failed control supplies the collection-instability
+classification.
 
 ## Frozen system boundary
 
-Use the shared 768-dimensional Sentence-T5-base SSE checkpoint identified in:
-
-README.md
+Use the shared execution contract and 768-dimensional Sentence-T5-base SSE
+checkpoint in [README.md](README.md).
 
 Preserve its raw outputs exactly. Any normalization, distance, or other
 preprocessing belongs to the candidate's frozen configuration.
@@ -358,79 +392,83 @@ This is a visible development fixture, not held-out confirmation.
 
 1. Obtain human approval of all 27 notes, masks, subject identities, and
    expected relationships.
-2. Freeze this document and the candidate's implementation, preprocessing,
-   configuration, fine-output rule, and candidate seed.
-3. Generate all 27 full-note SSE vectors once and preserve their exact bytes.
-4. After freezing the candidate, draw one 32-byte blinding seed from the
-   operating system CSPRNG. Draw it exactly once. Derive each opaque ID as
-   `HMAC-SHA-256(seed, "experiment-4-id-v1\0" || fixture_id_utf8)` and its order
-   key as
-   `HMAC-SHA-256(seed, "experiment-4-order-v1\0" || fixture_id_utf8)`.
-5. Record
-   `SHA-256("experiment-4-blinding-v1\0" || seed)` in the run manifest. Keep
-   the seed and fixture mapping in the scorer's private artifact, which the
-   candidate cannot read. Sort by ascending order key. Reveal the seed and
-   mapping only after preserving the candidate output.
-6. Give the 18 anchors, filtered from that frozen order, to two separately
+2. Freeze this document and the complete candidate identity, and document the
+   candidate's construction-level permutation invariance.
+3. Apply the shared opaque-ID blinding and frozen-order rules once to all 27
+   fixture IDs. The anchor-only input is the 18-anchor subsequence of that one
+   frozen order; the joint input is the full 27-vector order.
+4. Freeze the SSE boundary and exact input bytes, then generate all 27
+   full-note vectors once and record their dimensions and hashes.
+5. Give the 18 anchors to two separately
    initialized candidate invocations with identical configuration and
    candidate seed. Preserve both complete anchor-only outputs.
-7. Give all 27 vectors in the frozen order to two more separately initialized
+6. Give all 27 vectors to two more separately initialized
    invocations with that same configuration and candidate seed. Preserve both
    complete joint outputs.
-8. Within each identical-input pair, canonicalize the output as an unordered
-   collection of unordered member-ID sets. The two canonical outputs must be
-   identical. Otherwise record a repeatability failure and do not score the
-   semantic hypothesis.
-9. After all four outputs are immutable, reveal the fixture identities and
-   verify the blinding derivations. If repeatability succeeded, validate the
-   anchor-only baseline and score the joint-run hypothesis only when that
-   baseline is valid. Preserve and verify the artifacts even when repeatability
-   failed.
-
-Before canonicalization, require every returned segment to be a nonempty set
-of IDs present in that invocation. To canonicalize one output:
-
-1. encode every 32-byte opaque ID as 64 lowercase hexadecimal characters;
-2. sort the IDs inside each segment by their underlying bytes;
-3. encode each segment as a compact JSON array of those strings;
-4. sort those segment encodings lexicographically by their UTF-8 bytes while
-   retaining duplicate member sets as separate entries; and
-5. encode the outer list as compact UTF-8 JSON with no trailing newline and
-   compute SHA-256 over those exact bytes.
-
-Repeatability compares those canonical bytes, not only their hashes. The hash
-is retained for the run record.
+7. While identities remain hidden, validate every raw output under the shared
+   output contract. An empty segment, unknown ID, repeated member within a
+   segment, or duplicate member set is an output-contract failure. Do not
+   canonicalize an invalid output or derive a semantic verdict from it.
+8. For each valid identical-input pair, compare the shared canonical JSON
+   bytes. A mismatch is a repeatability failure and receives no semantic
+   verdict.
+9. After all four outputs are immutable, reveal and verify the fixture mapping.
+   Qualify the anchor-only baseline before scoring the matched controls and
+   mixed targets in a valid, repeatable joint output. Preserve and verify all
+   artifacts even when scoring is withheld.
 
 ## Pass rule
 
-An invalid anchor-only baseline or a repeatability failure produces no
-Experiment 4 verdict. Once the baseline is valid, apply the following order:
+An anchor-only output-contract or repeatability failure blocks baseline
+qualification and every dependent semantic verdict. A joint output-contract or
+repeatability failure preserves any independent baseline qualification but
+produces no joint-control or unmasked-context verdict. A valid, repeatable
+anchor-only output that does not qualify is a prerequisite failure and also
+produces no semantic verdict.
 
-1. A competing supported membership or cross-target mixed segment fails the
-   experiment, even if a joint reference graph is disconnected.
-2. Otherwise, a disconnected joint reference graph produces no verdict. It
-   shows that adding the mixed vectors globally changed the candidate's
-   reference structure, but does not isolate unmasked context from general
-   collection instability.
-3. With all six joint reference graphs connected, a mixed target missing
-   meaningful membership in its masked subject fails the experiment.
-4. The experiment passes only when every mixed target has its required
-   meaningful membership and none of the failure conditions above occurs.
+Once the anchor-only baseline qualifies, score the valid, repeatable joint
+output in this order:
+
+1. For each mixed target, inspect its matched exact fully masked control in the
+   same joint output. If the control lacks meaningful membership in its target
+   subject or has competing supported membership, record collection
+   instability and withhold the context verdict for that mixed target.
+2. When the matched control qualifies, fail that mixed target if it lacks
+   meaningful membership in its masked target subject or has competing
+   supported membership. Otherwise its membership comparison passes.
+3. A segment containing mixed targets from different declared target subjects
+   is a context failure only when the matched controls for every represented
+   target subject qualify. If any such control does not qualify, preserve the
+   segment as a diagnostic; it does not override the collection-instability
+   classification or create a context verdict.
+
+The experiment fails when any eligible mixed target fails its membership
+comparison or any control-qualified cross-target mixed segment occurs. It
+passes only when every mixed target receives and passes a context verdict and
+no control-qualified cross-target mixed segment occurs. If no eligible target
+fails but one or more target verdicts are withheld for collection instability,
+the experiment has no overall context verdict. Do not average targets.
 
 Report these result classes separately:
 
-- missing anchor-only reference;
+- output-contract failure;
 - repeatability failure;
-- disconnected reference graph in the joint run;
+- anchor-only prerequisite failure, distinguishing a missing reference graph
+  from an anchor with competing supported membership;
+- collection instability for a matched fully masked control, distinguishing
+  lost target membership from gained competing supported membership;
 - mixed target missing meaningful membership in its masked subject;
 - mixed target receiving competing support from its matching unmasked context;
 - mixed target receiving support from any other competing subject;
-- cross-target mixed segment, classified when applicable as context-lure or
-  form-lure support;
+- control-qualified cross-target mixed segment, classified when applicable as
+  context-lure or form-lure support;
+- cross-target mixed segment withheld by a nonqualifying matched control;
+- disconnected reference graph in the joint run, as a collection diagnostic;
 - other unsupported auxiliary segments.
 
-One missing target membership or one competing supported membership is not
-averaged away. One cross-target mixed segment also fails the experiment. Other
+One missing target membership or one competing supported membership after its
+matched control qualifies is not averaged away. One cross-target mixed segment
+whose represented-subject controls qualify also fails the experiment. Other
 unsupported auxiliary segments are diagnostic and do not decide the verdict.
 
 ## Required record
@@ -438,24 +476,33 @@ unsupported auxiliary segments are diagnostic and do not decide the verdict.
 Preserve:
 
 - the complete returned fine-segment collection from all four invocations;
-- every segment's projection onto the 18 anchor IDs;
-- anchor-only validity, all reference segments, and all six anchor graphs;
+- for each valid output, every segment's projection onto the 18 anchor IDs;
+- every raw output-validity result and, for each valid output, its canonical
+  JSON byte string and hash;
+- both repeatability comparisons;
+- anchor-only qualification, every anchor with competing supported membership,
+  every multiply supported segment, all reference segments, and all six anchor
+  graphs;
 - all joint reference segments and anchor graphs;
-- every mixed target's meaningful and competing supported segments;
+- each exact fully masked control's meaningful and competing supported
+  segments and the resulting per-target control qualification;
+- every mixed target's meaningful and competing supported segments and its
+  matched context verdict;
 - every context-lure, form-lure, and other cross-subject merge;
 - the exact opaque-ID mapping and input order for both input conditions;
-- canonical output hashes and equality results for both identical-input pairs;
-- the blinding seed, its pre-run commitment, and successful post-run
+- the shared blinding seed, its pre-run commitment, and successful post-run
   verification of every derived ID and order key;
 - cosine matrices and nearest-neighbor orders computed from immutable raw SSE
   outputs;
 - the raw SSE artifact and hashes;
-- the candidate configuration and candidate seed.
+- the complete candidate identity required by the shared contract.
 
-If either identical-input pair disagrees, preserve all four raw outputs and
-the repeatability evidence, but mark anchor validity, reference graphs,
-memberships, and the semantic verdict as unevaluated rather than choosing one
-of the conflicting outputs.
+If the anchor-only pair is invalid or non-repeatable, preserve all four raw
+outputs and mark baseline qualification and every dependent result
+unevaluated. If only the joint pair is invalid or non-repeatable, preserve the
+independently valid baseline qualification and mark joint reference graphs,
+memberships, control comparisons, and context verdicts unevaluated. Never
+repair an output or choose one of two conflicting outputs.
 
 Cosine is diagnostic evidence. The verdict is determined by returned
 fine-segment membership.
@@ -463,19 +510,22 @@ fine-segment membership.
 ## What a result means
 
 A pass shows that, in this fixture, the candidate first recovered six clean
-anchor-supported references, preserved connected versions of those references
-when the mixed vectors were added, placed every mixed vector in its masked
-subject's reference, placed none in a segment supported by a competing
-subject, and produced no treatment-only segment spanning different masked
-subjects.
+anchor-supported baseline references, then kept each exact fully masked target
+control in its target reference and out of competing supported memberships in
+the joint collection. Against those same-run controls, every mixed target kept
+its masked-subject membership, gained no competing supported membership, and
+formed no control-qualified segment spanning different masked subjects.
 
-An invalid anchor-only baseline or repeatability failure has no Experiment 4
-interpretation. A disconnected joint reference graph is also inconclusive
-unless direct competing membership or a cross-target mixed segment
-independently establishes a failure. Once the joint references remain
-connected, missing target membership or competing supported membership is a
-failure. Unsupported auxiliary segments remain diagnostic because their
-existence alone does not establish a recurring subject.
+An output-contract failure, repeatability failure, or anchor-only prerequisite
+failure has no Experiment 4 semantic interpretation. Collection instability
+means the exact fully masked control changed after the joint collection was
+introduced, so the corresponding mixed target cannot isolate unmasked context
+and its context verdict is withheld. Once that control qualifies, missing
+target membership or competing supported membership in the mixed target is a
+context failure. A cross-target mixed segment is a context failure only after
+the controls for all represented target subjects qualify. Disconnected joint
+reference graphs and unsupported auxiliary segments remain diagnostic unless
+they produce one of those matched membership outcomes.
 
 The recorded lure classes and raw-vector geometry can help explain a failure,
 but do not prove its mechanism. A smaller matched follow-up should isolate

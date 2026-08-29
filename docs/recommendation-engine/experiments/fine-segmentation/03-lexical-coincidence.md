@@ -290,7 +290,13 @@ experimental result.
 
 ## Two output comparisons
 
-Every raw candidate output is preserved. Score it in two separate ways.
+Every raw candidate output is preserved. Apply the shared output-validity,
+canonicalization, repeatability, and blinding contract in [README.md](README.md)
+before revealing fixture identities or doing either semantic comparison below.
+In particular, duplicate member sets make an output invalid; they are never
+silently removed or treated as a semantic or shape change.
+
+Only valid, repeatable outputs are scored in the two separate ways below.
 
 ### 1. Subject relationships
 
@@ -301,21 +307,14 @@ Record:
    together in any returned segment.
 
 This detects lost recovery of an approved subject and new cross-subject
-grouping. It deliberately ignores duplicate segments, singleton changes, and
+grouping. For a valid output, it deliberately ignores singleton changes and
 extra segments contained entirely inside one approved subject.
 
 ### 2. Complete output
 
-Canonicalize without discarding information:
-
-1. sort the member IDs inside each returned segment;
-2. sort the complete list of segments while retaining overlaps, singleton
-   segments, and duplicate segments;
-3. derive and sort IDs that occur in no returned segment.
-
-Segment IDs and output order are ignored because they carry no meaning. An
-empty segment, an unknown ID, or a repeated member inside one segment makes the
-output invalid.
+Use the shared canonical JSON as the complete output. It retains every valid
+overlap and singleton. Also derive and sort the input IDs that occur in no
+returned segment for the diagnostic record.
 
 Relative to `BASELINE`, classify every valid arm as:
 
@@ -329,6 +328,7 @@ whether shared spelling replaced a semantic relationship.
 
 ## Baseline qualification
 
+After its two runs pass the shared validity and repeatability checks,
 `BASELINE` qualifies only when it contains these six exact segments:
 
 ```text
@@ -344,52 +344,67 @@ Every other returned segment containing two or more positions must be a subset
 of one approved subject. Extra same-subject subsegments and singleton segments
 are allowed.
 
-If `BASELINE` does not qualify, stop with **baseline recovery failure**. A
-system that did not recover the intended subjects cannot show whether the noun
-substitutions preserved them.
+An invalid `BASELINE` raw output is an **output-contract failure**. Two valid
+baseline outputs that disagree are a **repeatability failure**. If the valid,
+repeatable `BASELINE` does not qualify, record a **prerequisite failure**. None
+of these cases receives a trap verdict: a system that did not produce one
+well-formed, repeatable recovery of the intended subjects cannot show whether
+the noun substitutions preserved them.
 
 ## Trap verdict
 
-For one trap:
+For one trap, apply these checks in order:
 
-1. Its `PLACEBO`, first-subject-only, and second-subject-only runs must be valid
-   and preserve the baseline subject relationships. Otherwise the trap is
-   **inconclusive** because ordinary substitution or one isolated use of the
-   ambiguous noun already changed the semantic result.
-2. If those three controls hold and `BOTH` is valid with the same subject
-   relationships, record **pass**.
-3. If those three controls hold and `BOTH` is invalid or changes the subject
-   relationships, record **both-side-only lexical failure**.
+1. Its `PLACEBO`, first-subject-only, and second-subject-only collections must
+   each produce a valid, repeatable output. An invalid control output is an
+   **output-contract failure**; disagreeing valid repetitions are a
+   **repeatability failure**. Either case withholds the trap verdict.
+2. Each of those three controls must preserve the baseline subject
+   relationships. A valid, repeatable control that does not is a
+   **prerequisite failure**, not evidence about simultaneous shared spelling,
+   and withholds the trap verdict.
+3. Once all three controls qualify, an invalid `BOTH` output is a
+   **both-side-only output-contract failure**. It receives no lexical verdict
+   and must not be reported as a lexical failure. Disagreeing valid `BOTH`
+   repetitions are likewise a repeatability failure with no lexical verdict.
+4. If the controls qualify and `BOTH` is valid and repeatable, record **pass**
+   when its subject relationships equal the baseline relationships. Record
+   **both-side-only lexical failure** only when those subject relationships
+   differ.
 
 Overall support requires all three traps to pass; do not average them. Report
-all shape-only changes and the full segments added or removed.
+all shape-only changes and the full segments added or removed. A shape-only
+change is diagnostic and never changes a trap verdict.
 
-A both-side-only failure is strong evidence that the simultaneous shared noun
-matters in this fixture. It is not universal mechanistic proof: two
-individually subthreshold vector shifts could combine across a candidate's
+A both-side-only lexical failure is strong evidence that the simultaneous
+shared noun matters in this fixture. It is not universal mechanistic proof:
+two individually subthreshold vector shifts could combine across a candidate's
 decision boundary.
 
 ## Protocol
 
 1. Human-approve and freeze the six propositions, all 72 masks, the 13 arm
    assignments, both output comparisons, and the verdict rules.
-2. Freeze the shared SSE contract from [README.md](README.md), the complete
-   fine-segmentation candidate, preprocessing, fine-output selector,
-   configuration, seed, and one shuffled opaque-ID order. Freeze these before
-   rerunning the label-informed lexical gate or inspecting any vectors or
-   candidate output.
+2. Freeze the complete candidate identity and document its construction-level
+   permutation invariance. Freeze these before rerunning the label-informed
+   lexical gate or inspecting any vectors or candidate output.
 3. Run and preserve the complete lexical-baseline gate. If it fails, discard
    the fixture without tuning the frozen candidate against the failure.
-4. Encode each distinct `B`, `P`, and `C` mask once. Preserve and reuse the
-   exact vectors in every applicable collection.
-5. Run every collection twice in separate clean processes with the identical
-   frozen vectors, opaque-ID order, selector, configuration, and seed.
-6. Preserve all 26 raw outputs while identities remain hidden.
-7. Canonical outputs from the two identical runs of each collection must
-   match. Any mismatch stops the whole experiment as **nondeterministic**; it
-   is not a lexical result.
-8. Restore fixture identities, qualify `BASELINE`, and apply the three trap
-   verdicts.
+4. Use `03-lexical-coincidence` as the shared blinding namespace. Derive and
+   commit the opaque-ID mapping and order, then freeze the SSE boundary and all
+   13 exact collection inputs.
+5. Encode each distinct `B`, `P`, and `C` mask once. Record dimensions and
+   hashes, then preserve and reuse the exact vectors in every applicable
+   collection.
+6. Run each input twice in fresh candidate processes with identical
+   vectors, opaque IDs, order, selector, configuration, and seed.
+7. Preserve all 26 raw outputs while identities remain hidden. Validate each
+   raw output before canonicalization, identity reveal, or semantic scoring.
+8. Compare the shared canonical bytes for each valid identical-input pair. A
+   mismatch is a repeatability failure, not a lexical result.
+9. After the required outputs are immutable, reveal and verify the fixture
+   mapping, qualify `BASELINE`, qualify each trap's controls, and only then
+   score a valid, repeatable `BOTH` output.
 
 The fixture is controlled development evidence because its labels are visible
 while candidate algorithms may still be developed. If its result changes the
@@ -404,11 +419,13 @@ Preserve:
 - raw SSE vectors and hashes;
 - the lexical representations, similarity matrices, threshold sweep, and
   outputs;
-- the candidate implementation, preprocessing, configuration, seed, opaque-ID
-   order, and fine-output selector;
-- all 26 raw outputs and their complete canonical forms;
-- both deterministic-replay comparisons;
+- the candidate implementation, preprocessing, configuration, seed, private
+  opaque-ID mapping, order, and fine-output selector;
+- all 26 raw outputs and validity results, plus canonical JSON bytes and hashes
+  for every valid raw output;
+- all 13 repeatability comparisons;
 - baseline qualification and all three trap verdicts;
+- every output-contract, repeatability, and prerequisite failure;
 - every subject-relationship and complete-output difference;
 - raw-vector cosine matrices and matched `B`/`P`/`C` cosine changes.
 
@@ -419,7 +436,10 @@ traps, sharing one ambiguous noun across two unrelated meanings did not change
 the recovered subject relationships after the paired placebo and both
 one-sided ambiguous-noun conditions preserved them.
 
-An inconclusive result means those controls did not hold. A both-side-only
-lexical failure means only the simultaneous shared-noun condition changed the
-semantic result. A baseline recovery failure means the fixture never reached
-the state needed to test lexical robustness.
+A prerequisite failure means a valid, repeatable baseline or control did not
+reach the state needed to test lexical robustness. An output-contract or
+repeatability failure supplies no semantic verdict. In particular, an invalid
+`BOTH` output after its controls qualify is recorded as a both-side-only
+output-contract failure, not as lexical evidence. A both-side-only lexical
+failure means the controls qualified and the valid, repeatable simultaneous
+shared-noun output alone changed the subject relationships.

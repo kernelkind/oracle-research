@@ -11,7 +11,9 @@ encoding**.
 
 The fixture contains 36 vectors: six clearly different fine subjects with six
 independently worded instances each. Density is balanced. Each complete note is
-also its complete mask, so unmasked context cannot affect this experiment.
+also its complete mask, so unmasked context cannot affect this experiment. The
+wordings vary without adding a distinct method to only some instances of one
+declared atomic subject.
 
 The candidate receives only opaque IDs and vectors. It does not receive the
 subject names or expected groups.
@@ -22,21 +24,21 @@ subject names or expected groups.
 |---|---|
 | `ORIGAMI-1` | ⟦I folded a paper crane using origami.⟧ |
 | `ORIGAMI-2` | ⟦A square sheet of paper became an origami crane through folding.⟧ |
-| `ORIGAMI-3` | ⟦I made the traditional origami crane from one piece of paper.⟧ |
-| `ORIGAMI-4` | ⟦Careful creases turned my paper square into an origami crane.⟧ |
-| `ORIGAMI-5` | ⟦I constructed an origami crane with a sequence of paper folds.⟧ |
+| `ORIGAMI-3` | ⟦I made an origami crane by folding paper.⟧ |
+| `ORIGAMI-4` | ⟦I folded paper into the shape of an origami crane.⟧ |
+| `ORIGAMI-5` | ⟦I used paper folding to construct an origami crane.⟧ |
 | `ORIGAMI-6` | ⟦My origami project was folding a sheet of paper into a crane.⟧ |
 
 ### `BIKE-TUBE`: repairing a punctured bicycle inner tube
 
 | ID | Complete note and exact mask |
 |---|---|
-| `BIKE-TUBE-1` | ⟦I patched a punctured bicycle inner tube.⟧ |
-| `BIKE-TUBE-2` | ⟦I sealed a hole in my bike's inner tube with a repair patch.⟧ |
-| `BIKE-TUBE-3` | ⟦I fixed a flat bicycle tube by applying a vulcanizing patch.⟧ |
+| `BIKE-TUBE-1` | ⟦I repaired a punctured bicycle inner tube.⟧ |
+| `BIKE-TUBE-2` | ⟦I fixed a puncture in my bike's inner tube.⟧ |
+| `BIKE-TUBE-3` | ⟦I repaired my bicycle's punctured inner tube.⟧ |
 | `BIKE-TUBE-4` | ⟦I mended the puncture in the tube inside my bicycle tire.⟧ |
 | `BIKE-TUBE-5` | ⟦I repaired a puncture in the inner tube from my bike.⟧ |
-| `BIKE-TUBE-6` | ⟦A patch closed the leak caused by a puncture in my bicycle tube.⟧ |
+| `BIKE-TUBE-6` | ⟦I fixed a bicycle inner tube that had been punctured.⟧ |
 
 ### `ECLIPSE`: observing a lunar eclipse
 
@@ -65,27 +67,32 @@ subject names or expected groups.
 | ID | Complete note and exact mask |
 |---|---|
 | `PIANO-1` | ⟦I tuned an acoustic piano.⟧ |
-| `PIANO-2` | ⟦I adjusted an acoustic piano's string tension to correct its pitch.⟧ |
-| `PIANO-3` | ⟦I brought the strings of the piano back into tune.⟧ |
-| `PIANO-4` | ⟦I corrected the piano's notes by tuning its strings.⟧ |
-| `PIANO-5` | ⟦I set each string in the acoustic piano to the proper pitch.⟧ |
-| `PIANO-6` | ⟦I used the tuning pins to bring every piano note to pitch.⟧ |
+| `PIANO-2` | ⟦I corrected the pitch of an acoustic piano.⟧ |
+| `PIANO-3` | ⟦I brought an acoustic piano back into tune.⟧ |
+| `PIANO-4` | ⟦I tuned an acoustic piano to correct its notes.⟧ |
+| `PIANO-5` | ⟦I restored the proper pitch of an acoustic piano.⟧ |
+| `PIANO-6` | ⟦I brought an acoustic piano to the correct tuning.⟧ |
 
 ### `TOMATO`: transplanting tomato seedlings into garden soil
 
 | ID | Complete note and exact mask |
 |---|---|
 | `TOMATO-1` | ⟦I transplanted tomato seedlings into a garden bed.⟧ |
-| `TOMATO-2` | ⟦I moved young tomato plants from seed trays into garden soil.⟧ |
+| `TOMATO-2` | ⟦I moved young tomato plants into garden soil.⟧ |
 | `TOMATO-3` | ⟦I replanted tomato starts in the outdoor vegetable bed.⟧ |
-| `TOMATO-4` | ⟦I transferred tomato seedlings from nursery cells into prepared ground.⟧ |
-| `TOMATO-5` | ⟦I moved young tomato starts from pots into their final garden rows.⟧ |
-| `TOMATO-6` | ⟦I planted nursery-grown tomato seedlings out in the garden.⟧ |
+| `TOMATO-4` | ⟦I transferred tomato seedlings into garden soil.⟧ |
+| `TOMATO-5` | ⟦I moved young tomato starts into their garden rows.⟧ |
+| `TOMATO-6` | ⟦I planted tomato seedlings out in the garden.⟧ |
 
 ## Pass rule
 
-The candidate's predeclared fine-segment output must contain these six exact
-member sets:
+Shared output validity and repeatability are prerequisites. An
+output-contract or repeatability failure produces no Experiment 1 recovery
+verdict. There is no semantic baseline prerequisite.
+
+After both exact-input runs agree and the identities are revealed, the
+candidate's predeclared fine-segment output must contain these six exact member
+sets:
 
 ```text
 {ORIGAMI-1 ... ORIGAMI-6}
@@ -97,25 +104,26 @@ member sets:
 ```
 
 Every returned fine segment containing at least two fixture vectors must be a
-subset of one of those six sets. This still permits additional overlapping or
+subset of one of those six sets. This permits additional overlapping or
 partial same-subject segments and singleton segments. It rejects one giant
 segment, mixed-subject segments, and an algorithm that emits every possible
 subset. Recovering all six exact sets necessarily assigns every fixture vector.
+This is an objective set-membership verdict; no post-run semantic review may
+reinterpret an alternative grouping as a pass.
 
 ## Run
 
-1. Approve and freeze every note, mask, and expected group.
-2. Encode all 36 inputs once under the shared contract in README.md.
-3. Freeze the candidate, configuration, seed, fine-output selector, and one
-   shuffled opaque-ID order.
-4. Run the candidate and preserve its complete output before restoring the
-   fixture identities.
-5. Apply the pass rule.
+Use `01-repeated-subject-recovery` as the shared blinding namespace. Freeze the
+candidate identity tuple before encoding any of the 36 notes or inspecting a
+fixture vector or cosine diagnostic. This experiment has one exact candidate
+input: all 36 opaque ID/vector pairs in the committed HMAC order. Run that
+exact input twice from fresh state and complete the shared lifecycle in
+[README.md](README.md#shared-execution-contract).
 
-Record the frozen inputs and hashes, raw vectors, input order, candidate
-configuration, complete returned memberships, unassigned IDs, and the verdict
-for each expected group. Preserve the raw-vector cosine matrix for diagnosis;
-it does not determine the verdict.
+In addition to the shared artifacts, preserve both complete outputs, every
+returned membership and unassigned ID, and the pass/fail result for each
+expected group and for the experiment. Preserve the raw-vector cosine matrix
+for diagnosis; it does not determine the verdict.
 
 ## Scope
 
