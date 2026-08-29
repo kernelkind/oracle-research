@@ -25,6 +25,7 @@
 
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 use crate::fine_region_partition::CosineMatrix;
@@ -37,7 +38,8 @@ pub enum HdbscanError {
     Invariant(String),
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
 pub enum ClusterSelectionMethod {
     /// Select the non-overlapping set of clusters with maximum total
     /// stability (the paper's excess-of-mass objective).
@@ -48,7 +50,8 @@ pub enum ClusterSelectionMethod {
     Leaf,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
 pub struct HdbscanConfig {
     /// Neighborhood size `mpts`, including the point itself. This must be
     /// between one and the number of vectors.
@@ -58,7 +61,8 @@ pub struct HdbscanConfig {
     pub selection_method: ClusterSelectionMethod,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
 pub struct MinimumSpanningTreeEdge {
     pub left: usize,
     pub right: usize,
@@ -72,7 +76,8 @@ pub struct MinimumSpanningTreeEdge {
 /// from `vector_count`, so the final row is the root. Equal-distance edges
 /// necessarily receive a deterministic binary order here; condensation
 /// coalesces each equal-distance tier before applying HDBSCAN* semantics.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
 pub struct SingleLinkageNode {
     pub id: usize,
     pub left: usize,
@@ -86,7 +91,8 @@ pub struct SingleLinkageNode {
 /// IDs below `vector_count` are input vectors and always have `child_size =
 /// 1`; IDs at or above `vector_count` are condensed clusters. `lambda` is
 /// reciprocal mutual-reachability distance at which `child` leaves `parent`.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
 pub struct CondensedTreeEdge {
     pub parent: usize,
     pub child: usize,
@@ -94,7 +100,8 @@ pub struct CondensedTreeEdge {
     pub child_size: usize,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
 pub struct HdbscanCluster {
     /// Condensed-tree cluster ID, not a user-facing ordinal.
     pub id: usize,
@@ -103,7 +110,8 @@ pub struct HdbscanCluster {
     pub stability: f64,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
 pub struct HdbscanResult {
     pub config: HdbscanConfig,
     pub core_distances: Vec<f64>,

@@ -21,6 +21,7 @@ pub mod event;
 pub mod final_evaluation;
 pub mod final_evaluation_report;
 pub mod final_evaluation_runner;
+pub mod fine_region_candidate_artifact;
 pub mod fine_region_hdbscan;
 pub mod fine_region_hierarchy;
 pub mod fine_region_hierarchy_pilot;
