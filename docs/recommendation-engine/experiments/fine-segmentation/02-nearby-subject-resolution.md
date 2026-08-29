@@ -34,6 +34,10 @@ vectors add nearby subjects, and the final 32 add precise subjects that combine
 attributes already represented in those neighborhoods. Together, these inputs
 provide varied nearby-subject relationships for one segmentation run.
 
+The four formulations of each subject are independently worded. Sibling
+subjects do not reuse aligned sentence templates. Repeated words remain only
+where they directly express the subject being tested.
+
 The diagnostic annotations are balanced by construction:
 
 | Path depth | Annotated groups | Vectors per group |
@@ -67,91 +71,91 @@ shares one subject.
 
 | ID | Complete note and exact mask |
 |---|---|
-| `LIGHT-ROAST-1` | ⟦I roasted green coffee beans to a light roast.⟧ |
-| `LIGHT-ROAST-2` | ⟦Heating transformed the raw coffee beans into a light roast.⟧ |
-| `LIGHT-ROAST-3` | ⟦I stopped roasting the coffee beans at the light-roast stage.⟧ |
-| `LIGHT-ROAST-4` | ⟦The coffee beans were roasted until they reached a light roast.⟧ |
+| `LIGHT-ROAST-1` | ⟦I pulled the coffee beans from the roaster at the light-roast stage.⟧ |
+| `LIGHT-ROAST-2` | ⟦A batch of green coffee beans came out lightly roasted.⟧ |
+| `LIGHT-ROAST-3` | ⟦I kept this coffee-bean roast light.⟧ |
+| `LIGHT-ROAST-4` | ⟦These green coffee beans were prepared as a light roast.⟧ |
 
 ### Coffee activities > Coffee preparation > Roasting coffee > Dark-roast preparation · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `DARK-ROAST-1` | ⟦I roasted green coffee beans to a dark roast.⟧ |
-| `DARK-ROAST-2` | ⟦Heating transformed the raw coffee beans into a dark roast.⟧ |
-| `DARK-ROAST-3` | ⟦I continued roasting the coffee beans to the dark-roast stage.⟧ |
-| `DARK-ROAST-4` | ⟦The coffee beans were roasted until they reached a dark roast.⟧ |
+| `DARK-ROAST-1` | ⟦The coffee beans stayed in the roaster until they reached a dark roast.⟧ |
+| `DARK-ROAST-2` | ⟦I turned a batch of green coffee beans into dark-roast coffee.⟧ |
+| `DARK-ROAST-3` | ⟦This batch of coffee was roasted dark.⟧ |
+| `DARK-ROAST-4` | ⟦The finished coffee beans had a dark roast.⟧ |
 
 ### Coffee activities > Coffee preparation > Brewing coffee > Pour-over brewing · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `POUR-OVER-1` | ⟦I brewed coffee with a pour-over dripper.⟧ |
-| `POUR-OVER-2` | ⟦I prepared a cup of pour-over coffee.⟧ |
-| `POUR-OVER-3` | ⟦My coffee was brewed using the pour-over method.⟧ |
-| `POUR-OVER-4` | ⟦I used pour-over brewing to make coffee.⟧ |
+| `POUR-OVER-1` | ⟦Hot water passed through the coffee grounds in my pour-over dripper.⟧ |
+| `POUR-OVER-2` | ⟦A pour-over cone was how I brewed this cup of coffee.⟧ |
+| `POUR-OVER-3` | ⟦I made coffee by hand-pouring water through a filter.⟧ |
+| `POUR-OVER-4` | ⟦The coffee in my cup came from a pour-over brew.⟧ |
 
 ### Coffee activities > Coffee preparation > Brewing coffee > Espresso brewing · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `ESPRESSO-1` | ⟦I brewed a shot of espresso.⟧ |
-| `ESPRESSO-2` | ⟦I used an espresso machine to prepare espresso.⟧ |
-| `ESPRESSO-3` | ⟦My coffee preparation produced a shot of espresso.⟧ |
-| `ESPRESSO-4` | ⟦I made espresso with an espresso brewer.⟧ |
+| `ESPRESSO-1` | ⟦I pulled an espresso shot from the machine.⟧ |
+| `ESPRESSO-2` | ⟦The coffee I prepared was espresso.⟧ |
+| `ESPRESSO-3` | ⟦An espresso brewer produced my shot.⟧ |
+| `ESPRESSO-4` | ⟦A small shot of espresso came out of the pressurized brewer.⟧ |
 
 ### Coffee activities > Drinking coffee > Drinking hot coffee > Drinking hot black coffee · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `BLACK-HOT-1` | ⟦I drank a cup of hot black coffee.⟧ |
-| `BLACK-HOT-2` | ⟦I sipped hot coffee without milk or cream.⟧ |
-| `BLACK-HOT-3` | ⟦I drank hot coffee served black.⟧ |
-| `BLACK-HOT-4` | ⟦I drank black coffee while it was hot.⟧ |
+| `BLACK-HOT-1` | ⟦Steam rose from the black coffee as I drank it.⟧ |
+| `BLACK-HOT-2` | ⟦I finished a hot cup of coffee with no milk or cream.⟧ |
+| `BLACK-HOT-3` | ⟦The coffee I was sipping was served hot and black.⟧ |
+| `BLACK-HOT-4` | ⟦The black coffee was still hot when I drank it.⟧ |
 
 ### Coffee activities > Drinking coffee > Drinking hot coffee > Drinking hot coffee with milk · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `MILK-HOT-1` | ⟦I drank hot coffee with milk.⟧ |
-| `MILK-HOT-2` | ⟦I drank a hot coffee that contained milk.⟧ |
-| `MILK-HOT-3` | ⟦I sipped a cup of hot coffee with milk.⟧ |
-| `MILK-HOT-4` | ⟦I sipped a hot, milky coffee.⟧ |
+| `MILK-HOT-1` | ⟦I added milk to the hot coffee before drinking it.⟧ |
+| `MILK-HOT-2` | ⟦A steaming cup of milky coffee was what I sipped.⟧ |
+| `MILK-HOT-3` | ⟦The coffee I finished was served hot with milk.⟧ |
+| `MILK-HOT-4` | ⟦I drank a mixture of hot coffee and milk.⟧ |
 
 ### Coffee activities > Drinking coffee > Drinking cold coffee > Drinking iced coffee · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `ICED-COFFEE-1` | ⟦I drank coffee served over ice.⟧ |
-| `ICED-COFFEE-2` | ⟦I sipped an iced coffee.⟧ |
-| `ICED-COFFEE-3` | ⟦I drank cold coffee with ice cubes in it.⟧ |
-| `ICED-COFFEE-4` | ⟦I drank a chilled cup of iced coffee.⟧ |
+| `ICED-COFFEE-1` | ⟦The coffee I drank was chilled by ice cubes.⟧ |
+| `ICED-COFFEE-2` | ⟦I poured coffee over ice and drank it cold.⟧ |
+| `ICED-COFFEE-3` | ⟦My cup held iced coffee when I took a sip.⟧ |
+| `ICED-COFFEE-4` | ⟦I drank a cold coffee served on ice.⟧ |
 
 ### Coffee activities > Drinking coffee > Drinking cold coffee > Drinking cold-brew coffee · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `COLD-BREW-1` | ⟦I drank a cup of cold-brew coffee.⟧ |
-| `COLD-BREW-2` | ⟦I drank cold-brew coffee as a cold drink.⟧ |
-| `COLD-BREW-3` | ⟦I sipped a cold-brew coffee.⟧ |
-| `COLD-BREW-4` | ⟦I finished drinking a cold-brew coffee.⟧ |
+| `COLD-BREW-1` | ⟦Cold-brew coffee was what I drank.⟧ |
+| `COLD-BREW-2` | ⟦The coffee I sipped had been made by cold brewing.⟧ |
+| `COLD-BREW-3` | ⟦I finished a cup of cold brew.⟧ |
+| `COLD-BREW-4` | ⟦I was drinking coffee prepared as cold brew.⟧ |
 
 ### Working with photos > Making and editing photos > Taking photos > Taking portraits · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `PORTRAIT-1` | ⟦I took a portrait photograph of a person.⟧ |
-| `PORTRAIT-2` | ⟦My camera captured a person's portrait.⟧ |
-| `PORTRAIT-3` | ⟦I photographed someone for a portrait.⟧ |
-| `PORTRAIT-4` | ⟦The photo I took was a portrait of a person.⟧ |
+| `PORTRAIT-1` | ⟦A person posed while I made their portrait photograph.⟧ |
+| `PORTRAIT-2` | ⟦Someone was the subject of the portrait my camera captured.⟧ |
+| `PORTRAIT-3` | ⟦The image I made was a person’s portrait.⟧ |
+| `PORTRAIT-4` | ⟦The photograph I took presented one person as a portrait.⟧ |
 
 ### Working with photos > Making and editing photos > Taking photos > Taking landscape photos · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `LANDSCAPE-1` | ⟦I took a landscape photograph of the scenery.⟧ |
-| `LANDSCAPE-2` | ⟦My camera captured a wide outdoor landscape.⟧ |
-| `LANDSCAPE-3` | ⟦I photographed the natural scenery as a landscape.⟧ |
-| `LANDSCAPE-4` | ⟦The photo I took showed a broad landscape.⟧ |
+| `LANDSCAPE-1` | ⟦I photographed the scenery as a landscape.⟧ |
+| `LANDSCAPE-2` | ⟦A wide outdoor view became my landscape photo.⟧ |
+| `LANDSCAPE-3` | ⟦My camera captured the natural surroundings in a landscape image.⟧ |
+| `LANDSCAPE-4` | ⟦The shot I took showed a broad landscape.⟧ |
 
 ### Working with photos > Making and editing photos > Editing photos > Cropping photos · 4 vectors
 
@@ -168,188 +172,188 @@ shares one subject.
 |---|---|
 | `COLOR-ADJUST-1` | ⟦I adjusted the colors in a photo.⟧ |
 | `COLOR-ADJUST-2` | ⟦I edited a photograph's color balance.⟧ |
-| `COLOR-ADJUST-3` | ⟦Changing the color settings altered the picture's appearance.⟧ |
+| `COLOR-ADJUST-3` | ⟦Adjusting the photograph's color settings changed how the image looked.⟧ |
 | `COLOR-ADJUST-4` | ⟦I corrected the colors while editing an image.⟧ |
 
 ### Working with photos > Storing and sharing photos > Backing up photos > Local photo backups · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `LOCAL-BACKUP-1` | ⟦I created a recovery backup of my photo library on a local external drive.⟧ |
-| `LOCAL-BACKUP-2` | ⟦A drive connected to my computer holds a backup copy of my photos.⟧ |
-| `LOCAL-BACKUP-3` | ⟦I copied my photo library to a locally attached disk for recovery.⟧ |
-| `LOCAL-BACKUP-4` | ⟦A local USB storage device stores my photo backup.⟧ |
+| `LOCAL-BACKUP-1` | ⟦For recovery, I keep a copy of my photo library on an external drive connected to my computer.⟧ |
+| `LOCAL-BACKUP-2` | ⟦My pictures are backed up to a USB disk beside my computer.⟧ |
+| `LOCAL-BACKUP-3` | ⟦I copied every photo onto locally attached storage in case the originals are lost.⟧ |
+| `LOCAL-BACKUP-4` | ⟦An external hard drive stores the photo backup locally.⟧ |
 
 ### Working with photos > Storing and sharing photos > Backing up photos > Cloud photo backups · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `CLOUD-BACKUP-1` | ⟦I created a recovery backup of my photo library in remote cloud storage.⟧ |
-| `CLOUD-BACKUP-2` | ⟦A cloud storage service holds a backup copy of my photos.⟧ |
-| `CLOUD-BACKUP-3` | ⟦I copied my photo library to remote online storage for recovery.⟧ |
-| `CLOUD-BACKUP-4` | ⟦An off-site cloud service stores my photo backup.⟧ |
+| `CLOUD-BACKUP-1` | ⟦My photo library has a recovery copy in online cloud storage.⟧ |
+| `CLOUD-BACKUP-2` | ⟦A remote storage service backs up my pictures.⟧ |
+| `CLOUD-BACKUP-3` | ⟦I uploaded all my photos to the cloud so they could be restored if needed.⟧ |
+| `CLOUD-BACKUP-4` | ⟦The backup of my photograph collection lives on off-site cloud servers.⟧ |
 
 ### Working with photos > Storing and sharing photos > Sharing photos > Sharing photos by email · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `EMAIL-SHARE-1` | ⟦I shared a photo by attaching it to an email.⟧ |
-| `EMAIL-SHARE-2` | ⟦I emailed a photograph to someone.⟧ |
-| `EMAIL-SHARE-3` | ⟦An email attachment carried the photo I shared.⟧ |
-| `EMAIL-SHARE-4` | ⟦I sent someone a picture through email.⟧ |
+| `EMAIL-SHARE-1` | ⟦I attached the photograph to a message and sent it by email.⟧ |
+| `EMAIL-SHARE-2` | ⟦I sent the picture as an email attachment.⟧ |
+| `EMAIL-SHARE-3` | ⟦Email was how I delivered a photo to another person.⟧ |
+| `EMAIL-SHARE-4` | ⟦Someone received the image file in an email from me.⟧ |
 
 ### Working with photos > Storing and sharing photos > Sharing photos > Sharing photos by link · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `LINK-SHARE-1` | ⟦I shared a photo by sending its online link.⟧ |
-| `LINK-SHARE-2` | ⟦I gave someone a web link to a photograph.⟧ |
-| `LINK-SHARE-3` | ⟦A shared link opened the online photo.⟧ |
-| `LINK-SHARE-4` | ⟦I sent someone a link for viewing my picture.⟧ |
+| `LINK-SHARE-1` | ⟦I gave someone the web address where my photo could be viewed.⟧ |
+| `LINK-SHARE-2` | ⟦A link I shared opened the photograph online.⟧ |
+| `LINK-SHARE-3` | ⟦The picture was available through a viewing URL I sent to another person.⟧ |
+| `LINK-SHARE-4` | ⟦I sent someone an online link to my image.⟧ |
 
 ### Eating produce > Eating fruit > Eating apples > Eating red apples · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `RED-APPLE-1` | ⟦I ate a red apple.⟧ |
-| `RED-APPLE-2` | ⟦I was eating an apple with red skin.⟧ |
-| `RED-APPLE-3` | ⟦My snack was a red apple.⟧ |
-| `RED-APPLE-4` | ⟦A red apple was what I ate.⟧ |
+| `RED-APPLE-1` | ⟦I ate an apple with red skin.⟧ |
+| `RED-APPLE-2` | ⟦I ate a red apple down to its core.⟧ |
+| `RED-APPLE-3` | ⟦I finished eating a red-skinned apple.⟧ |
+| `RED-APPLE-4` | ⟦The apple I ate was red.⟧ |
 
 ### Eating produce > Eating fruit > Eating apples > Eating green apples · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `GREEN-APPLE-1` | ⟦I ate a green apple.⟧ |
-| `GREEN-APPLE-2` | ⟦I was eating an apple with green skin.⟧ |
-| `GREEN-APPLE-3` | ⟦My snack was a green apple.⟧ |
-| `GREEN-APPLE-4` | ⟦A green apple was what I ate.⟧ |
+| `GREEN-APPLE-1` | ⟦A green apple was what I ate.⟧ |
+| `GREEN-APPLE-2` | ⟦Green skin covered the apple I was eating.⟧ |
+| `GREEN-APPLE-3` | ⟦I ate an apple that was green.⟧ |
+| `GREEN-APPLE-4` | ⟦The fruit I finished eating was a green apple.⟧ |
 
 ### Eating produce > Eating fruit > Eating citrus fruit > Eating oranges · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
 | `ORANGE-1` | ⟦I ate an orange.⟧ |
-| `ORANGE-2` | ⟦I was eating a fresh orange fruit.⟧ |
-| `ORANGE-3` | ⟦My snack was an orange.⟧ |
-| `ORANGE-4` | ⟦An orange was what I ate.⟧ |
+| `ORANGE-2` | ⟦The fruit I was eating was an orange.⟧ |
+| `ORANGE-3` | ⟦An orange was what I finished eating.⟧ |
+| `ORANGE-4` | ⟦I consumed an orange.⟧ |
 
 ### Eating produce > Eating fruit > Eating citrus fruit > Eating grapefruit · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `GRAPEFRUIT-1` | ⟦I ate a grapefruit.⟧ |
-| `GRAPEFRUIT-2` | ⟦I was eating fresh grapefruit.⟧ |
-| `GRAPEFRUIT-3` | ⟦My snack was a grapefruit.⟧ |
-| `GRAPEFRUIT-4` | ⟦A grapefruit was what I ate.⟧ |
+| `GRAPEFRUIT-1` | ⟦Some grapefruit was what I ate.⟧ |
+| `GRAPEFRUIT-2` | ⟦I finished eating a grapefruit.⟧ |
+| `GRAPEFRUIT-3` | ⟦I ate grapefruit as my citrus fruit.⟧ |
+| `GRAPEFRUIT-4` | ⟦I ate my way through some grapefruit.⟧ |
 
 ### Eating produce > Eating vegetables > Eating carrots > Eating raw carrots · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `RAW-CARROT-1` | ⟦I ate a raw carrot.⟧ |
+| `RAW-CARROT-1` | ⟦The carrot I ate was raw.⟧ |
 | `RAW-CARROT-2` | ⟦I snacked on an uncooked carrot.⟧ |
-| `RAW-CARROT-3` | ⟦I crunched on a fresh raw carrot.⟧ |
+| `RAW-CARROT-3` | ⟦A raw carrot crunched between my teeth as I ate it.⟧ |
 | `RAW-CARROT-4` | ⟦I ate a carrot without cooking it.⟧ |
 
 ### Eating produce > Eating vegetables > Eating carrots > Eating cooked carrots · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `COOKED-CARROT-1` | ⟦I ate a cooked carrot.⟧ |
-| `COOKED-CARROT-2` | ⟦I ate a carrot after cooking it.⟧ |
-| `COOKED-CARROT-3` | ⟦I had a soft cooked carrot with my meal.⟧ |
-| `COOKED-CARROT-4` | ⟦I ate a carrot that had been cooked.⟧ |
+| `COOKED-CARROT-1` | ⟦I ate a carrot that had been cooked.⟧ |
+| `COOKED-CARROT-2` | ⟦A cooked carrot was part of what I ate.⟧ |
+| `COOKED-CARROT-3` | ⟦The carrot on my plate had been cooked before I ate it.⟧ |
+| `COOKED-CARROT-4` | ⟦I finished eating a cooked carrot.⟧ |
 
 ### Eating produce > Eating vegetables > Eating leafy greens > Eating lettuce · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
 | `LETTUCE-1` | ⟦I ate some lettuce.⟧ |
-| `LETTUCE-2` | ⟦I was eating fresh lettuce leaves.⟧ |
-| `LETTUCE-3` | ⟦My food included crisp lettuce.⟧ |
-| `LETTUCE-4` | ⟦Lettuce leaves were what I ate.⟧ |
+| `LETTUCE-2` | ⟦Lettuce leaves were part of what I ate.⟧ |
+| `LETTUCE-3` | ⟦I finished the lettuce I was eating.⟧ |
+| `LETTUCE-4` | ⟦The leafy food I ate was lettuce.⟧ |
 
 ### Eating produce > Eating vegetables > Eating leafy greens > Eating spinach · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `SPINACH-1` | ⟦I ate some spinach.⟧ |
-| `SPINACH-2` | ⟦I was eating fresh spinach leaves.⟧ |
-| `SPINACH-3` | ⟦My food included leafy spinach.⟧ |
-| `SPINACH-4` | ⟦Spinach leaves were what I ate.⟧ |
+| `SPINACH-1` | ⟦A serving of spinach was what I ate.⟧ |
+| `SPINACH-2` | ⟦I consumed a portion of spinach.⟧ |
+| `SPINACH-3` | ⟦I ate the spinach in front of me.⟧ |
+| `SPINACH-4` | ⟦The greens I finished eating were spinach.⟧ |
 
 ### Consuming media > Reading > Reading books > Reading fiction books · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `FICTION-BOOK-1` | ⟦I read a fiction book.⟧ |
-| `FICTION-BOOK-2` | ⟦I spent time reading a novel.⟧ |
-| `FICTION-BOOK-3` | ⟦My reading was a fictional book.⟧ |
-| `FICTION-BOOK-4` | ⟦I read a book that told an invented story.⟧ |
+| `FICTION-BOOK-1` | ⟦I read a novel.⟧ |
+| `FICTION-BOOK-2` | ⟦The book I finished told a fictional story.⟧ |
+| `FICTION-BOOK-3` | ⟦A fictional book occupied my reading time.⟧ |
+| `FICTION-BOOK-4` | ⟦My latest reading was an invented narrative in book form.⟧ |
 
 ### Consuming media > Reading > Reading books > Reading nonfiction books · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
 | `NONFICTION-BOOK-1` | ⟦I read a nonfiction book.⟧ |
-| `NONFICTION-BOOK-2` | ⟦I spent time reading a factual book.⟧ |
-| `NONFICTION-BOOK-3` | ⟦My reading was a work of nonfiction.⟧ |
-| `NONFICTION-BOOK-4` | ⟦I read a book about real events and facts.⟧ |
+| `NONFICTION-BOOK-2` | ⟦Factual material filled the book I was reading.⟧ |
+| `NONFICTION-BOOK-3` | ⟦A book of nonfiction was what I finished reading.⟧ |
+| `NONFICTION-BOOK-4` | ⟦My reading time went to a book of nonfiction.⟧ |
 
 ### Consuming media > Reading > Reading magazines > Reading print magazines · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `PRINT-MAGAZINE-1` | ⟦I read a printed magazine.⟧ |
-| `PRINT-MAGAZINE-2` | ⟦I turned the paper pages while reading a magazine.⟧ |
-| `PRINT-MAGAZINE-3` | ⟦My reading was a physical magazine issue.⟧ |
-| `PRINT-MAGAZINE-4` | ⟦I read articles in a magazine printed on paper.⟧ |
+| `PRINT-MAGAZINE-1` | ⟦I read a magazine printed on paper.⟧ |
+| `PRINT-MAGAZINE-2` | ⟦Turning physical pages, I worked through a magazine issue.⟧ |
+| `PRINT-MAGAZINE-3` | ⟦I read the print magazine I held in my hands.⟧ |
+| `PRINT-MAGAZINE-4` | ⟦My magazine reading came from a paper copy.⟧ |
 
 ### Consuming media > Reading > Reading magazines > Reading digital magazines · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `DIGITAL-MAGAZINE-1` | ⟦I read a digital magazine.⟧ |
-| `DIGITAL-MAGAZINE-2` | ⟦I used a screen to read an electronic magazine issue.⟧ |
-| `DIGITAL-MAGAZINE-3` | ⟦My reading was an online magazine edition.⟧ |
-| `DIGITAL-MAGAZINE-4` | ⟦I read magazine articles in a digital publication.⟧ |
+| `DIGITAL-MAGAZINE-1` | ⟦A digital magazine was what I read.⟧ |
+| `DIGITAL-MAGAZINE-2` | ⟦The magazine issue appeared on a screen while I read it.⟧ |
+| `DIGITAL-MAGAZINE-3` | ⟦My screen displayed the digital magazine I was reading.⟧ |
+| `DIGITAL-MAGAZINE-4` | ⟦I read a magazine that had been published digitally.⟧ |
 
 ### Consuming media > Listening > Listening to podcasts > Listening to news podcasts · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
 | `NEWS-PODCAST-1` | ⟦I listened to a news podcast.⟧ |
-| `NEWS-PODCAST-2` | ⟦I played a podcast episode about current news.⟧ |
-| `NEWS-PODCAST-3` | ⟦My listening choice was a news podcast.⟧ |
-| `NEWS-PODCAST-4` | ⟦I heard the latest news in a podcast episode.⟧ |
+| `NEWS-PODCAST-2` | ⟦Current events were the subject of the podcast episode I heard.⟧ |
+| `NEWS-PODCAST-3` | ⟦A podcast supplied the news I was listening to.⟧ |
+| `NEWS-PODCAST-4` | ⟦The audio program I played covered recent news in podcast form.⟧ |
 
 ### Consuming media > Listening > Listening to podcasts > Listening to interview podcasts · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `INTERVIEW-PODCAST-1` | ⟦I listened to an interview podcast.⟧ |
-| `INTERVIEW-PODCAST-2` | ⟦I played a podcast episode featuring an interview.⟧ |
-| `INTERVIEW-PODCAST-3` | ⟦My listening choice was a podcast conversation with a guest.⟧ |
-| `INTERVIEW-PODCAST-4` | ⟦I heard a host interview someone on a podcast.⟧ |
+| `INTERVIEW-PODCAST-1` | ⟦A guest interview filled the podcast I listened to.⟧ |
+| `INTERVIEW-PODCAST-2` | ⟦I played a podcast built around a host interviewing a guest.⟧ |
+| `INTERVIEW-PODCAST-3` | ⟦The episode I heard featured a conversation with an interviewee.⟧ |
+| `INTERVIEW-PODCAST-4` | ⟦My podcast listening centered on an interview.⟧ |
 
 ### Consuming media > Listening > Listening to audiobooks > Listening to fiction audiobooks · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `FICTION-AUDIOBOOK-1` | ⟦I listened to a fiction audiobook.⟧ |
-| `FICTION-AUDIOBOOK-2` | ⟦I listened to a narrated audiobook telling a fictional story.⟧ |
-| `FICTION-AUDIOBOOK-3` | ⟦My listening was an audiobook of a novel.⟧ |
-| `FICTION-AUDIOBOOK-4` | ⟦I played an audiobook that told an invented story.⟧ |
+| `FICTION-AUDIOBOOK-1` | ⟦I listened to a novel in audiobook form.⟧ |
+| `FICTION-AUDIOBOOK-2` | ⟦The audiobook I heard contained a narrator’s performance of a fictional story.⟧ |
+| `FICTION-AUDIOBOOK-3` | ⟦A work of fiction was playing as an audiobook for me.⟧ |
+| `FICTION-AUDIOBOOK-4` | ⟦My listening was an audio edition of a fictional book.⟧ |
 
 ### Consuming media > Listening > Listening to audiobooks > Listening to nonfiction audiobooks · 4 vectors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `NONFICTION-AUDIOBOOK-1` | ⟦I listened to a nonfiction audiobook.⟧ |
-| `NONFICTION-AUDIOBOOK-2` | ⟦I listened to a narrated audiobook presenting factual material.⟧ |
-| `NONFICTION-AUDIOBOOK-3` | ⟦My listening was an audiobook of nonfiction.⟧ |
-| `NONFICTION-AUDIOBOOK-4` | ⟦I played an audiobook about real events and facts.⟧ |
+| `NONFICTION-AUDIOBOOK-1` | ⟦My audiobook was a work of nonfiction.⟧ |
+| `NONFICTION-AUDIOBOOK-2` | ⟦I listened to factual material narrated from a book.⟧ |
+| `NONFICTION-AUDIOBOOK-3` | ⟦The audio edition I played presented real events as fact.⟧ |
+| `NONFICTION-AUDIOBOOK-4` | ⟦A nonfiction book was read aloud in the recording I heard.⟧ |
 
 ## Additional adjacent subjects · 32 vectors
 
@@ -362,7 +366,7 @@ corpus.
 | ID | Complete note and exact mask |
 |---|---|
 | `ADJ-GRINDER-CLEAN-1` | ⟦I brushed old coffee grounds out of my burr grinder.⟧ |
-| `ADJ-GRINDER-CLEAN-2` | ⟦After unplugging the grinder, I cleaned the coffee residue from its burrs.⟧ |
+| `ADJ-GRINDER-CLEAN-2` | ⟦I cleaned the coffee residue from the burrs inside my grinder.⟧ |
 | `ADJ-GRINDER-CLEAN-3` | ⟦Trapped grounds had collected around the burrs, so I cleaned the coffee grinder.⟧ |
 | `ADJ-GRINDER-CLEAN-4` | ⟦I opened my burr coffee grinder and cleared away the stale dust inside.⟧ |
 
@@ -370,7 +374,7 @@ corpus.
 
 | ID | Complete note and exact mask |
 |---|---|
-| `ADJ-DRIP-DESCALE-1` | ⟦Mineral buildup had slowed my automatic drip coffee maker, so I ran a descaling cycle.⟧ |
+| `ADJ-DRIP-DESCALE-1` | ⟦I ran a descaling cycle to remove mineral buildup from my automatic drip coffee maker.⟧ |
 | `ADJ-DRIP-DESCALE-2` | ⟦I flushed limescale from the drip coffee machine with a descaling solution.⟧ |
 | `ADJ-DRIP-DESCALE-3` | ⟦Cleaning out the mineral deposits left my automatic drip coffee brewer free of scale.⟧ |
 | `ADJ-DRIP-DESCALE-4` | ⟦I descaled the automatic drip coffee brewer to clear the chalky buildup inside it.⟧ |
@@ -415,10 +419,10 @@ corpus.
 
 | ID | Complete note and exact mask |
 |---|---|
-| `ADJ-FEATURE-FILM-1` | ⟦I watched a feature film from beginning to end.⟧ |
-| `ADJ-FEATURE-FILM-2` | ⟦Last night I settled in and watched a full-length movie.⟧ |
-| `ADJ-FEATURE-FILM-3` | ⟦The feature-length movie kept me watching all the way through the closing credits.⟧ |
-| `ADJ-FEATURE-FILM-4` | ⟦I put on a feature-length film and watched the whole thing.⟧ |
+| `ADJ-FEATURE-FILM-1` | ⟦I watched a feature-length film.⟧ |
+| `ADJ-FEATURE-FILM-2` | ⟦A full-length movie was what I viewed.⟧ |
+| `ADJ-FEATURE-FILM-3` | ⟦I settled in to watch a feature film.⟧ |
+| `ADJ-FEATURE-FILM-4` | ⟦The movie I viewed on my screen was feature length.⟧ |
 
 ### Watching a live sports broadcast · adjacent to consuming media · 4 vectors
 
@@ -440,8 +444,8 @@ may represent through broader, narrower, or overlapping segments.
 
 | ID | Complete note and exact mask |
 |---|---|
-| `BRIDGE-ICED-COLD-BREW-1` | ⟦I drank cold-brew coffee poured over ice.⟧ |
-| `BRIDGE-ICED-COLD-BREW-2` | ⟦I sipped cold-brew coffee from a glass filled with ice.⟧ |
+| `BRIDGE-ICED-COLD-BREW-1` | ⟦Ice chilled the cold-brew coffee I drank.⟧ |
+| `BRIDGE-ICED-COLD-BREW-2` | ⟦I poured cold brew over ice before sipping it.⟧ |
 | `BRIDGE-ICED-COLD-BREW-3` | ⟦The iced coffee I drank had been prepared by cold brewing.⟧ |
 | `BRIDGE-ICED-COLD-BREW-4` | ⟦The coffee I finished was cold-brewed and chilled with ice cubes.⟧ |
 
@@ -449,9 +453,9 @@ may represent through broader, narrower, or overlapping segments.
 
 | ID | Complete note and exact mask |
 |---|---|
-| `BRIDGE-DARK-POUR-OVER-1` | ⟦I brewed dark-roast coffee with a pour-over dripper.⟧ |
+| `BRIDGE-DARK-POUR-OVER-1` | ⟦Dark-roasted beans went into the pour-over I brewed.⟧ |
 | `BRIDGE-DARK-POUR-OVER-2` | ⟦My pour-over used dark-roasted beans.⟧ |
-| `BRIDGE-DARK-POUR-OVER-3` | ⟦I made a pour-over using dark-roasted coffee beans.⟧ |
+| `BRIDGE-DARK-POUR-OVER-3` | ⟦The coffee from my pour-over had a dark roast.⟧ |
 | `BRIDGE-DARK-POUR-OVER-4` | ⟦My pour-over was brewed from dark-roast coffee grounds.⟧ |
 
 ### Cropping a portrait photograph · bridges portraits and cropping · 4 vectors
@@ -548,8 +552,8 @@ unseen fixture for subsequent validation.
 
 ## Run
 
-1. Approve and freeze all 192 notes and masks, atomic-subject cohorts, and
-   diagnostic paths.
+1. Approve and freeze all 192 notes and masks, atomic-subject cohorts,
+   diagnostic paths, and the wording-independence control above.
 2. Freeze one candidate, configuration, seed, fine-output selector, and one
    shuffled opaque input order before encoding or exposing vector diagnostics.
 3. Encode all 192 inputs once under the shared contract in README.md.
