@@ -2,7 +2,7 @@
 
 Status: **draft; do not encode or run yet**.
 
-These six experiments test the six canonical assumptions recorded in:
+Five active protocols cover the six canonical assumptions recorded in:
 
 ../../../notes/MY-NOTES.md
 
@@ -21,13 +21,17 @@ The experiments are:
 
 1. 01-repeated-subject-recovery.md — repeated instances of the same fine
    subject
-2. 02-nearby-subject-resolution.md — nearby but distinct fine subjects
+2. 02-nearby-subject-resolution.md — nearby but distinct fine subjects under
+   balanced, unequal, and sparse support
 3. 03-lexical-coincidence.md — lexical coincidences
 4. 04-unmasked-context.md — changes to unmasked material
-5. 05-density-and-sparsity.md — unequal density and sparsity
 6. 06-irrelevant-change-stability.md — irrelevant-change stability
 
-## Boundary shared by all six experiments
+`05-density-and-sparsity.md` is a retired pointer. Its fixture and purpose were
+merged into Experiment 2 so balanced organization and changing support use the
+same frozen vectors.
+
+## Boundary shared by all active experiments
 
 Each input is one complete synthetic note plus one manually fixed mask. SSE
 processes the complete note, averages the contextual token representations at

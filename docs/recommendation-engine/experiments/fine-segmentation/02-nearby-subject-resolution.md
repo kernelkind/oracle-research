@@ -1,527 +1,542 @@
-# Experiment 2: exploratory nearby-subject segmentation
+# Experiment 2: nearby-subject organization under changing support
 
-Status: **draft; every atomic proposition and mask requires human approval
-before encoding**.
+Status: **draft; the crossed wording fixture and every atomic proposition and
+mask require human approval before encoding**.
 
-## Purpose
-
-The motivating assumption is:
+## Assumptions explored
 
 > Nearby but meaningfully distinct fine subjects are resolved.
 
-This experiment does not pass or fail that assumption. It exposes how one
-frozen fine-segmentation candidate organizes a controlled collection of nearby
-atomic subjects so a human can judge whether the result is useful, too coarse,
-too fragmented, or otherwise revealing.
+> Region recovery survives unequal density and sparsity.
 
-For each returned multi-vector segment, the primary review asks:
+The experiment first observes how one frozen candidate organizes nearby
+subjects under balanced support. It then changes only which already-encoded
+vectors enter the collection. This establishes the balanced behavior before
+showing how that behavior changes under unequal support and singleton
+sparsity.
 
-> What is the narrowest recognizable subject for which every instance is a
-> valid refinement?
+It is exploratory. It does not prescribe one universally correct boundary
+between nearby subjects or one binary pass threshold.
 
-No partition, mandatory boundary, segment count, or hierarchy is prescribed.
+## Questions
+
+1. With four vectors from each of three nearby subjects, what segments does the
+   candidate return?
+2. Does the same balanced local collection organize differently when the other
+   three semantic neighborhoods are present?
+3. Holding the local collection size at twelve, how does changing support from
+   `4:4:4` to `8:2:2`, `6:5:1`, or `8:3:1` change those segments?
+
+## Design
+
+The fixture contains four independent semantic neighborhoods:
+
+1. processing coffee beans;
+2. editing photographs;
+3. caring for rose bushes;
+4. developing software.
+
+Each neighborhood contains three nearby but meaningfully different atomic
+subjects, with eight formulations per subject. This gives 24 vectors per
+neighborhood and 96 frozen vectors total.
+
+Every complete note is also its complete mask. Each heading is the frozen
+atomic subject represented by all eight masks beneath it. A mask is valid only
+when it clearly expresses that subject and contains no additional substantive
+subject or narrower method, motivation, setting, quantity, or outcome.
+Grammatical person, tense, and voice are carrier form, not separate subjects.
+
+Each subject uses the same eight wording forms:
+
+| Form | Structure |
+|---|---|
+| A | active, canonical wording |
+| B | active, equivalent paraphrase |
+| C | passive, canonical wording |
+| D | passive, equivalent paraphrase |
+| E | object-focus, canonical wording |
+| F | object-focus, equivalent paraphrase |
+| G | ongoing-process, canonical wording |
+| H | ongoing-process, equivalent paraphrase |
+
+Within one neighborhood, the three subjects use the same form at each numeric
+schedule index. Across neighborhoods, the form order is staggered:
+
+| Neighborhood | Forms at indices 1 through 8 |
+|---|---|
+| Coffee | A, B, C, D, E, F, G, H |
+| Photograph | C, D, E, F, G, H, A, B |
+| Rose bush | E, F, G, H, A, B, C, D |
+| Software | G, H, A, B, C, D, E, F |
+
+This crossing prevents a wording form from identifying one subject. It also
+means every 48-vector combined run contains exactly six instances of each
+wording form instead of multiplying one form alongside the semantic areas.
+Necessary subject words may repeat; incidental carrier phrases or writing
+styles may not identify one subject. Freeze both the numeric schedule index and
+wording form as fixture metadata.
+
+The candidate sees four kinds of run:
+
+1. one balanced twelve-vector collection from one neighborhood;
+2. the same local collection embedded in a combined 48-vector collection;
+3. local twelve-vector collections with unequal support;
+4. local collections containing a singleton subject instance.
+
+Because every local support-stress run contains twelve vectors, its counts are
+a complete support **allocation**: increasing one subject's support necessarily
+reduces another's. The experiment compares behavior under each allocation. It
+does not claim to identify the independent causal effect of one subject's
+support count.
 
 ## Fixture
 
-The fixture contains 160 vectors: forty atomic subjects with four formulations
-each. Ten subjects concern coffee, ten concern photos, ten concern produce, and
-ten concern media. These four neighborhoods organize this document for human
-review; neither the candidate nor the blind reviewer receives them.
+### Coffee processing
 
-There are no bridge cohorts or different fixture roles. Every subject has four
-formulations. Deliberately varying cohort support, irrelevant corpus changes,
-and subjects that combine attributes from multiple regions belong to separate
-experiments.
-
-Each subject heading states its frozen atomic proposition. Every formulation
-must be semantically equivalent to that proposition:
-
-1. the complete mask must imply the proposition;
-2. the proposition must imply the complete meaning of the mask.
-
-This mutual-entailment requirement excludes both missing evidence and added
-details such as time, place, motivation, quantity, meal context, or a narrower
-method. Every complete note is also its complete mask.
-
-Within each cohort, one formulation may use the canonical subject wording. The
-others use ordinary alternative wording where possible. Repeated words are
-allowed when they directly express the atomic subject.
-
-The candidate receives one frozen shuffled collection of opaque IDs and raw
-vectors. It does not receive the notes, masks, atomic propositions, or fixture
-neighborhoods.
-
-## Lexical-only diagnostic
-
-Record how easily surface words alone recover the forty cohorts. This does not
-score the candidate; it shows how much lexical shortcut information the
-fixture contains.
-
-Before SSE encoding:
-
-1. lowercase each complete mask and tokenize contiguous Unicode letters and
-   numbers;
-2. build binary unigram vectors with inverse-document-frequency weight
-   `ln((1 + 160) / (1 + document_frequency)) + 1`;
-3. L2-normalize every vector;
-4. for each mask, build every cohort centroid while excluding that mask from
-   its own cohort, average the remaining normalized vectors, and L2-normalize
-   each centroid;
-5. assign the mask only when one centroid has the unique highest cosine;
-   preserve exact ties as unresolved;
-6. preserve the complete cosine matrix, predicted cohort for every mask,
-   confusion matrix, and leave-one-out accuracy.
-
-A high lexical-only accuracy does not invalidate the exploration. It prevents
-us from attributing a similar segmentation result uniquely to semantic
-geometry.
-
-## Coffee subjects · 40 vectors
-
-### The author roasted coffee beans to a light roast · 4 vectors
+#### `COFFEE-R`: roasting green coffee beans
 
 | ID | Complete note and exact mask |
 |---|---|
-| `LIGHT-ROAST-1` | ⟦I roasted coffee beans to a light roast.⟧ |
-| `LIGHT-ROAST-2` | ⟦My coffee-bean roasting produced light-roast beans.⟧ |
-| `LIGHT-ROAST-3` | ⟦The beans I roasted received a light roast.⟧ |
-| `LIGHT-ROAST-4` | ⟦I made light-roast coffee beans by roasting them.⟧ |
+| `COFFEE-R1` | ⟦I'm roasting green coffee beans.⟧ |
+| `COFFEE-R2` | ⟦I'm roasting unroasted coffee beans.⟧ |
+| `COFFEE-R3` | ⟦Green coffee beans are being roasted.⟧ |
+| `COFFEE-R4` | ⟦Unroasted coffee beans are undergoing roasting.⟧ |
+| `COFFEE-R5` | ⟦Green coffee beans are what I'm roasting.⟧ |
+| `COFFEE-R6` | ⟦Unroasted coffee beans are what I'm roasting.⟧ |
+| `COFFEE-R7` | ⟦Roasting green coffee beans is underway.⟧ |
+| `COFFEE-R8` | ⟦I'm in the middle of roasting unroasted coffee beans.⟧ |
 
-### The author roasted coffee beans to a dark roast · 4 vectors
-
-| ID | Complete note and exact mask |
-|---|---|
-| `DARK-ROAST-1` | ⟦I gave coffee beans a dark roast.⟧ |
-| `DARK-ROAST-2` | ⟦Dark-roast beans were the result of my coffee roasting.⟧ |
-| `DARK-ROAST-3` | ⟦The coffee beans I roasted came out dark-roasted.⟧ |
-| `DARK-ROAST-4` | ⟦By roasting coffee beans, I made them into a dark roast.⟧ |
-
-### The author brewed coffee using the pour-over method · 4 vectors
+#### `COFFEE-G`: grinding roasted coffee beans
 
 | ID | Complete note and exact mask |
 |---|---|
-| `POUR-OVER-1` | ⟦I brewed coffee by the pour-over method.⟧ |
-| `POUR-OVER-2` | ⟦Pour-over was how I made the coffee.⟧ |
-| `POUR-OVER-3` | ⟦The coffee I prepared was a pour-over brew.⟧ |
-| `POUR-OVER-4` | ⟦I made coffee by pouring water through grounds in a filter.⟧ |
+| `COFFEE-G1` | ⟦I'm grinding roasted coffee beans.⟧ |
+| `COFFEE-G2` | ⟦I'm grinding coffee beans that were previously roasted.⟧ |
+| `COFFEE-G3` | ⟦Roasted coffee beans are being ground.⟧ |
+| `COFFEE-G4` | ⟦Coffee beans that were previously roasted are undergoing grinding.⟧ |
+| `COFFEE-G5` | ⟦Roasted coffee beans are what I'm grinding.⟧ |
+| `COFFEE-G6` | ⟦Previously roasted coffee beans are what I'm grinding.⟧ |
+| `COFFEE-G7` | ⟦Grinding roasted coffee beans is underway.⟧ |
+| `COFFEE-G8` | ⟦I'm in the middle of grinding previously roasted coffee beans.⟧ |
 
-### The author brewed espresso · 4 vectors
-
-| ID | Complete note and exact mask |
-|---|---|
-| `ESPRESSO-1` | ⟦I brewed espresso.⟧ |
-| `ESPRESSO-2` | ⟦The coffee I brewed was espresso.⟧ |
-| `ESPRESSO-3` | ⟦Espresso was the kind of coffee I brewed.⟧ |
-| `ESPRESSO-4` | ⟦What I produced by brewing the coffee was espresso.⟧ |
-
-### The author drank coffee that was hot and black · 4 vectors
+#### `COFFEE-E`: extracting espresso
 
 | ID | Complete note and exact mask |
 |---|---|
-| `BLACK-HOT-1` | ⟦I drank hot black coffee.⟧ |
-| `BLACK-HOT-2` | ⟦The black coffee I drank was hot.⟧ |
-| `BLACK-HOT-3` | ⟦Hot coffee taken black was what I drank.⟧ |
-| `BLACK-HOT-4` | ⟦What I drank was coffee that was both hot and black.⟧ |
+| `COFFEE-E1` | ⟦I'm extracting espresso.⟧ |
+| `COFFEE-E2` | ⟦I'm pulling espresso.⟧ |
+| `COFFEE-E3` | ⟦Espresso is being extracted.⟧ |
+| `COFFEE-E4` | ⟦Espresso is being pulled.⟧ |
+| `COFFEE-E5` | ⟦Espresso is what I'm extracting.⟧ |
+| `COFFEE-E6` | ⟦Espresso is what I'm pulling.⟧ |
+| `COFFEE-E7` | ⟦Extracting espresso is underway.⟧ |
+| `COFFEE-E8` | ⟦I'm in the middle of pulling espresso.⟧ |
 
-### The author drank coffee that was hot and contained milk · 4 vectors
+### Photograph editing
 
-| ID | Complete note and exact mask |
-|---|---|
-| `MILK-HOT-1` | ⟦Milk was in the hot coffee I drank.⟧ |
-| `MILK-HOT-2` | ⟦I drank a hot mixture of coffee and milk.⟧ |
-| `MILK-HOT-3` | ⟦The coffee I drank had milk in it and was hot.⟧ |
-| `MILK-HOT-4` | ⟦Hot coffee containing milk was what I drank.⟧ |
-
-### The author drank coffee that had been chilled with ice · 4 vectors
+#### `PHOTO-C`: cropping a photograph
 
 | ID | Complete note and exact mask |
 |---|---|
-| `ICED-COFFEE-1` | ⟦I drank iced coffee.⟧ |
-| `ICED-COFFEE-2` | ⟦Ice had chilled the coffee I drank.⟧ |
-| `ICED-COFFEE-3` | ⟦The coffee I drank was cold from ice.⟧ |
-| `ICED-COFFEE-4` | ⟦Coffee chilled with ice was what I drank.⟧ |
+| `PHOTO-C1` | ⟦A photograph is being cropped.⟧ |
+| `PHOTO-C2` | ⟦A photograph's crop is being changed.⟧ |
+| `PHOTO-C3` | ⟦A photograph is what I'm cropping.⟧ |
+| `PHOTO-C4` | ⟦A photograph's crop is what I'm changing.⟧ |
+| `PHOTO-C5` | ⟦Cropping a photograph is underway.⟧ |
+| `PHOTO-C6` | ⟦I'm in the middle of changing a photograph's crop.⟧ |
+| `PHOTO-C7` | ⟦I'm cropping a photograph.⟧ |
+| `PHOTO-C8` | ⟦I'm changing a photograph's crop.⟧ |
 
-### The author drank coffee prepared by the cold-brew method · 4 vectors
-
-| ID | Complete note and exact mask |
-|---|---|
-| `COLD-BREW-1` | ⟦I drank cold-brew coffee.⟧ |
-| `COLD-BREW-2` | ⟦Cold brew was the coffee I drank.⟧ |
-| `COLD-BREW-3` | ⟦The coffee I drank had been made by cold brewing.⟧ |
-| `COLD-BREW-4` | ⟦Coffee prepared by the cold-brew method was what I drank.⟧ |
-
-### The author cleaned a burr coffee grinder · 4 vectors
+#### `PHOTO-A`: adjusting a photograph's colors
 
 | ID | Complete note and exact mask |
 |---|---|
-| `GRINDER-CLEAN-1` | ⟦I cleaned a burr coffee grinder.⟧ |
-| `GRINDER-CLEAN-2` | ⟦The coffee grinder I cleaned was a burr grinder.⟧ |
-| `GRINDER-CLEAN-3` | ⟦A coffee grinder that uses burrs was what I cleaned.⟧ |
-| `GRINDER-CLEAN-4` | ⟦I gave a burr coffee grinder a cleaning.⟧ |
+| `PHOTO-A1` | ⟦A photograph's colors are being adjusted.⟧ |
+| `PHOTO-A2` | ⟦The colors in a photograph are being changed.⟧ |
+| `PHOTO-A3` | ⟦A photograph's colors are what I'm adjusting.⟧ |
+| `PHOTO-A4` | ⟦A photograph's colors are what I'm changing.⟧ |
+| `PHOTO-A5` | ⟦Adjusting a photograph's colors is underway.⟧ |
+| `PHOTO-A6` | ⟦I'm in the middle of changing a photograph's colors.⟧ |
+| `PHOTO-A7` | ⟦I'm adjusting a photograph's colors.⟧ |
+| `PHOTO-A8` | ⟦I'm changing the colors in a photograph.⟧ |
 
-### The author descaled an automatic drip coffee maker · 4 vectors
-
-| ID | Complete note and exact mask |
-|---|---|
-| `DRIP-DESCALE-1` | ⟦I descaled an automatic drip coffee maker.⟧ |
-| `DRIP-DESCALE-2` | ⟦Scale was what I removed from an automatic drip coffee machine.⟧ |
-| `DRIP-DESCALE-3` | ⟦The coffee brewer I descaled was an automatic drip model.⟧ |
-| `DRIP-DESCALE-4` | ⟦I cleared an automatic drip coffee machine of scale.⟧ |
-
-## Photo subjects · 40 vectors
-
-### The author took a portrait photograph · 4 vectors
+#### `PHOTO-S`: straightening a tilted photograph
 
 | ID | Complete note and exact mask |
 |---|---|
-| `PORTRAIT-1` | ⟦I took a portrait photograph.⟧ |
-| `PORTRAIT-2` | ⟦The picture I shot was a portrait.⟧ |
-| `PORTRAIT-3` | ⟦A photographic portrait was what I captured.⟧ |
-| `PORTRAIT-4` | ⟦I photographed a subject as a portrait.⟧ |
+| `PHOTO-S1` | ⟦A tilted photograph is being straightened.⟧ |
+| `PHOTO-S2` | ⟦The tilt in a photograph is being corrected.⟧ |
+| `PHOTO-S3` | ⟦A tilted photograph is what I'm straightening.⟧ |
+| `PHOTO-S4` | ⟦A photograph's tilt is what I'm correcting.⟧ |
+| `PHOTO-S5` | ⟦Straightening a tilted photograph is underway.⟧ |
+| `PHOTO-S6` | ⟦I'm in the middle of correcting a photograph's tilt.⟧ |
+| `PHOTO-S7` | ⟦I'm straightening a tilted photograph.⟧ |
+| `PHOTO-S8` | ⟦I'm correcting the tilt in a photograph.⟧ |
 
-### The author took a photograph of a landscape · 4 vectors
+### Rose-bush care
 
-| ID | Complete note and exact mask |
-|---|---|
-| `LANDSCAPE-1` | ⟦I took a photograph of a landscape.⟧ |
-| `LANDSCAPE-2` | ⟦I photographed a landscape.⟧ |
-| `LANDSCAPE-3` | ⟦A landscape was the subject of the picture I took.⟧ |
-| `LANDSCAPE-4` | ⟦The photo I captured depicted a landscape.⟧ |
-
-### The author cropped a photograph · 4 vectors
+#### `ROSE-P`: pruning a rose bush
 
 | ID | Complete note and exact mask |
 |---|---|
-| `CROP-PHOTO-1` | ⟦I cropped a photograph.⟧ |
-| `CROP-PHOTO-2` | ⟦A crop was the edit I made to a photo.⟧ |
-| `CROP-PHOTO-3` | ⟦I trimmed the edges of the picture.⟧ |
-| `CROP-PHOTO-4` | ⟦The photograph was cropped by me.⟧ |
+| `ROSE-P1` | ⟦A rose bush is what I'm pruning.⟧ |
+| `ROSE-P2` | ⟦A rose bush is what I'm cutting back.⟧ |
+| `ROSE-P3` | ⟦Pruning a rose bush is underway.⟧ |
+| `ROSE-P4` | ⟦I'm in the middle of cutting back a rose bush.⟧ |
+| `ROSE-P5` | ⟦I'm pruning a rose bush.⟧ |
+| `ROSE-P6` | ⟦I'm cutting back a rose bush.⟧ |
+| `ROSE-P7` | ⟦A rose bush is being pruned.⟧ |
+| `ROSE-P8` | ⟦A rose bush is being cut back.⟧ |
 
-### The author adjusted the colors in a photograph · 4 vectors
-
-| ID | Complete note and exact mask |
-|---|---|
-| `COLOR-ADJUST-1` | ⟦I adjusted the colors in a photograph.⟧ |
-| `COLOR-ADJUST-2` | ⟦The photo's colors were what I changed.⟧ |
-| `COLOR-ADJUST-3` | ⟦I made color adjustments to the picture.⟧ |
-| `COLOR-ADJUST-4` | ⟦My edit altered the photograph's colors.⟧ |
-
-### The author created a backup of photographs in local storage · 4 vectors
+#### `ROSE-W`: watering a rose bush
 
 | ID | Complete note and exact mask |
 |---|---|
-| `LOCAL-BACKUP-1` | ⟦I backed up the photos to local storage.⟧ |
-| `LOCAL-BACKUP-2` | ⟦Backup copies of the photographs were kept in local storage by me.⟧ |
-| `LOCAL-BACKUP-3` | ⟦I made a local backup of the pictures.⟧ |
-| `LOCAL-BACKUP-4` | ⟦Local storage held the photo backup I created.⟧ |
+| `ROSE-W1` | ⟦A rose bush is what I'm watering.⟧ |
+| `ROSE-W2` | ⟦A rose bush is what I'm supplying water to.⟧ |
+| `ROSE-W3` | ⟦Watering a rose bush is underway.⟧ |
+| `ROSE-W4` | ⟦I'm in the middle of supplying water to a rose bush.⟧ |
+| `ROSE-W5` | ⟦I'm watering a rose bush.⟧ |
+| `ROSE-W6` | ⟦I'm supplying water to a rose bush.⟧ |
+| `ROSE-W7` | ⟦A rose bush is being watered.⟧ |
+| `ROSE-W8` | ⟦Water is being supplied to a rose bush.⟧ |
 
-### The author created a backup of photographs in cloud storage · 4 vectors
-
-| ID | Complete note and exact mask |
-|---|---|
-| `CLOUD-BACKUP-1` | ⟦A cloud backup was what I made of the photos.⟧ |
-| `CLOUD-BACKUP-2` | ⟦I stored backup copies of the pictures in the cloud.⟧ |
-| `CLOUD-BACKUP-3` | ⟦The photographs were backed up to cloud storage by me.⟧ |
-| `CLOUD-BACKUP-4` | ⟦I created a backup of the photos in cloud storage.⟧ |
-
-### The author sent a photo file as an email attachment · 4 vectors
+#### `ROSE-F`: fertilizing a rose bush
 
 | ID | Complete note and exact mask |
 |---|---|
-| `EMAIL-SHARE-1` | ⟦I sent a photo file as an email attachment.⟧ |
-| `EMAIL-SHARE-2` | ⟦The photograph I emailed was attached as a file.⟧ |
-| `EMAIL-SHARE-3` | ⟦I sent an email with the picture file attached.⟧ |
-| `EMAIL-SHARE-4` | ⟦The email I sent included the photo as an attached file.⟧ |
+| `ROSE-F1` | ⟦A rose bush is what I'm fertilizing.⟧ |
+| `ROSE-F2` | ⟦A rose bush is what I'm applying fertilizer to.⟧ |
+| `ROSE-F3` | ⟦Fertilizing a rose bush is underway.⟧ |
+| `ROSE-F4` | ⟦I'm in the middle of applying fertilizer to a rose bush.⟧ |
+| `ROSE-F5` | ⟦I'm fertilizing a rose bush.⟧ |
+| `ROSE-F6` | ⟦I'm applying fertilizer to a rose bush.⟧ |
+| `ROSE-F7` | ⟦A rose bush is being fertilized.⟧ |
+| `ROSE-F8` | ⟦Fertilizer is being applied to a rose bush.⟧ |
 
-### The author shared a photograph by sending a viewing link · 4 vectors
+### Software development
 
-| ID | Complete note and exact mask |
-|---|---|
-| `LINK-SHARE-1` | ⟦I sent a viewing link to share a photograph.⟧ |
-| `LINK-SHARE-2` | ⟦The link I sent let someone view the photo.⟧ |
-| `LINK-SHARE-3` | ⟦I gave another person a link to view the picture.⟧ |
-| `LINK-SHARE-4` | ⟦I shared the photograph by sending its viewing link.⟧ |
-
-### The author straightened a tilted photograph · 4 vectors
+#### `SOFTWARE-C`: compiling source code
 
 | ID | Complete note and exact mask |
 |---|---|
-| `PHOTO-STRAIGHTEN-1` | ⟦I straightened a tilted photograph.⟧ |
-| `PHOTO-STRAIGHTEN-2` | ⟦The tilted photo was made straight by me.⟧ |
-| `PHOTO-STRAIGHTEN-3` | ⟦I corrected the tilt in a picture.⟧ |
-| `PHOTO-STRAIGHTEN-4` | ⟦I leveled a photograph that was slanted.⟧ |
+| `SOFTWARE-C1` | ⟦Compiling source code is underway.⟧ |
+| `SOFTWARE-C2` | ⟦I'm in the middle of putting source code through compilation.⟧ |
+| `SOFTWARE-C3` | ⟦I'm compiling source code.⟧ |
+| `SOFTWARE-C4` | ⟦I'm putting source code through compilation.⟧ |
+| `SOFTWARE-C5` | ⟦Source code is being compiled.⟧ |
+| `SOFTWARE-C6` | ⟦Source code is undergoing compilation.⟧ |
+| `SOFTWARE-C7` | ⟦Source code is what I'm compiling.⟧ |
+| `SOFTWARE-C8` | ⟦Source code is what I'm putting through compilation.⟧ |
 
-### The author assigned descriptive tags to photographs · 4 vectors
-
-| ID | Complete note and exact mask |
-|---|---|
-| `PHOTO-TAG-1` | ⟦I added descriptive tags to photographs.⟧ |
-| `PHOTO-TAG-2` | ⟦The tags I assigned to the photos described them.⟧ |
-| `PHOTO-TAG-3` | ⟦I labeled the pictures with descriptive tags.⟧ |
-| `PHOTO-TAG-4` | ⟦Descriptive terms were what I used to tag the photographs.⟧ |
-
-## Produce subjects · 40 vectors
-
-### The author ate a red apple · 4 vectors
+#### `SOFTWARE-T`: running automated software tests
 
 | ID | Complete note and exact mask |
 |---|---|
-| `RED-APPLE-1` | ⟦I ate a red apple.⟧ |
-| `RED-APPLE-2` | ⟦The apple I ate was red.⟧ |
-| `RED-APPLE-3` | ⟦I ate an apple with red skin.⟧ |
-| `RED-APPLE-4` | ⟦I consumed an apple that was red.⟧ |
+| `SOFTWARE-T1` | ⟦Running automated software tests is underway.⟧ |
+| `SOFTWARE-T2` | ⟦I'm in the middle of executing automated software tests.⟧ |
+| `SOFTWARE-T3` | ⟦I'm running automated software tests.⟧ |
+| `SOFTWARE-T4` | ⟦I'm executing automated software tests.⟧ |
+| `SOFTWARE-T5` | ⟦Automated software tests are being run.⟧ |
+| `SOFTWARE-T6` | ⟦Automated software tests are being executed.⟧ |
+| `SOFTWARE-T7` | ⟦Automated software tests are what I'm running.⟧ |
+| `SOFTWARE-T8` | ⟦Automated software tests are what I'm executing.⟧ |
 
-### The author ate a green apple · 4 vectors
-
-| ID | Complete note and exact mask |
-|---|---|
-| `GREEN-APPLE-1` | ⟦Green was the color of the apple I ate.⟧ |
-| `GREEN-APPLE-2` | ⟦I ate a green-skinned apple.⟧ |
-| `GREEN-APPLE-3` | ⟦The apple was green when I ate it.⟧ |
-| `GREEN-APPLE-4` | ⟦I ate a green apple.⟧ |
-
-### The author ate an orange · 4 vectors
+#### `SOFTWARE-D`: debugging a program
 
 | ID | Complete note and exact mask |
 |---|---|
-| `ORANGE-1` | ⟦An orange was the fruit I ate.⟧ |
-| `ORANGE-2` | ⟦I consumed an orange.⟧ |
-| `ORANGE-3` | ⟦I ate an orange.⟧ |
-| `ORANGE-4` | ⟦It was an orange that I ate.⟧ |
+| `SOFTWARE-D1` | ⟦Debugging a program is underway.⟧ |
+| `SOFTWARE-D2` | ⟦I'm in the middle of debugging a program.⟧ |
+| `SOFTWARE-D3` | ⟦I'm debugging a program.⟧ |
+| `SOFTWARE-D4` | ⟦I'm in the process of debugging a program.⟧ |
+| `SOFTWARE-D5` | ⟦A program is being debugged.⟧ |
+| `SOFTWARE-D6` | ⟦Debugging work is being done on a program.⟧ |
+| `SOFTWARE-D7` | ⟦A program is what I'm debugging.⟧ |
+| `SOFTWARE-D8` | ⟦A program is what I'm doing debugging work on.⟧ |
 
-### The author ate a grapefruit · 4 vectors
+The subject names and human-readable IDs are scoring data. The candidate never
+receives them.
 
-| ID | Complete note and exact mask |
-|---|---|
-| `GRAPEFRUIT-1` | ⟦I consumed a grapefruit.⟧ |
-| `GRAPEFRUIT-2` | ⟦I ate a grapefruit.⟧ |
-| `GRAPEFRUIT-3` | ⟦A grapefruit was what I ate.⟧ |
-| `GRAPEFRUIT-4` | ⟦The fruit I ate was a grapefruit.⟧ |
+## Representation diagnostics
 
-### The author ate a raw carrot · 4 vectors
+The declared neighborhoods express the human-designed semantic relationships
+that this experiment asks the candidate to explore. They are not selected or
+rejected using SSE cosine. Doing so would preselect the geometry whose behavior
+we are trying to observe.
 
-| ID | Complete note and exact mask |
-|---|---|
-| `RAW-CARROT-1` | ⟦I ate a raw carrot.⟧ |
-| `RAW-CARROT-2` | ⟦The carrot I ate was uncooked.⟧ |
-| `RAW-CARROT-3` | ⟦I consumed a carrot in its raw state.⟧ |
-| `RAW-CARROT-4` | ⟦An uncooked carrot was what I ate.⟧ |
+After the wording and masks are approved and frozen, preserve these descriptive
+diagnostics:
 
-### The author ate a cooked carrot · 4 vectors
+1. the complete raw-vector cosine matrix;
+2. same-subject and cross-subject cosine distributions in each neighborhood;
+3. every vector's nearest same-subject rank and margin;
+4. the result of a binary-unigram TF-IDF leave-one-out classifier within each
+   24-mask neighborhood, including its complete cosine and confusion matrices;
+5. subject-by-wording-form and support-role-by-wording-form tables, tokenizer
+   lengths, and repeated incidental n-grams.
 
-| ID | Complete note and exact mask |
-|---|---|
-| `COOKED-CARROT-1` | ⟦A cooked carrot was what I consumed.⟧ |
-| `COOKED-CARROT-2` | ⟦The carrot had been cooked before I ate it.⟧ |
-| `COOKED-CARROT-3` | ⟦I ate a carrot that had been cooked.⟧ |
-| `COOKED-CARROT-4` | ⟦I ate a cooked carrot.⟧ |
+For the lexical diagnostic, lowercase and tokenize contiguous Unicode letters
+and numbers, form binary unigram vectors, weight a term with document frequency
+`df` as `ln((1 + 24) / (1 + df)) + 1`, and L2-normalize. Fit those weights once
+on all 24 masks in the neighborhood. Classify each mask against the three
+normalized mean subject centroids while excluding that mask from its own
+centroid; preserve a tie as unresolved. Reuse these lexical vectors for every
+support condition. The result shows how easily wording alone can recover the
+declared subjects; it is not an eligibility rule. High lexical accuracy
+prevents attributing functional recovery uniquely to semantic geometry, but
+does not invalidate the observed segmentation.
 
-### The author ate lettuce · 4 vectors
+After candidate output is revealed, flag any cross-subject segment whose
+members share a wording form. This is a wording-form diagnostic, not a
+different scoring rule. Experiment 3 remains the controlled test of whether a
+specific lexical collision causally changes the output.
 
-| ID | Complete note and exact mask |
-|---|---|
-| `LETTUCE-1` | ⟦Lettuce was what I consumed.⟧ |
-| `LETTUCE-2` | ⟦I ate lettuce.⟧ |
-| `LETTUCE-3` | ⟦What I ate was lettuce.⟧ |
-| `LETTUCE-4` | ⟦It was lettuce that I ate.⟧ |
+For every returned segment, also record whether its members cross canonical
+and equivalent-paraphrase forms. A segment containing only one wording stratum
+does not demonstrate that the candidate recovered the shared subject across
+the paraphrase change.
 
-### The author ate spinach · 4 vectors
+## Fixed support conditions
 
-| ID | Complete note and exact mask |
-|---|---|
-| `SPINACH-1` | ⟦The greens I ate were spinach.⟧ |
-| `SPINACH-2` | ⟦Spinach was what I ate.⟧ |
-| `SPINACH-3` | ⟦I ate spinach.⟧ |
-| `SPINACH-4` | ⟦It was spinach that I consumed.⟧ |
+Every local allocation run contains exactly twelve vectors:
 
-### The author ate blueberries · 4 vectors
+| Condition | Support | Primary contrast |
+|---|---:|---|
+| Balanced | `4:4:4` | Equal-support control |
+| Imbalanced | `8:2:2` | One common subject and two rare repeated subjects |
+| Singleton | `6:5:1` | One unmatched instance with two similarly supported subjects |
+| Dense and singleton | `8:3:1` | A common subject, a rare repeated subject, and a singleton |
 
-| ID | Complete note and exact mask |
-|---|---|
-| `BLUEBERRY-1` | ⟦I ate blueberries.⟧ |
-| `BLUEBERRY-2` | ⟦Blueberries were what I consumed.⟧ |
-| `BLUEBERRY-3` | ⟦The berries I ate were blueberries.⟧ |
-| `BLUEBERRY-4` | ⟦It was blueberries that I ate.⟧ |
+The `6:5:1` condition runs both orders of the recurring subjects. The one-vector
+role is the only intentionally unmatched subject.
 
-### The author ate steamed broccoli · 4 vectors
+## Frozen formulation schedule
 
-| ID | Complete note and exact mask |
-|---|---|
-| `STEAMED-BROCCOLI-1` | ⟦The broccoli I ate had been steamed.⟧ |
-| `STEAMED-BROCCOLI-2` | ⟦I ate broccoli cooked by steaming.⟧ |
-| `STEAMED-BROCCOLI-3` | ⟦Steaming was how the broccoli I ate was prepared.⟧ |
-| `STEAMED-BROCCOLI-4` | ⟦I ate steamed broccoli.⟧ |
+Number each subject's formulations `1` through `8`. For subject `q`, start
+index `s`, and length `k`, let `Wq(k, s)` be the `k` consecutive formulations
+of `q` beginning at `s`, wrapping after `8`. For example:
 
-## Media subjects · 40 vectors
+```text
+Wq(3, 7) = {q7, q8, q1}
+```
 
-### The author read a fiction book · 4 vectors
+Run every condition for `s = 1 ... 8`:
 
-| ID | Complete note and exact mask |
-|---|---|
-| `FICTION-BOOK-1` | ⟦I read a fiction book.⟧ |
-| `FICTION-BOOK-2` | ⟦The book I read was a work of fiction.⟧ |
-| `FICTION-BOOK-3` | ⟦A book containing a fictional story was what I read.⟧ |
-| `FICTION-BOOK-4` | ⟦I spent time reading a book of fiction.⟧ |
+- Balanced `4:4:4`: all three subjects use `Wq(4, s)`.
+- Imbalanced `8:2:2`: each subject takes one turn as the eight-vector subject;
+  each other subject uses `Wq(2, s)`.
+- Singleton `6:5:1`: run all six ordered assignments to the three roles, using
+  `Wq(6, s)`, `Wq(5, s)`, and `Wq(1, s)`.
+- Dense-and-singleton stress `8:3:1`: run all six ordered role assignments,
+  using all eight vectors, `Wq(3, s)`, and `Wq(1, s)`.
 
-### The author read a nonfiction book · 4 vectors
+All index arithmetic wraps into `1 ... 8`. Across the eight schedules, every
+formulation appears equally often in each role that its subject occupies.
+Subject order means the order in which the three subject cohorts appear in the
+fixture. The cyclic blocks provide controlled wording coverage; they are not
+independent statistical replicates and do not exhaust every possible subset.
 
-| ID | Complete note and exact mask |
-|---|---|
-| `NONFICTION-BOOK-1` | ⟦I read a nonfiction book.⟧ |
-| `NONFICTION-BOOK-2` | ⟦The book I read was a work of nonfiction.⟧ |
-| `NONFICTION-BOOK-3` | ⟦A book of nonfiction was what I read.⟧ |
-| `NONFICTION-BOOK-4` | ⟦I spent time reading a book written as nonfiction.⟧ |
+These local schedules produce 128 runs per neighborhood and 512 inexpensive
+candidate calls total:
 
-### The author read a print magazine · 4 vectors
+| Condition | Runs per neighborhood |
+|---|---:|
+| Balanced | 8 |
+| Imbalanced | 24 |
+| Singleton | 48 |
+| Dense and singleton | 48 |
 
-| ID | Complete note and exact mask |
-|---|---|
-| `PRINT-MAGAZINE-1` | ⟦I read a magazine printed on paper.⟧ |
-| `PRINT-MAGAZINE-2` | ⟦The magazine issue I read was a physical print edition.⟧ |
-| `PRINT-MAGAZINE-3` | ⟦A paper copy of a magazine was what I read.⟧ |
-| `PRINT-MAGAZINE-4` | ⟦A printed magazine issue was what I read.⟧ |
+For each `s`, also form one **combined balanced** 48-vector run by taking the
+union of that schedule's four local balanced runs. These eight runs expose the
+exact same local vectors in the presence of the other three semantic areas.
 
-### The author read a digital magazine · 4 vectors
+The complete protocol therefore makes 520 candidate calls per frozen candidate
+and seed: 512 local allocation calls plus eight combined balanced calls. The 96
+SSE vectors are generated once. No candidate run re-encodes text.
 
-| ID | Complete note and exact mask |
-|---|---|
-| `DIGITAL-MAGAZINE-1` | ⟦I read a digital magazine.⟧ |
-| `DIGITAL-MAGAZINE-2` | ⟦The magazine issue I read was electronic.⟧ |
-| `DIGITAL-MAGAZINE-3` | ⟦A digital edition of a magazine was what I read.⟧ |
-| `DIGITAL-MAGAZINE-4` | ⟦I read a magazine in digital form.⟧ |
+## Blinding and run isolation
 
-### The author listened to a news podcast · 4 vectors
+After the final fixture is frozen and before any candidate run:
 
-| ID | Complete note and exact mask |
-|---|---|
-| `NEWS-PODCAST-1` | ⟦I listened to a news podcast.⟧ |
-| `NEWS-PODCAST-2` | ⟦The podcast episode I heard presented news.⟧ |
-| `NEWS-PODCAST-3` | ⟦A podcast about news was what I listened to.⟧ |
-| `NEWS-PODCAST-4` | ⟦I heard news presented in podcast form.⟧ |
+1. map every human-readable fixture ID to a frozen random opaque ID;
+2. assign every opaque ID one frozen random global rank;
+3. order every local or combined run by filtering the global master rank order.
 
-### The author listened to an interview podcast · 4 vectors
+The candidate receives no condition name, role, support count, subject name, or
+human-readable ID. Dense, rare, and singleton vectors are never deliberately
+placed in contiguous blocks.
 
-| ID | Complete note and exact mask |
-|---|---|
-| `INTERVIEW-PODCAST-1` | ⟦I listened to an interview podcast.⟧ |
-| `INTERVIEW-PODCAST-2` | ⟦The podcast episode I heard consisted of a host interviewing a guest.⟧ |
-| `INTERVIEW-PODCAST-3` | ⟦A podcast conversation between interviewer and guest was what I heard.⟧ |
-| `INTERVIEW-PODCAST-4` | ⟦I listened to a podcast built around an interview.⟧ |
+Freeze one random execution order over all 520 run specifications. Every run
+starts from the same fresh candidate state and declared seed. No run can train
+or prime another run.
 
-### The author listened to a fiction audiobook · 4 vectors
+This experiment uses one frozen within-run order and therefore requires the
+candidate either to be permutation-invariant by construction or to have passed
+Experiment 6's input-order stability check. Otherwise the results are not
+interpretable; do not duplicate that separate test by adding ad hoc order
+variants here.
 
-| ID | Complete note and exact mask |
-|---|---|
-| `FICTION-AUDIOBOOK-1` | ⟦I listened to a fiction audiobook.⟧ |
-| `FICTION-AUDIOBOOK-2` | ⟦The audiobook I heard narrated a work of fiction.⟧ |
-| `FICTION-AUDIOBOOK-3` | ⟦An audio recording of a book of fiction was what I listened to.⟧ |
-| `FICTION-AUDIOBOOK-4` | ⟦I listened to a fiction book read aloud in audiobook form.⟧ |
+## Evaluation
 
-### The author listened to a nonfiction audiobook · 4 vectors
+This is a characterization experiment, not an all-runs-must-pass test. The
+balanced local runs establish the behavior that the two later comparisons may
+change. The declared subjects are reference cohorts, not prescribed segment
+boundaries.
 
-| ID | Complete note and exact mask |
-|---|---|
-| `NONFICTION-AUDIOBOOK-1` | ⟦I listened to a nonfiction audiobook.⟧ |
-| `NONFICTION-AUDIOBOOK-2` | ⟦The audiobook I heard narrated a work of nonfiction.⟧ |
-| `NONFICTION-AUDIOBOOK-3` | ⟦An audio recording of a nonfiction book was what I listened to.⟧ |
-| `NONFICTION-AUDIOBOOK-4` | ⟦I listened to a nonfiction book read aloud in audiobook form.⟧ |
+For each run, record these separate outcomes:
 
-### The author watched a feature-length film · 4 vectors
+1. **Reference-cohort recovery:** for each declared subject with at least two present
+   vectors, whether one segment contains all of them and no vector from another
+   declared subject.
+2. **Cross-subject membership:** every segment containing vectors from more
+   than one declared subject, plus whether it contains a low-support vector.
+3. **Omission:** which vectors receive no fine-segment membership.
+4. **Fragmentation and extra segments:** every same-subject member set,
+   including partial sets that coexist with a complete recovered segment.
+5. **Singleton disposition:** independently record whether a one-member segment
+   exists, whether the singleton has no membership, every multi-member segment
+   it joins, and whether any such membership is invalid. These fields are not
+   mutually exclusive.
 
-| ID | Complete note and exact mask |
-|---|---|
-| `FEATURE-FILM-1` | ⟦I watched a feature-length film.⟧ |
-| `FEATURE-FILM-2` | ⟦A full-length movie was what I viewed.⟧ |
-| `FEATURE-FILM-3` | ⟦The film I watched was feature length.⟧ |
-| `FEATURE-FILM-4` | ⟦I viewed a movie of feature length.⟧ |
-
-### The author watched a live sports broadcast · 4 vectors
-
-| ID | Complete note and exact mask |
-|---|---|
-| `LIVE-SPORTS-1` | ⟦I watched a live sports broadcast.⟧ |
-| `LIVE-SPORTS-2` | ⟦A sporting event unfolded live in the broadcast I viewed.⟧ |
-| `LIVE-SPORTS-3` | ⟦I viewed a sporting event through a live broadcast.⟧ |
-| `LIVE-SPORTS-4` | ⟦The program I viewed was live coverage of a sporting event.⟧ |
-
-## Reviewing the returned segments
-
-Freeze and preserve the candidate's complete output before restoring fixture
-identities. Give every vector a neutral temporary label, freeze one shuffled
-segment-review order, and review every returned segment containing at least two
-vectors.
-
-For each segment, show every complete mask and ask:
+A segment spanning declared subjects does not count as reference-cohort
+recovery, but it is not automatically invalid: the candidate may return
+overlapping subjects that differ from the declared reference cohorts. Review
+each unique
+cross-subject member set with its run, condition, support roles, fixture IDs,
+and declared subjects hidden. Show only its complete masks under neutral labels
+and ask:
 
 > What is the narrowest recognizable subject for which every instance is a
 > valid refinement?
 
-Record the proposed subject and whether every mask genuinely fits it. If no
-precise recognizable subject covers every member, record a suspected false
-merge and the specific masks responsible. Do not rescue it with a vague
-umbrella or a list of unrelated subjects.
+Freeze one random instance order for each unique member set. The reviewer must
+either supply that subject or record `no valid fine subject`.
 
-The segment-by-segment review is not enough. Before revealing fixture
-identities, also record the complete output shape:
+The neighborhood umbrella alone—`coffee processing`, `photograph editing`,
+`rose-bush care`, or `software development`—is too broad to validate a fine
+segment. Record `invalid cross-subject membership` when no more specific valid
+fine subject covers every member. When an invalid member set contains a rare or
+singleton vector, additionally record `false absorption`; this does not assert
+which vector entered which pre-existing segment. Review an identical member set
+once and reuse that frozen judgment wherever it recurs.
 
-- number and size distribution of all returned segments, including
-  one-vector segments;
-- number of vectors assigned zero, one, and multiple times;
-- duplicate member sets;
-- containment relationships among returned segments;
-- every vector's complete memberships.
+This review is metadata-blind, not source-blind: the synthetic wording may be
+recognizable. Declared-cohort recovery and alternative semantic validity remain
+separate measurements. An accepted alternative segment never changes the
+declared allocation used to describe that run.
 
-Then reveal the atomic propositions and fixture neighborhoods. Record:
+### Balanced local organization
 
-- where the four formulations of every atomic proposition appeared;
-- same-cohort pairs that do and do not share a segment;
-- cross-cohort pairs that share a segment;
-- cohorts represented only by singletons or unassigned vectors;
-- candidate behavior beside the lexical-only diagnostic and raw-vector cosine
-  matrix.
+For the 32 balanced local runs, preserve every returned member set and the
+metadata-blind semantic judgment above. Describe whether the candidate tends to
+recover the three declared cohorts, combine nearby cohorts into valid broader
+fine subjects, fragment them, overlap them, or omit vectors. No one of those
+shapes is declared correct in advance.
 
-Finally, make one explicit human judgment of the complete result: useful, too
-coarse, too fragmented, dominated by redundant overlap, or another stated
-description. Support that judgment with the complete counts above rather than
-only selected examples.
+### Local versus combined balanced organization
 
-A split cohort, broad grouping, overlap, singleton, or unassigned vector is not
-automatically a failure. This experiment has no score, preferred resolution,
-or pass/fail verdict.
+For each neighborhood and schedule `s`, compare its local balanced output with
+the combined balanced output for the same `s`:
 
-## Run
+1. project each combined-output segment onto that neighborhood's twelve IDs;
+2. compare the resulting nonempty member sets with the local output's member
+   sets;
+3. separately preserve every combined-output segment that crosses semantic
+   neighborhoods.
 
-1. Approve and freeze all forty atomic propositions, all 160 equivalent masks,
-   the four fixture neighborhoods, and the lexical-only diagnostic.
-2. Freeze one candidate, configuration, seed, fine-output selector, shuffled
-   opaque input order, and shuffled segment-review order.
-3. Run and preserve the lexical-only diagnostic.
-4. Encode all 160 inputs once under the shared contract in README.md.
-5. Run the frozen candidate once without retuning.
-6. Preserve the complete output before restoring fixture identities.
-7. Complete and freeze the blind segment and output-shape reviews.
-8. Reveal the atomic propositions, neighborhoods, lexical diagnostic, and raw
-   cosine matrix; then complete the diagnostic record and overall human
-   judgment.
+Projection shows whether the local organization changed. The separate
+cross-neighborhood record prevents projection from hiding contamination. This
+comparison uses identical local vectors, schedule indices, and relative order;
+only the other three balanced neighborhoods were added.
+Retain the source combined segment for every projection; do not deduplicate
+identical projected member sets.
 
-Record the frozen inputs and hashes, raw vectors, input order, candidate
-configuration, complete returned memberships, blind review judgments,
-lexical-only result, annotation-based diagnostics, and all generated artifact
-hashes.
+### Balanced versus unequal support
 
-## Scope
+For every neighborhood, schedule `s`, and role assignment, pair the unequal
+run with that neighborhood's balanced run for the same `s`. Record:
 
-This is an exploratory observation of the complete frozen
-SSE-plus-segmentation system. It does not validate, rank, or pass the candidate.
-Any undesirable behavior may originate in the SSE geometry, the candidate, or
-their interaction; neither the lexical diagnostic nor cosine values identify
-the internal cause.
+1. the IDs shared by the two inputs;
+2. each run's complete output;
+3. both outputs projected onto the shared IDs;
+4. the exact set difference between those projected member-set collections;
+5. the ordinary semantic review of every new cross-subject member set.
 
-The fixture contains direct synthetic English statements in four semantic
-neighborhoods. It does not cover automatic atomic-subject generation,
-cross-cutting subjects, corpus scale, hierarchy construction, or natural note
-noise. Experiments 3–6 separately examine lexical traps, unmasked context,
-unequal density, and irrelevant-change stability.
+Retain the source segment for every projection and treat projected outputs as
+source-linked lists; never deduplicate identical projected member sets.
 
-If the result influences a candidate or configuration, later validation
-requires a new frozen fixture.
+Analysts may describe a change as a gain, loss, split, merge, omission, or
+absorption, but those are qualitative annotations. The preserved inputs,
+outputs, projections, and exact set difference are the authoritative record.
+
+The matched comparison isolates the complete collection-membership
+intervention. It does not isolate the effect of a single support count: total
+size remains twelve and several subject counts change together.
+
+Compare results by neighborhood, declared subject, support role, allocation,
+and formulation schedule. Report every schedule and aggregate only with
+schedule as a repeated block; do not treat the 520 overlapping runs as 520
+independent samples. Do not average away a neighborhood-specific failure. Raw
+cosine and lexical measurements are diagnostics, not semantic verdicts.
+
+## Protocol
+
+1. Audit every mask against its declared atomic subject. Correct any missing
+   subject evidence, extra substantive meaning, or narrower qualification.
+2. Counterbalance the eight wording forms inside every neighborhood and across
+   the combined run.
+   Correct clear incidental-template imbalances without purging necessary
+   subject words or forcing unnatural synonyms.
+3. Obtain human approval of all 96 notes, masks, atomic propositions, and the
+   intended nearby relationships.
+4. Freeze the fixture wording before encoding or inspecting candidate output.
+5. Freeze the SSE contract, candidate source and build, preprocessing,
+   configuration, fine-output selector, seed, and diagnostics.
+6. Encode the 96 inputs once, then freeze the vector bytes, opaque-ID mapping,
+   global master rank, all 520 run specifications, and randomized run order.
+7. Execute every run from fresh candidate state without retuning or
+   re-encoding, and preserve every output before restoring fixture identities.
+8. Compute the frozen representation and lexical diagnostics.
+9. Complete the metadata-blind semantic reviews, local-versus-combined
+   comparisons, and matched support-allocation comparisons.
+
+## Required record
+
+Preserve:
+
+- every complete note, mask, raw vector, and artifact hash;
+- the atomic-subject equivalence audit for every mask;
+- every numeric schedule index, wording form, and recorded structural
+  attribute;
+- the opaque-ID mapping and global master rank order;
+- the frozen execution order and every run’s condition, roles, schedule, exact
+  inputs, and candidate order;
+- every complete returned segment, overlap, singleton, and omission;
+- reference-cohort recovery, all cross-subject memberships, false absorption,
+  omission, fragmentation, extra segments, and singleton disposition fields;
+- every blind-review judgment and the masks supporting it;
+- every local-versus-combined projection and cross-neighborhood segment;
+- every balanced-versus-unequal shared-ID projection and membership change;
+- the immutable raw-vector cosine matrix and all lexical diagnostics;
+- candidate source, build, configuration, preprocessing, selector, and seed
+  hashes.
+
+## What a result means
+
+The result describes how one frozen SSE-plus-segmentation system organizes four
+controlled collections of nearby subjects under balanced support, whether that
+organization changes when unrelated neighborhoods are present, and how it
+responds to support imbalance and singleton sparsity.
+
+Evidence is stronger when declared cohorts that recover under balanced support
+continue to recover under stress allocations without new invalid membership,
+omission, or fragmentation involving low-support vectors. The document does
+not impose one binary threshold; it preserves the full failure profile for
+candidate comparison and later threshold selection.
+
+It does not establish one universally correct fine-subject boundary,
+production-scale behavior, every geometric density pattern, natural-corpus
+mask quality, or hierarchy quality. The combined run is one controlled global
+composition check; Experiment 6 separately tests broader irrelevant-change
+stability.

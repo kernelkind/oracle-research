@@ -120,5 +120,6 @@ it does not determine the verdict.
 ## Scope
 
 A pass supports repeated-subject recovery for six balanced and deliberately
-separated subjects. Experiments 2–6 separately test nearby subjects, lexical
-traps, unmasked context, unequal density, and irrelevant changes.
+separated subjects. Experiment 2 jointly explores nearby subjects and unequal
+support; Experiments 3, 4, and 6 separately test lexical traps, unmasked
+context, and irrelevant changes.
