@@ -21,19 +21,25 @@ outside the regions represented only by those contexts?
 
 ## Design
 
-All 27 vectors coexist in one candidate run:
+The same frozen vectors are used in two input conditions. Each condition is
+repeated in two fresh candidate invocations:
 
-- nine fully masked anchors for the three target subjects;
-- nine fully masked anchors for the three context subjects;
-- nine mixed targets crossing every target subject with every context subject.
+1. An **anchor-only baseline** contains the nine fully masked target anchors
+   and nine fully masked context anchors.
+2. A **joint coexistence run** contains those 18 anchors plus the nine mixed
+   targets crossing every target subject with every context subject.
 
-The anchor cohorts establish six recoverable fine-subject regions. The mixed
-targets then have both a correct destination and a competing context
-destination in the same vector collection.
+The anchor-only baseline establishes six reference subjects before mixed
+vectors can affect the candidate's output. The joint run then tests whether
+those references survive and whether each mixed vector enters the reference
+for its masked subject instead of a competing reference supported by its
+unmasked context.
 
-There is no separate neutral run. Separate runs could conceal a split in which
-bare and context-loaded instances form different regions while each run looks
-internally coherent.
+The anchor-only baseline does not replace the joint run. Comparing separately
+clustered control and treatment collections could conceal a split in which
+bare and context-loaded instances form different regions while each collection
+looks internally coherent. Both views are required: the baseline establishes
+the references, and the joint run tests coexistence against them.
 
 ## Lexical controls
 
@@ -41,8 +47,11 @@ internally coherent.
   outside the selected span, matching the mixed-target masks. There is no
   repeated unmasked carrier in the anchor cohorts.
 - Each target-subject cohort contains one exact fully masked control and two
-  semantic paraphrases. The control holds the selected token text fixed when
-  its membership is compared with the mixed targets.
+  semantic paraphrases. The exact control supplies one fixed-wording anchor;
+  the paraphrases prevent the subject reference from being established by
+  literal repetition alone. Scoring uses their connected anchor-supported
+  subject reference rather than requiring every mixed target to share one
+  segment directly with the exact control.
 - The three context-subject anchors express that subject with different
   wording.
 - The three mixed contexts representing one context subject use different
@@ -216,7 +225,7 @@ The context is deliberately unmasked.
 Each mixed target's declared atomic subject is its masked subject. Its
 unmasked context is not an additional vector subject.
 
-The required target-subject groups are:
+The declared target-subject identities are:
 
 ```text
 COFFEE-CONTROL, COFFEE-ANCHOR-2, COFFEE-ANCHOR-3,
@@ -229,7 +238,7 @@ WATERCOLOR-CONTROL, WATERCOLOR-ANCHOR-2, WATERCOLOR-ANCHOR-3,
 WATERCOLOR-TELESCOPE, WATERCOLOR-SOURDOUGH, WATERCOLOR-PASSPORT
 ```
 
-The required context-anchor groups are:
+The declared context-anchor identities are:
 
 ```text
 TELESCOPE-ANCHOR-1, TELESCOPE-ANCHOR-2, TELESCOPE-ANCHOR-3
@@ -237,7 +246,7 @@ SOURDOUGH-ANCHOR-1, SOURDOUGH-ANCHOR-2, SOURDOUGH-ANCHOR-3
 PASSPORT-ANCHOR-1, PASSPORT-ANCHOR-2, PASSPORT-ANCHOR-3
 ```
 
-The invalid context-lure groups are:
+The frozen context-lure groups are:
 
 ```text
 COFFEE-TELESCOPE, BICYCLE-TELESCOPE, WATERCOLOR-TELESCOPE
@@ -245,7 +254,7 @@ COFFEE-SOURDOUGH, BICYCLE-SOURDOUGH, WATERCOLOR-SOURDOUGH
 COFFEE-PASSPORT, BICYCLE-PASSPORT, WATERCOLOR-PASSPORT
 ```
 
-The invalid form-lure groups are:
+The frozen form-lure groups are:
 
 ```text
 COFFEE-TELESCOPE, WATERCOLOR-SOURDOUGH, BICYCLE-PASSPORT
@@ -253,37 +262,82 @@ BICYCLE-TELESCOPE, COFFEE-SOURDOUGH, WATERCOLOR-PASSPORT
 WATERCOLOR-TELESCOPE, BICYCLE-SOURDOUGH, COFFEE-PASSPORT
 ```
 
+A frozen lure group is **supported** when at least two of its three members
+co-occur in one returned segment.
+
 For each mixed target, the three anchors belonging to its unmasked context are
 its matching context anchors. For example, the matching context anchors for
 `COFFEE-TELESCOPE` are `TELESCOPE-ANCHOR-1` through
 `TELESCOPE-ANCHOR-3`. There are 27 such target-to-context-anchor pairs.
 
-## Prerequisites
+## Anchor-supported membership
 
-The candidate must already have passed the experiments for recovering repeated
-subjects and resolving distinct subjects. In this fixture:
+Each of the six declared subjects has exactly three independently worded
+anchors. A segment is **supported by a subject** when it contains at least two
+of that subject's anchors. Support does not imply purity: the same segment may
+also contain vectors declared as other subjects.
 
-1. each exact target control and its two paraphrase anchors must share at least
-   one segment;
-2. each three-vector context-anchor cohort must share at least one segment;
-3. every segment containing an exact target control must also contain at least
-   one of its two correct paraphrase anchors and no vector declared as another
-   atomic subject.
+A **reference segment** for one subject is supported by that subject and
+subject-pure: every vector in it has that same declared atomic subject. A
+target reference segment may therefore contain any of that target's mixed
+vectors. A context reference segment cannot contain a mixed vector, because a
+mixed vector's declared atomic subject is its mask, not its unmasked context.
 
-These conditions establish that each exact control already has a recovered,
-semantically supported reference membership. If a prerequisite fails,
-Experiment 4 has no verdict. Record which prerequisite failed instead of
-attributing that failure to unmasked context.
+For each subject, construct an undirected three-vertex **anchor graph**. Its
+vertices are that subject's anchors. Connect two anchors when they co-occur in
+one reference segment for that subject. The subject's reference is recovered
+when this graph is connected. This permits either one segment containing all
+three anchors or overlapping pure segments that connect them in pairs.
+
+A vector has **meaningful membership** in a subject when it belongs to at
+least one reference segment for that subject. A vector has **competing
+supported membership** when it belongs to any segment supported by another
+subject, whether or not that competing segment is pure.
+
+One-vector segments and segments without two same-subject anchors remain part
+of the candidate output and the diagnostic record, but they do not define
+meaningful or competing supported membership here. Evidence is not aggregated
+across separate one-anchor segments.
+
+This is deliberately a subject-level membership test. It does not require all
+anchors and mixed vectors for one subject to appear in one six-vector segment,
+nor does it require their complete sets of segment IDs to match. Different
+anchor-supported pure segments can represent the same declared subject.
+
+## Anchor-only baseline
+
+The anchor-only baseline is valid only when the reference anchor graph for
+each of the six subjects is connected. Other baseline segments, including
+singletons and unsupported overlaps, remain in the diagnostic record. They do
+not establish or invalidate a reference subject by themselves.
+
+The six connected anchor graphs and their reference segments are the baseline
+references. If the anchor-only baseline is invalid, Experiment 4 has no
+verdict. Baseline eligibility uses only output preserved before the mixed
+vectors enter the joint candidate run.
 
 ## Frozen hypothesis
 
-For each target subject, the exact fully masked control and all three mixed
-targets will have identical, nonempty fine-segment membership signatures.
+In the joint coexistence run:
 
-A vector's **membership signature** is the set of returned fine-segment IDs
-that contain it. Comparing every mixed target directly with the exact control
-detects context-specific, sentence-form-specific, and mixed-only segments even
-when a complete correct-subject segment also exists.
+1. every baseline reference subject still has a connected reference anchor
+   graph;
+2. every mixed target has meaningful membership in its masked target subject;
+3. no mixed target has competing supported membership in one of the other
+   five declared subjects; and
+4. no returned segment contains mixed targets from two or more different
+   declared target subjects.
+
+The third condition includes the matching unmasked-context subject. It also
+catches support from an unrelated target or context subject. Complete
+segment-ID signatures are not compared: an auxiliary singleton or unsupported
+overlap does not by itself show that unmasked material changed meaningful
+subject membership. The fourth condition is different: mixed vectors with
+different masked subjects recurring together form a treatment-only
+cross-subject region even without anchors. The frozen context-lure and
+form-lure groups identify two specific mechanisms for such a failure; other
+cross-target mixed segments catch generic compound-note framing and
+unanticipated interactions.
 
 ## Frozen system boundary
 
@@ -317,43 +371,80 @@ This is a visible development fixture, not held-out confirmation.
    the seed and fixture mapping in the scorer's private artifact, which the
    candidate cannot read. Sort by ascending order key. Reveal the seed and
    mapping only after preserving the candidate output.
-6. Give all 27 vectors to one freshly initialized candidate invocation in that
-   frozen order.
-7. Require the candidate to be deterministic for identical input,
-   configuration, and candidate seed before interpreting this run.
-8. Preserve the complete returned fine-segment collection.
-9. Reveal the fixture identities, check the prerequisites, and then score the
-   frozen hypothesis when the prerequisites hold.
+6. Give the 18 anchors, filtered from that frozen order, to two separately
+   initialized candidate invocations with identical configuration and
+   candidate seed. Preserve both complete anchor-only outputs.
+7. Give all 27 vectors in the frozen order to two more separately initialized
+   invocations with that same configuration and candidate seed. Preserve both
+   complete joint outputs.
+8. Within each identical-input pair, canonicalize the output as an unordered
+   collection of unordered member-ID sets. The two canonical outputs must be
+   identical. Otherwise record a repeatability failure and do not score the
+   semantic hypothesis.
+9. After all four outputs are immutable, reveal the fixture identities and
+   verify the blinding derivations. If repeatability succeeded, validate the
+   anchor-only baseline and score the joint-run hypothesis only when that
+   baseline is valid. Preserve and verify the artifacts even when repeatability
+   failed.
+
+Before canonicalization, require every returned segment to be a nonempty set
+of IDs present in that invocation. To canonicalize one output:
+
+1. encode every 32-byte opaque ID as 64 lowercase hexadecimal characters;
+2. sort the IDs inside each segment by their underlying bytes;
+3. encode each segment as a compact JSON array of those strings;
+4. sort those segment encodings lexicographically by their UTF-8 bytes while
+   retaining duplicate member sets as separate entries; and
+5. encode the outer list as compact UTF-8 JSON with no trailing newline and
+   compute SHA-256 over those exact bytes.
+
+Repeatability compares those canonical bytes, not only their hashes. The hash
+is retained for the run record.
 
 ## Pass rule
 
-The experiment passes only if all three prerequisites hold and the frozen
-hypothesis holds for all three target subjects. Report these result classes
-separately:
+An invalid anchor-only baseline or a repeatability failure produces no
+Experiment 4 verdict. Once the baseline is valid, apply the following order:
 
-- target-subject prerequisite failure;
-- context-subject prerequisite failure;
-- different control-versus-mixed membership signatures within one masked
-  subject;
-- an empty shared signature;
-- a target-to-matching-context-anchor merge;
-- context-lure merges;
-- form-lure merges;
-- every other cross-subject merge.
+1. A competing supported membership or cross-target mixed segment fails the
+   experiment, even if a joint reference graph is disconnected.
+2. Otherwise, a disconnected joint reference graph produces no verdict. It
+   shows that adding the mixed vectors globally changed the candidate's
+   reference structure, but does not isolate unmasked context from general
+   collection instability.
+3. With all six joint reference graphs connected, a mixed target missing
+   meaningful membership in its masked subject fails the experiment.
+4. The experiment passes only when every mixed target has its required
+   meaningful membership and none of the failure conditions above occurs.
 
-One control-versus-mixed signature mismatch is not averaged away.
+Report these result classes separately:
+
+- missing anchor-only reference;
+- repeatability failure;
+- disconnected reference graph in the joint run;
+- mixed target missing meaningful membership in its masked subject;
+- mixed target receiving competing support from its matching unmasked context;
+- mixed target receiving support from any other competing subject;
+- cross-target mixed segment, classified when applicable as context-lure or
+  form-lure support;
+- other unsupported auxiliary segments.
+
+One missing target membership or one competing supported membership is not
+averaged away. One cross-target mixed segment also fails the experiment. Other
+unsupported auxiliary segments are diagnostic and do not decide the verdict.
 
 ## Required record
 
 Preserve:
 
-- the complete returned fine-segment collection;
-- every vector's complete membership signature;
-- prerequisite status for every target-subject and context-anchor group;
-- every control-versus-mixed signature difference;
-- every target-to-matching-context-anchor merge;
+- the complete returned fine-segment collection from all four invocations;
+- every segment's projection onto the 18 anchor IDs;
+- anchor-only validity, all reference segments, and all six anchor graphs;
+- all joint reference segments and anchor graphs;
+- every mixed target's meaningful and competing supported segments;
 - every context-lure, form-lure, and other cross-subject merge;
-- the exact opaque-ID mapping and candidate input order;
+- the exact opaque-ID mapping and input order for both input conditions;
+- canonical output hashes and equality results for both identical-input pairs;
 - the blinding seed, its pre-run commitment, and successful post-run
   verification of every derived ID and order key;
 - cosine matrices and nearest-neighbor orders computed from immutable raw SSE
@@ -361,21 +452,36 @@ Preserve:
 - the raw SSE artifact and hashes;
 - the candidate configuration and candidate seed.
 
+If either identical-input pair disagrees, preserve all four raw outputs and
+the repeatability evidence, but mark anchor validity, reference graphs,
+memberships, and the semantic verdict as unevaluated rather than choosing one
+of the conflicting outputs.
+
 Cosine is diagnostic evidence. The verdict is determined by returned
 fine-segment membership.
 
 ## What a result means
 
-A pass shows that, in this fixture, adding each lexically varied unmasked
-context left the vector's complete fine-segment membership identical to the
-semantically supported exact control.
+A pass shows that, in this fixture, the candidate first recovered six clean
+anchor-supported references, preserved connected versions of those references
+when the mixed vectors were added, placed every mixed vector in its masked
+subject's reference, placed none in a segment supported by a competing
+subject, and produced no treatment-only segment spanning different masked
+subjects.
 
-A control-versus-mixed signature difference directly shows that some part of
-the complete unmasked framing changed membership. A prerequisite failure has
-no Experiment 4 interpretation. The recorded lure classes provide diagnostics,
-not a mechanism proof. A smaller matched follow-up should isolate semantic
-meaning, syntax, length, or position only after a failure occurs.
+An invalid anchor-only baseline or repeatability failure has no Experiment 4
+interpretation. A disconnected joint reference graph is also inconclusive
+unless direct competing membership or a cross-target mixed segment
+independently establishes a failure. Once the joint references remain
+connected, missing target membership or competing supported membership is a
+failure. Unsupported auxiliary segments remain diagnostic because their
+existence alone does not establish a recurring subject.
+
+The recorded lure classes and raw-vector geometry can help explain a failure,
+but do not prove its mechanism. A smaller matched follow-up should isolate
+semantic meaning, syntax, length, or position only after a failure occurs.
 
 This experiment does not test automatically generated masks, natural
-correlated notes, unequal density, every possible context position, or
-hierarchy quality.
+correlated notes, unequal density, every possible context position,
+input-order or candidate-seed invariance, context-loaded paraphrases of the
+target masks, or hierarchy quality.
