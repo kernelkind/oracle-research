@@ -1,214 +1,246 @@
-# Experiment 3: lexical coincidence
+# Experiment 3: paired lexical coincidence
 
-Status: **draft; notes, masks, and expected relationships require human
-approval before encoding**.
+Status: **draft; every subject identity, baseline/treatment pair, and mask
+requires human approval before encoding**.
 
 ## Assumption under test
 
 > Lexical coincidences do not substitute for semantic relationships.
 
-The desired structure is semantic. A conspicuous shared word must not join two
-different meanings, while paraphrases of one meaning must remain recoverable
-even when they share less wording.
-
 ## Question
 
-Can one frozen candidate recover the two meanings in each of three lexical
-traps without joining them through an ambiguous word they share?
+Starting from a run that separates each trap's two meanings, does replacing
+either or both meanings' unambiguous wording with the same ambiguous word
+create false relationships or destroy valid ones?
 
-## Why this fixture exists
+## Controlled intervention
 
-Each trap has equal support on both sides: three independently worded instances
-of one meaning and three of the other. This avoids confounding lexical
-robustness with singleton or unequal-density handling.
+Use one 24-vector baseline in which every meaning has unambiguous wording.
+Then run three variants for each trap:
 
-Some formulations use the conspicuous word, while others express the same
-meaning differently. All notes use the same carrier sentence, so unmasked
-context is not the intended variable.
+1. replace the wording for its first meaning only;
+2. replace the wording for its second meaning only;
+3. replace the wording for both meanings.
 
-Each trap is anchored by one ambiguous case-insensitive lexeme—`rust`, `Java`,
-or `mouse`—that appears in at least one formulation on each side. Paraphrases
-may omit that lexeme; they remain members of the same human-declared subject.
+All other positions remain in baseline form. This produces ten 24-vector runs:
+one shared baseline and three isolated variants for each of three traps.
 
-## Synthetic notes and masks
+The ambiguous words are `draft`, `pupil`, and `trunk`. Each appears once in
+every treatment mask on both sides of its trap: four times per meaning and
+eight times per trap. It never appears in the corresponding baseline masks.
 
-### Trap 1: programming-language Rust versus metal corrosion
+Every run contains exactly one version of every position; a position's
+baseline and treatment vectors never appear together. The whole synthetic note
+is masked, so unmasked context cannot affect this experiment.
 
-#### Subject `RUST-CODE`: Rust borrowing errors
+## Paired synthetic notes and masks
 
-**RUST-CODE-1**
+`B` is the baseline mask. `T` is the corresponding treatment mask.
 
-> This note concerns ⟦fixing a Rust borrow-checker error⟧.
+### Trap 1: `draft`
 
-**RUST-CODE-2**
+Subject `DRAFT-DOCUMENT`: correcting citation errors in a grant-proposal
+version
 
-> This note concerns ⟦resolving a rejected mutable borrow in Rust code⟧.
+| ID | Mask |
+|---|---|
+| DOC-1 B | ⟦I corrected citation errors in the preliminary version of the grant proposal before submission.⟧ |
+| DOC-1 T | ⟦I corrected citation errors in the draft of the grant proposal before submission.⟧ |
+| DOC-2 B | ⟦Before submitting the grant proposal, I fixed incorrect citations in its preliminary version.⟧ |
+| DOC-2 T | ⟦Before submitting the grant proposal, I fixed incorrect citations in its draft.⟧ |
+| DOC-3 B | ⟦I reviewed the grant proposal's preliminary version and repaired mistakes in its citations.⟧ |
+| DOC-3 T | ⟦I reviewed the grant proposal's draft and repaired mistakes in its citations.⟧ |
+| DOC-4 B | ⟦The preliminary version of my grant proposal had citation errors that I corrected before sending it.⟧ |
+| DOC-4 T | ⟦The draft of my grant proposal had citation errors that I corrected before sending it.⟧ |
 
-**RUST-CODE-3**
+Subject `DRAFT-AIR`: blocking cold airflow beneath a kitchen door
 
-> This note concerns ⟦debugging a borrowing conflict reported by the Rust
-> compiler⟧.
+| ID | Mask |
+|---|---|
+| AIR-1 B | ⟦I installed a door sweep to block the airflow under the kitchen door.⟧ |
+| AIR-1 T | ⟦I installed a door sweep to block the draft under the kitchen door.⟧ |
+| AIR-2 B | ⟦A new sweep beneath the kitchen door stopped the airflow that had been entering the room.⟧ |
+| AIR-2 T | ⟦A new sweep beneath the kitchen door stopped the draft that had been entering the room.⟧ |
+| AIR-3 B | ⟦I sealed the bottom of the kitchen door so the cold airflow no longer entered.⟧ |
+| AIR-3 T | ⟦I sealed the bottom of the kitchen door so the cold draft no longer entered.⟧ |
+| AIR-4 B | ⟦To stop the airflow from the gap under the kitchen door, I fitted a door sweep.⟧ |
+| AIR-4 T | ⟦To stop the draft from the gap under the kitchen door, I fitted a door sweep.⟧ |
 
-#### Subject `RUST-METAL`: rust corrosion on bicycle chains
+### Trap 2: `pupil`
 
-**RUST-METAL-1**
+Subject `PUPIL-STUDENT`: teaching multiplication to a primary-school student
 
-> This note concerns ⟦removing rust corrosion from a bicycle chain⟧.
+| ID | Mask |
+|---|---|
+| STUDENT-1 B | ⟦The teacher showed the primary-school student how to solve a multiplication problem.⟧ |
+| STUDENT-1 T | ⟦The teacher showed the primary-school pupil how to solve a multiplication problem.⟧ |
+| STUDENT-2 B | ⟦The teacher guided the primary-school student through each step of multiplying two numbers.⟧ |
+| STUDENT-2 T | ⟦The teacher guided the primary-school pupil through each step of multiplying two numbers.⟧ |
+| STUDENT-3 B | ⟦During the math lesson, the primary-school student learned multiplication with the teacher's help.⟧ |
+| STUDENT-3 T | ⟦During the math lesson, the primary-school pupil learned multiplication with the teacher's help.⟧ |
+| STUDENT-4 B | ⟦The tutor taught the primary-school student a method for solving multiplication problems.⟧ |
+| STUDENT-4 T | ⟦The tutor taught the primary-school pupil a method for solving multiplication problems.⟧ |
 
-**RUST-METAL-2**
+Subject `PUPIL-EYE`: an eye opening constricting in bright light
 
-> This note concerns ⟦cleaning orange oxidation from steel bicycle links⟧.
+| ID | Mask |
+|---|---|
+| EYE-1 B | ⟦The iris opening narrowed under bright light.⟧ |
+| EYE-1 T | ⟦The pupil narrowed under bright light.⟧ |
+| EYE-2 B | ⟦A bright examination lamp caused the iris opening to contract.⟧ |
+| EYE-2 T | ⟦A bright examination lamp caused the pupil to contract.⟧ |
+| EYE-3 B | ⟦The iris opening became smaller when light shone into the eye.⟧ |
+| EYE-3 T | ⟦The pupil became smaller when light shone into the eye.⟧ |
+| EYE-4 B | ⟦The eye exam recorded the iris opening constricting in response to bright light.⟧ |
+| EYE-4 T | ⟦The eye exam recorded the pupil constricting in response to bright light.⟧ |
 
-**RUST-METAL-3**
+### Trap 3: `trunk`
 
-> This note concerns ⟦removing iron corrosion from a bike chain⟧.
+Subject `TRUNK-ELEPHANT`: an elephant spraying itself with water
 
-### Trap 2: Java software versus the island of Java
+| ID | Mask |
+|---|---|
+| ELEPHANT-1 B | ⟦An elephant sprayed water over its back with its proboscis.⟧ |
+| ELEPHANT-1 T | ⟦An elephant sprayed water over its back with its trunk.⟧ |
+| ELEPHANT-2 B | ⟦At the sanctuary, an elephant used its proboscis to shower its body with water.⟧ |
+| ELEPHANT-2 T | ⟦At the sanctuary, an elephant used its trunk to shower its body with water.⟧ |
+| ELEPHANT-3 B | ⟦An elephant sprayed its body with water from its proboscis.⟧ |
+| ELEPHANT-3 T | ⟦An elephant sprayed its body with water from its trunk.⟧ |
+| ELEPHANT-4 B | ⟦At the watering pool, an elephant splashed water onto its skin with its proboscis.⟧ |
+| ELEPHANT-4 T | ⟦At the watering pool, an elephant splashed water onto its skin with its trunk.⟧ |
 
-#### Subject `JAVA-CODE`: Java null-reference failures
+Subject `TRUNK-CAR`: loading groceries into a car's rear cargo compartment
 
-**JAVA-CODE-1**
-
-> This note concerns ⟦debugging a Java NullPointerException⟧.
-
-**JAVA-CODE-2**
-
-> This note concerns ⟦tracing a null-reference crash in a Java service⟧.
-
-**JAVA-CODE-3**
-
-> This note concerns ⟦fixing a Java program that dereferences null⟧.
-
-#### Subject `JAVA-ISLAND`: travel across the island of Java
-
-**JAVA-ISLAND-1**
-
-> This note concerns ⟦hiking across the island of Java⟧.
-
-**JAVA-ISLAND-2**
-
-> This note concerns ⟦trekking through Java's volcanic highlands⟧.
-
-**JAVA-ISLAND-3**
-
-> This note concerns ⟦trekking across the Indonesian island of Java⟧.
-
-### Trap 3: computer mouse versus animal mouse
-
-#### Subject `MOUSE-DEVICE`: repairing a computer mouse
-
-**MOUSE-DEVICE-1**
-
-> This note concerns ⟦repairing a broken computer mouse⟧.
-
-**MOUSE-DEVICE-2**
-
-> This note concerns ⟦fixing a malfunctioning cursor-control device⟧.
-
-**MOUSE-DEVICE-3**
-
-> This note concerns ⟦replacing the click switch in a USB mouse⟧.
-
-#### Subject `MOUSE-ANIMAL`: mice nesting in a home
-
-**MOUSE-ANIMAL-1**
-
-> This note concerns ⟦a house mouse nesting in the pantry⟧.
-
-**MOUSE-ANIMAL-2**
-
-> This note concerns ⟦a small rodent building a nest behind the cupboard⟧.
-
-**MOUSE-ANIMAL-3**
-
-> This note concerns ⟦a wild mouse nesting inside a kitchen⟧.
+| ID | Mask |
+|---|---|
+| CAR-1 B | ⟦I loaded grocery bags into my sedan's cargo compartment.⟧ |
+| CAR-1 T | ⟦I loaded grocery bags into my sedan's trunk.⟧ |
+| CAR-2 B | ⟦I arranged the groceries inside my sedan's cargo compartment.⟧ |
+| CAR-2 T | ⟦I arranged the groceries inside my sedan's trunk.⟧ |
+| CAR-3 B | ⟦I placed the supermarket bags in my sedan's cargo compartment.⟧ |
+| CAR-3 T | ⟦I placed the supermarket bags in my sedan's trunk.⟧ |
+| CAR-4 B | ⟦I stowed the grocery bags securely in my sedan's cargo compartment.⟧ |
+| CAR-4 T | ⟦I stowed the grocery bags securely in my sedan's trunk.⟧ |
 
 The six subject identities and three trap pairings are scoring data. The
-candidate does not receive them.
+system receives only opaque IDs and vectors. The IDs printed above exist only
+for human review and must be remapped before any candidate run.
 
-## Frozen hypothesis
+## Scoring
 
-1. Each of the six three-vector subjects will be recovered as an exact
-   three-vector segment.
-2. No segment will join either side of the Rust trap.
-3. No segment will join either side of the Java trap.
-4. No segment will join either side of the mouse trap.
+For any two positions, record **together** when at least one returned fine
+segment contains both vectors. Otherwise record **apart**.
 
-The first condition prevents a candidate from passing by refusing to group
-anything. The remaining conditions prevent it from returning correct narrow
-segments while also emitting lexical false merges as additional fine segments.
+Each trap contains:
 
-A subject is **recovered** when one segment contains exactly its three vectors
-among this eighteen-vector fixture. This prevents an unrelated cross-trap
-mixture from masquerading as recovery. Additional cross-trap segments are
-recorded but do not affect this experiment's verdict; their correctness would
-require separate fine-resolution judgments.
+- 12 within-subject pairs: six from each four-vector subject;
+- 16 pairs crossing the two meanings of the ambiguous word.
+
+### Baseline prerequisite
+
+A trap qualifies for the lexical test only when its baseline run puts:
+
+- all 12 within-subject pairs together; and
+- all 16 cross-meaning pairs apart.
+
+If not, record a **baseline prerequisite failure**. That trap cannot show what
+the ambiguous word changed.
+
+This prerequisite prevents meaningless passes: returning no relationships
+fails the within-subject check, while returning one giant relationship fails
+the cross-meaning check.
+
+### Variant verdict
+
+A qualified trap passes only when all three of its variant runs preserve all
+28 scored pairwise relationships from baseline:
+
+- a within-subject pair changing from together to apart means valid recovery
+  was lost after a controlled substitution;
+- a cross-meaning pair changing from apart to together means a controlled
+  substitution created a false relationship.
+
+Record the complete four-state pattern for every pair: baseline, first-side
+only, second-side only, and both sides.
+
+- A change in a one-sided run means one substitution was sufficient.
+- A change only in the both-sides run is the strongest evidence of interaction
+  between the two uses of the ambiguous word.
+- A relation between unchanged vectors that changes in a one-sided run exposes
+  a collection-dependent effect of the substituted vectors.
+
+These patterns identify where the system changed. They do not prove that exact
+token matching, rather than nonlinear embedding or segmentation behavior, was
+the internal mechanism.
+
+Do not average the three traps. Report each independently. Segments joining
+different traps are diagnostics only; this experiment has no approved truth
+for those relationships.
+
+This scoring does not require exact segment shapes and permits overlapping
+segments or unassigned vectors.
 
 ## Frozen system boundary
 
-Use the shared 768-dimensional Sentence-T5-base SSE checkpoint identified in:
+Use the shared 768-dimensional Sentence-T5-base SSE checkpoint identified in
+[the experiment README](README.md). Preserve its raw outputs exactly.
 
-README.md
-
-Preserve its raw outputs exactly. Any normalization, distance, or other
-preprocessing belongs to the candidate's frozen configuration.
-
-The candidate receives only opaque IDs and vectors. It may return overlapping
-fine segments and leave vectors unassigned. Scoring consumes only its
-predeclared fine-segment collection; coarser parents are excluded.
+Freeze the fine-segmentation implementation, preprocessing, configuration,
+fine-output rule, and random seed before any run. Any normalization or
+distance calculation belongs to that frozen configuration.
 
 This is a visible development fixture, not held-out confirmation.
 
 ## Protocol
 
-1. Obtain human approval of all eighteen notes, masks, subject identities, and
-   trap pairings.
-2. Freeze this document and the candidate's implementation, preprocessing,
-   configuration, fine-output rule, and seed.
-3. Generate all eighteen SSE vectors once and preserve their exact bytes.
-4. Give the candidate only opaque IDs and vectors in one frozen shuffled order.
-5. Preserve the complete returned fine-segment collection.
-6. Reveal the fixture identities and score the frozen hypothesis.
-7. Show every failure with the complete notes, masks, segment memberships, and
-   cosine values.
-
-## Pass rule
-
-The experiment passes only if:
-
-- all six subjects are recovered as exact three-vector segments;
-- no pair crossing one of the three declared trap boundaries shares a returned
-  fine segment.
-
-Cross-trap memberships are diagnostics only. One failure on a declared trap
-boundary is not averaged away.
+1. Obtain human approval of all six subject identities, all 24
+   baseline/treatment mask pairs, and the three trap assignments.
+2. Freeze this document, SSE, and the complete fine-segmentation candidate.
+3. Assign the same 24 opaque IDs and shuffled positions to corresponding
+   baseline and treatment vectors.
+4. Generate the 24 baseline and 24 treatment SSE vectors once and preserve
+   their exact bytes and tokenizer-piece counts.
+5. Run the all-baseline collection in a clean process.
+6. For each trap, run its first-side-only, second-side-only, and both-sides
+   variants in separate clean processes. Keep every other position at
+   baseline.
+7. Use the same positions, configuration, and seed in all ten runs.
+8. Preserve all ten complete outputs before inspecting or scoring any of them.
+9. Score the baseline prerequisite and three variant transitions for every
+   trap.
 
 ## Required record
 
 Preserve:
 
-- recovery status for all six subjects;
-- every declared trap-boundary membership;
-- every other cross-trap membership as a non-scoring diagnostic;
-- every returned segment, overlap, and omission;
-- the exact shuffled input order;
-- the cosine matrix and nearest-neighbor order computed from immutable raw SSE
-  outputs;
-- the smallest within-subject cosine for each subject;
-- every cosine crossing a lexical-trap boundary;
-- the raw SSE artifact and hashes;
-- the complete candidate configuration and seed.
+- all paired inputs and scoring identities;
+- all ten complete returned fine-segment collections;
+- every scored pair's four-state pattern for its trap;
+- every changed pair;
+- every overlap and unassigned vector;
+- the exact input positions;
+- tokenizer-piece counts for every baseline/treatment pair;
+- cosine similarity for every matched baseline/treatment vector pair;
+- complete cosine matrices and nearest-neighbor orders for all ten runs;
+- raw SSE artifacts and hashes;
+- the complete fine-segmentation configuration and seed.
 
-Cosine can suggest whether a misleading relationship was already prominent in
-the raw vector geometry. It does not prove causation, describe every geometric
-relationship available to a candidate, or determine the verdict.
+Cosine diagnostics may show how the controlled wording change affected the raw
+geometry. They do not determine the experiment's verdict or assign a failure
+specifically to SSE or fine segmentation.
 
 ## What a result means
 
-A pass supports lexical robustness for these three controlled traps. It does
-not establish arbitrary homonym handling, natural-language robustness,
-context invariance, density behavior, stability, or hierarchy quality.
+A pass supports lexical robustness for these three balanced, common-word traps
+in an isolated synthetic collection.
 
-A failure applies to the complete vector-plus-candidate system. The diagnostics
-may indicate a likely failure stage, but this experiment cannot conclusively
-attribute the cause to SSE or the segmentation procedure.
+A baseline prerequisite failure is ordinary recovery failure, not evidence of
+a lexical-coincidence failure. A variant failure after a qualified baseline
+shows that the controlled lexical substitution changed the behavior of the
+complete SSE-plus-fine-segmentation system. The four-state pattern distinguishes
+one-sided substitution sensitivity from a both-sides-only interaction, but
+does not by itself prove the system's internal failure mechanism.
+
+This experiment does not establish robustness for arbitrary ambiguous words,
+natural social-media text, a large mixed corpus, unmasked context, unequal
+density, stability, or hierarchy construction.
