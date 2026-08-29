@@ -365,19 +365,27 @@ enum PromptReviewItemKind {
 struct VerifiedPromptReviewItem {
     item_id: String,
     item_sha256: String,
-    kind: PromptReviewItemKind,
     presentation: PromptReviewItemPresentation,
 }
 
 #[derive(Clone, Debug)]
 enum PromptReviewItemPresentation {
-    Subject(ApprovalScreen),
+    Subject(AtomicSubjectPromptReviewScreen),
     SubjectList {
         note_index: usize,
         note_count: usize,
         note: String,
         subject_item_indices: Vec<usize>,
     },
+}
+
+impl PromptReviewItemPresentation {
+    fn kind(&self) -> PromptReviewItemKind {
+        match self {
+            Self::Subject(_) => PromptReviewItemKind::Subject,
+            Self::SubjectList { .. } => PromptReviewItemKind::SubjectList,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -415,9 +423,52 @@ pub trait SubjectMaskReviewUi: ApprovalUi {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct PromptReviewScreen {
-    pub screen: ApprovalScreen,
-    pub comment: String,
+pub struct AtomicSubjectPromptReviewScreen {
+    pub heading: String,
+    pub subject: String,
+    pub question: String,
+    pub note: String,
+    pub approve_label: String,
+    pub reject_label: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct AtomicSubjectListReviewScreen {
+    pub heading: String,
+    pub question: String,
+    pub note: String,
+    pub subject_decisions: String,
+    pub approve_label: String,
+    pub reject_label: String,
+    pub guidance: ApprovalGuidance,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum PromptReviewScreen {
+    Subject {
+        review: AtomicSubjectPromptReviewScreen,
+        comment: String,
+    },
+    SubjectList {
+        review: AtomicSubjectListReviewScreen,
+        comment: String,
+    },
+}
+
+impl PromptReviewScreen {
+    pub fn approval_screen(&self) -> ApprovalScreen {
+        match self {
+            PromptReviewScreen::Subject { review, .. } => review.approval_screen(),
+            PromptReviewScreen::SubjectList { review, .. } => review.approval_screen(),
+        }
+    }
+
+    pub fn comment(&self) -> &str {
+        match self {
+            PromptReviewScreen::Subject { comment, .. }
+            | PromptReviewScreen::SubjectList { comment, .. } => comment,
+        }
+    }
 }
 
 pub trait PromptReviewUi {
@@ -426,7 +477,7 @@ pub trait PromptReviewUi {
 
 impl PromptReviewUi for ReferenceTerminal {
     fn review_prompt(&mut self, screen: PromptReviewScreen) -> io::Result<ApprovalTuiAction> {
-        self.review_prompt_iteration(screen.screen, screen.comment)
+        self.review_prompt_iteration(screen.approval_screen(), screen.comment().to_owned())
     }
 }
 
@@ -905,7 +956,6 @@ fn load_verified_atomic_subject_review_run(
             items.push(VerifiedPromptReviewItem {
                 item_id,
                 item_sha256,
-                kind: PromptReviewItemKind::Subject,
                 presentation: PromptReviewItemPresentation::Subject(atomic_subject_screen(
                     note_index,
                     input.notes.len(),
@@ -931,7 +981,6 @@ fn load_verified_atomic_subject_review_run(
         items.push(VerifiedPromptReviewItem {
             item_id,
             item_sha256,
-            kind: PromptReviewItemKind::SubjectList,
             presentation: PromptReviewItemPresentation::SubjectList {
                 note_index,
                 note_count: input.notes.len(),
@@ -1399,10 +1448,7 @@ pub fn run_atomic_subject_prompt_review(
     save_session(session_path, &session)?;
 
     while let Some(item_index) = session.next_pending_item() {
-        let screen = PromptReviewScreen {
-            screen: prompt_review_item_screen(item_index, &run, &session)?,
-            comment: session.comment(item_index)?.to_owned(),
-        };
+        let screen = prompt_review_item_screen(item_index, &run, &session)?;
         let action = ui.review_prompt(screen).map_err(|source| {
             io_error(
                 "run SSE prompt review UI for",
@@ -1542,7 +1588,7 @@ impl PromptReviewSession {
             self.items
                 .iter()
                 .zip(&run.items)
-                .filter(|(_, item)| item.kind == kind)
+                .filter(|(_, item)| item.presentation.kind() == kind)
                 .map(|(stored, _)| stored.status),
         )
     }
@@ -1889,7 +1935,7 @@ fn mask_screen(
             global_index + 1,
             proposal.subject_count()
         ),
-        title: subject.proposal.label.clone(),
+        title: Some(subject.proposal.label.clone()),
         scope: "Does the highlight contain only the smallest text span or spans that directly express this subject?"
             .to_owned(),
         approve_label: "Correct".to_owned(),
@@ -1903,12 +1949,11 @@ fn mask_screen(
                    Discontinuous spans are allowed when every selected span directly expresses the same subject."
                 .to_owned(),
         }),
-        evidence: vec![ApprovalEvidence {
+        evidence: ApprovalEvidenceLayout::Paged(vec![ApprovalEvidence {
             title: "Note".to_owned(),
             annotation: String::new(),
             body: highlighted_note(&note.note.content, &subject.spans),
-        }],
-        evidence_layout: ApprovalEvidenceLayout::Paged,
+        }]),
     })
 }
 
@@ -1919,8 +1964,8 @@ fn atomic_subject_screen(
     subject_count: usize,
     note: &str,
     subject: &str,
-) -> ApprovalScreen {
-    ApprovalScreen {
+) -> AtomicSubjectPromptReviewScreen {
+    AtomicSubjectPromptReviewScreen {
         heading: format!(
             "Atomic-subject prompt review · Subject {} of {} · Note {} of {}",
             global_subject_index + 1,
@@ -1928,20 +1973,32 @@ fn atomic_subject_screen(
             note_index + 1,
             note_count,
         ),
-        title: subject.to_owned(),
-        scope:
+        subject: subject.to_owned(),
+        question:
             "Is this a valid atomic subject explicitly and substantively discussed in this note?"
                 .to_owned(),
         approve_label: "Approve".to_owned(),
         reject_label: "Disapprove".to_owned(),
-        rejection_help: String::new(),
-        guidance: None,
-        evidence: vec![ApprovalEvidence {
-            title: "Note".to_owned(),
-            annotation: String::new(),
-            body: note.to_owned(),
-        }],
-        evidence_layout: ApprovalEvidenceLayout::Paged,
+        note: note.to_owned(),
+    }
+}
+
+impl AtomicSubjectPromptReviewScreen {
+    fn approval_screen(&self) -> ApprovalScreen {
+        ApprovalScreen {
+            heading: self.heading.clone(),
+            title: Some(self.subject.clone()),
+            scope: self.question.clone(),
+            approve_label: self.approve_label.clone(),
+            reject_label: self.reject_label.clone(),
+            rejection_help: String::new(),
+            guidance: None,
+            evidence: ApprovalEvidenceLayout::Paged(vec![ApprovalEvidence {
+                title: "Note".to_owned(),
+                annotation: String::new(),
+                body: self.note.clone(),
+            }]),
+        }
     }
 }
 
@@ -1957,12 +2014,15 @@ fn prompt_review_item_screen(
     item_index: usize,
     run: &VerifiedAtomicSubjectReviewRun,
     session: &PromptReviewSession,
-) -> Result<ApprovalScreen> {
+) -> Result<PromptReviewScreen> {
     let item = run.items.get(item_index).ok_or_else(|| {
         Error::ExperimentState(format!("prompt-review item {item_index} is absent"))
     })?;
     match &item.presentation {
-        PromptReviewItemPresentation::Subject(screen) => Ok(screen.clone()),
+        PromptReviewItemPresentation::Subject(review) => Ok(PromptReviewScreen::Subject {
+            review: review.clone(),
+            comment: session.comment(item_index)?.to_owned(),
+        }),
         PromptReviewItemPresentation::SubjectList {
             note_index,
             note_count,
@@ -1993,17 +2053,15 @@ fn prompt_review_item_screen(
                 }
                 subjects.push(ReviewedAtomicSubject {
                     source_index: subjects.len(),
-                    label: subject_screen.title.clone(),
+                    label: subject_screen.subject.clone(),
                     status: state.status,
                     comment: state.comment.clone(),
                 });
             }
-            Ok(atomic_subject_list_screen(
-                *note_index,
-                *note_count,
-                note,
-                &subjects,
-            ))
+            Ok(PromptReviewScreen::SubjectList {
+                review: atomic_subject_list_screen(*note_index, *note_count, note, &subjects),
+                comment: session.comment(item_index)?.to_owned(),
+            })
         }
     }
 }
@@ -2013,7 +2071,7 @@ fn atomic_subject_list_screen(
     note_count: usize,
     note: &str,
     subjects: &[ReviewedAtomicSubject],
-) -> ApprovalScreen {
+) -> AtomicSubjectListReviewScreen {
     let accepted = subjects
         .iter()
         .filter(|subject| subject.status == PromptReviewStatus::Approved)
@@ -2044,44 +2102,55 @@ fn atomic_subject_list_screen(
         })
         .collect::<Vec<_>>()
         .join("\n");
-    let mut evidence = vec![
-        ApprovalEvidence {
-            title: "Note".to_owned(),
-            annotation: String::new(),
-            body: note.to_owned(),
-        },
-        ApprovalEvidence {
-            title: "Accepted atomic subjects".to_owned(),
-            annotation: String::new(),
-            body: accepted,
-        },
-    ];
-    if !not_accepted.is_empty() {
-        evidence.push(ApprovalEvidence {
-            title: "Disapproved or skipped subjects".to_owned(),
-            annotation: String::new(),
-            body: not_accepted,
-        });
-    }
-    ApprovalScreen {
+    let subject_decisions = if not_accepted.is_empty() {
+        format!("Accepted\n{accepted}")
+    } else {
+        format!("Accepted\n{accepted}\n\nDisapproved or skipped\n{not_accepted}")
+    };
+    AtomicSubjectListReviewScreen {
         heading: format!(
             "Atomic-subject list review · Note {} of {}",
             note_index + 1,
             note_count
         ),
-        title: "Missing or repeated subjects".to_owned(),
-        scope: "Considering only the accepted subjects, is any atomic subject missing, or do any express the same thing?"
-            .to_owned(),
-        approve_label: "Nothing missing or repeated".to_owned(),
-        reject_label: "Something missing or repeated".to_owned(),
-        rejection_help: String::new(),
-        guidance: Some(ApprovalGuidance {
+        question:
+            "Are any atomic subjects missing, or do any accepted subjects express the same thing?"
+                .to_owned(),
+        note: note.to_owned(),
+        subject_decisions,
+        approve_label: "No — complete and distinct".to_owned(),
+        reject_label: "Yes — missing or repeated".to_owned(),
+        guidance: ApprovalGuidance {
             title: "Decision scope".to_owned(),
             body: "This decision records only whether an atomic subject is missing or repeated. It does not change any earlier subject decision."
                 .to_owned(),
-        }),
-        evidence,
-        evidence_layout: ApprovalEvidenceLayout::Stacked,
+        },
+    }
+}
+
+impl AtomicSubjectListReviewScreen {
+    fn approval_screen(&self) -> ApprovalScreen {
+        ApprovalScreen {
+            heading: self.heading.clone(),
+            title: None,
+            scope: self.question.clone(),
+            approve_label: self.approve_label.clone(),
+            reject_label: self.reject_label.clone(),
+            rejection_help: String::new(),
+            guidance: Some(self.guidance.clone()),
+            evidence: ApprovalEvidenceLayout::Stacked {
+                top: ApprovalEvidence {
+                    title: "Note".to_owned(),
+                    annotation: String::new(),
+                    body: self.note.clone(),
+                },
+                bottom: ApprovalEvidence {
+                    title: "Subject decisions".to_owned(),
+                    annotation: String::new(),
+                    body: self.subject_decisions.clone(),
+                },
+            },
+        }
     }
 }
 

@@ -41,23 +41,60 @@ pub struct ApprovalGuidance {
     pub body: String,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ApprovalEvidenceLayout {
-    Paged,
-    Stacked,
+    Paged(Vec<ApprovalEvidence>),
+    Stacked {
+        top: ApprovalEvidence,
+        bottom: ApprovalEvidence,
+    },
+}
+
+impl ApprovalEvidenceLayout {
+    fn len(&self) -> usize {
+        match self {
+            Self::Paged(evidence) => evidence.len(),
+            Self::Stacked { .. } => 2,
+        }
+    }
+
+    fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
+    fn is_paged(&self) -> bool {
+        matches!(self, Self::Paged(_))
+    }
+
+    fn get(&self, index: usize) -> Option<&ApprovalEvidence> {
+        match self {
+            Self::Paged(evidence) => evidence.get(index),
+            Self::Stacked { top, bottom } => match index {
+                0 => Some(top),
+                1 => Some(bottom),
+                _ => None,
+            },
+        }
+    }
+
+    fn iter_mut(&mut self) -> Box<dyn Iterator<Item = &mut ApprovalEvidence> + '_> {
+        match self {
+            Self::Paged(evidence) => Box::new(evidence.iter_mut()),
+            Self::Stacked { top, bottom } => Box::new([top, bottom].into_iter()),
+        }
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ApprovalScreen {
     pub heading: String,
-    pub title: String,
+    pub title: Option<String>,
     pub scope: String,
     pub approve_label: String,
     pub reject_label: String,
     pub rejection_help: String,
     pub guidance: Option<ApprovalGuidance>,
-    pub evidence: Vec<ApprovalEvidence>,
-    pub evidence_layout: ApprovalEvidenceLayout,
+    pub evidence: ApprovalEvidenceLayout,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -122,7 +159,7 @@ impl ApprovalTuiModel {
         comment: String,
     ) -> Self {
         screen.heading = terminal_safe(&screen.heading);
-        screen.title = terminal_safe(&screen.title);
+        screen.title = screen.title.map(|title| terminal_safe(&title));
         screen.scope = terminal_safe(&screen.scope);
         screen.approve_label = terminal_safe(&screen.approve_label);
         screen.reject_label = terminal_safe(&screen.reject_label);
@@ -131,7 +168,7 @@ impl ApprovalTuiModel {
             guidance.title = terminal_safe(&guidance.title);
             guidance.body = terminal_safe(&guidance.body);
         }
-        for evidence in &mut screen.evidence {
+        for evidence in screen.evidence.iter_mut() {
             evidence.title = terminal_safe(&evidence.title);
             evidence.annotation = terminal_safe(&evidence.annotation);
             evidence.body = terminal_safe(&evidence.body);
@@ -371,7 +408,7 @@ impl ApprovalTuiModel {
             return;
         }
         self.evidence_index = (self.evidence_index + 1) % self.screen.evidence.len();
-        if self.screen.evidence_layout == ApprovalEvidenceLayout::Paged {
+        if self.screen.evidence.is_paged() {
             self.evidence_scrolls[self.evidence_index] = 0;
         }
     }
@@ -385,7 +422,7 @@ impl ApprovalTuiModel {
         } else {
             self.evidence_index - 1
         };
-        if self.screen.evidence_layout == ApprovalEvidenceLayout::Paged {
+        if self.screen.evidence.is_paged() {
             self.evidence_scrolls[self.evidence_index] = 0;
         }
     }
@@ -393,9 +430,9 @@ impl ApprovalTuiModel {
     fn navigation_controls(&self, exit_label: &'static str) -> Vec<Span<'static>> {
         let mut controls = Vec::new();
         if self.screen.evidence.len() > 1 {
-            let target = match self.screen.evidence_layout {
-                ApprovalEvidenceLayout::Paged => " Evidence  ",
-                ApprovalEvidenceLayout::Stacked => " Panel  ",
+            let target = match &self.screen.evidence {
+                ApprovalEvidenceLayout::Paged(_) => " Evidence  ",
+                ApprovalEvidenceLayout::Stacked { .. } => " Panel  ",
             };
             controls.extend([
                 Span::styled("[Tab/←/→]", accent_style()),
@@ -455,9 +492,10 @@ impl ApprovalTuiModel {
         let annotation = Paragraph::new(annotation_text)
             .style(secondary_style())
             .wrap(Wrap { trim: false });
+        let title_height = if self.screen.title.is_some() { 2 } else { 0 };
         let maximum_annotation_height = area
             .height
-            .saturating_sub(1 + 2 + scope_height + 6 + footer_height);
+            .saturating_sub(1 + title_height + scope_height + 6 + footer_height);
         let annotation_height = if annotation_text.is_empty() {
             0
         } else {
@@ -469,7 +507,7 @@ impl ApprovalTuiModel {
             .direction(Direction::Vertical)
             .constraints([
                 Constraint::Length(1),
-                Constraint::Length(2),
+                Constraint::Length(title_height),
                 Constraint::Length(scope_height),
                 Constraint::Min(6),
                 Constraint::Length(annotation_height),
@@ -480,10 +518,12 @@ impl ApprovalTuiModel {
             Paragraph::new(self.screen.heading.as_str()).style(secondary_style()),
             rows[0],
         );
-        frame.render_widget(
-            Paragraph::new(self.screen.title.as_str()).style(accent_style()),
-            rows[1],
-        );
+        if let Some(title) = &self.screen.title {
+            frame.render_widget(
+                Paragraph::new(title.as_str()).style(accent_style()),
+                rows[1],
+            );
+        }
         frame.render_widget(scope, rows[2]);
 
         if self.guidance_visible {
@@ -501,12 +541,11 @@ impl ApprovalTuiModel {
                 &mut self.half_page_lines,
                 false,
             );
-        } else if self.screen.evidence_layout == ApprovalEvidenceLayout::Stacked
-            && self.screen.evidence.len() == 2
-        {
-            let panels = stacked_evidence_areas(rows[3], &self.screen.evidence[1].body);
+        } else if let ApprovalEvidenceLayout::Stacked { top, bottom } = &self.screen.evidence {
+            let panels = stacked_evidence_areas(rows[3], &bottom.body);
+            let evidence = [top, bottom];
             for (index, area) in panels.into_iter().enumerate() {
-                let evidence = &self.screen.evidence[index];
+                let evidence = evidence[index];
                 let mut inactive_half_page_lines = 1;
                 let half_page_lines = if index == self.evidence_index {
                     &mut self.half_page_lines
@@ -620,9 +659,15 @@ impl ApprovalTuiModel {
             let mut lines = vec![
                 Line::from(vec![
                     Span::styled("[A]", accent_style()),
-                    Span::styled(" Approve  ", secondary_style()),
+                    Span::styled(
+                        format!(" {}  ", self.screen.approve_label),
+                        secondary_style(),
+                    ),
                     Span::styled("[R]", accent_style()),
-                    Span::styled(" Disapprove  ", secondary_style()),
+                    Span::styled(
+                        format!(" {}  ", self.screen.reject_label),
+                        secondary_style(),
+                    ),
                     Span::styled("[C]", accent_style()),
                     Span::styled(" Comment  ", secondary_style()),
                     Span::styled("[S]", accent_style()),

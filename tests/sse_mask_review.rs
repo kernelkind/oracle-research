@@ -6,7 +6,9 @@ use std::path::{Path, PathBuf};
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
 use oracle_mvp::reference_map::ReviewOutcome;
 use oracle_mvp::reference_review::ApprovalUi;
-use oracle_mvp::reference_tui::{ApprovalScreen, ApprovalTuiAction};
+use oracle_mvp::reference_tui::{
+    ApprovalEvidence, ApprovalEvidenceLayout, ApprovalScreen, ApprovalTuiAction,
+};
 use oracle_mvp::sse_mask_review::{
     ReviewStage, SubjectMaskReviewRunOutcome, SubjectMaskReviewUi, SubjectReviewAction,
     SubjectReviewScreen, SubjectReviewTuiModel, load_verified_subject_mask_proposal,
@@ -20,6 +22,17 @@ use sha2::{Digest, Sha256};
 const SUBJECT_INSTRUCTION: &str = "Enumerate every atomic subject explicitly and substantively discussed in the provided text.\n\nAn atomic subject is the smallest coherent semantic idea that remains meaningful as a distinct focus.\n\n<RAW NOTE>\n\nReturn only a JSON array of subject strings.";
 const MASK_INSTRUCTION: &str = "Mask only the narrowest portion or portions of the provided text that directly express the provided atomic subject.\n\nAtomic subject:\n<SUBJECT>\n\nText:\n<RAW NOTE>\n\nReturn only a JSON array of exact substrings copied from the text, in source order. If the subject is not expressed, return \"unsupported\".";
 const TAKEAWAY_INSTRUCTION: &str = "This text is a social media post. Identify each substantive point the user communicates. Summarize every independent point as a separate, concise takeaway in your own words. Combine details when they jointly express one point. Ground each takeaway in the text itself.\n\nReturn only a JSON array of strings.";
+
+fn evidence_at(screen: &ApprovalScreen, index: usize) -> &ApprovalEvidence {
+    match &screen.evidence {
+        ApprovalEvidenceLayout::Paged(evidence) => &evidence[index],
+        ApprovalEvidenceLayout::Stacked { top, bottom } => match index {
+            0 => top,
+            1 => bottom,
+            _ => panic!("stacked evidence contains exactly two panels"),
+        },
+    }
+}
 const TAKEAWAY_MASK_INSTRUCTION: &str = "Mask only the narrowest portion or portions of the provided text that directly express the provided takeaway.\n\nTakeaway:\n<TAKEAWAY>\n\nText:\n<RAW NOTE>\n\nReturn only a JSON array of exact substrings copied from the text, in source order. If the takeaway is not expressed, return \"unsupported\".";
 const TPV3_81_INSTRUCTION: &str = r#"Read this social-media post as a whole and determine everything the author communicates.
 
@@ -367,7 +380,7 @@ fn all_subjects_and_completeness_unlock_individual_mask_review_and_publication()
     assert_eq!(outcome, SubjectMaskReviewRunOutcome::Approved);
     assert_eq!(ui.approval_screens.len(), 3);
     assert_eq!(
-        ui.approval_screens[1].evidence[0].body,
+        evidence_at(&ui.approval_screens[1], 0).body,
         "pypush is serverless; ⟦pypush⟧ is ⟦open-source⟧."
     );
     let approved: Value =
@@ -470,7 +483,7 @@ fn revising_one_rejected_mask_reopens_only_that_mask() {
     assert!(resumed.subject_screens.is_empty());
     assert_eq!(resumed.approval_screens.len(), 1);
     assert_eq!(
-        resumed.approval_screens[0].evidence[0].body,
+        evidence_at(&resumed.approval_screens[0], 0).body,
         "pypush is serverless; pypush is ⟦open-source⟧."
     );
 }
@@ -607,10 +620,7 @@ fn proposal_validation_accepts_tpv3_82_with_mpv3_4() {
         takeaway_registry["frozen_takeaway_prompt_version"],
         json!("TPv3.82")
     );
-    assert_eq!(
-        mask_registry["frozen_mask_prompt_version"],
-        json!("MPv3.4")
-    );
+    assert_eq!(mask_registry["frozen_mask_prompt_version"], json!("MPv3.4"));
     assert_eq!(takeaway_registry["TPv3.82"], json!(TPV3_82_INSTRUCTION));
     assert_eq!(mask_registry["MPv3.4"], json!(MPV3_4_INSTRUCTION));
     proposal["subject_instruction"] = takeaway_registry["TPv3.82"].clone();

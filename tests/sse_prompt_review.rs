@@ -4,11 +4,15 @@ use std::io;
 use std::path::{Path, PathBuf};
 
 use oracle_mvp::reference_map::ReviewOutcome;
-use oracle_mvp::reference_tui::ApprovalTuiAction;
+use oracle_mvp::reference_tui::{
+    ApprovalEvidence, ApprovalEvidenceLayout, ApprovalScreen, ApprovalTuiAction, ApprovalTuiModel,
+};
 use oracle_mvp::sse_mask_review::{
     PromptReviewCounts, PromptReviewRunOutcome, PromptReviewScreen, PromptReviewUi,
     run_atomic_subject_prompt_review,
 };
+use ratatui::Terminal;
+use ratatui::backend::TestBackend;
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 
@@ -20,6 +24,17 @@ const FIXTURE_NIP19: &str = "nostr:npub1qqqqqqqqqqqqqqqqqqqq?relay=test";
 const FIXTURE_QUERY_NIP19: &str = "npub1qqqqqqqqqqqqqqqqqqqq?relay=x";
 const FIXTURE_COMBINING_BOUNDARY_NIP19: &str = "npub1pppppppppppppppppppp";
 const SECOND_NOTE: &str = "Solar power will dominate future electricity generation. nostr:npub1qqqqqqqqqqqqqqqqqqqq?relay=test nſec1ſſſſſſſſſſſſſſſſſſſſ npub1qqqqqqqqqqqqqqqqqqqq?relay=x\u{1c}tail \u{345}npub1pppppppppppppppppppp";
+
+fn evidence_at(screen: &ApprovalScreen, index: usize) -> &ApprovalEvidence {
+    match &screen.evidence {
+        ApprovalEvidenceLayout::Paged(evidence) => &evidence[index],
+        ApprovalEvidenceLayout::Stacked { top, bottom } => match index {
+            0 => top,
+            1 => bottom,
+            _ => panic!("stacked evidence contains exactly two panels"),
+        },
+    }
+}
 
 struct Fixture {
     _temporary: tempfile::TempDir,
@@ -332,33 +347,32 @@ fn subject_prompt_review_uses_flat_items_and_never_shows_masks() {
 
     assert_eq!(outcome, PromptReviewRunOutcome::Paused);
     assert_eq!(first.screens.len(), 4);
+    let first_subject = first.screens[0].approval_screen();
     assert_eq!(
-        first.screens[0].screen.title,
-        "Serverless operation of pypush"
+        first_subject.title.as_deref(),
+        Some("Serverless operation of pypush")
     );
     assert_eq!(
-        first.screens[0].screen.evidence[0].body,
+        evidence_at(&first_subject, 0).body,
         "pypush is serverless; pypush is open-source."
     );
-    assert!(!first.screens[0].screen.evidence[0].body.contains('⟦'));
+    assert!(!evidence_at(&first_subject, 0).body.contains('⟦'));
     assert_eq!(
-        first.screens[0].screen.scope,
+        first_subject.scope,
         "Is this a valid atomic subject explicitly and substantively discussed in this note?"
     );
+    let first_list = first.screens[2].approval_screen();
+    assert!(first_list.title.is_none());
     assert_eq!(
-        first.screens[2].screen.title,
-        "Missing or repeated subjects"
-    );
-    assert_eq!(
-        first.screens[2].screen.evidence[0].body,
+        evidence_at(&first_list, 0).body,
         "pypush is serverless; pypush is open-source."
     );
     assert!(
-        first.screens[2].screen.evidence[2]
+        evidence_at(&first_list, 1)
             .body
             .contains("[Skipped] Open-source availability of pypush")
     );
-    assert_eq!(first.screens[3].comment, "Potential missing subject");
+    assert_eq!(first.screens[3].comment(), "Potential missing subject");
 
     let session = read_session(&fixture.session_path);
     assert!(session.get("notes").is_none());
@@ -427,34 +441,46 @@ fn subject_list_review_shows_the_subject_decisions_without_changing_them() {
             .expect("reach the subject-list review");
 
     assert_eq!(outcome, PromptReviewRunOutcome::Paused);
-    let list = &first.screens[3].screen;
+    let PromptReviewScreen::SubjectList { review, .. } = &first.screens[3] else {
+        panic!("expected a subject-list review screen");
+    };
+    assert_eq!(review.note, "pypush is serverless; pypush is open-source.");
+    assert!(review.subject_decisions.contains("Accepted"));
+    let list = first.screens[3].approval_screen();
     assert_eq!(
         list.scope,
-        "Considering only the accepted subjects, is any atomic subject missing, or do any express the same thing?"
+        "Are any atomic subjects missing, or do any accepted subjects express the same thing?"
     );
-    assert_eq!(list.title, "Missing or repeated subjects");
-    assert_eq!(list.approve_label, "Nothing missing or repeated");
-    assert_eq!(list.reject_label, "Something missing or repeated");
-    assert_eq!(list.evidence[1].title, "Accepted atomic subjects");
-    assert_eq!(list.evidence[1].body, "1. Serverless operation of pypush");
-    assert_eq!(list.evidence[2].title, "Disapproved or skipped subjects");
+    assert!(list.title.is_none());
+    assert_eq!(list.approve_label, "No — complete and distinct");
+    assert_eq!(list.reject_label, "Yes — missing or repeated");
+    assert!(matches!(
+        list.evidence,
+        ApprovalEvidenceLayout::Stacked { .. }
+    ));
+    assert_eq!(evidence_at(&list, 1).title, "Subject decisions");
     assert!(
-        list.evidence[2]
+        evidence_at(&list, 1)
+            .body
+            .contains("Accepted\n1. Serverless operation of pypush")
+    );
+    assert!(
+        evidence_at(&list, 1)
             .body
             .contains("2. [Disapproved] Open-source availability of pypush")
     );
     assert!(
-        list.evidence[2]
+        evidence_at(&list, 1)
             .body
             .contains("Comment: This is availability, not a separate subject")
     );
     assert!(
-        list.evidence[2]
+        evidence_at(&list, 1)
             .body
             .contains("3. [Skipped] Software distribution")
     );
     assert!(
-        list.evidence[2]
+        evidence_at(&list, 1)
             .body
             .contains("Comment: Needs another look")
     );
@@ -462,6 +488,38 @@ fn subject_list_review_shows_the_subject_decisions_without_changing_them() {
         list.guidance.as_ref().expect("decision guidance").body,
         "This decision records only whether an atomic subject is missing or repeated. It does not change any earlier subject decision."
     );
+
+    for (width, height) in [(72, 24), (100, 32)] {
+        let mut model = ApprovalTuiModel::new_prompt_iteration(list.clone(), String::new());
+        let backend = TestBackend::new(width, height);
+        let mut terminal = Terminal::new(backend).expect("test terminal");
+        terminal
+            .draw(|frame| model.render(frame))
+            .expect("render coverage review");
+        let rendered = terminal
+            .backend()
+            .buffer()
+            .content()
+            .iter()
+            .map(|cell| cell.symbol())
+            .collect::<String>();
+        let normalized = rendered.split_whitespace().collect::<Vec<_>>().join(" ");
+        assert!(normalized.contains("Note"), "{rendered}");
+        assert!(normalized.contains("Subject decisions"), "{rendered}");
+        assert!(normalized.contains("Serverless operation"), "{rendered}");
+        assert!(
+            !normalized.contains("Missing or repeated subjects Missing"),
+            "{rendered}"
+        );
+        assert!(
+            normalized.contains("[A] No — complete and distinct"),
+            "{rendered}"
+        );
+        assert!(
+            normalized.contains("[R] Yes — missing or repeated"),
+            "{rendered}"
+        );
+    }
 
     let mut resumed = ScriptedUi::new([approved(""), ApprovalTuiAction::Pause]);
     run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut resumed)
@@ -613,13 +671,11 @@ fn subject_prompt_review_surfaces_empty_and_duplicate_lists() {
     let mut empty = ScriptedUi::new([ApprovalTuiAction::Pause]);
     run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut empty)
         .expect("show empty generated subject list");
+    let empty_list = empty.screens[0].approval_screen();
+    assert!(empty_list.title.is_none());
     assert_eq!(
-        empty.screens[0].screen.title,
-        "Missing or repeated subjects"
-    );
-    assert_eq!(
-        empty.screens[0].screen.evidence[1].body,
-        "No atomic subjects generated."
+        evidence_at(&empty_list, 1).body,
+        "Accepted\nNo atomic subjects generated."
     );
 
     let fixture = Fixture::new();
@@ -633,8 +689,37 @@ fn subject_prompt_review_surfaces_empty_and_duplicate_lists() {
         &mut duplicate,
     )
     .expect("show duplicate generated labels for review");
-    let list = &duplicate.screens[2].screen.evidence[2].body;
+    let duplicate_list = duplicate.screens[2].approval_screen();
+    let list = &evidence_at(&duplicate_list, 1).body;
     assert_eq!(list.matches("Serverless operation of pypush").count(), 2);
+}
+
+#[test]
+fn subject_list_review_preserves_all_disapproved_and_skipped_subjects() {
+    let fixture = Fixture::new();
+    let mut ui = ScriptedUi::new([
+        rejected("Not a substantive subject"),
+        skipped("Needs another look"),
+        ApprovalTuiAction::Pause,
+    ]);
+
+    run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut ui)
+        .expect("reach subject-list review");
+
+    let PromptReviewScreen::SubjectList { review, .. } = &ui.screens[2] else {
+        panic!("expected a subject-list review screen");
+    };
+    assert!(
+        review
+            .subject_decisions
+            .contains("No accepted atomic subjects.")
+    );
+    assert!(review.subject_decisions.contains(
+        "1. [Disapproved] Serverless operation of pypush\n   Comment: Not a substantive subject"
+    ));
+    assert!(review.subject_decisions.contains(
+        "2. [Skipped] Open-source availability of pypush\n   Comment: Needs another look"
+    ));
 }
 
 #[test]

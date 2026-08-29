@@ -25,7 +25,7 @@ fn project_path(path: &str) -> PathBuf {
 fn approval_screen() -> ApprovalScreen {
     ApprovalScreen {
         heading: "Candidate 7 of 48 · 4 approved · 2 rejected".to_owned(),
-        title: "Slot 07".to_owned(),
+        title: Some("Slot 07".to_owned()),
         scope:
             "Is there a concrete reason this note should not be included in the 48-note reference set?"
                 .to_owned(),
@@ -47,7 +47,7 @@ fn approval_screen() -> ApprovalScreen {
                    A URL is only a problem when its contents are necessary to understand the note."
                 .to_owned(),
         }),
-        evidence: vec![
+        evidence: ApprovalEvidenceLayout::Paged(vec![
             ApprovalEvidence {
                 title: "Candidate note".to_owned(),
                 annotation: "Related-but-different pair · contrast-03".to_owned(),
@@ -59,8 +59,7 @@ fn approval_screen() -> ApprovalScreen {
                     "Shown only to judge the relationship; reviewed separately.".to_owned(),
                 body: "A systems programmer compares Rust and C memory models.".to_owned(),
             },
-        ],
-        evidence_layout: ApprovalEvidenceLayout::Paged,
+        ]),
     }
 }
 
@@ -68,19 +67,18 @@ fn stacked_approval_screen(note: &str, subject_map: &str) -> ApprovalScreen {
     let mut screen = approval_screen();
     screen.scope = "Are these subject assignments correct?".to_owned();
     screen.approve_label = "Approve these assignments".to_owned();
-    screen.evidence_layout = ApprovalEvidenceLayout::Stacked;
-    screen.evidence = vec![
-        ApprovalEvidence {
+    screen.evidence = ApprovalEvidenceLayout::Stacked {
+        top: ApprovalEvidence {
             title: "Note".to_owned(),
             annotation: String::new(),
             body: note.to_owned(),
         },
-        ApprovalEvidence {
+        bottom: ApprovalEvidence {
             title: "Proposed subject map".to_owned(),
             annotation: String::new(),
             body: subject_map.to_owned(),
         },
-    ];
+    };
     screen
 }
 
@@ -121,7 +119,11 @@ fn compact_guidance_preserves_the_note_and_controls_at_minimum_terminal_size() {
 #[test]
 fn a_single_evidence_claim_does_not_advertise_evidence_navigation() {
     let mut screen = approval_screen();
-    screen.evidence.truncate(1);
+    let first = match &screen.evidence {
+        ApprovalEvidenceLayout::Paged(evidence) => evidence[0].clone(),
+        ApprovalEvidenceLayout::Stacked { top, .. } => top.clone(),
+    };
+    screen.evidence = ApprovalEvidenceLayout::Paged(vec![first]);
     let mut model = ApprovalTuiModel::new(screen);
 
     let rendered = render_approval(&mut model);
@@ -346,7 +348,7 @@ fn multiline_evidence_annotation_is_fully_visible() {
     let mut screen = approval_screen();
     screen.scope.clear();
     screen.guidance = None;
-    screen.evidence = vec![ApprovalEvidence {
+    screen.evidence = ApprovalEvidenceLayout::Paged(vec![ApprovalEvidence {
         title: "Note".to_owned(),
         annotation: "Memberships:\n\
                      • Everyday fulfillment — Central\n\
@@ -356,7 +358,7 @@ fn multiline_evidence_annotation_is_fully_visible() {
                      • Music and rhythm — Incidental"
             .to_owned(),
         body: "The exact note text remains the primary evidence.".to_owned(),
-    }];
+    }]);
     let mut model = ApprovalTuiModel::new(screen);
 
     let rendered = render_approval_at(&mut model, 100, 32);
@@ -490,8 +492,14 @@ fn queued_control_c_is_preserved_as_a_pause_request() {
 fn prompt_iteration_controls_make_decisions_directly_and_keep_comments_optional() {
     let mut approved = ApprovalTuiModel::new_prompt_iteration(approval_screen(), String::new());
     let rendered = render_approval(&mut approved);
-    assert!(rendered.contains("[A] Approve"), "{rendered}");
-    assert!(rendered.contains("[R] Disapprove"), "{rendered}");
+    assert!(
+        rendered.contains("[A] Approve — no disqualifying problem"),
+        "{rendered}"
+    );
+    assert!(
+        rendered.contains("[R] Reject — explain the problem"),
+        "{rendered}"
+    );
     assert!(rendered.contains("[C] Comment"), "{rendered}");
     assert!(rendered.contains("[S] Skip"), "{rendered}");
     assert_eq!(
@@ -545,6 +553,49 @@ fn prompt_iteration_controls_make_decisions_directly_and_keep_comments_optional(
             comment: String::new(),
         }
     );
+}
+
+#[test]
+fn prompt_iteration_controls_use_the_screen_specific_decision_labels() {
+    let mut screen = approval_screen();
+    screen.title = None;
+    screen.approve_label = "No missing or repeated subjects".to_owned();
+    screen.reject_label = "Missing or repeated subjects found".to_owned();
+    let mut model = ApprovalTuiModel::new_prompt_iteration(screen, String::new());
+
+    let rendered = render_approval_at(&mut model, 72, 24);
+    let normalized = rendered.split_whitespace().collect::<Vec<_>>().join(" ");
+
+    assert!(
+        normalized.contains("[A] No missing or repeated subjects"),
+        "{rendered}"
+    );
+    assert!(
+        normalized.contains("[R] Missing or repeated subjects found"),
+        "{rendered}"
+    );
+}
+
+#[test]
+fn a_screen_without_a_title_uses_the_released_rows_for_its_annotation() {
+    let mut screen = approval_screen();
+    screen.title = None;
+    screen.scope.clear();
+    screen.guidance = None;
+    let annotation = (1..=13)
+        .map(|line| format!("annotation-{line:02}"))
+        .collect::<Vec<_>>()
+        .join("\n");
+    screen.evidence = ApprovalEvidenceLayout::Paged(vec![ApprovalEvidence {
+        title: "Note".to_owned(),
+        annotation,
+        body: "The note remains visible.".to_owned(),
+    }]);
+    let mut model = ApprovalTuiModel::new_prompt_iteration(screen, String::new());
+
+    let rendered = render_approval_at(&mut model, 72, 24);
+
+    assert!(rendered.contains("annotation-13"), "{rendered}");
 }
 
 fn hierarchy() -> ApprovedHierarchy {

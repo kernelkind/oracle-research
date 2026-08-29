@@ -6,14 +6,34 @@ use oracle_mvp::reference_map::{
     ApprovedHierarchy, ApprovedNoteSet, BroadNarrowRole, HierarchyDraft, HierarchyReviewDecision,
     HierarchyReviewSession, HierarchyReviewTarget, LeafMembership, MembershipStrength,
     NoteProposal, NoteReviewDecision, NoteReviewSession, PairMembership, ProposedNote,
-    ReferenceNavigation, ReviewOutcome, SelectionSource, SubjectNode, REFERENCE_NOTE_COUNT,
+    REFERENCE_NOTE_COUNT, ReferenceNavigation, ReviewOutcome, SelectionSource, SubjectNode,
 };
 use oracle_mvp::reference_review::{
-    load_verified_note_proposal, run_hierarchy_review, run_note_review, ApprovalUi,
-    ReviewRunOutcome,
+    ApprovalUi, ReviewRunOutcome, load_verified_note_proposal, run_hierarchy_review,
+    run_note_review,
 };
-use oracle_mvp::reference_tui::{ApprovalEvidenceLayout, ApprovalScreen, ApprovalTuiAction};
+use oracle_mvp::reference_tui::{
+    ApprovalEvidence, ApprovalEvidenceLayout, ApprovalScreen, ApprovalTuiAction,
+};
 use sha2::{Digest, Sha256};
+
+fn evidence_at(screen: &ApprovalScreen, index: usize) -> &ApprovalEvidence {
+    match &screen.evidence {
+        ApprovalEvidenceLayout::Paged(evidence) => &evidence[index],
+        ApprovalEvidenceLayout::Stacked { top, bottom } => match index {
+            0 => top,
+            1 => bottom,
+            _ => panic!("stacked evidence contains exactly two panels"),
+        },
+    }
+}
+
+fn evidence_len(screen: &ApprovalScreen) -> usize {
+    match &screen.evidence {
+        ApprovalEvidenceLayout::Paged(evidence) => evidence.len(),
+        ApprovalEvidenceLayout::Stacked { .. } => 2,
+    }
+}
 
 fn proposed_note(index: usize) -> ProposedNote {
     ProposedNote {
@@ -773,9 +793,11 @@ fn rejected_note_map_keeps_other_notes_reviewable_but_blocks_parents() {
         .reviewable_targets(&hierarchy, &approved)
         .expect("list remaining note maps");
     assert_eq!(remaining.len(), REFERENCE_NOTE_COUNT - 1);
-    assert!(remaining
-        .iter()
-        .all(|target| matches!(target, HierarchyReviewTarget::NoteMap { .. })));
+    assert!(
+        remaining
+            .iter()
+            .all(|target| matches!(target, HierarchyReviewTarget::NoteMap { .. }))
+    );
     for target in remaining {
         session
             .record(&hierarchy, &approved, target, approved_hierarchy_decision())
@@ -1070,10 +1092,12 @@ fn rejected_focus_coverage_blocks_grouped_publication() {
         )
         .expect("record the concrete coverage gap");
 
-    assert!(session
-        .reviewable_targets(&hierarchy, &approved)
-        .expect("list items after rejected focus coverage")
-        .is_empty());
+    assert!(
+        session
+            .reviewable_targets(&hierarchy, &approved)
+            .expect("list items after rejected focus coverage")
+            .is_empty()
+    );
     assert!(!session.review_is_complete(&hierarchy, &approved));
     let error = ApprovedHierarchy::from_review(&hierarchy, &approved, &session)
         .expect_err("rejected focus coverage prevents publication");
@@ -1413,18 +1437,27 @@ fn hierarchy_runner_reviews_one_note_map_per_action() {
     );
     assert_eq!(ui.screens.len(), 2);
     let first = &ui.screens[0];
-    assert_eq!(first.title, "Note map · Slot 01");
+    assert_eq!(first.title.as_deref(), Some("Note map · Slot 01"));
     assert_eq!(first.scope, "Are these subject assignments correct?");
     assert_eq!(first.approve_label, "Approve these assignments");
     assert_eq!(first.reject_label, "Reject — name the exact correction");
-    assert_eq!(first.evidence_layout, ApprovalEvidenceLayout::Stacked);
-    assert_eq!(first.evidence.len(), 2);
-    assert_eq!(first.evidence[0].body, "Real diagnostic note number 0");
-    assert!(first.evidence[1].body.contains("Software — Substantive"));
-    assert!(!first.evidence[0]
-        .body
-        .contains("Real diagnostic note number 1"));
-    assert_eq!(ui.screens[1].title, "Note map · Slot 02");
+    assert!(matches!(
+        first.evidence,
+        ApprovalEvidenceLayout::Stacked { .. }
+    ));
+    assert_eq!(evidence_len(first), 2);
+    assert_eq!(evidence_at(first, 0).body, "Real diagnostic note number 0");
+    assert!(
+        evidence_at(first, 1)
+            .body
+            .contains("Software — Substantive")
+    );
+    assert!(
+        !evidence_at(first, 0)
+            .body
+            .contains("Real diagnostic note number 1")
+    );
+    assert_eq!(ui.screens[1].title.as_deref(), Some("Note map · Slot 02"));
 }
 
 #[test]
@@ -1454,11 +1487,11 @@ fn hierarchy_runner_opens_a_deepest_parent_after_all_note_maps() {
         ReviewRunOutcome::Paused
     );
     let parent = ui.screens.last().expect("first bottom-up parent screen");
-    assert_eq!(parent.title, "Technology");
+    assert_eq!(parent.title.as_deref(), Some("Technology"));
     assert_eq!(parent.scope, "Are these immediate child subjects correct?");
     assert_eq!(parent.approve_label, "No problems");
     assert_eq!(parent.reject_label, "Describe a problem");
-    assert_eq!(parent.evidence[0].body, "[1] Software\n[2] Hardware");
+    assert_eq!(evidence_at(parent, 0).body, "[1] Software\n[2] Hardware");
 }
 
 #[test]
@@ -1492,7 +1525,7 @@ fn hierarchy_runner_reviews_one_parent_level_at_a_time() {
         technology.heading,
         "Hierarchy review · Parent 1 of 3 · 48 note maps approved"
     );
-    assert_eq!(technology.title, "Technology");
+    assert_eq!(technology.title.as_deref(), Some("Technology"));
     assert_eq!(
         technology.scope,
         "Are these immediate child subjects correct?"
@@ -1506,26 +1539,32 @@ fn hierarchy_runner_reviews_one_parent_level_at_a_time() {
          [3] Does not belong under this parent.\n\
          Missing \"Expected subject\"."
     );
-    assert_eq!(technology.evidence.len(), 1);
-    assert_eq!(technology.evidence[0].title, "Children · 2 subjects");
+    assert_eq!(evidence_len(technology), 1);
+    assert_eq!(evidence_at(technology, 0).title, "Children · 2 subjects");
     assert_eq!(
-        technology.evidence[0].annotation,
+        evidence_at(technology, 0).annotation,
         "Approving accepts these titles, their order, and their direct placement under this parent.\n\
          Use the numbers when describing a problem."
     );
-    assert!(technology
-        .guidance
-        .as_ref()
-        .expect("parent decision is explained")
-        .body
-        .contains("Only this one level is being reviewed."));
-    assert_eq!(technology.evidence[0].body, "[1] Software\n[2] Hardware");
+    assert!(
+        technology
+            .guidance
+            .as_ref()
+            .expect("parent decision is explained")
+            .body
+            .contains("Only this one level is being reviewed.")
+    );
+    assert_eq!(
+        evidence_at(technology, 0).body,
+        "[1] Software\n[2] Hardware"
+    );
     let everyday_life = &ui.screens[REFERENCE_NOTE_COUNT + 1];
     assert_eq!(
-        everyday_life.title, "Everyday life",
+        everyday_life.title.as_deref(),
+        Some("Everyday life"),
         "one parent approval advances to the next internal parent"
     );
-    assert_eq!(everyday_life.evidence[0].body, "[1] Food\n[2] Outdoors");
+    assert_eq!(evidence_at(everyday_life, 0).body, "[1] Food\n[2] Outdoors");
 }
 
 #[test]
@@ -1563,7 +1602,7 @@ fn hierarchy_runner_migrates_empty_prior_sessions_to_schema_five() {
             .expect("migrate the empty prior session"),
             ReviewRunOutcome::Paused
         );
-        assert_eq!(ui.screens[0].title, "Note map · Slot 01");
+        assert_eq!(ui.screens[0].title.as_deref(), Some("Note map · Slot 01"));
         let migrated: serde_json::Value =
             serde_json::from_slice(&fs::read(&session_path).expect("read migrated session"))
                 .expect("decode migrated session");
@@ -1629,7 +1668,7 @@ fn hierarchy_runner_migrates_schema_four_note_maps_without_repeating_them() {
         ReviewRunOutcome::Paused
     );
     assert_eq!(resumed_ui.screens.len(), 1);
-    assert_eq!(resumed_ui.screens[0].title, "Technology");
+    assert_eq!(resumed_ui.screens[0].title.as_deref(), Some("Technology"));
 
     let migrated: serde_json::Value =
         serde_json::from_slice(&fs::read(&session_path).expect("read migrated session"))
@@ -1772,7 +1811,7 @@ fn note_review_screen_asks_only_for_a_concrete_disqualifying_problem() {
         .expect("open the first review screen"),
         ReviewRunOutcome::Paused
     );
-    assert_eq!(ui.screens[0].title, "Slot 01");
+    assert_eq!(ui.screens[0].title.as_deref(), Some("Slot 01"));
     assert_eq!(
         ui.screens[0].scope,
         "Is there a concrete reason this note should not be included in the 48-note reference set?"
@@ -1782,7 +1821,7 @@ fn note_review_screen_asks_only_for_a_concrete_disqualifying_problem() {
         "Approve — no disqualifying problem"
     );
     assert_eq!(ui.screens[0].reject_label, "Reject — explain the problem");
-    let comparison = &ui.screens[0].evidence[1];
+    let comparison = evidence_at(&ui.screens[0], 1);
     assert_eq!(
         comparison.body, "Real diagnostic note number 1",
         "the comparison panel must contain only the exact note text"
@@ -1800,9 +1839,11 @@ fn note_review_screen_asks_only_for_a_concrete_disqualifying_problem() {
     assert_eq!(guidance.title, "Rejection guide");
     assert!(guidance.body.contains("missing context"));
     assert!(guidance.body.contains("Do not reject merely because"));
-    assert!(guidance
-        .body
-        .contains("A URL is only a problem when its contents are necessary"));
+    assert!(
+        guidance
+            .body
+            .contains("A URL is only a problem when its contents are necessary")
+    );
     let rendered = format!("{:?}", ui.screens[0]).to_lowercase();
     assert!(
         !rendered.contains("single subject")
@@ -1831,8 +1872,18 @@ fn note_review_runner_resumes_at_the_first_undecided_slot() {
             .expect("first pass"),
         ReviewRunOutcome::Paused
     );
-    assert!(first.screens[0].title.contains("Slot 01"));
-    assert!(first.screens[1].title.contains("Slot 02"));
+    assert!(
+        first.screens[0]
+            .title
+            .as_deref()
+            .is_some_and(|title| title.contains("Slot 01"))
+    );
+    assert!(
+        first.screens[1]
+            .title
+            .as_deref()
+            .is_some_and(|title| title.contains("Slot 02"))
+    );
 
     let mut resumed = ScriptedUi::new((0..63).map(|_| ApprovalTuiAction::Submit {
         outcome: ReviewOutcome::Approved,
@@ -1843,7 +1894,12 @@ fn note_review_runner_resumes_at_the_first_undecided_slot() {
             .expect("resumed pass"),
         ReviewRunOutcome::Approved
     );
-    assert!(resumed.screens[0].title.contains("Slot 02"));
+    assert!(
+        resumed.screens[0]
+            .title
+            .as_deref()
+            .is_some_and(|title| title.contains("Slot 02"))
+    );
     assert!(approved_path.is_file());
 }
 
@@ -1866,7 +1922,7 @@ fn sparse_source_slot_uses_its_review_position_in_the_candidate_counter() {
         ReviewRunOutcome::Paused
     );
     let screen = ui.screens.last().expect("sparse-slot review screen");
-    assert_eq!(screen.title, "Slot 42");
+    assert_eq!(screen.title.as_deref(), Some("Slot 42"));
     assert_eq!(
         screen.heading,
         "Candidate 41 of 48 · 40 approved · 0 rejected"
@@ -1928,9 +1984,12 @@ fn hierarchy_runner_reviews_each_note_then_each_parent_then_coverage() {
     assert_eq!(ui.screens.len(), decision_count);
 
     for (note, screen) in notes.notes.iter().zip(&ui.screens[..REFERENCE_NOTE_COUNT]) {
-        assert_eq!(screen.title, format!("Note map · Slot {:02}", note.slot));
+        assert_eq!(
+            screen.title.as_deref(),
+            Some(format!("Note map · Slot {:02}", note.slot).as_str())
+        );
         assert!(
-            screen.evidence[0]
+            evidence_at(screen, 0)
                 .body
                 .contains(&format!("Real diagnostic note number {}", note.slot - 1)),
             "each note is read exactly once in approved-note order"
@@ -1942,22 +2001,29 @@ fn hierarchy_runner_reviews_each_note_then_each_parent_then_coverage() {
         multi_subject.scope,
         "Are these subject assignments correct?"
     );
-    assert!(multi_subject.evidence[1]
-        .body
-        .contains("Software — Central"));
-    assert!(multi_subject.evidence[1]
-        .body
-        .contains("Food — Substantive"));
+    assert!(
+        evidence_at(multi_subject, 1)
+            .body
+            .contains("Software — Central")
+    );
+    assert!(
+        evidence_at(multi_subject, 1)
+            .body
+            .contains("Food — Substantive")
+    );
 
     assert_eq!(
         ui.screens[REFERENCE_NOTE_COUNT..REFERENCE_NOTE_COUNT + 3]
             .iter()
-            .map(|screen| screen.title.as_str())
+            .map(|screen| screen.title.as_deref().expect("review screens have titles"))
             .collect::<Vec<_>>(),
         vec!["Technology", "Everyday life", "Top-level subjects"],
         "each internal parent is loaded bottom-up"
     );
-    assert_eq!(ui.screens[REFERENCE_NOTE_COUNT + 3].title, "Focus coverage");
+    assert_eq!(
+        ui.screens[REFERENCE_NOTE_COUNT + 3].title.as_deref(),
+        Some("Focus coverage")
+    );
     assert!(
         ui.screens[..REFERENCE_NOTE_COUNT]
             .iter()
@@ -1977,7 +2043,7 @@ fn hierarchy_runner_reviews_each_note_then_each_parent_then_coverage() {
         "Hierarchy review · Parent 3 of 3 · 48 note maps approved"
     );
     assert_eq!(
-        ui.screens[REFERENCE_NOTE_COUNT + 2].evidence[0].body,
+        evidence_at(&ui.screens[REFERENCE_NOTE_COUNT + 2], 0).body,
         "[1] Technology\n[2] Everyday life",
         "the top-level choices are reviewed only after their child structures"
     );
@@ -2018,8 +2084,8 @@ fn hierarchy_runner_audits_focus_coverage_after_note_maps_and_parents() {
         ReviewRunOutcome::Paused
     );
     assert_eq!(
-        ui.screens[decisions_before_coverage].title,
-        "Focus coverage"
+        ui.screens[decisions_before_coverage].title.as_deref(),
+        Some("Focus coverage")
     );
     assert_eq!(
         ui.screens[decisions_before_coverage].scope,
@@ -2043,12 +2109,16 @@ fn hierarchy_runner_audits_focus_coverage_after_note_maps_and_parents() {
     assert!(guidance.body.contains("Central"));
     assert!(guidance.body.contains("Substantive"));
     assert!(guidance.body.contains("Incidental"));
-    let rendered_inventory = ui.screens[decisions_before_coverage]
-        .evidence
-        .iter()
-        .map(|evidence| format!("{}\n{}", evidence.annotation, evidence.body))
-        .collect::<Vec<_>>()
-        .join("\n");
+    let rendered_inventory = match &ui.screens[decisions_before_coverage].evidence {
+        ApprovalEvidenceLayout::Paged(evidence) => evidence
+            .iter()
+            .map(|evidence| format!("{}\n{}", evidence.annotation, evidence.body))
+            .collect::<Vec<_>>()
+            .join("\n"),
+        ApprovalEvidenceLayout::Stacked { .. } => {
+            panic!("focus coverage uses paged evidence")
+        }
+    };
     assert!(rendered_inventory.contains("Central"));
     assert!(rendered_inventory.contains("Substantive"));
     assert!(rendered_inventory.contains("Incidental"));
@@ -2061,12 +2131,12 @@ fn hierarchy_runner_audits_focus_coverage_after_note_maps_and_parents() {
         "the final check summarizes the maps without making the reviewer reread notes"
     );
     assert_eq!(
-        ui.screens[decisions_before_coverage].evidence.len(),
+        evidence_len(&ui.screens[decisions_before_coverage]),
         1,
         "the reviewer sees one summary instead of switching panels"
     );
     assert_eq!(
-        ui.screens[decisions_before_coverage].evidence[0].title,
+        evidence_at(&ui.screens[decisions_before_coverage], 0).title,
         "Coverage summary"
     );
     assert!(rendered_inventory.contains("Narrow-focus notes"));
@@ -2103,10 +2173,10 @@ fn note_map_review_shows_every_current_membership_and_strength() {
         ReviewRunOutcome::Paused
     );
     let screen = &ui.screens[2];
-    assert_eq!(screen.title, "Note map · Slot 03");
-    assert_eq!(screen.evidence.len(), 2);
-    assert!(screen.evidence[1].body.contains("Software — Central"));
-    assert!(screen.evidence[1].body.contains("Food — Substantive"));
+    assert_eq!(screen.title.as_deref(), Some("Note map · Slot 03"));
+    assert_eq!(evidence_len(screen), 2);
+    assert!(evidence_at(screen, 1).body.contains("Software — Central"));
+    assert!(evidence_at(screen, 1).body.contains("Food — Substantive"));
 }
 
 #[test]
@@ -2132,10 +2202,13 @@ fn note_map_review_shows_one_exact_note_and_its_assignments() {
         ReviewRunOutcome::Paused
     );
     let screen = &ui.screens[0];
-    assert_eq!(screen.evidence_layout, ApprovalEvidenceLayout::Stacked);
-    assert_eq!(screen.evidence.len(), 2);
-    let note = &screen.evidence[0];
-    let assignments = &screen.evidence[1];
+    assert!(matches!(
+        screen.evidence,
+        ApprovalEvidenceLayout::Stacked { .. }
+    ));
+    assert_eq!(evidence_len(screen), 2);
+    let note = evidence_at(screen, 0);
+    let assignments = evidence_at(screen, 1);
     assert_eq!(note.title, "Note");
     assert_eq!(note.body, "Real diagnostic note number 0");
     assert_eq!(assignments.title, "Proposed subject map");
@@ -2185,14 +2258,17 @@ fn note_map_review_separates_raw_note_from_compact_subject_assignments() {
     let screen = &ui.screens[0];
     assert_eq!(screen.scope, "Are these subject assignments correct?");
     assert_eq!(screen.approve_label, "Approve these assignments");
-    assert_eq!(screen.evidence_layout, ApprovalEvidenceLayout::Stacked);
-    assert_eq!(screen.evidence.len(), 2);
-    assert_eq!(screen.evidence[0].title, "Note");
-    assert_eq!(screen.evidence[0].body, notes.notes[0].content);
-    assert_eq!(screen.evidence[1].title, "Proposed subject map");
-    assert_eq!(screen.evidence[1].body, "Software — Substantive");
+    assert!(matches!(
+        screen.evidence,
+        ApprovalEvidenceLayout::Stacked { .. }
+    ));
+    assert_eq!(evidence_len(screen), 2);
+    assert_eq!(evidence_at(screen, 0).title, "Note");
+    assert_eq!(evidence_at(screen, 0).body, notes.notes[0].content);
+    assert_eq!(evidence_at(screen, 1).title, "Proposed subject map");
+    assert_eq!(evidence_at(screen, 1).body, "Software — Substantive");
     assert!(
-        !screen.evidence[1].body.contains("Notes about Software"),
+        !evidence_at(screen, 1).body.contains("Notes about Software"),
         "subject definitions are not part of note-map review"
     );
     assert!(
@@ -2232,12 +2308,16 @@ fn note_map_review_states_the_grouped_decision_and_rejection_criteria() {
         .as_ref()
         .expect("note-map review explains the grouped decision");
     assert_eq!(guidance.title, "Note-map review");
-    assert!(guidance
-        .body
-        .contains("Approving accepts each listed subject and strength."));
-    assert!(guidance
-        .body
-        .contains("listed subject is not actually expressed"));
+    assert!(
+        guidance
+            .body
+            .contains("Approving accepts each listed subject and strength.")
+    );
+    assert!(
+        guidance
+            .body
+            .contains("listed subject is not actually expressed")
+    );
     assert!(guidance.body.contains("membership strength is wrong"));
     assert!(guidance.body.contains("Central:"));
     assert!(guidance.body.contains("Substantive:"));
@@ -2246,11 +2326,11 @@ fn note_map_review_states_the_grouped_decision_and_rejection_criteria() {
         !guidance.body.contains("missing") && !guidance.body.contains("description"),
         "assignment approval does not claim exhaustiveness or depend on hidden definitions"
     );
-    assert_eq!(screen.evidence.len(), 2);
-    assert!(screen.evidence[1].body.contains("Software — Central"));
-    assert!(screen.evidence[1].body.contains("Food — Substantive"));
+    assert_eq!(evidence_len(screen), 2);
+    assert!(evidence_at(screen, 1).body.contains("Software — Central"));
+    assert!(evidence_at(screen, 1).body.contains("Food — Substantive"));
     assert!(
-        !screen.evidence[1].body.contains("[1]"),
+        !evidence_at(screen, 1).body.contains("[1]"),
         "the compact map contains only subject labels and strengths"
     );
 }
@@ -2951,9 +3031,13 @@ fn tracked_crec_116_hierarchy_applies_the_approved_parent_corrections() {
         child_ids("book-topics"),
         vec!["books-reading", "book-recommendations"]
     );
-    assert!(child_ids("knowledge-written-culture").contains(&"digital-knowledge-access".to_owned()));
-    assert!(child_ids("knowledge-written-culture")
-        .contains(&"scientific-discipline-boundaries".to_owned()));
+    assert!(
+        child_ids("knowledge-written-culture").contains(&"digital-knowledge-access".to_owned())
+    );
+    assert!(
+        child_ids("knowledge-written-culture")
+            .contains(&"scientific-discipline-boundaries".to_owned())
+    );
     assert_eq!(
         draft
             .node("scientific-discipline-boundaries")
@@ -3367,8 +3451,10 @@ fn approved_artifact_publication_never_replaces_an_existing_directory_entry() {
     )
     .expect_err("create-once publication must not replace any directory entry");
     assert!(error.to_string().contains("already exists"), "{error}");
-    assert!(fs::symlink_metadata(&approved_path)
-        .expect("artifact link remains")
-        .file_type()
-        .is_symlink());
+    assert!(
+        fs::symlink_metadata(&approved_path)
+            .expect("artifact link remains")
+            .file_type()
+            .is_symlink()
+    );
 }

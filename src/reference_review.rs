@@ -435,7 +435,7 @@ fn focus_coverage_screen(
         heading: format!(
             "Hierarchy review · {approved} approved · {rejected} rejected · {total} total"
         ),
-        title: "Focus coverage".to_owned(),
+        title: Some("Focus coverage".to_owned()),
         scope: format!(
             "Do the {} note maps include both narrow-focus and multi-focus notes?",
             approved_notes.notes.len()
@@ -445,14 +445,13 @@ fn focus_coverage_screen(
         rejection_help:
             "State whether narrow-focus or multi-focus notes are missing or too sparse.".to_owned(),
         guidance: Some(focus_coverage_guidance()),
-        evidence: vec![ApprovalEvidence {
+        evidence: ApprovalEvidenceLayout::Paged(vec![ApprovalEvidence {
             title: "Coverage summary".to_owned(),
             annotation:
                 "Each note map was already reviewed. This screen only checks the mix of focus patterns."
                     .to_owned(),
             body: summary,
-        }],
-        evidence_layout: ApprovalEvidenceLayout::Paged,
+        }]),
     })
 }
 
@@ -537,7 +536,7 @@ fn note_screen(
             "Candidate {ordinal} of {} · {approved} approved · {rejected} rejected",
             proposal.notes.len()
         ),
-        title: format!("Slot {slot:02}"),
+        title: Some(format!("Slot {slot:02}")),
         scope: format!(
             "Is there a concrete reason this note should not be included in the {}-note reference set?",
             proposal.notes.len()
@@ -560,8 +559,7 @@ fn note_screen(
                    A URL is only a problem when its contents are necessary to understand the note."
                 .to_owned(),
         }),
-        evidence,
-        evidence_layout: ApprovalEvidenceLayout::Paged,
+        evidence: ApprovalEvidenceLayout::Paged(evidence),
     })
 }
 
@@ -586,7 +584,7 @@ fn hierarchy_target_screen(
             let memberships = note_map_memberships(draft, note_id);
             Ok(ApprovalScreen {
                 heading,
-                title: format!("Note map · Slot {:02}", note.slot),
+                title: Some(format!("Note map · Slot {:02}", note.slot)),
                 scope: "Are these subject assignments correct?".to_owned(),
                 approve_label: "Approve these assignments".to_owned(),
                 reject_label: "Reject — name the exact correction".to_owned(),
@@ -594,19 +592,18 @@ fn hierarchy_target_screen(
                     "Name the incorrect subject or strength and state the exact correction."
                         .to_owned(),
                 guidance: Some(note_map_guidance()),
-                evidence: vec![
-                    ApprovalEvidence {
+                evidence: ApprovalEvidenceLayout::Stacked {
+                    top: ApprovalEvidence {
                         title: "Note".to_owned(),
                         annotation: String::new(),
                         body: note.content.clone(),
                     },
-                    ApprovalEvidence {
+                    bottom: ApprovalEvidence {
                         title: "Proposed subject map".to_owned(),
                         annotation: String::new(),
                         body: format_note_assignments(&memberships),
                     },
-                ],
-                evidence_layout: ApprovalEvidenceLayout::Stacked,
+                },
             })
         }
         HierarchyReviewTarget::Parent { node_id } => {
@@ -636,11 +633,11 @@ fn hierarchy_target_screen(
                     parent_targets.len(),
                     approved_notes.notes.len()
                 ),
-                title: if node_id == &draft.root_node_id {
+                title: Some(if node_id == &draft.root_node_id {
                     "Top-level subjects".to_owned()
                 } else {
                     parent.label.clone()
-                },
+                }),
                 scope: "Are these immediate child subjects correct?".to_owned(),
                 approve_label: "No problems".to_owned(),
                 reject_label: "Describe a problem".to_owned(),
@@ -660,7 +657,7 @@ fn hierarchy_target_screen(
                            Name the numbered child. For something missing, name it."
                         .to_owned(),
                 }),
-                evidence: vec![ApprovalEvidence {
+                evidence: ApprovalEvidenceLayout::Paged(vec![ApprovalEvidence {
                     title: format!(
                         "Children · {child_count} subject{}",
                         if child_count == 1 { "" } else { "s" }
@@ -670,8 +667,7 @@ fn hierarchy_target_screen(
                          Use the numbers when describing a problem."
                             .to_owned(),
                     body: child_list,
-                }],
-                evidence_layout: ApprovalEvidenceLayout::Paged,
+                }]),
             })
         }
         HierarchyReviewTarget::Branch { .. }
