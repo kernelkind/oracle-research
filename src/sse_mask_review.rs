@@ -437,7 +437,7 @@ pub struct AtomicSubjectListReviewScreen {
     pub heading: String,
     pub question: String,
     pub note: String,
-    pub subject_decisions: String,
+    pub accepted_subjects: Vec<String>,
     pub approve_label: String,
     pub reject_label: String,
     pub guidance: ApprovalGuidance,
@@ -2002,14 +2002,6 @@ impl AtomicSubjectPromptReviewScreen {
     }
 }
 
-#[derive(Clone, Debug)]
-struct ReviewedAtomicSubject {
-    source_index: usize,
-    label: String,
-    status: PromptReviewStatus,
-    comment: String,
-}
-
 fn prompt_review_item_screen(
     item_index: usize,
     run: &VerifiedAtomicSubjectReviewRun,
@@ -2029,7 +2021,7 @@ fn prompt_review_item_screen(
             note,
             subject_item_indices,
         } => {
-            let mut subjects = Vec::with_capacity(subject_item_indices.len());
+            let mut accepted_subjects = Vec::with_capacity(subject_item_indices.len());
             for &subject_item_index in subject_item_indices {
                 let subject_item = run.items.get(subject_item_index).ok_or_else(|| {
                     Error::ExperimentState(format!(
@@ -2051,15 +2043,17 @@ fn prompt_review_item_screen(
                         "subject-list review was reached before its subjects were decided",
                     );
                 }
-                subjects.push(ReviewedAtomicSubject {
-                    source_index: subjects.len(),
-                    label: subject_screen.subject.clone(),
-                    status: state.status,
-                    comment: state.comment.clone(),
-                });
+                if state.status == PromptReviewStatus::Approved {
+                    accepted_subjects.push(subject_screen.subject.clone());
+                }
             }
             Ok(PromptReviewScreen::SubjectList {
-                review: atomic_subject_list_screen(*note_index, *note_count, note, &subjects),
+                review: atomic_subject_list_screen(
+                    *note_index,
+                    *note_count,
+                    note,
+                    accepted_subjects,
+                ),
                 comment: session.comment(item_index)?.to_owned(),
             })
         }
@@ -2070,43 +2064,8 @@ fn atomic_subject_list_screen(
     note_index: usize,
     note_count: usize,
     note: &str,
-    subjects: &[ReviewedAtomicSubject],
+    accepted_subjects: Vec<String>,
 ) -> AtomicSubjectListReviewScreen {
-    let accepted = subjects
-        .iter()
-        .filter(|subject| subject.status == PromptReviewStatus::Approved)
-        .map(|subject| format!("{}. {}", subject.source_index + 1, subject.label))
-        .collect::<Vec<_>>();
-    let accepted = if subjects.is_empty() {
-        "No atomic subjects generated.".to_owned()
-    } else if accepted.is_empty() {
-        "No accepted atomic subjects.".to_owned()
-    } else {
-        accepted.join("\n")
-    };
-    let not_accepted = subjects
-        .iter()
-        .filter_map(|subject| {
-            let status = match subject.status {
-                PromptReviewStatus::Rejected => "Disapproved",
-                PromptReviewStatus::Skipped => "Skipped",
-                PromptReviewStatus::Approved => return None,
-                PromptReviewStatus::Pending => unreachable!("pending subjects were rejected above"),
-            };
-            let mut line = format!("{}. [{status}] {}", subject.source_index + 1, subject.label);
-            if !subject.comment.is_empty() {
-                line.push_str("\n   Comment: ");
-                line.push_str(&subject.comment);
-            }
-            Some(line)
-        })
-        .collect::<Vec<_>>()
-        .join("\n");
-    let subject_decisions = if not_accepted.is_empty() {
-        format!("Accepted\n{accepted}")
-    } else {
-        format!("Accepted\n{accepted}\n\nDisapproved or skipped\n{not_accepted}")
-    };
     AtomicSubjectListReviewScreen {
         heading: format!(
             "Atomic-subject list review · Note {} of {}",
@@ -2117,7 +2076,7 @@ fn atomic_subject_list_screen(
             "Are any atomic subjects missing, or do any accepted subjects express the same thing?"
                 .to_owned(),
         note: note.to_owned(),
-        subject_decisions,
+        accepted_subjects,
         approve_label: "No — complete and distinct".to_owned(),
         reject_label: "Yes — missing or repeated".to_owned(),
         guidance: ApprovalGuidance {
@@ -2130,6 +2089,16 @@ fn atomic_subject_list_screen(
 
 impl AtomicSubjectListReviewScreen {
     fn approval_screen(&self) -> ApprovalScreen {
+        let accepted_subjects = if self.accepted_subjects.is_empty() {
+            "No accepted atomic subjects.".to_owned()
+        } else {
+            self.accepted_subjects
+                .iter()
+                .enumerate()
+                .map(|(index, subject)| format!("{}. {subject}", index + 1))
+                .collect::<Vec<_>>()
+                .join("\n")
+        };
         ApprovalScreen {
             heading: self.heading.clone(),
             title: None,
@@ -2145,9 +2114,9 @@ impl AtomicSubjectListReviewScreen {
                     body: self.note.clone(),
                 },
                 bottom: ApprovalEvidence {
-                    title: "Subject decisions".to_owned(),
+                    title: "Accepted subjects".to_owned(),
                     annotation: String::new(),
-                    body: self.subject_decisions.clone(),
+                    body: accepted_subjects,
                 },
             },
         }

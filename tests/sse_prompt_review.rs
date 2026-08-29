@@ -367,10 +367,10 @@ fn subject_prompt_review_uses_flat_items_and_never_shows_masks() {
         evidence_at(&first_list, 0).body,
         "pypush is serverless; pypush is open-source."
     );
-    assert!(
-        evidence_at(&first_list, 1)
-            .body
-            .contains("[Skipped] Open-source availability of pypush")
+    assert_eq!(evidence_at(&first_list, 1).title, "Accepted subjects");
+    assert_eq!(
+        evidence_at(&first_list, 1).body,
+        "1. Serverless operation of pypush"
     );
     assert_eq!(first.screens[3].comment(), "Potential missing subject");
 
@@ -420,7 +420,7 @@ fn subject_prompt_review_uses_flat_items_and_never_shows_masks() {
 }
 
 #[test]
-fn subject_list_review_shows_the_subject_decisions_without_changing_them() {
+fn subject_list_review_shows_only_accepted_subjects_without_changing_prior_decisions() {
     let fixture = Fixture::new();
     let mut notes = default_output_notes();
     notes[0]["subjects"] = json!([
@@ -445,7 +445,10 @@ fn subject_list_review_shows_the_subject_decisions_without_changing_them() {
         panic!("expected a subject-list review screen");
     };
     assert_eq!(review.note, "pypush is serverless; pypush is open-source.");
-    assert!(review.subject_decisions.contains("Accepted"));
+    assert_eq!(
+        review.accepted_subjects,
+        vec!["Serverless operation of pypush"]
+    );
     let list = first.screens[3].approval_screen();
     assert_eq!(
         list.scope,
@@ -458,31 +461,10 @@ fn subject_list_review_shows_the_subject_decisions_without_changing_them() {
         list.evidence,
         ApprovalEvidenceLayout::Stacked { .. }
     ));
-    assert_eq!(evidence_at(&list, 1).title, "Subject decisions");
-    assert!(
-        evidence_at(&list, 1)
-            .body
-            .contains("Accepted\n1. Serverless operation of pypush")
-    );
-    assert!(
-        evidence_at(&list, 1)
-            .body
-            .contains("2. [Disapproved] Open-source availability of pypush")
-    );
-    assert!(
-        evidence_at(&list, 1)
-            .body
-            .contains("Comment: This is availability, not a separate subject")
-    );
-    assert!(
-        evidence_at(&list, 1)
-            .body
-            .contains("3. [Skipped] Software distribution")
-    );
-    assert!(
-        evidence_at(&list, 1)
-            .body
-            .contains("Comment: Needs another look")
+    assert_eq!(evidence_at(&list, 1).title, "Accepted subjects");
+    assert_eq!(
+        evidence_at(&list, 1).body,
+        "1. Serverless operation of pypush"
     );
     assert_eq!(
         list.guidance.as_ref().expect("decision guidance").body,
@@ -505,8 +487,13 @@ fn subject_list_review_shows_the_subject_decisions_without_changing_them() {
             .collect::<String>();
         let normalized = rendered.split_whitespace().collect::<Vec<_>>().join(" ");
         assert!(normalized.contains("Note"), "{rendered}");
-        assert!(normalized.contains("Subject decisions"), "{rendered}");
+        assert!(normalized.contains("Accepted subjects"), "{rendered}");
         assert!(normalized.contains("Serverless operation"), "{rendered}");
+        assert!(
+            !normalized.contains("Open-source availability"),
+            "{rendered}"
+        );
+        assert!(!normalized.contains("Software distribution"), "{rendered}");
         assert!(
             !normalized.contains("Missing or repeated subjects Missing"),
             "{rendered}"
@@ -529,6 +516,46 @@ fn subject_list_review_shows_the_subject_decisions_without_changing_them() {
     assert_eq!(session["items"][1]["status"], "rejected");
     assert_eq!(session["items"][2]["status"], "skipped");
     assert_eq!(session["items"][3]["status"], "approved");
+}
+
+#[test]
+fn subject_list_review_displays_only_accepted_subjects() {
+    let fixture = Fixture::new();
+    let mut notes = default_output_notes();
+    notes[0]["subjects"] = json!([
+        {"source_index": 0, "text": "Serverless operation of pypush"},
+        {"source_index": 1, "text": "Open-source availability of pypush"},
+        {"source_index": 2, "text": "Software distribution"}
+    ]);
+    fixture.publish_output(notes);
+
+    let mut ui = ScriptedUi::new([
+        approved(""),
+        rejected("Not an atomic subject"),
+        skipped("Needs another look"),
+        ApprovalTuiAction::Pause,
+    ]);
+    run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut ui)
+        .expect("reach subject-list review");
+
+    let PromptReviewScreen::SubjectList { review, .. } = &ui.screens[3] else {
+        panic!("expected a subject-list review screen");
+    };
+    assert_eq!(
+        review.accepted_subjects,
+        vec!["Serverless operation of pypush"]
+    );
+    let list = ui.screens[3].approval_screen();
+    assert_eq!(evidence_at(&list, 1).title, "Accepted subjects");
+    assert_eq!(
+        evidence_at(&list, 1).body,
+        "1. Serverless operation of pypush"
+    );
+    let session = read_session(&fixture.session_path);
+    assert_eq!(session["items"][1]["status"], "rejected");
+    assert_eq!(session["items"][1]["comment"], "Not an atomic subject");
+    assert_eq!(session["items"][2]["status"], "skipped");
+    assert_eq!(session["items"][2]["comment"], "Needs another look");
 }
 
 #[test]
@@ -675,14 +702,14 @@ fn subject_prompt_review_surfaces_empty_and_duplicate_lists() {
     assert!(empty_list.title.is_none());
     assert_eq!(
         evidence_at(&empty_list, 1).body,
-        "Accepted\nNo atomic subjects generated."
+        "No accepted atomic subjects."
     );
 
     let fixture = Fixture::new();
     let mut notes = default_output_notes();
     notes[0]["subjects"][1]["text"] = notes[0]["subjects"][0]["text"].clone();
     fixture.publish_output(notes);
-    let mut duplicate = ScriptedUi::new([skipped(""), skipped(""), ApprovalTuiAction::Pause]);
+    let mut duplicate = ScriptedUi::new([approved(""), approved(""), ApprovalTuiAction::Pause]);
     run_atomic_subject_prompt_review(
         &fixture.run_directory,
         &fixture.session_path,
@@ -695,7 +722,7 @@ fn subject_prompt_review_surfaces_empty_and_duplicate_lists() {
 }
 
 #[test]
-fn subject_list_review_preserves_all_disapproved_and_skipped_subjects() {
+fn subject_list_review_hides_disapproved_and_skipped_subjects_but_preserves_their_decisions() {
     let fixture = Fixture::new();
     let mut ui = ScriptedUi::new([
         rejected("Not a substantive subject"),
@@ -709,17 +736,15 @@ fn subject_list_review_preserves_all_disapproved_and_skipped_subjects() {
     let PromptReviewScreen::SubjectList { review, .. } = &ui.screens[2] else {
         panic!("expected a subject-list review screen");
     };
-    assert!(
-        review
-            .subject_decisions
-            .contains("No accepted atomic subjects.")
-    );
-    assert!(review.subject_decisions.contains(
-        "1. [Disapproved] Serverless operation of pypush\n   Comment: Not a substantive subject"
-    ));
-    assert!(review.subject_decisions.contains(
-        "2. [Skipped] Open-source availability of pypush\n   Comment: Needs another look"
-    ));
+    assert!(review.accepted_subjects.is_empty());
+    let list = ui.screens[2].approval_screen();
+    assert_eq!(evidence_at(&list, 1).title, "Accepted subjects");
+    assert_eq!(evidence_at(&list, 1).body, "No accepted atomic subjects.");
+    let session = read_session(&fixture.session_path);
+    assert_eq!(session["items"][0]["status"], "rejected");
+    assert_eq!(session["items"][0]["comment"], "Not a substantive subject");
+    assert_eq!(session["items"][1]["status"], "skipped");
+    assert_eq!(session["items"][1]["comment"], "Needs another look");
 }
 
 #[test]
