@@ -1,7 +1,7 @@
 # Experiment 2: nearby-subject organization under changing support
 
-Status: **draft; the crossed wording fixture and every atomic proposition and
-mask require human approval before encoding**.
+Status: **draft; all 96 fixture notes, masks, and declared atomic subjects
+require human approval before encoding**.
 
 ## Characterization target
 
@@ -22,10 +22,21 @@ boundary between nearby subjects.
 
 1. With four vectors from each of three nearby subjects, what segments does the
    candidate return?
-2. Does the same balanced local collection organize differently when the other
-   three semantic neighborhoods are present?
-3. Holding the local collection size at twelve, how does changing support from
+2. Holding the local collection size at twelve, how does changing support from
    `4:4:4` to `8:2:2`, `6:5:1`, or `8:3:1` change those segments?
+
+## Program role
+
+Experiment 2 is a late characterization sibling of the targeted hypothesis
+tests. The default spending graph schedules it only after the exact candidate
+identity has passed the earlier qualification and focal tests in `README.md`.
+Those upstream results are only scheduling gates: none can supply a semantic
+baseline for an Experiment 2 comparison.
+
+Within Experiment 2, every unequal-support comparison is scientifically gated
+by its matched local balanced configuration for the same neighborhood and
+schedule. Experiment 2 neither qualifies the candidate nor gates a targeted
+hypothesis test.
 
 ## Design
 
@@ -78,17 +89,15 @@ neighborhoods, the form order is also staggered:
 
 The neighborhood staggering and subject phases prevent subjects with the same
 support role from automatically receiving identical wording-form windows.
-They also mean every 48-vector combined balanced run contains exactly six
-instances of each wording form. Necessary subject words may repeat; incidental
-carrier phrases or writing styles may not identify one subject. Freeze the
-numeric schedule index, subject phase, and wording form as fixture metadata.
+Necessary subject words may repeat; incidental carrier phrases or writing
+styles may not identify one subject. Freeze the numeric schedule index, subject
+phase, and wording form as fixture metadata.
 
-The candidate sees four kinds of run:
+The candidate sees three kinds of local run:
 
 1. one balanced twelve-vector collection from one neighborhood;
-2. the same local collection embedded in a combined 48-vector collection;
-3. local twelve-vector collections with unequal support;
-4. local collections containing a singleton subject instance.
+2. twelve-vector collections with unequal support; and
+3. twelve-vector collections containing a singleton subject instance.
 
 Because every local support-stress run contains twelve vectors, its counts are
 a complete support **allocation**: increasing one subject's support necessarily
@@ -256,7 +265,7 @@ support count.
 | `SOFTWARE-D1` | ⟦Debugging a program is underway.⟧ |
 | `SOFTWARE-D2` | ⟦I'm in the middle of debugging a program.⟧ |
 | `SOFTWARE-D3` | ⟦I'm debugging a program.⟧ |
-| `SOFTWARE-D4` | ⟦I'm in the process of debugging a program.⟧ |
+| `SOFTWARE-D4` | ⟦I'm troubleshooting a program.⟧ |
 | `SOFTWARE-D5` | ⟦A program is being debugged.⟧ |
 | `SOFTWARE-D6` | ⟦Debugging work is being done on a program.⟧ |
 | `SOFTWARE-D7` | ⟦A program is what I'm debugging.⟧ |
@@ -278,21 +287,7 @@ diagnostics:
 1. the complete raw-vector cosine matrix;
 2. same-subject and cross-subject cosine distributions in each neighborhood;
 3. every vector's nearest same-subject rank and margin;
-4. the result of a binary-unigram TF-IDF leave-one-out classifier within each
-   24-mask neighborhood, including its complete cosine and confusion matrices;
-5. subject-by-wording-form and support-role-by-wording-form tables, tokenizer
-   lengths, and repeated incidental n-grams.
-
-For the lexical diagnostic, lowercase and tokenize contiguous Unicode letters
-and numbers, form binary unigram vectors, weight a term with document frequency
-`df` as `ln((1 + 24) / (1 + df)) + 1`, and L2-normalize. Fit those weights once
-on all 24 masks in the neighborhood. Classify each mask against the three
-normalized mean subject centroids while excluding that mask from its own
-centroid; preserve a tie as unresolved. Reuse these lexical vectors for every
-support condition. The result shows how easily wording alone can recover the
-declared subjects; it is not an eligibility rule. High lexical accuracy
-prevents attributing functional recovery uniquely to semantic geometry, but
-does not invalidate the observed segmentation.
+4. subject-by-wording-form and support-role-by-wording-form tables.
 
 After candidate output is revealed, flag any cross-subject segment whose
 members share a wording form. This is a wording-form diagnostic, not a
@@ -372,15 +367,8 @@ length `k`. Consequently:
   `2 × (8 + 3 + 1)`.
 
 Every frozen vector therefore appears in exactly 64 of the 512 unique local
-configurations. The eight combined balanced configurations contribute four
-more appearances, so every one of the 96 vectors appears in exactly 68 of the
-520 unique configurations and 136 of the repeated invocations. No formulation
-is systematically assigned to common, rare, or singleton support.
-
-For any one subject position, the four neighborhoods' balanced length-four
-windows contain each wording form twice because their form orders are shifted
-by `0`, `2`, `4`, and `6`. Across all three subject positions, every combined
-balanced run therefore contains six instances of each form.
+configurations and 128 of the repeated invocations. No formulation is
+systematically assigned to common, rare, or singleton support.
 
 The eight cyclic schedules are the complete frozen schedule family and every
 one is reported. They provide balanced individual-vector coverage, but they
@@ -400,34 +388,28 @@ These local schedules produce 128 unique configurations per neighborhood and
 | Singleton | 48 |
 | Dense and singleton | 48 |
 
-For each `s`, also form one **combined balanced** 48-vector configuration by
-taking the union of that schedule's four local balanced configurations. These
-eight configurations expose the exact same local vectors in the presence of
-the other three semantic areas.
-
-The complete protocol therefore defines 520 unique input/run configurations per
-frozen candidate and seed: 512 local allocation configurations plus eight
-combined balanced configurations. Each configuration is invoked twice from
-fresh candidate state, for 1,040 invocations total. The 96 SSE vectors are
-generated once. No candidate invocation re-encodes text.
+The complete protocol therefore defines 512 unique input/run configurations per
+frozen candidate and seed. Each configuration is invoked twice from fresh
+candidate state, for 1,024 invocations total. The 96 SSE vectors are generated
+once. No candidate invocation re-encodes text.
 
 ## Blinding and run isolation
 
 Use `02-nearby-subject-resolution` as the shared blinding namespace. The HMAC
 mapping and order in `README.md` define every opaque ID and its frozen global
-rank. Order each local or combined run by filtering that global order.
+rank. Order each local run by filtering that global order.
 
 The candidate receives no condition name, role, support count, subject name, or
 human-readable ID. Dense, rare, and singleton vectors are never deliberately
 placed in contiguous blocks.
 
-Create two invocation records for each of the 520 configurations and freeze one
-random execution order over all 1,040 records. Represent one configuration as
+Create two invocation records for each of the 512 configurations and freeze one
+random execution order over all 1,024 records. Represent one configuration as
 compact UTF-8 JSON with no trailing newline:
 
-- a local run is
-  `["local", neighborhood, condition, s, role_assignment]`; and
-- a combined run is `["combined-balanced", s]`.
+```text
+["local", neighborhood, condition, s, role_assignment]
+```
 
 Use the neighborhood codes `coffee`, `photograph`, `rose`, and `software`; the
 condition codes `balanced`, `imbalanced`, `singleton`, and
@@ -455,23 +437,22 @@ state and declared candidate seed. No invocation can train or prime another.
 For replay comparison, first validate and then canonicalize each complete
 opaque-ID output under the shared contract. A duplicate raw member set is an
 output-contract failure, not multiplicity to preserve. The two valid canonical
-outputs for a configuration must match byte for byte. If they do not, mark it
-`non-repeatable`, preserve both outputs, and mark every outcome or comparison
-that depends on that configuration `unevaluable`; never choose one invocation
-as authoritative.
+outputs for a configuration must match byte for byte. If they do not, record a
+**repeatability failure**, preserve both outputs, and give every outcome or
+comparison that depends on that configuration **no verdict**; never choose one
+invocation as authoritative.
 
 This experiment uses one frozen within-invocation input order. The candidate
 must meet the shared contract's construction-level permutation-invariance
-requirement. An empirical input-order result from Experiment 6 is not a
-substitute for that invariant, and this experiment does not add ad hoc order
-variants.
+requirement. The suite-level conformance preflight in `README.md` owns the
+empirical order check; this experiment does not add ad hoc order variants.
 
 ## Evaluation
 
 This is a characterization experiment, not an all-runs-must-pass test. The
-balanced local configurations establish the baseline behavior that the two
-later comparisons may change. The declared subjects are reference cohorts,
-not prescribed segment boundaries.
+balanced local configurations establish the baseline behavior that later
+unequal-support conditions may change. The declared subjects are reference
+cohorts, not prescribed segment boundaries.
 
 For each repeatable configuration, record these separate outcomes:
 
@@ -493,13 +474,29 @@ recovery, but it is not automatically invalid: the candidate may return
 overlapping subjects that differ from the declared reference cohorts.
 
 Freeze the semantic-review rubric, one primary human reviewer, reviewer
-procedure, and review shuffle seed before candidate execution. After all
-candidate outputs are immutable, pool all unique segments from valid raw
-outputs across both invocations of the one frozen candidate. Uniqueness is the
-canonical fixture-member set, so an identical member set is reviewed once and
-its frozen verdict is reused for every occurrence. Segments from a valid but
-non-repeatable output may receive diagnostic review, but they cannot make a
-dependent comparison evaluable.
+procedure, review shuffle seed, and finite packet budget before candidate
+execution. After all candidate outputs are immutable and readable identities
+are restored, form the review pool from every unique segment in an agreed,
+repeatable configuration that contains vectors from at least two declared
+subjects. Uniqueness is the canonical fixture-member set, so an identical
+member set is reviewed once and its frozen verdict is reused for every
+occurrence. Preserve segments from invalid or non-repeatable configurations in
+the execution record, but do not send them to semantic review or use them in
+semantic characterization. The output-contract or repeatability failure
+itself remains part of the final candidate-decision record.
+
+If the complete pool exceeds the frozen packet budget, do not review a subset.
+Record a **review-capacity failure** and preserve all automated configuration,
+membership, and support-stress observations. Cross-subject semantic verdicts,
+including invalid membership and false absorption, are unavailable, and the
+suite's final review cannot choose `proceed` for this candidate.
+
+Do not send singleton or same-declared-subject segments to semantic review.
+Human fixture approval already establishes the common atomic subject for every
+same-subject subset; singleton disposition is recorded directly. Reviewing
+either again would add work without resolving an unknown relationship.
+Cross-subject segments are reviewed because they may still express a valid
+alternative fine subject not represented by the declared cohorts.
 
 Build the review packets only after that pool is fixed. Hide the candidate,
 invocation, run configuration, condition, schedule, support roles, declared
@@ -570,13 +567,16 @@ allocation used to describe that configuration.
 
 For each neighborhood, declared subject, and schedule `s`, its repeatable local
 balanced configuration is the balanced baseline. Describe recovery as
-**surviving** a combined or unequal-support condition only when that subject's
-reference cohort recovered in this matched balanced baseline and the compared
+**surviving** an unequal-support condition only when that subject's reference
+cohort recovered in this matched balanced baseline and the compared
 configuration is also repeatable. If the balanced baseline did not recover the
-cohort, record all later recovery, fragmentation, omission, membership, and
-semantic-review outcomes, but make no survival claim. If either required
-configuration is non-repeatable, the dependent survival comparison is
-`unevaluable`. For an eligible comparison, record `survived` exactly when the
+cohort, record a **local prerequisite failure** for that matched comparison and
+preserve all later recovery, fragmentation, omission, membership, and
+semantic-review outcomes, but record **no survival verdict because matched
+baseline did not recover**. If either required configuration has an
+output-contract or repeatability failure, record **no survival verdict because
+`<configuration ID>` had `<integrity failure class>`** for each affected
+configuration. For an eligible comparison, record `survived` exactly when the
 cohort also meets the reference-cohort recovery rule in the compared
 configuration; otherwise record `did not survive`. A one-vector subject has
 disposition fields rather than a recovery-survival claim.
@@ -606,32 +606,14 @@ declared cohorts, combines nearby cohorts into valid broader fine subjects,
 fragments them, overlaps them, or omits vectors. No one of those shapes is
 declared correct in advance.
 
-### Local versus combined balanced organization
-
-For each neighborhood and schedule `s`, compare its local balanced output with
-the combined balanced output for the same `s`:
-
-1. apply the canonical projection rule to the combined output with that
-   neighborhood's twelve IDs as `K`;
-2. represent the local output as the canonical member-set multiset on those
-   same IDs;
-3. compare the two multisets, including every member-set multiplicity and the
-   exact signed difference `combined projection count - local count`;
-4. retain source-segment provenance separately for every projected occurrence;
-5. separately preserve every combined-output segment that crosses semantic
-   neighborhoods.
-
-Projection shows whether the local organization changed. The separate
-cross-neighborhood record prevents projection from hiding contamination. This
-comparison uses identical local vectors, schedule indices, and relative order;
-only the other three balanced neighborhoods were added. Empty projections are
-discarded; identical nonempty projections remain present through their
-multiplicity.
-
 ### Balanced versus unequal support
 
 For every neighborhood, schedule `s`, and role assignment, pair the unequal
-run with that neighborhood's balanced run for the same `s`. Record:
+run with that neighborhood's balanced run for the same `s`. Produce the
+projected-output comparison only when both exact configurations are valid and
+repeatable. Otherwise record **no projected-output verdict because
+`<configuration ID>` had `<integrity failure class>`** for each affected
+configuration. For an available comparison, record:
 
 1. the IDs shared by the two inputs;
 2. each run's complete output;
@@ -640,14 +622,13 @@ run with that neighborhood's balanced run for the same `s`. Record:
 4. the exact signed difference `unequal projection count - balanced projection
    count` for every member set;
 5. source-segment provenance for every projected occurrence, retained
-   separately from the canonical multisets;
-6. every new cross-subject member-set occurrence and its frozen blinded
-   semantic-review verdict.
+   separately from the canonical multisets.
 
 Analysts may describe a change as a gain, loss, split, merge, omission, or
 absorption, but those are qualitative annotations. The preserved inputs,
-outputs, projected multisets, and exact multiplicity difference are the
-authoritative record.
+complete outputs, projected multisets, exact multiplicity differences,
+provenance rows, and frozen semantic-review verdicts are the authoritative
+record.
 
 The matched comparison measures how segmentation changes under each complete
 support allocation. It does not isolate the causal effect of support count:
@@ -660,42 +641,44 @@ Experiment 6 owns duplicate stability.
 
 Compare results by neighborhood, declared subject, support role, allocation,
 and formulation schedule. Report every schedule and aggregate only with
-schedule as a repeated block; do not treat the 520 overlapping configurations
-as 520 independent samples. Do not average away a neighborhood-specific
-outcome. Raw cosine and lexical measurements are diagnostics, not semantic
-verdicts.
+schedule as a repeated block; do not treat the 512 overlapping configurations
+as 512 independent samples. Do not average away a neighborhood-specific
+outcome. Raw cosine measurements and wording-form audits are diagnostics, not
+semantic verdicts.
 
 ## Protocol
 
 1. Audit every mask against its declared atomic subject. Correct any missing
    subject evidence, extra substantive meaning, or narrower qualification.
-2. Counterbalance the eight wording forms inside every neighborhood and across
-   the combined run.
-   Correct clear incidental-template imbalances without purging necessary
-   subject words or forcing unnatural synonyms.
-3. Obtain human approval of all 96 notes, masks, atomic propositions, intended
-   nearby relationships, and the semantic-review rubric and procedure.
+2. Counterbalance the eight wording forms inside every neighborhood. Correct
+   clear incidental-template imbalances without purging necessary subject
+   words or forcing unnatural synonyms.
+3. Obtain human approval of all 96 notes, masks, declared atomic subjects,
+   intended nearby relationships, and the semantic-review rubric, procedure,
+   and finite packet budget.
 4. Freeze the fixture wording and every scoring rule.
 5. Freeze the candidate identity and document its construction-level
    permutation invariance.
 6. Derive and commit the shared opaque-ID mapping and global order. Freeze all
-   520 unique configurations, two invocation records per configuration, and
-   the randomized execution order of all 1,040 invocations. Draw and freeze the
+   512 unique configurations, two invocation records per configuration, and
+   the randomized execution order of all 1,024 invocations. Draw and freeze the
    independent review seed.
 7. Freeze the SSE boundary and exact input bytes, then encode the 96 inputs
    once and record the vector dimensions and hashes.
 8. Invoke every configuration twice in separate fresh processes without
-   retuning or re-encoding. Make all 1,040 raw outputs immutable before
+   retuning or re-encoding. Make all 1,024 raw outputs immutable before
    restoring fixture identities.
 9. Validate and compare the two canonical complete outputs for every
-   configuration and mark
-   non-repeatable configurations and all dependent outcomes `unevaluable`.
-10. Compute the frozen representation and lexical diagnostics.
-11. Fix the unique-segment pool, build the blinded packets in their frozen
-    random order, and complete the three-way semantic review.
+   configuration, record every repeatability failure, and give all dependent
+   outcomes no verdict.
+10. Compute the frozen representation diagnostics and wording-form/support-role
+    audits.
+11. Fix the cross-subject segment pool. If its size is within the frozen
+    packet budget, build every blinded packet in the frozen random order and
+    complete the three-way semantic review. Otherwise, review none and record
+    a review-capacity failure.
 12. For repeatable configurations, complete the balanced-baseline-conditioned
-    recovery descriptions, local-versus-combined comparisons, and matched
-    support-allocation comparisons.
+    recovery descriptions and matched support-allocation comparisons.
 
 ## Required record
 
@@ -706,50 +689,52 @@ Preserve:
 - every numeric schedule index, subject phase, wording form, and recorded
   structural attribute;
 - the opaque-ID mapping and global master rank order;
-- the 520 unique configurations, all 1,040 invocation records in their frozen
+- the 512 unique configurations, all 1,024 invocation records in their frozen
   execution order, and every condition, role, schedule, exact input, and
   within-invocation order;
-- all 1,040 raw outputs, canonical outputs and hashes for every valid raw
-  output, and every output-contract, repeatability, or `unevaluable` finding;
+- all 1,024 raw outputs, canonical outputs and hashes for every valid raw
+  output, every output-contract or repeatability finding, and every resulting
+  no-verdict dependency;
 - every complete returned segment, overlap, singleton, and omission from both
   invocations;
 - reference-cohort recovery, all cross-subject memberships, false absorption,
   omission, fragmentation, extra segments, and singleton disposition fields;
 - the frozen semantic-review rubric, procedure, shuffle seed, its commitment
-  and verification, unique-segment pool, packet and member orders, every
+  and verification, cross-subject segment pool, packet and member orders, every
   `valid`, `invalid`, and `uncertain` judgment, the valid subject text, and the
   masks supporting each judgment;
-- every balanced-baseline recovery prerequisite and every resulting survival,
-  no-survival-claim, or `unevaluable` record;
-- every local-versus-combined canonical projected multiset, exact multiplicity
-  difference, separate source-segment provenance row, and cross-neighborhood
-  segment;
+- every balanced-baseline recovery prerequisite, its local-prerequisite state,
+  and every resulting survival or no-verdict record;
+- the frozen semantic-review packet budget, complete pool size, and any
+  review-capacity failure;
 - every balanced-versus-unequal shared-ID set, canonical projected multiset,
-  exact multiplicity difference, separate source-segment provenance row, and
-  membership change;
-- the immutable raw-vector cosine matrix and all lexical diagnostics;
+  exact multiplicity difference, and separate source-segment provenance row;
+- the immutable raw-vector cosine matrix, cosine summaries, and every
+  wording-form/support-role audit;
 - every artifact and candidate identity required by the shared contract.
 
 ## What a result means
 
 The result characterizes how one frozen SSE-plus-segmentation system organizes
-four controlled collections of nearby subjects under balanced support, whether
-that organization changes when unrelated neighborhoods are present, and how it
-changes under the complete unequal-support and singleton allocations. It does
-not attribute those changes to support count alone.
+four controlled collections of nearby subjects under balanced support and how
+that organization changes under the complete unequal-support and singleton
+allocations. It does not attribute those changes to support count alone.
 
 For a declared subject that recovered in its matched balanced baseline, the
-record can state whether recovery survived a repeatable stress or combined
-condition. When balanced recovery was absent, the later output remains an
-observation but supports no survival statement. Non-repeatable configurations
-leave their dependent comparisons unevaluable.
+record can state whether recovery survived a repeatable support stress. When
+balanced recovery was absent, the later output remains an observation but
+supports no survival statement. A repeatability failure leaves its dependent
+comparisons with no verdict.
 
 The protocol has no binary confirmation result and does not rank or select
 candidates. Its returned shapes, semantic verdicts, and changes are reported
 as characterization data.
 
+A review-capacity failure is a resource result, not a semantic segmentation
+failure. It prevents a final `proceed` decision because the required semantic
+evidence is incomplete.
+
 It does not establish one universally correct fine-subject boundary,
 production-scale behavior, every geometric density pattern, natural-corpus
-mask quality, or hierarchy quality. The combined run is one controlled global
-composition check; Experiment 6 separately tests broader irrelevant-change
-stability.
+mask quality, hierarchy quality, or stability under unrelated additions or
+combined collections. Experiment 6 owns those stability tests.

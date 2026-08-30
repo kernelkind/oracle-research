@@ -7,6 +7,30 @@ encoding**.
 
 > Repeated instances of the same fine subject form recoverable groups.
 
+## Program role
+
+This experiment is the suite's cheap program-qualification gate. After the
+shared candidate-eligibility and execution-integrity requirements are met, a
+pass qualifies that exact candidate identity for the default downstream run
+schedule. Any non-pass stops that default schedule: a valid, repeatable output
+that misses the pass rule is a **program-qualification failure**, while an
+output-contract or repeatability failure supplies no qualification verdict.
+Preserve that distinction even though both states stop downstream execution by
+default.
+
+Qualification is an operational scheduling gate, not a substitute for a later
+experiment's exact-fixture baseline. Every downstream comparison must still
+meet its own declared baseline prerequisite. Changing any candidate-identity
+field creates a new candidate that must qualify again.
+
+Experiment 6 later reuses this experiment's exact default input and output as
+its combined-collection artifact, but only after the output is valid,
+repeatable, and passes this experiment's recovery-and-purity rule. That
+qualification establishes the imported collection's six-group structure; it
+does not replace Experiment 6's two subset baselines or preservation
+comparisons. The Experiment 6 protocol and duplicate-ID commitment must
+therefore be frozen before this default output is generated.
+
 ## Fixture
 
 The fixture contains 36 vectors: six clearly different fine subjects with six
@@ -120,10 +144,21 @@ input: all 36 opaque ID/vector pairs in the committed HMAC order. Run that
 exact input twice from fresh state and complete the shared lifecycle in
 [README.md](README.md#shared-execution-contract).
 
+The suite-level order-conformance preflight in `README.md` separately reuses
+these same 36 opaque ID/vector pairs in its frozen alternate order. Its two
+outputs are candidate-conformance artifacts, not additional Experiment 1
+semantic inputs. An invalid or non-repeatable conformance input is an integrity
+failure with no conformance or recovery verdict. If both orders are valid and
+repeatable but differ, the candidate is ineligible before the recovery pass
+rule is applied.
+
 In addition to the shared artifacts, preserve both complete outputs, every
 returned membership and unassigned ID, and the pass/fail result for each
 expected group and for the experiment. Preserve the raw-vector cosine matrix
-for diagnosis; it does not determine the verdict.
+for diagnosis; it does not determine the verdict. Preserve the two alternate-
+order outputs and their comparison with the default-order canonical output in
+the suite conformance record. Preserve the default pair as the exact shared
+artifact consumed by Experiment 6's combined-collection comparison.
 
 ## Scope
 
