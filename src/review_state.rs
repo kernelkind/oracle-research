@@ -51,6 +51,15 @@ pub(crate) fn save_session<T: Serialize>(path: &Path, session: &T) -> Result<()>
     replace_json(path, &envelope)
 }
 
+pub(crate) fn publish_session<T: Serialize>(path: &Path, session: &T) -> Result<()> {
+    let envelope = SessionEnvelope {
+        schema_version: 1,
+        state_sha256: value_sha256(session)?,
+        session,
+    };
+    write_json_atomic(path, &envelope, false)
+}
+
 pub(crate) fn load_json<T: DeserializeOwned>(path: &Path) -> Result<T> {
     let mut bytes = Vec::new();
     File::open(path)

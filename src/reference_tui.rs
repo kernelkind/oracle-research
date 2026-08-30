@@ -1031,7 +1031,18 @@ impl ReferenceTerminal {
     where
         M: InteractiveReviewModel,
     {
-        if drain_stale_input()? {
+        self.run_review_model_stateful(&mut model, true)
+    }
+
+    pub(crate) fn run_review_model_stateful<M>(
+        &mut self,
+        model: &mut M,
+        drain_stale: bool,
+    ) -> io::Result<M::Action>
+    where
+        M: InteractiveReviewModel,
+    {
+        if drain_stale && drain_stale_input()? {
             return Ok(M::pause_action());
         }
         loop {

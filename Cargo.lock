@@ -1242,6 +1242,7 @@ dependencies = [
  "thiserror",
  "tokenizers",
  "unicode-normalization",
+ "unicode-width",
  "whatlang",
  "zstd",
 ]

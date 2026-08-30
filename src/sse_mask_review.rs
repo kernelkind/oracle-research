@@ -7,9 +7,9 @@ use std::path::{Path, PathBuf};
 
 use crossterm::event::{Event, KeyCode, KeyEventKind, KeyModifiers};
 use ratatui::Frame;
-use ratatui::layout::{Constraint, Direction, Layout};
+use ratatui::layout::{Constraint, Direction, Layout, Rect};
 use ratatui::style::{Color, Modifier, Style};
-use ratatui::text::{Line, Span};
+use ratatui::text::{Line, Span, Text};
 use ratatui::widgets::{Block, Borders, List, ListItem, ListState, Padding, Paragraph, Wrap};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
@@ -24,7 +24,7 @@ use crate::reference_tui::{
     secondary_style, terminal_safe,
 };
 use crate::review_state::{
-    acquire_session_lock, load_session, publish_json, save_session, value_sha256,
+    acquire_session_lock, load_session, publish_json, publish_session, save_session, value_sha256,
 };
 use crate::snapshot::{Error, Result, io_error};
 
@@ -203,6 +203,22 @@ pub struct VerifiedSubjectMaskProposal {
 struct VerifiedAtomicSubjectReviewRun {
     identity_sha256: String,
     items: Vec<VerifiedPromptReviewItem>,
+}
+
+#[derive(Clone, Debug)]
+struct VerifiedAtomicSubjectNoteReviewNote {
+    note_id: String,
+    note: String,
+    subjects: Vec<VerifiedAtomicSubjectNoteReviewSubject>,
+    list_item_id: String,
+    list_item_sha256: String,
+}
+
+#[derive(Clone, Debug)]
+struct VerifiedAtomicSubjectNoteReviewSubject {
+    item_id: String,
+    item_sha256: String,
+    label: String,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -475,9 +491,100 @@ pub trait PromptReviewUi {
     fn review_prompt(&mut self, screen: PromptReviewScreen) -> io::Result<ApprovalTuiAction>;
 }
 
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum AtomicSubjectCoverageDecision {
+    Complete,
+    Missing,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum AtomicSubjectDistinctnessDecision {
+    Distinct,
+    Repeated,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct AtomicSubjectNoteReviewChoice {
+    pub label: String,
+    pub outcome: Option<ReviewOutcome>,
+    pub comment: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct AtomicSubjectNoteReviewScreen {
+    pub note_index: usize,
+    pub note_count: usize,
+    pub note: String,
+    pub subjects: Vec<AtomicSubjectNoteReviewChoice>,
+    pub coverage: Option<AtomicSubjectCoverageDecision>,
+    pub coverage_comment: String,
+    pub distinctness: Option<AtomicSubjectDistinctnessDecision>,
+    pub distinctness_comment: String,
+    pub selected_index: usize,
+    pub finished: bool,
+    pub finished_note_count: usize,
+    pub decided_review_count: usize,
+    pub total_review_count: usize,
+    pub prior_combined_check: Option<String>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum AtomicSubjectNoteReviewAction {
+    None,
+    DecideSubject {
+        subject_index: usize,
+        outcome: ReviewOutcome,
+    },
+    ClearSubject {
+        subject_index: usize,
+    },
+    SaveSubjectComment {
+        subject_index: usize,
+        comment: String,
+    },
+    DecideCoverage {
+        decision: AtomicSubjectCoverageDecision,
+    },
+    ClearCoverage,
+    SaveCoverageComment {
+        comment: String,
+    },
+    DecideDistinctness {
+        decision: AtomicSubjectDistinctnessDecision,
+    },
+    ClearDistinctness,
+    SaveDistinctnessComment {
+        comment: String,
+    },
+    FinishNote,
+    PreviousNote,
+    NextNote,
+    Pause,
+}
+
+pub trait AtomicSubjectNoteReviewUi {
+    fn review_note(
+        &mut self,
+        model: &mut AtomicSubjectNoteReviewTuiModel,
+        drain_stale_input: bool,
+    ) -> io::Result<AtomicSubjectNoteReviewAction>;
+}
+
 impl PromptReviewUi for ReferenceTerminal {
     fn review_prompt(&mut self, screen: PromptReviewScreen) -> io::Result<ApprovalTuiAction> {
         self.review_prompt_iteration(screen.approval_screen(), screen.comment().to_owned())
+    }
+}
+
+impl AtomicSubjectNoteReviewUi for ReferenceTerminal {
+    fn review_note(
+        &mut self,
+        model: &mut AtomicSubjectNoteReviewTuiModel,
+        drain_stale_input: bool,
+    ) -> io::Result<AtomicSubjectNoteReviewAction> {
+        self.run_review_model_stateful(model, drain_stale_input)
     }
 }
 
@@ -511,6 +618,16 @@ pub enum PromptReviewRunOutcome {
     Completed {
         subjects: PromptReviewCounts,
         subject_lists: PromptReviewCounts,
+    },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum AtomicSubjectNoteReviewRunOutcome {
+    Paused,
+    Completed {
+        subjects: PromptReviewCounts,
+        notes_missing_subjects: usize,
+        notes_with_repeated_subjects: usize,
     },
 }
 
@@ -591,8 +708,59 @@ struct PromptReviewSession {
     items: Vec<PromptReviewItemState>,
 }
 
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
+struct AtomicSubjectNoteReviewSubjectState {
+    item_id: String,
+    item_sha256: String,
+    outcome: Option<ReviewOutcome>,
+    comment: String,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
+struct PriorCombinedPromptReviewCheck {
+    status: PromptReviewStatus,
+    comment: String,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
+struct AtomicSubjectNoteReviewState {
+    note_id: String,
+    list_item_id: String,
+    list_item_sha256: String,
+    subjects: Vec<AtomicSubjectNoteReviewSubjectState>,
+    coverage: Option<AtomicSubjectCoverageDecision>,
+    coverage_comment: String,
+    distinctness: Option<AtomicSubjectDistinctnessDecision>,
+    distinctness_comment: String,
+    prior_combined_check: Option<PriorCombinedPromptReviewCheck>,
+    selected_index: usize,
+    finished: bool,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
+struct AtomicSubjectNoteReviewSession {
+    schema_version: u32,
+    review_protocol: String,
+    generation_run_sha256: String,
+    current_note_index: usize,
+    notes: Vec<AtomicSubjectNoteReviewState>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(untagged)]
+enum StoredAtomicSubjectNoteReviewSession {
+    V2(AtomicSubjectNoteReviewSession),
+    V1(PromptReviewSession),
+}
+
 const PROMPT_REVIEW_SESSION_SCHEMA_VERSION: u32 = 1;
 const PROMPT_REVIEW_PROTOCOL: &str = "atomic-subject-review-v1";
+const ATOMIC_SUBJECT_NOTE_REVIEW_SESSION_SCHEMA_VERSION: u32 = 2;
+const ATOMIC_SUBJECT_NOTE_REVIEW_PROTOCOL: &str = "atomic-subject-review-v2";
 const SUBJECT_RESPONSE_SCHEMA_SHA256: &str =
     "ffa0aa2d4a52a1b30f41f0a1761e455471a5127c0e20d74aaeea575a0df2226a";
 
@@ -1488,6 +1656,656 @@ pub fn run_atomic_subject_prompt_review(
     })
 }
 
+pub fn run_atomic_subject_note_review(
+    generation_run_directory: impl AsRef<Path>,
+    session_path: impl AsRef<Path>,
+    ui: &mut impl AtomicSubjectNoteReviewUi,
+) -> Result<AtomicSubjectNoteReviewRunOutcome> {
+    let generation_run_directory = generation_run_directory.as_ref();
+    let session_path = session_path.as_ref();
+    let run = load_verified_atomic_subject_review_run(generation_run_directory)?;
+    let notes = run.note_review_notes()?;
+    let _lock = acquire_session_lock(session_path)?;
+    let mut session = match load_session::<StoredAtomicSubjectNoteReviewSession>(session_path)? {
+        Some(StoredAtomicSubjectNoteReviewSession::V2(session)) => {
+            session.validate(&run, &notes)?;
+            session
+        }
+        Some(StoredAtomicSubjectNoteReviewSession::V1(legacy)) => {
+            legacy.validate(&run)?;
+            preserve_legacy_prompt_review_session(session_path, &legacy)?;
+            AtomicSubjectNoteReviewSession::migrate(legacy, &run, &notes)?
+        }
+        None => AtomicSubjectNoteReviewSession::new(&run, &notes),
+    };
+    save_session(session_path, &session)?;
+
+    let mut model = AtomicSubjectNoteReviewTuiModel::new(session.screen(&notes)?);
+    let mut drain_stale_input = true;
+    loop {
+        let action = ui
+            .review_note(&mut model, drain_stale_input)
+            .map_err(|source| {
+                io_error(
+                    "run SSE atomic-subject note review UI for",
+                    generation_run_directory,
+                    source,
+                )
+            })?;
+        drain_stale_input = false;
+        session.set_selected_index(model.selected_index())?;
+        match action {
+            AtomicSubjectNoteReviewAction::None => {
+                return invalid("atomic-subject note review UI returned without an action");
+            }
+            AtomicSubjectNoteReviewAction::Pause => {
+                save_session(session_path, &session)?;
+                return Ok(if session.all_finished() {
+                    session.completed_outcome()
+                } else {
+                    AtomicSubjectNoteReviewRunOutcome::Paused
+                });
+            }
+            AtomicSubjectNoteReviewAction::DecideSubject {
+                subject_index,
+                outcome,
+            } => session.decide_subject(subject_index, outcome)?,
+            AtomicSubjectNoteReviewAction::ClearSubject { subject_index } => {
+                session.clear_subject(subject_index)?
+            }
+            AtomicSubjectNoteReviewAction::SaveSubjectComment {
+                subject_index,
+                comment,
+            } => session.save_subject_comment(subject_index, comment)?,
+            AtomicSubjectNoteReviewAction::DecideCoverage { decision } => {
+                session.decide_coverage(decision)?
+            }
+            AtomicSubjectNoteReviewAction::ClearCoverage => session.clear_coverage()?,
+            AtomicSubjectNoteReviewAction::SaveCoverageComment { comment } => {
+                session.save_coverage_comment(comment)?
+            }
+            AtomicSubjectNoteReviewAction::DecideDistinctness { decision } => {
+                session.decide_distinctness(decision)?
+            }
+            AtomicSubjectNoteReviewAction::ClearDistinctness => session.clear_distinctness()?,
+            AtomicSubjectNoteReviewAction::SaveDistinctnessComment { comment } => {
+                session.save_distinctness_comment(comment)?
+            }
+            AtomicSubjectNoteReviewAction::FinishNote => {
+                session.finish_current_note()?;
+                if !session.all_finished() {
+                    session.move_to_next_unfinished()?;
+                }
+            }
+            AtomicSubjectNoteReviewAction::PreviousNote => session.move_previous()?,
+            AtomicSubjectNoteReviewAction::NextNote => session.move_next()?,
+        }
+        save_session(session_path, &session)?;
+        model.replace_screen(session.screen(&notes)?);
+    }
+}
+
+fn preserve_legacy_prompt_review_session(
+    session_path: &Path,
+    legacy: &PromptReviewSession,
+) -> Result<()> {
+    let mut backup_name = session_path.as_os_str().to_os_string();
+    backup_name.push(".v1-backup");
+    let backup_path = PathBuf::from(backup_name);
+    if let Some(existing) = load_session::<PromptReviewSession>(&backup_path)? {
+        if &existing == legacy {
+            return Ok(());
+        }
+        return invalid(format!(
+            "legacy prompt-review backup `{}` differs from the session being migrated",
+            backup_path.display()
+        ));
+    }
+    publish_session(&backup_path, legacy)
+}
+
+impl VerifiedAtomicSubjectReviewRun {
+    fn note_review_notes(&self) -> Result<Vec<VerifiedAtomicSubjectNoteReviewNote>> {
+        let mut notes = Vec::new();
+        for item in &self.items {
+            let PromptReviewItemPresentation::SubjectList {
+                note_index,
+                note_count,
+                note,
+                subject_item_indices,
+            } = &item.presentation
+            else {
+                continue;
+            };
+            if *note_index != notes.len() || *note_count == 0 {
+                return invalid("prompt-review note ordering is invalid");
+            }
+            let note_id = item
+                .item_id
+                .strip_prefix("subject-list:")
+                .filter(|value| !value.is_empty())
+                .ok_or_else(|| {
+                    Error::ExperimentState("prompt-review note identity is invalid".to_owned())
+                })?
+                .to_owned();
+            let mut subjects = Vec::with_capacity(subject_item_indices.len());
+            for &subject_item_index in subject_item_indices {
+                let subject_item = self.items.get(subject_item_index).ok_or_else(|| {
+                    Error::ExperimentState(format!(
+                        "subject review item {subject_item_index} is absent"
+                    ))
+                })?;
+                let PromptReviewItemPresentation::Subject(subject_screen) =
+                    &subject_item.presentation
+                else {
+                    return invalid("subject-list review references a non-subject item");
+                };
+                subjects.push(VerifiedAtomicSubjectNoteReviewSubject {
+                    item_id: subject_item.item_id.clone(),
+                    item_sha256: subject_item.item_sha256.clone(),
+                    label: subject_screen.subject.clone(),
+                });
+            }
+            notes.push(VerifiedAtomicSubjectNoteReviewNote {
+                note_id,
+                note: note.clone(),
+                subjects,
+                list_item_id: item.item_id.clone(),
+                list_item_sha256: item.item_sha256.clone(),
+            });
+        }
+        if notes.is_empty() || notes.iter().any(|note| note.note.trim().is_empty()) {
+            return invalid("prompt-review run contains no valid notes");
+        }
+        Ok(notes)
+    }
+}
+
+impl AtomicSubjectNoteReviewSession {
+    fn new(
+        run: &VerifiedAtomicSubjectReviewRun,
+        notes: &[VerifiedAtomicSubjectNoteReviewNote],
+    ) -> Self {
+        Self {
+            schema_version: ATOMIC_SUBJECT_NOTE_REVIEW_SESSION_SCHEMA_VERSION,
+            review_protocol: ATOMIC_SUBJECT_NOTE_REVIEW_PROTOCOL.to_owned(),
+            generation_run_sha256: run.identity_sha256.clone(),
+            current_note_index: 0,
+            notes: notes
+                .iter()
+                .map(|note| AtomicSubjectNoteReviewState {
+                    note_id: note.note_id.clone(),
+                    list_item_id: note.list_item_id.clone(),
+                    list_item_sha256: note.list_item_sha256.clone(),
+                    subjects: note
+                        .subjects
+                        .iter()
+                        .map(|subject| AtomicSubjectNoteReviewSubjectState {
+                            item_id: subject.item_id.clone(),
+                            item_sha256: subject.item_sha256.clone(),
+                            outcome: None,
+                            comment: String::new(),
+                        })
+                        .collect(),
+                    coverage: None,
+                    coverage_comment: String::new(),
+                    distinctness: None,
+                    distinctness_comment: String::new(),
+                    prior_combined_check: None,
+                    selected_index: 0,
+                    finished: false,
+                })
+                .collect(),
+        }
+    }
+
+    fn migrate(
+        legacy: PromptReviewSession,
+        run: &VerifiedAtomicSubjectReviewRun,
+        notes: &[VerifiedAtomicSubjectNoteReviewNote],
+    ) -> Result<Self> {
+        let first_pending_item_id = legacy
+            .items
+            .iter()
+            .find(|item| item.status == PromptReviewStatus::Pending)
+            .map(|item| item.item_id.clone());
+        let legacy_by_id = legacy
+            .items
+            .into_iter()
+            .map(|item| (item.item_id.clone(), item))
+            .collect::<BTreeMap<_, _>>();
+        let mut session = Self::new(run, notes);
+        for (note_state, note) in session.notes.iter_mut().zip(notes) {
+            for (subject_state, subject) in note_state.subjects.iter_mut().zip(&note.subjects) {
+                let legacy_state = legacy_by_id.get(&subject.item_id).ok_or_else(|| {
+                    Error::ExperimentState(format!(
+                        "legacy prompt-review subject `{}` is absent",
+                        subject.item_id
+                    ))
+                })?;
+                subject_state.comment = legacy_state.comment.clone();
+                subject_state.outcome = match legacy_state.status {
+                    PromptReviewStatus::Approved => Some(ReviewOutcome::Approved),
+                    PromptReviewStatus::Rejected => Some(ReviewOutcome::Rejected),
+                    PromptReviewStatus::Pending | PromptReviewStatus::Skipped => None,
+                };
+            }
+            let all_subjects_decided = note_state
+                .subjects
+                .iter()
+                .all(|subject| subject.outcome.is_some());
+            let legacy_list = legacy_by_id.get(&note.list_item_id).ok_or_else(|| {
+                Error::ExperimentState(format!(
+                    "legacy prompt-review list `{}` is absent",
+                    note.list_item_id
+                ))
+            })?;
+            let mapped_approved =
+                legacy_list.status == PromptReviewStatus::Approved && all_subjects_decided;
+            if mapped_approved {
+                note_state.coverage = Some(AtomicSubjectCoverageDecision::Complete);
+                note_state.distinctness = Some(AtomicSubjectDistinctnessDecision::Distinct);
+                note_state.finished = true;
+            }
+            if (!mapped_approved && legacy_list.status != PromptReviewStatus::Pending)
+                || !legacy_list.comment.is_empty()
+            {
+                note_state.prior_combined_check = Some(PriorCombinedPromptReviewCheck {
+                    status: legacy_list.status,
+                    comment: legacy_list.comment.clone(),
+                });
+            }
+            note_state.selected_index = note_state
+                .subjects
+                .iter()
+                .position(|subject| subject.outcome.is_none())
+                .unwrap_or(note_state.subjects.len());
+        }
+        session.current_note_index = first_pending_item_id
+            .as_deref()
+            .and_then(|item_id| {
+                notes.iter().position(|note| {
+                    note.list_item_id == item_id
+                        || note
+                            .subjects
+                            .iter()
+                            .any(|subject| subject.item_id == item_id)
+                })
+            })
+            .or_else(|| session.notes.iter().position(|note| !note.finished))
+            .unwrap_or(0);
+        if let Some(item_id) = first_pending_item_id.as_deref()
+            && let Some(subject_index) = notes[session.current_note_index]
+                .subjects
+                .iter()
+                .position(|subject| subject.item_id == item_id)
+        {
+            session.notes[session.current_note_index].selected_index = subject_index;
+        } else if first_pending_item_id.as_deref()
+            == Some(notes[session.current_note_index].list_item_id.as_str())
+        {
+            session.notes[session.current_note_index].selected_index =
+                notes[session.current_note_index].subjects.len();
+        }
+        session.validate(run, notes)?;
+        Ok(session)
+    }
+
+    fn validate(
+        &self,
+        run: &VerifiedAtomicSubjectReviewRun,
+        notes: &[VerifiedAtomicSubjectNoteReviewNote],
+    ) -> Result<()> {
+        if self.schema_version != ATOMIC_SUBJECT_NOTE_REVIEW_SESSION_SCHEMA_VERSION {
+            return invalid(format!(
+                "atomic-subject note review session schema {} is unsupported",
+                self.schema_version
+            ));
+        }
+        if self.review_protocol != ATOMIC_SUBJECT_NOTE_REVIEW_PROTOCOL {
+            return invalid("atomic-subject note review session uses a different protocol");
+        }
+        if self.generation_run_sha256 != run.identity_sha256 {
+            return invalid(
+                "atomic-subject note review session belongs to a different generation run",
+            );
+        }
+        if self.notes.len() != notes.len() || self.current_note_index >= notes.len() {
+            return invalid(
+                "atomic-subject note review session has an invalid note count or position",
+            );
+        }
+        for (stored, note) in self.notes.iter().zip(notes) {
+            if stored.note_id != note.note_id
+                || stored.list_item_id != note.list_item_id
+                || stored.list_item_sha256 != note.list_item_sha256
+                || stored.subjects.len() != note.subjects.len()
+            {
+                return invalid("atomic-subject note review note identity is invalid");
+            }
+            for (stored_subject, subject) in stored.subjects.iter().zip(&note.subjects) {
+                if stored_subject.item_id != subject.item_id
+                    || stored_subject.item_sha256 != subject.item_sha256
+                {
+                    return invalid("atomic-subject note review subject identity is invalid");
+                }
+            }
+            if stored.selected_index >= atomic_subject_review_item_count(stored) {
+                return invalid("atomic-subject note review selection is invalid");
+            }
+            if stored.finished
+                && (stored
+                    .subjects
+                    .iter()
+                    .any(|subject| subject.outcome.is_none())
+                    || stored.coverage.is_none()
+                    || stored.distinctness.is_none())
+            {
+                return invalid("finished atomic-subject note review is incomplete");
+            }
+        }
+        Ok(())
+    }
+
+    fn screen(
+        &self,
+        notes: &[VerifiedAtomicSubjectNoteReviewNote],
+    ) -> Result<AtomicSubjectNoteReviewScreen> {
+        let state = self.notes.get(self.current_note_index).ok_or_else(|| {
+            Error::ExperimentState("current atomic-subject review note is absent".to_owned())
+        })?;
+        let note = notes.get(self.current_note_index).ok_or_else(|| {
+            Error::ExperimentState("current verified atomic-subject note is absent".to_owned())
+        })?;
+        let subjects = state
+            .subjects
+            .iter()
+            .zip(&note.subjects)
+            .map(|(stored, subject)| AtomicSubjectNoteReviewChoice {
+                label: subject.label.clone(),
+                outcome: stored.outcome,
+                comment: stored.comment.clone(),
+            })
+            .collect();
+        let prior_combined_check = state.prior_combined_check.as_ref().map(|prior| {
+            let status = match prior.status {
+                PromptReviewStatus::Pending => "pending",
+                PromptReviewStatus::Approved => "approved",
+                PromptReviewStatus::Rejected => "rejected",
+                PromptReviewStatus::Skipped => "skipped",
+            };
+            if prior.comment.is_empty() {
+                format!("Previous combined list check: {status}. Review Coverage and Distinctness separately.")
+            } else {
+                format!(
+                    "Previous combined list check: {status} — {}. Review Coverage and Distinctness separately.",
+                    prior.comment
+                )
+            }
+        });
+        Ok(AtomicSubjectNoteReviewScreen {
+            note_index: self.current_note_index,
+            note_count: notes.len(),
+            note: note.note.clone(),
+            subjects,
+            coverage: state.coverage,
+            coverage_comment: state.coverage_comment.clone(),
+            distinctness: state.distinctness,
+            distinctness_comment: state.distinctness_comment.clone(),
+            selected_index: state.selected_index,
+            finished: state.finished,
+            finished_note_count: self.notes.iter().filter(|note| note.finished).count(),
+            decided_review_count: self
+                .notes
+                .iter()
+                .map(atomic_subject_note_decided_count)
+                .sum(),
+            total_review_count: self
+                .notes
+                .iter()
+                .map(atomic_subject_review_item_count)
+                .sum(),
+            prior_combined_check,
+        })
+    }
+
+    fn current_note_mut(&mut self) -> Result<&mut AtomicSubjectNoteReviewState> {
+        self.notes.get_mut(self.current_note_index).ok_or_else(|| {
+            Error::ExperimentState("current atomic-subject review note is absent".to_owned())
+        })
+    }
+
+    fn set_selected_index(&mut self, selected_index: usize) -> Result<()> {
+        let note = self.current_note_mut()?;
+        note.selected_index = selected_index.min(atomic_subject_review_item_count(note) - 1);
+        Ok(())
+    }
+
+    fn decide_subject(&mut self, subject_index: usize, outcome: ReviewOutcome) -> Result<()> {
+        let note = self.current_note_mut()?;
+        let subject = note.subjects.get_mut(subject_index).ok_or_else(|| {
+            Error::ExperimentState(format!("atomic-subject proposal {subject_index} is absent"))
+        })?;
+        let was_pending = subject.outcome.is_none();
+        if subject.outcome != Some(outcome) {
+            subject.outcome = Some(outcome);
+            note.finished = false;
+            invalidate_note_checks(note);
+        }
+        if was_pending && outcome == ReviewOutcome::Approved {
+            note.selected_index =
+                next_pending_review_item(note, subject_index).unwrap_or(subject_index);
+        } else {
+            note.selected_index = subject_index;
+        }
+        Ok(())
+    }
+
+    fn clear_subject(&mut self, subject_index: usize) -> Result<()> {
+        let note = self.current_note_mut()?;
+        let subject = note.subjects.get_mut(subject_index).ok_or_else(|| {
+            Error::ExperimentState(format!("atomic-subject proposal {subject_index} is absent"))
+        })?;
+        subject.outcome = None;
+        note.selected_index = subject_index;
+        note.finished = false;
+        invalidate_note_checks(note);
+        Ok(())
+    }
+
+    fn save_subject_comment(&mut self, subject_index: usize, comment: String) -> Result<()> {
+        let note = self.current_note_mut()?;
+        let subject = note.subjects.get_mut(subject_index).ok_or_else(|| {
+            Error::ExperimentState(format!("atomic-subject proposal {subject_index} is absent"))
+        })?;
+        subject.comment = comment.trim().to_owned();
+        note.selected_index = subject_index;
+        Ok(())
+    }
+
+    fn decide_coverage(&mut self, decision: AtomicSubjectCoverageDecision) -> Result<()> {
+        let note = self.current_note_mut()?;
+        let row = note.subjects.len();
+        let was_pending = note.coverage.is_none();
+        if note.coverage != Some(decision) {
+            note.coverage = Some(decision);
+            note.finished = false;
+        }
+        note.selected_index = if was_pending && decision == AtomicSubjectCoverageDecision::Complete
+        {
+            next_pending_review_item(note, row).unwrap_or(row)
+        } else {
+            row
+        };
+        Ok(())
+    }
+
+    fn clear_coverage(&mut self) -> Result<()> {
+        let note = self.current_note_mut()?;
+        note.coverage = None;
+        note.finished = false;
+        note.selected_index = note.subjects.len();
+        Ok(())
+    }
+
+    fn save_coverage_comment(&mut self, comment: String) -> Result<()> {
+        let note = self.current_note_mut()?;
+        note.coverage_comment = comment.trim().to_owned();
+        note.selected_index = note.subjects.len();
+        Ok(())
+    }
+
+    fn decide_distinctness(&mut self, decision: AtomicSubjectDistinctnessDecision) -> Result<()> {
+        let note = self.current_note_mut()?;
+        let row = note.subjects.len() + 1;
+        if note.distinctness != Some(decision) {
+            note.distinctness = Some(decision);
+            note.finished = false;
+        }
+        note.selected_index = row;
+        Ok(())
+    }
+
+    fn clear_distinctness(&mut self) -> Result<()> {
+        let note = self.current_note_mut()?;
+        note.distinctness = None;
+        note.finished = false;
+        note.selected_index = note.subjects.len() + 1;
+        Ok(())
+    }
+
+    fn save_distinctness_comment(&mut self, comment: String) -> Result<()> {
+        let note = self.current_note_mut()?;
+        note.distinctness_comment = comment.trim().to_owned();
+        note.selected_index = note.subjects.len() + 1;
+        Ok(())
+    }
+
+    fn finish_current_note(&mut self) -> Result<()> {
+        let note = self.current_note_mut()?;
+        if note
+            .subjects
+            .iter()
+            .any(|subject| subject.outcome.is_none())
+        {
+            return invalid(
+                "every proposed atomic subject must be decided before finishing the note",
+            );
+        }
+        if note.coverage.is_none() {
+            return invalid("coverage must be decided before finishing the note");
+        }
+        if note.distinctness.is_none() {
+            return invalid("distinctness must be decided before finishing the note");
+        }
+        note.finished = true;
+        Ok(())
+    }
+
+    fn move_previous(&mut self) -> Result<()> {
+        if self.notes.is_empty() {
+            return invalid("atomic-subject note review contains no notes");
+        }
+        self.current_note_index = if self.current_note_index == 0 {
+            self.notes.len() - 1
+        } else {
+            self.current_note_index - 1
+        };
+        Ok(())
+    }
+
+    fn move_next(&mut self) -> Result<()> {
+        if self.notes.is_empty() {
+            return invalid("atomic-subject note review contains no notes");
+        }
+        self.current_note_index = (self.current_note_index + 1) % self.notes.len();
+        Ok(())
+    }
+
+    fn move_to_next_unfinished(&mut self) -> Result<()> {
+        let note_count = self.notes.len();
+        for offset in 1..=note_count {
+            let candidate = (self.current_note_index + offset) % note_count;
+            if !self.notes[candidate].finished {
+                self.current_note_index = candidate;
+                return Ok(());
+            }
+        }
+        invalid("atomic-subject note review has no unfinished note")
+    }
+
+    fn all_finished(&self) -> bool {
+        self.notes.iter().all(|note| note.finished)
+    }
+
+    fn completed_outcome(&self) -> AtomicSubjectNoteReviewRunOutcome {
+        let approved = self
+            .notes
+            .iter()
+            .flat_map(|note| &note.subjects)
+            .filter(|subject| subject.outcome == Some(ReviewOutcome::Approved))
+            .count();
+        let rejected = self
+            .notes
+            .iter()
+            .flat_map(|note| &note.subjects)
+            .filter(|subject| subject.outcome == Some(ReviewOutcome::Rejected))
+            .count();
+        AtomicSubjectNoteReviewRunOutcome::Completed {
+            subjects: PromptReviewCounts {
+                approved,
+                rejected,
+                skipped: 0,
+            },
+            notes_missing_subjects: self
+                .notes
+                .iter()
+                .filter(|note| note.coverage == Some(AtomicSubjectCoverageDecision::Missing))
+                .count(),
+            notes_with_repeated_subjects: self
+                .notes
+                .iter()
+                .filter(|note| {
+                    note.distinctness == Some(AtomicSubjectDistinctnessDecision::Repeated)
+                })
+                .count(),
+        }
+    }
+}
+
+fn atomic_subject_review_item_count(note: &AtomicSubjectNoteReviewState) -> usize {
+    note.subjects.len() + 2
+}
+
+fn atomic_subject_note_decided_count(note: &AtomicSubjectNoteReviewState) -> usize {
+    note.subjects
+        .iter()
+        .filter(|subject| subject.outcome.is_some())
+        .count()
+        + usize::from(note.coverage.is_some())
+        + usize::from(note.distinctness.is_some())
+}
+
+fn next_pending_review_item(note: &AtomicSubjectNoteReviewState, current: usize) -> Option<usize> {
+    let item_count = atomic_subject_review_item_count(note);
+    (1..=item_count)
+        .map(|offset| (current + offset) % item_count)
+        .find(|&index| {
+            if let Some(subject) = note.subjects.get(index) {
+                subject.outcome.is_none()
+            } else if index == note.subjects.len() {
+                note.coverage.is_none()
+            } else {
+                note.distinctness.is_none()
+            }
+        })
+}
+
+fn invalidate_note_checks(note: &mut AtomicSubjectNoteReviewState) {
+    note.coverage = None;
+    note.distinctness = None;
+}
+
 impl PromptReviewSession {
     fn new(run: &VerifiedAtomicSubjectReviewRun) -> Self {
         let items = run
@@ -2121,6 +2939,911 @@ impl AtomicSubjectListReviewScreen {
             },
         }
     }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum AtomicSubjectCommentTarget {
+    Subject(usize),
+    Coverage,
+    Distinctness,
+}
+
+#[derive(Clone, Debug)]
+pub struct AtomicSubjectNoteReviewTuiModel {
+    screen: AtomicSubjectNoteReviewScreen,
+    selected_index: usize,
+    note_scroll: u16,
+    help_scroll: u16,
+    half_page_lines: u16,
+    help_visible: bool,
+    comment_target: Option<AtomicSubjectCommentTarget>,
+    comment: String,
+    comment_cursor: usize,
+    interaction_enabled: bool,
+}
+
+impl AtomicSubjectNoteReviewTuiModel {
+    pub fn new(screen: AtomicSubjectNoteReviewScreen) -> Self {
+        let mut model = Self {
+            screen: sanitize_atomic_subject_note_screen(screen),
+            selected_index: 0,
+            note_scroll: 0,
+            help_scroll: 0,
+            half_page_lines: 1,
+            help_visible: false,
+            comment_target: None,
+            comment: String::new(),
+            comment_cursor: 0,
+            interaction_enabled: true,
+        };
+        model.selected_index = model
+            .screen
+            .selected_index
+            .min(model.review_item_count() - 1);
+        model
+    }
+
+    pub fn screen(&self) -> &AtomicSubjectNoteReviewScreen {
+        &self.screen
+    }
+
+    pub fn selected_index(&self) -> usize {
+        self.selected_index
+    }
+
+    pub fn replace_screen(&mut self, screen: AtomicSubjectNoteReviewScreen) {
+        let note_changed = self.screen.note_index != screen.note_index;
+        self.screen = sanitize_atomic_subject_note_screen(screen);
+        self.selected_index = self.screen.selected_index.min(self.review_item_count() - 1);
+        if note_changed {
+            self.note_scroll = 0;
+            self.help_scroll = 0;
+            self.help_visible = false;
+        }
+    }
+
+    fn review_item_count(&self) -> usize {
+        self.screen.subjects.len() + 2
+    }
+
+    fn coverage_index(&self) -> usize {
+        self.screen.subjects.len()
+    }
+
+    pub fn handle_event(&mut self, event: Event) -> AtomicSubjectNoteReviewAction {
+        if is_control_c_event(&event) {
+            self.comment_target = None;
+            return AtomicSubjectNoteReviewAction::Pause;
+        }
+        if !self.interaction_enabled {
+            return AtomicSubjectNoteReviewAction::None;
+        }
+        if self.comment_target.is_some() {
+            return self.handle_comment_event(event);
+        }
+        let Event::Key(key) = event else {
+            return AtomicSubjectNoteReviewAction::None;
+        };
+        if key.kind != KeyEventKind::Press {
+            return AtomicSubjectNoteReviewAction::None;
+        }
+        if key.modifiers == KeyModifiers::CONTROL {
+            match key.code {
+                KeyCode::Char('d' | 'D') => {
+                    if self.help_visible {
+                        self.help_scroll = self.help_scroll.saturating_add(self.half_page_lines);
+                    } else {
+                        self.note_scroll = self.note_scroll.saturating_add(self.half_page_lines);
+                    }
+                }
+                KeyCode::Char('u' | 'U') => {
+                    if self.help_visible {
+                        self.help_scroll = self.help_scroll.saturating_sub(self.half_page_lines);
+                    } else {
+                        self.note_scroll = self.note_scroll.saturating_sub(self.half_page_lines);
+                    }
+                }
+                _ => {}
+            }
+            return AtomicSubjectNoteReviewAction::None;
+        }
+        if has_command_modifier(key.modifiers) {
+            return AtomicSubjectNoteReviewAction::None;
+        }
+        if self.help_visible {
+            match key.code {
+                KeyCode::Char('?') | KeyCode::Esc => {
+                    self.help_visible = false;
+                    self.help_scroll = 0;
+                }
+                KeyCode::Down | KeyCode::Char('j' | 'J') => {
+                    self.help_scroll = self.help_scroll.saturating_add(1);
+                }
+                KeyCode::Up | KeyCode::Char('k' | 'K') => {
+                    self.help_scroll = self.help_scroll.saturating_sub(1);
+                }
+                KeyCode::PageDown => {
+                    self.help_scroll = self.help_scroll.saturating_add(PAGE_LINES);
+                }
+                KeyCode::PageUp => {
+                    self.help_scroll = self.help_scroll.saturating_sub(PAGE_LINES);
+                }
+                KeyCode::Home => self.help_scroll = 0,
+                _ => {}
+            }
+            return AtomicSubjectNoteReviewAction::None;
+        }
+        match key.code {
+            KeyCode::Down | KeyCode::Char('j' | 'J') => {
+                self.selected_index = (self.selected_index + 1) % self.review_item_count();
+                AtomicSubjectNoteReviewAction::None
+            }
+            KeyCode::Up | KeyCode::Char('k' | 'K') => {
+                self.selected_index = if self.selected_index == 0 {
+                    self.review_item_count() - 1
+                } else {
+                    self.selected_index - 1
+                };
+                AtomicSubjectNoteReviewAction::None
+            }
+            KeyCode::Char('a' | 'A') => self.affirm_selected_item(),
+            KeyCode::Char('r' | 'R') => self.reject_selected_item(),
+            KeyCode::Char('u' | 'U') => self.clear_selected_item(),
+            KeyCode::Char('c' | 'C') => {
+                self.begin_comment(self.selected_comment_target());
+                AtomicSubjectNoteReviewAction::None
+            }
+            KeyCode::Char('p' | 'P') | KeyCode::Left => AtomicSubjectNoteReviewAction::PreviousNote,
+            KeyCode::Char('n' | 'N') | KeyCode::Right => AtomicSubjectNoteReviewAction::NextNote,
+            KeyCode::Enter if self.all_review_items_decided() => {
+                AtomicSubjectNoteReviewAction::FinishNote
+            }
+            KeyCode::Char('?') => {
+                self.help_visible = true;
+                self.help_scroll = 0;
+                AtomicSubjectNoteReviewAction::None
+            }
+            KeyCode::PageDown => {
+                self.note_scroll = self.note_scroll.saturating_add(PAGE_LINES);
+                AtomicSubjectNoteReviewAction::None
+            }
+            KeyCode::PageUp => {
+                self.note_scroll = self.note_scroll.saturating_sub(PAGE_LINES);
+                AtomicSubjectNoteReviewAction::None
+            }
+            KeyCode::Home => {
+                self.note_scroll = 0;
+                AtomicSubjectNoteReviewAction::None
+            }
+            _ => AtomicSubjectNoteReviewAction::None,
+        }
+    }
+
+    fn affirm_selected_item(&self) -> AtomicSubjectNoteReviewAction {
+        if self.selected_index < self.coverage_index() {
+            AtomicSubjectNoteReviewAction::DecideSubject {
+                subject_index: self.selected_index,
+                outcome: ReviewOutcome::Approved,
+            }
+        } else if self.selected_index == self.coverage_index() {
+            AtomicSubjectNoteReviewAction::DecideCoverage {
+                decision: AtomicSubjectCoverageDecision::Complete,
+            }
+        } else {
+            AtomicSubjectNoteReviewAction::DecideDistinctness {
+                decision: AtomicSubjectDistinctnessDecision::Distinct,
+            }
+        }
+    }
+
+    fn reject_selected_item(&self) -> AtomicSubjectNoteReviewAction {
+        if self.selected_index < self.coverage_index() {
+            AtomicSubjectNoteReviewAction::DecideSubject {
+                subject_index: self.selected_index,
+                outcome: ReviewOutcome::Rejected,
+            }
+        } else if self.selected_index == self.coverage_index() {
+            AtomicSubjectNoteReviewAction::DecideCoverage {
+                decision: AtomicSubjectCoverageDecision::Missing,
+            }
+        } else {
+            AtomicSubjectNoteReviewAction::DecideDistinctness {
+                decision: AtomicSubjectDistinctnessDecision::Repeated,
+            }
+        }
+    }
+
+    fn clear_selected_item(&self) -> AtomicSubjectNoteReviewAction {
+        if self.selected_index < self.coverage_index() {
+            AtomicSubjectNoteReviewAction::ClearSubject {
+                subject_index: self.selected_index,
+            }
+        } else if self.selected_index == self.coverage_index() {
+            AtomicSubjectNoteReviewAction::ClearCoverage
+        } else {
+            AtomicSubjectNoteReviewAction::ClearDistinctness
+        }
+    }
+
+    fn selected_comment_target(&self) -> AtomicSubjectCommentTarget {
+        if self.selected_index < self.coverage_index() {
+            AtomicSubjectCommentTarget::Subject(self.selected_index)
+        } else if self.selected_index == self.coverage_index() {
+            AtomicSubjectCommentTarget::Coverage
+        } else {
+            AtomicSubjectCommentTarget::Distinctness
+        }
+    }
+
+    fn begin_comment(&mut self, target: AtomicSubjectCommentTarget) {
+        self.comment = match target {
+            AtomicSubjectCommentTarget::Subject(index) => self
+                .screen
+                .subjects
+                .get(index)
+                .map(|subject| subject.comment.clone())
+                .unwrap_or_default(),
+            AtomicSubjectCommentTarget::Coverage => self.screen.coverage_comment.clone(),
+            AtomicSubjectCommentTarget::Distinctness => self.screen.distinctness_comment.clone(),
+        };
+        self.comment_cursor = self.comment.chars().count();
+        self.comment_target = Some(target);
+    }
+
+    fn handle_comment_event(&mut self, event: Event) -> AtomicSubjectNoteReviewAction {
+        match event {
+            Event::Paste(text) => {
+                let text = terminal_safe(&text).replace('\n', " ");
+                insert_at_character(&mut self.comment, self.comment_cursor, &text);
+                self.comment_cursor += text.chars().count();
+            }
+            Event::Key(key) if key.kind == KeyEventKind::Press => {
+                if key.modifiers == KeyModifiers::CONTROL
+                    && matches!(key.code, KeyCode::Char('k' | 'K'))
+                {
+                    let target = self
+                        .comment_target
+                        .take()
+                        .expect("comment editor always has a target");
+                    return clear_atomic_subject_comment(target);
+                }
+                if has_command_modifier(key.modifiers) {
+                    return AtomicSubjectNoteReviewAction::None;
+                }
+                match key.code {
+                    KeyCode::Enter => {
+                        let target = self
+                            .comment_target
+                            .take()
+                            .expect("comment editor always has a target");
+                        let comment = self.comment.trim().to_owned();
+                        return match target {
+                            AtomicSubjectCommentTarget::Subject(subject_index) => {
+                                AtomicSubjectNoteReviewAction::SaveSubjectComment {
+                                    subject_index,
+                                    comment,
+                                }
+                            }
+                            AtomicSubjectCommentTarget::Coverage => {
+                                AtomicSubjectNoteReviewAction::SaveCoverageComment { comment }
+                            }
+                            AtomicSubjectCommentTarget::Distinctness => {
+                                AtomicSubjectNoteReviewAction::SaveDistinctnessComment { comment }
+                            }
+                        };
+                    }
+                    KeyCode::Esc => {
+                        self.comment_target = None;
+                        self.comment.clear();
+                        self.comment_cursor = 0;
+                    }
+                    KeyCode::Left => {
+                        self.comment_cursor = self.comment_cursor.saturating_sub(1);
+                    }
+                    KeyCode::Right => {
+                        self.comment_cursor =
+                            (self.comment_cursor + 1).min(self.comment.chars().count());
+                    }
+                    KeyCode::Home => self.comment_cursor = 0,
+                    KeyCode::End => self.comment_cursor = self.comment.chars().count(),
+                    KeyCode::Backspace if self.comment_cursor > 0 => {
+                        remove_character(&mut self.comment, self.comment_cursor - 1);
+                        self.comment_cursor -= 1;
+                    }
+                    KeyCode::Delete if self.comment_cursor < self.comment.chars().count() => {
+                        remove_character(&mut self.comment, self.comment_cursor);
+                    }
+                    KeyCode::Char(character) => {
+                        let mut text = String::new();
+                        text.push(character);
+                        insert_at_character(&mut self.comment, self.comment_cursor, &text);
+                        self.comment_cursor += 1;
+                    }
+                    _ => {}
+                }
+            }
+            _ => {}
+        }
+        AtomicSubjectNoteReviewAction::None
+    }
+
+    fn all_review_items_decided(&self) -> bool {
+        self.screen
+            .subjects
+            .iter()
+            .all(|subject| subject.outcome.is_some())
+            && self.screen.coverage.is_some()
+            && self.screen.distinctness.is_some()
+    }
+
+    fn local_decided_count(&self) -> usize {
+        self.screen
+            .subjects
+            .iter()
+            .filter(|subject| subject.outcome.is_some())
+            .count()
+            + usize::from(self.screen.coverage.is_some())
+            + usize::from(self.screen.distinctness.is_some())
+    }
+
+    fn selected_question(&self) -> &'static str {
+        if self.selected_index < self.coverage_index() {
+            "Is this one narrow subject substantively discussed in the note?"
+        } else if self.selected_index == self.coverage_index() {
+            "Do the approved subjects cover every atomic subject in the note?"
+        } else {
+            "Do the approved subjects express different meanings?"
+        }
+    }
+
+    fn selected_control_labels(&self) -> (&'static str, &'static str) {
+        if self.selected_index < self.coverage_index() {
+            ("Approve", "Disapprove")
+        } else if self.selected_index == self.coverage_index() {
+            ("Complete", "Missing")
+        } else {
+            ("Distinct", "Repeated")
+        }
+    }
+
+    fn selected_status(&self) -> String {
+        if let Some(subject) = self.screen.subjects.get(self.selected_index) {
+            let decision = match subject.outcome {
+                None => "Pending",
+                Some(ReviewOutcome::Approved) => "Approved",
+                Some(ReviewOutcome::Rejected) => "Disapproved",
+            };
+            return selected_review_status(
+                &format!("Subject {}", self.selected_index + 1),
+                decision,
+                &subject.comment,
+            );
+        }
+        if self.selected_index == self.coverage_index() {
+            let decision = match self.screen.coverage {
+                None => "Pending",
+                Some(AtomicSubjectCoverageDecision::Complete) => "Complete",
+                Some(AtomicSubjectCoverageDecision::Missing) => "Missing subject(s)",
+            };
+            return selected_review_status("Coverage", decision, &self.screen.coverage_comment);
+        }
+        let decision = match self.screen.distinctness {
+            None => "Pending",
+            Some(AtomicSubjectDistinctnessDecision::Distinct) => "Distinct",
+            Some(AtomicSubjectDistinctnessDecision::Repeated) => "Repeated subject(s)",
+        };
+        selected_review_status("Distinctness", decision, &self.screen.distinctness_comment)
+    }
+
+    pub fn render(&mut self, frame: &mut Frame<'_>) {
+        let terminal_area = frame.area();
+        self.interaction_enabled =
+            terminal_area.width >= MIN_WIDTH && terminal_area.height >= MIN_HEIGHT;
+        if !self.interaction_enabled {
+            render_too_small(frame, terminal_area);
+            return;
+        }
+        let area = centered(terminal_area);
+        let inner_width = area.width.saturating_sub(4).max(1);
+        let note_lines = Paragraph::new(self.screen.note.as_str())
+            .wrap(Wrap { trim: false })
+            .line_count(inner_width);
+        let note_height = u16::try_from(note_lines.saturating_add(2))
+            .unwrap_or(u16::MAX)
+            .clamp(4, 9);
+        let note_height = if self.help_visible { 9 } else { note_height };
+        let status_height = if self.screen.prior_combined_check.is_some() {
+            2
+        } else {
+            1
+        };
+        let footer_height = 4;
+        let rows = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints([
+                Constraint::Length(1),
+                Constraint::Length(note_height),
+                Constraint::Length(1),
+                Constraint::Min(6),
+                Constraint::Length(status_height),
+                Constraint::Length(footer_height),
+            ])
+            .split(area);
+
+        let local_decided = self.local_decided_count();
+        let finished = if self.screen.finished {
+            " · Finished"
+        } else {
+            ""
+        };
+        frame.render_widget(
+            Paragraph::new(format!(
+                "Note {}/{} · {local_decided}/{} here · {}/{} overall · {}/{} finished{finished}",
+                self.screen.note_index + 1,
+                self.screen.note_count,
+                self.review_item_count(),
+                self.screen.decided_review_count,
+                self.screen.total_review_count,
+                self.screen.finished_note_count,
+                self.screen.note_count,
+            ))
+            .style(secondary_style()),
+            rows[0],
+        );
+
+        if self.help_visible {
+            let mut help = "Each note has three kinds of review row.\n\nSubject proposal: approve when it names one narrow, independently meaningful subject explicitly and substantively discussed in the note. Disapprove when it combines separate subjects, names only a broad ancestor, invents meaning, or elevates an incidental mention.\n\nCoverage: decide whether the approved subjects include every atomic subject discussed in the note.\n\nDistinctness: decide whether the approved subjects express different meanings. Only approved subjects count.\n\nA records the positive answer shown for the selected row. R records the negative answer. U clears that decision. C edits an optional comment.\n\nP and N move between notes without deciding anything. Enter marks the note finished only after every row has an explicit decision. Finished notes remain editable."
+                .to_owned();
+            if let Some(prior) = &self.screen.prior_combined_check {
+                help.push_str("\n\nMigrated prior combined check:\n");
+                help.push_str(prior);
+            }
+            render_scrollable_panel(
+                frame,
+                rows[1],
+                "Atomic-subject review help",
+                &help,
+                &mut self.help_scroll,
+                &mut self.half_page_lines,
+                false,
+            );
+        } else {
+            render_scrollable_panel(
+                frame,
+                rows[1],
+                "Note",
+                &self.screen.note,
+                &mut self.note_scroll,
+                &mut self.half_page_lines,
+                false,
+            );
+        }
+
+        frame.render_widget(
+            Paragraph::new(self.selected_question()).style(accent_style()),
+            rows[2],
+        );
+        self.render_review_items(frame, rows[3], local_decided);
+        self.render_status(frame, rows[4]);
+        if self.comment_target.is_some() {
+            self.render_comment_editor(frame, rows[5]);
+        } else if self.help_visible {
+            self.render_help_controls(frame, rows[5]);
+        } else {
+            self.render_controls(frame, rows[5]);
+        }
+    }
+
+    fn render_review_items(&mut self, frame: &mut Frame<'_>, area: Rect, local_decided: usize) {
+        let label_width = usize::from(area.width.saturating_sub(12).max(12));
+        let mut items = self
+            .screen
+            .subjects
+            .iter()
+            .enumerate()
+            .map(|(index, subject)| {
+                let (symbol, style) = match subject.outcome {
+                    None => ("?", secondary_style()),
+                    Some(ReviewOutcome::Approved) => (
+                        "✓",
+                        Style::default()
+                            .fg(Color::Green)
+                            .add_modifier(Modifier::BOLD),
+                    ),
+                    Some(ReviewOutcome::Rejected) => (
+                        "✗",
+                        Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+                    ),
+                };
+                let prefix = format!("{symbol} {}. ", index + 1);
+                let continuation = " ".repeat(prefix.chars().count());
+                let wrapped = wrap_terminal_text(&subject.label, label_width);
+                let lines = wrapped
+                    .into_iter()
+                    .enumerate()
+                    .map(|(line_index, text)| {
+                        Line::from(vec![
+                            Span::styled(
+                                if line_index == 0 {
+                                    prefix.clone()
+                                } else {
+                                    continuation.clone()
+                                },
+                                style,
+                            ),
+                            Span::raw(text),
+                        ])
+                    })
+                    .collect::<Vec<_>>();
+                ListItem::new(Text::from(lines))
+            })
+            .collect::<Vec<_>>();
+
+        let (coverage_symbol, coverage_style, coverage_status) = match self.screen.coverage {
+            None => ("?", secondary_style(), "Pending"),
+            Some(AtomicSubjectCoverageDecision::Complete) => (
+                "✓",
+                Style::default()
+                    .fg(Color::Green)
+                    .add_modifier(Modifier::BOLD),
+                "Complete",
+            ),
+            Some(AtomicSubjectCoverageDecision::Missing) => (
+                "✗",
+                Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+                "Missing subject(s)",
+            ),
+        };
+        items.push(ListItem::new(Line::from(vec![
+            Span::styled(format!("{coverage_symbol} Coverage · "), coverage_style),
+            Span::raw(coverage_status),
+        ])));
+
+        let (distinctness_symbol, distinctness_style, distinctness_status) =
+            match self.screen.distinctness {
+                None => ("?", secondary_style(), "Pending"),
+                Some(AtomicSubjectDistinctnessDecision::Distinct) => (
+                    "✓",
+                    Style::default()
+                        .fg(Color::Green)
+                        .add_modifier(Modifier::BOLD),
+                    "Distinct",
+                ),
+                Some(AtomicSubjectDistinctnessDecision::Repeated) => (
+                    "✗",
+                    Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+                    "Repeated subject(s)",
+                ),
+            };
+        items.push(ListItem::new(Line::from(vec![
+            Span::styled(
+                format!("{distinctness_symbol} Distinctness · "),
+                distinctness_style,
+            ),
+            Span::raw(distinctness_status),
+        ])));
+
+        let mut state = ListState::default().with_selected(Some(self.selected_index));
+        frame.render_stateful_widget(
+            List::new(items)
+                .highlight_symbol("▶ ")
+                .highlight_style(accent_style())
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .border_style(border_style())
+                        .padding(Padding::horizontal(1))
+                        .title(format!(
+                            "Review items · {local_decided}/{} decided",
+                            self.review_item_count()
+                        ))
+                        .title_style(accent_style()),
+                ),
+            area,
+            &mut state,
+        );
+    }
+
+    fn render_status(&self, frame: &mut Frame<'_>, area: Rect) {
+        let width = usize::from(area.width);
+        let mut lines = vec![Line::raw(truncate_terminal_line(
+            &self.selected_status(),
+            width,
+        ))];
+        if let Some(prior) = &self.screen.prior_combined_check {
+            lines.push(Line::styled(
+                truncate_terminal_line(prior, width),
+                secondary_style(),
+            ));
+        }
+        frame.render_widget(Paragraph::new(lines), area);
+    }
+
+    fn render_controls(&self, frame: &mut Frame<'_>, area: Rect) {
+        let (affirm, reject) = self.selected_control_labels();
+        let finish_line =
+            if self.screen.finished && self.screen.finished_note_count == self.screen.note_count {
+                Line::from(vec![
+                    Span::styled(
+                        "All notes finished  ",
+                        Style::default()
+                            .fg(Color::Green)
+                            .add_modifier(Modifier::BOLD),
+                    ),
+                    Span::styled("[?]", accent_style()),
+                    Span::styled(" Help", secondary_style()),
+                ])
+            } else {
+                let action = if self.screen.finished {
+                    "Next unfinished"
+                } else if self.all_review_items_decided() {
+                    "Finish note"
+                } else {
+                    "Finish (decide all first)"
+                };
+                Line::from(vec![
+                    Span::styled("[Enter]", accent_style()),
+                    Span::styled(format!(" {action}  "), secondary_style()),
+                    Span::styled("[?]", accent_style()),
+                    Span::styled(" Help", secondary_style()),
+                ])
+            };
+        let lines = vec![
+            Line::from(vec![
+                Span::styled("[A]", accent_style()),
+                Span::styled(format!(" {affirm}  "), secondary_style()),
+                Span::styled("[R]", accent_style()),
+                Span::styled(format!(" {reject}  "), secondary_style()),
+                Span::styled("[U]", accent_style()),
+                Span::styled(" Undecide  ", secondary_style()),
+                Span::styled("[C]", accent_style()),
+                Span::styled(" Comment", secondary_style()),
+            ]),
+            Line::from(vec![
+                Span::styled("[↑/↓]", accent_style()),
+                Span::styled(" Select  ", secondary_style()),
+                Span::styled("[P/N]", accent_style()),
+                Span::styled(" Note", secondary_style()),
+            ]),
+            finish_line,
+            Line::from(vec![
+                Span::styled("[Ctrl-D/U]", accent_style()),
+                Span::styled(" Note  ", secondary_style()),
+                Span::styled("[Ctrl-C]", accent_style()),
+                Span::styled(" Save/exit", secondary_style()),
+            ]),
+        ];
+        frame.render_widget(Paragraph::new(lines), area);
+    }
+
+    fn render_help_controls(&self, frame: &mut Frame<'_>, area: Rect) {
+        let lines = vec![
+            Line::from(vec![
+                Span::styled("[?/Esc]", accent_style()),
+                Span::styled(" Close help  ", secondary_style()),
+                Span::styled("[↑/↓]", accent_style()),
+                Span::styled(" Scroll", secondary_style()),
+            ]),
+            Line::from(vec![
+                Span::styled("[Ctrl-D/U]", accent_style()),
+                Span::styled(" Half-page  ", secondary_style()),
+                Span::styled("[Home]", accent_style()),
+                Span::styled(" Top", secondary_style()),
+            ]),
+            Line::from(vec![
+                Span::styled("[Ctrl-C]", accent_style()),
+                Span::styled(" Save/exit", secondary_style()),
+            ]),
+        ];
+        frame.render_widget(Paragraph::new(lines), area);
+    }
+
+    fn render_comment_editor(&self, frame: &mut Frame<'_>, area: Rect) {
+        let target = self
+            .comment_target
+            .expect("comment editor always has a target");
+        let title = match target {
+            AtomicSubjectCommentTarget::Subject(index) => {
+                format!("Comment for subject {} (optional)", index + 1)
+            }
+            AtomicSubjectCommentTarget::Coverage => "Coverage comment (optional)".to_owned(),
+            AtomicSubjectCommentTarget::Distinctness => {
+                "Distinctness comment (optional)".to_owned()
+            }
+        };
+        let available = usize::from(area.width.saturating_sub(2).max(1));
+        let (visible, cursor_x) = comment_window(&self.comment, self.comment_cursor, available);
+        frame.render_widget(
+            Paragraph::new(vec![
+                Line::styled(title, accent_style()),
+                Line::raw(format!("> {visible}")),
+                Line::from(vec![
+                    Span::styled("[Enter]", accent_style()),
+                    Span::styled(" Save  ", secondary_style()),
+                    Span::styled("[Ctrl-K]", accent_style()),
+                    Span::styled(" Clear  ", secondary_style()),
+                    Span::styled("[Esc]", accent_style()),
+                    Span::styled(" Cancel", secondary_style()),
+                ]),
+                Line::from(vec![
+                    Span::styled("[←/→]", accent_style()),
+                    Span::styled(" Move  ", secondary_style()),
+                    Span::styled("[Home/End]", accent_style()),
+                    Span::styled(" Ends", secondary_style()),
+                ]),
+            ]),
+            area,
+        );
+        frame.set_cursor_position((
+            area.x.saturating_add(2).saturating_add(cursor_x),
+            area.y.saturating_add(1),
+        ));
+    }
+}
+
+impl InteractiveReviewModel for AtomicSubjectNoteReviewTuiModel {
+    type Action = AtomicSubjectNoteReviewAction;
+
+    fn none_action() -> Self::Action {
+        AtomicSubjectNoteReviewAction::None
+    }
+
+    fn pause_action() -> Self::Action {
+        AtomicSubjectNoteReviewAction::Pause
+    }
+
+    fn handle_terminal_event(&mut self, event: Event) -> Self::Action {
+        self.handle_event(event)
+    }
+
+    fn render_terminal(&mut self, frame: &mut Frame<'_>) {
+        self.render(frame);
+    }
+}
+
+fn sanitize_atomic_subject_note_screen(
+    mut screen: AtomicSubjectNoteReviewScreen,
+) -> AtomicSubjectNoteReviewScreen {
+    screen.note = terminal_safe(&screen.note);
+    screen.coverage_comment = terminal_safe(&screen.coverage_comment).replace('\n', " ");
+    screen.distinctness_comment = terminal_safe(&screen.distinctness_comment).replace('\n', " ");
+    screen.prior_combined_check = screen
+        .prior_combined_check
+        .map(|message| terminal_safe(&message).replace('\n', " "));
+    for subject in &mut screen.subjects {
+        subject.label = terminal_safe(&subject.label).replace('\n', " ");
+        subject.comment = terminal_safe(&subject.comment).replace('\n', " ");
+    }
+    screen
+}
+
+fn clear_atomic_subject_comment(
+    target: AtomicSubjectCommentTarget,
+) -> AtomicSubjectNoteReviewAction {
+    match target {
+        AtomicSubjectCommentTarget::Subject(subject_index) => {
+            AtomicSubjectNoteReviewAction::SaveSubjectComment {
+                subject_index,
+                comment: String::new(),
+            }
+        }
+        AtomicSubjectCommentTarget::Coverage => {
+            AtomicSubjectNoteReviewAction::SaveCoverageComment {
+                comment: String::new(),
+            }
+        }
+        AtomicSubjectCommentTarget::Distinctness => {
+            AtomicSubjectNoteReviewAction::SaveDistinctnessComment {
+                comment: String::new(),
+            }
+        }
+    }
+}
+
+fn selected_review_status(label: &str, decision: &str, comment: &str) -> String {
+    if comment.is_empty() {
+        format!("{label} · {decision} · no comment")
+    } else {
+        format!("{label} · {decision} · comment: {comment}")
+    }
+}
+
+fn truncate_terminal_line(value: &str, maximum_width: usize) -> String {
+    if unicode_width::UnicodeWidthStr::width(value) <= maximum_width {
+        return value.to_owned();
+    }
+    if maximum_width == 0 {
+        return String::new();
+    }
+    let content_width = maximum_width.saturating_sub(1);
+    let mut truncated = String::new();
+    let mut width = 0;
+    for character in value.chars() {
+        let character_width = unicode_width::UnicodeWidthChar::width(character).unwrap_or(0);
+        if width + character_width > content_width {
+            break;
+        }
+        truncated.push(character);
+        width += character_width;
+    }
+    truncated.push('…');
+    truncated
+}
+
+fn insert_at_character(value: &mut String, character_index: usize, text: &str) {
+    let byte_index = value
+        .char_indices()
+        .nth(character_index)
+        .map_or(value.len(), |(index, _)| index);
+    value.insert_str(byte_index, text);
+}
+
+fn remove_character(value: &mut String, character_index: usize) {
+    let Some((start, character)) = value.char_indices().nth(character_index) else {
+        return;
+    };
+    value.drain(start..start + character.len_utf8());
+}
+
+fn wrap_terminal_text(value: &str, maximum_width: usize) -> Vec<String> {
+    let maximum_width = maximum_width.max(1);
+    let mut lines = Vec::new();
+    let mut current = String::new();
+    let mut current_width = 0;
+    for word in value.split_whitespace() {
+        let word_width = unicode_width::UnicodeWidthStr::width(word);
+        if current_width != 0 && current_width + 1 + word_width > maximum_width {
+            lines.push(current);
+            current = String::new();
+            current_width = 0;
+        }
+        if !current.is_empty() {
+            current.push(' ');
+            current_width += 1;
+        }
+        if word_width <= maximum_width {
+            current.push_str(word);
+            current_width += word_width;
+            continue;
+        }
+        for character in word.chars() {
+            let width = unicode_width::UnicodeWidthChar::width(character).unwrap_or(0);
+            if current_width != 0 && current_width + width > maximum_width {
+                lines.push(current);
+                current = String::new();
+                current_width = 0;
+            }
+            current.push(character);
+            current_width += width;
+        }
+    }
+    if !current.is_empty() || lines.is_empty() {
+        lines.push(current);
+    }
+    lines
+}
+
+fn comment_window(value: &str, cursor: usize, maximum_width: usize) -> (String, u16) {
+    let characters = value.chars().collect::<Vec<_>>();
+    let cursor = cursor.min(characters.len());
+    let mut start = 0;
+    while display_width(&characters[start..cursor]) >= maximum_width && start < cursor {
+        start += 1;
+    }
+    let mut end = start;
+    while end < characters.len() && display_width(&characters[start..=end]) <= maximum_width {
+        end += 1;
+    }
+    let visible = characters[start..end].iter().collect::<String>();
+    let cursor_width = display_width(&characters[start..cursor]);
+    (visible, u16::try_from(cursor_width).unwrap_or(u16::MAX))
+}
+
+fn display_width(characters: &[char]) -> usize {
+    characters
+        .iter()
+        .map(|character| unicode_width::UnicodeWidthChar::width(*character).unwrap_or(0))
+        .sum()
 }
 
 #[derive(Clone, Debug)]
