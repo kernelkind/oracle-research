@@ -18,7 +18,7 @@ configuration and analysis manifest:
 `ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d`
 
 The measured comparison with TEv3.1 is documented in
-[`sse-communicated-meaning-extraction.md`](../../../docs/recommendation-engine/experiments/sse-communicated-meaning-extraction.md).
+[`../../../docs/recommendation-engine/experiments/sse-communicated-meaning-extraction.md`](../../../docs/recommendation-engine/experiments/sse-communicated-meaning-extraction.md).
 
 Verify and inspect the archive with:
 

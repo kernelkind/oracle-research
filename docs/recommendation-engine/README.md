@@ -51,32 +51,32 @@ If a later experiment succeeds, its result should become the quality target. Pro
 
 ### Current design work
 
-- [Adjacent-novelty design direction](design/adjacent-novelty.md)
-- [User-directed semantic-region navigation](design/semantic-region-navigation.md)
-- [Corpus-induced weighted note-topic map](design/corpus-induced-subject-map-hypothesis.md)
-- [Theme-vector necessary-condition result](experiments/adjacent-novelty/crec-101-theme-vector-separation.md)
-- [Cumulative theme-exposure replay](experiments/adjacent-novelty/crec-102-cumulative-theme-exposure-replay.md)
-- [Semantic-branch recovery diagnostic](experiments/adjacent-novelty/crec-110-semantic-branch-recovery.md)
+- [`design/adjacent-novelty.md`](design/adjacent-novelty.md)
+- [`design/semantic-region-navigation.md`](design/semantic-region-navigation.md)
+- [`design/corpus-induced-subject-map-hypothesis.md`](design/corpus-induced-subject-map-hypothesis.md)
+- [`experiments/adjacent-novelty/crec-101-theme-vector-separation.md`](experiments/adjacent-novelty/crec-101-theme-vector-separation.md)
+- [`experiments/adjacent-novelty/crec-102-cumulative-theme-exposure-replay.md`](experiments/adjacent-novelty/crec-102-cumulative-theme-exposure-replay.md)
+- [`experiments/adjacent-novelty/crec-110-semantic-branch-recovery.md`](experiments/adjacent-novelty/crec-110-semantic-branch-recovery.md)
 
 ### Operational guidance
 
-- [Disk I/O pressure control](disk-io-pressure-control.md)
+- [`disk-io-pressure-control.md`](disk-io-pressure-control.md)
 
 ### Frozen Oracle MVP v1
 
-- [Experiment design](experiments/oracle-mvp-v1/design/oracle-mvp.md)
-- [Local personalizer design](experiments/oracle-mvp-v1/design/local-personalizer.md)
-- [Embedding-model decision](experiments/oracle-mvp-v1/design/oracle-embedding-model-research.md)
-- [Experiment result and autopsy](experiments/oracle-mvp-v1/results/recommendation-mvp-autopsy.md)
-- [Detailed rating analysis](experiments/oracle-mvp-v1/results/recommendation-mvp-rating-analysis.md)
-- [Artifact locations](experiments/oracle-mvp-v1/artifact-locations.md)
+- [`experiments/oracle-mvp-v1/design/oracle-mvp.md`](experiments/oracle-mvp-v1/design/oracle-mvp.md)
+- [`experiments/oracle-mvp-v1/design/local-personalizer.md`](experiments/oracle-mvp-v1/design/local-personalizer.md)
+- [`experiments/oracle-mvp-v1/design/oracle-embedding-model-research.md`](experiments/oracle-mvp-v1/design/oracle-embedding-model-research.md)
+- [`experiments/oracle-mvp-v1/results/recommendation-mvp-autopsy.md`](experiments/oracle-mvp-v1/results/recommendation-mvp-autopsy.md)
+- [`experiments/oracle-mvp-v1/results/recommendation-mvp-rating-analysis.md`](experiments/oracle-mvp-v1/results/recommendation-mvp-rating-analysis.md)
+- [`experiments/oracle-mvp-v1/artifact-locations.md`](experiments/oracle-mvp-v1/artifact-locations.md)
 
 ### Research
 
-- [Direct note-to-mask extractor](research/direct-note-to-mask-extractor.md)
-- [Corpus-induced semantic region discovery](research/semantic-region-discovery-and-labeling.md)
-- [Leading production recommendation systems](research/leading-content-recommendation-systems.md)
-- [General semantic recommendation systems](research/general-semantic-recommendation-systems.md)
-- [Existing Nostr recommendation systems](research/existing-nostr-recommendation-systems.md)
-- [Nostr semantic recommendation prior art](research/nostr-semantic-recommendation-prior-art.md)
-- [Nostr relay storage](research/nostr-relay-storage-research.md)
+- [`research/direct-note-to-mask-extractor.md`](research/direct-note-to-mask-extractor.md)
+- [`research/semantic-region-discovery-and-labeling.md`](research/semantic-region-discovery-and-labeling.md)
+- [`research/leading-content-recommendation-systems.md`](research/leading-content-recommendation-systems.md)
+- [`research/general-semantic-recommendation-systems.md`](research/general-semantic-recommendation-systems.md)
+- [`research/existing-nostr-recommendation-systems.md`](research/existing-nostr-recommendation-systems.md)
+- [`research/nostr-semantic-recommendation-prior-art.md`](research/nostr-semantic-recommendation-prior-art.md)
+- [`research/nostr-relay-storage-research.md`](research/nostr-relay-storage-research.md)

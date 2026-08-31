@@ -53,4 +53,4 @@ The next load-bearing question was whether the existing idea vectors could be
 hard-partitioned into coherent fine semantic regions. The first pilot found
 real recurring semantic cores but did not validate one global hard partition;
 its result is recorded in
-[`sse-fine-region-partition-pilot.md`](../../docs/recommendation-engine/experiments/sse-fine-region-partition-pilot.md).
+[`../../docs/recommendation-engine/experiments/sse-fine-region-partition-pilot.md`](../../docs/recommendation-engine/experiments/sse-fine-region-partition-pilot.md).

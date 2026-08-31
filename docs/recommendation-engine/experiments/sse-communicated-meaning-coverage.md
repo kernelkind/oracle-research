@@ -110,8 +110,8 @@ accuracy or that SSE works across the complete Nostr corpus.
 
 The complete notes, generated takeaways, masks, ranks, and case-by-case
 reasoning are in
-[TEv3.1 detailed similarity analysis](./sse-communicated-meaning-coverage-cases.md).
+[`./sse-communicated-meaning-coverage-cases.md`](./sse-communicated-meaning-coverage-cases.md).
 The immutable stages are preserved in
-[`communicated-meaning-coverage-v1`](../../../sse_multivector/baselines/communicated-meaning-coverage-v1/)
+[`../../../sse_multivector/baselines/communicated-meaning-coverage-v1/README.md`](../../../sse_multivector/baselines/communicated-meaning-coverage-v1/README.md)
 and
-[`communicated-meaning-coverage-v2`](../../../sse_multivector/baselines/communicated-meaning-coverage-v2/).
+[`../../../sse_multivector/baselines/communicated-meaning-coverage-v2/README.md`](../../../sse_multivector/baselines/communicated-meaning-coverage-v2/README.md).

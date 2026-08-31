@@ -24,7 +24,7 @@ the exact prompt pair, unique IDs and labels, and every fragment's presence,
 occurrence, source order, and non-overlap.
 
 The complete source-bound input is
-[`communicated-meaning-full-proposal-v1.json`](../../../sse_multivector/communicated-meaning-full-proposal-v1.json).
+[`../../../sse_multivector/communicated-meaning-full-proposal-v1.json`](../../../sse_multivector/communicated-meaning-full-proposal-v1.json).
 The schema retains the historical field name `subjects`, but every label in
 this proposal is a communicated takeaway. Labels are report metadata and never
 enter the encoder.
@@ -37,7 +37,7 @@ and full-dimensional Sentence-T5-base SSE checkpoint used by the earlier
 vectors and all 2,628 unordered cosine values. Deterministic replay succeeded.
 
 The immutable run is preserved at
-[`communicated-meaning-full-v1`](../../../sse_multivector/baselines/communicated-meaning-full-v1/).
+[`../../../sse_multivector/baselines/communicated-meaning-full-v1/README.md`](../../../sse_multivector/baselines/communicated-meaning-full-v1/README.md).
 
 ## Measurements
 
@@ -111,7 +111,7 @@ takeaways:
 
 The complete notes, generated takeaways, masks, rankings, and analysis for
 these cases are collected in
-[SSE Similarity Analysis](./sse-communicated-meaning-failure-cases.md).
+[`./sse-communicated-meaning-failure-cases.md`](./sse-communicated-meaning-failure-cases.md).
 
 Some results are also consistent with unrelated surrounding-note context
 affecting masked vectors. A takeaway about choices made without pressure ranked

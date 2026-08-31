@@ -41,7 +41,7 @@ hypothesis test.
 ## Design
 
 Encoding, candidate construction, candidate I/O, fine-output selection, and
-artifact freezing follow the [shared contract](README.md). This document adds
+artifact freezing follow the [`README.md`](README.md). This document adds
 only the fixture, schedule, blinding, replay, and evaluation rules specific to
 Experiment 2.
 

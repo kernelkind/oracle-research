@@ -10,17 +10,17 @@ which improvements remain compatible with its privacy boundary and the `$500`
 lifetime paid-compute ceiling for the complete MVP.
 
 The completed v1 Nostr design is documented in
-[oracle-mvp.md](../experiments/oracle-mvp-v1/design/oracle-mvp.md).
+[`../experiments/oracle-mvp-v1/design/oracle-mvp.md`](../experiments/oracle-mvp-v1/design/oracle-mvp.md).
 
 > **Frozen-v1 boundary (2026-07-16):** The PPLX/GTE-Large bake-off,
 > 25-million-note assumptions, compact-vector sizing, and one-million-note
 > experiments later in this research were historical proposals, not v1
 > requirements. The evidence review and sequential GTE-then-conditional-Grit
 > decision used by v1 are recorded in
-> [oracle-embedding-model-research.md](../experiments/oracle-mvp-v1/design/oracle-embedding-model-research.md).
+> [`../experiments/oracle-mvp-v1/design/oracle-embedding-model-research.md`](../experiments/oracle-mvp-v1/design/oracle-embedding-model-research.md).
 > That decision,
-> [oracle-mvp.md](../experiments/oracle-mvp-v1/design/oracle-mvp.md), and
-> [local-personalizer.md](../experiments/oracle-mvp-v1/design/local-personalizer.md)
+> [`../experiments/oracle-mvp-v1/design/oracle-mvp.md`](../experiments/oracle-mvp-v1/design/oracle-mvp.md), and
+> [`../experiments/oracle-mvp-v1/design/local-personalizer.md`](../experiments/oracle-mvp-v1/design/local-personalizer.md)
 > record what v1 used wherever this older survey conflicts.
 
 ## Conclusion

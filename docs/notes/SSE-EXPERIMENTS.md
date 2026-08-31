@@ -128,6 +128,6 @@ R12
 ──────────────────────  ────────────  ────────────  ─────────
  R11↔R12 solar only          0.4659        0.5965    +0.1306
 
-## 4) [Real-note holdout mask experiment](./SSE-REAL-NOTE-HOLDOUT-EXPERIMENT.md)
+## 4) [`./SSE-REAL-NOTE-HOLDOUT-EXPERIMENT.md`](./SSE-REAL-NOTE-HOLDOUT-EXPERIMENT.md)
 
 Four predeclared comparisons over 12 previously unused real Nostr notes. Three passed; the hard Windows/Linux comparison failed.

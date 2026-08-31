@@ -11,7 +11,7 @@ It asks:
 > system failed, and what remains plausible?
 
 This is a companion to the
-[Recommendation MVP Autopsy](recommendation-mvp-autopsy.md). The autopsy owns
+[`recommendation-mvp-autopsy.md`](recommendation-mvp-autopsy.md). The autopsy owns
 the verdict. This report preserves the deeper cross-phase analysis without
 changing that verdict or selecting a replacement architecture.
 

@@ -1,7 +1,7 @@
 # Recommendation Oracle MVP
 
 > **Status:** Frozen v1 experiment design. The outcome is recorded in the
-> [experiment autopsy](../results/recommendation-mvp-autopsy.md).
+> [`../results/recommendation-mvp-autopsy.md`](../results/recommendation-mvp-autopsy.md).
 
 ## Goal
 

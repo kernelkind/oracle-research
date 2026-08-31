@@ -10,7 +10,7 @@ Subject enumeration and independent mask generation have run over every raw
 note using the approved minimal prompts. Each note used a fresh subject call,
 and every resulting subject used a separate fresh mask call. Their audited,
 source-bound output is
-[`subject-mask-proposal-v3.json`](../../../sse_multivector/subject-mask-proposal-v3.json):
+[`../../../sse_multivector/subject-mask-proposal-v3.json`](../../../sse_multivector/subject-mask-proposal-v3.json):
 
 - 190 subjects generated;
 - 187 subjects retained after the primary agent inspected every proposal;
@@ -248,11 +248,11 @@ processing.
 ## Follow-up
 
 The separate
-[communicated-meaning triplet](./sse-communicated-meaning-triplet.md) records a
+[`./sse-communicated-meaning-triplet.md`](./sse-communicated-meaning-triplet.md) records a
 small follow-up using semantic takeaways rather than narrow subject labels. It
 does not modify or replace this baseline.
 
 The later
-[full communicated-meaning diagnostic](./sse-communicated-meaning-full.md)
+[`./sse-communicated-meaning-full.md`](./sse-communicated-meaning-full.md)
 applies the locked takeaway representation to all 32 frozen notes and compares
 the resulting geometry with this preserved baseline.

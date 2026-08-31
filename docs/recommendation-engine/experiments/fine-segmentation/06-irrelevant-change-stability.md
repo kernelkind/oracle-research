@@ -38,7 +38,7 @@ Input-order conformance belongs to the suite eligibility contract in
 
 This experiment introduces no new base note, mask, or SSE encoding. Its 36
 base vectors are the exact approved fixture from
-[Experiment 1](01-repeated-subject-recovery.md), with the same frozen bytes,
+[`01-repeated-subject-recovery.md`](01-repeated-subject-recovery.md), with the same frozen bytes,
 opaque runtime IDs, and default input order.
 
 The readable labels below are scorer-only aliases:

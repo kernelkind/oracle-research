@@ -24,7 +24,7 @@ whether the person wants more of a subject or has become tired of it.
 Public computation could derive a versioned semantic structure from the
 complete public note corpus. No subject ontology exists beforehand. The public
 mapping representation and construction are owned by
-[Corpus-Induced Weighted Note-Topic Map](corpus-induced-subject-map-hypothesis.md),
+[`corpus-induced-subject-map-hypothesis.md`](corpus-induced-subject-map-hypothesis.md),
 not by this navigation hypothesis.
 
 Every eligible public note must be considered by this mapping. A note may have
@@ -79,9 +79,9 @@ Until this prerequisite is demonstrated, semantic-region navigation must not
 be treated as the next architecture.
 
 See
-[Corpus-Induced Semantic Region Discovery](../research/semantic-region-discovery-and-labeling.md)
+[`../research/semantic-region-discovery-and-labeling.md`](../research/semantic-region-discovery-and-labeling.md)
 for the neutral literature record. See
-[Corpus-Induced Weighted Note-Topic Map](corpus-induced-subject-map-hypothesis.md)
+[`corpus-induced-subject-map-hypothesis.md`](corpus-induced-subject-map-hypothesis.md)
 for the separate project prescription currently under consideration.
 
 ## Decisions Not Yet Made

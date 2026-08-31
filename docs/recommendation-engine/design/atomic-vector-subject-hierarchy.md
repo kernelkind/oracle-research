@@ -72,11 +72,11 @@ The current 32-case counterfactual pilot found no valid observed blending
 failure and supports continuing to the next assumption. This is small-pilot
 evidence, not a claim that the decomposition is universally correct. The
 preserved interpretation is in
-[`scientific-interpretation.md`](../../../sse_multivector/context-counterfactual-result-v1/scientific-interpretation.md).
+[`../../../sse_multivector/context-counterfactual-result-v1/scientific-interpretation.md`](../../../sse_multivector/context-counterfactual-result-v1/scientific-interpretation.md).
 
 Research on replacing per-note frontier-model extraction with a trained local
 `note -> grouped masks` model is preserved in
-[`direct-note-to-mask-extractor.md`](../research/direct-note-to-mask-extractor.md).
+[`../research/direct-note-to-mask-extractor.md`](../research/direct-note-to-mask-extractor.md).
 
 ## 2. Hard-Partition Atomic Vectors into Fine Subjects
 
@@ -127,7 +127,7 @@ order and are joined with `; `. Instances are joined with one newline. The
 blank lines shown above are part of the prompt.
 
 The exact text is also preserved in
-[`fine-region-title-prompt-versions.json`](../../../sse_multivector/fine-region-title-prompt-versions.json).
+[`../../../sse_multivector/fine-region-title-prompt-versions.json`](../../../sse_multivector/fine-region-title-prompt-versions.json).
 
 For example, a region grounded in spans such as:
 
@@ -157,7 +157,7 @@ The fine-subject regions become the leaves of the hierarchy.
 
 The corrected literature review for grouping frozen fine segments is recorded
 in
-[`hierarchical-grouping-of-fine-semantic-segments.md`](../research/hierarchical-grouping-of-fine-semantic-segments.md).
+[`../research/hierarchical-grouping-of-fine-semantic-segments.md`](../research/hierarchical-grouping-of-fine-semantic-segments.md).
 It treats every higher subject as an exact union of complete fine segments and
 does not assume that a parent is one filled geometric region.
 
@@ -243,7 +243,7 @@ The first 194-vector pilot found several coherent recurring regions but also
 persistent false merges and obvious splits. It did not validate one global
 hard partition. DP-vMF also failed as the authoritative scalable method due to
 broad, order-sensitive merging. The result is preserved in
-[`sse-fine-region-partition-pilot.md`](../experiments/sse-fine-region-partition-pilot.md).
+[`../experiments/sse-fine-region-partition-pilot.md`](../experiments/sse-fine-region-partition-pilot.md).
 
 ### C. Fine-region labeling
 

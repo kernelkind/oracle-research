@@ -262,6 +262,6 @@ given only the span could recover a partial subject, but not the actors or
 referent needed for the complete generated takeaway.
 
 Raw inputs:
-[`communicated-meaning-full-proposal-v1.json`](../../../sse_multivector/communicated-meaning-full-proposal-v1.json) ·
+[`../../../sse_multivector/communicated-meaning-full-proposal-v1.json`](../../../sse_multivector/communicated-meaning-full-proposal-v1.json) ·
 raw results:
-[`communicated-meaning-full-v1`](../../../sse_multivector/baselines/communicated-meaning-full-v1/)
+[`../../../sse_multivector/baselines/communicated-meaning-full-v1/README.md`](../../../sse_multivector/baselines/communicated-meaning-full-v1/README.md)

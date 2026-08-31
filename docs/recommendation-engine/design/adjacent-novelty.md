@@ -116,19 +116,19 @@ problems.
 
 ## Necessary-Condition Results
 
-[CREC-101](../experiments/adjacent-novelty/crec-101-theme-vector-separation.md)
+[`../experiments/adjacent-novelty/crec-101-theme-vector-separation.md`](../experiments/adjacent-novelty/crec-101-theme-vector-separation.md)
 found strong separation for three distinct reported theme families in the
 valid Phase 4 prefix. This resolves only whether the current document vectors
 contain usable broad-theme structure.
 
-[CREC-102](../experiments/adjacent-novelty/crec-102-cumulative-theme-exposure-replay.md)
+[`../experiments/adjacent-novelty/crec-102-cumulative-theme-exposure-replay.md`](../experiments/adjacent-novelty/crec-102-cumulative-theme-exposure-replay.md)
 then found that a decayed vector-only score tracked recent recurrence of all
 three families in the frozen presentation sequence. This authorizes a short
 live adjacent-novelty mechanism test. It does not show that the score measures
 human saturation, establish a live exposure budget, prove candidate
 availability, or validate the complete loop.
 
-[CREC-109](../experiments/adjacent-novelty/crec-109-full-pool-exposure-gated-escape-probe.md)
+[`../experiments/adjacent-novelty/crec-109-full-pool-exposure-gated-escape-probe.md`](../experiments/adjacent-novelty/crec-109-full-pool-exposure-gated-escape-probe.md)
 found `6/20` mildly valuable, non-repetitive escapes. It also found `7/20`
 low-value thematic escapes and `7/20` notes that still felt repetitive. The
 accepted exposure scores weakly separated those live repetition answers, and
@@ -136,7 +136,7 @@ lowering the scalar ceiling would discard several observed successes.
 Whole-note vector exposure can help, but this gate alone cannot reliably
 preserve worthwhile new angles while blocking exhausted treatments.
 
-[CREC-110](../experiments/adjacent-novelty/crec-110-semantic-branch-recovery.md)
+[`../experiments/adjacent-novelty/crec-110-semantic-branch-recovery.md`](../experiments/adjacent-novelty/crec-110-semantic-branch-recovery.md)
 tested whether the current single-vector Oracle preserved multiple recoverable
 directions around one valued note with explicit physical, mental, and spiritual
 themes. Mental/learning was significantly separated under both independent

@@ -6,7 +6,7 @@ Current hypothesis and approved prerequisite experiment, tracked by CREC-113.
 This is not an approved product architecture.
 
 The neutral literature record is
-[Corpus-Induced Semantic Region Discovery](../research/semantic-region-discovery-and-labeling.md).
+[`../research/semantic-region-discovery-and-labeling.md`](../research/semantic-region-discovery-and-labeling.md).
 
 ## Why
 
@@ -139,7 +139,7 @@ The real-note sampler is a separate bounded path:
   merely to repeat that verification.
 
 The sampler uses the adaptive cgroup `io.pressure` policy in
-[Disk I/O Pressure-Control Guidance](../disk-io-pressure-control.md). It does
+[`../disk-io-pressure-control.md`](../disk-io-pressure-control.md). It does
 not stack fixed device throttles on that controller because an artificial
 throttle can itself create pressure and prevent recovery.
 

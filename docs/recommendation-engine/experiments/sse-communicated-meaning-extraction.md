@@ -1358,9 +1358,8 @@ No generated result received a subjective correction pass. One mask response
 contained a non-exact substring. Mechanical validation rejected it, and a
 fresh retry succeeded. The rejected attempt remains in the audit log.
 
-The [immutable TEv4.1 archive and inspection
-instructions](/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/baselines/communicated-meaning-tev4-1/README.md)
-preserve:
+The [`../../../sse_multivector/baselines/communicated-meaning-tev4-1/README.md`](../../../sse_multivector/baselines/communicated-meaning-tev4-1/README.md)
+preserves:
 
 - the exact 50-note input and generation configurations;
 - every accepted fresh-context response;

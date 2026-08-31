@@ -23,7 +23,7 @@ The source-bound input contains three real Nostr notes from three authors:
 The approved takeaway-generation prompt produced seven takeaways. A separate
 call applied the approved mask prompt to each takeaway. Both prompts and every
 exact source fragment are pinned in
-[`communicated-meaning-triplet-proposal-v1.json`](../../../sse_multivector/communicated-meaning-triplet-proposal-v1.json).
+[`../../../sse_multivector/communicated-meaning-triplet-proposal-v1.json`](../../../sse_multivector/communicated-meaning-triplet-proposal-v1.json).
 
 One generated label normalized the source text `Germs, Guns & steel` to the
 canonical title *Guns, Germs, and Steel*. The exact mask remained grounded in
@@ -37,7 +37,7 @@ Sentence-T5-base SSE checkpoint, tokenizer, and pooling rule from the original
 and all 21 pairwise cosine values. Deterministic verification succeeded.
 
 The complete run is preserved at
-[`communicated-meaning-triplet-v1`](../../../sse_multivector/baselines/communicated-meaning-triplet-v1/).
+[`../../../sse_multivector/baselines/communicated-meaning-triplet-v1/README.md`](../../../sse_multivector/baselines/communicated-meaning-triplet-v1/README.md).
 
 ## Measurements
 

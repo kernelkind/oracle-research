@@ -3,7 +3,7 @@
 Status: **draft; do not encode or run yet**.
 
 This suite evaluates one frozen fine-segmentation candidate across the six
-concerns that originated in [MY-NOTES.md](../../../notes/MY-NOTES.md). The
+concerns that originated in [`../../../notes/MY-NOTES.md`](../../../notes/MY-NOTES.md). The
 protocols here are their operational definitions. In particular, Experiment 2
 characterizes density and sparsity; it does not impose a categorical
 rare-subject absorption rule. Each experiment uses purpose-built synthetic
@@ -16,14 +16,14 @@ Every check has one owner:
 | Owner | What it establishes |
 |---|---|
 | Candidate conformance | The frozen candidate obeys its construction contract and does not change when one frozen input is permuted. |
-| [Experiment 1](01-repeated-subject-recovery.md) | Basic repeated-subject recovery. |
-| [Experiment 6](06-irrelevant-change-stability.md) | Stability under exact duplicates, an unrelated added subject, and combining independently recovered collections spanning separated semantic areas. |
-| [Experiment 3](03-lexical-coincidence.md) | Shared words do not replace semantic relationships. |
-| [Experiment 4](04-unmasked-context.md) | Unmasked material does not determine the fine-segment membership of a fixed mask. |
-| [Experiment 2](02-nearby-subject-resolution.md) | Characterization of nearby-subject resolution under balanced, unequal, and sparse support, plus semantic-review capacity. |
+| [`01-repeated-subject-recovery.md`](01-repeated-subject-recovery.md) | Basic repeated-subject recovery. |
+| [`06-irrelevant-change-stability.md`](06-irrelevant-change-stability.md) | Stability under exact duplicates, an unrelated added subject, and combining independently recovered collections spanning separated semantic areas. |
+| [`03-lexical-coincidence.md`](03-lexical-coincidence.md) | Shared words do not replace semantic relationships. |
+| [`04-unmasked-context.md`](04-unmasked-context.md) | Unmasked material does not determine the fine-segment membership of a fixed mask. |
+| [`02-nearby-subject-resolution.md`](02-nearby-subject-resolution.md) | Characterization of nearby-subject resolution under balanced, unequal, and sparse support, plus semantic-review capacity. |
 | Final human review | Whether the complete frozen evidence is sufficient to use this candidate in the next proof of concept. |
 
-[Experiment 5](05-density-and-sparsity.md) is retired because Experiment 2
+[`05-density-and-sparsity.md`](05-density-and-sparsity.md) is retired because Experiment 2
 owns density and sparsity. Experiment 2 does not also own unrelated-area
 addition; Experiment 6 owns that concern.
 

@@ -19,7 +19,7 @@ verdict. Interpretations must not be treated as established causes.
 ## Deeper Rating Analysis
 
 The
-[Recommendation MVP Rating Analysis](recommendation-mvp-rating-analysis.md)
+[`recommendation-mvp-rating-analysis.md`](recommendation-mvp-rating-analysis.md)
 preserves the full cross-phase analysis of Phase 3 and the confirmed-valid
 Phase 4 prefix.
 
@@ -288,7 +288,7 @@ not establish which representation or algorithmic component failed.
 ## Failure Localization
 
 The full measurements are preserved in the
-[Recommendation MVP Rating Analysis](recommendation-mvp-rating-analysis.md).
+[`recommendation-mvp-rating-analysis.md`](recommendation-mvp-rating-analysis.md).
 The following separates the observed state transitions from their
 interpretation.
 

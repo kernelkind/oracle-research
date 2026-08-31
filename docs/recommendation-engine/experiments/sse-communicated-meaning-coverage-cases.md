@@ -798,8 +798,8 @@ retirement.`
   earlier leading neighbors are byte-identical across them.
 
 Summary:
-[TEv3.1 coverage-only diagnostic](./sse-communicated-meaning-coverage.md) ·
+[`./sse-communicated-meaning-coverage.md`](./sse-communicated-meaning-coverage.md) ·
 complete artifacts:
-[`stage 1`](../../../sse_multivector/baselines/communicated-meaning-coverage-v1/)
+[`../../../sse_multivector/baselines/communicated-meaning-coverage-v1/README.md`](../../../sse_multivector/baselines/communicated-meaning-coverage-v1/README.md)
 and
-[`stage 2`](../../../sse_multivector/baselines/communicated-meaning-coverage-v2/)
+[`../../../sse_multivector/baselines/communicated-meaning-coverage-v2/README.md`](../../../sse_multivector/baselines/communicated-meaning-coverage-v2/README.md)
