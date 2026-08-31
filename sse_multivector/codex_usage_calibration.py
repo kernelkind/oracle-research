@@ -486,7 +486,7 @@ class CalibrationTracker:
                     "and includes the job that crossed the next boundary"
                 ),
             }
-        elif self.status == "timed_out":
+        elif self.status == "timed_out" and self.start_boundary_index is not None:
             result["lower_bound"] = {
                 "job_keys": self.measured_job_keys,
                 "usage": self.measured_usage,
@@ -494,6 +494,16 @@ class CalibrationTracker:
                 "meaning": (
                     "the recorded usage did not cross the next displayed integer "
                     "boundary, so one percentage point requires more than this amount"
+                ),
+            }
+        elif self.status == "timed_out":
+            result["unchanged_display_observation"] = {
+                "job_keys": self.measured_job_keys,
+                "usage": self.measured_usage,
+                "completions": self.measured_completions,
+                "meaning": (
+                    "all recorded jobs completed while the displayed used percentage "
+                    "remained unchanged; no percentage boundary was observed"
                 ),
             }
         return result

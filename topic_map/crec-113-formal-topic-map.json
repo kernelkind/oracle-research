@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "purpose": "CREC-113 formal corpus-induced weighted note-topic relation",
+  "runtime": {
+    "worker_sha256": "dff04acce1f40b9a17918e8c8e4226f35f439c81140308f32e62e0a66f5138c4",
+    "container_image": "pytorch/pytorch@sha256:72f863fa1fe13d5d87a72d00db2c85fb2d43409ee08dd26bc469de4c8a28b427"
+  },
+  "input": {
+    "matrix_path": "/dev/shm/oracle-mvp-crec113-granite-r2-v1/formal-v1/embedding-output/embeddings/vectors.f32le",
+    "note_ids_path": "/dev/shm/oracle-mvp-crec113-granite-r2-v1/formal-v1/embedding-output/embeddings/note-ids.bin",
+    "embedding_manifest": {
+      "path": "/dev/shm/oracle-mvp-crec113-granite-r2-v1/formal-v1/embedding-output/embeddings/manifest.json",
+      "bytes": 1722,
+      "sha256": "76e4b1bc5abb04a85a7612fe5862f7a3cfbb238286255a6bff397217eef14128"
+    },
+    "dimensions": 768,
+    "start_row": 0,
+    "learning_rows": 40960,
+    "evaluation_rows": 10240
+  },
+  "model": {
+    "dictionary_size": 3072,
+    "average_k": 32,
+    "batch_size": 1000,
+    "steps": 1000,
+    "measurement_steps": [100, 200, 500, 1000],
+    "learning_rate": 0.001,
+    "seed": 112233,
+    "warmup_steps": 100,
+    "dead_tokens": 10000000,
+    "auxiliary_k": 384,
+    "auxiliary_penalty": 0.03125,
+    "gradient_clip": 1.0,
+    "maximum_relation_entries": 13107200,
+    "device": "cpu"
+  },
+  "io_budget": {
+    "max_source_read_bytes": 158926522,
+    "max_durable_write_bytes": 268435456
+  },
+  "output_path": "/dev/shm/oracle-mvp-crec113-granite-r2-v1/formal-v1/relation-output/relation"
+}

@@ -7,8 +7,10 @@ demonstrate, cross-study synthesis, and remaining evidence gaps. It does not
 contain project requirements, recommend an architecture, select a method, or
 approve an experiment.
 
-Project inferences and the current technical proposal are kept separately in
-[`../design/corpus-induced-subject-map-hypothesis.md`](../design/corpus-induced-subject-map-hypothesis.md).
+Project requirements and the current direction are kept separately in
+[`../design/atomic-vector-subject-hierarchy.md`](../design/atomic-vector-subject-hierarchy.md)
+and
+[`fine-segmentation-vector-space-requirements.md`](fine-segmentation-vector-space-requirements.md).
 
 ## Limits of the Evidence
 
@@ -352,10 +354,8 @@ The reviewed evidence does not decide:
   another construction yields faithful subjects for short notes;
 - how many useful granularities exist in the corpus;
 - whether broad-to-narrow relationships require a tree or overlapping graph;
-- which residual or outlier policy preserves rare notes without inventing
-  subjects;
 - whether generated labels predict the contents of their regions;
 - whether any resulting map improves user-directed discovery.
 
 Those are project decisions and empirical questions. The current project
-hypothesis is documented separately; it is not a conclusion of this review.
+direction is documented separately; it is not a conclusion of this review.

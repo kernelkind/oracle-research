@@ -4,45 +4,24 @@ Research date: 2026-07-11
 
 ## Purpose
 
-Identify the strongest disclosed semantic recommendation systems, compare their
-successful mechanisms with the proposed Nostr meaning-map oracle, and determine
-which improvements remain compatible with its privacy boundary and the `$500`
-lifetime paid-compute ceiling for the complete MVP.
-
-The completed v1 Nostr design is documented in
-[`../experiments/oracle-mvp-v1/design/oracle-mvp.md`](../experiments/oracle-mvp-v1/design/oracle-mvp.md).
-
-> **Frozen-v1 boundary (2026-07-16):** The PPLX/GTE-Large bake-off,
-> 25-million-note assumptions, compact-vector sizing, and one-million-note
-> experiments later in this research were historical proposals, not v1
-> requirements. The evidence review and sequential GTE-then-conditional-Grit
-> decision used by v1 are recorded in
-> [`../experiments/oracle-mvp-v1/design/oracle-embedding-model-research.md`](../experiments/oracle-mvp-v1/design/oracle-embedding-model-research.md).
-> That decision,
-> [`../experiments/oracle-mvp-v1/design/oracle-mvp.md`](../experiments/oracle-mvp-v1/design/oracle-mvp.md), and
-> [`../experiments/oracle-mvp-v1/design/local-personalizer.md`](../experiments/oracle-mvp-v1/design/local-personalizer.md)
-> record what v1 used wherever this older survey conflicts.
+Record published evidence about semantic recommendation systems. This is
+background for the separate recommendation problem; it does not prescribe the
+current user-directed subject hierarchy or an active MVP experiment.
 
 ## Conclusion
 
-The retained architectural findings are:
+The retained research findings are:
 
-- Compute public item representations once.
-- Retrieve candidates lazily only for positive source notes that are queried.
-- Return the exact same-version public candidate/document vectors needed for
-  private local comparison.
-- Keep private judgments, candidate fusion, and final ranking local.
+- Public item representations can support inexpensive per-user learning.
+- Recommendation-trained representations often outperform generic semantic
+  embeddings on their own objectives.
+- Multiple interest representations avoid collapsing unrelated tastes.
+- Private local ranking remains technically plausible, but the reviewed
+  systems do not establish its quality for Nostr notes.
 
-The strongest systems do not reveal a better low-cost retrieval topology. Their
-main advantage is that their representations are trained for recommendation on
-domain-specific behavioral evidence rather than used as generic semantic
-embeddings.
-
-The completed v1 MVP did not run the model, dimension, or architecture
-bake-offs proposed below. It calibrated one GTE-Qwen2-7B-Instruct
-complete-corpus build, then compared two inexpensive local personalizers before
-one untouched final evaluation. Nostr-adapted encoders and additional public
-candidate sources remain possible later experiments, not parts of v1.
+These findings concern recommendation systems. They do not define the atomic
+subjects, fine segmentation, or hierarchy used by the current content-discovery
+direction.
 
 ## Evidence Boundary
 
@@ -231,145 +210,3 @@ they are a poor fit for this oracle:
 
 They should not be added to the MVP.
 
-## Historical Comparison With the Earlier Oracle
-
-The following table records the design that existed when this survey was
-written. It is retained as research history and must not be used as the current
-execution plan.
-
-| Concern | Strong systems | Earlier oracle design | Historical assessment |
-| --- | --- | --- | --- |
-| Public item representation | Precomputed dense or semantic-ID representations | Native-INT8 dense vectors | Correct |
-| Candidate computation | ANN or GPU nearest-neighbor retrieval at request time | Exact lazy cosine scan | Correct for low-volume oracle quality |
-| Representation objective | Domain and behavior aligned | Generic semantic retrieval | Largest quality risk |
-| Plural interests | Multiple embeddings or interest clusters | Independent source-event queries | Strong |
-| Local personalization | Small classifiers through large sequential rankers | Similarity evidence and local fusion, not yet concrete | Needs an experimental local scorer |
-| Compact vectors | PCA, Matryoshka, quantization | Full 1,024-dimensional INT8 vectors | Unnecessarily fixed |
-| Hard distinctions | Impression hard negatives or explicit ratings | Human worth judgments in the bake-off | Evaluation exists; training use remains unresolved |
-| Final ranking | Usually centralized | Local | Required advantage |
-| Complete neighbor graph | Generally unnecessary | Explicitly omitted | Correct |
-| ANN | Required at industrial QPS | Deferred | Correct |
-
-## Historical Candidate Improvements
-
-The following proposals were considered before the GTE-first decision. They
-are not approved MVP work.
-
-### 1. Matryoshka Dimension Bake-Off
-
-The selected
-[pplx-embed-v1-0.6B model](https://huggingface.co/perplexity-ai/pplx-embed-v1-0.6b)
-natively emits INT8 embeddings and advertises Matryoshka support. Its
-[training report](https://ar5iv.labs.arxiv.org/html/2602.11151) includes
-128-, 256-, 512-, and 1,024-dimensional objectives for the 0.6B model family.
-
-The bake-off should compare exact retrieval using every supported prefix:
-
-| Dimensions | Raw vectors for 25M events |
-| ---: | ---: |
-| 1,024 | 25.6 GB |
-| 512 | 12.8 GB |
-| 256 | 6.4 GB |
-| 128 | 3.2 GB |
-
-This does not materially reduce the encoder's forward-pass cost. It can reduce
-artifact transfer, resident memory, memory bandwidth per exact query, local
-payload size, and ongoing service cost.
-
-Full 1,024-dimensional exact search remains the recall reference. A second
-serving experiment may scan a compact prefix over the complete corpus and
-rerank a deep shortlist using the full vectors. The cascade is retained only if
-it preserves worthwhile candidates relative to the exact reference.
-
-### 2. Public Candidate Vectors for Local Learning
-
-The public response should be able to include each candidate's compact vector
-alongside its event ID and source-candidate score. A 1,000-candidate response
-adds approximately 256 KB at 256 dimensions.
-
-The local bake-off can then compare:
-
-- Existing independent-source similarity and support.
-- A strongly regularized linear scorer per active interest.
-- A positive-only prototype when explicit negative evidence is insufficient.
-
-No local LLM is required. Unjudged events remain neutral. An exact negative
-worth judgment continues to exclude that event; broader model updates must
-respect the separate instruction for changing future recommendations.
-
-### 3. Independent Encoder Control
-
-The 0.6B and 4B Perplexity encoders share a backbone family and training method.
-Their agreement is not independent evidence that semantic retrieval has reached
-its practical limit.
-
-The earlier one-million-event bake-off proposal would have included one
-independently trained encoder. GTE-Large was a defensible control because it
-produced Scholar Inbox's strongest
-explicit-rating results. It is not assumed to be the production choice. It
-receives a full-corpus build only if it contributes material unique worthwhile
-recall.
-
-### 4. Active Human Labeling
-
-Scholar Inbox demonstrates that active labeling near a model's uncertain region
-can improve a small personalized model efficiently. The oracle can use this to
-reduce labeling effort, but evaluation must retain a separately sampled holdout
-so an actively selected pool does not masquerade as unbiased recommendation
-quality.
-
-### 5. Separately Gated Nostr Adaptation
-
-If strong generic encoders omit worthwhile candidates, the next experiment is a
-Nostr-adapted public encoder, not a larger local LLM.
-
-A cost-bounded first attempt may train a small projection or adapter over the
-0.6B representation using only public evidence such as event relationships and
-kind `1` tags. It must:
-
-- Use missing interaction as unknown, not negative.
-- Prevent prolific users, authors, and popular events from dominating pair
-  construction.
-- Mask probable false negatives during contrastive training.
-- Preserve content-based representations for zero-engagement events.
-- Measure low-engagement and unknown-author recall separately.
-- Win on unique worthwhile discovery before the full corpus is embedded.
-
-Training and model selection occur before the only 25-million-event embedding
-pass. A hard bake-off cap and measured end-to-end throughput are required; the
-budget cannot be guaranteed from parameter count alone.
-
-This experiment remains compatible with the public/private information
-boundary, but not with the current meaning-only scope. It must be approved as a
-separate hypothesis.
-
-## Approaches Not Justified for the MVP
-
-- A centralized user tower or uploaded private interest vector.
-- A complete precomputed event-neighbor graph.
-- ANN before exact search establishes the quality reference and measured QPS
-  requires it.
-- Generative semantic identifiers or end-to-end transformer recommendation.
-- Mandatory pairwise reranking before dense candidate recall is known.
-- Treating random or unobserved events as negative preference evidence.
-- Pooling all interests into one vector or one undifferentiated user model.
-- Selecting an encoder from general retrieval leaderboards alone.
-
-## Resulting MVP Direction
-
-The approved cost-constrained design is:
-
-1. Calibrate GTE-Qwen2-7B-Instruct for compatibility and complete-build cost.
-2. If the lifetime budget gate passes, build one versioned candidate/document
-   representation over all `3,530,455` representable notes.
-3. Expose `similar_notes` for positive-source candidate discovery and
-   `vectors_for_notes` for same-version local comparison.
-4. Train and freeze both approved local personalizers using private adaptive
-   judgments.
-5. Evaluate each frozen personalizer on its own `200` untouched
-   recommendations using the direct approved pass/fail rule. Either may pass;
-   the MVP does not select a winner first.
-
-GritLM, a Nostr-adapted encoder, additional candidate sources, compact
-representations, and serving optimizations require later evidence and separate
-approval.

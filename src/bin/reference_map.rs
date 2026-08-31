@@ -8,8 +8,8 @@ use std::process::ExitCode;
 
 use oracle_mvp::reference_map::ApprovedHierarchy;
 use oracle_mvp::reference_review::{
-    load_verified_note_proposal, prepare_note_proposal, run_hierarchy_review, run_note_review,
-    ReviewRunOutcome,
+    ReviewRunOutcome, load_verified_note_proposal, prepare_note_proposal, run_hierarchy_review,
+    run_note_review,
 };
 use oracle_mvp::reference_tui::ReferenceTerminal;
 

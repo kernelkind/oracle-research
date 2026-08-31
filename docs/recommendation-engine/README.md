@@ -1,77 +1,86 @@
-# Private, Decentralized Recommendation Engine
+# Oracle MVP Content Discovery
 
 ## Current Status
 
-Oracle MVP v1 is complete and frozen at the local `oracle-mvp-v1` tag.
+Oracle MVP v1 is frozen at the local `oracle-mvp-v1` Git tag. Its exact
+whole-note Oracle and private-personalizer experiment missed its approved
+quality criterion. Git preserves that implementation and its reports.
 
-The exact v1 Oracle-plus-personalizer system missed its approved quality
-criterion on the historical corpus. This is not a direct failure of the broader
-Oracle architecture. The post-run analysis found exploratory evidence that
-vector proximity retained some relationship to the evaluator's judgments, but
-the tested system did not convert that signal into a sufficiently valuable,
-varied feed.
+The approved direction is now a separate, user-directed content-discovery
+system. It does not try to infer which subject a person wants next. It builds a
+public subject hierarchy, lets the person narrow through explicit choices, and
+then shows notes from the selected fine subject.
 
-No complete replacement architecture has been approved. The current
-prerequisite experiment asks whether public Nostr notes can support one
-corpus-induced weighted note-topic relation. Hierarchy, labels, navigation, and
-another personalizer remain out of scope until that relation is validated.
+The current implemented preparation pipeline is:
+
+```text
+public note
+  -> TP-generated takeaways
+  -> MP-selected source masks
+  -> PP prominence scores
+  -> one SSE vector per mask
+```
+
+Those components are experimental. The downstream representation is intended
+to describe atomic subjects, and the current prompts do not yet establish that
+they do so reliably. The fine-segmentation output contract, selected algorithm,
+hierarchy algorithm, and production-scale extractor remain open.
 
 ## Goal
 
-Build an actually good recommendation engine that provides personalized, high-signal discovery without exposing private user behavior or placing discovery under the control of an indispensable provider.
+Build a public, corpus-derived content-discovery hierarchy that helps a person
+reach content about a subject they explicitly choose, including niche subjects
+and notes from unknown authors.
 
-A recommendation succeeds when that particular person is consciously glad they saw it. Aggregate popularity, engagement, or consumption time cannot substitute for personal value.
+The hierarchy is a discovery tool, not a replacement for the separate local
+recommendation system. The v1-style recommender may still be useful later, but
+it must not control this hierarchy or infer the person's current subject from
+private behavior.
 
 ## Hard Constraints
 
-- Shared computation may analyze only public Nostr data. Private behavior, recommendation feedback, inferred preferences, and final ranking remain on-device.
-- Personalized candidate discovery must reach niche and unfamiliar content rather than merely reorder a generic or popularity-selected pool. Suppressing content already seen by a person is a client responsibility, not an Oracle-quality requirement.
-- No external provider may be the sole gatekeeper of eligible content or a required dependency for recommendation.
-- The eventual personalized discovery and ranking system must be practical on supported mobile and desktop hardware.
+- Shared computation may analyze only public Nostr data.
+- The public hierarchy must not depend on private ratings, inferred
+  preferences, or current intent.
+- Subjects must emerge from the corpus rather than a predefined ontology.
+- One note may contribute to several fine subjects.
+- A hierarchy choice must narrow the content set relative to the complete path
+  above it; an independent label that can be interpreted many ways is not a
+  useful refinement.
+- No indispensable external provider may control which public content can be
+  discovered.
+- Production constraints are deferred until the scientific assumptions work,
+  but the repository-wide `$500` paid-compute ceiling remains binding.
 
-## Quality Bar
+## Work Order
 
-The engine must discover content from unknown authors across a person's distinct and potentially unrelated tastes. It must learn from explicit local judgments of whether a recommendation was worth seeing. Lack of feedback remains neutral.
+The next stages are intentionally dependency-ordered:
 
-## V1 Experimental Mandate
+1. Fix and freeze the temporary TP, MP, and prominence generation boundary.
+2. Evaluate one frozen fine-segmentation candidate on the approved synthetic
+   suite.
+3. If that evidence supports proceeding, test the same candidate on a
+   hand-selected real-note collection from one niche subject area.
+4. Only after useful fine subjects are demonstrated, compare and freeze a
+   hierarchy-construction method.
+5. Construct and label the hierarchy, then build the navigation TUI.
 
-Before choosing a production architecture, the v1 mandate was to run the strongest Oracle experiment that fit the `$500` lifetime paid-compute ceiling for the complete MVP. It used the complete eligible public Nostr corpus after calibration showed that it fit. Production constraints such as mobile runtime and network serving were deferred, but the lifetime ceiling was not.
-
-The public Oracle supplied semantic candidates and reusable public vectors. A private personalizer learned from one person's judgments and produced the final order. Recommendation quality belonged to that combined system and was evaluated by whether the person was consciously glad they saw the resulting notes.
-
-## Interpretation
-
-A successful later experiment would establish that public Nostr data and private local judgments contain enough information for a worthwhile recommendation system under its tested conditions.
-
-The v1 result is strong evidence against its exact tested configuration. It does not prove that every future representation, corpus, personalizer, or Oracle-like architecture must fail.
-
-If a later experiment succeeds, its result should become the quality target. Production constraints should then be introduced one at a time: fit the public representation and private personalization onto supported devices, then distribute and update the public inputs through a decentralized protocol. Recommendation quality must be compared with that result at each stage so the cost of every constraint is known.
+Do not scale the corpus or build a later stage to conceal an unresolved earlier
+stage.
 
 ## Document Map
 
-### Current design work
+### Current sources
 
-- [`design/adjacent-novelty.md`](design/adjacent-novelty.md)
+- [`../notes/MY-NOTES.md`](../notes/MY-NOTES.md)
+- [`design/atomic-vector-subject-hierarchy.md`](design/atomic-vector-subject-hierarchy.md)
 - [`design/semantic-region-navigation.md`](design/semantic-region-navigation.md)
-- [`design/corpus-induced-subject-map-hypothesis.md`](design/corpus-induced-subject-map-hypothesis.md)
-- [`experiments/adjacent-novelty/crec-101-theme-vector-separation.md`](experiments/adjacent-novelty/crec-101-theme-vector-separation.md)
-- [`experiments/adjacent-novelty/crec-102-cumulative-theme-exposure-replay.md`](experiments/adjacent-novelty/crec-102-cumulative-theme-exposure-replay.md)
-- [`experiments/adjacent-novelty/crec-110-semantic-branch-recovery.md`](experiments/adjacent-novelty/crec-110-semantic-branch-recovery.md)
+- [`../notes/SSE-EXPERIMENTS.md`](../notes/SSE-EXPERIMENTS.md)
+- [`research/fine-segmentation-vector-space-requirements.md`](research/fine-segmentation-vector-space-requirements.md)
+- [`experiments/fine-segmentation/README.md`](experiments/fine-segmentation/README.md)
+- [`research/hierarchical-grouping-of-fine-semantic-segments.md`](research/hierarchical-grouping-of-fine-semantic-segments.md)
 
-### Operational guidance
-
-- [`disk-io-pressure-control.md`](disk-io-pressure-control.md)
-
-### Frozen Oracle MVP v1
-
-- [`experiments/oracle-mvp-v1/design/oracle-mvp.md`](experiments/oracle-mvp-v1/design/oracle-mvp.md)
-- [`experiments/oracle-mvp-v1/design/local-personalizer.md`](experiments/oracle-mvp-v1/design/local-personalizer.md)
-- [`experiments/oracle-mvp-v1/design/oracle-embedding-model-research.md`](experiments/oracle-mvp-v1/design/oracle-embedding-model-research.md)
-- [`experiments/oracle-mvp-v1/results/recommendation-mvp-autopsy.md`](experiments/oracle-mvp-v1/results/recommendation-mvp-autopsy.md)
-- [`experiments/oracle-mvp-v1/results/recommendation-mvp-rating-analysis.md`](experiments/oracle-mvp-v1/results/recommendation-mvp-rating-analysis.md)
-- [`experiments/oracle-mvp-v1/artifact-locations.md`](experiments/oracle-mvp-v1/artifact-locations.md)
-
-### Research
+### Supporting research
 
 - [`research/direct-note-to-mask-extractor.md`](research/direct-note-to-mask-extractor.md)
 - [`research/semantic-region-discovery-and-labeling.md`](research/semantic-region-discovery-and-labeling.md)
@@ -80,3 +89,7 @@ If a later experiment succeeds, its result should become the quality target. Pro
 - [`research/existing-nostr-recommendation-systems.md`](research/existing-nostr-recommendation-systems.md)
 - [`research/nostr-semantic-recommendation-prior-art.md`](research/nostr-semantic-recommendation-prior-art.md)
 - [`research/nostr-relay-storage-research.md`](research/nostr-relay-storage-research.md)
+
+### Operational guidance
+
+- [`disk-io-pressure-control.md`](disk-io-pressure-control.md)

@@ -1,4 +1,4 @@
-TO AGENTS: YOU MUST NOT EDIT OR DELETE. These are my personal notes, which is read only to AI's.
+TO AGENTS: YOU MUST NOT DELETE. These are my personal notes. AI's which want to edit must get explicit permission from the user. Otherwise the document is read-only.
 
 # Thesis
 My current thesis is that a content hierarchy will be the best content discovery mechanism for users.
@@ -31,136 +31,43 @@ There are some things that must be true for SSE to work favorably for us:
 1. Different wording for the same atomic subject should produce nearby vectors. (Semantic understanding)
 2. Materially different subjects must remain distinguishable despite sharing works or surrounding text. (Context isolation)
 
+Experimental results: [SSE-EXPERIMENTS.md](./SSE-EXPERIMENTS.md)
 
-## SSE Experiments
-We generated synthetic tests.
+# Fine Segmentation Algorithm
 
-### 1) Single 'fragment' factorial experiment
-Generate a synthetic note with an atomic subject as a control. Then do the following permutations and compare:
-1.1) Use the same mask, but compare it to a version with different surrounding context. (tests whether context can be isolated well)
-1.2) Paraphrase the mask, but use the same context as the control (tests for semantic understanding, for the positive case)
-1.3) Use a completely different mask, but use the same context (tests for semantic understanding, for the negative case)
+The vectors represent atomic subjects in notes. Therefore, vectors which are geometrically close by should mean that each vector's atomic subject is similar. We must take advantage of this, by figuring out an algorithm which can, in general, group nearby vectors into a group, which all-together represent a 'fine subject'.
 
-#### Experimental Results
+## Assumptions
+
+Fine segmentation must make assumptions to be able to form a hierarchy in the way we desire. These assumptions are as follows:
+1. Repeated instances of the same fine subject form recoverable groups.
+2. Nearby but meaningfully distinct fine subjects are resolved
+    - Vectors from masks which have SIMILAR atomic subjects should be grouped together if they are 'similar enough'
+    - Conversely, vectors from masks which have atomic subjects which are 'distinct enough' should not be grouped together
+    - 'enough' is vague, but establishing what kind of resolution the FSA has will contribute to how well the overall architecture performs downstream in the hierarchy
+3. Lexical coincidences do not substitute for semantic relationships.
+    - This is a hierarchy for SEMANTIC structure, not lexical. Therefore, we must not just be doing lexical pattern matching
+4. Holding the resolved atomic subject fixed, unmasked material does not materially change membership.
+    - We are assuming that the mask is the atomic subject, and we are grouping based on that, not the surrounding context.
+5. Region recovery survives unequal density and sparsity.
+6. Results remain stable under irrelevant changes.
+    - This includes input order, duplicates, unrelated added subjects, and mixing all semantic areas into one collection.
+
+## Evaluation
+
+We need to be able to evaluate the algorithm without confounding variables.
 
 
-### 2) Multi fragrment mask experiment
-Control: A synthetic note with the subject in one fragment
-Test: The same synthetic note with the subject in multiple fragments
-
-
-### 3) Real note transfer experiment
-Repeat experiments 1 & 2 with real Nostr notes and hand picked masks 
-
-
-#### Experimental Results
-**Telemetry comparison: (R07 vs R08, cosine of 0.5114)**
-**Hypothesis:** These masks are both semantically about telemetry/data tracking. The first is a statement about operating systems in general having telemetry, the second is about a specific app that has concrete telemetry mechanisms. We predict that these vectors will have a high cosine.
-
-**R07**
-> they want to control everything..
->
-> ..if you think your #Nostr nsec key is safe on a proprietary OS (#Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger
-> picture.. ..⟦all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices⟧.. ..i'm still
-> on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS.. ..i've already switched to #Linux computer-
-> wise.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty
-
-**R08**
-> Ledger Live Tracks and Sends ALL User Information to Outsourced Data Harvesting Service
->
-> “The tracking code is too structural to be just counting users and downloads, like regular apps do. {Ledger Live is doing analytics on
-> everything from screen views, to button clicks, error events, installs, uninstalls, etc. It's basically tracking everything.} Anything you
-> do on that app gets tracked.”
->
-> https://www.nobsbitcoin.com/ledger-live-tracks-and-sends-out-all-user-information-by-default/
-
-**Result:** validated. Although 0.51 is not extrordinarily high
 
 ---
 
-**Control comparison (R09 vs R07, cosine 0.3961)**
-hmm a bad comparison it seems
+1. Choose the desired 'fine subjects'
+2. Generate synthetic notes for each fine subject
+    1. Each mask must truly be how we envision atomic subjects to be, requires human understanding
+    2. We must test for varying density levels
+    3. We must test for fidelity between very similar, yet distinct fine subjects
 
-**R07**
-> they want to control everything..
->
-> ..if you think your #Nostr nsec key is safe on a proprietary OS (#Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger
-> picture.. ..⟦all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices⟧.. ..i'm still
-> on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS.. ..i've already switched to #Linux computer-
-> wise.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty
-
-**R09**
-> ⟦A lot of websites use dark patterns in relation to cookies management, with the majority of them trying to trick you into accepting all of
-> them.⟧ It tells you everything you need to know about their sincerity when they say “we care about your privacy”
->
-> #privacy #cookies #darkpatterns
-
----
-
-**Solar-mining comparison (R10 vs R11, cosine 0.6558):**
-**Description:** These masks are both very narrowly similar, they are about using solar panels with a bitcoin miner. The contexts are different though. The first note's context is a casual thought about wanting to optimize their solar-mining system for maximum duration of operation. The second note's context is about the logistics of solar mining.
-**Hypothesis:** The cosine will be high for the vectors since the masks are extremely semantically similar despite having different contexts.
-**Result:** validated
-
-**R10**
-> This week I just let the miner running to keep temperatures for a minimum and save the #statistics.
->
-> I want to find the best way how to run the miner. So far it only starts when it is below a specific temperature (with a day/night mode)
->
-> Meanwhile I do a bit of programming to ⟦start up the miner when I have #solar #energy left⟧. And to have statistics how much solar energy
-> is used for the miner.
->
-> Anyhow in the winter days almost everything is required to heat the house so it won’t be much anyhow.
->
-> #orangery #greenhouse #grownostr #miner #bitcoin #nostr #btc
-
-**R11**
-> #proofofwork
->
-> Got 14 460w ⟦solar panels⟧ series and ready to connect. Have to grab some wire out of my trailer on one of the jobs. This weekend project.
-> might be able to charge a car or ⟦run a Bitcoin miner off this successfully⟧. I still have six extra panels back there and four that are
-> working up top on the roof.
->
-> https://m.primal.net/Mkft.jpg
-
----
-
-
-**R10**
-> This week I just let the miner running to keep temperatures for a minimum and save the #statistics.
->
-> I want to find the best way how to run the miner. So far it only starts when it is below a specific temperature (with a day/night mode)
->
-> Meanwhile I do a bit of programming to ⟦start up the miner when I have #solar #energy left⟧. And to have statistics how much solar energy
-> is used for the miner.
->
-> Anyhow in the winter days almost everything is required to heat the house so it won’t be much anyhow.
->
-> #orangery #greenhouse #grownostr #miner #bitcoin #nostr #btc
-
-R12
-> ⟦Solar power will be the vast majority of power generation in the future⟧
-
-R10↔R12 cosine: 0.7777
-
-**Ablation study:**
-
-R10
-> start up the miner when I have #solar #energy left
-
-R11
-> solar panels
-> run a Bitcoin miner off this successfully
-
-R12
-> Solar power will be the vast majority of power generation in the future
-
- Edge                    Full notes    Masks only     Change
-━━━━━━━━━━━━━━━━━━━━━━  ━━━━━━━━━━━━  ━━━━━━━━━━━━  ━━━━━━━━━
- R10↔R11 solar mining        0.6558        0.6981    +0.0423
-──────────────────────  ────────────  ────────────  ─────────
- R10↔R12 solar only          0.7777        0.6977    −0.0800
-──────────────────────  ────────────  ────────────  ─────────
- R11↔R12 solar only          0.4659        0.5965    +0.1306
-
-
+1. Generate synthetic 'notes'
+2. Generate masks and group them into what we envison as fine subject groups
+    1. we need to make sure the 'density' is not uniform
+3. Run the FSA on the synthetic 

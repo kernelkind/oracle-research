@@ -3,7 +3,7 @@
 Status: **draft; do not encode or run yet**.
 
 This suite evaluates one frozen fine-segmentation candidate across the six
-concerns that originated in [`../../../notes/MY-NOTES.md`](../../../notes/MY-NOTES.md). The
+requirements that originated in [`../../../notes/MY-NOTES.md`](../../../notes/MY-NOTES.md). The
 protocols here are their operational definitions. In particular, Experiment 2
 characterizes density and sparsity; it does not impose a categorical
 rare-subject absorption rule. Each experiment uses purpose-built synthetic
@@ -23,8 +23,7 @@ Every check has one owner:
 | [`02-nearby-subject-resolution.md`](02-nearby-subject-resolution.md) | Characterization of nearby-subject resolution under balanced, unequal, and sparse support, plus semantic-review capacity. |
 | Final human review | Whether the complete frozen evidence is sufficient to use this candidate in the next proof of concept. |
 
-[`05-density-and-sparsity.md`](05-density-and-sparsity.md) is retired because Experiment 2
-owns density and sparsity. Experiment 2 does not also own unrelated-area
+Experiment 2 owns density and sparsity. It does not also own unrelated-area
 addition; Experiment 6 owns that concern.
 
 ## Dependency graph

@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "purpose": "CREC-113 discarded 4096-learning/1024-evaluation real-note encoder scalability and convergence preflight; no topic-quality conclusions",
+  "sample_manifest_path": "/dev/shm/oracle-mvp-crec113-granite-r2-v1/scale-preflight-v3/sample/manifest.json",
+  "model_path": "/dev/shm/oracle-mvp-crec113-granite-r2-v1/model",
+  "dependencies_path": "/dev/shm/oracle-mvp-crec113-granite-r2-v1/dependencies",
+  "encoder": {
+    "model_id": "ibm-granite/granite-embedding-english-r2",
+    "model_revision": "47ea694b257b703fee9253d75c2b1f2985180498",
+    "dimensions": 768,
+    "pooling": "cls-token-no-normalization-v1",
+    "maximum_tokens": 8192,
+    "numeric_type": "float32"
+  },
+  "runtime": {
+    "canonical_tree_hash_rule": "sorted-relative-path-type-size-content-sha256-v1",
+    "model_tree_sha256": "49b7cf2f77b0966fbf53a9cc952c8f9cc173ba7c862c4b98553bb9da0c418c6a",
+    "dependencies_tree_sha256": "c88c6fc57d4dd2f340f8060f761a6dd3851aaa9085117074cd40bf098ca0b28e",
+    "encoder_implementation_sha256": "1a8b8137ce307f9f1ff540b6e8b1a6c1cbdb810d2fc7efe201c8fa339ae79289",
+    "container_image": "pytorch/pytorch@sha256:72f863fa1fe13d5d87a72d00db2c85fb2d43409ee08dd26bc469de4c8a28b427"
+  },
+  "batch_size": 16,
+  "io_budget": {
+    "maximum_sample_artifact_bytes": 4194304,
+    "maximum_output_bytes": 16777216
+  },
+  "output_path": "/dev/shm/oracle-mvp-crec113-granite-r2-v1/scale-preflight-v3/embeddings"
+}

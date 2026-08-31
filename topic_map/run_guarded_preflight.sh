@@ -10,6 +10,23 @@ script_directory=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 repository=$(git -C "$script_directory" rev-parse --show-toplevel)
 config=$(realpath -e -- "$1")
 image='pytorch/pytorch@sha256:72f863fa1fe13d5d87a72d00db2c85fb2d43409ee08dd26bc469de4c8a28b427'
+declared_image=$(python3 - "$config" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as source:
+    runtime = json.load(source).get("runtime")
+if runtime is not None:
+    image = runtime.get("container_image")
+    if not isinstance(image, str) or not image:
+        raise SystemExit("runtime container image must be a nonempty string")
+    print(image)
+PY
+)
+if [[ -n "$declared_image" && "$declared_image" != "$image" ]]; then
+    echo "frozen runtime container image does not match the guarded image" >&2
+    exit 1
+fi
 
 mapfile -d '' -t config_paths < <(
     python3 - "$config" <<'PY'
@@ -27,16 +44,31 @@ for value in (
     if not isinstance(value, str) or not value:
         raise SystemExit("guard config paths must be nonempty strings")
     sys.stdout.buffer.write(os.path.abspath(value).encode() + b"\0")
+binding = config["input"].get("embedding_manifest")
+if binding is None:
+    sys.stdout.buffer.write(b"\0")
+else:
+    if not isinstance(binding, dict):
+        raise SystemExit("input embedding manifest binding must be an object")
+    value = binding.get("path")
+    if not isinstance(value, str) or not value:
+        raise SystemExit("embedding manifest path must be a nonempty string")
+    sys.stdout.buffer.write(os.path.abspath(value).encode() + b"\0")
 PY
 )
 matrix=${config_paths[0]}
 note_ids=${config_paths[1]}
 output=${config_paths[2]}
+embedding_manifest=${config_paths[3]}
 output_parent=$(dirname -- "$output")
 output_name=$(basename -- "$output")
 
 if [[ ! -f "$matrix" || ! -f "$note_ids" ]]; then
     echo "guard input files must already exist" >&2
+    exit 1
+fi
+if [[ -n "$embedding_manifest" && ! -f "$embedding_manifest" ]]; then
+    echo "guard embedding manifest must already exist" >&2
     exit 1
 fi
 if [[ ! -d "$output_parent" ]]; then
@@ -51,6 +83,32 @@ if [[ "$(findmnt -n -o FSTYPE -T "$output_parent")" != "tmpfs" ]]; then
     echo "guard output parent must be tmpfs: $output_parent" >&2
     exit 1
 fi
+output_parent=$(realpath -e -- "$output_parent")
+output_parent_identity=$(stat -Lc '%d:%i' -- "$output_parent")
+guarded_input_paths=("$matrix" "$note_ids")
+if [[ -n "$embedding_manifest" ]]; then
+    guarded_input_paths+=("$embedding_manifest")
+fi
+for guarded_input in "${guarded_input_paths[@]}"; do
+    guarded_input=$(realpath -e -- "$guarded_input")
+    case "$guarded_input" in
+        "$output_parent"|"$output_parent"/*)
+            echo "output parent must not contain or alias a guarded input" >&2
+            exit 1
+            ;;
+    esac
+    ancestor=$(dirname -- "$guarded_input")
+    while :; do
+        if [[ "$(stat -Lc '%d:%i' -- "$ancestor")" == "$output_parent_identity" ]]; then
+            echo "output parent must not contain or alias a guarded input" >&2
+            exit 1
+        fi
+        if [[ "$ancestor" == "/" ]]; then
+            break
+        fi
+        ancestor=$(dirname -- "$ancestor")
+    done
+done
 
 container_config="$output_parent/.guard-config.json"
 python3 - "$config" "$container_config" "$output_name" <<'PY'
@@ -63,6 +121,8 @@ with open(source, encoding="utf-8") as handle:
     config = json.load(handle)
 config["input"]["matrix_path"] = "/input/vectors.f32le"
 config["input"]["note_ids_path"] = "/input/note-ids.bin"
+if config["input"].get("embedding_manifest") is not None:
+    config["input"]["embedding_manifest"]["path"] = "/input/manifest.json"
 config["output_path"] = f"/output/{output_name}"
 temporary = destination + ".tmp"
 with open(temporary, "x", encoding="utf-8") as handle:
@@ -72,7 +132,11 @@ os.replace(temporary, destination)
 PY
 
 devices=()
-for guarded_path in / "$repository" "$matrix" "$note_ids"; do
+guarded_paths=(/ "$repository" "$matrix" "$note_ids")
+if [[ -n "$embedding_manifest" ]]; then
+    guarded_paths+=("$embedding_manifest")
+fi
+for guarded_path in "${guarded_paths[@]}"; do
     filesystem=$(findmnt -n -o FSTYPE -T "$guarded_path")
     if [[ "$filesystem" == "tmpfs" ]]; then
         continue
@@ -116,6 +180,12 @@ for device in "${devices[@]}"; do
         --device-write-iops "$device:64"
     )
 done
+embedding_manifest_mount=()
+if [[ -n "$embedding_manifest" ]]; then
+    embedding_manifest_mount+=(
+        --mount "type=bind,src=$embedding_manifest,dst=/input/manifest.json,readonly"
+    )
+fi
 container_name="crec113-guard-$$-$RANDOM"
 container=
 cleanup() {
@@ -145,6 +215,7 @@ container=$(docker create \
     --mount "type=bind,src=$repository,dst=/workspace,readonly" \
     --mount "type=bind,src=$matrix,dst=/input/vectors.f32le,readonly" \
     --mount "type=bind,src=$note_ids,dst=/input/note-ids.bin,readonly" \
+    "${embedding_manifest_mount[@]}" \
     --mount "type=bind,src=$output_parent,dst=/output" \
     --entrypoint sleep \
     "$image" infinity)
@@ -170,12 +241,14 @@ for device in "${devices[@]}"; do
     done
 done
 
-report=$(timeout --signal=TERM --kill-after=15s 600 docker exec \
+report=$(timeout --signal=TERM --kill-after=15s 1800 docker exec \
     --env PYTHONDONTWRITEBYTECODE=1 \
     --env PYTHONPATH=/workspace \
     --env HOME=/tmp \
     --env TMPDIR=/tmp \
     --env CUBLAS_WORKSPACE_CONFIG=:4096:8 \
+    --env OMP_NUM_THREADS=4 \
+    --env MKL_NUM_THREADS=4 \
     "$container" \
     python /workspace/topic_map/worker.py /output/.guard-config.json)
 report_temporary="$output_parent/.guard-report.json.tmp"

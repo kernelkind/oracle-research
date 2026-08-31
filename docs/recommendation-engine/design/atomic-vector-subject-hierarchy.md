@@ -1,116 +1,111 @@
-# Atomic-Vector Subject Hierarchy
+# Atomic-Subject Content Hierarchy
 
 ## Status
 
-This is the current architecture hypothesis for the next content-discovery
-direction. It is not yet validated.
+This is the approved architectural direction for the content-discovery
+experiment. It is not a validated system.
 
-The immediate work is to verify its assumptions in order. Technology choices,
-scale, hierarchy shape, and evaluation details remain open until the
-corresponding assumption is understood.
-
-This direction supersedes the earlier whole-note topic-map and hierarchy
-proposals as the planned path forward. Their artifacts remain historical
-evidence; this document does not reinterpret their results.
+The current implementation has several provisional components. The exact
+prompt boundary, fine-segmentation output contract, fine-segmentation
+algorithm, hierarchy algorithm, and labels must still be tested and frozen in
+dependency order.
 
 ## Goal
 
-Build a public, corpus-derived subject hierarchy that lets a person repeatedly
-narrow what they want to explore and then inspect notes from the selected
-fine subject.
+Build a public, corpus-derived hierarchy that lets a person repeatedly narrow
+the subject they want to explore and then inspect notes associated with the
+selected fine subject.
 
-The hierarchy must emerge from the public note corpus. It must not begin with a
-predefined ontology or infer what the person currently wants.
+The hierarchy does not infer current intent from ratings or behavior. The
+person supplies current intent by choosing among the hierarchy's visible
+refinements.
 
 ## Separation of Concerns
 
-The architecture has four separate transformations:
+The system has distinct transformations:
+
+```text
+public note
+  -> subject-bearing source masks
+  -> one SSE vector per mask
+  -> fine-subject memberships
+  -> broad-to-narrow subject hierarchy
+  -> note results for an explicitly selected subject
+```
+
+Each stage must be evaluated on its own output. A later label or hierarchy must
+not conceal a failure in extraction, SSE geometry, or fine segmentation.
+
+## 1. Produce Grounded Subject Vectors
+
+One note may express several subjects. It therefore may produce several source
+masks and several SSE vectors instead of one whole-note vector.
+
+Every vector instance must retain:
+
+- a stable vector ID;
+- its source `NoteId`;
+- the exact selected source fragments;
+- its SSE vector; and
+- its prominence to the complete note.
+
+The intended downstream unit is an atomic subject. Complete uniqueness is not
+required: related masks may produce related or partially redundant vectors.
+The requirement is that materially different subjects remain distinguishable
+enough for the later segmentation stage.
+
+### Current implementation
+
+The current corpus-preparation path is:
 
 ```text
 note
-  -> atomic semantic vectors
-  -> hard fine-subject regions
-  -> recursively grouped subject hierarchy
-  -> notes presented by the UI
+  -> TPv3.82 takeaways
+  -> MPv3.4 exact source masks
+  -> PPv2 prominence
+  -> SSE vectors
 ```
 
-Failure at one transformation must remain visible. A later transformation must
-not manufacture structure to conceal an earlier failure.
+The generated takeaway is an intermediate instruction for mask selection; SSE
+receives the complete note and selected token positions, not the takeaway
+text. The selected contextual token representations are averaged and passed
+through SSE's learned output transformation.
 
-## 1. Represent Each Note with Multiple Atomic Vectors
+This pipeline exists, but prompt repair remains current work. It has not yet
+shown that its masks reliably correspond to the atomic subjects required by
+the downstream hierarchy. A future trained extractor may replace the TP and MP
+calls if the transformation is first demonstrated and enough supervision can
+be created.
 
-One note may discuss several independent ideas. The representation therefore
-produces several semantic vectors rather than pooling the complete note into
-one vector.
+## 2. Recover Fine Subjects
 
-Each vector instance retains:
+The fine-segmentation algorithm receives the frozen SSE vectors and returns
+groups intended to represent recurring fine subjects.
 
-- the source `NoteId`;
-- the exact source-token region that supports it;
-- its semantic vector;
-- an importance-to-note value only if the representation naturally and
-  reliably provides one.
+The vector-space requirements are recorded in
+[`../research/fine-segmentation-vector-space-requirements.md`](../research/fine-segmentation-vector-space-requirements.md).
+They deliberately do not require the result to be:
 
-The intended meaning of one vector is one sufficiently atomic idea expressed
-by the note.
+- exhaustive;
+- hard rather than weighted;
+- non-overlapping; or
+- one membership per vector.
 
-For example:
+Those are unresolved output-contract choices. A candidate method must expose
+its actual memberships and unassigned vectors rather than silently changing
+them to fit a preferred architecture.
 
-```text
-I love writing Rust code while sipping a martini on the beach.
-```
+The fine-segmentation stage establishes membership only. It does not generate
+English labels or higher hierarchy nodes.
 
-could produce separate vectors grounded in:
+## 3. Label Fine Subjects from Grounded Evidence
 
-```text
-writing Rust code
-sipping a martini
-on the beach
-```
+Every member vector retains exact source fragments. A fine subject can
+therefore be described from the source evidence that formed it instead of
+attempting to decode an opaque vector directly.
 
-The current 32-case counterfactual pilot found no valid observed blending
-failure and supports continuing to the next assumption. This is small-pilot
-evidence, not a claim that the decomposition is universally correct. The
-preserved interpretation is in
-[`../../../sse_multivector/context-counterfactual-result-v1/scientific-interpretation.md`](../../../sse_multivector/context-counterfactual-result-v1/scientific-interpretation.md).
-
-Research on replacing per-note frontier-model extraction with a trained local
-`note -> grouped masks` model is preserved in
-[`../research/direct-note-to-mask-extractor.md`](../research/direct-note-to-mask-extractor.md).
-
-## 2. Hard-Partition Atomic Vectors into Fine Subjects
-
-All atomic vector instances from the corpus are partitioned into fine semantic
-regions:
-
-```text
-AtomicVectorId -> FineSubjectId
-```
-
-This is a hard partition:
-
-- every atomic vector belongs to exactly one fine-subject region;
-- fine-subject regions do not overlap;
-- notes are not being partitioned.
-
-A note can still belong to several fine subjects because it can contribute
-several atomic vectors:
-
-```text
-NoteId -> {FineSubjectId}
-```
-
-The representation supplies the separate ideas. The partition aligns
-equivalent ideas expressed across different notes.
-
-## 3. Give Every Fine Region a Grounded English Label
-
-Every vector retains the exact token region that produced it. A fine region can
-therefore be described using the English evidence attached to its member
-vectors rather than by attempting to decode an opaque vector directly.
-
-For one fine region, a scoped language-model operation receives grounded source
-evidence from that region. The complete frozen input format is:
+The current fine-subject title prompt receives one numbered instance per
+vector:
 
 ```text
 Instances:
@@ -121,176 +116,104 @@ Instances:
 What is the most precise and concise title for the semantic similarity among these instances?
 ```
 
-Each vector is one numbered instance. Every exact source fragment is enclosed
-in curly double quotes. Multiple fragments from one vector remain in source
-order and are joined with `; `. Instances are joined with one newline. The
-blank lines shown above are part of the prompt.
-
-The exact text is also preserved in
+Multiple fragments belonging to one vector remain one instance. The prompt is
+stored in
 [`../../../sse_multivector/fine-region-title-prompt-versions.json`](../../../sse_multivector/fine-region-title-prompt-versions.json).
 
-For example, a region grounded in spans such as:
+A title describes an already formed fine subject. It must not change
+membership or broaden an incoherent group until it sounds plausible. Prompt
+quality remains open work after fine segmentation is validated.
 
-```text
-writing Rust code
-fixing borrow-checker errors
-Cargo workspace configuration
-rust-analyzer completion
-```
+## 4. Build the Hierarchy from Fine Subjects
 
-might receive the label:
+Fine-subject nodes are the inputs to a separate hierarchy-construction stage.
+That stage recursively groups narrower subjects into broader subjects.
 
-```text
-Rust development and tooling
-```
+Every visible child must be a meaningful refinement of its parent and of the
+complete path above it. Independent labels that happen to be nearby are not a
+hierarchy.
 
-The title does not define, validate, reject, or change the region. It only maps
-a region already established from corpus vectors into human language.
-
-The conceptual evidence is the set of source spans attached to the region's
-member vectors. How large regions are batched or sampled without producing a
-misleading label is unresolved.
-
-## 4. Build the Hierarchy Bottom-Up
-
-The fine-subject regions become the leaves of the hierarchy.
-
-The corrected literature review for grouping frozen fine segments is recorded
-in
+The current literature review is
 [`../research/hierarchical-grouping-of-fine-semantic-segments.md`](../research/hierarchical-grouping-of-fine-semantic-segments.md).
-It treats every higher subject as an exact union of complete fine segments and
-does not assume that a parent is one filled geometric region.
+It identifies candidates and risks; it does not freeze an algorithm. The
+number of roots, depth, branching, parent-membership policy, and condensation
+for navigation remain open.
 
-A separate partitioning process groups related leaf subjects. For each proposed
-group, a scoped language-model operation receives the children's grounded
-English representations and must either:
+Hierarchy labels must be generated from the grounded evidence beneath each
+node. They describe membership; they do not define it.
 
-- name the narrowest recognizable subject for which every child is a valid
-  refinement; or
-- reject the group as incoherent.
+## 5. Resolve a Selected Fine Subject to Notes
 
-For example:
+When navigation reaches a selected fine subject:
 
-```text
-Rust development
-Python development
-C++ development
-```
+1. collect the vector memberships for that subject;
+2. resolve each vector to its source `NoteId`;
+3. deduplicate repeated `NoteId` values inside that result; and
+4. order the notes using the vector-to-note prominence values.
 
-could become children of:
+One note may appear in several fine subjects because it may contribute several
+subject vectors. That is expected.
 
-```text
-Programming languages
-```
+Prominence affects note ordering inside a subject result. It does not create
+fine-subject membership or hierarchy edges.
 
-The accepted parent retains its child regions and their underlying evidence.
-Its generated label never replaces that evidence.
+## Load-Bearing Questions
 
-The same operation repeats over the newly created parent regions until the
-complete broad-to-narrow hierarchy exists.
+### Subject extraction and SSE
 
-Under the current hypothesis, every subject node belongs to exactly one parent
-group at the next level. The result is therefore a tree. No DAG or overlapping
-parent structure is currently required.
+- Do the selected masks represent the atomic subjects needed by the system?
+- Do differently worded instances of the same subject remain nearby?
+- Do materially different subjects remain distinguishable despite shared words
+  and unselected context?
 
-The number of roots, maximum children per node, and stopping rules are not yet
-decided.
+### Fine segmentation
 
-## 5. Resolve Leaf Vectors Back to Notes
+- Can one frozen candidate recover repeated subjects?
+- Can it resolve nearby but meaningfully distinct subjects?
+- Does it follow semantic relationships rather than lexical coincidence?
+- Does unselected context avoid determining membership?
+- How does it behave under unequal support, duplicates, unrelated additions,
+  and input reordering?
 
-The hierarchy organizes atomic vectors, not notes.
+### Hierarchy and navigation
 
-When the UI reaches a leaf:
+- Can useful broad subjects be built from demonstrated fine subjects?
+- Does every visible choice narrow the complete path predictably?
+- Do labels accurately predict the notes that selection reveals?
+- Can the UI expose a small, usable set of choices without changing the
+  scientific hierarchy?
 
-1. read the vector instances assigned to that leaf;
-2. resolve their source `NoteId` values;
-3. deduplicate repeated `NoteId` values within that leaf;
-4. present the resulting notes.
+## Current Evidence
 
-The membership rule is binary:
+The controlled SSE evidence is indexed in
+[`../../notes/SSE-EXPERIMENTS.md`](../../notes/SSE-EXPERIMENTS.md). It supports some
+single- and multi-fragment subject relationships, but it also records failures,
+including relationship reversal and mixed real-note transfer. It does not
+validate corpus-wide fine segmentation.
 
-```text
-if at least one vector from a note belongs to the leaf,
-the note belongs to that leaf
-```
-
-Because one note can produce several vectors, the same note may legitimately
-appear in several different leaves.
-
-An importance-to-note value could later improve ordering within a leaf. It is
-not required to establish membership or validate the architecture.
-
-## Load-Bearing Assumptions
-
-### A. Atomic decomposition
-
-The multi-vector representation must:
-
-- preserve the material ideas expressed by a note;
-- separate those ideas into sufficiently atomic vectors;
-- avoid routinely blending unrelated ideas into one vector;
-- retain reliable source-token grounding.
-
-### B. Fine-region recovery
-
-The corpus geometry must permit a useful hard partition in which:
-
-- equivalent atomic ideas expressed with different wording share a region;
-- unrelated ideas remain separate;
-- rare ideas are not silently discarded or forced into an incorrect region.
-
-The first 194-vector pilot found several coherent recurring regions but also
-persistent false merges and obvious splits. It did not validate one global
-hard partition. DP-vMF also failed as the authoritative scalable method due to
-broad, order-sensitive merging. The result is preserved in
-[`../experiments/sse-fine-region-partition-pilot.md`](../experiments/sse-fine-region-partition-pilot.md).
-
-### C. Fine-region labeling
-
-Grounded source evidence must be sufficient to produce a concise label that
-accurately predicts the region's members. Region membership remains the
-partitioner's responsibility; the labeler must not conceal a partitioning
-failure by changing membership or inventing a broader region.
-
-### D. Hierarchy construction
-
-Repeated partitioning must produce groups with precise common parents. Every
-selection must meaningfully narrow the content beneath its parent instead of
-creating vague concatenations of neighboring subjects.
-
-### E. Leaf presentation
-
-Resolving any matching vector back to its note must produce a useful set of
-notes for the selected fine subject. Importance weighting and final ordering
-can be evaluated separately.
+Earlier complete-linkage and SCC pilots demonstrated mechanics and exposed bad
+groupings. They did not validate a global hard partition and are not the
+current fine-segmentation specification.
 
 ## Verification Order
 
-Verify the assumptions in dependency order:
+1. Fix and freeze the temporary TP, MP, and prominence boundary.
+2. Freeze one fine-segmentation candidate and run the
+   [`../experiments/fine-segmentation/README.md`](../experiments/fine-segmentation/README.md).
+3. If the synthetic evidence supports proceeding, test the same candidate on
+   hand-selected real notes from one niche subject area.
+4. Only after useful fine subjects are demonstrated, compare and freeze a
+   hierarchy method.
+5. Construct labels and the hierarchy, then evaluate the navigation TUI.
 
-1. `note -> atomic semantic vectors`;
-2. `atomic vectors -> coherent hard fine-subject regions`;
-3. `fine region -> faithful grounded label`;
-4. `fine subjects -> useful recursive hierarchy`;
-5. `leaf vectors -> useful note set`.
+## Open Decisions
 
-Step 1 has small-pilot support. Step 2 remains unresolved. The next test must
-determine whether sparse subject coverage caused the observed false merges and
-splits before any label or hierarchy work begins.
-
-Do not build a later stage merely to make an unverified earlier stage appear
-successful.
-
-## Not Currently Required
-
-- personalization or recommendation;
-- private user behavior;
-- a predefined subject ontology;
-- one whole-note embedding as the subject map;
-- overlapping fine-subject regions;
-- a DAG;
-- importance-to-note weights;
-- a fixed topic count;
-- a fixed hierarchy depth;
-- a fixed branching factor;
-- final note-ranking policy.
+- the final direct subject-mask extractor;
+- the fine-segmentation membership contract;
+- the selected fine-segmentation algorithm and configuration;
+- the hierarchy algorithm and configuration;
+- tree versus overlapping parent paths;
+- hierarchy condensation and visible branching;
+- fine and higher subject-label generation;
+- corpus scale and update policy; and
+- final navigation evaluation.

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "purpose": "CREC-113 discarded 64-learning/16-evaluation real-note end-to-end topic-map wiring and resource preflight; no topic-quality conclusions",
+  "input": {
+    "matrix_path": "/dev/shm/oracle-mvp-crec113-granite-r2-v1/preflight/embeddings/vectors.f32le",
+    "note_ids_path": "/dev/shm/oracle-mvp-crec113-granite-r2-v1/preflight/embeddings/note-ids.bin",
+    "dimensions": 768,
+    "start_row": 0,
+    "learning_rows": 64,
+    "evaluation_rows": 16
+  },
+  "model": {
+    "dictionary_size": 3072,
+    "average_k": 32,
+    "batch_size": 64,
+    "steps": 20,
+    "learning_rate": 0.001,
+    "seed": 112233,
+    "warmup_steps": 2,
+    "dead_tokens": 10000000,
+    "auxiliary_k": 384,
+    "auxiliary_penalty": 0.03125,
+    "gradient_clip": 1.0,
+    "maximum_relation_entries": 20480,
+    "device": "cpu"
+  },
+  "io_budget": {
+    "max_source_read_bytes": 248320,
+    "max_durable_write_bytes": 16777216
+  },
+  "output_path": "/dev/shm/oracle-mvp-crec113-granite-r2-v1/preflight/relation"
+}

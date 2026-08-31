@@ -1,97 +1,108 @@
-# User-Directed Semantic Region Navigation
+# User-Directed Subject Navigation
 
 ## Status
 
-This is a working hypothesis, not an approved architecture. No mapping
-technology, implementation, or experiment has been chosen.
+This document defines the intended user-facing behavior of the content
+hierarchy. The backend that constructs the hierarchy remains experimental.
 
-## Realization
+## Purpose
 
-A note rating and a request for more content from the same subject are
-different statements:
+The system should not guess which subject the person wants right now.
 
-- Rating records how glad the person was that this note was presented at that
-  time.
-- Selecting a semantic region says what the person wants to explore now.
-- Being shown a note records exposure; it does not establish preference.
+A person may not be able to name the desired subject from an empty prompt, but
+can choose among several concrete alternatives. Repeating that choice at
+successively narrower levels lets the person state current intent without the
+system attempting to infer it from private behavior.
 
-Oracle MVP v1 treated positive note ratings as permission to repeatedly expand
-their semantic neighborhoods. Explicit region selection could avoid guessing
-whether the person wants more of a subject or has become tired of it.
+For example:
 
-## Possible Responsibility Boundary
+```text
+Technology
+  -> Programming
+     -> Rust
+        -> Borrow-checker diagnostics
+```
 
-Public computation could derive a versioned semantic structure from the
-complete public note corpus. No subject ontology exists beforehand. The public
-mapping representation and construction are owned by
-[`corpus-induced-subject-map-hypothesis.md`](corpus-induced-subject-map-hypothesis.md),
-not by this navigation hypothesis.
+Each selection has meaning only within the complete path. A child is not an
+independent label; it must predict a narrower subset of what the parent
+offered.
 
-Every eligible public note must be considered by this mapping. A note may have
-graded membership in several regions, a coarse-only placement, a boundary or
-residual state, or an explicit outlier state. It must not disappear merely
-because it is outside the neighborhoods reached from private positive
-examples.
+## Interaction Contract
 
-Private local state could use that public map without turning note ratings into
-region preferences:
+1. Show a small set of useful subject choices at the current node.
+2. The person selects one choice.
+3. Show that subject's meaningful refinements.
+4. Repeat until the interface reaches a useful terminal subject.
+5. Show the notes associated with that subject.
 
-- each rating remains evidence about that particular note;
-- repeated positive or negative evidence near a region may inform local
-  ranking, but does not mean "show more" or "show less" of the region;
-- being shown a note records exposure only;
-- explicit region selection represents temporary current intent.
+The interface may omit structural hierarchy levels that add no useful choice.
+It must not show:
 
-The interface could order regions by how much positive note-level evidence they
-contain, followed by unexplored regions that become increasingly distant from
-that evidence. This ordering would not authorize automatic expansion. Different
-semantic directions must remain visible so one dense subject cannot fill the
-list. Disconnected regions must also remain browsable.
+- a parent-to-child transition with the same note result;
+- sibling choices with identical note results; or
+- a label whose visible meaning does not predict the notes beneath it.
 
-Selecting a region would decide where to explore. It would not replace the
-local task of selecting worthwhile, varied notes within that region.
+The exact maximum number of visible choices is not frozen.
 
-## Central Unknown
+## Note Membership
 
-We do not currently know how to produce the required note-to-region mapping.
+The hierarchy organizes subject-vector memberships. A note may contribute
+several vectors and therefore appear in several final subject results.
 
-Oracle MVP v1 stores one candidate/document-role vector for each represented
-note. `similar_notes` encodes a source note in the query role and returns
-directional retrieval scores; `vectors_for_notes` returns candidate/document
-vectors for local comparison. Neither interface provides:
+Within one selected result:
 
-- a reliable way to produce useful semantic-region choices when needed;
-- accurate descriptive labels for those regions;
-- membership strengths when a note expresses several subjects;
-- evidence that the resulting mapping matches human interpretation.
+- repeated occurrences of the same note are deduplicated;
+- prominence scores may order notes by how strongly the complete note is about
+  the matched subject; and
+- the same note's membership in another subject is not removed.
 
-A whole-note vector may blend several subjects. The mapping must not assume
-that each note has exactly one subject.
+## Separation from Recommendation
 
-The subjects are corpus-induced rather than predefined. This does not imply one
-objectively correct partition: the construction still chooses granularity,
-overlap, and outlier behavior. What remains unresolved is which construction
-produces useful regions and whether public definitions, cuts, labels, and note
-memberships must be materialized after discovery or can be computed lazily from
-a versioned public structure.
+These actions have different meanings:
 
-Until this prerequisite is demonstrated, semantic-region navigation must not
-be treated as the next architecture.
+- Rating a note records how glad the person was to see that note at that time.
+- Selecting a subject states what the person wants to explore now.
+- Showing a note records exposure.
 
-See
-[`../research/semantic-region-discovery-and-labeling.md`](../research/semantic-region-discovery-and-labeling.md)
-for the neutral literature record. See
-[`corpus-induced-subject-map-hypothesis.md`](corpus-induced-subject-map-hypothesis.md)
-for the separate project prescription currently under consideration.
+Oracle MVP v1 used positive note ratings to expand whole-note semantic
+neighborhoods. That is existing frozen-v1 behavior, not the control mechanism
+for this hierarchy.
 
-## Decisions Not Yet Made
+The hierarchy may later coexist with a local recommender, but private ratings
+must not define the public subject structure or silently select the person's
+current path.
 
-- Which corpus-wide construction derives the public semantic structure.
-- Which public cuts, labels, and memberships are materialized or computed
-  lazily.
-- How private evidence orders and selects among those public regions.
-- How regions at different levels of specificity relate.
-- How labels are generated and grounded in representative notes.
-- How one note contributes to multiple regions.
-- How private positive, neutral, and negative evidence is combined.
-- How unexplored regions are ordered without reproducing exposure bias.
+## Public and Private Boundary
+
+Public computation may derive a versioned hierarchy and note memberships from
+public Nostr notes.
+
+Private local state may retain:
+
+- the person's current navigation path;
+- notes already shown locally;
+- local ordering or filtering preferences; and
+- private recommendation state belonging to a separate recommender.
+
+The public hierarchy must not require that private state.
+
+## Backend Dependency
+
+The backend direction is documented in
+[`atomic-vector-subject-hierarchy.md`](atomic-vector-subject-hierarchy.md).
+The method-independent fine-segmentation boundary is documented in
+[`../research/fine-segmentation-vector-space-requirements.md`](../research/fine-segmentation-vector-space-requirements.md).
+
+Navigation work begins only after the earlier stages demonstrate useful fine
+subjects and a usable hierarchy. The interface must evaluate the complete
+root-to-note experience; attractive labels alone are not sufficient.
+
+## Open Decisions
+
+- the visible branching limit;
+- how structural levels are condensed for navigation;
+- how the root choices are presented;
+- when a subject becomes a terminal note result;
+- how note ordering uses prominence;
+- how versions and corpus updates affect saved paths; and
+- the complete navigation evaluation.

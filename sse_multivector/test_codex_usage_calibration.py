@@ -402,6 +402,33 @@ class CalibrationTrackerTests(unittest.TestCase):
         self.assertIn("lower_bound", encoded)
         self.assertNotIn("estimate", encoded)
 
+    def test_timeout_before_any_boundary_reports_only_the_unchanged_display(self) -> None:
+        tracker = CalibrationTracker.start(snapshot(53), "2026-08-06T00:00:00Z")
+        tracker.observe(observation("job-1", 100, 53))
+        tracker.observe(observation("job-2", 200, 53))
+
+        tracker.timeout("2026-08-06T01:00:00Z")
+
+        result = tracker.to_dict()
+        self.assertNotIn("lower_bound", result)
+        self.assertEqual(
+            {
+                "job_keys": ["job-1", "job-2"],
+                "usage": {
+                    "cached_input_tokens": 0,
+                    "input_tokens": 300,
+                    "output_tokens": 150,
+                    "reasoning_output_tokens": 75,
+                },
+                "completions": {"notes": 0, "takeaways": 0},
+                "meaning": (
+                    "all recorded jobs completed while the displayed used percentage "
+                    "remained unchanged; no percentage boundary was observed"
+                ),
+            },
+            result["unchanged_display_observation"],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

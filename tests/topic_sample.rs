@@ -69,7 +69,7 @@ fn materializes_exact_author_disjoint_quotas_and_stops_without_reading_another_i
     let manifest = materialize_topic_sample_with_controller(
         &TopicSampleConfig {
             source_corpus_path: source_path.clone(),
-            ordered_event_ids_path: ordered_path,
+            ordered_event_ids_path: ordered_path.clone(),
             semantic_manifest_path,
             output_path: output_path.clone(),
             learning_rows: 1,
@@ -205,7 +205,7 @@ fn skips_a_high_confidence_textual_copy_from_the_opposite_split() {
     let manifest = materialize_topic_sample_with_controller(
         &TopicSampleConfig {
             source_corpus_path: source_path.clone(),
-            ordered_event_ids_path: ordered_path,
+            ordered_event_ids_path: ordered_path.clone(),
             semantic_manifest_path: semantic_manifest_path.clone(),
             output_path: output_path.clone(),
             learning_rows: 2,
@@ -221,7 +221,16 @@ fn skips_a_high_confidence_textual_copy_from_the_opposite_split() {
 
     assert_eq!(6, manifest.examined_rows);
     assert_eq!(2, manifest.skipped_cross_split_textual_copy_rows);
-    assert_eq!(2, manifest.schema_version);
+    assert_eq!(
+        "sha256-exact-buckets-global-hash-prefix-postings-exact-verification-v1",
+        manifest.textual_copy_index_rule
+    );
+    assert!(
+        manifest.textual_copy_candidate_comparisons <= 4,
+        "indexed copy search compared too many retained pairs: {}",
+        manifest.textual_copy_candidate_comparisons
+    );
+    assert_eq!(3, manifest.schema_version);
     assert_eq!(
         "semantic-order-prefix-author-hash-text-copy-disjoint-learning-first-v2",
         manifest.selection_rule
@@ -243,6 +252,29 @@ fn skips_a_high_confidence_textual_copy_from_the_opposite_split() {
     assert_eq!(hex(&learning_short.event_id), records[1].note_id);
     assert_eq!(hex(&evaluation_short_distinct.event_id), records[2].note_id);
     assert_eq!(hex(&evaluation_distinct.event_id), records[3].note_id);
+
+    write_pressure(&pressure_path, 0);
+    let replay_controller =
+        IoPressureController::start(&pressure_path).expect("start replay pressure controller");
+    let replay_manifest = materialize_topic_sample_with_controller(
+        &TopicSampleConfig {
+            source_corpus_path: source_path.clone(),
+            ordered_event_ids_path: ordered_path,
+            semantic_manifest_path: semantic_manifest_path.clone(),
+            output_path: root.path().join("replay-sample"),
+            learning_rows: 2,
+            evaluation_rows: 2,
+            max_examined_rows: 6,
+            max_sample_bytes: 1_048_576,
+            author_split_seed_hex: hex(&seed),
+        },
+        &replay_controller,
+    )
+    .expect("replay copy-isolated sample");
+    replay_controller
+        .shutdown()
+        .expect("stop replay pressure controller");
+    assert_eq!(manifest, replay_manifest);
 
     let reverse_ordered_path = root.path().join("reverse-ordered-event-ids.bin");
     let mut reverse_ordered =

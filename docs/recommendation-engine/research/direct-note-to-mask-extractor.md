@@ -16,7 +16,7 @@ canonical note
   -> Sub-Sentence Encoder vectors
 ```
 
-One mask represents one meaning. A mask may contain separated source
+One mask is intended to represent one atomic subject. A mask may contain separated source
 fragments, and masks from the same note may overlap. The extractor must also
 decide how many masks the note needs.
 
@@ -71,14 +71,15 @@ direct source masks. It is not itself the desired replacement.
 Sources: [Sub-Sentence Encoder paper](https://aclanthology.org/2024.naacl-long.89.pdf)
 and [released SegmenT5-large model](https://huggingface.co/sihaochen/SegmenT5-large).
 
-## Proposed Training Role
+## Possible Training Role
 
-The existing two-stage process can create supervision without becoming part of
-production:
+The current general-model process could create supervision without becoming
+part of production, but only after its atomic-subject target is fixed and the
+generated records are reviewed:
 
 ```text
 training-data creation
-  note -> TPv3.81 takeaway -> MPv3.3 mask -> reviewed training record
+  note -> TPv3.82 takeaway -> MPv3.4 mask -> reviewed atomic-subject record
 
 production inference
   note -> trained mask extractor -> SSE vectors
@@ -88,10 +89,16 @@ The extractor's training target is only the final grouped mask set. Takeaways
 may remain in the preserved training artifacts for diagnosis, but are not an
 inference output.
 
-The frozen teacher prompts are preserved in:
+The currently selected prompt versions are preserved in:
 
 - `sse_multivector/takeaway-prompt-versions.json`;
-- `sse_multivector/mask-prompt-versions.json`.
+- `sse_multivector/mask-prompt-versions.json`; and
+- `sse_multivector/prominence-prompt-versions.json`.
+
+They are current implementation inputs, not a frozen training-data contract.
+Prompt repair remains open. PPv2 currently estimates vector-to-note
+prominence separately; whether a trained mask extractor should also predict
+that value has not been decided.
 
 Teacher-to-student proposition segmentation has also been demonstrated at
 larger scale. One study used 226,000 teacher-generated text/proposition pairs
@@ -101,44 +108,27 @@ distillation strategy but not direct mask quality.
 
 Source: [Scalable and Domain-General Abstractive Proposition Segmentation](https://aclanthology.org/2024.findings-emnlp.517.pdf).
 
-## Training-Data Estimate
+## Training-Data Size Is Open
 
-The current center estimate is **10,000 diverse English Nostr notes**, with a
-plausible range of **5,000--25,000**.
+Earlier estimates used proposition counts from communicated-meaning runs.
+Those counts do not establish how many reviewed atomic-subject masks this task
+requires. No training-set size is currently approved.
 
-The estimate is based on supervision density rather than note count alone:
-
-- TEv4.1 produced 194 masks from 50 notes, or about 3.9 masks per note;
-- 10,000 similar notes would therefore yield about 39,000 mask examples;
-- PropSegmEnt trained on 9,913 sentences containing 38,206 propositions.
-
-Pretraining on the public PropSegmEnt masks and then adapting to Nostr could
-put the Nostr-specific requirement nearer 5,000--10,000 notes. Starting only
-from generic T5 weights would likely require more. Neither estimate has yet
-been measured on Nostr.
-
-Do not purchase all labels up front. Measure a learning curve:
-
-1. 1,000 notes: verify that the model learns the output structure and measure
-   annotation and training cost;
-2. 3,000 notes: measure whether held-out quality is still improving;
-3. 10,000 notes: first credible domain model;
-4. expand toward 25,000 only if additional data still produces material gains.
-
-All label generation and training must remain inside the Oracle MVP's lifetime
-paid-compute ceiling. The complete cost of TPv3.81 plus one MPv3.3 call per
-takeaway must be calibrated before approving even the first stage.
+If this scaling path is pursued, start with a bounded learning curve and
+measure held-out downstream SSE behavior before purchasing or generating a
+large corpus. Every paid stage remains subject to the repository-wide budget
+rules.
 
 ## Evaluation Requirements
 
 Exact token agreement is insufficient because several source-token selections
-can preserve the same meaning. PropSegmEnt itself measured only moderate human
+can preserve the same atomic subject. PropSegmEnt itself measured only moderate human
 agreement on complete proposition sets.
 
 A credible test must separately measure:
 
-1. mask-set coverage, duplication, and unsupported selections on a held-out
-   Nostr set;
+1. atomic-subject coverage, duplication, and unsupported selections on a
+   held-out Nostr set;
 2. fuzzy token overlap after matching predicted and reference masks as
    unordered sets;
 3. whether predicted masks produce the same useful SSE neighborhood behavior
@@ -149,11 +139,12 @@ only insofar as it preserves the semantic vectors needed downstream.
 
 ## Current Conclusion
 
-Direct `note -> grouped masks` extraction is feasible and has strong published
-precedent. The simplest evidence-backed first implementation is the T5
-marked-copy formulation, adapted with Nostr-specific supervision. A new custom
-parallel mask architecture is not necessary for the first experiment.
+Direct `note -> grouped masks` extraction has useful published precedent, but
+the reviewed systems extract propositions rather than this project's atomic
+subjects. T5 marked-copy output is one plausible candidate, not a selected
+implementation.
 
-The unresolved question is data efficiency: how many Nostr-specific examples
-are required before direct masks preserve the downstream SSE geometry well
-enough. The staged learning curve above is how that should be measured.
+The current dependency is earlier: demonstrate the desired atomic-subject
+mask transformation and its downstream SSE behavior. Only then can extractor
+architecture, supervision volume, prominence prediction, and training cost be
+evaluated coherently.

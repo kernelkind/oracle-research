@@ -1,133 +1,99 @@
-# SSE Experiments
-We generated synthetic tests.
+# SSE Evidence Index
 
-## 1) [SSE-SINGLE-FRAGMENT-MASK-EXPERIMENTS.md](./SSE-SINGLE-FRAGMENT-MASK-EXPERIMENTS.md)
-We must have sufficient evidence that single-fragment masks satisfy the following requirements:
-1. Changing the wording or boundaries of the mask fragment must not materially change the vector when the intended atomic subject remains the same.
-2. Changing only text outside the mask should affect the vector less than changing the atomic subject.
-3. When changing the fragment changes the human-defined atomic subject, the resulting vector should also become distinguishable from the original vector.
+## Scope
 
+These experiments test whether SSE vectors preserve the atomic-subject
+relationships needed by the content hierarchy.
 
-## 2) [SSE-MULTI-FRAGMENT-MASK-EXPERIMENTS.md](./SSE-MULTI-FRAGMENT-MASK-EXPERIMENTS.md)
-We must have sufficient evidence that multi fragment masks satisfy the following requirements:
-1) Changing the wording, number, boundaries, or redundancy of mask fragments must not materially change the vector when the intended atomic subject remains the same.
-2) Changing only text outside the mask should affect the vector less than changing the atomic subject.
-3) When changing a fragment changes the human-defined atomic subject, the resulting vector should also become distinguishable from the original vector.
+SSE does not discover masks. For each input, another process supplies:
 
-## 3) Real note transfer experiment
-Repeat experiments 1 & 2 with real Nostr notes and hand picked masks 
+1. the complete note; and
+2. the selected source-token positions.
 
+SSE processes the complete note, averages the contextual token representations
+at the selected positions, and applies its learned output transformation.
 
-#### Experimental Results
-**Telemetry comparison: (R07 vs R08, cosine of 0.5114)**
-**Hypothesis:** These masks are both semantically about telemetry/data tracking. The first is a statement about operating systems in general having telemetry, the second is about a specific app that has concrete telemetry mechanisms. We predict that these vectors will have a high cosine.
+The evidence below is conditional on the supplied masks. It does not validate
+automatic subject extraction, fine segmentation, hierarchy construction, or
+navigation quality.
 
-**R07**
-> they want to control everything..
->
-> ..if you think your #Nostr nsec key is safe on a proprietary OS (#Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger
-> picture.. ..⟦all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices⟧.. ..i'm still
-> on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS.. ..i've already switched to #Linux computer-
-> wise.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty
+## Controlled Synthetic Evidence
 
-**R08**
-> Ledger Live Tracks and Sends ALL User Information to Outsourced Data Harvesting Service
->
-> “The tracking code is too structural to be just counting users and downloads, like regular apps do. {Ledger Live is doing analytics on
-> everything from screen views, to button clicks, error events, installs, uninstalls, etc. It's basically tracking everything.} Anything you
-> do on that app gets tracked.”
->
-> https://www.nobsbitcoin.com/ledger-live-tracks-and-sends-out-all-user-information-by-default/
+### Single-fragment masks
 
-**Result:** validated. Although 0.51 is not extrordinarily high
+- The
+  [`../../sse_multivector/mask-fidelity-single-fragment-factorial-v3/result/analysis.md`](../../sse_multivector/mask-fidelity-single-fragment-factorial-v3/result/analysis.md)
+  passed all 432 predeclared context, paraphrase, and different-subject
+  comparisons.
+- The
+  [`../../sse_multivector/mask-fidelity-single-fragment-boundary-v1/result/analysis.md`](../../sse_multivector/mask-fidelity-single-fragment-boundary-v1/result/analysis.md)
+  passed all 72 comparisons.
+- The complete readable cases are also recorded in
+  [`SSE-SINGLE-FRAGMENT-MASK-EXPERIMENTS.md`](SSE-SINGLE-FRAGMENT-MASK-EXPERIMENTS.md).
 
----
+These results show strong behavior on the tested synthetic subjects. They do
+not establish arbitrary real-note performance.
 
-**Control comparison (R09 vs R07, cosine 0.3961)**
-hmm a bad comparison it seems
+### Multi-fragment masks
 
-**R07**
-> they want to control everything..
->
-> ..if you think your #Nostr nsec key is safe on a proprietary OS (#Windows, #macOS, #iOS, #Android, etc.) then you are missing the bigger
-> picture.. ..⟦all those OS's are saturated with telemetry mechanisms and APIs that have access to everything on your devices⟧.. ..i'm still
-> on iOS phone-wise, but my days are numbered with that.. ..likely moving to #GrapheneOS.. ..i've already switched to #Linux computer-
-> wise.. ..free and opensource is the only way to navigate this tech surveillance state with any level of sovereignty
+- The
+  [`../../sse_multivector/mask-fidelity-multifragment-requirements-v1/result/analysis.md`](../../sse_multivector/mask-fidelity-multifragment-requirements-v1/result/analysis.md)
+  passed its fragment-count, boundary, wording, redundancy, and unselected-text
+  comparisons.
+- A stricter
+  [`../../sse_multivector/mask-fidelity-multifragment-v1/result/analysis.md`](../../sse_multivector/mask-fidelity-multifragment-v1/result/analysis.md)
+  failed one of three families, but complete and fragmented masks behaved
+  similarly; the evidence did not attribute the family failure to
+  fragmentation.
+- The complete readable cases are also recorded in
+  [`SSE-MULTI-FRAGMENT-MASK-EXPERIMENTS.md`](SSE-MULTI-FRAGMENT-MASK-EXPERIMENTS.md).
 
-**R09**
-> ⟦A lot of websites use dark patterns in relation to cookies management, with the majority of them trying to trick you into accepting all of
-> them.⟧ It tells you everything you need to know about their sincerity when they say “we care about your privacy”
->
-> #privacy #cookies #darkpatterns
+### Known limits
 
----
+- [`../../sse_multivector/mask-fidelity-location-v1/result/analysis.md`](../../sse_multivector/mask-fidelity-location-v1/result/analysis.md)
+  passed all four predeclared comparisons despite unrelated surrounding text.
+- [`../../sse_multivector/mask-fidelity-relationship-v1/result/analysis.md`](../../sse_multivector/mask-fidelity-relationship-v1/result/analysis.md)
+  failed all four comparisons: SSE did not reliably distinguish who chased
+  whom when the same entities and action appeared in reversed relationships.
+- [`../../sse_multivector/mask-fidelity-compound-subject-neighborhood-v1/result/analysis.md`](../../sse_multivector/mask-fidelity-compound-subject-neighborhood-v1/result/analysis.md)
+  passed two of three subject families. The solar-powered-greenhouse family
+  narrowly failed its local-neighbor rule.
 
-**Solar-mining comparison (R10 vs R11, cosine 0.6558):**
-**Description:** These masks are both very narrowly similar, they are about using solar panels with a bitcoin miner. The contexts are different though. The first note's context is a casual thought about wanting to optimize their solar-mining system for maximum duration of operation. The second note's context is about the logistics of solar mining.
-**Hypothesis:** The cosine will be high for the vectors since the masks are extremely semantically similar despite having different contexts.
-**Result:** validated
+The synthetic evidence therefore supports some subject relationships but not a
+general claim that SSE preserves every relation expressed by selected text.
 
-**R10**
-> This week I just let the miner running to keep temperatures for a minimum and save the #statistics.
->
-> I want to find the best way how to run the miner. So far it only starts when it is below a specific temperature (with a day/night mode)
->
-> Meanwhile I do a bit of programming to ⟦start up the miner when I have #solar #energy left⟧. And to have statistics how much solar energy
-> is used for the miner.
->
-> Anyhow in the winter days almost everything is required to heat the house so it won’t be much anyhow.
->
-> #orangery #greenhouse #grownostr #miner #bitcoin #nostr #btc
+## Real-Note Evidence
 
-**R11**
-> #proofofwork
->
-> Got 14 460w ⟦solar panels⟧ series and ready to connect. Have to grab some wire out of my trailer on one of the jobs. This weekend project.
-> might be able to charge a car or ⟦run a Bitcoin miner off this successfully⟧. I still have six extra panels back there and four that are
-> working up top on the roof.
->
-> https://m.primal.net/Mkft.jpg
+The
+[`SSE-REAL-NOTE-HOLDOUT-EXPERIMENT.md`](SSE-REAL-NOTE-HOLDOUT-EXPERIMENT.md)
+passed three of four predeclared comparisons. The hard Windows/Linux case
+failed, leaving nearby technical-subject resolution unresolved.
 
----
+The later
+[`../../sse_multivector/mask-fidelity-real-note-transfer-v5/result/analysis.md`](../../sse_multivector/mask-fidelity-real-note-transfer-v5/result/analysis.md)
+passed six of eight comparisons and failed its strict overall criterion:
 
+- mining-hardware noise passed;
+- pervasive software telemetry passed one of two comparisons; and
+- solar-powered mining passed three of four comparisons.
 
-**R10**
-> This week I just let the miner running to keep temperatures for a minimum and save the #statistics.
->
-> I want to find the best way how to run the miner. So far it only starts when it is below a specific temperature (with a day/night mode)
->
-> Meanwhile I do a bit of programming to ⟦start up the miner when I have #solar #energy left⟧. And to have statistics how much solar energy
-> is used for the miner.
->
-> Anyhow in the winter days almost everything is required to heat the house so it won’t be much anyhow.
->
-> #orangery #greenhouse #grownostr #miner #bitcoin #nostr #btc
+Two counterfactuals clarified those failures without erasing them:
 
-R12
-> ⟦Solar power will be the vast majority of power generation in the future⟧
+- Selecting the direct telemetry statement made the intended telemetry edge
+  strongest in its comparison
+  ([`../../sse_multivector/mask-fidelity-telemetry-mask-counterfactual-v1/result/analysis.md`](../../sse_multivector/mask-fidelity-telemetry-mask-counterfactual-v1/result/analysis.md)).
+- Removing unselected context moved the solar-mining comparison to an almost
+  exact tie with its solar-only control
+  ([`../../sse_multivector/mask-fidelity-solar-context-ablation-v4/result/analysis.md`](../../sse_multivector/mask-fidelity-solar-context-ablation-v4/result/analysis.md)).
 
-R10↔R12 cosine: 0.7777
+## Current Conclusion
 
-**Ablation study:**
+Within these bounded tests, SSE often preserves recognizable atomic-subject
+similarity across wording, mask boundaries, multiple fragments, and changed
+surrounding text. It also has observed failures, especially for reversed
+relationships and some nearby or compound subjects.
 
-R10
-> start up the miner when I have #solar #energy left
-
-R11
-> solar panels
-> run a Bitcoin miner off this successfully
-
-R12
-> Solar power will be the vast majority of power generation in the future
-
- Edge                    Full notes    Masks only     Change
-━━━━━━━━━━━━━━━━━━━━━━  ━━━━━━━━━━━━  ━━━━━━━━━━━━  ━━━━━━━━━
- R10↔R11 solar mining        0.6558        0.6981    +0.0423
-──────────────────────  ────────────  ────────────  ─────────
- R10↔R12 solar only          0.7777        0.6977    −0.0800
-──────────────────────  ────────────  ────────────  ─────────
- R11↔R12 solar only          0.4659        0.5965    +0.1306
-
-## 4) [`./SSE-REAL-NOTE-HOLDOUT-EXPERIMENT.md`](./SSE-REAL-NOTE-HOLDOUT-EXPERIMENT.md)
-
-Four predeclared comparisons over 12 previously unused real Nostr notes. Three passed; the hard Windows/Linux comparison failed.
+That is enough to continue testing the architecture, not enough to treat SSE
+geometry as validated. The current dependency is to fix the subject-mask
+generation boundary and then evaluate one frozen fine-segmentation candidate
+with the synthetic suite.

@@ -1,6 +1,6 @@
 //! Pressure-gated materialization of a real, author-disjoint topic-model sample.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeSet, HashMap};
 use std::ffi::CString;
 use std::fs::{self, File};
 use std::io::{self, BufWriter, Read, Write};
@@ -18,7 +18,7 @@ use unicode_normalization::UnicodeNormalization;
 
 use crate::io_pressure::{IoPressureController, IoPressureError};
 
-const SCHEMA_VERSION: u32 = 2;
+const SCHEMA_VERSION: u32 = 3;
 const EVENT_ID_BYTES: usize = 32;
 const NDB_NOTE_MINIMUM_BYTES: usize = 160;
 const NDB_NOTE_ID_OFFSET: usize = 4;
@@ -37,6 +37,8 @@ const SEMANTIC_ORDER_RULE: &str = "preserve-source-order-exclude-raw-content-tri
 const TEXTUAL_COPY_RULE: &str = "nfc-lower-nfc-trim-collapse-unicode-whitespace-exact-all-\
 fuzzy-both-ge100-codepoints-codepoint5-set-sha256-prefix128-codepoint-length-ge90-\
 jaccard-ge90-v1";
+const TEXTUAL_COPY_INDEX_RULE: &str =
+    "sha256-exact-buckets-global-hash-prefix-postings-exact-verification-v1";
 const COPY_SHINGLE_CHARACTERS: usize = 5;
 const FUZZY_COPY_MINIMUM_CHARACTERS: usize = 100;
 const COPY_SIMILARITY_NUMERATOR: usize = 9;
@@ -131,6 +133,10 @@ pub struct TopicSampleManifest {
     pub skipped_filled_split_rows: u64,
     /// Frozen high-precision textual copy rule.
     pub textual_copy_rule: String,
+    /// Frozen exact-search index used to avoid a cross-product scan.
+    pub textual_copy_index_rule: String,
+    /// Candidate pairs checked by the exact predicate, including final verification.
+    pub textual_copy_candidate_comparisons: u64,
     /// Rows rejected because they copied a retained note in the opposite split.
     pub skipped_cross_split_textual_copy_rows: u64,
     /// Serialized sample artifact.
@@ -196,8 +202,16 @@ struct OwnedNote {
 
 struct TextualCopyFingerprint {
     normalized: String,
+    normalized_sha256: [u8; 32],
     character_count: usize,
     shingles: Vec<[u8; 16]>,
+}
+
+#[derive(Default)]
+struct TextualCopyIndex {
+    fingerprints: Vec<TextualCopyFingerprint>,
+    exact_buckets: HashMap<[u8; 32], Vec<usize>>,
+    prefix_postings: HashMap<[u8; 16], Vec<usize>>,
 }
 
 struct ReadOnlyCorpus {
@@ -314,11 +328,12 @@ fn materialize_in_stage(
     let mut examined_rows = 0_u64;
     let mut skipped_filled_split_rows = 0_u64;
     let mut skipped_cross_split_textual_copy_rows = 0_u64;
+    let mut textual_copy_candidate_comparisons = 0_u64;
     let mut serialized_bytes = 0_u64;
     let mut learning_authors = BTreeSet::new();
     let mut evaluation_authors = BTreeSet::new();
-    let mut learning_fingerprints = Vec::<TextualCopyFingerprint>::new();
-    let mut evaluation_fingerprints = Vec::<TextualCopyFingerprint>::new();
+    let mut learning_copy_index = TextualCopyIndex::default();
+    let mut evaluation_copy_index = TextualCopyIndex::default();
     let mut sampled_order_prefix = Sha256::new();
 
     while learning_rows != config.learning_rows || evaluation_rows != config.evaluation_rows {
@@ -344,14 +359,14 @@ fn materialize_in_stage(
 
         let evaluation =
             is_evaluation_author(&seed, &owned.pubkey, config.evaluation_rows, total_target);
-        let (split, rows, quota, authors, fingerprints, opposite_fingerprints) = if evaluation {
+        let (split, rows, quota, authors, copy_index, opposite_copy_index) = if evaluation {
             (
                 "evaluation",
                 &mut evaluation_rows,
                 config.evaluation_rows,
                 &mut evaluation_authors,
-                &mut evaluation_fingerprints,
-                &learning_fingerprints,
+                &mut evaluation_copy_index,
+                &learning_copy_index,
             )
         } else {
             (
@@ -359,8 +374,8 @@ fn materialize_in_stage(
                 &mut learning_rows,
                 config.learning_rows,
                 &mut learning_authors,
-                &mut learning_fingerprints,
-                &evaluation_fingerprints,
+                &mut learning_copy_index,
+                &evaluation_copy_index,
             )
         };
         if *rows == quota {
@@ -368,9 +383,8 @@ fn materialize_in_stage(
             continue;
         }
         let fingerprint = textual_copy_fingerprint(&owned.content);
-        if opposite_fingerprints
-            .iter()
-            .any(|opposite| are_textual_copies(&fingerprint, opposite))
+        if opposite_copy_index
+            .contains_copy(&fingerprint, &mut textual_copy_candidate_comparisons)?
         {
             skipped_cross_split_textual_copy_rows += 1;
             continue;
@@ -408,10 +422,14 @@ fn materialize_in_stage(
                 .map_err(|source| io_error("write", &sample_temporary_path, source))?;
         }
         authors.insert(owned.pubkey);
-        fingerprints.push(fingerprint);
+        copy_index.insert(fingerprint)?;
         *rows += 1;
     }
-    verify_textual_copy_isolation(&learning_fingerprints, &evaluation_fingerprints)?;
+    verify_textual_copy_isolation(
+        &learning_copy_index,
+        &evaluation_copy_index,
+        &mut textual_copy_candidate_comparisons,
+    )?;
     learning_output
         .write_all(&evaluation_output)
         .map_err(|source| io_error("write", &sample_temporary_path, source))?;
@@ -467,6 +485,8 @@ fn materialize_in_stage(
         })?,
         skipped_filled_split_rows,
         textual_copy_rule: TEXTUAL_COPY_RULE.to_owned(),
+        textual_copy_index_rule: TEXTUAL_COPY_INDEX_RULE.to_owned(),
+        textual_copy_candidate_comparisons,
         skipped_cross_split_textual_copy_rows,
         sample: TopicSampleFile {
             file: SAMPLE_FILE.to_owned(),
@@ -522,23 +542,89 @@ fn textual_copy_fingerprint(content: &str) -> TextualCopyFingerprint {
     shingles.shrink_to_fit();
 
     TextualCopyFingerprint {
+        normalized_sha256: Sha256::digest(normalized.as_bytes()).into(),
         normalized,
         character_count: characters.len(),
         shingles,
     }
 }
 
+impl TextualCopyIndex {
+    fn insert(&mut self, fingerprint: TextualCopyFingerprint) -> Result<(), TopicSampleError> {
+        let index = self.fingerprints.len();
+        self.exact_buckets
+            .entry(fingerprint.normalized_sha256)
+            .or_default()
+            .push(index);
+        if fingerprint.character_count >= FUZZY_COPY_MINIMUM_CHARACTERS {
+            for shingle in copy_prefix(&fingerprint.shingles) {
+                self.prefix_postings
+                    .entry(*shingle)
+                    .or_default()
+                    .push(index);
+            }
+        }
+        self.fingerprints.try_reserve(1).map_err(|_| {
+            TopicSampleError::Invariant("textual-copy index exceeded available memory".to_owned())
+        })?;
+        self.fingerprints.push(fingerprint);
+        Ok(())
+    }
+
+    fn contains_copy(
+        &self,
+        fingerprint: &TextualCopyFingerprint,
+        comparisons: &mut u64,
+    ) -> Result<bool, TopicSampleError> {
+        let mut candidates = Vec::<usize>::new();
+        if let Some(exact) = self.exact_buckets.get(&fingerprint.normalized_sha256) {
+            candidates.extend(exact.iter().copied());
+        }
+        if fingerprint.character_count >= FUZZY_COPY_MINIMUM_CHARACTERS {
+            for shingle in copy_prefix(&fingerprint.shingles) {
+                if let Some(postings) = self.prefix_postings.get(shingle) {
+                    candidates.extend(postings.iter().copied().filter(|candidate| {
+                        can_reach_fuzzy_copy_threshold(fingerprint, &self.fingerprints[*candidate])
+                    }));
+                }
+            }
+        }
+        candidates.sort_unstable();
+        candidates.dedup();
+        for candidate in candidates {
+            *comparisons = comparisons.checked_add(1).ok_or_else(|| {
+                TopicSampleError::Invariant("textual-copy comparison count overflowed".to_owned())
+            })?;
+            if are_textual_copies(fingerprint, &self.fingerprints[candidate]) {
+                return Ok(true);
+            }
+        }
+        Ok(false)
+    }
+}
+
+fn copy_prefix(shingles: &[[u8; 16]]) -> &[[u8; 16]] {
+    if shingles.is_empty() {
+        return shingles;
+    }
+    let required_overlap = shingles
+        .len()
+        .saturating_mul(COPY_SIMILARITY_NUMERATOR)
+        .saturating_add(COPY_SIMILARITY_DENOMINATOR - 1)
+        / COPY_SIMILARITY_DENOMINATOR;
+    let prefix_length = shingles
+        .len()
+        .saturating_sub(required_overlap)
+        .saturating_add(1)
+        .min(shingles.len());
+    &shingles[..prefix_length]
+}
+
 fn are_textual_copies(left: &TextualCopyFingerprint, right: &TextualCopyFingerprint) -> bool {
     if left.normalized == right.normalized {
         return true;
     }
-    if left.character_count < FUZZY_COPY_MINIMUM_CHARACTERS
-        || right.character_count < FUZZY_COPY_MINIMUM_CHARACTERS
-        || !ratio_at_least(
-            left.character_count.min(right.character_count),
-            left.character_count.max(right.character_count),
-        )
-    {
+    if !can_reach_fuzzy_copy_threshold(left, right) {
         return false;
     }
 
@@ -565,6 +651,22 @@ fn are_textual_copies(left: &TextualCopyFingerprint, right: &TextualCopyFingerpr
     ratio_at_least(intersection, union)
 }
 
+fn can_reach_fuzzy_copy_threshold(
+    left: &TextualCopyFingerprint,
+    right: &TextualCopyFingerprint,
+) -> bool {
+    left.character_count >= FUZZY_COPY_MINIMUM_CHARACTERS
+        && right.character_count >= FUZZY_COPY_MINIMUM_CHARACTERS
+        && ratio_at_least(
+            left.character_count.min(right.character_count),
+            left.character_count.max(right.character_count),
+        )
+        && ratio_at_least(
+            left.shingles.len().min(right.shingles.len()),
+            left.shingles.len().max(right.shingles.len()),
+        )
+}
+
 fn ratio_at_least(numerator: usize, denominator: usize) -> bool {
     denominator != 0
         && (numerator as u128) * (COPY_SIMILARITY_DENOMINATOR as u128)
@@ -572,17 +674,16 @@ fn ratio_at_least(numerator: usize, denominator: usize) -> bool {
 }
 
 fn verify_textual_copy_isolation(
-    learning: &[TextualCopyFingerprint],
-    evaluation: &[TextualCopyFingerprint],
+    learning: &TextualCopyIndex,
+    evaluation: &TextualCopyIndex,
+    comparisons: &mut u64,
 ) -> Result<(), TopicSampleError> {
-    if learning.iter().any(|left| {
-        evaluation
-            .iter()
-            .any(|right| are_textual_copies(left, right))
-    }) {
-        return Err(TopicSampleError::Invariant(
-            "learning and evaluation contain a cross-split textual copy".to_owned(),
-        ));
+    for fingerprint in &learning.fingerprints {
+        if evaluation.contains_copy(fingerprint, comparisons)? {
+            return Err(TopicSampleError::Invariant(
+                "learning and evaluation contain a cross-split textual copy".to_owned(),
+            ));
+        }
     }
     Ok(())
 }

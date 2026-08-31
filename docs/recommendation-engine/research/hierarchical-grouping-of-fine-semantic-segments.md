@@ -5,22 +5,29 @@
 This document records the CREC-122 literature review after correcting the
 object being organized.
 
-It is research, not a frozen algorithm decision. The review identifies a
-small comparison that can test the remaining hierarchy assumption without
-changing the fine segments, asking a language model to define the topology, or
-fitting a geometric volume to every parent.
+It is research for a later stage, not a frozen algorithm decision or current
+execution plan. Hierarchy comparison begins only after the fine-segmentation
+work demonstrates useful fine subjects. The review identifies methods that can
+then be compared without asking a language model to define the topology or
+fitting one filled geometric volume to every parent.
 
 ## Question
 
-Given already-frozen fine semantic segments, how can we construct a useful
+Given validated and frozen fine semantic segments, how can we construct a useful
 broad-to-narrow hierarchy in which every higher subject is exactly a union of
 complete finer subjects?
 
 The input is:
 
 ```text
-AtomicVectorId -> FineSegmentId
+FineSegmentId -> {AtomicSubjectVectorId}
 ```
+
+This representation does not require the fine-segmentation stage to be
+exhaustive or non-overlapping. One vector may occur in more than one fine
+segment, and an unassigned vector is outside the hierarchy input. The exact
+fine-segmentation membership contract must be frozen before this research is
+turned into an experiment.
 
 The required output is a nested partition:
 
@@ -52,7 +59,7 @@ regions through a graph:
 
 | Image segmentation | Semantic hierarchy |
 |---|---|
-| pixel or local feature | atomic meaning vector |
+| pixel or local feature | atomic-subject vector |
 | superpixel or fine image region | frozen fine semantic segment |
 | physical region adjacency | inferred semantic-neighborhood relation |
 | boundary strength | evidence that two fine segments should remain separate |
@@ -102,8 +109,11 @@ The most defensible initial graph construction is:
 
 1. Build a sparse mutual-`k`-nearest-neighbor graph over the original atomic
    meaning vectors.
-2. Contract all vector nodes assigned to one frozen fine segment into one
-   segment node.
+2. If fine-segment memberships are non-overlapping, contract each fine
+   segment's vector nodes into one segment node. If memberships overlap, this
+   contraction is not defined: the hierarchy experiment must first specify how
+   one vector contributes evidence to several segment nodes without duplicating
+   or discarding it.
 3. Preserve segment mass, the multiplicity and weight of cross-segment edges,
    and internal edges as self-flow when the hierarchy method supports it.
 
@@ -133,7 +143,7 @@ The first hierarchy comparison should not add other edge types:
 
 - Same-note co-occurrence means two ideas were communicated together. It does
   not prove that either is a broader subject of the other.
-- Takeaway prominence describes importance to a note. It is useful for
+- Vector-to-note prominence describes importance to a note. It is useful for
   ordering notes inside a subject, not for defining subject topology.
 - Generated labels describe already-formed groups. They must not determine
   membership during this comparison.
@@ -379,8 +389,8 @@ to a human broad-to-narrow subject hierarchy. That remains the experiment.
 
 The smallest comparison that isolates it is:
 
-1. Freeze one atom-level mutual-`k`-NN graph and one contraction into the
-   accepted fine segments.
+1. Freeze one atom-level mutual-`k`-NN graph and the demonstrated fine-segment
+   memberships.
 2. Run a nested degree-corrected SBM as the primary statistical candidate.
 3. Run hierarchical Infomap as the assortative flow-based comparison.
 4. Run Agglomerative Information Bottleneck over the same neighbor evidence as
@@ -391,9 +401,9 @@ The smallest comparison that isolates it is:
    neighbor counts, edge perturbations, and algorithm seeds to measure
    stability.
 
-The current small artifact can test mechanics. Choosing an algorithm should
-use the forthcoming larger frozen artifact because a tiny graph cannot reveal
-whether broad semantic relationship patterns recur reliably.
+Earlier small artifacts tested mechanics only. A hierarchy comparison should
+use the first fine-segment artifact admitted by the synthetic and real-niche
+FSA work; no larger artifact is authorized merely by this review.
 
 The review criteria are:
 

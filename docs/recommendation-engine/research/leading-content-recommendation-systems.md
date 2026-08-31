@@ -1120,128 +1120,14 @@ eligibility, coverage, objectives, and counterfactual evaluation.
 - **Copying published weights or lifts:** objective scales and experiment
   baselines are system-specific.
 
-## Implications for a Private, Decentralized Notedeck Recommender
+## Relevance to Current Work
 
-The centralized systems depend heavily on pooled private behavior, but many of
-their strongest ideas survive the privacy boundary.
+This survey remains background for the separate recommendation problem. Its
+production-system findings do not select components for the current
+user-directed subject hierarchy.
 
-This section describes possible capabilities of a later production system, not
-the approved Oracle MVP. The MVP deliberately tests one public semantic
-candidate source over root text kind `1` notes, two local personalizers, and one
-untouched final evaluation. It does not add graph, popularity, freshness,
-multimedia, collaborative, quality, safety, exploration, or fixed-interest
-components. Those parts require evidence and separate approval after the MVP
-decision.
+The hierarchy work may later inform candidate discovery for a local
+recommender, but that integration requires a separate explicit decision. No
+recommendation architecture, objective, or feedback loop is approved by this
+research record.
 
-### Public computation
-
-Public Nostr events can support:
-
-- multimodal/text content embeddings;
-- author, reply, repost, reaction, topic, and co-occurrence graphs;
-- graph and semantic item-to-item retrieval;
-- public popularity and freshness estimates with explicit bias correction;
-- multiple independently reproducible candidate indexes; and
-- public quality or safety signals whose trust provider remains user-selectable.
-
-These artifacts should be content- or graph-derived and independently
-replaceable. No one service should define the eligible corpus.
-
-### Private on-device state
-
-The device can retain:
-
-- several long-term interest vectors or clusters rather than one profile;
-- short-term session actions and current context;
-- explicit "worth seeing" judgments;
-- separate instructions such as less from this author/topic or do not train on
-  this context;
-- local seen/impressed state;
-- local predictions for positive and negative outcomes; and
-- the final value formula and slate re-ranking.
-
-This mirrors the strongest systems while keeping private behavior, inferred
-preferences, recommendation feedback, and final ranking local.
-
-### Candidate discovery
-
-A later production recommender could union several sources before ranking:
-
-1. followed-author and social-neighborhood content;
-2. reply/repost/reaction graph walks;
-3. semantic neighbors of distinct interest clusters;
-4. collaborative neighborhoods derived only from public events;
-5. fresh and local-to-topic content;
-6. underexposed but high-quality content;
-7. explicit topic or author requests; and
-8. a small eligible exploration pool.
-
-That later system could evaluate each source by marginal recall: how many eventually valuable
-items disappear when that source is removed? Aggregate precision is not enough.
-
-### Objective and feedback design
-
-The existing "worth seeing" judgment should be the primary satisfaction target,
-not passive dwell. A separate control that changes future recommendations must
-mutate local preference state without being treated as a judgment of the current
-note. Absence of feedback must remain unknown rather than negative.
-
-Useful auxiliary outcomes include open-thread, expand-media, profile-open,
-reply, repost, zap, save, hide, mute, and report, but the value model should be
-trained or calibrated against intentional worth judgments. This follows the
-YouTube, UTIS, and Pinterest survey pattern without exporting the survey data.
-
-### Exploration and evaluation
-
-Safe local exploration requires:
-
-- eligibility before exploration;
-- randomization among plausible candidates, not the full corpus;
-- logged selection probability;
-- explicit source and model version;
-- enough persistence to observe delayed judgments; and
-- user-level controls to disable or reset learned state.
-
-A later production evaluation could report:
-
-- per-interest and per-user candidate Recall@K;
-- recall of unknown-author and low-popularity items;
-- calibrated worth probability;
-- diversity across author, topic, format, and interest cluster;
-- discovery rate and lasting value after first exposure;
-- negative-feedback and regret rate;
-- catalog and creator exposure concentration;
-- freshness, latency, and resource cost; and
-- ablations for every candidate source, state timescale, and objective term.
-
-If the MVP succeeds, production constraints can be introduced one at a time
-and measured against that combined retrieval-and-personalization result, as
-required by
-[`../README.md`](../README.md).
-
-## Research Bottom Line for Later Product Work
-
-The following are lessons for possible post-MVP product design, not approved
-parts of the current experiment.
-
-Across the best-documented systems, recurring design principles are:
-
-- maximize candidate coverage with several representations;
-- model the user's plural, time-varying state;
-- predict behaviors separately;
-- learn value from intentional satisfaction and delayed outcomes;
-- correct logged-data bias;
-- construct the feed as a set or sequence;
-- keep eligibility and user controls explicit;
-- update fresh state without breaking representation consistency; and
-- treat randomized online tests as the strongest evidence of causal product
-  improvement, while retaining offline, safety, and operational evidence for
-  claims those tests cannot resolve.
-
-For Notedeck, the central design opportunity is to move public representation
-and discovery into replaceable public artifacts while retaining multi-interest
-state, intentional feedback, exploration, value estimation, and final slate
-construction on-device. The current MVP tests the narrower prerequisite: can
-one strong public semantic representation and private local personalization
-meet the direct personal-value bar? It does not compare against a pooled-private
-system or measure a quality loss relative to one.

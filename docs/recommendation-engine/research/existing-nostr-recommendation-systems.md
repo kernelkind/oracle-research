@@ -413,22 +413,14 @@ DVMs and open/self-hostable servers reduce dependence on one operator. If every 
 
 Gorse, Primal, AlgoRelay, Nostria, Nalgorithm, and NostrDVM expose useful implementation details. None publishes evidence that users are consciously glad they saw its recommendations. Engagement prediction and recommendation satisfaction remain different objectives.
 
-## Implications for the Recommendation Oracle
+## Relevance to Current Work
 
-The existing systems establish that Nostr already has useful popularity, graph,
-filter, and hosted-personalization components. They do not establish the current
-MVP question: whether public semantic note relationships plus private local
-judgments can produce a feed one person is consciously glad to see.
+The surveyed systems establish that Nostr already has useful popularity,
+graph, filtering, hosted-personalization, and semantic-search components. They
+do not demonstrate the atomic-subject extraction, fine segmentation, or
+broad-to-narrow hierarchy required by the current content-discovery direction.
 
-The MVP therefore does not compare four broad architectures. It makes one
-strong, affordable complete-corpus semantic attempt, exposes reusable public
-evidence through `similar_notes` and `vectors_for_notes`, and compares two
-local personalizers before one untouched final evaluation. Collaborative,
-graph, engagement, recency, freshness, and exploration sources remain possible
-follow-up work only if the semantic MVP result justifies it.
+This survey does not select a recommendation architecture or a control feed.
+Any later integration with a private local recommender requires a separate
+explicit decision.
 
-The unoccupied design space remains a system in which public infrastructure
-computes replaceable information about public Nostr content while private
-behavior constructs the user's taste model and final ranking locally. None of
-the surveyed systems currently demonstrates that combination with conscious
-personal-value evaluation.

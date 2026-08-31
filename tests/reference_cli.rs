@@ -113,11 +113,13 @@ fn reference_map_cli_prepares_a_source_bound_review_proposal() {
     let proposal_bytes = fs::read(&proposal_path).expect("read generated proposal");
     let proposal_json: serde_json::Value =
         serde_json::from_slice(&proposal_bytes).expect("decode generated proposal");
-    assert!(proposal_json["notes"]
-        .as_array()
-        .expect("proposal notes")
-        .iter()
-        .all(|note| note.get("interpretive_ambiguity").is_none()));
+    assert!(
+        proposal_json["notes"]
+            .as_array()
+            .expect("proposal notes")
+            .iter()
+            .all(|note| note.get("interpretive_ambiguity").is_none())
+    );
     let proposal: NoteProposal =
         serde_json::from_slice(&proposal_bytes).expect("decode typed proposal");
     proposal.validate().expect("generated proposal is valid");

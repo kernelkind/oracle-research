@@ -56,7 +56,8 @@ exact preceding result-ledger byte prefix. The earlier runner sources are
 identified by SHA-256 but were not separately snapshotted; the final runner
 implementation is pinned by the enclosing Git commit.
 
-The optional one-hour calibration timed out after 27 notes and 55 takeaways completed, using 434,652 input tokens, 91,648 cached input tokens, 83,447 output tokens, and 77,216 reasoning-output tokens.
+The optional one-hour calibration recorded 169 model calls. During that window, 27 notes and 55 takeaways completed, using 434,652 input tokens, 91,648
+cached input tokens, 83,447 output tokens, and 77,216 reasoning-output tokens.
 
 ## Archive
 

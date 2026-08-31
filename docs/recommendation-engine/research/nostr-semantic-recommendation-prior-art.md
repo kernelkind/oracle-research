@@ -154,16 +154,14 @@ Either interface can carry semantic discovery. Neither provides or validates the
 - Local seen-state filtering and final ranking.
 - Quality measured by whether a person considers each recommendation worth seeing.
 
-## Implication for the Oracle
+## Relevance to Current Work
 
-Existing projects already establish that embeddings and nearest-neighbor search
-work mechanically on Nostr data. They do not establish that public semantic
-retrieval plus private local personalization can produce a feed one person is
-consciously glad to see.
+Existing projects establish that Nostr notes can be embedded and retrieved by
+semantic proximity. They do not establish that the resulting vector geometry
+supports atomic-subject extraction, useful fine segmentation, or a
+broad-to-narrow content hierarchy.
 
-The current MVP therefore treats NRA and Fediway/CommonFeed as prior art, not
-as control feeds or required baselines. It builds one strong complete-corpus
-semantic Oracle, compares two local personalizers without using the untouched
-final ratings, and assigns recommendation quality only to the combined system.
-Building another embedding-plus-vector-search API without that personalized
-evaluation would only reproduce existing work.
+This prior-art record therefore supports only the mechanical feasibility of
+semantic Nostr infrastructure. It does not select the current extraction,
+segmentation, hierarchy, or recommendation design.
+

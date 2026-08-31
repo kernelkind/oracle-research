@@ -845,19 +845,15 @@ impl HierarchyReviewSession {
             2 | 3 => invalid(
                 "the prior hierarchy review contains decisions and cannot be reinterpreted as note-map and parent reviews",
             ),
-            4 if self
-                .history
-                .iter()
-                .all(|record| {
-                    matches!(
-                        record,
-                        HierarchyReviewRecord::Atomic(AtomicHierarchyReviewRecord {
-                            target: HierarchyReviewTarget::NoteMap { .. },
-                            ..
-                        })
-                    )
-                })
-                && self.focus_coverage_history.is_empty() =>
+            4 if self.history.iter().all(|record| {
+                matches!(
+                    record,
+                    HierarchyReviewRecord::Atomic(AtomicHierarchyReviewRecord {
+                        target: HierarchyReviewTarget::NoteMap { .. },
+                        ..
+                    })
+                )
+            }) && self.focus_coverage_history.is_empty() =>
             {
                 self.schema_version = 5;
                 Ok(())
@@ -874,7 +870,10 @@ impl HierarchyReviewSession {
                         ..
                     })
                 )
-            }) => Ok(()),
+            }) =>
+            {
+                Ok(())
+            }
             5 => invalid("a parent hierarchy review contains a legacy decision"),
             version => invalid(format!(
                 "hierarchy review session schema {version} is unsupported"

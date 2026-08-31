@@ -8,6 +8,7 @@ import hashlib
 import json
 import math
 import os
+import resource
 import shutil
 import struct
 import sys
@@ -23,6 +24,7 @@ from torch import Tensor, nn
 
 
 RELATION_FORMAT = "canonical-sparse-note-topic-relation-v1"
+EMBEDDING_FORMAT = "learning-first-note-embedding-matrix-v1"
 READ_CHUNK_BYTES = 8 * 1024 * 1024
 
 
@@ -45,6 +47,24 @@ def _require_mapping(value: object, name: str) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise ValueError(f"`{name}` must be an object")
     return value
+
+
+def _require_sha256(value: object, name: str) -> str:
+    if (
+        not isinstance(value, str)
+        or len(value) != 64
+        or any(character not in "0123456789abcdef" for character in value)
+    ):
+        raise ValueError(f"`{name}` must be a lowercase SHA-256 digest")
+    return value
+
+
+def _hash_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        while chunk := source.read(1024 * 1024):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 @dataclass(frozen=True)
@@ -73,9 +93,24 @@ class IoPlan:
 
 
 @dataclass(frozen=True)
+class EmbeddingManifestBinding:
+    path: Path
+    bytes: int
+    sha256: str
+
+
+@dataclass(frozen=True)
+class VerifiedEmbeddingManifest:
+    sha256: str
+    matrix_sha256: str
+    note_ids_sha256: str
+
+
+@dataclass(frozen=True)
 class InputConfig:
     matrix_path: Path
     note_ids_path: Path
+    embedding_manifest: EmbeddingManifestBinding | None
     dimensions: int
     start_row: int
     learning_rows: int
@@ -103,7 +138,12 @@ class InputConfig:
 
     @property
     def source_read_bytes(self) -> int:
-        return self.byte_length + self.note_ids_byte_length
+        manifest_bytes = (
+            0
+            if self.embedding_manifest is None
+            else self.embedding_manifest.bytes
+        )
+        return self.byte_length + self.note_ids_byte_length + manifest_bytes
 
 
 @dataclass(frozen=True)
@@ -112,6 +152,7 @@ class ModelConfig:
     average_k: int
     batch_size: int
     steps: int
+    measurement_steps: tuple[int, ...]
     learning_rate: float
     seed: int
     warmup_steps: int
@@ -124,11 +165,18 @@ class ModelConfig:
 
 
 @dataclass(frozen=True)
+class RuntimeIdentity:
+    worker_sha256: str
+    container_image: str
+
+
+@dataclass(frozen=True)
 class ExperimentConfig:
     schema_version: int
     purpose: str
     input: InputConfig
     model: ModelConfig
+    runtime: RuntimeIdentity | None
     io_budget: IoBudget
     output_path: Path
 
@@ -150,9 +198,33 @@ class ExperimentConfig:
         note_ids_path_raw = input_raw.get("note_ids_path")
         if not isinstance(note_ids_path_raw, str) or not note_ids_path_raw:
             raise ValueError("`input.note_ids_path` must be a nonempty string")
+        embedding_manifest_raw = input_raw.get("embedding_manifest")
+        embedding_manifest = None
+        if embedding_manifest_raw is not None:
+            binding = _require_mapping(
+                embedding_manifest_raw, "input.embedding_manifest"
+            )
+            manifest_path = binding.get("path")
+            if not isinstance(manifest_path, str) or not manifest_path:
+                raise ValueError(
+                    "`input.embedding_manifest.path` must be a nonempty string"
+                )
+            embedding_manifest = EmbeddingManifestBinding(
+                path=Path(manifest_path),
+                bytes=_require_plain_int(
+                    binding.get("bytes"),
+                    "input.embedding_manifest.bytes",
+                    minimum=1,
+                ),
+                sha256=_require_sha256(
+                    binding.get("sha256"),
+                    "input.embedding_manifest.sha256",
+                ),
+            )
         input_config = InputConfig(
             matrix_path=Path(matrix_path_raw),
             note_ids_path=Path(note_ids_path_raw),
+            embedding_manifest=embedding_manifest,
             dimensions=_require_plain_int(
                 input_raw.get("dimensions"), "input.dimensions", minimum=1
             ),
@@ -179,6 +251,33 @@ class ExperimentConfig:
         batch_size = _require_plain_int(
             model_raw.get("batch_size"), "model.batch_size", minimum=1
         )
+        steps = _require_plain_int(
+            model_raw.get("steps"), "model.steps", minimum=1
+        )
+        measurement_steps_raw = model_raw.get("measurement_steps", [])
+        if not isinstance(measurement_steps_raw, list):
+            raise ValueError("`model.measurement_steps` must be an array")
+        measurement_steps = tuple(
+            _require_plain_int(
+                value,
+                f"model.measurement_steps[{index}]",
+                minimum=1,
+            )
+            for index, value in enumerate(measurement_steps_raw)
+        )
+        if any(
+            left >= right
+            for left, right in zip(
+                measurement_steps, measurement_steps[1:], strict=False
+            )
+        ):
+            raise ValueError(
+                "`model.measurement_steps` must be strictly increasing"
+            )
+        if measurement_steps and measurement_steps[-1] > steps:
+            raise ValueError(
+                "`model.measurement_steps` cannot exceed `model.steps`"
+            )
         default_maximum_entries = (
             input_config.total_rows * min(dictionary_size, average_k * 8)
         )
@@ -186,9 +285,8 @@ class ExperimentConfig:
             dictionary_size=dictionary_size,
             average_k=average_k,
             batch_size=batch_size,
-            steps=_require_plain_int(
-                model_raw.get("steps"), "model.steps", minimum=1
-            ),
+            steps=steps,
+            measurement_steps=measurement_steps,
             learning_rate=_require_number(
                 model_raw.get("learning_rate"),
                 "model.learning_rate",
@@ -238,6 +336,23 @@ class ExperimentConfig:
         if model_config.device not in {"cpu", "cuda", "auto"}:
             raise ValueError("`model.device` must be `cpu`, `cuda`, or `auto`")
 
+        runtime_raw = raw.get("runtime")
+        runtime = None
+        if runtime_raw is not None:
+            runtime_mapping = _require_mapping(runtime_raw, "runtime")
+            container_image = runtime_mapping.get("container_image")
+            if not isinstance(container_image, str) or not container_image:
+                raise ValueError(
+                    "`runtime.container_image` must be a nonempty string"
+                )
+            runtime = RuntimeIdentity(
+                worker_sha256=_require_sha256(
+                    runtime_mapping.get("worker_sha256"),
+                    "runtime.worker_sha256",
+                ),
+                container_image=container_image,
+            )
+
         budget_raw = _require_mapping(raw.get("io_budget"), "io_budget")
         io_budget = IoBudget(
             max_source_read_bytes=_require_plain_int(
@@ -257,6 +372,7 @@ class ExperimentConfig:
             purpose=purpose,
             input=input_config,
             model=model_config,
+            runtime=runtime,
             io_budget=io_budget,
             output_path=Path(output_path_raw),
         )
@@ -924,6 +1040,74 @@ def _read_exact_range(
     return contents, digest.hexdigest()
 
 
+def _verified_embedding_manifest(
+    config: InputConfig,
+) -> VerifiedEmbeddingManifest | None:
+    binding = config.embedding_manifest
+    if binding is None:
+        return None
+    if config.start_row != 0:
+        raise ValueError(
+            "a bound embedding manifest requires `input.start_row` to be zero"
+        )
+    if binding.path.stat().st_size != binding.bytes:
+        raise ValueError("embedding manifest byte length differs from config")
+    manifest_bytes, manifest_sha256 = _read_exact_range(
+        binding.path, offset=0, length=binding.bytes
+    )
+    if manifest_sha256 != binding.sha256:
+        raise ValueError("embedding manifest hash differs from config")
+    try:
+        manifest = json.loads(manifest_bytes)
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ValueError("embedding manifest is not valid UTF-8 JSON") from error
+    if manifest.get("schema_version") != 1:
+        raise ValueError("embedding manifest schema is not supported")
+    if manifest.get("embedding_format") != EMBEDDING_FORMAT:
+        raise ValueError("embedding manifest format is not supported")
+    if (
+        manifest.get("learning_rows") != config.learning_rows
+        or manifest.get("evaluation_rows") != config.evaluation_rows
+        or manifest.get("total_rows") != config.total_rows
+    ):
+        raise ValueError("embedding manifest split counts differ from config")
+    encoder = _require_mapping(
+        manifest.get("encoder"), "embedding_manifest.encoder"
+    )
+    if encoder.get("dimensions") != config.dimensions:
+        raise ValueError("embedding manifest dimensions differ from config")
+    files = _require_mapping(
+        manifest.get("files"), "embedding_manifest.files"
+    )
+    matrix = _require_mapping(
+        files.get("vectors.f32le"),
+        "embedding_manifest.files.vectors.f32le",
+    )
+    note_ids = _require_mapping(
+        files.get("note-ids.bin"),
+        "embedding_manifest.files.note-ids.bin",
+    )
+    if matrix.get("bytes") != config.byte_length:
+        raise ValueError("embedding matrix byte length differs from manifest")
+    if note_ids.get("bytes") != config.note_ids_byte_length:
+        raise ValueError("embedding NoteId byte length differs from manifest")
+    if config.matrix_path.stat().st_size != config.byte_length:
+        raise ValueError("embedding matrix has trailing or missing bytes")
+    if config.note_ids_path.stat().st_size != config.note_ids_byte_length:
+        raise ValueError("embedding NoteIds have trailing or missing bytes")
+    return VerifiedEmbeddingManifest(
+        sha256=manifest_sha256,
+        matrix_sha256=_require_sha256(
+            matrix.get("sha256"),
+            "embedding_manifest.files.vectors.f32le.sha256",
+        ),
+        note_ids_sha256=_require_sha256(
+            note_ids.get("sha256"),
+            "embedding_manifest.files.note-ids.bin.sha256",
+        ),
+    )
+
+
 def _read_inputs(config: InputConfig) -> tuple[Tensor, Tensor, str, str]:
     matrix_bytes, matrix_sha256 = _read_exact_range(
         config.matrix_path, offset=config.byte_offset, length=config.byte_length
@@ -963,6 +1147,129 @@ def _training_batches(
         yield indexes
 
 
+@torch.no_grad()
+def _learning_active_topics(
+    model: BatchTopKSae,
+    learning: Tensor,
+    *,
+    threshold: float,
+    batch_size: int,
+) -> Tensor:
+    active = torch.zeros(
+        model.dictionary_size, dtype=torch.bool, device=learning.device
+    )
+    for start in range(0, learning.shape[0], batch_size):
+        activations = model.encode_inference(
+            learning[start : start + batch_size], threshold
+        )
+        active |= torch.any(activations > 0, dim=0)
+    return active
+
+
+@torch.no_grad()
+def _reconstruction_metrics(
+    model: BatchTopKSae,
+    embeddings: Tensor,
+    *,
+    baseline_mean: Tensor,
+    threshold: float,
+    learning_active_topics: Tensor,
+    batch_size: int,
+) -> dict[str, int | float]:
+    residual_squared_error = 0.0
+    baseline_squared_error = 0.0
+    relation_entry_count = 0
+    maximum_active_topics = 0
+    unassigned_note_count = 0
+    split_active_topics = torch.zeros_like(learning_active_topics)
+    for start in range(0, embeddings.shape[0], batch_size):
+        batch = embeddings[start : start + batch_size]
+        activations = model.encode_inference(batch, threshold)
+        activations[:, ~learning_active_topics] = 0
+        present = activations > 0
+        active_counts = present.sum(dim=1)
+        relation_entry_count += int(active_counts.sum())
+        maximum_active_topics = max(
+            maximum_active_topics, int(active_counts.max())
+        )
+        unassigned_note_count += int((active_counts == 0).sum())
+        split_active_topics |= torch.any(present, dim=0)
+        reconstruction = model.decode(activations)
+        residual_squared_error += float(
+            (reconstruction - batch).double().pow(2).sum()
+        )
+        baseline_squared_error += float(
+            (batch - baseline_mean).double().pow(2).sum()
+        )
+    if baseline_squared_error <= 0:
+        raise ValueError("reconstruction baseline has zero variance")
+    normalized_error = residual_squared_error / baseline_squared_error
+    row_count = int(embeddings.shape[0])
+    return {
+        "residual_squared_error": residual_squared_error,
+        "baseline_squared_error": baseline_squared_error,
+        "normalized_reconstruction_error": normalized_error,
+        "reconstruction_r2": 1.0 - normalized_error,
+        "active_topic_count": int(split_active_topics.sum()),
+        "relation_entry_count": relation_entry_count,
+        "mean_active_topics": relation_entry_count / row_count,
+        "maximum_active_topics": maximum_active_topics,
+        "unassigned_note_count": unassigned_note_count,
+    }
+
+
+@torch.no_grad()
+def _measure_training_state(
+    model: BatchTopKSae,
+    *,
+    learning: Tensor,
+    evaluation: Tensor,
+    average_k: int,
+    batch_size: int,
+    step: int,
+    last_batch_loss: float,
+    last_batch_reconstruction_loss: float,
+    last_batch_auxiliary_loss: float,
+) -> dict[str, Any]:
+    threshold = calibrate_inference_threshold(
+        model, learning, average_k, batch_size=batch_size
+    )
+    active_topics = _learning_active_topics(
+        model,
+        learning,
+        threshold=threshold,
+        batch_size=batch_size,
+    )
+    baseline_mean = learning.mean(dim=0)
+    return {
+        "step": step,
+        "learning_rows_processed": step * batch_size,
+        "equivalent_learning_passes": (
+            step * batch_size / int(learning.shape[0])
+        ),
+        "inference_threshold": threshold,
+        "last_batch_loss": last_batch_loss,
+        "last_batch_reconstruction_loss": last_batch_reconstruction_loss,
+        "last_batch_auxiliary_loss": last_batch_auxiliary_loss,
+        "learning": _reconstruction_metrics(
+            model,
+            learning,
+            baseline_mean=baseline_mean,
+            threshold=threshold,
+            learning_active_topics=active_topics,
+            batch_size=batch_size,
+        ),
+        "evaluation": _reconstruction_metrics(
+            model,
+            evaluation,
+            baseline_mean=baseline_mean,
+            threshold=threshold,
+            learning_active_topics=active_topics,
+            batch_size=batch_size,
+        ),
+    }
+
+
 @dataclass(frozen=True)
 class ExperimentReport:
     total_rows: int
@@ -971,8 +1278,13 @@ class ExperimentReport:
     inference_threshold: float
     final_loss: float
     final_reconstruction_loss: float
+    training_trace: list[dict[str, Any]]
     source_bytes_read: int
     durable_bytes_written: int
+    training_seconds: float
+    measurement_seconds: float
+    relation_seconds: float
+    peak_resident_set_bytes: int
     elapsed_seconds: float
 
     def to_dict(self) -> dict[str, int | float]:
@@ -983,8 +1295,13 @@ class ExperimentReport:
             "inference_threshold": self.inference_threshold,
             "final_loss": self.final_loss,
             "final_reconstruction_loss": self.final_reconstruction_loss,
+            "training_trace": self.training_trace,
             "source_bytes_read": self.source_bytes_read,
             "durable_bytes_written": self.durable_bytes_written,
+            "training_seconds": self.training_seconds,
+            "measurement_seconds": self.measurement_seconds,
+            "relation_seconds": self.relation_seconds,
+            "peak_resident_set_bytes": self.peak_resident_set_bytes,
             "elapsed_seconds": self.elapsed_seconds,
         }
 
@@ -993,12 +1310,33 @@ def run_experiment(config: ExperimentConfig) -> ExperimentReport:
     """Execute the admitted production path without scanning the source matrix."""
 
     started = time.monotonic()
+    runtime_metadata: dict[str, str] = {}
+    if config.runtime is not None:
+        worker_sha256 = _hash_file(Path(__file__))
+        if worker_sha256 != config.runtime.worker_sha256:
+            raise ValueError(
+                "worker implementation differs from the frozen runtime identity"
+            )
+        runtime_metadata = {
+            "worker_sha256": worker_sha256,
+            "container_image": config.runtime.container_image,
+        }
     planned = IoPlan(
         source_read_bytes=config.input.source_read_bytes,
         durable_write_bytes=_estimate_relation_bytes(config),
     )
     planned.require_admitted(config.io_budget)
+    embedding_manifest = _verified_embedding_manifest(config.input)
     embeddings, note_ids, matrix_sha256, note_ids_sha256 = _read_inputs(config.input)
+    if embedding_manifest is not None:
+        if matrix_sha256 != embedding_manifest.matrix_sha256:
+            raise ValueError(
+                "embedding matrix hash differs from its verified manifest"
+            )
+        if note_ids_sha256 != embedding_manifest.note_ids_sha256:
+            raise ValueError(
+                "embedding NoteId hash differs from its verified manifest"
+            )
     if not bool(torch.all(torch.isfinite(embeddings))):
         raise ValueError("input embeddings contain a non-finite value")
 
@@ -1008,6 +1346,7 @@ def run_experiment(config: ExperimentConfig) -> ExperimentReport:
         torch.cuda.manual_seed_all(config.model.seed)
     device = _resolve_device(config.model.device)
     learning = embeddings[: config.input.learning_rows].to(device)
+    evaluation = embeddings[config.input.learning_rows :].to(device)
     model = BatchTopKSae(
         config.input.dimensions,
         config.model.dictionary_size,
@@ -1019,6 +1358,11 @@ def run_experiment(config: ExperimentConfig) -> ExperimentReport:
 
     final_loss = math.nan
     final_reconstruction_loss = math.nan
+    final_auxiliary_loss = math.nan
+    training_trace: list[dict[str, Any]] = []
+    measurement_steps = set(config.model.measurement_steps)
+    training_seconds = 0.0
+    measurement_seconds = 0.0
     model.train()
     batches = iter(
         _training_batches(
@@ -1037,6 +1381,7 @@ def run_experiment(config: ExperimentConfig) -> ExperimentReport:
         chain((first_indexes,), batches),
         start=1,
     ):
+        training_step_started = time.monotonic()
         batch = learning[indexes.to(device)]
         optimizer.zero_grad(set_to_none=True)
         reconstruction, _, dense = model.forward_training(batch)
@@ -1067,7 +1412,26 @@ def run_experiment(config: ExperimentConfig) -> ExperimentReport:
         model.normalize_decoder()
         final_loss = float(loss.detach())
         final_reconstruction_loss = float(reconstruction_loss.detach())
+        final_auxiliary_loss = float(auxiliary_loss.detach())
+        training_seconds += time.monotonic() - training_step_started
+        if step in measurement_steps:
+            measurement_started = time.monotonic()
+            training_trace.append(
+                _measure_training_state(
+                    model,
+                    learning=learning,
+                    evaluation=evaluation,
+                    average_k=config.model.average_k,
+                    batch_size=config.model.batch_size,
+                    step=step,
+                    last_batch_loss=final_loss,
+                    last_batch_reconstruction_loss=final_reconstruction_loss,
+                    last_batch_auxiliary_loss=final_auxiliary_loss,
+                )
+            )
+            measurement_seconds += time.monotonic() - measurement_started
 
+    relation_started = time.monotonic()
     model.eval()
     threshold = calibrate_inference_threshold(
         model,
@@ -1100,6 +1464,11 @@ def run_experiment(config: ExperimentConfig) -> ExperimentReport:
         "purpose": config.purpose,
         "matrix_range_sha256": matrix_sha256,
         "note_ids_range_sha256": note_ids_sha256,
+        "embedding_manifest_sha256": (
+            None
+            if embedding_manifest is None
+            else embedding_manifest.sha256
+        ),
         "start_row": config.input.start_row,
         "input_dimensions": config.input.dimensions,
         "learning_rows": config.input.learning_rows,
@@ -1118,6 +1487,10 @@ def run_experiment(config: ExperimentConfig) -> ExperimentReport:
         "gradient_clip": config.model.gradient_clip,
         "device": str(device),
         "torch_version": torch.__version__,
+        "torch_num_threads": torch.get_num_threads(),
+        "torch_num_interop_threads": torch.get_num_interop_threads(),
+        **runtime_metadata,
+        "training_trace": training_trace,
         "threshold_calibration": (
             "arithmetic mean of minimum positive BatchTopK activations "
             "over fixed sequential learning batches"
@@ -1128,6 +1501,10 @@ def run_experiment(config: ExperimentConfig) -> ExperimentReport:
         metadata=metadata,
         maximum_write_bytes=config.io_budget.max_durable_write_bytes,
     )
+    relation_seconds = time.monotonic() - relation_started
+    peak_resident_set_bytes = (
+        resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024
+    )
     return ExperimentReport(
         total_rows=config.input.total_rows,
         dictionary_size=config.model.dictionary_size,
@@ -1135,8 +1512,13 @@ def run_experiment(config: ExperimentConfig) -> ExperimentReport:
         inference_threshold=threshold,
         final_loss=final_loss,
         final_reconstruction_loss=final_reconstruction_loss,
+        training_trace=training_trace,
         source_bytes_read=config.input.source_read_bytes,
         durable_bytes_written=written,
+        training_seconds=training_seconds,
+        measurement_seconds=measurement_seconds,
+        relation_seconds=relation_seconds,
+        peak_resident_set_bytes=peak_resident_set_bytes,
         elapsed_seconds=time.monotonic() - started,
     )
 
