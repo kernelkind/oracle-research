@@ -1,4 +1,4 @@
-# Experiment 4: unmasked-context coexistence
+# Experiment 4: unmasked-context membership
 
 Status: **draft; all notes, masks, and expected relationships require human
 approval before encoding**.
@@ -17,42 +17,40 @@ vector's fine-segment membership.
 
 When the same selected text is encoded alone and inside notes with different
 unmasked contexts, does each context-loaded vector retain the no-context
-control's relationships to the recovered subjects?
+control's relationships to the recovered subjects when each context change is
+tested independently?
 
 ## Design
 
-The same frozen vectors are used in two input conditions. Each condition is
-repeated in two fresh candidate invocations:
+The same frozen vectors are used in ten exact input conditions. Each condition
+is repeated in two fresh candidate invocations:
 
-1. An **anchor-only baseline** contains the nine fully masked target anchors
+1. One **anchor-only baseline** contains the nine fully masked target anchors
    and nine fully masked context anchors.
-2. A **joint coexistence run** contains those 18 anchors plus the nine mixed
-   targets crossing every target subject with every context subject.
+2. Nine independent **treatment runs** each contain those same 18 anchors plus
+   exactly one mixed target.
 
-The anchor-only baseline establishes six reference subjects before mixed
-vectors can affect the candidate's output. In the joint run, compare each mixed
-target with its exact no-context control separately against each recovered
-subject. This asks whether unmasked context changed a relationship; it does not
-require the control's relationships themselves to be ideal.
+The anchor-only baseline establishes six reference subjects and one six-subject
+relationship profile for each exact no-context control. A control is usable
+only when that profile is one-hot: it has a relationship to its declared target
+subject and no relationship to the other five subjects.
+
+Each treatment run then asks one question. After the added mixed vector enters,
+do the six references and the exact control's one-hot profile remain available,
+and does the mixed vector have that same profile? A changed control or missing
+reference withholds that treatment's focal verdict; it does not become evidence
+that the mixed vector itself changed because of context.
 
 Each target reference contains one fully masked anchor whose selected text is
 exactly the same as its three mixed targets' masks, plus two independent
-paraphrases. The exact anchor ensures that the no-context version of the mask
-is present in the joint collection; the paraphrases prevent literal repetition
-from defining the reference by itself.
+paraphrases. The exact anchor supplies the no-context control inside every
+treatment collection; the paraphrases prevent literal repetition from defining
+the reference by itself.
 
-The subject being compared must qualify in the baseline. The masked-subject
-comparison always requires that subject's joint reference. A foreign-subject
-comparison additionally requires its joint reference only when both
-relationships are absent; a directly present foreign relationship can be
-compared without that pure reference. The existing anchors provide these
-checks; no additional arm is required.
-
-The anchor-only baseline does not replace the joint run. Comparing separately
-clustered control and treatment collections could conceal a split in which
-bare and context-loaded instances form different regions while each collection
-looks internally coherent. Both views are required: the baseline establishes
-the references, and the joint run tests coexistence against them.
+Testing one mixed target per run prevents treatment vectors from moving one
+another, jointly reinforcing their masked subject, or jointly changing the
+control and references used to score them. No all-nine treatment run is part of
+this experiment because it cannot supply the missing per-target counterfactual.
 
 ## Lexical controls
 
@@ -63,8 +61,8 @@ the references, and the joint run tests coexistence against them.
   semantic paraphrases. The exact control supplies one fixed-wording anchor;
   the paraphrases prevent the subject reference from being established by
   literal repetition alone. Scoring compares each mixed target with that exact
-  control, subject by subject, in the same joint output. The mixed target and
-  control need not share one segment directly.
+  control, subject by subject, in the same treatment output. The mixed target
+  and control need not share one segment directly.
 - The three context-subject anchors express that subject with different
   wording.
 - The three mixed contexts representing one context subject use different
@@ -77,6 +75,11 @@ the references, and the joint run tests coexistence against them.
 - Necessary content words such as `telescope`, `sourdough`, and `passport` are
   not artificially removed. The test avoids copied phrases; it does not turn
   the notes into unnatural thesaurus substitutions.
+- The control and mixed target select identical UTF-8 bytes, but their selected
+  token IDs, selected-piece counts, and contextual token representations may
+  differ when the complete notes are tokenized and encoded. Those differences
+  are legitimate effects of unmasked context under the frozen SSE boundary.
+  Preserve them as diagnostics; do not use equality as a prerequisite.
 
 The three outer forms are:
 
@@ -270,29 +273,16 @@ SOURDOUGH-ANCHOR-1, SOURDOUGH-ANCHOR-2, SOURDOUGH-ANCHOR-3
 PASSPORT-ANCHOR-1, PASSPORT-ANCHOR-2, PASSPORT-ANCHOR-3
 ```
 
-The frozen context-lure groups are:
-
-```text
-COFFEE-TELESCOPE, BICYCLE-TELESCOPE, WATERCOLOR-TELESCOPE
-COFFEE-SOURDOUGH, BICYCLE-SOURDOUGH, WATERCOLOR-SOURDOUGH
-COFFEE-PASSPORT, BICYCLE-PASSPORT, WATERCOLOR-PASSPORT
-```
-
-The frozen form-lure groups are:
-
-```text
-COFFEE-TELESCOPE, WATERCOLOR-SOURDOUGH, BICYCLE-PASSPORT
-BICYCLE-TELESCOPE, COFFEE-SOURDOUGH, WATERCOLOR-PASSPORT
-WATERCOLOR-TELESCOPE, BICYCLE-SOURDOUGH, COFFEE-PASSPORT
-```
-
-A frozen lure group is **supported** when at least two of its three members
-co-occur in one returned segment.
-
 For each mixed target, the three anchors belonging to its unmasked context are
 its matching context anchors. For example, the matching context anchors for
 `COFFEE-TELESCOPE` are `TELESCOPE-ANCHOR-1` through
 `TELESCOPE-ANCHOR-3`. There are 27 such target-to-context-anchor pairs.
+
+Each mixed target also retains its masked-subject, context-subject, and outer-form
+labels as scorer-only diagnostic metadata. After the nine independent focal
+verdicts are fixed, summarize failures by each of those three dimensions. A
+repeated pattern may motivate a smaller follow-up, but it never replaces or
+changes an individual treatment verdict.
 
 ## Anchor-supported membership
 
@@ -302,10 +292,11 @@ of that subject's anchors. Support does not imply purity: the same segment may
 also contain vectors declared as other subjects.
 
 A **reference segment** for one subject is supported by that subject and
-subject-pure: every vector in it has that same declared atomic subject. A
-target reference segment may therefore contain any of that target's mixed
-vectors. A context reference segment cannot contain a mixed vector, because a
-mixed vector's declared atomic subject is its mask, not its unmasked context.
+subject-pure: every vector in it has that same declared atomic subject. In a
+treatment run, a target reference segment may therefore contain that run's
+single mixed vector when its mask declares the same target subject. A context
+reference segment cannot contain that mixed vector, because the vector's
+declared atomic subject is its mask, not its unmasked context.
 
 For each subject, construct an undirected three-vertex **anchor graph**. Its
 vertices are that subject's anchors. Connect two anchors when they co-occur in
@@ -323,10 +314,7 @@ while the separately recovered reference establishes what `S` means.
 
 For a mixed target, its relationship to its unmasked-context subject is the
 **matching-context relationship**. Relationships to the four remaining
-foreign subjects are recorded separately. A segment containing mixed targets
-with different masked subjects creates a relationship for each represented
-target to the other's declared subject; each relationship is scored under its
-own prerequisites.
+foreign subjects are recorded separately.
 
 One-vector segments and segments without two same-subject anchors do not
 define a reference subject. They remain part of the candidate output. A
@@ -335,76 +323,69 @@ different declared subject is a direct returned relationship and is scored as
 described above. Evidence is not aggregated across separate segments.
 
 This is deliberately a subject-level membership test. It does not require all
-anchors and mixed vectors for one subject to appear in one six-vector segment,
-nor does it require their complete sets of segment IDs to match. Different
+vectors declared as one subject in an input to appear in a single segment, nor
+does it require their complete sets of segment IDs to match. Different
 anchor-supported pure segments can represent the same declared subject.
 
 ## Anchor-only baseline qualification
 
-First apply the shared output-validity and repeatability checks. In a valid,
-repeatable anchor-only baseline, qualify each declared subject independently.
-One subject qualifies when its reference anchor graph is connected.
+First apply the shared execution-profile, output-validity, and repeatability
+checks. In a valid, repeatable anchor-only baseline, qualify each declared
+subject independently. One subject qualifies when its reference anchor graph
+is connected.
 
-Other baseline segments, including cross-subject segments, singletons, and
-same-subject overlaps, remain in the diagnostic record. They do not erase an
-otherwise connected pure reference.
+For each exact target control, build a six-boolean profile in this frozen order:
 
-Each qualified graph and its reference segments form that subject's baseline
-reference. An invalid raw output is an **output-contract failure** and
-disagreeing valid repetitions are a **repeatability failure**; either blocks
-all six baseline subjects. In a valid, repeatable output, a subject whose pure
-reference graph is disconnected has a **local baseline prerequisite failure**.
-For a failed subject `S`, every target-to-`S` comparison is withheld. A mixed
-target masked as `S` also lacks a complete six-subject result, but its five
-foreign-subject comparisons remain independently scoreable when their own
-prerequisites hold. Baseline qualification uses only output preserved before
-the mixed vectors enter the joint candidate run.
+```text
+COFFEE, BICYCLE, WATERCOLOR, TELESCOPE, SOURDOUGH, PASSPORT
+```
+
+The control is usable only when all six subject references qualify and its
+profile is one-hot: `true` for its declared target subject and `false` for the
+other five. For example, `COFFEE-CONTROL` must have
+`[true, false, false, false, false, false]`.
+
+Other baseline segments, including cross-subject segments not involving a
+scored control, singletons, and same-subject overlaps, remain diagnostics. They
+do not erase an otherwise connected reference or usable control. A missing
+subject reference is one **local baseline-reference prerequisite failure** and
+makes all three control profiles unavailable. If all six references qualify but
+one control's profile is not one-hot, that control has a **local control-profile
+prerequisite failure**. Its three treatment runs receive no focal verdict. Do
+not relabel a missing baseline reference as three control-profile failures;
+neither prerequisite failure is an unmasked-context failure.
+
+An invalid raw output, execution-profile mismatch, or disagreement between
+valid repetitions is an integrity failure under the shared contract and blocks
+every baseline-dependent result.
 
 ## Frozen hypothesis
 
-In the joint coexistence run, a subject's reference is available when its pure
-joint anchor graph is connected. Cross-subject anchor overlaps are recorded as
-collection diagnostics; they do not erase a pure connected reference.
+In one treatment run, reconstruct all six pure anchor graphs and recompute the
+exact control's six-boolean profile before scoring the mixed vector. That
+treatment qualifies only when:
 
-For each mixed target, compare it with the exact no-context control for its
-masked text against each of the six declared subjects. Only the subject being
-compared must qualify in the anchor-only baseline. Failure of the masked
-subject's own baseline or joint-reference prerequisite withholds its
-masked-subject comparison and its complete six-subject result, but it does not
-erase independently scoreable foreign-subject comparisons.
+1. its exact control qualified in the anchor-only baseline;
+2. all six treatment-run reference graphs are connected; and
+3. the control's treatment-run profile exactly equals its frozen one-hot
+   baseline profile.
 
-For the masked-subject comparison, the joint target reference must also be
-available. For a foreign-subject comparison, first compute the control's and
-mixed target's direct relationship booleans. If either relationship is
-present, their equality or difference is directly observable even when the
-foreign subject's pure joint reference disconnected. If both are absent, the
-foreign joint reference must be available before that shared absence can count
-as a pass; otherwise the comparison has no verdict.
+A missing reference is a **local treatment-reference prerequisite failure**. A
+changed control profile is a **local control-displacement prerequisite
+failure**. Either gives only that treatment no focal verdict. This prevents an
+added vector from moving the measurement control and then passing merely
+because the mixed vector moved with it.
 
-For an available comparison, equal booleans are a
-**subject-relationship pass**. Different booleans are a
-**context-membership-change failure**, recorded as either a gained or lost
-relationship.
+For a qualified treatment, compute the mixed vector's six-boolean profile. An
+equal profile is a **subject-relationship pass**. Any difference is a
+**context-membership-change failure**, recorded as each gained or lost
+relationship. The target-subject comparison tests retention; the
+unmasked-context-subject comparison tests the matching-context lure; the other
+four comparisons detect unrelated gains or losses.
 
-This is a difference test. An unrelated control relationship does not suppress
-a comparison with another subject, and a relationship shared by the control
-and mixed target is stable for this experiment even if it is undesirable for
-another reason. Requiring every control to be globally clean would conflate
-unmasked-context sensitivity with general segmentation quality and erase
-independent evidence.
-
-The comparison against the masked target subject tests retention. The
-comparison against the declared unmasked-context subject is the
-matching-context comparison. The other four comparisons detect unrelated
-gained or lost relationships. A mixed target passes completely only when all
-six comparisons are available and pass. A failure in one comparison remains
-scoreable when another comparison lacks its own subject reference.
-
-Complete segment-ID signatures are not compared: an auxiliary singleton or
-same-subject overlap does not by itself show that unmasked material changed a
-subject relationship. The frozen context-lure and form-lure groups remain
-diagnostics for patterns across multiple failures; they do not replace the
-subject-by-subject verdicts.
+Complete segment-ID signatures are not compared. An auxiliary singleton or
+same-subject overlap that leaves all references and the control profile intact
+does not by itself show that unmasked material changed membership.
 
 ## Frozen system boundary
 
@@ -418,92 +399,89 @@ The candidate receives only opaque IDs and vectors. It may return overlapping
 fine segments and leave vectors unassigned. Scoring consumes only its
 predeclared fine-segment collection; coarser parents are excluded.
 
+This experiment qualifies the frozen SSE-plus-candidate combination. Its text
+intervention passes through SSE and can change the vector before the candidate
+organizes it. A failure cannot by itself identify SSE, candidate behavior, or
+their interaction as the cause.
+
 This is a visible development fixture, not held-out confirmation.
 
 ## Protocol
 
 1. Obtain human approval of all 27 notes, masks, subject identities, and
    expected relationships.
-2. Freeze this document and the complete candidate identity, and document the
-   candidate's construction-level permutation invariance.
+2. Freeze this document, the complete candidate identity and execution profile,
+   and the candidate's construction-level permutation-invariance argument.
 3. Apply the shared opaque-ID blinding and frozen-order rules once to all 27
    fixture IDs. The anchor-only input is the 18-anchor subsequence of that one
-   frozen order; the joint input is the full 27-vector order.
+   frozen order. Each treatment input is the same 18 anchors plus exactly one
+   mixed target, filtered from that global order.
 4. Freeze the SSE boundary and exact input bytes, then generate all 27
-   full-note vectors once and record their dimensions and hashes.
-5. Give the 18 anchors to two separately
-   initialized candidate invocations with identical configuration and
-   candidate seed. Preserve both complete anchor-only outputs.
-6. Give all 27 vectors to two more separately initialized
-   invocations with that same configuration and candidate seed. Preserve both
-   complete joint outputs.
-7. While identities remain hidden, validate every raw output under the shared
-   output contract. An empty segment, unknown ID, repeated member within a
-   segment, or duplicate member set is an output-contract failure. Do not
-   canonicalize an invalid output or derive a semantic verdict from it.
+   full-note vectors once and record their dimensions and hashes. Also preserve
+   each frozen byte span's mapping to selected token positions and verify it
+   against the frozen byte-span-to-token rule. Preserve token IDs and piece
+   counts as diagnostics without comparing positions, IDs, or counts between a
+   control and mixed note.
+5. Give the 18 anchors to two separately initialized candidate invocations with
+   the frozen candidate seed and verified execution profile. Preserve both
+   complete anchor-only outputs.
+6. Run each of the nine 19-vector treatment inputs twice, each time in a
+   separately initialized process with that same seed and verified profile.
+   Preserve all 18 complete treatment outputs.
+7. While identities remain hidden, verify each invocation's actual execution
+   profile, then validate every raw output under the shared output contract. Do
+   not canonicalize an invalid output or derive a semantic verdict from an
+   integrity failure.
 8. For each valid identical-input pair, compare the shared canonical JSON
    bytes. A mismatch is a repeatability failure and receives no semantic
    verdict.
-9. After all four outputs are immutable, reveal and verify the fixture mapping.
-   Qualify each anchor-only subject reference, then each corresponding joint
-   reference. Compare each mixed target with its exact control against all six
-   subjects under the local prerequisites above. Preserve and verify all
-   artifacts even when one comparison is withheld.
+9. After all 20 outputs are immutable, reveal and verify the fixture mapping.
+   Qualify the six baseline references and three exact control profiles. Then,
+   for each treatment independently, qualify its six references, verify that
+   its exact control retained the baseline profile, and compare the mixed
+   vector's profile. Preserve every artifact even when a treatment is withheld.
 
 ## Pass rule
 
-An anchor-only output-contract or repeatability failure blocks baseline
-qualification and every dependent semantic verdict. A joint output-contract or
-repeatability failure preserves any independent baseline qualification but
-produces no joint-reference or unmasked-context verdict. In a valid,
-repeatable anchor-only output, a subject that does not qualify has a local
-baseline prerequisite failure; only comparisons that depend on that subject
-receive no verdict.
+Any anchor-only integrity failure under the shared contract blocks baseline
+qualification and every dependent semantic verdict. When the anchor-only pair
+passes those checks, all six references and all three one-hot control profiles
+must qualify before the experiment can produce a complete pass.
 
-In a valid, repeatable joint output, make each subject's pure anchor graph. Its
-joint reference is available when that graph is connected. A disconnected
-pure graph is a **local joint-reference prerequisite failure** for that
-subject. Cross-subject anchor overlaps remain diagnostics; they do not erase
-an otherwise connected pure reference.
+An integrity failure in one treatment preserves the baseline and every other
+treatment's result but gives that treatment no focal verdict. For each valid,
+repeatable treatment, score in this order:
 
-For each mixed target, score in this order:
+1. require all six baseline references and that treatment's exact control
+   profile to have qualified;
+2. require all six treatment reference graphs to remain connected;
+3. recompute the exact control's profile and require it to equal its frozen
+   baseline profile; and
+4. compare the mixed vector's six booleans with that preserved profile.
 
-1. For each declared subject `S`, require `S` to qualify in the anchor-only
-   baseline. If it did not, only the target-to-`S` comparison has no verdict.
-2. Compute the no-context control's relationship to `S` and the mixed target's
-   relationship to `S`.
-3. If `S` is the masked target subject, require its joint reference to be
-   available. If `S` is foreign and both relationships are absent, require its
-   joint reference to be available. A missing required joint reference gives
-   only that comparison no verdict.
-4. For every available comparison, equal booleans pass. Unequal booleans fail
-   and are recorded as a gained or lost relationship.
-
-The experiment fails when any eligible subject-by-subject comparison differs.
-It passes only when all 54 mixed-target-to-subject comparisons are available
-and pass. Those comparisons already require every baseline reference and every
-joint reference needed to interpret an absent relationship. If no eligible
-comparison fails but any comparison is withheld, the experiment has no overall
-context verdict. Do not average targets or subjects.
+The experiment fails when any eligible mixed-vector profile differs. It passes
+only when all nine treatments are eligible and all nine mixed profiles equal
+their controls. If no eligible treatment fails but any treatment is withheld,
+the experiment has no overall context verdict. Do not average treatments or
+profile positions.
 
 Report these result classes separately:
 
-- output-contract failure;
-- repeatability failure;
-- local anchor-only prerequisite failure for each subject;
-- local joint-reference prerequisite failure for each subject;
+- integrity failure, with its shared-contract cause;
+- local baseline-reference prerequisite failure for each subject;
+- local control-profile prerequisite failure for each exact control;
+- local treatment-reference prerequisite failure for each treatment;
+- local control-displacement prerequisite failure for each treatment;
 - context-membership-change failure for each eligible gained or lost
   relationship, classified as masked-subject, matching-context, or other
   subject;
-- stable subject relationship for each eligible equal control/mixed result,
-  preserving whether both relationships were present or both were absent;
-- cross-target mixed segment, with a separate scoped result for every mixed
-  target represented and classification when applicable as context-lure or
-  form-lure support;
-- subject comparison withheld because the compared subject failed a local
-  prerequisite;
-- other joint-output shape changes that do not alter a local chain, as
-  collection diagnostics;
+- stable complete mixed-vector profile for each eligible equal comparison;
+- treatment withheld because its baseline, reference, or preserved-control
+  prerequisite failed;
+- context-subject, masked-subject, and outer-form patterns across independent
+  treatment results;
+- other treatment-output shape changes that do not alter a reference or
+  control profile, as collection diagnostics; and
 - other unsupported auxiliary segments.
 
 One eligible gained or lost relationship is not averaged away. Other output
@@ -514,64 +492,67 @@ and do not decide the verdict.
 
 Preserve:
 
-- the complete returned fine-segment collection from all four invocations;
+- the complete returned fine-segment collection from all 20 invocations;
 - for each valid output, every segment's projection onto the 18 anchor IDs;
 - every raw output-validity result and, for each valid output, its canonical
   JSON byte string and hash;
-- both repeatability comparisons;
+- all 10 repeatability comparisons;
 - every subject's anchor-only qualification, every anchor in a cross-subject
   segment, all reference segments, and all six anchor graphs;
-- each subject's pure joint anchor graph, reference segments, and resulting
-  reference availability;
-- for every mixed-target-to-subject comparison, its exact no-context control,
-  both vectors' complete supporting segments, both relationship booleans, all
-  local prerequisite states, the equal/different result, and the gained/lost
-  classification when different;
-- every mixed target's six subject comparisons and complete target result;
-- every context-lure, form-lure, and other cross-subject merge;
-- the exact opaque-ID mapping and input order for both input conditions;
+- every exact control's baseline profile and qualification;
+- for each treatment, all six pure anchor graphs, the control's recomputed
+  profile, every prerequisite state, the mixed vector's complete supporting
+  segments and profile, and every gained/lost relationship;
+- every context-subject, masked-subject, outer-form, and other diagnostic
+  pattern across the nine independent treatment results;
+- the exact opaque-ID mapping, global order, anchor-only input, and all nine
+  treatment inputs;
 - the shared blinding seed, its pre-run commitment, and successful post-run
   verification of every derived ID and order key;
+- every frozen byte span, its selected token positions, and its verification
+  against the frozen byte-span-to-token rule; selected token IDs and piece
+  counts remain diagnostics without a control/mixed equality requirement;
 - cosine matrices and nearest-neighbor orders computed from immutable raw SSE
   outputs;
 - the raw SSE artifact and hashes;
-- the complete candidate identity required by the shared contract.
+- the complete candidate identity and execution-profile manifest and hash, plus
+  every invocation's actual-profile verification.
 
-If the anchor-only pair has an output-contract or repeatability failure,
-preserve all four raw outputs and mark baseline qualification and every
-dependent result as **no verdict because anchor-only integrity failed**. If
-only the joint pair has an output-contract or repeatability failure, preserve
-every independently valid per-subject baseline qualification and mark joint
-reference graphs, subject comparisons, and context verdicts as **no verdict
-because joint-input integrity failed**. Never repair an output or choose one of
-two conflicting outputs.
+If the anchor-only pair has an integrity failure, preserve all 20 raw outputs
+and mark baseline qualification and every dependent result as **no verdict
+because anchor-only integrity failed**. If one treatment pair has an integrity
+failure, preserve its raw outputs and every independently valid baseline and
+treatment result, and mark only that treatment **no verdict because treatment
+integrity failed**. Never repair an output or choose one of two conflicting
+outputs.
 
 Cosine is diagnostic evidence. The verdict is determined by returned
 fine-segment membership.
 
 ## What a result means
 
-A pass shows that, in this fixture, the candidate recovered all six baseline
-references and gave each context-loaded vector the same relationship to every
-declared subject as its exact no-context control. Every joint reference needed
-to interpret an absent relationship remained available.
+A pass shows that, in this fixture, the frozen SSE-plus-candidate combination
+recovered all six baseline references, established a one-hot relationship
+profile for every exact control, preserved that control in each independent
+treatment, and gave every context-loaded vector the same six-subject profile.
 
-An output-contract or repeatability failure has no Experiment 4 semantic
-interpretation. A local anchor-only prerequisite failure blocks only mixed
-targets whose specific comparison needs that subject. A local joint-reference
-prerequisite failure means an anchor subject that qualified in the baseline no
-longer provides an interpretable joint reference. It withholds that subject's
-masked-subject comparison and any foreign comparison that relies on shared
-absence; directly present foreign relationships remain comparable. A
-context-membership-change failure means the mixed vector gained or lost one
-subject relationship that its exact no-context control did not. Unchanged but
-undesirable relationships are not Experiment 4 failures; this protocol tests
-sensitivity to unmasked context, not general segment correctness. Auxiliary
-shape changes remain diagnostic.
+An integrity failure has no Experiment 4 semantic interpretation. A baseline
+reference or control-profile failure means the local state needed to test a
+mixed target never existed. A treatment-reference or control-displacement
+failure means adding that one mixed vector changed the measurement state, so
+the mixed vector receives no focal verdict. A context-membership-change failure
+means an eligible mixed vector gained or lost at least one relationship that
+its preserved no-context control did not. Auxiliary shape changes remain
+diagnostic.
 
-The recorded lure classes and raw-vector geometry can help explain a failure,
-but do not prove its mechanism. A smaller matched follow-up should isolate
-semantic meaning, syntax, length, or position only after a failure occurs.
+Because the intervention passes through SSE before candidate execution, a
+failure may arise from SSE geometry, the segmentation candidate, or their
+interaction. The result does not identify that mechanism.
+
+The recorded context, masked-subject, outer-form, and raw-vector diagnostics can
+help explain a failure, but do not prove its mechanism. A smaller matched
+follow-up should isolate semantic meaning, syntax, length, or position only
+after a failure occurs.
 
 This experiment does not test automatically generated masks, natural
 correlated notes, unequal density, every possible context position,

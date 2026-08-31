@@ -15,7 +15,10 @@ at the selected positions, and applies its learned output transformation.
 
 The evidence below is conditional on the supplied masks. It does not validate
 automatic subject extraction, fine segmentation, hierarchy construction, or
-navigation quality.
+navigation quality. The later fine-segmentation suite contains two integration
+experiments that re-encode controlled text changes through SSE and then inspect
+candidate memberships; those results qualify the frozen SSE-plus-candidate
+combination rather than either component alone.
 
 ## Controlled Synthetic Evidence
 
@@ -95,5 +98,6 @@ relationships and some nearby or compound subjects.
 
 That is enough to continue testing the architecture, not enough to treat SSE
 geometry as validated. The current dependency is to fix the subject-mask
-generation boundary and then evaluate one frozen fine-segmentation candidate
-with the synthetic suite.
+generation boundary and then evaluate one frozen SSE-plus-fine-segmentation
+combination with the synthetic suite while preserving each experiment's stated
+scope.

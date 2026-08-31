@@ -248,13 +248,15 @@ identical across the two subjects.
 
 ## Two output comparisons
 
-Every raw candidate output is preserved. Apply the shared output-validity,
-canonicalization, repeatability, and blinding contract in [README.md](README.md)
-before revealing fixture identities or doing either semantic comparison below.
-In particular, duplicate member sets make an output invalid; they are never
-silently removed or treated as a semantic or shape change.
+Every raw candidate output is preserved. Apply the shared execution-profile,
+output-validity, canonicalization, repeatability, and blinding contract in
+[README.md](README.md) before revealing fixture identities or doing either
+semantic comparison below. In particular, duplicate member sets make an output
+invalid; they are never silently removed or treated as a semantic or shape
+change.
 
-Only valid, repeatable outputs are scored in the two separate ways below.
+Only profile-matched, valid, repeatable outputs are scored in the two separate
+ways below.
 
 ### 1. Subject relationships
 
@@ -284,7 +286,8 @@ Use the shared canonical JSON as the complete output. It retains every valid
 overlap and singleton. Also derive and sort the input IDs that occur in no
 returned segment for the diagnostic record.
 
-Relative to `BASELINE`, classify every valid arm as:
+Relative to `BASELINE`, classify every profile-matched, valid, repeatable arm
+as:
 
 - **exactly stable** when its complete canonical output is equal;
 - **shape-only change** when its complete output differs but the recorded
@@ -296,9 +299,9 @@ whether shared spelling replaced a semantic relationship.
 
 ## Baseline qualification
 
-After its two runs pass the shared validity and repeatability checks, score
-baseline recovery independently for each trap. Each adjacent pair below is one
-trap's two required segments:
+After its two runs pass the shared execution-profile, output-validity, and
+repeatability checks, score baseline recovery independently for each trap. Each
+adjacent pair below is one trap's two required segments:
 
 ```text
 {COACH-SPORTS-1 ... COACH-SPORTS-4}
@@ -315,33 +318,37 @@ positions total must be a subset of that position's approved subject. Extra
 same-subject subsegments and singleton segments are allowed. A segment
 involving only other traps does not affect this trap's baseline gate.
 
-An invalid `BASELINE` raw output is an **output-contract failure**. Two valid
-baseline outputs that disagree are a **repeatability failure**. If the valid,
-repeatable `BASELINE` does not qualify for one trap, record a **local recovery
-prerequisite failure** for that trap. It receives no lexical verdict. Other
-traps use their own baseline relationships.
+A profile-mismatched `BASELINE` invocation is an **execution-profile integrity
+failure**. An invalid raw output is an **output-contract failure**. Two valid
+baseline outputs that disagree are a **repeatability failure**. Any of those
+integrity causes withholds every baseline-dependent verdict. If the
+profile-matched, valid, repeatable `BASELINE` does not qualify for one trap,
+record a **local recovery prerequisite failure** for that trap. It receives no
+lexical verdict. Other traps use their own baseline relationships.
 
 ## Trap verdict
 
 For one trap, apply these checks in order:
 
 1. Its first-subject-only and second-subject-only collections must each produce
-   a valid, repeatable output. An invalid control output is an
-   **output-contract failure** for that exact input; disagreeing valid
-   repetitions are a **repeatability failure** for that exact input. Either
-   case withholds the trap verdict.
+   a profile-matched, valid, repeatable output. A profile mismatch is an
+   **execution-profile integrity failure**, an invalid control output is an
+   **output-contract failure**, and disagreeing valid repetitions are a
+   **repeatability failure** for that exact input. Any of those causes withholds
+   the trap verdict.
 2. Each one-sided control must preserve that trap's local baseline subject
-   relationships. A valid, repeatable control that does not is a
-   **one-sided-control prerequisite failure**, not evidence about simultaneous
-   shared spelling, and withholds the trap verdict.
-3. Once both controls qualify, an invalid `BOTH` output is an ordinary
-   **output-contract failure** for that exact input. It receives no lexical
-   verdict. Disagreeing valid `BOTH` repetitions are likewise a repeatability
-   failure with no lexical verdict.
-4. If the controls qualify and `BOTH` is valid and repeatable, record **pass**
-   when its local subject relationships equal the trap's baseline
-   relationships. Record **lexical-collision failure** only when those local
-   relationships differ.
+   relationships. If a profile-matched, valid, repeatable control does not,
+   record a **one-sided-control prerequisite failure**, not evidence about
+   simultaneous shared spelling, and withhold the trap verdict.
+3. Once both controls qualify, a profile mismatch or invalid `BOTH` output is
+   an **execution-profile integrity failure** or **output-contract failure**,
+   respectively, for that exact input. It receives no lexical verdict.
+   Disagreeing valid `BOTH` repetitions are likewise a repeatability failure
+   with no lexical verdict.
+4. If the controls qualify and `BOTH` is profile-matched, valid, and
+   repeatable, record **pass** when its local subject relationships equal the
+   trap's baseline relationships. Record **lexical-collision failure** only
+   when those local relationships differ.
 
 Overall support requires all three traps to pass; do not average them. Report
 all shape-only changes and the full segments added or removed. A shape-only
@@ -353,27 +360,36 @@ relationships. It is not universal mechanistic proof: two individually
 subthreshold vector shifts could combine across a candidate's decision
 boundary.
 
+The substituted text is re-encoded through SSE before the candidate sees it and
+can change the vectors. Accordingly, both a pass and a failure qualify the
+frozen SSE-plus-candidate combination; neither identifies the segmentation
+candidate alone as the mechanism.
+
 ## Protocol
 
 1. Human-approve and freeze the six propositions, all 48 masks, the 10
    collection assignments, both output comparisons, and the verdict rules.
-2. Freeze the complete candidate identity and document its construction-level
-   permutation invariance before inspecting any vectors or candidate output.
+2. Freeze the complete candidate identity and execution profile and document
+   construction-level permutation invariance before inspecting any vectors or
+   candidate output.
 3. Use `03-lexical-coincidence` as the shared blinding namespace. Derive and
    commit the opaque-ID mapping and order, then freeze the SSE boundary and all
    10 exact collection inputs.
 4. Encode each distinct `B` and `C` mask once. Record dimensions and
    hashes, then preserve and reuse the exact vectors in every applicable
    collection.
-5. Run each input twice in fresh candidate processes with identical
-   vectors, opaque IDs, order, selector, configuration, and seed.
-6. Preserve all 20 raw outputs while identities remain hidden. Validate each
-   raw output before canonicalization, identity reveal, or semantic scoring.
+5. Run each input twice in fresh candidate processes with identical vectors,
+   opaque IDs, order, selector, configuration, seed, and verified execution
+   profile.
+6. Preserve all 20 raw outputs while identities remain hidden. Verify each
+   invocation's actual execution profile and validate each raw output before
+   canonicalization, identity reveal, or semantic scoring.
 7. Compare the shared canonical bytes for each valid identical-input pair. A
    mismatch is a repeatability failure, not a lexical result.
 8. After the required outputs are immutable, reveal and verify the fixture
    mapping, qualify each trap's local `BASELINE` relationships, qualify that
-   trap's controls, and only then score its valid, repeatable `BOTH` output.
+   trap's controls, and only then score its profile-matched, valid, repeatable
+   `BOTH` output.
 
 The fixture is controlled development evidence because its labels are visible
 while candidate algorithms may still be developed. If its result changes the
@@ -388,25 +404,31 @@ Preserve:
 - raw SSE vectors and hashes;
 - the candidate implementation, preprocessing, configuration, seed, private
   opaque-ID mapping, order, and fine-output selector;
+- the candidate execution-profile manifest and hash and every invocation's
+  actual-profile verification;
 - all 20 raw outputs and validity results, plus canonical JSON bytes and hashes
   for every valid raw output;
 - all 10 repeatability comparisons;
 - all three local baseline qualifications, all six one-sided-control
   qualifications, and all three trap verdicts;
-- every output-contract, repeatability, and prerequisite failure;
+- every execution-profile, output-contract, repeatability, and prerequisite
+  failure;
 - every subject-relationship and complete-output difference;
 - raw-vector cosine matrices and matched `B`/`C` cosine changes.
 
 ## Meaning of a result
 
 A pass supports one narrow claim: in these three explicit, proposition-level
-traps, sharing one ambiguous noun across two unrelated meanings did not change
-the recovered subject relationships after both one-sided ambiguous-noun
-conditions preserved them. It does not prove that the candidate used no
-lexical information internally.
+traps, the frozen SSE-plus-candidate combination preserved the recovered subject
+relationships when one ambiguous noun was shared across two unrelated meanings,
+after both one-sided conditions remained stable. It does not prove that SSE or
+the candidate used no lexical information internally.
 
-A prerequisite failure means a valid, repeatable baseline or control did not
-reach the state needed to test lexical robustness. An output-contract or
-repeatability failure supplies no semantic verdict. A lexical-collision failure
-means the controls qualified and the valid, repeatable simultaneous shared-noun
-output alone changed the subject relationships.
+A prerequisite failure means a profile-matched, valid, repeatable baseline or
+control did not reach the state needed to test lexical robustness. An
+execution-profile, output-contract, or repeatability integrity failure supplies
+no semantic verdict. A lexical-collision failure means the controls qualified
+and the profile-matched, valid, repeatable simultaneous shared-noun output alone
+changed the subject relationships. Because the intervention is encoded through
+SSE, the experiment cannot assign that change solely to SSE, the segmentation
+candidate, or their interaction.

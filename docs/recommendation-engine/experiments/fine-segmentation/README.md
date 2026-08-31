@@ -26,6 +26,13 @@ Every check has one owner:
 Experiment 2 owns density and sparsity. It does not also own unrelated-area
 addition; Experiment 6 owns that concern.
 
+Experiments 3 and 4 qualify the frozen SSE-plus-candidate combination. Their
+candidate inputs remain opaque vectors, but their interventions re-encode
+changed text or changed unmasked context through SSE and can change the
+vectors. A failure can therefore arise from SSE geometry, candidate behavior,
+or their interaction; it must not be attributed to the segmentation candidate
+alone.
+
 ## Dependency graph
 
 Run the program in this fail-fast order:
@@ -70,12 +77,30 @@ procedure and seed, a finite semantic-review packet budget, the required
 evidence fields, the choices `proceed`, `revise candidate`, and `stop`, and the
 requirement for a written rationale. Derive the concrete review order only
 after the evidence pool is immutable.
-The review must inspect the balanced organization, every support-stress
-change, every invalid or uncertain cross-subject segment, every rare or
-singleton disposition, and every Experiment 2 output-contract, repeatability,
-or local-prerequisite failure. Its rationale must explicitly address every
-invalid false absorption and every neighborhood-specific failure before
-choosing `proceed`. The decision cannot rewrite the recorded observations.
+
+Before encoding, also freeze the decision-report schema, coverage-manifest
+schema, and machine-checkable coverage validator and completeness rules. The
+generated report and manifest must account for all 32 balanced configurations,
+all 480 unequal-support comparisons, every support-role and singleton
+disposition, every reviewed cross-subject segment, and every integrity,
+review-capacity, or local-prerequisite failure. They may aggregate repeated
+outcomes by neighborhood, condition, schedule, support role, and result class,
+but every exact configuration must occur once in the coverage manifest and
+remain traceable to its immutable raw record.
+
+The reviewer inspects the complete aggregate report and every exceptional
+invalid, uncertain, false-absorption, integrity-failure, and
+local-prerequisite record. The reviewer does not manually inspect all 512
+configuration records or all 1,024 raw invocation outputs. Review is complete
+only when the coverage manifest validates, all required exceptions have an
+explicit disposition, and the written rationale addresses every required
+exception, including every neighborhood-specific failure, before choosing
+`proceed`.
+Missing coverage or an incomplete review withholds `proceed`; the available
+choices are `revise candidate` or `stop`. The decision cannot rewrite the
+recorded observations. A decision to revise after Experiment 3 or 4 must first
+determine whether SSE, the segmentation candidate, or their interaction needs
+to change.
 
 If Experiment 2's complete semantic-review pool exceeds the frozen packet
 budget, do not sample or silently discard packets. Record a review-capacity
@@ -89,9 +114,9 @@ If every stage is admitted, the frozen plan uses:
 | Experiment 1 plus order conformance | 36 | 2 | 4 |
 | Experiment 6 | 0; reuses 36 from Experiment 1 | 4 new; reuses Experiment 1's default input | 8 new; reuses Experiment 1's default pair |
 | Experiment 3 | 48 | 10 | 20 |
-| Experiment 4 | 27 | 2 | 4 |
+| Experiment 4 | 27 | 10 | 20 |
 | Experiment 2 | 96 | 512 | 1,024 |
-| **Total** | **207** | **530** | **1,060** |
+| **Total** | **207** | **538** | **1,076** |
 
 Experiment 6 reuses Experiment 1's 36 immutable SSE vectors, opaque IDs,
 default order, and valid, repeatable default output as its combined-collection
@@ -126,7 +151,9 @@ still qualify its own exact inputs. This distinction prevents a focal
 experiment from passing merely because the reference structure it was meant
 to compare against disappeared.
 
-The complete **local scientific dependency map** is:
+The complete **local scientific dependency map** is below. Every predicate that
+calls an input `valid` or `repeatable` also requires the shared execution
+integrity checks, including actual-profile verification, to have passed.
 
 | Owner | Exact prerequisite | Dependent comparison |
 |---|---|---|
@@ -138,13 +165,10 @@ The complete **local scientific dependency map** is:
 | Experiment 6 | Both side results are available from a valid, repeatable combined input, whether they pass or fail | Complete combined-collection verdict; it passes only when both sides pass. |
 | Experiment 3 | One trap's qualified baseline relationships | That trap's two one-sided-control comparisons. |
 | Experiment 3 | Both one-sided controls preserve those relationships | That trap's simultaneous shared-word comparison. |
-| Experiment 4 | One subject's qualified anchor-only reference | Availability of that subject as a joint local prerequisite. |
-| Experiment 4 | A mixed target's masked subject qualifies in the baseline and remains available in the joint output | Comparison with the exact no-context control for the masked target subject. |
-| Experiment 4 | One foreign subject qualifies in the baseline; either control or mixed target has a direct relationship to that foreign subject | Direct foreign-subject comparison, even if the foreign pure joint reference disconnected. |
-| Experiment 4 | The foreign subject qualifies in the baseline, neither vector has a direct relationship to it, and its joint reference remains available | Shared-absence pass for that foreign subject. |
-| Experiment 4 | All six subject comparisons for one mixed target are available | That mixed target's complete context-stability result. |
-| Experiment 4 | Any available mixed-target-to-subject comparison differs | Complete Experiment 4 failure, even if another comparison is withheld. |
-| Experiment 4 | All 54 mixed-target-to-subject comparisons are available and pass | Complete Experiment 4 pass. If none fails but any is withheld, there is no overall verdict. |
+| Experiment 4 | All six anchor-only references qualify and one exact control has its expected one-hot profile | That control's three independent treatment runs have a usable baseline. |
+| Experiment 4 | One treatment input is valid and repeatable, all six treatment references remain available, and its exact control retains the baseline profile | Comparison of that mixed vector's complete six-subject profile with its preserved control. |
+| Experiment 4 | One eligible mixed-vector profile differs from its preserved control | Complete Experiment 4 failure; record every gained or lost relationship. |
+| Experiment 4 | All nine treatment profiles are available and equal their preserved controls | Complete Experiment 4 pass. If none fails but any treatment is withheld, there is no overall verdict. |
 | Experiment 2 | One valid, repeatable matched balanced configuration plus its valid, repeatable unequal configuration | The balanced-versus-unequal projected-output comparison for that exact pair. |
 | Experiment 2 | One repeatable matched balanced configuration that recovered the cohort, plus its repeatable unequal configuration | A recovery-survival statement for that cohort. |
 | Experiment 2 | Complete repeatable cross-subject segment pool does not exceed the frozen packet budget | Cross-subject semantic review and final `proceed` eligibility. If the pool exceeds the budget, automated characterization remains available but `proceed` is withheld. |
@@ -162,8 +186,9 @@ Use these result classes throughout the suite:
   construction or order-conformance contract; no semantic experiment is
   scored;
 - **integrity failure:** approval, encoding, blinding, output validity, or
-  exact-input repeatability failed; the affected input and every comparison
-  using it receive no verdict;
+  exact-input repeatability failed, or an invocation did not match the frozen
+  execution profile; the affected input and every comparison using it receive
+  no verdict;
 - **program-qualification failure:** Experiment 1 or 6 produced an eligible
   focal failure; later experiments are skipped by default;
 - **local prerequisite failure:** an experiment's own baseline or control did
@@ -225,6 +250,7 @@ Freeze the candidate before encoding or inspecting any fixture vector. Its
  dependency-lock or runtime hash,
  configuration-bytes hash,
  preprocessing contract and parameters hash,
+ candidate-execution-profile hash,
  candidate seed,
  fine-output selector,
  deterministic tie-rule contract)
@@ -236,6 +262,38 @@ separate. One suite manifest also records that candidate-manifest hash, the
 encoder-manifest hash, and the approved protocol-file hashes. Tuning the
 candidate creates a new suite instance; results from the previous identity do
 not admit the new one through any dependency edge.
+
+The **candidate execution profile** is one canonical compact JSON object with
+sorted keys and no trailing newline. It freezes the environment in which every
+candidate invocation runs:
+
+- schema version, a stable host-instance identifier, operating system, kernel,
+  architecture, CPU model, and relevant CPU features;
+- accelerator model and stable device identifier, such as its runtime UUID or
+  PCI address, plus the driver and runtime when used;
+- executable or container identity, fixed working directory, launcher, and
+  command template;
+- device selection, numeric type and precision, numerical-backend and
+  determinism settings, and thread/process counts;
+- the complete sanitized environment-variable map exposed to the candidate;
+  the candidate process receives no unrecorded inherited variables; and
+- resource limits and fresh-state/isolation policy.
+
+The command template identifies the already frozen exact input manifest through
+one declared placeholder; input-specific paths and hashes remain invocation
+records rather than changing the execution profile. During verification,
+require the executed argument vector to equal the frozen template after that
+invocation's recorded input value is substituted. Store the template in the
+actual-profile schema, not the varying path. Freeze the profile bytes and
+SHA-256 before encoding. Before accepting each invocation's output, capture the
+actual values from that process into the same canonical schema, recompute the
+hash, and require byte-for-byte equality with the frozen profile. Merely
+copying the expected hash into a run record is not verification. A missing or
+different actual profile is an integrity failure for that exact input. Changing
+the frozen profile creates a new candidate identity and suite instance.
+
+For this controlled suite, all candidate invocations use the same host/device,
+container or executable, fixed environment, and threading configuration.
 
 The candidate must be permutation-invariant by construction: permuting the
 same `(opaque ID, vector bytes)` pairs must produce the same unordered
@@ -351,8 +409,8 @@ output, canonical JSON bytes, and hash.
 For each experiment admitted by the dependency graph:
 
 1. obtain human approval of the fixture, rubric, and prerequisite graph;
-2. freeze the candidate identity tuple and document its construction-level
-   permutation invariance;
+2. freeze the candidate identity tuple and candidate execution profile, and
+   document construction-level permutation invariance;
 3. derive the opaque-ID mapping and order and record their private artifact and
    public commitment;
 4. freeze the SSE artifacts, exact input bytes, spans, and all exact run-input
@@ -360,9 +418,11 @@ For each experiment admitted by the dependency graph:
 5. encode each unique SSE input once, then record output dimensions and hashes
    and freeze the vector bytes;
 6. run every exact candidate input twice from fresh candidate state with the
-   same identity tuple, opaque IDs, vector bytes, and order;
-7. preserve both raw outputs, validate them independently, canonicalize valid
-   outputs, and require their canonical bytes—not only hashes—to match;
+   same identity tuple, frozen execution profile, opaque IDs, vector bytes, and
+   order;
+7. capture and verify each invocation's actual execution profile, preserve both
+   raw outputs, validate them independently, canonicalize valid outputs, and
+   require their canonical bytes—not only hashes—to match;
 8. after all outputs are immutable, reveal and verify the blinding artifact;
    and
 9. restore readable identities and apply the approved scoring rules.
@@ -378,11 +438,11 @@ design.
 ### Prerequisite scope
 
 Missing approval, boundary drift, candidate ineligibility, an encoder failure,
-or failed blinding verification supplies no semantic verdict. An invalid raw
-output is an output-contract failure for that exact input. Two valid but
-unequal canonical outputs are a repeatability failure for that exact input.
-Either blocks that input and every comparison that depends on it from semantic
-scoring.
+a missing or mismatched actual execution profile, or failed blinding
+verification supplies no semantic verdict. An invalid raw output is an
+output-contract failure for that exact input. Two valid but unequal canonical
+outputs are a repeatability failure for that exact input. Any of these blocks
+that input and every comparison that depends on it from semantic scoring.
 
 An experiment-specific baseline or other semantic prerequisite blocks only the
 conditions that explicitly depend on it. Independent conditions may retain
@@ -391,7 +451,8 @@ dependent hypothesis is false; report it separately from a scored failure.
 
 The same rule applies across documents: a successful result transports only
 when a later comparison literally reuses the same immutable candidate input
-and output artifact under the same identity tuple. Experiment 6's
+and output artifact under the same identity tuple and verified
+execution-profile hash. Experiment 6's
 combined-collection condition deliberately reuses Experiment 1's default
 artifact; no other current comparison transports an earlier output.
 Similar-looking subjects or a previous recovery pass are not substitutes for

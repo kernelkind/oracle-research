@@ -265,7 +265,7 @@ support count.
 | `SOFTWARE-D1` | ⟦Debugging a program is underway.⟧ |
 | `SOFTWARE-D2` | ⟦I'm in the middle of debugging a program.⟧ |
 | `SOFTWARE-D3` | ⟦I'm debugging a program.⟧ |
-| `SOFTWARE-D4` | ⟦I'm troubleshooting a program.⟧ |
+| `SOFTWARE-D4` | ⟦I'm finding and fixing bugs in a program.⟧ |
 | `SOFTWARE-D5` | ⟦A program is being debugged.⟧ |
 | `SOFTWARE-D6` | ⟦Debugging work is being done on a program.⟧ |
 | `SOFTWARE-D7` | ⟦A program is what I'm debugging.⟧ |
@@ -312,6 +312,19 @@ Every local allocation run contains exactly twelve vectors:
 
 The `6:5:1` condition runs both orders of the recurring subjects. The one-vector
 role is the only intentionally unmatched subject.
+
+The frozen support role is the literal condition-and-count slot, not a derived
+category such as `low-support`:
+
+| Condition | Frozen support roles |
+|---|---|
+| Balanced | `balanced-4` |
+| Imbalanced | `imbalanced-8`, `imbalanced-2` |
+| Singleton | `singleton-6`, `singleton-5`, `singleton-1` |
+| Dense and singleton | `dense-singleton-8`, `dense-singleton-3`, `dense-singleton-1` |
+
+Subjects with equal counts in one configuration share the same role. Every
+result records both this exact role and its numeric support count.
 
 ## Frozen formulation schedule
 
@@ -419,6 +432,11 @@ array containing the dense subject. For singleton it lists the `6`, `5`, and
 `1` subjects in that order. For dense-singleton it lists the `8`, `3`, and `1`
 subjects in that order.
 
+Derive each subject's frozen support-role code from the condition and that
+subject's position in `role_assignment` using the support-role table above. For
+imbalanced configurations, subjects absent from the one-element array receive
+`imbalanced-2`.
+
 Represent an invocation record as compact JSON
 `[configuration, repetition]`, where repetition is integer `1` or `2`. Derive:
 
@@ -432,7 +450,10 @@ execution_key = HMAC-SHA-256(
 
 Sort by the 32 digest bytes, breaking a collision by the invocation-record
 bytes. Every invocation starts in a fresh process from the same candidate
-state and declared candidate seed. No invocation can train or prime another.
+state, declared candidate seed, and frozen execution profile. Before accepting
+an output, capture the invocation's actual profile using the shared canonical
+schema and verify its hash. A missing or mismatched profile is an integrity
+failure for that configuration. No invocation can train or prime another.
 
 For replay comparison, first validate and then canonicalize each complete
 opaque-ID output under the shared contract. A duplicate raw member set is an
@@ -441,6 +462,12 @@ outputs for a configuration must match byte for byte. If they do not, record a
 **repeatability failure**, preserve both outputs, and give every outcome or
 comparison that depends on that configuration **no verdict**; never choose one
 invocation as authoritative.
+
+For the rest of this protocol, a configuration is **eligible** only when every
+shared integrity check affecting it has passed: both invocations match the
+frozen execution profile, both raw outputs pass the output contract, the two
+canonical outputs are byte-for-byte equal, and the shared approval, encoding,
+and blinding prerequisites remain valid.
 
 This experiment uses one frozen within-invocation input order. The candidate
 must meet the shared contract's construction-level permutation-invariance
@@ -454,13 +481,15 @@ balanced local configurations establish the baseline behavior that later
 unequal-support conditions may change. The declared subjects are reference
 cohorts, not prescribed segment boundaries.
 
-For each repeatable configuration, record these separate outcomes:
+For each eligible configuration, record these separate outcomes:
 
 1. **Reference-cohort recovery:** for each declared subject with at least two
    present vectors, whether one returned member set is exactly the set of its
    present vectors. A one-vector subject has no cohort-recovery verdict.
 2. **Cross-subject membership:** every segment containing vectors from more
-   than one declared subject, plus whether it contains a low-support vector.
+   than one declared subject, plus every member's exact support count and
+   frozen support role in that configuration. Do not derive or score an
+   additional `low-support` category.
 3. **Omission:** which vectors receive no fine-segment membership.
 4. **Fragmentation and extra segments:** every same-subject member set,
    including partial sets that coexist with a complete recovered segment.
@@ -476,14 +505,14 @@ overlapping subjects that differ from the declared reference cohorts.
 Freeze the semantic-review rubric, one primary human reviewer, reviewer
 procedure, review shuffle seed, and finite packet budget before candidate
 execution. After all candidate outputs are immutable and readable identities
-are restored, form the review pool from every unique segment in an agreed,
-repeatable configuration that contains vectors from at least two declared
-subjects. Uniqueness is the canonical fixture-member set, so an identical
-member set is reviewed once and its frozen verdict is reused for every
-occurrence. Preserve segments from invalid or non-repeatable configurations in
-the execution record, but do not send them to semantic review or use them in
-semantic characterization. The output-contract or repeatability failure
-itself remains part of the final candidate-decision record.
+are restored, form the review pool from every unique segment in an eligible
+configuration that contains vectors from at least two declared subjects.
+Uniqueness is the canonical fixture-member set, so an identical member set is
+reviewed once and its frozen verdict is reused for every occurrence. Preserve
+segments from ineligible configurations in the execution record, but do not
+send them to semantic review or use them in semantic characterization. The
+execution-profile, output-contract, or repeatability cause itself remains part
+of the final candidate-decision record.
 
 If the complete pool exceeds the frozen packet budget, do not review a subset.
 Record a **review-capacity failure** and preserve all automated configuration,
@@ -563,23 +592,49 @@ recognizable. Declared-cohort recovery and alternative semantic validity remain
 separate measurements. A valid alternative segment never changes the declared
 allocation used to describe that configuration.
 
+### Final decision report
+
+After every automated outcome, semantic-review judgment, and matched comparison
+is immutable, generate the decision report and coverage manifest required by
+`README.md`. The manifest must enumerate every one of the 512 unique
+configurations exactly once and bind each to its two invocation records. For
+each invocation, record the actual-profile result, raw-output validity, and
+canonical-output hash when available. Record one configuration-level canonical
+hash only when the configuration is eligible and both hashes agree. Also bind
+the configuration to its declared-cohort outcomes, singleton disposition, and
+every matched comparison that consumes it.
+
+The report may aggregate repeated results by neighborhood, condition, schedule,
+support role, and result class. It must separately enumerate every invalid or
+uncertain reviewed segment, false absorption, integrity failure,
+local-prerequisite failure, unavailable survival statement, and
+neighborhood-specific exception. Each aggregate and exception links back to
+the immutable configuration records in the coverage manifest.
+
+The primary reviewer examines this generated report rather than manually
+opening all 512 configuration records or all 1,024 raw invocation outputs.
+Review is incomplete, and `proceed` is unavailable, unless the coverage
+manifest validates and every required exception has a recorded disposition and
+is addressed by the written rationale.
+
 ### Balanced-baseline conditioning
 
-For each neighborhood, declared subject, and schedule `s`, its repeatable local
+For each neighborhood, declared subject, and schedule `s`, its eligible local
 balanced configuration is the balanced baseline. Describe recovery as
 **surviving** an unequal-support condition only when that subject's reference
 cohort recovered in this matched balanced baseline and the compared
-configuration is also repeatable. If the balanced baseline did not recover the
+configuration is also eligible. If the balanced baseline did not recover the
 cohort, record a **local prerequisite failure** for that matched comparison and
 preserve all later recovery, fragmentation, omission, membership, and
 semantic-review outcomes, but record **no survival verdict because matched
 baseline did not recover**. If either required configuration has an
-output-contract or repeatability failure, record **no survival verdict because
-`<configuration ID>` had `<integrity failure class>`** for each affected
-configuration. For an eligible comparison, record `survived` exactly when the
-cohort also meets the reference-cohort recovery rule in the compared
-configuration; otherwise record `did not survive`. A one-vector subject has
-disposition fields rather than a recovery-survival claim.
+execution-profile, output-contract, or repeatability integrity failure, record
+**no survival verdict because `<configuration ID>` had `<integrity failure
+class>`** for each affected configuration. For an eligible comparison, record
+`survived` exactly when the cohort also meets the reference-cohort recovery rule
+in the compared configuration; otherwise record `did not survive`. A
+one-vector subject has disposition fields rather than a recovery-survival
+claim.
 
 ### Canonical projection rule
 
@@ -601,7 +656,7 @@ projections unequal.
 
 For the 32 unique balanced local configurations, preserve both invocations,
 every returned member set, and the blinded semantic judgment above. For each
-repeatable configuration, describe whether the candidate recovers the three
+eligible configuration, describe whether the candidate recovers the three
 declared cohorts, combines nearby cohorts into valid broader fine subjects,
 fragments them, overlaps them, or omits vectors. No one of those shapes is
 declared correct in advance.
@@ -610,8 +665,8 @@ declared correct in advance.
 
 For every neighborhood, schedule `s`, and role assignment, pair the unequal
 run with that neighborhood's balanced run for the same `s`. Produce the
-projected-output comparison only when both exact configurations are valid and
-repeatable. Otherwise record **no projected-output verdict because
+projected-output comparison only when both exact configurations are eligible.
+Otherwise record **no projected-output verdict because
 `<configuration ID>` had `<integrity failure class>`** for each affected
 configuration. For an available comparison, record:
 
@@ -657,8 +712,8 @@ semantic verdicts.
    intended nearby relationships, and the semantic-review rubric, procedure,
    and finite packet budget.
 4. Freeze the fixture wording and every scoring rule.
-5. Freeze the candidate identity and document its construction-level
-   permutation invariance.
+5. Freeze the candidate identity and execution profile and document its
+   construction-level permutation invariance.
 6. Derive and commit the shared opaque-ID mapping and global order. Freeze all
    512 unique configurations, two invocation records per configuration, and
    the randomized execution order of all 1,024 invocations. Draw and freeze the
@@ -666,19 +721,25 @@ semantic verdicts.
 7. Freeze the SSE boundary and exact input bytes, then encode the 96 inputs
    once and record the vector dimensions and hashes.
 8. Invoke every configuration twice in separate fresh processes without
-   retuning or re-encoding. Make all 1,024 raw outputs immutable before
-   restoring fixture identities.
-9. Validate and compare the two canonical complete outputs for every
-   configuration, record every repeatability failure, and give all dependent
-   outcomes no verdict.
+   retuning or re-encoding. Verify the actual execution profile and preserve
+   every raw output while fixture identities remain hidden.
+9. While identities remain hidden, validate each raw output, canonicalize every
+   valid output, compare the two canonical outputs for each configuration, and
+   record every execution-profile, output-contract, or repeatability failure.
+   Give every dependent outcome no verdict. After all 1,024 raw outputs and
+   integrity results are immutable, reveal and verify the blinding artifact;
+   only then restore fixture identities.
 10. Compute the frozen representation diagnostics and wording-form/support-role
     audits.
 11. Fix the cross-subject segment pool. If its size is within the frozen
     packet budget, build every blinded packet in the frozen random order and
     complete the three-way semantic review. Otherwise, review none and record
     a review-capacity failure.
-12. For repeatable configurations, complete the balanced-baseline-conditioned
+12. For eligible configurations, complete the balanced-baseline-conditioned
     recovery descriptions and matched support-allocation comparisons.
+13. Generate and validate the frozen decision report and complete coverage
+    manifest. The final reviewer may choose `proceed` only after completing the
+    shared review procedure.
 
 ## Required record
 
@@ -688,13 +749,14 @@ Preserve:
 - the atomic-subject equivalence audit for every mask;
 - every numeric schedule index, subject phase, wording form, and recorded
   structural attribute;
-- the opaque-ID mapping and global master rank order;
+- the opaque-ID mapping and global master rank order, plus the shared blinding
+  seed, commitment, and post-run verification;
 - the 512 unique configurations, all 1,024 invocation records in their frozen
   execution order, and every condition, role, schedule, exact input, and
   within-invocation order;
 - all 1,024 raw outputs, canonical outputs and hashes for every valid raw
-  output, every output-contract or repeatability finding, and every resulting
-  no-verdict dependency;
+  output, every execution-profile, output-contract, or repeatability finding,
+  and every resulting no-verdict dependency;
 - every complete returned segment, overlap, singleton, and omission from both
   invocations;
 - reference-cohort recovery, all cross-subject memberships, false absorption,
@@ -709,9 +771,13 @@ Preserve:
   review-capacity failure;
 - every balanced-versus-unequal shared-ID set, canonical projected multiset,
   exact multiplicity difference, and separate source-segment provenance row;
+- the generated decision report, its coverage manifest and validation result,
+  every aggregate-to-configuration link, every required exception disposition,
+  and the final review-completion state;
 - the immutable raw-vector cosine matrix, cosine summaries, and every
   wording-form/support-role audit;
-- every artifact and candidate identity required by the shared contract.
+- every artifact, candidate identity, execution-profile manifest and hash, and
+  per-invocation actual-profile verification required by the shared contract.
 
 ## What a result means
 
@@ -720,11 +786,11 @@ four controlled collections of nearby subjects under balanced support and how
 that organization changes under the complete unequal-support and singleton
 allocations. It does not attribute those changes to support count alone.
 
-For a declared subject that recovered in its matched balanced baseline, the
-record can state whether recovery survived a repeatable support stress. When
-balanced recovery was absent, the later output remains an observation but
-supports no survival statement. A repeatability failure leaves its dependent
-comparisons with no verdict.
+For a declared subject that recovered in its eligible matched balanced
+baseline, the record can state whether recovery survived an eligible support
+stress. When balanced recovery was absent, the later output remains an
+observation but supports no survival statement. Any integrity failure leaves
+its dependent comparisons with no verdict.
 
 The protocol has no binary confirmation result and does not rank or select
 candidates. Its returned shapes, semantic verdicts, and changes are reported

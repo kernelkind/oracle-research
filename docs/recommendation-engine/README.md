@@ -57,8 +57,10 @@ private behavior.
 The next stages are intentionally dependency-ordered:
 
 1. Fix and freeze the temporary TP, MP, and prominence generation boundary.
-2. Evaluate one frozen fine-segmentation candidate on the approved synthetic
-   suite.
+2. Evaluate one frozen fine-segmentation candidate with the frozen SSE boundary
+   on the approved synthetic suite. Experiments 3 and 4 qualify that combined
+   boundary because their text interventions are re-encoded through SSE before
+   the candidate receives them.
 3. If that evidence supports proceeding, test the same candidate on a
    hand-selected real-note collection from one niche subject area.
 4. Only after useful fine subjects are demonstrated, compare and freeze a

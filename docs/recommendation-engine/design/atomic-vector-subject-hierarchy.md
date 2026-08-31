@@ -33,8 +33,11 @@ public note
   -> note results for an explicitly selected subject
 ```
 
-Each stage must be evaluated on its own output. A later label or hierarchy must
-not conceal a failure in extraction, SSE geometry, or fine segmentation.
+Each stage has an explicit output boundary. A later label or hierarchy must not
+conceal a failure in extraction, SSE geometry, or fine segmentation. A test
+that deliberately changes source text and re-encodes it before segmentation
+qualifies the frozen SSE-plus-segmentation combination; it cannot assign the
+result to either stage by itself.
 
 ## 1. Produce Grounded Subject Vectors
 
@@ -198,8 +201,11 @@ current fine-segmentation specification.
 ## Verification Order
 
 1. Fix and freeze the temporary TP, MP, and prominence boundary.
-2. Freeze one fine-segmentation candidate and run the
+2. Freeze one fine-segmentation candidate and the SSE boundary, then run the
    [`../experiments/fine-segmentation/README.md`](../experiments/fine-segmentation/README.md).
+   Experiments 3 and 4 are integration evidence for that combination; the
+   remaining experiment-specific claims retain the ownership defined by the
+   suite.
 3. If the synthetic evidence supports proceeding, test the same candidate on
    hand-selected real notes from one niche subject area.
 4. Only after useful fine subjects are demonstrated, compare and freeze a

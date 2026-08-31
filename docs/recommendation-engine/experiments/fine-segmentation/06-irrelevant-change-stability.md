@@ -106,9 +106,9 @@ The candidate receives only opaque IDs and vectors. It does not receive notes,
 masks, subject names, scoring aliases, expected segment counts, expected
 segment sizes, or relationships between duplicate IDs.
 
-The candidate identity must equal Experiment 1's frozen identity tuple. A
-change creates a new suite instance and invalidates artifact reuse. Coarser
-hierarchy output is excluded.
+The candidate identity and verified execution-profile hash must equal
+Experiment 1's frozen values. A change creates a new suite instance and
+invalidates artifact reuse. Coarser hierarchy output is excluded.
 
 ## What counts as one output
 
@@ -139,8 +139,8 @@ Baseline `R` must contain these three complete subject segments:
 Every other returned segment containing two or more baseline vectors must be a
 subset of one declared subject. Extra same-subject subsegments and singletons
 are allowed, matching the architecture's shared output contract. The complete
-valid, repeatable baseline output—including every allowed extra segment—then
-becomes that branch's local reference output.
+profile-verified, valid, repeatable baseline output—including every allowed
+extra segment—then becomes that branch's local reference output.
 
 A baseline qualification failure withholds verdicts for its dependent
 comparisons because there is no clean local output to preserve. It does not
@@ -200,19 +200,20 @@ failure.
 
 1. Obtain the required human approval and freeze this protocol before the
    shared Experiment 1 default output is generated.
-2. Freeze the complete candidate identity and the readable membership
-   specifications for the four new Experiment 6 inputs: `L0`, `R0`, duplicate,
-   and unrelated addition.
+2. Freeze the complete candidate identity and execution profile and the
+   readable membership specifications for the four new Experiment 6 inputs:
+   `L0`, `R0`, duplicate, and unrelated addition.
 3. Reuse Experiment 1's opaque IDs and committed order for every base-vector
    subset. Generate and commit only the six new duplicate IDs.
 4. Verify and reuse the 36 Experiment 1 vector artifacts, including their
    dimensions and hashes. Materialize and freeze the four exact ordered
    `(opaque ID, vector bytes)` inputs. Verify that the imported default output
-   has the same candidate identity, IDs, vector bytes, order, validity result,
-   and two equal canonical repetitions and passed Experiment 1's
-   recovery-and-purity rule.
+   has the same candidate identity, verified execution-profile hash, IDs,
+   vector bytes, order, validity result, and two equal canonical repetitions,
+   and that it passed Experiment 1's recovery-and-purity rule.
 5. Run each of the four new exact inputs twice in fresh processes, even if one
-   baseline later fails.
+   baseline later fails. Verify every invocation's actual execution profile
+   before accepting its output.
 6. Validate and canonicalize every new opaque output. The readable mapping may
    be known to the scorer after Experiment 1, but it must never be exposed to
    the already frozen candidate executable.
@@ -227,8 +228,9 @@ failure.
   each Experiment 6 side checks only preservation of its own complete local
   reference output. The complete combined-collection verdict requires both
   side verdicts.
-- A validity or repeatability failure for one exact input gates that input and
-  comparisons depending on it, but not independent branches.
+- An execution-profile, output-validity, or repeatability integrity failure for
+  one exact input gates that input and comparisons depending on it, but not
+  independent branches.
 
 Always record every raw run and the imported Experiment 1 pair. A gated
 condition is reported as **no verdict**, not as a stability pass or failure.
@@ -244,9 +246,10 @@ the shared committed order; the candidate never receives an alias.
 A1 A2 A3 A4 A5 A6 B1 B2 B3 B4 B5 B6 C1 C2 C3 C4 C5 C6
 ```
 
-It qualifies only when both fresh runs are valid and repeatable and the agreed
-output meets baseline `L`'s subject-recovery and purity rule. Preserve that
-complete agreed output as local reference `L`.
+It qualifies only when both fresh runs match the frozen execution profile, are
+valid and repeatable, and the agreed output meets baseline `L`'s
+subject-recovery and purity rule. Preserve that complete agreed output as local
+reference `L`.
 
 ### Baseline `R0`
 
@@ -254,9 +257,10 @@ complete agreed output as local reference `L`.
 D1 D2 D3 D4 D5 D6 E1 E2 E3 E4 E5 E6 F1 F2 F3 F4 F5 F6
 ```
 
-It qualifies only when both fresh runs are valid and repeatable and the agreed
-output meets baseline `R`'s subject-recovery and purity rule. Preserve that
-complete agreed output as local reference `R`.
+It qualifies only when both fresh runs match the frozen execution profile, are
+valid and repeatable, and the agreed output meets baseline `R`'s
+subject-recovery and purity rule. Preserve that complete agreed output as local
+reference `R`.
 
 ## Exact-duplicate condition
 
@@ -318,8 +322,8 @@ here.
 
 ## Combined-collection condition
 
-Use the already valid, repeatable Experiment 1 default output. Its exact input
-is the complete `L0` and `R0` collection:
+Use the already profile-verified, valid, repeatable Experiment 1 default output.
+Its exact input is the complete `L0` and `R0` collection:
 
 ```text
 A1 A2 A3 A4 A5 A6 B1 B2 B3 B4 B5 B6 C1 C2 C3 C4 C5 C6
@@ -337,8 +341,8 @@ A missing local reference gives only its side no verdict. It does not erase
 the other side's qualified projection result. Preserve every segment from the
 imported artifact. The complete combined-collection verdict exists only when
 the imported Experiment 1 artifact passed its recovery-and-purity rule under
-the same frozen candidate identity and both side verdicts exist; it passes
-only when both sides pass.
+the same frozen candidate identity and verified execution-profile hash and both
+side verdicts exist; it passes only when both sides pass.
 
 ## Overall pass rule
 
@@ -346,7 +350,8 @@ The suite stability qualification passes only if:
 
 1. both baselines qualify and establish their complete local reference
    outputs;
-2. every repeated exact input is repeatable;
+2. every invocation matches the frozen execution profile and every repeated
+   exact input is repeatable;
 3. the exact-duplicate condition passes;
 4. the unrelated-subject addition passes;
 5. the combined-collection condition passes.
@@ -355,10 +360,9 @@ Do not average verdicts.
 
 Classify a non-pass before interpreting it:
 
-- **output-contract failure:** any raw output contains an empty segment, an
-  unknown ID, a repeated member, or a duplicate member set;
-- **repeatability failure:** two valid fresh-process outputs for one exact
-  input have different canonical bytes;
+- **integrity failure:** one of the shared execution checks failed, including
+  an execution-profile mismatch, an invalid raw output, or unequal canonical
+  repetitions; that exact input and its dependents receive no verdict;
 - **local prerequisite failure:** both valid baseline repetitions agree but the
   output misses a required subject segment or contains a cross-subject
   multi-vector segment;
@@ -366,11 +370,11 @@ Classify a non-pass before interpreting it:
   exact, and repeatable, but the repeatable intervention output violates
   its frozen expectation.
 
-An output-contract, repeatability, or local prerequisite failure does not support
-a stability conclusion for the affected branch. Record all applicable
-failures and every independent branch verdict, but do not reinterpret one as
-another. A scored failure in any of the three owned conditions fails the suite
-stability qualification.
+An integrity or local prerequisite failure does not support a stability
+conclusion for the affected branch. Record the exact integrity cause and every
+independent branch verdict, but do not reinterpret one as another. A scored
+failure in any of the three owned conditions fails the suite stability
+qualification.
 
 ## Required record
 
@@ -380,7 +384,8 @@ Preserve:
   of its 36 reused vector artifacts, and its exact default input/output pair;
 - the scorer-only alias mapping, the six duplicate-ID derivations, their
   private mapping, order keys, and pre-run commitment;
-- candidate implementation and configuration identities;
+- candidate implementation and configuration identities, the execution-profile
+  manifest and hash, and every invocation's actual-profile verification;
 - all four new exact ordered inputs;
 - both raw outputs, canonical JSON, and SHA-256 hashes for each new input, plus
   the imported pair's corresponding records;
@@ -411,6 +416,7 @@ that branch's semantic prerequisite, so only its dependent stability
 conditions cannot be interpreted.
 
 A condition failure proves that its complete frozen intervention changed the
-output and fails the suite stability qualification. Duplicate, addition, and
-combined-collection failures do not identify which bundled mechanism—such as
-density, collection size, or semantic composition—caused the change.
+output under one verified candidate execution profile and fails the suite
+stability qualification. Duplicate, addition, and combined-collection failures
+do not identify which bundled mechanism—such as density, collection size, or
+semantic composition—caused the change.

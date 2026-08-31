@@ -14,7 +14,7 @@ shared candidate-eligibility and execution-integrity requirements are met, a
 pass qualifies that exact candidate identity for the default downstream run
 schedule. Any non-pass stops that default schedule: a valid, repeatable output
 that misses the pass rule is a **program-qualification failure**, while an
-output-contract or repeatability failure supplies no qualification verdict.
+integrity failure supplies no qualification verdict.
 Preserve that distinction even though both states stop downstream execution by
 default.
 
@@ -110,9 +110,10 @@ subject names or expected groups.
 
 ## Pass rule
 
-Shared output validity and repeatability are prerequisites. An
-output-contract or repeatability failure produces no Experiment 1 recovery
-verdict. There is no semantic baseline prerequisite.
+Shared execution integrity is a prerequisite. Any integrity failure, including
+an execution-profile mismatch, invalid output, or unequal canonical
+repetitions, produces no Experiment 1 recovery verdict. There is no semantic
+baseline prerequisite.
 
 After both exact-input runs agree and the identities are revealed, the
 candidate's predeclared fine-segment output must contain these six exact member
@@ -147,10 +148,10 @@ exact input twice from fresh state and complete the shared lifecycle in
 The suite-level order-conformance preflight in `README.md` separately reuses
 these same 36 opaque ID/vector pairs in its frozen alternate order. Its two
 outputs are candidate-conformance artifacts, not additional Experiment 1
-semantic inputs. An invalid or non-repeatable conformance input is an integrity
-failure with no conformance or recovery verdict. If both orders are valid and
-repeatable but differ, the candidate is ineligible before the recovery pass
-rule is applied.
+semantic inputs. Any shared execution integrity failure in a conformance input
+has no conformance or recovery verdict. If both orders are profile-verified,
+valid, and repeatable but differ, the candidate is ineligible before the
+recovery pass rule is applied.
 
 In addition to the shared artifacts, preserve both complete outputs, every
 returned membership and unassigned ID, and the pass/fail result for each
