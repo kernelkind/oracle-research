@@ -85,6 +85,29 @@ No final side-by-side comparison artifact can be created until the user records
 one of those dispositions, with a written rationale, for each candidate. The
 final candidate choice remains exclusively the user's decision.
 
+## Separate HDBSCAN* follow-up
+
+The user chose to inspect HDBSCAN* alone before deciding what to do next. This
+is a post-hoc characterization, not a continuation of the frozen qualification
+protocol:
+
+- all 177 retained HDBSCAN* packets are shown; none is sampled away;
+- one judgment is reused for every occurrence of the same packet, so 177 human
+  decisions cover all 191 cross-subject occurrences;
+- the reviewer sees only neutral instance IDs and complete mask fragments;
+- `valid`, `invalid`, and `uncertain` are available; the review evaluates only
+  whether each grouping is coherent and does not generate subject labels;
+- the review is stored in a separate manifest-bound artifact and cannot rewrite
+  the scoring artifact above;
+- the original capacity failure, unavailable `proceed` disposition, and final
+  user selection remain unchanged.
+
+The review is pending. Its judgments must not be reported as frozen-run results
+after they are collected.
+
+Fine-subject naming remains a separate downstream stage. It is not needed to
+decide whether HDBSCAN* placed the masks in a coherent group.
+
 ## Interpretation for the pending decision
 
 HDBSCAN* showed the stronger evidence of semantic separation: it passed every

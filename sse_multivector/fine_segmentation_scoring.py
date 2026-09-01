@@ -431,15 +431,27 @@ def validate_semantic_review_response(
 
     if review.get("status") != "pending_review":
         raise ValueError("semantic review is not available for this candidate")
+    packets = review.get("internal_packets")
+    if not isinstance(packets, list):
+        raise ValueError("semantic review is missing its internal packets")
+    return _validate_packet_judgments(packets, review_set, response)
+
+
+def _validate_packet_judgments(
+    packets: Sequence[Mapping[str, object]],
+    review_set: str,
+    response: Mapping[str, object],
+) -> dict[str, dict[str, object]]:
+    """Validate exactly one semantic judgment for every named packet."""
+
     if set(response) != {"schema_version", "review_set", "judgments"}:
         raise ValueError("semantic-review response has the wrong top-level schema")
     if response.get("schema_version") != SCHEMA_VERSION:
         raise ValueError("semantic-review response has the wrong schema version")
     if response.get("review_set") != review_set:
         raise ValueError("semantic-review response names the wrong review set")
-    packets = review.get("internal_packets")
     judgments = response.get("judgments")
-    if not isinstance(packets, list) or not isinstance(judgments, list):
+    if not isinstance(judgments, list):
         raise ValueError("semantic-review response is missing packets or judgments")
     expected = {str(packet.get("packet")) for packet in packets}
     if None in expected or "None" in expected or len(expected) != len(packets):
@@ -4102,6 +4114,431 @@ def _bound_unavailable_scoring_candidate(
     }
 
 
+POST_HOC_REVIEW_ARTIFACT_TYPE = "fine-segmentation-post-hoc-review-v1"
+POST_HOC_REVIEWED_ARTIFACT_TYPE = "fine-segmentation-post-hoc-reviewed-v1"
+POST_HOC_PACKET_COUNT = 177
+POST_HOC_OCCURRENCE_COUNT = 191
+
+
+def _reject_post_hoc_output_overlap(
+    output_path: Path | str,
+    upstream_paths: Sequence[tuple[str, Path | str]],
+) -> None:
+    """Reject an output equal to, above, or below any immutable source."""
+
+    output = Path(output_path).expanduser().resolve()
+    for name, upstream_path in upstream_paths:
+        upstream = Path(upstream_path).expanduser().resolve()
+        if (
+            output == upstream
+            or output in upstream.parents
+            or upstream in output.parents
+        ):
+            raise ValueError(f"post-hoc output and {name} artifact paths overlap")
+
+
+def _validated_post_hoc_occurrences(
+    evidence: Mapping[str, object],
+    internal_packets: Sequence[Mapping[str, object]],
+) -> list[tuple[str, dict[str, object]]]:
+    """Bind retained packet occurrences to the formal coverage manifest."""
+
+    experiment = evidence.get("experiment_02")
+    coverage = (
+        experiment.get("coverage_manifest") if isinstance(experiment, dict) else None
+    )
+    configurations = (
+        coverage.get("configurations") if isinstance(coverage, dict) else None
+    )
+    if not isinstance(configurations, list):
+        raise ValueError("HDBSCAN source has no formal Experiment 2 coverage")
+
+    internal_rows: list[tuple[str, dict[str, object]]] = []
+    internal_counter: Counter[tuple[str, bytes]] = Counter()
+    for packet in internal_packets:
+        packet_id = packet.get("packet")
+        occurrences = packet.get("occurrences")
+        if not isinstance(packet_id, str) or not isinstance(occurrences, list):
+            raise ValueError("HDBSCAN source contains invalid packet occurrences")
+        for occurrence in occurrences:
+            if not isinstance(occurrence, dict):
+                raise ValueError("HDBSCAN source contains an invalid occurrence")
+            retained = copy.deepcopy(occurrence)
+            internal_rows.append((packet_id, retained))
+            internal_counter[(packet_id, _canonical_json(retained))] += 1
+
+    coverage_counter: Counter[tuple[str, bytes]] = Counter()
+    for configuration in configurations:
+        if not isinstance(configuration, dict):
+            raise ValueError("Experiment 2 coverage contains an invalid configuration")
+        occurrences = configuration.get("cross_subject_occurrences")
+        if not isinstance(occurrences, list):
+            raise ValueError("Experiment 2 coverage omits cross-subject occurrences")
+        for occurrence in occurrences:
+            if not isinstance(occurrence, dict):
+                raise ValueError("Experiment 2 coverage contains an invalid occurrence")
+            review = occurrence.get("review")
+            packet_id = review.get("packet") if isinstance(review, dict) else None
+            if not isinstance(packet_id, str):
+                raise ValueError("Experiment 2 occurrence has no packet binding")
+            retained = {
+                key: copy.deepcopy(value)
+                for key, value in occurrence.items()
+                if key != "review"
+            }
+            coverage_counter[(packet_id, _canonical_json(retained))] += 1
+    if internal_counter != coverage_counter:
+        raise ValueError(
+            "retained review packet occurrences differ from formal Experiment 2 coverage"
+        )
+    return internal_rows
+
+
+def _post_hoc_hdbscan_review_values(
+    source: Mapping[str, object],
+) -> tuple[dict[str, object], dict[str, object]]:
+    """Project every retained HDBSCAN packet without exposing scoring provenance."""
+
+    if (
+        source.get("candidate") != "hdbscan"
+        or source.get("candidate_identity") != "hdbscan-controlled-suite-config-v1"
+        or source.get("review_status") != "review_capacity_failure"
+    ):
+        raise ValueError(
+            "post-hoc review requires the frozen capacity-failed HDBSCAN candidate"
+        )
+    evidence = source.get("evidence")
+    if not isinstance(evidence, dict):
+        raise ValueError("post-hoc review source has no candidate evidence")
+    experiment = evidence.get("experiment_02")
+    review = experiment.get("review") if isinstance(experiment, dict) else None
+    if (
+        not isinstance(review, dict)
+        or review.get("status") != "review_capacity_failure"
+        or review.get("reviewer_packets") != []
+    ):
+        raise ValueError("HDBSCAN source did not retain its capacity-failure state")
+    internal_packets = review.get("internal_packets")
+    if not isinstance(internal_packets, list) or review.get(
+        "unique_packet_count"
+    ) != len(internal_packets):
+        raise ValueError("HDBSCAN source has an invalid retained packet pool")
+    if len(internal_packets) != POST_HOC_PACKET_COUNT:
+        raise ValueError("post-hoc HDBSCAN review requires exactly 177 unique packets")
+
+    packets: list[dict[str, object]] = []
+    packet_ids: set[str] = set()
+    for packet in internal_packets:
+        if not isinstance(packet, dict):
+            raise ValueError("HDBSCAN source contains an invalid packet")
+        packet_id = packet.get("packet")
+        members = packet.get("members")
+        occurrences = packet.get("occurrences")
+        if (
+            not isinstance(packet_id, str)
+            or not packet_id
+            or packet_id in packet_ids
+            or packet.get("review_state") != "unavailable"
+            or not isinstance(members, list)
+            or len(members) < 2
+            or not isinstance(occurrences, list)
+            or not occurrences
+        ):
+            raise ValueError("HDBSCAN source contains an invalid retained packet")
+        packet_ids.add(packet_id)
+        projected_instances = []
+        seen_instances: set[str] = set()
+        for member in members:
+            if not isinstance(member, dict):
+                raise ValueError("HDBSCAN packet contains an invalid member")
+            instance = member.get("instance")
+            fragments = member.get("fragments")
+            if (
+                not isinstance(instance, str)
+                or not instance
+                or instance in seen_instances
+                or not isinstance(fragments, list)
+                or not fragments
+                or not all(
+                    isinstance(fragment, str) and fragment for fragment in fragments
+                )
+            ):
+                raise ValueError("HDBSCAN packet contains an invalid review instance")
+            seen_instances.add(instance)
+            projected_instances.append(
+                {"instance": instance, "fragments": copy.deepcopy(fragments)}
+            )
+        packets.append(
+            {
+                "packet": packet_id,
+                "question": (
+                    "Are all instances recognizable as refinements of one fine subject?"
+                ),
+                "verdicts": ["valid", "invalid", "uncertain"],
+                "instances": projected_instances,
+            }
+        )
+    occurrence_count = len(_validated_post_hoc_occurrences(evidence, internal_packets))
+    if occurrence_count != POST_HOC_OCCURRENCE_COUNT:
+        raise ValueError("post-hoc HDBSCAN review requires exactly 191 occurrences")
+
+    review_set_digest = hashlib.sha256(
+        b"fine-segmentation-post-hoc-hdbscan-review-v1\0"
+        + str(source["candidate_file_sha256"]).encode("ascii")
+        + _canonical_json(packets)
+    ).hexdigest()
+    review_set = f"PH{review_set_digest[:12]}"
+    reviewer = {
+        "schema_version": SCHEMA_VERSION,
+        "review_set": review_set,
+        "instructions": {
+            "question": (
+                "For each packet, decide whether all instances are recognizable "
+                "as refinements of one fine subject."
+            ),
+            "valid": (
+                "Every instance is recognizable as a refinement of one fine subject."
+            ),
+            "invalid": (
+                "No one recognizable, non-disjunctive fine subject covers every instance."
+            ),
+            "uncertain": (
+                "The masks do not support a confident valid/invalid decision."
+            ),
+        },
+        "packets": packets,
+        "response_contract": {
+            "schema_version": SCHEMA_VERSION,
+            "review_set": review_set,
+            "judgments": "exactly one judgment for every packet",
+            "judgment_fields": ["packet", "verdict"],
+            "allowed_verdicts": ["valid", "invalid", "uncertain"],
+        },
+    }
+    status = {
+        "schema_version": SCHEMA_VERSION,
+        "status": "pending_review",
+        "epistemic_status": "post_hoc_exploratory_after_capacity_failure",
+        "source_review_status": "review_capacity_failure",
+        "packet_count": len(packets),
+        "occurrence_count": occurrence_count,
+        "changes_frozen_protocol_result": False,
+        "proceed_eligible": False,
+        "candidate_selection": "reserved_for_user",
+    }
+    return reviewer, status
+
+
+def _post_hoc_review_source_bindings(source: Mapping[str, object]) -> dict[str, object]:
+    bindings = {
+        key: copy.deepcopy(source[key])
+        for key in (
+            "scoring_manifest_sha256",
+            "candidate",
+            "candidate_identity",
+            "candidate_file",
+            "candidate_file_sha256",
+        )
+    }
+    bindings["source_review_status"] = source["review_status"]
+    return bindings
+
+
+def write_post_hoc_hdbscan_review_artifact(
+    scoring_path: Path | str, output_path: Path | str
+) -> dict[str, object]:
+    """Materialize all retained HDBSCAN packets as a separate post-hoc review."""
+
+    _reject_post_hoc_output_overlap(output_path, (("scoring", scoring_path),))
+    source = _bound_unavailable_scoring_candidate(scoring_path, "hdbscan")
+    reviewer, status = _post_hoc_hdbscan_review_values(source)
+    _write_json_artifact(
+        output_path,
+        artifact_type=POST_HOC_REVIEW_ARTIFACT_TYPE,
+        source_bindings=_post_hoc_review_source_bindings(source),
+        json_files={"review.json": reviewer, "status.json": status},
+    )
+    return verify_post_hoc_hdbscan_review_artifact(scoring_path, output_path)
+
+
+def verify_post_hoc_hdbscan_review_artifact(
+    scoring_path: Path | str, review_path: Path | str
+) -> dict[str, object]:
+    """Replay the safe reviewer projection from the immutable scoring source."""
+
+    root, manifest, manifest_sha = _verify_json_artifact(
+        review_path, artifact_type=POST_HOC_REVIEW_ARTIFACT_TYPE
+    )
+    source = _bound_unavailable_scoring_candidate(scoring_path, "hdbscan")
+    if manifest.get("source_bindings") != _post_hoc_review_source_bindings(source):
+        raise ValueError("post-hoc review source chain differs from frozen scoring")
+    expected_review, expected_status = _post_hoc_hdbscan_review_values(source)
+    retained_review = json.loads((root / "review.json").read_text(encoding="utf-8"))
+    retained_status = json.loads((root / "status.json").read_text(encoding="utf-8"))
+    if retained_review != expected_review or retained_status != expected_status:
+        raise ValueError("post-hoc review differs from its replayed projection")
+    return {
+        "artifact_type": POST_HOC_REVIEW_ARTIFACT_TYPE,
+        "manifest_sha256": manifest_sha,
+        "output_path": str(root),
+        "packet_count": expected_status["packet_count"],
+        "occurrence_count": expected_status["occurrence_count"],
+        "review": retained_review,
+        "status": retained_status,
+    }
+
+
+def _validate_post_hoc_packet_judgments(
+    packets: Sequence[Mapping[str, object]],
+    review_set: str,
+    response: Mapping[str, object],
+) -> dict[str, dict[str, object]]:
+    """Validate one verdict-only judgment for every post-hoc packet."""
+
+    if set(response) != {"schema_version", "review_set", "judgments"}:
+        raise ValueError("post-hoc review response has the wrong top-level schema")
+    if response.get("schema_version") != SCHEMA_VERSION:
+        raise ValueError("post-hoc review response has the wrong schema version")
+    if response.get("review_set") != review_set:
+        raise ValueError("post-hoc review response names the wrong review set")
+    judgments = response.get("judgments")
+    if not isinstance(judgments, list):
+        raise ValueError("post-hoc review response is missing judgments")
+    expected = {str(packet.get("packet")) for packet in packets}
+    if None in expected or "None" in expected or len(expected) != len(packets):
+        raise ValueError("post-hoc review packet identities are invalid")
+    by_packet: dict[str, dict[str, object]] = {}
+    for judgment in judgments:
+        if not isinstance(judgment, dict):
+            raise ValueError("post-hoc review judgment is not an object")
+        if set(judgment) != {"packet", "verdict"}:
+            raise ValueError("post-hoc review judgment has unexpected fields")
+        packet = judgment.get("packet")
+        if not isinstance(packet, str) or packet in by_packet:
+            raise ValueError("post-hoc review response repeats a packet")
+        if judgment.get("verdict") not in {"valid", "invalid", "uncertain"}:
+            raise ValueError("post-hoc review verdict is invalid")
+        by_packet[packet] = dict(judgment)
+    if set(by_packet) != expected:
+        raise ValueError(
+            "post-hoc review response does not cover every packet exactly once"
+        )
+    return by_packet
+
+
+def _post_hoc_review_result(
+    source: Mapping[str, object],
+    reviewer: Mapping[str, object],
+    response: Mapping[str, object],
+) -> dict[str, object]:
+    packets = reviewer.get("packets")
+    review_set = reviewer.get("review_set")
+    if not isinstance(packets, list) or not isinstance(review_set, str):
+        raise ValueError("post-hoc reviewer artifact is invalid")
+    judgments = _validate_post_hoc_packet_judgments(packets, review_set, response)
+    evidence = source["evidence"]
+    internal_packets = evidence["experiment_02"]["review"]["internal_packets"]
+    bound_occurrences = _validated_post_hoc_occurrences(evidence, internal_packets)
+    occurrence_rows = []
+    for packet_id, occurrence in bound_occurrences:
+        judgment = judgments[packet_id]
+        occurrence_rows.append(
+            {
+                "packet": packet_id,
+                "configuration_id": occurrence["configuration_id"],
+                "verdict": judgment["verdict"],
+            }
+        )
+    packet_verdict_counts = Counter(
+        str(judgment["verdict"]) for judgment in judgments.values()
+    )
+    occurrence_verdict_counts = Counter(row["verdict"] for row in occurrence_rows)
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "candidate": source["candidate"],
+        "candidate_identity": source["candidate_identity"],
+        "source_review_status": "review_capacity_failure",
+        "changes_frozen_protocol_result": False,
+        "proceed_eligible": False,
+        "candidate_selection": "reserved_for_user",
+        "judgment_count": len(judgments),
+        "occurrence_count": len(occurrence_rows),
+        "packet_verdict_counts": {
+            verdict: packet_verdict_counts.get(verdict, 0)
+            for verdict in ("valid", "invalid", "uncertain")
+        },
+        "occurrence_verdict_counts": {
+            verdict: occurrence_verdict_counts.get(verdict, 0)
+            for verdict in ("valid", "invalid", "uncertain")
+        },
+        "judgments": [judgments[str(packet["packet"])] for packet in packets],
+        "occurrences": occurrence_rows,
+    }
+
+
+def write_post_hoc_hdbscan_reviewed_artifact(
+    scoring_path: Path | str,
+    review_path: Path | str,
+    response: Mapping[str, object],
+    output_path: Path | str,
+) -> dict[str, object]:
+    """Retain a complete post-hoc response without overriding the frozen verdict."""
+
+    _reject_post_hoc_output_overlap(
+        output_path,
+        (("scoring", scoring_path), ("review", review_path)),
+    )
+    review_report = verify_post_hoc_hdbscan_review_artifact(scoring_path, review_path)
+    source = _bound_unavailable_scoring_candidate(scoring_path, "hdbscan")
+    result = _post_hoc_review_result(source, review_report["review"], response)
+    _write_json_artifact(
+        output_path,
+        artifact_type=POST_HOC_REVIEWED_ARTIFACT_TYPE,
+        source_bindings={
+            "post_hoc_review_manifest_sha256": review_report["manifest_sha256"],
+            **_post_hoc_review_source_bindings(source),
+        },
+        json_files={
+            "semantic-response.json": copy.deepcopy(response),
+            "post-hoc-result.json": result,
+        },
+    )
+    return verify_post_hoc_hdbscan_reviewed_artifact(
+        scoring_path, review_path, output_path
+    )
+
+
+def verify_post_hoc_hdbscan_reviewed_artifact(
+    scoring_path: Path | str,
+    review_path: Path | str,
+    reviewed_path: Path | str,
+) -> dict[str, object]:
+    """Replay a complete post-hoc response and its occurrence reuse."""
+
+    review_report = verify_post_hoc_hdbscan_review_artifact(scoring_path, review_path)
+    source = _bound_unavailable_scoring_candidate(scoring_path, "hdbscan")
+    root, manifest, manifest_sha = _verify_json_artifact(
+        reviewed_path, artifact_type=POST_HOC_REVIEWED_ARTIFACT_TYPE
+    )
+    expected_bindings = {
+        "post_hoc_review_manifest_sha256": review_report["manifest_sha256"],
+        **_post_hoc_review_source_bindings(source),
+    }
+    if manifest.get("source_bindings") != expected_bindings:
+        raise ValueError("post-hoc reviewed source chain is incomplete")
+    response = json.loads((root / "semantic-response.json").read_text(encoding="utf-8"))
+    expected = _post_hoc_review_result(source, review_report["review"], response)
+    retained = json.loads((root / "post-hoc-result.json").read_text(encoding="utf-8"))
+    if retained != expected:
+        raise ValueError("post-hoc reviewed result differs from replayed judgments")
+    return {
+        "artifact_type": POST_HOC_REVIEWED_ARTIFACT_TYPE,
+        "manifest_sha256": manifest_sha,
+        "output_path": str(root),
+        **retained,
+    }
+
+
 def write_reviewed_scoring_artifact(
     scoring_path: Path | str,
     review_set: str,
@@ -4718,6 +5155,21 @@ def main(argv: Sequence[str] | None = None) -> int:
     verify_comparison.add_argument("scoring", type=Path)
     verify_comparison.add_argument("finalized", type=Path, nargs=2)
     verify_comparison.add_argument("comparison", type=Path)
+    prepare_post_hoc = subparsers.add_parser("prepare-post-hoc-review")
+    prepare_post_hoc.add_argument("scoring", type=Path)
+    prepare_post_hoc.add_argument("output", type=Path)
+    verify_post_hoc = subparsers.add_parser("verify-post-hoc-review")
+    verify_post_hoc.add_argument("scoring", type=Path)
+    verify_post_hoc.add_argument("review", type=Path)
+    apply_post_hoc = subparsers.add_parser("apply-post-hoc-review")
+    apply_post_hoc.add_argument("scoring", type=Path)
+    apply_post_hoc.add_argument("review", type=Path)
+    apply_post_hoc.add_argument("response", type=Path)
+    apply_post_hoc.add_argument("output", type=Path)
+    verify_post_hoc_reviewed = subparsers.add_parser("verify-post-hoc-reviewed")
+    verify_post_hoc_reviewed.add_argument("scoring", type=Path)
+    verify_post_hoc_reviewed.add_argument("review", type=Path)
+    verify_post_hoc_reviewed.add_argument("reviewed", type=Path)
     args = parser.parse_args(list(argv) if argv is not None else None)
     if args.command == "prepare-review":
         report = prepare_scoring_artifact(
@@ -4841,6 +5293,63 @@ def main(argv: Sequence[str] | None = None) -> int:
             "output_path": result["output_path"],
             "assistant_recommendation": result["assistant_recommendation"],
             "candidate_selection": result["candidate_selection"],
+        }
+    elif args.command == "prepare-post-hoc-review":
+        result = write_post_hoc_hdbscan_review_artifact(args.scoring, args.output)
+        report = {
+            key: result[key]
+            for key in (
+                "artifact_type",
+                "manifest_sha256",
+                "output_path",
+                "packet_count",
+                "occurrence_count",
+            )
+        }
+    elif args.command == "verify-post-hoc-review":
+        result = verify_post_hoc_hdbscan_review_artifact(args.scoring, args.review)
+        report = {
+            key: result[key]
+            for key in (
+                "artifact_type",
+                "manifest_sha256",
+                "output_path",
+                "packet_count",
+                "occurrence_count",
+            )
+        }
+    elif args.command == "apply-post-hoc-review":
+        response = json.loads(args.response.read_text(encoding="utf-8"))
+        result = write_post_hoc_hdbscan_reviewed_artifact(
+            args.scoring, args.review, response, args.output
+        )
+        report = {
+            key: result[key]
+            for key in (
+                "artifact_type",
+                "manifest_sha256",
+                "output_path",
+                "judgment_count",
+                "occurrence_count",
+                "source_review_status",
+                "proceed_eligible",
+            )
+        }
+    elif args.command == "verify-post-hoc-reviewed":
+        result = verify_post_hoc_hdbscan_reviewed_artifact(
+            args.scoring, args.review, args.reviewed
+        )
+        report = {
+            key: result[key]
+            for key in (
+                "artifact_type",
+                "manifest_sha256",
+                "output_path",
+                "judgment_count",
+                "occurrence_count",
+                "source_review_status",
+                "proceed_eligible",
+            )
         }
     else:
         raise AssertionError(f"unhandled command {args.command}")

@@ -99,6 +99,10 @@ path = "src/bin/scaled_fine_segments.rs"
 name = "fine-segmentation-candidate"
 path = "src/bin/fine_segmentation_candidate.rs"
 
+[[bin]]
+name = "fine-segmentation-review"
+path = "src/bin/fine_segmentation_review.rs"
+
 [dependencies]
 bech32 = "=0.11.1"
 crossterm = "=0.29.0"

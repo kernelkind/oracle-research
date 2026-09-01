@@ -31,6 +31,7 @@ pub mod fine_region_pilot;
 pub mod fine_region_scc;
 pub mod fine_region_scc_preflight;
 pub mod fine_region_snn;
+pub mod fine_segmentation_review;
 pub mod fp32_oracle;
 pub mod gte;
 pub mod gte_budget;

@@ -38,6 +38,10 @@ candidates exceeded the frozen Experiment 2 limit of 100 unique cross-subject
 packets, so neither may proceed and the user's `revise candidate` or `stop`
 dispositions remain pending. The complete observations are in the
 [controlled-run results](experiments/fine-segmentation/controlled-run-v1-results.md).
+The current follow-up keeps that result unchanged and presents all 177 retained
+HDBSCAN* packets in a separate post-hoc review. SNN is not part of this review,
+the review does not generate fine-subject labels, and the user still makes any
+eventual candidate decision.
 
 ## Goal
 
@@ -77,9 +81,11 @@ The next fine-segmentation stages are intentionally dependency-ordered:
    them. Semantic failures remain evidence and do not halt later local tests;
    an integrity failure blocks only the affected candidate input and dependent
    conclusions.
-2. Present the two complete records side by side. The assistant may recommend
-   an outcome; the user alone selects and final-freezes a candidate, requests a
-   revision, or stops the approach.
+2. Preserve the capacity-failure result, then review all 177 retained HDBSCAN*
+   packets through a separately identified post-hoc artifact. These judgments
+   characterize HDBSCAN* but do not retroactively satisfy the frozen
+   100-packet protocol. SNN remains retained and is not reviewed in this
+   follow-up. The user alone decides what to do with the resulting evidence.
 3. If the user selects a candidate, test that exact identity on a hand-selected
    real-note collection from one niche subject area.
 4. Only after useful fine subjects are demonstrated, compare and freeze a
