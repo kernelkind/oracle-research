@@ -1,7 +1,8 @@
 # Experiment 1: repeated fine-subject recovery
 
-Status: **fixture, subject identities, masks, and scoring approved on
-2026-08-31; technical freeze incomplete; do not encode or run yet**.
+Status: **run completed on 2026-09-01; HDBSCAN* recovered five of six cohorts,
+while SNN recovered all six**. See the
+[controlled-run results](controlled-run-v1-results.md).
 
 ## Assumption
 

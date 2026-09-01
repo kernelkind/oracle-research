@@ -1,7 +1,8 @@
 # Experiment 3: lexical coincidence
 
-Status: **all propositions, `B` and `C` masks, relationships, and scoring rules
-approved on 2026-08-31; technical freeze incomplete; do not encode or run yet**.
+Status: **run completed on 2026-09-01; HDBSCAN* passed all three traps, while
+SNN received no verdict because its local baseline relationships did not
+qualify**. See the [controlled-run results](controlled-run-v1-results.md).
 
 ## Assumption
 

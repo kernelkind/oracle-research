@@ -17,10 +17,11 @@ complete suite as separate candidate instances. Neither is the final
 fine-segmentation choice.
 
 The suite's exact semantic fixtures, scoring rules, and prerequisite graph were
-approved on 2026-08-31. The user is its primary human semantic reviewer, with
-an Experiment 2 limit of 100 unique cross-subject packets per candidate.
-Technical identity and protocol-hash freezes remain incomplete, and the suite
-has not run.
+approved on 2026-08-31. Its controlled run completed on 2026-09-01. Both
+candidates exceeded the frozen Experiment 2 limit of 100 unique cross-subject
+packets, so neither may proceed and the user's `revise candidate` or `stop`
+dispositions remain pending. See the
+[controlled-run results](../experiments/fine-segmentation/controlled-run-v1-results.md).
 
 ## Goal
 

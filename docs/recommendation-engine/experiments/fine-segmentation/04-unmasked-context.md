@@ -1,8 +1,9 @@
 # Experiment 4: unmasked-context membership
 
-Status: **all notes, masks, subject identities, expected relationships,
-scoring rules, and prerequisites approved on 2026-08-31; technical freeze
-incomplete; do not encode or run yet**.
+Status: **run completed on 2026-09-01; HDBSCAN* passed six treatments and had
+three local-prerequisite no-verdicts, while SNN's baseline did not qualify for
+any treatment**. See the
+[controlled-run results](controlled-run-v1-results.md).
 
 ## Assumption under test
 

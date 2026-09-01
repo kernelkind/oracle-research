@@ -1,8 +1,9 @@
 # Experiment 6: stability under irrelevant changes
 
-Status: **reused fixture semantics, baseline qualification, intervention
-rules, and scoring approved on 2026-08-31; technical freeze incomplete; do not
-encode or run yet**.
+Status: **run completed on 2026-09-01; SNN passed all three checks, while
+HDBSCAN* received no verdict because its transported Experiment 1 baseline did
+not qualify**. See the
+[controlled-run results](controlled-run-v1-results.md).
 
 ## Assumption under test
 

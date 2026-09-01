@@ -1,11 +1,12 @@
 # Fine-segmentation qualification and characterization suite
 
-Status: **semantic fixtures, scoring rules, and prerequisite graph approved on
-2026-08-31; technical freeze incomplete; do not encode or run yet**.
+Status: **controlled execution and automated scoring completed on 2026-09-01;
+both candidates exceeded the semantic-review cap, so user dispositions remain
+pending**. See the [v1 results](controlled-run-v1-results.md).
 
-After the technical freeze is complete, the controlled run will evaluate two
-predeclared candidates as equal, separate suite instances over the same
-fixtures, SSE vectors, opaque IDs, input orders, and scoring rules:
+The controlled run evaluated two predeclared candidates as equal, separate
+suite instances over the same fixtures, SSE vectors, opaque IDs, input orders,
+and scoring rules:
 
 - HDBSCAN* with `hdbscan-controlled-suite-config-v1`:
   `min_samples = 2`, `min_cluster_size = 2`, and excess-of-mass selection; and

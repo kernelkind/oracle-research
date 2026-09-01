@@ -65,6 +65,17 @@ not establish arbitrary real-note performance.
 The synthetic evidence therefore supports some subject relationships but not a
 general claim that SSE preserves every relation expressed by selected text.
 
+## Fine-segmentation integration run
+
+The controlled HDBSCAN*/SNN suite completed on 2026-09-01. Its Experiment 3
+and 4 results qualify the frozen SSE-plus-candidate combinations rather than
+SSE alone. HDBSCAN* passed all three lexical traps and six of nine
+unmasked-context treatments; three context treatments had no verdict after a
+local relationship stopped qualifying. SNN's local baselines did not qualify
+for either integration experiment. Both candidates exceeded the frozen
+semantic-review cap. See the
+[complete result](../recommendation-engine/experiments/fine-segmentation/controlled-run-v1-results.md).
+
 ## Real-Note Evidence
 
 The exploratory

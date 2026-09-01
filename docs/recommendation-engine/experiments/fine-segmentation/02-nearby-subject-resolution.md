@@ -1,8 +1,9 @@
 # Experiment 2: nearby-subject organization under changing support
 
-Status: **all 96 fixture notes, masks, declared atomic subjects, intended
-relationships, and scoring rules approved on 2026-08-31; technical freeze
-incomplete; do not encode or run yet**.
+Status: **run completed on 2026-09-01; both candidates exceeded the frozen
+100-packet semantic-review cap, so `proceed` is unavailable and user
+dispositions remain pending**. See the
+[controlled-run results](controlled-run-v1-results.md).
 
 ## Characterization target
 
