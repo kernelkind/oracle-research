@@ -4114,9 +4114,11 @@ def _bound_unavailable_scoring_candidate(
     }
 
 
-POST_HOC_REVIEW_ARTIFACT_TYPE = "fine-segmentation-post-hoc-review-v1"
-POST_HOC_REVIEWED_ARTIFACT_TYPE = "fine-segmentation-post-hoc-reviewed-v1"
-POST_HOC_PACKET_COUNT = 177
+POST_HOC_REVIEW_ARTIFACT_TYPE = "fine-segmentation-post-hoc-review-v2"
+POST_HOC_REVIEWED_ARTIFACT_TYPE = "fine-segmentation-post-hoc-reviewed-v2"
+POST_HOC_SCHEMA_VERSION = 2
+POST_HOC_JUDGMENT_COUNT = 9
+POST_HOC_EXACT_PACKET_COUNT = 177
 POST_HOC_OCCURRENCE_COUNT = 191
 
 
@@ -4196,8 +4198,8 @@ def _validated_post_hoc_occurrences(
 
 def _post_hoc_hdbscan_review_values(
     source: Mapping[str, object],
-) -> tuple[dict[str, object], dict[str, object]]:
-    """Project every retained HDBSCAN packet without exposing scoring provenance."""
+) -> tuple[dict[str, object], dict[str, object], dict[str, str]]:
+    """Project nine subject-set judgments and retain exact-packet replay bindings."""
 
     if (
         source.get("candidate") != "hdbscan"
@@ -4223,11 +4225,16 @@ def _post_hoc_hdbscan_review_values(
         "unique_packet_count"
     ) != len(internal_packets):
         raise ValueError("HDBSCAN source has an invalid retained packet pool")
-    if len(internal_packets) != POST_HOC_PACKET_COUNT:
-        raise ValueError("post-hoc HDBSCAN review requires exactly 177 unique packets")
+    if len(internal_packets) != POST_HOC_EXACT_PACKET_COUNT:
+        raise ValueError("post-hoc HDBSCAN review requires exactly 177 exact packets")
 
-    packets: list[dict[str, object]] = []
-    packet_ids: set[str] = set()
+    source_sha = source.get("candidate_file_sha256")
+    if not isinstance(source_sha, str) or len(source_sha) != 64:
+        raise ValueError("post-hoc HDBSCAN source digest is invalid")
+
+    exact_packet_ids: set[str] = set()
+    vector_evidence: dict[str, tuple[str, tuple[str, ...]]] = {}
+    grouped: dict[tuple[str, ...], dict[str, object]] = {}
     for packet in internal_packets:
         if not isinstance(packet, dict):
             raise ValueError("HDBSCAN source contains an invalid packet")
@@ -4237,7 +4244,7 @@ def _post_hoc_hdbscan_review_values(
         if (
             not isinstance(packet_id, str)
             or not packet_id
-            or packet_id in packet_ids
+            or packet_id in exact_packet_ids
             or packet.get("review_state") != "unavailable"
             or not isinstance(members, list)
             or len(members) < 2
@@ -4245,18 +4252,23 @@ def _post_hoc_hdbscan_review_values(
             or not occurrences
         ):
             raise ValueError("HDBSCAN source contains an invalid retained packet")
-        packet_ids.add(packet_id)
-        projected_instances = []
-        seen_instances: set[str] = set()
+        exact_packet_ids.add(packet_id)
+        canonical_opaque_members = packet.get("canonical_opaque_members")
+        if not isinstance(canonical_opaque_members, list):
+            raise ValueError("HDBSCAN packet omits its canonical opaque members")
+        packet_members: dict[str, tuple[str, tuple[str, ...]]] = {}
         for member in members:
             if not isinstance(member, dict):
                 raise ValueError("HDBSCAN packet contains an invalid member")
-            instance = member.get("instance")
+            opaque_id = member.get("opaque_id")
+            readable_id = member.get("readable_id")
             fragments = member.get("fragments")
             if (
-                not isinstance(instance, str)
-                or not instance
-                or instance in seen_instances
+                not isinstance(opaque_id, str)
+                or not opaque_id
+                or opaque_id in packet_members
+                or not isinstance(readable_id, str)
+                or not readable_id
                 or not isinstance(fragments, list)
                 or not fragments
                 or not all(
@@ -4264,13 +4276,117 @@ def _post_hoc_hdbscan_review_values(
                 )
             ):
                 raise ValueError("HDBSCAN packet contains an invalid review instance")
-            seen_instances.add(instance)
-            projected_instances.append(
-                {"instance": instance, "fragments": copy.deepcopy(fragments)}
+            evidence_row = (readable_id, tuple(fragments))
+            prior = vector_evidence.setdefault(opaque_id, evidence_row)
+            if prior != evidence_row:
+                raise ValueError("one opaque vector has inconsistent review evidence")
+            packet_members[opaque_id] = evidence_row
+        if set(canonical_opaque_members) != set(packet_members) or len(
+            canonical_opaque_members
+        ) != len(packet_members):
+            raise ValueError(
+                "HDBSCAN packet canonical members differ from its evidence"
             )
+
+        packet_subjects: tuple[str, ...] | None = None
+        packet_member_subjects: tuple[tuple[str, str], ...] | None = None
+        readable_members = {row[0] for row in packet_members.values()}
+        for occurrence in occurrences:
+            if not isinstance(occurrence, dict):
+                raise ValueError("HDBSCAN packet contains an invalid occurrence")
+            occurrence_members = occurrence.get("readable_members")
+            member_roles = occurrence.get("member_roles")
+            if (
+                not isinstance(occurrence_members, list)
+                or len(occurrence_members) != len(set(occurrence_members))
+                or set(occurrence_members) != readable_members
+                or not isinstance(member_roles, dict)
+                or set(member_roles) != readable_members
+            ):
+                raise ValueError("HDBSCAN occurrence has invalid subject evidence")
+            member_subjects: list[tuple[str, str]] = []
+            for member, role in member_roles.items():
+                subject = role.get("subject") if isinstance(role, dict) else None
+                if not isinstance(subject, str) or not subject:
+                    raise ValueError("HDBSCAN occurrence has an invalid subject")
+                member_subjects.append((member, subject))
+            member_subject_map = tuple(sorted(member_subjects))
+            subject_set = tuple(sorted({subject for _, subject in member_subject_map}))
+            if len(subject_set) < 2:
+                raise ValueError(
+                    "HDBSCAN cross-subject packet has fewer than two subjects"
+                )
+            if packet_subjects is None:
+                packet_subjects = subject_set
+                packet_member_subjects = member_subject_map
+            elif packet_subjects != subject_set:
+                raise ValueError(
+                    "one exact packet has inconsistent subject combinations"
+                )
+            elif packet_member_subjects != member_subject_map:
+                raise ValueError(
+                    "one exact packet has inconsistent member-to-subject mappings"
+                )
+        if packet_subjects is None:
+            raise ValueError("HDBSCAN packet has no subject combination")
+        group = grouped.setdefault(
+            packet_subjects,
+            {"exact_packets": [], "members": {}},
+        )
+        group["exact_packets"].append(packet_id)
+        group_members = group["members"]
+        if not isinstance(group_members, dict):
+            raise AssertionError("invalid post-hoc group accumulator")
+        for opaque_id, evidence_row in packet_members.items():
+            group_members[opaque_id] = evidence_row
+
+    if len(grouped) != POST_HOC_JUDGMENT_COUNT:
+        raise ValueError(
+            "post-hoc HDBSCAN review requires exactly 9 distinct subject combinations"
+        )
+
+    occurrence_count = len(_validated_post_hoc_occurrences(evidence, internal_packets))
+    if occurrence_count != POST_HOC_OCCURRENCE_COUNT:
+        raise ValueError("post-hoc HDBSCAN review requires exactly 191 occurrences")
+
+    def blind_key(domain: bytes, identity: object) -> bytes:
+        return hashlib.sha256(
+            domain
+            + b"\0"
+            + source_sha.encode("ascii")
+            + b"\0"
+            + _canonical_json(identity)
+        ).digest()
+
+    packets: list[dict[str, object]] = []
+    exact_to_review: dict[str, str] = {}
+    ordered_groups = sorted(
+        grouped.items(),
+        key=lambda row: blind_key(b"post-hoc-review-group-v2", row[0]),
+    )
+    for group_ordinal, (_subjects, group) in enumerate(ordered_groups, start=1):
+        review_packet = f"P{group_ordinal:03d}"
+        group_members = group["members"]
+        exact_packets = group["exact_packets"]
+        if not isinstance(group_members, dict) or not isinstance(exact_packets, list):
+            raise AssertionError("invalid post-hoc group accumulator")
+        ordered_members = sorted(
+            group_members.items(),
+            key=lambda row: blind_key(b"post-hoc-review-instance-v2", row[0]),
+        )
+        instance_width = max(2, len(str(len(ordered_members))))
+        projected_instances = [
+            {
+                "instance": f"I{ordinal:0{instance_width}d}",
+                "fragments": list(evidence_row[1]),
+            }
+            for ordinal, (_opaque_id, evidence_row) in enumerate(
+                ordered_members, start=1
+            )
+        ]
         packets.append(
             {
-                "packet": packet_id,
+                "packet": review_packet,
                 "question": (
                     "Are all instances recognizable as refinements of one fine subject?"
                 ),
@@ -4278,18 +4394,19 @@ def _post_hoc_hdbscan_review_values(
                 "instances": projected_instances,
             }
         )
-    occurrence_count = len(_validated_post_hoc_occurrences(evidence, internal_packets))
-    if occurrence_count != POST_HOC_OCCURRENCE_COUNT:
-        raise ValueError("post-hoc HDBSCAN review requires exactly 191 occurrences")
+        for exact_packet in exact_packets:
+            exact_to_review[str(exact_packet)] = review_packet
+    if set(exact_to_review) != exact_packet_ids:
+        raise AssertionError("post-hoc group projection omitted an exact packet")
 
     review_set_digest = hashlib.sha256(
-        b"fine-segmentation-post-hoc-hdbscan-review-v1\0"
+        b"fine-segmentation-post-hoc-hdbscan-review-v2\0"
         + str(source["candidate_file_sha256"]).encode("ascii")
         + _canonical_json(packets)
     ).hexdigest()
     review_set = f"PH{review_set_digest[:12]}"
     reviewer = {
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": POST_HOC_SCHEMA_VERSION,
         "review_set": review_set,
         "instructions": {
             "question": (
@@ -4308,7 +4425,7 @@ def _post_hoc_hdbscan_review_values(
         },
         "packets": packets,
         "response_contract": {
-            "schema_version": SCHEMA_VERSION,
+            "schema_version": POST_HOC_SCHEMA_VERSION,
             "review_set": review_set,
             "judgments": "exactly one judgment for every packet",
             "judgment_fields": ["packet", "verdict"],
@@ -4316,17 +4433,18 @@ def _post_hoc_hdbscan_review_values(
         },
     }
     status = {
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": POST_HOC_SCHEMA_VERSION,
         "status": "pending_review",
         "epistemic_status": "post_hoc_exploratory_after_capacity_failure",
         "source_review_status": "review_capacity_failure",
-        "packet_count": len(packets),
+        "judgment_count": len(packets),
+        "exact_packet_count": len(internal_packets),
         "occurrence_count": occurrence_count,
         "changes_frozen_protocol_result": False,
         "proceed_eligible": False,
         "candidate_selection": "reserved_for_user",
     }
-    return reviewer, status
+    return reviewer, status, exact_to_review
 
 
 def _post_hoc_review_source_bindings(source: Mapping[str, object]) -> dict[str, object]:
@@ -4347,11 +4465,11 @@ def _post_hoc_review_source_bindings(source: Mapping[str, object]) -> dict[str, 
 def write_post_hoc_hdbscan_review_artifact(
     scoring_path: Path | str, output_path: Path | str
 ) -> dict[str, object]:
-    """Materialize all retained HDBSCAN packets as a separate post-hoc review."""
+    """Materialize nine subject-set judgments with exact-packet replay retained."""
 
     _reject_post_hoc_output_overlap(output_path, (("scoring", scoring_path),))
     source = _bound_unavailable_scoring_candidate(scoring_path, "hdbscan")
-    reviewer, status = _post_hoc_hdbscan_review_values(source)
+    reviewer, status, _exact_to_review = _post_hoc_hdbscan_review_values(source)
     _write_json_artifact(
         output_path,
         artifact_type=POST_HOC_REVIEW_ARTIFACT_TYPE,
@@ -4372,7 +4490,9 @@ def verify_post_hoc_hdbscan_review_artifact(
     source = _bound_unavailable_scoring_candidate(scoring_path, "hdbscan")
     if manifest.get("source_bindings") != _post_hoc_review_source_bindings(source):
         raise ValueError("post-hoc review source chain differs from frozen scoring")
-    expected_review, expected_status = _post_hoc_hdbscan_review_values(source)
+    expected_review, expected_status, _exact_to_review = (
+        _post_hoc_hdbscan_review_values(source)
+    )
     retained_review = json.loads((root / "review.json").read_text(encoding="utf-8"))
     retained_status = json.loads((root / "status.json").read_text(encoding="utf-8"))
     if retained_review != expected_review or retained_status != expected_status:
@@ -4381,7 +4501,8 @@ def verify_post_hoc_hdbscan_review_artifact(
         "artifact_type": POST_HOC_REVIEW_ARTIFACT_TYPE,
         "manifest_sha256": manifest_sha,
         "output_path": str(root),
-        "packet_count": expected_status["packet_count"],
+        "judgment_count": expected_status["judgment_count"],
+        "exact_packet_count": expected_status["exact_packet_count"],
         "occurrence_count": expected_status["occurrence_count"],
         "review": retained_review,
         "status": retained_status,
@@ -4397,7 +4518,7 @@ def _validate_post_hoc_packet_judgments(
 
     if set(response) != {"schema_version", "review_set", "judgments"}:
         raise ValueError("post-hoc review response has the wrong top-level schema")
-    if response.get("schema_version") != SCHEMA_VERSION:
+    if response.get("schema_version") != POST_HOC_SCHEMA_VERSION:
         raise ValueError("post-hoc review response has the wrong schema version")
     if response.get("review_set") != review_set:
         raise ValueError("post-hoc review response names the wrong review set")
@@ -4438,23 +4559,43 @@ def _post_hoc_review_result(
     judgments = _validate_post_hoc_packet_judgments(packets, review_set, response)
     evidence = source["evidence"]
     internal_packets = evidence["experiment_02"]["review"]["internal_packets"]
+    _expected_reviewer, _expected_status, exact_to_review = (
+        _post_hoc_hdbscan_review_values(source)
+    )
     bound_occurrences = _validated_post_hoc_occurrences(evidence, internal_packets)
+    exact_packet_rows = []
+    for exact_packet in internal_packets:
+        exact_packet_id = str(exact_packet["packet"])
+        review_packet = exact_to_review[exact_packet_id]
+        judgment = judgments[review_packet]
+        exact_packet_rows.append(
+            {
+                "exact_packet": exact_packet_id,
+                "review_packet": review_packet,
+                "verdict": judgment["verdict"],
+            }
+        )
     occurrence_rows = []
-    for packet_id, occurrence in bound_occurrences:
-        judgment = judgments[packet_id]
+    for exact_packet_id, occurrence in bound_occurrences:
+        review_packet = exact_to_review[exact_packet_id]
+        judgment = judgments[review_packet]
         occurrence_rows.append(
             {
-                "packet": packet_id,
+                "exact_packet": exact_packet_id,
+                "review_packet": review_packet,
                 "configuration_id": occurrence["configuration_id"],
                 "verdict": judgment["verdict"],
             }
         )
-    packet_verdict_counts = Counter(
+    judgment_verdict_counts = Counter(
         str(judgment["verdict"]) for judgment in judgments.values()
+    )
+    exact_packet_verdict_counts = Counter(
+        str(row["verdict"]) for row in exact_packet_rows
     )
     occurrence_verdict_counts = Counter(row["verdict"] for row in occurrence_rows)
     return {
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": POST_HOC_SCHEMA_VERSION,
         "candidate": source["candidate"],
         "candidate_identity": source["candidate_identity"],
         "source_review_status": "review_capacity_failure",
@@ -4462,9 +4603,14 @@ def _post_hoc_review_result(
         "proceed_eligible": False,
         "candidate_selection": "reserved_for_user",
         "judgment_count": len(judgments),
+        "exact_packet_count": len(exact_packet_rows),
         "occurrence_count": len(occurrence_rows),
-        "packet_verdict_counts": {
-            verdict: packet_verdict_counts.get(verdict, 0)
+        "judgment_verdict_counts": {
+            verdict: judgment_verdict_counts.get(verdict, 0)
+            for verdict in ("valid", "invalid", "uncertain")
+        },
+        "exact_packet_verdict_counts": {
+            verdict: exact_packet_verdict_counts.get(verdict, 0)
             for verdict in ("valid", "invalid", "uncertain")
         },
         "occurrence_verdict_counts": {
@@ -4472,6 +4618,7 @@ def _post_hoc_review_result(
             for verdict in ("valid", "invalid", "uncertain")
         },
         "judgments": [judgments[str(packet["packet"])] for packet in packets],
+        "exact_packets": exact_packet_rows,
         "occurrences": occurrence_rows,
     }
 
@@ -5302,7 +5449,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "artifact_type",
                 "manifest_sha256",
                 "output_path",
-                "packet_count",
+                "judgment_count",
+                "exact_packet_count",
                 "occurrence_count",
             )
         }
@@ -5314,7 +5462,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "artifact_type",
                 "manifest_sha256",
                 "output_path",
-                "packet_count",
+                "judgment_count",
+                "exact_packet_count",
                 "occurrence_count",
             )
         }
@@ -5330,6 +5479,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "manifest_sha256",
                 "output_path",
                 "judgment_count",
+                "exact_packet_count",
                 "occurrence_count",
                 "source_review_status",
                 "proceed_eligible",
@@ -5346,6 +5496,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "manifest_sha256",
                 "output_path",
                 "judgment_count",
+                "exact_packet_count",
                 "occurrence_count",
                 "source_review_status",
                 "proceed_eligible",

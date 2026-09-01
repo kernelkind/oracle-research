@@ -22,10 +22,14 @@ candidates exceeded the frozen Experiment 2 limit of 100 unique cross-subject
 packets, so neither may proceed and the user's `revise candidate` or `stop`
 dispositions remain pending. See the
 [controlled-run results](../experiments/fine-segmentation/controlled-run-v1-results.md).
-A separate follow-up is reviewing all 177 retained HDBSCAN* packets. It does
-not change the frozen capacity-failure result, include SNN, or select the final
-fine-segmentation algorithm. The review judges group coherence from the masks;
-fine-subject naming remains a separate downstream stage.
+A separately versioned exploratory v2 follow-up reviews the nine distinct
+sorted sets of approved synthetic subjects represented by HDBSCAN*'s 177
+retained exact packets. Each judgment replays to every matching exact packet
+and formal occurrence, covering all 177 packets and 191 occurrences. This
+methodological correction leaves the frozen capacity-failure result, HDBSCAN*
+candidate and evidence, original 177-packet v1 review session, SNN record, and
+final user selection unchanged. The review records only group coherence;
+fine-subject naming remains downstream.
 
 ## Goal
 

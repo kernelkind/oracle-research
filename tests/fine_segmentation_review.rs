@@ -27,7 +27,7 @@ impl Fixture {
         let reviewer_path = root.path().join("reviewer.json");
         let session_path = root.path().join("session.json");
         let response_path = root.path().join("response.json");
-        let packets = (1..=177)
+        let packets = (1..=9)
             .map(|ordinal| {
                 json!({
                     "packet": format!("P{ordinal:03}"),
@@ -43,7 +43,7 @@ impl Fixture {
         write_json(
             &reviewer_path,
             &json!({
-                "schema_version": 1,
+                "schema_version": 2,
                 "review_set": "R-hdbscan-post-hoc-v1",
                 "instructions": {
                     "question": "For each packet, decide whether all instances are recognizable as refinements of one fine subject.",
@@ -53,7 +53,7 @@ impl Fixture {
                 },
                 "packets": packets,
                 "response_contract": {
-                    "schema_version": 1,
+                    "schema_version": 2,
                     "review_set": "R-hdbscan-post-hoc-v1",
                     "judgments": "exactly one judgment for every packet",
                     "judgment_fields": ["packet", "verdict"],
@@ -184,7 +184,7 @@ fn every_verdict_requires_confirmation_and_session_has_no_label_or_suggestion_st
 #[test]
 fn all_packets_complete_without_any_suggestion_input() {
     let fixture = Fixture::new();
-    let actions = completed_actions(177, |ordinal| match ordinal % 3 {
+    let actions = completed_actions(9, |ordinal| match ordinal % 3 {
         0 => FineSegmentationReviewVerdict::Valid,
         1 => FineSegmentationReviewVerdict::Invalid,
         _ => FineSegmentationReviewVerdict::Uncertain,
@@ -202,14 +202,15 @@ fn all_packets_complete_without_any_suggestion_input() {
     assert_eq!(
         outcome,
         FineSegmentationReviewRunOutcome::Completed {
-            valid: 59,
-            invalid: 59,
-            uncertain: 59,
+            valid: 3,
+            invalid: 3,
+            uncertain: 3,
         }
     );
     let response = read_json(&fixture.response_path);
+    assert_eq!(response["schema_version"], 2);
     let judgments = response["judgments"].as_array().expect("judgments");
-    assert_eq!(judgments.len(), 177);
+    assert_eq!(judgments.len(), 9);
     assert!(judgments.iter().all(|judgment| {
         let fields = judgment.as_object().expect("judgment object");
         fields.len() == 2 && fields.contains_key("packet") && fields.contains_key("verdict")
@@ -273,65 +274,35 @@ fn resume_and_revision_preserve_the_exact_packet_position() {
 }
 
 #[test]
-fn an_unacknowledged_break_is_saved_and_repeated_after_every_twenty_completions() {
+fn nine_packet_session_has_no_break_or_checkpoint_state() {
     let fixture = Fixture::new();
-    let mut actions = completed_actions(20, |_| FineSegmentationReviewVerdict::Invalid);
-    actions.push(FineSegmentationReviewAction::Pause);
-    let mut first = ScriptedUi::new(actions);
+    let mut ui = ScriptedUi::new([FineSegmentationReviewAction::Pause]);
 
     let outcome = run_fine_segmentation_review(
         &fixture.reviewer_path,
         &fixture.session_path,
         &fixture.response_path,
-        &mut first,
+        &mut ui,
     )
-    .expect("reach first break");
+    .expect("pause nine-packet review");
 
     assert_eq!(outcome, FineSegmentationReviewRunOutcome::Paused);
     assert!(matches!(
-        first.screens.last(),
-        Some(FineSegmentationReviewScreen::Break {
-            completed_packet_count: 20
-        })
+        ui.screens.as_slice(),
+        [FineSegmentationReviewScreen::Packet {
+            packet_index: 0,
+            packet_count: 9,
+            ..
+        }]
     ));
     let session = read_session(&fixture.session_path);
-    assert_eq!(session["break_checkpoints"][0]["after_packets"], 20);
-    assert_eq!(session["break_checkpoints"][0]["continued"], false);
-
-    let mut resumed = ScriptedUi::new([
-        FineSegmentationReviewAction::ContinueBreak,
-        FineSegmentationReviewAction::Pause,
-    ]);
-    run_fine_segmentation_review(
-        &fixture.reviewer_path,
-        &fixture.session_path,
-        &fixture.response_path,
-        &mut resumed,
-    )
-    .expect("continue saved break");
-    assert!(matches!(
-        resumed.screens[0],
-        FineSegmentationReviewScreen::Break {
-            completed_packet_count: 20
-        }
-    ));
-    assert!(matches!(
-        resumed.screens[1],
-        FineSegmentationReviewScreen::Packet {
-            packet_index: 20,
-            ..
-        }
-    ));
-    assert_eq!(
-        read_session(&fixture.session_path)["break_checkpoints"][0]["continued"],
-        true
-    );
+    assert!(session.get("break_checkpoints").is_none(), "{session}");
 }
 
 #[test]
 fn the_complete_response_is_not_published_until_every_packet_is_confirmed() {
     let fixture = Fixture::new();
-    let mut actions = completed_actions(176, |_| FineSegmentationReviewVerdict::Invalid);
+    let mut actions = completed_actions(8, |_| FineSegmentationReviewVerdict::Invalid);
     actions.push(FineSegmentationReviewAction::Pause);
     let mut first = ScriptedUi::new(actions);
     let outcome = run_fine_segmentation_review(
@@ -359,25 +330,25 @@ fn the_complete_response_is_not_published_until_every_packet_is_confirmed() {
         outcome,
         FineSegmentationReviewRunOutcome::Completed {
             valid: 1,
-            invalid: 176,
+            invalid: 8,
             uncertain: 0,
         }
     );
     let response = read_json(&fixture.response_path);
     assert_eq!(
         response["judgments"].as_array().expect("judgments").len(),
-        177
+        9
     );
     assert_eq!(
-        response["judgments"][176],
-        json!({"packet": "P177", "verdict": "valid"})
+        response["judgments"][8],
+        json!({"packet": "P009", "verdict": "valid"})
     );
 }
 
 #[test]
 fn pending_replacement_retains_the_prior_verdict_and_blocks_publication() {
     let fixture = Fixture::new();
-    let mut actions = completed_actions(176, |_| FineSegmentationReviewVerdict::Invalid);
+    let mut actions = completed_actions(8, |_| FineSegmentationReviewVerdict::Invalid);
     actions.extend([
         FineSegmentationReviewAction::PreviousPacket,
         FineSegmentationReviewAction::Select(FineSegmentationReviewVerdict::Uncertain),
@@ -399,14 +370,14 @@ fn pending_replacement_retains_the_prior_verdict_and_blocks_publication() {
     assert_eq!(outcome, FineSegmentationReviewRunOutcome::Paused);
     assert!(!fixture.response_path.exists());
     let session = read_session(&fixture.session_path);
-    assert_eq!(session["current_packet_index"], 175);
-    assert_eq!(session["packets"][175]["state"]["status"], "selected");
-    assert_eq!(session["packets"][175]["state"]["proposed"], "uncertain");
-    assert_eq!(session["packets"][175]["state"]["prior"], "invalid");
+    assert_eq!(session["current_packet_index"], 7);
+    assert_eq!(session["packets"][7]["state"]["status"], "selected");
+    assert_eq!(session["packets"][7]["state"]["proposed"], "uncertain");
+    assert_eq!(session["packets"][7]["state"]["prior"], "invalid");
     assert!(matches!(
         first.screens.last(),
         Some(FineSegmentationReviewScreen::Packet {
-            completed_packet_count: 177,
+            completed_packet_count: 9,
             ..
         })
     ));
@@ -440,13 +411,13 @@ fn pending_replacement_retains_the_prior_verdict_and_blocks_publication() {
         outcome,
         FineSegmentationReviewRunOutcome::Completed {
             valid: 1,
-            invalid: 176,
+            invalid: 8,
             uncertain: 0,
         }
     );
     assert_eq!(
-        read_json(&fixture.response_path)["judgments"][175],
-        json!({"packet": "P176", "verdict": "invalid"})
+        read_json(&fixture.response_path)["judgments"][7],
+        json!({"packet": "P008", "verdict": "invalid"})
     );
 }
 
@@ -511,7 +482,8 @@ fn tui_shows_definitions_and_supports_scrolling_and_two_step_valid_confirmation(
     .expect("open initial packet");
     let mut model = FineSegmentationReviewTuiModel::new(initial.screens.remove(0));
     let initial_text = render(&mut model, 72, 24);
-    assert!(initial_text.contains("Packet 1 of 177"), "{initial_text}");
+    assert!(initial_text.contains("Packet 1 of 9"), "{initial_text}");
+    assert!(!initial_text.contains("break"), "{initial_text}");
     assert!(
         initial_text.contains("Valid = one recognizable"),
         "{initial_text}"
@@ -605,9 +577,6 @@ fn completed_actions(
     for ordinal in 0..count {
         actions.push(FineSegmentationReviewAction::Select(verdict(ordinal)));
         actions.push(FineSegmentationReviewAction::Confirm);
-        if (ordinal + 1).is_multiple_of(20) && ordinal + 1 < count {
-            actions.push(FineSegmentationReviewAction::ContinueBreak);
-        }
     }
     actions
 }

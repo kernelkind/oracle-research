@@ -26,6 +26,11 @@ from sse_multivector.fine_segmentation_scoring import (
 
 POST_HOC_PACKET_COUNT = 177
 POST_HOC_OCCURRENCE_COUNT = 191
+POST_HOC_JUDGMENT_COUNT = 9
+POST_HOC_GROUP_SUBJECTS = tuple(
+    (f"SUBJECT-{ordinal:02d}-A", f"SUBJECT-{ordinal:02d}-B")
+    for ordinal in range(POST_HOC_JUDGMENT_COUNT)
+)
 
 
 def _encoding(readable_id: str, text: str) -> dict[str, object]:
@@ -43,22 +48,29 @@ def _capacity_failed_evidence(
     *,
     packet_count: int = POST_HOC_PACKET_COUNT,
     occurrence_count: int = POST_HOC_OCCURRENCE_COUNT,
+    subject_group_count: int = POST_HOC_JUDGMENT_COUNT,
 ) -> dict[str, object]:
     encodings: dict[str, dict[str, object]] = {}
     occurrences = []
     for ordinal in range(packet_count):
-        left = f"A{ordinal:03d}"
+        group_ordinal = ordinal % subject_group_count
+        left = f"A{group_ordinal:03d}"
         right = f"B{ordinal:03d}"
-        encodings[left] = _encoding(left, f"alpha meaning {ordinal}")
+        left_subject = f"SUBJECT-{group_ordinal:02d}-A"
+        right_subject = f"SUBJECT-{group_ordinal:02d}-B"
+        encodings[left] = _encoding(left, f"alpha meaning {group_ordinal}")
         encodings[right] = _encoding(right, f"beta meaning {ordinal}")
         occurrences.append(
             {
                 "configuration_id": f"hidden-config-{ordinal}",
-                "opaque_members": [f"{ordinal + 1:064x}", f"{ordinal + 1000:064x}"],
+                "opaque_members": [
+                    f"{group_ordinal + 1:064x}",
+                    f"{ordinal + 1000:064x}",
+                ],
                 "readable_members": [left, right],
                 "member_roles": {
-                    left: {"subject": "A", "support_count": 4},
-                    right: {"subject": "B", "support_count": 4},
+                    left: {"subject": left_subject, "support_count": 4},
+                    right: {"subject": right_subject, "support_count": 4},
                 },
                 "review": "pending",
             }
@@ -108,6 +120,29 @@ def _artifact_digests(root: Path) -> dict[Path, str]:
 
 
 class PostHocHdbscanReviewTests(unittest.TestCase):
+    def test_review_collapses_exact_packets_to_nine_subject_combinations(self) -> None:
+        with tempfile.TemporaryDirectory(dir="/dev/shm") as directory:
+            root = Path(directory)
+            scoring = root / "scoring"
+            write_scoring_artifact(
+                scoring,
+                {
+                    "hdbscan": _capacity_failed_evidence(
+                        "hdbscan-controlled-suite-config-v1"
+                    )
+                },
+                review_seed=b"r" * 32,
+                source_bindings={"candidate_runs_sha256": "b" * 64},
+            )
+
+            report = write_post_hoc_hdbscan_review_artifact(
+                scoring, root / "post-hoc-review"
+            )
+
+        self.assertEqual(POST_HOC_JUDGMENT_COUNT, report["judgment_count"])
+        self.assertEqual(POST_HOC_PACKET_COUNT, report["exact_packet_count"])
+        self.assertEqual(POST_HOC_OCCURRENCE_COUNT, report["occurrence_count"])
+
     def test_cli_prepares_and_verifies_the_post_hoc_review(self) -> None:
         with tempfile.TemporaryDirectory(dir="/dev/shm") as directory:
             root = Path(directory)
@@ -162,7 +197,11 @@ class PostHocHdbscanReviewTests(unittest.TestCase):
             status = json.loads((artifact / "status.json").read_text())
 
         self.assertEqual(before, after)
-        self.assertEqual(POST_HOC_PACKET_COUNT, report["packet_count"])
+        self.assertEqual(
+            "fine-segmentation-post-hoc-review-v2", report["artifact_type"]
+        )
+        self.assertEqual(POST_HOC_JUDGMENT_COUNT, report["judgment_count"])
+        self.assertEqual(POST_HOC_PACKET_COUNT, report["exact_packet_count"])
         self.assertEqual(POST_HOC_OCCURRENCE_COUNT, report["occurrence_count"])
         self.assertEqual(
             {
@@ -174,10 +213,15 @@ class PostHocHdbscanReviewTests(unittest.TestCase):
             },
             set(reviewer),
         )
-        self.assertEqual(POST_HOC_PACKET_COUNT, len(reviewer["packets"]))
+        self.assertEqual(2, reviewer["schema_version"])
+        self.assertEqual(POST_HOC_JUDGMENT_COUNT, len(reviewer["packets"]))
+        self.assertEqual(
+            [f"P{ordinal:03d}" for ordinal in range(1, 10)],
+            [packet["packet"] for packet in reviewer["packets"]],
+        )
         self.assertEqual(
             {
-                "schema_version": 1,
+                "schema_version": 2,
                 "review_set": reviewer["review_set"],
                 "judgments": "exactly one judgment for every packet",
                 "judgment_fields": ["packet", "verdict"],
@@ -190,9 +234,40 @@ class PostHocHdbscanReviewTests(unittest.TestCase):
             reviewer["instructions"]["valid"],
         )
         self.assertEqual("review_capacity_failure", status["source_review_status"])
+        self.assertEqual(POST_HOC_JUDGMENT_COUNT, status["judgment_count"])
+        self.assertEqual(POST_HOC_PACKET_COUNT, status["exact_packet_count"])
+        self.assertEqual(POST_HOC_OCCURRENCE_COUNT, status["occurrence_count"])
         self.assertFalse(status["changes_frozen_protocol_result"])
+        self.assertEqual(
+            186,
+            sum(len(packet["instances"]) for packet in reviewer["packets"]),
+        )
+        for packet in reviewer["packets"]:
+            self.assertEqual(
+                {"packet", "question", "verdicts", "instances"}, set(packet)
+            )
+            self.assertEqual(
+                [
+                    f"I{ordinal:02d}"
+                    for ordinal in range(1, len(packet["instances"]) + 1)
+                ],
+                [instance["instance"] for instance in packet["instances"]],
+            )
+            fragments = [
+                tuple(instance["fragments"]) for instance in packet["instances"]
+            ]
+            self.assertEqual(len(fragments), len(set(fragments)))
+            self.assertTrue(
+                all(
+                    set(instance) == {"instance", "fragments"}
+                    for instance in packet["instances"]
+                )
+            )
         serialized = json.dumps(reviewer)
         self.assertNotIn("fine_subject", serialized)
+        for subjects in POST_HOC_GROUP_SUBJECTS:
+            for subject in subjects:
+                self.assertNotIn(subject, serialized)
         for hidden in (
             "hidden-config",
             "opaque_id",
@@ -226,7 +301,7 @@ class PostHocHdbscanReviewTests(unittest.TestCase):
             reviewer = review_report["review"]
             verdicts = ("valid", "invalid", "uncertain")
             response = {
-                "schema_version": 1,
+                "schema_version": 2,
                 "review_set": reviewer["review_set"],
                 "judgments": [
                     {
@@ -268,35 +343,65 @@ class PostHocHdbscanReviewTests(unittest.TestCase):
         self.assertEqual("review_capacity_failure", replay["source_review_status"])
         self.assertFalse(replay["changes_frozen_protocol_result"])
         self.assertFalse(replay["proceed_eligible"])
-        self.assertEqual(POST_HOC_PACKET_COUNT, replay["judgment_count"])
+        self.assertEqual(POST_HOC_JUDGMENT_COUNT, replay["judgment_count"])
+        self.assertEqual(POST_HOC_PACKET_COUNT, replay["exact_packet_count"])
         self.assertEqual(POST_HOC_OCCURRENCE_COUNT, replay["occurrence_count"])
         self.assertEqual(
+            POST_HOC_JUDGMENT_COUNT,
+            sum(replay["judgment_verdict_counts"].values()),
+        )
+        self.assertEqual(
             POST_HOC_PACKET_COUNT,
-            sum(replay["packet_verdict_counts"].values()),
+            sum(replay["exact_packet_verdict_counts"].values()),
         )
         self.assertEqual(
             POST_HOC_OCCURRENCE_COUNT,
             sum(replay["occurrence_verdict_counts"].values()),
         )
         self.assertNotIn("fine_subject", json.dumps(replay))
-        by_packet: dict[str, set[str]] = {}
-        occurrence_counts: dict[str, int] = {}
-        for occurrence in replay["occurrences"]:
-            by_packet.setdefault(occurrence["packet"], set()).add(occurrence["verdict"])
-            occurrence_counts[occurrence["packet"]] = (
-                occurrence_counts.get(occurrence["packet"], 0) + 1
+        exact_verdicts = {
+            row["exact_packet"]: (row["review_packet"], row["verdict"])
+            for row in replay["exact_packets"]
+        }
+        self.assertEqual(POST_HOC_PACKET_COUNT, len(exact_verdicts))
+        review_packet_counts: dict[str, int] = {}
+        for review_packet, _verdict in exact_verdicts.values():
+            review_packet_counts[review_packet] = (
+                review_packet_counts.get(review_packet, 0) + 1
             )
-        self.assertIn(2, occurrence_counts.values())
-        self.assertTrue(all(len(verdicts) == 1 for verdicts in by_packet.values()))
+        self.assertTrue(all(count > 1 for count in review_packet_counts.values()))
+        for occurrence in replay["occurrences"]:
+            self.assertEqual(
+                exact_verdicts[occurrence["exact_packet"]],
+                (occurrence["review_packet"], occurrence["verdict"]),
+            )
 
     def test_review_rejects_wrong_locked_packet_or_occurrence_count(self) -> None:
         cases = (
-            (POST_HOC_PACKET_COUNT - 1, POST_HOC_OCCURRENCE_COUNT, "177 unique"),
-            (POST_HOC_PACKET_COUNT, POST_HOC_OCCURRENCE_COUNT - 1, "191 occurrences"),
+            (
+                POST_HOC_PACKET_COUNT - 1,
+                POST_HOC_OCCURRENCE_COUNT,
+                POST_HOC_JUDGMENT_COUNT,
+                "177 exact packets",
+            ),
+            (
+                POST_HOC_PACKET_COUNT,
+                POST_HOC_OCCURRENCE_COUNT - 1,
+                POST_HOC_JUDGMENT_COUNT,
+                "191 occurrences",
+            ),
+            (
+                POST_HOC_PACKET_COUNT,
+                POST_HOC_OCCURRENCE_COUNT,
+                POST_HOC_JUDGMENT_COUNT - 1,
+                "9 distinct subject combinations",
+            ),
         )
-        for packet_count, occurrence_count, error in cases:
+        for packet_count, occurrence_count, subject_group_count, error in cases:
             with self.subTest(
-                packet_count=packet_count, occurrence_count=occurrence_count
+                packet_count=packet_count,
+                occurrence_count=occurrence_count,
+                subject_group_count=subject_group_count,
             ):
                 with tempfile.TemporaryDirectory(dir="/dev/shm") as directory:
                     root = Path(directory)
@@ -308,6 +413,7 @@ class PostHocHdbscanReviewTests(unittest.TestCase):
                                 "hdbscan-controlled-suite-config-v1",
                                 packet_count=packet_count,
                                 occurrence_count=occurrence_count,
+                                subject_group_count=subject_group_count,
                             )
                         },
                         review_seed=b"r" * 32,
@@ -363,7 +469,7 @@ class PostHocHdbscanReviewTests(unittest.TestCase):
             review_artifact = review_parent / "review"
             report = write_post_hoc_hdbscan_review_artifact(scoring, review_artifact)
             response = {
-                "schema_version": 1,
+                "schema_version": 2,
                 "review_set": report["review"]["review_set"],
                 "judgments": [
                     {"packet": packet["packet"], "verdict": "uncertain"}
@@ -405,6 +511,81 @@ class PostHocHdbscanReviewTests(unittest.TestCase):
                 source_bindings={"candidate_runs_sha256": "b" * 64},
             )
             with self.assertRaisesRegex(ValueError, "formal Experiment 2 coverage"):
+                write_post_hoc_hdbscan_review_artifact(
+                    scoring, root / "post-hoc-review"
+                )
+
+    def test_review_rejects_one_exact_packet_with_inconsistent_subject_sets(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory(dir="/dev/shm") as directory:
+            root = Path(directory)
+            evidence = _capacity_failed_evidence("hdbscan-controlled-suite-config-v1")
+            packets = evidence["experiment_02"]["review"]["internal_packets"]
+            packet = next(item for item in packets if len(item["occurrences"]) == 2)
+            changed = packet["occurrences"][1]
+            member = changed["readable_members"][0]
+            changed["member_roles"][member]["subject"] = "CHANGED-SUBJECT"
+            coverage = evidence["experiment_02"]["coverage_manifest"]["configurations"][
+                0
+            ]["cross_subject_occurrences"]
+            retained = next(
+                occurrence
+                for occurrence in coverage
+                if occurrence["review"]["packet"] == packet["packet"]
+                and occurrence["configuration_id"] == changed["configuration_id"]
+            )
+            retained["member_roles"][member]["subject"] = "CHANGED-SUBJECT"
+            scoring = root / "scoring"
+            write_scoring_artifact(
+                scoring,
+                {"hdbscan": evidence},
+                review_seed=b"r" * 32,
+                source_bindings={"candidate_runs_sha256": "b" * 64},
+            )
+
+            with self.assertRaisesRegex(
+                ValueError, "one exact packet has inconsistent subject combinations"
+            ):
+                write_post_hoc_hdbscan_review_artifact(
+                    scoring, root / "post-hoc-review"
+                )
+
+    def test_review_rejects_subjects_swapped_between_members(self) -> None:
+        with tempfile.TemporaryDirectory(dir="/dev/shm") as directory:
+            root = Path(directory)
+            evidence = _capacity_failed_evidence("hdbscan-controlled-suite-config-v1")
+            packets = evidence["experiment_02"]["review"]["internal_packets"]
+            packet = next(item for item in packets if len(item["occurrences"]) == 2)
+            changed = packet["occurrences"][1]
+            left, right = changed["readable_members"]
+            left_subject = changed["member_roles"][left]["subject"]
+            right_subject = changed["member_roles"][right]["subject"]
+            changed["member_roles"][left]["subject"] = right_subject
+            changed["member_roles"][right]["subject"] = left_subject
+            coverage = evidence["experiment_02"]["coverage_manifest"]["configurations"][
+                0
+            ]["cross_subject_occurrences"]
+            retained = next(
+                occurrence
+                for occurrence in coverage
+                if occurrence["review"]["packet"] == packet["packet"]
+                and occurrence["configuration_id"] == changed["configuration_id"]
+            )
+            retained["member_roles"][left]["subject"] = right_subject
+            retained["member_roles"][right]["subject"] = left_subject
+            scoring = root / "scoring"
+            write_scoring_artifact(
+                scoring,
+                {"hdbscan": evidence},
+                review_seed=b"r" * 32,
+                source_bindings={"candidate_runs_sha256": "b" * 64},
+            )
+
+            with self.assertRaisesRegex(
+                ValueError,
+                "one exact packet has inconsistent member-to-subject mappings",
+            ):
                 write_post_hoc_hdbscan_review_artifact(
                     scoring, root / "post-hoc-review"
                 )

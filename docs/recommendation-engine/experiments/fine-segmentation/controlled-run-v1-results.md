@@ -85,28 +85,33 @@ No final side-by-side comparison artifact can be created until the user records
 one of those dispositions, with a written rationale, for each candidate. The
 final candidate choice remains exclusively the user's decision.
 
-## Separate HDBSCAN* follow-up
+## Separate exploratory HDBSCAN* review v2
 
-The user chose to inspect HDBSCAN* alone before deciding what to do next. This
-is a post-hoc characterization, not a continuation of the frozen qualification
-protocol:
+The initial post-hoc v1 session used each retained exact vector set as one
+human-review unit, requiring 177 judgments for 191 occurrences. That session
+remains unchanged. A later methodological audit found that this was unsuitable
+for the human task: the 177 exact packets map to nine distinct sorted sets of
+approved synthetic subjects.
 
-- all 177 retained HDBSCAN* packets are shown; none is sampled away;
-- one judgment is reused for every occurrence of the same packet, so 177 human
-  decisions cover all 191 cross-subject occurrences;
-- the reviewer sees only neutral instance IDs and complete mask fragments;
-- `valid`, `invalid`, and `uncertain` are available; the review evaluates only
-  whether each grouping is coherent and does not generate subject labels;
-- the review is stored in a separate manifest-bound artifact and cannot rewrite
-  the scoring artifact above;
-- the original capacity failure, unavailable `proceed` disposition, and final
-  user selection remain unchanged.
+The separately versioned v2 characterization:
 
-The review is pending. Its judgments must not be reported as frozen-run results
-after they are collected.
+- makes each approved-subject set one review packet;
+- presents the union of that group's opaque vectors, deduplicated by
+  opaque-vector identity, under deterministic neutral instance IDs with
+  complete mask fragments;
+- records one `valid`, `invalid`, or `uncertain` judgment and no subject label;
+- deterministically replays that judgment to every exact packet with the same
+  subject set and then to every formal occurrence, so nine judgments cover 177
+  exact packets and 191 occurrences;
+- preserves explicit exact-packet and occurrence mappings in the reviewed
+  artifact; and
+- leaves the frozen HDBSCAN* candidate and evidence, original v1 session, SNN
+  record, capacity failure, unavailable `proceed` disposition, and final user
+  selection unchanged.
 
-Fine-subject naming remains a separate downstream stage. It is not needed to
-decide whether HDBSCAN* placed the masks in a coherent group.
+This is an exploratory methodological correction, not a continuation or
+rewrite of the frozen qualification protocol. The review is pending, and its
+judgments must be reported only as post-hoc v2 evidence.
 
 ## Interpretation for the pending decision
 

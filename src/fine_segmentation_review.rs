@@ -1,6 +1,5 @@
 //! Resumable, post-hoc semantic review for the blinded HDBSCAN* packet pool.
 
-use std::collections::BTreeSet;
 use std::fs;
 use std::io;
 use std::path::Path;
@@ -21,8 +20,8 @@ use crate::reference_tui::{
 use crate::review_state::{acquire_session_lock, publish_json, save_session, value_sha256};
 use crate::snapshot::{Error, Result, io_error};
 
-const SCHEMA_VERSION: u32 = 1;
-const REVIEW_PROTOCOL: &str = "fine-segmentation-exp2-hdbscan-post-hoc-review-v1";
+const SCHEMA_VERSION: u32 = 2;
+const REVIEW_PROTOCOL: &str = "fine-segmentation-exp2-hdbscan-post-hoc-review-v2";
 const REVIEW_QUESTION: &str = "Are all instances recognizable as refinements of one fine subject?";
 const INSTRUCTION_QUESTION: &str = "For each packet, decide whether all instances are recognizable as refinements of one fine subject.";
 const VALID_INSTRUCTION: &str =
@@ -33,8 +32,7 @@ const UNCERTAIN_INSTRUCTION: &str = "The masks do not support a confident valid/
 const RESPONSE_JUDGMENTS: &str = "exactly one judgment for every packet";
 const RESPONSE_JUDGMENT_FIELDS: [&str; 2] = ["packet", "verdict"];
 const REVIEW_VERDICTS: [&str; 3] = ["valid", "invalid", "uncertain"];
-const REQUIRED_PACKET_COUNT: usize = 177;
-const BREAK_INTERVAL: usize = 20;
+const REQUIRED_PACKET_COUNT: usize = 9;
 const PAGE_LINES: u16 = 10;
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -87,10 +85,6 @@ pub enum FineSegmentationReviewScreen {
         instances: Vec<FineSegmentationReviewInstance>,
         state: FineSegmentationPacketState,
         completed_packet_count: usize,
-        break_in: usize,
-    },
-    Break {
-        completed_packet_count: usize,
     },
 }
 
@@ -102,7 +96,6 @@ pub enum FineSegmentationReviewAction {
     CancelSelection,
     PreviousPacket,
     NextPacket,
-    ContinueBreak,
     Pause,
 }
 
@@ -189,13 +182,6 @@ struct PacketSessionState {
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(deny_unknown_fields)]
-struct BreakCheckpoint {
-    after_packets: usize,
-    continued: bool,
-}
-
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-#[serde(deny_unknown_fields)]
 struct FineSegmentationReviewSession {
     schema_version: u32,
     review_protocol: String,
@@ -203,7 +189,6 @@ struct FineSegmentationReviewSession {
     reviewer_artifact_sha256: String,
     current_packet_index: usize,
     packets: Vec<PacketSessionState>,
-    break_checkpoints: Vec<BreakCheckpoint>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -221,7 +206,7 @@ pub struct FineSegmentationReviewJudgment {
     pub verdict: FineSegmentationReviewVerdict,
 }
 
-/// Run or resume the complete 177-packet post-hoc review.
+/// Run or resume the complete nine-judgment post-hoc v2 review.
 pub fn run_fine_segmentation_review(
     reviewer_path: impl AsRef<Path>,
     session_path: impl AsRef<Path>,
@@ -246,43 +231,13 @@ pub fn run_fine_segmentation_review(
     }
     save_session(session_path, &session)?;
 
-    let mut model = FineSegmentationReviewTuiModel::new(FineSegmentationReviewScreen::Break {
-        completed_packet_count: 0,
-    });
+    let mut model = FineSegmentationReviewTuiModel::new(session.screen(&reviewer)?);
     let mut drain_stale_input = true;
     loop {
         if session.all_complete() {
             let response = session.response()?;
             publish_json(response_path, &response)?;
             return Ok(session.completed_outcome());
-        }
-
-        if let Some((checkpoint_index, created)) = session.due_break_checkpoint() {
-            if created {
-                save_session(session_path, &session)?;
-            }
-            model.replace_screen(FineSegmentationReviewScreen::Break {
-                completed_packet_count: session.completed_count(),
-            });
-            let action = ui.review(&mut model, drain_stale_input).map_err(|source| {
-                io_error("run fine-segmentation review UI for", reviewer_path, source)
-            })?;
-            drain_stale_input = false;
-            match action {
-                FineSegmentationReviewAction::ContinueBreak => {
-                    session.break_checkpoints[checkpoint_index].continued = true;
-                    save_session(session_path, &session)?;
-                }
-                FineSegmentationReviewAction::Pause => {
-                    save_session(session_path, &session)?;
-                    return Ok(FineSegmentationReviewRunOutcome::Paused);
-                }
-                FineSegmentationReviewAction::None => {
-                    return invalid("fine-segmentation break UI returned without an action");
-                }
-                _ => return invalid("fine-segmentation break UI returned an invalid action"),
-            }
-            continue;
         }
 
         model.replace_screen(session.screen(&reviewer)?);
@@ -303,9 +258,6 @@ pub fn run_fine_segmentation_review(
             FineSegmentationReviewAction::CancelSelection => session.cancel_selection(),
             FineSegmentationReviewAction::PreviousPacket => session.move_previous(),
             FineSegmentationReviewAction::NextPacket => session.move_next(),
-            FineSegmentationReviewAction::ContinueBreak => {
-                return invalid("packet review UI continued a break that was not due");
-            }
         }
         save_session(session_path, &session)?;
     }
@@ -399,7 +351,6 @@ impl FineSegmentationReviewSession {
             reviewer_artifact_sha256,
             current_packet_index: 0,
             packets,
-            break_checkpoints: Vec::new(),
         })
     }
 
@@ -421,16 +372,6 @@ impl FineSegmentationReviewSession {
                 return invalid(
                     "review session packet identity differs from the reviewer artifact",
                 );
-            }
-        }
-        let mut seen_breaks = BTreeSet::new();
-        for checkpoint in &self.break_checkpoints {
-            if checkpoint.after_packets == 0
-                || !checkpoint.after_packets.is_multiple_of(BREAK_INTERVAL)
-                || checkpoint.after_packets >= REQUIRED_PACKET_COUNT
-                || !seen_breaks.insert(checkpoint.after_packets)
-            {
-                return invalid("review session contains an invalid break checkpoint");
             }
         }
         Ok(())
@@ -513,25 +454,6 @@ impl FineSegmentationReviewSession {
         }
     }
 
-    fn due_break_checkpoint(&mut self) -> Option<(usize, bool)> {
-        let completed = self.completed_count();
-        if completed == 0 || !completed.is_multiple_of(BREAK_INTERVAL) {
-            return None;
-        }
-        if let Some(index) = self
-            .break_checkpoints
-            .iter()
-            .position(|checkpoint| checkpoint.after_packets == completed)
-        {
-            return (!self.break_checkpoints[index].continued).then_some((index, false));
-        }
-        self.break_checkpoints.push(BreakCheckpoint {
-            after_packets: completed,
-            continued: false,
-        });
-        Some((self.break_checkpoints.len() - 1, true))
-    }
-
     fn screen(&self, reviewer: &ReviewerArtifact) -> Result<FineSegmentationReviewScreen> {
         let packet = reviewer
             .packets
@@ -540,12 +462,6 @@ impl FineSegmentationReviewSession {
                 Error::ExperimentState("current reviewer packet is absent".to_owned())
             })?;
         let completed = self.completed_count();
-        let remainder = completed % BREAK_INTERVAL;
-        let break_in = if remainder == 0 {
-            BREAK_INTERVAL
-        } else {
-            BREAK_INTERVAL - remainder
-        };
         Ok(FineSegmentationReviewScreen::Packet {
             packet_index: self.current_packet_index,
             packet_count: reviewer.packets.len(),
@@ -560,7 +476,6 @@ impl FineSegmentationReviewSession {
                 .collect(),
             state: self.current_state().clone(),
             completed_packet_count: completed,
-            break_in,
         })
     }
 
@@ -674,15 +589,11 @@ impl FineSegmentationReviewTuiModel {
         }
         if key.modifiers == KeyModifiers::CONTROL {
             match key.code {
-                KeyCode::Char('d' | 'D')
-                    if !matches!(self.screen, FineSegmentationReviewScreen::Break { .. }) =>
-                {
+                KeyCode::Char('d' | 'D') => {
                     self.instance_scroll =
                         self.instance_scroll.saturating_add(self.half_page_lines);
                 }
-                KeyCode::Char('u' | 'U')
-                    if !matches!(self.screen, FineSegmentationReviewScreen::Break { .. }) =>
-                {
+                KeyCode::Char('u' | 'U') => {
                     self.instance_scroll =
                         self.instance_scroll.saturating_sub(self.half_page_lines);
                 }
@@ -694,15 +605,6 @@ impl FineSegmentationReviewTuiModel {
             return FineSegmentationReviewAction::None;
         }
         match &self.screen {
-            FineSegmentationReviewScreen::Break { .. } => match key.code {
-                KeyCode::Enter | KeyCode::Char('c' | 'C') | KeyCode::Char(' ') => {
-                    FineSegmentationReviewAction::ContinueBreak
-                }
-                KeyCode::Char('p' | 'P' | 'q' | 'Q') | KeyCode::Esc => {
-                    FineSegmentationReviewAction::Pause
-                }
-                _ => FineSegmentationReviewAction::None,
-            },
             FineSegmentationReviewScreen::Packet { state, .. } => match key.code {
                 KeyCode::Char('v' | 'V') => {
                     FineSegmentationReviewAction::Select(FineSegmentationReviewVerdict::Valid)
@@ -770,9 +672,6 @@ impl FineSegmentationReviewTuiModel {
         }
         let area = centered(terminal_area);
         match self.screen.clone() {
-            FineSegmentationReviewScreen::Break {
-                completed_packet_count,
-            } => self.render_break(frame, area, completed_packet_count),
             FineSegmentationReviewScreen::Packet {
                 packet_index,
                 packet_count,
@@ -780,7 +679,6 @@ impl FineSegmentationReviewTuiModel {
                 instances,
                 state,
                 completed_packet_count,
-                break_in,
             } => self.render_packet(
                 frame,
                 area,
@@ -790,25 +688,8 @@ impl FineSegmentationReviewTuiModel {
                 &instances,
                 &state,
                 completed_packet_count,
-                break_in,
             ),
         }
-    }
-
-    fn render_break(&self, frame: &mut Frame<'_>, area: Rect, completed: usize) {
-        frame.render_widget(
-            Paragraph::new(format!(
-                "{completed} packets reviewed.\n\n[Enter/C] Continue    [P] Save/exit"
-            ))
-            .wrap(Wrap { trim: false })
-            .block(
-                Block::default()
-                    .borders(Borders::ALL)
-                    .title("Take a break")
-                    .title_style(accent_style()),
-            ),
-            area,
-        );
     }
 
     #[allow(clippy::too_many_arguments)]
@@ -822,7 +703,6 @@ impl FineSegmentationReviewTuiModel {
         instances: &[FineSegmentationReviewInstance],
         state: &FineSegmentationPacketState,
         completed: usize,
-        break_in: usize,
     ) {
         let rows = Layout::default()
             .direction(Direction::Vertical)
@@ -837,7 +717,7 @@ impl FineSegmentationReviewTuiModel {
             .split(area);
         frame.render_widget(
             Paragraph::new(format!(
-                "Packet {} of {packet_count} · {completed} reviewed · break in {break_in} · {packet}",
+                "Packet {} of {packet_count} · {completed} reviewed · {packet}",
                 packet_index + 1
             ))
             .style(secondary_style()),
@@ -982,16 +862,14 @@ impl InteractiveReviewModel for FineSegmentationReviewTuiModel {
 }
 
 fn sanitize_screen(mut screen: FineSegmentationReviewScreen) -> FineSegmentationReviewScreen {
-    if let FineSegmentationReviewScreen::Packet {
+    let FineSegmentationReviewScreen::Packet {
         packet, instances, ..
-    } = &mut screen
-    {
-        *packet = terminal_safe(packet).replace('\n', " ");
-        for instance in instances {
-            instance.instance = terminal_safe(&instance.instance).replace('\n', " ");
-            for fragment in &mut instance.fragments {
-                *fragment = terminal_safe(fragment);
-            }
+    } = &mut screen;
+    *packet = terminal_safe(packet).replace('\n', " ");
+    for instance in instances {
+        instance.instance = terminal_safe(&instance.instance).replace('\n', " ");
+        for fragment in &mut instance.fragments {
+            *fragment = terminal_safe(fragment);
         }
     }
     screen
@@ -1000,7 +878,6 @@ fn sanitize_screen(mut screen: FineSegmentationReviewScreen) -> FineSegmentation
 fn packet_index(screen: &FineSegmentationReviewScreen) -> Option<usize> {
     match screen {
         FineSegmentationReviewScreen::Packet { packet_index, .. } => Some(*packet_index),
-        FineSegmentationReviewScreen::Break { .. } => None,
     }
 }
 
