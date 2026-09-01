@@ -1,7 +1,7 @@
 # Experiment 1: repeated fine-subject recovery
 
-Status: **draft; every subject identity and mask requires human approval before
-encoding**.
+Status: **fixture, subject identities, masks, and scoring approved on
+2026-08-31; technical freeze incomplete; do not encode or run yet**.
 
 ## Assumption
 
@@ -9,27 +9,27 @@ encoding**.
 
 ## Program role
 
-This experiment is the suite's cheap program-qualification gate. After the
-shared candidate-eligibility and execution-integrity requirements are met, a
-pass qualifies that exact candidate identity for the default downstream run
-schedule. Any non-pass stops that default schedule: a valid, repeatable output
-that misses the pass rule is a **program-qualification failure**, while an
-integrity failure supplies no qualification verdict.
-Preserve that distinction even though both states stop downstream execution by
-default.
+Run this experiment separately for both frozen candidates over the same vector
+artifact and input order. For each candidate, a valid, repeatable output that
+misses the pass rule is a **recovery failure**. An integrity failure supplies no
+recovery verdict for that candidate and exact input. A recovery failure does
+not suppress later local runs. An integrity failure blocks only its affected
+candidate scope, exact input, and dependent conclusions; it does not block the
+other candidate.
 
-Qualification is an operational scheduling gate, not a substitute for a later
-experiment's exact-fixture baseline. Every downstream comparison must still
-meet its own declared baseline prerequisite. Changing any candidate-identity
-field creates a new candidate that must qualify again.
+The result is not a substitute for a later experiment's exact-fixture baseline.
+Every downstream comparison must still meet its own declared local prerequisite.
+Changing any candidate-identity field creates a new suite instance with its own
+Experiment 1 artifacts and verdict.
 
-Experiment 6 later reuses this experiment's exact default input and output as
-its combined-collection artifact, but only after the output is valid,
-repeatable, and passes this experiment's recovery-and-purity rule. That
-qualification establishes the imported collection's six-group structure; it
-does not replace Experiment 6's two subset baselines or preservation
-comparisons. The Experiment 6 protocol and duplicate-ID commitment must
-therefore be frozen before this default output is generated.
+Experiment 6 later reuses each candidate's exact default input and output as
+that candidate's combined-collection artifact. A combined-collection verdict is
+available only when the imported output is valid, repeatable, and passes this
+experiment's recovery-and-purity rule. That prerequisite establishes the
+imported collection's six-group structure; it does not replace Experiment 6's
+two subset baselines or preservation comparisons. The Experiment 6 protocol
+and duplicate-ID commitment must therefore be frozen before either candidate's
+default output is generated.
 
 ## Fixture
 
@@ -138,28 +138,36 @@ reinterpret an alternative grouping as a pass.
 
 ## Run
 
-Use `01-repeated-subject-recovery` as the shared blinding namespace. Freeze the
-candidate identity tuple before encoding any of the 36 notes or inspecting a
-fixture vector or cosine diagnostic. This experiment has one exact candidate
-input: all 36 opaque ID/vector pairs in the committed HMAC order. Run that
-exact input twice from fresh state and complete the shared lifecycle in
+Use `01-repeated-subject-recovery` as the shared blinding namespace. Freeze both
+candidate identity tuples before encoding any of the 36 notes or inspecting a
+fixture vector or cosine diagnostic. Encode and freeze one shared 36-vector
+artifact. This experiment has one exact input shared by both candidates: all 36
+opaque ID/vector pairs in the committed HMAC order. Run that exact input twice
+from fresh state for each candidate and complete the shared lifecycle in
 [README.md](README.md#shared-execution-contract).
 
 The suite-level order-conformance preflight in `README.md` separately reuses
 these same 36 opaque ID/vector pairs in its frozen alternate order. Its two
-outputs are candidate-conformance artifacts, not additional Experiment 1
-semantic inputs. Any shared execution integrity failure in a conformance input
-has no conformance or recovery verdict. If both orders are profile-verified,
-valid, and repeatable but differ, the candidate is ineligible before the
-recovery pass rule is applied.
+outputs are candidate-specific conformance artifacts, not additional
+Experiment 1 semantic inputs. Any shared execution integrity failure in a
+conformance input has no conformance or recovery verdict for that candidate. If
+both orders are profile-verified, valid, and repeatable but differ, record a
+conformance failure and do not apply the recovery pass rule to that candidate's
+output.
 
-In addition to the shared artifacts, preserve both complete outputs, every
+For each candidate, preserve its two complete default-order outputs, every
 returned membership and unassigned ID, and the pass/fail result for each
-expected group and for the experiment. Preserve the raw-vector cosine matrix
-for diagnosis; it does not determine the verdict. Preserve the two alternate-
-order outputs and their comparison with the default-order canonical output in
-the suite conformance record. Preserve the default pair as the exact shared
-artifact consumed by Experiment 6's combined-collection comparison.
+expected group and for the experiment. Preserve the shared raw-vector cosine
+matrix for diagnosis; it does not determine either verdict. For each candidate,
+also preserve its two alternate-order outputs and their comparison with that
+candidate's default-order canonical output in the suite conformance record.
+Preserve each candidate's default pair as the exact candidate-specific artifact
+consumed by Experiment 6's combined-collection comparison. The experiment
+therefore records four raw outputs per candidate and eight across both
+candidates, while encoding the 36 vectors only once.
+
+These results do not select or final-freeze a candidate. They become evidence
+for the user's later decision.
 
 ## Scope
 

@@ -13,7 +13,6 @@ import platform
 import shutil
 import stat
 import struct
-import sys
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -107,9 +106,7 @@ def _expect_fields(
     unexpected = sorted(set(value) - expected)
     missing = sorted(expected - set(value))
     if unexpected:
-        raise ValueError(
-            f"`{name}` contains unexpected field `{unexpected[0]}`"
-        )
+        raise ValueError(f"`{name}` contains unexpected field `{unexpected[0]}`")
     if missing:
         raise ValueError(f"`{name}` is missing field `{missing[0]}`")
 
@@ -169,6 +166,7 @@ class EncodedSubject:
     subject_id: str
     vector: tuple[float, ...]
     selected_token_indices: tuple[int, ...]
+    selected_token_ids: tuple[int, ...]
     token_count: int
 
 
@@ -194,9 +192,7 @@ class ModelDescriptor:
         )
         descriptor = cls(
             base_model=_expect_string(value["base_model"], "model.base_model"),
-            dimensions=_expect_int(
-                value["dimensions"], "model.dimensions", minimum=1
-            ),
+            dimensions=_expect_int(value["dimensions"], "model.dimensions", minimum=1),
             maximum_tokens=_expect_int(
                 value["maximum_tokens"],
                 "model.maximum_tokens",
@@ -258,22 +254,19 @@ class WorkerConfig:
         device = _expect_string(value["device"], "device")
         if device != "cpu":
             raise ValueError("the diagnostic worker currently supports only `cpu`")
-        container_image = _expect_string(
-            value["container_image"], "container_image"
-        )
-        _, separator, image_digest = container_image.rpartition("@sha256:")
-        if not separator:
-            raise ValueError(
-                "`container_image` must end in an immutable sha256 digest"
-            )
+        container_image = _expect_string(value["container_image"], "container_image")
+        if container_image.startswith("sha256:"):
+            image_digest = container_image.removeprefix("sha256:")
+        else:
+            _, separator, image_digest = container_image.rpartition("@sha256:")
+            if not separator:
+                raise ValueError(
+                    "`container_image` must be an immutable sha256 image identity"
+                )
         _expect_sha256(image_digest, "container_image digest")
         return cls(
-            request_path=Path(
-                _expect_string(value["request_path"], "request_path")
-            ),
-            request_sha256=_expect_sha256(
-                value["request_sha256"], "request_sha256"
-            ),
+            request_path=Path(_expect_string(value["request_path"], "request_path")),
+            request_sha256=_expect_sha256(value["request_sha256"], "request_sha256"),
             checkpoint_path=Path(
                 _expect_string(value["checkpoint_path"], "checkpoint_path")
             ),
@@ -296,9 +289,7 @@ class WorkerConfig:
             note_batch_size=_expect_int(
                 value["note_batch_size"], "note_batch_size", minimum=1
             ),
-            output_path=Path(
-                _expect_string(value["output_path"], "output_path")
-            ),
+            output_path=Path(_expect_string(value["output_path"], "output_path")),
         )
 
 
@@ -344,9 +335,7 @@ def select_token_indices(
         if token_start == token_end == 0:
             continue
         if token_start < 0 or token_end <= token_start or token_end > len(text):
-            raise ValueError(
-                f"token offset [{token_start}, {token_end}) is invalid"
-            )
+            raise ValueError(f"token offset [{token_start}, {token_end}) is invalid")
         if any(
             span_start <= token_start and token_end <= span_end
             for span_start, span_end in character_spans
@@ -434,9 +423,7 @@ def _load_request(path: Path) -> tuple[str, tuple[NoteInput, ...]]:
                 start = _expect_int(raw_span[0], f"{span_name}[0]")
                 end = _expect_int(raw_span[1], f"{span_name}[1]")
                 if end <= start or start < previous_span_start:
-                    raise ValueError(
-                        f"`{span_name}` is empty or out of source order"
-                    )
+                    raise ValueError(f"`{span_name}` is empty or out of source order")
                 _byte_span_to_character_span(text, (start, end))
                 spans.append((start, end))
                 previous_span_start = start
@@ -503,9 +490,7 @@ class OfficialSseEncoder:
             raise ValueError("checkpoint does not contain a Lightning state_dict")
         hyperparameters = checkpoint.get("hyper_parameters")
         params = (
-            hyperparameters.get("params")
-            if isinstance(hyperparameters, dict)
-            else None
+            hyperparameters.get("params") if isinstance(hyperparameters, dict) else None
         )
         if params is not None:
             checkpoint_model_name = getattr(params, "model_name", None)
@@ -585,6 +570,7 @@ class OfficialSseEncoder:
                 )
                 offsets = tokens.pop("offset_mapping")
                 attention = tokens["attention_mask"]
+                input_ids = tokens["input_ids"]
                 lengths = attention.sum(dim=1).tolist()
                 validate_token_lengths(
                     tuple(
@@ -605,18 +591,15 @@ class OfficialSseEncoder:
                             subject.byte_spans,
                             note_offsets,
                         )
-                        selected_tensor = torch.tensor(
-                            selected, dtype=torch.long
+                        selected_tensor = torch.tensor(selected, dtype=torch.long)
+                        pooled = (
+                            hidden[batch_index]
+                            .index_select(0, selected_tensor)
+                            .mean(dim=0)
                         )
-                        pooled = hidden[batch_index].index_select(
-                            0, selected_tensor
-                        ).mean(dim=0)
-                        projected = self._linear2(
-                            torch.relu(self._linear1(pooled))
-                        )
+                        projected = self._linear2(torch.relu(self._linear1(pooled)))
                         vector = tuple(
-                            float(value)
-                            for value in projected.float().cpu().tolist()
+                            float(value) for value in projected.float().cpu().tolist()
                         )
                         rows.append(
                             EncodedSubject(
@@ -624,6 +607,10 @@ class OfficialSseEncoder:
                                 subject_id=subject.subject_id,
                                 vector=vector,
                                 selected_token_indices=selected,
+                                selected_token_ids=tuple(
+                                    int(input_ids[batch_index, index].item())
+                                    for index in selected
+                                ),
                                 token_count=int(lengths[batch_index]),
                             )
                         )
@@ -719,10 +706,15 @@ def run_worker(
         if not any(value != 0.0 for value in rounded):
             raise ValueError(f"encoder row {ordinal} has a zero norm")
         indices = row.selected_token_indices
+        token_ids = row.selected_token_ids
         if (
             not indices
             or tuple(sorted(set(indices))) != indices
             or any(index < 0 for index in indices)
+            or len(token_ids) != len(indices)
+            or any(
+                not isinstance(token_id, int) or token_id < 0 for token_id in token_ids
+            )
             or row.token_count < 1
             or any(index >= row.token_count for index in indices)
         ):
@@ -735,6 +727,7 @@ def run_worker(
                 "note_id": row.note_id,
                 "subject_id": row.subject_id,
                 "selected_token_indices": list(indices),
+                "selected_token_ids": list(token_ids),
                 "token_count": row.token_count,
             }
         )
@@ -753,9 +746,7 @@ def run_worker(
             "proposal_sha256": proposal_sha256,
             "request_sha256": config.request_sha256,
             "checkpoint_sha256": config.checkpoint_sha256,
-            "base_model_artifact_tree_sha256": (
-                config.base_model_artifact_tree_sha256
-            ),
+            "base_model_artifact_tree_sha256": (config.base_model_artifact_tree_sha256),
             "tree_hash_rule": TREE_HASH_RULE,
             "model": config.model.to_json(),
             "runtime": _runtime_metadata(active_encoder, worker_sha256),

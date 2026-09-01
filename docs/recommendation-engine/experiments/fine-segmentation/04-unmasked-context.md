@@ -1,7 +1,8 @@
 # Experiment 4: unmasked-context membership
 
-Status: **draft; all notes, masks, and expected relationships require human
-approval before encoding**.
+Status: **all notes, masks, subject identities, expected relationships,
+scoring rules, and prerequisites approved on 2026-08-31; technical freeze
+incomplete; do not encode or run yet**.
 
 ## Assumption under test
 
@@ -22,8 +23,8 @@ tested independently?
 
 ## Design
 
-The same frozen vectors are used in ten exact input conditions. Each condition
-is repeated in two fresh candidate invocations:
+The same frozen vectors are used in ten exact input conditions for both
+candidates. Each condition is repeated in two fresh invocations per candidate:
 
 1. One **anchor-only baseline** contains the nine fully masked target anchors
    and nine fully masked context anchors.
@@ -399,19 +400,21 @@ The candidate receives only opaque IDs and vectors. It may return overlapping
 fine segments and leave vectors unassigned. Scoring consumes only its
 predeclared fine-segment collection; coarser parents are excluded.
 
-This experiment qualifies the frozen SSE-plus-candidate combination. Its text
-intervention passes through SSE and can change the vector before the candidate
-organizes it. A failure cannot by itself identify SSE, candidate behavior, or
-their interaction as the cause.
+This experiment produces a separate result for each frozen
+SSE-plus-candidate combination. Its text intervention passes through SSE and
+can change the vector before the candidate organizes it. A failure cannot by
+itself identify SSE, candidate behavior, or their interaction as the cause.
 
 This is a visible development fixture, not held-out confirmation.
 
 ## Protocol
 
-1. Obtain human approval of all 27 notes, masks, subject identities, and
-   expected relationships.
-2. Freeze this document, the complete candidate identity and execution profile,
-   and the candidate's construction-level permutation-invariance argument.
+1. Verify the recorded 2026-08-31 human approval of all 27 notes, masks,
+   subject identities, expected relationships, scoring rules, and
+   prerequisites.
+2. Freeze this document, both complete candidate identities and execution
+   profiles, and each candidate's construction-level permutation-invariance
+   argument.
 3. Apply the shared opaque-ID blinding and frozen-order rules once to all 27
    fixture IDs. The anchor-only input is the 18-anchor subsequence of that one
    frozen order. Each treatment input is the same 18 anchors plus exactly one
@@ -422,12 +425,13 @@ This is a visible development fixture, not held-out confirmation.
    against the frozen byte-span-to-token rule. Preserve token IDs and piece
    counts as diagnostics without comparing positions, IDs, or counts between a
    control and mixed note.
-5. Give the 18 anchors to two separately initialized candidate invocations with
-   the frozen candidate seed and verified execution profile. Preserve both
-   complete anchor-only outputs.
-6. Run each of the nine 19-vector treatment inputs twice, each time in a
-   separately initialized process with that same seed and verified profile.
-   Preserve all 18 complete treatment outputs.
+5. For each candidate, give the 18 anchors to two separately initialized
+   invocations with that candidate's frozen seed and verified execution
+   profile. Preserve both complete anchor-only outputs.
+6. For each candidate, run each of the nine 19-vector treatment inputs twice,
+   each time in a separately initialized process with that candidate's same
+   seed and verified profile. Preserve all 18 complete treatment outputs per
+   candidate.
 7. While identities remain hidden, verify each invocation's actual execution
    profile, then validate every raw output under the shared output contract. Do
    not canonicalize an invalid output or derive a semantic verdict from an
@@ -435,8 +439,9 @@ This is a visible development fixture, not held-out confirmation.
 8. For each valid identical-input pair, compare the shared canonical JSON
    bytes. A mismatch is a repeatability failure and receives no semantic
    verdict.
-9. After all 20 outputs are immutable, reveal and verify the fixture mapping.
-   Qualify the six baseline references and three exact control profiles. Then,
+9. After all 20 outputs per candidate and 40 outputs total are immutable,
+   reveal and verify the shared fixture mapping. Separately for each candidate,
+   qualify the six baseline references and three exact control profiles. Then,
    for each treatment independently, qualify its six references, verify that
    its exact control retained the baseline profile, and compare the mixed
    vector's profile. Preserve every artifact even when a treatment is withheld.
@@ -492,11 +497,12 @@ and do not decide the verdict.
 
 Preserve:
 
-- the complete returned fine-segment collection from all 20 invocations;
+- each candidate's complete returned fine-segment collection from its 20
+  invocations, 40 invocations total;
 - for each valid output, every segment's projection onto the 18 anchor IDs;
 - every raw output-validity result and, for each valid output, its canonical
   JSON byte string and hash;
-- all 10 repeatability comparisons;
+- all 10 repeatability comparisons per candidate, 20 total;
 - every subject's anchor-only qualification, every anchor in a cross-subject
   segment, all reference segments, and all six anchor graphs;
 - every exact control's baseline profile and qualification;
@@ -514,27 +520,32 @@ Preserve:
   counts remain diagnostics without a control/mixed equality requirement;
 - cosine matrices and nearest-neighbor orders computed from immutable raw SSE
   outputs;
-- the raw SSE artifact and hashes;
-- the complete candidate identity and execution-profile manifest and hash, plus
-  every invocation's actual-profile verification.
+- the shared raw SSE artifact and hashes;
+- each complete candidate identity and execution-profile manifest and hash,
+  plus every invocation's actual-profile verification.
 
-If the anchor-only pair has an integrity failure, preserve all 20 raw outputs
-and mark baseline qualification and every dependent result as **no verdict
-because anchor-only integrity failed**. If one treatment pair has an integrity
-failure, preserve its raw outputs and every independently valid baseline and
-treatment result, and mark only that treatment **no verdict because treatment
-integrity failed**. Never repair an output or choose one of two conflicting
-outputs.
+If one candidate's anchor-only pair has an integrity failure, preserve all 20
+of that candidate's raw outputs and mark its baseline qualification and every
+dependent result as **no verdict because anchor-only integrity failed**. If one
+treatment pair has an integrity failure, preserve its raw outputs and every
+independently valid baseline and treatment result, and mark only that candidate
+and treatment **no verdict because treatment integrity failed**. Never repair
+an output or choose one of two conflicting outputs. The other candidate's
+result is independent.
 
 Cosine is diagnostic evidence. The verdict is determined by returned
 fine-segment membership.
 
 ## What a result means
 
-A pass shows that, in this fixture, the frozen SSE-plus-candidate combination
+For one candidate, a pass shows that, in this fixture, the frozen
+SSE-plus-candidate combination
 recovered all six baseline references, established a one-hot relationship
 profile for every exact control, preserved that control in each independent
 treatment, and gave every context-loaded vector the same six-subject profile.
+
+The two candidate-specific results are evidence for later user review. This
+experiment does not select or final-freeze either candidate.
 
 An integrity failure has no Experiment 4 semantic interpretation. A baseline
 reference or control-profile failure means the local state needed to test a

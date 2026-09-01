@@ -1,7 +1,7 @@
 # Experiment 3: lexical coincidence
 
-Status: **draft; every proposition and every `B` and `C` mask requires
-human approval before encoding**.
+Status: **all propositions, `B` and `C` masks, relationships, and scoring rules
+approved on 2026-08-31; technical freeze incomplete; do not encode or run yet**.
 
 ## Assumption
 
@@ -15,10 +15,11 @@ remained stable?
 
 ## Role and dependencies
 
-The default spending gate is suite-level. Human approval, the frozen SSE and
-candidate boundaries, construction-level candidate eligibility, blinding,
-exact-input output validity, and exact-input repeatability are governed by
-[README.md](README.md); none is an Experiment 3 lexical result.
+Recorded human approval, the shared frozen SSE boundary, both frozen candidate
+identities, blinding, exact-input output validity, and exact-input
+repeatability are governed by [README.md](README.md); none is an Experiment 3
+lexical result. Run this experiment separately for both candidates over the
+same frozen vectors and inputs.
 
 Within this experiment:
 
@@ -27,14 +28,13 @@ Within this experiment:
    controls for using the ambiguous noun on either side alone; and
 3. `BOTH` alone owns the lexical-collision verdict.
 
-If the default spending graph stops upstream, Experiment 3 is skipped. An
-explicitly authorized diagnostic run may still produce its own scoped results,
-but those results cannot reopen the stopped edge. Within any run, exact-input
-integrity and the local prerequisites below determine which lexical results are
-available. If one trap's `BASELINE` relationships or a one-sided control do not
-qualify, record that local prerequisite failure and give only that trap no
-lexical verdict. Another trap remains scoreable when its own relationships and
-inputs qualify.
+Run every frozen input for both candidates regardless of semantic results in
+other experiments. Within one candidate's result, exact-input integrity and the
+local prerequisites below determine which lexical verdicts are available. If
+one trap's `BASELINE` relationships or a one-sided control do not qualify,
+record that local prerequisite failure and give only that trap no lexical
+verdict. Another trap remains scoreable when its own relationships and inputs
+qualify, and the other candidate's result is independent.
 
 The experiment uses three ambiguous words:
 
@@ -283,8 +283,9 @@ do not gate or decide this trap.
 ### 2. Complete output
 
 Use the shared canonical JSON as the complete output. It retains every valid
-overlap and singleton. Also derive and sort the input IDs that occur in no
-returned segment for the diagnostic record.
+overlap, singleton, and `unassigned` ID. Verify that `unassigned` equals the
+sorted complement of all IDs present in returned segments; do not derive and
+compare a second output representation.
 
 Relative to `BASELINE`, classify every profile-matched, valid, repeatable arm
 as:
@@ -367,29 +368,34 @@ candidate alone as the mechanism.
 
 ## Protocol
 
-1. Human-approve and freeze the six propositions, all 48 masks, the 10
-   collection assignments, both output comparisons, and the verdict rules.
-2. Freeze the complete candidate identity and execution profile and document
-   construction-level permutation invariance before inspecting any vectors or
-   candidate output.
+1. Verify the recorded 2026-08-31 human approval of the six propositions, all
+   48 masks, the 10 collection assignments, both output comparisons, and the
+   verdict rules.
+2. Freeze both complete candidate identities and execution profiles and
+   document each candidate's construction-level permutation invariance before
+   inspecting any vectors or candidate output.
 3. Use `03-lexical-coincidence` as the shared blinding namespace. Derive and
    commit the opaque-ID mapping and order, then freeze the SSE boundary and all
    10 exact collection inputs.
 4. Encode each distinct `B` and `C` mask once. Record dimensions and
    hashes, then preserve and reuse the exact vectors in every applicable
    collection.
-5. Run each input twice in fresh candidate processes with identical vectors,
-   opaque IDs, order, selector, configuration, seed, and verified execution
-   profile.
-6. Preserve all 20 raw outputs while identities remain hidden. Verify each
-   invocation's actual execution profile and validate each raw output before
-   canonicalization, identity reveal, or semantic scoring.
+5. For each candidate, run each input twice in fresh processes with identical
+   shared vectors, opaque IDs, and order, plus that candidate's frozen selector,
+   configuration, seed, and verified execution profile.
+6. Preserve all 20 raw outputs per candidate and 40 total while identities
+   remain hidden. Verify each invocation's actual execution profile and
+   validate each raw output before canonicalization, identity reveal, or
+   semantic scoring.
 7. Compare the shared canonical bytes for each valid identical-input pair. A
    mismatch is a repeatability failure, not a lexical result.
-8. After the required outputs are immutable, reveal and verify the fixture
-   mapping, qualify each trap's local `BASELINE` relationships, qualify that
-   trap's controls, and only then score its profile-matched, valid, repeatable
-   `BOTH` output.
+8. After all 40 required outputs are immutable, reveal and verify the shared
+   fixture mapping. Separately for each candidate, qualify each trap's local
+   `BASELINE` relationships, qualify that trap's controls, and only then score
+   its profile-matched, valid, repeatable `BOTH` output.
+
+Generate separate artifacts and a separate Experiment 3 result for each
+candidate. This experiment does not select or final-freeze either candidate.
 
 The fixture is controlled development evidence because its labels are visible
 while candidate algorithms may still be developed. If its result changes the
@@ -401,16 +407,16 @@ Preserve:
 
 - every approved proposition and `B` and `C` mask;
 - tokenizer IDs, selected positions, and piece counts for every mask;
-- raw SSE vectors and hashes;
-- the candidate implementation, preprocessing, configuration, seed, private
-  opaque-ID mapping, order, and fine-output selector;
-- the candidate execution-profile manifest and hash and every invocation's
+- the shared raw SSE vectors and hashes;
+- each candidate's implementation, preprocessing, configuration, seed, and
+  fine-output selector, plus the shared private opaque-ID mapping and order;
+- each candidate's execution-profile manifest and hash and every invocation's
   actual-profile verification;
-- all 20 raw outputs and validity results, plus canonical JSON bytes and hashes
-  for every valid raw output;
-- all 10 repeatability comparisons;
-- all three local baseline qualifications, all six one-sided-control
-  qualifications, and all three trap verdicts;
+- all 20 raw outputs and 10 repeatability comparisons per candidate, 40 raw
+  outputs and 20 comparisons total, plus canonical JSON bytes and hashes for
+  every valid raw output;
+- for each candidate, all three local baseline qualifications, all six
+  one-sided-control qualifications, and all three trap verdicts;
 - every execution-profile, output-contract, repeatability, and prerequisite
   failure;
 - every subject-relationship and complete-output difference;
@@ -418,11 +424,12 @@ Preserve:
 
 ## Meaning of a result
 
-A pass supports one narrow claim: in these three explicit, proposition-level
-traps, the frozen SSE-plus-candidate combination preserved the recovered subject
-relationships when one ambiguous noun was shared across two unrelated meanings,
-after both one-sided conditions remained stable. It does not prove that SSE or
-the candidate used no lexical information internally.
+For one candidate, a pass supports one narrow claim: in these three explicit,
+proposition-level traps, that frozen SSE-plus-candidate combination preserved
+the recovered subject relationships when one ambiguous noun was shared across
+two unrelated meanings, after both one-sided conditions remained stable. It
+does not prove that SSE or the candidate used no lexical information
+internally, and it does not select a candidate.
 
 A prerequisite failure means a profile-matched, valid, repeatable baseline or
 control did not reach the state needed to test lexical robustness. An

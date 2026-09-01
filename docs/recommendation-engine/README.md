@@ -23,8 +23,20 @@ public note
 
 Those components are experimental. The downstream representation is intended
 to describe atomic subjects, and the current prompts do not yet establish that
-they do so reliably. The fine-segmentation output contract, selected algorithm,
-hierarchy algorithm, and production-scale extractor remain open.
+they do so reliably. Two fine-segmentation configurations are frozen for
+controlled qualification: HDBSCAN* with `min_samples = 2`,
+`min_cluster_size = 2`, and excess-of-mass selection, and SNN with
+`neighbor_count = 5`, `minimum_shared_neighbor_count = 2`, and
+`minimum_core_neighbor_count = 3`. They run the complete suite as separate
+candidate instances over the same frozen inputs. The final fine-segmentation
+contract and algorithm, hierarchy algorithm, and production-scale extractor
+remain open.
+
+The suite's exact semantic fixtures, scoring rules, and prerequisite graph were
+approved on 2026-08-31. The user is its primary human semantic reviewer, with
+an Experiment 2 limit of 100 unique cross-subject packets per candidate.
+Technical identity and protocol-hash freezes remain incomplete, and the suite
+has not run.
 
 ## Goal
 
@@ -54,18 +66,29 @@ private behavior.
 
 ## Work Order
 
-The next stages are intentionally dependency-ordered:
+The next fine-segmentation stages are intentionally dependency-ordered:
 
-1. Fix and freeze the temporary TP, MP, and prominence generation boundary.
-2. Evaluate one frozen fine-segmentation candidate with the frozen SSE boundary
-   on the approved synthetic suite. Experiments 3 and 4 qualify that combined
-   boundary because their text interventions are re-encoded through SSE before
-   the candidate receives them.
-3. If that evidence supports proceeding, test the same candidate on a
-   hand-selected real-note collection from one niche subject area.
+1. Technically freeze the shared SSE inputs, bind the approved fixtures and
+   scoring rules by hash, freeze the orders and both complete candidate
+   identities, then run the synthetic suite separately for HDBSCAN* and SNN.
+   Experiments 3 and 4 qualify each SSE-plus-candidate combination because their
+   text interventions are re-encoded through SSE before the candidate receives
+   them. Semantic failures remain evidence and do not halt later local tests;
+   an integrity failure blocks only the affected candidate input and dependent
+   conclusions.
+2. Present the two complete records side by side. The assistant may recommend
+   an outcome; the user alone selects and final-freezes a candidate, requests a
+   revision, or stops the approach.
+3. If the user selects a candidate, test that exact identity on a hand-selected
+   real-note collection from one niche subject area.
 4. Only after useful fine subjects are demonstrated, compare and freeze a
    hierarchy-construction method.
 5. Construct and label the hierarchy, then build the navigation TUI.
+
+The temporary TP, MP, and prominence generation boundary remains separate
+upstream work. It must be resolved before an end-to-end system can produce
+atomic-subject inputs from arbitrary notes, but it is not a prerequisite for
+this suite's hand-authored synthetic masks.
 
 Do not scale the corpus or build a later stage to conceal an unresolved earlier
 stage.

@@ -1,7 +1,8 @@
 # Experiment 6: stability under irrelevant changes
 
-Status: **draft; the reused fixture mapping, baseline qualification, and
-intervention rules require human approval before candidate execution**.
+Status: **reused fixture semantics, baseline qualification, intervention
+rules, and scoring approved on 2026-08-31; technical freeze incomplete; do not
+encode or run yet**.
 
 ## Assumption under test
 
@@ -17,15 +18,17 @@ changes:
 
 ## Question
 
-After one frozen candidate recovers the required subjects in a clean,
-repeatable baseline, does each condition preserve that complete observed
-structure? Exact duplicates must inherit their originals' memberships, and
-added subjects must not contaminate the preserved segments.
+For each frozen candidate, after it recovers the required subjects in a clean,
+repeatable baseline, does each condition preserve that candidate's complete
+observed structure? Exact duplicates must inherit their originals' memberships,
+and added subjects must not contaminate the preserved segments.
 
 The experiment tests invariance to each complete change. It does not attempt
 to identify the internal mechanism behind a failure. In particular:
 
-- adding duplicates necessarily changes local density;
+- without the shared alias adapter, adding duplicates would change local
+  density; this condition verifies that the complete candidate boundary
+  prevents that change and restores every alias afterward;
 - adding a subject necessarily changes collection size;
 - combining collections necessarily changes both collection size and semantic
   composition.
@@ -65,25 +68,29 @@ Only the six duplicate aliases introduced by the duplicate condition need new
 opaque runtime IDs; they reuse their originals' vector bytes and require no SSE
 encoding.
 
-## Human approval required
+## Approved semantic decisions
 
-Before candidate execution, human review must confirm:
+The 2026-08-31 human approval confirms:
 
-1. the approved Experiment 1 fixture and its frozen hashes are the sole source
-   of truth for the 36 base notes, masks, subjects, and vectors;
-2. the `A1 ... F6` alias table maps exactly onto that fixture;
-3. the six subjects are separated enough to represent six distinct semantic
+1. the six subjects are separated enough to represent six distinct semantic
    areas for this controlled stability test;
-4. `A` through `C` form baseline `L`, and `D` through `F` form baseline `R`;
-5. the baseline qualification rules below are correct;
-6. each exact duplicate must inherit every membership of its original;
-7. adding subject `D` to baseline `L` must preserve `L` without placing a `D`
+2. `A` through `C` form baseline `L`, and `D` through `F` form baseline `R`;
+3. the baseline qualification rules below are correct;
+4. each exact duplicate must inherit every membership of its original;
+5. adding subject `D` to baseline `L` must preserve `L` without placing a `D`
    vector in an `A`–`C` segment; and
-8. the imported full collection is usable only after it passes Experiment 1's
-   recovery-and-purity rule.
+6. the imported full collection receives a combined-condition verdict only
+   after that candidate's Experiment 1 artifact passes the recovery-and-purity
+   rule.
 
 These judgments apply only to this fixture. They do not impose a global
 partition requirement on the architecture.
+
+Before execution, separately verify two technical facts: the approved
+Experiment 1 fixture and its frozen hashes are the sole source of the 36 base
+notes, masks, subjects, and vectors, and the `A1 ... F6` alias table maps
+exactly onto that fixture. These are provenance checks, not additional semantic
+judgments.
 
 ## Frozen system boundary
 
@@ -106,9 +113,18 @@ The candidate receives only opaque IDs and vectors. It does not receive notes,
 masks, subject names, scoring aliases, expected segment counts, expected
 segment sizes, or relationships between duplicate IDs.
 
-The candidate identity and verified execution-profile hash must equal
-Experiment 1's frozen values. A change creates a new suite instance and
-invalidates artifact reuse. Coarser hierarchy output is excluded.
+The shared `opaque-id-order-bitwise-vector-alias-v1` adapter may infer only
+what the supplied opaque IDs and vector coordinates reveal directly. In the
+duplicate condition it detects each byte-identical vector group, passes one
+representative to the frozen SNN or HDBSCAN* core, and expands that
+representative's selected memberships or unassigned state to every alias after
+the core returns. The core never receives the duplicate relationship or an
+extra geometric point.
+
+For each candidate, its identity and verified execution-profile hash must equal
+that candidate's Experiment 1 values. A change creates a new suite instance and
+invalidates that candidate's artifact reuse. Coarser hierarchy output is
+excluded.
 
 ## What counts as one output
 
@@ -172,51 +188,59 @@ Repeatability gates only that input and comparisons that depend on it. Two
 matching invocations establish repeatability only for those exact runs, not
 general determinism.
 
-## Program and local gates
+## Integrity and local prerequisites
 
-The suite eligibility and conformance-integrity requirements in
-[README.md](README.md) are **program gates**. A construction violation or a
-repeatable cross-order difference makes the candidate ineligible. An invalid
-or non-repeatable conformance input is instead an integrity failure with no
-conformance or semantic verdict.
+The construction and conformance-integrity requirements in
+[README.md](README.md) are evaluated separately for each candidate. A
+construction violation or repeatable cross-order difference is a conformance
+failure. An invalid or non-repeatable conformance input is an integrity failure
+with no conformance or semantic verdict. A conformance failure blocks semantic
+scoring for that candidate instance. An exact-input integrity failure blocks
+only that input and its dependent comparisons. Neither blocks the other
+candidate.
 
-This experiment is the program's stability qualification for exact duplicates,
-unrelated-subject addition, and combined recovered collections. A scored
-failure in any of those three conditions means the candidate does not earn
-that qualification. It does not rewrite the scoped observations already
-preserved by another experiment.
+This experiment records a candidate-specific stability result for exact
+duplicates, unrelated-subject addition, and combined recovered collections. A
+scored failure in any of those three conditions is a stability failure for that
+candidate. It does not rewrite the scoped observations already preserved by
+another experiment or stop remaining local runs.
 
-`L0` and `R0` are **local gates**. They establish the exact positive output
-that a dependent intervention must preserve in this fixture. An Experiment 1
-pass may admit a candidate to later stages, but it cannot replace either local
-baseline: each local input is a strict subset with a different collection
-context. A failed local gate gives its dependent condition no verdict; it is
-not itself a stability failure. Because only a complete pass admits the
-downstream program, an unresolved local branch also withholds the overall
-stability qualification without converting that no-verdict state into a focal
-failure.
+`L0` and `R0` are **local prerequisites**. They establish the exact positive
+output that a dependent intervention must preserve in this fixture. An
+Experiment 1 pass cannot replace either local baseline: each local input is a
+strict subset with a different collection context. A failed local prerequisite
+gives its dependent condition no verdict; it is not itself a stability failure
+and does not suppress any configured run. An unresolved local branch leaves
+that candidate's overall stability result incomplete without converting the
+no-verdict state into a focal failure.
 
 ## Protocol
 
-1. Obtain the required human approval and freeze this protocol before the
-   shared Experiment 1 default output is generated.
-2. Freeze the complete candidate identity and execution profile and the
+1. Verify the recorded 2026-08-31 human approval and freeze this protocol
+   before the shared Experiment 1 default output is generated.
+2. Freeze both complete candidate identities and execution profiles and the
    readable membership specifications for the four new Experiment 6 inputs:
-   `L0`, `R0`, duplicate, and unrelated addition.
+   `L0`, `R0`, duplicate, and unrelated addition. Each identity must include
+   the shared input-adapter version and its applicable SNN or HDBSCAN*
+   fine-output-selector version from `README.md`.
 3. Reuse Experiment 1's opaque IDs and committed order for every base-vector
    subset. Generate and commit only the six new duplicate IDs.
-4. Verify and reuse the 36 Experiment 1 vector artifacts, including their
-   dimensions and hashes. Materialize and freeze the four exact ordered
-   `(opaque ID, vector bytes)` inputs. Verify that the imported default output
-   has the same candidate identity, verified execution-profile hash, IDs,
-   vector bytes, order, validity result, and two equal canonical repetitions,
-   and that it passed Experiment 1's recovery-and-purity rule.
-5. Run each of the four new exact inputs twice in fresh processes, even if one
-   baseline later fails. Verify every invocation's actual execution profile
-   before accepting its output.
-6. Validate and canonicalize every new opaque output. The readable mapping may
-   be known to the scorer after Experiment 1, but it must never be exposed to
-   the already frozen candidate executable.
+4. Verify and reuse the one shared 36-vector Experiment 1 artifact, including
+   its dimensions and hashes. Materialize and freeze the four exact ordered
+   `(opaque ID, vector bytes)` inputs once. For each candidate, verify that its
+   imported default output has that candidate's identity and verified
+   execution-profile hash plus the shared IDs, vector bytes, and order, a valid
+   result, two equal canonical repetitions, and an Experiment 1
+   recovery-and-purity pass.
+5. For each candidate, run each of the four new exact inputs twice in fresh
+   processes, even if one baseline later fails. Verify every invocation's
+   actual execution profile before accepting its output. This produces eight
+   new raw outputs per candidate and sixteen total, plus each candidate's two
+   imported Experiment 1 outputs.
+6. Preserve each run's canonical representative order and complete alias
+   groups. Validate and canonicalize every expanded opaque output. The readable
+   mapping may be known to the scorer after Experiment 1, but it must never be
+   exposed to the already frozen candidate executable.
 7. Score each condition using the dependency graph below.
 
 ## Verdict dependency graph
@@ -296,7 +320,9 @@ required complete subject segments, this transformation produces:
 
 Any allowed extra reference segments undergo the same transformation. Both
 fresh runs must return exactly the complete transformed reference output. Do
-not collapse aliases before scoring.
+not collapse aliases in the selected output before scoring. The shared adapter
+collapses them only while running the algorithm core, then must restore them
+before output validation and scoring.
 
 This condition tests one subject whose six instances are each duplicated
 once. It does not establish invariance to every possible duplicate pattern.
@@ -380,12 +406,14 @@ qualification.
 
 Preserve:
 
-- the approved Experiment 1 manifest and protocol hashes, the verified hashes
+- the Experiment 1 manifest, hashes of the approved protocol, verified hashes
   of its 36 reused vector artifacts, and its exact default input/output pair;
 - the scorer-only alias mapping, the six duplicate-ID derivations, their
   private mapping, order keys, and pre-run commitment;
 - candidate implementation and configuration identities, the execution-profile
-  manifest and hash, and every invocation's actual-profile verification;
+  manifest and hash, the input-adapter and fine-output-selector versions, and
+  every invocation's actual-profile verification;
+- every run's canonical representative order and complete alias groups;
 - all four new exact ordered inputs;
 - both raw outputs, canonical JSON, and SHA-256 hashes for each new input, plus
   the imported pair's corresponding records;

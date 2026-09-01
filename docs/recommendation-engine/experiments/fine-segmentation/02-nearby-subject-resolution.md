@@ -1,7 +1,8 @@
 # Experiment 2: nearby-subject organization under changing support
 
-Status: **draft; all 96 fixture notes, masks, and declared atomic subjects
-require human approval before encoding**.
+Status: **all 96 fixture notes, masks, declared atomic subjects, intended
+relationships, and scoring rules approved on 2026-08-31; technical freeze
+incomplete; do not encode or run yet**.
 
 ## Characterization target
 
@@ -9,10 +10,12 @@ require human approval before encoding**.
 
 > Changes in organization under unequal density and sparsity.
 
-The experiment first observes how one frozen candidate organizes nearby
-subjects under balanced support. It then changes only which already-encoded
-vectors enter the collection. The balanced observations provide the baseline
-for describing what changes under unequal support and singleton sparsity.
+After technical freeze, the experiment observes each candidate separately over
+the same shared vectors. For each candidate, it first records organization
+under balanced support and then changes only which already-encoded vectors
+enter the collection. The candidate's balanced observations provide its
+baseline for describing what changes under unequal support and singleton
+sparsity.
 
 This is a characterization protocol. It has no confirmation verdict, model
 ranking, or selection threshold. It does not prescribe one universally correct
@@ -20,23 +23,23 @@ boundary between nearby subjects.
 
 ## Questions
 
-1. With four vectors from each of three nearby subjects, what segments does the
-   candidate return?
+1. With four vectors from each of three nearby subjects, what segments does
+   each candidate return?
 2. Holding the local collection size at twelve, how does changing support from
    `4:4:4` to `8:2:2`, `6:5:1`, or `8:3:1` change those segments?
 
 ## Program role
 
-Experiment 2 is a late characterization sibling of the targeted hypothesis
-tests. The default spending graph schedules it only after the exact candidate
-identity has passed the earlier qualification and focal tests in `README.md`.
-Those upstream results are only scheduling gates: none can supply a semantic
-baseline for an Experiment 2 comparison.
+Experiment 2 is a characterization sibling of the targeted hypothesis tests.
+Run its complete frozen schedule for both candidates regardless of their
+semantic results elsewhere in the suite. No upstream semantic result can
+supply a baseline for an Experiment 2 comparison.
 
-Within Experiment 2, every unequal-support comparison is scientifically gated
-by its matched local balanced configuration for the same neighborhood and
-schedule. Experiment 2 neither qualifies the candidate nor gates a targeted
-hypothesis test.
+Within Experiment 2, every unequal-support comparison has its own matched local
+balanced prerequisite for the same candidate, neighborhood, and schedule. A
+missing prerequisite withholds only that comparison's survival statement; it
+does not suppress any configured run. Experiment 2 neither selects a candidate
+nor changes another experiment's result.
 
 ## Design
 
@@ -281,8 +284,8 @@ that this experiment asks the candidate to explore. They are not selected or
 rejected using SSE cosine. Doing so would preselect the geometry whose behavior
 we are trying to observe.
 
-After the wording and masks are approved and frozen, preserve these descriptive
-diagnostics:
+After the approved wording and masks are technically frozen, preserve these
+descriptive diagnostics:
 
 1. the complete raw-vector cosine matrix;
 2. same-subject and cross-subject cosine distributions in each neighborhood;
@@ -401,10 +404,11 @@ These local schedules produce 128 unique configurations per neighborhood and
 | Singleton | 48 |
 | Dense and singleton | 48 |
 
-The complete protocol therefore defines 512 unique input/run configurations per
-frozen candidate and seed. Each configuration is invoked twice from fresh
-candidate state, for 1,024 invocations total. The 96 SSE vectors are generated
-once. No candidate invocation re-encodes text.
+The complete protocol therefore defines 512 unique input configurations shared
+by both candidates after technical freeze. Each configuration is invoked twice
+from fresh state for each candidate: 1,024 invocations per candidate and 2,048
+invocations across both. The 96 SSE vectors are generated once and reused byte
+for byte. No candidate invocation re-encodes text.
 
 ## Blinding and run isolation
 
@@ -502,27 +506,30 @@ A segment spanning declared subjects does not count as reference-cohort
 recovery, but it is not automatically invalid: the candidate may return
 overlapping subjects that differ from the declared reference cohorts.
 
-Freeze the semantic-review rubric, one primary human reviewer, reviewer
-procedure, review shuffle seed, and finite packet budget before candidate
-execution. After all candidate outputs are immutable and readable identities
-are restored, form the review pool from every unique segment in an eligible
-configuration that contains vectors from at least two declared subjects.
-Uniqueness is the canonical fixture-member set, so an identical member set is
-reviewed once and its frozen verdict is reused for every occurrence. Preserve
-segments from ineligible configurations in the execution record, but do not
+The semantic-review rubric and reviewer procedure below are approved. The
+primary human reviewer is the user who approved this protocol. The packet cap
+is 100 unique cross-subject packets per candidate. Freeze the
+review shuffle seed before candidate execution. After all outputs for both
+candidates are immutable and readable identities are restored, form one review
+pool per candidate from every unique segment in that candidate's eligible
+configurations that contains vectors from
+at least two declared subjects. Within one candidate, uniqueness is the
+canonical fixture-member set, so an identical member set is reviewed once and
+its frozen verdict is reused for every occurrence. Preserve segments from
+ineligible configurations in that candidate's execution record, but do not
 send them to semantic review or use them in semantic characterization. The
 execution-profile, output-contract, or repeatability cause itself remains part
-of the final candidate-decision record.
+of the candidate-specific result record.
 
-If the complete pool exceeds the frozen packet budget, do not review a subset.
-Record a **review-capacity failure** and preserve all automated configuration,
-membership, and support-stress observations. Cross-subject semantic verdicts,
-including invalid membership and false absorption, are unavailable, and the
-suite's final review cannot choose `proceed` for this candidate.
+If one candidate's complete pool exceeds 100 unique packets, do not review a
+subset. Record a **review-capacity failure** and preserve all automated
+configuration, membership, and support-stress observations. Cross-subject
+semantic verdicts, including invalid-membership judgments, are unavailable for
+that candidate and the result records a review-capacity failure.
 
 Do not send singleton or same-declared-subject segments to semantic review.
-Human fixture approval already establishes the common atomic subject for every
-same-subject subset; singleton disposition is recorded directly. Reviewing
+Recorded fixture approval already establishes the common atomic subject for
+every same-subject subset; singleton disposition is recorded directly. Reviewing
 either again would add work without resolving an unknown relationship.
 Cross-subject segments are reviewed because they may still express a valid
 alternative fine subject not represented by the declared cohorts.
@@ -582,40 +589,53 @@ post-output adjudication or replacement reviewer.
 The neighborhood umbrella alone—`coffee processing`, `photograph editing`,
 `rose-bush care`, or `software development`—is too broad to validate a fine
 segment. Record `invalid cross-subject membership` when a cross-subject segment
-receives `invalid`. When such a segment contains a rare or singleton vector,
-additionally record `false absorption`; this does not assert which vector
-entered which pre-existing segment. An `uncertain` cross-subject segment is
-reported separately and is not counted as invalid or false absorption.
+receives `invalid`. An `uncertain` cross-subject segment is reported separately
+and is not counted as invalid.
 
 This review is metadata-blind, not source-blind: the synthetic wording may be
 recognizable. Declared-cohort recovery and alternative semantic validity remain
 separate measurements. A valid alternative segment never changes the declared
 allocation used to describe that configuration.
 
-### Final decision report
+### Candidate result reports
 
 After every automated outcome, semantic-review judgment, and matched comparison
-is immutable, generate the decision report and coverage manifest required by
-`README.md`. The manifest must enumerate every one of the 512 unique
-configurations exactly once and bind each to its two invocation records. For
-each invocation, record the actual-profile result, raw-output validity, and
-canonical-output hash when available. Record one configuration-level canonical
-hash only when the configuration is eligible and both hashes agree. Also bind
-the configuration to its declared-cohort outcomes, singleton disposition, and
-every matched comparison that consumes it.
+is immutable, generate a separate result report and coverage manifest for each
+candidate as required by `README.md`. Each manifest must enumerate every one of
+the 512 shared input configurations exactly once and bind it to that
+candidate's two invocation records. For each invocation, record the
+actual-profile result, raw-output validity, and canonical-output hash when
+available. Record one configuration-level canonical hash only when the
+configuration is eligible and both hashes agree. Also bind the configuration
+to its declared-cohort outcomes, singleton disposition, and every matched
+comparison that consumes it. For every cross-subject segment occurrence in an
+eligible configuration, also bind the configuration to the occurrence's
+canonical member set, its reused semantic-review packet and verdict, and every
+member's exact support role and count. If semantic review is unavailable, bind
+the occurrence to that recorded cause instead of a verdict.
 
-The report may aggregate repeated results by neighborhood, condition, schedule,
-support role, and result class. It must separately enumerate every invalid or
-uncertain reviewed segment, false absorption, integrity failure,
-local-prerequisite failure, unavailable survival statement, and
-neighborhood-specific exception. Each aggregate and exception links back to
-the immutable configuration records in the coverage manifest.
+The report must include these summary tables with explicit denominators:
 
-The primary reviewer examines this generated report rather than manually
-opening all 512 configuration records or all 1,024 raw invocation outputs.
-Review is incomplete, and `proceed` is unavailable, unless the coverage
-manifest validates and every required exception has a recorded disposition and
-is addressed by the written rationale.
+1. by neighborhood and condition;
+2. by exact support role; and
+3. by schedule.
+
+Where each measure applies, every table reports total and eligible
+configurations or comparisons, matched baselines that recovered, `survived`,
+`did not survive`, and unavailable comparisons, eligible configurations with
+omission or fragmentation, and eligible cross-subject occurrences classified
+as `valid`, `invalid`, `uncertain`, or unavailable. Mark a field that does not
+apply instead of omitting it. The report may add aggregates by result class,
+but it must separately enumerate every invalid or uncertain reviewed segment,
+integrity failure, local-prerequisite failure, unavailable survival statement,
+and neighborhood-specific exception. Each summary, aggregate, and exception
+links back to the immutable configuration records in the coverage manifest.
+
+The primary reviewer examines each generated report rather than manually
+opening all 512 configuration records or all 1,024 raw invocation outputs for
+that candidate. A candidate's characterization is incomplete unless its
+coverage manifest validates and every required exception has a recorded
+disposition addressed by the written rationale.
 
 ### Balanced-baseline conditioning
 
@@ -690,56 +710,62 @@ support allocation. It does not isolate the causal effect of support count:
 adding distinct examples necessarily changes both the number and the sampled
 vector geometry, total size remains twelve, and several subject counts change
 together. Exact duplicate vectors would hold the set of distinct vector
-locations fixed while changing their multiplicities, but that would test
-duplicate sensitivity rather than realistic unequal subject support;
-Experiment 6 owns duplicate stability.
+locations fixed, but the shared candidate adapter deliberately collapses
+bitwise-identical aliases before the algorithm core and expands them afterward.
+Experiment 6 owns verification of that complete adapter-boundary behavior;
+duplicates are therefore not a support-allocation arm here.
 
-Compare results by neighborhood, declared subject, support role, allocation,
-and formulation schedule. Report every schedule and aggregate only with
-schedule as a repeated block; do not treat the 512 overlapping configurations
-as 512 independent samples. Do not average away a neighborhood-specific
-outcome. Raw cosine measurements and wording-form audits are diagnostics, not
-semantic verdicts.
+The mandatory summary tables and any further comparisons use neighborhood,
+declared subject, exact support role, condition and support allocation, and
+formulation schedule. Report every schedule and aggregate only with schedule as
+a repeated block; do not treat the 512 overlapping configurations as 512
+independent samples. Do not average away a neighborhood-specific outcome. Raw
+cosine measurements and wording-form audits are diagnostics, not semantic
+verdicts.
 
 ## Protocol
 
-1. Audit every mask against its declared atomic subject. Correct any missing
-   subject evidence, extra substantive meaning, or narrower qualification.
-2. Counterbalance the eight wording forms inside every neighborhood. Correct
-   clear incidental-template imbalances without purging necessary subject
-   words or forcing unnatural synonyms.
-3. Obtain human approval of all 96 notes, masks, declared atomic subjects,
-   intended nearby relationships, and the semantic-review rubric, procedure,
-   and finite packet budget.
+1. Verify that every approved mask still matches its declared atomic subject
+   without missing evidence, extra substantive meaning, or a narrower
+   qualification.
+2. Verify the approved counterbalancing of the eight wording forms inside every
+   neighborhood without changing the fixture.
+3. Verify the recorded 2026-08-31 human approval of all 96 notes, masks,
+   declared atomic subjects, intended nearby relationships, semantic-review
+   rubric and procedure, the user as primary reviewer, and the 100-packet
+   per-candidate budget.
 4. Freeze the fixture wording and every scoring rule.
-5. Freeze the candidate identity and execution profile and document its
-   construction-level permutation invariance.
+5. Freeze both candidate identities and execution profiles and document each
+   candidate's construction-level permutation invariance.
 6. Derive and commit the shared opaque-ID mapping and global order. Freeze all
-   512 unique configurations, two invocation records per configuration, and
-   the randomized execution order of all 1,024 invocations. Draw and freeze the
-   independent review seed.
+   512 unique configurations, two invocation records per configuration and
+   candidate, and each candidate's randomized execution order of 1,024
+   invocations. Draw and freeze the independent review seed.
 7. Freeze the SSE boundary and exact input bytes, then encode the 96 inputs
    once and record the vector dimensions and hashes.
-8. Invoke every configuration twice in separate fresh processes without
-   retuning or re-encoding. Verify the actual execution profile and preserve
-   every raw output while fixture identities remain hidden.
+8. For each candidate, invoke every configuration twice in separate fresh
+   processes without retuning or re-encoding. Verify the actual execution
+   profile and preserve every raw output while fixture identities remain
+   hidden. This produces 1,024 raw outputs per candidate and 2,048 total.
 9. While identities remain hidden, validate each raw output, canonicalize every
-   valid output, compare the two canonical outputs for each configuration, and
-   record every execution-profile, output-contract, or repeatability failure.
-   Give every dependent outcome no verdict. After all 1,024 raw outputs and
-   integrity results are immutable, reveal and verify the blinding artifact;
-   only then restore fixture identities.
+   valid output, compare each candidate's two canonical outputs for each
+   configuration, and record every execution-profile, output-contract, or
+   repeatability failure. Give every dependent outcome no verdict. After all
+   2,048 raw outputs and integrity results are immutable, reveal and verify the
+   shared blinding artifact; only then restore fixture identities.
 10. Compute the frozen representation diagnostics and wording-form/support-role
     audits.
-11. Fix the cross-subject segment pool. If its size is within the frozen
-    packet budget, build every blinded packet in the frozen random order and
-    complete the three-way semantic review. Otherwise, review none and record
-    a review-capacity failure.
+11. Fix each candidate's cross-subject segment pool. If its size is within the
+    100-packet budget, build every blinded packet in the frozen random order
+    and complete the three-way semantic review. Otherwise, review none for that
+    candidate and record a review-capacity failure.
 12. For eligible configurations, complete the balanced-baseline-conditioned
     recovery descriptions and matched support-allocation comparisons.
-13. Generate and validate the frozen decision report and complete coverage
-    manifest. The final reviewer may choose `proceed` only after completing the
-    shared review procedure.
+13. Generate and validate one frozen result report and complete coverage
+    manifest per candidate. Require every eligible cross-subject occurrence
+    binding and every mandatory summary table and denominator before that
+    candidate's characterization is complete. The experiment does not select
+    or final-freeze either candidate.
 
 ## Required record
 
@@ -751,29 +777,33 @@ Preserve:
   structural attribute;
 - the opaque-ID mapping and global master rank order, plus the shared blinding
   seed, commitment, and post-run verification;
-- the 512 unique configurations, all 1,024 invocation records in their frozen
-  execution order, and every condition, role, schedule, exact input, and
-  within-invocation order;
-- all 1,024 raw outputs, canonical outputs and hashes for every valid raw
-  output, every execution-profile, output-contract, or repeatability finding,
-  and every resulting no-verdict dependency;
+- the 512 shared input configurations and, for each candidate, all 1,024
+  invocation records in their frozen execution order, plus every condition,
+  role, schedule, exact input, and within-invocation order;
+- all 1,024 raw outputs per candidate and 2,048 total, canonical outputs and
+  hashes for every valid raw output, every execution-profile, output-contract,
+  or repeatability finding, and every resulting no-verdict dependency;
 - every complete returned segment, overlap, singleton, and omission from both
   invocations;
-- reference-cohort recovery, all cross-subject memberships, false absorption,
-  omission, fragmentation, extra segments, and singleton disposition fields;
+- reference-cohort recovery, all cross-subject memberships, omission,
+  fragmentation, extra segments, and singleton disposition fields;
 - the frozen semantic-review rubric, procedure, shuffle seed, its commitment
   and verification, cross-subject segment pool, packet and member orders, every
   `valid`, `invalid`, and `uncertain` judgment, the valid subject text, and the
   masks supporting each judgment;
+- for every eligible cross-subject occurrence, its configuration, canonical
+  member set, reused review packet and verdict or recorded review-unavailable
+  cause, and every member's exact support role and count;
 - every balanced-baseline recovery prerequisite, its local-prerequisite state,
   and every resulting survival or no-verdict record;
-- the frozen semantic-review packet budget, complete pool size, and any
-  review-capacity failure;
+- the frozen 100-packet per-candidate semantic-review budget, complete pool
+  size, and any review-capacity failure;
 - every balanced-versus-unequal shared-ID set, canonical projected multiset,
   exact multiplicity difference, and separate source-segment provenance row;
-- the generated decision report, its coverage manifest and validation result,
+- each candidate's generated result report, coverage manifest and validation
+  result, every mandatory summary table and summary-to-configuration link,
   every aggregate-to-configuration link, every required exception disposition,
-  and the final review-completion state;
+  and review-completion state;
 - the immutable raw-vector cosine matrix, cosine summaries, and every
   wording-form/support-role audit;
 - every artifact, candidate identity, execution-profile manifest and hash, and
@@ -781,10 +811,11 @@ Preserve:
 
 ## What a result means
 
-The result characterizes how one frozen SSE-plus-segmentation system organizes
-four controlled collections of nearby subjects under balanced support and how
-that organization changes under the complete unequal-support and singleton
-allocations. It does not attribute those changes to support count alone.
+Each candidate's result characterizes how its frozen SSE-plus-segmentation
+system organizes four controlled collections of nearby subjects under balanced
+support and how that organization changes under the complete unequal-support
+and singleton allocations. It does not attribute those changes to support
+count alone.
 
 For a declared subject that recovered in its eligible matched balanced
 baseline, the record can state whether recovery survived an eligible support
@@ -797,8 +828,8 @@ candidates. Its returned shapes, semantic verdicts, and changes are reported
 as characterization data.
 
 A review-capacity failure is a resource result, not a semantic segmentation
-failure. It prevents a final `proceed` decision because the required semantic
-evidence is incomplete.
+failure. It leaves that candidate's required semantic characterization
+incomplete.
 
 It does not establish one universally correct fine-subject boundary,
 production-scale behavior, every geometric density pattern, natural-corpus

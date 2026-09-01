@@ -67,6 +67,13 @@ general claim that SSE preserves every relation expressed by selected text.
 
 ## Real-Note Evidence
 
+The exploratory
+[`SSE Multi-Vector Isolation Experiment`](../recommendation-engine/experiments/sse-multivector-isolation.md)
+encoded 187 manually audited atomic-subject masks from 32 real notes. It found
+useful within-note separation and cross-note convergence, alongside
+surface-word false neighbors and measurable same-note influence. It was a
+diagnostic, not a pass/fail validation.
+
 The
 [`SSE-REAL-NOTE-HOLDOUT-EXPERIMENT.md`](SSE-REAL-NOTE-HOLDOUT-EXPERIMENT.md)
 passed three of four predeclared comparisons. The hard Windows/Linux case
@@ -89,15 +96,26 @@ Two counterfactuals clarified those failures without erasing them:
   exact tie with its solar-only control
   ([`../../sse_multivector/mask-fidelity-solar-context-ablation-v4/result/analysis.md`](../../sse_multivector/mask-fidelity-solar-context-ablation-v4/result/analysis.md)).
 
+The earlier
+[`SSE context counterfactual experiment`](../../sse_multivector/context-counterfactual-result-v1/README.md)
+formally passed 21 of 24 targets and failed its strict overall rule. A later
+[`scientific review`](../../sse_multivector/context-counterfactual-result-v1/scientific-interpretation.md)
+found two failed comparisons non-diagnostic and the third sensitive to the
+reference aggregation rule; no valid case showed unrelated note content taking
+over a selected vector. This remains small, hand-supplied-mask evidence rather
+than general validation.
+
 ## Current Conclusion
 
 Within these bounded tests, SSE often preserves recognizable atomic-subject
 similarity across wording, mask boundaries, multiple fragments, and changed
 surrounding text. It also has observed failures, especially for reversed
-relationships and some nearby or compound subjects.
+relationships, surface-word false matches, and some nearby or compound
+subjects.
 
 That is enough to continue testing the architecture, not enough to treat SSE
-geometry as validated. The current dependency is to fix the subject-mask
-generation boundary and then evaluate one frozen SSE-plus-fine-segmentation
-combination with the synthetic suite while preserving each experiment's stated
-scope.
+geometry as validated. Subject-mask generation remains a separate upstream
+problem. The current fine-segmentation test evaluates the frozen HDBSCAN and
+SNN candidates against the same frozen SSE vectors and synthetic suite while
+preserving each experiment's stated scope. The evidence may support a
+recommendation, but the user selects the candidate.

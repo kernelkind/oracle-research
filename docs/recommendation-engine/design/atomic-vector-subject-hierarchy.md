@@ -6,9 +6,21 @@ This is the approved architectural direction for the content-discovery
 experiment. It is not a validated system.
 
 The current implementation has several provisional components. The exact
-prompt boundary, fine-segmentation output contract, fine-segmentation
-algorithm, hierarchy algorithm, and labels must still be tested and frozen in
-dependency order.
+prompt boundary, final fine-segmentation output contract and algorithm,
+hierarchy algorithm, and labels must still be tested and frozen in dependency
+order. HDBSCAN* with `min_samples = 2`, `min_cluster_size = 2`, and
+excess-of-mass selection and SNN with `neighbor_count = 5`,
+`minimum_shared_neighbor_count = 2`, and `minimum_core_neighbor_count = 3` are
+the two predeclared controlled-qualification configurations. Once their full
+technical identities and the shared inputs are frozen, they will run the
+complete suite as separate candidate instances. Neither is the final
+fine-segmentation choice.
+
+The suite's exact semantic fixtures, scoring rules, and prerequisite graph were
+approved on 2026-08-31. The user is its primary human semantic reviewer, with
+an Experiment 2 limit of 100 unique cross-subject packets per candidate.
+Technical identity and protocol-hash freezes remain incomplete, and the suite
+has not run.
 
 ## Goal
 
@@ -171,12 +183,14 @@ fine-subject membership or hierarchy edges.
 
 ### Fine segmentation
 
-- Can one frozen candidate recover repeated subjects?
-- Can it resolve nearby but meaningfully distinct subjects?
-- Does it follow semantic relationships rather than lexical coincidence?
-- Does unselected context avoid determining membership?
-- How does it behave under unequal support, duplicates, unrelated additions,
+- Can each frozen candidate recover repeated subjects?
+- Can each resolve nearby but meaningfully distinct subjects?
+- Does each follow semantic relationships rather than lexical coincidence?
+- Does unselected context avoid determining either candidate's memberships?
+- How does each behave under unequal support, duplicates, unrelated additions,
   and input reordering?
+- What differences in their complete evidence matter to the user's final
+  choice?
 
 ### Hierarchy and navigation
 
@@ -200,23 +214,35 @@ current fine-segmentation specification.
 
 ## Verification Order
 
-1. Fix and freeze the temporary TP, MP, and prominence boundary.
-2. Freeze one fine-segmentation candidate and the SSE boundary, then run the
-   [`../experiments/fine-segmentation/README.md`](../experiments/fine-segmentation/README.md).
-   Experiments 3 and 4 are integration evidence for that combination; the
-   remaining experiment-specific claims retain the ownership defined by the
-   suite.
-3. If the synthetic evidence supports proceeding, test the same candidate on
-   hand-selected real notes from one niche subject area.
+1. Technically freeze the shared SSE inputs, bind the approved fixtures and
+   scoring rules by hash, and freeze the orders and both complete candidate
+   identities, then run the complete
+   [`../experiments/fine-segmentation/README.md`](../experiments/fine-segmentation/README.md)
+   separately for HDBSCAN* and SNN. Experiments 3 and 4 are integration evidence
+   for each SSE-plus-candidate combination; the remaining experiment-specific
+   claims retain the ownership defined by the suite. Semantic failures do not
+   halt later local tests; integrity failures block only affected inputs and
+   dependent conclusions.
+2. Present both complete records side by side. The assistant may recommend an
+   outcome; the user alone selects and final-freezes a candidate, requests a
+   revision, or stops the approach.
+3. If the user selects a candidate, test that exact identity on hand-selected
+   real notes from one niche subject area.
 4. Only after useful fine subjects are demonstrated, compare and freeze a
    hierarchy method.
 5. Construct labels and the hierarchy, then evaluate the navigation TUI.
 
+The temporary TP, MP, and prominence boundary remains separate upstream work.
+It must be resolved before arbitrary notes can enter the complete architecture,
+but it does not gate this suite because the synthetic atomic-subject masks are
+hand-authored and frozen.
+
 ## Open Decisions
 
 - the final direct subject-mask extractor;
-- the fine-segmentation membership contract;
-- the selected fine-segmentation algorithm and configuration;
+- the final fine-segmentation membership contract;
+- the final fine-segmentation algorithm and configuration after controlled
+  qualification;
 - the hierarchy algorithm and configuration;
 - tree versus overlapping parent paths;
 - hierarchy condensation and visible branching;

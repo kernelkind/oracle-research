@@ -1,4 +1,4 @@
-//! Hard partitions over normalized semantic idea vectors.
+//! Hard-partition baselines over normalized semantic vectors.
 
 use std::cmp::Ordering;
 use std::collections::{BTreeSet, BinaryHeap};

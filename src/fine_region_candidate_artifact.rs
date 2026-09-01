@@ -1,55 +1,64 @@
 //! Reproducible in-memory artifacts for fine-segmentation candidates.
 //!
-//! The wrapper retains the algorithm's complete production result and binds it
-//! to the ordered vector identities, upstream vector artifacts, exact
-//! parameters, implementation source, and deterministic tie rules. Verification
-//! reruns the production algorithm and reconstructs the entire expected
-//! artifact; it does not trust hashes stored in the artifact being checked.
-
-use std::collections::BTreeSet;
+//! [`crate::fine_region_candidate`] is the only algorithm-execution boundary.
+//! This module binds that adapter's canonical input, complete production run,
+//! implementation sources, exact parameters, and deterministic contracts into
+//! a verifiable artifact. Verification reconstructs the artifact by rerunning
+//! the adapter; it does not trust hashes stored in the retained artifact.
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 use crate::artifact::hash_bytes;
-use crate::fine_region_hdbscan::{HdbscanConfig, HdbscanError, HdbscanResult, hdbscan};
-use crate::fine_region_partition::CosineMatrix;
-use crate::fine_region_snn::{SnnConfig, SnnError, SnnSegmentation, snn_segmentation};
+use crate::fine_region_candidate::{
+    CANDIDATE_INPUT_CONTRACT_VERSION, FineRegionCandidateError, FineRegionCandidateInput,
+    FineRegionCandidateOutput, FineRegionCandidateRun, HDBSCAN_FINE_OUTPUT_SELECTOR_VERSION,
+    HdbscanCandidateRun, SNN_FINE_OUTPUT_SELECTOR_VERSION, SnnCandidateRun, run_hdbscan_candidate,
+    run_snn_candidate,
+};
+use crate::fine_region_hdbscan::HdbscanConfig;
+use crate::fine_region_snn::SnnConfig;
 
+const CANDIDATE_ADAPTER_SOURCE: &[u8] = include_bytes!("fine_region_candidate.rs");
+const PREPROCESSING_SOURCE: &[u8] = include_bytes!("fine_region_partition.rs");
 const SNN_SOURCE: &[u8] = include_bytes!("fine_region_snn.rs");
 const HDBSCAN_SOURCE: &[u8] = include_bytes!("fine_region_hdbscan.rs");
 
-pub const CANDIDATE_ARTIFACT_SCHEMA_VERSION: u32 = 1;
+pub const CANDIDATE_ARTIFACT_SCHEMA_VERSION: u32 = 4;
 pub const SNN_ALGORITHM_VERSION: &str = "snn-sdm-2003-exact-angular-v1";
 pub const HDBSCAN_ALGORITHM_VERSION: &str = "hdbscan-star-exact-angular-v1";
 
-/// SNN ties use lower input ordinals in exact angular-neighbor ordering. An
-/// ambiguous border point chooses the qualifying core link with the greatest
-/// shared-neighbor count, then the smallest angular distance, then the lowest
-/// core ordinal. Border points never connect core components.
+/// SNN ties use lower canonical input ordinals in exact angular-neighbor
+/// ordering. An ambiguous border point chooses the qualifying core link with
+/// the greatest shared-neighbor count, then the smallest angular distance,
+/// then the lowest canonical ordinal. Border points never connect core
+/// components.
 pub const SNN_TIE_RULE_VERSION: &str = "snn-angular-ordinal-border-v1";
 
-/// HDBSCAN* MST ties use source then target input ordinal, all equal-distance
-/// splits are condensed simultaneously, EOM selects the parent on equal
-/// stability, and public clusters use member ordinals then cluster ID.
+/// HDBSCAN* MST ties use source then target canonical ordinal, all
+/// equal-distance splits are condensed simultaneously, EOM selects the parent
+/// on equal stability, and public clusters use member ordinals then cluster ID.
 pub const HDBSCAN_TIE_RULE_VERSION: &str = "hdbscan-angular-ordinal-equal-tier-v1";
 
 #[derive(Clone, Copy)]
 struct AlgorithmContract {
     version: &'static str,
     tie_rule_version: &'static str,
+    fine_output_selector_version: &'static str,
     implementation_source: &'static [u8],
 }
 
 const SNN_CONTRACT: AlgorithmContract = AlgorithmContract {
     version: SNN_ALGORITHM_VERSION,
     tie_rule_version: SNN_TIE_RULE_VERSION,
+    fine_output_selector_version: SNN_FINE_OUTPUT_SELECTOR_VERSION,
     implementation_source: SNN_SOURCE,
 };
 
 const HDBSCAN_CONTRACT: AlgorithmContract = AlgorithmContract {
     version: HDBSCAN_ALGORITHM_VERSION,
     tie_rule_version: HDBSCAN_TIE_RULE_VERSION,
+    fine_output_selector_version: HDBSCAN_FINE_OUTPUT_SELECTOR_VERSION,
     implementation_source: HDBSCAN_SOURCE,
 };
 
@@ -60,9 +69,7 @@ pub enum CandidateArtifactError {
     #[error("fine-region candidate artifact invariant failed: {0}")]
     Invariant(String),
     #[error(transparent)]
-    Snn(#[from] SnnError),
-    #[error(transparent)]
-    Hdbscan(#[from] HdbscanError),
+    Candidate(#[from] FineRegionCandidateError),
     #[error("fine-region candidate artifact serialization failed: {0}")]
     Serialization(#[from] serde_json::Error),
 }
@@ -73,47 +80,60 @@ pub enum CandidateArtifactError {
 pub struct CandidateArtifactManifest<Parameters> {
     pub schema_version: u32,
     pub algorithm_version: String,
-    /// SHA-256 of the exact Rust algorithm module compiled into this build.
-    pub implementation_source_sha256: String,
+    pub input_contract_version: String,
+    pub fine_output_selector_version: String,
+    /// SHA-256 of the exact shared adapter module compiled into this build.
+    pub adapter_implementation_source_sha256: String,
+    /// SHA-256 of the exact algorithm core compiled into this build.
+    pub algorithm_implementation_source_sha256: String,
+    /// SHA-256 of the exact normalization and cosine implementation compiled
+    /// into this build.
+    pub preprocessing_implementation_source_sha256: String,
     pub source_vector_manifest_sha256: String,
     pub normalized_vector_sha256: String,
-    /// SHA-256 of the compact JSON array of opaque IDs in supplied order.
-    pub ordered_vector_ids_sha256: String,
+    /// SHA-256 over canonical opaque IDs and each coordinate's IEEE-754 bits.
+    pub canonical_input_sha256: String,
     pub vector_count: usize,
+    pub unique_vector_count: usize,
     pub parameters: Parameters,
+    /// SHA-256 of the exact canonical configuration JSON bytes.
+    pub configuration_sha256: String,
     pub tie_rule_version: String,
-    /// SHA-256 of the compact JSON encoding of the complete production result.
+    /// SHA-256 of the compact JSON encoding of the complete adapter run.
     pub result_sha256: String,
+    /// SHA-256 of the exact canonical selected-output JSON bytes.
+    pub fine_output_sha256: String,
 }
 
-/// A complete candidate result plus the identities and manifest that bind it.
+/// A complete adapter result plus the canonical input identities and manifest
+/// that bind it.
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 #[serde(deny_unknown_fields)]
-pub struct CandidateArtifact<Parameters, AlgorithmResult> {
+pub struct CandidateArtifact<Parameters, CandidateRun> {
     pub manifest: CandidateArtifactManifest<Parameters>,
-    pub ordered_vector_ids: Vec<String>,
-    pub result: AlgorithmResult,
+    pub canonical_input_ids: Vec<String>,
+    /// Exact compact UTF-8 JSON for the algorithm configuration, with no
+    /// trailing newline.
+    pub canonical_configuration_json: String,
+    /// Exact compact UTF-8 JSON selected for semantic scoring, with no
+    /// trailing newline.
+    pub canonical_fine_output_json: String,
+    pub result: CandidateRun,
 }
 
-pub type SnnCandidateArtifact = CandidateArtifact<SnnConfig, SnnSegmentation>;
-pub type HdbscanCandidateArtifact = CandidateArtifact<HdbscanConfig, HdbscanResult>;
+pub type SnnCandidateArtifact = CandidateArtifact<SnnConfig, SnnCandidateRun>;
+pub type HdbscanCandidateArtifact = CandidateArtifact<HdbscanConfig, HdbscanCandidateRun>;
 
 pub fn build_snn_candidate_artifact(
-    cosines: &CosineMatrix,
-    ordered_vector_ids: &[String],
+    inputs: &[FineRegionCandidateInput],
     source_vector_manifest_sha256: &str,
     normalized_vector_sha256: &str,
     config: &SnnConfig,
 ) -> Result<SnnCandidateArtifact> {
-    validate_inputs(
-        cosines,
-        ordered_vector_ids,
-        source_vector_manifest_sha256,
-        normalized_vector_sha256,
-    )?;
-    let result = snn_segmentation(cosines, config)?;
+    validate_source_hashes(source_vector_manifest_sha256, normalized_vector_sha256)?;
+    let result = run_snn_candidate(inputs, config)?;
     assemble_artifact(
-        ordered_vector_ids,
+        inputs,
         source_vector_manifest_sha256,
         normalized_vector_sha256,
         config.clone(),
@@ -124,21 +144,19 @@ pub fn build_snn_candidate_artifact(
 
 pub fn verify_snn_candidate_artifact(
     artifact: &SnnCandidateArtifact,
-    cosines: &CosineMatrix,
-    ordered_vector_ids: &[String],
+    inputs: &[FineRegionCandidateInput],
     source_vector_manifest_sha256: &str,
     normalized_vector_sha256: &str,
     config: &SnnConfig,
 ) -> Result<()> {
-    validate_retained_artifact(artifact, cosines.count(), SNN_CONTRACT)?;
-    if artifact.manifest.parameters != artifact.result.config {
+    validate_retained_artifact(artifact, SNN_CONTRACT)?;
+    if artifact.manifest.parameters != artifact.result.algorithm_result.config {
         return Err(invalid(
             "SNN manifest parameters differ from the retained production result",
         ));
     }
     let expected = build_snn_candidate_artifact(
-        cosines,
-        ordered_vector_ids,
+        inputs,
         source_vector_manifest_sha256,
         normalized_vector_sha256,
         config,
@@ -147,21 +165,15 @@ pub fn verify_snn_candidate_artifact(
 }
 
 pub fn build_hdbscan_candidate_artifact(
-    cosines: &CosineMatrix,
-    ordered_vector_ids: &[String],
+    inputs: &[FineRegionCandidateInput],
     source_vector_manifest_sha256: &str,
     normalized_vector_sha256: &str,
     config: &HdbscanConfig,
 ) -> Result<HdbscanCandidateArtifact> {
-    validate_inputs(
-        cosines,
-        ordered_vector_ids,
-        source_vector_manifest_sha256,
-        normalized_vector_sha256,
-    )?;
-    let result = hdbscan(cosines, *config)?;
+    validate_source_hashes(source_vector_manifest_sha256, normalized_vector_sha256)?;
+    let result = run_hdbscan_candidate(inputs, *config)?;
     assemble_artifact(
-        ordered_vector_ids,
+        inputs,
         source_vector_manifest_sha256,
         normalized_vector_sha256,
         *config,
@@ -172,21 +184,19 @@ pub fn build_hdbscan_candidate_artifact(
 
 pub fn verify_hdbscan_candidate_artifact(
     artifact: &HdbscanCandidateArtifact,
-    cosines: &CosineMatrix,
-    ordered_vector_ids: &[String],
+    inputs: &[FineRegionCandidateInput],
     source_vector_manifest_sha256: &str,
     normalized_vector_sha256: &str,
     config: &HdbscanConfig,
 ) -> Result<()> {
-    validate_retained_artifact(artifact, cosines.count(), HDBSCAN_CONTRACT)?;
-    if artifact.manifest.parameters != artifact.result.config {
+    validate_retained_artifact(artifact, HDBSCAN_CONTRACT)?;
+    if artifact.manifest.parameters != artifact.result.algorithm_result.config {
         return Err(invalid(
             "HDBSCAN* manifest parameters differ from the retained production result",
         ));
     }
     let expected = build_hdbscan_candidate_artifact(
-        cosines,
-        ordered_vector_ids,
+        inputs,
         source_vector_manifest_sha256,
         normalized_vector_sha256,
         config,
@@ -194,82 +204,119 @@ pub fn verify_hdbscan_candidate_artifact(
     require_recomputed_match(artifact, &expected)
 }
 
-fn assemble_artifact<Parameters, AlgorithmResult>(
-    ordered_vector_ids: &[String],
+fn assemble_artifact<Parameters, CandidateRun>(
+    inputs: &[FineRegionCandidateInput],
     source_vector_manifest_sha256: &str,
     normalized_vector_sha256: &str,
     parameters: Parameters,
-    result: AlgorithmResult,
+    result: CandidateRun,
     contract: AlgorithmContract,
-) -> Result<CandidateArtifact<Parameters, AlgorithmResult>>
+) -> Result<CandidateArtifact<Parameters, CandidateRun>>
 where
     Parameters: Serialize,
-    AlgorithmResult: Serialize,
+    CandidateRun: CandidateRunContract + Serialize,
 {
+    let mut canonical_inputs = inputs.iter().collect::<Vec<_>>();
+    canonical_inputs.sort_by(|left, right| left.opaque_id.cmp(&right.opaque_id));
+    let canonical_input_ids = canonical_inputs
+        .iter()
+        .map(|input| input.opaque_id.clone())
+        .collect::<Vec<_>>();
+    let canonical_configuration_json = serde_json::to_string(&parameters)?;
+    let canonical_fine_output_json =
+        serde_json::to_string(result.fine_output()).map_err(CandidateArtifactError::from)?;
     let manifest = CandidateArtifactManifest {
         schema_version: CANDIDATE_ARTIFACT_SCHEMA_VERSION,
         algorithm_version: contract.version.to_owned(),
-        implementation_source_sha256: hash_bytes(contract.implementation_source),
+        input_contract_version: CANDIDATE_INPUT_CONTRACT_VERSION.to_owned(),
+        fine_output_selector_version: contract.fine_output_selector_version.to_owned(),
+        adapter_implementation_source_sha256: hash_bytes(CANDIDATE_ADAPTER_SOURCE),
+        algorithm_implementation_source_sha256: hash_bytes(contract.implementation_source),
+        preprocessing_implementation_source_sha256: hash_bytes(PREPROCESSING_SOURCE),
         source_vector_manifest_sha256: source_vector_manifest_sha256.to_owned(),
         normalized_vector_sha256: normalized_vector_sha256.to_owned(),
-        ordered_vector_ids_sha256: hash_serialized(&ordered_vector_ids)?,
-        vector_count: ordered_vector_ids.len(),
+        canonical_input_sha256: hash_canonical_inputs(&canonical_inputs),
+        vector_count: inputs.len(),
+        unique_vector_count: result.unique_vector_count(),
         parameters,
+        configuration_sha256: hash_bytes(canonical_configuration_json.as_bytes()),
         tie_rule_version: contract.tie_rule_version.to_owned(),
         result_sha256: hash_serialized(&result)?,
+        fine_output_sha256: hash_bytes(canonical_fine_output_json.as_bytes()),
     };
     Ok(CandidateArtifact {
         manifest,
-        ordered_vector_ids: ordered_vector_ids.to_vec(),
+        canonical_input_ids,
+        canonical_configuration_json,
+        canonical_fine_output_json,
         result,
     })
 }
 
-fn validate_inputs(
-    cosines: &CosineMatrix,
-    ordered_vector_ids: &[String],
-    source_vector_manifest_sha256: &str,
-    normalized_vector_sha256: &str,
-) -> Result<()> {
-    validate_ordered_ids(ordered_vector_ids, cosines.count())?;
-    validate_sha256(
-        "source vector-manifest SHA-256",
-        source_vector_manifest_sha256,
-    )?;
-    validate_sha256("normalized-vector SHA-256", normalized_vector_sha256)
+trait CandidateRunContract {
+    fn input_contract_version(&self) -> &str;
+    fn fine_output_selector_version(&self) -> &str;
+    fn canonical_unique_ids(&self) -> &[String];
+    fn alias_groups(&self) -> &[Vec<String>];
+    fn fine_output(&self) -> &FineRegionCandidateOutput;
+
+    fn unique_vector_count(&self) -> usize {
+        self.canonical_unique_ids().len()
+    }
 }
 
-fn validate_ordered_ids(ordered_vector_ids: &[String], expected_count: usize) -> Result<()> {
-    if ordered_vector_ids.len() != expected_count {
-        return Err(invalid(format!(
-            "ordered vector-ID count {} does not match cosine-matrix count {expected_count}",
-            ordered_vector_ids.len()
-        )));
+impl<AlgorithmResult> CandidateRunContract for FineRegionCandidateRun<AlgorithmResult> {
+    fn input_contract_version(&self) -> &str {
+        &self.input_contract_version
     }
-    if ordered_vector_ids.iter().any(String::is_empty) {
-        return Err(invalid("ordered vector IDs must each be nonempty"));
+
+    fn fine_output_selector_version(&self) -> &str {
+        &self.fine_output_selector_version
     }
-    let unique = ordered_vector_ids.iter().collect::<BTreeSet<_>>();
-    if unique.len() != ordered_vector_ids.len() {
-        return Err(invalid("ordered vector IDs must be unique"));
+
+    fn canonical_unique_ids(&self) -> &[String] {
+        &self.canonical_unique_ids
     }
-    Ok(())
+
+    fn alias_groups(&self) -> &[Vec<String>] {
+        &self.alias_groups
+    }
+
+    fn fine_output(&self) -> &FineRegionCandidateOutput {
+        &self.fine_output
+    }
 }
 
-fn validate_retained_artifact<Parameters, AlgorithmResult>(
-    artifact: &CandidateArtifact<Parameters, AlgorithmResult>,
-    expected_count: usize,
+fn validate_retained_artifact<Parameters, CandidateRun>(
+    artifact: &CandidateArtifact<Parameters, CandidateRun>,
     contract: AlgorithmContract,
 ) -> Result<()>
 where
     Parameters: Serialize,
-    AlgorithmResult: Serialize,
+    CandidateRun: CandidateRunContract + Serialize,
 {
-    validate_ordered_ids(&artifact.ordered_vector_ids, expected_count)?;
+    validate_canonical_ids(&artifact.canonical_input_ids)?;
     for (name, value) in [
         (
-            "implementation-source SHA-256",
-            artifact.manifest.implementation_source_sha256.as_str(),
+            "adapter-implementation-source SHA-256",
+            artifact
+                .manifest
+                .adapter_implementation_source_sha256
+                .as_str(),
+        ),
+        (
+            "algorithm-implementation-source SHA-256",
+            artifact
+                .manifest
+                .algorithm_implementation_source_sha256
+                .as_str(),
+        ),
+        (
+            "preprocessing-implementation-source SHA-256",
+            artifact
+                .manifest
+                .preprocessing_implementation_source_sha256
+                .as_str(),
         ),
         (
             "source vector-manifest SHA-256",
@@ -280,22 +327,68 @@ where
             artifact.manifest.normalized_vector_sha256.as_str(),
         ),
         (
-            "ordered-vector-ID SHA-256",
-            artifact.manifest.ordered_vector_ids_sha256.as_str(),
+            "canonical-input SHA-256",
+            artifact.manifest.canonical_input_sha256.as_str(),
+        ),
+        (
+            "configuration SHA-256",
+            artifact.manifest.configuration_sha256.as_str(),
         ),
         ("result SHA-256", artifact.manifest.result_sha256.as_str()),
+        (
+            "fine-output SHA-256",
+            artifact.manifest.fine_output_sha256.as_str(),
+        ),
     ] {
         validate_sha256(name, value)?;
     }
+
+    let mut result_ids = artifact
+        .result
+        .alias_groups()
+        .iter()
+        .flatten()
+        .cloned()
+        .collect::<Vec<_>>();
+    result_ids.sort();
+    if result_ids != artifact.canonical_input_ids
+        || artifact.result.alias_groups().len() != artifact.result.canonical_unique_ids().len()
+        || artifact
+            .result
+            .alias_groups()
+            .iter()
+            .zip(artifact.result.canonical_unique_ids())
+            .any(|(aliases, representative)| aliases.first() != Some(representative))
+    {
+        return Err(invalid(
+            "retained alias groups do not match the canonical input identities",
+        ));
+    }
+
     if artifact.manifest.schema_version != CANDIDATE_ARTIFACT_SCHEMA_VERSION
         || artifact.manifest.algorithm_version != contract.version
+        || artifact.manifest.input_contract_version != CANDIDATE_INPUT_CONTRACT_VERSION
+        || artifact.manifest.fine_output_selector_version != contract.fine_output_selector_version
+        || artifact.result.input_contract_version() != CANDIDATE_INPUT_CONTRACT_VERSION
+        || artifact.result.fine_output_selector_version() != contract.fine_output_selector_version
         || artifact.manifest.tie_rule_version != contract.tie_rule_version
-        || artifact.manifest.vector_count != expected_count
-        || artifact.manifest.implementation_source_sha256
+        || artifact.manifest.vector_count != artifact.canonical_input_ids.len()
+        || artifact.manifest.unique_vector_count != artifact.result.unique_vector_count()
+        || artifact.canonical_configuration_json
+            != serde_json::to_string(&artifact.manifest.parameters)?
+        || artifact.manifest.configuration_sha256
+            != hash_bytes(artifact.canonical_configuration_json.as_bytes())
+        || artifact.manifest.adapter_implementation_source_sha256
+            != hash_bytes(CANDIDATE_ADAPTER_SOURCE)
+        || artifact.manifest.algorithm_implementation_source_sha256
             != hash_bytes(contract.implementation_source)
-        || artifact.manifest.ordered_vector_ids_sha256
-            != hash_serialized(&artifact.ordered_vector_ids)?
+        || artifact.manifest.preprocessing_implementation_source_sha256
+            != hash_bytes(PREPROCESSING_SOURCE)
         || artifact.manifest.result_sha256 != hash_serialized(&artifact.result)?
+        || artifact.canonical_fine_output_json
+            != serde_json::to_string(artifact.result.fine_output())?
+        || artifact.manifest.fine_output_sha256
+            != hash_bytes(artifact.canonical_fine_output_json.as_bytes())
     {
         return Err(invalid(
             "retained artifact metadata does not match deterministic recomputation",
@@ -304,13 +397,61 @@ where
     Ok(())
 }
 
-fn require_recomputed_match<Parameters, AlgorithmResult>(
-    artifact: &CandidateArtifact<Parameters, AlgorithmResult>,
-    expected: &CandidateArtifact<Parameters, AlgorithmResult>,
+fn validate_source_hashes(
+    source_vector_manifest_sha256: &str,
+    normalized_vector_sha256: &str,
+) -> Result<()> {
+    validate_sha256(
+        "source vector-manifest SHA-256",
+        source_vector_manifest_sha256,
+    )?;
+    validate_sha256("normalized-vector SHA-256", normalized_vector_sha256)
+}
+
+fn validate_canonical_ids(ids: &[String]) -> Result<()> {
+    if ids.iter().any(|id| {
+        id.len() != 64
+            || !id
+                .bytes()
+                .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+    }) {
+        return Err(invalid(
+            "canonical input IDs must contain exactly 64 lowercase hexadecimal characters",
+        ));
+    }
+    if ids.windows(2).any(|pair| pair[0] >= pair[1]) {
+        return Err(invalid(
+            "canonical input IDs must be unique and strictly increasing",
+        ));
+    }
+    Ok(())
+}
+
+fn hash_canonical_inputs(canonical_inputs: &[&FineRegionCandidateInput]) -> String {
+    let coordinate_count = canonical_inputs
+        .iter()
+        .map(|input| input.normalized_vector.len())
+        .sum::<usize>();
+    let mut bytes =
+        Vec::with_capacity(35 + canonical_inputs.len() * 72 + coordinate_count.saturating_mul(8));
+    bytes.extend_from_slice(b"fine-region-candidate-input-v1\0");
+    for input in canonical_inputs {
+        bytes.extend_from_slice(input.opaque_id.as_bytes());
+        bytes.extend_from_slice(&(input.normalized_vector.len() as u64).to_be_bytes());
+        for coordinate in &input.normalized_vector {
+            bytes.extend_from_slice(&coordinate.to_bits().to_be_bytes());
+        }
+    }
+    hash_bytes(&bytes)
+}
+
+fn require_recomputed_match<Parameters, CandidateRun>(
+    artifact: &CandidateArtifact<Parameters, CandidateRun>,
+    expected: &CandidateArtifact<Parameters, CandidateRun>,
 ) -> Result<()>
 where
     Parameters: PartialEq,
-    AlgorithmResult: PartialEq,
+    CandidateRun: PartialEq,
 {
     if artifact != expected {
         return Err(invalid(

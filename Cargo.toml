@@ -95,6 +95,10 @@ path = "src/bin/materialize_semantic_map_input.rs"
 name = "scaled-fine-segments"
 path = "src/bin/scaled_fine_segments.rs"
 
+[[bin]]
+name = "fine-segmentation-candidate"
+path = "src/bin/fine_segmentation_candidate.rs"
+
 [dependencies]
 bech32 = "=0.11.1"
 crossterm = "=0.29.0"

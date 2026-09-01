@@ -37,6 +37,9 @@ class DeterministicEncoder:
                         selected_token_indices=tuple(
                             range(1, len(subject.byte_spans) + 1)
                         ),
+                        selected_token_ids=tuple(
+                            range(101, 101 + len(subject.byte_spans))
+                        ),
                         token_count=max(2, len(note.text)),
                     )
                 )
@@ -142,19 +145,15 @@ class WorkerTests(unittest.TestCase):
                     checkpoint_path.read_bytes()
                 ).hexdigest(),
                 "base_model_artifact_path": str(tokenizer),
-                "base_model_artifact_tree_sha256": canonical_tree_sha256(
-                    tokenizer
-                ),
+                "base_model_artifact_tree_sha256": canonical_tree_sha256(tokenizer),
                 "model": {
                     "base_model": "fixture/sentence-encoder",
                     "dimensions": 3,
                     "maximum_tokens": 512,
-                    "pooling": (
-                        "selected-contextual-token-mean-linear-relu-linear-v1"
-                    ),
+                    "pooling": ("selected-contextual-token-mean-linear-relu-linear-v1"),
                 },
                 "device": "cpu",
-                "container_image": "fixture/sse@sha256:" + ("ef" * 32),
+                "container_image": "sha256:" + ("ef" * 32),
                 "note_batch_size": 2,
                 "output_path": str(output),
             }
@@ -171,9 +170,7 @@ class WorkerTests(unittest.TestCase):
             self.assertEqual(2, len(encoder.calls[0]))
             self.assertEqual(3, report.row_count)
             self.assertEqual(3, report.dimensions)
-            values = struct.unpack(
-                "<9f", (output / "raw-vectors.f32le").read_bytes()
-            )
+            values = struct.unpack("<9f", (output / "raw-vectors.f32le").read_bytes())
             self.assertTrue(all(math.isfinite(value) for value in values))
             self.assertEqual(
                 (
@@ -194,13 +191,15 @@ class WorkerTests(unittest.TestCase):
                 ["0000000000000001", "0000000000000002", "0000000000000003"],
                 [row["subject_id"] for row in receipt["rows"]],
             )
-            self.assertEqual([23, 23, 17], [
-                row["token_count"] for row in receipt["rows"]
-            ])
             self.assertEqual(
-                hashlib.sha256(
-                    (output / "raw-vectors.f32le").read_bytes()
-                ).hexdigest(),
+                [23, 23, 17], [row["token_count"] for row in receipt["rows"]]
+            )
+            self.assertEqual(
+                [[101], [101], [101]],
+                [row["selected_token_ids"] for row in receipt["rows"]],
+            )
+            self.assertEqual(
+                hashlib.sha256((output / "raw-vectors.f32le").read_bytes()).hexdigest(),
                 receipt["files"]["raw-vectors.f32le"]["sha256"],
             )
             self.assertEqual(
@@ -208,7 +207,7 @@ class WorkerTests(unittest.TestCase):
                 receipt["request_sha256"],
             )
             self.assertEqual(
-                "fixture/sse@sha256:" + ("ef" * 32),
+                "sha256:" + ("ef" * 32),
                 receipt["container_image"],
             )
 
@@ -251,16 +250,12 @@ class WorkerTests(unittest.TestCase):
                     checkpoint.read_bytes()
                 ).hexdigest(),
                 "base_model_artifact_path": str(tokenizer),
-                "base_model_artifact_tree_sha256": canonical_tree_sha256(
-                    tokenizer
-                ),
+                "base_model_artifact_tree_sha256": canonical_tree_sha256(tokenizer),
                 "model": {
                     "base_model": "fixture/sentence-encoder",
                     "dimensions": 3,
                     "maximum_tokens": 512,
-                    "pooling": (
-                        "selected-contextual-token-mean-linear-relu-linear-v1"
-                    ),
+                    "pooling": ("selected-contextual-token-mean-linear-relu-linear-v1"),
                 },
                 "device": "cpu",
                 "container_image": "fixture/sse@sha256:" + ("ef" * 32),
@@ -274,9 +269,7 @@ class WorkerTests(unittest.TestCase):
                 "sse_multivector.worker.OfficialSseEncoder",
                 return_value=DeterministicEncoder(),
             ):
-                with self.assertRaisesRegex(
-                    ValueError, "unexpected field.*label"
-                ):
+                with self.assertRaisesRegex(ValueError, "unexpected field.*label"):
                     run_worker(config_path)
 
 
