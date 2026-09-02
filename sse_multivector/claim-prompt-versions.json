@@ -1,0 +1,4 @@
+{
+  "frozen_claim_prompt_version": "CPv1",
+  "CPv1": "Given the following text, tell me what claims it makes. Split the text as much as possible without adding information.\n\nEach claim must express its complete meaning without depending on any other claim in the output. When a claim refers to an event, action, or situation expressed by another claim, restate the necessary meaning inside that claim.\n\nExample text:\nThe Alder Observatory in Flagstaff, Arizona, reopened its public telescope. This delighted local students.\n\nExample output:\n{\"claims\":[\"The Alder Observatory is in Flagstaff.\",\"Flagstaff is in Arizona.\",\"The Alder Observatory reopened its public telescope.\",\"The reopening of the Alder Observatory’s public telescope delighted local students.\"]}\n\nReturn only a JSON object with a `claims` array of strings."
+}

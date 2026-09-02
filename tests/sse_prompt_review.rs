@@ -12,8 +12,8 @@ use oracle_mvp::sse_mask_review::{
     AtomicSubjectCoverageDecision, AtomicSubjectDistinctnessDecision,
     AtomicSubjectNoteReviewAction, AtomicSubjectNoteReviewRunOutcome,
     AtomicSubjectNoteReviewTuiModel, AtomicSubjectNoteReviewUi, PromptReviewCounts,
-    PromptReviewRunOutcome, PromptReviewScreen, PromptReviewUi, run_atomic_subject_note_review,
-    run_atomic_subject_prompt_review,
+    PromptReviewKind, PromptReviewRunOutcome, PromptReviewScreen, PromptReviewUi,
+    run_atomic_subject_note_review, run_atomic_subject_prompt_review, run_claim_note_review,
 };
 use ratatui::Terminal;
 use ratatui::backend::TestBackend;
@@ -24,6 +24,9 @@ const SUBJECT_PROMPT: &str = "Candidate atomic-subject prompt.";
 const CODEX_VERSION: &str = "codex-cli test-version";
 const SUBJECT_SCHEMA_SHA256: &str =
     "ffa0aa2d4a52a1b30f41f0a1761e455471a5127c0e20d74aaeea575a0df2226a";
+const CLAIM_PROMPT: &str = "Candidate claim prompt.";
+const CLAIM_SCHEMA_SHA256: &str =
+    "1365a3d239f08657226fb771b8e7db48974882b8d580005de6e651d288be53a3";
 const FIXTURE_NIP19: &str = "nostr:npub1qqqqqqqqqqqqqqqqqqqq?relay=test";
 const FIXTURE_QUERY_NIP19: &str = "npub1qqqqqqqqqqqqqqqqqqqq?relay=x";
 const FIXTURE_COMBINING_BOUNDARY_NIP19: &str = "npub1pppppppppppppppppppp";
@@ -298,6 +301,131 @@ fn default_output_notes() -> Value {
             ]
         }
     ])
+}
+
+struct ClaimFixture {
+    _temporary: tempfile::TempDir,
+    run_directory: PathBuf,
+    session_path: PathBuf,
+}
+
+impl ClaimFixture {
+    fn new() -> Self {
+        let temporary = tempfile::tempdir().expect("create claim fixture directory");
+        let run_directory = temporary.path().join("generation");
+        fs::create_dir(&run_directory).expect("create claim run directory");
+        let input_path = temporary.path().join("notes.json");
+        let note_id = format!("{:064x}", 31);
+        let note =
+            "Balance Matter is a talk show on Magic 102.7, and it is a real thought provoker.";
+        write_json(
+            &input_path,
+            &json!({
+                "schema_version": 1,
+                "notes": [{"note_id": note_id, "text": note}]
+            }),
+        );
+        let registry_path = temporary.path().join("claim-prompts.json");
+        write_json(&registry_path, &json!({"CP-test": CLAIM_PROMPT}));
+        let wrapper_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("sse_multivector")
+            .join("claim_exec.py");
+        let engine_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("sse_multivector")
+            .join("codex_exec.py");
+        write_json(
+            &run_directory.join("manifest.json"),
+            &json!({
+                "schema_version": 1,
+                "mode": "claim_generation",
+                "wrapper_sha256": sha256(&fs::read(wrapper_path).expect("read claim wrapper")),
+                "engine_sha256": sha256(&fs::read(engine_path).expect("read shared engine")),
+                "codex_binary": "/test/codex",
+                "codex_version": CODEX_VERSION,
+                "codex_home": "/test/codex-home",
+                "input_path": input_path,
+                "input_sha256": sha256(&fs::read(&input_path).expect("read claim input")),
+                "claim_envelope_version": "exact-note-text-v1",
+                "claim_input_normalization_version": "none-v1",
+                "claim": {
+                    "prompt_registry_path": registry_path,
+                    "prompt_registry_sha256": sha256(&fs::read(&registry_path).expect("read claim registry")),
+                    "prompt_version": "CP-test",
+                    "prompt": CLAIM_PROMPT,
+                    "prompt_sha256": sha256(CLAIM_PROMPT.as_bytes()),
+                    "model": "candidate-claim-model",
+                    "reasoning_effort": "low",
+                    "response_schema": claim_schema(),
+                    "response_schema_sha256": CLAIM_SCHEMA_SHA256
+                },
+                "isolation": isolation_contract()
+            }),
+        );
+        let manifest_path = run_directory.join("manifest.json");
+        let manifest = read_json(&manifest_path);
+        let manifest_sha256 = sha256(&fs::read(&manifest_path).expect("read claim manifest"));
+        let claims = json!([
+            {"source_index": 0, "text": "Balance Matter is a talk show."},
+            {"source_index": 1, "text": "Balance Matter airs on Magic 102.7."},
+            {"source_index": 2, "text": "Balance Matter is a real thought provoker."}
+        ]);
+        write_json(
+            &run_directory.join("output.json"),
+            &json!({
+                "schema_version": 1,
+                "manifest_sha256": manifest_sha256,
+                "notes": [{"note_id": note_id, "text": note, "claims": claims}]
+            }),
+        );
+        let response = claims
+            .as_array()
+            .expect("claim array")
+            .iter()
+            .map(|claim| claim["text"].clone())
+            .collect::<Vec<_>>();
+        let final_output_raw = json!({"claims": response}).to_string();
+        let rendered_prompt = format!("{CLAIM_PROMPT}\n\nText:\n{note}");
+        write_json_lines(
+            &run_directory.join("results.jsonl"),
+            &[json!({
+                "schema_version": 1,
+                "manifest_sha256": manifest_sha256,
+                "job_key": format!("claim:{note_id}"),
+                "stage": "claim",
+                "note_id": note_id,
+                "attempt": 1,
+                "status": "succeeded",
+                "wrapper_sha256": manifest["wrapper_sha256"],
+                "codex_version": manifest["codex_version"],
+                "model": manifest["claim"]["model"],
+                "reasoning_effort": manifest["claim"]["reasoning_effort"],
+                "prompt_sha256": sha256(rendered_prompt.as_bytes()),
+                "response_schema_sha256": manifest["claim"]["response_schema_sha256"],
+                "final_output_raw": final_output_raw,
+                "final_output_sha256": sha256(final_output_raw.as_bytes()),
+                "response": response
+            })],
+        );
+        Self {
+            session_path: temporary.path().join("claim-review-session.json"),
+            _temporary: temporary,
+            run_directory,
+        }
+    }
+}
+
+fn claim_schema() -> Value {
+    json!({
+        "type": "object",
+        "properties": {
+            "claims": {
+                "type": "array",
+                "items": {"type": "string", "minLength": 1}
+            }
+        },
+        "required": ["claims"],
+        "additionalProperties": false
+    })
 }
 
 struct ScriptedUi {
@@ -802,6 +930,104 @@ impl AtomicSubjectNoteReviewUi for ScriptedNoteUi {
             .pop_front()
             .expect("one action per note-workspace iteration"))
     }
+}
+
+#[test]
+fn claim_review_uses_claim_artifacts_and_claim_questions() {
+    let fixture = ClaimFixture::new();
+    let mut ui = ScriptedNoteUi::new([AtomicSubjectNoteReviewAction::Pause]);
+
+    let outcome = run_claim_note_review(&fixture.run_directory, &fixture.session_path, &mut ui)
+        .expect("open claim review");
+
+    assert_eq!(outcome, AtomicSubjectNoteReviewRunOutcome::Paused);
+    let screen = &ui.screens[0];
+    assert_eq!(screen.kind, PromptReviewKind::Claim);
+    assert_eq!(
+        screen
+            .subjects
+            .iter()
+            .map(|claim| claim.label.as_str())
+            .collect::<Vec<_>>(),
+        [
+            "Balance Matter is a talk show.",
+            "Balance Matter airs on Magic 102.7.",
+            "Balance Matter is a real thought provoker.",
+        ]
+    );
+
+    let mut model = AtomicSubjectNoteReviewTuiModel::new(screen.clone());
+    let backend = TestBackend::new(72, 24);
+    let mut terminal = Terminal::new(backend).expect("claim review terminal");
+    terminal
+        .draw(|frame| model.render(frame))
+        .expect("render claim row");
+    let rendered = rendered_terminal(&terminal);
+    assert!(
+        rendered.contains(
+            "Is this one self-contained claim made by the note without added information?"
+        ),
+        "{rendered}"
+    );
+    assert!(!rendered.contains("subject"), "{rendered}");
+
+    for _ in 0..screen.subjects.len() {
+        assert_eq!(
+            model.handle_event(key(KeyCode::Down)),
+            AtomicSubjectNoteReviewAction::None
+        );
+    }
+    terminal
+        .draw(|frame| model.render(frame))
+        .expect("render claim coverage row");
+    let rendered = rendered_terminal(&terminal);
+    assert!(
+        rendered.contains("Do the approved claims include every claim made by the note?"),
+        "{rendered}"
+    );
+
+    assert_eq!(
+        model.handle_event(key(KeyCode::Down)),
+        AtomicSubjectNoteReviewAction::None
+    );
+    terminal
+        .draw(|frame| model.render(frame))
+        .expect("render claim distinctness row");
+    let rendered = rendered_terminal(&terminal);
+    assert!(
+        rendered.contains("Do the approved claims express different claims?"),
+        "{rendered}"
+    );
+
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('?'))),
+        AtomicSubjectNoteReviewAction::None
+    );
+    terminal
+        .draw(|frame| model.render(frame))
+        .expect("render claim help");
+    let rendered = rendered_terminal(&terminal);
+    assert!(rendered.contains("Claim review help"), "{rendered}");
+    assert!(rendered.contains("another proposed claim"), "{rendered}");
+    assert!(!rendered.contains("subject"), "{rendered}");
+
+    let session = read_session(&fixture.session_path);
+    assert_eq!(session["review_protocol"], "claim-review-v1");
+    assert!(session["notes"][0].get("claims").is_some());
+    assert!(session["notes"][0].get("subjects").is_none());
+}
+
+fn rendered_terminal(terminal: &Terminal<TestBackend>) -> String {
+    terminal
+        .backend()
+        .buffer()
+        .content()
+        .iter()
+        .map(|cell| cell.symbol())
+        .collect::<String>()
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
 #[test]

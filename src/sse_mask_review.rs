@@ -201,6 +201,7 @@ pub struct VerifiedSubjectMaskProposal {
 
 #[derive(Clone, Debug)]
 struct VerifiedAtomicSubjectReviewRun {
+    kind: PromptReviewKind,
     identity_sha256: String,
     items: Vec<VerifiedPromptReviewItem>,
 }
@@ -254,6 +255,24 @@ struct AtomicSubjectGenerationManifest {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
+struct ClaimGenerationManifest {
+    schema_version: u32,
+    mode: String,
+    wrapper_sha256: String,
+    engine_sha256: String,
+    codex_binary: String,
+    codex_version: String,
+    codex_home: String,
+    input_path: String,
+    input_sha256: String,
+    claim_envelope_version: String,
+    claim_input_normalization_version: String,
+    claim: PromptGenerationStage,
+    isolation: serde_json::Value,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct PromptGenerationInput {
     schema_version: u32,
     notes: Vec<PromptGenerationInputNote>,
@@ -285,6 +304,29 @@ struct AtomicSubjectGenerationOutputNote {
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AtomicSubjectGenerationOutputSubject {
+    source_index: usize,
+    text: String,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ClaimGenerationOutput {
+    schema_version: u32,
+    manifest_sha256: String,
+    notes: Vec<ClaimGenerationOutputNote>,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ClaimGenerationOutputNote {
+    note_id: String,
+    text: String,
+    claims: Vec<ClaimGenerationOutputClaim>,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ClaimGenerationOutputClaim {
     source_index: usize,
     text: String,
 }
@@ -514,6 +556,7 @@ pub struct AtomicSubjectNoteReviewChoice {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AtomicSubjectNoteReviewScreen {
+    pub kind: PromptReviewKind,
     pub note_index: usize,
     pub note_count: usize,
     pub note: String,
@@ -528,6 +571,28 @@ pub struct AtomicSubjectNoteReviewScreen {
     pub decided_review_count: usize,
     pub total_review_count: usize,
     pub prior_combined_check: Option<String>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum PromptReviewKind {
+    AtomicSubject,
+    Claim,
+}
+
+impl PromptReviewKind {
+    fn note_review_protocol(self) -> &'static str {
+        match self {
+            Self::AtomicSubject => ATOMIC_SUBJECT_NOTE_REVIEW_PROTOCOL,
+            Self::Claim => CLAIM_NOTE_REVIEW_PROTOCOL,
+        }
+    }
+
+    fn list_item_prefix(self) -> &'static str {
+        match self {
+            Self::AtomicSubject => "subject-list:",
+            Self::Claim => "claim-list:",
+        }
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -628,6 +693,16 @@ pub enum AtomicSubjectNoteReviewRunOutcome {
         subjects: PromptReviewCounts,
         notes_missing_subjects: usize,
         notes_with_repeated_subjects: usize,
+    },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum ClaimNoteReviewRunOutcome {
+    Paused,
+    Completed {
+        claims: PromptReviewCounts,
+        notes_missing_claims: usize,
+        notes_with_repeated_claims: usize,
     },
 }
 
@@ -751,6 +826,32 @@ struct AtomicSubjectNoteReviewSession {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
+struct ClaimNoteReviewState {
+    note_id: String,
+    list_item_id: String,
+    list_item_sha256: String,
+    claims: Vec<AtomicSubjectNoteReviewSubjectState>,
+    coverage: Option<AtomicSubjectCoverageDecision>,
+    coverage_comment: String,
+    distinctness: Option<AtomicSubjectDistinctnessDecision>,
+    distinctness_comment: String,
+    prior_combined_check: Option<PriorCombinedPromptReviewCheck>,
+    selected_index: usize,
+    finished: bool,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
+struct ClaimNoteReviewSession {
+    schema_version: u32,
+    review_protocol: String,
+    generation_run_sha256: String,
+    current_note_index: usize,
+    notes: Vec<ClaimNoteReviewState>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(untagged)]
 enum StoredAtomicSubjectNoteReviewSession {
     V2(AtomicSubjectNoteReviewSession),
@@ -761,8 +862,12 @@ const PROMPT_REVIEW_SESSION_SCHEMA_VERSION: u32 = 1;
 const PROMPT_REVIEW_PROTOCOL: &str = "atomic-subject-review-v1";
 const ATOMIC_SUBJECT_NOTE_REVIEW_SESSION_SCHEMA_VERSION: u32 = 2;
 const ATOMIC_SUBJECT_NOTE_REVIEW_PROTOCOL: &str = "atomic-subject-review-v2";
+const CLAIM_NOTE_REVIEW_SESSION_SCHEMA_VERSION: u32 = 1;
+const CLAIM_NOTE_REVIEW_PROTOCOL: &str = "claim-review-v1";
 const SUBJECT_RESPONSE_SCHEMA_SHA256: &str =
     "ffa0aa2d4a52a1b30f41f0a1761e455471a5127c0e20d74aaeea575a0df2226a";
+const CLAIM_RESPONSE_SCHEMA_SHA256: &str =
+    "1365a3d239f08657226fb771b8e7db48974882b8d580005de6e651d288be53a3";
 
 pub fn load_verified_subject_mask_proposal(
     proposal_path: impl AsRef<Path>,
@@ -1163,6 +1268,167 @@ fn load_verified_atomic_subject_review_run(
         ));
     }
     Ok(VerifiedAtomicSubjectReviewRun {
+        kind: PromptReviewKind::AtomicSubject,
+        identity_sha256,
+        items,
+    })
+}
+
+fn load_verified_claim_review_run(run_directory: &Path) -> Result<VerifiedAtomicSubjectReviewRun> {
+    if run_directory.join("runner-upgrades.jsonl").exists() {
+        return invalid("claim review requires a fresh generation run without runner upgrades");
+    }
+    let manifest_path = run_directory.join("manifest.json");
+    let (manifest, manifest_sha256): (ClaimGenerationManifest, String) =
+        load_json_snapshot(&manifest_path)?;
+    validate_claim_generation_manifest(&manifest)?;
+
+    let input_path = resolve_relative(&manifest_path, &manifest.input_path);
+    let (input, input_sha256): (PromptGenerationInput, String) = load_json_snapshot(&input_path)?;
+    if input_sha256 != manifest.input_sha256 {
+        return invalid(format!(
+            "claim generation input `{}` does not match its manifest binding",
+            input_path.display()
+        ));
+    }
+    if input.schema_version != 1 || input.notes.is_empty() {
+        return invalid("claim generation input schema or note list is invalid");
+    }
+
+    let output_path = run_directory.join("output.json");
+    let (output, output_sha256): (ClaimGenerationOutput, String) =
+        load_json_snapshot(&output_path)?;
+    if output.schema_version != 1 || output.manifest_sha256 != manifest_sha256 {
+        return invalid("claim generation output does not match its manifest");
+    }
+    if output.notes.len() != input.notes.len() {
+        return invalid("claim generation output does not match its input note count");
+    }
+
+    let results_path = run_directory.join("results.jsonl");
+    let (results_bytes, results_sha256) = load_bytes_snapshot(&results_path)?;
+    let mut results = latest_claim_generation_results(
+        &results_bytes,
+        &results_path,
+        &manifest,
+        &manifest_sha256,
+        &input,
+    )?;
+    let identity_sha256 = value_sha256(&PromptReviewRunIdentity {
+        review_protocol: CLAIM_NOTE_REVIEW_PROTOCOL,
+        manifest_sha256: &manifest_sha256,
+        input_sha256: &input_sha256,
+        results_sha256: &results_sha256,
+        output_sha256: &output_sha256,
+    })?;
+    let claim_count = output.notes.iter().map(|note| note.claims.len()).sum();
+    let mut seen_note_ids = BTreeSet::<String>::new();
+    let mut seen_item_ids = BTreeSet::<String>::new();
+    let mut items = Vec::with_capacity(claim_count + input.notes.len());
+    let mut global_claim_index = 0;
+    for (note_index, (input_note, output_note)) in input.notes.iter().zip(&output.notes).enumerate()
+    {
+        if input_note.note_id.trim().is_empty()
+            || input_note.text.trim().is_empty()
+            || !seen_note_ids.insert(input_note.note_id.clone())
+        {
+            return invalid(format!(
+                "claim generation input note {} has an invalid or duplicate identity",
+                note_index + 1
+            ));
+        }
+        if output_note.note_id != input_note.note_id || output_note.text != input_note.text {
+            return invalid(format!(
+                "claim generation output note {} does not preserve the input note",
+                note_index + 1
+            ));
+        }
+        let labels = output_note
+            .claims
+            .iter()
+            .map(|claim| claim.text.clone())
+            .collect::<Vec<_>>();
+        let claim_key = format!("claim:{}", input_note.note_id);
+        let claim_result = take_generation_result(&mut results, &claim_key)?;
+        let rendered_prompt = render_claim_prompt(&manifest.claim.prompt, &input_note.text);
+        validate_claim_generation_result(
+            &claim_result,
+            &manifest,
+            &manifest_sha256,
+            &claim_key,
+            &input_note.note_id,
+            &rendered_prompt,
+            &serde_json::to_value(&labels).map_err(|source| Error::Manifest {
+                operation: "encode",
+                path: output_path.clone(),
+                source,
+            })?,
+        )?;
+
+        let first_claim_item_index = items.len();
+        for (claim_index, generated) in output_note.claims.iter().enumerate() {
+            if generated.text.trim().is_empty() || generated.source_index != claim_index {
+                return invalid(format!(
+                    "claim generation output note {} has an invalid claim {}",
+                    input_note.note_id,
+                    claim_index + 1
+                ));
+            }
+            let item_id = format!("claim:{}:{claim_index}", input_note.note_id);
+            if !seen_item_ids.insert(item_id.clone()) {
+                return invalid("generated claim review item identities collided");
+            }
+            let item_sha256 = value_sha256(&(
+                identity_sha256.as_str(),
+                "claim",
+                input_note.note_id.as_str(),
+                input_note.text.as_str(),
+                claim_index,
+                generated.text.as_str(),
+            ))?;
+            items.push(VerifiedPromptReviewItem {
+                item_id,
+                item_sha256,
+                presentation: PromptReviewItemPresentation::Subject(atomic_subject_screen(
+                    note_index,
+                    input.notes.len(),
+                    global_claim_index,
+                    claim_count,
+                    &input_note.text,
+                    &generated.text,
+                )),
+            });
+            global_claim_index += 1;
+        }
+        let item_id = format!("claim-list:{}", input_note.note_id);
+        if !seen_item_ids.insert(item_id.clone()) {
+            return invalid("generated claim-list review item identities collided");
+        }
+        let item_sha256 = value_sha256(&(
+            identity_sha256.as_str(),
+            "claim_list",
+            input_note.note_id.as_str(),
+            input_note.text.as_str(),
+            &labels,
+        ))?;
+        items.push(VerifiedPromptReviewItem {
+            item_id,
+            item_sha256,
+            presentation: PromptReviewItemPresentation::SubjectList {
+                note_index,
+                note_count: input.notes.len(),
+                note: input_note.text.clone(),
+                subject_item_indices: (first_claim_item_index..items.len()).collect(),
+            },
+        });
+    }
+    if let Some(unexpected) = results.keys().next() {
+        return invalid(format!(
+            "claim generation ledger contains unexpected latest result `{unexpected}`"
+        ));
+    }
+    Ok(VerifiedAtomicSubjectReviewRun {
+        kind: PromptReviewKind::Claim,
         identity_sha256,
         items,
     })
@@ -1201,6 +1467,36 @@ fn validate_atomic_subject_generation_manifest(
         SUBJECT_RESPONSE_SCHEMA_SHA256,
     )?;
     Ok(())
+}
+
+fn validate_claim_generation_manifest(manifest: &ClaimGenerationManifest) -> Result<()> {
+    if manifest.schema_version != 1 || manifest.mode != "claim_generation" {
+        return invalid("claim review requires a claim generation run");
+    }
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("sse_multivector");
+    let (_, wrapper_sha256) = load_bytes_snapshot(&root.join("claim_exec.py"))?;
+    let (_, engine_sha256) = load_bytes_snapshot(&root.join("codex_exec.py"))?;
+    if !is_lower_hex(&manifest.input_sha256, 64)
+        || manifest.wrapper_sha256 != wrapper_sha256
+        || manifest.engine_sha256 != engine_sha256
+        || manifest.codex_binary.trim().is_empty()
+        || manifest.codex_version.trim().is_empty()
+        || manifest.codex_home.trim().is_empty()
+        || manifest.input_path.trim().is_empty()
+        || manifest.claim_envelope_version != "exact-note-text-v1"
+        || manifest.claim_input_normalization_version != "none-v1"
+    {
+        return invalid("claim generation manifest is incomplete");
+    }
+    if manifest.isolation != expected_prompt_generation_isolation() {
+        return invalid("claim generation did not use a fresh isolated process per job");
+    }
+    validate_prompt_generation_stage(
+        &manifest.claim,
+        "claim",
+        expected_claim_response_schema(),
+        CLAIM_RESPONSE_SCHEMA_SHA256,
+    )
 }
 
 fn validate_prompt_generation_stage(
@@ -1270,6 +1566,20 @@ fn expected_subject_response_schema() -> serde_json::Value {
             }
         },
         "required": ["subjects"],
+        "additionalProperties": false
+    })
+}
+
+fn expected_claim_response_schema() -> serde_json::Value {
+    serde_json::json!({
+        "type": "object",
+        "properties": {
+            "claims": {
+                "type": "array",
+                "items": {"type": "string", "minLength": 1}
+            }
+        },
+        "required": ["claims"],
         "additionalProperties": false
     })
 }
@@ -1392,6 +1702,122 @@ fn latest_prompt_generation_results(
     Ok(latest)
 }
 
+fn latest_claim_generation_results(
+    bytes: &[u8],
+    path: &Path,
+    manifest: &ClaimGenerationManifest,
+    manifest_sha256: &str,
+    input: &PromptGenerationInput,
+) -> Result<BTreeMap<String, PromptGenerationResult>> {
+    let mut note_texts = BTreeMap::<&str, &str>::new();
+    for note in &input.notes {
+        if note.note_id.trim().is_empty()
+            || note.text.trim().is_empty()
+            || note_texts
+                .insert(note.note_id.as_str(), note.text.as_str())
+                .is_some()
+        {
+            return invalid("claim generation input contains an invalid or duplicate note");
+        }
+    }
+    let mut latest = BTreeMap::<String, PromptGenerationResult>::new();
+    let lines = bytes.split(|byte| *byte == b'\n').collect::<Vec<_>>();
+    for (index, line) in lines.iter().enumerate() {
+        if line.is_empty() {
+            if index + 1 == lines.len() && bytes.ends_with(b"\n") {
+                continue;
+            }
+            return invalid(format!(
+                "claim generation result line {} is empty",
+                index + 1
+            ));
+        }
+        let result: PromptGenerationResult =
+            serde_json::from_slice(line).map_err(|source| Error::Manifest {
+                operation: "decode claim generation result from",
+                path: path.to_owned(),
+                source,
+            })?;
+        if result.schema_version != 1
+            || result.manifest_sha256 != manifest_sha256
+            || result.attempt == 0
+            || result.job_key.trim().is_empty()
+        {
+            return invalid(format!(
+                "claim generation result line {} has an invalid identity",
+                index + 1
+            ));
+        }
+        let expected_attempt = latest
+            .get(&result.job_key)
+            .map_or(1, |previous| previous.attempt + 1);
+        if result.attempt != expected_attempt {
+            return invalid(format!(
+                "claim generation result `{}` has a nonconsecutive attempt",
+                result.job_key
+            ));
+        }
+        let Some(note_text) = note_texts.get(result.note_id.as_str()).copied() else {
+            return invalid(format!(
+                "claim generation result `{}` names an unknown note",
+                result.job_key
+            ));
+        };
+        if result.stage != "claim" || result.job_key != format!("claim:{}", result.note_id) {
+            return invalid(format!(
+                "claim generation result `{}` has an invalid claim identity",
+                result.job_key
+            ));
+        }
+        let rendered_prompt = render_claim_prompt(&manifest.claim.prompt, note_text);
+        if result.wrapper_sha256 != manifest.wrapper_sha256
+            || result.codex_version != manifest.codex_version
+            || result.model != manifest.claim.model
+            || result.reasoning_effort != manifest.claim.reasoning_effort
+            || result.prompt_sha256 != sha256_bytes(rendered_prompt.as_bytes())
+            || result.response_schema_sha256 != manifest.claim.response_schema_sha256
+            || !matches!(result.status.as_str(), "succeeded" | "failed")
+        {
+            return invalid(format!(
+                "claim generation result `{}` does not match its rendered prompt or generation contract",
+                result.job_key
+            ));
+        }
+        if result.status == "succeeded" {
+            validate_claim_result_output(&result, &result.response, &result.job_key)?;
+            result
+                .response
+                .as_array()
+                .ok_or_else(|| {
+                    Error::ExperimentState(format!(
+                        "claim generation result `{}` response is not an array",
+                        result.job_key
+                    ))
+                })?
+                .iter()
+                .map(|item| {
+                    item.as_str()
+                        .filter(|value| !value.trim().is_empty())
+                        .map(str::to_owned)
+                        .ok_or_else(|| {
+                            Error::ExperimentState(format!(
+                                "claim generation result `{}` contains an invalid response item",
+                                result.job_key
+                            ))
+                        })
+                })
+                .collect::<Result<Vec<_>>>()?;
+        } else {
+            validate_failed_result_output(&result)?;
+        }
+        latest.insert(result.job_key.clone(), result);
+    }
+    if latest.is_empty() {
+        return invalid("claim generation result ledger is empty");
+    }
+    Ok(latest)
+}
+
 fn validate_failed_result_output(result: &PromptGenerationResult) -> Result<()> {
     if !result.response.is_null() {
         return invalid(format!(
@@ -1455,6 +1881,37 @@ fn validate_generation_result(
     Ok(())
 }
 
+#[allow(clippy::too_many_arguments)]
+fn validate_claim_generation_result(
+    result: &PromptGenerationResult,
+    manifest: &ClaimGenerationManifest,
+    manifest_sha256: &str,
+    job_key: &str,
+    note_id: &str,
+    rendered_prompt: &str,
+    expected_response: &serde_json::Value,
+) -> Result<()> {
+    if result.schema_version != 1
+        || result.manifest_sha256 != manifest_sha256
+        || result.job_key != job_key
+        || result.stage != "claim"
+        || result.note_id != note_id
+        || result.status != "succeeded"
+        || result.wrapper_sha256 != manifest.wrapper_sha256
+        || result.codex_version != manifest.codex_version
+        || result.model != manifest.claim.model
+        || result.reasoning_effort != manifest.claim.reasoning_effort
+        || result.prompt_sha256 != sha256_bytes(rendered_prompt.as_bytes())
+        || result.response_schema_sha256 != manifest.claim.response_schema_sha256
+        || &result.response != expected_response
+    {
+        return invalid(format!(
+            "claim generation output does not match preserved result or rendered prompt `{job_key}`"
+        ));
+    }
+    validate_claim_result_output(result, expected_response, job_key)
+}
+
 fn validate_result_output(
     result: &PromptGenerationResult,
     expected_response: &serde_json::Value,
@@ -1490,11 +1947,49 @@ fn validate_result_output(
     Ok(())
 }
 
+fn validate_claim_result_output(
+    result: &PromptGenerationResult,
+    expected_response: &serde_json::Value,
+    job_key: &str,
+) -> Result<()> {
+    let raw = result.final_output_raw.as_deref().ok_or_else(|| {
+        Error::ExperimentState(format!(
+            "claim generation result `{job_key}` has no final output"
+        ))
+    })?;
+    let expected_sha256 = result.final_output_sha256.as_deref().ok_or_else(|| {
+        Error::ExperimentState(format!(
+            "claim generation result `{job_key}` has no final output hash"
+        ))
+    })?;
+    if sha256_bytes(raw.as_bytes()) != expected_sha256 {
+        return invalid(format!(
+            "claim generation result `{job_key}` has invalid final output provenance"
+        ));
+    }
+    let raw_response: serde_json::Value =
+        serde_json::from_str(raw).map_err(|source| Error::Manifest {
+            operation: "decode claim generation final output from",
+            path: PathBuf::from(job_key),
+            source,
+        })?;
+    if raw_response != serde_json::json!({"claims": expected_response}) {
+        return invalid(format!(
+            "claim generation result `{job_key}` final output does not match its response"
+        ));
+    }
+    Ok(())
+}
+
 fn render_subject_prompt(prompt: &str, note: &str) -> String {
     format!(
         "{prompt}\n\n<post>\n{}\n</post>",
         normalize_subject_input(note)
     )
+}
+
+fn render_claim_prompt(prompt: &str, note: &str) -> String {
+    format!("{prompt}\n\nText:\n{note}")
 }
 fn normalize_subject_input(note: &str) -> String {
     let mut normalized = String::with_capacity(note.len());
@@ -1745,6 +2240,149 @@ pub fn run_atomic_subject_note_review(
     }
 }
 
+pub fn run_claim_note_review(
+    generation_run_directory: impl AsRef<Path>,
+    session_path: impl AsRef<Path>,
+    ui: &mut impl AtomicSubjectNoteReviewUi,
+) -> Result<AtomicSubjectNoteReviewRunOutcome> {
+    let generation_run_directory = generation_run_directory.as_ref();
+    let session_path = session_path.as_ref();
+    let run = load_verified_claim_review_run(generation_run_directory)?;
+    let notes = run.note_review_notes()?;
+    let _lock = acquire_session_lock(session_path)?;
+    let mut session = match load_session::<ClaimNoteReviewSession>(session_path)? {
+        Some(session) => session.into_atomic(),
+        None => AtomicSubjectNoteReviewSession::new(&run, &notes),
+    };
+    session.validate(&run, &notes)?;
+    save_claim_note_review_session(session_path, &session)?;
+
+    let mut model = AtomicSubjectNoteReviewTuiModel::new(session.screen(&notes)?);
+    let mut drain_stale_input = true;
+    loop {
+        let action = ui
+            .review_note(&mut model, drain_stale_input)
+            .map_err(|source| {
+                io_error(
+                    "run SSE claim note review UI for",
+                    generation_run_directory,
+                    source,
+                )
+            })?;
+        drain_stale_input = false;
+        session.set_selected_index(model.selected_index())?;
+        match action {
+            AtomicSubjectNoteReviewAction::None => {
+                return invalid("claim note review UI returned without an action");
+            }
+            AtomicSubjectNoteReviewAction::Pause => {
+                save_claim_note_review_session(session_path, &session)?;
+                return Ok(if session.all_finished() {
+                    session.completed_outcome()
+                } else {
+                    AtomicSubjectNoteReviewRunOutcome::Paused
+                });
+            }
+            AtomicSubjectNoteReviewAction::DecideSubject {
+                subject_index,
+                outcome,
+            } => session.decide_subject(subject_index, outcome)?,
+            AtomicSubjectNoteReviewAction::ClearSubject { subject_index } => {
+                session.clear_subject(subject_index)?
+            }
+            AtomicSubjectNoteReviewAction::SaveSubjectComment {
+                subject_index,
+                comment,
+            } => session.save_subject_comment(subject_index, comment)?,
+            AtomicSubjectNoteReviewAction::DecideCoverage { decision } => {
+                session.decide_coverage(decision)?
+            }
+            AtomicSubjectNoteReviewAction::ClearCoverage => session.clear_coverage()?,
+            AtomicSubjectNoteReviewAction::SaveCoverageComment { comment } => {
+                session.save_coverage_comment(comment)?
+            }
+            AtomicSubjectNoteReviewAction::DecideDistinctness { decision } => {
+                session.decide_distinctness(decision)?
+            }
+            AtomicSubjectNoteReviewAction::ClearDistinctness => session.clear_distinctness()?,
+            AtomicSubjectNoteReviewAction::SaveDistinctnessComment { comment } => {
+                session.save_distinctness_comment(comment)?
+            }
+            AtomicSubjectNoteReviewAction::FinishNote => {
+                session.finish_current_note()?;
+                if !session.all_finished() {
+                    session.move_to_next_unfinished()?;
+                }
+            }
+            AtomicSubjectNoteReviewAction::PreviousNote => session.move_previous()?,
+            AtomicSubjectNoteReviewAction::NextNote => session.move_next()?,
+        }
+        save_claim_note_review_session(session_path, &session)?;
+        model.replace_screen(session.screen(&notes)?);
+    }
+}
+
+fn save_claim_note_review_session(
+    session_path: &Path,
+    session: &AtomicSubjectNoteReviewSession,
+) -> Result<()> {
+    save_session(session_path, &ClaimNoteReviewSession::from_atomic(session))
+}
+
+impl ClaimNoteReviewSession {
+    fn from_atomic(session: &AtomicSubjectNoteReviewSession) -> Self {
+        Self {
+            schema_version: CLAIM_NOTE_REVIEW_SESSION_SCHEMA_VERSION,
+            review_protocol: session.review_protocol.clone(),
+            generation_run_sha256: session.generation_run_sha256.clone(),
+            current_note_index: session.current_note_index,
+            notes: session
+                .notes
+                .iter()
+                .map(|note| ClaimNoteReviewState {
+                    note_id: note.note_id.clone(),
+                    list_item_id: note.list_item_id.clone(),
+                    list_item_sha256: note.list_item_sha256.clone(),
+                    claims: note.subjects.clone(),
+                    coverage: note.coverage,
+                    coverage_comment: note.coverage_comment.clone(),
+                    distinctness: note.distinctness,
+                    distinctness_comment: note.distinctness_comment.clone(),
+                    prior_combined_check: note.prior_combined_check.clone(),
+                    selected_index: note.selected_index,
+                    finished: note.finished,
+                })
+                .collect(),
+        }
+    }
+
+    fn into_atomic(self) -> AtomicSubjectNoteReviewSession {
+        AtomicSubjectNoteReviewSession {
+            schema_version: ATOMIC_SUBJECT_NOTE_REVIEW_SESSION_SCHEMA_VERSION,
+            review_protocol: self.review_protocol,
+            generation_run_sha256: self.generation_run_sha256,
+            current_note_index: self.current_note_index,
+            notes: self
+                .notes
+                .into_iter()
+                .map(|note| AtomicSubjectNoteReviewState {
+                    note_id: note.note_id,
+                    list_item_id: note.list_item_id,
+                    list_item_sha256: note.list_item_sha256,
+                    subjects: note.claims,
+                    coverage: note.coverage,
+                    coverage_comment: note.coverage_comment,
+                    distinctness: note.distinctness,
+                    distinctness_comment: note.distinctness_comment,
+                    prior_combined_check: note.prior_combined_check,
+                    selected_index: note.selected_index,
+                    finished: note.finished,
+                })
+                .collect(),
+        }
+    }
+}
+
 fn preserve_legacy_prompt_review_session(
     session_path: &Path,
     legacy: &PromptReviewSession,
@@ -1782,7 +2420,7 @@ impl VerifiedAtomicSubjectReviewRun {
             }
             let note_id = item
                 .item_id
-                .strip_prefix("subject-list:")
+                .strip_prefix(self.kind.list_item_prefix())
                 .filter(|value| !value.is_empty())
                 .ok_or_else(|| {
                     Error::ExperimentState("prompt-review note identity is invalid".to_owned())
@@ -1828,7 +2466,7 @@ impl AtomicSubjectNoteReviewSession {
     ) -> Self {
         Self {
             schema_version: ATOMIC_SUBJECT_NOTE_REVIEW_SESSION_SCHEMA_VERSION,
-            review_protocol: ATOMIC_SUBJECT_NOTE_REVIEW_PROTOCOL.to_owned(),
+            review_protocol: run.kind.note_review_protocol().to_owned(),
             generation_run_sha256: run.identity_sha256.clone(),
             current_note_index: 0,
             notes: notes
@@ -1962,7 +2600,7 @@ impl AtomicSubjectNoteReviewSession {
                 self.schema_version
             ));
         }
-        if self.review_protocol != ATOMIC_SUBJECT_NOTE_REVIEW_PROTOCOL {
+        if self.review_protocol != run.kind.note_review_protocol() {
             return invalid("atomic-subject note review session uses a different protocol");
         }
         if self.generation_run_sha256 != run.identity_sha256 {
@@ -2044,6 +2682,11 @@ impl AtomicSubjectNoteReviewSession {
             }
         });
         Ok(AtomicSubjectNoteReviewScreen {
+            kind: if self.review_protocol == CLAIM_NOTE_REVIEW_PROTOCOL {
+                PromptReviewKind::Claim
+            } else {
+                PromptReviewKind::AtomicSubject
+            },
             note_index: self.current_note_index,
             note_count: notes.len(),
             note: note.note.clone(),
@@ -3287,7 +3930,17 @@ impl AtomicSubjectNoteReviewTuiModel {
     }
 
     fn selected_question(&self) -> &'static str {
-        if self.selected_index < self.coverage_index() {
+        if self.screen.kind == PromptReviewKind::Claim
+            && self.selected_index < self.coverage_index()
+        {
+            "Is this one self-contained claim made by the note without added information?"
+        } else if self.screen.kind == PromptReviewKind::Claim
+            && self.selected_index == self.coverage_index()
+        {
+            "Do the approved claims include every claim made by the note?"
+        } else if self.screen.kind == PromptReviewKind::Claim {
+            "Do the approved claims express different claims?"
+        } else if self.selected_index < self.coverage_index() {
             "Is this one narrow subject substantively discussed in the note?"
         } else if self.selected_index == self.coverage_index() {
             "Do the approved subjects cover every atomic subject in the note?"
@@ -3314,7 +3967,15 @@ impl AtomicSubjectNoteReviewTuiModel {
                 Some(ReviewOutcome::Rejected) => "Disapproved",
             };
             return selected_review_status(
-                &format!("Subject {}", self.selected_index + 1),
+                &format!(
+                    "{} {}",
+                    if self.screen.kind == PromptReviewKind::Claim {
+                        "Claim"
+                    } else {
+                        "Subject"
+                    },
+                    self.selected_index + 1
+                ),
                 decision,
                 &subject.comment,
             );
@@ -3323,14 +3984,26 @@ impl AtomicSubjectNoteReviewTuiModel {
             let decision = match self.screen.coverage {
                 None => "Pending",
                 Some(AtomicSubjectCoverageDecision::Complete) => "Complete",
-                Some(AtomicSubjectCoverageDecision::Missing) => "Missing subject(s)",
+                Some(AtomicSubjectCoverageDecision::Missing) => {
+                    if self.screen.kind == PromptReviewKind::Claim {
+                        "Missing claim(s)"
+                    } else {
+                        "Missing subject(s)"
+                    }
+                }
             };
             return selected_review_status("Coverage", decision, &self.screen.coverage_comment);
         }
         let decision = match self.screen.distinctness {
             None => "Pending",
             Some(AtomicSubjectDistinctnessDecision::Distinct) => "Distinct",
-            Some(AtomicSubjectDistinctnessDecision::Repeated) => "Repeated subject(s)",
+            Some(AtomicSubjectDistinctnessDecision::Repeated) => {
+                if self.screen.kind == PromptReviewKind::Claim {
+                    "Repeated claim(s)"
+                } else {
+                    "Repeated subject(s)"
+                }
+            }
         };
         selected_review_status("Distinctness", decision, &self.screen.distinctness_comment)
     }
@@ -3358,12 +4031,17 @@ impl AtomicSubjectNoteReviewTuiModel {
             1
         };
         let footer_height = 4;
+        let question_height = if self.screen.kind == PromptReviewKind::Claim {
+            2
+        } else {
+            1
+        };
         let rows = Layout::default()
             .direction(Direction::Vertical)
             .constraints([
                 Constraint::Length(1),
                 Constraint::Length(note_height),
-                Constraint::Length(1),
+                Constraint::Length(question_height),
                 Constraint::Min(6),
                 Constraint::Length(status_height),
                 Constraint::Length(footer_height),
@@ -3392,8 +4070,19 @@ impl AtomicSubjectNoteReviewTuiModel {
         );
 
         if self.help_visible {
-            let mut help = "Each note has three kinds of review row.\n\nSubject proposal: approve when it names one narrow, independently meaningful subject explicitly and substantively discussed in the note. Disapprove when it combines separate subjects, names only a broad ancestor, invents meaning, or elevates an incidental mention.\n\nCoverage: decide whether the approved subjects include every atomic subject discussed in the note.\n\nDistinctness: decide whether the approved subjects express different meanings. Only approved subjects count.\n\nA records the positive answer shown for the selected row. R records the negative answer. U clears that decision. C edits an optional comment.\n\nP and N move between notes without deciding anything. Enter marks the note finished only after every row has an explicit decision. Finished notes remain editable."
-                .to_owned();
+            let (help_title, mut help) = if self.screen.kind == PromptReviewKind::Claim {
+                (
+                    "Claim review help",
+                    "Each note has three kinds of review row.\n\nA claim cannot depend on another proposed claim.\n\nClaim proposal: approve when the note makes it, it expresses only one claim, adds no information, and supplies the event, action, or situation being claimed. Descriptive entities such as “the player” or “the fire” may remain unidentified.\n\nCoverage: decide whether the approved claims include every claim made by the note.\n\nDistinctness: decide whether the approved claims express different claims. Only approved claims count.\n\nA records the positive answer shown for the selected row. R records the negative answer. U clears that decision. C edits an optional comment.\n\nP and N move between notes without deciding anything. Enter marks the note finished only after every row has an explicit decision. Finished notes remain editable."
+                        .to_owned(),
+                )
+            } else {
+                (
+                    "Atomic-subject review help",
+                    "Each note has three kinds of review row.\n\nSubject proposal: approve when it names one narrow, independently meaningful subject explicitly and substantively discussed in the note. Disapprove when it combines separate subjects, names only a broad ancestor, invents meaning, or elevates an incidental mention.\n\nCoverage: decide whether the approved subjects include every atomic subject discussed in the note.\n\nDistinctness: decide whether the approved subjects express different meanings. Only approved subjects count.\n\nA records the positive answer shown for the selected row. R records the negative answer. U clears that decision. C edits an optional comment.\n\nP and N move between notes without deciding anything. Enter marks the note finished only after every row has an explicit decision. Finished notes remain editable."
+                        .to_owned(),
+                )
+            };
             if let Some(prior) = &self.screen.prior_combined_check {
                 help.push_str("\n\nMigrated prior combined check:\n");
                 help.push_str(prior);
@@ -3401,7 +4090,7 @@ impl AtomicSubjectNoteReviewTuiModel {
             render_scrollable_panel(
                 frame,
                 rows[1],
-                "Atomic-subject review help",
+                help_title,
                 &help,
                 &mut self.help_scroll,
                 &mut self.half_page_lines,
@@ -3420,7 +4109,9 @@ impl AtomicSubjectNoteReviewTuiModel {
         }
 
         frame.render_widget(
-            Paragraph::new(self.selected_question()).style(accent_style()),
+            Paragraph::new(self.selected_question())
+                .style(accent_style())
+                .wrap(Wrap { trim: false }),
             rows[2],
         );
         self.render_review_items(frame, rows[3], local_decided);
@@ -3491,7 +4182,11 @@ impl AtomicSubjectNoteReviewTuiModel {
             Some(AtomicSubjectCoverageDecision::Missing) => (
                 "✗",
                 Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
-                "Missing subject(s)",
+                if self.screen.kind == PromptReviewKind::Claim {
+                    "Missing claim(s)"
+                } else {
+                    "Missing subject(s)"
+                },
             ),
         };
         items.push(ListItem::new(Line::from(vec![
@@ -3512,7 +4207,11 @@ impl AtomicSubjectNoteReviewTuiModel {
                 Some(AtomicSubjectDistinctnessDecision::Repeated) => (
                     "✗",
                     Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
-                    "Repeated subject(s)",
+                    if self.screen.kind == PromptReviewKind::Claim {
+                        "Repeated claim(s)"
+                    } else {
+                        "Repeated subject(s)"
+                    },
                 ),
             };
         items.push(ListItem::new(Line::from(vec![
@@ -3644,7 +4343,15 @@ impl AtomicSubjectNoteReviewTuiModel {
             .expect("comment editor always has a target");
         let title = match target {
             AtomicSubjectCommentTarget::Subject(index) => {
-                format!("Comment for subject {} (optional)", index + 1)
+                format!(
+                    "Comment for {} {} (optional)",
+                    if self.screen.kind == PromptReviewKind::Claim {
+                        "claim"
+                    } else {
+                        "subject"
+                    },
+                    index + 1
+                )
             }
             AtomicSubjectCommentTarget::Coverage => "Coverage comment (optional)".to_owned(),
             AtomicSubjectCommentTarget::Distinctness => {

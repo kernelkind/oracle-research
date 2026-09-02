@@ -10,6 +10,7 @@ from pathlib import Path
 
 
 RUNNER = Path(__file__).with_name("codex_exec.py")
+CLAIM_RUNNER = Path(__file__).with_name("claim_exec.py")
 APPROVED_PROMINENCE_PROMPT = """Assign a prominence score to the one fixed takeaway below.
 
 The score has one downstream meaning: the takeaway's vector may place this complete post in a fine-subject result matching the takeaway's complete meaning. Score how strongly the complete post is about that complete meaning so the score can help order notes within that result.
@@ -63,6 +64,8 @@ argv = sys.argv[1:]
 output_path = Path(argv[argv.index("--output-last-message") + 1])
 if prompt.startswith("GENERIC PROMPT"):
     stage = "prompt"
+elif prompt.startswith("CLAIM INSTRUCTION"):
+    stage = "claim"
 elif prompt.startswith("SUBJECT INSTRUCTION"):
     stage = "subject"
 elif prompt.startswith("MASK INSTRUCTION"):
@@ -116,6 +119,12 @@ elif stage == "subject":
         if "Solar power" in prompt
         else ["Rust programming.", "Tea drinking."]
     )
+elif stage == "claim":
+    response = (
+        ["Solar power will dominate electricity generation."]
+        if "Solar power" in prompt
+        else ["Rust is pleasant.", "Tea helps."]
+    )
 elif stage == "prominence":
     invalid_prominence = os.environ.get("FAKE_CODEX_INVALID_PROMINENCE")
     response = {
@@ -141,6 +150,7 @@ if stage != "prompt":
     response_object = {
         {
             "takeaway": "takeaways",
+            "claim": "claims",
             "subject": "subjects",
             "prominence": "prominence",
             "mask": "fragments",
@@ -231,9 +241,17 @@ class CodexExecRunnerTests(unittest.TestCase):
         )
         self.subject_config_path = self.root / "subject-config.json"
         self.subject_run_directory = self.root / "subject-run"
+        self.claim_prompts = self.root / "claim-prompts.json"
+        self.claim_prompts.write_text(
+            json.dumps({"CP-test": "CLAIM INSTRUCTION"}),
+            encoding="utf-8",
+        )
+        self.claim_config_path = self.root / "claim-config.json"
+        self.claim_run_directory = self.root / "claim-run"
         self.config_path = self.root / "config.json"
         self.write_config()
         self.write_subject_config()
+        self.write_claim_config()
 
     def write_config(
         self,
@@ -333,6 +351,51 @@ class CodexExecRunnerTests(unittest.TestCase):
                 str(RUNNER),
                 "subjects",
                 str(self.subject_config_path),
+                *extra_arguments,
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            env=environment,
+            timeout=30,
+        )
+
+    def write_claim_config(self) -> None:
+        self.claim_config_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "codex_binary": str(self.fake_codex),
+                    "codex_home": str(self.codex_home),
+                    "input_path": str(self.notes_path),
+                    "run_directory": str(self.claim_run_directory),
+                    "claim": {
+                        "prompt_registry_path": str(self.claim_prompts),
+                        "prompt_version": "CP-test",
+                        "model": "candidate/claim",
+                        "reasoning_effort": "low",
+                    },
+                }
+            ),
+            encoding="utf-8",
+        )
+
+    def invoke_claims(
+        self,
+        *extra_arguments: str,
+        extra_environment: dict[str, str] | None = None,
+    ) -> subprocess.CompletedProcess[str]:
+        environment = os.environ.copy()
+        environment["FAKE_CODEX_LOG"] = str(self.log_path)
+        environment["CODEX_URL"] = "https://ambient-codex.invalid"
+        environment["OPENAI_API_KEY"] = "ambient-openai-key"
+        environment.update(extra_environment or {})
+        return subprocess.run(
+            [
+                sys.executable,
+                str(CLAIM_RUNNER),
+                "claims",
+                str(self.claim_config_path),
                 *extra_arguments,
             ],
             check=False,
@@ -615,6 +678,76 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertEqual(
             {"subjects": ["Rust programming.", "Tea drinking."]},
             json.loads(records[0]["final_output_raw"]),
+        )
+
+    def test_claims_generates_ordered_claims_from_exact_note_text(self) -> None:
+        exact_text = (
+            "This does not happen on Nostr. "
+            "nostr:npub1qqqqqqqqqqqqqqqqqqqq?relay=test"
+        )
+        self.notes_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "notes": [{"note_id": "note-1", "text": exact_text}],
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        completed = self.invoke_claims()
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        calls = [call for call in self.calls() if call["kind"] == "exec"]
+        self.assertEqual(["claim"], [call["stage"] for call in calls])
+        self.assertEqual(
+            f"CLAIM INSTRUCTION\n\nText:\n{exact_text}",
+            calls[0]["prompt"],
+        )
+        self.assertIn("--output-schema", calls[0]["argv"])
+        self.assertEqual([], calls[0]["cwd_entries"])
+
+        output = json.loads(
+            (self.claim_run_directory / "output.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            [
+                {
+                    "note_id": "note-1",
+                    "text": exact_text,
+                    "claims": [
+                        {"source_index": 0, "text": "Rust is pleasant."},
+                        {"source_index": 1, "text": "Tea helps."},
+                    ],
+                }
+            ],
+            output["notes"],
+        )
+        manifest = json.loads(
+            (self.claim_run_directory / "manifest.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual("claim_generation", manifest["mode"])
+        self.assertEqual("CP-test", manifest["claim"]["prompt_version"])
+        self.assertEqual("exact-note-text-v1", manifest["claim_envelope_version"])
+        self.assertEqual("none-v1", manifest["claim_input_normalization_version"])
+        self.assertNotIn("subject", manifest)
+        self.assertEqual(
+            ["claims"],
+            json.loads(
+                (self.claim_run_directory / "claim-output-schema.json").read_text(
+                    encoding="utf-8"
+                )
+            )["required"],
+        )
+        record = json.loads(
+            (self.claim_run_directory / "results.jsonl").read_text(encoding="utf-8")
+        )
+        self.assertEqual("claim:note-1", record["job_key"])
+        self.assertEqual("claim", record["stage"])
+        self.assertNotIn("takeaway_index", record)
+        self.assertEqual(
+            {"claims": ["Rust is pleasant.", "Tea helps."]},
+            json.loads(record["final_output_raw"]),
         )
 
     def test_subjects_rejects_a_mask_stage_before_spawning(self) -> None:

@@ -21,4 +21,8 @@ fn sse_mask_review_cli_explains_its_required_artifacts() {
         ),
         "{stderr}"
     );
+    assert!(
+        stderr.contains("sse-mask-review review-claims <experiment-directory>"),
+        "{stderr}"
+    );
 }

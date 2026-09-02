@@ -7,13 +7,21 @@ use std::process::ExitCode;
 use oracle_mvp::reference_tui::ReferenceTerminal;
 use oracle_mvp::sse_mask_review::{
     AtomicSubjectNoteReviewRunOutcome, ReviewStage, SubjectMaskReviewRunOutcome,
-    load_verified_subject_mask_proposal, run_atomic_subject_note_review, run_subject_mask_review,
+    load_verified_subject_mask_proposal, run_atomic_subject_note_review, run_claim_note_review,
+    run_subject_mask_review,
 };
 
 const USAGE: &str = "usage: sse-mask-review \
     <subject-mask-proposal.json> <session.json> <approved-subject-masks.json>\n       \
     sse-mask-review iterate <generation-run-directory> <prompt-review-session.json>\n       \
-    sse-mask-review review-subjects <experiment-directory>";
+    sse-mask-review review-subjects <experiment-directory>\n       \
+    sse-mask-review review-claims <experiment-directory>";
+
+#[derive(Clone, Copy)]
+enum PromptReviewMode {
+    AtomicSubject,
+    Claim,
+}
 
 fn main() -> ExitCode {
     match run() {
@@ -28,41 +36,73 @@ fn main() -> ExitCode {
 fn run() -> Result<(), Box<dyn std::error::Error>> {
     let arguments = env::args().skip(1).collect::<Vec<_>>();
     let prompt_review_paths = match arguments.as_slice() {
-        [command, generation_run, session] if command == "iterate" => {
-            Some((generation_run.into(), session.into()))
-        }
+        [command, generation_run, session] if command == "iterate" => Some((
+            PromptReviewMode::AtomicSubject,
+            generation_run.into(),
+            session.into(),
+        )),
         [command, experiment] if command == "review-subjects" => {
             let experiment = std::path::PathBuf::from(experiment);
             Some((
+                PromptReviewMode::AtomicSubject,
+                experiment.join("run"),
+                experiment.join("review-session.json"),
+            ))
+        }
+        [command, experiment] if command == "review-claims" => {
+            let experiment = std::path::PathBuf::from(experiment);
+            Some((
+                PromptReviewMode::Claim,
                 experiment.join("run"),
                 experiment.join("review-session.json"),
             ))
         }
         _ => None,
     };
-    if let Some((generation_run, session)) = prompt_review_paths {
+    if let Some((mode, generation_run, session)) = prompt_review_paths {
         if !std::io::stdin().is_terminal() || !std::io::stdout().is_terminal() {
             return Err(
                 "the SSE prompt review must be started from an interactive terminal".into(),
             );
         }
         let mut terminal = ReferenceTerminal::new()?;
-        let outcome = run_atomic_subject_note_review(generation_run, session, &mut terminal)?;
+        let outcome = match mode {
+            PromptReviewMode::AtomicSubject => {
+                run_atomic_subject_note_review(generation_run, session, &mut terminal)?
+            }
+            PromptReviewMode::Claim => {
+                run_claim_note_review(generation_run, session, &mut terminal)?
+            }
+        };
         drop(terminal);
         match outcome {
             AtomicSubjectNoteReviewRunOutcome::Paused => {
-                println!("SSE atomic-subject prompt review paused safely")
+                println!(
+                    "SSE {} prompt review paused safely",
+                    match mode {
+                        PromptReviewMode::AtomicSubject => "atomic-subject",
+                        PromptReviewMode::Claim => "claim",
+                    }
+                )
             }
             AtomicSubjectNoteReviewRunOutcome::Completed {
                 subjects,
                 notes_missing_subjects,
                 notes_with_repeated_subjects,
-            } => println!(
-                "SSE atomic-subject prompt review complete: subjects {} approved, {} rejected; \
-                 {notes_missing_subjects} notes missing subjects; \
-                 {notes_with_repeated_subjects} notes with repeated subjects",
-                subjects.approved, subjects.rejected,
-            ),
+            } => match mode {
+                PromptReviewMode::AtomicSubject => println!(
+                    "SSE atomic-subject prompt review complete: subjects {} approved, {} rejected; \
+                     {notes_missing_subjects} notes missing subjects; \
+                     {notes_with_repeated_subjects} notes with repeated subjects",
+                    subjects.approved, subjects.rejected,
+                ),
+                PromptReviewMode::Claim => println!(
+                    "SSE claim prompt review complete: claims {} approved, {} rejected; \
+                     {notes_missing_subjects} notes missing claims; \
+                     {notes_with_repeated_subjects} notes with repeated claims",
+                    subjects.approved, subjects.rejected,
+                ),
+            },
         }
         return Ok(());
     }
