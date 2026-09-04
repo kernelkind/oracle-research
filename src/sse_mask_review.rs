@@ -947,7 +947,12 @@ pub fn load_verified_subject_mask_proposal(
                     proposed.note_id, subject.label
                 ));
             }
-            let spans = resolve_fragments(subject, &note.content, &proposed.note_id)?;
+            let spans = resolve_fragments(
+                &subject.fragments,
+                &note.content,
+                &proposed.note_id,
+                &subject.subject_id,
+            )?;
             subjects.push(VerifiedSubjectMask {
                 proposal: subject.clone(),
                 spans,
@@ -5090,23 +5095,22 @@ struct SourceSampleRow {
     content: String,
 }
 
-fn resolve_fragments(
-    subject: &ProposedSubjectMask,
+pub(crate) fn resolve_fragments(
+    fragments: &[ProposedMaskFragment],
     content: &str,
     note_id: &str,
+    subject_id: &str,
 ) -> Result<Vec<(usize, usize)>> {
-    if subject.fragments.is_empty() {
+    if fragments.is_empty() {
         return invalid(format!(
-            "mask {note_id} / {} contains no fragments",
-            subject.subject_id
+            "mask {note_id} / {subject_id} contains no fragments"
         ));
     }
-    let mut spans = Vec::with_capacity(subject.fragments.len());
-    for fragment in &subject.fragments {
+    let mut spans = Vec::with_capacity(fragments.len());
+    for fragment in fragments {
         if fragment.text.trim().is_empty() || fragment.occurrence == 0 {
             return invalid(format!(
-                "mask {note_id} / {} contains an empty fragment or zero occurrence",
-                subject.subject_id
+                "mask {note_id} / {subject_id} contains an empty fragment or zero occurrence"
             ));
         }
         let Some((start, _)) = content
@@ -5133,7 +5137,7 @@ fn resolve_fragments(
     Ok(spans)
 }
 
-fn highlighted_note(content: &str, spans: &[(usize, usize)]) -> String {
+pub(crate) fn highlighted_note(content: &str, spans: &[(usize, usize)]) -> String {
     let mut rendered = String::with_capacity(content.len() + spans.len() * 6);
     let mut cursor = 0;
     for &(start, end) in spans {

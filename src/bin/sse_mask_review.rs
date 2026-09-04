@@ -4,6 +4,7 @@ use std::env;
 use std::io::IsTerminal;
 use std::process::ExitCode;
 
+use oracle_mvp::mask_prompt_review::{MaskPromptReviewOutcome, run_mask_prompt_review};
 use oracle_mvp::reference_tui::ReferenceTerminal;
 use oracle_mvp::sse_mask_review::{
     AtomicSubjectNoteReviewRunOutcome, ReviewStage, SubjectMaskReviewRunOutcome,
@@ -15,7 +16,8 @@ const USAGE: &str = "usage: sse-mask-review \
     <subject-mask-proposal.json> <session.json> <approved-subject-masks.json>\n       \
     sse-mask-review iterate <generation-run-directory> <prompt-review-session.json>\n       \
     sse-mask-review review-subjects <experiment-directory>\n       \
-    sse-mask-review review-claims <experiment-directory>";
+    sse-mask-review review-claims <experiment-directory>\n       \
+    sse-mask-review review-masks <mask-review.json> <mask-session.json>";
 
 #[derive(Clone, Copy)]
 enum PromptReviewMode {
@@ -35,6 +37,33 @@ fn main() -> ExitCode {
 
 fn run() -> Result<(), Box<dyn std::error::Error>> {
     let arguments = env::args().skip(1).collect::<Vec<_>>();
+    if let [command, batch, session] = arguments.as_slice()
+        && command == "review-masks"
+    {
+        if !std::io::stdin().is_terminal() || !std::io::stdout().is_terminal() {
+            return Err(
+                "the mask prompt review must be started from an interactive terminal".into(),
+            );
+        }
+        let mut terminal = ReferenceTerminal::new()?;
+        let outcome = run_mask_prompt_review(batch, session, |screen, comment| {
+            terminal.review_prompt_iteration(screen, comment)
+        })?;
+        drop(terminal);
+        match outcome {
+            MaskPromptReviewOutcome::Paused => println!("Mask review paused safely"),
+            MaskPromptReviewOutcome::Completed {
+                approved,
+                rejected,
+                skipped,
+            } => {
+                println!(
+                    "Mask review complete: {approved} approved, {rejected} disapproved, {skipped} skipped"
+                );
+            }
+        }
+        return Ok(());
+    }
     let prompt_review_paths = match arguments.as_slice() {
         [command, generation_run, session] if command == "iterate" => Some((
             PromptReviewMode::AtomicSubject,
