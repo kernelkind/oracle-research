@@ -220,7 +220,7 @@ pub fn run_note_review(
             .review(screen)
             .map_err(|source| io_error("run review UI for", proposal_path, source))?
         {
-            ApprovalTuiAction::None => {
+            ApprovalTuiAction::None | ApprovalTuiAction::PreviousItem | ApprovalTuiAction::NextItem => {
                 return Err(Error::ExperimentState(
                     "approval UI returned without a decision".to_owned(),
                 ));
@@ -293,7 +293,7 @@ pub fn run_hierarchy_review(
                 .review(screen)
                 .map_err(|source| io_error("run hierarchy review UI for", draft_path, source))?
             {
-                ApprovalTuiAction::None => {
+                ApprovalTuiAction::None | ApprovalTuiAction::PreviousItem | ApprovalTuiAction::NextItem => {
                     return Err(Error::ExperimentState(
                         "approval UI returned without a decision".to_owned(),
                     ));
@@ -333,7 +333,7 @@ pub fn run_hierarchy_review(
                 .review(screen)
                 .map_err(|source| io_error("run hierarchy review UI for", draft_path, source))?
             {
-                ApprovalTuiAction::None => {
+                ApprovalTuiAction::None | ApprovalTuiAction::PreviousItem | ApprovalTuiAction::NextItem => {
                     return Err(Error::ExperimentState(
                         "approval UI returned without a decision".to_owned(),
                     ));

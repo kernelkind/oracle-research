@@ -14,7 +14,20 @@ From the Oracle MVP repository:
   target/atomic-subject-mask-probe-v1/review-session.json
 ```
 
-The subject is fixed. Review its mask in the full original note. `A` approves, `R` disapproves, `C` edits an optional comment, `S` skips, and `Ctrl-C` saves and exits. No requirement to finish the batch. Resuming uses the same session file and does not repeat recorded decisions.
+The subject is fixed. Review its mask in the full original note. `←` and `→` move between items, including reviewed items, without changing any decisions. `↑` and `↓` scroll within the note. The heading shows the current item's saved decision.
+
+`A` approves, `R` disapproves, `C` edits an optional comment, `S` records a skip, and `Ctrl-C` saves and exits. A new decision replaces only the current item's decision, then advances to an unfinished item. No requirement to finish the batch. Resuming normally starts at the first unfinished item.
+
+To open M08 directly, including after the batch is complete, append `--start-at M08`:
+
+```sh
+./target/release/sse-mask-review review-masks \
+  sse_multivector/mask-prompt-probe-v1/mask-review.json \
+  target/atomic-subject-mask-probe-v1/review-session.json \
+  --start-at M08
+```
+
+Use `target/atomic-subject-mask-probe-v1/review-session-rereview-v1.json` instead of the original session path for the fresh rereview. This keeps the original review separately preserved.
 
 ## Preserved evidence
 

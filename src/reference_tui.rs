@@ -110,6 +110,8 @@ pub enum ApprovalTuiAction {
     Skip {
         comment: String,
     },
+    PreviousItem,
+    NextItem,
     Pause,
 }
 
@@ -142,6 +144,7 @@ pub struct ApprovalTuiModel {
     comment_before_edit: String,
     editing_prompt_comment: bool,
     interaction_enabled: bool,
+    item_navigation: bool,
 }
 
 impl ApprovalTuiModel {
@@ -151,6 +154,12 @@ impl ApprovalTuiModel {
 
     pub fn new_prompt_iteration(screen: ApprovalScreen, comment: String) -> Self {
         Self::with_interaction(screen, ApprovalInteraction::PromptIteration, comment)
+    }
+
+    pub fn new_navigable_prompt_iteration(screen: ApprovalScreen, comment: String) -> Self {
+        let mut model = Self::new_prompt_iteration(screen, comment);
+        model.item_navigation = true;
+        model
     }
 
     fn with_interaction(
@@ -187,6 +196,7 @@ impl ApprovalTuiModel {
             comment_before_edit: String::new(),
             editing_prompt_comment: false,
             interaction_enabled: true,
+            item_navigation: false,
         }
     }
 
@@ -301,6 +311,8 @@ impl ApprovalTuiModel {
                     comment: self.comment.trim().to_owned(),
                 };
             }
+            KeyCode::Left if self.item_navigation => return ApprovalTuiAction::PreviousItem,
+            KeyCode::Right if self.item_navigation => return ApprovalTuiAction::NextItem,
             KeyCode::Tab | KeyCode::Right => self.next_evidence(),
             KeyCode::BackTab | KeyCode::Left => self.previous_evidence(),
             KeyCode::Down | KeyCode::Char('j' | 'J') => {
@@ -429,13 +441,22 @@ impl ApprovalTuiModel {
 
     fn navigation_controls(&self, exit_label: &'static str) -> Vec<Span<'static>> {
         let mut controls = Vec::new();
+        if self.item_navigation {
+            controls.extend([
+                Span::styled("[←/→]", accent_style()),
+                Span::styled(" Previous/next item  ", secondary_style()),
+            ]);
+        }
         if self.screen.evidence.len() > 1 {
             let target = match &self.screen.evidence {
                 ApprovalEvidenceLayout::Paged(_) => " Evidence  ",
                 ApprovalEvidenceLayout::Stacked { .. } => " Panel  ",
             };
             controls.extend([
-                Span::styled("[Tab/←/→]", accent_style()),
+                Span::styled(
+                    if self.item_navigation { "[Tab/Shift-Tab]" } else { "[Tab/←/→]" },
+                    accent_style(),
+                ),
                 Span::styled(target, secondary_style()),
             ]);
         }
@@ -1025,6 +1046,14 @@ impl ReferenceTerminal {
         comment: String,
     ) -> io::Result<ApprovalTuiAction> {
         self.run_review_model(ApprovalTuiModel::new_prompt_iteration(screen, comment))
+    }
+
+    pub fn review_navigable_prompt_iteration(
+        &mut self,
+        screen: ApprovalScreen,
+        comment: String,
+    ) -> io::Result<ApprovalTuiAction> {
+        self.run_review_model(ApprovalTuiModel::new_navigable_prompt_iteration(screen, comment))
     }
 
     pub(crate) fn run_review_model<M>(&mut self, mut model: M) -> io::Result<M::Action>

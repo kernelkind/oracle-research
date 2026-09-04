@@ -71,6 +71,16 @@ pub enum MaskPromptReviewOutcome {
 pub fn run_mask_prompt_review(
     batch_path: impl AsRef<Path>,
     session_path: impl AsRef<Path>,
+    review: impl FnMut(ApprovalScreen, String) -> io::Result<ApprovalTuiAction>,
+) -> Result<MaskPromptReviewOutcome> {
+    run_mask_prompt_review_from(batch_path, session_path, None, review)
+}
+
+/// Optionally begin at a specific item, including an item with a recorded decision.
+pub fn run_mask_prompt_review_from(
+    batch_path: impl AsRef<Path>,
+    session_path: impl AsRef<Path>,
+    start_at: Option<&str>,
     mut review: impl FnMut(ApprovalScreen, String) -> io::Result<ApprovalTuiAction>,
 ) -> Result<MaskPromptReviewOutcome> {
     let batch_path = batch_path.as_ref();
@@ -112,6 +122,15 @@ pub fn run_mask_prompt_review(
         let spans = resolve_fragments(&item.fragments, &item.note, &item.note_id, &item.item_id)?;
         highlights.push(highlighted_note(&item.note, &spans));
     }
+    let start_index = start_at
+        .map(|id| {
+            batch
+                .items
+                .iter()
+                .position(|item| item.item_id == id)
+                .ok_or_else(|| Error::ExperimentState(format!("unknown mask review item {id}")))
+        })
+        .transpose()?;
     let batch_sha256 = value_sha256(&batch)?;
     let _lock = acquire_session_lock(session_path)?;
     let mut session = match load_session::<MaskReviewSession>(session_path)? {
@@ -142,10 +161,22 @@ pub fn run_mask_prompt_review(
         },
     };
     save_session(session_path, &session)?;
-    for (index, item) in batch.items.iter().enumerate() {
-        while session.decisions[&item.item_id].outcome.is_none() {
-            let screen = ApprovalScreen {
-                heading: format!("Mask review · {} of {} · {}", index + 1, batch.items.len(), item.item_id),
+    let mut current = start_index.or_else(|| {
+        batch
+            .items
+            .iter()
+            .position(|item| session.decisions[&item.item_id].outcome.is_none())
+    });
+    while let Some(index) = current {
+        let item = &batch.items[index];
+        let status = match session.decisions[&item.item_id].outcome {
+            None => "Not reviewed",
+            Some(MaskDecision::Approved) => "Approved",
+            Some(MaskDecision::Rejected) => "Disapproved",
+            Some(MaskDecision::Skipped) => "Skipped",
+        };
+        let screen = ApprovalScreen {
+                heading: format!("Mask review · {} of {} · {} · {status}", index + 1, batch.items.len(), item.item_id),
                 title: Some(item.subject.clone()),
                 scope: "Does this mask express the whole subject without including text belonging only to something else?".into(),
                 approve_label: "Approve".into(),
@@ -153,7 +184,7 @@ pub fn run_mask_prompt_review(
                 rejection_help: String::new(),
                 guidance: Some(ApprovalGuidance {
                     title: "Mask review".into(),
-                    body: "Review only the highlighted mask; the subject is fixed. The complete note supplies context.\n\nCheck for missing subject-bearing text and text belonging only to another subject. More than one mask can be reasonable; the shortest possible selection is not required.\n\nA or R records a decision. C edits an optional comment. S skips this mask. Ctrl-C saves and exits; you do not need to finish the batch.".into(),
+                    body: "Review only the highlighted mask; the subject is fixed. The complete note supplies context.\n\nCheck for missing subject-bearing text and text belonging only to another subject. More than one mask can be reasonable; the shortest possible selection is not required.\n\nLeft/right moves to the previous/next item, including reviewed items, without changing decisions. Up/down scrolls within the note.\n\nA or R records or replaces this item's decision, then moves to an unfinished item. C edits an optional comment. S records a skip. The heading shows the saved decision. Ctrl-C saves and exits; you do not need to finish the batch.".into(),
                 }),
                 evidence: ApprovalEvidenceLayout::Paged(vec![ApprovalEvidence {
                     title: "Note".into(),
@@ -161,33 +192,53 @@ pub fn run_mask_prompt_review(
                     body: highlights[index].clone(),
                 }]),
             };
-            let action = review(screen, session.decisions[&item.item_id].comment.clone())
-                .map_err(|source| io_error("review masks from", batch_path, source))?;
-            let decision = session
-                .decisions
-                .get_mut(&item.item_id)
-                .expect("validated item ID");
-            match action {
-                ApprovalTuiAction::Pause => return Ok(MaskPromptReviewOutcome::Paused),
-                ApprovalTuiAction::None => {
-                    return Err(Error::ExperimentState(
-                        "mask review returned without an action".into(),
-                    ));
-                }
-                ApprovalTuiAction::SaveComment { comment } => decision.comment = comment,
-                ApprovalTuiAction::Submit { outcome, comment } => {
-                    decision.outcome = Some(match outcome {
-                        ReviewOutcome::Approved => MaskDecision::Approved,
-                        ReviewOutcome::Rejected => MaskDecision::Rejected,
-                    });
-                    decision.comment = comment;
-                }
-                ApprovalTuiAction::Skip { comment } => {
-                    decision.outcome = Some(MaskDecision::Skipped);
-                    decision.comment = comment;
-                }
+        let action = review(screen, session.decisions[&item.item_id].comment.clone())
+            .map_err(|source| io_error("review masks from", batch_path, source))?;
+        let advance = matches!(
+            &action,
+            ApprovalTuiAction::Submit { .. } | ApprovalTuiAction::Skip { .. }
+        );
+        let decision = session
+            .decisions
+            .get_mut(&item.item_id)
+            .expect("validated item ID");
+        match action {
+            ApprovalTuiAction::Pause => return Ok(MaskPromptReviewOutcome::Paused),
+            ApprovalTuiAction::PreviousItem => {
+                current = Some((index + batch.items.len() - 1) % batch.items.len());
+                continue;
             }
-            save_session(session_path, &session)?;
+            ApprovalTuiAction::NextItem => {
+                current = Some((index + 1) % batch.items.len());
+                continue;
+            }
+            ApprovalTuiAction::None => {
+                return Err(Error::ExperimentState(
+                    "mask review returned without an action".into(),
+                ));
+            }
+            ApprovalTuiAction::SaveComment { comment } => decision.comment = comment,
+            ApprovalTuiAction::Submit { outcome, comment } => {
+                decision.outcome = Some(match outcome {
+                    ReviewOutcome::Approved => MaskDecision::Approved,
+                    ReviewOutcome::Rejected => MaskDecision::Rejected,
+                });
+                decision.comment = comment;
+            }
+            ApprovalTuiAction::Skip { comment } => {
+                decision.outcome = Some(MaskDecision::Skipped);
+                decision.comment = comment;
+            }
+        }
+        save_session(session_path, &session)?;
+        if advance {
+            current = (1..=batch.items.len())
+                .map(|offset| (index + offset) % batch.items.len())
+                .find(|&next| {
+                    session.decisions[&batch.items[next].item_id]
+                        .outcome
+                        .is_none()
+                });
         }
     }
     let (mut approved, mut rejected, mut skipped) = (0, 0, 0);

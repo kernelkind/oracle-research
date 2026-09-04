@@ -1063,7 +1063,7 @@ pub fn run_subject_mask_review(
             .review(screen)
             .map_err(|source| io_error("run SSE mask review UI for", proposal_path, source))?
         {
-            ApprovalTuiAction::None => {
+            ApprovalTuiAction::None | ApprovalTuiAction::PreviousItem | ApprovalTuiAction::NextItem => {
                 return invalid("mask review UI returned without a decision");
             }
             ApprovalTuiAction::Pause => return Ok(SubjectMaskReviewRunOutcome::Paused),
@@ -2125,7 +2125,7 @@ pub fn run_atomic_subject_prompt_review(
             )
         })?;
         match action {
-            ApprovalTuiAction::None => {
+            ApprovalTuiAction::None | ApprovalTuiAction::PreviousItem | ApprovalTuiAction::NextItem => {
                 return invalid("prompt review UI returned without a decision");
             }
             ApprovalTuiAction::Pause => return Ok(PromptReviewRunOutcome::Paused),
