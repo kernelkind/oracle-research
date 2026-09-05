@@ -1,18 +1,20 @@
 # Astra masks for every subject in ten additional notes
 
-All 60 mask calls returned. My review found **55 masks with no issue**, **one unresolved mask-scope question**, and **four supplied subjects that need separate judgment**. I found no clear mask-selection failure. This is a small batch result, not evidence of perfect accuracy or new user approval.
+All 60 mask calls returned. My initial review found **55 masks with no issue**, **one mask-scope question**, and **four supplied subjects that need separate judgment**. I found no clear mask-selection failure. The user has now approved all five masks in the review sample, resolving the mask-scope question. This is not approval of all 60 masks or evidence of perfect accuracy.
 
 [Every supplied subject, full original note and inline mask](./masks.md)
 
-## What needs your judgment
+## Review outcome and remaining questions
 
-The mask-scope question is **N06-S06**.
+The resolved mask-scope question was **N06-S06**.
 
 Subject: “The story is categorized as relating to the United States.”
 
 Returned mask: `["#UnitedStates"]`
 
-The tag names the country, but should this mask also identify which story? ASv6.8 itself only says “the story.” I have not declared this a missing-reference failure. The tag occurs twice; the TUI displays its first occurrence, while the complete report shows both.
+My question was whether the country tag also needed text identifying the story. ASv6.8 itself only says “the story”; I had not declared a missing-reference failure. The user corrected an accidental rejection to approval. The other four reviewed masks (N01-S03, N05-S05, N06-S01 and N07-S03) were already approved. Only N06-S06's decision was changed, using the existing review tool; all other decisions and comments stayed unchanged.
+
+The tag occurs twice; the TUI displays its first occurrence, while the complete report shows both. Approval resolves mask scope, not whether either occurrence would produce the same SSE vector.
 
 The four separate subject questions are:
 
@@ -40,7 +42,7 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
   target/mask-prompt-astra-ten-note-v1-review-session.json
 ```
 
-This uses the existing binary, without a Cargo build. You can stop whenever you want. No decisions are prefilled. The subject-generation questions above are not inserted into this mask-only review.
+This uses the existing binary, without a Cargo build. The review began with no decisions prefilled; the saved session now contains five approvals. The subject-generation questions above are not inserted into this mask-only review.
 
 ## What ran
 
@@ -100,10 +102,10 @@ The distinction between actual corpus inputs, task-specific judgments and human 
 - [plan.json](./plan.json): scope and controls fixed before inference.
 - [fixed-subjects.json](./fixed-subjects.json): all 60 unedited subjects, fixed before masks.
 - [review-basis-before-masks.json](./review-basis-before-masks.json): review criteria and initial subject concerns, never sent to the models.
-- [assistant-review.json](./assistant-review.json): separate mask/subject judgments for every item.
+- [assistant-review.json](./assistant-review.json): initial assistant mask/subject judgments for every item, preserved unchanged; the user review outcome is recorded above.
 - [mechanical-checks.json](./mechanical-checks.json): fragments and all source-order-valid placements.
 - [review-preparation.json](./review-preparation.json): sample selection and explicit source-occurrence display convention.
 - [verification.json](./verification.json): hashes, isolation and execution checks.
 - `subjects-1/`, `subjects-2/`, `masks-1/` and `masks-2/`: exact configurations, manifests, outputs and raw call records.
 
-No user notes document, existing prompt, user decision, production code, SSE artifact or segmentation result was changed. CREC-125 remains for user review; neither the model nor mask prompt was frozen.
+No user notes document, existing prompt, production code, SSE artifact or segmentation result was changed. The only decision correction was the explicitly authorized N06-S06 rejection-to-approval change. CREC-125 remains In Review with four subject-generation questions open; neither the model nor mask prompt was frozen.
