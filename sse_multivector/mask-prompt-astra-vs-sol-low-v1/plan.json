@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "question": "With the same CLI, inputs, prompt, and low reasoning setting, does Astra produce fixed-subject masks with fewer missing meanings and additional meanings than Sol?",
+  "authorization": "User approved the installed CLI 0.153.0 for both models and a fresh 36-call Sol-low baseline, alongside 36 Astra-low calls. Verify Astra compatibility first; stop if blocked.",
+  "models": {
+    "astra": "gpt-6-astra",
+    "sol": "gpt-5.6-sol"
+  },
+  "reasoning_effort": "low",
+  "codex_binary": "/nix/store/h0xv9625s31bnn7wlk3fsdmhv290z0i1-codex-0.153.0/bin/codex",
+  "codex_version": "codex-cli 0.153.0",
+  "source_config": "../mask-prompt-probe-v4/config.json",
+  "source_selection": "../mask-prompt-probe-v4/selection.json",
+  "source_prompt": "../mask-prompt-probe-v4/mask-prompt.md",
+  "source_prompt_sha256": "564c860a3be5f8eb6e90c404184ef467f24004276dbb535f637ba0a8ded7ff9e",
+  "subjects": 12,
+  "notes": 4,
+  "trials_per_model": 3,
+  "calls_per_model": 36,
+  "total_calls": 72,
+  "execution_order": [
+    "astra-trial-1",
+    "sol-trial-1",
+    "astra-trial-2",
+    "sol-trial-2",
+    "astra-trial-3",
+    "sol-trial-3"
+  ],
+  "within_trial_order": [
+    "M01",
+    "M02",
+    "M03",
+    "M04",
+    "M05",
+    "M06",
+    "M07",
+    "M08",
+    "M09",
+    "M10",
+    "M11",
+    "M12"
+  ],
+  "changed_variable_between_models": "model only; fresh run-specific paths necessarily differ",
+  "changes_from_historical_runs": "Both arms use CLI 0.153.0 instead of 0.150.1. The fresh Sol arm, not the historical Sol calls, is the primary comparator. The earlier failed Astra request is preserved separately and excluded from the 72-call comparison.",
+  "controls": "The rendered prompts, original notes, fixed ASv6.8 subjects, reasoning effort, wrapper, output contract without a schema, dedicated subscription home, minimal model instructions, and isolation settings remain identical across models. No examples, prior responses, or review comments are added. Nominal low effort is not a fixed compute budget shared across models.",
+  "isolation": "New ephemeral CLI process and empty non-repository workdir for every call; user configuration, rules, tools, web, skills, and environment context disabled using the existing runner. Calls and trials remain sequential.",
+  "failure_policy": "Stop at the first transport failure and preserve it. No retries, repairs, model substitutions, automatic account switching, or additional compatibility calls. A semantic or formatting error in a returned output remains part of the results.",
+  "assessment": "Inspect all outputs using the existing fixed-subject scope decisions, including the M09 settlement-activity rejection. Check missing identifying words and additional meanings separately from source-order/occurrence/format checks. Preserve M02/M03 unresolved scope where applicable. Assistant judgments are not fabricated user reviews; no overall accuracy rate with unsettled judgments.",
+  "resource_limits": {
+    "memory_max_bytes": 2147483648,
+    "memory_swap_max_bytes": 0,
+    "runtime_max_seconds_per_batch": 900,
+    "sequential_calls": true
+  },
+  "spending": "Existing Codex subscription allowance only. No paid API, rented compute, or purchases; the monetary ledger's unknown reserve forbids new paid commitments.",
+  "excluded": [
+    "Prompt edits or examples",
+    "Subject regeneration",
+    "SSE encoding",
+    "Hierarchy work",
+    "Production-code changes",
+    "Automatic prompt/model freeze"
+  ]
+}
