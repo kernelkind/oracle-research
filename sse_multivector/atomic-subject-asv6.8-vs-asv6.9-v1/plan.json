@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "status": "fixed_before_generation",
+  "question": "Does the approved ASv6.9 wording reduce added model commentary while preserving subjects, implications, and source-grounded uncertainty?",
+  "comparison": [
+    "ASv6.8",
+    "ASv6.9"
+  ],
+  "notes": 6,
+  "trials_per_note_and_prompt": 3,
+  "planned_calls": 36,
+  "hypothesis": "ASv6.9 will reduce added commentary about missing information or plausibility, without suppressing uncertainty or negative statements actually communicated by the post.",
+  "primary_targets": [
+    "sports",
+    "ai"
+  ],
+  "open_interpretation_cases": [
+    "cloud",
+    "katie"
+  ],
+  "retention_controls": [
+    "kremlin",
+    "iran"
+  ],
+  "unchanged": [
+    "Full source notes",
+    "Sol low",
+    "CLI 0.153.0",
+    "Existing subjects runner",
+    "JSON subject schema",
+    "Long NIP19 removal only",
+    "Per-call fresh empty context",
+    "Mask prompt and all mask data",
+    "Frozen ASv6.8 registry entry"
+  ],
+  "judgments": {
+    "added_commentary": "A returned subject adds the model's own assessment of what the post leaves unclear, does not say, or establishes; distinguish this from uncertainty/negation communicated by the source.",
+    "coverage": "Retain the substantive meanings already communicated by each note; not an exact required word list or fixed subject count.",
+    "permitted": "Broad, nested, overlapping, duplicate, rhetorical and reasonably implied subjects remain allowed. Missing attribution alone is not failure.",
+    "uncertain_readings": "Do not predeclare the technologyservicesllc company-name reading or Katie's smile/teeth reading correct or incorrect. Show exact outputs separately.",
+    "source_retention": "Kremlin's 'nothing to add' is actual source content, not prohibited model commentary. Preserve the Iran post's causal argument and open question about future adoption.",
+    "evidence_limit": "Small selected development comparison, not a population accuracy estimate or automatic freeze."
+  },
+  "runs": [
+    {
+      "version": "ASv6.8",
+      "trial": 1,
+      "name": "asv6.8-trial-1"
+    },
+    {
+      "version": "ASv6.9",
+      "trial": 1,
+      "name": "asv6.9-trial-1"
+    },
+    {
+      "version": "ASv6.9",
+      "trial": 2,
+      "name": "asv6.9-trial-2"
+    },
+    {
+      "version": "ASv6.8",
+      "trial": 2,
+      "name": "asv6.8-trial-2"
+    },
+    {
+      "version": "ASv6.8",
+      "trial": 3,
+      "name": "asv6.8-trial-3"
+    },
+    {
+      "version": "ASv6.9",
+      "trial": 3,
+      "name": "asv6.9-trial-3"
+    }
+  ],
+  "runtime": {
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "low",
+    "sequential": true,
+    "memory_max_bytes": 2147483648,
+    "swap_max_bytes": 0,
+    "runtime_max_seconds_per_batch": 900,
+    "max_attempts": 1,
+    "no_retry": true,
+    "paid_api_or_rental": false
+  },
+  "outputs": "Preserve every subject string unchanged; assistant analysis separate. No masks, SSE, segmentation, UI code changes, or user decisions.",
+  "guidance": "https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6"
+}
