@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "status": "approved_pre_inference_plan",
+  "question": "Does Astra low's earlier improvement in mask generation extend to six additional notes?",
+  "models": {
+    "sol": "gpt-5.6-sol",
+    "astra": "gpt-6-astra"
+  },
+  "reasoning_effort": "low",
+  "notes": 6,
+  "subjects": 12,
+  "mask_trials_per_model": 3,
+  "mask_calls": 72,
+  "subject_setup_calls": 2,
+  "mask_prompt_source": "sse_multivector/mask-prompt-probe-v4/mask-prompt.md",
+  "mask_prompt_sha256": "564c860a3be5f8eb6e90c404184ef467f24004276dbb535f637ba0a8ded7ff9e",
+  "input_per_mask_call": "One complete note and one unchanged fixed subject; no earlier responses, sibling subjects, scope notes, expected answers or review decisions.",
+  "models_change_only": "Same prompt, note, subject, CLI, wrapper and low setting in both model arms. Fresh independent calls, not paired random seeds; model-reported compute and tokenization may differ.",
+  "execution_order": [
+    "sol-trial-1",
+    "astra-trial-1",
+    "astra-trial-2",
+    "sol-trial-2",
+    "sol-trial-3",
+    "astra-trial-3"
+  ],
+  "limits": {
+    "memory_max_bytes": 2147483648,
+    "memory_swap_max_bytes": 0,
+    "runtime_max_seconds_per_batch": 900,
+    "max_attempts_per_call": 1
+  },
+  "restrictions": [
+    "Sequential inference only",
+    "No retries, repairs or output rewrites",
+    "No model-generated checking",
+    "No default/prompt-registry changes",
+    "No subject-prompt engineering",
+    "No SSE or segmentation",
+    "No new human approvals"
+  ],
+  "interpretation": "Report per-subject repeated outcomes and concrete errors, not an overall population success rate. Known real notes were reused from subject-development data; new with respect to the four-note mask comparison, not globally unseen.",
+  "funding": "Existing subscription only; no paid API or rented-compute commitment."
+}
