@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "status": "approved_before_inference",
+  "question": "How much correction does the unchanged mask prompt with Astra low need when it handles every ASv6.8 subject from ten additional corpus notes?",
+  "note_count": 10,
+  "subject_prompt_version": "ASv6.8",
+  "subject_model": "gpt-5.6-sol",
+  "subject_effort": "low",
+  "subject_calls": 10,
+  "subject_input_normalization": "Existing runner removes long NIP-19 identifiers only; all other text remains. Masks receive the complete original note.",
+  "mask_prompt_source": "sse_multivector/mask-prompt-probe-v4/mask-prompt.md",
+  "mask_prompt_sha256": "564c860a3be5f8eb6e90c404184ef467f24004276dbb535f637ba0a8ded7ff9e",
+  "mask_model": "gpt-6-astra",
+  "mask_effort": "low",
+  "mask_calls": "One for every generated subject; subject count frozen after subject generation and before any mask inference.",
+  "scope": [
+    "No prompt edits",
+    "No model comparison",
+    "No checker",
+    "No subject or mask output rewrites",
+    "No reruns after seeing outputs",
+    "No SSE or segmentation",
+    "No user approvals written"
+  ],
+  "review": {
+    "all_outputs": "Assistant inspects every generated subject and mask.",
+    "criteria": [
+      "Whole supplied subject covered",
+      "No additional source meanings outside that subject",
+      "Exact fragments and source order",
+      "Source occurrence ambiguity recorded separately"
+    ],
+    "upstream": "Unsupported or unmaskable supplied subjects are flagged separately; all remain in the raw data and still receive a mask call.",
+    "human_sample": "Include disputed masks and a small sample the assistant considers correct; no prefilled decisions.",
+    "counts": "Report counts and concrete problems for this batch, not population accuracy or a predeclared pass rate."
+  },
+  "execution": {
+    "cli": "/nix/store/h0xv9625s31bnn7wlk3fsdmhv290z0i1-codex-0.153.0/bin/codex",
+    "codex_home": "/path/to/isolated/codex-home",
+    "sequential": true,
+    "fresh_process_thread_workdir_per_call": true,
+    "memory_max_bytes": 2147483648,
+    "memory_swap_max_bytes": 0,
+    "runtime_max_seconds_per_batch": 900,
+    "max_attempts": 1,
+    "paid_api_or_rental": false
+  },
+  "guidance": "https://developers.openai.com/api/docs/guides/evaluation-best-practices"
+}
