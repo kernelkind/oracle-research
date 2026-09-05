@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "purpose": "Compare repeatability of the previous and current mask prompts without editing them.",
+  "prompt_names": {
+    "v3": "Previous prompt: fragment flexibility",
+    "v4": "Current prompt: identifying-reference clarification"
+  },
+  "name_note": "v3/v4 refer to mask-prompt-probe-v3/v4 test artifacts, not new frozen MP registry versions.",
+  "existing_trials": {
+    "v3": "../mask-prompt-probe-v3/run",
+    "v4": "../mask-prompt-probe-v4/run"
+  },
+  "prompt_sources": {
+    "v3": {
+      "path": "../mask-prompt-probe-v3/mask-prompt.md",
+      "sha256": "040b8d1807cde832fc836b4dcca361f734ed9637fc3fce91b1b46e8e00e92e97"
+    },
+    "v4": {
+      "path": "../mask-prompt-probe-v4/mask-prompt.md",
+      "sha256": "564c860a3be5f8eb6e90c404184ef467f24004276dbb535f637ba0a8ded7ff9e"
+    }
+  },
+  "new_call_count": 48,
+  "fixed_subject_count": 12,
+  "note_count": 4,
+  "subject_version": "ASv6.8",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "run_order": [
+    {
+      "prompt": "v3",
+      "trial": 2,
+      "execution_order": 1,
+      "relative_directory": "v3-trial-2"
+    },
+    {
+      "prompt": "v4",
+      "trial": 2,
+      "execution_order": 2,
+      "relative_directory": "v4-trial-2"
+    },
+    {
+      "prompt": "v4",
+      "trial": 3,
+      "execution_order": 3,
+      "relative_directory": "v4-trial-3"
+    },
+    {
+      "prompt": "v3",
+      "trial": 3,
+      "execution_order": 4,
+      "relative_directory": "v3-trial-3"
+    }
+  ],
+  "order_note": "Reverse prompt order in the second repeat round. Within each batch, retain the original M01–M12 order. This is a fixed balanced order, not randomization.",
+  "controls": "Each copied configuration preserves its baseline prompt strings and execution settings exactly. Every call gets a new isolated process and empty working directory. No examples, comments, earlier answers, or extra instructions are added.",
+  "analysis_criterion": "Assess missing required meaning and additional meaning against each fixed subject. Fragment count, grammatical prose, and shortest length are not semantic success criteria. Report source matching, source order, and occurrence ambiguity separately.",
+  "review_policy": "Independently inspect all outputs. Prior user decisions are evidence, not new approvals. Ask the user only about genuinely unclear new selections. Do not copy approvals into a new review session.",
+  "scope_exclusions": [
+    "No prompt edits or freeze",
+    "No subject regeneration",
+    "No SSE encoding",
+    "No segmentation or hierarchy changes",
+    "No production-code changes"
+  ],
+  "per_run_limits": {
+    "memory_max_bytes": 2147483648,
+    "memory_swap_max_bytes": 0,
+    "runtime_max_seconds": 900
+  },
+  "monetary_scope": "Existing Codex subscription allowance only; no paid API or rented resources."
+}
