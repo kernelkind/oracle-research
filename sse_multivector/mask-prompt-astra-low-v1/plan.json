@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "question": "Does GPT-6 Astra at low reasoning follow the unchanged fixed-subject mask prompt more reliably than GPT-5.6 Sol at low reasoning?",
+  "authorization": "User approved the proposed comparison: same 12 fixed subjects and notes, three fresh isolated calls per subject, unchanged prompt, sequential existing subscription-backed runner.",
+  "source_config": "../mask-prompt-probe-v4/config.json",
+  "source_selection": "../mask-prompt-probe-v4/selection.json",
+  "source_prompt": "../mask-prompt-probe-v4/mask-prompt.md",
+  "source_prompt_sha256": "564c860a3be5f8eb6e90c404184ef467f24004276dbb535f637ba0a8ded7ff9e",
+  "baseline_model": "gpt-5.6-sol",
+  "new_model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "baseline_runs": [
+    "../mask-prompt-probe-v4/run",
+    "../mask-prompt-repeatability-v1/v4-trial-2/run",
+    "../mask-prompt-repeatability-v1/v4-trial-3/run"
+  ],
+  "subjects": 12,
+  "source_notes": 4,
+  "trials": 3,
+  "new_calls": 36,
+  "primary_changed_variable": "model only",
+  "controls": "All baseline configuration values except model remain identical. All rendered prompts, fixed ASv6.8 subjects, complete original notes, reasoning effort, wrapper, binary, minimal model instructions, no-schema output mode, and isolation settings remain fixed. Run paths necessarily differ. Nominal low effort does not imply identical inference compute across models.",
+  "execution": "Sequential trials 1, 2, 3; each contains M01 through M12 in the original order. Each call starts a fresh process and empty non-repository workspace. No preceding outputs, examples, review comments, or additional task text are supplied. No retries or output repairs. Stop on a transport failure; report the incomplete comparison if blocked.",
+  "evaluation": "Inspect raw outputs for missing identifying meaning and added meaning outside each fixed subject. Preserve original human judgments and distinguish new assistant judgments. M09's user rejection of added settlement activity applies; M02/M03 prior unresolved scope remains unresolved unless a new output clearly avoids it. Compare all repeated outputs, not only successes. Check exact source strings, source order, and source occurrence ambiguity separately from semantic correctness. Report token counts, latency, and resources; no overall accuracy rate with unsettled scope cases.",
+  "resource_limits": {
+    "memory_max_bytes": 2147483648,
+    "memory_swap_max_bytes": 0,
+    "runtime_max_seconds_per_batch": 900,
+    "sequential_calls": true
+  },
+  "spending": "Existing Codex subscription allowance only. No paid API, rentals, or new purchases. The monetary ledger has an unknown remaining-work reserve; no additional charge is admissible.",
+  "out_of_scope": [
+    "Prompt changes or examples",
+    "New subject generation",
+    "SSE encoding",
+    "Segmentation or hierarchy work",
+    "Production code changes",
+    "Automatic prompt/model freeze"
+  ]
+}
