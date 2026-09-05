@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "original_plan": "../plan.json",
+  "previous_account_attempt": "../asv6.8-trial-1/run/results.jsonl",
+  "previous_attempt_outcome": "Authentication failure; no subjects generated.",
+  "change": "Use the existing dedicated runner home in separate run directories, preserving the earlier failed attempt and all original inputs/configurations.",
+  "same_prompts_model_input_schema_and_normalization": true,
+  "planned_successful_outputs": 36,
+  "runs": [
+    {
+      "version": "ASv6.8",
+      "trial": 1,
+      "name": "asv6.8-trial-1"
+    },
+    {
+      "version": "ASv6.9",
+      "trial": 1,
+      "name": "asv6.9-trial-1"
+    },
+    {
+      "version": "ASv6.9",
+      "trial": 2,
+      "name": "asv6.9-trial-2"
+    },
+    {
+      "version": "ASv6.8",
+      "trial": 2,
+      "name": "asv6.8-trial-2"
+    },
+    {
+      "version": "ASv6.8",
+      "trial": 3,
+      "name": "asv6.8-trial-3"
+    },
+    {
+      "version": "ASv6.9",
+      "trial": 3,
+      "name": "asv6.9-trial-3"
+    }
+  ],
+  "runtime": {
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "low",
+    "sequential": true,
+    "memory_max_bytes": 2147483648,
+    "swap_max_bytes": 0,
+    "runtime_max_seconds_per_batch": 900,
+    "max_attempts": 1,
+    "no_retry": true,
+    "paid_api_or_rental": false
+  },
+  "credentials_copied_or_printed": false
+}
