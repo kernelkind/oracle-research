@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "question": "Does adding the six approved worked examples improve fixed-subject mask selection under Sol low, without introducing missing meaning or additional meaning?",
+  "authorization": "User approved testing the revised draft, then explicitly selected sol low.",
+  "new_calls": 36,
+  "trials": 3,
+  "subjects_per_trial": 12,
+  "notes": 4,
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "codex_binary": "/nix/store/h0xv9625s31bnn7wlk3fsdmhv290z0i1-codex-0.153.0/bin/codex",
+  "codex_version": "codex-cli 0.153.0",
+  "wrapper": "sse_multivector/codex_exec.py",
+  "wrapper_sha256": "f1a1c314a0347b179bc454bcc0b6ebc7fb69091ab8336784ecd4d958470aa636",
+  "source_prompt": "sse_multivector/mask-prompt-few-shot-proposal-v1/mask-prompt.md",
+  "source_prompt_commit": "128985ac1a2d44d903fa51e345a4621b48864d57",
+  "source_prompt_sha256": "7c56065ffa2827795b1f07f4cea7319a41e1494fe97b4883f9f47ecd24860ee0",
+  "baseline_prompt": "sse_multivector/mask-prompt-probe-v4/mask-prompt.md",
+  "baseline_prompt_sha256": "564c860a3be5f8eb6e90c404184ef467f24004276dbb535f637ba0a8ded7ff9e",
+  "baseline_runs": [
+    "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-1/run",
+    "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-2/run",
+    "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-3/run"
+  ],
+  "baseline_calls": 36,
+  "changed_variable": "Only the approved examples block is added to each otherwise identical rendered prompt.",
+  "execution_order": "Trial 1, then trial 2, then trial 3; sequential calls throughout. Fresh process, thread, and empty workdir for every subject/trial.",
+  "output_contract": "Raw prompt mode without an output schema, identical to the baseline. Preserve every raw response and independently check JSON, exact source strings, source order, and occurrence ambiguity.",
+  "analysis": "Inspect every response against the same fixed subject and prior human scope decisions. Separate missing meaning, additional meaning, and mechanical errors. M02/M03 retain unresolved prior scope questions; do not invent new approvals or an overall accuracy score.",
+  "limits": {
+    "memory_max_bytes": 2147483648,
+    "memory_swap_max_bytes": 0,
+    "runtime_max_seconds_per_trial": 900,
+    "max_attempts_per_subject_per_trial": 1
+  },
+  "failure_policy": "Stop on transport/runtime failure; no silent retries, model substitutions, account switches, output repairs, or new prompt edits.",
+  "funding": "Existing Codex subscription only. No paid API or rented resources.",
+  "limitations": [
+    "Four previously used development notes, not an unseen holdout.",
+    "Three outputs per subject per prompt; results do not establish population reliability.",
+    "Baseline runs were collected earlier, not interleaved with the new runs.",
+    "The six synthetic teaching examples are prompt inputs, not test cases."
+  ],
+  "out_of_scope": [
+    "New subject generation",
+    "SSE encoding",
+    "Hierarchy work",
+    "Review-tool changes",
+    "Production/default-model changes",
+    "Prompt-registry changes",
+    "New user approvals"
+  ]
+}
