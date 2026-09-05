@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "status": "approved_for_execution",
+  "model_calls_started": 0,
+  "question": "Can Sol low recognize the same missing-meaning and additional-meaning errors it makes when generating masks?",
+  "scope": "Recognition only. No generation, correction, candidate ranking, or automatic mask acceptance.",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "subjects": 3,
+  "original_notes": 2,
+  "masks": 6,
+  "trials_per_mask": 3,
+  "planned_new_calls": 18,
+  "baseline_criteria": "sse_multivector/mask-prompt-probe-v4/mask-prompt.md",
+  "changed_task": "Assess a supplied highlighted mask under the existing scope/completeness rules instead of generating source fragments.",
+  "input_per_call": "One complete source post with one mask inline, and its unchanged ASv6.8 subject. No alternative masks, expected judgments, case IDs, prior model responses, review comments, or source-run names enter the prompt.",
+  "input_rendering": "Replace only {MASKED_POST} and {SUBJECT} in recognition-prompt.md. Preserve the complete original note except for inserted mask delimiters. Cases use explicit source occurrences from prior review inputs; the clean M07 selection is unique.",
+  "planned_call_order": [
+    [
+      "M09-2",
+      "M05-1",
+      "M07-2",
+      "M09-1",
+      "M05-2",
+      "M07-1"
+    ],
+    [
+      "M07-1",
+      "M09-2",
+      "M05-2",
+      "M07-2",
+      "M05-1",
+      "M09-1"
+    ],
+    [
+      "M05-2",
+      "M07-1",
+      "M09-1",
+      "M05-1",
+      "M09-2",
+      "M07-2"
+    ]
+  ],
+  "isolation": "Existing raw CLI wrapper; fresh process, thread, and empty workdir for every call; no previous responses or review evidence; tools and web disabled.",
+  "execution": "Sequential calls and trials. Same pinned CLI 0.153.0 and subscription wrapper as the generation comparison. Recheck resource and credential-file permissions without reading credentials before any run.",
+  "limits": {
+    "memory_max_bytes": 2147483648,
+    "memory_swap_max_bytes": 0,
+    "runtime_max_seconds_per_trial": 900,
+    "max_attempts_per_call": 1
+  },
+  "evaluation": "Compare each returned issue against the privately stored review basis. Empty arrays are correct only when that mask has no corresponding issue. Correct rejection with an invented reason is not counted as recognition of the observed error. Report missing-meaning detection, additional-meaning detection, false alarms on acceptable masks, and consistency separately; do not collapse them into a population accuracy claim.",
+  "decision_use": "Consistent correct judgments would justify a further test of checking generated masks, not deployment of a reviewer. Repeated wrong judgments would show that this recognition prompt/model is not yet a reliable checker; they would not prove the model can never learn the criterion.",
+  "review_policy": "All new judgments remain assistant analysis unless the user reviews them. No human review files are edited. The clean M07 mask is assistant-checked, not user-approved.",
+  "limitations": [
+    "Two reused source notes and three settled subjects; not a broad or unseen holdout.",
+    "One missing-meaning example and two additional-meaning examples.",
+    "Presenting a supplied mask makes the task different from generation; success cannot establish why generation fails.",
+    "Run order changes, but fresh independent contexts mean this is not a within-call candidate-position experiment.",
+    "The original source-order/occurrence issues are excluded by supplying a fixed highlighted mask. This tests recognition of semantic scope, not array validity."
+  ],
+  "out_of_scope": [
+    "New mask generation or repair",
+    "ASv6.8 changes",
+    "SSE or segmentation",
+    "Stronger-model calls",
+    "Production runner or review-tool changes",
+    "Prompt registry/default updates",
+    "Training or deploying a checker"
+  ],
+  "approved_by_user": "lgtm. proceed w test",
+  "proposal_commit": "ac2a5e4bfa7fcbb629d7e794e686f160a65b562d"
+}

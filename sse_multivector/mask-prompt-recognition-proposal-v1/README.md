@@ -1,12 +1,12 @@
-# Mask recognition test — prompt for review
+# Mask recognition test — approved proposal
 
-No model calls have run. The draft is awaiting prompt review.
+The user approved this prompt and test. All 18 planned calls have now run; see the [results](../mask-prompt-recognition-sol-low-v1/README.md) and [full-context judgments](../mask-prompt-recognition-sol-low-v1/judgments.md). The prompt, cases, expected judgments, and original plan in this proposal remain unchanged.
 
 The proposed test uses **six existing masks**, for **three fixed subjects across two original notes**: understanding life, cryptocurrency insurance, and Bitcoin's value under restrictions. Each subject has an acceptable mask and an incorrect mask. Five selections have direct user review decisions; the clean insurance mask is an existing generated selection checked by the assistant, not a fabricated user approval.
 
 Each call receives **one mask**, highlighted inside the complete note, and the fixed subject. It reports missing meaning and additional meaning separately. It does not generate a replacement or choose from alternatives. The expected judgments and their provenance are kept in a separate file and never sent to the model.
 
-The plan is three fresh Sol-low calls per mask: 18 calls total, sequential and isolated. Call order changes between trials. Because every call has a clean context and sees only one mask, this is not a multiple-choice or candidate-position test.
+The plan was three fresh Sol-low calls per mask: 18 calls total, sequential and isolated. Call order changes between trials. Because every call has a clean context and sees only one mask, this is not a multiple-choice or candidate-position test.
 
 The prompt uses the scope and completeness requirements from the original fragment-only mask prompt. Changes adapt generation instructions into assessment criteria, explain the inline input, and request issue descriptions instead of fragments. No examples, case-specific hints, new scope policy, internal reasoning procedure, or confidence score are added.
 
