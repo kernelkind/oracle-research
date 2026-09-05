@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "question": "Does making the fixed subject-to-source correspondence explicit improve the resulting mask's completeness and scope, compared with the original fragment-only output?",
+  "authorization": "The user approved the draft, requested the entry-definition fix, then said proceed w test. Same proposed 12 subjects, three trials, Sol low.",
+  "new_calls": 36,
+  "trials": 3,
+  "subjects_per_trial": 12,
+  "notes": 4,
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "codex_binary": "/nix/store/h0xv9625s31bnn7wlk3fsdmhv290z0i1-codex-0.153.0/bin/codex",
+  "codex_version": "codex-cli 0.153.0",
+  "wrapper": "sse_multivector/codex_exec.py",
+  "wrapper_sha256": "f1a1c314a0347b179bc454bcc0b6ebc7fb69091ab8336784ecd4d958470aa636",
+  "source_prompt": "sse_multivector/mask-prompt-subject-source-proposal-v1/mask-prompt.md",
+  "source_prompt_commit": "cc949ec195a9f6a08992b442210f1391c3262aff",
+  "source_prompt_sha256": "ad2652a7e5f404c7627588e38e04ae5f3944f3d532c48eeabf301a982d6033b8",
+  "baseline_prompt": "sse_multivector/mask-prompt-probe-v4/mask-prompt.md",
+  "baseline_prompt_sha256": "564c860a3be5f8eb6e90c404184ef467f24004276dbb535f637ba0a8ded7ff9e",
+  "baseline_runs": [
+    "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-1/run",
+    "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-2/run",
+    "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-3/run"
+  ],
+  "baseline_calls": 36,
+  "changed_variable": "Replace only the original final output sentence with the approved subject-to-source object-array requirement. All other submitted text and generation settings remain identical.",
+  "execution_order": "Three sequential trials; sequential calls within each. Fresh process, thread, and empty working directory for every call. No examples or prior answers.",
+  "output_contract": "Use the same raw prompt mode without an enforced schema. Preserve every raw response. The new expected JSON contains subject_text and source_fragments fields.",
+  "analysis": {
+    "primary": "Inspect the union of source fragments against the unchanged fixed subject and existing scope decisions. Assess missing and additional meaning separately. Do not treat the mapping as proof of correctness.",
+    "secondary": "Inspect subject_text/source_fragments correspondences, exact subject excerpts, exact source strings, entry coverage, and source order within each source_fragments array. No fixed required entry count is invented.",
+    "source_placements": "Enumerate source placements obeying the order within each source_fragments array. Entries may reuse or overlap source text; the resulting mask is the union of ranges. Object order does not imply source order. Preserve ambiguity where several positions or unions are possible; do not silently choose an occurrence.",
+    "source_order": "Check nondecreasing source starts within each array. Overlapping ranges are reported, not rejected solely for overlap. The prior plain-array outputs have one global source order; no global order is imposed between new mapping entries.",
+    "unresolved": "M02/M03 retain older unresolved scope judgments. No overall accuracy score or new human approvals."
+  },
+  "limits": {
+    "memory_max_bytes": 2147483648,
+    "memory_swap_max_bytes": 0,
+    "runtime_max_seconds_per_trial": 900,
+    "max_attempts_per_call": 1
+  },
+  "failure_policy": "Stop on transport or runtime failure. No retries, output repairs, model substitution, account switch, or prompt edits during the test. Task-format failures remain data.",
+  "funding": "Existing Codex subscription only. No paid API or rented compute.",
+  "limitations": [
+    "Four previously used development notes, not an unseen holdout.",
+    "Three calls per subject do not establish population reliability.",
+    "Baseline was collected earlier, not interleaved.",
+    "Output shape differs intentionally; semantic judgments must be separated from format-specific checks."
+  ],
+  "out_of_scope": [
+    "Subject generation or edits",
+    "SSE encoding",
+    "Hierarchy work",
+    "Production runner/review-tool changes",
+    "Prompt registries or default models",
+    "Human review decisions"
+  ]
+}
