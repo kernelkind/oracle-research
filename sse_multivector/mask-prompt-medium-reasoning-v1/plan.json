@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "question": "Does changing only reasoning effort from low to medium reduce missing identifying words and additional meanings, without regressing masks that already worked?",
+  "prompt_source": "../mask-prompt-probe-v4/mask-prompt.md",
+  "prompt_sha256": "564c860a3be5f8eb6e90c404184ef467f24004276dbb535f637ba0a8ded7ff9e",
+  "baseline_config": "../mask-prompt-probe-v4/config.json",
+  "baseline_runs": [
+    "../mask-prompt-probe-v4/run",
+    "../mask-prompt-repeatability-v1/v4-trial-2/run",
+    "../mask-prompt-repeatability-v1/v4-trial-3/run"
+  ],
+  "new_call_count": 36,
+  "trial_count": 3,
+  "subjects_per_trial": 12,
+  "note_count": 4,
+  "subject_version": "ASv6.8",
+  "model": "gpt-5.6-sol",
+  "changed_setting": {
+    "reasoning_effort": {
+      "from": "low",
+      "to": "medium"
+    }
+  },
+  "run_order": [
+    "trial-1",
+    "trial-2",
+    "trial-3"
+  ],
+  "within_trial_order": "M01–M12, unchanged from the low-effort runs",
+  "controls": "All configuration values other than reasoning_effort remain equal to the current-prompt baseline. Each configuration resides in a new trial directory and resolves its relative run directory there. Every inference call uses a new process and empty workdir, with no prior answers, examples, review comments, or additional prompt text.",
+  "assessment": "Use the same fixed-subject scope judgments as the repeated low-effort analysis. Examine missing required meaning and additional meaning separately. Exact substrings, array source order, response format, and occurrence ambiguity remain separate mechanical checks. Fragment count, grammatical prose, and minimum length are not independent semantic criteria.",
+  "coverage": "Inspect all 36 new outputs. M02/M03's unresolved earlier scope judgments remain open rather than acquiring automatic approvals. Preserve all failures without repairs or replacement calls. Ask the user only about genuinely unclear judgments.",
+  "reporting": "Report each item across three trials per effort, together with tokens and timing. No new numerical pass criterion or overall accuracy score is assumed. These are four already-used notes, and medium is compared with existing low-effort runs, not randomized contemporaneous low calls.",
+  "per_batch_limits": {
+    "memory_max_bytes": 2147483648,
+    "memory_swap_max_bytes": 0,
+    "runtime_max_seconds": 900,
+    "sequential_calls": true
+  },
+  "monetary_scope": "Existing subscription allowance only. No paid API or rented resources; no new monetary commitment.",
+  "scope_exclusions": [
+    "No prompt text changes or freeze",
+    "No subject regeneration",
+    "No SSE encoding",
+    "No segmentation or hierarchy work",
+    "No production-code changes",
+    "No changes to existing raw outputs or user review decisions"
+  ]
+}
