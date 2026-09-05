@@ -59,7 +59,7 @@ The ceramics studio is run by volunteers and offers evening classes for beginner
 
 <example>
 <post>
-The theater announced the cast during a celebration. Two performers quit. Their departure delayed rehearsals.
+The theater announced the cast during a celebration. Two performers quit. Their departure delayed rehearsals. Wonderful commitment to the show.
 </post>
 <subject>
 Two performers quitting delayed rehearsals.
@@ -71,13 +71,13 @@ Two performers quitting delayed rehearsals.
 
 <example>
 <post>
-The theater announced the cast during a celebration. Two performers quit. Their departure delayed rehearsals.
+The theater announced the cast during a celebration. Two performers quit. Their departure delayed rehearsals. Wonderful commitment to the show.
 </post>
 <subject>
-Two performers quit.
+The author sarcastically praises the commitment of two performers who quit the show.
 </subject>
 <response>
-["Two performers quit."]
+["Two performers quit.", "Wonderful commitment to the show."]
 </response>
 </example>
 </examples>

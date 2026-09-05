@@ -8,7 +8,7 @@ The posts and masks are synthetic teaching examples written for this proposal, n
 
 - Rescue boat: select an identifying noun without its surrounding claim; retain that claim when it is the supplied subject.
 - Ceramics studio: omit or include a modifier according to the supplied subject, including a longer mask when needed.
-- Theater: resolve an event reference without copying the earlier setup; omit the consequence when the subject is only the event.
+- Theater: distinguish the event and its consequence from the author's sarcastic praise of the same performers. Both masks omit the announcement setup; the rhetoric mask also omits the separate rehearsal-delay claim.
 
 The hypothesis is that examples make the existing scope requirement easier to apply consistently. These examples use different content from the four notes in the saved Sol-medium/Astra-low comparison. They are not evidence that the prompt works, and must not be counted as independent test notes.
 
