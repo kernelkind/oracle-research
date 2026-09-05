@@ -6,7 +6,7 @@ The mask may contain one or more fragments, including individual words. The frag
 
 Do not select URLs, exact user handles, or long encoded Nostr identifiers beginning with prefixes such as `npub1…`, `nprofile1…`, `note1…`, `nevent1…`, `naddr1…`, or `nsec1…`. These identifiers may be prefixed by `nostr:`, the Nostr URI scheme, as in `nostr:npub1…`.
 
-Return only a JSON array mapping each distinct part of the supplied subject to the source text that expresses it. Each object has these fields:
+Return only a JSON array with a separate entry for each person or thing identified by the supplied subject, each relationship or assertion about them, and each qualification that limits or modifies that meaning. Keep enough of the subject's wording in each entry to preserve the meaning being matched. Each object has these fields:
 
 - "subject_text": an exact excerpt from the supplied subject identifying the part being matched.
 - "source_fragments": an array of exact substrings copied from the post, in source order, that express that part as it is meant in the complete subject.
