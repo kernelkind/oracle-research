@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "status_at_creation": "planned_before_generation",
+  "approved_by_user": "Proceed with that.",
+  "question": "On the next 20 unused development notes in frozen corpus order, does unchanged ASv6.10 reduce added model commentary and newly calculated results without losing represented meanings, compared with frozen ASv6.8?",
+  "note_count": 20,
+  "calls_per_note_per_version": 1,
+  "planned_new_calls": 40,
+  "versions": [
+    "ASv6.8",
+    "ASv6.10"
+  ],
+  "prompt_sources": {
+    "ASv6.8": {
+      "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/ASv6.8.md",
+      "sha256": "8b1112a30a5384f87bd010d616db75cd27eb45daf8f2cf2906e408086f840fcf"
+    },
+    "ASv6.10": {
+      "path": "sse_multivector/atomic-subject-asv6.10-proposal-v1/ASv6.10.md",
+      "sha256": "7e8f3051e05963a09f5a87ea738cd2d428c146fd17620d8ed756966426f3bd82"
+    }
+  },
+  "input_path": "input.json",
+  "selection_path": "selection.json",
+  "subject_registry": "subject-prompts.json",
+  "execution_order": [
+    "asv6.8/config.json: all 20 notes in frozen order",
+    "asv6.10/config.json: the identical 20 notes in the identical order"
+  ],
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "codex_binary": "/nix/store/h0xv9625s31bnn7wlk3fsdmhv290z0i1-codex-0.153.0/bin/codex",
+  "codex_home": "/home/dev/.local/state/oracle-mvp/codex-home",
+  "sequential": true,
+  "max_attempts": 1,
+  "no_retries_or_repairs": true,
+  "no_output_edits": true,
+  "review": "Assistant reads every returned subject against the complete original note for added or missing meaning. Questionable cases are prepared for the existing review TUI, with no user decisions prefilled.",
+  "interpretation_rules": [
+    "Broad, nested, overlapping and duplicate subjects are allowed.",
+    "Plausible implications and supported alternative interpretations are allowed.",
+    "Preserve source-expressed uncertainty and negation. Neither uncertainty words nor negation automatically constitute added commentary.",
+    "Do not demand one canonical subject list or treat all differences between versions as defects.",
+    "Separate definite observations from uncertain assistant judgments; ask the user about the latter."
+  ],
+  "unchanged": [
+    "Both prompt texts",
+    "Frozen default ASv6.8",
+    "Input normalization",
+    "Response schema",
+    "Existing isolated runner",
+    "Model and effort",
+    "All previous raw outputs",
+    "Mask pipeline and SSE (not run)"
+  ],
+  "limitations": [
+    "20 notes from an existing frozen corpus, not a random sample of all Nostr.",
+    "Unused refers to the saved development inputs listed in selection.json; earlier corpus-wide processing may have encoded these notes.",
+    "One generation per note per version cannot establish repeatability or attribute a difference causally.",
+    "Multiple prompt changes are compared as a package; this does not isolate their effects."
+  ],
+  "runtime": {
+    "launcher_memory_max_bytes": 2147483648,
+    "launcher_swap_max_bytes": 0,
+    "launcher_runtime_max_seconds_per_version": 900,
+    "cap_scope": "Pinned Codex launches a separate codex.slice scope, so launcher limits/measurements are not whole-Codex limits/measurements.",
+    "resource_checks": "Sequential calls only. Check host MemAvailable and memory/I/O pressure during generation; pause if pressure develops.",
+    "paid_api_or_rental": false,
+    "budget_ledger": "Read before generation. No new paid commitment: existing subscription only."
+  },
+  "guidance": [
+    "https://developers.openai.com/api/docs/guides/evaluation-best-practices#how-to-read-evals"
+  ]
+}
