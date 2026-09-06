@@ -24,7 +24,7 @@ The two remaining ASv6.9 problems are concrete:
 - **Katie, trial 3, subject 6:** “Direct contact with the unspecified group is conditionally connected to not wanting a ticket to be used, though the precise relationship is ambiguous”. The ending adds the model's commentary instead of qualifying the proposed interpretation itself.
 - **Iran, trial 2, subject 8:** “Iran launched Hormuz Safe two weeks after Tether froze $344 million in USDT linked to the Central Bank of Iran.” The source says “Three weeks ago” and “Last week”; the generated subject subtracts them, contrary to the unchanged restriction on new calculations.
 
-The source statements and complete outputs are together in [results.md](./main/results.md); the separate judgments are in [assistant-analysis.json](./main/assistant-analysis.json). No prompt was edited in response to these results.
+The source statements and complete outputs are together in [results.md](./main/results.md); the separate judgments are in [assistant-analysis.json](./main/assistant-analysis.json). Neither compared prompt changed during that run. The subsequent [ASv6.10 test](../atomic-subject-asv6.10-test-v1/README.md) reuses the saved ASv6.9 outputs; it does not alter this comparison's inputs or results.
 
 ## Inputs and execution
 

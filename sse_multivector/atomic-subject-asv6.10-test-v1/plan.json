@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "approved_by_user": "Proceed with test.",
+  "source_commit": "ff2825d06ba74d9c3e8f21a415842536721aca5e",
+  "status_at_creation": "planned_before_generation",
+  "prompt_path": "../atomic-subject-asv6.10-proposal-v1/ASv6.10.md",
+  "prompt_file_sha256": "7e8f3051e05963a09f5a87ea738cd2d428c146fd17620d8ed756966426f3bd82",
+  "input_path": "../atomic-subject-asv6.8-vs-asv6.9-v1/input.json",
+  "selection_path": "../atomic-subject-asv6.8-vs-asv6.9-v1/selection.json",
+  "baseline_version": "ASv6.9",
+  "baseline_run_directories": [
+    "../atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-1/run",
+    "../atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-2/run",
+    "../atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-3/run"
+  ],
+  "baseline_policy": "Reuse all 18 saved ASv6.9 outputs without rerunning or editing them.",
+  "new_version": "ASv6.10",
+  "planned_new_calls": 18,
+  "note_order": [
+    "a2e5fe086f462944a017cdff9881bb1ae1d3de92551946aa7c42e55814d6fc1d",
+    "8eeb84c6b011fe5ac11b5d88856f2a621a7c8306a881948c515c17e973ee3fc4",
+    "8a09d119276a6f209e72bd1563aafe0a21e7b89095c3838ac7f5320d56c46710",
+    "64fe5642e53d257c3d4a1b3444281e45288fbb1c563bbdc471f6b1df8de86352",
+    "69db6770fd9576b2f0de283d6384af1b405d37a0061bdf196ccfd389cc58c05d",
+    "80efdad1520559f6808caf65c415df3d9d5340b54f446134eb7e7f86530e6e0d"
+  ],
+  "trials": 3,
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "codex_binary": "/nix/store/h0xv9625s31bnn7wlk3fsdmhv290z0i1-codex-0.153.0/bin/codex",
+  "codex_home": "/home/dev/.local/state/oracle-mvp/codex-home",
+  "sequential": true,
+  "max_attempts": 1,
+  "no_retries_or_repairs": true,
+  "no_generation_output_edits": true,
+  "checks": [
+    "Whether sports, Katie and AI outputs add model commentary about unclear, unstated or implausible source meaning.",
+    "Whether any output introduces a newly calculated numerical result, including the Iran time gap.",
+    "Whether source-expressed uncertainty, negation and arguments survive, including the Kremlin nothing-to-add statement and Iran's normal-conditions contrast and future-adoption question.",
+    "Inspect all generated subjects against their full source notes; report additional issues separately from the targeted checks."
+  ],
+  "interpretation_rules": [
+    "Supported alternative interpretations and reasonable implications are permitted.",
+    "Broad, overlapping, nested and duplicate subjects are permitted.",
+    "LLC and smile/teeth interpretations remain open judgments, not established failures.",
+    "Uncertainty words are not automatically errors; distinguish the subject's possible meaning from added commentary about interpreting it."
+  ],
+  "unchanged": "Frozen ASv6.8, tested ASv6.9, full notes and ordering, normalization, response schema, runner, isolation and all prior outputs.",
+  "limitations": [
+    "Six previously used development notes, not an unseen holdout.",
+    "Three calls per note do not establish corpus reliability.",
+    "ASv6.9 is a saved baseline, not a concurrent rerun.",
+    "Two prompt changes are tested together; this does not isolate their individual effects."
+  ],
+  "runtime": {
+    "launcher_memory_max_bytes": 2147483648,
+    "launcher_swap_max_bytes": 0,
+    "launcher_runtime_max_seconds_per_trial": 900,
+    "cap_scope": "The pinned Codex executable launches its own codex.slice scope; outer launcher limits and measurements do not cover that separate scope.",
+    "host_checks": "Inspect available memory and OS memory/I/O pressure between trials. Pause if resource pressure develops.",
+    "paid_api_or_rental": false,
+    "budget_ledger": "Existing subscription only; no new paid commitment."
+  }
+}
