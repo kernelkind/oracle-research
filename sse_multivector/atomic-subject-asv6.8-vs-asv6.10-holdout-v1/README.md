@@ -33,7 +33,7 @@ The saved TUI session records these two rejections, with empty comments. The use
 1. **N18, ASv6.10 subject 3 — rejected:** “The linked Xport chart page concerns the BX:ABCH pair.” The user stated: “we should not be inferring things in links.”
 2. **N03, ASv6.10 subject 2 — rejected:** “Execution” may mean how an unspecified plan or strategy is implemented during the next quarter. The user stated: “we should not be encoding uncertainty INSIDE the subject.”
 
-These are requirements for the next prompt revision, not changes already made to the prompt. No generation was rerun, no output was edited, and no decision was copied to other subjects. The prompt wording and implementation remain undecided.
+These requirements led to the separate [ASv6.11 draft](../atomic-subject-asv6.11-proposal-v1/ASv6.11.md), which is untested and awaiting wording approval. The draft excludes URLs from source evidence and replaces ASv6.10's instruction to phrase interpretations as possibilities with direct wording. It also removes the general instruction to preserve uncertainty. All other subject requirements remain unchanged. ASv6.8 remains frozen; the tested ASv6.10 prompt is untouched. No generation was rerun, no output was edited, and no decision was copied to other subjects.
 
 N08's Snow/snow interpretations and N12's non-English phrase remain unresolved, but are not requested in this review. Neither is automatically approved or rejected.
 
