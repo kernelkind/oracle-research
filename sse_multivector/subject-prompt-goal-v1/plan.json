@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "created_before_new_generation": true,
+  "starting_commit": "f2e62bbb39eeb93bc4a20b28aa3c437fbbb93d6e",
+  "authorization": "Active goal from /home/dev/.codex/attachments/c9cd0710-6e4e-4a53-93d7-a374be5849a0/pasted-text-1.txt",
+  "objective": "Develop and freeze a subject prompt meeting the fixed review and validation gates below; continue from ASv6.11.",
+  "unchanged": {
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "low",
+    "codex_binary": "/nix/store/h0xv9625s31bnn7wlk3fsdmhv290z0i1-codex-0.153.0/bin/codex",
+    "codex_home": "/home/dev/.local/state/oracle-mvp/codex-home",
+    "runner": "sse_multivector/codex_exec.py",
+    "runner_sha256": "f1a1c314a0347b179bc454bcc0b6ebc7fb69091ab8336784ecd4d958470aa636",
+    "input_normalization": "Existing subject-stage long-NIP-19 removal only; URLs remain in model input.",
+    "response": "Existing subjects JSON schema",
+    "account": "existing subscription allowance only"
+  },
+  "scope": [
+    "Subject prompt text, existing run configurations, preserved generation artifacts, semantic review, validation and exact-version freezing.",
+    "No masks, prominence, embeddings, segmentation, hierarchy, model/effort changes, or new pipeline."
+  ],
+  "semantic_standard": {
+    "source": "Latest agreed requirements and settled reviews in this thread; historical requirements superseded by later decisions do not apply.",
+    "correctness": "A subject's meaning must be stated or reasonably implied by the source text outside URLs. General knowledge may interpret the text but may not supply a new source claim. Review represented meaning, not the truth or social acceptability of the author's claim.",
+    "coverage": "Inspect the complete note independently of the output, then check that its distinct communicated meanings are represented. Missing coverage requires pointing to source evidence and explaining the absent meaning. A different valid subject list, an optional abstraction, or fewer duplicates is not a coverage error.",
+    "allowed": [
+      "Literal, implied, rhetorical and nonliteral meanings.",
+      "Broad, narrow, nested, overlapping and duplicate subjects.",
+      "Separate supported interpretations of genuinely ambiguous expressions.",
+      "Minor meanings; no importance filter."
+    ],
+    "defects": [
+      "Unsupported additions or relationships, distorted negation/comparison/attribution, newly calculated results not stated by the source.",
+      "Subjects requiring other subjects or missing source context to be understood.",
+      "URL-derived meaning, model commentary, and subjects that merely describe the presence or formatting of pointers/tags/categories.",
+      "Uncertainty about the extractor's interpretation written inside a subject instead of separate direct supported interpretations.",
+      "A distinct communicated meaning absent from the output."
+    ],
+    "modality_boundary": "Do not confuse the author's own question, concern, conditional claim or stated probability with the extractor's confidence. Represent such content directly without upgrading it to a certain fact. Where existing wording remains ambiguous under the agreed no-uncertainty requirement, record the unresolved judgment rather than silently accepting it.",
+    "uncertainty": "Each output subject receives accept, error, or unresolved with evidence. Unresolved subjects/coverage count against acceptance gates, not as passes. Resolve difficult meanings from the full source; ask the user only if the requirement itself is undefined.",
+    "no_canonical_list": true
+  },
+  "data": {
+    "development": "28 real notes: the 20 ASv6.11 notes plus eight previously used notes covering recurring arithmetic/field, metaphor, comparison, attribution, implicit-reference and multi-part extraction challenges. Freeze exact IDs and source hashes before a new call.",
+    "development_repeats": "Eight fixed difficult notes from those 28; three fresh outputs per note for any candidate submitted to final validation. One of the three may be its full-development run output; the other two are independent calls.",
+    "final_source": "target/crec-119-500-note-v2/input/notes.json",
+    "final_source_sha256": "af1f82719003ed73aea0f569c0a936733a95f6c366d4d95e1436c7cebae9b5d1",
+    "unseen_definition": "Absent from all saved subject/claim prompt-development and mask-comparison inputs/selections. This does not assert never processed by an earlier full-corpus pipeline.",
+    "exclusion_inventory": "Record prior exclusion sources plus current subject/claim/mask input and selection files; exclude by note ID and identical normalized source text. Preserve inventory and hashes.",
+    "final_selection": "Select 60 unseen real notes before final generation: 20 with <=160 characters, 20 with 161-600 characters, 20 with >600 characters, ordered within each band by SHA256('subject-prompt-goal-v1/final/' + note_id). If any band has fewer than 20 eligible notes, take all from that band and fill remaining places by the same hash order from all remaining eligible notes. Record the shortage. No exclusions because a note is ambiguous, multilingual, niche or difficult.",
+    "final_repeats": "From those 60, take the first four hash-ordered notes in each actual length band (12 total; fill a shortage in global hash order). Run each twice more with the identical candidate prompt, giving three independent outputs including its first result.",
+    "coverage_audit": "Read all 60 source notes and record observed structures: short/long, single/multi-part, literal/nonliteral, questions, assertions/opinions, attribution, ambiguity/references, numbers/structured text, links/tags. These are descriptive coverage axes, not assumed natural classes or quotas. Report missing challenges and limit the conclusion to observed coverage; known difficult structures remain represented in the development set.",
+    "final_separation": "Do not use final notes or outputs to write a candidate before its final run. If final evidence leads to a prompt change, those notes become development data and cannot validate the revised candidate. A second final attempt uses 60 new excluded IDs selected by the same rule."
+  },
+  "gates": {
+    "development": {
+      "minimum_notes_with_no_error_or_unresolved_out_of_28": 26,
+      "minimum_accepted_subject_fraction": 0.95,
+      "recurrent_failure": "Reject a candidate if the same specific semantic failure recurs in two of three outputs for any fixed repeated note, or occurs in three distinct development notes. Similarity is about failure mechanism, not merely a shared broad defect category.",
+      "prior_regressions": "No previously settled serious fidelity error may recur in two repeated outputs. Do not compensate for an invented relationship or changed negation with more correct duplicate subjects."
+    },
+    "final": {
+      "minimum_notes_with_no_error_or_unresolved_out_of_60": 54,
+      "minimum_accepted_subject_fraction": 0.95,
+      "minimum_clean_note_outputs_across_84": 76,
+      "recurrent_failure": "No same specific failure mechanism in three distinct final notes, and no same specific error in two of three outputs for a repeated note.",
+      "severe_errors": "Zero clear reversals of an explicit negation/comparison or reassignment of an attributed allegation to the wrong speaker. Other isolated fidelity, coverage or presentation errors count toward the fixed gates and must be reported."
+    },
+    "meaning_of_pass": "An operational stopping rule for this pilot under one assistant's semantic review, not a confidence interval or universal corpus-accuracy claim. Counts are frozen before generation and may not be weakened after results.",
+    "completion": "One byte-identical prompt passes development plus an untouched final attempt, all raw-output/isolation checks pass, every subject and whole-note coverage has a recorded review, and the exact passing prompt is frozen with an evidence-linked report and remaining errors. Historical outputs and user decisions are unchanged."
+  },
+  "iteration": {
+    "max_new_prompt_revisions": 6,
+    "max_final_attempts": 2,
+    "max_new_calls": 512,
+    "steps": [
+      "Review existing ASv6.11 results and prior decisions; name the evidenced failure before editing.",
+      "Make the smallest general prompt revision, audit against official GPT-5.6 guidance, preserve its diff.",
+      "Use a small subset of development notes for early diagnosis; proceed to all 28 and fixed repeats only when warranted.",
+      "Preserve failed results and repetition evidence; do not use reruns to select a convenient output.",
+      "Submit an unchanged candidate that passes development to final validation.",
+      "If a final attempt fails, continue within the remaining plan limits without reusing it as unseen evidence."
+    ],
+    "limits": "These are finite operational caps, not a request for a Codex token budget. If exhausted without success, report the best candidate, evidence and needed next authority; do not freeze or mark the goal complete."
+  },
+  "resources": {
+    "new_paid_api_or_rental": false,
+    "ledger_state": "Read at start: reserved_remaining_work_cents is null and older commitments are unreconciled. No new paid spend is admissible; do not change the ledger or credentials.",
+    "concurrency": 1,
+    "admit_calls_per_batch": 1,
+    "checks": "Inspect host memory and I/O PSI before admission and while a call runs. Do not launch if MemAvailable <16 GiB, memory PSI avg10 >1, or I/O PSI avg10 >10. Recheck pressure before further work; sustained pressure means no new call admission.",
+    "per_batch_launcher_limits": {
+      "MemoryMax": "2G",
+      "MemorySwapMax": "0",
+      "RuntimeMaxSec": 900
+    },
+    "limit_caveat": "Pinned Codex starts separate codex.slice scopes. Launcher limits do not bound those scopes; monitor the actual child without changing global limits for other sessions.",
+    "no_credential_content_reads": true
+  },
+  "preservation": {
+    "outputs": "Never edit model-produced subjects. Separate assistant review data from raw outputs and existing user review sessions.",
+    "evidence": "Record exact source IDs/text/hashes, prompt/config/model/effort, unique thread/workdir, one-turn/no-tool execution, raw hashes, run success/failure, token usage and resource observations.",
+    "baseline_registry": "ASv6.8 remains frozen until this plan's completion gates are met. Preserve every version when appending the exact passing version.",
+    "docs": "Do not edit personal docs/notes. Goal records belong to this experiment directory; update existing linked operational/status records only where the approved goal changes current status."
+  }
+}

@@ -63,3 +63,7 @@ The [pre-generation plan](./plan.json), exact prompt registry, configuration, ra
 Usage: 42,628 input tokens, including 5,760 cached; 6,699 output tokens, including 4,536 reasoning tokens. Four sequential batches took 345.586 seconds including a final launcher pause. Host disk pressure rose during the final batch; the launcher was paused, and its last already-exited model call was then collected without launching another. Final memory and I/O pressure readings were zero. Reported launcher memory peaks of 16.3–16.8M do not include separate Codex scopes. No paid API, rental or credential changes.
 
 This is a development test on previously examined notes, with one new call per note and a saved nonconcurrent baseline. It does not establish repeatability or isolate the effects of the two changes. ASv6.8 remains frozen; ASv6.11 is not promoted.
+
+## Follow-up
+
+The user started a [subject-prompt goal](../subject-prompt-goal-v1/README.md). Routine semantic review and prompt iteration are now delegated to the assistant under a fixed validation plan. This test remains the starting evidence; its observations are not overwritten or converted into user decisions.
