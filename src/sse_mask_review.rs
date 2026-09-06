@@ -3946,11 +3946,11 @@ impl AtomicSubjectNoteReviewTuiModel {
         } else if self.screen.kind == PromptReviewKind::Claim {
             "Do the approved claims express different claims?"
         } else if self.selected_index < self.coverage_index() {
-            "Is this one narrow subject substantively discussed in the note?"
+            "Is this subject supported by the note?"
         } else if self.selected_index == self.coverage_index() {
             "Do the approved subjects cover every atomic subject in the note?"
         } else {
-            "Do the approved subjects express different meanings?"
+            "Do the approved subjects express different meanings? Repeats are OK."
         }
     }
 
@@ -4084,7 +4084,7 @@ impl AtomicSubjectNoteReviewTuiModel {
             } else {
                 (
                     "Atomic-subject review help",
-                    "Each note has three kinds of review row.\n\nSubject proposal: approve when it names one narrow, independently meaningful subject explicitly and substantively discussed in the note. Disapprove when it combines separate subjects, names only a broad ancestor, invents meaning, or elevates an incidental mention.\n\nCoverage: decide whether the approved subjects include every atomic subject discussed in the note.\n\nDistinctness: decide whether the approved subjects express different meanings. Only approved subjects count.\n\nA records the positive answer shown for the selected row. R records the negative answer. U clears that decision. C edits an optional comment.\n\nP and N move between notes without deciding anything. Enter marks the note finished only after every row has an explicit decision. Finished notes remain editable."
+                    "Review the subjects against the complete note.\n\nSubject proposal: approve when the note states or reasonably implies the meaning. Disapprove when the subject adds unsupported meaning or changes what the note communicates.\n\nBroad, narrow, nested, overlapping and duplicate subjects are allowed. A brief mention is not, by itself, a reason to disapprove a subject.\n\nCoverage: decide whether any meaning communicated by the note is missing from the approved subjects. Different wording for an already covered meaning is not a missing subject.\n\nDistinctness records whether approved subjects repeat a meaning. Repetition is allowed; choosing Repeated does not reject any subject.\n\nA and R record the answer shown for the selected row. U clears that decision. C edits an optional comment.\n\nP and N move between notes without deciding anything. Ctrl-C saves and exits; you do not need to finish every row or note. Enter marks the note finished only after every row has an explicit decision. Finished notes remain editable."
                         .to_owned(),
                 )
             };

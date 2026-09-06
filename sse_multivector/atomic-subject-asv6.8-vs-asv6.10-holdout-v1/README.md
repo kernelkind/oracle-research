@@ -35,13 +35,24 @@ The straightforward text examples retain their main communicated meanings. That 
 
 The [review focus](./review-focus.json) preserves the complete source notes and exact subject strings. All user decisions remain empty. [Assistant analysis](./assistant-analysis.json) also records the less clear provenance questions in N07, N14 and N20 rather than treating every URL-related subject as invalid.
 
-### Existing review tool: wording approval pending
+### Existing review tool
 
-The actual generation runs load in the existing subject-review tool. Its current screen/help still asks for one narrow subject, rejects broad/incidental subjects, and has a distinctness check. Those rules conflict with this experiment’s accepted broad/overlapping-subject policy. No UI code has been changed; permission was requested to update only the review wording. Do not use its old narrowness/distinctness instructions to judge this experiment.
+The subject question is now “Is this subject supported by the note?” Help explicitly allows broad, narrow, nested, overlapping and duplicate subjects, including reasonable implications. Coverage checks for missing meaning. Distinctness only records repetition; choosing Repeated does not reject any subject. Only displayed wording changed; controls, stored decisions, generation inputs and outputs are unchanged.
 
 The tool reviews complete generated runs, not a filtered list of isolated subjects. Both original runs remain intact; no fabricated or rebound generation records were made to filter them. A smoke check opened ASv6.8, navigated to the next note and paused with **zero decisions**. The temporary session is under `target/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/`.
 
-Once review wording is resolved, the existing inputs are `asv6.8/run` and `asv6.10/run`; the four review-focus notes above identify where human judgment is useful. The user need not finish every note.
+Open ASv6.10 with:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+./target/release/sse-mask-review iterate \
+  sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.10/run \
+  target/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.10-review-session.json
+```
+
+Use `asv6.8` in both paths to review the baseline. P/N moves between notes; up/down selects a subject; Ctrl-D/U scrolls the note; Ctrl-C saves and exits. The four review-focus notes above identify where human judgment is useful. You need not finish every row or note.
+
+The wording change passed 78 review regression tests, including a new minimum-size screen/help test. The rebuilt TUI also opened ASv6.10, navigated to N03, scrolled help and paused with zero decisions. The earlier ASv6.8 review session and all 24 non-status comparison artifacts remained byte-for-byte unchanged.
 
 ## Verification and limits
 

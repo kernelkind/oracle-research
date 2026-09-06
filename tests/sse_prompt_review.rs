@@ -1659,6 +1659,77 @@ fn completed_note_review_reopens_for_edits() {
 }
 
 #[test]
+fn note_workspace_subject_wording_allows_broad_and_repeated_meanings() {
+    let fixture = Fixture::new();
+    let mut ui = ScriptedNoteUi::new([AtomicSubjectNoteReviewAction::Pause]);
+    run_atomic_subject_note_review(&fixture.run_directory, &fixture.session_path, &mut ui)
+        .expect("open subject review through the production loader");
+    let mut model = AtomicSubjectNoteReviewTuiModel::new(ui.screens.remove(0));
+    let mut terminal = Terminal::new(TestBackend::new(72, 24)).expect("review terminal");
+
+    terminal
+        .draw(|frame| model.render(frame))
+        .expect("render subject question");
+    let rendered = rendered_terminal(&terminal);
+    assert!(
+        rendered.contains("Is this subject supported by the note?"),
+        "{rendered}"
+    );
+    assert!(!rendered.contains("one narrow"), "{rendered}");
+
+    for _ in 0..=model.screen().subjects.len() {
+        assert_eq!(
+            model.handle_event(key(KeyCode::Down)),
+            AtomicSubjectNoteReviewAction::None
+        );
+    }
+    terminal
+        .draw(|frame| model.render(frame))
+        .expect("render repetition question");
+    let rendered = rendered_terminal(&terminal);
+    assert!(rendered.contains("Repeats are OK."), "{rendered}");
+    assert!(rendered.contains("[A] Distinct"), "{rendered}");
+    assert!(rendered.contains("[R] Repeated"), "{rendered}");
+
+    assert_eq!(
+        model.handle_event(key(KeyCode::Char('?'))),
+        AtomicSubjectNoteReviewAction::None
+    );
+    let mut help = String::new();
+    for _ in 0..80 {
+        terminal
+            .draw(|frame| model.render(frame))
+            .expect("render and scroll subject help");
+        let rendered = rendered_terminal(&terminal).replace('│', " ");
+        help.push_str(&rendered.split_whitespace().collect::<Vec<_>>().join(" "));
+        help.push('\n');
+        assert_eq!(
+            model.handle_event(key(KeyCode::Down)),
+            AtomicSubjectNoteReviewAction::None
+        );
+    }
+    for expected in [
+        "the note states or reasonably implies the meaning",
+        "Broad, narrow, nested, overlapping and duplicate subjects are allowed.",
+        "any meaning communicated by the note is missing",
+        "choosing Repeated does not reject any subject",
+    ] {
+        assert!(help.contains(expected), "missing help text {expected:?}");
+    }
+    for obsolete in [
+        "one narrow, independently meaningful subject",
+        "names only a broad ancestor",
+        "elevates an incidental mention",
+    ] {
+        assert!(!help.contains(obsolete), "obsolete help text {obsolete:?}");
+    }
+    let session = read_session(&fixture.session_path);
+    assert!(session["notes"][0]["subjects"][0]["outcome"].is_null());
+    assert!(session["notes"][0]["coverage"].is_null());
+    assert!(session["notes"][0]["distinctness"].is_null());
+}
+
+#[test]
 fn note_workspace_help_shows_only_help_controls() {
     let fixture = Fixture::new();
     let mut ui = ScriptedNoteUi::new([AtomicSubjectNoteReviewAction::Pause]);

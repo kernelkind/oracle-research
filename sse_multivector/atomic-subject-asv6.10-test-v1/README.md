@@ -2,7 +2,7 @@
 
 The original ambiguity comment and calculated time gap did not recur. This is progress on those examples, not a complete fix: one Iran output still adds commentary about what is not asserted, and one Katie output leaves the possible contact/ticket connection unexpressed.
 
-Follow-up: the [20-note ASv6.8 versus ASv6.10 comparison](../atomic-subject-asv6.8-vs-asv6.10-holdout-v1/README.md) is complete. Both prompts stayed unchanged; ASv6.8 remains frozen. Questionable outputs await human review, and the existing review tool's outdated narrowness/distinctness wording needs approval to update.
+Follow-up: the [20-note ASv6.8 versus ASv6.10 comparison](../atomic-subject-asv6.8-vs-asv6.10-holdout-v1/README.md) is complete. Both prompts stayed unchanged; ASv6.8 remains frozen. The review wording now permits broad and repeated subjects. Questionable outputs still await human review.
 
 [Full original notes, every ASv6.9 and ASv6.10 subject, and analysis](./results.md)
 
