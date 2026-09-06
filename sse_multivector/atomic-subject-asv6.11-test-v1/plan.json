@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "status_at_creation": "planned_before_generation",
+  "user_authorization": "proceed with test",
+  "question": "Does the corrected ASv6.11 avoid URL-derived subjects and uncertainty qualifiers while retaining meanings supported by the note?",
+  "input": "../atomic-subject-asv6.8-vs-asv6.10-holdout-v1/input.json",
+  "note_count": 20,
+  "calls_per_note": 1,
+  "planned_new_calls": 20,
+  "saved_baseline": "../atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.10/run",
+  "baseline_rerun": false,
+  "execution": "Same 20 notes and order; one fresh Sol-low call each, sequentially. Pause after each five new jobs for host-pressure inspection.",
+  "prompt_source": "../atomic-subject-asv6.11-proposal-v1/ASv6.11.md",
+  "prompt_file_sha256": "6da1062662ffff98ae2c714071d25eea3b03af2c3af691ba0c218706bea94221",
+  "prompt_normalization": "Remove the final file newline when placing the prompt in the JSON registry, matching the saved baseline.",
+  "max_attempts_per_note": 1,
+  "retries": false,
+  "output_edits": false,
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "review": [
+    "Read every generated subject with the full original note, alongside saved ASv6.10 output.",
+    "Check N18 for chart subjects based only on URL text. Instrument symbols appearing outside URLs remain valid evidence.",
+    "Check N03 for direct supported interpretations rather than uncertainty qualifiers or interpretation commentary.",
+    "Check all notes for URL-derived additions, uncertainty wording, new calculations, lost meaning and unsupported relationships. Separate source-expressed meanings from model-added qualifications.",
+    "Broad, nested, overlapping and duplicate subjects, plausible implications and separate supported interpretations remain allowed.",
+    "Do not invent new human decisions or treat one output difference as a proven regression."
+  ],
+  "unchanged": [
+    "Approved ASv6.11 wording",
+    "Frozen default ASv6.8 and registry",
+    "All original input text and existing normalization",
+    "Pinned CLI 0.153.0 and existing wrapper",
+    "Sol low and response schema",
+    "One new isolated process and empty working directory per note",
+    "Minimal instructions; tools, web and injected agent context disabled",
+    "All prior outputs and human decisions"
+  ],
+  "runtime": {
+    "launcher_memory_max_bytes": 2147483648,
+    "launcher_swap_max_bytes": 0,
+    "launcher_runtime_max_seconds_per_batch": 900,
+    "max_new_jobs_per_batch": 5,
+    "cap_scope": "Launcher only: pinned Codex starts a separate codex.slice scope. Do not mistake launcher measurements for the complete Codex process.",
+    "pressure_check": "Inspect host available memory and memory/I/O PSI before each five-job batch and during execution. Stop admitting new calls if sustained pressure or low available memory develops; do not change global Codex limits affecting other work.",
+    "paid_api_or_rental": false,
+    "budget": "This test uses existing subscription allowance only; no new paid resource is authorized."
+  },
+  "limitations": [
+    "Development test using the previously examined 20-note sample, not an unseen holdout.",
+    "One new output per note with a saved nonconcurrent baseline cannot establish repeatability or causality.",
+    "The two prompt changes are tested together, not independently."
+  ]
+}
