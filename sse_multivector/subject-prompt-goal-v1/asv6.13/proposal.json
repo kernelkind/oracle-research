@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "prompt": "ASv6.13",
+  "parent": "ASv6.12",
+  "goal_revision": 2,
+  "evidence": "../asv6.12/diagnostic-review.json",
+  "changes": [
+    "Replace the ineffective commentary/presence wording with an explicit distinction between communicated content and labels/credits/identifiers used merely to present it.",
+    "Require source support for a number's role as a count/measurement and any units; retain the existing ban on newly calculated results."
+  ],
+  "hypotheses": [
+    "Publication wrappers will stop producing standalone subjects while discussed entities and attribution relationships remain available.",
+    "The fee-priority values will retain their supported associations without turning into invented item counts."
+  ],
+  "unchanged": "Coverage, broad/nested/overlapping/duplicate allowance, plausible implication boundary, direct ambiguity branches, self-containment, URL rule, model, effort, runner, inputs and validation criteria.",
+  "audit": {
+    "source": "https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6",
+    "outcome_first": true,
+    "general_not_note_specific": true,
+    "no_added_examples": true,
+    "no_prescribed_hidden_reasoning": true,
+    "each_instruction_distinct": true,
+    "notes": "Both new sentences specify evidence boundaries. They do not filter by importance or force one canonical subject list. The metadata sentence applies only to text used merely to present content, not content discussing a person, identifier or publication."
+  },
+  "test": "All 28 fixed development notes; inspect every output and coverage. Run fixed repeats only if the first-pass evidence warrants them."
+}

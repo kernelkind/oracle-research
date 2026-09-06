@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "version": "ASv6.12",
+  "parent": "ASv6.11",
+  "observed_failure": "ASv6.11 N10-S30 and N16-S4 describe the post's tags/category instead of subjects conveyed by those labels. Similar presentation observations appeared in prior development results.",
+  "change": "Extend the existing no-commentary sentence to cover the post's writing, labeling and presentation; leave all other text byte-identical.",
+  "hypothesis": "The model will use source labels as semantic evidence without making a separate subject out of labeling the post. This is a hypothesis to test, not a demonstrated fix.",
+  "not_changed": [
+    "Scope, broad/narrow/overlapping/duplicate permission",
+    "Reasonable implications",
+    "URL evidence restriction",
+    "Arithmetic restriction",
+    "Direct ambiguity branches",
+    "Source interpretation and standalone meaning",
+    "Model, reasoning, harness, schema and source inputs"
+  ],
+  "audit": {
+    "source": "https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6",
+    "outcome_first": true,
+    "surgical": true,
+    "no_examples": true,
+    "no_hidden_process_steps": true,
+    "no_new_output_format": true,
+    "distinct_function": "The existing commentary rule covered uncertainty and absence; the added clause covers presentation observations. The presence/form sentence remains the general evidence threshold."
+  },
+  "unresolved": "Source-expressed uncertainty in the dashboard note and difficult slang remain separate questions. This edit does not claim to solve them.",
+  "generation": "One fresh Sol-low call per development note first; all output read against full source before deciding whether repeats are warranted."
+}
