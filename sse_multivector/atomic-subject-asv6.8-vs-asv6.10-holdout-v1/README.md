@@ -1,6 +1,6 @@
 # ASv6.8 versus ASv6.10: 20-note holdout
 
-ASv6.10 improved the targeted calculation and commentary examples. It is not established as a complete fix: a definition-like item, unclear slang and repeated chart-link subjects still need judgment. ASv6.8 remains the frozen default.
+ASv6.10 improved the targeted calculation and commentary examples, but the user rejected both subjects in the focused review: the chart-link item and the execution-interpretation item. Unclear slang and non-English coverage remain unresolved. ASv6.8 remains the frozen default.
 
 [Complete notes, all 305 subjects, and per-note analysis](./results.md)
 
@@ -26,12 +26,14 @@ N12 also loses ASv6.8’s proposed interpretation of “Hos Kasi Laguma Karo.”
 
 The straightforward text examples retain their main communicated meanings. That does not establish complete coverage across all 20 notes: the slang and non-English phrase remain unresolved. More outputs are not inherently worse: ASv6.8 returned 140 subjects and ASv6.10 returned 165; duplicates and broad/nested subjects are allowed.
 
-## Review focus
+## Focused review: both subjects rejected
 
-The user requested only the most pressing decisions. The filtered review shows:
+The saved TUI session records these two rejections, with empty comments. The user supplied the reasons in chat:
 
-1. **N18, ASv6.10 subject 3:** is the chart-page item a represented subject or link bookkeeping? One decision can inform inspection of the repeated pattern; it is not automatically copied to all items.
-2. **N03, ASv6.10 subject 2:** is defining “execution” a subject of the post, or commentary about interpreting it?
+1. **N18, ASv6.10 subject 3 — rejected:** “The linked Xport chart page concerns the BX:ABCH pair.” The user stated: “we should not be inferring things in links.”
+2. **N03, ASv6.10 subject 2 — rejected:** “Execution” may mean how an unspecified plan or strategy is implemented during the next quarter. The user stated: “we should not be encoding uncertainty INSIDE the subject.”
+
+These are requirements for the next prompt revision, not changes already made to the prompt. No generation was rerun, no output was edited, and no decision was copied to other subjects. The prompt wording and implementation remain undecided.
 
 N08's Snow/snow interpretations and N12's non-English phrase remain unresolved, but are not requested in this review. Neither is automatically approved or rejected.
 
@@ -43,7 +45,7 @@ The subject question is “Is this subject supported by the note?” Help explic
 
 The tool verifies the complete original generation run, then `--only` selects which subjects to display. Each screen contains one subject and its full original note. Coverage and distinctness questions are absent from this filtered view. Both original runs remain intact; no fabricated or rebound generation records are used. Saved decisions still use the ordinary full-run session, so excluded subjects are preserved rather than silently approved, rejected or removed.
 
-Open only the two ASv6.10 subjects with:
+Reopen only the two ASv6.10 subjects with:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
