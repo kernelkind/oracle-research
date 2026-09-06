@@ -28,31 +28,36 @@ The straightforward text examples retain their main communicated meanings. That 
 
 ## Review focus
 
-1. **N03, ASv6.10 subject 2:** is defining “execution” a subject of the post, or commentary about interpreting it?
-2. **N08, both versions:** which Snow/snow interpretations does the short text support? The image was not examined.
-3. **N18, ASv6.10 subject 3:** is the chart-page item a represented subject or link bookkeeping? One decision can inform inspection of the repeated pattern; it is not automatically copied to all items.
-4. **N12:** the conversion difference is concrete; the non-English phrase needs someone able to judge it.
+The user requested only the most pressing decisions. The filtered review shows:
 
-The [review focus](./review-focus.json) preserves the complete source notes and exact subject strings. All user decisions remain empty. [Assistant analysis](./assistant-analysis.json) also records the less clear provenance questions in N07, N14 and N20 rather than treating every URL-related subject as invalid.
+1. **N18, ASv6.10 subject 3:** is the chart-page item a represented subject or link bookkeeping? One decision can inform inspection of the repeated pattern; it is not automatically copied to all items.
+2. **N03, ASv6.10 subject 2:** is defining “execution” a subject of the post, or commentary about interpreting it?
+
+N08's Snow/snow interpretations and N12's non-English phrase remain unresolved, but are not requested in this review. Neither is automatically approved or rejected.
+
+The [review focus](./review-focus.json) preserves all four original review questions, complete source notes and exact subject strings. Its empty decision fields are not the live review session. [Assistant analysis](./assistant-analysis.json) also records the less clear provenance questions in N07, N14 and N20 rather than treating every URL-related subject as invalid.
 
 ### Existing review tool
 
-The subject question is now “Is this subject supported by the note?” Help explicitly allows broad, narrow, nested, overlapping and duplicate subjects, including reasonable implications. Coverage checks for missing meaning. Distinctness only records repetition; choosing Repeated does not reject any subject. Only displayed wording changed; controls, stored decisions, generation inputs and outputs are unchanged.
+The subject question is “Is this subject supported by the note?” Help explicitly allows broad, narrow, nested, overlapping and duplicate subjects, including reasonable implications. The full-note review retains its coverage and distinctness rows: coverage checks for missing meaning; distinctness only records repetition and does not reject subjects.
 
-The tool reviews complete generated runs, not a filtered list of isolated subjects. Both original runs remain intact; no fabricated or rebound generation records were made to filter them. A smoke check opened ASv6.8, navigated to the next note and paused with **zero decisions**. The temporary session is under `target/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/`.
+The tool verifies the complete original generation run, then `--only` selects which subjects to display. Each screen contains one subject and its full original note. Coverage and distinctness questions are absent from this filtered view. Both original runs remain intact; no fabricated or rebound generation records are used. Saved decisions still use the ordinary full-run session, so excluded subjects are preserved rather than silently approved, rejected or removed.
 
-Open ASv6.10 with:
+Open only the two ASv6.10 subjects with:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 ./target/release/sse-mask-review iterate \
   sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.10/run \
-  target/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.10-review-session.json
+  target/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.10-review-session.json \
+  --only 18:3,3:2
 ```
 
-Use `asv6.8` in both paths to review the baseline. P/N moves between notes; up/down selects a subject; Ctrl-D/U scrolls the note; Ctrl-C saves and exits. The four review-focus notes above identify where human judgment is useful. You need not finish every row or note.
+`--only` lists note:subject numbers, starting at 1, in display order. A/R records only the displayed subject's decision; C adds an optional comment. Left/right moves between these two subjects; up/down and Ctrl-D/U scroll the note. S moves on without deciding, leaving the subject available next time. Ctrl-C saves and exits. Reopening resumes with the first undecided selected subject; if both are decided, it opens the first for re-review. Removing `--only` opens the unchanged full-note review, including its coverage/distinctness rows.
 
-The wording change passed 78 review regression tests, including a new minimum-size screen/help test. The rebuilt TUI also opened ASv6.10, navigated to N03, scrolled help and paused with zero decisions. The earlier ASv6.8 review session and all 24 non-status comparison artifacts remained byte-for-byte unchanged.
+The earlier wording change passed 78 review regression tests, including a new minimum-size screen/help test. Its rebuilt TUI opened ASv6.10, navigated to N03, scrolled help and paused with zero decisions. The ASv6.8 review session and all 24 non-status comparison artifacts remained byte-for-byte unchanged.
+
+The subject filter passed 84 review tests, including six new tests covering CLI selection, full-note display, decisions, navigation, comments, pause/resume, re-review, invalid selections and generation identity. A terminal check opened exactly the two requested subjects, navigated between them and opened help, then paused with zero decisions. Both existing review-session files and all generation artifacts remained unchanged. No generation calls were made.
 
 ## Verification and limits
 

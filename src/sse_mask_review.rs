@@ -697,6 +697,16 @@ pub enum AtomicSubjectNoteReviewRunOutcome {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum SelectedSubjectReviewRunOutcome {
+    Paused,
+    Completed {
+        approved: usize,
+        rejected: usize,
+        undecided: usize,
+    },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum ClaimNoteReviewRunOutcome {
     Paused,
     Completed {
@@ -2166,18 +2176,7 @@ pub fn run_atomic_subject_note_review(
     let run = load_verified_atomic_subject_review_run(generation_run_directory)?;
     let notes = run.note_review_notes()?;
     let _lock = acquire_session_lock(session_path)?;
-    let mut session = match load_session::<StoredAtomicSubjectNoteReviewSession>(session_path)? {
-        Some(StoredAtomicSubjectNoteReviewSession::V2(session)) => {
-            session.validate(&run, &notes)?;
-            session
-        }
-        Some(StoredAtomicSubjectNoteReviewSession::V1(legacy)) => {
-            legacy.validate(&run)?;
-            preserve_legacy_prompt_review_session(session_path, &legacy)?;
-            AtomicSubjectNoteReviewSession::migrate(legacy, &run, &notes)?
-        }
-        None => AtomicSubjectNoteReviewSession::new(&run, &notes),
-    };
+    let mut session = load_atomic_subject_note_review_session(session_path, &run, &notes)?;
     save_session(session_path, &session)?;
 
     let mut model = AtomicSubjectNoteReviewTuiModel::new(session.screen(&notes)?);
@@ -2243,6 +2242,165 @@ pub fn run_atomic_subject_note_review(
         save_session(session_path, &session)?;
         model.replace_screen(session.screen(&notes)?);
     }
+}
+
+fn load_atomic_subject_note_review_session(
+    session_path: &Path,
+    run: &VerifiedAtomicSubjectReviewRun,
+    notes: &[VerifiedAtomicSubjectNoteReviewNote],
+) -> Result<AtomicSubjectNoteReviewSession> {
+    match load_session::<StoredAtomicSubjectNoteReviewSession>(session_path)? {
+        Some(StoredAtomicSubjectNoteReviewSession::V2(session)) => {
+            session.validate(run, notes)?;
+            Ok(session)
+        }
+        Some(StoredAtomicSubjectNoteReviewSession::V1(legacy)) => {
+            legacy.validate(run)?;
+            preserve_legacy_prompt_review_session(session_path, &legacy)?;
+            AtomicSubjectNoteReviewSession::migrate(legacy, run, notes)
+        }
+        None => Ok(AtomicSubjectNoteReviewSession::new(run, notes)),
+    }
+}
+
+/// Review only the requested one-based note:subject pairs, in the given order.
+/// The verified run and saved session still contain every original note and subject.
+pub fn run_selected_atomic_subject_review(
+    generation_run_directory: impl AsRef<Path>,
+    session_path: impl AsRef<Path>,
+    selection: &str,
+    mut review: impl FnMut(ApprovalScreen, String) -> io::Result<ApprovalTuiAction>,
+) -> Result<SelectedSubjectReviewRunOutcome> {
+    let generation_run_directory = generation_run_directory.as_ref();
+    let session_path = session_path.as_ref();
+    let run = load_verified_atomic_subject_review_run(generation_run_directory)?;
+    let notes = run.note_review_notes()?;
+    let mut selected = Vec::new();
+    let mut seen = BTreeSet::new();
+    for entry in selection.split(',') {
+        let pair = entry.trim().split_once(':').and_then(|(note, subject)| {
+            Some((
+                note.parse::<usize>().ok()?.checked_sub(1)?,
+                subject.parse::<usize>().ok()?.checked_sub(1)?,
+            ))
+        });
+        let Some((note, subject)) = pair else {
+            return invalid("--only requires comma-separated note:subject numbers, starting at 1");
+        };
+        if notes
+            .get(note)
+            .and_then(|note| note.subjects.get(subject))
+            .is_none()
+        {
+            return invalid(format!(
+                "--only subject {entry} is absent from this generation run"
+            ));
+        }
+        if !seen.insert((note, subject)) {
+            return invalid(format!("--only repeats subject {entry}"));
+        }
+        selected.push((note, subject));
+    }
+    let _lock = acquire_session_lock(session_path)?;
+    let mut session = load_atomic_subject_note_review_session(session_path, &run, &notes)?;
+    let mut current = selected
+        .iter()
+        .position(|&(note, subject)| session.notes[note].subjects[subject].outcome.is_none())
+        .unwrap_or(0);
+    let mut skipped = BTreeSet::new();
+    loop {
+        let (note_index, subject_index) = selected[current];
+        session.current_note_index = note_index;
+        session.set_selected_index(subject_index)?;
+        save_session(session_path, &session)?;
+        let subject = &session.notes[note_index].subjects[subject_index];
+        let status = match subject.outcome {
+            None => "Not reviewed",
+            Some(ReviewOutcome::Approved) => "Approved",
+            Some(ReviewOutcome::Rejected) => "Disapproved",
+        };
+        let screen = ApprovalScreen {
+            heading: format!(
+                "Subject review · {} of {} · Note {} · Subject {} · {status}",
+                current + 1, selected.len(), note_index + 1, subject_index + 1
+            ),
+            title: Some(notes[note_index].subjects[subject_index].label.clone()),
+            scope: "Is this subject supported by the note?".into(),
+            approve_label: "Approve".into(),
+            reject_label: "Disapprove".into(),
+            rejection_help: String::new(),
+            guidance: Some(ApprovalGuidance {
+                title: "Subject review".into(),
+                body: "Review only the displayed subject against the complete note. Approve when the note states or reasonably implies the meaning. Disapprove when it adds unsupported meaning or changes what the note communicates. Broad, narrow, nested, overlapping and duplicate subjects are allowed.\n\nA or R records this subject's decision. C edits an optional comment. Left/right moves between the selected subjects without deciding. Up/down and Ctrl-D/U scroll the note. S moves on without deciding; Ctrl-C saves and exits. Other subjects are not reviewed automatically.".into(),
+            }),
+            evidence: ApprovalEvidenceLayout::Paged(vec![ApprovalEvidence {
+                title: "Note".into(),
+                annotation: String::new(),
+                body: notes[note_index].note.clone(),
+            }]),
+        };
+        let action = review(screen, subject.comment.clone()).map_err(|source| {
+            io_error("review selected subjects from", generation_run_directory, source)
+        })?;
+        let advance = matches!(
+            &action,
+            ApprovalTuiAction::Submit { .. } | ApprovalTuiAction::Skip { .. }
+        );
+        match action {
+            ApprovalTuiAction::None => return invalid("subject review returned without an action"),
+            ApprovalTuiAction::Pause => return Ok(SelectedSubjectReviewRunOutcome::Paused),
+            ApprovalTuiAction::PreviousItem => {
+                current = (current + selected.len() - 1) % selected.len();
+                continue;
+            }
+            ApprovalTuiAction::NextItem => {
+                current = (current + 1) % selected.len();
+                continue;
+            }
+            ApprovalTuiAction::Submit { outcome, comment } => {
+                session.decide_subject(subject_index, outcome)?;
+                session.save_subject_comment(subject_index, comment)?;
+                skipped.remove(&current);
+            }
+            ApprovalTuiAction::SaveComment { comment } => {
+                session.save_subject_comment(subject_index, comment)?;
+            }
+            ApprovalTuiAction::Skip { comment } => {
+                session.save_subject_comment(subject_index, comment)?;
+                skipped.insert(current);
+            }
+        }
+        save_session(session_path, &session)?;
+        if advance {
+            let next = (1..=selected.len())
+                .map(|offset| (current + offset) % selected.len())
+                .find(|&index| {
+                    let (note, subject) = selected[index];
+                    !skipped.contains(&index) && session.notes[note].subjects[subject].outcome.is_none()
+                });
+            match next {
+                Some(index) => current = index,
+                None => break,
+            }
+        }
+    }
+    let approved = selected
+        .iter()
+        .filter(|&&(note, subject)| {
+            session.notes[note].subjects[subject].outcome == Some(ReviewOutcome::Approved)
+        })
+        .count();
+    let rejected = selected
+        .iter()
+        .filter(|&&(note, subject)| {
+            session.notes[note].subjects[subject].outcome == Some(ReviewOutcome::Rejected)
+        })
+        .count();
+    Ok(SelectedSubjectReviewRunOutcome::Completed {
+        approved,
+        rejected,
+        undecided: selected.len() - approved - rejected,
+    })
 }
 
 pub fn run_claim_note_review(

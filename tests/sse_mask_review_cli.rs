@@ -26,3 +26,23 @@ fn sse_mask_review_cli_explains_its_required_artifacts() {
         "{stderr}"
     );
 }
+
+#[test]
+fn subject_review_cli_accepts_an_explicit_subject_filter() {
+    let output = Command::new(env!("CARGO_BIN_EXE_sse-mask-review"))
+        .args([
+            "iterate",
+            "generation-run",
+            "review-session.json",
+            "--only",
+            "18:3,3:2",
+        ])
+        .output()
+        .expect("run filtered subject review CLI");
+    assert!(!output.status.success());
+    let stderr = String::from_utf8(output.stderr).expect("utf-8 stderr");
+    assert!(
+        stderr.contains("the SSE prompt review must be started from an interactive terminal"),
+        "expected the filter to reach subject review, got: {stderr}"
+    );
+}

@@ -14,6 +14,7 @@ use oracle_mvp::sse_mask_review::{
     AtomicSubjectNoteReviewTuiModel, AtomicSubjectNoteReviewUi, PromptReviewCounts,
     PromptReviewKind, PromptReviewRunOutcome, PromptReviewScreen, PromptReviewUi,
     run_atomic_subject_note_review, run_atomic_subject_prompt_review, run_claim_note_review,
+    run_selected_atomic_subject_review, SelectedSubjectReviewRunOutcome,
 };
 use ratatui::Terminal;
 use ratatui::backend::TestBackend;
@@ -1727,6 +1728,171 @@ fn note_workspace_subject_wording_allows_broad_and_repeated_meanings() {
     assert!(session["notes"][0]["subjects"][0]["outcome"].is_null());
     assert!(session["notes"][0]["coverage"].is_null());
     assert!(session["notes"][0]["distinctness"].is_null());
+}
+
+#[test]
+fn selected_subject_review_shows_only_requested_subjects_with_complete_notes() {
+    let fixture = Fixture::new();
+    let output_before = fs::read(fixture.run_directory.join("output.json")).unwrap();
+    let results_before = fs::read(fixture.run_directory.join("results.jsonl")).unwrap();
+    let expected = [
+        ("Future dominance of solar power generation", SECOND_NOTE, 'a'),
+        ("Open-source availability of pypush", "pypush is serverless; pypush is open-source.", 'r'),
+    ];
+    let mut index = 0;
+    let outcome = run_selected_atomic_subject_review(
+        &fixture.run_directory, &fixture.session_path, "2:1,1:2",
+        |screen, comment| {
+            assert!(screen.heading.contains(&format!("{} of 2", index + 1)));
+            assert_eq!(screen.title.as_deref(), Some(expected[index].0));
+            assert_eq!(screen.scope, "Is this subject supported by the note?");
+            assert_eq!(evidence_at(&screen, 0).body, expected[index].1);
+            assert_eq!(evidence_at(&screen, 0).title, "Note");
+            assert!(evidence_at(&screen, 0).annotation.is_empty());
+            let mut model = ApprovalTuiModel::new_navigable_prompt_iteration(screen, comment);
+            let mut terminal = Terminal::new(TestBackend::new(72, 24)).unwrap();
+            terminal.draw(|frame| model.render(frame)).unwrap();
+            let rendered = rendered_terminal(&terminal);
+            assert!(rendered.contains("Is this subject supported by the note?"), "{rendered}");
+            assert!(!rendered.contains("Coverage"), "{rendered}");
+            assert!(!rendered.contains("Distinctness"), "{rendered}");
+            let action = model.handle_event(key(KeyCode::Char(expected[index].2)));
+            index += 1;
+            Ok(action)
+        },
+    ).unwrap();
+    assert_eq!(index, 2);
+    assert_eq!(outcome, SelectedSubjectReviewRunOutcome::Completed {
+        approved: 1, rejected: 1, undecided: 0,
+    });
+    let session = read_session(&fixture.session_path);
+    assert_eq!(session["notes"].as_array().unwrap().len(), 2);
+    assert!(session["notes"][0]["subjects"][0]["outcome"].is_null());
+    assert_eq!(session["notes"][0]["subjects"][1]["outcome"], "rejected");
+    assert_eq!(session["notes"][1]["subjects"][0]["outcome"], "approved");
+    for note in session["notes"].as_array().unwrap() {
+        assert!(note["coverage"].is_null());
+        assert!(note["distinctness"].is_null());
+        assert_eq!(note["finished"], false);
+    }
+    assert_eq!(fs::read(fixture.run_directory.join("output.json")).unwrap(), output_before);
+    assert_eq!(fs::read(fixture.run_directory.join("results.jsonl")).unwrap(), results_before);
+    let mut ui = ScriptedNoteUi::new([AtomicSubjectNoteReviewAction::Pause]);
+    run_atomic_subject_note_review(&fixture.run_directory, &fixture.session_path, &mut ui)
+        .expect("filtered decisions also load in the unchanged full review");
+}
+
+#[test]
+fn selected_subject_review_resumes_navigates_comments_and_leaves_skips_undecided() {
+    let fixture = Fixture::new();
+    let mut actions = VecDeque::from([approved("First decision"), ApprovalTuiAction::Pause]);
+    assert_eq!(run_selected_atomic_subject_review(
+        &fixture.run_directory, &fixture.session_path, "1:2,2:1",
+        |_, _| Ok(actions.pop_front().unwrap()),
+    ).unwrap(), SelectedSubjectReviewRunOutcome::Paused);
+
+    let mut actions = VecDeque::from([
+        ApprovalTuiAction::PreviousItem,
+        ApprovalTuiAction::NextItem,
+        ApprovalTuiAction::SaveComment { comment: "Unsure".into() },
+        ApprovalTuiAction::Skip { comment: "Unsure".into() },
+    ]);
+    let mut seen = Vec::new();
+    let outcome = run_selected_atomic_subject_review(
+        &fixture.run_directory, &fixture.session_path, "1:2,2:1",
+        |screen, comment| {
+            seen.push((screen.title.unwrap(), comment));
+            Ok(actions.pop_front().unwrap())
+        },
+    ).unwrap();
+    assert_eq!(seen, [
+        ("Future dominance of solar power generation".into(), "".into()),
+        ("Open-source availability of pypush".into(), "First decision".into()),
+        ("Future dominance of solar power generation".into(), "".into()),
+        ("Future dominance of solar power generation".into(), "Unsure".into()),
+    ]);
+    assert_eq!(outcome, SelectedSubjectReviewRunOutcome::Completed {
+        approved: 1, rejected: 0, undecided: 1,
+    });
+    let session = read_session(&fixture.session_path);
+    assert!(session["notes"][1]["subjects"][0]["outcome"].is_null());
+    assert_eq!(session["notes"][1]["subjects"][0]["comment"], "Unsure");
+    run_selected_atomic_subject_review(
+        &fixture.run_directory, &fixture.session_path, "1:2,2:1",
+        |screen, comment| {
+            assert_eq!(screen.title.as_deref(), Some("Future dominance of solar power generation"));
+            assert_eq!(comment, "Unsure");
+            Ok(ApprovalTuiAction::Pause)
+        },
+    ).unwrap();
+}
+
+#[test]
+fn selected_subject_review_preserves_other_notes_decisions_and_allows_rereview() {
+    let fixture = Fixture::new();
+    let mut ui = ScriptedNoteUi::new([
+        AtomicSubjectNoteReviewAction::DecideSubject { subject_index: 0, outcome: ReviewOutcome::Approved },
+        AtomicSubjectNoteReviewAction::DecideSubject { subject_index: 1, outcome: ReviewOutcome::Rejected },
+        AtomicSubjectNoteReviewAction::SaveSubjectComment { subject_index: 1, comment: "Keep this".into() },
+        AtomicSubjectNoteReviewAction::DecideCoverage { decision: AtomicSubjectCoverageDecision::Complete },
+        AtomicSubjectNoteReviewAction::DecideDistinctness { decision: AtomicSubjectDistinctnessDecision::Distinct },
+        AtomicSubjectNoteReviewAction::FinishNote,
+        AtomicSubjectNoteReviewAction::Pause,
+    ]);
+    run_atomic_subject_note_review(&fixture.run_directory, &fixture.session_path, &mut ui).unwrap();
+    let first_note = read_session(&fixture.session_path)["notes"][0].clone();
+    run_selected_atomic_subject_review(
+        &fixture.run_directory, &fixture.session_path, "2:1",
+        |_, _| Ok(approved("Solar decision")),
+    ).unwrap();
+    run_selected_atomic_subject_review(
+        &fixture.run_directory, &fixture.session_path, "2:1",
+        |screen, comment| {
+            assert!(screen.heading.contains("Approved"));
+            assert_eq!(comment, "Solar decision");
+            Ok(rejected("Changed my mind"))
+        },
+    ).unwrap();
+    let session = read_session(&fixture.session_path);
+    assert_eq!(session["notes"][0], first_note);
+    assert_eq!(session["notes"][1]["subjects"][0]["outcome"], "rejected");
+    assert_eq!(session["notes"][1]["subjects"][0]["comment"], "Changed my mind");
+}
+
+#[test]
+fn selected_subject_review_rejects_bad_filters_before_creating_decisions() {
+    for selection in ["", "1", "0:1", "1:0", "3:1", "1:3", "1:1,1:1", "1:1,", "1:1:2"] {
+        let fixture = Fixture::new();
+        let error = run_selected_atomic_subject_review(
+            &fixture.run_directory, &fixture.session_path, selection,
+            |_, _| panic!("an invalid selection must not open review"),
+        ).unwrap_err();
+        assert!(error.to_string().contains("--only"), "{selection}: {error}");
+        assert!(!fixture.session_path.exists());
+    }
+}
+
+#[test]
+fn selected_subject_review_keeps_generation_and_session_identity_checks() {
+    let fixture = Fixture::new();
+    run_selected_atomic_subject_review(
+        &fixture.run_directory, &fixture.session_path, "1:2",
+        |_, _| Ok(ApprovalTuiAction::Pause),
+    ).unwrap();
+    let session_before = fs::read(&fixture.session_path).unwrap();
+    fixture.change_subject_prompt();
+    let error = run_selected_atomic_subject_review(
+        &fixture.run_directory, &fixture.session_path, "1:2",
+        |_, _| panic!("changed generation must not reuse saved decisions"),
+    ).unwrap_err();
+    assert!(error.to_string().contains("different generation run"), "{error}");
+    assert_eq!(fs::read(&fixture.session_path).unwrap(), session_before);
+
+    fs::write(fixture.run_directory.join("output.json"), b"{}").unwrap();
+    assert!(run_selected_atomic_subject_review(
+        &fixture.run_directory, &fixture.session_path, "1:2",
+        |_, _| panic!("a filter must not bypass verification"),
+    ).is_err());
 }
 
 #[test]

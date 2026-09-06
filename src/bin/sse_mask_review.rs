@@ -7,14 +7,15 @@ use std::process::ExitCode;
 use oracle_mvp::mask_prompt_review::{MaskPromptReviewOutcome, run_mask_prompt_review_from};
 use oracle_mvp::reference_tui::ReferenceTerminal;
 use oracle_mvp::sse_mask_review::{
-    AtomicSubjectNoteReviewRunOutcome, ReviewStage, SubjectMaskReviewRunOutcome,
+    AtomicSubjectNoteReviewRunOutcome, ReviewStage, SelectedSubjectReviewRunOutcome,
+    SubjectMaskReviewRunOutcome,
     load_verified_subject_mask_proposal, run_atomic_subject_note_review, run_claim_note_review,
-    run_subject_mask_review,
+    run_selected_atomic_subject_review, run_subject_mask_review,
 };
 
 const USAGE: &str = "usage: sse-mask-review \
     <subject-mask-proposal.json> <session.json> <approved-subject-masks.json>\n       \
-    sse-mask-review iterate <generation-run-directory> <prompt-review-session.json>\n       \
+    sse-mask-review iterate <generation-run-directory> <prompt-review-session.json> [--only <note:subject,...>]\n       \
     sse-mask-review review-subjects <experiment-directory>\n       \
     sse-mask-review review-claims <experiment-directory>\n       \
     sse-mask-review review-masks <mask-review.json> <mask-session.json> [--start-at <item-id>]";
@@ -37,6 +38,35 @@ fn main() -> ExitCode {
 
 fn run() -> Result<(), Box<dyn std::error::Error>> {
     let arguments = env::args().skip(1).collect::<Vec<_>>();
+    if let [command, generation_run, session, flag, selection] = arguments.as_slice()
+        && command == "iterate"
+        && flag == "--only"
+    {
+        if !std::io::stdin().is_terminal() || !std::io::stdout().is_terminal() {
+            return Err("the SSE prompt review must be started from an interactive terminal".into());
+        }
+        let mut terminal = ReferenceTerminal::new()?;
+        let outcome = run_selected_atomic_subject_review(
+            generation_run,
+            session,
+            selection,
+            |screen, comment| terminal.review_navigable_prompt_iteration(screen, comment),
+        )?;
+        drop(terminal);
+        match outcome {
+            SelectedSubjectReviewRunOutcome::Paused => {
+                println!("Selected subject review paused safely");
+            }
+            SelectedSubjectReviewRunOutcome::Completed {
+                approved,
+                rejected,
+                undecided,
+            } => {
+                println!("Selected subject review: {approved} approved, {rejected} disapproved, {undecided} not reviewed. Other subjects are unchanged.");
+            }
+        }
+        return Ok(());
+    }
     let mask_review = match arguments.as_slice() {
         [command, batch, session] if command == "review-masks" => Some((batch, session, None)),
         [command, batch, session, flag, item] if command == "review-masks" && flag == "--start-at" => {
