@@ -1,0 +1,393 @@
+{
+  "schema_version": 1,
+  "status": "completed_not_promoted",
+  "question": "Does medium reasoning effort improve application of the unchanged ASv6.13 subject-extraction requirements compared with low?",
+  "prompt": "ASv6.13 unchanged",
+  "model": "gpt-5.6-sol",
+  "calls": 36,
+  "settings": [
+    "low",
+    "medium"
+  ],
+  "counts": {
+    "low": {
+      "outputs": 18,
+      "clean_outputs": 8,
+      "subjects": 290,
+      "accepted": 244,
+      "errors": 45,
+      "unresolved": 1,
+      "coverage_errors": 1,
+      "by_note": {
+        "D10": {
+          "clean": 0,
+          "context_errors": 3,
+          "any_errors": 3,
+          "coverage_errors": 0
+        },
+        "D19": {
+          "clean": 2,
+          "context_errors": 0,
+          "any_errors": 1,
+          "coverage_errors": 0
+        },
+        "D23": {
+          "clean": 1,
+          "context_errors": 2,
+          "any_errors": 2,
+          "coverage_errors": 0
+        },
+        "D24": {
+          "clean": 3,
+          "context_errors": 0,
+          "any_errors": 0,
+          "coverage_errors": 0
+        },
+        "D25": {
+          "clean": 0,
+          "context_errors": 2,
+          "any_errors": 3,
+          "coverage_errors": 0
+        },
+        "D28": {
+          "clean": 2,
+          "context_errors": 0,
+          "any_errors": 1,
+          "coverage_errors": 1
+        }
+      }
+    },
+    "medium": {
+      "outputs": 18,
+      "clean_outputs": 8,
+      "subjects": 322,
+      "accepted": 281,
+      "errors": 39,
+      "unresolved": 2,
+      "coverage_errors": 0,
+      "by_note": {
+        "D10": {
+          "clean": 0,
+          "context_errors": 3,
+          "any_errors": 3,
+          "coverage_errors": 0
+        },
+        "D19": {
+          "clean": 3,
+          "context_errors": 0,
+          "any_errors": 0,
+          "coverage_errors": 0
+        },
+        "D23": {
+          "clean": 1,
+          "context_errors": 2,
+          "any_errors": 2,
+          "coverage_errors": 0
+        },
+        "D24": {
+          "clean": 1,
+          "context_errors": 0,
+          "any_errors": 2,
+          "coverage_errors": 0
+        },
+        "D25": {
+          "clean": 0,
+          "context_errors": 3,
+          "any_errors": 3,
+          "coverage_errors": 0
+        },
+        "D28": {
+          "clean": 3,
+          "context_errors": 0,
+          "any_errors": 0,
+          "coverage_errors": 0
+        }
+      }
+    }
+  },
+  "primary_targets": [
+    {
+      "note": "D10",
+      "low": 3,
+      "medium": 3,
+      "meets_primary": false
+    },
+    {
+      "note": "D23",
+      "low": 2,
+      "medium": 2,
+      "meets_primary": false
+    },
+    {
+      "note": "D25",
+      "low": 2,
+      "medium": 3,
+      "meets_primary": false
+    }
+  ],
+  "primary_targets_meeting_condition": 0,
+  "primary_targets_required": 2,
+  "decision": "Do not promote medium from this comparison. It met0/3 context-improvement contrasts; two were required. Both settings had8/18 fully accepted outputs. Medium misassigned the two-model insurance analysis to CIAB in2/3 trials.",
+  "scope": "This closes the authorized36-call diagnostic. No permanent medium adoption, further generation, prompt revision or final validation is performed.",
+  "other_findings": [
+    "Medium had a higher accepted-subject fraction (281/322 versus244/290), but both were below the unchanged95% validation threshold and neither improved the whole-output success count.",
+    "Medium retained the Bitcoin dashboard's URL boundary in all3 outputs; low named the URL-only site in1/3.",
+    "Low trial3 D28 omitted most of the source. Medium represented the full source in all3. This single occurrence does not establish a recurring coverage failure or its cause.",
+    "Medium invented numerical counts in1/3 fee outputs versus2/3 for low, but fee-context errors still occurred2/3 for each.",
+    "The hiring-note analyst comparison omitted the event in all6 outputs. Source-gap commentary occurred in all6 CEO-note outputs."
+  ],
+  "mechanisms": {
+    "low": {
+      "missing_per_item_event_context": [
+        {
+          "note": "D10",
+          "trial": 1,
+          "blind_id": "B14"
+        },
+        {
+          "note": "D10",
+          "trial": 2,
+          "blind_id": "B25"
+        },
+        {
+          "note": "D10",
+          "trial": 3,
+          "blind_id": "B34"
+        },
+        {
+          "note": "D25",
+          "trial": 2,
+          "blind_id": "B05"
+        },
+        {
+          "note": "D25",
+          "trial": 3,
+          "blind_id": "B23"
+        }
+      ],
+      "url_derived_name": [
+        {
+          "note": "D19",
+          "trial": 2,
+          "blind_id": "B03"
+        }
+      ],
+      "invented_numeric_count": [
+        {
+          "note": "D23",
+          "trial": 1,
+          "blind_id": "B12"
+        },
+        {
+          "note": "D23",
+          "trial": 2,
+          "blind_id": "B28"
+        }
+      ],
+      "missing_per_item_fee_context": [
+        {
+          "note": "D23",
+          "trial": 1,
+          "blind_id": "B12"
+        },
+        {
+          "note": "D23",
+          "trial": 2,
+          "blind_id": "B28"
+        }
+      ],
+      "source_gap_commentary": [
+        {
+          "note": "D25",
+          "trial": 2,
+          "blind_id": "B05"
+        },
+        {
+          "note": "D25",
+          "trial": 3,
+          "blind_id": "B23"
+        },
+        {
+          "note": "D25",
+          "trial": 1,
+          "blind_id": "B27"
+        }
+      ],
+      "extractor_uncertainty": [
+        {
+          "note": "D28",
+          "trial": 3,
+          "blind_id": "B22"
+        }
+      ],
+      "missing_per_item_source_context": [
+        {
+          "note": "D28",
+          "trial": 3,
+          "blind_id": "B22"
+        }
+      ]
+    },
+    "medium": {
+      "missing_per_item_event_context": [
+        {
+          "note": "D10",
+          "trial": 3,
+          "blind_id": "B10"
+        },
+        {
+          "note": "D10",
+          "trial": 2,
+          "blind_id": "B21"
+        },
+        {
+          "note": "D10",
+          "trial": 1,
+          "blind_id": "B33"
+        },
+        {
+          "note": "D25",
+          "trial": 2,
+          "blind_id": "B06"
+        },
+        {
+          "note": "D25",
+          "trial": 3,
+          "blind_id": "B18"
+        },
+        {
+          "note": "D25",
+          "trial": 1,
+          "blind_id": "B36"
+        }
+      ],
+      "invented_numeric_count": [
+        {
+          "note": "D23",
+          "trial": 3,
+          "blind_id": "B08"
+        }
+      ],
+      "missing_per_item_fee_context": [
+        {
+          "note": "D23",
+          "trial": 3,
+          "blind_id": "B08"
+        },
+        {
+          "note": "D23",
+          "trial": 1,
+          "blind_id": "B31"
+        }
+      ],
+      "wrong_source_attribution": [
+        {
+          "note": "D24",
+          "trial": 1,
+          "blind_id": "B04"
+        },
+        {
+          "note": "D24",
+          "trial": 3,
+          "blind_id": "B20"
+        }
+      ],
+      "missing_per_item_source_context": [
+        {
+          "note": "D24",
+          "trial": 3,
+          "blind_id": "B20"
+        }
+      ],
+      "source_gap_commentary": [
+        {
+          "note": "D25",
+          "trial": 2,
+          "blind_id": "B06"
+        },
+        {
+          "note": "D25",
+          "trial": 3,
+          "blind_id": "B18"
+        },
+        {
+          "note": "D25",
+          "trial": 1,
+          "blind_id": "B36"
+        }
+      ]
+    }
+  },
+  "usage": {
+    "low": {
+      "input_tokens": 40077,
+      "cached_input_tokens": 3968,
+      "output_tokens": 10066,
+      "reasoning_output_tokens": 5167
+    },
+    "medium": {
+      "input_tokens": 40077,
+      "cached_input_tokens": 1920,
+      "output_tokens": 22703,
+      "reasoning_output_tokens": 17037
+    }
+  },
+  "output_token_ratio_medium_to_low": 2.2554142658454204,
+  "reasoning_token_ratio_medium_to_low": 3.2972711437971745,
+  "token_cost_caveat": "Token counts are measured. Subscription-credit cost and a comparison with Astra were not measured. Reasoning tokens are included within output tokens; do not add them twice.",
+  "timing": {
+    "sequential": {
+      "low": {
+        "calls": 6,
+        "mean_seconds": 26.05472987378016,
+        "median_seconds": 26.051494260551408,
+        "min_seconds": 15.643073685932904,
+        "max_seconds": 36.416492288932204
+      },
+      "medium": {
+        "calls": 6,
+        "mean_seconds": 44.07429983435819,
+        "median_seconds": 48.83741341647692,
+        "min_seconds": 18.084126610308886,
+        "max_seconds": 60.6947663188912
+      }
+    },
+    "concurrent": {
+      "low": {
+        "calls": 12,
+        "mean_seconds": 21.70304525224492,
+        "median_seconds": 20.82725662784651,
+        "min_seconds": 10.911215420812368,
+        "max_seconds": 38.54285492235795
+      },
+      "medium": {
+        "calls": 12,
+        "mean_seconds": 47.12204040974999,
+        "median_seconds": 47.740438231034204,
+        "min_seconds": 15.022712816018611,
+        "max_seconds": 73.97323377523571
+      }
+    }
+  },
+  "concurrency": {
+    "first_trial": "12 sequential calls",
+    "later_trials": "24 calls with up to12 active;152seconds from first parallel launch to recorded final finish",
+    "production_changes": "None. Experiment-local one-note inputs/configs/output dirs only.",
+    "observed_min_available_gib": 106.34978103637695,
+    "limits": "No admission-threshold excursion; sampled pressure only, launcher cgroups do not bound separate Codex scopes."
+  },
+  "review": {
+    "blinding": "All36 outputs and612 subjects reviewed with effort/trial identities hidden; original judgments and two corrections saved before mapping reveal.",
+    "corrections": "B04:5 and B10:32 changed from unresolved to accepted before reveal under supported-interpretation rules.",
+    "independent_d25_audit": "All78 D25 subject judgments matched independent review.",
+    "sensitivity": "The main reviewer accepted B30:22–23 as supported broad insurance-related subjects. An independent reviewer preferred missing-causal-context errors. Applying that stricter reading would reduce medium from8/18 to7/18 and281/322 to279/322; it cannot reverse the no-promotion decision."
+  },
+  "limits": [
+    "Six previously used difficult notes, not a representative corpus accuracy estimate.",
+    "Three stochastic outputs per setting/note; no claim that more effort never helps.",
+    "One main semantic reviewer, partial independent checks; identities hidden but not a separate formal blinded trial.",
+    "Some clipped-source and insinuation interpretations remain unresolved, distinct from errors.",
+    "Changing concurrency after trial1 affects wall-clock comparison; timing reported separately.",
+    "Neither setting is eligible for final validation; ASv6.8 remains frozen."
+  ]
+}
