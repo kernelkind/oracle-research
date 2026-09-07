@@ -1,6 +1,8 @@
 # Mask-prompt development
 
-Status: plan approved; initial six-call batch prepared. No mask calls have run yet.
+Status: initial batch reviewed: five of six masks accepted, one small scope error. The prompt remains unchanged; development and final validation are not complete.
+
+[Initial results with complete notes and inline masks](./initial/results.md)
 
 Keep ASv6.23 frozen. Each Astra-low call receives the complete original note and one fixed subject, using the existing mask prompt unchanged initially. No auxiliary context field is sent.
 

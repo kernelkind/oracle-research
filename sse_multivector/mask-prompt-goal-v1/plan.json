@@ -1,6 +1,13 @@
 {
   "schema_version": 1,
-  "status": "approved_before_initial_generation",
+  "status": "initial_batch_reviewed",
+  "progress": {
+    "mask_calls": 6,
+    "accepted": 5,
+    "mask_errors": 1,
+    "results": "initial/results.md",
+    "next": "Reserve final inputs, then add three development notes with different masking demands; keep the prompt unchanged."
+  },
   "generation_authorized": true,
   "approval": {
     "user_message": "Yeah, that sounds reasonable",
