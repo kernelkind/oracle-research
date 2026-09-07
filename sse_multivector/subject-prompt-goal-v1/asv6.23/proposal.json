@@ -1,0 +1,36 @@
+{
+  "state": "draft_awaiting_prompt_review",
+  "question": "Does generating concrete context before each subject help the final subject retain its own necessary context?",
+  "control": "asv6.13/ASv6.13.md",
+  "candidate": "asv6.23/ASv6.23.md",
+  "candidate_schema": "asv6.23/output-schema.json",
+  "change": "Keep ASv6.13 instructions, add per-item context before subject, and explicitly require the final subject to stand alone without that context field.",
+  "control_reason": "Use the existing instruction-only baseline so the test does not also require rewriting worked examples for the new format.",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "source_files": [
+    "astra-examples-comparison-v1/inputs/D25.json",
+    "astra-examples-comparison-v1/inputs/D10.json"
+  ],
+  "source_changes": false,
+  "trials_per_prompt_per_note": 3,
+  "planned_calls": 12,
+  "completed_calls": 0,
+  "isolation": "One fresh isolated custom-runner call per prompt/note/trial. No inherited conversation or supplied context answers. No source rewrite or second model call.",
+  "review": "Compare only final subject strings under the existing semantic standards, with condition and trial identity hidden. Check every subject and whole-note coverage. Inspect context fields afterward to understand the result; never concatenate them into subjects or use them to excuse missing context.",
+  "interpretation": "A reduction in missing-context errors with target meanings still covered and no offsetting semantic regression would support broader confirmation. These two development notes cannot validate the prompt or isolate an internal model mechanism. No automatic promotion or final validation.",
+  "runner_status": "Experimental schema is drafted, not connected to production. The subjects command currently fixes the string-array schema and the generic prompt command currently uses no schema; schema support must be addressed before execution while preserving both existing interfaces.",
+  "resource_status": "No inference launched. Reuse existing resource limits and fix the previously disclosed monitoring cadence gap before execution.",
+  "unchanged": [
+    "Frozen ASv6.8 default",
+    "Semantic requirements and final-validation gates",
+    "Existing source notes and prior evidence",
+    "Reserved final data",
+    "Mask generation and downstream pipeline"
+  ],
+  "prompt_review": "Main author and one fresh-context reviewer read the baseline, candidate and schema. No material wording or scope defect identified; this is not evidence of extraction improvement.",
+  "guidance": [
+    "https://developers.openai.com/api/docs/guides/latest-model#prompting-best-practices",
+    "https://developers.openai.com/api/docs/guides/structured-outputs#key-ordering"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "properties": {
+    "subjects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "context": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["context", "subject"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["subjects"],
+  "additionalProperties": false
+}
