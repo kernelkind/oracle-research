@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "prompt": "ASv6.16",
+  "parent": "ASv6.15",
+  "goal_revision": 5,
+  "status": "prepared, not run",
+  "evidence": "../asv6.15/diagnostic-review.json",
+  "changes": [
+    "Move independent readability to the initial output contract and distinguish describing an event from pointing to the passage that mentions it. Remove the redundant later version of that rule.",
+    "Keep labels/credits/identifiers as interpretation evidence while excluding their mere presence/formatting as subjects; do not instruct the model to ignore those contextual cues.",
+    "Make preserving a number-label pairing retain its referent, while retaining the successful ban on an unstated unit/counted object.",
+    "Remove the synthetic example: it did not provide a reliable solution in the repeated diagnostics."
+  ],
+  "hypotheses": [
+    "An upfront output criterion will reduce context-dependent event aliases and bare numeric fields.",
+    "Clarifying the role of contextual labels/credits will preserve domain context and help distinguish a reported source from a separate analysis section."
+  ],
+  "audit": {
+    "source": "https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6",
+    "outcome_first": true,
+    "duplicate_instruction_removed": true,
+    "no_example_remains": true,
+    "no_hidden_reasoning_steps": true,
+    "permission_and_evidence_boundaries_unchanged": true,
+    "interpretation": "This is a candidate hypothesis, not a claim that instruction order or metadata filtering has been causally isolated. Functional requirements and validation gates are unchanged."
+  },
+  "test_plan": "First run the same D23/D24/D25 diagnostic three times with fresh isolated Sol-low calls. Do not submit to the full 28-note run or final validation unless the resulting evidence warrants it.",
+  "limits": "Fifth of six new revisions. All final-validation notes remain unused."
+}

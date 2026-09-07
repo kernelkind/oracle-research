@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "prompt": "ASv6.14",
+  "parent": "ASv6.13",
+  "goal_revision": 3,
+  "evidence": [
+    "../asv6.13/diagnostic-review.json",
+    "../asv6.13/review-corrections.json"
+  ],
+  "changes": [
+    "Specify preserving a number-label pairing when the text omits a unit or counted object.",
+    "Explicitly preserve available meaning from incomplete passages without describing or completing the missing text.",
+    "Make the within-each-subject reference rule explicitly cover events and situations as well as people/things."
+  ],
+  "audit": {
+    "source": "https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6",
+    "outcome_first": true,
+    "scoped_evidence_rules": true,
+    "no_examples_or_case_entities": true,
+    "no_model_or_effort_change": true,
+    "no_hidden_reasoning_sequence": true,
+    "unchanged": "All broad/nested/overlapping/duplicate subject permissions, plausible-implication policy, ambiguity branches, URL rule and fixed validation gates."
+  },
+  "diagnostic_plan": "Three fresh trials on D23 (unstated number role), D24 (stated percentages and comparisons), and D25 (incomplete passage/references). These are old development notes. If warranted, run all 28 development notes and fixed repeats with the identical prompt."
+}

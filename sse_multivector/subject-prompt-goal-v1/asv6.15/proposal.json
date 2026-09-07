@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "prompt": "ASv6.15",
+  "parent": "ASv6.14",
+  "goal_revision": 4,
+  "evidence": "../asv6.14/diagnostic-review.json",
+  "changes": [
+    "Add one declared, synthetic ceramics-kiln example demonstrating context-complete numeric associations, no added units, and retaining available meaning rather than incomplete word fragments.",
+    "Explicitly prohibit assigning statements to a different speaker/source. This does not require attribution prefixes on every overlapping subject."
+  ],
+  "why_example": "The same abstract instructions still led to disconnected field values and incomplete-word commentary in repeated calls. The example demonstrates satisfying those instructions together. It contains none of the development notes' entities, domains or desired answers.",
+  "audit": {
+    "source": "https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6",
+    "working_prompt_preserved": true,
+    "one_targeted_example": true,
+    "no_new_reasoning_workflow": true,
+    "per_item_context_demonstrated": true,
+    "true_invariant_attribution_constraint": true,
+    "no_canonical_subject_count": true,
+    "tradeoff": "The example adds tokens; retain it only if repeated diagnostics show a useful improvement. All raw outputs and failures remain counted."
+  },
+  "diagnostic_plan": "Three trials on the same D23/D24/D25 development subset. If warranted, run all 28 and fixed repeats unchanged.",
+  "unchanged": "Model/effort/runner/input text, broad/nested/overlapping/duplicate permissions and fixed validation criteria. No final notes inspected."
+}
