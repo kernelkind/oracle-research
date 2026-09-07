@@ -1,7 +1,13 @@
 {
   "schema_version": 1,
-  "status": "proposed_awaiting_user_approval",
-  "generation_authorized": false,
+  "status": "approved_before_initial_generation",
+  "generation_authorized": true,
+  "approval": {
+    "user_message": "Yeah, that sounds reasonable",
+    "scope": "The staged plan and 95% acceptance target, beginning with three notes and six mask calls.",
+    "recorded_at_utc": "2026-09-07 21:50:10 UTC",
+    "proposal_commit": "f55a734e824f77fdfb92c03d31c162e1c5f4585f"
+  },
   "goal_file": "/home/dev/.codex/attachments/c9cd0710-6e4e-4a53-93d7-a374be5849a0/pasted-text-1.txt",
   "objective": "Freeze a single-subject mask prompt that reliably preserves the fixed subject's meaning and scope on reviewed real notes.",
   "starting_point": {
@@ -88,7 +94,7 @@
     "rate": "At least 95% accepted outputs in both completion checks, rounded upward: 35/36 development and 50/52 final.",
     "repeatability": "No same demonstrated semantic omission or added-meaning error in two of the three calls for any fixed repeated input. Identify the actual source words/meaning, not just a broad error label. Unresolved judgments count against acceptance but are not claimed as proven recurring failures.",
     "regressions": "A candidate cannot erase a previously settled defect by changing the review standard. Preserve relevant earlier fixed-input counterexamples and, if a proposed revision touches that failure mechanism, check them before accepting the revision. Report such extra checks separately; do not dilute the completion denominators with easy diagnostic outputs.",
-    "rationale": "95% is a proposed practical tolerance of roughly one non-accepted mask in twenty, not a measured population guarantee. Twelve development notes plus twenty separate final notes permit a modest real-note coverage check after tiny probes. Repeats test consistency. Sample sizes and tolerance are proposed for user approval and cannot be weakened after results.",
+    "rationale": "95% is the approved practical tolerance of roughly one non-accepted mask in twenty, not a measured population guarantee. Twelve development notes plus twenty separate final notes permit a modest real-note coverage check after tiny probes. Repeats test consistency. The approved sample sizes and tolerance cannot be weakened after results.",
     "completion": "One unchanged prompt/model/effort/input handling/output contract meets both checks and the repeatability rule; all outputs and reviews are saved and isolation/mechanical checks verified; freeze the exact package with remaining errors and limits. This does not establish population accuracy, source-position equivalence, SSE quality or segment quality."
   },
   "operations": {
