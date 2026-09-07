@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "prompt": "ASv6.17",
+  "parent": "ASv6.16",
+  "goal_revision": 6,
+  "status": "prepared, not run",
+  "evidence": "../asv6.16/diagnostic-review.json",
+  "changes": [
+    "Make the independent-reader condition explicit for every item, including repeated topic/context. This is the existing self-containment requirement, not a new preference for narrower subjects.",
+    "State what incomplete text contributes: its recoverable meaning, with no extra subject for an unfinished expression without a referent.",
+    "Clarify that reporting a message's classification or credit is excluded too, not only reporting the presence/format of its labels."
+  ],
+  "audit": {
+    "source": "https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6",
+    "outcome_first": true,
+    "existing_requirements_retained": true,
+    "examples_added": false,
+    "new_output_fields": false,
+    "no_model_or_effort_change": true,
+    "no_note_specific_terms": true,
+    "ordering": "Whole-post goal; independent-reader condition; coverage; evidence; metadata/numbers; ambiguity/relationships; fidelity.",
+    "limitation": "These changes target repeated mechanisms. Their causal contribution is not isolated from one another; the unchanged prompt is evaluated as a candidate."
+  },
+  "test_plan": "Three fresh D23/D24/D25 diagnostic trials. Advance only if warranted; full 28-note development and fixed repeats remain required before untouched final validation.",
+  "limits": "Sixth and last new revision under the fixed plan. If it fails, preserve the failure and report that the revision limit has been reached; do not freeze a failed prompt."
+}
