@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "recorded_before_generation": true,
+  "starting_commit": "553b165bcd45a3eb5e735850fb00dfc74556645e",
+  "authorization": "User approved original versus reference-expanded passage, prompt and model unchanged. Six fresh single-note calls: three per condition.",
+  "question": "Does spelling out the CEO referent in the later source paragraph reduce generated subjects that leave that referent implicit?",
+  "changed_factor": "Only the second source paragraph. Add CEO context to development, tracking, trajectory and fundamentals. Preserve quotation including clipping, URL, source order and other wording.",
+  "source": "../astra-comparison-v1/inputs/D25.json",
+  "conditions": {
+    "original": "inputs/original.json",
+    "explicit": "inputs/explicit.json"
+  },
+  "synthetic_identity": "The explicit condition is a manually edited diagnostic input, not an authentic Nostr note; its separate note_id prevents confusion with the source.",
+  "fixed": {
+    "prompt": "ASv6.13",
+    "prompt_registry": "../asv6.13/subject-prompts.json",
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "runner": "../../codex_exec.py",
+    "schema": "Existing subject string-array schema",
+    "calls_per_condition": 3,
+    "fresh_calls": 6,
+    "no_retries": true,
+    "no_prompt_edits": true,
+    "no_new_final_notes": true
+  },
+  "schedule": [
+    "original-1",
+    "explicit-1",
+    "explicit-2",
+    "original-2",
+    "original-3",
+    "explicit-3"
+  ],
+  "review": {
+    "primary": "For each specific subject about the commentator's changed thesis, tracking for months, undeniable trajectory, or aligning fundamentals, does the item independently identify the CEO-related matter? Exact wording is not required. A reference to this/the matter/the development/this post without CEO identification does not supply the context.",
+    "coverage": "Record coverage of each of those four meanings independently; not generating an affected subject cannot count as successful context retention.",
+    "other_subjects": "Review all subjects against their full condition-specific input using the unchanged semantic standard in ../plan.json. Broad, nested, overlapping, duplicate subjects, plausible implications and supported interpretations remain allowed.",
+    "identity_hiding": "Independent reviewer receives all six complete input/output pairs with opaque IDs in shuffled order; trial and condition names withheld. The input edit itself is visible so condition blinding is not possible.",
+    "originals_preserved": "All previous generated output, judgments, prompts and user decisions remain unchanged."
+  },
+  "decision": {
+    "support": "Original has target context errors in at least 2/3 outputs; explicit has zero such errors in 3/3 and covers all four target meanings in each. Directional evidence that this source edit helps this case.",
+    "persistence": "If explicit still loses CEO context in at least 2/3 outputs while representing the affected meanings, local source reference expansion is insufficient.",
+    "otherwise": "Mixed result or original failure not reproduced: inconclusive at this six-call bound. Report exact outputs; no automatic rerun.",
+    "scope": "This is not final validation and cannot promote a prompt/model or authorize preprocessing."
+  },
+  "limits": [
+    "One previously troublesome note; not general performance.",
+    "The edit increases CEO repetition, length and salience as well as resolving references. A positive result cannot isolate which of these caused the change.",
+    "Success does not prove how the model internally understood the original; failure does not prove it failed to resolve the reference.",
+    "The original clipped quotation remains ambiguous; this test does not repair or score that as improved."
+  ],
+  "resources": {
+    "concurrency": 6,
+    "maximum_calls": 6,
+    "existing_subscription_only": true,
+    "new_paid_api_or_rental": false,
+    "host_poll_seconds": 5,
+    "admission": "MemAvailable >=16GiB, memory PSI avg10<=1 and IO PSI avg10<=10.",
+    "stop_owned_launchers": "MemAvailable<8GiB or memory PSI avg10>10; no unrelated process may be stopped.",
+    "launcher": {
+      "MemoryMax": "2G",
+      "MemorySwapMax": "0",
+      "RuntimeMaxSec": 900
+    },
+    "caveat": "Codex child scopes may escape launcher memory accounting; host checks remain required."
+  },
+  "preflight": "Independent read-only reviewer verified input edit and warned of the salience/repetition confound, recorded in limits.",
+  "guidance": "https://developers.openai.com/api/docs/guides/evaluation-best-practices#single-turn-model-interactions"
+}
