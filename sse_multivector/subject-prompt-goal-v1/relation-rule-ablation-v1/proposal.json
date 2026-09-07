@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "recorded_before_generation": true,
+  "prompt": "ASv6.20",
+  "parent": "ASv6.13",
+  "question": "Does removing the two special warnings about statement proximity and co-mention reduce missing per-item source context, without losing communicated meanings or inventing relationships?",
+  "change": "Delete exactly two sentences; no replacement text. All other ASv6.13 instructions remain byte-identical.",
+  "removed": [
+    "The order or proximity of separate statements does not itself establish a relationship between them.",
+    "Co-mention does not by itself establish participation or causation."
+  ],
+  "evidence": [
+    "../contract-confirmation-v1/README.md",
+    "../contract-confirmation-v1/assessment.json",
+    "../contract-confirmation-v1/review.json"
+  ],
+  "rationale": "Strengthening and repositioning standalone-item instructions did not reliably resolve repeated context omissions. The special relationship warnings may compete with resolving contextual references, although the more general stated-or-reasonably-implied evidence constraint already remains. This instruction group has not been isolated in prior ASv6.12–19 comparisons.",
+  "counterevidence": "ASv6.13 sometimes correctly supplies D10 monitoring context while omitting context from the analyst item, and supplies D25 later context while still generating clipped-text commentary. These failures demonstrate inconsistent item context, not proven suppression of relationship resolution. The causal hypothesis is weak and must earn support from the targeted outcomes.",
+  "selection": [
+    {
+      "label": "D10",
+      "note_id": "5c194c83e01c68bd8bdf822c99d1940510928673fcb72fa2cd7b9b831e6f9504",
+      "role": "target: analyst/monitoring items retain Riley Walz hiring context",
+      "source": "../development-input.json"
+    },
+    {
+      "label": "D19",
+      "note_id": "e93bbeedfe66e29ead660aae5f4717bbb44f9e699b76878215e6e94c1c2d3172",
+      "role": "target: specific dashboard appraisals/maintenance identify the Bitcoin dashboard",
+      "source": "../development-input.json"
+    },
+    {
+      "label": "D24",
+      "note_id": "bdffeb300714d0604749fd723df69003b844147741c4799eef2bbe24592d4157",
+      "role": "guard: distinguish CIAB report from two-model interpretation",
+      "source": "../development-input.json"
+    },
+    {
+      "label": "D25",
+      "note_id": "f04223c35f24caa66aaec47a3323d8b582b8be89bca97cfd727b7aba303999ac",
+      "role": "target: later thesis/tracking subjects retain the CEO incident",
+      "source": "../development-input.json"
+    },
+    {
+      "label": "D28",
+      "note_id": "80efdad1520559f6808caf65c415df3d9d5340b54f446134eb7e7f86530e6e0d",
+      "role": "guard: retain stated causal connection and scope of negation",
+      "source": "../development-input.json"
+    },
+    {
+      "label": "Katie",
+      "note_id": "8a09d119276a6f209e72bd1563aafe0a21e7b89095c3838ac7f5320d56c46710",
+      "role": "guard: do not fabricate unsupported connections between disconnected source phrases",
+      "source": "../../atomic-subject-asv6.8-vs-asv6.9-v1/input.json"
+    }
+  ],
+  "selection_boundary": "Katie is a previously used diagnostic source, not a final note or an addition/replacement to the fixed 28-note development set. Its unresolved interpretations are not preclassified as failures.",
+  "design": {
+    "prompts": [
+      "ASv6.13",
+      "ASv6.20"
+    ],
+    "trials": 3,
+    "max_new_calls": 36,
+    "trial_order": "Visit the six notes in input order for each trial. Alternate prompt order by note; reverse that order in the next trial. All calls are independent and sequential.",
+    "context": "Existing isolated Sol-low runner; new process/thread/workdir per call; one note; no tools or web.",
+    "fixed": "Model/effort/binary/account/runner/normalization/schema/source text; no output editing or retries for semantic disappointment."
+  },
+  "review": {
+    "identity_hiding": "After the first two trials, assign opaque IDs and review all 24 outputs against full source notes without displaying prompt identities. Save judgments before revealing the mapping. If a third trial is warranted, use new opaque IDs for all 12 outputs. Prior prompt knowledge limits blinding.",
+    "standard": "../plan.json semantic_standard, unchanged. Record accepted/error/unresolved subjects and complete-note coverage. Record whether each target's communicated meaning is present and context-complete. Fewer duplicate subjects is not a coverage loss, but dropping a distinct source meaning cannot satisfy the target.",
+    "targeted_context": "Only missing source-event/topic context in otherwise represented subjects counts toward the proposed mechanism. Source-gap commentary, metadata, calculation and attribution changes are judged separately; their improvement alone does not support this hypothesis."
+  },
+  "decision": {
+    "retain_for_full_development": "At least two of the three target notes must have repeated missing-context errors under ASv6.13 (at least 2/3) and at most 1/3 under ASv6.20, with the relevant meanings covered in all three candidate outputs. No repeated new unsupported relationship or source reassignment, and no worsening whole-note coverage. This only warrants the unchanged full-development test; it does not freeze or validate the candidate.",
+    "reject": "No targeted repeatable improvement, or gains accompanied by recurring new relationship/coverage failures. Stop this ablation line rather than rewording the same two sentences.",
+    "unresolved": "If the control does not reproduce the missing-context problem, or ambiguous evidence prevents the contrast, record an inconclusive result without automatic more trials.",
+    "bounded_confirmation": "At most three paired trials. Review after two. Stop at 24 calls if at least two target notes already have a candidate missing-context error or missing target meaning in both outputs, because the declared two-target retention condition is then impossible. Otherwise complete the third trial and decide using all outputs. No additional reruns after that decision.",
+    "completion_boundary": "Original failed validation results remain preserved. An unchanged candidate must still pass the fixed complete development, repeated-note and unseen-final gates."
+  },
+  "guidance": {
+    "url": "https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6",
+    "application": "Remove one instruction group and test the same inputs; preserve outcome, constraints and output schema. No new examples, exception lists, reasoning steps or model change. Guidance motivates the test, not a predicted success."
+  },
+  "resources": {
+    "new_paid_api_or_rental": false,
+    "ledger_state": "Read at start: reserved_remaining_work_cents is null and older commitments are unreconciled. No new paid spend is admissible; do not change the ledger or credentials.",
+    "concurrency": 1,
+    "admit_calls_per_batch": 1,
+    "checks": "Inspect host memory and I/O PSI before admission and while a call runs. Do not launch if MemAvailable <16 GiB, memory PSI avg10 >1, or I/O PSI avg10 >10. Recheck pressure before further work; sustained pressure means no new call admission.",
+    "per_batch_launcher_limits": {
+      "MemoryMax": "2G",
+      "MemorySwapMax": "0",
+      "RuntimeMaxSec": 900
+    },
+    "limit_caveat": "Pinned Codex starts separate codex.slice scopes. Launcher limits do not bound those scopes; monitor the actual child without changing global limits for other sessions.",
+    "no_credential_content_reads": true
+  },
+  "frozen_default": "ASv6.8 canonical registry unchanged. Experiment-local registry selector remains the control ASv6.13; every config explicitly selects its prompt.",
+  "state": "prepared_not_run"
+}
