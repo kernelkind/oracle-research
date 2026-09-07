@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "status": "frozen_before_generation",
+  "purpose": "Use the two already-predesignated M05 development repeats to establish whether the added-affinity error recurs, before expanding to twelve notes.",
+  "input": "../initial-inputs.json: M05",
+  "first_output": "../initial/M05-t1/run/results.jsonl",
+  "first_judgment": "../initial/review.json: M05",
+  "same_prompt_text_as_first_call": true,
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "calls": 2,
+  "counting": "Both outputs count as the two planned additional M05 development trials; the original output remains trial 1.",
+  "decision": "If the same added-affinity error appears in either new call, this candidate fails the 2-of-3 repeatability rule and cannot reach 35/36 development. Stop expansion and diagnose before any prompt revision. If both pass, retain all three results and continue the planned development coverage.",
+  "no_revision": true,
+  "no_subject_edits": true,
+  "no_replacement_of_outputs": true
+}

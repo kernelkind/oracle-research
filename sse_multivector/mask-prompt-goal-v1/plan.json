@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "status": "initial_batch_reviewed",
+  "status": "second_batch_reviewed",
   "progress": {
-    "mask_calls": 6,
-    "accepted": 5,
+    "mask_calls": 12,
+    "accepted": 11,
     "mask_errors": 1,
-    "results": "initial/results.md",
-    "next": "Reserve final inputs, then add three development notes with different masking demands; keep the prompt unchanged."
+    "results": ["initial/results.md", "batch-2/results.md"],
+    "next": "Run the two predesignated M05 repeats before expanding further; keep prompt and inputs unchanged."
   },
   "generation_authorized": true,
   "approval": {

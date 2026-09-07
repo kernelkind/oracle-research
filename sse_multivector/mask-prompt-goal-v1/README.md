@@ -1,8 +1,12 @@
 # Mask-prompt development
 
-Status: initial batch reviewed: five of six masks accepted, one small scope error. The prompt remains unchanged; development and final validation are not complete.
+Status: two batches reviewed: eleven of twelve masks accepted, one small scope error. The prompt remains unchanged; development and final validation are not complete.
 
 [Initial results with complete notes and inline masks](./initial/results.md)
+
+[Second batch with complete notes and inline masks](./batch-2/results.md)
+
+Next: the two predesignated additional M05 trials check whether the initial scope error recurs before further expansion.
 
 Keep ASv6.23 frozen. Each Astra-low call receives the complete original note and one fixed subject, using the existing mask prompt unchanged initially. No auxiliary context field is sent.
 
@@ -30,7 +34,7 @@ Acceptance: at least 35/36 development outputs and 50/52 final outputs accepted,
 
 This is the approved practical pilot target of at least 95% acceptance, not proof of population accuracy or an effort cap. Remaining errors stay visible; the standard cannot be weakened after results.
 
-[plan.json](./plan.json) records selection, repeat, judgment and execution rules. No final set or later development batches have been opened or selected for this mask effort yet.
+[plan.json](./plan.json) records selection, repeat, judgment and execution rules. Twenty separate final notes and forty subject indices are reserved in [final-reservation.json](./final-reservation.json). No final masks have been generated. Six development notes have now been used.
 
 ## Scope
 
