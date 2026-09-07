@@ -9,7 +9,7 @@ Neither prompt passes the development test. ASv6.19 improved some outputs but in
 
 “Clean” below means every generated subject was accepted and whole-note coverage was accepted. Broad, overlapping and duplicate subjects are allowed. Fewer subjects is not itself an improvement.
 
-This is one paired run, not evidence that ASv6.19 is reliably better. Its repeated-note checks and unseen final validation have not been completed. ASv6.8 remains frozen.
+This is one paired run, not evidence that ASv6.19 is reliably better. Its [repeated-note checks are now complete](../contract-confirmation-v1/README.md), with mixed gains and recurring regressions; unseen final validation remains unused. ASv6.8 remains frozen.
 
 ## What was tested
 
@@ -67,11 +67,11 @@ The [second review audit](../semantic-review-audit-v2.json) separately corrects 
 
 A bounded language lookup found relevant component meanings in [Zorc's Somali-English dictionary](https://zorc.net/RDZorc/SOMALI/SOMALI-ENGLISH=DICTIONARY.pdf), but did not establish the compressed phrase's full meaning in D12. That uncertainty is retained rather than converted into a pass or failure.
 
-## Next action
+## Follow-up result
 
-Repeat the two unchanged prompts twice on 12 notes: the eight fixed difficult notes plus every note whose clean result differed here. That is 48 fresh calls. The [confirmation proposal](../contract-confirmation-v1/proposal.json) records the exact selection and interpretation before generation.
+The two unchanged prompts were repeated twice on 12 notes: the eight fixed difficult notes plus every note whose clean result differed here. All 48 fresh calls are complete. The [confirmation proposal](../contract-confirmation-v1/proposal.json) preserves the exact selection and interpretation recorded before generation.
 
-This asks whether the observed gains and regressions repeat. It does not add another prompt version, discard the first results, or replace full-development and final-validation requirements. Neither prompt is eligible for final validation from this run.
+The [completed confirmation](../contract-confirmation-v1/README.md) found 18/36 clean selected outputs for ASv6.13 and 23/36 for ASv6.19, including this first run. Numerical context improved, but several initial relative gains disappeared and insurance-source ambiguity recurred. ASv6.19 was not promoted as a demonstrated overall improvement. The first results were not discarded, and neither prompt is eligible for final validation from this run.
 
 ## Evidence and execution
 
