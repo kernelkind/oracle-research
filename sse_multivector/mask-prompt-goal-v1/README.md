@@ -1,6 +1,8 @@
 # Mask-prompt development
 
-Status: the user confirmed that “My” adds unwanted meaning to M05. Eleven baseline subjects have accepted first masks; all three M05 calls have the same scope error. Two focused prompt revisions also reproduced it. Development and final validation remain incomplete.
+Status: the subject-conditioned removal candidate has 14 accepted masks across the six fixed development notes, including all three M05 trials. The baseline had eleven accepted masks and three M05 scope errors on the same inputs. Development and final validation remain incomplete.
+
+[Current candidate: every subject, complete note and inline mask](./subject-deletion-v1/results.md)
 
 [Initial results with complete notes and inline masks](./initial/results.md)
 
@@ -14,7 +16,9 @@ Both revisions returned the same M05 and M06 masks. Neither demonstrated an impr
 
 For “A call for Salvadorans to make their presence known,” “My” must be excluded: affinity is additional meaning. For M06, “The poster's expressed affinity with Salvadorans,” it belongs. This is a scope distinction, not a general ban on that word or on overlapping masks.
 
-Next: test a subject-conditioned removal criterion rather than adding another scope reminder. The fixed subjects and acceptance thresholds stay unchanged. The final inputs remain unused. The user answered in chat; the existing TUI session was left untouched.
+The subject-conditioned removal candidate replaces the baseline's ambiguous “preserve the same meaning” wording. The initial pair, two M05 repeats, four coverage regressions and six remaining fixed subjects all passed. That is an observed improvement on this development set, not proof of a general success rate or the failure's cause.
+
+Next: complete the ten missing repeats for M01, M03, M07, M09 and M11, then add six more development notes with two fixed subjects each. Keep this candidate unchanged while testing it. The subjects and acceptance thresholds stay frozen; final inputs remain unused. The user answered the M05 question in chat; the existing TUI session was left untouched.
 
 Keep ASv6.23 frozen. Each Astra-low call receives the complete original note and one fixed subject, using the existing mask prompt unchanged initially. No auxiliary context field is sent.
 
