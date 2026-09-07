@@ -1,6 +1,6 @@
 # Mask-prompt development
 
-Status: the unchanged prompt failed its repeatability check. Eleven subjects have accepted first masks, but M05 included the same extra meaning in all three calls. Further expansion of this version has stopped; development and final validation are incomplete.
+Status: two focused prompt revisions produced no change. The only disputed mask, M05, needs a scope clarification before more generation. Eleven baseline subjects have accepted first masks; its three M05 outputs are now unresolved, not proven failures or passes. Development and final validation remain incomplete.
 
 [Initial results with complete notes and inline masks](./initial/results.md)
 
@@ -8,7 +8,22 @@ Status: the unchanged prompt failed its repeatability check. Eleven subjects hav
 
 [M05 repeat results](./m05-repeats/results.md)
 
-Next: investigate a small general scope-instruction change. Keep the eleven accepted examples for regression checks and leave the separate final inputs unused.
+[Direct-instruction probe](./scope-v1/results.md) · [Contrastive-example probe](./scope-examples-v1/results.md)
+
+Both revisions returned the same M05 and M06 masks. Neither demonstrated an improvement, so neither was expanded. Historical reports retain their original error judgments; [the separate correction](./m05-scope-review/correction.json) governs current accounting across all three versions.
+
+The question is whether “My” in “Where are all My Salvadorans at?” belongs in the mask for “A call for Salvadorans to make their presence known.” It expresses affinity, but also helps convey the familiar call. Removing it is reasonable; that alone does not establish that keeping it is wrong.
+
+Next: resolve this one scope question in the existing review tool, then apply the decision to every identical output. Reopening the judgment changes no prompt, subject or acceptance threshold. The final inputs remain unused.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+./target/release/sse-mask-review review-masks \
+  sse_multivector/mask-prompt-goal-v1/m05-scope-review/review-input.json \
+  target/mask-goal-m05-scope-review-session.json
+```
+
+One item, with the complete note and returned mask. No decision is prefilled.
 
 Keep ASv6.23 frozen. Each Astra-low call receives the complete original note and one fixed subject, using the existing mask prompt unchanged initially. No auxiliary context field is sent.
 
@@ -40,6 +55,6 @@ This is the approved practical pilot target of at least 95% acceptance, not proo
 
 ## Scope
 
-No prompt edit, model comparison, new subject generation, production change, SSE encoding or segmentation. No overall attempt/token cap; choose each next batch for its expected information gain. User review uses the existing tool only when consequential semantic questions need input.
+Mask-prompt development only: no model comparison, new subject generation, production change, SSE encoding or segmentation. No overall attempt/token cap; choose each next batch for its expected information gain. User review uses the existing tool only when consequential semantic questions need input.
 
 The task-specific evidence and review design follows [OpenAI evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices). The particular sample sizes and acceptance tolerance are our approved experimental choices, not numbers prescribed by that guidance.

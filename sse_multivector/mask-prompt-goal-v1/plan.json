@@ -1,12 +1,19 @@
 {
   "schema_version": 1,
-  "status": "baseline_repeatability_failed",
+  "status": "awaiting_m05_scope_clarification",
   "progress": {
     "mask_calls": 14,
     "accepted": 11,
-    "mask_errors": 3,
+    "mask_errors": 0,
+    "unresolved": 3,
+    "accounting_scope": "Unchanged baseline only; focused revisions are recorded separately.",
+    "correction": "m05-scope-review/correction.json",
+    "focused_revisions": [
+      {"candidate": "scope-v1", "calls": 2, "accepted": 1, "mask_errors": 0, "unresolved": 1, "result": "No output change; no broader calls."},
+      {"candidate": "scope-examples-v1", "calls": 2, "accepted": 1, "mask_errors": 0, "unresolved": 1, "result": "No output change; no broader calls."}
+    ],
     "results": ["initial/results.md", "batch-2/results.md", "m05-repeats/results.md"],
-    "next": "Stop baseline expansion; investigate a minimal general scope-instruction change and retain accepted inputs for regression checks."
+    "next": "Resolve the consequential M05 scope ambiguity through the existing one-item review packet before further generation. Preserve earlier judgments and apply the clarification to every identical output. Acceptance gates remain unchanged."
   },
   "generation_authorized": true,
   "approval": {
