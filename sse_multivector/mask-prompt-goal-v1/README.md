@@ -1,12 +1,14 @@
 # Mask-prompt development
 
-Status: two batches reviewed: eleven of twelve masks accepted, one small scope error. The prompt remains unchanged; development and final validation are not complete.
+Status: the unchanged prompt failed its repeatability check. Eleven subjects have accepted first masks, but M05 included the same extra meaning in all three calls. Further expansion of this version has stopped; development and final validation are incomplete.
 
 [Initial results with complete notes and inline masks](./initial/results.md)
 
 [Second batch with complete notes and inline masks](./batch-2/results.md)
 
-Next: the two predesignated additional M05 trials check whether the initial scope error recurs before further expansion.
+[M05 repeat results](./m05-repeats/results.md)
+
+Next: investigate a small general scope-instruction change. Keep the eleven accepted examples for regression checks and leave the separate final inputs unused.
 
 Keep ASv6.23 frozen. Each Astra-low call receives the complete original note and one fixed subject, using the existing mask prompt unchanged initially. No auxiliary context field is sent.
 

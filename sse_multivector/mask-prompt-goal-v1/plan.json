@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "status": "second_batch_reviewed",
+  "status": "baseline_repeatability_failed",
   "progress": {
-    "mask_calls": 12,
+    "mask_calls": 14,
     "accepted": 11,
-    "mask_errors": 1,
-    "results": ["initial/results.md", "batch-2/results.md"],
-    "next": "Run the two predesignated M05 repeats before expanding further; keep prompt and inputs unchanged."
+    "mask_errors": 3,
+    "results": ["initial/results.md", "batch-2/results.md", "m05-repeats/results.md"],
+    "next": "Stop baseline expansion; investigate a minimal general scope-instruction change and retain accepted inputs for regression checks."
   },
   "generation_authorized": true,
   "approval": {
