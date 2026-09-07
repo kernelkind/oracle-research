@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "recorded_before_generation": true,
+  "prompt": "ASv6.18",
+  "parent": "ASv6.17",
+  "goal_revision": 7,
+  "question": "Does restoring ASv6.13's content-versus-presentation sentence in ASv6.17 reduce metadata extraction without losing the latter's stronger per-item context?",
+  "evidence": "../representative-comparison-v1/README.md",
+  "change": {
+    "removed": "Use labels, credits and identifiers as context for understanding the message they accompany, not to describe how the message is labeled, credited or categorized.",
+    "restored": "Subjects concern the communicated content, not labels, credits or identifiers used merely to present it.",
+    "only_change": true
+  },
+  "unchanged": "Everything else in ASv6.17: coverage, self-containment, numerical rules, incomplete-text rule, evidence boundary, output schema, Sol low, pinned runner and normalization.",
+  "scope": "This is an instruction-level diagnostic, not a new validation standard or a claim that ASv6.17 is the best overall baseline.",
+  "notes": [
+    {
+      "label": "D10",
+      "note_id": "5c194c83e01c68bd8bdf822c99d1940510928673fcb72fa2cd7b9b831e6f9504",
+      "role": "event-context gain check"
+    },
+    {
+      "label": "D14",
+      "note_id": "cd51d2046396c3e101dd2e865dfd5ba9777efe2e1306ad318ba928cc620ca462",
+      "role": "metadata target"
+    },
+    {
+      "label": "D19",
+      "note_id": "e93bbeedfe66e29ead660aae5f4717bbb44f9e699b76878215e6e94c1c2d3172",
+      "role": "URL-identifier regression check"
+    },
+    {
+      "label": "D21",
+      "note_id": "b1f8e46799627cb182d22e6cfc6adfa3c7f86effd6a910a28cfaafb08273d63b",
+      "role": "metadata target"
+    },
+    {
+      "label": "D22",
+      "note_id": "c9cda2c73a208ac5a9936031ff8f5f2e1874d529f806394efc1089f3b92867de",
+      "role": "URL-identifier regression check"
+    },
+    {
+      "label": "D23",
+      "note_id": "89679272c74f40676d71364742ea018a94e62bdf245094aa22b5732ec130d070",
+      "role": "numeric-label control"
+    },
+    {
+      "label": "D24",
+      "note_id": "bdffeb300714d0604749fd723df69003b844147741c4799eef2bbe24592d4157",
+      "role": "metadata target"
+    },
+    {
+      "label": "D25",
+      "note_id": "f04223c35f24caa66aaec47a3323d8b582b8be89bca97cfd727b7aba303999ac",
+      "role": "event-context gain check"
+    },
+    {
+      "label": "D26",
+      "note_id": "8cf3fe8abeaff416b1198de1fb15f81ce09c3d00676881149766fe540ae2225b",
+      "role": "metadata target"
+    }
+  ],
+  "design": "Three fresh isolated outputs per version per note; 9 notes x 2 versions x 3 trials = 54 calls. Alternate prompt order by note/trial, one call at a time. Preserve every result, including failures. Both versions use this same frozen input file.",
+  "interpretation": "The primary outcome is whether metadata errors decline repeatedly across different source forms, not whether a particular output is shorter. A candidate may be worth broader testing even if an unrelated known error remains; it cannot be frozen until the original complete validation standard is met.",
+  "retain_rule": "Retain the changed sentence for broader development only if at least two of the four metadata notes show fewer metadata-error outputs across the three trials, and no new semantic-fidelity error recurs in two candidate outputs on a control. An inconclusive or mixed result calls for another controlled comparison, not automatic retention. Unresolved judgments do not count as passes.",
+  "audit": {
+    "source": "https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6",
+    "rationale": "Test a general instruction group using the same evidence and model. Restores a shorter outcome/evidence restriction instead of adding examples or new process steps.",
+    "no_note_specific_examples": true,
+    "no_new_requirement": true,
+    "no_model_change": true,
+    "limitation": "The surrounding prompt still has known defects. Keeping it byte-identical except for this sentence is deliberate experimental control, not a claim that the whole prompt is ideal."
+  }
+}

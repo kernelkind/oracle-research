@@ -4,7 +4,7 @@ Continue from ASv6.11. The assistant now makes routine semantic judgments and ca
 
 The [validation plan](./plan.json) was recorded before new generation. It fixes 28 development notes, eight repeated difficult notes, and a final test of 60 previously unused notes with 12 repeated notes. Passing requires at least 54 of the 60 final notes to have no identified error or unresolved judgment, at least 95% of subjects accepted, and no recurring failure under the plan's exact definitions. These are pilot acceptance limits, not a population accuracy estimate.
 
-Current state: independent iteration has resumed under the revised user goal. No prompt has passed. All 102 earlier isolated calls were reviewed and verified. ASv6.12 and ASv6.13 failed full-development review; ASv6.14 through ASv6.17 failed the focused repeated diagnostics. ASv6.8 remains the frozen default. No final-validation calls have been made.
+Current state: no prompt has passed. All 158 isolated calls have been reviewed and verified, including a fresh 56-call ASv6.13/ASv6.17 comparison across all 28 development notes. ASv6.18 is prepared for a controlled instruction test, not frozen. ASv6.8 remains the frozen default. No final-validation calls have been made.
 
 The original plan remains byte-identical as predeclared evidence. Its self-imposed revision, call and final-attempt caps, and the historical verification reports' permission-blocking conclusions, are superseded by the revised goal. They are not current authorization limits. The semantic requirements, source data, validation criteria and resource safeguards remain fixed. Current operational authority is recorded in [status.json](./status.json).
 
@@ -26,11 +26,13 @@ The four latest candidates used the same three diagnostic notes, each generated 
 | ASv6.16 | 0 |
 | ASv6.17 | 3 |
 
-ASv6.17 is the strongest of these focused results, but was not submitted to the 28-note test because its failures recurred. That left its overall performance unmeasured. There is no established best overall candidate. After the disclosed review audit, ASv6.13 still has 24 clean notes and ASv6.12 has 23; accepted subjects are 257/269 and 255/264 respectively. Both fail the fixed criteria.
+ASv6.17 was the strongest of these focused results, but those diagnostics alone left its broader performance unmeasured. The earlier audited full runs gave ASv6.13 24 clean notes and ASv6.12 23; accepted subjects were 257/269 and 255/264 respectively. Both failed the fixed criteria. Those historical results remain preserved separately from the fresh comparison below.
 
 The [review audit](./semantic-review-audit-v1.json) corrects four judgments that treated plausible implications too strictly. It separately records unresolved slang and non-English interpretation as reviewer uncertainty, not established extractor failures. These corrections do not make either prompt pass.
 
-Next is a [controlled full-development comparison](./representative-comparison-v1/comparison.json): unchanged ASv6.13 and ASv6.17 on the same 28 notes, with one fresh isolated output each. This measures overall gains and regressions before another prompt edit; it cannot isolate the effect of each instruction or establish final reliability. The final notes stay unused.
+The [completed full-development comparison](./representative-comparison-v1/README.md) used unchanged ASv6.13 and ASv6.17 on the same 28 notes, with one fresh isolated output each. ASv6.13 had 21/28 clean notes and 254/271 accepted subjects; ASv6.17 had 19/28 and 147/172. ASv6.17 improved four notes but regressed on six, notably presentation metadata and URL-only names. It did not establish a best overall prompt or the causal effect of individual instructions. The final notes stay unused.
+
+Next is the [ASv6.18 controlled diagnostic](./asv6.18/proposal.json): restore only ASv6.13's content-versus-presentation sentence in ASv6.17, with three fresh trials of both versions on nine fixed notes. Metadata targets test the suspected mechanism; URL, event-reference and numerical cases check adjacent effects and regressions. This is a diagnostic, not a replacement for the fixed validation criteria.
 
 The I/O-pressure guard temporarily paused earlier admission. All previously launched calls completed; the resumption check found no active generation unit. Host-pressure checks and sequential call admission remain mandatory.
 
@@ -43,7 +45,8 @@ The I/O-pressure guard temporarily paused earlier admission. All previously laun
 - [ASv6.16 repeated diagnostics](./asv6.16/diagnostic-review.json)
 - [ASv6.17 repeated diagnostics](./asv6.17/diagnostic-review.json), [exact tested prompt](./asv6.17/ASv6.17.md), and [proposal](./asv6.17/proposal.json)
 - [Explicit review correction](./review-corrections.json): mirroring-only provenance is not the linked post's content. This changes ASv6.12's first-pass result from 24/28 to 23/28 clean notes; its historical judgments are retained.
-- [Latest isolation and preservation verification](./verification-development-3.json): 102 distinct threads and empty working directories, one turn each, no tool events, exact prompts and unedited raw outputs.
+- [Earlier isolation and preservation verification](./verification-development-3.json): 102 distinct threads and working directories, one turn each, no tool events, exact prompts and unedited raw outputs.
+- [Comparison review](./representative-comparison-v1/review.json) and [latest verification](./representative-comparison-v1/verification.json): 56 further distinct threads/workdirs, paired sequential admission, exact prompts, unchanged inputs and unedited outputs; no reuse across the 217 earlier calls checked.
 
 Every generated subject is preserved verbatim in each run's `output.json` and `results.jsonl`. The JSON reviews record subject-level decisions and whole-note coverage separately. These are assistant judgments, not new user approvals.
 
