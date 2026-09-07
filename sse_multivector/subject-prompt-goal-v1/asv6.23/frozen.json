@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "status": "frozen",
+  "version": "ASv6.23",
+  "frozen_at_utc": "2026-09-07 21:00:15 UTC",
+  "prompt": {
+    "path": "ASv6.23.md",
+    "sha256": "b80fd158b27ee0b3ddd640f10e78d7a18101f933d8758af749f6f3d2f25d506f"
+  },
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "output_schema": {
+    "path": "output-schema.json",
+    "file_sha256": "f4fe9090fa4843397605c1a7bc163245f1cc15b71fefcef89ed31357e85f1070",
+    "ordered_transport_sha256": "3e66f7a7d499bbb76ce8bcd2797f74a25d403f658341721b9631e235c3885c51",
+    "property_order": [
+      "context",
+      "subject"
+    ],
+    "meaning": "Each object contains an auxiliary context field and a final subject field. Acceptance judgments concern subject alone."
+  },
+  "input_processing": {
+    "implementation": "sse_multivector/codex_exec.py::_render_subject_prompt and _takeaway_input",
+    "normalization": "Existing long-NIP-19 identifier removal only. Complete remaining post retained. URLs remain in source but prompt excludes them as semantic evidence.",
+    "wrapper_sha256": "ebf1942737069a49146d7336c6936dd2fa5cdd8d4b6a2b24274f01bc9f83e2fe"
+  },
+  "generation": {
+    "interface": "codex_exec.py prompt CONFIG",
+    "codex_version": "0.153.0",
+    "fresh_context_per_call": true,
+    "model_tools": false,
+    "example_config": "../asv6.23-validation-v1/final/H01-t1/config.json"
+  },
+  "evidence": {
+    "development": "../asv6.23-validation-v1/repeat/assessment.json",
+    "final": "../asv6.23-validation-v1/final/results.md",
+    "verification": "../asv6.23-validation-v1/final/verification.json",
+    "review": "../asv6.23-validation-v1/final/review.json",
+    "review_sha256": "c21acd2a404d328240e4086e446245e5abb70eb69bd15a0965c723d95921fd57",
+    "technical_sha256": "6d3c91f92fac1e13bac24b7e3ea9cd0efa8815be6e6c8dc1a5a95bf4e3bb50df",
+    "final_preflight_commit": "733242f",
+    "development_result_commit": "70ef4cd"
+  },
+  "result": {
+    "first_clean": 57,
+    "first_total": 60,
+    "total_clean": 80,
+    "total_outputs": 84,
+    "accepted_subjects": 809,
+    "total_subjects": 819,
+    "definite_errors": 0,
+    "unresolved_subjects": 10,
+    "no_recurrent_failure": true,
+    "all_predeclared_gates_pass": true
+  },
+  "scope": "Freeze of the tested subject-generation package, not a production rollout. Existing production prompt defaults, mask pipeline, prominence and hierarchy are unchanged.",
+  "limits": [
+    "Single pilot corpus and assistant semantic review; no population accuracy estimate.",
+    "Ten unresolved final subjects and earlier development uncertainties remain counted against gates.",
+    "The object-output schema is part of the tested package; do not replace it with the older string-array schema and claim equivalent validation.",
+    "No claim that auxiliary context fields enforce any internal reasoning mechanism.",
+    "Changes to prompt/model/schema/normalization need separate validation."
+  ]
+}

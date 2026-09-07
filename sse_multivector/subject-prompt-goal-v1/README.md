@@ -1,5 +1,15 @@
 # Subject-prompt goal
 
+ASv6.23 is now [frozen as a validated package](./asv6.23/frozen.json), using Astra low and the tested context/subject output schema. It passed unchanged development and final validation. Production defaults and downstream components are unchanged.
+
+[Final results](./asv6.23-validation-v1/final/results.md): 57/60 first outputs and 80/84 total outputs fully accepted; 809/819 subjects accepted. Ten subjects remain unresolved and count against acceptance. No definite error, prohibited recurrence or severe fidelity error was identified. [Remaining questions](./asv6.23-validation-v1/final/remaining-questions.md) preserve full source context and review disagreements.
+
+All 84 final calls were isolated first attempts. The single exposed reserved entry was repaired under the original selection rule, with the other 59 unchanged. No model tools were used, no sampled memory/IO-pressure excursion occurred, and no experiment units remain active. The goal total is 684 generation calls. [Verification](./asv6.23-validation-v1/final/verification.json).
+
+The exact prompt is [ASv6.23.md](./asv6.23/ASv6.23.md). This is a pilot stopping decision, not a universal accuracy claim. No further prompt revision is pending.
+
+## Earlier checkpoints
+
 Current work: ASv6.23 passes the [development repeatability check](./asv6.23-validation-v1/repeat/results.md). All26 outputs for the eight fixed repeated notes were considered:25 fully accepted,446/449 subjects accepted, with one unresolved pattern in one insurance output and no recurring failure. The goal total is600 generation calls. The approved next step is final-entry repair and84-call final validation with the prompt/model/gates unchanged. ASv6.8 remains the frozen default until a candidate passes final validation.
 
 Current result: the [broader ASv6.13-versus-ASv6.23 comparison](./per-item-context-development-v1/results.md) is complete: 56 fresh Astra-low calls over all 28 existing development notes, and all 552 final subjects reviewed. ASv6.23 had 27/28 fully accepted lists versus 25/28 for ASv6.13, with no definite errors and one unresolved interpretation. It passes the existing first-pass thresholds, not repeated-development or final-validation gates. The advantage is modest: one clear hiring-context error and one unresolved reader-role wording were avoided; both prompts retained an uncertain reading of the snow note. Outside the prior two-note probe, fully accepted lists were 25/26 versus 24/26.
