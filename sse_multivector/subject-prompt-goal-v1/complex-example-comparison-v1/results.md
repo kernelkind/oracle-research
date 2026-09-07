@@ -21,9 +21,9 @@ All 623 subjects and every note's coverage were reviewed. More accepted subjects
 Complete unchanged source, including its unfinished quotation:
 
 > "CEO has all employee calls where he does questions at the end that you can ask via an anon chat. He always says ask me something hard. So I asked him if his wife knew about what he&#39;s up to with hi"
-> 
+>
 > this development changes my entire thesis. I've been tracking this for months and the trajectory is undeniable. the fundamentals are aligning in a way that's hard to ignore.
-> 
+>
 > https://mastodon.social/@fesshole/116810711404206903
 
 The four later meanings were present in every output. Here, “yes” means that the subject independently identifies the CEO-related matter, without needing another subject.
@@ -60,20 +60,20 @@ This is evidence about the outputs, not proof of how the model reasoned. The exa
 The hiring note has one context error under each prompt. Complete source:
 
 > Riley Walz, the Jester of Silicon Valley, Is Joining OpenAI
-> 
+>
 > The software engineer known for online stunts is joining OpenAI to work on new ways for humans to use AI systems.
-> 
+>
 > Sector: Electronic Labour | Confidence: 96%
 > Source: https://www.wired.com/story/openai-hires-riley-walz/
-> 
+>
 > ---
 > Council (2 models): OpenAI hires Riley Walz, a high‑visibility internet personality, to embed cultural relevance into its AI offerings and sharpen user‑centric design. The move acts as a branding lever that shapes market perception, prompting heightened investor sentiment, prompting insurers to reassess liability exposures from new human‑AI interaction patterns, and driving data‑center planners to scale capacity for anticipated usage spikes. Analysts converge on the significance of this talent acquisition for brand and experience strategy, while noting that one analyst deviated by using predictive phrasing. The council highlights key metrics, valuation impacts, and cloud infrastructure adjustments for ongoing monitoring.
 > Cross-sector: Finance, Insurance, Real Infrastructure
-> 
+>
 >   ? Which user‑experience metrics does OpenAI prioritize in evaluating the impact of culturally‑oriented talent?
 >   ? How do investors incorporate talent announcements into valuation models for AI firms?
 >   ? What adjustments do cloud providers make to support increased interactive AI workloads linked to engagement‑driven features?
-> 
+>
 > #FIRE #Circle #ai
 
 ASv6.21 trial 3:
