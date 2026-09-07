@@ -33,11 +33,13 @@ Other findings:
 | Review measure | ASv6.13 | ASv6.21 |
 | --- | ---: | ---: |
 | Fully accepted outputs | 7/18 | 7/18 |
-| Accepted subjects | 265/303 | 274/307 |
-| Subjects judged erroneous | 37 | 31 |
+| Accepted subjects | 264/303 | 274/307 |
+| Subjects judged erroneous | 38 | 31 |
 | Unresolved subjects | 1 | 2 |
 
 “Fully accepted” means all subjects and whole-note coverage were accepted. Broad, overlapping and repeated subjects remain allowed. Unresolved judgments are neither proven failures nor passes.
+
+These totals include the later [review correction](../semantic-review-audit-v3.json): B24's eighth subject refers to “the quoted employee’s question” without identifying the CEO context. It was incorrectly accepted. The original review and decision retain their initial totals, 265 accepted and 37 erroneous control subjects. This correction changes no clean-output count, target count or comparison decision.
 
 ## Decision
 
@@ -54,4 +56,4 @@ ASv6.13 remains the earlier broadly tested reference; ASv6.8 remains the frozen 
 - [First 24-call decision](./first-two-decision.json)
 - Blind reviews: [first two trials](./blind-review-first-two.json), [third trial](./blind-review-third.json)
 
-Prompt/trial identities were hidden until each review was saved. All judgments remain unchanged after reveal. This is one reviewer's assessment with prior knowledge, not independent semantic review. These selected difficult notes do not estimate corpus-wide accuracy. The comparison isolates the added example group, not either example separately or the value of examples in general.
+Prompt/trial identities were hidden until each review was saved. Those original review files remain unchanged. The later correction is disclosed separately and was made with identities known; it is not a new blinded judgment. These selected difficult notes do not estimate corpus-wide accuracy. The comparison isolates the added example group, not either example separately or the value of examples in general.
