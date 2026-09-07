@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "recorded_before_generation": true,
+  "prompt": "ASv6.19",
+  "parent": "ASv6.13",
+  "question": "Does a simpler output-focused fidelity contract improve overall subject extraction compared with ASv6.13, while retaining the same coverage and evidence requirements?",
+  "evidence": [
+    "../representative-comparison-v1/README.md",
+    "../metadata-sentence-comparison-v1/README.md",
+    "../metadata-confirmation-v1/README.md"
+  ],
+  "baseline_reason": "ASv6.13 has two full-development runs and outperformed ASv6.17 in the fresh paired run. ASv6.18's metadata improvement did not establish a better overall replacement. ASv6.13 is a failing but evidence-backed comparison, not a frozen winner.",
+  "changes": [
+    "Move the standalone-item outcome near the goal and state that necessary event/topic/numerical context comes from the complete post.",
+    "Replace the warning about source gaps with a direct description of valid output, retaining the content-versus-presentation sentence.",
+    "Simplify numeric fidelity wording without the count/measurement or label-pair instructions that appeared in flawed outputs.",
+    "State attribution preservation conditionally when an item attributes a statement; do not require adding attribution to every subject."
+  ],
+  "unchanged": "Literal, nonliteral and rhetorical coverage, whole-post and multi-part meanings, broad/narrow/overlapping/nested subjects, source evidence outside URLs, general-knowledge limits, supported alternative interpretations, relationship/negation/comparison fidelity and meaning before brevity. Same Sol low, pinned binary and runner, normalization and schema.",
+  "design": "All 28 frozen development notes, one fresh output from each unchanged version, 56 sequential calls. Odd note positions run ASv6.13 then ASv6.19; even positions reverse the order. Review every output against the complete note and use the same standards for both versions.",
+  "interpretation": "This tests the revised instruction group as a whole; it cannot attribute an effect to one individual sentence. Review concrete gains and regressions across the complete development set, not only the CEO, insurance or fee notes. A gain limited to a few probes is not an overall win. Repeat inconclusive comparisons rather than automatically retaining the new version. All fixed development gates and repeated-note checks still precede untouched final validation.",
+  "no_final_data": true,
+  "audit": {
+    "source": "https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6",
+    "outcome_first": true,
+    "requirements_preserved": true,
+    "no_note_specific_examples": true,
+    "no_new_process_or_output_fields": true,
+    "why_test": "The guide supports simplifying repeated/process instructions and checking representative tasks. The suspected source-gap instruction echo and numeric field-copying are evidence for this comparison, not proof the revision will work.",
+    "word_counts": {
+      "baseline": 278,
+      "candidate": 264
+    }
+  }
+}
