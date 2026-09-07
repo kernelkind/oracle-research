@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "status": "frozen_before_generation",
+  "previous_turn": "Progress: six further masks passed, and both planned M05 repeats reproduced its scope error. Baseline expansion stopped after failing the agreed repeatability check.",
+  "candidate": "scope-v1",
+  "baseline_prompt": "../../mask-prompt-astra-ten-note-v1/mask-prompt.md",
+  "prompt": "mask-prompt.md",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "question": "Does making the scope boundary explicit for attached relationships/qualifications fix M05 while preserving M06's requested affinity?",
+  "hypothesis": "The model may retain a familiar address phrase as a unit even when one word carries an additional meaning outside the fixed subject. A targeted scope instruction may separate that extra meaning while leaving necessary identifying context intact. Repeated identical outputs establish recurrence, not this causal explanation.",
+  "change": "Add one general sentence after the reference/scope paragraph; all other prompt text and settings stay identical. No note-specific examples or pronoun-specific rule.",
+  "guidance": {
+    "sources": [
+      "https://developers.openai.com/api/docs/guides/latest-model#prompting-best-practices",
+      "https://developers.openai.com/api/docs/guides/model-optimization#write-effective-prompts"
+    ],
+    "audit": "A clear output-scope instruction under Astra low, with no additional generation stage or request for hidden reasoning. Reference resolution and whole-meaning coverage remain unchanged. Exact task data, output format and isolated context remain fixed. Official guidance does not establish that this change will help."
+  },
+  "initial_calls": 2,
+  "inputs": [
+    {
+      "id": "M05",
+      "note_id": "b767f7ce18c1d8eadad3517769983618dd530504d1c4cdc3a996087abde63f08",
+      "source": "../initial-inputs.json",
+      "subject": "A call for Salvadorans to make their presence known.",
+      "baseline_results": [
+        "../initial/M05-t1/run/results.jsonl",
+        "../m05-repeats/M05-t2/run/results.jsonl",
+        "../m05-repeats/M05-t3/run/results.jsonl"
+      ]
+    },
+    {
+      "id": "M06",
+      "note_id": "b767f7ce18c1d8eadad3517769983618dd530504d1c4cdc3a996087abde63f08",
+      "source": "../initial-inputs.json",
+      "subject": "The poster's expressed affinity with Salvadorans.",
+      "baseline_results": [
+        "../initial/M06-t1/run/results.jsonl"
+      ]
+    }
+  ],
+  "retention_rule": "Both initial outputs must match their fixed subjects' scope. If M05 retains the additional affinity or M06 loses requested affinity, reject this candidate and do not expand it. Judge semantic meaning, not exact match to a preferred fragment array.",
+  "confirmation_if_both_pass": "Run two further M05 trials plus first outputs for M02, M03, M04 and M11: six calls checking recurrence and regressions in necessary context, ownership, requested comparison and distributed intention. Then inspect the other six existing fixed inputs before new development notes. Reuse all resulting first/repeat outputs for the same candidate; all earlier trials remain preserved.",
+  "remaining_uncertainty": "A passing pair is only a focused diagnostic. The full unchanged candidate must still meet the approved 35/36 development, 50/52 final and repeatability criteria. Final reservation remains untouched.",
+  "isolation": "One fixed subject per fresh call, no auxiliary context field, sibling subjects, answers or review notes supplied; existing tools/web-disabled wrapper and guards.",
+  "scope": "Mask prompt only. No subject edits, production changes, new generation stage, model change or SSE work."
+}
