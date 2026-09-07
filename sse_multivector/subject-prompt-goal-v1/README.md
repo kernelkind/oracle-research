@@ -1,6 +1,8 @@
 # Subject-prompt goal
 
-Continue from ASv6.11. The assistant makes routine semantic judgments and can revise/test the subject prompt independently. The user has approved one bounded Sol-low versus Sol-medium comparison. The requirements, isolated runner and earlier evidence remain unchanged; permanent medium adoption is not decided.
+Continue from ASv6.11. The assistant makes routine semantic judgments and can revise/test the subject prompt independently. The completed Sol-low versus Sol-medium comparison did not establish improvement. The user has now approved [18 Astra-low calls](./astra-comparison-v1/proposal.json) with unchanged ASv6.13 and the same six notes, compared with the preserved Sol results. Up to 12 independent calls may run concurrently with resource-pressure checks. The requirements, isolated runner and earlier evidence remain unchanged; no permanent model adoption is authorized.
+
+Astra configuration and preservation checks have passed; generation and review are pending.
 
 The [validation plan](./plan.json) was recorded before new generation. It fixes 28 development notes, eight repeated difficult notes, and a final test of 60 previously unused notes with 12 repeated notes. Passing requires at least 54 of the 60 final notes to have no identified error or unresolved judgment, at least 95% of subjects accepted, and no recurring failure under the plan's exact definitions. These are pilot acceptance limits, not a population accuracy estimate.
 

@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "recorded_before_generation": true,
+  "starting_commit": "4a94f436c87217e0094c24dd1189b88e5275cb1f",
+  "authorization": "User approved: unchanged ASv6.13, same six notes, three fresh Astra-low calls per note (18 total), up to12 concurrent isolated calls and resource monitoring; compare preserved Sol low/medium results. No permanent migration.",
+  "question": "Does gpt-6-astra at low effort improve the same source-context problems and overall subject fidelity that persisted at Sol low and medium?",
+  "changed_factor": "Requested model gpt-5.6-sol -> gpt-6-astra at low reasoning effort. Medium is an additional preserved comparator, not a single-factor contrast.",
+  "prompt": "ASv6.13",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "source_input": "../context-examples-comparison-v1/input.json",
+  "selection": [
+    {
+      "label": "D10",
+      "note_id": "5c194c83e01c68bd8bdf822c99d1940510928673fcb72fa2cd7b9b831e6f9504",
+      "source": "../development-input.json",
+      "role": "target: per-item source context"
+    },
+    {
+      "label": "D19",
+      "note_id": "e93bbeedfe66e29ead660aae5f4717bbb44f9e699b76878215e6e94c1c2d3172",
+      "source": "../development-input.json",
+      "role": "guard: already successful context without loss"
+    },
+    {
+      "label": "D23",
+      "note_id": "89679272c74f40676d71364742ea018a94e62bdf245094aa22b5732ec130d070",
+      "source": "../development-input.json",
+      "role": "target: per-item source context"
+    },
+    {
+      "label": "D24",
+      "note_id": "bdffeb300714d0604749fd723df69003b844147741c4799eef2bbe24592d4157",
+      "source": "../development-input.json",
+      "role": "guard: attribution and complete-source coverage"
+    },
+    {
+      "label": "D25",
+      "note_id": "f04223c35f24caa66aaec47a3323d8b582b8be89bca97cfd727b7aba303999ac",
+      "source": "../development-input.json",
+      "role": "target: per-item source context"
+    },
+    {
+      "label": "D28",
+      "note_id": "80efdad1520559f6808caf65c415df3d9d5340b54f446134eb7e7f86530e6e0d",
+      "source": "../development-input.json",
+      "role": "guard: negation and chronology without new calculation"
+    }
+  ],
+  "design": {
+    "new_calls": 18,
+    "trials": 3,
+    "baseline": "All36 preserved calls from ../effort-comparison-v1; no new Sol calls.",
+    "fixed": "Exact source text, prompt, response schema, production runner, pinned binary, account, normalization, isolation and semantic review standards.",
+    "schedule": "Trial1 all six notes, then trial2, then trial3, each in source-selection order; admit up to12. First planned call checks account/model compatibility before admitting the remaining17. No semantic retries, replacement outputs or fast mode.",
+    "isolation": "Fresh process, thread and workdir per single-note call; unique run directory. Existing Codex subscription only; web and tools disabled."
+  },
+  "review": {
+    "standard": "../plan.json semantic_standard, ../semantic-review-audit-v3.json and ../effort-comparison-v1/blind-review-corrections.json, including prior unresolved evidence and stated sensitivity. Every new subject and complete-note coverage reviewed.",
+    "allowed": "Broad, nested, overlapping, duplicate subjects, plausible implications and supported alternative interpretations. No canonical subject list.",
+    "identity_hiding": "Before semantic inspection, prepare a shuffled packet of all18 new outputs plus preserved Sol outputs without setting/trial labels for independent review. Save judgments before revealing identities. Main reviewer knows the experiment's models and prior outputs; this limits blinding. Preserve baseline judgments; any inconsistent judgment must be corrected separately and applied across models.",
+    "targeted_context": "Record D10 event context, D23 fee/mempool context, and D25 CEO context independently of calculation, metadata, source-gap and attribution problems.",
+    "unresolved": "Neither an established failure nor a pass; cannot supply an improvement contrast."
+  },
+  "decision": {
+    "primary_condition": "At least two of D10/D23/D25 have the same specific context error in >=2/3 preserved Sol-low outputs but <=1/3 Astra-low outputs, with affected meanings covered in all three Astra outputs.",
+    "overall_improvement": "Primary condition plus more fully accepted outputs than Sol low (8/18 under frozen current review), with no recurring new specific semantic regression. Also report comparison with medium and subject acceptance fractions; extra correct duplicate subjects cannot compensate for errors.",
+    "guards": "D19 source context and URL boundary; D24 attribution and source coverage; D28 negation/chronology without invented calculation. Review all other errors too.",
+    "reject": "No primary improvement or a recurring new semantic regression. Context gain without greater fully accepted-output count is a limited finding, not overall improvement.",
+    "inconclusive": "Decisive judgments remain unresolved or required calls fail operationally. No automatic rerun.",
+    "confirmation": "Three independent outputs per note are the bounded repeated check here. A positive result justifies proposing broader unchanged-prompt development testing on the fixed28-note set and fixed repeats; it does not authorize that run or satisfy final gates.",
+    "scope": "No prompt changes, permanent model adoption, default changes, masks, downstream work or final validation in this experiment."
+  },
+  "limits": [
+    "Six previously used difficult notes, not representative accuracy.",
+    "Astra calls occur later than the preserved Sol calls; model is the intended difference, but time/provider conditions are not contemporaneously controlled.",
+    "Low effort is a model-specific setting, not equal compute across models.",
+    "Astra availability is not proven until a planned call succeeds; requested model is auditable in configuration/argv, served weights may not be exposed."
+  ],
+  "resources": {
+    "new_paid_api_or_rental": false,
+    "ledger_state": "reserved_remaining_work_cents remains null; no new paid spend admitted. Use only existing approved subscription runner; no credentials read or modified.",
+    "concurrency": 12,
+    "admit_calls_per_batch": 1,
+    "checks": "Before each admission and about every5s while active: MemAvailable>=16GiB, memory PSI avg10<=1 and I/O PSI avg10<=10. Pause new admissions otherwise; <8GiB or memory PSI>10 stops only owned experiment launchers and requires ownership-specific descendant followup. Never kill unrelated Codex sessions.",
+    "per_batch_launcher_limits": {
+      "MemoryMax": "2G",
+      "MemorySwapMax": "0",
+      "RuntimeMaxSec": 900
+    },
+    "limit_caveat": "Pinned Codex may start separate codex.slice scopes; launcher limits alone do not prove a host-wide limit. Monitor actual host pressure.",
+    "max_new_calls": 18
+  },
+  "guidance": {
+    "source": "https://developers.openai.com/api/docs/models/gpt-6-astra",
+    "finding": "Official OpenAI documentation supports low effort and structured outputs; task-specific benefit, account availability and subscription charges are not established by documentation."
+  },
+  "protected": "Do not modify prior prompts, reviews, raw data, plan.json, goal attachment, credentials, personal notes, or production runner."
+}
