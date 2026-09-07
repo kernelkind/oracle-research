@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "recorded_before_generation": true,
+  "question": "Does the apparent attribution/missing-text tradeoff under ASv6.18 repeat when the same two source notes are generated again under both unchanged prompts?",
+  "prior_evidence": "../metadata-sentence-comparison-v1/README.md",
+  "versions": [
+    "ASv6.17",
+    "ASv6.18"
+  ],
+  "notes": [
+    {
+      "label": "D24",
+      "note_id": "bdffeb300714d0604749fd723df69003b844147741c4799eef2bbe24592d4157",
+      "question": "Does the output assign the two-model analysis to CIAB, leave its source unresolved, or preserve the distinction?"
+    },
+    {
+      "label": "D25",
+      "note_id": "f04223c35f24caa66aaec47a3323d8b582b8be89bca97cfd727b7aba303999ac",
+      "question": "Does the output add commentary about missing text or distort the author's thesis change, while retaining the CEO context?"
+    }
+  ],
+  "design": "Three additional fresh outputs per version per note, called trials 4–6 to distinguish them from the completed nine-note comparison. 2 notes x 2 versions x 3 trials = 12 calls. Alternate prompt order by trial and note, with one call at a time.",
+  "unchanged": "Exact ASv6.17 and ASv6.18 prompts and source text, Sol low, pinned binary/runner, schema, input normalization, fresh isolated context and resource safeguards. No final-validation notes.",
+  "review": "Use the same settled standards and recorded failure mechanisms. Review every subject plus source coverage, including regressions not named in the targeted questions. Do not turn an unresolved attribution into either a proven error or a pass.",
+  "interpretation": "Report all six outputs per version per note, separating the original and confirmation trials. A tradeoff that repeats argues against treating ASv6.18 as an overall improvement; disappearance in both versions weakens the causal claim but does not erase earlier errors. If the prompts remain comparably unreliable on these controls, carry forward only the established metadata finding, not a claim that ASv6.18 is a validated baseline. Do not continue rerunning these two notes merely to obtain a pass; use the accumulated evidence to choose the next general prompt comparison on representative development coverage.",
+  "validation_unchanged": "This is diagnostic evidence only. The original development gates, repeated-note criteria and unseen final validation remain fixed."
+}

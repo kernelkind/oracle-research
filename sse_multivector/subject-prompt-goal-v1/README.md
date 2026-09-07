@@ -4,7 +4,7 @@ Continue from ASv6.11. The assistant now makes routine semantic judgments and ca
 
 The [validation plan](./plan.json) was recorded before new generation. It fixes 28 development notes, eight repeated difficult notes, and a final test of 60 previously unused notes with 12 repeated notes. Passing requires at least 54 of the 60 final notes to have no identified error or unresolved judgment, at least 95% of subjects accepted, and no recurring failure under the plan's exact definitions. These are pilot acceptance limits, not a population accuracy estimate.
 
-Current state: no prompt has passed. All 158 isolated calls have been reviewed and verified, including a fresh 56-call ASv6.13/ASv6.17 comparison across all 28 development notes. ASv6.18 is prepared for a controlled instruction test, not frozen. ASv6.8 remains the frozen default. No final-validation calls have been made.
+Current state: no prompt has passed. All 212 isolated calls have been reviewed and verified, including the 56-call full-development comparison and the 54-call ASv6.17/ASv6.18 metadata comparison. The latest comparison improved metadata extraction on several notes but left mixed context and attribution results; ASv6.18 is not yet retained as the next development baseline. ASv6.8 remains the frozen default. No final-validation calls have been made.
 
 The original plan remains byte-identical as predeclared evidence. Its self-imposed revision, call and final-attempt caps, and the historical verification reports' permission-blocking conclusions, are superseded by the revised goal. They are not current authorization limits. The semantic requirements, source data, validation criteria and resource safeguards remain fixed. Current operational authority is recorded in [status.json](./status.json).
 
@@ -32,7 +32,7 @@ The [review audit](./semantic-review-audit-v1.json) corrects four judgments that
 
 The [completed full-development comparison](./representative-comparison-v1/README.md) used unchanged ASv6.13 and ASv6.17 on the same 28 notes, with one fresh isolated output each. ASv6.13 had 21/28 clean notes and 254/271 accepted subjects; ASv6.17 had 19/28 and 147/172. ASv6.17 improved four notes but regressed on six, notably presentation metadata and URL-only names. It did not establish a best overall prompt or the causal effect of individual instructions. The final notes stay unused.
 
-Next is the [ASv6.18 controlled diagnostic](./asv6.18/proposal.json): restore only ASv6.13's content-versus-presentation sentence in ASv6.17, with three fresh trials of both versions on nine fixed notes. Metadata targets test the suspected mechanism; URL, event-reference and numerical cases check adjacent effects and regressions. This is a diagnostic, not a replacement for the fixed validation criteria.
+The [completed metadata comparison](./metadata-sentence-comparison-v1/README.md) restored only ASv6.13's content-versus-presentation sentence in ASv6.17. Three fresh trials of both versions on nine fixed notes found fewer metadata-error outputs on three of four targets. URL naming and numerical context remained problematic. The insurance attribution and CEO missing-text commentary results were mixed, so the change is not automatically retained. Next: repeat those two cases with both prompts unchanged before deciding whether to keep the sentence. This diagnostic does not replace the fixed validation criteria.
 
 The I/O-pressure guard temporarily paused earlier admission. All previously launched calls completed; the resumption check found no active generation unit. Host-pressure checks and sequential call admission remain mandatory.
 
@@ -46,7 +46,8 @@ The I/O-pressure guard temporarily paused earlier admission. All previously laun
 - [ASv6.17 repeated diagnostics](./asv6.17/diagnostic-review.json), [exact tested prompt](./asv6.17/ASv6.17.md), and [proposal](./asv6.17/proposal.json)
 - [Explicit review correction](./review-corrections.json): mirroring-only provenance is not the linked post's content. This changes ASv6.12's first-pass result from 24/28 to 23/28 clean notes; its historical judgments are retained.
 - [Earlier isolation and preservation verification](./verification-development-3.json): 102 distinct threads and working directories, one turn each, no tool events, exact prompts and unedited raw outputs.
-- [Comparison review](./representative-comparison-v1/review.json) and [latest verification](./representative-comparison-v1/verification.json): 56 further distinct threads/workdirs, paired sequential admission, exact prompts, unchanged inputs and unedited outputs; no reuse across the 217 earlier calls checked.
+- [Full-development comparison review](./representative-comparison-v1/review.json) and [verification](./representative-comparison-v1/verification.json): 56 further distinct threads/workdirs, paired sequential admission, exact prompts, unchanged inputs and unedited outputs; no reuse across the 217 earlier calls checked.
+- [Metadata comparison review](./metadata-sentence-comparison-v1/review.json) and [latest verification](./metadata-sentence-comparison-v1/verification.json): 54 further distinct threads/workdirs, exact prompts, unchanged inputs, unedited outputs and complete reviews; no reuse across the 273 earlier calls checked.
 
 Every generated subject is preserved verbatim in each run's `output.json` and `results.jsonl`. The JSON reviews record subject-level decisions and whole-note coverage separately. These are assistant judgments, not new user approvals.
 
