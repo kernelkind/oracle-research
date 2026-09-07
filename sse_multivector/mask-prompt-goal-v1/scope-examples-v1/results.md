@@ -2,7 +2,7 @@
 
 Two calls used the unchanged baseline instructions plus two synthetic examples. Both masks are identical to the baseline and the direct-instruction revision. No broader calls were run.
 
-M05’s original error judgment has been reopened, not converted into a pass. [The correction](../m05-scope-review/correction.json) applies to every identical output. The examples have not demonstrated an improvement.
+The user resolved the reopened M05 judgment: “my would add unwanted meaning.” [The decision history](../m05-scope-review/correction.json) applies to every identical output. The examples have not demonstrated an improvement: one mask is accepted and one has a scope error.
 
 ## M05
 
@@ -12,7 +12,7 @@ Subject: A call for Salvadorans to make their presence known.
 > My Salvadorans at?⟧
 > https://blossom.primal.net/2b5ac7389e0863fcc843a67abf667a024f4e8f79310cbe048a3e3141bfecedca.jpg
 
-Analysis: Identical to baseline and scope-v1. The initial rule treated My as extra affinity. A subsequent review found that My also helps express the familiar call; whether retaining it exceeds this fixed subject's scope needs clarification. It is not counted as a pass or a proven failure.
+Analysis: Identical to baseline and scope-v1. “My” adds affinity beyond the supplied call-for-presence subject. The user confirmed this is unwanted meaning; the mask fails the scope requirement.
 
 ## M06
 

@@ -1,6 +1,6 @@
 # Mask-prompt development
 
-Status: two focused prompt revisions produced no change. The only disputed mask, M05, needs a scope clarification before more generation. Eleven baseline subjects have accepted first masks; its three M05 outputs are now unresolved, not proven failures or passes. Development and final validation remain incomplete.
+Status: the user confirmed that “My” adds unwanted meaning to M05. Eleven baseline subjects have accepted first masks; all three M05 calls have the same scope error. Two focused prompt revisions also reproduced it. Development and final validation remain incomplete.
 
 [Initial results with complete notes and inline masks](./initial/results.md)
 
@@ -10,20 +10,11 @@ Status: two focused prompt revisions produced no change. The only disputed mask,
 
 [Direct-instruction probe](./scope-v1/results.md) · [Contrastive-example probe](./scope-examples-v1/results.md)
 
-Both revisions returned the same M05 and M06 masks. Neither demonstrated an improvement, so neither was expanded. Historical reports retain their original error judgments; [the separate correction](./m05-scope-review/correction.json) governs current accounting across all three versions.
+Both revisions returned the same M05 and M06 masks. Neither demonstrated an improvement, so neither was expanded. [The decision history](./m05-scope-review/correction.json) preserves the original error judgment, its reopening, and the user's resolution across all three versions.
 
-The question is whether “My” in “Where are all My Salvadorans at?” belongs in the mask for “A call for Salvadorans to make their presence known.” It expresses affinity, but also helps convey the familiar call. Removing it is reasonable; that alone does not establish that keeping it is wrong.
+For “A call for Salvadorans to make their presence known,” “My” must be excluded: affinity is additional meaning. For M06, “The poster's expressed affinity with Salvadorans,” it belongs. This is a scope distinction, not a general ban on that word or on overlapping masks.
 
-Next: resolve this one scope question in the existing review tool, then apply the decision to every identical output. Reopening the judgment changes no prompt, subject or acceptance threshold. The final inputs remain unused.
-
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
-./target/release/sse-mask-review review-masks \
-  sse_multivector/mask-prompt-goal-v1/m05-scope-review/review-input.json \
-  target/mask-goal-m05-scope-review-session.json
-```
-
-One item, with the complete note and returned mask. No decision is prefilled.
+Next: test a subject-conditioned removal criterion rather than adding another scope reminder. The fixed subjects and acceptance thresholds stay unchanged. The final inputs remain unused. The user answered in chat; the existing TUI session was left untouched.
 
 Keep ASv6.23 frozen. Each Astra-low call receives the complete original note and one fixed subject, using the existing mask prompt unchanged initially. No auxiliary context field is sent.
 

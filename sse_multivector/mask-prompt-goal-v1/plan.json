@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
-  "status": "awaiting_m05_scope_clarification",
+  "status": "baseline_repeatability_failed",
   "progress": {
     "mask_calls": 14,
     "accepted": 11,
-    "mask_errors": 0,
-    "unresolved": 3,
+    "mask_errors": 3,
+    "unresolved": 0,
     "accounting_scope": "Unchanged baseline only; focused revisions are recorded separately.",
     "correction": "m05-scope-review/correction.json",
     "focused_revisions": [
-      {"candidate": "scope-v1", "calls": 2, "accepted": 1, "mask_errors": 0, "unresolved": 1, "result": "No output change; no broader calls."},
-      {"candidate": "scope-examples-v1", "calls": 2, "accepted": 1, "mask_errors": 0, "unresolved": 1, "result": "No output change; no broader calls."}
+      {"candidate": "scope-v1", "calls": 2, "accepted": 1, "mask_errors": 1, "unresolved": 0, "result": "No output change; no broader calls."},
+      {"candidate": "scope-examples-v1", "calls": 2, "accepted": 1, "mask_errors": 1, "unresolved": 0, "result": "No output change; no broader calls."}
     ],
     "results": ["initial/results.md", "batch-2/results.md", "m05-repeats/results.md"],
-    "next": "Resolve the consequential M05 scope ambiguity through the existing one-item review packet before further generation. Preserve earlier judgments and apply the clarification to every identical output. Acceptance gates remain unchanged."
+    "next": "The user confirmed My adds unwanted meaning. Test a subject-conditioned removal criterion rather than adding another scope reminder. Keep the fixed inputs and acceptance gates unchanged."
   },
   "generation_authorized": true,
   "approval": {

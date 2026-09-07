@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "status": "frozen_before_generation",
+  "candidate": "subject-deletion-v1",
+  "baseline_prompt": "../../mask-prompt-astra-ten-note-v1/mask-prompt.md",
+  "prompt": "mask-prompt.md",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "question": "Does testing removal against the supplied subject eliminate extra meaning while retaining necessary meaning?",
+  "hypothesis": "The baseline says to prefer fewer words only while preserving the same meaning, which may be interpreted as preserving all meaning in the selected phrase. Replacing this with a deletion criterion explicitly conditioned on the supplied subject may correct scope selection. The cause is not established by prior unchanged outputs.",
+  "change": "Replace the two semantic/fragment paragraphs with one subject-conditioned deletion paragraph. Keep task introduction, identifier exclusions, exact-array output, inputs, model and settings unchanged. No new examples or extra generation stage.",
+  "prior_evidence": "A scope reminder and two contrastive examples each left M05/M06 unchanged. Older probe-v3 already allowed individual-word fragments; probe-v4 added identifying-reference requirements and traded coverage errors. Neither repeating those permissions nor stacking scope reminders is supported.",
+  "settled_scope": "The user said 'my would add unwanted meaning' for M05. M06 explicitly requests affinity and must retain it. This decision is recorded in ../m05-scope-review/correction.json and is not injected into generation prompts.",
+  "initial_calls": 2,
+  "inputs": [
+    {
+      "id": "M05",
+      "note_id": "b767f7ce18c1d8eadad3517769983618dd530504d1c4cdc3a996087abde63f08",
+      "subject": "A call for Salvadorans to make their presence known.",
+      "source": "../initial-inputs.json"
+    },
+    {
+      "id": "M06",
+      "note_id": "b767f7ce18c1d8eadad3517769983618dd530504d1c4cdc3a996087abde63f08",
+      "subject": "The poster's expressed affinity with Salvadorans.",
+      "source": "../initial-inputs.json"
+    }
+  ],
+  "retention_rule": "Both initial masks must capture the fixed subject without additional meaning. M05's extra affinity or any M06 omission rejects this candidate without broader generation. Different faithful arrays are allowed; do not compare to a preferred exact mask.",
+  "confirmation_if_both_pass": "Six calls: M05-t2, M05-t3 and first outputs for M02, M03, M04, M11. If these pass, cover the other six existing fixed subjects before adding the remaining development notes. Retain every first/repeat result under this candidate for the unchanged completion checks.",
+  "regression_risk": "The deletion objective could remove identifying context, requested qualifications or implicit meaning. Current fixed checks cover Bitcoin identity, the truck company, requested route/comparison and comments on the author's book. Review relevant prior identifying-reference failures before final candidate acceptance; keep them outside completion denominators.",
+  "remaining_uncertainty": "Two calls cannot establish broad improvement or reliability. The 35/36 development and 50/52 final thresholds and repeatability requirement remain unchanged. No final inputs are used.",
+  "guidance": {
+    "source": "https://developers.openai.com/api/docs/guides/latest-model#gpt-6-astra-instruction-following",
+    "application": "Replace potentially ambiguous instructions with one explicit subject-conditioned objective. Do not treat official guidance as evidence the change works; the unchanged-input comparison supplies that evidence."
+  },
+  "isolation": "Fresh process/thread/sterile workdir per fixed-subject call; full original source plus .subject only; no .context, reviews, sibling subjects, tools or web.",
+  "resources": "Existing concurrent driver: 2 GiB/job, zero swap, 900-second runtime and host memory/I/O-pressure admission checks. Existing subscription only."
+}
