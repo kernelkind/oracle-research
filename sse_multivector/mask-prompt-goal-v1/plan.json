@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "status": "proposed_awaiting_user_approval",
+  "generation_authorized": false,
+  "goal_file": "/home/dev/.codex/attachments/c9cd0710-6e4e-4a53-93d7-a374be5849a0/pasted-text-1.txt",
+  "objective": "Freeze a single-subject mask prompt that reliably preserves the fixed subject's meaning and scope on reviewed real notes.",
+  "starting_point": {
+    "prompt": "../mask-prompt-astra-ten-note-v1/mask-prompt.md",
+    "prompt_sha256": "564c860a3be5f8eb6e90c404184ef467f24004276dbb535f637ba0a8ded7ff9e",
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "subjects": "../subject-prompt-goal-v1/asv6.23/frozen.json",
+    "input": "One complete original note and one unedited accepted ASv6.23 subject; no auxiliary context field, sibling subjects, previous masks or review notes.",
+    "output": "JSON array of exact source substrings, in source order.",
+    "runner": "../codex_exec.py",
+    "runner_sha256": "ebf1942737069a49146d7336c6936dd2fa5cdd8d4b6a2b24274f01bc9f83e2fe"
+  },
+  "initial": {
+    "inputs": "initial-inputs.json",
+    "notes": 3,
+    "subjects_per_note": 2,
+    "mask_calls": 6,
+    "subject_generation_calls": 0,
+    "repeats": 0,
+    "question": "Does the unchanged working prompt show a concrete masking problem on the six accepted subjects, or is broader coverage the more useful next step?",
+    "decision": "Inspect all six outputs. An isolated defect or uncertainty does not automatically block expansion. If it suggests a failure mechanism that could threaten the acceptance criteria, use the smallest focused comparison or repeat that can change the next decision. Do not claim reliability from six outputs.",
+    "limits": "These are the first experiment's size, not a cap on the effort."
+  },
+  "development": {
+    "stages": [
+      {
+        "total_notes": 3,
+        "total_fixed_subjects": 6,
+        "additional_first_calls": 6
+      },
+      {
+        "total_notes": 6,
+        "total_fixed_subjects": 12,
+        "additional_first_calls": 6
+      },
+      {
+        "total_notes": 12,
+        "total_fixed_subjects": 24,
+        "additional_first_calls": 12
+      }
+    ],
+    "selection": "Add notes only when the preceding batch has been reviewed. Select two accepted subjects per note before any mask output, covering distinctions not already adequately exercised: scope within shared passages, distributed context/references, implied meaning, relationships/qualifications and different source structures. These are observable extraction demands, not a predefined taxonomy or a claim of representative prevalence. Record omitted/unsupported subjects; do not cherry-pick masks after generation.",
+    "input_freeze": "Freeze each batch before calls. Once the 12-note set is assembled it stays fixed across candidate completion checks. Focused diagnostics remain recorded outside the completion set.",
+    "repeats": {
+      "fixed_subjects": 6,
+      "additional_calls_per_subject": 2,
+      "additional_calls": 12,
+      "total_outputs": 36,
+      "selection": "Use one predesignated subject from each of six different development notes. Designate each before its first mask generation; M01, M03 and M05 are the first three. The next three are designated when the next three notes enter. Include the first output plus two new isolated calls under the same prompt/configuration."
+    },
+    "reuse": "For an unchanged prompt/configuration, retain its first output for each fixed input and add only missing required calls. Never choose a later preferable result as the first output. A revised prompt must cover the same fixed completion inputs; broad reruns are not required for each early diagnostic draft.",
+    "acceptance": {
+      "minimum_accepted_outputs": 35,
+      "total_outputs": 36
+    }
+  },
+  "final": {
+    "notes": 20,
+    "subjects_per_note": 2,
+    "first_calls": 40,
+    "repeated_subjects": 6,
+    "additional_repeat_calls_per_subject": 2,
+    "additional_repeat_calls": 12,
+    "total_outputs": 52,
+    "selection": "Before expanding development, reserve 20 eligible notes from saved ASv6.23 first outputs, excluding all notes used in mask-prompt development by note ID and identical source text. A note is eligible if it has at least two accepted, unchanged subjects. Order eligible notes by SHA256('mask-prompt-goal-v1/final/' + note_id) and reserve the first 20. Choose two accepted subjects per reserved note by SHA256('mask-prompt-goal-v1/subject/' + note_id + '/' + one_based_subject_index), not by expected mask quality. Audit their support only when entering final validation, before any final masks; record any exclusion and take the next hash-ordered eligible subject/note. Preserve all selection decisions.",
+    "repeat_selection": "Use the first chosen subject from each of the first six hash-ordered final notes. Include each first output and two additional isolated calls.",
+    "batching": "Only enter final validation after the unchanged candidate passes development. Generate in small batches with review between them; stop that final attempt early if failure is already mathematically unavoidable. Do not turn an incomplete or stopped attempt into a pass.",
+    "exposure": "These notes have subject-generation and semantic-review exposure. They are held out from mask-prompt development, not globally unseen. If final data informs a prompt change, retire those inputs into development and use a newly reserved final set.",
+    "acceptance": {
+      "minimum_accepted_outputs": 50,
+      "total_outputs": 52
+    }
+  },
+  "judgment": {
+    "unit": "One mask for one fixed note-subject input. Two subjects from one note are not two independent notes.",
+    "accepted": "Exact source fragments in source order that capture the supplied subject's whole supported meaning and scope, without missing necessary identifying words or selecting additional meanings. Apply the agreed semantic standard, not exact-match comparison to a preferred mask.",
+    "not_accepted": "Errors, unresolved semantic judgments, invalid/non-source/out-of-order output and missing responses do not count as accepted. Record service errors separately from model/semantic defects. Do not retry or replace an attempted output silently.",
+    "upstream": "Validate supplied subjects before masking. Later subject concerns remain in the recorded results and are reported separately, not relabeled as masking failures or silently dropped from denominators. If the target cannot be adjudicated, mark the mask judgment unresolved for acceptance accounting.",
+    "positions": "Record all source-order-compatible placements for repeated fragments. Do not claim a returned string specifies a unique occurrence. If different placements change the scope judgment, record that judgment as unresolved; otherwise report the ambiguity separately without declaring an SSE equivalence.",
+    "corrections": "Preserve raw outputs and earlier judgments; append corrections with source evidence and apply the same interpretation to every compared version. Primary agent reviews every mask. User review is only for consequential undefined scope or disputed interpretation, using full notes with inline masks."
+  },
+  "gates": {
+    "rate": "At least 95% accepted outputs in both completion checks, rounded upward: 35/36 development and 50/52 final.",
+    "repeatability": "No same demonstrated semantic omission or added-meaning error in two of the three calls for any fixed repeated input. Identify the actual source words/meaning, not just a broad error label. Unresolved judgments count against acceptance but are not claimed as proven recurring failures.",
+    "regressions": "A candidate cannot erase a previously settled defect by changing the review standard. Preserve relevant earlier fixed-input counterexamples and, if a proposed revision touches that failure mechanism, check them before accepting the revision. Report such extra checks separately; do not dilute the completion denominators with easy diagnostic outputs.",
+    "rationale": "95% is a proposed practical tolerance of roughly one non-accepted mask in twenty, not a measured population guarantee. Twelve development notes plus twenty separate final notes permit a modest real-note coverage check after tiny probes. Repeats test consistency. Sample sizes and tolerance are proposed for user approval and cannot be weakened after results.",
+    "completion": "One unchanged prompt/model/effort/input handling/output contract meets both checks and the repeatability rule; all outputs and reviews are saved and isolation/mechanical checks verified; freeze the exact package with remaining errors and limits. This does not establish population accuracy, source-position equivalence, SSE quality or segment quality."
+  },
+  "operations": {
+    "model_call_isolation": "Fresh process, thread and sterile workdir per call; no tools/web, user rules, prior conversations or inherited answers. Use existing runner safeguards.",
+    "parallelism": "Concurrency may reach the existing approved ceiling of 12, but never enlarge a batch to fill slots. Initial batch contains only six calls.",
+    "resource_checks": "Existing 2 GiB per-job cap, zero swap, 900-second runtime safeguard and OS memory/I/O-pressure checks. Inspect current host conditions before admitting any calls. No unbounded process fan-out.",
+    "usage": "Record calls, token usage and elapsed time. No self-imposed total token, call or attempt cap; more work requires a concrete information gain.",
+    "spend": "Existing Codex subscription only; no paid API, rental, account change or new monetary commitment.",
+    "scope": "No ASv6.23 changes, model change, multi-subject generation call, new generation stage, production code/default changes, SSE, prominence or hierarchy. Do not edit personal docs/notes."
+  },
+  "guidance": "https://developers.openai.com/api/docs/guides/evaluation-best-practices"
+}
