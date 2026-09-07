@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "status": "frozen_before_generation",
+  "candidate": "scope-examples-v1",
+  "baseline_prompt": "../../mask-prompt-astra-ten-note-v1/mask-prompt.md",
+  "prompt": "mask-prompt.md",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "question": "Can contrasting the same source word's exclusion and inclusion teach finer scope selection without losing requested meaning?",
+  "hypothesis": "The direct scope reminder changed neither output. Concrete examples may better communicate that a meaningful modifier inside a relevant phrase belongs only when needed for the fixed subject. The examples also retain a requested modifier and earlier context, so they do not teach blanket trimming.",
+  "change": "Original baseline instructions plus two examples from one new synthetic train/conductor post. The unsuccessful scope-v1 sentence is not included. No evaluated note, subject answer, nationality, affinity cue or URL is used in the examples.",
+  "existing_evidence": {
+    "path": "../../mask-prompt-few-shot-sol-low-v1/README.md",
+    "finding": "Prior six-example Sol-low work traded scope and coverage errors on ASv6.8 subjects. It does not establish benefit on current Astra-low inputs. This is a smaller, internal-modifier contrast rather than treating old examples as proven.",
+    "risk": "More trimming could lose necessary context or requested qualifiers. The companion M06 subject and later fixed regressions check that risk."
+  },
+  "guidance": {
+    "sources": [
+      "https://developers.openai.com/api/docs/guides/latest-model#prompting-best-practices",
+      "https://developers.openai.com/api/docs/guides/model-optimization#write-effective-prompts"
+    ],
+    "audit": "Examples demonstrate output behavior with unchanged instructions, complete input context and output contract. No hidden reasoning instructions, extra generation stage or model change. Benefit must be measured."
+  },
+  "initial_calls": 2,
+  "inputs": [
+    {
+      "id": "M05",
+      "note_id": "b767f7ce18c1d8eadad3517769983618dd530504d1c4cdc3a996087abde63f08",
+      "subject": "A call for Salvadorans to make their presence known.",
+      "source": "../initial-inputs.json"
+    },
+    {
+      "id": "M06",
+      "note_id": "b767f7ce18c1d8eadad3517769983618dd530504d1c4cdc3a996087abde63f08",
+      "subject": "The poster's expressed affinity with Salvadorans.",
+      "source": "../initial-inputs.json"
+    }
+  ],
+  "retention_rule": "Both outputs must match the fixed subjects' meaning and scope. If M05 retains added affinity or M06 loses requested affinity, reject without broader generation. Accept faithful alternatives, not an exact preferred mask.",
+  "confirmation_if_both_pass": "Two more M05 trials and first outputs for M02, M03, M04, M11 (six calls); then the other six existing fixed inputs. Keep all outcomes as candidate first/repeat outputs. Only then expand to the remaining development notes under the original completion plan.",
+  "remaining_uncertainty": "A focused pair is not a candidate pass. The original 35/36 development, 50/52 final and repeatability checks remain unchanged; final reservation remains unused.",
+  "isolation": "Fresh process/thread/workdir and one fixed subject per actual call; tools/web disabled; no auxiliary context field, prior answers or review commentary supplied.",
+  "examples_check": "Both example masks are exact source substrings in source order. The first retains the requested overnight-train context and boarding relation, excluding impatience, passenger sleepiness and platform location; the second retains impatience and its conductor referent."
+}
