@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "recorded_before_generation": true,
+  "prompt": "ASv6.21",
+  "parent": "ASv6.13",
+  "question": "Does adding two domain-distant examples of context-complete observations/opinions improve per-item context while the ASv6.13 instruction text remains unchanged?",
+  "change": "Append two invented source-to-subject examples; delete or edit no ASv6.13 instruction.",
+  "rationale": "Repeated outputs correctly resolve some event references but leave specific opinions, observations and field values detached from their topic. The existing requirement may be interpreted as grammatical readability rather than source-specific independent meaning. The examples demonstrate retaining an opinion/observation's topic in each item, alongside permitted broad subjects and an unrelated meaning.",
+  "prior_example_evidence": {
+    "prompt": "ASv6.15",
+    "path": "../asv6.15/ASv6.15.md",
+    "result": "0/9 clean on D23/D24/D25; event-context omissions persisted.",
+    "confound": "It added both a kiln example and an attribution rule to ASv6.14.",
+    "boundary": "Examples are not an untried mechanism. This is a controlled example-only comparison with different demonstrations, not proof that examples will help. The prior negative result is counterevidence."
+  },
+  "counterevidence": "ASv6.15 already demonstrated standalone grounded subjects without solving the same CEO context problem. Repeated explicit self-containment instructions and their repositioning did not reliably solve it either. This single bounded example-only comparison is warranted to isolate the effect; no successive example replacement is authorized by an inconclusive result alone.",
+  "examples": "../asv6.21/ASv6.21.md",
+  "selection": [
+    {
+      "label": "D10",
+      "note_id": "5c194c83e01c68bd8bdf822c99d1940510928673fcb72fa2cd7b9b831e6f9504",
+      "source": "../development-input.json",
+      "role": "target: per-item source context"
+    },
+    {
+      "label": "D19",
+      "note_id": "e93bbeedfe66e29ead660aae5f4717bbb44f9e699b76878215e6e94c1c2d3172",
+      "source": "../development-input.json",
+      "role": "guard: already successful context without loss"
+    },
+    {
+      "label": "D23",
+      "note_id": "89679272c74f40676d71364742ea018a94e62bdf245094aa22b5732ec130d070",
+      "source": "../development-input.json",
+      "role": "target: per-item source context"
+    },
+    {
+      "label": "D24",
+      "note_id": "bdffeb300714d0604749fd723df69003b844147741c4799eef2bbe24592d4157",
+      "source": "../development-input.json",
+      "role": "guard: attribution and complete-source coverage"
+    },
+    {
+      "label": "D25",
+      "note_id": "f04223c35f24caa66aaec47a3323d8b582b8be89bca97cfd727b7aba303999ac",
+      "source": "../development-input.json",
+      "role": "target: per-item source context"
+    },
+    {
+      "label": "D28",
+      "note_id": "80efdad1520559f6808caf65c415df3d9d5340b54f446134eb7e7f86530e6e0d",
+      "source": "../development-input.json",
+      "role": "guard: negation and chronology without new calculation"
+    }
+  ],
+  "design": {
+    "prompts": [
+      "ASv6.13",
+      "ASv6.21"
+    ],
+    "trials": 3,
+    "max_new_calls": 36,
+    "trial_order": "Six notes in input order. Alternate prompt order by note; reverse that order in the next trial.",
+    "context": "Fresh process/thread/workdir for each single-note call; existing isolated Sol-low runner; no tools/web.",
+    "fixed": "Instruction text before examples, actual note text, model, effort, schema, runner, binary, account and normalization. No semantic retries."
+  },
+  "review": {
+    "identity_hiding": "After two trials, shuffle all 24 outputs behind opaque prompt/trial IDs. Review against full notes and save every judgment before reveal. If third trial proceeds, repeat with new IDs. Same reviewer's prior knowledge limits blinding.",
+    "standard": "../plan.json semantic_standard, unchanged; no canonical list; broad/nested/overlapping/duplicate subjects and plausible implications allowed.",
+    "targeted_context": "Record per-output missing topic/event/numerical context separately from source-gap, metadata, arithmetic and attribution defects. Dropping an independently communicated target meaning cannot satisfy the context target."
+  },
+  "decision": {
+    "retain_for_full_development": "At least two of D10/D23/D25 have control missing-context errors in >=2/3 outputs and candidate errors in <=1/3, with target meanings covered in all three candidate outputs. No recurring new unsupported relationship/source reassignment or lost source meaning. No context loss in the already-successful D19 guard. Retention only warrants the unchanged full-development and repeat gates.",
+    "bounded_confirmation": "Review after 24 calls. Stop if at least two target notes have candidate missing-context error or missing target meaning in both outputs; then the two-target <=1/3 condition is impossible. Otherwise run the last 12 calls and decide from all36. No further repetitions or swapping examples to rescue this comparison.",
+    "reject": "No targeted repeatable improvement, or gains accompanied by recurring relationship/attribution/coverage regressions. Close the example line, not another speculative replacement example.",
+    "unresolved": "No repeated control failure, or unresolved semantic evidence prevents the contrast. No automatic rerun.",
+    "completion_boundary": "Original full-development failures and unchanged final gates remain binding. No final input is used here."
+  },
+  "guidance": {
+    "model": "gpt-5.6-sol",
+    "sources": [
+      "https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6",
+      "https://developers.openai.com/api/docs/guides/prompt-engineering#few-shot-learning",
+      "https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively"
+    ],
+    "application": "Keep working instructions and output shape unchanged; test only the added example group. Examples illustrate input/output behavior, not hidden reasoning. Prior zero-shot work exists. Domains differ from the test notes; evaluate actual results rather than treating guidance as a guarantee."
+  },
+  "resources": {
+    "new_paid_api_or_rental": false,
+    "ledger_state": "reserved_remaining_work_cents remains null; no new paid spend admitted. Use only existing approved subscription runner; no credentials read or modified.",
+    "concurrency": 1,
+    "admit_calls_per_batch": 1,
+    "checks": "Before each call and while live: MemAvailable>=16GiB, memory PSI avg10<=1, I/O PSI avg10<=10 for new admission.",
+    "per_batch_launcher_limits": {
+      "MemoryMax": "2G",
+      "MemorySwapMax": "0",
+      "RuntimeMaxSec": 900
+    },
+    "limit_caveat": "Pinned Codex may start separate codex.slice scopes; launcher limits alone do not prove a host-wide limit. Monitor actual host pressure."
+  },
+  "frozen_default": "Canonical ASv6.8 unchanged; experiment-local selector ASv6.13; configs explicitly select prompt.",
+  "previous_goal_turn_classification": "No extraction progress: reread and verified the already-applied goal revision; no authoritative experiment state changed. Resume the prepared, bounded example-only comparison after resolving its documented example defects.",
+  "state": "prepared_not_run",
+  "example_audit": {
+    "before_generation": true,
+    "corrections": [
+      "The per-item paraphrase now states whose aunt is meant.",
+      "Removed 'Meanwhile' from the invented source; the example no longer leaves concurrence versus topic-shift interpretation unresolved."
+    ],
+    "judgment": "Examples preserve broad subjects and source-grounded specific items. Pool-manager context is reasonably implied. The output demonstrates one acceptable list, not a canonical list or fixed item count."
+  }
+}
