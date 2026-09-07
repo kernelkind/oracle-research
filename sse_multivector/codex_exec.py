@@ -272,6 +272,13 @@ def _canonical_json_bytes(value: object) -> bytes:
     ).encode("utf-8")
 
 
+def _ordered_json_bytes(value: object) -> bytes:
+    """Preserve property order for caller-supplied structured output schemas."""
+    return (
+        json.dumps(value, ensure_ascii=False, separators=(",", ":")) + "\n"
+    ).encode("utf-8")
+
+
 def _sha256_bytes(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
@@ -690,6 +697,7 @@ class PromptRunnerConfig:
     model: str
     reasoning_effort: str
     prompts: tuple[PromptJob, ...]
+    output_schema: dict[str, object] | None = None
 
     @classmethod
     def load(cls, path: Path) -> "PromptRunnerConfig":
@@ -707,10 +715,17 @@ class PromptRunnerConfig:
                 "model",
                 "reasoning_effort",
                 "prompts",
-            },
+            } | ({"output_schema"} & value.keys()),
         )
         if value["schema_version"] != SCHEMA_VERSION:
             raise RunnerError("unsupported config schema version")
+        output_schema = None
+        if "output_schema" in value:
+            output_schema = _expect_object(
+                value["output_schema"], "config.output_schema"
+            )
+            if output_schema.get("type") != "object":
+                raise RunnerError("`config.output_schema.type` must be `object`")
         raw_prompts = value["prompts"]
         if not isinstance(raw_prompts, list) or not raw_prompts:
             raise RunnerError("`config.prompts` must be a nonempty array")
@@ -744,6 +759,7 @@ class PromptRunnerConfig:
                 value["reasoning_effort"], "config.reasoning_effort"
             ),
             prompts=tuple(prompts),
+            output_schema=output_schema,
         )
         _validate_codex_home(config.codex_home)
         return config
@@ -871,7 +887,7 @@ def _build_prompt_manifest(
     config: PromptRunnerConfig,
     codex_version: str,
 ) -> dict[str, object]:
-    return {
+    manifest: dict[str, object] = {
         "schema_version": SCHEMA_VERSION,
         "mode": "prompt",
         "wrapper_sha256": _sha256_file(Path(__file__).resolve()),
@@ -888,6 +904,12 @@ def _build_prompt_manifest(
         ],
         "isolation": _isolation_manifest(),
     }
+    if config.output_schema is not None:
+        manifest["response_schema"] = config.output_schema
+        manifest["response_schema_sha256"] = _sha256_bytes(
+            _ordered_json_bytes(config.output_schema)
+        )
+    return manifest
 
 
 def _build_subject_manifest(
@@ -1954,7 +1976,11 @@ def _run_job(
         "response_schema_sha256": (
             None
             if schema is None
-            else _sha256_bytes(_canonical_json_bytes(schema))
+            else _sha256_bytes(
+                _ordered_json_bytes(schema)
+                if stage_name == "prompt"
+                else _canonical_json_bytes(schema)
+            )
         ),
         "argv": argv,
         "exit_code": exit_code,
@@ -2534,6 +2560,10 @@ def run_prompts(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
     manifest = _build_prompt_manifest(config, codex_version)
     prepared_manifest = _prepare_manifest_directory(config.run_directory, manifest)
     manifest_sha256 = prepared_manifest.manifest_sha256
+    schema_path = None
+    if config.output_schema is not None:
+        schema_path = config.run_directory / "prompt-output-schema.json"
+        _atomic_write(schema_path, _ordered_json_bytes(config.output_schema))
     results_path = config.run_directory / "results.jsonl"
     latest = _load_latest_results(
         results_path,
@@ -2553,8 +2583,8 @@ def run_prompts(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
             note=Note(note_id=prompt.prompt_id, text=""),
             takeaway_index=None,
             prompt=prompt.text,
-            schema_path=None,
-            schema=None,
+            schema_path=schema_path,
+            schema=config.output_schema,
             results_path=results_path,
             latest=latest,
             retry_failed=retry_failed,
@@ -2580,6 +2610,7 @@ def run_direct_prompt(
     codex_home: Path,
     model: str | None,
     reasoning_effort: str | None,
+    output_schema: dict[str, object] | None = None,
 ) -> str:
     prompt = _expect_string(prompt, "--text")
     resolved_binary = _resolve_executable(
@@ -2598,19 +2629,22 @@ def run_direct_prompt(
         temporary_root = Path(temporary).resolve()
         config_path = temporary_root / "config.json"
         run_directory = temporary_root / "run"
+        config_value: dict[str, object] = {
+            "schema_version": SCHEMA_VERSION,
+            "codex_binary": str(resolved_binary),
+            "codex_home": str(resolved_home),
+            "run_directory": str(run_directory),
+            "model": model,
+            "reasoning_effort": reasoning_effort,
+            "prompts": [{"prompt_id": "direct", "text": prompt}],
+        }
+        if output_schema is not None:
+            config_value["output_schema"] = output_schema
         _atomic_write(
             config_path,
-            _canonical_json_bytes(
-                {
-                    "schema_version": SCHEMA_VERSION,
-                    "codex_binary": str(resolved_binary),
-                    "codex_home": str(resolved_home),
-                    "run_directory": str(run_directory),
-                    "model": model,
-                    "reasoning_effort": reasoning_effort,
-                    "prompts": [{"prompt_id": "direct", "text": prompt}],
-                }
-            ),
+            _ordered_json_bytes(config_value)
+            if output_schema is not None
+            else _canonical_json_bytes(config_value),
         )
         try:
             output = run_prompts(config_path, retry_failed=False)
@@ -2719,6 +2753,11 @@ def _argument_parser() -> argparse.ArgumentParser:
     prompt_parser.add_argument("--codex-home", type=Path)
     prompt_parser.add_argument("--codex-binary")
     prompt_parser.add_argument(
+        "--output-schema",
+        type=Path,
+        help="JSON output schema file for --text; batches use config.output_schema",
+    )
+    prompt_parser.add_argument(
         "--retry-failed",
         action="store_true",
         help="explicitly retry failed jobs in config-based batch mode",
@@ -2742,6 +2781,14 @@ def main(arguments: Sequence[str] | None = None) -> int:
                     raise RunnerError("use either a config path or --text, not both")
                 if parsed.retry_failed:
                     raise RunnerError("--retry-failed is only valid with a config path")
+                output_schema = None
+                if parsed.output_schema is not None:
+                    output_schema = _expect_object(
+                        _load_json(
+                            parsed.output_schema.expanduser(), "--output-schema"
+                        ),
+                        "--output-schema",
+                    )
                 prompt = sys.stdin.read() if parsed.text == "-" else parsed.text
                 response = run_direct_prompt(
                     prompt,
@@ -2749,6 +2796,7 @@ def main(arguments: Sequence[str] | None = None) -> int:
                     codex_home=parsed.codex_home or DEFAULT_CODEX_HOME,
                     model=parsed.model,
                     reasoning_effort=parsed.reasoning_effort,
+                    output_schema=output_schema,
                 )
                 sys.stdout.write(response)
                 return 0
@@ -2761,11 +2809,12 @@ def main(arguments: Sequence[str] | None = None) -> int:
                     parsed.reasoning_effort,
                     parsed.codex_home,
                     parsed.codex_binary,
+                    parsed.output_schema,
                 )
             ):
                 raise RunnerError(
-                    "--model, --reasoning-effort, --codex-home, and "
-                    "--codex-binary are only valid with --text"
+                    "--model, --reasoning-effort, --codex-home, "
+                    "--codex-binary, and --output-schema are only valid with --text"
                 )
             output = run_prompts(parsed.config, retry_failed=parsed.retry_failed)
             print(json.dumps({"prompts": len(output["responses"])}, sort_keys=True))

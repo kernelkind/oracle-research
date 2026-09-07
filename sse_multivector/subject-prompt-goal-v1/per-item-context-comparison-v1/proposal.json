@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "recorded_before_generation": true,
+  "starting_commit": "15b7b777b2c7c1f66b59dc97fbae8d2ec51d972f",
+  "authorization": "User reviewed ASv6.23 diff and instructed proceed. This authorizes the 12-call comparison and necessary schema/monitoring support, not another prompt revision or a permanent migration.",
+  "question": "Does model-generated context before each subject improve the final subjects' independent meaning on unchanged difficult notes?",
+  "conditions": {
+    "base": {
+      "prompt": "ASv6.13",
+      "path": "../asv6.13/ASv6.13.md",
+      "schema": "Existing subjects string-array schema"
+    },
+    "context": {
+      "prompt": "ASv6.23",
+      "path": "../asv6.23/ASv6.23.md",
+      "schema": "../asv6.23/output-schema.json"
+    }
+  },
+  "fixed": {
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "notes": [
+      "D25",
+      "D10"
+    ],
+    "source": "../astra-examples-comparison-v1/inputs",
+    "runner": "../../codex_exec.py prompt",
+    "calls_per_note_per_condition": 3,
+    "fresh_calls": 12,
+    "no_retries": true,
+    "no_prompt_edits": true,
+    "no_source_edits": true,
+    "no_final_validation_data": true
+  },
+  "isolation": "Fresh custom-runner thread and sterile workdir per call. Same minimal system instructions and all tools/web/environment/AGENTS injection disabled. Schema and prompt hashes retained. No content-generation subagent reuse.",
+  "review": {
+    "standard": "Existing semantic standard: subjects can be broad, narrow, nested, overlapping or duplicates; reasonable implications are allowed. Specific meanings must retain their own necessary context, relationships, negation and attribution. No URL-derived meaning, calculations absent from source, or uncertainty commentary. Do not require every broad subject to restate the full event.",
+    "primary": "D25: specific changed-thesis, months-of-tracking, undeniable-trajectory and aligning-fundamentals subjects must independently identify the CEO-related matter. Exact CEO conduct and the full quoted question are not required. Generic 'this development/matter/post' is insufficient. All four meanings must remain covered.",
+    "secondary": "D10: specific analyst-disagreement/predictive-phrasing and ongoing-monitoring subjects retain the Riley Walz/OpenAI hiring-event context. Genuine broad subjects are allowed. Preserve other communicated meanings, including the three closing questions.",
+    "method": "Extract only final subject strings, shuffle under opaque IDs, hide version/trial labels and context fields, and save full semantic judgments before revealing the mapping. Audit every subject and whole-note coverage. Inspect context fields only afterward; never concatenate them into subjects or excuse incomplete subjects.",
+    "uncertainty": "Do not turn unresolved interpretations of the clipped CEO quote into new definite errors. Distinguish insinuation of infidelity from asserting an affair as fact."
+  },
+  "decision": {
+    "local_benefit": "CEO context errors occur in at least 2/3 base outputs and at most 1/3 context outputs, all four meanings present in every context output. Hiring context-error output count must not increase, and no recurring new semantic error or coverage loss may offset the gain.",
+    "mixed": "If CEO improves without meeting that rule, or hiring improves alone, report the exact mixed evidence rather than declare the whole candidate better. Correct duplicate count alone is not improvement.",
+    "regressions": "Record every error. An error occurring in at least two context outputs but at most one base output is a recurring regression; any serious individual failure must also be shown.",
+    "consequence": "At most this supports proposing broader confirmation. No automatic further calls, candidate promotion, final validation or model migration."
+  },
+  "resources": {
+    "maximum_calls": 12,
+    "maximum_concurrency": 12,
+    "existing_subscription_only": true,
+    "new_paid_api_or_rental": false,
+    "host_poll_seconds": 5,
+    "admission": "MemAvailable >=16GiB; memory PSI some avg10<=1; IO PSI some avg10<=10",
+    "emergency": "MemAvailable <8GiB or memory PSI some avg10>10: stop only owned jobs; no global pkill",
+    "launcher": {
+      "MemoryMax": "2G",
+      "MemorySwapMax": "0",
+      "RuntimeMaxSec": 900
+    },
+    "caveat": "Per-launcher cgroups cannot bound descendants that create independent scopes. Preserve observed pressure and max polling interval; do not claim unobserved safety."
+  },
+  "limitations": [
+    "Two known development notes, three trials each: not a population estimate or final validation.",
+    "Adds explicit generated context and extra output tokens; does not isolate internal reference-resolution reasoning from repetition, output length or salience.",
+    "Both conditions use the same generic prompt runner with schemas; previous trials are historical context, not this experiment's control.",
+    "Style may reveal condition despite opaque review IDs.",
+    "Previously disclosed final-note exposure remains unresolved and outside this experiment."
+  ],
+  "planned_goal_call_total_after_completion": 532
+}

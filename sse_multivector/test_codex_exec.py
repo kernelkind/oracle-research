@@ -82,6 +82,10 @@ append_log({
     "cwd": os.getcwd(),
     "cwd_entries": sorted(os.listdir()),
     "prompt": prompt,
+    "output_schema_text": (
+        Path(argv[argv.index("--output-schema") + 1]).read_text(encoding="utf-8")
+        if "--output-schema" in argv else None
+    ),
     "credential_environment": {
         key: value
         for key, value in os.environ.items()
@@ -100,7 +104,9 @@ if os.environ.get("FAKE_CODEX_FAIL_STAGE") == stage:
 
 if stage == "prompt":
     response_object = None
-    output_text = f"Response to: {prompt}"
+    output_text = os.environ.get(
+        "FAKE_CODEX_PROMPT_RESPONSE", f"Response to: {prompt}"
+    )
 elif stage == "takeaway":
     response = (
         ["Tea helps the author."]
@@ -434,7 +440,7 @@ class CodexExecRunnerTests(unittest.TestCase):
     def invoke_direct_prompt(
         self,
         text: str,
-        *,
+        *extra_arguments: str,
         stdin: str | None = None,
         include_model: bool = True,
         include_effort: bool = True,
@@ -463,6 +469,7 @@ class CodexExecRunnerTests(unittest.TestCase):
             arguments.extend(("--model", "candidate/label"))
         if include_effort:
             arguments.extend(("--reasoning-effort", "low"))
+        arguments.extend(extra_arguments)
         return subprocess.run(
             arguments,
             input=stdin,
@@ -1470,6 +1477,157 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertEqual("candidate/label", manifest["model"])
         self.assertEqual("low", manifest["reasoning_effort"])
         self.assertEqual(prompts, manifest["prompts"])
+
+    def test_generic_prompt_output_schema_preserves_order_and_provenance(self) -> None:
+        schema = {
+            "type": "object",
+            "properties": {
+                "context": {"type": "string"},
+                "subject": {"type": "string"},
+            },
+            "required": ["context", "subject"],
+            "additionalProperties": False,
+        }
+        prompt_run_directory = self.root / "prompt-run"
+        config_path = self.root / "prompt-config.json"
+        config = {
+            "schema_version": 1,
+            "codex_binary": str(self.fake_codex),
+            "codex_home": str(self.codex_home),
+            "run_directory": str(prompt_run_directory),
+            "model": "candidate/label",
+            "reasoning_effort": "low",
+            "prompts": [{"prompt_id": "segment-1", "text": "GENERIC PROMPT ONE"}],
+            "output_schema": schema,
+        }
+        config_path.write_text(json.dumps(config), encoding="utf-8")
+        response = '{"context":"A conversation.","subject":"Tea."}'
+
+        completed = self.invoke_prompt_config(
+            config_path,
+            extra_environment={"FAKE_CODEX_PROMPT_RESPONSE": response},
+        )
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        calls = [call for call in self.calls() if call["kind"] == "exec"]
+        self.assertEqual(1, len(calls))
+        call = calls[0]
+        self.assertEqual("GENERIC PROMPT ONE", call["prompt"])
+        self.assertEqual([], call["cwd_entries"])
+        self.assertEqual(
+            {"CODEX_HOME": str(self.codex_home)}, call["credential_environment"]
+        )
+        schema_path = prompt_run_directory / "prompt-output-schema.json"
+        self.assertIn(
+            ("--output-schema", str(schema_path)),
+            zip(call["argv"], call["argv"][1:]),
+        )
+        schema_bytes = schema_path.read_bytes()
+        self.assertEqual(schema_bytes.decode("utf-8"), call["output_schema_text"])
+        saved_schema = json.loads(schema_bytes)
+        self.assertEqual(schema, saved_schema)
+        self.assertEqual(list(schema), list(saved_schema))
+        self.assertEqual(["context", "subject"], list(saved_schema["properties"]))
+        schema_sha256 = hashlib.sha256(schema_bytes).hexdigest()
+        manifest = json.loads(
+            (prompt_run_directory / "manifest.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(schema, manifest["response_schema"])
+        self.assertEqual(schema_sha256, manifest["response_schema_sha256"])
+        record = json.loads(
+            (prompt_run_directory / "results.jsonl").read_text(encoding="utf-8")
+        )
+        self.assertEqual(schema_sha256, record["response_schema_sha256"])
+        self.assertEqual(response, record["response"])
+        output = json.loads(
+            (prompt_run_directory / "output.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(response, output["responses"][0]["response"])
+
+        resumed = self.invoke_prompt_config(config_path)
+        self.assertEqual(0, resumed.returncode, resumed.stderr)
+        self.assertEqual(1, len(self.calls()))
+
+        schema["properties"] = dict(reversed(list(schema["properties"].items())))
+        config_path.write_text(json.dumps(config), encoding="utf-8")
+        blocked = self.invoke_prompt_config(config_path)
+        self.assertNotEqual(0, blocked.returncode)
+        self.assertIn("run manifest does not match", blocked.stderr)
+        self.assertEqual(1, len(self.calls()))
+
+        config["run_directory"] = str(self.root / "reordered-prompt-run")
+        config_path.write_text(json.dumps(config), encoding="utf-8")
+        reordered = self.invoke_prompt_config(config_path)
+        self.assertEqual(0, reordered.returncode, reordered.stderr)
+        reordered_manifest = json.loads(
+            (self.root / "reordered-prompt-run" / "manifest.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertNotEqual(
+            schema_sha256, reordered_manifest["response_schema_sha256"]
+        )
+
+    def test_generic_prompt_rejects_invalid_output_schema_before_spawning(self) -> None:
+        config_path = self.root / "prompt-config.json"
+        for schema in (None, [], {}, {"type": "array"}):
+            with self.subTest(schema=schema):
+                config_path.write_text(
+                    json.dumps({
+                        "schema_version": 1,
+                        "codex_binary": str(self.fake_codex),
+                        "codex_home": str(self.codex_home),
+                        "run_directory": str(self.root / "prompt-run"),
+                        "model": "candidate/label",
+                        "reasoning_effort": "low",
+                        "prompts": [
+                            {"prompt_id": "segment-1", "text": "GENERIC PROMPT ONE"}
+                        ],
+                        "output_schema": schema,
+                    }),
+                    encoding="utf-8",
+                )
+                completed = self.invoke_prompt_config(config_path)
+                self.assertNotEqual(0, completed.returncode)
+                self.assertIn("config.output_schema", completed.stderr)
+                self.assertIn("must", completed.stderr)
+                self.assertEqual([], self.calls())
+                self.assertFalse((self.root / "prompt-run").exists())
+
+    def test_direct_prompt_output_schema_preserves_order_without_persistent_files(
+        self,
+    ) -> None:
+        schema = {
+            "type": "object",
+            "properties": {
+                "subject": {"type": "string"},
+                "context": {"type": "string"},
+            },
+            "required": ["subject", "context"],
+            "additionalProperties": False,
+        }
+        schema_path = self.root / "output-schema.json"
+        schema_path.write_text(json.dumps(schema), encoding="utf-8")
+        response = '{"subject":"Tea.","context":"A conversation."}'
+
+        completed = self.invoke_direct_prompt(
+            "GENERIC PROMPT DIRECT",
+            "--output-schema", str(schema_path),
+            extra_environment={"FAKE_CODEX_PROMPT_RESPONSE": response},
+        )
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        self.assertEqual(response, completed.stdout)
+        call = self.calls()[0]
+        self.assertEqual("GENERIC PROMPT DIRECT", call["prompt"])
+        saved_schema = json.loads(call["output_schema_text"])
+        self.assertEqual(schema, saved_schema)
+        self.assertEqual(list(schema), list(saved_schema))
+        self.assertEqual(["subject", "context"], list(saved_schema["properties"]))
+        self.assertEqual([], call["cwd_entries"])
+        self.assertEqual([], list((self.root / "direct-temporary-files").iterdir()))
+        self.assertEqual([], list((self.codex_home / "job-workspaces").iterdir()))
+        self.assertEqual(schema, json.loads(schema_path.read_text(encoding="utf-8")))
 
     def test_direct_prompt_prints_response_without_persistent_run_files(self) -> None:
         completed = self.invoke_direct_prompt("GENERIC PROMPT DIRECT")
