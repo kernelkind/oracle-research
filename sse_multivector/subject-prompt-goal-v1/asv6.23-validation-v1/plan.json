@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "recorded_before_generation": true,
+  "starting_commit": "9c1dac1a02fb39c4f74b5fb918553c825e627f05",
+  "authorization": "User approved finishing ASv6.23 validation:12 remaining repeat calls, then exposed-final-entry repair and fixed final validation if development passes; freeze only if all original gates pass. No automatic new prompt revisions on failure.",
+  "frozen": {
+    "prompt": "../asv6.23/ASv6.23.md",
+    "prompt_sha256": "b80fd158b27ee0b3ddd640f10e78d7a18101f933d8758af749f6f3d2f25d506f",
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "runner_sha256": "ebf1942737069a49146d7336c6936dd2fa5cdd8d4b6a2b24274f01bc9f83e2fe",
+    "schema": "../asv6.23/output-schema.json",
+    "normalization": "Existing long-NIP-19 removal only; URLs retained but excluded as semantic evidence.",
+    "semantic_standard": {
+      "source": "Latest agreed requirements and settled reviews in this thread; historical requirements superseded by later decisions do not apply.",
+      "correctness": "A subject's meaning must be stated or reasonably implied by the source text outside URLs. General knowledge may interpret the text but may not supply a new source claim. Review represented meaning, not the truth or social acceptability of the author's claim.",
+      "coverage": "Inspect the complete note independently of the output, then check that its distinct communicated meanings are represented. Missing coverage requires pointing to source evidence and explaining the absent meaning. A different valid subject list, an optional abstraction, or fewer duplicates is not a coverage error.",
+      "allowed": [
+        "Literal, implied, rhetorical and nonliteral meanings.",
+        "Broad, narrow, nested, overlapping and duplicate subjects.",
+        "Separate supported interpretations of genuinely ambiguous expressions.",
+        "Minor meanings; no importance filter."
+      ],
+      "defects": [
+        "Unsupported additions or relationships, distorted negation/comparison/attribution, newly calculated results not stated by the source.",
+        "Subjects requiring other subjects or missing source context to be understood.",
+        "URL-derived meaning, model commentary, and subjects that merely describe the presence or formatting of pointers/tags/categories.",
+        "Uncertainty about the extractor's interpretation written inside a subject instead of separate direct supported interpretations.",
+        "A distinct communicated meaning absent from the output."
+      ],
+      "modality_boundary": "Do not confuse the author's own question, concern, conditional claim or stated probability with the extractor's confidence. Represent such content directly without upgrading it to a certain fact. Where existing wording remains ambiguous under the agreed no-uncertainty requirement, record the unresolved judgment rather than silently accepting it.",
+      "uncertainty": "Each output subject receives accept, error, or unresolved with evidence. Unresolved subjects/coverage count against acceptance gates, not as passes. Resolve difficult meanings from the full source; ask the user only if the requirement itself is undefined.",
+      "no_canonical_list": true
+    },
+    "gates": {
+      "development": {
+        "minimum_notes_with_no_error_or_unresolved_out_of_28": 26,
+        "minimum_accepted_subject_fraction": 0.95,
+        "recurrent_failure": "Reject a candidate if the same specific semantic failure recurs in two of three outputs for any fixed repeated note, or occurs in three distinct development notes. Similarity is about failure mechanism, not merely a shared broad defect category.",
+        "prior_regressions": "No previously settled serious fidelity error may recur in two repeated outputs. Do not compensate for an invented relationship or changed negation with more correct duplicate subjects."
+      },
+      "final": {
+        "minimum_notes_with_no_error_or_unresolved_out_of_60": 54,
+        "minimum_accepted_subject_fraction": 0.95,
+        "minimum_clean_note_outputs_across_84": 76,
+        "recurrent_failure": "No same specific failure mechanism in three distinct final notes, and no same specific error in two of three outputs for a repeated note.",
+        "severe_errors": "Zero clear reversals of an explicit negation/comparison or reassignment of an attributed allegation to the wrong speaker. Other isolated fidelity, coverage or presentation errors count toward the fixed gates and must be reported."
+      },
+      "meaning_of_pass": "An operational stopping rule for this pilot under one assistant's semantic review, not a confidence interval or universal corpus-accuracy claim. Counts are frozen before generation and may not be weakened after results.",
+      "completion": "One byte-identical prompt passes development plus an untouched final attempt, all raw-output/isolation checks pass, every subject and whole-note coverage has a recorded review, and the exact passing prompt is frozen with an evidence-linked report and remaining errors. Historical outputs and user decisions are unchanged."
+    }
+  },
+  "repeat": {
+    "new_notes": [
+      "D03",
+      "D18",
+      "D19",
+      "D23",
+      "D24",
+      "D27"
+    ],
+    "fresh_calls": 12,
+    "outputs_per_note": 2,
+    "reuse": "For D10 and D25, retain all3 per-item-context-comparison-v1 context trials plus the latest broader output. For other6 notes combine broader output with2 fresh outputs. No favorable-output selection.",
+    "gate": "Original recurrence criterion: same specific failure in2/3 outputs per fixed note or3 distinct development notes. For D10/D25 inspect all4 rather than ignore adverse evidence. Unresolved evidence is not a pass.",
+    "review": "Read all final subjects against full source before context fields/trial labels; main plus fresh independent review. Settled broad/minor-subject and numeric-value decisions from preceding review apply unchanged."
+  },
+  "final": {
+    "conditional_on_repeat_pass": true,
+    "repair": "Replace only previously exposed final-input.json:190 entry with next eligible same-band hash-ordered note, updating repeated subset mechanically. Preserve originals; no semantic selection or prompt edits.",
+    "source": "target/crec-119-500-note-v2/input/notes.json",
+    "selection_rule": "Select 60 unseen real notes before final generation: 20 with <=160 characters, 20 with 161-600 characters, 20 with >600 characters, ordered within each band by SHA256('subject-prompt-goal-v1/final/' + note_id). If any band has fewer than 20 eligible notes, take all from that band and fill remaining places by the same hash order from all remaining eligible notes. Record the shortage. No exclusions because a note is ambiguous, multilingual, niche or difficult.",
+    "repeat_rule": "From those 60, take the first four hash-ordered notes in each actual length band (12 total; fill a shortage in global hash order). Run each twice more with the identical candidate prompt, giving three independent outputs including its first result.",
+    "first_calls": 60,
+    "repeat_calls": 24,
+    "total_calls": 84,
+    "review": "Read all sources and all subjects; preserve exact outputs and masks are out of scope. Apply frozen semantic criteria without treating new uncertain interpretations as clear failures. No prompt changes using final data.",
+    "freeze": "Only if original full criteria pass. Freeze exact prompt/schema/model/normalization and evidence. No mask/hierarchy or unrelated production changes."
+  },
+  "resources": {
+    "driver": "../per-item-context-comparison-v1/run_comparison.py unchanged",
+    "max_concurrency": 12,
+    "poll_seconds": 5,
+    "admit": "MemAvailable >=16GiB; memory some avg10<=1; IO some avg10<=10",
+    "stop": "MemAvailable <8GiB or memory some avg10>10; owned units only",
+    "unit_limits": {
+      "MemoryMax": "2G",
+      "MemorySwapMax": "0",
+      "RuntimeMaxSec": 900
+    },
+    "existing_subscription_only": true,
+    "no_new_paid_api_or_rental": true,
+    "no_retries": true
+  },
+  "generation_count_before": 588,
+  "generation_count_after_repeats": 600,
+  "generation_count_after_full_validation": 684
+}
