@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "status": "frozen_before_generation",
+  "question": "Do the other five predesignated subjects retain acceptable meaning and scope across three trials under this unchanged candidate?",
+  "calls": 10,
+  "ids": [
+    "M01-t2",
+    "M01-t3",
+    "M03-t2",
+    "M03-t3",
+    "M07-t2",
+    "M07-t3",
+    "M09-t2",
+    "M09-t3",
+    "M11-t2",
+    "M11-t3"
+  ],
+  "existing_outputs": 14,
+  "existing_accepted": 14,
+  "change": "None. Add only trials two and three of M01, M03, M07, M09 and M11. The first outputs and all three M05 trials remain in the completion accounting.",
+  "decision_rule": "Review every new output. Continue to six more development notes only if the cumulative result can still reach 35/36 accepted and no same demonstrated semantic error occurs in two of three calls for any repeated input. Errors and unresolved judgments count against acceptance; do not retry or replace outputs.",
+  "remaining_uncertainty": "These repeats concern six already-used notes, not broader content coverage. Separate final validation remains unused.",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "prompt_sha256": "3bfaae265284e7b27fc0b740c7c4b214db8045d9f316f59990d5b36332d6c3e2",
+  "isolation": "Same recorded prompt text per fixed subject, separate fresh process/thread/workdir for every trial; tools/web disabled.",
+  "resources": "Existing guarded concurrent runner; ten jobs, within approved ceiling twelve; no extra calls to fill unused slots."
+}
