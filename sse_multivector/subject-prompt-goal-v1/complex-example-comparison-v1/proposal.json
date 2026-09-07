@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "recorded_before_generation": true,
+  "starting_commit": "1475505a6ec98fa1db9b0898fb0257a4b6ba1499",
+  "authorization": "User approved ASv6.22 draft, then instructed proceed with test. Same bounded comparison design, settings and semantic standards as prior example comparison.",
+  "question": "Does replacing the tapestry example with the more demanding puppet-and-suitcase example improve independently understandable subjects on unchanged notes with Astra low, without losing meanings or introducing other errors?",
+  "changed_factor": "Only the second worked example: ASv6.21 versus ASv6.22. Instructions and first example are identical.",
+  "conditions": {
+    "base": {
+      "prompt": "ASv6.21",
+      "registry": "../asv6.21/subject-prompts.json"
+    },
+    "examples": {
+      "prompt": "ASv6.22",
+      "registry": "../asv6.22/subject-prompts.json"
+    }
+  },
+  "fixed": {
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "notes": [
+      "D10",
+      "D19",
+      "D23",
+      "D24",
+      "D25",
+      "D28"
+    ],
+    "source": "../astra-examples-comparison-v1/inputs",
+    "runner": "../../codex_exec.py",
+    "schema": "Existing subject string-array schema",
+    "calls_per_note_per_condition": 3,
+    "fresh_calls": 36,
+    "no_retries": true,
+    "no_prompt_edits": true,
+    "no_source_edits": true,
+    "no_final_validation_data": true
+  },
+  "schedule": [
+    "base-D10-t1",
+    "examples-D10-t1",
+    "examples-D19-t1",
+    "base-D19-t1",
+    "base-D23-t1",
+    "examples-D23-t1",
+    "examples-D24-t1",
+    "base-D24-t1",
+    "base-D25-t1",
+    "examples-D25-t1",
+    "examples-D28-t1",
+    "base-D28-t1",
+    "examples-D10-t2",
+    "base-D10-t2",
+    "base-D19-t2",
+    "examples-D19-t2",
+    "examples-D23-t2",
+    "base-D23-t2",
+    "base-D24-t2",
+    "examples-D24-t2",
+    "examples-D25-t2",
+    "base-D25-t2",
+    "base-D28-t2",
+    "examples-D28-t2",
+    "base-D10-t3",
+    "examples-D10-t3",
+    "examples-D19-t3",
+    "base-D19-t3",
+    "base-D23-t3",
+    "examples-D23-t3",
+    "examples-D24-t3",
+    "base-D24-t3",
+    "base-D25-t3",
+    "examples-D25-t3",
+    "examples-D28-t3",
+    "base-D28-t3"
+  ],
+  "review": {
+    "standard": "Unchanged ../plan.json semantic_standard. Review every subject and missing distinct meanings against the complete source outside URLs. Broad/narrow/overlapping/duplicate subjects and plausible implications remain allowed.",
+    "primary": "D25: specific subjects for changed thesis, tracking for months, undeniable trajectory, and aligning fundamentals must independently identify the CEO-related matter. Exact CEO conduct or the full quoted question is not required; generic 'this development/matter/post' is insufficient. All four meanings must be present in each examples output.",
+    "guards": {
+      "D10": "Specific analyst disagreement and monitoring subjects preserve the hiring-event context. Genuine broad subjects are allowed.",
+      "D19": "No name or other meaning learned only from the URL. Ordinary dashboard and maintenance subjects are allowed.",
+      "D23": "Preserve fee/mempool context, what numbers refer to, and block identity without inventing units or calculated facts.",
+      "D24": "Preserve attribution between CIAB survey reporting and the separate Council analysis. Inspect all other relations and numbers.",
+      "D28": "Preserve negation, chronology, and source claims. Plausible implications about other cryptocurrencies remain allowed."
+    },
+    "unresolved": "Retain unresolved judgments where source clipping or genuine ambiguity prevents a clear decision. Do not turn disputed D25 clipping/insinuation readings into new definite failures or silently accepted subjects.",
+    "independent": "Full sources and all outputs, shuffled under opaque IDs, to fresh independent reviewers. Prompt/condition/trial labels withheld. Save mapping separately. Main reviewer reconciles every disagreement explicitly."
+  },
+  "decision": {
+    "directional_benefit": "D25 target context error appears in >=2/3 base outputs and <=1/3 examples outputs, with all four target meanings present in every examples output. Zero examples context errors is stronger evidence, not a separate promotion gate.",
+    "regression": "Record any specific error in >=2/3 examples outputs versus <=1/3 base outputs as a recurring regression. Also report all individual serious errors and coverage losses; recurring regression blocks an overall favorable verdict.",
+    "overall": "Compare exact erroneous/accepted/unresolved subjects, outputs with any errors, coverage, and recurring failures. More correct duplicates alone is not improvement. A favorable local verdict needs fewer failing outputs without hiding omissions or recurring regression.",
+    "otherwise": "Report mixed or inconclusive result at 36 calls. No automatic additional run or example revision.",
+    "scope": "No frozen default change, no final validation, no automatic model adoption or production preprocessing."
+  },
+  "resources": {
+    "maximum_calls": 36,
+    "maximum_concurrency": 12,
+    "existing_subscription_only": true,
+    "new_paid_api_or_rental": false,
+    "host_poll_seconds": 5,
+    "admission": "MemAvailable >=16GiB, memory PSI some avg10<=1 and IO PSI some avg10<=10.",
+    "emergency": "MemAvailable<8GiB or memory PSI some avg10>10: stop only owned launchers; separately inspect owned descendant scopes if necessary.",
+    "launcher": {
+      "MemoryMax": "2G",
+      "MemorySwapMax": "0",
+      "RuntimeMaxSec": 900
+    },
+    "caveat": "Codex descendants can use separate scopes; launcher cgroups are not a complete host memory bound."
+  },
+  "limitations": [
+    "Only six known development notes and three calls per condition; not general accuracy.",
+    "Few-shot examples may help these tasks but cannot identify an internal reasoning mechanism.",
+    "Output style can expose condition despite opaque independent-review IDs.",
+    "The second example changes domain, length, output length and reference pattern together. A gain would not isolate complexity as its cause."
+  ],
+  "preflight": "Prompt prefix and first example identical; new example audited independently before execution. Inputs are the same six prior development notes, read directly from their preserved files. No final data accessed.",
+  "guidance": "https://developers.openai.com/api/docs/guides/prompt-engineering#few-shot-learning"
+}
