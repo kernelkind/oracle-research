@@ -47,9 +47,11 @@ The shorter content-versus-presentation sentence improved the targeted behavior 
 
 Across all 27 outputs per version, ASv6.17 had 8 clean outputs and 183/227 accepted subjects; ASv6.18 had 11 clean outputs and 174/210 accepted subjects. A clean output has no identified error or unresolved judgment and no identified missing meaning. These totals do not erase serious errors or establish a better overall prompt.
 
+Those are the original recorded review totals. The later [review correction](../semantic-review-audit-v2.json) accepts two ASv6.17 trial-2 subjects that reasonably express possibilities supported by the Riley Walz post. The adjusted ASv6.17 total is 185/227 accepted subjects. Its 8/27 clean outputs and this comparison's overall conclusion are unchanged; original reviews and verification outputs remain preserved.
+
 The predeclared metadata-improvement condition was met. The context tradeoff remains mixed: missing-text commentary occurred under both versions, but more often in ASv6.18, and attribution was worse or unresolved. This is not enough to infer a reliable causal regression or to retain the change automatically.
 
-Next: repeat the unchanged ASv6.17/ASv6.18 comparison on D24 and D25, with three additional fresh outputs each. This checks whether those specific tradeoffs recur before another prompt edit. Broader development and the original final-validation requirements remain mandatory.
+The [subsequent confirmation](../metadata-confirmation-v1/README.md) completed three additional fresh outputs per prompt on D24 and D25. Metadata improvement persisted, but explicit wrong-source attribution recurred under ASv6.18. It was not promoted as an overall replacement. The [current goal status](../status.json) records the later full-development work; the original final-validation requirements remain mandatory.
 
 ## Evidence and execution
 

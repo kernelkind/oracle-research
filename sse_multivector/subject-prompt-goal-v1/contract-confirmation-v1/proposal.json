@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "recorded_before_generation": true,
+  "question": "Do ASv6.19's observed gains and regressions repeat under fresh calls, including the fixed difficult-note controls, or were the first paired differences incidental?",
+  "prompts": [
+    "ASv6.13",
+    "ASv6.19"
+  ],
+  "prompt_changes": "None. Use the exact prompts already tested in contract-comparison-v1.",
+  "evidence": [
+    "../contract-comparison-v1/README.md",
+    "../contract-comparison-v1/review.json",
+    "../semantic-review-audit-v2.json"
+  ],
+  "selection": {
+    "rule": "Union of all eight predeclared development-repeat note IDs and every note whose clean/not-clean result differs between the two versions in contract-comparison-v1. Preserve development source order. No final notes.",
+    "labels": [
+      "D03",
+      "D04",
+      "D08",
+      "D10",
+      "D18",
+      "D19",
+      "D23",
+      "D24",
+      "D25",
+      "D26",
+      "D27",
+      "D28"
+    ],
+    "note_count": 12,
+    "changed_labels": [
+      "D04",
+      "D08",
+      "D24",
+      "D26",
+      "D27",
+      "D28"
+    ],
+    "why": "This repeats all observed note-level gains and regressions, while retaining the original difficult-note controls rather than returning to only three familiar problem notes.",
+    "first_review_sha256": "6cbd4f5f5e8f6e18528af2c257176b7cdf6e48cf4b54f3daede8cfee1b53ae38"
+  },
+  "design": {
+    "additional_trials_per_prompt": 2,
+    "new_calls": 48,
+    "trial_numbers": [
+      2,
+      3
+    ],
+    "existing_trial_1": "../contract-comparison-v1",
+    "order": "For each trial, visit the 12 input notes in source order. For trial 2, odd positions run ASv6.13 then ASv6.19 and even positions reverse that order. Trial 3 reverses trial 2's order at every position.",
+    "context": "Each call uses a new isolated process/thread/workdir with one note, no tools, no web and no conversation history.",
+    "fixed": "Sol low, binary, account, production runner, normalization, schema and exact source text. Concurrency one; one admitted job at a time with host pressure checks."
+  },
+  "review": "Review every subject and the complete source of every output. Apply the original plan and disclosed corrections identically across versions; preserve raw generations and all decisions.",
+  "interpretation": [
+    "Compare all three outputs per selected note, including the first run. Report concrete mechanisms and all gains/regressions rather than selecting a favorable output.",
+    "If context/coverage gains repeat without persistent new fidelity errors, ASv6.19 may be a better working reference for the next controlled change, but remains unvalidated.",
+    "If gains disappear or regressions repeat, do not automatically retain ASv6.19; use the broader evidence to choose the next reference or isolate an instruction interaction.",
+    "Mixed results remain mixed. This selection cannot estimate corpus-wide accuracy or attribute an effect to one sentence.",
+    "Neither prompt passes its recorded first full-development run. These repeats are diagnostic and cannot erase those failures or authorize final validation. The fixed completion criteria remain unchanged."
+  ],
+  "resources": {
+    "concurrency": 1,
+    "admit_calls_per_batch": 1,
+    "maximum_new_calls_for_this_comparison": 48,
+    "new_paid_api_or_rental": false,
+    "checks": "../plan.json resources"
+  },
+  "state": "prepared_not_run",
+  "source_input_sha256": "889d1ea7d8f6908a0c5b50a3eea096349365befcc7384c509a97fbca30e34bf2",
+  "prompt_sha256": {
+    "ASv6.13": "652c5d39cd41f5c75e7d51a1422282dd6d3a2e16eb27fb63cb20d22e77d6d783",
+    "ASv6.19": "a0228d36c114b289c6282d741f52c7da024eabf47ecb7948d2101d0379c2ff93"
+  }
+}
