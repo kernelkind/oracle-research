@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "recorded_before_generation": true,
+  "starting_commit": "ff0a4468c748fa372c449e09f61e1168c542c689",
+  "authorization": "User approved testing ASv6.23 unchanged on more varied notes. Existing complete 28-note development set; no reserved final inputs, prompt revisions or promotion.",
+  "question": "Does the ASv6.23 context-before-subject output format improve final subjects across the existing varied development set compared with ASv6.13?",
+  "conditions": {
+    "base": "../asv6.13/ASv6.13.md with original subjects string-array schema",
+    "context": "../asv6.23/ASv6.23.md with unchanged ordered context-then-subject schema"
+  },
+  "fixed": {
+    "source": "../development-input.json",
+    "notes": 28,
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "calls_per_note_per_condition": 1,
+    "fresh_generation_calls": 56,
+    "no_retries": true,
+    "no_source_edits": true,
+    "no_prompt_edits": true,
+    "normalization": "Existing production _render_subject_prompt / _takeaway_input: encoded NIP-19 identifiers removed, URLs retained but not evidence.",
+    "runner": "../../codex_exec.py prompt"
+  },
+  "review": {
+    "standard": "Frozen plan.json semantic standard. Broad, narrow, nested, duplicate, overlapping, minor and rhetorical subjects are allowed. Reasonable implications are allowed. Judge communicated meaning, not factual truth. No invented relationships, unsupported calculations, URL-derived meaning, extractor uncertainty/source commentary or pointer-only subjects. Specific meanings retain necessary context, negation, attribution and relationships.",
+    "coverage": "Read whole source. Missing coverage requires a distinct communicated meaning absent from all subjects, not an optional abstraction or fewer duplicates. Do not count clipped unseen continuation as missing meaning. Do not double-count a context error as omission of the same assertion.",
+    "method": "Shuffle final subject lists under opaque IDs and review every subject with full note before revealing prompt labels or auxiliary context fields. Save judgments, then unblind. Main semantic review plus independent fresh review when available; disclose limits. Generated subjects are never edited.",
+    "context": "Each final subject stands alone. Auxiliary context cannot rescue an incomplete subject. Broad labels need not repeat the entire event. Specific later CEO assertions need CEO context; hiring-event analysis needs Riley Walz/OpenAI context.",
+    "unresolved": "Record uncertain semantic judgments separately and count against clean-output/acceptance gates. Do not invent precise interpretation requirements."
+  },
+  "decision": {
+    "comparative_support": "More completely accepted note outputs, with no additional omitted distinct meanings and no recurring new candidate failure on at least three distinct notes. Report individual errors even if totals improve. Severe attribution/negation reversals are not offset by correct duplicates.",
+    "mixed": "If clean-output advantage or non-regression condition is absent, report mixed/no demonstrated broader gain rather than declare success from subject-level percentages.",
+    "development_gate": "Report unchanged first-pass gates separately: at least 26/28 clean outputs and at least 95% accepted subjects. Existing repeated-difficult-note and final-validation requirements remain unmet by this one-output-per-note comparison.",
+    "next": "Finish comparison and recommend next action. No automatic prompt revision, repeats/final validation, promotion or change to frozen ASv6.8."
+  },
+  "resources": {
+    "driver": "../per-item-context-comparison-v1/run_comparison.py unchanged",
+    "sequential_batch_sizes": [
+      12,
+      12,
+      12,
+      12,
+      8
+    ],
+    "max_concurrency": 12,
+    "existing_subscription_only": true,
+    "new_paid_api_or_rental": false,
+    "poll_seconds": 5,
+    "admission": "MemAvailable >=16GiB, memory PSI some avg10<=1, IO PSI some avg10<=10",
+    "emergency": "MemAvailable <8GiB or memory PSI some avg10>10: stop only owned units",
+    "unit_limits": {
+      "MemoryMax": "2G",
+      "MemorySwapMax": "0",
+      "RuntimeMaxSec": 900
+    },
+    "caveats": [
+      "Per-unit limits do not cover independent descendant scopes.",
+      "Monitoring continuous during active batch, not idle gaps.",
+      "Verify owned units inactive after each batch; driver cannot guarantee termination after a failed stop."
+    ]
+  },
+  "limitations": [
+    "Known development notes, not unseen holdout.",
+    "One output per condition per note cannot establish per-note repeatability.",
+    "Includes two previously tested notes; report remaining 26 separately.",
+    "Changed format adds context and tokens; does not isolate an internal reasoning mechanism.",
+    "Style may reveal condition despite hidden labels.",
+    "Previously disclosed reserved-note exposure remains outside scope."
+  ],
+  "planned_goal_generation_total": 588
+}
