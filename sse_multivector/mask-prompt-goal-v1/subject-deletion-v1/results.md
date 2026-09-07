@@ -8,7 +8,7 @@ Still required: ten additional trials for the other five predesignated subjects,
 
 Generation usage for these 14 calls: 34,599 input tokens and 1,557 output tokens. Cached input (7,680) is included in input; reasoning (1,255) is included in output.
 
-Full source notes follow. Each highlight shows the returned fragments at the first source-order-compatible placement. Any repeated-text placement alternatives are recorded separately; this display does not claim SSE equivalence across placements.
+Full source notes follow. Each highlight shows the returned fragments at the first source-order-compatible placement. [All placement alternatives](./mechanical-checks.json) and [execution verification](./verification.json) are saved separately; this display does not claim SSE equivalence across placements.
 
 ## M01-t1
 
@@ -213,4 +213,3 @@ Subject: The library app has a button at the end of each chapter that takes read
 >
 
 Accepted. Retains the library app, chapter-end button, Primal and the full Nostr onboarding experience. The complete post supplies the ordinary reader reference; this does not introduce a new missing-reference standard.
-
