@@ -4,7 +4,9 @@ Continue from ASv6.11. The assistant now makes routine semantic judgments and ca
 
 The [validation plan](./plan.json) was recorded before new generation. It fixes 28 development notes, eight repeated difficult notes, and a final test of 60 previously unused notes with 12 repeated notes. Passing requires at least 54 of the 60 final notes to have no identified error or unresolved judgment, at least 95% of subjects accepted, and no recurring failure under the plan's exact definitions. These are pilot acceptance limits, not a population accuracy estimate.
 
-Current state: the Codex goal is blocked pending authorization to extend the six-revision limit. It is not complete. All 102 isolated calls were reviewed and verified. ASv6.12 and ASv6.13 failed full-development review; ASv6.14 through ASv6.17 failed the focused repeated diagnostics. ASv6.8 remains the frozen default. No final-validation calls have been made.
+Current state: independent iteration has resumed under the revised user goal. No prompt has passed. All 102 earlier isolated calls were reviewed and verified. ASv6.12 and ASv6.13 failed full-development review; ASv6.14 through ASv6.17 failed the focused repeated diagnostics. ASv6.8 remains the frozen default. No final-validation calls have been made.
+
+The original plan remains byte-identical as predeclared evidence. Its self-imposed revision, call and final-attempt caps, and the historical verification reports' permission-blocking conclusions, are superseded by the revised goal. They are not current authorization limits. The semantic requirements, source data, validation criteria and resource safeguards remain fixed. Current operational authority is recorded in [status.json](./status.json).
 
 ASv6.12 incorrectly turned fee-priority values into counts in all three trials. Its publication-label problem occurred in two of three trials. ASv6.13 removed the targeted publication label in its first run, but the numeric error remained and commentary about truncated text returned in all three trials. Later revisions stopped inventing counts, but still produced items without their source context. The financial diagnostic also exposed incorrect or unresolved source attribution. These are difficult-case diagnostics, not estimates of corpus-wide accuracy.
 
@@ -24,9 +26,13 @@ The four latest candidates used the same three diagnostic notes, each generated 
 | ASv6.16 | 0 |
 | ASv6.17 | 3 |
 
-ASv6.17 is the strongest of these focused results, but was not submitted to the 28-note test because its failures recurred. There is no established best overall candidate. Of the two candidates tested on all 28 notes, ASv6.13 had more clean notes (24 versus 23 after recorded review corrections), while ASv6.12 had a higher accepted-subject fraction; both failed.
+ASv6.17 is the strongest of these focused results, but was not submitted to the 28-note test because its failures recurred. That left its overall performance unmeasured. There is no established best overall candidate. After the disclosed review audit, ASv6.13 still has 24 clean notes and ASv6.12 has 23; accepted subjects are 257/269 and 255/264 respectively. Both fail the fixed criteria.
 
-The I/O-pressure guard temporarily paused earlier admission. All launched calls completed; no generation process remains live. Further prompt revision requires authorization to extend the recorded six-revision limit. The acceptance criteria and unused final data remain unchanged. A failed candidate will not be frozen merely because the iteration limit was reached.
+The [review audit](./semantic-review-audit-v1.json) corrects four judgments that treated plausible implications too strictly. It separately records unresolved slang and non-English interpretation as reviewer uncertainty, not established extractor failures. These corrections do not make either prompt pass.
+
+Next is a [controlled full-development comparison](./representative-comparison-v1/comparison.json): unchanged ASv6.13 and ASv6.17 on the same 28 notes, with one fresh isolated output each. This measures overall gains and regressions before another prompt edit; it cannot isolate the effect of each instruction or establish final reliability. The final notes stay unused.
+
+The I/O-pressure guard temporarily paused earlier admission. All previously launched calls completed; the resumption check found no active generation unit. Host-pressure checks and sequential call admission remain mandatory.
 
 - [Current checkpoint](./status.json)
 - [ASv6.12 full review](./asv6.12/review.json) and [diagnostic review](./asv6.12/diagnostic-review.json)
