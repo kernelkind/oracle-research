@@ -8,6 +8,8 @@ Started 2026-09-08 UTC from commit `18637cbed7ba45716bc81afd8d4a195e99844b51` on
 
 ## Current checkpoint
 
+Follow-up [omission audit results](omission-audit-v1/README.md): three assessments agreed on 28 valid pairs involving 44 masks that lacked a baseline multi-note segment (10 noise, 34 in one-note segments). One agreement came from the random sample outside all proposal methods. Eleven pairs have conflicting Valid judgments and are packaged separately for user review. The audit inspected 64 suggested and 64 unsuggested pairs; it does not count all missing subjects or establish overall recall. Every frozen input, candidate result, and baseline user decision is preserved.
+
 User review, 2026-09-08: “done. these all look like valid groupings to me”. The masks-only baseline displayed 43 multi-note segments. The saved tool state contains 37 confirmed Valid decisions, one unconfirmed Valid selection, and five Pending segments. The chat assessment is preserved separately without filling in missing clicks. See [the review result and its limits](results.md#user-review). No alternative configuration or general algorithm qualification was approved by this statement.
 
 Saved-example integration passed: see [the gate](smoke-test/integration-gate.json), [technical checks](smoke-test/technical-smoke-check.json), and [interactive checks](smoke-test/interactive-check.md). Five saved notes and ten reviewed masks passed through the unchanged SSE worker (768 dimensions), baseline HDBSCAN, and the actual unnamed full-note review tool. The four smoke segments are technical outputs, not evidence of semantic success.

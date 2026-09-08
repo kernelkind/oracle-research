@@ -16,6 +16,12 @@ The tool saved 37 confirmed Valid decisions, no Invalid or Uncertain decisions, 
 
 What this supports: reviewed source masks, SSE vectors, and baseline HDBSCAN can together produce coherent cross-note fine segments in this concentrated 100-note collection. It does not establish that all useful groups were found, that automatic extraction needs no correction, or that the result generalizes to the full corpus.
 
+## Follow-up: missing cross-note partners
+
+The [omission audit](omission-audit-v1/README.md) subsequently inspected 128 pairs: 64 sampled from combined alternative-configuration, cosine, and text-only suggestions, plus 64 sampled outside that union. Two fresh model assessments and the primary assistant separately marked 28 pairs Valid. Those pairs involve 44 distinct masks that lacked baseline multi-note segments: 10 noise masks and 34 in one-note segments. One agreement was found among the unsuggested pairs. Eleven pairs have conflicting Valid judgments and are available in a separate masks-only review set.
+
+These are demonstrated candidate relationships, not a count of distinct missing fine subjects, a new partition, or an overall recall estimate. The baseline's positive user assessment remains intact. All raw masks, vectors, partitions, and saved baseline user decisions remain unchanged.
+
 ## What was held fixed
 
 100 food/drink notes from 95 authors were selected before inspecting vectors. Their mixed and incidental subjects were retained too. This is a deliberately concentrated development collection, not an unbiased corpus sample or a strictly unseen holdout.
