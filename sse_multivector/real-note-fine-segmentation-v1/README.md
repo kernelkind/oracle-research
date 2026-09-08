@@ -10,7 +10,9 @@ Saved-example integration passed: see `smoke-test/integration-gate.json`, `techn
 
 The 100-note food/drink collection is frozen in `corpus-selection-v1/notes.json` (SHA-256 `581e465d9a4c3ac5e6e2067a2edb9e9711acb3fd68982909394c9c704151dbf3`). The primary assistant read all 100 original notes. The initial-ten checkpoint passed: `initial-ten-checkpoint.json`. All ten AS calls and 77 MP calls succeeded and were reviewed; one subject and one mask were corrected separately from raw output, and three ambiguous source placements were explicitly resolved. No vectors or segments from the new collection have been inspected.
 
-All 100 subject lists are now reviewed in `subjects-001-100-reviewed.json` (SHA-256 `4772af0cbbe0ad9623bc31984ae8f0086f4ea72aafbc12e7047612c34971d9f3`). The 946 generated subjects yielded 945 accepted subjects and one unresolved interpretation (N028-S002); eleven subjects received separately recorded wording corrections. The remaining 868 mask calls are running from `masks-011-100/` with the same frozen MPv3.5 configuration. Review completed batches before any experiment encoding. Do not rerun completed calls.
+All 100 subject lists and all 945 masks are reviewed. The consolidated `reviewed-input.json` has SHA-256 `9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019`. The 946 generated subjects yielded 945 accepted subjects and one unresolved interpretation (N028-S002); eleven subjects and seventeen masks received separately recorded corrections. Eighty-three source placements were explicitly chosen. All original note texts, IDs and authors still equal the frozen collection. See `all-inputs-reviewed-checkpoint.json` and the per-range decision files. Do not rerun completed generation calls.
+
+The unchanged SSE encoding finished successfully in 67.70 seconds. `vectors/` freezes all 945 vectors from all 100 notes; only N028-S002 is excluded. Each vector has 768 dimensions and unit norm within floating-point precision. The normalized vector bytes have SHA-256 `fd545835af8c28c9e11a56286af7b19d343c3adf968070d42268ea2277e3138d`. The baseline HDBSCAN run is in progress; no new-collection groupings have been assessed yet. Exact SSE execution and cgroup samples are under `encoder-run/`.
 
 Reviewed initial inputs remain in `masks-001-010-reviewed/reviewed-input.json`; its `review.txt` shows the chosen masks over complete originals. Independent assistant reviewers covered disjoint later-note ranges, and the primary assistant adjudicated surfaced uncertainties. Each decision file names its actual reviewer; this is not a claim that the primary assistant independently reread every delegated subject.
 
@@ -32,8 +34,8 @@ Reviewed initial inputs remain in `masks-001-010-reviewed/reviewed-input.json`; 
 - First ten subjects: ten successful calls, 77 generated subjects reviewed and retained. One correction resolves “coffee chain” as a coffee-themed social-media post rather than a business chain; raw output remains unchanged.
 - First ten masks: 77 successful calls, no retries, no JSON parse errors, fresh isolated call contexts verified. All 77 accepted after one correction; three repeated-text placements explicitly resolved. Adapter input preparation passes; no experiment encoding yet.
 - Remaining 90 subjects: 90 successful calls; all 869 generated subjects reviewed. Ten wording corrections, one unresolved interpretation, no rejected subjects. Original note IDs, text, and authors in the consolidated artifact exactly match the frozen 100-note collection.
-- Remaining masks: 868 calls in 73 sequential batches, at most 12 workers at once. N028-S002 is explicitly excluded because its subject interpretation remains unresolved; it is retained in input accounting.
-- Experiment SSE artifact and configuration comparisons: not started.
+- Remaining masks: all 868 calls completed in 73 sequential batches, at most 12 workers at once. Every call succeeded exactly once with a distinct isolated thread; no parse errors, retries or resource stops. All masks were explicitly reviewed; sixteen were corrected separately from raw output. N028-S002 remains excluded with its reason in input accounting.
+- Experiment SSE artifact: complete and frozen after source/range/token, finite-vector, dimension and normalization checks. Baseline HDBSCAN is running through two actual pinned-binary invocations before review admission; configuration comparisons have not started.
 - Assistant assessment and final user review handoff: not started.
 
 ## Resources
@@ -42,7 +44,11 @@ Initial host check: approximately 103 GiB MemAvailable. Existing guarded model r
 
 Initial ten AS calls used 25,976 input tokens (1,920 cached) and 3,663 output tokens (1,051 reasoning). Their 77 MP calls used 186,418 input tokens (50,304 cached) and 7,997 output tokens (6,318 reasoning). Batches ran sequentially with at most 12 isolated workers at once. No generation resource interruptions occurred.
 
-The other 90 AS calls used 236,204 input tokens (57,984 cached) and 34,276 output tokens (8,711 reasoning). All eight batches succeeded without retries or pressure stops. Their 160 guard samples recorded at least 111,561,285,632 bytes available memory and zero sampled memory/I/O pressure. Remaining MP usage is still accumulating.
+The other 90 AS calls used 236,204 input tokens (57,984 cached) and 34,276 output tokens (8,711 reasoning). All eight batches succeeded without retries or pressure stops. Their 160 guard samples recorded at least 111,561,285,632 bytes available memory and zero sampled memory/I/O pressure.
+
+The remaining 868 MP calls used 2,156,129 input tokens (1,416,576 cached) and 87,272 output tokens (70,247 reasoning). The guarded sequential-batch run took 19m01s. Its 1,208 resource samples recorded at least 111,303,327,744 bytes available memory; peak sampled memory/I/O avg10 pressure was 0.90/1.46. No guard stop or retry occurred. These are generation-run diagnostics, not measurements of SSE quality.
+
+SSE ran with four CPUs and an 8 GiB/no-swap container limit. Its 269 workload-cgroup samples recorded a peak 1,318,621,184 bytes of memory and 8.26% rolling two-second I/O pressure, below the documented 20% backoff threshold. No OOM event occurred and no additional workload was admitted during encoding. See `encoder-run/resource-summary.json`.
 
 Implementation checkpoints: `2971e86` adds the real-note adapter/review integration; `d708b10` verifies every declared vector-evidence file and records the candidate replay requirement. Six mask-range helper tests pass, including ambiguous occurrence refusal and preservation of raw masks after explicit correction. Candidate requests must still be freshly executed twice and their complete parsed responses compared before review packaging; the adapter does not claim to validate Rust's full-result serialization digest independently.
 
