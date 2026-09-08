@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "question": "Does the unchanged final candidate repeat its accepted masking behavior on the six subjects predesignated in the original final reservation?",
+  "inputs": [
+    "../batch-a/input.json",
+    "../batch-b/input.json"
+  ],
+  "calls": 12,
+  "ids": [
+    "F01-S1-t2",
+    "F01-S1-t3",
+    "F02-S1-t2",
+    "F02-S1-t3",
+    "F03-S1-t2",
+    "F03-S1-t3",
+    "F04-S1-t2",
+    "F04-S1-t3",
+    "F05-S1-t2",
+    "F05-S1-t3",
+    "F06-S1-t2",
+    "F06-S1-t3"
+  ],
+  "first_outputs": "Retained in batch-a and batch-b; no output is replaced.",
+  "judgment": "Same frozen mask-fidelity standard; all attempts retained.",
+  "decision": "Together with40 first outputs, require at least50/52 accepted and no same demonstrated semantic error in2of3 trials for any repeated subject. No prompt edits or retry-to-pass.",
+  "batch_size_reason": "These twelve calls complete the six already fixed repeatability checks after40/40 first outputs; no new subjects are added. Parallelism remains within the approved12-job ceiling and resource guards."
+}
