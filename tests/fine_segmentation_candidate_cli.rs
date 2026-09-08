@@ -90,3 +90,100 @@ fn candidate_cli_rejects_an_unrecognized_candidate_before_running() {
     assert!(!output.status.success());
     assert!(String::from_utf8_lossy(&output.stderr).contains("unsupported candidate `unknown`"));
 }
+
+#[test]
+fn candidate_cli_runs_explicit_hdbscan_configuration_without_changing_legacy_baseline() {
+    let root = tempfile::tempdir_in("/dev/shm").expect("temporary directory");
+    let request_path = root.path().join("request.json");
+    let inputs = [0.00_f64, 0.01, 0.02, 0.03, 1.00, 1.01, 1.02, 1.03]
+        .into_iter()
+        .enumerate()
+        .map(|(ordinal, angle)| {
+            json!({
+                "opaque_id": opaque_id(ordinal as u8 + 1),
+                "normalized_vector": unit_vector(angle),
+            })
+        })
+        .collect::<Vec<_>>();
+    let mut request = json!({
+        "schema_version": 1,
+        "candidate": "hdbscan",
+        "source_vector_manifest_sha256": "a".repeat(64),
+        "normalized_vector_sha256": "b".repeat(64),
+        "inputs": inputs,
+    });
+    fs::write(&request_path, serde_json::to_vec(&request).unwrap()).unwrap();
+    let baseline = Command::new(env!("CARGO_BIN_EXE_fine-segmentation-candidate"))
+        .arg(&request_path)
+        .output()
+        .expect("baseline command");
+    assert!(
+        baseline.status.success(),
+        "{}",
+        String::from_utf8_lossy(&baseline.stderr)
+    );
+    let baseline: Value = serde_json::from_slice(&baseline.stdout).unwrap();
+    assert_eq!(
+        "hdbscan-controlled-suite-config-v1",
+        baseline["candidate_identity"]
+    );
+    let baseline_config: Value = serde_json::from_str(
+        baseline["artifact"]["canonical_configuration_json"]
+            .as_str()
+            .unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        json!({"min_samples":2,"min_cluster_size":2,"selection_method":"excess_of_mass"}),
+        baseline_config
+    );
+
+    let chosen = json!({"min_samples":3,"min_cluster_size":3,"selection_method":"leaf"});
+    request["hdbscan_configuration"] = chosen.clone();
+    fs::write(&request_path, serde_json::to_vec(&request).unwrap()).unwrap();
+    let changed = Command::new(env!("CARGO_BIN_EXE_fine-segmentation-candidate"))
+        .arg(&request_path)
+        .output()
+        .expect("configured command");
+    assert!(
+        changed.status.success(),
+        "{}",
+        String::from_utf8_lossy(&changed.stderr)
+    );
+    let changed: Value = serde_json::from_slice(&changed.stdout).unwrap();
+    assert_eq!("hdbscan-explicit-config-v1", changed["candidate_identity"]);
+    let actual: Value = serde_json::from_str(
+        changed["artifact"]["canonical_configuration_json"]
+            .as_str()
+            .unwrap(),
+    )
+    .unwrap();
+    assert_eq!(chosen, actual);
+    assert_ne!(
+        baseline["artifact"]["manifest"]["configuration_sha256"],
+        changed["artifact"]["manifest"]["configuration_sha256"]
+    );
+}
+
+#[test]
+fn candidate_cli_does_not_silently_ignore_hdbscan_configuration_for_snn() {
+    let root = tempfile::tempdir_in("/dev/shm").expect("temporary directory");
+    let request_path = root.path().join("request.json");
+    fs::write(&request_path, serde_json::to_vec(&json!({
+        "schema_version": 1,
+        "candidate": "snn",
+        "source_vector_manifest_sha256": "a".repeat(64),
+        "normalized_vector_sha256": "b".repeat(64),
+        "inputs": [],
+        "hdbscan_configuration": {"min_samples":2,"min_cluster_size":2,"selection_method":"leaf"},
+    })).unwrap()).unwrap();
+    let output = Command::new(env!("CARGO_BIN_EXE_fine-segmentation-candidate"))
+        .arg(request_path)
+        .output()
+        .expect("run candidate");
+    assert!(!output.status.success());
+    assert!(
+        String::from_utf8_lossy(&output.stderr)
+            .contains("hdbscan_configuration requires candidate `hdbscan`")
+    );
+}

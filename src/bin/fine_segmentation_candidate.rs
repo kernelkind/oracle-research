@@ -13,6 +13,7 @@ use oracle_mvp::fine_region_candidate::{
 use oracle_mvp::fine_region_candidate_artifact::{
     build_hdbscan_candidate_artifact, build_snn_candidate_artifact,
 };
+use oracle_mvp::fine_region_hdbscan::HdbscanConfig;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use thiserror::Error;
@@ -52,6 +53,7 @@ struct Request {
     source_vector_manifest_sha256: String,
     normalized_vector_sha256: String,
     inputs: Vec<FineRegionCandidateInput>,
+    hdbscan_configuration: Option<HdbscanConfig>,
 }
 
 #[derive(Debug, Serialize)]
@@ -102,6 +104,12 @@ fn run() -> Result<Response> {
         )));
     }
 
+    if request.hdbscan_configuration.is_some() && request.candidate != "hdbscan" {
+        return Err(invalid(
+            "hdbscan_configuration requires candidate `hdbscan`",
+        ));
+    }
+
     let (candidate_identity, artifact) = match request.candidate.as_str() {
         "snn" => (
             SNN_CONTROLLED_SUITE_CONFIG_VERSION,
@@ -113,12 +121,19 @@ fn run() -> Result<Response> {
             )?)?,
         ),
         "hdbscan" => (
-            HDBSCAN_CONTROLLED_SUITE_CONFIG_VERSION,
+            if request.hdbscan_configuration.is_some() {
+                "hdbscan-explicit-config-v1"
+            } else {
+                HDBSCAN_CONTROLLED_SUITE_CONFIG_VERSION
+            },
             serde_json::to_value(build_hdbscan_candidate_artifact(
                 &request.inputs,
                 &request.source_vector_manifest_sha256,
                 &request.normalized_vector_sha256,
-                &HDBSCAN_CONTROLLED_SUITE_CONFIG_V1,
+                request
+                    .hdbscan_configuration
+                    .as_ref()
+                    .unwrap_or(&HDBSCAN_CONTROLLED_SUITE_CONFIG_V1),
             )?)?,
         ),
         candidate => {
