@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "candidate_development_in_progress",
+  "status": "development_passed_final_pending",
   "progress": {
     "mask_calls": 14,
     "accepted": 11,
@@ -9,26 +9,54 @@
     "accounting_scope": "Unchanged baseline only; focused revisions are recorded separately.",
     "correction": "m05-scope-review/correction.json",
     "focused_revisions": [
-      {"candidate": "scope-v1", "calls": 2, "accepted": 1, "mask_errors": 1, "unresolved": 0, "result": "No output change; no broader calls."},
-      {"candidate": "scope-examples-v1", "calls": 2, "accepted": 1, "mask_errors": 1, "unresolved": 0, "result": "No output change; no broader calls."}
+      {
+        "candidate": "scope-v1",
+        "calls": 2,
+        "accepted": 1,
+        "mask_errors": 1,
+        "unresolved": 0,
+        "result": "No output change; no broader calls."
+      },
+      {
+        "candidate": "scope-examples-v1",
+        "calls": 2,
+        "accepted": 1,
+        "mask_errors": 1,
+        "unresolved": 0,
+        "result": "No output change; no broader calls."
+      }
     ],
-    "results": ["initial/results.md", "batch-2/results.md", "m05-repeats/results.md"],
-    "next": "The baseline and two failed revisions remain stopped. Continue the subject-deletion-v1 candidate, whose first 14 outputs are accepted."
+    "results": [
+      "initial/results.md",
+      "batch-2/results.md",
+      "m05-repeats/results.md"
+    ],
+    "next": "The baseline and two failed revisions remain stopped. subject-deletion-v1 passed development and execution verification; proceed to separate final validation."
   },
   "current_candidate": {
     "name": "subject-deletion-v1",
     "prompt": "subject-deletion-v1/mask-prompt.md",
     "prompt_sha256": "3bfaae265284e7b27fc0b740c7c4b214db8045d9f316f59990d5b36332d6c3e2",
-    "notes": 6,
-    "fixed_subjects": 12,
-    "outputs": 14,
-    "accepted": 14,
+    "notes": 12,
+    "fixed_subjects": 24,
+    "outputs": 36,
+    "accepted": 36,
     "mask_errors": 0,
     "unresolved": 0,
     "m05_trials_accepted": 3,
-    "results": "subject-deletion-v1/results.md",
-    "next": "Ten missing repeat calls: M01, M03, M07, M09 and M11, two each. Review them before adding six further development notes (twelve first calls). Preserve all existing candidate outputs; final remains untouched.",
-    "completion": "Development and final validation are incomplete. No freeze as final and no change to acceptance gates."
+    "results": "subject-deletion-v1/development-results.md",
+    "next": "Validate the unchanged candidate on the reserved final inputs in small reviewed batches.",
+    "completion": "Development semantic and repeatability gates pass. Final validation has not begun. No freeze as final and no change to acceptance gates.",
+    "repeated_subjects": [
+      "M01",
+      "M03",
+      "M05",
+      "M07",
+      "M09",
+      "M11"
+    ],
+    "repeat_outputs": 18,
+    "repeat_outputs_accepted": 18
   },
   "generation_authorized": true,
   "approval": {

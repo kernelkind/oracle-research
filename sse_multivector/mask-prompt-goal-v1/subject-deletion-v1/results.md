@@ -4,7 +4,7 @@ All 14 masks were accepted: twelve subjects from six notes, with two additional 
 
 The change replaces ambiguous minimization wording with removal judged against the fixed supplied subject. These results do not establish why the change worked, corpus-wide reliability, SSE quality, or segmentation quality.
 
-Still required: ten additional trials for the other five predesignated subjects, six more development notes with two subjects each, and the separate final validation. No final masks have been generated. The original 35/36 development and 50/52 final requirements remain unchanged.
+The remaining development calls are now recorded in [completed development](./development-results.md): 36/36 accepted. This page preserves the first 14 outputs. Separate final validation is still required; the original 35/36 development and 50/52 final requirements remain unchanged.
 
 Generation usage for these 14 calls: 34,599 input tokens and 1,557 output tokens. Cached input (7,680) is included in input; reasoning (1,255) is included in output.
 

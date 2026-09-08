@@ -1,8 +1,8 @@
 # Mask-prompt development
 
-Status: the subject-conditioned removal candidate has 14 accepted masks across the six fixed development notes, including all three M05 trials. The baseline had eleven accepted masks and three M05 scope errors on the same inputs. Development and final validation remain incomplete.
+Status: the subject-conditioned removal candidate passed development with 36/36 accepted masks across 12 notes and 24 fixed subjects. All six repeated subjects passed three trials each. Execution verification passed; separate final validation is next. This is not yet the frozen final prompt.
 
-[Current candidate: every subject, complete note and inline mask](./subject-deletion-v1/results.md)
+[Current candidate: completed development with full notes and inline masks](./subject-deletion-v1/development-results.md)
 
 [Initial results with complete notes and inline masks](./initial/results.md)
 
@@ -18,7 +18,7 @@ For “A call for Salvadorans to make their presence known,” “My” must be 
 
 The subject-conditioned removal candidate replaces the baseline's ambiguous “preserve the same meaning” wording. The initial pair, two M05 repeats, four coverage regressions and six remaining fixed subjects all passed. That is an observed improvement on this development set, not proof of a general success rate or the failure's cause.
 
-Next: complete the ten missing repeats for M01, M03, M07, M09 and M11, then add six more development notes with two fixed subjects each. Keep this candidate unchanged while testing it. The subjects and acceptance thresholds stay frozen; final inputs remain unused. The user answered the M05 question in chat; the existing TUI session was left untouched.
+Next: validate the unchanged candidate on the reserved final set in small reviewed batches. The subjects and acceptance thresholds stay frozen. The user answered the M05 question in chat; the existing TUI session was left untouched.
 
 Keep ASv6.23 frozen. Each Astra-low call receives the complete original note and one fixed subject, using the existing mask prompt unchanged initially. No auxiliary context field is sent.
 
@@ -46,7 +46,7 @@ Acceptance: at least 35/36 development outputs and 50/52 final outputs accepted,
 
 This is the approved practical pilot target of at least 95% acceptance, not proof of population accuracy or an effort cap. Remaining errors stay visible; the standard cannot be weakened after results.
 
-[plan.json](./plan.json) records selection, repeat, judgment and execution rules. Twenty separate final notes and forty subject indices are reserved in [final-reservation.json](./final-reservation.json). No final masks have been generated. Six development notes have now been used.
+[plan.json](./plan.json) records selection, repeat, judgment and execution rules. Twenty separate final notes and forty subject indices are reserved in [final-reservation.json](./final-reservation.json). No final masks have been generated. Twelve development notes have now been used; none is in the reserved set.
 
 ## Scope
 
