@@ -1,6 +1,6 @@
 # Cross-note density: results
 
-You completed the 41-segment review: **37 Valid, 4 Invalid**, with every decision confirmed. The complete rerun produced more multi-note segments, but it did not resolve the six exact omitted pairs you approved. This review does not select it as a replacement for the baseline.
+Your current judgments are **38 Valid, 3 Invalid**, including the later retraction of the garden/allotment rejection. The original saved review contains 37 Valid and 4 Invalid decisions and remains unchanged. Of the three remaining rejections, V766's grouping has been reaffirmed after full-note inspection; V439 and V841 are still being re-examined. The complete rerun produced more multi-note segments, but it did not resolve the six exact omitted pairs you approved. This review does not select it as a replacement for the baseline.
 
 All previous results and review decisions are unchanged. Checksums match for all 65 preserved files.
 
@@ -29,7 +29,7 @@ Of the five user-rejected pairs, one is now grouped: V742 and V439 in S3d2aa08f7
 
 ## Your review
 
-All 41 new or changed multi-note segments have confirmed decisions. None was skipped or left pending. You accepted 37 and rejected these four:
+All 41 new or changed multi-note segments have confirmed saved decisions. None was skipped or left pending. The original response accepted 37 and rejected these four; subsequent chat decisions follow the table:
 
 | Segment | Your comment |
 |---|---|
@@ -38,13 +38,15 @@ All 41 new or changed multi-note segments have confirmed decisions. None was ski
 | S68ce4fd21f | “v841 does not seem related. others do” |
 | Saadde5a7ec | No comment |
 
-The first three comments identify a specific unwanted member. For the fourth rejection, you later clarified in chat that “allotment efforts” is too generic. After seeing its supplied subject and full source note, you concluded: “this is a masking failure.” The saved empty comment above remains unchanged.
+The first three comments identify a specific unwanted member. For the fourth rejection, you later clarified in chat that “allotment efforts” is too generic. After seeing its supplied subject and full source note, you concluded: “this is a masking failure.” You then explicitly retracted the Invalid grouping decision: “hdbscan did a good job here, it was masking which did not.” Saadde5a7ec is therefore Valid in the current assessment. The saved original decision and empty comment above remain unchanged.
 
-V257 was generated for subject N031-S007, “The author loves someone’s allotment gardening efforts.” Its mask is `⟦I love⟧ ⟦allotment efforts⟧`. The note supplies concrete gardening context through “Growing your own” and “homegrown tomatoes,” but that text is outside the mask. The diagnosis is that the mask does not adequately express the supplied subject, not that the source note lacks that meaning. SSE received the complete note, so this rejection does not by itself establish a segmentation failure. The earlier assistant judgment missed this masking issue.
+V257 was generated for subject N031-S007, “The author loves someone’s allotment gardening efforts.” Its mask is `⟦I love⟧ ⟦allotment efforts⟧`. The note supplies concrete gardening context through “Growing your own” and “homegrown tomatoes,” but that text is outside the mask. The diagnosis is that the mask does not adequately express the supplied subject, not that the source note lacks that meaning. SSE received the complete note; the user accepts the grouping once that meaning is visible. The earlier assistant judgment missed the masking issue.
 
-No mask, vector, member, or review decision has been changed. The appropriate mask correction remains open; this diagnosis does not authorize a prompt change, rerun, or algorithm change.
+You also agreed to retain S14b6e36e21's Invalid judgment after full-note inspection. V766's subject is “Gianduja as a food product offered in jars.” Its mask, `⟦gianguja jars⟧ ⟦store⟧`, comes from a product announcement with no greeting elsewhere in the note. The other five masks explicitly express greetings. Unlike the allotment example, context does not clarify V766 into the shared meaning. This confirms an inappropriate grouping without isolating an SSE or HDBSCAN cause. The remaining V439 and V841 rejections are still being re-examined, not reaffirmed or withdrawn yet.
 
-Two decisions directly differ from my earlier judgments: you accepted S72d277b43a (bread masks plus the spaghetti preparation mask), which I marked Invalid; you rejected Saadde5a7ec, which I marked Valid. Your decisions and my original assessment remain separate. In particular, the spaghetti member is not a user-confirmed failure.
+No mask, vector, member, or saved review file has been changed. The appropriate allotment mask correction remains open; these decisions do not authorize a prompt change, rerun, or algorithm change.
+
+The original saved review had two direct disagreements with my earlier judgments: you accepted S72d277b43a (bread masks plus the spaghetti preparation mask), which I marked Invalid; you initially rejected Saadde5a7ec, which I marked Valid. Your later retraction resolves the latter grouping disagreement while identifying a masking problem. Your decisions and my original assessment remain separate. In particular, the spaghetti member is not a user-confirmed failure.
 
 The saved response and session both bind to review set `RN30ea35e75a20` and review-artifact SHA-256 `77bda6b0747cc0aec0dc4305b6f1ef6f2302ac3055173d6965a7f4736506dbea`. Response SHA-256: `cc21a5e9b5963b59e1c5035c84a8362534d02c89efbc61c5e9084b659546e9ee`. Session SHA-256: `92f2aca83650c974a7dd7fa3b8ff858aa1dba36abb718bb7a44fd5bc70e802d0`. These local user files were inspected, not modified or added to Git.
 
