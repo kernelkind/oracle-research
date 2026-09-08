@@ -1,6 +1,7 @@
 {
   "schema_version": 1,
   "status": "frozen",
+  "version": "MPv3.5",
   "name": "subject-deletion-v1",
   "scope": "Single-subject mask generation; no production rollout.",
   "prompt": {

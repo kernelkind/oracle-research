@@ -1,8 +1,8 @@
 # Mask-prompt development
 
-Status: the subject-conditioned removal prompt is frozen with Astra low. It passed development at 36/36 accepted masks and separate final validation at 52/52. Every predesignated repeated subject passed all three trials. Inputs, raw outputs, judgments, usage and isolation checks are preserved.
+Status: MPv3.5 is frozen with Astra low. This is the version name for the unchanged `subject-deletion-v1` prompt; its text, file path, and hash are unchanged. It passed development at 36/36 accepted masks and separate final validation at 52/52. Every predesignated repeated subject passed all three trials. Inputs, raw outputs, judgments, usage and isolation checks are preserved.
 
-[Frozen package](./frozen.json) · [Exact prompt](./subject-deletion-v1/mask-prompt.md)
+[Frozen package](./frozen.json) · [MPv3.5 prompt](./subject-deletion-v1/mask-prompt.md)
 
 [Final results: every complete note and inline mask](./subject-deletion-v1/final/results.md) · [Final verification](./subject-deletion-v1/final/verification.json)
 
