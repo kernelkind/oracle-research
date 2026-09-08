@@ -4,6 +4,12 @@ The user reviewed the masks-only baseline and reported that the groupings all lo
 
 [Open the review instructions](review-handoff/README.md). [See the full notes and inline masks behind three observations](evidence.md).
 
+## Follow-up: full cross-note-density rerun
+
+The user subsequently approved changing the core-distance neighbor to the nearest vector from a different note and rebuilding the entire partition. The [separate trial](cross-note-density-v1/README.md) holds all 945 vectors and the remaining baseline settings fixed. It produced 64 multi-note segments containing 266 vectors, no one-note segments, and 679 ungrouped vectors. Compared with the baseline, 128 vectors gained a multi-note segment and 12 lost one. Twenty-three baseline groups are exactly unchanged, eleven retain all members within enlarged groups, and nine lose some members.
+
+None of the six exact user-approved omitted pairs is together; one previously rejected pair now shares a segment. My inspection of all 41 new or changed groups records 30 Valid, 8 Uncertain, and 3 Invalid, separately from user decisions. The old baseline's positive user assessment remains intact. No trial winner is declared. All previous result and review files are preserved, and ordinary HDBSCAN with the new executable reproduces the complete saved baseline algorithm result exactly.
+
 ## User review
 
 On 2026-09-08, after using the masks-only baseline reviewer, the user said:

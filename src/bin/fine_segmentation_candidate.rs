@@ -1,5 +1,6 @@
 //! Fresh-process command boundary for the controlled fine-segmentation candidates.
 
+use std::collections::BTreeMap;
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -7,11 +8,12 @@ use std::process::ExitCode;
 
 use oracle_mvp::fine_region_candidate::{
     FineRegionCandidateInput, HDBSCAN_CONTROLLED_SUITE_CONFIG_V1,
-    HDBSCAN_CONTROLLED_SUITE_CONFIG_VERSION, SNN_CONTROLLED_SUITE_CONFIG_V1,
-    SNN_CONTROLLED_SUITE_CONFIG_VERSION,
+    HDBSCAN_CONTROLLED_SUITE_CONFIG_VERSION, HDBSCAN_CROSS_NOTE_CONTROLLED_SUITE_CONFIG_VERSION,
+    SNN_CONTROLLED_SUITE_CONFIG_V1, SNN_CONTROLLED_SUITE_CONFIG_VERSION,
 };
 use oracle_mvp::fine_region_candidate_artifact::{
-    build_hdbscan_candidate_artifact, build_snn_candidate_artifact,
+    build_hdbscan_candidate_artifact, build_hdbscan_cross_note_candidate_artifact,
+    build_snn_candidate_artifact,
 };
 use oracle_mvp::fine_region_hdbscan::HdbscanConfig;
 use serde::{Deserialize, Serialize};
@@ -54,6 +56,7 @@ struct Request {
     normalized_vector_sha256: String,
     inputs: Vec<FineRegionCandidateInput>,
     hdbscan_configuration: Option<HdbscanConfig>,
+    source_note_ids: Option<BTreeMap<String, String>>,
 }
 
 #[derive(Debug, Serialize)]
@@ -104,9 +107,16 @@ fn run() -> Result<Response> {
         )));
     }
 
-    if request.hdbscan_configuration.is_some() && request.candidate != "hdbscan" {
+    if request.hdbscan_configuration.is_some()
+        && !matches!(request.candidate.as_str(), "hdbscan" | "hdbscan_cross_note")
+    {
         return Err(invalid(
-            "hdbscan_configuration requires candidate `hdbscan`",
+            "hdbscan_configuration requires candidate `hdbscan` or `hdbscan_cross_note`",
+        ));
+    }
+    if request.source_note_ids.is_some() && request.candidate != "hdbscan_cross_note" {
+        return Err(invalid(
+            "source_note_ids requires candidate `hdbscan_cross_note`",
         ));
     }
 
@@ -128,6 +138,25 @@ fn run() -> Result<Response> {
             },
             serde_json::to_value(build_hdbscan_candidate_artifact(
                 &request.inputs,
+                &request.source_vector_manifest_sha256,
+                &request.normalized_vector_sha256,
+                request
+                    .hdbscan_configuration
+                    .as_ref()
+                    .unwrap_or(&HDBSCAN_CONTROLLED_SUITE_CONFIG_V1),
+            )?)?,
+        ),
+        "hdbscan_cross_note" => (
+            if request.hdbscan_configuration.is_some() {
+                "hdbscan-cross-note-explicit-config-v1"
+            } else {
+                HDBSCAN_CROSS_NOTE_CONTROLLED_SUITE_CONFIG_VERSION
+            },
+            serde_json::to_value(build_hdbscan_cross_note_candidate_artifact(
+                &request.inputs,
+                request.source_note_ids.as_ref().ok_or_else(|| {
+                    invalid("source_note_ids is required for candidate `hdbscan_cross_note`")
+                })?,
                 &request.source_vector_manifest_sha256,
                 &request.normalized_vector_sha256,
                 request

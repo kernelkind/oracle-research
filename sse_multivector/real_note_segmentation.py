@@ -525,13 +525,42 @@ def package_review(
     )
     artifact = _expect_object(response.get("artifact"), "candidate artifact")
     manifest = _expect_object(artifact.get("manifest"), "candidate manifest")
+    algorithm = manifest.get("algorithm_version")
     if (
         manifest.get("schema_version") != 4
-        or manifest.get("algorithm_version") != "hdbscan-star-exact-angular-v1"
+        or algorithm not in (
+            "hdbscan-star-exact-angular-v1",
+            "hdbscan-star-cross-note-exact-angular-v1",
+        )
         or manifest.get("fine_output_selector_version") != "hdbscan-clusters-members-v1"
     ):
         raise ValueError(
             "review packaging requires the HDBSCAN selected-output artifact"
+        )
+    cross_note = None
+    cross_note_identities = {
+        "hdbscan-cross-note-controlled-suite-config-v1",
+        "hdbscan-cross-note-explicit-config-v1",
+    }
+    if algorithm == "hdbscan-star-cross-note-exact-angular-v1":
+        if candidate_identity not in cross_note_identities:
+            raise ValueError("cross-note candidate identity differs from algorithm")
+        source_note_ids = {member: item["note_id"] for member, item in evidence.items()}
+        cross_note = {
+            "core_distance_rule_version": "nearest-different-source-note-angular-v1",
+            "source_note_ids_sha256": _sha(
+                json.dumps(
+                    source_note_ids, sort_keys=True, separators=(",", ":")
+                ).encode("utf-8")
+            ),
+        }
+        if manifest.get("cross_note") != cross_note:
+            raise ValueError(
+                "cross-note rule or source note map hash differs from verified vector evidence"
+            )
+    elif "cross_note" in manifest or candidate_identity in cross_note_identities:
+        raise ValueError(
+            "cross-note metadata or identity requires the cross-note algorithm"
         )
     expected_hashes = {
         "source_vector_manifest_sha256": _sha(vector_manifest_raw),
@@ -679,6 +708,8 @@ def package_review(
         "segments": metadata_segments,
         "unassigned_vector_ids": sorted(unassigned),
     }
+    if cross_note is not None:
+        metadata["cross_note"] = cross_note
     files = {
         "review.json": _canonical(reviewer),
         "unassigned.json": _canonical(noise),

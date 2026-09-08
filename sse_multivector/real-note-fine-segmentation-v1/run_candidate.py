@@ -11,7 +11,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-from sse_multivector.real_note_segmentation import package_review  # noqa: E402
+from sse_multivector.real_note_segmentation import (  # noqa: E402
+    _review_evidence,
+    package_review,
+)
 
 
 def sha(path):
@@ -25,7 +28,9 @@ def write_json(path, value):
         destination.write("\n")
 
 
-def run(vectors, binary, pinned_sha, output, configuration=None):
+def run(
+    vectors, binary, pinned_sha, output, configuration=None, *, cross_note_density=False
+):
     if output.exists() or output.is_symlink():
         raise ValueError(f"output already exists: {output}")
     vectors, binary, output = (path.resolve() for path in (vectors, binary, output))
@@ -42,20 +47,39 @@ def run(vectors, binary, pinned_sha, output, configuration=None):
         request = json.loads(source_raw)
         if request.get("candidate") != "hdbscan" or "hdbscan_configuration" in request:
             raise ValueError("expected the unchanged HDBSCAN request from finalize_vectors")
+        if cross_note_density:
+            manifest_raw, manifest, evidence, inputs = _review_evidence(vectors)
+            expected_request = {
+                "schema_version": 1,
+                "candidate": "hdbscan",
+                "source_vector_manifest_sha256": hashlib.sha256(manifest_raw).hexdigest(),
+                "normalized_vector_sha256": manifest["files"][
+                    "normalized-vectors.f64le"
+                ]["sha256"],
+                "inputs": inputs,
+            }
+            if request != expected_request:
+                raise ValueError("source request differs from verified vector evidence")
+            request["candidate"] = "hdbscan_cross_note"
+            request["source_note_ids"] = {
+                member: item["note_id"] for member, item in evidence.items()
+            }
         parameters = {
             "min_samples": 2,
             "min_cluster_size": 2,
             "selection_method": "excess_of_mass",
         }
-        identity = "hdbscan-controlled-suite-config-v1"
+        identity_prefix = "hdbscan-cross-note" if cross_note_density else "hdbscan"
+        identity = f"{identity_prefix}-controlled-suite-config-v1"
         request_path = output / "request.json"
-        if configuration is None:
+        if configuration is None and not cross_note_density:
             with request_path.open("xb") as destination:
                 destination.write(source_raw)
         else:
-            parameters = json.loads(configuration.read_bytes())
-            request["hdbscan_configuration"] = parameters
-            identity = "hdbscan-explicit-config-v1"
+            if configuration is not None:
+                parameters = json.loads(configuration.read_bytes())
+                request["hdbscan_configuration"] = parameters
+                identity = f"{identity_prefix}-explicit-config-v1"
             write_json(request_path, request)
         request_sha = sha(request_path)
         files = {"request.json": request_sha}
@@ -152,11 +176,13 @@ def main():
     parser.add_argument("candidate_binary_sha256")
     parser.add_argument("output", type=Path)
     parser.add_argument("--hdbscan-configuration", type=Path)
+    parser.add_argument("--cross-note-density", action="store_true")
     args = parser.parse_args()
     try:
         report = run(
             args.vector_artifact, args.candidate_binary, args.candidate_binary_sha256,
             args.output, args.hdbscan_configuration,
+            cross_note_density=args.cross_note_density,
         )
     except Exception as error:
         parser.exit(1, f"candidate replay failed: {error}\n")

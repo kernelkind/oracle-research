@@ -6,15 +6,18 @@
 //! a verifiable artifact. Verification reconstructs the artifact by rerunning
 //! the adapter; it does not trust hashes stored in the retained artifact.
 
+use std::collections::BTreeMap;
+
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 use crate::artifact::hash_bytes;
 use crate::fine_region_candidate::{
     CANDIDATE_INPUT_CONTRACT_VERSION, FineRegionCandidateError, FineRegionCandidateInput,
-    FineRegionCandidateOutput, FineRegionCandidateRun, HDBSCAN_FINE_OUTPUT_SELECTOR_VERSION,
+    FineRegionCandidateOutput, FineRegionCandidateRun,
+    HDBSCAN_CROSS_NOTE_CORE_DISTANCE_RULE_VERSION, HDBSCAN_FINE_OUTPUT_SELECTOR_VERSION,
     HdbscanCandidateRun, SNN_FINE_OUTPUT_SELECTOR_VERSION, SnnCandidateRun, run_hdbscan_candidate,
-    run_snn_candidate,
+    run_hdbscan_cross_note_candidate, run_snn_candidate,
 };
 use crate::fine_region_hdbscan::HdbscanConfig;
 use crate::fine_region_snn::SnnConfig;
@@ -27,6 +30,7 @@ const HDBSCAN_SOURCE: &[u8] = include_bytes!("fine_region_hdbscan.rs");
 pub const CANDIDATE_ARTIFACT_SCHEMA_VERSION: u32 = 4;
 pub const SNN_ALGORITHM_VERSION: &str = "snn-sdm-2003-exact-angular-v1";
 pub const HDBSCAN_ALGORITHM_VERSION: &str = "hdbscan-star-exact-angular-v1";
+pub const HDBSCAN_CROSS_NOTE_ALGORITHM_VERSION: &str = "hdbscan-star-cross-note-exact-angular-v1";
 
 /// SNN ties use lower canonical input ordinals in exact angular-neighbor
 /// ordering. An ambiguous border point chooses the qualifying core link with
@@ -46,6 +50,7 @@ struct AlgorithmContract {
     tie_rule_version: &'static str,
     fine_output_selector_version: &'static str,
     implementation_source: &'static [u8],
+    cross_note_core_distance_rule_version: Option<&'static str>,
 }
 
 const SNN_CONTRACT: AlgorithmContract = AlgorithmContract {
@@ -53,6 +58,7 @@ const SNN_CONTRACT: AlgorithmContract = AlgorithmContract {
     tie_rule_version: SNN_TIE_RULE_VERSION,
     fine_output_selector_version: SNN_FINE_OUTPUT_SELECTOR_VERSION,
     implementation_source: SNN_SOURCE,
+    cross_note_core_distance_rule_version: None,
 };
 
 const HDBSCAN_CONTRACT: AlgorithmContract = AlgorithmContract {
@@ -60,6 +66,13 @@ const HDBSCAN_CONTRACT: AlgorithmContract = AlgorithmContract {
     tie_rule_version: HDBSCAN_TIE_RULE_VERSION,
     fine_output_selector_version: HDBSCAN_FINE_OUTPUT_SELECTOR_VERSION,
     implementation_source: HDBSCAN_SOURCE,
+    cross_note_core_distance_rule_version: None,
+};
+
+const HDBSCAN_CROSS_NOTE_CONTRACT: AlgorithmContract = AlgorithmContract {
+    version: HDBSCAN_CROSS_NOTE_ALGORITHM_VERSION,
+    cross_note_core_distance_rule_version: Some(HDBSCAN_CROSS_NOTE_CORE_DISTANCE_RULE_VERSION),
+    ..HDBSCAN_CONTRACT
 };
 
 pub type Result<T> = std::result::Result<T, CandidateArtifactError>;
@@ -74,7 +87,18 @@ pub enum CandidateArtifactError {
     Serialization(#[from] serde_json::Error),
 }
 
-/// Integrity and reproducibility metadata shared by both candidate algorithms.
+/// Extra binding required only for source-note-aware core distances. The map
+/// remains external evidence, like the normalized vectors, and verification
+/// requires its complete contents instead of trusting this retained digest.
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct CrossNoteCandidateMetadata {
+    pub core_distance_rule_version: String,
+    /// SHA-256 of compact JSON encoding of the opaque-ID-sorted source map.
+    pub source_note_ids_sha256: String,
+}
+
+/// Integrity and reproducibility metadata shared by the candidate algorithms.
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct CandidateArtifactManifest<Parameters> {
@@ -103,6 +127,9 @@ pub struct CandidateArtifactManifest<Parameters> {
     pub result_sha256: String,
     /// SHA-256 of the exact canonical selected-output JSON bytes.
     pub fine_output_sha256: String,
+    /// Omitted entirely for standard SNN and HDBSCAN* artifacts.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cross_note: Option<CrossNoteCandidateMetadata>,
 }
 
 /// A complete adapter result plus the canonical input identities and manifest
@@ -123,6 +150,7 @@ pub struct CandidateArtifact<Parameters, CandidateRun> {
 
 pub type SnnCandidateArtifact = CandidateArtifact<SnnConfig, SnnCandidateRun>;
 pub type HdbscanCandidateArtifact = CandidateArtifact<HdbscanConfig, HdbscanCandidateRun>;
+pub type HdbscanCrossNoteCandidateArtifact = CandidateArtifact<HdbscanConfig, HdbscanCandidateRun>;
 
 pub fn build_snn_candidate_artifact(
     inputs: &[FineRegionCandidateInput],
@@ -204,6 +232,54 @@ pub fn verify_hdbscan_candidate_artifact(
     require_recomputed_match(artifact, &expected)
 }
 
+pub fn build_hdbscan_cross_note_candidate_artifact(
+    inputs: &[FineRegionCandidateInput],
+    source_note_ids: &BTreeMap<String, String>,
+    source_vector_manifest_sha256: &str,
+    normalized_vector_sha256: &str,
+    config: &HdbscanConfig,
+) -> Result<HdbscanCrossNoteCandidateArtifact> {
+    validate_source_hashes(source_vector_manifest_sha256, normalized_vector_sha256)?;
+    let result = run_hdbscan_cross_note_candidate(inputs, source_note_ids, *config)?;
+    let mut artifact = assemble_artifact(
+        inputs,
+        source_vector_manifest_sha256,
+        normalized_vector_sha256,
+        *config,
+        result,
+        HDBSCAN_CROSS_NOTE_CONTRACT,
+    )?;
+    artifact.manifest.cross_note = Some(CrossNoteCandidateMetadata {
+        core_distance_rule_version: HDBSCAN_CROSS_NOTE_CORE_DISTANCE_RULE_VERSION.to_owned(),
+        source_note_ids_sha256: hash_serialized(source_note_ids)?,
+    });
+    Ok(artifact)
+}
+
+pub fn verify_hdbscan_cross_note_candidate_artifact(
+    artifact: &HdbscanCrossNoteCandidateArtifact,
+    inputs: &[FineRegionCandidateInput],
+    source_note_ids: &BTreeMap<String, String>,
+    source_vector_manifest_sha256: &str,
+    normalized_vector_sha256: &str,
+    config: &HdbscanConfig,
+) -> Result<()> {
+    validate_retained_artifact(artifact, HDBSCAN_CROSS_NOTE_CONTRACT)?;
+    if artifact.manifest.parameters != artifact.result.algorithm_result.config {
+        return Err(invalid(
+            "HDBSCAN* manifest parameters differ from the retained production result",
+        ));
+    }
+    let expected = build_hdbscan_cross_note_candidate_artifact(
+        inputs,
+        source_note_ids,
+        source_vector_manifest_sha256,
+        normalized_vector_sha256,
+        config,
+    )?;
+    require_recomputed_match(artifact, &expected)
+}
+
 fn assemble_artifact<Parameters, CandidateRun>(
     inputs: &[FineRegionCandidateInput],
     source_vector_manifest_sha256: &str,
@@ -243,6 +319,7 @@ where
         tie_rule_version: contract.tie_rule_version.to_owned(),
         result_sha256: hash_serialized(&result)?,
         fine_output_sha256: hash_bytes(canonical_fine_output_json.as_bytes()),
+        cross_note: None,
     };
     Ok(CandidateArtifact {
         manifest,
@@ -296,6 +373,20 @@ where
     CandidateRun: CandidateRunContract + Serialize,
 {
     validate_canonical_ids(&artifact.canonical_input_ids)?;
+    match (
+        &artifact.manifest.cross_note,
+        contract.cross_note_core_distance_rule_version,
+    ) {
+        (None, None) => {}
+        (Some(metadata), Some(rule)) if metadata.core_distance_rule_version == rule => {
+            validate_sha256("source-note-IDs SHA-256", &metadata.source_note_ids_sha256)?;
+        }
+        _ => {
+            return Err(invalid(
+                "retained cross-note metadata does not match the candidate algorithm",
+            ));
+        }
+    }
     for (name, value) in [
         (
             "adapter-implementation-source SHA-256",

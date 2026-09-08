@@ -13,6 +13,7 @@ use thiserror::Error;
 
 use crate::fine_region_hdbscan::{
     ClusterSelectionMethod, HdbscanConfig, HdbscanError, HdbscanResult, hdbscan,
+    hdbscan_with_core_distances,
 };
 use crate::fine_region_partition::{CosineMatrix, FineRegionPartitionError};
 use crate::fine_region_snn::{SnnConfig, SnnError, SnnSegmentation, snn_segmentation};
@@ -20,6 +21,10 @@ use crate::fine_region_snn::{SnnConfig, SnnError, SnnSegmentation, snn_segmentat
 pub const CANDIDATE_INPUT_CONTRACT_VERSION: &str = "opaque-id-order-bitwise-vector-alias-v1";
 pub const SNN_FINE_OUTPUT_SELECTOR_VERSION: &str = "snn-segments-members-v1";
 pub const HDBSCAN_FINE_OUTPUT_SELECTOR_VERSION: &str = "hdbscan-clusters-members-v1";
+pub const HDBSCAN_CROSS_NOTE_CORE_DISTANCE_RULE_VERSION: &str =
+    "nearest-different-source-note-angular-v1";
+pub const HDBSCAN_CROSS_NOTE_CONTROLLED_SUITE_CONFIG_VERSION: &str =
+    "hdbscan-cross-note-controlled-suite-config-v1";
 
 pub const SNN_CONTROLLED_SUITE_CONFIG_VERSION: &str = "snn-controlled-suite-config-v1";
 pub const SNN_CONTROLLED_SUITE_CONFIG_JSON_V1: &str =
@@ -120,6 +125,82 @@ pub fn run_hdbscan_candidate(
 ) -> Result<HdbscanCandidateRun> {
     let canonical = canonicalize(inputs)?;
     let algorithm_result = hdbscan(&canonical.cosines, config)?;
+    assemble_hdbscan_run(canonical, algorithm_result)
+}
+
+/// Uses the nearest vector from a different source note for each unique
+/// vector's core distance, preserving ordinary HDBSCAN* downstream behavior.
+/// Every alias contributes its source note before distances are computed.
+/// An exact-vector group represented in multiple notes has a zero-distance
+/// cross-note witness, but remains one ordinal for cluster size and stability.
+pub fn run_hdbscan_cross_note_candidate(
+    inputs: &[FineRegionCandidateInput],
+    source_note_ids: &BTreeMap<String, String>,
+    config: HdbscanConfig,
+) -> Result<HdbscanCandidateRun> {
+    if config.min_samples != 2 {
+        return Err(invalid("cross-note core distances require min_samples=2"));
+    }
+    let canonical = canonicalize(inputs)?;
+    let input_ids = inputs
+        .iter()
+        .map(|input| &input.opaque_id)
+        .collect::<BTreeSet<_>>();
+    if source_note_ids.keys().collect::<BTreeSet<_>>() != input_ids {
+        return Err(invalid(
+            "source_note_ids keys must exactly match the input opaque IDs",
+        ));
+    }
+    for source_note_id in source_note_ids.values() {
+        if !is_hex_id(source_note_id) {
+            return Err(invalid(
+                "source note IDs must contain exactly 64 lowercase hexadecimal characters",
+            ));
+        }
+    }
+    if source_note_ids.values().collect::<BTreeSet<_>>().len() < 2 {
+        return Err(invalid("at least two distinct source notes are required"));
+    }
+
+    let alias_source_notes = canonical
+        .alias_groups
+        .iter()
+        .map(|aliases| {
+            aliases
+                .iter()
+                .map(|id| &source_note_ids[id])
+                .collect::<BTreeSet<_>>()
+        })
+        .collect::<Vec<_>>();
+    let mut core_distances = Vec::with_capacity(alias_source_notes.len());
+    for (left, sources) in alias_source_notes.iter().enumerate() {
+        if sources.len() > 1 {
+            core_distances.push(0.0);
+            continue;
+        }
+        let only_source = sources
+            .first()
+            .expect("canonical alias groups are nonempty");
+        let mut nearest = f64::INFINITY;
+        for (right, other_sources) in alias_source_notes.iter().enumerate() {
+            if other_sources.iter().any(|source| source != only_source) {
+                nearest = nearest.min(canonical.cosines.get(left, right)?.acos());
+            }
+        }
+        if !nearest.is_finite() {
+            return Err(invalid("a unique vector has no vector from another note"));
+        }
+        core_distances.push(nearest);
+    }
+    let algorithm_result =
+        hdbscan_with_core_distances(&canonical.cosines, config, &core_distances)?;
+    assemble_hdbscan_run(canonical, algorithm_result)
+}
+
+fn assemble_hdbscan_run(
+    canonical: CanonicalInput,
+    algorithm_result: HdbscanResult,
+) -> Result<HdbscanCandidateRun> {
     let selected_segments = algorithm_result
         .clusters
         .iter()
@@ -256,16 +337,19 @@ fn expand_ordinals(
 }
 
 fn validate_opaque_id(value: &str) -> Result<()> {
-    if value.len() != 64
-        || !value
-            .bytes()
-            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
-    {
+    if !is_hex_id(value) {
         return Err(invalid(
             "opaque IDs must contain exactly 64 lowercase hexadecimal characters",
         ));
     }
     Ok(())
+}
+
+fn is_hex_id(value: &str) -> bool {
+    value.len() == 64
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
 }
 
 fn invalid(message: impl Into<String>) -> FineRegionCandidateError {

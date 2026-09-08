@@ -9,15 +9,17 @@
 //! extensions rather than paper-defined HDBSCAN* outputs:
 //! <https://github.com/scikit-learn-contrib/hdbscan>.
 //!
-//! The input is deliberately only [`CosineMatrix`]. Cosines are converted to
-//! angular distance (`acos(cosine)`), which is a metric for unit vectors. No
-//! note text, labels, author information, or semantic rules enter clustering.
+//! Inputs are limited to [`CosineMatrix`], numeric configuration, and optional
+//! caller-supplied core distances. Cosines are converted to angular distance
+//! (`acos(cosine)`), which is a metric for unit vectors. No note text, labels,
+//! author information, or semantic rules enter this numeric implementation.
 //!
 //! Following Definition 3.1 of Campello et al. (2015),
-//! [`HdbscanConfig::min_samples`] counts the point itself. A value of two
-//! therefore makes a point's core distance the distance to its nearest other
-//! point. This is explicit because some software APIs use a different
-//! convention.
+//! [`hdbscan`] uses [`HdbscanConfig::min_samples`] counting the point itself.
+//! A value of two therefore makes a point's core distance the distance to its
+//! nearest other point. This is explicit because some software APIs use a
+//! different convention. [`hdbscan_with_core_distances`] instead uses supplied
+//! numeric core distances without changing the downstream algorithm.
 //!
 //! Input ordinals are part of the deterministic contract. They break exact
 //! geometric ties in the MST and public ordering, so callers that require
@@ -170,8 +172,53 @@ pub fn hdbscan(cosines: &CosineMatrix, config: HdbscanConfig) -> Result<HdbscanR
     let vector_count = cosines.count();
     let angular_distances = angular_distances(cosines)?;
     let core_distances = core_distances(&angular_distances, vector_count, config.min_samples);
+    hdbscan_from_distances(&angular_distances, core_distances, config)
+}
+
+/// Runs the same exact dense HDBSCAN* calculation with caller-supplied cores.
+///
+/// Supply one finite, nonnegative angular core distance per input ordinal.
+/// Zero is allowed, including when upstream deduplication has combined exact
+/// aliases from multiple source notes. Distinct input ordinals must still
+/// have nonzero angular distance, as required by [`hdbscan`].
+///
+/// `config.min_samples` is validated and retained in the result, but does not
+/// recompute or alter the supplied cores. All pairwise angular distances,
+/// mutual-reachability edges, MST construction, condensation, selection, and
+/// scores use the same implementation as [`hdbscan`].
+pub fn hdbscan_with_core_distances(
+    cosines: &CosineMatrix,
+    config: HdbscanConfig,
+    core_distances: &[f64],
+) -> Result<HdbscanResult> {
+    validate(cosines.count(), config)?;
+    if core_distances.len() != cosines.count() {
+        return Err(invalid(format!(
+            "supplied core distances count {} does not match vector count {}",
+            core_distances.len(),
+            cosines.count()
+        )));
+    }
+    for (ordinal, distance) in core_distances.iter().enumerate() {
+        if !distance.is_finite() || *distance < 0.0 {
+            return Err(invalid(format!(
+                "supplied core distance at input ordinal {ordinal} must be finite and nonnegative"
+            )));
+        }
+    }
+
+    let angular_distances = angular_distances(cosines)?;
+    hdbscan_from_distances(&angular_distances, core_distances.to_vec(), config)
+}
+
+fn hdbscan_from_distances(
+    angular_distances: &[f64],
+    core_distances: Vec<f64>,
+    config: HdbscanConfig,
+) -> Result<HdbscanResult> {
+    let vector_count = core_distances.len();
     let mutual_reachability_distances =
-        mutual_reachability_distances(&angular_distances, &core_distances, vector_count);
+        mutual_reachability_distances(angular_distances, &core_distances, vector_count);
     let minimum_spanning_tree = exact_prim_mst(&mutual_reachability_distances, vector_count)?;
     let single_linkage_tree = single_linkage_tree(&minimum_spanning_tree, vector_count)?;
     let condensed_tree =
