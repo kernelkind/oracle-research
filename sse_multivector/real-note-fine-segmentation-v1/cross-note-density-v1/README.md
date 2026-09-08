@@ -1,6 +1,6 @@
 # Cross-note density: results
 
-Your current judgments are **38 Valid, 3 Invalid**, including the later retraction of the garden/allotment rejection. The original saved review contains 37 Valid and 4 Invalid decisions and remains unchanged. Of the three remaining rejections, V766's grouping has been reaffirmed after full-note inspection; V439 and V841 are still being re-examined. The complete rerun produced more multi-note segments, but it did not resolve the six exact omitted pairs you approved. This review does not select it as a replacement for the baseline.
+Your current judgments are **38 Valid, 3 Invalid**, including the later retraction of the garden/allotment rejection. The original saved review contains 37 Valid and 4 Invalid decisions and remains unchanged. Of the three remaining rejections, V766's and V439's groupings have been reaffirmed after inspecting their full notes; only V841 remains under re-examination. The complete rerun produced more multi-note segments, but it did not resolve the six exact omitted pairs you approved. This review does not select it as a replacement for the baseline.
 
 All previous results and review decisions are unchanged. Checksums match for all 65 preserved files.
 
@@ -42,7 +42,9 @@ The first three comments identify a specific unwanted member. For the fourth rej
 
 V257 was generated for subject N031-S007, “The author loves someone’s allotment gardening efforts.” Its mask is `⟦I love⟧ ⟦allotment efforts⟧`. The note supplies concrete gardening context through “Growing your own” and “homegrown tomatoes,” but that text is outside the mask. The diagnosis is that the mask does not adequately express the supplied subject, not that the source note lacks that meaning. SSE received the complete note; the user accepts the grouping once that meaning is visible. The earlier assistant judgment missed the masking issue.
 
-You also agreed to retain S14b6e36e21's Invalid judgment after full-note inspection. V766's subject is “Gianduja as a food product offered in jars.” Its mask, `⟦gianguja jars⟧ ⟦store⟧`, comes from a product announcement with no greeting elsewhere in the note. The other five masks explicitly express greetings. Unlike the allotment example, context does not clarify V766 into the shared meaning. This confirms an inappropriate grouping without isolating an SSE or HDBSCAN cause. The remaining V439 and V841 rejections are still being re-examined, not reaffirmed or withdrawn yet.
+You also agreed to retain S14b6e36e21's Invalid judgment after full-note inspection. V766's subject is “Gianduja as a food product offered in jars.” Its mask, `⟦gianguja jars⟧ ⟦store⟧`, comes from a product announcement with no greeting elsewhere in the note. The other five masks explicitly express greetings. Unlike the allotment example, context does not clarify V766 into the shared meaning. This confirms an inappropriate grouping without isolating an SSE or HDBSCAN cause.
+
+You reaffirmed S3d2aa08f70's rejection after inspecting V439's full note and the three audiobook masks: “agree w reject.” V439's supplied subject is “Literature.” Its mask faithfully selects `⟦Literature⟧` from a closing hashtag; the rest of the note does not supply a narrower audiobook meaning. The other masks describe an unsatisfying audiobook. The assistant noted their broad literary relationship but did not identify a missing-context masking failure. Your grouping rejection remains in force; the cause is not isolated. Only V841's rejection remains under re-examination.
 
 No mask, vector, member, or saved review file has been changed. The appropriate allotment mask correction remains open; these decisions do not authorize a prompt change, rerun, or algorithm change.
 
