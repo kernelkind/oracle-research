@@ -38,7 +38,11 @@ All 41 new or changed multi-note segments have confirmed decisions. None was ski
 | S68ce4fd21f | “v841 does not seem related. others do” |
 | Saadde5a7ec | No comment |
 
-The first three comments identify a specific unwanted member. No reason is inferred for the fourth rejection, the two-mask garden/allotment pair. No member has been removed, and accepting a segment does not authorize an algorithm or parameter change.
+The first three comments identify a specific unwanted member. For the fourth rejection, you later clarified in chat that “allotment efforts” is too generic. After seeing its supplied subject and full source note, you concluded: “this is a masking failure.” The saved empty comment above remains unchanged.
+
+V257 was generated for subject N031-S007, “The author loves someone’s allotment gardening efforts.” Its mask is `⟦I love⟧ ⟦allotment efforts⟧`. The note supplies concrete gardening context through “Growing your own” and “homegrown tomatoes,” but that text is outside the mask. The diagnosis is that the mask does not adequately express the supplied subject, not that the source note lacks that meaning. SSE received the complete note, so this rejection does not by itself establish a segmentation failure. The earlier assistant judgment missed this masking issue.
+
+No mask, vector, member, or review decision has been changed. The appropriate mask correction remains open; this diagnosis does not authorize a prompt change, rerun, or algorithm change.
 
 Two decisions directly differ from my earlier judgments: you accepted S72d277b43a (bread masks plus the spaghetti preparation mask), which I marked Invalid; you rejected Saadde5a7ec, which I marked Valid. Your decisions and my original assessment remain separate. In particular, the spaghetti member is not a user-confirmed failure.
 
