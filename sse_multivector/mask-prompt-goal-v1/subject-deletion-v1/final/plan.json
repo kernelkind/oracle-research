@@ -8,7 +8,7 @@
   "reasoning_effort": "low",
   "question": "Does the unchanged development-passing prompt meet the approved mask-fidelity standard on reserved note-subject inputs that did not inform prompt development?",
   "candidate_mechanism": "Removal conditioned on the fixed subject should exclude additional meanings while retaining required identifying evidence. Final validation measures remaining errors; it does not isolate causality.",
-  "selection": "../../../final-reservation.json, support-audit each batch before any masks. Preserve unsupported subjects and hash-ordered replacements, if any.",
+  "selection": "../../final-reservation.json, support-audit each batch before any masks. Preserve unsupported subjects and hash-ordered replacements, if any.",
   "first_batch": {
     "notes": 3,
     "first_calls": 6,
