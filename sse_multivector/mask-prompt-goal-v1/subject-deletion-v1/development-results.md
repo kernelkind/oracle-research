@@ -1,6 +1,6 @@
 # Subject-conditioned removal: completed development
 
-All 36 outputs were accepted across 12 notes and 24 fixed subjects. Each of the six predesignated repeated subjects passed all three trials. This meets the 35/36 development threshold and repeatability rule; separate final validation is still required.
+All 36 outputs were accepted across 12 notes and 24 fixed subjects. Each of the six predesignated repeated subjects passed all three trials. This meets the 35/36 development threshold and repeatability rule. [Separate final validation](./final/results.md) subsequently passed at 52/52 with the same prompt.
 
 The prompt, Astra-low settings and ASv6.23 subjects stayed unchanged. The earlier baseline had three scope errors among the first 14 corresponding outputs; this candidate corrected those without an observed new error on those inputs. The additional notes test broader coverage, not a controlled baseline comparison.
 

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "final_validation_started_inputs_frozen",
+  "status": "completed_pass",
   "development_commit": "1fc82a1",
   "prompt": "../mask-prompt.md",
   "prompt_sha256": "3bfaae265284e7b27fc0b740c7c4b214db8045d9f316f59990d5b36332d6c3e2",
@@ -25,5 +25,16 @@
   "stop_rule": "Stop if three nonaccepted outputs make 50/52 mathematically impossible, or if the repeatability rule is violated. Preserve all attempted outputs; no retry-to-pass.",
   "unchanged": "ASv6.23, full original source, one .subject per call, no auxiliary context, exact substring array output, fresh isolated Astra-low call, tools/web disabled, existing subscription and guarded concurrent runner.",
   "decision": "Only freeze after all52 outputs meet gates and verification is complete. If failures inform a prompt revision, retire this final set to development; no partial pass.",
-  "uncertainty": "Finite coverage and semantic-review judgments; no population guarantee and no SSE/segmentation conclusion."
+  "uncertainty": "Finite coverage and semantic-review judgments; no population guarantee and no SSE/segmentation conclusion.",
+  "result": {
+    "outputs": 52,
+    "accepted": 52,
+    "mask_errors": 0,
+    "unresolved": 0,
+    "repeatability_passed": true,
+    "replacements": 0,
+    "verification": "verification.json",
+    "results": "results.md",
+    "frozen_package": "../../frozen.json"
+  }
 }

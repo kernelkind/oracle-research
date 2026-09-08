@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "status": "frozen",
+  "name": "subject-deletion-v1",
+  "scope": "Single-subject mask generation; no production rollout.",
+  "prompt": {
+    "path": "subject-deletion-v1/mask-prompt.md",
+    "sha256": "3bfaae265284e7b27fc0b740c7c4b214db8045d9f316f59990d5b36332d6c3e2"
+  },
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "subject_package": {
+    "path": "../subject-prompt-goal-v1/asv6.23/frozen.json",
+    "sha256": "54f87aa49fbed73f401eba1bf7a5b792fec9d989d0371c35ee7dd96689534d01",
+    "unchanged": true
+  },
+  "input": "Complete original note plus exactly one unchanged accepted ASv6.23 .subject. Do not send auxiliary context, sibling subjects or prior outputs. Original source is not replaced with the subject generator's normalized input.",
+  "output": "JSON array of nonempty exact substrings from the original note, in source order, whose mask captures the fixed subject's complete supported meaning and scope. Individual-word fragments and multiple faithful arrays are allowed. Identifier exclusions are in the exact prompt.",
+  "runner": {
+    "path": "../codex_exec.py",
+    "sha256": "ebf1942737069a49146d7336c6936dd2fa5cdd8d4b6a2b24274f01bc9f83e2fe",
+    "mode": "prompt",
+    "codex_binary": "/nix/store/h0xv9625s31bnn7wlk3fsdmhv290z0i1-codex-0.153.0/bin/codex",
+    "codex_version": "codex-cli 0.153.0",
+    "reference_config": "subject-deletion-v1/final/batch-a/F01-S1-t1/config.json",
+    "model_instructions": "Follow the user's instructions.\n",
+    "model_instructions_sha256": "3d366e0253ede507e29be8ce00a9bd46ba2ebe7c01024bad45305bc0207fcfb1",
+    "isolation": "Fresh process/thread/sterile workdir per one-subject call; strict-config, ephemeral, ignore user config/rules; tools/web and instruction injection disabled as recorded in argv. Existing subscription only."
+  },
+  "driver": {
+    "path": "../subject-prompt-goal-v1/per-item-context-comparison-v1/run_comparison.py",
+    "sha256": "cd60a72f493eb84701708c2f8fecda5aab5ae303bdc1f3a17e5f0fc1c13c7acf",
+    "max_concurrency": 12,
+    "memory_per_job": "2 GiB",
+    "swap_per_job": 0,
+    "runtime_max_seconds": 900,
+    "pressure_monitor": "Existing5-second memory/I/O-pressure safeguards, verified in execution logs."
+  },
+  "development": {
+    "notes": 12,
+    "fixed_subjects": 24,
+    "outputs": 36,
+    "accepted": 36,
+    "minimum_accepted": 35,
+    "repeated_subjects": 6,
+    "all_repeated_trials_accepted": true,
+    "results": "subject-deletion-v1/development-results.md",
+    "verification": [
+      "subject-deletion-v1/verification.json",
+      "subject-deletion-v1/expansion-verification.json"
+    ]
+  },
+  "final": {
+    "notes": 20,
+    "fixed_subjects": 40,
+    "outputs": 52,
+    "accepted": 52,
+    "minimum_accepted": 50,
+    "repeated_subjects": 6,
+    "all_repeated_trials_accepted": true,
+    "selection": "final-reservation.json",
+    "results": "subject-deletion-v1/final/results.md",
+    "verification": "subject-deletion-v1/final/verification.json",
+    "note_or_subject_replacements": 0,
+    "prompt_revisions_during_final": 0
+  },
+  "candidate_usage": {
+    "calls": 88,
+    "input_tokens": 219298,
+    "output_tokens": 8062,
+    "cached_input_tokens": 63488,
+    "reasoning_output_tokens": 6157
+  },
+  "remaining_errors": "No semantic mask error or unresolved scope judgment observed under the approved review standard in the completed development and final sets.",
+  "limitations": [
+    "These are finite selected sets, not a population accuracy guarantee. Final notes had prior subject-generation/review exposure, but did not inform mask-prompt development.",
+    "Exact string arrays can admit multiple source positions. Alternatives are saved; this does not establish which occurrence the model intended or equivalent SSE vectors.",
+    "A source abbreviation may support a fixed interpretation without proving unique author intent; F15 WoT is recorded explicitly.",
+    "Results validate mask fidelity only, not subject-extractor infallibility, SSE representations, segmentation or hierarchy.",
+    "The model identifier/settings and local artifacts are frozen, not an independently archived copy of provider model weights."
+  ],
+  "next": "No more prompt revisions or mask-generation calls are required for this approved goal. Downstream integration or SSE testing requires separate scope.",
+  "frozen_at_utc": "2026-09-08 00:25:02 UTC",
+  "total_runner_generation_usage": {
+    "calls": 106,
+    "input_tokens": 264655,
+    "output_tokens": 9038,
+    "cached_input_tokens": 71168,
+    "reasoning_output_tokens": 6779,
+    "scope": "All mask-prompt-goal-v1 runner attempts, including the baseline and two failed revisions. Excludes orchestrator reasoning and read-only review-agent usage. Cached/reasoning tokens are included in input/output, not additive."
+  }
+}

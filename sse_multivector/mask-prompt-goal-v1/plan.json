@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "development_passed_final_pending",
+  "status": "complete_frozen",
   "progress": {
     "mask_calls": 14,
     "accepted": 11,
@@ -31,7 +31,7 @@
       "batch-2/results.md",
       "m05-repeats/results.md"
     ],
-    "next": "The baseline and two failed revisions remain stopped. subject-deletion-v1 passed development and execution verification; proceed to separate final validation."
+    "next": "No further generation is required. subject-deletion-v1 passed both approved completion checks and is frozen."
   },
   "current_candidate": {
     "name": "subject-deletion-v1",
@@ -45,8 +45,8 @@
     "unresolved": 0,
     "m05_trials_accepted": 3,
     "results": "subject-deletion-v1/development-results.md",
-    "next": "Validate the unchanged candidate on the reserved final inputs in small reviewed batches.",
-    "completion": "Development semantic and repeatability gates pass. Final validation has not begun. No freeze as final and no change to acceptance gates.",
+    "next": "No further in-scope work required; production integration and SSE testing were not performed.",
+    "completion": "Development36/36 and separate final52/52 passed with unchanged prompt/settings. All repeats accepted and execution/source checks verified.",
     "repeated_subjects": [
       "M01",
       "M03",
@@ -56,9 +56,15 @@
       "M11"
     ],
     "repeat_outputs": 18,
-    "repeat_outputs_accepted": 18
+    "repeat_outputs_accepted": 18,
+    "status": "frozen",
+    "frozen_package": "frozen.json",
+    "final_outputs": 52,
+    "final_accepted": 52,
+    "final_results": "subject-deletion-v1/final/results.md",
+    "verification": "subject-deletion-v1/final/verification.json"
   },
-  "generation_authorized": true,
+  "generation_authorized": false,
   "approval": {
     "user_message": "Yeah, that sounds reasonable",
     "scope": "The staged plan and 95% acceptance target, beginning with three notes and six mask calls.",
@@ -162,5 +168,6 @@
     "spend": "Existing Codex subscription only; no paid API, rental, account change or new monetary commitment.",
     "scope": "No ASv6.23 changes, model change, multi-subject generation call, new generation stage, production code/default changes, SSE, prominence or hierarchy. Do not edit personal docs/notes."
   },
-  "guidance": "https://developers.openai.com/api/docs/guides/evaluation-best-practices"
+  "guidance": "https://developers.openai.com/api/docs/guides/evaluation-best-practices",
+  "generation_status": "Approved validation is complete; do not launch additional calls merely because this plan originally authorized generation."
 }

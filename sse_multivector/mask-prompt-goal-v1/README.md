@@ -1,8 +1,12 @@
 # Mask-prompt development
 
-Status: the subject-conditioned removal candidate passed development with 36/36 accepted masks across 12 notes and 24 fixed subjects. All six repeated subjects passed three trials each. Execution verification passed; separate final validation is next. This is not yet the frozen final prompt.
+Status: the subject-conditioned removal prompt is frozen with Astra low. It passed development at 36/36 accepted masks and separate final validation at 52/52. Every predesignated repeated subject passed all three trials. Inputs, raw outputs, judgments, usage and isolation checks are preserved.
 
-[Current candidate: completed development with full notes and inline masks](./subject-deletion-v1/development-results.md)
+[Frozen package](./frozen.json) · [Exact prompt](./subject-deletion-v1/mask-prompt.md)
+
+[Final results: every complete note and inline mask](./subject-deletion-v1/final/results.md) · [Final verification](./subject-deletion-v1/final/verification.json)
+
+[Development results with full notes and inline masks](./subject-deletion-v1/development-results.md)
 
 [Initial results with complete notes and inline masks](./initial/results.md)
 
@@ -18,13 +22,15 @@ For “A call for Salvadorans to make their presence known,” “My” must be 
 
 The subject-conditioned removal candidate replaces the baseline's ambiguous “preserve the same meaning” wording. The initial pair, two M05 repeats, four coverage regressions and six remaining fixed subjects all passed. That is an observed improvement on this development set, not proof of a general success rate or the failure's cause.
 
-Next: validate the unchanged candidate on the reserved final set in small reviewed batches. The subjects and acceptance thresholds stay frozen. The user answered the M05 question in chat; the existing TUI session was left untouched.
+No further prompt revisions or generation calls are required for this approved goal. ASv6.23 and the acceptance thresholds remained unchanged; production behavior was not changed. The user answered the M05 question in chat; the existing TUI session was left untouched.
 
-Keep ASv6.23 frozen. Each Astra-low call receives the complete original note and one fixed subject, using the existing mask prompt unchanged initially. No auxiliary context field is sent.
+Each call uses the frozen prompt with the complete original note and one fixed ASv6.23 subject. No auxiliary context field, sibling subjects or prior answers are sent.
 
-## Start small
+These results do not establish population accuracy, SSE quality or segmentation quality. Some returned words have multiple source positions, including matches inside URLs; all alternatives are recorded without claiming which one the model intended. An ambiguous abbreviation can support the supplied interpretation without proving unique author intent.
 
-The first batch is three notes, two subjects from each: six calls, with no automatic repeats.
+## Development started small
+
+The first batch used three notes, two subjects from each: six calls, with no automatic repeats.
 
 | Note | What the two subjects let us inspect |
 | --- | --- |
@@ -34,7 +40,7 @@ The first batch is three notes, two subjects from each: six calls, with no autom
 
 The six subjects are unchanged accepted ASv6.23 outputs. Their source notes, exact subjects and provenance are in [initial-inputs.json](./initial-inputs.json). These inputs were inspected before generating any masks. They do not establish broad coverage by themselves.
 
-Review all six results before deciding whether a focused diagnostic or another small batch would help more. An isolated acceptable imperfection does not require an endless repair loop.
+Each batch was reviewed before choosing the next. The candidate retained its earlier outputs and added only missing coverage and repeat calls.
 
 ## Approved completion checks
 
@@ -46,7 +52,7 @@ Acceptance: at least 35/36 development outputs and 50/52 final outputs accepted,
 
 This is the approved practical pilot target of at least 95% acceptance, not proof of population accuracy or an effort cap. Remaining errors stay visible; the standard cannot be weakened after results.
 
-[plan.json](./plan.json) records selection, repeat, judgment and execution rules. Twenty separate final notes and forty subject indices are reserved in [final-reservation.json](./final-reservation.json). No final masks have been generated. Twelve development notes have now been used; none is in the reserved set.
+[plan.json](./plan.json) records selection, repeat, judgment and execution rules. The twenty final notes and forty subject indices came unchanged from [final-reservation.json](./final-reservation.json), with no replacements or overlap with the twelve development notes. All 88 candidate calls succeeded on their first attempt. Candidate generation used 219,298 input tokens and 8,062 output tokens; cached/reasoning tokens are included, not additional.
 
 ## Scope
 
