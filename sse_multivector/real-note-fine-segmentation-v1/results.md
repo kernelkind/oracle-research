@@ -10,6 +10,8 @@ The user subsequently approved changing the core-distance neighbor to the neares
 
 None of the six exact user-approved omitted pairs is together; one previously rejected pair now shares a segment. My inspection of all 41 new or changed groups records 30 Valid, 8 Uncertain, and 3 Invalid, separately from user decisions. The old baseline's positive user assessment remains intact. No trial winner is declared. All previous result and review files are preserved, and ordinary HDBSCAN with the new executable reproduces the complete saved baseline algorithm result exactly.
 
+The user has now completed the changed-segment review: **37 Valid and 4 Invalid**, all confirmed. The rejected segments are S14b6e36e21, S3d2aa08f70, S68ce4fd21f, and Saadde5a7ec. The first three comments point to V766, V439, and V841 respectively; the fourth has no stated reason. The user accepted S72d277b43a despite my earlier objection to its spaghetti member. [The separate user outcome](cross-note-density-v1/README.md#your-review) preserves these differences without rewriting my prior judgments, changing the partition, or declaring a general success rate.
+
 ## User review
 
 On 2026-09-08, after using the masks-only baseline reviewer, the user said:

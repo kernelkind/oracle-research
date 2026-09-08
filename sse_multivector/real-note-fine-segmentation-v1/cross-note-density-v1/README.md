@@ -1,6 +1,6 @@
 # Cross-note density: results
 
-The complete rerun produced more multi-note segments, but it did not resolve the six exact omitted pairs you approved. It also introduced some questionable groupings. This is not yet a replacement for the baseline.
+You completed the 41-segment review: **37 Valid, 4 Invalid**, with every decision confirmed. The complete rerun produced more multi-note segments, but it did not resolve the six exact omitted pairs you approved. This review does not select it as a replacement for the baseline.
 
 All previous results and review decisions are unchanged. Checksums match for all 65 preserved files.
 
@@ -27,15 +27,34 @@ There is a useful qualification. V709, `⟦chef⟧`, now shares S49eb0ac749 with
 
 Of the five user-rejected pairs, one is now grouped: V742 and V439 in S3d2aa08f70. The other four remain apart. Separately, two of the 28 assistant-only accepted pairs are now together; those are not user approvals or evidence that their complete new segments are valid.
 
-## My inspection
+## Your review
+
+All 41 new or changed multi-note segments have confirmed decisions. None was skipped or left pending. You accepted 37 and rejected these four:
+
+| Segment | Your comment |
+|---|---|
+| S14b6e36e21 | “v766 does not belong” |
+| S3d2aa08f70 | “v439 is very different from the others” |
+| S68ce4fd21f | “v841 does not seem related. others do” |
+| Saadde5a7ec | No comment |
+
+The first three comments identify a specific unwanted member. No reason is inferred for the fourth rejection, the two-mask garden/allotment pair. No member has been removed, and accepting a segment does not authorize an algorithm or parameter change.
+
+Two decisions directly differ from my earlier judgments: you accepted S72d277b43a (bread masks plus the spaghetti preparation mask), which I marked Invalid; you rejected Saadde5a7ec, which I marked Valid. Your decisions and my original assessment remain separate. In particular, the spaghetti member is not a user-confirmed failure.
+
+The saved response and session both bind to review set `RN30ea35e75a20` and review-artifact SHA-256 `77bda6b0747cc0aec0dc4305b6f1ef6f2302ac3055173d6965a7f4736506dbea`. Response SHA-256: `cc21a5e9b5963b59e1c5035c84a8362534d02c89efbc61c5e9084b659546e9ee`. Session SHA-256: `92f2aca83650c974a7dd7fa3b8ff858aa1dba36abb718bb7a44fd5bc70e802d0`. These local user files were inspected, not modified or added to Git.
+
+## My assessment before your review
 
 I read every mask in all 41 changed segments: 30 looked valid, 8 remained uncertain, and 3 looked invalid. These are my judgments, not an accuracy score or your review decisions. No labels were generated or supplied to the reviewer.
 
-Three concrete concerns:
+I had marked these three segments Invalid:
 
 - S14b6e36e21 puts `⟦gianguja jars⟧ ⟦store⟧` among five greeting masks such as `⟦GM⟧`.
 - S68ce4fd21f puts `⟦today is a gift⟧` among Christmas and Santa masks. The metaphor does not establish a Christmas connection.
 - S72d277b43a puts `⟦Spaghetti Bolognaise⟧ ⟦Mix all ingredients thoroughly.⟧ ⟦Simmer⟧` among fifteen bread masks.
+
+Your review agreed on the first two rejections but accepted the third. The original assistant-assessment file is preserved rather than rewritten to match your answers.
 
 The change removes the opportunity for same-note neighbors alone to establish a short core distance. It does not make the remaining cross-note neighbors semantically correct, and it does not remove repeated same-note contributions from cluster stability. The full rerun demonstrates both gains and costs; it does not justify changing more settings automatically.
 
