@@ -22,7 +22,6 @@ use crate::review_state::{
     acquire_session_lock, load_json, publish_json, replace_json, save_session, value_sha256,
 };
 use crate::snapshot::{Error, Result, io_error};
-use crate::sse_mask_review::highlighted_note;
 
 const SCHEMA_VERSION: u32 = 2;
 const NOTE_SCHEMA_VERSION: u32 = 3;
@@ -131,8 +130,6 @@ pub enum FineSegmentationReviewAction {
     CancelSelection,
     PreviousPacket,
     NextPacket,
-    PreviousInstance,
-    NextInstance,
     SaveComment(String),
     Skip,
     Pause,
@@ -244,7 +241,7 @@ pub struct FineSegmentationReviewJudgment {
     pub comment: Option<String>,
 }
 
-/// Run or resume a legacy v2 packet review or a partial, complete-note v3 review.
+/// Run or resume a legacy v2 review or a masks-only, multi-note v3 review.
 pub fn run_fine_segmentation_review(
     reviewer_path: impl AsRef<Path>,
     session_path: impl AsRef<Path>,
@@ -256,6 +253,7 @@ pub fn run_fine_segmentation_review(
     let response_path = response_path.as_ref();
     require_distinct_paths(reviewer_path, session_path, response_path)?;
     let (reviewer, reviewer_artifact_sha256) = load_reviewer_artifact(reviewer_path)?;
+    let review_indices = reviewer.review_indices();
     let _lock = acquire_session_lock(session_path)?;
     let mut session =
         match crate::review_state::load_session::<FineSegmentationReviewSession>(session_path)? {
@@ -281,9 +279,20 @@ pub fn run_fine_segmentation_review(
             return invalid("response belongs to a different review set or protocol");
         }
     }
+    // Filtering changes navigation only. Keep all artifact hashes and saved decisions.
+    if !review_indices.contains(&session.current_packet_index) {
+        if let Some(&index) = review_indices
+            .iter()
+            .find(|&&index| index >= session.current_packet_index)
+            .or_else(|| review_indices.first())
+        {
+            session.move_to(index);
+        }
+    }
     persist_review(session_path, response_path, &session)?;
 
-    let mut model = FineSegmentationReviewTuiModel::new(session.screen(&reviewer)?);
+    let mut model =
+        FineSegmentationReviewTuiModel::new(session.screen(&reviewer, &review_indices)?);
     let mut drain_stale_input = true;
     loop {
         if !reviewer.is_note_review() && session.all_complete() {
@@ -292,12 +301,12 @@ pub fn run_fine_segmentation_review(
             return Ok(session.completed_outcome());
         }
 
-        model.replace_screen(session.screen(&reviewer)?);
+        model.replace_screen(session.screen(&reviewer, &review_indices)?);
         let action = ui.review(&mut model, drain_stale_input).map_err(|source| {
             io_error("run fine-segmentation review UI for", reviewer_path, source)
         })?;
         drain_stale_input = false;
-        if session.packets.is_empty() && action != FineSegmentationReviewAction::Pause {
+        if review_indices.is_empty() && action != FineSegmentationReviewAction::Pause {
             return invalid("an empty review has no decision or browsing actions");
         }
         match action {
@@ -311,21 +320,21 @@ pub fn run_fine_segmentation_review(
                         terminal_safe(&model.comment_buffer);
                 }
                 persist_review(session_path, response_path, &session)?;
-                return Ok(if session.packets.is_empty() {
-                    session.completed_outcome()
+                return Ok(if review_indices.is_empty() {
+                    FineSegmentationReviewRunOutcome::Completed {
+                        valid: 0,
+                        invalid: 0,
+                        uncertain: 0,
+                    }
                 } else {
                     FineSegmentationReviewRunOutcome::Paused
                 });
             }
             FineSegmentationReviewAction::Select(verdict) => session.select(verdict),
-            FineSegmentationReviewAction::Confirm => session.confirm()?,
+            FineSegmentationReviewAction::Confirm => session.confirm(&review_indices)?,
             FineSegmentationReviewAction::CancelSelection => session.cancel_selection(),
-            FineSegmentationReviewAction::PreviousPacket => session.move_previous(),
-            FineSegmentationReviewAction::NextPacket => session.move_next(),
-            FineSegmentationReviewAction::PreviousInstance => {
-                session.move_instance(&reviewer, false)?
-            }
-            FineSegmentationReviewAction::NextInstance => session.move_instance(&reviewer, true)?,
+            FineSegmentationReviewAction::PreviousPacket => session.move_previous(&review_indices),
+            FineSegmentationReviewAction::NextPacket => session.move_next(&review_indices),
             FineSegmentationReviewAction::SaveComment(comment) => {
                 session.require_note_review()?;
                 session.packets[session.current_packet_index].comment = terminal_safe(&comment);
@@ -333,7 +342,7 @@ pub fn run_fine_segmentation_review(
             FineSegmentationReviewAction::Skip => {
                 session.require_note_review()?;
                 *session.current_state_mut() = FineSegmentationPacketState::Skipped;
-                session.move_to_next_pending();
+                session.move_to_next_pending(&review_indices);
             }
         }
         persist_review(session_path, response_path, &session)?;
@@ -382,6 +391,27 @@ fn load_reviewer_artifact(path: &Path) -> Result<(ReviewerArtifact, String)> {
 }
 
 impl ReviewerArtifact {
+    fn review_indices(&self) -> Vec<usize> {
+        self.packets
+            .iter()
+            .enumerate()
+            .filter_map(|(index, packet)| {
+                if !self.is_note_review() {
+                    return Some(index);
+                }
+                let mut notes = packet
+                    .instances
+                    .iter()
+                    .filter_map(|instance| match instance {
+                        FineSegmentationReviewInstance::Note { note_id, .. } => Some(note_id),
+                        _ => None,
+                    });
+                let first = notes.next()?;
+                notes.any(|note| note != first).then_some(index)
+            })
+            .collect()
+    }
+
     fn is_note_review(&self) -> bool {
         self.schema_version == NOTE_SCHEMA_VERSION
     }
@@ -592,10 +622,10 @@ impl FineSegmentationReviewSession {
         &mut self.packets[self.current_packet_index].state
     }
 
-    fn completed_count(&self) -> usize {
-        self.packets
+    fn completed_count(&self, review_indices: &[usize]) -> usize {
+        review_indices
             .iter()
-            .filter(|packet| packet.state.confirmed_verdict().is_some())
+            .filter(|&&index| self.packets[index].state.confirmed_verdict().is_some())
             .count()
     }
 
@@ -626,12 +656,12 @@ impl FineSegmentationReviewSession {
         };
     }
 
-    fn confirm(&mut self) -> Result<()> {
+    fn confirm(&mut self, review_indices: &[usize]) -> Result<()> {
         let Some(verdict) = self.current_state().proposed_verdict() else {
             return invalid("only a selected verdict can be confirmed");
         };
         *self.current_state_mut() = FineSegmentationPacketState::Decided { verdict };
-        self.move_to_next_pending();
+        self.move_to_next_pending(review_indices);
         Ok(())
     }
 
@@ -654,12 +684,23 @@ impl FineSegmentationReviewSession {
         }
     }
 
-    fn move_previous(&mut self) {
-        self.move_to(self.current_packet_index.saturating_sub(1));
+    fn move_previous(&mut self, review_indices: &[usize]) {
+        if let Some(&index) = review_indices
+            .iter()
+            .rev()
+            .find(|&&index| index < self.current_packet_index)
+        {
+            self.move_to(index);
+        }
     }
 
-    fn move_next(&mut self) {
-        self.move_to((self.current_packet_index + 1).min(self.packets.len().saturating_sub(1)));
+    fn move_next(&mut self, review_indices: &[usize]) {
+        if let Some(&index) = review_indices
+            .iter()
+            .find(|&&index| index > self.current_packet_index)
+        {
+            self.move_to(index);
+        }
     }
 
     fn move_to(&mut self, index: usize) {
@@ -669,18 +710,15 @@ impl FineSegmentationReviewSession {
         }
     }
 
-    fn move_instance(&mut self, reviewer: &ReviewerArtifact, next: bool) -> Result<()> {
-        self.require_note_review()?;
-        let count = reviewer.packets[self.current_packet_index].instances.len();
-        self.current_instance_index =
-            (self.current_instance_index + if next { 1 } else { count - 1 }) % count;
-        Ok(())
-    }
-
-    fn move_to_next_pending(&mut self) {
-        let packet_count = self.packets.len();
-        for offset in 1..=packet_count {
-            let candidate = (self.current_packet_index + offset) % packet_count;
+    fn move_to_next_pending(&mut self, review_indices: &[usize]) {
+        let Some(position) = review_indices
+            .iter()
+            .position(|&index| index == self.current_packet_index)
+        else {
+            return;
+        };
+        for offset in 1..=review_indices.len() {
+            let candidate = review_indices[(position + offset) % review_indices.len()];
             if matches!(
                 self.packets[candidate].state,
                 FineSegmentationPacketState::Pending
@@ -693,8 +731,12 @@ impl FineSegmentationReviewSession {
         }
     }
 
-    fn screen(&self, reviewer: &ReviewerArtifact) -> Result<FineSegmentationReviewScreen> {
-        if self.packets.is_empty() {
+    fn screen(
+        &self,
+        reviewer: &ReviewerArtifact,
+        review_indices: &[usize],
+    ) -> Result<FineSegmentationReviewScreen> {
+        if review_indices.is_empty() {
             return Ok(FineSegmentationReviewScreen::Empty);
         }
         let packet = reviewer
@@ -703,11 +745,17 @@ impl FineSegmentationReviewSession {
             .ok_or_else(|| {
                 Error::ExperimentState("current reviewer packet is absent".to_owned())
             })?;
-        let completed = self.completed_count();
+        let completed = self.completed_count(review_indices);
+        let packet_index = review_indices
+            .iter()
+            .position(|&index| index == self.current_packet_index)
+            .ok_or_else(|| {
+                Error::ExperimentState("current reviewer packet is hidden".to_owned())
+            })?;
         Ok(FineSegmentationReviewScreen::Packet {
             schema_version: self.schema_version,
-            packet_index: self.current_packet_index,
-            packet_count: reviewer.packets.len(),
+            packet_index,
+            packet_count: review_indices.len(),
             packet: packet.packet.clone(),
             instances: packet.instances.clone(),
             state: self.current_state().clone(),
@@ -884,12 +932,6 @@ impl FineSegmentationReviewTuiModel {
                 KeyCode::Char('s' | 'S') if *schema_version == NOTE_SCHEMA_VERSION => {
                     FineSegmentationReviewAction::Skip
                 }
-                KeyCode::Tab if *schema_version == NOTE_SCHEMA_VERSION => {
-                    FineSegmentationReviewAction::NextInstance
-                }
-                KeyCode::BackTab if *schema_version == NOTE_SCHEMA_VERSION => {
-                    FineSegmentationReviewAction::PreviousInstance
-                }
                 KeyCode::Char('v' | 'V') => {
                     FineSegmentationReviewAction::Select(FineSegmentationReviewVerdict::Valid)
                 }
@@ -982,7 +1024,7 @@ impl FineSegmentationReviewTuiModel {
         let area = centered(terminal_area);
         match self.screen.clone() {
             FineSegmentationReviewScreen::Empty => {
-                frame.render_widget(Paragraph::new("No segments\n\nNo judgments are required. Noise remains in the separate experiment artifact.\n\n[Enter / Ctrl-C] Exit")
+                frame.render_widget(Paragraph::new("No segments to review\n\nOnly segments containing at least two distinct notes are shown. Stored evidence and decisions are unchanged.\n\n[Enter / Ctrl-C] Exit")
                     .wrap(Wrap { trim: false })
                     .block(Block::default().borders(Borders::ALL).title("Fine segmentation review")), area);
             }
@@ -994,8 +1036,8 @@ impl FineSegmentationReviewTuiModel {
                 instances,
                 state,
                 completed_packet_count,
-                current_instance_index,
                 comment,
+                ..
             } => self.render_packet(
                 frame,
                 area,
@@ -1006,7 +1048,6 @@ impl FineSegmentationReviewTuiModel {
                 &state,
                 completed_packet_count,
                 schema_version == NOTE_SCHEMA_VERSION,
-                current_instance_index,
                 &comment,
             ),
         }
@@ -1024,7 +1065,6 @@ impl FineSegmentationReviewTuiModel {
         state: &FineSegmentationPacketState,
         completed: usize,
         note_review: bool,
-        instance_index: usize,
         comment: &str,
     ) {
         let rows = Layout::default()
@@ -1054,33 +1094,16 @@ impl FineSegmentationReviewTuiModel {
             rows[1],
         );
         self.render_verdict_definitions(frame, rows[2]);
-        let (instance_title, instance_text) = if note_review {
-            match instances.get(instance_index) {
-                Some(FineSegmentationReviewInstance::Note {
-                    instance,
-                    note_id,
-                    text,
-                    byte_spans,
-                    ..
-                }) => (
-                    format!(
-                        "Note {} of {} · {instance} · {}",
-                        instance_index + 1,
-                        instances.len(),
-                        &note_id[..12]
-                    ),
-                    terminal_safe(&highlighted_note(text, byte_spans)),
-                ),
-                _ => ("Note".to_owned(), "Note evidence unavailable".to_owned()),
-            }
+        let instance_title = if note_review {
+            format!("Masks · {}", instances.len())
         } else {
-            ("Instances".to_owned(), render_instances(instances))
+            "Instances".to_owned()
         };
         render_scrollable_panel(
             frame,
             rows[3],
             &instance_title,
-            &instance_text,
+            &render_instances(instances),
             &mut self.instance_scroll,
             &mut self.half_page_lines,
             false,
@@ -1199,8 +1222,6 @@ impl FineSegmentationReviewTuiModel {
         ];
         if note_review {
             controls.push(Line::from(vec![
-                Span::styled("[Tab/Shift-Tab]", accent_style()),
-                Span::styled(" Notes  ", secondary_style()),
                 Span::styled("[C]", accent_style()),
                 Span::styled(" Comment  ", secondary_style()),
                 Span::styled("[S]", accent_style()),
@@ -1279,6 +1300,20 @@ fn render_instances(instances: &[FineSegmentationReviewInstance]) -> String {
         .iter()
         .enumerate()
         .map(|(index, instance)| {
+            if let FineSegmentationReviewInstance::Note {
+                instance,
+                text,
+                byte_spans,
+                ..
+            } = instance
+            {
+                let fragments = byte_spans
+                    .iter()
+                    .map(|&(start, end)| format!("⟦{}⟧", terminal_safe(&text[start..end])))
+                    .collect::<Vec<_>>()
+                    .join(" ");
+                return format!("{instance}  {fragments}");
+            }
             let FineSegmentationReviewInstance::Fragments { fragments, .. } = instance else {
                 return String::new();
             };

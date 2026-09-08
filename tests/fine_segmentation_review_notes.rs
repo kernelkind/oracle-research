@@ -112,6 +112,75 @@ struct EventUi {
     frames: Vec<String>,
 }
 
+#[test]
+fn segment_shows_all_four_masks_together_without_text_outside_the_masks() {
+    let root = tempfile::tempdir_in("/dev/shm").unwrap();
+    let input = root.path().join("review.json");
+    let mut artifact = reviewer();
+    let instances = artifact["packets"][0]["instances"].as_array_mut().unwrap();
+    for (index, text, spans) in [
+        (
+            3,
+            "Before my gap Blueberry cheesecake after",
+            json!([[7, 9], [14, 34]]),
+        ),
+        (4, "Before fourth mask after", json!([[7, 18]])),
+    ] {
+        instances.push(json!({
+            "instance": format!("V{index:03}"),
+            "note_id": format!("{index:064x}"),
+            "vector_id": format!("{:064x}", index + 10),
+            "text": text,
+            "byte_spans": spans
+        }));
+    }
+    let original = serde_json::to_vec(&artifact).unwrap();
+    fs::write(&input, &original).unwrap();
+    let mut ui = PausingUi {
+        rendered: String::new(),
+    };
+    run_fine_segmentation_review(
+        &input,
+        root.path().join("session.json"),
+        root.path().join("response.json"),
+        &mut ui,
+    )
+    .unwrap();
+    for expected in [
+        "Masks · 4",
+        "V001",
+        "⟦café⟧",
+        "V002",
+        "⟦Other⟧",
+        "V003",
+        "⟦my⟧ ⟦Blueberry cheesecake⟧",
+        "V004",
+        "⟦fourth mask⟧",
+    ] {
+        assert!(
+            ui.rendered.contains(expected),
+            "missing {expected}:\n{}",
+            ui.rendered
+        );
+    }
+    for outside in [
+        "first",
+        "complete original note",
+        "Before",
+        " gap ",
+        "⟧ after",
+        "Note 1 of 4",
+        "[Tab/Shift-Tab]",
+    ] {
+        assert!(
+            !ui.rendered.contains(outside),
+            "unexpected {outside}:\n{}",
+            ui.rendered
+        );
+    }
+    assert_eq!(fs::read(&input).unwrap(), original);
+}
+
 impl EventUi {
     fn new(events: impl IntoIterator<Item = Event>) -> Self {
         Self {
