@@ -48,7 +48,8 @@ The system has distinct transformations:
 ```text
 public note
   -> subject-bearing source masks
-  -> one SSE vector per mask
+  -> identical masks within that note deduplicated
+  -> one SSE vector per remaining mask
   -> fine-subject memberships
   -> broad-to-narrow subject hierarchy
   -> note results for an explicitly selected subject
@@ -64,6 +65,12 @@ result to either stage by itself.
 
 One note may express several subjects. It therefore may produce several source
 masks and several SSE vectors instead of one whole-note vector.
+
+For future runs, encode identical masks from the same original note only once,
+retaining links to every subject record that produced that mask. Identity here
+means the same source note and the same set of mask ranges, not similar wording
+or overlapping meaning. This pre-encoding deduplication is approved but not yet
+implemented; frozen experiment inputs, results, and reviews remain unchanged.
 
 Every vector instance must retain:
 

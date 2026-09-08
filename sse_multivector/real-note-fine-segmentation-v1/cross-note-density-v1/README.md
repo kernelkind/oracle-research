@@ -51,6 +51,12 @@ R=sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1
 
 Use the same command to resume. To inspect all 64 trial segments, the complete review artifact is `../hdbscan-cross-note/review/review.json`; use separate session and response paths.
 
+## Duplicate masks
+
+During review, V814 and V815 were confirmed to contain the same mask ranges from the same original note. Two different subject records produced those identical masks. Their vectors are identical too: HDBSCAN already counted them once, but restoring both original IDs caused both to appear in the reviewer. Six of the 41 displayed segments contain this kind of exact duplicate. Removing those repeated rows would not change any segment's distinct-note count.
+
+The user approved deduplicating such inputs before vector generation in future runs. [The pending encoding change](../README.md#current-checkpoint) preserves subject associations and does not merge merely overlapping masks. No current input, vector, partition, review artifact, or user decision was changed by this decision.
+
 ## Records
 
 - `protocol.md`: the change and comparison declared before running.
