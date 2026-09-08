@@ -482,6 +482,34 @@ class ReviewedInputTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "hash"):
             package_review(vectors, candidate, self.root / "bad-map")
 
+    def test_package_rejects_a_missing_declared_worker_receipt(self):
+        vectors = self.packaging_vectors()
+        candidate, _, _ = self.candidate_response(vectors)
+        (vectors / "worker-receipt.json").unlink()
+        output = self.root / "review-with-missing-receipt"
+        with self.assertRaisesRegex(ValueError, "worker-receipt.json"):
+            package_review(vectors, candidate, output)
+        self.assertFalse(output.exists())
+
+    def test_package_rejects_a_changed_declared_encoder_descriptor(self):
+        vectors = self.packaging_vectors()
+        candidate, _, _ = self.candidate_response(vectors)
+        descriptor = vectors / "encoder.json"
+        descriptor.write_bytes(descriptor.read_bytes() + b" ")
+        output = self.root / "review-with-changed-encoder"
+        with self.assertRaisesRegex(ValueError, "encoder.json"):
+            package_review(vectors, candidate, output)
+        self.assertFalse(output.exists())
+
+    def test_package_reports_the_full_candidate_result_replay_requirement(self):
+        vectors = self.packaging_vectors()
+        candidate, _, _ = self.candidate_response(vectors)
+        metadata = package_review(vectors, candidate, self.root / "review")
+        verification = metadata.get("candidate_result_verification", {})
+        self.assertIs(verification.get("result_sha256_checked"), False)
+        self.assertIn("pinned", verification.get("required_external_check", ""))
+        self.assertIn("full parsed response", verification["required_external_check"])
+
 
 if __name__ == "__main__":
     unittest.main()

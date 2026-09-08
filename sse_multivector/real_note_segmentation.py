@@ -443,12 +443,22 @@ def _review_evidence(vector_artifact: Path) -> tuple[bytes, dict, dict, list]:
         or manifest.get("raw_decode_and_normalization_contract") != NORMALIZATION
     ):
         raise ValueError("unsupported vector artifact schema or normalization")
+    declared_files = _expect_object(manifest.get("files"), "vector manifest files")
+    required_files = {"vector-map.json", "reviewed-input.json", "normalized-vectors.f64le"}
+    if not required_files <= declared_files.keys():
+        raise ValueError("vector manifest omits required evidence files")
     files = {}
-    for name in ("vector-map.json", "reviewed-input.json", "normalized-vectors.f64le"):
-        raw = (vector_artifact / name).read_bytes()
-        if manifest.get("files", {}).get(name) != _identity(raw):
+    for name, identity in declared_files.items():
+        if not name or Path(name).name != name or name in (".", ".."):
+            raise ValueError(f"vector manifest has an invalid artifact filename: {name}")
+        try:
+            raw = (vector_artifact / name).read_bytes()
+        except OSError as error:
+            raise ValueError(f"cannot read declared vector artifact file: {name}") from error
+        if identity != _identity(raw):
             raise ValueError(f"vector artifact file hash differs from manifest: {name}")
-        files[name] = raw
+        if name in required_files:
+            files[name] = raw
     reviewed = json.loads(files["reviewed-input.json"])
     _, expected_map = _compile_inputs(reviewed, _sha(files["reviewed-input.json"]))
     mapping = _expect_object(json.loads(files["vector-map.json"]), "vector map")
@@ -547,6 +557,11 @@ def package_review(
     ) or json.loads(configuration) != manifest.get("parameters"):
         raise ValueError("candidate configuration hash or parameters are inconsistent")
     result = _expect_object(artifact.get("result"), "candidate result")
+    # result_sha256 covers Rust typed-struct serialization. The CLI emits the
+    # result through serde_json::Value (sorted object keys), and Python also
+    # formats some floats differently. Do not pretend a Python JSON hash checks
+    # that digest: the experiment must replay with its pinned candidate binary
+    # and compare the complete parsed response before packaging.
     fine = _expect_object(result.get("fine_output"), "candidate fine output")
     canonical_fine = _expect_string(
         artifact.get("canonical_fine_output_json"), "canonical fine output"
@@ -649,6 +664,13 @@ def package_review(
         "configuration_sha256": manifest["configuration_sha256"],
         "parameters": manifest["parameters"],
         "candidate_result_sha256": _sha(candidate_raw),
+        "candidate_result_verification": {
+            "result_sha256_checked": False,
+            "required_external_check": (
+                "Freshly replay the saved request with the pinned unchanged candidate "
+                "binary and compare the full parsed response before packaging."
+            ),
+        },
         **expected_hashes,
         "vector_count": len(evidence),
         "segment_count": len(packets),
