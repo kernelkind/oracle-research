@@ -1,8 +1,20 @@
 # 100-note fine-segmentation results
 
-The frozen inputs produce recognizable groups across real notes, but the three HDBSCAN settings make different mistakes. There is no clear overall winner. The review handoff preserves all three results without asking you to judge identical groups repeatedly.
+The user reviewed the masks-only baseline and reported that the groupings all looked valid. This supports the pipeline's ability to form recognizable groups across real notes in this collection. The three HDBSCAN settings produce different groupings and leave different vectors ungrouped; this review does not select an overall winner.
 
 [Open the review instructions](review-handoff/README.md). [See the full notes and inline masks behind three observations](evidence.md).
+
+## User review
+
+On 2026-09-08, after using the masks-only baseline reviewer, the user said:
+
+> done. these all look like valid groupings to me
+
+The review displayed 43 segments, each containing masks from at least two distinct notes. It excluded the 209 one-note segments and did not show generated labels or assistant judgments. This is a positive assessment of the displayed baseline groupings, not a review of the alternative configurations or every possible omitted grouping.
+
+The tool saved 37 confirmed Valid decisions, no Invalid or Uncertain decisions, one Valid selection without confirmation, and five Pending segments. The statement above is recorded separately; no missing clicks were filled in and no saved decisions were changed. The assistant's earlier doubts about individual baseline groups should not be reported as user-confirmed failures.
+
+What this supports: reviewed source masks, SSE vectors, and baseline HDBSCAN can together produce coherent cross-note fine segments in this concentrated 100-note collection. It does not establish that all useful groups were found, that automatic extraction needs no correction, or that the result generalizes to the full corpus.
 
 ## What was held fixed
 

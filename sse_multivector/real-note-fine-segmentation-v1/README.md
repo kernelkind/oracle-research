@@ -2,11 +2,13 @@
 
 Goal: `/home/dev/.codex/memories/oracle-mvp-100-note-fine-segmentation-goal.md`.
 
-Started 2026-09-08 UTC from commit `18637cbed7ba45716bc81afd8d4a195e99844b51` on main. Existing unrelated working-tree changes are preserved. Tracking: CREC-118. The 100-note experiment is complete and ready for user review; the larger 500–1,000-note roadmap is not complete.
+Started 2026-09-08 UTC from commit `18637cbed7ba45716bc81afd8d4a195e99844b51` on main. Existing unrelated working-tree changes are preserved. Tracking: CREC-118. The 100-note experiment is complete, and the user has positively assessed the displayed baseline groupings; the larger 500–1,000-note roadmap is not complete.
 
 [Results](results.md) · [Full-note evidence](evidence.md) · [Run the unnamed review tool](review-handoff/README.md)
 
 ## Current checkpoint
+
+User review, 2026-09-08: “done. these all look like valid groupings to me”. The masks-only baseline displayed 43 multi-note segments. The saved tool state contains 37 confirmed Valid decisions, one unconfirmed Valid selection, and five Pending segments. The chat assessment is preserved separately without filling in missing clicks. See [the review result and its limits](results.md#user-review). No alternative configuration or general algorithm qualification was approved by this statement.
 
 Saved-example integration passed: see [the gate](smoke-test/integration-gate.json), [technical checks](smoke-test/technical-smoke-check.json), and [interactive checks](smoke-test/interactive-check.md). Five saved notes and ten reviewed masks passed through the unchanged SSE worker (768 dimensions), baseline HDBSCAN, and the actual unnamed full-note review tool. The four smoke segments are technical outputs, not evidence of semantic success.
 
@@ -44,7 +46,7 @@ Reviewed initial inputs remain in `masks-001-010-reviewed/reviewed-input.json`; 
 - Remaining 90 subjects: 90 successful calls; all 869 generated subjects reviewed. Ten wording corrections, one unresolved interpretation, no rejected subjects. Original note IDs, text, and authors in the consolidated artifact exactly match the frozen 100-note collection.
 - Remaining masks: all 868 calls completed in 73 sequential batches, at most 12 workers at once. Every call succeeded exactly once with a distinct isolated thread; no parse errors, retries or resource stops. All masks were explicitly reviewed; sixteen were corrected separately from raw output. N028-S002 remains excluded with its reason in input accounting.
 - Experiment SSE artifact: complete and frozen after source/range/token, finite-vector, dimension and normalization checks. All three HDBSCAN runs passed their complete replay checks before review admission.
-- Assistant assessment and final user review handoff: complete. Interpretations remain provisional, and no favorable outcome or user-completed review is claimed.
+- Assistant assessment and user review handoff: complete. The user subsequently reported that the displayed baseline groupings all looked valid; saved confirmations and the broader chat assessment remain distinguished in `results.md`.
 
 ## Resources
 
