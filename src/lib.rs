@@ -35,6 +35,8 @@ pub mod fine_segmentation_review;
 pub mod fp32_oracle;
 pub mod gte;
 pub mod gte_budget;
+pub mod hdbscan_hierarchy;
+pub mod hdbscan_hierarchy_tui;
 pub mod io_pressure;
 pub mod local_personalizer;
 pub mod manual_workflow;

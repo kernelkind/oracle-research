@@ -103,6 +103,10 @@ path = "src/bin/fine_segmentation_candidate.rs"
 name = "fine-segmentation-review"
 path = "src/bin/fine_segmentation_review.rs"
 
+[[bin]]
+name = "hdbscan-hierarchy"
+path = "src/bin/hdbscan_hierarchy.rs"
+
 [dependencies]
 bech32 = "=0.11.1"
 crossterm = "=0.29.0"

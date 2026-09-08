@@ -80,6 +80,27 @@ R=sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1
 
 Use the same command to resume. To inspect all 64 trial segments, the complete review artifact is `../hdbscan-cross-note/review/review.json`; use separate session and response paths.
 
+## Explore the saved HDBv2 hierarchy
+
+This read-only explorer shows the complete saved condensed tree, not only the 64 selected segments. It preserves all 130 groups and their nested memberships, including masks that belong to a parent outside its child groups. No titles, filtering, new segmentation, or review decisions are added. Inspecting this structure does not select it as the final navigation hierarchy.
+
+```sh
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-hdbscan-hierarchy.sh
+```
+
+It starts at group 1043, with its immediate children collapsed. Use ↑/↓ to select and → to expand a child. **U** shows the parent while keeping expanded descendants nested. **Enter** on a mask opens its full original note with inline brackets; **Esc** returns. **PgUp/PgDn** scroll, **F** focuses a selected group, **?** opens help, and **Q** quits. Optional argument `916` starts at the root instead.
+
+Note counts include descendants and count each source note once per group. Siblings may contain vectors from the same note, so their note counts are not additive. Identical masks from one note sharing a vector appear once with all their original IDs; merely overlapping masks remain separate.
+
+The script runs the existing binary without rebuilding. After a fresh checkout, build it once in the development shell with `cargo build --bin hdbscan-hierarchy`. To check the saved inputs without opening a terminal UI:
+
+```sh
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+D=sse_multivector/real-note-fine-segmentation-v1
+./target/debug/hdbscan-hierarchy "$D/hdbscan-cross-note/response.json" \
+  "$D/vectors/vector-map.json" "$D/reviewed-input.json" --check
+```
+
 ## Duplicate masks
 
 During review, V814 and V815 were confirmed to contain the same mask ranges from the same original note. Two different subject records produced those identical masks. Their vectors are identical too: HDBSCAN already counted them once, but restoring both original IDs caused both to appear in the reviewer. Six of the 41 displayed segments contain this kind of exact duplicate. Removing those repeated rows would not change any segment's distinct-note count.
