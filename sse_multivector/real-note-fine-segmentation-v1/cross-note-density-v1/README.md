@@ -103,6 +103,41 @@ D=sse_multivector/real-note-fine-segmentation-v1
   "$D/vectors/vector-map.json" "$D/reviewed-input.json" --check
 ```
 
+## Manual selection of hierarchy levels
+
+The approved follow-up asks whether choosing which **existing groups** to show can produce useful navigation. It does not authorize new groups, moved members, generated titles, or adoption of HDBSCAN. The raw explorer and its inputs remain unchanged.
+
+I inspected all 130 groups and their masks. The separate assistant proposal is [hierarchy-selection-v1.json](hierarchy-selection-v1.json). It records a decision for every group, the retained ancestor relationships, exact point inventories, source checksums, and unresolved concerns. These are not user approvals.
+
+| | Raw tree | This proposal |
+|---|---:|---:|
+| Exposed groups, including root | 130 | 55 |
+| Longest path, in edges | 42 | 4 |
+| Choices immediately below root | 2 | 34 |
+
+Every other retained parent has at most nine children. No retained parent has only one child, no child returns exactly its parent's note set, and no siblings return identical note sets. These structural checks do **not** establish that the choices are semantically good.
+
+One useful local selection is:
+
+```text
+990
+└─ 1030
+   ├─ 1038
+   └─ 1043
+      ├─ 1044
+      └─ 1045
+```
+
+This excerpt omits 990's other children, which remain in the proposal. Group 1044 contains the brisket/smoker masks; 1045 contains the crockpot stew/roast masks. Group 1038 mostly concerns food quality and intake. Skipping intermediate groups shortens the route while preserving these distinctions. V843's compound crockpot/chicks/homesteading mask remains directly in 1043; it was not removed to make the example cleaner.
+
+The whole-tree result is less satisfactory. Of 916 unique vectors, **600 have no retained group below the root**. They remain in the root inventory, not deleted. The other 316 vectors represent 81 notes. Nineteen notes have no retained non-root destination; thirty have no retained terminal-group destination. Parent-only masks elsewhere also remain, so this is not yet a solution where all notes are reached only at leaves.
+
+Skipping levels exposes many small groups without supplying better shared parents. For example, group 958's tea masks and group 972's wine masks first meet at existing group 955, which contains 495 vectors from 92 notes—not just beverages. We cannot create a smaller common parent for them merely by skipping levels.
+
+The three user-rejected groups remain unchanged internally but are not proposed as choices. The accepted allotment group and accepted bread/spaghetti group retain their prior decisions. New assistant concerns remain explicitly separate, including standalone sleep and the dog-emoji mask within 1003.
+
+**Conclusion:** selecting levels reveals useful local structure, but this proposal does not yet provide a good complete discovery hierarchy. It is one inspected selection, not proof that every possible selection fails. There was no rerun, retuning, label generation, new UI mode, or membership change. The JSON is an audit artifact; the existing explorer still shows the raw tree.
+
 ## Duplicate masks
 
 During review, V814 and V815 were confirmed to contain the same mask ranges from the same original note. Two different subject records produced those identical masks. Their vectors are identical too: HDBSCAN already counted them once, but restoring both original IDs caused both to appear in the reviewer. Six of the 41 displayed segments contain this kind of exact duplicate. Removing those repeated rows would not change any segment's distinct-note count.
