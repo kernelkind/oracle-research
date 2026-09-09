@@ -10,9 +10,10 @@
 //! <https://github.com/scikit-learn-contrib/hdbscan>.
 //!
 //! Inputs are limited to [`CosineMatrix`], numeric configuration, and optional
-//! caller-supplied core distances. Cosines are converted to angular distance
-//! (`acos(cosine)`), which is a metric for unit vectors. No note text, labels,
-//! author information, or semantic rules enter this numeric implementation.
+//! caller-supplied core distances and excluded ordinal pairs. Cosines become
+//! angular distance (`acos(cosine)`), which is a metric for unit vectors. No
+//! note text, labels, author information, or semantic rules enter this numeric
+//! implementation.
 //!
 //! Following Definition 3.1 of Campello et al. (2015),
 //! [`hdbscan`] uses [`HdbscanConfig::min_samples`] counting the point itself.
@@ -172,7 +173,7 @@ pub fn hdbscan(cosines: &CosineMatrix, config: HdbscanConfig) -> Result<HdbscanR
     let vector_count = cosines.count();
     let angular_distances = angular_distances(cosines)?;
     let core_distances = core_distances(&angular_distances, vector_count, config.min_samples);
-    hdbscan_from_distances(&angular_distances, core_distances, config)
+    hdbscan_from_distances(&angular_distances, core_distances, config, &[])
 }
 
 /// Runs the same exact dense HDBSCAN* calculation with caller-supplied cores.
@@ -191,6 +192,23 @@ pub fn hdbscan_with_core_distances(
     config: HdbscanConfig,
     core_distances: &[f64],
 ) -> Result<HdbscanResult> {
+    hdbscan_with_core_distances_and_excluded_edges(cosines, config, core_distances, &[])
+}
+
+/// Runs the supplied-core calculation after excluding numeric ordinal pairs
+/// from the graph used to construct a new MST. Both pair orientations exclude
+/// the same undirected edge. Self-pairs and out-of-bounds ordinals are rejected.
+///
+/// Angular and mutual-reachability distances stay finite and unchanged, even
+/// for excluded pairs. The complete MST, linkage, condensation, selection, and
+/// scores are then rebuilt through the ordinary production implementation.
+/// A disconnected permitted graph is rejected instead of returning a forest.
+pub fn hdbscan_with_core_distances_and_excluded_edges(
+    cosines: &CosineMatrix,
+    config: HdbscanConfig,
+    core_distances: &[f64],
+    excluded_edges: &[(usize, usize)],
+) -> Result<HdbscanResult> {
     validate(cosines.count(), config)?;
     if core_distances.len() != cosines.count() {
         return Err(invalid(format!(
@@ -208,18 +226,25 @@ pub fn hdbscan_with_core_distances(
     }
 
     let angular_distances = angular_distances(cosines)?;
-    hdbscan_from_distances(&angular_distances, core_distances.to_vec(), config)
+    hdbscan_from_distances(
+        &angular_distances,
+        core_distances.to_vec(),
+        config,
+        excluded_edges,
+    )
 }
 
 fn hdbscan_from_distances(
     angular_distances: &[f64],
     core_distances: Vec<f64>,
     config: HdbscanConfig,
+    excluded_edges: &[(usize, usize)],
 ) -> Result<HdbscanResult> {
     let vector_count = core_distances.len();
     let mutual_reachability_distances =
         mutual_reachability_distances(angular_distances, &core_distances, vector_count);
-    let minimum_spanning_tree = exact_prim_mst(&mutual_reachability_distances, vector_count)?;
+    let minimum_spanning_tree =
+        exact_prim_mst(&mutual_reachability_distances, vector_count, excluded_edges)?;
     let single_linkage_tree = single_linkage_tree(&minimum_spanning_tree, vector_count)?;
     let condensed_tree =
         condense_tree(&single_linkage_tree, vector_count, config.min_cluster_size)?;
@@ -345,7 +370,27 @@ fn mutual_reachability_distances(
     mutual
 }
 
-fn exact_prim_mst(distances: &[f64], count: usize) -> Result<Vec<MinimumSpanningTreeEdge>> {
+fn exact_prim_mst(
+    distances: &[f64],
+    count: usize,
+    excluded_edges: &[(usize, usize)],
+) -> Result<Vec<MinimumSpanningTreeEdge>> {
+    // Dense membership keeps Prim O(n^2), without allocating another matrix
+    // for the original complete-graph calculation.
+    let mut excluded = if excluded_edges.is_empty() {
+        Vec::new()
+    } else {
+        vec![false; count * count]
+    };
+    for &(left, right) in excluded_edges {
+        if left >= count || right >= count || left == right {
+            return Err(invalid(
+                "excluded edges must contain distinct in-bounds input ordinals",
+            ));
+        }
+        excluded[left * count + right] = true;
+        excluded[right * count + left] = true;
+    }
     let mut in_tree = vec![false; count];
     let mut best_distance = vec![f64::INFINITY; count];
     let mut best_source = vec![usize::MAX; count];
@@ -356,7 +401,12 @@ fn exact_prim_mst(distances: &[f64], count: usize) -> Result<Vec<MinimumSpanning
         in_tree[current] = true;
 
         for target in 0..count {
-            if in_tree[target] {
+            if in_tree[target]
+                || excluded
+                    .get(current * count + target)
+                    .copied()
+                    .unwrap_or(false)
+            {
                 continue;
             }
             let candidate = distances[current * count + target];

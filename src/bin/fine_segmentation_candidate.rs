@@ -9,11 +9,12 @@ use std::process::ExitCode;
 use oracle_mvp::fine_region_candidate::{
     FineRegionCandidateInput, HDBSCAN_CONTROLLED_SUITE_CONFIG_V1,
     HDBSCAN_CONTROLLED_SUITE_CONFIG_VERSION, HDBSCAN_CROSS_NOTE_CONTROLLED_SUITE_CONFIG_VERSION,
-    SNN_CONTROLLED_SUITE_CONFIG_V1, SNN_CONTROLLED_SUITE_CONFIG_VERSION,
+    HDBSCAN_CROSS_NOTE_EDGES_CONTROLLED_SUITE_CONFIG_VERSION, SNN_CONTROLLED_SUITE_CONFIG_V1,
+    SNN_CONTROLLED_SUITE_CONFIG_VERSION,
 };
 use oracle_mvp::fine_region_candidate_artifact::{
     build_hdbscan_candidate_artifact, build_hdbscan_cross_note_candidate_artifact,
-    build_snn_candidate_artifact,
+    build_hdbscan_cross_note_edges_candidate_artifact, build_snn_candidate_artifact,
 };
 use oracle_mvp::fine_region_hdbscan::HdbscanConfig;
 use serde::{Deserialize, Serialize};
@@ -108,15 +109,23 @@ fn run() -> Result<Response> {
     }
 
     if request.hdbscan_configuration.is_some()
-        && !matches!(request.candidate.as_str(), "hdbscan" | "hdbscan_cross_note")
+        && !matches!(
+            request.candidate.as_str(),
+            "hdbscan" | "hdbscan_cross_note" | "hdbscan_cross_note_edges"
+        )
     {
         return Err(invalid(
-            "hdbscan_configuration requires candidate `hdbscan` or `hdbscan_cross_note`",
+            "hdbscan_configuration requires candidate `hdbscan`, `hdbscan_cross_note`, or `hdbscan_cross_note_edges`",
         ));
     }
-    if request.source_note_ids.is_some() && request.candidate != "hdbscan_cross_note" {
+    if request.source_note_ids.is_some()
+        && !matches!(
+            request.candidate.as_str(),
+            "hdbscan_cross_note" | "hdbscan_cross_note_edges"
+        )
+    {
         return Err(invalid(
-            "source_note_ids requires candidate `hdbscan_cross_note`",
+            "source_note_ids requires candidate `hdbscan_cross_note` or `hdbscan_cross_note_edges`",
         ));
     }
 
@@ -156,6 +165,25 @@ fn run() -> Result<Response> {
                 &request.inputs,
                 request.source_note_ids.as_ref().ok_or_else(|| {
                     invalid("source_note_ids is required for candidate `hdbscan_cross_note`")
+                })?,
+                &request.source_vector_manifest_sha256,
+                &request.normalized_vector_sha256,
+                request
+                    .hdbscan_configuration
+                    .as_ref()
+                    .unwrap_or(&HDBSCAN_CONTROLLED_SUITE_CONFIG_V1),
+            )?)?,
+        ),
+        "hdbscan_cross_note_edges" => (
+            if request.hdbscan_configuration.is_some() {
+                "hdbscan-cross-note-edges-explicit-config-v1"
+            } else {
+                HDBSCAN_CROSS_NOTE_EDGES_CONTROLLED_SUITE_CONFIG_VERSION
+            },
+            serde_json::to_value(build_hdbscan_cross_note_edges_candidate_artifact(
+                &request.inputs,
+                request.source_note_ids.as_ref().ok_or_else(|| {
+                    invalid("source_note_ids is required for candidate `hdbscan_cross_note_edges`")
                 })?,
                 &request.source_vector_manifest_sha256,
                 &request.normalized_vector_sha256,

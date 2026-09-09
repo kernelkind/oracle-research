@@ -13,7 +13,7 @@ use thiserror::Error;
 
 use crate::fine_region_hdbscan::{
     ClusterSelectionMethod, HdbscanConfig, HdbscanError, HdbscanResult, hdbscan,
-    hdbscan_with_core_distances,
+    hdbscan_with_core_distances, hdbscan_with_core_distances_and_excluded_edges,
 };
 use crate::fine_region_partition::{CosineMatrix, FineRegionPartitionError};
 use crate::fine_region_snn::{SnnConfig, SnnError, SnnSegmentation, snn_segmentation};
@@ -25,6 +25,9 @@ pub const HDBSCAN_CROSS_NOTE_CORE_DISTANCE_RULE_VERSION: &str =
     "nearest-different-source-note-angular-v1";
 pub const HDBSCAN_CROSS_NOTE_CONTROLLED_SUITE_CONFIG_VERSION: &str =
     "hdbscan-cross-note-controlled-suite-config-v1";
+pub const HDBSCAN_CROSS_NOTE_EDGE_RULE_VERSION: &str = "different-source-note-witness-angular-v1";
+pub const HDBSCAN_CROSS_NOTE_EDGES_CONTROLLED_SUITE_CONFIG_VERSION: &str =
+    "hdbscan-cross-note-edges-controlled-suite-config-v1";
 
 pub const SNN_CONTROLLED_SUITE_CONFIG_VERSION: &str = "snn-controlled-suite-config-v1";
 pub const SNN_CONTROLLED_SUITE_CONFIG_JSON_V1: &str =
@@ -138,6 +141,28 @@ pub fn run_hdbscan_cross_note_candidate(
     source_note_ids: &BTreeMap<String, String>,
     config: HdbscanConfig,
 ) -> Result<HdbscanCandidateRun> {
+    run_cross_note_candidate(inputs, source_note_ids, config, false)
+}
+
+/// Preserves cross-note core distances while rebuilding the entire HDBSCAN*
+/// result using only graph edges with a different-source-note witness.
+/// Two canonical groups are excluded only when both contain aliases solely
+/// from the same source note. Multi-source exact aliases therefore retain
+/// every edge and remain one ordinal for cluster size and stability.
+pub fn run_hdbscan_cross_note_edges_candidate(
+    inputs: &[FineRegionCandidateInput],
+    source_note_ids: &BTreeMap<String, String>,
+    config: HdbscanConfig,
+) -> Result<HdbscanCandidateRun> {
+    run_cross_note_candidate(inputs, source_note_ids, config, true)
+}
+
+fn run_cross_note_candidate(
+    inputs: &[FineRegionCandidateInput],
+    source_note_ids: &BTreeMap<String, String>,
+    config: HdbscanConfig,
+    exclude_same_note_edges: bool,
+) -> Result<HdbscanCandidateRun> {
     if config.min_samples != 2 {
         return Err(invalid("cross-note core distances require min_samples=2"));
     }
@@ -192,8 +217,27 @@ pub fn run_hdbscan_cross_note_candidate(
         }
         core_distances.push(nearest);
     }
-    let algorithm_result =
-        hdbscan_with_core_distances(&canonical.cosines, config, &core_distances)?;
+    let algorithm_result = if exclude_same_note_edges {
+        let mut excluded_edges = Vec::new();
+        for (left, sources) in alias_source_notes.iter().enumerate() {
+            if sources.len() != 1 {
+                continue;
+            }
+            for (right, other_sources) in alias_source_notes.iter().enumerate().skip(left + 1) {
+                if other_sources == sources {
+                    excluded_edges.push((left, right));
+                }
+            }
+        }
+        hdbscan_with_core_distances_and_excluded_edges(
+            &canonical.cosines,
+            config,
+            &core_distances,
+            &excluded_edges,
+        )?
+    } else {
+        hdbscan_with_core_distances(&canonical.cosines, config, &core_distances)?
+    };
     assemble_hdbscan_run(canonical, algorithm_result)
 }
 
