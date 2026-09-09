@@ -24,7 +24,7 @@ The question was whether missing related examples contributed to the three bad H
 
 Only the additional notes and their derived vectors differ. The old vector bytes, IDs, subjects, masks, and user decisions were not changed. ASv6.23, MPv3.5, Astra low, Sentence-T5-base SSE, normalization, and HDBv2 settings stayed fixed. Each complete partition was rebuilt and independently replayed with the pinned candidate binary; both full parsed responses matched.
 
-HDBv2 still uses the closest vector from a different note for core distance, angular distance, `min_samples=2`, `min_cluster_size=2`, and excess-of-mass selection. No settings were tuned after seeing these results. Exact-mask deduplication before encoding remains separate, unimplemented work; this experiment retained the old encoding path and candidate alias handling.
+HDBv2 still uses the closest vector from a different note for core distance, angular distance, `min_samples=2`, `min_cluster_size=2`, and excess-of-mass selection. No settings were tuned after seeing these results. This experiment retained the old encoding path and candidate alias handling. The adapter now supports opt-in exact-mask deduplication for new music notes; these saved coverage inputs and results remain unchanged.
 
 All 48 original texts were read before generation. All 409 generated subjects and masks were reviewed before encoding: three subject corrections and nine mask corrections were saved separately from the raw outputs. All 457 generation calls used distinct fresh threads; no retries or guard stops occurred. Nothing was regenerated after examining the segments.
 
