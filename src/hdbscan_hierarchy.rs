@@ -3,10 +3,11 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::error::Error;
 use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufReader, Read};
 use std::path::Path;
 
 use serde::{Deserialize, de::DeserializeOwned};
+use sha2::{Digest, Sha256};
 
 #[derive(Clone, Debug)]
 pub struct Hierarchy {
@@ -39,6 +40,109 @@ pub struct MaskInstance {
 }
 
 impl Hierarchy {
+    /// Load a saved display selection after verifying its sources and membership.
+    /// The raw tree remains untouched; only existing ancestor edges are shortened.
+    pub fn load_selection(
+        response_path: &Path,
+        vector_map_path: &Path,
+        notes_path: &Path,
+        selection_path: &Path,
+    ) -> Result<Self, Box<dyn Error>> {
+        let selection: SavedSelection = read_json(selection_path)?;
+        for (name, path, source) in [
+            ("response", response_path, &selection.sources.response),
+            ("vectors", vector_map_path, &selection.sources.vectors),
+            ("notes", notes_path, &selection.sources.notes),
+        ] {
+            if source.sha256 != file_sha256(path)? {
+                return Err(format!("selection source checksum mismatch: {name}").into());
+            }
+        }
+        let mut hierarchy = Self::load(response_path, vector_map_path, notes_path)?;
+        let mut records = BTreeMap::new();
+        for record in selection.retained_groups {
+            let id = record.id;
+            if !hierarchy.groups.contains_key(&id) {
+                return Err(format!("selection contains unknown group {id}").into());
+            }
+            if records.insert(id, record).is_some() {
+                return Err(format!("selection contains duplicate group {id}").into());
+            }
+        }
+        if !records.contains_key(&hierarchy.root) {
+            return Err("selection must retain the root".into());
+        }
+        let nearest_retained = |mut id: Option<usize>| {
+            while let Some(group) = id {
+                if records.contains_key(&group) {
+                    return Some(group);
+                }
+                id = hierarchy.groups[&group].parent;
+            }
+            None
+        };
+        let mut selected = BTreeMap::new();
+        for &id in records.keys() {
+            let raw = &hierarchy.groups[&id];
+            selected.insert(
+                id,
+                Group {
+                    id,
+                    parent: nearest_retained(raw.parent),
+                    children: Vec::new(),
+                    vectors: Vec::new(),
+                    note_count: raw.note_count,
+                    vector_count: raw.vector_count,
+                },
+            );
+        }
+        // Assign each raw group's direct points to its closest retained ancestor.
+        // This preserves the complete point set of every retained group without
+        // copying flattened memberships for every ancestor.
+        for raw in hierarchy.groups.values() {
+            let owner = nearest_retained(Some(raw.id)).expect("root retained");
+            selected
+                .get_mut(&owner)
+                .expect("retained group")
+                .vectors
+                .extend(&raw.vectors);
+        }
+        for &id in records.keys() {
+            if let Some(parent) = selected[&id].parent {
+                selected
+                    .get_mut(&parent)
+                    .expect("retained parent")
+                    .children
+                    .push(id);
+            }
+        }
+        for (&id, group) in &mut selected {
+            group.vectors.sort_unstable();
+            let record = &records[&id];
+            let mut direct = record.direct_points.clone();
+            direct.sort_unstable();
+            if record.raw_parent != hierarchy.groups[&id].parent
+                || record.display_parent != group.parent
+                || record.display_children != group.children
+            {
+                return Err(format!("selection ancestry mismatch for group {id}").into());
+            }
+            if direct != group.vectors {
+                return Err(
+                    format!("selection direct-point membership mismatch for group {id}").into(),
+                );
+            }
+            if record.distinct_notes != group.note_count
+                || record.unique_vectors != group.vector_count
+                || record.direct_unique_vectors != group.vectors.len()
+            {
+                return Err(format!("selection count mismatch for group {id}").into());
+            }
+        }
+        hierarchy.groups = selected;
+        Ok(hierarchy)
+    }
+
     pub fn load(
         response_path: &Path,
         vector_map_path: &Path,
@@ -295,6 +399,50 @@ fn read_json<T: DeserializeOwned>(path: &Path) -> Result<T, Box<dyn Error>> {
     let file = File::open(path).map_err(|error| format!("{}: {error}", path.display()))?;
     serde_json::from_reader(BufReader::new(file))
         .map_err(|error| format!("{}: {error}", path.display()).into())
+}
+
+fn file_sha256(path: &Path) -> Result<String, Box<dyn Error>> {
+    let mut file = File::open(path)?;
+    let mut digest = Sha256::new();
+    let mut buffer = [0; 65536];
+    loop {
+        let count = file.read(&mut buffer)?;
+        if count == 0 {
+            break;
+        }
+        digest.update(&buffer[..count]);
+    }
+    Ok(format!("{:x}", digest.finalize()))
+}
+
+#[derive(Deserialize)]
+struct SavedSelection {
+    sources: SelectionSources,
+    retained_groups: Vec<SelectedGroup>,
+}
+
+#[derive(Deserialize)]
+struct SelectionSources {
+    response: SelectionSource,
+    vectors: SelectionSource,
+    notes: SelectionSource,
+}
+
+#[derive(Deserialize)]
+struct SelectionSource {
+    sha256: String,
+}
+
+#[derive(Deserialize)]
+struct SelectedGroup {
+    id: usize,
+    raw_parent: Option<usize>,
+    display_parent: Option<usize>,
+    display_children: Vec<usize>,
+    direct_points: Vec<usize>,
+    distinct_notes: usize,
+    unique_vectors: usize,
+    direct_unique_vectors: usize,
 }
 
 // These intentionally partial schemas skip saved matrices, labels, selected

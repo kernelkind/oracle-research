@@ -35,19 +35,18 @@ struct Row {
     content: String,
 }
 
-const HELP: &str = "This is a read-only view of the saved HDBSCAN hierarchy.\n\n\
-Group numbers are the IDs in the saved tree, not generated subject titles.\n\
-Counts are distinct source notes in the group, including all descendants. They are not additive: the same note can appear in several children.\n\n\
-Masks outside its child groups belong to that parent in the saved tree. They have not been discarded or moved into a made-up child.\n\
-V numbers identify the original mask/vector records. Identical masks from the same note sharing one vector are shown together, with every ID retained.\n\n\
+const HELP_COUNTS: &str = "Group numbers are the IDs in the saved tree, not generated subject titles.\n\
+Counts are distinct source notes in the group, including all descendants. They are not additive: the same note can appear in several children.";
+
+const HELP_CONTROLS: &str = "V numbers identify the original mask/vector records. Identical masks from the same note sharing one vector are shown together, with every ID retained.\n\n\
 h/j/k/l match Left/Down/Up/Right. Up/Down selects a group or mask. Right expands a group; when already expanded it moves into its contents. Left collapses a group or selects the containing group. In notes and help, j/k scroll.\n\
 U shows the parent of the displayed branch, preserving expansion and selection. F focuses the selected group as the displayed branch.\n\
 Ctrl-F/B or PageDown/PageUp scroll a page; Ctrl-U/D scroll half a page up/down. gg or Home moves to the beginning; G or End moves to the end. Shift-Left/Right scroll horizontally in deep branches.\n\
-Enter opens a mask's full original note with inline brackets, or toggles a selected group. Escape returns from the note or this help.\n\n\
-No groups or members are filtered, judged, relabeled, or rearranged. Nothing is written to the source files or review sessions. Q or Ctrl-C exits.";
+Enter opens a mask's full original note with inline brackets, or toggles a selected group. Escape returns from the note or this help.";
 
 pub struct HierarchyExplorer {
     hierarchy: Hierarchy,
+    selection_view: bool,
     branch: usize,
     expanded: BTreeSet<usize>,
     selected: Selection,
@@ -75,6 +74,7 @@ impl HierarchyExplorer {
             .collect();
         Ok(Self {
             hierarchy,
+            selection_view: false,
             branch,
             expanded: BTreeSet::from([branch]),
             selected: Selection::Group(branch),
@@ -88,6 +88,13 @@ impl HierarchyExplorer {
             detail_scroll: 0,
             pending_g: false,
         })
+    }
+
+    /// Display an already-projected saved selection without changing its members.
+    pub fn new_selection(hierarchy: Hierarchy, start: Option<usize>) -> Result<Self, String> {
+        let mut explorer = Self::new(hierarchy, start)?;
+        explorer.selection_view = true;
+        Ok(explorer)
     }
 
     pub fn handle_event(&mut self, event: Event) -> bool {
@@ -269,10 +276,26 @@ impl HierarchyExplorer {
     }
 
     fn rows(&self) -> Vec<Row> {
+        enum PendingRows {
+            Group(usize, String, String),
+            Masks(usize, String),
+        }
+
         let mut rows = Vec::new();
         // Explicit stack preserves the saved tree even for deeply nested input.
-        let mut stack = vec![(self.branch, String::new(), String::new())];
-        while let Some((id, prefix, continuation)) = stack.pop() {
+        let mut stack = vec![PendingRows::Group(
+            self.branch,
+            String::new(),
+            String::new(),
+        )];
+        while let Some(pending) = stack.pop() {
+            let (id, prefix, continuation) = match pending {
+                PendingRows::Group(id, prefix, continuation) => (id, prefix, continuation),
+                PendingRows::Masks(id, continuation) => {
+                    self.append_masks(&mut rows, id, &continuation);
+                    continue;
+                }
+            };
             let group = &self.hierarchy.groups[&id];
             let expanded = self.expanded.contains(&id);
             rows.push(Row {
@@ -292,53 +315,94 @@ impl HierarchyExplorer {
             if !expanded {
                 continue;
             }
-            let point_prefix = format!(
-                "{continuation}{}  ",
-                if group.children.is_empty() {
-                    " "
-                } else {
-                    "│"
-                }
-            );
-            if !group.children.is_empty() && !group.vectors.is_empty() {
-                rows.push(Row {
-                    selection: None,
-                    prefix: point_prefix.clone(),
-                    content: "Masks outside its child groups:".to_owned(),
-                });
-            }
-            for point in &group.vectors {
-                let aliases = &self.hierarchy.vectors[point];
-                let mut seen = BTreeSet::new();
-                for (index, mask) in aliases.iter().enumerate() {
-                    if !seen.insert((&mask.note_id, &mask.byte_spans)) {
-                        continue;
-                    }
-                    let ids = matching_ids(aliases, mask);
-                    rows.push(Row {
-                        selection: Some(Selection::Mask(*point, index)),
-                        prefix: point_prefix.clone(),
-                        content: format!(
-                            "{ids}  {}",
-                            mask.fragments
-                                .iter()
-                                .map(|text| format!("⟦{}⟧", terminal_safe(text)))
-                                .collect::<Vec<_>>()
-                                .join(" ")
-                        ),
-                    });
-                }
+            // LIFO ordering lets selection children stay reachable before long
+            // direct-member lists, while the raw view keeps its saved ordering.
+            if self.selection_view {
+                stack.push(PendingRows::Masks(id, continuation.clone()));
             }
             for (index, child) in group.children.iter().enumerate().rev() {
-                let last = index == group.children.len() - 1;
-                stack.push((
+                let last = index == group.children.len() - 1
+                    && (!self.selection_view || group.vectors.is_empty());
+                stack.push(PendingRows::Group(
                     *child,
                     format!("{continuation}{} ", if last { "└─" } else { "├─" }),
                     format!("{continuation}{}", if last { "   " } else { "│  " }),
                 ));
             }
+            if !self.selection_view {
+                stack.push(PendingRows::Masks(id, continuation));
+            }
         }
         rows
+    }
+
+    fn append_masks(&self, rows: &mut Vec<Row>, id: usize, continuation: &str) {
+        let group = &self.hierarchy.groups[&id];
+        let point_prefix = format!(
+            "{continuation}{}  ",
+            if group.children.is_empty() || self.selection_view {
+                " "
+            } else {
+                "│"
+            }
+        );
+        if !group.children.is_empty() && !group.vectors.is_empty() {
+            rows.push(Row {
+                selection: None,
+                prefix: if self.selection_view {
+                    format!("{continuation}└─ ")
+                } else {
+                    point_prefix.clone()
+                },
+                content: if self.selection_view {
+                    "Masks outside retained child groups:"
+                } else {
+                    "Masks outside its child groups:"
+                }
+                .to_owned(),
+            });
+        }
+        for point in &group.vectors {
+            let aliases = &self.hierarchy.vectors[point];
+            let mut seen = BTreeSet::new();
+            for (index, mask) in aliases.iter().enumerate() {
+                if !seen.insert((&mask.note_id, &mask.byte_spans)) {
+                    continue;
+                }
+                let ids = matching_ids(aliases, mask);
+                rows.push(Row {
+                    selection: Some(Selection::Mask(*point, index)),
+                    prefix: point_prefix.clone(),
+                    content: format!(
+                        "{ids}  {}",
+                        mask.fragments
+                            .iter()
+                            .map(|text| format!("⟦{}⟧", terminal_safe(text)))
+                            .collect::<Vec<_>>()
+                            .join(" ")
+                    ),
+                });
+            }
+        }
+    }
+
+    fn help(&self) -> String {
+        let (intro, masks, decisions) = if self.selection_view {
+            (
+                "This is a read-only view of the saved selection proposal.",
+                "Groups skipped in this view remain in the raw tree. Every mask remains; masks outside retained children are shown at their displayed ancestor.",
+                "Children are shown before direct masks. No groups are judged or given generated titles; no acceptance decisions are made.",
+            )
+        } else {
+            (
+                "This is a read-only view of the saved HDBSCAN hierarchy.",
+                "Masks outside its child groups belong to that parent in the saved tree. They have not been discarded or moved into a made-up child.",
+                "No groups or members are filtered, judged, relabeled, or rearranged.",
+            )
+        };
+        format!(
+            "{intro}\n\n{HELP_COUNTS}\n\n{masks}\n{HELP_CONTROLS}\n\n{decisions} Nothing is written to the source files or review sessions. Q or Ctrl-C exits."
+        )
     }
 
     pub fn render(&mut self, frame: &mut Frame<'_>) {
@@ -363,7 +427,15 @@ impl HierarchyExplorer {
         self.height = usize::from(inner.height).max(1);
         if let Some(detail) = self.detail {
             let (title, content) = match detail {
-                Detail::Help => ("Hierarchy help".to_owned(), HELP.to_owned()),
+                Detail::Help => (
+                    if self.selection_view {
+                        "HDBv2 selection help · proposal · read-only"
+                    } else {
+                        "Hierarchy help"
+                    }
+                    .to_owned(),
+                    self.help(),
+                ),
                 Detail::Note(point, alias) => {
                     let aliases = &self.hierarchy.vectors[&point];
                     let mask = &aliases[alias];
@@ -451,7 +523,12 @@ impl HierarchyExplorer {
         }
         self.follow_selection = false;
         let title = format!(
-            "HDBv2 hierarchy · read-only\nShowing branch {} · {} {}",
+            "{}\nShowing branch {} · {} {}",
+            if self.selection_view {
+                "HDBv2 selection · proposal · read-only"
+            } else {
+                "HDBv2 hierarchy · read-only"
+            },
             self.branch,
             self.hierarchy.groups[&self.branch].note_count,
             if self.hierarchy.groups[&self.branch].note_count == 1 {
@@ -584,8 +661,17 @@ impl InteractiveReviewModel for HierarchyExplorer {
     }
 }
 
-pub fn run_hierarchy_explorer(hierarchy: Hierarchy, start: Option<usize>) -> io::Result<()> {
-    let mut model = HierarchyExplorer::new(hierarchy, start).map_err(io::Error::other)?;
+pub fn run_hierarchy_explorer(
+    hierarchy: Hierarchy,
+    start: Option<usize>,
+    selection_view: bool,
+) -> io::Result<()> {
+    let mut model = if selection_view {
+        HierarchyExplorer::new_selection(hierarchy, start)
+    } else {
+        HierarchyExplorer::new(hierarchy, start)
+    }
+    .map_err(io::Error::other)?;
     let mut terminal = ReferenceTerminal::new()?;
     terminal.run_review_model_stateful(&mut model, false)?;
     Ok(())

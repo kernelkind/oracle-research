@@ -105,7 +105,7 @@ D=sse_multivector/real-note-fine-segmentation-v1
 
 ## Manual selection of hierarchy levels
 
-The approved follow-up asks whether choosing which **existing groups** to show can produce useful navigation. It does not authorize new groups, moved members, generated titles, or adoption of HDBSCAN. The raw explorer and its inputs remain unchanged.
+The approved follow-up asks whether choosing which **existing groups** to show can produce useful navigation. It does not authorize new groups, moved members, generated titles, or adoption of HDBSCAN. The raw-tree view and its inputs remain unchanged; the selection is now available as a separate view in the same explorer.
 
 I inspected all 130 groups and their masks. The separate assistant proposal is [hierarchy-selection-v1.json](hierarchy-selection-v1.json). It records a decision for every group, the retained ancestor relationships, exact point inventories, source checksums, and unresolved concerns. These are not user approvals.
 
@@ -136,7 +136,17 @@ Skipping levels exposes many small groups without supplying better shared parent
 
 The three user-rejected groups remain unchanged internally but are not proposed as choices. The accepted allotment group and accepted bread/spaghetti group retain their prior decisions. New assistant concerns remain explicitly separate, including standalone sleep and the dog-emoji mask within 1003.
 
-**Conclusion:** selecting levels reveals useful local structure, but this proposal does not yet provide a good complete discovery hierarchy. It is one inspected selection, not proof that every possible selection fails. There was no rerun, retuning, label generation, new UI mode, or membership change. The JSON is an audit artifact; the existing explorer still shows the raw tree.
+**Conclusion:** selecting levels reveals useful local structure, but this proposal does not yet provide a good complete discovery hierarchy. It is one inspected selection, not proof that every possible selection fails. There was no rerun, retuning, label generation, or membership change.
+
+To inspect the saved selection in the TUI:
+
+```sh
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-hdbscan-hierarchy.sh --selection
+```
+
+This starts at root 916. Add a retained group ID, such as `--selection 1030`, to start there instead. The heading says **HDBv2 selection · proposal · read-only**. Children appear before masks outside those children; all masks remain available below them. **j/k** select, **l/h** expand/collapse, **U** goes to the displayed parent without flattening the children, **Enter** on a mask opens the full source note, and **Q** quits. No judgments are saved.
+
+Without `--selection`, the same command still opens the original raw tree at 1043. The selection file is checked against all three source checksums and against the raw ancestry, complete memberships and counts before display. Unknown or skipped starting groups are rejected. The viewer never runs segmentation or changes the proposal.
 
 ## Duplicate masks
 
