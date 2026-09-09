@@ -69,8 +69,11 @@ masks and several SSE vectors instead of one whole-note vector.
 For future runs, encode identical masks from the same original note only once,
 retaining links to every subject record that produced that mask. Identity here
 means the same source note and the same set of mask ranges, not similar wording
-or overlapping meaning. This pre-encoding deduplication is approved but not yet
-implemented; frozen experiment inputs, results, and reviews remain unchanged.
+or overlapping meaning. The real-note adapter supports this with
+`deduplicate_identical_masks: true` on each new input note. A vector's
+`reviewed_subjects` retains every contributing subject record and its identity.
+Absent that setting, historical per-subject encoding remains unchanged so frozen
+experiment inputs, results, and reviews can still be replayed exactly.
 
 Every vector instance must retain:
 

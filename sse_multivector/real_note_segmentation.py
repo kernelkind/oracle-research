@@ -112,6 +112,10 @@ def _compile_inputs(reviewed: object, reviewed_sha256: str) -> tuple[dict, dict]
         note_ids.add(note_id)
         text = _expect_string(note.get("text"), "note.text")
         encoded = text.encode("utf-8")
+        deduplicate = note.get("deduplicate_identical_masks", False)
+        if type(deduplicate) is not bool:
+            raise ValueError("note.deduplicate_identical_masks must be a boolean")
+        distinct_masks = {}
         note_short_id = f"N{note_index + 1:03d}"
         mapped_notes.append(
             {
@@ -177,6 +181,16 @@ def _compile_inputs(reviewed: object, reviewed_sha256: str) -> tuple[dict, dict]
                 raise ValueError("derived subject or vector ID collision")
             worker_ids.add(worker_id)
             vector_ids.add(vector_id)
+            if deduplicate:
+                source_subject = {
+                    **mapping,
+                    "vector_id": vector_id,
+                    "worker_subject_id": worker_id,
+                }
+                mask_key = tuple(tuple(span) for span in spans)
+                if mask_key in distinct_masks:
+                    distinct_masks[mask_key]["reviewed_subjects"].append(source_subject)
+                    continue
             worker_subjects.append({"subject_id": worker_id, "byte_spans": spans})
             vectors.append(
                 {
@@ -189,6 +203,9 @@ def _compile_inputs(reviewed: object, reviewed_sha256: str) -> tuple[dict, dict]
                     "byte_spans": spans,
                 }
             )
+            if deduplicate:
+                vectors[-1]["reviewed_subjects"] = [source_subject]
+                distinct_masks[mask_key] = vectors[-1]
         if worker_subjects:
             request_notes.append(
                 {"note_id": note_id, "text": text, "subjects": worker_subjects}
