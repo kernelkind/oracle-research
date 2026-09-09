@@ -107,6 +107,60 @@ fn showing_parent_preserves_nested_expansion_and_parent_only_masks() {
 }
 
 #[test]
+fn showing_parent_places_unopened_children_above_expanded_children() {
+    let mut model = HierarchyExplorer::new(fixture(), Some(11)).unwrap();
+    key(&mut model, KeyCode::Down); // parent-only mask
+    key(&mut model, KeyCode::Down); // child 13
+    key(&mut model, KeyCode::Right);
+    key(&mut model, KeyCode::Char('u'));
+    let parent = screen(&mut model, 100, 40);
+    assert!(
+        parent.find("├─ ▸ 12").unwrap() < parent.find("└─ ▾ 11").unwrap(),
+        "{parent}"
+    );
+    assert!(parent.contains("   ├─ ▾ 13"), "{parent}");
+    assert!(parent.contains("⟦Beach⟧"));
+    assert!(parent.contains("⟦Parent-only meaning⟧"));
+    assert!(parent.contains("10 · 5 notes"));
+    // Reordering keeps selection on the previously selected nested child.
+    key(&mut model, KeyCode::Left);
+    assert!(!screen(&mut model, 100, 40).contains("⟦Beach⟧"));
+}
+
+#[test]
+fn opening_an_unopened_section_after_showing_parent_keeps_its_position() {
+    let mut model = HierarchyExplorer::new(fixture(), Some(11)).unwrap();
+    key(&mut model, KeyCode::Char('u'));
+    key(&mut model, KeyCode::Up); // unopened sibling 12, now above 11
+    key(&mut model, KeyCode::Right);
+    let opened = screen(&mut model, 100, 40);
+    assert!(
+        opened.find("├─ ▾ 12").unwrap() < opened.find("└─ ▾ 11").unwrap(),
+        "{opened}"
+    );
+    assert!(opened.contains("⟦Coffee⟧"));
+    key(&mut model, KeyCode::Down);
+    key(&mut model, KeyCode::Enter);
+    assert!(screen(&mut model, 100, 40).contains("Before ⟦Coffee⟧ after. Original context."));
+    key(&mut model, KeyCode::Esc);
+    key(&mut model, KeyCode::Left); // containing group 12
+    key(&mut model, KeyCode::Left); // collapse 12
+    let collapsed = screen(&mut model, 100, 40);
+    assert!(
+        collapsed.find("├─ ▸ 12").unwrap() < collapsed.find("└─ ▾ 11").unwrap(),
+        "{collapsed}"
+    );
+}
+
+#[test]
+fn showing_parent_in_selection_view_preserves_saved_child_order() {
+    let mut model = HierarchyExplorer::new_selection(fixture(), Some(11)).unwrap();
+    key(&mut model, KeyCode::Char('u'));
+    let parent = screen(&mut model, 100, 40);
+    assert!(parent.find("▾ 11").unwrap() < parent.find("▸ 12").unwrap());
+}
+
+#[test]
 fn original_note_is_opened_with_exact_inline_mask_and_returns_to_tree() {
     let mut model = HierarchyExplorer::new(fixture(), Some(11)).unwrap();
     screen(&mut model, 80, 24);

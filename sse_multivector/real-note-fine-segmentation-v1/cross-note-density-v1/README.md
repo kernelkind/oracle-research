@@ -90,7 +90,7 @@ In this raw view, a direct parent mask is hidden if its source note appears anyw
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-hdbscan-hierarchy.sh
 ```
 
-It starts at group 1043, with its immediate children collapsed. Use **j/k** or ↓/↑ to select and **h/l** or ←/→ to collapse/expand. **U** shows the parent while keeping expanded descendants nested. **Enter** on a mask opens its full original note with inline brackets; **Esc** returns. **F** focuses a selected group, **?** opens help, and **Q** quits. Optional argument `916` starts at the root instead.
+It starts at group 1043, with its immediate children collapsed. Use **j/k** or ↓/↑ to select and **h/l** or ←/→ to collapse/expand. **U** shows the parent while keeping expanded descendants nested and preserving selection. In this raw view, going up places that parent's unopened children above its expanded children. Their displayed order then stays fixed while you open or collapse them; the saved child order is unchanged. **Enter** on a mask opens its full original note with inline brackets; **Esc** returns. **F** focuses a selected group, **?** opens help, and **Q** quits. Optional argument `916` starts at the root instead.
 
 In the tree, notes, and help, **gg/G** go to the beginning/end, **Ctrl-F/B** scroll a page down/up, and **Ctrl-U/D** scroll half a page up/down. **j/k** scroll in notes and help. Existing arrow, Home/End, and PgUp/PgDn bindings remain available.
 

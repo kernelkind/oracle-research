@@ -49,6 +49,7 @@ pub struct HierarchyExplorer {
     selection_view: bool,
     branch: usize,
     expanded: BTreeSet<usize>,
+    child_order: BTreeMap<usize, Vec<usize>>,
     selected: Selection,
     point_parents: BTreeMap<usize, usize>,
     hidden_parent_masks: BTreeSet<(usize, usize)>,
@@ -96,6 +97,7 @@ impl HierarchyExplorer {
             selection_view,
             branch,
             expanded: BTreeSet::from([branch]),
+            child_order: BTreeMap::new(),
             selected: Selection::Group(branch),
             point_parents,
             hidden_parent_masks,
@@ -265,6 +267,15 @@ impl HierarchyExplorer {
 
     fn show_parent(&mut self) {
         if let Some(parent) = self.hierarchy.groups[&self.branch].parent {
+            if !self.selection_view {
+                let children = self
+                    .child_order
+                    .entry(parent)
+                    .or_insert_with(|| self.hierarchy.groups[&parent].children.clone());
+                // Reorder only on upward navigation, so opening a child does not
+                // move it. Stable sorting also preserves order on return visits.
+                children.sort_by_key(|child| self.expanded.contains(child));
+            }
             self.expanded.insert(parent);
             self.branch = parent;
             self.follow_selection = true;
@@ -329,12 +340,13 @@ impl HierarchyExplorer {
                 continue;
             }
             // LIFO ordering lets selection children stay reachable before long
-            // direct-member lists, while the raw view keeps its saved ordering.
+            // direct-member lists, while raw parent masks stay before children.
             if self.selection_view {
                 stack.push(PendingRows::Masks(id, continuation.clone()));
             }
-            for (index, child) in group.children.iter().enumerate().rev() {
-                let last = index == group.children.len() - 1
+            let children = self.child_order.get(&id).unwrap_or(&group.children);
+            for (index, child) in children.iter().enumerate().rev() {
+                let last = index == children.len() - 1
                     && (!self.selection_view || group.vectors.is_empty());
                 stack.push(PendingRows::Group(
                     *child,
@@ -414,7 +426,7 @@ impl HierarchyExplorer {
             (
                 "This is a read-only view of the saved HDBSCAN hierarchy.",
                 "Masks outside its child groups remain in the saved tree. A parent mask is hidden here when its source note occurs anywhere in a child subtree, including collapsed children. Counts and saved memberships are unchanged.",
-                "No groups are filtered, judged, relabeled, or rearranged. Only repeated-note parent mask rows are hidden.",
+                "Going up places unopened child groups above expanded ones. Opening or collapsing them afterward keeps that order. The saved tree is unchanged; no groups are removed, judged, or relabeled.",
             )
         };
         format!(
