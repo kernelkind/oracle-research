@@ -5,37 +5,27 @@
 This is the approved architectural direction for the content-discovery
 experiment. It is not a validated system.
 
-The current implementation has several provisional components. The exact
-prompt boundary, final fine-segmentation output contract and algorithm,
-hierarchy algorithm, and labels must still be tested and frozen in dependency
-order. HDBSCAN* with `min_samples = 2`, `min_cluster_size = 2`, and
-excess-of-mass selection and SNN with `neighbor_count = 5`,
-`minimum_shared_neighbor_count = 2`, and `minimum_core_neighbor_count = 3` are
-the two predeclared controlled-qualification configurations. Once their full
-technical identities and the shared inputs are frozen, they will run the
-complete suite as separate candidate instances. Neither is the final
-fine-segmentation choice.
+Subjects and discovered groups may have different breadths. They are not
+required to form a uniformly fine layer before hierarchy work begins. The
+frozen subject prompt explicitly permits broad, narrow, nested, and overlapping
+subjects; a useful group is not automatically a terminal navigation subject.
 
-The suite's exact semantic fixtures, scoring rules, and prerequisite graph were
-approved on 2026-08-31. Its controlled run completed on 2026-09-01. Both
-candidates exceeded the frozen Experiment 2 limit of 100 unique cross-subject
-packets, so neither may proceed and the user's `revise candidate` or `stop`
-dispositions remain pending. See the
-[controlled-run results](../experiments/fine-segmentation/controlled-run-v1-results.md).
-A separately versioned exploratory v2 follow-up reviews the nine distinct
-sorted sets of approved synthetic subjects represented by HDBSCAN*'s 177
-retained exact packets. Each judgment replays to every matching exact packet
-and formal occurrence, covering all 177 packets and 191 occurrences. This
-methodological correction leaves the frozen capacity-failure result, HDBSCAN*
-candidate and evidence, original 177-packet v1 review session, SNN record, and
-final user selection unchanged. The review records only group coherence;
-fine-subject naming remains downstream.
+The [100-note real-data experiment](../../../sse_multivector/real-note-fine-segmentation-v1/README.md)
+uses frozen ASv6.23 subjects and MPv3.5 masks. The current hierarchy investigation
+inspects the saved [HDBv2 groups and condensed tree](../../../sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/README.md),
+without generated titles. Coherent groups do not establish that all of their
+parent placements are useful subject refinements. HDBv2 is not selected as the
+final grouping or hierarchy algorithm.
+
+The earlier [controlled qualification and its results](../experiments/fine-segmentation/controlled-run-v1-results.md)
+remain experimental evidence. Their frozen protocols and outcomes are not
+changed by the later real-note investigation or by this breadth clarification.
 
 ## Goal
 
 Build a public, corpus-derived hierarchy that lets a person repeatedly narrow
 the subject they want to explore and then inspect notes associated with the
-selected fine subject.
+selected subject.
 
 The hierarchy does not infer current intent from ratings or behavior. The
 person supplies current intent by choosing among the hierarchy's visible
@@ -50,16 +40,18 @@ public note
   -> subject-bearing source masks
   -> identical masks within that note deduplicated
   -> one SSE vector per remaining mask
-  -> fine-subject memberships
+  -> subject-group memberships
   -> broad-to-narrow subject hierarchy
   -> note results for an explicitly selected subject
 ```
 
 Each stage has an explicit output boundary. A later label or hierarchy must not
-conceal a failure in extraction, SSE geometry, or fine segmentation. A test
+conceal a failure in extraction, SSE geometry, or grouping. A test
 that deliberately changes source text and re-encodes it before segmentation
 qualifies the frozen SSE-plus-segmentation combination; it cannot assign the
-result to either stage by itself.
+result to either stage by itself. These are separate responsibilities, not a
+requirement to use separate algorithms: a grouping method may also produce a
+candidate hierarchy whose subject refinements require independent inspection.
 
 ## 1. Produce Grounded Subject Vectors
 
@@ -83,38 +75,44 @@ Every vector instance must retain:
 - its SSE vector; and
 - its prominence to the complete note.
 
-The intended downstream unit is an atomic subject. Complete uniqueness is not
-required: related masks may produce related or partially redundant vectors.
+The intended downstream unit is a source-grounded subject. The frozen
+[ASv6.23 prompt](../../../sse_multivector/subject-prompt-goal-v1/asv6.23/ASv6.23.md)
+states: "Subjects may overlap, nest, or describe the same material at broad and
+narrow levels." The existing name "atomic subject" does not require every
+subject to be maximally narrow. Complete uniqueness is not required: related
+masks may produce related or partially redundant vectors.
 The requirement is that materially different subjects remain distinguishable
 enough for the later segmentation stage.
 
 ### Current implementation
 
-The current corpus-preparation path is:
+The current real-note experiment uses:
 
 ```text
 note
-  -> TPv3.82 takeaways
-  -> MPv3.4 exact source masks
-  -> PPv2 prominence
+  -> ASv6.23 subjects
+  -> MPv3.5 exact source masks
+  -> reviewed subjects and masks
   -> SSE vectors
 ```
 
-The generated takeaway is an intermediate instruction for mask selection; SSE
-receives the complete note and selected token positions, not the takeaway
+The generated subject is an intermediate instruction for mask selection; SSE
+receives the complete note and selected token positions, not the subject
 text. The selected contextual token representations are averaged and passed
 through SSE's learned output transformation.
 
-This pipeline exists, but prompt repair remains current work. It has not yet
-shown that its masks reliably correspond to the atomic subjects required by
-the downstream hierarchy. A future trained extractor may replace the TP and MP
-calls if the transformation is first demonstrated and enough supervision can
-be created.
+Both prompt packages are frozen for this experiment. This does not establish
+production-wide extraction quality. The older takeaway/prominence orchestration
+remains implemented, but is not the preparation path used for the saved HDBv2
+experiment. A future trained extractor may replace subject and mask generation
+if the transformation is demonstrated and enough supervision can be created.
 
-## 2. Recover Fine Subjects
+## 2. Discover Subject Groups
 
-The fine-segmentation algorithm receives the frozen SSE vectors and returns
-groups intended to represent recurring fine subjects.
+The grouping algorithm receives the frozen SSE vectors and returns candidate
+groups of related source masks. Groups may represent subjects at different
+breadths. Neither the input prompt nor the grouping requirement fixes them to
+one finest level.
 
 The vector-space requirements are recorded in
 [`../research/fine-segmentation-vector-space-requirements.md`](../research/fine-segmentation-vector-space-requirements.md).
@@ -129,17 +127,18 @@ Those are unresolved output-contract choices. A candidate method must expose
 its actual memberships and unassigned vectors rather than silently changing
 them to fit a preferred architecture.
 
-The fine-segmentation stage establishes membership only. It does not generate
-English labels or higher hierarchy nodes.
+The current grouping experiments establish memberships without generating
+English labels. HDBv2 also returns a nested hierarchy. Its connectivity-based
+parent relations are candidate structure to inspect, not automatically valid
+broader-subject relations.
 
-## 3. Label Fine Subjects from Grounded Evidence
+## 3. Label Subject Groups from Grounded Evidence
 
-Every member vector retains exact source fragments. A fine subject can
+Every member vector retains exact source fragments. A subject group can
 therefore be described from the source evidence that formed it instead of
 attempting to decode an opaque vector directly.
 
-The current fine-subject title prompt receives one numbered instance per
-vector:
+The existing title-prompt experiment receives one numbered instance per vector:
 
 ```text
 Instances:
@@ -154,14 +153,16 @@ Multiple fragments belonging to one vector remain one instance. The prompt is
 stored in
 [`../../../sse_multivector/fine-region-title-prompt-versions.json`](../../../sse_multivector/fine-region-title-prompt-versions.json).
 
-A title describes an already formed fine subject. It must not change
+A title describes an already formed group. It must not change
 membership or broaden an incoherent group until it sounds plausible. Prompt
-quality remains open work after fine segmentation is validated.
+quality remains open work; the current HDBv2 review is deliberately unnamed.
 
-## 4. Build the Hierarchy from Fine Subjects
+## 4. Organize Groups into a Broad-to-Narrow Hierarchy
 
-Fine-subject nodes are the inputs to a separate hierarchy-construction stage.
-That stage recursively groups narrower subjects into broader subjects.
+The hierarchy must organize subjects of different breadths into meaningful
+narrowing paths. Discovered groups are not presumed to be indivisible leaves.
+Whether the grouping method's own hierarchy supplies useful paths, or a
+separate construction method is needed, remains under investigation.
 
 Every visible child must be a meaningful refinement of its parent and of the
 complete path above it. Independent labels that happen to be nearby are not a
@@ -176,20 +177,20 @@ for navigation remain open.
 Hierarchy labels must be generated from the grounded evidence beneath each
 node. They describe membership; they do not define it.
 
-## 5. Resolve a Selected Fine Subject to Notes
+## 5. Resolve a Selected Subject to Notes
 
-When navigation reaches a selected fine subject:
+When navigation reaches a selected terminal subject:
 
 1. collect the vector memberships for that subject;
 2. resolve each vector to its source `NoteId`;
 3. deduplicate repeated `NoteId` values inside that result; and
 4. order the notes using the vector-to-note prominence values.
 
-One note may appear in several fine subjects because it may contribute several
+One note may appear in several subjects because it may contribute several
 subject vectors. That is expected.
 
 Prominence affects note ordering inside a subject result. It does not create
-fine-subject membership or hierarchy edges.
+subject membership or hierarchy edges.
 
 ## Load-Bearing Questions
 
@@ -200,12 +201,12 @@ fine-subject membership or hierarchy edges.
 - Do materially different subjects remain distinguishable despite shared words
   and unselected context?
 
-### Fine segmentation
+### Subject grouping
 
 - Can each frozen candidate recover repeated subjects?
 - Can each resolve nearby but meaningfully distinct subjects?
 - Does each follow semantic relationships rather than lexical coincidence?
-- Does unselected context avoid determining either candidate's memberships?
+- Does unselected context avoid determining a candidate's memberships?
 - How does each behave under unequal support, duplicates, unrelated additions,
   and input reordering?
 - What differences in their complete evidence matter to the user's final
@@ -213,7 +214,8 @@ fine-subject membership or hierarchy edges.
 
 ### Hierarchy and navigation
 
-- Can useful broad subjects be built from demonstrated fine subjects?
+- Can discovered groups at different breadths support meaningful narrowing
+  paths?
 - Does every visible choice narrow the complete path predictably?
 - Do labels accurately predict the notes that selection reveals?
 - Can the UI expose a small, usable set of choices without changing the
@@ -225,46 +227,37 @@ The controlled SSE evidence is indexed in
 [`../../notes/SSE-EXPERIMENTS.md`](../../notes/SSE-EXPERIMENTS.md). It supports some
 single- and multi-fragment subject relationships, but it also records failures,
 including relationship reversal and mixed real-note transfer. It does not
-validate corpus-wide fine segmentation.
+validate corpus-wide subject grouping.
 
 Earlier complete-linkage and SCC pilots demonstrated mechanics and exposed bad
 groupings. They did not validate a global hard partition and are not the
-current fine-segmentation specification.
+current grouping specification. The later real-note experiment and HDBv2
+hierarchy inspection are linked above; they preserve earlier results rather
+than retroactively changing their protocols or declaring a final algorithm.
 
-## Verification Order
+## Evidence Boundaries
 
-1. Technically freeze the shared SSE inputs, bind the approved fixtures and
-   scoring rules by hash, and freeze the orders and both complete candidate
-   identities, then run the complete
-   [`../experiments/fine-segmentation/README.md`](../experiments/fine-segmentation/README.md)
-   separately for HDBSCAN* and SNN. Experiments 3 and 4 are integration evidence
-   for each SSE-plus-candidate combination; the remaining experiment-specific
-   claims retain the ownership defined by the suite. Semantic failures do not
-   halt later local tests; integrity failures block only affected inputs and
-   dependent conclusions.
-2. Present both complete records side by side. The assistant may recommend an
-   outcome; the user alone selects and final-freezes a candidate, requests a
-   revision, or stops the approach.
-3. If the user selects a candidate, test that exact identity on hand-selected
-   real notes from one niche subject area.
-4. Only after useful fine subjects are demonstrated, compare and freeze a
-   hierarchy method.
-5. Construct labels and the hierarchy, then evaluate the navigation TUI.
+Each experiment must identify and freeze its actual inputs and configuration.
+Review source masks before using the resulting groups as semantic evidence.
+Keep group-coherence judgments separate from judgments about parent placement,
+labels, and complete navigation paths.
 
-The temporary TP, MP, and prominence boundary remains separate upstream work.
-It must be resolved before arbitrary notes can enter the complete architecture,
-but it does not gate this suite because the synthetic atomic-subject masks are
-hand-authored and frozen.
+A candidate hierarchy may be inspected while grouping remains experimental;
+inspection is not final algorithm selection. Useful groups need not first be
+declared maximally fine. Preserve complete memberships, parent-only masks, and
+ungrouped material when assessing what the hierarchy does and does not offer.
+The user selects the final algorithm and navigation direction; the assistant's
+research or proposed selection is not approval.
 
 ## Open Decisions
 
 - the final direct subject-mask extractor;
-- the final fine-segmentation membership contract;
-- the final fine-segmentation algorithm and configuration after controlled
+- the final subject-group membership contract;
+- the final grouping algorithm and configuration after controlled
   qualification;
 - the hierarchy algorithm and configuration;
 - tree versus overlapping parent paths;
 - hierarchy condensation and visible branching;
-- fine and higher subject-label generation;
+- subject-label generation at each breadth;
 - corpus scale and update policy; and
 - final navigation evaluation.

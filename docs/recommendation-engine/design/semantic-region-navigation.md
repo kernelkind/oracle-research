@@ -90,12 +90,13 @@ The public hierarchy must not require that private state.
 
 The backend direction is documented in
 [`atomic-vector-subject-hierarchy.md`](atomic-vector-subject-hierarchy.md).
-The method-independent fine-segmentation boundary is documented in
+The vector-grouping experiment boundary is documented in
 [`../research/fine-segmentation-vector-space-requirements.md`](../research/fine-segmentation-vector-space-requirements.md).
 
-Navigation work begins only after the earlier stages demonstrate useful fine
-subjects and a usable hierarchy. The interface must evaluate the complete
-root-to-note experience; attractive labels alone are not sufficient.
+Navigation requires useful subjects and a usable hierarchy, not a uniformly
+fine layer of groups. Read-only candidate explorers support that investigation;
+they do not establish a final navigation hierarchy. The interface must evaluate
+the complete root-to-note experience; attractive labels alone are not sufficient.
 
 ## Open Decisions
 

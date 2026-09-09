@@ -1,68 +1,74 @@
-# Hierarchical Grouping of Fine Semantic Segments
+# Hierarchical Grouping of Semantic Segments
 
 ## Status
 
-This document records the CREC-122 literature review after correcting the
-object being organized.
+This document records the CREC-122 research into geometric hierarchy methods,
+not a frozen algorithm decision or execution plan. The methods below remain
+candidates with explicit input assumptions.
 
-It is research for a later stage, not a frozen algorithm decision or current
-execution plan. Hierarchy comparison begins only after the fine-segmentation
-work demonstrates useful fine subjects. The review identifies methods that can
-then be compared without asking a language model to define the topology or
-fitting one filled geometric volume to every parent.
+The [current design](../design/atomic-vector-subject-hierarchy.md) allows
+subjects and discovered groups at different breadths. It does not require a
+fixed finest layer before hierarchy investigation. The current work includes
+inspecting [HDBv2's existing groups and hierarchy](../../../sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/README.md)
+for meaningful refinements. Neither HDBv2 nor a separate hierarchy algorithm
+has been selected as the final solution.
 
 ## Question
 
-Given validated and frozen fine semantic segments, how can we construct a useful
-broad-to-narrow hierarchy in which every higher subject is exactly a union of
-complete finer subjects?
+How can discovered subject groups at different breadths support a useful
+broad-to-narrow hierarchy?
 
-The input is:
+The merge-based methods reviewed here can operate on a frozen set of input
+segments, with each segment retaining its source-vector membership:
 
 ```text
-FineSegmentId -> {AtomicSubjectVectorId}
+segment -> {subject vectors}
 ```
 
-This representation does not require the fine-segmentation stage to be
-exhaustive or non-overlapping. One vector may occur in more than one fine
-segment, and an unassigned vector is outside the hierarchy input. The exact
-fine-segmentation membership contract must be frozen before this research is
-turned into an experiment.
+The input contract of a particular comparison must state whether these groups
+are disjoint, overlapping, or already nested, and how unassigned vectors are
+handled. Freezing an input for comparison does not declare its groups to be
+maximally narrow, indivisible in the final system, or terminal UI subjects.
 
-The required output is a nested partition:
+For a nested-merge candidate, the output has this form:
 
 ```text
-fine segments
-  -> groups of fine segments
+input segments
+  -> groups of input segments
   -> groups of those groups
   -> ...
 ```
 
-For every hierarchy node `h`:
+For that candidate, each parent is an exact union of its descendants' input
+memberships:
 
 ```text
-members(h) = union of the complete fine segments below h
+members(h) = union of the complete input segments below h
 ```
+
+This is a property of these merge methods, not a requirement that every
+discovered group must become a leaf. Tree versus overlapping parent paths and
+reuse versus separate construction of a candidate hierarchy remain open.
 
 A parent is not required to be one point, centroid, sphere, box, Gaussian, or
 other filled region in the embedding space.
 
 For example, a parent called `Programming languages` could be the exact union
-of separate Rust, Python, and C fine segments. It does not claim that every
+of separate Rust, Python, and C segments. It does not claim that every
 point in the empty space between those segments belongs to the parent.
 
 ## Corrected Image-Segmentation Analogy
 
 The useful analogy is not that a semantic subject has the shape of an image
-object. It is that hierarchical image segmentation organizes indivisible fine
-regions through a graph:
+object. It is that a merge-based image-segmentation method can organize fixed
+input regions through a graph:
 
 | Image segmentation | Semantic hierarchy |
 |---|---|
 | pixel or local feature | atomic-subject vector |
-| superpixel or fine image region | frozen fine semantic segment |
+| input image region | input semantic segment |
 | physical region adjacency | inferred semantic-neighborhood relation |
-| boundary strength | evidence that two fine segments should remain separate |
+| boundary strength | evidence that two segments should remain separate |
 | region hierarchy | nested unions of semantic segments |
 
 The mathematical image-segmentation literature already supports hierarchical
@@ -80,8 +86,9 @@ Ultrametric Watersheds*](https://arxiv.org/abs/1002.1887).
 
 ## Central Finding
 
-The strongest methods do not reduce two fine segments to one direct cosine.
-They compare how each fine segment relates to a wider semantic neighborhood.
+The strongest methods in this fixed-input review compare how each segment
+relates to a wider semantic neighborhood rather than reducing two segments to
+one direct cosine.
 
 This matters because siblings in a useful hierarchy need not be one another's
 closest points. For example:
@@ -105,12 +112,12 @@ the work.
 
 ## Proposed Semantic Relation Graph
 
-The most defensible initial graph construction is:
+One candidate graph construction for a fixed input layer is:
 
 1. Build a sparse mutual-`k`-nearest-neighbor graph over the original atomic
    meaning vectors.
-2. If fine-segment memberships are non-overlapping, contract each fine
-   segment's vector nodes into one segment node. If memberships overlap, this
+2. If input memberships are non-overlapping, contract each segment's vector
+   nodes into one segment node. If memberships overlap or nest, this
    contraction is not defined: the hierarchy experiment must first specify how
    one vector contributes evidence to several segment nodes without duplicating
    or discarding it.
@@ -124,7 +131,7 @@ w(a, b) = sum of retained atom-level neighbor-edge weights
           crossing from a to b
 ```
 
-This retains evidence from every atomic vector. Replacing each fine segment
+This retains evidence from every atomic vector. Replacing each input segment
 with one average vector would discard local contacts, segment size, internal
 cohesion, and potentially multimodal geometry.
 
@@ -139,7 +146,8 @@ Source: [Ertöz, Steinbach, and Kumar, *Finding Clusters of Different Sizes,
 Shapes, and Densities in Noisy, High Dimensional
 Data*](https://epubs.siam.org/doi/10.1137/1.9781611972733.5).
 
-The first hierarchy comparison should not add other edge types:
+To isolate this candidate's geometric evidence, a comparison can keep other
+signals separate:
 
 - Same-note co-occurrence means two ideas were communicated together. It does
   not prove that either is a broader subject of the other.
@@ -148,15 +156,15 @@ The first hierarchy comparison should not add other edge types:
 - Generated labels describe already-formed groups. They must not determine
   membership during this comparison.
 
-Those signals can be tested independently later if semantic-neighborhood
-relations prove insufficient.
+This experimental separation is not a decision that all future hierarchy
+methods must use only geometry.
 
 ## Leading Candidate: Nested Degree-Corrected Stochastic Block Model
 
 A stochastic block model groups graph nodes according to the pattern of edges
 between groups. In the nested model:
 
-1. fine-segment nodes are assigned to blocks;
+1. input-segment nodes are assigned to blocks;
 2. inter-block edge counts form a smaller graph;
 3. that graph is assigned to broader blocks;
 4. the process repeats to form a hierarchy.
@@ -176,7 +184,7 @@ evidence-based choices for group count, branching, and depth rather than one
 global cosine cutoff. The model supports nonbinary structure and is not
 limited to dense spherical clusters.
 
-Degree correction is important because fine segments can differ substantially
+Degree correction is important because input segments can differ substantially
 in size and graph degree. Without it, high-degree semantic hubs can be grouped
 for the wrong reason.
 
@@ -191,7 +199,7 @@ Sources:
 
 ### Why it fits
 
-- It preserves frozen leaves.
+- It preserves the input segments in this fixed-input comparison.
 - Higher nodes are exact unions, not enclosing geometric shapes.
 - It can use complete relation patterns rather than direct pairwise proximity.
 - Its model-selection objective penalizes unsupported levels.
@@ -204,8 +212,9 @@ patterns. Two segments could be grouped because they interact with the graph
 similarly even if a person would not recognize one broader subject containing
 both. Statistical graph structure is not automatically semantic taxonomy.
 
-This is the strongest primary candidate, but that risk prevents selecting it
-without a semantic comparison.
+This is the leading statistical candidate for the fixed-input comparison below,
+but that risk prevents selecting it without a semantic comparison. It is not a
+selected hierarchy method or an instruction to replace the HDBv2 investigation.
 
 ## Independent Candidate: Hierarchical Infomap
 
@@ -244,11 +253,11 @@ Equation*](https://journals.aps.org/pre/abstract/10.1103/PhysRevE.86.026112).
 
 ## Diagnostic Candidate: Agglomerative Information Bottleneck
 
-Agglomerative Information Bottleneck represents each fine segment by a
-conditional distribution over a chosen context. For this experiment, the
+Agglomerative Information Bottleneck represents each input segment by a
+conditional distribution over a chosen context. For a graph comparison, the
 context can be the segment's semantic neighbors in the contracted graph.
 
-It starts with one cluster per fine segment and repeatedly merges the pair
+It starts with one cluster per input segment and repeatedly merges the pair
 whose union loses the least information about those context distributions.
 Two segments can therefore merge because they predict similar semantic
 surroundings rather than because they have the highest direct cosine.
@@ -302,9 +311,9 @@ interconnectivity and relative closeness compared with each cluster's internal
 structure. This is stronger than centroid linkage and can follow irregular
 shapes.
 
-It is a possible deterministic graph-merging baseline. However, many current
-fine segments contain very few vectors, making estimates of internal
-connectivity and closeness unstable. It also remains fundamentally a
+It is a possible deterministic graph-merging baseline. For input segments
+containing very few vectors, estimates of internal connectivity and closeness
+can be unstable. It also remains fundamentally a
 proximity/interconnectivity method rather than a full relationship-pattern
 model.
 
@@ -317,11 +326,12 @@ Density cluster trees organize connected components of progressively lower
 density level sets. HDBSCAN uses mutual-reachability distance, builds this
 hierarchy, and extracts persistent clusters.
 
-This is useful when one broader group should be one connected density region.
-That is not required here. `Programming languages` may be a union of separated
-Rust, Python, and C regions with no dense path filling the space between them.
-Density connectivity would add a requirement that the desired architecture
-does not need.
+This can expose useful groups at different breadths, as the current HDBv2
+investigation explores. However, a density connection is not automatically a
+broader-subject relationship. `Programming languages` may be a union of
+separated Rust, Python, and C regions with no dense path filling the space
+between them. Connectedness is a method assumption, not a system requirement;
+its effect must be checked against actual masks and parent placements.
 
 Source: [Chaudhuri et al., *Consistent Procedures for Cluster Tree Estimation
 and Pruning*](https://cseweb.ucsd.edu/~dasgupta/papers/cluster-ieee.pdf).
@@ -342,7 +352,7 @@ Across Time Scales*](https://www.pnas.org/doi/10.1073/pnas.0903215107).
 Diffusion condensation repeatedly diffuses and contracts data to expose
 coarser structure. It is a genuine multiscale method, but it moves and averages
 the representation while constructing the hierarchy. That makes the meaning
-of a parent harder to ground in the fixed fine segments and adds machinery not
+of a parent harder to ground in the fixed input segments and adds machinery not
 required for the first comparison.
 
 Source: [Brugnone et al., *Coarse Graining of Data via Inhomogeneous Diffusion
@@ -387,10 +397,11 @@ Optimization*](https://arxiv.org/abs/1206.2807).
 No paper establishes that semantic-neighborhood graph structure corresponds
 to a human broad-to-narrow subject hierarchy. That remains the experiment.
 
-The smallest comparison that isolates it is:
+If comparing the fixed-input graph methods above, a controlled design is:
 
-1. Freeze one atom-level mutual-`k`-NN graph and the demonstrated fine-segment
-   memberships.
+1. Freeze one atom-level mutual-`k`-NN graph and the demonstrated input-segment
+   memberships, explicitly resolving overlap or nesting before
+   graph contraction. These inputs are not declared the final finest layer.
 2. Run a nested degree-corrected SBM as the primary statistical candidate.
 3. Run hierarchical Infomap as the assortative flow-based comparison.
 4. Run Agglomerative Information Bottleneck over the same neighbor evidence as
@@ -401,9 +412,11 @@ The smallest comparison that isolates it is:
    neighbor counts, edge perturbations, and algorithm seeds to measure
    stability.
 
-Earlier small artifacts tested mechanics only. A hierarchy comparison should
-use the first fine-segment artifact admitted by the synthetic and real-niche
-FSA work; no larger artifact is authorized merely by this review.
+This is a candidate comparison, not the current execution order. Inspecting
+the existing HDBv2 hierarchy does not require replacing it with these methods
+or first declaring its groups to be fine leaves. A new comparison must freeze
+its actual inputs and receive separate authorization; this review authorizes
+no rerun or corpus expansion.
 
 The review criteria are:
 
@@ -444,10 +457,12 @@ The literature does **not** establish:
 
 The resulting working hypothesis is:
 
-> The complete semantic-neighborhood relationships among frozen fine segments
+> The complete semantic-neighborhood relationships among frozen input segments
 > contain enough structure for a graph hierarchy method to recover useful
 > broader subjects as exact unions of those segments.
 
 That hypothesis is more precise than assuming direct cosine linkage should
 construct the hierarchy, and it can be tested without changing the earlier
-representation or fine-segment stages.
+representation. It is one testable hypothesis, not a requirement that all
+discovered subjects occupy the same breadth or that the final hierarchy be a
+tree of unions.

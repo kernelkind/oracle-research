@@ -9,45 +9,34 @@ quality criterion. Git preserves that implementation and its reports.
 The approved direction is now a separate, user-directed content-discovery
 system. It does not try to infer which subject a person wants next. It builds a
 public subject hierarchy, lets the person narrow through explicit choices, and
-then shows notes from the selected fine subject.
+then shows notes from the selected subject. Subjects and discovered groups may
+have different breadths; a uniformly fine layer is not a prerequisite for
+hierarchy investigation.
 
-The current implemented preparation pipeline is:
+The current [100-note real-data experiment](../../sse_multivector/real-note-fine-segmentation-v1/README.md)
+uses this preparation pipeline:
 
 ```text
 public note
-  -> TP-generated takeaways
-  -> MP-selected source masks
-  -> PP prominence scores
+  -> ASv6.23 subjects
+  -> MPv3.5 source masks
+  -> reviewed subjects and masks
   -> one SSE vector per mask
 ```
 
-Those components are experimental. The downstream representation is intended
-to describe atomic subjects, and the current prompts do not yet establish that
-they do so reliably. Two fine-segmentation configurations are frozen for
-controlled qualification: HDBSCAN* with `min_samples = 2`,
-`min_cluster_size = 2`, and excess-of-mass selection, and SNN with
-`neighbor_count = 5`, `minimum_shared_neighbor_count = 2`, and
-`minimum_core_neighbor_count = 3`. They run the complete suite as separate
-candidate instances over the same frozen inputs. The final fine-segmentation
-contract and algorithm, hierarchy algorithm, and production-scale extractor
-remain open.
+Both prompt packages are frozen for this experiment. ASv6.23 explicitly allows
+broad, narrow, nested, and overlapping subjects. The older takeaway/prominence
+orchestration remains implemented but is not this experiment's preparation
+path. The final grouping contract and algorithm, hierarchy algorithm, and
+production-scale extractor remain open.
 
-The suite's exact semantic fixtures, scoring rules, and prerequisite graph were
-approved on 2026-08-31. Its controlled run completed on 2026-09-01. Both
-candidates exceeded the frozen Experiment 2 limit of 100 unique cross-subject
-packets, so neither may proceed and the user's `revise candidate` or `stop`
-dispositions remain pending. The complete observations are in the
-[controlled-run results](experiments/fine-segmentation/controlled-run-v1-results.md).
-The frozen capacity failure remains the historical v1 protocol outcome. A
-later audit found that exact-vector-set identity was unsuitable as the unit for
-the follow-up human review: HDBSCAN*'s 177 retained exact packets map to nine
-distinct sorted sets of approved synthetic subjects. A separately versioned
-exploratory v2 review presents each set once and replays its judgment to every
-matching exact packet and formal occurrence, so nine judgments cover 177 exact
-packets and 191 occurrences. This methodological correction leaves the frozen
-HDBSCAN* candidate and evidence, the original 177-packet v1 review session, the
-unavailable `proceed` disposition, and final user selection unchanged. SNN is
-not included, and the review produces no labels.
+The current hierarchy investigation inspects the saved
+[HDBv2 groups and condensed tree](../../sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/README.md),
+without generated titles. Useful groupings do not automatically validate their
+parent placements. This inspection does not select HDBv2 as the final method.
+The earlier [controlled-run results](experiments/fine-segmentation/controlled-run-v1-results.md)
+and their frozen protocols remain unchanged evidence, not a pending work order
+that must be repeated before this investigation.
 
 ## Goal
 
@@ -66,7 +55,7 @@ private behavior.
 - The public hierarchy must not depend on private ratings, inferred
   preferences, or current intent.
 - Subjects must emerge from the corpus rather than a predefined ontology.
-- One note may contribute to several fine subjects.
+- One note may contribute to several subjects at different breadths.
 - A hierarchy choice must narrow the content set relative to the complete path
   above it; an independent label that can be interpreted many ways is not a
   useful refinement.
@@ -75,35 +64,18 @@ private behavior.
 - Production constraints are deferred until the scientific assumptions work,
   but the repository-wide `$500` paid-compute ceiling remains binding.
 
-## Work Order
+## Investigation Boundaries
 
-The next fine-segmentation stages are intentionally dependency-ordered:
+Keep source extraction, grouping, hierarchy placement, and navigation judgments
+separate. An algorithm may produce both groups and a candidate hierarchy, but
+coherent groups alone do not establish meaningful narrowing paths. A discovered
+group is not presumed to be a maximally narrow or terminal subject.
 
-1. Technically freeze the shared SSE inputs, bind the approved fixtures and
-   scoring rules by hash, freeze the orders and both complete candidate
-   identities, then run the synthetic suite separately for HDBSCAN* and SNN.
-   Experiments 3 and 4 qualify each SSE-plus-candidate combination because their
-   text interventions are re-encoded through SSE before the candidate receives
-   them. Semantic failures remain evidence and do not halt later local tests;
-   an integrity failure blocks only the affected candidate input and dependent
-   conclusions.
-2. Preserve the frozen capacity failure, HDBSCAN* candidate and evidence, and
-   original 177-packet v1 review session. Run a separately versioned
-   exploratory v2 review over the nine distinct sorted approved-subject sets.
-   Deterministically replay each judgment to every matching exact packet and
-   formal occurrence. This methodological correction does not retroactively
-   satisfy the frozen 100-packet protocol; SNN remains outside the follow-up,
-   and the user alone decides what the evidence supports.
-3. If the user selects a candidate, test that exact identity on a hand-selected
-   real-note collection from one niche subject area.
-4. Only after useful fine subjects are demonstrated, compare and freeze a
-   hierarchy-construction method.
-5. Construct and label the hierarchy, then build the navigation TUI.
-
-The temporary TP, MP, and prominence generation boundary remains separate
-upstream work. It must be resolved before an end-to-end system can produce
-atomic-subject inputs from arbitrary notes, but it is not a prerequisite for
-this suite's hand-authored synthetic masks.
+Each experiment freezes its actual inputs and configuration. Preserve source
+masks, memberships, and prior judgments when comparing outcomes. Read-only
+inspection of candidate hierarchies may inform the next experiment; it does
+not freeze an algorithm. Tree versus overlapping parent paths, grouping versus
+separate hierarchy construction, and final labels remain open.
 
 Do not scale the corpus or build a later stage to conceal an unresolved earlier
 stage.
