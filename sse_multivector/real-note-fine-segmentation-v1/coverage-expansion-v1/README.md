@@ -6,11 +6,11 @@ Adding related notes repaired the gianduja placement. It did not cleanly repair 
 
 | Original mask | With 24 related notes | With 24 other-subject notes |
 |---|---|---|
-| V766: ⟦gianguja jars⟧ ⟦store⟧ | Leaves greetings; joins three other gianduja posts. A clear improvement. | Original greeting segment unchanged. |
-| V439: ⟦Literature⟧ | Gains two book-related masks, but stays with all three previously rejected audiobook-criticism masks. Not a demonstrated repair. | Original segment unchanged. |
-| V841: ⟦today is a gift⟧ | Leaves Christmas; joins gratitude and life-related masks, but the resulting segment contains 61 vectors from 14 notes. Placement improves locally; the complete segment remains questionable. | Original Christmas segment unchanged. |
+| V766: ⟦gianguja jars⟧ ⟦store⟧ | Leaves greetings; joins three other gianduja posts. User approved the new segment. | Original greeting segment unchanged. |
+| V439: ⟦Literature⟧ | Gains two book-related masks, but stays with the old audiobook-criticism masks. User rejected the new segment, identifying V439 as the outlier. | Original segment unchanged. |
+| V841: ⟦today is a gift⟧ | Leaves Christmas. User found its new 61-mask segment mostly coherent, but rejected it because V991, ⟦Thanks guys⟧, stands out. | Original Christmas segment unchanged. |
 
-These are my assessments, not new user approvals. The review remains unnamed: no segment titles were generated.
+The related-addition user review is complete: **20 valid, 2 invalid, 2 uncertain**, all 24 decisions confirmed. The other-subject review is still pending. Assistant assessments remain saved separately. No segment titles were generated.
 
 The [full source notes with inline masks](target-evidence.md) show each original target and its closest different-note mask before and after the related addition. [Exact scores](target-comparison.json) retain the ten closest different-note vectors for every target in all three runs. The complete segments, not just nearest neighbors, are in the review tool below.
 
@@ -32,9 +32,9 @@ All 48 original texts were read before generation. All 409 generated subjects an
 
 **V766:** Its closest different-note mask changes from ⟦Gm nostr⟧, cosine **0.556752**, to ⟦limited edition⟧ ⟦Gianduja⟧ ⟦available⟧, **0.749020**. Its new segment, `Sd621a11e19`, contains six masks from four posts, all about gianduja availability. The remaining greeting masks stay together separately. The original gianduja-to-greeting cosine has not decreased; better neighbors were added and HDBv2 selected a different group.
 
-**V439:** Its closest different-note mask changes from audiobook criticism, **0.609150**, to ⟦Audiobooks⟧ ⟦“read”⟧, **0.667523**. However, `S110c9d7b6f` still contains every member of the rejected original segment, plus that audiobook mask and ⟦non-fiction books⟧ ⟦so much filler⟧. A changed segment ID is not a correction of the previously rejected relationship. The independent assistant reviewer accepts the broader books connection; that does not overturn the user's prior judgment.
+**V439:** Its closest different-note mask changes from audiobook criticism, **0.609150**, to ⟦Audiobooks⟧ ⟦“read”⟧, **0.667523**. However, `S110c9d7b6f` still contains every member of the rejected original segment, plus that audiobook mask and ⟦non-fiction books⟧ ⟦so much filler⟧. The user rejected this expanded group: “mostly valid. v439 stands out too much”. The independent assistant reviewer had accepted the broader books connection; that assessment does not override the user's rejection.
 
-**V841:** Its closest different-note mask changes from printing Christmas cards, **0.564604**, to ⟦I’m grateful⟧ ⟦present⟧, **0.631959**. The Christmas masks remain together without V841. But its new segment, `S07e6d2ac71`, also combines gratitude, divine guidance, claims about human beings as God's instruments, life's purpose, sharing knowledge and joy, and advice about speaking. Better immediate neighbors therefore do not establish a good complete fine segment. All 61 masks are preserved for review.
+**V841:** Its closest different-note mask changes from printing Christmas cards, **0.564604**, to ⟦I’m grateful⟧ ⟦present⟧, **0.631959**. The Christmas masks remain together without V841. The user rejected its new segment, `S07e6d2ac71`, but explained: “it's mostly coherent. v991 stands out a bit too much though”. V991 selects only ⟦Thanks guys⟧ from a pecan-product note. This differs from my earlier criticism that the entire life/spirituality group was too diffuse: the user's stated problem is that particular outlier. It is not a claim that V841 still belongs with Christmas, nor approval of a hypothetical group with V991 removed. All 61 masks remain unchanged.
 
 ## Changes elsewhere
 
@@ -60,7 +60,29 @@ Every original segment's destination and every original vector's transition are 
 
 ## Review
 
-Only new or changed segments are shown. Every displayed segment contains masks from at least two distinct notes. All its masks appear together; scroll for long segments. Unchanged segments remain in the complete results and are not requested again. The two review sessions are independent and initially contain no answers.
+Only new or changed segments are shown. Every displayed segment contains masks from at least two distinct notes. All its masks appear together; scroll for long segments. Unchanged segments remain in the complete results and are not requested again. The two review sessions are independent. The related-addition session is complete; the other-subject session has not been reviewed.
+
+### Your related-addition review
+
+All 24 saved judgments match the confirmed session decisions and the original review artifact: 20 valid, 2 invalid, 2 uncertain.
+
+- `Sd621a11e19`, the gianduja segment: valid.
+- `S07e6d2ac71`, containing V841: invalid, with the V991 outlier comment above.
+- `S110c9d7b6f`, containing V439: invalid, with V439 identified as the outlier.
+- `S67274cded4` and `S8a0cf4f31b`: uncertain, with no comments. The first combines initial-writing masks and ending an overlong note; the second combines gianduja shipping/order timing and choosing fruit for a challenge. Those descriptions are not inferred reasons for the user's uncertainty.
+- `Sc2be76b29b`: valid, with “we really need to dedup. it is making it hard to understand...”. Its ten displayed masks include one exact same-note/range duplicate pair, V105/V106, and several distinct overlapping masks. The comment records review friction; it does not choose a broader deduplication rule or authorize removing current evidence.
+
+The user also accepted the philosophy/psychology group that the assistant had marked uncertain, and the grownostr/agroforestr group whose initial assistant interpretation was corrected before this review. Raw assistant judgments and user decisions remain separate and unchanged. No masks were removed, no algorithm rerun, and no prompt or deduplication change was made in response to this review.
+
+Review set: `RNeb4ad12783e3`. Evidence SHA-256:
+
+| File | SHA-256 |
+|---|---|
+| `arm-a-comparison/review.json` | `8736814a4097fcca50dc2ad8088b3310d562773842e107af0f720c4a46b79ca1` |
+| `arm-a-user-response.json` | `81e81837c5b667ed1a071aeaa7dfd2c52a005437875d26cc5cbf7d62ebe54ef1` |
+| `arm-a-user-session.json` | `b855b63478a2e5102dd24dc25e577503fa43db6280a7f4e2594606f91f3389f0` |
+
+### Commands
 
 Related addition — 24 segments:
 
@@ -84,7 +106,7 @@ Use the same command to resume. V001–V945 mean the same original vectors in bo
 
 The selected related addition changed the three target neighborhoods in ways that the equally sized other-subject addition did not. Gianduja supplies a concrete example where missing related notes contributed to an incorrect placement and additional evidence repaired it without changing the original representation or HDBv2.
 
-This is not evidence that sparsity explains every failure, that more notes necessarily improve every segment, or that HDBv2 is a final algorithm. The literature relationship persists, the life-related segment becomes diffuse, and unrelated additions also create questionable groupings. Representation, corpus coverage, and segmentation remain separate sources of uncertainty.
+This is not evidence that sparsity explains every failure, that more notes necessarily improve every segment, or that HDBv2 is a final algorithm. The literature relationship remains rejected. The life-related group is mostly coherent according to the user but still contains a named outlier. The other-subject run's new groups have assistant assessments, not user judgments. Representation, corpus coverage, and segmentation remain separate sources of uncertainty.
 
 ## Limits and saved evidence
 
