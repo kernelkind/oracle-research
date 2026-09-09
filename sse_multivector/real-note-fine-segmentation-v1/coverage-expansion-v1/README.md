@@ -10,7 +10,7 @@ Adding related notes repaired the gianduja placement. It did not cleanly repair 
 | V439: ⟦Literature⟧ | Gains two book-related masks, but stays with the old audiobook-criticism masks. User rejected the new segment, identifying V439 as the outlier. | Original segment unchanged. |
 | V841: ⟦today is a gift⟧ | Leaves Christmas. User found its new 61-mask segment mostly coherent, but rejected it because V991, ⟦Thanks guys⟧, stands out. | Original Christmas segment unchanged. |
 
-The related-addition user review is complete: **20 valid, 2 invalid, 2 uncertain**, all 24 decisions confirmed. The other-subject review is still pending. Assistant assessments remain saved separately. No segment titles were generated.
+Both user reviews are complete. The related addition has **20 valid, 2 invalid, 2 uncertain** segments; the other-subject addition has **13 valid, 6 invalid, 0 uncertain**. All 43 decisions are confirmed. These counts cover only new or changed segments, not all segments in either run. Assistant assessments remain saved separately. No segment titles were generated.
 
 The [full source notes with inline masks](target-evidence.md) show each original target and its closest different-note mask before and after the related addition. [Exact scores](target-comparison.json) retain the ten closest different-note vectors for every target in all three runs. The complete segments, not just nearest neighbors, are in the review tool below.
 
@@ -86,9 +86,9 @@ Evidence: the original [complete review](../hdbscan-cross-note/review/review.jso
 
 ## Review
 
-Only new or changed segments are shown. Every displayed segment contains masks from at least two distinct notes. All its masks appear together; scroll for long segments. Unchanged segments remain in the complete results and are not requested again. The two review sessions are independent. The related-addition session is complete; the other-subject session has not been reviewed.
+Only new or changed segments are shown. Every displayed segment contains masks from at least two distinct notes. All its masks appear together; scroll for long segments. Unchanged segments remain in the complete results and are not requested again. The two review sessions are independent and both are complete.
 
-I reread all 88 masks in the 19 other-subject segments for this finishing check. The saved independent assessment remains 14 valid, 4 invalid, 1 uncertain; these are assistant judgments only. The existing masks-only review is ready and every displayed segment contains at least two notes. No new review interface or generated titles are needed.
+I reread all 88 masks in the 19 other-subject segments for this finishing check. The saved independent assessment remains 14 valid, 4 invalid, 1 uncertain; these are assistant judgments only, distinct from the completed user review below. No new review interface or generated titles were needed.
 
 ### Your related-addition review
 
@@ -110,7 +110,34 @@ Review set: `RNeb4ad12783e3`. Evidence SHA-256:
 | `arm-a-user-response.json` | `81e81837c5b667ed1a071aeaa7dfd2c52a005437875d26cc5cbf7d62ebe54ef1` |
 | `arm-a-user-session.json` | `b855b63478a2e5102dd24dc25e577503fa43db6280a7f4e2594606f91f3389f0` |
 
-### Commands
+### Your other-subject review
+
+All 19 judgments are confirmed: **13 valid, 6 invalid, 0 uncertain**. Every comment is empty, so the saved decisions do not establish your reasons for accepting or rejecting a group.
+
+Rejected segments: `S01f8819321`, `S131d17a0a4`, `S438999a4b8`, `S7391f31474`, `S83e6ec814d`, and `Sc325c9304d`. Every other displayed segment is valid, including `S577ad54ac5`, which preserves the cold-morning connection after V491 becomes ungrouped.
+
+Four decisions differ from the saved assistant assessment:
+
+| Segment | Assistant | User |
+|---|---|---|
+| `S01f8819321` | Valid | Invalid |
+| `S131d17a0a4` | Valid | Invalid |
+| `S438999a4b8` | Uncertain | Invalid |
+| `Sdb49c8320d` | Invalid | Valid |
+
+The assistant's earlier interpretations do not override these decisions. They remain recorded separately rather than rewritten to imply agreement. No member was removed, no mask changed, and no algorithm rerun. The six rejections identify unwanted groupings; their causes have not been isolated to masking, SSE, corpus coverage, or HDBv2.
+
+Review set: `RN0a50c8a3dcab`. All decisions match the session and original review artifact; the session checksum and all 19 segment checksums were verified. Evidence SHA-256:
+
+| File | SHA-256 |
+|---|---|
+| `arm-b-comparison/review.json` | `c4eb8a8764ad8c45e12a87a51b61671ec8373da53a3e2ba2655aba880c9933ce` |
+| `arm-b-user-response.json` | `0d9cf5e6ffbf6677aaff9ecf800d0df2d34e58283bb402d38f24ed47e1814e40` |
+| `arm-b-user-session.json` | `31f1ffa18c264bc08452ba758e73690cb4d2a478cf826bc245ad1041da79128d` |
+
+The local session and response files for both reviews remain untracked and unmodified by this documentation update.
+
+### Commands to revisit the completed reviews
 
 Related addition — 24 segments:
 
@@ -134,7 +161,9 @@ Use the same command to resume. V001–V945 mean the same original vectors in bo
 
 The selected related addition changed the three target neighborhoods in ways that the equally sized other-subject addition did not. Gianduja supplies a concrete example where missing related notes contributed to an incorrect placement and additional evidence repaired it without changing the original representation or HDBv2.
 
-This is not evidence that sparsity explains every failure, that more notes necessarily improve every segment, or that HDBv2 is a final algorithm. The literature relationship remains rejected. The life-related group is mostly coherent according to the user but still contains a named outlier. The other-subject run's new groups have assistant assessments, not user judgments. Representation, corpus coverage, and segmentation remain separate sources of uncertainty.
+Both additions produced new or changed groups that the user accepted, and both also produced rejected groups. The related addition received 20 valid, 2 invalid and 2 uncertain decisions; the other-subject addition received 13 valid and 6 invalid. These are different sets of segments, not repeated judgments on the same items, so their acceptance counts are not a controlled estimate of a general quality improvement. The cleaner controlled observation remains the three original target placements: adding related notes changed them, whereas adding other-subject notes left all three unchanged.
+
+This is not evidence that sparsity explains every failure, that more notes necessarily improve every segment, or that HDBv2 is a final algorithm. The literature relationship remains rejected. The life-related group is mostly coherent according to the user but still contains a named outlier. Representation, corpus coverage, and segmentation remain separate sources of uncertainty. The coverage follow-up and its two user reviews are complete; no further experiment is implied by this checkpoint.
 
 ## Limits and saved evidence
 
