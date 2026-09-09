@@ -51,6 +51,7 @@ pub struct HierarchyExplorer {
     expanded: BTreeSet<usize>,
     selected: Selection,
     point_parents: BTreeMap<usize, usize>,
+    hidden_parent_masks: BTreeSet<(usize, usize)>,
     scroll: usize,
     horizontal: usize,
     height: usize,
@@ -63,6 +64,19 @@ pub struct HierarchyExplorer {
 
 impl HierarchyExplorer {
     pub fn new(hierarchy: Hierarchy, start: Option<usize>) -> Result<Self, String> {
+        Self::with_view(hierarchy, start, false)
+    }
+
+    /// Display an already-projected saved selection without changing its members.
+    pub fn new_selection(hierarchy: Hierarchy, start: Option<usize>) -> Result<Self, String> {
+        Self::with_view(hierarchy, start, true)
+    }
+
+    fn with_view(
+        hierarchy: Hierarchy,
+        start: Option<usize>,
+        selection_view: bool,
+    ) -> Result<Self, String> {
         let branch = start.unwrap_or(hierarchy.root);
         if !hierarchy.groups.contains_key(&branch) {
             return Err(format!("unknown group {branch}"));
@@ -72,13 +86,19 @@ impl HierarchyExplorer {
             .values()
             .flat_map(|group| group.vectors.iter().map(move |point| (*point, group.id)))
             .collect();
+        let hidden_parent_masks = if selection_view {
+            BTreeSet::new()
+        } else {
+            repeated_parent_masks(&hierarchy)
+        };
         Ok(Self {
             hierarchy,
-            selection_view: false,
+            selection_view,
             branch,
             expanded: BTreeSet::from([branch]),
             selected: Selection::Group(branch),
             point_parents,
+            hidden_parent_masks,
             scroll: 0,
             horizontal: 0,
             height: 12,
@@ -88,13 +108,6 @@ impl HierarchyExplorer {
             detail_scroll: 0,
             pending_g: false,
         })
-    }
-
-    /// Display an already-projected saved selection without changing its members.
-    pub fn new_selection(hierarchy: Hierarchy, start: Option<usize>) -> Result<Self, String> {
-        let mut explorer = Self::new(hierarchy, start)?;
-        explorer.selection_view = true;
-        Ok(explorer)
     }
 
     pub fn handle_event(&mut self, event: Event) -> bool {
@@ -346,28 +359,32 @@ impl HierarchyExplorer {
                 "│"
             }
         );
-        if !group.children.is_empty() && !group.vectors.is_empty() {
-            rows.push(Row {
-                selection: None,
-                prefix: if self.selection_view {
-                    format!("{continuation}└─ ")
-                } else {
-                    point_prefix.clone()
-                },
-                content: if self.selection_view {
-                    "Masks outside retained child groups:"
-                } else {
-                    "Masks outside its child groups:"
-                }
-                .to_owned(),
-            });
-        }
+        let mut needs_header = !group.children.is_empty();
         for point in &group.vectors {
             let aliases = &self.hierarchy.vectors[point];
             let mut seen = BTreeSet::new();
             for (index, mask) in aliases.iter().enumerate() {
-                if !seen.insert((&mask.note_id, &mask.byte_spans)) {
+                if self.hidden_parent_masks.contains(&(*point, index))
+                    || !seen.insert((&mask.note_id, &mask.byte_spans))
+                {
                     continue;
+                }
+                if needs_header {
+                    rows.push(Row {
+                        selection: None,
+                        prefix: if self.selection_view {
+                            format!("{continuation}└─ ")
+                        } else {
+                            point_prefix.clone()
+                        },
+                        content: if self.selection_view {
+                            "Masks outside retained child groups:"
+                        } else {
+                            "Masks outside its child groups:"
+                        }
+                        .to_owned(),
+                    });
+                    needs_header = false;
                 }
                 let ids = matching_ids(aliases, mask);
                 rows.push(Row {
@@ -396,8 +413,8 @@ impl HierarchyExplorer {
         } else {
             (
                 "This is a read-only view of the saved HDBSCAN hierarchy.",
-                "Masks outside its child groups belong to that parent in the saved tree. They have not been discarded or moved into a made-up child.",
-                "No groups or members are filtered, judged, relabeled, or rearranged.",
+                "Masks outside its child groups remain in the saved tree. A parent mask is hidden here when its source note occurs anywhere in a child subtree, including collapsed children. Counts and saved memberships are unchanged.",
+                "No groups are filtered, judged, relabeled, or rearranged. Only repeated-note parent mask rows are hidden.",
             )
         };
         format!(
@@ -577,6 +594,45 @@ impl HierarchyExplorer {
         };
         frame.render_widget(Paragraph::new(format!("j/k ↑/↓ Select  h/l ←/→ Collapse/expand  PgUp/PgDn Scroll\nU Show parent  F Focus group  {enter}\ngg/G Top/end  ? Help  Q Quit")).style(secondary_style()), areas[2]);
     }
+}
+
+/// Compare direct masks with all original child memberships, not visible rows.
+fn repeated_parent_masks(hierarchy: &Hierarchy) -> BTreeSet<(usize, usize)> {
+    let mut order = Vec::with_capacity(hierarchy.groups.len());
+    let mut pending = vec![hierarchy.root];
+    while let Some(id) = pending.pop() {
+        order.push(id);
+        pending.extend(&hierarchy.groups[&id].children);
+    }
+
+    let mut subtree_notes: BTreeMap<usize, BTreeSet<&str>> = BTreeMap::new();
+    let mut hidden = BTreeSet::new();
+    // Children precede parents, without recursion or retaining a set per ancestor.
+    for id in order.into_iter().rev() {
+        let group = &hierarchy.groups[&id];
+        let mut notes = BTreeSet::new();
+        for child in &group.children {
+            notes.append(&mut subtree_notes.remove(child).expect("child already visited"));
+        }
+        for point in &group.vectors {
+            for (index, mask) in hierarchy.vectors[point].iter().enumerate() {
+                if notes.contains(mask.note_id.as_str()) {
+                    hidden.insert((*point, index));
+                }
+            }
+        }
+        // Add direct membership only after filtering: another mask at this same
+        // group is not a child. Hidden masks still belong to the saved subtree.
+        for point in &group.vectors {
+            notes.extend(
+                hierarchy.vectors[point]
+                    .iter()
+                    .map(|mask| mask.note_id.as_str()),
+            );
+        }
+        subtree_notes.insert(id, notes);
+    }
+    hidden
 }
 
 fn matching_ids(aliases: &[MaskInstance], mask: &MaskInstance) -> String {

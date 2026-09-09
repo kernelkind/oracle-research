@@ -82,7 +82,9 @@ Use the same command to resume. To inspect all 64 trial segments, the complete r
 
 ## Explore the saved HDBv2 hierarchy
 
-This read-only explorer shows the complete saved condensed tree, not only the 64 selected segments. It preserves all 130 groups and their nested memberships, including masks that belong to a parent outside its child groups. No titles, filtering, new segmentation, or review decisions are added. Inspecting this structure does not select it as the final navigation hierarchy.
+This read-only explorer shows the complete saved condensed tree, not only the 64 selected segments. It preserves all 130 groups and their nested memberships. No titles, new segmentation, or review decisions are added. Inspecting this structure does not select it as the final navigation hierarchy.
+
+In this raw view, a direct parent mask is hidden if its source note appears anywhere in a child subtree, however deep. Collapsed children count too; expanding or visiting a group does not change this rule. Masks from notes absent from those child subtrees remain visible, and leaf masks are unchanged. An entirely hidden parent-mask list leaves no empty heading. This changes only the displayed rows: saved masks, memberships, and note counts remain intact. The separate `--selection` view does not apply this filter.
 
 ```sh
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-hdbscan-hierarchy.sh
@@ -105,7 +107,7 @@ D=sse_multivector/real-note-fine-segmentation-v1
 
 ## Manual selection of hierarchy levels
 
-The approved follow-up asks whether choosing which **existing groups** to show can produce useful navigation. It does not authorize new groups, moved members, generated titles, or adoption of HDBSCAN. The raw-tree view and its inputs remain unchanged; the selection is now available as a separate view in the same explorer.
+The approved follow-up asks whether choosing which **existing groups** to show can produce useful navigation. It does not authorize new groups, moved members, generated titles, or adoption of HDBSCAN. The raw tree's saved data remains unchanged; the selection is available as a separate view in the same explorer.
 
 I inspected all 130 groups and their masks. The separate assistant proposal is [hierarchy-selection-v1.json](hierarchy-selection-v1.json). It records a decision for every group, the retained ancestor relationships, exact point inventories, source checksums, and unresolved concerns. These are not user approvals.
 
