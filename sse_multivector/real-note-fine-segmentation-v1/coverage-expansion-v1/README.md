@@ -54,13 +54,41 @@ All 48 original texts were read before generation. All 409 generated subjects an
 
 These counts measure placement, not semantic correctness or recall. Related additions do not dominate the other addition on every measure.
 
-Of the 61 previously accepted original segments, 49 remain exactly unchanged with related additions and 56 with other-subject additions. Twelve and five accepted segments respectively change. The related run leaves eight previously grouped vectors ungrouped, including ⟦How are you today?⟧, Saturday well-wishes, waking-brain wording, two communication masks, and three autumn/frost masks. The other run leaves only the ⟦fall⟧ ⟦definitely here⟧ vector newly ungrouped. This is a cost to inspect, not something hidden by reporting only recoveries.
+Of the 61 previously accepted original segments, 49 remain exactly unchanged with related additions and 56 with other-subject additions. Twelve and five accepted segments respectively change. The related run leaves eight previously grouped vectors ungrouped; the other run leaves one. The inspection below distinguishes losing a vector's membership from losing the note's connection through that subject.
 
 Every original segment's destination and every original vector's transition are recorded in `arm-a-comparison/comparison.json` and `arm-b-comparison/comparison.json`. Separate assistant assessments cover all 24 and 19 new/changed segments. They are provisional semantic judgments, not user decisions or automatic changes to the data.
+
+## The original vectors that became ungrouped
+
+The eight related-addition losses come from seven notes and five original segments. I inspected their complete source notes and the other masks from those same notes. A remaining mask about an unrelated subject does not preserve the lost connection.
+
+### Related addition
+
+| Original segment | Masks that became ungrouped | What remains |
+|---|---|---|
+| `S83f6ab41f0` | V542: ⟦How are you today?⟧ | Its former neighbors V825, ⟦gonna⟧ ⟦great day⟧, and V918, ⟦today's been pretty solid⟧, join positive-day masks in `Scefc2d6b39`. No other mask from V542's note reconnects it to those notes. |
+| `S96e55b4730` | V840: ⟦have a great Saturday nostr friends⟧ | Its former Sunday-wish neighbors V487/V862/V863/V864 remain together in `Scf4fe8f08b`. The Saturday wish has no equivalent grouped mask. These notes still meet through morning-related masks in `S6088798e3d`, but no longer through the weekend wishes. |
+| `Sa256265971` | V320: ⟦Woke up⟧ ⟦my brain⟧ ⟦started⟧ | Its former neighbors V105/V106, both ⟦My mind⟧ ⟦off⟧, join reading/thinking masks in `Sc2be76b29b`. V320's note retains V322/V323, both ⟦Fog is lifted⟧, in `S724e3c5527`, with another note's ⟦Hazy sunlight on dusty desk⟧. It no longer shares a segment with the “My mind … off” note. |
+| `Sae17bb57f6` | V617: ⟦Learn when to speak⟧; V444: ⟦Knowledge must be shared⟧ | The same two notes still meet in `S07e6d2ac71`: V618/V619 select accepting that not everything needs to be said; V446 selects ⟦Knowledge must be shared, so must joy⟧. The speaking/sharing connection remains through related masks, not the exact original pair. |
+| `Scc38f7607c` | V491: ⟦fall⟧ ⟦definitely here⟧; V493: ⟦It'll warm up, but fall is definitely here⟧; V728: ⟦beautiful morning⟧ ⟦Stunning sunrise over a frosty garden⟧ | V492, ⟦Woke up⟧ ⟦brrr⟧ ⟦fall⟧ ⟦here⟧, and V729, ⟦sunrise over⟧ ⟦frosty garden⟧ ⟦got me out of bed⟧, still connect the same two notes in `Sbf7a4b89c0`. The cold-morning connection survives. |
+
+These are not eight independently lost useful relationships. The three cold-morning losses retain the relevant connection through other masks. The two speaking/sharing losses also retain related masks together, although their new segment is the 61-mask group rejected for the V991 outlier; retained membership does not establish a valid replacement.
+
+The remaining three losses deserve attention: V542 no longer participates in its good-day group; V840 loses its weekend-wish group; V320 loses its connection to the other mental-activity note. Their former neighbors now have plausible narrower or expanded groups, so these changes are not automatically semantic failures. They do show that recovering some placements can remove previously accepted connections elsewhere.
+
+Preserving the subject is not the same as preserving every detail. V492 omits V493's warm-up forecast; V729 omits V728's explicit beauty judgment. This audit does not impose complete claim preservation as a new segmentation requirement, and it does not reverse any previous user approval.
+
+### Other-subject addition
+
+Only V491, ⟦fall⟧ ⟦definitely here⟧, becomes ungrouped. V492 and V493 from that same note remain with V728/V729 in `S577ad54ac5`. Both the fall meaning and the original connection to the frosty-garden note survive. This is a lost vector membership, not a lost connection between those notes.
+
+Evidence: the original [complete review](../hdbscan-cross-note/review/review.json), the [related-addition complete review](arm-a-hdbv2/review/review.json), and the [other-subject complete review](arm-b-hdbv2/review/review.json) preserve every source note and mask range. The comparison JSON files above record the placements. This inspection used saved results only; nothing was regenerated or regrouped.
 
 ## Review
 
 Only new or changed segments are shown. Every displayed segment contains masks from at least two distinct notes. All its masks appear together; scroll for long segments. Unchanged segments remain in the complete results and are not requested again. The two review sessions are independent. The related-addition session is complete; the other-subject session has not been reviewed.
+
+I reread all 88 masks in the 19 other-subject segments for this finishing check. The saved independent assessment remains 14 valid, 4 invalid, 1 uncertain; these are assistant judgments only. The existing masks-only review is ready and every displayed segment contains at least two notes. No new review interface or generated titles are needed.
 
 ### Your related-addition review
 
