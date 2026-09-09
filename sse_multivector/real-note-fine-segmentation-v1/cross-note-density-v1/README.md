@@ -88,7 +88,9 @@ This read-only explorer shows the complete saved condensed tree, not only the 64
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-hdbscan-hierarchy.sh
 ```
 
-It starts at group 1043, with its immediate children collapsed. Use ↑/↓ to select and → to expand a child. **U** shows the parent while keeping expanded descendants nested. **Enter** on a mask opens its full original note with inline brackets; **Esc** returns. **PgUp/PgDn** scroll, **F** focuses a selected group, **?** opens help, and **Q** quits. Optional argument `916` starts at the root instead.
+It starts at group 1043, with its immediate children collapsed. Use **j/k** or ↓/↑ to select and **h/l** or ←/→ to collapse/expand. **U** shows the parent while keeping expanded descendants nested. **Enter** on a mask opens its full original note with inline brackets; **Esc** returns. **F** focuses a selected group, **?** opens help, and **Q** quits. Optional argument `916` starts at the root instead.
+
+In the tree, notes, and help, **gg/G** go to the beginning/end, **Ctrl-F/B** scroll a page down/up, and **Ctrl-U/D** scroll half a page up/down. **j/k** scroll in notes and help. Existing arrow, Home/End, and PgUp/PgDn bindings remain available.
 
 Note counts include descendants and count each source note once per group. Siblings may contain vectors from the same note, so their note counts are not additive. Identical masks from one note sharing a vector appear once with all their original IDs; merely overlapping masks remain separate.
 

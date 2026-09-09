@@ -40,9 +40,9 @@ Group numbers are the IDs in the saved tree, not generated subject titles.\n\
 Counts are distinct source notes in the group, including all descendants. They are not additive: the same note can appear in several children.\n\n\
 Masks outside its child groups belong to that parent in the saved tree. They have not been discarded or moved into a made-up child.\n\
 V numbers identify the original mask/vector records. Identical masks from the same note sharing one vector are shown together, with every ID retained.\n\n\
-Up/Down selects a group or mask. Right expands a group; when already expanded it moves into its contents. Left collapses a group or selects the containing group.\n\
+h/j/k/l match Left/Down/Up/Right. Up/Down selects a group or mask. Right expands a group; when already expanded it moves into its contents. Left collapses a group or selects the containing group. In notes and help, j/k scroll.\n\
 U shows the parent of the displayed branch, preserving expansion and selection. F focuses the selected group as the displayed branch.\n\
-PageUp/PageDown and Ctrl-U/Ctrl-D scroll. Home/End move to the beginning/end. Shift-Left/Right scroll horizontally in deep branches.\n\
+Ctrl-F/B or PageDown/PageUp scroll a page; Ctrl-U/D scroll half a page up/down. gg or Home moves to the beginning; G or End moves to the end. Shift-Left/Right scroll horizontally in deep branches.\n\
 Enter opens a mask's full original note with inline brackets, or toggles a selected group. Escape returns from the note or this help.\n\n\
 No groups or members are filtered, judged, relabeled, or rearranged. Nothing is written to the source files or review sessions. Q or Ctrl-C exits.";
 
@@ -59,6 +59,7 @@ pub struct HierarchyExplorer {
     follow_selection: bool,
     detail: Option<Detail>,
     detail_scroll: usize,
+    pending_g: bool,
 }
 
 impl HierarchyExplorer {
@@ -85,6 +86,7 @@ impl HierarchyExplorer {
             follow_selection: true,
             detail: None,
             detail_scroll: 0,
+            pending_g: false,
         })
     }
 
@@ -98,10 +100,13 @@ impl HierarchyExplorer {
         if key.kind == KeyEventKind::Release {
             return false;
         }
+        let previous_g = std::mem::take(&mut self.pending_g);
         if key.modifiers == KeyModifiers::CONTROL {
             match key.code {
                 KeyCode::Char('d') => self.scroll_by((self.height / 2).max(1) as isize),
                 KeyCode::Char('u') => self.scroll_by(-((self.height / 2).max(1) as isize)),
+                KeyCode::Char('f') => self.scroll_by(self.height as isize),
+                KeyCode::Char('b') => self.scroll_by(-(self.height as isize)),
                 _ => {}
             }
             return false;
@@ -109,11 +114,25 @@ impl HierarchyExplorer {
         if has_command_modifier(key.modifiers) {
             return false;
         }
-        if matches!(key.code, KeyCode::Char('q' | 'Q')) {
+        // Route aliases through the same actions in every view.
+        let code = match key.code {
+            KeyCode::Char('h') => KeyCode::Left,
+            KeyCode::Char('j') => KeyCode::Down,
+            KeyCode::Char('k') => KeyCode::Up,
+            KeyCode::Char('l') => KeyCode::Right,
+            KeyCode::Char('G') => KeyCode::End,
+            KeyCode::Char('g') if previous_g => KeyCode::Home,
+            KeyCode::Char('g') => {
+                self.pending_g = true;
+                return false;
+            }
+            other => other,
+        };
+        if matches!(code, KeyCode::Char('q' | 'Q')) {
             return true;
         }
         if self.detail.is_some() {
-            match key.code {
+            match code {
                 KeyCode::Esc => {
                     self.detail = None;
                     self.follow_selection = true;
@@ -129,7 +148,7 @@ impl HierarchyExplorer {
             return false;
         }
         if key.modifiers.contains(KeyModifiers::SHIFT) {
-            match key.code {
+            match code {
                 KeyCode::Left => {
                     self.horizontal = self.horizontal.saturating_sub(8);
                     self.follow_selection = false;
@@ -143,7 +162,7 @@ impl HierarchyExplorer {
                 _ => {}
             }
         }
-        match key.code {
+        match code {
             KeyCode::Char('?') => {
                 self.detail = Some(Detail::Help);
                 self.detail_scroll = 0;
@@ -189,8 +208,11 @@ impl HierarchyExplorer {
                 self.follow_selection = true;
             }
             KeyCode::End => {
+                if let Some(last) = self.rows().into_iter().rev().find_map(|row| row.selection) {
+                    self.selected = last;
+                }
                 self.scroll = usize::MAX;
-                self.follow_selection = false;
+                self.follow_selection = true;
             }
             _ => {}
         }
@@ -368,7 +390,13 @@ impl HierarchyExplorer {
                 .block(block),
                 areas[1],
             );
-            frame.render_widget(Paragraph::new("↑/↓ Scroll  PgUp/PgDn Page  Home/End Beginning/end\nEsc Return to hierarchy  Q Quit").style(secondary_style()), areas[2]);
+            frame.render_widget(
+                Paragraph::new(
+                    "j/k ↑/↓ Scroll  Ctrl-F/B Page  gg/G Top/end\nEsc Return to hierarchy  Q Quit",
+                )
+                .style(secondary_style()),
+                areas[2],
+            );
             return;
         }
         let rows = self.rows();
@@ -394,6 +422,7 @@ impl HierarchyExplorer {
                 physical.push((row.selection, clip_left(&text, self.horizontal)));
             }
         }
+        self.scroll = self.scroll.min(physical.len().saturating_sub(self.height));
         if let Some(first) = physical
             .iter()
             .position(|(id, _)| *id == Some(self.selected))
@@ -410,10 +439,9 @@ impl HierarchyExplorer {
                 }
             } else if last < self.scroll || first >= self.scroll.saturating_add(self.height) {
                 // Keep keyboard selection attached to visible content after scrolling.
-                let top = self.scroll.min(physical.len().saturating_sub(self.height));
                 if let Some(id) = physical
                     .iter()
-                    .skip(top)
+                    .skip(self.scroll)
                     .take(self.height)
                     .find_map(|(id, _)| *id)
                 {
@@ -421,7 +449,6 @@ impl HierarchyExplorer {
                 }
             }
         }
-        self.scroll = self.scroll.min(physical.len().saturating_sub(self.height));
         self.follow_selection = false;
         let title = format!(
             "HDBv2 hierarchy · read-only\nShowing branch {} · {} {}",
@@ -471,7 +498,7 @@ impl HierarchyExplorer {
         } else {
             "Enter Toggle group"
         };
-        frame.render_widget(Paragraph::new(format!("↑/↓ Select  ←/→ Collapse/expand  PgUp/PgDn Scroll\nU Show parent  F Focus group  {enter}\n? Help  Shift-←/→ Horizontal  Q Quit")).style(secondary_style()), areas[2]);
+        frame.render_widget(Paragraph::new(format!("j/k ↑/↓ Select  h/l ←/→ Collapse/expand  PgUp/PgDn Scroll\nU Show parent  F Focus group  {enter}\ngg/G Top/end  ? Help  Q Quit")).style(secondary_style()), areas[2]);
     }
 }
 

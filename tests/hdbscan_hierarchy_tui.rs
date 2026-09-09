@@ -256,3 +256,161 @@ fn wrapping_preserves_emoji_graphemes_in_the_original_note() {
     assert!(note.contains("👨‍👩‍👧‍👦"), "{note}");
     assert!(note.contains("TAIL"));
 }
+
+#[test]
+fn vim_direction_keys_match_existing_tree_navigation() {
+    let mut vim = HierarchyExplorer::new(fixture(), Some(11)).unwrap();
+    let mut arrows = HierarchyExplorer::new(fixture(), Some(11)).unwrap();
+    for (letter, arrow) in [
+        ('j', KeyCode::Down),
+        ('j', KeyCode::Down),
+        ('l', KeyCode::Right),
+        ('j', KeyCode::Down),
+        ('h', KeyCode::Left),
+        ('h', KeyCode::Left),
+        ('l', KeyCode::Right),
+        ('k', KeyCode::Up),
+    ] {
+        key(&mut vim, KeyCode::Char(letter));
+        key(&mut arrows, arrow);
+        assert_eq!(
+            screen(&mut vim, 80, 24),
+            screen(&mut arrows, 80, 24),
+            "{letter}"
+        );
+    }
+}
+
+#[test]
+fn vim_scroll_and_jump_keys_work_in_tree_notes_and_help() {
+    let mut data = fixture();
+    let mask = &mut data.vectors.get_mut(&1).unwrap()[0];
+    mask.text = (0..80)
+        .map(|i| format!("Line {i:02}: source text.\n"))
+        .collect();
+    mask.fragments = vec![mask.text.clone()];
+    mask.byte_spans = vec![(0, mask.text.len())];
+    for mode in ["tree", "note", "help"] {
+        let mut vim = HierarchyExplorer::new(data.clone(), Some(11)).unwrap();
+        let mut existing = HierarchyExplorer::new(data.clone(), Some(11)).unwrap();
+        for model in [&mut vim, &mut existing] {
+            match mode {
+                "note" => {
+                    key(model, KeyCode::Down);
+                    key(model, KeyCode::Enter);
+                }
+                "help" => {
+                    key(model, KeyCode::Char('?'));
+                }
+                _ => {}
+            }
+            screen(model, 80, 18);
+        }
+        for (code, modifiers, old) in [
+            (KeyCode::Char('f'), KeyModifiers::CONTROL, KeyCode::PageDown),
+            (KeyCode::Char('b'), KeyModifiers::CONTROL, KeyCode::PageUp),
+            (KeyCode::Char('j'), KeyModifiers::NONE, KeyCode::Down),
+            (KeyCode::Char('k'), KeyModifiers::NONE, KeyCode::Up),
+            (KeyCode::Char('G'), KeyModifiers::SHIFT, KeyCode::End),
+        ] {
+            vim.handle_event(Event::Key(KeyEvent::new(code, modifiers)));
+            key(&mut existing, old);
+            assert_eq!(
+                screen(&mut vim, 80, 18),
+                screen(&mut existing, 80, 18),
+                "{mode}: {code:?}"
+            );
+        }
+        key(&mut vim, KeyCode::Char('g'));
+        key(&mut vim, KeyCode::Char('g'));
+        key(&mut existing, KeyCode::Home);
+        assert_eq!(
+            screen(&mut vim, 80, 18),
+            screen(&mut existing, 80, 18),
+            "{mode}: gg"
+        );
+    }
+}
+
+#[test]
+fn vim_gg_requires_two_consecutive_g_keys_and_ignores_key_releases() {
+    let mut model = HierarchyExplorer::new(fixture(), Some(11)).unwrap();
+    screen(&mut model, 80, 24);
+    key(&mut model, KeyCode::Down);
+    let original = screen(&mut model, 80, 24);
+    key(&mut model, KeyCode::Char('g'));
+    assert_eq!(screen(&mut model, 80, 24), original);
+    key(&mut model, KeyCode::Char('x')); // cancels the unfinished command
+    key(&mut model, KeyCode::Char('g'));
+    assert_eq!(screen(&mut model, 80, 24), original);
+    let mut release = KeyEvent::new(KeyCode::Char('g'), KeyModifiers::NONE);
+    release.kind = crossterm::event::KeyEventKind::Release;
+    model.handle_event(Event::Key(release));
+    key(&mut model, KeyCode::Char('g'));
+    let top = screen(&mut model, 80, 24);
+    assert!(top.contains("▶ ▾ 11"), "{top}");
+}
+
+#[test]
+fn vim_bindings_are_visible_in_the_key_guide() {
+    let mut model = HierarchyExplorer::new(fixture(), Some(11)).unwrap();
+    let tree = screen(&mut model, 60, 24);
+    assert!(tree.contains("j/k"));
+    assert!(tree.contains("h/l"));
+    key(&mut model, KeyCode::Char('?'));
+    let help = screen(&mut model, 100, 50);
+    for shortcut in ["h/j/k/l", "gg", "Ctrl-F/B", "Ctrl-U/D"] {
+        assert!(help.contains(shortcut), "missing {shortcut}: {help}");
+    }
+}
+
+#[test]
+fn vim_g_selects_the_last_visible_item_even_when_the_tree_fits() {
+    let mut model = HierarchyExplorer::new(fixture(), Some(11)).unwrap();
+    screen(&mut model, 80, 24);
+    key(&mut model, KeyCode::Char('G'));
+    let bottom = screen(&mut model, 80, 24);
+    assert!(bottom.contains("▶ └─ ▸ 14"), "{bottom}");
+    key(&mut model, KeyCode::Enter);
+    key(&mut model, KeyCode::Char('G'));
+    let expanded = screen(&mut model, 80, 24);
+    assert!(
+        expanded
+            .lines()
+            .any(|line| line.contains('▶') && line.contains("⟦Office⟧")),
+        "{expanded}"
+    );
+}
+
+#[test]
+fn vim_g_keeps_a_deep_last_item_readable() {
+    let mut data = fixture();
+    data.groups.clear();
+    for id in 10..=40 {
+        data.groups.insert(
+            id,
+            Group {
+                id,
+                parent: (id > 10).then_some(id - 1),
+                children: if id < 40 { vec![id + 1] } else { vec![] },
+                vectors: if id == 40 { vec![0] } else { vec![] },
+                note_count: 1,
+                vector_count: 1,
+            },
+        );
+    }
+    let mut model = HierarchyExplorer::new(data, None).unwrap();
+    for _ in 0..60 {
+        key(&mut model, KeyCode::Char('l'));
+    }
+    key(&mut model, KeyCode::Home);
+    screen(&mut model, 60, 24);
+    key(&mut model, KeyCode::Char('G'));
+    let bottom = screen(&mut model, 60, 24);
+    assert!(
+        bottom
+            .lines()
+            .any(|line| line.contains('▶') && line.contains("V001")),
+        "{bottom}"
+    );
+}
