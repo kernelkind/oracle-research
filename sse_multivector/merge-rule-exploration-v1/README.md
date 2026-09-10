@@ -4,6 +4,8 @@ Goal: find evidence-backed alternatives to HDBv3's single-edge merge rule for br
 
 **Start with [the inspection package](inspection.md): verified TUI commands, exact masks and the main improvements and regressions.** M06 and M07 are the primary comparisons, M01 preserves useful contrasting groups, and M03 has an optional animal-processing/slaughter example. No final algorithm is selected. The sections below retain the chronological research and experiment record; their “next question” paragraphs explain why the following experiment was run.
 
+The separate [Infomap comparison](../infomap-experiment-v1/README.md) reuses M07's exact graph, then tests three nearest-neighbor subgraphs while preserving its weights and frozen SSE inputs. All four outputs are available in a native-module viewer. None produced nested modules; local membership results are mixed. This does not replace or revise any M01–M09 result.
+
 ## Research that determines the first experiment
 
 Gowda et al. (2026), *Chamfer-Linkage for Hierarchical Agglomerative Clustering*, directly studies per-point nearest-neighbor linkage. Our proposed symmetric mean is their normalized symmetric variant divided by two, before adapting excluded edges. Section 3 supplies exact point-to-group update equations. All variants can lack increasing merge costs. The headline method instead uses unnormalized directional sums and chooses the cheaper direction. Appendix A.3 evaluates the best label agreement across several cut orders; those results do not establish semantic navigation quality. [Paper](https://arxiv.org/html/2602.10444v1)

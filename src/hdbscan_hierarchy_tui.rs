@@ -50,10 +50,12 @@ pub enum HierarchyView {
     Selection,
     NoteNavigation,
     NoteNavigationMinimum(usize),
+    Infomap,
 }
 
 pub struct HierarchyExplorer {
     hierarchy: Hierarchy,
+    run_id: Option<String>,
     note_short_ids: BTreeMap<String, String>,
     show_parent_masks: Option<bool>,
     view: HierarchyView,
@@ -88,6 +90,17 @@ impl HierarchyExplorer {
         Self::with_view(hierarchy, start, HierarchyView::NoteNavigation)
     }
 
+    /// Display native Infomap modules with their original source note IDs.
+    pub fn new_infomap(
+        hierarchy: Hierarchy,
+        start: Option<usize>,
+        note_short_ids: BTreeMap<String, String>,
+    ) -> Result<Self, String> {
+        Ok(Self::with_view(hierarchy, start, HierarchyView::Infomap)?
+            .with_note_short_ids(note_short_ids)
+            .with_parent_mask_toggle())
+    }
+
     pub(crate) fn with_view(
         hierarchy: Hierarchy,
         start: Option<usize>,
@@ -109,6 +122,7 @@ impl HierarchyExplorer {
         };
         Ok(Self {
             hierarchy,
+            run_id: None,
             note_short_ids: BTreeMap::new(),
             show_parent_masks: None,
             view,
@@ -132,6 +146,19 @@ impl HierarchyExplorer {
     pub(crate) fn with_note_short_ids(mut self, note_short_ids: BTreeMap<String, String>) -> Self {
         self.note_short_ids = note_short_ids;
         self
+    }
+
+    /// Identify the saved experiment without changing any hierarchy membership.
+    pub fn with_run_id(mut self, run_id: Option<String>) -> Self {
+        self.run_id = run_id;
+        self
+    }
+
+    fn run_suffix(&self) -> String {
+        self.run_id
+            .as_ref()
+            .map(|id| format!(" · {}", id.escape_debug()))
+            .unwrap_or_default()
     }
 
     pub(crate) fn with_parent_mask_toggle(mut self) -> Self {
@@ -482,6 +509,12 @@ impl HierarchyExplorer {
                 "A child returning the same notes as its parent is collapsed. The parent keeps its complete membership; the remaining descendants are promoted. The root remains the full-corpus container, even below the minimum.\nAll masks remain at their nearest retained ancestor. A parent mask is hidden when its note occurs recursively in a child, including collapsed children.",
                 "Going up places unopened children above expanded ones, preserving nesting. No new clustering, semantic judgments or subject titles are generated. These display rules do not establish semantic quality.",
             )
+        } else if self.view == HierarchyView::Infomap {
+            (
+                "This is a read-only view of the saved Infomap native module hierarchy.",
+                "Every module path prefix remains a group, including one-note and one-vector modules. Direct masks stay in their saved module. A parent mask starts hidden when its note occurs recursively in a child, including collapsed children; a reveals every parent mask.",
+                "No modules are removed or converted to binary merges. No merge distances, semantic judgments, or subject titles are generated. Going up preserves nesting and puts unopened children above expanded ones.",
+            )
         } else if self.view == HierarchyView::Selection {
             (
                 "This is a read-only view of the saved selection proposal.",
@@ -500,8 +533,13 @@ impl HierarchyExplorer {
         } else {
             ""
         };
+        let counts = if self.view == HierarchyView::Infomap {
+            "Group numbers identify groups within this run. The same number in another run can have different contents.\nCounts are distinct source notes including all descendants and aliases. They are not additive: a note can appear in several children."
+        } else {
+            HELP_COUNTS
+        };
         format!(
-            "{intro}\n\n{HELP_COUNTS}\n\n{minimum}{masks}\n{HELP_CONTROLS}\n\n{decisions}{comparison} Nothing is written to the source files or review sessions. Q or Ctrl-C exits."
+            "{intro}\n\n{counts}\n\n{minimum}{masks}\n{HELP_CONTROLS}\n\n{decisions}{comparison} Nothing is written to the source files or review sessions. Q or Ctrl-C exits."
         )
     }
 
@@ -519,8 +557,57 @@ impl HierarchyExplorer {
             frame.render_widget(Paragraph::new("Resize to at least 60 × 12. Q exits."), area);
             return;
         }
+        let detail = self.detail.map(|detail| {
+            let (mut title, content) = match detail {
+                Detail::Help => (
+                    if self.view == HierarchyView::Selection {
+                        "HDBv2 selection help · proposal · read-only".to_owned()
+                    } else if self.view == HierarchyView::Infomap {
+                        format!("Infomap hierarchy help{}", self.run_suffix())
+                    } else {
+                        "Hierarchy help".to_owned()
+                    },
+                    self.help(),
+                ),
+                Detail::Note(point, alias) => {
+                    let aliases = &self.hierarchy.vectors[&point];
+                    let mask = &aliases[alias];
+                    let title = if self.view == HierarchyView::Infomap {
+                        format!(
+                            "Original note{} · {}\nSource note ID: {}",
+                            self.run_suffix(),
+                            self.mask_ids(aliases, mask),
+                            terminal_safe(&mask.note_id)
+                        )
+                    } else {
+                        format!("Original note · {}", self.mask_ids(aliases, mask))
+                    };
+                    (title, inline_note(mask))
+                }
+            };
+            if self.show_parent_masks == Some(true) {
+                title.push_str("\nAll parent masks shown in hierarchy");
+            }
+            let title = if self.view == HierarchyView::Infomap {
+                wrap_text(&title, usize::from(area.width)).join("\n")
+            } else {
+                title
+            };
+            (title, content)
+        });
+        let title_height = if self.view == HierarchyView::Infomap {
+            detail.as_ref().map_or(2, |(title, _)| {
+                title
+                    .lines()
+                    .count()
+                    .max(2)
+                    .min(usize::from(area.height.saturating_sub(7))) as u16
+            })
+        } else {
+            2
+        };
         let areas = Layout::vertical([
-            Constraint::Length(2),
+            Constraint::Length(title_height),
             Constraint::Min(4),
             Constraint::Length(3),
         ])
@@ -528,29 +615,7 @@ impl HierarchyExplorer {
         let block = Block::default().borders(Borders::ALL);
         let inner = block.inner(areas[1]);
         self.height = usize::from(inner.height).max(1);
-        if let Some(detail) = self.detail {
-            let (mut title, content) = match detail {
-                Detail::Help => (
-                    if self.view == HierarchyView::Selection {
-                        "HDBv2 selection help · proposal · read-only"
-                    } else {
-                        "Hierarchy help"
-                    }
-                    .to_owned(),
-                    self.help(),
-                ),
-                Detail::Note(point, alias) => {
-                    let aliases = &self.hierarchy.vectors[&point];
-                    let mask = &aliases[alias];
-                    (
-                        format!("Original note · {}", self.mask_ids(aliases, mask)),
-                        inline_note(mask),
-                    )
-                }
-            };
-            if self.show_parent_masks == Some(true) {
-                title.push_str("\nAll parent masks shown in hierarchy");
-            }
+        if let Some((title, content)) = detail {
             frame.render_widget(Paragraph::new(title).style(accent_style()), areas[0]);
             let lines = wrap_text(&content, usize::from(inner.width));
             self.detail_scroll = self
@@ -637,6 +702,10 @@ impl HierarchyExplorer {
                     "Merge-tree note navigation · comparison · read-only".to_owned(),
                 HierarchyView::NoteNavigationMinimum(count) =>
                     format!("Merge-tree note navigation · minimum {count} notes · read-only"),
+                HierarchyView::Infomap => format!(
+                    "Infomap hierarchy{} · native modules · read-only",
+                    self.run_suffix()
+                ),
             },
             self.branch,
             self.hierarchy.groups[&self.branch].note_count,
@@ -821,6 +890,8 @@ pub fn run_hierarchy_explorer(
     hierarchy: Hierarchy,
     start: Option<usize>,
     view: HierarchyView,
+    note_short_ids: BTreeMap<String, String>,
+    run_id: Option<String>,
 ) -> io::Result<()> {
     let mut model = match view {
         HierarchyView::Condensed => HierarchyExplorer::new(hierarchy, start),
@@ -829,8 +900,10 @@ pub fn run_hierarchy_explorer(
         HierarchyView::NoteNavigationMinimum(_) => {
             HierarchyExplorer::with_view(hierarchy, start, view)
         }
+        HierarchyView::Infomap => HierarchyExplorer::new_infomap(hierarchy, start, note_short_ids),
     }
-    .map_err(io::Error::other)?;
+    .map_err(io::Error::other)?
+    .with_run_id(run_id);
     let mut terminal = ReferenceTerminal::new()?;
     terminal.run_review_model_stateful(&mut model, false)?;
     Ok(())

@@ -50,38 +50,11 @@ enum PageKind {
     Analysis,
 }
 
-#[derive(Deserialize)]
-struct VectorMapNotes {
-    vectors: Vec<VectorNote>,
-}
-
-#[derive(Deserialize)]
-struct VectorNote {
-    note_id: String,
-    note_short_id: String,
-}
-
 fn load_note_short_ids(
     path: &Path,
     manual: &ManualNoteHierarchy,
 ) -> Result<BTreeMap<String, String>, Box<dyn Error>> {
-    let vectors: VectorMapNotes = serde_json::from_slice(&fs::read(path)?)?;
-    let mut notes = BTreeMap::new();
-    let mut short_ids = BTreeMap::new();
-    for vector in vectors.vectors {
-        if vector.note_id.trim().is_empty() || vector.note_short_id.trim().is_empty() {
-            return Err("vector map requires nonempty source note IDs".into());
-        }
-        if notes
-            .insert(vector.note_id.clone(), vector.note_short_id.clone())
-            .is_some_and(|previous| previous != vector.note_short_id)
-            || short_ids
-                .insert(vector.note_short_id.clone(), vector.note_id.clone())
-                .is_some_and(|previous| previous != vector.note_id)
-        {
-            return Err("vector map has conflicting source note short IDs".into());
-        }
-    }
+    let notes = crate::hdbscan_hierarchy::load_note_short_ids(path)?;
     for note in manual.notes.values() {
         if notes
             .get(&note.note_id)
