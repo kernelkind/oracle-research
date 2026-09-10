@@ -222,10 +222,16 @@ The output directory must not exist; the runner refuses to overwrite results. Re
 
 This view uses the saved `single_linkage_tree`, not the `condensed_tree` and not the earlier handmade selection. It performs no inference or clustering and writes no result or review files.
 
-It applies only two rules:
+By default it applies two rules:
 
 1. Do not offer groups containing fewer than two distinct source notes.
 2. Collapse a child when its complete note set equals its parent's. Keep the parent and promote the remaining descendants, preserving each retained group's complete original vector membership.
+
+The hierarchy binary also accepts `--min-notes N` with `--note-navigation` or
+`--merge-history`, raising the first rule's minimum while leaving the second
+unchanged. The [optional five-note M06 comparison](../../merge-rule-exploration-v1/inspection.md#optional-five-note-view-of-m06)
+tests that viewing change. The launcher below still uses the default two-note
+minimum; counts in this section describe that unchanged default.
 
 All 916 unique vectors, 945 original IDs, 100 notes, exact masks and aliases remain available. Masks from removed groups belong directly to their nearest retained ancestor. The root remains the full-corpus container. As in the existing raw viewer, a parent mask is hidden if its note appears recursively in any child; this only affects display, not membership.
 

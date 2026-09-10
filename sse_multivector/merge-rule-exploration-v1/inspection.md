@@ -8,7 +8,7 @@ All runs contain the same 100 notes and 916 distinct vectors, representing 945 o
 
 ## Open the hierarchies
 
-Each command opens the complete saved hierarchy, initially focused on one example. Children remain nested. Press `j/k` to select, `l` to expand, and `Enter` on a mask to see its full original note. `Esc` returns to the hierarchy; `u` moves upward. Unopened siblings appear above the branch already opened. `q` exits. Omit `--start-at` to begin at the root.
+Each command opens the saved hierarchy with the default two-note display minimum, initially focused on one example. Children remain nested. Press `j/k` to select, `l` to expand, and `Enter` on a mask to see its full original note. `Esc` returns to the hierarchy; `u` moves upward. Unopened siblings appear above the branch already opened. `q` exits. Omit `--start-at` to begin at the root.
 
 M06, starting with the ingredient example:
 
@@ -53,6 +53,36 @@ target/merge-rule-review-build/debug/hdbscan-hierarchy \
   sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json \
   --note-navigation
 ```
+
+## Optional five-note view of M06
+
+This is the same M06 tree, not a new merge-rule run. Only groups containing at least five distinct notes are offered as choices. Masks from smaller groups appear at their nearest displayed ancestor. All 100 notes, 916 unique vectors and 945 original mask IDs remain; no merge, source text or membership changes. The root is always available, even when a corpus has fewer notes than the minimum. Existing parent-mask hiding still applies when that note is accessible in a displayed child.
+
+```sh
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+target/merge-rule-review-build/debug/hdbscan-hierarchy \
+  sse_multivector/merge-rule-exploration-v1/M06.json \
+  sse_multivector/real-note-fine-segmentation-v1/vectors/vector-map.json \
+  sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json \
+  --merge-history --min-notes 5 --start-at 1512
+```
+
+Remove `--min-notes 5` to compare the old view at the same group. Omit `--start-at 1512` to open the root. Press `?` for the active view's rules. These options belong to the binary above; the older HDBv2 launcher is unchanged.
+
+| M06 view | Displayed groups | Terminal groups | Notes per terminal group | Maximum depth |
+|---|---:|---:|---|---:|
+| Default minimum 2 | 488 | 194 | 2 | 22 |
+| Optional minimum 5 | 150 | 39 | 5–7 | 19 |
+
+These are counts, not quality scores. Inspect these same starts in both views:
+
+| Start | Current view | Five-note view | What to inspect |
+|---|---|---|---|
+| 1512 · 5 notes | Children 1385 and 1444, each with 3 notes | No subgroup choices; all 15 original masks directly available | Animal flesh as food across preparation, preference and opposition. The view gathers the evidence without forcing another choice. |
+| 1627 · 22 notes | Children 1561 (3 notes) and 1605 (19) | Child 1605 remains; the five masks from 1561 appear directly at 1627 | The smaller group connects hot tea, sweet tea and morning tea. Its notes remain, but the independently selectable tea group disappears into a parent also containing coffee and other material. |
+| 1733 · 5 notes | Children 1641 (2 notes) and 1681 (4) | No subgroup choices; all 25 masks directly available | Stock preservation, frozen beets and a vacuum sealer coexist with bathroom grab bars, an induction hob and chicken feeding. Meeting five does not make this uniformly food preservation. |
+
+The minimum reduces choices, but cannot repair the underlying parent placements. Whether losing useful small choices is worth the simpler navigation remains for user inspection; five is not a frozen product requirement.
 
 ## 1. M06 gives useful intermediate groups that HDBv3 lacks
 

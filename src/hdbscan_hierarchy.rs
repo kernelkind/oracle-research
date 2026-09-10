@@ -58,6 +58,18 @@ impl Hierarchy {
         vector_map_path: &Path,
         notes_path: &Path,
     ) -> Result<Self, Box<dyn Error>> {
+        Self::load_note_navigation_with_min_notes(response_path, vector_map_path, notes_path, 2)
+    }
+
+    /// Use a larger minimum distinct-note count for displayed group choices.
+    /// Smaller groups' points remain at the nearest displayed ancestor. The
+    /// root is always kept, even when the entire corpus is below the minimum.
+    pub fn load_note_navigation_with_min_notes(
+        response_path: &Path,
+        vector_map_path: &Path,
+        notes_path: &Path,
+        min_notes: usize,
+    ) -> Result<Self, Box<dyn Error>> {
         let response: SavedResponse<SavedLinkageAlgorithm> = read_json(response_path)?;
         let SavedResult {
             algorithm_result,
@@ -85,6 +97,7 @@ impl Hierarchy {
             canonical_unique_ids,
             vector_map_path,
             notes_path,
+            min_notes,
         )
     }
 
@@ -96,6 +109,16 @@ impl Hierarchy {
         history_path: &Path,
         vector_map_path: &Path,
         notes_path: &Path,
+    ) -> Result<Self, Box<dyn Error>> {
+        Self::load_merge_history_with_min_notes(history_path, vector_map_path, notes_path, 2)
+    }
+
+    /// Apply the optional display minimum without changing saved merges.
+    pub fn load_merge_history_with_min_notes(
+        history_path: &Path,
+        vector_map_path: &Path,
+        notes_path: &Path,
+        min_notes: usize,
     ) -> Result<Self, Box<dyn Error>> {
         let history: SavedMergeHistory = read_json(history_path)?;
         for row in &history.merges {
@@ -110,6 +133,7 @@ impl Hierarchy {
             history.canonical_unique_ids,
             vector_map_path,
             notes_path,
+            min_notes,
         )
     }
 
@@ -120,7 +144,11 @@ impl Hierarchy {
         canonical_unique_ids: Vec<String>,
         vector_map_path: &Path,
         notes_path: &Path,
+        min_notes: usize,
     ) -> Result<Self, Box<dyn Error>> {
+        if min_notes < 2 {
+            return Err("minimum group size must be at least 2 distinct notes".into());
+        }
         if vector_count < 2 {
             return Err("saved merge history requires at least two points".into());
         }
@@ -190,7 +218,8 @@ impl Hierarchy {
                 .copied()
                 .collect::<BTreeSet<_>>();
             for (child, child_notes) in [(row.left, &left_notes), (row.right, &right_notes)] {
-                if child >= vector_count && child_notes.len() >= 2 && *child_notes != notes {
+                if child >= vector_count && child_notes.len() >= min_notes && *child_notes != notes
+                {
                     retained.insert(child);
                 }
             }

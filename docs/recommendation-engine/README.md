@@ -37,6 +37,10 @@ merge history, omits one-note groups, and collapses transitions returning the
 same notes. The original viewer and saved clustering results remain unchanged.
 Useful groupings do not automatically validate their parent placements; neither
 HDBv3 nor this simplification is selected as the final method.
+The [merge-rule inspection package](../../sse_multivector/merge-rule-exploration-v1/inspection.md)
+also includes an optional five-note display minimum for saved M06, alongside
+the unchanged default view. It changes available group choices, not clustering
+or note memberships; the minimum is still an experiment.
 The earlier [controlled-run results](experiments/fine-segmentation/controlled-run-v1-results.md)
 and their frozen protocols remain unchanged evidence, not a pending work order
 that must be repeated before this investigation.

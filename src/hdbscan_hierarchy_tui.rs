@@ -49,6 +49,7 @@ pub enum HierarchyView {
     Condensed,
     Selection,
     NoteNavigation,
+    NoteNavigationMinimum(usize),
 }
 
 pub struct HierarchyExplorer {
@@ -428,10 +429,22 @@ impl HierarchyExplorer {
     }
 
     fn help(&self) -> String {
-        let (intro, masks, decisions) = if self.view == HierarchyView::NoteNavigation {
+        let minimum = match self.view {
+            HierarchyView::NoteNavigation => {
+                "Each group choice contains at least two distinct notes. ".to_owned()
+            }
+            HierarchyView::NoteNavigationMinimum(count) => format!(
+                "Each group choice contains at least {count} distinct notes. Smaller groups are hidden; their masks remain at the nearest displayed ancestor. "
+            ),
+            _ => String::new(),
+        };
+        let (intro, masks, decisions) = if matches!(
+            self.view,
+            HierarchyView::NoteNavigation | HierarchyView::NoteNavigationMinimum(_)
+        ) {
             (
                 "This comparison uses the saved complete merge history. Group numbers are merge-tree IDs, not condensed-tree IDs.",
-                "Each group choice contains at least two distinct notes. A child returning the same notes as its parent is collapsed. The parent keeps its complete membership; the remaining descendants are promoted. The root remains the full-corpus container.\nAll masks remain at their nearest retained ancestor. A parent mask is hidden when its note occurs recursively in a child, including collapsed children.",
+                "A child returning the same notes as its parent is collapsed. The parent keeps its complete membership; the remaining descendants are promoted. The root remains the full-corpus container, even below the minimum.\nAll masks remain at their nearest retained ancestor. A parent mask is hidden when its note occurs recursively in a child, including collapsed children.",
                 "Going up places unopened children above expanded ones, preserving nesting. No new clustering, semantic judgments or subject titles are generated. These display rules do not establish semantic quality.",
             )
         } else if self.view == HierarchyView::Selection {
@@ -448,7 +461,7 @@ impl HierarchyExplorer {
             )
         };
         format!(
-            "{intro}\n\n{HELP_COUNTS}\n\n{masks}\n{HELP_CONTROLS}\n\n{decisions} Nothing is written to the source files or review sessions. Q or Ctrl-C exits."
+            "{intro}\n\n{HELP_COUNTS}\n\n{minimum}{masks}\n{HELP_CONTROLS}\n\n{decisions} Nothing is written to the source files or review sessions. Q or Ctrl-C exits."
         )
     }
 
@@ -572,10 +585,12 @@ impl HierarchyExplorer {
         let title = format!(
             "{}\nShowing branch {} · {} {}",
             match self.view {
-                HierarchyView::Selection => "HDBv2 selection · proposal · read-only",
-                HierarchyView::Condensed => "HDBv2 hierarchy · read-only",
+                HierarchyView::Selection => "HDBv2 selection · proposal · read-only".to_owned(),
+                HierarchyView::Condensed => "HDBv2 hierarchy · read-only".to_owned(),
                 HierarchyView::NoteNavigation =>
-                    "Merge-tree note navigation · comparison · read-only",
+                    "Merge-tree note navigation · comparison · read-only".to_owned(),
+                HierarchyView::NoteNavigationMinimum(count) =>
+                    format!("Merge-tree note navigation · minimum {count} notes · read-only"),
             },
             self.branch,
             self.hierarchy.groups[&self.branch].note_count,
@@ -757,6 +772,9 @@ pub fn run_hierarchy_explorer(
         HierarchyView::Condensed => HierarchyExplorer::new(hierarchy, start),
         HierarchyView::Selection => HierarchyExplorer::new_selection(hierarchy, start),
         HierarchyView::NoteNavigation => HierarchyExplorer::new_note_navigation(hierarchy, start),
+        HierarchyView::NoteNavigationMinimum(_) => {
+            HierarchyExplorer::with_view(hierarchy, start, view)
+        }
     }
     .map_err(io::Error::other)?;
     let mut terminal = ReferenceTerminal::new()?;

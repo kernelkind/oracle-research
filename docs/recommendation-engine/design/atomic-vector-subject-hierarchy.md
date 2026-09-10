@@ -184,6 +184,13 @@ are promoted without reassigning semantic memberships. This preserves narrower
 note sets that HDBSCAN condensation may not expose as separate nodes. It does
 not validate those sets semantically or impose a branching limit.
 
+An optional [five-note view of saved M06](../../../sse_multivector/merge-rule-exploration-v1/inspection.md#optional-five-note-view-of-m06)
+tests stopping navigation earlier. `--min-notes 5` hides smaller group choices,
+keeping their masks at the nearest displayed ancestor. The saved merges and
+every retained group's complete membership stay unchanged; the default remains
+two notes. Five is a provisional display minimum, not a merge constraint or a
+selected production requirement.
+
 Hierarchy labels must be generated from the grounded evidence beneath each
 node. They describe membership; they do not define it.
 
