@@ -17,9 +17,9 @@ not by labeling the existing tree. Coffee contains 18 notes; Morning coffee
 contains six and Coffee preparation contains five. Seven notes remain directly
 at Coffee without a forced narrower category. The user accepted this manual
 example as a valid arrangement on 2026-09-10: "ok, the hierarchy looks fine to me".
-It is not a unique target or approval of an algorithm. It has not yet been
-compared with the algorithm's output. All saved algorithm runs and source
-artifacts remain unchanged.
+It is not a unique target or approval of an algorithm. The Coffee preparation
+child has now been compared with M06; Morning coffee has not. All saved
+algorithm runs and source artifacts remain unchanged.
 
 ```sh
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-manual-coffee-hierarchy.sh
@@ -39,6 +39,46 @@ without opening the terminal. If needed, build once in `oracle-mvp`:
 ```sh
 CARGO_BUILD_JOBS=2 CARGO_TARGET_DIR=target/merge-rule-review-build nix develop -c cargo build --bin sse-subject-navigation
 ```
+
+### Coffee preparation compared with M06
+
+```sh
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-coffee-preparation-comparison.sh
+```
+
+The comparison menu presents the accepted five-note category, M06's relevant
+branches, and separate analysis. Open a page with `Enter`; `F2` returns to the
+menu. Existing nested-tree controls and original-note drilldown remain available.
+No category titles were generated for M06 and no decisions are recorded.
+Masks show both their original `V` IDs and source-note `N` IDs. Parent masks
+start hidden when their note occurs in a descendant; `a` shows or hides them
+for inspection. This toggle is confined to the comparison and changes no groups.
+
+M06 preserves two useful pairs: grinding with roasting (displayed group951),
+and cream with the objection to half-and-half (group1096). Both are hidden by
+the five-note display minimum. Their inspection pages explicitly use a two-note
+minimum without changing the saved tree or the other pages.
+
+The smallest raw group containing all five preparation notes is 1264, with
+19 distinct notes. The equivalent-note simplification displays group1605,
+also with 19 notes. This minimum holds both when requiring a preparation mask
+from each note and when allowing any mask from each note. Thus removing the
+display minimum does not reveal a smaller group containing these five notes.
+The added notes include broader coffee material, caffeine, and detached tags;
+they do not establish a preparation-specific category.
+
+The result shows useful local relationships without the preparation-specific
+choice in the accepted example. It does not identify a single causal failure
+in the masks, SSE, or the merge rule, and does not require every valid hierarchy
+to reproduce the exact manual category. The egg and flavour branches are also
+available for inspection: another mask's valid placement is not automatically
+a loss of the note's preparation meaning.
+
+The UI reads the unchanged originals and masks. Its input checksums, qualifying
+mask IDs, all-alias membership counts, and exact raw/displayed group references
+are in [m06-comparison.json](../manual-coffee-hierarchy-v1/m06-comparison.json).
+`--check` validates every page without opening the terminal. The artifact tests
+independently reconstruct membership and the minimum-group result from M06.
 
 ### Algorithm hierarchies
 

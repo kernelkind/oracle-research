@@ -4,6 +4,7 @@ use std::env;
 use std::io::IsTerminal;
 use std::process::ExitCode;
 
+use oracle_mvp::hierarchy_comparison_tui::{HierarchyComparison, run_hierarchy_comparison};
 use oracle_mvp::manual_note_hierarchy::ManualNoteHierarchy;
 use oracle_mvp::manual_note_hierarchy_tui::run_manual_note_explorer;
 use oracle_mvp::reference_tui::ReferenceTerminal;
@@ -11,9 +12,11 @@ use oracle_mvp::sse_subject_navigation::load_sse_subject_hierarchy;
 
 const USAGE: &str = "usage: sse-subject-navigation <manual-hierarchy.json> <fine-region-hierarchy-analysis.json> <fine-region-partition-analysis.json>
        sse-subject-navigation --notes <manual-note-hierarchy.json> <source-notes.json> [--check]
+       sse-subject-navigation --compare <comparison.json> [--check]
 
 --notes  Inspect manually constructed categories over original notes; no vector or clustering input
---check  Validate the manual-note proposal without opening a terminal";
+--compare  Compare manual notes with saved merge groups; F2 returns to the comparison menu
+--check  Validate and describe every requested page without opening a terminal";
 
 fn main() -> ExitCode {
     match run() {
@@ -34,6 +37,9 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     if arguments.first().is_some_and(|arg| arg == "--notes") {
         return run_notes(&arguments[1..]);
     }
+    if arguments.first().is_some_and(|arg| arg == "--compare") {
+        return run_comparison(&arguments[1..]);
+    }
     let [hierarchy, hierarchy_analysis, partition_analysis] = arguments.as_slice() else {
         return Err(USAGE.into());
     };
@@ -43,6 +49,24 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     }
     let mut terminal = ReferenceTerminal::new()?;
     terminal.navigate_subjects(hierarchy)?;
+    Ok(())
+}
+
+fn run_comparison(arguments: &[String]) -> Result<(), Box<dyn std::error::Error>> {
+    let (manifest, check) = match arguments {
+        [manifest] => (manifest, false),
+        [manifest, flag] if flag == "--check" => (manifest, true),
+        _ => return Err(USAGE.into()),
+    };
+    let model = HierarchyComparison::load(manifest.as_ref())?;
+    if check {
+        println!("{}", model.check_summary());
+        return Ok(());
+    }
+    if !std::io::stdin().is_terminal() || !std::io::stdout().is_terminal() {
+        return Err("hierarchy comparison must be started from an interactive terminal".into());
+    }
+    run_hierarchy_comparison(model)?;
     Ok(())
 }
 

@@ -253,12 +253,20 @@ impl ManualNoteExplorer {
     }
 
     pub fn render(&mut self, frame: &mut Frame<'_>) {
-        let area = frame.area();
-        self.interaction_enabled = area.width >= MIN_WIDTH && area.height >= MIN_HEIGHT;
+        self.render_with_minimum(frame, frame.area(), MIN_HEIGHT);
+    }
+
+    pub(crate) fn render_in_area(&mut self, frame: &mut Frame<'_>, area: Rect) {
+        // A comparison reserves one terminal row for its return shortcut.
+        self.render_with_minimum(frame, area, MIN_HEIGHT - 1);
+    }
+
+    fn render_with_minimum(&mut self, frame: &mut Frame<'_>, area: Rect, minimum_height: u16) {
+        self.interaction_enabled = area.width >= MIN_WIDTH && area.height >= minimum_height;
         if !self.interaction_enabled {
             frame.render_widget(
                 Paragraph::new(format!(
-                    "Resize to at least {MIN_WIDTH} × {MIN_HEIGHT}. Q or Ctrl-C exits."
+                    "Resize to at least {MIN_WIDTH} × {minimum_height}. Q or Ctrl-C exits."
                 ))
                 .wrap(Wrap { trim: false }),
                 area,

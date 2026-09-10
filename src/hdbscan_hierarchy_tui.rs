@@ -5,7 +5,7 @@ use std::io;
 
 use crossterm::event::{Event, KeyCode, KeyEventKind, KeyModifiers};
 use ratatui::Frame;
-use ratatui::layout::{Constraint, Layout};
+use ratatui::layout::{Constraint, Layout, Rect};
 use ratatui::style::{Color, Style};
 use ratatui::text::Line;
 use ratatui::widgets::{Block, Borders, Paragraph};
@@ -54,6 +54,8 @@ pub enum HierarchyView {
 
 pub struct HierarchyExplorer {
     hierarchy: Hierarchy,
+    note_short_ids: BTreeMap<String, String>,
+    show_parent_masks: Option<bool>,
     view: HierarchyView,
     branch: usize,
     expanded: BTreeSet<usize>,
@@ -86,7 +88,7 @@ impl HierarchyExplorer {
         Self::with_view(hierarchy, start, HierarchyView::NoteNavigation)
     }
 
-    fn with_view(
+    pub(crate) fn with_view(
         hierarchy: Hierarchy,
         start: Option<usize>,
         view: HierarchyView,
@@ -107,6 +109,8 @@ impl HierarchyExplorer {
         };
         Ok(Self {
             hierarchy,
+            note_short_ids: BTreeMap::new(),
+            show_parent_masks: None,
             view,
             branch,
             expanded: BTreeSet::from([branch]),
@@ -123,6 +127,24 @@ impl HierarchyExplorer {
             detail_scroll: 0,
             pending_g: false,
         })
+    }
+
+    pub(crate) fn with_note_short_ids(mut self, note_short_ids: BTreeMap<String, String>) -> Self {
+        self.note_short_ids = note_short_ids;
+        self
+    }
+
+    pub(crate) fn with_parent_mask_toggle(mut self) -> Self {
+        self.show_parent_masks = Some(false);
+        self
+    }
+
+    fn mask_ids(&self, aliases: &[MaskInstance], mask: &MaskInstance) -> String {
+        let ids = matching_ids(aliases, mask);
+        match self.note_short_ids.get(&mask.note_id) {
+            Some(short_id) => format!("{ids} · {}", terminal_safe(short_id)),
+            None => ids,
+        }
     }
 
     pub fn handle_event(&mut self, event: Event) -> bool {
@@ -198,6 +220,18 @@ impl HierarchyExplorer {
             }
         }
         match code {
+            KeyCode::Char('a') if self.show_parent_masks.is_some() => {
+                let show = !self.show_parent_masks.unwrap();
+                self.show_parent_masks = Some(show);
+                if !show {
+                    if let Selection::Mask(point, alias) = self.selected {
+                        if self.hidden_parent_masks.contains(&(point, alias)) {
+                            self.selected = Selection::Group(self.point_parents[&point]);
+                        }
+                    }
+                }
+                self.follow_selection = true;
+            }
             KeyCode::Char('?') => {
                 self.detail = Some(Detail::Help);
                 self.detail_scroll = 0;
@@ -389,7 +423,8 @@ impl HierarchyExplorer {
             let aliases = &self.hierarchy.vectors[point];
             let mut seen = BTreeSet::new();
             for (index, mask) in aliases.iter().enumerate() {
-                if self.hidden_parent_masks.contains(&(*point, index))
+                if (self.show_parent_masks != Some(true)
+                    && self.hidden_parent_masks.contains(&(*point, index)))
                     || !seen.insert((&mask.note_id, &mask.byte_spans))
                 {
                     continue;
@@ -411,7 +446,7 @@ impl HierarchyExplorer {
                     });
                     needs_header = false;
                 }
-                let ids = matching_ids(aliases, mask);
+                let ids = self.mask_ids(aliases, mask);
                 rows.push(Row {
                     selection: Some(Selection::Mask(*point, index)),
                     prefix: point_prefix.clone(),
@@ -460,13 +495,21 @@ impl HierarchyExplorer {
                 "Going up places unopened child groups above expanded ones. Opening or collapsing them afterward keeps that order. The saved tree is unchanged; no groups are removed, judged, or relabeled.",
             )
         };
+        let comparison = if self.show_parent_masks.is_some() {
+            "\n\nIn this comparison, a shows or hides repeated parent masks without changing any saved memberships. They start hidden. N numbers identify source notes from the vector map; V numbers remain the original mask IDs."
+        } else {
+            ""
+        };
         format!(
-            "{intro}\n\n{HELP_COUNTS}\n\n{minimum}{masks}\n{HELP_CONTROLS}\n\n{decisions} Nothing is written to the source files or review sessions. Q or Ctrl-C exits."
+            "{intro}\n\n{HELP_COUNTS}\n\n{minimum}{masks}\n{HELP_CONTROLS}\n\n{decisions}{comparison} Nothing is written to the source files or review sessions. Q or Ctrl-C exits."
         )
     }
 
     pub fn render(&mut self, frame: &mut Frame<'_>) {
-        let area = frame.area();
+        self.render_in_area(frame, frame.area());
+    }
+
+    pub(crate) fn render_in_area(&mut self, frame: &mut Frame<'_>, area: Rect) {
         let dimensions = (area.width, area.height);
         if self.viewport != Some(dimensions) {
             self.viewport = Some(dimensions);
@@ -486,7 +529,7 @@ impl HierarchyExplorer {
         let inner = block.inner(areas[1]);
         self.height = usize::from(inner.height).max(1);
         if let Some(detail) = self.detail {
-            let (title, content) = match detail {
+            let (mut title, content) = match detail {
                 Detail::Help => (
                     if self.view == HierarchyView::Selection {
                         "HDBv2 selection help · proposal · read-only"
@@ -500,11 +543,14 @@ impl HierarchyExplorer {
                     let aliases = &self.hierarchy.vectors[&point];
                     let mask = &aliases[alias];
                     (
-                        format!("Original note · {}", matching_ids(aliases, mask)),
+                        format!("Original note · {}", self.mask_ids(aliases, mask)),
                         inline_note(mask),
                     )
                 }
             };
+            if self.show_parent_masks == Some(true) {
+                title.push_str("\nAll parent masks shown in hierarchy");
+            }
             frame.render_widget(Paragraph::new(title).style(accent_style()), areas[0]);
             let lines = wrap_text(&content, usize::from(inner.width));
             self.detail_scroll = self
@@ -582,7 +628,7 @@ impl HierarchyExplorer {
             }
         }
         self.follow_selection = false;
-        let title = format!(
+        let mut title = format!(
             "{}\nShowing branch {} · {} {}",
             match self.view {
                 HierarchyView::Selection => "HDBv2 selection · proposal · read-only".to_owned(),
@@ -600,6 +646,9 @@ impl HierarchyExplorer {
                 "notes"
             },
         );
+        if self.show_parent_masks == Some(true) {
+            title.push_str(" · All parent masks");
+        }
         frame.render_widget(Paragraph::new(title).style(accent_style()), areas[0]);
         let mut marked = false;
         let lines = physical
@@ -638,7 +687,12 @@ impl HierarchyExplorer {
         } else {
             "Enter Toggle group"
         };
-        frame.render_widget(Paragraph::new(format!("j/k ↑/↓ Select  h/l ←/→ Collapse/expand  PgUp/PgDn Scroll\nU Show parent  F Focus group  {enter}\ngg/G Top/end  ? Help  Q Quit")).style(secondary_style()), areas[2]);
+        let parent_masks = match self.show_parent_masks {
+            Some(true) => "  a Hide parent masks",
+            Some(false) => "  a Show parent masks",
+            None => "",
+        };
+        frame.render_widget(Paragraph::new(format!("j/k ↑/↓ Select  h/l ←/→ Collapse/expand  PgUp/PgDn Scroll\nU Show parent  F Focus group  {enter}\ngg/G Top/end  ? Help  Q Quit{parent_masks}")).style(secondary_style()), areas[2]);
     }
 }
 

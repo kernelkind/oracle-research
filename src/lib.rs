@@ -37,6 +37,7 @@ pub mod gte;
 pub mod gte_budget;
 pub mod hdbscan_hierarchy;
 pub mod hdbscan_hierarchy_tui;
+pub mod hierarchy_comparison_tui;
 pub mod io_pressure;
 pub mod local_personalizer;
 pub mod manual_note_hierarchy;
