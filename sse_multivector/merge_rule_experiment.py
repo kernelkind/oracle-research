@@ -25,6 +25,7 @@ RULES = {
     'symmetric_mean': 'Half the sum of both directional means of finite per-point nearest eligible distances.',
     'symmetric_sum': 'Half the sum of both directional sums of finite per-point nearest eligible distances.',
     'min_sum': 'The smaller of both directional sums of finite per-point nearest eligible distances.',
+    'average': 'The mean of every finite eligible cross-group pair distance, weighted by the number of such pairs.',
 }
 
 
@@ -33,6 +34,9 @@ def pair_score(distances, left, right, rule='symmetric_mean'):
     if rule not in RULES:
         raise ValueError('unknown merge rule: ' + rule)
     cross = np.asarray(distances)[np.ix_(left, right)]
+    if rule == 'average':
+        eligible = cross[np.isfinite(cross)]
+        return float(eligible.mean()) if len(eligible) else math.inf
     forward, reverse = cross.min(axis=1), cross.min(axis=0)
     forward, reverse = forward[np.isfinite(forward)], reverse[np.isfinite(reverse)]
     if not len(forward) or not len(reverse):
@@ -69,6 +73,10 @@ def agglomerate(distances, rule='symmetric_mean'):
     finite = np.isfinite(d)
     sums[:n, :n] = np.where(finite, d, 0)
     counts[:n, :n] = finite
+    # All-pairs averaging needs pair counts, not endpoint-support counts.
+    # Keep them separate so unsupported endpoint reporting remains identical.
+    pair_sums = sums.copy() if rule == 'average' else None
+    pair_counts = counts.copy() if rule == 'average' else None
     active = set(range(n))
     members = {i: np.array([i], dtype=np.int64) for i in range(n)}
     owner = np.arange(n)
@@ -105,7 +113,13 @@ def agglomerate(distances, rule='symmetric_mean'):
         sums[others, new] = incoming[others]
         counts[others, new] = supported[others]
         valid = others[(counts[new, others] > 0) & (counts[others, new] > 0)]
-        if rule == 'min_sum':
+        if rule == 'average':
+            pair_sums[new, others] = pair_sums[left, others] + pair_sums[right, others]
+            pair_counts[new, others] = pair_counts[left, others] + pair_counts[right, others]
+            pair_sums[others, new] = pair_sums[new, others]
+            pair_counts[others, new] = pair_counts[new, others]
+            values = pair_sums[new, valid] / pair_counts[new, valid]
+        elif rule == 'min_sum':
             values = np.minimum(sums[new, valid], sums[valid, new])
         elif rule == 'symmetric_sum':
             values = (sums[new, valid] + sums[valid, new]) / 2
@@ -199,10 +213,14 @@ def main():
     summary = tree_summary(rows, source_sets)
     result = {
         'schema_version': 'merge-rule-experiment-v1', 'run_id': args.run_id,
-        'method': 'chamfer_' + args.rule + '_finite', 'sources': sources,
+        'method': ('average_eligible_pairs' if args.rule == 'average'
+                   else 'chamfer_' + args.rule + '_finite'), 'sources': sources,
         'source_code_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         'definition': RULES[args.rule],
-        'missing_partner_policy': 'Omit endpoints with no eligible partner from that directional aggregation; record their counts. A pair with no eligible edges cannot merge.',
+        'missing_partner_policy': (
+            'Omit excluded pairs from the mean and denominator; record endpoints with no eligible partner. A pair of groups with no eligible edges cannot merge.'
+            if args.rule == 'average' else
+            'Omit endpoints with no eligible partner from that directional aggregation; record their counts. A pair with no eligible edges cannot merge.'),
         'tie_rule': 'merge_score, then smaller cluster ID, then larger cluster ID',
         'distance': 'Frozen HDBv3 angular distances on permitted cross-note edges; no distance recomputation.',
         'excluded_undirected_edges': excluded,

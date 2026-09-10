@@ -62,9 +62,11 @@ Lower scores merge first. Removing normalization reverses these choices: the rec
 
 **Next question:** Does requiring both directions cause this delay? Keep the sums but use the smaller directional sum, following the main Chamfer rule rather than its symmetric variant. This is M03. For a singleton entering an existing group, this removes the receiving group's reverse cost, but also restores single-linkage-like attachment. Check the resulting chains and mid-level memberships, not merely whether the motivating pair changes. Retain exact global score selection: our finite-only omission policy does not inherit the paper's monotonic directional-update shortcut.
 
-**Inspection status:** Exact masks and source notes read for the changed pie/cream decision and two unrelated small M02 groups, plus all masks under1294,1620,1703,1769. Independent inspection of another subtree is underway. Full semantic inspection is not complete.
+**Inspection status:** Exact masks and source notes read for the changed pie/cream decision and two unrelated small M02 groups, plus all masks under1294,1620,1703,1769. The independent subtree inspection below is complete. Full semantic inspection is not complete.
 
-**Independent inspection beyond coffee:** All 26 canonical leaves under M02/1791 and five comparison masks were inspected, with seven full original notes. M02/1362 preserves the exact six-vector audiobook/literature group found at M01/1527 and HDBv3/1674. M02/1508 combines seven purpose/open-mindedness/philosophy masks in a narrower descendant; those seven first coexist at M01/1793 (856 vectors) and HDBv3/1767 (850 vectors). These are limited positives: the two examples mainly combine several overlapping masks from one note with a bare hashtag from N054. They are not rich examples of discovering many related notes.
+**Independent inspection beyond coffee:** All 26 canonical leaves under M02/1791 and five comparison masks were inspected, with seven full original notes. M02/1362 preserves the exact six-vector audiobook/literature group found at M01/1527 and HDBv3/1674.
+
+**Correction to an apparent improvement:** M02/1508 combines seven purpose/open-mindedness/philosophy masks; those exact seven first coexist at M01/1793 (856 vectors). But M01/1666 already contains six of them, with exactly the same two notes, N054 and N069. The additional V628 comes from N069, which is already represented by five other masks. Thus M02 reunites a vector but does not establish a new note-discovery improvement over M01. M04/1677 later reproduces the same seven-vector group. This is why complete vector-set preservation is not the objective. The audiobook and purpose examples also rely on bare hashtags from N054 rather than rich substantive cross-note coverage.
 
 The same inspection found questionable intermediate combinations, without treating them as automatic failures: M02/1567 combines `Movies`, `Music`, and `biking instead of the car`. General activities is a possible broader interpretation. M02/1553 joins a Sorrento food walk to travel/jet-lag masks from Charlotte; travel is a legitimate commonality. M01 is not consistently better: M01/1489 joins three-stop Sorrento food-walk masks to three discounted rotisserie chickens. Source masks and full notes, rather than inferred labels, determine these judgments.
 
@@ -84,6 +86,48 @@ The same inspection found questionable intermediate combinations, without treati
 
 Use the M01 command below with the same four input paths. For M02, add `--rule symmetric_sum`, set `--run-id M02-replay`, and use a new output path. For M03, use `--rule min_sum`, `--run-id M03-replay`, and a new output path. Output files are never overwritten. Compare complete `merges`, aliases, canonical IDs, and input checksums; elapsed time, run ID and current source-code hash may differ.
 
+## M04 — All eligible cross-group pairs
+
+**Question, before running:** Do nearest-partner rules actually give better memberships than considering every eligible connection between the two groups? The preceding experiments changed normalization and directional combination; they have not yet isolated the value of nearest-partner support against this standard comparator on the frozen 100-note input.
+
+Use average linkage, adapted only to the same fixed excluded edges: sum all permitted cross-group distances and divide by their count. This is not a mean of the two child scores and is not the earlier repository experiment over preselected fine segments with `1 - cosine` distances. Existing code was inspected; it cannot be reused unchanged without altering this experiment's frozen inputs and eligibility policy.
+
+Average linkage is the established all-pairs rule. Its exact definition and finite-input requirement are documented by [SciPy](https://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster.hierarchy.linkage.html). The whole-hierarchy analysis of Cohen-Addad et al., §6.1, concerns a distance-weighted objective, not semantic navigation; its guarantee is not claimed for our omitted-edge denominator. [Paper](https://arxiv.org/html/1704.02147v1)
+
+The tradeoff to inspect is specific: considering every pair may prevent a few close representatives from joining poorly related groups, but may also penalize legitimate broad groups whose different subsubjects need not all resemble one another. A standard comparator is more informative now than choosing an intermediate normalization exponent from the observed examples.
+
+**Result:** 1.38 seconds. All 916 vectors and 100 notes retained; raw maximum depth53, no observed parent-score inversions,379 merges with unsupported endpoints. The unchanged note projection has485 groups, maximum depth23, and114 one-child groups. The saved file passes the production TUI loader.
+
+**Initial inspection:** The raw-cream/half-and-half pair remains alone at1097; coffee-shop music at1026; chocolate/tea consumption at1046; recipes at1133. The purpose/open-mindedness branch is available at1677 with the same two notes as M01/1666 and M02/1508. The pie mask first pairs at1275 and later enters the20-vector group1381, which includes bread-related masks and a spaghetti-preparation mask. All masks in the named small groups and1381 were read. These observations justify further comparison, not an overall semantic verdict.
+
+Reproduce with `--rule average`, a fresh run ID and a new output path. In the viewer, use `M04.json` with the same map and notes. Eligible-edge degrees differ between source rows, so this comparison also changes their effective weighting; it is not a pure inner-minimum-to-mean substitution.
+
+**Completed inspection:** [Audit A](audit-M04-A.md), [audit B](audit-M04-B.md), [audit C](audit-M04-C.md), and the [connecting parents](audit-M04-upper.md) cover all 916 canonical vectors, 945 original IDs, 2,490 exact fragments and 915 merges. This is exhaustive M04 reading coverage, not a semantic pass rate. All fragments were checked against original byte ranges. The [targeted M01 regression search](audit-M01-regressions.md) separately checks alternate masks before claiming lost note discovery; it does not claim full M01 semantic coverage.
+
+There are real tradeoffs. M04 brings animal-slaughter notes N013/N048/N055 together at 1506 and food/emotion notes N024/N059/N064 at 1495. M01 instead retains a Christmas extension involving N062 at 1655 and a photography/painting connection involving N064 at 1637; M04's relevant alternatives first meet at 100-note ancestors. M01 and M04 both preserve food-storage and garden connections missing from compact baseline branches. These judgments are provisional and source-grounded, not label agreement scores.
+
+The unchanged viewer still exposes a 99-note child below M04's 100-note root. Fewer raw levels therefore did not solve all navigation problems. Useful smaller descendants coexist with weak pairs and broad upper transitions. M02/M03 remain saved contrasts, not selected winners.
+
+**Verification:** All 11 numeric tests pass. Replaying all four rules with the current runner exactly reproduces each saved 915-merge history, aliases, canonical IDs and input checksums. M04 passes the production merge-history viewer with 485 groups and all 100 notes.
+
+## Current comparison boundary
+
+| Run | Group score | Raw maximum depth | Display maximum depth | Display groups | Display one-child groups |
+| --- | --- | ---: | ---: | ---: | ---: |
+| HDBv3 | Closest permitted edge | 565 | 54 | 246 | 86 |
+| M01 | Average of both nearest-partner means | 161 | 33 | 428 | 116 |
+| M02 | Half the sum of both nearest-partner sums | 16 | 10 | 513 | 7 |
+| M03 | Smaller nearest-partner sum | 109 | 45 | 496 | 304 |
+| M04 | Average of every permitted cross-group distance | 53 | 23 | 485 | 114 |
+
+These are structural measurements only. Before claiming a lost discovery path, check whether another vector from the same note already provides that access. Before claiming improvement from reuniting vectors, check whether any new relevant note becomes reachable. Exact memberships remain useful for locating changes, not as a substitute for the semantic and note-level objective.
+
+The next question is whether a different aggregation of the cross-group distance distribution can improve these tradeoffs. Research and fixed-state score checks precede another run. No candidate is accepted, no input has been changed, and no final winner is selected.
+
+## Further literature considered
+
+Maximizing the two directional means is the established modified Hausdorff distance MH1, not a new invention. James et al., Definition2.2 and Proposition3.1, also show that it can ignore changes in one direction while the other dominates. Their clustering uses distances between pre-existing time-series change-point sets, not this dynamic merge problem. This supports considering the measure but does not justify implementing it before inspecting the all-pairs comparator. [Paper](https://arxiv.org/pdf/1911.00995)
+
 ## Review-tool verification
 
 The new `--merge-history` input uses the existing note-set projection and nested renderer, but accepts genuine decreasing merge scores without pretending they are HDBSCAN distances. Tests cover source masks, aliases, structural validation, score inversions, conflicting modes, and old HDB distance validation. All 65 hierarchy integration tests and both launcher tests passed. In a real terminal, M01 rendered, expanded, opened a full original note with its inline mask, moved upward while preserving expansion, and exited cleanly. Baseline counts match the frozen binary exactly.
@@ -98,7 +142,12 @@ target/merge-rule-review-build/debug/hdbscan-hierarchy \
   --merge-history
 ```
 
-Substitute `M02.json` to inspect M02. Its input validation passed with 513 groups and all 100 notes.
+Substitute `M02.json`, `M03.json`, or `M04.json` to inspect another saved run. All four pass the production loader. To build this binary from a fresh checkout, without changing the existing pinned launcher:
+
+```sh
+CARGO_TARGET_DIR=target/merge-rule-review-build CARGO_BUILD_JOBS=2 \
+  nix develop -c cargo build --bin hdbscan-hierarchy
+```
 
 ## Reproduce M01
 

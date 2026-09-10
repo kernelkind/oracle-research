@@ -134,6 +134,39 @@ class MergeRuleTests(unittest.TestCase):
                 self.assertAlmostEqual(row['merge_score'], score)
                 active[row['id']] = active.pop(a) + active.pop(b)
 
+    def test_average_uses_every_eligible_pair_and_omits_excluded_pairs(self):
+        d = np.array([[0, .1, .2, .8], [.1, 0, .7, .6],
+                      [.2, .7, 0, .1], [.8, .6, .1, 0]])
+        self.assertAlmostEqual(pair_score(d, [0, 1], [2, 3], rule='average'), .575)
+        d[0, 2] = d[2, 0] = np.inf
+        self.assertAlmostEqual(pair_score(d, [0, 1], [2, 3], rule='average'), .7)
+        self.assertTrue(math.isinf(pair_score(d, [0], [2], rule='average')))
+
+    def test_average_updates_preserve_pair_counts_for_unequal_groups(self):
+        for seed in range(7):
+            rng = np.random.default_rng(40 + seed)
+            x = rng.normal(size=(12, 5))
+            x /= np.linalg.norm(x, axis=1)[:, None]
+            d = np.arccos(np.clip(x @ x.T, -1, 1))
+            for i in range(12):
+                for j in range(12):
+                    if i // 3 == j // 3:
+                        d[i, j] = np.inf
+            active = {i: [i] for i in range(12)}
+            for row in agglomerate(d, rule='average'):
+                candidates = []
+                for a, av in active.items():
+                    for b, bv in active.items():
+                        if a >= b:
+                            continue
+                        distances = [d[i, j] for i in av for j in bv if math.isfinite(d[i, j])]
+                        if distances:
+                            candidates.append((sum(distances)/len(distances), a, b))
+                score, a, b = min(candidates)
+                self.assertEqual((row['left'], row['right']), (a, b))
+                self.assertAlmostEqual(row['merge_score'], score)
+                active[row['id']] = active.pop(a) + active.pop(b)
+
 
 if __name__ == '__main__':
     unittest.main()
