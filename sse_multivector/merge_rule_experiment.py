@@ -23,6 +23,7 @@ import numpy as np
 
 RULES = {
     'symmetric_mean': 'Half the sum of both directional means of finite per-point nearest eligible distances.',
+    'hausdorff_finite': 'The maximum of all finite per-point nearest eligible distances from both directions; omit unsupported endpoints without claiming complete coverage.',
     'symmetric_sum': 'Half the sum of both directional sums of finite per-point nearest eligible distances.',
     'min_sum': 'The smaller of both directional sums of finite per-point nearest eligible distances.',
     'average': 'The mean of every finite eligible cross-group pair distance, weighted by the number of such pairs.',
@@ -104,6 +105,8 @@ def pair_score(distances, left, right, rule='symmetric_mean', source_note_ids=No
     forward, reverse = forward[np.isfinite(forward)], reverse[np.isfinite(reverse)]
     if not len(forward) or not len(reverse):
         return math.inf
+    if rule == 'hausdorff_finite':
+        return float(max(forward.max(), reverse.max()))
     if rule == 'min_sum':
         return float(min(forward.sum(), reverse.sum()))
     if rule == 'symmetric_sum':
@@ -141,6 +144,10 @@ def agglomerate(distances, rule='symmetric_mean', source_note_ids=None):
     counts = np.zeros((total, total), dtype=np.int64)
     sums[:n, :n] = np.where(finite, d, 0)
     counts[:n, :n] = finite
+    maxima = None
+    if rule == 'hausdorff_finite':
+        maxima = np.full((total, total), -np.inf)
+        maxima[:n, :n] = np.where(finite, d, -np.inf)
     # All-pairs averaging needs pair counts, not endpoint-support counts.
     # Keep them separate so unsupported endpoint reporting remains identical.
     pair_sums = sums.copy() if rule == 'average' else None
@@ -195,7 +202,15 @@ def agglomerate(distances, rule='symmetric_mean', source_note_ids=None):
         sums[others, new] = incoming[others]
         counts[others, new] = supported[others]
         valid = others[(counts[new, others] > 0) & (counts[others, new] > 0)]
-        if weights is not None:
+        if maxima is not None:
+            # New endpoints keep their existing nearest partner in each other
+            # group. Other endpoints may now find a nearer partner in the union.
+            maxima[new, others] = np.maximum(maxima[left, others], maxima[right, others])
+            incoming_max = np.full(total, -np.inf)
+            np.maximum.at(incoming_max, owner[available], nearest[new, available])
+            maxima[others, new] = incoming_max[others]
+            values = np.maximum(maxima[new, valid], maxima[valid, new])
+        elif weights is not None:
             mass[new] = mass[left] + mass[right]
             connections[new, others] = connections[left, others] + connections[right, others]
             connections[others, new] = connections[new, others]
@@ -318,7 +333,8 @@ def main():
     summary = tree_summary(rows, source_sets)
     result = {
         'schema_version': 'merge-rule-experiment-v1', 'run_id': args.run_id,
-        'method': (args.rule + '_eligible_graph' if args.rule in ('paris_linear', 'paris_conditional') else
+        'method': (args.rule if args.rule == 'hausdorff_finite' else
+                   args.rule + '_eligible_graph' if args.rule in ('paris_linear', 'paris_conditional') else
                    args.rule + '_eligible_pairs' if args.rule in ('average', 'median', 'note_pair_mean')
                    else 'chamfer_' + args.rule + '_finite'), 'sources': sources,
         'source_code_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),

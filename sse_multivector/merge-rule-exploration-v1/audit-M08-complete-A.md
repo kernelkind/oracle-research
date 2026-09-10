@@ -112,7 +112,7 @@ Exact /1410 already carries Satoshi, Sorrento and infant material. /1540 adds th
 
 ### Root 1744
 
-/1380 extends simple/healthy-looking meals, /1468 adds a minimalist/advanced cooktop and /1545 the fuller off-menu dish. /1624 adds Japan's newly encountered tasty food to the bay/takeout-appreciation child. /1730 joins the clean-meal/cooktop side to the cooking/praise branch, which includes a compound mentioning a mother's chemotherapy and hope for improved health; /1744 combines the two sides. Food appreciation, obtaining and preparing appealing food provide a defensible broad relationship. The cooktop's design is not nutrition evidence, and the sensitive source compound does not establish a therapeutic effect of its food.
+/1380 extends simple/healthy-looking meals, /1468 adds a minimalist/advanced cooktop and /1545 the fuller off-menu dish. /1624 adds Japan's newly encountered tasty food to the bay/takeout-appreciation child. /1730 joins the clean-meal/cooktop side to the cooking/praise branch, which includes a compound mentioning chemotherapy and hoping it goes down well; /1744 combines the two sides. Food appreciation, obtaining and preparing appealing food provide a defensible broad relationship. The cooktop's design is not nutrition evidence, and the sensitive source compound does not establish a therapeutic effect of its food. Correction during M09's source reread: N008 does not identify a mother or the chemotherapy recipient; the earlier wording introduced that unsupported relationship.
 
 ### Root 1750
 

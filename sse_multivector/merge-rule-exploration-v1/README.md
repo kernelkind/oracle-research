@@ -182,6 +182,18 @@ The implementation must use the actual cross-pair median, not SciPy's differentl
 
 **Verification:** Six new tests failed before implementation; all31 merge-rule tests now pass. Independent exhaustive checks cover the definition, eligibility, ties, normalization and complete small histories. All eight saved full histories replay exactly. The live production TUI opens1582, shows V670's complete original inline, expands1260 and moves up to1723 with unopened1534 above the still-nested children. No display code changed. Reproduce with `--rule paris_conditional`, a fresh run ID and a new output path.
 
+## M09 — Largest finite nearest-partner distance
+
+**Question:** Does replacing M01's average with the largest nearest-partner distance prevent poorly matched endpoints from disappearing in the average? The [research and predeclared definition](internal-variation-and-coverage.md) distinguish this adapted Hausdorff linkage from complete linkage, maximum directional means and minimax prototypes. Unsupported endpoints are still omitted and counted; this is not a complete-coverage guarantee.
+
+**Result:** 1.79 seconds, preserving all 916 canonical vectors, 945 original IDs and 100 notes. Raw maximum depth is 29, with 28 genuine parent-score inversions and 345 merges with unsupported endpoints. The unchanged viewer retains 536 groups, maximum depth 19 and 62 one-child groups. These are structural measurements, not semantic grades.
+
+**Complete inspection:** [A](audit-M09-complete-A.md), [B](audit-M09-complete-B.md), and the [connecting parents](audit-M09-upper.md) cover all 915 transitions and 2,490 exact fragments: 517 exact recursive matches to previously audited trees and 398 changed transitions. The [13 relation checks](audit-M09-relations.md) retain the same admitted alternate masks. Focused food/emotion1343 and slaughter1596 survive. Useful tomato-preparation1323 and Christmas1512 children remain, but their complete previously examined note extensions need broader ancestors. The complete tea, photography, restaurant and activity relations require all-note ancestors. M09 is not an overall improvement.
+
+**Mechanism:** Two [fixed-child comparisons](M09-fixed-child-comparisons.md) reproduce the precise available masks and scores. Before1227, one coffee-tag endpoint raises the maximum for a larger coffee group above the pie/bread alternative, despite the coffee group's lower mean. Before1583, the maximum favors a regional-flavor branch over the available tea group, while the mean favors tea. These local choices show the cost of worst-endpoint sensitivity; they do not prove that rerunning M01 would follow the same history or repair every affected relation. The first six child-pair choices match M01, but their scores need not.
+
+**Verification:** Six new tests failed before implementation; all 37 merge-rule tests pass. Independent numerical review checked 96 exhaustive small histories and the omission/reversal behavior. All nine saved full histories replay exactly. The live production TUI opens1482, expands1248, shows V531's full original with its inline mask, then moves upward to1507 with unopened1266 above the still-nested children. Reproduce with `--rule hausdorff_finite`, a fresh run ID and an unused output path. No display code changed.
+
 ## Comparison table
 
 | Run | Group score | Raw maximum depth | Display maximum depth | Display groups | Display one-child groups |
@@ -195,10 +207,11 @@ The implementation must use the actual cross-pair median, not SciPy's differentl
 | M06 | Equal mean of unordered source-note-pair means | 54 | 22 | 488 | 129 |
 | M07 | Original degree masses relative to cross-group graph weight (PARIS) | 26 | 20 | 904 | 277 |
 | M08 | Eligible original degree products relative to cross-group graph weight | 31 | 20 | 502 | 117 |
+| M09 | Largest finite nearest-partner distance across both directions | 29 | 19 | 536 | 62 |
 
 These are structural measurements only. Before claiming a lost discovery path, check whether another vector from the same note already provides that access. Before claiming improvement from reuniting vectors, check whether any new relevant note becomes reachable. Exact memberships remain useful for locating changes, not as a substitute for the semantic and note-level objective.
 
-M07 tests surrounding-connection evidence and changes singleton-pair scores, unlike M01–M06. M08 tests the treatment of excluded connections in that rule and also yields tradeoffs. Research is now checking whether already-present internal variation supplies a useful different merge criterion without silently changing frozen geometry or restoring excluded pairs. No subsequent rule or final winner is selected; final inspection packaging remains pending.
+M07 tests surrounding-connection evidence and changes singleton-pair scores, unlike M01–M06. M08 tests the treatment of excluded connections; M09 tests the worst supported endpoint instead of the mean. Neither removes the observed tradeoffs. Research is now checking whether structure within each child supplies a justified different criterion without silently changing frozen geometry or restoring excluded pairs. No M10 or final winner is selected; final inspection packaging remains pending. The latest allowance check after the M09 audit returned42% remaining.
 
 ## Further literature considered
 
@@ -218,7 +231,7 @@ target/merge-rule-review-build/debug/hdbscan-hierarchy \
   --merge-history
 ```
 
-Substitute `M02.json`, `M03.json`, `M04.json`, `M05.json`, `M06.json`, `M07.json`, or `M08.json` to inspect another saved run. All eight pass the production loader. Add `--start-at 1467` for M05's restaurant example, `--start-at 1704` for M06's Christmas example, `--start-at 1523` for M07's restaurant example, or `--start-at 1582` for M08's tea example. M05 was also verified in a live terminal: expand child1403, open V399's full original with its inline mask, return, move upward to1651 while retaining the expanded nesting, and exit. To build this binary from a fresh checkout, without changing the existing pinned launcher:
+Substitute `M02.json`, `M03.json`, `M04.json`, `M05.json`, `M06.json`, `M07.json`, `M08.json`, or `M09.json` to inspect another saved run. All nine pass the production loader. Add `--start-at 1467` for M05's restaurant example, `--start-at 1704` for M06's Christmas example, `--start-at 1523` for M07's restaurant example, `--start-at 1582` for M08's tea example, or `--start-at 1482` for M09's recipe/ingredient example. M05 was also verified in a live terminal: expand child1403, open V399's full original with its inline mask, return, move upward to1651 while retaining the expanded nesting, and exit. To build this binary from a fresh checkout, without changing the existing pinned launcher:
 
 ```sh
 CARGO_TARGET_DIR=target/merge-rule-review-build CARGO_BUILD_JOBS=2 \
