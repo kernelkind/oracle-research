@@ -136,6 +136,22 @@ The implementation must use the actual cross-pair median, not SciPy's differentl
 
 **Additional regression:** M04/1587 exposes a three-note tea relationship across N042/N072/N080. M05 preserves the hot/morning-tea pair at1208, but every relevant tea-mask alternative involving N072 first meets it at the displayed root. N072's sweet-tea analogy remains with bread instead. The upper audit gives the exact alternatives and source context; this is a qualified loss of that extension, not of all tea discovery.
 
+## M06 — Equal weighting of source-note pairs
+
+**Question:** Does averaging separately within each unordered source-note pair, then averaging those pair means equally, improve the hierarchy compared with M04's vector-pair mean? The [pre-run research and definition](source-note-weighting.md) explain why source multiplicity is worth testing without declaring it inherently wrong. No input, distance, excluded edge, or display rule changed.
+
+**Result:** 8.62 seconds; all916 canonical vectors,945 original IDs and100 notes retained. Raw maximum depth54; two genuine score inversions at1176 and1615;371 merges with unsupported endpoints. The unchanged viewer retains488 groups, maximum depth22 and129 one-child groups. These counts are not semantic scores.
+
+**Complete inspection:** [A](audit-M06-complete-A.md), [B](audit-M06-complete-B.md), and the [connecting parents](audit-M06-upper.md) exhaust all915 merges and2490 exact fragments. There are599 exact recursive M04 matches and316 changed transitions. [Nine relation checks](audit-M06-relations.md) and a [new-small-group search](audit-M06-new-groups.md) separately admit relevant alternate masks before claiming better or worse note access.
+
+**Findings:** M06 recovers compact Christmas and five-note animal-flesh groups also available in M01, and the tea group available in M04 but missing from compact M05 branches. Food/emotion remains useful. New promising intermediate options include physical activity1736, getting-going/caffeine1442, seasoning1397, tomatoes1285 and cooking/eating equipment1746. M05's restaurant-availability extension is not recovered; photography remains separated. Slaughter and concrete preservation still have relevant access, but with broader or weaker additions. A 99-note near-root child remains; in this food-focused corpus, its size alone is not proof of semantic incoherence.
+
+**Mechanism, not a universal repair:** At1397, three source-pair means have4,2 and1 eligible edges. M04 gives them those weights and scores1.103133528; M06 weights the means equally and scores1.035868624. Both children are exact M04 subtrees. Conversely, the useful equipment group1746 has a higher M06 score than the M04 formula on the same children, and new singleton pairs retain identical scores. Earlier merge availability matters; a favorable final group does not prove that its own score decreased or that all multiplicity effects are solved.
+
+**Verification:** All19 tests pass, including a real command-line test of valid aliases, conflicting map/request provenance and multi-source-alias rejection. That added test exposed an integer-JSON-distance loader error; explicitly reading numeric distances as float64 fixed it. All six complete saved histories replay unchanged after the fix. The M06 artifact retains the hash of the source that generated it; replay checks compare histories and frozen input hashes rather than falsely requiring the later source hash to match.
+
+**Live viewer check:** Open1704, open V518's complete original with its inline mask, return, expand1453, and move upward to1781. The opened child stays nested and the unopened1761 sibling appears above it. Exiting restores the terminal. This confirms display behavior, not semantic approval.
+
 ## Comparison table
 
 | Run | Group score | Raw maximum depth | Display maximum depth | Display groups | Display one-child groups |
@@ -146,10 +162,11 @@ The implementation must use the actual cross-pair median, not SciPy's differentl
 | M03 | Smaller nearest-partner sum | 109 | 45 | 496 | 304 |
 | M04 | Average of every permitted cross-group distance | 53 | 23 | 485 | 114 |
 | M05 | Median of every permitted cross-group distance | 47 | 23 | 500 | 124 |
+| M06 | Equal mean of unordered source-note-pair means | 54 | 22 | 488 | 129 |
 
 These are structural measurements only. Before claiming a lost discovery path, check whether another vector from the same note already provides that access. Before claiming improvement from reuniting vectors, check whether any new relevant note becomes reachable. Exact memberships remain useful for locating changes, not as a substitute for the semantic and note-level objective.
 
-The next question concerns how repeated masks from the same source note influence aggregation. The [research, fixed-state evidence and M06 definition](source-note-weighting.md) distinguish equal source-note-pair weighting from whole-note clustering and WPGMA. No candidate is accepted, no input has been changed, and no final winner is selected.
+Source-note weighting now has a complete controlled result, not just a proposed next experiment. The next research question is whether a merge criterion can use surrounding connections, beyond the candidate groups' own cross-pair distances. All six implemented rules agree on singleton-pair scores. No seventh rule is selected merely to increase the experiment count, and no final winner is selected.
 
 ## Further literature considered
 
@@ -169,7 +186,7 @@ target/merge-rule-review-build/debug/hdbscan-hierarchy \
   --merge-history
 ```
 
-Substitute `M02.json`, `M03.json`, `M04.json`, or `M05.json` to inspect another saved run. All five pass the production loader. Add `--start-at 1467` for M05's restaurant example. M05 was also verified in a live terminal: expand child1403, open V399's full original with its inline mask, return, move upward to1651 while retaining the expanded nesting, and exit. To build this binary from a fresh checkout, without changing the existing pinned launcher:
+Substitute `M02.json`, `M03.json`, `M04.json`, `M05.json`, or `M06.json` to inspect another saved run. All six pass the production loader. Add `--start-at 1467` for M05's restaurant example, or `--start-at 1704` for M06's Christmas example. M05 was also verified in a live terminal: expand child1403, open V399's full original with its inline mask, return, move upward to1651 while retaining the expanded nesting, and exit. To build this binary from a fresh checkout, without changing the existing pinned launcher:
 
 ```sh
 CARGO_TARGET_DIR=target/merge-rule-review-build CARGO_BUILD_JOBS=2 \
@@ -191,3 +208,5 @@ python3 sse_multivector/merge_rule_experiment.py \
 ```
 
 The runner refuses to overwrite an existing output. Compare `merges`, IDs and source checksums; run ID, source-code hash and elapsed time are provenance rather than membership output.
+
+For M06, use `--rule note_pair_mean`, a fresh run ID and an unused output path with the same four input files. It requires one source note per canonical vector, which the complete frozen artifact satisfies.

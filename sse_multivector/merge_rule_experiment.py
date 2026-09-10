@@ -27,14 +27,40 @@ RULES = {
     'min_sum': 'The smaller of both directional sums of finite per-point nearest eligible distances.',
     'average': 'The mean of every finite eligible cross-group pair distance, weighted by the number of such pairs.',
     'median': 'The ordinary median of all finite eligible cross-group pair distances; average the two middle values for even counts.',
+    'note_pair_mean': 'The equal mean of unordered source-note-pair means, each pooling all its finite cross-group distances from both orientations.',
 }
 
 
-def pair_score(distances, left, right, rule='symmetric_mean'):
+def _note_pair_keys(source_note_ids, n):
+    if (source_note_ids is None or len(source_note_ids) != n
+            or any(not isinstance(s, str) or not s.strip() for s in source_note_ids)):
+        raise ValueError('one nonempty source note ID is required per canonical vector')
+    unique, codes = np.unique(source_note_ids, return_inverse=True)
+    a, b = codes[:, None], codes[None, :]
+    pairs = np.minimum(a, b) * len(unique) + np.maximum(a, b)
+    pairs[a == b] = -1
+    return pairs
+
+
+def _mean_of_note_pairs(cross, pairs):
+    eligible = np.isfinite(cross)
+    if not eligible.any():
+        return math.inf
+    keys = pairs[eligible]
+    if (keys < 0).any():
+        raise ValueError('same-note edges must remain excluded')
+    _, bins = np.unique(keys, return_inverse=True)
+    return float((np.bincount(bins, weights=cross[eligible]) / np.bincount(bins)).mean())
+
+
+def pair_score(distances, left, right, rule='symmetric_mean', source_note_ids=None):
     """Reference definition; points without an eligible partner contribute nothing."""
     if rule not in RULES:
         raise ValueError('unknown merge rule: ' + rule)
     cross = np.asarray(distances)[np.ix_(left, right)]
+    if rule == 'note_pair_mean':
+        pairs = _note_pair_keys(source_note_ids, len(distances))
+        return _mean_of_note_pairs(cross, pairs[np.ix_(left, right)])
     if rule in ('average', 'median'):
         eligible = cross[np.isfinite(cross)]
         if not len(eligible):
@@ -51,13 +77,14 @@ def pair_score(distances, left, right, rule='symmetric_mean'):
     return float((forward.mean() + reverse.mean()) / 2)
 
 
-def agglomerate(distances, rule='symmetric_mean'):
+def agglomerate(distances, rule='symmetric_mean', source_note_ids=None):
     """Globally smallest active score, including decreases after previous merges.
 
     Heap ties use ordered cluster IDs. Cached directional sums and support
     counts preserve fixed edge exclusions. Space is O(n²). Mean/sum rules
     take O(n) arithmetic per merge plus heap updates. Median recomputes the
     changed cross-pair distributions exactly, with O(n³) worst-case work.
+    Note-pair means additionally sort the pair keys within each comparison.
     """
     if rule not in RULES:
         raise ValueError('unknown merge rule: ' + rule)
@@ -70,11 +97,14 @@ def agglomerate(distances, rule='symmetric_mean'):
         raise ValueError('distances must be symmetric')
     n, total = len(d), 2 * len(d) - 1
     np.fill_diagonal(d, np.inf)
+    finite = np.isfinite(d)
+    note_pairs = _note_pair_keys(source_note_ids, n) if rule == 'note_pair_mean' else None
+    if note_pairs is not None and np.any(finite & (note_pairs < 0)):
+        raise ValueError('same-note edges must remain excluded')
     nearest = np.full((total, n), np.inf)
     nearest[:n] = d
     sums = np.zeros((total, total))
     counts = np.zeros((total, total), dtype=np.int64)
-    finite = np.isfinite(d)
     sums[:n, :n] = np.where(finite, d, 0)
     counts[:n, :n] = finite
     # All-pairs averaging needs pair counts, not endpoint-support counts.
@@ -117,7 +147,12 @@ def agglomerate(distances, rule='symmetric_mean'):
         sums[others, new] = incoming[others]
         counts[others, new] = supported[others]
         valid = others[(counts[new, others] > 0) & (counts[others, new] > 0)]
-        if rule == 'median':
+        if rule == 'note_pair_mean':
+            values = np.array([
+                _mean_of_note_pairs(d[np.ix_(members[new], members[other])],
+                                    note_pairs[np.ix_(members[new], members[other])])
+                for other in valid])
+        elif rule == 'median':
             values = np.array([pair_score(d, members[new], members[other], rule)
                                for other in valid])
         elif rule == 'average':
@@ -164,7 +199,7 @@ def load_baseline(baseline, request, vector_map, notes):
     # Code audit: on permitted HDBv3 edges, both cross-note cores are bounded
     # by the pair's angle. Thus these saved values equal the original angles.
     # Excluded same-note values need not equal angles and are never consumed.
-    d = np.array(algorithm['mutual_reachability_distances']).reshape(n, n)
+    d = np.array(algorithm['mutual_reachability_distances'], dtype=np.float64).reshape(n, n)
     excluded = 0
     for i in range(n):
         d[i, i] = np.inf
@@ -216,15 +251,22 @@ def main():
     start = time.monotonic()
     d, baseline, source_sets, sources, excluded = load_baseline(
         args.baseline, args.request, args.vector_map, args.notes)
-    rows = agglomerate(d, rule=args.rule)
+    source_note_ids = None
+    if args.rule == 'note_pair_mean':
+        if any(len(s) != 1 for s in source_sets):
+            raise ValueError('note-pair weighting requires one source note per canonical vector')
+        source_note_ids = [next(iter(s)) for s in source_sets]
+    rows = agglomerate(d, rule=args.rule, source_note_ids=source_note_ids)
     summary = tree_summary(rows, source_sets)
     result = {
         'schema_version': 'merge-rule-experiment-v1', 'run_id': args.run_id,
-        'method': (args.rule + '_eligible_pairs' if args.rule in ('average', 'median')
+        'method': (args.rule + '_eligible_pairs' if args.rule in ('average', 'median', 'note_pair_mean')
                    else 'chamfer_' + args.rule + '_finite'), 'sources': sources,
         'source_code_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         'definition': RULES[args.rule],
         'missing_partner_policy': (
+            'Omit excluded edges and empty source-note-pair bins; equally average nonempty bin means. Record endpoints with no eligible partner. Groups with no eligible edges cannot merge.'
+            if args.rule == 'note_pair_mean' else
             'Omit excluded pairs from the median sample; record endpoints with no eligible partner. A pair of groups with no eligible edges cannot merge.'
             if args.rule == 'median' else
             'Omit excluded pairs from the mean and denominator; record endpoints with no eligible partner. A pair of groups with no eligible edges cannot merge.'

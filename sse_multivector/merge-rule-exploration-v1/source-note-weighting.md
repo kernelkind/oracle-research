@@ -31,6 +31,10 @@ The frozen input has exactly one source note per canonical vector, including its
 
 Recompute changed group scores exactly, retaining global smallest-score selection, deterministic ties and genuine score decreases. Do not assume an average-linkage recurrence or monotonic merge heights. First test the definition, overlapping source-note sets, equal weighting of unequal pair counts, and the complete history against an independent exhaustive implementation. Existing tests and all previous saved histories must remain unchanged.
 
+The independent mathematical review found a reachable decrease with four distinct unit vectors. Notes `a,c=P`, `b=Q`, `d=R` have permitted angular distances `ab=1.00`, `ad=1.80`, `bc=1.30`, `bd=1.01`, `cd=1.31`; `ac` is excluded. M06 merges `ab` at1.00, then `ab+c` at1.30, then `abc+d` at `mean(mean(1.80,1.31),1.01)=1.2825`. The numeric regression test constructs the actual 3D unit vectors and checks this complete history. Ordinary average-linkage monotonicity and its selection shortcuts therefore cannot be imported.
+
+Five new tests initially failed because the runner did not accept source-note weighting. After implementation, all18 numeric tests pass. The new checks cover pooled unequal orientations, absent bins, singleton cases, source/eligibility validation, the real angular decrease, and every merge against independent exhaustive calculations on eight small angular inputs. The pre-existing13 tests were unchanged.
+
 ## Fixed-state evidence
 
 These calculations use actual saved groups and fixed distances, before any M06 run. Lower scores merge earlier. They compare available choices at an existing state, not a predicted full history.
@@ -51,6 +55,14 @@ This change does **not** repair the known Christmas or photography choice at tho
 Equal source-pair weight may reduce the influence of repeated masks, but can increase the influence of a weak singleton connection from another note. Replicating an entire note's identical set of masks at a fixed comparison need not change its pair mean; selectively repeating only one of its different meanings can still change that mean. The actual tree can change earlier than either comparison. Neither statistical independence nor complete duplicate invariance is claimed.
 
 Inspect newly created and lost note relationships, plus complete nested structure, before judging usefulness. Preserve M01/M04/M05 tradeoffs and check alternate masks. The existing broad-root and sparse-fragment problems may survive unchanged.
+
+## Observed M06 result
+
+The complete run took8.62 seconds and retained all inputs. The whole-tree audit covers all915 merges. Compact Christmas, animal-flesh and tea relationships return; food/emotion survives; several new useful-looking intermediate groups appear. Restaurant availability, photography, and the focus of slaughter/preservation groups show real remaining tradeoffs. The [M06 result and audit links](README.md#m06--equal-weighting-of-source-note-pairs) give the exact scopes and counterpart checks.
+
+The weighting mechanism is directly visible for seasoning1397: the three pair-bin means1.207372085,0.992212565,0.908021223 have4,2,1 edges. Their M04 weighted mean is1.103133528 and M06 equal mean1.035868624. Other useful M06 groups do not have a lower score at their own fixed memberships; earlier greedy choices also change which groups are available. This is evidence of a useful alternative, not proof of independent-note consensus or a final solution.
+
+Nineteen tests now pass. The added command-line test verifies real alias-provenance rejection and exposed a numeric loading bug for integer-valued JSON distances. Explicit float64 loading fixes it without changing any of the six saved histories. Live nested TUI inspection succeeded. The next investigation concerns contextual merge evidence rather than further tuning source-pair weights to these examples.
 
 ## Sources
 
