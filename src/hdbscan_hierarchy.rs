@@ -1,4 +1,4 @@
-//! Read-only reconstruction of saved HDBSCAN trees and scored merge histories.
+//! Read-only reconstruction of saved HDBSCAN trees, merge histories, and Infomap modules.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::error::Error;
@@ -40,6 +40,136 @@ pub struct MaskInstance {
 }
 
 impl Hierarchy {
+    /// Reconstruct every native Infomap module prefix without projecting note
+    /// sets, synthesizing binary merges, or adding merge distances.
+    ///
+    /// The root's empty path has ID `vector_count`. Nonempty module prefixes
+    /// receive subsequent IDs in numeric lexicographic order. Vectors belong
+    /// directly to their saved `module_path`; all aliases retain their originals.
+    pub fn load_infomap(
+        hierarchy_path: &Path,
+        vector_map_path: &Path,
+        notes_path: &Path,
+    ) -> Result<Self, Box<dyn Error>> {
+        Self::load_infomap_with_run_id(hierarchy_path, vector_map_path, notes_path)
+            .map(|(hierarchy, _)| hierarchy)
+    }
+
+    /// Keep the saved run identity alongside the hierarchy for reviewer headers.
+    /// Artifacts without a run ID remain readable; no identity is inferred.
+    pub fn load_infomap_with_run_id(
+        hierarchy_path: &Path,
+        vector_map_path: &Path,
+        notes_path: &Path,
+    ) -> Result<(Self, Option<String>), Box<dyn Error>> {
+        let input: SavedInfomapHierarchy = read_json(hierarchy_path)?;
+        if input.schema_version != "infomap-hierarchy-v1" {
+            return Err("unsupported Infomap hierarchy schema_version".into());
+        }
+        if input.run_id.as_ref().is_some_and(|id| id.trim().is_empty()) {
+            return Err("saved Infomap run_id must be nonempty when present".into());
+        }
+        for (name, path, source) in [
+            ("vector_map", vector_map_path, &input.sources.vector_map),
+            ("notes", notes_path, &input.sources.notes),
+        ] {
+            if source.sha256 != file_sha256(path)? {
+                return Err(format!("Infomap source checksum mismatch: {name}").into());
+            }
+        }
+        let root = input.vector_count;
+        if root == 0 {
+            return Err("saved Infomap hierarchy has no points".into());
+        }
+        if input.alias_groups.len() != root {
+            return Err("alias group count does not match vector_count".into());
+        }
+        if input.canonical_unique_ids.len() != root {
+            return Err("canonical ID count does not match vector_count".into());
+        }
+        if input.paths.len() != root {
+            return Err("Infomap paths must contain every node exactly once".into());
+        }
+        let mut nodes = BTreeMap::new();
+        let mut prefixes = BTreeSet::from([Vec::new()]);
+        for node in input.paths {
+            if node.node_id >= root {
+                return Err(
+                    format!("Infomap node {} is outside vector_count", node.node_id).into(),
+                );
+            }
+            if node.module_path.contains(&0) {
+                return Err("Infomap module path components must be positive integers".into());
+            }
+            for length in 1..=node.module_path.len() {
+                prefixes.insert(node.module_path[..length].to_vec());
+            }
+            if nodes.insert(node.node_id, node.module_path).is_some() {
+                return Err(format!("duplicate Infomap node {}", node.node_id).into());
+            }
+        }
+        let mut path_ids = BTreeMap::new();
+        let mut groups: BTreeMap<usize, Group> = BTreeMap::new();
+        for (offset, path) in prefixes.into_iter().enumerate() {
+            let id = root
+                .checked_add(offset)
+                .ok_or("Infomap group IDs overflow")?;
+            let mut group = Group::new(id);
+            if !path.is_empty() {
+                let parent = path_ids[&path[..path.len() - 1]];
+                group.parent = Some(parent);
+                groups
+                    .get_mut(&parent)
+                    .expect("prefix precedes child")
+                    .children
+                    .push(id);
+            }
+            groups.insert(id, group);
+            path_ids.insert(path, id);
+        }
+        for (node, path) in nodes {
+            groups
+                .get_mut(&path_ids[&path])
+                .expect("saved module prefix")
+                .vectors
+                .push(node);
+        }
+        let vectors = load_vectors(
+            input.alias_groups,
+            input.canonical_unique_ids,
+            vector_map_path,
+            notes_path,
+        )?;
+        // Prefix IDs precede descendants. Consume temporary note sets bottom-up;
+        // every native module stays in the tree, including one-note/one-vector modules.
+        let order = groups.keys().copied().rev().collect::<Vec<_>>();
+        let mut descendant_notes: BTreeMap<usize, BTreeSet<&str>> = BTreeMap::new();
+        for id in order {
+            let group = &groups[&id];
+            let mut count = group.vectors.len();
+            let mut notes = BTreeSet::new();
+            for point in &group.vectors {
+                notes.extend(vectors[point].iter().map(|mask| mask.note_id.as_str()));
+            }
+            for child in &group.children {
+                count += groups[child].vector_count;
+                notes.extend(descendant_notes.remove(child).expect("child visited first"));
+            }
+            let group = groups.get_mut(&id).expect("visited module");
+            group.vector_count = count;
+            group.note_count = notes.len();
+            descendant_notes.insert(id, notes);
+        }
+        Ok((
+            Self {
+                root,
+                groups,
+                vectors,
+            },
+            input.run_id,
+        ))
+    }
+
     /// Load a note-navigation comparison from the saved binary merge tree.
     ///
     /// Retain a merge only when it contains at least two distinct source notes
@@ -646,6 +776,39 @@ fn load_vectors(
     Ok(vectors)
 }
 
+/// Read the source note IDs used by the vector map, rejecting ambiguous labels.
+pub fn load_note_short_ids(path: &Path) -> Result<BTreeMap<String, String>, Box<dyn Error>> {
+    let vectors: VectorMapNotes = read_json(path)?;
+    let mut notes = BTreeMap::new();
+    let mut short_ids = BTreeMap::new();
+    for vector in vectors.vectors {
+        if vector.note_id.trim().is_empty() || vector.note_short_id.trim().is_empty() {
+            return Err("vector map requires nonempty source note IDs".into());
+        }
+        if notes
+            .insert(vector.note_id.clone(), vector.note_short_id.clone())
+            .is_some_and(|previous| previous != vector.note_short_id)
+            || short_ids
+                .insert(vector.note_short_id.clone(), vector.note_id.clone())
+                .is_some_and(|previous| previous != vector.note_id)
+        {
+            return Err("vector map has conflicting source note short IDs".into());
+        }
+    }
+    Ok(notes)
+}
+
+#[derive(Deserialize)]
+struct VectorMapNotes {
+    vectors: Vec<VectorNote>,
+}
+
+#[derive(Deserialize)]
+struct VectorNote {
+    note_id: String,
+    note_short_id: String,
+}
+
 fn read_json<T: DeserializeOwned>(path: &Path) -> Result<T, Box<dyn Error>> {
     let file = File::open(path).map_err(|error| format!("{}: {error}", path.display()))?;
     serde_json::from_reader(BufReader::new(file))
@@ -733,6 +896,29 @@ struct SavedMergeHistory {
     alias_groups: Vec<Vec<String>>,
     canonical_unique_ids: Vec<String>,
     merges: Vec<SavedMergeNode<SavedMergeScore>>,
+}
+
+#[derive(Deserialize)]
+struct SavedInfomapHierarchy {
+    schema_version: String,
+    run_id: Option<String>,
+    sources: InfomapSources,
+    vector_count: usize,
+    alias_groups: Vec<Vec<String>>,
+    canonical_unique_ids: Vec<String>,
+    paths: Vec<InfomapNodePath>,
+}
+
+#[derive(Deserialize)]
+struct InfomapSources {
+    vector_map: SelectionSource,
+    notes: SelectionSource,
+}
+
+#[derive(Deserialize)]
+struct InfomapNodePath {
+    node_id: usize,
+    module_path: Vec<usize>,
 }
 
 #[derive(Deserialize)]

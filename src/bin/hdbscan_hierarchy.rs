@@ -2,16 +2,17 @@ use std::error::Error;
 use std::io::{self, IsTerminal};
 use std::path::PathBuf;
 
-use oracle_mvp::hdbscan_hierarchy::Hierarchy;
+use oracle_mvp::hdbscan_hierarchy::{Hierarchy, load_note_short_ids};
 use oracle_mvp::hdbscan_hierarchy_tui::{HierarchyView, run_hierarchy_explorer};
 
-const USAGE: &str = "Read-only HDBSCAN hierarchy explorer
+const USAGE: &str = "Read-only HDBSCAN and Infomap hierarchy explorer
 
-Usage: hdbscan-hierarchy INPUT.json VECTOR-MAP.json NOTES.json [--selection SELECTION.json | --note-navigation | --merge-history] [--min-notes N] [--start-at GROUP] [--check]
+Usage: hdbscan-hierarchy INPUT.json VECTOR-MAP.json NOTES.json [--selection SELECTION.json | --note-navigation | --merge-history | --infomap] [--min-notes N] [--start-at GROUP] [--check]
 
 --selection FILE  Inspect a validated saved selection instead of the raw tree
 --note-navigation  Simplify the saved merge tree by distinct note sets; uses merge-tree IDs, not condensed-tree IDs
 --merge-history    Apply the same note-set projection to a saved merge history; merge scores may decrease
+--infomap          Inspect every saved native module prefix without note-set projection or binary conversion
 --min-notes N      Minimum distinct notes per displayed group (default: 2; root always kept); requires --note-navigation or --merge-history
 --start-at GROUP  Initially display this saved group (default: root)
 --check           Validate the inputs and print counts without opening the TUI
@@ -26,6 +27,7 @@ fn run() -> Result<(), Box<dyn Error>> {
     let mut selection = None;
     let mut note_navigation = false;
     let mut merge_history = false;
+    let mut infomap = false;
     let mut min_notes = None;
     let mut args = std::env::args_os().skip(1);
     while let Some(arg) = args.next() {
@@ -57,6 +59,7 @@ fn run() -> Result<(), Box<dyn Error>> {
             Some("--check") if !check => check = true,
             Some("--note-navigation") if !note_navigation => note_navigation = true,
             Some("--merge-history") if !merge_history => merge_history = true,
+            Some("--infomap") if !infomap => infomap = true,
             Some(flag) if flag.starts_with('-') => {
                 return Err(format!("unknown or repeated option: {flag}\n{USAGE}").into());
             }
@@ -66,6 +69,9 @@ fn run() -> Result<(), Box<dyn Error>> {
     let [response, vector_map, notes] = paths.as_slice() else {
         return Err(USAGE.into());
     };
+    if infomap && (note_navigation || merge_history || selection.is_some() || min_notes.is_some()) {
+        return Err("cannot combine --infomap with --note-navigation, --merge-history, --selection, or --min-notes".into());
+    }
     if merge_history && (note_navigation || selection.is_some()) {
         return Err("cannot combine --merge-history with --note-navigation or --selection".into());
     }
@@ -79,7 +85,10 @@ fn run() -> Result<(), Box<dyn Error>> {
         HierarchyView::NoteNavigation,
         HierarchyView::NoteNavigationMinimum,
     );
-    let (hierarchy, view) = if merge_history {
+    let (hierarchy, view, run_id) = if infomap {
+        let (hierarchy, run_id) = Hierarchy::load_infomap_with_run_id(response, vector_map, notes)?;
+        (hierarchy, HierarchyView::Infomap, run_id)
+    } else if merge_history {
         (
             Hierarchy::load_merge_history_with_min_notes(
                 response,
@@ -88,6 +97,7 @@ fn run() -> Result<(), Box<dyn Error>> {
                 min_notes.unwrap_or(2),
             )?,
             navigation_view,
+            None,
         )
     } else if note_navigation {
         (
@@ -98,17 +108,25 @@ fn run() -> Result<(), Box<dyn Error>> {
                 min_notes.unwrap_or(2),
             )?,
             navigation_view,
+            None,
         )
     } else if let Some(path) = &selection {
         (
             Hierarchy::load_selection(response, vector_map, notes, path)?,
             HierarchyView::Selection,
+            None,
         )
     } else {
         (
             Hierarchy::load(response, vector_map, notes)?,
             HierarchyView::Condensed,
+            None,
         )
+    };
+    let note_short_ids = if infomap {
+        load_note_short_ids(vector_map)?
+    } else {
+        Default::default()
     };
     let branch = start.unwrap_or(hierarchy.root);
     if !hierarchy.groups.contains_key(&branch) {
@@ -118,6 +136,13 @@ fn run() -> Result<(), Box<dyn Error>> {
         return Err(format!("unknown group {branch}").into());
     }
     if check {
+        if infomap {
+            let identity = run_id
+                .as_ref()
+                .map(|id| format!(" · {}", id.escape_debug()))
+                .unwrap_or_default();
+            println!("Infomap hierarchy{identity} · native modules · read-only");
+        }
         if note_navigation || merge_history {
             println!("Merge-tree note navigation · comparison · read-only");
         }
@@ -144,7 +169,7 @@ fn run() -> Result<(), Box<dyn Error>> {
     if !io::stdin().is_terminal() || !io::stdout().is_terminal() {
         return Err("An interactive terminal is required; use --check for validation.".into());
     }
-    run_hierarchy_explorer(hierarchy, Some(branch), view)?;
+    run_hierarchy_explorer(hierarchy, Some(branch), view, note_short_ids, run_id)?;
     Ok(())
 }
 
