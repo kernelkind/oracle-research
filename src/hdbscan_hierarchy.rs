@@ -1,4 +1,4 @@
-//! Read-only reconstruction of saved HDBSCAN condensed and single-linkage trees.
+//! Read-only reconstruction of saved HDBSCAN trees and scored merge histories.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::error::Error;
@@ -68,11 +68,64 @@ impl Hierarchy {
             vector_count,
             single_linkage_tree,
         } = algorithm_result;
-        if vector_count < 2 {
-            return Err("saved single-linkage tree requires at least two points".into());
+        let mut previous_distance = 0.0;
+        for row in &single_linkage_tree {
+            let distance = row.score.mutual_reachability_distance;
+            if !distance.is_finite() || distance < previous_distance {
+                return Err(
+                    "single-linkage distances must be finite, nonnegative, and ordered".into(),
+                );
+            }
+            previous_distance = distance;
         }
-        if single_linkage_tree.len() != vector_count - 1 {
-            return Err("single-linkage tree must contain vector_count - 1 merges".into());
+        Self::project_note_navigation(
+            vector_count,
+            &single_linkage_tree,
+            alias_groups,
+            canonical_unique_ids,
+            vector_map_path,
+            notes_path,
+        )
+    }
+
+    /// Apply the same distinct-note projection to a saved merge history.
+    ///
+    /// Genuine merge scores may decrease. They must be finite and nonnegative,
+    /// but are never reordered or replaced with single-linkage distances.
+    pub fn load_merge_history(
+        history_path: &Path,
+        vector_map_path: &Path,
+        notes_path: &Path,
+    ) -> Result<Self, Box<dyn Error>> {
+        let history: SavedMergeHistory = read_json(history_path)?;
+        for row in &history.merges {
+            if !row.score.merge_score.is_finite() || row.score.merge_score < 0.0 {
+                return Err("merge scores must be finite and nonnegative".into());
+            }
+        }
+        Self::project_note_navigation(
+            history.vector_count,
+            &history.merges,
+            history.alias_groups,
+            history.canonical_unique_ids,
+            vector_map_path,
+            notes_path,
+        )
+    }
+
+    fn project_note_navigation<Score>(
+        vector_count: usize,
+        merges: &[SavedMergeNode<Score>],
+        alias_groups: Vec<Vec<String>>,
+        canonical_unique_ids: Vec<String>,
+        vector_map_path: &Path,
+        notes_path: &Path,
+    ) -> Result<Self, Box<dyn Error>> {
+        if vector_count < 2 {
+            return Err("saved merge history requires at least two points".into());
+        }
+        if merges.len() != vector_count - 1 {
+            return Err("merge history must contain vector_count - 1 merges".into());
         }
         if alias_groups.len() != vector_count {
             return Err("alias group count does not match vector_count".into());
@@ -82,7 +135,7 @@ impl Hierarchy {
         }
         let total_nodes = vector_count
             .checked_add(vector_count - 1)
-            .ok_or("single-linkage node count overflows")?;
+            .ok_or("merge-history node count overflows")?;
         let root = total_nodes - 1;
         let vectors = load_vectors(
             alias_groups,
@@ -105,22 +158,13 @@ impl Hierarchy {
             pending_notes.insert(point, notes);
         }
         let mut retained = BTreeSet::from([root]);
-        let mut previous_distance = 0.0;
-        for (offset, row) in single_linkage_tree.iter().enumerate() {
+        for (offset, row) in merges.iter().enumerate() {
             if row.id != vector_count + offset {
-                return Err("single-linkage merge IDs must be consecutive and ordered".into());
+                return Err("merge IDs must be consecutive and ordered".into());
             }
             if row.left == row.right || row.left >= row.id || row.right >= row.id {
                 return Err(format!("merge {} must join distinct earlier nodes", row.id).into());
             }
-            if !row.mutual_reachability_distance.is_finite()
-                || row.mutual_reachability_distance < previous_distance
-            {
-                return Err(
-                    "single-linkage distances must be finite, nonnegative, and ordered".into(),
-                );
-            }
-            previous_distance = row.mutual_reachability_distance;
             for child in [row.left, row.right] {
                 if parents[child].replace(row.id).is_some() {
                     return Err(format!("raw node {child} has more than one parent").into());
@@ -157,7 +201,7 @@ impl Hierarchy {
             || parents[..root].iter().any(Option::is_none)
             || parents[root].is_some()
         {
-            return Err("single-linkage root must contain every point exactly once".into());
+            return Err("merge-history root must contain every point exactly once".into());
         }
 
         // Parent IDs are larger than child IDs. Descending order therefore
@@ -200,7 +244,7 @@ impl Hierarchy {
                     .children
                     .push(id);
             }
-            let row = &single_linkage_tree[id - vector_count];
+            let row = &merges[id - vector_count];
             pending.push(row.right);
             pending.push(row.left);
         }
@@ -651,16 +695,35 @@ struct SavedAlgorithm {
 #[derive(Deserialize)]
 struct SavedLinkageAlgorithm {
     vector_count: usize,
-    single_linkage_tree: Vec<SavedLinkageNode>,
+    single_linkage_tree: Vec<SavedMergeNode<SavedLinkageDistance>>,
 }
 
 #[derive(Deserialize)]
-struct SavedLinkageNode {
+struct SavedMergeHistory {
+    vector_count: usize,
+    alias_groups: Vec<Vec<String>>,
+    canonical_unique_ids: Vec<String>,
+    merges: Vec<SavedMergeNode<SavedMergeScore>>,
+}
+
+#[derive(Deserialize)]
+struct SavedMergeNode<Score> {
     id: usize,
     left: usize,
     right: usize,
     size: usize,
+    #[serde(flatten)]
+    score: Score,
+}
+
+#[derive(Deserialize)]
+struct SavedLinkageDistance {
     mutual_reachability_distance: f64,
+}
+
+#[derive(Deserialize)]
+struct SavedMergeScore {
+    merge_score: f64,
 }
 
 #[derive(Deserialize)]

@@ -41,7 +41,64 @@ At that M01 decision, the half-and-half vector already belongs to group1259 (42 
 
 **Next question:** The normalized rule still produces many one-child levels. The 2026 paper explicitly studies removing normalization. Test that single change next, preserving symmetric aggregation and all other controls. Check whether less chaining merely creates arbitrary small groups, rather than assuming a shorter hierarchy is better.
 
-**Pending:** Complete source-grounded hierarchy inspection, generic merge-history TUI input that preserves inversions honestly, and final candidate comparison.
+**Pending:** Complete source-grounded hierarchy inspection and final candidate comparison. Generic merge-history TUI support is verified below.
+
+## M02 — Symmetric nearest-neighbor sums
+
+**Question:** Does removing normalization reduce chains while preserving useful group membership? This changes only directional means to directional sums; it does not change distances, exclusions, or the symmetric combination.
+
+**Result:** 1.41 seconds; all inputs preserved. Raw maximum depth falls to 16, and the unchanged note projection has 513 groups, maximum depth 10, and 7 one-child groups. There are no observed parent-score inversions and 383 merges with omitted unsupported endpoints. Replaying M01 after the implementation change reproduces every saved merge and source checksum exactly.
+
+**Concrete regression candidate:** M02/1294 contains V355/V356 and V357, the two half-and-half coffee complaint masks from N045, together with V777/N083, the matcha-cashew pie mask. No narrower descendant separates the coffee complaint from the pie. M01 instead offers the raw-cream coffee pair at1110 and pie/bread pair at1261. The M02 ancestor1703 further joins these masks to caffeine, iced coffee, and ice-cream material; its ancestor1769 also inherits a baby's name and affection through a coffee-shop song mask. This is evidence to inspect, not a declaration that every unusual shared subject is invalid.
+
+**Why this changed:** At the exact partition immediately before M02/1118, V355 is alone; the raw-cream coffee vector V504 already belongs to group1056 with V503 (coffee) and V653 (breakfast coffee). Compare two available choices for V355:
+
+| Other group | M01 rule at this fixed partition | M02 rule at this fixed partition |
+| --- | ---: | ---: |
+| V777 alone | 0.882689 | 0.882689 |
+| Group1056, three coffee vectors | 0.862207 | 1.756219 |
+
+Lower scores merge first. Removing normalization reverses these choices: the receiving group's accumulated reverse cost outweighs the coffee connection. This establishes a score-level mechanism at one fixed state, not a claim that rerunning M01 would follow this same earlier history. V777 itself still has its closest individual connection to V355; that embedding limitation remains unchanged.
+
+**Next question:** Does requiring both directions cause this delay? Keep the sums but use the smaller directional sum, following the main Chamfer rule rather than its symmetric variant. This is M03. For a singleton entering an existing group, this removes the receiving group's reverse cost, but also restores single-linkage-like attachment. Check the resulting chains and mid-level memberships, not merely whether the motivating pair changes. Retain exact global score selection: our finite-only omission policy does not inherit the paper's monotonic directional-update shortcut.
+
+**Inspection status:** Exact masks and source notes read for the changed pie/cream decision and two unrelated small M02 groups, plus all masks under1294,1620,1703,1769. Independent inspection of another subtree is underway. Full semantic inspection is not complete.
+
+**Independent inspection beyond coffee:** All 26 canonical leaves under M02/1791 and five comparison masks were inspected, with seven full original notes. M02/1362 preserves the exact six-vector audiobook/literature group found at M01/1527 and HDBv3/1674. M02/1508 combines seven purpose/open-mindedness/philosophy masks in a narrower descendant; those seven first coexist at M01/1793 (856 vectors) and HDBv3/1767 (850 vectors). These are limited positives: the two examples mainly combine several overlapping masks from one note with a bare hashtag from N054. They are not rich examples of discovering many related notes.
+
+The same inspection found questionable intermediate combinations, without treating them as automatic failures: M02/1567 combines `Movies`, `Music`, and `biking instead of the car`. General activities is a possible broader interpretation. M02/1553 joins a Sorrento food walk to travel/jet-lag masks from Charlotte; travel is a legitimate commonality. M01 is not consistently better: M01/1489 joins three-stop Sorrento food-walk masks to three discounted rotisserie chickens. Source masks and full notes, rather than inferred labels, determine these judgments.
+
+## M03 — Smaller directional nearest-neighbor sum
+
+**Question:** Does removing the receiving group's reverse cost preserve useful attachments without restoring single-edge chains? M03 changes only M02's final combination: use the smaller directional sum rather than half their sum. Exact global updates remain in place; no monotonic nearest-neighbor shortcut is assumed.
+
+**Result:** 1.56 seconds; all 916 vectors and 100 notes retained. Raw maximum depth109; unchanged note projection496 groups, maximum depth45, and304 one-child groups. There are no observed parent-score inversions and405 merges with unsupported endpoints. Replaying M02 after adding this rule reproduces every merge and source checksum exactly.
+
+**Concrete result:** The coffee complaint V355 now enters an existing six-note coffee group at1127. V777's pie mask subsequently enters that group at1231, which then contains12 vectors from7 notes. This is smaller than HDBv3's30-note first attachment but does not establish a suitable shared subject. In particular, the M01 raw-cream/half-and-half pair no longer exists alone.
+
+**Preservation checks:** The coffee-shop music pair remains at1042, the chocolate/tea consumption pair at1066, and the recipe pair at1190. These are raw membership checks; equal-note transitions can be collapsed in the display without losing note access. M02's small purpose/open-mindedness branch is not recovered: even V627 and V635 first coexist at M03/1816, with229 vectors from56 notes.
+
+**Analysis:** The removed reverse cost does change attachments as predicted, but M03 has many successive one-child levels after exactly the same simplification. Neither symmetry nor tree depth alone identifies a winner. Full semantic inspection and a broader comparison remain unfinished. The next literature question concerns directional support versus all-pairs support; no further rule is selected yet.
+
+## Reproducing the additional runs
+
+Use the M01 command below with the same four input paths. For M02, add `--rule symmetric_sum`, set `--run-id M02-replay`, and use a new output path. For M03, use `--rule min_sum`, `--run-id M03-replay`, and a new output path. Output files are never overwritten. Compare complete `merges`, aliases, canonical IDs, and input checksums; elapsed time, run ID and current source-code hash may differ.
+
+## Review-tool verification
+
+The new `--merge-history` input uses the existing note-set projection and nested renderer, but accepts genuine decreasing merge scores without pretending they are HDBSCAN distances. Tests cover source masks, aliases, structural validation, score inversions, conflicting modes, and old HDB distance validation. All 65 hierarchy integration tests and both launcher tests passed. In a real terminal, M01 rendered, expanded, opened a full original note with its inline mask, moved upward while preserving expansion, and exited cleanly. Baseline counts match the frozen binary exactly.
+
+From the repository root:
+
+```sh
+target/merge-rule-review-build/debug/hdbscan-hierarchy \
+  sse_multivector/merge-rule-exploration-v1/M01.json \
+  sse_multivector/real-note-fine-segmentation-v1/vectors/vector-map.json \
+  sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json \
+  --merge-history
+```
+
+Substitute `M02.json` to inspect M02. Its input validation passed with 513 groups and all 100 notes.
 
 ## Reproduce M01
 

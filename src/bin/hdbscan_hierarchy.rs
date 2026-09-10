@@ -7,10 +7,11 @@ use oracle_mvp::hdbscan_hierarchy_tui::{HierarchyView, run_hierarchy_explorer};
 
 const USAGE: &str = "Read-only HDBSCAN hierarchy explorer
 
-Usage: hdbscan-hierarchy RESPONSE.json VECTOR-MAP.json NOTES.json [--selection SELECTION.json | --note-navigation] [--start-at GROUP] [--check]
+Usage: hdbscan-hierarchy INPUT.json VECTOR-MAP.json NOTES.json [--selection SELECTION.json | --note-navigation | --merge-history] [--start-at GROUP] [--check]
 
 --selection FILE  Inspect a validated saved selection instead of the raw tree
 --note-navigation  Simplify the saved merge tree by distinct note sets; uses merge-tree IDs, not condensed-tree IDs
+--merge-history    Apply the same note-set projection to a saved merge history; merge scores may decrease
 --start-at GROUP  Initially display this saved group (default: root)
 --check           Validate the inputs and print counts without opening the TUI
 --help            Show this help
@@ -23,6 +24,7 @@ fn run() -> Result<(), Box<dyn Error>> {
     let mut check = false;
     let mut selection = None;
     let mut note_navigation = false;
+    let mut merge_history = false;
     let mut args = std::env::args_os().skip(1);
     while let Some(arg) = args.next() {
         match arg.to_str() {
@@ -41,6 +43,7 @@ fn run() -> Result<(), Box<dyn Error>> {
             }
             Some("--check") if !check => check = true,
             Some("--note-navigation") if !note_navigation => note_navigation = true,
+            Some("--merge-history") if !merge_history => merge_history = true,
             Some(flag) if flag.starts_with('-') => {
                 return Err(format!("unknown or repeated option: {flag}\n{USAGE}").into());
             }
@@ -50,10 +53,18 @@ fn run() -> Result<(), Box<dyn Error>> {
     let [response, vector_map, notes] = paths.as_slice() else {
         return Err(USAGE.into());
     };
+    if merge_history && (note_navigation || selection.is_some()) {
+        return Err("cannot combine --merge-history with --note-navigation or --selection".into());
+    }
     if note_navigation && selection.is_some() {
         return Err("cannot combine --note-navigation and --selection".into());
     }
-    let (hierarchy, view) = if note_navigation {
+    let (hierarchy, view) = if merge_history {
+        (
+            Hierarchy::load_merge_history(response, vector_map, notes)?,
+            HierarchyView::NoteNavigation,
+        )
+    } else if note_navigation {
         (
             Hierarchy::load_note_navigation(response, vector_map, notes)?,
             HierarchyView::NoteNavigation,
@@ -74,7 +85,7 @@ fn run() -> Result<(), Box<dyn Error>> {
         return Err(format!("unknown group {branch}").into());
     }
     if check {
-        if note_navigation {
+        if note_navigation || merge_history {
             println!("Merge-tree note navigation · comparison · read-only");
         }
         if selection.is_some() {

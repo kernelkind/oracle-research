@@ -21,23 +21,38 @@ from pathlib import Path
 import numpy as np
 
 
-def pair_score(distances, left, right):
+RULES = {
+    'symmetric_mean': 'Half the sum of both directional means of finite per-point nearest eligible distances.',
+    'symmetric_sum': 'Half the sum of both directional sums of finite per-point nearest eligible distances.',
+    'min_sum': 'The smaller of both directional sums of finite per-point nearest eligible distances.',
+}
+
+
+def pair_score(distances, left, right, rule='symmetric_mean'):
     """Reference definition; points without an eligible partner contribute nothing."""
+    if rule not in RULES:
+        raise ValueError('unknown merge rule: ' + rule)
     cross = np.asarray(distances)[np.ix_(left, right)]
     forward, reverse = cross.min(axis=1), cross.min(axis=0)
     forward, reverse = forward[np.isfinite(forward)], reverse[np.isfinite(reverse)]
     if not len(forward) or not len(reverse):
         return math.inf
+    if rule == 'min_sum':
+        return float(min(forward.sum(), reverse.sum()))
+    if rule == 'symmetric_sum':
+        return float((forward.sum() + reverse.sum()) / 2)
     return float((forward.mean() + reverse.mean()) / 2)
 
 
-def agglomerate(distances):
+def agglomerate(distances, rule='symmetric_mean'):
     """Globally smallest active score, including decreases after previous merges.
 
     Heap ties use ordered cluster IDs. Cached directional sums and support
     counts preserve fixed edge exclusions. Space is O(n²); all incoming and
     outgoing score updates take O(n) arithmetic per merge plus heap updates.
     """
+    if rule not in RULES:
+        raise ValueError('unknown merge rule: ' + rule)
     d = np.array(distances, dtype=np.float64, copy=True)
     if d.ndim != 2 or d.shape[0] != d.shape[1] or len(d) < 2:
         raise ValueError('distances must be a square matrix with at least two points')
@@ -90,8 +105,13 @@ def agglomerate(distances):
         sums[others, new] = incoming[others]
         counts[others, new] = supported[others]
         valid = others[(counts[new, others] > 0) & (counts[others, new] > 0)]
-        values = (sums[new, valid] / counts[new, valid]
-                  + sums[valid, new] / counts[valid, new]) / 2
+        if rule == 'min_sum':
+            values = np.minimum(sums[new, valid], sums[valid, new])
+        elif rule == 'symmetric_sum':
+            values = (sums[new, valid] + sums[valid, new]) / 2
+        else:
+            values = (sums[new, valid] / counts[new, valid]
+                      + sums[valid, new] / counts[valid, new]) / 2
         for other, value in zip(valid.tolist(), values.tolist()):
             heapq.heappush(heap, (value, other, new))
         active.add(new)
@@ -168,20 +188,21 @@ def main():
     for name in ('baseline', 'request', 'vector-map', 'notes', 'output'):
         parser.add_argument('--' + name, required=True, type=Path)
     parser.add_argument('--run-id', required=True)
+    parser.add_argument('--rule', choices=RULES, default='symmetric_mean')
     args = parser.parse_args()
     if args.output.exists():
         parser.error('output already exists; preserve previous experiments')
     start = time.monotonic()
     d, baseline, source_sets, sources, excluded = load_baseline(
         args.baseline, args.request, args.vector_map, args.notes)
-    rows = agglomerate(d)
+    rows = agglomerate(d, rule=args.rule)
     summary = tree_summary(rows, source_sets)
     result = {
         'schema_version': 'merge-rule-experiment-v1', 'run_id': args.run_id,
-        'method': 'chamfer_symmetric_mean_finite', 'sources': sources,
+        'method': 'chamfer_' + args.rule + '_finite', 'sources': sources,
         'source_code_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-        'definition': 'Half the sum of both directional means of finite per-point nearest eligible distances.',
-        'missing_partner_policy': 'Omit endpoints with no eligible partner from that directional mean; record their counts. A pair with no eligible edges cannot merge.',
+        'definition': RULES[args.rule],
+        'missing_partner_policy': 'Omit endpoints with no eligible partner from that directional aggregation; record their counts. A pair with no eligible edges cannot merge.',
         'tie_rule': 'merge_score, then smaller cluster ID, then larger cluster ID',
         'distance': 'Frozen HDBv3 angular distances on permitted cross-note edges; no distance recomputation.',
         'excluded_undirected_edges': excluded,
