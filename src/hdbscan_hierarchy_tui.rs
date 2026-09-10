@@ -17,10 +17,10 @@ use crate::reference_tui::{
     is_control_c_event, secondary_style, terminal_safe,
 };
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 enum Selection {
-    Group(usize),
-    Mask(usize, usize),
+    Group(Vec<usize>),
+    Mask(Vec<usize>, usize, usize),
 }
 
 #[derive(Clone, Copy)]
@@ -51,6 +51,7 @@ pub enum HierarchyView {
     NoteNavigation,
     NoteNavigationMinimum(usize),
     Infomap,
+    Containment,
 }
 
 pub struct HierarchyExplorer {
@@ -59,12 +60,11 @@ pub struct HierarchyExplorer {
     note_short_ids: BTreeMap<String, String>,
     show_parent_masks: Option<bool>,
     view: HierarchyView,
-    branch: usize,
-    expanded: BTreeSet<usize>,
-    child_order: BTreeMap<usize, Vec<usize>>,
+    branch: Vec<usize>,
+    expanded: BTreeSet<Vec<usize>>,
+    child_order: BTreeMap<Vec<usize>, Vec<usize>>,
     selected: Selection,
-    point_parents: BTreeMap<usize, usize>,
-    hidden_parent_masks: BTreeSet<(usize, usize)>,
+    hidden_parent_masks: BTreeSet<(usize, usize, usize)>,
     scroll: usize,
     horizontal: usize,
     height: usize,
@@ -101,20 +101,29 @@ impl HierarchyExplorer {
             .with_parent_mask_toggle())
     }
 
+    /// Display every retained containment edge, including shared groups.
+    pub fn new_containment(
+        hierarchy: Hierarchy,
+        start: Option<usize>,
+        note_short_ids: BTreeMap<String, String>,
+    ) -> Result<Self, String> {
+        Ok(
+            Self::with_view(hierarchy, start, HierarchyView::Containment)?
+                .with_note_short_ids(note_short_ids)
+                .with_parent_mask_toggle(),
+        )
+    }
+
     pub(crate) fn with_view(
         hierarchy: Hierarchy,
         start: Option<usize>,
         view: HierarchyView,
     ) -> Result<Self, String> {
-        let branch = start.unwrap_or(hierarchy.root);
-        if !hierarchy.groups.contains_key(&branch) {
-            return Err(format!("unknown group {branch}"));
+        let start = start.unwrap_or(hierarchy.root);
+        if !hierarchy.groups.contains_key(&start) {
+            return Err(format!("unknown group {start}"));
         }
-        let point_parents = hierarchy
-            .groups
-            .values()
-            .flat_map(|group| group.vectors.iter().map(move |point| (*point, group.id)))
-            .collect();
+        let (branch, expanded) = initial_paths(&hierarchy, start);
         let hidden_parent_masks = if view == HierarchyView::Selection {
             BTreeSet::new()
         } else {
@@ -126,11 +135,10 @@ impl HierarchyExplorer {
             note_short_ids: BTreeMap::new(),
             show_parent_masks: None,
             view,
-            branch,
-            expanded: BTreeSet::from([branch]),
+            branch: branch.clone(),
+            expanded,
             child_order: BTreeMap::new(),
             selected: Selection::Group(branch),
-            point_parents,
             hidden_parent_masks,
             scroll: 0,
             horizontal: 0,
@@ -251,9 +259,13 @@ impl HierarchyExplorer {
                 let show = !self.show_parent_masks.unwrap();
                 self.show_parent_masks = Some(show);
                 if !show {
-                    if let Selection::Mask(point, alias) = self.selected {
-                        if self.hidden_parent_masks.contains(&(point, alias)) {
-                            self.selected = Selection::Group(self.point_parents[&point]);
+                    if let Selection::Mask(path, point, alias) = &self.selected {
+                        if self.hidden_parent_masks.contains(&(
+                            *path.last().unwrap(),
+                            *point,
+                            *alias,
+                        )) {
+                            self.selected = Selection::Group(path.clone());
                         }
                     }
                 }
@@ -266,31 +278,31 @@ impl HierarchyExplorer {
             KeyCode::Up => self.move_selection(-1),
             KeyCode::Down => self.move_selection(1),
             KeyCode::Right => {
-                if let Selection::Group(id) = self.selected {
-                    if !self.expanded.insert(id) {
+                if let Selection::Group(path) = &self.selected {
+                    if !self.expanded.insert(path.clone()) {
                         self.move_selection(1);
                     }
                     self.follow_selection = true;
                 }
             }
             KeyCode::Left => self.collapse_or_parent(),
-            KeyCode::Enter => match self.selected {
-                Selection::Group(id) => {
-                    if !self.expanded.remove(&id) {
-                        self.expanded.insert(id);
+            KeyCode::Enter => match &self.selected {
+                Selection::Group(path) => {
+                    if !self.expanded.remove(path) {
+                        self.expanded.insert(path.clone());
                     }
                     self.follow_selection = true;
                 }
-                Selection::Mask(point, alias) => {
-                    self.detail = Some(Detail::Note(point, alias));
+                Selection::Mask(_, point, alias) => {
+                    self.detail = Some(Detail::Note(*point, *alias));
                     self.detail_scroll = 0;
                 }
             },
             KeyCode::Char('u' | 'U') => self.show_parent(),
             KeyCode::Char('f' | 'F') => {
-                if let Selection::Group(id) = self.selected {
-                    self.branch = id;
-                    self.expanded.insert(id);
+                if let Selection::Group(path) = &self.selected {
+                    self.branch = path.clone();
+                    self.expanded.insert(path.clone());
                     self.scroll = 0;
                     self.horizontal = 0;
                     self.follow_selection = true;
@@ -299,7 +311,7 @@ impl HierarchyExplorer {
             KeyCode::PageUp => self.scroll_by(-(self.height as isize)),
             KeyCode::PageDown => self.scroll_by(self.height as isize),
             KeyCode::Home => {
-                self.selected = Selection::Group(self.branch);
+                self.selected = Selection::Group(self.branch.clone());
                 self.scroll = 0;
                 self.follow_selection = true;
             }
@@ -335,78 +347,97 @@ impl HierarchyExplorer {
             .iter()
             .position(|item| *item == self.selected)
             .unwrap_or(0);
-        self.selected = selections[index.saturating_add_signed(delta).min(selections.len() - 1)];
+        self.selected =
+            selections[index.saturating_add_signed(delta).min(selections.len() - 1)].clone();
         self.follow_selection = true;
     }
 
     fn show_parent(&mut self) {
-        if let Some(parent) = self.hierarchy.groups[&self.branch].parent {
+        if self.branch.len() > 1 {
+            let parent_path = self.branch[..self.branch.len() - 1].to_vec();
+            let parent = *parent_path.last().unwrap();
             if self.view != HierarchyView::Selection {
                 let children = self
                     .child_order
-                    .entry(parent)
+                    .entry(parent_path.clone())
                     .or_insert_with(|| self.hierarchy.groups[&parent].children.clone());
                 // Reorder only on upward navigation, so opening a child does not
                 // move it. Stable sorting also preserves order on return visits.
-                children.sort_by_key(|child| self.expanded.contains(child));
+                children.sort_by_key(|child| {
+                    let mut path = parent_path.clone();
+                    path.push(*child);
+                    self.expanded.contains(&path)
+                });
             }
-            self.expanded.insert(parent);
-            self.branch = parent;
+            self.expanded.insert(parent_path.clone());
+            self.branch = parent_path;
             self.follow_selection = true;
         }
     }
 
     fn collapse_or_parent(&mut self) {
-        match self.selected {
-            Selection::Group(id) if self.expanded.remove(&id) => {}
-            Selection::Group(id) => {
-                if id == self.branch {
+        match self.selected.clone() {
+            Selection::Group(path) if self.expanded.remove(&path) => {}
+            Selection::Group(mut path) => {
+                if path == self.branch {
                     self.show_parent();
-                } else if let Some(parent) = self.hierarchy.groups[&id].parent {
-                    self.selected = Selection::Group(parent);
+                } else if path.len() > 1 {
+                    path.pop();
+                    self.selected = Selection::Group(path);
                 }
             }
-            Selection::Mask(point, _) => {
-                self.selected = Selection::Group(self.point_parents[&point])
-            }
+            Selection::Mask(path, _, _) => self.selected = Selection::Group(path),
         }
         self.follow_selection = true;
     }
 
     fn rows(&self) -> Vec<Row> {
         enum PendingRows {
-            Group(usize, String, String),
-            Masks(usize, String),
+            Group(Vec<usize>, String, String),
+            Masks(Vec<usize>, String),
         }
 
         let mut rows = Vec::new();
         // Explicit stack preserves the saved tree even for deeply nested input.
         let mut stack = vec![PendingRows::Group(
-            self.branch,
+            self.branch.clone(),
             String::new(),
             String::new(),
         )];
         while let Some(pending) = stack.pop() {
-            let (id, prefix, continuation) = match pending {
-                PendingRows::Group(id, prefix, continuation) => (id, prefix, continuation),
-                PendingRows::Masks(id, continuation) => {
-                    self.append_masks(&mut rows, id, &continuation);
+            let (path, prefix, continuation) = match pending {
+                PendingRows::Group(path, prefix, continuation) => (path, prefix, continuation),
+                PendingRows::Masks(path, continuation) => {
+                    self.append_masks(&mut rows, &path, &continuation);
                     continue;
                 }
             };
+            let id = *path.last().unwrap();
             let group = &self.hierarchy.groups[&id];
-            let expanded = self.expanded.contains(&id);
+            let expanded = self.expanded.contains(&path);
+            let same_notes = self.view == HierarchyView::Containment
+                && path.len() > 1
+                && self.hierarchy.groups[&path[path.len() - 2]].note_count == group.note_count;
             rows.push(Row {
-                selection: Some(Selection::Group(id)),
+                selection: Some(Selection::Group(path.clone())),
                 prefix,
                 content: format!(
-                    "{} {id} · {} {}",
+                    "{} {id} · {} {}{}{}",
                     if expanded { "▾" } else { "▸" },
                     group.note_count,
                     if group.note_count == 1 {
                         "note"
                     } else {
                         "notes"
+                    },
+                    if same_notes { " · same notes" } else { "" },
+                    if self.view == HierarchyView::Containment
+                        && id != self.hierarchy.root
+                        && group.parent.is_none()
+                    {
+                        " · shared"
+                    } else {
+                        ""
                     }
                 ),
             });
@@ -416,26 +447,29 @@ impl HierarchyExplorer {
             // LIFO ordering lets selection children stay reachable before long
             // direct-member lists, while raw parent masks stay before children.
             if self.view == HierarchyView::Selection {
-                stack.push(PendingRows::Masks(id, continuation.clone()));
+                stack.push(PendingRows::Masks(path.clone(), continuation.clone()));
             }
-            let children = self.child_order.get(&id).unwrap_or(&group.children);
+            let children = self.child_order.get(&path).unwrap_or(&group.children);
             for (index, child) in children.iter().enumerate().rev() {
                 let last = index == children.len() - 1
                     && (self.view != HierarchyView::Selection || group.vectors.is_empty());
+                let mut child_path = path.clone();
+                child_path.push(*child);
                 stack.push(PendingRows::Group(
-                    *child,
+                    child_path,
                     format!("{continuation}{} ", if last { "└─" } else { "├─" }),
                     format!("{continuation}{}", if last { "   " } else { "│  " }),
                 ));
             }
             if self.view != HierarchyView::Selection {
-                stack.push(PendingRows::Masks(id, continuation));
+                stack.push(PendingRows::Masks(path, continuation));
             }
         }
         rows
     }
 
-    fn append_masks(&self, rows: &mut Vec<Row>, id: usize, continuation: &str) {
+    fn append_masks(&self, rows: &mut Vec<Row>, path: &[usize], continuation: &str) {
+        let id = *path.last().unwrap();
         let group = &self.hierarchy.groups[&id];
         let point_prefix = format!(
             "{continuation}{}  ",
@@ -451,7 +485,7 @@ impl HierarchyExplorer {
             let mut seen = BTreeSet::new();
             for (index, mask) in aliases.iter().enumerate() {
                 if (self.show_parent_masks != Some(true)
-                    && self.hidden_parent_masks.contains(&(*point, index)))
+                    && self.hidden_parent_masks.contains(&(id, *point, index)))
                     || !seen.insert((&mask.note_id, &mask.byte_spans))
                 {
                     continue;
@@ -475,7 +509,7 @@ impl HierarchyExplorer {
                 }
                 let ids = self.mask_ids(aliases, mask);
                 rows.push(Row {
-                    selection: Some(Selection::Mask(*point, index)),
+                    selection: Some(Selection::Mask(path.to_vec(), *point, index)),
                     prefix: point_prefix.clone(),
                     content: format!(
                         "{ids}  {}",
@@ -509,6 +543,12 @@ impl HierarchyExplorer {
                 "A child returning the same notes as its parent is collapsed. The parent keeps its complete membership; the remaining descendants are promoted. The root remains the full-corpus container, even below the minimum.\nAll masks remain at their nearest retained ancestor. A parent mask is hidden when its note occurs recursively in a child, including collapsed children.",
                 "Going up places unopened children above expanded ones, preserving nesting. No new clustering, semantic judgments or subject titles are generated. These display rules do not establish semantic quality.",
             )
+        } else if self.view == HierarchyView::Containment {
+            (
+                "This is a read-only view of the saved HiDeF exact-containment DAG. Groups with fewer than two distinct notes are hidden; their masks remain at the nearest displayed ancestors. The full-corpus root is always retained.",
+                "A shared group appears under every saved parent with the same ID and complete membership. Each route expands independently. Counts use distinct source notes, never sums of overlapping children. Equal-note transitions remain and are marked same notes; these do not narrow note discovery. A parent mask starts hidden when its note occurs recursively in any child, including collapsed children; a reveals every parent mask.",
+                "U follows the route used to reach the displayed branch, placing unopened children above opened ones. A shared --start-at, including shared ancestry, starts at the root with all routes to that group open. No memberships are expanded, no parent is chosen for shared groups, and no semantic judgments or subject titles are generated.",
+            )
         } else if self.view == HierarchyView::Infomap {
             (
                 "This is a read-only view of the saved Infomap native module hierarchy.",
@@ -533,7 +573,10 @@ impl HierarchyExplorer {
         } else {
             ""
         };
-        let counts = if self.view == HierarchyView::Infomap {
+        let counts = if matches!(
+            self.view,
+            HierarchyView::Infomap | HierarchyView::Containment
+        ) {
             "Group numbers identify groups within this run. The same number in another run can have different contents.\nCounts are distinct source notes including all descendants and aliases. They are not additive: a note can appear in several children."
         } else {
             HELP_COUNTS
@@ -564,6 +607,8 @@ impl HierarchyExplorer {
                         "HDBv2 selection help · proposal · read-only".to_owned()
                     } else if self.view == HierarchyView::Infomap {
                         format!("Infomap hierarchy help{}", self.run_suffix())
+                    } else if self.view == HierarchyView::Containment {
+                        format!("Containment hierarchy help{}", self.run_suffix())
                     } else {
                         "Hierarchy help".to_owned()
                     },
@@ -572,7 +617,10 @@ impl HierarchyExplorer {
                 Detail::Note(point, alias) => {
                     let aliases = &self.hierarchy.vectors[&point];
                     let mask = &aliases[alias];
-                    let title = if self.view == HierarchyView::Infomap {
+                    let title = if matches!(
+                        self.view,
+                        HierarchyView::Infomap | HierarchyView::Containment
+                    ) {
                         format!(
                             "Original note{} · {}\nSource note ID: {}",
                             self.run_suffix(),
@@ -588,14 +636,20 @@ impl HierarchyExplorer {
             if self.show_parent_masks == Some(true) {
                 title.push_str("\nAll parent masks shown in hierarchy");
             }
-            let title = if self.view == HierarchyView::Infomap {
+            let title = if matches!(
+                self.view,
+                HierarchyView::Infomap | HierarchyView::Containment
+            ) {
                 wrap_text(&title, usize::from(area.width)).join("\n")
             } else {
                 title
             };
             (title, content)
         });
-        let title_height = if self.view == HierarchyView::Infomap {
+        let title_height = if matches!(
+            self.view,
+            HierarchyView::Infomap | HierarchyView::Containment
+        ) {
             detail.as_ref().map_or(2, |(title, _)| {
                 title
                     .lines()
@@ -645,7 +699,7 @@ impl HierarchyExplorer {
         let rows = self.rows();
         let selected_prefix = rows
             .iter()
-            .find(|row| row.selection == Some(self.selected))
+            .find(|row| row.selection.as_ref() == Some(&self.selected))
             .map(|row| row.prefix.width())
             .unwrap_or(0);
         if self.follow_selection {
@@ -662,17 +716,17 @@ impl HierarchyExplorer {
                 .max(16);
             for text in wrap_text(&row.content, body_width) {
                 let text = format!("{}{text}", row.prefix);
-                physical.push((row.selection, clip_left(&text, self.horizontal)));
+                physical.push((row.selection.clone(), clip_left(&text, self.horizontal)));
             }
         }
         self.scroll = self.scroll.min(physical.len().saturating_sub(self.height));
         if let Some(first) = physical
             .iter()
-            .position(|(id, _)| *id == Some(self.selected))
+            .position(|(id, _)| id.as_ref() == Some(&self.selected))
         {
             let last = physical
                 .iter()
-                .rposition(|(id, _)| *id == Some(self.selected))
+                .rposition(|(id, _)| id.as_ref() == Some(&self.selected))
                 .unwrap();
             if self.follow_selection {
                 if first < self.scroll {
@@ -686,13 +740,14 @@ impl HierarchyExplorer {
                     .iter()
                     .skip(self.scroll)
                     .take(self.height)
-                    .find_map(|(id, _)| *id)
+                    .find_map(|(id, _)| id.clone())
                 {
                     self.selected = id;
                 }
             }
         }
         self.follow_selection = false;
+        let branch = self.branch.last().unwrap();
         let mut title = format!(
             "{}\nShowing branch {} · {} {}",
             match self.view {
@@ -706,10 +761,14 @@ impl HierarchyExplorer {
                     "Infomap hierarchy{} · native modules · read-only",
                     self.run_suffix()
                 ),
+                HierarchyView::Containment => format!(
+                    "Containment hierarchy{} · exact membership · read-only",
+                    self.run_suffix()
+                ),
             },
-            self.branch,
-            self.hierarchy.groups[&self.branch].note_count,
-            if self.hierarchy.groups[&self.branch].note_count == 1 {
+            branch,
+            self.hierarchy.groups[branch].note_count,
+            if self.hierarchy.groups[branch].note_count == 1 {
                 "note"
             } else {
                 "notes"
@@ -725,7 +784,7 @@ impl HierarchyExplorer {
             .skip(self.scroll)
             .take(self.height)
             .map(|(id, text)| {
-                let selected = *id == Some(self.selected);
+                let selected = id.as_ref() == Some(&self.selected);
                 let marker = if selected && !marked {
                     marked = true;
                     "▶ "
@@ -751,7 +810,7 @@ impl HierarchyExplorer {
             physical.len()
         );
         frame.render_widget(Paragraph::new(lines).block(block.title(position)), areas[1]);
-        let enter = if matches!(self.selected, Selection::Mask(_, _)) {
+        let enter = if matches!(self.selected, Selection::Mask(_, _, _)) {
             "Enter Full note"
         } else {
             "Enter Toggle group"
@@ -765,28 +824,90 @@ impl HierarchyExplorer {
     }
 }
 
+/// Ordinary loading records only one route. A requested shared group explicitly
+/// opens all ancestor routes, rather than choosing a parent or inventing IDs.
+fn initial_paths(hierarchy: &Hierarchy, start: usize) -> (Vec<usize>, BTreeSet<Vec<usize>>) {
+    let mut parents = BTreeMap::<usize, Vec<usize>>::new();
+    for group in hierarchy.groups.values() {
+        for child in &group.children {
+            parents.entry(*child).or_default().push(group.id);
+        }
+    }
+    let mut route = vec![start];
+    while let Some(ancestors) = parents.get(route.last().unwrap()) {
+        if ancestors.len() != 1 {
+            let mut relevant = BTreeSet::new();
+            let mut pending = vec![start];
+            while let Some(id) = pending.pop() {
+                if relevant.insert(id) {
+                    pending.extend(parents.get(&id).into_iter().flatten().copied());
+                }
+            }
+            let branch = vec![hierarchy.root];
+            let mut expanded = BTreeSet::new();
+            let mut pending = vec![branch.clone()];
+            while let Some(path) = pending.pop() {
+                for child in &hierarchy.groups[path.last().unwrap()].children {
+                    if relevant.contains(child) {
+                        let mut child_path = path.clone();
+                        child_path.push(*child);
+                        pending.push(child_path);
+                    }
+                }
+                expanded.insert(path);
+            }
+            return (branch, expanded);
+        }
+        route.push(ancestors[0]);
+    }
+    route.reverse();
+    (route.clone(), BTreeSet::from([route]))
+}
+
 /// Compare direct masks with all original child memberships, not visible rows.
-fn repeated_parent_masks(hierarchy: &Hierarchy) -> BTreeSet<(usize, usize)> {
+fn repeated_parent_masks(hierarchy: &Hierarchy) -> BTreeSet<(usize, usize, usize)> {
     let mut order = Vec::with_capacity(hierarchy.groups.len());
-    let mut pending = vec![hierarchy.root];
-    while let Some(id) = pending.pop() {
-        order.push(id);
-        pending.extend(&hierarchy.groups[&id].children);
+    let mut visited = BTreeSet::new();
+    let mut pending = vec![(hierarchy.root, false)];
+    while let Some((id, finished)) = pending.pop() {
+        if finished {
+            order.push(id);
+        } else if visited.insert(id) {
+            pending.push((id, true));
+            pending.extend(
+                hierarchy.groups[&id]
+                    .children
+                    .iter()
+                    .map(|child| (*child, false)),
+            );
+        }
     }
 
     let mut subtree_notes: BTreeMap<usize, BTreeSet<&str>> = BTreeMap::new();
     let mut hidden = BTreeSet::new();
-    // Children precede parents, without recursion or retaining a set per ancestor.
-    for id in order.into_iter().rev() {
+    // Visit each saved group once, retaining child sets until all parents use them.
+    let mut remaining_parents = BTreeMap::<usize, usize>::new();
+    for group in hierarchy.groups.values() {
+        for child in &group.children {
+            *remaining_parents.entry(*child).or_default() += 1;
+        }
+    }
+    for id in order {
         let group = &hierarchy.groups[&id];
         let mut notes = BTreeSet::new();
         for child in &group.children {
-            notes.append(&mut subtree_notes.remove(child).expect("child already visited"));
+            let remaining = remaining_parents.get_mut(child).unwrap();
+            *remaining -= 1;
+            if *remaining == 0 {
+                notes.append(&mut subtree_notes.remove(child).expect("child already visited"));
+            } else {
+                notes.extend(&subtree_notes[child]);
+            }
         }
         for point in &group.vectors {
             for (index, mask) in hierarchy.vectors[point].iter().enumerate() {
                 if notes.contains(mask.note_id.as_str()) {
-                    hidden.insert((*point, index));
+                    hidden.insert((id, *point, index));
                 }
             }
         }
@@ -901,6 +1022,9 @@ pub fn run_hierarchy_explorer(
             HierarchyExplorer::with_view(hierarchy, start, view)
         }
         HierarchyView::Infomap => HierarchyExplorer::new_infomap(hierarchy, start, note_short_ids),
+        HierarchyView::Containment => {
+            HierarchyExplorer::new_containment(hierarchy, start, note_short_ids)
+        }
     }
     .map_err(io::Error::other)?
     .with_run_id(run_id);

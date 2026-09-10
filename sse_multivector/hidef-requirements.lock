@@ -1,0 +1,19 @@
+# Resolved from hidef-requirements.in using Nix-pinned Python 3.11.
+cloudpickle==3.1.2
+hidef @ git+https://github.com/fanzheng10/HiDeF.git@3d016a375ac52feda0e0b2a3ace917c834f3a3a9
+igraph==0.11.9
+joblib==1.6.0
+leidenalg==0.10.2
+louvain==0.8.2
+networkx==3.2.1
+numpy==1.26.4
+pandas==2.3.3
+python-dateutil==2.9.0.post0
+pytz==2026.3.post1
+scikit-learn==1.7.2
+scipy==1.12.0
+setuptools==80.9.0
+six==1.17.0
+texttable==1.7.0
+threadpoolctl==3.6.0
+tzdata==2026.3

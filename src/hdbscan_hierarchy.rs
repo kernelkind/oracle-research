@@ -1,4 +1,4 @@
-//! Read-only reconstruction of saved HDBSCAN trees, merge histories, and Infomap modules.
+//! Read-only reconstruction of saved trees, modules, and containment DAGs.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::error::Error;
@@ -19,6 +19,8 @@ pub struct Hierarchy {
 #[derive(Clone, Debug)]
 pub struct Group {
     pub id: usize,
+    /// The unique parent, when one exists. A shared DAG group has no unique
+    /// parent; `children` adjacency retains every edge and is authoritative.
     pub parent: Option<usize>,
     pub children: Vec<usize>,
     /// Points departing directly from this group, excluding its descendants.
@@ -40,6 +42,188 @@ pub struct MaskInstance {
 }
 
 impl Hierarchy {
+    /// Load exact saved containment memberships. Shared groups retain their
+    /// original ID under every parent; overlapping children are never summed.
+    /// Groups with fewer than two notes are hidden only in this display model.
+    /// Equal-note transitions remain, since they can carry different masks.
+    pub fn load_containment_with_run_id(
+        hierarchy_path: &Path,
+        vector_map_path: &Path,
+        notes_path: &Path,
+    ) -> Result<(Self, Option<String>), Box<dyn Error>> {
+        let input: SavedContainmentHierarchy = read_json(hierarchy_path)?;
+        if input.schema_version != "containment-hierarchy-v1" {
+            return Err("unsupported containment hierarchy schema_version".into());
+        }
+        if input.run_id.trim().is_empty() {
+            return Err("saved containment run_id must be nonempty".into());
+        }
+        for (name, path, source) in [
+            ("vector_map", vector_map_path, &input.sources.vector_map),
+            ("notes", notes_path, &input.sources.notes),
+        ] {
+            if source.sha256 != file_sha256(path)? {
+                return Err(format!("containment source checksum mismatch: {name}").into());
+            }
+        }
+        if input.vector_count == 0 || input.root != input.vector_count {
+            return Err("containment root must equal the nonzero vector_count".into());
+        }
+        if input.alias_groups.len() != input.vector_count
+            || input.canonical_unique_ids.len() != input.vector_count
+        {
+            return Err("containment alias and canonical counts must match vector_count".into());
+        }
+        let vectors = load_vectors(
+            input.alias_groups,
+            input.canonical_unique_ids,
+            vector_map_path,
+            notes_path,
+        )?;
+        let mut saved = BTreeMap::new();
+        let mut memberships = BTreeMap::new();
+        let mut distinct_memberships = BTreeSet::new();
+        for group in input.groups {
+            if group.id < input.root || saved.contains_key(&group.id) {
+                return Err(
+                    format!("invalid or duplicate containment group ID {}", group.id).into(),
+                );
+            }
+            if group.kind
+                != if group.id == input.root {
+                    "root"
+                } else {
+                    "persistent"
+                }
+            {
+                return Err(format!("invalid containment group kind for {}", group.id).into());
+            }
+            if group.vector_ids.is_empty()
+                || group
+                    .vector_ids
+                    .iter()
+                    .any(|point| *point >= input.vector_count)
+                || !strictly_sorted(&group.vector_ids)
+                || !strictly_sorted(&group.note_ids)
+                || !strictly_sorted(&group.parents)
+                || !strictly_sorted(&group.children)
+            {
+                return Err(format!(
+                    "containment group {} has invalid or unsorted membership/edges",
+                    group.id
+                )
+                .into());
+            }
+            let notes = group
+                .vector_ids
+                .iter()
+                .flat_map(|point| vectors[point].iter().map(|mask| mask.note_id.clone()))
+                .collect::<BTreeSet<_>>();
+            if notes.into_iter().collect::<Vec<_>>() != group.note_ids {
+                return Err(format!(
+                    "containment note membership mismatch for group {}",
+                    group.id
+                )
+                .into());
+            }
+            if !distinct_memberships.insert(group.vector_ids.clone()) {
+                return Err(
+                    "containment groups must have distinct complete vector memberships".into(),
+                );
+            }
+            memberships.insert(
+                group.id,
+                group.vector_ids.iter().copied().collect::<BTreeSet<_>>(),
+            );
+            saved.insert(group.id, group);
+        }
+        let root = saved.get(&input.root).ok_or("missing containment root")?;
+        if root.vector_ids != (0..input.vector_count).collect::<Vec<_>>()
+            || !root.parents.is_empty()
+        {
+            return Err("containment root must preserve every vector and have no parents".into());
+        }
+        for group in saved.values() {
+            if group.id != input.root && group.parents.is_empty() {
+                return Err(format!("containment group {} has no parent", group.id).into());
+            }
+            for parent in &group.parents {
+                let parent = saved.get(parent).ok_or("unknown containment parent")?;
+                if !parent.children.contains(&group.id) {
+                    return Err("containment parents and children disagree".into());
+                }
+            }
+            for child in &group.children {
+                let child = saved.get(child).ok_or("unknown containment child")?;
+                if !child.parents.contains(&group.id) {
+                    return Err("containment parents and children disagree".into());
+                }
+                // Strict set containment also rules out cycles. Every nonroot
+                // has a parent, so following parents must reach the full root.
+                if child.vector_ids.len() >= group.vector_ids.len()
+                    || !memberships[&child.id].is_subset(&memberships[&group.id])
+                {
+                    return Err(format!(
+                        "group {} is not strictly contained by {}",
+                        child.id, group.id
+                    )
+                    .into());
+                }
+            }
+        }
+        let retained = saved
+            .values()
+            .filter(|group| group.id == input.root || group.note_ids.len() >= 2)
+            .map(|group| group.id)
+            .collect::<BTreeSet<_>>();
+        let mut groups = BTreeMap::new();
+        for id in &retained {
+            let original = &saved[id];
+            // A removed one-note group cannot have a retained multi-note
+            // descendant: all saved edges are exact containment relationships.
+            let children = original
+                .children
+                .iter()
+                .copied()
+                .filter(|child| retained.contains(child))
+                .collect::<Vec<_>>();
+            let covered = children
+                .iter()
+                .flat_map(|child| memberships[child].iter().copied())
+                .collect::<BTreeSet<_>>();
+            let direct = memberships[id].difference(&covered).copied().collect();
+            let parents = original
+                .parents
+                .iter()
+                .copied()
+                .filter(|parent| retained.contains(parent))
+                .collect::<Vec<_>>();
+            groups.insert(
+                *id,
+                Group {
+                    id: *id,
+                    parent: if parents.len() == 1 {
+                        Some(parents[0])
+                    } else {
+                        None
+                    },
+                    children,
+                    vectors: direct,
+                    note_count: original.note_ids.len(),
+                    vector_count: original.vector_ids.len(),
+                },
+            );
+        }
+        Ok((
+            Self {
+                root: input.root,
+                groups,
+                vectors,
+            },
+            Some(input.run_id),
+        ))
+    }
+
     /// Reconstruct every native Infomap module prefix without projecting note
     /// sets, synthesizing binary merges, or adding merge distances.
     ///
@@ -902,7 +1086,7 @@ struct SavedMergeHistory {
 struct SavedInfomapHierarchy {
     schema_version: String,
     run_id: Option<String>,
-    sources: InfomapSources,
+    sources: SavedHierarchySources,
     vector_count: usize,
     alias_groups: Vec<Vec<String>>,
     canonical_unique_ids: Vec<String>,
@@ -910,9 +1094,35 @@ struct SavedInfomapHierarchy {
 }
 
 #[derive(Deserialize)]
-struct InfomapSources {
+struct SavedHierarchySources {
     vector_map: SelectionSource,
     notes: SelectionSource,
+}
+
+#[derive(Deserialize)]
+struct SavedContainmentHierarchy {
+    schema_version: String,
+    run_id: String,
+    root: usize,
+    vector_count: usize,
+    canonical_unique_ids: Vec<String>,
+    alias_groups: Vec<Vec<String>>,
+    sources: SavedHierarchySources,
+    groups: Vec<SavedContainmentGroup>,
+}
+
+#[derive(Deserialize)]
+struct SavedContainmentGroup {
+    id: usize,
+    kind: String,
+    vector_ids: Vec<usize>,
+    note_ids: Vec<String>,
+    parents: Vec<usize>,
+    children: Vec<usize>,
+}
+
+fn strictly_sorted<T: Ord>(values: &[T]) -> bool {
+    values.windows(2).all(|pair| pair[0] < pair[1])
 }
 
 #[derive(Deserialize)]

@@ -5,16 +5,18 @@ use std::path::PathBuf;
 use oracle_mvp::hdbscan_hierarchy::{Hierarchy, load_note_short_ids};
 use oracle_mvp::hdbscan_hierarchy_tui::{HierarchyView, run_hierarchy_explorer};
 
-const USAGE: &str = "Read-only HDBSCAN and Infomap hierarchy explorer
+const USAGE: &str = "Read-only HDBSCAN, Infomap, and containment hierarchy explorer
 
-Usage: hdbscan-hierarchy INPUT.json VECTOR-MAP.json NOTES.json [--selection SELECTION.json | --note-navigation | --merge-history | --infomap] [--min-notes N] [--start-at GROUP] [--check]
+Usage: hdbscan-hierarchy INPUT.json VECTOR-MAP.json NOTES.json [--selection SELECTION.json | --note-navigation | --merge-history | --infomap | --containment] [--min-notes N] [--start-at GROUP] [--check]
 
 --selection FILE  Inspect a validated saved selection instead of the raw tree
 --note-navigation  Simplify the saved merge tree by distinct note sets; uses merge-tree IDs, not condensed-tree IDs
 --merge-history    Apply the same note-set projection to a saved merge history; merge scores may decrease
 --infomap          Inspect every saved native module prefix without note-set projection or binary conversion
+--containment      Inspect every saved exact-containment edge; hide groups below two notes, retain equal-note edges
 --min-notes N      Minimum distinct notes per displayed group (default: 2; root always kept); requires --note-navigation or --merge-history
 --start-at GROUP  Initially display this saved group (default: root)
+                  Shared containment ancestry opens the root with all routes to the group expanded
 --check           Validate the inputs and print counts without opening the TUI
 --help            Show this help
 
@@ -28,6 +30,7 @@ fn run() -> Result<(), Box<dyn Error>> {
     let mut note_navigation = false;
     let mut merge_history = false;
     let mut infomap = false;
+    let mut containment = false;
     let mut min_notes = None;
     let mut args = std::env::args_os().skip(1);
     while let Some(arg) = args.next() {
@@ -60,6 +63,7 @@ fn run() -> Result<(), Box<dyn Error>> {
             Some("--note-navigation") if !note_navigation => note_navigation = true,
             Some("--merge-history") if !merge_history => merge_history = true,
             Some("--infomap") if !infomap => infomap = true,
+            Some("--containment") if !containment => containment = true,
             Some(flag) if flag.starts_with('-') => {
                 return Err(format!("unknown or repeated option: {flag}\n{USAGE}").into());
             }
@@ -69,6 +73,15 @@ fn run() -> Result<(), Box<dyn Error>> {
     let [response, vector_map, notes] = paths.as_slice() else {
         return Err(USAGE.into());
     };
+    if containment
+        && (infomap
+            || note_navigation
+            || merge_history
+            || selection.is_some()
+            || min_notes.is_some())
+    {
+        return Err("cannot combine --containment with --infomap, --note-navigation, --merge-history, --selection, or --min-notes".into());
+    }
     if infomap && (note_navigation || merge_history || selection.is_some() || min_notes.is_some()) {
         return Err("cannot combine --infomap with --note-navigation, --merge-history, --selection, or --min-notes".into());
     }
@@ -85,7 +98,11 @@ fn run() -> Result<(), Box<dyn Error>> {
         HierarchyView::NoteNavigation,
         HierarchyView::NoteNavigationMinimum,
     );
-    let (hierarchy, view, run_id) = if infomap {
+    let (hierarchy, view, run_id) = if containment {
+        let (hierarchy, run_id) =
+            Hierarchy::load_containment_with_run_id(response, vector_map, notes)?;
+        (hierarchy, HierarchyView::Containment, run_id)
+    } else if infomap {
         let (hierarchy, run_id) = Hierarchy::load_infomap_with_run_id(response, vector_map, notes)?;
         (hierarchy, HierarchyView::Infomap, run_id)
     } else if merge_history {
@@ -123,7 +140,7 @@ fn run() -> Result<(), Box<dyn Error>> {
             None,
         )
     };
-    let note_short_ids = if infomap {
+    let note_short_ids = if infomap || containment {
         load_note_short_ids(vector_map)?
     } else {
         Default::default()
@@ -136,12 +153,19 @@ fn run() -> Result<(), Box<dyn Error>> {
         return Err(format!("unknown group {branch}").into());
     }
     if check {
-        if infomap {
+        if infomap || containment {
             let identity = run_id
                 .as_ref()
                 .map(|id| format!(" · {}", id.escape_debug()))
                 .unwrap_or_default();
-            println!("Infomap hierarchy{identity} · native modules · read-only");
+            if containment {
+                println!("Containment hierarchy{identity} · exact membership · read-only");
+                println!(
+                    "Groups below two notes hidden; equal-note edges retained; shared groups repeat per parent."
+                );
+            } else {
+                println!("Infomap hierarchy{identity} · native modules · read-only");
+            }
         }
         if note_navigation || merge_history {
             println!("Merge-tree note navigation · comparison · read-only");
@@ -159,11 +183,18 @@ fn run() -> Result<(), Box<dyn Error>> {
         }
         let originals: usize = hierarchy.vectors.values().map(Vec::len).sum();
         println!(
-            "{} groups · {} unique vectors · {originals} original IDs · {} notes\nStarting branch {branch}",
+            "{} groups · {} unique vectors · {originals} original IDs · {} notes",
             hierarchy.groups.len(),
             hierarchy.vectors.len(),
             hierarchy.groups[&hierarchy.root].note_count,
         );
+        if containment {
+            println!(
+                "Requested start group {branch}; shared ancestry opens root with all routes expanded."
+            );
+        } else {
+            println!("Starting branch {branch}");
+        }
         return Ok(());
     }
     if !io::stdin().is_terminal() || !io::stdout().is_terminal() {
