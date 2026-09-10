@@ -2,6 +2,8 @@
 
 Goal: find evidence-backed alternatives to HDBv3's single-edge merge rule for broad-to-narrow content discovery. Existing notes, masks, vectors, angular distances, source-note eligibility, and display simplification remain fixed. No generated titles or manual reassignment enter the comparison. This directory is separate from earlier experiments and user-authored notes.
 
+**Start with [the inspection package](inspection.md): verified TUI commands, exact masks and the main improvements and regressions.** M06 and M07 are the primary comparisons, M01 preserves useful contrasting groups, and M03 has an optional animal-processing/slaughter example. No final algorithm is selected. The sections below retain the chronological research and experiment record; their “next question” paragraphs explain why the following experiment was run.
+
 ## Research that determines the first experiment
 
 Gowda et al. (2026), *Chamfer-Linkage for Hierarchical Agglomerative Clustering*, directly studies per-point nearest-neighbor linkage. Our proposed symmetric mean is their normalized symmetric variant divided by two, before adapting excluded edges. Section 3 supplies exact point-to-group update equations. All variants can lack increasing merge costs. The headline method instead uses unnormalized directional sums and chooses the cheaper direction. Appendix A.3 evaluates the best label agreement across several cut orders; those results do not establish semantic navigation quality. [Paper](https://arxiv.org/html/2602.10444v1)
@@ -41,7 +43,7 @@ At that M01 decision, the half-and-half vector already belongs to group1259 (42 
 
 **Next question:** The normalized rule still produces many one-child levels. The 2026 paper explicitly studies removing normalization. Test that single change next, preserving symmetric aggregation and all other controls. Check whether less chaining merely creates arbitrary small groups, rather than assuming a shorter hierarchy is better.
 
-**Completed inspection:** The [complete M01 audit](audit-M01-complete.md) covers all 915 internal nodes: 444 exact recursive M04 matches and 471 newly inspected transitions. It includes all 100 original notes and checks the relevant alternate masks behind the strongest gain/loss claims. Useful Christmas, photography and animal-flesh extensions coexist with weak pairs and very broad upper parents. This is complete reading coverage, not semantic approval. Final candidate packaging remains pending.
+**Completed inspection:** The [complete M01 audit](audit-M01-complete.md) covers all 915 internal nodes: 444 exact recursive M04 matches and 471 newly inspected transitions. It includes all 100 original notes and checks the relevant alternate masks behind the strongest gain/loss claims. Useful Christmas, photography and animal-flesh extensions coexist with weak pairs and very broad upper parents. This is complete reading coverage, not semantic approval. M01 is included as a focused contrast in the inspection package.
 
 ## M02 — Symmetric nearest-neighbor sums
 
@@ -62,7 +64,7 @@ Lower scores merge first. Removing normalization reverses these choices: the rec
 
 **Next question:** Does requiring both directions cause this delay? Keep the sums but use the smaller directional sum, following the main Chamfer rule rather than its symmetric variant. This is M03. For a singleton entering an existing group, this removes the receiving group's reverse cost, but also restores single-linkage-like attachment. Check the resulting chains and mid-level memberships, not merely whether the motivating pair changes. Retain exact global score selection: our finite-only omission policy does not inherit the paper's monotonic directional-update shortcut.
 
-**Inspection status:** Exact masks and source notes read for the changed pie/cream decision and two unrelated small M02 groups, plus all masks under1294,1620,1703,1769. The independent subtree inspection below is complete. Full semantic inspection is not complete.
+**Completed inspection:** The [complete M02 audit](audit-M02-complete.md) covers all915 transitions:408 exact recursive prior matches and507 freshly inspected transitions, all945 masks,2490 fragments and100 complete originals. Useful descendants and a qualified activity group survive, but compact Christmas, photography, tea, preservation and restaurant extensions are weaker than several other runs. This is complete reading coverage, not an overall pass or rejection. The observations below were the earlier bounded inspection.
 
 **Independent inspection beyond coffee:** All 26 canonical leaves under M02/1791 and five comparison masks were inspected, with seven full original notes. M02/1362 preserves the exact six-vector audiobook/literature group found at M01/1527 and HDBv3/1674.
 
@@ -78,9 +80,11 @@ The same inspection found questionable intermediate combinations, without treati
 
 **Concrete result:** The coffee complaint V355 now enters an existing six-note coffee group at1127. V777's pie mask subsequently enters that group at1231, which then contains12 vectors from7 notes. This is smaller than HDBv3's30-note first attachment but does not establish a suitable shared subject. In particular, the M01 raw-cream/half-and-half pair no longer exists alone.
 
-**Preservation checks:** The coffee-shop music pair remains at1042, the chocolate/tea consumption pair at1066, and the recipe pair at1190. These are raw membership checks; equal-note transitions can be collapsed in the display without losing note access. M02's small purpose/open-mindedness branch is not recovered: even V627 and V635 first coexist at M03/1816, with229 vectors from56 notes.
+**Preservation checks:** The coffee-shop music pair remains at1042, the chocolate/tea consumption pair at1066, and the recipe pair at1190. These are raw membership checks; equal-note transitions can be collapsed in the display without losing note access. V627 and V635 first coexist at M03/1816, with229 vectors from56 notes. That does not establish lost purpose/philosophy note access: the complete V629 alternative supplies a five-note option at1670, and open-mindedness alternatives provide four-note1593. The complete audit corrects the earlier exact-vector interpretation.
 
-**Analysis:** The removed reverse cost does change attachments as predicted, but M03 has many successive one-child levels after exactly the same simplification. Neither symmetry nor tree depth alone identifies a winner. Full semantic inspection and a broader comparison remain unfinished. The next literature question concerns directional support versus all-pairs support; no further rule is selected yet.
+**Analysis:** The removed reverse cost does change attachments as predicted, but M03 has many successive one-child levels after exactly the same simplification. Neither symmetry nor tree depth alone identifies a winner. This result led to the all-pairs comparison in M04.
+
+**Completed inspection:** The [complete M03 audit](audit-M03-complete.md) covers all915 transitions:278 exact recursive prior matches and637 freshly inspected transitions, all945 masks,2490 fragments and100 complete originals. Christmas1603 and photography1527 remain useful. Animal-processing/slaughter1778 offers a focused six-note parent with three-note1614 retained underneath, and is included as an optional inspection stop. Tea separates to the root, while food/emotion and concrete preservation need broader parents. No overall winner follows.
 
 ## Reproducing the additional runs
 
@@ -211,7 +215,7 @@ The implementation must use the actual cross-pair median, not SciPy's differentl
 
 These are structural measurements only. Before claiming a lost discovery path, check whether another vector from the same note already provides that access. Before claiming improvement from reuniting vectors, check whether any new relevant note becomes reachable. Exact memberships remain useful for locating changes, not as a substitute for the semantic and note-level objective.
 
-M07 tests surrounding-connection evidence and changes singleton-pair scores, unlike M01–M06. M08 tests the treatment of excluded connections; M09 tests the worst supported endpoint instead of the mean. Neither removes the observed tradeoffs. Research is now checking whether structure within each child supplies a justified different criterion without silently changing frozen geometry or restoring excluded pairs. No M10 or final winner is selected; final inspection packaging remains pending. The latest allowance check after the M09 audit returned42% remaining.
+M07 tests surrounding-connection evidence and changes singleton-pair scores, unlike M01–M06. M08 tests the treatment of excluded connections; M09 tests the worst supported endpoint instead of the mean. Neither removes the observed tradeoffs. The [within-child-structure review](within-child-structure.md) identifies useful CHAMELEON precedents, but also initialization, edge-count and implementation-version choices that prevent treating it as an unchanged drop-in rule. No M10 or final winner is selected. All nine complete-tree audits and the [inspection package](inspection.md) are available. No additional runs were needed to deliver the supported candidate comparison.
 
 ## Further literature considered
 
@@ -240,10 +244,12 @@ CARGO_TARGET_DIR=target/merge-rule-review-build CARGO_BUILD_JOBS=2 \
 
 ## Reproduce M01
 
-From the repository root, use a Python environment with NumPy and run:
+From the repository root, this pinned Nix command supplies Python and NumPy without changing the repository's development environment. Python3.13.14/NumPy2.5.0 reproduces all nine saved histories exactly; the original runs used Python3.13.12/NumPy2.3.4. Numeric worker counts remain one. Choose an unused output path:
 
 ```sh
-python3 sse_multivector/merge_rule_experiment.py \
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
+nix shell --expr '(let pkgs = (builtins.getFlake "github:NixOS/nixpkgs/35d3407a3816f3b341d8cf1d60abaf2b7b8166ac").legacyPackages.x86_64-linux; in pkgs.python313.withPackages (p: [p.numpy]))' \
+  --command python3 sse_multivector/merge_rule_experiment.py \
   --baseline sse_multivector/real-note-fine-segmentation-v1/hdbv3-cross-note-edges-v1/response.json \
   --request sse_multivector/real-note-fine-segmentation-v1/hdbv3-cross-note-edges-v1/request.json \
   --vector-map sse_multivector/real-note-fine-segmentation-v1/vectors/vector-map.json \
@@ -255,3 +261,5 @@ python3 sse_multivector/merge_rule_experiment.py \
 The runner refuses to overwrite an existing output. Compare `merges`, IDs and source checksums; run ID, source-code hash and elapsed time are provenance rather than membership output.
 
 For M06, use `--rule note_pair_mean`, a fresh run ID and an unused output path with the same four input files. It requires one source note per canonical vector, which the complete frozen artifact satisfies.
+
+For M07, use `--rule paris_linear`. The other rule names appear in their experiment sections. With the same Nix prefix, replace the command after `--command` by `python3 -m unittest discover -s sse_multivector -p 'test_merge_rule*.py'` to run all37 numeric/CLI tests. The final verification ran all nine production CLI replays into temporary outputs and compared every merge, input hash, alias, canonical ID, exclusion count and summary; all matched. Saved results were not overwritten.
