@@ -15,10 +15,11 @@ Each command opens the saved hierarchy with the default two-note display minimum
 This separate, read-only proposal was constructed from the original notes,
 not by labeling the existing tree. Coffee contains 18 notes; Morning coffee
 contains six and Coffee preparation contains five. Seven notes remain directly
-at Coffee without a forced narrower category. This is one proposed arrangement,
-not a unique target or an approved hierarchy. It has not yet been compared with
-the algorithm's output. All saved algorithm runs and source artifacts remain
-unchanged.
+at Coffee without a forced narrower category. The user accepted this manual
+example as a valid arrangement on 2026-09-10: "ok, the hierarchy looks fine to me".
+It is not a unique target or approval of an algorithm. It has not yet been
+compared with the algorithm's output. All saved algorithm runs and source
+artifacts remain unchanged.
 
 ```sh
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-manual-coffee-hierarchy.sh

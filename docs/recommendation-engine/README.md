@@ -43,9 +43,9 @@ the unchanged default view. It changes available group choices, not clustering
 or note memberships; the minimum is still an experiment.
 The separate [manual coffee example](../../sse_multivector/merge-rule-exploration-v1/inspection.md#manual-coffee-example)
 lets the user inspect a small proposed hierarchy constructed from original
-notes, not from an algorithm's nodes. Its titles and memberships are proposals,
-not approvals or the uniquely correct arrangement. Comparing it with the saved
-algorithm results remains a later step.
+notes, not from an algorithm's nodes. The user accepted this example as a valid
+arrangement, not the uniquely correct one. Comparing it with the saved algorithm
+results remains a later step; no algorithm is approved by this judgment.
 The earlier [controlled-run results](experiments/fine-segmentation/controlled-run-v1-results.md)
 and their frozen protocols remain unchanged evidence, not a pending work order
 that must be repeated before this investigation.
