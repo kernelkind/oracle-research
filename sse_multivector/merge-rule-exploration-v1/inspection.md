@@ -10,6 +10,37 @@ All runs contain the same 100 notes and 916 distinct vectors, representing 945 o
 
 Each command opens the saved hierarchy with the default two-note display minimum, initially focused on one example. Children remain nested. Press `j/k` to select, `l` to expand, and `Enter` on a mask to see its full original note. `Esc` returns to the hierarchy; `u` moves upward. Unopened siblings appear above the branch already opened. `q` exits. Omit `--start-at` to begin at the root.
 
+### Manual coffee example
+
+This separate, read-only proposal was constructed from the original notes,
+not by labeling the existing tree. Coffee contains 18 notes; Morning coffee
+contains six and Coffee preparation contains five. Seven notes remain directly
+at Coffee without a forced narrower category. This is one proposed arrangement,
+not a unique target or an approved hierarchy. It has not yet been compared with
+the algorithm's output. All saved algorithm runs and source artifacts remain
+unchanged.
+
+```sh
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-manual-coffee-hierarchy.sh
+```
+
+Choose with `j/k`; open with `Enter` or `l`. Only immediate child categories
+are shown. The separate note actions let you inspect all notes in a category
+or only its notes outside children; those actions are not additional subjects.
+Within notes, `h/l` selects the previous/next note and `j/k` scrolls. `Backspace`
+or `Esc` returns; `q` exits. `?` shows the manual reasoning and controls separately
+from the original note. No decisions are automatically recorded.
+
+The launcher uses the existing `sse-subject-navigation` binary with the explicit
+`--notes` mode. `--check` validates the manual input and its source checksum
+without opening the terminal. If needed, build once in `oracle-mvp`:
+
+```sh
+CARGO_BUILD_JOBS=2 CARGO_TARGET_DIR=target/merge-rule-review-build nix develop -c cargo build --bin sse-subject-navigation
+```
+
+### Algorithm hierarchies
+
 M06, starting with the ingredient example:
 
 ```sh
