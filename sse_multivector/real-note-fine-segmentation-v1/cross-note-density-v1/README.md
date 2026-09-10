@@ -109,7 +109,7 @@ D=sse_multivector/real-note-fine-segmentation-v1
 
 HDBv3 is a diagnostic variant of HDBv2, not an adopted replacement. It tests the first of the four hierarchy concerns: whether same-note connections are responsible for questionable parent placements. The other concerns remain deferred. The parallel music-corpus experiment is separate and its inputs, outputs, and instructions were not changed by this run.
 
-**Result:** the egg group is no longer inside the coffee branch. The greeting/coffee connection persists, however, and some useful structure becomes more fragmented. Removing every same-note connection is not a complete solution.
+**Result:** HDBv3 offers the coffee-making and hot-coffee notes together without the chicken-and-egg diary. The earlier HDBv2 tree did not offer that membership. Subsequent source tracing distinguishes that improvement from accepted SSE misses and from useful groups that exist before condensation but are not separately offered afterward. This is not a complete semantic validation or an adopted replacement.
 
 ### Control and change
 
@@ -161,9 +161,11 @@ HDBv3 removes V494–V495, the same-note connection. But it finds a cross-note a
 >
 > V647 · N071: ⟦Good morning frens⟧
 
-Consequently, a greeting group still sits beside coffee material: HDBv3/1046 and HDBv3/1045 are children of HDBv3/1037. The new greeting group contains all six old greeting-group vectors plus V496/N058, ⟦brrr⟧ ⟦Glad⟧ ⟦coffee⟧ ⟦hot⟧ ⟦AM⟧. Removing same-note connections did not remove the suspected placement; similar cross-note connections already existed in the frozen distances.
+Consequently, a greeting group still sits beside coffee material: HDBv3/1046 and HDBv3/1045 are children of HDBv3/1037. The new greeting group contains all six old greeting-group vectors plus V496/N058, ⟦brrr⟧ ⟦Glad⟧ ⟦coffee⟧ ⟦hot⟧ ⟦AM⟧. This sibling relationship is not itself a demonstrated placement failure. Both old and new greeting groups return the same six notes, all of whose complete posts contain greetings; N058 starts with “GM Nostr! Happy Sunday!”
 
-### 3. Useful groups do not all survive intact
+The separate “GM” and “Good morning” groups meet only near the root, even in the complete merge history. For example, V805/N089, ⟦Gm nostr⟧, has cosine 0.5568 with V766/N081, ⟦gianguja jars⟧ ⟦store⟧, but only 0.1912 with V824/N092, ⟦Good morning nostr⟧. No narrower shared greeting group was discarded by condensation. The user accepts this abbreviated-versus-spelled-out greeting miss as a limitation of the current SSE representation; it is not a reason to modify the hierarchy algorithm. This does not revoke the separate user rejection of V766's individual membership.
+
+### 3. Changed groups need note-level interpretation
 
 | HDBv2 group | HDBv3 result |
 |---|---|
@@ -172,12 +174,14 @@ Consequently, a greeting group still sits beside coffee material: HDBv3/1046 and
 | 1031: four chicken-stock masks from two notes | Split into two two-mask groups, 1108 and 1110. Their smallest common parent now contains 44 vectors from 21 notes. |
 | 980: chocolate/tea quantities and concern about their effects | All six masks remain together in 1022, but it adds V098/N013: ⟦today⟧ ⟦batch⟧ ⟦chicken stock⟧ ⟦Should get around 25 quarts⟧. This is a changed grouping, not a verified preservation of the same meaning. |
 
-The chicken-stock example shows why a blanket ban has costs. HDBv2 connected V092/N013, ⟦stock pots rolling today⟧ ⟦batch of chicken stock⟧, to V094/N013, ⟦stock pots rolling⟧ ⟦chicken stock⟧ ⟦We save carcasses when we butcher⟧, through two masks from N026:
+The chicken-stock example changes how mask variants are grouped. HDBv2 connected V092/N013, ⟦stock pots rolling today⟧ ⟦batch of chicken stock⟧, to V094/N013, ⟦stock pots rolling⟧ ⟦chicken stock⟧ ⟦We save carcasses when we butcher⟧, through two masks from N026:
 
 - V196: ⟦Today i⟧ ⟦Acquired⟧ ⟦prepared⟧ ⟦tomato’s⟧ ⟦Made⟧ ⟦yogurt⟧ ⟦bagged⟧ ⟦chicken meat⟧ ⟦made⟧ ⟦chicken stock⟧ ⟦cleaned⟧ ⟦dishes⟧
 - V206: ⟦i⟧ ⟦rotisserie chickens⟧ ⟦bagged⟧ ⟦meat⟧ ⟦made⟧ ⟦chicken stock from the bones⟧
 
-Removing V196–V206 also removes a connection between two masks that genuinely share chicken-stock meaning. The strongest remaining path between V092 and V094 has a largest connection distance of **0.804264**, up from **0.761153**. Their pairs now meet only within a much larger group. This is a concrete structural cost; same-note origin does not imply unrelated meanings.
+Removing V196–V206 also removes a connection between two masks that genuinely share chicken-stock meaning. The strongest remaining path between V092 and V094 has a largest connection distance of **0.804264**, up from **0.761153**. Their pairs now meet only within a much larger group. However, **each new pair independently returns both N013 and N026**. This is not a demonstrated loss of note discovery; preserving those four particular mask variants in one node was not the objective.
+
+The chocolate-and-tea example is different. HDBv3's complete merge history contains exactly the six old masks at raw node **1204**, forming at connection distance 0.860736. Raw node **1254** adds the stock-production mask V098 at 0.877109. Condensation keeps the seven-mask branch as group **1022**. When the single stock mask departs, only one branch remains above the minimum size of two vectors, so it keeps the same identity instead of producing a six-mask child. The saved data contains the narrower group, but the condensed-tree viewer does not offer it separately. Raw merge IDs and condensed group IDs are different namespaces, even within one run.
 
 ### Whole-tree changes and limits
 
@@ -193,9 +197,9 @@ Removing V196–V206 also removes a connection between two masks that genuinely 
 
 All 945 original vector records and all 100 notes remain in the complete hierarchy. Selected-group counts describe the separate excess-of-mass selection, not deletion from the raw hierarchy. Fifty-four old hierarchy groups retain exactly the same vector membership somewhere in HDBv3; 38 old selected groups remain selected with exactly the same membership.
 
-The greater depth and repeated note sets are measured costs, not an instruction to solve those deferred issues now. More selected groups do not establish higher semantic quality. This run has not received a complete human review of all 201 groups. The unchanged user-rejected greeting/jar group, HDBv2/935 → HDBv3/957, also demonstrates that the change does not resolve every previously identified problem. The bread/spaghetti group remains user-accepted evidence, not a failure target.
+The greater depth and repeated note sets are measured costs. More selected groups do not establish higher semantic quality. This run has not received a complete human review of all 201 groups. The unchanged user-rejected greeting/jar group, HDBv2/935 → HDBv3/957, also demonstrates that the change does not resolve every previously identified problem. The bread/spaghetti group remains user-accepted evidence, not a failure target. The subsequently approved note-navigation comparison below addresses only which existing merge-tree memberships to offer.
 
-**Conclusion:** same-note connections can materially affect parent placement, but excluding all of them both helps and harms specific structures and leaves cross-note routes for other questionable placements. Keep HDBv3 as diagnostic evidence; do not replace HDBv2 or infer that this fixes the other three concerns.
+**Conclusion:** same-note connections can materially affect parent placement. The coffee example improves; the chicken-stock split does not establish lost note discovery; the shared greeting miss is accepted; and the narrower chocolate-and-tea group exists before condensation. Keep HDBv3 as diagnostic evidence. These findings motivate inspecting a different simplification of its saved merge tree, not changing SSE or the merge rule.
 
 ### Reproduce the diagnostic
 
@@ -214,9 +218,34 @@ python3 sse_multivector/run_cross_note_edges_experiment.py \
 
 The output directory must not exist; the runner refuses to overwrite results. Rebuilding the binary can change its checksum: record and explicitly supply the new checksum rather than silently changing the saved run. The saved [request](../hdbv3-cross-note-edges-v1/request.json), [response](../hdbv3-cross-note-edges-v1/response.json), [comparison](../hdbv3-cross-note-edges-v1/comparison.json) and [proof](../hdbv3-cross-note-edges-v1/proof.json) remain separate from HDBv2 and the music experiment. The original viewer command still opens HDBv2; it was not redirected to this variant.
 
-## Manual selection of hierarchy levels
+## Optional HDBv3 note-navigation comparison
 
-The approved follow-up asks whether choosing which **existing groups** to show can produce useful navigation. It does not authorize new groups, moved members, generated titles, or adoption of HDBSCAN. The raw tree's saved data remains unchanged; the selection is available as a separate view in the same explorer.
+This view uses the saved `single_linkage_tree`, not the `condensed_tree` and not the earlier handmade selection. It performs no inference or clustering and writes no result or review files.
+
+It applies only two rules:
+
+1. Do not offer groups containing fewer than two distinct source notes.
+2. Collapse a child when its complete note set equals its parent's. Keep the parent and promote the remaining descendants, preserving each retained group's complete original vector membership.
+
+All 916 unique vectors, 945 original IDs, 100 notes, exact masks and aliases remain available. Masks from removed groups belong directly to their nearest retained ancestor. The root remains the full-corpus container. As in the existing raw viewer, a parent mask is hidden if its note appears recursively in any child; this only affects display, not membership.
+
+For the saved HDBv3 data, 915 merge nodes become 246 offered groups. Maximum depth is 54, compared with 71 in the 201-group condensed tree. There are no one-note group choices or parent-child transitions returning identical note sets. The largest child list happens to contain ten groups; ten is not an imposed limit.
+
+The two rules do not deduplicate siblings. One pair remains: children 1013 and 1150 under 1304 both return N007/N076, with different masks. Removing that duplication is not part of this comparison.
+
+```sh
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-hdbscan-hierarchy.sh --note-navigation
+```
+
+The comparison starts at merge node **1254**: three notes, with stock mask V098 and a collapsed child **1204** containing the six chocolate-and-tea masks from two notes. Expand 1204 with `l`, focus it with `F`, or open its original notes with Enter. `U` retains nesting while moving upward, placing unopened child groups above opened ones. Vim keys, scrolling and full-note inline masks are unchanged. Help explains that these are **merge-tree IDs, not the condensed-tree IDs used by the old view**.
+
+Other inspected starts are **1090** for coffee (includes N058/N060, excludes N080), and **1023** or **1063** for the two chicken-stock pairs (each returns N013/N026). Pass the start after `--note-navigation`; **1830** opens the root. No subject titles or semantic approval decisions are generated. This restores the demonstrated narrowing step but is not a final hierarchy or a complete semantic review.
+
+The original command without the new flag still opens HDBv2, and `--selection` still opens the earlier manual proposal. The comparison uses the separately built `target/hierarchy-note-view-build/debug/hdbscan-hierarchy`; it does not overwrite the binaries pinned by earlier experiments. On a fresh checkout, build it in the development shell with `CARGO_TARGET_DIR=target/hierarchy-note-view-build cargo build --bin hdbscan-hierarchy`.
+
+## Earlier manual selection of hierarchy levels
+
+This earlier proposal asked whether choosing which **existing groups** to show could produce useful navigation. The user rejected it as incoherent; it is retained for comparison, not adopted. It did not create new groups, move members, or generate titles. The raw tree's saved data remains unchanged; the selection is still available as a separate view in the same explorer.
 
 I inspected all 130 groups and their masks. The separate assistant proposal is [hierarchy-selection-v1.json](hierarchy-selection-v1.json). It records a decision for every group, the retained ancestor relationships, exact point inventories, source checksums, and unresolved concerns. These are not user approvals.
 

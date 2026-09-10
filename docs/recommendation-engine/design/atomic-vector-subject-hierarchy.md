@@ -12,10 +12,12 @@ subjects; a useful group is not automatically a terminal navigation subject.
 
 The [100-note real-data experiment](../../../sse_multivector/real-note-fine-segmentation-v1/README.md)
 uses frozen ASv6.23 subjects and MPv3.5 masks. The current hierarchy investigation
-inspects the saved [HDBv2 groups and condensed tree](../../../sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/README.md),
-without generated titles. Coherent groups do not establish that all of their
-parent placements are useful subject refinements. HDBv2 is not selected as the
-final grouping or hierarchy algorithm.
+compares the saved [HDBv2/HDBv3 trees and optional note-navigation view](../../../sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/README.md),
+without generated titles. The comparison starts from HDBv3's complete merge
+history rather than only its condensed groups. It omits one-note groups and
+collapses parent-child transitions returning the same notes. Coherent groups
+do not establish that all their parent placements are useful refinements.
+Neither HDBv3 nor this simplification is selected as the final algorithm.
 
 The earlier [controlled qualification and its results](../experiments/fine-segmentation/controlled-run-v1-results.md)
 remain experimental evidence. Their frozen protocols and outcomes are not
@@ -128,9 +130,9 @@ its actual memberships and unassigned vectors rather than silently changing
 them to fit a preferred architecture.
 
 The current grouping experiments establish memberships without generating
-English labels. HDBv2 also returns a nested hierarchy. Its connectivity-based
-parent relations are candidate structure to inspect, not automatically valid
-broader-subject relations.
+English labels. HDBv2 and HDBv3 also return nested hierarchies. Their
+connectivity-based parent relations are candidate structure to inspect, not
+automatically valid broader-subject relations.
 
 ## 3. Label Subject Groups from Grounded Evidence
 
@@ -155,7 +157,7 @@ stored in
 
 A title describes an already formed group. It must not change
 membership or broaden an incoherent group until it sounds plausible. Prompt
-quality remains open work; the current HDBv2 review is deliberately unnamed.
+quality remains open work; the current hierarchy comparison is deliberately unnamed.
 
 ## 4. Organize Groups into a Broad-to-Narrow Hierarchy
 
@@ -173,6 +175,14 @@ The current literature review is
 It identifies candidates and risks; it does not freeze an algorithm. The
 number of roots, depth, branching, parent-membership policy, and condensation
 for navigation remain open.
+
+The current note-navigation comparison preserves complete memberships from the
+saved merge tree. One-note groups are not offered as choices, but their masks
+remain at the nearest retained ancestor. When a child returns exactly the same
+notes as its parent, the parent is retained and the child's remaining descendants
+are promoted without reassigning semantic memberships. This preserves narrower
+note sets that HDBSCAN condensation may not expose as separate nodes. It does
+not validate those sets semantically or impose a branching limit.
 
 Hierarchy labels must be generated from the grounded evidence beneath each
 node. They describe membership; they do not define it.

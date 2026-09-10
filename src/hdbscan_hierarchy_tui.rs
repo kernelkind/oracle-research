@@ -1,4 +1,4 @@
-//! Read-only exploration of the saved HDBSCAN condensed hierarchy.
+//! Read-only exploration of saved HDBSCAN hierarchies and optional display views.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::io;
@@ -44,9 +44,16 @@ U shows the parent of the displayed branch, preserving expansion and selection. 
 Ctrl-F/B or PageDown/PageUp scroll a page; Ctrl-U/D scroll half a page up/down. gg or Home moves to the beginning; G or End moves to the end. Shift-Left/Right scroll horizontally in deep branches.\n\
 Enter opens a mask's full original note with inline brackets, or toggles a selected group. Escape returns from the note or this help.";
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum HierarchyView {
+    Condensed,
+    Selection,
+    NoteNavigation,
+}
+
 pub struct HierarchyExplorer {
     hierarchy: Hierarchy,
-    selection_view: bool,
+    view: HierarchyView,
     branch: usize,
     expanded: BTreeSet<usize>,
     child_order: BTreeMap<usize, Vec<usize>>,
@@ -65,18 +72,23 @@ pub struct HierarchyExplorer {
 
 impl HierarchyExplorer {
     pub fn new(hierarchy: Hierarchy, start: Option<usize>) -> Result<Self, String> {
-        Self::with_view(hierarchy, start, false)
+        Self::with_view(hierarchy, start, HierarchyView::Condensed)
     }
 
     /// Display an already-projected saved selection without changing its members.
     pub fn new_selection(hierarchy: Hierarchy, start: Option<usize>) -> Result<Self, String> {
-        Self::with_view(hierarchy, start, true)
+        Self::with_view(hierarchy, start, HierarchyView::Selection)
+    }
+
+    /// Display the note-based projection of a saved complete merge tree.
+    pub fn new_note_navigation(hierarchy: Hierarchy, start: Option<usize>) -> Result<Self, String> {
+        Self::with_view(hierarchy, start, HierarchyView::NoteNavigation)
     }
 
     fn with_view(
         hierarchy: Hierarchy,
         start: Option<usize>,
-        selection_view: bool,
+        view: HierarchyView,
     ) -> Result<Self, String> {
         let branch = start.unwrap_or(hierarchy.root);
         if !hierarchy.groups.contains_key(&branch) {
@@ -87,14 +99,14 @@ impl HierarchyExplorer {
             .values()
             .flat_map(|group| group.vectors.iter().map(move |point| (*point, group.id)))
             .collect();
-        let hidden_parent_masks = if selection_view {
+        let hidden_parent_masks = if view == HierarchyView::Selection {
             BTreeSet::new()
         } else {
             repeated_parent_masks(&hierarchy)
         };
         Ok(Self {
             hierarchy,
-            selection_view,
+            view,
             branch,
             expanded: BTreeSet::from([branch]),
             child_order: BTreeMap::new(),
@@ -267,7 +279,7 @@ impl HierarchyExplorer {
 
     fn show_parent(&mut self) {
         if let Some(parent) = self.hierarchy.groups[&self.branch].parent {
-            if !self.selection_view {
+            if self.view != HierarchyView::Selection {
                 let children = self
                     .child_order
                     .entry(parent)
@@ -341,20 +353,20 @@ impl HierarchyExplorer {
             }
             // LIFO ordering lets selection children stay reachable before long
             // direct-member lists, while raw parent masks stay before children.
-            if self.selection_view {
+            if self.view == HierarchyView::Selection {
                 stack.push(PendingRows::Masks(id, continuation.clone()));
             }
             let children = self.child_order.get(&id).unwrap_or(&group.children);
             for (index, child) in children.iter().enumerate().rev() {
                 let last = index == children.len() - 1
-                    && (!self.selection_view || group.vectors.is_empty());
+                    && (self.view != HierarchyView::Selection || group.vectors.is_empty());
                 stack.push(PendingRows::Group(
                     *child,
                     format!("{continuation}{} ", if last { "└─" } else { "├─" }),
                     format!("{continuation}{}", if last { "   " } else { "│  " }),
                 ));
             }
-            if !self.selection_view {
+            if self.view != HierarchyView::Selection {
                 stack.push(PendingRows::Masks(id, continuation));
             }
         }
@@ -365,7 +377,7 @@ impl HierarchyExplorer {
         let group = &self.hierarchy.groups[&id];
         let point_prefix = format!(
             "{continuation}{}  ",
-            if group.children.is_empty() || self.selection_view {
+            if group.children.is_empty() || self.view == HierarchyView::Selection {
                 " "
             } else {
                 "│"
@@ -384,12 +396,12 @@ impl HierarchyExplorer {
                 if needs_header {
                     rows.push(Row {
                         selection: None,
-                        prefix: if self.selection_view {
+                        prefix: if self.view == HierarchyView::Selection {
                             format!("{continuation}└─ ")
                         } else {
                             point_prefix.clone()
                         },
-                        content: if self.selection_view {
+                        content: if self.view == HierarchyView::Selection {
                             "Masks outside retained child groups:"
                         } else {
                             "Masks outside its child groups:"
@@ -416,7 +428,13 @@ impl HierarchyExplorer {
     }
 
     fn help(&self) -> String {
-        let (intro, masks, decisions) = if self.selection_view {
+        let (intro, masks, decisions) = if self.view == HierarchyView::NoteNavigation {
+            (
+                "This comparison uses the saved complete merge history. Group numbers are merge-tree IDs, not condensed-tree IDs.",
+                "Each group choice contains at least two distinct notes. A child returning the same notes as its parent is collapsed. The parent keeps its complete membership; the remaining descendants are promoted. The root remains the full-corpus container.\nAll masks remain at their nearest retained ancestor. A parent mask is hidden when its note occurs recursively in a child, including collapsed children.",
+                "Going up places unopened children above expanded ones, preserving nesting. No new clustering, semantic judgments or subject titles are generated. These display rules do not establish semantic quality.",
+            )
+        } else if self.view == HierarchyView::Selection {
             (
                 "This is a read-only view of the saved selection proposal.",
                 "Groups skipped in this view remain in the raw tree. Every mask remains; masks outside retained children are shown at their displayed ancestor.",
@@ -457,7 +475,7 @@ impl HierarchyExplorer {
         if let Some(detail) = self.detail {
             let (title, content) = match detail {
                 Detail::Help => (
-                    if self.selection_view {
+                    if self.view == HierarchyView::Selection {
                         "HDBv2 selection help · proposal · read-only"
                     } else {
                         "Hierarchy help"
@@ -553,10 +571,11 @@ impl HierarchyExplorer {
         self.follow_selection = false;
         let title = format!(
             "{}\nShowing branch {} · {} {}",
-            if self.selection_view {
-                "HDBv2 selection · proposal · read-only"
-            } else {
-                "HDBv2 hierarchy · read-only"
+            match self.view {
+                HierarchyView::Selection => "HDBv2 selection · proposal · read-only",
+                HierarchyView::Condensed => "HDBv2 hierarchy · read-only",
+                HierarchyView::NoteNavigation =>
+                    "Merge-tree note navigation · comparison · read-only",
             },
             self.branch,
             self.hierarchy.groups[&self.branch].note_count,
@@ -732,12 +751,12 @@ impl InteractiveReviewModel for HierarchyExplorer {
 pub fn run_hierarchy_explorer(
     hierarchy: Hierarchy,
     start: Option<usize>,
-    selection_view: bool,
+    view: HierarchyView,
 ) -> io::Result<()> {
-    let mut model = if selection_view {
-        HierarchyExplorer::new_selection(hierarchy, start)
-    } else {
-        HierarchyExplorer::new(hierarchy, start)
+    let mut model = match view {
+        HierarchyView::Condensed => HierarchyExplorer::new(hierarchy, start),
+        HierarchyView::Selection => HierarchyExplorer::new_selection(hierarchy, start),
+        HierarchyView::NoteNavigation => HierarchyExplorer::new_note_navigation(hierarchy, start),
     }
     .map_err(io::Error::other)?;
     let mut terminal = ReferenceTerminal::new()?;

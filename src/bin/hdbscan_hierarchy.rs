@@ -3,13 +3,14 @@ use std::io::{self, IsTerminal};
 use std::path::PathBuf;
 
 use oracle_mvp::hdbscan_hierarchy::Hierarchy;
-use oracle_mvp::hdbscan_hierarchy_tui::run_hierarchy_explorer;
+use oracle_mvp::hdbscan_hierarchy_tui::{HierarchyView, run_hierarchy_explorer};
 
 const USAGE: &str = "Read-only HDBSCAN hierarchy explorer
 
-Usage: hdbscan-hierarchy RESPONSE.json VECTOR-MAP.json NOTES.json [--selection SELECTION.json] [--start-at GROUP] [--check]
+Usage: hdbscan-hierarchy RESPONSE.json VECTOR-MAP.json NOTES.json [--selection SELECTION.json | --note-navigation] [--start-at GROUP] [--check]
 
 --selection FILE  Inspect a validated saved selection instead of the raw tree
+--note-navigation  Simplify the saved merge tree by distinct note sets; uses merge-tree IDs, not condensed-tree IDs
 --start-at GROUP  Initially display this saved group (default: root)
 --check           Validate the inputs and print counts without opening the TUI
 --help            Show this help
@@ -21,6 +22,7 @@ fn run() -> Result<(), Box<dyn Error>> {
     let mut start = None;
     let mut check = false;
     let mut selection = None;
+    let mut note_navigation = false;
     let mut args = std::env::args_os().skip(1);
     while let Some(arg) = args.next() {
         match arg.to_str() {
@@ -38,6 +40,7 @@ fn run() -> Result<(), Box<dyn Error>> {
                 ));
             }
             Some("--check") if !check => check = true,
+            Some("--note-navigation") if !note_navigation => note_navigation = true,
             Some(flag) if flag.starts_with('-') => {
                 return Err(format!("unknown or repeated option: {flag}\n{USAGE}").into());
             }
@@ -47,15 +50,33 @@ fn run() -> Result<(), Box<dyn Error>> {
     let [response, vector_map, notes] = paths.as_slice() else {
         return Err(USAGE.into());
     };
-    let hierarchy = match &selection {
-        Some(path) => Hierarchy::load_selection(response, vector_map, notes, path)?,
-        None => Hierarchy::load(response, vector_map, notes)?,
+    if note_navigation && selection.is_some() {
+        return Err("cannot combine --note-navigation and --selection".into());
+    }
+    let (hierarchy, view) = if note_navigation {
+        (
+            Hierarchy::load_note_navigation(response, vector_map, notes)?,
+            HierarchyView::NoteNavigation,
+        )
+    } else if let Some(path) = &selection {
+        (
+            Hierarchy::load_selection(response, vector_map, notes, path)?,
+            HierarchyView::Selection,
+        )
+    } else {
+        (
+            Hierarchy::load(response, vector_map, notes)?,
+            HierarchyView::Condensed,
+        )
     };
     let branch = start.unwrap_or(hierarchy.root);
     if !hierarchy.groups.contains_key(&branch) {
         return Err(format!("unknown group {branch}").into());
     }
     if check {
+        if note_navigation {
+            println!("Merge-tree note navigation · comparison · read-only");
+        }
         if selection.is_some() {
             let root = &hierarchy.groups[&hierarchy.root];
             println!(
@@ -76,7 +97,7 @@ fn run() -> Result<(), Box<dyn Error>> {
     if !io::stdin().is_terminal() || !io::stdout().is_terminal() {
         return Err("An interactive terminal is required; use --check for validation.".into());
     }
-    run_hierarchy_explorer(hierarchy, Some(branch), selection.is_some())?;
+    run_hierarchy_explorer(hierarchy, Some(branch), view)?;
     Ok(())
 }
 

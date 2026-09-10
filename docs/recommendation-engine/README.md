@@ -30,10 +30,13 @@ orchestration remains implemented but is not this experiment's preparation
 path. The final grouping contract and algorithm, hierarchy algorithm, and
 production-scale extractor remain open.
 
-The current hierarchy investigation inspects the saved
-[HDBv2 groups and condensed tree](../../sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/README.md),
-without generated titles. Useful groupings do not automatically validate their
-parent placements. This inspection does not select HDBv2 as the final method.
+The current hierarchy investigation compares the saved
+[HDBv2/HDBv3 trees and an optional note-navigation view](../../sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/README.md),
+without generated titles. The comparison derives choices from HDBv3's complete
+merge history, omits one-note groups, and collapses transitions returning the
+same notes. The original viewer and saved clustering results remain unchanged.
+Useful groupings do not automatically validate their parent placements; neither
+HDBv3 nor this simplification is selected as the final method.
 The earlier [controlled-run results](experiments/fine-segmentation/controlled-run-v1-results.md)
 and their frozen protocols remain unchanged evidence, not a pending work order
 that must be repeated before this investigation.

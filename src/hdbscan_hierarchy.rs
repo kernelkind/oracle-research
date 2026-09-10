@@ -1,4 +1,4 @@
-//! Read-only reconstruction of a saved HDBSCAN condensed tree.
+//! Read-only reconstruction of saved HDBSCAN condensed and single-linkage trees.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::error::Error;
@@ -40,6 +40,184 @@ pub struct MaskInstance {
 }
 
 impl Hierarchy {
+    /// Load a note-navigation comparison from the saved binary merge tree.
+    ///
+    /// Retain a merge only when it contains at least two distinct source notes
+    /// and its complete note set differs from its immediate raw parent's set.
+    /// Exact-vector aliases all contribute notes. The root is always retained
+    /// as a container, including for a one-note corpus; it is not evidence of
+    /// a cross-note group in that case. Input points never become group nodes.
+    ///
+    /// IDs are the original single-linkage merge IDs, not condensed-tree IDs.
+    /// Removing a group only promotes its retained descendants and transfers
+    /// its direct points to the nearest retained ancestor. No distances are
+    /// recomputed, no equal-distance transitions are additionally removed, and
+    /// every retained group's complete membership and source masks stay intact.
+    pub fn load_note_navigation(
+        response_path: &Path,
+        vector_map_path: &Path,
+        notes_path: &Path,
+    ) -> Result<Self, Box<dyn Error>> {
+        let response: SavedResponse<SavedLinkageAlgorithm> = read_json(response_path)?;
+        let SavedResult {
+            algorithm_result,
+            alias_groups,
+            canonical_unique_ids,
+        } = response.artifact.result;
+        let SavedLinkageAlgorithm {
+            vector_count,
+            single_linkage_tree,
+        } = algorithm_result;
+        if vector_count < 2 {
+            return Err("saved single-linkage tree requires at least two points".into());
+        }
+        if single_linkage_tree.len() != vector_count - 1 {
+            return Err("single-linkage tree must contain vector_count - 1 merges".into());
+        }
+        if alias_groups.len() != vector_count {
+            return Err("alias group count does not match vector_count".into());
+        }
+        if canonical_unique_ids.len() != vector_count {
+            return Err("canonical ID count does not match vector_count".into());
+        }
+        let total_nodes = vector_count
+            .checked_add(vector_count - 1)
+            .ok_or("single-linkage node count overflows")?;
+        let root = total_nodes - 1;
+        let vectors = load_vectors(
+            alias_groups,
+            canonical_unique_ids,
+            vector_map_path,
+            notes_path,
+        )?;
+
+        let mut parents = vec![None; total_nodes];
+        let mut point_counts = vec![0usize; total_nodes];
+        let mut note_counts = vec![0usize; total_nodes];
+        let mut pending_notes = BTreeMap::new();
+        for (&point, aliases) in &vectors {
+            let notes = aliases
+                .iter()
+                .map(|mask| mask.note_id.as_str())
+                .collect::<BTreeSet<_>>();
+            point_counts[point] = 1;
+            note_counts[point] = notes.len();
+            pending_notes.insert(point, notes);
+        }
+        let mut retained = BTreeSet::from([root]);
+        let mut previous_distance = 0.0;
+        for (offset, row) in single_linkage_tree.iter().enumerate() {
+            if row.id != vector_count + offset {
+                return Err("single-linkage merge IDs must be consecutive and ordered".into());
+            }
+            if row.left == row.right || row.left >= row.id || row.right >= row.id {
+                return Err(format!("merge {} must join distinct earlier nodes", row.id).into());
+            }
+            if !row.mutual_reachability_distance.is_finite()
+                || row.mutual_reachability_distance < previous_distance
+            {
+                return Err(
+                    "single-linkage distances must be finite, nonnegative, and ordered".into(),
+                );
+            }
+            previous_distance = row.mutual_reachability_distance;
+            for child in [row.left, row.right] {
+                if parents[child].replace(row.id).is_some() {
+                    return Err(format!("raw node {child} has more than one parent").into());
+                }
+            }
+            let count = point_counts[row.left] + point_counts[row.right];
+            if row.size != count {
+                return Err(format!(
+                    "merge {} size {} does not match {count} descendant points",
+                    row.id, row.size
+                )
+                .into());
+            }
+            point_counts[row.id] = count;
+
+            // A node is evaluated against its immediate raw parent while both
+            // complete note sets are available. Child sets are then consumed,
+            // avoiding stored per-ancestor copies of all point memberships.
+            let left_notes = pending_notes.remove(&row.left).expect("validated child");
+            let right_notes = pending_notes.remove(&row.right).expect("validated child");
+            let notes = left_notes
+                .union(&right_notes)
+                .copied()
+                .collect::<BTreeSet<_>>();
+            for (child, child_notes) in [(row.left, &left_notes), (row.right, &right_notes)] {
+                if child >= vector_count && child_notes.len() >= 2 && *child_notes != notes {
+                    retained.insert(child);
+                }
+            }
+            note_counts[row.id] = notes.len();
+            pending_notes.insert(row.id, notes);
+        }
+        if point_counts[root] != vector_count
+            || parents[..root].iter().any(Option::is_none)
+            || parents[root].is_some()
+        {
+            return Err("single-linkage root must contain every point exactly once".into());
+        }
+
+        // Parent IDs are larger than child IDs. Descending order therefore
+        // resolves each node's nearest retained ancestor without recursion.
+        let mut owners = vec![root; total_nodes];
+        for id in (0..root).rev() {
+            owners[id] = if retained.contains(&id) {
+                id
+            } else {
+                owners[parents[id].expect("validated nonroot parent")]
+            };
+        }
+        let mut groups = retained
+            .iter()
+            .map(|&id| {
+                (
+                    id,
+                    Group {
+                        id,
+                        parent: parents[id].map(|parent| owners[parent]),
+                        children: Vec::new(),
+                        vectors: Vec::new(),
+                        note_count: note_counts[id],
+                        vector_count: point_counts[id],
+                    },
+                )
+            })
+            .collect::<BTreeMap<_, _>>();
+        // Promotion preserves raw left-to-right order, rather than introducing
+        // an ordering by merge ID. Direct points keep their canonical order.
+        let mut pending = vec![root];
+        while let Some(id) = pending.pop() {
+            if id < vector_count {
+                continue;
+            }
+            if let Some(parent) = groups.get(&id).and_then(|group| group.parent) {
+                groups
+                    .get_mut(&parent)
+                    .expect("retained parent")
+                    .children
+                    .push(id);
+            }
+            let row = &single_linkage_tree[id - vector_count];
+            pending.push(row.right);
+            pending.push(row.left);
+        }
+        for (point, &owner) in owners.iter().take(vector_count).enumerate() {
+            groups
+                .get_mut(&owner)
+                .expect("retained point owner")
+                .vectors
+                .push(point);
+        }
+        Ok(Self {
+            root,
+            groups,
+            vectors,
+        })
+    }
+
     /// Load a saved display selection after verifying its sources and membership.
     /// The raw tree remains untouched; only existing ancestor edges are shortened.
     pub fn load_selection(
@@ -148,7 +326,7 @@ impl Hierarchy {
         vector_map_path: &Path,
         notes_path: &Path,
     ) -> Result<Self, Box<dyn Error>> {
-        let response: SavedResponse = read_json(response_path)?;
+        let response: SavedResponse<SavedAlgorithm> = read_json(response_path)?;
         let SavedResult {
             algorithm_result,
             alias_groups,
@@ -448,18 +626,18 @@ struct SelectedGroup {
 // These intentionally partial schemas skip saved matrices, labels, selected
 // clusters, model output, and provenance without materializing them in memory.
 #[derive(Deserialize)]
-struct SavedResponse {
-    artifact: SavedArtifact,
+struct SavedResponse<Algorithm> {
+    artifact: SavedArtifact<Algorithm>,
 }
 
 #[derive(Deserialize)]
-struct SavedArtifact {
-    result: SavedResult,
+struct SavedArtifact<Algorithm> {
+    result: SavedResult<Algorithm>,
 }
 
 #[derive(Deserialize)]
-struct SavedResult {
-    algorithm_result: SavedAlgorithm,
+struct SavedResult<Algorithm> {
+    algorithm_result: Algorithm,
     alias_groups: Vec<Vec<String>>,
     canonical_unique_ids: Vec<String>,
 }
@@ -468,6 +646,21 @@ struct SavedResult {
 struct SavedAlgorithm {
     vector_count: usize,
     condensed_tree: Vec<SavedEdge>,
+}
+
+#[derive(Deserialize)]
+struct SavedLinkageAlgorithm {
+    vector_count: usize,
+    single_linkage_tree: Vec<SavedLinkageNode>,
+}
+
+#[derive(Deserialize)]
+struct SavedLinkageNode {
+    id: usize,
+    left: usize,
+    right: usize,
+    size: usize,
+    mutual_reachability_distance: f64,
 }
 
 #[derive(Deserialize)]
