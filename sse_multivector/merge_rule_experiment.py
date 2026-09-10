@@ -29,6 +29,7 @@ RULES = {
     'median': 'The ordinary median of all finite eligible cross-group pair distances; average the two middle values for even counts.',
     'note_pair_mean': 'The equal mean of unordered source-note-pair means, each pooling all its finite cross-group distances from both orientations.',
     'paris_linear': 'PARIS: product of original degree masses divided by total degree and cross-group weight; eligible weight is 1 - frozen angle / pi.',
+    'paris_conditional': 'Conditional PARIS variant: (W/Z) times the sum of eligible original degree products divided by cross-group weight; Z sums eligible ordered degree products and W sums original degrees. Eligible weight is 1 - frozen angle / pi.',
 }
 
 
@@ -41,6 +42,17 @@ def _paris_weights(distances):
     weights = np.zeros_like(d)
     weights[eligible] = 1 - d[eligible] / math.pi
     return weights
+
+
+def _conditional_expected_weights(weights):
+    """Condition original endpoint products on eligibility, not refit strengths."""
+    degree = weights.sum(axis=1)
+    expected = degree[:, None] * degree[None, :]
+    expected[weights == 0] = 0
+    normalizer = expected.sum()
+    if not normalizer:
+        raise ValueError('eligible distance graph must be connected')
+    return expected * (degree.sum() / normalizer)
 
 
 def _note_pair_keys(source_note_ids, n):
@@ -66,15 +78,18 @@ def _mean_of_note_pairs(cross, pairs):
 
 
 def pair_score(distances, left, right, rule='symmetric_mean', source_note_ids=None):
-    """Reference definition; points without an eligible partner contribute nothing."""
+    """Reference score using the selected rule's explicit exclusion policy."""
     if rule not in RULES:
         raise ValueError('unknown merge rule: ' + rule)
     cross = np.asarray(distances)[np.ix_(left, right)]
-    if rule == 'paris_linear':
+    if rule in ('paris_linear', 'paris_conditional'):
         weights = _paris_weights(distances)
         connection = weights[np.ix_(left, right)].sum()
         if not connection:
             return math.inf
+        if rule == 'paris_conditional':
+            expected = _conditional_expected_weights(weights)
+            return float(expected[np.ix_(left, right)].sum() / connection)
         degree = weights.sum(axis=1)
         return float(degree[left].sum() * degree[right].sum() / (degree.sum() * connection))
     if rule == 'note_pair_mean':
@@ -130,18 +145,23 @@ def agglomerate(distances, rule='symmetric_mean', source_note_ids=None):
     # Keep them separate so unsupported endpoint reporting remains identical.
     pair_sums = sums.copy() if rule == 'average' else None
     pair_counts = counts.copy() if rule == 'average' else None
-    weights = _paris_weights(d) if rule == 'paris_linear' else None
+    weights = _paris_weights(d) if rule in ('paris_linear', 'paris_conditional') else None
+    expected = None
     if weights is not None:
         connections = np.zeros((total, total))
         connections[:n, :n] = weights
         mass = np.zeros(total)
         mass[:n] = weights.sum(axis=1)
         total_mass = mass.sum()
+        if rule == 'paris_conditional':
+            expected = np.zeros((total, total))
+            expected[:n, :n] = _conditional_expected_weights(weights)
     active = set(range(n))
     members = {i: np.array([i], dtype=np.int64) for i in range(n)}
     owner = np.arange(n)
     sizes = np.ones(total, dtype=np.int64)
-    heap = [(float(mass[i] * mass[j] / (total_mass * weights[i, j]))
+    heap = [(float(expected[i, j] / weights[i, j]) if expected is not None else
+             float(mass[i] * mass[j] / (total_mass * weights[i, j]))
              if weights is not None else float(d[i, j]), i, j)
             for i in range(n) for j in range(i + 1, n)
             if finite[i, j]]
@@ -175,11 +195,16 @@ def agglomerate(distances, rule='symmetric_mean', source_note_ids=None):
         sums[others, new] = incoming[others]
         counts[others, new] = supported[others]
         valid = others[(counts[new, others] > 0) & (counts[others, new] > 0)]
-        if rule == 'paris_linear':
+        if weights is not None:
             mass[new] = mass[left] + mass[right]
             connections[new, others] = connections[left, others] + connections[right, others]
             connections[others, new] = connections[new, others]
-            values = mass[new] * mass[valid] / (total_mass * connections[new, valid])
+            if expected is not None:
+                expected[new, others] = expected[left, others] + expected[right, others]
+                expected[others, new] = expected[new, others]
+                values = expected[new, valid] / connections[new, valid]
+            else:
+                values = mass[new] * mass[valid] / (total_mass * connections[new, valid])
         elif rule == 'note_pair_mean':
             values = np.array([
                 _mean_of_note_pairs(d[np.ix_(members[new], members[other])],
@@ -293,12 +318,14 @@ def main():
     summary = tree_summary(rows, source_sets)
     result = {
         'schema_version': 'merge-rule-experiment-v1', 'run_id': args.run_id,
-        'method': ('paris_linear_eligible_graph' if args.rule == 'paris_linear' else
+        'method': (args.rule + '_eligible_graph' if args.rule in ('paris_linear', 'paris_conditional') else
                    args.rule + '_eligible_pairs' if args.rule in ('average', 'median', 'note_pair_mean')
                    else 'chamfer_' + args.rule + '_finite'), 'sources': sources,
         'source_code_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         'definition': RULES[args.rule],
         'missing_partner_policy': (
+            'Excluded pairs contribute neither observed nor expected graph weight. Condition original endpoint products on eligibility without refitting strengths. Record endpoints with no eligible partner. Groups with no eligible edges cannot merge.'
+            if args.rule == 'paris_conditional' else
             'Excluded edges have no graph weight. Original degree mass remains fixed through unions. Record endpoints with no eligible partner. Groups with no eligible edges cannot merge.'
             if args.rule == 'paris_linear' else
             'Omit excluded edges and empty source-note-pair bins; equally average nonempty bin means. Record endpoints with no eligible partner. Groups with no eligible edges cannot merge.'

@@ -168,6 +168,20 @@ The implementation must use the actual cross-pair median, not SciPy's differentl
 
 **Live viewer:** At 1626, expand 1312 and open V777's full original with its inline mask. Return and move upward to 1718: unopened 1133 and 1611 appear above the still-nested 1626/1312 chain. Exit restores the terminal. Reproduce using `--rule paris_linear`, a fresh run ID and a new output path; preserve the recorded affinity definition and original degree mass.
 
+## M08 — Expected connections conditioned on eligibility
+
+**Question:** Does excluding forbidden same-note pairs from M07's expected connections improve discovery? The [predeclared research and definition](excluded-expected-connections.md) distinguish absent evidence from zero similarity and conditioning from refitting expected strengths. Original affinities, original strengths, angular distances, edge eligibility, inputs and display remain fixed.
+
+**Result:** 1.42 seconds, with all 916 canonical vectors, 945 original IDs and 100 notes retained. Raw maximum depth is 31, no score inversions, and 370 merges have unsupported endpoints. The unchanged viewer retains 502 groups, maximum depth 20 and 117 one-child groups. These are structural measurements, not semantic grades.
+
+**Complete inspection:** [A](audit-M08-complete-A.md), [B](audit-M08-complete-B.md), and the [connecting parents](audit-M08-upper.md) cover all 915 transitions and 2,490 original fragments. There are 331 exact recursive M04/M06/M07 matches and 584 changed transitions. The [13 relation checks](audit-M08-relations.md) preserve all previously admitted alternate masks, including the separate future-lunch and concrete-preservation variants.
+
+**Findings:** Tea1582 and restaurant1737 retain useful access; tomatoes1743 provides a more focused but qualified full extension than M07. Christmas1732 remains available with an additional generic gift/gratitude note. Photography separates again; food over time and concrete preservation need broader parents. The same vacuum-sealer/grab-bar pair survives. Some upper beverage and culinary unions remain intelligible, but the full root partition is not established as coherent. M08 is a mixed comparison, not a replacement winner.
+
+**Mechanism:** The first 12 merges are identical to M07. At928, removing an excluded same-note expected contribution makes the Bitcoin-workshop alternative win instead of a greeting addition. That exact change reunites another mask of an already-present note; it does not add a discovered note. All eligible singleton rankings are unchanged up to one common rescaling, and conditional expected endpoint strengths need not match observed strengths.
+
+**Verification:** Six new tests failed before implementation; all31 merge-rule tests now pass. Independent exhaustive checks cover the definition, eligibility, ties, normalization and complete small histories. All eight saved full histories replay exactly. The live production TUI opens1582, shows V670's complete original inline, expands1260 and moves up to1723 with unopened1534 above the still-nested children. No display code changed. Reproduce with `--rule paris_conditional`, a fresh run ID and a new output path.
+
 ## Comparison table
 
 | Run | Group score | Raw maximum depth | Display maximum depth | Display groups | Display one-child groups |
@@ -180,10 +194,11 @@ The implementation must use the actual cross-pair median, not SciPy's differentl
 | M05 | Median of every permitted cross-group distance | 47 | 23 | 500 | 124 |
 | M06 | Equal mean of unordered source-note-pair means | 54 | 22 | 488 | 129 |
 | M07 | Original degree masses relative to cross-group graph weight (PARIS) | 26 | 20 | 904 | 277 |
+| M08 | Eligible original degree products relative to cross-group graph weight | 31 | 20 | 502 | 117 |
 
 These are structural measurements only. Before claiming a lost discovery path, check whether another vector from the same note already provides that access. Before claiming improvement from reuniting vectors, check whether any new relevant note becomes reachable. Exact memberships remain useful for locating changes, not as a substitute for the semantic and note-level objective.
 
-M07 tests surrounding-connection evidence and changes singleton-pair scores, unlike M01–M06. Its mixed result raises a narrower question: how should a graph-based merge rule treat deliberately excluded same-note connections? That question is being investigated in the literature before another implementation is chosen. No final winner is selected.
+M07 tests surrounding-connection evidence and changes singleton-pair scores, unlike M01–M06. M08 tests the treatment of excluded connections in that rule and also yields tradeoffs. Research is now checking whether already-present internal variation supplies a useful different merge criterion without silently changing frozen geometry or restoring excluded pairs. No subsequent rule or final winner is selected; final inspection packaging remains pending.
 
 ## Further literature considered
 
@@ -203,7 +218,7 @@ target/merge-rule-review-build/debug/hdbscan-hierarchy \
   --merge-history
 ```
 
-Substitute `M02.json`, `M03.json`, `M04.json`, `M05.json`, `M06.json`, or `M07.json` to inspect another saved run. All seven pass the production loader. Add `--start-at 1467` for M05's restaurant example, `--start-at 1704` for M06's Christmas example, or `--start-at 1523` for M07's restaurant example. M05 was also verified in a live terminal: expand child1403, open V399's full original with its inline mask, return, move upward to1651 while retaining the expanded nesting, and exit. To build this binary from a fresh checkout, without changing the existing pinned launcher:
+Substitute `M02.json`, `M03.json`, `M04.json`, `M05.json`, `M06.json`, `M07.json`, or `M08.json` to inspect another saved run. All eight pass the production loader. Add `--start-at 1467` for M05's restaurant example, `--start-at 1704` for M06's Christmas example, `--start-at 1523` for M07's restaurant example, or `--start-at 1582` for M08's tea example. M05 was also verified in a live terminal: expand child1403, open V399's full original with its inline mask, return, move upward to1651 while retaining the expanded nesting, and exit. To build this binary from a fresh checkout, without changing the existing pinned launcher:
 
 ```sh
 CARGO_TARGET_DIR=target/merge-rule-review-build CARGO_BUILD_JOBS=2 \
