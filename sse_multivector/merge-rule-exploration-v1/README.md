@@ -152,6 +152,22 @@ The implementation must use the actual cross-pair median, not SciPy's differentl
 
 **Live viewer check:** Open1704, open V518's complete original with its inline mask, return, expand1453, and move upward to1781. The opened child stays nested and the unopened1761 sibling appears above it. Exiting restores the terminal. This confirms display behavior, not semantic approval.
 
+## M07 — PARIS with fixed linear affinities
+
+**Question:** Can a connection judged relative to the groups' connections to the rest of the corpus improve nested memberships? The [paper/source review and predeclared definition](surrounding-connections.md) specify PARIS on `1 − frozen angle / π`, preserving every eligible edge. Original degree mass stays fixed through unions. This is not new embedding geometry and not a pure change from mean to median: excluded edges have no graph weight, unlike omission from M04's denominator.
+
+**Result:** 1.38 seconds; all 916 canonical vectors, 945 original IDs and 100 notes retained. Raw maximum depth 26, no score inversions, and two merges with unsupported endpoints. The unchanged viewer retains 904 groups, maximum depth 20, and 277 one-child groups. Neither shorter raw depth nor monotonic scores demonstrates semantic improvement.
+
+**Complete inspection:** [A](audit-M07-complete-A.md), [B](audit-M07-complete-B.md), and the [connecting parents](audit-M07-upper.md) cover all 915 transitions and 2,490 original mask fragments. There are 162 exact recursive matches to M04 or M06 and 753 changed transitions. All masks, including aliases with different fragments, were read; full originals were used throughout. The [13 relation checks](audit-M07-relations.md) retain the previously declared generous alternate masks.
+
+**Findings:** M07 restores photography 1080, preserves Christmas 1455, tea 1426 and physical activity 1276, and restores restaurant access at 1523 with a relevant coffee-shop restriction added. It does not dominate M06: the complete tomato and seasoning extensions are less focused, as is the three-note food/emotion extension. Useful partial groups survive. Concrete preservation still includes the weak vacuum-sealer/grab-bar link. The upper tree has intelligible food/drink broadening alongside mixed numeric, technical and generic fragments; no coherent complete top-level partition is established.
+
+**Mechanism:** The [fixed-pair score diagnostic](audit-M07-score-factors.md) separates original-degree effects from the fraction of possible cross pairs that are eligible. Across nine saved decisions, both factors favor useful and weak groups. Removing only the explicit eligibility-fraction factor reverses eight inspected competing-pair comparisons; these are fixed-state calculations, not reruns or proof of whole-tree causation. Source-note size also affects original degree. This warrants a source-grounded investigation of the null model's treatment of eligibility, not an automatic claim that degree correction caused every improvement or regression.
+
+**Verification:** All 25 tests pass. Six new tests were first verified to fail before implementation; they cover external-degree influence, preserved internal degree mass, independent exhaustive full histories, exact ties, eligibility guards and the constant-edge source-size effect. Independent numerical review found no defect. All seven saved 915-merge histories, aliases, canonical IDs and input hashes replay exactly with the current runner.
+
+**Live viewer:** At 1626, expand 1312 and open V777's full original with its inline mask. Return and move upward to 1718: unopened 1133 and 1611 appear above the still-nested 1626/1312 chain. Exit restores the terminal. Reproduce using `--rule paris_linear`, a fresh run ID and a new output path; preserve the recorded affinity definition and original degree mass.
+
 ## Comparison table
 
 | Run | Group score | Raw maximum depth | Display maximum depth | Display groups | Display one-child groups |
@@ -163,10 +179,11 @@ The implementation must use the actual cross-pair median, not SciPy's differentl
 | M04 | Average of every permitted cross-group distance | 53 | 23 | 485 | 114 |
 | M05 | Median of every permitted cross-group distance | 47 | 23 | 500 | 124 |
 | M06 | Equal mean of unordered source-note-pair means | 54 | 22 | 488 | 129 |
+| M07 | Original degree masses relative to cross-group graph weight (PARIS) | 26 | 20 | 904 | 277 |
 
 These are structural measurements only. Before claiming a lost discovery path, check whether another vector from the same note already provides that access. Before claiming improvement from reuniting vectors, check whether any new relevant note becomes reachable. Exact memberships remain useful for locating changes, not as a substitute for the semantic and note-level objective.
 
-Source-note weighting now has a complete controlled result, not just a proposed next experiment. The next research question is whether a merge criterion can use surrounding connections, beyond the candidate groups' own cross-pair distances. All six implemented rules agree on singleton-pair scores. No seventh rule is selected merely to increase the experiment count, and no final winner is selected.
+M07 tests surrounding-connection evidence and changes singleton-pair scores, unlike M01–M06. Its mixed result raises a narrower question: how should a graph-based merge rule treat deliberately excluded same-note connections? That question is being investigated in the literature before another implementation is chosen. No final winner is selected.
 
 ## Further literature considered
 
@@ -186,7 +203,7 @@ target/merge-rule-review-build/debug/hdbscan-hierarchy \
   --merge-history
 ```
 
-Substitute `M02.json`, `M03.json`, `M04.json`, `M05.json`, or `M06.json` to inspect another saved run. All six pass the production loader. Add `--start-at 1467` for M05's restaurant example, or `--start-at 1704` for M06's Christmas example. M05 was also verified in a live terminal: expand child1403, open V399's full original with its inline mask, return, move upward to1651 while retaining the expanded nesting, and exit. To build this binary from a fresh checkout, without changing the existing pinned launcher:
+Substitute `M02.json`, `M03.json`, `M04.json`, `M05.json`, `M06.json`, or `M07.json` to inspect another saved run. All seven pass the production loader. Add `--start-at 1467` for M05's restaurant example, `--start-at 1704` for M06's Christmas example, or `--start-at 1523` for M07's restaurant example. M05 was also verified in a live terminal: expand child1403, open V399's full original with its inline mask, return, move upward to1651 while retaining the expanded nesting, and exit. To build this binary from a fresh checkout, without changing the existing pinned launcher:
 
 ```sh
 CARGO_TARGET_DIR=target/merge-rule-review-build CARGO_BUILD_JOBS=2 \

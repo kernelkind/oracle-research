@@ -28,7 +28,19 @@ RULES = {
     'average': 'The mean of every finite eligible cross-group pair distance, weighted by the number of such pairs.',
     'median': 'The ordinary median of all finite eligible cross-group pair distances; average the two middle values for even counts.',
     'note_pair_mean': 'The equal mean of unordered source-note-pair means, each pooling all its finite cross-group distances from both orientations.',
+    'paris_linear': 'PARIS: product of original degree masses divided by total degree and cross-group weight; eligible weight is 1 - frozen angle / pi.',
 }
+
+
+def _paris_weights(distances):
+    d = np.asarray(distances, dtype=np.float64)
+    eligible = np.isfinite(d)
+    np.fill_diagonal(eligible, False)
+    if np.any((d[eligible] < 0) | (d[eligible] >= math.pi)):
+        raise ValueError('eligible angles must lie in [0, pi) to preserve positive graph edges')
+    weights = np.zeros_like(d)
+    weights[eligible] = 1 - d[eligible] / math.pi
+    return weights
 
 
 def _note_pair_keys(source_note_ids, n):
@@ -58,6 +70,13 @@ def pair_score(distances, left, right, rule='symmetric_mean', source_note_ids=No
     if rule not in RULES:
         raise ValueError('unknown merge rule: ' + rule)
     cross = np.asarray(distances)[np.ix_(left, right)]
+    if rule == 'paris_linear':
+        weights = _paris_weights(distances)
+        connection = weights[np.ix_(left, right)].sum()
+        if not connection:
+            return math.inf
+        degree = weights.sum(axis=1)
+        return float(degree[left].sum() * degree[right].sum() / (degree.sum() * connection))
     if rule == 'note_pair_mean':
         pairs = _note_pair_keys(source_note_ids, len(distances))
         return _mean_of_note_pairs(cross, pairs[np.ix_(left, right)])
@@ -111,11 +130,20 @@ def agglomerate(distances, rule='symmetric_mean', source_note_ids=None):
     # Keep them separate so unsupported endpoint reporting remains identical.
     pair_sums = sums.copy() if rule == 'average' else None
     pair_counts = counts.copy() if rule == 'average' else None
+    weights = _paris_weights(d) if rule == 'paris_linear' else None
+    if weights is not None:
+        connections = np.zeros((total, total))
+        connections[:n, :n] = weights
+        mass = np.zeros(total)
+        mass[:n] = weights.sum(axis=1)
+        total_mass = mass.sum()
     active = set(range(n))
     members = {i: np.array([i], dtype=np.int64) for i in range(n)}
     owner = np.arange(n)
     sizes = np.ones(total, dtype=np.int64)
-    heap = [(float(d[i, j]), i, j) for i in range(n) for j in range(i + 1, n)
+    heap = [(float(mass[i] * mass[j] / (total_mass * weights[i, j]))
+             if weights is not None else float(d[i, j]), i, j)
+            for i in range(n) for j in range(i + 1, n)
             if finite[i, j]]
     heapq.heapify(heap)
     rows = []
@@ -147,7 +175,12 @@ def agglomerate(distances, rule='symmetric_mean', source_note_ids=None):
         sums[others, new] = incoming[others]
         counts[others, new] = supported[others]
         valid = others[(counts[new, others] > 0) & (counts[others, new] > 0)]
-        if rule == 'note_pair_mean':
+        if rule == 'paris_linear':
+            mass[new] = mass[left] + mass[right]
+            connections[new, others] = connections[left, others] + connections[right, others]
+            connections[others, new] = connections[new, others]
+            values = mass[new] * mass[valid] / (total_mass * connections[new, valid])
+        elif rule == 'note_pair_mean':
             values = np.array([
                 _mean_of_note_pairs(d[np.ix_(members[new], members[other])],
                                     note_pairs[np.ix_(members[new], members[other])])
@@ -260,11 +293,14 @@ def main():
     summary = tree_summary(rows, source_sets)
     result = {
         'schema_version': 'merge-rule-experiment-v1', 'run_id': args.run_id,
-        'method': (args.rule + '_eligible_pairs' if args.rule in ('average', 'median', 'note_pair_mean')
+        'method': ('paris_linear_eligible_graph' if args.rule == 'paris_linear' else
+                   args.rule + '_eligible_pairs' if args.rule in ('average', 'median', 'note_pair_mean')
                    else 'chamfer_' + args.rule + '_finite'), 'sources': sources,
         'source_code_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         'definition': RULES[args.rule],
         'missing_partner_policy': (
+            'Excluded edges have no graph weight. Original degree mass remains fixed through unions. Record endpoints with no eligible partner. Groups with no eligible edges cannot merge.'
+            if args.rule == 'paris_linear' else
             'Omit excluded edges and empty source-note-pair bins; equally average nonempty bin means. Record endpoints with no eligible partner. Groups with no eligible edges cannot merge.'
             if args.rule == 'note_pair_mean' else
             'Omit excluded pairs from the median sample; record endpoints with no eligible partner. A pair of groups with no eligible edges cannot merge.'
