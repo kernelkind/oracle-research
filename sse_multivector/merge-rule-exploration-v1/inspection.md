@@ -2,11 +2,54 @@
 
 Start with **M06 and M07**. Keep **M01** beside them: it preserves useful relationships that both weaken. These are candidates for inspection, not a selected replacement for HDBv3.
 
-All runs contain the same 100 notes and 916 distinct vectors, representing 945 original masks. Only the merge rule changes. No hierarchy titles were generated and no memberships were moved by hand.
+All runs contain the same 100 notes and 916 distinct vectors, representing 945 original masks. Only the merge rule changes. The merge experiments used no hierarchy titles and no memberships were moved by hand. The separate M06 note view below adds provisional titles for inspection, not for clustering.
 
 `N046` identifies a note. `V362` identifies one mask and its vector. `M06/1397` identifies group1397 in M06; the same number in another run means something different. Brackets below show the exact mask fragments, in source order.
 
 ## Open the hierarchies
+
+### M06 with provisional titles and original notes
+
+```sh
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-m06-titled-hierarchy.sh
+```
+
+This opens all 150 groups in M06's existing five-note display. No memberships,
+children, order, masks or merges were changed. All 100 original notes remain
+available. Titles were proposed by reading the notes and checking the masks;
+they are not user approvals or a new labeling-prompt experiment.
+
+The existing note browser shows immediate children, their actual `M06/ID`,
+provisional titles and distinct-note counts. `j/k` chooses; `Enter/l` opens;
+`h` or `Backspace` goes back. The note actions open full original text with
+the original `N` IDs. Within a note, `h/l` changes notes and `j/k` scrolls.
+`?` opens analysis separately from the original text. `q` exits without saving
+decisions. Starting inside a group still permits going up to the real root:
+
+```sh
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-m06-titled-hierarchy.sh --start-at 1605
+```
+
+Other direct starts are `1433` (Eggs), `1351` (Tomatoes), and `1733`
+(Household equipment). These are provisional descriptions for inspection,
+not preferred paths the algorithm must reproduce.
+
+**Current reading:** broad Coffee and Food categories can be valid; missing
+manual subgroups are not failures. The note-level check also rescues groups
+whose masks differ but whose original notes share Food. However, the current
+tree has successive choices that can only be given the same broad title:
+`1812 → 1799 → 1797 → 1782 → 1770` returns `99 → 97 → 95 → 93 → 92`
+notes, all provisionally titled Food. These titles expose limited semantic
+narrowing without claiming that a different manual taxonomy is mandatory.
+They do not fix it or isolate its cause. Detached tags and narrower titles
+that would misdescribe the notes are identified in each group's analysis.
+
+[M06-titles.json](M06-titles.json) binds its 150 entries to the saved history,
+vector map and source-note checksums. The production loader rejects missing,
+extra or mismatched entries. `--check` validates the complete package without
+opening a terminal. The earlier unlabeled viewers remain unchanged.
+
+### Unlabeled mask views
 
 Each command opens the saved hierarchy with the default two-note display minimum, initially focused on one example. Children remain nested. Press `j/k` to select, `l` to expand, and `Enter` on a mask to see its full original note. `Esc` returns to the hierarchy; `u` moves upward. Unopened siblings appear above the branch already opened. `q` exits. Omit `--start-at` to begin at the root.
 
@@ -49,7 +92,7 @@ CARGO_BUILD_JOBS=2 CARGO_TARGET_DIR=target/merge-rule-review-build nix develop -
 The comparison menu presents the accepted five-note category, M06's relevant
 branches, and separate analysis. Open a page with `Enter`; `F2` returns to the
 menu. Existing nested-tree controls and original-note drilldown remain available.
-No category titles were generated for M06 and no decisions are recorded.
+These comparison pages keep M06 unlabeled and record no decisions.
 Masks show both their original `V` IDs and source-note `N` IDs. Parent masks
 start hidden when their note occurs in a descendant; `a` shows or hides them
 for inspection. This toggle is confined to the comparison and changes no groups.
@@ -67,10 +110,10 @@ display minimum does not reveal a smaller group containing these five notes.
 The added notes include broader coffee material, caffeine, and detached tags;
 they do not establish a preparation-specific category.
 
-The result shows useful local relationships without the preparation-specific
-choice in the accepted example. It does not identify a single causal failure
-in the masks, SSE, or the merge rule, and does not require every valid hierarchy
-to reproduce the exact manual category. The egg and flavour branches are also
+The user clarified that **Coffee alone can be sufficient**. The absence of the
+manual preparation subgroup is not, by itself, a hierarchy defect. The result
+therefore does not justify changing the masks, SSE or merge rule to reproduce
+that subgroup. The egg and flavour branches are also
 available for inspection: another mask's valid placement is not automatically
 a loss of the note's preparation meaning.
 

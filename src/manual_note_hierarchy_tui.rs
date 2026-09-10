@@ -14,6 +14,7 @@ use crate::reference_tui::{
     centered, has_command_modifier, is_control_c_event, render_scrollable_panel, secondary_style,
     terminal_safe,
 };
+use crate::titled_merge_hierarchy::TitledMergeHierarchy;
 
 const CONTROLS: &str = "In categories, j/k or Up/Down chooses an item; Enter/l or Right opens it. h, Backspace or Escape returns to the parent. Child categories are separate from the actions for viewing all notes or notes outside children.\n\nIn original notes, h/l or Left/Right changes the note; j/k or Up/Down scrolls. Backspace or Escape returns to the category choices.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis manual proposal is read-only. Nothing is written or approved.";
 
@@ -32,6 +33,7 @@ struct NoteBrowser {
 
 pub struct ManualNoteExplorer {
     hierarchy: ManualNoteHierarchy,
+    merge_origin: Option<(String, usize)>,
     categories: Vec<CategoryFrame>,
     notes: Option<NoteBrowser>,
     analysis_scroll: Option<u16>,
@@ -48,6 +50,7 @@ impl ManualNoteExplorer {
                 cursor: 0,
             }],
             hierarchy,
+            merge_origin: None,
             notes: None,
             analysis_scroll: None,
             half_page_lines: 1,
@@ -60,11 +63,76 @@ impl ManualNoteExplorer {
         model
     }
 
+    pub fn from_merge(hierarchy: TitledMergeHierarchy) -> Self {
+        let mut path = vec![hierarchy.start_group_id.to_string()];
+        let mut model = Self::new(hierarchy.hierarchy);
+        model.merge_origin = Some((hierarchy.run_id, hierarchy.min_notes));
+        while path.last().expect("starting group") != &model.hierarchy.root_node_id {
+            let child = path.last().expect("starting group");
+            let parent = model
+                .hierarchy
+                .nodes
+                .values()
+                .find(|node| node.children.contains(child))
+                .expect("validated complete merge hierarchy");
+            path.push(parent.node_id.clone());
+        }
+        path.reverse();
+        model.categories = path
+            .iter()
+            .enumerate()
+            .map(|(index, id)| CategoryFrame {
+                node_id: id.clone(),
+                cursor: path
+                    .get(index + 1)
+                    .and_then(|child| {
+                        model.hierarchy.nodes[id]
+                            .children
+                            .iter()
+                            .position(|id| id == child)
+                    })
+                    .unwrap_or(0),
+            })
+            .collect();
+        model.notes = None;
+        if model.category().children.is_empty() {
+            model.show_notes(false, model.categories.len() > 1);
+        }
+        model
+    }
+
+    fn category_title(&self, id: &str) -> String {
+        let label = terminal_safe(&self.hierarchy.nodes[id].label);
+        match &self.merge_origin {
+            Some((run, _)) => format!("{}/{id} · {label}", terminal_safe(run)),
+            None => label,
+        }
+    }
+
+    fn merge_notice(&self) -> Option<String> {
+        self.merge_origin.as_ref().map(|(run, minimum)| {
+            format!(
+                "{} · provisional titles · minimum {minimum} notes · read-only",
+                terminal_safe(run)
+            )
+        })
+    }
+
     fn category(&self) -> &ManualCategory {
         &self.hierarchy.nodes[&self.categories.last().expect("root category").node_id]
     }
 
     fn breadcrumb(&self) -> String {
+        if self.merge_origin.is_some() {
+            let title = self.category_title(&self.category().node_id);
+            // An immediate parent and current title remain legible even deep in the tree.
+            return if self.categories.len() > 1 {
+                let parent = &self.categories[self.categories.len() - 2].node_id;
+                format!("Parent: {}\n{title}", self.category_title(parent))
+            } else {
+                title
+            };
+        }
         self.categories
             .iter()
             .map(|frame| terminal_safe(&self.hierarchy.nodes[&frame.node_id].label))
@@ -80,7 +148,7 @@ impl ManualNoteExplorer {
             .map(|id| {
                 format!(
                     "{} · {}",
-                    terminal_safe(&self.hierarchy.nodes[id].label),
+                    self.category_title(id),
                     note_count(self.hierarchy.note_ids(id).len())
                 )
             })
@@ -275,7 +343,7 @@ impl ManualNoteExplorer {
         }
         let area = centered(area);
         let breadcrumb = self.breadcrumb();
-        let heading = if self.analysis_scroll.is_some() {
+        let mut heading = if self.analysis_scroll.is_some() {
             format!("{breadcrumb}\nCategory analysis · read-only")
         } else if let Some(notes) = &self.notes {
             let note = &self.hierarchy.notes[&notes.note_ids[notes.cursor]];
@@ -292,10 +360,19 @@ impl ManualNoteExplorer {
             )
         } else {
             format!(
-                "{breadcrumb} · {}\nManual hierarchy · read-only",
-                note_count(self.hierarchy.note_ids(&self.category().node_id).len())
+                "{breadcrumb} · {}{}",
+                note_count(self.hierarchy.note_ids(&self.category().node_id).len()),
+                if self.merge_origin.is_none() {
+                    "\nManual hierarchy · read-only"
+                } else {
+                    ""
+                }
             )
         };
+        if let Some(notice) = self.merge_notice() {
+            heading.push('\n');
+            heading.push_str(&notice);
+        }
         let heading = Paragraph::new(heading).wrap(Wrap { trim: false });
         let heading_height = u16::try_from(heading.line_count(area.width))
             .unwrap_or(u16::MAX)
@@ -308,7 +385,12 @@ impl ManualNoteExplorer {
         .split(area);
         frame.render_widget(heading.style(accent_style()), rows[0]);
         if self.analysis_scroll.is_some() {
-            let content = format!("{}\n\n{CONTROLS}", terminal_safe(&self.category().analysis));
+            let controls = if self.merge_origin.is_some() {
+                CONTROLS.replace("This manual proposal", "This saved hierarchy")
+            } else {
+                CONTROLS.to_owned()
+            };
+            let content = format!("{}\n\n{controls}", terminal_safe(&self.category().analysis));
             render_scrollable_panel(
                 frame,
                 rows[1],
@@ -398,7 +480,14 @@ impl InteractiveReviewModel for ManualNoteExplorer {
 }
 
 pub fn run_manual_note_explorer(hierarchy: ManualNoteHierarchy) -> io::Result<()> {
-    let mut model = ManualNoteExplorer::new(hierarchy);
+    run_note_explorer(ManualNoteExplorer::new(hierarchy))
+}
+
+pub fn run_titled_merge_note_explorer(hierarchy: TitledMergeHierarchy) -> io::Result<()> {
+    run_note_explorer(ManualNoteExplorer::from_merge(hierarchy))
+}
+
+fn run_note_explorer(mut model: ManualNoteExplorer) -> io::Result<()> {
     let mut terminal = ReferenceTerminal::new()?;
     terminal.run_review_model_stateful(&mut model, false)?;
     Ok(())

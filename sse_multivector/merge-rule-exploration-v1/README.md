@@ -1,6 +1,8 @@
 # Merge-rule exploration
 
-Goal: find evidence-backed alternatives to HDBv3's single-edge merge rule for broad-to-narrow content discovery. Existing notes, masks, vectors, angular distances, source-note eligibility, and display simplification remain fixed. No generated titles or manual reassignment enter the comparison. This directory is separate from earlier experiments and user-authored notes.
+Goal: find evidence-backed alternatives to HDBv3's single-edge merge rule for broad-to-narrow content discovery. Existing notes, masks, vectors, angular distances, source-note eligibility, and display simplification remain fixed. The merge experiments use no generated titles or manual reassignment. This directory is separate from earlier experiments and user-authored notes.
+
+The separate [M06 titled note view](inspection.md#m06-with-provisional-titles-and-original-notes) now adds provisional reading aids to the unchanged five-note projection. It uses all 150 displayed groups and all 100 original notes, not a manually rearranged hierarchy. Broad Food or Coffee can be sufficient; the manual preparation subgroup is not a required target. Repeated broad labels expose the current lack of informative narrowing at some levels. These inspection titles do not change or validate the merge rule.
 
 **Start with [the inspection package](inspection.md): verified TUI commands, exact masks and the main improvements and regressions.** M06 and M07 are the primary comparisons, M01 preserves useful contrasting groups, and M03 has an optional animal-processing/slaughter example. No final algorithm is selected. The sections below retain the chronological research and experiment record; their “next question” paragraphs explain why the following experiment was run.
 

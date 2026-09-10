@@ -42,6 +42,7 @@ pub mod io_pressure;
 pub mod local_personalizer;
 pub mod manual_note_hierarchy;
 pub mod manual_note_hierarchy_tui;
+pub mod titled_merge_hierarchy;
 pub mod manual_workflow;
 pub mod oracle;
 pub mod ordered_embedding;

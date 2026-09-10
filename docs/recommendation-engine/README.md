@@ -41,6 +41,11 @@ The [merge-rule inspection package](../../sse_multivector/merge-rule-exploration
 also includes an optional five-note display minimum for saved M06, alongside
 the unchanged default view. It changes available group choices, not clustering
 or note memberships; the minimum is still an experiment.
+The [provisionally titled M06 note view](../../sse_multivector/merge-rule-exploration-v1/inspection.md#m06-with-provisional-titles-and-original-notes)
+uses that unchanged 150-group projection in the existing original-note browser.
+It exposes titles, actual group IDs and optional analysis; it makes no new
+clustering or membership decisions. Repeated broad Food titles make limited
+semantic narrowing visible without forcing an alternative manual taxonomy.
 The separate [manual coffee example](../../sse_multivector/merge-rule-exploration-v1/inspection.md#manual-coffee-example)
 lets the user inspect a small proposed hierarchy constructed from original
 notes, not from an algorithm's nodes. The user accepted this example as a valid
@@ -49,7 +54,9 @@ arrangement, not the uniquely correct one. The
 now shows its five original notes beside relevant saved M06 branches. M06
 preserves useful two-note preparation pairs, hidden by the five-note display
 minimum, but its smallest group covering the five notes contains 19 notes.
-Morning coffee has not been compared; no algorithm is approved by this judgment.
+The user clarified that a broad Coffee category can be sufficient: absence of
+the manual preparation subgroup is not, by itself, a hierarchy defect. Morning
+coffee has not been compared; no algorithm is approved by this judgment.
 The earlier [controlled-run results](experiments/fine-segmentation/controlled-run-v1-results.md)
 and their frozen protocols remain unchanged evidence, not a pending work order
 that must be repeated before this investigation.

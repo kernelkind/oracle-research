@@ -6,16 +6,21 @@ use std::process::ExitCode;
 
 use oracle_mvp::hierarchy_comparison_tui::{HierarchyComparison, run_hierarchy_comparison};
 use oracle_mvp::manual_note_hierarchy::ManualNoteHierarchy;
-use oracle_mvp::manual_note_hierarchy_tui::run_manual_note_explorer;
+use oracle_mvp::manual_note_hierarchy_tui::{
+    run_manual_note_explorer, run_titled_merge_note_explorer,
+};
 use oracle_mvp::reference_tui::ReferenceTerminal;
 use oracle_mvp::sse_subject_navigation::load_sse_subject_hierarchy;
+use oracle_mvp::titled_merge_hierarchy::TitledMergeHierarchy;
 
 const USAGE: &str = "usage: sse-subject-navigation <manual-hierarchy.json> <fine-region-hierarchy-analysis.json> <fine-region-partition-analysis.json>
        sse-subject-navigation --notes <manual-note-hierarchy.json> <source-notes.json> [--check]
        sse-subject-navigation --compare <comparison.json> [--check]
+       sse-subject-navigation --merge-notes <merge-history.json> <vector-map.json> <source-notes.json> <titles.json> [--min-notes 5] [--start-at GROUP] [--check]
 
 --notes  Inspect manually constructed categories over original notes; no vector or clustering input
 --compare  Compare manual notes with saved merge groups; F2 returns to the comparison menu
+--merge-notes  Browse unchanged saved merge groups as original notes with provisional titles
 --check  Validate and describe every requested page without opening a terminal";
 
 fn main() -> ExitCode {
@@ -40,6 +45,9 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     if arguments.first().is_some_and(|arg| arg == "--compare") {
         return run_comparison(&arguments[1..]);
     }
+    if arguments.first().is_some_and(|arg| arg == "--merge-notes") {
+        return run_merge_notes(&arguments[1..]);
+    }
     let [hierarchy, hierarchy_analysis, partition_analysis] = arguments.as_slice() else {
         return Err(USAGE.into());
     };
@@ -49,6 +57,49 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     }
     let mut terminal = ReferenceTerminal::new()?;
     terminal.navigate_subjects(hierarchy)?;
+    Ok(())
+}
+
+fn run_merge_notes(arguments: &[String]) -> Result<(), Box<dyn std::error::Error>> {
+    let [history, vectors, notes, titles, options @ ..] = arguments else {
+        return Err(USAGE.into());
+    };
+    let mut minimum = None;
+    let mut start = None;
+    let mut check = false;
+    let mut options = options.iter();
+    while let Some(option) = options.next() {
+        match option.as_str() {
+            "--check" if !check => check = true,
+            "--min-notes" if minimum.is_none() => {
+                minimum = Some(options.next().ok_or(USAGE)?.parse::<usize>()?);
+            }
+            "--start-at" if start.is_none() => {
+                start = Some(options.next().ok_or(USAGE)?.parse::<usize>()?);
+            }
+            _ => return Err(USAGE.into()),
+        }
+    }
+    let mut hierarchy = TitledMergeHierarchy::load(
+        history.as_ref(),
+        vectors.as_ref(),
+        notes.as_ref(),
+        titles.as_ref(),
+        minimum.unwrap_or(5),
+    )?;
+    if let Some(group) = start {
+        hierarchy.start_at(group)?;
+    }
+    if check {
+        println!("{}", hierarchy.check_summary());
+        return Ok(());
+    }
+    if !std::io::stdin().is_terminal() || !std::io::stdout().is_terminal() {
+        return Err(
+            "titled merge note navigation must be started from an interactive terminal".into(),
+        );
+    }
+    run_titled_merge_note_explorer(hierarchy)?;
     Ok(())
 }
 
