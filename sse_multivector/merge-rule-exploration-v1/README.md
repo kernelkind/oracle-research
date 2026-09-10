@@ -31,7 +31,7 @@ These findings justify a controlled first experiment, not a predetermined sequen
 
 These counts describe structure, not semantic quality. M01 preserves exactly 246 of the baseline's 915 raw membership sets; changed merge order alone is not counted as a changed group.
 
-**Initial inspection:** Read the first 32 changed cross-note groups, the full masks in M01/1292, /1316, /1337 and /1373, and the original notes needed to interpret the pie/bread/cream examples. Most early changes remain interpretable: coffee, dietary variety, egg-related material, crockpot cooking, and bread ingredients. No semantic titles were generated or used. Complete hierarchy inspection remains in progress; these observations are not an overall pass rate.
+**Initial inspection:** Read the first 32 changed cross-note groups, the full masks in M01/1292, /1316, /1337 and /1373, and the original notes needed to interpret the pie/bread/cream examples. Most early changes remain interpretable: coffee, dietary variety, egg-related material, crockpot cooking, and bread ingredients. No semantic titles were generated or used. These initial observations are not an overall pass rate; complete reading coverage is now documented below.
 
 **Concrete changed decision:** V777/N083 selects `⟦easter matcha-cashew pie⟧ ⟦no refined sugar⟧`. Its strongest individual connection still points to V355/V356/N045, `⟦Half & half⟧ ⟦ruining my coffee⟧`, with cosine 0.635076. Neither vector changed. In HDBv3 it joins an 81-vector, 30-note group at1270. In M01 it instead pairs with V666/N072, `⟦Irish soda bread⟧ ⟦I tried out recently⟧ ⟦currants aren't in season yet⟧`, at1261. Their cosine is0.595311.
 
@@ -41,7 +41,7 @@ At that M01 decision, the half-and-half vector already belongs to group1259 (42 
 
 **Next question:** The normalized rule still produces many one-child levels. The 2026 paper explicitly studies removing normalization. Test that single change next, preserving symmetric aggregation and all other controls. Check whether less chaining merely creates arbitrary small groups, rather than assuming a shorter hierarchy is better.
 
-**Pending:** Complete source-grounded hierarchy inspection and final candidate comparison. Generic merge-history TUI support is verified below.
+**Completed inspection:** The [complete M01 audit](audit-M01-complete.md) covers all 915 internal nodes: 444 exact recursive M04 matches and 471 newly inspected transitions. It includes all 100 original notes and checks the relevant alternate masks behind the strongest gain/loss claims. Useful Christmas, photography and animal-flesh extensions coexist with weak pairs and very broad upper parents. This is complete reading coverage, not semantic approval. Final candidate packaging remains pending.
 
 ## M02 — Symmetric nearest-neighbor sums
 
@@ -110,7 +110,33 @@ The unchanged viewer still exposes a 99-note child below M04's 100-note root. Fe
 
 **Verification:** All 11 numeric tests pass. Replaying all four rules with the current runner exactly reproduces each saved 915-merge history, aliases, canonical IDs and input checksums. M04 passes the production merge-history viewer with 485 groups and all 100 notes.
 
-## Current comparison boundary
+## M05 — Median of eligible cross-group distances
+
+**Question:** Does replacing the all-pairs mean with the ordinary median yield useful groups that neither magnitude-sensitive averaging nor per-point nearest partners preserve? This is a distribution-aggregation comparison, not a claim that the existing losses are caused by outliers. Use the middle value when the count is odd, and the average of the two middle values when it is even. Excluded edges remain absent, not artificial infinite observations. Do not choose a percentile from the semantic results.
+
+**Research:** Gagolewski et al. (2023), §3.2 Definition2, applies ordered weighted averages to all cross-group pairs, explicitly including medians, quantiles and trimmed means. It is not an MST-only framework. Its later theorems concern particular weight generators; they do not automatically cover every quantile convention. The paper supplies theoretical linkage results, not semantic-navigation evidence. [Paper](https://arxiv.org/pdf/2303.05683)
+
+The implementation must use the actual cross-pair median, not SciPy's differently defined centroid-based `method="median"`. The latter would change the question and geometry. [SciPy definition](https://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster.hierarchy.linkage.html)
+
+**Fixed-state check before implementing:** At M04's exact partition before V518 joins1659, the mean distances to the regional-meal group1659 and Christmas group1669 are1.233848 and1.243088; medians are1.220974 and1.257601. Median therefore does **not** favor the Christmas alternative at this state. For V549, before its attachment to work group1402, the only eligible distance to1402 is1.105920; the mean to the art group1490 is1.265650 and its median1.322550. Median again does not reverse the local choice. These are fixed-state calculations, not a complete M05 replay. They rule out claiming in advance that median directly repairs these two decisions.
+
+**Reason to test:** The statistic is genuinely distinct and cheap to compare across the full frozen tree. It reduces magnitude sensitivity to extreme pairs but can still penalize legitimate heterogeneous groups, ignore a minority of vectors, and inherit erroneous singleton pairings. Inspect new groups and preserved/lost note relationships rather than treating either known example as the entire test. No labels or manual assignments enter the run.
+
+**Implementation plan:** Recompute each changed pair's exact median from the frozen eligible distances; retain exact global heap selection and the existing support reporting. Do not average child medians, alter merge heights, or import a nearest-neighbor shortcut. Check against independent exhaustive selection before running the corpus. Optimize only if measured local runtime warrants it.
+
+**Result:** The exact implementation completed in5.75 seconds, preserving all916 canonical vectors,945 original IDs and100 notes. Raw maximum depth is47; no parent-score inversions occurred;370 merges have unsupported endpoints under the unchanged exclusion policy. The production viewer retains500 groups, maximum depth23 and124 one-child groups. These are structural measurements, not semantic scores. Thirteen numeric tests pass, including independently sorted cross-pair medians and exhaustive global selection. All five saved runs reproduce exactly after this addition.
+
+**Semantic findings:** The [seven-relation audit](audit-M05-relations.md) confirms preservation of M04's slaughter, food/emotion and food-storage discoveries, but not M01's Christmas or photography extensions. The [new-group audit](audit-M05-new-groups.md) finds a useful restaurant-food-availability group1467 across N010/N050/N057 that the other runs do not expose compactly through the declared relevant alternative masks. It also finds a weak bread-failure/ice-cream-serving pair1686; other bread masks still preserve useful bread-note access, so this is not total lost discovery.
+
+**Mechanism and qualification:** Before1437, V399/N050 can join1403={V075,V077 from N010; V485 from N057}. The three distances are1.064952239,1.065452461,1.284297580. Median1.065452461 favors this third-note addition over the available N057 variant V484 at1.074607679; mean1.138234093 does not. This is a real local choice reversal, not a full causal replay. Crucially, the median majority consists of two masks from **one** note, not two independent notes. Its useful result does not prove source-note consensus.
+
+**Correction to the earlier comparison:** The food/emotion alternative list originally admitted N024 V181–V183. Its96-note M01 bound was valid for that list, but V173 also contains the ice-cream joke. Including it gives M01/1377 at36 notes. M04/M05 still provide the three-note relation much more compactly;96 must not be presented as an exhaustive bound. The relation audit records the complete alternative checks.
+
+**Completed inspection:** [A](audit-M05-complete-A.md), [B](audit-M05-complete-B.md), and the [connecting parents](audit-M05-upper.md) cover all916 canonical vectors,945 original IDs,2490 exact fragments and915 merges. There are521 exact recursive M04 matches and394 newly inspected transitions. This is complete reading coverage, not a semantic pass rate or an overall winner.
+
+**Additional regression:** M04/1587 exposes a three-note tea relationship across N042/N072/N080. M05 preserves the hot/morning-tea pair at1208, but every relevant tea-mask alternative involving N072 first meets it at the displayed root. N072's sweet-tea analogy remains with bread instead. The upper audit gives the exact alternatives and source context; this is a qualified loss of that extension, not of all tea discovery.
+
+## Comparison table
 
 | Run | Group score | Raw maximum depth | Display maximum depth | Display groups | Display one-child groups |
 | --- | --- | ---: | ---: | ---: | ---: |
@@ -119,10 +145,11 @@ The unchanged viewer still exposes a 99-note child below M04's 100-note root. Fe
 | M02 | Half the sum of both nearest-partner sums | 16 | 10 | 513 | 7 |
 | M03 | Smaller nearest-partner sum | 109 | 45 | 496 | 304 |
 | M04 | Average of every permitted cross-group distance | 53 | 23 | 485 | 114 |
+| M05 | Median of every permitted cross-group distance | 47 | 23 | 500 | 124 |
 
 These are structural measurements only. Before claiming a lost discovery path, check whether another vector from the same note already provides that access. Before claiming improvement from reuniting vectors, check whether any new relevant note becomes reachable. Exact memberships remain useful for locating changes, not as a substitute for the semantic and note-level objective.
 
-The next question is whether a different aggregation of the cross-group distance distribution can improve these tradeoffs. Research and fixed-state score checks precede another run. No candidate is accepted, no input has been changed, and no final winner is selected.
+The next question concerns how repeated masks from the same source note influence aggregation. The [research, fixed-state evidence and M06 definition](source-note-weighting.md) distinguish equal source-note-pair weighting from whole-note clustering and WPGMA. No candidate is accepted, no input has been changed, and no final winner is selected.
 
 ## Further literature considered
 
@@ -142,7 +169,7 @@ target/merge-rule-review-build/debug/hdbscan-hierarchy \
   --merge-history
 ```
 
-Substitute `M02.json`, `M03.json`, or `M04.json` to inspect another saved run. All four pass the production loader. To build this binary from a fresh checkout, without changing the existing pinned launcher:
+Substitute `M02.json`, `M03.json`, `M04.json`, or `M05.json` to inspect another saved run. All five pass the production loader. Add `--start-at 1467` for M05's restaurant example. M05 was also verified in a live terminal: expand child1403, open V399's full original with its inline mask, return, move upward to1651 while retaining the expanded nesting, and exit. To build this binary from a fresh checkout, without changing the existing pinned launcher:
 
 ```sh
 CARGO_TARGET_DIR=target/merge-rule-review-build CARGO_BUILD_JOBS=2 \

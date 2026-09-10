@@ -26,6 +26,7 @@ RULES = {
     'symmetric_sum': 'Half the sum of both directional sums of finite per-point nearest eligible distances.',
     'min_sum': 'The smaller of both directional sums of finite per-point nearest eligible distances.',
     'average': 'The mean of every finite eligible cross-group pair distance, weighted by the number of such pairs.',
+    'median': 'The ordinary median of all finite eligible cross-group pair distances; average the two middle values for even counts.',
 }
 
 
@@ -34,9 +35,11 @@ def pair_score(distances, left, right, rule='symmetric_mean'):
     if rule not in RULES:
         raise ValueError('unknown merge rule: ' + rule)
     cross = np.asarray(distances)[np.ix_(left, right)]
-    if rule == 'average':
+    if rule in ('average', 'median'):
         eligible = cross[np.isfinite(cross)]
-        return float(eligible.mean()) if len(eligible) else math.inf
+        if not len(eligible):
+            return math.inf
+        return float(np.median(eligible) if rule == 'median' else eligible.mean())
     forward, reverse = cross.min(axis=1), cross.min(axis=0)
     forward, reverse = forward[np.isfinite(forward)], reverse[np.isfinite(reverse)]
     if not len(forward) or not len(reverse):
@@ -52,8 +55,9 @@ def agglomerate(distances, rule='symmetric_mean'):
     """Globally smallest active score, including decreases after previous merges.
 
     Heap ties use ordered cluster IDs. Cached directional sums and support
-    counts preserve fixed edge exclusions. Space is O(n²); all incoming and
-    outgoing score updates take O(n) arithmetic per merge plus heap updates.
+    counts preserve fixed edge exclusions. Space is O(n²). Mean/sum rules
+    take O(n) arithmetic per merge plus heap updates. Median recomputes the
+    changed cross-pair distributions exactly, with O(n³) worst-case work.
     """
     if rule not in RULES:
         raise ValueError('unknown merge rule: ' + rule)
@@ -113,7 +117,10 @@ def agglomerate(distances, rule='symmetric_mean'):
         sums[others, new] = incoming[others]
         counts[others, new] = supported[others]
         valid = others[(counts[new, others] > 0) & (counts[others, new] > 0)]
-        if rule == 'average':
+        if rule == 'median':
+            values = np.array([pair_score(d, members[new], members[other], rule)
+                               for other in valid])
+        elif rule == 'average':
             pair_sums[new, others] = pair_sums[left, others] + pair_sums[right, others]
             pair_counts[new, others] = pair_counts[left, others] + pair_counts[right, others]
             pair_sums[others, new] = pair_sums[new, others]
@@ -213,11 +220,13 @@ def main():
     summary = tree_summary(rows, source_sets)
     result = {
         'schema_version': 'merge-rule-experiment-v1', 'run_id': args.run_id,
-        'method': ('average_eligible_pairs' if args.rule == 'average'
+        'method': (args.rule + '_eligible_pairs' if args.rule in ('average', 'median')
                    else 'chamfer_' + args.rule + '_finite'), 'sources': sources,
         'source_code_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         'definition': RULES[args.rule],
         'missing_partner_policy': (
+            'Omit excluded pairs from the median sample; record endpoints with no eligible partner. A pair of groups with no eligible edges cannot merge.'
+            if args.rule == 'median' else
             'Omit excluded pairs from the mean and denominator; record endpoints with no eligible partner. A pair of groups with no eligible edges cannot merge.'
             if args.rule == 'average' else
             'Omit endpoints with no eligible partner from that directional aggregation; record their counts. A pair with no eligible edges cannot merge.'),
