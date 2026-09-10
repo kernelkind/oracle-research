@@ -16,10 +16,10 @@ All four retain the same 100 notes, 916 canonical vectors, and 945 original mask
 From any directory:
 
 ```bash
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp-infomap/sse_multivector/run-infomap-hierarchy.sh I02
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-infomap-hierarchy.sh I02
 ```
 
-Replace `I02` with `I01`, `I03`, or `I04`. This launches the saved result, not inference. Existing HDBSCAN and merge-rule launchers remain unchanged in the original worktree.
+Replace `I02` with `I01`, `I03`, or `I04`. This launches the saved result, not inference. The Infomap code and saved results are now on `main` alongside the existing HDBSCAN, merge-rule, and M06 viewers. Their launchers remain unchanged. The separate Infomap worktree is retained; absolute paths inside the frozen JSON files record where the experiment originally ran and are not runtime dependencies.
 
 `j/k` selects; `h/l` collapses/expands; `Enter` opens the complete original note with its mask inline. `U` shows the parent; unopened siblings appear above the expanded group. `F` focuses a group. `gg/G` goes to the beginning/end; `?` opens help; `q` exits. Parent masks whose source note appears recursively below start hidden; `a` reveals them. No review decisions or source edits are made.
 
@@ -27,16 +27,16 @@ Some useful starting points, with interpretation in [the analysis](analysis.md):
 
 ```bash
 # Many coffee masks together; a useful relationship, not a generated title.
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp-infomap/sse_multivector/run-infomap-hierarchy.sh I02 --start-at 925
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-infomap-hierarchy.sh I02 --start-at 925
 
 # Three tour stops, three chickens, three awakenings, and other material.
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp-infomap/sse_multivector/run-infomap-hierarchy.sh I03 --start-at 931
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-infomap-hierarchy.sh I03 --start-at 931
 
 # Greetings together with gianguja, Gentoo, a gin gift, and a 'goblin'.
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp-infomap/sse_multivector/run-infomap-hierarchy.sh I04 --start-at 929
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-infomap-hierarchy.sh I04 --start-at 929
 
 # Bitcoin-heavy material with an unexplained storm mask.
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp-infomap/sse_multivector/run-infomap-hierarchy.sh I04 --start-at 931
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-infomap-hierarchy.sh I04 --start-at 931
 ```
 
 Group IDs apply only within their run. `I03/931` and `I04/931` contain different vectors. N and V IDs retain their original corpus meanings across all runs. The UI shows exact fragments separated by spaces, and combines display-identical aliases while retaining every original ID.
@@ -54,7 +54,7 @@ These four outputs are separate partitions, **not successive hierarchy levels**.
 The lightweight experiment command uses the pinned Nix development shell, NumPy 2.3.4 and Infomap 2.15.1. It fixes seed 123 and ten internal trials and refuses an existing output directory. It requires `nix` and `uv`. No model calls or paid resources are needed.
 
 ```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp-infomap
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 sse_multivector/run-infomap-experiment.sh I02 /tmp/infomap-I02-replay
 ```
 
@@ -72,7 +72,7 @@ All four saved graphs were replayed through Infomap's file-input path with the s
 To rebuild the isolated viewer:
 
 ```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp-infomap
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 CARGO_TARGET_DIR=target/infomap-review-build CARGO_BUILD_JOBS=2 CARGO_PROFILE_DEV_DEBUG=0 \
   nix develop --command cargo build --bin hdbscan-hierarchy
 ```
