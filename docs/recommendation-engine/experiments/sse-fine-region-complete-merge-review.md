@@ -1,5 +1,12 @@
 # Every Multi-Note Segment, With Its Evidence
 
+## Scope
+
+This is the evidence audit for the frozen TEv4.1 hard-partition pilot. Its
+communicated-meaning vectors and exhaustive, non-overlapping segments describe
+that executed experiment only. They are not the current atomic-subject input or
+a requirement that future fine segmentation return a hard partition.
+
 ## What this document shows
 
 The experiment turned parts of 50 notes into 194 separate numerical

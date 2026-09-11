@@ -16,4 +16,4 @@ This doc will detail from a high level how SSE was trained. We must understand t
            - a label saying which pair of claims expressed equivalent information
         - For each pair of sentences which had at least one pair of claims which expressed equivalent information (entailed):
             - for the pair(s) of claims which entailed, the weights of the SSE model were updated so when those claims were encoded again, their vectors would point in MORE similar directions (higher cosine similarity)
-            - for the pair(s) of claims which DIDN'T entail, th eweights of the SSE model were updated so when those claims were encoded again, their vectors would point in LESS similar directions (lower cosine similarity)
+            - for the pair(s) of claims which DIDN'T entail, the weights of the SSE model were updated so when those claims were encoded again, their vectors would point in LESS similar directions (lower cosine similarity)

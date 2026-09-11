@@ -5,15 +5,21 @@
 Executed against the frozen TEv4.1 vectors. The result artifact is
 `sse_multivector/fine-region-partition-result-v1/`.
 
+This was a hard, exhaustive partition pilot over the communicated-meaning
+vectors produced by TEv4.1. That membership contract belongs only to this
+frozen experiment. It is not a requirement for the current fine-segmentation
+stage, whose exhaustive, overlapping, hard, or weighted output contract remains
+open.
+
 ## Question
 
-Can the 194 grounded idea vectors from TEv4.1 form nontrivial, coherent fine
-regions without preselecting how many regions exist?
+Can the 194 communicated-meaning vectors from TEv4.1 form nontrivial, coherent
+fine regions without preselecting how many regions exist?
 
 This pilot tests only:
 
 ```text
-grounded idea vectors -> hard fine-subject regions
+TEv4.1 communicated-meaning vectors -> hard fine-subject regions
 ```
 
 It does not generate region labels or build the hierarchy.
@@ -123,11 +129,6 @@ meaning. The semantic conclusion must cite concrete member evidence. A
 one-vector region is not a failure; it means this 50-note input contains no
 demonstrated recurrence for that vector.
 
-If complete linkage finds coherent regions and DP-vMF reproduces their stable
-cores, DP-vMF remains the scale candidate. If only complete linkage succeeds,
-later work may test a local graph method. If complete linkage cannot produce a
-useful resolution, stop before labels or hierarchy construction.
-
 ## Result
 
 The pilot found real recurring semantic structure, but it did not find a
@@ -223,14 +224,15 @@ The three P90 segments produced:
 | S008 | `Commitment to Free and Open-Source Software for Technological Sovereignty` |
 | S020 | `Authenticity and Individuality` |
 
-These outputs support using the prompt to title an already-fixed segment. They
-do not establish that the partition producing a segment is correct.
+These outputs record how the frozen prompt titled already-fixed segments. They
+do not establish that the partition was correct or select the current labeling
+method.
 
 ## Scientific conclusion
 
 This pilot supports:
 
-> SSE idea vectors contain useful recurring semantic cores.
+> The frozen TEv4.1 vectors contain useful recurring semantic cores.
 
 It does not yet support:
 
@@ -238,8 +240,7 @@ It does not yet support:
 > reliable hard fine-subject partition.
 
 This is not evidence that labels or hierarchy construction should begin. The
-smallest next question is whether the persistent false merges and obvious
-splits are caused by the 50-note sample's sparse subject coverage. That can be
-tested by adding controlled real-note coverage around both sides of the
-observed errors and rerunning the exact reference without changing the encoder,
-takeaway prompt, mask prompt, or partition rules.
+pilot leaves the fine-segmentation algorithm, membership contract, and labeling
+and hierarchy methods open. Its observed false merges and splits remain useful
+evidence about this frozen hard-partition candidate, not a prescription for the
+current atomic-subject pipeline.

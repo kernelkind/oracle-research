@@ -146,11 +146,10 @@ The honest conclusion is:
 > evidence that it improves semantic parent-child correctness over average
 > linkage.
 
-For the later scaled algorithm comparison, `D2` is the only SCC variant worth
-retaining. `G200` duplicates the average-linkage control, and `D√2` was both
-more complex and worse under the existing review evidence. SCC should not be
-selected as the hierarchy algorithm without beating alternatives on the
-larger corpus.
+Among the three tested schedules, `D2` was the least-bad SCC variant. `G200`
+duplicated the average-linkage control, and `D√2` was both more complex and
+worse under the existing review evidence. This pilot does not select `D2` or
+SCC for later hierarchy work.
 
 ## Reproduction
 

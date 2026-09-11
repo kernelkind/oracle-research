@@ -42,9 +42,9 @@ experiment.
 Before the real run, the worker reproduced the two similarities published in
 the official Dracula example: `0.29089065` and `0.71797654`, which round to the
 published `0.2909` and `0.7180`. The real run then generated all 187 vectors.
-Its deterministic replay verified every source binding and generated file.
-Local artifacts are under
-`target/sse-multivector-diagnostic-v1/analysis/`.
+Its deterministic replay verified every source binding and generated file. The
+committed immutable archive and verification instructions are in the
+[`narrowest-subject-v1` baseline](../../../sse_multivector/baselines/narrowest-subject-v1/README.md).
 
 The upstream release provides neither a checkpoint checksum nor an explicit
 license. This repository does not redistribute the checkpoint. The recorded
@@ -52,7 +52,7 @@ hash binds this run to the file obtained from the authors' official Drive ID,
 name, and advertised byte size; it does not independently authenticate the
 publisher.
 
-## Current Question
+## Question Tested
 
 Given audited subjects and their exact supporting text, can SSE produce
 a useful separate vector for each subject expressed within a note?
@@ -239,20 +239,7 @@ reliable atomic-subject map. Surface-word false matches and measurable
 same-note influence could create incorrect fine-region assignments if cosine
 were used uncritically.
 
-The remaining ambiguity is specific: how much of each vector represents the
-masked subject, and how much represents surface wording or surrounding note
-context? A later focused comparison may test that ambiguity. This run alone
-does not justify clustering, hierarchy construction, or corpus-scale
-processing.
-
-## Follow-up
-
-The separate
-[`./sse-communicated-meaning-triplet.md`](./sse-communicated-meaning-triplet.md) records a
-small follow-up using semantic takeaways rather than narrow subject labels. It
-does not modify or replace this baseline.
-
-The later
-[`./sse-communicated-meaning-full.md`](./sse-communicated-meaning-full.md)
-applies the locked takeaway representation to all 32 frozen notes and compares
-the resulting geometry with this preserved baseline.
+The run left one specific ambiguity: how much of each vector represented the
+masked subject, and how much represented surface wording or surrounding note
+context? This run alone did not justify clustering, hierarchy construction, or
+corpus-scale processing.

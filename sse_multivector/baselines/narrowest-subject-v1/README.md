@@ -30,5 +30,5 @@ sha256sum --check SHA256SUMS
 tar --zstd -tf baseline.tar.zst
 ```
 
-Do not replace this archive when producing the broader, navigation-useful
-subject run. Store that run as a separate baseline.
+This archive is immutable provenance for the retained atomic-subject
+diagnostic.

@@ -25,7 +25,7 @@ The current implementation is definitely not scaleable. But an embedding model c
 
 # SSE
 
-SSE was seen in practice to perform well for determining similarity of atomic facts. We are making the bet that it can also perform well for determining similarity of atomic note meanings. Because if it does, then we can use geometric locality of vectors to construct this hierarchy.
+SSE was seen in practice to perform well for determining similarity of atomic facts. We are making the bet that it can also perform well for determining similarity of atomic subjects. Because if it does, then we can use geometric locality of vectors to construct this hierarchy.
 
 There are some things that must be true for SSE to work favorably for us:
 1. Different wording for the same atomic subject should produce nearby vectors. (Semantic understanding)

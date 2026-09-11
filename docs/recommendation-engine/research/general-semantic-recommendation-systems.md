@@ -98,7 +98,7 @@ and eight 80 GB A100 GPUs. Against a 257,937-note test pool, NoteLLM reported
 week-long production experiment reported a 16.2% click-through-rate increase
 and improved exposure for new notes.
 
-The important result is not that the oracle needs a 7B model. It is that
+The important result for a separate recommendation system is that
 recommendation-aligned contrastive training substantially outperformed a
 generic semantic encoder. Most of the gain came from behavioral pair training;
 the hashtag/category auxiliary task added a smaller further improvement.
@@ -147,11 +147,10 @@ It:
 - Samples a small number of medoids for nearest-neighbor retrieval.
 - Separates long-term batch state from same-day state.
 
-The current oracle already follows the essential lesson more conservatively:
-each positive source event remains an independent query and results are fused
-locally. Local clustering and medoid selection should be considered only when
-query volume becomes expensive; querying every selected source remains the
-quality reference.
+The frozen Oracle MVP v1 followed the essential lesson more conservatively:
+each positive source event remained an independent query and results were fused
+locally. That is historical evidence for the separate recommendation problem,
+not a current design choice for the subject hierarchy.
 
 ### Semantic Scholar
 
@@ -161,8 +160,8 @@ papers. It establishes that example-item recommendation can be exposed as a
 simple public retrieval service.
 
 Its public documentation does not disclose enough about the current ranking
-model or recommendation-quality evaluation to guide the oracle beyond the
-better-documented Scholar Inbox findings.
+model or recommendation-quality evaluation to guide a Nostr recommender beyond
+the better-documented Scholar Inbox findings.
 
 ## Privacy-Oriented Analogues
 
@@ -199,7 +198,7 @@ semantic tokenization, large sequential models, preference optimization, and
 continuous centralized training.
 
 These systems may improve recommendation objectives at industrial scale, but
-they are a poor fit for this oracle:
+they are a poor fit for the constrained local recommendation problem:
 
 - Their primary signal is pooled private behavior.
 - Training and serving require industrial GPU infrastructure.
@@ -208,5 +207,4 @@ they are a poor fit for this oracle:
   control; it hides both inside the model.
 - Their reported engagement gains do not establish conscious personal value.
 
-They should not be added to the MVP.
-
+No current work adopts them.

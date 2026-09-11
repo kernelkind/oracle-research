@@ -42,15 +42,15 @@ not evidence that another part of the note replaced the selected meaning.
 
 ## Conclusion
 
-> Within this small pilot, SSE produced separate, context-grounded idea vectors
-> without any valid observed blending failure.
+> Within this small pilot, SSE produced separate, context-grounded vectors for
+> the supplied masks without any valid observed blending failure.
 
-This is feasibility evidence conditional on the supplied takeaways and masks.
-It does not establish corpus-wide reliability, automatic extraction quality,
-fine-region formation, region labeling, or hierarchy construction.
+This is feasibility evidence conditional on the supplied masks. This run
+obtained those masks through its frozen takeaway pipeline; it does not establish
+corpus-wide reliability, automatic extraction quality, fine-region formation,
+region labeling, or hierarchy construction.
 
-The next load-bearing question was whether the existing idea vectors could be
-hard-partitioned into coherent fine semantic regions. The first pilot found
-real recurring semantic cores but did not validate one global hard partition;
-its result is recorded in
+A later pilot tested whether these vectors could be hard-partitioned into
+coherent fine semantic regions. It found real recurring semantic cores but did
+not validate one global hard partition; its result is recorded in
 [`../../docs/recommendation-engine/experiments/sse-fine-region-partition-pilot.md`](../../docs/recommendation-engine/experiments/sse-fine-region-partition-pilot.md).

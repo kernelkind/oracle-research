@@ -1,5 +1,11 @@
 # TEv4.1 — Did clearer masks produce better semantic vectors?
 
+## Status
+
+Executed historical diagnostic using communicated takeaways as vector units.
+It explains one transition toward atomic-subject masks, but it does not define
+or validate the current intended representation.
+
 ## Result
 
 TEv4.1 did not support the hypothesis.
@@ -7,8 +13,8 @@ TEv4.1 did not support the hypothesis.
 TEv4.1 tested whether making a mask self-contained would make SSE represent its
 takeaway more cleanly. The evidence shows that adding a referent to a mask can
 move its vector toward the referent's subject matter. It does not establish that
-self-contained masks are always worse, nor that atomic vectors are already the
-correct solution.
+self-contained masks are always worse, nor does it establish the current
+atomic-subject design.
 
 The main argument below is deliberately sequential. Each claim presents its
 evidence before its analysis. Complete generation records for the three
@@ -327,7 +333,7 @@ The evidence does **not** establish that:
 - TPv3.81 or MPv3.3 individually caused every observed change;
 - these 50 diagnostic notes estimate corpus-wide performance.
 
-The next hypothesis suggested by these results is:
+The hypothesis this result suggested at the time was:
 
 > One vector should represent one independently searchable meaning, while one
 > note may produce several such vectors.
@@ -335,7 +341,8 @@ The next hypothesis suggested by these results is:
 For the greenhouse note, that could mean separate vectors for `geothermal solar
 powered greenhouse` and `non consumption based retirement`, rather than adding
 the greenhouse phrase merely to make the retirement sentence self-contained.
-That is a hypothesis for a later experiment, not a TEv4.1 result.
+That was not a TEv4.1 result and is not the current definition of an atomic
+subject.
 
 ## Detailed evidence A — Surveillance
 
@@ -1335,9 +1342,9 @@ The experiment does not reject SSE or multi-vector representations. It exposes
 a narrower problem: exact source text needed to explain a reference can carry
 additional subject matter that changes the vector's retrieval behavior.
 
-The atomic-vector idea is a response to that problem, not a result already
-established by TEv4.1. Both prompts changed together, so this run also cannot
-attribute every effect specifically to TPv3.81 or MPv3.3.
+The later atomic-subject direction was not established by TEv4.1. Both prompts
+changed together, so this run also cannot attribute every effect specifically
+to TPv3.81 or MPv3.3.
 
 ## Exact controls and preserved evidence
 

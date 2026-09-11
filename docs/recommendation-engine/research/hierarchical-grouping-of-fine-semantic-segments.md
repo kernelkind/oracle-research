@@ -114,8 +114,8 @@ the work.
 
 One candidate graph construction for a fixed input layer is:
 
-1. Build a sparse mutual-`k`-nearest-neighbor graph over the original atomic
-   meaning vectors.
+1. Build a sparse mutual-`k`-nearest-neighbor graph over the original
+   atomic-subject vectors.
 2. If input memberships are non-overlapping, contract each segment's vector
    nodes into one segment node. If memberships overlap or nest, this
    contraction is not defined: the hierarchy experiment must first specify how
@@ -127,13 +127,13 @@ One candidate graph construction for a fixed input layer is:
 For segments `a` and `b`, one possible contracted edge weight is:
 
 ```text
-w(a, b) = sum of retained atom-level neighbor-edge weights
+w(a, b) = sum of retained atomic-subject-vector neighbor-edge weights
           crossing from a to b
 ```
 
-This retains evidence from every atomic vector. Replacing each input segment
-with one average vector would discard local contacts, segment size, internal
-cohesion, and potentially multimodal geometry.
+This retains evidence from every atomic-subject vector. Replacing each input
+segment with one average vector would discard local contacts, segment size,
+internal cohesion, and potentially multimodal geometry.
 
 Mutual nearest-neighbor edges are preferable to an ordinary directed `k`-NN
 graph as a first attempt because they reduce asymmetric links and some
@@ -399,8 +399,8 @@ to a human broad-to-narrow subject hierarchy. That remains the experiment.
 
 If comparing the fixed-input graph methods above, a controlled design is:
 
-1. Freeze one atom-level mutual-`k`-NN graph and the demonstrated input-segment
-   memberships, explicitly resolving overlap or nesting before
+1. Freeze one atomic-subject-vector mutual-`k`-NN graph and the demonstrated
+   input-segment memberships, explicitly resolving overlap or nesting before
    graph contraction. These inputs are not declared the final finest layer.
 2. Run a nested degree-corrected SBM as the primary statistical candidate.
 3. Run hierarchical Infomap as the assortative flow-based comparison.

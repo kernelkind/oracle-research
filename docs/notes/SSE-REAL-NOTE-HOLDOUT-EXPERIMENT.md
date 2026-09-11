@@ -195,13 +195,3 @@ The passing comparisons show that SSE can expose the expected narrow semantic re
 The failed Windows/Linux comparison shows that this behavior is not yet reliable for nearby subjects. Its result cannot distinguish a general SSE limitation from insufficient technical knowledge in the frozen model.
 
 This experiment therefore supports continuing to test SSE mask fidelity, but does not establish that the necessary semantic structure is reliable across real Nostr content.
-
-## Next experiment
-
-The next batch will use nine new real-note comparisons:
-
-- Three nearby-subject comparisons.
-- Three comparisons where text outside the mask creates a competing similarity.
-- Three comparisons involving multiple mask fragments.
-
-The notes, masks, and expected ordering will again be frozen before encoding.

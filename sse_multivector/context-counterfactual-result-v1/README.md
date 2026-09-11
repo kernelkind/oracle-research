@@ -89,16 +89,10 @@ Two diagnostic conclusions are sensitive to the three hand-written references. G
 
 The experiment tests SSE conditional on hand-supplied masks. It does not test automatic takeaway or mask generation, corpus-wide coverage, or the eventual subject hierarchy.
 
-Under the frozen contract, Stage 2 does not run because Stage 1 failed. A follow-up should isolate one failure mechanism at a time rather than changing the takeaway/mask pipeline or proceeding to hierarchy construction.
-
-## Smallest next diagnostic
-
-The cleanest unresolved case is solar-miner startup versus solar-use measurement. Reuse the frozen model and reference groups and encode only two new vectors:
-
-1. The startup mask after removing only the neighboring solar-use-measurement sentence.
-2. The measurement mask after removing only the neighboring startup sentence.
-
-If removing the neighboring meaning moves each vector toward its own frozen group, the current failure is evidence of context leakage. If it does not, the evidence instead points to weak local separation or reference sensitivity between these two closely related meanings. This diagnostic must remain separate from the frozen result above.
+Under the frozen contract, Stage 2 did not run because Stage 1 failed. This
+directory records that result; the current interpretation and work order are
+indexed in
+[`../../docs/notes/SSE-EXPERIMENTS.md`](../../docs/notes/SSE-EXPERIMENTS.md).
 
 ## Reproduction and audit
 
