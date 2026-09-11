@@ -87,12 +87,42 @@ Further inspection of the saved fuzzy matrices found that independently selectin
 
 This is a conversion conflict, not a numerical implementation bug or proof that the fuzzy memberships lack meaning. For GFM02 row568, its old preferred branch passes its entire0.082658 contribution to the next coffee node. Contributions from other branches increase that destination's total membership to0.094252, but a different parent reaches0.098297 and becomes the winner. The old contribution did not disappear. No new hard projector was invented here; native arrays and the earlier conversion stay frozen.
 
+## Does longer persistence identify better levels?
+
+The final diagnostic makes no changes to the tree. It measures how long a group remains unchanged before gaining another note. Adjacent nodes containing exactly the same notes count as one interval for this measurement, even when additional masks arrive. The root has no measured end. All durations below use GDC09's clock; they are not comparable confidence scores across different update schedules.
+
+| Saved group | Distinct notes | Iterations before the note set changes | Evidence-based interpretation |
+| --- | ---: | ---: | --- |
+| 1401 | 4 | 2 | Diet quality: processed food, diverse diets, and choosing better food. |
+| 1419 | 2 | 1 | Meal planning and packing a lunch box. A defensible connection, despite its short duration. |
+| 1487 and its equal-note parents | 19 | 129 | Coffee. Node 1487 alone lasts only 8 iterations; subsequent masks initially add no new notes. |
+| 1598 | 22 | 53 | Coffee and tea. |
+| 1671 | 5 | 780 | Kitchen equipment. |
+| 1693 | 4 | 818 | Knowledge and education, including literature. |
+| 1665 | 7 | 2,287 | Greetings, Gentoo, and gianguja/chocolate masks. Long duration does not repair this questionable combination. |
+| 1751 | 4 | 1 | Storms alongside alby, DCA, and Apocalypse. A weak late join. |
+
+The masks behind the two most direct counterexamples are concrete. The short-lived 1419 contains `⟦I gotta start meal planning⟧` and lunch-box fragments such as `⟦Packing⟧ ⟦lunch box⟧ ⟦food⟧`. The long-lived 1665 contains `⟦GM⟧`, `⟦Gentoo⟧`, and `⟦gianguja⟧ ⟦craftchocolate⟧`, among their overlapping variants. Its full-note and original-neighborhood limitations are discussed above. There is no demonstrated semantic-quality ordering in which merely lasting longer makes the second group preferable.
+
+Checking the 20 longest-lived multi-note sets also found both recognizable relationships, such as anxiety/stress and visual art, and questionable mixtures, such as Sorrento tourism with satoshi references. These were inspected after ranking, unlike the preselected examples in the table; they are additional observations, not an independent validation set.
+
+The literature supports examining time between merges, but does not turn it into semantic confidence. CUTS uses unchanged-segment duration for image segmentation; Multiscale PHATE instead selects scales from global motion. Neither establishes an automatic nested selector for these note vectors. Our equal-note-set measurement is additionally distinct from both methods' original observation identities. [CUTS, Methods](https://papers.miccai.org/miccai-2024/paper/1569_paper.pdf), [Multiscale PHATE, Methods](https://pmc.ncbi.nlm.nih.gov/articles/PMC10015653/).
+
+Conclusion: raw node duration can misrepresent stability at the note level, and note-set duration alone is insufficient to judge meaning. No persistence threshold, pruning, or new ranking was adopted. `note-set-duration.json` retains every measured interval for GDC02, GDC07, GDC08, and GDC09; `code/check-note-set-duration.py` reproduces the calculation from their unchanged trees.
+
 ## Reproducibility and handoff
 
 - `GDC09` is the complete strongest directional candidate. `GDC07` is the useful alternative without density correction. `GDC08` is a bounded bandwidth robustness comparison, not a converged result.
 - `GDC02S/motion.json`, `GDC09/continuation-analysis.json`, and `GDC09/remaining-original-neighborhoods.json` preserve the numerical diagnoses. The diagnostic source scripts are in `code/`.
+- `note-set-duration.json` records the final level-selection diagnostic. It does not alter or filter any result.
 - `path-evidence.json` stores complete chains for the discussed interests, exact masks, and full original notes. Existing `geometric_experiment.py inspect RUN NODE --full-notes` remains the inspection interface. No TUI was built or changed.
 - Source archives and `provenance.json` preserve code and artifact hashes. Observation NPZ caches stay local and Git-ignored; configuration and checksums make them reproducible. No baseline output was overwritten.
 - The production regression suite passed73 tests. After the optional unit-sphere feature was added, default Euclidean fitting reproduces GDC02's first558 steps of nodes and GDC05's final coordinates. Separately, the unchanged GDC02S observational replay matches the complete archived GDC02 tree and final coordinates.
 
 Conclusion: the original-vector geometry can support more useful nested note relationships than the first runs exposed. Unit-sphere motion is the best demonstrated improvement here. Complete semantic navigation, reliable coverage across interests, and automatic selection of useful levels remain unproven. Those limitations are not interchangeable, and another isolated cosine or one attractive flat group cannot settle them.
+
+## Justified next experiment, not performed here
+
+Replicate the Euclidean-versus-unit-sphere comparison on a separately selected dense corpus from a different broad semantic area. Freeze its masks and vectors before fitting, retain the bandwidth-selection rule and other settings, and compare complete paths without prescribing the categories that should emerge. This directly asks whether the directional improvement generalizes beyond the repeatedly inspected food-heavy corpus. It is a separate proposed experiment, not authorization to change this corpus or start another extraction run.
+
+GDC09 and GDC07 are packaged as the strongest inspected candidate and a useful alternative, not certified winners. More tuning on this same corpus, or hiding its weak levels using a lifetime cutoff, would not answer that generalization question. The investigation can therefore conclude without consuming the remaining allowance merely to reach the 70% wrap-up signal.
