@@ -8,17 +8,18 @@ use ratatui::layout::{Constraint, Layout, Rect};
 use ratatui::text::Line;
 use ratatui::widgets::{Block, Borders, List, ListItem, ListState, Paragraph, Wrap};
 
-use crate::manual_note_hierarchy::{ManualCategory, ManualNoteHierarchy};
+use crate::manual_note_hierarchy::{CategoryNoteMasks, ManualCategory, ManualNoteHierarchy};
 use crate::reference_tui::{
     InteractiveReviewModel, MIN_HEIGHT, MIN_WIDTH, ReferenceTerminal, accent_style, border_style,
     centered, has_command_modifier, is_control_c_event, render_scrollable_panel, secondary_style,
     terminal_safe,
 };
+use crate::sse_mask_review::highlighted_note;
 use crate::titled_merge_hierarchy::TitledMergeHierarchy;
 
 const CONTROLS: &str = "In categories, j/k or Up/Down chooses an item; Enter/l or Right opens it. h, Backspace or Escape returns to the parent. Child categories are separate from the actions for viewing all notes or notes outside children.\n\nIn original notes, h/l or Left/Right changes the note; j/k or Up/Down scrolls. Backspace or Escape returns to the category choices.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis manual proposal is read-only. Nothing is written or approved.";
 
-const CATEGORY_CONTROLS: &str = "In categories, only immediate child categories are listed. j/k or Up/Down chooses a child; Enter/l or Right descends into it, including a category with no children. N opens all original notes at the CURRENT category, including descendants and deduplicating shared notes. h, Backspace or Escape returns to the parent.\n\nIn original notes, h/l or Left/Right changes the note; j/k or Up/Down scrolls. Backspace or Escape returns to the same category menu and selection.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis category hierarchy is read-only. Nothing is written or approved.";
+const CATEGORY_CONTROLS: &str = "In categories, only immediate child categories are listed. j/k or Up/Down chooses a child; Enter/l or Right descends into it, including a category with no children. N opens all original notes at the CURRENT category, including descendants and deduplicating shared notes. h, Backspace or Escape returns to the parent.\n\nWhen masks are supplied, each note shows one combined ⟦highlight⟧ covering all its mask ranges in the current category, including descendants. Masks belonging only to other branches are excluded. h/l or Left/Right changes the note; j/k or Up/Down scrolls. Backspace or Escape returns to the same category menu and selection.\n\nPaths use Category > Child > Grandchild and wrap. If older ancestors cannot fit above the notes, an ellipsis marks them and the complete path appears in this analysis screen.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis category hierarchy is read-only. Nothing is written or approved.";
 
 struct CategoryFrame {
     node_id: String,
@@ -36,6 +37,7 @@ struct NoteBrowser {
 pub struct ManualNoteExplorer {
     hierarchy: ManualNoteHierarchy,
     categories_only: bool,
+    category_masks: Option<CategoryNoteMasks>,
     merge_origin: Option<(String, usize)>,
     categories: Vec<CategoryFrame>,
     notes: Option<NoteBrowser>,
@@ -55,6 +57,15 @@ impl ManualNoteExplorer {
         Self::with_categories_only(hierarchy, true)
     }
 
+    pub fn categories_with_masks(
+        hierarchy: ManualNoteHierarchy,
+        masks: Option<CategoryNoteMasks>,
+    ) -> Self {
+        let mut model = Self::categories(hierarchy);
+        model.category_masks = masks;
+        model
+    }
+
     fn with_categories_only(hierarchy: ManualNoteHierarchy, categories_only: bool) -> Self {
         let mut model = Self {
             categories: vec![CategoryFrame {
@@ -63,6 +74,7 @@ impl ManualNoteExplorer {
             }],
             hierarchy,
             categories_only,
+            category_masks: None,
             merge_origin: None,
             notes: None,
             analysis_scroll: None,
@@ -136,7 +148,7 @@ impl ManualNoteExplorer {
     }
 
     fn breadcrumb(&self) -> String {
-        if self.merge_origin.is_some() || (self.categories_only && self.categories.len() > 3) {
+        if self.merge_origin.is_some() {
             let title = self.category_title(&self.category().node_id);
             // An immediate parent and current title remain legible even deep in the tree.
             return if self.categories.len() > 1 {
@@ -398,10 +410,35 @@ impl ManualNoteExplorer {
             heading.push('\n');
             heading.push_str(&notice);
         }
+        let heading_budget = if self.categories_only {
+            (area.height / 4).max(3)
+        } else {
+            area.height.saturating_sub(9)
+        };
+        let suffix = heading[breadcrumb.len()..].to_owned();
+        let mut shortened_path = false;
+        if self.categories_only {
+            for first in 1..self.categories.len() {
+                if Paragraph::new(heading.as_str())
+                    .wrap(Wrap { trim: false })
+                    .line_count(area.width)
+                    <= usize::from(heading_budget)
+                {
+                    break;
+                }
+                let path = self.categories[first..]
+                    .iter()
+                    .map(|category| self.category_title(&category.node_id))
+                    .collect::<Vec<_>>()
+                    .join(" > ");
+                heading = format!("… > {path}{suffix}");
+                shortened_path = true;
+            }
+        }
         let heading = Paragraph::new(heading).wrap(Wrap { trim: false });
         let heading_height = u16::try_from(heading.line_count(area.width))
             .unwrap_or(u16::MAX)
-            .clamp(2, area.height.saturating_sub(9));
+            .clamp(2, heading_budget);
         let rows = Layout::vertical([
             Constraint::Length(heading_height),
             Constraint::Min(5),
@@ -417,7 +454,15 @@ impl ManualNoteExplorer {
             } else {
                 CONTROLS.to_owned()
             };
-            let content = format!("{}\n\n{controls}", terminal_safe(&self.category().analysis));
+            let content = format!(
+                "{}{}\n\n{controls}",
+                if shortened_path {
+                    format!("{breadcrumb}\n\n")
+                } else {
+                    String::new()
+                },
+                terminal_safe(&self.category().analysis)
+            );
             render_scrollable_panel(
                 frame,
                 rows[1],
@@ -428,12 +473,21 @@ impl ManualNoteExplorer {
                 false,
             );
         } else if let Some(notes) = &mut self.notes {
-            let content =
-                terminal_safe(&self.hierarchy.notes[&notes.note_ids[notes.cursor]].content);
+            let note = &self.hierarchy.notes[&notes.note_ids[notes.cursor]];
+            let (content, title) = if let Some(masks) = &self.category_masks {
+                let category = &self.categories.last().expect("root category").node_id;
+                (
+                    highlighted_note(&note.content, masks.spans(category, &note.note_short_id)),
+                    "Note · combined category mask",
+                )
+            } else {
+                (note.content.clone(), "Note")
+            };
+            let content = terminal_safe(&content);
             render_scrollable_panel(
                 frame,
                 rows[1],
-                "Note",
+                title,
                 &content,
                 &mut notes.scroll,
                 &mut self.half_page_lines,
@@ -525,8 +579,11 @@ pub fn run_manual_note_explorer(hierarchy: ManualNoteHierarchy) -> io::Result<()
     run_note_explorer(ManualNoteExplorer::new(hierarchy))
 }
 
-pub fn run_category_note_explorer(hierarchy: ManualNoteHierarchy) -> io::Result<()> {
-    run_note_explorer(ManualNoteExplorer::categories(hierarchy))
+pub fn run_category_note_explorer(
+    hierarchy: ManualNoteHierarchy,
+    masks: Option<CategoryNoteMasks>,
+) -> io::Result<()> {
+    run_note_explorer(ManualNoteExplorer::categories_with_masks(hierarchy, masks))
 }
 
 pub fn run_titled_merge_note_explorer(hierarchy: TitledMergeHierarchy) -> io::Result<()> {

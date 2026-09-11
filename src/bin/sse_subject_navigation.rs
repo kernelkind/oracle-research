@@ -20,7 +20,7 @@ const USAGE: &str = "usage: sse-subject-navigation <manual-hierarchy.json> <fine
        sse-subject-navigation --merge-notes <merge-history.json> <vector-map.json> <source-notes.json> <titles.json> [--min-notes 5] [--start-at GROUP] [--check]
 
 --notes  Inspect manually constructed categories over original notes; no vector or clustering input
---categories  Browse immediate child categories; N opens all original notes at the current category
+--categories  Browse immediate children; N opens current-category notes with combined masks when supplied
 --compare  Compare manual notes with saved merge groups; F2 returns to the comparison menu
 --merge-notes  Browse unchanged saved merge groups as original notes with provisional titles
 --check  Validate and describe every requested page without opening a terminal";
@@ -135,7 +135,7 @@ fn run_notes(
         [spec, source, flag] if flag == "--check" => (spec, source, true),
         _ => return Err(USAGE.into()),
     };
-    let hierarchy = ManualNoteHierarchy::load(spec.as_ref(), source.as_ref())?;
+    let (hierarchy, masks) = ManualNoteHierarchy::load_with_masks(spec.as_ref(), source.as_ref())?;
     if check {
         println!(
             "{} · {} · read-only",
@@ -171,7 +171,7 @@ fn run_notes(
         return Err("manual note navigation must be started from an interactive terminal".into());
     }
     if categories_only {
-        run_category_note_explorer(hierarchy)?;
+        run_category_note_explorer(hierarchy, masks)?;
     } else {
         run_manual_note_explorer(hierarchy)?;
     }

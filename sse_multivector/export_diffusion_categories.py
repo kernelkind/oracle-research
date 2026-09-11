@@ -137,9 +137,23 @@ def export(run, vector_map, notes, titles, output, projection_output):
                   children=group['children'],
                   note_ids=sorted(note_shorts[note] for note in group['direct_note_ids']))
              for group in projected['retained_groups']]
+    originals = {vector['vector_id']: vector for vector in mapping['vectors']}
+    native_groups_by_id = {group['id']: group for group in viewer['groups']}
+    note_masks = {}
+    for group in projected['retained_groups']:
+        masks = {note_shorts[note]: set() for note in group['note_ids']}
+        # The highest retained native group contains all descendant rows,
+        # including collapsed and hidden groups, but no sibling-only rows.
+        native = native_groups_by_id[group['native_node_ids'][0]]
+        for row in native['vector_ids']:
+            for alias in viewer['alias_groups'][row]:
+                vector = originals[alias]
+                masks[vector['note_short_id']].update(map(tuple, vector['byte_spans']))
+        note_masks[group['node_id']] = {note: sorted(masks[note]) for note in sorted(masks)}
     result = dict(schema_version=1, hierarchy_id=f'{viewer["run_id"]}-note-categories',
                   source_sha256=viewer['sources']['notes']['sha256'],
-                  root_node_id=projected['root_node_id'], notes=references, nodes=nodes)
+                  root_node_id=projected['root_node_id'], notes=references, nodes=nodes,
+                  note_masks=note_masks)
     blob = json_bytes(result)
 
     retained = []

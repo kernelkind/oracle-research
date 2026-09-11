@@ -35,6 +35,20 @@ pub struct ManualNote {
     pub content: String,
 }
 
+type NoteMaskRanges = BTreeMap<String, BTreeMap<String, Vec<(usize, usize)>>>;
+
+/// Source-validated unions of the mask ranges belonging to each category's notes.
+#[derive(Clone, Debug)]
+pub struct CategoryNoteMasks {
+    ranges: NoteMaskRanges,
+}
+
+impl CategoryNoteMasks {
+    pub fn spans(&self, category: &str, note: &str) -> &[(usize, usize)] {
+        &self.ranges[category][note]
+    }
+}
+
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Spec {
@@ -44,6 +58,8 @@ struct Spec {
     root_node_id: String,
     notes: Vec<NoteReference>,
     nodes: Vec<ManualCategory>,
+    #[serde(default)]
+    note_masks: Option<NoteMaskRanges>,
 }
 
 #[derive(Deserialize)]
@@ -66,6 +82,13 @@ struct SourceNote {
 
 impl ManualNoteHierarchy {
     pub fn load(spec_path: &Path, source_path: &Path) -> Result<Self, Box<dyn Error>> {
+        Self::load_with_masks(spec_path, source_path).map(|(hierarchy, _)| hierarchy)
+    }
+
+    pub fn load_with_masks(
+        spec_path: &Path,
+        source_path: &Path,
+    ) -> Result<(Self, Option<CategoryNoteMasks>), Box<dyn Error>> {
         let spec: Spec = serde_json::from_slice(&fs::read(spec_path)?)?;
         let bytes = fs::read(source_path)?;
         if spec.schema_version != 1 || spec.hierarchy_id.trim().is_empty() {
@@ -160,12 +183,71 @@ impl ManualNoteHierarchy {
         if seen.len() != nodes.len() || used_notes != notes.keys().cloned().collect() {
             return Err("every declared category and note must be reachable".into());
         }
-        Ok(Self {
+        let hierarchy = Self {
             hierarchy_id: spec.hierarchy_id,
             root_node_id: spec.root_node_id,
             nodes,
             notes,
-        })
+        };
+        let masks = spec
+            .note_masks
+            .map(|ranges| hierarchy.validate_masks(ranges))
+            .transpose()?;
+        Ok((hierarchy, masks))
+    }
+
+    fn validate_masks(
+        &self,
+        mut ranges: NoteMaskRanges,
+    ) -> Result<CategoryNoteMasks, Box<dyn Error>> {
+        if ranges.keys().ne(self.nodes.keys()) {
+            return Err("note masks must cover exactly the declared categories".into());
+        }
+        for (category, notes) in &mut ranges {
+            if notes.keys().ne(self.note_ids(category).iter()) {
+                return Err(
+                    format!("category {category} masks must cover exactly its notes").into(),
+                );
+            }
+            for (note, spans) in notes {
+                let text = &self.notes[note].content;
+                if spans.is_empty()
+                    || spans.iter().any(|&(start, end)| {
+                        start >= end
+                            || end > text.len()
+                            || !text.is_char_boundary(start)
+                            || !text.is_char_boundary(end)
+                    })
+                {
+                    return Err(format!("invalid UTF-8 mask ranges for {category}/{note}").into());
+                }
+                spans.sort_unstable();
+                let mut union: Vec<(usize, usize)> = Vec::new();
+                for &(start, end) in spans.iter() {
+                    if let Some(last) = union.last_mut().filter(|last| start <= last.1) {
+                        last.1 = last.1.max(end);
+                    } else {
+                        union.push((start, end));
+                    }
+                }
+                *spans = union;
+            }
+        }
+        for (parent, node) in &self.nodes {
+            for child in &node.children {
+                for (note, spans) in &ranges[child] {
+                    let parent_spans = &ranges[parent][note];
+                    if spans.iter().any(|&(start, end)| {
+                        !parent_spans.iter().any(|&(a, b)| a <= start && end <= b)
+                    }) {
+                        return Err(
+                            format!("category {parent} mask omits child {child}/{note}").into()
+                        );
+                    }
+                }
+            }
+        }
+        Ok(CategoryNoteMasks { ranges })
     }
 
     /// Full membership of a category, deduplicated across its descendants.
