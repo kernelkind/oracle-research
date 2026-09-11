@@ -3,7 +3,12 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest: [mask distinctions and middle-level scoring](./MASK-DISTINCTIONS.md).
+Latest membership evidence: [explicit masks and missing notes](./LITERAL-MEMBERSHIP.md).
+NMR03 finds four notes outside broad Coffee and two outside Bitcoin through
+literal subject evidence. It is an audited diagnostic, not an adopted assignment
+rule or a new hierarchy. Source snapshots and all proposed masks are preserved.
+
+Latest browser comparison: [mask distinctions and middle-level scoring](./MASK-DISTINCTIONS.md).
 ND02-NP01 removes three repeated textual choices from NP01 while preserving all
 retained evidence. It is a small inspectable improvement, not a solved hierarchy.
 
@@ -153,5 +158,13 @@ The follow-up [research record](./MASK-DISTINCTIONS.md) contains the rejected
 common-word-intersection hypothesis, the stricter tested rule, every removal,
 preservation controls, provenance, and inspection commands. It also records a
 separate category-utility diagnostic that changes no category or membership.
-The next question concerns missing explicit subject evidence elsewhere in the
+The follow-up NMR03 tests missing explicit subject evidence elsewhere in the
 corpus, not another arbitrary pruning threshold.
+
+## NMR03 — literal subject membership
+
+[The record](./LITERAL-MEMBERSHIP.md) separates seed-union growth from omissions
+in existing broad destinations, inspects all additions, and preserves uncertain
+scope and literal-matching misses. No browsing membership changed. The next
+question is how to obtain meaningful broader and narrower descriptions without
+depending on the old tree's groups; shared words alone remain insufficient.

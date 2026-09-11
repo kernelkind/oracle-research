@@ -192,16 +192,15 @@ attributes. The actual top group is plausibly coherent overeating/overdrinking;
 its high score is not itself a failure. The mechanism prevents interpreting
 that rank as proof or simply selecting high-scoring groups.
 
-## Next action
+## Membership follow-up
 
-Do not turn the observed lexical shortcut into a general semantic rule, and do
-not tune another score cutoff. Test a separate consequence of explicit evidence:
-when a destination's supplied masks identify a subject, does the corpus contain
-additional masks with the same explicit subject that the tree leaves elsewhere?
-An attribute-closure diagnostic can expose those omissions without treating
-existing ancestry as truth.[^1] It must audit ambiguous word senses and added
-notes, keep paraphrase misses visible, and not replace semantic discovery with a
-claim that keyword matches suffice.
+[NMR03](./LITERAL-MEMBERSHIP.md) tests the separate consequence of explicit
+evidence: masks elsewhere can identify the same subject despite being outside
+the original destination. It recovers concrete Coffee and Bitcoin omissions,
+but literal matching has unresolved scope, word-sense and coverage limits.
+Neither its results nor ND02 establish a general semantic rule. No score cutoff
+or membership change was adopted. The next investigation concerns meaningful
+descriptions independent of old ancestry, with memberships separately auditable.
 
 ## Reproduction and inspection
 
