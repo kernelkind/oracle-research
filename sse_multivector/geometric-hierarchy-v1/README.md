@@ -1,6 +1,8 @@
 # Original-coordinate hierarchy experiments
 
-The strongest result is **partial improvement from slower diffusion**, not a working complete hierarchy. All three methods produce some coherent groups. None of the inspected outputs consistently turns their nested memberships into increasingly specific, accurate categories of notes.
+The strongest current candidate is **unit-sphere diffusion, GDC09**, not the earlier slower Euclidean diffusion. Following the coordinate-motion diagnostic produced genuine additional parent–child structure: coffee→tea, sleep→daily routines, cookware→kitchen equipment, and literature→knowledge/writing. This remains a partial candidate, not a validated complete navigation system. Some memberships are weak, many successive nodes add examples without a new descriptive level, and coverage gaps remain.
+
+[Continuation findings](./CONTINUATION.md) record the causal investigation, controlled changes, completed trajectory, robustness checks, and remaining counterexamples. The original runs below remain unchanged. The earlier conclusion that motion tracing was merely a future recommendation was premature; that work is now performed.
 
 These are exploratory adaptations, not a benchmark ranking or a finding that the underlying papers are wrong. No generated category labels, new TUI, subject edits, mask edits, or new model calls were used.
 
@@ -21,10 +23,17 @@ Each result contains full notes, exact mask fragments, alias IDs, and byte range
 | GFM02 | GFM01 with adaptive aggregation disabled | Preserves one cleaner hard coffee group, but does not repair the native vacuum-sealing/bathroom mixture; other paths deteriorate. |
 | GDC01 | Density-normalized diffusion condensation, epsilon 0.12762124070971148 | Useful local groups, but many jump directly into broad collections. |
 | GDC01S | Identical GDC01 dynamics, saving iterations 0–16 | Hierarchy and final coordinates match GDC01 bitwise. A 100-fold merge-tolerance range shifts the broad food jump rather than removing it. |
-| GDC02 | GDC01 with each coordinate update reduced to one quarter | Adds genuine prepared-meal and sleep intermediates. Long chains still mostly add more examples of the same broad subject. Strongest partial candidate. |
+| GDC02 | GDC01 with each coordinate update reduced to one quarter | Adds genuine prepared-meal and sleep intermediates. Long chains still mostly add more examples of the same broad subject. Earlier baseline, superseded as strongest candidate. |
 | GDC03 | GDC01 with three applications of each current diffusion operator | Converges faster and provides fewer useful intermediate choices in the inspected paths. No observed rescue from this published mechanism. |
+| GDC02S | Unchanged GDC02, sparse coordinate snapshots | Bitwise replay; identifies density reweighting, radial contraction, and late numerical merging. |
+| GDC04 | GDC02 with density normalization disabled | Restores one coffee connection but loses other useful distinctions. Not a global improvement. |
+| GDC05 | GDC02 with earlier numerical merge recording | Does not generally repair missing intermediate structure. Motion stays identical. |
+| GDC06 | GDC02 with unit normalization after each update | Genuine additional intermediate groups; reaches its 2,000-step bound unfinished. |
+| GDC07 | GDC06 without density normalization | Useful alternative shrimp, bread, steak groups, with other distinctions lost. Completes at 1,825 steps. |
+| GDC08 | GDC06 with initial epsilon multiplied by 1.25 | Several exact diet/sleep/routine groups survive; other subdivisions change. Unfinished at 2,000 steps. |
+| GDC09 | GDC06 unchanged, bound extended to 8,000 | Completes at 3,480 steps; first 2,000 steps match exactly. Adds useful knowledge/writing parents; late weak joins persist. Strongest current candidate. |
 
-## Strongest diffusion examples
+## Earlier Euclidean diffusion examples
 
 Node IDs identify saved computational groups, not titles. Arrows here move upward, from narrower memberships toward the root.
 
@@ -56,7 +65,7 @@ V356 has cosine **0.675218** to V342, whose mask is `⟦Fetching coffee⟧`, ins
 
 V494 has cosine **0.706267** to V503, whose mask is `⟦Made⟧ ⟦coffee⟧ ⟦today⟧`, also inside 1334. It is V494's nearest vector from a different note. Nearby greeting vectors are almost as close, so the original neighborhood is not exclusively coffee.
 
-These comparisons rule out the simple explanation that no strong original coffee relationship exists. They do **not** establish why the final memberships separate: the complete neighborhoods, coordinate motion, and cumulative merging remain possible contributors. See `original-neighbors.json` for the exact inputs and six nearest distinct-note neighbors per target.
+These original comparisons rule out the simple explanation that no strong original coffee relationship exists. The continuation then traced the motion and tested the mechanisms rather than attributing the outcome from these two similarities alone. See `original-neighbors.json` for the original evidence and [CONTINUATION.md](./CONTINUATION.md) for the completed investigation.
 
 ## What FMC clarified
 
@@ -84,7 +93,7 @@ Native matrices are retained in `native-fuzzy.json` and `native-fuzzy-arrays.npz
 
 **FMC:** [author-hosted Fast Multilevel Clustering](https://www.wisdom.weizmann.ac.il/~achi/LOP158.pdf). This is an independent dense implementation, not covariance-based FMSC or a sparse linear-time reproduction. Conventions and unspecified parameters are explicit in `geometric_fmc.py`. A source discrepancy remains: the indexed author-hosted section 3.2 gives the implemented unweighted coarse sparsity average; an indexed [CiteSeer copy](https://citeseerx.ist.psu.edu/document?doi=8951aa6713594bee2e0c654e5f62b4b1097931db&repid=rep1&type=pdf) includes accumulated volume. Actual PDF bytes/rendered equations could not be retrieved. This is unresolved source/extraction provenance, not a confirmed transcription defect. No formula was silently changed.
 
-**Diffusion:** [original diffusion condensation](https://arxiv.org/html/1907.04463v3), [later theoretical and experimental treatment](https://arxiv.org/html/2203.14860). Coordinates move by a recomputed, density-normalized Gaussian operator; all original rows remain, and near-coincidence unions accumulate. The algorithm never increased epsilon in these saved runs. The tau=3 experiment follows the later paper's mechanism of applying the current operator repeatedly before rebuilding it. The slower update is motivated by [generalised blurring mean shift](https://iacl.ece.jhu.edu/proceedings/cvpr2008/papers/095.pdf); adapting its convex update to this density-normalized process is explicit, not an assertion that its convergence examples prove semantic quality here.
+**Diffusion:** [original diffusion condensation](https://arxiv.org/html/1907.04463v3), [later theoretical and experimental treatment](https://arxiv.org/html/2203.14860). Coordinates move by a recomputed, density-normalized Gaussian operator; all original rows remain, and near-coincidence unions accumulate. The original GDC01–03 runs never increased epsilon; GDC07 and GDC09 later did. The tau=3 experiment follows the later paper's mechanism of applying the current operator repeatedly before rebuilding it. The slower update is motivated by [generalised blurring mean shift](https://iacl.ece.jhu.edu/proceedings/cvpr2008/papers/095.pdf); adapting its convex update to this density-normalized process is explicit, not an assertion that its convergence examples prove semantic quality here. Unit-sphere precedent and adaptation limits are documented in the continuation.
 
 ## Reproduce and inspect
 
@@ -109,6 +118,6 @@ Every configuration preserves source hashes, canonical order, actual parameters,
 
 The 86 MiB `GDC01S/coordinate-snapshots.npz` observation cache remains saved locally but is excluded from Git; its checksum, exact generating configuration, final coordinates, and complete derived tolerance comparison are tracked. It can be regenerated without changing the experiment. No prior experiment artifacts were overwritten or deleted.
 
-## Next informative step
+## Current handoff
 
-The strongest follow-up is a bounded **diffusion-motion diagnostic**, not another blind parameter sweep: follow N045/N058 and their already-related original neighbors through saved coordinate updates, separating which neighbors pull them, when those relationships change, and when cumulative merging commits their placement. Compare this with a successful path. That can distinguish lost geometry during motion from a problematic conversion of an otherwise useful geometric state. The current results justify that investigation; they do not yet justify replacing the production hierarchy or blaming SSE alone.
+Inspect GDC09 as the strongest complete saved trajectory and GDC07 as the alternative without density correction. No production hierarchy was replaced. Native structure, note-level repetition, source-mask weaknesses, and semantic acceptance remain separate questions. The continuation includes concrete paths and counterexamples so the next decision can concern those actual results, not another unperformed motion diagnostic.

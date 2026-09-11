@@ -6,8 +6,9 @@ membership follows Huguet et al. (2023), https://arxiv.org/html/2203.14860,
 section 5.2. No CATCH or Multiscale PHATE source code is incorporated.
 
 Working coordinates evolve, but all original rows remain present. No PCA,
-diffusion-potential preprocessing, representative compression, unit-sphere
-renormalization, or later hierarchy simplification is performed here.
+diffusion-potential preprocessing, representative compression, or later
+hierarchy simplification is performed here. Unit-sphere updates are an explicit
+experimental variant; the default preserves the Euclidean diffusion equations.
 """
 
 from numbers import Integral
@@ -43,6 +44,7 @@ def fit(
     max_steps=2000,
     snapshot_iterations=(),
     relaxation=1.0,
+    coordinate_constraint="none",
 ):
     """Return native merge nodes, possibly multiple roots, and numerical stats.
 
@@ -63,6 +65,16 @@ def fit(
     https://iacl.ece.jhu.edu/proceedings/cvpr2008/papers/095.pdf) to the current
     density-normalized operator. One preserves the original update exactly.
 
+    ``coordinate_constraint='unit_sphere'`` requires unit input rows and
+    normalizes each completed coordinate update before rebuilding affinities.
+    For beta=0, one diffusion step and full relaxation this is blurring
+    directional mean shift with a von-Mises kernel, as explored in Zhang and
+    Chen (JMLR2021), https://jmlr.org/papers/v22/20-1194.html, Appendix A.3.
+    Density correction, relaxation, cumulative unions and bandwidth growth
+    remain explicit adaptations. Fixed-source mean-shift convergence theorems
+    do not establish guarantees for this variant. The default 'none' performs
+    no normalization. An undefined mean direction is rejected, not invented.
+
     At time zero and after each update, pairs closer than ``merge_tolerance``
     add permanent membership unions. This numerical threshold is not a semantic
     acceptance rule. Simultaneous connected unions become one multiway node;
@@ -82,6 +94,11 @@ def fit(
     if (coordinates.ndim != 2 or min(coordinates.shape) == 0
             or not np.isfinite(coordinates).all()):
         raise ValueError("X must be a nonempty finite two-dimensional matrix")
+    if coordinate_constraint not in ("none", "unit_sphere"):
+        raise ValueError("coordinate_constraint must be 'none' or 'unit_sphere'")
+    if coordinate_constraint == "unit_sphere" and not np.allclose(
+            np.linalg.norm(coordinates, axis=1), 1., rtol=0, atol=1e-10):
+        raise ValueError("unit_sphere requires unit vectors as input")
     for name, value in (("epsilon", epsilon), ("merge_tolerance", merge_tolerance),
                         ("density_tolerance", density_tolerance)):
         if not np.isfinite(value) or value <= 0:
@@ -166,6 +183,11 @@ def fit(
             next_coordinates = operator @ next_coordinates
         if relaxation < 1:
             next_coordinates = (1 - relaxation) * coordinates + relaxation * next_coordinates
+        if coordinate_constraint == "unit_sphere":
+            norms = np.linalg.norm(next_coordinates, axis=1)
+            if not np.isfinite(norms).all() or np.any(norms <= np.finfo(float).eps):
+                raise ValueError("unit-sphere update has an undefined direction")
+            next_coordinates /= norms[:, None]
         displacement = float(np.linalg.norm(next_coordinates - coordinates, axis=1).max())
         coordinates = next_coordinates
         if iteration in requested:
@@ -205,6 +227,7 @@ def fit(
             "density_normalization": float(density_normalization),
             "diffusion_steps": int(diffusion_steps),
             "relaxation": float(relaxation),
+            "coordinate_constraint": coordinate_constraint,
             "merge_tolerance": float(merge_tolerance),
             "density_tolerance": float(density_tolerance),
             "bandwidth_growth": float(bandwidth_growth),

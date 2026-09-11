@@ -132,6 +132,50 @@ class GeometricDiffusionTests(unittest.TestCase):
 
         self.assertTrue(np.all(np.linalg.norm(result["final_coordinates"], axis=1) < 1))
 
+    def test_unit_sphere_constraint_normalizes_each_move_before_rebuilding_kernel(self):
+        x = np.array([[1., 0.], [.6, .8], [0., 1.]])
+        original = x.copy()
+        expected = x.copy()
+        for _ in range(2):
+            distances = np.array([[np.dot(a - b, a - b) for b in expected]
+                                  for a in expected])
+            affinity = np.exp(-distances / .6)
+            degree = affinity.sum(axis=1)
+            kernel = affinity / (degree[:, None] * degree[None, :])
+            operator = kernel / kernel.sum(axis=1)[:, None]
+            expected = .75 * expected + .25 * (operator @ expected)
+            expected /= np.linalg.norm(expected, axis=1)[:, None]
+
+        result = fit(x, epsilon=.6, relaxation=.25, max_steps=2,
+                     coordinate_constraint='unit_sphere', snapshot_iterations=(1, 2))
+
+        np.testing.assert_allclose(result['final_coordinates'], expected, atol=1e-14)
+        for snapshot in result['snapshots'].values():
+            np.testing.assert_allclose(np.linalg.norm(snapshot, axis=1), 1., atol=1e-14)
+        np.testing.assert_array_equal(x, original)
+        self.assertEqual(result['stats']['coordinate_constraint'], 'unit_sphere')
+        plain = fit(x, epsilon=.6, relaxation=.25, max_steps=2)
+        normalized_at_end = plain['final_coordinates']
+        normalized_at_end /= np.linalg.norm(normalized_at_end, axis=1)[:, None]
+        self.assertFalse(np.allclose(expected, normalized_at_end))
+
+    def test_no_coordinate_constraint_preserves_original_dynamics(self):
+        x = np.array([[0.], [.4], [2.]])
+        original = fit(x, epsilon=.6, max_steps=3)
+        explicit = fit(x, epsilon=.6, max_steps=3, coordinate_constraint='none')
+        np.testing.assert_array_equal(original['final_coordinates'], explicit['final_coordinates'])
+        self.assertEqual(original['nodes'], explicit['nodes'])
+
+    def test_unit_sphere_constraint_rejects_nonunit_input_and_undefined_direction(self):
+        for x in ([[0., 0.], [1., 0.]], [[2., 0.], [0., 1.]]):
+            with self.subTest(x=x), self.assertRaisesRegex(ValueError, 'unit vectors'):
+                fit(x, epsilon=.6, coordinate_constraint='unit_sphere')
+        with self.assertRaisesRegex(ValueError, 'undefined direction'):
+            fit([[1., 0.], [-1., 0.]], epsilon=1e300, max_steps=1,
+                coordinate_constraint='unit_sphere')
+        with self.assertRaisesRegex(ValueError, 'coordinate_constraint'):
+            fit([[1., 0.]], epsilon=.6, coordinate_constraint='sphere')
+
     def test_requested_snapshots_are_read_only_observations_of_same_trajectory(self):
         x = np.array([[0.], [.4], [2.]])
         plain = fit(x, epsilon=.6, max_steps=3, bandwidth_growth=1)
