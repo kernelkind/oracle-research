@@ -3,6 +3,12 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
+Latest parent-construction evidence: [mask descriptions and hierarchy relations](./MASK-DESCRIPTION-HIERARCHY.md).
+MDH02 removes the old-tree dependency and finds three immediate relations, but
+literal matching confuses word senses and leaves twenty roots. It is not a new
+browser candidate. The record also corrects an `I` candidate caused by stripping
+a sleep emoji from its source mask.
+
 Latest membership evidence: [explicit masks and missing notes](./LITERAL-MEMBERSHIP.md).
 NMR03 finds four notes outside broad Coffee and two outside Bitcoin through
 literal subject evidence. It is an audited diagnostic, not an adopted assignment
@@ -165,6 +171,6 @@ corpus, not another arbitrary pruning threshold.
 
 [The record](./LITERAL-MEMBERSHIP.md) separates seed-union growth from omissions
 in existing broad destinations, inspects all additions, and preserves uncertain
-scope and literal-matching misses. No browsing membership changed. The next
-question is how to obtain meaningful broader and narrower descriptions without
-depending on the old tree's groups; shared words alone remain insufficient.
+scope and literal-matching misses. No browsing membership changed. MDH01/MDH02
+now test descriptions independent of the old groups; shared wording yields a
+few useful relationships but does not supply semantic parent construction.

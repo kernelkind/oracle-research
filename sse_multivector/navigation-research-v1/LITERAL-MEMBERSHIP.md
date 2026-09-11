@@ -186,16 +186,15 @@ use complete word sets already supplied by individual masks, and retain those
 whose words appear in masks from at least two notes. This yields 23 candidates:
 19 single-word, three two-word, and one three-word. Alongside the seven subjects
 above it finds bread (8 notes), sourdough bread (2), beef (4), brisket (2), and
-`good morning` (4). But it also proposes `I` (27 notes) and ambiguous `rise` and
-`freedom` (2 each). These are exploratory counts, not another accepted run.
+`good morning` (4). It also proposes `I` (27 notes) and ambiguous `rise` and
+`freedom` (2 each). These exploratory counts have since been reproduced in MDH01.
 
-The next useful test is whether source-supported descriptions can generate
-meaningful broad and narrow destinations independently of old ancestry. It
-must examine why a candidate is a subject rather than merely shared wording,
-and whether adding a qualifier actually narrows the meaning and notes. Do not
-silently remove `I` with a one-off exception or advertise the 23 candidates as
-a solution. This is the unresolved description-quality problem, not a reason
-to tune another geometric distance cutoff.
+[MDH01/MDH02](./MASK-DESCRIPTION-HIERARCHY.md) test those candidates and correct
+the interpretation of `I`: the original mask was `⟦I⟧ ⟦😴⟧`, and our word-only
+representation erased the sleep emoji. Preserving symbols removes that artifact,
+leaving 22 candidates and three immediate relations under either tested rule.
+Literal sense errors and missing abstractions remain. This does not establish
+a better browsing hierarchy or justify tuning another geometric cutoff.
 
 ## Reproduction and verification
 
