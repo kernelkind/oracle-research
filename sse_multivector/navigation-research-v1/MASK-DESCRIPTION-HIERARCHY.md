@@ -194,13 +194,16 @@ GM and Good morning remain disconnected; the method has no way to propose an
 unwritten shared description. Adjusting inclusion thresholds cannot supply that
 missing semantic understanding.
 
-The next mechanism to investigate is source-grounded semantic generalization:
+The follow-up [learned-membership experiments](./MODEL-MEMBERSHIP.md) investigate
+source-grounded semantic generalization:
 can an explicit description identify the relevant meaning across differently
 worded masks and distinguish refinement from mere association? Published
-conceptual indexing and contextual entailment methods are leads, not approved
-solutions. A new test must separately establish description meaning, membership
-and ancestor fit; it must not silently turn a conventional noun taxonomy or a
-claim-entailment score into the definition of note browsing.
+conceptual indexing and contextual entailment methods motivated that test, not
+an approved solution. The tested entailment and relevance classifiers show
+useful recognition alongside wrong orderings; neither supplies a validated
+membership rule or constructs parents. Description meaning, membership and
+ancestor fit still require separate evidence. A conventional noun taxonomy or
+claim-entailment score must not become the definition of note browsing.
 
 ## Reproduction and preservation
 

@@ -1,0 +1,9 @@
+{
+  "model_id": "BAAI/bge-reranker-v2-m3",
+  "model_revision": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e",
+  "runs": "RER01 reuses all 108 NLI01 pairs; RER02 reuses all 21 NLI02 pairs.",
+  "hypothesis": "A pretrained query/passage relevance model better distinguishes mask aboutness from statement polarity and loose associations than the tested entailment classifier on these already-observed examples.",
+  "input_policy": "Use the original description string as the query, exact fragments joined with one space as passage. No hypothesis sentence, source context, generated subject, old model score or extra prompt enters the model. The source originals remain available for audit.",
+  "controls": "Preserve every original pair including the apparent positive generalizations, not only the three negative cases. Repeat the GM expansion, coffee negation and morning/afternoon interventions with exactly the saved texts.",
+  "interpretation": "A model comparison, not a causal isolation of training objective: model family, training data and parameters differ. Scores are not calibrated probabilities, are not directly comparable in scale to NLI scores, and do not establish membership thresholds or parent-child relationships. No hierarchy modifications or mask regeneration. Interpret all scores, not only a relative-order checklist. These are development examples, not an unseen holdout."
+}

@@ -1,0 +1,28 @@
+{
+  "run_id": "NLI01",
+  "model_id": "MoritzLaurer/deberta-v3-base-zeroshot-v2.0",
+  "model_revision": "8e7e5af5983a0ddb1a5b45a38b129ab69e2258e8",
+  "template": "This text is about {}",
+  "vectors": ["V224", "V377", "V486", "V120", "V494", "V321", "V107", "V658", "V786", "V519", "V114", "V620"],
+  "descriptions": ["art", "technological advancement", "morning greetings", "coffee", "bread", "sourdough bread", "food", "price increases", "physical exercise"],
+  "checks": [
+    ["V224", "technological advancement", "art"],
+    ["V377", "art", "technological advancement"],
+    ["V486", "morning greetings", "price increases"],
+    ["V120", "morning greetings", "price increases"],
+    ["V494", "coffee", "physical exercise"],
+    ["V321", "coffee", "physical exercise"],
+    ["V107", "sourdough bread", "coffee"],
+    ["V107", "bread", "coffee"],
+    ["V107", "food", "price increases"],
+    ["V658", "bread", "sourdough bread"],
+    ["V786", "food", "art"],
+    ["V519", "price increases", "morning greetings"],
+    ["V114", "food", "physical exercise"],
+    ["V620", "physical exercise", "food"]
+  ],
+  "scope": "Exploratory classification of fixed masks against fixed descriptions; no hierarchy generation, membership edits, source-mask regeneration, model tuning or threshold selection.",
+  "hypothesis": "A pretrained zero-shot classifier can recognize broad source-supported subjects and reject some misleading shared words on these fixed masks. It need not choose a single description: several may apply.",
+  "interpretation": "Record all 108 scores and all originals. The 14 checks are limited relative-order expectations, not a complete annotation matrix or proof that membership thresholds transfer. A high score is not a calibrated probability. Art is a bare-tag mask. V658 concerns soda bread; bread versus sourdough tests unsupported narrowing, not a claim that all soda-bread recipes exclude sourdough. These 12 masks do not validate ambiguous standalone fragments such as Rise or I plus an emoji.",
+  "input_policy": "Join exact source fragments with one space, in source order. Full originals and generated subjects are saved only for audit and are not passed to the classifier. This explicitly tests the selected text, not SSE's full-note contextual encoding."
+}

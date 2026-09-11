@@ -3,6 +3,13 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
+Latest learned-membership evidence: [entailment and relevance models](./MODEL-MEMBERSHIP.md).
+NLI01/NLI02 show some useful broader-subject recognition but also abbreviation,
+negation and greeting-association errors. RER01/RER02 do not fix membership:
+for Coffee, the reranker puts `Good morning` above explicit coffee masks.
+All inputs and scores are preserved. No classifier, membership rule or new
+hierarchy is adopted by these component tests.
+
 Latest parent-construction evidence: [mask descriptions and hierarchy relations](./MASK-DESCRIPTION-HIERARCHY.md).
 MDH02 removes the old-tree dependency and finds three immediate relations, but
 literal matching confuses word senses and leaves twenty roots. It is not a new

@@ -1,0 +1,25 @@
+{
+  "run_id": "NLI02",
+  "model_id": "MoritzLaurer/deberta-v3-base-zeroshot-v2.0",
+  "model_revision": "8e7e5af5983a0ddb1a5b45a38b129ab69e2258e8",
+  "template": "This text is about {}",
+  "vectors": ["V486", "CF-GM", "V321", "CF-NEED", "V494", "CF-AM", "CF-PM"],
+  "descriptions": ["morning greetings", "coffee", "technological advancement"],
+  "checks": [
+    ["V486", "morning greetings", "technological advancement"],
+    ["CF-GM", "morning greetings", "technological advancement"],
+    ["V321", "coffee", "technological advancement"],
+    ["CF-NEED", "coffee", "technological advancement"],
+    ["V494", "coffee", "morning greetings"],
+    ["CF-AM", "coffee", "morning greetings"],
+    ["CF-PM", "coffee", "morning greetings"]
+  ],
+  "scope": "Post-NLI01 controlled input interventions, not a holdout or source-mask repair. Same model and hypothesis template.",
+  "hypotheses": [
+    "Spelling GM as Good morning will increase recognition if abbreviation interpretation caused the low original greeting score.",
+    "Removing don't from the coffee-need statement will raise the Coffee score if the classifier incorrectly lets statement polarity suppress aboutness.",
+    "Restoring a grammatical coffee sentence may remove a greeting interpretation of fragmented text; changing morning to afternoon tests time-of-day association. Neither sentence actually greets anyone."
+  ],
+  "input_policy": "The separate counterfactual evidence file preserves unchanged source entries for V486/V321/V494. CF identifiers are synthetic interventions, explicitly not real notes or revised masks. No changes are made to GDC09.",
+  "interpretation": "Report every score and intervention delta. Relative checks alone do not establish correct membership, calibration, or semantic parentage. The two grammatical coffee variants differ only by morning versus afternoon."
+}
