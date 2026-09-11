@@ -61,6 +61,14 @@ The earlier [controlled-run results](experiments/fine-segmentation/controlled-ru
 and their frozen protocols remain unchanged evidence, not a pending work order
 that must be repeated before this investigation.
 
+The later [HiDeF comparison](../../sse_multivector/hidef-experiment-v1/README.md)
+uses the saved Infomap I03 graph and the same 100-note vectors. HDFv1 preserves
+communities found at multiple resolutions and connects them by exact vector
+containment. [HDFv2](../../sse_multivector/hidef-experiment-v1/HDFv2/README.md)
+compares that unchanged graph with two edge-removal policies while keeping
+HiDeF fixed. The runs and unnamed, nested review views are preserved separately;
+neither graph policy is adopted as a default or a final hierarchy method.
+
 ## Goal
 
 Build a public, corpus-derived content-discovery hierarchy that helps a person

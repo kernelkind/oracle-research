@@ -2,6 +2,8 @@
 
 HiDeF on the unchanged I03 graph: 100 notes, 916 canonical vectors, 945 original vector IDs. No new subjects, masks, embeddings, or labels were generated. CREC-124.
 
+Follow-up: [HDFv2](./HDFv2/README.md) compares graph-edge restrictions with HiDeF unchanged. All HDFv1 files and the default review command below remain unchanged. Explicit `--graph-policy` selection opens the separate HDFv2 results.
+
 ## Inspect
 
 ```bash

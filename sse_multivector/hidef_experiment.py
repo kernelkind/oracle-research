@@ -22,6 +22,8 @@ import resource
 import shlex
 import time
 
+from hidef_graph_policy import apply_graph_policy
+
 for variable in ('OPENBLAS_NUM_THREADS', 'OMP_NUM_THREADS', 'MKL_NUM_THREADS',
                  'NUMEXPR_NUM_THREADS'):
     os.environ[variable] = '1'
@@ -353,6 +355,8 @@ def main(argv=None):
     parser.add_argument('--data-directory', type=Path, default=root / 'real-note-fine-segmentation-v1')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--run-id', default='HDFv1')
+    parser.add_argument('--graph-policy', default='original',
+                        choices=('original', 'mutual_best_per_note', 'strongest_edges_matched'))
     parser.add_argument('--plan', action='store_true', help='validate inputs and print frozen configuration without discovery')
     for key in ('minres', 'maxres', 'density', 'neighbors', 'persistence', 'consensus_percent', 'seed'):
         parser.add_argument('--' + key.replace('_', '-'), type=type(DEFAULTS[key]), default=DEFAULTS[key])
@@ -367,13 +371,25 @@ def main(argv=None):
     config = {**DEFAULTS, **{key: getattr(args, key) for key in DEFAULTS if hasattr(args, key)}}
     dependencies = dependency_provenance()
     graph, reference, source_sets, graph_path = load_inputs(args.graph_directory, args.data_directory)
+    original_graph = {'path': str(graph_path.resolve()), 'sha256': sha256(graph_path),
+                      'vertices': graph.vcount(), 'edges': graph.ecount(),
+                      'weight_sum': math.fsum(graph.es['weight'])}
+    graph, graph_audit = apply_graph_policy(graph, source_sets, args.graph_policy)
+    # Preserve the original identity header and retained edge bytes exactly.
+    # Policy indices refer to the checked original edge order, not a reindexing.
+    original_lines = graph_path.read_bytes().splitlines(keepends=True)
+    edge_start = graph.vcount() + 2
+    graph_bytes = b''.join(original_lines[:edge_start] + [original_lines[edge_start + i]
+                          for i in graph_audit['retained_original_edge_indices']])
     resolutions, resolution_graph = resolution_schedule(config)
     configuration = {
         'schema_version': 'hidef-configuration-v1', 'run_id': args.run_id, 'method': METHOD,
         'sources': reference['sources'],
-        'input_graph': {'path': str(graph_path.resolve()), 'sha256': sha256(graph_path),
-                        'vertices': graph.vcount(), 'edges': graph.ecount(),
-                        'weight_sum': math.fsum(graph.es['weight'])},
+        'input_graph': original_graph,
+        'graph': {'path': 'graph.net', 'sha256': hashlib.sha256(graph_bytes).hexdigest(),
+                  'vertices': graph.vcount(), 'edges': graph.ecount(),
+                  'weight_sum': math.fsum(graph.es['weight'])},
+        'graph_policy': graph_audit,
         'input_hierarchy_sha256': sha256(args.graph_directory / 'hierarchy.json'),
         'parameters': config, 'resolutions': resolutions,
         'seed_policy': 'base seed + zero-based sample index; independent fresh partitions',
@@ -384,6 +400,7 @@ def main(argv=None):
                         'transitive_reduction': True, 'multiple_parents': True},
         'dependencies': dependencies, 'python': platform.python_version(),
         'source_code_sha256': sha256(__file__),
+        'graph_policy_source_sha256': sha256(root / 'hidef_graph_policy.py'),
         'dependency_lock_sha256': sha256(root / 'hidef-requirements.lock'),
     }
     if args.plan:
@@ -392,7 +409,7 @@ def main(argv=None):
     args.output.mkdir(parents=True, exist_ok=False)
     write_json(args.output / 'configuration.json', configuration)
     with (args.output / 'graph.net').open('xb') as stream:
-        stream.write(graph_path.read_bytes())
+        stream.write(graph_bytes)
     stage = time.monotonic()
     cluster_graph, candidates, partitions, resolution_graph = discover(graph, source_sets, config)
     discovery_seconds = time.monotonic() - stage
