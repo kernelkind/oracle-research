@@ -149,13 +149,13 @@ the grinding words. The same group contains this complete different note:
 V519's generated subject is `Rising costs of Christmas lunch for Australians.`
 The shared word does not make Getting up a faithful description of that mask.
 This is a grouping problem, not a reason to invent a broader label that hides it.
-The source subjects already distinguish the two meanings; whether an automatic
-method can use them reliably is the next test, not an established fix.
-
-This motivates testing existing subject outputs as **candidate meanings checked
-against the other members**, while permitting an incompatible group to remain
-unresolved. Do not automatically promote a seed subject, assume all frozen groups
-are coherent, or begin another prompt project without testing the available data.
+The source subjects already distinguish the two meanings. The completed
+[GDR02 follow-up](./EXISTING-SUBJECT-RELATIONS.md) exposes this mixture and recovers
+greeting equivalence using those existing outputs, but also finds incorrect
+relations and coverage decisions. [GDR03](./SUBJECT-INPUT-RENDERING.md) isolates
+input formatting: some matches improve, while associated-topic errors remain or
+increase. A seed subject is still not automatically a description of the whole
+group. No automatic grouping or parent method is established by these tests.
 
 ## Reproduction and integrity
 

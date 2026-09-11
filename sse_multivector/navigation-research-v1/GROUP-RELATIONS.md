@@ -166,9 +166,11 @@ author code found that its normal scoring path supplies only the child's
 definition, leaving the parent's sense unspecified. TaxoLLaMA was not run.
 GDR01 recovers greeting equivalence with manually supplied meanings while
 retaining the bread direction; it does not establish automatic group meanings
-or adopt a classifier as a production component. The next test should use the
-available subject outputs as candidates, without assuming a seed's meaning
-describes every member of a literal group.
+or adopt a classifier as a production component. The completed
+[GDR02 test](./EXISTING-SUBJECT-RELATIONS.md) uses available subject outputs;
+[GDR03](./SUBJECT-INPUT-RENDERING.md) checks input formatting. Both retain useful
+signals but expose scope mismatches and association errors. No seed description
+or generic topic-classification score is adopted as a hierarchy relation.
 
 ## Reproduction and verification
 

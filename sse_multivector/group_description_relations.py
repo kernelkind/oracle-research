@@ -48,32 +48,23 @@ def prepare_pairs(groups, fixture):
     return pairs
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--groups', type=Path, required=True)
-    parser.add_argument('--fixture', type=Path, required=True)
-    parser.add_argument('--cache', type=Path, required=True)
-    parser.add_argument('--output', type=Path, required=True)
-    args = parser.parse_args()
-    if args.output.exists():
-        parser.error('output exists; preserve earlier experiments')
-    groups = json.loads(args.groups.read_bytes())
-    fixture = json.loads(args.fixture.read_bytes())
-    pairs = prepare_pairs(groups, fixture)
-    source_groups = [g for g in groups if g['id'] in {p['child'] for p in pairs}]
-
+def score_pairs(pairs, fixture, cache):
+    """Score explicit premise/hypothesis pairs with the fixed local classifier."""
+    if not pairs or any(not p.get('premise') or not p.get('hypothesis') for p in pairs):
+        raise ValueError('nonempty premise/hypothesis pairs required')
     import torch
     from huggingface_hub import snapshot_download
     from transformers import AutoTokenizer, AutoModelForSequenceClassification
     torch.set_num_threads(2)
-    torch.set_num_interop_threads(1)
+    if torch.get_num_interop_threads() != 1:
+        torch.set_num_interop_threads(1)
     torch.manual_seed(0)
     torch.use_deterministic_algorithms(True)
     started = time.monotonic()
     print('Loading pinned cached model; CPU only, two threads, no downloads', flush=True)
     snapshot = Path(snapshot_download(
         fixture['model_id'], revision=fixture['model_revision'],
-        cache_dir=str(args.cache), local_files_only=True, token=False))
+        cache_dir=str(cache), local_files_only=True, token=False))
     tokenizer = AutoTokenizer.from_pretrained(snapshot, local_files_only=True, trust_remote_code=False)
     model = AutoModelForSequenceClassification.from_pretrained(
         snapshot, local_files_only=True, use_safetensors=True, trust_remote_code=False).cpu().eval()
@@ -97,6 +88,30 @@ def main():
                 tokens['attention_mask'].sum(dim=1).tolist()):
             pair.update(logits=raw, score=score, token_count=length)
     inference_seconds = time.monotonic() - started
+    return dict(
+        model_id=fixture['model_id'], model_revision=fixture['model_revision'],
+        model_files={str(p.relative_to(snapshot)): sha256(p)
+                     for p in sorted(snapshot.rglob('*')) if p.is_file()},
+        model_labels=mapping, parameters=sum(p.numel() for p in model.parameters()),
+        packages={d.metadata['Name']: d.version for d in importlib.metadata.distributions()},
+        torch_threads=2, batch_size=4, seed=0, device='cpu', loading_seconds=loading_seconds,
+        inference_seconds=inference_seconds, peak_rss_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--groups', type=Path, required=True)
+    parser.add_argument('--fixture', type=Path, required=True)
+    parser.add_argument('--cache', type=Path, required=True)
+    parser.add_argument('--output', type=Path, required=True)
+    args = parser.parse_args()
+    if args.output.exists():
+        parser.error('output exists; preserve earlier experiments')
+    groups = json.loads(args.groups.read_bytes())
+    fixture = json.loads(args.fixture.read_bytes())
+    pairs = prepare_pairs(groups, fixture)
+    source_groups = [g for g in groups if g['id'] in {p['child'] for p in pairs}]
+    metrics = score_pairs(pairs, fixture, args.cache)
     summaries = []
     for condition in dict.fromkeys(p['condition'] for p in pairs):
         rows = [p for p in pairs if p['condition'] == condition]
@@ -107,15 +122,9 @@ def main():
             disagreements=[p for p in rows if (p['score'] > .5) != p['expected_implication']]))
     helper = Path(__file__).with_name('mask_description_nli.py')
     config = dict(
-        run_id=fixture['run_id'], model_id=fixture['model_id'], model_revision=fixture['model_revision'],
-        model_files={str(p.relative_to(snapshot)): sha256(p)
-                     for p in sorted(snapshot.rglob('*')) if p.is_file()},
-        model_labels=mapping, parameters=sum(p.numel() for p in model.parameters()),
+        **metrics, run_id=fixture['run_id'],
         groups_sha256=sha256(args.groups), fixture_sha256=sha256(args.fixture),
         runner_sha256=sha256(Path(__file__)), helper_sha256=sha256(helper),
-        packages={d.metadata['Name']: d.version for d in importlib.metadata.distributions()},
-        torch_threads=2, batch_size=4, seed=0, device='cpu', loading_seconds=loading_seconds,
-        inference_seconds=inference_seconds, peak_rss_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
         notes='Manual descriptions are diagnostic inputs. Scores are not calibrated probabilities. No group, mask, note membership or hierarchy changed.')
     args.output.mkdir(parents=True)
     for name, value in [('scores.json', pairs), ('summary.json', summaries),
@@ -127,7 +136,7 @@ def main():
                          ('mask_description_nli.py', helper)]:
         with (args.output / name).open('xb') as stream:
             stream.write(source.read_bytes())
-    print(json.dumps(dict(pairs=len(pairs), inference_seconds=inference_seconds,
+    print(json.dumps(dict(pairs=len(pairs), inference_seconds=metrics['inference_seconds'],
                          positive_decisions={r['condition']: r['positive_decisions'] for r in summaries})))
 
 

@@ -3,13 +3,16 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest contextual-relation evidence: [GDR01](./CONTEXTUAL-GROUP-RELATIONS.md).
-For eight unchanged groups, manually supplied subject descriptions recover the
-GM/Good morning equivalence and retain one-way bread narrowing with the fixed
-local entailment model. No automatic group-description or hierarchy method is
-established. The existing source subjects may supply candidate meanings, but
-the literal Rise group mixes getting up with rising lunch costs; a seed subject
-cannot automatically represent every member. All 224 scores are preserved.
+Latest contextual-relation evidence: [GDR02](./EXISTING-SUBJECT-RELATIONS.md) and
+[GDR03](./SUBJECT-INPUT-RENDERING.md). Existing generated subjects recover greeting
+equivalence without GDR01's manual descriptions, but one seed's subject often
+does not describe its whole group. A controlled input-format change fixes some
+coverage misses and introduces incorrect associated-topic relations, including
+Coffee → morning greetings. No automatic classifier, group description or new
+hierarchy is adopted. All inputs and scores are preserved. The next research
+lead is a task-trained parent/sibling relation method, not another topic-template
+tweak. Earlier [GDR01](./CONTEXTUAL-GROUP-RELATIONS.md) remains the manual-input
+control.
 
 Prior group-relation evidence: [lexical broader and equivalent relations](./GROUP-RELATIONS.md).
 LGR01 checks all 462 ordered pairs of the 22 frozen MDH02 groups. It proposes
