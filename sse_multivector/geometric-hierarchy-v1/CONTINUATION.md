@@ -2,7 +2,7 @@
 
 GDC09 is the strongest candidate from this investigation. Keeping moving vectors at unit length produced useful intermediate memberships missing from the earlier Euclidean run. The completed result still contains weak joins and redundant levels; it is not a finished navigation hierarchy.
 
-All fits use the same 916 canonical vectors, 945 preserved mask aliases, 100 notes, and 768 original dimensions. No subjects, masks, source notes, or semantic labels were changed. No new model calls or TUI were used. GDC02 remains the unchanged Euclidean baseline. Configuration, exact masks, full notes, native tree, and final coordinates are retained for every run.
+All fits use the same 916 canonical vectors, 945 preserved mask aliases, 100 notes, and 768 original dimensions. No subjects, masks, source notes, or semantic labels were changed during fitting. No new model calls or TUI were used for the numerical investigation. The subsequently requested category browser adds inspection titles without changing those results; its display rules are in the [README](./README.md). GDC02 remains the unchanged Euclidean baseline. Configuration, exact masks, full notes, native tree, and final coordinates are retained for every run.
 
 ## What the motion trace established
 
@@ -71,7 +71,7 @@ Its nine-mask storm/parade/fireworks group1686 joins `⟦alby⟧`, `⟦#DCA⟧`,
 
 Again, the input matters. The exact mask `⟦Next rounds of storms⟧` scores only0.157403 against its best N058 vector and0.134908 against its best N080 vector; a brain-fog mask is its closest other-note neighbor at0.271418. Another mask containing storms and grilling dinner is much closer to meal preparation,0.715740. The missing weather category is a content-discovery limitation of this frozen pipeline, not isolated evidence that a different merge rule would recover it. `remaining-original-neighborhoods.json` retains every checked target, requested note comparison, and nearest distinct-note masks.
 
-**Many levels still do not describe a new interest.** A larger set of food notes is not automatically a broader semantic category. Repeated note sets and successive additions of examples remain prominent. Removing such levels would be a separate readout decision; no pruning or generated titles were used to conceal them here.
+**Many levels still do not describe a new interest.** A larger set of food notes is not automatically a broader semantic category. The native tree retains repeated note sets and successive additions of examples. The later approved category browser collapses only parent–child steps returning identical notes. It retains different note sets even when their best titles repeat; that semantic redundancy remains unresolved. Separate branches with the same notes remain distinct unless their masks also express the same subject.
 
 ## Does cumulative merging hide later separation?
 
@@ -115,7 +115,7 @@ Conclusion: raw node duration can misrepresent stability at the note level, and 
 - `GDC09` is the complete strongest directional candidate. `GDC07` is the useful alternative without density correction. `GDC08` is a bounded bandwidth robustness comparison, not a converged result.
 - `GDC02S/motion.json`, `GDC09/continuation-analysis.json`, and `GDC09/remaining-original-neighborhoods.json` preserve the numerical diagnoses. The diagnostic source scripts are in `code/`.
 - `note-set-duration.json` records the final level-selection diagnostic. It does not alter or filter any result.
-- `path-evidence.json` stores complete chains for the discussed interests, exact masks, and full original notes. Existing `geometric_experiment.py inspect RUN NODE --full-notes` remains a read-only inspection interface. After the investigation, the user requested UI viewing: `../run-diffusion-hierarchy.sh` now loads the unchanged GDC09 memberships into the existing nested-mask viewer. See the main README for its display rules and controls; no new TUI or semantic labels were generated.
+- `path-evidence.json` stores complete chains for the discussed interests, exact masks, and full original notes. Existing `geometric_experiment.py inspect RUN NODE --full-notes` remains a read-only inspection interface. `../run-diffusion-hierarchy.sh` opens the unchanged nested-mask view. The later `../run-diffusion-categories.sh` reuses the category browser: immediate children only, separately opened recursive original notes, authored mask-grounded titles, and collapsed equal-note parent–child steps. Its 219 categories retain all 100 notes. The five repeated note sets across distinct branches were checked semantically and kept separate; `GDC09/category-mask-review.json` records why. The README documents both views, and `GDC09/category-projection.json` records every native-to-displayed mapping.
 - Source archives and `provenance.json` preserve code and artifact hashes. Observation NPZ caches stay local and Git-ignored; configuration and checksums make them reproducible. No baseline output was overwritten.
 - The production regression suite passed73 tests. After the optional unit-sphere feature was added, default Euclidean fitting reproduces GDC02's first558 steps of nodes and GDC05's final coordinates. Separately, the unchanged GDC02S observational replay matches the complete archived GDC02 tree and final coordinates.
 

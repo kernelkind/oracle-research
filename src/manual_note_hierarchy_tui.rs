@@ -18,6 +18,8 @@ use crate::titled_merge_hierarchy::TitledMergeHierarchy;
 
 const CONTROLS: &str = "In categories, j/k or Up/Down chooses an item; Enter/l or Right opens it. h, Backspace or Escape returns to the parent. Child categories are separate from the actions for viewing all notes or notes outside children.\n\nIn original notes, h/l or Left/Right changes the note; j/k or Up/Down scrolls. Backspace or Escape returns to the category choices.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis manual proposal is read-only. Nothing is written or approved.";
 
+const CATEGORY_CONTROLS: &str = "In categories, only immediate child categories are listed. j/k or Up/Down chooses a child; Enter/l or Right descends into it, including a category with no children. N opens all original notes at the CURRENT category, including descendants and deduplicating shared notes. h, Backspace or Escape returns to the parent.\n\nIn original notes, h/l or Left/Right changes the note; j/k or Up/Down scrolls. Backspace or Escape returns to the same category menu and selection.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis category hierarchy is read-only. Nothing is written or approved.";
+
 struct CategoryFrame {
     node_id: String,
     cursor: usize,
@@ -33,6 +35,7 @@ struct NoteBrowser {
 
 pub struct ManualNoteExplorer {
     hierarchy: ManualNoteHierarchy,
+    categories_only: bool,
     merge_origin: Option<(String, usize)>,
     categories: Vec<CategoryFrame>,
     notes: Option<NoteBrowser>,
@@ -44,12 +47,22 @@ pub struct ManualNoteExplorer {
 
 impl ManualNoteExplorer {
     pub fn new(hierarchy: ManualNoteHierarchy) -> Self {
+        Self::with_categories_only(hierarchy, false)
+    }
+
+    /// Browse immediate children, with original notes opened separately using N.
+    pub fn categories(hierarchy: ManualNoteHierarchy) -> Self {
+        Self::with_categories_only(hierarchy, true)
+    }
+
+    fn with_categories_only(hierarchy: ManualNoteHierarchy, categories_only: bool) -> Self {
         let mut model = Self {
             categories: vec![CategoryFrame {
                 node_id: hierarchy.root_node_id.clone(),
                 cursor: 0,
             }],
             hierarchy,
+            categories_only,
             merge_origin: None,
             notes: None,
             analysis_scroll: None,
@@ -57,7 +70,7 @@ impl ManualNoteExplorer {
             pending_g: false,
             interaction_enabled: true,
         };
-        if model.category().children.is_empty() {
+        if !categories_only && model.category().children.is_empty() {
             model.show_notes(false, false);
         }
         model
@@ -123,7 +136,7 @@ impl ManualNoteExplorer {
     }
 
     fn breadcrumb(&self) -> String {
-        if self.merge_origin.is_some() {
+        if self.merge_origin.is_some() || (self.categories_only && self.categories.len() > 3) {
             let title = self.category_title(&self.category().node_id);
             // An immediate parent and current title remain legible even deep in the tree.
             return if self.categories.len() > 1 {
@@ -153,6 +166,9 @@ impl ManualNoteExplorer {
                 )
             })
             .collect::<Vec<_>>();
+        if self.categories_only {
+            return items;
+        }
         items.push(format!(
             "View all {}",
             note_count(self.hierarchy.note_ids(&category.node_id).len())
@@ -192,10 +208,10 @@ impl ManualNoteExplorer {
                 node_id: child,
                 cursor: 0,
             });
-            if self.category().children.is_empty() {
+            if !self.categories_only && self.category().children.is_empty() {
                 self.show_notes(false, true);
             }
-        } else {
+        } else if !self.categories_only {
             self.show_notes(cursor > self.category().children.len(), false);
         }
     }
@@ -304,6 +320,9 @@ impl ManualNoteExplorer {
             KeyCode::Home => self.jump(false),
             KeyCode::End => self.jump(true),
             _ if self.analysis_scroll.is_some() => {}
+            KeyCode::Char('n' | 'N') if self.categories_only && self.notes.is_none() => {
+                self.show_notes(false, false);
+            }
             KeyCode::Left | KeyCode::Right if self.notes.is_some() => {
                 let notes = self.notes.as_mut().expect("note browser");
                 notes.cursor = if code == KeyCode::Left {
@@ -362,13 +381,19 @@ impl ManualNoteExplorer {
             format!(
                 "{breadcrumb} · {}{}",
                 note_count(self.hierarchy.note_ids(&self.category().node_id).len()),
-                if self.merge_origin.is_none() {
+                if !self.categories_only && self.merge_origin.is_none() {
                     "\nManual hierarchy · read-only"
                 } else {
                     ""
                 }
             )
         };
+        if self.categories_only {
+            heading.push_str(&format!(
+                "\n{} · category hierarchy · read-only",
+                terminal_safe(&self.hierarchy.hierarchy_id)
+            ));
+        }
         if let Some(notice) = self.merge_notice() {
             heading.push('\n');
             heading.push_str(&notice);
@@ -385,7 +410,9 @@ impl ManualNoteExplorer {
         .split(area);
         frame.render_widget(heading.style(accent_style()), rows[0]);
         if self.analysis_scroll.is_some() {
-            let controls = if self.merge_origin.is_some() {
+            let controls = if self.categories_only {
+                CATEGORY_CONTROLS.to_owned()
+            } else if self.merge_origin.is_some() {
                 CONTROLS.replace("This manual proposal", "This saved hierarchy")
             } else {
                 CONTROLS.to_owned()
@@ -419,6 +446,8 @@ impl ManualNoteExplorer {
             "j/k ↑/↓ Scroll  Ctrl-D/U Half page  gg/G Top/end\nBackspace/Esc Back  Q Quit"
         } else if self.notes.is_some() {
             "h/l ←/→ Previous/next note  j/k ↑/↓ Scroll\nCtrl-D/U Half page  gg/G Top/end  ? Analysis\nBackspace/Esc Back  Q Quit"
+        } else if self.categories_only {
+            "j/k ↑/↓ Choose  Enter/l Descend  N Notes at current category\nh/Backspace/Esc Parent  gg/G Top/end  ? Analysis  Q Quit"
         } else {
             "j/k ↑/↓ Choose  Enter/l Open  h/l ←/→ Back/open\nBackspace/Esc Back  gg/G Top/end  ? Analysis  Q Quit"
         };
@@ -428,6 +457,24 @@ impl ManualNoteExplorer {
     fn render_menu(&mut self, frame: &mut Frame<'_>, area: Rect) {
         self.half_page_lines = (area.height.saturating_sub(2) / 2).max(1);
         let child_count = self.category().children.len();
+        let block = Block::default()
+            .borders(Borders::ALL)
+            .border_style(border_style())
+            .title(if self.categories_only {
+                "Categories"
+            } else {
+                "Categories and note actions"
+            });
+        if self.categories_only && child_count == 0 {
+            frame.render_widget(
+                Paragraph::new("No child categories. N opens notes at this category.")
+                    .style(secondary_style())
+                    .wrap(Wrap { trim: false })
+                    .block(block),
+                area,
+            );
+            return;
+        }
         let items = self
             .menu_items()
             .into_iter()
@@ -446,12 +493,7 @@ impl ManualNoteExplorer {
             List::new(items)
                 .highlight_symbol("▶ ")
                 .highlight_style(accent_style())
-                .block(
-                    Block::default()
-                        .borders(Borders::ALL)
-                        .border_style(border_style())
-                        .title("Categories and note actions"),
-                ),
+                .block(block),
             area,
             &mut ListState::default().with_selected(Some(cursor)),
         );
@@ -481,6 +523,10 @@ impl InteractiveReviewModel for ManualNoteExplorer {
 
 pub fn run_manual_note_explorer(hierarchy: ManualNoteHierarchy) -> io::Result<()> {
     run_note_explorer(ManualNoteExplorer::new(hierarchy))
+}
+
+pub fn run_category_note_explorer(hierarchy: ManualNoteHierarchy) -> io::Result<()> {
+    run_note_explorer(ManualNoteExplorer::categories(hierarchy))
 }
 
 pub fn run_titled_merge_note_explorer(hierarchy: TitledMergeHierarchy) -> io::Result<()> {

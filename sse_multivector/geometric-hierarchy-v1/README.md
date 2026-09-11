@@ -4,11 +4,39 @@ The strongest current candidate is **unit-sphere diffusion, GDC09**, not the ear
 
 [Continuation findings](./CONTINUATION.md) record the causal investigation, controlled changes, completed trajectory, robustness checks, and remaining counterexamples. The original runs below remain unchanged. The earlier conclusion that motion tracing was merely a future recommendation was premature; that work is now performed.
 
-These are exploratory adaptations, not a benchmark ranking or a finding that the underlying papers are wrong. No generated category labels, new TUI, subject edits, mask edits, or new model calls were used.
+These are exploratory adaptations, not a benchmark ranking or a finding that the underlying papers are wrong. No category labels, subject edits, or mask edits entered the numerical experiments. The subsequently requested inspection browsers below read the saved results without running extraction, embedding, or clustering again.
 
 ## View GDC09
 
-The user subsequently requested UI inspection. The existing nested-mask viewer now opens the saved GDC09 result:
+### Categories and original notes
+
+```sh
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-diffusion-categories.sh
+```
+
+This reuses the existing category browser. Each screen lists **only the immediate child categories** of the current level. Enter or `l` descends, including into a leaf. `N` separately opens the **current category's** complete original notes, including every descendant and deduplicating source notes; it does not open the highlighted child's notes. Escape returns to the same category and selection, then moves up a level. `j/k` move or scroll, `h/l` change notes, `?` opens analysis/help, and `q` exits. Deep paths show the immediate parent and current category so the header cannot consume the note area. Add `--check` to validate without opening a terminal.
+
+The browser starts at the full 100-note root and has **219 categories** after collapsing **141 parent–child steps** with identical recursive note sets. The highest native group survives each collapse, with narrower descendants promoted in their saved order. One-note group choices stay hidden; their notes remain at displayed ancestors. No note or underlying vector membership is deleted.
+
+The two collapse rules are deliberately different:
+
+- **Parent–child:** identical returned note sets collapse, even if the masks differ, because clicking would not narrow the notes.
+- **Separate branches:** identical notes are only candidates for merging. The grouped masks must also express the same subject. The five repeated note sets in this run were checked and kept separate: their masks express different or insufficiently equivalent meanings. No automatic merge based only on note identity or matching titles is performed.
+
+The assistant assigned titles bottom-up from the grouped masks, reading complete notes to clarify context. These are inspection labels, not clustering inputs or certified categories. **14 groups are explicitly marked `Unclear grouping`** where no defensible common mask subject was identified. Some other labels repeat across levels whose note sets differ; no narrower meaning was invented to disguise that limitation. Analysis is separate from the original-note box.
+
+`GDC09/categories.json` is the browser input. `category-titles.json` contains the authored labels and caveats; `category-mask-review.json` records the separate-branch decisions. `category-projection.json` maps all 838 native internal groups to the displayed groups and binds the saved inputs and output with checksums. `../export_diffusion_categories.py` reproduces the export into new output paths. It does not recompute coordinates or clusters. All 100 original notes remain available.
+
+If the binary has not been built:
+
+```sh
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+CARGO_TARGET_DIR=target/infomap-review-build CARGO_BUILD_JOBS=2 CARGO_PROFILE_DEV_DEBUG=0 nix develop --command cargo build --bin sse-subject-navigation
+```
+
+### Original nested-mask view
+
+The earlier raw viewer remains available for inspecting the exact saved mask hierarchy:
 
 ```sh
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-diffusion-hierarchy.sh
