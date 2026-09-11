@@ -3,6 +3,10 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
+Latest: [mask distinctions and middle-level scoring](./MASK-DISTINCTIONS.md).
+ND02-NP01 removes three repeated textual choices from NP01 while preserving all
+retained evidence. It is a small inspectable improvement, not a solved hierarchy.
+
 ## NMR01 — original-vector membership
 
 **Question:** Can fixed examples from an existing group recover omitted subject
@@ -142,3 +146,12 @@ python3 sse_multivector/select_note_categories.py \
 
 The unbounded control uses `--max-choices 0`, `--run-id NP00`, and its own output
 directory. Neither run changes the original browser's default artifact.
+
+## ND02 — repeated masked words
+
+The follow-up [research record](./MASK-DISTINCTIONS.md) contains the rejected
+common-word-intersection hypothesis, the stricter tested rule, every removal,
+preservation controls, provenance, and inspection commands. It also records a
+separate category-utility diagnostic that changes no category or membership.
+The next question concerns missing explicit subject evidence elsewhere in the
+corpus, not another arbitrary pruning threshold.

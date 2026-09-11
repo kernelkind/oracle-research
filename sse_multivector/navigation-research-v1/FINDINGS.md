@@ -4,6 +4,11 @@ These are separate experiments on the unchanged GDC09 corpus. Neither membership
 rule is adopted. NP01 is an inspectable navigation comparison, not a validated
 replacement. The original GDC09 browser remains the default.
 
+The follow-up [mask-distinction experiment](./MASK-DISTINCTIONS.md) removes three
+repeated choices from NP01. It preserves all retained evidence but leaves the
+upper-level paths and membership problems unresolved. ND02-NP01 is the latest
+inspectable comparison, not an adopted replacement.
+
 ## Membership
 
 NMR01 uses a note-balanced average of nearest examples and an internal group
@@ -134,11 +139,15 @@ Three important problems remain:
 
 - The near-identical 100→99→98 steps remain. The menu bound prevents flattening
   their many descendants in one operation.
-- Coffee [1539] and the broader reading/writing group [1700] disappear. Their
-  descendants survive, but preserved leaves do not prove that these intermediate
-  destinations were unnecessary.
-- Coffeechain [1050] still offers [1015] and [983]. Their masks mostly select
+- The 19-note Coffee [1539] and five-note reading/writing group [1700] disappear.
+  Coffee/tea [1598,22], a smaller Coffee [1016,5], and Knowledge/reading [1693,4]
+  remain. Losing a particular node is not automatically a semantic regression:
+  the unresolved question is whether those remaining destinations offer equally
+  useful access. Retaining every old node is not a requirement.
+- In NP01, Coffeechain [1035] offers [982] and [983]. Their masks mostly select
   the same Coffeechain text; no useful subject distinction is demonstrated.
+  An earlier version of this report incorrectly used [1050] and [1015] from
+  the baseline/single-child view. Those nodes are absent in NP01.
 
 NP00's 41 root choices show the tradeoff the menu bound addresses. Forty-one is
 not automatically invalid, but a shorter path does not establish a better menu,
@@ -162,10 +171,12 @@ which nearby meanings truly refine it? Neither internal cosine thresholds nor
 note-count pruning answers that. More arbitrary threshold or menu-size tuning
 would not isolate this problem.
 
-The next investigation should test the selection of semantically distinct
-destinations while memberships remain fixed. It must include the Coffeechain
-siblings and genuinely useful intermediate groups, rather than treating lower
-depth as the target. Membership recovery remains a separate unresolved test.
+That investigation now has a limited result: shared-word intersections alone
+discard distinctions, while checking every child's mask permits a few defensible
+removals. Coffeechain [982] contains `Sipping` evidence and is retained; [983]
+contains only the general tag and is removed. This corrects the earlier premise
+that both children were clean removal controls. See the follow-up record for
+the full audit and why general semantic selection remains unvalidated.
 
 ## Inspect NP01
 
