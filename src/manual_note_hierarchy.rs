@@ -250,6 +250,29 @@ impl ManualNoteHierarchy {
         Ok(CategoryNoteMasks { ranges })
     }
 
+    /// Absorb one-child steps, retaining each parent's identity and full membership.
+    /// Existing category mask lookups stay valid because retained memberships do not change.
+    pub fn absorb_single_children(&mut self) -> usize {
+        let before = self.nodes.len();
+        let mut pending = vec![self.root_node_id.clone()];
+        while let Some(id) = pending.pop() {
+            while self.nodes[&id].children.len() == 1 {
+                let child_id = self.nodes[&id].children[0].clone();
+                let child = self
+                    .nodes
+                    .remove(&child_id)
+                    .expect("validated child category");
+                let parent = self.nodes.get_mut(&id).expect("retained parent category");
+                parent.note_ids.extend(child.note_ids);
+                parent.note_ids.sort();
+                parent.note_ids.dedup();
+                parent.children = child.children;
+            }
+            pending.extend(self.nodes[&id].children.iter().cloned());
+        }
+        before - self.nodes.len()
+    }
+
     /// Full membership of a category, deduplicated across its descendants.
     pub fn note_ids(&self, node_id: &str) -> Vec<String> {
         let mut notes = BTreeSet::new();

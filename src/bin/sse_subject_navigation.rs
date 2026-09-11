@@ -15,12 +15,13 @@ use oracle_mvp::titled_merge_hierarchy::TitledMergeHierarchy;
 
 const USAGE: &str = "usage: sse-subject-navigation <manual-hierarchy.json> <fine-region-hierarchy-analysis.json> <fine-region-partition-analysis.json>
        sse-subject-navigation --notes <manual-note-hierarchy.json> <source-notes.json> [--check]
-       sse-subject-navigation --categories <note-hierarchy.json> <source-notes.json> [--check]
+       sse-subject-navigation --categories <note-hierarchy.json> <source-notes.json> [--absorb-single-children] [--check]
        sse-subject-navigation --compare <comparison.json> [--check]
        sse-subject-navigation --merge-notes <merge-history.json> <vector-map.json> <source-notes.json> <titles.json> [--min-notes 5] [--start-at GROUP] [--check]
 
 --notes  Inspect manually constructed categories over original notes; no vector or clustering input
 --categories  Browse immediate children; N opens current-category notes with combined masks when supplied
+--absorb-single-children  Each parent absorbs its only child; keeps parent IDs, titles and notes (--categories only)
 --compare  Compare manual notes with saved merge groups; F2 returns to the comparison menu
 --merge-notes  Browse unchanged saved merge groups as original notes with provisional titles
 --check  Validate and describe every requested page without opening a terminal";
@@ -130,12 +131,29 @@ fn run_notes(
     arguments: &[String],
     categories_only: bool,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let (spec, source, check) = match arguments {
-        [spec, source] => (spec, source, false),
-        [spec, source, flag] if flag == "--check" => (spec, source, true),
-        _ => return Err(USAGE.into()),
+    let [spec, source, options @ ..] = arguments else {
+        return Err(USAGE.into());
     };
-    let (hierarchy, masks) = ManualNoteHierarchy::load_with_masks(spec.as_ref(), source.as_ref())?;
+    let mut check = false;
+    let mut absorb = false;
+    for option in options {
+        match option.as_str() {
+            "--check" if !check => check = true,
+            "--absorb-single-children" if categories_only && !absorb => absorb = true,
+            _ => return Err(USAGE.into()),
+        }
+    }
+    let (mut hierarchy, masks) =
+        ManualNoteHierarchy::load_with_masks(spec.as_ref(), source.as_ref())?;
+    let absorbed = if absorb {
+        let count = hierarchy.absorb_single_children();
+        hierarchy
+            .hierarchy_id
+            .push_str(" · single-child absorption");
+        count
+    } else {
+        0
+    };
     if check {
         println!(
             "{} · {} · read-only",
@@ -151,6 +169,9 @@ fn run_notes(
             hierarchy.nodes.len(),
             hierarchy.notes.len()
         );
+        if absorb {
+            println!("Absorbed {absorbed} single-child categories");
+        }
         for node in hierarchy.nodes.values() {
             println!(
                 "{} · {} notes",

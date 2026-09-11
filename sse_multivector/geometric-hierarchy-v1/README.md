@@ -20,7 +20,7 @@ Categories show their saved node IDs: for example, `[1746] Hospitality` in the m
 
 Each note shows **one combined inline mask**: the union of all its original mask ranges belonging to the current category, including descendants and collapsed or hidden groups. All relevant ranges appear together as `⟦highlights⟧`; there is no mask cycling. Overlapping or adjacent ranges merge, but gaps stay unhighlighted. Other-branch masks of the same note are excluded. The same note can therefore have different highlights in different categories. Original source bytes and saved masks are unchanged.
 
-The browser starts at the full 100-note root and has **219 categories** after collapsing **141 parent–child steps** with identical recursive note sets. The highest native group survives each collapse, with narrower descendants promoted in their saved order. One-note group choices stay hidden; their notes remain at displayed ancestors. No note or underlying vector membership is deleted.
+The default browser starts at the full 100-note root and has **219 categories** after collapsing **141 parent–child steps** with identical recursive note sets. The highest native group survives each collapse, with narrower descendants promoted in their saved order. One-note group choices stay hidden; their notes remain at displayed ancestors. No note or underlying vector membership is deleted.
 
 The two collapse rules are deliberately different:
 
@@ -30,6 +30,18 @@ The two collapse rules are deliberately different:
 The assistant assigned titles bottom-up from the grouped masks, reading complete notes to clarify context. **Every displayed category has a content-based name.** The root choices are Everyday life, Hospitality, and Storms, Bitcoin and apocalypse. These are inspection descriptions, not clustering inputs or certified categories. A mixed-content name states what a group contains; it does not establish a relationship between those subjects. Some labels repeat across levels whose note sets differ; no narrower meaning was invented to disguise that limitation. Qualifications are in the separate analysis screen, not in place of category names or inside the original-note box.
 
 `GDC09/categories.json` is the browser input. Its `note_masks` field carries source-byte ranges per category and note; the loader validates complete membership, UTF-8 boundaries and descendant coverage before combining them for display. `category-titles.json` contains the authored labels and caveats; `category-mask-review.json` records the separate-branch decisions. `category-projection.json` maps all 838 native internal groups to the displayed groups and binds the saved inputs and output with checksums. `../export_diffusion_categories.py` reproduces the export into new output paths, taking every original alias mask from each retained native group's complete membership. It does not recompute coordinates or clusters. All 100 original notes remain available.
+
+#### Single-child absorption experiment
+
+```sh
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-diffusion-categories.sh --absorb-single-children
+```
+
+After loading the saved categories, each parent with exactly one child absorbs that child. The parent keeps its ID, title, analysis and complete note/mask membership; it gains the child's direct notes and replaces that child with the child's children in their existing order. This repeats from the root downward, including when the absorbed child is a leaf, until no single-child step remains. The rule does not require equal note sets or equivalent titles.
+
+For GDC09 this removes **71 categories**, leaving **148 categories and all 100 notes**. Maximum path length falls from **40 to 28 edges**. Every retained category has exactly its previous recursive notes and combined masks. Narrower categories can disappear even when their titles and note sets differ; this is a requested navigation experiment, not a semantic quality claim.
+
+The header identifies `single-child absorption`. Add `--check` to inspect it without opening a terminal. Omit the switch to return to the original view. Saved category JSON, projection, titles, masks and underlying hierarchy remain untouched. The complete pre-experiment working tree was committed as `663e5e2a3f6f117527c7ffdf09a93ceb694aa168`; this display change is a separate commit.
 
 If the binary has not been built:
 

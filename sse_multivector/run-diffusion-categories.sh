@@ -2,9 +2,21 @@
 set -euo pipefail
 
 root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
-if (( $# > 1 )) || { (( $# == 1 )) && [[ "$1" != --check ]]; }; then
-    echo "Usage: $0 [--check] (GDC09 categories and original notes)" >&2
+usage() {
+    echo "Usage: $0 [--absorb-single-children] [--check] (GDC09 categories and original notes)" >&2
     exit 2
+}
+check=0
+absorb=0
+for option in "$@"; do
+    case "$option" in
+        --check) ((check += 1)) ;;
+        --absorb-single-children) ((absorb += 1)) ;;
+        *) usage ;;
+    esac
+done
+if (( check > 1 || absorb > 1 )); then
+    usage
 fi
 binary="$root/target/infomap-review-build/debug/sse-subject-navigation"
 if [[ ! -x "$binary" ]]; then
