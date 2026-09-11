@@ -3,6 +3,13 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
+Latest group-relation evidence: [lexical broader and equivalent relations](./GROUP-RELATIONS.md).
+LGR01 checks all 462 ordered pairs of the 22 frozen MDH02 groups. It proposes
+the existing Bread → Sourdough bread link and an animal-sense Carnivore → Dog
+link that does not fit the human-diet parent group. It finds no equivalences;
+GM resolves to the unit of mass, not the greeting. No new defensible parent
+link or browser change results. Full evidence and an offline replay are saved.
+
 Latest learned-membership evidence: [entailment and relevance models](./MODEL-MEMBERSHIP.md).
 NLI01/NLI02 show some useful broader-subject recognition but also abbreviation,
 negation and greeting-association errors. RER01/RER02 do not fix membership:
