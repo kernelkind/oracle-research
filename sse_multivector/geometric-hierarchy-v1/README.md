@@ -6,6 +6,22 @@ The strongest current candidate is **unit-sphere diffusion, GDC09**, not the ear
 
 These are exploratory adaptations, not a benchmark ranking or a finding that the underlying papers are wrong. No generated category labels, new TUI, subject edits, mask edits, or new model calls were used.
 
+## View GDC09
+
+The user subsequently requested UI inspection. The existing nested-mask viewer now opens the saved GDC09 result:
+
+```sh
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-diffusion-hierarchy.sh
+```
+
+It starts at group **1487**, the 19-note coffee group. `j/k` select, `l` or Enter expands, `u` shows the parent, and `f` focuses the selected group. Enter on a mask opens the complete original note with that mask highlighted. `a` shows or hides repeated parent masks; `?` explains the controls; `q` exits.
+
+Pass a group number to start elsewhere: `1671` for kitchen equipment, `1533` for sleep, `1700` for knowledge/writing, or `1753` for the full root. These descriptions are inspection aids, not generated titles. Add `--check` to validate without opening a terminal UI.
+
+The viewer retains all **360 multi-note groups**, their original IDs, child order, and exact memberships. Equal-note levels remain visible. As in the previous viewer, one-note group choices are hidden, with their masks kept at the nearest displayed ancestor. A parent mask starts hidden if its source note already occurs recursively in a child; the `a` toggle reveals it. Children remain nested, and moving upward puts unopened sections above opened sections.
+
+`GDC09/viewer.json` is a checked format export, not a new clustering result. All 916 vectors, 945 original mask IDs, and 100 notes remain. The native tree and prior results are unchanged. The existing viewer calls this an exact-containment hierarchy; the displayed run is **GDC09**, not a HiDeF run. Export source: `../export_diffusion_hierarchy.py`.
+
 ## What stayed fixed
 
 All runs use the same 916 distinct saved SSE vectors in their original 768 dimensions, representing 945 masks from 100 real notes. Exact coordinate aliases are preserved in the evidence. The old HDBv3 artifact supplies only that alias mapping—not its graph or source-note edge restrictions. Inputs are verified against their frozen manifest before fitting. No PCA, UMAP, fine-segment preprocessing, or semantic labels enter a fit.

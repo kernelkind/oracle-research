@@ -66,8 +66,8 @@ impl Hierarchy {
                 return Err(format!("containment source checksum mismatch: {name}").into());
             }
         }
-        if input.vector_count == 0 || input.root != input.vector_count {
-            return Err("containment root must equal the nonzero vector_count".into());
+        if input.vector_count == 0 || input.root < input.vector_count {
+            return Err("containment root must not overlap the nonzero vector inventory".into());
         }
         if input.alias_groups.len() != input.vector_count
             || input.canonical_unique_ids.len() != input.vector_count
@@ -84,7 +84,7 @@ impl Hierarchy {
         let mut memberships = BTreeMap::new();
         let mut distinct_memberships = BTreeSet::new();
         for group in input.groups {
-            if group.id < input.root || saved.contains_key(&group.id) {
+            if group.id < input.vector_count || saved.contains_key(&group.id) {
                 return Err(
                     format!("invalid or duplicate containment group ID {}", group.id).into(),
                 );
@@ -96,7 +96,11 @@ impl Hierarchy {
                     "persistent"
                 }
             {
-                return Err(format!("invalid containment group kind for {}", group.id).into());
+                return Err(format!(
+                    "invalid containment group kind for {} (root is {})",
+                    group.id, input.root
+                )
+                .into());
             }
             if group.vector_ids.is_empty()
                 || group
@@ -106,7 +110,7 @@ impl Hierarchy {
                 || !strictly_sorted(&group.vector_ids)
                 || !strictly_sorted(&group.note_ids)
                 || !strictly_sorted(&group.parents)
-                || !strictly_sorted(&group.children)
+                || group.children.iter().collect::<BTreeSet<_>>().len() != group.children.len()
             {
                 return Err(format!(
                     "containment group {} has invalid or unsorted membership/edges",

@@ -380,6 +380,162 @@ fn invalid_memberships_edges_inventory_identity_and_source_bytes_are_rejected() 
 }
 
 #[test]
+fn saved_root_ids_and_child_order_do_not_need_to_follow_containment_export_order() {
+    let mut values = fixture();
+    values.0["run_id"] = json!("GDC09");
+    values.0["root"] = json!(16);
+    values.0["groups"][0]["id"] = json!(16);
+    values.0["groups"][0]["children"] = json!([8, 7]);
+    values.0["groups"][1]["parents"] = json!([16]);
+    values.0["groups"][2]["parents"] = json!([16]);
+    let (_directory, paths) = saved_fixture(&values);
+    let hierarchy = load(&paths);
+    assert_eq!(hierarchy.root, 16);
+    assert_eq!(hierarchy.groups[&16].children, [8, 7]);
+    assert_eq!(hierarchy.groups[&7].children, [10]);
+    assert_eq!(hierarchy.groups[&10].children, [9]);
+    assert_eq!(
+        hierarchy.groups[&7].note_count,
+        hierarchy.groups[&10].note_count
+    );
+    assert_eq!(hierarchy.groups[&16].vector_count, 6);
+    assert_eq!(hierarchy.groups[&16].note_count, 5);
+    assert_eq!(hierarchy.vectors[&1].len(), 2);
+    let output = run_cli(&paths, &["--containment", "--start-at", "7", "--check"]);
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(String::from_utf8_lossy(&output.stdout).contains("GDC09"));
+    let mut model = HierarchyExplorer::new_containment(
+        hierarchy,
+        Some(7),
+        load_note_short_ids(&paths[1]).unwrap(),
+    )
+    .unwrap()
+    .with_run_id(Some("GDC09".to_owned()));
+    key(&mut model, KeyCode::Char('?'));
+    let help = screen(&mut model);
+    assert!(help.contains("GDC09"), "{help}");
+    assert!(!help.contains("HiDeF"), "{help}");
+}
+
+#[test]
+fn duplicate_containment_children_still_fail_without_requiring_sorted_order() {
+    let mut values = fixture();
+    values.0["groups"][0]["children"] = json!([8, 7, 8]);
+    let (_directory, paths) = saved_fixture(&values);
+    let error = Hierarchy::load_containment_with_run_id(&paths[0], &paths[1], &paths[2])
+        .unwrap_err()
+        .to_string();
+    assert!(error.contains("invalid"), "{error}");
+}
+
+#[test]
+fn saved_diffusion_view_preserves_every_multinote_group_membership_and_native_id() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    let run = root.join("sse_multivector/geometric-hierarchy-v1/GDC09");
+    let data = root.join("sse_multivector/real-note-fine-segmentation-v1");
+    let paths = [
+        run.join("viewer.json"),
+        data.join("vectors/vector-map.json"),
+        data.join("reviewed-input.json"),
+    ];
+    let before = paths
+        .iter()
+        .map(fs::read)
+        .collect::<Result<Vec<_>, _>>()
+        .unwrap();
+    let hierarchy = load(&paths);
+    let raw: Value =
+        serde_json::from_slice(&fs::read(run.join("hierarchy.json")).unwrap()).unwrap();
+    let nodes = raw["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|n| (n["id"].as_u64().unwrap() as usize, n))
+        .collect::<std::collections::BTreeMap<_, _>>();
+    let retained = nodes
+        .iter()
+        .filter(|(_, n)| n["note_ids"].as_array().unwrap().len() >= 2)
+        .map(|(id, _)| *id)
+        .collect::<std::collections::BTreeSet<_>>();
+    assert_eq!(hierarchy.root, 1753);
+    assert_eq!(hierarchy.groups.len(), 360);
+    assert_eq!(
+        hierarchy
+            .groups
+            .keys()
+            .copied()
+            .collect::<std::collections::BTreeSet<_>>(),
+        retained
+    );
+    assert_eq!(hierarchy.groups[&1753].children, [1752]); // native 1748 contains one note
+    assert_eq!(hierarchy.vectors.len(), 916);
+    assert_eq!(hierarchy.vectors.values().map(Vec::len).sum::<usize>(), 945);
+    assert_eq!(hierarchy.groups[&1753].note_count, 100);
+    for (id, group) in &hierarchy.groups {
+        let native = nodes[id];
+        let children = native["children"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|c| c.as_u64().unwrap() as usize)
+            .filter(|c| retained.contains(c))
+            .collect::<Vec<_>>();
+        assert_eq!(group.children, children, "children of {id}");
+        assert_eq!(
+            group.note_count,
+            native["note_ids"].as_array().unwrap().len(),
+            "notes at {id}"
+        );
+        let mut pending = vec![*id];
+        let mut members = std::collections::BTreeSet::new();
+        while let Some(child) = pending.pop() {
+            members.extend(hierarchy.groups[&child].vectors.iter().copied());
+            pending.extend(&hierarchy.groups[&child].children);
+        }
+        assert_eq!(
+            serde_json::to_value(members).unwrap(),
+            native["members"],
+            "membership at {id}"
+        );
+    }
+    for start in [1487, 1598, 1533, 1629, 1671, 1700, 1753] {
+        let output = run_cli(
+            &paths,
+            &["--containment", "--start-at", &start.to_string(), "--check"],
+        );
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+    let mut model = HierarchyExplorer::new_containment(
+        hierarchy,
+        Some(1487),
+        load_note_short_ids(&paths[1]).unwrap(),
+    )
+    .unwrap()
+    .with_run_id(Some("GDC09".to_owned()));
+    let displayed = screen(&mut model);
+    assert!(displayed.contains("GDC09"), "{displayed}");
+    assert!(displayed.contains("1487 · 19 notes"), "{displayed}");
+    key(&mut model, KeyCode::Char('u'));
+    assert!(screen(&mut model).contains("1487 · 19 notes"));
+    assert_eq!(
+        before,
+        paths
+            .iter()
+            .map(fs::read)
+            .collect::<Result<Vec<_>, _>>()
+            .unwrap()
+    );
+}
+
+#[test]
 fn containment_cli_rejects_conflicting_modes_before_loading_inputs() {
     let paths = ["missing", "missing-vectors", "missing-notes"].map(PathBuf::from);
     for options in [

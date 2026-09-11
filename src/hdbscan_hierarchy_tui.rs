@@ -545,7 +545,7 @@ impl HierarchyExplorer {
             )
         } else if self.view == HierarchyView::Containment {
             (
-                "This is a read-only view of the saved HiDeF exact-containment DAG. Groups with fewer than two distinct notes are hidden; their masks remain at the nearest displayed ancestors. The full-corpus root is always retained.",
+                "This is a read-only view of the saved exact-containment DAG. Groups with fewer than two distinct notes are hidden; their masks remain at the nearest displayed ancestors. The full-corpus root is always retained.",
                 "A shared group appears under every saved parent with the same ID and complete membership. Each route expands independently. Counts use distinct source notes, never sums of overlapping children. Equal-note transitions remain and are marked same notes; these do not narrow note discovery. A parent mask starts hidden when its note occurs recursively in any child, including collapsed children; a reveals every parent mask.",
                 "U follows the route used to reach the displayed branch, placing unopened children above opened ones. A shared --start-at, including shared ancestry, starts at the root with all routes to that group open. No memberships are expanded, no parent is chosen for shared groups, and no semantic judgments or subject titles are generated.",
             )
