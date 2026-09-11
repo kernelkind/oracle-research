@@ -15,6 +15,26 @@ fn read(path: impl AsRef<Path>) -> Value {
 }
 
 #[test]
+fn every_displayed_category_has_a_descriptive_name_not_an_audit_placeholder() {
+    let h = ManualNoteHierarchy::load(&Path::new(RUN).join("categories.json"), Path::new(SOURCE))
+        .unwrap();
+    let placeholders = h
+        .nodes
+        .values()
+        .filter(|node| {
+            node.label.starts_with("Unclear grouping")
+                || node.label == "Main collection"
+                || node.label.trim().is_empty()
+        })
+        .map(|node| format!("{}: {}", node.node_id, node.label))
+        .collect::<Vec<_>>();
+    assert!(
+        placeholders.is_empty(),
+        "unlabeled categories: {placeholders:?}"
+    );
+}
+
+#[test]
 fn saved_diffusion_categories_preserve_all_notes_and_every_retained_membership() {
     let spec = Path::new(RUN).join("categories.json");
     let h = ManualNoteHierarchy::load(&spec, Path::new(SOURCE)).unwrap();
