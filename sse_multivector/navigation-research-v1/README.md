@@ -3,7 +3,15 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest group-relation evidence: [lexical broader and equivalent relations](./GROUP-RELATIONS.md).
+Latest contextual-relation evidence: [GDR01](./CONTEXTUAL-GROUP-RELATIONS.md).
+For eight unchanged groups, manually supplied subject descriptions recover the
+GM/Good morning equivalence and retain one-way bread narrowing with the fixed
+local entailment model. No automatic group-description or hierarchy method is
+established. The existing source subjects may supply candidate meanings, but
+the literal Rise group mixes getting up with rising lunch costs; a seed subject
+cannot automatically represent every member. All 224 scores are preserved.
+
+Prior group-relation evidence: [lexical broader and equivalent relations](./GROUP-RELATIONS.md).
 LGR01 checks all 462 ordered pairs of the 22 frozen MDH02 groups. It proposes
 the existing Bread → Sourdough bread link and an animal-sense Carnivore → Dog
 link that does not fit the human-diet parent group. It finds no equivalences;

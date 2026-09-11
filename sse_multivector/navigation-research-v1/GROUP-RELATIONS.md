@@ -160,12 +160,15 @@ fixed. Include the greeting equivalence, human-diet/animal distinction, ordinary
 bread refinement and merely associated coffee/music examples. Judge all masks,
 not only a conveniently matching member or a model-generated description.
 
-TaxoLLaMA's definition-conditioned method is the closest inspected fit for that
-comparison; its model availability, safe local execution and the fidelity of the
-conditioning text need verification before a run. RelBERT is an alternative
-lexical signal, not a reason to substitute another generic relevance benchmark.
-No new learned-model run, definition-generation prompt or classifier is approved
-as a production component by this record.
+The follow-up [GDR01 comparison](./CONTEXTUAL-GROUP-RELATIONS.md) now tests this
+input distinction with the installed DeBERTa model. Inspection of TaxoLLaMA's
+author code found that its normal scoring path supplies only the child's
+definition, leaving the parent's sense unspecified. TaxoLLaMA was not run.
+GDR01 recovers greeting equivalence with manually supplied meanings while
+retaining the bread direction; it does not establish automatic group meanings
+or adopt a classifier as a production component. The next test should use the
+available subject outputs as candidates, without assuming a seed's meaning
+describes every member of a literal group.
 
 ## Reproduction and verification
 
