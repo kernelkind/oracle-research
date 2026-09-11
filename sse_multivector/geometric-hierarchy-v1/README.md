@@ -6,6 +6,8 @@ The strongest current candidate is **unit-sphere diffusion, GDC09**, not the ear
 
 These are exploratory adaptations, not a benchmark ranking or a finding that the underlying papers are wrong. No category labels, subject edits, or mask edits entered the numerical experiments. The subsequently requested inspection browsers below read the saved results without running extraction, embedding, or clustering again.
 
+[Navigation research](../navigation-research-v1/FINDINGS.md) separately tests original-vector membership recovery and selection of browsing steps. Those experiments preserve GDC09. Neither tested membership rule is adopted; the NP01 navigation export is an inspectable comparison, not a validated replacement or a change to the default browser.
+
 ## View GDC09
 
 ### Categories and original notes
