@@ -171,8 +171,13 @@ impl ManualNoteExplorer {
             .children
             .iter()
             .map(|id| {
+                let identifier = if self.categories_only {
+                    format!("[{}] ", terminal_safe(id))
+                } else {
+                    String::new()
+                };
                 format!(
-                    "{} · {}",
+                    "{identifier}{} · {}",
                     self.category_title(id),
                     note_count(self.hierarchy.note_ids(id).len())
                 )
@@ -374,12 +379,17 @@ impl ManualNoteExplorer {
         }
         let area = centered(area);
         let breadcrumb = self.breadcrumb();
+        let category_id = if self.categories_only {
+            format!(" [{}]", terminal_safe(&self.category().node_id))
+        } else {
+            String::new()
+        };
         let mut heading = if self.analysis_scroll.is_some() {
-            format!("{breadcrumb}\nCategory analysis · read-only")
+            format!("{breadcrumb}{category_id}\nCategory analysis · read-only")
         } else if let Some(notes) = &self.notes {
             let note = &self.hierarchy.notes[&notes.note_ids[notes.cursor]];
             format!(
-                "{breadcrumb}{}\n{} · Note {} of {}",
+                "{breadcrumb}{category_id}{}\n{} · Note {} of {}",
                 if notes.outside_children {
                     " · Notes outside children"
                 } else {
@@ -391,7 +401,7 @@ impl ManualNoteExplorer {
             )
         } else {
             format!(
-                "{breadcrumb} · {}{}",
+                "{breadcrumb}{category_id} · {}{}",
                 note_count(self.hierarchy.note_ids(&self.category().node_id).len()),
                 if !self.categories_only && self.merge_origin.is_none() {
                     "\nManual hierarchy · read-only"
