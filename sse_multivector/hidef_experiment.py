@@ -155,6 +155,121 @@ def resolution_schedule(config):
     return resolutions, graph
 
 
+def extended_resolution_schedule(config, previous_resolutions):
+    """Append the usual upper-interval samples without resampling the old range."""
+    import networkx as nx
+    from hidef import hidef_finder as finder
+
+    previous_max = max(previous_resolutions)
+    if config['maxres'] <= previous_max:
+        raise ValueError('extension maxres must exceed the previous maxres')
+    added, _ = resolution_schedule({**config, 'minres': previous_max})
+    resolutions = list(previous_resolutions) + [value for value in added if value > previous_max]
+    if len(resolutions) > 4096:
+        raise ValueError('extended resolution schedule exceeds the bounded 4096-sample limit')
+    graph = nx.Graph()
+    for value in resolutions:
+        if f'{value:.4f}' in graph:
+            raise ValueError('extension resolution rounding collision')
+        finder.update_resolution_graph(graph, value, config['density'], config['neighbors'])
+    return resolutions, graph
+
+
+def singleton_resolution_bound(graph):
+    """Above max(2*m*w_ij/(k_i*k_j)), nonisolated singletons maximize RB."""
+    weights = graph.es['weight']
+    if graph.is_directed() or not graph.is_simple() or any(
+            not math.isfinite(weight) or weight < 0 for weight in weights):
+        raise ValueError('singleton bound requires a simple undirected nonnegative finite graph')
+    total = math.fsum(weights)
+    strengths = graph.strength(weights=weights)
+    return max((2 * total * weight / (strengths[a] * strengths[b])
+                for (a, b), weight in zip(graph.get_edgelist(), weights) if weight > 0), default=0.)
+
+
+def load_extension(directory, configuration, reference, source_sets):
+    """Validate frozen discovery and its provenance before creating any output."""
+    import igraph
+    import networkx as nx
+    from hidef import hidef_finder as finder
+
+    directory = Path(directory)
+    manifest = json.loads((directory / 'manifest.json').read_text())['sha256']
+    required = {'configuration.json', 'graph.net', 'raw-partitions.json', 'candidates.json',
+                'hierarchy.json', 'persistent-groups.json', 'strict-dag.json',
+                'note-projection.json', 'timings.json'}
+    if not required <= manifest.keys():
+        raise ValueError('extension source manifest is incomplete')
+    for name, digest in manifest.items():
+        if Path(name).name != name or not (directory / name).is_file() or sha256(directory / name) != digest:
+            raise ValueError(f'extension source checksum mismatch: {name}')
+    previous = json.loads((directory / 'configuration.json').read_text())
+    for key in ('schema_version', 'method', 'sources', 'graph', 'graph_policy',
+                'input_hierarchy_sha256', 'dependency_lock_sha256', 'graph_policy_source_sha256',
+                'dependencies', 'seed_policy', 'consensus_similarity', 'consensus_membership', 'containment'):
+        if previous.get(key) != configuration[key]:
+            raise ValueError(f'extension source configuration mismatch: {key}')
+    for key in ('sha256', 'vertices', 'edges', 'weight_sum'):
+        if previous['input_graph'][key] != configuration['input_graph'][key]:
+            raise ValueError(f'extension source input_graph mismatch: {key}')
+    if manifest['graph.net'] != configuration['graph']['sha256']:
+        raise ValueError('extension source graph checksum disagrees with configuration')
+    config = configuration['parameters']
+    if previous['parameters'].keys() != config.keys():
+        raise ValueError('extension source parameter names mismatch')
+    for key, value in config.items():
+        if key != 'maxres' and previous['parameters'][key] != value:
+            raise ValueError(f'extension source parameter mismatch: {key}')
+    hierarchy = json.loads((directory / 'hierarchy.json').read_text())
+    if (hierarchy.get('schema_version') != 'containment-hierarchy-v1'
+            or hierarchy.get('run_id') != previous['run_id'] or hierarchy.get('method') != METHOD):
+        raise ValueError('extension source hierarchy identity mismatch')
+    for key in ('sources', 'vector_count', 'canonical_unique_ids', 'alias_groups'):
+        if hierarchy.get(key) != reference[key]:
+            raise ValueError(f'extension source hierarchy mismatch: {key}')
+    raw = json.loads((directory / 'raw-partitions.json').read_text())
+    candidates = json.loads((directory / 'candidates.json').read_text())['groups']
+    partitions, resolutions = raw['partitions'], previous['resolutions']
+    if (not partitions or len(partitions) != len(resolutions)
+            or any(not math.isfinite(value) or value < .001 for value in resolutions)
+            or min(resolutions) != previous['parameters']['minres']
+            or max(resolutions) != previous['parameters']['maxres']
+            or len({f'{value:.4f}' for value in resolutions}) != len(resolutions)):
+        raise ValueError('extension source partition resolution mismatch')
+    if raw['reference_partition_index'] != previous['single_resolution_reference_index']:
+        raise ValueError('extension source reference partition mismatch')
+    resolution_graph = nx.Graph()
+    expected_candidates = []
+    for index, (row, resolution) in enumerate(zip(partitions, resolutions)):
+        membership = row['membership']
+        if (row['sample_index'] != index or row['resolution'] != resolution
+                or row['seed'] != config['seed'] + index or len(membership) != len(source_sets)
+                or any(type(label) is not int or not 0 <= label < len(source_sets) for label in membership)
+                or set(membership) != set(range(max(membership) + 1))
+                or not math.isfinite(row['quality']) or not math.isfinite(row['seconds']) or row['seconds'] < 0):
+            raise ValueError(f'extension source partition mismatch: sample {index}')
+        clustering = igraph.VertexClustering(igraph.Graph(n=len(source_sets)), membership)
+        members_by_size = sorted(clustering, key=len, reverse=True)
+        ids = list(range(len(expected_candidates), len(expected_candidates) + len(members_by_size)))
+        if row['candidate_ids'] != ids:
+            raise ValueError(f'extension source partition candidate IDs mismatch: sample {index}')
+        for candidate_id, members in zip(ids, members_by_size):
+            expected_candidates.append({'id': candidate_id, 'sample_index': index,
+                'resolution': resolution, 'seed': row['seed'], 'vector_ids': members,
+                'note_ids': sorted({note for vertex in members for note in source_sets[vertex]})})
+        finder.update_resolution_graph(resolution_graph, resolution, config['density'], config['neighbors'])
+    if candidates != expected_candidates:
+        raise ValueError('extension source candidates disagree with frozen partition membership')
+    if raw['resolution_edges'] != sorted([sorted(edge) for edge in resolution_graph.edges]):
+        raise ValueError('extension source partition resolution edges mismatch')
+    return partitions, {
+        'source_directory': str(directory.resolve()), 'source_run_id': previous['run_id'],
+        'source_manifest_sha256': sha256(directory / 'manifest.json'), 'source_artifact_sha256': manifest,
+        'preserved_partition_count': len(partitions), 'preserved_candidate_count': len(candidates),
+        'previous_maxres': previous['parameters']['maxres'],
+        'sampling_policy': 'existing resolution sampler on [previous_maxres, maxres], excluding previous_maxres'}
+
+
 def weighted_partition(graph, resolution, seed, n_iterations=2):
     import leidenalg
 
@@ -164,17 +279,21 @@ def weighted_partition(graph, resolution, seed, n_iterations=2):
         seed=seed, n_iterations=n_iterations)
 
 
-def discover(graph, source_sets, config):
+def discover(graph, source_sets, config, frozen_partitions=()):
+    import igraph
     from hidef import hidef_finder as finder
 
-    resolutions, resolution_graph = resolution_schedule(config)
+    resolutions, resolution_graph = (extended_resolution_schedule(config, [row['resolution'] for row in frozen_partitions])
+                                     if frozen_partitions else resolution_schedule(config))
     cluster_graph = finder.ClusterGraph()
     cluster_graph.graph.update(sim_threshold=config['jaccard'], num_leaves=graph.vcount())
     partitions, candidates = [], []
     for index, resolution in enumerate(resolutions):
         started = time.monotonic()
         seed = config['seed'] + index
-        partition = weighted_partition(graph, resolution, seed, config['n_iterations'])
+        frozen = frozen_partitions[index] if index < len(frozen_partitions) else None
+        partition = (igraph.VertexClustering(graph, frozen['membership']) if frozen is not None
+                     else weighted_partition(graph, resolution, seed, config['n_iterations']))
         # Explicitly override upstream minsize=4; every raw community survives.
         matrix = finder.partition_to_membership_matrix(partition, minsize=1)
         key = f'{resolution:.4f}'
@@ -187,7 +306,10 @@ def discover(graph, source_sets, config):
                                'resolution': resolution, 'seed': seed,
                                'vector_ids': members,
                                'note_ids': sorted({note for v in members for note in source_sets[v]})})
-        partitions.append({'sample_index': index, 'resolution': resolution, 'seed': seed,
+        if frozen is not None and candidate_ids != frozen['candidate_ids']:
+            raise ValueError('replayed partition changed frozen candidate IDs')
+        partitions.append(dict(frozen) if frozen is not None else {
+                           'sample_index': index, 'resolution': resolution, 'seed': seed,
                            'membership': list(partition.membership), 'candidate_ids': candidate_ids,
                            'quality': float(partition.quality()),
                            'seconds': time.monotonic() - started})
@@ -354,6 +476,7 @@ def main(argv=None):
     parser.add_argument('--graph-directory', type=Path, default=root / 'infomap-experiment-v1/I03')
     parser.add_argument('--data-directory', type=Path, default=root / 'real-note-fine-segmentation-v1')
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--extend-from', type=Path, help='reuse frozen discovery and append resolutions above its maximum')
     parser.add_argument('--run-id', default='HDFv1')
     parser.add_argument('--graph-policy', default='original',
                         choices=('original', 'mutual_best_per_note', 'strongest_edges_matched'))
@@ -381,7 +504,7 @@ def main(argv=None):
     edge_start = graph.vcount() + 2
     graph_bytes = b''.join(original_lines[:edge_start] + [original_lines[edge_start + i]
                           for i in graph_audit['retained_original_edge_indices']])
-    resolutions, resolution_graph = resolution_schedule(config)
+    resolutions, resolution_graph = resolution_schedule(config) if args.extend_from is None else ([], None)
     configuration = {
         'schema_version': 'hidef-configuration-v1', 'run_id': args.run_id, 'method': METHOD,
         'sources': reference['sources'],
@@ -393,7 +516,8 @@ def main(argv=None):
         'input_hierarchy_sha256': sha256(args.graph_directory / 'hierarchy.json'),
         'parameters': config, 'resolutions': resolutions,
         'seed_policy': 'base seed + zero-based sample index; independent fresh partitions',
-        'single_resolution_reference_index': min(range(len(resolutions)), key=lambda i: abs(math.log(resolutions[i]))),
+        'single_resolution_reference_index': (min(range(len(resolutions)), key=lambda i: abs(math.log(resolutions[i])))
+                                              if resolutions else None),
         'consensus_similarity': 'strict Jaccard > 0.75 for cluster edges and clique percolation',
         'consensus_membership': 'strict participation > consensus_percent; before containment only',
         'containment': {'cutoff': 1., 'strict_subset': True, 'parent_expansion': False,
@@ -403,6 +527,18 @@ def main(argv=None):
         'graph_policy_source_sha256': sha256(root / 'hidef_graph_policy.py'),
         'dependency_lock_sha256': sha256(root / 'hidef-requirements.lock'),
     }
+    frozen_partitions = ()
+    if args.extend_from is not None:
+        frozen_partitions, extension = load_extension(args.extend_from, configuration, reference, source_sets)
+        resolutions, resolution_graph = extended_resolution_schedule(config, [row['resolution'] for row in frozen_partitions])
+        added = resolutions[len(frozen_partitions):]
+        bound = singleton_resolution_bound(graph)
+        configuration.update(resolutions=resolutions,
+            single_resolution_reference_index=min(range(len(resolutions)), key=lambda i: abs(math.log(resolutions[i]))),
+            extension={**extension, 'added_resolutions': added,
+                       'boundary_log10_gap': math.log10(min(added) / extension['previous_maxres']),
+                       'singleton_resolution_bound': bound,
+                       'endpoint_exceeds_singleton_bound': config['maxres'] > bound})
     if args.plan:
         print(json.dumps(configuration, indent=2, allow_nan=False))
         return
@@ -411,7 +547,7 @@ def main(argv=None):
     with (args.output / 'graph.net').open('xb') as stream:
         stream.write(graph_bytes)
     stage = time.monotonic()
-    cluster_graph, candidates, partitions, resolution_graph = discover(graph, source_sets, config)
+    cluster_graph, candidates, partitions, resolution_graph = discover(graph, source_sets, config, frozen_partitions)
     discovery_seconds = time.monotonic() - stage
     write_json(args.output / 'raw-partitions.json', {
         'partitions': partitions, 'reference_partition_index': configuration['single_resolution_reference_index'],

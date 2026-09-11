@@ -68,6 +68,11 @@ containment. [HDFv2](../../sse_multivector/hidef-experiment-v1/HDFv2/README.md)
 compares that unchanged graph with two edge-removal policies while keeping
 HiDeF fixed. The runs and unnamed, nested review views are preserved separately;
 neither graph policy is adopted as a default or a final hierarchy method.
+[HDFv3](../../sse_multivector/hidef-experiment-v1/HDFv3/README.md) extends the
+original graph's resolution range while preserving all earlier raw partitions.
+It reveals useful additional candidates, including a clean Satoshi pair lost at
+the unchanged persistence step, but does not establish reliable semantic
+parent–child relationships. All previous run artifacts and viewer defaults remain.
 
 ## Goal
 

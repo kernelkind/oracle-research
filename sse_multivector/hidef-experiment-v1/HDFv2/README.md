@@ -39,7 +39,7 @@ The source notes confirm that Sophia is a five-month-old baby, rosemary and basi
 
 This is not just the primary seed: the smallest shared Satoshi group is **1123** in seed 124, with Sorrento, a zapathon, and exercise advice; it is **1065** in seed 125, with Sorrento, Sophia, herbs, and a zapathon. None is a clean Satoshi group.
 
-The strongest-edge control removes the old mixed group largely by disconnecting its masks. That is not equivalent to placing those meanings in useful categories.
+Correction from the HDFv3 source audit: the strongest-edge control does produce a clean persistent Satoshi/Satoshis pair in seed 123, group **1119**, with seven supporting resolutions. The earlier summary omitted this positive. The control also disconnects many other vectors and loses six notes from multi-note groups; the clean pair does not erase those coverage losses.
 
 ## Useful original groups did not all survive the change
 

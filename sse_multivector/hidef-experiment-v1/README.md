@@ -4,6 +4,8 @@ HiDeF on the unchanged I03 graph: 100 notes, 916 canonical vectors, 945 original
 
 Follow-up: [HDFv2](./HDFv2/README.md) compares graph-edge restrictions with HiDeF unchanged. All HDFv1 files and the default review command below remain unchanged. Explicit `--graph-policy` selection opens the separate HDFv2 results.
 
+[HDFv3](./HDFv3/README.md) extends the original graph's sampled resolutions from 25 through 190, reusing all old raw partitions exactly. It finds useful additional candidates and some retained local refinements, but does not establish a reliable full hierarchy. The saved runs remain separate. Results were requested in chat; the viewer is unchanged.
+
 ## Inspect
 
 ```bash

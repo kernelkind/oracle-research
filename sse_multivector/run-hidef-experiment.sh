@@ -3,7 +3,7 @@ set -euo pipefail
 
 root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 if [[ $# -lt 2 ]]; then
-    echo "Usage: $0 123|124|125 NEW_OUTPUT_DIRECTORY [--graph-policy original|mutual_best_per_note|strongest_edges_matched] [--plan]" >&2
+    echo "Usage: $0 123|124|125 NEW_OUTPUT_DIRECTORY [--graph-policy POLICY | --extend-from ORIGINAL_RUN --maxres VALUE] [--plan]" >&2
     exit 2
 fi
 case "$1" in
@@ -18,6 +18,8 @@ output="$2"
 shift 2
 extra=()
 policy_args=()
+extension_args=()
+maxres=""
 run_id="HDFv1-seed$seed"
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -33,9 +35,25 @@ while [[ $# -gt 0 ]]; do
             policy_args=(--graph-policy "$2")
             run_id="HDFv2-$2-seed$seed"
             shift 2 ;;
-        *) echo 'Only --graph-policy and --plan may follow the output directory.' >&2; exit 2 ;;
+        --extend-from)
+            [[ ${#extension_args[@]} == 0 && $# -ge 2 && "$2" != --* ]] || { echo 'Expected one extension source directory.' >&2; exit 2; }
+            extension_args=(--extend-from "$2")
+            shift 2 ;;
+        --maxres)
+            [[ -z "$maxres" && $# -ge 2 && "$2" != --* ]] || { echo 'Expected one maximum resolution.' >&2; exit 2; }
+            maxres="$2"
+            shift 2 ;;
+        *) echo 'Expected --graph-policy, --extend-from with --maxres, or --plan.' >&2; exit 2 ;;
     esac
 done
+if [[ ${#extension_args[@]} -gt 0 || -n "$maxres" ]]; then
+    [[ ${#extension_args[@]} -gt 0 && -n "$maxres" && ${#policy_args[@]} == 0 ]] || {
+        echo 'Extension requires --extend-from and --maxres, without --graph-policy.' >&2; exit 2;
+    }
+    run_id="HDFv3-seed$seed"
+else
+    maxres=25
+fi
 # The Nix-pinned interpreter is needed on NixOS, where a generic uv-managed
 # Python cannot start. Python 3.11 also has the mandatory louvain wheel.
 exec nix develop "$root" --command \
@@ -46,6 +64,6 @@ exec nix develop "$root" --command \
     python "$root/sse_multivector/hidef_experiment.py" \
     --graph-directory "$root/sse_multivector/infomap-experiment-v1/I03" \
     --data-directory "$root/sse_multivector/real-note-fine-segmentation-v1" \
-    --run-id "$run_id" --seed "$seed" --output "$output" "${policy_args[@]}" \
-    --minres .001 --maxres 25 --density .1 --neighbors 10 \
+    --run-id "$run_id" --seed "$seed" --output "$output" "${policy_args[@]}" "${extension_args[@]}" \
+    --minres .001 --maxres "$maxres" --density .1 --neighbors 10 \
     --persistence 5 --consensus-percent 75 "${extra[@]}"
