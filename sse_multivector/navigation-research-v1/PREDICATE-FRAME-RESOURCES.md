@@ -168,13 +168,14 @@ an end in itself.
 
 ## Construction question before another model
 
-The source audit identifies a less demanding possibility. SGC01's preparation
+The source audit identified a less demanding possibility. SGC01's preparation
 sources already connect preparation to food through `MadeOf`; its beet source
 connects beets to preservation through `Goal` in the other direction. Preparation
 and preservation have an existing activity ancestor. Keeping those observed
-connections while forgetting their exact type and direction might yield a
-shared food-related-activity pattern. This is an untested possibility, not a
-reported recovery, and does not require a new frame inventory.
+connections while forgetting their exact type and direction was tested in
+[SGC02](./CONNECTED-PATTERN-CONSTRUCTION.md), without a new frame inventory.
+It produces source-supported food-activity patterns, but does not establish a
+better complete browsing hierarchy.
 
 This relaxation must remain separate from dropping all connections. The
 [CAP03 evidence](./SUBJECT-DESCRIPTION-CONSTRUCTION.md) distinguishes “More
@@ -183,13 +184,18 @@ internet. Whole-description word co-occurrence would lose that distinction.
 Wrong senses, missing participants and omitted sources likewise remain separate
 limitations; erasing relation labels cannot repair them.
 
-The next controlled construction comparison should therefore keep every source,
-predicted sense and actual connected pair fixed, varying only whether relation
-type/direction is required. Inspect new patterns and their paths for supported
-meanings, meaningful narrowing and omitted relevant notes. No particular
-food-activity taxonomy is prescribed. A useful outcome would weaken the case
-for precise role normalization; unhelpful output would not by itself prove that
-an accurate event parser is necessary.
+SGC02 kept every source, predicted sense and actual connected pair fixed. Its
+source/path audit weakens the case for requiring precise role normalization
+first. Remaining omissions concern the generalization order and source bindings:
+the correct cooking/brisket edge still cannot reach the activity noun, and two
+ordinary food senses meet only at Matter. Category pruning or better role names
+cannot supply those links. Further resource investigation must address actual
+construction paths, retaining mapping types and auditing source-supported
+admissions; no particular food taxonomy or replacement model is prescribed.
+The [semantic-order resource investigation](./SEMANTIC-ORDER-RESOURCES.md)
+addresses that narrower dependency. Its published construction precedent and
+known mapping mismatches motivate a controlled comparison, not another
+nominal-role model search or adoption of a sound ontology by assumption.
 
 ## Sources
 

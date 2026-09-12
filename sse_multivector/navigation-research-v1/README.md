@@ -3,7 +3,37 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest construction experiment: [SGC01 — contextual semantic graphs](./SEMANTIC-GRAPH-CONSTRUCTION.md).
+Latest construction experiment: [SGC02 — connected patterns](./CONNECTED-PATTERN-CONSTRUCTION.md).
+With SGC01's eleven accepted graphs and dictionary fixed, relaxing exact
+relationship labels/directions produces two genuinely shared food-activity
+patterns. One joins beet preservation with the three food-preparation notes;
+the other joins stock preservation with bread preparation. Both note sets are
+new, but neither establishes better complete navigation. Food activities still
+misses brisket cooking; its Preparation child misses the preparing-beets note.
+Two ordinary food senses remain split into overlapping destinations.
+
+All 25 recurring connected representatives and their source witnesses are
+audited. Generic pattern growth is not credited as semantic progress. The
+generalized inventories each have 32 recurring note sets, with ten gained and
+ten lost—not identical sets. Existing singletons remain unchanged. All 89
+relevant tests pass; exact and relaxed construction replay, and originals,
+inline masks, all witnesses and five complete inspection paths are preserved.
+No browser is adopted. The comparison weakens the case for requiring precise
+event roles before proceeding, but leaves lexical generalization, source errors,
+category selection and complete-note coverage unresolved.
+
+The next [semantic-order investigation](./SEMANTIC-ORDER-RESOURCES.md) finds a
+direct construction precedent and concrete SUMO paths across the missing
+noun/verb and Food distinctions. It also finds scope mismatches: the resource
+is not a verified semantic order. [SGC03's pre-run design](./SGC03-PLAN.md)
+tests approximate construction separately from mapping validity, with noun-only
+and noun-plus-verb conditions and same-order singleton controls. No SGC03 run,
+new model, resource adoption or browser change has occurred. Static lookup
+reachability alone would not establish progress; the required result is a
+source-supported meaningful path, with collateral admissions and exclusions
+inspected. Resources must pass the stated parsing/admission checks first.
+
+Preceding construction experiment: [SGC01 — contextual semantic graphs](./SEMANTIC-GRAPH-CONSTRUCTION.md).
 Fifteen unchanged descriptions from thirteen notes were given to a native
 text-to-DRS parser. Eleven outputs pass local sequence/reference checks; four
 are malformed despite ending themselves below the allowed output length.
@@ -34,11 +64,11 @@ unverified: NounAtlas's joint release is described as forthcoming, and the
 inspected MultiSRL text interface selects verbs only. No substitute model is run.
 Precise event-role recovery must not become a requirement without showing its
 value for the browsing construction.
-The source audit identifies an available controlled comparison first: preserve
-actual connected pairs while relaxing their exact relation type/direction.
-Preparation/food and beets/preservation could then share a broader activity
-pattern. This remains a hypothesis, not a reported result or a license to
-combine arbitrary words from the same description.
+The resulting controlled comparison is complete in SGC02 above. It retains
+actual source edges rather than combining arbitrary words from a description.
+That construction constraint has not been shown superior to co-occurrence in
+this small run; the earlier coffee-shop counterexample was malformed and
+remains excluded.
 
 Preceding construction experiment: [SPC02 — phrase structure and broader meanings](./STRUCTURAL-GENERALIZATION.md).
 Using all frozen SPC01 expressions, structural lexical matching recovers three

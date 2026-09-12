@@ -1,4 +1,4 @@
-"""Construct witnessed singleton and directed one-role semantic graph patterns.
+"""Construct witnessed singleton, directed-role or unordered-connection patterns.
 
 The caller supplies contextual senses, canonical directed roles and their source
 rows. This module neither selects senses nor normalizes roles. Generalization
@@ -134,7 +134,7 @@ def _witness(identity, sources):
     }
 
 
-def _condition(sources, ancestors, immediate, generalized):
+def _condition(sources, ancestors, immediate, generalized, relation_policy):
     occurrences = defaultdict(set)
     for row, source in sources.items():
         for identifier, node in source['nodes'].items():
@@ -147,8 +147,11 @@ def _condition(sources, ancestors, immediate, generalized):
             starts = ancestors[start_sense] if generalized else [start_sense]
             targets = ancestors[target_sense] if generalized else [target_sense]
             for broader_start, broader_target in product(starts, targets):
-                occurrences['role', broader_start, role, broader_target].add(
-                    ('role', row, start, role, target))
+                if relation_policy == 'connection':
+                    key = ('connection', *sorted((broader_start, broader_target)))
+                else:
+                    key = ('role', broader_start, role, broader_target)
+                occurrences[key].add((key[0], row, start, role, target))
 
     identifiers = {key: _identifier(key) for key in sorted(occurrences)}
     if len(set(identifiers.values())) != len(identifiers):
@@ -176,6 +179,14 @@ def _condition(sources, ancestors, immediate, generalized):
             if generalized:
                 for broader in immediate[key[1]]:
                     link(('singleton', broader), key, 'broaden_singleton')
+        elif key[0] == 'connection':
+            endpoints = key[1:]
+            for index, sense in enumerate(endpoints):
+                link(('singleton', sense), key, 'drop_endpoint')
+                if generalized:
+                    for broader in immediate[sense]:
+                        parent = ('connection', *sorted((broader, endpoints[1 - index])))
+                        link(parent, key, 'broaden_endpoint')
         else:
             _, start, role, target = key
             link(('singleton', start), key, 'drop_target')
@@ -211,7 +222,7 @@ def _condition(sources, ancestors, immediate, generalized):
             'edges': edges, 'recurring_groups': recurring_groups}
 
 
-def construct(records, graphs, lexicon):
+def construct(records, graphs, lexicon, relation_policy='exact'):
     """Return literal/generalized patterns, sparse links and support-set reports.
 
     ``records`` and ``graphs`` must have identical, unique integer row identities.
@@ -220,16 +231,21 @@ def construct(records, graphs, lexicon):
     entries supply a reflexive, transitively closed ``ancestors`` list; cycles
     and inconsistent closure are rejected rather than silently repaired.
 
-    Relations and both endpoint senses remain explicit in role-pattern keys.
+    The default ``exact`` policy retains directed roles in pattern keys. The
+    ``connection`` policy instead keys each actual edge by its sorted pair of
+    endpoint senses; witnesses still retain its native role and direction.
+    Neither policy pairs unconnected nodes or follows multi-edge source paths.
     Repeated note aliases increase witnesses, not the distinct-note support.
     Equal-support reporting never merges patterns or filters the full inventory.
     """
+    if relation_policy not in ('exact', 'connection'):
+        raise ValueError('relation_policy must be exact or connection')
     sources = _sources(records, graphs)
     ancestors, immediate = _sense_order(sources, lexicon)
     return {
         'source_rows': sorted(sources),
         'source_notes': sorted({source['note'] for source in sources.values()}),
         'link_semantics': 'broader_to_narrower_sparse_generating_links_not_transitive_reduction',
-        'conditions': [_condition(sources, ancestors, immediate, generalized)
+        'conditions': [_condition(sources, ancestors, immediate, generalized, relation_policy)
                        for generalized in [False, True]],
     }
