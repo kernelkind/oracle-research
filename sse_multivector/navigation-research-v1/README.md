@@ -3,7 +3,19 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest representation diagnostic: [PPR01 — complete subject descriptions](./PHRASE-DESCRIPTION-NEIGHBORHOODS.md).
+Latest representation diagnostic: [DSP01 — grammatical connections](./DEPENDENCY-DESCRIPTIONS.md).
+On 14 frozen subject/mask records, dependency parsing retains useful local
+phrases and separates coffee experience from the coffee-shop internet dispute.
+But valid common subjects also have different grammatical paths; correcting
+the rosemary/bread attachment does not make those paths identical. Native
+parsing errors are recorded separately. Do not build an exact-tree miner as
+a sufficient category rule. All parses, 1,121 paths, full originals/masks and
+analytical controls are preserved, with an exact offline replay. No hierarchy
+or browser changed. Next audit native text-to-category classification that can
+accept different grammatical witnesses; GLiClass is an unrun lead, not a
+selected model or a category-generation solution.
+
+Preceding representation diagnostic: [PPR01 — complete subject descriptions](./PHRASE-DESCRIPTION-NEIGHBORHOODS.md).
 On the same 945 records, the base Sentence-BERT recovers the nine other known
 morning-greeting notes within ten neighbors and the rosemary/bread note at position
 two under Euclidean distance. Both models distinguish coffee-taste experience
@@ -14,7 +26,8 @@ inspected records and 50 full notes, both vector sets and scores are preserved;
 41 tests pass and offline replays are exact. No hierarchy or browser changed.
 Retain base affinity as possible proposal evidence, not a grouping rule. Next,
 investigate explicit compositional relationships as evidence for shared and
-broader meanings; no parser or relation model is selected.
+broader meanings. DSP01 above tests grammatical structure without adopting it
+as a construction rule.
 
 Preceding construction diagnostic: [CAP04 — order and adjacency](./ORDERED-PHRASE-CANDIDATES.md).
 The same 945 subject records yield useful repeated phrases, including ten morning

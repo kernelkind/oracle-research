@@ -1,0 +1,27 @@
+{
+  "purpose": "Separate native parsing mistakes from a representational mismatch. These corrections are analytical controls, not automatic results or changes to source artifacts.",
+  "controls": [
+    {
+      "row": 669,
+      "sentence": 0,
+      "changes": [{"id": 1, "set": {"upos": "NOUN"}}],
+      "reason": "The full original identifies culinary rosemary rather than a person's name.",
+      "endpoints": [1, 4],
+      "expected_word_ids": [1, 4],
+      "expected_nodes": [["rosemary", "NOUN"], ["bread", "NOUN"]],
+      "expected_edges": [["down", "nmod"]],
+      "expected_case_dependents": [[], [["in", "ADP"]]]
+    },
+    {
+      "row": 254,
+      "sentence": 0,
+      "changes": [{"id": 12, "set": {"head": 3, "deprel": "obl"}}],
+      "reason": "To the Irish soda bread specifies the destination of added, not a nominal modifier rosemary-to-bread.",
+      "endpoints": [5, 12],
+      "expected_word_ids": [5, 3, 12],
+      "expected_nodes": [["rosemary", "NOUN"], ["add", "VERB"], ["bread", "NOUN"]],
+      "expected_edges": [["up", "obj"], ["down", "obl"]],
+      "expected_case_dependents": [[], [], [["to", "ADP"]]]
+    }
+  ]
+}

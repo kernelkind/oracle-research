@@ -184,6 +184,11 @@ Any parser or relation model must first demonstrate task fit; neither is
 selected here. These source examples specify a missing capability, not a
 canonical taxonomy. Equivalence, membership and parent construction remain open.
 
+The subsequent [DSP01 diagnostic](./DEPENDENCY-DESCRIPTIONS.md) inspects native
+dependency parses and separates parsing mistakes from legitimate syntactic
+variation. It finds useful attachment evidence, but does not adopt exact
+grammatical matching as the category rule.
+
 ## Verification and reproduction
 
 Both models have 109,482,240 parameters. They ran sequentially on two CPU threads
