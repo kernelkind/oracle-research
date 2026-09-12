@@ -168,11 +168,12 @@ not just these examples. The exact input for the Coffee/Bread error is:
 
 > bread as food: Food made by cooking a dough of flour and liquid, usually by baking.
 
-Thus neither absent familiar names nor absent definitions alone explains the
-remaining errors. Combined inputs could themselves be out of distribution;
-this is evidence against adopting this tested application, not against every
-possible adaptation of this model. No wording was subsequently optimized to
-these scores.
+None of these tested renderings established reliable relations. This does not
+isolate the cause of the earlier failures: supplying names and definitions also
+changes the input distribution, so failure under the combined rendering cannot
+exclude a missing-context explanation for a different rendering. This is
+evidence against adopting the tested configurations, not against every possible
+adaptation of this model. No wording was subsequently optimized to these scores.
 
 ## Consequence for the hierarchy goal
 
@@ -181,7 +182,7 @@ scores, or claim that the hierarchy improved. Reliable membership, group-wide
 description fidelity, useful sibling choices and complete browsing paths remain
 open. The strongest existing optional browser remains ND02-NP01.
 
-The next research lead is a **shared learned hierarchy representation**, rather
+One untested research lead is a **shared learned hierarchy representation**, rather
 than another independently scored pair classifier. HiT retrains a text encoder
 with a loss bringing children near parents and another ordering their distances
 from a common origin. Its paper includes transfer to other ontologies and hard
@@ -189,10 +190,13 @@ negative siblings, not just random unrelated words.[^5] This is a specific
 hypothesis about training and representation, not a declaration that hyperbolic
 geometry supplies semantics. Its actual score still requires a fitted weight
 and threshold; transitivity and semantic correctness are not guaranteed merely
-by using that score. Before any test, inspect the released model, input rendering,
-training split and published calibration. Preserve the current fixed meanings
-and compare with its unmodified base encoder if a test is justified. No HiT
-weights were downloaded or inference run in this checkpoint.
+by using that score. Any future test still needs justified input/task fit and
+calibration. No HiT weights were downloaded or inference run during SRR01–SRR03.
+The subsequent [CAP01 construction audit](./CANDIDATE-COVERAGE.md) finds source
+evidence excluded by MDH02's candidate rule. Shared-feature candidate discovery
+is therefore the next investigation, not another scoring pass over the same
+fixed meanings. This does not establish that HiT would fail or that independent
+pair scoring caused the SRR errors.
 
 An alternative was considered: construct path-specific intersections of note
 memberships instead of claiming global subject subsumption. Faceted navigation

@@ -3,14 +3,24 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
+Latest construction audit: [CAP01 — candidate coverage](./CANDIDATE-COVERAGE.md).
+MDH02's complete-mask seed rule excludes `food` despite 45 matching masks from
+15 notes, and also excludes recurring recipe, processed-food and chicken-stock
+evidence. All 22 saved candidates reproduce exactly. The 315 excluded recurrent
+features are not 315 valid subjects: grammatical words and ambiguous uses remain.
+Next, test bounded shared-feature proposals while preserving source evidence and
+the relation rule. No category, mask, vector, membership or browser changed.
+HiT remains an unrun alternative rather than the automatic next experiment.
+
 Latest task-trained relation evidence: [SRR01–SRR03](./SENSE-RELATIONS.md).
 A WordNet definition-relation classifier preserves Bread → Sourdough but also
 produces false Coffee/greeting and human-diet/Dog parents. Explicit definitions
 change the errors rather than reliably removing them, adding Music → greetings
 and Bread → Coffee. Retaining both names and definitions also fails. Neither a
-new hierarchy nor another description rewrite is
-adopted. The next research lead is a shared learned hierarchy representation;
-the model's scoring and calibration still need inspection before testing.
+new hierarchy nor another description rewrite is adopted. These input variants
+do not isolate why the classifier failed. HiT's shared learned representation
+was a subsequent lead, but it does not itself supply absent category candidates;
+the construction-level reassessment above takes priority.
 
 Earlier contextual-relation evidence: [GDR02](./EXISTING-SUBJECT-RELATIONS.md) and
 [GDR03](./SUBJECT-INPUT-RENDERING.md). Existing generated subjects recover greeting
