@@ -1,0 +1,611 @@
+{
+  "run_id": "HRC02",
+  "model_id": "malper/hierarcaps-clip-l",
+  "model_revision": "e3aa199d94c438f98628c9697a0b64ef5760b03c",
+  "original_sha256": "8c2a3eebf84855cc676b3a5812aa53401ec9ddf66292139daa7a4ee17a574712",
+  "input_policy": "Exact original masks joined in source order with one space. Same pinned checkpoint, tokenizer, CPU settings and author exterior-angle score as HRC01. No training, rewritten text, full-note context, hierarchy construction or thresholds.",
+  "hypothesis": "The favorable direction and relevant-parent ordering survive without shared subject words, against closer topical alternatives, and when a broader activity is expressed using longer text.",
+  "selection": "Text-only proposals from two clean-context readers plus main-agent selection. A third independently spawned reader checked all draft cases against exact source masks before scoring; its corrections are recorded below. No HRC02 score was available during selection. This reuses a previously studied 100-note food/lifestyle corpus, not an unseen-domain holdout.",
+  "groups": {
+    "category": "Thirteen clearer topical category relationships. All except A15 lack a shared subject-word family; repeated anchors and families remain dependent.",
+    "activity": "Five broad activity/fragmented phrases, including longer broader inputs. Analyze separately from clean category names.",
+    "qualified": "Seven ambiguous/contextual relationships for inspection; no mandatory semantic verdict.",
+    "shared_word": "Two dependent coffee controls: real broader mask versus a closely related different activity, with shared coffee wording."
+  },
+  "cases": [
+    {
+      "id": "A01",
+      "group": "category",
+      "broader": "V286",
+      "narrower": "V359",
+      "alternatives": [
+        "V579"
+      ],
+      "reason": "Bagels are a type of bread; cheesecake is another food, not the broader kind of bagel."
+    },
+    {
+      "id": "A02",
+      "group": "category",
+      "broader": "V286",
+      "narrower": "V719",
+      "alternatives": [
+        "V579"
+      ],
+      "reason": "Paratha is a flatbread; requires recognizing the dish name."
+    },
+    {
+      "id": "A03",
+      "group": "category",
+      "broader": "V078",
+      "narrower": "V140",
+      "alternatives": [
+        "V722"
+      ],
+      "reason": "Shrimp tempura sushi is Japanese food, not a refinement of Indian food."
+    },
+    {
+      "id": "A04",
+      "group": "category",
+      "broader": "V722",
+      "narrower": "V720",
+      "alternatives": [
+        "V078"
+      ],
+      "reason": "Dal fry is an Indian dish; this also tests named-food knowledge."
+    },
+    {
+      "id": "A05",
+      "group": "category",
+      "broader": "V722",
+      "narrower": "V719",
+      "alternatives": [
+        "V078"
+      ],
+      "reason": "Paratha admits Indian food as well as bread as a broader subject. No unique parent required."
+    },
+    {
+      "id": "A06",
+      "group": "category",
+      "broader": "V942",
+      "narrower": "V148",
+      "alternatives": [
+        "V147",
+        "V096"
+      ],
+      "reason": "Vacuum sealing beets for freezing is food preservation; growing beets and canning chicken stock are related but different activities."
+    },
+    {
+      "id": "A07",
+      "group": "category",
+      "broader": "V942",
+      "narrower": "V096",
+      "alternatives": [
+        "V148"
+      ],
+      "reason": "Pressure-canning chicken stock is food preservation; freezing beets is another specific preservation activity."
+    },
+    {
+      "id": "A08",
+      "group": "activity",
+      "broader": "V255",
+      "narrower": "V147",
+      "alternatives": [
+        "V148"
+      ],
+      "reason": "The fragmented broader text is exactly 'food Growing your own skill'; the intended food-growing relationship requires reconstruction, so this is a mask/activity stress case, not part of the clearer category aggregate."
+    },
+    {
+      "id": "A09",
+      "group": "qualified",
+      "broader": "V377",
+      "narrower": "V757",
+      "alternatives": [
+        "V391"
+      ],
+      "reason": "Bare painting can mean art or painting a building. The full source indicates artistic painting, but is not available to the model; no mandatory direction."
+    },
+    {
+      "id": "A10",
+      "group": "category",
+      "broader": "V377",
+      "narrower": "V758",
+      "alternatives": [
+        "V391"
+      ],
+      "reason": "Watercolour painting is an art; photography is not its broader subject."
+    },
+    {
+      "id": "A11",
+      "group": "category",
+      "broader": "V377",
+      "narrower": "V391",
+      "alternatives": [
+        "V758"
+      ],
+      "reason": "Photography is an art; watercolour painting is not its broader subject."
+    },
+    {
+      "id": "A12",
+      "group": "category",
+      "broader": "V382",
+      "narrower": "V212",
+      "alternatives": [
+        "V380"
+      ],
+      "reason": "A Chihuahua is a dog. Changing its diet belongs to dogs rather than cats."
+    },
+    {
+      "id": "A13",
+      "group": "category",
+      "broader": "V439",
+      "narrower": "V745",
+      "alternatives": [
+        "V437"
+      ],
+      "reason": "An audiobook and a murder mystery fall under literature, not movies as their broader subject."
+    },
+    {
+      "id": "A14",
+      "group": "category",
+      "broader": "V389",
+      "narrower": "V413",
+      "alternatives": [
+        "V380"
+      ],
+      "reason": "Nature is a defensible broader topic for squirrels attacking tomatoes. The source actually says squirrels have given up attacking them; the mask drops that reversal, so do not describe this as evidence of current attacks."
+    },
+    {
+      "id": "A15",
+      "group": "category",
+      "broader": "V942",
+      "narrower": "V819",
+      "alternatives": [
+        "V096"
+      ],
+      "reason": "Preserved century eggs belong under food preservation. The preserved/preservation word family supplies a lexical cue; this is not counted as nonlexical transfer."
+    },
+    {
+      "id": "B01",
+      "group": "activity",
+      "broader": "V547",
+      "narrower": "V108",
+      "alternatives": [
+        "V129"
+      ],
+      "reason": "General kitchen work versus preparing sourdough; broader wording is longer. A topical relationship, not the same episode."
+    },
+    {
+      "id": "B02",
+      "group": "activity",
+      "broader": "V547",
+      "narrower": "V201",
+      "alternatives": [
+        "V129"
+      ],
+      "reason": "General kitchen work versus making yogurt; broader wording is longer. This requires reading the activity rather than equating the two episodes."
+    },
+    {
+      "id": "B03",
+      "group": "activity",
+      "broader": "V711",
+      "narrower": "V895",
+      "alternatives": [
+        "V359"
+      ],
+      "reason": "General cooking methods versus instructions for cooking spaghetti. These differ in wording and contain advice, not clean noun categories."
+    },
+    {
+      "id": "B04",
+      "group": "activity",
+      "broader": "V465",
+      "narrower": "V451",
+      "alternatives": [
+        "V402"
+      ],
+      "reason": "Education versus a Bitcoin workshop. The longer general statement includes a favorable stance; merchant Bitcoin acceptance is related to Bitcoin but not broader than the workshop."
+    },
+    {
+      "id": "C01",
+      "group": "qualified",
+      "broader": "V465",
+      "narrower": "V466",
+      "alternatives": [
+        "V402"
+      ],
+      "reason": "Education versus Bitcoin education; lexical control in a nonvisual subject."
+    },
+    {
+      "id": "C02",
+      "group": "qualified",
+      "broader": "V606",
+      "narrower": "V607",
+      "alternatives": [
+        "V626"
+      ],
+      "reason": "A positive outlook can include assuming the best in people. Speech conduct is related, but not a required broader subject."
+    },
+    {
+      "id": "C03",
+      "group": "qualified",
+      "broader": "V633",
+      "narrower": "V626",
+      "alternatives": [
+        "V607"
+      ],
+      "reason": "Kindness can include refraining from speaking badly about others. This is not a claim that every criticism is unkind."
+    },
+    {
+      "id": "C04",
+      "group": "qualified",
+      "broader": "V598",
+      "narrower": "V599",
+      "alternatives": [
+        "V597"
+      ],
+      "reason": "Dietary variety versus particular nutrients. Both concern diet but the exact broader subject may be debatable; report separately."
+    },
+    {
+      "id": "C05",
+      "group": "qualified",
+      "broader": "V595",
+      "narrower": "V594",
+      "alternatives": [
+        "V592"
+      ],
+      "reason": "Good sleep versus bedtime consistency. This may be a means or related habit rather than a broader subject; not a mandatory verdict."
+    },
+    {
+      "id": "C06",
+      "group": "qualified",
+      "broader": "V638",
+      "narrower": "V640",
+      "alternatives": [
+        "V595"
+      ],
+      "reason": "Environmental adaptation versus dietary adaptability. Environment could be understood more narrowly; not a mandatory verdict."
+    },
+    {
+      "id": "D01",
+      "group": "shared_word",
+      "broader": "V381",
+      "narrower": "V410",
+      "alternatives": [
+        "V793"
+      ],
+      "reason": "Coffee is broader than grinding coffee beans. Roasting is another coffee activity, not the broader subject of grinding."
+    },
+    {
+      "id": "D02",
+      "group": "shared_word",
+      "broader": "V381",
+      "narrower": "V793",
+      "alternatives": [
+        "V410"
+      ],
+      "reason": "Coffee is broader than roasting coffee beans. Grinding is another coffee activity, not the broader subject of roasting."
+    }
+  ],
+  "vectors": [
+    "V286",
+    "V359",
+    "V579",
+    "V719",
+    "V078",
+    "V140",
+    "V722",
+    "V720",
+    "V942",
+    "V148",
+    "V147",
+    "V096",
+    "V255",
+    "V377",
+    "V757",
+    "V391",
+    "V758",
+    "V382",
+    "V212",
+    "V380",
+    "V439",
+    "V745",
+    "V437",
+    "V389",
+    "V413",
+    "V819",
+    "V547",
+    "V108",
+    "V129",
+    "V201",
+    "V711",
+    "V895",
+    "V465",
+    "V451",
+    "V402",
+    "V466",
+    "V606",
+    "V607",
+    "V626",
+    "V633",
+    "V598",
+    "V599",
+    "V597",
+    "V595",
+    "V594",
+    "V592",
+    "V638",
+    "V640",
+    "V381",
+    "V410",
+    "V793"
+  ],
+  "direction_checks": [
+    [
+      "V286",
+      "V359"
+    ],
+    [
+      "V286",
+      "V719"
+    ],
+    [
+      "V078",
+      "V140"
+    ],
+    [
+      "V722",
+      "V720"
+    ],
+    [
+      "V722",
+      "V719"
+    ],
+    [
+      "V942",
+      "V148"
+    ],
+    [
+      "V942",
+      "V096"
+    ],
+    [
+      "V255",
+      "V147"
+    ],
+    [
+      "V377",
+      "V757"
+    ],
+    [
+      "V377",
+      "V758"
+    ],
+    [
+      "V377",
+      "V391"
+    ],
+    [
+      "V382",
+      "V212"
+    ],
+    [
+      "V439",
+      "V745"
+    ],
+    [
+      "V389",
+      "V413"
+    ],
+    [
+      "V942",
+      "V819"
+    ],
+    [
+      "V547",
+      "V108"
+    ],
+    [
+      "V547",
+      "V201"
+    ],
+    [
+      "V711",
+      "V895"
+    ],
+    [
+      "V465",
+      "V451"
+    ],
+    [
+      "V465",
+      "V466"
+    ],
+    [
+      "V606",
+      "V607"
+    ],
+    [
+      "V633",
+      "V626"
+    ],
+    [
+      "V598",
+      "V599"
+    ],
+    [
+      "V595",
+      "V594"
+    ],
+    [
+      "V638",
+      "V640"
+    ],
+    [
+      "V381",
+      "V410"
+    ],
+    [
+      "V381",
+      "V793"
+    ]
+  ],
+  "parent_comparisons": [
+    [
+      "V359",
+      "V286",
+      "V579"
+    ],
+    [
+      "V719",
+      "V286",
+      "V579"
+    ],
+    [
+      "V140",
+      "V078",
+      "V722"
+    ],
+    [
+      "V720",
+      "V722",
+      "V078"
+    ],
+    [
+      "V719",
+      "V722",
+      "V078"
+    ],
+    [
+      "V148",
+      "V942",
+      "V147"
+    ],
+    [
+      "V148",
+      "V942",
+      "V096"
+    ],
+    [
+      "V096",
+      "V942",
+      "V148"
+    ],
+    [
+      "V147",
+      "V255",
+      "V148"
+    ],
+    [
+      "V757",
+      "V377",
+      "V391"
+    ],
+    [
+      "V758",
+      "V377",
+      "V391"
+    ],
+    [
+      "V391",
+      "V377",
+      "V758"
+    ],
+    [
+      "V212",
+      "V382",
+      "V380"
+    ],
+    [
+      "V745",
+      "V439",
+      "V437"
+    ],
+    [
+      "V413",
+      "V389",
+      "V380"
+    ],
+    [
+      "V819",
+      "V942",
+      "V096"
+    ],
+    [
+      "V108",
+      "V547",
+      "V129"
+    ],
+    [
+      "V201",
+      "V547",
+      "V129"
+    ],
+    [
+      "V895",
+      "V711",
+      "V359"
+    ],
+    [
+      "V451",
+      "V465",
+      "V402"
+    ],
+    [
+      "V466",
+      "V465",
+      "V402"
+    ],
+    [
+      "V607",
+      "V606",
+      "V626"
+    ],
+    [
+      "V626",
+      "V633",
+      "V607"
+    ],
+    [
+      "V599",
+      "V598",
+      "V597"
+    ],
+    [
+      "V594",
+      "V595",
+      "V592"
+    ],
+    [
+      "V640",
+      "V638",
+      "V595"
+    ],
+    [
+      "V410",
+      "V381",
+      "V793"
+    ],
+    [
+      "V793",
+      "V381",
+      "V410"
+    ]
+  ],
+  "comparison_policy": "Compare exterior angle against ordinary cosine and a shorter-text baseline on the same fixed pairs. Direction-vs-depth is the same evidence. Report raw counts by group and family rather than a corpus accuracy estimate. Do not optimize cutoff or replace failed inputs.",
+  "excluded_before_scoring": [
+    "Homesteading -> hens laying eggs: the mask does not establish a homestead, and the scope judgment is weaker.",
+    "Compound advice lists treated as necessarily broader than their components: conjunction versus topic-union is ambiguous; these would not cleanly test hierarchical broadness.",
+    "Additional technical pairs: the existing 100-note corpus does not contain enough to make this a broad technical-domain evaluation."
+  ],
+  "pre_score_review": {
+    "reviewer": "/root/hrc02_prescore_review",
+    "changes": [
+      "A08 moved from category to activity because fragmented wording requires interpretation.",
+      "A09 moved from category to qualified because bare painting is ambiguous.",
+      "A14 source-negation caveat recorded without changing the saved mask.",
+      "A15 identified as a lexical-family control, not nonlexical transfer.",
+      "D01 and D02 accepted as shared-word close-alternative controls."
+    ],
+    "scope": "25 original cases and 48 masks audited, plus two additional coffee cases and their three masks. Exact IDs, fragments, byte ranges and source order verified; no model scores inspected."
+  },
+  "source_domains": "Food, everyday activity, arts, animals, and limited lifestyle advice. Additional technical-domain coverage is unavailable in this frozen source corpus; do not claim it."
+}
