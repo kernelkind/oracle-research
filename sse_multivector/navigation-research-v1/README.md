@@ -3,7 +3,25 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest construction experiment: [SPC01 — source phrases and category paths](./SOURCE-PHRASE-PATHS.md).
+Latest construction experiment: [SPC02 — phrase structure and broader meanings](./STRUCTURAL-GENERALIZATION.md).
+Using all frozen SPC01 expressions, structural lexical matching recovers three
+Food-preparation notes through bread preparation, steak preparation and outdoor
+grilling. It also interprets washed dishes as food, and rejects valid cooking
+and preservation topics whose grammatical arrangements differ. All 18 new links
+into existing recurring multiword destinations and the 79 further word-only
+links are audited; fewer links are not equated with better semantics.
+
+Ambiguous dictionary paths also create a 271-expression cycle. Food → Sake
+uses a drink sense; Sake → Interest switches to a purpose/interest sense. Food
+then reaches all 100 notes through the graph. A relevant destination note can
+hide a wrong source witness, so memberships and derivations are evaluated
+separately. Neither graph is adopted. The next research target is source-context
+interpretation in the composed representation, including meaning-preserving
+relationships across different phrasing—not another matching or parser tweak.
+Seventy-two tests pass; final artifacts replay byte-for-byte across hash seeds.
+The original inputs and browser remain unchanged.
+
+Preceding construction experiment: [SPC01 — source phrases and category paths](./SOURCE-PHRASE-PATHS.md).
 The unchanged 945 descriptions generate 2,129 expressions and 1,268 observed
 head-extension links. Requiring two distinct notes leaves 234 choices, 204 roots
 and 30 links; eight links return identical note sets. The complete source audit
@@ -16,12 +34,12 @@ that semantic subexpression is absent from the saved grammatical structure.
 This establishes partial phrase-based construction, not a sufficient hierarchy.
 No browser, parser revision, threshold or semantic repair is adopted. All source
 occurrences, menus, native parses and the 30-link audit are preserved; 49 tests
-pass and construction replays exactly. The next research question is contextual
-generalization of complete expressions into broader paths with justified note
-memberships, not another independent cutoff or stopword tweak. Specific relation
-rules and their activity/object and word-sense assumptions remain to be selected
-through literature and implementation review. [Method-fit research](./CONSTRUCTION-MECHANISMS.md)
-records the relevant construction precedents and qualifications.
+pass and construction replays exactly. This motivated contextual generalization
+of complete expressions into broader paths with justified memberships. SPC02
+above tests one grammatical/lexical approximation and exposes its unresolved
+context and binding requirements. [Method-fit research](./CONSTRUCTION-MECHANISMS.md)
+records the construction precedents and qualifications; no independent cutoff
+or stopword tweak is adopted.
 
 Preceding construction diagnostic: [CPC01–CPC02 — memberships and paths](./CATEGORY-PATH-COMPATIBILITY.md).
 CPC01 scores all 945 saved descriptions from 100 notes against 12 frozen

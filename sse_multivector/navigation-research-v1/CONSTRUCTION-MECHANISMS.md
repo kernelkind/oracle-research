@@ -208,6 +208,22 @@ matching penalties cannot be treated as interchangeable with WordNet or SSE.
 The Food-preparation and beet-preservation controls test different parts of
 that transfer; no new implementation is selected from this paper alone.
 
+## SPC02 follow-up
+
+The [structural generalization experiment](./STRUCTURAL-GENERALIZATION.md)
+implements a bounded comparison informed by these sources. Its
+[plan](./SPC02-PLAN.md) records the additional Woods 1997 structural rule and
+Luu SIWN method/evaluation qualifications. Universal Dependencies connections
+are explicitly an approximation to conceptual relations, not a reproduction.
+
+The complete recurring-multiword audit finds useful new food-preparation paths,
+an incorrect dish sense, and valid topical paths lost through grammatical
+restrictions. The larger dictionary graph additionally switches meanings at
+intermediate expressions. The next method must address contextual meanings and
+their bindings; the literature does not justify treating either present matcher
+as a complete hierarchy constructor. No method or browser is adopted from
+these papers alone.
+
 ## Sources
 
 [^1]: Stoica, Hearst and Richardson (2007), [Automating Creation of Hierarchical Faceted Metadata Structures](https://aclanthology.org/N07-1031.pdf), method and evaluation sections.

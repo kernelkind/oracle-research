@@ -217,18 +217,17 @@ lost valid paths. A justified semantic relation could instead carry its actual
 source witnesses into the broader destination. But propagation must be justified:
 a false child-to-parent relation would spread errors, not repair them.
 
-Before implementing that mechanism, examine contextual subsumption and
-compositional-generalization methods for their actual relation evidence,
-word-sense treatment and handling of activity/object connections. A Bread→Food
-dictionary lookup, another general-purpose classifier or a renamed graph alone
-would repeat answered questions. The next test must produce additional paths
-and inspect all their destination notes, including incorrect additions and
-omitted witnesses. No particular lexical model or rule is selected here.
+The subsequent [SPC02 experiment](./STRUCTURAL-GENERALIZATION.md) examined the
+relevant primary methods and compared lexical phrase matching with and without
+grammatical structure. It recovers three justified Food-preparation notes but
+also confuses washed dishes with food and loses valid differently structured
+cooking/preservation topics. Longer ambiguous dictionary paths switch senses
+and form cycles. Neither graph is adopted as a sufficient construction method.
 
-Useful additional paths would justify combining that mechanism with the partial
-construction demonstrated here. Generic ancestors, unrelated associations or
-lost activity connections would reject that combination in its tested form.
-Neither outcome would certify or refute every possible semantic hierarchy.
+Those findings retain a limited role for source-backed phrase construction
+while making source-context interpretation and cross-structure meaning the
+next research requirements. They do not justify another parser, support-filter
+or word-lookup tweak, or invalidate every possible semantic hierarchy.
 
 ## Evidence and verification
 
