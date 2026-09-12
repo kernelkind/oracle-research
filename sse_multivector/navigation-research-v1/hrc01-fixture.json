@@ -1,0 +1,22 @@
+{
+  "run_id": "HRC01",
+  "model_id": "malper/hierarcaps-clip-l",
+  "model_revision": "e3aa199d94c438f98628c9697a0b64ef5760b03c",
+  "original_sha256": "8c2a3eebf84855cc676b3a5812aa53401ec9ddf66292139daa7a4ee17a574712",
+  "input_policy": "Existing exact mask fragments joined in source order with one space. No original-note context, generated subject, template, paraphrase, dictionary, or training. Empty string is used only as the author's geometric root.",
+  "selection": "Twenty saved masks selected before scores by an independent clean-context reader. Full notes retained only for human interpretation. This is not a representative accuracy estimate or a prescribed hierarchy.",
+  "hypothesis": "The released text geometry distinguishes some supported broad-to-narrow directions and separates those relationships from obvious cross-topic alternatives on our exact masks.",
+  "vectors": ["V286", "V287", "V292", "V381", "V281", "V282", "V436", "V295", "V379", "V451", "V444", "V464", "V385", "V387", "V627", "V629", "V617", "V618", "V619", "V560"],
+  "direction_checks": [["V286", "V287"], ["V287", "V292"], ["V286", "V292"], ["V381", "V281"], ["V379", "V451"], ["V436", "V295"]],
+  "parent_comparisons": [["V281", "V381", "V436"], ["V295", "V436", "V379"], ["V451", "V379", "V387"], ["V292", "V286", "V381"]],
+  "interpretation_notes": [
+    "The three bread checks reuse one nested trio, not three independent successes.",
+    "Ice versus iced coffee is related through an ingredient; inspect, without requiring a subtype-only interpretation.",
+    "Coffee-shop music is plausibly reachable through a coffee-shop or music subject. Do not demand one unique parent or reject all coffee-related paths.",
+    "The isolated Gentoo mask leaves its word sense implicit. Inspect Linux/Gentoo but do not count a mandatory direction.",
+    "Knowledge-sharing and a Bitcoin workshop may support topical refinement without logical implication of an injunction.",
+    "Added qualifications in V627/V629 and V618/V619 may retain essentially the same browsing subject. No mandatory extra level.",
+    "All 400 ordered pairs, including self-pairs with undefined directional angle, will be preserved. No score cutoff will be fitted.",
+    "A favorable pilot would justify further investigation, not qualify full hierarchy construction. A failure would apply to this checkpoint/input/scorer setup, not every hierarchy embedding model."
+  ]
+}
