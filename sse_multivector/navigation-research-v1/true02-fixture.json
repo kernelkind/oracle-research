@@ -1,0 +1,73 @@
+{
+  "experiment": "TRUE02",
+  "threshold": 0.142,
+  "judgment": "A contains B means that B's topic is a narrower instance of, or equivalent to, A's topic. Sharing examples or commonly occurring together is not enough. Judge category scope, not whether every arbitrary document mentioning B must mention A explicitly.",
+  "provenance": "New manually constructed category descriptions, not generated HDBSCAN labels. All distinct ordered pairs within each domain are tested. Exact inputs and semantic judgments are frozen before TRUE inference; no between-domain easy negatives are added.",
+  "domains": [
+    {
+      "id": "food",
+      "categories": {
+        "F1": "Bread",
+        "F2": "Sourdough bread",
+        "F3": "Gluten-free food",
+        "F4": "Gluten-free bread",
+        "F5": "Bread made without gluten",
+        "F6": "Bread baking"
+      },
+      "contains": [["F1", "F2"], ["F1", "F4"], ["F1", "F5"], ["F1", "F6"], ["F3", "F4"], ["F3", "F5"], ["F4", "F5"], ["F5", "F4"]],
+      "rationale": "Bread includes its varieties and the topic of baking bread. Gluten-free food includes gluten-free bread but also non-bread food. Sourdough can contain gluten or be gluten-free; gluten-free bread need not be sourdough. Bread baking is a process, whereas discussions of bread varieties need not concern baking. F4 and F5 describe the same variety. The bread/baking judgments use topical containment, not a claim that a process is literally a loaf."
+    },
+    {
+      "id": "software",
+      "categories": {
+        "S1": "Software testing",
+        "S2": "Testing web applications",
+        "S3": "Software security testing",
+        "S4": "Security testing of web applications",
+        "S5": "Testing the security of web applications",
+        "S6": "Automated software testing"
+      },
+      "contains": [["S1", "S2"], ["S1", "S3"], ["S1", "S4"], ["S1", "S5"], ["S1", "S6"], ["S2", "S4"], ["S2", "S5"], ["S3", "S4"], ["S3", "S5"], ["S4", "S5"], ["S5", "S4"]],
+      "rationale": "Testing can vary independently in target (web or other software), purpose (security or other behavior), and method (automated or manual). S4/S5 narrow both S2 and S3. Manual web security testing belongs to S4/S5 but not S6; automated desktop functional testing belongs to S6 but not S2/S3/S4/S5. Neither automation nor web software implies security testing."
+    },
+    {
+      "id": "economics",
+      "categories": {
+        "E1": "Taxes",
+        "E2": "Taxes on corporate profits",
+        "E3": "Environmental policy",
+        "E4": "Carbon taxes",
+        "E5": "Taxes on carbon emissions",
+        "E6": "Carbon emissions trading"
+      },
+      "contains": [["E1", "E2"], ["E1", "E4"], ["E1", "E5"], ["E3", "E4"], ["E3", "E5"], ["E3", "E6"], ["E4", "E5"], ["E5", "E4"]],
+      "rationale": "Carbon taxes and emissions trading are different environmental-policy instruments; trading emissions allowances is not itself a tax. Taxes on corporate profits need not be environmental policy, and carbon taxes are levied on emissions rather than corporate profit. Environmental policy also covers non-tax regulation; taxes also cover non-environmental tax bases. Factual disputes about policy effectiveness are outside these category-scope judgments."
+    },
+    {
+      "id": "politics",
+      "categories": {
+        "P1": "Political campaigning",
+        "P2": "Election fundraising",
+        "P3": "Online political campaigning",
+        "P4": "Online fundraising for election campaigns",
+        "P5": "Raising money online for election campaigns",
+        "P6": "Door-to-door election canvassing"
+      },
+      "contains": [["P1", "P2"], ["P1", "P3"], ["P1", "P4"], ["P1", "P5"], ["P1", "P6"], ["P2", "P4"], ["P2", "P5"], ["P3", "P4"], ["P3", "P5"], ["P4", "P5"], ["P5", "P4"]],
+      "rationale": "Election fundraising and online political campaigning overlap in online election fundraising. Fundraising can occur offline; online campaigning can advocate without raising money. Door-to-door canvassing is political campaigning but neither necessarily fundraising nor online campaigning. Campaigning encompasses fundraising and canvassing activities; this is topical containment, not a causal or co-occurrence claim."
+    },
+    {
+      "id": "interpersonal",
+      "categories": {
+        "R1": "Friendship",
+        "R2": "Friendships between coworkers",
+        "R3": "Workplace relationships",
+        "R4": "Mentoring at work",
+        "R5": "Workplace mentoring",
+        "R6": "Long-distance friendships"
+      },
+      "contains": [["R1", "R2"], ["R1", "R6"], ["R3", "R2"], ["R3", "R4"], ["R3", "R5"], ["R4", "R5"], ["R5", "R4"]],
+      "rationale": "Coworker friendships belong to friendship and workplace relationships. Workplace mentoring is a workplace relationship but need not be friendship; coworkers can be friends without mentoring one another. Long-distance friends need not be coworkers, and coworkers can be friends nearby. Friendship and workplace relationships overlap without either containing the other. R4/R5 denote the same mentoring context."
+    }
+  ]
+}
