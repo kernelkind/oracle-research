@@ -187,7 +187,7 @@ because their meaning is expressed with a different structure. Retain the
 three food-preparation recoveries as component evidence, not a complete-method
 success or an estimate of broad-corpus reliability.
 
-The next consequential research target is **source-context interpretation in
+The consequential research target identified here was **source-context interpretation in
 the representation being composed**. A candidate approach needs evidence for
 distinguishing meanings such as washed dishes versus prepared dishes and
 purpose-sake versus drink-sake, while also handling the activity/material
@@ -202,6 +202,15 @@ That is a missing capability and method-selection requirement, not a decision
 to download a particular model or adopt a word-sense-only taxonomy. The
 construction still needs to support legitimate topical relationships beyond
 strict object-type subsumption.
+
+[SGC01](./SEMANTIC-GRAPH-CONSTRUCTION.md) now tests a contextual semantic-graph
+representation with a bounded generic constructor. It preserves some useful
+local food-preparation and meat-cut paths, but also predicts wrong senses and
+bindings and emits malformed outputs. The useful paths are not rejected solely
+for unrelated logical errors; they also do not establish an improved complete
+hierarchy. A subsequent static check separates parser-recoverable paths from
+relations absent in the fixed dictionary and exact-role scheme. This supersedes
+the pending method-selection step, not SPC02's observations or frozen records.
 
 ## Reproduction and verification
 

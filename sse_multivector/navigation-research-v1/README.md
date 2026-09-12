@@ -3,7 +3,44 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest construction experiment: [SPC02 — phrase structure and broader meanings](./STRUCTURAL-GENERALIZATION.md).
+Latest construction experiment: [SGC01 — contextual semantic graphs](./SEMANTIC-GRAPH-CONSTRUCTION.md).
+Fifteen unchanged descriptions from thirteen notes were given to a native
+text-to-DRS parser. Eleven outputs pass local sequence/reference checks; four
+are malformed despite ending themselves below the allowed output length.
+Generic graph generalization produces useful food-preparation and meat-cut
+paths, but no improved complete browsing arrangement. The preparation group
+retains the same three notes as its literal counterpart. Wrong dish, stock and
+smoker senses coexist with useful local patterns; neither whole-graph rejection
+nor accepting a correct final note set would be a sufficient semantic audit.
+
+All originals, inline masks, native outputs, numbered senses, source witnesses
+and construction paths are preserved. Seventy-five relevant tests pass, and
+construction replays byte-for-byte. Both constructed graphs are acyclic; this
+does not certify their meanings or category choices. No browser is adopted.
+
+A static source/dictionary check finds one baking/brisket grouping recoverable
+through better input, but several cross-form preparation/preservation links
+remain unavailable under the fixed hypernym and exact-role rules. Do not run
+a full annotation control merely to repeat that known limitation.
+[NounAtlas/VerbAtlas lookup research](./PREDICATE-FRAME-RESOURCES.md) verifies
+shared noun/verb activity classes. But adding them alone to the saved graphs
+would not repair the missing beet participant or create a new shared
+preparation/material pattern. That lookup question is now answered; a further
+test needs contextual argument evidence and must exercise actual construction,
+not just produce cleaner frame names. Category selection and complete-note
+coverage remain open. No replacement model, frame hierarchy or browser is adopted.
+The directly related release chain also leaves joint nominal/verbal inference
+unverified: NounAtlas's joint release is described as forthcoming, and the
+inspected MultiSRL text interface selects verbs only. No substitute model is run.
+Precise event-role recovery must not become a requirement without showing its
+value for the browsing construction.
+The source audit identifies an available controlled comparison first: preserve
+actual connected pairs while relaxing their exact relation type/direction.
+Preparation/food and beets/preservation could then share a broader activity
+pattern. This remains a hypothesis, not a reported result or a license to
+combine arbitrary words from the same description.
+
+Preceding construction experiment: [SPC02 — phrase structure and broader meanings](./STRUCTURAL-GENERALIZATION.md).
 Using all frozen SPC01 expressions, structural lexical matching recovers three
 Food-preparation notes through bread preparation, steak preparation and outdoor
 grilling. It also interprets washed dishes as food, and rejects valid cooking
@@ -15,9 +52,9 @@ Ambiguous dictionary paths also create a 271-expression cycle. Food → Sake
 uses a drink sense; Sake → Interest switches to a purpose/interest sense. Food
 then reaches all 100 notes through the graph. A relevant destination note can
 hide a wrong source witness, so memberships and derivations are evaluated
-separately. Neither graph is adopted. The next research target is source-context
-interpretation in the composed representation, including meaning-preserving
-relationships across different phrasing—not another matching or parser tweak.
+separately. Neither graph is adopted. This motivated the contextual
+representation experiment SGC01 above, including relationships across different
+phrasing—not another word-matching or grammar tweak.
 Seventy-two tests pass; final artifacts replay byte-for-byte across hash seeds.
 The original inputs and browser remain unchanged.
 
