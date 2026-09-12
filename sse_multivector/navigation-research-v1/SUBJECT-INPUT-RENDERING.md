@@ -110,9 +110,10 @@ construction benchmark starts with seeded levels and reports improved parent
 ranking, including an ablation without parent training. That objective is closer
 to the unresolved distinction than generic topic classification.[^2] But it uses
 entity names and a seed taxonomy, not masked-note groups; it is not a drop-in
-solution. The next investigation should verify released weights, training
-dependencies, sense/context inputs and local resource requirements before any
-run. Neither TaxoInstruct nor another new model has been downloaded or tested.
+solution. The follow-up [SRR01–SRR03 research](./SENSE-RELATIONS.md) inspected
+TaxoInstruct's released workflow and tested a smaller WordNet definition-relation
+classifier instead. That model also produces false parents, including after
+explicit definition inputs. TaxoInstruct itself has not been downloaded or run.
 
 The end goal remains a repeatable complete note hierarchy. These diagnostics
 do not establish a new browser candidate, automatic group naming, membership

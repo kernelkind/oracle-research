@@ -3,15 +3,23 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest contextual-relation evidence: [GDR02](./EXISTING-SUBJECT-RELATIONS.md) and
+Latest task-trained relation evidence: [SRR01–SRR03](./SENSE-RELATIONS.md).
+A WordNet definition-relation classifier preserves Bread → Sourdough but also
+produces false Coffee/greeting and human-diet/Dog parents. Explicit definitions
+change the errors rather than reliably removing them, adding Music → greetings
+and Bread → Coffee. Retaining both names and definitions also fails. Neither a
+new hierarchy nor another description rewrite is
+adopted. The next research lead is a shared learned hierarchy representation;
+the model's scoring and calibration still need inspection before testing.
+
+Earlier contextual-relation evidence: [GDR02](./EXISTING-SUBJECT-RELATIONS.md) and
 [GDR03](./SUBJECT-INPUT-RENDERING.md). Existing generated subjects recover greeting
 equivalence without GDR01's manual descriptions, but one seed's subject often
 does not describe its whole group. A controlled input-format change fixes some
 coverage misses and introduces incorrect associated-topic relations, including
 Coffee → morning greetings. No automatic classifier, group description or new
-hierarchy is adopted. All inputs and scores are preserved. The next research
-lead is a task-trained parent/sibling relation method, not another topic-template
-tweak. Earlier [GDR01](./CONTEXTUAL-GROUP-RELATIONS.md) remains the manual-input
+hierarchy is adopted. All inputs and scores are preserved. The task-trained
+follow-up is recorded above. Earlier [GDR01](./CONTEXTUAL-GROUP-RELATIONS.md) remains the manual-input
 control.
 
 Prior group-relation evidence: [lexical broader and equivalent relations](./GROUP-RELATIONS.md).

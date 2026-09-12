@@ -1,0 +1,14 @@
+{
+  "run_id": "SRR02",
+  "provenance": "Manual diagnostic definitions of the eight fixed GDR01 meanings, frozen before inference. No taxonomy edge supplied to the model.",
+  "groups": [
+    {"id": "D82879f64c8d0", "description": "Food made by cooking a dough of flour and liquid, usually by baking."},
+    {"id": "D57d89affb1a1", "description": "Bread made from dough fermented with a culture of wild yeast and bacteria."},
+    {"id": "D133882956ce9", "description": "A way of eating in which a person eats animal foods and avoids plant foods."},
+    {"id": "D3cbafae1fbeb", "description": "Domesticated canine animals commonly kept as pets or used for work."},
+    {"id": "D0748da9782f5", "description": "An expression of welcome or goodwill addressed to someone during the morning."},
+    {"id": "D9f21a0591c5a", "description": "A greeting that expresses a wish for someone to have a pleasant morning."},
+    {"id": "D185749d2e92b", "description": "A drink prepared from roasted coffee beans, and establishments where that drink is prepared and served."},
+    {"id": "De23fc8b14651", "description": "Sounds arranged through rhythm, melody or harmony for expression or enjoyment."}
+  ]
+}

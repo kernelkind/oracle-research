@@ -1,0 +1,22 @@
+{
+  "run_id": "GDR01",
+  "model_id": "MoritzLaurer/deberta-v3-base-zeroshot-v2.0",
+  "model_revision": "8e7e5af5983a0ddb1a5b45a38b129ab69e2258e8",
+  "template": "This text is about {}.",
+  "description_provenance": "Manually supplied diagnostic descriptions, frozen after reading all eight groups' complete masks and original notes, before inference. These describe the common topical dimension, not every meaning in every mask. No parent relations appear in the descriptions.",
+  "groups": [
+    {"id": "D82879f64c8d0", "description": "bread as food", "audit": "All 51 masks from eight notes checked: sourdough, soda bread, mochi bread, bread pans, sandwiches, a bread-containing meal and dough preparation. Bread pans concern preparing bread; the category is topical, not a claim that every mentioned object is a type of bread."},
+    {"id": "D57d89affb1a1", "description": "sourdough bread", "audit": "All ten masks from N015 and N037 checked. Both notes explicitly concern sourdough bread. No extra detail is needed to identify its meaning; the description deliberately remains unchanged."},
+    {"id": "D133882956ce9", "description": "the human carnivore diet", "audit": "All seven masks and all three originals checked: a non-carnivore pancake recipe, meat eaters and dietary hashtags, and commentary on the carnivore diet. No animal classification is communicated."},
+    {"id": "D3cbafae1fbeb", "description": "dogs as animals", "audit": "All five masks and both originals checked: a dog hashtag and scraps or meat for a dog. Feeding is not required of every member, because the hashtag alone does not express it."},
+    {"id": "D0748da9782f5", "description": "greeting people in the morning", "audit": "All six masks and originals checked. GM greets Nostr audiences, Siamstr, or readers generally; none concerns a unit of mass or a company. Audience and affection vary without changing the common greeting subject."},
+    {"id": "D9f21a0591c5a", "description": "wishing people a good morning", "audit": "All four masks and originals checked. Good morning addresses readers, Nostr, friends, or the world. The description preserves the same common greeting scope as the GM group without copying its wording."},
+    {"id": "D185749d2e92b", "description": "coffee and coffee shops", "audit": "All 75 canonical masks from 19 notes checked. The description includes shops because masks discuss a rave, music, and laptop rules in coffee shops as well as coffee preparation and consumption. It does not make all music a coffee subject."},
+    {"id": "De23fc8b14651", "description": "music", "audit": "Both masks and originals checked: a Music hashtag and music playing in a coffee shop. Music is already unambiguous enough here; its description deliberately remains unchanged instead of inventing extra scope."}
+  ],
+  "expected_implications": [
+    ["D57d89affb1a1", "D82879f64c8d0"],
+    ["D0748da9782f5", "D9f21a0591c5a"],
+    ["D9f21a0591c5a", "D0748da9782f5"]
+  ]
+}
