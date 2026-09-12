@@ -3,16 +3,30 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest construction diagnostic: [CAP04 — order and adjacency](./ORDERED-PHRASE-CANDIDATES.md).
+Latest representation diagnostic: [PPR01 — complete subject descriptions](./PHRASE-DESCRIPTION-NEIGHBORHOODS.md).
+On the same 945 records, the base Sentence-BERT recovers the nine other known
+morning-greeting notes within ten neighbors and the rosemary/bread note at position
+two under Euclidean distance. Both models distinguish coffee-taste experience
+from operators experiencing internet loss. Phrase-BERT improves preservation
+matches but regresses elsewhere; neither supplies a membership or containment
+rule. The audit separates correct notes from incorrect winning masks. All 90
+inspected records and 50 full notes, both vector sets and scores are preserved;
+41 tests pass and offline replays are exact. No hierarchy or browser changed.
+Retain base affinity as possible proposal evidence, not a grouping rule. Next,
+investigate explicit compositional relationships as evidence for shared and
+broader meanings; no parser or relation model is selected.
+
+Preceding construction diagnostic: [CAP04 — order and adjacency](./ORDERED-PHRASE-CANDIDATES.md).
 The same 945 subject records yield useful repeated phrases, including ten morning
 greetings omitted by CAP03. Word order removes the specific More-coffee collision;
 adjacency also loses the valid rosemary/bread combination. Repeated reporting
 language remains, and equivalent greeting expressions select different note sets.
 Neither pattern family is a sufficient semantic representation. All patterns and
 154 inspected source records are saved; 38 tests pass, with an exact replay.
-No hierarchy, baseline or browser changed. Next, investigate complete grounded
-subject expressions, separating cross-gap attachment from wording equivalence;
-do not extend pair enumeration or tune frequency as a semantic solution.
+No hierarchy, baseline or browser changed. PPR01 above tests complete grounded
+subject expressions. Cross-gap attachment, wording equivalence and containment
+remain separate questions; do not extend pair enumeration or tune frequency as
+a semantic solution.
 
 Preceding construction control: [CAP03 — existing subject descriptions](./SUBJECT-DESCRIPTION-CONSTRUCTION.md).
 The mask control reproduces CAP02 exactly. Using saved per-mask subjects adds

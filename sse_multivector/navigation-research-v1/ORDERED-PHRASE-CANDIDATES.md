@@ -140,7 +140,10 @@ expressions**, including relationships across gaps and equivalent descriptions
 with different wording. Those are different requirements: syntax might preserve
 an attachment without recognizing two paraphrases. A parser or learned model
 should only be selected after its native inputs and objective are checked against
-the particular requirement being tested.
+the particular requirement being tested. The follow-up
+[PPR01 description-embedding comparison](./PHRASE-DESCRIPTION-NEIGHBORHOODS.md)
+finds useful gap/attachment evidence in the base model, but does not establish
+equivalence, containment or a reliable membership rule.
 
 A plausible complete method would propose grounded descriptions, reconcile
 equivalent meanings, establish broader/narrower relations, recover membership,
