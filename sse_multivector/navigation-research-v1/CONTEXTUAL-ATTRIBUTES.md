@@ -205,7 +205,14 @@ and explicitly leaves the quality of removed concepts unconfirmed. It does not
 justify adopting a synonym/hypernym replacement or frequency threshold merely
 because it produces a smaller structure.[^8]
 
-The next discriminating investigation is whether a bounded, source-grounded
+The subsequent [CAP03 construction control](./SUBJECT-DESCRIPTION-CONSTRUCTION.md)
+first checks the already-generated per-mask subject descriptions. It recovers
+some abstractions, but finds both lost attachments and explicit combinations
+excluded by the candidate seed rule. That omission alone does not justify adding
+another context extractor: the common meaning is already expressed. The following structured-description question remains open,
+but is no longer grounds for selecting a parser as the immediate next action.
+
+A discriminating investigation is whether a bounded, source-grounded
 structured description can preserve useful shared phrases and relationships
 across our different source constructions. Before selecting a parser, define
 the output and check its expressiveness on the saved masks: distinguish a shared

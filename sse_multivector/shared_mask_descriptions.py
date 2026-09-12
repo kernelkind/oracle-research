@@ -8,13 +8,24 @@ import hashlib
 import json
 from pathlib import Path
 
-from mask_candidate_coverage import inventory
-from mask_description_hierarchy import descriptions_from_masks, description_relations
+from mask_description_hierarchy import (descriptions_from_masks, description_relations,
+                                        features_from_masks, descriptions_from_features)
 
 
 def shared_descriptions(evidence):
-    baseline = descriptions_from_masks(evidence, keep_symbols=True)
-    recurring = inventory(evidence)
+    return shared_descriptions_from_features(*features_from_masks(evidence, keep_symbols=True))
+
+
+def shared_descriptions_from_features(features, notes):
+    """Same bounded closure rule for independently supplied feature rows."""
+    baseline = descriptions_from_features(features, notes)
+    all_postings = {}
+    for row, tokens in enumerate(features):
+        for token in tokens:
+            all_postings.setdefault(token, set()).add(row)
+    recurring = [dict(feature=w, rows=sorted(rows), notes=sorted({notes[r] for r in rows}))
+                 for w, rows in all_postings.items() if len({notes[r] for r in rows}) >= 2]
+    recurring.sort(key=lambda d: (-len(d['notes']), d['feature']))
     postings = {d['feature']: set(d['rows']) for d in recurring}
     descriptions = {tuple(d['features']): d for d in baseline}
     seeds = {}

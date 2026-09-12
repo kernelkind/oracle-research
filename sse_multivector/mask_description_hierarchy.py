@@ -12,7 +12,7 @@ import unicodedata
 from select_mask_distinctions import mask_words
 
 
-def descriptions_from_masks(evidence, *, keep_symbols):
+def features_from_masks(evidence, *, keep_symbols):
     features, notes = [], []
     for row, record in enumerate(evidence):
         if record['row'] != row or not record['aliases']:
@@ -30,6 +30,17 @@ def descriptions_from_masks(evidence, *, keep_symbols):
             raise ValueError('canonical aliases disagree on note or features')
         features.append(alternatives[0])
         notes.append(next(iter(note_ids)))
+    return features, notes
+
+
+def descriptions_from_masks(evidence, *, keep_symbols):
+    return descriptions_from_features(*features_from_masks(evidence, keep_symbols=keep_symbols))
+
+
+def descriptions_from_features(features, notes):
+    """Complete-input candidates for an ordered feature/owner matrix."""
+    if len(features) != len(notes):
+        raise ValueError('one note owner is required per feature row')
 
     postings = {}
     seeds = {}

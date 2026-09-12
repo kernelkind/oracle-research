@@ -3,7 +3,20 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest representation audit: [CSA01 — contextual attributes](./CONTEXTUAL-ATTRIBUTES.md).
+Latest construction control: [CAP03 — existing subject descriptions](./SUBJECT-DESCRIPTION-CONSTRUCTION.md).
+The mask control reproduces CAP02 exactly. Using saved per-mask subjects adds
+useful Food abstractions and local preservation/harmful-food refinements, but
+also produces 556 candidates and 359 links dominated by reporting/function words.
+The meaningful relationship in `more complete disconnection` is lost when its
+words are grouped with `more coffee`. Explicit good-morning, processed-food and
+sea-salt combinations are present in the input but missed by the single-feature
+seed family. This separates candidate availability from missing interpretation.
+No browser is adopted. Next, investigate retaining shared multiword descriptions
+without proliferating grammatical distinctions; do not add another extractor to
+repair meaning already present. Attachment and broader membership remain open.
+All inputs, both outputs, source snapshots and the complete link audit are saved.
+
+Preceding representation audit: [CSA01 — contextual attributes](./CONTEXTUAL-ATTRIBUTES.md).
 Contextual word senses can add lexical abstractions such as Bread → Food, but
 do not alone encode phrase relationships or every legitimate topical parent.
 The two `experience` uses already differ in part of speech; separating them
@@ -11,10 +24,10 @@ would not establish deeper interpretation. Chicken meat and live chickens have
 only physical entity/entity as shared hypernym ancestors. This limits a
 sense-only route, not the validity of either separate or combined browsing topics.
 Ten source masks and all queried dictionary entries are preserved. No WSD or
-SPLADE model was run. Next, define and assess source-grounded structured
-descriptions before selecting a parser; word senses remain a possible component.
+SPLADE model was run. CAP03 checks the existing descriptions before selecting
+another component; word senses remain a possible component.
 
-Latest construction test: [CAP02 — shared candidates](./SHARED-CANDIDATE-CONSTRUCTION.md).
+Preceding construction test: [CAP02 — shared candidates](./SHARED-CANDIDATE-CONSTRUCTION.md).
 Keeping source features and the relation rule fixed, shared-feature closures
 add five source-supported topical links, including Bread → Bread with rosemary
 and Coffee → Coffee shops. The full output has 336 candidates, 43 links and 304
@@ -23,7 +36,8 @@ remain. All old candidates are unchanged. This is not an adopted browser.
 Next, investigate source-grounded phrase/relationship attributes that distinguish
 shared meanings from shared spelling, without discarding valid dispersed masks.
 CSA01 above narrows the role of word-sense models in that investigation.
-No parser, extraction rule or model has been selected.
+CAP03 above refines the immediate question. No parser, extraction rule or model
+has been selected.
 
 Preceding construction audit: [CAP01 — candidate coverage](./CANDIDATE-COVERAGE.md).
 MDH02's complete-mask seed rule excludes `food` despite 45 matching masks from
