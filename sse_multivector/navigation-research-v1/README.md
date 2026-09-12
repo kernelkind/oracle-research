@@ -3,7 +3,20 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest representation diagnostic: [DSP01 — grammatical connections](./DEPENDENCY-DESCRIPTIONS.md).
+Latest membership diagnostic: [TCC01 — native classification](./NATIVE-CATEGORY-MEMBERSHIP.md).
+All 25 predeclared supported assignments are recognized across the 14 frozen
+records, but the native 0.5 rule also accepts unsupported meanings. Reversing
+the same eight category choices turns chicken-with-yogurt into Bread membership;
+adding other labels turns rosemary bread into Coffee. Single-category scoring
+removes many interaction errors but still accepts greeting/coffee associations.
+Its supported/unsupported scores remain separated in this small complete audit,
+so a different-record discrimination check is justified before calibration or
+rejection of that remaining possibility. No cutoff, membership rule or hierarchy
+is adopted. All 336 scores and complete originals/masks are preserved; 71 tests
+pass and the complete offline replay is exact. Category generation and meaningful
+parent relations remain separate unresolved requirements. No browser change.
+
+Preceding representation diagnostic: [DSP01 — grammatical connections](./DEPENDENCY-DESCRIPTIONS.md).
 On 14 frozen subject/mask records, dependency parsing retains useful local
 phrases and separates coffee experience from the coffee-shop internet dispute.
 But valid common subjects also have different grammatical paths; correcting
@@ -11,9 +24,9 @@ the rosemary/bread attachment does not make those paths identical. Native
 parsing errors are recorded separately. Do not build an exact-tree miner as
 a sufficient category rule. All parses, 1,121 paths, full originals/masks and
 analytical controls are preserved, with an exact offline replay. No hierarchy
-or browser changed. Next audit native text-to-category classification that can
-accept different grammatical witnesses; GLiClass is an unrun lead, not a
-selected model or a category-generation solution.
+or browser changed. TCC01 above audits and tests native text-to-category
+classification that can accept different grammatical witnesses. It does not
+provide a category-generation solution.
 
 Preceding representation diagnostic: [PPR01 — complete subject descriptions](./PHRASE-DESCRIPTION-NEIGHBORHOODS.md).
 On the same 945 records, the base Sentence-BERT recovers the nine other known
@@ -113,7 +126,7 @@ link that does not fit the human-diet parent group. It finds no equivalences;
 GM resolves to the unit of mass, not the greeting. No new defensible parent
 link or browser change results. Full evidence and an offline replay are saved.
 
-Latest learned-membership evidence: [entailment and relevance models](./MODEL-MEMBERSHIP.md).
+Earlier learned-membership evidence: [entailment and relevance models](./MODEL-MEMBERSHIP.md).
 NLI01/NLI02 show some useful broader-subject recognition but also abbreviation,
 negation and greeting-association errors. RER01/RER02 do not fix membership:
 for Coffee, the reranker puts `Good morning` above explicit coffee masks.

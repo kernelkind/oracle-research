@@ -152,7 +152,7 @@ caused the previous learned-model errors. Existing phrases/descriptions can
 supply candidate inputs, but their adequacy and semantic parent relations still
 need separate evidence; matching finite note sets alone does not prove either.
 
-One new lead is GLiClass, not yet run or selected. It jointly encodes text and
+The subsequent lead was GLiClass. It jointly encodes text and
 candidate labels and learns classification scores. Its reported training includes
 short titles, longer passages, generated positive/negative labels, classification
 and NLI. This is closer to accepting different textual witnesses than dictionary
@@ -160,12 +160,12 @@ definition relations, although it is not a shared-category generator. The paper
 also reports sensitivity to label/text ratios and mixed benchmark performance;
 these require controls, not an assumption of reliable membership.[^5]
 
-Next inspect the released training examples and inference implementation before
-choosing a configuration or experiment. In particular, distinguish classification
-of a short topical description from arbitrary sentence entailment; test whether
-overlapping broad/narrow labels compete, and whether candidate wording/order
-changes membership. Do not launch a hierarchy run from the model's headline
-average or treat its probabilities as calibrated semantic truth.
+That training-data and native-code audit, followed by a controlled 14-record
+experiment, is now recorded in [TCC01](./NATIVE-CATEGORY-MEMBERSHIP.md). Shared
+subjects are recognized, but native acceptance changes with the other supplied
+labels and their order. Single-category scoring remains a limited possibility
+requiring different-record validation, not an adopted membership rule. Do not
+treat the classifier's probabilities as calibrated semantic truth.
 
 ## Verification and reproduction
 
@@ -203,4 +203,4 @@ separate from the explicitly marked manual grammatical controls.
 [^2]: [Universal Dependencies syntax](https://universaldependencies.org/u/overview/syntax.html), content/function-word and core-argument sections. A syntactic dependency is not itself a semantic ingredient or topical-containment relation.
 [^3]: Woods (2000), [Conceptual Indexing](https://cdn.aaai.org/AAAI/2000/AAAI00-215.pdf), conceptual indexing, passage retrieval and evaluation sections.
 [^4]: Leeuwenberg et al. (2015), [Exploring Pattern Structures of Syntactic Trees for Relation Extraction](https://publications.hse.ru/pubs/share/folder/x9m9ofrdni/163919667.pdf), sections 2–3; CSA01 retains its evaluation limitations.
-[^5]: Stepanov et al. (2025), [GLiClass](https://arxiv.org/html/2508.07662v1), sections 2–3, including training streams, native label integration and Tables 2–5. These sections were read; release code/training examples are not yet audited. No GLiClass model was downloaded or run.
+[^5]: Stepanov et al. (2025), [GLiClass](https://arxiv.org/html/2508.07662v1), sections 2–3, including training streams, native label integration and Tables 2–5. DSP01 itself ran no GLiClass model; the later release/data audit and native run are documented separately in TCC01.
