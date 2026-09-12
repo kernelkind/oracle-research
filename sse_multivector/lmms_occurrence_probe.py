@@ -5,7 +5,6 @@ import hashlib
 import importlib.metadata
 import json
 from pathlib import Path
-import resource
 import time
 import zipfile
 
@@ -17,6 +16,13 @@ LMMS_REVISION = '65f5829a5c9d91a0c46db3633ddf3beb8a0af4e1'
 MODEL_SHA = '137eefff71696316817af618eb19f72e277daab3225b56584848c5723a47cc59'
 ZIP_MD5 = 'd0ea3c709d2e8e62c0ff92cb127a1dab'
 WEIGHTS_SHA = '3bde7e1ee2b8903a89033901094fd0e305566d195db577d77ecb8b892d6cfa95'
+
+
+def peak_rss_kib():
+    # getrusage can retain the launcher's pre-exec high-water value on Linux.
+    # /proc reports the current program's memory high water instead.
+    return next(int(line.split()[1]) for line in Path('/proc/self/status').read_text().splitlines()
+                if line.startswith('VmHWM:'))
 
 
 def digest(path, algorithm='sha256'):
@@ -51,8 +57,9 @@ def candidate_keys(text, lemma, upos, condition, wordnet):
     if condition == 'saved':
         return {item.key() for item in wordnet.lemmas(lemma, pos=PARTS[upos])
                 if item.key().split('%')[0] == lemma}
-    if condition == 'surface':
-        return {item.key() for pos in ('n', 'v', 'a', 'r')
+    if condition in ('surface', 'surface_pos'):
+        parts = ('n', 'v', 'a', 'r') if condition == 'surface' else (PARTS[upos],)
+        return {item.key() for pos in parts
                 for form in wordnet._morphy(text.lower(), pos)
                 for item in wordnet.lemmas(form, pos=pos)
                 if item.key().split('%')[0] == form}
@@ -221,7 +228,7 @@ def main():
                   tie_break='inventory file order, shared across conditions',
                   inventory=info, encoding_seconds=encoding_seconds,
                   inventory_and_matching_seconds=time.monotonic()-started,
-                  peak_rss_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
+                  peak_rss_kib=peak_rss_kib(),
                   initial_memavailable_kib=memory['MemAvailable'],
                   input_sha256=digest(args.inputs), parses_sha256=digest(args.parses),
                   runner_sha256=digest(Path(__file__)),

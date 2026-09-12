@@ -3,7 +3,27 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest construction experiment: [SGC03 — broader concepts](./ONTOLOGY-CONSTRUCTION.md).
+Latest construction experiment: [USC01 — source meanings and pairs](./USC01-RESULTS.md).
+All fifteen unchanged descriptions and all 128 nonempty USM02 word assignments
+produce singleton and same-description pair hierarchies. Cooking → Cooking with
+meat supplies a supported new local destination; transformation with seasoning
+is another plausible distinction. These are not complete-navigation results.
+
+The full 202-pair semantic audit also exposes artificial narrowing: Cooking plus
+Act excludes two cooking notes merely because they lack a second eligible word,
+although Cooking already entails Act under the fixed dictionary. Forty-two
+most-specific pairs have identical or ancestor-overlapping endpoints; nineteen
+lose notes relative to the narrower singleton. Existing wrong senses, lexical
+ancestry gaps, and description omissions cause separate errors. The next
+justified control is same-description conjunction that can reuse an occurrence,
+not another sense-matching sweep. It has not run or been adopted.
+
+All original notes, inline masks, word scores, source witnesses, two complete
+audit partitions and reconstruction evidence are preserved. Seventy-six tests
+pass, and all result/graph/lexicon/input files replay byte-for-byte. The browser
+and original GDC09 remain unchanged; no review UI is packaged before wrap-up.
+
+Preceding construction experiment: [SGC03 — broader concepts](./ONTOLOGY-CONSTRUCTION.md).
 Adding pinned SUMO noun and verb mappings to the unchanged eleven source graphs
 creates locally useful Food → food/process → preservation/preparation/cooking
 paths. The shared activity parent includes brisket cooking, which WordNet-only
@@ -52,9 +72,14 @@ but introduces unsupported specifics such as beef broth for chicken stock.
 Dropping POS also lets bread become breading and beef become complaining.
 Neither condition resolves every source meaning; preparing beets still maps to
 preparing a speech. All originals, masks, scores and judgments are preserved.
-No source representation or replacement hierarchy is adopted. The next control
-can reuse the frozen vectors to separate original-word lookup from POS removal;
-actual construction consequences and complete navigation remain unproven.
+The completed [USM02 control](./USM02-RESULTS.md) reuses those frozen vectors
+and retains saved POS during original-word lookup. It preserves useful tomato,
+beet and simmer recoveries and avoids bread/beef grammatical misreadings, but
+blocks useful decaffeination, canning and homemade meanings. All 402 previous
+comparisons and 1,579 scores reproduce exactly. This fixed condition supplies
+USC01 above; it is not accepted as a final representation. Current source
+identity checks and a corrected process-memory measurement are documented;
+historical run files remain unchanged.
 
 Preceding construction experiment: [SGC02 — connected patterns](./CONNECTED-PATTERN-CONSTRUCTION.md).
 With SGC01's eleven accepted graphs and dictionary fixed, relaxing exact

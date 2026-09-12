@@ -152,9 +152,12 @@ category selection and redundant note sets remain independent concerns.
   Candidate metadata, sensekeys, synsets, definitions and artifact hashes match.
   This verifies matching reproducibility without rerunning the neural encoder.
 - Encoding including model loading: 2.873 s. Inventory loading and matching:
-  40.466 s. Peak process RSS: 5,517,548 KiB, approximately 5.3 GiB. One CPU process,
-  two Torch threads; no paid compute. These phase times exclude separate hash
-  verification and output writing.
+  40.466 s. The recorded `ru_maxrss` is 5,517,548 KiB, but a later USC01 control
+  showed that this launcher can pass its pre-exec high-water mark to that metric.
+  Do not interpret it as this encoder's isolated peak memory. The historical
+  measurement is preserved; current runners use `/proc/self/status` `VmHWM`.
+  One CPU process, two Torch threads; no paid compute. These phase times exclude
+  separate hash verification and output writing.
 - Published checkpoint, ZIP and layer hashes verified; 206,949 sensekeys,
   1,024 dimensions. CPU/eager attention, NumPy 2.3.4 float64 weighting/scores,
   shared file-order tie breaking, 24 selected layers and unused 25th weight are

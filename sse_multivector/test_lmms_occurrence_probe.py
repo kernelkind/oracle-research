@@ -2,17 +2,32 @@ import tempfile
 import unittest
 import zipfile
 from pathlib import Path
+from unittest.mock import patch
 
 import numpy as np
 from nltk.corpus import wordnet as wn
 
 from lmms_occurrence_probe import (
     candidate_keys, pool_layers, prepare_inputs, rank_conditions, read_inventory,
-    tokenize_words,
+    tokenize_words, peak_rss_kib,
 )
 
 
 class OccurrenceProbeTests(unittest.TestCase):
+    def test_memory_report_uses_current_process_high_water(self):
+        with patch('lmms_occurrence_probe.Path.read_text',
+                   return_value='VmRSS:\t1000 kB\nVmHWM:\t1234 kB\n'):
+            self.assertEqual(peak_rss_kib(), 1234)
+
+    def test_source_pos_recovers_original_word_but_keeps_grammatical_restriction(self):
+        noun_keys = candidate_keys('Bread', 'bread', 'NOUN', 'surface_pos', wn)
+        self.assertTrue(noun_keys)
+        self.assertTrue(all('%1:' in key for key in noun_keys))
+        self.assertEqual({key.split('%')[0] for key in noun_keys}, {'bread'})
+        self.assertTrue(candidate_keys('tomatoes', 'tomatoe', 'NOUN', 'surface_pos', wn))
+        self.assertFalse(candidate_keys('homemade', 'homemade', 'VERB', 'surface_pos', wn))
+        self.assertFalse(candidate_keys('canning', 'canning', 'NOUN', 'surface_pos', wn))
+
     def test_surface_control_recovers_inflection_without_synonym_expansion(self):
         surface = candidate_keys('tomatoes', 'tomatoe', 'NOUN', 'surface', wn)
         self.assertTrue(surface)
