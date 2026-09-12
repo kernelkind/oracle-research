@@ -3,18 +3,33 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest decision-method research: [literature and shared-cutoff tradeoffs](./CATEGORY-DECISION-METHODS.md).
-The saved TCC03 scores permit a shared cutoff retaining 18 of 19 judged
-supported assignments with two of 15 unsupported assignments admitted, versus
-19 retained and 12 incorrectly admitted at 0.5. These are retrospective
-development counts, not validation. All four nondominated tradeoffs and their
-concrete errors are preserved. A probability-calibration subsystem is not yet
-justified: freeze a simple global development cutoff and test different notes
-and categories first. The candidate is 0.9969531560953688, selected by minimum
-equal-cost development errors and the midpoint rule documented in the report.
-No new inference or deployed membership rule; challenge inputs and judgments
-are not yet frozen. Mask support, new-category transfer, category proposals
-and meaningful parent relations remain open. Baseline and browser unchanged.
+Latest transfer diagnostic: [TCC04 — the frozen cutoff](./CATEGORY-CUTOFF-TRANSFER.md).
+On 12 different notes with all 145 saved descriptions, the TCC03 cutoff misses
+10/13 supported Bread, Chicken and Salt assignments; native 0.5 misses none and
+incorrectly adds one bread-baking note to Chicken. All missed assignments have
+genuine supporting masks. All 90 judged within-category positive–negative
+comparisons are correctly ordered. The fixed cutoff fails transfer; useful
+rankings remain. No cutoff or hierarchy is adopted. All 435 scores, originals,
+inline masks, judgments, hashes and an exact offline replay are preserved.
+
+A separate retrospective check of combined TCC03+TCC04 scores finds a shared
+tradeoff retaining 30/32 supported assignments with six incorrect additions,
+all Morning greetings. Both misses concern the bagel note, under Bread and Salt.
+This is development feasibility, not validation or an adopted rule. It keeps
+a simple imperfect membership component worth testing before adding calibration.
+Next, freeze a bounded existing source-derived category family and test whether
+semantic membership improves its actual parent–child paths, retaining the known
+counterexamples and unresolved scopes. Do not hand-repair descriptions, silently
+propagate children upward, or mistake membership recovery for semantic parenthood.
+The concrete family/rendering still needs to be frozen before that run. Category
+generation, meaningful relations and overall browsing remain open; no new UI.
+
+Preceding decision-method research: [literature and shared-cutoff tradeoffs](./CATEGORY-DECISION-METHODS.md).
+The TCC03-only development cutoff was 0.9969531560953688; its full derivation,
+alternatives and source-supervision audit are preserved unchanged as frozen
+TCC04 inputs. TCC04 above supersedes that report's pending-transfer prescription,
+not its measured development counts. Neither result justifies probability
+calibration solely to make scores look less extreme.
 
 Preceding note-membership diagnostic: [TCC03 — complete available evidence](./COMPLETE-NOTE-CATEGORY-EVIDENCE.md).
 Scoring all 181 existing descriptions from the same 20 TCC02 notes restores
@@ -22,8 +37,8 @@ the judged Coffee note ordering and preserves Morning greetings ordering.
 The cafe recovery has a genuine venue witness; it does not depend on its
 hashtag-derived maximum. But maximum pooling worsens the native 0.5 decisions:
 Morning greetings admits all 20 notes. No cutoff or hierarchy is adopted.
-The literature assessment above now identifies a simple shared-cutoff transfer
-test; fitting these two labels is development, not general success.
+The shared-cutoff transfer test is now complete in TCC04 above; fitting only
+these two labels was development, not general success.
 Category generation and meaningful parent relations remain unresolved.
 Full scores, all note maxima, source
 judgments, originals/masks and exact offline replay are preserved. No browser
