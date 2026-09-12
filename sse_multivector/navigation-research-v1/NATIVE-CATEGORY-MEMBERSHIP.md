@@ -6,7 +6,11 @@ which records it accepts. Supplying categories individually removes many such
 errors but leaves confident false assignments. Importantly, the individual
 scores still separate the supported and unsupported examples in this small
 audit; that possibility should be tested elsewhere, not dismissed or declared
-validated.
+validated. The subsequent [TCC02](./INDIVIDUAL-CATEGORY-DISCRIMINATION.md)
+finds Coffee witness inversions on other notes, while
+[TCC03](./COMPLETE-NOTE-CATEGORY-EVIDENCE.md) shows that complete available
+descriptions nevertheless restore the judged note ordering. Those records
+supersede the next-test prescription below, not the original measurements.
 
 This is a membership diagnostic, not a generated hierarchy. GDC09, the
 extraction prompts, masks, vectors and browser are unchanged.
@@ -193,14 +197,16 @@ description can enter Bread merely because choices were reordered, and Coffee
 contains a demonstrated wrong ordering. No hierarchy should inherit those
 assignments.
 
-Single-category scoring is a remaining, bounded possibility, not an adopted
-fix. Before either calibrating it or discarding it, test whether supported and
-unsupported records outside this diagnostic remain separable for a fixed
-category. Freeze the model, descriptions and category wording; inspect all
-high-scoring additions and low-scoring supported witnesses with full source
-context. Interleaving would show why calibration cannot solve that category's
-errors; separation would justify a genuinely held-out calibration experiment.
-Do not tune a cutoff and report these same fourteen records as validation.
+Single-category scoring was retained as a bounded possibility, not an adopted
+fix. TCC02 subsequently tested supported/unsupported records outside these
+fourteen notes while keeping model and categories fixed. Coffee witness scores
+interleave, so one cutoff cannot perfectly separate those descriptions. TCC03
+then restores judged note ordering by admitting every available description as
+evidence. Neither experiment validates a cutoff. The next decision concerns
+defensible score-to-membership calibration, not tuning on these records and
+calling them independent validation. Perfect accuracy is not a product
+requirement, and failed exact separation does not make every imperfect score
+useless.
 
 This is consequential because content-based membership is still missing from
 the proposed construction. It is not a substitute for generating categories

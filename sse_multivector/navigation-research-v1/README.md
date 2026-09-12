@@ -3,17 +3,39 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest membership diagnostic: [TCC01 — native classification](./NATIVE-CATEGORY-MEMBERSHIP.md).
+Latest note-membership diagnostic: [TCC03 — complete available evidence](./COMPLETE-NOTE-CATEGORY-EVIDENCE.md).
+Scoring all 181 existing descriptions from the same 20 TCC02 notes restores
+the judged Coffee note ordering and preserves Morning greetings ordering.
+The cafe recovery has a genuine venue witness; it does not depend on its
+hashtag-derived maximum. But maximum pooling worsens the native 0.5 decisions:
+Morning greetings admits all 20 notes. No cutoff or hierarchy is adopted.
+Research a membership decision/calibration method with explicit supervision
+and category-transfer assumptions before testing it; do not hand-fit these
+two labels and call that general success. Category generation and meaningful
+parent relations remain unresolved. Full scores, all note maxima, source
+judgments, originals/masks and exact offline replay are preserved. No browser
+or baseline change; pending HiT files remain untouched.
+
+Preceding discrimination diagnostic: [TCC02 — individual categories](./INDIVIDUAL-CATEGORY-DISCRIMINATION.md).
+With the model and category wording fixed, 25 descriptions from 20 notes
+outside TCC01 produce five Coffee witness inversions; greeting witness scores
+remain separated. Frozen pre-score judgments retain ambiguous scopes. Witness
+errors do not all add irrelevant notes, and unscored descriptions can recover
+missed notes. TCC03 above tests that architectural distinction instead of
+incorrectly extrapolating selected-witness errors to complete note retrieval.
+All 50 scores and an exact replay are saved. All 72 regression tests pass;
+the runner's old defaults reproduce TCC01 scores and tokens exactly.
+
+Preceding membership diagnostic: [TCC01 — native classification](./NATIVE-CATEGORY-MEMBERSHIP.md).
 All 25 predeclared supported assignments are recognized across the 14 frozen
 records, but the native 0.5 rule also accepts unsupported meanings. Reversing
 the same eight category choices turns chicken-with-yogurt into Bread membership;
 adding other labels turns rosemary bread into Coffee. Single-category scoring
 removes many interaction errors but still accepts greeting/coffee associations.
 Its supported/unsupported scores remain separated in this small complete audit,
-so a different-record discrimination check is justified before calibration or
-rejection of that remaining possibility. No cutoff, membership rule or hierarchy
-is adopted. All 336 scores and complete originals/masks are preserved; 71 tests
-pass and the complete offline replay is exact. Category generation and meaningful
+which motivated the different-record TCC02 check above. No cutoff, membership
+rule or hierarchy is adopted. All 336 scores and complete originals/masks are
+preserved; 71 tests pass and the complete offline replay is exact. Category generation and meaningful
 parent relations remain separate unresolved requirements. No browser change.
 
 Preceding representation diagnostic: [DSP01 — grammatical connections](./DEPENDENCY-DESCRIPTIONS.md).

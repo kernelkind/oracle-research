@@ -5,6 +5,19 @@ from native_category_probe import make_requests, attach_scores
 
 
 class NativeCategoryProbeTests(unittest.TestCase):
+    def test_single_condition_never_supplies_competing_categories(self):
+        records = [dict(row=1, subject='First.'), dict(row=2, subject='Second.')]
+        requests = make_requests(records, ['coffee', 'morning greetings'], conditions=['single'])
+        self.assertEqual(len(requests), 4)
+        self.assertTrue(all(r['condition'] == 'single' and len(r['labels']) == 1
+                            for r in requests))
+        self.assertEqual([(r['row'], r['labels'][0]) for r in requests],
+                         [(1, 'coffee'), (2, 'coffee'),
+                          (1, 'morning greetings'), (2, 'morning greetings')])
+        for conditions in [[], ['single', 'single'], ['missing']]:
+            with self.assertRaises(ValueError):
+                make_requests(records, ['coffee'], conditions=conditions)
+
     def test_conditions_preserve_subjects_and_category_mapping(self):
         records = [dict(row=17, subject='A concrete subject.', text='Full note.',
                         fragments=['concrete']),

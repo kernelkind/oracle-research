@@ -17,17 +17,24 @@ REVISION = '77a70e6cd52e602ed18184ef37d18bdd3741e3d5'
 SOURCE_REVISION = '5d96d8a5d099a10f00d90a2493e5f93a3ddbd2ae'
 
 
-def make_requests(records, labels):
+def make_requests(records, labels, conditions=('joint', 'reversed', 'single')):
     if (not records or len({r['row'] for r in records}) != len(records)
             or any(not isinstance(r['subject'], str) or not r['subject'].strip()
                    for r in records)
             or not labels or len(set(labels)) != len(labels)
             or any(not isinstance(label, str) or not label.strip() for label in labels)):
         raise ValueError('distinct rows, nonempty subjects and distinct labels required')
-    conditions = [('joint', list(labels)), ('reversed', list(reversed(labels)))]
-    conditions += [('single', [label]) for label in labels]
+    if (not conditions or len(set(conditions)) != len(conditions)
+            or any(c not in ('joint', 'reversed', 'single') for c in conditions)):
+        raise ValueError('distinct known conditions required')
+    groups = []
+    for condition in conditions:
+        if condition == 'single':
+            groups.extend(('single', [label]) for label in labels)
+        else:
+            groups.append((condition, list(labels if condition == 'joint' else reversed(labels))))
     return [dict(row=r['row'], text=r['subject'], condition=condition, labels=group)
-            for condition, group in conditions for r in records]
+            for condition, group in groups for r in records]
 
 
 def attach_scores(request, logits):
@@ -49,6 +56,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--input', type=Path, required=True)
     parser.add_argument('--labels', nargs='+', required=True)
+    parser.add_argument('--conditions', nargs='+', choices=['joint', 'reversed', 'single'],
+                        default=['joint', 'reversed', 'single'])
     parser.add_argument('--source', type=Path, required=True)
     parser.add_argument('--cache', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
@@ -57,7 +66,7 @@ def main():
     if args.output.exists():
         raise FileExistsError('preserve previous outputs; choose a new directory')
     records = json.loads(args.input.read_text())
-    requests = make_requests(records, args.labels)
+    requests = make_requests(records, args.labels, args.conditions)
     source_revision = subprocess.check_output(
         ['git', '-C', str(args.source), 'rev-parse', 'HEAD'], text=True).strip()
     if source_revision != SOURCE_REVISION or subprocess.check_output(
