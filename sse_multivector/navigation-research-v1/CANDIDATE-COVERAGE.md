@@ -2,8 +2,8 @@
 
 CAP01 identifies a restrictive candidate rule in MDH02. It does not identify a
 failure of SSE, explain the relation classifiers' errors, or improve GDC09 yet.
-The next experiment should test shared-feature proposals before classifying
-the same restricted candidate list again.
+The subsequent [CAP02 test](./SHARED-CANDIDATE-CONSTRUCTION.md) examines
+shared-feature proposals before classifying the same restricted list again.
 
 ## The restriction
 
@@ -89,7 +89,7 @@ excluded by candidate generation before any semantic relation mechanism ran.
 The presence of grammatical and ambiguous features is real competing evidence
 against adopting unrestricted lexical enumeration as the solution.
 
-## Literature and next decision
+## Literature and the decision tested by CAP02
 
 Formal Concept Analysis constructs abstractions from shared attributes without
 requiring their description to equal any single input object's description.

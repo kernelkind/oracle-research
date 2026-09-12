@@ -3,13 +3,23 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest construction audit: [CAP01 — candidate coverage](./CANDIDATE-COVERAGE.md).
+Latest construction test: [CAP02 — shared candidates](./SHARED-CANDIDATE-CONSTRUCTION.md).
+Keeping source features and the relation rule fixed, shared-feature closures
+add five source-supported topical links, including Bread → Bread with rosemary
+and Coffee → Coffee shops. The full output has 336 candidates, 43 links and 304
+roots; grammatical structure, mixed word meanings and membership omissions
+remain. All old candidates are unchanged. This is not an adopted browser.
+Next, investigate source-grounded phrase/relationship attributes that distinguish
+shared meanings from shared spelling, without discarding valid dispersed masks.
+No parser, extraction rule or model has been selected for that investigation.
+
+Preceding construction audit: [CAP01 — candidate coverage](./CANDIDATE-COVERAGE.md).
 MDH02's complete-mask seed rule excludes `food` despite 45 matching masks from
 15 notes, and also excludes recurring recipe, processed-food and chicken-stock
 evidence. All 22 saved candidates reproduce exactly. The 315 excluded recurrent
 features are not 315 valid subjects: grammatical words and ambiguous uses remain.
-Next, test bounded shared-feature proposals while preserving source evidence and
-the relation rule. No category, mask, vector, membership or browser changed.
+CAP02 tests bounded shared-feature proposals with source evidence and the
+relation rule fixed. No original category, mask, vector, membership or browser changed.
 HiT remains an unrun alternative rather than the automatic next experiment.
 
 Latest task-trained relation evidence: [SRR01–SRR03](./SENSE-RELATIONS.md).
