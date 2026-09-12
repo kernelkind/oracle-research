@@ -3,7 +3,27 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest construction diagnostic: [CPC01–CPC02 — memberships and paths](./CATEGORY-PATH-COMPATIBILITY.md).
+Latest construction experiment: [SPC01 — source phrases and category paths](./SOURCE-PHRASE-PATHS.md).
+The unchanged 945 descriptions generate 2,129 expressions and 1,268 observed
+head-extension links. Requiring two distinct notes leaves 234 choices, 204 roots
+and 30 links; eight links return identical note sets. The complete source audit
+finds useful Diet → Carnivore diet and Tea → Hot tea refinements, but also
+reporting-language choices and incomplete destinations. Food preparation omits
+bread and steak preparation; Food preservation omits the beet-freezing note.
+Sea salt flakes does not contribute to the recurring Sea salt category because
+that semantic subexpression is absent from the saved grammatical structure.
+
+This establishes partial phrase-based construction, not a sufficient hierarchy.
+No browser, parser revision, threshold or semantic repair is adopted. All source
+occurrences, menus, native parses and the 30-link audit are preserved; 49 tests
+pass and construction replays exactly. The next research question is contextual
+generalization of complete expressions into broader paths with justified note
+memberships, not another independent cutoff or stopword tweak. Specific relation
+rules and their activity/object and word-sense assumptions remain to be selected
+through literature and implementation review. [Method-fit research](./CONSTRUCTION-MECHANISMS.md)
+records the relevant construction precedents and qualifications.
+
+Preceding construction diagnostic: [CPC01–CPC02 — memberships and paths](./CATEGORY-PATH-COMPATIBILITY.md).
 CPC01 scores all 945 saved descriptions from 100 notes against 12 frozen
 source-derived category candidates. Both fixed classifier cutoffs remove all
 three clearly meaningful existing refinements. At the development cutoff,
@@ -20,12 +40,11 @@ reference, not a solved taxonomy: incomplete choices and duplicate children
 remain. No cutoff, classifier or new browser is adopted. All evidence, source
 overlays and deterministic replays are preserved; 47 tests pass.
 
-Next, return to complete category proposals and semantic parent relationships,
-with this stronger reference. Independently predicted note containment cannot
-be the sole evidence for meaning; automatically propagating child errors upward
-is not a demonstrated repair. Check a proposed mechanism against the existing
-lexical, grammatical and learned-relation failures before implementing it.
-No additional normalizer or threshold sweep is justified by these results.
+SPC01 above tests complete source-phrase proposals and observed extensions,
+using these failures as controls. Independently predicted note containment
+cannot be the sole evidence for meaning; automatically propagating child errors
+upward is not a demonstrated repair. No additional normalizer or threshold
+sweep is justified by CPC01–CPC02.
 
 Preceding transfer diagnostic: [TCC04 — the frozen cutoff](./CATEGORY-CUTOFF-TRANSFER.md).
 On 12 different notes with all 145 saved descriptions, the TCC03 cutoff misses

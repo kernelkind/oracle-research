@@ -1,0 +1,304 @@
+# SPC01 source phrase inventory
+
+Automatically produced expressions, not approved category titles.
+Counts refer to distinct original notes. All source occurrences are in result.json.
+
+## At least 2 notes
+
+234 choices; 204 roots; 30 edges; 8 equal-note edges.
+
+### Complete root menu
+
+- P0009: activities — 2 notes
+- P0017: advice — 3 notes
+- P0019: Affection — 2 notes
+- P0032: amount — 6 notes
+- P0034: amusement — 3 notes
+- P0037: Animals — 2 notes
+- P0050: Arguments — 2 notes
+- P0053: art — 2 notes
+- P0055: ash — 2 notes
+- P0066: author — 37 notes
+- P0067: avocado — 3 notes
+- P0069: baby — 2 notes
+- P0072: bag — 2 notes
+- P0076: baking — 3 notes
+- P0079: bar — 2 notes
+- P0080: barbecue — 2 notes
+- P0084: basil — 2 notes
+- P0087: Batch — 2 notes
+- P0091: beans — 3 notes
+- P0094: bed — 4 notes
+- P0097: beef — 4 notes
+- P0102: Bitcoin — 4 notes
+- P0103: Bitcoin — 7 notes
+- P0107: body — 3 notes
+- P0109: bone — 2 notes
+- P0117: brand — 2 notes
+- P0122: bread — 8 notes
+- P0125: breakfast — 7 notes
+- P0129: Brisket — 2 notes
+- P0146: butter — 3 notes
+- P0150: caffeine — 2 notes
+- P0156: carnivore — 3 notes
+- P0158: carrot — 2 notes
+- P0164: chain — 10 notes
+- P0165: challenge — 2 notes
+- P0170: cheese — 5 notes
+- P0180: chicken — 9 notes
+- P0183: child — 4 notes
+- P0184: chocolate — 3 notes
+- P0187: Christmas — 3 notes
+- P0200: coffee — 21 notes
+- P0209: community — 10 notes
+- P0217: consisting — 2 notes
+- P0218: consumption — 2 notes
+- P0225: Cooking — 6 notes
+- P0228: cost — 2 notes
+- P0231: couple — 2 notes
+- P0232: Craft — 2 notes
+- P0234: Cranberry — 2 notes
+- P0235: cream — 4 notes
+- P0240: crockpot — 2 notes
+- P0244: customer — 3 notes
+- P0248: day — 11 notes
+- P0251: Day — 4 notes
+- P0252: de — 2 notes
+- P0261: design — 2 notes
+- P0266: diet — 5 notes
+- P0267: dietary — 2 notes
+- P0272: dinner — 7 notes
+- P0275: dish — 4 notes
+- P0279: Dogs — 4 notes
+- P0291: duck — 2 notes
+- P0302: effort — 2 notes
+- P0303: eggs — 7 notes
+- P0306: embarrassment — 2 notes
+- P0312: Enjoyment — 2 notes
+- P0315: enthusiasts — 2 notes
+- P0320: evidence — 2 notes
+- P0322: experience — 2 notes
+- P0326: expression — 2 notes
+- P0331: family — 2 notes
+- P0347: flavor — 2 notes
+- P0352: food — 29 notes
+- P0358: Freedom — 2 notes
+- P0361: friends — 2 notes
+- P0365: frying — 2 notes
+- P0369: gallon — 2 notes
+- P0370: garden — 2 notes
+- P0373: garlic — 2 notes
+- P0380: gift — 2 notes
+- P0389: grams — 2 notes
+- P0392: greeting — 7 notes
+- P0398: growth — 2 notes
+- P0400: guests — 2 notes
+- P0404: habit — 2 notes
+- P0406: half — 4 notes
+- P0409: Happiness — 2 notes
+- P0412: health — 2 notes
+- P0429: Homesteading — 3 notes
+- P0432: hours — 5 notes
+- P0439: Humans — 2 notes
+- P0445: ice — 3 notes
+- P0462: Ingredients — 3 notes
+- P0473: invitation — 3 notes
+- P0479: jars — 2 notes
+- P0496: knowledge — 2 notes
+- P0510: Leftover — 2 notes
+- P0513: Lemon — 2 notes
+- P0515: life — 6 notes
+- P0519: light — 2 notes
+- P0532: location — 2 notes
+- P0536: lot — 3 notes
+- P0538: lunch — 6 notes
+- P0550: meals — 5 notes
+- P0553: meat — 8 notes
+- P0554: media — 10 notes
+- P0558: members — 2 notes
+- P0562: method — 2 notes
+- P0567: milk — 2 notes
+- P0571: minutes — 3 notes
+- P0575: mixture — 2 notes
+- P0579: months — 2 notes
+- P0581: morning — 15 notes
+- P0583: mother — 2 notes
+- P0589: Music — 2 notes
+- P0599: network — 2 notes
+- P0605: Nostr — 12 notes
+- P0611: oil — 3 notes
+- P0612: olive — 2 notes
+- P0616: one — 2 notes
+- P0617: onion — 3 notes
+- P0621: others — 6 notes
+- P0626: packet — 2 notes
+- P0628: pan — 3 notes
+- P0631: pantry — 2 notes
+- P0644: part — 7 notes
+- P0649: peace — 2 notes
+- P0658: people — 14 notes
+- P0660: pepper — 2 notes
+- P0665: person — 2 notes
+- P0680: pizza — 3 notes
+- P0681: Pizza — 2 notes
+- P0684: place — 5 notes
+- P0686: plans — 6 notes
+- P0690: Plebchain — 2 notes
+- P0697: post — 6 notes
+- P0699: posting — 9 notes
+- P0703: potatoes — 3 notes
+- P0705: pound — 3 notes
+- P0708: preference — 2 notes
+- P0709: preparation — 4 notes
+- P0710: preservation — 3 notes
+- P0712: price — 2 notes
+- P0716: processing — 2 notes
+- P0717: products — 3 notes
+- P0743: readers — 3 notes
+- P0745: reason — 3 notes
+- P0747: recipe — 4 notes
+- P0766: restaurant — 3 notes
+- P0771: rice — 2 notes
+- P0783: rosemary — 2 notes
+- P0799: salt — 5 notes
+- P0804: Satoshis — 2 notes
+- P0812: Sea — 3 notes
+- P0820: seed — 2 notes
+- P0824: service — 2 notes
+- P0827: shop — 3 notes
+- P0830: Shrimp — 2 notes
+- P0833: side — 2 notes
+- P0843: sleep — 3 notes
+- P0847: smoker — 2 notes
+- P0848: Smoking — 2 notes
+- P0856: Sourdough — 2 notes
+- P0859: space — 2 notes
+- P0863: speaker — 7 notes
+- P0872: status — 2 notes
+- P0876: steak — 3 notes
+- P0882: stock — 2 notes
+- P0885: store — 2 notes
+- P0891: strip — 2 notes
+- P0897: success — 2 notes
+- P0898: sugar — 2 notes
+- P0900: Sunday — 2 notes
+- P0912: tablespoons — 2 notes
+- P0918: taste — 3 notes
+- P0920: tea — 4 notes
+- P0922: temperature — 2 notes
+- P0928: things — 5 notes
+- P0933: time — 13 notes
+- P0937: tips — 2 notes
+- P0939: today — 8 notes
+- P0940: tomato — 3 notes
+- P0941: tomatoes — 5 notes
+- P0942: tomorrow — 2 notes
+- P0943: tonight — 3 notes
+- P0944: toppings — 3 notes
+- P0947: town — 2 notes
+- P0956: unit — 2 notes
+- P0963: vacuum — 2 notes
+- P0968: vegan — 2 notes
+- P0970: vegetables — 5 notes
+- P0972: view — 3 notes
+- P0981: water — 2 notes
+- P0983: way — 5 notes
+- P0988: weekend — 2 notes
+- P0987: weeks — 3 notes
+- P0993: wine — 3 notes
+- P0996: Wishes — 2 notes
+- P1002: work — 2 notes
+- P1003: Workout — 2 notes
+- P1006: world — 2 notes
+- P1007: writer — 2 notes
+- P1012: year — 9 notes
+- P1016: yogurt — 2 notes
+
+### All proposed edges
+
+- P0066 author → P1499 post author (37 → 2 notes); N045 N060
+- P0122 bread → P1601 Sourdough bread (8 → 2 notes); N015 N037
+- P0129 Brisket → P1596 Smoking brisket (2 → 2 notes); N019 N085
+- P0164 chain → P2111 themed social media posting chain (10 → 6 notes); N005 N017 N038 N078 N086 N095
+- P0164 chain → P2114 coffee themed social media posting chain (10 → 2 notes); N029 N071
+- P0200 coffee → P1706 author's coffee (21 → 2 notes); N045 N058
+- P0209 community → P1442 Nostr community (10 → 4 notes); N005 N058 N089 N092
+- P0209 community → P1495 Plebchain community (10 → 2 notes); N048 N095
+- P0235 cream → P1336 ice cream (4 → 2 notes); N024 N068
+- P0266 diet → P1132 carnivore diet (5 → 3 notes); N028 N041 N074
+- P0272 dinner → P1707 author's dinner (7 → 2 notes); N007 N023
+- P0352 food → P1295 better food (29 → 2 notes); N054 N070
+- P0352 food → P1396 many foods (29 → 2 notes); N011 N070
+- P0352 food → P1505 processed food (29 → 2 notes); N032 N069
+- P0392 greeting → P1796 good morning greeting (7 → 7 notes); N005 N040 N058 N064 N071 N089 N099
+- P0412 health → P1637 their health (2 → 2 notes); N032 N073
+- P0479 jars → P1247 few jars (2 → 2 notes); N026 N081
+- P0554 media → P1597 social media (10 → 8 notes); N004 N005 N017 N018 N038 N078 N086 N095
+- P0554 media → P1749 coffee social media (10 → 2 notes); N029 N071
+- P0567 milk → P1519 raw milk (2 → 2 notes); N006 N051
+- P0581 morning → P1296 good morning (15 → 10 notes); N005 N017 N040 N058 N064 N071 N089 N092 N095 N099
+- P0599 network → P1444 Nostr network (2 → 2 notes); N024 N048
+- P0605 Nostr → P1312 Growing Nostr (12 → 2 notes); N029 N071
+- P0686 plans → P1081 author plans (6 → 4 notes); N013 N026 N061 N100
+- P0709 preparation → P1259 Food preparation (4 → 2 notes); N026 N076
+- P0710 preservation → P1260 food preservation (3 → 2 notes); N013 N100
+- P0827 shop → P1157 coffee shop (3 → 3 notes); N004 N038 N065
+- P0882 stock → P1144 chicken stock (2 → 2 notes); N013 N026
+- P0920 tea → P1330 hot tea (4 → 2 notes); N042 N073
+- P1796 good morning greeting → P1794 good morning greeting to Nostr community (7 → 2 notes); N058 N089
+
+## At least 5 notes
+
+45 choices; 41 roots; 4 edges; 1 equal-note edges.
+
+### Complete root menu
+
+- P0032: amount — 6 notes
+- P0066: author — 37 notes
+- P0103: Bitcoin — 7 notes
+- P0122: bread — 8 notes
+- P0125: breakfast — 7 notes
+- P0164: chain — 10 notes
+- P0170: cheese — 5 notes
+- P0180: chicken — 9 notes
+- P0200: coffee — 21 notes
+- P0209: community — 10 notes
+- P0225: Cooking — 6 notes
+- P0248: day — 11 notes
+- P0266: diet — 5 notes
+- P0272: dinner — 7 notes
+- P0303: eggs — 7 notes
+- P0352: food — 29 notes
+- P0392: greeting — 7 notes
+- P0432: hours — 5 notes
+- P0515: life — 6 notes
+- P0538: lunch — 6 notes
+- P0550: meals — 5 notes
+- P0553: meat — 8 notes
+- P0554: media — 10 notes
+- P0581: morning — 15 notes
+- P0605: Nostr — 12 notes
+- P0621: others — 6 notes
+- P0644: part — 7 notes
+- P0658: people — 14 notes
+- P0684: place — 5 notes
+- P0686: plans — 6 notes
+- P0697: post — 6 notes
+- P0699: posting — 9 notes
+- P0799: salt — 5 notes
+- P0863: speaker — 7 notes
+- P0928: things — 5 notes
+- P0933: time — 13 notes
+- P0939: today — 8 notes
+- P0941: tomatoes — 5 notes
+- P0970: vegetables — 5 notes
+- P0983: way — 5 notes
+- P1012: year — 9 notes
+
+### All proposed edges
+
+- P0164 chain → P2111 themed social media posting chain (10 → 6 notes); N005 N017 N038 N078 N086 N095
+- P0392 greeting → P1796 good morning greeting (7 → 7 notes); N005 N040 N058 N064 N071 N089 N099
+- P0554 media → P1597 social media (10 → 8 notes); N004 N005 N017 N018 N038 N078 N086 N095
+- P0581 morning → P1296 good morning (15 → 10 notes); N005 N017 N040 N058 N064 N071 N089 N092 N095 N099
+
