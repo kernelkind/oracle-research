@@ -3,16 +3,29 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest note-membership diagnostic: [TCC03 — complete available evidence](./COMPLETE-NOTE-CATEGORY-EVIDENCE.md).
+Latest decision-method research: [literature and shared-cutoff tradeoffs](./CATEGORY-DECISION-METHODS.md).
+The saved TCC03 scores permit a shared cutoff retaining 18 of 19 judged
+supported assignments with two of 15 unsupported assignments admitted, versus
+19 retained and 12 incorrectly admitted at 0.5. These are retrospective
+development counts, not validation. All four nondominated tradeoffs and their
+concrete errors are preserved. A probability-calibration subsystem is not yet
+justified: freeze a simple global development cutoff and test different notes
+and categories first. The candidate is 0.9969531560953688, selected by minimum
+equal-cost development errors and the midpoint rule documented in the report.
+No new inference or deployed membership rule; challenge inputs and judgments
+are not yet frozen. Mask support, new-category transfer, category proposals
+and meaningful parent relations remain open. Baseline and browser unchanged.
+
+Preceding note-membership diagnostic: [TCC03 — complete available evidence](./COMPLETE-NOTE-CATEGORY-EVIDENCE.md).
 Scoring all 181 existing descriptions from the same 20 TCC02 notes restores
 the judged Coffee note ordering and preserves Morning greetings ordering.
 The cafe recovery has a genuine venue witness; it does not depend on its
 hashtag-derived maximum. But maximum pooling worsens the native 0.5 decisions:
 Morning greetings admits all 20 notes. No cutoff or hierarchy is adopted.
-Research a membership decision/calibration method with explicit supervision
-and category-transfer assumptions before testing it; do not hand-fit these
-two labels and call that general success. Category generation and meaningful
-parent relations remain unresolved. Full scores, all note maxima, source
+The literature assessment above now identifies a simple shared-cutoff transfer
+test; fitting these two labels is development, not general success.
+Category generation and meaningful parent relations remain unresolved.
+Full scores, all note maxima, source
 judgments, originals/masks and exact offline replay are preserved. No browser
 or baseline change; pending HiT files remain untouched.
 
