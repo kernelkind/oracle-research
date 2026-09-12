@@ -335,35 +335,31 @@ extractor to explain these misses. Existing descriptions already contain the
 necessary evidence. Retain the scorer as a possible membership-ranking
 component; it has not become a dependable universal membership decision.
 
-The next consequential question is whether semantic membership improves the
-usefulness of existing automatically proposed category families along their
-parent–child paths. Keep a bounded family of source-derived descriptions and
-proposed relations fixed, retain counterexamples and unresolved cases, compare
-literal memberships with a frozen shared classifier rule, and audit the actual
-notes and masks at both ends. Do not silently union child memberships upward
-to conceal contradictions. This is a construction diagnostic, not a new
-probability-calibration benchmark or a hand-built hierarchy.
+The resulting construction question is now tested in
+[CPC01–CPC02](./CATEGORY-PATH-COMPATIBILITY.md), keeping a source-derived family,
+both relation rules, prior counterexamples and unresolved scopes fixed.
+Both classifier cutoffs remove three meaningful paths. The failure mechanisms
+are distinguished by exact note evidence: incorrect child additions versus
+incorrect parent omissions. No silent upward union or cutoff retuning hides
+those contradictions.
 
-If memberships improve but paths remain misleading, category meaning or the
-relation rule becomes the demonstrated next bottleneck. If memberships remain
-unusable, inspect their ordering, source scope and support before adding a
-category-relative decision. A score gap or well-fitted mixture is not itself
-a semantic boundary. The retained errors must remain visible in the analysis;
-they cannot be excused because the next question concerns construction.
+CPC02's word-form control recovers the two genuine development-condition gains
+without incorrect additions and retains the paths. It does not fix incomplete
+categories, duplicates or broader semantic omissions. That result redirects
+work toward construction and semantic relation evidence, not another
+probability-calibration benchmark. A score gap or well-fitted mixture alone
+still does not establish a semantic boundary.
 
 This does not construct categories or establish parent–child meaning. Those
 dependencies remain necessary: source-grounded category proposals, recoverable
 membership, and genuine narrowing of the represented meaning and note set.
 Corrected membership alone will not validate subset-based parents.
 
-The concrete construction inputs still require a pre-run freeze. CAP02 stores
-unordered feature sets, not finished natural-language category descriptions.
-For example, its sorted `salt sea` features are not automatically equivalent
-model inputs to the phrase `sea salt`. Quietly rewriting these into favorable
-descriptions would mix category interpretation with membership recovery. The
-next design must preserve source provenance and explicitly separate that
-representation assumption. No new category family, rendering, or classifier
-operating point has yet been frozen for a construction run.
+CPC01 froze its concrete strings from CAP04's ordered source occurrences,
+rather than rewriting CAP02's unordered feature sets. For example, sorted
+`salt sea` features are not automatically equivalent model inputs to the
+observed phrase `sea salt`. That provenance distinction remains necessary;
+neither experiment certifies every candidate string as a complete category.
 
 ## Calibration alternatives reconsidered
 

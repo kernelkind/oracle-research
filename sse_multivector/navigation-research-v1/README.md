@@ -3,7 +3,31 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest transfer diagnostic: [TCC04 — the frozen cutoff](./CATEGORY-CUTOFF-TRANSFER.md).
+Latest construction diagnostic: [CPC01–CPC02 — memberships and paths](./CATEGORY-PATH-COMPATIBILITY.md).
+CPC01 scores all 945 saved descriptions from 100 notes against 12 frozen
+source-derived category candidates. Both fixed classifier cutoffs remove all
+three clearly meaningful existing refinements. At the development cutoff,
+wrong child admissions break Bread → Sourdough bread and Chicken → Chicken stock;
+a missed parent admission breaks Salt → Sea salt. Malformed and duplicate
+candidates remain. Better memberships alone do not establish better construction.
+
+CPC02's fixed word-form control recovers the classifier's only two development
+gains, Chicken/N080 and N100, without its incorrect additions. Across the six
+judged complete categories it retains 28/31 supported assignments, adds none of
+557 unsupported assignments, and preserves all three paths. The three missing
+Bread notes require more than inflection matching. This is a stronger simple
+reference, not a solved taxonomy: incomplete choices and duplicate children
+remain. No cutoff, classifier or new browser is adopted. All evidence, source
+overlays and deterministic replays are preserved; 47 tests pass.
+
+Next, return to complete category proposals and semantic parent relationships,
+with this stronger reference. Independently predicted note containment cannot
+be the sole evidence for meaning; automatically propagating child errors upward
+is not a demonstrated repair. Check a proposed mechanism against the existing
+lexical, grammatical and learned-relation failures before implementing it.
+No additional normalizer or threshold sweep is justified by these results.
+
+Preceding transfer diagnostic: [TCC04 — the frozen cutoff](./CATEGORY-CUTOFF-TRANSFER.md).
 On 12 different notes with all 145 saved descriptions, the TCC03 cutoff misses
 10/13 supported Bread, Chicken and Salt assignments; native 0.5 misses none and
 incorrectly adds one bread-baking note to Chicken. All missed assignments have
@@ -15,14 +39,9 @@ inline masks, judgments, hashes and an exact offline replay are preserved.
 A separate retrospective check of combined TCC03+TCC04 scores finds a shared
 tradeoff retaining 30/32 supported assignments with six incorrect additions,
 all Morning greetings. Both misses concern the bagel note, under Bread and Salt.
-This is development feasibility, not validation or an adopted rule. It keeps
-a simple imperfect membership component worth testing before adding calibration.
-Next, freeze a bounded existing source-derived category family and test whether
-semantic membership improves its actual parent–child paths, retaining the known
-counterexamples and unresolved scopes. Do not hand-repair descriptions, silently
-propagate children upward, or mistake membership recovery for semantic parenthood.
-The concrete family/rendering still needs to be frozen before that run. Category
-generation, meaningful relations and overall browsing remain open; no new UI.
+This is development feasibility, not validation or an adopted rule. It motivated
+the now-completed CPC01 family/path test above before adding calibration.
+Category generation, meaningful relations and overall browsing remain open.
 
 Preceding decision-method research: [literature and shared-cutoff tradeoffs](./CATEGORY-DECISION-METHODS.md).
 The TCC03-only development cutoff was 0.9969531560953688; its full derivation,
