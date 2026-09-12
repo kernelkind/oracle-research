@@ -11,9 +11,10 @@ construction missed there. A new Food/preservation pattern joins stock and beets
 This is actual candidate construction, not merely static ancestor lookup.
 
 It is not a dependable semantic order or a complete browsing improvement.
-Generalization also introduces shipping containers from generic containers,
-learning processes from coffee experience, and occupation/attribute classes
-from things that have those properties. Existing wrong source senses remain;
+Generalization also introduces shipping containers from generic containers
+and learning processes from coffee experience. Some occupation/attribute
+derivations are formally problematic without being bad topical destinations:
+a chef note can reasonably concern occupations. Existing wrong source senses remain;
 correct local food results also rely on a globally imperfect animal/human Food
 mapping. Class-only mapping admission is insufficient. The connection controls
 show different behavior from co-occurrence, not demonstrated better membership.
@@ -22,9 +23,20 @@ All three conditions replay, all original WordNet patterns and witnesses remain
 unchanged, and complete masks, native graphs, paths, controls and all candidate
 patterns are preserved. The 157 final recurring representatives are not approved
 categories. Repeated note sets, source omissions and menu selection remain open.
-The next investigation concerns validating/adapting the meaning of a mapping
-edge, not another resource expansion or browser polish. No correction rule,
-model, resource adoption, or UI change is selected.
+The completed [mapping and source-meaning audit](./MAPPING-VALIDATION.md)
+finds no justified drop-in mapping repair. The authors' correction release
+changes ontology definitions as well as noun mappings and supplies no matching
+final verb table. Learned methods examined predict supplied ontology
+relationships; they do not establish independent correction of these errors.
+Five fixed-witness dependency checks identify affected destinations without
+rebuilding or adopting a mapping blacklist.
+
+The next research question is contextual source grounding: distinguishing
+wrong sense selection, absent dictionary meanings, and errors added later by
+generalization. The parser currently sees generated descriptions, not original
+notes or masks. Changing that input is a separate assumption. Better sense
+selection alone cannot repair missing source connections. No replacement model,
+corrective rule, resource adoption, or UI change is selected.
 
 Preceding construction experiment: [SGC02 — connected patterns](./CONNECTED-PATTERN-CONSTRUCTION.md).
 With SGC01's eleven accepted graphs and dictionary fixed, relaxing exact

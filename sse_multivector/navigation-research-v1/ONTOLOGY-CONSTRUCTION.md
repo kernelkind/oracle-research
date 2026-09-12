@@ -182,7 +182,7 @@ discrimination from preserving the native connection in this sample. They
 remain interpretable connected patterns, but a simpler construction control
 has not been ruled out.
 
-## Unsupported additional meanings
+## Additional meanings and derivation problems
 
 All final 157 most-specific patterns and the 17 noun-condition representatives
 that disappear or change status were inspected against the fixed source graphs.
@@ -191,13 +191,14 @@ titles; [source evidence](./SGC03/SOURCE-EVIDENCE.md) gives every original note,
 inline mask, description and native connection. No validity percentage is
 claimed: generic patterns and uncertain category utility are not binary errors.
 
-The substantive recurring problems fall into three distinct mechanisms:
+The audit separates incorrect destinations from formally questionable
+derivations. The latter need not make a topic irrelevant to its source note:
 
 | Mechanism | Concrete source route | What the evidence supports |
 | --- | --- | --- |
 | Existing wrong source sense, then an additional narrowing error | N022 side dishes → dishware → generic container → ShipContainer | Neither dishware nor a ship container describes the side-food meaning. The shipping restriction comes from the mapping resource. |
 | Mapping changes the kind of thing | N094 coffee experience → accumulated knowledge → Learning/EducationalProcess | Knowledge held is not the process of acquiring or teaching knowledge. The source does not discuss learning. |
-| A property or role is treated as the thing that has it | N076 chef → skilled worker → SkilledOccupation → SocialRole | A worker has an occupation; the worker is not an occupation-class member under ordinary subclass meaning. The direct Chef attribute instance was excluded, but this ancestor route still enters. |
+| A property or role is treated as the thing that has it | N076 chef → skilled worker → SkilledOccupation → SocialRole | This is not ordinary subclass meaning, but a chef note can legitimately concern occupations. The same destination's N085 member comes from cooking equipment wrongly interpreted as a person. A type defect alone is not a discovery-failure judgment. |
 
 N022 row 378, complete note and unchanged mask:
 
@@ -266,15 +267,23 @@ than a static lookup demonstration and weaker than a dependable construction
 method. The best paths are locally plausible candidates with explicit mapping
 qualifications, not certificates of semantic containment.
 
-The next investigation should address the **meaning of a generalization edge**
-before expanding the sample or polishing category selection. It must distinguish
-an actual broader class from a related attribute, a process related to an
-outcome, and an accidentally narrower mapping. The current positive annotation
-plus declared-class rule does not do that. Research should examine general
-mapping validation/adaptation methods using the actual dictionary and ontology
-definitions, including whether an overly narrow mapping can be safely broadened.
-This is a different input/task from directly applying a definition-trained
-model to informal note masks. Its training/task fit still needs verification.
+The subsequent [mapping and source-meaning audit](./MAPPING-VALIDATION.md)
+examines typed interpretation, expert correction and propagation, weakening and
+completion, learned subsumption methods, and the actual released correction
+archive. It does not justify adding a mapping verifier or swapping the resource.
+The archive changes definitions and ancestry as well as mappings; the learned
+methods do not establish independent correction of these errors. Some formal
+type objections also overstate the topical-discovery problem.
+
+The source audit identifies unsupported meanings, and five fixed-witness checks
+locate their mapping dependencies while preserving the existing food/process
+memberships. These are not rebuilt
+conditions or evidence that a blacklist repairs construction. The source audit
+distinguishes wrong available senses, unknown identifiers and absent meanings.
+Contextual source grounding is the next research question, not an adopted
+replacement: the existing parser consumes generated descriptions rather than
+the original note and mask. Sense selection cannot alone create missing
+connections or correct later ontology generalizations.
 
 This does not impose an error-free ontology or require every enumerated
 candidate to become a valid category. Approximate candidate generation may be
