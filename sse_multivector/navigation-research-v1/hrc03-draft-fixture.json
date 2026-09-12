@@ -1,0 +1,519 @@
+{
+  "experiment_id": "HRC03",
+  "model_id": "malper/hierarcaps-clip-l",
+  "model_revision": "e3aa199d94c438f98628c9697a0b64ef5760b03c",
+  "input_kind": "constructed_category_descriptions",
+  "status": "draft_pre_score_review",
+  "cases": [
+    {
+      "id": "S01",
+      "domain": "software",
+      "rationale": "Blocking tracking across websites is a privacy function; changing browser appearance is a different browser function.",
+      "wordings": [
+        {
+          "broader": "Web browser privacy",
+          "narrower": "Blocking cross-site tracking",
+          "alternative": "Changing a browser's appearance"
+        },
+        {
+          "broader": "Protecting privacy while browsing the web",
+          "narrower": "Preventing tracking across different websites",
+          "alternative": "Customizing how a web browser looks"
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "domain": "software",
+      "rationale": "Checking software signatures concerns software security; publishing releases is related software work but not a broader subject for signature verification.",
+      "wordings": [
+        {
+          "broader": "Software security",
+          "narrower": "Verifying digital signatures on downloaded programs",
+          "alternative": "Publishing new software versions"
+        },
+        {
+          "broader": "Keeping software secure",
+          "narrower": "Checking downloaded software's digital signatures",
+          "alternative": "Releasing program updates"
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "domain": "software",
+      "rationale": "GPL software is open source; proprietary software can be free of charge without being open source.",
+      "wordings": [
+        {
+          "broader": "Open-source software",
+          "narrower": "Programs released under the GNU General Public License",
+          "alternative": "Proprietary freeware"
+        },
+        {
+          "broader": "Software whose source code users may inspect, modify, and redistribute",
+          "narrower": "Software distributed under the GPL",
+          "alternative": "Closed-source software offered at no charge"
+        }
+      ]
+    },
+    {
+      "id": "S04",
+      "domain": "software",
+      "rationale": "Backups protect against loss of data; alphabetical file ordering is a related file-management activity, not a broader subject for backup copies.",
+      "wordings": [
+        {
+          "broader": "Preventing data loss",
+          "narrower": "Keeping backup copies of important files",
+          "alternative": "Sorting files alphabetically"
+        },
+        {
+          "broader": "Protecting against lost data",
+          "narrower": "Making extra copies of important files for recovery",
+          "alternative": "Arranging filenames in alphabetical order"
+        }
+      ]
+    },
+    {
+      "id": "S05",
+      "domain": "software",
+      "rationale": "Preventing use-after-free is memory safety, while access speed is a distinct memory-performance concern.",
+      "wordings": [
+        {
+          "broader": "Memory safety",
+          "narrower": "Preventing access to freed memory",
+          "alternative": "Improving memory access speed"
+        },
+        {
+          "broader": "Safe use of computer memory",
+          "narrower": "Preventing a program from using memory after it has been freed",
+          "alternative": "Making access to computer memory faster"
+        }
+      ]
+    },
+    {
+      "id": "S06",
+      "domain": "software",
+      "rationale": "Linux distributions supply operating systems; desktop applications are a related software class, not their parent.",
+      "wordings": [
+        {
+          "broader": "Operating systems",
+          "narrower": "Linux distributions",
+          "alternative": "Desktop applications"
+        },
+        {
+          "broader": "System software that manages a computer's hardware and programs",
+          "narrower": "Distributions of the Linux operating system",
+          "alternative": "Application software for desktop users"
+        }
+      ]
+    },
+    {
+      "id": "E01",
+      "domain": "economics",
+      "rationale": "Savings buying less is a loss of purchasing power; transferring savings between accounts is related to savings but not the same broader meaning.",
+      "wordings": [
+        {
+          "broader": "Changes in purchasing power",
+          "narrower": "Savings buying less as prices rise",
+          "alternative": "Moving savings between bank accounts"
+        },
+        {
+          "broader": "Changes in what money can buy",
+          "narrower": "Rising prices reducing the goods that savings can purchase",
+          "alternative": "Transferring saved money from one bank account to another"
+        }
+      ]
+    },
+    {
+      "id": "E02",
+      "domain": "economics",
+      "rationale": "Central-bank policy interest rates are monetary policy; government income taxes are a different policy instrument.",
+      "wordings": [
+        {
+          "broader": "Monetary policy",
+          "narrower": "A central bank raising interest rates",
+          "alternative": "A government raising income taxes"
+        },
+        {
+          "broader": "Central-bank management of money and borrowing conditions",
+          "narrower": "An increase in policy interest rates by the central bank",
+          "alternative": "Higher income taxes imposed by the government"
+        }
+      ]
+    },
+    {
+      "id": "E03",
+      "domain": "economics",
+      "rationale": "Tariffs concern cross-border trade; taxes on domestic purchases are related taxation but not a broader subject for import duties.",
+      "wordings": [
+        {
+          "broader": "International trade",
+          "narrower": "Tariffs on imported goods",
+          "alternative": "Sales taxes on domestic purchases"
+        },
+        {
+          "broader": "Commerce between countries",
+          "narrower": "Import duties charged on goods entering a country",
+          "alternative": "Taxes on goods bought within the domestic market"
+        }
+      ]
+    },
+    {
+      "id": "E04",
+      "domain": "economics",
+      "rationale": "Building an emergency reserve is saving; taking an emergency loan is a different means of obtaining emergency funds.",
+      "wordings": [
+        {
+          "broader": "Personal saving",
+          "narrower": "Setting aside money for emergencies",
+          "alternative": "Borrowing money for emergencies"
+        },
+        {
+          "broader": "Putting money aside for future needs",
+          "narrower": "Building an emergency cash reserve",
+          "alternative": "Taking out an emergency loan"
+        }
+      ]
+    },
+    {
+      "id": "E05",
+      "domain": "economics",
+      "rationale": "Pay negotiation concerns employment compensation; negotiation over hours is a different employment condition, not a broader subject for salary negotiation.",
+      "wordings": [
+        {
+          "broader": "Employment compensation",
+          "narrower": "Negotiating a higher salary",
+          "alternative": "Negotiating shorter working hours"
+        },
+        {
+          "broader": "Pay and benefits received for work",
+          "narrower": "Asking an employer for a pay rise",
+          "alternative": "Asking an employer for a shorter working week"
+        }
+      ]
+    },
+    {
+      "id": "E06",
+      "domain": "economics",
+      "rationale": "Undercutting prices is competition among sellers; coordinated price fixing is a different relationship between sellers.",
+      "wordings": [
+        {
+          "broader": "Market competition",
+          "narrower": "Businesses competing by lowering prices",
+          "alternative": "Businesses agreeing to fix prices"
+        },
+        {
+          "broader": "Rivalry between sellers",
+          "narrower": "Sellers undercutting each other's prices",
+          "alternative": "Sellers coordinating prices with each other"
+        }
+      ]
+    },
+    {
+      "id": "P01",
+      "domain": "political_ideas",
+      "rationale": "Freedom to criticize government is an instance of freedom of expression; suppressing criticism is related but not a broader description of that freedom.",
+      "wordings": [
+        {
+          "broader": "Freedom of expression",
+          "narrower": "The right to criticize the government",
+          "alternative": "Government censorship of criticism"
+        },
+        {
+          "broader": "Freedom to voice opinions",
+          "narrower": "Being free to speak against government policies",
+          "alternative": "Suppressing criticism of government policies"
+        }
+      ]
+    },
+    {
+      "id": "P02",
+      "domain": "political_ideas",
+      "rationale": "Citizens voting for local representatives is democratic participation; officials being appointed without voting is related government selection, not a broader subject.",
+      "wordings": [
+        {
+          "broader": "Democratic participation",
+          "narrower": "Voting in local elections",
+          "alternative": "Appointment of local officials without an election"
+        },
+        {
+          "broader": "Public participation in democratic government",
+          "narrower": "Citizens electing their local representatives",
+          "alternative": "Local officials being selected rather than elected by citizens"
+        }
+      ]
+    },
+    {
+      "id": "P03",
+      "domain": "political_ideas",
+      "rationale": "Moving authority from national to local government is decentralization; the reverse transfer is related but not broader.",
+      "wordings": [
+        {
+          "broader": "Decentralization of government",
+          "narrower": "Giving local councils more decision-making power instead of the national government",
+          "alternative": "Concentrating decisions in the national government"
+        },
+        {
+          "broader": "Distributing government authority",
+          "narrower": "Transferring authority from national leaders to local councils",
+          "alternative": "Moving local decision-making powers to national leaders"
+        }
+      ]
+    },
+    {
+      "id": "P04",
+      "domain": "political_ideas",
+      "rationale": "Organizing demonstrations to seek change is political activism; neutral reporting on those demonstrations is a related role, not the organizing role's broader subject.",
+      "wordings": [
+        {
+          "broader": "Political activism",
+          "narrower": "Organizing peaceful demonstrations for political change",
+          "alternative": "Reporting neutrally on demonstrations as a journalist"
+        },
+        {
+          "broader": "Taking action to bring about political change",
+          "narrower": "Arranging nonviolent public demonstrations to seek political change",
+          "alternative": "Providing neutral news coverage of public demonstrations"
+        }
+      ]
+    },
+    {
+      "id": "P05",
+      "domain": "political_ideas",
+      "rationale": "Protection against arbitrary detention is a civil liberty; punishment following conviction is related criminal justice, not a broader subject for that protection.",
+      "wordings": [
+        {
+          "broader": "Civil liberties",
+          "narrower": "Legal protection against arbitrary detention",
+          "alternative": "Punishment after a criminal conviction"
+        },
+        {
+          "broader": "Individual freedoms protected against government interference",
+          "narrower": "Safeguards against being detained without lawful justification",
+          "alternative": "Penalties imposed on people convicted of crimes"
+        }
+      ]
+    },
+    {
+      "id": "P06",
+      "domain": "political_ideas",
+      "rationale": "Requiring disclosure of officials' financial interests is a form of public accountability; selecting election candidates is a different political process.",
+      "wordings": [
+        {
+          "broader": "Political accountability",
+          "narrower": "Requiring elected officials to disclose their personal financial interests",
+          "alternative": "Selecting candidates for public office"
+        },
+        {
+          "broader": "Making public officials answerable for their conduct",
+          "narrower": "Mandatory disclosure of elected officials' personal financial interests",
+          "alternative": "Choosing who will stand for election"
+        }
+      ]
+    },
+    {
+      "id": "R01",
+      "domain": "interpersonal_relationships",
+      "rationale": "Entrusting private information to a partner is interpersonal trust; spending time together is related but not a broader subject for confidentiality-based trust.",
+      "wordings": [
+        {
+          "broader": "Trust in relationships",
+          "narrower": "Relying on a partner to keep a confidence",
+          "alternative": "Spending more time with a partner"
+        },
+        {
+          "broader": "Interpersonal trust",
+          "narrower": "Trusting a partner to keep private information confidential",
+          "alternative": "Increasing the time spent together as a couple"
+        }
+      ]
+    },
+    {
+      "id": "R02",
+      "domain": "interpersonal_relationships",
+      "rationale": "Accepting privacy limits respects boundaries; pressuring someone to disclose private matters is related but not broader.",
+      "wordings": [
+        {
+          "broader": "Respecting personal boundaries",
+          "narrower": "Accepting a friend's refusal to discuss a private matter",
+          "alternative": "Persuading a friend to reveal private information"
+        },
+        {
+          "broader": "Respect for other people's personal limits",
+          "narrower": "Letting a friend keep a sensitive topic private",
+          "alternative": "Pressing a friend to talk about a sensitive topic"
+        }
+      ]
+    },
+    {
+      "id": "R03",
+      "domain": "interpersonal_relationships",
+      "rationale": "Compassionate listening provides emotional support; financial assistance in the same bereavement context is a related but distinct form of help.",
+      "wordings": [
+        {
+          "broader": "Emotional support",
+          "narrower": "Listening compassionately to a grieving friend",
+          "alternative": "Financial assistance to a grieving friend"
+        },
+        {
+          "broader": "Helping someone cope emotionally",
+          "narrower": "Offering a bereaved friend a sympathetic ear",
+          "alternative": "Helping a bereaved friend pay expenses"
+        }
+      ]
+    },
+    {
+      "id": "R04",
+      "domain": "interpersonal_relationships",
+      "rationale": "Finding a resolution to a couple's disagreement is conflict resolution; trying to win against the partner is related argument behavior, not a broader description of resolving disagreement.",
+      "wordings": [
+        {
+          "broader": "Resolving interpersonal conflict",
+          "narrower": "Working through a disagreement with a partner",
+          "alternative": "Competing with a partner to win an argument"
+        },
+        {
+          "broader": "Settling disagreements between people",
+          "narrower": "Finding a resolution to an argument within a couple",
+          "alternative": "Trying to defeat a partner in an argument"
+        }
+      ]
+    },
+    {
+      "id": "R05",
+      "domain": "interpersonal_relationships",
+      "rationale": "Accommodating a spouse's different preferences expresses consideration; attempting to change the spouse's tastes is related but not a broader subject for accommodation.",
+      "wordings": [
+        {
+          "broader": "Consideration for a partner",
+          "narrower": "Accommodating a spouse's preferences despite different personal tastes",
+          "alternative": "Persuading a spouse to adopt one's own tastes"
+        },
+        {
+          "broader": "Being considerate toward one's partner",
+          "narrower": "Making room for what a spouse likes even when one's own preferences differ",
+          "alternative": "Convincing a spouse to prefer the same things as oneself"
+        }
+      ]
+    },
+    {
+      "id": "R06",
+      "domain": "interpersonal_relationships",
+      "rationale": "Admitting a mistake is honesty; concealing it from the same person is related but not broader.",
+      "wordings": [
+        {
+          "broader": "Honesty in relationships",
+          "narrower": "Admitting a mistake to a friend",
+          "alternative": "Hiding a mistake from a friend"
+        },
+        {
+          "broader": "Being truthful with other people",
+          "narrower": "Owning up to something one did wrong when speaking to a friend",
+          "alternative": "Keeping a friend unaware of one's mistake"
+        }
+      ]
+    },
+    {
+      "id": "F01",
+      "domain": "food_control",
+      "rationale": "Bagels are bread; sesame crackers share ingredients but do not form a broader category for bagels.",
+      "wordings": [
+        {
+          "broader": "Bread",
+          "narrower": "Bagels with sesame seeds",
+          "alternative": "Sesame crackers"
+        },
+        {
+          "broader": "Baked bread products",
+          "narrower": "Sesame-topped bagels",
+          "alternative": "Crackers topped with sesame"
+        }
+      ]
+    },
+    {
+      "id": "F02",
+      "domain": "food_control",
+      "rationale": "Yogurt made using live cultures is fermented food; thickening milk with starch is a different preparation.",
+      "wordings": [
+        {
+          "broader": "Fermented foods",
+          "narrower": "Yogurt made with live cultures",
+          "alternative": "Milk thickened with starch"
+        },
+        {
+          "broader": "Foods produced through fermentation",
+          "narrower": "Milk fermented into yogurt using live bacteria",
+          "alternative": "Milk made thicker by adding starch"
+        }
+      ]
+    },
+    {
+      "id": "F03",
+      "domain": "food_control",
+      "rationale": "Freezing garden vegetables is food preservation; growing those vegetables is related but not a broader description of preserving them.",
+      "wordings": [
+        {
+          "broader": "Preserving food",
+          "narrower": "Freezing homegrown vegetables",
+          "alternative": "Growing vegetables at home"
+        },
+        {
+          "broader": "Preventing stored food from spoiling",
+          "narrower": "Keeping garden vegetables in the freezer",
+          "alternative": "Raising vegetables in a home garden"
+        }
+      ]
+    },
+    {
+      "id": "F04",
+      "domain": "food_control",
+      "rationale": "Cooking a cake in an oven is baking; adding icing is a related cake-making activity, not a broader subject for the baking step.",
+      "wordings": [
+        {
+          "broader": "Baking",
+          "narrower": "Making a cake in the oven",
+          "alternative": "Decorating a cake with icing"
+        },
+        {
+          "broader": "Cooking food by baking",
+          "narrower": "Preparing an oven-baked cake",
+          "alternative": "Adding decorative icing to a cake"
+        }
+      ]
+    },
+    {
+      "id": "F05",
+      "domain": "food_control",
+      "rationale": "Pan-frying is a cooking method; cutting vegetables is a related preparation activity but not broader than frying.",
+      "wordings": [
+        {
+          "broader": "Cooking methods",
+          "narrower": "Pan-frying vegetables",
+          "alternative": "Cutting vegetables into thin slices"
+        },
+        {
+          "broader": "Techniques for cooking food",
+          "narrower": "Frying vegetables in a pan",
+          "alternative": "Slicing vegetables thinly"
+        }
+      ]
+    },
+    {
+      "id": "F06",
+      "domain": "food_control",
+      "rationale": "A plant-only lentil stew is a vegetarian meal; a beef-and-lentil stew is related but not its broader category.",
+      "wordings": [
+        {
+          "broader": "Vegetarian meals",
+          "narrower": "Plant-based lentil stew",
+          "alternative": "Beef stew with lentils"
+        },
+        {
+          "broader": "Meals without meat or fish",
+          "narrower": "A lentil stew made entirely from plant ingredients",
+          "alternative": "A stew containing beef and lentils"
+        }
+      ]
+    }
+  ]
+}

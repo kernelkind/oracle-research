@@ -1,0 +1,519 @@
+{
+  "experiment_id": "HRC03",
+  "model_id": "malper/hierarcaps-clip-l",
+  "model_revision": "e3aa199d94c438f98628c9697a0b64ef5760b03c",
+  "input_kind": "constructed_category_descriptions",
+  "status": "frozen_before_scoring",
+  "cases": [
+    {
+      "id": "S01",
+      "domain": "software",
+      "rationale": "Pre-score judgment: Blocking cross-site tracking is a valid topical refinement of Web browser privacy. Web browser appearance is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Web browser privacy",
+          "narrower": "Blocking cross-site tracking",
+          "alternative": "Web browser appearance"
+        },
+        {
+          "broader": "Protecting privacy while browsing the web",
+          "narrower": "Preventing tracking across different websites",
+          "alternative": "How a web browser looks"
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "domain": "software",
+      "rationale": "Pre-score judgment: verifying downloaded program signatures refines software security, not software usability. Replaced release management because verifying distributed release artifacts can fall under it.",
+      "wordings": [
+        {
+          "broader": "Software security",
+          "narrower": "Verifying digital signatures on downloaded programs",
+          "alternative": "Software usability"
+        },
+        {
+          "broader": "Keeping software secure",
+          "narrower": "Checking downloaded software's digital signatures",
+          "alternative": "Making software easy to use"
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "domain": "software",
+      "rationale": "Pre-score judgment: Programs released under the GNU General Public License is a valid topical refinement of Open-source software. Closed-source software is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Open-source software",
+          "narrower": "Programs released under the GNU General Public License",
+          "alternative": "Closed-source software"
+        },
+        {
+          "broader": "Software whose source code users may inspect, modify, and redistribute",
+          "narrower": "Software distributed under the GPL",
+          "alternative": "Software with source code withheld from users"
+        }
+      ]
+    },
+    {
+      "id": "S04",
+      "domain": "software",
+      "rationale": "Pre-score judgment: Keeping backup copies of important files is a valid topical refinement of Preventing data loss. File organization is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Preventing data loss",
+          "narrower": "Keeping backup copies of important files",
+          "alternative": "File organization"
+        },
+        {
+          "broader": "Protecting against lost data",
+          "narrower": "Making extra copies of important files for recovery",
+          "alternative": "Arranging and categorizing files"
+        }
+      ]
+    },
+    {
+      "id": "S05",
+      "domain": "software",
+      "rationale": "Pre-score judgment: Preventing access to freed memory is a valid topical refinement of Memory safety. Memory performance is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Memory safety",
+          "narrower": "Preventing access to freed memory",
+          "alternative": "Memory performance"
+        },
+        {
+          "broader": "Safe use of computer memory",
+          "narrower": "Preventing a program from using memory after it has been freed",
+          "alternative": "The speed and efficiency of computer memory use"
+        }
+      ]
+    },
+    {
+      "id": "S06",
+      "domain": "software",
+      "rationale": "Pre-score judgment: Linux distributions is a valid topical refinement of Operating systems. Application software is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Operating systems",
+          "narrower": "Linux distributions",
+          "alternative": "Application software"
+        },
+        {
+          "broader": "System software that manages a computer's hardware and programs",
+          "narrower": "Distributions of the Linux operating system",
+          "alternative": "Programs designed to carry out tasks for users"
+        }
+      ]
+    },
+    {
+      "id": "E01",
+      "domain": "economics",
+      "rationale": "Pre-score judgment: Savings buying less as prices rise is a valid topical refinement of Changes in purchasing power. Bank transfers is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Changes in purchasing power",
+          "narrower": "Savings buying less as prices rise",
+          "alternative": "Bank transfers"
+        },
+        {
+          "broader": "Changes in what money can buy",
+          "narrower": "Rising prices reducing the goods that savings can purchase",
+          "alternative": "Moving money between bank accounts"
+        }
+      ]
+    },
+    {
+      "id": "E02",
+      "domain": "economics",
+      "rationale": "Pre-score judgment: A central bank raising interest rates is a valid topical refinement of Monetary policy. Fiscal policy is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Monetary policy",
+          "narrower": "A central bank raising interest rates",
+          "alternative": "Fiscal policy"
+        },
+        {
+          "broader": "Central-bank management of money and borrowing conditions",
+          "narrower": "An increase in policy interest rates by the central bank",
+          "alternative": "Government decisions about taxation and spending"
+        }
+      ]
+    },
+    {
+      "id": "E03",
+      "domain": "economics",
+      "rationale": "Pre-score judgment: Tariffs on imported goods is a valid topical refinement of International trade. Domestic sales taxation is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "International trade",
+          "narrower": "Tariffs on imported goods",
+          "alternative": "Domestic sales taxation"
+        },
+        {
+          "broader": "Commerce between countries",
+          "narrower": "Import duties charged on goods entering a country",
+          "alternative": "Taxes charged on purchases within the domestic market"
+        }
+      ]
+    },
+    {
+      "id": "E04",
+      "domain": "economics",
+      "rationale": "Pre-score judgment: Setting aside money for emergencies is a valid topical refinement of Personal saving. Personal borrowing is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Personal saving",
+          "narrower": "Setting aside money for emergencies",
+          "alternative": "Personal borrowing"
+        },
+        {
+          "broader": "Putting money aside for future needs",
+          "narrower": "Building an emergency cash reserve",
+          "alternative": "Taking on debt to meet personal needs"
+        }
+      ]
+    },
+    {
+      "id": "E05",
+      "domain": "economics",
+      "rationale": "Pre-score judgment: Negotiating a higher salary is a valid topical refinement of Employment compensation. Working-time arrangements is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Employment compensation",
+          "narrower": "Negotiating a higher salary",
+          "alternative": "Working-time arrangements"
+        },
+        {
+          "broader": "Pay and benefits received for work",
+          "narrower": "Asking an employer for a pay rise",
+          "alternative": "Agreements about employees' working hours"
+        }
+      ]
+    },
+    {
+      "id": "E06",
+      "domain": "economics",
+      "rationale": "Pre-score judgment: Businesses competing by lowering prices is a valid topical refinement of Market competition. Price collusion is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Market competition",
+          "narrower": "Businesses competing by lowering prices",
+          "alternative": "Price collusion"
+        },
+        {
+          "broader": "Rivalry between sellers",
+          "narrower": "Sellers undercutting each other's prices",
+          "alternative": "Coordination between sellers to fix prices"
+        }
+      ]
+    },
+    {
+      "id": "P01",
+      "domain": "political_ideas",
+      "rationale": "Pre-score judgment: The right to criticize the government is a valid topical refinement of Freedom of expression. Freedom of movement is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Freedom of expression",
+          "narrower": "The right to criticize the government",
+          "alternative": "Freedom of movement"
+        },
+        {
+          "broader": "Freedom to voice opinions",
+          "narrower": "Being free to speak against government policies",
+          "alternative": "Freedom to travel and choose where to live"
+        }
+      ]
+    },
+    {
+      "id": "P02",
+      "domain": "political_ideas",
+      "rationale": "Pre-score judgment: Voting in local elections is a valid topical refinement of Democratic participation. Public-sector employment is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Democratic participation",
+          "narrower": "Voting in local elections",
+          "alternative": "Public-sector employment"
+        },
+        {
+          "broader": "Public participation in democratic government",
+          "narrower": "Citizens electing their local representatives",
+          "alternative": "Working in jobs provided by government"
+        }
+      ]
+    },
+    {
+      "id": "P03",
+      "domain": "political_ideas",
+      "rationale": "Pre-score judgment: Giving local councils more decision-making power instead of the national government is a valid topical refinement of Decentralization of government. Electoral representation is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Decentralization of government",
+          "narrower": "Giving local councils more decision-making power instead of the national government",
+          "alternative": "Electoral representation"
+        },
+        {
+          "broader": "Decentralizing government authority",
+          "narrower": "Transferring authority from national leaders to local councils",
+          "alternative": "How elected officials represent voters"
+        }
+      ]
+    },
+    {
+      "id": "P04",
+      "domain": "political_ideas",
+      "rationale": "Pre-score judgment: Organizing peaceful demonstrations for political change is a valid topical refinement of Political activism. Political journalism is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Political activism",
+          "narrower": "Organizing peaceful demonstrations for political change",
+          "alternative": "Political journalism"
+        },
+        {
+          "broader": "Taking action to bring about political change",
+          "narrower": "Arranging nonviolent public demonstrations to seek political change",
+          "alternative": "News reporting about politics"
+        }
+      ]
+    },
+    {
+      "id": "P05",
+      "domain": "political_ideas",
+      "rationale": "Pre-score judgment: Legal protection against arbitrary detention is a valid topical refinement of Civil liberties. Criminal sentencing is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Civil liberties",
+          "narrower": "Legal protection against arbitrary detention",
+          "alternative": "Criminal sentencing"
+        },
+        {
+          "broader": "Individual freedoms protected against government interference",
+          "narrower": "Safeguards against being detained without lawful justification",
+          "alternative": "Deciding penalties following criminal convictions"
+        }
+      ]
+    },
+    {
+      "id": "P06",
+      "domain": "political_ideas",
+      "rationale": "Pre-score judgment: Requiring elected officials to disclose their personal financial interests is a valid topical refinement of Political accountability. Election campaigning is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Political accountability",
+          "narrower": "Requiring elected officials to disclose their personal financial interests",
+          "alternative": "Election campaigning"
+        },
+        {
+          "broader": "Making public officials answerable for their conduct",
+          "narrower": "Mandatory disclosure of elected officials' personal financial interests",
+          "alternative": "Organized efforts to win elections"
+        }
+      ]
+    },
+    {
+      "id": "R01",
+      "domain": "interpersonal_relationships",
+      "rationale": "Pre-score judgment: Relying on a partner to keep a confidence is a valid topical refinement of Trust in relationships. Shared leisure in relationships is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Trust in relationships",
+          "narrower": "Relying on a partner to keep a confidence",
+          "alternative": "Shared leisure in relationships"
+        },
+        {
+          "broader": "Interpersonal trust",
+          "narrower": "Trusting a partner to keep private information confidential",
+          "alternative": "Spending recreational time together in a relationship"
+        }
+      ]
+    },
+    {
+      "id": "R02",
+      "domain": "interpersonal_relationships",
+      "rationale": "Pre-score judgment: Accepting a friend's refusal to discuss a private matter is a valid topical refinement of Respecting personal boundaries. Giving personal advice is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Respecting personal boundaries",
+          "narrower": "Accepting a friend's refusal to discuss a private matter",
+          "alternative": "Giving personal advice"
+        },
+        {
+          "broader": "Respect for other people's personal limits",
+          "narrower": "Letting a friend keep a sensitive topic private",
+          "alternative": "Offering someone guidance about personal decisions"
+        }
+      ]
+    },
+    {
+      "id": "R03",
+      "domain": "interpersonal_relationships",
+      "rationale": "Pre-score judgment: Listening compassionately to a grieving friend is a valid topical refinement of Emotional support. Financial support is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Emotional support",
+          "narrower": "Listening compassionately to a grieving friend",
+          "alternative": "Financial support"
+        },
+        {
+          "broader": "Helping someone cope emotionally",
+          "narrower": "Offering a bereaved friend a sympathetic ear",
+          "alternative": "Helping someone with money or expenses"
+        }
+      ]
+    },
+    {
+      "id": "R04",
+      "domain": "interpersonal_relationships",
+      "rationale": "Pre-score judgment: Working through a disagreement with a partner is a valid topical refinement of Resolving interpersonal conflict. Interpersonal competition is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Resolving interpersonal conflict",
+          "narrower": "Working through a disagreement with a partner",
+          "alternative": "Interpersonal competition"
+        },
+        {
+          "broader": "Settling disagreements between people",
+          "narrower": "Finding a resolution to an argument within a couple",
+          "alternative": "Competing against other people"
+        }
+      ]
+    },
+    {
+      "id": "R05",
+      "domain": "interpersonal_relationships",
+      "rationale": "Pre-score judgment: Accommodating a spouse's preferences despite different personal tastes is a valid topical refinement of Consideration for a partner. Persuasion in relationships is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Consideration for a partner",
+          "narrower": "Accommodating a spouse's preferences despite different personal tastes",
+          "alternative": "Persuasion in relationships"
+        },
+        {
+          "broader": "Being considerate toward one's partner",
+          "narrower": "Making room for what a spouse likes even when one's own preferences differ",
+          "alternative": "Trying to change another person's views or preferences"
+        }
+      ]
+    },
+    {
+      "id": "R06",
+      "domain": "interpersonal_relationships",
+      "rationale": "Pre-score judgment: Admitting a mistake to a friend is a valid topical refinement of Honesty in relationships. Maintaining personal privacy is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Honesty in relationships",
+          "narrower": "Admitting a mistake to a friend",
+          "alternative": "Maintaining personal privacy"
+        },
+        {
+          "broader": "Being truthful with other people",
+          "narrower": "Owning up to something one did wrong when speaking to a friend",
+          "alternative": "Keeping personal information private"
+        }
+      ]
+    },
+    {
+      "id": "F01",
+      "domain": "food_control",
+      "rationale": "Pre-score judgment: Bagels with sesame seeds is a valid topical refinement of Bread. Crackers is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Bread",
+          "narrower": "Bagels with sesame seeds",
+          "alternative": "Crackers"
+        },
+        {
+          "broader": "Baked bread products",
+          "narrower": "Sesame-topped bagels",
+          "alternative": "Crisp, dry cracker products"
+        }
+      ]
+    },
+    {
+      "id": "F02",
+      "domain": "food_control",
+      "rationale": "Pre-score judgment: yogurt made with live cultures refines fermented foods, not roasted foods. Replaced thickening food because milk fermentation also thickens it.",
+      "wordings": [
+        {
+          "broader": "Fermented foods",
+          "narrower": "Yogurt made with live cultures",
+          "alternative": "Roasted foods"
+        },
+        {
+          "broader": "Foods produced through fermentation",
+          "narrower": "Milk fermented into yogurt using live bacteria",
+          "alternative": "Foods cooked by roasting"
+        }
+      ]
+    },
+    {
+      "id": "F03",
+      "domain": "food_control",
+      "rationale": "Pre-score judgment: Freezing homegrown vegetables is a valid topical refinement of Preserving food. Growing food is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Preserving food",
+          "narrower": "Freezing homegrown vegetables",
+          "alternative": "Growing food"
+        },
+        {
+          "broader": "Preventing stored food from spoiling",
+          "narrower": "Keeping garden vegetables in the freezer",
+          "alternative": "Cultivating plants for food"
+        }
+      ]
+    },
+    {
+      "id": "F04",
+      "domain": "food_control",
+      "rationale": "Pre-score judgment: Making a cake in the oven is a valid topical refinement of Baking. Food decoration is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Baking",
+          "narrower": "Making a cake in the oven",
+          "alternative": "Food decoration"
+        },
+        {
+          "broader": "Cooking food by baking",
+          "narrower": "Preparing an oven-baked cake",
+          "alternative": "Decorating food for presentation"
+        }
+      ]
+    },
+    {
+      "id": "F05",
+      "domain": "food_control",
+      "rationale": "Pre-score judgment: Pan-frying vegetables is a valid topical refinement of Cooking methods. Cutting techniques in food preparation is a related category but does not encompass that narrower subject as described.",
+      "wordings": [
+        {
+          "broader": "Cooking methods",
+          "narrower": "Pan-frying vegetables",
+          "alternative": "Cutting techniques in food preparation"
+        },
+        {
+          "broader": "Techniques for cooking food",
+          "narrower": "Frying vegetables in a pan",
+          "alternative": "Ways of slicing and chopping ingredients"
+        }
+      ]
+    },
+    {
+      "id": "F06",
+      "domain": "food_control",
+      "rationale": "Pre-score judgment: a stew made entirely from plant ingredients is a valid refinement of vegetarian meals, but not meat dishes.",
+      "wordings": [
+        {
+          "broader": "Vegetarian meals",
+          "narrower": "Lentil stew made entirely from plant ingredients",
+          "alternative": "Meat dishes"
+        },
+        {
+          "broader": "Meals without meat or fish",
+          "narrower": "A lentil stew made entirely from plant ingredients",
+          "alternative": "Dishes containing meat"
+        }
+      ]
+    }
+  ]
+}
