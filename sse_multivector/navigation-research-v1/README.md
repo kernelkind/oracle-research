@@ -31,12 +31,30 @@ relationships; they do not establish independent correction of these errors.
 Five fixed-witness dependency checks identify affected destinations without
 rebuilding or adopting a mapping blacklist.
 
-The next research question is contextual source grounding: distinguishing
-wrong sense selection, absent dictionary meanings, and errors added later by
-generalization. The parser currently sees generated descriptions, not original
-notes or masks. Changing that input is a separate assumption. Better sense
-selection alone cannot repair missing source connections. No replacement model,
-corrective rule, resource adoption, or UI change is selected.
+The [source-occurrence audit](./SOURCE-OCCURRENCE-GROUNDING.md) now separates
+candidate availability from contextual sense selection. Existing token offsets
+are usable, but the saved parser turns beet into boot and supplies nonexistent
+lemmas for tomatoes and simmering. Removing those restrictions is a different
+question from repairing a generated DRS graph. The edge-control audit finds no
+demonstrated semantic advantage requiring that graph; it does not prove that
+relationships never matter. The beets/preparation omission also has two
+independent barriers: a missing direct edge and missing lexical ancestry.
+
+[USM01](./USM01-PLAN.md) selects a bounded direct-occurrence comparison using
+one released LMMS sense representation: saved-lemma filtering, original-word
+morphological lookup, and unrestricted matching. The original-word control
+tests whether bypassing faulty lemmas explains any apparent improvement.
+The [completed comparison](./USM01-RESULTS.md) processes all fifteen descriptions
+and 134 lexical targets, including the four descriptions the DRS parser could
+not process. Original-word lookup explains the main lemma-error recoveries;
+unrestricted matching additionally finds a useful frying meaning for sautéing
+but introduces unsupported specifics such as beef broth for chicken stock.
+Dropping POS also lets bread become breading and beef become complaining.
+Neither condition resolves every source meaning; preparing beets still maps to
+preparing a speech. All originals, masks, scores and judgments are preserved.
+No source representation or replacement hierarchy is adopted. The next control
+can reuse the frozen vectors to separate original-word lookup from POS removal;
+actual construction consequences and complete navigation remain unproven.
 
 Preceding construction experiment: [SGC02 — connected patterns](./CONNECTED-PATTERN-CONSTRUCTION.md).
 With SGC01's eleven accepted graphs and dictionary fixed, relaxing exact

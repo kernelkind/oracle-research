@@ -277,9 +277,11 @@ nonempty inventory whose meanings are all inappropriate. The inspected release
 uses legacy dependencies and a noncommercial repository license; checkpoint
 execution and artifact-specific reuse terms remain unverified.[^escher-code]
 
-The next method decision should therefore inspect whether native occurrences
-can be recovered without inventing them. If a bounded sense-selection test is
-run, keep the existing descriptions, graph connections and generalization
+The subsequent [source-occurrence audit](./SOURCE-OCCURRENCE-GROUNDING.md)
+finds existing token offsets but also erroneous candidate restrictions. It
+selects a direct-occurrence comparison, not an alignment layer for DRS.
+For a bounded test that instead repairs the existing graph's sense selection,
+keep the existing descriptions, graph connections and generalization
 resource fixed, include currently correct concepts as regression controls, and
 record unavailable or unaligned cases rather than supplying hand-picked
 replacement meanings. Any resulting change must then be traced through actual
@@ -322,9 +324,11 @@ mask. The superstition in N089 and diet in N069 illustrate that boundary.
 
 Source grounding is not a requirement to perfect every parser node. N085's
 valid cooking path does not need its wrong smoker/person node. Nor could sense
-selection alone supply N022's missing preparation–beet connection or make the
-correct drinking sense reach IntentionalProcess. Research must establish which
-source errors actually prevent useful construction, not just reduce an error
+selection alone resolve N022's two separate barriers: no direct fix/beet edge
+and no path from its existing `fix.v.12` sense to `preparation.n.01` in the
+frozen order. The correct drinking sense also does not reach IntentionalProcess.
+Research must establish which source errors actually prevent useful
+construction, not just reduce an error
 count in an intermediate representation.
 
 The practical success criterion remains construction: preserve the useful food,

@@ -147,9 +147,11 @@ Cooking now has an actual route from the broader food/activity parent.
 
 This does not establish a complete or well-condensed hierarchy:
 
-- The preparation branch still misses the preparing-beets description. Its
-  native graph lacks the required preparation/beet connection. Adding broader
-  concepts cannot invent that missing evidence.
+- The preparation branch still misses the preparing-beets description for two
+  independent reasons. Its `fix.v.12` sense does not reach `preparation.n.01`
+  in the frozen order, and the graph lacks a direct fix/beet edge. Removing
+  the edge restriction alone—or supplying only that edge—would not recover
+  this membership. [Source and order audit](./SOURCE-OCCURRENCE-GROUNDING.md).
 - N039 remains absent from food/process patterns despite its grilling meaning.
   The native `grilling.v.01` is an unknown placeholder without a dictionary
   ancestor. This is not evidence that storms and grilling are unrelated.
