@@ -1,6 +1,8 @@
 # SGC03: additional broader concepts in category construction
 
-Status: pre-run design. No SGC03 construction or new inference has run.
+Status: construction complete; [findings and qualifications](./ONTOLOGY-CONSTRUCTION.md).
+The design below records the intervention and controls chosen before the run.
+No new inference or browser change was involved.
 
 ## Capability and hypothesis
 
@@ -79,6 +81,33 @@ food mappings because they give preferred results, or blacklist a known bad
 mapping to repair this sample. The scope is deliberately approximate: forward
 use prevents identity collapse, but does not correct an invalid broadening.
 Known scope mismatches remain flagged independently of local source support.
+
+### Resource preflight decisions
+
+Use the 45 constituents in SigmaKEE's published SUMO domain configuration,
+pinned at `9dba684eac829fd1e5d6740b8d28c5e208dc8204`, with their contents from
+the SUMO revision above. This is a general deployed domain list, not a selection
+of food files or every experimental file in the repository. Save the configuration,
+each exact resource hash, and its upstream revision and applicable notices.
+[Declared list](https://github.com/ontologyportal/sigmakee/blob/9dba684eac829fd1e5d6740b8d28c5e208dc8204/docker/sigmakee2023/kbs/config.xml).
+
+Parse the complete terminal annotation list. Multiple annotations have a
+conjunctive interpretation: retain each eligible class mapping, separately
+excluding property/individual mappings. They are not alternative interpretations.
+Malformed suffixes or spacing are recorded without repairing or salvaging part
+of the annotation list. Conflicting duplicate offsets are excluded; identical
+duplicates retain their provenance. This follows the distinction in section 4.2
+of [Álvez, Lucio and Rigau, arXiv v3](https://arxiv.org/pdf/1705.10217v3);
+it does not establish that the mapping assertions are correct.
+
+Only exact top-level ground `subclass` statements supply class edges.
+`instance` facts help identify class roles but do not become subclass edges.
+Quoted text, comments, nested conditional statements and partition assertions
+are not mined for extra edges. Reject malformed resource syntax and reachable
+cycles rather than silently repairing or dropping them. Preserve complete raw
+resources in a separate cache and the used facts/definitions/mapping rows with
+their source positions in the experiment record. No resource or source-graph
+repair is part of the intervention.
 
 ## Controls and semantic reading
 

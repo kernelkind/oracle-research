@@ -3,7 +3,30 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest construction experiment: [SGC02 — connected patterns](./CONNECTED-PATTERN-CONSTRUCTION.md).
+Latest construction experiment: [SGC03 — broader concepts](./ONTOLOGY-CONSTRUCTION.md).
+Adding pinned SUMO noun and verb mappings to the unchanged eleven source graphs
+creates locally useful Food → food/process → preservation/preparation/cooking
+paths. The shared activity parent includes brisket cooking, which WordNet-only
+construction missed there. A new Food/preservation pattern joins stock and beets.
+This is actual candidate construction, not merely static ancestor lookup.
+
+It is not a dependable semantic order or a complete browsing improvement.
+Generalization also introduces shipping containers from generic containers,
+learning processes from coffee experience, and occupation/attribute classes
+from things that have those properties. Existing wrong source senses remain;
+correct local food results also rely on a globally imperfect animal/human Food
+mapping. Class-only mapping admission is insufficient. The connection controls
+show different behavior from co-occurrence, not demonstrated better membership.
+
+All three conditions replay, all original WordNet patterns and witnesses remain
+unchanged, and complete masks, native graphs, paths, controls and all candidate
+patterns are preserved. The 157 final recurring representatives are not approved
+categories. Repeated note sets, source omissions and menu selection remain open.
+The next investigation concerns validating/adapting the meaning of a mapping
+edge, not another resource expansion or browser polish. No correction rule,
+model, resource adoption, or UI change is selected.
+
+Preceding construction experiment: [SGC02 — connected patterns](./CONNECTED-PATTERN-CONSTRUCTION.md).
 With SGC01's eleven accepted graphs and dictionary fixed, relaxing exact
 relationship labels/directions produces two genuinely shared food-activity
 patterns. One joins beet preservation with the three food-preparation notes;
@@ -22,16 +45,13 @@ No browser is adopted. The comparison weakens the case for requiring precise
 event roles before proceeding, but leaves lexical generalization, source errors,
 category selection and complete-note coverage unresolved.
 
-The next [semantic-order investigation](./SEMANTIC-ORDER-RESOURCES.md) finds a
+The [semantic-order investigation](./SEMANTIC-ORDER-RESOURCES.md) found a
 direct construction precedent and concrete SUMO paths across the missing
 noun/verb and Food distinctions. It also finds scope mismatches: the resource
 is not a verified semantic order. [SGC03's pre-run design](./SGC03-PLAN.md)
-tests approximate construction separately from mapping validity, with noun-only
-and noun-plus-verb conditions and same-order singleton controls. No SGC03 run,
-new model, resource adoption or browser change has occurred. Static lookup
-reachability alone would not establish progress; the required result is a
-source-supported meaningful path, with collateral admissions and exclusions
-inspected. Resources must pass the stated parsing/admission checks first.
+separates approximate construction from mapping validity using noun-only and
+noun-plus-verb conditions and same-order singleton controls. The completed
+comparison and collateral-admission audit are linked above.
 
 Preceding construction experiment: [SGC01 — contextual semantic graphs](./SEMANTIC-GRAPH-CONSTRUCTION.md).
 Fifteen unchanged descriptions from thirteen notes were given to a native

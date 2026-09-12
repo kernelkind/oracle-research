@@ -195,17 +195,21 @@ augmentation, requires same-order singleton controls, and distinguishes local
 membership from mapping validity. It explicitly does not test an already
 contradicted claim of universally sound containment. A positive pilot with
 justified paths would support testing transfer and category selection, not
-declaring the whole navigation goal solved. Resource parsing/admission checks
-remain required before construction.
+declaring the whole navigation goal solved. The [completed SGC03 comparison](./ONTOLOGY-CONSTRUCTION.md)
+now records useful local paths, class-of-attribute admission errors, other
+mapping scope mismatches, and unchanged source limitations. Class declarations
+and provenance did not establish semantic containment. Validation/adaptation
+of the cross-resource mappings remains unresolved.
 
 ## Reuse and sources
 
 The inspected files have different notices: the core ontology carries IEEE
 attribution terms; the mid-level ontology, Food file and mapping annotations
 declare GPL, and original WordNet content retains its own notice. They are not
-uniformly permissive. No complete external ontology or mapping file has been
-copied into this checkpoint. Any later reproducible resource snapshot must
-preserve its exact revision and applicable notices. [^core] [^milo] [^food]
+uniformly permissive. SGC03 retains full pinned resources in a separate local
+cache and saves parsed facts, used mapping rows, resource hashes and exact
+header notices with the experiment. These retained excerpts and records preserve
+the applicable notices; they do not relicense the upstream resource. [^core] [^milo] [^food]
 [^noun-mapping] [^verb-mapping]
 
 [^morph]: Verginica Mititelu, Svetlozara Leseva and Ivelina Stoyanova (2021), [Semantic Analysis of Verb-Noun Derivation in Princeton WordNet](https://aclanthology.org/2021.gwc-1.13.pdf), sections 2–4. Local lookup used the already frozen WordNet 3.0 cache and NLTK 3.9.2; this is not a new neural-model result.
