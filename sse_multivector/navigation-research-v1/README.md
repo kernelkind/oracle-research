@@ -3,7 +3,18 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest construction control: [CAP03 — existing subject descriptions](./SUBJECT-DESCRIPTION-CONSTRUCTION.md).
+Latest construction diagnostic: [CAP04 — order and adjacency](./ORDERED-PHRASE-CANDIDATES.md).
+The same 945 subject records yield useful repeated phrases, including ten morning
+greetings omitted by CAP03. Word order removes the specific More-coffee collision;
+adjacency also loses the valid rosemary/bread combination. Repeated reporting
+language remains, and equivalent greeting expressions select different note sets.
+Neither pattern family is a sufficient semantic representation. All patterns and
+154 inspected source records are saved; 38 tests pass, with an exact replay.
+No hierarchy, baseline or browser changed. Next, investigate complete grounded
+subject expressions, separating cross-gap attachment from wording equivalence;
+do not extend pair enumeration or tune frequency as a semantic solution.
+
+Preceding construction control: [CAP03 — existing subject descriptions](./SUBJECT-DESCRIPTION-CONSTRUCTION.md).
 The mask control reproduces CAP02 exactly. Using saved per-mask subjects adds
 useful Food abstractions and local preservation/harmful-food refinements, but
 also produces 556 candidates and 359 links dominated by reporting/function words.
@@ -11,9 +22,9 @@ The meaningful relationship in `more complete disconnection` is lost when its
 words are grouped with `more coffee`. Explicit good-morning, processed-food and
 sea-salt combinations are present in the input but missed by the single-feature
 seed family. This separates candidate availability from missing interpretation.
-No browser is adopted. Next, investigate retaining shared multiword descriptions
-without proliferating grammatical distinctions; do not add another extractor to
-repair meaning already present. Attachment and broader membership remain open.
+No browser is adopted. CAP04 above tests retaining shared multiword descriptions
+and bounds what order/adjacency can establish. Attachment, equivalent meanings
+and broader membership remain open; no new extractor has been selected.
 All inputs, both outputs, source snapshots and the complete link audit are saved.
 
 Preceding representation audit: [CSA01 — contextual attributes](./CONTEXTUAL-ATTRIBUTES.md).

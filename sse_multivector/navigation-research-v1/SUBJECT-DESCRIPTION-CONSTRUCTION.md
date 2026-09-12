@@ -174,6 +174,11 @@ and every parent-only member have not been exhaustively semantically certified.
 
 ## Decision
 
+The follow-up [CAP04 order/adjacency diagnostic](./ORDERED-PHRASE-CANDIDATES.md)
+recovers the omitted combinations and establishes a limit: adjacency removes
+some false combinations but also loses valid dispersed subjects. Its complete
+inventory and source review refine the candidate-construction question below.
+
 Do not add another context-extraction model merely to repair meanings already
 expressed correctly in the saved subjects. Do not adopt subject-word closure as
 the browser either. It provides useful broad abstractions in some cases, retains
