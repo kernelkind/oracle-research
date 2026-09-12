@@ -154,6 +154,12 @@ candidate interpretation. The complete proposed construction still depends on
 adequate shared attributes, selective memberships, valid inclusion relations,
 and navigation selection; these dependencies are not discharged by five links.
 
+The subsequent [CSA01 audit](./CONTEXTUAL-ATTRIBUTES.md) checks contextual
+word senses before a model run. It confirms useful lexical ancestors but also
+inventory and composition limits. Word senses are retained as a possible
+component, not selected as the sole replacement for source descriptions.
+The original CAP02 data and judgments above remain unchanged.
+
 ## Literature check
 
 The [CAP02 plan](./CAP02-PLAN.md) records the bounded FCA mechanism, its fit,
