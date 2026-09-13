@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv2-node-description-probe-v13-additional-v1",
+  "prompt_version": "v13",
+  "frozen_version": "v1",
+  "status": "approved_test_not_frozen",
+  "change": "New complete groups only; v13 prompt, model, effort, wrapper and input serialization unchanged.",
+  "prompt_template": "Write the most precise category title for the subject matter supported by every instance.\n\nInterpret the quoted text within each instance together.\n\nFor each instance, ask yourself: \"Given this instance alone, must it belong to the category named by this title?\"\n\nInstances:\n\n{NUMBERED_INSTANCES}\n",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "groups": [
+    {
+      "segment": "S50475065d8",
+      "selection_rationale": "Short topic words; check subject naming rather than input-format naming.",
+      "mask_instances": 3,
+      "notes": 3
+    },
+    {
+      "segment": "S7dd75e5388",
+      "selection_rationale": "A broad instance accompanies several more specific instances; check unsupported specificity.",
+      "mask_instances": 5,
+      "notes": 2
+    },
+    {
+      "segment": "S65c33de2ef",
+      "selection_rationale": "Related actions with differing methods and durations; check common meaning without inventing a shared method or duration.",
+      "mask_instances": 2,
+      "notes": 2
+    },
+    {
+      "segment": "Sd5f4538ab9",
+      "selection_rationale": "Different dishes and added ingredients; check useful shared context without importing an ingredient into another instance.",
+      "mask_instances": 5,
+      "notes": 3
+    },
+    {
+      "segment": "Sa256265971",
+      "selection_rationale": "Colloquial descriptions of contrasting mental states; check a shared subject without imposing one state on every instance.",
+      "mask_instances": 3,
+      "notes": 2
+    },
+    {
+      "segment": "Sae17bb57f6",
+      "selection_rationale": "Different abstract statements; check whether a supported shared subject can be named without inventing a relationship.",
+      "mask_instances": 2,
+      "notes": 2
+    }
+  ],
+  "repetitions": 2,
+  "calls": 12,
+  "max_concurrent_calls": 3,
+  "question": "Does unchanged v13 produce supported, appropriately specific subject-category titles on a small diverse sample of previously unused complete HDBv2 groups?",
+  "evaluation": [
+    "Read each mask's quoted text together; retain normal semantic interpretation.",
+    "Every mask must independently support membership in the named subject category; another mask must not supply missing specificity.",
+    "Judge a category of subject matter, not a class of keywords, text, tags or mentions.",
+    "Textual subjects remain valid when they actually are the subject matter.",
+    "A broad title can be correct when evidence does not support a narrower one; a category joined with and need not assert every item simultaneously.",
+    "Separate unsupported scope, describing input form, and avoidable loss of specific meaning; do not require exact reference strings.",
+    "Preserve assistant disagreements and every raw output; assign no user decisions."
+  ],
+  "novelty": {
+    "comparison": "All 102 prior title configs and result metadata across 12 experiment directories; eight prior source-packet files cover 18 original groups.",
+    "previously_tested_groups": 0,
+    "previous_exact_masks": 0,
+    "mask_instances": 20,
+    "unique_exact_masks": 19,
+    "source_notes": 13,
+    "previously_seen_notes": 6,
+    "new_notes": 7,
+    "limitation": "New groups and masks from the same original 100-note food-centered corpus, not a new corpus or wholly unseen notes.",
+    "audit": "/root/v13_new_group_audit performed read-only input and metadata checks without inspecting generated titles.",
+    "duplicate_policy": "Preserve complete original groups including exact duplicate V106/V105; no input repair or deduplication."
+  },
+  "comparison": "No historical same-group baseline. Both repetitions are preserved; no exact target titles are specified. This selected small sample is not a population accuracy estimate.",
+  "execution": "One new isolated subscription-authenticated Codex process/thread/workspace per group and trial. Same CLI binary, wrapper, model, low effort, no schema or extra instructions. Numbered grouped quoted fragments unchanged; no full notes, expected titles, examples or prior responses supplied. Three concurrent calls maximum; no retry or best-of.",
+  "budget": "Existing subscription allowance only; no API billing, rental, new purchase or credential changes.",
+  "source_review": "sse_multivector/real-note-fine-segmentation-v1/hdbscan-cross-note/review/review.json",
+  "source_review_sha256": "999e30fe987e2816bdb588f28cc8e7c6141a6d152344836d5ea4eebcda0121ae"
+}
