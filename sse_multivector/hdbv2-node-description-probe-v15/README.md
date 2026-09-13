@@ -66,6 +66,6 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 
 ## Next decision
 
-Keep v15 unchanged. There is no remaining user-confirmed failure here to motivate another prompt edit. The next proposed step is a small, diverse sample of previously untested groups, rather than more attempts to repair the accepted brisket title. That test has not been authorized or run. V15 remains an unfrozen candidate.
+Keep v15 unchanged. There is no remaining user-confirmed failure in this sample to motivate another prompt edit. The user subsequently authorized the [six-new-group test](../hdbv2-node-description-probe-v15-additional-v1/README.md), which is now complete: nine outputs are assistant-accepted and three are uncertain, representing two distinct titles awaiting user judgment. V15 remains an unfrozen candidate; the accepted brisket title is not being treated as an outstanding failure.
 
 The [official GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed the isolated change and fixed-input retest, not the semantic judgments.

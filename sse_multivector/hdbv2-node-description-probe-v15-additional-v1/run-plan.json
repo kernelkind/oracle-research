@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv2-node-description-probe-v15-additional-v1",
+  "prompt_version": "v15",
+  "frozen_version": "v1",
+  "status": "approved_test_not_frozen",
+  "change": "New complete groups only. V15 prompt, model, effort, runner and serialization unchanged.",
+  "prompt_template": "Write the most precise and concise category title for the subject matter supported by every instance.\n\nInterpret the quoted text within each instance together.\n\nFor each instance, ask yourself: \"Given this instance alone, must its subject matter belong to the category named by this title?\"\n\nInstances:\n\n{NUMBERED_INSTANCES}\n",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "groups": [
+    {
+      "segment": "Sbbd7d8dae4",
+      "selection_rationale": "Several related opinions and processes expressed through separated fragments; shared subject must remain useful without copying every detail.",
+      "mask_instances": 5,
+      "notes": 2
+    },
+    {
+      "segment": "Saadde5a7ec",
+      "selection_rationale": "Short expressions with an implicit ordinary subject and different attitudes toward it; keep limited evidence intact.",
+      "mask_instances": 2,
+      "notes": 2
+    },
+    {
+      "segment": "S6088798e3d",
+      "selection_rationale": "Mostly greetings with morning-coffee and afternoon instances; test an entire heterogeneous group rather than trimming difficult members.",
+      "mask_instances": 6,
+      "notes": 6
+    },
+    {
+      "segment": "S0c3094257f",
+      "selection_rationale": "Two distinct foods sharing an explicit cuisine context; avoid replacing subject meaning with a list of word types.",
+      "mask_instances": 2,
+      "notes": 2
+    },
+    {
+      "segment": "S8077d349df",
+      "selection_rationale": "Technical and sensory descriptions about meat; test ordinary semantic interpretation without importing source-note context.",
+      "mask_instances": 2,
+      "notes": 2
+    },
+    {
+      "segment": "Sf5a4b23523",
+      "selection_rationale": "Hashtag-only fragments alongside a sipping fragment; test naming subject matter despite marker-like input.",
+      "mask_instances": 7,
+      "notes": 7
+    }
+  ],
+  "repetitions": 2,
+  "calls": 12,
+  "max_concurrent_calls": 3,
+  "question": "Does unchanged v15 produce useful, concise subject-category titles for a small diverse selection of previously unused complete HDBv2 groups?",
+  "evaluation": [
+    "Interpret each mask's exact fragments together with ordinary semantic knowledge; judge the named subject against all members.",
+    "Do not demand one canonical title or literal word overlap. A title can cover alternatives and broader wording can be acceptable.",
+    "Do not name the text's formatting instead of its subject. Advice and other textual subjects remain valid when they are the actual subject matter.",
+    "The user accepted Brisket smoking for the preceding group containing a bare brisket mask and smoking masks. Preserve that case-specific decision rather than treating it as an outstanding failure or silently inferring a new universal rule.",
+    "Separate a weak source mask or a heterogeneous grouping from a title-generation error; do not repair inputs or invent specificity to force a pass.",
+    "Preserve all responses, explicitly distinguish assistant uncertainty from clear errors, and record no user decisions automatically."
+  ],
+  "selection": {
+    "original_groups": 64,
+    "previously_used_unique_groups": 24,
+    "untested_groups_before_this_run": 40,
+    "selected_groups": 6,
+    "selected_previously_used_groups": 0,
+    "limitation": "New group memberships from the same 100-note food-centered corpus, not new source notes by definition, an independent corpus or a general accuracy estimate.",
+    "no_prior_generated_titles_used_for_selection": true,
+    "complete_groups_not_trimmed": true,
+    "duplicate_masks_preserved": true
+  },
+  "comparison": "Two repetitions of unchanged v15. No same-group prior title baseline; the review comparison shows the other trial. This selected sample is not a population estimate.",
+  "execution": "One new isolated subscription-authenticated Codex process/thread/empty workspace per group and trial. Same pinned CLI and wrapper as v15; no extra schema, tools, web, examples, expected titles, full source notes or review comments supplied. Three concurrent calls at most; no retry or best-of.",
+  "budget": "Existing subscription allowance only. No new API billing, rental, purchase, credential changes or local model inference.",
+  "source_review": "sse_multivector/real-note-fine-segmentation-v1/hdbscan-cross-note/review/review.json",
+  "source_review_sha256": "999e30fe987e2816bdb588f28cc8e7c6141a6d152344836d5ea4eebcda0121ae",
+  "preceding_user_approval": {
+    "group": "S7dd75e5388",
+    "trial": 1,
+    "title": "Brisket smoking",
+    "source": "target/hdbv2-node-description-v15-review-session.json",
+    "sha256": "93f9fdcff00021fcbbcf61d33790d7058e9a2a760d79ce3b1caccb3efdd69d6b",
+    "outcome": "approved"
+  }
+}
