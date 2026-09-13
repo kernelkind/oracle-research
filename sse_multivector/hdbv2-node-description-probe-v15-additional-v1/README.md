@@ -76,6 +76,6 @@ This extends the evidence to six new groups without an unresolved title objectio
 
 ## Next decision
 
-The two review questions in this sample are resolved. The user subsequently approved completing v15 title coverage for the remaining 49 accepted HDBv2 groups. The [complete run](../hdbv2-node-titles-v15/README.md) now assembles all 61 outputs, reusing these first trials and preserving the alternatives. Four new outputs have clear problems and three are uncertain, so their review replaces the earlier freeze recommendation as the current next decision. V15 remains unchanged and unfrozen; no hierarchy links were constructed.
+The two review questions in this sample are resolved. The user subsequently approved completing v15 title coverage for the remaining 49 accepted HDBv2 groups. The [complete run](../hdbv2-node-titles-v15/README.md) now assembles all 61 outputs, reusing these first trials and preserving the alternatives. Its three uncertain titles have now been approved by the user; four assistant-flagged outputs remain unresolved. Those outputs, rather than the accepted scope questions, are the next issue to address. V15 remains unchanged and unfrozen; no hierarchy links were constructed.
 
 The [official GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed keeping the prompt and execution settings fixed. It does not determine the semantic judgments.
