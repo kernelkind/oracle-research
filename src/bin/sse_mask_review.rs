@@ -57,7 +57,11 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         }
         let mut terminal = ReferenceTerminal::new()?;
         let outcome = run_title_prompt_review(batch, session, start_at, |screen, comment| {
-            terminal.review_navigable_prompt_iteration(screen, comment)
+            if screen.title.is_some() {
+                terminal.review_title(screen, comment)
+            } else {
+                terminal.review_navigable_prompt_iteration(screen, comment)
+            }
         })?;
         drop(terminal);
         match outcome {

@@ -10,12 +10,13 @@ The single unrelated contrastive example did not fix the targeted weather issue 
 
 The launcher builds the existing `sse-mask-review` binary through Nix with two build jobs, then opens its dedicated `review-titles` mode. No model calls are made by the UI.
 
-- Six cards; one node and one v4-title decision per card.
-- The exact v4 output is under review. The fresh v3 output is comparison only, not another approval question.
-- All original member masks appear together with V IDs and bracketed fragments separated by spaces. Neither duplicate masks nor source fragments are removed.
-- A approves v4; R disapproves v4; C opens the optional comment editor and Enter saves it; S skips. Left/right revisits cards, including reviewed cards; up/down scrolls. Ctrl-C pauses. Running the same command resumes the saved card.
-- To reopen a completed card, append `--start-at Scc38f7607c` (or another node ID).
-- User decisions live in `target/hdbv2-node-description-v4-review-session.json`. It is not prefilled with assistant assessments. Tests and smoke inspection use temporary sessions, not that path. Input identity is checked on resume so changed titles/masks cannot inherit decisions.
+- Only uncertain judgments are surfaced: currently one card, **Sea salt** (Sfd8645f195). The other five results remain saved; they are not assigned user approvals or rejections.
+- The exact v4 title stays above the masks. V3 is hidden until B opens the comparison; it is not another approval question.
+- All original member masks appear together with V IDs, blank lines between masks, and bracketed fragments separated by spaces. Neither duplicate masks nor source fragments are removed.
+- My assessment appears below the masks, separate from your decision. Here I lean toward accepting the title, but am unsure whether it loses important shared food-use context.
+- A approves v4; R rejects v4; C edits an optional comment and Enter saves it; S skips. Left/right revisits cards; up/down scrolls masks. B opens/closes the comparison, including complete long titles or assessments. Ctrl-C saves/exits. The same command resumes.
+- To reopen the completed card, append `--start-at Sfd8645f195`.
+- This focused review uses `target/hdbv2-node-description-v4-uncertain-review-session.json`, initially without decisions. The original six-card artifact and `target/hdbv2-node-description-v4-review-session.json` are unchanged. Tests and smoke inspection use temporary sessions. Changed review inputs cannot inherit previous decisions.
 
 ## Exact results
 
@@ -32,7 +33,7 @@ These are fresh v3/v4 calls, not replacements for earlier outputs. Markdown/code
 
 ## Assistant assessment, separate from user review
 
-- Scc38f7607c: Both fresh versions restrict the category to fall even though V729 and V728 supply only frost/sunrise/garden evidence. V4's unrelated example did not remove that restriction in this trial. The raw v4 response additionally includes Title:, which is preserved rather than stripped. This is an assistant scope assessment pending user review, not a claim the underlying group is invalid.
+- Scc38f7607c: Both fresh versions restrict the category to fall even though V729 and V728 supply only frost/sunrise/garden evidence. V4's unrelated example did not remove that restriction in this trial. The raw v4 response additionally includes Title:, which is preserved rather than stripped. I can reject this title without asking for another user decision. This is not a user verdict or a claim the underlying group is invalid.
 
 - S24afa84c49: Both outputs capture preparation. V4's bean qualifier is present in all masks through grinding beans or roasting one's own beans with coffee. Neither fresh output adds Home. This does not establish that the example caused the omission: unchanged v3 had already omitted Home in earlier repeats.
 
@@ -53,10 +54,13 @@ Adding only a targeted demonstration and retesting the same cases follows the [o
 - [Run plan](run-plan.json) records selection, hypothesis and fixed settings before generation.
 - [Source packets](source-packets.json) retain all 25 masks / 54 exact UTF-8 fragments from six complete HDBv2 groups, including full original notes for provenance. Full notes, review judgments and target answers were not passed to the model.
 - [Comparison](comparison.json) contains exact outputs, hashes, fresh thread IDs, usage and separate assistant judgments.
-- [UI batch](review.json) contains the exact generated titles and complete masks. It contains no assistant verdicts or edits to generated text.
+- [Original complete batch](review.json) preserves all six exact generated titles and complete masks, unchanged.
+- [Assistant assessments](assistant-assessments.json) distinguish four confident accepts, one confident rejection, and one uncertain judgment. These are not user decisions.
+- [Focused UI batch](review-uncertain.json) contains only that uncertain item, with unchanged titles/masks and the assistant's opinion. Selection happens before opening the UI; the UI only presents supplied items and records the user's decisions.
 - Each node/version directory contains its exact `config.json` and unedited run manifest, output, result log and model instructions.
 - All twelve fresh isolated Sol low calls succeeded on attempt one, with at most three concurrent calls. Independent audit verified input reconstruction, complete membership, source spans, exact hashes, distinct threads/workspaces, no tools, and preserved v1–v3 registry entries and previous raw artifacts. No retries or best-output selection.
-- UI verification: the new CLI test first failed against the old binary for the missing title-review entrypoint. All 7 new and 84 relevant existing tests then passed. A real-terminal check opened all six cards and verified pause/resume using a temporary session; the user session remains untouched. An independent code review found no concrete correctness issue. The UI batch was also checked directly against every raw output and all original UTF-8 mask ranges.
+- Original UI verification: the CLI test first failed against the old binary for the missing title-review entrypoint. All 7 new and 84 relevant existing tests then passed. The full six-card artifact was checked against every raw output and all original UTF-8 mask ranges. Those original tests and artifacts are retained unchanged.
+- Focused UI verification: the new assessment test first failed because the old input schema rejected `assessment`; the new tall-terminal test first demonstrated 23 unwanted blank rows between masks and opinion. After implementation, all 91 unchanged regressions and 8 new tests pass. New tests cover the actual one-card artifact, visible complete opinion/masks at 72×24, content-sized layout at 80×40, pinned title during scrolling, B comparison, complete long text, comments, and unchanged legacy session hashes. Old user data and all original generated artifacts remain unchanged.
 
 | Version | Input | Output | Reasoning included in output | Cached input |
 | --- | ---: | ---: | ---: | ---: |

@@ -6,5 +6,5 @@ root="$(cd -- "$here/../.." && pwd)"
 cd "$root"
 nix develop -c cargo build --release --jobs 2 --bin sse-mask-review
 exec "$root/target/release/sse-mask-review" review-titles \
-  "$here/review.json" \
-  "$root/target/hdbv2-node-description-v4-review-session.json" "$@"
+  "$here/review-uncertain.json" \
+  "$root/target/hdbv2-node-description-v4-uncertain-review-session.json" "$@"

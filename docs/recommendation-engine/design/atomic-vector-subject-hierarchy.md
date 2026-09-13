@@ -194,9 +194,14 @@ prepend one unrelated jewelry-polishing example to the otherwise unchanged v3
 prompt. Fresh v3/v4 calls on six existing nodes both retain the fall restriction
 in the weather case; this example did not demonstrate a fix. Other selected
 controls remain broadly defensible under assistant assessment. The dedicated
-`sse-mask-review review-titles` mode presents exact v4 titles and every member
-mask, with v3 comparison-only context and independent, initially empty user
-decisions. The frozen selector remains v1; v4 is not a selected replacement.
+`sse-mask-review review-titles` mode presents an exact v4 title, every member
+mask, and the assistant's assessment, with v3 comparison available on demand.
+The current launcher surfaces only uncertain assistant judgments: one sea-salt
+title whose shared food-use context may be worth retaining. Confident assistant
+judgments and all original results remain saved separately, never copied into
+user decisions. The original six-card review session is preserved; the focused
+review has a separate session. The frozen selector remains v1; v4 is not a
+selected replacement.
 
 A title describes an already formed group. It must not change
 membership or broaden an incoherent group until it sounds plausible. Prompt

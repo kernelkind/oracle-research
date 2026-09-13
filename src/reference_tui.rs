@@ -145,6 +145,7 @@ pub struct ApprovalTuiModel {
     editing_prompt_comment: bool,
     interaction_enabled: bool,
     item_navigation: bool,
+    compact_title: bool,
 }
 
 impl ApprovalTuiModel {
@@ -159,6 +160,12 @@ impl ApprovalTuiModel {
     pub fn new_navigable_prompt_iteration(screen: ApprovalScreen, comment: String) -> Self {
         let mut model = Self::new_prompt_iteration(screen, comment);
         model.item_navigation = true;
+        model
+    }
+
+    pub fn new_title_review(screen: ApprovalScreen, comment: String) -> Self {
+        let mut model = Self::new_navigable_prompt_iteration(screen, comment);
+        model.compact_title = true;
         model
     }
 
@@ -197,6 +204,7 @@ impl ApprovalTuiModel {
             editing_prompt_comment: false,
             interaction_enabled: true,
             item_navigation: false,
+            compact_title: false,
         }
     }
 
@@ -252,6 +260,10 @@ impl ApprovalTuiModel {
         }
         if self.guidance_visible {
             match key.code {
+                KeyCode::Char('b' | 'B') if self.compact_title => {
+                    self.guidance_visible = false;
+                    self.guidance_scroll = 0;
+                }
                 KeyCode::Char('?') | KeyCode::Esc => {
                     self.guidance_visible = false;
                     self.guidance_scroll = 0;
@@ -274,6 +286,10 @@ impl ApprovalTuiModel {
             return ApprovalTuiAction::None;
         }
         match key.code {
+            KeyCode::Char('b' | 'B') if self.compact_title && self.screen.guidance.is_some() => {
+                self.guidance_visible = true;
+                self.guidance_scroll = 0;
+            }
             KeyCode::Char('?') if self.screen.guidance.is_some() => {
                 self.guidance_visible = true;
                 self.guidance_scroll = 0;
@@ -485,6 +501,10 @@ impl ApprovalTuiModel {
             return;
         }
         let area = centered(area);
+        if self.compact_title {
+            self.render_title_review(frame, area);
+            return;
+        }
         let footer_height = if self.pending_outcome.is_some() {
             8
         } else if self.editing_prompt_comment {
@@ -738,6 +758,156 @@ impl ApprovalTuiModel {
             .try_into()
             .unwrap_or(u16::MAX);
         frame.render_widget(footer.scroll((footer_scroll, 0)), rows[5]);
+    }
+
+    fn render_title_review(&mut self, frame: &mut Frame<'_>, area: Rect) {
+        let title = Paragraph::new(self.screen.title.as_deref().unwrap_or_default())
+            .style(accent_style())
+            .wrap(Wrap { trim: false });
+        let title_lines = title.line_count(area.width);
+        // Keep masks and controls usable even when the raw response is very long.
+        // Any shortened pinned text has an explicit route to its complete text.
+        let title_height = title_lines.min(4) as u16;
+        let title_shortened = title_lines > usize::from(title_height);
+        let annotation = if self.guidance_visible {
+            ""
+        } else {
+            self.screen
+                .evidence
+                .get(self.evidence_index)
+                .map_or("", |evidence| evidence.annotation.as_str())
+        };
+        let assessment = Paragraph::new(annotation).wrap(Wrap { trim: false });
+        let assessment_lines = if annotation.is_empty() {
+            0
+        } else {
+            assessment.line_count(area.width)
+        };
+        let assessment_height = assessment_lines.min(3) as u16;
+        let assessment_shortened = assessment_lines > usize::from(assessment_height);
+        let footer_height = if self.editing_prompt_comment { 5 } else { 3 };
+        let annotation_height = assessment_height + u16::from(assessment_shortened) + 1;
+        let panel_content = if self.guidance_visible {
+            self.screen
+                .guidance
+                .as_ref()
+                .map(|guidance| guidance.body.as_str())
+        } else {
+            self.screen
+                .evidence
+                .get(self.evidence_index)
+                .map(|evidence| evidence.body.as_str())
+        }
+        .unwrap_or_default();
+        let panel_lines = Paragraph::new(panel_content)
+            .wrap(Wrap { trim: false })
+            .line_count(area.width.saturating_sub(4));
+        let available_panel_height = area
+            .height
+            .saturating_sub(2 + title_height + 1 + 2 + annotation_height + footer_height);
+        let panel_height = u16::try_from(panel_lines.saturating_add(2))
+            .unwrap_or(u16::MAX)
+            .min(available_panel_height)
+            .max(4);
+        let rows = Layout::vertical([
+            Constraint::Length(2),
+            Constraint::Length(title_height),
+            Constraint::Length(1),
+            Constraint::Length(2),
+            Constraint::Length(panel_height),
+            Constraint::Length(annotation_height),
+            Constraint::Length(footer_height),
+            Constraint::Min(0),
+        ])
+        .split(area);
+        frame.render_widget(
+            Paragraph::new(self.screen.heading.as_str()).style(secondary_style()),
+            rows[0],
+        );
+        frame.render_widget(title, rows[1]);
+        if title_shortened {
+            frame.render_widget(
+                Paragraph::new("… [B] Full title").style(secondary_style()),
+                rows[2],
+            );
+        }
+        frame.render_widget(Paragraph::new(self.screen.scope.as_str()), rows[3]);
+        if self.guidance_visible {
+            let guidance = self
+                .screen
+                .guidance
+                .as_ref()
+                .expect("visible comparison is present");
+            render_scrollable_panel(
+                frame,
+                rows[4],
+                &guidance.title,
+                &guidance.body,
+                &mut self.guidance_scroll,
+                &mut self.half_page_lines,
+                false,
+            );
+        } else if let Some(evidence) = self.screen.evidence.get(self.evidence_index) {
+            render_scrollable_panel(
+                frame,
+                rows[4],
+                &evidence.title,
+                &evidence.body,
+                &mut self.evidence_scrolls[self.evidence_index],
+                &mut self.half_page_lines,
+                false,
+            );
+        }
+        let assessment_area = Rect {
+            height: assessment_height,
+            ..rows[5]
+        };
+        frame.render_widget(assessment, assessment_area);
+        if assessment_shortened {
+            frame.render_widget(
+                Paragraph::new("… [B] Full assessment").style(secondary_style()),
+                Rect {
+                    y: rows[5].y + assessment_height,
+                    height: 1,
+                    ..rows[5]
+                },
+            );
+        }
+        let footer = if self.editing_prompt_comment {
+            vec![
+                Line::styled("Comment (optional)", accent_style()),
+                Line::raw(format!("> {}", self.comment)),
+                Line::styled("[Enter] Save  [Esc] Cancel", secondary_style()),
+            ]
+        } else if self.guidance_visible {
+            vec![Line::styled(
+                "[B/Esc] Back  [↑/↓] Scroll  [Ctrl-C] Save/exit",
+                secondary_style(),
+            )]
+        } else {
+            let mut lines = vec![
+                Line::styled(
+                    "[A] Approve  [R] Reject  [C] Comment  [S] Skip",
+                    accent_style(),
+                ),
+                Line::styled(
+                    "[←/→] Previous/next  [↑/↓] Scroll  [B] Compare  [Ctrl-C] Save/exit",
+                    secondary_style(),
+                ),
+            ];
+            if !self.comment.is_empty() {
+                lines.push(Line::styled("Comment saved · [C] Edit", secondary_style()));
+            }
+            lines
+        };
+        let footer = Paragraph::new(footer).wrap(Wrap { trim: false });
+        let scroll = footer
+            .line_count(rows[6].width)
+            .saturating_sub(rows[6].height as usize);
+        frame.render_widget(
+            footer.scroll((u16::try_from(scroll).unwrap_or(u16::MAX), 0)),
+            rows[6],
+        );
     }
 }
 
@@ -1054,6 +1224,14 @@ impl ReferenceTerminal {
         comment: String,
     ) -> io::Result<ApprovalTuiAction> {
         self.run_review_model(ApprovalTuiModel::new_navigable_prompt_iteration(screen, comment))
+    }
+
+    pub fn review_title(
+        &mut self,
+        screen: ApprovalScreen,
+        comment: String,
+    ) -> io::Result<ApprovalTuiAction> {
+        self.run_review_model(ApprovalTuiModel::new_title_review(screen, comment))
     }
 
     pub(crate) fn run_review_model<M>(&mut self, mut model: M) -> io::Result<M::Action>

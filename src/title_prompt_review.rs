@@ -32,6 +32,8 @@ struct TitleReviewItem {
     candidate_title: String,
     baseline_title: String,
     instances: Vec<TitleReviewInstance>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    assessment: Option<String>,
 }
 
 #[derive(Deserialize, Serialize)]
@@ -91,6 +93,10 @@ impl TitleReviewBatch {
             if item.item_id.trim().is_empty()
                 || item.candidate_title.trim().is_empty()
                 || item.baseline_title.trim().is_empty()
+                || item
+                    .assessment
+                    .as_ref()
+                    .is_some_and(|text| text.trim().is_empty())
                 || item.instances.is_empty()
                 || !ids.insert(item.item_id.as_str())
             {
@@ -135,7 +141,43 @@ impl TitleReviewBatch {
                 format!("{}: {fragments}", instance.instance)
             })
             .collect::<Vec<_>>()
-            .join("\n");
+            .join(if item.assessment.is_some() {
+                "\n\n"
+            } else {
+                "\n"
+            });
+        if let Some(assessment) = &item.assessment {
+            return ApprovalScreen {
+                heading: format!(
+                    "{} of {} · {} · {} · {status}",
+                    index + 1,
+                    self.items.len(),
+                    item.item_id,
+                    self.candidate_version
+                ),
+                title: Some(item.candidate_title.clone()),
+                scope: "Does this title fit every mask?".into(),
+                approve_label: "Approve".into(),
+                reject_label: "Reject".into(),
+                rejection_help: String::new(),
+                guidance: Some(ApprovalGuidance {
+                    title: "Compare titles".into(),
+                    body: format!(
+                        "{} candidate — complete raw response:\n{}\n\n{} baseline — context only:\n{}\n\nMy assessment: {}\n\nOnly your A/R/S choice records a decision. B or Esc returns to the masks.",
+                        self.candidate_version,
+                        item.candidate_title,
+                        self.baseline_version,
+                        item.baseline_title,
+                        assessment
+                    ),
+                }),
+                evidence: ApprovalEvidenceLayout::Paged(vec![ApprovalEvidence {
+                    title: "Masks".into(),
+                    annotation: format!("My assessment: {assessment}"),
+                    body: masks,
+                }]),
+            };
+        }
         ApprovalScreen {
             heading: format!(
                 "Title review · {} of {} · {} · {status}",
