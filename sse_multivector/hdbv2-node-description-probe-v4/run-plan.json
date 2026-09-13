@@ -1,0 +1,39 @@
+{
+  "baseline": "v3",
+  "candidate": "v4",
+  "nodes": [
+    {
+      "node": "Scc38f7607c",
+      "rationale": "Weather: season qualification is unsupported by some masks."
+    },
+    {
+      "node": "S24afa84c49",
+      "rationale": "Coffee: prior Home restriction; retain preparation meaning."
+    },
+    {
+      "node": "S8a6ab7afaf",
+      "rationale": "Art: avoid describing the input as keywords/tags."
+    },
+    {
+      "node": "Sfd8645f195",
+      "rationale": "Sea salt: retain justified specificity across dishes."
+    },
+    {
+      "node": "S3d2aa08f70",
+      "rationale": "Literature: broad member among detailed audiobook criticism."
+    },
+    {
+      "node": "S96e55b4730",
+      "rationale": "Weekend wishes: preserve shared meaning across different days and qualifications."
+    }
+  ],
+  "change": "Prepend one separate jewelry-polishing example showing a supported title and an unsupported gold restriction. Original v3 prompt body and actual-instance format unchanged.",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "calls_per_version_per_node": 1,
+  "max_concurrent_calls": 3,
+  "hypothesis": "A concrete, unrelated example may help apply the existing shared-evidence constraint when some instances suggest but do not establish a qualifier. Preserve useful specificity and semantic abstraction.",
+  "execution": "12 new isolated calls, no cached output reuse, retries or best-of selection. Freeze inputs before running. Example is identical across v4 calls; no actual node answer or review judgment enters prompts.",
+  "evaluation": "Inspect exact titles against complete masks. No unique target labels, no automatic verdict adoption or prompt freeze. A single paired sample per node cannot isolate prompt effects from variation.",
+  "review": "Six v4-title decisions in existing review screen with a dedicated title-review adapter. V3 shown as comparison only. Every original mask retained; comments/skip/resume; no assistant verdict preselected."
+}

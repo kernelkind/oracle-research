@@ -8,17 +8,19 @@ use oracle_mvp::mask_prompt_review::{MaskPromptReviewOutcome, run_mask_prompt_re
 use oracle_mvp::reference_tui::ReferenceTerminal;
 use oracle_mvp::sse_mask_review::{
     AtomicSubjectNoteReviewRunOutcome, ReviewStage, SelectedSubjectReviewRunOutcome,
-    SubjectMaskReviewRunOutcome,
-    load_verified_subject_mask_proposal, run_atomic_subject_note_review, run_claim_note_review,
-    run_selected_atomic_subject_review, run_subject_mask_review,
+    SubjectMaskReviewRunOutcome, load_verified_subject_mask_proposal,
+    run_atomic_subject_note_review, run_claim_note_review, run_selected_atomic_subject_review,
+    run_subject_mask_review,
 };
+use oracle_mvp::title_prompt_review::{TitlePromptReviewOutcome, run_title_prompt_review};
 
 const USAGE: &str = "usage: sse-mask-review \
     <subject-mask-proposal.json> <session.json> <approved-subject-masks.json>\n       \
     sse-mask-review iterate <generation-run-directory> <prompt-review-session.json> [--only <note:subject,...>]\n       \
     sse-mask-review review-subjects <experiment-directory>\n       \
     sse-mask-review review-claims <experiment-directory>\n       \
-    sse-mask-review review-masks <mask-review.json> <mask-session.json> [--start-at <item-id>]";
+    sse-mask-review review-masks <mask-review.json> <mask-session.json> [--start-at <item-id>]\n       \
+    sse-mask-review review-titles <title-review.json> <title-session.json> [--start-at <item-id>]";
 
 #[derive(Clone, Copy)]
 enum PromptReviewMode {
@@ -38,12 +40,46 @@ fn main() -> ExitCode {
 
 fn run() -> Result<(), Box<dyn std::error::Error>> {
     let arguments = env::args().skip(1).collect::<Vec<_>>();
+    let title_review = match arguments.as_slice() {
+        [command, batch, session] if command == "review-titles" => Some((batch, session, None)),
+        [command, batch, session, flag, item]
+            if command == "review-titles" && flag == "--start-at" =>
+        {
+            Some((batch, session, Some(item.as_str())))
+        }
+        _ => None,
+    };
+    if let Some((batch, session, start_at)) = title_review {
+        if !std::io::stdin().is_terminal() || !std::io::stdout().is_terminal() {
+            return Err(
+                "the title prompt review must be started from an interactive terminal".into(),
+            );
+        }
+        let mut terminal = ReferenceTerminal::new()?;
+        let outcome = run_title_prompt_review(batch, session, start_at, |screen, comment| {
+            terminal.review_navigable_prompt_iteration(screen, comment)
+        })?;
+        drop(terminal);
+        match outcome {
+            TitlePromptReviewOutcome::Paused => println!("Title review paused safely"),
+            TitlePromptReviewOutcome::Completed {
+                approved,
+                rejected,
+                skipped,
+            } => println!(
+                "Title review complete: {approved} approved, {rejected} disapproved, {skipped} skipped"
+            ),
+        }
+        return Ok(());
+    }
     if let [command, generation_run, session, flag, selection] = arguments.as_slice()
         && command == "iterate"
         && flag == "--only"
     {
         if !std::io::stdin().is_terminal() || !std::io::stdout().is_terminal() {
-            return Err("the SSE prompt review must be started from an interactive terminal".into());
+            return Err(
+                "the SSE prompt review must be started from an interactive terminal".into(),
+            );
         }
         let mut terminal = ReferenceTerminal::new()?;
         let outcome = run_selected_atomic_subject_review(
@@ -62,14 +98,18 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 rejected,
                 undecided,
             } => {
-                println!("Selected subject review: {approved} approved, {rejected} disapproved, {undecided} not reviewed. Other subjects are unchanged.");
+                println!(
+                    "Selected subject review: {approved} approved, {rejected} disapproved, {undecided} not reviewed. Other subjects are unchanged."
+                );
             }
         }
         return Ok(());
     }
     let mask_review = match arguments.as_slice() {
         [command, batch, session] if command == "review-masks" => Some((batch, session, None)),
-        [command, batch, session, flag, item] if command == "review-masks" && flag == "--start-at" => {
+        [command, batch, session, flag, item]
+            if command == "review-masks" && flag == "--start-at" =>
+        {
             Some((batch, session, Some(item.as_str())))
         }
         _ => None,

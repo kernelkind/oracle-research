@@ -26,5 +26,14 @@
     "instance_separator": "\n",
     "fragment_order": "source_order",
     "instance_unit": "one_vector"
+  },
+  "v4": {
+    "prompt_template": "Example:\n\nInstances:\n1. “polishing a gold necklace”\n2. “polishing a yellow metal ring”\n\nTitle: Polishing jewelry\n“Polishing gold jewelry” is too specific: yellow metal does not establish gold.\n\n---\n\nInstances:\n\n{NUMBERED_INSTANCES}\n\nWhat is the most precise and concise title for the subject matter shared by these instances?\n\nThe title's full meaning, including any qualifying details, must be supported by every instance.",
+    "numbered_instance_template": "{INDEX}. {QUOTED_FRAGMENTS}",
+    "fragment_template": "“{EXACT_SOURCE_FRAGMENT}”",
+    "fragment_separator": "; ",
+    "instance_separator": "\n",
+    "fragment_order": "source_order",
+    "instance_unit": "one_vector"
   }
 }
