@@ -171,6 +171,16 @@ consumption title still raises an unresolved scope question. One trial per
 node does not isolate wording effects from sampling variation; v2 has not
 been selected as the replacement.
 
+The registry also preserves approved **v3**, which adds only: “The title's full
+meaning, including any qualifying details, must be supported by every instance.”
+A [fresh six-node v2/v3 comparison](../../../sse_multivector/hdbv2-node-description-probe-v3/README.md)
+found more useful v3 descriptions, especially for art, while retaining specific
+sea-salt and coffee-preparation meanings. Some dietary and kindness wording
+remains interpretive. V2 also dropped its earlier Home restriction on repeat,
+so not all improvements can be attributed to v3. These are provisional assistant
+assessments, not new user verdicts or a representative accuracy estimate. V3 is
+tested but not frozen; all earlier prompts and results remain unchanged.
+
 A title describes an already formed group. It must not change
 membership or broaden an incoherent group until it sounds plausible. Prompt
 quality remains open work; the current hierarchy comparison is deliberately unnamed.
