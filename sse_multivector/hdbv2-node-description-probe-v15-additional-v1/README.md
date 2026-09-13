@@ -1,6 +1,8 @@
 # Node-title v15: six new groups
 
-Nine outputs look acceptable; three outputs need judgment, representing two distinct titles. Main and independent assistant reviewers agree on that split. These are assistant assessments, not user approvals or a general accuracy estimate.
+The user approved both titles raised for review: Daily greetings and Coffee chains. No unresolved title objections remain in this sample. The other nine outputs were accepted by the assistant reviewers, not individually approved by the user.
+
+The initial main and independent assessments accepted nine outputs and marked three uncertain, representing two distinct titles. Both Coffee chains calls returned the same title for the same masks, so the focused review showed it once. The saved session contains two explicit approvals, not twelve. This is not a general accuracy estimate.
 
 V15 was unchanged. Each group received two fresh Sol-low calls; only the groups changed from the preceding test.
 
@@ -8,12 +10,12 @@ V15 was unchanged. Each group received two fresh Sol-low calls; only the groups 
 |---|---|---|---|
 | Sbbd7d8dae4 | Flavor-focused coffee appreciation | Coffee Flavor Appreciation | Both accepted by assistants |
 | Saadde5a7ec | Positive attitudes toward gardening and allotments | Enthusiasm for Gardening and Allotments | Both accepted by assistants |
-| S6088798e3d | Daily greetings | Positive daytime greetings and check-ins | First uncertain; second accepted by assistants |
+| S6088798e3d | Daily greetings | Positive daytime greetings and check-ins | User approved first; second accepted by assistants |
 | S0c3094257f | Chinese cuisine | Chinese cuisine | Both accepted by assistants |
 | S8077d349df | Meat | Meat | Both accepted by assistants |
-| Sf5a4b23523 | Coffee chains | Coffee chains | Both uncertain; same title |
+| Sf5a4b23523 | Coffee chains | Coffee chains | User approved the shared title on the trial-1 card |
 
-## Two questions for review
+## Completed review
 
 **Daily greetings — S6088798e3d, trial 1**
 
@@ -24,7 +26,7 @@ V15 was unchanged. Each group received two fresh Sol-low calls; only the groups 
 - V647: ⟦Good morning frens⟧
 - V127: ⟦Good⟧ ⟦Afternoon Nostr⟧
 
-The coffee observation is not an explicit greeting. It could still fit the ordinary social context of daily greetings, so we have not declared it a definite failure. Trial 2, Positive daytime greetings and check-ins, more clearly includes that status update. The question is whether the shorter title accurately describes this whole group, not whether every mask contains the word greeting.
+The initial question was whether Daily greetings reasonably covers the coffee observation alongside the explicit greetings. The user approved it and commented: “ehhh i think rejecting would be pedantic”. For this group, the difference is not a reason to reject the title or require the longer second-trial wording. It remains an accepted case, not an unresolved failure.
 
 **Coffee chains — Sf5a4b23523, both trials**
 
@@ -36,13 +38,15 @@ The coffee observation is not an explicit greeting. It could still fit the ordin
 - V126: ⟦#coffeechain⟧
 - V043: ⟦coffeechain⟧
 
-Coffee chains could suggest coffee-shop businesses. The masks give a tag-like expression and one sipping fragment, not evidence of multiple outlets. It may instead be a rendering of a social tag. This is an interpretation question, and the limited mask context means any problem cannot yet be assigned to the prompt alone.
+The initial concern was that Coffee chains might suggest coffee-shop businesses rather than the tag-like subject in these masks. The user approved the title without a comment. That resolves its acceptability for this group; it does not establish which interpretation the user or model had in mind.
 
-The focused review shows this identical title once, with a comment that both calls returned it. All twelve raw responses remain available. No review decisions are prefilled.
+The focused review showed this identical title once, with a comment that both calls returned it. All twelve raw responses remain available. No additional decisions have been filled in for the other trial or the all-results review.
+
+The saved session is `target/hdbv2-node-description-v15-additional-v1-review-session.json`, SHA256 `318768f9ed4baff2db604237672a18bf0cd0f50914ccba7805c82e6d1b06b0f8` at this update. It records `S6088798e3d-trial-1` and `Sf5a4b23523-trial-1` as `approved`; the former has the comment quoted above and the latter has an empty comment. Original assistant comments and assessments are retained as pre-review evidence, not current objections.
 
 ## Review
 
-Two cards, each with all its masks and separate assistant reasoning:
+Reopen the two completed cards, each with all its masks and original assistant reasoning:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
@@ -55,7 +59,7 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 
 The coffee titles capture flavour appreciation across decaf preferences and roasting for personal taste. Both gardening titles preserve the positive attitude. Chinese cuisine fits two different foods. Meat is broad but supported by both meat-related masks; no narrower compulsory title was imposed. The longer greeting/check-in title can describe alternatives without claiming each mask expresses both.
 
-This extends the evidence to six new groups, but does not establish general reliability or justify freezing. The prior user acceptance of Brisket smoking remains intact. No exact reference titles, word blacklists or a newly invented universal rule about broad masks were used.
+This extends the evidence to six new groups without an unresolved title objection. It does not establish general reliability. The prior user acceptance of Brisket smoking remains intact. These case-specific approvals do not establish a universal rule that every adjacent meaning or ambiguous title is acceptable.
 
 ## Controls and provenance
 
@@ -68,10 +72,10 @@ This extends the evidence to six new groups, but does not establish general reli
 - Only the approved prompt and numbered quoted mask fragments were passed as user input. No full notes, group IDs, expected labels, examples, previous answers or reviewer comments in the generation prompt. Same minimal model instruction and service context; no tools, web or response schema.
 - Usage: 21,674 input tokens; zero cached input; 1,147 output tokens including 1,032 reasoning tokens. Existing subscription only; no new API billing, rental, purchase or local model inference.
 
-`run-plan.json` was saved before generation. `selection-audit.json` records prior exposure and the independent selection check. `source-packets.json` contains complete notes and byte spans for provenance only. `comparison.json` preserves every response, all masks and the main assessment. Raw calls remain under `trial-{1,2}/<group>/run/`. Integrity checks and UI checks are recorded in `verification.json`.
+`run-plan.json` was saved before generation. `selection-audit.json` records prior exposure and the independent selection check. `source-packets.json` contains complete notes and byte spans for provenance only. `comparison.json` preserves every response, all masks and the initial main assessment. Raw calls remain under `trial-{1,2}/<group>/run/`. `verification.json` records the pre-review integrity and UI checks; the subsequent user decisions are recorded above rather than rewriting those checks.
 
 ## Next decision
 
-Get the user's judgment on the two uncertain titles before treating either as a prompt failure. Keep v15 unchanged and unfrozen; no further test or prompt edit has been authorized.
+Keep v15 unchanged. The two review questions are resolved, so they do not motivate another prompt edit. The recommendation is to freeze v15 provisionally for use in the next stage, rather than continue revising accepted cases. That freeze requires user approval; v15 remains unfrozen and no further test or prompt edit has been authorized.
 
 The [official GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed keeping the prompt and execution settings fixed. It does not determine the semantic judgments.
