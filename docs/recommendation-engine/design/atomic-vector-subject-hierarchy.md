@@ -155,14 +155,21 @@ Multiple fragments belonging to one vector remain one instance. The prompt is
 stored in
 [`../../../sse_multivector/fine-region-title-prompt-versions.json`](../../../sse_multivector/fine-region-title-prompt-versions.json).
 
-The same registry also preserves **v2**, an approved but untested candidate.
+The same registry also preserves **v2**, an approved candidate tested on the
+same three HDBv2 nodes with one fresh isolated Sol low call per node.
 It changes only “the semantic similarity among these instances” to
 “the subject matter shared by these instances.” The input format is unchanged.
 It aims to make titles name the shared subject rather than the text's
 presentation, addressing the user-confirmed “Keywords” description error.
 v1 remains the frozen baseline, and its
 [three-node HDBv2 probe](../../../sse_multivector/hdbv2-node-description-probe-v1/README.md)
-and raw results remain unchanged. No v2 generation has been run.
+and raw results remain unchanged. The
+[v1/v2 comparison](../../../sse_multivector/hdbv2-node-description-probe-v2/README.md)
+records every input mask and exact output: v2 dropped “Keywords” from the art
+title but added an unsupported “Home” restriction to the coffee title. The
+consumption title still raises an unresolved scope question. One trial per
+node does not isolate wording effects from sampling variation; v2 has not
+been selected as the replacement.
 
 A title describes an already formed group. It must not change
 membership or broaden an incoherent group until it sounds plausible. Prompt
