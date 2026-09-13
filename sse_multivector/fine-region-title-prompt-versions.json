@@ -88,5 +88,14 @@
     "instance_separator": "\n",
     "fragment_order": "source_order",
     "instance_unit": "one_vector"
+  },
+  "v11": {
+    "prompt_template": "Write a concise category title that names the subject expressed by these instances collectively.\n\nInterpret the quoted text within each instance together.\n\nPreserve the shared context and relationships.\n\nInstances:\n\n{NUMBERED_INSTANCES}",
+    "numbered_instance_template": "{INDEX}. {QUOTED_FRAGMENTS}",
+    "fragment_template": "“{EXACT_SOURCE_FRAGMENT}”",
+    "fragment_separator": "; ",
+    "instance_separator": "\n",
+    "fragment_order": "source_order",
+    "instance_unit": "one_vector"
   }
 }

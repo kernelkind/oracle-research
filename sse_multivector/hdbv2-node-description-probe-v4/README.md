@@ -173,9 +173,39 @@ Review only the two main uncertainties, with all their masks and separate reason
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v10-additional-v1/run-review.sh
 ```
 
-The full six-card [sampler](../hdbv2-node-description-probe-v10-additional-v1/review.json) is retained. No baseline title was generated for these groups; B states that rather than supplying a fabricated comparison. All user decisions are unset. The two scope questions need adjudication before treating them as prompt failures; no follow-up prompt edit or generation has been performed.
+The full six-card [sampler](../hdbv2-node-description-probe-v10-additional-v1/review.json) is retained. No baseline title was generated for these groups; B states that rather than supplying a fabricated comparison. The user subsequently rejected the wine title: “agree, it is not nececessarily pairing.” The rave title remains undecided. These decisions do not establish a general support-count rule or return to the broadest-mask standard. The following controlled deletion trial tests a possible contributor without changing the prior prompt or review records.
 
 [Verification](../hdbv2-node-description-probe-v10-additional-v1/verification.json) confirms unchanged V10/registry/wrapper/CLI/Sol-low settings, six fresh threads and empty workspaces, exact source-byte fragments and input reconstruction, first-attempt success, no tools/schema, and matching provenance/output hashes. Usage: 10,933 input and 146 output tokens, including 82 reasoning tokens; no cached input or additional billing. Existing release TUI loaded focused/all packets and separate comments at 100×36, with temporary-session navigation and safe exit checks; no user approvals were created. The checked-in prompt remains unchanged and unfrozen.
+
+## V11 — remove cross-instance clarification
+
+The user approved testing V10 with just this sentence removed: “Use evidence from the group to clarify what an instance leaves unspecified, without contradicting what it explicitly expresses.” V10 is unchanged; V11 is a separate candidate, not a frozen replacement. The [pre-run plan](../hdbv2-node-description-probe-v11/run-plan.json) records the hypothesis and competing explanations. Both prompts still request the collective subject; this is not a test of intersection-based labeling.
+
+Six complete existing groups supply 27 masks / 49 fragments. Art, rave and wine target the scope question; coffee preparation, sea-salt foods and weekend wishes check retained useful meaning. Twelve fresh isolated Sol-low calls provide one response per variant/group. Memberships, exact fragments, ordering, duplicates and serialization remain fixed.
+
+| Group | Fresh V10 | V11 |
+|---|---|---|
+| Art | Visual Art and Photography | Visual Art and Photography |
+| Coffee-shop music | Music Playing at a Coffee Shop | Coffee Shop Music Events |
+| Wine | Wine and Food Pairings | Wine and Food Pairings |
+| Coffee preparation | Coffee Bean Preparation Steps | Coffee Bean Grinding and Roasting |
+| Sea-salt foods | Foods with Sea Salt | Foods with Sea Salt and Flavor Variations |
+| Weekend wishes | Weekend well-wishes to friends and everyone | Weekend Well-Wishes and Blessings |
+
+Both versions repeat the user-rejected wine relationship. Art remains useful without forcing the bare art mask to determine the category's breadth. Fresh V10 also drops the old rave-specific wording, so that change cannot be credited to deletion. Coffee preparation and weekend wishes remain accurate. Main and independent reviewers leave V11's Events and Flavor Variations uncertain: each could reasonably describe the group, but could also elevate one member's additional detail into a category-level restriction or distracting theme. They are not declared failures. The independent reviewer finds V11's explicit grinding/roasting title more informative; main review does not treat that wording preference as evidence of overall superiority.
+
+The [complete comparison](../hdbv2-node-description-probe-v11/comparison.json), [main assessments](../hdbv2-node-description-probe-v11/assistant-assessments.json), [independent assessment](../hdbv2-node-description-probe-v11/independent-assessments.json), and all raw calls are preserved. This trial does not demonstrate improvement from the deletion. One output per variant/group cannot establish reliable behavior or isolate a causal effect; all six are development groups, not an unseen holdout. No further prompt edit or test is implied by these results.
+
+Only the two new uncertainties are surfaced, with all masks, separate reasoning, and B to compare the fresh V10 response:
+
+```bash
+cd ~/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector &&
+./hdbv2-node-description-probe-v11/run-review.sh
+```
+
+The [all-six review](../hdbv2-node-description-probe-v11/review.json) is also retained. New sessions contain no prefilled decisions. The existing tool still says “fit every mask”; the intended judgment is collective category meaning, not independent proof of every title qualifier by every mask. No production UI change was made for this prompt test.
+
+[Verification](../hdbv2-node-description-probe-v11/verification.json) confirms exact input/source spans, unchanged V1–V10 entries, twelve distinct threads/workspaces, first-attempt success, no tools/schema, matching hashes and raw outputs. Usage: 21,488 input and 288 output tokens (171 reasoning included), no cache. Existing subscription only. The focused TUI, comments, next-card navigation, paired comparison and safe exit were checked using a temporary session without decisions. CREC-127 synchronization was blocked by HTTP 403; no new card or status transition was made.
 
 ## Evidence and reproducibility
 

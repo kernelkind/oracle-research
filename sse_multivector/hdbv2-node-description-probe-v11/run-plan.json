@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv2-node-description-v11",
+  "base_commit": "c4767d61a676442b8adf31582514e332b81096ed",
+  "variants": {
+    "v10": {
+      "prompt_template": "Write a concise category title that names the subject expressed by these instances collectively.\n\nInterpret the quoted text within each instance together. Use evidence from the group to clarify what an instance leaves unspecified, without contradicting what it explicitly expresses.\n\nPreserve the shared context and relationships.\n\nInstances:\n\n{NUMBERED_INSTANCES}",
+      "numbered_instance_template": "{INDEX}. {QUOTED_FRAGMENTS}",
+      "fragment_template": "“{EXACT_SOURCE_FRAGMENT}”",
+      "fragment_separator": "; ",
+      "instance_separator": "\n",
+      "fragment_order": "source_order",
+      "instance_unit": "one_vector"
+    },
+    "v11": {
+      "prompt_template": "Write a concise category title that names the subject expressed by these instances collectively.\n\nInterpret the quoted text within each instance together.\n\nPreserve the shared context and relationships.\n\nInstances:\n\n{NUMBERED_INSTANCES}",
+      "numbered_instance_template": "{INDEX}. {QUOTED_FRAGMENTS}",
+      "fragment_template": "“{EXACT_SOURCE_FRAGMENT}”",
+      "fragment_separator": "; ",
+      "instance_separator": "\n",
+      "fragment_order": "source_order",
+      "instance_unit": "one_vector"
+    }
+  },
+  "change": "Delete one cross-instance clarification sentence; no other change.",
+  "removed": "Use evidence from the group to clarify what an instance leaves unspecified, without contradicting what it explicitly expresses.",
+  "question": "Does removing explicit cross-instance clarification reduce unwarranted specificity without losing a useful collective title?",
+  "hypothesis": "The removed instruction may encourage assigning one instance's specificity to the group; deletion may reduce this while retaining collective interpretation.",
+  "competing_explanations": [
+    "The remaining collective instruction may already cause the same behavior.",
+    "Output variation alone may explain different titles.",
+    "Deletion may cause overly broad or less informative titles."
+  ],
+  "decision": "Look at specific changed meanings, not exact title matches or preferred title strings. If the issue persists, this deletion is insufficient; do not expand the corpus or declare a winner automatically.",
+  "nodes": [
+    "S8a6ab7afaf",
+    "S8ea08f1aff",
+    "Se7ebc25cf1",
+    "S24afa84c49",
+    "Sfd8645f195",
+    "S96e55b4730"
+  ],
+  "controls": [
+    "S24afa84c49",
+    "Sfd8645f195",
+    "S96e55b4730"
+  ],
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "calls": 12,
+  "calls_per_variant_per_group": 1,
+  "max_concurrent_calls": 3,
+  "config_order": [
+    "sse_multivector/hdbv2-node-description-probe-v11/v10/S8a6ab7afaf/config.json",
+    "sse_multivector/hdbv2-node-description-probe-v11/v11/S8a6ab7afaf/config.json",
+    "sse_multivector/hdbv2-node-description-probe-v11/v11/S8ea08f1aff/config.json",
+    "sse_multivector/hdbv2-node-description-probe-v11/v10/S8ea08f1aff/config.json",
+    "sse_multivector/hdbv2-node-description-probe-v11/v10/Se7ebc25cf1/config.json",
+    "sse_multivector/hdbv2-node-description-probe-v11/v11/Se7ebc25cf1/config.json",
+    "sse_multivector/hdbv2-node-description-probe-v11/v11/S24afa84c49/config.json",
+    "sse_multivector/hdbv2-node-description-probe-v11/v10/S24afa84c49/config.json",
+    "sse_multivector/hdbv2-node-description-probe-v11/v10/Sfd8645f195/config.json",
+    "sse_multivector/hdbv2-node-description-probe-v11/v11/Sfd8645f195/config.json",
+    "sse_multivector/hdbv2-node-description-probe-v11/v11/S96e55b4730/config.json",
+    "sse_multivector/hdbv2-node-description-probe-v11/v10/S96e55b4730/config.json"
+  ],
+  "evaluation": [
+    "Read every title against its complete masks collectively, not an intersection requiring the broadest mask to dictate scope.",
+    "Check preserved subject, context and relationships; flag invented restrictions/relationships separately from style.",
+    "Wine pairing is user-rejected for prior v10 output; rave specificity remains genuinely unsettled. Do not fabricate an adjudication or a support-count rule.",
+    "Preserve inputs, all outputs and assistant disagreements. No user decisions prefilled."
+  ],
+  "execution": "Fresh isolated wrapper process/thread/workspace per group/variant; no tools/web/schema/inherited conversation; no retries or best-of; source masks/ordering/duplicates unchanged.",
+  "limitations": "Six reused development groups from same corpus; one fresh output per prompt/group cannot isolate causality or establish reliability.",
+  "costs": "Existing subscription authentication only; no API billing or new paid resources.",
+  "guidance": "https://developers.openai.com/api/docs/guides/optimizing-llm-accuracy"
+}

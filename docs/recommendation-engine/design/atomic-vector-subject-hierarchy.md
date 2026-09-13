@@ -303,15 +303,30 @@ questions synthesis in the time-related advice title, which main review treats
 as a wording weakness. These disagreements are preserved, not assigned as user
 decisions. The focused review shows only main review's two uncertainties with
 all masks and separate reasoning. No exact masks were reused from prior title
-probes, but the notes come from the same food-centered corpus.
+probes, but the notes come from the same food-centered corpus. The user subsequently
+rejected the wine title because food association does not necessarily establish
+pairing; the rave-title scope remains undecided.
 
-V1 remains the frozen selector. V8–v10 are not selected replacements;
+Candidate **v11** removes only V10's explicit instruction to clarify one instance
+using group evidence. The [six-group paired trial](../../../sse_multivector/hdbv2-node-description-probe-v4/README.md#v11--remove-cross-instance-clarification)
+preserves 27 masks and twelve fresh isolated Sol-low calls. Both prompts return
+Visual Art and Photography and repeat the rejected Wine and Food Pairings.
+Fresh V10 also avoids the previous rave-specific wording. Main and independent
+reviewers accept the coffee-preparation and weekend-wishes meanings, but leave
+V11's Events and Flavor Variations additions uncertain. The focused TUI preserves
+those scope questions with masks, paired outputs and separate reasoning. The
+deletion has no demonstrated advantage in this small development sample; no
+new general rule, winning prompt or automatic user decision is established.
+
+V1 remains the frozen selector. V8–v11 are not selected replacements;
 the runner, grouping, original masks and earlier review artifacts are unchanged.
 One v9 response per group, without fresh v8 controls, cannot isolate flattening
 from prompt wording or sampling variation. V10 also has one response per group,
 and v9 was not rerun alongside it. These selected development results do not
 establish general reliability or isolate the effect of restoring mask bundles
-from the changed wording.
+from the changed wording. V11's paired controls hold inputs and execution settings
+fixed, but one output per variant/group still does not establish a reliable causal
+effect of deleting the sentence.
 
 A title describes an already formed group. It must not change
 membership or broaden an incoherent group until it sounds plausible. Prompt
