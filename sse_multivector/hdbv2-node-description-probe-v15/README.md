@@ -1,21 +1,21 @@
 # Node-title prompt v15
 
-Both food titles now name food rather than phrases. One new output violates independent support: Brisket smoking, although one member mask says only brisket. The other call returned Brisket.
+Both food titles now name food rather than phrases. The user accepted Brisket smoking, the only title flagged by the assistant reviewers. No unresolved title objections remain in this sample.
 
-Main and independent reviewers accept eleven outputs and reject that one. This is a result on six reused development groups, not a general accuracy estimate.
+The initial main and independent assessments accepted eleven outputs and rejected that one. The user's subsequent approval resolves the flagged item; it does not turn the other eleven assistant assessments into user approvals. This is a result on six reused development groups, not a general accuracy estimate.
 
 Only the per-instance question changed from “must it belong” to “must its subject matter belong”. The concise opening, masks, model and execution settings were unchanged.
 
 | Group | v15 trial 1 — exact response | v15 trial 2 — exact response | Assessment |
 |---|---|---|---|
 | S50475065d8 | Bitcoin | Bitcoin | Both supported under assistant assessment |
-| S7dd75e5388 | Brisket smoking | Brisket | First adds unsupported smoking; second supported |
+| S7dd75e5388 | Brisket smoking | Brisket | User approved first; second supported under assistant assessment |
 | S65c33de2ef | Cooking times and methods | Cooking instructions | Both supported under assistant assessment |
 | Sd5f4538ab9 | Savory Dishes with Added Ingredients | Savory Dishes and Ingredients | Both supported under assistant assessment |
 | Sa256265971 | Mental activity switching on or off | Changes in mental activity | Both supported under assistant assessment |
 | Sae17bb57f6 | Communication Advice | Communication Principles | Both supported under assistant assessment |
 
-## The remaining failure
+## The reviewed brisket title
 
 S7dd75e5388, trial 1: **Brisket smoking**.
 
@@ -27,9 +27,11 @@ Every original mask, in its supplied order:
 - V788: ⟦morning⟧ ⟦Brisket⟧ ⟦smoker⟧
 - V786: ⟦Brisket on the smoker⟧
 
-V133 does not require smoking: brisket can be prepared in other ways. The other four instances cannot supply that restriction for V133. This is an independent-support failure, not a demand for one exact title. Both v14 calls and v15 trial 2 returned Brisket.
+The initial assistant objection was that V133 alone does not establish smoking, whereas the other four masks include a smoker. Both v14 calls and v15 trial 2 returned Brisket. The user subsequently approved Brisket smoking in the focused review and said in chat, “i think it's fine”. It is accepted for this group, not retained as an unresolved failure.
 
-The result does not establish that the wording change caused this error. We did not rerun v14 concurrently, and two calls are insufficient to estimate reliability.
+The saved review at `target/hdbv2-node-description-v15-review-session.json` records `S7dd75e5388-trial-1` as `approved`, with an empty comment. Its SHA256 at this update is `93f9fdcff00021fcbbcf61d33790d7058e9a2a760d79ce3b1caccb3efdd69d6b`. The raw outputs and original assistant assessments remain unchanged. This case-specific approval does not establish a new general rule for broad masks or authorize a prompt change.
+
+We did not rerun v14 concurrently, and two calls are insufficient to estimate reliability or attribute changes to the prompt wording.
 
 ## What improved and what remained sound
 
@@ -41,14 +43,14 @@ The user approved both previously questioned broader titles in the saved v14 rev
 
 ## Optional inspection
 
-There are no additional uncertain judgments I need the user to resolve. This one-card view is available to inspect the failed title with every member mask and separate reasoning:
+There are no outstanding judgments requiring user review. This one-card view reopens the accepted title with every member mask and the original assistant objection:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
   ./sse_multivector/hdbv2-node-description-probe-v15/run-review.sh
 ```
 
-`run-review-all.sh` opens all twelve results in a separate session. B compares each candidate with the matching historical v14 response. No user decisions are prefilled.
+`run-review-all.sh` opens all twelve results in a separate session. B compares each candidate with the matching historical v14 response. No user decisions were prefilled; the focused session now contains the user's approval.
 
 ## Controls and evidence
 
@@ -60,10 +62,10 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 - Usage: 21,496 input tokens, zero cached input; 1,011 output tokens including 903 reasoning tokens. Existing subscription only; no new API billing, model downloads or local inference.
 - Historical v14 results, not fresh controls. This is a same-case development retest with limited repetitions, not new-data validation or causal proof.
 
-`run-plan.json` was saved before calls. `comparison.json` contains both versions' raw outputs with full mask sets and per-title reasoning. `source-packets.json` preserves complete notes and byte spans for provenance only. Each `trial-{1,2}/<group>/run/` preserves raw output, usage, prompt hashes and execution evidence. `verification.json` records integrity and UI checks.
+`run-plan.json` was saved before calls. `comparison.json` contains both versions' raw outputs with full mask sets and the initial assistant reasoning, before user review. `source-packets.json` preserves complete notes and byte spans for provenance only. Each `trial-{1,2}/<group>/run/` preserves raw output, usage, prompt hashes and execution evidence. `verification.json` records the pre-review integrity and UI checks. The subsequent approval is recorded above rather than rewriting those historical checks or judgments.
 
 ## Next decision
 
-Do not freeze v15 or silently edit it again. The targeted wording error was absent in this run, but one broad/specific group still received unsupported specificity. A focused repeat comparison on groups containing broad and more specific masks would tell us more about that remaining failure than assuming this one occurrence proves the new wording is worse. That further test has not been authorized or run.
+Keep v15 unchanged. There is no remaining user-confirmed failure here to motivate another prompt edit. The next proposed step is a small, diverse sample of previously untested groups, rather than more attempts to repair the accepted brisket title. That test has not been authorized or run. V15 remains an unfrozen candidate.
 
 The [official GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed the isolated change and fixed-input retest, not the semantic judgments.
