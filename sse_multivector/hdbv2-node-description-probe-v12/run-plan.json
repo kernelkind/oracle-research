@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv2-node-description-probe-v12",
+  "prompt_version": "v12",
+  "status": "approved_for_test_not_frozen",
+  "prompt_template": "Write the most precise title that names a category supported by every instance.\n\nInterpret the quoted text within each instance together.\n\nFor each instance, ask yourself: \"Given this instance alone, must it belong to the category named by this title?\"\n\nInstances:\n\n{NUMBERED_INSTANCES}\n",
+  "source_experiment": "hdbv2-node-description-probe-v11",
+  "groups": [
+    "S8a6ab7afaf",
+    "S8ea08f1aff",
+    "Se7ebc25cf1",
+    "S24afa84c49",
+    "Sfd8645f195",
+    "S96e55b4730"
+  ],
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "repetitions": 2,
+  "calls": 12,
+  "max_concurrent_calls": 3,
+  "question": "Does requiring each instance independently to support membership avoid invented title restrictions and relationships, while retaining the most precise supported category?",
+  "evaluation": [
+    "Interpret the quoted fragments of each single instance together.",
+    "Do not use other instances or full notes to supply missing support for an instance.",
+    "Judge category membership rather than requiring the same proposition in all instances.",
+    "A broader title caused by an underspecified instance is an intended concession, not automatically a failure.",
+    "Record unsupported specificity separately from avoidable loss of common specific meaning.",
+    "Do not require one exact title string; preserve alternative valid outputs and uncertainty."
+  ],
+  "comparison": "Old v11 outputs are historical references only; no fresh v11 control in this test. Two runs per group probe variation, not representative accuracy.",
+  "execution": "One fresh isolated subscription-authenticated codex exec process/thread/workspace per group and repetition; exact approved prompt with numbered unchanged quoted fragments; no schema, extra prompt text, examples, expected title, full notes, tool access or prior conversation. No automatic retries or best-of selection.",
+  "budget": "Existing subscription only; no API-billed requests or new paid resources."
+}
+
