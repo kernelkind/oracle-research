@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv2-node-description-v10-grouped-concise-subject",
+  "candidate": "v10",
+  "source_packets": {
+    "path": "../hdbv2-node-description-probe-v4/source-packets.json",
+    "sha256": "da6b6012fbfe8bed0d9441821a50e5f8e5f26dd3d9c2fd8404ab2a4377475f24"
+  },
+  "nodes": [
+    "Scc38f7607c",
+    "S24afa84c49",
+    "S8a6ab7afaf",
+    "Sfd8645f195",
+    "S3d2aa08f70",
+    "S96e55b4730"
+  ],
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "total_planned_calls": 6,
+  "calls_per_node": 1,
+  "max_concurrent_calls": 3,
+  "prompt": {
+    "prompt_template": "Write a concise category title that names the subject expressed by these instances collectively.\n\nInterpret the quoted text within each instance together. Use evidence from the group to clarify what an instance leaves unspecified, without contradicting what it explicitly expresses.\n\nPreserve the shared context and relationships.\n\nInstances:\n\n{NUMBERED_INSTANCES}",
+    "numbered_instance_template": "{INDEX}. {QUOTED_FRAGMENTS}",
+    "fragment_template": "“{EXACT_SOURCE_FRAGMENT}”",
+    "fragment_separator": "; ",
+    "instance_separator": "\n",
+    "fragment_order": "source_order",
+    "instance_unit": "one_vector"
+  },
+  "change": "Save the user-approved trimmed grouped V8 draft unchanged as V10. Name the collectively expressed subject, not describe the batch or maximize specificity. Use quoted text wording; request concision in the opening. Remove grouping/source provenance, prescribed generalization, and ambiguous no-broadening instruction. Restore original mask bundles versus V9.",
+  "question": "Does the approved grouped prompt name a coherent subject while retaining relevant context and avoiding unsupported additions?",
+  "evaluation": [
+    "Inspect each exact title against the complete grouped masks, treating them collectively rather than demanding independent proof from every mask.",
+    "Allow the group to clarify underspecified masks without overriding explicit meaning or adding unsupported details.",
+    "Distinguish category description from a list of the collection's contents; no prescribed exact title strings.",
+    "Record genuine uncertainty separately and preserve disagreements. Do not convert assistant assessments to user decisions."
+  ],
+  "controls": "Same six groups, 25 masks and 54 exact fragment occurrences. One numbered instance per vector; source-order quoted fragments separated by semicolons within it. Duplicate occurrences retained. No source notes/IDs/subject descriptions/judgments/examples in model input. Same wrapper, pinned CLI, subscription authentication, Sol low; at most three concurrent calls.",
+  "execution": "Each of six configs runs through a fresh independent wrapper process and empty temporary workspace/thread. No inherited conversation, tools, web, output schema, retries or best-of selection.",
+  "comparison": "Saved V9 and V6 outputs are historical context, not fresh controls. V8 remains untested. Wording and grouping both differ from V9, so this trial cannot isolate the effects of mask bundles, individual phrases, or random output variation.",
+  "limitations": "Selected development sample with one response per node; not a general accuracy estimate or a frozen replacement.",
+  "review": "Main reviews all six. Preserve a complete review artifact and surface only genuinely uncertain outputs in the existing TUI with original mask grouping, exact output and a separate comment.",
+  "costs": "Existing ChatGPT subscription; no API-key billing or rented resources."
+}

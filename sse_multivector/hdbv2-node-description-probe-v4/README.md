@@ -125,6 +125,33 @@ The [complete six-card batch](../hdbv2-node-description-probe-v9/review.json) is
 
 V9 is not ready to freeze from these results. This is one selected development trial, not a general accuracy estimate. Neither V8 nor V9's original wording was run, so the observed problems cannot be attributed specifically to flattening or the removed clause. No further prompt change or experiment is selected by this result alone.
 
+## V10 — grouped subject-title trial
+
+The user approved a trimmed grouped-mask prompt, saved exactly as [v10](../fine-region-title-prompt-versions.json). It asks for a concise title naming the subject expressed collectively, interprets the quoted text within each instance together, uses group evidence without contradicting explicit meaning, and preserves shared context and relationships. Provenance wording and the final prohibition on broader wording are removed. V8, V9 and frozen selector V1 remain unchanged.
+
+Six fresh isolated Sol low calls used the same 25 masks / 54 fragments. Each numbered instance is one vector's mask, with its exact fragments individually quoted and separated by semicolons. The model received no full notes, IDs, subject descriptions or judgments. See the [pre-run plan](../hdbv2-node-description-probe-v10/run-plan.json) and [complete results with masks](../hdbv2-node-description-probe-v10/comparison.json).
+
+| Node | Exact V10 output | Main assessment |
+| --- | --- | --- |
+| Scc38f7607c | Frosty Fall Morning Sunrise | Accept: collectively supported scene |
+| S24afa84c49 | Coffee Bean Grinding and Roasting | Accept: related operations on coffee beans, without Home |
+| S8a6ab7afaf | Visual Art and Photography | Accept: supported visual-art context; photography wording is redundant |
+| Sfd8645f195 | Foods Featuring Sea Salt | Accept: preserves the shared food-use relationship |
+| S3d2aa08f70 | Negative Opinions of Audiobook Literature | Accept: grounded negative audiobook opinions; wording is awkward |
+| S96e55b4730 | Weekend well-wishes to everyone | Accept: covers both Saturday and Sunday wishes |
+
+An independent reviewer, given only these current exact inputs/outputs and the collective-context contract, also accepts all six. [Assessments](../hdbv2-node-description-probe-v10/assistant-assessments.json) distinguish semantic judgments from wording imperfections. No user decisions are assigned, and no uncertain-only review is required. The all-six sampler is optional:
+
+```bash
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v10/run-review.sh
+```
+
+It shows complete grouped masks and a separate reasoning comment. B displays historical V9 output, not a freshly rerun control. The generic UI question about fitting every mask is interpreted collectively, not as independent proof by each mask.
+
+[Execution verification](../hdbv2-node-description-probe-v10/verification.json) confirmed exact input reconstruction and UTF-8 source spans, six fresh threads/workspaces, first-attempt success, no tools or schema, unchanged wrapper/model/executable, and exact output/provenance hashes. Usage: 10,814 input and 208 output tokens, including 150 reasoning tokens; no cached input. Existing subscription only, no API-key billing or rental. The existing release TUI loaded the batch and separate comments at 100×36; next-card navigation, historical comparison and safe exit were checked using a temporary session with all outcomes still empty. No production code changed.
+
+The previously rejected Home restriction and food-list output do not recur here. That is improvement in this selected sample, not proof that grouped input alone caused it: both prompt wording and input organization differ from V9, and no fresh paired control was run. V10 remains unfrozen. The suggested next step is a small diverse new sample with V10 unchanged; it has not been run.
+
 ## Evidence and reproducibility
 
 - [Run plan](run-plan.json) records selection, hypothesis and fixed settings before generation.

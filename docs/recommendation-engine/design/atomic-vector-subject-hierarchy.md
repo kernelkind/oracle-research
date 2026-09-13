@@ -277,10 +277,29 @@ a food-list title, and leaves Instagram scope and Sunday emphasis uncertain.
 These are assistant assessments, not user decisions. The existing review tool
 surfaces those two uncertainties with flat fragments and separate comments.
 
-V1 remains the frozen selector. Neither v8 nor v9 is a selected replacement;
+Candidate **v10** saves the subsequently approved trimmed grouped-mask prompt.
+It names the subject expressed collectively, interprets quoted text within each
+instance together, uses group context without contradicting explicit meaning,
+and preserves shared context and relationships. It removes the provenance
+explanation and puts concision in the opening instruction rather than requiring
+the final wording not to broaden an intermediate interpretation.
+
+The [six-group v10 trial](../../../sse_multivector/hdbv2-node-description-probe-v4/README.md#v10--grouped-subject-title-trial)
+used six fresh isolated Sol low calls on the same 25 masks. Main and independent
+reviewers accept all six under the collective-context contract. The coffee title
+no longer adds Home, and the food title describes food associated with sea salt
+instead of listing items. Art redundancy and awkward audiobook wording remain
+stylistic imperfections. These are assistant judgments, not user decisions; the
+complete sampler is available in the existing review tool without requiring a
+new user review.
+
+V1 remains the frozen selector. V8–v10 are not selected replacements;
 the runner, grouping, original masks and earlier review artifacts are unchanged.
 One v9 response per group, without fresh v8 controls, cannot isolate flattening
-from prompt wording or sampling variation.
+from prompt wording or sampling variation. V10 also has one response per group,
+and v9 was not rerun alongside it. These selected development results do not
+establish general reliability or isolate the effect of restoring mask bundles
+from the changed wording.
 
 A title describes an already formed group. It must not change
 membership or broaden an incoherent group until it sounds plausible. Prompt
