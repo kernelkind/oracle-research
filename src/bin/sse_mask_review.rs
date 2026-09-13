@@ -2,6 +2,7 @@
 
 use std::env;
 use std::io::IsTerminal;
+use std::path::Path;
 use std::process::ExitCode;
 
 use oracle_mvp::mask_prompt_review::{MaskPromptReviewOutcome, run_mask_prompt_review_from};
@@ -12,7 +13,9 @@ use oracle_mvp::sse_mask_review::{
     run_atomic_subject_note_review, run_claim_note_review, run_selected_atomic_subject_review,
     run_subject_mask_review,
 };
-use oracle_mvp::title_prompt_review::{TitlePromptReviewOutcome, run_title_prompt_review};
+use oracle_mvp::title_prompt_review::{
+    TitlePromptReviewOutcome, run_title_prompt_review_with_comments,
+};
 
 const USAGE: &str = "usage: sse-mask-review \
     <subject-mask-proposal.json> <session.json> <approved-subject-masks.json>\n       \
@@ -20,7 +23,7 @@ const USAGE: &str = "usage: sse-mask-review \
     sse-mask-review review-subjects <experiment-directory>\n       \
     sse-mask-review review-claims <experiment-directory>\n       \
     sse-mask-review review-masks <mask-review.json> <mask-session.json> [--start-at <item-id>]\n       \
-    sse-mask-review review-titles <title-review.json> <title-session.json> [--start-at <item-id>]";
+    sse-mask-review review-titles <title-review.json> <title-session.json> [--start-at <item-id>] [--comments <comments.json>]";
 
 #[derive(Clone, Copy)]
 enum PromptReviewMode {
@@ -40,29 +43,50 @@ fn main() -> ExitCode {
 
 fn run() -> Result<(), Box<dyn std::error::Error>> {
     let arguments = env::args().skip(1).collect::<Vec<_>>();
-    let title_review = match arguments.as_slice() {
-        [command, batch, session] if command == "review-titles" => Some((batch, session, None)),
-        [command, batch, session, flag, item]
-            if command == "review-titles" && flag == "--start-at" =>
-        {
-            Some((batch, session, Some(item.as_str())))
+    if let [command, batch, session, options @ ..] = arguments.as_slice()
+        && command == "review-titles"
+    {
+        let mut start_at = None;
+        let mut comments_path = None;
+        let mut options = options.chunks_exact(2);
+        for option in &mut options {
+            match option[0].as_str() {
+                "--start-at" if start_at.is_none() => start_at = Some(option[1].as_str()),
+                "--comments" if comments_path.is_none() => {
+                    comments_path = Some(Path::new(&option[1]));
+                }
+                _ => return Err(USAGE.into()),
+            }
         }
-        _ => None,
-    };
-    if let Some((batch, session, start_at)) = title_review {
+        if !options.remainder().is_empty() {
+            return Err(USAGE.into());
+        }
         if !std::io::stdin().is_terminal() || !std::io::stdout().is_terminal() {
             return Err(
                 "the title prompt review must be started from an interactive terminal".into(),
             );
         }
         let mut terminal = ReferenceTerminal::new()?;
-        let outcome = run_title_prompt_review(batch, session, start_at, |screen, comment| {
-            if screen.title.is_some() {
-                terminal.review_title(screen, comment)
-            } else {
-                terminal.review_navigable_prompt_iteration(screen, comment)
-            }
-        })?;
+        let outcome = run_title_prompt_review_with_comments(
+            batch,
+            session,
+            start_at,
+            comments_path,
+            |screen, comment, assistant_comment| {
+                if let Some(assistant_comment) = assistant_comment {
+                    terminal.review_title_with_comment(
+                        screen,
+                        comment,
+                        &assistant_comment.assessment_summary,
+                        &assistant_comment.comment,
+                    )
+                } else if screen.title.is_some() {
+                    terminal.review_title(screen, comment)
+                } else {
+                    terminal.review_navigable_prompt_iteration(screen, comment)
+                }
+            },
+        )?;
         drop(terminal);
         match outcome {
             TitlePromptReviewOutcome::Paused => println!("Title review paused safely"),

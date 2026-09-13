@@ -67,6 +67,22 @@ struct TitleReviewSession {
     decisions: BTreeMap<String, TitleDecisionRecord>,
 }
 
+/// Supplementary assistant text, separate from the reviewed batch and user decisions.
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct TitleReviewComment {
+    pub assessment_summary: String,
+    pub comment: String,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct TitleReviewComments {
+    schema_version: u32,
+    batch_sha256: String,
+    comments: BTreeMap<String, TitleReviewComment>,
+}
+
 #[derive(Debug, Eq, PartialEq)]
 pub enum TitlePromptReviewOutcome {
     Paused,
@@ -224,6 +240,28 @@ pub fn run_title_prompt_review(
     start_at: Option<&str>,
     mut review: impl FnMut(ApprovalScreen, String) -> io::Result<ApprovalTuiAction>,
 ) -> Result<TitlePromptReviewOutcome> {
+    run_title_prompt_review_with_comments(
+        batch_path,
+        session_path,
+        start_at,
+        None,
+        |screen, comment, _| review(screen, comment),
+    )
+}
+
+/// Load optional assistant comments without changing the batch identity or decisions.
+/// Saved approval applies to the original reviewed batch, not supplementary comments.
+pub fn run_title_prompt_review_with_comments(
+    batch_path: impl AsRef<Path>,
+    session_path: impl AsRef<Path>,
+    start_at: Option<&str>,
+    comments_path: Option<&Path>,
+    mut review: impl FnMut(
+        ApprovalScreen,
+        String,
+        Option<&TitleReviewComment>,
+    ) -> io::Result<ApprovalTuiAction>,
+) -> Result<TitlePromptReviewOutcome> {
     let batch_path = batch_path.as_ref();
     let session_path = session_path.as_ref();
     if std::fs::canonicalize(batch_path)
@@ -244,6 +282,33 @@ pub fn run_title_prompt_review(
         )));
     }
     let batch_sha256 = value_sha256(&batch)?;
+    let comments = comments_path
+        .map(load_json::<TitleReviewComments>)
+        .transpose()?;
+    if let Some(comments) = &comments
+        && (comments.schema_version != 1
+            || comments.batch_sha256 != batch_sha256
+            || comments.comments.iter().any(|(id, comment)| {
+                !ids.contains(id.as_str())
+                    || comment.assessment_summary.trim().is_empty()
+                    || comment.comment.trim().is_empty()
+            }))
+    {
+        return Err(Error::ExperimentState(
+            "invalid title review comments or comments belong to a different title batch".into(),
+        ));
+    }
+    if let Some(comments) = &comments
+        && let Some(item) = batch
+            .items
+            .iter()
+            .find(|item| comments.comments.contains_key(&item.item_id) && item.assessment.is_none())
+    {
+        return Err(Error::ExperimentState(format!(
+            "comments require an assessed title review item: {}",
+            item.item_id
+        )));
+    }
     let _lock = acquire_session_lock(session_path)?;
     let mut session = match load_session::<TitleReviewSession>(session_path)? {
         Some(session) => {
@@ -298,8 +363,14 @@ pub fn run_title_prompt_review(
             .position(|item| &item.item_id == id)
             .expect("validated item ID");
         let decision = &session.decisions[id];
-        let action = review(batch.screen(index, decision), decision.comment.clone())
-            .map_err(|source| io_error("review titles from", batch_path, source))?;
+        let action = review(
+            batch.screen(index, decision),
+            decision.comment.clone(),
+            comments
+                .as_ref()
+                .and_then(|comments| comments.comments.get(id)),
+        )
+        .map_err(|source| io_error("review titles from", batch_path, source))?;
         let advance = matches!(
             action,
             ApprovalTuiAction::Submit { .. } | ApprovalTuiAction::Skip { .. }

@@ -5,18 +5,18 @@ The single unrelated contrastive example did not fix the targeted weather issue 
 ## Open the review
 
 ```bash
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v4/run-review.sh
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v4/run-review.sh --start-at Sfd8645f195
 ```
 
 The launcher builds the existing `sse-mask-review` binary through Nix with two build jobs, then opens its dedicated `review-titles` mode. No model calls are made by the UI.
 
-- Only uncertain judgments are surfaced: currently one card, **Sea salt** (Sfd8645f195). The other five results remain saved; they are not assigned user approvals or rejections.
+- Only uncertain assistant judgments were surfaced: one card, **Sea salt** (Sfd8645f195), which you have now approved. The command above reopens it with that approval preserved. The other five results remain saved; they are not assigned user approvals or rejections.
 - The exact v4 title stays above the masks. V3 is hidden until B opens the comparison; it is not another approval question.
 - All original member masks appear together with V IDs, blank lines between masks, and bracketed fragments separated by spaces. Neither duplicate masks nor source fragments are removed.
-- My assessment appears below the masks, separate from your decision. Here I lean toward accepting the title, but am unsure whether it loses important shared food-use context.
-- A approves v4; R rejects v4; C edits an optional comment and Enter saves it; S skips. Left/right revisits cards; up/down scrolls masks. B opens/closes the comparison, including complete long titles or assessments. Ctrl-C saves/exits. The same command resumes.
-- To reopen the completed card, append `--start-at Sfd8645f195`.
-- This focused review uses `target/hdbv2-node-description-v4-uncertain-review-session.json`, initially without decisions. The original six-card artifact and `target/hdbv2-node-description-v4-review-session.json` are unchanged. Tests and smoke inspection use temporary sessions. Changed review inputs cannot inherit previous decisions.
+- **My assessment** gives the brief judgment. A separate **My comment** section explains why I was unsure: the masks share a food-use context that “Sea salt” alone does not express. Both the masks and comment remain visible; Tab chooses which section up/down scrolls.
+- A approves v4; R rejects v4; C edits **your** optional comment and Enter saves it; S skips. Left/right revisits cards. B opens/closes the comparison, including complete long titles or assessments. Ctrl-C saves/exits. Without `--start-at`, the launcher resumes unfinished work or reports completion.
+- The supplementary assistant comment comes from `review-comments.json`, supplied with `--comments`. It is tied to this batch but stored separately from the original reviewed title, masks, assessment, and your decision. Adding the explanation does not reset or reinterpret your approval.
+- This focused review uses `target/hdbv2-node-description-v4-uncertain-review-session.json`; its saved approval remains unchanged. The original six-card artifact and `target/hdbv2-node-description-v4-review-session.json` are also unchanged. Tests and smoke inspection use temporary sessions. Changed original review inputs cannot inherit previous decisions.
 
 ## Exact results
 
@@ -57,10 +57,12 @@ Adding only a targeted demonstration and retesting the same cases follows the [o
 - [Original complete batch](review.json) preserves all six exact generated titles and complete masks, unchanged.
 - [Assistant assessments](assistant-assessments.json) distinguish four confident accepts, one confident rejection, and one uncertain judgment. These are not user decisions.
 - [Focused UI batch](review-uncertain.json) contains only that uncertain item, with unchanged titles/masks and the assistant's opinion. Selection happens before opening the UI; the UI only presents supplied items and records the user's decisions.
+- [Supplementary assistant comment](review-comments.json) adds the explanation in its own section without changing the focused batch or saved user approval. It is not a new model result or a new approval question.
 - Each node/version directory contains its exact `config.json` and unedited run manifest, output, result log and model instructions.
 - All twelve fresh isolated Sol low calls succeeded on attempt one, with at most three concurrent calls. Independent audit verified input reconstruction, complete membership, source spans, exact hashes, distinct threads/workspaces, no tools, and preserved v1–v3 registry entries and previous raw artifacts. No retries or best-output selection.
 - Original UI verification: the CLI test first failed against the old binary for the missing title-review entrypoint. All 7 new and 84 relevant existing tests then passed. The full six-card artifact was checked against every raw output and all original UTF-8 mask ranges. Those original tests and artifacts are retained unchanged.
 - Focused UI verification: the new assessment test first failed because the old input schema rejected `assessment`; the new tall-terminal test first demonstrated 23 unwanted blank rows between masks and opinion. After implementation, all 91 unchanged regressions and 8 new tests pass. New tests cover the actual one-card artifact, visible complete opinion/masks at 72×24, content-sized layout at 80×40, pinned title during scrolling, B comparison, complete long text, comments, and unchanged legacy session hashes. Old user data and all original generated artifacts remain unchanged.
+- Separate-comment verification: 99 unchanged regressions and 8 new tests pass. Test-first checks cover the `--comments` entrypoint, complete masks and explanation together at 72×24 and 80×40, independent scrolling, B comparison versus C user comments, validation before session changes, and preservation of completed approvals when supplementary comments change. Original title/mask/assessment changes still fail the saved-session identity check. Release-terminal inspection at both sizes showed the complete explanation and three masks together with Approved status, using a temporary copy of the approved session. The original focused input and both actual user session files remain byte-for-byte unchanged.
 
 | Version | Input | Output | Reasoning included in output | Cached input |
 | --- | ---: | ---: | ---: | ---: |
