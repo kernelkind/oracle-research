@@ -90,6 +90,14 @@ The [registered v7](../fine-region-title-prompt-versions.json) states the title 
 
 V7 is versioned for user prompt review only. V1–v6, frozen selector v1, exact quoted-fragment serialization, model/runner settings, and existing experiment/review artifacts are unchanged. No generation trial has run and no new semantic verdicts have been assigned. The remaining empirical question is whether v7 uses group context without turning it into unsupported specificity or ignoring genuine differences.
 
+## V8 and V9 — saved for prompt review, not tested
+
+V8 saves the previous proposal exactly. It retains one numbered instance per vector, shortening v7's grouping explanation and clarifying the evidence boundary. V9 is a separate prompt for collective interpretation of one flat collection of exact fragments, without first interpreting each instance's fragments together. Both versions and their input-format specifications are in the [registry](../fine-region-title-prompt-versions.json).
+
+V9 presents each exact fragment in quotation marks on its own line. It removes instance numbering and boundaries, not fragment text or stored provenance. Existing instance order and source order within each mask are retained, including duplicate occurrences. Full notes, IDs, generated subject descriptions, and judgments remain outside the model input. The original note/mask/vector associations remain in the source packets.
+
+This is a materially different prompt and input format, not a formatting-only change. Flattening may help collective interpretation but also removes evidence of which fragments originally belonged together; neither effect has been tested. Earlier prompts, raw outputs, reviews, model/runner settings, and frozen selector v1 are unchanged. No v7, v8, or v9 generation calls have run.
+
 ## Evidence and reproducibility
 
 - [Run plan](run-plan.json) records selection, hypothesis and fixed settings before generation.

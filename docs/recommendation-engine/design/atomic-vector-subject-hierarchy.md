@@ -256,6 +256,23 @@ v1–v6 prompts, generated data, review decisions, and model/runner settings are
 unchanged. The extent to which the prompt reliably makes this distinction
 remains unproven.
 
+Candidate **v8** preserves the reviewed revision of v7: it shortens the
+grouping explanation and clarifies using group evidence without contradicting
+explicit meaning. Its numbered, per-vector input format is unchanged.
+
+Candidate **v9** is a separate flat-input alternative. It receives one collection
+of individually quoted exact fragments, one per line, without numbered instances
+or note/mask boundaries. Its prompt interprets that collection collectively
+rather than first reconstructing each instance. The registry specifies both the
+prompt and this different input format. Existing instance order, source order
+within each mask, and duplicate occurrences are retained; source note/vector/mask
+associations remain saved internally but are not presented to the title model.
+
+V8 and v9 are saved for prompt review only, not tested or frozen. V1 remains the
+frozen selector, and no existing runner, grouping, mask, or review artifact has
+changed. Flattening's effect on useful specificity and unsupported connections
+remains an empirical question; this revision is not evidence of an improvement.
+
 A title describes an already formed group. It must not change
 membership or broaden an incoherent group until it sounds plausible. Prompt
 quality remains open work; the current hierarchy comparison is deliberately unnamed.
