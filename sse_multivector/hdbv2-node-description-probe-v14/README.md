@@ -1,6 +1,6 @@
 # Node-title prompt v14
 
-The mental-state titles became concise and stayed on the subject. But shorter wording also lost useful detail elsewhere; this was not an unqualified improvement.
+The mental-state titles became concise and stayed on the subject. The user has since approved both broader titles and confirmed the remaining problem: the food title about phrases describes wording rather than its subject.
 
 Only **and concise** was added to v13's opening. The separate brevity sentence from the earlier unrun proposal was not used. The per-instance support requirement, model, masks, and runner were unchanged.
 
@@ -8,8 +8,8 @@ Only **and concise** was added to v13's opening. The separate brevity sentence f
 |---|---|---|---|
 | S50475065d8 | Bitcoin | Bitcoin | Supported in both calls |
 | S7dd75e5388 | Brisket | Brisket | Supported in both calls |
-| S65c33de2ef | Timed cooking instructions | Cooking instructions | First supported; second loses the timing detail |
-| Sd5f4538ab9 | Dish-and-ingredient combinations | Recipe dish-and-ingredient phrases | First loses seasoning/topping detail; second names text phrases |
+| S65c33de2ef | Timed cooking instructions | Cooking instructions | First assistant-accepted; user approved second |
+| Sd5f4538ab9 | Dish-and-ingredient combinations | Recipe dish-and-ingredient phrases | User approved first; confirmed phrases problem |
 | Sa256265971 | Changes in mental activity | Starting or Stopping Mental Activity | Supported in both calls |
 | Sae17bb57f6 | Communication principles | Communication maxims | Supported in both calls |
 
@@ -17,17 +17,17 @@ Only **and concise** was added to v13's opening. The separate brevity sentence f
 
 **Mental activity:** v13 produced “Mental faculties being inactive or starting up upon waking” and “Mind/brain conceptualized as a machine”. The user rejected both and clarified that the first was too wordy. V14 produced “Changes in mental activity” and “Starting or Stopping Mental Activity”. Both are shorter category names about mental activity. The user's suggested wording was not supplied to the generation calls or required as an exact answer.
 
-**Cooking:** “Timed cooking instructions” keeps the shared duration information. “Cooking instructions” remains accurate but drops it. That is a precision question, not a false-membership finding.
+**Cooking:** “Timed cooking instructions” keeps the shared duration information. “Cooking instructions” remains accurate but drops it. The user approved that broader title; it is not an unresolved failure.
 
-**Food:** “Dish-and-ingredient combinations” remains accurate but loses the shared seasoning/topping relation. “Recipe dish-and-ingredient phrases” is the clearest problem: it names a category of wording instead of the food subject, and recipe is not independently required by every mask. This is not fixed by brevity.
+**Food:** “Dish-and-ingredient combinations” remains accurate but omits the shared seasoning/topping relation. The user approved it. The user separately confirmed that “Recipe dish-and-ingredient phrases” is a problem because it names wording rather than food. The earlier assistant concern about recipe scope was not separately confirmed by the user.
 
 **Other groups:** Bitcoin and Brisket are unchanged. Communication principles/maxims retain the already-accepted advice meaning. Instructions and maxims are not banned words.
 
-The assistant accepts nine outputs, questions the precision of two, and rejects the phrases title. These are judgments on this selected development sample, not a general accuracy estimate or user decisions.
+The initial assistant assessment accepted nine outputs, questioned two, and rejected the phrases title. The user subsequently approved the two questioned titles in the focused review and confirmed the phrases problem in chat. The original calls and assistant comments remain unchanged. The [baseline review record for v15](../hdbv2-node-description-probe-v15/baseline-user-review.json) preserves these sources separately; it does not fabricate a TUI rejection or convert other assistant judgments into user approvals.
 
 ## Review
 
-Only the two precision questions are surfaced:
+Reopen the completed two-card review:
 
 ```bash
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v14/run-review.sh
@@ -59,6 +59,6 @@ The cards show every exact member mask and separate assistant reasoning. The B c
 
 ## Next decision
 
-Resolve whether the two broader but accurate titles lost too much useful meaning. Keep the phrases result recorded as an assistant-identified problem. Do not freeze v14 or silently replace it with another prompt. Frozen v1, prior prompts and raw outputs remain unchanged.
+The broader-title questions are resolved by user approval. The [completed v15 test](../hdbv2-node-description-probe-v15/README.md) changes only the membership check from “it” to “its subject matter”, aiming to prevent categories of wording. Concision, per-instance support, masks, model and settings remain unchanged. V15 is a test candidate, not a freeze; prior prompts, outputs and frozen v1 remain unchanged.
 
 The [official GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed the small isolated edit and same-case retest, not the semantic verdicts.

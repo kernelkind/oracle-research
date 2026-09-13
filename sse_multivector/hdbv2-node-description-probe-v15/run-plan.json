@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv2-node-description-probe-v15",
+  "prompt_version": "v15",
+  "frozen_version": "v1",
+  "status": "approved_test_not_frozen",
+  "baseline": "hdbv2-node-description-probe-v14",
+  "change": "Only replace 'must it belong to the category' with 'must its subject matter belong to the category' in the per-instance check. Opening and concision requirement unchanged.",
+  "prompt_template": "Write the most precise and concise category title for the subject matter supported by every instance.\n\nInterpret the quoted text within each instance together.\n\nFor each instance, ask yourself: \"Given this instance alone, must its subject matter belong to the category named by this title?\"\n\nInstances:\n\n{NUMBERED_INSTANCES}\n",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "groups": [
+    "S50475065d8",
+    "S7dd75e5388",
+    "S65c33de2ef",
+    "Sd5f4538ab9",
+    "Sa256265971",
+    "Sae17bb57f6"
+  ],
+  "repetitions": 2,
+  "calls": 12,
+  "max_concurrent_calls": 3,
+  "question": "Does directing the per-instance check to subject matter prevent categories of input wording while preserving concise, independently supported titles?",
+  "hypothesis": "The prior check's 'it' may let the model classify the supplied text as an object. Subject matter makes the intended category membership explicit. This is a hypothesis, not an established cause.",
+  "evaluation": [
+    "Use every complete mask in its original group; interpret its fragments together with ordinary semantic knowledge.",
+    "Each mask must independently support membership in the named subject category. The title need not restate every instance or match a predefined reference title.",
+    "The user approved Cooking instructions, Dish-and-ingredient combinations, and both earlier Communication maxims titles. These are accepted examples; broader wording or advice categories are not automatic failures.",
+    "The user confirmed Recipe dish-and-ingredient phrases is a failure because it names wording instead of food. Judge that distinction by meaning, not a word blacklist.",
+    "Check that concise mental-activity titles and the simple Bitcoin/Brisket subjects remain sound. No exact mental-state title is required.",
+    "Preserve every raw response and distinguish clear problems from genuine uncertainty. Do not prefill user decisions."
+  ],
+  "comparison": "Same six complete groups and original order, both saved v14 calls as historical comparisons. No fresh v14 rerun or unseen-data claim. Two repetitions assess variability, not general accuracy or isolated causation.",
+  "execution": "One new isolated subscription-authenticated Codex process/thread/workspace per group and trial. Same CLI binary, wrapper, model, low effort, no schema or extra instructions. Numbered grouped quoted fragments unchanged; no full notes, expected titles, examples or prior responses supplied. Three concurrent calls maximum; no retry or best-of.",
+  "budget": "Existing subscription allowance only; no API billing, rental, new purchase or credential changes.",
+  "source_review": "sse_multivector/real-note-fine-segmentation-v1/hdbscan-cross-note/review/review.json",
+  "source_review_sha256": "999e30fe987e2816bdb588f28cc8e7c6141a6d152344836d5ea4eebcda0121ae",
+  "baseline_user_review": "baseline-user-review.json"
+}
