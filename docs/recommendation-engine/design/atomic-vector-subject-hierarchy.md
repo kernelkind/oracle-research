@@ -268,10 +268,19 @@ prompt and this different input format. Existing instance order, source order
 within each mask, and duplicate occurrences are retained; source note/vector/mask
 associations remain saved internally but are not presented to the title model.
 
-V8 and v9 are saved for prompt review only, not tested or frozen. V1 remains the
-frozen selector, and no existing runner, grouping, mask, or review artifact has
-changed. Flattening's effect on useful specificity and unsupported connections
-remains an empirical question; this revision is not evidence of an improvement.
+V8 remains untested. Before testing v9, the user removed its instruction to
+generalize differing details; the earlier proposal remains in Git history.
+The [six-group v9 trial](../../../sse_multivector/hdbv2-node-description-probe-v4/README.md#v9--flat-fragment-trial)
+preserves all exact inputs and outputs. Main review accepts the collective
+weather and audiobook descriptions, rejects an unsupported Home qualifier and
+a food-list title, and leaves Instagram scope and Sunday emphasis uncertain.
+These are assistant assessments, not user decisions. The existing review tool
+surfaces those two uncertainties with flat fragments and separate comments.
+
+V1 remains the frozen selector. Neither v8 nor v9 is a selected replacement;
+the runner, grouping, original masks and earlier review artifacts are unchanged.
+One v9 response per group, without fresh v8 controls, cannot isolate flattening
+from prompt wording or sampling variation.
 
 A title describes an already formed group. It must not change
 membership or broaden an incoherent group until it sounds plausible. Prompt

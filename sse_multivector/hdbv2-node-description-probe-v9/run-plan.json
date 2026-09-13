@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv2-node-description-v9-flat-fragments",
+  "candidate": "v9",
+  "source_packets": {
+    "path": "../hdbv2-node-description-probe-v4/source-packets.json",
+    "sha256": "da6b6012fbfe8bed0d9441821a50e5f8e5f26dd3d9c2fd8404ab2a4377475f24"
+  },
+  "nodes": [
+    "Scc38f7607c",
+    "S24afa84c49",
+    "S8a6ab7afaf",
+    "Sfd8645f195",
+    "S3d2aa08f70",
+    "S96e55b4730"
+  ],
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "total_planned_calls": 6,
+  "calls_per_node": 1,
+  "max_concurrent_calls": 3,
+  "prompt_template": "Write a category title for the most specific subject matter that coherently describes this collection of text fragments.\n\nInterpret the collection as a whole, using its evidence to clarify meaning left unspecified in individual fragments. Preserve the context and relationships that make the subject specific. Keep the description grounded in the supplied text without inventing connections or contradicting it.\n\nExpress that meaning concisely without making it broader.\n\nFragments:\n\n{FRAGMENTS}",
+  "change": "Remove only the approved generalization clause from the untested flat-fragment V9 proposal. Test the resulting V9, preserving V8 and all prior outputs.",
+  "input_format": {
+    "prompt_template": "Write a category title for the most specific subject matter that coherently describes this collection of text fragments.\n\nInterpret the collection as a whole, using its evidence to clarify meaning left unspecified in individual fragments. Preserve the context and relationships that make the subject specific. Keep the description grounded in the supplied text without inventing connections or contradicting it.\n\nExpress that meaning concisely without making it broader.\n\nFragments:\n\n{FRAGMENTS}",
+    "input_format": "flat_fragments",
+    "fragment_template": "“{EXACT_SOURCE_FRAGMENT}”",
+    "fragment_separator": "\n",
+    "fragment_order": "instance_order_then_source_order",
+    "duplicate_fragments": "preserve"
+  },
+  "controls": "Same six existing groups and all 54 exact fragment occurrences in existing instance/source order. Quotes retained, instance numbering and boundaries absent. No source text, IDs, generated subjects, judgments or examples in prompts.",
+  "question": "Does the flat collection support specific coherent category descriptions without unsupported connections? Interpret generic fragments collectively, not as independently defining the maximum breadth of the title.",
+  "evaluation": [
+    "Read each output against every exact fragment, considering the collection as a whole.",
+    "Retain defining context such as food use rather than naming only an ingredient; no predetermined exact title.",
+    "Allow group-supported interpretation of underspecified fragments. Distinguish absent detail from explicit conflicting meaning.",
+    "Check whether apparent relationships rely on fragment bundles that the model no longer sees.",
+    "Treat historical V6 outputs as context, not a fresh paired comparison or evidence that flattening caused any change."
+  ],
+  "execution": "Six new standalone wrapper calls; each creates a fresh empty workspace and thread. No tools/web/history, no output schema. No retry or best-of selection.",
+  "limitations": "Selected development groups and one response per group; V8 and original V9 have not been run. Cannot isolate flattening from prompt wording or sampling variation.",
+  "review": "Assistant assesses all six, keeps judgments separate from user decisions, and surfaces only genuine uncertainty in the existing title review UI.",
+  "costs": "Existing ChatGPT subscription authentication; no API key billing or rented compute."
+}

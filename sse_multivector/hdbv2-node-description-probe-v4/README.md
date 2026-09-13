@@ -90,13 +90,40 @@ The [registered v7](../fine-region-title-prompt-versions.json) states the title 
 
 V7 is versioned for user prompt review only. V1–v6, frozen selector v1, exact quoted-fragment serialization, model/runner settings, and existing experiment/review artifacts are unchanged. No generation trial has run and no new semantic verdicts have been assigned. The remaining empirical question is whether v7 uses group context without turning it into unsupported specificity or ignoring genuine differences.
 
-## V8 and V9 — saved for prompt review, not tested
+## V8 and V9 — separate grouped and flat prompts
 
 V8 saves the previous proposal exactly. It retains one numbered instance per vector, shortening v7's grouping explanation and clarifying the evidence boundary. V9 is a separate prompt for collective interpretation of one flat collection of exact fragments, without first interpreting each instance's fragments together. Both versions and their input-format specifications are in the [registry](../fine-region-title-prompt-versions.json).
 
 V9 presents each exact fragment in quotation marks on its own line. It removes instance numbering and boundaries, not fragment text or stored provenance. Existing instance order and source order within each mask are retained, including duplicate occurrences. Full notes, IDs, generated subject descriptions, and judgments remain outside the model input. The original note/mask/vector associations remain in the source packets.
 
-This is a materially different prompt and input format, not a formatting-only change. Flattening may help collective interpretation but also removes evidence of which fragments originally belonged together; neither effect has been tested. Earlier prompts, raw outputs, reviews, model/runner settings, and frozen selector v1 are unchanged. No v7, v8, or v9 generation calls have run.
+This is a materially different prompt and input format, not a formatting-only change. Flattening may help collective interpretation but also removes evidence of which fragments originally belonged together. V7 and V8 remain untested. Before the first V9 trial, the user removed only “while generalizing differing details” from V9, because generalization should not be prescribed before deciding which differences matter. The pre-test proposal is preserved in Git commit 8b38356a7c1495a0f52f8b0a2364d979fcf3fa13. Earlier prompts, raw outputs, reviews, model/runner settings, and frozen selector v1 are unchanged.
+
+## V9 — flat-fragment trial
+
+Six fresh Sol low calls used the revised V9 on the same six complete groups. Each prompt contained the same exact fragments, in the same order and with duplicate occurrences retained, but without instance bundles. No full notes, IDs, generated subject descriptions, examples, or assessments were supplied. The [pre-run plan](../hdbv2-node-description-probe-v9/run-plan.json), [complete results with fragments](../hdbv2-node-description-probe-v9/comparison.json), and raw per-node records are preserved.
+
+| Node | Exact V9 output | Main assessment |
+| --- | --- | --- |
+| Scc38f7607c | Frosty Fall Morning Sunrise Over the Garden | Accept: collectively supported, though wordy |
+| S24afa84c49 | Home Coffee Roasting, Grinding, and Brewing Preparation | Reject: Home is absent from the entire collection |
+| S8a6ab7afaf | Visual Art: Photography, Painting, and Watercolour on Instagram | Uncertain: platform context versus a defining restriction |
+| Sfd8645f195 | Bagel Varieties, Sea Salt, and Shrimp Mushroom Risotto | Reject: enumerates items rather than describing their category |
+| S3d2aa08f70 | Abandoned Audiobooks Dismissed as Meaningless Literary Fluff | Accept: collectively supported criticism and abandonment |
+| S96e55b4730 | Weekend Well-Wishes for Friends: Happy and Blessed Sunday | Uncertain: Sunday emphasis versus exclusion of Saturday |
+
+These judgments use the revised collective-context contract. The generic Literature fragment need not independently establish audiobook criticism, and a fall fragment may clarify the season of the garden scene. The coffee objection instead concerns meaning absent from the whole collection. The food title's words are grounded; its problem is enumeration rather than categorization. An independent reviewer agrees on those two rejects and accepts the other four. Main review retains genuine uncertainty about the Instagram qualifier and Sunday subtitle; these disagreements are recorded, not converted into user decisions.
+
+Open only the two uncertain titles, with complete flat fragments and separate reasoning:
+
+```bash
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v9/run-review.sh
+```
+
+The [complete six-card batch](../hdbv2-node-description-probe-v9/review.json) is also preserved. Numeric row labels identify fragments for review; the model saw no row numbers. The original note/vector/mask associations remain in source packets, not reconstructed in the model input. B displays the earlier V6 output as historical context, not a new paired control. The UI retains its generic “fit every mask” wording: this review concerns collective interpretation, not independent proof by each fragment. User sessions start without decisions, and prior sessions remain unchanged.
+
+[Verification](../hdbv2-node-description-probe-v9/verification.json) confirmed all 54 fragments, six distinct fresh threads/workspaces, first-attempt success, no tools or schema, unchanged wrapper/model/executable, and exact output/hash agreement. Usage: 10,908 input and 220 output tokens, including 125 reasoning tokens; no cached input. Existing subscription only, no API-key billing or rental. Existing release TUI loaded both batches and comments; temporary-session checks covered scrolling, navigation, historical comparison and safe exit without decisions.
+
+V9 is not ready to freeze from these results. This is one selected development trial, not a general accuracy estimate. Neither V8 nor V9's original wording was run, so the observed problems cannot be attributed specifically to flattening or the removed clause. No further prompt change or experiment is selected by this result alone.
 
 ## Evidence and reproducibility
 

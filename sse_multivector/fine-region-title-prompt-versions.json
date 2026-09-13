@@ -73,7 +73,7 @@
     "instance_unit": "one_vector"
   },
   "v9": {
-    "prompt_template": "Write a category title for the most specific subject matter that coherently describes this collection of text fragments.\n\nInterpret the collection as a whole, using its evidence to clarify meaning left unspecified in individual fragments. Preserve the context and relationships that make the subject specific, while generalizing differing details. Keep the description grounded in the supplied text without inventing connections or contradicting it.\n\nExpress that meaning concisely without making it broader.\n\nFragments:\n\n{FRAGMENTS}",
+    "prompt_template": "Write a category title for the most specific subject matter that coherently describes this collection of text fragments.\n\nInterpret the collection as a whole, using its evidence to clarify meaning left unspecified in individual fragments. Preserve the context and relationships that make the subject specific. Keep the description grounded in the supplied text without inventing connections or contradicting it.\n\nExpress that meaning concisely without making it broader.\n\nFragments:\n\n{FRAGMENTS}",
     "input_format": "flat_fragments",
     "fragment_template": "“{EXACT_SOURCE_FRAGMENT}”",
     "fragment_separator": "\n",
