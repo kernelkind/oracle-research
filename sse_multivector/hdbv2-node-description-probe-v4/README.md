@@ -203,6 +203,18 @@ cd ~/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector &&
 ./hdbv2-node-description-probe-v11/run-review.sh
 ```
 
+The V11 launcher opens the existing executable directly; it does not enter Nix
+or build. Build once initially, and rebuild after changing the review tool's code:
+
+```bash
+cd ~/src/notedeck_worktrees/algos/oracle-mvp &&
+nix develop -c cargo build --release --jobs 2 --bin sse-mask-review
+```
+
+New review data does not require rebuilding. If the executable is missing or
+not executable, the launcher prints the build command and exits. Earlier
+experiment launchers are unchanged.
+
 The [all-six review](../hdbv2-node-description-probe-v11/review.json) is also retained. New sessions contain no prefilled decisions. The existing tool still says “fit every mask”; the intended judgment is collective category meaning, not independent proof of every title qualifier by every mask. No production UI change was made for this prompt test.
 
 [Verification](../hdbv2-node-description-probe-v11/verification.json) confirms exact input/source spans, unchanged V1–V10 entries, twelve distinct threads/workspaces, first-attempt success, no tools/schema, matching hashes and raw outputs. Usage: 21,488 input and 288 output tokens (171 reasoning included), no cache. Existing subscription only. The focused TUI, comments, next-card navigation, paired comparison and safe exit were checked using a temporary session without decisions. CREC-127 synchronization was blocked by HTTP 403; no new card or status transition was made.
