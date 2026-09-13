@@ -106,5 +106,14 @@
     "instance_separator": "\n",
     "fragment_order": "source_order",
     "instance_unit": "one_vector"
+  },
+  "v13": {
+    "prompt_template": "Write the most precise category title for the subject matter supported by every instance.\n\nInterpret the quoted text within each instance together.\n\nFor each instance, ask yourself: \"Given this instance alone, must it belong to the category named by this title?\"\n\nInstances:\n\n{NUMBERED_INSTANCES}\n",
+    "numbered_instance_template": "{INDEX}. {QUOTED_FRAGMENTS}",
+    "fragment_template": "“{EXACT_SOURCE_FRAGMENT}”",
+    "fragment_separator": "; ",
+    "instance_separator": "\n",
+    "fragment_order": "source_order",
+    "instance_unit": "one_vector"
   }
 }

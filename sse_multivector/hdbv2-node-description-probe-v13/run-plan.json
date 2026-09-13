@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv2-node-description-probe-v13",
+  "prompt_version": "v13",
+  "frozen_version": "v1",
+  "source_experiment": "hdbv2-node-description-probe-v12",
+  "status": "approved_test_not_frozen",
+  "change": "Only replace the v12 opening with the approved subject-matter opening. Do not test the earlier two-sentence v13 proposal.",
+  "prompt_template": "Write the most precise category title for the subject matter supported by every instance.\n\nInterpret the quoted text within each instance together.\n\nFor each instance, ask yourself: \"Given this instance alone, must it belong to the category named by this title?\"\n\nInstances:\n\n{NUMBERED_INSTANCES}\n",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "groups": [
+    "S8a6ab7afaf",
+    "S8ea08f1aff",
+    "Se7ebc25cf1",
+    "S24afa84c49",
+    "Sfd8645f195",
+    "S96e55b4730"
+  ],
+  "repetitions": 2,
+  "calls": 12,
+  "max_concurrent_calls": 3,
+  "question": "Does stating subject matter directly in the objective prevent text-format/mention labels while preserving independent support and useful specificity?",
+  "evaluation": [
+    "Read each mask's quoted text together; retain normal semantic interpretation.",
+    "Every mask must independently support membership in the named subject category; another mask must not supply missing specificity.",
+    "Judge a category of subject matter, not a class of keywords, text, tags or mentions.",
+    "Textual subjects remain valid when they actually are the subject matter.",
+    "A broad title can be correct when evidence does not support a narrower one; a category joined with and need not assert every item simultaneously.",
+    "Separate unsupported scope, describing input form, and avoidable loss of specific meaning; do not require exact reference strings.",
+    "Preserve assistant disagreements and every raw output; assign no user decisions."
+  ],
+  "comparison": "Both saved v12 calls are historical references, not fresh controls. Two calls per group test variation; this is a reused development sample, not an accuracy estimate or proof of causation.",
+  "execution": "One new isolated subscription-authenticated Codex process/thread/workspace per group and trial. Same CLI binary, wrapper, model, low effort, no schema or extra instructions. Numbered grouped quoted fragments unchanged; no full notes, expected titles, examples or prior responses supplied. Three concurrent calls maximum; no retry or best-of.",
+  "budget": "Existing subscription allowance only; no API billing, rental, new purchase or credential changes."
+}

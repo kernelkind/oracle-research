@@ -1,0 +1,9 @@
+Write the most precise category title for the subject matter supported by every instance.
+
+Interpret the quoted text within each instance together.
+
+For each instance, ask yourself: "Given this instance alone, must it belong to the category named by this title?"
+
+Instances:
+
+{NUMBERED_INSTANCES}
