@@ -99,6 +99,10 @@ It is not a solved membership oracle. The universal score boundary is imperfect,
 
 The 150 directions reuse just 30 descriptions in five tightly constructed collections, including explicit intersections and simple paraphrases. The 98% figure is descriptive of this test, not an estimated deployment accuracy. All expectations remain unchanged; disputes can be revisited openly without rewriting the saved answer key.
 
+## Current research status — 2026-09-12
+
+The user considers TRUE plausible for hierarchy construction and has shelved further subsumption testing, not rejected the approach. The next focus is generating descriptions for nodes: both TRUE and a frontier-LLM alternative need those descriptions. The description-generation method and the final subsumption system remain undecided. This status change does not alter the experimental results or approve another run.
+
 ## Complete evidence
 
 - [Every decision, exact descriptions, scores, and native errors](DECISIONS.md).
