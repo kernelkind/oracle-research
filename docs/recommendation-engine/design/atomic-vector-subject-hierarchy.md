@@ -166,7 +166,7 @@ v1 remains the frozen baseline, and its
 and raw results remain unchanged. The
 [v1/v2 comparison](../../../sse_multivector/hdbv2-node-description-probe-v2/README.md)
 records every input mask and exact output: v2 dropped “Keywords” from the art
-title but added an unsupported “Home” restriction to the coffee title. The
+title but added a user-confirmed unsupported “Home” restriction to the coffee title. The
 consumption title still raises an unresolved scope question. One trial per
 node does not isolate wording effects from sampling variation; v2 has not
 been selected as the replacement.

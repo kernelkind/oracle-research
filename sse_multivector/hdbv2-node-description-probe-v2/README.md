@@ -16,7 +16,7 @@ V2: Home coffee-bean preparation
 - V411: ⟦Rise⟧ ⟦grind coffee beans⟧
 - V793: ⟦coffee⟧ ⟦Roasting your own beans⟧
 
-Analysis: The common subject is still coffee-bean preparation. However, v2 adds Home. None of the supplied masks establishes a home setting; owning or roasting one's own beans does not establish where preparation occurs. This is an assistant-identified unsupported restriction, not a user-confirmed verdict.
+Analysis: The common subject is still coffee-bean preparation. However, v2 adds Home. None of the supplied masks establishes a home setting; owning or roasting one's own beans does not establish where preparation occurs. The user confirmed this unsupported restriction as an error in v2.
 
 ## S004153390e
 
@@ -55,4 +55,4 @@ Analysis: V2 drops Keywords and names subject matter. The user-confirmed input-f
 - All three v2 runs succeeded on their first attempts with distinct fresh threads. No retry or output selection occurred. The wrapper disables tools/web and runs from an empty temporary workspace with explicit minimal model instructions; unavoidable service-level context is not claimed absent.
 - V2 used 5,346 input tokens and 452 output tokens, including 418 reasoning tokens. No additional API billing or rented compute was used.
 
-One output per prompt per node cannot distinguish a prompt effect from sampling variation. The art wording improved in this run; the coffee restriction and unresolved consumption scope prevent declaring the prompt solved. These semantic assessments are the assistant's judgments; only the original Keywords issue has been confirmed by the user.
+One output per prompt per node cannot distinguish a prompt effect from sampling variation. The art wording improved in this run; the coffee restriction and unresolved consumption scope prevent declaring the prompt solved. The user has confirmed the original Keywords error and v2's unsupported Home restriction. The consumption scope concern remains an assistant judgment, not a confirmed failure.
