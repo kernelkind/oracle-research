@@ -1,0 +1,39 @@
+{
+  "prompt_version": "v3",
+  "run": "additional-v1",
+  "nodes": [
+    {
+      "node": "S53be040f52",
+      "rationale": "Repeated community-related term with and without hashtag syntax; little other evidence."
+    },
+    {
+      "node": "Scc38f7607c",
+      "rationale": "Season, temperature and morning observations vary across masks; related meaning without identical wording."
+    },
+    {
+      "node": "S96e55b4730",
+      "rationale": "Well-wishes vary in weekend day, audience and religious qualification."
+    },
+    {
+      "node": "S3d2aa08f70",
+      "rationale": "Detailed negative audiobook comments coexist with a broad Literature mask."
+    },
+    {
+      "node": "Sbec762f76f",
+      "rationale": "Related anxiety/stress terms with advice in just one instance."
+    },
+    {
+      "node": "S6fefae17d0",
+      "rationale": "A person/baby/family mask and a general family exhortation."
+    }
+  ],
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "calls_per_node": 1,
+  "max_concurrent_calls": 3,
+  "unchanged": "Exact registered v3; same wrapper/executable/model/effort and numbered fragments as prior runs. No prompt edit or baseline re-run.",
+  "selection": "Six complete additional multi-note nodes from the same HDBv2 artifact, selected from masks before generation. These are new nodes, not an unseen-corpus holdout; source notes may recur across earlier nodes. Preserve membership, duplicates and order.",
+  "evaluation": "Judge semantic fit and justified specificity from every supplied mask. Accept unexpected but valid descriptions; no exact target titles. Separate output defects from limitations of masks/groupings. Assistant assessments are not user verdicts.",
+  "execution": "One fresh isolated call per node; all raw outputs retained. No retries or output selection; no source notes, prior titles or review instructions in model input.",
+  "limitation": "A small purposive sample, not a representative accuracy estimate. No automatic freeze or extra tests."
+}

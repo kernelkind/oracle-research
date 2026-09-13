@@ -181,6 +181,14 @@ so not all improvements can be attributed to v3. These are provisional assistant
 assessments, not new user verdicts or a representative accuracy estimate. V3 is
 tested but not frozen; all earlier prompts and results remain unchanged.
 
+A [six-additional-node v3 test](../../../sse_multivector/hdbv2-node-description-probe-v3-additional-v1/README.md)
+kept the prompt unchanged. Outputs included appropriate shared descriptions
+such as Weekend Well-Wishes, Literature and Family. The assistant flagged
+Fall’s Arrival because two masks describe frost and sunrise without establishing
+the season. This remains a review judgment, not a user-confirmed error or a
+grouping verdict. The same-corpus test does not establish general reliability;
+v3 remains unfrozen.
+
 A title describes an already formed group. It must not change
 membership or broaden an incoherent group until it sounds plausible. Prompt
 quality remains open work; the current hierarchy comparison is deliberately unnamed.
