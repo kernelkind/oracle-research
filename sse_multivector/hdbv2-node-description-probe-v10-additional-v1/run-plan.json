@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv2-node-description-v10-additional-v1",
+  "candidate": "v10",
+  "base_commit": "b4e04795a72639723c13108c9fcb9bfdd3ea176d",
+  "source_packets": "source-packets.json",
+  "prompt_registry_sha256": "ba6f14543b9efde27c7516fcf66f3eb3d2e918d2252baa1b7e74760e86f0fda8",
+  "prompt": {
+    "prompt_template": "Write a concise category title that names the subject expressed by these instances collectively.\n\nInterpret the quoted text within each instance together. Use evidence from the group to clarify what an instance leaves unspecified, without contradicting what it explicitly expresses.\n\nPreserve the shared context and relationships.\n\nInstances:\n\n{NUMBERED_INSTANCES}",
+    "numbered_instance_template": "{INDEX}. {QUOTED_FRAGMENTS}",
+    "fragment_template": "“{EXACT_SOURCE_FRAGMENT}”",
+    "fragment_separator": "; ",
+    "instance_separator": "\n",
+    "fragment_order": "source_order",
+    "instance_unit": "one_vector"
+  },
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "nodes": [
+    "S18bc272886",
+    "S6621c8eaa9",
+    "S1be86fefb7",
+    "S8ea08f1aff",
+    "S5ea79ac96e",
+    "Se7ebc25cf1"
+  ],
+  "total_planned_calls": 6,
+  "calls_per_node": 1,
+  "max_concurrent_calls": 3,
+  "change": "Only sample changes. V10 prompt and prior settings remain exactly unchanged.",
+  "question": "Does V10 describe the collective subject of previously unused complete groups across different input structures?",
+  "evaluation": [
+    "Judge exact title against complete masks collectively; other instances may clarify unspecified context without contradicting explicit meaning.",
+    "Preserve shared context/relationships and avoid unsupported scope restrictions. Category title need not describe each note's individual stance or every incidental detail.",
+    "Distinguish meaningful category from literal list and stylistic awkwardness from semantic error. No exact target title strings.",
+    "Record input/group insufficiency separately from title error and do not change memberships to rescue a title.",
+    "Main inspects every output; independent clean-context audit; only genuine uncertainties require user review."
+  ],
+  "selection": {
+    "prior_probe_group_ids": [
+      "S004153390e",
+      "S24afa84c49",
+      "S3d2aa08f70",
+      "S53be040f52",
+      "S6fefae17d0",
+      "S8a6ab7afaf",
+      "S96e55b4730",
+      "Saf220f7de1",
+      "Sbec762f76f",
+      "Scc38f7607c",
+      "Sd6b13ec91f",
+      "Sfd8645f195"
+    ],
+    "unused_count": 52,
+    "selected_ids": [
+      "S18bc272886",
+      "S6621c8eaa9",
+      "S1be86fefb7",
+      "S8ea08f1aff",
+      "S5ea79ac96e",
+      "Se7ebc25cf1"
+    ],
+    "reasons": {
+      "S18bc272886": "Simple lexical subject with hashtag-like wording; check unnecessary specificity.",
+      "S6621c8eaa9": "Two short abstract expressions; check interpreting a relationship without prescribing exact title.",
+      "S1be86fefb7": "Longer heterogeneous advice/social language; check coherent category vs phrase enumeration.",
+      "S8ea08f1aff": "Venue and activity combined; check preserving the shared relationship.",
+      "S5ea79ac96e": "Larger group ranging from production to uses of the same food; check breadth without invented restriction.",
+      "Se7ebc25cf1": "Drinking, non-drinking and culinary use together; check a category is not converted into a shared positive claim."
+    },
+    "unit": "Complete existing group with >=2 source notes; no changes to source order, duplicates, masks or membership.",
+    "novelty": "No exact mask (note ID and byte spans) reused from prior title-prompt probes. Source notes/corpus may overlap; not a corpus-disjoint holdout."
+  },
+  "execution": "One fresh wrapper process per complete group with one prompt, new thread/empty workspace, no tools/web/schema/inherited context, no retries or best-of selection.",
+  "controls": "Same pinned CLI/wrapper, subscription authentication, Sol low, exact V10 serialization (one vector per numbered instance, individually quoted source fragments with semicolons). Full notes, IDs, selection reasons and assessments excluded.",
+  "limitations": "Small deliberately varied sample from same 100-note food-centered corpus, not general accuracy estimate or representative unseen-corpus transfer. No prompt freeze authorized.",
+  "costs": "Existing ChatGPT subscription; no API-key billing or rental.",
+  "guidance": "https://developers.openai.com/api/docs/guides/optimizing-llm-accuracy"
+}

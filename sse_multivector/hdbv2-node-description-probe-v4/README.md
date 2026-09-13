@@ -150,7 +150,32 @@ It shows complete grouped masks and a separate reasoning comment. B displays his
 
 [Execution verification](../hdbv2-node-description-probe-v10/verification.json) confirmed exact input reconstruction and UTF-8 source spans, six fresh threads/workspaces, first-attempt success, no tools or schema, unchanged wrapper/model/executable, and exact output/provenance hashes. Usage: 10,814 input and 208 output tokens, including 150 reasoning tokens; no cached input. Existing subscription only, no API-key billing or rental. The existing release TUI loaded the batch and separate comments at 100×36; next-card navigation, historical comparison and safe exit were checked using a temporary session with all outcomes still empty. No production code changed.
 
-The previously rejected Home restriction and food-list output do not recur here. That is improvement in this selected sample, not proof that grouped input alone caused it: both prompt wording and input organization differ from V9, and no fresh paired control was run. V10 remains unfrozen. The suggested next step is a small diverse new sample with V10 unchanged; it has not been run.
+The previously rejected Home restriction and food-list output do not recur here. That is improvement in this selected sample, not proof that grouped input alone caused it: both prompt wording and input organization differ from V9, and no fresh paired control was run. V10 remains unfrozen. The subsequent unchanged-prompt test is recorded below.
+
+## V10 — additional sample 1
+
+The user approved a small diverse new sample, not another prompt revision. We selected six complete groups from the 52 not used in earlier title probes: simple lexical subject, abstract time-related expressions, heterogeneous positive advice, venue/activity, a larger egg group, and wine with differing uses and stances. All 35 masks / 65 fragment occurrences retain original memberships and order. None reuses an exact mask from a previous title probe; the 15 source notes still come from the same 100-note food-centered corpus, so this is not unseen-corpus transfer or a general accuracy estimate. Selection reasons and exclusions were saved in the [plan](../hdbv2-node-description-probe-v10-additional-v1/run-plan.json) before generation.
+
+| Node | Exact V10 output | Main assessment |
+| --- | --- | --- |
+| S18bc272886 | Dogs | Accept: direct subject |
+| S6621c8eaa9 | Lower Time Preference and Slow Down | Accept meaning; reads like advice rather than a category |
+| S1be86fefb7 | Positive Wisdom on Happiness and Humility | Accept: coherent positive-advice category |
+| S8ea08f1aff | Playing Rave Music at a Coffee Shop | Uncertain: event context versus a genre restriction |
+| S5ea79ac96e | Eggs: Laying, Preserving, and Cooking | Accept: common subject and related activities; subtitle need not be exhaustive |
+| Se7ebc25cf1 | Wine and Food Pairings | Uncertain, lean reject: food association versus a specific pairing relationship |
+
+The [complete results](../hdbv2-node-description-probe-v10-additional-v1/comparison.json) and [separate assessments](../hdbv2-node-description-probe-v10-additional-v1/assistant-assessments.json) preserve the disagreements. The independent reviewer accepts the rave interpretation, questions the synthesis of the time-related title, and shares the wine uncertainty. Main review treats the time title as a wording weakness, not a clear semantic error. Importantly, not drinking wine does not contradict discussing wine pairings, and the risotto/white-wine mask alone does not establish ingredient versus accompaniment. The disputed issue is how much specific context the group licenses, not a proven contradiction or a return to independent proof by every mask.
+
+Review only the two main uncertainties, with all their masks and separate reasoning:
+
+```bash
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v10-additional-v1/run-review.sh
+```
+
+The full six-card [sampler](../hdbv2-node-description-probe-v10-additional-v1/review.json) is retained. No baseline title was generated for these groups; B states that rather than supplying a fabricated comparison. All user decisions are unset. The two scope questions need adjudication before treating them as prompt failures; no follow-up prompt edit or generation has been performed.
+
+[Verification](../hdbv2-node-description-probe-v10-additional-v1/verification.json) confirms unchanged V10/registry/wrapper/CLI/Sol-low settings, six fresh threads and empty workspaces, exact source-byte fragments and input reconstruction, first-attempt success, no tools/schema, and matching provenance/output hashes. Usage: 10,933 input and 146 output tokens, including 82 reasoning tokens; no cached input or additional billing. Existing release TUI loaded focused/all packets and separate comments at 100×36, with temporary-session navigation and safe exit checks; no user approvals were created. The checked-in prompt remains unchanged and unfrozen.
 
 ## Evidence and reproducibility
 

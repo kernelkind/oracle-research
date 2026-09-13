@@ -291,7 +291,19 @@ no longer adds Home, and the food title describes food associated with sea salt
 instead of listing items. Art redundancy and awkward audiobook wording remain
 stylistic imperfections. These are assistant judgments, not user decisions; the
 complete sampler is available in the existing review tool without requiring a
-new user review.
+new user review for that first sample.
+
+The [additional six-group v10 trial](../../../sse_multivector/hdbv2-node-description-probe-v4/README.md#v10--additional-sample-1)
+kept the prompt unchanged and used previously unused complete groups: 35 masks
+from 15 notes. Main review accepts four titles and leaves two scope questions
+uncertain: whether a rave event justifies Rave Music and whether wine/food
+associations justify Food Pairings. Neither is a proven contradiction. An
+independent reviewer accepts the rave title, shares the wine uncertainty, and
+questions synthesis in the time-related advice title, which main review treats
+as a wording weakness. These disagreements are preserved, not assigned as user
+decisions. The focused review shows only main review's two uncertainties with
+all masks and separate reasoning. No exact masks were reused from prior title
+probes, but the notes come from the same food-centered corpus.
 
 V1 remains the frozen selector. V8–v10 are not selected replacements;
 the runner, grouping, original masks and earlier review artifacts are unchanged.
