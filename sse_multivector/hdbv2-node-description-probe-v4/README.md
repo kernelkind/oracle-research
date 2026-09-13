@@ -1,6 +1,6 @@
 # V4 node-title experiment and review
 
-The single unrelated contrastive example did not fix the targeted weather issue in this trial. Both fresh prompts titled the weather group as fall despite two masks supplying frost/sunrise information without establishing the season. Subsequent user feedback also identified omitted food context in Sea salt. V4 is versioned but not frozen or selected as the replacement.
+Both fresh prompts titled the weather group as fall despite two masks supplying frost/sunrise information without independently establishing the season. This was assessed as an unresolved failure under the per-instance standard used at the time. The approved collective-context standard below changes how that evidence should be judged; old verdicts are preserved, not automatically reversed. Subsequent user feedback also identified omitted food context in Sea salt. V4 is versioned but not frozen or selected as the replacement.
 
 ## Open the review
 
@@ -31,9 +31,9 @@ These are fresh v3/v4 calls, not replacements for earlier outputs. Markdown/code
 | S3d2aa08f70 | `Literature` | `Literature` |
 | S96e55b4730 | `Weekend well-wishes` | `Weekend well-wishes` |
 
-## Assistant assessment, separate from user review
+## Original assistant assessment, separate from user review
 
-- Scc38f7607c: Both fresh versions restrict the category to fall even though V729 and V728 supply only frost/sunrise/garden evidence. V4's unrelated example did not remove that restriction in this trial. The raw v4 response additionally includes Title:, which is preserved rather than stripped. I can reject this title without asking for another user decision. This is not a user verdict or a claim the underlying group is invalid.
+- Scc38f7607c: Both fresh versions restrict the category to fall even though V729 and V728 supply only frost/sunrise/garden evidence. V4's unrelated example did not remove that restriction in this trial. The raw v4 response additionally includes Title:, which is preserved rather than stripped. The assistant rejected this under the previous per-instance standard. It is not a user verdict or a claim the underlying group is invalid, and isolated support alone no longer settles the title judgment.
 
 - S24afa84c49: Both outputs capture preparation. V4's bean qualifier is present in all masks through grinding beans or roasting one's own beans with coffee. Neither fresh output adds Home. This does not establish that the example caused the omission: unchanged v3 had already omitted Home in earlier repeats.
 
@@ -47,19 +47,19 @@ These are fresh v3/v4 calls, not replacements for earlier outputs. Markdown/code
 
 The example tests the difference between a plausible qualification and one established by every instance: a yellow metal ring is not necessarily gold, while polishing remains shared. It is separate from the actual node instances and uses no expected answer from these cases. The original v3 body and actual-instance format are unchanged. The [registered v4](../fine-region-title-prompt-versions.json) preserves the exact example and prior versions.
 
-Adding only a targeted demonstration and retesting the same cases follows the [official GPT-5.6 prompting guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6); the measured outcome here, not that guidance, determines whether this example helped. It did not fix the targeted case in this sample.
+Adding only a targeted demonstration and retesting the same cases followed the [official GPT-5.6 prompting guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6); the measured outcome here, not that guidance, determines whether this example helped. It did not satisfy the then-current criterion for the targeted case in this sample.
 
 ## V5 — prepared, not tested
 
 The [registered v5](../fine-region-title-prompt-versions.json) changes one line in the existing unrelated jewelry example: it explains that Jewelry is too broad because both instances describe polishing. The existing explanation rejecting the unsupported gold restriction remains intact. This illustrates both omitting supported specificity and adding unsupported specificity, without supplying an answer from the reviewed corpus.
 
-The hypothesis was that this contrast would help preserve shared subject-defining context. It does not establish that the model was caused to omit food by the earlier example, or that every shared word belongs in a title. The user then requested deeper task-definition work before adding examples. V5 remains preserved and untested; the next authorized experiment uses example-free v6 instead. V1–v5 and the frozen v1 selector are unchanged.
+The hypothesis was that this contrast would help preserve shared subject-defining context. It does not establish that the model was caused to omit food by the earlier example, or that every shared word belongs in a title. The user then requested deeper task-definition work before adding examples. V5 remains preserved and untested; the subsequent experiment used example-free v6 instead. V1–v5 and the frozen v1 selector are unchanged.
 
 ## V6 — example-free comparison
 
 V6 defines the desired shared meaning directly: interpret each instance's fragments together, preserve shared context and relationships, generalize differences, and shorten the wording without broadening the meaning. It contains no examples. The [pre-run plan](../hdbv2-node-description-probe-v6/run-plan.json) and [exact comparison](../hdbv2-node-description-probe-v6/comparison.json) preserve the six unchanged groups and twelve new isolated Sol low calls: one v3 and one v6 per group, at most three concurrent calls.
 
-| Node | Fresh v3 | V6 | Assistant judgment of v6 |
+| Node | Fresh v3 | V6 | Original assistant judgment of v6 |
 | --- | --- | --- | --- |
 | Scc38f7607c | A chilly fall morning | Frosty fall mornings | Reject: combines details not established by every mask |
 | S24afa84c49 | Coffee beans | Coffee Bean Preparation | Accept: retains the shared preparation activity |
@@ -68,9 +68,9 @@ V6 defines the desired shared meaning directly: interpret each instance's fragme
 | S3d2aa08f70 | Literature | Literature | Accept: respects the generic Literature member |
 | S96e55b4730 | Weekend well-wishes | Weekend Day Well-Wishes | Accept: generalizes Saturday and Sunday wishes |
 
-The weather result is still a concrete title failure: V491 supplies only fall, while V729/V728 supply frost and sunrise without establishing fall. V6 combines these details instead of identifying what is shared. Food context is retained, but fresh v3 also retains it. Coffee is more descriptive in this paired trial. These observations do not establish a consistently better prompt; v6 is not frozen.
+The weather rejection used the earlier independent-support criterion: V491 supplies only fall, while V729/V728 supply frost and sunrise without establishing fall. Under the approved collective-context contract, that absence alone is not enough to reject the title; the collective interpretation must be reconsidered. Food context is retained, but fresh v3 also retains it. Coffee is more descriptive in this paired trial. These observations do not establish a consistently better prompt; v6 is not frozen.
 
-Only the art judgment needs user input. The independent reviewer rejects the visual-only restriction; the main reviewer leans against it but recognizes that ordinary use of art can mean visual art. That semantic boundary, not a demand that every art mask mention photography, is the review question. The title and every original mask remain unchanged; the reasoning appears separately under My comment.
+Only the art judgment was queued for user input. The independent reviewer rejected the visual-only restriction; the main reviewer leaned against it but recognized that ordinary use of art can mean visual art. Subsequent discussion established that generic art need not force a broad Art title when the grouped instances support a visual-art interpretation. The saved UI still displays the original judgment and separate My comment; it has not been rewritten or assigned a new user decision. The weather and literature judgments also require reassessment under this same standard.
 
 ```bash
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v6/run-review.sh
@@ -80,7 +80,15 @@ The [focused batch](../hdbv2-node-description-probe-v6/review-uncertain.json) us
 
 Verification confirmed exact prompt reconstruction, all 25 masks / 54 fragments, twelve distinct fresh threads/workspaces, one successful attempt per call, no tool events, and unchanged raw responses. The existing release TUI loaded both batches and their hash-bound comments; temporary sessions verified the separate comment, scrolling, baseline comparison, and exit without recording approvals. No production Rust code changed. Total usage was 21,616 input and 1,094 output tokens, including 984 reasoning tokens, with no cached input; existing subscription only.
 
-This is a selected development sample, not a general accuracy estimate. The next justified prompt question is how to distinguish context shared by all instances from details distributed across different instances. This run does not justify adding a corpus-specific example or declaring v6 a replacement.
+This is a selected development sample, not a general accuracy estimate. It does not establish v6 as a replacement. The next candidate adopts the revised labeling contract rather than adding a corpus-specific example.
+
+## V7 — collective context, prepared but not tested
+
+The user approved treating HDBSCAN grouping of contextual SSE vectors as semantic evidence. An instance's meaning may be clarified by other instances in its group; the title need not encompass every possible interpretation of each fragment in isolation. Explicitly incompatible meaning still matters, and grouping does not prove a proposed description correct. This is a general contract change, not an exception for art. Earlier v3/v4/v6 judgments that relied solely on isolated support require consistent reassessment, including weather and literature. No raw result or saved review decision is changed by that clarification.
+
+The [registered v7](../fine-region-title-prompt-versions.json) states the title objective first, explains the input and grouping evidence, permits supported contextual interpretation, preserves explicit meaning and shared relationships, then prioritizes concise wording without losing specificity. It has no examples, added output schema, or prescribed hidden reasoning sequence. This follows the outcome/evidence/constraint priorities and avoidance of unnecessary absolutes in the fetched [GPT-5.6 Sol guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6); that guidance is not evidence that v7 works on this task.
+
+V7 is versioned for user prompt review only. V1–v6, frozen selector v1, exact quoted-fragment serialization, model/runner settings, and existing experiment/review artifacts are unchanged. No generation trial has run and no new semantic verdicts have been assigned. The remaining empirical question is whether v7 uses group context without turning it into unsupported specificity or ignoring genuine differences.
 
 ## Evidence and reproducibility
 

@@ -53,5 +53,14 @@
     "instance_separator": "\n",
     "fragment_order": "source_order",
     "instance_unit": "one_vector"
+  },
+  "v7": {
+    "prompt_template": "Write a category title for the most specific subject matter that coherently describes this group.\n\nThe instances were grouped by similarity between semantic vectors generated from their source text in context. Each numbered instance contains fragments from one social-media post.\n\nInterpret the fragments within each instance together, using the group as context. Where the group supports a more specific interpretation of an instance, use it. Keep the title consistent with the meaning explicitly expressed by each instance.\n\nPreserve the shared context and relationships that make the subject specific, while generalizing the details that differ between instances.\n\nExpress that meaning concisely without making it broader.\n\nInstances:\n\n{NUMBERED_INSTANCES}",
+    "numbered_instance_template": "{INDEX}. {QUOTED_FRAGMENTS}",
+    "fragment_template": "“{EXACT_SOURCE_FRAGMENT}”",
+    "fragment_separator": "; ",
+    "instance_separator": "\n",
+    "fragment_order": "source_order",
+    "instance_unit": "one_vector"
   }
 }

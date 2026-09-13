@@ -140,6 +140,24 @@ Every member vector retains exact source fragments. A subject group can
 therefore be described from the source evidence that formed it instead of
 attempting to decode an opaque vector directly.
 
+The approved labeling contract interprets these observed instances collectively.
+Their grouping by contextual SSE similarity is evidence of related meaning,
+not proof that every member fits any proposed title. Other instances can support
+a more specific interpretation where one mask leaves meaning unspecified. A
+generic mask does not require the title to encompass every possible meaning of
+that mask in isolation. Explicitly incompatible meaning still constrains the
+description; mere compatibility does not establish an otherwise unsupported
+qualification.
+
+This replaces the independent-per-instance proof standard used in earlier
+title reviews. Existing raw outputs and recorded judgments remain experimental
+evidence, not current verdicts under the revised contract. In particular, the
+v3/v4/v6 weather, art and literature assessments require consistent
+reconsideration; this decision does not automatically reverse them all.
+Category subsumption retains its ordinary broad-to-narrow meaning. Interpreting
+an observed mask within a group does not redefine the category named by that
+mask, alter group membership, or validate downstream placement by itself.
+
 The frozen v1 title prompt receives one numbered instance per vector:
 
 ```text
@@ -218,15 +236,25 @@ example-free task definition before adding examples; earlier prompts, results,
 and recorded decisions are unchanged.
 
 The [v6 example-free comparison](../../../sse_multivector/hdbv2-node-description-probe-v4/README.md#v6--example-free-comparison)
-tests explicit shared-meaning preservation against fresh v3 calls on the same
-six groups. V6 retains food context and coffee preparation, but still combines
-unshared weather details into Frosty fall mornings. Fresh v3 also retains food
-context. Four v6 outputs receive assistant acceptance, one rejection, and one
-uncertain, lean-reject art-scope judgment; these are not user decisions. The
+tested explicit shared-meaning preservation against fresh v3 calls on the same
+six groups. V6 retained food context and coffee preparation and returned Frosty
+fall mornings for the weather group. Fresh v3 also retained food context. Under
+the prior standard, four v6 outputs received assistant acceptance, one rejection,
+and one uncertain, lean-reject art-scope judgment; these are not user decisions. The
 existing TUI surfaces only that uncertain judgment with every mask and a
 separate explanation. Twelve clean-context Sol low calls and all raw outputs
 are preserved. This selected comparison does not establish reliability or a
 winning prompt; v6 remains unfrozen and v1 remains the frozen selector.
+
+Candidate **v7** implements the revised collective-context contract in the same
+registry. It supplies the grouping provenance, permits a more specific
+interpretation supported by the group, and requires consistency with each
+instance's explicit meaning. It retains shared relationships, generalization
+and meaning-before-brevity instructions without examples. The candidate is
+prepared for prompt review, not tested or frozen. Exact instance serialization,
+v1–v6 prompts, generated data, review decisions, and model/runner settings are
+unchanged. The extent to which the prompt reliably makes this distinction
+remains unproven.
 
 A title describes an already formed group. It must not change
 membership or broaden an incoherent group until it sounds plausible. Prompt
