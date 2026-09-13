@@ -1,6 +1,6 @@
 # V4 node-title experiment and review
 
-The single unrelated contrastive example did not fix the targeted weather issue in this trial. Both fresh prompts titled the weather group as fall despite two masks supplying frost/sunrise information without establishing the season. Other selected controls remained broadly defensible. V4 is versioned but not frozen or selected as the replacement.
+The single unrelated contrastive example did not fix the targeted weather issue in this trial. Both fresh prompts titled the weather group as fall despite two masks supplying frost/sunrise information without establishing the season. Subsequent user feedback also identified omitted food context in Sea salt. V4 is versioned but not frozen or selected as the replacement.
 
 ## Open the review
 
@@ -10,7 +10,7 @@ The single unrelated contrastive example did not fix the targeted weather issue 
 
 The launcher builds the existing `sse-mask-review` binary through Nix with two build jobs, then opens its dedicated `review-titles` mode. No model calls are made by the UI.
 
-- Only uncertain assistant judgments were surfaced: one card, **Sea salt** (Sfd8645f195), which you have now approved. The command above reopens it with that approval preserved. The other five results remain saved; they are not assigned user approvals or rejections.
+- Only uncertain assistant judgments were surfaced: one card, **Sea salt** (Sfd8645f195). Its saved UI decision is Approved; subsequent chat feedback clarified that the description should include the shared food context. The command above preserves the recorded decision and original assessment rather than rewriting review history. The other five results remain saved; they are not assigned user approvals or rejections.
 - The exact v4 title stays above the masks. V3 is hidden until B opens the comparison; it is not another approval question.
 - All original member masks appear together with V IDs, blank lines between masks, and bracketed fragments separated by spaces. Neither duplicate masks nor source fragments are removed.
 - **My assessment** gives the brief judgment. A separate **My comment** section explains why I was unsure: the masks share a food-use context that “Sea salt” alone does not express. Both the masks and comment remain visible; Tab chooses which section up/down scrolls.
@@ -39,7 +39,7 @@ These are fresh v3/v4 calls, not replacements for earlier outputs. Markdown/code
 
 - S8a6ab7afaf: Both return Art. This covers the supplied art, photography, painting and watercolor masks and avoids the earlier keywords/tag-format description. A broader title than some previous Visual art outputs is not automatically a failure, particularly given the plain art instance.
 
-- Sfd8645f195: Sea salt is present in every instance. V4 drops the food context retained by v3 and supported by the bagel/risotto masks. Both are defensible subjects; whether the shorter title is informative enough is a review question, not an automatic correctness failure.
+- Sfd8645f195: Sea salt is present in every instance, but V4 drops the food context retained by v3 and supported by the bagel/risotto masks. The assistant initially treated that omission as an optional naming preference. The user clarified that food is part of the shared meaning the description should preserve: Foods with sea salt captures that meaning, whereas Sea salt alone is too broad. This is a title-generation issue, not a UI or grouping verdict. Original generated outputs, assessment artifacts, and saved user decisions remain unchanged.
 
 - S3d2aa08f70: Both retain Literature, covering the broad Literature mask without letting the three more detailed negative audiobook masks impose a restriction on it.
 
@@ -47,7 +47,13 @@ These are fresh v3/v4 calls, not replacements for earlier outputs. Markdown/code
 
 The example tests the difference between a plausible qualification and one established by every instance: a yellow metal ring is not necessarily gold, while polishing remains shared. It is separate from the actual node instances and uses no expected answer from these cases. The original v3 body and actual-instance format are unchanged. The [registered v4](../fine-region-title-prompt-versions.json) preserves the exact example and prior versions.
 
-Adding only a targeted demonstration and retesting the same cases follows the [official GPT-5.6 prompting guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6); the measured outcome here, not that guidance, determines whether this example helped. It did not fix the targeted case in this sample. No further prompt revision or experiment was run.
+Adding only a targeted demonstration and retesting the same cases follows the [official GPT-5.6 prompting guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6); the measured outcome here, not that guidance, determines whether this example helped. It did not fix the targeted case in this sample.
+
+## Next candidate: v5 — not yet tested
+
+The [registered v5](../fine-region-title-prompt-versions.json) changes one line in the existing unrelated jewelry example: it explains that Jewelry is too broad because both instances describe polishing. The existing explanation rejecting the unsupported gold restriction remains intact. This illustrates both omitting supported specificity and adding unsupported specificity, without supplying an answer from the reviewed corpus.
+
+The hypothesis is that this contrast will help preserve shared subject-defining context. It does not establish that the model was caused to omit food by the earlier example, or that every shared word belongs in a title. The instruction remains outcome-focused, the evidence constraint is stated once, and the actual-instance format is unchanged. This is a small targeted revision under the fetched GPT-5.6 guidance, not a demonstrated improvement. V1–v4, the frozen v1 selector, model settings, raw results, and review data are unchanged. V5 is prepared for prompt review; no generation trial has run.
 
 ## Evidence and reproducibility
 

@@ -197,8 +197,10 @@ controls remain broadly defensible under assistant assessment. The dedicated
 `sse-mask-review review-titles` mode presents an exact v4 title, every member
 mask, and the assistant's assessment, with v3 comparison available on demand.
 The current launcher surfaces only uncertain assistant judgments: one sea-salt
-title whose shared food-use context may be worth retaining. The user approved
-that title. Its later explanation appears in a separate **My comment** section,
+title. Its saved UI decision is Approved; the user later clarified in chat that
+the description should include the food context shared by every mask. That is
+a title omission, not merely a naming preference. The original explanation
+appears in a separate **My comment** section,
 alongside the masks and brief assessment; C edits the user's own comment.
 Supplementary assistant comments do not change the original review inputs or
 reset saved decisions. Confident assistant
@@ -206,6 +208,13 @@ judgments and all original results remain saved separately, never copied into
 user decisions. The original six-card review session is preserved; the focused
 review has a separate session. The frozen selector remains v1; v4 is not a
 selected replacement.
+
+Candidate **v5** adds one contrast to v4's existing unrelated example: Jewelry
+is too broad because both instances describe polishing. The prior explanation
+rejecting an unsupported gold restriction remains. The aim is to retain shared
+subject-defining context as well as avoid unsupported qualifications. This
+revision is prepared for prompt review, not yet tested or frozen; earlier
+prompts, results, and recorded decisions are unchanged.
 
 A title describes an already formed group. It must not change
 membership or broaden an incoherent group until it sounds plausible. Prompt
