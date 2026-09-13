@@ -76,6 +76,6 @@ This extends the evidence to six new groups without an unresolved title objectio
 
 ## Next decision
 
-Keep v15 unchanged. The two review questions are resolved, so they do not motivate another prompt edit. The recommendation is to freeze v15 provisionally for use in the next stage, rather than continue revising accepted cases. That freeze requires user approval; v15 remains unfrozen and no further test or prompt edit has been authorized.
+The two review questions in this sample are resolved. The user subsequently approved completing v15 title coverage for the remaining 49 accepted HDBv2 groups. The [complete run](../hdbv2-node-titles-v15/README.md) now assembles all 61 outputs, reusing these first trials and preserving the alternatives. Four new outputs have clear problems and three are uncertain, so their review replaces the earlier freeze recommendation as the current next decision. V15 remains unchanged and unfrozen; no hierarchy links were constructed.
 
 The [official GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed keeping the prompt and execution settings fixed. It does not determine the semantic judgments.

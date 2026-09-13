@@ -66,6 +66,6 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 
 ## Next decision
 
-Keep v15 unchanged. There is no remaining user-confirmed failure in this sample to motivate another prompt edit. The [six-new-group test](../hdbv2-node-description-probe-v15-additional-v1/README.md) is also complete: the user approved both titles raised for review, and the other nine outputs remain assistant-accepted. No unresolved title objections remain in either sample. V15 is still unfrozen; provisionally freezing it is a recommendation awaiting user approval, not an implemented change.
+The questions in this sample and the [six-new-group test](../hdbv2-node-description-probe-v15-additional-v1/README.md) are resolved. The user then approved generating unchanged v15 titles for the remaining 49 accepted HDBv2 groups. The [complete run](../hdbv2-node-titles-v15/README.md) now assembles outputs for all 61 accepted groups, preserving these first trials and their alternatives. That larger run found four clear problems and three uncertain titles requiring review; these replace the earlier freeze recommendation as the current next decision. V15 remains unchanged and unfrozen.
 
 The [official GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed the isolated change and fixed-input retest, not the semantic judgments.
