@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv2-node-description-v6-vs-v3",
+  "baseline": "v3",
+  "candidate": "v6",
+  "source_packets": {
+    "path": "../hdbv2-node-description-probe-v4/source-packets.json",
+    "sha256": "da6b6012fbfe8bed0d9441821a50e5f8e5f26dd3d9c2fd8404ab2a4377475f24"
+  },
+  "nodes": [
+    "Scc38f7607c",
+    "S24afa84c49",
+    "S8a6ab7afaf",
+    "Sfd8645f195",
+    "S3d2aa08f70",
+    "S96e55b4730"
+  ],
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "calls_per_version_per_node": 1,
+  "max_concurrent_calls": 3,
+  "total_planned_calls": 12,
+  "change": "Replace the example-free v3 instruction with an explicit shared-meaning outcome: interpret each instance jointly, preserve shared context and relationships while generalizing differences, constrain the title to every instance, and subordinate brevity to meaning. No examples. V5 stays untested.",
+  "hypothesis": "The revised outcome definition may retain shared subject context without introducing restrictions unsupported by some instances. This tests the complete instruction rewrite, not which individual sentence or input position causes a change.",
+  "evaluation": [
+    "Sea salt: preserve food-use context across bagels and risotto; no uniquely required title string.",
+    "Coffee: preserve coffee-bean preparation/generalization across grinding and roasting; do not presume home setting.",
+    "Weather: do not impose season or morning on masks that do not establish it; inspect actual shared subject, not full-note metadata.",
+    "Art: retain semantic art category; broad Art may be correct given the generic member.",
+    "Literature: respect generic Literature member alongside detailed audiobook criticisms.",
+    "Weekend wishes: retain well-wishing across Saturday and Sunday without restricting to one day, religion, or platform."
+  ],
+  "execution": "Twelve fresh independent wrapper calls. One exact prompt per config and sterile process. No tools, web, inherited conversation, response schema, full-note context, target titles or review judgments in generation. No cached prior outputs, retry or best-of selection.",
+  "controls": "Same six complete groups, mask order and semicolon-separated quoted fragments, wrapper hash, pinned CLI binary, dedicated subscription authentication, model and reasoning effort as prior v4 experiment. Neither vectors nor grouping change.",
+  "limitations": "Development sample selected after known errors, one output per version per node, no causal attribution to an individual wording change and no general accuracy estimate.",
+  "review": "Assistant inspects all raw outputs against masks. Existing TUI shows only genuinely uncertain candidate judgments by default with separate assistant comment, complete masks, and fresh empty user session. Full six-card artifact also preserved for optional inspection. Do not prefill user decisions.",
+  "costs": "Uses existing subscription allowance only; no API key billing or rented resources."
+}

@@ -209,12 +209,24 @@ user decisions. The original six-card review session is preserved; the focused
 review has a separate session. The frozen selector remains v1; v4 is not a
 selected replacement.
 
-Candidate **v5** adds one contrast to v4's existing unrelated example: Jewelry
+Preserved candidate **v5** adds one contrast to v4's existing unrelated example: Jewelry
 is too broad because both instances describe polishing. The prior explanation
 rejecting an unsupported gold restriction remains. The aim is to retain shared
 subject-defining context as well as avoid unsupported qualifications. This
-revision is prepared for prompt review, not yet tested or frozen; earlier
-prompts, results, and recorded decisions are unchanged.
+revision was prepared but not tested or frozen. The user instead requested an
+example-free task definition before adding examples; earlier prompts, results,
+and recorded decisions are unchanged.
+
+The [v6 example-free comparison](../../../sse_multivector/hdbv2-node-description-probe-v4/README.md#v6--example-free-comparison)
+tests explicit shared-meaning preservation against fresh v3 calls on the same
+six groups. V6 retains food context and coffee preparation, but still combines
+unshared weather details into Frosty fall mornings. Fresh v3 also retains food
+context. Four v6 outputs receive assistant acceptance, one rejection, and one
+uncertain, lean-reject art-scope judgment; these are not user decisions. The
+existing TUI surfaces only that uncertain judgment with every mask and a
+separate explanation. Twelve clean-context Sol low calls and all raw outputs
+are preserved. This selected comparison does not establish reliability or a
+winning prompt; v6 remains unfrozen and v1 remains the frozen selector.
 
 A title describes an already formed group. It must not change
 membership or broaden an incoherent group until it sounds plausible. Prompt

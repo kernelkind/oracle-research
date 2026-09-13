@@ -44,5 +44,14 @@
     "instance_separator": "\n",
     "fragment_order": "source_order",
     "instance_unit": "one_vector"
+  },
+  "v6": {
+    "prompt_template": "Write a category title for the most specific subject matter shared by all the instances.\n\nInterpret the fragments within each instance together. Preserve the shared context and relationships that make the subject specific, while generalizing the details that differ between instances. Every part of the title must be supported by every instance.\n\nExpress that meaning concisely without making it broader.\n\nInstances:\n\n{NUMBERED_INSTANCES}",
+    "numbered_instance_template": "{INDEX}. {QUOTED_FRAGMENTS}",
+    "fragment_template": "“{EXACT_SOURCE_FRAGMENT}”",
+    "fragment_separator": "; ",
+    "instance_separator": "\n",
+    "fragment_order": "source_order",
+    "instance_unit": "one_vector"
   }
 }

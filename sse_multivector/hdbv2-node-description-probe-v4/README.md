@@ -49,11 +49,38 @@ The example tests the difference between a plausible qualification and one estab
 
 Adding only a targeted demonstration and retesting the same cases follows the [official GPT-5.6 prompting guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6); the measured outcome here, not that guidance, determines whether this example helped. It did not fix the targeted case in this sample.
 
-## Next candidate: v5 — not yet tested
+## V5 — prepared, not tested
 
 The [registered v5](../fine-region-title-prompt-versions.json) changes one line in the existing unrelated jewelry example: it explains that Jewelry is too broad because both instances describe polishing. The existing explanation rejecting the unsupported gold restriction remains intact. This illustrates both omitting supported specificity and adding unsupported specificity, without supplying an answer from the reviewed corpus.
 
-The hypothesis is that this contrast will help preserve shared subject-defining context. It does not establish that the model was caused to omit food by the earlier example, or that every shared word belongs in a title. The instruction remains outcome-focused, the evidence constraint is stated once, and the actual-instance format is unchanged. This is a small targeted revision under the fetched GPT-5.6 guidance, not a demonstrated improvement. V1–v4, the frozen v1 selector, model settings, raw results, and review data are unchanged. V5 is prepared for prompt review; no generation trial has run.
+The hypothesis was that this contrast would help preserve shared subject-defining context. It does not establish that the model was caused to omit food by the earlier example, or that every shared word belongs in a title. The user then requested deeper task-definition work before adding examples. V5 remains preserved and untested; the next authorized experiment uses example-free v6 instead. V1–v5 and the frozen v1 selector are unchanged.
+
+## V6 — example-free comparison
+
+V6 defines the desired shared meaning directly: interpret each instance's fragments together, preserve shared context and relationships, generalize differences, and shorten the wording without broadening the meaning. It contains no examples. The [pre-run plan](../hdbv2-node-description-probe-v6/run-plan.json) and [exact comparison](../hdbv2-node-description-probe-v6/comparison.json) preserve the six unchanged groups and twelve new isolated Sol low calls: one v3 and one v6 per group, at most three concurrent calls.
+
+| Node | Fresh v3 | V6 | Assistant judgment of v6 |
+| --- | --- | --- | --- |
+| Scc38f7607c | A chilly fall morning | Frosty fall mornings | Reject: combines details not established by every mask |
+| S24afa84c49 | Coffee beans | Coffee Bean Preparation | Accept: retains the shared preparation activity |
+| S8a6ab7afaf | Art | Visual Art and Photography | Uncertain, lean reject: plain art does not establish visual-only scope |
+| Sfd8645f195 | Foods Featuring Sea Salt | Foods Seasoned with Sea Salt | Accept: retains the shared food-use context |
+| S3d2aa08f70 | Literature | Literature | Accept: respects the generic Literature member |
+| S96e55b4730 | Weekend well-wishes | Weekend Day Well-Wishes | Accept: generalizes Saturday and Sunday wishes |
+
+The weather result is still a concrete title failure: V491 supplies only fall, while V729/V728 supply frost and sunrise without establishing fall. V6 combines these details instead of identifying what is shared. Food context is retained, but fresh v3 also retains it. Coffee is more descriptive in this paired trial. These observations do not establish a consistently better prompt; v6 is not frozen.
+
+Only the art judgment needs user input. The independent reviewer rejects the visual-only restriction; the main reviewer leans against it but recognizes that ordinary use of art can mean visual art. That semantic boundary, not a demand that every art mask mention photography, is the review question. The title and every original mask remain unchanged; the reasoning appears separately under My comment.
+
+```bash
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v6/run-review.sh
+```
+
+The [focused batch](../hdbv2-node-description-probe-v6/review-uncertain.json) uses a fresh v6 session. The [complete six-card batch](../hdbv2-node-description-probe-v6/review.json), [all assistant comments](../hdbv2-node-description-probe-v6/review-all-comments.json), [assessments](../hdbv2-node-description-probe-v6/assistant-assessments.json), and [execution verification](../hdbv2-node-description-probe-v6/verification.json) remain available. No assistant judgments are copied into user decisions and no previous review data is changed.
+
+Verification confirmed exact prompt reconstruction, all 25 masks / 54 fragments, twelve distinct fresh threads/workspaces, one successful attempt per call, no tool events, and unchanged raw responses. The existing release TUI loaded both batches and their hash-bound comments; temporary sessions verified the separate comment, scrolling, baseline comparison, and exit without recording approvals. No production Rust code changed. Total usage was 21,616 input and 1,094 output tokens, including 984 reasoning tokens, with no cached input; existing subscription only.
+
+This is a selected development sample, not a general accuracy estimate. The next justified prompt question is how to distinguish context shared by all instances from details distributed across different instances. This run does not justify adding a corpus-specific example or declaring v6 a replacement.
 
 ## Evidence and reproducibility
 
