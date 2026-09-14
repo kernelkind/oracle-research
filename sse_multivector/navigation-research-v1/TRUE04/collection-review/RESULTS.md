@@ -96,7 +96,23 @@ The earlier clear-reference nominations Positive Living → Kindness Beyond Soci
 
 The prior-reference cross-check also restored Communication → Art to the uncertain candidates: artistic expression may fall under a broad Communication category. Positive Living → Weekend Well-Wishes was rejected as goodwill communication rather than inherently a lifestyle subject; Bitcoin ↔ Plebchain remains unestablished rather than guessed.
 
-All 63 non-Nostr uncertain directions, their predictions and exact scores are listed in comparison.json. They are not a request for 63 user reviews.
+All 63 non-Nostr uncertain directions, their predictions and exact scores are listed in comparison.json. The user subsequently requested all uncertainties for decision; the review below includes those 63 and the two previously set-aside Nostr/Plebchain questions.
+
+## Decide the uncertain relationships
+
+```bash
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-true04-uncertainties.sh
+```
+
+The 65 cards show both exact category titles and a separate explanation of why the relationship was uncertain. U001–U063 are the non-Nostr questions; U064–U065 are the two previously set-aside questions. Identical title pairs appear once, with every original source score preserved in the optional details.
+
+Answer **Does category A contain category B?** A is the proposed parent and B the proposed child. A records Yes; R records No; S skips; C edits an optional comment, saved with Enter. These answers do not approve or reject my uncertainty statement.
+
+Left/right visits all cards, including reviewed ones. Tab selects which panel to scroll; up/down or j/k scrolls. `?` opens details, including the unchanged model input and predictions. Predictions are not displayed as an answer key on the decision screen.
+
+Ctrl-C exits; the same command resumes the saved current card. To reopen a particular card, append `--start-at U001` (or another card ID). You do not have to finish the batch.
+
+User answers and comments are saved separately in `target/true04-uncertainty-review/decisions.json`, bound to [the exact review packet](uncertainty-review.json). No decisions are prefilled, and no hierarchy changes or new model calls are performed. The original read-only `run-true04-review.sh` remains available and unchanged.
 
 ## Conclusion
 
@@ -104,4 +120,4 @@ The user's collection-first approach substantially reduces the review burden whi
 
 TRUE still provides useful containment decisions, but both rules miss some reasonable broader/narrower relationships. The lower cutoff recovers seven additional reasonable non-Nostr relationships and accepts three clearly wrong ones. Native agreement is never used as the answer key.
 
-This is a semantic audit of the saved run, not a new model experiment, a full accuracy estimate, or a constructed hierarchy. No original experiment outputs, earlier reviews, titles, masks, cutoff, model configuration, or UI were changed.
+The semantic audit did not change the original experiment outputs, earlier reviews, titles, masks, cutoff, model configuration, or UI. The subsequent decision review adds a separate saved-review mode without changing those results. Neither step is a new model experiment, a full accuracy estimate, or a constructed hierarchy.
