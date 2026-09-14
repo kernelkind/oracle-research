@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv2-node-description-probe-v16",
+  "prompt_version": "v16",
+  "status": "approved_test_not_frozen",
+  "prompt_template": "Write the most precise and concise category title for the subject matter supported by every instance.\n\nInterpret the quoted text within each instance together.\n\nCategorize what the text communicates, not its wording or format, unless those are themselves the subject being discussed.\n\nFor each instance, ask yourself: \"Given this instance alone, must its subject matter belong to the category named by this title?\"\n\nReturn only one unnumbered title for the entire group.\n\nInstances:\n\n{NUMBERED_INSTANCES}\n",
+  "prompt_sha256": "af7122ab0fb6fef99760ffddcd0759872c2b6007eff01f1e88833523be43b883",
+  "base_prompt_version": "v15",
+  "change": "Add meaning-versus-wording constraint with genuine language-subject exception; require one unnumbered title for the entire group. All other prompt text and serialization unchanged.",
+  "groups": [
+    {
+      "group": "S0eafedb82e",
+      "role": "user_confirmed_v15_failure"
+    },
+    {
+      "group": "S18bc272886",
+      "role": "user_confirmed_v15_failure"
+    },
+    {
+      "group": "S78e7660d1d",
+      "role": "user_confirmed_v15_failure"
+    },
+    {
+      "group": "S83f6ab41f0",
+      "role": "user_confirmed_v15_failure"
+    },
+    {
+      "group": "S07d0857008",
+      "role": "user_accepted_v15_control"
+    },
+    {
+      "group": "S6621c8eaa9",
+      "role": "user_accepted_v15_control"
+    },
+    {
+      "group": "Sa6996b199f",
+      "role": "user_accepted_v15_control"
+    },
+    {
+      "group": "S7dd75e5388",
+      "role": "user_accepted_v15_control"
+    },
+    {
+      "group": "S6088798e3d",
+      "role": "user_accepted_v15_control"
+    }
+  ],
+  "calls": 18,
+  "repetitions": 2,
+  "max_concurrent_calls": 3,
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "source_review": "sse_multivector/real-note-fine-segmentation-v1/hdbscan-cross-note/review/review.json",
+  "source_review_sha256": "999e30fe987e2816bdb588f28cc8e7c6141a6d152344836d5ea4eebcda0121ae",
+  "comparison": "Two fresh v16 trials per complete group against saved v15 outputs, not a contemporaneous v15 rerun. No claim of causal attribution or general accuracy.",
+  "evaluation": [
+    "All four failure groups must receive one usable subject-category title, not a classification of the source text's form.",
+    "Accepted controls need not reproduce exact earlier labels. Judge whether the new title is useful and grounded, not whether it is lexically identical.",
+    "Preserve prior user approvals, especially the name-qualified foods category, broader brisket mask and morning coffee/greeting boundary.",
+    "Read all output and complete mask sets; distinguish clear defects, uncertainty and legitimate alternatives. No user decisions prefilled."
+  ],
+  "execution": "One new isolated process/thread/empty workspace per group per trial. Only exact numbered mask fragments in the prompt. No previous titles, full notes, IDs, examples, expected answers or feedback. Same pinned wrapper and CLI; no web, tools, or output schema. No retry or best-of.",
+  "budget": "Existing subscription only; no new monetary commitment, API billing, rentals, credentials changes or local model inference.",
+  "group_approval": "The user confirmed all four prior failures in chat: 'yeah definite failures'. This is not a claim of saved reject clicks. The three recent accepted controls have saved approvals; brisket and greetings were approved in earlier title reviews.",
+  "scope": "Version and execute approved v16 proposal; preserve v15, complete groups, all raw outputs and registry frozen_version=v1. No hierarchy or automatic replacement of the full61titleartifact."
+}
