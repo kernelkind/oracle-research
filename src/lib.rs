@@ -8,6 +8,7 @@ pub mod benchmark;
 pub mod budget;
 pub mod candidate_order;
 pub mod canonical;
+pub mod containment_review;
 pub mod corpus_dedup;
 pub mod corpus_derivation;
 pub mod corpus_filter;
