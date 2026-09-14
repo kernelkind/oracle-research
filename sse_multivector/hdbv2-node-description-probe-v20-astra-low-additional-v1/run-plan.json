@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv2-node-description-probe-v20-astra-low-additional-v1",
+  "source_commit": "7cf6649ee0bd13bd59fb9a050fd81476fb9c2e14",
+  "prompt_version": "v20",
+  "prompt_source": "../hdbv2-node-description-probe-v20-astra-low-v1/prompt.txt",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "groups": [
+    {
+      "arm": "b",
+      "group": "S5a50550c18",
+      "rationale": "Different network restrictions; hypothetical and completed actions.",
+      "source_grouping_verdict": "valid"
+    },
+    {
+      "arm": "a",
+      "group": "Scccd04c325",
+      "rationale": "Very short instances connecting a named person and a food reference through a shared qualifier.",
+      "source_grouping_verdict": "valid"
+    },
+    {
+      "arm": "b",
+      "group": "Sf1004af893",
+      "rationale": "Activity masks of differing length, with extra actions in only some instances.",
+      "source_grouping_verdict": "valid"
+    },
+    {
+      "arm": "b",
+      "group": "S260ccd3184",
+      "rationale": "Broad and qualified references with contrasting attitudes.",
+      "source_grouping_verdict": "valid"
+    },
+    {
+      "arm": "a",
+      "group": "Sd621a11e19",
+      "rationale": "Repeated product references with availability, quantity and making details.",
+      "source_grouping_verdict": "valid"
+    },
+    {
+      "arm": "b",
+      "group": "Sd7a87d7a3c",
+      "rationale": "A broad subject alongside narrower event, team and prediction details.",
+      "source_grouping_verdict": "valid"
+    }
+  ],
+  "trials_per_group": 2,
+  "calls": 12,
+  "max_concurrent": 3,
+  "selection": "Six complete previously untitled groups from saved coverage-expansion runs; selected for subject/input-structure variety before seeing new model outputs. All have saved valid user grouping decisions. No new clustering, membership or mask edits.",
+  "novelty": "New groups, not a new independent corpus. Some source notes/masks appeared in earlier experiments. Exclude exact member-set and fragment-multiset matches to prior title probes; no expected titles supplied.",
+  "assessment": "Review every title against all exact masks under the unchanged shared-subject and independent-support requirement. No unique expected label. Distinguish subject categories from assertions; assess broadness, unsupported restrictions, text-form labels, and format failures without assuming each existing group admits a useful title.",
+  "execution": "First call alone; then at most three concurrent. Fresh process/thread/empty workspace per call, no extra examples or context. Stop new calls on error, no automatic retries or best-of.",
+  "scope": "No prompt/model edits, no Sol retest, no freeze, no hierarchy changes.",
+  "billing": "Authorized Codex subscription only; no new API billing, purchases, rentals or financial commitment.",
+  "submission_order": [
+    "trial-1/S5a50550c18/config.json",
+    "trial-1/Scccd04c325/config.json",
+    "trial-1/Sf1004af893/config.json",
+    "trial-1/S260ccd3184/config.json",
+    "trial-1/Sd621a11e19/config.json",
+    "trial-1/Sd7a87d7a3c/config.json",
+    "trial-2/S5a50550c18/config.json",
+    "trial-2/Scccd04c325/config.json",
+    "trial-2/Sf1004af893/config.json",
+    "trial-2/S260ccd3184/config.json",
+    "trial-2/Sd621a11e19/config.json",
+    "trial-2/Sd7a87d7a3c/config.json"
+  ]
+}
