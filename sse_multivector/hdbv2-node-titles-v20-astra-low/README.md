@@ -2,18 +2,20 @@
 
 All 61 accepted groups from the original 100-note HDBv2 run now have a v20/Astra-low title: 55 new calls and six reused first trials. The groups, masks and prompt are unchanged. This completes title generation, not hierarchy construction or a prompt/model freeze.
 
-My review finds 59 titles usable, one misleading and one uncertain. Two independent read-only reviewers covered all 61 and reached the same judgments. These are assistant assessments, not user approvals or an estimated general error rate.
+No title objections remain for this run: 59 titles were assistant-accepted, and the user approved the two titles raised for judgment. The original assistant assessments remain preserved as pre-review evidence, not outstanding failures. This is not an estimated general error rate or a claim that the user individually reviewed all 61.
 
 ## Review
 
-The default view shows only the two items needing your judgment, with every exact mask and my reasoning in a separate comment:
+The default view can revisit the two approved items, with every exact mask and my original reasoning in a separate comment. No further review is requested:
 
 ```bash
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-titles-v20-astra-low/run-review.sh
 ```
 
-- **Coffee Chains — Sf5a4b23523:** I think this is misleading. The masks contain coffeechain tags, not discussion of café businesses.
-- **Grow Nostr Campaign — S53be040f52:** I am unsure whether the tag identifies a campaign specifically. It might instead be a community tag or a general call to grow Nostr.
+- **Coffee Chains — Sf5a4b23523:** user-approved, with no comment. My earlier objection about café businesses is not an outstanding rejection.
+- **Grow Nostr Campaign — S53be040f52:** user-approved, with no comment. My earlier uncertainty about the campaign interpretation is resolved for this title review.
+
+The saved session is `target/hdbv2-node-titles-v20-astra-low-review-session.json`, SHA256 `ec3cc5a12d500524c5181713de8388ee91b3c4d8df9fe2fceb01d9da3b0243b8`. Its batch hash matches the unchanged focused review, and it contains exactly these two approvals with empty comments. No rationale, general interpretation rule or prompt/model freeze is inferred from those clicks.
 
 Optional, all 61 titles:
 
@@ -21,15 +23,15 @@ Optional, all 61 titles:
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-titles-v20-astra-low/run-review-all.sh
 ```
 
-The views use separate sessions in `target/`. No decisions are prefilled. B shows an already-saved second Astra trial for the six reused groups; other groups explicitly have no comparison response. This makes no new calls. Original notes and byte spans remain in `source-packets.json`; the title model and title review use the masks only.
+The views use separate sessions in `target/`. The focused session now contains the user's actual approvals; no decisions were prefilled. B shows an already-saved second Astra trial for the six reused groups; other groups explicitly have no comparison response. This makes no new calls. Original notes and byte spans remain in `source-packets.json`; the title model and title review use the masks only.
 
 ## What this run establishes
 
-The fixed prompt with Astra-low produced useful titles across most of this accepted group set. It did not repeatedly describe the input as strings, phrases or statements. The remaining clear error is a subject interpretation: Coffee Chains suggests café businesses where the masks supply a coffeechain tag.
+The fixed prompt with Astra-low produced useful titles across this accepted group set. It did not repeatedly describe the input as strings, phrases or statements. My initial assessment, also reached by two independent read-only reviewers, was 59 accepted, one rejected and one uncertain. The user's subsequent approvals resolve both raised objections; Coffee Chains must not continue to be reported as a demonstrated failure from this review.
 
 Review follows the user's clarification that reasonable interpretations and minor imperfections are acceptable. A broader accurate category, alternate wording, or a possible strict literal objection is not by itself a failure. The user's earlier approval of European Football is preserved in the [additional probe record](../hdbv2-node-description-probe-v20-astra-low-additional-v1/README.md); that separate coverage-expansion group is not added to these 61.
 
-This is not evidence that the title procedure is perfect or that any particular hierarchy works. There was no new model comparison, retrial selection, title rewriting, mask correction, group change, subsumption call or hierarchy construction. Further action should follow the two focused judgments, not another speculative prompt edit.
+This is not evidence that the title procedure is perfect or that any particular hierarchy works. There was no new model comparison, retrial selection, title rewriting, mask correction, group change, subsumption call or hierarchy construction. The focused judgments are complete. No further prompt edit or freeze has been authorized by these case-specific approvals.
 
 ## Which groups
 
@@ -51,7 +53,7 @@ One successful call, S0c034c4006, logged an internal Codex shell-snapshot valida
 
 ## Evidence and verification
 
-[titles.json](./titles.json) contains every exact selected output, its raw result path, reuse alternatives and my per-group reasoning. `new/<group>/` preserves each of the 55 configurations, manifests and raw outputs. Reused records remain in the [original Astra probe](../hdbv2-node-description-probe-v20-astra-low-v1/README.md).
+[titles.json](./titles.json) contains every exact selected output, its raw result path, reuse alternatives and my original per-group reasoning. Its separate `user_review` section records the two later approvals without rewriting the original assessments. `new/<group>/` preserves each of the 55 configurations, manifests and raw outputs. Reused records remain in the [original Astra probe](../hdbv2-node-description-probe-v20-astra-low-v1/README.md).
 
 The source packets match the v15 source artifact byte for byte. Independent integrity review checked scope, byte spans, prompt rendering, model settings, raw-output identity, hashes and isolation. A final packaging audit checked the assembled titles, review masks, comments and reuse paths. [verification.json](./verification.json) records the checks and the warning above.
 
