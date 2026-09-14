@@ -116,7 +116,19 @@ def threshold_decision(score):
     return score > THRESHOLD
 
 
+def has_expected_labels(rows):
+    """An answer key is either complete and Boolean or absent, never inferred."""
+    if not rows:
+        raise ValueError('nonempty scored rows required')
+    present = ['expected' in row for row in rows]
+    if any(present) and (not all(present) or any(type(row['expected']) is not bool for row in rows)):
+        raise ValueError('complete explicit Boolean answer key or wholly unlabeled rows required')
+    return all(present)
+
+
 def summarize(rows):
+    labeled = has_expected_labels(rows)
+
     def counts(items, field):
         correct = sum(row[field] == row['expected'] for row in items)
         return dict(total=len(items), correct=correct, accuracy=correct / len(items),
@@ -167,11 +179,21 @@ def summarize(rows):
             minimum_negative=extreme(negative, min), maximum_negative=maximum_negative,
             separation_gap=gap, strictly_separated=None if gap is None else gap > 0)
 
-    if not rows:
-        raise ValueError('nonempty scored rows required')
     for row in rows:
         if row['threshold_predicted'] is not threshold_decision(row['entailment_score']):
             raise ValueError('saved threshold verdict differs from frozen cutoff')
+    if not labeled:
+        if any(row['predicted'] is not None and type(row['predicted']) is not bool for row in rows):
+            raise ValueError('native verdict must be Boolean or unresolved')
+
+        def prediction_counts(field):
+            return dict(total=len(rows), yes=sum(row[field] is True for row in rows),
+                        no=sum(row[field] is False for row in rows),
+                        unresolved=sum(row[field] is None for row in rows))
+
+        return dict(threshold=THRESHOLD, threshold_rule='entailment_score > 0.142',
+                    labeled=False, overall=dict(native=prediction_counts('predicted'),
+                                                cutoff=prediction_counts('threshold_predicted')))
     result = dict(threshold=THRESHOLD, threshold_rule='entailment_score > 0.142',
                   overall=both_counts(rows))
     for field in ('domain', 'kind'):
@@ -187,20 +209,33 @@ def summarize(rows):
 
 
 def render_decisions(rows, experiment='TRUE02'):
+    labeled = has_expected_labels(rows)
+
     def cell(value):
         return str(value).replace('|', '\\|').replace('\n', ' ').replace('\r', ' ')
 
     def answer(value):
         return 'Unresolved' if value is None else ('Yes' if value else 'No')
 
-    lines = [f'# {experiment} — Every frozen holdout decision', '',
+    subject = 'holdout' if labeled else 'title'
+    lines = [f'# {experiment} — Every frozen {subject} decision', '',
         'Each row asks **A contains B?** B is the premise; A is the hypothesis. '
         'All inputs use the unchanged TRUE01 topic sentence wrapper.', '',
         'Native answers are complete greedy labels with EOS required. Score is full-vocabulary '
         'probability of the first output token being `1`, not calibrated category confidence. '
-        'The separately frozen cutoff verdict is **score > 0.142**; no cutoff was fitted here.', '',
+        'The separately frozen cutoff verdict is **score > 0.142**; no cutoff was fitted here.', '']
+    if not labeled:
+        lines.extend(['No answer key is attached; these are model verdicts, not measured accuracy.', '',
+                      '| ID | A | B | Native | Score | Cutoff |',
+                      '|---|---|---|---|---|---|'])
+        for row in rows:
+            lines.append('| ' + ' | '.join(map(cell, (row['id'], row['a'], row['b'],
+                answer(row['predicted']), f"{row['entailment_score']:.6f}",
+                answer(row['threshold_predicted'])))) + ' |')
+        return '\n'.join(lines) + '\n'
+    lines.extend([
         '| ID | A | B | Expected | Native | Score | Cutoff |',
-        '|---|---|---|---|---|---|---|']
+        '|---|---|---|---|---|---|---|'])
     for row in rows:
         lines.append('| ' + ' | '.join(map(cell, (row['id'], row['a'], row['b'],
             answer(row['expected']), answer(row['predicted']), f"{row['entailment_score']:.6f}",

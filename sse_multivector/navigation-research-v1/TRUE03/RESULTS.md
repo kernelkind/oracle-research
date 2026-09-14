@@ -77,7 +77,7 @@ The coffee error also creates an inconsistent set of predictions: the cutoff acc
 
 This is encouraging evidence that TRUE can use actual generated titles to recover useful containment relations, including distinguishing related categories from containment. It does not establish that the full collection will form a valid hierarchy.
 
-The pilot is strong enough to justify the proposed broader test across all 61 groups, keeping titles, wording and cutoff fixed and reviewing accepted links and plausible missing links separately. That larger test has **not** run. The poultry wording issue and reciprocal-coffee error should remain explicit observations to follow, not reasons to silently alter titles or repair predictions.
+The broader [TRUE04 test](../TRUE04/RESULTS.md) is now complete: all 61 original groups and 3,660 ordered questions, with titles, wording and cutoff unchanged. Of 106 cutoff-accepted directions, semantic review judged 91 reasonable, 9 incorrect and 6 ambiguous; these include repeated title strings. It recovered 90 of 120 relationships nominated before score inspection, with disputes preserved separately. The reciprocal-coffee error and missed poultry relationships reproduced unchanged. TRUE04 also found false Food/Nostr equivalence even in native answers. No title repair, cutoff change or hierarchy adoption followed.
 
 The pre-score expectations remain unchanged. P16 (Meat Eating / Red meat) and P24 (Art / Music in Coffee Shops) were excluded before inference because the titles permitted materially different scopes. See the [blind review](../TRUE03-BLIND-REVIEW.md). Their exclusion limits what this pilot establishes about ambiguous titles.
 

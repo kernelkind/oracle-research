@@ -101,7 +101,7 @@ The 150 directions reuse just 30 descriptions in five tightly constructed collec
 
 ## Current research status — 2026-09-14
 
-After the pause for node-description work, the user approved resuming TRUE tests on actual generated titles. The completed [TRUE03 pilot](../TRUE03/RESULTS.md) uses unchanged v20/Astra-low titles and TRUE02's model, input wording and 0.142 cutoff. Its 41/44 matching directions support broader testing but do not adopt TRUE as the final hierarchy system. The TRUE02 measurements and original judgments above remain unchanged.
+After the pause for node-description work, the user approved resuming TRUE tests on actual generated titles. The [TRUE03 pilot](../TRUE03/RESULTS.md) and completed [TRUE04 full-title test](../TRUE04/RESULTS.md) use unchanged v20/Astra-low titles and TRUE02's model, input wording and 0.142 cutoff. TRUE04 scored all 3,660 directions across 61 original groups. Semantic review judged 91 of 106 cutoff-accepted directions reasonable, 9 incorrect and 6 ambiguous; it also recorded missed relationships and false reciprocal containments. These results do not adopt TRUE as the final hierarchy system. The TRUE02 measurements and original judgments above remain unchanged.
 
 ## Complete evidence
 
@@ -111,4 +111,4 @@ After the pause for node-description work, the user approved resuming TRUE tests
 - [Frozen plan](../TRUE02-PLAN.md), [pre-score independent review](../TRUE02-BLIND-REVIEW.md).
 - [Execution and reproducibility](EXECUTION.md), [independent verification](verification.json).
 
-TRUE01 and this run's frozen source snapshots remain unchanged. No hierarchy or cutoff adjustment was made in TRUE02. The later TRUE03 test has separate artifacts; the current runner shares the same inference implementation through a tested extraction.
+TRUE01 and this run's frozen source snapshots remain unchanged. No hierarchy or cutoff adjustment was made in TRUE02. TRUE03 and TRUE04 have separate artifacts. The current runner shares the same inference implementation through a tested extraction; TRUE04 adds reporting for unlabeled rows without changing inference or inventing expected answers.
