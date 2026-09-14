@@ -62,4 +62,6 @@ This is a same-case development retest against historical v15 outputs, not a con
 
 The [official GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed the targeted edit and controlled retest, not the semantic judgments.
 
-The [complete v15 artifact](../hdbv2-node-titles-v15/README.md) remains unchanged as generation evidence. V16 is not frozen or installed as the complete 61-group title set. The time-title review is resolved. The next decision concerns the persistent dog failure; no further prompt change or generation was performed.
+The [complete v15 artifact](../hdbv2-node-titles-v15/README.md) remains unchanged as generation evidence. V16 is not frozen or installed as the complete 61-group title set. The time-title review is resolved.
+
+The user then approved a [hashtag-input diagnostic](../hdbv2-node-description-v16-hashtag-diagnostic-v1/README.md) on the dog group, keeping v16 and Sol-low fixed. Three fresh original-input calls produced one “Dogs” and two string-based titles; restoring the original `#` markers produced “Dogs” three times. This supports omitted hashtag context as a contributor for this group, not a general fix or a reason to overwrite the earlier failures. Canonical masks, prior outputs, prompt and freeze state remain unchanged. Any permanent input change or broader test remains a separate decision.

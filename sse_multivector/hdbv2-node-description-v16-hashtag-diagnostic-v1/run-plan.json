@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv2-node-description-v16-hashtag-diagnostic-v1",
+  "group": "S18bc272886",
+  "prompt_version": "v16",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "low",
+  "source_commit": "5d852f4872118448d823fbb63995aa5a2b7ec7f1",
+  "wrapper_sha256": "ebf1942737069a49146d7336c6936dd2fa5cdd8d4b6a2b24274f01bc9f83e2fe",
+  "control": "Exact original mask texts dogstr and dog.",
+  "variable": "Restore the immediately preceding # from each original source note. No other generation-input change.",
+  "conditions": {
+    "original": [
+      [
+        "dogstr"
+      ],
+      [
+        "dog"
+      ]
+    ],
+    "restored_hashtags": [
+      [
+        "#dogstr"
+      ],
+      [
+        "#dog"
+      ]
+    ]
+  },
+  "repetitions_per_condition": 3,
+  "calls": 6,
+  "max_concurrent": 3,
+  "submission_order": [
+    "original-1",
+    "restored_hashtags-1",
+    "restored_hashtags-2",
+    "original-2",
+    "original-3",
+    "restored_hashtags-3"
+  ],
+  "hypothesis": "Restoring hashtag markers helps the fixed title generator interpret the instances as dog-related subjects instead of strings or prefixes.",
+  "interpretation": "Repeated improvement supports hashtag-marker omission as a contributor for this group. Continued text-form output means restoring markers alone did not solve it. Mixed outputs indicate instability. No general success claim or permanent mask/pipeline change follows from this single-group diagnostic.",
+  "execution": "Each condition/trial is a new isolated wrapper process and thread with an empty workspace. Same v16 prompt, Codex binary, auth home, no tools/web/schema/examples/feedback. Keep all outputs, no best-of or silent retries.",
+  "scope": "Do not change canonical masks, vectors, HDBSCAN membership, prompt registry or previous results. No new prompt version or freeze.",
+  "billing": "Existing subscription only; no new API billing, rental, model download or monetary commitment."
+}
