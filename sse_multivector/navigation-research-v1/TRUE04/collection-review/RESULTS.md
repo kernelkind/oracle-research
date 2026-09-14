@@ -104,11 +104,13 @@ All 63 non-Nostr uncertain directions, their predictions and exact scores are li
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-true04-uncertainties.sh
 ```
 
-The 65 cards show both exact category titles and a separate explanation of why the relationship was uncertain. U001–U063 are the non-Nostr questions; U064–U065 are the two previously set-aside questions. Identical title pairs appear once, with every original source score preserved in the optional details.
+The 65 cards show A's exact category title above a box containing all its masks, followed by B's title and mask box. Each mask retains its vector ID and brackets around each fragment. My explanation of the uncertainty remains separate. U001–U063 are the non-Nostr questions; U064–U065 are the two previously set-aside questions. Identical title pairs appear once; where a title represents several original groups, its box includes all their masks, deduplicating only repeated vector IDs. Every original source score remains in the optional details.
+
+The masks come from the saved [title-generation record](../titles.json); they are display evidence, not new input to TRUE. TRUE received only the category titles. Adding the masks does not change the questions or invalidate existing answers, comments, or the saved review position.
 
 Answer **Does category A contain category B?** A is the proposed parent and B the proposed child. A records Yes; R records No; S skips; C edits an optional comment, saved with Enter. These answers do not approve or reject my uncertainty statement.
 
-Left/right visits all cards, including reviewed ones. Tab selects which panel to scroll; up/down or j/k scrolls. `?` opens details, including the unchanged model input and predictions. Predictions are not displayed as an answer key on the decision screen.
+Left/right visits all cards, including reviewed ones. A, B, and my comment remain visible together. Tab selects which box to scroll; up/down or j/k scrolls. `?` opens details, including the unchanged model input and predictions. Predictions are not displayed as an answer key on the decision screen.
 
 Ctrl-C exits; the same command resumes the saved current card. To reopen a particular card, append `--start-at U001` (or another card ID). You do not have to finish the batch.
 

@@ -147,6 +147,7 @@ pub struct ApprovalTuiModel {
     item_navigation: bool,
     compact_title: bool,
     title_comment: bool,
+    stacked_review: bool,
 }
 
 impl ApprovalTuiModel {
@@ -161,6 +162,13 @@ impl ApprovalTuiModel {
     pub fn new_navigable_prompt_iteration(screen: ApprovalScreen, comment: String) -> Self {
         let mut model = Self::new_prompt_iteration(screen, comment);
         model.item_navigation = true;
+        model
+    }
+
+    /// Keep every evidence title and independently scrollable box visible together.
+    pub fn new_navigable_stacked_review(screen: ApprovalScreen, comment: String) -> Self {
+        let mut model = Self::new_navigable_prompt_iteration(screen, comment);
+        model.stacked_review = true;
         model
     }
 
@@ -234,6 +242,7 @@ impl ApprovalTuiModel {
             item_navigation: false,
             compact_title: false,
             title_comment: false,
+            stacked_review: false,
         }
     }
 
@@ -465,7 +474,7 @@ impl ApprovalTuiModel {
             return;
         }
         self.evidence_index = (self.evidence_index + 1) % self.screen.evidence.len();
-        if self.screen.evidence.is_paged() {
+        if self.screen.evidence.is_paged() && !self.stacked_review {
             self.evidence_scrolls[self.evidence_index] = 0;
         }
     }
@@ -479,7 +488,7 @@ impl ApprovalTuiModel {
         } else {
             self.evidence_index - 1
         };
-        if self.screen.evidence.is_paged() {
+        if self.screen.evidence.is_paged() && !self.stacked_review {
             self.evidence_scrolls[self.evidence_index] = 0;
         }
     }
@@ -494,8 +503,8 @@ impl ApprovalTuiModel {
         }
         if self.screen.evidence.len() > 1 {
             let target = match &self.screen.evidence {
-                ApprovalEvidenceLayout::Paged(_) => " Evidence  ",
-                ApprovalEvidenceLayout::Stacked { .. } => " Panel  ",
+                ApprovalEvidenceLayout::Paged(_) if !self.stacked_review => " Evidence  ",
+                _ => " Panel  ",
             };
             controls.extend([
                 Span::styled(
@@ -516,7 +525,14 @@ impl ApprovalTuiModel {
             ]);
         }
         controls.extend([
-            Span::styled("[↑/↓]", accent_style()),
+            Span::styled(
+                if self.stacked_review {
+                    "[j/k]"
+                } else {
+                    "[↑/↓]"
+                },
+                accent_style(),
+            ),
             Span::styled(" Scroll  ", secondary_style()),
             Span::styled("[Ctrl-D/U]", accent_style()),
             Span::styled(" Half-page  ", secondary_style()),
@@ -534,6 +550,10 @@ impl ApprovalTuiModel {
             return;
         }
         let area = centered(area);
+        if self.stacked_review {
+            self.render_stacked_review(frame, area);
+            return;
+        }
         if self.compact_title {
             self.render_title_review(frame, area);
             return;
@@ -676,6 +696,16 @@ impl ApprovalTuiModel {
             );
         }
 
+        let footer = self.approval_footer();
+        let rendered_lines = footer.line_count(rows[5].width);
+        let footer_scroll = rendered_lines
+            .saturating_sub(rows[5].height as usize)
+            .try_into()
+            .unwrap_or(u16::MAX);
+        frame.render_widget(footer.scroll((footer_scroll, 0)), rows[5]);
+    }
+
+    fn approval_footer(&self) -> Paragraph<'static> {
         let footer = if self.guidance_visible {
             vec![
                 Line::from(vec![
@@ -694,7 +724,14 @@ impl ApprovalTuiModel {
         } else if self.editing_prompt_comment {
             vec![
                 Line::from(vec![
-                    Span::styled("Comment", accent_style()),
+                    Span::styled(
+                        if self.stacked_review {
+                            "Your comment"
+                        } else {
+                            "Comment"
+                        },
+                        accent_style(),
+                    ),
                     Span::styled(" (optional)", secondary_style()),
                 ]),
                 Line::raw(format!("> {}", self.comment)),
@@ -753,7 +790,14 @@ impl ApprovalTuiModel {
                         secondary_style(),
                     ),
                     Span::styled("[C]", accent_style()),
-                    Span::styled(" Comment  ", secondary_style()),
+                    Span::styled(
+                        if self.stacked_review {
+                            " Your comment  "
+                        } else {
+                            " Comment  "
+                        },
+                        secondary_style(),
+                    ),
                     Span::styled("[S]", accent_style()),
                     Span::styled(" Skip", secondary_style()),
                 ]),
@@ -762,7 +806,14 @@ impl ApprovalTuiModel {
             if !self.comment.is_empty() {
                 lines.insert(
                     1,
-                    Line::styled(format!("Comment: {}", self.comment), secondary_style()),
+                    Line::styled(
+                        if self.stacked_review {
+                            "Your comment saved · [C] Edit".to_owned()
+                        } else {
+                            format!("Comment: {}", self.comment)
+                        },
+                        secondary_style(),
+                    ),
                 );
             }
             lines
@@ -784,13 +835,147 @@ impl ApprovalTuiModel {
                 Line::from(navigation_controls),
             ]
         };
-        let footer = Paragraph::new(footer).wrap(Wrap { trim: false });
-        let rendered_lines = footer.line_count(rows[5].width);
-        let footer_scroll = rendered_lines
-            .saturating_sub(rows[5].height as usize)
-            .try_into()
-            .unwrap_or(u16::MAX);
-        frame.render_widget(footer.scroll((footer_scroll, 0)), rows[5]);
+        Paragraph::new(footer).wrap(Wrap { trim: false })
+    }
+
+    fn render_stacked_review(&mut self, frame: &mut Frame<'_>, area: Rect) {
+        let mut heading = vec![Line::styled(
+            self.screen.heading.as_str(),
+            secondary_style(),
+        )];
+        if let Some(title) = &self.screen.title {
+            heading.push(Line::styled(title.as_str(), accent_style()));
+        }
+        if !self.screen.scope.is_empty() {
+            heading.push(Line::raw(self.screen.scope.as_str()));
+        }
+        let heading = Paragraph::new(heading).wrap(Wrap { trim: false });
+        let heading_height = u16::try_from(heading.line_count(area.width)).unwrap_or(u16::MAX);
+        let footer = self.approval_footer();
+        let footer_lines = u16::try_from(footer.line_count(area.width)).unwrap_or(u16::MAX);
+        let footer_height = if self.editing_prompt_comment {
+            footer_lines.min(5)
+        } else {
+            footer_lines
+        };
+        let titles: Vec<_> = (0..self.screen.evidence.len())
+            .map(|index| {
+                let evidence = self.screen.evidence.get(index).expect("evidence panel");
+                let mut lines = vec![Line::styled(evidence.title.as_str(), accent_style())];
+                if !evidence.annotation.is_empty() {
+                    lines.push(Line::styled(
+                        evidence.annotation.as_str(),
+                        secondary_style(),
+                    ));
+                }
+                Paragraph::new(lines).wrap(Wrap { trim: false })
+            })
+            .collect();
+        let title_heights: Vec<_> = titles
+            .iter()
+            .map(|title| u16::try_from(title.line_count(area.width)).unwrap_or(u16::MAX))
+            .collect();
+        let title_height: u16 = title_heights.iter().copied().fold(0, u16::saturating_add);
+        let minimum_panels = u16::try_from(titles.len())
+            .unwrap_or(u16::MAX)
+            .saturating_mul(3);
+        let required_height = heading_height
+            .saturating_add(footer_height)
+            .saturating_add(title_height)
+            .saturating_add(minimum_panels);
+        if !self.guidance_visible && required_height > area.height {
+            self.interaction_enabled = false;
+            frame.render_widget(
+                Paragraph::new(format!(
+                    "Resize to at least {} × {required_height} to show all evidence titles, boxes and controls.",
+                    area.width
+                ))
+                .wrap(Wrap { trim: false })
+                .block(Block::default().borders(Borders::ALL).title("Terminal too small")),
+                area,
+            );
+            return;
+        }
+        let rows = Layout::vertical([
+            Constraint::Length(heading_height),
+            Constraint::Min(0),
+            Constraint::Length(footer_height),
+        ])
+        .split(area);
+        frame.render_widget(heading, rows[0]);
+        frame.render_widget(
+            footer.scroll((footer_lines.saturating_sub(footer_height), 0)),
+            rows[2],
+        );
+
+        if self.guidance_visible {
+            let guidance = self.screen.guidance.as_ref().expect("visible guidance");
+            render_scrollable_panel(
+                frame,
+                rows[1],
+                &guidance.title,
+                &guidance.body,
+                &mut self.guidance_scroll,
+                &mut self.half_page_lines,
+                false,
+            );
+            return;
+        }
+
+        let panel_height = rows[1].height.saturating_sub(title_height);
+        let desired_heights: Vec<_> = (0..self.screen.evidence.len())
+            .map(|index| {
+                let evidence = self.screen.evidence.get(index).expect("evidence panel");
+                let lines = Paragraph::new(evidence.body.as_str())
+                    .wrap(Wrap { trim: false })
+                    .line_count(area.width.saturating_sub(4));
+                u16::try_from(lines.saturating_add(2))
+                    .unwrap_or(u16::MAX)
+                    .max(3)
+            })
+            .collect();
+        let mut panel_heights = vec![3_u16; self.screen.evidence.len()];
+        let mut remaining = panel_height.saturating_sub(minimum_panels);
+        // Give each box a visible body line, then share additional space among
+        // boxes that still have hidden content. Short comments need no extra rows.
+        while remaining > 0 {
+            let mut expanded = false;
+            for (height, desired) in panel_heights.iter_mut().zip(&desired_heights) {
+                if *height < *desired && remaining > 0 {
+                    *height += 1;
+                    remaining -= 1;
+                    expanded = true;
+                }
+            }
+            if !expanded {
+                break;
+            }
+        }
+        let mut y = rows[1].y;
+        for (index, ((title, title_height), panel_height)) in titles
+            .into_iter()
+            .zip(title_heights)
+            .zip(panel_heights)
+            .enumerate()
+        {
+            frame.render_widget(title, Rect::new(area.x, y, area.width, title_height));
+            y = y.saturating_add(title_height);
+            let evidence = self.screen.evidence.get(index).expect("evidence panel");
+            let mut half_page_lines = 1;
+            render_scrollable_panel(
+                frame,
+                Rect::new(area.x, y, area.width, panel_height),
+                "",
+                &evidence.body,
+                &mut self.evidence_scrolls[index],
+                &mut half_page_lines,
+                index == self.evidence_index,
+            );
+            if index == self.evidence_index {
+                self.half_page_lines = half_page_lines;
+            }
+            y = y.saturating_add(panel_height);
+        }
     }
 
     fn render_title_review(&mut self, frame: &mut Frame<'_>, area: Rect) {
@@ -1405,6 +1590,16 @@ impl ReferenceTerminal {
         ))
     }
 
+    pub fn review_navigable_stacked(
+        &mut self,
+        screen: ApprovalScreen,
+        comment: String,
+    ) -> io::Result<ApprovalTuiAction> {
+        self.run_review_model(ApprovalTuiModel::new_navigable_stacked_review(
+            screen, comment,
+        ))
+    }
+
     pub fn review_title(
         &mut self,
         screen: ApprovalScreen,
@@ -1551,10 +1746,11 @@ pub(crate) fn render_scrollable_panel(
         .line_count(inner.width);
     let maximum_scroll = rendered_lines.saturating_sub(inner.height as usize);
     *scroll = (*scroll).min(u16::try_from(maximum_scroll).unwrap_or(u16::MAX));
+    let separator = if base_title.is_empty() { "" } else { " · " };
     let title = match (*scroll > 0, usize::from(*scroll) < maximum_scroll) {
-        (false, true) => format!("{base_title} · more below"),
-        (true, true) => format!("{base_title} · more above and below"),
-        (true, false) => format!("{base_title} · more above"),
+        (false, true) => format!("{base_title}{separator}more below"),
+        (true, true) => format!("{base_title}{separator}more above and below"),
+        (true, false) => format!("{base_title}{separator}more above"),
         _ => base_title.to_owned(),
     };
     frame.render_widget(

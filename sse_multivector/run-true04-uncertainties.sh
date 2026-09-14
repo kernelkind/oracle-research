@@ -8,4 +8,4 @@ if [[ ! -x "$binary" ]]; then
   printf 'Missing review binary: %s\nBuild the true-review target in the repository Rust development environment first.\n' "$binary" >&2
   exit 1
 fi
-exec "$binary" "$here/navigation-research-v1/TRUE04/collection-review/uncertainty-review.json" --session "$root/target/true04-uncertainty-review/decisions.json" "$@"
+exec "$binary" "$here/navigation-research-v1/TRUE04/collection-review/uncertainty-review.json" --session "$root/target/true04-uncertainty-review/decisions.json" --titles "$here/navigation-research-v1/TRUE04/titles.json" "$@"

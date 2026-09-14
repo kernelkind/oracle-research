@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::io;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use crossterm::event::{Event, KeyCode, KeyEventKind, KeyModifiers};
 use ratatui::Frame;
@@ -50,6 +50,25 @@ struct Decision {
     score: f64,
     cutoff: bool,
     model_input: String,
+}
+
+#[derive(Deserialize)]
+struct TitleCatalog {
+    schema_version: u32,
+    groups: Vec<TitleGroup>,
+}
+
+#[derive(Deserialize)]
+struct TitleGroup {
+    group: String,
+    title: String,
+    instances: Vec<MaskInstance>,
+}
+
+#[derive(Deserialize)]
+struct MaskInstance {
+    instance: String,
+    fragments: Vec<String>,
 }
 
 impl Packet {
@@ -116,6 +135,9 @@ pub enum ContainmentReviewAction {
 
 pub struct ContainmentReview {
     packet: Packet,
+    packet_path: PathBuf,
+    titles: Option<BTreeMap<String, TitleGroup>>,
+    titles_path: Option<PathBuf>,
     index: usize,
     details: bool,
     scroll: u16,
@@ -125,6 +147,7 @@ pub struct ContainmentReview {
 impl ContainmentReview {
     /// Read and validate all input before a terminal enters raw mode.
     pub fn load(path: impl AsRef<Path>, start_at: Option<&str>) -> io::Result<Self> {
+        let path = path.as_ref();
         let packet: Packet = serde_json::from_slice(&std::fs::read(path)?)
             .map_err(|error| invalid(format!("invalid containment packet: {error}")))?;
         packet.validate()?;
@@ -138,11 +161,67 @@ impl ContainmentReview {
         };
         Ok(Self {
             packet,
+            packet_path: path.to_owned(),
+            titles: None,
+            titles_path: None,
             index,
             details: false,
             scroll: 0,
             half_page_lines: 1,
         })
+    }
+
+    /// Attach source masks for display without changing the reviewed questions
+    /// or the hash that binds existing answers to those questions.
+    pub fn with_titles(mut self, path: impl AsRef<Path>) -> io::Result<Self> {
+        let path = path.as_ref();
+        let catalog: TitleCatalog = serde_json::from_slice(&std::fs::read(path)?)
+            .map_err(|error| invalid(format!("invalid title catalog: {error}")))?;
+        if catalog.schema_version != 1 || catalog.groups.is_empty() {
+            return Err(invalid("expected a nonempty schema-1 title catalog"));
+        }
+        let mut groups = BTreeMap::new();
+        let mut masks = BTreeMap::new();
+        for group in catalog.groups {
+            if group.group.trim().is_empty()
+                || group.title.trim().is_empty()
+                || group.instances.is_empty()
+            {
+                return Err(invalid("empty source group, title, or masks"));
+            }
+            for mask in &group.instances {
+                if mask.instance.trim().is_empty()
+                    || mask.fragments.is_empty()
+                    || mask.fragments.iter().any(|text| text.trim().is_empty())
+                {
+                    return Err(invalid("empty vector ID or mask fragments"));
+                }
+                if masks
+                    .insert(mask.instance.clone(), mask.fragments.clone())
+                    .is_some_and(|previous| previous != mask.fragments)
+                {
+                    return Err(invalid(format!("conflicting masks for {}", mask.instance)));
+                }
+            }
+            if groups.insert(group.group.clone(), group).is_some() {
+                return Err(invalid("duplicate source group ID"));
+            }
+        }
+        for item in &self.packet.items {
+            for decision in &item.decisions {
+                for (id, expected_title) in [(&decision.a_id, &item.a), (&decision.b_id, &item.b)] {
+                    let group = groups
+                        .get(id)
+                        .ok_or_else(|| invalid(format!("missing source masks for {id}")))?;
+                    if group.title != *expected_title {
+                        return Err(invalid(format!("source title mismatch for {id}")));
+                    }
+                }
+            }
+        }
+        self.titles = Some(groups);
+        self.titles_path = Some(path.to_owned());
+        Ok(self)
     }
 
     pub fn run(self) -> io::Result<()> {
@@ -379,6 +458,28 @@ pub enum ContainmentDecisionReviewOutcome {
 }
 
 impl ContainmentReview {
+    fn masks_for_groups<'a>(&self, ids: impl Iterator<Item = &'a str>) -> String {
+        let groups = self.titles.as_ref().expect("source masks loaded");
+        let mut seen = BTreeSet::new();
+        let mut lines = Vec::new();
+        for id in ids {
+            for mask in &groups[id].instances {
+                if seen.insert(&mask.instance) {
+                    lines.push(format!(
+                        "{}  {}",
+                        mask.instance,
+                        mask.fragments
+                            .iter()
+                            .map(|fragment| format!("⟦{fragment}⟧"))
+                            .collect::<Vec<_>>()
+                            .join(" ")
+                    ));
+                }
+            }
+        }
+        lines.join("\n\n")
+    }
+
     fn decision_screen(&self, decision: &ContainmentDecisionRecord) -> ApprovalScreen {
         let item = &self.packet.items[self.index];
         let status = match decision.outcome {
@@ -387,7 +488,7 @@ impl ContainmentReview {
             Some(ContainmentDecision::No) => "No (does not contain)",
             Some(ContainmentDecision::Skipped) => "Skipped",
         };
-        ApprovalScreen {
+        let mut screen = ApprovalScreen {
             heading: format!(
                 "TRUE04 · {} of {} · {} · {status}",
                 self.index + 1,
@@ -421,7 +522,30 @@ impl ContainmentReview {
                     body: item.reason.clone(),
                 },
             },
+        };
+        if self.titles.is_some() {
+            screen.evidence = ApprovalEvidenceLayout::Paged(vec![
+                ApprovalEvidence {
+                    title: format!("A (proposed parent): {}", item.a),
+                    annotation: String::new(),
+                    body: self.masks_for_groups(item.decisions.iter().map(|d| d.a_id.as_str())),
+                },
+                ApprovalEvidence {
+                    title: format!("B (proposed child): {}", item.b),
+                    annotation: String::new(),
+                    body: self.masks_for_groups(item.decisions.iter().map(|d| d.b_id.as_str())),
+                },
+                ApprovalEvidence {
+                    title: "My comment".into(),
+                    annotation: String::new(),
+                    body: item.reason.clone(),
+                },
+            ]);
+            screen.guidance.as_mut().expect("review guidance").body.push_str(
+                "\n\nThe masks show the source of each title. TRUE saw only the category titles, not these masks. Where an identical title represents multiple groups, all their source masks are shown. Only repeated vector IDs are deduplicated."
+            );
         }
+        screen
     }
 }
 
@@ -432,166 +556,193 @@ pub fn run_containment_decision_review(
     packet_path: impl AsRef<Path>,
     session_path: impl AsRef<Path>,
     start_at: Option<&str>,
-    mut review: impl FnMut(ApprovalScreen, String) -> io::Result<ApprovalTuiAction>,
+    review: impl FnMut(ApprovalScreen, String) -> io::Result<ApprovalTuiAction>,
 ) -> Result<ContainmentDecisionReviewOutcome> {
     let packet_path = packet_path.as_ref();
-    let mut viewer = ContainmentReview::load(packet_path, start_at)
-        .map_err(|source| io_error("read", packet_path, source))?;
-    // Resolve existing symlinks so aliases share the same session lock and writes.
-    let session_path = std::fs::canonicalize(session_path.as_ref())
-        .or_else(|error| {
-            if error.kind() == io::ErrorKind::NotFound {
-                std::path::absolute(session_path.as_ref())
-            } else {
-                Err(error)
-            }
-        })
-        .map_err(|source| io_error("resolve", session_path.as_ref(), source))?;
-    let session_path = session_path.as_path();
-    let same_file = std::fs::canonicalize(packet_path).is_ok_and(|path| path == session_path);
-    #[cfg(unix)]
-    let same_file = {
-        use std::os::unix::fs::MetadataExt;
-        same_file
-            || match (
-                std::fs::metadata(packet_path),
-                std::fs::metadata(session_path),
-            ) {
-                (Ok(packet), Ok(session)) => {
-                    packet.dev() == session.dev() && packet.ino() == session.ino()
-                }
-                _ => false,
-            }
-    };
-    if same_file {
-        return Err(Error::ExperimentState(
-            "containment input and review session must be different files".into(),
-        ));
-    }
-    let ids: BTreeSet<_> = viewer
-        .packet
-        .items
-        .iter()
-        .map(|item| item.item_id.as_str())
-        .collect();
-    let batch_sha256 = value_sha256(&viewer.packet)?;
-    let _lock = acquire_session_lock(session_path)?;
-    let mut session = match load_session::<ContainmentDecisionSession>(session_path)? {
-        Some(session) => {
-            if session.schema_version != 1
-                || session.batch_sha256 != batch_sha256
-                || session
-                    .decisions
-                    .keys()
-                    .map(String::as_str)
-                    .collect::<BTreeSet<_>>()
-                    != ids
-            {
-                return Err(Error::ExperimentState(
-                    "review session belongs to a different containment batch".into(),
-                ));
-            }
-            if session
-                .current_item
-                .as_deref()
-                .is_some_and(|id| !ids.contains(id))
-                || (session.current_item.is_none()
-                    && session
-                        .decisions
-                        .values()
-                        .any(|record| record.outcome.is_none()))
-            {
-                return Err(Error::ExperimentState(
-                    "containment review session has an invalid current item".into(),
-                ));
-            }
-            session
-        }
-        None => ContainmentDecisionSession {
-            schema_version: 1,
-            batch_sha256,
-            current_item: Some(viewer.packet.items[viewer.index].item_id.clone()),
-            decisions: viewer
+    ContainmentReview::load(packet_path, start_at)
+        .map_err(|source| io_error("read", packet_path, source))?
+        .run_decisions(session_path, start_at, review)
+}
+
+impl ContainmentReview {
+    /// Save decisions on the loaded questions, with any attached masks as display evidence.
+    pub fn run_decisions(
+        self,
+        session_path: impl AsRef<Path>,
+        start_at: Option<&str>,
+        mut review: impl FnMut(ApprovalScreen, String) -> io::Result<ApprovalTuiAction>,
+    ) -> Result<ContainmentDecisionReviewOutcome> {
+        let mut viewer = self;
+        let input = viewer.packet_path.clone();
+        let packet_path = input.as_path();
+        if let Some(id) = start_at {
+            viewer.index = viewer
                 .packet
                 .items
                 .iter()
-                .map(|item| (item.item_id.clone(), ContainmentDecisionRecord::default()))
-                .collect(),
-        },
-    };
-    if let Some(id) = start_at {
-        session.current_item = Some(id.to_owned());
-    }
-    save_session(session_path, &session)?;
-    while let Some(id) = &session.current_item {
-        viewer.index = viewer
+                .position(|item| item.item_id == id)
+                .ok_or_else(|| invalid(format!("unknown containment card: {id}")))
+                .map_err(|source| io_error("read", packet_path, source))?;
+        }
+        // Resolve existing symlinks so aliases share the same session lock and writes.
+        let session_path = std::fs::canonicalize(session_path.as_ref())
+            .or_else(|error| {
+                if error.kind() == io::ErrorKind::NotFound {
+                    std::path::absolute(session_path.as_ref())
+                } else {
+                    Err(error)
+                }
+            })
+            .map_err(|source| io_error("resolve", session_path.as_ref(), source))?;
+        let session_path = session_path.as_path();
+        for source_path in std::iter::once(packet_path).chain(viewer.titles_path.as_deref()) {
+            let same_file =
+                std::fs::canonicalize(source_path).is_ok_and(|path| path == session_path);
+            #[cfg(unix)]
+            let same_file = {
+                use std::os::unix::fs::MetadataExt;
+                same_file
+                    || match (
+                        std::fs::metadata(source_path),
+                        std::fs::metadata(session_path),
+                    ) {
+                        (Ok(packet), Ok(session)) => {
+                            packet.dev() == session.dev() && packet.ino() == session.ino()
+                        }
+                        _ => false,
+                    }
+            };
+            if same_file {
+                return Err(Error::ExperimentState(
+                    "containment inputs and review session must be different files".into(),
+                ));
+            }
+        }
+        let ids: BTreeSet<_> = viewer
             .packet
             .items
             .iter()
-            .position(|item| &item.item_id == id)
-            .expect("validated current item");
-        let decision = &session.decisions[id];
-        let action = review(viewer.decision_screen(decision), decision.comment.clone())
-            .map_err(|source| io_error("review containment from", packet_path, source))?;
-        let advance = matches!(
-            action,
-            ApprovalTuiAction::Submit { .. } | ApprovalTuiAction::Skip { .. }
-        );
-        let decision = session.decisions.get_mut(id).expect("validated item ID");
-        match action {
-            ApprovalTuiAction::Pause => return Ok(ContainmentDecisionReviewOutcome::Paused),
-            ApprovalTuiAction::None => {
-                return Err(Error::ExperimentState(
-                    "containment review returned without an action".into(),
-                ));
+            .map(|item| item.item_id.as_str())
+            .collect();
+        let batch_sha256 = value_sha256(&viewer.packet)?;
+        let _lock = acquire_session_lock(session_path)?;
+        let mut session = match load_session::<ContainmentDecisionSession>(session_path)? {
+            Some(session) => {
+                if session.schema_version != 1
+                    || session.batch_sha256 != batch_sha256
+                    || session
+                        .decisions
+                        .keys()
+                        .map(String::as_str)
+                        .collect::<BTreeSet<_>>()
+                        != ids
+                {
+                    return Err(Error::ExperimentState(
+                        "review session belongs to a different containment batch".into(),
+                    ));
+                }
+                if session
+                    .current_item
+                    .as_deref()
+                    .is_some_and(|id| !ids.contains(id))
+                    || (session.current_item.is_none()
+                        && session
+                            .decisions
+                            .values()
+                            .any(|record| record.outcome.is_none()))
+                {
+                    return Err(Error::ExperimentState(
+                        "containment review session has an invalid current item".into(),
+                    ));
+                }
+                session
             }
-            ApprovalTuiAction::PreviousItem => {
-                session.current_item = Some(
-                    viewer.packet.items[(viewer.index + viewer.packet.items.len() - 1)
-                        % viewer.packet.items.len()]
-                    .item_id
-                    .clone(),
-                );
-            }
-            ApprovalTuiAction::NextItem => {
-                session.current_item = Some(
-                    viewer.packet.items[(viewer.index + 1) % viewer.packet.items.len()]
-                        .item_id
-                        .clone(),
-                );
-            }
-            ApprovalTuiAction::SaveComment { comment } => decision.comment = comment,
-            ApprovalTuiAction::Submit { outcome, comment } => {
-                decision.outcome = Some(match outcome {
-                    ReviewOutcome::Approved => ContainmentDecision::Yes,
-                    ReviewOutcome::Rejected => ContainmentDecision::No,
-                });
-                decision.comment = comment;
-            }
-            ApprovalTuiAction::Skip { comment } => {
-                decision.outcome = Some(ContainmentDecision::Skipped);
-                decision.comment = comment;
-            }
-        }
-        if advance {
-            session.current_item = (1..=viewer.packet.items.len())
-                .map(|offset| {
-                    &viewer.packet.items[(viewer.index + offset) % viewer.packet.items.len()]
-                        .item_id
-                })
-                .find(|id| session.decisions[*id].outcome.is_none())
-                .cloned();
+            None => ContainmentDecisionSession {
+                schema_version: 1,
+                batch_sha256,
+                current_item: Some(viewer.packet.items[viewer.index].item_id.clone()),
+                decisions: viewer
+                    .packet
+                    .items
+                    .iter()
+                    .map(|item| (item.item_id.clone(), ContainmentDecisionRecord::default()))
+                    .collect(),
+            },
+        };
+        if let Some(id) = start_at {
+            session.current_item = Some(id.to_owned());
         }
         save_session(session_path, &session)?;
-    }
-    let (mut yes, mut no, mut skipped) = (0, 0, 0);
-    for decision in session.decisions.values() {
-        match decision.outcome {
-            Some(ContainmentDecision::Yes) => yes += 1,
-            Some(ContainmentDecision::No) => no += 1,
-            Some(ContainmentDecision::Skipped) => skipped += 1,
-            None => unreachable!("all cards have decisions"),
+        while let Some(id) = &session.current_item {
+            viewer.index = viewer
+                .packet
+                .items
+                .iter()
+                .position(|item| &item.item_id == id)
+                .expect("validated current item");
+            let decision = &session.decisions[id];
+            let action = review(viewer.decision_screen(decision), decision.comment.clone())
+                .map_err(|source| io_error("review containment from", packet_path, source))?;
+            let advance = matches!(
+                action,
+                ApprovalTuiAction::Submit { .. } | ApprovalTuiAction::Skip { .. }
+            );
+            let decision = session.decisions.get_mut(id).expect("validated item ID");
+            match action {
+                ApprovalTuiAction::Pause => return Ok(ContainmentDecisionReviewOutcome::Paused),
+                ApprovalTuiAction::None => {
+                    return Err(Error::ExperimentState(
+                        "containment review returned without an action".into(),
+                    ));
+                }
+                ApprovalTuiAction::PreviousItem => {
+                    session.current_item = Some(
+                        viewer.packet.items[(viewer.index + viewer.packet.items.len() - 1)
+                            % viewer.packet.items.len()]
+                        .item_id
+                        .clone(),
+                    );
+                }
+                ApprovalTuiAction::NextItem => {
+                    session.current_item = Some(
+                        viewer.packet.items[(viewer.index + 1) % viewer.packet.items.len()]
+                            .item_id
+                            .clone(),
+                    );
+                }
+                ApprovalTuiAction::SaveComment { comment } => decision.comment = comment,
+                ApprovalTuiAction::Submit { outcome, comment } => {
+                    decision.outcome = Some(match outcome {
+                        ReviewOutcome::Approved => ContainmentDecision::Yes,
+                        ReviewOutcome::Rejected => ContainmentDecision::No,
+                    });
+                    decision.comment = comment;
+                }
+                ApprovalTuiAction::Skip { comment } => {
+                    decision.outcome = Some(ContainmentDecision::Skipped);
+                    decision.comment = comment;
+                }
+            }
+            if advance {
+                session.current_item = (1..=viewer.packet.items.len())
+                    .map(|offset| {
+                        &viewer.packet.items[(viewer.index + offset) % viewer.packet.items.len()]
+                            .item_id
+                    })
+                    .find(|id| session.decisions[*id].outcome.is_none())
+                    .cloned();
+            }
+            save_session(session_path, &session)?;
         }
+        let (mut yes, mut no, mut skipped) = (0, 0, 0);
+        for decision in session.decisions.values() {
+            match decision.outcome {
+                Some(ContainmentDecision::Yes) => yes += 1,
+                Some(ContainmentDecision::No) => no += 1,
+                Some(ContainmentDecision::Skipped) => skipped += 1,
+                None => unreachable!("all cards have decisions"),
+            }
+        }
+        Ok(ContainmentDecisionReviewOutcome::Completed { yes, no, skipped })
     }
-    Ok(ContainmentDecisionReviewOutcome::Completed { yes, no, skipped })
 }
