@@ -1,0 +1,183 @@
+{
+  "experiment": "TRUE03",
+  "threshold": 0.142,
+  "source_titles_sha256": "424ffe683fe5fdb3de152cfc6fa09496dfef9fdef422e7a22618b28cc1e20716",
+  "pairs": [
+    {
+      "id": "P01",
+      "a_id": "S9c440e7f47",
+      "b_id": "S24afa84c49",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Preparing coffee beans is a narrower coffee subject. Coffee also includes drinking, trade and other subjects beyond preparation."
+    },
+    {
+      "id": "P02",
+      "a_id": "S9c440e7f47",
+      "b_id": "Sa241c43eb5",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Coffee consumption is a coffee subject. Coffee also includes preparation and cultivation, which need not concern consumption."
+    },
+    {
+      "id": "P03",
+      "a_id": "S9c440e7f47",
+      "b_id": "Sbbd7d8dae4",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Appreciating coffee flavor is a coffee subject. Coffee includes other subjects, such as cultivation or prices."
+    },
+    {
+      "id": "P04",
+      "a_id": "S24afa84c49",
+      "b_id": "Sa241c43eb5",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Preparing beans and consuming coffee can be related without containing each other. Grinding beans does not require drinking coffee; drinking pre-prepared coffee does not require bean preparation."
+    },
+    {
+      "id": "P05",
+      "a_id": "S24afa84c49",
+      "b_id": "Sbbd7d8dae4",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Bean preparation can concern grinding equipment rather than flavor appreciation; appreciating a served coffee's flavor need not concern preparing beans."
+    },
+    {
+      "id": "P06",
+      "a_id": "S9c440e7f47",
+      "b_id": "Sbb8511308a",
+      "a_contains_b": true,
+      "b_contains_a": true,
+      "rationale": "These distinct groups have exactly the same generated title, Coffee. This checks label equivalence only, not equality of their note sets or paraphrase generalization."
+    },
+    {
+      "id": "P07",
+      "a_id": "S49eb0ac749",
+      "b_id": "S485994b768",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Food ingredients are a food subject. Food includes eating and nutrition beyond ingredients."
+    },
+    {
+      "id": "P08",
+      "a_id": "S485994b768",
+      "b_id": "Sfd8645f195",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Sea salt used as a food ingredient is a narrower food-ingredient subject; many other ingredients are not sea salt."
+    },
+    {
+      "id": "P09",
+      "a_id": "S49eb0ac749",
+      "b_id": "Sfd8645f195",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Sea salt explicitly as a food ingredient belongs under Food. Food includes much beyond sea salt."
+    },
+    {
+      "id": "P10",
+      "a_id": "S485994b768",
+      "b_id": "S0eafedb82e",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Carrots explicitly as a recipe ingredient are a food-ingredient subject; ingredients are not limited to carrots."
+    },
+    {
+      "id": "P11",
+      "a_id": "S49eb0ac749",
+      "b_id": "S0c3094257f",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Chinese cuisine is a food subject, while food also includes other cuisines and topics."
+    },
+    {
+      "id": "P12",
+      "a_id": "S49eb0ac749",
+      "b_id": "Sea1c568039",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Indian food is a narrower food subject; food also includes other cuisines."
+    },
+    {
+      "id": "P13",
+      "a_id": "S0c3094257f",
+      "b_id": "Sea1c568039",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Chinese cuisine and Indian food may overlap in fusion dishes, but neither complete cuisine category contains the other."
+    },
+    {
+      "id": "P14",
+      "a_id": "S8077d349df",
+      "b_id": "S7dd75e5388",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Brisket is a cut of red meat; red meat also includes many other cuts. This judges the ordinary food sense of the actual titles."
+    },
+    {
+      "id": "P15",
+      "a_id": "S7dd75e5388",
+      "b_id": "S0c034c4006",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Brisket can be smoked or otherwise prepared without a crockpot. Crockpot meat dishes can use chicken or other cuts rather than brisket."
+    },
+    {
+      "id": "P17",
+      "a_id": "S5ea79ac96e",
+      "b_id": "Se66af3a9b7",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Poultry-based food preparation is a narrower poultry-and-eggs subject. Poultry and eggs also includes keeping birds or egg laying, beyond food preparation."
+    },
+    {
+      "id": "P18",
+      "a_id": "Se66af3a9b7",
+      "b_id": "Sa1a95316f6",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Making chicken stock is poultry-based food preparation. Other poultry preparations do not make chicken stock."
+    },
+    {
+      "id": "P19",
+      "a_id": "S5ea79ac96e",
+      "b_id": "Sa1a95316f6",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Making chicken stock is a poultry subject. Poultry and eggs includes much beyond making stock."
+    },
+    {
+      "id": "P20",
+      "a_id": "S6088798e3d",
+      "b_id": "S96e55b4730",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Daytime greetings need not refer to the weekend; weekend well-wishes need not be daytime greetings and may be given at night or before the weekend."
+    },
+    {
+      "id": "P21",
+      "a_id": "S6621c8eaa9",
+      "b_id": "Sd6b13ec91f",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Patience can concern waiting with no social-status or kindness issue. Kindness beyond social status need not concern patience."
+    },
+    {
+      "id": "P22",
+      "a_id": "S50475065d8",
+      "b_id": "S983e3758e5",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Satoshi Bitcoin units explicitly concern Bitcoin. Bitcoin includes subjects beyond its unit of account."
+    },
+    {
+      "id": "P23",
+      "a_id": "Sa11e75ba0a",
+      "b_id": "S53be040f52",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "A campaign to grow Nostr is a Nostr subject. Nostr includes technical and social subjects beyond that campaign."
+    }
+  ]
+}

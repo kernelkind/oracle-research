@@ -186,14 +186,14 @@ def summarize(rows):
     return result
 
 
-def render_decisions(rows):
+def render_decisions(rows, experiment='TRUE02'):
     def cell(value):
         return str(value).replace('|', '\\|').replace('\n', ' ').replace('\r', ' ')
 
     def answer(value):
         return 'Unresolved' if value is None else ('Yes' if value else 'No')
 
-    lines = ['# TRUE02 — Every frozen holdout decision', '',
+    lines = [f'# {experiment} — Every frozen holdout decision', '',
         'Each row asks **A contains B?** B is the premise; A is the hypothesis. '
         'All inputs use the unchanged TRUE01 topic sentence wrapper.', '',
         'Native answers are complete greedy labels with EOS required. Score is full-vocabulary '
@@ -231,12 +231,16 @@ def main():
             or snapshot.parent.parent.name != 'models--' + MODEL_ID.replace('/', '--')):
         raise ValueError('exact pinned model snapshot required')
     inputs = freeze_inputs(args.fixture, args.fixture_sha256, args.output)
+    run_inference(snapshot, inputs, args.output, args.batch_size, started)
+
+
+def run_inference(snapshot, inputs, output, batch_size, started, experiment='TRUE02'):
     print(f'Frozen {len(inputs)} inputs before inference. Hashing the pinned checkpoint.', flush=True)
     files = {path.name: sha256(path) for path in sorted(snapshot.iterdir()) if path.is_file()}
     for index, expected in enumerate(WEIGHT_HASHES, 1):
         if files.get(f'pytorch_model-{index:05d}-of-00005.bin') != expected:
             raise ValueError('weight shard differs from the release manifest')
-    save_json(args.output / 'model-files.json', files)
+    save_json(output / 'model-files.json', files)
 
     import numpy as np
     import torch
@@ -261,10 +265,10 @@ def main():
         raise ValueError('all parameters must remain in float32')
     loaded = time.monotonic()
     results, logits_batches = [], []
-    config = dict(experiment='TRUE02', model_id=MODEL_ID, revision=REVISION,
+    config = dict(experiment=experiment, model_id=MODEL_ID, revision=REVISION,
         parameter_count=sum(p.numel() for p in model.parameters()),
         label_token_ids=label_ids, dtype='float32', device='cpu', threads=4,
-        batch_size=args.batch_size, max_input_tokens=512, truncation=False,
+        batch_size=batch_size, max_input_tokens=512, truncation=False,
         decision='complete native greedy output, EOS required, no score cutoff',
         threshold=THRESHOLD, threshold_decision='entailment_score > 0.142',
         displayed_score='full-vocabulary probability of first output token 209',
@@ -273,10 +277,10 @@ def main():
         load_seconds=loaded-started, loading=loading, seed=0,
         packages={name: importlib.metadata.version(name) for name in
                   ('torch', 'transformers', 'huggingface_hub', 'numpy', 'safetensors')})
-    save_json(args.output / 'config.json', config)
-    with (args.output / 'scores.jsonl').open('x') as stream, torch.inference_mode():
-        for start in range(0, len(inputs), args.batch_size):
-            batch = inputs[start:start+args.batch_size]
+    save_json(output / 'config.json', config)
+    with (output / 'scores.jsonl').open('x') as stream, torch.inference_mode():
+        for start in range(0, len(inputs), batch_size):
+            batch = inputs[start:start+batch_size]
             tokens = tokenizer([row['model_input'] for row in batch], padding=True,
                                truncation=False, return_tensors='pt')
             if tokens['input_ids'].shape[1] > 512:
@@ -299,19 +303,19 @@ def main():
             stream.flush()
             print(f'{len(results)}/{len(inputs)} pairs; batch {elapsed:.1f}s; peak RSS '
                   f'{resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024**2:.1f} GiB', flush=True)
-    with (args.output / 'first-token-logits.npy').open('xb') as stream:
+    with (output / 'first-token-logits.npy').open('xb') as stream:
         np.save(stream, np.concatenate(logits_batches), allow_pickle=False)
     analysis = summarize(results)
-    save_json(args.output / 'analysis.json', analysis)
-    with (args.output / 'DECISIONS.md').open('x') as stream:
-        stream.write(render_decisions(results))
-    save_json(args.output / 'completion.json', dict(pairs=len(results),
+    save_json(output / 'analysis.json', analysis)
+    with (output / 'DECISIONS.md').open('x') as stream:
+        stream.write(render_decisions(results, experiment=experiment))
+    save_json(output / 'completion.json', dict(pairs=len(results),
         inference_seconds=time.monotonic()-loaded, total_seconds=time.monotonic()-started,
         peak_rss_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
-        scores_sha256=sha256(args.output / 'scores.jsonl'),
-        logits_sha256=sha256(args.output / 'first-token-logits.npy'),
-        analysis_sha256=sha256(args.output / 'analysis.json'),
-        decisions_sha256=sha256(args.output / 'DECISIONS.md')))
+        scores_sha256=sha256(output / 'scores.jsonl'),
+        logits_sha256=sha256(output / 'first-token-logits.npy'),
+        analysis_sha256=sha256(output / 'analysis.json'),
+        decisions_sha256=sha256(output / 'DECISIONS.md')))
     print(json.dumps(analysis, indent=2), flush=True)
 
 

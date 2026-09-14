@@ -99,9 +99,9 @@ It is not a solved membership oracle. The universal score boundary is imperfect,
 
 The 150 directions reuse just 30 descriptions in five tightly constructed collections, including explicit intersections and simple paraphrases. The 98% figure is descriptive of this test, not an estimated deployment accuracy. All expectations remain unchanged; disputes can be revisited openly without rewriting the saved answer key.
 
-## Current research status — 2026-09-12
+## Current research status — 2026-09-14
 
-The user considers TRUE plausible for hierarchy construction and has shelved further subsumption testing, not rejected the approach. The next focus is generating descriptions for nodes: both TRUE and a frontier-LLM alternative need those descriptions. The description-generation method and the final subsumption system remain undecided. This status change does not alter the experimental results or approve another run.
+After the pause for node-description work, the user approved resuming TRUE tests on actual generated titles. The completed [TRUE03 pilot](../TRUE03/RESULTS.md) uses unchanged v20/Astra-low titles and TRUE02's model, input wording and 0.142 cutoff. Its 41/44 matching directions support broader testing but do not adopt TRUE as the final hierarchy system. The TRUE02 measurements and original judgments above remain unchanged.
 
 ## Complete evidence
 
@@ -111,4 +111,4 @@ The user considers TRUE plausible for hierarchy construction and has shelved fur
 - [Frozen plan](../TRUE02-PLAN.md), [pre-score independent review](../TRUE02-BLIND-REVIEW.md).
 - [Execution and reproducibility](EXECUTION.md), [independent verification](verification.json).
 
-TRUE01 and its runner are unchanged. No hierarchy was modified and no further test or cutoff adjustment was run.
+TRUE01 and this run's frozen source snapshots remain unchanged. No hierarchy or cutoff adjustment was made in TRUE02. The later TRUE03 test has separate artifacts; the current runner shares the same inference implementation through a tested extraction.
