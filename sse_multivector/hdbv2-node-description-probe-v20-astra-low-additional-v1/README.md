@@ -1,6 +1,6 @@
 # V20 Astra-low: six previously untitled groups
 
-Ten of 12 titles look usable. Both football trials add an unsupported European restriction. The five other groups work in both trials. These are assistant judgments, independently checked—not user title approvals or a population accuracy estimate.
+No title objections remain in this six-group sample: ten outputs were assistant-accepted, and the user explicitly accepted “European Football” for the remaining group, covering its two capitalization variants. The original assistant assessments remain preserved separately. These are review outcomes, not a population accuracy estimate.
 
 ## Exact outputs
 
@@ -13,11 +13,11 @@ Ten of 12 titles look usable. Both football trials add an unsupported European r
 | Sd621a11e19 | Gianduja Availability | Gianduja Availability |
 | Sd7a87d7a3c | European Football | European football |
 
-No title, mask, or group was edited. [titles.json](./titles.json) includes every output, all masks, individual assessment and raw-result path.
+No title, mask, or group was edited. [titles.json](./titles.json) includes every output, all masks, the original pre-review assistant assessment and raw-result path. The chat approval below resolves the football objection; no TUI clicks were invented.
 
-## The repeated problem
+## Football title: approved in chat
 
-Both football titles include “European,” but one instance is only ⟦football⟧. That instance does not independently restrict the subject to Europe. Other instances mentioning European leagues or England cannot supply the missing restriction under the unchanged prompt.
+Asked explicitly whether “European Football” was acceptable for this group, the user answered “yes.” The earlier objection was that one instance contains only ⟦football⟧, while other instances supply the European context. Treating that literal scope objection as a clear practical failure was too pedantic.
 
 Complete group, preserving every mask:
 
@@ -31,17 +31,17 @@ Complete group, preserving every mask:
 - V955: ⟦football⟧
 - V956: ⟦leagues around Europe⟧ ⟦football⟧
 
-This is the same kind of unsupported narrowing previously seen with “Visual Art” over standalone ⟦art⟧. It demonstrates that Astra's earlier success on the art group did not establish reliable independent support. It does not invalidate the user's approval of this grouping or show that it cannot receive a valid title.
+The user also clarified that nondeterministic models are imperfect: assessment must focus on useful, accurate descriptions at an acceptable error rate, not perfect wording or flawless literal compliance on every call. This title is an accepted description of this group, not an outstanding failure. That does not automatically approve other disputed titles or freeze the prompt/model.
 
 ## What the other results show
 
 Network restrictions remain recognizable despite a hypothetical password change versus an actual firewall action. “Community” preserves the broad subject without importing musical context from the other instance. “Physical Stretching” does not require every instance to include bowing or a stiffness-relief purpose. “Japanese Culture” describes the poet/food connection instead of the text format. “Gianduja Availability” keeps availability without adding limited edition, a fixed quantity or freshly made status to every instance.
 
-This is encouraging transfer beyond the first six groups, with a specific remaining support problem. It is not a matched model comparison: no Sol calls were made on this sample. Repeated outputs from the same group are not independent semantic examples. No new prompt revision, automated correction or freeze followed this test.
+This is encouraging transfer beyond the first six groups, with no remaining objection after review. It is not a matched model comparison: no Sol calls were made on this sample. Repeated outputs from the same group are not independent semantic examples. The user approved completing [the original 61 accepted groups](../hdbv2-node-titles-v20-astra-low/README.md) using unchanged v20 and Astra-low, with review focused on meaningful errors. No prompt revision, automated correction or freeze followed this test.
 
 ## Review
 
-The focused review contains both football outputs, with every mask and separate assistant reasoning. B displays the other trial. No user decisions are prefilled.
+The focused review can revisit both approved football outputs, with every mask and the original pre-review assistant reasoning. It is no longer an outstanding review request. B displays the other trial. The approval is recorded in chat above, not prefilled into a TUI session.
 
 ```bash
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v20-astra-low-additional-v1/run-review.sh
@@ -68,4 +68,4 @@ Full notes and byte ranges are provenance only. Generation received only numbere
 - Usage: 26,976 input tokens including 1,920 cached; 295 output tokens including 201 reasoning tokens. Prefix caching did not reuse conversations.
 - [verification.json](./verification.json) records independent input/output/hash/isolation checks and production review-tool smoke tests.
 
-Previous artifacts and user review sessions are unchanged. Only a follow-up link was added to the [first Astra report](../hdbv2-node-description-probe-v20-astra-low-v1/README.md). CREC-127 remains the existing card; Plane tools were unavailable, so its external status/comment could not be updated.
+Raw artifacts and user review sessions are unchanged. This report and the follow-up summary in the [first Astra report](../hdbv2-node-description-probe-v20-astra-low-v1/README.md) record the later chat approval separately from the original assessments. CREC-127 remains the existing card; Plane tools were unavailable, so its external status/comment could not be updated.

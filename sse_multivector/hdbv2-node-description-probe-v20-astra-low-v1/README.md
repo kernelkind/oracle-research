@@ -2,7 +2,7 @@
 
 Astra-low produced 11 titles I judge usable and one I judge too narrow. The saved Sol-low run produced seven usable titles and five failures. This is an improvement on six reused groups, not an estimate of general accuracy or a reason to freeze the prompt/model.
 
-The user approved a follow-up with [six previously untitled groups](../hdbv2-node-description-probe-v20-astra-low-additional-v1/README.md), keeping v20 and Astra-low unchanged. That run produced ten titles judged usable and two football titles with an unsupported European restriction. This initial comparison and its outputs remain unchanged; neither prompt nor model is frozen.
+The user approved a follow-up with [six previously untitled groups](../hdbv2-node-description-probe-v20-astra-low-additional-v1/README.md), keeping v20 and Astra-low unchanged. Ten outputs were assistant-accepted; the user subsequently accepted “European Football” for the other group, resolving the objection to both capitalization variants. Review should focus on meaningful errors rather than pedantic wording objections. This initial comparison and its outputs remain unchanged; neither prompt nor model is frozen.
 
 ## Exact results
 

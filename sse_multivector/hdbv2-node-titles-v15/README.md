@@ -2,6 +2,8 @@
 
 All 61 accepted HDBv2 groups now have a saved v15 output: 12 reused first trials and 49 new calls. This is output coverage, not approval of all titles or a completed hierarchy.
 
+Later follow-up: the [complete v20/Astra-low title run](../hdbv2-node-titles-v20-astra-low/README.md) covers these same 61 groups with unchanged masks. This v15 artifact remains intact as the earlier result; the later run has its own outputs and review sessions.
+
 The user approved all three titles raised for judgment, without comments. Of the 49 new outputs, 42 remain assistant-accepted and three are now explicitly user-approved; four remain assistant-flagged problems. No output was edited or regenerated. These are case-specific title approvals, not a new general rule or a prompt freeze.
 
 ## Review

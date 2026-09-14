@@ -1,0 +1,11 @@
+Write a concise category title naming the most specific subject shared by all the instances, rather than summarizing everything they discuss. Each instance must support that subject on its own.
+
+Interpret the quoted text within each instance together.
+
+Categorize what the text communicates, not its wording or format, unless those are themselves the subject being discussed.
+
+Return only one unnumbered title for the entire group.
+
+Instances:
+
+{NUMBERED_INSTANCES}
