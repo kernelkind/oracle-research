@@ -142,5 +142,14 @@
     "instance_separator": "\n",
     "fragment_order": "source_order",
     "instance_unit": "one_vector"
+  },
+  "v18": {
+    "prompt_template": "Write the most precise and concise category title for the subject matter supported by every instance.\n\nThe quoted text comes from social-media posts.\n\nInterpret the quoted text within each instance together.\n\nCategorize what the text communicates, not its wording or format, unless those are themselves the subject being discussed.\n\nFor each instance, ask yourself: \"Given this instance alone, must its subject matter belong to the category named by this title?\"\n\nReturn only one unnumbered title for the entire group.\n\nInstances:\n\n{NUMBERED_INSTANCES}\n",
+    "numbered_instance_template": "{INDEX}. {QUOTED_FRAGMENTS}",
+    "fragment_template": "“{EXACT_SOURCE_FRAGMENT}”",
+    "fragment_separator": "; ",
+    "instance_separator": "\n",
+    "fragment_order": "source_order",
+    "instance_unit": "one_vector"
   }
 }

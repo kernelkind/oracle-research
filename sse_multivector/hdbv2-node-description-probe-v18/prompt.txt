@@ -1,0 +1,15 @@
+Write the most precise and concise category title for the subject matter supported by every instance.
+
+The quoted text comes from social-media posts.
+
+Interpret the quoted text within each instance together.
+
+Categorize what the text communicates, not its wording or format, unless those are themselves the subject being discussed.
+
+For each instance, ask yourself: "Given this instance alone, must its subject matter belong to the category named by this title?"
+
+Return only one unnumbered title for the entire group.
+
+Instances:
+
+{NUMBERED_INSTANCES}
