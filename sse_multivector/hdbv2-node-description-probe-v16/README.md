@@ -1,10 +1,10 @@
 # V16 node-title test
 
-Three of the four previously failed groups now have usable titles in both trials. The dog group still receives a title about strings. One control title needs review. These are assistant assessments; no v16 user decisions have been recorded.
+Three of the four previously failed groups now have usable titles in both trials. The dog group still receives a title about strings. The user accepted the only uncertain title, “Temporal deceleration.” No focused review questions remain. V16 remains unfrozen.
 
 ## Results
 
-| Group | Saved v15 title | V16 trial 1 | V16 trial 2 | My assessment |
+| Group | Saved v15 title | V16 trial 1 | V16 trial 2 | Initial assistant assessment |
 |---|---|---|---|---|
 | S0eafedb82e | Two numbered Recipes answers | Carrot Recipes | Recipes Containing Carrots | Both usable; one title per group |
 | S18bc272886 | Strings prefixed with “dog” | Strings beginning with “dog” | Strings Beginning with “dog” | Both repeat the wording-based failure |
@@ -16,24 +16,26 @@ Three of the four previously failed groups now have usable titles in both trials
 | S7dd75e5388 | Brisket smoking | Smoking brisket | Smoking brisket | Both usable |
 | S6088798e3d | Daily greetings | Greetings by Time of Day | Daytime greetings | Both usable |
 
-All 18 responses contain one unnumbered title. My judgments are 15 accepted, two rejected and one uncertain, not an accuracy estimate. Both raw trials remain saved; no best-of selection or output repair occurred.
+All 18 responses contain one unnumbered title. My initial judgments were 15 accepted, two rejected and one uncertain, not an accuracy estimate. The uncertain title is now explicitly user-approved; the other judgments remain assistant assessments. Both raw trials remain saved; no best-of selection or output repair occurred.
 
 The dog masks are ⟦dogstr⟧ and ⟦dog⟧. Neither discusses strings or prefixes. V16 therefore has not eliminated the failure the user confirmed.
 
-For the uncertain title, the masks are ⟦Find a way to slow things down⟧ and ⟦Lower⟧ ⟦time preference⟧. “Temporal deceleration” may suggest time itself slowing down, rather than less urgency or willingness to wait for future benefits. The earlier approval of “Rate reduction” remains intact; this is a question about a new title.
+For the initially uncertain title, the masks are ⟦Find a way to slow things down⟧ and ⟦Lower⟧ ⟦time preference⟧. My concern was that “Temporal deceleration” might suggest time itself slowing down, rather than less urgency or willingness to wait for future benefits. The user accepted the title; that concern is retained as the original assessment, not an outstanding objection. The earlier approval of “Rate reduction” also remains intact.
 
 ## Review
 
-The default review contains only that uncertain title, with all masks and my reasoning in a separate comment.
+The user approved `S6621c8eaa9-trial-2`, “Temporal deceleration,” with an empty TUI comment and confirmed in chat: “ehh ig it's fine.” The saved session is `target/hdbv2-node-description-v16-review-session.json`, SHA256 `d406c46e3ca45e5faedcbc6f6c675b2ff477ec5c3f3f6e3f9da55b7ae36b1998`. It contains exactly that one approval; its batch hash matches the unchanged review. This does not approve either dog output or freeze the prompt.
+
+The default review now reopens this accepted title, with all masks and the original assistant concern in a separate comment. No further review is required for it.
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
   ./sse_multivector/hdbv2-node-description-probe-v16/run-review.sh
 ```
 
-`run-review-problems.sh` shows both dog responses. `run-review-all.sh` shows all 18 responses. Each has a separate session. B shows the exact saved v15 answer. No user decisions are prefilled.
+`run-review-problems.sh` shows both dog responses. `run-review-all.sh` shows all 18 responses. Each has a separate session. B shows the exact saved v15 answer. No decisions were prefilled; the focused session now contains the user's actual approval.
 
-I read every mask and response. An independent semantic review agreed on both dog failures and the uncertain time title, but also questioned “Casual conversation about one’s day.” I accept that title because it describes the communication about someone's day, rather than merely classifying English expressions. The disagreement is preserved in [assessment-audit.json](./assessment-audit.json), not concealed as unanimous agreement.
+I read every mask and response. Before user review, an independent semantic review agreed on both dog failures and the uncertain time title, but also questioned “Casual conversation about one’s day.” I accept that title because it describes the communication about someone's day, rather than merely classifying English expressions. The initial disagreement is preserved in [assessment-audit.json](./assessment-audit.json), not concealed as unanimous agreement. The subsequent user approval is recorded above without rewriting those earlier assessments.
 
 ## What changed
 
@@ -60,4 +62,4 @@ This is a same-case development retest against historical v15 outputs, not a con
 
 The [official GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed the targeted edit and controlled retest, not the semantic judgments.
 
-The [complete v15 artifact](../hdbv2-node-titles-v15/README.md) remains unchanged as generation evidence. V16 is not frozen or installed as the complete 61-group title set. The next decision concerns the persistent dog failure and the uncertain time title; no further prompt change or generation was performed.
+The [complete v15 artifact](../hdbv2-node-titles-v15/README.md) remains unchanged as generation evidence. V16 is not frozen or installed as the complete 61-group title set. The time-title review is resolved. The next decision concerns the persistent dog failure; no further prompt change or generation was performed.
