@@ -51,7 +51,7 @@ Usage: 43,784 input tokens; 988 output tokens, including 813 reasoning tokens. N
 
 Dogs worked in both v20 trials, while the baseline repeated its spelling-based failure once. Tea worked in both versions. Those observations do not prove a reliable gain: art still failed, and v20 introduced combined-activity and positivity problems in these trials.
 
-Do not adopt or freeze v20 on this result. No further prompt revision or experiment was performed. The next action is user review of the concrete judgments, not an automatic additional run.
+Do not adopt or freeze v20 on this Sol-only result. The user subsequently requested [Astra-low title generation with unchanged v20](../hdbv2-node-description-probe-v20-astra-low-v1/README.md). That comparison uses these saved Sol outputs without changing them or rerunning Sol. Astra produced 11 titles judged usable and one judged too narrow on the same six groups; neither prompt nor model was frozen.
 
 The [official Sol guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed keeping the comparison controlled; it does not establish a cause for these outputs.
 

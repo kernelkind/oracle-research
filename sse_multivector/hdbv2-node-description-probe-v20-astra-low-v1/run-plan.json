@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv2-node-description-probe-v20-astra-low-v1",
+  "source_commit": "8c8bc238e81dcc85dfbf4e57662054554a05860b",
+  "prompt_version": "v20",
+  "task": "Generate category titles, not judge fixed titles.",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "baseline_model": "gpt-5.6-sol",
+  "baseline_reasoning_effort": "low",
+  "baseline": "../hdbv2-node-description-probe-v20/comparison.json, v20 rows only",
+  "comparison": "Twelve new Astra-low calls versus twelve saved Sol-low v20 calls. Not a concurrent Sol retest.",
+  "groups": [
+    "S18bc272886",
+    "S8a6ab7afaf",
+    "Se7ebc25cf1",
+    "S24afa84c49",
+    "S78e7660d1d",
+    "S83f6ab41f0"
+  ],
+  "trials_per_group": 2,
+  "calls": 12,
+  "max_concurrent": 3,
+  "execution": "First call alone, then waves of at most three. Fresh isolated CLI process, thread and empty workspace per call. Stop new submissions on error; no automatic retries.",
+  "change": "Only model changes from each saved Sol-low config; new artifact path, all prompt text, masks, effort, CLI and wrapper unchanged.",
+  "assessment": "Inspect every title against every supplied mask. Preserve the same strict independent-support standard and uncertainty as the Sol comparison. No exact-label requirement or model-based change of judgment. Keep every answer; no best-of selection.",
+  "scope": "No prompt edits, no fixed-title diagnostic, no source/vector/segment changes, no freeze, no further experiments.",
+  "billing": "Authorized Codex subscription only; no purchases, new API billing, rentals or monetary commitment.",
+  "submission_order": [
+    "trial-1/S18bc272886/config.json",
+    "trial-1/S8a6ab7afaf/config.json",
+    "trial-1/Se7ebc25cf1/config.json",
+    "trial-1/S24afa84c49/config.json",
+    "trial-1/S78e7660d1d/config.json",
+    "trial-1/S83f6ab41f0/config.json",
+    "trial-2/S18bc272886/config.json",
+    "trial-2/S8a6ab7afaf/config.json",
+    "trial-2/Se7ebc25cf1/config.json",
+    "trial-2/S24afa84c49/config.json",
+    "trial-2/S78e7660d1d/config.json",
+    "trial-2/S83f6ab41f0/config.json"
+  ]
+}
