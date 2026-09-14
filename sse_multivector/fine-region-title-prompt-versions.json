@@ -151,5 +151,14 @@
     "instance_separator": "\n",
     "fragment_order": "source_order",
     "instance_unit": "one_vector"
+  },
+  "v20": {
+    "prompt_template": "Write a concise category title naming the most specific subject shared by all the instances, rather than summarizing everything they discuss. Each instance must support that subject on its own.\n\nInterpret the quoted text within each instance together.\n\nCategorize what the text communicates, not its wording or format, unless those are themselves the subject being discussed.\n\nReturn only one unnumbered title for the entire group.\n\nInstances:\n\n{NUMBERED_INSTANCES}\n",
+    "numbered_instance_template": "{INDEX}. {QUOTED_FRAGMENTS}",
+    "fragment_template": "“{EXACT_SOURCE_FRAGMENT}”",
+    "fragment_separator": "; ",
+    "instance_separator": "\n",
+    "fragment_order": "source_order",
+    "instance_unit": "one_vector"
   }
 }

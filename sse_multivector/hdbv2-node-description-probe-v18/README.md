@@ -72,7 +72,9 @@ Usage: 44,000 input tokens, including 1,664 cached tokens; 1,034 output tokens, 
 
 [prompt.txt](./prompt.txt) and [baseline-prompt.txt](./baseline-prompt.txt) preserve the exact templates. [The earlier v16 results](../hdbv2-node-description-probe-v16/README.md) remain intact.
 
-Do not adopt v18 on this evidence. The dog failure did not recur in either fresh condition, so this run cannot show the new sentence fixed it. Tea regressed, and art remained unsupported under both prompts. This small comparison does not isolate why those behaviors occurred. No further prompt edit or experiment was performed.
+Do not adopt v18 on this evidence. The dog failure did not recur in either fresh condition, so this run cannot show the new sentence fixed it. Tea regressed, and art remained unsupported under both prompts. This small comparison does not isolate why those behaviors occurred. No further prompt edit or experiment was performed during this comparison.
+
+The user subsequently rejected the unrun v19 draft and approved the [v20 comparison](../hdbv2-node-description-probe-v20/README.md). V20 starts from v16 and states the shared-subject task and independent-support requirement in its opening. All 24 new calls completed, but v20 still has art, combined-activity and positivity failures. The v20 review exposes all eight failed outputs across both versions plus one uncertain baseline title. Neither version was frozen; this v18 record and its raw results remain unchanged apart from this follow-up link.
 
 The [official GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed the one-change comparison, not its semantic judgments.
 
