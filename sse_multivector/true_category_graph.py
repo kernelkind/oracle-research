@@ -1,8 +1,9 @@
-"""Build the provisional TRUE10 graph from complete, frozen directed scores.
+"""Build a category graph from complete, frozen TRUE directed outputs.
 
 An edge A -> B records that TRUE's score for A contains B exceeds 0.142.
 Group IDs remain distinct, including equal titles. Native labels are retained
 separately. Cycles are diagnostics, never evidence of semantic equivalence.
+An explicit native mode instead selects the saved generated positive class.
 """
 from copy import deepcopy
 import math
@@ -99,7 +100,7 @@ def _reachability(adjacency):
     return result
 
 
-def build_graph(titles, scores, threshold=THRESHOLD):
+def build_graph(titles, scores, threshold=THRESHOLD, *, decision_rule='cutoff'):
     """Return lossless raw edges and graph diagnostics without semantic repairs.
 
     Nodes preserve the source group dictionaries, including note memberships.
@@ -108,14 +109,19 @@ def build_graph(titles, scores, threshold=THRESHOLD):
     SCCs describe only graph cycles, not interchangeable category meanings.
     Transitive reduction is returned only for an entirely acyclic raw graph.
     All output ordering follows source group/pair order, not score file order.
+    Native mode uses the complete saved generated class, not a numerical cutoff;
+    unresolved native outputs remain separate from rejected relationships.
     """
+    if decision_rule not in ('cutoff', 'native'):
+        raise ValueError('decision_rule must be cutoff or native')
     if type(threshold) not in (int, float) or threshold != THRESHOLD:
         raise ValueError('frozen threshold 0.142 required')
     inputs = prepare_inputs(titles)
     rows = _validated_scores(inputs, scores)
     nodes = titles['groups']
     ids = [node['group'] for node in nodes]
-    raw_edges = [row for row in rows if threshold_decision(row['entailment_score'])]
+    field = 'threshold_predicted' if decision_rule == 'cutoff' else 'predicted'
+    raw_edges = [row for row in rows if row[field] is True]
     adjacency = {key: set() for key in ids}
     parents = {key: set() for key in ids}
     by_pair = {}
@@ -158,9 +164,9 @@ def build_graph(titles, scores, threshold=THRESHOLD):
             for child in adjacency[row['a_id']])]
     roots = [key for key in ids if not parents[key]]
     unresolved = [row for row in rows if row['predicted'] is None]
-    reachable_rejected = [row for row in rows if not row['threshold_predicted']
+    reachable_rejected = [row for row in rows if row[field] is False
                           and row['b_id'] in reachable[row['a_id']]]
-    return deepcopy(dict(
+    result = dict(
         threshold=THRESHOLD, threshold_rule='entailment_score > 0.142',
         nodes=nodes, raw_edges=raw_edges, roots=roots,
         strongly_connected_components=components, cycle_components=cycle_components,
@@ -174,4 +180,8 @@ def build_graph(titles, scores, threshold=THRESHOLD):
                    cycle_components=len(cycle_components), cycle_edges=len(cycle_edges),
                    mutual_acceptance=len(mutual), native_unresolved=len(unresolved),
                    reachable_rejected_pairs=len(reachable_rejected),
-                   transitive_reduced_edges=None if reduced is None else len(reduced))))
+                   transitive_reduced_edges=None if reduced is None else len(reduced)))
+    if decision_rule == 'native':
+        result.update(decision_rule='native', edge_rule='predicted is True',
+                      threshold=None, threshold_rule=None)
+    return deepcopy(result)

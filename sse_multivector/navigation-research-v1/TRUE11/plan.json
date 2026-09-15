@@ -1,0 +1,54 @@
+{
+  "experiment": "TRUE11",
+  "base_commit": "9425b5c6517b2f94151daffe91d22690f7f18bbd",
+  "tracking_card": "CREC-127",
+  "question": "What changes in category paths and note availability when the graph uses native answers instead of the fixed 0.142 cutoff?",
+  "control": "TRUE10 canonical cutoff graph, unchanged.",
+  "variable": "Edge acceptance only: complete generated native class 1 rather than score strictly greater than 0.142.",
+  "interpretation": "Retrospective deterministic comparison of saved outputs; prior pairwise results already suggested both cycle removal and lost useful links. This is not a blinded new model evaluation.",
+  "unchanged": [
+    "exact titles",
+    "source masks and notes",
+    "every saved model output",
+    "reviewed Coffee and Bitcoin equivalences",
+    "all 58 canonical categories"
+  ],
+  "measures": [
+    "raw and reduced connections",
+    "cycles and root access",
+    "all ordered category paths",
+    "per-category available notes",
+    "independent semantic judgments with uncertainties retained"
+  ],
+  "forbidden": [
+    "inference",
+    "cutoff tuning",
+    "new titles",
+    "new equivalences",
+    "semantic repairs",
+    "new UI",
+    "automatic selection of a replacement rule"
+  ],
+  "resources": {
+    "model_calls": 0,
+    "paid_calls": 0,
+    "algorithm": "small in-memory graph operations"
+  },
+  "inputs_sha256": {
+    "sse_multivector/navigation-research-v1/TRUE10/derived/canonical.json": "2ab5b4c95631ff9fd3e309dc21f425dce568fa0809462a0414d3e3ba7d716aed",
+    "sse_multivector/navigation-research-v1/TRUE10/derived/graph.json": "74dfa42d8a2b072b1803722f9674069638f5a229043528d47a579631a8985731",
+    "sse_multivector/navigation-research-v1/TRUE10/derived/notes.json": "49a2ba99049d9fa17c545e1e55849115b65f5570d459bf03a95e691ed358db08",
+    "sse_multivector/navigation-research-v1/TRUE10/derived/completion.json": "53a45e6fea85fc749d23fe9ffc3e11a4abafcef2f6991e4cc6aba0744c89fcdc",
+    "sse_multivector/navigation-research-v1/TRUE10/derived/semantic-comparison.json": "e7540ceba12396436a57fb0d5050b01278125134f9a00d5070c51ffa76685797",
+    "sse_multivector/navigation-research-v1/TRUE10/additional-semantic-review.json": "041944597b17faeff5e0913620e2df55360e36438e14146fc551b972f01c7db2",
+    "sse_multivector/navigation-research-v1/TRUE10/analysis-plan.json": "2bf5935b700b04192410fbaaf9a879fbbf2ad5ace5f36dd5b6d85c987b4383f7",
+    "sse_multivector/navigation-research-v1/TRUE10/graph/scores.json": "b0f7a17253b3f5682368477add8a3424ed5df4eaadc651eb1a168a89365bb7a5"
+  },
+  "code_sha256": {
+    "sse_multivector/navigation-research-v1/TRUE11/run.py": "60e3c6ff9ebefebf12b30ee3b46b81fba04ebc56842e54837a81903f61486236",
+    "sse_multivector/true_category_graph.py": "7431ac0390e36df40c4e359331d67fab954571a29cc86ec2adc00ca5f1872198",
+    "sse_multivector/true_graph_notes.py": "8b274bc457c115b65391ad37e1d335d18e2b6136fe2f2b1ca1416523c77d152a",
+    "sse_multivector/true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+    "sse_multivector/true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9"
+  }
+}

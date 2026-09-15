@@ -73,9 +73,9 @@ A fresh-context reviewer examined plausible relationships across the collection 
 
 These are assistant judgments about repeated categories, not independent test examples or a general accuracy estimate. Uncertainty includes product-versus-activity scope and whether Food includes beverages. The four uncertain duplicate-category directions were subsequently resolved by explicit mask review, not by automatic cycle contraction. Nineteen accepted directions absent from the initial review received a separate post-score review. Unlisted directions were not silently classified as No.
 
-## Next step suggested—not performed
+## Completed follow-up
 
-Compare the graph built from native answers with this fixed-cutoff graph, **using the saved outputs and no additional inference**. Native answers reject both false reverse connections above, but also miss more independently judged valid connections. The useful question is how that tradeoff affects complete paths and available notes—not which rule has the larger headline accuracy. No replacement rule has been selected.
+[TRUE11](../TRUE11/RESULTS.md) compared the native-answer graph with this fixed-cutoff graph using the saved outputs and no additional inference. Native answers remove both cycles, but also remove useful routes and note placements, including Cooking Times and Making Chicken Stock under Food Preparation and Dining. No replacement rule has been selected. All TRUE10 measurements and saved artifacts remain unchanged.
 
 ## Records
 
