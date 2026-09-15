@@ -1,0 +1,103 @@
+{
+  "experiment": "TRUE03",
+  "threshold": 0.142,
+  "source_titles_sha256": "693223548b17e439ac433dd2f9aaba9b830a2c97d5e68798379e8f784fb66799",
+  "pairs": [
+    {
+      "id": "P01",
+      "a_id": "Sea1c568039",
+      "b_id": "S7dd75e5388",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Brisket is a specific food; the broad Food title is not limited to its breakfast examples. Brisket does not encompass food generally."
+    },
+    {
+      "id": "P02",
+      "a_id": "Sea1c568039",
+      "b_id": "S349051e569",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Raw milk and raw-milk slush are foods in the broad dietary sense, including beverages. Food is not restricted to raw milk."
+    },
+    {
+      "id": "P03",
+      "a_id": "S49eb0ac749",
+      "b_id": "Sa1a95316f6",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Making chicken stock is food preparation, supported by cooking, stock pots and chicken bones. Food Preparation and Dining is an umbrella for preparation and dining, not a requirement that every child perform both. Stock making does not encompass all preparation or dining."
+    },
+    {
+      "id": "P04",
+      "a_id": "S485994b768",
+      "b_id": "S0c034c4006",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "The crockpot category specifies meat-based meals, and its masks describe beef stew and a roast. These fall within foods featuring meat or seafood; that broader category does not require crockpot cooking."
+    },
+    {
+      "id": "P05",
+      "a_id": "S9c440e7f47",
+      "b_id": "S24afa84c49",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Grinding or roasting coffee beans is a specific coffee subject. Coffee as a whole is not restricted to bean preparation."
+    },
+    {
+      "id": "P06",
+      "a_id": "S9c440e7f47",
+      "b_id": "Sbbd7d8dae4",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Appreciating coffee for flavour is a specific coffee subject, supported by decaf enjoyment and roast taste profiles. Coffee includes subjects other than flavour appreciation."
+    },
+    {
+      "id": "P07",
+      "a_id": "S50475065d8",
+      "b_id": "S983e3758e5",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "The fixed child title explicitly identifies satoshis as Bitcoin units. This is a narrower Bitcoin topic, not a claim that a unit is itself an entire cryptocurrency. Bitcoin is not restricted to its smallest units."
+    },
+    {
+      "id": "P08",
+      "a_id": "S24afa84c49",
+      "b_id": "Sbbd7d8dae4",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Roasting and taste-profile instances connect these subjects, but flavour appreciation also includes decaf enthusiasts without preparation. Grinding coffee beans does not itself express flavour appreciation. Overlap is not containment."
+    },
+    {
+      "id": "P09",
+      "a_id": "S8a6ab7afaf",
+      "b_id": "S8ea08f1aff",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Photography and painting do not encompass playing music or a rave at a coffee shop. Music at coffee shops does not encompass visual art. The accepted Visual Art title is not being reopened."
+    },
+    {
+      "id": "P10",
+      "a_id": "S485994b768",
+      "b_id": "S7e8dc24c0e",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Butter as part of a meal does not require meat or seafood; meat or seafood foods do not require butter. One shared shrimp-risotto instance is overlap, not containment."
+    },
+    {
+      "id": "P11",
+      "a_id": "S9c440e7f47",
+      "b_id": "Sa241c43eb5",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Having consumed coffee is a specific coffee topic, directly supported by 'You’ve had coffee' and 'Just had'/'coffee'. Coffee generally is not restricted to having consumed it."
+    },
+    {
+      "id": "P12",
+      "a_id": "Sdcca2f87ae",
+      "b_id": "S220a14b044",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Meat eating is a specific kind of food consumption. The general food-consumption masks discuss eating many kinds of foods and dietary guidance; the meat category selects carnivore and eating gamey meat. Food consumption is not restricted to meat."
+    }
+  ]
+}
