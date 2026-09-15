@@ -163,7 +163,7 @@ It does **not** justify lowering the cutoff to fit this sample. In the preserved
 
 The diagnostic does not establish how often wording causes errors across real categories, how to repair it, or whether TRUE is unusable. It does not validate a complete hierarchy. No variant was selected as a production replacement.
 
-**Agreed investigation priority:** focus on ordinary food relationships, especially the missed containment of Steak by “Foods featuring meat or seafood.” Give the Bitcoin result less weight when judging general performance: limited Bitcoin familiarity could contribute, but its training coverage and the cause of this failure are unestablished. All measured results remain unchanged. The specific follow-up test and any model comparison remain to be agreed; neither has been run.
+**Agreed investigation priority:** focus on ordinary food relationships, especially the missed containment of Steak by “Foods featuring meat or seafood.” Give the Bitcoin result less weight when judging general performance: limited Bitcoin familiarity could contribute, but its training coverage and the cause of this failure are unestablished. All measured results remain unchanged. The approved fixed-parent follow-up is now complete as [TRUE08](../TRUE08/RESULTS.md): it checks other food members and clear nonmembers. No alternative-model comparison has been run.
 
 ## Source masks
 

@@ -1,0 +1,71 @@
+{
+  "experiment": "TRUE03",
+  "threshold": 0.142,
+  "source_titles_sha256": "8303013f959799bb9482ac62a7fecf4a78d6f1cbb9eaa927db86aa9cee8bb8a2",
+  "pairs": [
+    {
+      "id": "P01",
+      "a_id": "parent",
+      "b_id": "P01",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Steak is meat-based food. Reverse is No: the parent is not restricted to this one child category."
+    },
+    {
+      "id": "P02",
+      "a_id": "parent",
+      "b_id": "P02",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Brisket is a meat cut/food. Reverse is No: the parent is not restricted to this one child category."
+    },
+    {
+      "id": "P03",
+      "a_id": "parent",
+      "b_id": "P03",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Roast chicken is poultry-based food. Reverse is No: the parent is not restricted to this one child category."
+    },
+    {
+      "id": "P04",
+      "a_id": "parent",
+      "b_id": "P04",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Grilled salmon is fish-based food. Reverse is No: the parent is not restricted to this one child category."
+    },
+    {
+      "id": "P05",
+      "a_id": "parent",
+      "b_id": "P05",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Shrimp dishes feature shellfish. Reverse is No: the parent is not restricted to this one child category."
+    },
+    {
+      "id": "P06",
+      "a_id": "parent",
+      "b_id": "P06",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Plain boiled rice does not require meat or seafood; serving it alongside meat does not make its category a refinement. Reverse is No: the parent is not restricted to this one child category."
+    },
+    {
+      "id": "P07",
+      "a_id": "parent",
+      "b_id": "P07",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Fresh fruit does not require meat or seafood. Reverse is No: the parent is not restricted to this one child category."
+    },
+    {
+      "id": "P08",
+      "a_id": "parent",
+      "b_id": "P08",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Vegan meals exclude meat and seafood. Reverse is No: the parent is not restricted to this one child category."
+    }
+  ]
+}
