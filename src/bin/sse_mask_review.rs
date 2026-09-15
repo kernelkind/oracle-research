@@ -5,7 +5,9 @@ use std::io::IsTerminal;
 use std::path::Path;
 use std::process::ExitCode;
 
-use oracle_mvp::mask_prompt_review::{MaskPromptReviewOutcome, run_mask_prompt_review_from};
+use oracle_mvp::mask_prompt_review::{
+    MaskPromptReviewOutcome, run_category_membership_review_from, run_mask_prompt_review_from,
+};
 use oracle_mvp::reference_tui::ReferenceTerminal;
 use oracle_mvp::sse_mask_review::{
     AtomicSubjectNoteReviewRunOutcome, ReviewStage, SelectedSubjectReviewRunOutcome,
@@ -23,7 +25,8 @@ const USAGE: &str = "usage: sse-mask-review \
     sse-mask-review review-subjects <experiment-directory>\n       \
     sse-mask-review review-claims <experiment-directory>\n       \
     sse-mask-review review-masks <mask-review.json> <mask-session.json> [--start-at <item-id>]\n       \
-    sse-mask-review review-titles <title-review.json> <title-session.json> [--start-at <item-id>] [--comments <comments.json>]";
+    sse-mask-review review-titles <title-review.json> <title-session.json> [--start-at <item-id>] [--comments <comments.json>]\n       \
+    sse-mask-review review-membership <membership-review.json> <membership-session.json> [--start-at <item-id>]";
 
 #[derive(Clone, Copy)]
 enum PromptReviewMode {
@@ -134,34 +137,46 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         return Ok(());
     }
     let mask_review = match arguments.as_slice() {
-        [command, batch, session] if command == "review-masks" => Some((batch, session, None)),
+        [command, batch, session] if command == "review-masks" || command == "review-membership" => {
+            Some((command, batch, session, None))
+        }
         [command, batch, session, flag, item]
-            if command == "review-masks" && flag == "--start-at" =>
+            if (command == "review-masks" || command == "review-membership") && flag == "--start-at" =>
         {
-            Some((batch, session, Some(item.as_str())))
+            Some((command, batch, session, Some(item.as_str())))
         }
         _ => None,
     };
-    if let Some((batch, session, start_at)) = mask_review {
+    if let Some((command, batch, session, start_at)) = mask_review {
+        let membership = command == "review-membership";
         if !std::io::stdin().is_terminal() || !std::io::stdout().is_terminal() {
-            return Err(
-                "the mask prompt review must be started from an interactive terminal".into(),
-            );
+            return Err(if membership {
+                "the category membership review must be started from an interactive terminal"
+            } else {
+                "the mask prompt review must be started from an interactive terminal"
+            }.into());
         }
         let mut terminal = ReferenceTerminal::new()?;
-        let outcome = run_mask_prompt_review_from(batch, session, start_at, |screen, comment| {
-            terminal.review_navigable_prompt_iteration(screen, comment)
-        })?;
+        let outcome = if membership {
+            run_category_membership_review_from(batch, session, start_at, |screen, comment| {
+                terminal.review_navigable_stacked(screen, comment)
+            })?
+        } else {
+            run_mask_prompt_review_from(batch, session, start_at, |screen, comment| {
+                terminal.review_navigable_prompt_iteration(screen, comment)
+            })?
+        };
         drop(terminal);
+        let label = if membership { "Membership" } else { "Mask" };
         match outcome {
-            MaskPromptReviewOutcome::Paused => println!("Mask review paused safely"),
+            MaskPromptReviewOutcome::Paused => println!("{label} review paused safely"),
             MaskPromptReviewOutcome::Completed {
                 approved,
                 rejected,
                 skipped,
             } => {
                 println!(
-                    "Mask review complete: {approved} approved, {rejected} disapproved, {skipped} skipped"
+                    "{label} review complete: {approved} approved, {rejected} disapproved, {skipped} skipped"
                 );
             }
         }

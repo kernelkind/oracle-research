@@ -32,6 +32,16 @@ struct MaskReviewItem {
     subject: String,
     note: String,
     fragments: Vec<ProposedMaskFragment>,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    assessment: String,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    details: String,
+}
+
+#[derive(Clone, Copy)]
+enum ReviewPurpose {
+    MaskQuality,
+    CategoryMembership,
 }
 
 #[derive(Clone, Copy, Deserialize, Serialize)]
@@ -81,6 +91,27 @@ pub fn run_mask_prompt_review_from(
     batch_path: impl AsRef<Path>,
     session_path: impl AsRef<Path>,
     start_at: Option<&str>,
+    review: impl FnMut(ApprovalScreen, String) -> io::Result<ApprovalTuiAction>,
+) -> Result<MaskPromptReviewOutcome> {
+    run_review_from(batch_path, session_path, start_at, ReviewPurpose::MaskQuality, review)
+}
+
+/// Review whether fixed mask evidence justifies adding a note to a category.
+/// Records decisions only; does not change masks or category memberships.
+pub fn run_category_membership_review_from(
+    batch_path: impl AsRef<Path>,
+    session_path: impl AsRef<Path>,
+    start_at: Option<&str>,
+    review: impl FnMut(ApprovalScreen, String) -> io::Result<ApprovalTuiAction>,
+) -> Result<MaskPromptReviewOutcome> {
+    run_review_from(batch_path, session_path, start_at, ReviewPurpose::CategoryMembership, review)
+}
+
+fn run_review_from(
+    batch_path: impl AsRef<Path>,
+    session_path: impl AsRef<Path>,
+    start_at: Option<&str>,
+    purpose: ReviewPurpose,
     mut review: impl FnMut(ApprovalScreen, String) -> io::Result<ApprovalTuiAction>,
 ) -> Result<MaskPromptReviewOutcome> {
     let batch_path = batch_path.as_ref();
@@ -131,7 +162,12 @@ pub fn run_mask_prompt_review_from(
                 .ok_or_else(|| Error::ExperimentState(format!("unknown mask review item {id}")))
         })
         .transpose()?;
-    let batch_sha256 = value_sha256(&batch)?;
+    // Preserve existing mask-session fingerprints, but never reuse decisions
+    // made about mask quality to answer a category-membership question.
+    let batch_sha256 = match purpose {
+        ReviewPurpose::MaskQuality => value_sha256(&batch)?,
+        ReviewPurpose::CategoryMembership => value_sha256(&("category_membership", &batch))?,
+    };
     let _lock = acquire_session_lock(session_path)?;
     let mut session = match load_session::<MaskReviewSession>(session_path)? {
         Some(session) => {
@@ -175,7 +211,7 @@ pub fn run_mask_prompt_review_from(
             Some(MaskDecision::Rejected) => "Disapproved",
             Some(MaskDecision::Skipped) => "Skipped",
         };
-        let screen = ApprovalScreen {
+        let mut screen = ApprovalScreen {
                 heading: format!("Mask review · {} of {} · {} · {status}", index + 1, batch.items.len(), item.item_id),
                 title: Some(item.subject.clone()),
                 scope: "Does this mask express the whole subject without including text belonging only to something else?".into(),
@@ -192,6 +228,35 @@ pub fn run_mask_prompt_review_from(
                     body: highlights[index].clone(),
                 }]),
             };
+        if matches!(purpose, ReviewPurpose::CategoryMembership) {
+            screen.heading = format!(
+                "{} · {} of {} · {} · {status}",
+                batch.batch_id, index + 1, batch.items.len(), item.item_id
+            );
+            screen.scope = format!(
+                "Does the highlighted evidence justify adding this note to {}?",
+                item.subject
+            );
+            screen.guidance = Some(ApprovalGuidance {
+                title: "Membership review details".into(),
+                body: format!(
+                    "Review this proposed note addition, not mask quality or category naming. The full original note supplies context. All relevant masks are highlighted together; overlaps appear only once.\n\nA approves the addition; R rejects it. S skips; use C to explain uncertainty if helpful. Left/right revisits any item; Tab changes panels; up/down or j/k scrolls. Ctrl-C saves and exits. Decisions are recorded separately and do not update the hierarchy.\n\nNote ID: {}\n\n{}",
+                    item.note_id, item.details
+                ),
+            });
+            screen.evidence = ApprovalEvidenceLayout::Paged(vec![
+                ApprovalEvidence {
+                    title: format!("{} · Complete note with accepted masks", item.item_id),
+                    annotation: String::new(),
+                    body: highlights[index].clone(),
+                },
+                ApprovalEvidence {
+                    title: "My reasoning".into(),
+                    annotation: String::new(),
+                    body: item.assessment.clone(),
+                },
+            ]);
+        }
         let action = review(screen, session.decisions[&item.item_id].comment.clone())
             .map_err(|source| io_error("review masks from", batch_path, source))?;
         let advance = matches!(
