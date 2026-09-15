@@ -1,0 +1,247 @@
+{
+  "experiment": "TRUE03",
+  "threshold": 0.142,
+  "source_titles_sha256": "3ad789d2bc10c7bff4a07cdb87397ded59718054136b4cd72b562f9f3c952202",
+  "pairs": [
+    {
+      "id": "R01-w0-w0",
+      "a_id": "bitcoin-w0",
+      "b_id": "units-w0",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Satoshis are a narrower Bitcoin unit topic. Bitcoin is not restricted to its smallest units."
+    },
+    {
+      "id": "R01-w0-w1",
+      "a_id": "bitcoin-w0",
+      "b_id": "units-w1",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Satoshis are a narrower Bitcoin unit topic. Bitcoin is not restricted to its smallest units."
+    },
+    {
+      "id": "R01-w0-w2",
+      "a_id": "bitcoin-w0",
+      "b_id": "units-w2",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Satoshis are a narrower Bitcoin unit topic. Bitcoin is not restricted to its smallest units."
+    },
+    {
+      "id": "R02-w0-w0",
+      "a_id": "meat_food-w0",
+      "b_id": "steak-w0",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Steak is meat-based food. Foods featuring meat or seafood need not be steak."
+    },
+    {
+      "id": "R02-w1-w0",
+      "a_id": "meat_food-w1",
+      "b_id": "steak-w0",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Steak is meat-based food. Foods featuring meat or seafood need not be steak."
+    },
+    {
+      "id": "R02-w2-w0",
+      "a_id": "meat_food-w2",
+      "b_id": "steak-w0",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Steak is meat-based food. Foods featuring meat or seafood need not be steak."
+    },
+    {
+      "id": "R03-w0-w0",
+      "a_id": "coffee-w0",
+      "b_id": "preparation-w0",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Bean preparation is a coffee topic; coffee is not restricted to bean preparation."
+    },
+    {
+      "id": "R03-w0-w1",
+      "a_id": "coffee-w0",
+      "b_id": "preparation-w1",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Bean preparation is a coffee topic; coffee is not restricted to bean preparation."
+    },
+    {
+      "id": "R03-w0-w2",
+      "a_id": "coffee-w0",
+      "b_id": "preparation-w2",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Bean preparation is a coffee topic; coffee is not restricted to bean preparation."
+    },
+    {
+      "id": "R04-w0-w0",
+      "a_id": "coffee-w0",
+      "b_id": "flavour-w0",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Flavour appreciation is a coffee topic; coffee is not restricted to appreciation of its flavour."
+    },
+    {
+      "id": "R04-w0-w1",
+      "a_id": "coffee-w0",
+      "b_id": "flavour-w1",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Flavour appreciation is a coffee topic; coffee is not restricted to appreciation of its flavour."
+    },
+    {
+      "id": "R04-w0-w2",
+      "a_id": "coffee-w0",
+      "b_id": "flavour-w2",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Flavour appreciation is a coffee topic; coffee is not restricted to appreciation of its flavour."
+    },
+    {
+      "id": "R05-w0-w0",
+      "a_id": "preparation-w0",
+      "b_id": "flavour-w0",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Preparation can influence flavour but need not express appreciation. Flavour can be appreciated without preparing beans. Neither complete topic contains the other."
+    },
+    {
+      "id": "R05-w0-w1",
+      "a_id": "preparation-w0",
+      "b_id": "flavour-w1",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Preparation can influence flavour but need not express appreciation. Flavour can be appreciated without preparing beans. Neither complete topic contains the other."
+    },
+    {
+      "id": "R05-w0-w2",
+      "a_id": "preparation-w0",
+      "b_id": "flavour-w2",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Preparation can influence flavour but need not express appreciation. Flavour can be appreciated without preparing beans. Neither complete topic contains the other."
+    },
+    {
+      "id": "R05-w1-w0",
+      "a_id": "preparation-w1",
+      "b_id": "flavour-w0",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Preparation can influence flavour but need not express appreciation. Flavour can be appreciated without preparing beans. Neither complete topic contains the other."
+    },
+    {
+      "id": "R05-w1-w1",
+      "a_id": "preparation-w1",
+      "b_id": "flavour-w1",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Preparation can influence flavour but need not express appreciation. Flavour can be appreciated without preparing beans. Neither complete topic contains the other."
+    },
+    {
+      "id": "R05-w1-w2",
+      "a_id": "preparation-w1",
+      "b_id": "flavour-w2",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Preparation can influence flavour but need not express appreciation. Flavour can be appreciated without preparing beans. Neither complete topic contains the other."
+    },
+    {
+      "id": "R05-w2-w0",
+      "a_id": "preparation-w2",
+      "b_id": "flavour-w0",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Preparation can influence flavour but need not express appreciation. Flavour can be appreciated without preparing beans. Neither complete topic contains the other."
+    },
+    {
+      "id": "R05-w2-w1",
+      "a_id": "preparation-w2",
+      "b_id": "flavour-w1",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Preparation can influence flavour but need not express appreciation. Flavour can be appreciated without preparing beans. Neither complete topic contains the other."
+    },
+    {
+      "id": "R05-w2-w2",
+      "a_id": "preparation-w2",
+      "b_id": "flavour-w2",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Preparation can influence flavour but need not express appreciation. Flavour can be appreciated without preparing beans. Neither complete topic contains the other."
+    },
+    {
+      "id": "R06-w0-w0",
+      "a_id": "meat_food-w0",
+      "b_id": "butter-w0",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Butter in a meal does not require meat or seafood, and meat/seafood foods do not require butter. A shared shrimp-risotto mask is overlap, not containment."
+    },
+    {
+      "id": "R06-w0-w1",
+      "a_id": "meat_food-w0",
+      "b_id": "butter-w1",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Butter in a meal does not require meat or seafood, and meat/seafood foods do not require butter. A shared shrimp-risotto mask is overlap, not containment."
+    },
+    {
+      "id": "R06-w0-w2",
+      "a_id": "meat_food-w0",
+      "b_id": "butter-w2",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Butter in a meal does not require meat or seafood, and meat/seafood foods do not require butter. A shared shrimp-risotto mask is overlap, not containment."
+    },
+    {
+      "id": "R06-w1-w0",
+      "a_id": "meat_food-w1",
+      "b_id": "butter-w0",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Butter in a meal does not require meat or seafood, and meat/seafood foods do not require butter. A shared shrimp-risotto mask is overlap, not containment."
+    },
+    {
+      "id": "R06-w1-w1",
+      "a_id": "meat_food-w1",
+      "b_id": "butter-w1",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Butter in a meal does not require meat or seafood, and meat/seafood foods do not require butter. A shared shrimp-risotto mask is overlap, not containment."
+    },
+    {
+      "id": "R06-w1-w2",
+      "a_id": "meat_food-w1",
+      "b_id": "butter-w2",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Butter in a meal does not require meat or seafood, and meat/seafood foods do not require butter. A shared shrimp-risotto mask is overlap, not containment."
+    },
+    {
+      "id": "R06-w2-w0",
+      "a_id": "meat_food-w2",
+      "b_id": "butter-w0",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Butter in a meal does not require meat or seafood, and meat/seafood foods do not require butter. A shared shrimp-risotto mask is overlap, not containment."
+    },
+    {
+      "id": "R06-w2-w1",
+      "a_id": "meat_food-w2",
+      "b_id": "butter-w1",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Butter in a meal does not require meat or seafood, and meat/seafood foods do not require butter. A shared shrimp-risotto mask is overlap, not containment."
+    },
+    {
+      "id": "R06-w2-w2",
+      "a_id": "meat_food-w2",
+      "b_id": "butter-w2",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Butter in a meal does not require meat or seafood, and meat/seafood foods do not require butter. A shared shrimp-risotto mask is overlap, not containment."
+    }
+  ]
+}

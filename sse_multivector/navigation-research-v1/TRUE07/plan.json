@@ -1,0 +1,218 @@
+{
+  "experiment": "TRUE07",
+  "description": "Does changing only ordinary title wording change TRUE's category-containment decisions?",
+  "base_commit": "9af86ad6c5abc1aa1f695d7fb597bf131d31cd3f",
+  "tracking_card": "CREC-127",
+  "approval": "User approved the small meaning-preserving wording diagnostic; no full graph, model change, title-prompt change or threshold tuning.",
+  "categories": [
+    {
+      "key": "bitcoin",
+      "source_group": "S50475065d8",
+      "meaning": "Bitcoin as the general cryptocurrency topic, including its unit system.",
+      "titles": [
+        "Bitcoin"
+      ]
+    },
+    {
+      "key": "units",
+      "source_group": "S983e3758e5",
+      "meaning": "Satoshis as the smallest units of Bitcoin.",
+      "titles": [
+        "Satoshis: Bitcoin’s Smallest Units",
+        "Satoshis, the smallest units of Bitcoin",
+        "Bitcoin’s smallest units, called satoshis"
+      ]
+    },
+    {
+      "key": "meat_food",
+      "source_group": "S485994b768",
+      "meaning": "Foods featuring meat or seafood, including meat itself and foods containing it; no restriction to complete cooked dishes.",
+      "titles": [
+        "Foods featuring meat or seafood",
+        "Foods that feature meat or seafood",
+        "Foods featuring seafood or meat"
+      ]
+    },
+    {
+      "key": "steak",
+      "source_group": "S62d57141b0",
+      "meaning": "Steak as the meat/food topic represented by the supplied sirloin and steak masks.",
+      "titles": [
+        "Steak"
+      ]
+    },
+    {
+      "key": "coffee",
+      "source_group": "S9c440e7f47",
+      "meaning": "Coffee as a general topic, including preparation and flavour appreciation.",
+      "titles": [
+        "Coffee"
+      ]
+    },
+    {
+      "key": "preparation",
+      "source_group": "S24afa84c49",
+      "meaning": "Preparing coffee beans, without requiring a flavour judgment or appreciation.",
+      "titles": [
+        "Coffee Bean Preparation",
+        "Preparing coffee beans",
+        "Preparation of coffee beans"
+      ]
+    },
+    {
+      "key": "flavour",
+      "source_group": "Sbbd7d8dae4",
+      "meaning": "Appreciation of coffee for its flavour; not a requirement that the appreciator prepare the beans.",
+      "titles": [
+        "Appreciating Coffee for Its Flavour",
+        "Appreciation of coffee’s flavour",
+        "Appreciating coffee’s flavour"
+      ]
+    },
+    {
+      "key": "butter",
+      "source_group": "S7e8dc24c0e",
+      "meaning": "Butter used in or served with meals; no necessary meat or seafood.",
+      "titles": [
+        "Butter as part of a meal",
+        "Butter included in a meal",
+        "Butter in meals"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "R01",
+      "a": "bitcoin",
+      "b": "units",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "reason": "Satoshis are a narrower Bitcoin unit topic. Bitcoin is not restricted to its smallest units.",
+      "selection": "Known historically wording-sensitive relationship; not an unseen case."
+    },
+    {
+      "id": "R02",
+      "a": "meat_food",
+      "b": "steak",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "reason": "Steak is meat-based food. Foods featuring meat or seafood need not be steak.",
+      "selection": "Known baseline miss with a related negative control; do not infer population failure frequency."
+    },
+    {
+      "id": "R03",
+      "a": "coffee",
+      "b": "preparation",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "reason": "Bean preparation is a coffee topic; coffee is not restricted to bean preparation.",
+      "selection": "Previously successful everyday positive control."
+    },
+    {
+      "id": "R04",
+      "a": "coffee",
+      "b": "flavour",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "reason": "Flavour appreciation is a coffee topic; coffee is not restricted to appreciation of its flavour.",
+      "selection": "Previously successful everyday positive control sharing variants with R05."
+    },
+    {
+      "id": "R05",
+      "a": "preparation",
+      "b": "flavour",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "reason": "Preparation can influence flavour but need not express appreciation. Flavour can be appreciated without preparing beans. Neither complete topic contains the other.",
+      "selection": "Related noncontainment control with full 3x3 wording combinations."
+    },
+    {
+      "id": "R06",
+      "a": "meat_food",
+      "b": "butter",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "reason": "Butter in a meal does not require meat or seafood, and meat/seafood foods do not require butter. A shared shrimp-risotto mask is overlap, not containment.",
+      "selection": "Related noncontainment control sharing parent variants with R02."
+    }
+  ],
+  "selection": {
+    "semantic_relationships": 6,
+    "unordered_variant_pairs": 30,
+    "model_directions": 60,
+    "positive_expected": 12,
+    "negative_expected": 48,
+    "design": "Four containment triples vary one endpoint. Two noncontainment pairs use all 3x3 wordings, both directions.",
+    "bias": "Selected stress diagnostic using familiar categories, including two known problem relationships and successful controls. Not a holdout or population error estimate. Variants are correlated, not independent examples."
+  },
+  "hypothesis": "For each fixed semantic relationship and direction, ordinary meaning-preserving title wording will retain the correct decision. Scores need not be equal.",
+  "reporting": "Show every variant, expected decision, native output, cutoff decision and exact score. Summarize each relationship/direction as consistently correct, consistently wrong or mixed; keep native unresolved separate. For 3x3 grids compare changes with the other title fixed. Do not headline pooled accuracy.",
+  "decision": "If ordinary equivalent wording changes correct decisions into errors, investigate robustness of the membership decision before constructing a graph. Stable results support a broader relationship check. Isolated imperfections do not require perfect performance or justify automatically discarding TRUE. No next run authorized.",
+  "unchanged": {
+    "model": "google/t5_xxl_true_nli_mixture",
+    "revision": "aa6cfe1dd4257853bfdd772992045f41bfc14988",
+    "snapshot": "/home/dev/.cache/huggingface/hub/models--google--t5_xxl_true_nli_mixture/snapshots/aa6cfe1dd4257853bfdd772992045f41bfc14988",
+    "input": "premise: This text is about {B}. hypothesis: This text is about {A}.",
+    "model_evidence": "Only title strings. Expected judgments, meanings, masks, review reasons and experiment history are metadata, never in model_input.",
+    "inference": "Unmodified production run_inference: CPU float32, batch4, four threads, seed0, greedy1beam, max3 output tokens, EOS required, no truncation.",
+    "cutoff": "Full-vocabulary probability of first output token 209 strictly > 0.142. Not cosine, calibrated confidence, or a retuned rule."
+  },
+  "resources": "Cached offline local CPU only. One model process; >=70GiB available; MemoryMax60G, MemorySwapMax0, CPUQuota400%. No downloads, rentals, training or paid API calls.",
+  "runner_reuse": "Fixture discriminator TRUE03 is schema compatibility only; runtime TRUE07. Generated-titles metadata changed to manual-title-variants, without modifying model_input. Shared DECISIONS.md may say holdout; this is a selected diagnostic.",
+  "preservation_sha256": {
+    "sse_multivector/hdbv2-node-titles-v21-astra-low/titles.json": "693223548b17e439ac433dd2f9aaba9b830a2c97d5e68798379e8f784fb66799",
+    "sse_multivector/hdbv2-node-titles-v20-astra-low/source-packets.json": "f728a3bc8298fd3b179e7840b44e59e4537bdb95d288c51079089a96e03df1c5",
+    "sse_multivector/true_generated_title_probe.py": "cf363c4ce14e4d5a40e49a5c42560e562a586335d490d23d592c9c449e3b2b45",
+    "sse_multivector/true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+    "sse_multivector/true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+    "sse_multivector/hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52",
+    "sse_multivector/navigation-research-v1/TRUE05/RESULTS.md": "040435684db83d2ef38e73cb84cc371b252e331a6053d9a73accc349e9244550",
+    "sse_multivector/navigation-research-v1/TRUE05/analysis.json": "af4af30aa2ce9ebcd6f44f5b645449271a2856966c421afbe57dbbdd9b242591",
+    "sse_multivector/navigation-research-v1/TRUE05/comparison.json": "40cc85a0f05cfededbd72e956df15cdcd9b51ad48cc8d67a19399f932fba5ef3",
+    "sse_multivector/navigation-research-v1/TRUE05/fixture.json": "bb395e64219697e06cebb04bbef62798ab647844564301a8c7fecd875f767e3d",
+    "sse_multivector/navigation-research-v1/TRUE05/independent-review-input.json": "cd481352c46208b9c1a04529f93a6e0f1208fd89a83e01eb21421fcfb0a9d497",
+    "sse_multivector/navigation-research-v1/TRUE05/plan.json": "6640f6115c75b4201a6c1d8da0f0f57f4b4c4896069e76eb0bfff6f5dd06e353",
+    "sse_multivector/navigation-research-v1/TRUE05/resources.json": "b736b47d4b00f5f57d2711615d489015b7934915f8707c05175ab4bd1fa2d464",
+    "sse_multivector/navigation-research-v1/TRUE05/run/DECISIONS.md": "f509bbb53e5b3a206140a5bba2a237c60e96e5a21509ec995174e26c5b41b8df",
+    "sse_multivector/navigation-research-v1/TRUE05/run/analysis.json": "56b271352043b64ebe8fa460002f9a9258d17f5a209d0f60cc0afed0af9b6ba2",
+    "sse_multivector/navigation-research-v1/TRUE05/run/completion.json": "4d398e5e583ebbbcddfba187014fbfb875c73d11f90d1a7a6524c5df5f9ad538",
+    "sse_multivector/navigation-research-v1/TRUE05/run/config.json": "8e449e39f92ba27b42772213d64a9f0bcb7942e913a4294b7f413b20248db73f",
+    "sse_multivector/navigation-research-v1/TRUE05/run/first-token-logits.npy": "90b214ff342307ef3afb831497a2a23f26681622f75ff339025a962645310a35",
+    "sse_multivector/navigation-research-v1/TRUE05/run/hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52",
+    "sse_multivector/navigation-research-v1/TRUE05/run/inputs.json": "8b91ccabe04d1fa7600416565f801729f0010c8abe670feab64e3f9fd1c67e9f",
+    "sse_multivector/navigation-research-v1/TRUE05/run/model-files.json": "c45c96315ca8795e9ec639d221622870180b91d1a216a38b45500654f1221104",
+    "sse_multivector/navigation-research-v1/TRUE05/run/run.py": "f0fb2193a9d0ec8a366b20a341f06ba8380fdf89eac7e1085499c32fd6bf437c",
+    "sse_multivector/navigation-research-v1/TRUE05/run/scores.jsonl": "398a7ab58a9d4bb4ea16850993a604057c9de29eb1548f367aa8644fba2b6bde",
+    "sse_multivector/navigation-research-v1/TRUE05/run/started.json": "2d63dde43a8ed523abc07cbe637ba70ea6a49ee4be87b012be1910ced604ae97",
+    "sse_multivector/navigation-research-v1/TRUE05/run/true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+    "sse_multivector/navigation-research-v1/TRUE05/run/true_generated_title_probe.py": "cf363c4ce14e4d5a40e49a5c42560e562a586335d490d23d592c9c449e3b2b45",
+    "sse_multivector/navigation-research-v1/TRUE05/run/true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+    "sse_multivector/navigation-research-v1/TRUE05/run.py": "f0fb2193a9d0ec8a366b20a341f06ba8380fdf89eac7e1085499c32fd6bf437c",
+    "sse_multivector/navigation-research-v1/TRUE05/semantic-review.json": "e85da595e71011c406b520e6c7778ad69e35806ad7a9a7b738fa783ca0c734e1",
+    "sse_multivector/navigation-research-v1/TRUE05/verification.json": "25b170ccf7dba5785179ebf0e99feeec060a3f74a1e2bd58b0ad03b9ed8f7e87",
+    "sse_multivector/navigation-research-v1/TRUE06/RESULTS.md": "e78c77876c4e56c588be7872117b86ddd11b40981d78ff87b8a8a9dfcbea9981",
+    "sse_multivector/navigation-research-v1/TRUE06/analysis.json": "62a8d9b7c9ba47ce356ffe4ada096952ead8bbf28538b07e31bcb41bed0d6349",
+    "sse_multivector/navigation-research-v1/TRUE06/fixture.json": "638c16801ac2ae94ed38966ea357f4ed7b9524b4ac8b82bb785c8913f7e80052",
+    "sse_multivector/navigation-research-v1/TRUE06/plan.json": "3a74b19d9e445344b1c5c88bae1706219bed0c3cd6e6b0c7cd6d1f88ed08e362",
+    "sse_multivector/navigation-research-v1/TRUE06/resources.json": "09ddf80d37e3258c76ad3579734530fc05285a6b637fde0c5903d35601ec0e2b",
+    "sse_multivector/navigation-research-v1/TRUE06/run/DECISIONS.md": "cab483091e7618e83033e3cffc179091f5aa9ed9cedfd779c3e34a5ca12a9d72",
+    "sse_multivector/navigation-research-v1/TRUE06/run/analysis.json": "6008a229e3e94693d6b3949c20f144590a93dd3ba2213b174235c2238291ee13",
+    "sse_multivector/navigation-research-v1/TRUE06/run/completion.json": "fc9ae4f41e6377e3bdd69c88c7174f9be7428b3445fc98856dc72af88c76f90d",
+    "sse_multivector/navigation-research-v1/TRUE06/run/config.json": "7af2e806f87cba68c735363f44d614f0539876e6485f11bc1aafef1c4fc6bc12",
+    "sse_multivector/navigation-research-v1/TRUE06/run/first-token-logits.npy": "00f26e1fc8c39129dbedeced11c23ed378a9a8cede2f5ad28bd2298f2d679068",
+    "sse_multivector/navigation-research-v1/TRUE06/run/hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52",
+    "sse_multivector/navigation-research-v1/TRUE06/run/inputs.json": "4351d1a799c11191bed1b84e64fc00edf8f376d8ce5e3c91029d371e53bfdd9b",
+    "sse_multivector/navigation-research-v1/TRUE06/run/model-files.json": "c45c96315ca8795e9ec639d221622870180b91d1a216a38b45500654f1221104",
+    "sse_multivector/navigation-research-v1/TRUE06/run/run.py": "89bcfa6f60666f725b2eff53ad5beaff411cfb8a597745bbaa20c99f35d7d387",
+    "sse_multivector/navigation-research-v1/TRUE06/run/scores.jsonl": "c7b2e744d3a7029627f40da9115b51e4a247f4abc1dc260b59fba42da0f5aee2",
+    "sse_multivector/navigation-research-v1/TRUE06/run/started.json": "6300286524452c3bf2baf4a142110fa594dc8afd423a21166d4845da1f360c7b",
+    "sse_multivector/navigation-research-v1/TRUE06/run/true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+    "sse_multivector/navigation-research-v1/TRUE06/run/true_generated_title_probe.py": "cf363c4ce14e4d5a40e49a5c42560e562a586335d490d23d592c9c449e3b2b45",
+    "sse_multivector/navigation-research-v1/TRUE06/run/true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+    "sse_multivector/navigation-research-v1/TRUE06/run.py": "89bcfa6f60666f725b2eff53ad5beaff411cfb8a597745bbaa20c99f35d7d387",
+    "sse_multivector/navigation-research-v1/TRUE06/semantic-review.json": "5ad518d37ac4a30543ca58840619c3e878fcfe005be2b84254eba54498e7eb8d",
+    "sse_multivector/navigation-research-v1/TRUE06/source-evidence.json": "d43860fcd7442d0201e301ced08fc9faa66c9870bf92ed1f37273c741202bb11",
+    "sse_multivector/navigation-research-v1/TRUE06/user-review.json": "dc9d02952d2fa94aefbaa96fda63efafa0821fc633767b54eed7a05f5d0fd358",
+    "sse_multivector/navigation-research-v1/TRUE06/verification.json": "01c533c803d71319d6214a5b10a52e9778d228c94625c40ba860ebae74dbb538"
+  }
+}
