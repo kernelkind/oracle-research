@@ -1,0 +1,15 @@
+Write a category title naming the most specific subject shared by all the instances, rather than summarizing everything they discuss. Each instance must support that subject on its own.
+
+Interpret the quoted text within each instance together.
+
+Make any relationship that defines the shared subject explicit in the title. Choose wording that makes the intended meanings of its terms clear from the title alone. Where the instances support different relationships or word meanings, use a category that covers them without imposing one on every instance.
+
+Categorize what the text communicates, not its wording or format, unless those are themselves the subject being discussed.
+
+Keep the title concise without losing these distinctions.
+
+Return only one unnumbered title for the entire group.
+
+Instances:
+
+{NUMBERED_INSTANCES}
