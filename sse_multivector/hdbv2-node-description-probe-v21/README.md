@@ -3,10 +3,13 @@
 The [complete 61-group v21 title set](../hdbv2-node-titles-v21-astra-low/titles.json)
 is now generated and reviewed by the assistant: 14 exact-input outputs reused and
 47 missing outputs generated with the unchanged prompt and Astra low. Eight exact
-same-note mask duplicates were removed before generation/review. The assistant
-accepts 59 titles, including three previously approved by the user. Two titles
-await user judgment in the [focused review](../hdbv2-node-titles-v21-astra-low/run-review.sh):
-Coffee shop chains and Signs of autumn’s arrival. No new TRUE run occurred.
+same-note mask duplicates were removed before generation/review. Sixty titles are
+now accepted by the assistant or user, including the user's subsequent approval
+of Signs of autumn’s arrival. Coffee shop chains remains unresolved: the user
+commented "yea should prob say coffee shop tags/hashtags" without recording an
+approve/reject decision. That comment is not treated as an approved replacement
+or a new prompt rule. The [focused review](../hdbv2-node-titles-v21-astra-low/run-review.sh)
+and its original inputs remain unchanged. No new TRUE run occurred.
 
 The initial six-group experiment and its original assistant judgments follow.
 The user later approved its Visual Art response; that decision is preserved in
