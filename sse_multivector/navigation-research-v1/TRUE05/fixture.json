@@ -1,0 +1,55 @@
+{
+  "experiment": "TRUE03",
+  "threshold": 0.142,
+  "source_titles_sha256": "693223548b17e439ac433dd2f9aaba9b830a2c97d5e68798379e8f784fb66799",
+  "pairs": [
+    {
+      "id": "U001",
+      "a_id": "S07d0857008",
+      "b_id": "S0c034c4006",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Crockpot meat meals do not necessarily communicate feedback on recipe outcomes; recipe feedback need not concern meat or crockpots."
+    },
+    {
+      "id": "U023",
+      "a_id": "S485994b768",
+      "b_id": "S349051e569",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Raw milk is dairy, not meat or seafood. Foods featuring meat or seafood need not contain raw milk. This changes the old ambiguous Food Ingredients wording rather than overturning the user's old-title decision."
+    },
+    {
+      "id": "U024",
+      "a_id": "S485994b768",
+      "b_id": "S4a36e8ac6b",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Animal-based protein includes eggs, explicitly present in V001. B is therefore not wholly within meat or seafood. A's meat/seafood foods need not include potatoes and other vegetables."
+    },
+    {
+      "id": "U026",
+      "a_id": "S485994b768",
+      "b_id": "S62d57141b0",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Steak is meat-based food; the supplied sirloin/steak masks support that ordinary meaning. Meat/seafood foods also include chorizo, ground beef and shrimp, so the reverse is false."
+    },
+    {
+      "id": "U028",
+      "a_id": "S485994b768",
+      "b_id": "S7e8dc24c0e",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Butter as part of a meal does not require meat or seafood, and meat/seafood foods do not require butter. The shared shrimp-risotto example establishes overlap, not containment."
+    },
+    {
+      "id": "U040",
+      "a_id": "S8a6ab7afaf",
+      "b_id": "S8ea08f1aff",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "Visual Art makes the accepted intended sense explicit. Music and raves at coffee shops do not belong to visual art; visual art does not require music or coffee shops."
+    }
+  ]
+}

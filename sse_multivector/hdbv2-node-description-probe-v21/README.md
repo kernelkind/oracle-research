@@ -9,7 +9,8 @@ of Signs of autumn’s arrival. Coffee shop chains remains unresolved: the user
 commented "yea should prob say coffee shop tags/hashtags" without recording an
 approve/reject decision. That comment is not treated as an approved replacement
 or a new prompt rule. The [focused review](../hdbv2-node-titles-v21-astra-low/run-review.sh)
-and its original inputs remain unchanged. No new TRUE run occurred.
+and its original inputs remain unchanged. No TRUE inference occurred during that
+title-generation stage; the later TRUE05 follow-up is described below.
 
 The user subsequently clarified that we must not assume the model learned the
 association between coffeechain and Nostr during training. The title input does
@@ -51,6 +52,15 @@ chains. Both controls remained appropriate across all trials. The 18 fresh calls
 therefore demonstrated no correction from the added rule; v23 is not promoted.
 These outputs do not establish the model's internal reason for retaining that
 interpretation. Saved titles and user decisions remain unchanged.
+
+The approved [TRUE05 follow-up](../navigation-research-v1/TRUE05/RESULTS.md) now
+checks these exact existing v21 titles against seven earlier ambiguous category
+pairs. Six current pairs have clear judgments; one food-versus-dish scope question
+remains. Unchanged TRUE rejected all twelve admitted directions: eleven correct
+rejections and one missed steak containment. Clearer titles therefore expose a
+remaining model decision problem; this is not a general accuracy estimate or a
+constructed hierarchy. No title was regenerated or manually corrected, and old
+user decisions remain bound to the old category wording.
 
 The initial six-group experiment and its original assistant judgments follow.
 The user later approved its Visual Art response; that decision is preserved in

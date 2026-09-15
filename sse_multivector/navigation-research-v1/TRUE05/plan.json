@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "experiment": "TRUE05",
+  "description": "Check whether existing v21 titles clarify selected previously ambiguous category relationships, then use unchanged TRUE inference on clear pairs only.",
+  "approval": "User approved a small follow-up on previously ambiguous pairs with current titles, followed by unchanged TRUE inference on clear pairs. The assistant selected seven pairs before new model scores.",
+  "base_commit": "98dd6841e7a58d593805b24da1b9c9f40e251e34",
+  "tracking_card": "CREC-127",
+  "selection": {
+    "ids": [
+      "U001",
+      "U023",
+      "U024",
+      "U026",
+      "U028",
+      "U040",
+      "U052"
+    ],
+    "reason": "Prior recipe-feedback ambiguity, original ingredient-versus-contained-ingredient complaint, ingredient/meal contrasts, steak as a potential positive containment, visual-art sense, and food/seasoning scope. No selection from new TRUE scores.",
+    "reused_not_holdout": true,
+    "clear_pairs": 6,
+    "uncertain_pairs": 1,
+    "model_directions": 12,
+    "positive_expected": 1,
+    "negative_expected": 11
+  },
+  "semantics": "Assess exact category meanings, grounded in masks. Do not treat overlap as containment or silently narrow a broad title to sampled members. Accepted Visual Art title is not reopened. Old user decisions remain about old titles.",
+  "hypotheses": [
+    "More explicit title relationships and word meanings may make old questions answerable.",
+    "Even a well-formed title may leave a broader-versus-narrower boundary unclear.",
+    "TRUE may still reject valid containment or accept invalid containment despite clearer descriptions."
+  ],
+  "unchanged": {
+    "titles": "Exact existing v21 outputs; no new generation or manual correction.",
+    "model": "google/t5_xxl_true_nli_mixture",
+    "revision": "aa6cfe1dd4257853bfdd772992045f41bfc14988",
+    "inference": "Reuse true_holdout_probe.run_inference without edits: CPU float32, batch4, four threads, seed0, greedy one beam, max3 output tokens, EOS required, no truncation, native output and strict >0.142 cutoff separately.",
+    "input": "premise: This text is about {B}. hypothesis: This text is about {A}.",
+    "model_evidence": "Only exact title strings. Masks, judgments, old titles and reviewer reasons never enter model_input.",
+    "snapshot": "/home/dev/.cache/huggingface/hub/models--google--t5_xxl_true_nli_mixture/snapshots/aa6cfe1dd4257853bfdd772992045f41bfc14988"
+  },
+  "runner_reuse": "fixture.json uses the existing TRUE03 input-schema discriminator so unchanged true_generated_title_probe.prepare_inputs can validate pair titles and both directions. The experiment and output are TRUE05, not a rerun of TRUE03.",
+  "resources": "Cached offline local CPU run only; one large model process, >=70GiB available before launch, MemoryMax60G, MemorySwapMax0, CPUQuota400%. No network downloads, purchases, rentals or API calls.",
+  "limits": "Seven deliberately selected historical ambiguities, six admitted binary pairs and one positive relation. This cannot estimate general accuracy, establish all ambiguities solved, or compare old and new accuracy by assigning new-title answers to old ambiguous titles.",
+  "preservation_sha256": {
+    "sse_multivector/hdbv2-node-titles-v21-astra-low/titles.json": "693223548b17e439ac433dd2f9aaba9b830a2c97d5e68798379e8f784fb66799",
+    "sse_multivector/hdbv2-node-titles-v21-astra-low/inputs.json": "6ee2a0f98a9e78332e5bc3c8340a2708beb38e60935318c1b7e66f2381cd1cad",
+    "sse_multivector/navigation-research-v1/TRUE04/titles.json": "424ffe683fe5fdb3de152cfc6fa09496dfef9fdef422e7a22618b28cc1e20716",
+    "sse_multivector/navigation-research-v1/TRUE04/scores.jsonl": "30e390297600bf64debd1f045cca2e5707a7c07ced605a0fab6dc6aa78c5c6c4",
+    "sse_multivector/navigation-research-v1/TRUE04/config.json": "5902022b0cac74557f34fb0cd6ab6be4a3706365e33c86489b70a93a772f27ec",
+    "sse_multivector/navigation-research-v1/TRUE04/collection-review/uncertainty-review.json": "ad92d4965359e8b733a37870ee9f8ec79a7698e9f72c8b18b29d17bf0a1d3686",
+    "target/true04-uncertainty-review/decisions.json": "69b5811b2026ab753ddd9e3f36108cfa25c6a0080999a6be3dda246035dadcbb",
+    "sse_multivector/true_generated_title_probe.py": "cf363c4ce14e4d5a40e49a5c42560e562a586335d490d23d592c9c449e3b2b45",
+    "sse_multivector/true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+    "sse_multivector/true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+    "sse_multivector/hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52"
+  }
+}
