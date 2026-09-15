@@ -33,11 +33,16 @@ reasoning or identify a particular causal instruction. No revised prompt or extr
 pipeline stage is approved, and all earlier raw outputs remain unchanged.
 
 The user then clarified that a model guessing a social-media setting is not the
-same as the prompt supplying that known context. The unrun
+same as the prompt supplying that known context. The
 [v22 candidate](../hdbv2-node-description-probe-v22/prompt.txt) prepends only:
 "Each instance contains text from a social-media post." All v21 instructions
-remain intact. The user approved the exact candidate wording. It remains
-untested, with no generation calls, adoption or freeze.
+remain intact. The user approved the exact candidate wording and then its
+[18-call comparison](../hdbv2-node-description-probe-v22/comparison-v1/README.md).
+V22 returned Coffee shop chains twice and Coffee chains once; the last title is
+ambiguous and remains for user judgment. The food and coffee-preparation controls
+retained their subjects. No clear correction was demonstrated, but that does not
+invalidate supplying the known source context. Neither prompt was edited during
+the test; no saved title was replaced and no adoption or freeze is inferred.
 
 The initial six-group experiment and its original assistant judgments follow.
 The user later approved its Visual Art response; that decision is preserved in
