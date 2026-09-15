@@ -1,4 +1,4 @@
-//! Read-only manual categories over original notes, independent of vector groups.
+//! Read-only categories over original notes: schema 1 trees and schema 2 DAGs.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::error::Error;
@@ -91,7 +91,7 @@ impl ManualNoteHierarchy {
     ) -> Result<(Self, Option<CategoryNoteMasks>), Box<dyn Error>> {
         let spec: Spec = serde_json::from_slice(&fs::read(spec_path)?)?;
         let bytes = fs::read(source_path)?;
-        if spec.schema_version != 1 || spec.hierarchy_id.trim().is_empty() {
+        if !matches!(spec.schema_version, 1 | 2) || spec.hierarchy_id.trim().is_empty() {
             return Err("invalid manual note hierarchy identity".into());
         }
         if format!("{:x}", Sha256::digest(&bytes)) != spec.source_sha256 {
@@ -167,20 +167,37 @@ impl ManualNoteHierarchy {
             used_notes.extend(local_notes);
         }
         for node in nodes.keys() {
-            let expected = usize::from(node != &spec.root_node_id);
-            if parents.get(node).copied().unwrap_or(0) != expected {
+            let count = parents.get(node).copied().unwrap_or(0);
+            let valid = if node == &spec.root_node_id {
+                count == 0
+            } else if spec.schema_version == 1 {
+                count == 1
+            } else {
+                count >= 1
+            };
+            if !valid {
                 return Err(format!("category {node} has an invalid parent count").into());
             }
         }
-        let mut seen = BTreeSet::new();
+        // Visit each child after all of its parents, not once per path to it.
+        let mut reached = 0;
         let mut pending = vec![spec.root_node_id.clone()];
         while let Some(node) = pending.pop() {
-            if !seen.insert(node.clone()) {
-                return Err("manual hierarchy contains a cycle".into());
+            reached += 1;
+            for child in &nodes[&node].children {
+                let remaining = parents
+                    .get_mut(child)
+                    .expect("validated child parent count");
+                *remaining -= 1;
+                if *remaining == 0 {
+                    pending.push(child.clone());
+                }
             }
-            pending.extend(nodes[&node].children.iter().cloned());
         }
-        if seen.len() != nodes.len() || used_notes != notes.keys().cloned().collect() {
+        if reached != nodes.len() {
+            return Err("manual hierarchy contains a cycle or unreachable category".into());
+        }
+        if used_notes != notes.keys().cloned().collect() {
             return Err("every declared category and note must be reachable".into());
         }
         let hierarchy = Self {
@@ -250,9 +267,22 @@ impl ManualNoteHierarchy {
         Ok(CategoryNoteMasks { ranges })
     }
 
+    /// Whether any category is referenced by more than one parent.
+    pub fn has_shared_categories(&self) -> bool {
+        let mut children = BTreeSet::new();
+        self.nodes
+            .values()
+            .flat_map(|node| &node.children)
+            .any(|child| !children.insert(child))
+    }
+
     /// Absorb one-child steps, retaining each parent's identity and full membership.
     /// Existing category mask lookups stay valid because retained memberships do not change.
+    /// Shared categories disable absorption: return zero without changing any category.
     pub fn absorb_single_children(&mut self) -> usize {
+        if self.has_shared_categories() {
+            return 0;
+        }
         let before = self.nodes.len();
         let mut pending = vec![self.root_node_id.clone()];
         while let Some(id) = pending.pop() {
@@ -276,8 +306,12 @@ impl ManualNoteHierarchy {
     /// Full membership of a category, deduplicated across its descendants.
     pub fn note_ids(&self, node_id: &str) -> Vec<String> {
         let mut notes = BTreeSet::new();
+        let mut seen = BTreeSet::new();
         let mut pending = vec![node_id];
         while let Some(id) = pending.pop() {
+            if !seen.insert(id) {
+                continue;
+            }
             let node = &self.nodes[id];
             notes.extend(node.note_ids.iter().cloned());
             pending.extend(node.children.iter().map(String::as_str));

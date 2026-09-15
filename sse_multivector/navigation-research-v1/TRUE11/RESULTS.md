@@ -65,11 +65,29 @@ Not all removed relationships are clearly good or bad. Food versus beverages, an
 
 The saved earlier assistant judgments remain inspection evidence, not ground truth. Repeated alias judgments and uncertain answers are identified explicitly. No overall accuracy percentage is inferred from them, and no claim is made that every remaining native connection is correct.
 
-## Conclusion and suggested next step
+## Conclusion and current next step
 
 Native answers provide cleaner structure while losing meaningful refinements. Neither rule is established as the replacement. Counts of connections or inherited notes alone cannot choose between them.
 
-I suggest developing a small frontier-model subsumption prompt next, testing clear valid relationships, clear invalid relationships and ambiguous boundaries separately. Keep these categories and TRUE outputs frozen as the comparison. This follows the previously discussed fallback; it has **not** been started here.
+The user chose to inspect the native hierarchy before considering further model work. The existing category browser now displays the saved reduced graph, with all category IDs and titles unchanged. Shared categories remain accessible under each parent. No frontier-model prompt or experiment has been started.
+
+## Inspect the hierarchy
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+./sse_multivector/run-true-hierarchy.sh
+```
+
+- `j` / `k` selects a category; `Enter` descends.
+- `N` shows the current category's original notes, including descendants, with all relevant masks overlaid together.
+- In notes, `h` / `l` changes notes; `j` / `k` scrolls.
+- `Backspace` returns through the category path actually visited; `Q` exits.
+
+The neutral All notes root opens the 26 starting categories. The browser retains all 58 categories, all 36 reduced connections, and all 77 notes. It does not absorb single-child categories, choose one parent for shared categories, or repair semantic placements. Source masks from unrelated branches are excluded even when they belong to the same note.
+
+The viewer uses schema version 2 of the existing category format to allow multiple parents while still rejecting cycles. Its [input](./categories.json) is derived by [the exporter](../../true_graph_categories.py) from the frozen graph, memberships, original notes and note-ID mapping. Version 1 inputs retain their tree-only validation.
+
+[Viewer verification](./viewer-verification.json): 85 Rust integration tests, 96 TRUE Python tests and the launcher test passed. The actual terminal view was inspected, including category descent, all nine Coffee notes, combined masks and returning through the visited path. All saved graph memberships were independently checked.
 
 ## Records and verification
 
@@ -80,4 +98,4 @@ I suggest developing a small frontier-model subsumption prompt next, testing cle
 - [Earlier judgments compared against both graphs](./semantic-comparison.json)
 - [Measurements](./comparison.json), [frozen plan](./plan.json), [completion hashes](./completion.json), and [independent verification](./verification.json)
 
-All 92 TRUE production-path tests pass. Independent verification confirmed every saved score row, source mask, title, original membership, equivalence and baseline hash; the reduced native graph preserves all native routes. TRUE was not loaded or rerun, and no new paid compute was provisioned. The plan records a retrospective comparison, not a blinded new evaluation.
+The original graph comparison passed 92 TRUE production-path tests. Independent verification confirmed every saved score row, source mask, title, original membership, equivalence and baseline hash; the reduced native graph preserves all native routes. TRUE was not loaded or rerun, and no new paid compute was provisioned. The plan records a retrospective comparison, not a blinded new evaluation.

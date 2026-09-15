@@ -21,7 +21,7 @@ const USAGE: &str = "usage: sse-subject-navigation <manual-hierarchy.json> <fine
 
 --notes  Inspect manually constructed categories over original notes; no vector or clustering input
 --categories  Browse immediate children; N opens current-category notes with combined masks when supplied
---absorb-single-children  Each parent absorbs its only child; keeps parent IDs, titles and notes (--categories only)
+--absorb-single-children  Each parent absorbs its only child; keeps parent IDs, titles and notes (--categories only; unavailable with shared categories)
 --compare  Compare manual notes with saved merge groups; F2 returns to the comparison menu
 --merge-notes  Browse unchanged saved merge groups as original notes with provisional titles
 --check  Validate and describe every requested page without opening a terminal";
@@ -145,6 +145,9 @@ fn run_notes(
     }
     let (mut hierarchy, masks) =
         ManualNoteHierarchy::load_with_masks(spec.as_ref(), source.as_ref())?;
+    if absorb && hierarchy.has_shared_categories() {
+        return Err("--absorb-single-children is unavailable with shared categories".into());
+    }
     let absorbed = if absorb {
         let count = hierarchy.absorb_single_children();
         hierarchy
