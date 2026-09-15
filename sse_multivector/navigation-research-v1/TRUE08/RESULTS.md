@@ -84,7 +84,7 @@ After TRUE08, I checked earlier scores before recommending a new basic-food test
 
 TRUE already recognizes some simpler relationships for the same foods. We do not need to rerun those checks. These are reused historical results, not additional TRUE08 trials, and the parent meanings differ. They argue against a blanket inability to recognize these food categories but do not prove why the combined parent is difficult. Exact input strings and provenance are in [existing-comparisons.json](./existing-comparisons.json); old node memberships are not being treated as current categories.
 
-**Suggested next step—not run:** distinguish difficulty with the combined “meat or seafood” category from difficulty with the “foods featuring” qualification, holding the food children and inference settings fixed. Settle the meaning and expected decision for each input before scoring; do not call different-scope parents equivalent paraphrases. This would be a diagnostic, not a production title rewrite or cutoff change.
+**Approved follow-up completed:** [TRUE09](../TRUE09/RESULTS.md) separately compared the combined “meat or seafood” category and the “foods featuring” qualification, holding the food children and inference settings fixed. Expectations were checked before scoring the different-scope parents. This was a diagnostic; production titles and the cutoff remain unchanged. All TRUE08 measurements above are preserved.
 
 ## Existing masks
 

@@ -1,0 +1,311 @@
+{
+  "experiment": "TRUE03",
+  "threshold": 0.142,
+  "source_titles_sha256": "dfa9a96968aa9a685aa48ddaa92ac38f4b1f6025cbc3a92b71c98affe66982a6",
+  "pairs": [
+    {
+      "id": "P01-M",
+      "a_id": "M",
+      "b_id": "P01",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Steak is meat-based food. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P01-MF",
+      "a_id": "MF",
+      "b_id": "P01",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Steak is meat-based food. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P01-U",
+      "a_id": "U",
+      "b_id": "P01",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Steak is meat-based food. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P01-UF",
+      "a_id": "UF",
+      "b_id": "P01",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Steak is meat-based food. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P02-M",
+      "a_id": "M",
+      "b_id": "P02",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Brisket is a meat cut/food. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P02-MF",
+      "a_id": "MF",
+      "b_id": "P02",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Brisket is a meat cut/food. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P02-U",
+      "a_id": "U",
+      "b_id": "P02",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Brisket is a meat cut/food. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P02-UF",
+      "a_id": "UF",
+      "b_id": "P02",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Brisket is a meat cut/food. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P03-M",
+      "a_id": "M",
+      "b_id": "P03",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Roast chicken is poultry-based food. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P03-MF",
+      "a_id": "MF",
+      "b_id": "P03",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Roast chicken is poultry-based food. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P03-U",
+      "a_id": "U",
+      "b_id": "P03",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Roast chicken is poultry-based food. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P03-UF",
+      "a_id": "UF",
+      "b_id": "P03",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Roast chicken is poultry-based food. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P04-S",
+      "a_id": "S",
+      "b_id": "P04",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Grilled salmon is fish-based food. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P04-SF",
+      "a_id": "SF",
+      "b_id": "P04",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Grilled salmon is fish-based food. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P04-U",
+      "a_id": "U",
+      "b_id": "P04",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Grilled salmon is fish-based food. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P04-UF",
+      "a_id": "UF",
+      "b_id": "P04",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Grilled salmon is fish-based food. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P05-S",
+      "a_id": "S",
+      "b_id": "P05",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Shrimp dishes feature shellfish. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P05-SF",
+      "a_id": "SF",
+      "b_id": "P05",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Shrimp dishes feature shellfish. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P05-U",
+      "a_id": "U",
+      "b_id": "P05",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Shrimp dishes feature shellfish. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P05-UF",
+      "a_id": "UF",
+      "b_id": "P05",
+      "a_contains_b": true,
+      "b_contains_a": false,
+      "rationale": "Shrimp dishes feature shellfish. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P06-M",
+      "a_id": "M",
+      "b_id": "P06",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P06-MF",
+      "a_id": "MF",
+      "b_id": "P06",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P06-S",
+      "a_id": "S",
+      "b_id": "P06",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P06-SF",
+      "a_id": "SF",
+      "b_id": "P06",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P06-U",
+      "a_id": "U",
+      "b_id": "P06",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P06-UF",
+      "a_id": "UF",
+      "b_id": "P06",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P07-M",
+      "a_id": "M",
+      "b_id": "P07",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P07-MF",
+      "a_id": "MF",
+      "b_id": "P07",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P07-S",
+      "a_id": "S",
+      "b_id": "P07",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P07-SF",
+      "a_id": "SF",
+      "b_id": "P07",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P07-U",
+      "a_id": "U",
+      "b_id": "P07",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P07-UF",
+      "a_id": "UF",
+      "b_id": "P07",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P08-M",
+      "a_id": "M",
+      "b_id": "P08",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P08-MF",
+      "a_id": "MF",
+      "b_id": "P08",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P08-S",
+      "a_id": "S",
+      "b_id": "P08",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P08-SF",
+      "a_id": "SF",
+      "b_id": "P08",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P08-U",
+      "a_id": "U",
+      "b_id": "P08",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    },
+    {
+      "id": "P08-UF",
+      "a_id": "UF",
+      "b_id": "P08",
+      "a_contains_b": false,
+      "b_contains_a": false,
+      "rationale": "This food category does not require meat or seafood. The proposed parent is not restricted to this child; reverse containment is No."
+    }
+  ]
+}

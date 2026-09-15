@@ -1,0 +1,200 @@
+{
+  "experiment": "TRUE09",
+  "description": "Separate observed effects of combining meat/seafood categories from adding Foods featuring, using the same TRUE08 children.",
+  "approval": "User approved the proposed diagnostic, not a production title rewrite, model change, cutoff change or further run.",
+  "base_commit": "441a074f56fbf752e7702caa8a5fc5350ee7a241",
+  "tracking_card": "CREC-127",
+  "parents": [
+    {
+      "group": "M",
+      "title": "Meat",
+      "component": "meat",
+      "qualified": false,
+      "combined": false
+    },
+    {
+      "group": "MF",
+      "title": "Foods featuring meat",
+      "component": "meat",
+      "qualified": true,
+      "combined": false
+    },
+    {
+      "group": "S",
+      "title": "Seafood",
+      "component": "seafood",
+      "qualified": false,
+      "combined": false
+    },
+    {
+      "group": "SF",
+      "title": "Foods featuring seafood",
+      "component": "seafood",
+      "qualified": true,
+      "combined": false
+    },
+    {
+      "group": "U",
+      "title": "Meat or seafood",
+      "qualified": false,
+      "combined": true
+    },
+    {
+      "group": "UF",
+      "title": "Foods featuring meat or seafood",
+      "qualified": true,
+      "combined": true,
+      "source_group": "S485994b768"
+    }
+  ],
+  "children": [
+    {
+      "id": "P01",
+      "title": "Steak",
+      "expected": true,
+      "reason": "Steak is meat-based food.",
+      "role": "Repeated TRUE07 baseline.",
+      "group": "S62d57141b0",
+      "component": "meat"
+    },
+    {
+      "id": "P02",
+      "title": "Brisket",
+      "expected": true,
+      "reason": "Brisket is a meat cut/food.",
+      "role": "Another beef category.",
+      "component": "meat"
+    },
+    {
+      "id": "P03",
+      "title": "Roast chicken",
+      "expected": true,
+      "reason": "Roast chicken is poultry-based food.",
+      "role": "Poultry category.",
+      "component": "meat"
+    },
+    {
+      "id": "P04",
+      "title": "Grilled salmon",
+      "expected": true,
+      "reason": "Grilled salmon is fish-based food.",
+      "role": "Fish category.",
+      "component": "seafood"
+    },
+    {
+      "id": "P05",
+      "title": "Shrimp dishes",
+      "expected": true,
+      "reason": "Shrimp dishes feature shellfish.",
+      "role": "Shellfish category.",
+      "component": "seafood"
+    },
+    {
+      "id": "P06",
+      "title": "Plain boiled rice",
+      "expected": false,
+      "reason": "Plain boiled rice does not require meat or seafood; serving it alongside meat does not make its category a refinement.",
+      "role": "Simple food nonmember.",
+      "component": null
+    },
+    {
+      "id": "P07",
+      "title": "Fresh fruit",
+      "expected": false,
+      "reason": "Fresh fruit does not require meat or seafood.",
+      "role": "Simple food nonmember.",
+      "component": null
+    },
+    {
+      "id": "P08",
+      "title": "Vegan meals",
+      "expected": false,
+      "reason": "Vegan meals exclude meat and seafood.",
+      "role": "Related food category with an explicit exclusion.",
+      "component": null
+    }
+  ],
+  "counts": {
+    "pairs": 38,
+    "directions": 76,
+    "expected_yes": 20,
+    "expected_no": 56,
+    "positive_comparisons": 20,
+    "forward_nonmembers": 18,
+    "reverse_no": 38
+  },
+  "design": "Each of five positive children gets four parent descriptions: relevant component bare/qualified and combined bare/qualified. Each of three clear nonmembers gets all six parents. Both directions. No cross-category seafood-under-Meat judgments are assumed.",
+  "controls": "All 16 TRUE08 inputs recur under UF. Child strings, expected meanings, model, framing and cutoff remain fixed. Parent descriptions are diagnostic variables; their scope is not assumed equivalent.",
+  "hypotheses": [
+    "Combination difficulty predicts loss of correct acceptance when moving from component parent to combined parent, examined separately for bare and qualified wording.",
+    "Qualification difficulty predicts loss of correct acceptance when adding Foods featuring, examined separately for component and combined parents.",
+    "Either, both, neither, or a child-dependent interaction can occur. Report each matched comparison rather than force one explanation."
+  ],
+  "reporting": "Show all native/cutoff decisions and exact scores; compare within-child differences for both transformations. Report nonmember and reverse checks separately. No pooled accuracy headline, significance claim, best-wording selection, or cutoff fitting.",
+  "limits": "Selected five positive and three negative child categories, not independent evidence from 76 semantic examples. Different-scope parent transformations do not prove a stylistic effect or a mechanism inside TRUE. Conventional meat-Steak and inclusive meat-food readings are fixed before scoring; masks are not additional model input.",
+  "next_decision": "Use the observed pattern to recommend a focused next step toward dependable category containment. Do not automatically change production titles or run a new judge.",
+  "unchanged": {
+    "model": "google/t5_xxl_true_nli_mixture",
+    "revision": "aa6cfe1dd4257853bfdd772992045f41bfc14988",
+    "snapshot": "/home/dev/.cache/huggingface/hub/models--google--t5_xxl_true_nli_mixture/snapshots/aa6cfe1dd4257853bfdd772992045f41bfc14988",
+    "model_input": "premise: This text is about {B}. hypothesis: This text is about {A}.",
+    "model_evidence": "Only category title text; no masks, judgments, rationales, semantic reviewer or prior scores.",
+    "inference": "Unchanged run_inference: CPU float32, batch4, four threads, seed0, greedy1beam, max3 generated tokens, EOS required, no input truncation.",
+    "cutoff": "entailment_score > 0.142 using full-vocabulary first output token 209 probability; native answer reported separately."
+  },
+  "resources": "One cached offline CPU model, four threads/batch4. >=70GiB available before launch; MemoryMax60G, MemorySwapMax0, CPUQuota400%. No rental, downloads, training or paid inference.",
+  "compatibility": "Fixture TRUE03 is the reused validator schema; runtime TRUE09. Metadata domain manual-parent-components. Shared raw DECISIONS may say holdout: this is not a holdout.",
+  "preservation_sha256": {
+    "sse_multivector/hdbv2-node-titles-v20-astra-low/source-packets.json": "f728a3bc8298fd3b179e7840b44e59e4537bdb95d288c51079089a96e03df1c5",
+    "sse_multivector/hdbv2-node-titles-v21-astra-low/titles.json": "693223548b17e439ac433dd2f9aaba9b830a2c97d5e68798379e8f784fb66799",
+    "sse_multivector/hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52",
+    "sse_multivector/navigation-research-v1/TRUE07/fixture.json": "f385c56da808b7b36cc21dff227842605ed33e76f7cd659e9457477981d35f16",
+    "sse_multivector/navigation-research-v1/TRUE07/frozen.json": "8ee6c984ccf70eb65d6c82eff7cb0fdb56d52795197d6065461ce5bcf09efcb0",
+    "sse_multivector/navigation-research-v1/TRUE07/independent-review-input.json": "502cd667ea0cd429a78d87c822085084dffa18ac23131d29d4186b6fcdd62da1",
+    "sse_multivector/navigation-research-v1/TRUE07/inputs.json": "0cfcac598dbfa3fa2a8c90ff50013f4c9f030f5b47e7825cfd7c7f3fb3baf6bf",
+    "sse_multivector/navigation-research-v1/TRUE07/plan.json": "41040ca1c2d360ac96c49f542067961bacbd673d52a6483432f94b02d7d9fc48",
+    "sse_multivector/navigation-research-v1/TRUE07/run/DECISIONS.md": "7f75ae14bb298e93ae5b58443300fd2ee1c6b1062cc4cfbf37443a9ef381791a",
+    "sse_multivector/navigation-research-v1/TRUE07/run/analysis.json": "d46986046acd41d467c5a4300311f31cd851539fed8a75f678b5767d65ff1605",
+    "sse_multivector/navigation-research-v1/TRUE07/run/completion.json": "91f68f2877ca6e5793a387b36d9f714aa0cc10dfa8997aeca02e86067c16d34f",
+    "sse_multivector/navigation-research-v1/TRUE07/run/config.json": "5d4debabd4d75f2f091651cfb3f51487964e678313e8a3bd142f123723f724e7",
+    "sse_multivector/navigation-research-v1/TRUE07/run/first-token-logits.npy": "04c6499691085db61c93c4788e88f2054258edea51f20d68180d1ee99e4e6e9c",
+    "sse_multivector/navigation-research-v1/TRUE07/run/hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52",
+    "sse_multivector/navigation-research-v1/TRUE07/run/inputs.json": "0cfcac598dbfa3fa2a8c90ff50013f4c9f030f5b47e7825cfd7c7f3fb3baf6bf",
+    "sse_multivector/navigation-research-v1/TRUE07/run/model-files.json": "c45c96315ca8795e9ec639d221622870180b91d1a216a38b45500654f1221104",
+    "sse_multivector/navigation-research-v1/TRUE07/run/run.py": "adcc9f12b74789a584876fc9fdb24e48c65a5d3272b8a552dda328217ae0e553",
+    "sse_multivector/navigation-research-v1/TRUE07/run/scores.jsonl": "53599220d636841df77b286d8d0a5a24acdaebd279bb51d8945167982f3ed0ab",
+    "sse_multivector/navigation-research-v1/TRUE07/run/started.json": "c2b60c75ad8d8a91d8f86fe71c77e85f2dabb05fe419ba10a1d066a72ef3f82b",
+    "sse_multivector/navigation-research-v1/TRUE07/run/true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+    "sse_multivector/navigation-research-v1/TRUE07/run/true_generated_title_probe.py": "cf363c4ce14e4d5a40e49a5c42560e562a586335d490d23d592c9c449e3b2b45",
+    "sse_multivector/navigation-research-v1/TRUE07/run/true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+    "sse_multivector/navigation-research-v1/TRUE07/run.py": "adcc9f12b74789a584876fc9fdb24e48c65a5d3272b8a552dda328217ae0e553",
+    "sse_multivector/navigation-research-v1/TRUE07/semantic-review.json": "f3f402e97c483f53ba42b2753da56568f1b8d1ee3d5a92a51608cd198cc07048",
+    "sse_multivector/navigation-research-v1/TRUE07/source-evidence.json": "f085fe8f949fe30aef8b9aeea0c9da09788d7cc232f32130262b65ae95360cfc",
+    "sse_multivector/navigation-research-v1/TRUE07/variants.json": "3ad789d2bc10c7bff4a07cdb87397ded59718054136b4cd72b562f9f3c952202",
+    "sse_multivector/navigation-research-v1/TRUE08/fixture.json": "577c7d74285c07bb0ea5e38004f18ada2bcfada52d63f81de23bdeed0f267ca4",
+    "sse_multivector/navigation-research-v1/TRUE08/frozen.json": "8c8cef4f0ad95eef79983e35383cc0924383b750670df265517a4d8ff21a1e3b",
+    "sse_multivector/navigation-research-v1/TRUE08/inputs.json": "a2b1f70a92f66e330ac569f4ca52354ff0c13733ad4b55ad091a3ee633aa826f",
+    "sse_multivector/navigation-research-v1/TRUE08/plan.json": "c7d7dd18cc680d3ff329bf73d24c4d614caf7869368447329cdddc7577f878f3",
+    "sse_multivector/navigation-research-v1/TRUE08/run/DECISIONS.md": "6fd8d988e620f7c56e2cd2c0780ba7d08d086e76b7074423cb560fac0b43c7af",
+    "sse_multivector/navigation-research-v1/TRUE08/run/analysis.json": "de309c64d1439bcfa18a6ef5333dd6abb362bbb6cc0a2940d5222e9c289275d3",
+    "sse_multivector/navigation-research-v1/TRUE08/run/completion.json": "18e68f0aa6761bd4a9b2b772006360174c1c64948918b70faa9fcd64a1e887b1",
+    "sse_multivector/navigation-research-v1/TRUE08/run/config.json": "5919952fd453c98023cb330da1942f59b2270a36ecc48f1e71ed2bf3ef728b93",
+    "sse_multivector/navigation-research-v1/TRUE08/run/first-token-logits.npy": "1fe4070fa85b8ecbcf679892db4684cc04924cccf555bfdf7694d0c617f828ad",
+    "sse_multivector/navigation-research-v1/TRUE08/run/hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52",
+    "sse_multivector/navigation-research-v1/TRUE08/run/inputs.json": "a2b1f70a92f66e330ac569f4ca52354ff0c13733ad4b55ad091a3ee633aa826f",
+    "sse_multivector/navigation-research-v1/TRUE08/run/model-files.json": "c45c96315ca8795e9ec639d221622870180b91d1a216a38b45500654f1221104",
+    "sse_multivector/navigation-research-v1/TRUE08/run/run.py": "dd1198e0d3eaedf44a739a5f36d6164117662c8089de9c03a08a74f936a72b34",
+    "sse_multivector/navigation-research-v1/TRUE08/run/scores.jsonl": "b374765298f7603c88169097f46f4b6a2ab8012398ca6579c2299917f55336c4",
+    "sse_multivector/navigation-research-v1/TRUE08/run/started.json": "9e4e4bb8cb1ba448b365e1388ce7b996127b6a7a574659880633e7b23bd1126c",
+    "sse_multivector/navigation-research-v1/TRUE08/run/true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+    "sse_multivector/navigation-research-v1/TRUE08/run/true_generated_title_probe.py": "cf363c4ce14e4d5a40e49a5c42560e562a586335d490d23d592c9c449e3b2b45",
+    "sse_multivector/navigation-research-v1/TRUE08/run/true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+    "sse_multivector/navigation-research-v1/TRUE08/run.py": "dd1198e0d3eaedf44a739a5f36d6164117662c8089de9c03a08a74f936a72b34",
+    "sse_multivector/navigation-research-v1/TRUE08/semantic-review.json": "6b8f8568ec2bdfd1bd7ec0f35d5d43d7adc2964115f6af239db44d9aebcecb8c",
+    "sse_multivector/navigation-research-v1/TRUE08/source-masks.json": "844a1a8cc8a7e91d4ba7a1869e359f640f76874ffa17bcbdd22a7ead0eebc4d7",
+    "sse_multivector/navigation-research-v1/TRUE08/titles.json": "8303013f959799bb9482ac62a7fecf4a78d6f1cbb9eaa927db86aa9cee8bb8a2",
+    "sse_multivector/true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+    "sse_multivector/true_generated_title_probe.py": "cf363c4ce14e4d5a40e49a5c42560e562a586335d490d23d592c9c449e3b2b45",
+    "sse_multivector/true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9"
+  }
+}
