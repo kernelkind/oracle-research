@@ -12,6 +12,8 @@ Approved requirements:
 - Compare Qwen3.8-27B, Gemma 4 31B instruction-tuned, and T5Gemma 9B–9B
   PrefixLM instruction-tuned.
 - Include a baseline without task-specific fine-tuning for every model.
+- Start automatic mask matching with an 80% token-overlap cutoff, alongside
+  separate exact-match scores. Details are in [Evaluation and decisions](#evaluation-and-decisions).
 - The total oracle MVP spending ceiling is $1,000, replacing—not supplementing—
   the old $500 ceiling. Existing spending and commitments still count.
 
@@ -134,6 +136,28 @@ The 1,000-note stage and confirmations are conditional, not a mandate to spend
 the remaining budget.
 
 ## Evaluation and decisions
+
+### Initial automatic mask scoring — approved
+
+Within each note, match generated masks to reference masks one-to-one,
+independently of their list order. Treat all fragments of each mask together
+as a set of source-token positions.
+
+```text
+overlap = tokens selected by both masks / tokens selected by either mask
+```
+
+Count a match when overlap is at least 0.80. For example, five selected tokens
+versus four of those same tokens gives 4/5 = 80%. Calculate precision, recall,
+and F1 using this rule, with exact-match scores calculated separately.
+
+This follows the matching approach in
+[PropSegmEnt, sections 3.2 and 5.1](https://aclanthology.org/2023.findings-acl.565.pdf).
+The 80% cutoff is an initial mask-matching rule, not a required model accuracy.
+Source tokenization, how scores are averaged across notes, and which score
+selects training checkpoints remain open.
+
+### Other measurements and interpretation
 
 Measure separately on the same validation notes:
 
