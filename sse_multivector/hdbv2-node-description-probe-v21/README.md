@@ -11,6 +11,11 @@ approve/reject decision. That comment is not treated as an approved replacement
 or a new prompt rule. The [focused review](../hdbv2-node-titles-v21-astra-low/run-review.sh)
 and its original inputs remain unchanged. No new TRUE run occurred.
 
+The user subsequently clarified that we must not assume the model learned the
+association between coffeechain and Nostr during training. The title input does
+not identify Nostr as the source platform, so "on Nostr" is not a required title
+qualification. No replacement title or prompt/input change has been approved.
+
 The initial six-group experiment and its original assistant judgments follow.
 The user later approved its Visual Art response; that decision is preserved in
 the complete set rather than reopening the initial objection below.
