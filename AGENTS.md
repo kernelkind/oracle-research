@@ -1,5 +1,6 @@
 # Oracle MVP Rules
 
+- After completing a task and before ending your turn, reconsider the broader goal in light of the results and remaining uncertainties. Proactively recommend the most useful next step and briefly explain why it is warranted. Suggest it without beginning it; wait for explicit approval. If no useful next step is justified, say so rather than inventing more work.
 - When presenting any command for the user to paste, use short paths and explicit `\` line continuations when wrapping. Never split a file path or other shell argument across lines. Put the complete command, including any required working-directory change, in one shell code block so it can be pasted without editing; continuation backslashes must be the last character on their lines. For delta diffs, keep the `nix run nixpkgs#delta -- --paging=always` invocation on one line.
 - The lifetime monetary budget for the entire oracle MVP is **$500 USD**. This is a hard ceiling, not a target.
 - The ceiling includes every paid resource used by the effort, including CPU and GPU rentals, storage, transfers, failed or interrupted runs, calibration, evaluation, diagnostics, and confirmation work.
