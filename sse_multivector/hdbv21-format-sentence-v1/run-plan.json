@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "experiment": "v21 format-sentence removal diagnostic",
+  "base_commit": "275abda3f5510cdb5cbc326ecdd11af5ac30975c",
+  "tracking_card": "CREC-127",
+  "plane_update": "No Plane tool exposed; no external status update performed.",
+  "approval": "User approved comparing v21 unchanged with one sentence removed, on Coffeechain, previous food wording failure, and a successful control.",
+  "question": "Does the sentence discourage recognizing a hashtag category, and does removal revive titles about phrases or wording?",
+  "baseline_prompt": "../hdbv2-node-description-probe-v21/prompt.txt",
+  "candidate_prompt": "prompt-without-sentence.txt",
+  "removed_sentence": "Categorize what the text communicates, not its wording or format, unless those are themselves the subject being discussed.",
+  "other_changes": "None: same exact masks, quotes, instance order, deduplication, model, effort, wrapper and account.",
+  "source_packets": "../hdbv2-node-titles-v20-astra-low/source-packets.json",
+  "source_sha256": "f728a3bc8298fd3b179e7840b44e59e4537bdb95d288c51079089a96e03df1c5",
+  "groups": [
+    "Sf5a4b23523",
+    "Sd5f4538ab9",
+    "S24afa84c49"
+  ],
+  "group_roles": {
+    "Sf5a4b23523": "Coffeechain failure under investigation; recognizable hashtag meaning is legitimate; shops/business chains must not be assumed; no Nostr association or exact expected title required.",
+    "Sd5f4538ab9": "Food wording regression control: earlier title Recipe dish-and-ingredient phrases described text instead of food.",
+    "S24afa84c49": "Successful coffee-bean preparation control; include both grinding and roasting without imposing either on every mask."
+  },
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "codex_binary": "/nix/store/h0xv9625s31bnn7wlk3fsdmhv290z0i1-codex-0.153.0/bin/codex",
+  "wrapper_sha256": "ebf1942737069a49146d7336c6936dd2fa5cdd8d4b6a2b24274f01bc9f83e2fe",
+  "trials_per_condition_per_group": 3,
+  "total_fresh_calls": 18,
+  "max_concurrent_calls": 3,
+  "execution": "First call alone; then at most three independent processes; interleave conditions and rotate group order by trial; stop dispatching on execution failure; no automatic retries or output selection.",
+  "review": "Read every raw title alongside all exact masks. Judge failures semantically, not exact-title matching. Assess whether the Coffeechain error repeats, whether hashtag meaning is identified, and whether control titles regress. Report every output and ambiguity, not only best results.",
+  "limits": "Small reused diagnostic, not accuracy estimate or proof of the cause; model nondeterminism and pretrained knowledge remain possible explanations. Do not infer that no difference proves the sentence has no effect. No Nostr platform context injected.",
+  "next_decision": "Recommend dropping the sentence only if Coffeechain improves without control regression; if no clear improvement, do not promote or invent a replacement in this run.",
+  "frozen": "Original prompts, raw generations, masks, vectors, HDBv2 grouping and user review sessions remain unchanged; no TRUE or new hierarchy work.",
+  "budget": "Existing authorized Codex subscription only; no new charge, API billing, rental or account switch.",
+  "guidance": "https://developers.openai.com/api/docs/guides/evaluation-best-practices#what-are-evals",
+  "calls": [
+    {
+      "trial": 1,
+      "group": "Sf5a4b23523",
+      "condition": "v21",
+      "config": "calls/trial-1/Sf5a4b23523/v21/config.json"
+    },
+    {
+      "trial": 1,
+      "group": "Sf5a4b23523",
+      "condition": "without-sentence",
+      "config": "calls/trial-1/Sf5a4b23523/without-sentence/config.json"
+    },
+    {
+      "trial": 1,
+      "group": "Sd5f4538ab9",
+      "condition": "without-sentence",
+      "config": "calls/trial-1/Sd5f4538ab9/without-sentence/config.json"
+    },
+    {
+      "trial": 1,
+      "group": "Sd5f4538ab9",
+      "condition": "v21",
+      "config": "calls/trial-1/Sd5f4538ab9/v21/config.json"
+    },
+    {
+      "trial": 1,
+      "group": "S24afa84c49",
+      "condition": "v21",
+      "config": "calls/trial-1/S24afa84c49/v21/config.json"
+    },
+    {
+      "trial": 1,
+      "group": "S24afa84c49",
+      "condition": "without-sentence",
+      "config": "calls/trial-1/S24afa84c49/without-sentence/config.json"
+    },
+    {
+      "trial": 2,
+      "group": "Sd5f4538ab9",
+      "condition": "v21",
+      "config": "calls/trial-2/Sd5f4538ab9/v21/config.json"
+    },
+    {
+      "trial": 2,
+      "group": "Sd5f4538ab9",
+      "condition": "without-sentence",
+      "config": "calls/trial-2/Sd5f4538ab9/without-sentence/config.json"
+    },
+    {
+      "trial": 2,
+      "group": "S24afa84c49",
+      "condition": "without-sentence",
+      "config": "calls/trial-2/S24afa84c49/without-sentence/config.json"
+    },
+    {
+      "trial": 2,
+      "group": "S24afa84c49",
+      "condition": "v21",
+      "config": "calls/trial-2/S24afa84c49/v21/config.json"
+    },
+    {
+      "trial": 2,
+      "group": "Sf5a4b23523",
+      "condition": "without-sentence",
+      "config": "calls/trial-2/Sf5a4b23523/without-sentence/config.json"
+    },
+    {
+      "trial": 2,
+      "group": "Sf5a4b23523",
+      "condition": "v21",
+      "config": "calls/trial-2/Sf5a4b23523/v21/config.json"
+    },
+    {
+      "trial": 3,
+      "group": "S24afa84c49",
+      "condition": "v21",
+      "config": "calls/trial-3/S24afa84c49/v21/config.json"
+    },
+    {
+      "trial": 3,
+      "group": "S24afa84c49",
+      "condition": "without-sentence",
+      "config": "calls/trial-3/S24afa84c49/without-sentence/config.json"
+    },
+    {
+      "trial": 3,
+      "group": "Sf5a4b23523",
+      "condition": "v21",
+      "config": "calls/trial-3/Sf5a4b23523/v21/config.json"
+    },
+    {
+      "trial": 3,
+      "group": "Sf5a4b23523",
+      "condition": "without-sentence",
+      "config": "calls/trial-3/Sf5a4b23523/without-sentence/config.json"
+    },
+    {
+      "trial": 3,
+      "group": "Sd5f4538ab9",
+      "condition": "without-sentence",
+      "config": "calls/trial-3/Sd5f4538ab9/without-sentence/config.json"
+    },
+    {
+      "trial": 3,
+      "group": "Sd5f4538ab9",
+      "condition": "v21",
+      "config": "calls/trial-3/Sd5f4538ab9/v21/config.json"
+    }
+  ]
+}

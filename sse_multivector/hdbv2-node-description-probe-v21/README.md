@@ -14,7 +14,15 @@ and its original inputs remain unchanged. No new TRUE run occurred.
 The user subsequently clarified that we must not assume the model learned the
 association between coffeechain and Nostr during training. The title input does
 not identify Nostr as the source platform, so "on Nostr" is not a required title
-qualification. No replacement title or prompt/input change has been approved.
+qualification. Recognizing social-media hashtags does not require that specific
+association. No replacement title or change to the active v21 prompt is approved.
+
+The approved [sentence-removal diagnostic](../hdbv21-format-sentence-v1/README.md)
+is complete: three fresh Astra-low trials per version on Coffeechain and two
+controls. Both versions returned Coffee shop chains in all three trials; the food
+and coffee-preparation controls remained on their subjects. Removing the
+wording-or-format sentence alone did not fix the error. The cause remains open;
+the diagnostic does not promote its candidate or change these saved titles.
 
 The initial six-group experiment and its original assistant judgments follow.
 The user later approved its Visual Art response; that decision is preserved in
