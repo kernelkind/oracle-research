@@ -250,12 +250,57 @@ and evaluation, excluding annotation work and troubleshooting. T5Gemma's setup
 is the least certain. The [published hardware evidence](EXTRACTOR-FINETUNING-MODEL-RESEARCH.md#published-training-hardware-and-weight-storage)
 does not establish measured memory use for this particular workload.
 
-Read-only Vast offer searches on 2026-09-15 returned approximately $0.56/hour
-for an A6000 48GB and $2.59/hour for an H100 80GB, each including 200GB storage
-and excluding transfers. At those quotes, 24 hours on each proposed machine
-would total about $89 across the three candidates. This was an illustrative
-rental-duration calculation, not the cost of the complete pilot or a training
-runtime forecast. Quotes can change. See [Vast pricing](https://docs.vast.ai/guides/instances/pricing).
+Read-only Vast offer searches on 2026-09-15 found A6000 48GB offers around
+$0.54–0.56/hour and H100 80GB offers around $2.19–2.59/hour, including 200GB
+storage and excluding transfers. The calculations below use rounded planning
+rates of $0.60/hour for an A6000 and $2.60/hour for an H100. Availability and
+prices can change; no offer was reserved. See [Vast pricing](https://docs.vast.ai/guides/instances/pricing).
+
+### Larger-training cost scenarios — provisional
+
+Saved on 2026-09-15 for reference, not as approved dataset sizes or spending.
+Each cell estimates one training run with three passes through the data,
+using the model and GPU pairing above.
+
+| Training notes | Qwen3.8-27B | Gemma 4 31B | T5Gemma 9B–9B |
+|---:|---:|---:|---:|
+| 10,000 | $6–24 | $12–36 | $13–78 |
+| 25,000 | $15–60 | $30–90 | $33–195 |
+| 50,000 | $30–120 | $60–180 | $65–390 |
+
+These are linear extrapolations from the unmeasured runtime ranges above:
+
+```text
+training cost = hours per 1,000 notes × (training notes / 1,000) × hourly rate
+```
+
+They assume similar note and mask lengths and unchanged training throughput.
+The ranges are not measured confidence intervals or guaranteed upper bounds.
+Three passes is a costing assumption, not a frozen training protocol. Setup,
+evaluation, transfers, troubleshooting, and annotation generation are additional.
+
+### Proposed allocation — not spending authorization
+
+- **$100 initial pilot ceiling, total across all three candidates.** Reassess
+  before extending it, using measured cost, training speed, improvement, and
+  whether further comparisons could change the choice. Reaching the ceiling
+  does not establish that the pilot is scientifically sufficient.
+- **$500 reserve for the selected model's larger fine-tune.** Under these
+  assumptions, this covers the expensive end of the 25,000-note scenario,
+  a complete rerun, and overhead. For example, two T5Gemma runs at $195 each,
+  plus three hours of setup/evaluation and an illustrative $5 transfer allowance
+  per run, total about $416. This is not a commitment to use 25,000 notes.
+- **Leave the remainder unallocated** for annotations, other project costs,
+  and unexpected expenses. Any paid annotation work shares the lifetime budget;
+  the training-cost table does not price it.
+
+The $500 reserve would not comfortably cover two slow-end, 50,000-note
+T5Gemma runs: training alone would cost about $780 under these assumptions.
+Measured pilot throughput must replace these estimates before committing to
+larger runs.
+
+
+### Spending constraints
 
 The [repository budget rules](../AGENTS.md) govern every paid action. The $1,000
 ceiling covers the entire effort, including previous costs, failed runs,
