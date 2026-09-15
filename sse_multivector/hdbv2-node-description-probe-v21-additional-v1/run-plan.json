@@ -1,0 +1,275 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv2-node-description-probe-v21-additional-v1",
+  "source_commit": "54af81cb4c64efd69a25125c659c5300e0d3c705",
+  "purpose": "Test unchanged v21 on six different existing groups for category-defining relationships and word-meaning clarity while retaining useful broad titles.",
+  "prompt_path": "../hdbv2-node-description-probe-v21/prompt.txt",
+  "prompt_sha256": "616500bd7c28103a9686de22ff69d53323c44fa976db4c2238d0041c704f8541",
+  "source_titles": "../hdbv2-node-titles-v20-astra-low/titles.json",
+  "source_packets": "../hdbv2-node-titles-v20-astra-low/source-packets.json",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "groups": [
+    {
+      "group": "Se7ebc25cf1",
+      "selection_reason": "Mixed beverage, food accompaniment, ingredient and refusal contexts; avoid forcing a universal activity.",
+      "instances": [
+        {
+          "instance": "V056",
+          "fragments": [
+            "I don’t drink……wine",
+            "😈"
+          ]
+        },
+        {
+          "instance": "V053",
+          "fragments": [
+            "wine was available with the lamb"
+          ]
+        },
+        {
+          "instance": "V706",
+          "fragments": [
+            "handmade wild rose wine"
+          ]
+        },
+        {
+          "instance": "V707",
+          "fragments": [
+            "best handmade wild rose wine"
+          ]
+        },
+        {
+          "instance": "V708",
+          "fragments": [
+            "wine",
+            "food",
+            "no compromise"
+          ]
+        },
+        {
+          "instance": "V536",
+          "fragments": [
+            "Mushroom Risotto with Shrimp",
+            "Dry White Wine"
+          ]
+        },
+        {
+          "instance": "V705",
+          "fragments": [
+            "wild rose wine"
+          ]
+        },
+        {
+          "instance": "V054",
+          "fragments": [
+            "Though wine was available with the lamb I don’t drink……wine"
+          ]
+        },
+        {
+          "instance": "V055",
+          "fragments": [
+            "I don’t drink……wine"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "S18bc272886",
+      "selection_reason": "Simple object baseline with a bare word and related tag; avoid unnecessary elaboration.",
+      "instances": [
+        {
+          "instance": "V440",
+          "fragments": [
+            "dogstr"
+          ]
+        },
+        {
+          "instance": "V382",
+          "fragments": [
+            "dog"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Sa256265971",
+      "selection_reason": "Figurative mental activity across opposite states; preserve shared scope without imposing one direction.",
+      "instances": [
+        {
+          "instance": "V106",
+          "fragments": [
+            "My mind",
+            "off"
+          ]
+        },
+        {
+          "instance": "V320",
+          "fragments": [
+            "Woke up",
+            "my brain",
+            "started"
+          ]
+        },
+        {
+          "instance": "V105",
+          "fragments": [
+            "My mind",
+            "off"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Sd6b13ec91f",
+      "selection_reason": "Social relation: kindness/generosity versus status/poverty across different claims.",
+      "instances": [
+        {
+          "instance": "V630",
+          "fragments": [
+            "not grant someone more priveleges based on status, or similar, but based on kindness and goodness"
+          ]
+        },
+        {
+          "instance": "V461",
+          "fragments": [
+            "poorest",
+            "often",
+            "most generous"
+          ]
+        },
+        {
+          "instance": "V460",
+          "fragments": [
+            "poorest",
+            "often",
+            "most generous"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "S8ea08f1aff",
+      "selection_reason": "Activity with a setting; distinguish music at a place from the place as an entity.",
+      "instances": [
+        {
+          "instance": "V035",
+          "fragments": [
+            "Rave at a coffee shop"
+          ]
+        },
+        {
+          "instance": "V295",
+          "fragments": [
+            "playing",
+            "coffee shop",
+            "music"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "S0eafedb82e",
+      "selection_reason": "Food-use relation shared by a dessert decoration and a savory recipe; preserve ingredient use without forcing either dish.",
+      "instances": [
+        {
+          "instance": "V775",
+          "fragments": [
+            "easter matcha-cashew pie",
+            "Carrots made with real carrots and coconut butter"
+          ]
+        },
+        {
+          "instance": "V875",
+          "fragments": [
+            "Spaghetti Bolognaise",
+            "1x med carrot",
+            "finely chopped"
+          ]
+        }
+      ]
+    }
+  ],
+  "trials_per_group": 2,
+  "total_calls": 12,
+  "max_concurrent": 3,
+  "jobs": [
+    {
+      "id": "Se7ebc25cf1-r1",
+      "group": "Se7ebc25cf1",
+      "trial": 1,
+      "config": "calls/Se7ebc25cf1-r1/config.json"
+    },
+    {
+      "id": "S18bc272886-r1",
+      "group": "S18bc272886",
+      "trial": 1,
+      "config": "calls/S18bc272886-r1/config.json"
+    },
+    {
+      "id": "Sa256265971-r1",
+      "group": "Sa256265971",
+      "trial": 1,
+      "config": "calls/Sa256265971-r1/config.json"
+    },
+    {
+      "id": "Sd6b13ec91f-r1",
+      "group": "Sd6b13ec91f",
+      "trial": 1,
+      "config": "calls/Sd6b13ec91f-r1/config.json"
+    },
+    {
+      "id": "S8ea08f1aff-r1",
+      "group": "S8ea08f1aff",
+      "trial": 1,
+      "config": "calls/S8ea08f1aff-r1/config.json"
+    },
+    {
+      "id": "S0eafedb82e-r1",
+      "group": "S0eafedb82e",
+      "trial": 1,
+      "config": "calls/S0eafedb82e-r1/config.json"
+    },
+    {
+      "id": "Se7ebc25cf1-r2",
+      "group": "Se7ebc25cf1",
+      "trial": 2,
+      "config": "calls/Se7ebc25cf1-r2/config.json"
+    },
+    {
+      "id": "S18bc272886-r2",
+      "group": "S18bc272886",
+      "trial": 2,
+      "config": "calls/S18bc272886-r2/config.json"
+    },
+    {
+      "id": "Sa256265971-r2",
+      "group": "Sa256265971",
+      "trial": 2,
+      "config": "calls/Sa256265971-r2/config.json"
+    },
+    {
+      "id": "Sd6b13ec91f-r2",
+      "group": "Sd6b13ec91f",
+      "trial": 2,
+      "config": "calls/Sd6b13ec91f-r2/config.json"
+    },
+    {
+      "id": "S8ea08f1aff-r2",
+      "group": "S8ea08f1aff",
+      "trial": 2,
+      "config": "calls/S8ea08f1aff-r2/config.json"
+    },
+    {
+      "id": "S0eafedb82e-r2",
+      "group": "S0eafedb82e",
+      "trial": 2,
+      "config": "calls/S0eafedb82e-r2/config.json"
+    }
+  ],
+  "sample_limits": "Different groups from the first v21 test, but all belong to the already known 61-group set. This is an additional development sample, not a wholly unseen holdout. The garden/allotment group was not selected because its known upstream mask ambiguity is outside this title test.",
+  "execution": "Exact frozen v21 prompt, original instance/fragment order and duplicate masks. Fresh process/thread/empty workspace per call through unchanged codex_exec.py. No full notes, prior titles, selection reasons, IDs, feedback or examples in model input. Tools/web/rules/skills off. First call alone then up to three concurrent. Both repetitions retained; no best-of selection. Stop new scheduling on failure, no automatic retries.",
+  "review": "Assess every output against masks. Independent support and clear category meanings; no prescribed canonical title. Broadness, benign alternatives and nondeterminism alone are not failures. Preserve different relationships/senses across mixed groups. Separate upstream limitations from title errors. Surface new failures and genuine uncertainty in the existing review tool with exact masks and separate assistant comments.",
+  "comparison": "No fresh v20 calls. Saved v20 titles are historical context only, not matched trials or fresh controls.",
+  "scope_limits": "No prompt edits, model changes, cluster/mask edits, TRUE/subsumption calls, hierarchy work, extra generation stages, API credits or new monetary commitments. Main existing subscription only."
+}
