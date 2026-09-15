@@ -4,11 +4,13 @@ Six of seven selected pairs now have clear category meanings for this comparison
 
 The first finding concerns title clarity; the second concerns TRUE's answers. Neither is a constructed hierarchy or a general accuracy estimate. These are seven reused cases, not a holdout. Some old cards already had user decisions; this is not a claim that all six clear cases were previously undecidable to the user.
 
+After the run, the user gave **U052 a qualified Yes**: “yes i think, though it is arguable both ways.” This is recorded separately from the pre-run judgments below. U052 was not sent to TRUE and is not added to the original test counts.
+
 ## Results
 
 Each question asks **Does A contain B?** The reverse was also tested for each clear pair; all six reverse answers were No and agreed with the frozen judgments.
 
-| ID | Current A | Current B | Our judgment | Native | Cutoff | Score |
+| ID | Current A | Current B | Pre-run judgment | Native | Cutoff | Score |
 |---|---|---|---|---|---|---|
 | U001 | Feedback on how food recipes turn out | Meat-based meals in a crockpot | No | No | No | 0.002216 |
 | U023 | Foods featuring meat or seafood | Raw Milk | No | No | No | 0.001817 |
@@ -212,7 +214,7 @@ Previous uncertainty: The parent explicitly limits itself to savory dishes. Sea 
 
 **Assessment:** The actual bagel and risotto masks fit dishes seasoned with salt. But Foods with sea salt also permits ingredients such as salted butter; its full title scope is not unambiguously narrower than dishes. Reverse containment is clearly false, but the whole pair is left for user review, outside this binary model test.
 
-**Not submitted to TRUE.** The question for the user is whether the category names establish containment, rather than merely whether these particular bagel and risotto examples fit. No decision is prefilled.
+**Not submitted to TRUE.** The user subsequently answered: “yes i think, though it is arguable both ways.” Record A containing B as a qualified Yes, preserving the caveat. This does not retroactively make the pre-run judgment unambiguous, add a model result, decide the reverse direction, or establish a general rule about foods and dishes.
 
 ## What changed, and what did not
 

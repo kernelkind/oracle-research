@@ -55,8 +55,10 @@ interpretation. Saved titles and user decisions remain unchanged.
 
 The approved [TRUE05 follow-up](../navigation-research-v1/TRUE05/RESULTS.md) now
 checks these exact existing v21 titles against seven earlier ambiguous category
-pairs. Six current pairs have clear judgments; one food-versus-dish scope question
-remains. Unchanged TRUE rejected all twelve admitted directions: eleven correct
+pairs. Before inference, six pairs had clear judgments; the food-versus-dish pair
+U052 was excluded as uncertain. The user later gave U052 a qualified Yes while
+noting that it is arguable both ways; the original test counts are unchanged.
+Unchanged TRUE rejected all twelve admitted directions: eleven correct
 rejections and one missed steak containment. Clearer titles therefore expose a
 remaining model decision problem; this is not a general accuracy estimate or a
 constructed hierarchy. No title was regenerated or manually corrected, and old
