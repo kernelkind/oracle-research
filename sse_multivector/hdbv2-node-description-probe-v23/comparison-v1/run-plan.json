@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "experiment": "v22 versus v23 name-and-tag interpretation comparison",
+  "base_commit": "735717b65edfa50da698a90fdb4b09725b33ccd8",
+  "approval": "User approved testing the proposed v23 prompt. Repeat the preceding comparison design: three fresh trials per version on the same three groups, 18 calls total.",
+  "tracking_card": "CREC-127",
+  "plane_update": "No Plane tool exposed; no external update performed.",
+  "question": "Does the added name/tag interpretation instruction reduce unsupported commercial-chain titles while preserving the two control subjects?",
+  "hypotheses": [
+    "The new rule may prevent treating a name's words as a literal description.",
+    "The model may treat the disputed interpretation as established meaning, in which case the rule may not help."
+  ],
+  "source_sha256": "f728a3bc8298fd3b179e7840b44e59e4537bdb95d288c51079089a96e03df1c5",
+  "prompts": {
+    "v22": "2962aba3df805f432e2a0250ad93e770885170fbb89e0b160a886e5983c1897d",
+    "v23": "e7c2de8480122f31ad50c1c4d57e6e651e7d585e28860cdefa798a16791a5c17"
+  },
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "execution": "One fresh wrapper config/process/thread and empty workspace per call. First call alone, then maximum three concurrent calls. Alternate versions and rotate group order. No automatic retries.",
+  "review": "Read every title beside the exact masks. Judge meaning, not an exact preferred title. Preserve ordinary background knowledge and accepted broad interpretations; count unsupported commercial chains as the target error. Record ambiguity separately. No reviewer hints enter generation.",
+  "limits": "Three reused groups, not a general holdout. Coffeechain and coffee preparation share one underlying note through different masks. These outputs cannot establish the model's internal mechanism.",
+  "frozen": "No prompt, mask, input order or wrapper changes during the experiment. No saved-title replacement, freeze, TRUE run or hierarchy changes.",
+  "budget": "Existing authorized Codex subscription only. No API billing, purchase, rental or account switch.",
+  "guidance": "https://developers.openai.com/api/docs/guides/evaluation-best-practices#what-are-evals",
+  "calls": [
+    {
+      "trial": 1,
+      "group": "Sf5a4b23523",
+      "version": "v22",
+      "config": "calls/trial-1/Sf5a4b23523/v22/config.json"
+    },
+    {
+      "trial": 1,
+      "group": "Sf5a4b23523",
+      "version": "v23",
+      "config": "calls/trial-1/Sf5a4b23523/v23/config.json"
+    },
+    {
+      "trial": 1,
+      "group": "Sd5f4538ab9",
+      "version": "v23",
+      "config": "calls/trial-1/Sd5f4538ab9/v23/config.json"
+    },
+    {
+      "trial": 1,
+      "group": "Sd5f4538ab9",
+      "version": "v22",
+      "config": "calls/trial-1/Sd5f4538ab9/v22/config.json"
+    },
+    {
+      "trial": 1,
+      "group": "S24afa84c49",
+      "version": "v22",
+      "config": "calls/trial-1/S24afa84c49/v22/config.json"
+    },
+    {
+      "trial": 1,
+      "group": "S24afa84c49",
+      "version": "v23",
+      "config": "calls/trial-1/S24afa84c49/v23/config.json"
+    },
+    {
+      "trial": 2,
+      "group": "Sd5f4538ab9",
+      "version": "v23",
+      "config": "calls/trial-2/Sd5f4538ab9/v23/config.json"
+    },
+    {
+      "trial": 2,
+      "group": "Sd5f4538ab9",
+      "version": "v22",
+      "config": "calls/trial-2/Sd5f4538ab9/v22/config.json"
+    },
+    {
+      "trial": 2,
+      "group": "S24afa84c49",
+      "version": "v22",
+      "config": "calls/trial-2/S24afa84c49/v22/config.json"
+    },
+    {
+      "trial": 2,
+      "group": "S24afa84c49",
+      "version": "v23",
+      "config": "calls/trial-2/S24afa84c49/v23/config.json"
+    },
+    {
+      "trial": 2,
+      "group": "Sf5a4b23523",
+      "version": "v23",
+      "config": "calls/trial-2/Sf5a4b23523/v23/config.json"
+    },
+    {
+      "trial": 2,
+      "group": "Sf5a4b23523",
+      "version": "v22",
+      "config": "calls/trial-2/Sf5a4b23523/v22/config.json"
+    },
+    {
+      "trial": 3,
+      "group": "S24afa84c49",
+      "version": "v22",
+      "config": "calls/trial-3/S24afa84c49/v22/config.json"
+    },
+    {
+      "trial": 3,
+      "group": "S24afa84c49",
+      "version": "v23",
+      "config": "calls/trial-3/S24afa84c49/v23/config.json"
+    },
+    {
+      "trial": 3,
+      "group": "Sf5a4b23523",
+      "version": "v23",
+      "config": "calls/trial-3/Sf5a4b23523/v23/config.json"
+    },
+    {
+      "trial": 3,
+      "group": "Sf5a4b23523",
+      "version": "v22",
+      "config": "calls/trial-3/Sf5a4b23523/v22/config.json"
+    },
+    {
+      "trial": 3,
+      "group": "Sd5f4538ab9",
+      "version": "v22",
+      "config": "calls/trial-3/Sd5f4538ab9/v22/config.json"
+    },
+    {
+      "trial": 3,
+      "group": "Sd5f4538ab9",
+      "version": "v23",
+      "config": "calls/trial-3/Sd5f4538ab9/v23/config.json"
+    }
+  ]
+}

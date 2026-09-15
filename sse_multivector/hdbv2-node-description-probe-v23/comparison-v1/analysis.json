@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "summary": "V23 did not correct the target error: all three Coffeechain outputs were Coffee shop chains. Both control groups retained appropriate subjects in every trial.",
+  "target": {
+    "group": "Sf5a4b23523",
+    "v22": [
+      "Coffee chains",
+      "Coffee shop chains",
+      "Coffee-shop chains"
+    ],
+    "v23": [
+      "Coffee shop chains",
+      "Coffee shop chains",
+      "Coffee shop chains"
+    ],
+    "v22_assessment": {
+      "explicit_commercial_errors": 2,
+      "ambiguous": 1
+    },
+    "v23_assessment": {
+      "explicit_commercial_errors": 3,
+      "ambiguous": 0
+    }
+  },
+  "controls": {
+    "groups": [
+      "Sd5f4538ab9",
+      "S24afa84c49"
+    ],
+    "v22_accepted": 6,
+    "v23_accepted": 6,
+    "reasoning": {
+      "Sf5a4b23523": "Titles explicitly naming shop chains impose an unsupported commercial interpretation. Coffee chains remains ambiguous rather than a demonstrated correction; that wording was already surfaced in the previous test.",
+      "Sd5f4538ab9": "All titles preserve the shared food relationship: savory dishes with toppings/seasonings or those additions used for savory dishes. The change of emphasis is reasonable; none describes the input as phrases or keywords.",
+      "S24afa84c49": "All titles cover grinding and roasting as coffee-bean preparation. The ordinary implied purpose for brewing is acceptable, consistent with the previous review. Capitalization is immaterial."
+    }
+  },
+  "conclusion": "The new instruction is insufficient on these inputs with Astra low. No benefit was demonstrated that would justify adopting v23. This does not establish whether the model ignored the rule or treated its commercial interpretation as established meaning; generated titles do not reveal that mechanism.",
+  "limits": "Three reused groups, three trials per version. Not an unseen holdout or general accuracy estimate. Coffeechain and coffee preparation share one underlying source note. No statistically established superiority of either version is claimed.",
+  "unchanged": "No previous title, prompt text, source, mask, vector, group membership, hierarchy artifact or user decision was replaced. No TRUE run or prompt freeze.",
+  "next": "Report the completed comparison. Do not promote v23 or start another prompt revision or generation batch without direction.",
+  "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 5760,
+    "input_tokens": 41631,
+    "output_tokens": 1117,
+    "reasoning_output_tokens": 924,
+    "input_plus_output_tokens": 42748,
+    "scope": "18 generation calls only; cached input and reasoning output are subsets. Main-agent work and independent integrity audit excluded."
+  },
+  "guidance": "https://developers.openai.com/api/docs/guides/evaluation-best-practices#what-are-evals"
+}

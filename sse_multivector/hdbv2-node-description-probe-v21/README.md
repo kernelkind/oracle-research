@@ -44,6 +44,14 @@ retained their subjects. No clear correction was demonstrated, but that does not
 invalidate supplying the known source context. Neither prompt was edited during
 the test; no saved title was replaced and no adoption or freeze is inferred.
 
+The subsequent [v22-versus-v23 comparison](../hdbv2-node-description-probe-v23/comparison-v1/README.md)
+tested one added instruction distinguishing a name's established meaning from a
+literal reading of its words. All three v23 target responses were Coffee shop
+chains. Both controls remained appropriate across all trials. The 18 fresh calls
+therefore demonstrated no correction from the added rule; v23 is not promoted.
+These outputs do not establish the model's internal reason for retaining that
+interpretation. Saved titles and user decisions remain unchanged.
+
 The initial six-group experiment and its original assistant judgments follow.
 The user later approved its Visual Art response; that decision is preserved in
 the complete set rather than reopening the initial objection below.
