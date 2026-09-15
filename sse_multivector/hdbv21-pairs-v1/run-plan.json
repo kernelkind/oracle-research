@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv21-pairs-v1",
+  "source_commit": "df319581",
+  "purpose": "Check whether v21 titles clarify three historically ambiguous category relationships while remaining faithful to the exact masks.",
+  "prompt_path": "../hdbv2-node-description-probe-v21/prompt.txt",
+  "prompt_sha256": "616500bd7c28103a9686de22ff69d53323c44fa976db4c2238d0041c704f8541",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "trials_per_group": 2,
+  "maximum_concurrent_calls": 3,
+  "pairs": [
+    {
+      "id": "U023",
+      "a_id": "S485994b768",
+      "b_id": "S349051e569",
+      "historical_a": "Food Ingredients",
+      "historical_b": "Raw Milk",
+      "reason": "The user's explicit contains-ingredients versus is-an-ingredient concern."
+    },
+    {
+      "id": "U025",
+      "a_id": "S485994b768",
+      "b_id": "S5ea79ac96e",
+      "historical_a": "Food Ingredients",
+      "historical_b": "Poultry and eggs",
+      "reason": "Ingredient role versus foods/living animals and the poultry bird-versus-meat ambiguity."
+    },
+    {
+      "id": "U009",
+      "a_id": "S07d0857008",
+      "b_id": "Se66af3a9b7",
+      "historical_a": "Recipes and Their Results",
+      "historical_b": "Poultry-Based Food Preparation",
+      "reason": "Recipe/result versus preparation activity; poultry-product wording may clarify eggs versus meat."
+    }
+  ],
+  "groups": [
+    "S485994b768",
+    "S349051e569",
+    "S5ea79ac96e",
+    "S07d0857008",
+    "Se66af3a9b7"
+  ],
+  "generation": "Fresh isolated call per group/trial, unchanged wrapper; only v21 prompt and deduplicated numbered exact masks. No note text, partner category, original title, historical judgments, TRUE scores or feedback.",
+  "evaluation": "Record title-only interpretations in a clean-context review first, using anonymized and shuffled historical/new title pairs. Then check those interpretations against exact masks separately. Clear rejection can count as improved clarity; containment is not prescribed. Faithfulness and ambiguity are separate judgments; no unique target title or hierarchy.",
+  "limits": "Small selected diagnostic, not general accuracy. Historical v20 titles are not newly rerun; generation nondeterminism limits causal attribution. No TRUE calls, inferred graph construction, upstream mask edits or new training.",
+  "preserve": "Historical groups, vectors, prompts, results and user decisions remain untouched."
+}
