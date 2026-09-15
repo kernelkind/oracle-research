@@ -1,0 +1,7 @@
+Briefly explain what these instances refer to.
+
+Interpret the quoted text within each instance together.
+
+Instances:
+
+{NUMBERED_INSTANCES}

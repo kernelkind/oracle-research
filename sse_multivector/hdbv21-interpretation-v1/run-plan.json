@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv21-interpretation-v1",
+  "base_commit": "c05f938a27dd8905bf0e1b05781ed27d82b45c0f",
+  "approval": "User approved three fresh Astra-low calls explaining the unchanged masks, without hints about hashtags, source platform, prior outputs or the expected answer. Diagnostic only, not a new pipeline stage.",
+  "tracking_card": "CREC-127",
+  "plane_update": "No Plane tool available; no external update performed.",
+  "source_packets": "../hdbv2-node-titles-v20-astra-low/source-packets.json",
+  "prior_inputs": "../hdbv21-format-sentence-v1/inputs-v21.json",
+  "group": "Sf5a4b23523",
+  "prompt": "prompt.txt",
+  "question": "Does the same model identify the masked reference when asked to explain rather than generate a category title?",
+  "changed": "Replace title-generation task with neutral brief explanation request. Retain the exact numbered instances, quotes, fragment grouping, order and together-reading instruction.",
+  "unchanged": "Same masks, model, effort, wrapper, account and isolated per-call execution. No notes, source platform, prior titles, comments or hints enter generation input.",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "codex_binary": "/nix/store/h0xv9625s31bnn7wlk3fsdmhv290z0i1-codex-0.153.0/bin/codex",
+  "wrapper_sha256": "ebf1942737069a49146d7336c6936dd2fa5cdd8d4b6a2b24274f01bc9f83e2fe",
+  "trials": 3,
+  "max_concurrent_calls": 2,
+  "execution": "First call alone to verify execution. Then remaining two fresh calls concurrently, with no retries or output selection.",
+  "assessment": "Read all responses. Record recognition of a tag or online coffee-sharing convention separately from commercial-chain interpretations, mixed/uncertain interpretations and unsupported extra claims. Do not require Nostr-specific knowledge or reward unexplained platform assertions.",
+  "limitations": "Explanation is a different task and output form, not a transparent report of latent reasoning. Success shows this model can express a different interpretation under these inputs; it does not prove which title instruction caused failure or validate a two-stage architecture. Failure does not establish lack of all general hashtag knowledge. Three calls on one selected group cannot establish general accuracy.",
+  "next": "Report all responses and bounded conclusions. No revised title prompt or two-stage pipeline is to be created during this diagnostic.",
+  "budget": "Existing authorized Codex subscription only; no extra charge, API billing, rental or account switch.",
+  "guidance": "https://developers.openai.com/api/docs/guides/evaluation-best-practices#what-are-evals",
+  "calls": [
+    {
+      "trial": 1,
+      "config": "trial-1/config.json"
+    },
+    {
+      "trial": 2,
+      "config": "trial-2/config.json"
+    },
+    {
+      "trial": 3,
+      "config": "trial-3/config.json"
+    }
+  ]
+}

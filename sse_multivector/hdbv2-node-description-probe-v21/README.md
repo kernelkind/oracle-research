@@ -24,6 +24,14 @@ and coffee-preparation controls remained on their subjects. Removing the
 wording-or-format sentence alone did not fix the error. The cause remains open;
 the diagnostic does not promote its candidate or change these saved titles.
 
+The subsequent [neutral-explanation diagnostic](../hdbv21-interpretation-v1/README.md)
+also completed. All three fresh Astra-low calls explicitly recognized hashtag
+notation but still interpreted coffeechain as a commercial coffee-shop chain.
+That reading therefore persists outside the title task; it is not evidence of
+missing general hashtag knowledge. These explanations do not reveal prior hidden
+reasoning or identify a particular causal instruction. No revised prompt or extra
+pipeline stage is approved, and all earlier raw outputs remain unchanged.
+
 The initial six-group experiment and its original assistant judgments follow.
 The user later approved its Visual Art response; that decision is preserved in
 the complete set rather than reopening the initial objection below.
