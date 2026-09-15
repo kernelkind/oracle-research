@@ -70,6 +70,52 @@ Output counts already include reasoning tokens. Cached input tokens are already 
 
 There is no additional allowance for future retries, semantic review, prompt-development work, subsumption checks or other hierarchy-generation calls. SSE encoding and clustering are outside this LLM-token estimate.
 
+## Lower-cost annotation models
+
+Research saved September 15, 2026. The question is whether another hosted model can generate subject and mask training labels at approximately Astra-low quality for less money. This is **teacher-model selection**, not selection of the smaller model we will fine-tune. The user accepted this shortlist as reasonable; no candidate has been tested on our task and no paid run is authorized by this record.
+
+The research screened the public Artificial Analysis and OpenRouter catalogs, including discounted tiers and provider-specific routes. Artificial Analysis supplies capability signals; **all prices below come from OpenRouter**. The current frozen prompts, ASv6.23 and MPv3.5, and the Astra-low baseline remain unchanged.
+
+### Ranked shortlist
+
+This is a ranking of candidates worth testing, not a demonstrated ranking of annotation accuracy.
+
+| Priority | Model and AA benchmark setting | AA Intelligence Index | AA knowledge accuracy | OpenRouter dollars per million input / output tokens | Same-token cost per 1,000 notes |
+|---|---|---:|---:|---:|---:|
+| 1 | [Muse Spark 1.3, max](https://artificialanalysis.ai/models/muse-spark-1-3), using Contributor | 48.2 | 43.6% | [0.10 / 0.20](https://openrouter.ai/meta/muse-spark-1.3-contributor) | **$3.00** |
+| 2 | [DeepSeek V4.1 Flash, max](https://artificialanalysis.ai/models/deepseek-v4-1-flash) | 39.5 | 46.4% | [0.15 / 0.60](https://openrouter.ai/deepseek/deepseek-v4.1-flash) | **$4.95** |
+| 3 | [GLM 5.3 Flash](https://artificialanalysis.ai/models/glm-5-3-flash) | 41.9 | 27.5% | [0.075 / 0.25, promotional](https://openrouter.ai/z-ai/glm-5.3-flash) | **$2.40** |
+| 4 | [DeepSeek V4 Flash 0731, max](https://artificialanalysis.ai/models/deepseek-v4-flash) | 34.5 | 40.4% | [0.04 / 0.10, via OpenInference](https://openrouter.ai/deepseek/deepseek-v4-flash-0731) | **$1.23** |
+
+For comparison, [Astra low](https://artificialanalysis.ai/models/gpt-6-astra-low) scores 46.0 on the Intelligence Index and 59.5% on knowledge accuracy.
+
+**Why this order:** Muse offers the strongest combination of general capability and price. DeepSeek V4.1 offers a promising balance of capability, knowledge coverage and cost. GLM has particularly attractive economics and strong general scores, but weaker knowledge coverage could matter on varied notes. DeepSeek 0731 is an inexpensive comparison that may be adequate despite lower general scores. These are hypotheses about transfer to our task.
+
+### Cost assumptions
+
+The table reuses the measured subject-plus-mask totals above, scaled from 248 to 1,000 notes:
+
+- Input: **26.899234 million tokens**, including the current execution path's overhead.
+- Output: **1.532319 million tokens**, including reasoning once.
+- Cost: `26.899234 × input price + 1.532319 × output price`.
+
+These scenarios charge **all input at the uncached rate**, exclude fees, and exclude node titles. They do not predict a future cache-hit rate. Different tokenizers, reasoning usage, subject counts, retries or request overhead can change actual costs substantially. A model benchmarked at maximum reasoning effort must not be assumed to use the same output volume as Astra low.
+
+### Access and benchmark caveats
+
+- **Muse Contributor:** AA benchmarked the standard model, not independently the Contributor endpoint. OpenRouter identifies Contributor as a tier of Muse Spark 1.3 but does not establish identical behavior in our configuration. Prompts and outputs may be used to improve Meta's products. Check the applicable output-use terms before generating extractor-training data at scale. [Route and terms description](https://openrouter.ai/meta/muse-spark-1.3-contributor).
+- **GLM:** the $2.40 scenario uses DeepInfra's promotional, FP4 deployment. It should not be assumed identical to the benchmarked deployment. The listed first-party $0.15 / $0.50 route gives approximately **$4.80** under the same token assumptions. [Providers](https://openrouter.ai/z-ai/glm-5.3-flash).
+- **DeepSeek:** prices vary by provider, and the V4.1 first-party rate can vary by time. The table uses the listed lower-priced routes. For the older candidate, use the exact OpenRouter ID `deepseek/deepseek-v4-flash-0731`; the unversioned `deepseek/deepseek-v4-flash` route refers to an older revision. [V4.1 providers](https://openrouter.ai/deepseek/deepseek-v4.1-flash), [0731 providers](https://openrouter.ai/deepseek/deepseek-v4-flash-0731).
+- **Evidence:** the Intelligence Index measures general capability, not extraction accuracy. AA-Omniscience knowledge accuracy may help gauge interpretation of unfamiliar subjects, but does not measure faithfulness to the note. No IFBench score was found for the exact four benchmark variants above. IFBench itself tests instruction following, not our semantic annotation policy. Long-context scores and context-window size were not used to rank this shortlist. [AA methodology](https://artificialanalysis.ai/methodology/intelligence-benchmarking), [Omniscience](https://artificialanalysis.ai/evaluations/omniscience), [IFBench](https://artificialanalysis.ai/evaluations/ifbench).
+
+### Other candidates retained
+
+- **MiniMax M3:** 82.9% IFBench provides instruction-following evidence missing for the four candidates above. Its weaker knowledge results make it more interesting for masking an already supplied subject than for discovering subjects. Approximately **$9.91 per 1,000 notes** at $0.30 / $1.20. [AA](https://artificialanalysis.ai/models/minimax-m3), [OpenRouter](https://openrouter.ai/minimax/minimax-m3).
+- **Qwen 3.8 Flash:** approximately **$4.76** at $0.15 / $0.47. A reasonable alternative family, but the AA result is for the related Flash-Next checkpoint rather than the exact hosted model. The official model card describes hosted Flash as based on Flash-Next, with additional production features. [Model relationship](https://huggingface.co/Qwen/Qwen3.8-Flash-Next), [OpenRouter](https://openrouter.ai/qwen/qwen3.8-flash).
+- **Gemini 3.8 Flash:** strong knowledge results, but approximately **$25.92**, or **$12.96 through batch**, at the same token volumes. [AA](https://artificialanalysis.ai/models/gemini-3-8-flash), [OpenRouter](https://openrouter.ai/google/gemini-3.8-flash).
+
+**Recommended next step, not yet run:** compare Muse Contributor, DeepSeek V4.1 Flash and GLM 5.3 Flash against our accepted Astra outputs on a small shared sample. Assess subject generation and mask generation separately; they need not have the same winning model. Record the exact provider, model revision, reasoning setting, actual tokens and cost. The research justifies this comparison, not a claim that any candidate already matches Astra's annotation quality.
+
 ## Saved evidence
 
 - [Frozen ASv6.23 package](subject-prompt-goal-v1/asv6.23/frozen.json) and [final-validation verification](subject-prompt-goal-v1/asv6.23-validation-v1/final/verification.json).
