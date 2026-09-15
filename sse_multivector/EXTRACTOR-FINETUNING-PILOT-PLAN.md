@@ -16,6 +16,9 @@ Approved requirements:
   separate exact-match scores. Details are in [Evaluation and decisions](#evaluation-and-decisions).
 - The total oracle MVP spending ceiling is $1,000, replacing—not supplementing—
   the old $500 ceiling. Existing spending and commitments still count.
+- Protect the larger fine-tune's budget with a provisional pilot spending
+  ceiling. See [Pilot budget](#pilot-budget--approved-approach); no amount or
+  percentage is approved yet.
 
 The staged experimental design below is proposed, not fully approved. Dataset
 sizes, exact training settings, hardware allocations, and individual spending
@@ -212,6 +215,25 @@ counts from a selected corpus, not model-token counts or a forecast for every
 new topic.
 
 ## Compute estimates and spending constraints
+
+### Pilot budget — approved approach
+
+Reserve enough of the remaining budget to train the selected model on more
+data and evaluate it, with room for reruns. Set a provisional ceiling for the
+three-model pilot around that reserve. Reassess the proposed allocation using
+measured costs and whether further comparisons could change the model choice.
+Any spending still requires the approvals specified below.
+
+Distinguish reusable expenditure, such as training annotations and working
+infrastructure, from the additional compute spent comparing candidates. Count
+all paid expenditure against the lifetime ceiling, regardless of reuse.
+
+The pilot ceiling is a financial guardrail, not a spending target or evidence
+that the pilot is scientifically sufficient. Its amount, the final-training
+reserve, and the dataset-size schedule remain open; no fixed pilot/rest ratio
+has been adopted.
+
+### Runtime estimates — not measured
 
 The following are planning estimates, not measured runtimes for our task. They
 assume 1,000 short training notes, three passes, compact mask outputs, and no
