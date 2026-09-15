@@ -1,0 +1,495 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv2-node-description-probe-v21",
+  "purpose": "Compare unchanged v20 with v21 for category-defining relationship and word-meaning clarity, while preserving supported breadth and useful concise titles.",
+  "source_commit": "83364eb1",
+  "source_titles": "../hdbv2-node-titles-v20-astra-low/titles.json",
+  "source_packets": "../hdbv2-node-titles-v20-astra-low/source-packets.json",
+  "prompts": {
+    "v20": "../hdbv2-node-titles-v20-astra-low/prompt.txt",
+    "v21": "prompt.txt"
+  },
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "groups": [
+    {
+      "group": "S485994b768",
+      "selection_reason": "Previously ambiguous entity versus ingredient-use scope; meat purchases mixed with recipe ingredient lists. Do not force purchasing or cooking on every instance.",
+      "role": "ambiguity probe",
+      "instances": [
+        {
+          "instance": "V573",
+          "fragments": [
+            "Guess how much",
+            "cost us",
+            "Argentina",
+            "600 grams of chorizo",
+            "600 grams of rib eye",
+            "1.1kg of Tbone"
+          ]
+        },
+        {
+          "instance": "V872",
+          "fragments": [
+            "Spaghetti Bolognaise",
+            "feeds 5",
+            "1x med onion \n1x celery stick\n1x med carrot \n1-2 cloves garlic \nbunch fresh basil \n500g ground beef\n1x 400g tin chopped tomatoes\n1x 400g tin tomato purée \nSalt and pepper to taste\n2 Tbls olive oil \n500g dried spaghetti",
+            "1 tin of water"
+          ]
+        },
+        {
+          "instance": "V574",
+          "fragments": [
+            "haul",
+            "Argentina",
+            "600 grams",
+            "chorizo",
+            "600 grams",
+            "rib eye",
+            "1.1kg",
+            "Tbone"
+          ]
+        },
+        {
+          "instance": "V525",
+          "fragments": [
+            "Mushroom Risotto",
+            "Shrimp, Arborio Rice, Pecorino, Cremini Mushroom, Yellow Onion, Garlic, Parsley, Thyme, EVOO, Butter, Dry White Wine, Vegetable Broth, Sea Salt, Pepper, Lemon"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "S5ea79ac96e",
+      "selection_reason": "Live hens and eggs in food; preserve both supported meanings rather than reading poultry as meat alone.",
+      "role": "ambiguity probe",
+      "instances": [
+        {
+          "instance": "V738",
+          "fragments": [
+            "clutch of eggs",
+            "receding"
+          ]
+        },
+        {
+          "instance": "V732",
+          "fragments": [
+            "Our",
+            "four hens"
+          ]
+        },
+        {
+          "instance": "V820",
+          "fragments": [
+            "Century eggs",
+            "made by preserving",
+            "eggs"
+          ]
+        },
+        {
+          "instance": "V733",
+          "fragments": [
+            "Our chickens",
+            "laying an egg a day"
+          ]
+        },
+        {
+          "instance": "V005",
+          "fragments": [
+            "my rocket stove",
+            "cook",
+            "eggs"
+          ]
+        },
+        {
+          "instance": "V735",
+          "fragments": [
+            "Our",
+            "laying",
+            "four hens",
+            "a lot of eggs"
+          ]
+        },
+        {
+          "instance": "V734",
+          "fragments": [
+            "Our",
+            "laying an egg a day",
+            "four hens"
+          ]
+        },
+        {
+          "instance": "V821",
+          "fragments": [
+            "Century eggs",
+            "made",
+            "duck, chicken, or quail eggs"
+          ]
+        },
+        {
+          "instance": "V736",
+          "fragments": [
+            "My guests had scrambled eggs for breakfast"
+          ]
+        },
+        {
+          "instance": "V162",
+          "fragments": [
+            "My dinner today",
+            "4 eggs"
+          ]
+        },
+        {
+          "instance": "V505",
+          "fragments": [
+            "Made",
+            "coffee with",
+            "raw egg yolk today"
+          ]
+        },
+        {
+          "instance": "V506",
+          "fragments": [
+            "Made my coffee",
+            "raw cream",
+            "raw egg yolk today"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Se66af3a9b7",
+      "selection_reason": "Stock from carcasses and preserved eggs; title should make the food preparation scope including eggs understandable.",
+      "role": "ambiguity probe",
+      "instances": [
+        {
+          "instance": "V823",
+          "fragments": [
+            "Century eggs",
+            "preserving duck, chicken, or quail eggs",
+            "for several weeks to several months"
+          ]
+        },
+        {
+          "instance": "V095",
+          "fragments": [
+            "chicken stock",
+            "We save carcasses",
+            "a couple of times a year do this"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "S24afa84c49",
+      "selection_reason": "Clear preparation relationship across grinding and roasting; preserve useful meaning without listing activities as jointly required.",
+      "role": "control",
+      "instances": [
+        {
+          "instance": "V410",
+          "fragments": [
+            "grind coffee beans"
+          ]
+        },
+        {
+          "instance": "V411",
+          "fragments": [
+            "Rise",
+            "grind coffee beans"
+          ]
+        },
+        {
+          "instance": "V793",
+          "fragments": [
+            "coffee",
+            "Roasting your own beans"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "S8a6ab7afaf",
+      "selection_reason": "Broad control: standalone art prevents narrowing all instances to visual art.",
+      "role": "control",
+      "instances": [
+        {
+          "instance": "V391",
+          "fragments": [
+            "Photography"
+          ]
+        },
+        {
+          "instance": "V757",
+          "fragments": [
+            "painting"
+          ]
+        },
+        {
+          "instance": "V761",
+          "fragments": [
+            "#artoninstagram",
+            "#painting"
+          ]
+        },
+        {
+          "instance": "V758",
+          "fragments": [
+            "watercolourpainting"
+          ]
+        },
+        {
+          "instance": "V377",
+          "fragments": [
+            "art"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "S49eb0ac749",
+      "selection_reason": "Broad mixed food control: preparation and meal experience; do not force all instances into an unsupported activity.",
+      "role": "control",
+      "instances": [
+        {
+          "instance": "V059",
+          "fragments": [
+            "cooked",
+            "proper food tonight",
+            "went down well"
+          ]
+        },
+        {
+          "instance": "V303",
+          "fragments": [
+            "grilling out dinner"
+          ]
+        },
+        {
+          "instance": "V057",
+          "fragments": [
+            "cooked",
+            "proper food tonight"
+          ]
+        },
+        {
+          "instance": "V551",
+          "fragments": [
+            "kitchen",
+            "Today meat dumplings"
+          ]
+        },
+        {
+          "instance": "V711",
+          "fragments": [
+            "right way to cook things"
+          ]
+        },
+        {
+          "instance": "V709",
+          "fragments": [
+            "chef"
+          ]
+        },
+        {
+          "instance": "V047",
+          "fragments": [
+            "I was rather impressed",
+            "dinner tonight"
+          ]
+        },
+        {
+          "instance": "V447",
+          "fragments": [
+            "sacred",
+            "sharing a meal"
+          ]
+        },
+        {
+          "instance": "V060",
+          "fragments": [
+            "cooked",
+            "proper food tonight",
+            "went down well"
+          ]
+        }
+      ]
+    }
+  ],
+  "trials_per_prompt": 2,
+  "total_calls": 24,
+  "max_concurrent": 3,
+  "jobs": [
+    {
+      "id": "v20-S485994b768-r1",
+      "group": "S485994b768",
+      "version": "v20",
+      "trial": 1,
+      "config": "calls/v20-S485994b768-r1/config.json"
+    },
+    {
+      "id": "v21-S485994b768-r1",
+      "group": "S485994b768",
+      "version": "v21",
+      "trial": 1,
+      "config": "calls/v21-S485994b768-r1/config.json"
+    },
+    {
+      "id": "v21-S5ea79ac96e-r1",
+      "group": "S5ea79ac96e",
+      "version": "v21",
+      "trial": 1,
+      "config": "calls/v21-S5ea79ac96e-r1/config.json"
+    },
+    {
+      "id": "v20-S5ea79ac96e-r1",
+      "group": "S5ea79ac96e",
+      "version": "v20",
+      "trial": 1,
+      "config": "calls/v20-S5ea79ac96e-r1/config.json"
+    },
+    {
+      "id": "v20-Se66af3a9b7-r1",
+      "group": "Se66af3a9b7",
+      "version": "v20",
+      "trial": 1,
+      "config": "calls/v20-Se66af3a9b7-r1/config.json"
+    },
+    {
+      "id": "v21-Se66af3a9b7-r1",
+      "group": "Se66af3a9b7",
+      "version": "v21",
+      "trial": 1,
+      "config": "calls/v21-Se66af3a9b7-r1/config.json"
+    },
+    {
+      "id": "v21-S24afa84c49-r1",
+      "group": "S24afa84c49",
+      "version": "v21",
+      "trial": 1,
+      "config": "calls/v21-S24afa84c49-r1/config.json"
+    },
+    {
+      "id": "v20-S24afa84c49-r1",
+      "group": "S24afa84c49",
+      "version": "v20",
+      "trial": 1,
+      "config": "calls/v20-S24afa84c49-r1/config.json"
+    },
+    {
+      "id": "v20-S8a6ab7afaf-r1",
+      "group": "S8a6ab7afaf",
+      "version": "v20",
+      "trial": 1,
+      "config": "calls/v20-S8a6ab7afaf-r1/config.json"
+    },
+    {
+      "id": "v21-S8a6ab7afaf-r1",
+      "group": "S8a6ab7afaf",
+      "version": "v21",
+      "trial": 1,
+      "config": "calls/v21-S8a6ab7afaf-r1/config.json"
+    },
+    {
+      "id": "v21-S49eb0ac749-r1",
+      "group": "S49eb0ac749",
+      "version": "v21",
+      "trial": 1,
+      "config": "calls/v21-S49eb0ac749-r1/config.json"
+    },
+    {
+      "id": "v20-S49eb0ac749-r1",
+      "group": "S49eb0ac749",
+      "version": "v20",
+      "trial": 1,
+      "config": "calls/v20-S49eb0ac749-r1/config.json"
+    },
+    {
+      "id": "v21-S485994b768-r2",
+      "group": "S485994b768",
+      "version": "v21",
+      "trial": 2,
+      "config": "calls/v21-S485994b768-r2/config.json"
+    },
+    {
+      "id": "v20-S485994b768-r2",
+      "group": "S485994b768",
+      "version": "v20",
+      "trial": 2,
+      "config": "calls/v20-S485994b768-r2/config.json"
+    },
+    {
+      "id": "v20-S5ea79ac96e-r2",
+      "group": "S5ea79ac96e",
+      "version": "v20",
+      "trial": 2,
+      "config": "calls/v20-S5ea79ac96e-r2/config.json"
+    },
+    {
+      "id": "v21-S5ea79ac96e-r2",
+      "group": "S5ea79ac96e",
+      "version": "v21",
+      "trial": 2,
+      "config": "calls/v21-S5ea79ac96e-r2/config.json"
+    },
+    {
+      "id": "v21-Se66af3a9b7-r2",
+      "group": "Se66af3a9b7",
+      "version": "v21",
+      "trial": 2,
+      "config": "calls/v21-Se66af3a9b7-r2/config.json"
+    },
+    {
+      "id": "v20-Se66af3a9b7-r2",
+      "group": "Se66af3a9b7",
+      "version": "v20",
+      "trial": 2,
+      "config": "calls/v20-Se66af3a9b7-r2/config.json"
+    },
+    {
+      "id": "v20-S24afa84c49-r2",
+      "group": "S24afa84c49",
+      "version": "v20",
+      "trial": 2,
+      "config": "calls/v20-S24afa84c49-r2/config.json"
+    },
+    {
+      "id": "v21-S24afa84c49-r2",
+      "group": "S24afa84c49",
+      "version": "v21",
+      "trial": 2,
+      "config": "calls/v21-S24afa84c49-r2/config.json"
+    },
+    {
+      "id": "v21-S8a6ab7afaf-r2",
+      "group": "S8a6ab7afaf",
+      "version": "v21",
+      "trial": 2,
+      "config": "calls/v21-S8a6ab7afaf-r2/config.json"
+    },
+    {
+      "id": "v20-S8a6ab7afaf-r2",
+      "group": "S8a6ab7afaf",
+      "version": "v20",
+      "trial": 2,
+      "config": "calls/v20-S8a6ab7afaf-r2/config.json"
+    },
+    {
+      "id": "v20-S49eb0ac749-r2",
+      "group": "S49eb0ac749",
+      "version": "v20",
+      "trial": 2,
+      "config": "calls/v20-S49eb0ac749-r2/config.json"
+    },
+    {
+      "id": "v21-S49eb0ac749-r2",
+      "group": "S49eb0ac749",
+      "version": "v21",
+      "trial": 2,
+      "config": "calls/v21-S49eb0ac749-r2/config.json"
+    }
+  ],
+  "execution": "Exact frozen prompts and original mask fragment bytes/order/duplicates. One preserved config per call; existing codex_exec.py prompt command. Fresh process/thread/empty workspace per call; tools/web/rules/skills off. No previous titles, group IDs, selection reasons, feedback or full notes in model input. Interleaved variants; both trials retained. Stop scheduling on error; no automatic retries.",
+  "review": "Judge only from mask instances. Preserve category-defining relations and supported word meanings, independent support from each instance, broad mixed categories, and concision. Alternate defensible wording is not failure; no preferred hierarchy or exact title. Assess all outputs; surface uncertainties with exact masks and separate comments. Do not interpret prior accepted title as automatically faulty.",
+  "limits": "No upstream edits, group changes, TRUE scores/calls, hierarchy construction, prompt revision, model migration, examples, extra stages, or schema change.",
+  "billing": "Existing authorized Codex subscription only. No API credits, rentals, purchases, credential changes, or new monetary commitments."
+}
