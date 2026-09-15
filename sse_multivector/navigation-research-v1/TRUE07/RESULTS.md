@@ -163,7 +163,7 @@ It does **not** justify lowering the cutoff to fit this sample. In the preserved
 
 The diagnostic does not establish how often wording causes errors across real categories, how to repair it, or whether TRUE is unusable. It does not validate a complete hierarchy. No variant was selected as a production replacement.
 
-**Suggested next step, not performed:** compare a fresh-context frontier model on the same frozen relationships and wordings. Keep category meanings and expected decisions fixed. This would test whether switching the containment judge offers a concrete improvement, before investing in a workaround for TRUE. Preserve TRUE as the baseline; do not assume a frontier model will succeed.
+**Agreed investigation priority:** focus on ordinary food relationships, especially the missed containment of Steak by “Foods featuring meat or seafood.” Give the Bitcoin result less weight when judging general performance: limited Bitcoin familiarity could contribute, but its training coverage and the cause of this failure are unestablished. All measured results remain unchanged. The specific follow-up test and any model comparison remain to be agreed; neither has been run.
 
 ## Source masks
 
