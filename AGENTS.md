@@ -1,5 +1,6 @@
 # Oracle MVP Rules
 
+- When presenting delta diff commands, use short, existing file paths and explicit `\` line continuations. Never split a file path or the `nix run nixpkgs#delta -- --paging=always` invocation across lines. Put the complete command in one shell code block so it can be pasted without editing; continuation backslashes must be the last character on their lines.
 - The lifetime monetary budget for the entire oracle MVP is **$500 USD**. This is a hard ceiling, not a target.
 - The ceiling includes every paid resource used by the effort, including CPU and GPU rentals, storage, transfers, failed or interrupted runs, calibration, evaluation, diagnostics, and confirmation work.
 - Before any action that can incur a charge, read `budget-ledger.json`. Do not spend money when the ledger is missing, internally inconsistent, or contains an unknown value needed to prove admission. Treat the ledger as stale whenever an active paid resource or an incurred charge is not represented and reconciled.
