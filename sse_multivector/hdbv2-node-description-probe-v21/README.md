@@ -32,6 +32,13 @@ missing general hashtag knowledge. These explanations do not reveal prior hidden
 reasoning or identify a particular causal instruction. No revised prompt or extra
 pipeline stage is approved, and all earlier raw outputs remain unchanged.
 
+The user then clarified that a model guessing a social-media setting is not the
+same as the prompt supplying that known context. The unrun
+[v22 candidate](../hdbv2-node-description-probe-v22/prompt.txt) prepends only:
+"Each instance contains text from a social-media post." All v21 instructions
+remain intact. This source-context direction is agreed; the exact candidate is
+being presented for review, with no generation calls, adoption or freeze.
+
 The initial six-group experiment and its original assistant judgments follow.
 The user later approved its Visual Art response; that decision is preserved in
 the complete set rather than reopening the initial objection below.
