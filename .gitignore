@@ -4,3 +4,5 @@ __pycache__/
 .budget-ledger.json.lock
 # TRUE04's large raw logits stay local; inputs, scores and hashes are tracked.
 /sse_multivector/navigation-research-v1/TRUE04/first-token-logits.npy
+# TRUE10 follows the same policy for its full pairwise run.
+/sse_multivector/navigation-research-v1/TRUE10/run/first-token-logits.npy

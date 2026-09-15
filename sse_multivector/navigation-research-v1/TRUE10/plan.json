@@ -1,0 +1,472 @@
+{
+  "experiment": "TRUE10",
+  "approval": "User approved the provisional current-title graph process.",
+  "base_commit": "46c7c72db5fe4cf8950ed3fa2a098b019282a9dc",
+  "tracking_card": "CREC-127",
+  "source_titles": "sse_multivector/hdbv2-node-titles-v21-astra-low/titles.json",
+  "source_titles_sha256": "693223548b17e439ac433dd2f9aaba9b830a2c97d5e68798379e8f784fb66799",
+  "excluded": [
+    {
+      "group": "Sf5a4b23523",
+      "reason": "Previously rejected coffee-chain category; unchanged exclusion."
+    }
+  ],
+  "groups": 60,
+  "distinct_titles": 58,
+  "directions": 3540,
+  "distinct_inputs": 3308,
+  "reused_distinct_inputs": 212,
+  "fresh_distinct_inputs": 3096,
+  "repeated_input_conflicts": 0,
+  "threshold": 0.142,
+  "threshold_rule": "entailment_score > 0.142",
+  "model_id": "google/t5_xxl_true_nli_mixture",
+  "revision": "aa6cfe1dd4257853bfdd772992045f41bfc14988",
+  "snapshot": "/home/dev/.cache/huggingface/hub/models--google--t5_xxl_true_nli_mixture/snapshots/aa6cfe1dd4257853bfdd772992045f41bfc14988",
+  "scope": "Current exact titles; every distinct group-ID direction; no cosine filter; no new labels or nodes.",
+  "interpretation": "Uncorrected provisional graph, not proof that TRUE or the category hierarchy is adequate.",
+  "cycles": "Flag all mutual acceptance/cycles. Never infer equivalence merely from scores or matching titles.",
+  "reduction": "Remove redundant edges only in an acyclic graph; preserve raw edges and reachability.",
+  "semantics": "Independent collection-level analysis. Uncertainty is not correctness; do not auto-fill unknown judgments.",
+  "cache_policy": "Exact model_input equality plus matching model/scorer/config. Fixed latest-first precedence. Conflicting native/cutoff decisions are rescored. Expand identical strings to all distinct group IDs.",
+  "source_priority": [
+    {
+      "path": "sse_multivector/navigation-research-v1/TRUE09/run/scores.jsonl",
+      "rows": 76,
+      "identity": {
+        "config": {
+          "experiment": "TRUE09",
+          "model_id": "google/t5_xxl_true_nli_mixture",
+          "revision": "aa6cfe1dd4257853bfdd772992045f41bfc14988",
+          "parameter_count": 11307321344,
+          "label_token_ids": {
+            "0": [
+              3,
+              632
+            ],
+            "1": [
+              209
+            ]
+          },
+          "dtype": "float32",
+          "device": "cpu",
+          "threads": 4,
+          "batch_size": 4,
+          "max_input_tokens": 512,
+          "truncation": false,
+          "decision": "complete native greedy output, EOS required, no score cutoff",
+          "threshold": 0.142,
+          "threshold_decision": "entailment_score > 0.142",
+          "displayed_score": "full-vocabulary probability of first output token 209",
+          "generation": {
+            "do_sample": false,
+            "num_beams": 1,
+            "max_new_tokens": 3,
+            "return_dict_in_generate": true,
+            "output_logits": true
+          },
+          "load_seconds": 25.583333179354668,
+          "loading": {
+            "missing_keys": [],
+            "unexpected_keys": [],
+            "mismatched_keys": [],
+            "error_msgs": []
+          },
+          "seed": 0,
+          "packages": {
+            "torch": "2.8.0+cpu",
+            "transformers": "4.57.1",
+            "huggingface_hub": "0.36.2",
+            "numpy": "2.3.4",
+            "safetensors": "0.6.2"
+          }
+        },
+        "model_files_sha256": "c45c96315ca8795e9ec639d221622870180b91d1a216a38b45500654f1221104",
+        "source_sha256": {
+          "true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+          "true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+          "hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52"
+        }
+      }
+    },
+    {
+      "path": "sse_multivector/navigation-research-v1/TRUE08/run/scores.jsonl",
+      "rows": 16,
+      "identity": {
+        "config": {
+          "experiment": "TRUE08",
+          "model_id": "google/t5_xxl_true_nli_mixture",
+          "revision": "aa6cfe1dd4257853bfdd772992045f41bfc14988",
+          "parameter_count": 11307321344,
+          "label_token_ids": {
+            "0": [
+              3,
+              632
+            ],
+            "1": [
+              209
+            ]
+          },
+          "dtype": "float32",
+          "device": "cpu",
+          "threads": 4,
+          "batch_size": 4,
+          "max_input_tokens": 512,
+          "truncation": false,
+          "decision": "complete native greedy output, EOS required, no score cutoff",
+          "threshold": 0.142,
+          "threshold_decision": "entailment_score > 0.142",
+          "displayed_score": "full-vocabulary probability of first output token 209",
+          "generation": {
+            "do_sample": false,
+            "num_beams": 1,
+            "max_new_tokens": 3,
+            "return_dict_in_generate": true,
+            "output_logits": true
+          },
+          "load_seconds": 44.27695357054472,
+          "loading": {
+            "missing_keys": [],
+            "unexpected_keys": [],
+            "mismatched_keys": [],
+            "error_msgs": []
+          },
+          "seed": 0,
+          "packages": {
+            "torch": "2.8.0+cpu",
+            "transformers": "4.57.1",
+            "huggingface_hub": "0.36.2",
+            "numpy": "2.3.4",
+            "safetensors": "0.6.2"
+          }
+        },
+        "model_files_sha256": "c45c96315ca8795e9ec639d221622870180b91d1a216a38b45500654f1221104",
+        "source_sha256": {
+          "true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+          "true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+          "hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52"
+        }
+      }
+    },
+    {
+      "path": "sse_multivector/navigation-research-v1/TRUE07/run/scores.jsonl",
+      "rows": 60,
+      "identity": {
+        "config": {
+          "experiment": "TRUE07",
+          "model_id": "google/t5_xxl_true_nli_mixture",
+          "revision": "aa6cfe1dd4257853bfdd772992045f41bfc14988",
+          "parameter_count": 11307321344,
+          "label_token_ids": {
+            "0": [
+              3,
+              632
+            ],
+            "1": [
+              209
+            ]
+          },
+          "dtype": "float32",
+          "device": "cpu",
+          "threads": 4,
+          "batch_size": 4,
+          "max_input_tokens": 512,
+          "truncation": false,
+          "decision": "complete native greedy output, EOS required, no score cutoff",
+          "threshold": 0.142,
+          "threshold_decision": "entailment_score > 0.142",
+          "displayed_score": "full-vocabulary probability of first output token 209",
+          "generation": {
+            "do_sample": false,
+            "num_beams": 1,
+            "max_new_tokens": 3,
+            "return_dict_in_generate": true,
+            "output_logits": true
+          },
+          "load_seconds": 30.72302940208465,
+          "loading": {
+            "missing_keys": [],
+            "unexpected_keys": [],
+            "mismatched_keys": [],
+            "error_msgs": []
+          },
+          "seed": 0,
+          "packages": {
+            "torch": "2.8.0+cpu",
+            "transformers": "4.57.1",
+            "huggingface_hub": "0.36.2",
+            "numpy": "2.3.4",
+            "safetensors": "0.6.2"
+          }
+        },
+        "model_files_sha256": "c45c96315ca8795e9ec639d221622870180b91d1a216a38b45500654f1221104",
+        "source_sha256": {
+          "true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+          "true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+          "hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52"
+        }
+      }
+    },
+    {
+      "path": "sse_multivector/navigation-research-v1/TRUE06/run/scores.jsonl",
+      "rows": 24,
+      "identity": {
+        "config": {
+          "experiment": "TRUE06",
+          "model_id": "google/t5_xxl_true_nli_mixture",
+          "revision": "aa6cfe1dd4257853bfdd772992045f41bfc14988",
+          "parameter_count": 11307321344,
+          "label_token_ids": {
+            "0": [
+              3,
+              632
+            ],
+            "1": [
+              209
+            ]
+          },
+          "dtype": "float32",
+          "device": "cpu",
+          "threads": 4,
+          "batch_size": 4,
+          "max_input_tokens": 512,
+          "truncation": false,
+          "decision": "complete native greedy output, EOS required, no score cutoff",
+          "threshold": 0.142,
+          "threshold_decision": "entailment_score > 0.142",
+          "displayed_score": "full-vocabulary probability of first output token 209",
+          "generation": {
+            "do_sample": false,
+            "num_beams": 1,
+            "max_new_tokens": 3,
+            "return_dict_in_generate": true,
+            "output_logits": true
+          },
+          "load_seconds": 34.89729914907366,
+          "loading": {
+            "missing_keys": [],
+            "unexpected_keys": [],
+            "mismatched_keys": [],
+            "error_msgs": []
+          },
+          "seed": 0,
+          "packages": {
+            "torch": "2.8.0+cpu",
+            "transformers": "4.57.1",
+            "huggingface_hub": "0.36.2",
+            "numpy": "2.3.4",
+            "safetensors": "0.6.2"
+          }
+        },
+        "model_files_sha256": "c45c96315ca8795e9ec639d221622870180b91d1a216a38b45500654f1221104",
+        "source_sha256": {
+          "true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+          "true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+          "hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52"
+        }
+      }
+    },
+    {
+      "path": "sse_multivector/navigation-research-v1/TRUE05/run/scores.jsonl",
+      "rows": 12,
+      "identity": {
+        "config": {
+          "experiment": "TRUE05",
+          "model_id": "google/t5_xxl_true_nli_mixture",
+          "revision": "aa6cfe1dd4257853bfdd772992045f41bfc14988",
+          "parameter_count": 11307321344,
+          "label_token_ids": {
+            "0": [
+              3,
+              632
+            ],
+            "1": [
+              209
+            ]
+          },
+          "dtype": "float32",
+          "device": "cpu",
+          "threads": 4,
+          "batch_size": 4,
+          "max_input_tokens": 512,
+          "truncation": false,
+          "decision": "complete native greedy output, EOS required, no score cutoff",
+          "threshold": 0.142,
+          "threshold_decision": "entailment_score > 0.142",
+          "displayed_score": "full-vocabulary probability of first output token 209",
+          "generation": {
+            "do_sample": false,
+            "num_beams": 1,
+            "max_new_tokens": 3,
+            "return_dict_in_generate": true,
+            "output_logits": true
+          },
+          "load_seconds": 60.385979312472045,
+          "loading": {
+            "missing_keys": [],
+            "unexpected_keys": [],
+            "mismatched_keys": [],
+            "error_msgs": []
+          },
+          "seed": 0,
+          "packages": {
+            "torch": "2.8.0+cpu",
+            "transformers": "4.57.1",
+            "huggingface_hub": "0.36.2",
+            "numpy": "2.3.4",
+            "safetensors": "0.6.2"
+          }
+        },
+        "model_files_sha256": "c45c96315ca8795e9ec639d221622870180b91d1a216a38b45500654f1221104",
+        "source_sha256": {
+          "true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+          "true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+          "hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52"
+        }
+      }
+    },
+    {
+      "path": "sse_multivector/navigation-research-v1/TRUE04/scores.jsonl",
+      "rows": 3660,
+      "identity": {
+        "config": {
+          "experiment": "TRUE04",
+          "model_id": "google/t5_xxl_true_nli_mixture",
+          "revision": "aa6cfe1dd4257853bfdd772992045f41bfc14988",
+          "parameter_count": 11307321344,
+          "label_token_ids": {
+            "0": [
+              3,
+              632
+            ],
+            "1": [
+              209
+            ]
+          },
+          "dtype": "float32",
+          "device": "cpu",
+          "threads": 4,
+          "batch_size": 4,
+          "max_input_tokens": 512,
+          "truncation": false,
+          "decision": "complete native greedy output, EOS required, no score cutoff",
+          "threshold": 0.142,
+          "threshold_decision": "entailment_score > 0.142",
+          "displayed_score": "full-vocabulary probability of first output token 209",
+          "generation": {
+            "do_sample": false,
+            "num_beams": 1,
+            "max_new_tokens": 3,
+            "return_dict_in_generate": true,
+            "output_logits": true
+          },
+          "load_seconds": 25.768619475886226,
+          "loading": {
+            "missing_keys": [],
+            "unexpected_keys": [],
+            "mismatched_keys": [],
+            "error_msgs": []
+          },
+          "seed": 0,
+          "packages": {
+            "torch": "2.8.0+cpu",
+            "transformers": "4.57.1",
+            "huggingface_hub": "0.36.2",
+            "numpy": "2.3.4",
+            "safetensors": "0.6.2"
+          }
+        },
+        "model_files_sha256": "c45c96315ca8795e9ec639d221622870180b91d1a216a38b45500654f1221104",
+        "source_sha256": {
+          "true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+          "true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+          "hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52"
+        }
+      }
+    }
+  ],
+  "preservation_sha256": {
+    "sse_multivector/hdbv2-node-titles-v21-astra-low/titles.json": "693223548b17e439ac433dd2f9aaba9b830a2c97d5e68798379e8f784fb66799",
+    "sse_multivector/navigation-research-v1/TRUE09/run/config.json": "bb274f004029dac7b880a6763b6d882469e13cef79cf5dd8bc2a7cd7acafd544",
+    "sse_multivector/navigation-research-v1/TRUE09/run/model-files.json": "c45c96315ca8795e9ec639d221622870180b91d1a216a38b45500654f1221104",
+    "sse_multivector/navigation-research-v1/TRUE09/run/started.json": "4e4012b3080a55893ee7583e174f7a024f3c9e88cd7a6ec7fe75b88f2f18fe4f",
+    "sse_multivector/navigation-research-v1/TRUE09/run/completion.json": "3e6b8ac335d432fdc1a7fb4d84f63a96ba9510b5daa1cd1c4ca714cf279c2ca5",
+    "sse_multivector/navigation-research-v1/TRUE09/run/scores.jsonl": "a89da8e37fa64683e90c4bf0abf38083bf81c02316b725654ec4783d1bacf281",
+    "sse_multivector/navigation-research-v1/TRUE09/run/first-token-logits.npy": "75d0baef3a04c11092e9119f3e7f55b603d2305acfec34efbc1dcda3f9958ada",
+    "sse_multivector/navigation-research-v1/TRUE09/run/true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+    "sse_multivector/navigation-research-v1/TRUE09/run/true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+    "sse_multivector/navigation-research-v1/TRUE09/run/hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52",
+    "sse_multivector/navigation-research-v1/TRUE08/run/config.json": "5919952fd453c98023cb330da1942f59b2270a36ecc48f1e71ed2bf3ef728b93",
+    "sse_multivector/navigation-research-v1/TRUE08/run/model-files.json": "c45c96315ca8795e9ec639d221622870180b91d1a216a38b45500654f1221104",
+    "sse_multivector/navigation-research-v1/TRUE08/run/started.json": "9e4e4bb8cb1ba448b365e1388ce7b996127b6a7a574659880633e7b23bd1126c",
+    "sse_multivector/navigation-research-v1/TRUE08/run/completion.json": "18e68f0aa6761bd4a9b2b772006360174c1c64948918b70faa9fcd64a1e887b1",
+    "sse_multivector/navigation-research-v1/TRUE08/run/scores.jsonl": "b374765298f7603c88169097f46f4b6a2ab8012398ca6579c2299917f55336c4",
+    "sse_multivector/navigation-research-v1/TRUE08/run/first-token-logits.npy": "1fe4070fa85b8ecbcf679892db4684cc04924cccf555bfdf7694d0c617f828ad",
+    "sse_multivector/navigation-research-v1/TRUE08/run/true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+    "sse_multivector/navigation-research-v1/TRUE08/run/true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+    "sse_multivector/navigation-research-v1/TRUE08/run/hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52",
+    "sse_multivector/navigation-research-v1/TRUE07/run/config.json": "5d4debabd4d75f2f091651cfb3f51487964e678313e8a3bd142f123723f724e7",
+    "sse_multivector/navigation-research-v1/TRUE07/run/model-files.json": "c45c96315ca8795e9ec639d221622870180b91d1a216a38b45500654f1221104",
+    "sse_multivector/navigation-research-v1/TRUE07/run/started.json": "c2b60c75ad8d8a91d8f86fe71c77e85f2dabb05fe419ba10a1d066a72ef3f82b",
+    "sse_multivector/navigation-research-v1/TRUE07/run/completion.json": "91f68f2877ca6e5793a387b36d9f714aa0cc10dfa8997aeca02e86067c16d34f",
+    "sse_multivector/navigation-research-v1/TRUE07/run/scores.jsonl": "53599220d636841df77b286d8d0a5a24acdaebd279bb51d8945167982f3ed0ab",
+    "sse_multivector/navigation-research-v1/TRUE07/run/first-token-logits.npy": "04c6499691085db61c93c4788e88f2054258edea51f20d68180d1ee99e4e6e9c",
+    "sse_multivector/navigation-research-v1/TRUE07/run/true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+    "sse_multivector/navigation-research-v1/TRUE07/run/true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+    "sse_multivector/navigation-research-v1/TRUE07/run/hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52",
+    "sse_multivector/navigation-research-v1/TRUE06/run/config.json": "7af2e806f87cba68c735363f44d614f0539876e6485f11bc1aafef1c4fc6bc12",
+    "sse_multivector/navigation-research-v1/TRUE06/run/model-files.json": "c45c96315ca8795e9ec639d221622870180b91d1a216a38b45500654f1221104",
+    "sse_multivector/navigation-research-v1/TRUE06/run/started.json": "6300286524452c3bf2baf4a142110fa594dc8afd423a21166d4845da1f360c7b",
+    "sse_multivector/navigation-research-v1/TRUE06/run/completion.json": "fc9ae4f41e6377e3bdd69c88c7174f9be7428b3445fc98856dc72af88c76f90d",
+    "sse_multivector/navigation-research-v1/TRUE06/run/scores.jsonl": "c7b2e744d3a7029627f40da9115b51e4a247f4abc1dc260b59fba42da0f5aee2",
+    "sse_multivector/navigation-research-v1/TRUE06/run/first-token-logits.npy": "00f26e1fc8c39129dbedeced11c23ed378a9a8cede2f5ad28bd2298f2d679068",
+    "sse_multivector/navigation-research-v1/TRUE06/run/true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+    "sse_multivector/navigation-research-v1/TRUE06/run/true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+    "sse_multivector/navigation-research-v1/TRUE06/run/hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52",
+    "sse_multivector/navigation-research-v1/TRUE05/run/config.json": "8e449e39f92ba27b42772213d64a9f0bcb7942e913a4294b7f413b20248db73f",
+    "sse_multivector/navigation-research-v1/TRUE05/run/model-files.json": "c45c96315ca8795e9ec639d221622870180b91d1a216a38b45500654f1221104",
+    "sse_multivector/navigation-research-v1/TRUE05/run/started.json": "2d63dde43a8ed523abc07cbe637ba70ea6a49ee4be87b012be1910ced604ae97",
+    "sse_multivector/navigation-research-v1/TRUE05/run/completion.json": "4d398e5e583ebbbcddfba187014fbfb875c73d11f90d1a7a6524c5df5f9ad538",
+    "sse_multivector/navigation-research-v1/TRUE05/run/scores.jsonl": "398a7ab58a9d4bb4ea16850993a604057c9de29eb1548f367aa8644fba2b6bde",
+    "sse_multivector/navigation-research-v1/TRUE05/run/first-token-logits.npy": "90b214ff342307ef3afb831497a2a23f26681622f75ff339025a962645310a35",
+    "sse_multivector/navigation-research-v1/TRUE05/run/true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+    "sse_multivector/navigation-research-v1/TRUE05/run/true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+    "sse_multivector/navigation-research-v1/TRUE05/run/hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52",
+    "sse_multivector/navigation-research-v1/TRUE04/config.json": "5902022b0cac74557f34fb0cd6ab6be4a3706365e33c86489b70a93a772f27ec",
+    "sse_multivector/navigation-research-v1/TRUE04/model-files.json": "c45c96315ca8795e9ec639d221622870180b91d1a216a38b45500654f1221104",
+    "sse_multivector/navigation-research-v1/TRUE04/started.json": "e0ac1e47e9bb660bbf8b0e7c8de7cc12004a66d321ccdde20633e730f883d33b",
+    "sse_multivector/navigation-research-v1/TRUE04/completion.json": "1918b68457ed6f4cd3175e1ed8545e2242877e397551b7c5d0464f8782f27e2f",
+    "sse_multivector/navigation-research-v1/TRUE04/scores.jsonl": "30e390297600bf64debd1f045cca2e5707a7c07ced605a0fab6dc6aa78c5c6c4",
+    "sse_multivector/navigation-research-v1/TRUE04/first-token-logits.npy": "f5b4eddd88edb02ccbd970e58cdb02283053190111b6d82877264678f4b7f7c4",
+    "sse_multivector/navigation-research-v1/TRUE04/true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+    "sse_multivector/navigation-research-v1/TRUE04/true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+    "sse_multivector/navigation-research-v1/TRUE04/hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52",
+    "sse_multivector/navigation-research-v1/TRUE10/run.py": "e4e3306ba6d7ecbca703760f53734b523693bacb1a7c4960cfa81d470017e1d5",
+    "sse_multivector/true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+    "sse_multivector/true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+    "sse_multivector/hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52",
+    "sse_multivector/true_score_reuse.py": "d55a53c31dd68128d996f552a3dcb01b80502971f81c0c6cc848aee9afbec1a0",
+    "sse_multivector/true_category_graph.py": "0591c6a7d3c2470901a0476e201ad2cd6e16406bb4707ba6dc00fb99c5dadfb3"
+  },
+  "resources": {
+    "local": true,
+    "offline": true,
+    "paid_calls": 0,
+    "model_processes": 1,
+    "memory_max_gib": 60,
+    "memory_swap_max": 0,
+    "cpu_quota_percent": 400,
+    "threads": 4,
+    "batch_size": 4,
+    "dtype": "float32"
+  },
+  "out_of_scope": [
+    "new frontier judge",
+    "prompt revision",
+    "cutoff tuning",
+    "mask changes",
+    "invented parents",
+    "semantic repairs",
+    "new UI"
+  ]
+}

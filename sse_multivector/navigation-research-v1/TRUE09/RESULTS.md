@@ -163,7 +163,7 @@ Every expected answer is No. These checks ask whether one child category contain
 
 Do not fit a lower cutoff here. An earlier incorrect relationship, **Foods featuring meat or seafood** containing **Meals featuring potatoes, other vegetables, and animal-based protein**, scored 0.14128443363025314 in TRUE05—above both original-parent misses here. Animal-based protein need not be meat or seafood. Recovering these misses by lowering the cutoff would also admit that known error.
 
-**Suggested next step—not run:** Keep the approved category titles unchanged. Compare TRUE with a fresh-context frontier judge on a small fixed set of existing valid and invalid category relationships, including these compound-parent misses and harder overlapping-but-not-contained cases. This would test whether a different judge handles the descriptions we need, instead of simplifying their meanings to accommodate TRUE. Proposed only; no new judge or paid call has been run.
+**Completed follow-up:** [TRUE10](../TRUE10/RESULTS.md) built the provisional graph with the current titles and unchanged TRUE rule. It preserves raw decisions and source memberships. Two reviewed duplicate-category pairs were consolidated; two non-equivalence cycles remain, alongside useful local connections and missing destinations. It did not produce a completed acyclic hierarchy. This replaced the proposed frontier-judge comparison; no new judge or prompt-development effort was run. All TRUE09 measurements above are preserved.
 
 ## Record
 
