@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "experiment": "Complete 61-group v21 title set",
+  "base_commit": "f9c4df56ae8ff4180b684be6fd433c1d3b954d0f",
+  "scope": "Generate only missing v21 titles, review every selected title, surface genuine uncertainties. No TRUE execution or prompt changes.",
+  "source_packets": "sse_multivector/hdbv2-node-titles-v20-astra-low/source-packets.json",
+  "prompt": "sse_multivector/hdbv2-node-description-probe-v21/prompt.txt",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "new_trials_per_missing_group": 1,
+  "max_concurrent_calls": 3,
+  "reuse_policy": "Require byte-identical prepared prompt and same model/effort/wrapper. Prefer explicitly user-approved matching output; otherwise first successful trial in chronological experiment order, excluding user-rejected outputs. Preserve all alternatives and their provenance; no semantic best-of selection.",
+  "prior_experiments": [
+    "sse_multivector/hdbv2-node-description-probe-v21",
+    "sse_multivector/hdbv2-node-description-probe-v21-additional-v1",
+    "sse_multivector/hdbv21-dedup-v1",
+    "sse_multivector/hdbv21-pairs-v1"
+  ],
+  "deduplication": "Within each group, collapse only identical ordered byte spans from the same note. Preserve aliases and all other mask distinctions.",
+  "review": "Main assistant reviews all titles; independent fresh-context reviewers inspect the same masks without prior titles, prompt versions, or model identities. Preserve disagreements and existing user decisions. User receives only material unresolved cases.",
+  "budget": "Existing authorized Codex subscription only. No API billing, rentals, purchases, or account switch.",
+  "tracking_card": "CREC-127",
+  "plane_update": "Unavailable: no Plane tool exposed in this session."
+}

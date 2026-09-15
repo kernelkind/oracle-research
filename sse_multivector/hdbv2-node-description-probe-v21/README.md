@@ -1,5 +1,17 @@
 # Category titles v21 versus v20
 
+The [complete 61-group v21 title set](../hdbv2-node-titles-v21-astra-low/titles.json)
+is now generated and reviewed by the assistant: 14 exact-input outputs reused and
+47 missing outputs generated with the unchanged prompt and Astra low. Eight exact
+same-note mask duplicates were removed before generation/review. The assistant
+accepts 59 titles, including three previously approved by the user. Two titles
+await user judgment in the [focused review](../hdbv2-node-titles-v21-astra-low/run-review.sh):
+Coffee shop chains and Signs of autumn’s arrival. No new TRUE run occurred.
+
+The initial six-group experiment and its original assistant judgments follow.
+The user later approved its Visual Art response; that decision is preserved in
+the complete set rather than reopening the initial objection below.
+
 The approved same-note mask deduplication is now applied by
 `../prepare_category_title_inputs.py` before both title generation and review.
 The unchanged v21 rerun is saved in [hdbv21-dedup-v1](../hdbv21-dedup-v1/run-plan.json).
