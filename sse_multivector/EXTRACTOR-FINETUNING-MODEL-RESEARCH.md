@@ -1,216 +1,207 @@
-# Models for fine-tuning the subject-and-mask extractor
+# Pretrained models for subject-and-mask fine-tuning
 
 ## Recommendation
 
-**Start with Qwen3.5-9B. Compare it with T5Gemma 2 4B-4B before committing to an architecture. Keep Gemma 4 12B as the next general-purpose alternative.** These are priorities for task-specific fine-tuning, not a claim that a published benchmark has already established the winner.
+**The leading quality-first candidates are Qwen3.8-2.4T-A95B and Nemotron 3 Ultra 550B-A55B. The most relevant encoder–decoder comparison is T5Gemma 9B-9B, about 20.3B total parameters.** Qwen3.8-27B and Gemma 4 31B remain strong dense-model alternatives.
 
-The intended replacement is:
+This selection imposes **no parameter-count, GPU-memory, or single-machine ceiling**. Training and deployment requirements are reported separately. A larger model is not excluded because it is expensive, and a smaller model is not preferred merely because it fits a convenient machine.
+
+The recommendation is a prioritized candidate set, not an established accuracy ranking. No matched study located fine-tunes these checkpoints on complete, overlapping subject masks from informal notes. Claiming that one is the most accurate would exceed the evidence.
+
+| Role | Leading candidates | Basis for consideration |
+|---|---|---|
+| Quality-first general-model comparison | Qwen3.8-2.4T-A95B; Nemotron 3 Ultra 550B-A55B | Broad pretrained capability, instruction-following evidence, and verified fine-tuning implementations |
+| Dense general-model comparison | Qwen3.8-27B; Gemma 4 31B | Strong general models with concrete adaptation recipes; not selected under a size ceiling |
+| Encoder–decoder comparison | T5Gemma 9B-9B PrefixLM instruction-tuned | Separate input encoder and output decoder; substantial pretrained language knowledge; relevant architecture evidence |
+| Specialized-extraction comparison | NuExtract3; GoLLIE-34B | Previous training for extraction or annotation-guideline following; different task assumptions that require scrutiny |
+
+Specifications and training support are documented in the primary releases and implementation guides.[^1][^2][^3][^4][^5][^6][^7][^8] The priority judgments are inferences, not published findings about this extractor.
+
+**If choosing a leading candidate by the completeness of its task-relevant training evidence, Nemotron Ultra is especially compelling. If choosing a frontier-capacity general-model challenger, Qwen3.8-Max deserves direct consideration.** Neither should have to wait for a smaller model to fail merely because of an assumed hardware limit.
+
+## Required transformation
+
+The component would replace the subject-generation and per-subject masking calls:
 
 ```text
-complete Nostr note → complete set of grouped source-text masks → unchanged SSE
+complete note → complete set of grouped source-text masks → unchanged SSE
 ```
 
-The difficult part is discovering the meanings and choosing their evidence. Producing a JSON array is comparatively easy. A useful student needs broad language understanding as well as reliable source-text selection; neither an extraction-branded model nor an encoder–decoder architecture guarantees both.
+The model must discover the subjects as well as locate their evidence. A mask may contain several separated fragments, different masks may overlap, and the number of masks varies. The production output does not necessarily need the intermediate English subject descriptions.[^9]
 
-| Priority | Checkpoint | Size relevant to text | Reason to consider it | Main uncertainty |
-|---|---|---:|---|---|
-| 1 | `Qwen/Qwen3.5-9B` | 9B language model | Modern general understanding; documented task fine-tuning; a practical first student | Whether its understanding and source selection survive task adaptation at the required quality |
-| 2 | `google/t5gemma-2-4b-4b` | About 7.1B text parameters | Modern encoder–decoder; complete-input encoding and source-reconstruction pretraining | Less mature serving support; released checkpoint is pretrained, not instruction-tuned |
-| 3 | `google/gemma-4-12B-it` | About 12B | Independent, broadly pretrained general model with current fine-tuning support | More memory; no direct evidence of better subject-mask extraction |
+This requires both interpretation and selection. A model can copy text perfectly while missing a subject, choosing the wrong scope, or combining unrelated meanings. Conversely, a reasonable subject interpretation can be paired with an inadequate source mask.
 
-Model specifications come from the releases and technical reports.[^1][^2][^3][^4] The ranking is an inference from task fit, pretrained capability, and implementation risk. No study located compares these models on complete, overlapping subject-mask extraction from informal social-media notes.
+The current teacher versions are ASv6.23 and MPv3.5. The teacher's annotation policy—not factual-proposition segmentation, a standard named-entity inventory, or a new taxonomy—defines the intended supervision.[^10] Valid alternative masks and harmless redundancy should not be rejected merely because they differ from one reference list.
 
-## The task the student must learn
+Both decoder-only and encoder–decoder models can be trained on the same complete-note input and grouped-mask output. A short task instruction is optional if the training and deployment formats agree. Some reasoning-model releases natively produce intermediate reasoning; changing that behavior through fine-tuning is a separate assumption, not something guaranteed by exposing only the final answer.
 
-The existing proposal removes the separate subject-generation and per-subject masking calls from production. The student must discover the number and contents of the masks itself. Supplying a subject and asking for its mask would test only half of that replacement.[^5]
+## Evidence relevant to the choice
 
-A mask is a set of source-text ranges. Its fragments can be separated; different masks can overlap. The source note can contain pronouns, implied meaning, quotations, jokes, multiple topics, and unfamiliar names. The model must interpret these in context while selecting text that captures the subject's scope, without adding unrelated meaning.
+### Direct source-mask generation
 
-The frozen teacher records are ASv6.23 for subjects and MPv3.5 for masks. They can supply training supervision, but the production student does not necessarily need to generate the intermediate subject descriptions or the subject agent's auxiliary context field. The final student output format remains a design choice, not something settled by this model comparison.[^6]
+PropSegmEnt is the closest published output-structure match. Its T5-v1.1-large model generates overlapping, potentially discontinuous proposition masks. It trained on 9,913 sentences with 38,206 proposition annotations and achieved 55.50 fuzzy F1, compared with estimated human agreement of 67.07. Its BERT-based mask-head baseline scored 34.17.[^11]
 
-Subject descriptions, exact fragments, and source ranges should remain available in the training records even if only masks are ultimately emitted. This preserves the evidence needed to diagnose whether a bad output arose from a missing subject or a badly scoped mask.
+This supports generative source-mask prediction as an architecture. It does not establish that T5 is the best current backbone, or that factual-proposition results transfer to informal subject masks. The imperfect results also show why copying source text is not sufficient evidence of semantic correctness.
 
-There is not necessarily one correct list of masks. Valid alternatives and harmless redundancy should not be mistaken for failure. Conversely, a valid JSON document containing exact copied text can still omit subjects, combine unrelated meanings, or select the wrong evidence.
+### Model size can matter in extraction
 
-## Relevant experimental evidence
+GoLLIE fine-tuned Code Llama at 7B, 13B, and 34B to follow extraction annotation guidelines. Average supervised F1 rose from 73.0 to 73.9 to 75.0. Benefits varied by task: the 34B model improved some results substantially, while not improving every dataset. The authors also found larger models generally better at unseen tasks, with some failures still attributable to guideline problems.[^12]
 
-### Direct mask generation: PropSegmEnt
+The implication is not “choose 34B.” It is that an arbitrary small-model ceiling can exclude useful capacity. It is equally wrong to assume that increasing size repairs an unclear training target or every extraction error.
 
-PropSegmEnt is the closest structural precedent. Its T5-v1.1-large model generates proposition masks that can overlap and contain separated text. Training used 9,913 sentences with 38,206 proposition annotations. Reported in-domain fuzzy F1 was 55.50, compared with 67.07 human agreement under the same evaluation; its BERT-based segmentation baseline scored 34.17.[^7]
+### Previous specialization can matter independently of size
 
-This establishes that a pretrained text-to-text model can learn the output structure. It does not establish adequate Nostr performance: the annotations are factual propositions, the source domains differ, and performance was imperfect. The T5/BERT comparison is evidence about those particular systems, not proof that every generator beats every encoder with an extraction head.
+NuExtract3 starts from Qwen3.5-4B and adds supervised extraction training followed by reinforcement learning. Its developer reports 65.2 on its structured-document extraction benchmark, versus 50.7 for the underlying Qwen3.5-4B comparator. Training uses annotated real documents and difficult synthetic examples.[^13]
 
-### Learning decomposition from a teacher
+That is evidence for task specialization, not evidence that a 4B model will outperform the large candidates on Nostr. The benchmark involves document-to-JSON extraction, often from images, under a supplied template. Discovering a complete subject set and assembling its masks remains untested.
 
-The SSE work trained a separate T5-large proposition generator on 44,970 teacher-labeled sentences. It then obtained masks through a separate alignment procedure. This supports learning a decomposition task from a stronger model, but not direct mask accuracy.[^8]
+A supplied schema is not, by itself, disqualifying for a generative model: it could describe a variable-length collection of masks. The important question is whether its learned behavior transfers to open-ended subject discovery, not whether its output is called JSON.
 
-Abstractive Proposition Segmentation also distilled proposition generation into Gemma 2B/7B students using 226,000 generated passages across 75 domains. These outputs were rewritten propositions rather than source masks. The relevance is that decoder-only models are viable students for generating multiple meanings; the training quantity is not a minimum for this project.[^9]
+### Architecture evidence does not identify a unique winner
 
-### Recent structured-extraction fine-tuning
+T5Gemma's adaptation study compared encoder–decoder variants with their Gemma 2 foundations. Its PrefixLM-plus-distillation variants generally performed better on generation-oriented evaluations, while UL2 often produced better encoder representations on SuperGLUE.[^14]
 
-A 2026 merchant-extraction study fine-tuned several models on 6,125 transaction records. Its Qwen3.5-4B JSON-only configuration reported F1 of 96.60, close to the tested Llama-3.1-8B configurations.[^10]
+Our output is generated masks, not the extractor encoder's embedding vectors. Therefore, selecting UL2 simply because its pretraining involves masked text would be insufficient reasoning. PrefixLM is a serious option for the actual generation task; the exact advantage still needs task-specific measurement.
 
-This is useful evidence that a contemporary smaller model can learn precise structured output from noisy text. However, the outputs were predefined merchant-related fields. It did not test discovering arbitrary subject meanings or grouping discontinuous masks. It also did not test Qwen3.5-9B. Its high score is therefore not an estimate of this extractor's likely accuracy.
+## Leading general-model candidates
 
-These studies favor testing a generative student. They do not establish that copying, interpretation, and complete subject discovery will all become reliable together.
+### Nemotron 3 Ultra 550B-A55B
 
-## Candidate 1: Qwen3.5-9B
+**Starting weights.** NVIDIA reports approximately 20T pretraining tokens covering code, mathematics, science, and general knowledge. Subsequent supervised training explicitly includes instruction following and structured outputs; later reinforcement learning and distillation also cover multiple task domains. The model has 550B total and 55B active parameters, and supports reasoning on or off.[^2]
 
-**What the weights have learned.** The release describes broad vision-language pretraining followed by post-training, including reinforcement learning, with support for 201 languages and dialects. The 9B text model combines Gated DeltaNet layers with full-attention layers. This is a general language model, not an embedding model or a specialist mask extractor.[^1]
+**Why it fits.** This is a broadly pretrained model with explicit preparation for following output specifications. Those are two relevant ingredients for learning a detailed masking policy. They are not proof of source-mask fidelity, but they are a stronger basis than assuming a model is suitable because its parameter count is convenient.
 
-**Why it is first.** The practical hypothesis is that a capable general model already understands much of an informal note, and task training can teach the specific extraction policy. Qwen offers a manageable starting size and a documented fine-tuning path, without first building a new prediction head or a separate subject-discovery mechanism. LlamaFactory documents Qwen3.5-9B LoRA training; Unsloth also documents text fine-tuning.[^11][^12]
+**Fine-tuning is demonstrated.** NVIDIA's NeMo recipe validates LoRA training on HellaSwag with 16 GB200 GPUs. It reports decreasing training loss through the complete training and checkpointing path.[^3] That establishes implementation feasibility, not mask quality or a minimum hardware requirement.
 
-Start from the post-trained checkpoint, rather than the separately released base checkpoint. This is a data-efficiency hypothesis, not a universal rule: instruction following may help a student learn the task from a modest annotation set. The model supports disabling its thinking output; direct task output is the proposed starting configuration.[^1]
+**Judgment.** A leading candidate for the complete extractor. Its relatively detailed training disclosure and verified adaptation path make it especially attractive for a controlled fine-tuning investigation. They do not establish that it is more accurate than Qwen-Max, Kimi, or DeepSeek.
 
-**Important practical limitation.** Unsloth currently warns against 4-bit QLoRA for Qwen3.5 because of quantization differences, and recommends BF16 setups. Its published 9B BF16-LoRA memory figure is approximately 22GB under its configuration. That figure is not a guarantee for this dataset's batch size or output lengths.[^12]
+### Qwen3.8-2.4T-A95B
 
-**Unproven:** whether Qwen can discover the full subject set and preserve difficult mask boundaries after fine-tuning. General reasoning scores, JSON support, and the merchant study cannot answer that.
+**Starting weights.** This is the released post-trained, text-only Qwen3.8-Max model: 2.4T total parameters, 95B activated per token. Its release reports IFBench of 82.8. The detailed pretraining corpus mixture is not specified sufficiently in the release used here to characterize it as precisely as Nemotron's.[^1]
 
-## Candidate 2: T5Gemma 2 4B-4B
+That instruction-following result is a relevant general-capability signal, not a predicted extraction score. It must not be compared directly with differently configured IFBench results to manufacture a reliable ordering.
 
-**What the weights have learned.** T5Gemma 2 initializes from Gemma 3 pretrained weights, then receives approximately two trillion tokens of further training. Its data includes multilingual web text, code, mathematics, and images. The UL2 training mixture includes recovering corrupted text and continuing prefixes.[^3]
+**Fine-tuning is real, not merely implied by downloadable weights.** NeMo documents full-parameter training using expert and pipeline parallelism. A public-checkpoint run completed 100 HellaSwag training steps on 256 GPUs. The documentation explicitly limits the result to validating training mechanics, not convergence.[^4]
 
-That is relevant preparation for reading source text and generating selected content, but recovering deliberately hidden text is not the same task as deciding which subject masks should exist.
+**Important behavior.** The released model requires thinking mode. Answer-only mask fine-tuning or a different inference format may be possible, but neither has been demonstrated for this task. Keeping intermediate reasoning is also an option; it was not ruled out by the extractor requirements.[^1]
 
-**What the model does.** An encoder builds contextual representations of the complete input. A decoder generates the output while attending to those representations. This separates input processing from output generation. Google adapted the architecture from a modern language model rather than relying on the original T5 weights.[^13]
+**Judgment.** A leading quality-first challenger, not a model to dismiss for its size. Its task-fine-tuned advantage over the dense Qwen release is unknown, and must not be inferred from parameter count alone.
 
-**Its size is easy to misread.** The 4B-4B model has approximately 7.1B text parameters, not 4B total. Shared embeddings reduce the combined count. The vision component adds about 417M parameters. Text-only inputs are supported, but that does not establish that the standard loader omits the vision weights; budget for the complete checkpoint initially.[^3][^13][^14]
+### Qwen3.8-27B
 
-**Why it deserves a comparison.** The source-to-mask task fits an encoder–decoder naturally, and the model brings much newer pretraining than original T5. It is the strongest architectural alternative in this shortlist. Nevertheless, a decoder-only model's generated answer also has access to the complete input: bidirectional encoder attention is a plausible advantage to test, not proof of superior contextual understanding.
+This is the relevant current dense Qwen alternative. Its release reports IFBench of 79.5 versus 69.1 for Qwen3.6-27B, supports optional thinking, and retains the Qwen3.5-family hybrid language-model architecture.[^5]
 
-**Practical disadvantages.** The released T5Gemma 2 checkpoints are pretrained, not instruction-tuned. A weak response to the teacher prompt before fine-tuning would not be a fair reason to reject it. Transformers documents support, but the vLLM request for this model is closed as not planned. Straightforward batched Transformers inference remains possible; a high-throughput production setup is less established than for the decoder-only candidates.[^14][^15]
+NeMo has full-training and LoRA recipes for the exact checkpoint. Its documented 100-step demonstrations use medical visual question answering and report training loss, with validation disabled for those curve-only runs.[^6] They establish a working adaptation path, not extraction quality.
 
-T5Gemma 2 uses the Gemma license, unlike the Apache-licensed Qwen and Gemma 4 releases. This is a licensing distinction to check before deployment, not an assessment of legal suitability.[^1][^2][^14]
+**Judgment.** It deserves consideration on capability and trainability, independently of any resource constraint. There is no task-based evidence justifying the earlier preference for Qwen3.5-9B over this checkpoint. Equally, there is no evidence that 27B is the right stopping point.
 
-## Candidate 3: Gemma 4 12B
+### Gemma 4 31B
 
-**What the weights have learned.** Gemma 4 pretraining covers web documents, code, images, and audio. The instruction-tuned release adds post-training for following instructions. The 12B variant is a dense, approximately 12-billion-parameter model; it is not the smaller active portion of a much larger mixture-of-experts model.[^2][^4]
+Gemma 4's training covers broad web documents, code, and multimodal data, followed by instruction tuning. The dense 31B release reports stronger general benchmark results than its 12B sibling; for example, MMLU Pro is 85.2 versus 77.2, and BigBench Extra Hard is 74.4 versus 53.0.[^7]
 
-**Why it is a useful alternative.** It provides an independently trained general model with potentially different interpretation errors. Google documents LoRA and full tuning for the 12B release. It therefore offers a practical quality comparison without depending on the same family as Qwen.[^16]
+These are reasons to consider the larger checkpoint, not forecasts of mask accuracy. NVIDIA also publishes a concrete Gemma 4 31B fine-tuning example for structured receipt extraction.[^8] Receipts provide a relevant structured-output demonstration but very different semantics and source structure.
 
-It is third rather than first because this investigation found no closely matched extraction result establishing an advantage over Qwen, while its weight memory is higher. That is a prioritization decision, not a finding that it is less accurate. It becomes more valuable if Qwen's remaining errors concern interpreting the note rather than generating source text correctly.
+**Judgment.** A strong independent dense-model candidate. Restricting the previous investigation to Gemma 4 12B was not supported by an explicit size requirement.
 
-The release is Apache 2.0. Its optional multimodal inputs are not a reason to add images or audio to this experiment.[^2]
+## Encoder–decoder candidates
 
-## Other models and why they are not the first comparison
+### T5Gemma 9B-9B PrefixLM instruction-tuned
 
-| Model or approach | Assessment |
-|---|---|
-| **T5Gemma 9B-2B** | Particularly interesting if generation cost becomes the bottleneck: a large encoder processes the input and a smaller decoder emits the answer. Published experiments support the quality–efficiency rationale. It uses Gemma 2 rather than Gemma 3 pretraining and is a reserve architecture, not automatically inferior because it is older.[^17] |
-| **FLAN-T5-XXL, about 11B** | A valid established baseline. It adds instruction tuning on more than 1,000 tasks to T5. Its size alone does not make it a better starting point than modern alternatives, and no matched result located establishes it as the best student here.[^18] |
-| **Qwen3.5-4B** | The first smaller model to consider after identifying a successful training recipe. It has related extraction evidence, but prioritizing its lower cost immediately could confound an unclear task with insufficient model capability.[^10] |
-| **IBM Granite 4.1 8B** | A credible general-model reserve. IBM reports approximately 15T pretraining tokens, followed by instruction tuning and staged reinforcement learning. Its documented strength in structured/instruction-following tasks is relevant, but no direct grouped-mask advantage was established.[^19] |
-| **gpt-oss-20b** | A credible fine-tunable open-weight reserve, with about 21B total and 3.6B active parameters. Active parameters are not total weight memory. Configurable reasoning and structured output are useful capabilities, but neither establishes a mask-extraction advantage.[^20] |
-| **Qwen3.8-27B** | A larger current family option if interpretation quality, rather than annotation coverage or training setup, appears to limit the smaller student. This is not the first run: it increases the resource commitment before the task has been tested.[^21] |
-| **GLiNER2 and similar schema-driven extractors** | Relevant for supplied entity types and fields, but not drop-in replacements for open-ended subject discovery. Their smaller size does not solve the missing task definition. A new subject-discovery mechanism or substantially different prediction setup would be required.[^22] |
-| **Custom encoder with mask-prediction heads** | Potentially efficient, but involves choosing how to predict an unknown number of overlapping, discontinuous masks. The closest published baseline did not beat its generative counterpart. Worth revisiting only with evidence that generation cost justifies the additional model-design work.[^7] |
+The model adapts Gemma 2 weights into separate encoder and decoder networks. The released model card reports 2T adaptation tokens; the PrefixLM approach combines prefix-continuation learning with knowledge distillation. Public checkpoint metadata counts **20,333,401,088 parameters**, not 9B total.[^14][^15]
 
-Phi, Ministral, and Liquid model families also supply trainable general or extraction-oriented models. Their availability does not make them unsuitable; the research did not find sufficiently matched evidence to displace the first two candidates. Treating every released model as an initial contender would spend training resources without a clear discriminating hypothesis.
+This preserves substantial pretrained knowledge while separating full-input encoding from answer generation. It is a more appropriate unconstrained-size comparison than selecting only the smaller T5Gemma 2 release.
 
-## Training and inference requirements
+**Why PrefixLM first within this family?** Its published generation-oriented results provide a reason to try it, whereas UL2's stronger encoder representations do not directly answer the generated-mask question. This is a starting hypothesis, not a demonstrated superiority on masks. The UL2 checkpoint remains a legitimate comparison.[^14]
 
-The student starts from existing language-model weights. No large-scale language pretraining, embedding-model training, or change to SSE is proposed.
+### T5Gemma 2 4B-4B
 
-### Weight memory
+This remains relevant despite being smaller. It adapts Gemma 3 pretrained weights, uses approximately 2T additional training tokens, and has a redesigned architecture and broader multilingual/multimodal preparation. Its text component is approximately 7.1B parameters. Released checkpoints are pretrained rather than instruction-tuned.[^16]
 
-These figures are approximate decimal GB for **16-bit weights alone**, calculated as two bytes per parameter. They exclude gradients, optimizer state, activations, caches, temporary buffers, and additional multimodal modules unless stated.
+The meaningful comparison is therefore **a larger older-foundation encoder–decoder versus a smaller newer-foundation encoder–decoder**. Neither “newer wins” nor “larger wins” follows automatically. The model should be compared after task fine-tuning, rather than eliminated for poor instruction following before adaptation.
 
-| Candidate | Approximate weight memory | Interpretation |
-|---|---:|---|
-| Qwen3.5-9B text model | 18GB | Not total training memory |
-| T5Gemma 2 4B-4B complete checkpoint | 15GB | About 14.2GB belongs to the text model |
-| Gemma 4 12B | 24GB | A 24GB card is not a sensible assumption for unquantized training |
-| FLAN-T5-XXL | 22GB | Parameter count is not evidence of better quality |
+### FLAN-UL2 20B and FLAN-T5-XXL 11B
 
-Parameter sources are the model releases and reports.[^1][^3][^4][^18] The memory arithmetic is an estimate, not measured usage on the corpus.
+These remain usable established baselines, not excluded by size. FLAN-UL2 applies instruction tuning to a 20B encoder–decoder with mixed denoising pretraining; its release compares favorably with FLAN-T5-XXL on several general evaluations.[^22] Neither result establishes subject-mask accuracy. I prioritize T5Gemma for investigating a more recent pretrained foundation, while retaining the FLAN models when their mature implementation or a controlled architecture comparison is valuable.
 
-**Adapter fine-tuning** keeps the base weights fixed and trains a much smaller set of added weights. It reduces gradient and optimizer memory, but the base model still has to be loaded and its computations still run. **Full fine-tuning** updates all weights and requires substantially more memory. **Quantization** reduces weight precision and can change outputs; it should not silently become an additional variable in the initial model comparison.
+## Additional candidates and limits of the evidence
 
-For planning, a single 48GB-class GPU is a reasonable starting resource for sequential BF16-adapter experiments with these candidates, short notes, small batches, and memory-saving training settings. This is a provisional engineering estimate, not a claim that an untested T5Gemma setup will fit every batch. Profile the longest source-and-output examples before booking a larger run. Qwen's documented 22GB result supports feasibility but does not substitute for that check.[^12]
+| Candidate | What makes it plausible | Why it is not established as the winner |
+|---|---|---|
+| DeepSeek-V4-Pro-0813 | Large text model; the V4 family reports more than 32T diverse pretraining tokens and extensive post-training | Released capability results do not measure our extraction policy; latest-update gains prominently concern agentic tasks |
+| Kimi K3 | 2.8T total/104B active; pretraining includes web text, code, mathematics, knowledge, and vision | Native reasoning and agentic capability are not direct source-mask evaluations |
+| GLM-5.3 | Large, broadly pretrained foundation with further post-training | Its release attributes improvements to post-training focused on coding and long-horizon tasks; that does not establish an extraction improvement |
+| gpt-oss-120b | Fine-tunable open weights, text generation, structured-output capability; 117B total/5.1B active | No matched post-fine-tuning advantage established for subject discovery and masks |
+| NuExtract3 | Extraction-specialized Qwen3.5-based generator; learnable variable output structure | Its previous task is document/template extraction, not our complete annotation policy |
+| GoLLIE-34B | Explicitly trained to follow extraction guidelines and generalize to new labels | Older Code Llama foundation; entity/relation/event tasks rather than grouped subject masks |
 
-The speed question is **complete notes processed at acceptable mask quality**, not advertised token throughput. Encoder–decoder models process the input through a separate encoder; decoder-only models encode their input before generating output too. Long output sets, batching, implementation support, and the exact input/output format can change their relative costs. None of the sources supplies a credible wall-clock estimate for this corpus.
+These are credible candidates, not rejected models. The evidence does not justify confidently placing DeepSeek or Kimi below the leading general models on mask quality.[^12][^13][^17][^18][^19][^20]
 
-Current uncertainty therefore does not justify quoting a rental bill or assuming that one million notes will be cheap enough. A measured end-to-end rate on the actual task is needed first.
+Other screened families include Mistral Medium, Qwen3.8-Flash-Next, and diffusion language models. None supplied a matched result that resolves the choice. DiffusionGemma, for example, is a fine-tunable experimental alternative for text generation; its speed-oriented generation design is not evidence that it discovers better subject masks.[^21]
 
-## A comparison that would resolve the choice
+The shortlist is deliberately based on distinct, relevant hypotheses. It is not a claim that every unnamed model is worse.
 
-The first question is whether a student can replace the complete teacher workflow, not which student best follows the existing long prompt without training.
+## Compute requirements are tradeoffs, not eligibility rules
 
-Use the same complete, reviewed note annotations for both primary candidates. Begin with the modest learning-curve sizes already proposed in the training-data review, rather than generating a huge corpus before observing student behavior. Those sizes are experimental starting points, not established requirements.[^23]
+The following numbers are **arithmetic estimates for weights alone**, at two bytes per parameter. They exclude activations, gradients, optimizer state, temporary buffers, and inference caches. Decimal GB/TB are used. Quantized checkpoints can require substantially less weight memory.
 
-Keep the meaning of the target output fixed across models. Do not give one candidate supplied subjects while requiring the other to discover them. Do not judge the pretrained T5Gemma 2 checkpoint against instruction-tuned Qwen solely through zero-shot prompts. Task fine-tuning is the comparison being proposed.
+| Model | Total parameters | Parameters active per token, where applicable | Approximate BF16 weight storage |
+|---|---:|---:|---:|
+| Qwen3.8-Max | 2.4T | 95B | 4.8 TB |
+| Nemotron 3 Ultra | 550B | 55B | 1.1 TB |
+| Qwen3.8-27B language model | 27B | — | 54 GB |
+| Gemma 4 31B | Approximately 31B | — | 62 GB |
+| T5Gemma 9B-9B | 20.33B | — | 40.7 GB |
 
-Separate three observations:
+Parameter counts come from the releases above.[^1][^2][^5][^7][^15] The storage values are calculated, not measured deployments. Mixture-of-experts models use only part of their weights for each token, but the remaining experts must still be stored and made available; active parameter count is not their complete memory footprint.
 
-1. **Coverage:** did the model identify the subject meanings that should be represented?
-2. **Mask fidelity:** does each mask select the right evidence, with the intended scope?
-3. **Mechanical validity:** are fragments exact source text, and can their occurrences be mapped unambiguously back to the note?
+Full-parameter fine-tuning additionally maintains trainable state for the model. LoRA trains a much smaller set of added parameters but still requires access to the foundation weights, as illustrated by the adaptation implementations above.[^3][^4][^6] Quantization, sequence length, batch size, parallelism, and optimizer choice materially affect the actual requirement. An inference demonstration on one GPU is not a training-resource estimate.
 
-Mechanical checks can identify fabricated text or unusable ranges cheaply. They cannot establish coverage or semantic fidelity. Those need semantic inspection of held-out complete notes, with valid alternative masks accepted. Split by note and keep near-duplicate posts together so training and evaluation do not share essentially the same content.
+The public implementation evidence is more concrete than guessing one universal GPU count:
 
-Adapter configurations need not use identical rank or identical layer names across different architectures. The relevant control is a comparable, documented adaptation opportunity. A failed run caused by unsupported layers, truncation, or a broken output parser says nothing about the model's semantic capacity.
+| Model | Demonstrated adaptation | Published demonstration hardware | What it establishes |
+|---|---|---|---|
+| Nemotron Ultra | LoRA on HellaSwag | 16 GB200 GPUs | Working training and checkpointing; not extractor accuracy |
+| Qwen3.8-Max | Full-parameter training, 100 HellaSwag steps | 256 GB200 GPUs | Training mechanics, explicitly not convergence |
+| Qwen3.8-27B | Full training and LoRA on medical visual questions | 8 H100 80GB GPUs | Working recipes for the exact checkpoint |
+| Gemma 4 31B | Full fine-tuning for receipt-to-JSON extraction | 8 A100 80GB or H100 80GB GPUs in the guide | A concrete structured-extraction training path |
 
-The next decision should follow the observed error:
+These configurations are **neither minimum requirements nor proposed purchases**.[^3][^4][^6][^8] They use different tasks and training methods, so their GPU counts do not form a fair efficiency benchmark. No compute rental, training run, or weight download was performed for this research.
 
-- If copied text is malformed but subject coverage is good, investigate output representation or constrained generation before increasing model size.
-- If masks are well formed but difficult meanings are consistently missed, distinguish missing training examples from deficient interpretation; then consider Gemma 4 12B or a larger model.
-- If both primary candidates approach teacher quality, measure throughput and try a smaller model rather than keeping the larger one by default.
-- If quality remains inadequate, more training data is one possible response—not an automatic explanation or an unlimited commitment.
+The economic question remains important because the extractor is intended to replace repeated frontier-model calls. A larger fine-tuned model may be worthwhile if it materially reduces errors or if its batched throughput is favorable. A smaller model may deliver equivalent usable masks at lower cost. Neither result follows from model size alone, and this research does not establish a break-even volume.
 
-This keeps the central decision narrow: **which pretrained student most reliably learns the actual extraction policy at a practical cost?**
+## What would settle the choice
 
-## Conclusion
+**The unresolved quantity is useful mask quality after learning our annotation policy.** General instruction-following scores, a decreasing fine-tuning loss, and an extraction benchmark with supplied field names cannot substitute for that measurement.
 
-**Qwen3.5-9B is the best first practical candidate; T5Gemma 2 4B-4B is the most important architectural comparison.** Gemma 4 12B is a credible next alternative. Original T5-11B should not be selected merely because earlier extraction papers used T5.
+A meaningful comparison would hold the reviewed training notes and target policy fixed, keep evaluation notes separate, and inspect both subject coverage and whether each mask selects the appropriate source meaning. Exact copying is necessary but insufficient. Alternative faithful boundaries and harmless redundant masks must not be counted as semantic failures solely because they differ from one teacher output.
 
-The literature supports attempting this distillation. It does not yet establish the best model, the necessary number of notes, or production-quality direct masks for this annotation policy. A small, controlled task-fine-tuning comparison is the evidence that would turn this shortlist into a selection.
+Compare realistic task-adapted versions, not an instruction-tuned general model against an encoder–decoder that has never been trained to follow the task. Record output tokens, throughput, training cost, and serving requirements alongside quality. The choice should reflect a useful quality–cost tradeoff, not an unrequested hardware ceiling or an unrequested requirement to maximize accuracy at any cost.
+
+**My corrected recommendation is to retain three genuinely different possibilities:** a large general model such as Nemotron Ultra or Qwen3.8-Max; a strong current dense model such as Qwen3.8-27B or Gemma 4 31B; and the larger T5Gemma encoder–decoder. NuExtract3 is a worthwhile extraction-specialized comparison, not an established replacement for discovering subjects.
+
+The earlier small-model-only recommendation was unjustified. The corrected literature review supports this wider candidate set and identifies concrete adaptation paths; it does not establish a task-fine-tuned winner. Choosing which training runs to fund remains a separate decision.
 
 ## Sources
 
-Model availability and implementation guidance checked in September 2026. Software support and release recommendations can change.
-
-[^1]: Qwen, [Qwen3.5-9B model card](https://huggingface.co/Qwen/Qwen3.5-9B), 2026. Language-model parameter count, pretraining/post-training, architecture, multilingual coverage, non-thinking mode, and Apache license.
-
-[^2]: Google, [Gemma 4 12B instruction-tuned model card](https://huggingface.co/google/gemma-4-12B-it), 2026. Released checkpoint, size, modalities, post-training status, and Apache license.
-
-[^3]: Zhang et al., [T5Gemma 2: Seeing, Reading, and Understanding Longer](https://arxiv.org/html/2512.14856v1), December 2025. Table 2 for parameter accounting; §3.1 for initialization, data, and approximately 2T-token additional pretraining.
-
-[^4]: Gemma Team, [Gemma 4 Technical Report](https://arxiv.org/html/2607.02770v1), July 2026. Architecture and parameters; §§2.4 and 3 for pretraining and instruction tuning.
-
-[^5]: Repository proposal, [Direct note-to-mask extractor](../docs/recommendation-engine/research/direct-note-to-mask-extractor.md). Architectural target only; older prompt references there are not the current frozen versions.
-
-[^6]: Repository freeze records: [ASv6.23](./subject-prompt-goal-v1/asv6.23/frozen.json) and [MPv3.5](./mask-prompt-goal-v1/frozen.json). Current teacher input/output responsibilities.
-
-[^7]: Chen et al., [PropSegmEnt: A Large-Scale Corpus for Proposition-Level Segmentation and Entailment Recognition](https://aclanthology.org/2023.findings-acl.565.pdf), Findings of ACL, 2023. Table 2 for training size; §4 and Tables 3–4 for output structure, model results, and agreement.
-
-[^8]: Chen et al., [Sub-Sentence Encoder: Contrastive Learning of Propositional Semantic Representations](https://aclanthology.org/2024.naacl-long.89.pdf), NAACL, 2024. Appendix A for the separate teacher-trained proposition generator and subsequent alignment.
-
-[^9]: Hosseini et al., [Scalable and Domain-General Abstractive Proposition Segmentation](https://aclanthology.org/2024.findings-emnlp.517.pdf), Findings of EMNLP, 2024. Gemma student training and the 226,000-passage, 75-domain distillation corpus.
-
-[^10]: [How Small Can You Go? LoRA Fine-Tuning 270M–8B Models for Merchant Information Extraction in Financial Transactions](https://arxiv.org/html/2606.08051v1), June 2026. Fixed-field transaction extraction; dataset splits and model/configuration comparisons. Its task and reported metric do not establish performance for open-ended masks.
-
-[^11]: LlamaFactory, [Fine-Tuning Qwen3.5 with LlamaFactory](https://blog.llamafactory.net/en/posts/qwen3_5_finetuning/), March 2026. Concrete 9B LoRA support; the demonstration task is not this extractor.
-
-[^12]: Unsloth, [Qwen3.5 Fine-tuning Guide](https://unsloth.ai/docs/models/qwen3.5/fine-tune), accessed September 2026. Published BF16-LoRA memory figures and current warning against 4-bit training. Memory figures are configuration-specific.
-
-[^13]: Google, [T5Gemma 2: The next generation of encoder-decoder models](https://blog.google/innovation-and-ai/technology/developers-tools/t5gemma-2/), December 2025. Modern decoder-to-encoder–decoder adaptation and text-only model sizes.
-
-[^14]: Google, [T5Gemma 2 4B-4B model card](https://huggingface.co/google/t5gemma-2-4b-4b), December 2025; Hugging Face, [T5Gemma 2 Transformers documentation](https://huggingface.co/docs/transformers/main/model_doc/t5gemma2). Pretrained release status, text-model support, and license.
-
-[^15]: vLLM, [T5Gemma 2 support request, issue 31004](https://github.com/vllm-project/vllm/issues/31004), opened December 2025; status checked September 2026. Closed as not planned. This is a limitation of the documented serving path, not proof that efficient deployment is impossible.
-
-[^16]: Google Developers, [Gemma 4 12B: The Developer Guide](https://developers.googleblog.com/gemma-4-12b-the-developer-guide/), 2026. Adapter/full fine-tuning and deployment guidance.
-
-[^17]: Zhang et al., [Encoder-Decoder Gemma: Improving the Quality-Efficiency Trade-Off via Adaptation](https://arxiv.org/html/2504.06225), 2025; Google, [T5Gemma 9B-2B UL2 instruction-tuned checkpoint](https://huggingface.co/google/t5gemma-9b-2b-ul2-it). Asymmetric encoder/decoder design and measured efficiency comparisons, not measurements for Nostr extraction.
-
-[^18]: Google, [FLAN-T5-XXL model card](https://huggingface.co/google/flan-t5-xxl), 2022. T5-based instruction-tuned release and task coverage.
-
-[^19]: IBM Research, [Introducing the IBM Granite 4.1 family of models](https://research.ibm.com/blog/granite-4-1-ai-foundation-models), 2026. Dense 3B/8B/30B releases and their training approach.
-
-[^20]: OpenAI, [gpt-oss-20b model documentation](https://developers.openai.com/api/docs/models/gpt-oss-20b), accessed September 2026. Open weights, total/active parameters, fine-tunability, reasoning settings, and structured outputs.
-
-[^21]: Qwen, [Qwen3.8-27B model card](https://huggingface.co/Qwen/Qwen3.8-27B), 2026. Released larger-model alternative, not an extraction result.
-
-[^22]: Zaratiana et al., [GLiNER2: An Efficient Multi-Task Information Extraction System with Schema-Driven Interface](https://arxiv.org/html/2507.18546v1), 2025. Schema-conditioned task formulation and evaluation.
-
-[^23]: Repository research, [Training-data volume for a subject-and-mask extractor](./SUBJECT-MASK-TRAINING-DATA-RESEARCH.md). Related-study counts, proposed learning curve, and limits of quantity extrapolation.
+[^1]: Qwen, [Qwen3.8-2.4T-A95B model card](https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B). Architecture, instruction-following results, reasoning format, and release links. See also its [license](https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B/blob/main/LICENSE); open weights should not be confused with identical terms across model families.
+[^2]: NVIDIA, [Nemotron 3 Ultra 550B-A55B model card](https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-BF16). Pretraining, post-training, architecture, and supported reasoning modes.
+[^3]: NVIDIA NeMo, [Nemotron 3 Ultra end-to-end adaptation recipe](https://docs.nvidia.com/nemo/automodel/recipes-e2e-examples/nemotron-3-ultra). LoRA, HellaSwag, hardware, and validation scope.
+[^4]: NVIDIA NeMo, [Qwen3.8-2.4T-A95B training coverage](https://docs.nvidia.com/nemo/automodel/model-coverage/large-language-models/qwen/qwen3-8-2-4t-a95b). Full-parameter training implementation and the limits of its 100-step validation.
+[^5]: Qwen, [Qwen3.8-27B model card](https://huggingface.co/Qwen/Qwen3.8-27B). Dense-model architecture, optional reasoning, and release benchmark results.
+[^6]: NVIDIA NeMo, [Qwen3.8-27B end-to-end adaptation recipes](https://docs.nvidia.com/nemo/automodel/recipes-e2e-examples/qwen3-8-27b). Full training and LoRA examples; validation conditions.
+[^7]: Google, [Gemma 4 31B instruction-tuned model card](https://huggingface.co/google/gemma-4-31B-it) and [Gemma 4 technical report](https://arxiv.org/html/2607.02770v1). Training background, model sizes, and general capability results.
+[^8]: NVIDIA NeMo, [Gemma 4 fine-tuning for structured receipt extraction](https://docs.nvidia.com/nemo/automodel/recipes-e2e-examples/gemma-4). Training task and hardware examples.
+[^9]: Repository architecture discussion, [Direct note-to-mask extractor](../docs/recommendation-engine/research/direct-note-to-mask-extractor.md). Architectural target; its older prompt references are not the current frozen teacher versions.
+[^10]: Current teacher records: [ASv6.23 freeze](./subject-prompt-goal-v1/asv6.23/frozen.json) and [MPv3.5 freeze](./mask-prompt-goal-v1/frozen.json).
+[^11]: Chen et al., [PropSegmEnt: A Large-Scale Corpus for Proposition-Level Segmentation and Entailment Recognition](https://aclanthology.org/2023.findings-acl.565.pdf), Findings of ACL 2023. Segmentation training data, generative architecture, and measured performance.
+[^12]: Sainz et al., [GoLLIE: Annotation Guidelines Improve Zero-Shot Information-Extraction](https://arxiv.org/html/2310.03668v5), and [released 34B checkpoint](https://huggingface.co/HiTZ/GoLLIE-34B). Training procedure, model-size comparisons, and generalization limits.
+[^13]: NuMind, [NuExtract 3 release and training description](https://about.nuextract.ai/blog/nuextract-3-release) and [released checkpoint](https://huggingface.co/numind/NuExtract3). Developer-reported extraction benchmark and supervised/RL preparation.
+[^14]: Zhang et al., [Encoder-Decoder Gemma: Improving the Quality-Efficiency Trade-Off via Adaptation](https://arxiv.org/html/2504.06225). Adaptation, PrefixLM/UL2 comparison, and generation-versus-encoder evaluation.
+[^15]: Google, [T5Gemma 9B-9B PrefixLM instruction-tuned checkpoint](https://huggingface.co/google/t5gemma-9b-9b-prefixlm-it) and its [machine-readable parameter metadata](https://huggingface.co/api/models/google/t5gemma-9b-9b-prefixlm-it). The metadata reports 20,333,401,088 parameters. The [UL2 instruction-tuned counterpart](https://huggingface.co/google/t5gemma-9b-9b-ul2-it) is also released.
+[^16]: Google, [T5Gemma 2 paper](https://arxiv.org/html/2512.14856v1), [4B-4B checkpoint](https://huggingface.co/google/t5gemma-2-4b-4b), and [release explanation](https://blog.google/innovation-and-ai/technology/developers-tools/t5gemma-2/). Foundation, adaptation data, architecture, and release status.
+[^17]: DeepSeek, [V4-Pro-0813 release](https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813) and [V4 technical report](https://arxiv.org/html/2606.19348). Foundation training and subsequent release emphasis.
+[^18]: Moonshot AI, [Kimi K3 release](https://huggingface.co/moonshotai/Kimi-K3) and [technical report](https://arxiv.org/html/2607.24653). Architecture and training background.
+[^19]: Z.ai, [GLM-5.3 release](https://huggingface.co/zai-org/GLM-5.3). Relationship to GLM-5.2 and post-training emphasis.
+[^20]: OpenAI, [gpt-oss-120b documentation](https://developers.openai.com/api/docs/models/gpt-oss-120b). Parameter counts, supported outputs, license, and fine-tuning availability.
+[^21]: Primary releases for additional screened approaches: [Mistral Medium 3.5](https://docs.mistral.ai/models/mistral-medium-3-5-26-04), [Qwen3.8-Flash-Next](https://huggingface.co/Qwen/Qwen3.8-Flash-Next), and [DiffusionGemma overview and fine-tuning links](https://ai.google.dev/gemma/docs/diffusiongemma).
+[^22]: Google, [FLAN-UL2 model card](https://huggingface.co/google/flan-ul2). Pretraining objective, instruction tuning, model size, and comparison with FLAN-T5-XXL.
