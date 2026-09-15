@@ -71,8 +71,9 @@ comparison.json contains every title, raw-result path, usage and main-assistant 
 V21 remains an un-frozen candidate. The [three-pair follow-up](../hdbv21-pairs-v1/analysis.json)
 checks title-only interpretations against the masks. Two historical relationships became
 clearer; the raw-milk comparison instead demonstrated a more specific category description.
-One chicken-only title remains disputed because its mask also includes duck and quail eggs.
-The [focused review](../hdbv21-pairs-v1/run-review.sh) shows that title and both masks.
+The user accepted the questioned chicken-derived title after seeing the complete notes
+and masks. No unresolved title question remains in this sample; the original reviewer
+concern and the user's decision are recorded separately in the follow-up.
 This is evidence about description clarity and scope, not TRUE accuracy or hierarchy quality.
 
 Existing tracking card: CREC-127. Plane tools were unavailable, so no external card update or status change is claimed.
