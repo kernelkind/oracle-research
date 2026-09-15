@@ -1,5 +1,11 @@
 # Category titles v21 versus v20
 
+The approved same-note mask deduplication is now applied by
+`../prepare_category_title_inputs.py` before both title generation and review.
+The unchanged v21 rerun is saved in [hdbv21-dedup-v1](../hdbv21-dedup-v1/run-plan.json).
+Only Food among this batch's six groups contained an exact duplicate. This original
+experiment and its review decisions remain preserved; its inputs below include that duplicate.
+
 V21 made some category relationships more explicit on this six-group development sample. It did not eliminate unsupported narrowing: one Art result still became Visual Art. This is evidence about title generation, not an improvement demonstrated in TRUE or the hierarchy.
 
 Both unchanged prompts ran twice on every group with Astra low: 24 fresh calls. These were existing groups selected before generation, not an unseen holdout. Every output is retained; no best-of selection or title editing occurred.

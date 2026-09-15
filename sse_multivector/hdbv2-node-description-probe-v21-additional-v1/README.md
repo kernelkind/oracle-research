@@ -1,5 +1,11 @@
 # Unchanged v21: six additional groups
 
+The approved same-note mask deduplication is now applied before both title generation
+and review in [hdbv21-dedup-v1](../hdbv21-dedup-v1/run-plan.json). The mental-activity
+and kindness/status groups were the two affected groups in this batch; each lost one
+duplicate instance. The original results and user decisions below remain preserved.
+Use `../hdbv21-dedup-v1/run-review.sh` to inspect the new outputs without duplicate masks.
+
 Ten outputs were straightforwardly accepted by both reviewers. Two titles from the same kindness/status group need judgment: one adds an unreliable-indicator interpretation, while the other may narrow status to socioeconomic status. Both are in the focused review. No user decisions have been recorded by the assistant.
 
 This tested the unchanged v21 prompt on six groups not used in its first test, twice each, with Astra low. All groups were already in the known 61-group collection; this is not a wholly unseen holdout. The 12 new calls succeeded on their first attempts. No new v20 calls were made, so saved v20 titles are historical context rather than matched comparisons.

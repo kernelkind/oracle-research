@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "experiment": "hdbv21-dedup-v1",
+  "source_commit": "435af19e",
+  "purpose": "Remove exact same-note duplicate masks from both category-title input and review; rerun only affected groups in the two current v21 test batches.",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "prompt": "../hdbv2-node-description-probe-v21/prompt.txt",
+  "prompt_sha256": "616500bd7c28103a9686de22ff69d53323c44fa976db4c2238d0041c704f8541",
+  "source_packets": "../hdbv2-node-titles-v20-astra-low/source-packets.json",
+  "policy": "Keep the first instance per note ID and exact ordered byte-span list within each group. Retain every original vector ID in sources. Preserve other notes, other positions, overlapping or subset masks, and multiple fragments within a mask.",
+  "groups_checked": [
+    "S485994b768",
+    "S5ea79ac96e",
+    "Se66af3a9b7",
+    "S24afa84c49",
+    "S8a6ab7afaf",
+    "S49eb0ac749",
+    "Se7ebc25cf1",
+    "S18bc272886",
+    "Sa256265971",
+    "Sd6b13ec91f",
+    "S8ea08f1aff",
+    "S0eafedb82e"
+  ],
+  "rerun_groups": [
+    "S49eb0ac749",
+    "Sa256265971",
+    "Sd6b13ec91f"
+  ],
+  "trials_per_group": 2,
+  "maximum_concurrent_calls": 3,
+  "unchanged": "Prompt, model, all remaining mask text and order, frozen vector artifacts, HDBv2 grouping and previous results/user decisions. No TRUE or hierarchy run.",
+  "comparison_limit": "Historical v21 outputs retained as context. Differences after deduplication are not individually attributable to deduplication because generation is nondeterministic."
+}
