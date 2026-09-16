@@ -70,7 +70,7 @@ def artifacts():
         if "L" in codes:
             excluded.append("non_english_or_mixed_prose")
         if "Z" in codes:
-            excluded.append("opaque_or_language_neutral_reserved_pending_scope_decision")
+            excluded.append("not_readable_english_text")
         row = {
             "id": f"E{index + 500:04d}", "source_index": index,
             "frozen_sample_row": index + 500, "note_id": note["note_id"],
@@ -171,7 +171,7 @@ def artifacts():
             "A includes simple headlines as well as complex attribution. S includes literal opinions as well as fiction and metaphor. Q includes promotional instructions as well as genuine help requests.",
             "The 60-note target gives 1 - 0.95^60 = 95.39% chance to observe at least one 5%-frequency failure only under an independent, representative Bernoulli model within that challenge. It is not a precision guarantee or proof of equivalence.",
             "Template filtering removes obvious repeated forms but cannot establish statistical independence between authors or sources.",
-            "English eligibility is manually checked; untranslated non-English prose and opaque payloads are held out. Translated titles, proper names and borrowed expressions can occur inside English posts.",
+            "This comparison requires readable English text. The manual audit excludes untranslated non-English prose, emoji-only posts and opaque payloads. Readable English reports remain eligible even when machine-generated. Translated titles, proper names and borrowed expressions can occur inside English posts.",
             "Known prompt-note exclusion does not prove absence from all earlier experiments or model pretraining.",
             "The 12-note viewer is curated for easy inspection after selection, not a representative accuracy sample.",
             "No model prompts were changed; subject and mask comparison remain separate, with identical fixed subjects required for the later mask comparison.",

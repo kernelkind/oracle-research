@@ -58,6 +58,19 @@ class FrontierEnglishSelectionTest(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_non_readable_posts_are_excluded_by_confirmed_policy(self):
+        result = subprocess.run(
+            ["python3", str(DIRECTORY / "select.py"), "--artifact", "audit.json"],
+            cwd=ROOT, capture_output=True, text=True, timeout=30,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        rows = json.loads(result.stdout)["notes"]
+        non_readable = [row for row in rows if "Z" in row["manual_codes"]]
+        self.assertTrue(non_readable)
+        for row in non_readable:
+            self.assertFalse(row["selected"])
+            self.assertIn("not_readable_english_text", row["exclude_reasons"])
+
 
 if __name__ == "__main__":
     unittest.main()
