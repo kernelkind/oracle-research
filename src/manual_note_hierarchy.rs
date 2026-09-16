@@ -36,16 +36,33 @@ pub struct ManualNote {
 }
 
 type NoteMaskRanges = BTreeMap<String, BTreeMap<String, Vec<(usize, usize)>>>;
+type CategoryMaskInstances = BTreeMap<String, BTreeMap<String, Vec<MaskInstance>>>;
 
-/// Source-validated unions of the mask ranges belonging to each category's notes.
+/// One original mask; identical masks retain all their original vector IDs.
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MaskInstance {
+    pub ids: Vec<String>,
+    pub byte_spans: Vec<(usize, usize)>,
+}
+
+/// Source-validated category highlights and optional original masks with IDs.
 #[derive(Clone, Debug)]
 pub struct CategoryNoteMasks {
     ranges: NoteMaskRanges,
+    instances: CategoryMaskInstances,
 }
 
 impl CategoryNoteMasks {
     pub fn spans(&self, category: &str, note: &str) -> &[(usize, usize)] {
         &self.ranges[category][note]
+    }
+
+    pub fn instances(&self, category: &str, note: &str) -> &[MaskInstance] {
+        self.instances
+            .get(category)
+            .and_then(|notes| notes.get(note))
+            .map_or(&[], Vec::as_slice)
     }
 }
 
@@ -60,6 +77,8 @@ struct Spec {
     nodes: Vec<ManualCategory>,
     #[serde(default)]
     note_masks: Option<NoteMaskRanges>,
+    #[serde(default)]
+    mask_instances: Option<CategoryMaskInstances>,
 }
 
 #[derive(Deserialize)]
@@ -206,11 +225,82 @@ impl ManualNoteHierarchy {
             nodes,
             notes,
         };
-        let masks = spec
+        let mut masks = spec
             .note_masks
             .map(|ranges| hierarchy.validate_masks(ranges))
             .transpose()?;
+        if let Some(instances) = spec.mask_instances {
+            let masks = masks
+                .as_mut()
+                .ok_or("individual masks require note masks")?;
+            hierarchy.validate_instances(&instances, masks)?;
+            masks.instances = instances;
+        }
         Ok((hierarchy, masks))
+    }
+
+    fn validate_instances(
+        &self,
+        instances: &CategoryMaskInstances,
+        masks: &CategoryNoteMasks,
+    ) -> Result<(), Box<dyn Error>> {
+        if instances.keys().ne(masks.ranges.keys()) {
+            return Err("individual masks must cover exactly the declared categories".into());
+        }
+        let mut identities = BTreeMap::new();
+        let mut combined = BTreeMap::new();
+        for (category, notes) in instances {
+            if notes.keys().ne(masks.ranges[category].keys()) {
+                return Err("individual masks must cover exactly the category's notes".into());
+            }
+            let mut combined_notes = BTreeMap::new();
+            for (note, records) in notes {
+                let text = &self.notes[note].content;
+                let mut seen_ids = BTreeSet::new();
+                let mut seen_spans = BTreeSet::new();
+                let mut spans = Vec::new();
+                for record in records {
+                    if record.ids.is_empty()
+                        || record
+                            .ids
+                            .iter()
+                            .any(|id| id.trim().is_empty() || !seen_ids.insert(id))
+                        || record.byte_spans.is_empty()
+                        || !seen_spans.insert(&record.byte_spans)
+                        || record.byte_spans.iter().any(|&(a, b)| {
+                            a >= b
+                                || b > text.len()
+                                || !text.is_char_boundary(a)
+                                || !text.is_char_boundary(b)
+                        })
+                        || record
+                            .byte_spans
+                            .windows(2)
+                            .any(|pair| pair[0].1 > pair[1].0)
+                    {
+                        return Err(format!("invalid individual mask for {category}/{note}").into());
+                    }
+                    for id in &record.ids {
+                        let identity = (note, &record.byte_spans);
+                        if identities
+                            .insert(id, identity)
+                            .is_some_and(|old| old != identity)
+                        {
+                            return Err(
+                                format!("mask ID {id} has conflicting source ranges").into()
+                            );
+                        }
+                    }
+                    spans.extend(record.byte_spans.iter().copied());
+                }
+                combined_notes.insert(note.clone(), spans);
+            }
+            combined.insert(category.clone(), combined_notes);
+        }
+        if self.validate_masks(combined)?.ranges != masks.ranges {
+            return Err("individual masks do not reproduce the saved combined masks".into());
+        }
+        Ok(())
     }
 
     fn validate_masks(
@@ -264,7 +354,10 @@ impl ManualNoteHierarchy {
                 }
             }
         }
-        Ok(CategoryNoteMasks { ranges })
+        Ok(CategoryNoteMasks {
+            ranges,
+            instances: BTreeMap::new(),
+        })
     }
 
     /// Whether any category is referenced by more than one parent.

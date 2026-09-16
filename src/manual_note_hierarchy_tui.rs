@@ -8,7 +8,9 @@ use ratatui::layout::{Constraint, Layout, Rect};
 use ratatui::text::Line;
 use ratatui::widgets::{Block, Borders, List, ListItem, ListState, Paragraph, Wrap};
 
-use crate::manual_note_hierarchy::{CategoryNoteMasks, ManualCategory, ManualNoteHierarchy};
+use crate::manual_note_hierarchy::{
+    CategoryNoteMasks, ManualCategory, ManualNoteHierarchy, MaskInstance,
+};
 use crate::reference_tui::{
     InteractiveReviewModel, MIN_HEIGHT, MIN_WIDTH, ReferenceTerminal, accent_style, border_style,
     centered, has_command_modifier, is_control_c_event, render_scrollable_panel, secondary_style,
@@ -19,7 +21,7 @@ use crate::titled_merge_hierarchy::TitledMergeHierarchy;
 
 const CONTROLS: &str = "In categories, j/k or Up/Down chooses an item; Enter/l or Right opens it. h, Backspace or Escape returns to the parent. Child categories are separate from the actions for viewing all notes or notes outside children.\n\nIn original notes, h/l or Left/Right changes the note; j/k or Up/Down scrolls. Backspace or Escape returns to the category choices.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis manual proposal is read-only. Nothing is written or approved.";
 
-const CATEGORY_CONTROLS: &str = "In categories, only immediate child categories are listed. j/k or Up/Down chooses a child; Enter/l or Right descends into it, including a category with no children. N opens all original notes at the CURRENT category, including descendants and deduplicating shared notes. D opens only notes assigned directly to the current category, including direct notes that also appear in children. O opens notes at the current category that appear in none of its children or deeper descendants. h, Backspace or Escape returns to the parent.\n\nWhen masks are supplied, each note shows one combined ⟦highlight⟧ covering all its mask ranges in the current category, including descendants. D and O change which notes are shown, not their saved highlights. Masks belonging only to other branches are excluded. h/l or Left/Right changes the note; j/k or Up/Down scrolls. Backspace or Escape returns to the same category menu and selection.\n\nPaths use Category > Child > Grandchild and wrap. If older ancestors cannot fit above the notes, an ellipsis marks them and the complete path appears in this analysis screen.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis category hierarchy is read-only. Nothing is written or approved.";
+const CATEGORY_CONTROLS: &str = "In categories, only immediate child categories are listed. j/k or Up/Down chooses a child; Enter/l or Right descends into it, including a category with no children. N opens all original notes at the CURRENT category, including descendants and deduplicating shared notes. D opens only notes assigned directly to the current category, including direct notes that also appear in children. O opens notes at the current category that appear in none of its children or deeper descendants. h, Backspace or Escape returns to the parent.\n\nN and D combine the current category's masks into one ⟦highlight⟧ on each full original note. O shows one original mask at a time with its ID; [ and ] switch masks. Identical masks share a display and list all original IDs. Older files without individual masks are explicitly marked unavailable and retain their saved combined highlights. Masks belonging only to other branches are excluded. h/l or Left/Right changes the note and returns to its first mask; j/k or Up/Down scrolls. Backspace or Escape returns to the same category menu and selection.\n\nPaths use Category > Child > Grandchild and wrap. If older ancestors cannot fit above the notes, an ellipsis marks them and the complete path appears in this analysis screen.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis category hierarchy is read-only. Nothing is written or approved.";
 
 struct CategoryFrame {
     node_id: String,
@@ -36,6 +38,7 @@ enum NoteScope {
 struct NoteBrowser {
     note_ids: Vec<String>,
     cursor: usize,
+    mask_cursor: usize,
     scroll: u16,
     leave_category: bool,
     scope: NoteScope,
@@ -220,10 +223,22 @@ impl ManualNoteExplorer {
         self.notes = Some(NoteBrowser {
             note_ids,
             cursor: 0,
+            mask_cursor: 0,
             scroll: 0,
             leave_category,
             scope,
         });
+    }
+
+    fn individual_masks(&self) -> &[MaskInstance] {
+        let Some(notes) = &self.notes else { return &[] };
+        if !matches!(notes.scope, NoteScope::OutsideChildren) {
+            return &[];
+        }
+        match (&self.category_masks, notes.note_ids.get(notes.cursor)) {
+            (Some(masks), Some(note)) => masks.instances(&self.category().node_id, note),
+            _ => &[],
+        }
     }
 
     fn open(&mut self) {
@@ -359,6 +374,18 @@ impl ManualNoteExplorer {
             KeyCode::Char('o' | 'O') if self.categories_only && self.notes.is_none() => {
                 self.show_notes(NoteScope::OutsideChildren, false);
             }
+            KeyCode::Char('[' | ']') if self.notes.is_some() => {
+                let count = self.individual_masks().len();
+                if count > 0 {
+                    let notes = self.notes.as_mut().expect("note browser");
+                    notes.mask_cursor = if code == KeyCode::Char('[') {
+                        notes.mask_cursor.saturating_sub(1)
+                    } else {
+                        (notes.mask_cursor + 1).min(count - 1)
+                    };
+                    notes.scroll = 0;
+                }
+            }
             KeyCode::Left | KeyCode::Right if self.notes.is_some() => {
                 let notes = self.notes.as_mut().expect("note browser");
                 notes.cursor = if code == KeyCode::Left {
@@ -366,6 +393,7 @@ impl ManualNoteExplorer {
                 } else {
                     (notes.cursor + 1).min(notes.note_ids.len().saturating_sub(1))
                 };
+                notes.mask_cursor = 0;
                 notes.scroll = 0;
             }
             KeyCode::Left => self.back(),
@@ -398,6 +426,13 @@ impl ManualNoteExplorer {
         }
         let area = centered(area);
         let breadcrumb = self.breadcrumb();
+        let instances = self.individual_masks();
+        let mask_count = instances.len();
+        let individual = self
+            .notes
+            .as_ref()
+            .and_then(|notes| instances.get(notes.mask_cursor))
+            .cloned();
         let category_id = if self.categories_only {
             format!(" [{}]", terminal_safe(&self.category().node_id))
         } else {
@@ -413,8 +448,21 @@ impl ManualNoteExplorer {
             };
             if let Some(id) = notes.note_ids.get(notes.cursor) {
                 let note = &self.hierarchy.notes[id];
+                let mask_heading = if let Some(mask) = &individual {
+                    format!(
+                        " · {} · Mask {} of {mask_count}",
+                        terminal_safe(&mask.ids.join(", ")),
+                        notes.mask_cursor + 1
+                    )
+                } else if matches!(notes.scope, NoteScope::OutsideChildren)
+                    && self.category_masks.is_some()
+                {
+                    " · Individual masks unavailable".to_owned()
+                } else {
+                    String::new()
+                };
                 format!(
-                    "{breadcrumb}{category_id}{scope}\n{} · Note {} of {}",
+                    "{breadcrumb}{category_id}{scope}\n{} · Note {} of {}{mask_heading}",
                     terminal_safe(&note.note_short_id),
                     notes.cursor + 1,
                     notes.note_ids.len(),
@@ -508,7 +556,12 @@ impl ManualNoteExplorer {
         } else if let Some(notes) = &mut self.notes {
             let (content, title) = if let Some(id) = notes.note_ids.get(notes.cursor) {
                 let note = &self.hierarchy.notes[id];
-                if let Some(masks) = &self.category_masks {
+                if let Some(mask) = &individual {
+                    (
+                        highlighted_note(&note.content, &mask.byte_spans),
+                        "Note · individual mask",
+                    )
+                } else if let Some(masks) = &self.category_masks {
                     let category = &self.categories.last().expect("root category").node_id;
                     (
                         highlighted_note(&note.content, masks.spans(category, &note.note_short_id)),
@@ -540,6 +593,8 @@ impl ManualNoteExplorer {
         }
         let controls = if self.analysis_scroll.is_some() {
             "j/k ↑/↓ Scroll  Ctrl-D/U Half page  gg/G Top/end\nBackspace/Esc Back  Q Quit"
+        } else if individual.is_some() {
+            "h/l ←/→ Previous/next note  [/] Previous/next mask\nj/k ↑/↓ Scroll  Ctrl-D/U Half page  gg/G Top/end\nBackspace/Esc Back  ? Analysis  Q Quit"
         } else if self.notes.is_some() {
             "h/l ←/→ Previous/next note  j/k ↑/↓ Scroll\nCtrl-D/U Half page  gg/G Top/end  ? Analysis\nBackspace/Esc Back  Q Quit"
         } else if self.categories_only {

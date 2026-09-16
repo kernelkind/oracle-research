@@ -246,3 +246,198 @@ fn category_files_without_masks_keep_the_original_note_view() {
     assert!(output.contains(TEXT), "{output}");
     assert!(!output.contains('⟦'), "{output}");
 }
+
+fn individual_fixture() -> (TempDir, Value) {
+    let (dir, mut spec) = fixture();
+    spec["nodes"][1]["note_ids"] = json!(["N001"]);
+    spec["nodes"][1]["children"] = json!([]);
+    spec["nodes"].as_array_mut().unwrap().remove(2);
+    spec["note_masks"].as_object_mut().unwrap().remove("milk");
+    let coffee = json!([
+        {"ids": ["V001"], "byte_spans": [range("coffee with")]},
+        {"ids": ["V002", "V009"], "byte_spans": [range("with milk")]}
+    ]);
+    let tea = json!({"ids": ["V003"], "byte_spans": [range("tea")]});
+    let mut all = coffee.as_array().unwrap().clone();
+    all.push(tea.clone());
+    all.push(json!({"ids": ["V004"], "byte_spans": [range("café")]}));
+    spec["mask_instances"] = json!({
+        "root": {"N001": all},
+        "coffee": {"N001": coffee},
+        "tea": {"N001": [tea]}
+    });
+    (dir, spec)
+}
+
+#[test]
+fn o_shows_one_original_mask_and_its_ids_without_changing_n_or_d() {
+    let (dir, spec) = individual_fixture();
+    let mut model = explorer(&dir, &spec);
+    key(&mut model, KeyCode::Enter);
+    let menu = screen(&mut model);
+    key(&mut model, KeyCode::Char('O'));
+    let first = screen(&mut model);
+    for expected in [
+        "N001",
+        "V001",
+        "Mask 1 of 2",
+        "café ⟦coffee with⟧ milk; tea later. coffee again.",
+    ] {
+        assert!(first.contains(expected), "missing {expected}: {first}");
+    }
+    assert!(!first.contains("⟦coffee with milk⟧"), "{first}");
+    key(&mut model, KeyCode::Char(']'));
+    let second = screen(&mut model);
+    for expected in [
+        "V002",
+        "V009",
+        "Mask 2 of 2",
+        "café coffee ⟦with milk⟧; tea later. coffee again.",
+    ] {
+        assert!(second.contains(expected), "missing {expected}: {second}");
+    }
+    key(&mut model, KeyCode::Char(']'));
+    assert_eq!(screen(&mut model), second);
+    key(&mut model, KeyCode::Char('['));
+    assert_eq!(screen(&mut model), first);
+    key(&mut model, KeyCode::Char('['));
+    assert_eq!(screen(&mut model), first);
+    key(&mut model, KeyCode::Esc);
+    assert_eq!(screen(&mut model), menu);
+    for action in ['N', 'D'] {
+        key(&mut model, KeyCode::Char(action));
+        let combined = screen(&mut model);
+        assert!(
+            combined.contains("café ⟦coffee with milk⟧; tea later. coffee again."),
+            "{combined}"
+        );
+        assert!(!combined.contains("Mask 1 of"), "{combined}");
+        key(&mut model, KeyCode::Char(']'));
+        assert_eq!(screen(&mut model), combined);
+        key(&mut model, KeyCode::Esc);
+    }
+}
+
+#[test]
+fn individual_masks_reject_incomplete_inconsistent_or_invalid_provenance() {
+    let (dir, original) = individual_fixture();
+    for case in 0..9 {
+        let mut spec = original.clone();
+        match case {
+            0 => {
+                spec["mask_instances"]
+                    .as_object_mut()
+                    .unwrap()
+                    .remove("coffee");
+            }
+            1 => {
+                spec["mask_instances"]["coffee"]["N001"][0]["ids"] = json!([]);
+            }
+            2 => {
+                spec["mask_instances"]["coffee"]["N001"][0]["byte_spans"] = json!([[3, 4]]);
+            }
+            3 => {
+                spec["mask_instances"]["coffee"]["N001"]
+                    .as_array_mut()
+                    .unwrap()
+                    .pop();
+            }
+            4 => {
+                spec["mask_instances"]["coffee"]["N001"][0]["ids"] = json!(["V003"]);
+            }
+            5 => {
+                spec["mask_instances"]["coffee"]["N001"][0]["byte_spans"] = json!([]);
+            }
+            6 => {
+                spec["mask_instances"]["coffee"]["N002"] =
+                    spec["mask_instances"]["coffee"]["N001"].clone();
+            }
+            7 => {
+                spec.as_object_mut().unwrap().remove("note_masks");
+            }
+            8 => {
+                spec["mask_instances"]["coffee"]["N001"][0]["ids"] = json!([" "]);
+            }
+            _ => unreachable!(),
+        }
+        save(&dir, &spec);
+        assert!(
+            ManualNoteHierarchy::load_with_masks(
+                &dir.path().join("categories.json"),
+                &dir.path().join("notes.json")
+            )
+            .is_err(),
+            "accepted invalid individual masks case {case}"
+        );
+    }
+}
+
+#[test]
+fn changing_notes_resets_the_individual_mask_and_analysis_preserves_it() {
+    let (dir, mut spec) = individual_fixture();
+    let source = serde_json::to_vec(&json!({"notes": [
+        {"note_id": "real", "text": TEXT},
+        {"note_id": "real-2", "text": TEXT}
+    ]}))
+    .unwrap();
+    fs::write(dir.path().join("notes.json"), &source).unwrap();
+    spec["source_sha256"] = json!(format!("{:x}", Sha256::digest(source)));
+    spec["notes"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({"note_id": "real-2", "note_short_id": "N002"}));
+    spec["nodes"][1]["note_ids"] = json!(["N001", "N002"]);
+    for category in ["root", "coffee"] {
+        spec["note_masks"][category]["N002"] = spec["note_masks"]["coffee"]["N001"].clone();
+        spec["mask_instances"][category]["N002"] = json!([
+            {"ids": ["V101"], "byte_spans": [range("coffee with")]},
+            {"ids": ["V102"], "byte_spans": [range("with milk")]}
+        ]);
+    }
+    let mut model = explorer(&dir, &spec);
+    key(&mut model, KeyCode::Enter);
+    key(&mut model, KeyCode::Char('O'));
+    let first = screen(&mut model);
+    key(&mut model, KeyCode::Char(']'));
+    let second_mask = screen(&mut model);
+    key(&mut model, KeyCode::Char('?'));
+    let analysis = screen(&mut model);
+    key(&mut model, KeyCode::Char(']'));
+    assert_eq!(screen(&mut model), analysis);
+    key(&mut model, KeyCode::Esc);
+    assert_eq!(screen(&mut model), second_mask);
+    key(&mut model, KeyCode::Char('l'));
+    let next = screen(&mut model);
+    for expected in ["N002", "Note 2 of 2", "V101", "Mask 1 of 2"] {
+        assert!(next.contains(expected), "missing {expected}: {next}");
+    }
+    key(&mut model, KeyCode::Char('h'));
+    assert_eq!(screen(&mut model), first);
+}
+
+#[test]
+fn one_mask_keeps_all_its_separated_fragments_under_one_id() {
+    let (dir, mut spec) = individual_fixture();
+    for category in ["root", "coffee"] {
+        spec["mask_instances"][category]["N001"][0]["byte_spans"] =
+            json!([range("coffee"), range("milk")]);
+        let spans: Vec<_> = spec["mask_instances"][category]["N001"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .flat_map(|mask| mask["byte_spans"].as_array().unwrap().iter().cloned())
+            .collect();
+        spec["note_masks"][category]["N001"] = json!(spans);
+    }
+    let mut model = explorer(&dir, &spec);
+    key(&mut model, KeyCode::Enter);
+    key(&mut model, KeyCode::Char('O'));
+    let first = screen(&mut model);
+    for expected in [
+        "V001",
+        "Mask 1 of 2",
+        "café ⟦coffee⟧ with ⟦milk⟧; tea later. coffee again.",
+    ] {
+        assert!(first.contains(expected), "missing {expected}: {first}");
+    }
+}

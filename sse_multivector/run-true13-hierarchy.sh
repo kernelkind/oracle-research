@@ -13,5 +13,5 @@ if [[ ! -x "$binary" ]]; then
     exit 1
 fi
 exec "$binary" --categories \
-    "$root/sse_multivector/navigation-research-v1/TRUE13/categories.json" \
+    "$root/sse_multivector/navigation-research-v1/TRUE13/categories-with-mask-ids.json" \
     "$root/sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json" "$@"

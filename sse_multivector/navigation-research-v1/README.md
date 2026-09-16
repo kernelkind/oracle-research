@@ -77,8 +77,11 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 Enter descends; N shows the current category's notes and all descendants.
 D shows only directly assigned notes, including direct notes also present in
 children. O shows notes that appear in none of the current category's children
-or deeper descendants. All three views show full original notes with the saved
-combined inline masks for the current category. Empty results stay empty;
+or deeper descendants. N and D combine the category's masks on each full note.
+O highlights one original mask at a time on the full note, showing its original
+vector ID and mask count. Use [ and ] to change masks; left/right changes notes
+and returns to the first mask. Identical masks list their original IDs together.
+Empty results stay empty;
 Escape returns to the category menu and preserves its selection.
 Category IDs identify the original groups. `--check` validates the saved view
 without opening the UI.
@@ -96,6 +99,16 @@ For Coffee, N shows 22 notes, D shows 18 directly assigned notes, and O shows
 13 notes absent from all descendants. O excludes a whole note when it appears
 below the category, even if its masks differ. This action works for every
 category in the existing UI; it does not change memberships or saved masks.
+
+The launcher uses [categories-with-mask-ids.json](./TRUE13/categories-with-mask-ids.json),
+which adds original individual masks and IDs to the unchanged saved view.
+The IDs come from native matched instances and the saved TRUE12 membership
+results, not from guessing how combined highlights were formed. Their combined
+ranges must exactly reproduce every category's saved highlights. The original
+categories.json, graph, scores and source notes remain unchanged. Coffee's O
+view contains 41 distinct masks across its 13 notes (43 IDs including aliases).
+Older category files without individual-mask records retain their previous
+combined display with an explicit “Individual masks unavailable” notice in O.
 
 ## Earlier focused Coffee and Tea review — TRUE12
 
