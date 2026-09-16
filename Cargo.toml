@@ -60,6 +60,10 @@ name = "true-review"
 path = "src/bin/true_review.rs"
 
 [[bin]]
+name = "note-sample-review"
+path = "src/bin/note_sample_review.rs"
+
+[[bin]]
 name = "sse-mask-review"
 path = "src/bin/sse_mask_review.rs"
 
