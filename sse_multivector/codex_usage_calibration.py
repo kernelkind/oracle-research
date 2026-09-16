@@ -18,7 +18,7 @@ from typing import IO, Any, Sequence
 
 WEEKLY_WINDOW_MINUTES = 7 * 24 * 60
 TRACKER_SCHEMA_VERSION = 1
-RUNNER = Path(__file__).with_name("codex_exec.py")
+RUNNER = Path(__file__).with_name("extraction_pipeline.py")
 
 
 def _object(value: object, name: str) -> dict[str, Any]:
@@ -83,7 +83,9 @@ class RateLimitSnapshot:
         value = _object(raw, "rate limit")
         limit_id = _string(value.get("limitId"), "rate limit.limitId")
         if limit_id != "codex":
-            raise ValueError(f"expected the default `codex` limit, received `{limit_id}`")
+            raise ValueError(
+                f"expected the default `codex` limit, received `{limit_id}`"
+            )
         primary = _object(value.get("primary"), "rate limit.primary")
         used_percent = _integer(
             primary.get("usedPercent"), "rate limit.primary.usedPercent"
@@ -123,9 +125,7 @@ class RateLimitSnapshot:
         value = _object(raw, "rate-limit snapshot")
         return cls(
             limit_id=_string(value.get("limit_id"), "snapshot.limit_id"),
-            used_percent=_integer(
-                value.get("used_percent"), "snapshot.used_percent"
-            ),
+            used_percent=_integer(value.get("used_percent"), "snapshot.used_percent"),
             window_duration_minutes=_integer(
                 value.get("window_duration_minutes"),
                 "snapshot.window_duration_minutes",
@@ -233,7 +233,9 @@ class CodexAppServer:
             try:
                 response = _object(json.loads(line), "app-server message")
             except json.JSONDecodeError as error:
-                raise RuntimeError(f"Codex app-server emitted invalid JSON: {error}") from error
+                raise RuntimeError(
+                    f"Codex app-server emitted invalid JSON: {error}"
+                ) from error
             if response.get("id") != request_id:
                 continue
             if "error" in response:
@@ -353,7 +355,9 @@ class CalibrationTracker:
         return self.observations[self.end_boundary_index].job_key
 
     def _measured_observations(self) -> list[JobObservation]:
-        start = 0 if self.start_boundary_index is None else self.start_boundary_index + 1
+        start = (
+            0 if self.start_boundary_index is None else self.start_boundary_index + 1
+        )
         end = (
             len(self.observations)
             if self.end_boundary_index is None
@@ -401,7 +405,9 @@ class CalibrationTracker:
 
     def observe(self, observation: JobObservation) -> None:
         if self.status not in {"waiting_for_first_boundary", "measuring"}:
-            raise ValueError(f"cannot append an observation after status `{self.status}`")
+            raise ValueError(
+                f"cannot append an observation after status `{self.status}`"
+            )
         if any(item.job_key == observation.job_key for item in self.observations):
             raise ValueError(f"duplicate job_key `{observation.job_key}`")
         previous_completed_notes = (
@@ -425,10 +431,14 @@ class CalibrationTracker:
             self._invalidate("rate-limit identity changed", observation.observed_at_utc)
             return
         if rate.window_duration_minutes != self.baseline.window_duration_minutes:
-            self._invalidate("rate-limit window duration changed", observation.observed_at_utc)
+            self._invalidate(
+                "rate-limit window duration changed", observation.observed_at_utc
+            )
             return
         if rate.resets_at != self.baseline.resets_at:
-            self._invalidate("rate-limit reset timestamp changed", observation.observed_at_utc)
+            self._invalidate(
+                "rate-limit reset timestamp changed", observation.observed_at_utc
+            )
             return
         previous_percent = (
             self.baseline.used_percent
@@ -457,7 +467,9 @@ class CalibrationTracker:
 
     def timeout(self, ended_at_utc: str) -> None:
         if self.status not in {"waiting_for_first_boundary", "measuring"}:
-            raise ValueError(f"cannot time out calibration after status `{self.status}`")
+            raise ValueError(
+                f"cannot time out calibration after status `{self.status}`"
+            )
         self.status = "timed_out"
         self.ended_at_utc = _string(ended_at_utc, "timeout")
 
@@ -525,7 +537,9 @@ class CalibrationTracker:
                 return None
             expected = _string(key, name)
             matches = [
-                index for index, item in enumerate(observations) if item.job_key == expected
+                index
+                for index, item in enumerate(observations)
+                if item.job_key == expected
             ]
             if len(matches) != 1:
                 raise ValueError(f"{name} does not identify one observation")
@@ -536,9 +550,7 @@ class CalibrationTracker:
             started_at_utc=_string(value.get("started_at_utc"), "started_at_utc"),
             observations=observations,
             status=_string(value.get("status"), "status"),
-            start_boundary_index=find_index(
-                start_key, "start_boundary_job_key"
-            ),
+            start_boundary_index=find_index(start_key, "start_boundary_job_key"),
             end_boundary_index=find_index(end_key, "end_boundary_job_key"),
             ended_at_utc=value.get("ended_at_utc"),
             invalid_reason=value.get("invalid_reason"),
@@ -548,14 +560,20 @@ class CalibrationTracker:
         return tracker
 
 
-def _load_pipeline_runtime(config_path: Path) -> tuple[Path, Path, Path]:
+def _load_pipeline_runtime(config_path: Path, codex_home: Path) -> Path:
     try:
-        from codex_exec import RunnerConfig
+        from extraction_pipeline import RunnerConfig
     except ImportError:
-        from sse_multivector.codex_exec import RunnerConfig
+        from sse_multivector.extraction_pipeline import RunnerConfig
 
     config = RunnerConfig.load(config_path)
-    return config.codex_binary, config.codex_home, config.run_directory
+    if config.provider != "openai-codex":
+        raise ValueError("Codex usage calibration requires the subscription provider")
+    if config.auth_file != (codex_home / "auth.json").resolve():
+        raise ValueError(
+            "calibration codex_home must contain the pipeline's explicit auth_file"
+        )
+    return config.run_directory
 
 
 @dataclass(frozen=True)
@@ -600,7 +618,9 @@ def _read_single_appended_result(
     try:
         return _object(json.loads(appended), "appended generation result")
     except (UnicodeDecodeError, json.JSONDecodeError) as error:
-        raise ValueError(f"appended generation result is invalid JSON: {error}") from error
+        raise ValueError(
+            f"appended generation result is invalid JSON: {error}"
+        ) from error
 
 
 def _require_empty_new_calibration(results_path: Path, output_path: Path) -> None:
@@ -621,9 +641,15 @@ def _observation_from_record(
     if record.get("status") != "succeeded":
         raise ValueError("the newly appended generation job did not succeed")
     raw_usage = _object(record.get("usage"), "generation result usage")
+    # pi-ai input excludes cache reads/writes; output already includes reasoning.
+    uncached = _integer(raw_usage.get("input"), "usage.input")
+    cached = _integer(raw_usage.get("cacheRead"), "usage.cacheRead")
+    written = _integer(raw_usage.get("cacheWrite"), "usage.cacheWrite")
     usage = {
-        _string(key, "usage key"): _integer(value, f"usage.{key}")
-        for key, value in raw_usage.items()
+        "input_tokens": uncached + cached + written,
+        "cached_input_tokens": cached,
+        "cache_write_tokens": written,
+        "output_tokens": _integer(raw_usage.get("output"), "usage.output"),
     }
     raw_index = record.get("takeaway_index")
     if raw_index is not None:
@@ -646,12 +672,15 @@ def run_calibration(
     ledger_path: Path,
     *,
     max_seconds: float,
+    codex_binary: Path,
+    codex_home: Path,
 ) -> dict[str, object]:
     if max_seconds <= 0:
         raise ValueError("--max-seconds must be greater than zero")
     config_path = config_path.resolve()
     ledger_path = ledger_path.resolve()
-    codex_binary, codex_home, run_directory = _load_pipeline_runtime(config_path)
+    codex_home = codex_home.expanduser().resolve()
+    run_directory = _load_pipeline_runtime(config_path, codex_home)
     results_path = run_directory / "results.jsonl"
     if ledger_path.exists():
         tracker = CalibrationTracker.from_dict(
@@ -722,7 +751,9 @@ def run_calibration(
             try:
                 runner_status = _object(json.loads(completed.stdout), "runner status")
             except json.JSONDecodeError as error:
-                raise RuntimeError(f"bounded generation returned invalid JSON: {error}") from error
+                raise RuntimeError(
+                    f"bounded generation returned invalid JSON: {error}"
+                ) from error
             new_jobs = _integer(runner_status.get("new_jobs"), "runner new_jobs")
             completed_notes = _integer(
                 runner_status.get("completed_notes"), "runner completed_notes"
@@ -734,7 +765,9 @@ def run_calibration(
             generation_complete = runner_status.get("complete") is True
             if new_jobs == 0:
                 if not generation_complete:
-                    raise RuntimeError("bounded generation neither ran a job nor completed")
+                    raise RuntimeError(
+                        "bounded generation neither ran a job nor completed"
+                    )
                 if _result_ledger_state(results_path) != before:
                     raise RuntimeError(
                         "bounded generation changed its results ledger without running a job"
@@ -776,6 +809,18 @@ def _argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("config", type=Path)
     parser.add_argument("ledger", type=Path)
     parser.add_argument("--max-seconds", type=float, default=3600.0)
+    parser.add_argument(
+        "--codex-binary",
+        type=Path,
+        required=True,
+        help="Codex app-server executable used only to read account usage",
+    )
+    parser.add_argument(
+        "--codex-home",
+        type=Path,
+        required=True,
+        help="Explicit account home containing the pipeline auth_file",
+    )
     return parser
 
 
@@ -786,6 +831,8 @@ def main(arguments: Sequence[str] | None = None) -> int:
             parsed.config,
             parsed.ledger,
             max_seconds=parsed.max_seconds,
+            codex_binary=parsed.codex_binary,
+            codex_home=parsed.codex_home,
         )
         print(json.dumps(result, sort_keys=True))
         return 0

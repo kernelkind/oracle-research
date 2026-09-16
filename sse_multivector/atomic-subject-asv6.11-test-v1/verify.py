@@ -9,7 +9,7 @@ import sys
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 sys.path.insert(0, str(ROOT))
-from sse_multivector import codex_exec as runner
+from sse_multivector import generation_history as runner
 
 
 def read_json(path):
@@ -41,7 +41,7 @@ for field in unchanged_fields:
     assert manifest[field] == baseline[field], field
 for field in ["model", "reasoning_effort", "response_schema", "response_schema_sha256"]:
     assert manifest["subject"][field] == baseline["subject"][field], field
-assert sha((ROOT / "sse_multivector/codex_exec.py").read_bytes()) == manifest["wrapper_sha256"]
+assert sha(runner.source_bytes(ROOT / "sse_multivector/codex_exec.py")) == manifest["wrapper_sha256"]
 assert sha((HERE / "run/model-instructions.md").read_bytes()) == manifest["isolation"]["model_instructions_sha256"]
 assert read_json(HERE / "run/subject-output-schema.json") == manifest["subject"]["response_schema"]
 
@@ -77,7 +77,7 @@ prior_threads = {record["thread_id"] for record in prior_records}
 prior_workdirs = {record["argv"][record["argv"].index("--cd") + 1] for record in prior_records}
 assert not threads.intersection(prior_threads)
 assert not workdirs.intersection(prior_workdirs)
-changed = [path for path, digest in protected.items() if sha((ROOT / path).read_bytes()) != digest]
+changed = [path for path, digest in protected.items() if sha(runner.source_bytes(ROOT / path)) != digest]
 allowed_docs = {
     "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/README.md",
     "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/status.json",

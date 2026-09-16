@@ -18,7 +18,7 @@ GOAL = HERE.parent
 ROOT = GOAL.parents[1]
 FROZEN_COMMIT = 'bd0fb4089a09d908c4516ace1b29718d9c333c39'
 sys.path.insert(0, str(ROOT))
-from sse_multivector import codex_exec as runner
+from sse_multivector import generation_history as runner
 
 
 def check(condition, message):
@@ -195,7 +195,7 @@ def verify():
     for group in ['frozen_sha256', 'protected_sha256']:
         for relative, digest in preflight[group].items():
             path = ROOT / relative
-            check(sha(path.read_bytes()) == digest, f'{group}: {relative}')
+            check(sha(runner.source_bytes(path)) == digest, f'{group}: {relative}')
             check(sha(frozen_bytes(path)) == digest, f'freeze commit mismatch: {relative}')
     plan, proposal = read(GOAL / 'plan.json'), read(HERE / 'proposal.json')
     versions, trials = proposal['design']['prompts'], proposal['design']['trials']

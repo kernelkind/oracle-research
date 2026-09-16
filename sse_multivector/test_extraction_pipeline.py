@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 
 
-RUNNER = Path(__file__).with_name("codex_exec.py")
+RUNNER = Path(__file__).with_name("extraction_pipeline.py")
 CLAIM_RUNNER = Path(__file__).with_name("claim_exec.py")
 APPROVED_PROMINENCE_PROMPT = """Assign a prominence score to the one fixed takeaway below.
 
@@ -31,7 +31,7 @@ Use the full integer range rather than treating the scale anchors as the only al
 Return only a JSON object: {"prominence":0}"""
 
 
-FAKE_CODEX = r"""#!/usr/bin/env python3
+FAKE_RUNNER = r"""#!/usr/bin/env python3
 import json
 import os
 from pathlib import Path
@@ -39,7 +39,7 @@ import sys
 
 
 def append_log(value):
-    path = Path(os.environ["FAKE_CODEX_LOG"])
+    path = Path(os.environ["FAKE_RUNNER_LOG"])
     existing = []
     if path.exists():
         existing = json.loads(path.read_text(encoding="utf-8"))
@@ -48,20 +48,15 @@ def append_log(value):
 
 
 if "--version" in sys.argv:
-    print("codex-cli fixture-1.0")
+    print("oracle-model-runner/1 pi-ai/fixture")
+    raise SystemExit(0)
+if "--identity" in sys.argv:
+    print(json.dumps({"runner_version": "oracle-model-runner/1", "runner_sha256": "e" * 64, "pi_ai_version": "fixture"}))
     raise SystemExit(0)
 
-if len(sys.argv) > 1 and sys.argv[1] == "login":
-    append_log({
-        "kind": "login",
-        "argv": sys.argv[1:],
-        "codex_home": os.environ.get("CODEX_HOME"),
-    })
-    raise SystemExit(0)
-
-prompt = sys.stdin.read()
+request = json.loads(sys.stdin.read())
+prompt = request["prompt"]
 argv = sys.argv[1:]
-output_path = Path(argv[argv.index("--output-last-message") + 1])
 if prompt.startswith("GENERIC PROMPT"):
     stage = "prompt"
 elif prompt.startswith("CLAIM INSTRUCTION"):
@@ -78,13 +73,14 @@ append_log({
     "kind": "exec",
     "stage": stage,
     "argv": argv,
-    "codex_home": os.environ.get("CODEX_HOME"),
+    "auth_file": argv[argv.index("--auth-file") + 1] if "--auth-file" in argv else None,
+    "request": request,
     "cwd": os.getcwd(),
     "cwd_entries": sorted(os.listdir()),
     "prompt": prompt,
     "output_schema_text": (
-        Path(argv[argv.index("--output-schema") + 1]).read_text(encoding="utf-8")
-        if "--output-schema" in argv else None
+        json.dumps(request["schema"], ensure_ascii=False, separators=(",", ":")) + "\n"
+        if "schema" in request else None
     ),
     "credential_environment": {
         key: value
@@ -93,27 +89,27 @@ append_log({
     },
 })
 
-mutation_path = os.environ.get("FAKE_CODEX_MUTATE_PATH")
+mutation_path = os.environ.get("FAKE_RUNNER_MUTATE_PATH")
 if mutation_path is not None:
     path = Path(mutation_path)
     path.write_bytes(path.read_bytes() + b"\n")
 
-if os.environ.get("FAKE_CODEX_FAIL_STAGE") == stage:
+if os.environ.get("FAKE_RUNNER_FAIL_STAGE") == stage:
     print("fixture child failure", file=sys.stderr)
     raise SystemExit(23)
 
 if stage == "prompt":
     response_object = None
     output_text = os.environ.get(
-        "FAKE_CODEX_PROMPT_RESPONSE", f"Response to: {prompt}"
+        "FAKE_RUNNER_PROMPT_RESPONSE", f"Response to: {prompt}"
     )
 elif stage == "takeaway":
     response = (
         ["Tea helps the author."]
-        if os.environ.get("FAKE_CODEX_REVISED_TAKEAWAYS") == "1"
+        if os.environ.get("FAKE_RUNNER_REVISED_TAKEAWAYS") == "1"
         else
         []
-        if os.environ.get("FAKE_CODEX_EMPTY_TAKEAWAYS") == "1"
+        if os.environ.get("FAKE_RUNNER_EMPTY_TAKEAWAYS") == "1"
         else [
             "The author finds Rust pleasant.",
             "Tea helps the author.",
@@ -132,7 +128,7 @@ elif stage == "claim":
         else ["Rust is pleasant.", "Tea helps."]
     )
 elif stage == "prominence":
-    invalid_prominence = os.environ.get("FAKE_CODEX_INVALID_PROMINENCE")
+    invalid_prominence = os.environ.get("FAKE_RUNNER_INVALID_PROMINENCE")
     response = {
         "bool": True,
         "string": "85",
@@ -143,9 +139,9 @@ elif stage == "prominence":
         invalid_prominence,
         85 if "The author finds Rust pleasant." in prompt else 25,
     )
-elif os.environ.get("FAKE_CODEX_INVALID_MASK") == "1":
+elif os.environ.get("FAKE_RUNNER_INVALID_MASK") == "1":
     response = ["not present in the source note"]
-elif os.environ.get("FAKE_CODEX_URL_MASK") == "1":
+elif os.environ.get("FAKE_RUNNER_URL_MASK") == "1":
     response = ["https://example.com/source"]
 elif "The author finds Rust pleasant." in prompt:
     response = ["Rust is pleasant"]
@@ -163,45 +159,155 @@ if stage != "prompt":
         }[stage]: response,
     }
     output_text = json.dumps(response_object)
-output_path.write_text(output_text, encoding="utf-8")
-print(json.dumps({"type": "thread.started", "thread_id": "fixture-thread"}))
-print(json.dumps({"type": "turn.started"}))
-if os.environ.get("FAKE_CODEX_MISSING_COMPLETION") == "1":
-    raise SystemExit(0)
-print(json.dumps({
-    "type": "item.completed",
-    "item": {
-        "id": "fixture-message",
-        "type": "agent_message",
-        "text": output_text,
-    },
-}))
-print(json.dumps({
-    "type": "turn.completed",
-    "usage": {
-        "input_tokens": 100,
-        "cached_input_tokens": 0,
-        "output_tokens": 20,
-        "reasoning_output_tokens": 5,
-    },
-}))
+import hashlib
+valid = os.environ.get("FAKE_RUNNER_MISSING_COMPLETION") != "1"
+result = {
+    "provider": request["provider"], "model": request["model"],
+    "reasoning": request["reasoning"], "runner_version": "oracle-model-runner/1",
+    "runner_sha256": "e" * 64, "pi_ai_version": "fixture",
+    "prompt_sha256": hashlib.sha256(prompt.encode()).hexdigest(),
+    "schema_sha256": hashlib.sha256(json.dumps(request["schema"], ensure_ascii=False, separators=(",", ":")).encode()).hexdigest() if "schema" in request else None,
+    "raw_text": output_text, "output": json.loads(output_text) if "schema" in request else output_text,
+    "valid": valid, "error": None, "validation_error": None,
+    "stop_reason": "stop" if valid else "length", "http_attempts": 1,
+    "usage": {"input_tokens": 100, "cached_input_tokens": 0, "output_tokens": 20, "reasoning_output_tokens": 5},
+    "request": {"body": {"model": request["model"], ("input" if request["provider"] == "openai-codex" else "messages"): [{"role": "user", "content": prompt}], **(({"text": {"format": {"schema": request["schema"]}}} if request["provider"] == "openai-codex" else {"response_format": {"json_schema": {"schema": request["schema"]}}}) if "schema" in request else {})}}, "response_metadata": {},
+}
+result.update(json.loads(os.environ.get("FAKE_RUNNER_RESULT_OVERRIDE", "{}")))
+print(json.dumps(result))
 """
 
 
-class CodexExecRunnerTests(unittest.TestCase):
+class ExtractionPipelineTests(unittest.TestCase):
+    def test_prior_run_reuse_requires_the_same_provider(self):
+        self.prepare_prior_run_reuse()
+        config = json.loads(self.config_path.read_text())
+        config.update(provider="openrouter", auth_file=None, max_output_tokens=4096)
+        self.config_path.write_text(json.dumps(config))
+        before = len(self.calls())
+        result = self.invoke()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("reuse source provider", result.stderr)
+        self.assertEqual(before, len(self.calls()))
+
+    def test_direct_openrouter_passes_explicit_output_cap_and_timeout(self):
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-B",
+                str(RUNNER),
+                "prompt",
+                "--runner-binary",
+                str(self.fake_runner),
+                "--provider",
+                "openrouter",
+                "--model",
+                "candidate/label",
+                "--reasoning-effort",
+                "provider-default",
+                "--max-output-tokens",
+                "128",
+                "--timeout-seconds",
+                "42",
+                "--text",
+                "GENERIC PROMPT OPENROUTER",
+            ],
+            env={**os.environ, "FAKE_RUNNER_LOG": str(self.log_path)},
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout, "Response to: GENERIC PROMPT OPENROUTER")
+        call = self.calls()[0]
+        self.assertEqual(call["argv"], ["run", "--send"])
+        self.assertEqual(call["request"]["provider"], "openrouter")
+        self.assertEqual(call["request"]["max_output_tokens"], 128)
+        self.assertEqual(call["request"]["timeout_seconds"], 42)
+
+    def test_model_result_is_bound_to_request_identity_schema_and_completion(
+        self,
+    ) -> None:
+        for field, value in (
+            ("reasoning", "wrong"),
+            ("schema_sha256", "invalid-digest"),
+            ("runner_sha256", "b" * 64),
+            ("runner_version", "wrong"),
+            ("stop_reason", "length"),
+            ("http_attempts", 2),
+            ("output", {"takeaways": ["changed"]}),
+        ):
+            with self.subTest(field=field):
+                self.run_directory = self.root / field
+                self.write_config()
+                before = len(self.calls())
+                result = self.invoke(
+                    extra_environment={
+                        "FAKE_RUNNER_RESULT_OVERRIDE": json.dumps({field: value})
+                    }
+                )
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual(len(self.calls()), before + 1)
+                record = json.loads((self.run_directory / "results.jsonl").read_text())
+                self.assertEqual(record["status"], "failed")
+                self.assertEqual(record["model_result"][field], value)
+                self.assertFalse((self.run_directory / "output.json").exists())
+
+    def test_resume_revalidates_saved_native_result_provenance_without_sending(self):
+        for field, value in (
+            ("provider", "openrouter"),
+            ("runner_sha256", "b" * 64),
+            ("final_output_sha256", "c" * 64),
+            ("usage", {"input": 999}),
+        ):
+            with self.subTest(field=field):
+                self.run_directory = self.root / ("cached-" + field)
+                self.write_config()
+                completed = self.invoke()
+                self.assertEqual(completed.returncode, 0, completed.stderr)
+                path = self.run_directory / "results.jsonl"
+                records = [json.loads(line) for line in path.read_text().splitlines()]
+                records[0][field] = value
+                path.write_text(
+                    "".join(json.dumps(record) + "\n" for record in records)
+                )
+                before = len(self.calls())
+                resumed = self.invoke()
+                self.assertNotEqual(resumed.returncode, 0)
+                self.assertEqual(before, len(self.calls()))
+
+    def test_pipeline_passes_exact_prompt_and_schema_to_generic_runner(self) -> None:
+        config = json.loads(self.config_path.read_text())
+        self.assertEqual(config["provider"], "openai-codex")
+        completed = self.invoke()
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        call = self.calls()[0]
+        self.assertEqual(
+            call["argv"], ["run", "--send", "--auth-file", str(self.auth_path)]
+        )
+        self.assertEqual(call["request"]["provider"], "openai-codex")
+        self.assertEqual(call["request"]["model"], "candidate/takeaway")
+        self.assertEqual(call["request"]["reasoning"], "high")
+        self.assertEqual(
+            call["request"]["prompt"],
+            "TAKEAWAY INSTRUCTION\n\n<post>\nRust is pleasant. Tea helps.\n</post>",
+        )
+        self.assertEqual(call["request"]["schema"]["required"], ["takeaways"])
+        self.assertNotIn("system", call["request"])
+        self.assertNotIn("tools", call["request"])
+
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
-        self.fake_codex = self.root / "codex"
-        self.fake_codex.write_text(FAKE_CODEX, encoding="utf-8")
-        self.fake_codex.chmod(0o755)
+        self.fake_runner = self.root / "codex"
+        self.fake_runner.write_text(FAKE_RUNNER, encoding="utf-8")
+        self.fake_runner.chmod(0o755)
         self.log_path = self.root / "codex-calls.json"
-        self.codex_home = self.root / "dedicated-codex-home"
-        self.codex_home.mkdir(mode=0o700)
-        self.auth_path = self.codex_home / "auth.json"
-        self.auth_path.write_text("fixture credentials", encoding="utf-8")
-        self.auth_path.chmod(0o600)
+        self.auth_file = self.root / "auth.json"
+        self.auth_path = self.auth_file
+        self.auth_file.write_text("fixture credentials", encoding="utf-8")
+        self.auth_file.chmod(0o600)
         self.run_directory = self.root / "run"
         self.notes_path = self.root / "notes.json"
         self.notes_path.write_text(
@@ -262,7 +368,7 @@ class CodexExecRunnerTests(unittest.TestCase):
     def write_config(
         self,
         *,
-        codex_home: Path | None = None,
+        auth_file: Path | None = None,
         takeaway_effort: str | None = "high",
         takeaway_model: str = "candidate/takeaway",
     ) -> None:
@@ -277,8 +383,9 @@ class CodexExecRunnerTests(unittest.TestCase):
             json.dumps(
                 {
                     "schema_version": 1,
-                    "codex_binary": str(self.fake_codex),
-                    "codex_home": str(codex_home or self.codex_home),
+                    "runner_binary": str(self.fake_runner),
+                    "provider": "openai-codex",
+                    "auth_file": str(auth_file or self.auth_file),
                     "input_path": str(self.notes_path),
                     "run_directory": str(self.run_directory),
                     "takeaway": takeaway,
@@ -299,7 +406,7 @@ class CodexExecRunnerTests(unittest.TestCase):
         extra_environment: dict[str, str] | None = None,
     ) -> subprocess.CompletedProcess[str]:
         environment = os.environ.copy()
-        environment["FAKE_CODEX_LOG"] = str(self.log_path)
+        environment["FAKE_RUNNER_LOG"] = str(self.log_path)
         environment["CODEX_URL"] = "https://ambient-codex.invalid"
         environment["CODEX_SQLITE_HOME"] = "/ambient/codex-sqlite"
         environment["CODEX_ACCESS_TOKEN"] = "ambient-codex-token"
@@ -326,8 +433,9 @@ class CodexExecRunnerTests(unittest.TestCase):
             json.dumps(
                 {
                     "schema_version": 1,
-                    "codex_binary": str(self.fake_codex),
-                    "codex_home": str(self.codex_home),
+                    "runner_binary": str(self.fake_runner),
+                    "provider": "openai-codex",
+                    "auth_file": str(self.auth_file),
                     "input_path": str(self.notes_path),
                     "run_directory": str(self.subject_run_directory),
                     "subject": {
@@ -347,7 +455,7 @@ class CodexExecRunnerTests(unittest.TestCase):
         extra_environment: dict[str, str] | None = None,
     ) -> subprocess.CompletedProcess[str]:
         environment = os.environ.copy()
-        environment["FAKE_CODEX_LOG"] = str(self.log_path)
+        environment["FAKE_RUNNER_LOG"] = str(self.log_path)
         environment["CODEX_URL"] = "https://ambient-codex.invalid"
         environment["OPENAI_API_KEY"] = "ambient-openai-key"
         environment.update(extra_environment or {})
@@ -371,8 +479,9 @@ class CodexExecRunnerTests(unittest.TestCase):
             json.dumps(
                 {
                     "schema_version": 1,
-                    "codex_binary": str(self.fake_codex),
-                    "codex_home": str(self.codex_home),
+                    "runner_binary": str(self.fake_runner),
+                    "provider": "openai-codex",
+                    "auth_file": str(self.auth_file),
                     "input_path": str(self.notes_path),
                     "run_directory": str(self.claim_run_directory),
                     "claim": {
@@ -392,7 +501,7 @@ class CodexExecRunnerTests(unittest.TestCase):
         extra_environment: dict[str, str] | None = None,
     ) -> subprocess.CompletedProcess[str]:
         environment = os.environ.copy()
-        environment["FAKE_CODEX_LOG"] = str(self.log_path)
+        environment["FAKE_RUNNER_LOG"] = str(self.log_path)
         environment["CODEX_URL"] = "https://ambient-codex.invalid"
         environment["OPENAI_API_KEY"] = "ambient-openai-key"
         environment.update(extra_environment or {})
@@ -418,7 +527,7 @@ class CodexExecRunnerTests(unittest.TestCase):
         extra_environment: dict[str, str] | None = None,
     ) -> subprocess.CompletedProcess[str]:
         environment = os.environ.copy()
-        environment["FAKE_CODEX_LOG"] = str(self.log_path)
+        environment["FAKE_RUNNER_LOG"] = str(self.log_path)
         environment["CODEX_URL"] = "https://ambient-codex.invalid"
         environment["OPENAI_API_KEY"] = "ambient-openai-key"
         environment.update(extra_environment or {})
@@ -449,7 +558,7 @@ class CodexExecRunnerTests(unittest.TestCase):
         temporary_root = self.root / "direct-temporary-files"
         temporary_root.mkdir(exist_ok=True)
         environment = os.environ.copy()
-        environment["FAKE_CODEX_LOG"] = str(self.log_path)
+        environment["FAKE_RUNNER_LOG"] = str(self.log_path)
         environment["TMPDIR"] = str(temporary_root)
         environment["CODEX_URL"] = "https://ambient-codex.invalid"
         environment["OPENAI_API_KEY"] = "ambient-openai-key"
@@ -458,10 +567,12 @@ class CodexExecRunnerTests(unittest.TestCase):
             sys.executable,
             str(RUNNER),
             "prompt",
-            "--codex-home",
-            str(self.codex_home),
-            "--codex-binary",
-            str(self.fake_codex),
+            "--auth-file",
+            str(self.auth_file),
+            "--runner-binary",
+            str(self.fake_runner),
+            "--provider",
+            "openai-codex",
             "--text",
             text,
         ]
@@ -599,13 +710,12 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertEqual(["subject", "subject"], [call["stage"] for call in calls])
         self.assertEqual(2, len({call["cwd"] for call in calls}))
         for call in calls:
-            self.assertIn("--output-schema", call["argv"])
+            self.assertIn("schema", call["request"])
             self.assertEqual([], call["cwd_entries"])
-            self.assertIn("candidate/subject", call["argv"])
-            self.assertIn('model_reasoning_effort="low"', call["argv"])
+            self.assertEqual("candidate/subject", call["request"]["model"])
+            self.assertEqual("low", call["request"]["reasoning"])
         self.assertEqual(
-            "SUBJECT INSTRUCTION\n\n"
-            "<post>\nRust is pleasant. Tea helps.\n</post>",
+            "SUBJECT INSTRUCTION\n\n<post>\nRust is pleasant. Tea helps.\n</post>",
             calls[0]["prompt"],
         )
         self.assertEqual(
@@ -638,9 +748,7 @@ class CodexExecRunnerTests(unittest.TestCase):
             output["notes"],
         )
         manifest = json.loads(
-            (self.subject_run_directory / "manifest.json").read_text(
-                encoding="utf-8"
-            )
+            (self.subject_run_directory / "manifest.json").read_text(encoding="utf-8")
         )
         self.assertEqual("atomic_subject_generation", manifest["mode"])
         self.assertEqual("AS-test", manifest["subject"]["prompt_version"])
@@ -660,9 +768,7 @@ class CodexExecRunnerTests(unittest.TestCase):
             )
         )
         self.assertEqual(["subjects"], subject_schema["required"])
-        self.assertEqual(
-            "array", subject_schema["properties"]["subjects"]["type"]
-        )
+        self.assertEqual("array", subject_schema["properties"]["subjects"]["type"])
         self.assertFalse(
             (self.subject_run_directory / "mask-output-schema.json").exists()
         )
@@ -689,8 +795,7 @@ class CodexExecRunnerTests(unittest.TestCase):
 
     def test_claims_generates_ordered_claims_from_exact_note_text(self) -> None:
         exact_text = (
-            "This does not happen on Nostr. "
-            "nostr:npub1qqqqqqqqqqqqqqqqqqqq?relay=test"
+            "This does not happen on Nostr. nostr:npub1qqqqqqqqqqqqqqqqqqqq?relay=test"
         )
         self.notes_path.write_text(
             json.dumps(
@@ -711,7 +816,7 @@ class CodexExecRunnerTests(unittest.TestCase):
             f"CLAIM INSTRUCTION\n\nText:\n{exact_text}",
             calls[0]["prompt"],
         )
-        self.assertIn("--output-schema", calls[0]["argv"])
+        self.assertIn("schema", calls[0]["request"])
         self.assertEqual([], calls[0]["cwd_entries"])
 
         output = json.loads(
@@ -776,24 +881,30 @@ class CodexExecRunnerTests(unittest.TestCase):
 
     def test_subjects_resumes_and_retries_only_failed_jobs(self) -> None:
         failed = self.invoke_subjects(
-            extra_environment={"FAKE_CODEX_FAIL_STAGE": "subject"}
+            extra_environment={"FAKE_RUNNER_FAIL_STAGE": "subject"}
         )
 
         self.assertNotEqual(0, failed.returncode)
         self.assertFalse((self.subject_run_directory / "output.json").exists())
-        self.assertEqual(1, len([call for call in self.calls() if call["kind"] == "exec"]))
+        self.assertEqual(
+            1, len([call for call in self.calls() if call["kind"] == "exec"])
+        )
 
         blocked = self.invoke_subjects()
 
         self.assertNotEqual(0, blocked.returncode)
         self.assertIn("--retry-failed", blocked.stderr)
-        self.assertEqual(1, len([call for call in self.calls() if call["kind"] == "exec"]))
+        self.assertEqual(
+            1, len([call for call in self.calls() if call["kind"] == "exec"])
+        )
 
         retried = self.invoke_subjects("--retry-failed")
 
         self.assertEqual(0, retried.returncode, retried.stderr)
         self.assertTrue((self.subject_run_directory / "output.json").is_file())
-        self.assertEqual(2, len([call for call in self.calls() if call["kind"] == "exec"]))
+        self.assertEqual(
+            2, len([call for call in self.calls() if call["kind"] == "exec"])
+        )
 
         records = [
             json.loads(line)
@@ -802,7 +913,9 @@ class CodexExecRunnerTests(unittest.TestCase):
             .splitlines()
         ]
         self.assertEqual([1, 2], [record["attempt"] for record in records])
-        self.assertEqual(["failed", "succeeded"], [record["status"] for record in records])
+        self.assertEqual(
+            ["failed", "succeeded"], [record["status"] for record in records]
+        )
 
         calls_before = len(self.calls())
         resumed = self.invoke_subjects()
@@ -846,9 +959,11 @@ class CodexExecRunnerTests(unittest.TestCase):
             json.loads(second.stdout),
         )
         self.assertTrue((self.subject_run_directory / "output.json").is_file())
-        self.assertEqual(2, len([call for call in self.calls() if call["kind"] == "exec"]))
+        self.assertEqual(
+            2, len([call for call in self.calls() if call["kind"] == "exec"])
+        )
 
-    def test_runs_each_generation_in_a_fresh_isolated_codex_exec(self) -> None:
+    def test_runs_each_generation_in_a_fresh_isolated_extraction_pipeline(self) -> None:
         completed = self.invoke()
 
         self.assertEqual(0, completed.returncode, completed.stderr)
@@ -860,80 +975,41 @@ class CodexExecRunnerTests(unittest.TestCase):
         )
         self.assertEqual(3, len({call["cwd"] for call in calls}))
         for call in calls:
-            argv = call["argv"]
-            self.assertIn("exec", argv)
-            self.assertIn("--ephemeral", argv)
-            self.assertIn("--ignore-user-config", argv)
-            self.assertIn("--ignore-rules", argv)
-            self.assertIn("--strict-config", argv)
-            self.assertIn("--skip-git-repo-check", argv)
-            self.assertIn("--cd", argv)
-            self.assertEqual(call["cwd"], argv[argv.index("--cd") + 1])
-            self.assertIn("--sandbox", argv)
-            self.assertIn("read-only", argv)
-            self.assertIn("--output-schema", argv)
-            self.assertIn("--output-last-message", argv)
-            self.assertIn("--json", argv)
-            self.assertIn("--color", argv)
-            self.assertEqual("never", argv[argv.index("--color") + 1])
-            self.assertNotIn("resume", argv)
-            self.assertIn('web_search="disabled"', argv)
-            self.assertIn('approval_policy="never"', argv)
-            self.assertIn('shell_environment_policy.inherit="none"', argv)
-            self.assertIn("project_root_markers=[]", argv)
-            model_instructions = self.run_directory / "model-instructions.md"
-            self.assertIn(
-                f"model_instructions_file={json.dumps(str(model_instructions))}",
-                argv,
-            )
-            for context_override in (
-                "agents.enabled=false",
-                "include_permissions_instructions=false",
-                "include_apps_instructions=false",
-                "include_collaboration_mode_instructions=false",
-                "include_environment_context=false",
-                "skills.include_instructions=false",
-            ):
-                self.assertIn(context_override, argv)
-            adjacent_arguments = set(zip(argv, argv[1:]))
-            for feature in (
-                "shell_tool",
-                "unified_exec",
-                "multi_agent",
-                "apps",
-                "plugins",
-                "browser_use",
-                "computer_use",
-                "image_generation",
-            ):
-                self.assertIn(("--disable", feature), adjacent_arguments)
-            self.assertEqual(str(self.codex_home), call["codex_home"])
             self.assertEqual(
-                {"CODEX_HOME": str(self.codex_home)},
-                call["credential_environment"],
+                ["run", "--send", "--auth-file", str(self.auth_file)], call["argv"]
             )
-            self.assertTrue(Path(call["cwd"]).is_relative_to(self.codex_home))
+            self.assertEqual(str(self.auth_file), call["auth_file"])
+            self.assertEqual({}, call["credential_environment"])
             self.assertEqual([], call["cwd_entries"])
-        self.assertIn("--model", calls[0]["argv"])
-        self.assertIn("candidate/takeaway", calls[0]["argv"])
-        self.assertIn('model_reasoning_effort="high"', calls[0]["argv"])
-        self.assertIn("candidate/mask", calls[1]["argv"])
-        self.assertIn('model_reasoning_effort="medium"', calls[1]["argv"])
+            self.assertEqual(
+                {
+                    "provider",
+                    "model",
+                    "reasoning",
+                    "prompt",
+                    "schema",
+                    "timeout_seconds",
+                },
+                set(call["request"]),
+            )
+            self.assertNotIn("tools", call["request"])
+            self.assertNotIn("system", call["request"])
+            self.assertNotIn("history", call["request"])
+            self.assertNotIn("resume", call["argv"])
+        self.assertEqual("candidate/takeaway", calls[0]["request"]["model"])
+        self.assertEqual("high", calls[0]["request"]["reasoning"])
+        self.assertEqual("candidate/mask", calls[1]["request"]["model"])
+        self.assertEqual("medium", calls[1]["request"]["reasoning"])
         self.assertEqual(
-            "TAKEAWAY INSTRUCTION\n\n" "<post>\nRust is pleasant. Tea helps.\n</post>",
+            "TAKEAWAY INSTRUCTION\n\n<post>\nRust is pleasant. Tea helps.\n</post>",
             calls[0]["prompt"],
         )
         self.assertIn(
             "<takeaway>\nThe author finds Rust pleasant.\n</takeaway>",
             calls[1]["prompt"],
         )
-        self.assertEqual(0o700, self.codex_home.stat().st_mode & 0o777)
-        self.assertEqual(
-            "Follow the user's instructions.\n",
-            (self.run_directory / "model-instructions.md").read_text(
-                encoding="utf-8"
-            ),
-        )
+        self.assertEqual(0o600, self.auth_file.stat().st_mode & 0o777)
+        self.assertFalse((self.run_directory / "model-instructions.md").exists())
 
         output = json.loads(
             (self.run_directory / "output.json").read_text(encoding="utf-8")
@@ -969,25 +1045,17 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertEqual("high", manifest["takeaway"]["reasoning_effort"])
         self.assertEqual("candidate/mask", manifest["mask"]["model"])
         self.assertEqual("medium", manifest["mask"]["reasoning_effort"])
-        self.assertEqual("codex-cli fixture-1.0", manifest["codex_version"])
+        self.assertEqual("oracle-model-runner/1", manifest["runner_version"])
         self.assertEqual(
-            "Follow the user's instructions.\n",
-            manifest["isolation"]["model_instructions"],
-        )
-        self.assertEqual(
-            hashlib.sha256(b"Follow the user's instructions.\n").hexdigest(),
-            manifest["isolation"]["model_instructions_sha256"],
-        )
-        self.assertEqual(
-            [
-                "agents.enabled=false",
-                "include_permissions_instructions=false",
-                "include_apps_instructions=false",
-                "include_collaboration_mode_instructions=false",
-                "include_environment_context=false",
-                "skills.include_instructions=false",
-            ],
-            manifest["isolation"]["runtime_context_overrides"],
+            {
+                "fresh_process_per_job": True,
+                "fresh_context_per_job": True,
+                "system_instructions": "",
+                "tools": [],
+                "history": [],
+                "transport": "pi-ai",
+            },
+            manifest["isolation"],
         )
 
     def test_pipeline_v2_scores_each_takeaway_in_its_own_process(self) -> None:
@@ -1004,8 +1072,8 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertEqual(5, len({call["cwd"] for call in calls}))
         first_prominence = calls[1]
         second_prominence = calls[3]
-        self.assertIn("candidate/prominence", first_prominence["argv"])
-        self.assertIn('model_reasoning_effort="high"', first_prominence["argv"])
+        self.assertEqual("candidate/prominence", first_prominence["request"]["model"])
+        self.assertEqual("high", first_prominence["request"]["reasoning"])
         self.assertIn(
             "<complete_post>\nRust is pleasant. Tea helps.\n</complete_post>",
             first_prominence["prompt"],
@@ -1019,9 +1087,7 @@ class CodexExecRunnerTests(unittest.TestCase):
             "<takeaway>\nTea helps the author.\n</takeaway>",
             second_prominence["prompt"],
         )
-        self.assertNotIn(
-            "The author finds Rust pleasant.", second_prominence["prompt"]
-        )
+        self.assertNotIn("The author finds Rust pleasant.", second_prominence["prompt"])
         output = json.loads(
             (self.run_directory / "output.json").read_text(encoding="utf-8")
         )
@@ -1072,7 +1138,7 @@ class CodexExecRunnerTests(unittest.TestCase):
                 self.enable_prominence()
 
                 completed = self.invoke(
-                    extra_environment={"FAKE_CODEX_INVALID_PROMINENCE": invalid}
+                    extra_environment={"FAKE_RUNNER_INVALID_PROMINENCE": invalid}
                 )
 
                 self.assertNotEqual(0, completed.returncode)
@@ -1083,7 +1149,7 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.enable_prominence()
 
         completed = self.invoke(
-            extra_environment={"FAKE_CODEX_INVALID_PROMINENCE": "zero"}
+            extra_environment={"FAKE_RUNNER_INVALID_PROMINENCE": "zero"}
         )
 
         self.assertEqual(0, completed.returncode, completed.stderr)
@@ -1098,9 +1164,7 @@ class CodexExecRunnerTests(unittest.TestCase):
     def test_pipeline_v2_skips_later_stages_for_empty_takeaways(self) -> None:
         self.enable_prominence()
 
-        completed = self.invoke(
-            extra_environment={"FAKE_CODEX_EMPTY_TAKEAWAYS": "1"}
-        )
+        completed = self.invoke(extra_environment={"FAKE_RUNNER_EMPTY_TAKEAWAYS": "1"})
 
         self.assertEqual(0, completed.returncode, completed.stderr)
         calls = [call for call in self.calls() if call["kind"] == "exec"]
@@ -1124,7 +1188,7 @@ class CodexExecRunnerTests(unittest.TestCase):
     def test_pipeline_v2_reuses_prominence_when_resuming_a_failed_mask(self) -> None:
         self.enable_prominence()
 
-        failed = self.invoke(extra_environment={"FAKE_CODEX_FAIL_STAGE": "mask"})
+        failed = self.invoke(extra_environment={"FAKE_RUNNER_FAIL_STAGE": "mask"})
 
         self.assertNotEqual(0, failed.returncode)
         self.assertEqual(
@@ -1179,7 +1243,7 @@ class CodexExecRunnerTests(unittest.TestCase):
             "semantic output contradicted the frozen prompt",
             "--max-new-jobs",
             "1",
-            extra_environment={"FAKE_CODEX_REVISED_TAKEAWAYS": "1"},
+            extra_environment={"FAKE_RUNNER_REVISED_TAKEAWAYS": "1"},
         )
         self.assertEqual(0, retried.returncode, retried.stderr)
         records = [
@@ -1310,9 +1374,7 @@ class CodexExecRunnerTests(unittest.TestCase):
     def test_pipeline_v2_normalizes_prominence_input_but_not_mask_input(
         self,
     ) -> None:
-        identifier = (
-            "nostr:npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"
-        )
+        identifier = "nostr:npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"
         original = f"Rust is pleasant. {identifier} Tea helps."
         self.notes_path.write_text(
             json.dumps(
@@ -1416,8 +1478,9 @@ class CodexExecRunnerTests(unittest.TestCase):
             json.dumps(
                 {
                     "schema_version": 1,
-                    "codex_binary": str(self.fake_codex),
-                    "codex_home": str(self.codex_home),
+                    "runner_binary": str(self.fake_runner),
+                    "provider": "openai-codex",
+                    "auth_file": str(self.auth_file),
                     "run_directory": str(prompt_run_directory),
                     "model": "candidate/label",
                     "reasoning_effort": "low",
@@ -1432,41 +1495,37 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertEqual(0, completed.returncode, completed.stderr)
         calls = [call for call in self.calls() if call["kind"] == "exec"]
         self.assertEqual(["prompt", "prompt"], [call["stage"] for call in calls])
-        self.assertEqual([row["text"] for row in prompts], [call["prompt"] for call in calls])
+        self.assertEqual(
+            [row["text"] for row in prompts], [call["prompt"] for call in calls]
+        )
         self.assertEqual(2, len({call["cwd"] for call in calls}))
         for call in calls:
-            argv = call["argv"]
-            self.assertNotIn("--output-schema", argv)
-            self.assertIn("--output-last-message", argv)
-            self.assertIn('web_search="disabled"', argv)
-            self.assertIn('approval_policy="never"', argv)
-            self.assertIn("candidate/label", argv)
-            self.assertIn('model_reasoning_effort="low"', argv)
-            self.assertEqual([], call["cwd_entries"])
+            self.assertNotIn("schema", call["request"])
             self.assertEqual(
-                {"CODEX_HOME": str(self.codex_home)},
-                call["credential_environment"],
+                ["run", "--send", "--auth-file", str(self.auth_file)], call["argv"]
             )
-            adjacent_arguments = set(zip(argv, argv[1:]))
-            for feature in (
-                "shell_tool",
-                "unified_exec",
-                "multi_agent",
-                "apps",
-                "plugins",
-                "browser_use",
-                "computer_use",
-                "image_generation",
-            ):
-                self.assertIn(("--disable", feature), adjacent_arguments)
+            self.assertEqual("candidate/label", call["request"]["model"])
+            self.assertEqual("low", call["request"]["reasoning"])
+            self.assertEqual([], call["cwd_entries"])
+            self.assertEqual({}, call["credential_environment"])
+            self.assertEqual(
+                {"provider", "model", "reasoning", "prompt", "timeout_seconds"},
+                set(call["request"]),
+            )
 
         output = json.loads(
             (prompt_run_directory / "output.json").read_text(encoding="utf-8")
         )
         self.assertEqual(
             [
-                {"prompt_id": "segment-1", "response": "Response to: GENERIC PROMPT ONE"},
-                {"prompt_id": "segment-2", "response": "Response to: GENERIC PROMPT TWO"},
+                {
+                    "prompt_id": "segment-1",
+                    "response": "Response to: GENERIC PROMPT ONE",
+                },
+                {
+                    "prompt_id": "segment-2",
+                    "response": "Response to: GENERIC PROMPT TWO",
+                },
             ],
             output["responses"],
         )
@@ -1492,8 +1551,9 @@ class CodexExecRunnerTests(unittest.TestCase):
         config_path = self.root / "prompt-config.json"
         config = {
             "schema_version": 1,
-            "codex_binary": str(self.fake_codex),
-            "codex_home": str(self.codex_home),
+            "runner_binary": str(self.fake_runner),
+            "provider": "openai-codex",
+            "auth_file": str(self.auth_file),
             "run_directory": str(prompt_run_directory),
             "model": "candidate/label",
             "reasoning_effort": "low",
@@ -1505,7 +1565,7 @@ class CodexExecRunnerTests(unittest.TestCase):
 
         completed = self.invoke_prompt_config(
             config_path,
-            extra_environment={"FAKE_CODEX_PROMPT_RESPONSE": response},
+            extra_environment={"FAKE_RUNNER_PROMPT_RESPONSE": response},
         )
 
         self.assertEqual(0, completed.returncode, completed.stderr)
@@ -1514,14 +1574,9 @@ class CodexExecRunnerTests(unittest.TestCase):
         call = calls[0]
         self.assertEqual("GENERIC PROMPT ONE", call["prompt"])
         self.assertEqual([], call["cwd_entries"])
-        self.assertEqual(
-            {"CODEX_HOME": str(self.codex_home)}, call["credential_environment"]
-        )
+        self.assertEqual({}, call["credential_environment"])
         schema_path = prompt_run_directory / "prompt-output-schema.json"
-        self.assertIn(
-            ("--output-schema", str(schema_path)),
-            zip(call["argv"], call["argv"][1:]),
-        )
+        self.assertEqual(schema, call["request"]["schema"])
         schema_bytes = schema_path.read_bytes()
         self.assertEqual(schema_bytes.decode("utf-8"), call["output_schema_text"])
         saved_schema = json.loads(schema_bytes)
@@ -1557,34 +1612,37 @@ class CodexExecRunnerTests(unittest.TestCase):
 
         config["run_directory"] = str(self.root / "reordered-prompt-run")
         config_path.write_text(json.dumps(config), encoding="utf-8")
-        reordered = self.invoke_prompt_config(config_path)
+        reordered = self.invoke_prompt_config(
+            config_path, extra_environment={"FAKE_RUNNER_PROMPT_RESPONSE": response}
+        )
         self.assertEqual(0, reordered.returncode, reordered.stderr)
         reordered_manifest = json.loads(
             (self.root / "reordered-prompt-run" / "manifest.json").read_text(
                 encoding="utf-8"
             )
         )
-        self.assertNotEqual(
-            schema_sha256, reordered_manifest["response_schema_sha256"]
-        )
+        self.assertNotEqual(schema_sha256, reordered_manifest["response_schema_sha256"])
 
     def test_generic_prompt_rejects_invalid_output_schema_before_spawning(self) -> None:
         config_path = self.root / "prompt-config.json"
         for schema in (None, [], {}, {"type": "array"}):
             with self.subTest(schema=schema):
                 config_path.write_text(
-                    json.dumps({
-                        "schema_version": 1,
-                        "codex_binary": str(self.fake_codex),
-                        "codex_home": str(self.codex_home),
-                        "run_directory": str(self.root / "prompt-run"),
-                        "model": "candidate/label",
-                        "reasoning_effort": "low",
-                        "prompts": [
-                            {"prompt_id": "segment-1", "text": "GENERIC PROMPT ONE"}
-                        ],
-                        "output_schema": schema,
-                    }),
+                    json.dumps(
+                        {
+                            "schema_version": 1,
+                            "runner_binary": str(self.fake_runner),
+                            "provider": "openai-codex",
+                            "auth_file": str(self.auth_file),
+                            "run_directory": str(self.root / "prompt-run"),
+                            "model": "candidate/label",
+                            "reasoning_effort": "low",
+                            "prompts": [
+                                {"prompt_id": "segment-1", "text": "GENERIC PROMPT ONE"}
+                            ],
+                            "output_schema": schema,
+                        }
+                    ),
                     encoding="utf-8",
                 )
                 completed = self.invoke_prompt_config(config_path)
@@ -1612,8 +1670,9 @@ class CodexExecRunnerTests(unittest.TestCase):
 
         completed = self.invoke_direct_prompt(
             "GENERIC PROMPT DIRECT",
-            "--output-schema", str(schema_path),
-            extra_environment={"FAKE_CODEX_PROMPT_RESPONSE": response},
+            "--output-schema",
+            str(schema_path),
+            extra_environment={"FAKE_RUNNER_PROMPT_RESPONSE": response},
         )
 
         self.assertEqual(0, completed.returncode, completed.stderr)
@@ -1626,7 +1685,7 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertEqual(["subject", "context"], list(saved_schema["properties"]))
         self.assertEqual([], call["cwd_entries"])
         self.assertEqual([], list((self.root / "direct-temporary-files").iterdir()))
-        self.assertEqual([], list((self.codex_home / "job-workspaces").iterdir()))
+        self.assertFalse((self.root / "job-workspaces").exists())
         self.assertEqual(schema, json.loads(schema_path.read_text(encoding="utf-8")))
 
     def test_direct_prompt_prints_response_without_persistent_run_files(self) -> None:
@@ -1638,15 +1697,15 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertEqual(1, len(calls))
         call = calls[0]
         self.assertEqual("GENERIC PROMPT DIRECT", call["prompt"])
-        self.assertIn("candidate/label", call["argv"])
-        self.assertIn('model_reasoning_effort="low"', call["argv"])
+        self.assertEqual("candidate/label", call["request"]["model"])
+        self.assertEqual("low", call["request"]["reasoning"])
         self.assertEqual([], call["cwd_entries"])
         self.assertEqual(
-            {"CODEX_HOME": str(self.codex_home)},
+            {},
             call["credential_environment"],
         )
         self.assertEqual([], list((self.root / "direct-temporary-files").iterdir()))
-        self.assertEqual([], list((self.codex_home / "job-workspaces").iterdir()))
+        self.assertFalse((self.root / "job-workspaces").exists())
         self.assertFalse(self.run_directory.exists())
 
     def test_direct_prompt_reads_text_from_stdin(self) -> None:
@@ -1662,14 +1721,14 @@ class CodexExecRunnerTests(unittest.TestCase):
     ) -> None:
         completed = self.invoke_direct_prompt(
             "GENERIC PROMPT DIRECT",
-            extra_environment={"FAKE_CODEX_FAIL_STAGE": "prompt"},
+            extra_environment={"FAKE_RUNNER_FAIL_STAGE": "prompt"},
         )
 
         self.assertNotEqual(0, completed.returncode)
-        self.assertIn("codex exec exited with status 23", completed.stderr)
+        self.assertIn("model runner exited with status 23", completed.stderr)
         self.assertIn("fixture child failure", completed.stderr)
         self.assertEqual([], list((self.root / "direct-temporary-files").iterdir()))
-        self.assertEqual([], list((self.codex_home / "job-workspaces").iterdir()))
+        self.assertFalse((self.root / "job-workspaces").exists())
 
     def test_direct_prompt_requires_explicit_model_and_effort(self) -> None:
         missing_model = self.invoke_direct_prompt(
@@ -1696,8 +1755,9 @@ class CodexExecRunnerTests(unittest.TestCase):
             json.dumps(
                 {
                     "schema_version": 1,
-                    "codex_binary": str(self.fake_codex),
-                    "codex_home": str(self.codex_home),
+                    "runner_binary": str(self.fake_runner),
+                    "provider": "openai-codex",
+                    "auth_file": str(self.auth_file),
                     "run_directory": str(prompt_run_directory),
                     "model": "candidate/label",
                     "reasoning_effort": "low",
@@ -1711,7 +1771,7 @@ class CodexExecRunnerTests(unittest.TestCase):
 
         failed = self.invoke_prompt_config(
             config_path,
-            extra_environment={"FAKE_CODEX_FAIL_STAGE": "prompt"},
+            extra_environment={"FAKE_RUNNER_FAIL_STAGE": "prompt"},
         )
 
         self.assertNotEqual(0, failed.returncode)
@@ -1742,8 +1802,9 @@ class CodexExecRunnerTests(unittest.TestCase):
             json.dumps(
                 {
                     "schema_version": 1,
-                    "codex_binary": str(self.fake_codex),
-                    "codex_home": str(self.codex_home),
+                    "runner_binary": str(self.fake_runner),
+                    "provider": "openai-codex",
+                    "auth_file": str(self.auth_file),
                     "run_directory": str(self.root / "prompt-run"),
                     "model": "candidate/label",
                     "reasoning_effort": "low",
@@ -1762,24 +1823,24 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertIn("duplicate prompt_id", completed.stderr)
         self.assertEqual([], self.calls())
 
-    def test_refuses_the_users_normal_codex_home_before_spawning(self) -> None:
-        self.write_config(codex_home=Path.home() / ".codex")
+    def test_refuses_the_users_normal_auth_file_before_spawning(self) -> None:
+        self.write_config(auth_file=Path.home() / ".codex")
 
         completed = self.invoke()
 
         self.assertNotEqual(0, completed.returncode)
-        self.assertIn("dedicated CODEX_HOME", completed.stderr)
+        self.assertIn("not a regular file", completed.stderr)
         self.assertEqual([], self.calls())
         self.assertFalse(self.run_directory.exists())
 
-    def test_does_not_chmod_or_use_an_existing_insecure_codex_home(self) -> None:
-        self.codex_home.chmod(0o755)
+    def test_does_not_chmod_or_use_an_existing_insecure_auth_file(self) -> None:
+        self.auth_file.chmod(0o755)
 
         completed = self.invoke()
 
         self.assertNotEqual(0, completed.returncode)
-        self.assertIn("must have mode 0700", completed.stderr)
-        self.assertEqual(0o755, self.codex_home.stat().st_mode & 0o777)
+        self.assertIn("must have mode 0600", completed.stderr)
+        self.assertEqual(0o755, self.auth_file.stat().st_mode & 0o777)
         self.assertEqual([], self.calls())
 
     def test_refuses_to_run_without_file_credentials(self) -> None:
@@ -1788,7 +1849,7 @@ class CodexExecRunnerTests(unittest.TestCase):
         completed = self.invoke()
 
         self.assertNotEqual(0, completed.returncode)
-        self.assertIn("auth.json is missing", completed.stderr)
+        self.assertIn("auth_file is missing", completed.stderr)
         self.assertEqual([], self.calls())
 
     def test_refuses_insecure_file_credential_permissions_without_changing_them(
@@ -1799,11 +1860,13 @@ class CodexExecRunnerTests(unittest.TestCase):
         completed = self.invoke()
 
         self.assertNotEqual(0, completed.returncode)
-        self.assertIn("auth.json must have mode 0600", completed.stderr)
+        self.assertIn("auth_file must have mode 0600", completed.stderr)
         self.assertEqual(0o644, self.auth_path.stat().st_mode & 0o777)
         self.assertEqual([], self.calls())
 
-    def test_uses_object_root_output_schemas_required_by_codex(self) -> None:
+    def test_uses_object_root_output_schemas_required_by_the_extraction_contract(
+        self,
+    ) -> None:
         completed = self.invoke()
 
         self.assertEqual(0, completed.returncode, completed.stderr)
@@ -1813,9 +1876,7 @@ class CodexExecRunnerTests(unittest.TestCase):
             )
         )
         mask_schema = json.loads(
-            (self.run_directory / "mask-output-schema.json").read_text(
-                encoding="utf-8"
-            )
+            (self.run_directory / "mask-output-schema.json").read_text(encoding="utf-8")
         )
         self.assertEqual("object", takeaway_schema["type"])
         self.assertEqual(["takeaways"], takeaway_schema["required"])
@@ -1834,10 +1895,10 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertEqual([], self.calls())
 
     def test_failed_child_is_audited_and_requires_an_explicit_retry(self) -> None:
-        failed = self.invoke(extra_environment={"FAKE_CODEX_FAIL_STAGE": "mask"})
+        failed = self.invoke(extra_environment={"FAKE_RUNNER_FAIL_STAGE": "mask"})
 
         self.assertNotEqual(0, failed.returncode)
-        self.assertIn("codex exec exited with status 23", failed.stderr)
+        self.assertIn("model runner exited with status 23", failed.stderr)
         self.assertFalse((self.run_directory / "output.json").exists())
         records = [
             json.loads(line)
@@ -1846,7 +1907,7 @@ class CodexExecRunnerTests(unittest.TestCase):
             .splitlines()
         ]
         self.assertEqual(["succeeded", "failed"], [row["status"] for row in records])
-        self.assertEqual("codex exec exited with status 23", records[-1]["error"])
+        self.assertEqual("model runner exited with status 23", records[-1]["error"])
         self.assertEqual("fixture child failure\n", records[-1]["stderr"])
         self.assertNotIn("fixture child failure", failed.stderr)
 
@@ -1861,7 +1922,9 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertTrue((self.run_directory / "output.json").is_file())
         self.assertEqual(calls_before + 2, len(self.calls()))
 
-    def test_max_new_jobs_pauses_and_resumes_without_replaying_cached_jobs(self) -> None:
+    def test_max_new_jobs_pauses_and_resumes_without_replaying_cached_jobs(
+        self,
+    ) -> None:
         self.enable_prominence()
 
         expected_stages = [
@@ -1907,9 +1970,11 @@ class CodexExecRunnerTests(unittest.TestCase):
             },
             json.loads(completed.stdout),
         )
-        self.assertEqual(5, len([call for call in self.calls() if call["kind"] == "exec"]))
+        self.assertEqual(
+            5, len([call for call in self.calls() if call["kind"] == "exec"])
+        )
 
-    def test_pipeline_v3_reuses_identical_prior_jobs_without_codex_calls(self) -> None:
+    def test_pipeline_v3_reuses_identical_prior_jobs_without_model_calls(self) -> None:
         _, source_run, provenance = self.prepare_prior_run_reuse()
         calls_before = len(self.calls())
         source_references = {}
@@ -1975,9 +2040,7 @@ class CodexExecRunnerTests(unittest.TestCase):
         config["mask"]["prompt_version"] = "MP-alias"
         self.config_path.write_text(json.dumps(config), encoding="utf-8")
 
-        completed = self.invoke(
-            extra_environment={"FAKE_CODEX_FAIL_STAGE": "mask"}
-        )
+        completed = self.invoke(extra_environment={"FAKE_RUNNER_FAIL_STAGE": "mask"})
 
         self.assertNotEqual(0, completed.returncode)
         new_calls = self.calls()[calls_before:]
@@ -2057,7 +2120,7 @@ class CodexExecRunnerTests(unittest.TestCase):
         calls_before = len(self.calls())
 
         completed = self.invoke(
-            extra_environment={"FAKE_CODEX_FAIL_STAGE": "takeaway"}
+            extra_environment={"FAKE_RUNNER_FAIL_STAGE": "takeaway"}
         )
 
         self.assertNotEqual(0, completed.returncode)
@@ -2077,7 +2140,7 @@ class CodexExecRunnerTests(unittest.TestCase):
                     "MPv3.4": (
                         "MASK INSTRUCTION\n\n<post>\n{POST}\n</post>\n\n"
                         "<takeaway>\n{TAKEAWAY}\n</takeaway>"
-                    )
+                    ),
                 }
             ),
             encoding="utf-8",
@@ -2089,10 +2152,7 @@ class CodexExecRunnerTests(unittest.TestCase):
         source_notes["notes"].append(
             {
                 "note_id": "note-2",
-                "text": (
-                    "Rust is pleasant. Tea helps. "
-                    "https://example.com/source"
-                ),
+                "text": ("Rust is pleasant. Tea helps. https://example.com/source"),
             }
         )
         self.notes_path.write_text(json.dumps(source_notes), encoding="utf-8")
@@ -2100,9 +2160,7 @@ class CodexExecRunnerTests(unittest.TestCase):
 
         output_path = source_run / "output.json"
         output = json.loads(output_path.read_text(encoding="utf-8"))
-        output["notes"][1]["takeaways"][0]["fragments"] = [
-            "https://example.com/source"
-        ]
+        output["notes"][1]["takeaways"][0]["fragments"] = ["https://example.com/source"]
         output_path.write_text(json.dumps(output), encoding="utf-8")
         results_path = source_run / "results.jsonl"
         records = [
@@ -2137,7 +2195,9 @@ class CodexExecRunnerTests(unittest.TestCase):
         target_output = json.loads(
             (self.run_directory / "output.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(["note-1"], [note["note_id"] for note in target_output["notes"]])
+        self.assertEqual(
+            ["note-1"], [note["note_id"] for note in target_output["notes"]]
+        )
 
     def test_pipeline_v3_rechecks_source_hashes_when_a_partial_run_exits(self) -> None:
         _, source_run, _ = self.prepare_prior_run_reuse()
@@ -2152,7 +2212,7 @@ class CodexExecRunnerTests(unittest.TestCase):
         completed = self.invoke(
             "--max-new-jobs",
             "1",
-            extra_environment={"FAKE_CODEX_MUTATE_PATH": str(source_results)},
+            extra_environment={"FAKE_RUNNER_MUTATE_PATH": str(source_results)},
         )
 
         self.assertNotEqual(0, completed.returncode)
@@ -2167,7 +2227,7 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.notes_path.write_text(json.dumps(notes), encoding="utf-8")
 
         completed = self.invoke(
-            extra_environment={"FAKE_CODEX_FAIL_STAGE": "takeaway"}
+            extra_environment={"FAKE_RUNNER_FAIL_STAGE": "takeaway"}
         )
 
         self.assertNotEqual(0, completed.returncode)
@@ -2185,9 +2245,7 @@ class CodexExecRunnerTests(unittest.TestCase):
         )
         self.mask_prompts.write_text(json.dumps(registry), encoding="utf-8")
 
-        completed = self.invoke(
-            extra_environment={"FAKE_CODEX_FAIL_STAGE": "mask"}
-        )
+        completed = self.invoke(extra_environment={"FAKE_RUNNER_FAIL_STAGE": "mask"})
 
         self.assertNotEqual(0, completed.returncode)
         new_calls = self.calls()[calls_before:]
@@ -2216,7 +2274,7 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertEqual(calls_before, len(self.calls()))
 
     def test_rejects_mask_fragments_absent_from_the_source_note(self) -> None:
-        completed = self.invoke(extra_environment={"FAKE_CODEX_INVALID_MASK": "1"})
+        completed = self.invoke(extra_environment={"FAKE_RUNNER_INVALID_MASK": "1"})
 
         self.assertNotEqual(0, completed.returncode)
         self.assertIn("is not present in the source note", completed.stderr)
@@ -2255,21 +2313,21 @@ class CodexExecRunnerTests(unittest.TestCase):
             encoding="utf-8",
         )
 
-        completed = self.invoke(extra_environment={"FAKE_CODEX_URL_MASK": "1"})
+        completed = self.invoke(extra_environment={"FAKE_RUNNER_URL_MASK": "1"})
 
         self.assertNotEqual(0, completed.returncode)
         self.assertIn("must not contain a URL", completed.stderr)
         self.assertFalse((self.run_directory / "output.json").exists())
 
-    def test_exit_zero_without_a_completed_turn_is_still_audited_as_failure(
+    def test_exit_zero_without_a_valid_completed_response_is_still_audited_as_failure(
         self,
     ) -> None:
         completed = self.invoke(
-            extra_environment={"FAKE_CODEX_MISSING_COMPLETION": "1"}
+            extra_environment={"FAKE_RUNNER_MISSING_COMPLETION": "1"}
         )
 
         self.assertNotEqual(0, completed.returncode)
-        self.assertIn("turn.completed", completed.stderr)
+        self.assertIn("valid completed response", completed.stderr)
         self.assertFalse((self.run_directory / "output.json").exists())
         record = json.loads(
             (self.run_directory / "results.jsonl")
@@ -2290,33 +2348,20 @@ class CodexExecRunnerTests(unittest.TestCase):
         self.assertIn("run manifest does not match", second.stderr)
         self.assertEqual(calls_before, len(self.calls()))
 
-    def test_login_uses_the_dedicated_home_and_file_credentials(self) -> None:
-        environment = os.environ.copy()
-        environment["FAKE_CODEX_LOG"] = str(self.log_path)
-
+    def test_login_is_not_an_extraction_workflow_and_never_changes_credentials(
+        self,
+    ) -> None:
+        before = self.auth_file.read_bytes()
         completed = subprocess.run(
-            [
-                sys.executable,
-                str(RUNNER),
-                "login",
-                "--codex-home",
-                str(self.codex_home),
-                "--codex-binary",
-                str(self.fake_codex),
-            ],
-            check=False,
+            [sys.executable, str(RUNNER), "login", "--auth-file", str(self.auth_file)],
             capture_output=True,
             text=True,
-            env=environment,
             timeout=30,
         )
-
-        self.assertEqual(0, completed.returncode, completed.stderr)
-        self.assertEqual(1, len(self.calls()))
-        call = self.calls()[0]
-        self.assertEqual("login", call["kind"])
-        self.assertEqual(str(self.codex_home), call["codex_home"])
-        self.assertIn('cli_auth_credentials_store="file"', call["argv"])
+        self.assertNotEqual(0, completed.returncode)
+        self.assertIn("invalid choice", completed.stderr)
+        self.assertEqual([], self.calls())
+        self.assertEqual(before, self.auth_file.read_bytes())
 
 
 if __name__ == "__main__":

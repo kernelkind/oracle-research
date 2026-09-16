@@ -1,3 +1,8 @@
+"""Reproduce this completed experiment's historical input/job records, not new calls.
+
+Printed job commands are archival Codex-format evidence. For new executions use
+run-model.sh or extraction_pipeline.py with explicit runtime configuration.
+"""
 from pathlib import Path
 import json, hashlib, re, importlib.util, sys
 R=Path("/home/dev/src/notedeck_worktrees/algos/oracle-mvp"); G=R/"sse_multivector/subject-prompt-goal-v1"; V=G/"asv6.23-validation-v1"
@@ -49,7 +54,8 @@ repeats=pick(repaired,4);repeatids={n["note_id"] for n in repeats}
 assert len(repeatids)==12
 original_repeat=json.loads((G/"final-repeat-input.json").read_text())["notes"]
 assert {n["note_id"] for n in original_repeat}=={n["note_id"] for n in pick(old,4)}
-spec=importlib.util.spec_from_file_location("sse_codex_exec",R/"sse_multivector/codex_exec.py");m=importlib.util.module_from_spec(spec);sys.modules[spec.name]=m;spec.loader.exec_module(m)
+sys.path.insert(0,str(R))
+from sse_multivector import generation_history as m
 template=json.loads((V/"repeat/D03-t2/config.json").read_text())
 prompt=(G/"asv6.23/ASv6.23.md").read_text().rstrip("\n")
 schema=json.loads((G/"asv6.23/output-schema.json").read_text())

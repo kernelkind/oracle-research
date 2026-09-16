@@ -1,19 +1,16 @@
 #!/usr/bin/env python3
-"""Generate source-bound claims without changing the preserved subject runner."""
+"""Generate source-bound claims through the shared extraction workflow."""
 
 from __future__ import annotations
 
 import argparse
 import json
-import subprocess
 import sys
-import tempfile
-import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Sequence
 
-import codex_exec as engine
+import extraction_pipeline as engine
 
 
 CLAIM_SCHEMA: dict[str, object] = {
@@ -32,8 +29,11 @@ CLAIM_SCHEMA: dict[str, object] = {
 @dataclass(frozen=True)
 class ClaimRunnerConfig:
     config_path: Path
-    codex_binary: Path
-    codex_home: Path
+    runner_binary: Path
+    auth_file: Path | None
+    provider: str
+    timeout_seconds: float
+    max_output_tokens: int | None
     input_path: Path
     run_directory: Path
     claim: engine.StageConfig
@@ -50,40 +50,42 @@ class ClaimRunnerConfig:
             "config",
             {
                 "schema_version",
-                "codex_binary",
-                "codex_home",
+                "runner_binary",
+                "auth_file",
                 "input_path",
                 "run_directory",
                 "claim",
-            },
+            }
+            | (engine.RUNTIME_FIELDS & value.keys()),
         )
         if value["schema_version"] != engine.SCHEMA_VERSION:
             raise engine.RunnerError("unsupported claim config schema version")
         config = cls(
             config_path=config_path,
-            codex_binary=engine._resolve_executable(
-                value["codex_binary"], "codex_binary", base
+            runner_binary=engine._resolve_executable(
+                value["runner_binary"], "runner_binary", base
             ),
-            codex_home=engine._resolve_path(value["codex_home"], "codex_home", base),
+            **engine._runtime_options(value, base),
             input_path=engine._resolve_path(value["input_path"], "input_path", base),
             run_directory=engine._resolve_path(
                 value["run_directory"], "run_directory", base
             ),
             claim=engine.StageConfig.load(value["claim"], "claim", base),
         )
-        engine._validate_codex_home(config.codex_home)
+        engine._validate_auth_file(config.auth_file)
         return config
 
 
-def _manifest(config: ClaimRunnerConfig, codex_version: str) -> dict[str, object]:
+def _manifest(config: ClaimRunnerConfig, runner_version: str) -> dict[str, object]:
     return {
-        "schema_version": engine.SCHEMA_VERSION,
+        "schema_version": 2,
         "mode": "claim_generation",
+        **engine._runtime_manifest(config),
         "wrapper_sha256": engine._sha256_file(Path(__file__).resolve()),
         "engine_sha256": engine._sha256_file(Path(engine.__file__).resolve()),
-        "codex_binary": str(config.codex_binary),
-        "codex_version": codex_version,
-        "codex_home": str(config.codex_home),
+        "runner_binary": str(config.runner_binary),
+        "runner_version": runner_version,
+        "auth_file": None if config.auth_file is None else str(config.auth_file),
         "input_path": str(config.input_path),
         "input_sha256": engine._sha256_file(config.input_path),
         "claim_envelope_version": "exact-note-text-v1",
@@ -98,11 +100,9 @@ def _render_prompt(prompt: str, note: engine.Note) -> str:
 
 
 def _validate_claims(value: object) -> list[str]:
-    response = engine._expect_object(value, "codex claim response")
-    engine._expect_fields(response, "codex claim response", {"claims"})
-    return engine._validate_string_array(
-        response["claims"], "claim", allow_empty=True
-    )
+    response = engine._expect_object(value, "model claim response")
+    engine._expect_fields(response, "model claim response", {"claims"})
+    return engine._validate_string_array(response["claims"], "claim", allow_empty=True)
 
 
 def _saved_claims(
@@ -110,11 +110,20 @@ def _saved_claims(
     *,
     manifest_sha256: str,
     wrapper_sha256: str,
-    codex_version: str,
+    runner_version: str,
     stage: engine.StageConfig,
     note: engine.Note,
     rendered_prompt: str,
+    config: ClaimRunnerConfig,
 ) -> list[str]:
+    engine.validate_model_receipt(
+        config,
+        stage,
+        rendered_prompt,
+        CLAIM_SCHEMA,
+        engine._load_json(config.run_directory / "manifest.json", "run manifest"),
+        record,
+    )
     job_key = f"claim:{note.note_id}"
     schema_sha256 = engine._sha256_bytes(engine._canonical_json_bytes(CLAIM_SCHEMA))
     if (
@@ -123,7 +132,7 @@ def _saved_claims(
         or record.get("stage") != "claim"
         or record.get("note_id") != note.note_id
         or record.get("wrapper_sha256") != wrapper_sha256
-        or record.get("codex_version") != codex_version
+        or record.get("runner_version") != runner_version
         or record.get("model") != stage.model
         or record.get("reasoning_effort") != stage.reasoning_effort
         or record.get("prompt_sha256")
@@ -138,7 +147,9 @@ def _saved_claims(
     )
     raw = record.get("final_output_raw")
     if not isinstance(raw, str):
-        raise engine.RunnerError(f"cached result for job `{job_key}` has no final output")
+        raise engine.RunnerError(
+            f"cached result for job `{job_key}` has no final output"
+        )
     if record.get("final_output_sha256") != engine._sha256_bytes(raw.encode("utf-8")):
         raise engine.RunnerError(
             f"cached result for job `{job_key}` has invalid final output provenance"
@@ -161,7 +172,7 @@ def _run_claim(
     config: ClaimRunnerConfig,
     manifest_sha256: str,
     wrapper_sha256: str,
-    codex_version: str,
+    runner_version: str,
     note: engine.Note,
     latest: dict[str, dict[str, Any]],
     retry_failed: bool,
@@ -175,10 +186,11 @@ def _run_claim(
             previous,
             manifest_sha256=manifest_sha256,
             wrapper_sha256=wrapper_sha256,
-            codex_version=codex_version,
+            runner_version=runner_version,
             stage=config.claim,
             note=note,
             rendered_prompt=prompt,
+            config=config,
         )
     if previous is not None and not retry_failed:
         raise engine.RunnerError(
@@ -187,57 +199,17 @@ def _run_claim(
         )
     budget.claim()
     attempt = 1 if previous is None else previous["attempt"] + 1
-    workspace_root = config.codex_home / "job-workspaces"
-    schema_path = config.run_directory / "claim-output-schema.json"
-    output_raw: str | None = None
-    stdout = ""
-    stderr = ""
-    exit_code: int | None = None
-    thread_id: str | None = None
-    usage: object = None
-    claims: list[str] | None = None
-    error_message: str | None = None
-    argv: list[str] = []
-    started_at = time.monotonic()
-
-    with tempfile.TemporaryDirectory(prefix="claim-", dir=workspace_root) as temporary:
-        workspace = Path(temporary).resolve()
-        response_path = workspace / "response.json"
-        argv = engine._build_exec_argv(
-            config, config.claim, workspace, schema_path, response_path
-        )
+    attempt_result = engine._invoke_model(config, config.claim, prompt, CLAIM_SCHEMA)
+    error_message = attempt_result["error"]
+    claims = None
+    if error_message is None:
         try:
-            completed = subprocess.run(
-                argv,
-                input=prompt,
-                check=False,
-                capture_output=True,
-                text=True,
-                cwd=workspace,
-                env=engine._isolated_environment(config.codex_home),
-            )
-            stdout = completed.stdout
-            stderr = completed.stderr
-            exit_code = completed.returncode
-            if response_path.exists():
-                output_raw = response_path.read_text(encoding="utf-8")
-            if exit_code != 0:
-                raise engine.RunnerError(f"codex exec exited with status {exit_code}")
-            thread_id, usage = engine._parse_event_stream(stdout)
-            if output_raw is None:
-                raise engine.RunnerError("codex exec did not write its final response")
-            try:
-                response = json.loads(output_raw)
-            except json.JSONDecodeError as error:
-                raise engine.RunnerError(
-                    f"codex final response is not valid JSON: {error}"
-                ) from error
-            claims = _validate_claims(response)
-        except (OSError, UnicodeError, engine.RunnerError) as error:
+            claims = _validate_claims(json.loads(attempt_result["final_output_raw"]))
+        except (json.JSONDecodeError, engine.RunnerError) as error:
             error_message = str(error)
 
     record: dict[str, object] = {
-        "schema_version": engine.SCHEMA_VERSION,
+        "schema_version": 2,
         "manifest_sha256": manifest_sha256,
         "job_key": job_key,
         "stage": "claim",
@@ -246,27 +218,13 @@ def _run_claim(
         "status": "failed" if error_message is not None else "succeeded",
         "model": config.claim.model,
         "reasoning_effort": config.claim.reasoning_effort,
-        "codex_version": codex_version,
+        "runner_version": runner_version,
         "wrapper_sha256": wrapper_sha256,
         "prompt_sha256": engine._sha256_bytes(prompt.encode("utf-8")),
         "response_schema_sha256": engine._sha256_bytes(
             engine._canonical_json_bytes(CLAIM_SCHEMA)
         ),
-        "argv": argv,
-        "exit_code": exit_code,
-        "elapsed_seconds": time.monotonic() - started_at,
-        "thread_id": thread_id,
-        "usage": usage,
-        "stdout_jsonl": stdout,
-        "stdout_sha256": engine._sha256_bytes(stdout.encode("utf-8")),
-        "stderr": stderr,
-        "stderr_sha256": engine._sha256_bytes(stderr.encode("utf-8")),
-        "final_output_raw": output_raw,
-        "final_output_sha256": (
-            None
-            if output_raw is None
-            else engine._sha256_bytes(output_raw.encode("utf-8"))
-        ),
+        **attempt_result,
         "response": claims,
         "error": error_message,
     }
@@ -290,10 +248,8 @@ def run_claims(
         raise engine.RunnerError("--max-new-jobs must be at least 1")
     config = ClaimRunnerConfig.load(config_path)
     notes = engine._load_notes(config.input_path)
-    engine._prepare_codex_home(config.codex_home)
-    engine._validate_file_credentials(config.codex_home)
-    codex_version = engine._codex_version(config)
-    manifest = _manifest(config, codex_version)
+    runner_version = engine._runner_version(config)
+    manifest = _manifest(config, runner_version)
     prepared = engine._prepare_manifest_directory(config.run_directory, manifest)
     engine._atomic_write(
         config.run_directory / "claim-output-schema.json",
@@ -313,7 +269,7 @@ def run_claims(
                 config=config,
                 manifest_sha256=prepared.manifest_sha256,
                 wrapper_sha256=prepared.provenance.active_wrapper_sha256,
-                codex_version=codex_version,
+                runner_version=runner_version,
                 note=note,
                 latest=latest,
                 retry_failed=retry_failed,

@@ -11,7 +11,7 @@ HERE = Path(__file__).resolve().parent
 GOAL = HERE.parent
 ROOT = GOAL.parents[1]
 sys.path.insert(0, str(ROOT))
-from sse_multivector import codex_exec as runner
+from sse_multivector import generation_history as runner
 
 
 def read(path):
@@ -30,7 +30,7 @@ plan = read(GOAL / 'plan.json')
 comparison = read(HERE / 'comparison.json')
 assert sha((GOAL / 'plan.json').read_bytes()) == '64c5e1a8b2897573f4e7f861173fc13a6a9734bda2a40d6d4fb42023d4a1f3fa'
 assert sha((GOAL / 'development-input.json').read_bytes()) == comparison['source_sha256']
-assert sha((ROOT / plan['unchanged']['runner']).read_bytes()) == plan['unchanged']['runner_sha256']
+assert sha(runner.source_bytes(ROOT / plan['unchanged']['runner'])) == plan['unchanged']['runner_sha256']
 for name in ['plan.json', 'selection.json', 'development-input.json', 'development-repeat-input.json', 'final-input.json', 'final-repeat-input.json']:
     original = subprocess.check_output(['git', 'show', 'ace3fa2667494f314bcc280f54aaf4c34e242fdc:sse_multivector/subject-prompt-goal-v1/' + name], cwd=ROOT)
     assert (GOAL / name).read_bytes() == original, name

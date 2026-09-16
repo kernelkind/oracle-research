@@ -3,7 +3,7 @@ import hashlib,json,subprocess,sys
 sys.dont_write_bytecode=True
 root=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(root))
-from sse_multivector import codex_exec as r
+from sse_multivector import generation_history as r
 p=root/'sse_multivector/subject-prompt-goal-v1'
 sha=lambda b:hashlib.sha256(b).hexdigest()
 plan=json.loads((p/'plan.json').read_text())
@@ -14,7 +14,7 @@ for name in ['plan.json','selection.json','development-input.json','development-
 registry=root/'sse_multivector/atomic-subject-prompt-versions.json'
 assert sha(registry.read_bytes())=='357772ff8c7f673982af976bf43d13a6c4ec5031f6b06ec2361046b9c8e4b95f'
 assert json.loads(registry.read_text())['frozen_atomic_subject_prompt_version']=='ASv6.8'
-assert sha((root/plan['unchanged']['runner']).read_bytes())==plan['unchanged']['runner_sha256']
+assert sha(r.source_bytes(root/plan['unchanged']['runner']))==plan['unchanged']['runner_sha256']
 baseline=json.loads((root/'sse_multivector/atomic-subject-asv6.11-test-v1/run/manifest.json').read_text())
 threads=set(); workdirs=set(); totals={}; run_reports=[]
 prior_paths=list((root/'sse_multivector').glob('atomic-subject-*/**/results.jsonl'))

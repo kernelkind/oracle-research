@@ -32,6 +32,12 @@ const NOTE_SET_SCHEMA_VERSION: u32 = 2;
 const PROPOSAL_SCHEMA_VERSION: u32 = 2;
 const REVIEW_SESSION_SCHEMA_VERSION: u32 = 2;
 const APPROVED_SCHEMA_VERSION: u32 = 2;
+// Frozen schema 1 generation contracts from b1649eb2f7b38ccea7d60e2e55bf70f5d7d85bcd.
+// Historical reviews must not depend on the removed Codex execution implementation.
+const LEGACY_SUBJECT_WRAPPER_SHA256: &str =
+    "ebf1942737069a49146d7336c6936dd2fa5cdd8d4b6a2b24274f01bc9f83e2fe";
+const LEGACY_CLAIM_WRAPPER_SHA256: &str =
+    "1d82bebc590ef676be9d6d40f7cbea1d3250f9a6084f17bf2714d896f5261c42";
 const PAGE_LINES: u16 = 10;
 const SUBJECT_INSTRUCTION: &str = "Enumerate every atomic subject explicitly and substantively discussed in the provided text.\n\nAn atomic subject is the smallest coherent semantic idea that remains meaningful as a distinct focus.\n\n<RAW NOTE>\n\nReturn only a JSON array of subject strings.";
 const MASK_INSTRUCTION: &str = "Mask only the narrowest portion or portions of the provided text that directly express the provided atomic subject.\n\nAtomic subject:\n<SUBJECT>\n\nText:\n<RAW NOTE>\n\nReturn only a JSON array of exact substrings copied from the text, in source order. If the subject is not expressed, return \"unsupported\".";
@@ -242,9 +248,16 @@ struct AtomicSubjectGenerationManifest {
     schema_version: u32,
     mode: String,
     wrapper_sha256: String,
-    codex_binary: String,
-    codex_version: String,
-    codex_home: String,
+    codex_binary: Option<String>,
+    codex_version: Option<String>,
+    codex_home: Option<String>,
+    runner_binary: Option<String>,
+    runner_version: Option<String>,
+    auth_file: Option<String>,
+    provider: Option<String>,
+    runner_sha256: Option<String>,
+    timeout_seconds: Option<u32>,
+    max_output_tokens: Option<u64>,
     input_path: String,
     input_sha256: String,
     subject_envelope_version: String,
@@ -260,9 +273,16 @@ struct ClaimGenerationManifest {
     mode: String,
     wrapper_sha256: String,
     engine_sha256: String,
-    codex_binary: String,
-    codex_version: String,
-    codex_home: String,
+    codex_binary: Option<String>,
+    codex_version: Option<String>,
+    codex_home: Option<String>,
+    runner_binary: Option<String>,
+    runner_version: Option<String>,
+    auth_file: Option<String>,
+    provider: Option<String>,
+    runner_sha256: Option<String>,
+    timeout_seconds: Option<u32>,
+    max_output_tokens: Option<u64>,
     input_path: String,
     input_sha256: String,
     claim_envelope_version: String,
@@ -341,7 +361,13 @@ struct PromptGenerationResult {
     attempt: u32,
     status: String,
     wrapper_sha256: String,
-    codex_version: String,
+    codex_version: Option<String>,
+    runner_version: Option<String>,
+    provider: Option<String>,
+    runner_sha256: Option<String>,
+    model_result: Option<serde_json::Value>,
+    stdout_json: Option<String>,
+    stdout_sha256: Option<String>,
     model: String,
     reasoning_effort: String,
     prompt_sha256: String,
@@ -349,6 +375,76 @@ struct PromptGenerationResult {
     final_output_raw: Option<String>,
     final_output_sha256: Option<String>,
     response: serde_json::Value,
+}
+
+impl PromptGenerationResult {
+    fn matches_runner(
+        &self,
+        schema_version: u32,
+        codex_version: Option<&str>,
+        runner_version: Option<&str>,
+        runner_sha256: Option<&str>,
+        provider: Option<&str>,
+    ) -> bool {
+        if self.schema_version != schema_version
+            || self.codex_version.as_deref() != codex_version
+            || self.runner_version.as_deref() != runner_version
+            || self.runner_sha256.as_deref() != runner_sha256
+            || self.provider.as_deref() != provider
+        {
+            return false;
+        }
+        if schema_version == 1 {
+            return self.model_result.is_none();
+        }
+        let Some(stdout) = self.stdout_json.as_deref() else {
+            return false;
+        };
+        if self.stdout_sha256.as_deref() != Some(sha256_bytes(stdout.as_bytes()).as_str()) {
+            return false;
+        }
+        let Some(result) = self.model_result.as_ref() else {
+            return self.status == "failed"
+                && self.final_output_raw.is_none()
+                && serde_json::from_str::<serde_json::Value>(stdout)
+                    .ok()
+                    .is_none_or(|value| !value.is_object());
+        };
+        if !result.is_object()
+            || serde_json::from_str::<serde_json::Value>(stdout).ok().as_ref() != Some(result)
+            || result["raw_text"].as_str() != self.final_output_raw.as_deref()
+        {
+            return false;
+        }
+        // Failed attempts may preserve malformed transport diagnostics rather than a
+        // completed model response. Their captured stdout and raw output still bind exactly.
+        if self.status == "failed" {
+            return true;
+        }
+        let field = match self.stage.as_str() {
+            "subject" => "subjects",
+            "claim" => "claims",
+            _ => return false,
+        };
+        // The runner hashes JSON.stringify(schema), preserving the workflow's field order,
+        // whereas response_schema_sha256 uses sorted JSON with a trailing newline.
+        let wire_schema = format!(
+            r#"{{"type":"object","properties":{{"{field}":{{"type":"array","items":{{"type":"string","minLength":1}}}}}},"required":["{field}"],"additionalProperties":false}}"#
+        );
+        result["runner_version"].as_str() == runner_version
+            && result["runner_sha256"].as_str() == runner_sha256
+            && result["provider"].as_str() == provider
+            && result["model"].as_str() == Some(self.model.as_str())
+            && result["reasoning"].as_str() == Some(self.reasoning_effort.as_str())
+            && result["prompt_sha256"].as_str() == Some(self.prompt_sha256.as_str())
+            && result["schema_sha256"].as_str() == Some(sha256_bytes(wire_schema.as_bytes()).as_str())
+            && result["raw_text"].as_str() == self.final_output_raw.as_deref()
+            && result["valid"] == true
+            && result["error"].is_null()
+            && result["validation_error"].is_null()
+            && result["stop_reason"] == "stop"
+            && result["output"] == serde_json::json!({(field): self.response})
+    }
 }
 
 #[derive(Serialize)]
@@ -1452,25 +1548,41 @@ fn load_verified_claim_review_run(run_directory: &Path) -> Result<VerifiedAtomic
 fn validate_atomic_subject_generation_manifest(
     manifest: &AtomicSubjectGenerationManifest,
 ) -> Result<()> {
-    if manifest.schema_version != 1 || manifest.mode != "atomic_subject_generation" {
+    if !matches!(manifest.schema_version, 1 | 2) || manifest.mode != "atomic_subject_generation" {
         return invalid("subject prompt review requires an atomic-subject generation run");
     }
-    let wrapper_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("sse_multivector")
-        .join("codex_exec.py");
-    let (_, wrapper_sha256) = load_bytes_snapshot(&wrapper_path)?;
+    let wrapper_sha256 = if manifest.schema_version == 1 {
+        LEGACY_SUBJECT_WRAPPER_SHA256.to_owned()
+    } else {
+        let wrapper_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("sse_multivector")
+            .join("extraction_pipeline.py");
+        load_bytes_snapshot(&wrapper_path)?.1
+    };
+    validate_generation_runner(
+        manifest.schema_version,
+        [
+            manifest.codex_binary.as_deref(),
+            manifest.codex_version.as_deref(),
+            manifest.codex_home.as_deref(),
+        ],
+        manifest.runner_binary.as_deref(),
+        manifest.runner_version.as_deref(),
+        manifest.auth_file.as_deref(),
+        manifest.provider.as_deref(),
+        manifest.runner_sha256.as_deref(),
+        manifest.timeout_seconds,
+        manifest.max_output_tokens,
+    )?;
     if !is_lower_hex(&manifest.input_sha256, 64)
         || manifest.wrapper_sha256 != wrapper_sha256
-        || manifest.codex_binary.trim().is_empty()
-        || manifest.codex_version.trim().is_empty()
-        || manifest.codex_home.trim().is_empty()
         || manifest.input_path.trim().is_empty()
         || manifest.subject_envelope_version != "xml-post-v1"
         || manifest.subject_input_normalization_version != "remove-long-ascii-nip19-identifiers-v2"
     {
         return invalid("subject generation manifest is incomplete");
     }
-    if manifest.isolation != expected_prompt_generation_isolation() {
+    if manifest.isolation != expected_prompt_generation_isolation(manifest.schema_version) {
         return invalid(
             "prompt generation did not use a fresh process and isolated context per job",
         );
@@ -1485,25 +1597,46 @@ fn validate_atomic_subject_generation_manifest(
 }
 
 fn validate_claim_generation_manifest(manifest: &ClaimGenerationManifest) -> Result<()> {
-    if manifest.schema_version != 1 || manifest.mode != "claim_generation" {
+    if !matches!(manifest.schema_version, 1 | 2) || manifest.mode != "claim_generation" {
         return invalid("claim review requires a claim generation run");
     }
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("sse_multivector");
-    let (_, wrapper_sha256) = load_bytes_snapshot(&root.join("claim_exec.py"))?;
-    let (_, engine_sha256) = load_bytes_snapshot(&root.join("codex_exec.py"))?;
+    let (wrapper_sha256, engine_sha256) = if manifest.schema_version == 1 {
+        (
+            LEGACY_CLAIM_WRAPPER_SHA256.to_owned(),
+            LEGACY_SUBJECT_WRAPPER_SHA256.to_owned(),
+        )
+    } else {
+        (
+            load_bytes_snapshot(&root.join("claim_exec.py"))?.1,
+            load_bytes_snapshot(&root.join("extraction_pipeline.py"))?.1,
+        )
+    };
+    validate_generation_runner(
+        manifest.schema_version,
+        [
+            manifest.codex_binary.as_deref(),
+            manifest.codex_version.as_deref(),
+            manifest.codex_home.as_deref(),
+        ],
+        manifest.runner_binary.as_deref(),
+        manifest.runner_version.as_deref(),
+        manifest.auth_file.as_deref(),
+        manifest.provider.as_deref(),
+        manifest.runner_sha256.as_deref(),
+        manifest.timeout_seconds,
+        manifest.max_output_tokens,
+    )?;
     if !is_lower_hex(&manifest.input_sha256, 64)
         || manifest.wrapper_sha256 != wrapper_sha256
         || manifest.engine_sha256 != engine_sha256
-        || manifest.codex_binary.trim().is_empty()
-        || manifest.codex_version.trim().is_empty()
-        || manifest.codex_home.trim().is_empty()
         || manifest.input_path.trim().is_empty()
         || manifest.claim_envelope_version != "exact-note-text-v1"
         || manifest.claim_input_normalization_version != "none-v1"
     {
         return invalid("claim generation manifest is incomplete");
     }
-    if manifest.isolation != expected_prompt_generation_isolation() {
+    if manifest.isolation != expected_prompt_generation_isolation(manifest.schema_version) {
         return invalid("claim generation did not use a fresh isolated process per job");
     }
     validate_prompt_generation_stage(
@@ -1537,7 +1670,81 @@ fn validate_prompt_generation_stage(
     Ok(())
 }
 
-fn expected_prompt_generation_isolation() -> serde_json::Value {
+#[allow(clippy::too_many_arguments)]
+fn validate_generation_runner(
+    schema_version: u32,
+    legacy_fields: [Option<&str>; 3],
+    runner_binary: Option<&str>,
+    runner_version: Option<&str>,
+    auth_file: Option<&str>,
+    provider: Option<&str>,
+    runner_sha256: Option<&str>,
+    timeout_seconds: Option<u32>,
+    max_output_tokens: Option<u64>,
+) -> Result<()> {
+    let runner_fields = [runner_binary, runner_version, provider, runner_sha256];
+    if schema_version == 1 {
+        if legacy_fields.iter().any(|value| value.is_none_or(|value| value.trim().is_empty()))
+            || runner_fields.iter().any(Option::is_some)
+            || auth_file.is_some()
+            || timeout_seconds.is_some()
+            || max_output_tokens.is_some()
+        {
+            return invalid("legacy prompt generation runner provenance is incomplete or mixed");
+        }
+        return Ok(());
+    }
+    if schema_version != 2
+        || legacy_fields.iter().any(Option::is_some)
+        || runner_fields.iter().any(|value| value.is_none_or(|value| value.trim().is_empty()))
+        || !matches!(provider, Some("openai-codex" | "openrouter"))
+        || auth_file.is_some_and(|value| value.trim().is_empty())
+        || (provider == Some("openai-codex") && auth_file.is_none())
+        || (provider == Some("openrouter") && auth_file.is_some())
+        || timeout_seconds.is_none_or(|value| !(1..=3600).contains(&value))
+        || (provider == Some("openai-codex") && max_output_tokens.is_some())
+        || (provider == Some("openrouter") && max_output_tokens.is_none_or(|value| value == 0))
+        || !runner_sha256.is_some_and(|value| is_lower_hex(value, 64))
+    {
+        return invalid("pi-ai prompt generation runner provenance is incomplete or mixed");
+    }
+    let runner_path = Path::new(runner_binary.expect("validated runner binary"));
+    let expected_sha256 = runner_sha256.expect("validated runner digest");
+    if prompt_generation_runner_sha256(runner_path)? != expected_sha256 {
+        return invalid("pi-ai prompt generation runner does not match its manifest binding");
+    }
+    Ok(())
+}
+
+fn prompt_generation_runner_sha256(runner_path: &Path) -> Result<String> {
+    let root = runner_path.parent().ok_or_else(|| {
+        Error::ExperimentState("pi-ai runner path has no parent directory".to_owned())
+    })?;
+    let mut digest = Sha256::new();
+    // Match the generic runner's --identity contract without executing the runner.
+    for (name, path) in [
+        ("model.mjs", root.join("frontier_runner/model.mjs")),
+        ("package-lock.json", root.join("frontier_runner/package-lock.json")),
+        ("../run-model.sh", runner_path.to_owned()),
+    ] {
+        let (bytes, _) = load_bytes_snapshot(&path)?;
+        digest.update(format!("{name}\0{}\0", bytes.len()).as_bytes());
+        digest.update(&bytes);
+    }
+    Ok(format!("{:x}", digest.finalize()))
+}
+
+fn expected_prompt_generation_isolation(schema_version: u32) -> serde_json::Value {
+    if schema_version == 2 {
+        return serde_json::json!({
+            "fresh_process_per_job": true,
+            "fresh_context_per_job": true,
+            "system_instructions": "",
+            "tools": [],
+            "history": [],
+            "transport": "pi-ai"
+        });
+    }
     serde_json::json!({
         "fresh_process_per_job": true,
         "ephemeral": true,
@@ -1635,7 +1842,7 @@ fn latest_prompt_generation_results(
                 path: path.to_owned(),
                 source,
             })?;
-        if result.schema_version != 1
+        if result.schema_version != manifest.schema_version
             || result.manifest_sha256 != manifest_sha256
             || result.attempt == 0
             || result.job_key.trim().is_empty()
@@ -1670,7 +1877,13 @@ fn latest_prompt_generation_results(
         let stage = &manifest.subject;
         let rendered_prompt = render_subject_prompt(&manifest.subject.prompt, note_text);
         if result.wrapper_sha256 != manifest.wrapper_sha256
-            || result.codex_version != manifest.codex_version
+            || !result.matches_runner(
+                manifest.schema_version,
+                manifest.codex_version.as_deref(),
+                manifest.runner_version.as_deref(),
+                manifest.runner_sha256.as_deref(),
+                manifest.provider.as_deref(),
+            )
             || result.model != stage.model
             || result.reasoning_effort != stage.reasoning_effort
             || result.prompt_sha256 != sha256_bytes(rendered_prompt.as_bytes())
@@ -1753,7 +1966,7 @@ fn latest_claim_generation_results(
                 path: path.to_owned(),
                 source,
             })?;
-        if result.schema_version != 1
+        if result.schema_version != manifest.schema_version
             || result.manifest_sha256 != manifest_sha256
             || result.attempt == 0
             || result.job_key.trim().is_empty()
@@ -1786,7 +1999,13 @@ fn latest_claim_generation_results(
         }
         let rendered_prompt = render_claim_prompt(&manifest.claim.prompt, note_text);
         if result.wrapper_sha256 != manifest.wrapper_sha256
-            || result.codex_version != manifest.codex_version
+            || !result.matches_runner(
+                manifest.schema_version,
+                manifest.codex_version.as_deref(),
+                manifest.runner_version.as_deref(),
+                manifest.runner_sha256.as_deref(),
+                manifest.provider.as_deref(),
+            )
             || result.model != manifest.claim.model
             || result.reasoning_effort != manifest.claim.reasoning_effort
             || result.prompt_sha256 != sha256_bytes(rendered_prompt.as_bytes())
@@ -1874,14 +2093,20 @@ fn validate_generation_result(
     rendered_prompt: &str,
     expected_response: &serde_json::Value,
 ) -> Result<()> {
-    if result.schema_version != 1
+    if result.schema_version != manifest.schema_version
         || result.manifest_sha256 != manifest_sha256
         || result.job_key != job_key
         || result.stage != "subject"
         || result.note_id != note_id
         || result.status != "succeeded"
         || result.wrapper_sha256 != manifest.wrapper_sha256
-        || result.codex_version != manifest.codex_version
+        || !result.matches_runner(
+            manifest.schema_version,
+            manifest.codex_version.as_deref(),
+            manifest.runner_version.as_deref(),
+            manifest.runner_sha256.as_deref(),
+            manifest.provider.as_deref(),
+        )
         || result.model != stage.model
         || result.reasoning_effort != stage.reasoning_effort
         || result.prompt_sha256 != sha256_bytes(rendered_prompt.as_bytes())
@@ -1906,14 +2131,20 @@ fn validate_claim_generation_result(
     rendered_prompt: &str,
     expected_response: &serde_json::Value,
 ) -> Result<()> {
-    if result.schema_version != 1
+    if result.schema_version != manifest.schema_version
         || result.manifest_sha256 != manifest_sha256
         || result.job_key != job_key
         || result.stage != "claim"
         || result.note_id != note_id
         || result.status != "succeeded"
         || result.wrapper_sha256 != manifest.wrapper_sha256
-        || result.codex_version != manifest.codex_version
+        || !result.matches_runner(
+            manifest.schema_version,
+            manifest.codex_version.as_deref(),
+            manifest.runner_version.as_deref(),
+            manifest.runner_sha256.as_deref(),
+            manifest.provider.as_deref(),
+        )
         || result.model != manifest.claim.model
         || result.reasoning_effort != manifest.claim.reasoning_effort
         || result.prompt_sha256 != sha256_bytes(rendered_prompt.as_bytes())

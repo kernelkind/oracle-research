@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run isolated, auditable model prompts through codex exec."""
+"""Preserve extraction workflows and audited batches using the generic model runner."""
 
 from __future__ import annotations
 
@@ -23,30 +23,12 @@ SCHEMA_VERSION = 1
 PIPELINE_SCHEMA_VERSION = 2
 REUSE_PIPELINE_SCHEMA_VERSION = 3
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_CODEX_HOME = Path("~/.local/state/oracle-mvp/codex-home").expanduser()
+DEFAULT_RUNNER = Path(__file__).with_name("run-model.sh")
+RUNTIME_FIELDS = {"provider", "timeout_seconds", "max_output_tokens"}
 TAKEAWAY_ENVELOPE_VERSION = "xml-post-v1"
 TAKEAWAY_INPUT_NORMALIZATION_VERSION = "remove-long-ascii-nip19-identifiers-v2"
-MINIMAL_MODEL_INSTRUCTIONS = "Follow the user's instructions.\n"
-RUNTIME_CONTEXT_OVERRIDES = (
-    "agents.enabled=false",
-    "include_permissions_instructions=false",
-    "include_apps_instructions=false",
-    "include_collaboration_mode_instructions=false",
-    "include_environment_context=false",
-    "skills.include_instructions=false",
-)
 URL_FREE_MASK_PROMPT_VERSIONS = frozenset({"MPv3.4"})
 URL_SCHEME_PATTERN = re.compile(r"(?:https?|wss?)://", re.IGNORECASE)
-DISABLED_FEATURES = (
-    "shell_tool",
-    "unified_exec",
-    "multi_agent",
-    "apps",
-    "plugins",
-    "browser_use",
-    "computer_use",
-    "image_generation",
-)
 IDENTIFIER = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/+\-]*$")
 NIP19_IDENTIFIER = re.compile(
     r"(?<![A-Za-z0-9_])"
@@ -91,9 +73,7 @@ MASK_SCHEMA: dict[str, object] = {
 }
 PROMINENCE_SCHEMA: dict[str, object] = {
     "type": "object",
-    "properties": {
-        "prominence": {"type": "integer", "minimum": 0, "maximum": 100}
-    },
+    "properties": {"prominence": {"type": "integer", "minimum": 0, "maximum": 100}},
     "required": ["prominence"],
     "additionalProperties": False,
 }
@@ -104,7 +84,7 @@ class RunnerError(Exception):
 
 
 class NewJobLimitReached(Exception):
-    """The caller-requested limit on newly spawned Codex jobs was reached."""
+    """The caller-requested limit on newly spawned model jobs was reached."""
 
 
 @dataclass
@@ -191,9 +171,7 @@ class ReuseSourceConfig:
         )
         upgrades = value["runner_upgrades_sha256"]
         if upgrades is not None:
-            upgrades = _expect_sha256(
-                upgrades, "reuse_source.runner_upgrades_sha256"
-            )
+            upgrades = _expect_sha256(upgrades, "reuse_source.runner_upgrades_sha256")
         return cls(
             input_path=_resolve_path(
                 value["input_path"], "reuse_source.input_path", base
@@ -274,9 +252,9 @@ def _canonical_json_bytes(value: object) -> bytes:
 
 def _ordered_json_bytes(value: object) -> bytes:
     """Preserve property order for caller-supplied structured output schemas."""
-    return (
-        json.dumps(value, ensure_ascii=False, separators=(",", ":")) + "\n"
-    ).encode("utf-8")
+    return (json.dumps(value, ensure_ascii=False, separators=(",", ":")) + "\n").encode(
+        "utf-8"
+    )
 
 
 def _sha256_bytes(value: bytes) -> str:
@@ -382,71 +360,58 @@ def _is_within(path: Path, parent: Path) -> bool:
     return True
 
 
-def _validate_codex_home(path: Path) -> None:
-    normal_home = (Path.home() / ".codex").resolve()
-    if path == normal_home:
-        raise RunnerError(
-            "a dedicated CODEX_HOME is required; the normal ~/.codex home "
-            "is forbidden"
-        )
+def _validate_auth_file(path: Path | None) -> None:
+    if path is None:
+        return
     if _is_within(path, REPOSITORY_ROOT):
         raise RunnerError(
-            "the dedicated CODEX_HOME must be outside the repository so its "
+            "auth_file must be outside the repository so its "
             "credentials cannot enter version control"
         )
-    if _is_within(Path.home().resolve(), path) or _is_within(REPOSITORY_ROOT, path):
-        raise RunnerError(
-            "the dedicated CODEX_HOME must not contain the user's home or "
-            "the repository"
-        )
-
-
-def _prepare_codex_home(path: Path) -> None:
-    _validate_codex_home(path)
-    existed = path.exists()
-    path.mkdir(parents=True, exist_ok=True, mode=0o700)
-    if not path.is_dir():
-        raise RunnerError(f"dedicated CODEX_HOME is not a directory: {path}")
+    if not path.is_file():
+        raise RunnerError(f"auth_file is missing or not a regular file: {path}")
     mode = stat.S_IMODE(path.stat().st_mode)
-    if existed and mode != 0o700:
-        raise RunnerError(
-            f"existing dedicated CODEX_HOME must have mode 0700, not {mode:04o}"
-        )
-    if not existed:
-        os.chmod(path, 0o700)
-    workspaces = path / "job-workspaces"
-    workspaces_existed = workspaces.exists()
-    workspaces.mkdir(mode=0o700, exist_ok=True)
-    workspace_mode = stat.S_IMODE(workspaces.stat().st_mode)
-    if workspaces_existed and workspace_mode != 0o700:
-        raise RunnerError(
-            "existing CODEX_HOME job-workspaces must have mode 0700, not "
-            f"{workspace_mode:04o}"
-        )
-    if not workspaces_existed:
-        os.chmod(workspaces, 0o700)
-
-
-def _validate_file_credentials(codex_home: Path) -> None:
-    auth_path = codex_home / "auth.json"
-    if not auth_path.is_file():
-        raise RunnerError(f"dedicated CODEX_HOME auth.json is missing: {auth_path}")
-    mode = stat.S_IMODE(auth_path.stat().st_mode)
     if mode != 0o600:
-        raise RunnerError(
-            "dedicated CODEX_HOME auth.json must have mode 0600, not "
-            f"{mode:04o}"
-        )
+        raise RunnerError(f"auth_file must have mode 0600, not {mode:04o}")
 
 
-def _isolated_environment(codex_home: Path) -> dict[str, str]:
-    environment = {
+def _runner_environment() -> dict[str, str]:
+    return {
         key: value
         for key, value in os.environ.items()
         if not key.upper().startswith(("CODEX_", "OPENAI_", "CHATGPT_"))
     }
-    environment["CODEX_HOME"] = str(codex_home)
-    return environment
+
+
+def _runtime_options(value: dict[str, Any], base: Path) -> dict[str, Any]:
+    provider = _expect_identifier(value.get("provider"), "config.provider")
+    if provider not in {"openai-codex", "openrouter"}:
+        raise RunnerError("provider must be openai-codex or openrouter")
+    auth = value.get("auth_file")
+    auth_file = None if auth is None else _resolve_path(auth, "auth_file", base)
+    if provider == "openai-codex" and auth_file is None:
+        raise RunnerError("openai-codex requires an explicit auth_file")
+    if provider == "openrouter" and auth_file is not None:
+        raise RunnerError("OpenRouter uses OPENROUTER_API_KEY, not auth_file")
+    timeout = value.get("timeout_seconds", 600)
+    if (
+        isinstance(timeout, bool)
+        or not isinstance(timeout, int)
+        or not 1 <= timeout <= 3600
+    ):
+        raise RunnerError("timeout_seconds must be an integer from 1 to 3600")
+    cap = value.get("max_output_tokens")
+    if provider == "openrouter":
+        if isinstance(cap, bool) or not isinstance(cap, int) or cap < 1:
+            raise RunnerError("OpenRouter requires positive max_output_tokens")
+    elif cap is not None:
+        raise RunnerError("subscription transport does not enforce max_output_tokens")
+    return {
+        "provider": provider,
+        "auth_file": auth_file,
+        "timeout_seconds": timeout,
+        "max_output_tokens": cap,
+    }
 
 
 def _resolve_executable(value: object, name: str, base: Path) -> Path:
@@ -536,8 +501,11 @@ class StageConfig:
 class RunnerConfig:
     schema_version: int
     config_path: Path
-    codex_binary: Path
-    codex_home: Path
+    runner_binary: Path
+    auth_file: Path | None
+    provider: str
+    timeout_seconds: float
+    max_output_tokens: int | None
     input_path: Path
     run_directory: Path
     takeaway: StageConfig
@@ -559,8 +527,8 @@ class RunnerConfig:
             schema_version = SCHEMA_VERSION
             expected_fields = {
                 "schema_version",
-                "codex_binary",
-                "codex_home",
+                "runner_binary",
+                "auth_file",
                 "input_path",
                 "run_directory",
                 "takeaway",
@@ -570,8 +538,8 @@ class RunnerConfig:
             schema_version = PIPELINE_SCHEMA_VERSION
             expected_fields = {
                 "schema_version",
-                "codex_binary",
-                "codex_home",
+                "runner_binary",
+                "auth_file",
                 "input_path",
                 "run_directory",
                 "takeaway",
@@ -582,8 +550,8 @@ class RunnerConfig:
             schema_version = REUSE_PIPELINE_SCHEMA_VERSION
             expected_fields = {
                 "schema_version",
-                "codex_binary",
-                "codex_home",
+                "runner_binary",
+                "auth_file",
                 "input_path",
                 "run_directory",
                 "takeaway",
@@ -593,14 +561,16 @@ class RunnerConfig:
             }
         else:
             raise RunnerError("unsupported pipeline config schema version")
-        _expect_fields(value, "config", expected_fields)
+        _expect_fields(
+            value, "config", expected_fields | (RUNTIME_FIELDS & value.keys())
+        )
         config = cls(
             schema_version=schema_version,
             config_path=config_path,
-            codex_binary=_resolve_executable(
-                value["codex_binary"], "codex_binary", base
+            runner_binary=_resolve_executable(
+                value["runner_binary"], "runner_binary", base
             ),
-            codex_home=_resolve_path(value["codex_home"], "codex_home", base),
+            **_runtime_options(value, base),
             input_path=_resolve_path(value["input_path"], "input_path", base),
             run_directory=_resolve_path(value["run_directory"], "run_directory", base),
             takeaway=StageConfig.load(value["takeaway"], "takeaway", base),
@@ -616,7 +586,6 @@ class RunnerConfig:
                 else ReuseSourceConfig.load(value["reuse_source"], base)
             ),
         )
-        _validate_codex_home(config.codex_home)
         if (
             config.reuse_source is not None
             and config.run_directory == config.reuse_source.run_directory
@@ -630,8 +599,11 @@ class RunnerConfig:
 @dataclass(frozen=True)
 class SubjectRunnerConfig:
     config_path: Path
-    codex_binary: Path
-    codex_home: Path
+    runner_binary: Path
+    auth_file: Path | None
+    provider: str
+    timeout_seconds: float
+    max_output_tokens: int | None
     input_path: Path
     run_directory: Path
     subject: StageConfig
@@ -646,12 +618,13 @@ class SubjectRunnerConfig:
             "config",
             {
                 "schema_version",
-                "codex_binary",
-                "codex_home",
+                "runner_binary",
+                "auth_file",
                 "input_path",
                 "run_directory",
                 "subject",
-            },
+            }
+            | (RUNTIME_FIELDS & value.keys()),
         )
         schema_version = value["schema_version"]
         if (
@@ -662,17 +635,14 @@ class SubjectRunnerConfig:
             raise RunnerError("unsupported subject config schema version")
         config = cls(
             config_path=config_path,
-            codex_binary=_resolve_executable(
-                value["codex_binary"], "codex_binary", base
+            runner_binary=_resolve_executable(
+                value["runner_binary"], "runner_binary", base
             ),
-            codex_home=_resolve_path(value["codex_home"], "codex_home", base),
+            **_runtime_options(value, base),
             input_path=_resolve_path(value["input_path"], "input_path", base),
-            run_directory=_resolve_path(
-                value["run_directory"], "run_directory", base
-            ),
+            run_directory=_resolve_path(value["run_directory"], "run_directory", base),
             subject=StageConfig.load(value["subject"], "subject", base),
         )
-        _validate_codex_home(config.codex_home)
         return config
 
 
@@ -691,8 +661,11 @@ class PromptJob:
 @dataclass(frozen=True)
 class PromptRunnerConfig:
     config_path: Path
-    codex_binary: Path
-    codex_home: Path
+    runner_binary: Path
+    auth_file: Path | None
+    provider: str
+    timeout_seconds: float
+    max_output_tokens: int | None
     run_directory: Path
     model: str
     reasoning_effort: str
@@ -709,13 +682,14 @@ class PromptRunnerConfig:
             "config",
             {
                 "schema_version",
-                "codex_binary",
-                "codex_home",
+                "runner_binary",
+                "auth_file",
                 "run_directory",
                 "model",
                 "reasoning_effort",
                 "prompts",
-            } | ({"output_schema"} & value.keys()),
+            }
+            | (({"output_schema"} | RUNTIME_FIELDS) & value.keys()),
         )
         if value["schema_version"] != SCHEMA_VERSION:
             raise RunnerError("unsupported config schema version")
@@ -747,13 +721,11 @@ class PromptRunnerConfig:
             )
         config = cls(
             config_path=config_path,
-            codex_binary=_resolve_executable(
-                value["codex_binary"], "codex_binary", base
+            runner_binary=_resolve_executable(
+                value["runner_binary"], "runner_binary", base
             ),
-            codex_home=_resolve_path(value["codex_home"], "codex_home", base),
-            run_directory=_resolve_path(
-                value["run_directory"], "run_directory", base
-            ),
+            **_runtime_options(value, base),
+            run_directory=_resolve_path(value["run_directory"], "run_directory", base),
             model=_expect_identifier(value["model"], "config.model"),
             reasoning_effort=_expect_identifier(
                 value["reasoning_effort"], "config.reasoning_effort"
@@ -761,7 +733,6 @@ class PromptRunnerConfig:
             prompts=tuple(prompts),
             output_schema=output_schema,
         )
-        _validate_codex_home(config.codex_home)
         return config
 
 
@@ -788,25 +759,42 @@ def _load_notes(path: Path) -> tuple[Note, ...]:
     return tuple(notes)
 
 
-def _codex_version(
+def _runner_identity(
     config: RunnerConfig | SubjectRunnerConfig | PromptRunnerConfig,
-) -> str:
+) -> dict[str, Any]:
     completed = subprocess.run(
-        [str(config.codex_binary), "--version"],
+        [str(config.runner_binary), "--identity"],
         check=False,
         capture_output=True,
         text=True,
-        env=_isolated_environment(config.codex_home),
+        env=_runner_environment(),
+        timeout=30,
     )
     if completed.returncode != 0:
         raise RunnerError(
-            f"codex --version exited with status {completed.returncode}: "
+            f"model runner --identity exited with status {completed.returncode}: "
             f"{completed.stderr.strip()}"
         )
-    version = completed.stdout.strip()
-    if not version:
-        raise RunnerError("codex --version returned no version")
-    return version
+    try:
+        identity = _expect_object(json.loads(completed.stdout), "runner identity")
+    except json.JSONDecodeError as error:
+        raise RunnerError("model runner returned invalid identity JSON") from error
+    _expect_string(identity.get("runner_version"), "runner_version")
+    _expect_sha256(identity.get("runner_sha256"), "runner_sha256")
+    return identity
+
+
+def _runner_version(config: Any) -> str:
+    return _runner_identity(config)["runner_version"]
+
+
+def _runtime_manifest(config: Any) -> dict[str, Any]:
+    return {
+        "provider": config.provider,
+        "runner_sha256": _runner_identity(config)["runner_sha256"],
+        "timeout_seconds": config.timeout_seconds,
+        "max_output_tokens": config.max_output_tokens,
+    }
 
 
 def _stage_manifest(
@@ -830,39 +818,29 @@ def _stage_manifest(
 def _isolation_manifest() -> dict[str, object]:
     return {
         "fresh_process_per_job": True,
-        "ephemeral": True,
-        "sterile_working_directory_per_job": True,
-        "ignore_user_config": True,
-        "ignore_rules": True,
-        "approval_policy": "never",
-        "sandbox": "read-only",
-        "web_search": "disabled",
-        "shell_environment_inherit": "none",
-        "model_instructions": MINIMAL_MODEL_INSTRUCTIONS,
-        "model_instructions_sha256": _sha256_bytes(
-            MINIMAL_MODEL_INSTRUCTIONS.encode("utf-8")
-        ),
-        "runtime_context_overrides": list(RUNTIME_CONTEXT_OVERRIDES),
-        "disabled_features": list(DISABLED_FEATURES),
+        "fresh_context_per_job": True,
+        "system_instructions": "",
+        "tools": [],
+        "history": [],
+        "transport": "pi-ai",
     }
 
 
 def _build_manifest(
     config: RunnerConfig,
-    codex_version: str,
+    runner_version: str,
 ) -> dict[str, object]:
     manifest: dict[str, object] = {
         "schema_version": config.schema_version,
+        **_runtime_manifest(config),
         "wrapper_sha256": _sha256_file(Path(__file__).resolve()),
-        "codex_binary": str(config.codex_binary),
-        "codex_version": codex_version,
-        "codex_home": str(config.codex_home),
+        "runner_binary": str(config.runner_binary),
+        "runner_version": runner_version,
+        "auth_file": None if config.auth_file is None else str(config.auth_file),
         "input_path": str(config.input_path),
         "input_sha256": _sha256_file(config.input_path),
         "takeaway_envelope_version": TAKEAWAY_ENVELOPE_VERSION,
-        "takeaway_input_normalization_version": (
-            TAKEAWAY_INPUT_NORMALIZATION_VERSION
-        ),
+        "takeaway_input_normalization_version": (TAKEAWAY_INPUT_NORMALIZATION_VERSION),
         "takeaway": _stage_manifest(config.takeaway, TAKEAWAY_SCHEMA),
         "mask": _stage_manifest(config.mask, MASK_SCHEMA),
         "isolation": _isolation_manifest(),
@@ -872,9 +850,7 @@ def _build_manifest(
             config.prominence,
             PROMINENCE_SCHEMA,
         )
-        manifest["prominence_envelope_version"] = (
-            "xml-complete-post-takeaway-v1"
-        )
+        manifest["prominence_envelope_version"] = "xml-complete-post-takeaway-v1"
         manifest["prominence_input_normalization_version"] = (
             TAKEAWAY_INPUT_NORMALIZATION_VERSION
         )
@@ -885,17 +861,18 @@ def _build_manifest(
 
 def _build_prompt_manifest(
     config: PromptRunnerConfig,
-    codex_version: str,
+    runner_version: str,
 ) -> dict[str, object]:
     manifest: dict[str, object] = {
         "schema_version": SCHEMA_VERSION,
         "mode": "prompt",
+        **_runtime_manifest(config),
         "wrapper_sha256": _sha256_file(Path(__file__).resolve()),
         "config_path": str(config.config_path),
         "config_sha256": _sha256_file(config.config_path),
-        "codex_binary": str(config.codex_binary),
-        "codex_version": codex_version,
-        "codex_home": str(config.codex_home),
+        "runner_binary": str(config.runner_binary),
+        "runner_version": runner_version,
+        "auth_file": None if config.auth_file is None else str(config.auth_file),
         "model": config.model,
         "reasoning_effort": config.reasoning_effort,
         "prompts": [
@@ -914,21 +891,20 @@ def _build_prompt_manifest(
 
 def _build_subject_manifest(
     config: SubjectRunnerConfig,
-    codex_version: str,
+    runner_version: str,
 ) -> dict[str, object]:
     return {
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": 2,
         "mode": "atomic_subject_generation",
+        **_runtime_manifest(config),
         "wrapper_sha256": _sha256_file(Path(__file__).resolve()),
-        "codex_binary": str(config.codex_binary),
-        "codex_version": codex_version,
-        "codex_home": str(config.codex_home),
+        "runner_binary": str(config.runner_binary),
+        "runner_version": runner_version,
+        "auth_file": None if config.auth_file is None else str(config.auth_file),
         "input_path": str(config.input_path),
         "input_sha256": _sha256_file(config.input_path),
         "subject_envelope_version": TAKEAWAY_ENVELOPE_VERSION,
-        "subject_input_normalization_version": (
-            TAKEAWAY_INPUT_NORMALIZATION_VERSION
-        ),
+        "subject_input_normalization_version": (TAKEAWAY_INPUT_NORMALIZATION_VERSION),
         "subject": _stage_manifest(config.subject, SUBJECT_SCHEMA),
         "isolation": _isolation_manifest(),
     }
@@ -946,7 +922,9 @@ def _load_runner_upgrades(
     try:
         lines = path.read_text(encoding="utf-8").splitlines()
     except (OSError, UnicodeError) as error:
-        raise RunnerError(f"could not read runner upgrade ledger {path}: {error}") from error
+        raise RunnerError(
+            f"could not read runner upgrade ledger {path}: {error}"
+        ) from error
     current_wrapper = initial_wrapper_sha256
     previous_first_result_line = 0
     result_path = run_directory / "results.jsonl"
@@ -1114,10 +1092,6 @@ def _prepare_manifest_directory(
         provenance = RunnerProvenance(proposed_wrapper, proposed_wrapper, ())
         pending_wrapper = None
         pending_reason = None
-    _atomic_write(
-        run_directory / "model-instructions.md",
-        MINIMAL_MODEL_INSTRUCTIONS.encode("utf-8"),
-    )
     return PreparedManifest(
         manifest_sha256,
         provenance,
@@ -1204,9 +1178,12 @@ def _load_latest_results(
                 raise RunnerError(
                     f"results ledger line {line_number} has invalid wrapper provenance"
                 )
-        elif _expect_sha256(
-            recorded_wrapper, f"results ledger line {line_number}.wrapper_sha256"
-        ) != active_wrapper:
+        elif (
+            _expect_sha256(
+                recorded_wrapper, f"results ledger line {line_number}.wrapper_sha256"
+            )
+            != active_wrapper
+        ):
             raise RunnerError(
                 f"results ledger line {line_number} has invalid wrapper provenance"
             )
@@ -1339,7 +1316,7 @@ def _compile_reusable_job(
     *,
     latest: dict[str, dict[str, Any]],
     references: dict[str, SourceResultReference],
-    source_codex_version: str,
+    source_runner_version: str,
     stage_name: str,
     stage: SourceStageContract,
     note: Note,
@@ -1377,9 +1354,9 @@ def _compile_reusable_job(
         raise RunnerError(
             f"reuse source result `{job_key}` has an invalid rendered prompt hash"
         )
-    if record.get("codex_version") != source_codex_version:
+    if record.get("runner_version") != source_runner_version:
         raise RunnerError(
-            f"reuse source result `{job_key}` has an invalid Codex version"
+            f"reuse source result `{job_key}` has an invalid runner version"
         )
     if record.get("response") != output_response:
         raise RunnerError(
@@ -1399,6 +1376,7 @@ def _compile_reusable_job(
 def _load_reuse_source(
     config: ReuseSourceConfig,
     target_notes: list[Note],
+    provider: str,
 ) -> LoadedReuseSource:
     _verify_reuse_source_hashes(config)
     source_notes = _load_notes(config.input_path)
@@ -1410,6 +1388,8 @@ def _load_reuse_source(
         raise RunnerError("reuse source manifest must use pipeline schema version 2")
     if manifest.get("isolation") != _isolation_manifest():
         raise RunnerError("reuse source isolation contract is incompatible")
+    if manifest.get("provider") != provider:
+        raise RunnerError("reuse source provider must match the target provider")
     _expect_string(manifest.get("input_path"), "reuse source manifest.input_path")
     if manifest.get("input_sha256") != config.input_sha256:
         raise RunnerError(
@@ -1433,8 +1413,8 @@ def _load_reuse_source(
     ):
         raise RunnerError("reuse source prominence normalization is incompatible")
     stages = _source_stage_contracts(manifest)
-    source_codex_version = _expect_string(
-        manifest.get("codex_version"), "reuse source manifest.codex_version"
+    source_runner_version = _expect_string(
+        manifest.get("runner_version"), "reuse source manifest.runner_version"
     )
 
     provenance = _load_runner_upgrades(
@@ -1463,9 +1443,7 @@ def _load_reuse_source(
     if output["schema_version"] != PIPELINE_SCHEMA_VERSION:
         raise RunnerError("reuse source output must use pipeline schema version 2")
     if output["manifest_sha256"] != config.manifest_sha256:
-        raise RunnerError(
-            "reuse source output does not belong to the pinned manifest"
-        )
+        raise RunnerError("reuse source output does not belong to the pinned manifest")
     raw_output_notes = output["notes"]
     if not isinstance(raw_output_notes, list):
         raise RunnerError("reuse source output.notes must be an array")
@@ -1478,9 +1456,7 @@ def _load_reuse_source(
     for index, (source_note, raw_note) in enumerate(
         zip(source_notes, raw_output_notes, strict=True)
     ):
-        output_note = _expect_object(
-            raw_note, f"reuse source output.notes[{index}]"
-        )
+        output_note = _expect_object(raw_note, f"reuse source output.notes[{index}]")
         _expect_fields(
             output_note,
             f"reuse source output.notes[{index}]",
@@ -1503,13 +1479,9 @@ def _load_reuse_source(
         takeaway_texts: list[str] = []
         validated_takeaways: list[tuple[str, int, list[str]]] = []
         for takeaway_index, raw_takeaway in enumerate(raw_takeaways):
-            name = (
-                f"reuse source output note `{note_id}` takeaway {takeaway_index}"
-            )
+            name = f"reuse source output note `{note_id}` takeaway {takeaway_index}"
             takeaway = _expect_object(raw_takeaway, name)
-            _expect_fields(
-                takeaway, name, {"text", "prominence", "fragments"}
-            )
+            _expect_fields(takeaway, name, {"text", "prominence", "fragments"})
             text = _expect_string(takeaway["text"], f"{name}.text")
             prominence = _validate_result_items(
                 "prominence",
@@ -1539,7 +1511,7 @@ def _load_reuse_source(
         jobs[takeaway_key] = _compile_reusable_job(
             latest=latest,
             references=references,
-            source_codex_version=source_codex_version,
+            source_runner_version=source_runner_version,
             stage_name="takeaway",
             stage=stages["takeaway"],
             note=source_note,
@@ -1570,7 +1542,7 @@ def _load_reuse_source(
                 jobs[job_key] = _compile_reusable_job(
                     latest=latest,
                     references=references,
-                    source_codex_version=source_codex_version,
+                    source_runner_version=source_runner_version,
                     stage_name=stage_name,
                     stage=stages[stage_name],
                     note=source_note,
@@ -1618,31 +1590,6 @@ def _append_runner_upgrade(
     )
 
 
-def _parse_event_stream(stdout: str) -> tuple[str, object]:
-    events: list[dict[str, Any]] = []
-    for line_number, line in enumerate(stdout.splitlines(), start=1):
-        if not line.strip():
-            continue
-        try:
-            value = json.loads(line)
-        except json.JSONDecodeError as error:
-            raise RunnerError(
-                f"codex JSONL line {line_number} is not valid JSON: {error}"
-            ) from error
-        if not isinstance(value, dict):
-            raise RunnerError(f"codex JSONL line {line_number} is not an object")
-        events.append(value)
-    started = [event for event in events if event.get("type") == "thread.started"]
-    if len(started) != 1 or not isinstance(started[0].get("thread_id"), str):
-        raise RunnerError("codex event stream must contain one thread.started")
-    if any(event.get("type") == "turn.failed" for event in events):
-        raise RunnerError("codex event stream contains turn.failed")
-    completed = [event for event in events if event.get("type") == "turn.completed"]
-    if len(completed) != 1:
-        raise RunnerError("codex event stream must contain one turn.completed")
-    return started[0]["thread_id"], completed[0].get("usage")
-
-
 def _validate_string_array(
     value: object,
     name: str,
@@ -1651,12 +1598,12 @@ def _validate_string_array(
 ) -> list[str]:
     if not isinstance(value, list) or (not allow_empty and not value):
         qualifier = "an array" if allow_empty else "a nonempty array"
-        raise RunnerError(f"codex {name} response must be {qualifier} of strings")
+        raise RunnerError(f"model {name} response must be {qualifier} of strings")
     result: list[str] = []
     for index, item in enumerate(value):
         if not isinstance(item, str) or not item.strip():
             raise RunnerError(
-                f"codex {name} response item {index} must be a nonempty string"
+                f"model {name} response item {index} must be a nonempty string"
             )
         result.append(item)
     return result
@@ -1672,11 +1619,9 @@ def _validate_result_items(
         return _validate_string_array(value, stage_name, allow_empty=True)
     if stage_name == "prominence":
         if isinstance(value, bool) or not isinstance(value, int):
-            raise RunnerError("codex prominence response must be an integer")
+            raise RunnerError("model prominence response must be an integer")
         if not 0 <= value <= 100:
-            raise RunnerError(
-                "codex prominence response must be between 0 and 100"
-            )
+            raise RunnerError("model prominence response must be between 0 and 100")
         return value
     fragments = _validate_string_array(value, "mask", allow_empty=False)
     if prompt_version in URL_FREE_MASK_PROMPT_VERSIONS:
@@ -1704,14 +1649,14 @@ def _validate_response(
     note_text: str,
     prompt_version: str,
 ) -> list[str] | int:
-    response_object = _expect_object(value, f"codex {stage_name} response")
+    response_object = _expect_object(value, f"model {stage_name} response")
     field = {
         "takeaway": "takeaways",
         "subject": "subjects",
         "prominence": "prominence",
         "mask": "fragments",
     }[stage_name]
-    _expect_fields(response_object, f"codex {stage_name} response", {field})
+    _expect_fields(response_object, f"model {stage_name} response", {field})
     return _validate_result_items(
         stage_name,
         response_object[field],
@@ -1737,72 +1682,297 @@ def _job_key(
 
 
 def _build_exec_argv(
-    config: RunnerConfig | SubjectRunnerConfig | PromptRunnerConfig,
-    stage: StageConfig | PromptRunnerConfig,
-    workspace: Path,
-    schema_path: Path | None,
-    response_path: Path,
+    config: Any,
 ) -> list[str]:
-    arguments = [
-        str(config.codex_binary),
-        "exec",
-        "--strict-config",
-        "--ephemeral",
-        "--ignore-user-config",
-        "--ignore-rules",
-        "--skip-git-repo-check",
-        "--cd",
-        str(workspace),
-        "--sandbox",
-        "read-only",
-        "--model",
-        stage.model,
-        "-c",
-        f'model_reasoning_effort="{stage.reasoning_effort}"',
-        "-c",
-        "model_instructions_file="
-        f"{json.dumps(str(config.run_directory / 'model-instructions.md'))}",
-        "-c",
-        'approval_policy="never"',
-        "-c",
-        'web_search="disabled"',
-        "-c",
-        "project_root_markers=[]",
-        "-c",
-        'shell_environment_policy.inherit="none"',
-        "-c",
-        'cli_auth_credentials_store="file"',
-    ]
-    for override in RUNTIME_CONTEXT_OVERRIDES:
-        arguments.extend(("-c", override))
-    for feature in DISABLED_FEATURES:
-        arguments.extend(("--disable", feature))
-    if schema_path is not None:
-        arguments.extend(("--output-schema", str(schema_path)))
-    arguments.extend(
-        (
-            "--output-last-message",
-            str(response_path),
-            "--json",
-            "--color",
-            "never",
-            "-",
-        )
-    )
+    arguments = [str(config.runner_binary), "run", "--send"]
+    if config.auth_file is not None:
+        arguments.extend(("--auth-file", str(config.auth_file)))
     return arguments
+
+
+def _same_json(left: Any, right: Any) -> bool:
+    if isinstance(left, dict) and isinstance(right, dict):
+        return left.keys() == right.keys() and all(
+            _same_json(left[key], right[key]) for key in left
+        )
+    if isinstance(left, list) and isinstance(right, list):
+        return len(left) == len(right) and all(
+            _same_json(a, b) for a, b in zip(left, right)
+        )
+    if type(left) is bool or type(right) is bool:
+        return type(left) is type(right) and left == right
+    return left == right
+
+
+def _wire_prompt(result: dict[str, Any], provider: str) -> str:
+    body = _expect_object(
+        _expect_object(result.get("request"), "model request").get("body"),
+        "model request body",
+    )
+    messages = body.get("input") if provider == "openai-codex" else body.get("messages")
+    if (
+        not isinstance(messages, list)
+        or len(messages) != 1
+        or not isinstance(messages[0], dict)
+        or messages[0].get("role") != "user"
+    ):
+        raise RunnerError(
+            "model result request must contain only the caller's user message"
+        )
+    content = messages[0].get("content")
+    text = (
+        content
+        if isinstance(content, str)
+        else content[0].get("text")
+        if isinstance(content, list)
+        and len(content) == 1
+        and isinstance(content[0], dict)
+        else None
+    )
+    if not isinstance(text, str):
+        raise RunnerError("model result request contains invalid prompt content")
+    return text
+
+
+def _validate_model_result(
+    config: Any,
+    stage: Any,
+    prompt: str,
+    schema: object,
+    identity: dict[str, Any],
+    result: dict[str, Any],
+) -> None:
+    expected = {
+        "provider": config.provider,
+        "model": stage.model,
+        "reasoning": stage.reasoning_effort,
+        "runner_version": identity["runner_version"],
+        "runner_sha256": identity["runner_sha256"],
+        "prompt_sha256": _sha256_bytes(prompt.encode("utf-8")),
+        "valid": True,
+        "stop_reason": "stop",
+        "http_attempts": 1,
+        "error": None,
+    }
+    if any(not _same_json(result.get(key), value) for key, value in expected.items()):
+        raise RunnerError(
+            "model runner did not return a valid completed response bound to the request"
+        )
+    raw = result.get("raw_text")
+    if not isinstance(raw, str) or not raw.strip():
+        raise RunnerError("model runner final response is empty")
+    body = _expect_object(
+        _expect_object(result.get("request"), "model request").get("body"),
+        "model request body",
+    )
+    wire_schema = (
+        (body.get("text") or {}).get("format", {}).get("schema")
+        if config.provider == "openai-codex"
+        else (body.get("response_format") or {}).get("json_schema", {}).get("schema")
+    )
+    if not _same_json(wire_schema, schema):
+        raise RunnerError("model result wire schema differs from caller schema")
+    if schema is None:
+        if result.get("schema_sha256") is not None:
+            raise RunnerError("model result unexpectedly reports a schema")
+    else:
+        _expect_sha256(result.get("schema_sha256"), "model result.schema_sha256")
+    text = _wire_prompt(result, config.provider)
+    if (
+        text != prompt
+        or body.get("model") != stage.model
+        or body.get("instructions", "")
+        or body.get("tools")
+        or body.get("previous_response_id")
+    ):
+        raise RunnerError("model result request differs from the exact isolated prompt")
+    output = raw if schema is None else json.loads(raw)
+    if not _same_json(result.get("output"), output):
+        raise RunnerError("model result output differs from its raw response")
+
+
+def _invoke_model(
+    config: Any, stage: Any, prompt: str, schema: object
+) -> dict[str, Any]:
+    _validate_auth_file(config.auth_file)
+    identity = _runner_identity(config)
+    request = {
+        "provider": config.provider,
+        "model": stage.model,
+        "reasoning": stage.reasoning_effort,
+        "prompt": prompt,
+        "timeout_seconds": config.timeout_seconds,
+    }
+    if schema is not None:
+        request["schema"] = schema
+    if config.max_output_tokens is not None:
+        request["max_output_tokens"] = config.max_output_tokens
+    argv = _build_exec_argv(config)
+    started = time.monotonic()
+    stdout = stderr = ""
+    exit_code = None
+    result: dict[str, Any] | None = None
+    error_message = None
+    try:
+        manifest = _expect_object(
+            _load_json(config.run_directory / "manifest.json", "run manifest"),
+            "run manifest",
+        )
+        if identity["runner_sha256"] != manifest.get("runner_sha256") or identity[
+            "runner_version"
+        ] != manifest.get("runner_version"):
+            raise RunnerError("model runner changed since the run manifest was created")
+        with tempfile.TemporaryDirectory(prefix="model-call-") as temporary:
+            completed = subprocess.run(
+                argv,
+                input=_ordered_json_bytes(request).decode("utf-8"),
+                check=False,
+                capture_output=True,
+                text=True,
+                cwd=temporary,
+                env=_runner_environment(),
+                timeout=config.timeout_seconds + 30,
+            )
+        stdout, stderr, exit_code = (
+            completed.stdout,
+            completed.stderr,
+            completed.returncode,
+        )
+        if stdout.strip():
+            result = _expect_object(json.loads(stdout), "model result")
+        if exit_code != 0:
+            raise RunnerError(f"model runner exited with status {exit_code}")
+        if result is None:
+            raise RunnerError("model runner returned no result")
+        _validate_model_result(config, stage, prompt, schema, identity, result)
+    except (
+        OSError,
+        UnicodeError,
+        ValueError,
+        TypeError,
+        AttributeError,
+        IndexError,
+        RunnerError,
+        subprocess.TimeoutExpired,
+    ) as error:
+        error_message = str(error)
+    output = (
+        None
+        if result is None or not isinstance(result.get("raw_text"), str)
+        else result["raw_text"]
+    )
+    return {
+        "argv": argv,
+        "exit_code": exit_code,
+        "elapsed_seconds": time.monotonic() - started,
+        "provider": config.provider,
+        "runner_sha256": identity["runner_sha256"],
+        "model_result": result,
+        "usage": None if result is None else result.get("usage"),
+        "stdout_json": stdout,
+        "stdout_sha256": _sha256_bytes(stdout.encode("utf-8")),
+        "stderr": stderr,
+        "stderr_sha256": _sha256_bytes(stderr.encode("utf-8")),
+        "final_output_raw": output,
+        "final_output_sha256": None
+        if output is None
+        else _sha256_bytes(output.encode("utf-8")),
+        "error": error_message,
+    }
+
+
+def validate_model_receipt(
+    config: Any,
+    stage: Any,
+    prompt: str,
+    schema: object,
+    manifest: dict[str, Any],
+    record: dict[str, Any],
+) -> None:
+    """Verify a saved native receipt without credentials or model requests."""
+    expected = {
+        "model": stage.model,
+        "reasoning_effort": stage.reasoning_effort,
+        "manifest_sha256": _sha256_file(config.run_directory / "manifest.json"),
+        "response_schema_sha256": None
+        if schema is None
+        else _sha256_bytes(
+            _ordered_json_bytes(schema)
+            if isinstance(stage, PromptRunnerConfig)
+            else _canonical_json_bytes(schema)
+        ),
+        "provider": config.provider,
+        "runner_version": manifest["runner_version"],
+        "runner_sha256": manifest["runner_sha256"],
+        "error": None,
+        "prompt_sha256": _sha256_bytes(prompt.encode("utf-8")),
+        "exit_code": 0,
+        "argv": _build_exec_argv(config),
+    }
+    if record.get("status") != "succeeded" or any(
+        not _same_json(record.get(k), v) for k, v in expected.items()
+    ):
+        raise RunnerError("saved receipt differs from expected model invocation")
+    for name, field in (
+        ("stdout", "stdout_json"),
+        ("stderr", "stderr"),
+        ("final_output", "final_output_raw"),
+    ):
+        value = record.get(field)
+        if not isinstance(value, str) or record.get(name + "_sha256") != _sha256_bytes(
+            value.encode("utf-8")
+        ):
+            raise RunnerError("saved receipt output hash differs")
+    try:
+        result = _expect_object(json.loads(record["stdout_json"]), "saved model result")
+        if (
+            not _same_json(result, record.get("model_result"))
+            or not _same_json(result.get("usage"), record.get("usage"))
+            or result.get("raw_text") != record.get("final_output_raw")
+        ):
+            raise RunnerError(
+                "saved receipt model result, usage, or raw output differs"
+            )
+        _validate_model_result(config, stage, prompt, schema, manifest, result)
+    except (ValueError, TypeError, AttributeError, IndexError) as error:
+        raise RunnerError("saved receipt model result is malformed") from error
+
+
+def validate_prompt_receipt(
+    config: PromptRunnerConfig, manifest: dict[str, Any], record: dict[str, Any]
+) -> None:
+    """Bind one saved prompt to its explicit caller config without sending it."""
+    if len(config.prompts) != 1:
+        raise RunnerError("receipt verification requires a single configured prompt")
+    prompt = config.prompts[0]
+    validate_model_receipt(
+        config, config, prompt.text, config.output_schema, manifest, record
+    )
+    expected_schema = (
+        None
+        if config.output_schema is None
+        else _sha256_bytes(_ordered_json_bytes(config.output_schema))
+    )
+    if (
+        record.get("stage") != "prompt"
+        or record.get("note_id") != prompt.prompt_id
+        or record.get("job_key") != "prompt:" + prompt.prompt_id
+        or record.get("response_schema_sha256") != expected_schema
+        or record.get("response") != record.get("final_output_raw")
+    ):
+        raise RunnerError("saved receipt differs from expected prompt response")
 
 
 def _run_job(
     *,
     config: RunnerConfig | SubjectRunnerConfig | PromptRunnerConfig,
     manifest_sha256: str,
-    codex_version: str,
+    runner_version: str,
     stage_name: str,
     stage: StageConfig | PromptRunnerConfig,
     note: Note,
     takeaway_index: int | None,
     prompt: str,
-    schema_path: Path | None,
     schema: dict[str, object] | None,
     results_path: Path,
     latest: dict[str, dict[str, Any]],
@@ -1817,6 +1987,12 @@ def _run_job(
     prompt_sha256 = _sha256_bytes(prompt.encode("utf-8"))
     retry_reason: str | None = None
     if previous is not None and previous["status"] == "succeeded":
+        if (
+            previous.get("stage") != stage_name
+            or previous.get("note_id") != note.note_id
+            or previous.get("takeaway_index") != takeaway_index
+        ):
+            raise RunnerError("saved receipt job identity differs")
         _validate_cached_reuse_record(
             previous,
             reuse_source,
@@ -1828,6 +2004,40 @@ def _run_job(
             prompt_sha256=prompt_sha256,
             schema=schema,
         )
+        if previous.get("execution") != "reused":
+            saved_prompt = (
+                prompt
+                if previous.get("prompt_sha256") == prompt_sha256
+                else _wire_prompt(
+                    _expect_object(previous.get("model_result"), "saved model result"),
+                    config.provider,
+                )
+            )
+            validate_model_receipt(
+                config,
+                stage,
+                saved_prompt,
+                schema,
+                _expect_object(
+                    _load_json(config.run_directory / "manifest.json", "run manifest"),
+                    "run manifest",
+                ),
+                previous,
+            )
+            raw_response = (
+                previous["final_output_raw"]
+                if stage_name == "prompt"
+                else _validate_response(
+                    stage_name,
+                    json.loads(previous["final_output_raw"]),
+                    note.text,
+                    stage.prompt_version,
+                )
+            )
+            if not _same_json(previous.get("response"), raw_response):
+                raise RunnerError(
+                    "saved receipt response differs from raw model output"
+                )
         if retry_directive is not None and retry_directive.job_key == job_key:
             retry_directive.matched = True
             retry_reason = retry_directive.reason
@@ -1899,69 +2109,24 @@ def _run_job(
     if new_job_budget is not None:
         new_job_budget.claim()
     attempt = 1 if previous is None else previous["attempt"] + 1
-    workspace_root = config.codex_home / "job-workspaces"
-    output_raw: str | None = None
-    stdout = ""
-    stderr = ""
-    exit_code: int | None = None
-    thread_id: str | None = None
-    usage: object = None
+    attempt_result = _invoke_model(config, stage, prompt, schema)
+    error_message = attempt_result["error"]
+    output_raw = attempt_result["final_output_raw"]
     response: list[str] | int | str | None = None
-    error_message: str | None = None
-    argv: list[str] = []
-    started_at = time.monotonic()
-
-    with tempfile.TemporaryDirectory(
-        prefix=f"{stage_name}-", dir=workspace_root
-    ) as temporary:
-        workspace = Path(temporary).resolve()
-        response_path = workspace / "response.json"
-        argv = _build_exec_argv(config, stage, workspace, schema_path, response_path)
+    if error_message is None:
         try:
-            completed = subprocess.run(
-                argv,
-                input=prompt,
-                check=False,
-                capture_output=True,
-                text=True,
-                cwd=workspace,
-                env=_isolated_environment(config.codex_home),
+            response = (
+                output_raw
+                if stage_name == "prompt"
+                else _validate_response(
+                    stage_name, json.loads(output_raw), note.text, stage.prompt_version
+                )
             )
-            stdout = completed.stdout
-            stderr = completed.stderr
-            exit_code = completed.returncode
-            if response_path.exists():
-                output_raw = response_path.read_text(encoding="utf-8")
-            if completed.returncode != 0:
-                raise RunnerError(
-                    f"codex exec exited with status {completed.returncode}"
-                )
-            thread_id, usage = _parse_event_stream(stdout)
-            if output_raw is None:
-                raise RunnerError("codex exec did not write its final response")
-            if stage_name == "prompt":
-                if not output_raw.strip():
-                    raise RunnerError("codex final response is empty")
-                response = output_raw
-            else:
-                try:
-                    raw_response = json.loads(output_raw)
-                except json.JSONDecodeError as error:
-                    raise RunnerError(
-                        f"codex final response is not valid JSON: {error}"
-                    ) from error
-                response = _validate_response(
-                    stage_name,
-                    raw_response,
-                    note.text,
-                    stage.prompt_version,
-                )
-        except (OSError, UnicodeError, RunnerError) as error:
+        except (json.JSONDecodeError, RunnerError) as error:
             error_message = str(error)
 
-    elapsed_seconds = time.monotonic() - started_at
     record: dict[str, object] = {
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": 2 if stage_name in {"subject", "claim"} else SCHEMA_VERSION,
         "manifest_sha256": manifest_sha256,
         "job_key": job_key,
         "stage": stage_name,
@@ -1970,7 +2135,7 @@ def _run_job(
         "status": "failed" if error_message is not None else "succeeded",
         "model": stage.model,
         "reasoning_effort": stage.reasoning_effort,
-        "codex_version": codex_version,
+        "runner_version": runner_version,
         "wrapper_sha256": execution_wrapper_sha256,
         "prompt_sha256": prompt_sha256,
         "response_schema_sha256": (
@@ -1982,19 +2147,7 @@ def _run_job(
                 else _canonical_json_bytes(schema)
             )
         ),
-        "argv": argv,
-        "exit_code": exit_code,
-        "elapsed_seconds": elapsed_seconds,
-        "thread_id": thread_id,
-        "usage": usage,
-        "stdout_jsonl": stdout,
-        "stdout_sha256": _sha256_bytes(stdout.encode("utf-8")),
-        "stderr": stderr,
-        "stderr_sha256": _sha256_bytes(stderr.encode("utf-8")),
-        "final_output_raw": output_raw,
-        "final_output_sha256": (
-            None if output_raw is None else _sha256_bytes(output_raw.encode("utf-8"))
-        ),
+        **attempt_result,
         "response": response,
         "error": error_message,
     }
@@ -2103,21 +2256,21 @@ def _append_reused_result(
         "execution": "reused",
         "model": stage.model,
         "reasoning_effort": stage.reasoning_effort,
-        "codex_version": None,
+        "runner_version": None,
         "wrapper_sha256": execution_wrapper_sha256,
         "prompt_sha256": prompt_sha256,
         "response_schema_sha256": _sha256_bytes(_canonical_json_bytes(schema)),
         "argv": [],
         "exit_code": None,
         "elapsed_seconds": 0.0,
-        "thread_id": None,
+        "model_result": None,
         "usage": {
             "input_tokens": 0,
             "cached_input_tokens": 0,
             "output_tokens": 0,
             "reasoning_output_tokens": 0,
         },
-        "stdout_jsonl": "",
+        "stdout_json": "",
         "stdout_sha256": empty_sha256,
         "stderr": "",
         "stderr_sha256": empty_sha256,
@@ -2155,7 +2308,9 @@ def _validate_cached_reuse_record(
     if source is None:
         if execution is None:
             return
-        raise RunnerError(f"cached result for job `{job_key}` has invalid reuse provenance")
+        raise RunnerError(
+            f"cached result for job `{job_key}` has invalid reuse provenance"
+        )
     if not isinstance(stage, StageConfig) or schema is None:
         raise RunnerError(f"cached result for job `{job_key}` has invalid reuse stage")
     reusable_response = _find_reusable_response(
@@ -2174,7 +2329,9 @@ def _validate_cached_reuse_record(
             )
         return
     if execution != "reused" or reusable_response is None:
-        raise RunnerError(f"cached result for job `{job_key}` has invalid reuse provenance")
+        raise RunnerError(
+            f"cached result for job `{job_key}` has invalid reuse provenance"
+        )
     reusable = source.jobs[job_key]
     reference = reusable.reference
     expected_provenance = {
@@ -2198,20 +2355,20 @@ def _validate_cached_reuse_record(
         "execution": "reused",
         "model": stage.model,
         "reasoning_effort": stage.reasoning_effort,
-        "codex_version": None,
+        "runner_version": None,
         "prompt_sha256": prompt_sha256,
         "response_schema_sha256": _sha256_bytes(_canonical_json_bytes(schema)),
         "argv": [],
         "exit_code": None,
         "elapsed_seconds": 0.0,
-        "thread_id": None,
+        "model_result": None,
         "usage": {
             "input_tokens": 0,
             "cached_input_tokens": 0,
             "output_tokens": 0,
             "reasoning_output_tokens": 0,
         },
-        "stdout_jsonl": "",
+        "stdout_json": "",
         "stdout_sha256": empty_sha256,
         "stderr": "",
         "stderr_sha256": empty_sha256,
@@ -2232,7 +2389,7 @@ def _execute_pipeline_jobs(
     config: RunnerConfig,
     notes: tuple[Note, ...],
     manifest_sha256: str,
-    codex_version: str,
+    runner_version: str,
     results_path: Path,
     latest: dict[str, dict[str, Any]],
     retry_failed: bool,
@@ -2247,13 +2404,12 @@ def _execute_pipeline_jobs(
         takeaways = _run_job(
             config=config,
             manifest_sha256=manifest_sha256,
-            codex_version=codex_version,
+            runner_version=runner_version,
             stage_name="takeaway",
             stage=config.takeaway,
             note=note,
             takeaway_index=None,
             prompt=_render_takeaway_prompt(config.takeaway.prompt, note),
-            schema_path=config.run_directory / "takeaway-output-schema.json",
             schema=TAKEAWAY_SCHEMA,
             results_path=results_path,
             latest=latest,
@@ -2274,7 +2430,7 @@ def _execute_pipeline_jobs(
                 prominence_result = _run_job(
                     config=config,
                     manifest_sha256=manifest_sha256,
-                    codex_version=codex_version,
+                    runner_version=runner_version,
                     stage_name="prominence",
                     stage=config.prominence,
                     note=note,
@@ -2283,9 +2439,6 @@ def _execute_pipeline_jobs(
                         config.prominence.prompt,
                         note,
                         takeaway,
-                    ),
-                    schema_path=(
-                        config.run_directory / "prominence-output-schema.json"
                     ),
                     schema=PROMINENCE_SCHEMA,
                     results_path=results_path,
@@ -2299,20 +2452,17 @@ def _execute_pipeline_jobs(
                 if isinstance(prominence_result, bool) or not isinstance(
                     prominence_result, int
                 ):
-                    raise AssertionError(
-                        "prominence job returned an invalid response"
-                    )
+                    raise AssertionError("prominence job returned an invalid response")
                 prominence = prominence_result
             fragments = _run_job(
                 config=config,
                 manifest_sha256=manifest_sha256,
-                codex_version=codex_version,
+                runner_version=runner_version,
                 stage_name="mask",
                 stage=config.mask,
                 note=note,
                 takeaway_index=index,
                 prompt=_render_mask_prompt(config.mask.prompt, note, takeaway),
-                schema_path=config.run_directory / "mask-output-schema.json",
                 schema=MASK_SCHEMA,
                 results_path=results_path,
                 latest=latest,
@@ -2348,16 +2498,15 @@ def run(
     if max_new_jobs is not None and max_new_jobs < 1:
         raise RunnerError("--max-new-jobs must be at least 1")
     config = RunnerConfig.load(config_path)
+    _validate_auth_file(config.auth_file)
     notes = _load_notes(config.input_path)
     reuse_source = (
         None
         if config.reuse_source is None
-        else _load_reuse_source(config.reuse_source, notes)
+        else _load_reuse_source(config.reuse_source, notes, config.provider)
     )
-    _prepare_codex_home(config.codex_home)
-    _validate_file_credentials(config.codex_home)
-    codex_version = _codex_version(config)
-    manifest = _build_manifest(config, codex_version)
+    runner_version = _runner_version(config)
+    manifest = _build_manifest(config, runner_version)
     prepared_manifest = _prepare_run_directory(
         config,
         manifest,
@@ -2394,7 +2543,7 @@ def run(
                 config=config,
                 notes=notes,
                 manifest_sha256=manifest_sha256,
-                codex_version=codex_version,
+                runner_version=runner_version,
                 results_path=results_path,
                 latest=latest,
                 retry_failed=retry_failed,
@@ -2446,7 +2595,7 @@ def _execute_subject_jobs(
     config: SubjectRunnerConfig,
     notes: tuple[Note, ...],
     manifest_sha256: str,
-    codex_version: str,
+    runner_version: str,
     results_path: Path,
     latest: dict[str, dict[str, Any]],
     retry_failed: bool,
@@ -2458,13 +2607,12 @@ def _execute_subject_jobs(
         subjects = _run_job(
             config=config,
             manifest_sha256=manifest_sha256,
-            codex_version=codex_version,
+            runner_version=runner_version,
             stage_name="subject",
             stage=config.subject,
             note=note,
             takeaway_index=None,
             prompt=_render_subject_prompt(config.subject.prompt, note),
-            schema_path=config.run_directory / "subject-output-schema.json",
             schema=SUBJECT_SCHEMA,
             results_path=results_path,
             latest=latest,
@@ -2499,11 +2647,10 @@ def run_subjects(
     if max_new_jobs is not None and max_new_jobs < 1:
         raise RunnerError("--max-new-jobs must be at least 1")
     config = SubjectRunnerConfig.load(config_path)
+    _validate_auth_file(config.auth_file)
     notes = _load_notes(config.input_path)
-    _prepare_codex_home(config.codex_home)
-    _validate_file_credentials(config.codex_home)
-    codex_version = _codex_version(config)
-    manifest = _build_subject_manifest(config, codex_version)
+    runner_version = _runner_version(config)
+    manifest = _build_subject_manifest(config, runner_version)
     prepared = _prepare_subject_run_directory(config, manifest)
     manifest_sha256 = prepared.manifest_sha256
     results_path = config.run_directory / "results.jsonl"
@@ -2520,7 +2667,7 @@ def run_subjects(
             config=config,
             notes=notes,
             manifest_sha256=manifest_sha256,
-            codex_version=codex_version,
+            runner_version=runner_version,
             results_path=results_path,
             latest=latest,
             retry_failed=retry_failed,
@@ -2554,10 +2701,9 @@ def run_subjects(
 
 def run_prompts(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
     config = PromptRunnerConfig.load(config_path)
-    _prepare_codex_home(config.codex_home)
-    _validate_file_credentials(config.codex_home)
-    codex_version = _codex_version(config)
-    manifest = _build_prompt_manifest(config, codex_version)
+    _validate_auth_file(config.auth_file)
+    runner_version = _runner_version(config)
+    manifest = _build_prompt_manifest(config, runner_version)
     prepared_manifest = _prepare_manifest_directory(config.run_directory, manifest)
     manifest_sha256 = prepared_manifest.manifest_sha256
     schema_path = None
@@ -2577,13 +2723,12 @@ def run_prompts(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
         response = _run_job(
             config=config,
             manifest_sha256=manifest_sha256,
-            codex_version=codex_version,
+            runner_version=runner_version,
             stage_name="prompt",
             stage=config,
             note=Note(note_id=prompt.prompt_id, text=""),
             takeaway_index=None,
             prompt=prompt.text,
-            schema_path=schema_path,
             schema=config.output_schema,
             results_path=results_path,
             latest=latest,
@@ -2606,33 +2751,38 @@ def run_prompts(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
 def run_direct_prompt(
     prompt: str,
     *,
-    codex_binary: str,
-    codex_home: Path,
+    runner_binary: str,
+    auth_file: Path | None,
+    provider: str,
     model: str | None,
     reasoning_effort: str | None,
     output_schema: dict[str, object] | None = None,
+    max_output_tokens: int | None = None,
+    timeout_seconds: int = 600,
 ) -> str:
     prompt = _expect_string(prompt, "--text")
     resolved_binary = _resolve_executable(
-        codex_binary,
-        "--codex-binary",
+        runner_binary,
+        "--runner-binary",
         Path.cwd(),
     )
-    resolved_home = codex_home.expanduser().resolve()
+    resolved_auth = None if auth_file is None else auth_file.expanduser().resolve()
     model = _expect_identifier(model, "--model")
     reasoning_effort = _expect_identifier(
         reasoning_effort,
         "--reasoning-effort",
     )
 
-    with tempfile.TemporaryDirectory(prefix="codex-direct-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="model-direct-") as temporary:
         temporary_root = Path(temporary).resolve()
         config_path = temporary_root / "config.json"
         run_directory = temporary_root / "run"
         config_value: dict[str, object] = {
             "schema_version": SCHEMA_VERSION,
-            "codex_binary": str(resolved_binary),
-            "codex_home": str(resolved_home),
+            "runner_binary": str(resolved_binary),
+            "auth_file": None if resolved_auth is None else str(resolved_auth),
+            "provider": provider,
+            "timeout_seconds": timeout_seconds,
             "run_directory": str(run_directory),
             "model": model,
             "reasoning_effort": reasoning_effort,
@@ -2640,6 +2790,8 @@ def run_direct_prompt(
         }
         if output_schema is not None:
             config_value["output_schema"] = output_schema
+        if max_output_tokens is not None:
+            config_value["max_output_tokens"] = max_output_tokens
         _atomic_write(
             config_path,
             _ordered_json_bytes(config_value)
@@ -2675,26 +2827,9 @@ def run_direct_prompt(
         return text
 
 
-def login(codex_home: Path, codex_binary: str) -> int:
-    resolved_home = codex_home.expanduser().resolve()
-    binary = _resolve_executable(codex_binary, "codex_binary", Path.cwd())
-    _prepare_codex_home(resolved_home)
-    completed = subprocess.run(
-        [
-            str(binary),
-            "login",
-            "-c",
-            'cli_auth_credentials_store="file"',
-        ],
-        check=False,
-        env=_isolated_environment(resolved_home),
-    )
-    return completed.returncode
-
-
 def _argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Run isolated, auditable prompts through codex exec jobs"
+        description="Run extraction workflows and audited batches through the model runner"
     )
     subcommands = parser.add_subparsers(dest="command", required=True)
     run_parser = subcommands.add_parser("run", help="run or resume a batch")
@@ -2750,8 +2885,11 @@ def _argument_parser() -> argparse.ArgumentParser:
     )
     prompt_parser.add_argument("--model")
     prompt_parser.add_argument("--reasoning-effort")
-    prompt_parser.add_argument("--codex-home", type=Path)
-    prompt_parser.add_argument("--codex-binary")
+    prompt_parser.add_argument("--auth-file", type=Path)
+    prompt_parser.add_argument("--runner-binary")
+    prompt_parser.add_argument("--provider")
+    prompt_parser.add_argument("--max-output-tokens", type=int)
+    prompt_parser.add_argument("--timeout-seconds", type=int)
     prompt_parser.add_argument(
         "--output-schema",
         type=Path,
@@ -2762,19 +2900,12 @@ def _argument_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="explicitly retry failed jobs in config-based batch mode",
     )
-    login_parser = subcommands.add_parser(
-        "login", help="authenticate the dedicated Codex home"
-    )
-    login_parser.add_argument("--codex-home", type=Path, default=DEFAULT_CODEX_HOME)
-    login_parser.add_argument("--codex-binary", default="codex")
     return parser
 
 
 def main(arguments: Sequence[str] | None = None) -> int:
     parsed = _argument_parser().parse_args(arguments)
     try:
-        if parsed.command == "login":
-            return login(parsed.codex_home, parsed.codex_binary)
         if parsed.command == "prompt":
             if parsed.text is not None:
                 if parsed.config is not None:
@@ -2792,11 +2923,16 @@ def main(arguments: Sequence[str] | None = None) -> int:
                 prompt = sys.stdin.read() if parsed.text == "-" else parsed.text
                 response = run_direct_prompt(
                     prompt,
-                    codex_binary=parsed.codex_binary or "codex",
-                    codex_home=parsed.codex_home or DEFAULT_CODEX_HOME,
+                    runner_binary=parsed.runner_binary or str(DEFAULT_RUNNER),
+                    auth_file=parsed.auth_file,
+                    provider=parsed.provider,
                     model=parsed.model,
                     reasoning_effort=parsed.reasoning_effort,
                     output_schema=output_schema,
+                    max_output_tokens=parsed.max_output_tokens,
+                    timeout_seconds=parsed.timeout_seconds
+                    if parsed.timeout_seconds is not None
+                    else 600,
                 )
                 sys.stdout.write(response)
                 return 0
@@ -2807,14 +2943,18 @@ def main(arguments: Sequence[str] | None = None) -> int:
                 for value in (
                     parsed.model,
                     parsed.reasoning_effort,
-                    parsed.codex_home,
-                    parsed.codex_binary,
+                    parsed.auth_file,
+                    parsed.runner_binary,
+                    parsed.provider,
+                    parsed.max_output_tokens,
+                    parsed.timeout_seconds,
                     parsed.output_schema,
                 )
             ):
                 raise RunnerError(
-                    "--model, --reasoning-effort, --codex-home, "
-                    "--codex-binary, and --output-schema are only valid with --text"
+                    "--model, --reasoning-effort, --auth-file, --provider, "
+                    "--runner-binary, --max-output-tokens, --timeout-seconds, "
+                    "and --output-schema are only valid with --text"
                 )
             output = run_prompts(parsed.config, retry_failed=parsed.retry_failed)
             print(json.dumps({"prompts": len(output["responses"])}, sort_keys=True))
@@ -2839,9 +2979,7 @@ def main(arguments: Sequence[str] | None = None) -> int:
                 if not isinstance(notes, list):
                     raise AssertionError("subject output contains invalid notes")
                 status["notes"] = len(notes)
-                status["subjects"] = sum(
-                    len(note["subjects"]) for note in notes
-                )
+                status["subjects"] = sum(len(note["subjects"]) for note in notes)
             print(json.dumps(status, sort_keys=True))
             return 0
         if (parsed.retry_job is None) != (parsed.retry_reason is None):
@@ -2882,7 +3020,7 @@ def main(arguments: Sequence[str] | None = None) -> int:
         print(json.dumps(status, sort_keys=True))
         return 0
     except RunnerError as error:
-        print(f"codex exec wrapper failed: {error}", file=sys.stderr)
+        print(f"extraction pipeline failed: {error}", file=sys.stderr)
         return 1
 
 

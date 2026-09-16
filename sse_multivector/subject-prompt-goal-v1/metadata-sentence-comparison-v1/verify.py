@@ -11,7 +11,7 @@ HERE = Path(__file__).resolve().parent
 GOAL = HERE.parent
 ROOT = GOAL.parents[1]
 sys.path.insert(0, str(ROOT))
-from sse_multivector import codex_exec as runner
+from sse_multivector import generation_history as runner
 
 
 def read(path):
@@ -38,7 +38,7 @@ p17 = (GOAL / 'asv6.17/ASv6.17.md').read_text()
 p18 = (GOAL / 'asv6.18/ASv6.18.md').read_text()
 assert p17.count(proposal['change']['removed']) == 1
 assert p18 == p17.replace(proposal['change']['removed'], proposal['change']['restored'])
-assert sha((ROOT / plan['unchanged']['runner']).read_bytes()) == plan['unchanged']['runner_sha256']
+assert sha(runner.source_bytes(ROOT / plan['unchanged']['runner'])) == plan['unchanged']['runner_sha256']
 for name in ['plan.json', 'selection.json', 'development-input.json', 'development-repeat-input.json', 'final-input.json', 'final-repeat-input.json']:
     original = subprocess.check_output(['git', 'show', 'ace3fa2667494f314bcc280f54aaf4c34e242fdc:sse_multivector/subject-prompt-goal-v1/' + name], cwd=ROOT)
     assert (GOAL / name).read_bytes() == original, name

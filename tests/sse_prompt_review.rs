@@ -23,6 +23,10 @@ use sha2::{Digest, Sha256};
 
 const SUBJECT_PROMPT: &str = "Candidate atomic-subject prompt.";
 const CODEX_VERSION: &str = "codex-cli test-version";
+const LEGACY_SUBJECT_WRAPPER_SHA256: &str =
+    "ebf1942737069a49146d7336c6936dd2fa5cdd8d4b6a2b24274f01bc9f83e2fe";
+const LEGACY_CLAIM_WRAPPER_SHA256: &str =
+    "1d82bebc590ef676be9d6d40f7cbea1d3250f9a6084f17bf2714d896f5261c42";
 const SUBJECT_SCHEMA_SHA256: &str =
     "ffa0aa2d4a52a1b30f41f0a1761e455471a5127c0e20d74aaeea575a0df2226a";
 const CLAIM_PROMPT: &str = "Candidate claim prompt.";
@@ -85,15 +89,12 @@ impl Fixture {
             &subject_registry_path,
             &json!({"atomic-subject-candidate-1": SUBJECT_PROMPT}),
         );
-        let wrapper_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("sse_multivector")
-            .join("codex_exec.py");
         write_json(
             &run_directory.join("manifest.json"),
             &json!({
                 "schema_version": 1,
                 "mode": "atomic_subject_generation",
-                "wrapper_sha256": sha256(&fs::read(wrapper_path).expect("read wrapper")),
+                "wrapper_sha256": LEGACY_SUBJECT_WRAPPER_SHA256,
                 "codex_binary": "/test/codex",
                 "codex_version": CODEX_VERSION,
                 "codex_home": "/test/codex-home",
@@ -328,19 +329,13 @@ impl ClaimFixture {
         );
         let registry_path = temporary.path().join("claim-prompts.json");
         write_json(&registry_path, &json!({"CP-test": CLAIM_PROMPT}));
-        let wrapper_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("sse_multivector")
-            .join("claim_exec.py");
-        let engine_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("sse_multivector")
-            .join("codex_exec.py");
         write_json(
             &run_directory.join("manifest.json"),
             &json!({
                 "schema_version": 1,
                 "mode": "claim_generation",
-                "wrapper_sha256": sha256(&fs::read(wrapper_path).expect("read claim wrapper")),
-                "engine_sha256": sha256(&fs::read(engine_path).expect("read shared engine")),
+                "wrapper_sha256": LEGACY_CLAIM_WRAPPER_SHA256,
+                "engine_sha256": LEGACY_SUBJECT_WRAPPER_SHA256,
                 "codex_binary": "/test/codex",
                 "codex_version": CODEX_VERSION,
                 "codex_home": "/test/codex-home",
@@ -470,6 +465,526 @@ fn rejected(comment: &str) -> ApprovalTuiAction {
 fn skipped(comment: &str) -> ApprovalTuiAction {
     ApprovalTuiAction::Skip {
         comment: comment.to_owned(),
+    }
+}
+
+fn use_pi_ai_generation_contract(run_directory: &Path) {
+    let runner_path = run_directory.join("run-model.sh");
+    fs::create_dir(run_directory.join("frontier_runner")).expect("create runner package");
+    let mut runner_digest = Sha256::new();
+    for (name, path, content) in [
+        ("model.mjs", run_directory.join("frontier_runner/model.mjs"), "preserved runner core\n"),
+        ("package-lock.json", run_directory.join("frontier_runner/package-lock.json"), "preserved dependency lock\n"),
+        ("../run-model.sh", runner_path.clone(), "preserved runner launcher\n"),
+    ] {
+        fs::write(path, content).expect("write runner package fixture");
+        runner_digest.update(format!("{name}\0{}\0", content.len()).as_bytes());
+        runner_digest.update(content.as_bytes());
+    }
+    let runner_sha256 = format!("{:x}", runner_digest.finalize());
+    let manifest_path = run_directory.join("manifest.json");
+    let mut manifest = read_json(&manifest_path);
+    let object = manifest.as_object_mut().expect("manifest object");
+    object.remove("codex_binary");
+    object.remove("codex_version");
+    object.remove("codex_home");
+    manifest["schema_version"] = json!(2);
+    manifest["runner_binary"] = json!(runner_path);
+    manifest["runner_version"] = json!("pi-ai-runner test-version");
+    manifest["runner_sha256"] = json!(runner_sha256);
+    manifest["provider"] = json!("openrouter");
+    manifest["auth_file"] = Value::Null;
+    manifest["timeout_seconds"] = json!(600);
+    manifest["max_output_tokens"] = json!(1024);
+    manifest["isolation"] = json!({
+        "fresh_process_per_job": true,
+        "fresh_context_per_job": true,
+        "system_instructions": "",
+        "tools": [],
+        "history": [],
+        "transport": "pi-ai"
+    });
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("sse_multivector");
+    let workflow_sha256 = sha256(
+        &fs::read(root.join("extraction_pipeline.py")).expect("read extraction workflow"),
+    );
+    if manifest["mode"] == "claim_generation" {
+        manifest["wrapper_sha256"] = json!(sha256(
+            &fs::read(root.join("claim_exec.py")).expect("read claim workflow"),
+        ));
+        manifest["engine_sha256"] = json!(workflow_sha256);
+    } else {
+        manifest["wrapper_sha256"] = json!(workflow_sha256);
+    }
+    write_json(&manifest_path, &manifest);
+    let manifest_sha256 = sha256(&fs::read(&manifest_path).expect("read manifest"));
+    let output_path = run_directory.join("output.json");
+    let mut output = read_json(&output_path);
+    output["manifest_sha256"] = json!(manifest_sha256);
+    write_json(&output_path, &output);
+    let results_path = run_directory.join("results.jsonl");
+    let mut records = read_json_lines(&results_path);
+    for record in &mut records {
+        record.as_object_mut().expect("result object").remove("codex_version");
+        record["schema_version"] = json!(2);
+        record["manifest_sha256"] = json!(manifest_sha256);
+        record["wrapper_sha256"] = manifest["wrapper_sha256"].clone();
+        record["runner_version"] = manifest["runner_version"].clone();
+        record["runner_sha256"] = manifest["runner_sha256"].clone();
+        record["provider"] = manifest["provider"].clone();
+        record["model_result"] = json!({
+            "runner_version": manifest["runner_version"],
+            "runner_sha256": manifest["runner_sha256"],
+            "provider": record["provider"],
+            "model": record["model"],
+            "reasoning": record["reasoning_effort"],
+            "prompt_sha256": record["prompt_sha256"],
+            "schema_sha256": if record["stage"] == "subject" {
+                sha256(br#"{"type":"object","properties":{"subjects":{"type":"array","items":{"type":"string","minLength":1}}},"required":["subjects"],"additionalProperties":false}"#)
+            } else {
+                sha256(br#"{"type":"object","properties":{"claims":{"type":"array","items":{"type":"string","minLength":1}}},"required":["claims"],"additionalProperties":false}"#)
+            },
+            "response_id": "test-response",
+            "raw_text": record["final_output_raw"],
+            "valid": true,
+            "output": serde_json::from_str::<Value>(record["final_output_raw"].as_str().expect("raw output")).expect("parsed model output"),
+            "error": null,
+            "validation_error": null,
+            "stop_reason": "stop"
+        });
+        record["stdout_json"] = json!(record["model_result"].to_string());
+        record["stdout_sha256"] = json!(sha256(record["stdout_json"].as_str().expect("stdout").as_bytes()));
+    }
+    write_json_lines(&results_path, &records);
+}
+
+#[test]
+fn pi_ai_subject_review_accepts_schema_two_generation_and_preserves_saved_review() {
+    let fixture = Fixture::new();
+    use_pi_ai_generation_contract(&fixture.run_directory);
+    let mut first = ScriptedUi::new([approved("Preserved review"), ApprovalTuiAction::Pause]);
+    assert_eq!(
+        run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut first)
+            .expect("review schema two subject generation"),
+        PromptReviewRunOutcome::Paused
+    );
+    let mut resumed = ScriptedUi::new([ApprovalTuiAction::Pause]);
+    run_atomic_subject_prompt_review(&fixture.run_directory, &fixture.session_path, &mut resumed)
+        .expect("resume schema two subject review");
+    let session = read_session(&fixture.session_path);
+    assert_eq!(session["items"][0]["status"], "approved");
+    assert_eq!(session["items"][0]["comment"], "Preserved review");
+}
+
+#[test]
+fn pi_ai_claim_review_accepts_schema_two_generation() {
+    let fixture = ClaimFixture::new();
+    use_pi_ai_generation_contract(&fixture.run_directory);
+    let mut ui = ScriptedNoteUi::new([AtomicSubjectNoteReviewAction::Pause]);
+    assert_eq!(
+        run_claim_note_review(&fixture.run_directory, &fixture.session_path, &mut ui)
+            .expect("review schema two claim generation"),
+        AtomicSubjectNoteReviewRunOutcome::Paused
+    );
+    assert_eq!(ui.screens[0].kind, PromptReviewKind::Claim);
+    assert_eq!(ui.screens[0].subjects.len(), 3);
+}
+
+#[test]
+fn pi_ai_reviews_accept_subscription_auth_provenance_and_require_its_path() {
+    for claim in [false, true] {
+        with_generation_fixture(claim, |run_directory, session_path| {
+            use_pi_ai_generation_contract(run_directory);
+            let manifest_path = run_directory.join("manifest.json");
+            let mut manifest = read_json(&manifest_path);
+            manifest["provider"] = json!("openai-codex");
+            manifest["auth_file"] = json!("/test/subscription-auth.json");
+            manifest["max_output_tokens"] = Value::Null;
+            write_json(&manifest_path, &manifest);
+            let results_path = run_directory.join("results.jsonl");
+            let mut records = read_json_lines(&results_path);
+            for record in &mut records {
+                record["provider"] = manifest["provider"].clone();
+                record["model_result"]["provider"] = manifest["provider"].clone();
+                record["stdout_json"] = json!(record["model_result"].to_string());
+                record["stdout_sha256"] = json!(sha256(
+                    record["stdout_json"].as_str().expect("stdout").as_bytes(),
+                ));
+            }
+            write_json_lines(&results_path, &records);
+            rebind_generation_manifest(run_directory);
+            pause_generation_review(run_directory, session_path, claim)
+                .expect("explicit subscription credential provenance");
+
+            manifest["auth_file"] = Value::Null;
+            write_json(&manifest_path, &manifest);
+            rebind_generation_manifest(run_directory);
+            let error = pause_generation_review(run_directory, session_path, claim)
+                .expect_err("subscription auth source must remain explicit");
+            assert!(error.contains("runner provenance is incomplete"), "{error}");
+        });
+    }
+}
+
+#[test]
+fn pi_ai_claim_review_rejects_changed_shared_workflow_hash() {
+    let fixture = ClaimFixture::new();
+    use_pi_ai_generation_contract(&fixture.run_directory);
+    let manifest_path = fixture.run_directory.join("manifest.json");
+    let mut manifest = read_json(&manifest_path);
+    manifest["engine_sha256"] = json!("0".repeat(64));
+    write_json(&manifest_path, &manifest);
+    rebind_generation_manifest(&fixture.run_directory);
+    let error = pause_generation_review(&fixture.run_directory, &fixture.session_path, true)
+        .expect_err("claim workflow provenance must include its shared engine");
+    assert!(error.contains("manifest is incomplete"), "{error}");
+    assert!(!fixture.session_path.exists());
+}
+
+#[test]
+fn pi_ai_reviews_reject_a_consistently_rebound_unknown_provider() {
+    for claim in [false, true] {
+        with_generation_fixture(claim, |run_directory, session_path| {
+            use_pi_ai_generation_contract(run_directory);
+            let manifest_path = run_directory.join("manifest.json");
+            let mut manifest = read_json(&manifest_path);
+            manifest["provider"] = json!("unknown-provider");
+            write_json(&manifest_path, &manifest);
+            let results_path = run_directory.join("results.jsonl");
+            let mut records = read_json_lines(&results_path);
+            for record in &mut records {
+                record["provider"] = manifest["provider"].clone();
+                record["model_result"]["provider"] = manifest["provider"].clone();
+                record["stdout_json"] = json!(record["model_result"].to_string());
+                record["stdout_sha256"] = json!(sha256(
+                    record["stdout_json"].as_str().expect("stdout").as_bytes(),
+                ));
+            }
+            write_json_lines(&results_path, &records);
+            rebind_generation_manifest(run_directory);
+            pause_generation_review(run_directory, session_path, claim)
+                .expect_err("unknown native providers must be rejected even with matching receipts");
+            assert!(!session_path.exists());
+        });
+    }
+}
+
+#[test]
+fn pi_ai_python_workflow_artifacts_open_and_resume_in_rust_review() {
+    use std::os::unix::fs::PermissionsExt;
+    use std::process::Command;
+
+    // Only the model backend is fake. Both production Python workflows write all
+    // manifests/receipts/output, and the production Rust reader verifies them unchanged.
+    const BACKEND: &str = r#"#!/usr/bin/env python3
+import hashlib
+import json
+from pathlib import Path
+import sys
+
+root = Path(__file__).resolve().parent
+digest = hashlib.sha256()
+for name in ["model.mjs", "package-lock.json", "../run-model.sh"]:
+    data = (root / "frontier_runner" / name).read_bytes()
+    digest.update(f"{name}\0{len(data)}\0".encode())
+    digest.update(data)
+identity = {"runner_version": "oracle-model-runner/1", "pi_ai_version": "offline-fixture", "runner_sha256": digest.hexdigest()}
+if sys.argv[1:] == ["--identity"]:
+    print(json.dumps(identity))
+    raise SystemExit(0)
+assert sys.argv[1:3] == ["run", "--send"]
+request = json.load(sys.stdin)
+with (root / "calls.jsonl").open("a") as calls:
+    calls.write(json.dumps(request) + "\n")
+field = request["schema"]["required"][0]
+assert field in {"subjects", "claims"}
+response = {field: ["Rust programming."] if field == "subjects" else ["Rust is pleasant."]}
+raw = json.dumps(response)
+print(json.dumps({
+    **identity,
+    "provider": request["provider"], "model": request["model"], "reasoning": request["reasoning"],
+    "prompt_sha256": hashlib.sha256(request["prompt"].encode()).hexdigest(),
+    "schema_sha256": hashlib.sha256(json.dumps(request["schema"], separators=(",", ":")).encode()).hexdigest(),
+    "raw_text": raw, "output": response, "valid": True, "error": None, "validation_error": None,
+    "stop_reason": "stop", "http_attempts": 1, "usage": {"input_tokens": 20, "output_tokens": 5},
+    "request": {"body": {"model": request["model"], "input": [{"role": "user", "content": [{"type": "input_text", "text": request["prompt"]}]}], "text": {"format": {"schema": request["schema"]}}}},
+    "response_metadata": {},
+}))
+"#;
+
+    for claim in [false, true] {
+        let temporary = tempfile::tempdir().expect("offline workflow directory");
+        let root = temporary.path();
+        let backend_directory = root.join("backend");
+        fs::create_dir_all(backend_directory.join("frontier_runner"))
+            .expect("create fake runner package");
+        let backend = backend_directory.join("run-model.sh");
+        fs::write(&backend, BACKEND).expect("write fake backend");
+        fs::set_permissions(&backend, fs::Permissions::from_mode(0o755))
+            .expect("make fake backend executable");
+        fs::write(backend_directory.join("frontier_runner/model.mjs"), "offline core\n")
+            .expect("write fake core identity bytes");
+        fs::write(backend_directory.join("frontier_runner/package-lock.json"), "{}\n")
+            .expect("write fake dependency identity bytes");
+        let auth_file = root.join("auth.json");
+        fs::write(&auth_file, "{}\n").expect("write fake credential file");
+        fs::set_permissions(&auth_file, fs::Permissions::from_mode(0o600))
+            .expect("restrict fake credential file");
+        let input_path = root.join("notes.json");
+        write_json(&input_path, &json!({
+            "schema_version": 1,
+            "notes": [
+                {"note_id": format!("{:064x}", 1), "text": "Rust is pleasant."},
+                {"note_id": format!("{:064x}", 2), "text": "Rust is pleasant. Tea helps."}
+            ]
+        }));
+        let registry = root.join("prompts.json");
+        write_json(&registry, &json!({"offline-v1": "Extract the requested items."}));
+        let run_directory = root.join("generation");
+        let stage = if claim { "claim" } else { "subject" };
+        let config_path = root.join("config.json");
+        write_json(&config_path, &json!({
+            "schema_version": 1,
+            "runner_binary": backend,
+            "provider": "openai-codex",
+            "auth_file": auth_file,
+            "input_path": input_path,
+            "run_directory": run_directory,
+            (stage): {
+                "prompt_registry_path": registry,
+                "prompt_version": "offline-v1",
+                "model": format!("offline/{stage}"),
+                "reasoning_effort": "low"
+            }
+        }));
+        let workflow = Path::new(env!("CARGO_MANIFEST_DIR")).join("sse_multivector").join(
+            if claim { "claim_exec.py" } else { "extraction_pipeline.py" },
+        );
+        let invoke = |limit: Option<&str>| {
+            let mut command = Command::new("python3");
+            command.arg("-B").arg(&workflow)
+                .arg(if claim { "claims" } else { "subjects" }).arg(&config_path)
+                .env_clear()
+                .env("PATH", std::env::var_os("PATH").expect("Python search path"))
+                .env("HOME", root)
+                .current_dir(root);
+            if let Some(limit) = limit {
+                command.args(["--max-new-jobs", limit]);
+            }
+            let output = command.output().expect("invoke production Python workflow");
+            assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
+        };
+        invoke(Some("1"));
+        let calls_path = backend_directory.join("calls.jsonl");
+        assert_eq!(read_json_lines(&calls_path).len(), 1);
+        assert!(!run_directory.join("output.json").exists());
+        invoke(None);
+        assert_eq!(read_json_lines(&calls_path).len(), 2);
+        let records_path = run_directory.join("results.jsonl");
+        let records = fs::read(&records_path).expect("preserved Python receipts");
+        let session_path = root.join("review-session.json");
+        pause_generation_review(&run_directory, &session_path, claim)
+            .expect("Rust opens actual Python-written schema two artifacts");
+        let saved_review = fs::read(&session_path).expect("saved Rust review");
+        invoke(None);
+        assert_eq!(read_json_lines(&calls_path).len(), 2);
+        assert_eq!(fs::read(&records_path).expect("resumed receipts"), records);
+        assert_eq!(fs::read(&session_path).expect("saved review after generation resume"), saved_review);
+        pause_generation_review(&run_directory, &session_path, claim)
+            .expect("Rust resumes review after Python's cached generation resume");
+    }
+}
+
+fn with_generation_fixture(claim: bool, action: impl FnOnce(&Path, &Path)) {
+    if claim {
+        let fixture = ClaimFixture::new();
+        action(&fixture.run_directory, &fixture.session_path);
+    } else {
+        let fixture = Fixture::new();
+        action(&fixture.run_directory, &fixture.session_path);
+    }
+}
+
+fn pause_generation_review(run_directory: &Path, session_path: &Path, claim: bool) -> Result<(), String> {
+    if claim {
+        let mut ui = ScriptedNoteUi::new([AtomicSubjectNoteReviewAction::Pause]);
+        run_claim_note_review(run_directory, session_path, &mut ui)
+            .map(|_| ())
+            .map_err(|error| error.to_string())
+    } else {
+        let mut ui = ScriptedUi::new([ApprovalTuiAction::Pause]);
+        run_atomic_subject_prompt_review(run_directory, session_path, &mut ui)
+            .map(|_| ())
+            .map_err(|error| error.to_string())
+    }
+}
+
+fn rebind_generation_manifest(run_directory: &Path) {
+    let manifest_sha256 = sha256(&fs::read(run_directory.join("manifest.json")).expect("manifest bytes"));
+    let output_path = run_directory.join("output.json");
+    let mut output = read_json(&output_path);
+    output["manifest_sha256"] = json!(manifest_sha256);
+    write_json(&output_path, &output);
+    let results_path = run_directory.join("results.jsonl");
+    let mut records = read_json_lines(&results_path);
+    for record in &mut records {
+        record["manifest_sha256"] = json!(manifest_sha256);
+    }
+    write_json_lines(&results_path, &records);
+}
+
+#[test]
+fn pi_ai_reviews_reject_changed_runner_components() {
+    for claim in [false, true] {
+        for component in ["run-model.sh", "frontier_runner/model.mjs", "frontier_runner/package-lock.json"] {
+            with_generation_fixture(claim, |run_directory, session_path| {
+                use_pi_ai_generation_contract(run_directory);
+                fs::write(run_directory.join(component), "changed bytes").expect("change runner component");
+                let error = pause_generation_review(run_directory, session_path, claim)
+                    .expect_err("changed runner component must not be reviewed");
+                assert!(error.contains("runner does not match"), "{component}: {error}");
+                assert!(!session_path.exists());
+            });
+        }
+    }
+}
+
+#[test]
+fn pi_ai_reviews_reject_incomplete_or_mixed_manifests_and_nonisolated_execution() {
+    let mutations = [
+        ("/schema_version", json!(3)),
+        ("/runner_version", json!("")),
+        ("/runner_sha256", json!("0".repeat(64))),
+        ("/provider", Value::Null),
+        ("/timeout_seconds", Value::Null),
+        ("/timeout_seconds", json!(0)),
+        ("/timeout_seconds", json!(3601)),
+        ("/timeout_seconds", json!(true)),
+        ("/max_output_tokens", Value::Null),
+        ("/max_output_tokens", json!(0)),
+        ("/max_output_tokens", json!(-1)),
+        ("/max_output_tokens", json!(true)),
+        ("/auth_file", json!("/unexpected/auth.json")),
+        ("/codex_binary", json!("/legacy/codex")),
+        ("/wrapper_sha256", json!("0".repeat(64))),
+        ("/isolation/fresh_process_per_job", json!(false)),
+        ("/isolation/fresh_context_per_job", json!(false)),
+        ("/isolation/system_instructions", json!("Extra instructions")),
+        ("/isolation/tools", json!(["shell"])),
+        ("/isolation/history", json!([{"role": "user", "content": "Prior note"}])),
+        ("/isolation/transport", json!("codex")),
+    ];
+    for claim in [false, true] {
+        for (pointer, value) in &mutations {
+            with_generation_fixture(claim, |run_directory, session_path| {
+                use_pi_ai_generation_contract(run_directory);
+                let path = run_directory.join("manifest.json");
+                let mut manifest = read_json(&path);
+                if *pointer == "/codex_binary" {
+                    manifest["codex_binary"] = value.clone();
+                } else {
+                    *manifest.pointer_mut(pointer).expect("manifest mutation target") = value.clone();
+                }
+                write_json(&path, &manifest);
+                rebind_generation_manifest(run_directory);
+                pause_generation_review(run_directory, session_path, claim)
+                    .unwrap_err();
+                assert!(!session_path.exists(), "{pointer}");
+            });
+        }
+    }
+}
+
+#[test]
+fn pi_ai_reviews_reject_record_and_model_result_provenance_changes() {
+    let mutations = [
+        ("/schema_version", json!(1)),
+        ("/provider", json!("different-provider")),
+        ("/runner_version", json!("different-version")),
+        ("/runner_sha256", json!("0".repeat(64))),
+        ("/prompt_sha256", json!("0".repeat(64))),
+        ("/response_schema_sha256", json!("0".repeat(64))),
+        ("/final_output_sha256", json!("0".repeat(64))),
+        ("/stdout_sha256", json!("0".repeat(64))),
+        ("/model_result", Value::Null),
+        ("/model_result/provider", json!("different-provider")),
+        ("/model_result/model", json!("different-model")),
+        ("/model_result/reasoning", json!("different-reasoning")),
+        ("/model_result/runner_version", json!("different-version")),
+        ("/model_result/runner_sha256", json!("0".repeat(64))),
+        ("/model_result/prompt_sha256", json!("0".repeat(64))),
+        ("/model_result/schema_sha256", json!("0".repeat(64))),
+        ("/model_result/raw_text", json!("{}")),
+        ("/model_result/output", json!({})),
+        ("/model_result/valid", json!(false)),
+        ("/model_result/error", json!("provider failed")),
+        ("/model_result/validation_error", json!("schema failed")),
+        ("/model_result/stop_reason", json!("length")),
+    ];
+    for claim in [false, true] {
+        for (pointer, value) in &mutations {
+            with_generation_fixture(claim, |run_directory, session_path| {
+                use_pi_ai_generation_contract(run_directory);
+                let path = run_directory.join("results.jsonl");
+                let mut records = read_json_lines(&path);
+                *records[0].pointer_mut(pointer).expect("result mutation target") = value.clone();
+                if pointer.starts_with("/model_result") {
+                    // Rebind transport bytes so the check reaches the model's own contract.
+                    records[0]["stdout_json"] = json!(records[0]["model_result"].to_string());
+                    records[0]["stdout_sha256"] = json!(sha256(records[0]["stdout_json"].as_str().expect("stdout").as_bytes()));
+                }
+                write_json_lines(&path, &records);
+                let error = pause_generation_review(run_directory, session_path, claim)
+                    .expect_err("altered provenance must be rejected before review");
+                assert!(!session_path.exists(), "{pointer}: {error}");
+            });
+        }
+    }
+}
+
+#[test]
+fn pi_ai_reviews_preserve_failed_diagnostics_before_a_successful_retry() {
+    for claim in [false, true] {
+        for diagnostics in [Value::Null, json!({"error": "malformed transport result"})] {
+            with_generation_fixture(claim, |run_directory, session_path| {
+                use_pi_ai_generation_contract(run_directory);
+                let path = run_directory.join("results.jsonl");
+                let mut records = read_json_lines(&path);
+                let mut failed = records[0].clone();
+                failed["status"] = json!("failed");
+                failed["response"] = Value::Null;
+                failed["final_output_raw"] = Value::Null;
+                failed["final_output_sha256"] = Value::Null;
+                failed["model_result"] = diagnostics.clone();
+                let stdout = if diagnostics.is_null() { String::new() } else { diagnostics.to_string() };
+                failed["stdout_json"] = json!(stdout);
+                failed["stdout_sha256"] = json!(sha256(stdout.as_bytes()));
+                records[0]["attempt"] = json!(2);
+                records.insert(0, failed);
+                write_json_lines(&path, &records);
+                pause_generation_review(run_directory, session_path, claim)
+                    .expect("failed diagnostics must not block review of the successful retry");
+            });
+        }
+    }
+}
+
+#[test]
+fn legacy_reviews_reject_changed_wrapper_and_claim_engine_hashes() {
+    for claim in [false, true] {
+        for field in if claim { vec!["wrapper_sha256", "engine_sha256"] } else { vec!["wrapper_sha256"] } {
+            with_generation_fixture(claim, |run_directory, session_path| {
+                let path = run_directory.join("manifest.json");
+                let mut manifest = read_json(&path);
+                manifest[field] = json!("0".repeat(64));
+                write_json(&path, &manifest);
+                rebind_generation_manifest(run_directory);
+                let error = pause_generation_review(run_directory, session_path, claim)
+                    .expect_err("legacy provenance must still be enforced");
+                assert!(error.contains("manifest is incomplete"), "{field}: {error}");
+                assert!(!session_path.exists());
+            });
+        }
     }
 }
 

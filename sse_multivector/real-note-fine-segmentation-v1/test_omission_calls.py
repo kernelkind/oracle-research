@@ -1,23 +1,42 @@
 import copy
-import hashlib
 import json
+import os
+import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 import omission_calls as calls
 from generation import read, sha, write
-from sse_multivector import codex_exec as runner
+from sse_multivector import extraction_pipeline as runner
+from sse_multivector.test_extraction_pipeline import FAKE_RUNNER
 
 
 E = Path(__file__).resolve().parent
 
 
 class OmissionCallsTests(unittest.TestCase):
+    def test_saved_codex_omission_calls_keep_legacy_provenance_without_execution(self):
+        manifest, saved = calls.saved_calls(E / "omission-audit-v1/text", "text")
+        self.assertEqual(4, len(saved))
+        self.assertEqual("codex-cli 0.153.0", manifest["codex_version"])
+        self.assertEqual(4, len({call["thread_id"] for call in saved}))
+        self.assertTrue(all("stdout_jsonl" in call["receipt"] for call in saved))
+        self.assertFalse((self.root / "calls.json").exists())
+
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
+        self.auth_file = self.root / "auth.json"
+        self.auth_file.write_text("fixture")
+        self.auth_file.chmod(0o600)
+        self.fake_runner = self.root / "fake-model"
+        self.fake_runner.write_text(FAKE_RUNNER)
+        self.fake_runner.chmod(0o755)
+        self.runtime = {"auth_file": self.auth_file, "runner_binary": self.fake_runner}
         reference = self.root / "subjects-001-010/N001-AS/config.json"
         reference.parent.mkdir(parents=True)
         reference.write_bytes((E / "subjects-001-010/N001-AS/config.json").read_bytes())
@@ -91,7 +110,7 @@ class OmissionCallsTests(unittest.TestCase):
 
     def prepare_text(self):
         destination = self.root / "text"
-        return destination, calls.prepare_text(self.root, destination)
+        return destination, calls.prepare_text(self.root, destination, **self.runtime)
 
     def good_text_responses(self, manifest):
         catalog = {row["id"]: row for row in manifest["catalog"]}
@@ -106,60 +125,35 @@ class OmissionCallsTests(unittest.TestCase):
             responses[call["id"]] = rows
         return responses
 
-    def save_responses(self, prepared, manifest, responses, duplicate_thread=False):
+    def save_responses(self, prepared, manifest, responses, duplicate_response=False):
         for index, call in enumerate(manifest["calls"]):
-            config = runner.PromptRunnerConfig.load(prepared / call["config"])
-            config.run_directory.mkdir(exist_ok=True)
-            run_manifest = runner._build_prompt_manifest(config, "codex-cli 0.153.0")
-            raw_manifest = runner._canonical_json_bytes(run_manifest)
-            (config.run_directory / "manifest.json").write_bytes(raw_manifest)
+            config_path = prepared / call["config"]
+            config = runner.PromptRunnerConfig.load(config_path)
+            if config.run_directory.exists():
+                shutil.rmtree(config.run_directory)
             raw = json.dumps(responses[call["id"]], ensure_ascii=False)
-            thread = "thread-0" if duplicate_thread else f"thread-{index}"
-            usage = {"input_tokens": 11, "output_tokens": 9}
-            stdout = (
-                "\n".join(
-                    json.dumps(row)
-                    for row in [
-                        {"type": "thread.started", "thread_id": thread},
-                        {"type": "turn.completed", "usage": usage},
-                    ]
-                )
-                + "\n"
-            )
-            workspace = config.codex_home / "job-workspaces" / f"prompt-{index}"
-            receipt = {
-                "schema_version": 1,
-                "manifest_sha256": hashlib.sha256(raw_manifest).hexdigest(),
-                "wrapper_sha256": run_manifest["wrapper_sha256"],
-                "job_key": "prompt:" + call["id"],
-                "status": "succeeded",
-                "attempt": 1,
-                "stage": "prompt",
-                "note_id": call["id"],
-                "prompt_sha256": hashlib.sha256(
-                    config.prompts[0].text.encode()
-                ).hexdigest(),
-                "model": config.model,
-                "reasoning_effort": config.reasoning_effort,
-                "codex_version": "codex-cli 0.153.0",
-                "response_schema_sha256": None,
-                "thread_id": thread,
-                "usage": usage,
-                "exit_code": 0,
-                "argv": runner._build_exec_argv(
-                    config, config, workspace, None, workspace / "response.json"
+            response_id = "response-0" if duplicate_response else f"response-{index}"
+            environment = {
+                **os.environ,
+                "FAKE_RUNNER_LOG": str(self.root / "calls.json"),
+                "FAKE_RUNNER_RESULT_OVERRIDE": json.dumps(
+                    {"raw_text": raw, "output": raw, "response_id": response_id}
                 ),
-                "stdout_jsonl": stdout,
-                "stdout_sha256": hashlib.sha256(stdout.encode()).hexdigest(),
-                "stderr": "",
-                "stderr_sha256": hashlib.sha256(b"").hexdigest(),
-                "response": raw,
-                "final_output_raw": raw,
-                "final_output_sha256": hashlib.sha256(raw.encode()).hexdigest(),
             }
-            (config.run_directory / "results.jsonl").write_text(
-                json.dumps(receipt) + "\n"
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-B",
+                    str(Path(runner.__file__)),
+                    "prompt",
+                    str(config_path),
+                ],
+                env=environment,
+                capture_output=True,
+                text=True,
+                timeout=30,
             )
+            self.assertEqual(result.returncode, 0, result.stderr)
 
     def judge_review(self):
         source = self.root / "sample.json"
@@ -220,7 +214,7 @@ class OmissionCallsTests(unittest.TestCase):
             self.assertNotIn("baseline", prompt)
             self.assertNotIn("cosine", prompt)
         with self.assertRaisesRegex(ValueError, "already exists"):
-            calls.prepare_text(self.root, prepared)
+            calls.prepare_text(self.root, prepared, **self.runtime)
 
     def test_text_collect_complete_coverage_dedup_and_raw_provenance(self):
         prepared, manifest = self.prepare_text()
@@ -234,7 +228,7 @@ class OmissionCallsTests(unittest.TestCase):
         provenance = read(output.with_suffix(".provenance.json"))
         self.assertEqual(4, len(provenance["calls"]))
         self.assertTrue(all(row["raw_response"] for row in provenance["calls"]))
-        self.assertEqual(4, len({row["thread_id"] for row in provenance["calls"]}))
+        self.assertEqual(4, len({row["response_id"] for row in provenance["calls"]}))
         with self.assertRaisesRegex(ValueError, "already exists"):
             calls.collect_text(prepared, output)
 
@@ -262,11 +256,11 @@ class OmissionCallsTests(unittest.TestCase):
                     calls.collect_text(prepared, destination)
                 self.assertFalse(destination.exists())
 
-    def test_receipt_prompt_hash_and_threads_are_bound(self):
+    def test_receipt_prompt_hash_and_response_ids_are_bound(self):
         prepared, manifest = self.prepare_text()
         responses = self.good_text_responses(manifest)
-        self.save_responses(prepared, manifest, responses, duplicate_thread=True)
-        with self.assertRaisesRegex(ValueError, "thread"):
+        self.save_responses(prepared, manifest, responses, duplicate_response=True)
+        with self.assertRaisesRegex(ValueError, "response ID"):
             calls.collect_text(prepared, self.root / "duplicate.json")
         self.save_responses(prepared, manifest, responses)
         receipt_path = prepared / manifest["calls"][0]["id"] / "run/results.jsonl"
@@ -282,7 +276,7 @@ class OmissionCallsTests(unittest.TestCase):
         document["packets"] = []
         baseline.write_text(json.dumps(document))
         with self.assertRaisesRegex(ValueError, "baseline.*hash"):
-            calls.prepare_text(self.root, self.root / "changed")
+            calls.prepare_text(self.root, self.root / "changed", **self.runtime)
         self.assertFalse((self.root / "changed").exists())
 
     def test_text_collect_filters_ineligible_proposals_preserving_raw(self):
@@ -343,7 +337,9 @@ class OmissionCallsTests(unittest.TestCase):
     def test_judge_prompt_names_each_allowed_verdict(self):
         source = self.judge_review()
         prepared = self.root / "labels"
-        manifest = calls.prepare_judges(source, prepared, root=self.root)
+        manifest = calls.prepare_judges(
+            source, prepared, root=self.root, **self.runtime
+        )
         prompt = (prepared / manifest["calls"][0]["prompt"]).read_text()
         for verdict in ("valid", "invalid", "uncertain"):
             self.assertIn(
@@ -353,7 +349,9 @@ class OmissionCallsTests(unittest.TestCase):
     def test_two_judge_rounds_blinded_coverage_and_batch_gate(self):
         source = self.judge_review()
         prepared = self.root / "judge"
-        manifest = calls.prepare_judges(source, prepared, root=self.root)
+        manifest = calls.prepare_judges(
+            source, prepared, root=self.root, **self.runtime
+        )
         self.assertEqual(16, len(manifest["calls"]))
         self.assertEqual(
             [2, 7, 7],
@@ -396,7 +394,7 @@ class OmissionCallsTests(unittest.TestCase):
         output = self.root / "judgments.json"
         result = calls.collect_judgments(prepared, output)
         self.assertEqual([128, 128], [len(r["judgments"]) for r in result["rounds"]])
-        self.assertEqual(16, len({row["thread_id"] for row in result["calls"]}))
+        self.assertEqual(16, len({row["response_id"] for row in result["calls"]}))
         self.assertNotIn("winner", result)
         bad = copy.deepcopy(responses)
         bad[manifest["calls"][0]["id"]][0]["verdict"] = "accepted"

@@ -11,7 +11,7 @@ HERE = Path(__file__).resolve().parent
 GOAL = HERE.parent
 ROOT = GOAL.parents[1]
 sys.path.insert(0, str(ROOT))
-from sse_multivector import codex_exec as runner
+from sse_multivector import generation_history as runner
 
 # Reuse the existing read-only raw-response validator.
 spec = importlib.util.spec_from_file_location('existing_verifier', GOAL / 'relation-rule-ablation-v1/verify.py')
@@ -28,7 +28,7 @@ def verify():
     check((HERE / 'proposal.json').read_bytes() == frozen(HERE / 'proposal.json'), 'changed proposal')
     paths = [GOAL / 'asv6.21/ASv6.21.md', GOAL / 'asv6.22/ASv6.22.md']
     for path in paths + [ROOT / 'sse_multivector/codex_exec.py', GOAL / 'plan.json']:
-        check(path.read_bytes() == frozen(path), f'changed frozen input {path}')
+        check(runner.source_bytes(path) == frozen(path), f'changed frozen input {path}')
     a, b = [p.read_text() for p in paths]
     check(a.split('</example>', 1)[0] == b.split('</example>', 1)[0], 'changed instructions or first example')
     threads, workdirs, calls = set(), set(), []

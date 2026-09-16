@@ -61,7 +61,10 @@ import sys
 from pathlib import Path
 
 if "--version" in sys.argv:
-    print("codex-cli fixture-1.0")
+    print("oracle-model-runner/1 pi-ai/fixture")
+    raise SystemExit(0)
+if "--identity" in sys.argv:
+    print(json.dumps({"runner_version": "oracle-model-runner/1", "runner_sha256": "e" * 64, "pi_ai_version": "fixture"}))
     raise SystemExit(0)
 
 if len(sys.argv) > 1 and sys.argv[1] == "app-server":
@@ -91,24 +94,27 @@ if len(sys.argv) > 1 and sys.argv[1] == "app-server":
             }), flush=True)
     raise SystemExit(0)
 
-prompt = sys.stdin.read()
-arguments = sys.argv[1:]
-output_path = Path(arguments[arguments.index("--output-last-message") + 1])
+request = json.loads(sys.stdin.read())
+prompt = request["prompt"]
 if prompt.startswith("TAKEAWAY"):
     response = {"takeaways": ["Rust is discussed."]}
 elif prompt.startswith("PROMINENCE"):
     response = {"prominence": 88}
 else:
     response = {"fragments": ["Rust"]}
-output_path.write_text(json.dumps(response), encoding="utf-8")
-print(json.dumps({"type": "thread.started", "thread_id": "fixture-thread"}))
+import hashlib
 print(json.dumps({
-    "type": "turn.completed",
+    "provider": request["provider"], "model": request["model"],
+    "reasoning": request["reasoning"], "runner_version": "oracle-model-runner/1",
+    "runner_sha256": "e" * 64,
+    "prompt_sha256": hashlib.sha256(prompt.encode()).hexdigest(),
+    "schema_sha256": hashlib.sha256(json.dumps(request["schema"], ensure_ascii=False, separators=(",", ":")).encode()).hexdigest(),
+    "valid": True, "error": None, "stop_reason": "stop", "http_attempts": 1,
+    "raw_text": json.dumps(response), "output": response,
+    "request": {"body": {"model": request["model"], "input": [{"role": "user", "content": [{"type": "input_text", "text": prompt}]}], "text": {"format": {"schema": request["schema"]}}}},
     "usage": {
-        "input_tokens": 100,
-        "cached_input_tokens": 0,
-        "output_tokens": 20,
-        "reasoning_output_tokens": 5
+        "input": 100, "output": 20, "cacheRead": 0, "cacheWrite": 0,
+        "cost": {"total": 0}
     }
 }))
 """
@@ -171,7 +177,9 @@ class CodexAppServerTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "exactly one"):
                 _read_single_appended_result(path, before)
 
-    def test_reads_the_default_weekly_codex_limit_and_ignores_notifications(self) -> None:
+    def test_reads_the_default_weekly_codex_limit_and_ignores_notifications(
+        self,
+    ) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             binary = root / "codex"
@@ -215,7 +223,9 @@ class CodexAppServerTests(unittest.TestCase):
                 encoding="utf-8",
             )
             takeaway_prompts = root / "takeaway-prompts.json"
-            takeaway_prompts.write_text(json.dumps({"TP": "TAKEAWAY"}), encoding="utf-8")
+            takeaway_prompts.write_text(
+                json.dumps({"TP": "TAKEAWAY"}), encoding="utf-8"
+            )
             prominence_prompts = root / "prominence-prompts.json"
             prominence_prompts.write_text(
                 json.dumps({"PP": "PROMINENCE"}), encoding="utf-8"
@@ -238,8 +248,9 @@ class CodexAppServerTests(unittest.TestCase):
                 json.dumps(
                     {
                         "schema_version": 2,
-                        "codex_binary": str(binary),
-                        "codex_home": str(codex_home),
+                        "runner_binary": str(binary),
+                        "provider": "openai-codex",
+                        "auth_file": str(codex_home / "auth.json"),
                         "input_path": str(notes),
                         "run_directory": str(run_directory),
                         "takeaway": {
@@ -272,6 +283,10 @@ class CodexAppServerTests(unittest.TestCase):
                     str(Path(__file__).with_name("codex_usage_calibration.py")),
                     str(config),
                     str(ledger),
+                    "--codex-binary",
+                    str(binary),
+                    "--codex-home",
+                    str(codex_home),
                     "--max-seconds",
                     "30",
                 ],
@@ -402,7 +417,9 @@ class CalibrationTrackerTests(unittest.TestCase):
         self.assertIn("lower_bound", encoded)
         self.assertNotIn("estimate", encoded)
 
-    def test_timeout_before_any_boundary_reports_only_the_unchanged_display(self) -> None:
+    def test_timeout_before_any_boundary_reports_only_the_unchanged_display(
+        self,
+    ) -> None:
         tracker = CalibrationTracker.start(snapshot(53), "2026-08-06T00:00:00Z")
         tracker.observe(observation("job-1", 100, 53))
         tracker.observe(observation("job-2", 200, 53))

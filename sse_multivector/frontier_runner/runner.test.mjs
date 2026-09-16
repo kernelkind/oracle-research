@@ -35,7 +35,7 @@ test('676 selected inputs match the existing frozen production formatter', async
   const file = new URL('frontier-model-comparison-v1/english-selection-v2/selection.json', root);
   const notes = JSON.parse(await readFile(file, 'utf8')).notes;
   const python = spawnSync('python3', ['-B', '-c',
-    'import importlib.util,sys,json,pathlib; p=pathlib.Path(sys.argv[1]); s=importlib.util.spec_from_file_location("codex_exec",p/"codex_exec.py"); m=importlib.util.module_from_spec(s); sys.modules[s.name]=m; s.loader.exec_module(m); notes=json.loads(pathlib.Path(sys.argv[2]).read_text())["notes"]; print(json.dumps([m._takeaway_input(n["text"]) for n in notes]))',
+    'import importlib.util,sys,json,pathlib; p=pathlib.Path(sys.argv[1]); s=importlib.util.spec_from_file_location("extraction_pipeline",p/"extraction_pipeline.py"); m=importlib.util.module_from_spec(s); sys.modules[s.name]=m; s.loader.exec_module(m); notes=json.loads(pathlib.Path(sys.argv[2]).read_text())["notes"]; print(json.dumps([m._takeaway_input(n["text"]) for n in notes]))',
     root.pathname, file.pathname], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 });
   assert.equal(python.status, 0, python.stderr);
   const normalized = JSON.parse(python.stdout);

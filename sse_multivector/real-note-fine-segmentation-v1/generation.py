@@ -11,11 +11,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-from sse_multivector import codex_exec as runner  # noqa: E402
+from sse_multivector import extraction_pipeline as runner  # noqa: E402
+from sse_multivector import generation_history as history  # noqa: E402
 
 
 def sha(path):
-    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    return history._sha256_file(Path(path))
 
 
 def read(path):
@@ -91,7 +92,51 @@ def load_packages():
     }
 
 
-def prepare(stage, input_path, output_path, *, start=1, stop=None):
+def native_config(config, *, auth_file, runner_binary=runner.DEFAULT_RUNNER):
+    """Keep the frozen model/prompt settings; select new execution explicitly."""
+    if auth_file is None:
+        raise ValueError("new generation requires an explicit auth_file")
+    value = {
+        key: item
+        for key, item in config.items()
+        if key not in {"codex_binary", "codex_home"}
+    }
+    value.update(
+        provider="openai-codex",
+        auth_file=str(Path(auth_file).expanduser().resolve()),
+        runner_binary=str(Path(runner_binary).expanduser().resolve()),
+    )
+    return value
+
+
+def receipt_engine(config_path):
+    return runner if "runner_binary" in read(config_path) else history
+
+
+def prompt_manifest(engine, config, saved, legacy_version):
+    version = saved["runner_version"] if engine is runner else legacy_version
+    return engine._build_prompt_manifest(config, version)
+
+
+def add_usage(total, counts, *, native):
+    for name, count in (counts or {}).items():
+        if native and name == "cost":
+            continue  # SDK catalog cost estimates are not incurred charges.
+        if type(count) is not int or count < 0:
+            raise ValueError("saved receipt has invalid usage")
+        total[name] = total.get(name, 0) + count
+
+
+def prepare(
+    stage,
+    input_path,
+    output_path,
+    *,
+    auth_file,
+    runner_binary=runner.DEFAULT_RUNNER,
+    start=1,
+    stop=None,
+):
     if stage not in ("subjects", "masks"):
         raise ValueError("stage must be subjects or masks")
     output = Path(output_path).resolve()
@@ -153,7 +198,11 @@ def prepare(stage, input_path, output_path, *, start=1, stop=None):
                 if stage == "subjects"
                 else f"N{note_index + 1:03d}-S{subject_index + 1:03d}-MP"
             )
-            config = copy.deepcopy(packages[stage])
+            config = native_config(
+                copy.deepcopy(packages[stage]),
+                auth_file=auth_file,
+                runner_binary=runner_binary,
+            )
             if stage == "subjects":
                 prompt = runner._render_subject_prompt(
                     packages["subject_prompt"].strip(), runner.Note(note_id, text)
@@ -198,7 +247,7 @@ def prepare(stage, input_path, output_path, *, start=1, stop=None):
                 "cwd": str(directory),
                 "command": [
                     str(Path(sys.executable).resolve()),
-                    str(ROOT / "sse_multivector/codex_exec.py"),
+                    str(ROOT / "sse_multivector/extraction_pipeline.py"),
                     "prompt",
                     str(path),
                 ],
@@ -212,6 +261,7 @@ def prepare(stage, input_path, output_path, *, start=1, stop=None):
     manifest = {
         "schema_version": 1,
         "stage": stage,
+        "transport": "pi-ai",
         "input_path": str(source),
         "input_sha256": sha(output / "input.json"),
         "note_range": [start, stop],
@@ -241,7 +291,8 @@ def collect(prepared_path, output_path):
         config_path = prepared / call["config"]
         if sha(config_path) != call["config_sha256"]:
             raise ValueError("saved call config hash changed")
-        config = runner.PromptRunnerConfig.load(config_path)
+        engine = receipt_engine(config_path)
+        config = engine.PromptRunnerConfig.load(config_path)
         note = review_notes.setdefault(
             call["note_index"], {**document["notes"][call["note_index"]], "outputs": []}
         )
@@ -256,24 +307,30 @@ def collect(prepared_path, output_path):
         if not run_manifest_path.exists():
             continue
         run_manifest = read(run_manifest_path)
-        if run_manifest != runner._build_prompt_manifest(
-            config, packages["codex_version"]
+        if run_manifest != prompt_manifest(
+            engine, config, run_manifest, packages["codex_version"]
         ):
             raise ValueError(
                 "saved runner manifest differs from exact frozen config/isolation"
             )
         manifest_sha = sha(run_manifest_path)
         wrapper = run_manifest["wrapper_sha256"]
-        latest = runner._load_latest_results(
+        latest = engine._load_latest_results(
             config.run_directory / "results.jsonl",
             manifest_sha,
-            runner.RunnerProvenance(wrapper, wrapper, ()),
+            engine.RunnerProvenance(wrapper, wrapper, ()),
         )
         receipt = latest.get("prompt:" + call["id"])
         if receipt is None:
             continue
+        if engine is runner and receipt["status"] == "succeeded":
+            runner.validate_prompt_receipt(config, run_manifest, receipt)
         raw = receipt.get("final_output_raw")
-        thread = receipt.get("thread_id")
+        thread = (
+            receipt.get("model_result", {}).get("response_id")
+            if engine is runner and receipt.get("model_result")
+            else receipt.get("thread_id")
+        )
         if thread is not None:
             if thread in threads:
                 raise ValueError("saved calls repeat a thread ID")
@@ -285,10 +342,7 @@ def collect(prepared_path, output_path):
             .splitlines()
         ]
         for record in records:
-            for name, count in (record.get("usage") or {}).items():
-                if type(count) is not int or count < 0:
-                    raise ValueError("saved receipt has invalid usage")
-                usage[name] = usage.get(name, 0) + count
+            add_usage(usage, record.get("usage"), native=engine is runner)
         item.update(
             status=receipt["status"],
             raw_response=raw,
@@ -344,6 +398,10 @@ def main():
         command.add_argument("output", type=Path)
         command.add_argument("--start", type=int, default=1)
         command.add_argument("--stop", type=int)
+        command.add_argument("--auth-file", type=Path, required=True)
+        command.add_argument(
+            "--runner-binary", type=Path, default=runner.DEFAULT_RUNNER
+        )
     command = commands.add_parser("collect")
     command.add_argument("prepared", type=Path)
     command.add_argument("output", type=Path)
@@ -355,7 +413,13 @@ def main():
         )
     else:
         result = prepare(
-            args.stage, args.input, args.output, start=args.start, stop=args.stop
+            args.stage,
+            args.input,
+            args.output,
+            start=args.start,
+            stop=args.stop,
+            auth_file=args.auth_file,
+            runner_binary=args.runner_binary,
         )
         print(
             json.dumps(

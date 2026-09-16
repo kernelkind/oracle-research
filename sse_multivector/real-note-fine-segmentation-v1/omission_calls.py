@@ -8,8 +8,18 @@ import re
 import sys
 from pathlib import Path
 
-from generation import ROOT, load_packages, new_directory, read, sha, write
-from sse_multivector import codex_exec as runner
+from generation import (
+    ROOT,
+    load_packages,
+    new_directory,
+    read,
+    sha,
+    write,
+    native_config,
+    receipt_engine,
+    prompt_manifest,
+)
+from sse_multivector import extraction_pipeline as runner
 from sse_multivector.real_note_segmentation import REVIEW_INSTRUCTIONS, REVIEW_VERDICTS
 from sse_multivector.worker import _byte_span_to_character_span
 
@@ -110,11 +120,22 @@ def catalog(root):
     )
 
 
-def prepare_calls(stage, root, output, calls, metadata, sources):
+def prepare_calls(
+    stage,
+    root,
+    output,
+    calls,
+    metadata,
+    sources,
+    *,
+    auth_file,
+    runner_binary=runner.DEFAULT_RUNNER,
+):
     output = Path(output).resolve()
     if output.exists() or output.is_symlink():
         raise ValueError(f"output already exists: {output}")
     base, packages, reference = settings(root)
+    base = native_config(base, auth_file=auth_file, runner_binary=runner_binary)
     new_directory(output)
     jobs = {}
     for call in calls:
@@ -142,7 +163,7 @@ def prepare_calls(stage, root, output, calls, metadata, sources):
             "cwd": str(directory),
             "command": [
                 str(Path(sys.executable).resolve()),
-                str(ROOT / "sse_multivector/codex_exec.py"),
+                str(ROOT / "sse_multivector/extraction_pipeline.py"),
                 "prompt",
                 str(directory / "config.json"),
             ],
@@ -164,7 +185,8 @@ def prepare_calls(stage, root, output, calls, metadata, sources):
         "calls": calls,
         "job_batches": batch_names,
         "driver": packages["driver"],
-        "codex_version": packages["codex_version"],
+        "transport": "pi-ai",
+        "frozen_codex_version": packages["codex_version"],
         "frozen_files": packages["files"],
         "sources": {**sources, str(reference): sha(reference)},
         **metadata,
@@ -173,7 +195,7 @@ def prepare_calls(stage, root, output, calls, metadata, sources):
     return manifest
 
 
-def prepare_text(root, output):
+def prepare_text(root, output, *, auth_file, runner_binary=runner.DEFAULT_RUNNER):
     rows, targets, sources = catalog(root)
     if len(targets) < 4:
         raise ValueError("four nonempty target blocks are required")
@@ -204,6 +226,8 @@ def prepare_text(root, output):
             "target_order": "sorted IDs, round-robin across four calls",
         },
         sources,
+        auth_file=auth_file,
+        runner_binary=runner_binary,
     )
 
 
@@ -227,7 +251,8 @@ def saved_calls(prepared, stage):
             or sha(prompt_path) != call["prompt_sha256"]
         ):
             raise ValueError("saved config or prompt hash changed")
-        config = runner.PromptRunnerConfig.load(config_path)
+        engine = receipt_engine(config_path)
+        config = engine.PromptRunnerConfig.load(config_path)
         if (
             len(config.prompts) != 1
             or config.prompts[0].prompt_id != call["id"]
@@ -238,13 +263,18 @@ def saved_calls(prepared, stage):
         if not run_path.exists():
             raise ValueError(f"missing completed call: {call['id']}")
         run = read(run_path)
-        if run != runner._build_prompt_manifest(config, manifest["codex_version"]):
+        if run != prompt_manifest(
+            engine,
+            config,
+            run,
+            manifest.get("codex_version") or manifest["frozen_codex_version"],
+        ):
             raise ValueError("saved run manifest differs from frozen config/isolation")
         result_path = config.run_directory / "results.jsonl"
         run_sha = sha(run_path)
         wrapper = run["wrapper_sha256"]
-        latest = runner._load_latest_results(
-            result_path, run_sha, runner.RunnerProvenance(wrapper, wrapper, ())
+        latest = engine._load_latest_results(
+            result_path, run_sha, engine.RunnerProvenance(wrapper, wrapper, ())
         )
         if set(latest) != {"prompt:" + call["id"]}:
             raise ValueError("saved receipt job coverage differs")
@@ -257,7 +287,6 @@ def saved_calls(prepared, stage):
             "note_id": call["id"],
             "model": config.model,
             "reasoning_effort": config.reasoning_effort,
-            "codex_version": manifest["codex_version"],
             "prompt_sha256": call["prompt_sha256"],
             "response_schema_sha256": None,
             "exit_code": 0,
@@ -269,36 +298,49 @@ def saved_calls(prepared, stage):
             or receipt.get("response") != raw
         ):
             raise ValueError("saved receipt does not bind the expected prompt/response")
-        argv = receipt.get("argv", [])
-        try:
-            workspace = Path(argv[argv.index("--cd") + 1])
-        except (ValueError, IndexError, TypeError) as error:
-            raise ValueError("invalid receipt argv") from error
-        if (
-            workspace.parent != config.codex_home / "job-workspaces"
-            or argv
-            != runner._build_exec_argv(
-                config, config, workspace, None, workspace / "response.json"
-            )
-        ):
-            raise ValueError("receipt argv differs from frozen isolated invocation")
-        thread, usage = runner._parse_event_stream(receipt.get("stdout_jsonl", ""))
-        if (
-            not thread
-            or thread != receipt.get("thread_id")
-            or usage != receipt.get("usage")
-        ):
-            raise ValueError("receipt thread/usage differs from event stream")
-        if thread in seen_threads or str(workspace) in seen_workspaces:
-            raise ValueError("saved calls repeat a thread or workspace")
-        seen_threads.add(thread)
-        seen_workspaces.add(str(workspace))
-        for key in ("stdout", "stderr"):
-            value = receipt.get("stdout_jsonl" if key == "stdout" else key)
-            if not isinstance(value, str) or receipt.get(key + "_sha256") != digest(
-                value
+        if engine is runner:
+            try:
+                runner.validate_prompt_receipt(config, run, receipt)
+            except runner.RunnerError as error:
+                raise ValueError(str(error)) from error
+            thread = receipt["model_result"].get("response_id")
+            if thread is not None:
+                if thread in seen_threads:
+                    raise ValueError("saved calls repeat a response ID")
+                seen_threads.add(thread)
+        else:
+            if receipt.get("codex_version") != manifest["codex_version"]:
+                raise ValueError("saved receipt Codex version differs from frozen run")
+            argv = receipt.get("argv", [])
+            try:
+                workspace = Path(argv[argv.index("--cd") + 1])
+            except (ValueError, IndexError, TypeError) as error:
+                raise ValueError("invalid receipt argv") from error
+            if (
+                workspace.parent != config.codex_home / "job-workspaces"
+                or argv
+                != engine._build_exec_argv(
+                    config, config, workspace, None, workspace / "response.json"
+                )
             ):
-                raise ValueError("receipt event/output hash differs")
+                raise ValueError("receipt argv differs from frozen isolated invocation")
+            thread, usage = engine._parse_event_stream(receipt.get("stdout_jsonl", ""))
+            if (
+                not thread
+                or thread != receipt.get("thread_id")
+                or usage != receipt.get("usage")
+            ):
+                raise ValueError("receipt thread/usage differs from event stream")
+            if thread in seen_threads or str(workspace) in seen_workspaces:
+                raise ValueError("saved calls repeat a thread or workspace")
+            seen_threads.add(thread)
+            seen_workspaces.add(str(workspace))
+            for key in ("stdout", "stderr"):
+                value = receipt.get("stdout_jsonl" if key == "stdout" else key)
+                if not isinstance(value, str) or receipt.get(key + "_sha256") != digest(
+                    value
+                ):
+                    raise ValueError("receipt event/output hash differs")
         try:
             parsed = json.loads(raw)
         except json.JSONDecodeError as error:
@@ -310,7 +352,11 @@ def saved_calls(prepared, stage):
                 "call_id": call["id"],
                 "config_sha256": call["config_sha256"],
                 "prompt_sha256": call["prompt_sha256"],
-                "thread_id": thread,
+                **(
+                    {"response_id": thread}
+                    if engine is runner
+                    else {"thread_id": thread}
+                ),
                 "run_manifest": str(run_path),
                 "run_manifest_sha256": run_sha,
                 "results": str(result_path),
@@ -528,7 +574,9 @@ def judge_plan(review_path):
     return calls, orders
 
 
-def prepare_judges(review, output, *, root=EXPERIMENT):
+def prepare_judges(
+    review, output, *, auth_file, runner_binary=runner.DEFAULT_RUNNER, root=EXPERIMENT
+):
     source = Path(review).resolve()
     calls, orders = judge_plan(source)
     return prepare_calls(
@@ -542,6 +590,8 @@ def prepare_judges(review, output, *, root=EXPERIMENT):
             "round_order": "A sorted IDs; B reverses the same first 16, then SHA256(round-B NUL ID) order",
         },
         {str(source): sha(source)},
+        auth_file=auth_file,
+        runner_binary=runner_binary,
     )
 
 
@@ -614,13 +664,23 @@ def main():
     judge.add_argument("--review", type=Path, required=True)
     judge.add_argument("--root", type=Path, default=EXPERIMENT)
     judge.add_argument("--output", type=Path, required=True)
+    for prepare_command in (text, judge):
+        prepare_command.add_argument("--auth-file", type=Path, required=True)
+        prepare_command.add_argument(
+            "--runner-binary", type=Path, default=runner.DEFAULT_RUNNER
+        )
     for name in ("collect-text", "collect-judgments"):
         collect = commands.add_parser(name)
         collect.add_argument("--input", type=Path, required=True)
         collect.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     if args.command == "text":
-        result = prepare_text(args.root, args.output)
+        result = prepare_text(
+            args.root,
+            args.output,
+            auth_file=args.auth_file,
+            runner_binary=args.runner_binary,
+        )
         print(
             json.dumps(
                 {
@@ -633,7 +693,13 @@ def main():
     elif args.command == "collect-text":
         print(json.dumps({"pairs": len(collect_text(args.input, args.output))}))
     elif args.command == "judge":
-        result = prepare_judges(args.review, args.output, root=args.root)
+        result = prepare_judges(
+            args.review,
+            args.output,
+            root=args.root,
+            auth_file=args.auth_file,
+            runner_binary=args.runner_binary,
+        )
         print(
             json.dumps(
                 {"calls": len(result["calls"]), "job_batches": result["job_batches"]}
