@@ -40,7 +40,7 @@ const MIN_AVAILABLE_DURATION_SECONDS: u64 = 86_400;
 pub const CALIBRATION_LIFETIME_CAP: MicroUsd = MicroUsd::from_dollars(25);
 
 /// Maximum cumulative charge authorized for the entire oracle MVP effort.
-pub const MVP_LIFETIME_CAP: MicroUsd = MicroUsd::from_dollars(500);
+pub use crate::budget::MVP_HARD_BUDGET as MVP_LIFETIME_CAP;
 
 /// Budget state read from one exact version of `budget-ledger.json`.
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -3480,7 +3480,7 @@ fn validate_ledger_document(document: &BudgetLedgerDocument) -> Result<()> {
     }
     if cents(document.lifetime_cap_cents)? != MVP_LIFETIME_CAP {
         return Err(Error::Budget(
-            "budget ledger does not freeze the $500 lifetime cap".to_owned(),
+            "budget ledger does not freeze the $1,000 lifetime cap".to_owned(),
         ));
     }
     if cents(document.calibration_lifetime_cap_cents)? != CALIBRATION_LIFETIME_CAP {
@@ -3529,7 +3529,7 @@ fn checked_sum(values: &[MicroUsd]) -> Result<MicroUsd> {
 fn require_lifetime_cap(total: MicroUsd) -> Result<()> {
     if total > MVP_LIFETIME_CAP {
         return Err(Error::Budget(format!(
-            "projected lifetime total {} micro-USD exceeds the fixed $500 MVP cap",
+            "projected lifetime total {} micro-USD exceeds the fixed $1,000 MVP cap",
             total.0
         )));
     }

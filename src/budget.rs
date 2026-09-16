@@ -30,8 +30,8 @@ const MVP_RAW_TOKEN_LENGTH_RULE: &str = "tokenizer-output-ids-before-model-trunc
 const MVP_ENCODER_INPUT_RULE: &str =
     "raw-utf8-url-text-empty-as-eot-add-special-tokens-right-truncate-512-v1";
 
-/// The cumulative oracle-MVP rented-compute cap cannot be raised by a request.
-pub const MVP_HARD_BUDGET: MicroUsd = MicroUsd::from_dollars(500);
+/// The cumulative oracle-MVP spending cap cannot be raised by a runtime request.
+pub const MVP_HARD_BUDGET: MicroUsd = MicroUsd::from_dollars(1_000);
 
 /// Integer millionths of one US dollar.
 #[derive(Clone, Copy, Debug, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
@@ -132,7 +132,7 @@ pub struct BudgetAdmission {
     pub identity_sha256: String,
 }
 
-/// Refuse a proposed stage unless every measured bucket fits under $500.
+/// Refuse a proposed stage unless every measured bucket fits under $1,000.
 pub fn admit_stage(request: &BudgetAdmissionRequest) -> Result<BudgetAdmission> {
     validate_request(request)?;
     let benchmark = &request.benchmark;
@@ -226,7 +226,7 @@ pub fn admit_stage(request: &BudgetAdmissionRequest) -> Result<BudgetAdmission> 
     )?;
     if projected_cumulative > MVP_HARD_BUDGET {
         return Err(Error::Budget(format!(
-            "projected cumulative spend {} micro-USD exceeds the fixed $500 MVP hard budget",
+            "projected cumulative spend {} micro-USD exceeds the fixed $1,000 MVP hard budget",
             projected_cumulative.0
         )));
     }
@@ -734,7 +734,7 @@ impl DamusSnapshot {
         )?;
         if protected > MVP_HARD_BUDGET {
             return Err(Error::Budget(
-                "another charged execution attempt plus contingency would exceed the fixed $500 MVP hard budget"
+                "another charged execution attempt plus contingency would exceed the fixed $1,000 MVP hard budget"
                     .to_owned(),
             ));
         }
@@ -1427,7 +1427,7 @@ pub(crate) fn reserve_benchmark_budget(
     let with_contingency = checked_sum(with_new, REQUIRED_CONTINGENCY, "reserved spend")?;
     if with_contingency > MVP_HARD_BUDGET {
         return Err(Error::Budget(
-            "benchmark reservation would exceed the fixed $500 MVP hard budget".to_owned(),
+            "benchmark reservation would exceed the fixed $1,000 MVP hard budget".to_owned(),
         ));
     }
     write_manifest(&path, &reservation)

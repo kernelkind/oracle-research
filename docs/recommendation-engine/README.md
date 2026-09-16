@@ -98,7 +98,9 @@ private behavior.
 - No indispensable external provider may control which public content can be
   discovered.
 - Production constraints are deferred until the scientific assumptions work,
-  but the repository-wide `$500` paid-compute ceiling remains binding.
+  but the repository-wide `$1,000` paid-compute ceiling remains binding and is
+  enforced by the spending code and ledger. No amount is currently earmarked
+  for a particular stage; existing spending and commitments still count.
 
 ## Investigation Boundaries
 

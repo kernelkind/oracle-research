@@ -279,26 +279,17 @@ The ranges are not measured confidence intervals or guaranteed upper bounds.
 Three passes is a costing assumption, not a frozen training protocol. Setup,
 evaluation, transfers, troubleshooting, and annotation generation are additional.
 
-### Proposed allocation — not spending authorization
+### Approved allocation
 
-- **$100 initial pilot ceiling, total across all three candidates.** Reassess
-  before extending it, using measured cost, training speed, improvement, and
-  whether further comparisons could change the choice. Reaching the ceiling
-  does not establish that the pilot is scientifically sufficient.
-- **$500 reserve for the selected model's larger fine-tune.** Under these
-  assumptions, this covers the expensive end of the 25,000-note scenario,
-  a complete rerun, and overhead. For example, two T5Gemma runs at $195 each,
-  plus three hours of setup/evaluation and an illustrative $5 transfer allowance
-  per run, total about $416. This is not a commitment to use 25,000 notes.
-- **Leave the remainder unallocated** for annotations, other project costs,
-  and unexpected expenses. Any paid annotation work shares the lifetime budget;
-  the training-cost table does not price it.
+The user approved one shared **$1,000 lifetime budget** and **$0 reserved for
+future work**. Nothing is currently earmarked for the pilot or larger fine-tune.
+The previously proposed $500 fine-tuning reserve was not approved. Model and
+training-cost estimates above remain planning scenarios, not spending authority.
+Any paid annotation work shares the same lifetime budget.
 
-The $500 reserve would not comfortably cover two slow-end, 50,000-note
-T5Gemma runs: training alone would cost about $780 under these assumptions.
-Measured pilot throughput must replace these estimates before committing to
-larger runs.
-
+Use [budget-ledger.json](../budget-ledger.json) for current spending and
+outstanding commitments. No per-run spending approval is implied by the
+training estimates or the unallocated budget.
 
 ### Spending constraints
 
@@ -307,10 +298,9 @@ ceiling covers the entire effort, including previous costs, failed runs,
 evaluation, storage, and transfers. It is not a per-model allowance or a target.
 There is no separate parameter-count, GPU-memory, or single-machine ceiling.
 
-The spending code and ledger still enforce the previous $500 cap. Reconcile
-the ledger and separately approve the enforcement change before spending;
-the new policy does not bypass existing checks. Every paid run needs an
-explicitly approved maximum charge and a provider-side limit that enforces it.
+The spending code and ledger enforce the approved $1,000 cap. Every paid run
+needs an explicitly approved maximum charge and a provider-side limit that
+enforces it.
 
 ## Next approval
 
