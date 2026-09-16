@@ -11,15 +11,14 @@ use nostrdb::{Config, Filter, Ndb, NoteBuilder, Transaction};
 use oracle_mvp::budget::MicroUsd;
 use oracle_mvp::gte::TokenRole;
 use oracle_mvp::gte_budget::{
-    CALIBRATION_LIFETIME_CAP, CalibrationEvidencePaths, CalibrationExecutionIdentity,
-    CalibrationRecorder, CalibrationRecorderConfig, FullBuildAdmission, FullBuildNonComputeCosts,
-    FullBuildResultPaths, MVP_LIFETIME_CAP, MonotonicCostGuard, VerifiedCalibrationEvidence,
-    claim_calibration_execution, claim_or_resume_full_build_execution, project_full_build,
-    read_active_calibration_reservation, read_active_full_build_reservation, read_budget_ledger,
-    reconcile_calibration_finalized_charge, reconcile_failed_full_build_provider_charge,
-    reserve_calibration, reserve_full_build, settle_calibration, settle_failed_calibration,
-    settle_failed_full_build, settle_full_build, settle_provisional_failed_full_build,
-    validate_calibration_selection,
+    CalibrationEvidencePaths, CalibrationExecutionIdentity, CalibrationRecorder,
+    CalibrationRecorderConfig, FullBuildAdmission, FullBuildNonComputeCosts, FullBuildResultPaths,
+    MVP_LIFETIME_CAP, MonotonicCostGuard, VerifiedCalibrationEvidence, claim_calibration_execution,
+    claim_or_resume_full_build_execution, project_full_build, read_active_calibration_reservation,
+    read_active_full_build_reservation, read_budget_ledger, reconcile_calibration_finalized_charge,
+    reconcile_failed_full_build_provider_charge, reserve_calibration, reserve_full_build,
+    settle_calibration, settle_failed_calibration, settle_failed_full_build, settle_full_build,
+    settle_provisional_failed_full_build, validate_calibration_selection,
 };
 use oracle_mvp::ordered_gte_token_audit::{
     OrderedGteTokenAuditConfig, OrderedGteTokenCounter, audit_ordered_gte_tokens,
@@ -36,13 +35,12 @@ use sha2::{Digest, Sha256};
 use tempfile::TempDir;
 
 #[test]
-fn checked_in_ledger_freezes_both_caps_and_reconciled_spend() {
+fn checked_in_ledger_freezes_shared_cap_and_reconciled_spend() {
     let ledger =
         read_budget_ledger(&Path::new(env!("CARGO_MANIFEST_DIR")).join("budget-ledger.json"))
             .expect("read checked-in budget ledger");
 
     assert_eq!(ledger.lifetime_cap, MVP_LIFETIME_CAP);
-    assert_eq!(ledger.calibration_lifetime_cap, CALIBRATION_LIFETIME_CAP);
     assert_eq!(ledger.actual_spend, MicroUsd(39_090_000));
     assert_eq!(ledger.calibration_actual_spend, MicroUsd(1_270_000));
     assert_eq!(ledger.calibration_outstanding_commitments, MicroUsd(0));
@@ -486,7 +484,7 @@ fn cli_full_build_projection_is_repeatable_and_read_only() {
 
 #[test]
 fn calibration_reservation_is_persisted_before_another_attempt_can_be_admitted() {
-    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let fixture = LedgerFixture::new(97_500, 0, 0, 0);
 
     let admission = reserve_calibration(
         &fixture.path,
@@ -510,7 +508,7 @@ fn calibration_reservation_is_persisted_before_another_attempt_can_be_admitted()
         "2026-07-16T20:01:00Z",
     )
     .expect_err("the second attempt must observe the first reservation");
-    assert!(error.to_string().contains("$25"), "{error}");
+    assert!(error.to_string().contains("$1,000"), "{error}");
 
     let error = reserve_calibration(
         &fixture.path,
@@ -810,7 +808,7 @@ fn finalized_charge_reconciliation_rejects_unbound_or_non_increasing_evidence() 
 }
 
 #[test]
-fn finalized_charge_reconciliation_records_spend_that_exceeds_a_budget_cap() {
+fn finalized_charge_reconciliation_records_spend_and_enforces_only_the_shared_cap() {
     let fixture = LedgerFixture::new(49_000, 0, 2_300, 0);
     reserve_calibration(
         &fixture.path,
@@ -818,7 +816,7 @@ fn finalized_charge_reconciliation_records_spend_that_exceeds_a_budget_cap() {
         MicroUsd::from_dollars(2),
         "2026-07-16T20:00:00Z",
     )
-    .expect("reserve the remaining calibration allowance");
+    .expect("reserve the authorized calibration charge");
     claim_calibration_execution(
         &fixture.path,
         "cap-bound-finalized-charge",
@@ -837,7 +835,7 @@ fn finalized_charge_reconciliation_records_spend_that_exceeds_a_budget_cap() {
         MicroUsd::from_dollars(2),
         "2026-07-16T20:30:00Z",
     )
-    .expect("settle at both remaining caps");
+    .expect("settle the authorized charge");
     let invoice_path = fixture.write_finalized_provider_invoice("fixture-instance", "2.01");
     let reconciled = reconcile_calibration_finalized_charge(
         &fixture.path,
@@ -853,14 +851,17 @@ fn finalized_charge_reconciliation_records_spend_that_exceeds_a_budget_cap() {
         reconciled.calibration_actual_spend,
         MicroUsd::from_cents(2_501)
     );
-    let error = reserve_calibration(
+    let admission = reserve_calibration(
         &fixture.path,
         "after-calibration-overrun",
         MicroUsd::from_cents(1),
         "2026-07-17T00:01:00Z",
     )
-    .expect_err("an over-cap ledger must reject new reservations");
-    assert!(error.to_string().contains("calibration cap"), "{error}");
+    .expect("calibration spending above $25 can use the remaining shared budget");
+    assert_eq!(
+        admission.projected_lifetime_total,
+        MicroUsd::from_cents(49_202)
+    );
 
     let fixture = LedgerFixture::new(99_800, 0, 0, 0);
     reserve_calibration(
@@ -1155,7 +1156,7 @@ fn full_build_requires_the_exact_calibration_evidence_to_be_settled() {
 
 #[test]
 fn concurrent_calibration_reservations_cannot_reuse_one_ledger_state() {
-    let fixture = LedgerFixture::new(0, 0, 0, 0);
+    let fixture = LedgerFixture::new(97_500, 0, 0, 0);
     let barrier = Arc::new(Barrier::new(2));
     let attempts = ["concurrent-1", "concurrent-2"]
         .into_iter()
@@ -3196,11 +3197,10 @@ impl LedgerFixture {
             &path,
             format!(
                 r#"{{
-  "schema_version": 2,
+  "schema_version": 3,
   "scope": "Entire oracle MVP effort",
   "currency": "USD",
   "lifetime_cap_cents": 100000,
-  "calibration_lifetime_cap_cents": 2500,
   "actual_spend_cents": {actual_spend_cents},
   "outstanding_commitments_cents": {outstanding_commitments_cents},
   "calibration_actual_spend_cents": {calibration_actual_spend_cents},

@@ -20,7 +20,7 @@ use crate::snapshot::{Error, Result, io_error};
 
 const NANOS_PER_HOUR: u128 = 3_600_000_000_000;
 const MICRO_USD_PER_CENT: u64 = 10_000;
-const LEDGER_SCHEMA_VERSION: u32 = 2;
+const LEDGER_SCHEMA_VERSION: u32 = 3;
 const LEDGER_SCOPE: &str = "Entire oracle MVP effort";
 const CALIBRATION_EVIDENCE_SCHEMA_VERSION: u32 = 6;
 const CALIBRATION_EVIDENCE_KIND: &str = "gte-calibration-evidence";
@@ -36,9 +36,6 @@ const MIN_RELIABILITY_MILLIONTHS: u32 = 995_000;
 const REQUIRED_POWER_LIMIT_WATTS: u32 = 600;
 const MIN_AVAILABLE_DURATION_SECONDS: u64 = 86_400;
 
-/// Maximum cumulative charge authorized for all GTE calibration attempts.
-pub const CALIBRATION_LIFETIME_CAP: MicroUsd = MicroUsd::from_dollars(25);
-
 /// Maximum cumulative charge authorized for the entire oracle MVP effort.
 pub use crate::budget::MVP_HARD_BUDGET as MVP_LIFETIME_CAP;
 
@@ -47,7 +44,6 @@ pub use crate::budget::MVP_HARD_BUDGET as MVP_LIFETIME_CAP;
 pub struct BudgetLedger {
     pub ledger_sha256: String,
     pub lifetime_cap: MicroUsd,
-    pub calibration_lifetime_cap: MicroUsd,
     pub actual_spend: MicroUsd,
     pub outstanding_commitments: MicroUsd,
     pub calibration_actual_spend: MicroUsd,
@@ -66,7 +62,6 @@ pub struct CalibrationAdmission {
     pub non_runtime_charge_reserve: MicroUsd,
     pub projected_calibration_total: MicroUsd,
     pub projected_lifetime_total: MicroUsd,
-    pub remaining_calibration_budget: MicroUsd,
     pub remaining_lifetime_budget: MicroUsd,
 }
 
@@ -1356,13 +1351,6 @@ pub fn reserve_calibration_with_non_runtime_reserve(
         ledger.calibration_outstanding_commitments,
         reserved_charge,
     ])?;
-    if projected_calibration_total > CALIBRATION_LIFETIME_CAP {
-        return Err(Error::Budget(format!(
-            "projected calibration total {} micro-USD exceeds the cumulative $25 calibration cap",
-            projected_calibration_total.0
-        )));
-    }
-
     let projected_lifetime_total = checked_sum(&[
         ledger.actual_spend,
         ledger.outstanding_commitments,
@@ -1402,10 +1390,6 @@ pub fn reserve_calibration_with_non_runtime_reserve(
         non_runtime_charge_reserve,
         projected_calibration_total,
         projected_lifetime_total,
-        remaining_calibration_budget: subtract(
-            CALIBRATION_LIFETIME_CAP,
-            projected_calibration_total,
-        ),
         remaining_lifetime_budget: subtract(MVP_LIFETIME_CAP, projected_lifetime_total),
     })
 }
@@ -2870,7 +2854,6 @@ fn ledger_from_document(
     Ok(BudgetLedger {
         ledger_sha256,
         lifetime_cap: cents(document.lifetime_cap_cents)?,
-        calibration_lifetime_cap: cents(document.calibration_lifetime_cap_cents)?,
         actual_spend: cents(document.actual_spend_cents)?,
         outstanding_commitments: cents(document.outstanding_commitments_cents)?,
         calibration_actual_spend: cents(document.calibration_actual_spend_cents)?,
@@ -3483,11 +3466,6 @@ fn validate_ledger_document(document: &BudgetLedgerDocument) -> Result<()> {
             "budget ledger does not freeze the $1,000 lifetime cap".to_owned(),
         ));
     }
-    if cents(document.calibration_lifetime_cap_cents)? != CALIBRATION_LIFETIME_CAP {
-        return Err(Error::Budget(
-            "budget ledger does not freeze the $25 calibration cap".to_owned(),
-        ));
-    }
     if document.reconciled_through_utc.is_empty() {
         return Err(Error::Budget(
             "budget ledger has no reconciliation timestamp".to_owned(),
@@ -3566,7 +3544,6 @@ struct BudgetLedgerDocument {
     scope: String,
     currency: String,
     lifetime_cap_cents: u64,
-    calibration_lifetime_cap_cents: u64,
     actual_spend_cents: u64,
     outstanding_commitments_cents: u64,
     calibration_actual_spend_cents: u64,

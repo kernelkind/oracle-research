@@ -3857,9 +3857,6 @@ def settlement_summary_from_ledger(
     return {
         "ledger_sha256": sha256_file(ledger_path),
         "lifetime_cap_micro_usd": cents("lifetime_cap_cents"),
-        "calibration_lifetime_cap_micro_usd": cents(
-            "calibration_lifetime_cap_cents"
-        ),
         "actual_spend_micro_usd": cents("actual_spend_cents"),
         "outstanding_commitments_micro_usd": cents(
             "outstanding_commitments_cents"

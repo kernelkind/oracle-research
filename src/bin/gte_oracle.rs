@@ -106,7 +106,6 @@ fn run() -> Result<(), String> {
                 "non_runtime_charge_reserve_micro_usd": admission.non_runtime_charge_reserve.0,
                 "projected_calibration_total_micro_usd": admission.projected_calibration_total.0,
                 "projected_lifetime_total_micro_usd": admission.projected_lifetime_total.0,
-                "remaining_calibration_budget_micro_usd": admission.remaining_calibration_budget.0,
                 "remaining_lifetime_budget_micro_usd": admission.remaining_lifetime_budget.0,
             }))
         }
@@ -1370,7 +1369,6 @@ fn print_budget_ledger(ledger: &BudgetLedger) -> Result<(), String> {
     print_json(&json!({
         "ledger_sha256": ledger.ledger_sha256,
         "lifetime_cap_micro_usd": ledger.lifetime_cap.0,
-        "calibration_lifetime_cap_micro_usd": ledger.calibration_lifetime_cap.0,
         "actual_spend_micro_usd": ledger.actual_spend.0,
         "outstanding_commitments_micro_usd": ledger.outstanding_commitments.0,
         "calibration_actual_spend_micro_usd": ledger.calibration_actual_spend.0,

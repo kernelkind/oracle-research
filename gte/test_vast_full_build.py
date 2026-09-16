@@ -908,11 +908,10 @@ class VastFullBuildCliTest(unittest.TestCase):
         write_json(
             self.ledger,
             {
-                "schema_version": 2,
+                "schema_version": 3,
                 "scope": "Entire oracle MVP effort",
                 "currency": "USD",
                 "lifetime_cap_cents": 50000,
-                "calibration_lifetime_cap_cents": 2500,
                 "actual_spend_cents": 127,
                 "outstanding_commitments_cents": 0,
                 "calibration_actual_spend_cents": 127,
