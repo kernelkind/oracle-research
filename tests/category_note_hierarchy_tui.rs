@@ -413,3 +413,68 @@ fn direct_action_respects_analysis_notes_and_control_d_scrolling() {
     key(&mut legacy, KeyCode::Char('D'));
     assert_eq!(compact_screen(&mut legacy), menu);
 }
+
+#[test]
+fn o_excludes_notes_in_any_descendant_and_restores_category_selection() {
+    let mut data = hierarchy();
+    data.nodes.get_mut("root").unwrap().note_ids =
+        vec!["N001".into(), "N002".into(), "N003".into()];
+    let mut model = ManualNoteExplorer::categories(data);
+    key(&mut model, KeyCode::Char('j'));
+    let menu = compact_screen(&mut model);
+    key(&mut model, KeyCode::Char('O'));
+    let outside = compact_screen(&mut model);
+    for expected in [
+        "Notes outside children",
+        "N003",
+        "Note 1 of 1",
+        "Original note directly at root.",
+    ] {
+        assert!(outside.contains(expected), "missing {expected}: {outside}");
+    }
+    assert!(
+        !outside.contains("N001"),
+        "grandchild note was not excluded: {outside}"
+    );
+    assert!(
+        !outside.contains("N002"),
+        "shared child note was not excluded: {outside}"
+    );
+    key(&mut model, KeyCode::Esc);
+    assert_eq!(compact_screen(&mut model), menu);
+    assert!(menu.contains("O Notes not in children"), "{menu}");
+    key(&mut model, KeyCode::Char('D'));
+    assert!(compact_screen(&mut model).contains("Note 1 of 3"));
+}
+
+#[test]
+fn o_handles_empty_categories_leaves_and_analysis_without_changing_other_views() {
+    let mut model = ManualNoteExplorer::categories(hierarchy());
+    key(&mut model, KeyCode::Enter);
+    let menu = compact_screen(&mut model);
+    key(&mut model, KeyCode::Char('o'));
+    let empty = compact_screen(&mut model);
+    assert!(empty.contains("0 notes"), "{empty}");
+    assert!(empty.contains("No notes outside children."), "{empty}");
+    for code in [
+        KeyCode::Char('h'),
+        KeyCode::Char('l'),
+        KeyCode::Char('G'),
+        KeyCode::Char('o'),
+    ] {
+        key(&mut model, code);
+        assert_eq!(compact_screen(&mut model), empty);
+    }
+    key(&mut model, KeyCode::Esc);
+    assert_eq!(compact_screen(&mut model), menu);
+    key(&mut model, KeyCode::Char('?'));
+    let analysis = compact_screen(&mut model);
+    key(&mut model, KeyCode::Char('O'));
+    assert_eq!(compact_screen(&mut model), analysis);
+    key(&mut model, KeyCode::Esc);
+    key(&mut model, KeyCode::Enter);
+    key(&mut model, KeyCode::Char('O'));
+    let leaf = compact_screen(&mut model);
+    assert!(leaf.contains("Note 1 of 2"), "{leaf}");
+    assert!(leaf.contains("Original opening."), "{leaf}");
+}

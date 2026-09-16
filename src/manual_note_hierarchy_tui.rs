@@ -19,7 +19,7 @@ use crate::titled_merge_hierarchy::TitledMergeHierarchy;
 
 const CONTROLS: &str = "In categories, j/k or Up/Down chooses an item; Enter/l or Right opens it. h, Backspace or Escape returns to the parent. Child categories are separate from the actions for viewing all notes or notes outside children.\n\nIn original notes, h/l or Left/Right changes the note; j/k or Up/Down scrolls. Backspace or Escape returns to the category choices.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis manual proposal is read-only. Nothing is written or approved.";
 
-const CATEGORY_CONTROLS: &str = "In categories, only immediate child categories are listed. j/k or Up/Down chooses a child; Enter/l or Right descends into it, including a category with no children. N opens all original notes at the CURRENT category, including descendants and deduplicating shared notes. D opens only notes assigned directly to the current category, including direct notes that also appear in children. h, Backspace or Escape returns to the parent.\n\nWhen masks are supplied, each note shows one combined ⟦highlight⟧ covering all its mask ranges in the current category, including descendants. D changes which notes are shown, not their saved highlights. Masks belonging only to other branches are excluded. h/l or Left/Right changes the note; j/k or Up/Down scrolls. Backspace or Escape returns to the same category menu and selection.\n\nPaths use Category > Child > Grandchild and wrap. If older ancestors cannot fit above the notes, an ellipsis marks them and the complete path appears in this analysis screen.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis category hierarchy is read-only. Nothing is written or approved.";
+const CATEGORY_CONTROLS: &str = "In categories, only immediate child categories are listed. j/k or Up/Down chooses a child; Enter/l or Right descends into it, including a category with no children. N opens all original notes at the CURRENT category, including descendants and deduplicating shared notes. D opens only notes assigned directly to the current category, including direct notes that also appear in children. O opens notes at the current category that appear in none of its children or deeper descendants. h, Backspace or Escape returns to the parent.\n\nWhen masks are supplied, each note shows one combined ⟦highlight⟧ covering all its mask ranges in the current category, including descendants. D and O change which notes are shown, not their saved highlights. Masks belonging only to other branches are excluded. h/l or Left/Right changes the note; j/k or Up/Down scrolls. Backspace or Escape returns to the same category menu and selection.\n\nPaths use Category > Child > Grandchild and wrap. If older ancestors cannot fit above the notes, an ellipsis marks them and the complete path appears in this analysis screen.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis category hierarchy is read-only. Nothing is written or approved.";
 
 struct CategoryFrame {
     node_id: String,
@@ -59,7 +59,8 @@ impl ManualNoteExplorer {
         Self::with_categories_only(hierarchy, false)
     }
 
-    /// Browse immediate children; N opens all notes, D only direct memberships.
+    /// Browse immediate children; N opens all notes, D direct memberships,
+    /// and O notes absent from all descendants.
     pub fn categories(hierarchy: ManualNoteHierarchy) -> Self {
         Self::with_categories_only(hierarchy, true)
     }
@@ -355,6 +356,9 @@ impl ManualNoteExplorer {
             KeyCode::Char('d' | 'D') if self.categories_only && self.notes.is_none() => {
                 self.show_notes(NoteScope::Direct, false);
             }
+            KeyCode::Char('o' | 'O') if self.categories_only && self.notes.is_none() => {
+                self.show_notes(NoteScope::OutsideChildren, false);
+            }
             KeyCode::Left | KeyCode::Right if self.notes.is_some() => {
                 let notes = self.notes.as_mut().expect("note browser");
                 notes.cursor = if code == KeyCode::Left {
@@ -516,7 +520,8 @@ impl ManualNoteExplorer {
             } else {
                 let message = match notes.scope {
                     NoteScope::Direct => "No notes are assigned directly to this category.",
-                    NoteScope::All | NoteScope::OutsideChildren => "No notes in this view.",
+                    NoteScope::OutsideChildren => "No notes outside children.",
+                    NoteScope::All => "No notes in this view.",
                 };
                 (message.to_owned(), "Notes")
             };
@@ -538,7 +543,7 @@ impl ManualNoteExplorer {
         } else if self.notes.is_some() {
             "h/l ←/→ Previous/next note  j/k ↑/↓ Scroll\nCtrl-D/U Half page  gg/G Top/end  ? Analysis\nBackspace/Esc Back  Q Quit"
         } else if self.categories_only {
-            "j/k ↑/↓ Choose  Enter/l Descend\nN Notes + descendants  D Direct notes\nh/Backspace/Esc Parent  gg/G Top/end  ? Analysis  Q Quit"
+            "j/k ↑/↓ Choose  Enter/l Descend\nN Notes + descendants  D Direct notes  O Notes not in children\nh/Backspace/Esc Parent  gg/G Top/end  ? Analysis  Q Quit"
         } else {
             "j/k ↑/↓ Choose  Enter/l Open  h/l ←/→ Back/open\nBackspace/Esc Back  gg/G Top/end  ? Analysis  Q Quit"
         };
@@ -558,7 +563,7 @@ impl ManualNoteExplorer {
             });
         if self.categories_only && child_count == 0 {
             frame.render_widget(
-                Paragraph::new("No child categories. N or D opens notes at this category.")
+                Paragraph::new("No child categories. N, D or O opens notes at this category.")
                     .style(secondary_style())
                     .wrap(Wrap { trim: false })
                     .block(block),

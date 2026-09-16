@@ -118,6 +118,26 @@ fn direct_notes_keep_category_highlights_and_complete_original_text() {
 }
 
 #[test]
+fn outside_children_keeps_full_notes_with_only_current_category_masks() {
+    let (dir, mut spec) = fixture();
+    spec["nodes"][1]["note_ids"] = json!(["N001"]);
+    spec["nodes"][1]["children"] = json!([]);
+    spec["nodes"].as_array_mut().unwrap().remove(2);
+    spec["note_masks"].as_object_mut().unwrap().remove("milk");
+    let mut model = explorer(&dir, &spec);
+    key(&mut model, KeyCode::Enter);
+    key(&mut model, KeyCode::Char('O'));
+    let outside = screen(&mut model);
+    assert!(outside.contains("Notes outside children"), "{outside}");
+    assert!(outside.contains("Note 1 of 1"), "{outside}");
+    assert!(
+        outside.contains("café ⟦coffee with milk⟧; tea later. coffee again."),
+        "{outside}"
+    );
+    assert!(!outside.contains("⟦tea⟧"), "{outside}");
+}
+
+#[test]
 fn note_view_overlays_all_category_masks_at_once_and_keeps_source_occurrences() {
     let (dir, spec) = fixture();
     let mut model = explorer(&dir, &spec);
