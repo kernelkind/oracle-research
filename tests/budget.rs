@@ -14,7 +14,7 @@ const TEST_BATCH_SIZE: u32 = 50_000;
 fn stage_admission_projects_each_length_bucket_and_all_non_model_work() {
     let request = make_request(
         vec![bucket_count(64, 100_000), bucket_count(512, 100_000)],
-        MicroUsd::from_dollars(450),
+        MicroUsd::from_dollars(950),
         MicroUsd::from_dollars(2),
     );
     let admission = admit_stage(&request).expect("stage remains under the hard budget");
@@ -24,7 +24,7 @@ fn stage_admission_projects_each_length_bucket_and_all_non_model_work() {
     assert_eq!(admission.projected_runtime_nanoseconds, 32_000_000_000);
     assert_eq!(admission.projected_compute, MicroUsd(32_000));
     assert_eq!(admission.projected_stage, MicroUsd(2_032_000));
-    assert_eq!(admission.projected_cumulative, MicroUsd(492_032_000));
+    assert_eq!(admission.projected_cumulative, MicroUsd(992_032_000));
     assert_eq!(admission.remaining_after_contingency, MicroUsd(7_968_000));
     assert_eq!(admission.hard_budget, MVP_HARD_BUDGET);
     assert!(!admission.identity_sha256.is_empty());
@@ -108,7 +108,7 @@ fn admission_refuses_a_projection_over_the_fixed_mvp_budget() {
         MicroUsd::from_dollars(2),
     );
     let error = admit_stage(&request).expect_err("stage exceeds the fixed hard budget");
-    assert!(error.to_string().contains("$500"));
+    assert!(error.to_string().contains("$1,000"));
 }
 
 #[test]

@@ -36,14 +36,14 @@ use sha2::{Digest, Sha256};
 use tempfile::TempDir;
 
 #[test]
-fn checked_in_ledger_freezes_both_caps_and_settled_calibration_spend() {
+fn checked_in_ledger_freezes_both_caps_and_reconciled_spend() {
     let ledger =
         read_budget_ledger(&Path::new(env!("CARGO_MANIFEST_DIR")).join("budget-ledger.json"))
             .expect("read checked-in budget ledger");
 
     assert_eq!(ledger.lifetime_cap, MVP_LIFETIME_CAP);
     assert_eq!(ledger.calibration_lifetime_cap, CALIBRATION_LIFETIME_CAP);
-    assert_eq!(ledger.actual_spend, MicroUsd(1_270_000));
+    assert_eq!(ledger.actual_spend, MicroUsd(39_090_000));
     assert_eq!(ledger.calibration_actual_spend, MicroUsd(1_270_000));
     assert_eq!(ledger.calibration_outstanding_commitments, MicroUsd(0));
 }
@@ -561,7 +561,7 @@ fn active_calibration_reservation_rejects_duplicate_authorization_entries() {
 
 #[test]
 fn calibration_reservation_enforces_the_lifetime_cap_and_rounds_up_to_cents() {
-    let fixture = LedgerFixture::new(49_000, 500, 0, 0);
+    let fixture = LedgerFixture::new(99_000, 500, 0, 0);
     let error = reserve_calibration(
         &fixture.path,
         "too-expensive",
@@ -569,7 +569,7 @@ fn calibration_reservation_enforces_the_lifetime_cap_and_rounds_up_to_cents() {
         "2026-07-16T20:00:00Z",
     )
     .expect_err("a calibration reservation cannot exceed the lifetime MVP cap");
-    assert!(error.to_string().contains("$500"), "{error}");
+    assert!(error.to_string().contains("$1,000"), "{error}");
 
     let rounding_fixture = LedgerFixture::new(0, 0, 0, 0);
     reserve_calibration(
@@ -862,7 +862,7 @@ fn finalized_charge_reconciliation_records_spend_that_exceeds_a_budget_cap() {
     .expect_err("an over-cap ledger must reject new reservations");
     assert!(error.to_string().contains("calibration cap"), "{error}");
 
-    let fixture = LedgerFixture::new(49_800, 0, 0, 0);
+    let fixture = LedgerFixture::new(99_800, 0, 0, 0);
     reserve_calibration(
         &fixture.path,
         "lifetime-cap-finalized-charge",
@@ -899,7 +899,7 @@ fn finalized_charge_reconciliation_records_spend_that_exceeds_a_budget_cap() {
         "2026-07-17T00:00:00Z",
     )
     .expect("already-incurred finalized spend must be recorded");
-    assert_eq!(reconciled.actual_spend, MicroUsd::from_cents(50_001));
+    assert_eq!(reconciled.actual_spend, MicroUsd::from_cents(100_001));
     assert_eq!(
         reconciled.calibration_actual_spend,
         MicroUsd::from_cents(201)
@@ -911,7 +911,7 @@ fn finalized_charge_reconciliation_records_spend_that_exceeds_a_budget_cap() {
         "2026-07-17T00:01:00Z",
     )
     .expect_err("an over-cap ledger must reject new reservations");
-    assert!(error.to_string().contains("$500 MVP cap"), "{error}");
+    assert!(error.to_string().contains("$1,000 MVP cap"), "{error}");
 }
 
 #[test]
@@ -1388,8 +1388,8 @@ fn full_build_rejects_an_evidence_derived_projection_over_the_lifetime_cap() {
         },
         "2026-07-16T21:00:00Z",
     )
-    .expect_err("the measured projection exceeds $500");
-    assert!(error.to_string().contains("$500"), "{error}");
+    .expect_err("the measured projection exceeds $1,000");
+    assert!(error.to_string().contains("$1,000"), "{error}");
     assert_eq!(
         read_budget_ledger(&fixture.path)
             .expect("read unchanged ledger")
@@ -2040,7 +2040,7 @@ fn provisional_full_build_charge_reconciliation_waits_for_v2_then_adds_only_the_
     .expect("reserve v2");
 
     let adjusted =
-        fixture.write_provider_invoice_with_label("900000026", "crec-72-gte-full-build", "500.00");
+        fixture.write_provider_invoice_with_label("900000026", "crec-72-gte-full-build", "1000.00");
     let before_rejected_reconciliation =
         fs::read(&fixture.path).expect("read ledger with active v2");
     let error = reconcile_failed_full_build_provider_charge(
@@ -2101,7 +2101,7 @@ fn provisional_full_build_charge_reconciliation_waits_for_v2_then_adds_only_the_
         "2026-07-20T15:02:00Z",
     )
     .expect("reconcile v1 after v2 is terminal");
-    assert_eq!(reconciled.actual_spend, MicroUsd::from_cents(50_100));
+    assert_eq!(reconciled.actual_spend, MicroUsd::from_cents(100_100));
     assert_eq!(reconciled.outstanding_commitments, MicroUsd(0));
     let entry = ledger_entries(&fixture.path)
         .into_iter()
@@ -2109,8 +2109,8 @@ fn provisional_full_build_charge_reconciliation_waits_for_v2_then_adds_only_the_
         .expect("provider-charge reconciliation entry");
     assert_eq!(entry["reservation_id"], "invoice-build-v1");
     assert_eq!(entry["previous_recorded_charge_cents"], 23_u64);
-    assert_eq!(entry["reconciled_recorded_charge_cents"], 50_000_u64);
-    assert_eq!(entry["added_actual_spend_cents"], 49_977_u64);
+    assert_eq!(entry["reconciled_recorded_charge_cents"], 100_000_u64);
+    assert_eq!(entry["added_actual_spend_cents"], 99_977_u64);
     assert_eq!(
         entry["released_invoice_adjustment_commitment_cents"],
         reserved_cents - 23
@@ -3199,7 +3199,7 @@ impl LedgerFixture {
   "schema_version": 2,
   "scope": "Entire oracle MVP effort",
   "currency": "USD",
-  "lifetime_cap_cents": 50000,
+  "lifetime_cap_cents": 100000,
   "calibration_lifetime_cap_cents": 2500,
   "actual_spend_cents": {actual_spend_cents},
   "outstanding_commitments_cents": {outstanding_commitments_cents},

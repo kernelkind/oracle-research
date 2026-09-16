@@ -206,7 +206,7 @@ fn admission_derives_audited_buckets_and_executes_only_the_exact_cuda_stage() {
             &mut FixedEncoder::recording(retry_encoded.clone()),
         )
         .expect_err("another full charged attempt would exceed the hard budget");
-    assert!(error.to_string().contains("$500"));
+    assert!(error.to_string().contains("$1,000"));
     assert_eq!(*retry_encoded.lock().expect("retry encoded rows"), 0);
     assert!(
         !fixture
@@ -438,7 +438,7 @@ fn admission_config(artifact_name: &str) -> BudgetAdmissionConfig {
         artifact_name: artifact_name.to_owned(),
         base_artifact_name: None,
         token_audit_name: "audit-100k".to_owned(),
-        projected_artifact_and_transfer: MicroUsd::from_dollars(140),
+        projected_artifact_and_transfer: MicroUsd::from_dollars(280),
     }
 }
 
