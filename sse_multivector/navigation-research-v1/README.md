@@ -3,7 +3,43 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
-Latest construction experiment: [USC01 — source meanings and pairs](./USC01-RESULTS.md).
+## Current evaluation decisions — September 15, 2026
+
+**Coffee → Music at Coffee Shops is approved for evaluation.** The user explicitly
+approved this category relationship, superseding the earlier No in
+[TRUE06/U02](./TRUE06/user-review.json). The parent is `S9c440e7f47`; the child is
+`S8ea08f1aff`, with these masks:
+
+- N004 · V035: ⟦Rave at a coffee shop⟧
+- N038 · V295: ⟦playing⟧ ⟦coffee shop⟧ ⟦music⟧
+
+The [saved TRUE output](./TRUE10/graph/scores.json) for
+`premise: This text is about Music at Coffee Shops. hypothesis: This text is about Coffee.`
+is native No, with score `0.009861395630151667`. The fixed `> 0.142` rule also
+rejects it. Under the updated user judgment, both rules miss this relationship.
+Repeated rows for equivalent Coffee titles are the same model input, not
+independent failures. No new inference was performed.
+
+This approval concerns this pair only. The reverse direction was not adjudicated;
+the earlier Food consumption → Having drunk coffee rejection remains unchanged.
+No hierarchy edge, category title, mask, or score has changed. How to recover
+this missing relationship automatically remains open.
+
+Separately, the user approved all six notes in the
+[TRUE12 membership review](./TRUE12/membership-review.json): N004, N005, N017,
+N024, N038, and N065. These are note-level membership decisions, not approvals of
+every individual mask or of other category relationships. The saved review
+session had state SHA-256
+`2aabc553e6cd68d9fb63f610fd79e63a76bffb4a08ca48e1eab5c77fe6583667`.
+
+The [TRUE06 report](./TRUE06/RESULTS.md) and
+[TRUE12 report](./TRUE12/RESULTS.md) remain frozen experiment evidence. Their
+original judgments and pending-review language predate these decisions; they
+are not the current evaluation verdicts for the items above.
+
+## Earlier construction research
+
+[USC01 — source meanings and pairs](./USC01-RESULTS.md).
 All fifteen unchanged descriptions and all 128 nonempty USM02 word assignments
 produce singleton and same-description pair hierarchies. Cooking → Cooking with
 meat supplies a supported new local destination; transformation with seasoning
