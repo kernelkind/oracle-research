@@ -12,8 +12,12 @@ from true_category_probe import model_input
 from true_holdout_probe import THRESHOLD, threshold_decision
 
 
-def prepare_inputs(titles):
-    """Use exact title strings for every ordered pair of distinct group IDs."""
+def prepare_inputs(titles, *, source_group_ids=None, consolidations=()):
+    """Use all titles, optionally checking the complete upstream group inventory.
+
+    Title judgments never remove groups. Only explicit, already-approved
+    consolidations account for multiple source groups with one category.
+    """
     groups = titles.get('groups') if isinstance(titles, dict) else None
     if not isinstance(groups, list) or not groups:
         raise ValueError('nonempty generated title groups required')
@@ -27,6 +31,27 @@ def prepare_inputs(titles):
         if not isinstance(title, str) or not title.strip():
             raise ValueError('nonempty exact generated titles required')
         by_id[key] = title
+    if source_group_ids is not None:
+        sources = set(source_group_ids)
+        if len(sources) != len(source_group_ids) or not sources:
+            raise ValueError('nonempty unique source group IDs required')
+        represented = {key: key for key in sources}
+        consolidated = set()
+        for item in consolidations:
+            canonical, members = item['canonical'], item['source_group_ids']
+            if (canonical not in members or not members
+                    or len(set(members)) != len(members)
+                    or not set(members) <= sources or consolidated & set(members)):
+                raise ValueError('invalid or overlapping explicit consolidation')
+            consolidated.update(members)
+            represented.update({key: canonical for key in members})
+        expected = set(represented.values())
+        missing, unexpected = expected - by_id.keys(), by_id.keys() - expected
+        if missing or unexpected:
+            raise ValueError(f'category inventory mismatch: missing {sorted(missing)}; '
+                             f'unexpected {sorted(unexpected)}')
+    elif consolidations:
+        raise ValueError('consolidations require the source inventory')
     rows = []
     for a_id, a in by_id.items():
         for b_id, b in by_id.items():

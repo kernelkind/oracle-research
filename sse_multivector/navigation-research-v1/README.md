@@ -22,8 +22,8 @@ independent failures. No new inference was performed.
 
 This approval concerns this pair only. The reverse direction was not adjudicated;
 the earlier Food consumption → Having drunk coffee rejection remains unchanged.
-No hierarchy edge, category title, mask, or score has changed. How to recover
-this missing relationship automatically remains open.
+That evaluation approval did not change a hierarchy edge, category title, mask,
+or score. How to recover this missing relationship automatically remains open.
 
 Separately, the user approved all six notes in the
 [TRUE12 membership review](./TRUE12/membership-review.json): N004, N005, N017,
@@ -37,9 +37,59 @@ The [TRUE06 report](./TRUE06/RESULTS.md) and
 original judgments and pending-review language predate these decisions; they
 are not the current evaluation verdicts for the items above.
 
-## Coffee and Tea hierarchy review
+## Complete category inventory — TRUE13
 
-The [expanded view](./TRUE12/hierarchy/categories.json) now packages the saved
+A failed title is not a rejected group. TRUE10 incorrectly excluded
+`Sf5a4b23523` because its generated title, “Coffee shop chains,” was rejected.
+The underlying seven-mask group had not been rejected. TRUE13 restores it as
+`#coffeechain`, the user's category name, with explicit title-override provenance.
+Its masks and original generated-title record are preserved.
+
+The inventory is now checked against the original source packets:
+
+- HDBv2 selected 64 groups. Three earlier user grouping rejections remain unchanged.
+- All 61 remaining groups must be represented, regardless of title-review status.
+- Two previously reviewed equivalent pairs are consolidated without losing masks.
+- This leaves 59 categories, with no title-based exclusions.
+
+[TRUE13](./TRUE13/categories.json) shows every category, including disconnected
+ones under the root. It preserves the 3,306 existing relationship scores and
+checks only the 116 directions involving the restored category. Native TRUE
+answers determine links; no Coffee link is inserted manually. Cycles would stop
+publication, not trigger silent deletion or consolidation.
+
+The 116 new checks produced one accepted relationship: Coffee → `#coffeechain`
+(native Yes; score 0.7825745). The other 115 were native No. The graph has no
+cycles. All 48 original accepted relationships remain unchanged.
+
+The full view also preserves the saved TRUE12 Coffee/Tea membership additions.
+It contains 79 distinct notes; notes and highlights remain visible recursively.
+The other 21 original notes have neither retained HDBSCAN membership nor an
+accepted Coffee/Tea membership in these results. This is not a new exclusion.
+The known missing Coffee → Music at Coffee Shops link remains uncorrected;
+the Music category itself is present, not hidden.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+./sse_multivector/run-true13-hierarchy.sh
+```
+
+Enter descends; N shows the current category's notes and all descendants, with
+combined inline masks. Category IDs identify the original groups. `--check`
+validates the saved view without opening the UI.
+
+[The plan](./TRUE13/plan.json) records inventory and preservation hashes;
+[the completion record](./TRUE13/completion.json) records graph and output hashes.
+The current handoff checks the full source inventory before generating inputs,
+accounting only for explicit consolidations. Missing titles/groups cause an
+error instead of filtering. TRUE10–12 remain frozen comparison evidence.
+
+Next, inspect the restored categories and their actual placement. This separates
+the corrected omission from remaining title, membership, and relationship errors.
+
+## Earlier focused Coffee and Tea review — TRUE12
+
+The [expanded view](./TRUE12/hierarchy/categories.json) packages the saved
 TRUE12 membership additions: Coffee has 22 notes and Tea as a beverage has four.
 It shows only these two branches, with all three original Coffee children and
 their contents unchanged. It does not add the approved Music at Coffee Shops
@@ -66,9 +116,8 @@ either view without opening the terminal UI.
 
 [The packaging manifest](./TRUE12/hierarchy/manifest.json) records the input and
 output hashes. Packaging uses no inference and refuses to replace an existing
-output directory. The next review is whether these expanded destinations and
-their unchanged children provide useful navigation before extending the test
-to other categories.
+output directory. This focused view remains available for comparison; use TRUE13
+above to inspect all categories without this branch filter.
 
 ## Earlier construction research
 
