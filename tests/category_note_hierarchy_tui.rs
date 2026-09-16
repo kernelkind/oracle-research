@@ -303,3 +303,113 @@ fn category_headers_identify_the_saved_hierarchy_on_menus_notes_and_analysis() {
     let analysis = compact_screen(&mut model);
     assert!(analysis.contains("saved-categories"), "{analysis}");
 }
+
+#[test]
+fn d_opens_only_direct_notes_of_current_category_and_restores_selection() {
+    let mut model = ManualNoteExplorer::categories(hierarchy());
+    key(&mut model, KeyCode::Char('j'));
+    let menu = compact_screen(&mut model);
+    assert!(menu.contains("D Direct notes"), "{menu}");
+    key(&mut model, KeyCode::Char('D'));
+    let direct = compact_screen(&mut model);
+    for expected in [
+        "Direct notes",
+        "N003",
+        "Note 1 of 1",
+        "Original note directly at root.",
+    ] {
+        assert!(direct.contains(expected), "missing {expected}: {direct}");
+    }
+    assert!(!direct.contains("Shared original note."), "{direct}");
+    assert!(!direct.contains("Original opening."), "{direct}");
+    key(&mut model, KeyCode::Esc);
+    assert_eq!(compact_screen(&mut model), menu);
+    key(&mut model, KeyCode::Char('N'));
+    assert!(compact_screen(&mut model).contains("Note 1 of 3"));
+}
+
+#[test]
+fn direct_notes_include_direct_members_that_also_belong_to_children() {
+    let mut model = ManualNoteExplorer::categories(hierarchy());
+    key(&mut model, KeyCode::Enter);
+    let menu = compact_screen(&mut model);
+    key(&mut model, KeyCode::Char('d'));
+    let direct = compact_screen(&mut model);
+    assert!(direct.contains("Subjects > Coffee"), "{direct}");
+    assert!(direct.contains("N002"), "{direct}");
+    assert!(direct.contains("Note 1 of 1"), "{direct}");
+    assert!(direct.contains("Shared original note."), "{direct}");
+    for code in [KeyCode::Char('l'), KeyCode::Char('h')] {
+        key(&mut model, code);
+        assert_eq!(compact_screen(&mut model), direct);
+    }
+    key(&mut model, KeyCode::Esc);
+    assert_eq!(compact_screen(&mut model), menu);
+    key(&mut model, KeyCode::Char('N'));
+    let recursive = compact_screen(&mut model);
+    assert!(recursive.contains("N001"), "{recursive}");
+    assert!(recursive.contains("Note 1 of 2"), "{recursive}");
+}
+
+#[test]
+fn empty_direct_notes_are_explicit_and_navigation_is_safe() {
+    let mut data = hierarchy();
+    data.nodes.get_mut("root").unwrap().note_ids.clear();
+    let mut model = ManualNoteExplorer::categories(data);
+    let menu = compact_screen(&mut model);
+    key(&mut model, KeyCode::Char('D'));
+    let direct = compact_screen(&mut model);
+    assert!(direct.contains("Direct notes"), "{direct}");
+    assert!(direct.contains("0 notes"), "{direct}");
+    assert!(
+        direct.contains("No notes are assigned directly to this category."),
+        "{direct}"
+    );
+    assert!(!direct.contains("Note 1 of 0"), "{direct}");
+    for code in [
+        KeyCode::Char('h'),
+        KeyCode::Char('l'),
+        KeyCode::Char('j'),
+        KeyCode::Char('G'),
+    ] {
+        key(&mut model, code);
+        assert_eq!(compact_screen(&mut model), direct);
+    }
+    key(&mut model, KeyCode::Char('?'));
+    key(&mut model, KeyCode::Esc);
+    assert_eq!(compact_screen(&mut model), direct);
+    key(&mut model, KeyCode::Esc);
+    assert_eq!(compact_screen(&mut model), menu);
+    key(&mut model, KeyCode::Char('N'));
+    assert!(compact_screen(&mut model).contains("Note 1 of 2"));
+}
+
+#[test]
+fn direct_action_respects_analysis_notes_and_control_d_scrolling() {
+    let mut model = ManualNoteExplorer::categories(hierarchy());
+    key(&mut model, KeyCode::Char('?'));
+    let analysis = compact_screen(&mut model);
+    key(&mut model, KeyCode::Char('D'));
+    assert_eq!(compact_screen(&mut model), analysis);
+    key(&mut model, KeyCode::Esc);
+    key(&mut model, KeyCode::Enter);
+    key(&mut model, KeyCode::Enter);
+    let leaf_menu = compact_screen(&mut model);
+    key(&mut model, KeyCode::Char('D'));
+    let first = compact_screen(&mut model);
+    assert!(first.contains("Original opening."), "{first}");
+    assert!(first.contains("Direct notes"), "{first}");
+    assert!(first.contains("Note 1 of 2"), "{first}");
+    key(&mut model, KeyCode::Char('d'));
+    assert_eq!(compact_screen(&mut model), first);
+    control(&mut model, 'd');
+    assert!(!compact_screen(&mut model).contains("Original opening."));
+    control(&mut model, 'u');
+    assert_eq!(compact_screen(&mut model), first);
+    key(&mut model, KeyCode::Esc);
+    assert_eq!(compact_screen(&mut model), leaf_menu);
+    let mut legacy = ManualNoteExplorer::new(hierarchy());
+    let menu = compact_screen(&mut legacy);
+    key(&mut legacy, KeyCode::Char('D'));
+    assert_eq!(compact_screen(&mut legacy), menu);
+}

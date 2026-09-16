@@ -74,9 +74,12 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 ./sse_multivector/run-true13-hierarchy.sh
 ```
 
-Enter descends; N shows the current category's notes and all descendants, with
-combined inline masks. Category IDs identify the original groups. `--check`
-validates the saved view without opening the UI.
+Enter descends; N shows the current category's notes and all descendants.
+D shows only directly assigned notes, including direct notes also present in
+children. Both views retain the saved combined inline masks. If no notes are
+assigned directly, D shows an empty view; Escape returns to the category menu.
+Category IDs identify the original groups. `--check` validates the saved view
+without opening the UI.
 
 [The plan](./TRUE13/plan.json) records inventory and preservation hashes;
 [the completion record](./TRUE13/completion.json) records graph and output hashes.
@@ -111,8 +114,9 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 
 Use the same command with `--baseline` for the original Coffee (nine notes) and
 Tea (two notes) branches. Enter descends; N displays all notes at the current
-category, including descendants; h returns to the parent. `--check` validates
-either view without opening the terminal UI.
+category, including descendants; D displays direct notes only; h returns to the
+parent from the category menu. `--check` validates either view without opening
+the terminal UI.
 
 [The packaging manifest](./TRUE12/hierarchy/manifest.json) records the input and
 output hashes. Packaging uses no inference and refuses to replace an existing

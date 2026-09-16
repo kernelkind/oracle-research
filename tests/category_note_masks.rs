@@ -101,6 +101,23 @@ fn screen(model: &mut ManualNoteExplorer) -> String {
 }
 
 #[test]
+fn direct_notes_keep_category_highlights_and_complete_original_text() {
+    let (dir, mut spec) = fixture();
+    spec["nodes"][1]["note_ids"] = json!(["N001"]);
+    let mut model = explorer(&dir, &spec);
+    key(&mut model, KeyCode::Enter);
+    key(&mut model, KeyCode::Char('D'));
+    let direct = screen(&mut model);
+    assert!(direct.contains("Direct notes"), "{direct}");
+    assert!(direct.contains("N001"), "{direct}");
+    assert!(
+        direct.contains("café ⟦coffee with milk⟧; tea later. coffee again."),
+        "{direct}"
+    );
+    assert!(!direct.contains("⟦tea⟧"), "{direct}");
+}
+
+#[test]
 fn note_view_overlays_all_category_masks_at_once_and_keeps_source_occurrences() {
     let (dir, spec) = fixture();
     let mut model = explorer(&dir, &spec);

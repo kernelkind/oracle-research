@@ -19,11 +19,18 @@ use crate::titled_merge_hierarchy::TitledMergeHierarchy;
 
 const CONTROLS: &str = "In categories, j/k or Up/Down chooses an item; Enter/l or Right opens it. h, Backspace or Escape returns to the parent. Child categories are separate from the actions for viewing all notes or notes outside children.\n\nIn original notes, h/l or Left/Right changes the note; j/k or Up/Down scrolls. Backspace or Escape returns to the category choices.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis manual proposal is read-only. Nothing is written or approved.";
 
-const CATEGORY_CONTROLS: &str = "In categories, only immediate child categories are listed. j/k or Up/Down chooses a child; Enter/l or Right descends into it, including a category with no children. N opens all original notes at the CURRENT category, including descendants and deduplicating shared notes. h, Backspace or Escape returns to the parent.\n\nWhen masks are supplied, each note shows one combined ⟦highlight⟧ covering all its mask ranges in the current category, including descendants. Masks belonging only to other branches are excluded. h/l or Left/Right changes the note; j/k or Up/Down scrolls. Backspace or Escape returns to the same category menu and selection.\n\nPaths use Category > Child > Grandchild and wrap. If older ancestors cannot fit above the notes, an ellipsis marks them and the complete path appears in this analysis screen.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis category hierarchy is read-only. Nothing is written or approved.";
+const CATEGORY_CONTROLS: &str = "In categories, only immediate child categories are listed. j/k or Up/Down chooses a child; Enter/l or Right descends into it, including a category with no children. N opens all original notes at the CURRENT category, including descendants and deduplicating shared notes. D opens only notes assigned directly to the current category, including direct notes that also appear in children. h, Backspace or Escape returns to the parent.\n\nWhen masks are supplied, each note shows one combined ⟦highlight⟧ covering all its mask ranges in the current category, including descendants. D changes which notes are shown, not their saved highlights. Masks belonging only to other branches are excluded. h/l or Left/Right changes the note; j/k or Up/Down scrolls. Backspace or Escape returns to the same category menu and selection.\n\nPaths use Category > Child > Grandchild and wrap. If older ancestors cannot fit above the notes, an ellipsis marks them and the complete path appears in this analysis screen.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis category hierarchy is read-only. Nothing is written or approved.";
 
 struct CategoryFrame {
     node_id: String,
     cursor: usize,
+}
+
+#[derive(Clone, Copy)]
+enum NoteScope {
+    All,
+    Direct,
+    OutsideChildren,
 }
 
 struct NoteBrowser {
@@ -31,7 +38,7 @@ struct NoteBrowser {
     cursor: usize,
     scroll: u16,
     leave_category: bool,
-    outside_children: bool,
+    scope: NoteScope,
 }
 
 pub struct ManualNoteExplorer {
@@ -52,7 +59,7 @@ impl ManualNoteExplorer {
         Self::with_categories_only(hierarchy, false)
     }
 
-    /// Browse immediate children, with original notes opened separately using N.
+    /// Browse immediate children; N opens all notes, D only direct memberships.
     pub fn categories(hierarchy: ManualNoteHierarchy) -> Self {
         Self::with_categories_only(hierarchy, true)
     }
@@ -83,7 +90,7 @@ impl ManualNoteExplorer {
             interaction_enabled: true,
         };
         if !categories_only && model.category().children.is_empty() {
-            model.show_notes(false, false);
+            model.show_notes(NoteScope::All, false);
         }
         model
     }
@@ -121,7 +128,7 @@ impl ManualNoteExplorer {
             .collect();
         model.notes = None;
         if model.category().children.is_empty() {
-            model.show_notes(false, model.categories.len() > 1);
+            model.show_notes(NoteScope::All, model.categories.len() > 1);
         }
         model
     }
@@ -200,22 +207,22 @@ impl ManualNoteExplorer {
         items
     }
 
-    fn show_notes(&mut self, outside_children: bool, leave_category: bool) {
+    fn show_notes(&mut self, scope: NoteScope, leave_category: bool) {
         let id = &self.category().node_id;
-        let note_ids = if outside_children {
-            self.hierarchy.outside_child_note_ids(id)
-        } else {
-            self.hierarchy.note_ids(id)
+        let mut note_ids = match scope {
+            NoteScope::All => self.hierarchy.note_ids(id),
+            NoteScope::Direct => self.category().note_ids.clone(),
+            NoteScope::OutsideChildren => self.hierarchy.outside_child_note_ids(id),
         };
-        if !note_ids.is_empty() {
-            self.notes = Some(NoteBrowser {
-                note_ids,
-                cursor: 0,
-                scroll: 0,
-                leave_category,
-                outside_children,
-            });
-        }
+        note_ids.sort_unstable();
+        note_ids.dedup();
+        self.notes = Some(NoteBrowser {
+            note_ids,
+            cursor: 0,
+            scroll: 0,
+            leave_category,
+            scope,
+        });
     }
 
     fn open(&mut self) {
@@ -226,10 +233,15 @@ impl ManualNoteExplorer {
                 cursor: 0,
             });
             if !self.categories_only && self.category().children.is_empty() {
-                self.show_notes(false, true);
+                self.show_notes(NoteScope::All, true);
             }
         } else if !self.categories_only {
-            self.show_notes(cursor > self.category().children.len(), false);
+            let scope = if cursor > self.category().children.len() {
+                NoteScope::OutsideChildren
+            } else {
+                NoteScope::All
+            };
+            self.show_notes(scope, false);
         }
     }
 
@@ -338,14 +350,17 @@ impl ManualNoteExplorer {
             KeyCode::End => self.jump(true),
             _ if self.analysis_scroll.is_some() => {}
             KeyCode::Char('n' | 'N') if self.categories_only && self.notes.is_none() => {
-                self.show_notes(false, false);
+                self.show_notes(NoteScope::All, false);
+            }
+            KeyCode::Char('d' | 'D') if self.categories_only && self.notes.is_none() => {
+                self.show_notes(NoteScope::Direct, false);
             }
             KeyCode::Left | KeyCode::Right if self.notes.is_some() => {
                 let notes = self.notes.as_mut().expect("note browser");
                 notes.cursor = if code == KeyCode::Left {
                     notes.cursor.saturating_sub(1)
                 } else {
-                    (notes.cursor + 1).min(notes.note_ids.len() - 1)
+                    (notes.cursor + 1).min(notes.note_ids.len().saturating_sub(1))
                 };
                 notes.scroll = 0;
             }
@@ -387,18 +402,22 @@ impl ManualNoteExplorer {
         let mut heading = if self.analysis_scroll.is_some() {
             format!("{breadcrumb}{category_id}\nCategory analysis · read-only")
         } else if let Some(notes) = &self.notes {
-            let note = &self.hierarchy.notes[&notes.note_ids[notes.cursor]];
-            format!(
-                "{breadcrumb}{category_id}{}\n{} · Note {} of {}",
-                if notes.outside_children {
-                    " · Notes outside children"
-                } else {
-                    ""
-                },
-                terminal_safe(&note.note_short_id),
-                notes.cursor + 1,
-                notes.note_ids.len(),
-            )
+            let scope = match notes.scope {
+                NoteScope::All => "",
+                NoteScope::Direct => " · Direct notes",
+                NoteScope::OutsideChildren => " · Notes outside children",
+            };
+            if let Some(id) = notes.note_ids.get(notes.cursor) {
+                let note = &self.hierarchy.notes[id];
+                format!(
+                    "{breadcrumb}{category_id}{scope}\n{} · Note {} of {}",
+                    terminal_safe(&note.note_short_id),
+                    notes.cursor + 1,
+                    notes.note_ids.len(),
+                )
+            } else {
+                format!("{breadcrumb}{category_id}{scope}\n0 notes")
+            }
         } else {
             format!(
                 "{breadcrumb}{category_id} · {}{}",
@@ -483,15 +502,23 @@ impl ManualNoteExplorer {
                 false,
             );
         } else if let Some(notes) = &mut self.notes {
-            let note = &self.hierarchy.notes[&notes.note_ids[notes.cursor]];
-            let (content, title) = if let Some(masks) = &self.category_masks {
-                let category = &self.categories.last().expect("root category").node_id;
-                (
-                    highlighted_note(&note.content, masks.spans(category, &note.note_short_id)),
-                    "Note · combined category mask",
-                )
+            let (content, title) = if let Some(id) = notes.note_ids.get(notes.cursor) {
+                let note = &self.hierarchy.notes[id];
+                if let Some(masks) = &self.category_masks {
+                    let category = &self.categories.last().expect("root category").node_id;
+                    (
+                        highlighted_note(&note.content, masks.spans(category, &note.note_short_id)),
+                        "Note · combined category mask",
+                    )
+                } else {
+                    (note.content.clone(), "Note")
+                }
             } else {
-                (note.content.clone(), "Note")
+                let message = match notes.scope {
+                    NoteScope::Direct => "No notes are assigned directly to this category.",
+                    NoteScope::All | NoteScope::OutsideChildren => "No notes in this view.",
+                };
+                (message.to_owned(), "Notes")
             };
             let content = terminal_safe(&content);
             render_scrollable_panel(
@@ -511,7 +538,7 @@ impl ManualNoteExplorer {
         } else if self.notes.is_some() {
             "h/l ←/→ Previous/next note  j/k ↑/↓ Scroll\nCtrl-D/U Half page  gg/G Top/end  ? Analysis\nBackspace/Esc Back  Q Quit"
         } else if self.categories_only {
-            "j/k ↑/↓ Choose  Enter/l Descend  N Notes at current category\nh/Backspace/Esc Parent  gg/G Top/end  ? Analysis  Q Quit"
+            "j/k ↑/↓ Choose  Enter/l Descend\nN Notes + descendants  D Direct notes\nh/Backspace/Esc Parent  gg/G Top/end  ? Analysis  Q Quit"
         } else {
             "j/k ↑/↓ Choose  Enter/l Open  h/l ←/→ Back/open\nBackspace/Esc Back  gg/G Top/end  ? Analysis  Q Quit"
         };
@@ -531,7 +558,7 @@ impl ManualNoteExplorer {
             });
         if self.categories_only && child_count == 0 {
             frame.render_widget(
-                Paragraph::new("No child categories. N opens notes at this category.")
+                Paragraph::new("No child categories. N or D opens notes at this category.")
                     .style(secondary_style())
                     .wrap(Wrap { trim: false })
                     .block(block),
