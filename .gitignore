@@ -8,3 +8,5 @@ __pycache__/
 /sse_multivector/navigation-research-v1/TRUE10/run/first-token-logits.npy
 # TRUE12 retains its raw logits locally and records their hash.
 /sse_multivector/navigation-research-v1/TRUE12/first-token-logits.npy
+# TRUE14 preserves the same local-logit, tracked-score policy.
+/sse_multivector/navigation-research-v1/TRUE14/run/first-token-logits.npy

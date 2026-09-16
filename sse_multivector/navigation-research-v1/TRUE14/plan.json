@@ -1,0 +1,81 @@
+{
+  "experiment": "TRUE14",
+  "tracking_card": "CREC-127",
+  "purpose": "Complete mask membership for the corrected Coffee/Tea branches, not new hierarchy edges.",
+  "created_utc": "2026-09-16T17:00:49.112812+00:00",
+  "targets": [
+    {
+      "id": "S9c440e7f47",
+      "title": "Coffee"
+    },
+    {
+      "id": "S24afa84c49",
+      "title": "Coffee Bean Preparation"
+    },
+    {
+      "id": "Sa241c43eb5",
+      "title": "Having drunk coffee"
+    },
+    {
+      "id": "Sbbd7d8dae4",
+      "title": "Appreciating Coffee for Its Flavour"
+    },
+    {
+      "id": "Sf5a4b23523",
+      "title": "#coffeechain"
+    },
+    {
+      "id": "S78e7660d1d",
+      "title": "Tea as a beverage"
+    }
+  ],
+  "original_masks": 945,
+  "source_notes": 100,
+  "unique_inputs": 5388,
+  "reused_inputs": 1796,
+  "new_inputs": 3592,
+  "logical_pairs": 5670,
+  "new_logical_pairs": 3780,
+  "model_id": "google/t5_xxl_true_nli_mixture",
+  "revision": "aa6cfe1dd4257853bfdd772992045f41bfc14988",
+  "threshold": 0.142,
+  "decision": "strict score > 0.142, additive; native answers retained separately",
+  "input_format": "premise: {original fragments joined by one space} hypothesis: This text is about {exact category title}.",
+  "inference_implementation": "Unchanged TRUE12 runner; its config.experiment remains TRUE12 as implementation identity. This experiment is TRUE14.",
+  "review": "Agent analysis plus user inspection in existing hierarchy UI; no separate uncertainty queue.",
+  "resources": {
+    "local": true,
+    "offline": true,
+    "paid_calls": 0,
+    "memory_max_gib": 60,
+    "memory_swap_max": 0,
+    "cpu_quota_percent": 400,
+    "threads": 4,
+    "batch_size": 4
+  },
+  "preservation_sha256": {
+    "sse_multivector/navigation-research-v1/TRUE13/categories-with-mask-ids.json": "58086ebc08004e5bb7f3439d02b5063dcca688f549b56c18d48f59311d213d3e",
+    "sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json": "9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019",
+    "sse_multivector/real-note-fine-segmentation-v1/vectors/vector-map.json": "8c2a3eebf84855cc676b3a5812aa53401ec9ddf66292139daa7a4ee17a574712",
+    "sse_multivector/navigation-research-v1/TRUE13/native-graph.json": "4da9f077dfe495b0a560fb5f911069bea532e96769d3a1ed8686fe48e2ee3bf6",
+    "sse_multivector/navigation-research-v1/TRUE13/native-notes.json": "6e920eae8961bb9ba308151d5c7d003feef631acaeb3bee5e996c01f040dbefc",
+    "sse_multivector/navigation-research-v1/TRUE12/inputs.json": "c8d42232f6f65827f263266f73c5ecf13a0a28d9ce29c267e5941a93049aed6c",
+    "sse_multivector/navigation-research-v1/TRUE12/scores.jsonl": "9c088ed13a292c3e43b50bba44e28b6ffede10484fd4393712d024330a174fa7",
+    "sse_multivector/navigation-research-v1/TRUE12/completion.json": "adcf68fdbeec48bc4e217599104685eb7ac9823311509753e199adeb2eba3cd2",
+    "sse_multivector/navigation-research-v1/TRUE12/config.json": "98dd5e45730c3d8b6b1aef6ba88e996944b3ac292f1bd6ff911472d17d57e25e",
+    "sse_multivector/navigation-research-v1/TRUE12/model-files.json": "c45c96315ca8795e9ec639d221622870180b91d1a216a38b45500654f1221104",
+    "sse_multivector/navigation-research-v1/TRUE12/source/true_mask_inference.py": "7501b2134adec335a4e17bb8293bbb2bf64721c6114ba5fc12253ccbf3b30ea2",
+    "sse_multivector/navigation-research-v1/TRUE12/source/true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+    "sse_multivector/navigation-research-v1/TRUE12/source/hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52",
+    "sse_multivector/navigation-research-v1/TRUE12/source/hierarcaps_category_probe.py": "3f4a9ebdc92ab4f0a6236e4a6f22b255f484a43939d4fc1c0727aa2450b395be",
+    "sse_multivector/navigation-research-v1/TRUE12/source/true_mask_membership.py": "06a15638b06171093161a43c38a4a30118809c4a79cc334d5f5beba2c0ad3171",
+    "sse_multivector/true_mask_inference.py": "7501b2134adec335a4e17bb8293bbb2bf64721c6114ba5fc12253ccbf3b30ea2",
+    "sse_multivector/true_category_probe.py": "334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228",
+    "sse_multivector/hierarcaps_mask_probe.py": "58a0d467dd5191b18a04fa1509e9545b01cd6d7c75b7e8184099586c409e6e52",
+    "sse_multivector/hierarcaps_category_probe.py": "3f4a9ebdc92ab4f0a6236e4a6f22b255f484a43939d4fc1c0727aa2450b395be",
+    "sse_multivector/true_mask_membership.py": "06a15638b06171093161a43c38a4a30118809c4a79cc334d5f5beba2c0ad3171",
+    "sse_multivector/true_score_reuse.py": "d55a53c31dd68128d996f552a3dcb01b80502971f81c0c6cc848aee9afbec1a0",
+    "sse_multivector/true_holdout_probe.py": "c1efc247cf733c182d0efe4bff331247863ddfeb6a41547581bd151beae968a9",
+    "sse_multivector/true_branch_membership.py": "d03710469aae785030845981bdcb144697330608c655cfecdfbec91eafd0ee5d"
+  }
+}

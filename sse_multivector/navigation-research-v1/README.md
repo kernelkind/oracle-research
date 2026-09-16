@@ -92,23 +92,8 @@ The current handoff checks the full source inventory before generating inputs,
 accounting only for explicit consolidations. Missing titles/groups cause an
 error instead of filtering. TRUE10–12 remain frozen comparison evidence.
 
-The next approved experiment checks every corpus mask against Coffee, Tea as
-a beverage, and all four current Coffee children: Coffee Bean Preparation,
-Having drunk coffee, Appreciating Coffee for Its Flavour, and #coffeechain.
-Do not restrict child checks to masks already accepted into a parent. Reuse
-the unchanged Coffee/Tea scores and infer only the missing child checks, keeping
-the titles, masks, model, membership cutoff and category relationships fixed.
-Preserve the existing results for comparison. The missing category compromised
-earlier completeness conclusions, not the unchanged Coffee/Tea model scores.
-
-After rebuilding additive memberships and inheriting child notes into parents,
-the agent performs its own analysis. The user inspects membership decisions in
-the existing hierarchy UI, including individual masks and IDs in O. Do not
-create a separate uncertainty or membership-decision review queue. This
-experiment is planned; its additional inference has not been run yet.
-
-For Coffee, N shows 22 notes, D shows 18 directly assigned notes, and O shows
-13 notes absent from all descendants. O excludes a whole note when it appears
+In the TRUE13 baseline, Coffee's N shows 22 notes, D shows 18 directly assigned
+notes, and O shows 13 notes absent from all descendants. O excludes a whole note when it appears
 below the category, even if its masks differ. This action works for every
 category in the existing UI; it does not change memberships or saved masks.
 
@@ -121,6 +106,69 @@ categories.json, graph, scores and source notes remain unchanged. Coffee's O
 view contains 41 distinct masks across its 13 notes (43 IDs including aliases).
 Older category files without individual-mask records retain their previous
 combined display with an explicit “Individual masks unavailable” notice in O.
+
+## Completed Coffee/Tea membership checks — TRUE14
+
+TRUE14 checks all 945 original masks from 100 notes against Coffee, Tea as a
+beverage, and all four Coffee children. It reuses the 1,796 unchanged Coffee/Tea
+inputs and scores and runs the 3,592 missing child inputs. Identical model inputs
+share a score while retaining every original mask ID: 5,388 inputs cover all
+5,670 mask/category pairs. No parent decision filters the child checks.
+
+The masks, titles, checkpoint, input wording, strict `score > 0.142` membership
+rule, and category relationships remain unchanged. All original memberships
+remain; accepted child masks are added and inherited upward. The full hierarchy
+still contains all 59 categories and 79 represented notes. No category or
+uncertain addition was hidden, and no separate review queue was created.
+
+| Coffee child | Notes before → after | Added individual masks |
+|---|---:|---:|
+| Coffee Bean Preparation | 2 → 2 | 3 |
+| Having drunk coffee | 2 → 7 | 19 |
+| Appreciating Coffee for Its Flavour | 2 → 2 | 2 |
+| #coffeechain | 7 → 8 | 1 |
+
+These are 25 added category/mask memberships, not 25 new notes. Coffee remains
+22 notes overall; its children now contain 13 distinct notes rather than nine.
+Coffee's O view therefore changes from 13 notes to nine. Its D view remains 18.
+Tea remains four notes, with no existing children. The other 21 source notes
+were checked but acquired no membership in these branches.
+
+The agent inspected every addition against its masks and source note. The
+grinding/roasting, explicit drinking, decaf-flavour, and returning-to-coffeechain
+matches are coherent. Some consumption additions are looser: V351 says
+“Fetching coffee” alongside stretching and bowing, not that coffee was drunk.
+Those decisions are preserved for inspection, not manually repaired.
+
+Two results clarify the earlier missing-child problem:
+
+- N018/V132, “back coffeechain tomorrow,” passes #coffeechain at 0.310519 despite
+  scoring only 0.080228 for Coffee. It is added to the child and inherited by
+  Coffee. Checking children independently therefore recovers this mask.
+- N004/V034, “Weird #coffeechain,” was finally checked but scores 0.056464 for
+  #coffeechain. N029/V243, the plain hashtag, scores 0.074444. Both remain outside
+  that child. These are model misses now, not missing checks. Some original
+  hashtag and flavour masks also fall below the cutoff; their existing
+  memberships are preserved. Complete checks do not establish complete recall.
+
+[Analysis](./TRUE14/analysis.json), [all additions](./TRUE14/membership-changes.json),
+[verification](./TRUE14/verification.json), and the
+[packaging manifest](./TRUE14/packaging-manifest.json) preserve the evidence.
+The unchanged inference implementation still writes `experiment: TRUE12` in its
+config; TRUE14's plan, execution record, verification, and outputs identify the
+new experiment explicitly. Frozen inputs and score/configuration identity were
+verified before packaging. Inference ran locally with no paid resources.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+./sse_multivector/run-true14-hierarchy.sh
+```
+
+The same launcher accepts `--baseline` for unchanged TRUE13 and `--check` for
+validation. N/D/O behavior is unchanged, including separate original masks and
+IDs in O. The next step is user inspection of this corrected hierarchy, especially
+Having drunk coffee and Coffee's remaining O notes. No further inference or
+semantic repairs are authorized by that recommendation.
 
 ## Earlier focused Coffee and Tea review — TRUE12
 
