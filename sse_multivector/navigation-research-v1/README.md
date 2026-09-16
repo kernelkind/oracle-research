@@ -92,8 +92,20 @@ The current handoff checks the full source inventory before generating inputs,
 accounting only for explicit consolidations. Missing titles/groups cause an
 error instead of filtering. TRUE10–12 remain frozen comparison evidence.
 
-Next, inspect the restored categories and their actual placement. This separates
-the corrected omission from remaining title, membership, and relationship errors.
+The next approved experiment checks every corpus mask against Coffee, Tea as
+a beverage, and all four current Coffee children: Coffee Bean Preparation,
+Having drunk coffee, Appreciating Coffee for Its Flavour, and #coffeechain.
+Do not restrict child checks to masks already accepted into a parent. Reuse
+the unchanged Coffee/Tea scores and infer only the missing child checks, keeping
+the titles, masks, model, membership cutoff and category relationships fixed.
+Preserve the existing results for comparison. The missing category compromised
+earlier completeness conclusions, not the unchanged Coffee/Tea model scores.
+
+After rebuilding additive memberships and inheriting child notes into parents,
+the agent performs its own analysis. The user inspects membership decisions in
+the existing hierarchy UI, including individual masks and IDs in O. Do not
+create a separate uncertainty or membership-decision review queue. This
+experiment is planned; its additional inference has not been run yet.
 
 For Coffee, N shows 22 notes, D shows 18 directly assigned notes, and O shows
 13 notes absent from all descendants. O excludes a whole note when it appears
