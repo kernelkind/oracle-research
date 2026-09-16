@@ -37,6 +37,39 @@ The [TRUE06 report](./TRUE06/RESULTS.md) and
 original judgments and pending-review language predate these decisions; they
 are not the current evaluation verdicts for the items above.
 
+## Coffee and Tea hierarchy review
+
+The [expanded view](./TRUE12/hierarchy/categories.json) now packages the saved
+TRUE12 membership additions: Coffee has 22 notes and Tea as a beverage has four.
+It shows only these two branches, with all three original Coffee children and
+their contents unchanged. It does not add the approved Music at Coffee Shops
+edge or create subcategories for the newly included notes.
+
+Membership is additive: every original note remains, and every saved mask score
+strictly above 0.142 contributes its source note and exact highlights. The
+browser overlays the union of those masks and the existing category/descendant
+masks. Source notes, titles, model scores, category links and the original
+TRUE11 browser are unchanged. This is a candidate to inspect, not an assertion
+that its navigation is adequate.
+
+Open the expanded view:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+./sse_multivector/run-true12-hierarchy.sh
+```
+
+Use the same command with `--baseline` for the original Coffee (nine notes) and
+Tea (two notes) branches. Enter descends; N displays all notes at the current
+category, including descendants; h returns to the parent. `--check` validates
+either view without opening the terminal UI.
+
+[The packaging manifest](./TRUE12/hierarchy/manifest.json) records the input and
+output hashes. Packaging uses no inference and refuses to replace an existing
+output directory. The next review is whether these expanded destinations and
+their unchanged children provide useful navigation before extending the test
+to other categories.
+
 ## Earlier construction research
 
 [USC01 — source meanings and pairs](./USC01-RESULTS.md).
