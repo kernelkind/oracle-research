@@ -111,7 +111,11 @@ function formatPayload(payload, request) {
     delete payload.tool_choice;
     delete payload.parallel_tool_calls;
     delete payload.include; // No encrypted history is reused between independent calls.
+    // Omit pi-ai's extra output preferences; retain the requested reasoning effort.
+    delete payload.text.verbosity;
+    delete payload.reasoning.summary;
     if (request.schema) payload.text.format = { type: 'json_schema', name: 'subjects', strict: true, schema: request.schema };
+    else delete payload.text;
   } else {
     if (request.reasoning === 'provider-default') delete payload.reasoning;
     if (request.schema) payload.response_format = {

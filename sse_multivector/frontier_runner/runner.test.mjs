@@ -89,6 +89,22 @@ test('preview sends MPv3.5 without adding a subject schema or context from other
   }
 });
 
+for (const stage of ['subjects', 'masks']) {
+  test(`Astra ${stage}: omit verbosity and summaries, retain low effort and frozen output format`, async () => {
+    const request = await prepare(config(astra, {
+      stage, ...(stage === 'masks' ? { subject: 'Bread baking' } : {}),
+    }));
+    const out = await preview(request);
+    assert.deepEqual({ text: out.body.text, reasoning: out.body.reasoning }, {
+      text: stage === 'subjects'
+        ? { format: { type: 'json_schema', name: 'subjects', strict: true, schema } }
+        : undefined,
+      reasoning: { effort: 'low' },
+    });
+    assert.equal(out.body.input[0].content[0].text, request.prompt);
+  });
+}
+
 test('provider default reasoning does not silently become off; unsupported efforts fail', async () => {
   const r = await preview(await prepare(config({ ...muse, reasoning: 'provider-default' })));
   assert.ok(!r.body.reasoning);
