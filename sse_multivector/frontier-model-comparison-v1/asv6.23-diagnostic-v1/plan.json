@@ -1,0 +1,22 @@
+{
+  "prompt_version": "ASv6.23",
+  "prompt_sha256": "b80fd158b27ee0b3ddd640f10e78d7a18101f933d8758af749f6f3d2f25d506f",
+  "model_calls": 36,
+  "note_count": 12,
+  "models": [
+    "meta/muse-spark-1.3-contributor",
+    "deepseek/deepseek-v4.1-flash",
+    "z-ai/glm-5.3-flash"
+  ],
+  "reasoning": "low",
+  "max_output_tokens": 8192,
+  "timeout_seconds": 300,
+  "concurrent_models": 3,
+  "automatic_retries": 0,
+  "astra_calls": 0,
+  "mask_calls": 0,
+  "spending_status": "Awaiting explicit approval of $1 maximum and extending the uncapped-key exception before reservation and execution.",
+  "review": "Read all 36 complete outputs against their actual input. Check missing communicated subjects, unsupported additions, references, and meaning changes; broad/narrow overlaps and harmless duplicates are permitted. Do not count subject quantity as quality. Distinguish source ambiguity and prompt limitations from clear output errors. Report specific examples and uncertainty, not small-sample accuracy percentages.",
+  "cost_accounting": "Use OpenRouter generation charges, not SDK catalog estimates. Output tokens include reasoning. Any truncation or transport error stays visible without silent retry.",
+  "prompt_rendering": "Generated with the existing frozen adapter; prompt unchanged. Existing NIP19 stripping applies identically across models. No source annotations or expected answers enter the model request."
+}
