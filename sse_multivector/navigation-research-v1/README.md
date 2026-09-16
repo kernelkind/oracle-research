@@ -90,6 +90,23 @@ error instead of filtering. TRUE10–12 remain frozen comparison evidence.
 Next, inspect the restored categories and their actual placement. This separates
 the corrected omission from remaining title, membership, and relationship errors.
 
+To inspect only **Coffee masks absent from every child**, use the separate view:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+./sse_multivector/run-coffee-unmatched-masks.sh
+```
+
+Press N to browse 17 full original notes with only the 52 remaining masks
+highlighted together per note. Left/right changes notes; up/down scrolls;
+? shows the individual mask IDs and fragments. This compares complete masks
+by source note and exact ranges against every descendant, not whole-note
+membership or individual overlapping words. Thus a note present in a child can
+still appear here with a different mask. The full TRUE13 view is unchanged.
+The [manifest](./TRUE13/coffee-unmatched-masks/manifest.json) records source hashes;
+[masks.json](./TRUE13/coffee-unmatched-masks/masks.json) preserves individual masks
+and duplicate-vector aliases before the browser combines their highlights.
+
 ## Earlier focused Coffee and Tea review — TRUE12
 
 The [expanded view](./TRUE12/hierarchy/categories.json) packages the saved
