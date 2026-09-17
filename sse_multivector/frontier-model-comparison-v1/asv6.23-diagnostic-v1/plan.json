@@ -15,7 +15,7 @@
   "automatic_retries": 0,
   "astra_calls": 0,
   "mask_calls": 0,
-  "spending_status": "Awaiting explicit approval of $1 maximum and extending the uncapped-key exception before reservation and execution.",
+  "spending_status": "Superseded before any model calls: these notes lacked Astra subject references. Use ../asv6.23-diagnostic-v2 instead, under its separately recorded approved $1 reservation.",
   "review": "Read all 36 complete outputs against their actual input. Check missing communicated subjects, unsupported additions, references, and meaning changes; broad/narrow overlaps and harmless duplicates are permitted. Do not count subject quantity as quality. Distinguish source ambiguity and prompt limitations from clear output errors. Report specific examples and uncertainty, not small-sample accuracy percentages.",
   "cost_accounting": "Use OpenRouter generation charges, not SDK catalog estimates. Output tokens include reasoning. Any truncation or transport error stays visible without silent retry.",
   "prompt_rendering": "Generated with the existing frozen adapter; prompt unchanged. Existing NIP19 stripping applies identically across models. No source annotations or expected answers enter the model request."
