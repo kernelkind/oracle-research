@@ -2,6 +2,16 @@
 
 Muse Spark is the most promising alternative in this sample. It is not yet an established Astra replacement. All three models sometimes failed to make each subject understandable by itself; DeepSeek and GLM also made clearer content errors.
 
+## View the results
+
+From `oracle-mvp`, run:
+
+```bash
+./sse_multivector/frontier-model-comparison-v1/asv6.23-diagnostic-v2/run-review.sh
+```
+
+Left/right changes the note; 1–4 switches models. Tab selects the note, output or separate assistant-comment pane; up/down scrolls. Press `i` to switch between the original note and the prepared model input where they differ. Press `q` to exit. The viewer is read-only and makes no model calls.
+
 ## What ran
 
 Twelve notes with existing ASv6.23 Astra-low outputs: four short, four medium, four long. Selection covered headlines, an opinion, a numeric comparison, gardening, a product launch, a reading app, court reporting and sports. Notes were selected for variety before reading the alternative models' outputs. The first archived Astra trial was used consistently—not whichever trial looked best.

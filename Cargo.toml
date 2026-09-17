@@ -64,6 +64,10 @@ name = "note-sample-review"
 path = "src/bin/note_sample_review.rs"
 
 [[bin]]
+name = "model-output-review"
+path = "src/bin/model_output_review.rs"
+
+[[bin]]
 name = "sse-mask-review"
 path = "src/bin/sse_mask_review.rs"
 
