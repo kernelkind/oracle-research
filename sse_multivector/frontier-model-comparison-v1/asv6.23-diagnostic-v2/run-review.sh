@@ -8,4 +8,4 @@ if [[ ! -x "$binary" ]]; then
   printf 'Build from oracle-mvp: nix develop -c cargo build --release --jobs 2 --bin model-output-review\n' >&2
   exit 1
 fi
-exec "$binary" "$here/review.json" "$@"
+exec "$binary" "$here/../asv6.23-diagnostic-retry-v1/review.json" "$@"
