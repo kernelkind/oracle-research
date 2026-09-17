@@ -1,0 +1,23 @@
+{
+  "kind": "subject_diagnostic_retry_reservation",
+  "recorded_at_utc": "2026-09-17T00:55:09.724Z",
+  "reservation_id": "frontier-asv6.23-diagnostic-retry-v1",
+  "reserved_maximum_charge_cents": 98,
+  "provider": "openrouter",
+  "model": "z-ai/glm-5.3-flash",
+  "note_ids": [
+    "H06",
+    "H21"
+  ],
+  "maximum_retry_attempts_per_note": 3,
+  "maximum_model_requests": 6,
+  "max_output_tokens_per_request": 8192,
+  "reasoning": "low",
+  "evidence": "User explicitly requested retrying the displayed HTTP 429 failures. Only H06 and H21 are retried with identical saved prompt, schema, model and effort. The diagnostic's previously approved total allowance is $1; two cents were recorded for the initial diagnostic, leaving at most 98 cents for these retries. No new Astra calls, no reruns of successful outputs, no provider/account substitution. HTTP 429 retries only, at most three new attempts per failed note.",
+  "original_diagnostic": "../asv6.23-diagnostic-v2",
+  "preserved_failure_records": {
+    "H06": "../asv6.23-diagnostic-v2/glm/results.jsonl",
+    "H21": "../asv6.23-diagnostic-v2/glm-remaining/H21/results.jsonl"
+  },
+  "review_policy": "Copy the entire original review and replace only the two GLM outputs and their comments after successful retries. Keep the original packet, receipts, summary and accounting unchanged."
+}
