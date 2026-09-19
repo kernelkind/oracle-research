@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; font-src 'self'; base-uri 'none'; form-action 'none'">
+  <title>Oracle release plan · read-only</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; color: #24364b; }
+    body { margin: 0; background: #fff; }
+    header { display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+      padding: 14px 22px; border-bottom: 1px solid #d7dee8; background: #f5f7fa; }
+    h1 { margin: 0; font-size: 18px; }
+    #status { flex: 1; font-size: 14px; }
+    button { font: inherit; padding: 6px 14px; cursor: pointer; background: white;
+      color: #24364b; border: 1px solid #aab7c8; border-radius: 5px; }
+    main { padding: 55px 22px 22px; }
+    #diagram { position: relative; width: 100%; min-height: 100px; }
+    #status[role="alert"] { color: #a4262c; }
+  </style>
+  <script>
+    // Keep the renderer and any attempted auxiliary loads on this host.
+    window.DRAWIO_BASE_URL = '.';
+    window.DRAWIO_VIEWER_URL = '.';
+    window.mxBasePath = '.';
+    window.mxImageBasePath = '.';
+    window.mxLoadResources = false;
+    window.mxLoadStylesheets = false;
+  </script>
+  <script defer src="vendor/viewer-static.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Oracle release plan</h1>
+    <span id="status" role="status">Loading diagram…</span>
+    <button id="refresh" type="button">Refresh</button>
+  </header>
+  <main><div id="diagram" aria-label="Read-only release diagram"></div></main>
+  <script>
+    document.getElementById('refresh').addEventListener('click', () => location.reload());
+    window.addEventListener('DOMContentLoaded', async () => {
+      const status = document.getElementById('status');
+      const diagram = document.getElementById('diagram');
+      try {
+        // Read the canonical source on every page load, never an exported snapshot.
+        const response = await fetch('october-18-release.drawio', {cache: 'no-store'});
+        if (!response.ok) throw new Error(`source returned HTTP ${response.status}`);
+        const xml = await response.text();
+        const parsed = new DOMParser().parseFromString(xml, 'application/xml');
+        if (parsed.querySelector('parsererror') || !parsed.querySelector('mxfile > diagram')) {
+          throw new Error('source is not a valid multi-page draw.io file');
+        }
+        diagram.setAttribute('data-mxgraph', JSON.stringify({
+          xml,
+          toolbar: 'pages zoom',
+          'toolbar-nohide': true,
+          'max-height': Math.max(400, window.innerHeight - 150),
+          'auto-fit': true,
+          'browser-translate': false,
+          editable: false,
+          lightbox: false,
+          nav: false,
+          center: true,
+          border: 12
+        }));
+        GraphViewer.createViewerForElement(diagram);
+        status.textContent = 'Read-only · Refresh to load the latest saved plan. Use the toolbar to change pages or zoom.';
+      } catch (error) {
+        diagram.replaceChildren();
+        status.setAttribute('role', 'alert');
+        status.textContent = `Could not load diagram: ${error.message}. Try Refresh after the source is fixed.`;
+      }
+    });
+  </script>
+</body>
+</html>
