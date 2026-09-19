@@ -62,6 +62,38 @@ and a provider rejection stays a failure rather than causing a format fallback.
 
 ## Execution and credentials
 
+### Anvil credential service
+
+For isolated subscription credentials, run the model command inside the selected
+Pi view and pass `--pi-config`:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+agent-account exec pi -- bash sse_multivector/run-model.sh \
+  run request.json --send --pi-config
+```
+
+This reads Pi's native `models.json` and `auth.json` in that process's view once:
+the loopback endpoint selects the account, and the token authorizes the local
+service only. The service owns the OpenAI credential and renewal. Switching
+`agent-account use NAME` affects future launches, not a running invocation.
+No Pi/Codex source is patched. Missing or invalid local configuration fails
+before sending, without falling back to bearer export or upstream access.
+`--pi-config` cannot be combined with `--auth-file` or OpenRouter.
+
+On 2026-09-19 this command completed a live `gpt-6-astra` request through
+the installed service. Offline checks cover selection capture, both account
+routes, credential refresh, redacted receipts and invalid configuration.
+
+This is an explicit mode, not a change to the default invocation. Existing batch
+commands and the frozen comparison adapter do not yet pass `--pi-config`;
+wrapping those commands in `agent-account exec pi` alone is insufficient. Their
+callers still need migration before old credentials can be retired. Preview
+remains credential-free. Existing conversations and stored credentials are not
+modified by this integration.
+
+### Native credentials without service routing
+
 Change `preview` to `run --send` to execute. Subscription calls additionally
 require `--auth-file /absolute/path/auth.json`; explicitly select the intended
 Codex or pi OAuth file. The runner never changes accounts, refreshes credentials,

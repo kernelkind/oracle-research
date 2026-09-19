@@ -4,6 +4,8 @@ import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
+import { homedir } from 'node:os';
+import { join } from 'node:path';
 import { zstdDecompressSync } from 'node:zlib';
 import Ajv from 'ajv';
 import Ajv2019 from 'ajv/dist/2019.js';
@@ -283,7 +285,29 @@ export async function subscriptionToken(path) {
   return token;
 }
 
-const help = `Usage: run-model.sh preview|run [CONFIG.json] [--send] [--auth-file PATH]
+async function localPiConnection() {
+  // agent-account owns selection. Read only the native Pi files in this
+  // process's selected view; never reselect via a child Pi invocation.
+  try {
+    const directory = process.env.PI_CODING_AGENT_DIR || join(homedir(), '.pi', 'agent');
+    const models = JSON.parse(await readFile(join(directory, 'models.json'), 'utf8'));
+    const auth = JSON.parse(await readFile(join(directory, 'auth.json'), 'utf8'));
+    const provider = models.providers?.['openai-codex'];
+    const credential = auth['openai-codex'];
+    const endpoint = new URL(provider.baseUrl);
+    if (endpoint.protocol !== 'http:' || !['127.0.0.1', '[::1]'].includes(endpoint.hostname) ||
+        !endpoint.port || endpoint.username || endpoint.password || endpoint.search || endpoint.hash ||
+        !/^\/[A-Za-z0-9_-]+\/pi\/?$/.test(endpoint.pathname) ||
+        credential?.type !== 'api_key' || !nonempty(credential.key) ||
+        credential.key !== provider.apiKey) throw new Error();
+    return { baseUrl: endpoint.href.replace(/\/$/, ''), apiKey: credential.key };
+  } catch {
+    // Do not export a real bearer or fall back to the upstream endpoint.
+    throw new Error('Valid local Pi configuration is required; run through agent-account exec pi');
+  }
+}
+
+const help = `Usage: run-model.sh preview|run [CONFIG.json] [--send] [--auth-file PATH | --pi-config]
 Reads one JSON config from file or stdin; writes one JSON result to stdout.
 Required: provider, model, reasoning, prompt (sent exactly as supplied).
 Optional: schema, timeout_seconds (default 300). No tools, history, retries, or prompt repair.
@@ -296,6 +320,8 @@ JSON Schema draft-07 (default), 2019-09, and 2020-12 are supported without remot
 Provider schema support may be narrower; unsupported parameters remain request failures.
 preview cannot send and reads no credentials. run requires --send.
 Subscription auth: explicit --auth-file; no refresh or paid OpenAI API fallback.
+--pi-config: use the local credential-service endpoint and access token from native Pi configuration.
+Launch this mode through agent-account exec pi; no upstream credential export or fallback.
 OpenRouter auth: OPENROUTER_API_KEY. Never reads OPENAI_API_KEY.
 --version prints versions; --identity prints versions and source/dependency SHA-256.
 Before paid execution, obtain approved maximum spend, record the commitment in
@@ -306,7 +332,7 @@ Timeouts/output limits are not spending approval or monetary hard caps.
 async function main() {
   const { values, positionals } = parseArgs({ allowPositionals: true, options: {
     help: { type: 'boolean' }, version: { type: 'boolean' }, identity: { type: 'boolean' },
-    send: { type: 'boolean' }, 'auth-file': { type: 'string' },
+    send: { type: 'boolean' }, 'auth-file': { type: 'string' }, 'pi-config': { type: 'boolean' },
   } });
   if (values.help) { process.stdout.write(help); return; }
   if (values.version) { process.stdout.write(`${VERSION} pi-ai/${PI_AI_VERSION}\n`); return; }
@@ -314,13 +340,22 @@ async function main() {
   const [command, path] = positionals;
   if (!['preview', 'run'].includes(command) || positionals.length > 2) throw new Error(help);
   if (command === 'run' && !values.send) throw new Error('Sending requires the explicit --send flag');
+  if (values['pi-config'] && values['auth-file']) throw new Error('--pi-config and --auth-file cannot be combined');
   if (command === 'preview' && (values.send || values['auth-file'])) throw new Error('preview does not accept --send or --auth-file');
   const input = path ? await readFile(path, 'utf8') : await new Response(process.stdin).text();
   const request = await prepare(JSON.parse(input));
+  if (values['pi-config'] && request.model.provider !== 'openai-codex') throw new Error('--pi-config is for openai-codex only');
   if (command === 'preview') { process.stdout.write(JSON.stringify(await preview(request), null, 2) + '\n'); return; }
   if (request.model.provider === 'openrouter' && values['auth-file']) throw new Error('OpenRouter uses OPENROUTER_API_KEY, not --auth-file');
-  const apiKey = request.model.provider === 'openai-codex'
-    ? await subscriptionToken(values['auth-file']) : process.env.OPENROUTER_API_KEY;
+  let apiKey;
+  if (values['pi-config']) {
+    const connection = await localPiConnection();
+    request.model = { ...request.model, baseUrl: connection.baseUrl };
+    apiKey = connection.apiKey;
+  } else {
+    apiKey = request.model.provider === 'openai-codex'
+      ? await subscriptionToken(values['auth-file']) : process.env.OPENROUTER_API_KEY;
+  }
   const result = await execute(request, { apiKey });
   process.stdout.write(JSON.stringify(result, null, 2) + '\n');
   if (!result.valid) process.exitCode = 1;
