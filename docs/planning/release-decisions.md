@@ -109,8 +109,11 @@ commitment. If launch occurs on October 18, that would extend through April 18,
 The $1,000 lifetime paid-resource cap still applies, including prior spending,
 Vast.ai training and snapshot GPU costs, hosting, storage, transfers and reruns.
 Account for the intended hosting period before allocating the remaining budget.
-No allocation or new spending is approved by this document; the budget ledger
-and repository spending rules remain authoritative.
+
+Keep hosting costs and reserves out of `budget-ledger.json`. Hosting estimates
+belong in release planning, separately from that ledger. This accounting decision
+does not change the overall cap or approve the proposed $200 hosting reserve.
+No allocation or new spending is approved by this document.
 
 ## Still open
 
