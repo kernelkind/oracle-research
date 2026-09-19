@@ -64,40 +64,35 @@ and a provider rejection stays a failure rather than causing a format fallback.
 
 ### Anvil credential service
 
-For isolated subscription credentials, run the model command inside the selected
-Pi view and pass `--pi-config`:
+Ordinary subscription requests automatically use the selected account's service:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
-agent-account exec pi -- bash sse_multivector/run-model.sh \
-  run request.json --send --pi-config
+./sse_multivector/run-model.sh run request.json --send
 ```
 
-This reads Pi's native `models.json` and `auth.json` in that process's view once:
-the loopback endpoint selects the account, and the token authorizes the local
-service only. The service owns the OpenAI credential and renewal. Switching
-`agent-account use NAME` affects future launches, not a running invocation.
-No Pi/Codex source is patched. Missing or invalid local configuration fails
-before sending, without falling back to bearer export or upstream access.
-`--pi-config` cannot be combined with `--auth-file` or OpenRouter.
+The runner invokes `agent-account exec pi` internally for each subscription
+request. The request process reads Pi's native `models.json` and `auth.json`
+from that selected view once: the loopback endpoint selects the account, and
+the token authorizes the local service only. The service owns the OpenAI
+credential and renewal. `--pi-config` is the internal handoff, not a required
+caller option. No Pi/Codex source is patched.
 
-On 2026-09-19 this command completed a live `gpt-6-astra` request through
-the installed service. Offline checks cover selection capture, both account
-routes, credential refresh, redacted receipts and invalid configuration.
+The frozen comparison adapter and saved batches use the same automatic route.
+Set `auth_file` to null in new batch configs. `--auth-file` is rejected
+with a migration message; no provider credential file is read or bearer exported.
+Missing launcher or invalid/nonlocal configuration fails without falling back
+to upstream access or paid OpenAI API billing. Preview remains credential-free.
 
-This is an explicit mode, not a change to the default invocation. Existing batch
-commands and the frozen comparison adapter do not yet pass `--pi-config`;
-wrapping those commands in `agent-account exec pi` alone is insufficient. Their
-callers still need migration before old credentials can be retired. Preview
-remains credential-free. Existing conversations and stored credentials are not
-modified by this integration.
+Switching `agent-account use NAME` affects requests launched afterward, not a
+running invocation. Batches start separate runner processes, so requests not
+yet launched use the newly selected account. Existing conversations and stored
+credential copies are not modified by this integration.
 
-### Native credentials without service routing
-
-Change `preview` to `run --send` to execute. Subscription calls additionally
-require `--auth-file /absolute/path/auth.json`; explicitly select the intended
-Codex or pi OAuth file. The runner never changes accounts, refreshes credentials,
-or falls back to normal OpenAI API billing.
+On 2026-09-19 the ordinary command and a saved prompt batch completed real
+`gpt-6-astra` requests through the installed service. Offline checks cover the
+real launcher/proxy, selection capture, both account routes, renewal, redacted
+receipts, the frozen adapter, cancellation and failure without fallback.
 
 OpenRouter reads only `OPENROUTER_API_KEY`. Do not put credentials in request
 JSON or repository files. Returned request headers redact credentials.
@@ -122,9 +117,9 @@ Standard output is one JSON result with:
 
 A successful ordinary-text result has its text in both `raw_text` and `output`.
 A schema failure preserves the raw response and returns exit status 1. Invalid
-configuration, missing credentials, and malformed or expired OAuth tokens fail
-before sending, on standard error. The server still decides whether an otherwise
-well-formed credential is authentic and authorized.
+configuration, a missing launcher, or invalid local Pi configuration fails
+before sending, on standard error. The credential service owns provider-token
+validation and renewal; provider rejection remains a request failure.
 
 Pi-ai's `usage.input` excludes `cacheRead` and `cacheWrite`;
 `usage.output` includes reasoning. Its cost field is a catalog estimate,
@@ -162,7 +157,7 @@ A prompt-batch configuration uses:
   "schema_version": 1,
   "runner_binary": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-model.sh",
   "provider": "openai-codex",
-  "auth_file": "/absolute/path/to/your/auth.json",
+  "auth_file": null,
   "run_directory": "new-run",
   "model": "gpt-6-astra",
   "reasoning_effort": "low",
@@ -173,7 +168,11 @@ A prompt-batch configuration uses:
 ```
 
 Execute with `python3 sse_multivector/extraction_pipeline.py prompt CONFIG.json`
-from the repository root. For OpenRouter set `auth_file` to null and supply
+from the repository root. For subscription calls, set `auth_file` to null to use
+the selected account's credential service. File paths are no longer
+supported. Preserve historical configs and use a fresh run directory for the
+changed runner identity.
+For OpenRouter set `auth_file` to null and supply
 `max_output_tokens`. Paths resolve relative to the configuration file.
 Extraction-specific normalization, schemas, note loading, and prompt registries
 belong to the workflow, not the general runner.
@@ -188,11 +187,12 @@ transport or disguise historical Codex calls as pi-ai calls.
 New subject and claim manifests use schema version 2
 to distinguish the new execution provenance.
 
-The real-note experiment's `generation.py` and `omission_calls.py` preparation
-commands now require `--auth-file PATH` and optionally accept `--runner-binary`.
-Their collection commands still read saved legacy runs without invoking the
-retired tool. The CREC-119 launchers require a new configuration path rather than
-silently reusing their archived Codex configurations.
+The real-note experiment's older `generation.py` and `omission_calls.py`
+preparation commands still require `--auth-file PATH`; they cannot launch new
+service-backed runs unchanged. Use the canonical saved-batch configs above for
+new calls. Their collection commands still read saved legacy runs without
+invoking the retired tool. The CREC-119 launchers require a new configuration
+path rather than silently reusing their archived Codex configurations.
 
 ## Historical experiments
 

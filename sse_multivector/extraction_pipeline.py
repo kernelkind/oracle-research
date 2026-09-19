@@ -389,8 +389,6 @@ def _runtime_options(value: dict[str, Any], base: Path) -> dict[str, Any]:
         raise RunnerError("provider must be openai-codex or openrouter")
     auth = value.get("auth_file")
     auth_file = None if auth is None else _resolve_path(auth, "auth_file", base)
-    if provider == "openai-codex" and auth_file is None:
-        raise RunnerError("openai-codex requires an explicit auth_file")
     if provider == "openrouter" and auth_file is not None:
         raise RunnerError("OpenRouter uses OPENROUTER_API_KEY, not auth_file")
     timeout = value.get("timeout_seconds", 600)

@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
-import { prepare as prepareModel, execute as executeModel, preview as previewModel, subscriptionToken } from './model.mjs';
+import { prepare as prepareModel, execute as executeModel, preview as previewModel, launchWithSelectedPi, localPiConnection } from './model.mjs';
 
 const root = new URL('../', import.meta.url);
 const sha256 = text => createHash('sha256').update(text).digest('hex');
@@ -107,7 +107,7 @@ export async function preview(request) {
   return { ...await previewModel(request), ...extractionMetadata(request), normalization_changed: request.normalization_changed };
 }
 
-const help = `Usage: run-frontier-comparison.sh preview|run [CONFIG.json] [--send] [--auth-file PATH]
+const help = `Usage: run-frontier-comparison.sh preview|run [CONFIG.json] [--send]
 Frozen extraction adapter. For arbitrary prompts use run-model.sh.
 Reads one config from file or stdin; writes one JSON result to stdout.
 Required: provider, model, reasoning, stage; exactly one of note_id or text.
@@ -116,7 +116,8 @@ Providers: openai-codex (gpt-6-astra, low), openrouter (pi-ai openai-completions
 OpenRouter requires max_output_tokens; reasoning may be provider-default.
 Optional: timeout_seconds (default 300). No retries, implicit batches, or prompt repair.
 preview reads no credentials and cannot send. run requires --send.
-Subscription auth: explicit --auth-file; no automatic refresh or paid OpenAI API fallback.
+Subscription auth: the selected account's credential service, launched automatically.
+No upstream credential export, auth files, or paid OpenAI API fallback.
 OpenRouter auth: OPENROUTER_API_KEY. Never reads OPENAI_API_KEY.
 Before paid execution, obtain approved maximum spend, record the commitment in
 budget-ledger.json, and configure the required external provider-side spending limit.
@@ -126,19 +127,25 @@ Local output checks test JSON/source integrity, NOT semantic correctness.
 
 async function main() {
   const { values, positionals } = parseArgs({ allowPositionals: true, options: {
-    help: { type: 'boolean' }, send: { type: 'boolean' }, 'auth-file': { type: 'string' },
+    help: { type: 'boolean' }, send: { type: 'boolean' }, 'auth-file': { type: 'string' }, 'pi-config': { type: 'boolean' },
   } });
   if (values.help) { process.stdout.write(help); return; }
+  if (values['auth-file']) throw new Error('--auth-file is no longer supported; subscription credentials are service-owned. Remove the option or set batch auth_file to null.');
   const [command, path] = positionals;
   if (!['preview', 'run'].includes(command) || positionals.length > 2) throw new Error(help);
   if (command === 'run' && !values.send) throw new Error('Sending requires the explicit --send flag');
-  if (command === 'preview' && (values.send || values['auth-file'])) throw new Error('preview does not accept --send or --auth-file');
+  if (command === 'preview' && values.send) throw new Error('preview does not accept --send');
   const input = path ? await readFile(path, 'utf8') : await new Response(process.stdin).text();
   const request = await prepare(JSON.parse(input));
+  if (values['pi-config'] && request.model.provider !== 'openai-codex') throw new Error('--pi-config is for openai-codex only');
   if (command === 'preview') { process.stdout.write(JSON.stringify(await preview(request), null, 2) + '\n'); return; }
-  if (request.model.provider === 'openrouter' && values['auth-file']) throw new Error('OpenRouter uses OPENROUTER_API_KEY, not --auth-file');
-  const apiKey = request.model.provider === 'openai-codex'
-    ? await subscriptionToken(values['auth-file']) : process.env.OPENROUTER_API_KEY;
+  if (request.model.provider === 'openai-codex' && !values['pi-config']) return launchWithSelectedPi(input);
+  let apiKey = process.env.OPENROUTER_API_KEY;
+  if (values['pi-config']) {
+    const connection = await localPiConnection();
+    request.model = { ...request.model, baseUrl: connection.baseUrl };
+    apiKey = connection.apiKey;
+  }
   const result = await execute(request, { apiKey });
   process.stdout.write(JSON.stringify(result, null, 2) + '\n');
   if (!result.valid) process.exitCode = 1;
