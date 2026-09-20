@@ -94,8 +94,15 @@ On 2026-09-19 the ordinary command and a saved prompt batch completed real
 real launcher/proxy, selection capture, both account routes, renewal, redacted
 receipts, the frozen adapter, cancellation and failure without fallback.
 
-OpenRouter reads only `OPENROUTER_API_KEY`. Do not put credentials in request
-JSON or repository files. Returned request headers redact credentials.
+OpenRouter also uses the local credential service through the same automatic Pi
+configuration handoff. Its single shared provider key and `/openrouter/api/v1`
+route do not change when the selected OpenAI subscription changes. The runner
+never reads `OPENROUTER_API_KEY` or falls back to direct provider access. Anvil's
+service route is active; the production runner's local configuration handoff was
+verified without inference. Paid generation remains untested.
+Do not put credentials in request JSON or repository files. Returned request
+headers redact the local capability. Offline checks cover ordinary and frozen
+adapter calls with the real pi-ai transport; no paid verification is implied.
 
 **A send flag is not spending approval.** Paid calls remain subject to the
 repository's approved maximum spend, ledger commitment, and external provider-side

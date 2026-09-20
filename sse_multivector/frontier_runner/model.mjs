@@ -282,7 +282,7 @@ export async function launchWithSelectedPi(input) {
   child.stdin.on('error', () => { /* Early refusal is reported by the child's exit status. */ });
   try {
     const completed = new Promise((resolve, reject) => {
-      child.once('error', () => reject(new Error('Cannot launch agent-account for subscription authentication')));
+      child.once('error', () => reject(new Error('Cannot launch agent-account for model authentication')));
       child.once('close', (code, signal) => resolve(code ?? 128 + (constants.signals[signal] ?? 1)));
     });
     child.stdin.end(input);
@@ -293,19 +293,21 @@ export async function launchWithSelectedPi(input) {
   }
 }
 
-export async function localPiConnection() {
+export async function localPiConnection(providerName = 'openai-codex') {
   // agent-account owns selection. Read only the native Pi files in this
   // process's selected view; never reselect via a child Pi invocation.
   try {
     const directory = process.env.PI_CODING_AGENT_DIR || join(homedir(), '.pi', 'agent');
     const models = JSON.parse(await readFile(join(directory, 'models.json'), 'utf8'));
     const auth = JSON.parse(await readFile(join(directory, 'auth.json'), 'utf8'));
-    const provider = models.providers?.['openai-codex'];
-    const credential = auth['openai-codex'];
+    if (!['openai-codex', 'openrouter'].includes(providerName)) throw new Error();
+    const provider = models.providers?.[providerName];
+    const credential = auth[providerName];
     const endpoint = new URL(provider.baseUrl);
+    const route = providerName === 'openrouter' ? /^\/openrouter\/api\/v1\/?$/ : /^\/[A-Za-z0-9_-]+\/pi\/?$/;
     if (endpoint.protocol !== 'http:' || !['127.0.0.1', '[::1]'].includes(endpoint.hostname) ||
         !endpoint.port || endpoint.username || endpoint.password || endpoint.search || endpoint.hash ||
-        !/^\/[A-Za-z0-9_-]+\/pi\/?$/.test(endpoint.pathname) ||
+        !route.test(endpoint.pathname) ||
         credential?.type !== 'api_key' || !nonempty(credential.key) ||
         credential.key !== provider.apiKey) throw new Error();
     return { baseUrl: endpoint.href.replace(/\/$/, ''), apiKey: credential.key };
@@ -329,7 +331,8 @@ Provider schema support may be narrower; unsupported parameters remain request f
 preview cannot send and reads no credentials. run requires --send.
 Subscription auth: the selected account's credential service, launched automatically.
 No upstream credential export, auth files, or paid OpenAI API fallback.
-OpenRouter auth: OPENROUTER_API_KEY. Never reads OPENAI_API_KEY.
+OpenRouter auth: the same local credential service, with one shared provider key.
+Never reads OPENROUTER_API_KEY or OPENAI_API_KEY; no direct upstream fallback.
 --version prints versions; --identity prints versions and source/dependency SHA-256.
 Before paid execution, obtain approved maximum spend, record the commitment in
 budget-ledger.json, and configure the required external provider-side spending limit.
@@ -351,18 +354,11 @@ async function main() {
   if (command === 'preview' && values.send) throw new Error('preview does not accept --send');
   const input = path ? await readFile(path, 'utf8') : await new Response(process.stdin).text();
   const request = await prepare(JSON.parse(input));
-  if (values['pi-config'] && request.model.provider !== 'openai-codex') throw new Error('--pi-config is for openai-codex only');
   if (command === 'preview') { process.stdout.write(JSON.stringify(await preview(request), null, 2) + '\n'); return; }
-  if (request.model.provider === 'openai-codex' && !values['pi-config']) return launchWithSelectedPi(input);
-  let apiKey;
-  if (values['pi-config']) {
-    const connection = await localPiConnection();
-    request.model = { ...request.model, baseUrl: connection.baseUrl };
-    apiKey = connection.apiKey;
-  } else {
-    apiKey = process.env.OPENROUTER_API_KEY;
-  }
-  const result = await execute(request, { apiKey });
+  if (!values['pi-config']) return launchWithSelectedPi(input);
+  const connection = await localPiConnection(request.model.provider);
+  request.model = { ...request.model, baseUrl: connection.baseUrl };
+  const result = await execute(request, { apiKey: connection.apiKey });
   process.stdout.write(JSON.stringify(result, null, 2) + '\n');
   if (!result.valid) process.exitCode = 1;
 }

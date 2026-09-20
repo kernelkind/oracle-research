@@ -118,7 +118,8 @@ Optional: timeout_seconds (default 300). No retries, implicit batches, or prompt
 preview reads no credentials and cannot send. run requires --send.
 Subscription auth: the selected account's credential service, launched automatically.
 No upstream credential export, auth files, or paid OpenAI API fallback.
-OpenRouter auth: OPENROUTER_API_KEY. Never reads OPENAI_API_KEY.
+OpenRouter auth: the same local credential service, with one shared provider key.
+Never reads OPENROUTER_API_KEY or OPENAI_API_KEY; no direct upstream fallback.
 Before paid execution, obtain approved maximum spend, record the commitment in
 budget-ledger.json, and configure the required external provider-side spending limit.
 Timeouts/output limits are not spending approval or a monetary hard cap.
@@ -137,16 +138,11 @@ async function main() {
   if (command === 'preview' && values.send) throw new Error('preview does not accept --send');
   const input = path ? await readFile(path, 'utf8') : await new Response(process.stdin).text();
   const request = await prepare(JSON.parse(input));
-  if (values['pi-config'] && request.model.provider !== 'openai-codex') throw new Error('--pi-config is for openai-codex only');
   if (command === 'preview') { process.stdout.write(JSON.stringify(await preview(request), null, 2) + '\n'); return; }
-  if (request.model.provider === 'openai-codex' && !values['pi-config']) return launchWithSelectedPi(input);
-  let apiKey = process.env.OPENROUTER_API_KEY;
-  if (values['pi-config']) {
-    const connection = await localPiConnection();
-    request.model = { ...request.model, baseUrl: connection.baseUrl };
-    apiKey = connection.apiKey;
-  }
-  const result = await execute(request, { apiKey });
+  if (!values['pi-config']) return launchWithSelectedPi(input);
+  const connection = await localPiConnection(request.model.provider);
+  request.model = { ...request.model, baseUrl: connection.baseUrl };
+  const result = await execute(request, { apiKey: connection.apiKey });
   process.stdout.write(JSON.stringify(result, null, 2) + '\n');
   if (!result.valid) process.exitCode = 1;
 }

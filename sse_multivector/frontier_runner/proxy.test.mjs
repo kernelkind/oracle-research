@@ -9,6 +9,58 @@ import { test } from 'node:test';
 const cli = new URL('model.mjs', import.meta.url).pathname;
 const config = { provider: 'openai-codex', model: 'gpt-6-astra', reasoning: 'low', prompt: 'Offline only.' };
 
+test('OpenRouter consumes only the shared local Pi endpoint and capability', async t => {
+  const home = await mkdtemp(join(tmpdir(), 'oracle-openrouter-service-'));
+  t.after(() => rm(home, { recursive: true, force: true }));
+  const key = 'LOCAL_OPENROUTER_CAPABILITY';
+  const requests = [];
+  const server = createServer((request, response) => {
+    requests.push({ url: request.url, authorization: request.headers.authorization });
+    request.resume();
+    response.writeHead(200, { 'content-type': 'text/event-stream' });
+    response.end([
+      { id: 'test', choices: [{ index: 0, delta: { content: '["bread"]' }, finish_reason: null }] },
+      { id: 'test', choices: [{ index: 0, delta: {}, finish_reason: 'stop' }], usage: { prompt_tokens: 1, completion_tokens: 1 } },
+      '[DONE]',
+    ].map(event => `data: ${typeof event === 'string' ? event : JSON.stringify(event)}\n\n`).join(''));
+  });
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => { server.closeAllConnections(); server.close(); });
+  const baseUrl = `http://127.0.0.1:${server.address().port}/openrouter/api/v1`;
+  await writeFile(join(home, 'models.json'), JSON.stringify({ providers: { openrouter: { baseUrl, apiKey: key } } }));
+  await writeFile(join(home, 'auth.json'), JSON.stringify({ openrouter: { type: 'api_key', key } }));
+  const input = { provider: 'openrouter', model: 'meta/muse-spark-1.3-contributor',
+    reasoning: 'low', max_output_tokens: 40, prompt: 'Offline only.' };
+  await writeFile(join(home, 'agent-account'), `#!${process.execPath}\n` +
+    `const a=process.argv.slice(2);require('node:assert/strict').deepEqual(a.slice(0,3),['exec','pi','--']);\n` +
+    `process.execve(a[3],a.slice(3),process.env);\n`, { mode: 0o700 });
+  for (const [entry, request, flags] of [
+    [cli, input, ['--pi-config']],
+    [cli, input, []],
+    [new URL('runner.mjs', import.meta.url).pathname,
+      { provider: input.provider, model: input.model, reasoning: input.reasoning,
+        max_output_tokens: 40, stage: 'masks', text: 'bread', subject: 'bread' }, []],
+  ]) {
+    const child = spawn(process.execPath, [entry, 'run', '--send', ...flags], {
+      env: { ...process.env, PATH: home, PI_CODING_AGENT_DIR: home, OPENROUTER_API_KEY: 'DO_NOT_USE_UPSTREAM_KEY' },
+      stdio: ['pipe', 'pipe', 'pipe'], timeout: 10000,
+    });
+    let stdout = '', stderr = '';
+    child.stdout.on('data', chunk => { stdout += chunk; });
+    child.stderr.on('data', chunk => { stderr += chunk; });
+    child.stdin.end(JSON.stringify(request));
+    const status = await new Promise((resolve, reject) => { child.once('error', reject); child.once('close', resolve); });
+    assert.equal(status, 0, stderr);
+    const result = JSON.parse(stdout);
+    assert.equal(result.valid, true, result.error);
+    assert.equal(result.request.url, baseUrl + '/chat/completions');
+    assert.ok(!(stdout + stderr).includes(key));
+    assert.ok(!(stdout + stderr).includes('DO_NOT_USE_UPSTREAM_KEY'));
+  }
+  assert.equal(requests.length, 3);
+  assert.ok(requests.every(r => r.url === '/openrouter/api/v1/chat/completions' && r.authorization === `Bearer ${key}`));
+});
+
 test('ordinary subscription commands use the selected Pi service without a flag or bearer export', async t => {
   const home = await mkdtemp(join(tmpdir(), 'oracle-default-service-'));
   t.after(() => rm(home, { recursive: true, force: true }));
@@ -129,6 +181,6 @@ test('local Pi mode rejects incomplete or non-local configuration without export
     });
     assert.equal(result.status, 1);
     assert.equal(result.stdout, '');
-    assert.match(result.stderr, /--pi-config|--auth-file is no longer supported/);
+    assert.match(result.stderr, /local Pi configuration|--auth-file is no longer supported/);
   }
 });
