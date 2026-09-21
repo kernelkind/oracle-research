@@ -15,12 +15,13 @@ use oracle_mvp::titled_merge_hierarchy::TitledMergeHierarchy;
 
 const USAGE: &str = "usage: sse-subject-navigation <manual-hierarchy.json> <fine-region-hierarchy-analysis.json> <fine-region-partition-analysis.json>
        sse-subject-navigation --notes <manual-note-hierarchy.json> <source-notes.json> [--check]
-       sse-subject-navigation --categories <note-hierarchy.json> <source-notes.json> [--absorb-single-children] [--check]
+       sse-subject-navigation --categories <note-hierarchy.json> <source-notes.json> [--collapse-equal-note-steps | --absorb-single-children] [--check]
        sse-subject-navigation --compare <comparison.json> [--check]
        sse-subject-navigation --merge-notes <merge-history.json> <vector-map.json> <source-notes.json> <titles.json> [--min-notes 5] [--start-at GROUP] [--check]
 
 --notes  Inspect manually constructed categories over original notes; no vector or clustering input
 --categories  Browse immediate children; N opens current-category notes with combined masks when supplied
+--collapse-equal-note-steps  Skip equal-note child steps per route; preserve raw categories, N/D memberships and masks; O uses displayed children (--categories only)
 --absorb-single-children  Each parent absorbs its only child; keeps parent IDs, titles and notes (--categories only; unavailable with shared categories)
 --compare  Compare manual notes with saved merge groups; F2 returns to the comparison menu
 --merge-notes  Browse unchanged saved merge groups as original notes with provisional titles
@@ -136,12 +137,19 @@ fn run_notes(
     };
     let mut check = false;
     let mut absorb = false;
+    let mut collapse_equal_notes = false;
     for option in options {
         match option.as_str() {
             "--check" if !check => check = true,
             "--absorb-single-children" if categories_only && !absorb => absorb = true,
+            "--collapse-equal-note-steps" if categories_only && !collapse_equal_notes => {
+                collapse_equal_notes = true;
+            }
             _ => return Err(USAGE.into()),
         }
+    }
+    if absorb && collapse_equal_notes {
+        return Err("choose either --collapse-equal-note-steps or --absorb-single-children".into());
     }
     let (mut hierarchy, masks) =
         ManualNoteHierarchy::load_with_masks(spec.as_ref(), source.as_ref())?;
@@ -175,17 +183,26 @@ fn run_notes(
         if absorb {
             println!("Absorbed {absorbed} single-child categories");
         }
+        if collapse_equal_notes {
+            println!(
+                "Equal-note navigation collapse enabled; raw categories and memberships unchanged."
+            );
+        }
         for node in hierarchy.nodes.values() {
+            let navigation = hierarchy.category_navigation(&node.node_id, collapse_equal_notes);
             println!(
                 "{} · {} notes",
                 node.label,
                 hierarchy.note_ids(&node.node_id).len()
             );
-            if !node.children.is_empty() {
-                println!("  Children: {}", node.children.join(", "));
+            if collapse_equal_notes || !navigation.children.is_empty() {
+                println!("  Children: {}", navigation.children.join(", "));
+                if !navigation.collapsed.is_empty() {
+                    println!("  Collapsed here: {}", navigation.collapsed.join(", "));
+                }
                 println!(
                     "  Notes outside children: {}",
-                    hierarchy.outside_child_note_ids(&node.node_id).join(" ")
+                    navigation.outside_note_ids.join(" ")
                 );
             }
         }
@@ -195,7 +212,7 @@ fn run_notes(
         return Err("manual note navigation must be started from an interactive terminal".into());
     }
     if categories_only {
-        run_category_note_explorer(hierarchy, masks)?;
+        run_category_note_explorer(hierarchy, masks, collapse_equal_notes)?;
     } else {
         run_manual_note_explorer(hierarchy)?;
     }

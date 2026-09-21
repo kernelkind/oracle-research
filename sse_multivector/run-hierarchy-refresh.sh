@@ -28,4 +28,4 @@ if [[ ! -f "$view" ]]; then
     echo "Hierarchy not packaged yet: $view" >&2
     exit 1
 fi
-exec "$binary" --categories "$view" "$source" "${check[@]}"
+exec "$binary" --categories "$view" "$source" --collapse-equal-note-steps "${check[@]}"

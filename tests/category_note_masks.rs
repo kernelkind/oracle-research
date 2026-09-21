@@ -79,7 +79,7 @@ fn explorer(dir: &TempDir, spec: &Value) -> ManualNoteExplorer {
         &dir.path().join("notes.json"),
     )
     .unwrap();
-    ManualNoteExplorer::categories_with_masks(h, masks)
+    ManualNoteExplorer::categories_with_masks(h, masks, false)
 }
 
 fn key(model: &mut ManualNoteExplorer, key: KeyCode) {

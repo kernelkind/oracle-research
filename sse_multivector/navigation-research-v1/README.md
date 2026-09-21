@@ -40,11 +40,10 @@ The existing `true_graph_equivalence.py` replays explicit reviewed approvals;
 it does not generate them. Its cutoff-based checks also must not silently be
 substituted for the current native-answer graph rule.
 
-The earlier GDC09 equal-note collapse operates on a tree. A proposed
-[shared-child specification](#shared-child-collapse-specification-not-enabled)
-has now been checked against saved memberships and a small shared-child example;
-it is not enabled in the browser. Deleting a shared child globally is not
-implied by the rule.
+The earlier GDC09 equal-note collapse operates on a tree. The current category
+browser also implements [shared-child collapse](#shared-child-collapse) as a
+navigation-only option, enabled for both sides of the HRv1 comparison.
+It does not delete a shared child globally.
 Unconditional single-child absorption is a separate earlier experiment, not
 part of the equal-note requirement.
 
@@ -54,14 +53,16 @@ evidence, not proof that these requirements were applied. No prompt, grouping,
 relationship, membership-expansion or title-repair policy changes are approved
 by these requirements.
 
-## Shared-child collapse specification (not enabled)
+## Shared-child collapse
 
-The user approved specifying and checking this behavior independently of the
-title-prompt work. The following is the proposed display behavior, not an
-implemented transformation or approval of semantic category consolidation.
-`true_graph_categories.py` currently exports every saved reduced edge, and the
-browser follows those edges. Existing single-child absorption is a different
-operation and refuses shared categories.
+The user approved implementing this behavior independently of the title-prompt
+work. `--categories --collapse-equal-note-steps` enables it in
+`sse-subject-navigation`; `run-hierarchy-refresh.sh` passes that option for both
+the refreshed hierarchy and `--baseline`. Other launchers retain their previous
+behavior. `true_graph_categories.py` still exports every saved reduced edge;
+the browser derives its displayed choices without rewriting those edges.
+Existing single-child absorption is a different operation, refuses shared
+categories, and cannot be combined with this option.
 
 **Keep the raw hierarchy; simplify only the displayed child choices.** Compute
 each category's complete post-ID set from its original direct memberships and
@@ -90,25 +91,28 @@ The note actions must remain distinct:
 - **N:** unchanged original recursive posts and their category-specific masks.
 - **D:** unchanged original direct assignments, including posts also in children.
   Skipping a child must not turn its posts into direct assignments to its parent.
-- **O (proposed):** original recursive posts minus the union of the displayed
+- **O:** original recursive posts minus the union of the displayed
   children's complete post sets. O may gain posts after collapse; it describes
   the choices currently shown. Keep the current category's original individual
   masks and IDs, without importing masks belonging only to another branch.
 
-Collapsed labels and IDs must remain inspectable with their parent-specific
-provenance. Categories skipped on every route remain in the raw graph and its
-evidence. This specification does not make them semantically equivalent.
+The current category's `?` analysis lists skipped labels and IDs, its saved
+children, and each skipped category's saved children. Categories skipped on
+every route remain in the raw graph and its evidence. `--check` reports the
+displayed children, skipped IDs and outside-child posts for each raw category.
+This operation does not make categories semantically equivalent.
 
-### Checks and remaining implementation work
+### Verification
 
 The saved TRUE13 **pre-membership-expansion** baseline was reconstructed through
 `build_graph(..., decision_rule='native')` and `derive_note_memberships`, matching
 the saved graph and memberships exactly. Its 59 categories have 37 reduced
 edges, four shared categories, and 77 represented posts. **None of those edges
-has equal complete post sets**, so the proposed collapse leaves that baseline
+has equal complete post sets**, so the collapse leaves that baseline
 unchanged. `category_mask_instances.reconstruct` also recovered the original
 mask IDs without changing the saved combined highlights. The existing browser's
-`--check` accepted the baseline and original source posts.
+`--check` accepted the baseline with and without collapse: all nonempty child
+lists and all 77 posts remain unchanged. The saved input files are unchanged.
 
 A structural example was checked through the production graph and membership
 functions, using synthetic relation answers, not model inference:
@@ -116,25 +120,26 @@ functions, using synthetic relation answers, not model inference:
 - Raw edges: A → C, B → C, C → D.
 - Direct posts: A={1}, B={3}, C={2}, D={1}.
 - Complete posts: A=C={1,2}, B={1,2,3}, D={1}.
-- Proposed displayed edges: A → D, B → C, C → D.
+- Displayed edges with collapse: A → D, B → C, C → D.
 
 Changing the **raw** A → C edge to A → D loses post 2 from A. Transferring C's
 post 2 into A instead changes A's direct membership. Retaining the raw graph
-avoids both: A's N remains {1,2}, D remains {1}, and proposed O becomes {2}.
+avoids both: A's N remains {1,2}, its D action remains {1}, and O becomes {2}.
 C remains available under B with its own masks and identity.
 
-The 34 existing TRUE graph, membership, category-export and individual-mask
-tests passed. The two older diffusion-category test modules could not import
-because this Python environment lacks NumPy. These checks validate current
-production behavior and the specification's inputs; they do **not** establish
-that the proposed browser behavior is implemented or integration-tested.
+The new CLI regression first failed because the option did not exist. All 80
+selected Rust browser/hierarchy tests and 37 Python refresh/TRUE tests now pass.
+The ten dedicated tests in `tests/category_equal_note_collapse.rs` exercise
+production loading, projection, CLI and rendered keyboard navigation: shared
+routes, equal-set chains and leaves, root retention, strict-subset children,
+distinct siblings with equal post sets, promoted-ID deduplication and ordering,
+unchanged N/D and branch-local masks, O's displayed-child behavior, inspectable
+skipped IDs, cycle rejection, and opt-in compatibility. An integration test
+runs the actual refresh launcher and browser on fixtures for both views.
 
-Before enabling it, production-path tests must cover the shared-child example,
-equal-set chains and leaves, root retention, strict-subset single children,
-distinct siblings with equal post sets, repeated promoted IDs, unchanged N/D
-and branch-local masks, proposed O behavior, and inspectable collapsed IDs.
-The browser and frozen artifacts remain unchanged pending that work and review
-of the proposed behavior, especially O's displayed-child definition.
+The real HRv1 graph remains unpackaged pending the independent title and
+semantic-consolidation work. No title, relation, membership or saved artifact
+was changed to implement this navigation rule.
 
 ## Current evaluation decisions — September 15, 2026
 

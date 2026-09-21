@@ -92,7 +92,7 @@ fn diamond_loads_once_and_both_category_routes_keep_masks_breadcrumbs_and_back()
     }
     let masks = masks.unwrap();
     assert_eq!(masks.spans("root", "N001"), [(0, 4), (5, 11), (12, 17)]);
-    let mut model = ManualNoteExplorer::categories_with_masks(hierarchy, Some(masks));
+    let mut model = ManualNoteExplorer::categories_with_masks(hierarchy, Some(masks), false);
     key(&mut model, KeyCode::Char('N'));
     let root_note = screen(&mut model);
     assert!(

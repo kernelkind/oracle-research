@@ -28,6 +28,14 @@ pub struct ManualCategory {
     pub analysis: String,
 }
 
+/// Child choices for one route, without changing saved category memberships.
+#[derive(Clone, Debug)]
+pub struct CategoryNavigation {
+    pub children: Vec<String>,
+    pub collapsed: Vec<String>,
+    pub outside_note_ids: Vec<String>,
+}
+
 #[derive(Clone, Debug)]
 pub struct ManualNote {
     pub note_id: String,
@@ -426,5 +434,45 @@ impl ManualNoteHierarchy {
             .collect::<BTreeSet<_>>()
             .into_iter()
             .collect()
+    }
+
+    /// Build the displayed choices from a validated, unchanged hierarchy.
+    /// Equal-note steps are skipped locally; shared children remain on other routes.
+    pub fn category_navigation(
+        &self,
+        node_id: &str,
+        collapse_equal_notes: bool,
+    ) -> CategoryNavigation {
+        let notes = self.note_ids(node_id);
+        let mut children = Vec::new();
+        let mut collapsed = Vec::new();
+        let mut child_notes = BTreeSet::new();
+        let mut seen = BTreeSet::new();
+        let mut pending = self.nodes[node_id]
+            .children
+            .iter()
+            .rev()
+            .collect::<Vec<_>>();
+        while let Some(child) = pending.pop() {
+            if !seen.insert(child) {
+                continue;
+            }
+            let membership = self.note_ids(child);
+            if collapse_equal_notes && membership == notes {
+                collapsed.push(child.clone());
+                pending.extend(self.nodes[child].children.iter().rev());
+            } else {
+                children.push(child.clone());
+                child_notes.extend(membership);
+            }
+        }
+        CategoryNavigation {
+            children,
+            collapsed,
+            outside_note_ids: notes
+                .into_iter()
+                .filter(|note| !child_notes.contains(note))
+                .collect(),
+        }
     }
 }

@@ -194,9 +194,11 @@ they can represent useful narrower categories. Preserve source references and
 original node IDs. These rules do not decide semantic equivalence between
 different mask sets. The
 [required stages and their limits](../../sse_multivector/navigation-research-v1/README.md#required-hierarchy-processing-stages)
-record the requirements; shared-child collapse and repeatable semantic-equivalence
-decisions remain open implementation questions. This is not a claim that the
-existing experimental pipeline implements all these stages end to end.
+record the requirements. Shared-child collapse is implemented and tested in the
+category browser, and enabled for both HRv1 comparison views without changing
+saved memberships. Repeatable semantic-equivalence decisions remain open.
+This is not a claim that the existing experimental pipeline implements all
+these stages end to end.
 
 Recovering missing category memberships is a separate operation. HDBSCAN's raw
 tree is not the specified launch hierarchy.
@@ -214,11 +216,13 @@ required outcomes, not selected implementation methods or new dates:
 | **27 · Order category notes using mask prominence** | Define and implement how relevant mask scores produce category-note order, including multiple masks and shared descendants. | Needs prominence definition 04; required to finish 03. |
 | **28 · Implement and validate the launch-scale build** | Turn scale findings into a runnable build preserving validated hierarchy behavior, including cosine-filtered TRUE and large-group title inputs. | Needs 03 + 21 + 22; required to finish full-build feasibility 10. |
 
-24–26 can start from saved artifacts; they are not marked in progress. 27 waits
-for 04, which remains paused. 28 waits for the validated small-corpus workflow
-and scale findings. Readiness does not authorize execution. Membership methods,
-category-equivalence/cycle handling, shared-child implementation, ranking rules
-and scale implementation choices remain open.
+24 and 25 can start from saved artifacts; they are not marked in progress.
+For 26, the [browser implementation and regression checks](../../sse_multivector/navigation-research-v1/README.md#shared-child-collapse)
+are complete; validation on the rebuilt HRv1 hierarchy awaits graph packaging.
+27 waits for 04, which remains paused. 28 waits for the validated small-corpus
+workflow and scale findings. Readiness does not authorize execution. Membership
+methods, category-equivalence/cycle handling, ranking rules and scale
+implementation choices remain open.
 
 The current 100-note diagnostic keeps its limited scope, including no membership
 expansion. Preliminary 200/300-note work can follow 02 while these stages develop.

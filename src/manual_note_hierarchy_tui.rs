@@ -9,7 +9,7 @@ use ratatui::text::Line;
 use ratatui::widgets::{Block, Borders, List, ListItem, ListState, Paragraph, Wrap};
 
 use crate::manual_note_hierarchy::{
-    CategoryNoteMasks, ManualCategory, ManualNoteHierarchy, MaskInstance,
+    CategoryNavigation, CategoryNoteMasks, ManualCategory, ManualNoteHierarchy, MaskInstance,
 };
 use crate::reference_tui::{
     InteractiveReviewModel, MIN_HEIGHT, MIN_WIDTH, ReferenceTerminal, accent_style, border_style,
@@ -26,6 +26,7 @@ const CATEGORY_CONTROLS: &str = "In categories, only immediate child categories 
 struct CategoryFrame {
     node_id: String,
     cursor: usize,
+    navigation: CategoryNavigation,
 }
 
 #[derive(Clone, Copy)]
@@ -47,6 +48,7 @@ struct NoteBrowser {
 pub struct ManualNoteExplorer {
     hierarchy: ManualNoteHierarchy,
     categories_only: bool,
+    collapse_equal_notes: bool,
     category_masks: Option<CategoryNoteMasks>,
     merge_origin: Option<(String, usize)>,
     categories: Vec<CategoryFrame>,
@@ -59,32 +61,43 @@ pub struct ManualNoteExplorer {
 
 impl ManualNoteExplorer {
     pub fn new(hierarchy: ManualNoteHierarchy) -> Self {
-        Self::with_categories_only(hierarchy, false)
+        Self::with_categories_only(hierarchy, false, false)
     }
 
     /// Browse immediate children; N opens all notes, D direct memberships,
     /// and O notes absent from all descendants.
     pub fn categories(hierarchy: ManualNoteHierarchy) -> Self {
-        Self::with_categories_only(hierarchy, true)
+        Self::with_categories_only(hierarchy, true, false)
     }
 
+    /// Optionally skip equal-note navigation steps without changing N/D or mask data.
+    /// O is computed against the displayed children; analysis retains skipped IDs.
     pub fn categories_with_masks(
         hierarchy: ManualNoteHierarchy,
         masks: Option<CategoryNoteMasks>,
+        collapse_equal_notes: bool,
     ) -> Self {
-        let mut model = Self::categories(hierarchy);
+        let mut model = Self::with_categories_only(hierarchy, true, collapse_equal_notes);
         model.category_masks = masks;
         model
     }
 
-    fn with_categories_only(hierarchy: ManualNoteHierarchy, categories_only: bool) -> Self {
+    fn with_categories_only(
+        hierarchy: ManualNoteHierarchy,
+        categories_only: bool,
+        collapse_equal_notes: bool,
+    ) -> Self {
+        let navigation =
+            hierarchy.category_navigation(&hierarchy.root_node_id, collapse_equal_notes);
         let mut model = Self {
             categories: vec![CategoryFrame {
                 node_id: hierarchy.root_node_id.clone(),
                 cursor: 0,
+                navigation,
             }],
             hierarchy,
             categories_only,
+            collapse_equal_notes,
             category_masks: None,
             merge_origin: None,
             notes: None,
@@ -119,6 +132,7 @@ impl ManualNoteExplorer {
             .enumerate()
             .map(|(index, id)| CategoryFrame {
                 node_id: id.clone(),
+                navigation: model.hierarchy.category_navigation(id, false),
                 cursor: path
                     .get(index + 1)
                     .and_then(|child| {
@@ -158,6 +172,41 @@ impl ManualNoteExplorer {
         &self.hierarchy.nodes[&self.categories.last().expect("root category").node_id]
     }
 
+    fn navigation(&self) -> &CategoryNavigation {
+        &self.categories.last().expect("root category").navigation
+    }
+
+    fn navigation_analysis(&self) -> String {
+        if !self.collapse_equal_notes {
+            return String::new();
+        }
+        let mut lines = vec![
+            "Equal-note navigation collapse: saved categories and memberships are unchanged."
+                .to_owned(),
+            "N keeps all saved notes; D keeps direct assignments; O uses the displayed children."
+                .to_owned(),
+            format!(
+                "Saved children: {}",
+                terminal_safe(&self.category().children.join(", "))
+            ),
+            "Collapsed here (IDs, labels and saved child links):".to_owned(),
+        ];
+        if self.navigation().collapsed.is_empty() {
+            lines.push("None.".to_owned());
+        }
+        for id in &self.navigation().collapsed {
+            let category = &self.hierarchy.nodes[id];
+            lines.push(format!(
+                "[{}] {} · saved children: {}",
+                terminal_safe(id),
+                terminal_safe(&category.label),
+                terminal_safe(&category.children.join(", ")),
+            ));
+        }
+        lines.push(String::new());
+        lines.join("\n") + "\n"
+    }
+
     fn breadcrumb(&self) -> String {
         if self.merge_origin.is_some() {
             let title = self.category_title(&self.category().node_id);
@@ -178,7 +227,8 @@ impl ManualNoteExplorer {
 
     fn menu_items(&self) -> Vec<String> {
         let category = self.category();
-        let mut items = category
+        let mut items = self
+            .navigation()
             .children
             .iter()
             .map(|id| {
@@ -201,8 +251,8 @@ impl ManualNoteExplorer {
             "View all {}",
             note_count(self.hierarchy.note_ids(&category.node_id).len())
         ));
-        let outside = self.hierarchy.outside_child_note_ids(&category.node_id);
-        if !category.children.is_empty() && !outside.is_empty() {
+        let outside = &self.navigation().outside_note_ids;
+        if !self.navigation().children.is_empty() && !outside.is_empty() {
             items.push(format!(
                 "View {} outside children",
                 note_count(outside.len())
@@ -216,7 +266,7 @@ impl ManualNoteExplorer {
         let mut note_ids = match scope {
             NoteScope::All => self.hierarchy.note_ids(id),
             NoteScope::Direct => self.category().note_ids.clone(),
-            NoteScope::OutsideChildren => self.hierarchy.outside_child_note_ids(id),
+            NoteScope::OutsideChildren => self.navigation().outside_note_ids.clone(),
         };
         note_ids.sort_unstable();
         note_ids.dedup();
@@ -243,16 +293,20 @@ impl ManualNoteExplorer {
 
     fn open(&mut self) {
         let cursor = self.categories.last().expect("root category").cursor;
-        if let Some(child) = self.category().children.get(cursor).cloned() {
+        if let Some(child) = self.navigation().children.get(cursor).cloned() {
+            let navigation = self
+                .hierarchy
+                .category_navigation(&child, self.collapse_equal_notes);
             self.categories.push(CategoryFrame {
                 node_id: child,
                 cursor: 0,
+                navigation,
             });
             if !self.categories_only && self.category().children.is_empty() {
                 self.show_notes(NoteScope::All, true);
             }
         } else if !self.categories_only {
-            let scope = if cursor > self.category().children.len() {
+            let scope = if cursor > self.navigation().children.len() {
                 NoteScope::OutsideChildren
             } else {
                 NoteScope::All
@@ -536,12 +590,13 @@ impl ManualNoteExplorer {
                 CONTROLS.to_owned()
             };
             let content = format!(
-                "{}{}\n\n{controls}",
+                "{}{}{}\n\n{controls}",
                 if shortened_path {
                     format!("{breadcrumb}\n\n")
                 } else {
                     String::new()
                 },
+                self.navigation_analysis(),
                 terminal_safe(&self.category().analysis)
             );
             render_scrollable_panel(
@@ -607,7 +662,7 @@ impl ManualNoteExplorer {
 
     fn render_menu(&mut self, frame: &mut Frame<'_>, area: Rect) {
         self.half_page_lines = (area.height.saturating_sub(2) / 2).max(1);
-        let child_count = self.category().children.len();
+        let child_count = self.navigation().children.len();
         let block = Block::default()
             .borders(Borders::ALL)
             .border_style(border_style())
@@ -679,8 +734,13 @@ pub fn run_manual_note_explorer(hierarchy: ManualNoteHierarchy) -> io::Result<()
 pub fn run_category_note_explorer(
     hierarchy: ManualNoteHierarchy,
     masks: Option<CategoryNoteMasks>,
+    collapse_equal_notes: bool,
 ) -> io::Result<()> {
-    run_note_explorer(ManualNoteExplorer::categories_with_masks(hierarchy, masks))
+    run_note_explorer(ManualNoteExplorer::categories_with_masks(
+        hierarchy,
+        masks,
+        collapse_equal_notes,
+    ))
 }
 
 pub fn run_titled_merge_note_explorer(hierarchy: TitledMergeHierarchy) -> io::Result<()> {
