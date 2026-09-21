@@ -1,0 +1,34 @@
+# PPv10 on Muse 1.3 high — single-call probe
+
+First test of the prominence scorer **PPv10** (draft, `../ppv10-draft-v1/PPv10.md`)
+on `meta/muse-spark-1.3-contributor` at reasoning `high` via OpenRouter.
+The mask is not regenerated: it is the frozen `MPv3.43` (draft) Astra-low
+answer for probe case H15 ("Encouragement to work hard" against
+"Rise and grind coffee beans"), mechanically decoded to exact word positions.
+One call only; no semantic expectations were predeclared beyond requiring a
+valid single-integer score.
+
+Prepare (offline, refuses to overwrite evidence):
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/prominence-prompt-goal-v1/ppv10-mpv3.43-muse13high-v1/study.py prepare
+```
+
+Run the one saved-batch call:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/extraction_pipeline.py prompt \
+  sse_multivector/prominence-prompt-goal-v1/ppv10-mpv3.43-muse13high-v1/config.json
+```
+
+Collect (verifies pinned inputs and the actual receipt):
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/prominence-prompt-goal-v1/ppv10-mpv3.43-muse13high-v1/study.py collect
+```
+
+`results.json` holds the measured score and provider usage; charges are
+settled in `budget-ledger.json`. A valid score is not a semantic approval.
