@@ -25,8 +25,8 @@ workstream, not this planning discussion.
 Mask-prominence work (04) remains paused, confirmed by the user on September 21.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
 hierarchy or title correction. Its prompt and validation are not complete.
-The user reports work on 19 underway,
-comparing Muse high and Astra low; no training-data generator is selected.
+The user confirms 17 is underway, comparing Muse high and Astra low;
+no training-data generator is selected.
 This does not establish completion of the subject/mask/prominence comparison (17).
 Dates are unchanged. The additional construction dependencies below expose
 unfinished work; 23 → 02 records the current title blocker. Completing 01 does
@@ -138,8 +138,8 @@ not automatically have to wait for the cheaper annotator to be selected.
 
 ### Annotation-model pilot evaluation plan
 
-Node 19 defines how candidate models will be compared; node 17 provides evidence
-for selection. The user reports 19 in progress, comparing Muse high and Astra low.
+Node 17 covers the training-data generator comparison, including its planning.
+The user confirms it is in progress, comparing Muse high and Astra low.
 Coverage and results of that current comparison have not yet been reported here;
 it does not establish completion of 17 or selection of a model.
 
@@ -153,10 +153,9 @@ The comparison needs to establish:
 - Whether provider data-use and output-use terms permit the intended training
   and open-weight release.
 
-Node 17 needs the validated subject/mask prompts from 01 and prominence
-requirements and prompt from 04, as well as the comparison design from 19.
-These are completion prerequisites, not a requirement to wait before doing any
-independent preparation.
+Completing 17 needs the validated subject/mask prompts from 01 and prominence
+requirements and prompt from 04. These are completion prerequisites; independent
+comparison work is already underway.
 
 Samples, comparison procedures, review coverage, treatment of unsuitable
 annotations and acceptance decisions remain open. No generate–repair–train

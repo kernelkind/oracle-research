@@ -145,6 +145,29 @@ class PlanningViewerTest(unittest.TestCase):
             self.assertIn(number, labels["week-pipeline"])
         self.assertIn("not new week assignments", labels["week-pipeline-heading"])
 
+    def test_training_data_comparison_is_active_without_separate_preparation(self):
+        diagram = Path(__file__).resolve().parents[1] / "docs/planning/october-18-release.drawio"
+        document = ET.parse(diagram)
+        root = document.find("./diagram[@id='dependencies']/mxGraphModel/root")
+        cells = {cell.get("id"): cell for cell in root.findall("mxCell")}
+        self.assertFalse("m-annotator-prep" in cells, "Remove the separate task 19")
+        comparison = cells["m-annotator"]
+        self.assertIn("IN PROGRESS", comparison.get("value"))
+        self.assertIn("fillColor=light-dark(#e7f1ff,", comparison.get("style"))
+        self.assertIn("Muse high vs Astra low; no model selected", comparison.get("value"))
+        self.assertIn("FINISH WITH 04", comparison.get("value"))
+        self.assertNotIn("17 ·", cells["ready-summary"].get("value"))
+        incoming = set()
+        for cell in cells.values():
+            if cell.get("edge") == "1":
+                self.assertIn(cell.get("source"), cells)
+                self.assertIn(cell.get("target"), cells)
+                if cell.get("target") == "m-annotator":
+                    incoming.add(cell.get("source"))
+        self.assertEqual(incoming, {"h1", "m0"})
+        for cell in document.findall(".//mxCell"):
+            self.assertNotIn("19 ·", cell.get("value", ""))
+
     def test_ready_preparation_is_separate_from_blocked_work(self):
         diagram = Path(__file__).resolve().parents[1] / "docs/planning/october-18-release.drawio"
         root = ET.parse(diagram).find("./diagram[@id='dependencies']/mxGraphModel/root")
@@ -159,15 +182,6 @@ class PlanningViewerTest(unittest.TestCase):
                 self.assertIn("READY TO START", cells[ready].get("value"))
                 self.assertIn("fillColor=light-dark(#f7f8fa,", cells[blocked].get("style"))
                 self.assertIn((ready, blocked), edges)
-        self.assertIn("IN PROGRESS", cells["m-annotator-prep"].get("value"))
-        self.assertIn("fillColor=light-dark(#e7f1ff,", cells["m-annotator-prep"].get("style"))
-        self.assertIn("Muse high vs Astra low", cells["m-annotator-prep"].get("value"))
-        self.assertNotIn("READY TO START", cells["m-annotator-prep"].get("value"))
-        self.assertNotIn("19 ·", cells["ready-summary"].get("value"))
-        self.assertIn(("m-annotator-prep", "m-annotator"), edges)
-        self.assertIn("NEEDS 04 + 19", cells["m-annotator"].get("value"))
-        self.assertIn("fillColor=light-dark(#f7f8fa,", cells["m-annotator"].get("style"))
-        self.assertIn("no model selected", cells["m-annotator"].get("value"))
         self.assertIn(("m1", "m2"), edges)
         self.assertIn(("m-setup", "m2"), edges)
         self.assertNotIn("STARTING SCOPE UNRESOLVED", cells["m-setup"].get("value"))
@@ -424,7 +438,7 @@ class PlanningViewerTest(unittest.TestCase):
                 wait_for_text("Ready to start now")
                 wait_for_text("18 · Prepare training code for the fine-tuning pilot")
                 wait_for_text("save/reload its trained weights")
-                wait_for_text("19 · Plan training-data generator comparison")
+                self.assertFalse(evaluate("document.body.innerText.includes('19 · Plan training-data generator comparison')"))
                 wait_for_text("Subject and mask prompts finished")
                 wait_for_text("Waiting for category-title correction (23) before TRUE placement")
                 wait_for_text("23 · Fix and validate category-title prompt")

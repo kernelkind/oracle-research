@@ -45,9 +45,10 @@ fine-tuning pilot: fine-tune each candidate, save/reload trained weights and
 generate outputs for evaluation. Final training-example formatting and
 mask/prominence evaluation remain in 06, after the agreed output format,
 criteria and reviewed pilot data are available. The 05 + 18 dependencies on
-06 are unchanged. Node 19 is blue and in progress: the user reports comparing
+06 are unchanged. Node 17 is blue and in progress: the user reports comparing
 Muse high and Astra low. No training-data generator is selected. Completing the
-selection comparison (17) still needs 19 and validated prompts (01 + 04).
+comparison still requires validated prompts (01 + 04); prominence remains
+unfinished. Comparison planning is part of 17, not a separate task.
 Node 01 is complete: the subject and mask prompts are finished, as confirmed by
 the user on September 20. On September 21, the user reported the 100-note build
 blocked by an inadequate category-title prompt. Node 02 is grey and marked
