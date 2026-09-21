@@ -620,7 +620,10 @@ fn proposal_validation_accepts_tpv3_82_with_mpv3_4() {
         takeaway_registry["frozen_takeaway_prompt_version"],
         json!("TPv3.82")
     );
-    assert_eq!(mask_registry["frozen_mask_prompt_version"], json!("MPv3.4"));
+    assert_eq!(
+        mask_registry["frozen_takeaway_mask_prompt_version"],
+        json!("MPv3.4")
+    );
     assert_eq!(takeaway_registry["TPv3.82"], json!(TPV3_82_INSTRUCTION));
     assert_eq!(mask_registry["MPv3.4"], json!(MPV3_4_INSTRUCTION));
     proposal["subject_instruction"] = takeaway_registry["TPv3.82"].clone();

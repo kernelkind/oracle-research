@@ -332,6 +332,15 @@ notes by their exact IDs; every subject from each selected note is included.
 }
 ```
 
+The current frozen subject-mask baseline is MPv3.43 with Astra low. Its
+`frozen_subject_mask_prompt` entry in [the mask registry](mask-prompt-versions.json)
+records the prompt path/hash, `mask_format` and output-schema path, relative to
+that registry. Set the batch's `prompt_path` and `mask_format` accordingly and
+load the schema file's contents into `output_schema`. The separate
+`frozen_takeaway_mask_prompt_version` is legacy MPv3.4, not the current subject
+baseline. Existing run configurations keep their explicit versions/paths; the
+runner does not automatically select either frozen entry.
+
 The caller supplies the prompt and model. The template must contain `{POST}` and
 `{SUBJECT}` exactly once each. The default `mask_format: "fragments"` preserves
 the legacy fragment-array output. For positional prompts such as MPv3.43, set
