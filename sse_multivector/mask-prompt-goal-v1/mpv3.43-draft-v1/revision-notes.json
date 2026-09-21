@@ -1,0 +1,13 @@
+{
+  "version": "MPv3.43",
+  "status": "draft for review; not tested or adopted",
+  "source_draft": "MPv3.42",
+  "approved_tested_baseline": "MPv3.37",
+  "authorization": "The user approved making the distinction between meaning in the actual post and selection of connecting words explicit.",
+  "change": "Replace the two relationship-selection sentences with separate statements: select words according to their meanings and relationships in the post, and a relationship can remain clear without every connecting word being selected.",
+  "preservation": "All other prompt bytes are unchanged, including exact scope, complete joint meaning, repetition coverage, examples and output format. Previous drafts and results are preserved.",
+  "inference": "None; this wording has not been behaviorally tested.",
+  "guidance": "https://developers.openai.com/api/docs/guides/prompt-engineering#prompting-current-models",
+  "guidance_scope": "Precise, explicit instructions support separating the two requirements; official guidance does not validate this masking policy or the proposed wording's effectiveness.",
+  "next": "Review the full MPv3.37 to MPv3.43 delta before authorizing a generation test."
+}

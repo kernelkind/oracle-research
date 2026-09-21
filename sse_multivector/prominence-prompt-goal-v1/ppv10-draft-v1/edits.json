@@ -1,0 +1,9 @@
+{
+  "base_sha256": "edc037191d02935a3bf015457e7e201cd001e0f7f09068b0c98c19d01edb72ed",
+  "edits": [
+    {
+      "old": "Score how strongly this social-media post is about the content selected by its mask.",
+      "new": "Prominence measures how central the masked content is to what the complete post communicates. Score the supplied mask’s prominence in the post."
+    }
+  ]
+}

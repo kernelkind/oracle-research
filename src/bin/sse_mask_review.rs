@@ -163,7 +163,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             })?
         } else {
             run_mask_prompt_review_from(batch, session, start_at, |screen, comment| {
-                terminal.review_navigable_prompt_iteration(screen, comment)
+                terminal.review_navigable_stacked(screen, comment)
             })?
         };
         drop(terminal);

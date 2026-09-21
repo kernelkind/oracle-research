@@ -1,0 +1,9 @@
+{
+  "base_sha256": "20a4a8d6504df58cd423988be2db80eb4126fbdab380d34928ed71038ae670b8",
+  "edits": [
+    {
+      "old": "A mask is the complete set of fragments selected for the supplied subject.",
+      "new": "A mask is the complete set of fragments which together make up the exact semantic meaning for the supplied subject."
+    }
+  ]
+}

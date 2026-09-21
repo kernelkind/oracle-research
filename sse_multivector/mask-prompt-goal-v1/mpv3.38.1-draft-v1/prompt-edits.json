@@ -1,0 +1,9 @@
+{
+  "base_sha256": "03329ac96b4ff4a0cd7d65fd5bcf24cfe28e372fea3be61e2cc601da8b2afa65",
+  "edits": [
+    {
+      "old": "Context may resolve the meanings and references of selected expressions, but must not supply a part of the subject that the mask does not express.",
+      "new": "Use the full note to understand what the mask’s fragments mean, what they refer to, and how they relate to one another. Do not retain wording merely to connect fragments if that wording also adds meaning the subject does not require."
+    }
+  ]
+}

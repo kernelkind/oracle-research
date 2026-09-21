@@ -1,12 +1,12 @@
 # Training data quantities for subject and mask extraction
 
-## Planning estimate
+## Evidence summary
 
 **A few thousand complete notes is a defensible starting experiment. Tens of thousands is a plausible development range. Neither is an established requirement for this task.**
 
 The closest published direct-mask system trained on about 10,000 sentences. The SSE paper's separate proposition generator trained on about 45,000 teacher-labeled sentences. Broader proposition distillation has used 226,000 passages. These are useful reference points, not interchangeable demonstrations of how much Nostr training data is necessary.[^2][^3][^4]
 
-My recommendation is to measure an initial learning curve using **1,000, 2,000 and 5,000 notes**, then consider **10,000–50,000** if the results justify expansion. Treat **100,000 or more** as a possible later commitment, not an initial requirement. These ranges are an inference from related work, not a statistical confidence interval or a claim that 50,000 will suffice.
+Experimental decisions—including the candidate models, untuned baselines, proposed dataset sizes, and evaluation procedure—are maintained in the [Pilot plan](EXTRACTOR-FINETUNING-PILOT-PLAN.md). The published dataset sizes below are evidence, not instructions to start with a particular number of notes.
 
 ## The task being estimated
 
@@ -102,19 +102,9 @@ Third, the student model and the required quality remain unspecified. The amount
 
 The quantity estimates also depend on whether training uses direct grouped masks, rewritten subject text, or both. The research does not establish that one representation requires a particular multiple of the other's data. Preserving existing intermediate annotations is useful, but does not commit production to emitting them.
 
-## Measuring the requirement without labeling everything first
+## What the evidence does not determine
 
-The next training investigation should measure how the chosen student's performance changes with additional **unique notes**, while holding the task definition and evaluation constant. This is a recommendation, not an approved training run.
-
-1. **Choose one pretrained student and a fixed output contract.** Changing the model, annotation policy and dataset size together would prevent attributing improvement to more data. Check that training and output parsing work on a small sample first.
-2. **Set aside independently checked notes.** Split before training, keeping duplicated or closely related material from leaking across the split. Include ordinary notes as well as the extraction challenges actually present in the corpus. Do not use this final set to tune every revision.
-3. **Compare nested sets of 1,000, 2,000 and 5,000 training notes.** Larger sets retain the smaller sets' notes. These are economical measurement points, not claims of sufficiency. Give each run a reasonable opportunity to learn; a poorly trained checkpoint is not evidence that more annotations are needed.
-4. **Assess meaning separately from formatting.** Check subject coverage, unsupported selections, missing context and added meaning. Exact mask matching can assist analysis, but alternative valid masks and harmless duplication should not be treated as automatic semantic failures.
-5. **Expand where the result justifies it.** If meaningful errors decline, test 10,000 and then a larger set. If they remain unchanged, examine label quality, missing coverage, model capability and training behavior before purchasing more of the same data. Confirm small gains with repeat runs before making a large commitment.
-
-The decision is not whether the student reproduces every teacher boundary. It is whether it preserves the subjects and source evidence needed by the unchanged SSE pipeline at an acceptable error rate. A later controlled SSE check can establish whether observed extraction differences matter; clustering changes should not be mixed into the data-volume experiment.
-
-No universal accuracy target or single canonical mask set is assumed here. Required data volume only becomes measurable relative to a specified student, data distribution and acceptable quality.
+The studies support measuring a learning curve, but they do not establish a minimum dataset size for this extractor or guarantee that another batch will help. Required volume depends on the pretrained model, annotation policy, data distribution, training procedure, and acceptable error rate. The [Pilot plan](EXTRACTOR-FINETUNING-PILOT-PLAN.md) specifies how those uncertainties will be investigated and separates proposed choices from approved requirements.
 
 ## Connection to the saved token estimate
 

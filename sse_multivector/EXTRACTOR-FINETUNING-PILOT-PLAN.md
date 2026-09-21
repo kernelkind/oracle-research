@@ -7,11 +7,29 @@ and open questions. Published model evidence belongs in
 [Model research](EXTRACTOR-FINETUNING-MODEL-RESEARCH.md); published data-volume
 evidence belongs in [Training-data research](SUBJECT-MASK-TRAINING-DATA-RESEARCH.md).
 
+This pilot selects the model we will fine-tune and release, not the model that
+generates its training data. The separate [annotation-model pilot](../docs/planning/release-decisions.md#two-separate-model-pilots)
+has Muse Spark 1.3 Contributor as its leading, unselected candidate. Existing
+[annotation research](TOKEN-USAGE-ESTIMATE-1M-NOTES.md#lower-cost-annotation-models)
+and the [12-note subject diagnostic](frontier-model-comparison-v1/asv6.23-diagnostic-v2/results.md)
+inform that choice; they do not establish mask or prominence quality.
+The [annotation-model pilot](../docs/planning/release-decisions.md#annotation-model-pilot-evaluation-plan)
+compares candidates for quality, speed, cost and training-data feasibility; its
+experimental procedure and treatment of unsuitable annotations remain open.
+This fine-tuning pilot informs the training-volume decision and schedule check;
+the annotation pilot does not determine how much training data the extractor needs.
+
 Approved requirements:
 
 - Compare Qwen3.8-27B, Gemma 4 31B instruction-tuned, and T5Gemma 9B–9B
   PrefixLM instruction-tuned.
 - Include a baseline without task-specific fine-tuning for every model.
+- Confirm permission to release fine-tuned weights during model selection (06),
+  before committing to the larger training run. Training-data provider
+  permissions remain part of the annotation-model pilot (17).
+- Measure unseen-note quality before and after training, improvement as training
+  data increases, actual training resources and cost, and batched generation
+  speed. Include both masks and prominence in the release-model evaluation.
 - Start automatic mask matching with an 80% token-overlap cutoff, alongside
   separate exact-match scores. Details are in [Evaluation and decisions](#evaluation-and-decisions).
 - The total oracle MVP spending ceiling is $1,000, replacing—not supplementing—
@@ -24,27 +42,66 @@ The staged experimental design below is proposed, not fully approved. Dataset
 sizes, exact training settings, hardware allocations, and individual spending
 authorizations remain open. No rental or training run has started for this pilot.
 
-## Task and frozen teacher
+The release plan's **18 · Prepare training code for the fine-tuning pilot** is
+ready for preparing code to fine-tune each candidate, save/reload its trained
+weights and generate evaluation outputs. Final training-example formatting and
+mask/prominence quality evaluation remain in **06 · Compare models to fine-tune**,
+which waits for the agreed output format, prominence criteria and reviewed pilot
+data as well as the training setup. Readiness is not authorization to begin work;
+this planning decision selects no framework or training method.
+
+The later final fine-tune (08) also prepares trained weights, necessary
+supporting files, usage instructions and evaluation results for publication.
+Verify that the intended release files load and generate masks and prominence;
+the pilot setup's internal save/reload check does not establish that release
+usability. Preparation can accompany development, with final verification on
+the actual release artifacts. Node 16 publishes these prepared outputs. File
+formats and publishing locations remain open, and publishing the training
+dataset is not required. See [publication preparation](../docs/planning/release-decisions.md#publication-preparation).
+
+## Task and training annotations
 
 ```text
-complete original note → complete set of grouped source-text masks → unchanged SSE
+complete original note → complete set of grouped source-text masks + prominence per mask
 ```
 
 The extractor must discover subjects as well as locate their evidence. The
 input does not supply a subject list. Masks may contain separated fragments,
 overlap other masks, and vary in number. The production output need not include
-the intermediate English subject descriptions.
+the intermediate English subject descriptions. Masks feed unchanged SSE;
+prominence supports ordering notes within categories.
 
-Training annotations come from the frozen
-[ASv6.23](subject-prompt-goal-v1/asv6.23/frozen.json) and
-[MPv3.5](mask-prompt-goal-v1/frozen.json) packages, both using Astra low. The
-existing annotation policy defines the task; this is not a switch to factual
-propositions, named entities, or a predefined taxonomy. Preserve the subjects
-and review history for diagnosis even when only masks become training targets.
+Assess prominence from the complete note and the particular mask, without
+requiring a generated subject description. Prominence prompt development and
+scoring calibration are a separate workstream from release planning.
+
+Use the subject and mask prompts validated by the current extraction work, not
+the superseded ASv6.23 / MPv3.5 commitment. Freeze the exact prompt versions,
+annotation model settings, output format and reviewed labels for each controlled
+comparison. This plan does not select successor prompt versions. Preserve the
+per-note subject hierarchies, raw annotations and review findings for diagnosis;
+do not silently mix outputs from different annotation policies.
+
+The prominence definition, annotation prompt, output representation and evaluation
+criteria still need to be settled. Report any earlier mask-only results as
+mask-only evidence; they cannot establish prominence quality or the cost of
+generating both outputs. Bulk training-data generation requires both the
+500-note hierarchy validation and annotation-model selection in the
+[release plan](../docs/planning/release-decisions.md). Earlier fine-tuning preparation
+and pilots can use reviewed data from the existing annotation process without
+waiting for the cheaper annotator to be selected.
+
+The agreed readiness target for the larger fine-tune's training data is
+**September 27, 2026**, including masks and prominence, with training/evaluation
+separation. The checks and handling of unsuitable annotations remain open;
+a correction workflow is not assumed. Dataset size and the time required to
+produce suitable data also remain open. The target does not establish
+feasibility or change the pilot's proposed sizes.
 
 The experiment excludes title generation, SSE changes, and segmentation.
-Mask quality alone would not establish the quality of a complete discovery
-hierarchy.
+Extractor quality alone would not establish the quality or total build cost of
+a complete discovery hierarchy. SSE, HDBSCAN, category titles and TRUE require
+separate scale measurements.
 
 ## Models and required untuned baselines
 
@@ -99,14 +156,16 @@ until needed. Do not use test outputs to revise the experiment.
 Mechanically check every training mask and deduplicate exact masks. Semantically
 review a varied sample of training annotations and every validation/test
 annotation. The assistant performs the review and asks the user about genuinely
-uncertain decisions. Preserve teacher outputs separately from corrections.
+uncertain decisions. This review policy is proposed, not a release requirement.
+How unsuitable annotations are handled remains open; preserve teacher outputs
+separately from review findings and any subsequent changes.
 
 ## Proposed run sequence and controls
 
 1. **Check each training setup on a small sample.** Verify complete-note input,
-   grouped-mask output, source alignment, working training, GPU memory use, and
-   measured speed. Training loss and successful parsing are setup diagnostics,
-   not evidence of semantic quality.
+   the agreed output format, source alignment, working training, GPU memory use,
+   and measured speed. Record whether prominence is included. Training loss and
+   successful parsing are setup diagnostics, not evidence of semantic quality.
 2. **Measure the three untuned baselines.** Use the shared validation notes and
    preserve their outputs before fine-tuning.
 3. **Train all three models on 250 notes, then on 500.** Start each dataset-size
@@ -160,16 +219,37 @@ The 80% cutoff is an initial mask-matching rule, not a required model accuracy.
 Source tokenization, how scores are averaged across notes, and which score
 selects training checkpoints remain open.
 
-### Other measurements and interpretation
+### Required pilot measurements
 
-Measure separately on the same validation notes:
+| Measurement | Required evidence | Decision it informs |
+|---|---|---|
+| Quality on unseen notes | Before/after subject coverage, mask correctness and prominence quality on the same held-out notes | Whether training improves the intended task |
+| Improvement with more training data | Quality at each tested data size, under the controls above | Which models and additional annotations merit investment |
+| Actual training resources and cost | GPU configuration, peak memory, training time and total rental cost, including setup and evaluation | Feasible hardware and measured inputs to larger-training estimates |
+| Batched generation speed | Notes processed per second, output lengths, peak memory and failures on representative notes | Time and cost to process the proposed launch corpus |
+
+Measure semantic quality separately from mechanical correctness:
 
 - **Coverage:** which supported subjects received a faithful mask?
 - **Mask errors:** which masks omit necessary meaning or add unrelated meaning?
+- **Prominence:** how well do scores reflect the agreed meaning of prominence?
+  Freeze its review criteria before comparing models; do not infer correctness
+  from valid numbers or combine its errors with mask errors into one score.
 - **Mechanical failures:** which outputs are malformed or cannot be located
   correctly in the original note?
-- **Cost and speed:** actual training cost, output length, generation time per
-  note, and serving requirements on the tested hardware.
+
+For resource measurements, record the exact checkpoint, training or inference
+configuration, batch size, input/output lengths and billed rental interval.
+Separate training time from downloading, loading, checkpointing and evaluation;
+include all of them in total cost. Record failed attempts and retries rather than
+reporting only the successful run.
+
+Measure generation in batches on a representative mix of real notes, including
+long notes and notes producing many masks. Report those cases separately as well
+as the overall rate. Include failed outputs and retries in elapsed time, and
+report unresolved failures separately; do not count them as completed notes.
+Repeat the measurement with the selected release model and final output format
+before committing the full corpus build.
 
 Valid alternative masks and harmless redundancy are acceptable. Exact copying
 is necessary for source alignment, but agreement with one teacher mask list is
@@ -186,9 +266,12 @@ dataset size from two or three points. If improvement shrinks, examine label
 quality, missing coverage, model capability, and training behavior before
 generating more of the same data.
 
-The pilot should identify which candidates merit further investment, how
-quickly they improve, and what errors remain. No universal accuracy threshold
-or claim of production readiness has been approved.
+Compare quality against total training-and-generation cost at the proposed
+launch volume, not training cost alone. Keep annotation, storage and transfer
+costs visible, and distinguish measured costs from extrapolations. Do not project
+one corpus-wide rate from only short, easy notes or infer the final data
+requirement from a small learning curve. No universal accuracy threshold or
+claim of production readiness has been approved.
 
 ## Preparation findings
 
@@ -212,7 +295,8 @@ training target by dropping the unresolved item.
 The notes average about 312 characters; original note plus compact grouped-mask
 JSON averages about 841 characters after exact deduplication. These are character
 counts from a selected corpus, not model-token counts or a forecast for every
-new topic.
+new topic. These older annotations and counts do not establish the coverage,
+output lengths or prominence labels required by the current extraction work.
 
 ## Compute estimates and spending constraints
 
@@ -235,9 +319,11 @@ has been adopted.
 
 ### Runtime estimates — not measured
 
-The following are planning estimates, not measured runtimes for our task. They
-assume 1,000 short training notes, three passes, compact mask outputs, and no
-CPU offloading:
+The following September 15 estimates predate the current subject hierarchy and
+the addition of prominence. They are not measured runtimes for the release task.
+They assume 1,000 short training notes, three passes, compact mask-only outputs,
+and no CPU offloading. Use pilot measurements to replace these assumptions before
+allocating larger-run spending:
 
 | Model | Proposed GPU | Estimated training time |
 |---|---|---:|
@@ -288,8 +374,10 @@ training-cost estimates above remain planning scenarios, not spending authority.
 Any paid annotation work shares the same lifetime budget.
 
 Use [budget-ledger.json](../budget-ledger.json) for current spending and
-outstanding commitments. No per-run spending approval is implied by the
-training estimates or the unallocated budget.
+outstanding commitments for this pilot. Hosting costs and reserves stay outside
+that ledger, as recorded in the [release decisions](../docs/planning/release-decisions.md#compute-hosting-and-budget).
+No per-run spending approval is implied by the training estimates or the
+unallocated budget.
 
 ### Spending constraints
 
@@ -298,12 +386,14 @@ ceiling covers the entire effort, including previous costs, failed runs,
 evaluation, storage, and transfers. It is not a per-model allowance or a target.
 There is no separate parameter-count, GPU-memory, or single-machine ceiling.
 
-The spending code and ledger enforce the approved $1,000 cap. Every paid run
-needs an explicitly approved maximum charge and a provider-side limit that
-enforces it.
+The spending code and ledger enforce the approved $1,000 cap. The repository
+rules give standing approval for user-requested OpenRouter work roughly estimated
+at $1 or less, without a provider-side cap. Other paid runs need an explicitly
+approved maximum charge and a provider-side limit that enforces it.
 
 ## Next approval
 
-The next proposed step is to approve the experimental design, then select and
-freeze the note splits and annotation format. Exact run settings and charges
-follow the setup and cost checks; this document does not authorize paid work.
+The measurement requirements above are approved. Next settle the remaining
+experimental design, note splits and annotation format, including prominence.
+The dataset-size schedule, exact run settings and spending amounts remain open;
+this document does not authorize rentals, annotation calls or training runs.

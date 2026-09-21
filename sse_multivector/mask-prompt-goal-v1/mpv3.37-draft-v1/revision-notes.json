@@ -1,0 +1,12 @@
+{
+  "version": "MPv3.37",
+  "status": "draft; not inference-tested or frozen",
+  "base_version": "MPv3.36",
+  "scope": "Only step 2: assess exact-scope expressibility in both directions, without prescribing deletion.",
+  "change": "All required meaning, details and relationships must be expressible without unavoidable additional meaning. Diagnostics identify either missing required meaning or unavoidable extra meaning.",
+  "preserved": "Every byte outside step 2, including examples, union definition, steps 1 and 3, output contract and input layout.",
+  "output_schema": "../mpv3.34-draft-v1/output-schema.json",
+  "guidance": "https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively",
+  "guidance_used": "Direct wording and explicit success constraints; no additional procedure or examples. This guidance does not validate masking behavior.",
+  "next": "Review the exact delta before inference. If approved, include missing-required-detail cases as well as unavoidable-extra-specificity cases in the next test."
+}

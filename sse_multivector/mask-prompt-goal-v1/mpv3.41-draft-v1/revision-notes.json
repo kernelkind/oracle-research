@@ -1,0 +1,27 @@
+{
+  "version": "MPv3.41",
+  "status": "draft for review; not tested or adopted",
+  "source_draft": "MPv3.40",
+  "approved_tested_baseline": "MPv3.37",
+  "authorization": "The user approved all five wording-cleanup suggestions, explicitly choosing post instead of note.",
+  "changes": [
+    "Use post consistently for the input.",
+    "Refer directly to text in the post instead of source wording or available wording.",
+    "Describe fragments jointly expressing the supplied subject instead of calling them contributions.",
+    "Replace connect those meanings with an instruction about when not to select extra connecting words.",
+    "State all required meaning and no unwanted meaning directly when setting expressible instead of referring to both conditions."
+  ],
+  "intended_invariants": [
+    "The supplied subject is fixed, with exact semantic union and level of generality.",
+    "The three ordered stages remain: understand, determine expressibility, construct.",
+    "Fragments jointly express the complete subject; an individual fragment need not express it all.",
+    "Genuine repeated expressions are included, but sharing a word or concept alone is not sufficient.",
+    "Required details and relationships remain; additional meaning and specificity are excluded.",
+    "The proposed allowance for source-established relationships remains in construction, not the introduction."
+  ],
+  "offline_checks": "The definitions, step 1, exclusions, output instructions, examples and placeholders are byte-identical to MPv3.40. Previous prompt hashes remain unchanged. This verifies preservation, not model behavior.",
+  "inference": "None; no model calls, retries, repairs or baseline reruns.",
+  "next": "Review the full delta against MPv3.37 before authorizing a generation test.",
+  "guidance": "https://developers.openai.com/api/docs/guides/prompt-engineering#prompting-current-models",
+  "guidance_scope": "General clarity guidance only; it does not prescribe or validate these masking rules."
+}

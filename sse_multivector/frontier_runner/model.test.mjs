@@ -170,6 +170,169 @@ test('chunked multiline SSE preserves native metadata and exact text', async () 
   assert.equal(result.response_metadata.usage.completion_tokens, 2);
 });
 
+test('streamed errors retain distinguishing codes and safe fields before SDK normalization', async () => {
+  for (const code of [429, 502]) {
+    const response = sse([
+      { id: 'error-response', model: 'reported-model', provider: 'Meta', choices: [] },
+      { error: { code, message: 'Network connection lost. secret-test-key', type: 'upstream_error',
+        metadata: { provider_name: 'Meta', error_type: 'provider_unavailable', provider_code: 'connection_closed',
+          raw: 'private upstream body', headers: { authorization: 'private-header' } } } },
+    ]);
+    response.headers.set('retry-after', '60');
+    response.headers.set('x-request-id', 'test-request-id');
+    response.headers.set('set-cookie', 'private-cookie');
+    const result = await execute(await prepare(config()), { apiKey: 'secret-test-key', fetch: async () => response });
+    assert.equal(result.valid, false);
+    assert.equal(result.http_attempts, 1);
+    assert.equal(result.response_metadata.http_status, 200);
+    assert.deepEqual(result.response_metadata.error, {
+      code, message: 'Network connection lost. [REDACTED]', type: 'upstream_error', provider_name: 'Meta',
+      error_type: 'provider_unavailable', provider_code: 'connection_closed',
+    });
+    assert.equal(result.response_metadata.retry_after, '60');
+    assert.equal(result.response_metadata.request_id, 'test-request-id');
+    assert.ok(result.timing.error_ms >= result.timing.headers_ms);
+    assert.equal(result.timing.event_count, 2);
+    const metadata = JSON.stringify(result.response_metadata);
+    for (const secret of ['secret-test-key', 'private upstream body', 'private-header', 'private-cookie']) {
+      assert.ok(!metadata.includes(secret));
+    }
+  }
+});
+
+test('OpenRouter upstream debugging is opt-in and changes no inference settings', async () => {
+  const baseline = await preview(await prepare(config()));
+  const debug = await preview(await prepare(config(openrouter, { debug: { echo_upstream_body: true } })));
+  assert.deepEqual(debug.body, { ...baseline.body, debug: { echo_upstream_body: true } });
+  assert.equal(baseline.body.debug, undefined);
+  for (const value of [true, null, {}, { echo_upstream_body: 'yes' }, { echo_upstream_body: true, extra: true }]) {
+    await assert.rejects(prepare(config(openrouter, { debug: value })), /debug/);
+  }
+  await assert.rejects(prepare(config(codex, { debug: { echo_upstream_body: true } })), /OpenRouter/);
+});
+
+test('debug receipts retain upstream settings and event gaps but not upstream bodies or reasoning', async () => {
+  const request = await prepare(config(openrouter, { schema, debug: { echo_upstream_body: true } }));
+  const frames = [
+    { choices: [], debug: { echo_upstream_body: { model: 'upstream-model', stream: true, max_output_tokens: 4096,
+      reasoning: { effort: 'low', private: 'private-field' }, text: { format: { type: 'json_schema', schema, strict: true } },
+      input: [{ role: 'user', content: [{ type: 'input_text', text: prompt }] }], authorization: 'private-header' } } },
+    { choices: [{ index: 0, delta: { reasoning: 'private-thought' }, finish_reason: null }] },
+    { error: { code: 502, message: 'Network connection lost.', metadata: { error_type: 'provider_unavailable', provider_code: 123 } } },
+  ];
+  let index = 0;
+  const result = await execute(request, { apiKey: 'test-only', fetch: async () => new Response(new ReadableStream({
+    async pull(controller) {
+      if (index === frames.length) { controller.close(); return; }
+      await new Promise(resolve => setTimeout(resolve, 20));
+      controller.enqueue(Buffer.from(`: OPENROUTER PROCESSING\n\ndata: ${JSON.stringify(frames[index++])}\n\n`));
+    },
+  }), { headers: { 'content-type': 'text/event-stream' } }) });
+  const upstream = result.response_metadata.upstream_requests[0];
+  assert.equal(upstream.model, 'upstream-model');
+  assert.equal(upstream.stream, true);
+  assert.equal(upstream.max_output_tokens, 4096);
+  assert.deepEqual(upstream.reasoning, { effort: 'low' });
+  assert.equal(upstream.schema_sha256, request.schema_sha256);
+  assert.equal(upstream.prompt_text_sha256, request.prompt_sha256);
+  assert.equal(result.response_metadata.error.provider_code, 123);
+  assert.equal(result.timing.event_trace.length, 3);
+  assert.equal(result.timing.event_trace[0].kind, 'debug');
+  assert.deepEqual(result.timing.event_trace[1].delta_fields, ['reasoning']);
+  assert.equal(result.timing.event_trace[2].kind, 'error');
+  assert.ok(result.timing.max_event_gap_ms >= 10);
+  assert.ok(result.timing.max_byte_gap_ms >= 10);
+  assert.equal(result.timing.comment_count, 3);
+  assert.ok(result.timing.last_non_error_event_ms < result.timing.error_ms);
+  for (const secret of ['private-header', 'private-thought', 'private-field']) assert.ok(!JSON.stringify(result).includes(secret));
+  assert.equal(result.http_attempts, 1);
+});
+
+test('event trace is bounded while aggregate timing covers the whole stream', async () => {
+  const frames = Array.from({ length: 300 }, () => ({ choices: [] }));
+  frames.push({ choices: [{ index: 0, delta: { content: 'ok' }, finish_reason: 'stop' }] });
+  const result = await execute(await prepare(config(openrouter, { debug: { echo_upstream_body: true } })), {
+    apiKey: 'test-only', fetch: async () => sse(frames),
+  });
+  assert.equal(result.valid, true);
+  assert.equal(result.timing.event_count, 301);
+  assert.equal(result.timing.event_trace.length, 256);
+  assert.equal(result.timing.event_trace_dropped, 45);
+  assert.ok(result.timing.last_event_ms >= result.timing.event_trace.at(-1).at_ms);
+  assert.equal((await run('ok')).timing.event_trace, undefined);
+});
+
+test('stream timing distinguishes received bytes, parsed events, and normal completion', async () => {
+  const result = await run('answer');
+  const timing = result.timing;
+  assert.ok(timing.headers_ms >= 0);
+  assert.ok(timing.first_byte_ms >= timing.headers_ms);
+  assert.ok(timing.last_byte_ms >= timing.first_byte_ms);
+  assert.ok(timing.first_event_ms >= timing.first_byte_ms);
+  assert.ok(timing.last_event_ms >= timing.first_event_ms);
+  assert.ok(timing.stream_end_ms >= timing.last_event_ms);
+  assert.ok(result.elapsed_ms >= timing.stream_end_ms);
+  assert.equal(timing.event_count, 2);
+  assert.ok(timing.byte_count > 0);
+  assert.equal(result.response_metadata.error, undefined);
+  assert.equal(result.response_metadata.transport_error, undefined);
+});
+
+test('body transport failure preserves its cause without reporting a server error or retrying', async () => {
+  let read = false;
+  const result = await execute(await prepare(config()), { apiKey: 'secret-test-key', fetch: async () =>
+    new Response(new ReadableStream({ pull(controller) {
+      if (!read) {
+        read = true;
+        controller.enqueue(new TextEncoder().encode('data: {"id":"broken-stream","choices":[]}\n\n'));
+      } else {
+        const cause = Object.assign(new Error('socket closed secret-test-key'), { code: 'UND_ERR_SOCKET', private: 'must-not-record' });
+        controller.error(new TypeError('terminated', { cause }));
+      }
+    } }), { headers: { 'content-type': 'text/event-stream' } }) });
+  assert.equal(result.http_attempts, 1);
+  assert.equal(result.error, 'terminated');
+  assert.equal(result.response_metadata.error, undefined);
+  assert.deepEqual(result.response_metadata.transport_error, {
+    phase: 'body', name: 'TypeError', message: 'terminated',
+    cause: { name: 'Error', message: 'socket closed [REDACTED]', code: 'UND_ERR_SOCKET' },
+  });
+  assert.ok(result.timing.error_ms >= result.timing.last_byte_ms);
+  assert.equal(result.timing.stream_end_ms, null);
+  assert.ok(!JSON.stringify(result).includes('must-not-record'));
+});
+
+test('error text is redacted before bounding, and HTTP retry hints survive', async () => {
+  const response = sse([{ error: { code: 502, message: 'x'.repeat(990) + 'secret-test-key' + 'y'.repeat(2000) } }]);
+  const result = await execute(await prepare(config()), { apiKey: 'secret-test-key', fetch: async () => response });
+  assert.ok(result.response_metadata.error.message.length <= 1024);
+  assert.ok(!result.response_metadata.error.message.includes('secret-test'));
+  const rejected = await execute(await prepare(config()), { apiKey: 'test-only', fetch: async () =>
+    new Response('{"error":{"message":"Rate limited"}}', { status: 429, headers: { 'retry-after': '120' } }) });
+  assert.equal(rejected.response_metadata.retry_after, '120');
+  assert.equal(rejected.http_attempts, 1);
+});
+
+test('failure before headers records its cause and caller cancellation remains an abort', async () => {
+  const request = await prepare(config());
+  const failed = await execute(request, { apiKey: 'test-only', fetch: async () => {
+    throw new TypeError('fetch failed', { cause: Object.assign(new Error('unreachable'), { code: 'ECONNREFUSED' }) });
+  } });
+  assert.equal(failed.response_metadata.transport_error.phase, 'headers');
+  assert.equal(failed.response_metadata.transport_error.cause.code, 'ECONNREFUSED');
+  assert.equal(failed.timing.headers_ms, null);
+  assert.equal(failed.timing.first_byte_ms, null);
+  assert.equal(failed.http_attempts, 1);
+  const abort = new AbortController();
+  const cancelled = await execute(request, { apiKey: 'test-only', signal: abort.signal, fetch: async () => {
+    abort.abort();
+    throw abort.signal.reason;
+  } });
+  assert.equal(cancelled.stop_reason, 'aborted');
+  assert.equal(cancelled.response_metadata.abort_reason.name, 'AbortError');
+  assert.equal(cancelled.http_attempts, 1);
+});
+
 test('independent executions never supply earlier input or generated output to later calls', async () => {
   await run('previous response marker', { prompt: 'previous prompt marker' });
   const next = await preview(await prepare(config(openrouter, { prompt: 'next prompt' })));

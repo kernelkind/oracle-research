@@ -211,6 +211,18 @@ fn run_review_from(
             Some(MaskDecision::Rejected) => "Disapproved",
             Some(MaskDecision::Skipped) => "Skipped",
         };
+        let mut evidence = vec![ApprovalEvidence {
+            title: "Note".into(),
+            annotation: String::new(),
+            body: highlights[index].clone(),
+        }];
+        if !item.assessment.trim().is_empty() {
+            evidence.push(ApprovalEvidence {
+                title: "My reasoning".into(),
+                annotation: String::new(),
+                body: item.assessment.clone(),
+            });
+        }
         let mut screen = ApprovalScreen {
                 heading: format!("Mask review · {} of {} · {} · {status}", index + 1, batch.items.len(), item.item_id),
                 title: Some(item.subject.clone()),
@@ -220,13 +232,9 @@ fn run_review_from(
                 rejection_help: String::new(),
                 guidance: Some(ApprovalGuidance {
                     title: "Mask review".into(),
-                    body: "Review only the highlighted mask; the subject is fixed. The complete note supplies context.\n\nCheck for missing subject-bearing text and text belonging only to another subject. More than one mask can be reasonable; the shortest possible selection is not required.\n\nLeft/right moves to the previous/next item, including reviewed items, without changing decisions. Up/down scrolls within the note.\n\nA or R records or replaces this item's decision, then moves to an unfinished item. C edits an optional comment. S records a skip. The heading shows the saved decision. Ctrl-C saves and exits; you do not need to finish the batch.".into(),
+                    body: "Review only the highlighted mask; the subject is fixed. The complete note supplies context.\n\nCheck for missing subject-bearing text and text belonging only to another subject. More than one mask can be reasonable; the shortest possible selection is not required.\n\nMy reasoning, when supplied, appears separately below the note. It is not a saved decision.\n\nLeft/right moves to the previous/next item, including reviewed items, without changing decisions. Tab switches panels; up/down or j/k scrolls the active panel.\n\nA or R records or replaces this item's decision, then moves to an unfinished item. C edits an optional comment. S records a skip. The heading shows the saved decision. Ctrl-C saves and exits; you do not need to finish the batch.".into(),
                 }),
-                evidence: ApprovalEvidenceLayout::Paged(vec![ApprovalEvidence {
-                    title: "Note".into(),
-                    annotation: String::new(),
-                    body: highlights[index].clone(),
-                }]),
+                evidence: ApprovalEvidenceLayout::Paged(evidence),
             };
         if matches!(purpose, ReviewPurpose::CategoryMembership) {
             screen.heading = format!(

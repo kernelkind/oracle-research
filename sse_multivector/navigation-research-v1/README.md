@@ -3,6 +3,55 @@
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The objective is a repeatable construction method, not a hand-repaired 100-note tree.
 
+## Required hierarchy-processing stages
+
+These are requirements for the formal construction process, not optional review
+cleanups. They do not authorize a new run or change the frozen experiment data.
+
+1. **Deduplicate identical masks within each post before SSE.** Treat masks with
+   the same post ID and identical ordered source-byte ranges as one encoder
+   input. Preserve every originating subject and mask ID as provenance. Equal
+   wording at different positions or in different posts is not this identity
+   rule; overlapping but different selections remain distinct. Title generation
+   and review must also use the same deduplicated mask inventory, so aliases do
+   not become repeated evidence. Keep valid empty subject masks recorded without
+   generating vectors for them; invalid outputs are not empty masks.
+2. **Merge nodes with identical mask sets before hierarchy generation.** Compare
+   sets of mask identities defined in stage 1, after resolving duplicate-mask
+   aliases, rather than labels, post sets or vector equality. Preserve every
+   original node ID and its provenance in the merged node's record. Retain
+   strict subsets: a smaller mask set can represent a useful narrower category,
+   so containment alone does not authorize merging.
+3. **Collapse equal-note parent–child steps before publishing the browsable
+   hierarchy.** After obtaining an acyclic category graph and computing each
+   category's complete post set, including descendants, collapse parent–child
+   navigation steps whose complete sets are equal. Equality is of post IDs, not
+   just counts or directly assigned posts. Different masks do not justify a
+   click that returns exactly the same posts. Preserve all source categories,
+   masks, IDs and their mapping to the displayed hierarchy, and preserve the
+   surviving destinations' post memberships and mask evidence. Keep the raw
+   category graph separately; this is not a claim of semantic equivalence.
+
+Beyond exact mask-set identity, semantic category consolidation is a separate
+stage whose repeatable decision procedure remains open. Identical labels,
+reciprocal TRUE answers, or equal post sets in separate branches do not
+automatically authorize merging.
+The existing `true_graph_equivalence.py` replays explicit reviewed approvals;
+it does not generate them. Its cutoff-based checks also must not silently be
+substituted for the current native-answer graph rule.
+
+The earlier GDC09 equal-note collapse operates on a tree. The exact handling of
+shared children in the current multi-parent graph must be specified before
+implementation; deleting a shared child globally is not implied by the rule.
+Unconditional single-child absorption is a separate earlier experiment, not
+part of the equal-note requirement.
+
+Use the same declared processing rules for both sides of an old/new comparison,
+recording any remaining differences. Existing saved hierarchies are historical
+evidence, not proof that these requirements were applied. No prompt, grouping,
+relationship, membership-expansion or title-repair policy changes are approved
+by these requirements.
+
 ## Current evaluation decisions — September 15, 2026
 
 **Coffee → Music at Coffee Shops is approved for evaluation.** The user explicitly

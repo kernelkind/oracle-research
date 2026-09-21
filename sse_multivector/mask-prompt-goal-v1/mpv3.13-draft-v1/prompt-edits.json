@@ -1,0 +1,9 @@
+{
+  "base_sha256": "a0133ef90657a2b1c07fb26514e52f1355c78ad5f16a090544f9fc89b4d32e89",
+  "edits": [
+    {
+      "old": "Select exact text from this social-media post for the supplied subject. Treat the supplied subject as fixed. The selected fragments form its mask.",
+      "new": "Select exact text from this social-media post for the supplied subject. Treat the supplied subject as fixed.\n\nA fragment is one continuous range of text from the post. It may contain part of a word, one word, or multiple words. A mask is the complete set of fragments selected for the supplied subject."
+    }
+  ]
+}

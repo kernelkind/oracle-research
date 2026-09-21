@@ -1,0 +1,11 @@
+{
+  "version": "MPv3.42",
+  "status": "draft for review; not tested or adopted",
+  "source_draft": "MPv3.41",
+  "approved_tested_baseline": "MPv3.37",
+  "authorization": "The user requested fixing the sentence that described the post as establishing relationships between fragments before their selection.",
+  "change": "Refer to relationships between words in the post before choosing which to include; retain the instruction against selecting extra words that add unwanted meaning solely to make a relationship explicit.",
+  "preservation": "Only that sentence is replaced. All other prompt bytes and previous versions remain unchanged.",
+  "inference": "None; model behavior remains untested.",
+  "next": "Review the full MPv3.37 to MPv3.42 delta before authorizing a generation test."
+}

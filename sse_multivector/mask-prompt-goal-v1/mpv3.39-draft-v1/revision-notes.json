@@ -1,0 +1,22 @@
+{
+  "version": "MPv3.39",
+  "status": "draft for user review; not tested, frozen or adopted",
+  "base": "MPv3.37, the last approved and tested mask prompt",
+  "authorization": "The user approved reworking the construction step against MPv3.37 after rejecting the placement and framing of the MPv3.38.1 proposal. No inference was requested.",
+  "changes": [
+    "Remove the introductory sentence referring to selected expressions before the construction stage and imposing the blanket restriction on unselected subject meaning.",
+    "Rework step 3 as selection instructions: choose fragments according to their meaning in the full note, use relationships already established in that note, and exclude wording adding unwanted meaning merely to make a connection explicit."
+  ],
+  "preserved": [
+    "MPv3.37 and the separate MPv3.38.1 draft",
+    "Mask and fragment definitions, including the exact semantic union requirement",
+    "Steps 1 and 2, their order, target interpretation and expressibility requirements",
+    "Required details and relationships, exclusion of added meaning and specificity, and the complete-mask requirement",
+    "Coverage of genuine repeated contributions rather than shared concepts alone",
+    "Word and hashtag parts, source exclusions, empty-mask behavior, output format, examples and placeholders"
+  ],
+  "hypothesis": "Framing the source-relationship allowance during construction may reduce the tendency to keep every time or to see solely as connective wording. MCv1's explanations motivate this test but do not prove a causal mechanism or establish that this revision will improve generation.",
+  "unresolved": "The separate B14 reaching-as-interest error is not claimed fixed. A future authorized generation test must check retained required meaning as well as exclusion of added meaning, and preserve saved baselines without rerunning them.",
+  "guidance": "https://developers.openai.com/api/docs/guides/latest-model#gpt-6-astra-instruction-following",
+  "guidance_scope": "Official guidance motivates checking instruction interactions. It does not establish the correctness of these mask rules or prescribe this wording."
+}

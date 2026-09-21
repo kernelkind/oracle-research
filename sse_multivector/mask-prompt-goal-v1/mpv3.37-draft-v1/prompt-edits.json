@@ -1,0 +1,9 @@
+{
+  "base_sha256": "d460ed88a1ae18e0e5c5a9a3f335465ff40df27393c6c0129f77763104190ffd",
+  "edits": [
+    {
+      "old": "2. Determine whether it is expressible. Before constructing the mask, decide whether the source wording can express the whole target at its exact level of generality once extraneous wording is removed. The required meaning may be spread across sentences. Particular examples are insufficient when their wording cannot express the target without retaining extra specificity. Set \"expressible\" to true or false. In \"evidence\", briefly identify the available wording or explain what required meaning is absent or cannot be separated from extra detail.",
+      "new": "2. Determine whether it is expressible. Before constructing the mask, decide whether the source wording can express the target at exactly its level of generality: all required meaning, details and relationships must be expressible, without having to include meaning the target does not specify. The wording may be spread across sentences. Set \"expressible\" to true only if both conditions can be met; otherwise set it to false. In \"evidence\", briefly identify the available wording or explain which required meaning is unavailable or which extra meaning is unavoidable."
+    }
+  ]
+}

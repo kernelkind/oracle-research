@@ -4,6 +4,7 @@ Requires Firefox (FIREFOX or PATH) and the Python websocket-client package.
 Uses an isolated profile and a loopback-only server; never edits the real plan.
 """
 
+import base64
 import functools
 import http.server
 import json
@@ -15,11 +16,173 @@ import tempfile
 import threading
 import time
 import unittest
+import xml.etree.ElementTree as ET
 
 import websocket
 
 
 class PlanningViewerTest(unittest.TestCase):
+    def test_publication_preparation_belongs_to_existing_tasks(self):
+        diagram = Path(__file__).resolve().parents[1] / "docs/planning/october-18-release.drawio"
+        root = ET.parse(diagram)
+        labels = {cell.get("id"): cell.get("value", "")
+                  for cell in root.findall("./diagram/mxGraphModel/root/mxCell")}
+        self.assertIn("weight-release permission before selection", labels["m2"])
+        self.assertNotIn("weight-release terms", labels["m4"])
+        for term in ("supporting files", "usage instructions", "evaluation results",
+                     "Verify loading", "mask/prominence generation"):
+            with self.subTest(model_release=term):
+                self.assertIn(term, labels["m4"])
+        for term in ("runnable code", "instructions", "architecture", "continual-update path"):
+            with self.subTest(hierarchy_release=term):
+                self.assertIn(term, labels["s4"])
+                self.assertIn(term, labels["week4"])
+        for term in ("prepared model (08)", "continual-update path (12)"):
+            self.assertIn(term, labels["d4"])
+        self.assertIn("evaluation results", labels["week3"])
+        self.assertIn("prepared", labels["week5"])
+        self.assertIn("prepared", labels["week-launch"])
+
+    def test_prompts_complete_hierarchy_build_active_prominence_not_resumed(self):
+        diagram = Path(__file__).resolve().parents[1] / "docs/planning/october-18-release.drawio"
+        root = ET.parse(diagram).find("./diagram[@id='dependencies']/mxGraphModel/root")
+        cells = {cell.get("id"): cell for cell in root.findall("mxCell")}
+        self.assertIn("COMPLETE", cells["h1"].get("value"))
+        self.assertIn("Subject and mask prompts finished", cells["h1"].get("value"))
+        self.assertNotIn("IN PROGRESS", cells["h1"].get("value"))
+        self.assertIn("fillColor=light-dark(#f7f8fa,", cells["h1"].get("style"))
+        self.assertIn("IN PROGRESS", cells["h2"].get("value"))
+        self.assertIn("Generation underway; review pending", cells["h2"].get("value"))
+        self.assertIn("fillColor=light-dark(#e7f1ff,", cells["h2"].get("style"))
+        self.assertNotIn("WAITING FOR 01", cells["h2"].get("value"))
+        self.assertIn("WAITING FOR 04", cells["m1"].get("value"))
+        self.assertNotIn("WAITING FOR 01", cells["m1"].get("value"))
+        self.assertIn("PAUSED", cells["m0"].get("value"))
+        self.assertIn("Mask prompt finished; resumption not confirmed", cells["m0"].get("value"))
+        self.assertIn("fillColor=light-dark(#f7f8fa,", cells["m0"].get("style"))
+        self.assertNotIn("IN PROGRESS", cells["m0"].get("value"))
+        self.assertNotIn("READY TO START", cells["m0"].get("value"))
+        self.assertNotIn("04 ·", cells["ready-summary"].get("value"))
+
+    def test_weekly_delivery_track_is_parallel_without_new_dates(self):
+        diagram = Path(__file__).resolve().parents[1] / "docs/planning/october-18-release.drawio"
+        root = ET.parse(diagram).find("./diagram[@id='weekly-targets']/mxGraphModel/root")
+        cells = {cell.get("id"): cell for cell in root.findall("mxCell")}
+        self.assertIn("week-delivery", cells)
+        self.assertIn("Parallel track", cells["week-delivery-heading"].get("value"))
+        self.assertIn("not week assignments", cells["week-delivery-note"].get("value"))
+        self.assertIn("dates remain open", cells["week-delivery-note"].get("value"))
+        self.assertIn("100-note snapshot (02)", cells["week-service-client"].get("value"))
+        self.assertIn("Notedeck can start with 13", cells["week-service-client"].get("value"))
+        self.assertIn("integration needs 14", cells["week-service-client"].get("value"))
+        self.assertIn("final snapshot (12)", cells["week-launch"].get("value"))
+        self.assertIn("October 18", cells["week-launch"].get("value"))
+        self.assertNotIn("prepare service", cells["week4"].get("value"))
+        self.assertIn("04 · Mask prominence: mask prompt finished; resumption not confirmed", cells["week-subtitle"].get("value"))
+        self.assertIn("Subject and mask prompts finished", cells["week1"].get("value"))
+        self.assertIn("100-note hierarchy generation underway; review pending", cells["week1"].get("value"))
+        lane = cells["week-delivery"].find("mxGeometry")
+        self.assertGreaterEqual(float(lane.get("width")), 1600)
+        week = cells["week1"].find("mxGeometry")
+        self.assertGreater(float(lane.get("y")), float(week.get("y")) + float(week.get("height")))
+
+    def test_ready_preparation_is_separate_from_blocked_work(self):
+        diagram = Path(__file__).resolve().parents[1] / "docs/planning/october-18-release.drawio"
+        root = ET.parse(diagram).find("./diagram[@id='dependencies']/mxGraphModel/root")
+        cells = {cell.get("id"): cell for cell in root.findall("mxCell")}
+        edges = {(cell.get("source"), cell.get("target"))
+                 for cell in cells.values() if cell.get("edge") == "1"}
+        for ready, blocked in [("m-setup", "m2"),
+                               ("s-hdbscan", "s-analysis"), ("s-stage-costs", "s-analysis")]:
+            with self.subTest(ready=ready):
+                self.assertIn(ready, cells, "Executable preparation needs its own node")
+                self.assertIn("fillColor=light-dark(#e6f4ea,", cells[ready].get("style"))
+                self.assertIn("READY TO START", cells[ready].get("value"))
+                self.assertIn("fillColor=light-dark(#f7f8fa,", cells[blocked].get("style"))
+                self.assertIn((ready, blocked), edges)
+        self.assertIn("IN PROGRESS", cells["m-annotator-prep"].get("value"))
+        self.assertIn("fillColor=light-dark(#e7f1ff,", cells["m-annotator-prep"].get("style"))
+        self.assertIn("Muse high vs Astra low", cells["m-annotator-prep"].get("value"))
+        self.assertNotIn("READY TO START", cells["m-annotator-prep"].get("value"))
+        self.assertNotIn("19 ·", cells["ready-summary"].get("value"))
+        self.assertIn(("m-annotator-prep", "m-annotator"), edges)
+        self.assertIn("NEEDS 04 + 19", cells["m-annotator"].get("value"))
+        self.assertIn("fillColor=light-dark(#f7f8fa,", cells["m-annotator"].get("style"))
+        self.assertIn("no model selected", cells["m-annotator"].get("value"))
+        self.assertIn(("m1", "m2"), edges)
+        self.assertIn(("m-setup", "m2"), edges)
+        self.assertNotIn("STARTING SCOPE UNRESOLVED", cells["m-setup"].get("value"))
+        self.assertIn("18 · Prepare training code for the fine-tuning pilot", cells["ready-summary"].get("value"))
+        self.assertIn("save/reload", cells["m-setup"].get("value"))
+        self.assertIn("outputs for evaluation", cells["m-setup"].get("value"))
+        self.assertIn("Format examples and evaluate", cells["m2"].get("value"))
+        self.assertIn(("s1", "s2"), edges)
+        self.assertIn(("m2", "s-analysis"), edges)
+        self.assertIn(("m-annotator", "m3"), edges)
+        for cell in cells.values():
+            self.assertNotIn("#fff4ce", cell.get("style", ""))
+            self.assertNotIn("amber", cell.get("value", "").lower())
+
+    def test_scale_measurements_inform_corpus_selection_before_final_validation(self):
+        diagram = Path(__file__).resolve().parents[1] / "docs/planning/october-18-release.drawio"
+        root = ET.parse(diagram).find("./diagram[@id='dependencies']/mxGraphModel/root")
+        cells = {cell.get("id"): cell for cell in root.findall("mxCell")}
+        edges = {(cell.get("source"), cell.get("target")): cell
+                 for cell in cells.values() if cell.get("edge") == "1"}
+        self.assertIn("fillColor=light-dark(#f7f8fa,", cells["s-analysis"].get("style"))
+        self.assertIn("NEEDS 21 + 22", cells["s-analysis"].get("value"))
+        self.assertNotIn("20 ·", cells["ready-summary"].get("value"))
+        self.assertIn("21 · Assess HDBSCAN at launch scale", cells["ready-summary"].get("value"))
+        self.assertIn("22 · Measure SSE, category-title and TRUE processing costs", cells["ready-summary"].get("value"))
+        self.assertIn("existing masks and categories", cells["s-stage-costs"].get("value"))
+        for pair in [("s-analysis", "s1"), ("s-analysis", "s2"), ("s1", "s2"),
+                     ("m4", "s2"), ("s-hdbscan", "s-analysis"), ("s-stage-costs", "s-analysis")]:
+            self.assertIn(pair, edges)
+            self.assertNotIn("dashed=1", edges[pair].get("style"))
+        self.assertIn("dashed=1", edges[("m2", "s-analysis")].get("style"))
+        self.assertIn("dashed=1", edges[("h3", "s-analysis")].get("style"))
+        self.assertFalse(any(target == "s-stage-costs" for source, target in edges),
+                         "Stage measurements can start from existing artifacts")
+        self.assertIn("cosine", cells["h-note"].get("value").lower())
+
+    def test_plan_exposes_dependencies_without_prescribing_unsettled_order(self):
+        diagram = Path(__file__).resolve().parents[1] / "docs/planning/october-18-release.drawio"
+        root = ET.parse(diagram).find("./diagram[@id='dependencies']/mxGraphModel/root")
+        cells = {cell.get("id"): cell for cell in root.findall("mxCell")}
+        edges = {(cell.get("source"), cell.get("target")): cell
+                 for cell in cells.values() if cell.get("edge") == "1"}
+        for pair in [("h1", "m-annotator"), ("m0", "m-annotator"),
+                     ("s2", "s4"), ("s3", "s4")]:
+            self.assertIn(pair, edges)
+            self.assertNotIn("dashed=1", edges[pair].get("style"))
+        self.assertIn("dashed=1", edges[("m2", "m3")].get("style"))
+        self.assertIn("VOLUME DECISION", cells["m3"].get("value"))
+        self.assertNotIn(("s2", "s3"), edges)
+        self.assertNotIn(("s3", "s2"), edges)
+        for node in ("s2", "s3"):
+            self.assertNotIn("RELATIONSHIP OPEN", cells[node].get("value"))
+        self.assertIn("Check full-build time and cost", cells["s2"].get("value"))
+        self.assertIn("Test hierarchy with fine-tuned model", cells["s3"].get("value"))
+        self.assertIn("Training labels:", cells["h-note"].get("value"))
+        self.assertIn("Fine-tuned model:", cells["h-note"].get("value"))
+        self.assertIn("does not authorize execution", cells["legend"].get("value"))
+        self.assertIn("Overall plan not approved", cells["subtitle"].get("value"))
+
+    def test_labels_identify_model_roles_without_tracing_dependencies(self):
+        diagram = Path(__file__).resolve().parents[1] / "docs/planning/october-18-release.drawio"
+        root = ET.parse(diagram)
+        labels = {cell.get("id"): cell.get("value", "")
+                  for cell in root.findall("./diagram/mxGraphModel/root/mxCell")}
+        for term in ("fine-tuned model", "masks", "prominence", "hierarchy", "budget"):
+            with self.subTest(term=term):
+                self.assertIn(term, labels["s2"])
+        self.assertIn("Compare training-data generators", labels["m-annotator"])
+        self.assertIn("Compare models to fine-tune", labels["m2"])
+        self.assertNotIn("SP + MP", labels["h1"])
+        for term in ("fine-tuned model", "masks", "prominence", "hierarchy"):
+            with self.subTest(weekly_term=term):
+                self.assertIn(term, labels["week4"])
+
     def test_read_only_view_and_fresh_source(self):
         source = Path(__file__).resolve().parents[1] / "docs/planning"
         firefox = os.environ.get("FIREFOX") or shutil.which("firefox")
@@ -89,14 +252,189 @@ class PlanningViewerTest(unittest.TestCase):
                         time.sleep(0.15)
                     self.fail(f"Viewer did not render {text!r}: " + evaluate("document.body.innerText.slice(0,500)"))
 
+                def capture_page(name):
+                    if directory := os.environ.get("PLANNING_SCREENSHOT_DIR"):
+                        destination = Path(directory)
+                        destination.mkdir(parents=True, exist_ok=True)
+                        screenshot = call("browsingContext.captureScreenshot", {"context": context})
+                        (destination / f"{name}.png").write_bytes(base64.b64decode(screenshot["data"]))
+
+                def assert_readable_size():
+                    # Measure the rendered SVG, not just its configuration.
+                    self.assertGreaterEqual(evaluate("""(() => {
+                        const label = document.querySelector('svg foreignObject');
+                        return label.getScreenCTM().a;
+                    })()"""), 1, "Opening a page must not shrink its text to fit the whole map")
+                    self.assertTrue(evaluate("""(() => {
+                        const main = document.querySelector('main');
+                        return main.scrollWidth > main.clientWidth &&
+                            main.scrollHeight > main.clientHeight &&
+                            getComputedStyle(main).overflow === 'auto';
+                    })()"""), "The readable-size map must scroll in both directions")
+
+                def assert_dark_mode():
+                    self.assertEqual(evaluate("getComputedStyle(document.documentElement).colorScheme"), "dark")
+                    self.assertTrue(evaluate("""(() => {
+                        const dark = color => {
+                            const rgb = color.match(/[\\d.]+/g)?.slice(0, 3).map(Number);
+                            return rgb?.length === 3 && Math.max(...rgb) < 100;
+                        };
+                        return ['body', 'header', '#refresh', '#diagram', '.diagram-toolbar']
+                            .every(selector => dark(getComputedStyle(document.querySelector(selector)).backgroundColor));
+                    })()"""), "Page, diagram and controls must have dark backgrounds")
+                    self.assertEqual(evaluate("getComputedStyle(document.querySelector('#diagram')).colorScheme"), "dark")
+                    self.assertTrue(evaluate("""(() => {
+                        const labels = [...document.querySelectorAll('svg foreignObject')];
+                        return labels.length > 10 && labels.every(label => {
+                            const text = label.querySelector('div > div > div');
+                            const rgb = getComputedStyle(text).color.match(/[\\d.]+/g).slice(0, 3).map(Number);
+                            return Math.max(...rgb) > 150;
+                        });
+                    })()"""), "Diagram text must adapt to dark mode, not remain dark on dark")
+
+                def assert_palette_contrast():
+                    measured = json.loads(evaluate("""JSON.stringify((() => {
+                        const rgb = color => color.match(/[\\d.]+/g).slice(0, 3).map(Number);
+                        const luminance = color => rgb(color).map(c => c / 255)
+                            .map(c => c <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4)
+                            .reduce((sum, c, i) => sum + c * [.2126, .7152, .0722][i], 0);
+                        const contrast = (a, b) => {
+                            a = luminance(a); b = luminance(b);
+                            return (Math.max(a, b) + .05) / (Math.min(a, b) + .05);
+                        };
+                        const card = document.querySelector('svg [fill*="#f7f8fa"]') ||
+                            document.querySelector('svg [fill*="#f4f7fc"]');
+                        const style = getComputedStyle(card);
+                        const background = getComputedStyle(document.querySelector('#diagram')).backgroundColor;
+                        const labels = [...document.querySelectorAll('svg foreignObject div > div > div')];
+                        const label = labels.find(e => e.textContent.includes('02 · Build and review')) ||
+                            labels.find(e => e.textContent.startsWith('Week 1'));
+                        const text = getComputedStyle(label).color;
+                        return {cardContrast: contrast(style.fill, background),
+                            borderContrast: contrast(style.stroke, style.fill),
+                            textContrast: contrast(text, style.fill),
+                            textRGB: rgb(text)};
+                    })())"""))
+                    self.assertGreaterEqual(measured["cardContrast"], 1.4, "Cards must stand out from the canvas")
+                    self.assertGreaterEqual(measured["borderContrast"], 3, "Card boundaries must remain visible")
+                    self.assertGreaterEqual(measured["textContrast"], 7, "Task text needs strong contrast")
+                    self.assertGreaterEqual(min(measured["textRGB"]), 220, "Task text, including waiting tasks, must be off-white")
+
+                def assert_clear_labels():
+                    # Measure rendered text against card geometry and all edge captions.
+                    problems = evaluate("""JSON.stringify((() => {
+                        const config = JSON.parse(document.querySelector('#diagram').dataset.mxgraph);
+                        const source = new DOMParser().parseFromString(config.xml, 'application/xml');
+                        const labels = [...document.querySelectorAll('svg foreignObject')].map(fo => {
+                            const element = fo.querySelector('div > div > div');
+                            return {element, text: element.textContent, matrix: fo.getScreenCTM()};
+                        });
+                        const cards = [], captions = [], problems = [];
+                        for (const cell of source.querySelectorAll('mxCell[value]')) {
+                            const text = document.createElement('div');
+                            text.innerHTML = cell.getAttribute('value');
+                            const label = labels.find(item => item.text === text.textContent);
+                            if (!label) continue;
+                            if (cell.getAttribute('edge') === '1') { captions.push(label); continue; }
+                            if (!cell.getAttribute('style').includes('rounded=1')) continue;
+                            const g = cell.querySelector('mxGeometry');
+                            const x = +g.getAttribute('x'), y = +g.getAttribute('y');
+                            const start = new DOMPoint(x, y).matrixTransform(label.matrix);
+                            const end = new DOMPoint(x + +g.getAttribute('width'),
+                                y + +g.getAttribute('height')).matrixTransform(label.matrix);
+                            const box = {left: start.x, top: start.y, right: end.x, bottom: end.y};
+                            const actual = label.element.getBoundingClientRect();
+                            if (actual.left < box.left + 4 || actual.right > box.right - 4 ||
+                                actual.top < box.top + 4 || actual.bottom > box.bottom - 4) {
+                                problems.push(cell.id + ': text lacks space inside its card; bottom gap=' +
+                                    (box.bottom - actual.bottom).toFixed(1));
+                            }
+                            cards.push({id: cell.id, box});
+                        }
+                        const overlaps = (a, b) => a.left < b.right && a.right > b.left &&
+                            a.top < b.bottom && a.bottom > b.top;
+                        if (cards.length < 10) problems.push('Expected at least ten rendered cards');
+                        return problems.concat(captions.flatMap(caption => cards.filter(card =>
+                            overlaps(caption.element.getBoundingClientRect(), card.box))
+                            .map(card => caption.text + ' overlaps ' + card.id)));
+                    })())""")
+                    self.assertEqual(json.loads(problems), [], "Diagram labels need clear space")
+
                 call("browsingContext.navigate", {"context": context, "url": url, "wait": "complete"})
                 wait_for_text("TRUE compares descriptions")
+                wait_for_text("Ready to start now")
+                wait_for_text("18 · Prepare training code for the fine-tuning pilot")
+                wait_for_text("save/reload its trained weights")
+                wait_for_text("19 · Plan training-data generator comparison")
+                wait_for_text("Subject and mask prompts finished")
+                wait_for_text("Generation underway; review pending")
+                wait_for_text("Mask prompt finished; resumption not confirmed")
+                wait_for_text("17 · Compare training-data generators")
+                wait_for_text("06 · Compare models to fine-tune")
+                wait_for_text("weight-release permission before selection")
+                wait_for_text("Verify loading and mask/prominence generation")
+                wait_for_text("prepared model (08)")
+                wait_for_text("20 · Assess full hierarchy-build resources")
+                wait_for_text("22 · Measure SSE, category-title and TRUE processing costs")
+                wait_for_text("21 · Assess HDBSCAN at launch scale")
+                wait_for_text("10 · Check full-build time and cost")
+                wait_for_text("our fine-tuned model")
+                wait_for_text("NEEDS 21 + 22")
+                wait_for_text("Cosine cutoff selects category pairs")
+                wait_for_text("Training labels:")
+                wait_for_text("Fine-tuned model:")
+                wait_for_text("11 · Test hierarchy with fine-tuned model")
+                self.assertFalse(evaluate("document.body.innerText.includes('RELATIONSHIP OPEN')"))
+                wait_for_text("Overall plan not approved")
+                assert_dark_mode()
+                assert_palette_contrast()
+                assert_readable_size()
+                assert_clear_labels()
+                capture_page("dependencies")
+                self.assertGreater(evaluate("document.querySelectorAll('svg [fill=\"#e6f4ea\"]').length"), 0)
+                self.assertEqual(evaluate("document.querySelectorAll('svg [fill=\"#fff4ce\"]').length"), 0)
+                self.assertFalse(evaluate("document.body.innerText.includes('PREPARATION READY')"))
                 self.assertGreater(evaluate("document.querySelectorAll('svg foreignObject, svg text').length"), 15)
                 self.assertFalse(evaluate("!!document.querySelector('[contenteditable=true], textarea')"))
+                evaluate("document.querySelector('main').scrollTo(600, 900)")
+                self.assertTrue(evaluate("""(() => {
+                    const button = document.querySelector('[title="Next Page"]').getBoundingClientRect();
+                    const main = document.querySelector('main').getBoundingClientRect();
+                    return button.left >= main.left && button.top >= main.top &&
+                        button.right <= main.right && button.bottom <= main.bottom;
+                })()"""), "Page controls must stay visible while scrolling")
                 evaluate("document.querySelector('[title=\"Next Page\"]').click()")
                 wait_for_text("Proposed weekly targets")
+                wait_for_text("Fine-tune the mask/prominence model")
+                wait_for_text("Build launch hierarchy snapshot")
+                wait_for_text("Prepare runnable code")
+                wait_for_text("04 · Mask prominence: mask prompt finished; resumption not confirmed")
+                wait_for_text("100-note hierarchy generation underway; review pending")
+                wait_for_text("Parallel track · protocol, service and Notedeck")
+                wait_for_text("Notedeck can start with 13")
+                wait_for_text("22: measure SSE, category titles and TRUE")
+                assert_dark_mode()
+                assert_palette_contrast()
+                assert_readable_size()
+                assert_clear_labels()
+                capture_page("weekly-targets")
+                self.assertEqual(evaluate("document.querySelector('main').scrollTop"), 0)
+                self.assertEqual(evaluate("document.querySelector('main').scrollLeft"), 0)
+                evaluate("document.querySelector('[title=\"Zoom Out\"]').click()")
+                self.assertLess(evaluate("document.querySelector('svg foreignObject').getScreenCTM().a"), 1)
+                evaluate("document.querySelector('[title=\"Zoom In\"]').click()")
+                assert_readable_size()
+                evaluate("document.querySelector('[title=\"Zoom Out\"]').click()")
+                evaluate("document.querySelector('[title=\"Reset zoom\"]').click()")
+                assert_readable_size()
+                # A laptop-size window must not trigger whole-map shrink-to-fit.
+                call("browsingContext.setViewport", {
+                    "context": context, "viewport": {"width": 1280, "height": 800},
+                    "devicePixelRatio": 1,
+                })
                 evaluate("document.querySelector('[title=\"Previous Page\"]').click()")
                 wait_for_text("TRUE compares descriptions")
+                assert_readable_size()
                 external = evaluate("JSON.stringify(performance.getEntriesByType('resource').map(r=>r.name).filter(u=>!u.startsWith(location.origin+'/')&&!u.startsWith('data:')))")
                 self.assertEqual(json.loads(external), [], "Viewer fetched a resource outside its own host")
 

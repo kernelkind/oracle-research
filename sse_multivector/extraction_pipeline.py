@@ -4,6 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import difflib
+import importlib.util
+import fcntl
 import hashlib
 import json
 import os
@@ -13,8 +16,12 @@ import stat
 import subprocess
 import sys
 import tempfile
+import threading
 import time
-from dataclasses import dataclass
+from concurrent.futures import ThreadPoolExecutor
+from contextlib import contextmanager
+from dataclasses import dataclass, replace
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -24,6 +31,7 @@ PIPELINE_SCHEMA_VERSION = 2
 REUSE_PIPELINE_SCHEMA_VERSION = 3
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_RUNNER = Path(__file__).with_name("run-model.sh")
+RESULTS_WRITE_LOCK = threading.Lock()
 RUNTIME_FIELDS = {"provider", "timeout_seconds", "max_output_tokens"}
 TAKEAWAY_ENVELOPE_VERSION = "xml-post-v1"
 TAKEAWAY_INPUT_NORMALIZATION_VERSION = "remove-long-ascii-nip19-identifiers-v2"
@@ -346,7 +354,7 @@ def _atomic_write(path: Path, payload: bytes) -> None:
 
 def _append_json_line(path: Path, value: object) -> None:
     payload = _canonical_json_bytes(value)
-    with path.open("ab") as destination:
+    with RESULTS_WRITE_LOCK, path.open("ab") as destination:
         destination.write(payload)
         destination.flush()
         os.fsync(destination.fileno())
@@ -669,6 +677,7 @@ class PromptRunnerConfig:
     reasoning_effort: str
     prompts: tuple[PromptJob, ...]
     output_schema: dict[str, object] | None = None
+    concurrency: int = 16
 
     @classmethod
     def load(cls, path: Path) -> "PromptRunnerConfig":
@@ -687,10 +696,13 @@ class PromptRunnerConfig:
                 "reasoning_effort",
                 "prompts",
             }
-            | (({"output_schema"} | RUNTIME_FIELDS) & value.keys()),
+            | (({"output_schema", "concurrency"} | RUNTIME_FIELDS) & value.keys()),
         )
         if value["schema_version"] != SCHEMA_VERSION:
             raise RunnerError("unsupported config schema version")
+        concurrency = value.get("concurrency", cls.concurrency)
+        if type(concurrency) is not int or concurrency < 1:
+            raise RunnerError("concurrency must be a positive integer")
         output_schema = None
         if "output_schema" in value:
             output_schema = _expect_object(
@@ -730,6 +742,7 @@ class PromptRunnerConfig:
             ),
             prompts=tuple(prompts),
             output_schema=output_schema,
+            concurrency=concurrency,
         )
         return config
 
@@ -873,6 +886,7 @@ def _build_prompt_manifest(
         "auth_file": None if config.auth_file is None else str(config.auth_file),
         "model": config.model,
         "reasoning_effort": config.reasoning_effort,
+        "concurrency": config.concurrency,
         "prompts": [
             {"prompt_id": prompt.prompt_id, "text": prompt.text}
             for prompt in config.prompts
@@ -1943,6 +1957,13 @@ def validate_prompt_receipt(
     if len(config.prompts) != 1:
         raise RunnerError("receipt verification requires a single configured prompt")
     prompt = config.prompts[0]
+    if record.get("execution") == "cross_run_reuse":
+        key = _prompt_request_key(manifest, prompt.text)
+        source = _read_request_source(record.get("reused_from"), key)
+        expected = _reused_prompt_record(config, manifest, prompt, record["reused_from"], source)
+        if not _same_json(record, expected):
+            raise RunnerError("saved reused response differs from its source receipt")
+        return
     validate_model_receipt(
         config, config, prompt.text, config.output_schema, manifest, record
     )
@@ -1959,6 +1980,174 @@ def validate_prompt_receipt(
         or record.get("response") != record.get("final_output_raw")
     ):
         raise RunnerError("saved receipt differs from expected prompt response")
+
+
+def _prompt_request_key(manifest: dict[str, Any], prompt: str) -> str:
+    """Content identity, independent of run paths, job IDs and prompt version labels."""
+    request = {name: manifest[name] for name in (
+        "provider", "model", "reasoning_effort", "runner_version", "runner_sha256",
+    )}
+    request.update(prompt=prompt,
+                   timeout_seconds=float(manifest["timeout_seconds"]),
+                   max_output_tokens=manifest.get("max_output_tokens"),
+                   response_schema_sha256=manifest.get("response_schema_sha256"))
+    return _sha256_bytes(_canonical_json_bytes(request))
+
+
+def _request_history_options(
+    config: PromptRunnerConfig, manifest: dict[str, Any], *,
+    repeat: bool, history_root: Path | None,
+) -> None:
+    saved = config.run_directory / "manifest.json"
+    if saved.exists() and not repeat and history_root is None:
+        previous = _load_json(saved, "run manifest").get("request_reuse")
+        if previous is not None:
+            manifest["request_reuse"] = previous
+            return
+    root = config.config_path.parent
+    if history_root is not None:
+        root = history_root.expanduser().resolve()
+    else:
+        root = next((p for p in (root, *root.parents) if (p / ".git").exists()), root)
+    if not root.is_dir():
+        raise RunnerError(f"request history root is not a directory: {root}")
+    manifest["request_reuse"] = {"history_root": str(root), "intentional_repeat": repeat}
+
+
+def _read_request_source(reference: object, request_key: str) -> dict[str, Any]:
+    """Read and verify the original native receipt; never trust just a cached answer."""
+    try:
+        reference = _expect_object(reference, "request history reference")
+        path = Path(reference["results_path"])
+        manifest = _load_json(path.parent / "manifest.json", "source manifest")
+        with path.open("rb") as source:
+            line = next(line for number, line in enumerate(source, 1)
+                        if number == reference["result_line"])
+        if _sha256_bytes(line) != reference["result_sha256"]:
+            raise RunnerError("request history source receipt hash differs")
+        record = json.loads(line)
+        if record.get("execution") is not None:
+            raise RunnerError("request history source must be an original model call")
+        # stdout retains the actual schema property order, unlike the sorted manifest.
+        result = json.loads(record["stdout_json"])
+        body = result["request"]["body"]
+        schema = ((body.get("text") or {}).get("format", {}).get("schema")
+                  if manifest["provider"] == "openai-codex" else
+                  (body.get("response_format") or {}).get("json_schema", {}).get("schema"))
+        prompt = next(p for p in manifest["prompts"] if p["prompt_id"] == record["note_id"])
+        config = PromptRunnerConfig(
+            config_path=Path(manifest["config_path"]),
+            runner_binary=Path(manifest["runner_binary"]),
+            auth_file=Path(manifest["auth_file"]) if manifest["auth_file"] else None,
+            provider=manifest["provider"], timeout_seconds=manifest["timeout_seconds"],
+            max_output_tokens=manifest.get("max_output_tokens"), run_directory=path.parent,
+            model=manifest["model"], reasoning_effort=manifest["reasoning_effort"],
+            prompts=(PromptJob(prompt["prompt_id"], prompt["text"]),), output_schema=schema,
+        )
+        if (record["manifest_sha256"] != reference["manifest_sha256"]
+                or _prompt_request_key(manifest, prompt["text"]) != request_key
+                or record.get("request_sha256", request_key) != request_key
+                or manifest.get("response_schema_sha256") != record.get("response_schema_sha256")):
+            raise RunnerError("request history source settings differ")
+        validate_prompt_receipt(config, manifest, record)
+        return record
+    except (OSError, ValueError, KeyError, TypeError, AttributeError, StopIteration, RunnerError) as error:
+        raise RunnerError(f"cannot verify request history source: {error}") from error
+
+
+def _reused_prompt_record(
+    config: PromptRunnerConfig, manifest: dict[str, Any], prompt: PromptJob,
+    reference: dict[str, Any], source: dict[str, Any],
+) -> dict[str, Any]:
+    raw = source["final_output_raw"]
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "manifest_sha256": _sha256_file(config.run_directory / "manifest.json"),
+        "wrapper_sha256": manifest["wrapper_sha256"],
+        "job_key": "prompt:" + prompt.prompt_id, "stage": "prompt",
+        "note_id": prompt.prompt_id, "takeaway_index": None, "attempt": 1,
+        "status": "succeeded", "execution": "cross_run_reuse",
+        "request_sha256": _prompt_request_key(manifest, prompt.text),
+        "prompt_sha256": _sha256_bytes(prompt.text.encode("utf-8")),
+        "response_schema_sha256": manifest.get("response_schema_sha256"),
+        "provider": config.provider, "model": config.model,
+        "reasoning_effort": config.reasoning_effort,
+        "response": raw, "final_output_raw": raw,
+        "final_output_sha256": _sha256_bytes(raw.encode("utf-8")),
+        "usage": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
+        "http_attempts": 0, "error": None, "reused_from": reference,
+    }
+
+
+class RequestHistory:
+    """Index saved prompt receipts once per batch; serialize only identical requests."""
+
+    def __init__(self, root: Path, *, exclude_run: Path | None = None):
+        self.directory = root / ".model-request-history"
+        self.sources: dict[str, list[dict[str, Any]]] = {}
+        ignored = {".git", "node_modules", "target", ".direnv", ".venv", "__pycache__",
+                   self.directory.name}
+        for directory, children, files in os.walk(root):
+            children[:] = sorted(c for c in children if c not in ignored)
+            if Path(directory) == exclude_run:
+                continue
+            if "manifest.json" not in files or "results.jsonl" not in files:
+                continue
+            path = Path(directory) / "results.jsonl"
+            try:
+                manifest = _load_json(path.parent / "manifest.json", "source manifest")
+                if manifest.get("mode") not in {"prompt", "mask_generation"}:
+                    continue
+                prompts = {p["prompt_id"]: p["text"] for p in manifest["prompts"]}
+                latest = {}
+                with path.open("rb") as source:
+                    for number, line in enumerate(source, 1):
+                        # Another run may still be appending its last record.
+                        if not line.endswith(b"\n"):
+                            continue
+                        record = json.loads(line)
+                        latest[record["job_key"]] = (number, line, record)
+                for number, line, record in latest.values():
+                    if (record.get("status") != "succeeded" or record.get("execution") is not None
+                            or record.get("stage") != "prompt" or not record.get("model_result")):
+                        continue
+                    key = _prompt_request_key(manifest, prompts[record["note_id"]])
+                    self.sources.setdefault(key, []).append({
+                        "results_path": str(path.resolve()), "result_line": number,
+                        "result_sha256": _sha256_bytes(line),
+                        "manifest_sha256": record["manifest_sha256"],
+                    })
+            except (OSError, ValueError, KeyError, TypeError, AttributeError, RunnerError):
+                # Unrelated legacy or incomplete runs are not reusable evidence.
+                continue
+
+    @contextmanager
+    def lock(self, key: str):
+        self.directory.mkdir(parents=True, exist_ok=True)
+        with (self.directory / (key + ".lock")).open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            yield
+
+    def matches(self, key: str):
+        path = self.directory / (key + ".json")
+        references = ([_load_json(path, "request history reference")] if path.exists() else [])
+        references += self.sources.get(key, [])
+        seen = set()
+        for reference in references:
+            identity = _canonical_json_bytes(reference)
+            if identity not in seen:
+                seen.add(identity)
+                yield reference, _read_request_source(reference, key)
+
+    def remember(self, key: str, path: Path, record: dict[str, Any]) -> None:
+        with RESULTS_WRITE_LOCK:
+            lines = path.read_bytes().splitlines(keepends=True)
+        expected = _canonical_json_bytes(record)
+        number = next(i for i, line in enumerate(lines, 1) if line == expected)
+        reference = {"results_path": str(path.resolve()), "result_line": number,
+                     "result_sha256": _sha256_bytes(expected),
+                     "manifest_sha256": record["manifest_sha256"]}
+        _atomic_write(self.directory / (key + ".json"), _canonical_json_bytes(reference))
 
 
 def _run_job(
@@ -2151,6 +2340,10 @@ def _run_job(
     }
     if stage_name != "subject":
         record["takeaway_index"] = takeaway_index
+    if stage_name == "prompt":
+        record["request_sha256"] = _prompt_request_key(
+            _load_json(config.run_directory / "manifest.json", "run manifest"), prompt
+        )
     if retry_reason is not None:
         record["retry_reason"] = retry_reason
     _append_json_line(results_path, record)
@@ -2697,11 +2890,119 @@ def run_subjects(
     )
 
 
-def run_prompts(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
+def revise_prompt(base_path: Path, destination: Path, request: object) -> str:
+    """Create an offline, no-clobber revision from exact edits against a pinned base."""
+    request = _expect_object(request, "revision")
+    _expect_fields(request, "revision", {"base_sha256", "edits"})
+    expected_hash = _expect_sha256(request["base_sha256"], "revision.base_sha256")
+    edits = request["edits"]
+    if not isinstance(edits, list) or not edits:
+        raise RunnerError("revision.edits must be a nonempty array")
+    base_path = base_path.expanduser().resolve()
+    destination = destination.expanduser().absolute()
+    receipt_path = destination.with_name(destination.name + ".revision.json")
+    try:
+        original = base_path.read_bytes()
+        original_text = original.decode("utf-8")
+    except (OSError, UnicodeError) as error:
+        raise RunnerError(f"could not read baseline prompt: {error}") from error
+    if _sha256_bytes(original) != expected_hash:
+        raise RunnerError("baseline SHA-256 does not match revision.base_sha256")
+    for path in (destination, receipt_path):
+        if os.path.lexists(path):
+            raise RunnerError(f"revision destination already exists: {path}")
+
+    replacements = []
+    for index, raw_edit in enumerate(edits):
+        name = f"revision.edits[{index}]"
+        edit = _expect_object(raw_edit, name)
+        _expect_fields(edit, name, {"old", "new"})
+        old = _expect_string(edit["old"], f"{name}.old")
+        new = edit["new"]
+        if not isinstance(new, str) or "\x00" in new:
+            raise RunnerError(f"{name}.new must be a string without NUL bytes")
+        try:
+            old_bytes, new_bytes = old.encode("utf-8"), new.encode("utf-8")
+        except UnicodeError as error:
+            raise RunnerError(f"{name} must contain valid UTF-8 text") from error
+        start = original.find(old_bytes)
+        if start < 0 or original.find(old_bytes, start + 1) >= 0:
+            raise RunnerError(f"{name}.old must match the original prompt exactly once")
+        if old_bytes == new_bytes:
+            raise RunnerError(f"{name} leaves the prompt unchanged")
+        replacements.append((start, start + len(old_bytes), new_bytes))
+    parts, cursor = [], 0
+    for start, end, replacement in sorted(replacements):
+        if start < cursor:
+            raise RunnerError("revision edits overlap in the original prompt")
+        parts.extend((original[cursor:start], replacement))
+        cursor = end
+    parts.append(original[cursor:])
+    revised = b"".join(parts)
+    if revised == original:
+        raise RunnerError("revision leaves the prompt unchanged")
+
+    receipt = {
+        "schema_version": 1,
+        "base_path": str(base_path),
+        "base_sha256": expected_hash,
+        "prompt_sha256": _sha256_bytes(revised),
+        "edits": edits,
+    }
+    diff_lines = difflib.unified_diff(
+        original_text.splitlines(keepends=True),
+        revised.decode("utf-8").splitlines(keepends=True),
+        fromfile=str(base_path), tofile=str(destination),
+    )
+    diff = "".join(
+        line if line.endswith("\n") else line + "\n\\ No newline at end of file\n"
+        for line in diff_lines
+    )
+    try:
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix=".prompt-revision-", dir=destination.parent) as temporary:
+            staged_receipt = Path(temporary) / "receipt"
+            staged_prompt = Path(temporary) / "prompt"
+            _atomic_write(staged_receipt, _canonical_json_bytes(receipt))
+            _atomic_write(staged_prompt, revised)
+            published = []
+            try:
+                # Publish complete files without replacing existing paths. The receipt
+                # claims this destination first; the prompt becomes visible last.
+                for source, target in ((staged_receipt, receipt_path), (staged_prompt, destination)):
+                    os.link(source, target)
+                    published.append((source, target))
+            except OSError:
+                for source, target in reversed(published):
+                    try:
+                        if os.path.samestat(source.stat(), target.lstat()):
+                            target.unlink()
+                    except FileNotFoundError:
+                        pass
+                raise
+    except OSError as error:
+        raise RunnerError(f"could not create prompt revision without overwriting: {error}") from error
+    return diff
+
+
+def run_prompts(
+    config_path: Path, *, retry_failed: bool, repeat: bool = False,
+    history_root: Path | None = None,
+) -> dict[str, object]:
     config = PromptRunnerConfig.load(config_path)
     _validate_auth_file(config.auth_file)
     runner_version = _runner_version(config)
     manifest = _build_prompt_manifest(config, runner_version)
+    _request_history_options(config, manifest, repeat=repeat, history_root=history_root)
+    return _execute_prompt_batch(config, manifest, retry_failed=retry_failed,
+                                 concurrency=config.concurrency)
+
+
+def _execute_prompt_batch(
+    config: PromptRunnerConfig, manifest: dict[str, Any], *,
+    retry_failed: bool, concurrency: int = 1,
+) -> dict[str, object]:
+    runner_version = manifest["runner_version"]
     prepared_manifest = _prepare_manifest_directory(config.run_directory, manifest)
     manifest_sha256 = prepared_manifest.manifest_sha256
     schema_path = None
@@ -2715,10 +3016,26 @@ def run_prompts(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
         prepared_manifest.provenance,
     )
     (config.run_directory / "output.json").unlink(missing_ok=True)
-    responses: list[dict[str, str]] = []
+    options = manifest["request_reuse"]
+    history = RequestHistory(Path(options["history_root"]), exclude_run=config.run_directory)
+    mask_notes = {item["item_id"]: item["note"] for item in manifest.get("items", [])}
 
-    for prompt in config.prompts:
-        response = _run_job(
+    def remember(key: str, prompt: PromptJob) -> None:
+        record = latest["prompt:" + prompt.prompt_id]
+        if prompt.prompt_id in mask_notes:
+            try:
+                _map_mask_fragments(record["final_output_raw"], mask_notes[prompt.prompt_id], manifest.get("mask_format", "fragments"))
+            except (RunnerError, ValueError):
+                return
+        history.remember(key, results_path, record)
+
+    def execute(prompt: PromptJob) -> dict[str, str]:
+        job_key = "prompt:" + prompt.prompt_id
+        previous = latest.get(job_key)
+        if previous is not None and previous.get("execution") == "cross_run_reuse":
+            validate_prompt_receipt(replace(config, prompts=(prompt,)), manifest, previous)
+            return {"prompt_id": prompt.prompt_id, "response": previous["response"]}
+        arguments = dict(
             config=config,
             manifest_sha256=manifest_sha256,
             runner_version=runner_version,
@@ -2733,9 +3050,47 @@ def run_prompts(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
             retry_failed=retry_failed,
             execution_wrapper_sha256=prepared_manifest.provenance.active_wrapper_sha256,
         )
+        if previous is not None:
+            response = _run_job(**arguments)
+        else:
+            key = _prompt_request_key(manifest, prompt.text)
+            if options["intentional_repeat"]:
+                response = _run_job(**arguments)
+                with history.lock(key):
+                    remember(key, prompt)
+            else:
+                with history.lock(key):
+                    reusable = None
+                    for reference, source in history.matches(key):
+                        if prompt.prompt_id in mask_notes:
+                            try:
+                                _map_mask_fragments(source["final_output_raw"], mask_notes[prompt.prompt_id], manifest.get("mask_format", "fragments"))
+                            except (RunnerError, ValueError):
+                                continue
+                        reusable = reference, source
+                        break
+                    if reusable is None:
+                        response = _run_job(**arguments)
+                        remember(key, prompt)
+                    else:
+                        reference, source = reusable
+                        record = _reused_prompt_record(config, manifest, prompt, reference, source)
+                        _append_json_line(results_path, record)
+                        latest[job_key] = record
+                        response = record["response"]
         if not isinstance(response, str):
             raise AssertionError("successful prompt job returned structured output")
-        responses.append({"prompt_id": prompt.prompt_id, "response": response})
+        return {"prompt_id": prompt.prompt_id, "response": response}
+
+    responses: list[dict[str, str]] = []
+    # Bound both active work and queued work. A failure stops subsequent waves;
+    # already-running calls finish and retain their receipts for resume.
+    if concurrency == 1:
+        responses = [execute(prompt) for prompt in config.prompts]
+    else:
+        with ThreadPoolExecutor(max_workers=concurrency) as pool:
+            for start in range(0, len(config.prompts), concurrency):
+                responses.extend(pool.map(execute, config.prompts[start:start + concurrency]))
 
     output: dict[str, object] = {
         "schema_version": SCHEMA_VERSION,
@@ -2744,6 +3099,257 @@ def run_prompts(config_path: Path, *, retry_failed: bool) -> dict[str, object]:
     }
     _atomic_write(config.run_directory / "output.json", _canonical_json_bytes(output))
     return output
+
+
+def _load_mask_batch(
+    config_path: Path,
+) -> tuple[PromptRunnerConfig, dict[str, Any], dict[str, Any]]:
+    path = config_path.expanduser().resolve()
+    value = _expect_object(_load_json(path, "config"), "config")
+    _expect_fields(value, "config", {
+        "schema_version", "runner_binary", "auth_file", "input_path",
+        "prompt_path", "run_directory", "model", "reasoning_effort",
+    } | ((RUNTIME_FIELDS | {"concurrency", "note_ids", "mask_format", "output_schema"}) & value.keys()))
+    if type(value["schema_version"]) is not int or value["schema_version"] != 1:
+        raise RunnerError("unsupported mask batch schema version")
+    concurrency = value.get("concurrency", 1)
+    if type(concurrency) is not int or not 1 <= concurrency <= 12:
+        raise RunnerError("concurrency must be an integer from 1 to 12")
+    source_path = _resolve_path(value["input_path"], "input_path", path.parent)
+    template_path = _resolve_path(value["prompt_path"], "prompt_path", path.parent)
+    try:
+        template = template_path.read_bytes().decode("utf-8")
+    except (OSError, UnicodeError) as error:
+        raise RunnerError(f"could not read mask prompt: {error}") from error
+    if any(template.count(p) != 1 for p in ("{POST}", "{SUBJECT}")):
+        raise RunnerError("mask prompt must contain {POST} and {SUBJECT} exactly once")
+    mask_format = value.get("mask_format", "fragments")
+    if mask_format not in ("fragments", "word_positions"):
+        raise RunnerError("mask_format must be fragments or word_positions")
+    if mask_format == "word_positions" and template.count("{INDEXED_POST}") != 1:
+        raise RunnerError("word_positions requires {INDEXED_POST} exactly once")
+    output_schema = value.get("output_schema")
+    if output_schema is not None and (not isinstance(output_schema, dict) or output_schema.get("type") != "object"):
+        raise RunnerError("output_schema must describe an object")
+    source = _expect_object(_load_json(source_path, "input_path"), "input")
+    notes = source.get("notes")
+    if (type(source.get("schema_version")) is not int or source["schema_version"] != 1
+            or not isinstance(notes, list) or not notes):
+        raise RunnerError("input must contain schema_version 1 and nonempty notes")
+    selected = None
+    if "note_ids" in value:
+        ids = _validate_string_array(value["note_ids"], "note_ids", allow_empty=False)
+        selected = set(ids)
+        if len(selected) != len(ids):
+            raise RunnerError("duplicate note_ids")
+    seen = set()
+    items, prompts = [], []
+    for index, raw in enumerate(notes):
+        note = _expect_object(raw, f"notes[{index}]")
+        note_id = _expect_string(note.get("note_id"), "note_id")
+        if note_id in seen:
+            raise RunnerError(f"duplicate note_id `{note_id}`")
+        seen.add(note_id)
+        if selected is not None and note_id not in selected:
+            continue
+        text = _expect_string(note.get("text"), "note text")
+        subjects = note.get("subjects")
+        if not isinstance(subjects, list):
+            raise RunnerError("each selected note must have a subjects array")
+        for raw_subject in subjects:
+            subject = raw_subject
+            if isinstance(subject, dict):
+                if "subject" in subject and "text" in subject:
+                    raise RunnerError("subject entry must use subject or text, not both")
+                subject = subject.get("subject", subject.get("text"))
+            subject = _expect_string(subject, "subject")
+            if not subject.strip():
+                raise RunnerError("subject must not be blank")
+            item_id = f"M{len(items) + 1:03}"
+            items.append({"item_id": item_id, "note_id": note_id,
+                          "note": text, "subject": subject})
+            # Substitute in the template only, never in text inserted from a note.
+            values = {"POST": text, "SUBJECT": subject}
+            if mask_format == "word_positions":
+                values["INDEXED_POST"] = _position_decoder().index_post(text)
+            prompt = re.sub(r"\{(" + "|".join(values) + r")\}", lambda m: values[m[1]], template)
+            prompts.append(PromptJob(item_id, prompt))
+    if selected is not None and selected - seen:
+        raise RunnerError(f"unknown note_ids: {sorted(selected - seen)}")
+    if not items:
+        raise RunnerError("selected notes have no subjects")
+    config = PromptRunnerConfig(
+        config_path=path,
+        runner_binary=_resolve_executable(value["runner_binary"], "runner_binary", path.parent),
+        **_runtime_options(value, path.parent),
+        run_directory=_resolve_path(value["run_directory"], "run_directory", path.parent),
+        model=_expect_identifier(value["model"], "model"),
+        reasoning_effort=_expect_identifier(value["reasoning_effort"], "reasoning_effort"),
+        prompts=tuple(prompts),
+        output_schema=output_schema,
+    )
+    metadata = {"input_path": str(source_path), "input_sha256": _sha256_file(source_path),
+                "prompt_path": str(template_path), "prompt_sha256": _sha256_file(template_path),
+                "concurrency": concurrency, "items": items}
+    if mask_format != "fragments":
+        metadata["mask_format"] = mask_format
+        metadata["position_decoder_sha256"] = _sha256_file(Path(__file__).with_name("mask_positions.py"))
+    return config, metadata, source
+
+
+@lru_cache(maxsize=1)
+def _position_decoder():
+    # Also works when extraction_pipeline is loaded by file path outside a package.
+    path = Path(__file__).with_name("mask_positions.py")
+    spec = importlib.util.spec_from_file_location("mask_positions", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _map_mask_fragments(raw: str, note: str, mask_format: str = "fragments") -> tuple[list[str], list[dict[str, Any]], bool]:
+    if mask_format == "word_positions":
+        _, ranges = _position_decoder().decode(raw, note)
+        fragments, mapped = [], []
+        for span in ranges:
+            fragment = note[span["start"]:span["end"]]
+            if URL_SCHEME_PATTERN.search(fragment) or NIP19_IDENTIFIER.search(fragment):
+                raise RunnerError("mask contains a prohibited URL or Nostr identifier")
+            positions = [m.start() for m in re.finditer(re.escape(fragment), note)]
+            if span["start"] not in positions:
+                raise RunnerError("selected range is not representable in the review format")
+            fragments.append(fragment)
+            mapped.append({"text": fragment, "occurrence": positions.index(span["start"]) + 1})
+        return fragments, mapped, False
+    fragments = _validate_string_array(json.loads(raw), "mask", allow_empty=False)
+    mapped, choices, cursor = [], [], 0
+    for fragment in fragments:
+        if URL_SCHEME_PATTERN.search(fragment) or NIP19_IDENTIFIER.search(fragment):
+            raise RunnerError("mask contains a prohibited URL or Nostr identifier")
+        # Match non-overlapping occurrences, like the Rust review tool.
+        positions = [m.start() for m in re.finditer(re.escape(fragment), note)]
+        available = [(i + 1, pos) for i, pos in enumerate(positions) if pos >= cursor]
+        if not available:
+            raise RunnerError(f"fragment is absent or out of source order: {fragment!r}")
+        occurrence, position = available[0]
+        mapped.append({"text": fragment, "occurrence": occurrence})
+        choices.append(positions)
+        cursor = position + len(fragment)
+    # Count valid ordered placements, capped at two: only ambiguity matters.
+    counts = {0: 1}
+    for fragment, positions in zip(fragments, choices):
+        counts = {pos + len(fragment): min(2, sum(n for end, n in counts.items() if end <= pos))
+                  for pos in positions}
+    return fragments, mapped, sum(counts.values()) > 1
+
+
+def _collect_mask_review(
+    config: PromptRunnerConfig, manifest: dict[str, Any],
+    prepared: PreparedManifest, items: list[dict[str, Any]],
+) -> dict[str, Any]:
+    latest = _load_latest_results(config.run_directory / "results.jsonl",
+                                  prepared.manifest_sha256, prepared.provenance)
+    review, checks = [], []
+    for item, prompt in zip(items, config.prompts):
+        check = {"item_id": item["item_id"], "status": "invalid"}
+        record = latest.get("prompt:" + prompt.prompt_id)
+        try:
+            if record is None:
+                raise RunnerError("not run")
+            if record["status"] == "failed":
+                raise RunnerError(f"model call failed: {record.get('error')}")
+            validate_prompt_receipt(replace(config, prompts=(prompt,)), manifest, record)
+            mask_format = manifest.get("mask_format", "fragments")
+            fragments, mapped, ambiguous = _map_mask_fragments(record["final_output_raw"], item["note"], mask_format)
+            check.update(status="valid", ambiguous_occurrences=ambiguous,
+                         fragments=mapped, raw_fragments=fragments)
+            if mask_format == "word_positions":
+                diagnostics, ranges = _position_decoder().decode(record["final_output_raw"], item["note"])
+                check.update(ranges=ranges, diagnostics={k: v for k, v in diagnostics.items() if k != "mask"})
+                if fragments:
+                    review.append({**item, "fragments": mapped, "details": "Exact generated positions; not semantically approved."})
+            else:
+                review.append({**item, "fragments": mapped, "details":
+                "Generated mask; not semantically approved. Occurrences use the first placement "
+                "compatible with source order; the model returned no positions."})
+        except (RunnerError, ValueError) as error:
+            check["error"] = str(error)
+        checks.append(check)
+    ledger = config.run_directory / "results.jsonl"
+    records = [json.loads(line) for line in ledger.read_text().splitlines()] if ledger.exists() else []
+    usage = {"input_tokens": 0, "cached_input_tokens": 0, "cache_write_tokens": 0,
+             "output_tokens": 0, "reasoning_tokens": 0, "attempts_without_usage": 0}
+    for record in records:
+        receipt = record.get("usage")
+        if not isinstance(receipt, dict):
+            usage["attempts_without_usage"] += 1
+            continue
+        for field, sdk_name, fallback in (
+            ("input_tokens", "input", "input_tokens"),
+            ("cached_input_tokens", "cacheRead", "cached_input_tokens"),
+            ("cache_write_tokens", "cacheWrite", "cache_write_tokens"),
+            ("output_tokens", "output", "output_tokens"),
+            ("reasoning_tokens", "reasoning", "reasoning_output_tokens"),
+        ):
+            usage[field] += receipt.get(sdk_name, receipt.get(fallback, 0)) or 0
+    valid = sum(c["status"] == "valid" for c in checks)
+    summary = {"schema_version": 1, "items": len(items), "valid": valid,
+               "empty": sum(c["status"] == "valid" and not c["raw_fragments"] for c in checks),
+               "invalid": len(items) - valid,
+               "saved_attempts": sum(r.get("execution") != "cross_run_reuse" for r in records),
+               "reused_results": sum(r.get("execution") == "cross_run_reuse" for r in records),
+               "usage": usage,
+               "ambiguous_occurrences": sum(c.get("ambiguous_occurrences", False) for c in checks),
+               "checks": checks}
+    _atomic_write(config.run_directory / "validation.json", _canonical_json_bytes(summary))
+    review_path = config.run_directory / "review.json"
+    if review:
+        _atomic_write(review_path, _canonical_json_bytes({"schema_version": 1,
+            "batch_id": "masks-" + prepared.manifest_sha256[:16], "items": review}))
+    else:
+        review_path.unlink(missing_ok=True)
+    return {k: v for k, v in summary.items() if k not in {"checks", "schema_version"}}
+
+
+def run_masks(
+    config_path: Path, *, retry_failed: bool = False,
+    prepare_only: bool = False, collect_only: bool = False,
+    repeat: bool = False, history_root: Path | None = None,
+) -> dict[str, Any]:
+    config, metadata, source = _load_mask_batch(config_path)
+    if collect_only and not (config.run_directory / "manifest.json").is_file():
+        raise RunnerError("no saved mask run to collect")
+    config.run_directory.parent.mkdir(parents=True, exist_ok=True)
+    # Prevent two invocations from spending on the same unfinished items.
+    lock_path = config.run_directory.with_name("." + config.run_directory.name + ".lock")
+    with lock_path.open("a") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise RunnerError("mask run is already active") from error
+        manifest = {**_build_prompt_manifest(config, _runner_version(config)),
+                    "mode": "mask_generation", **metadata}
+        _request_history_options(config, manifest, repeat=repeat, history_root=history_root)
+        prepared = _prepare_manifest_directory(config.run_directory, manifest)
+        _atomic_write(config.run_directory / "input.json", _canonical_json_bytes(source))
+        if prepare_only:
+            return {"prepared": len(config.prompts), "model_calls": 0}
+        error = None
+        ledger = config.run_directory / "results.jsonl"
+        previous_attempts = sum(json.loads(line).get("execution") != "cross_run_reuse"
+                                for line in ledger.read_text().splitlines()) if ledger.exists() else 0
+        if not collect_only:
+            _validate_auth_file(config.auth_file)
+            try:
+                _execute_prompt_batch(config, manifest, retry_failed=retry_failed,
+                                      concurrency=metadata["concurrency"])
+            except RunnerError as caught:
+                error = caught
+        summary = _collect_mask_review(config, manifest, prepared, metadata["items"])
+        summary["new_attempts"] = summary["saved_attempts"] - previous_attempts
+        if error is not None:
+            raise RunnerError(f"{error}; partial results saved in validation.json") from error
+        return summary
 
 
 def run_direct_prompt(
@@ -2830,6 +3436,32 @@ def _argument_parser() -> argparse.ArgumentParser:
         description="Run extraction workflows and audited batches through the model runner"
     )
     subcommands = parser.add_subparsers(dest="command", required=True)
+    revision_parser = subcommands.add_parser(
+        "revise-prompt", help="create a prompt version from exact edits; no model calls",
+        description=(
+            "Create a new prompt file and its .revision.json receipt without overwriting. "
+            "The original stays unchanged. Only the diff is printed to stdout; "
+            "no credentials or model calls are used."
+        ),
+        epilog=(
+            'Edits JSON: {"base_sha256":"<sha256sum of baseline>",'
+            '"edits":[{"old":"exact existing text","new":"replacement text"}]}\n'
+            'Every "old" must match exactly once in the original baseline; edits must not overlap.\n'
+            'All matches use the original, not earlier replacements. Use "new":"" to delete text.\n'
+            'Unchanged bytes, including line endings, are preserved.\n'
+            'Example: extraction_pipeline.py revise-prompt v1.md v2.md --edits changes.json'
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    revision_parser.add_argument("base", type=Path, help="existing UTF-8 prompt file")
+    revision_parser.add_argument("destination", type=Path, help="new prompt file; must not exist")
+    revision_parser.add_argument("--edits", required=True, help="edits JSON file, or - to read stdin")
+    masks_parser = subcommands.add_parser("masks", help="generate masks for saved subjects and prepare review")
+    masks_parser.add_argument("config", type=Path)
+    masks_parser.add_argument("--retry-failed", action="store_true")
+    mask_mode = masks_parser.add_mutually_exclusive_group()
+    mask_mode.add_argument("--prepare-only", action="store_true", help="save exact inputs without model calls")
+    mask_mode.add_argument("--collect-only", action="store_true", help="validate saved outputs and rebuild review without calls")
     run_parser = subcommands.add_parser("run", help="run or resume a batch")
     run_parser.add_argument("config", type=Path)
     run_parser.add_argument(
@@ -2898,18 +3530,49 @@ def _argument_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="explicitly retry failed jobs in config-based batch mode",
     )
+    for batch_parser in (prompt_parser, masks_parser):
+        batch_parser.add_argument(
+            "--repeat", action="store_true",
+            help="intentionally make fresh calls in a new run instead of reusing identical requests",
+        )
+        batch_parser.add_argument(
+            "--history-root", type=Path,
+            help="search saved runs under this directory (default: config's repository, or config directory)",
+        )
     return parser
 
 
 def main(arguments: Sequence[str] | None = None) -> int:
     parsed = _argument_parser().parse_args(arguments)
     try:
+        if parsed.command == "revise-prompt":
+            if parsed.edits == "-":
+                try:
+                    request = json.load(sys.stdin)
+                except (ValueError, UnicodeError) as error:
+                    raise RunnerError(f"could not read edits JSON from stdin: {error}") from error
+            else:
+                request = _load_json(Path(parsed.edits).expanduser(), "--edits")
+            diff = revise_prompt(parsed.base, parsed.destination, request)
+            sys.stdout.write(diff)
+            print(f"Created {parsed.destination}; provenance: {parsed.destination}.revision.json", file=sys.stderr)
+            return 0
+        if parsed.command == "masks":
+            if parsed.retry_failed and (parsed.prepare_only or parsed.collect_only):
+                raise RunnerError("--retry-failed requires execution")
+            summary = run_masks(parsed.config, retry_failed=parsed.retry_failed,
+                                prepare_only=parsed.prepare_only, collect_only=parsed.collect_only,
+                                repeat=parsed.repeat, history_root=parsed.history_root)
+            print(json.dumps(summary, sort_keys=True))
+            return 1 if summary.get("invalid") else 0
         if parsed.command == "prompt":
             if parsed.text is not None:
                 if parsed.config is not None:
                     raise RunnerError("use either a config path or --text, not both")
                 if parsed.retry_failed:
                     raise RunnerError("--retry-failed is only valid with a config path")
+                if parsed.repeat or parsed.history_root is not None:
+                    raise RunnerError("--repeat and --history-root require a saved batch config")
                 output_schema = None
                 if parsed.output_schema is not None:
                     output_schema = _expect_object(
@@ -2954,7 +3617,8 @@ def main(arguments: Sequence[str] | None = None) -> int:
                     "--runner-binary, --max-output-tokens, --timeout-seconds, "
                     "and --output-schema are only valid with --text"
                 )
-            output = run_prompts(parsed.config, retry_failed=parsed.retry_failed)
+            output = run_prompts(parsed.config, retry_failed=parsed.retry_failed,
+                                 repeat=parsed.repeat, history_root=parsed.history_root)
             print(json.dumps({"prompts": len(output["responses"])}, sort_keys=True))
             return 0
         if parsed.command == "subjects":

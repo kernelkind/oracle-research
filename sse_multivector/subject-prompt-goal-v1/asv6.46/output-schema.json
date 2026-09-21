@@ -1,0 +1,43 @@
+{
+  "type": "object",
+  "properties": {
+    "enumerated_subjects": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "subjects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*(\\.[1-9][0-9]*)*$"
+          },
+          "context": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "number",
+          "context",
+          "subject"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "enumerated_subjects",
+    "subjects"
+  ],
+  "additionalProperties": false
+}

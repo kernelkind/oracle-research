@@ -1,0 +1,9 @@
+{
+  "base_sha256": "793a8b51b35f5890bd6756ccc249f9b3f622037d0652ed88c32168ed61d4310b",
+  "edits": [
+    {
+      "old": "When the post already establishes how fragments are related, do not select extra words solely to make that relationship explicit if those words also add meaning the supplied subject does not require.",
+      "new": "Identify how the words in the post relate to one another before choosing which to include. Do not select extra words solely to make a relationship explicit if those words also add meaning the supplied subject does not require."
+    }
+  ]
+}

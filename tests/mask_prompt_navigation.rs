@@ -48,7 +48,7 @@ fn render(model: &mut ApprovalTuiModel) -> String {
 }
 
 fn navigate(screen: ApprovalScreen, comment: String, code: KeyCode) -> ApprovalTuiAction {
-    let mut model = ApprovalTuiModel::new_navigable_prompt_iteration(screen, comment);
+    let mut model = ApprovalTuiModel::new_navigable_stacked_review(screen, comment);
     render(&mut model);
     model.handle_event(key(code))
 }
@@ -216,7 +216,7 @@ fn item_navigation_is_separate_from_note_scroll_help_and_comment_editing() {
             .map(|n| format!("note line {n:02}"))
             .collect::<Vec<_>>()
             .join("\n");
-        let mut model = ApprovalTuiModel::new_navigable_prompt_iteration(screen.clone(), comment);
+        let mut model = ApprovalTuiModel::new_navigable_stacked_review(screen.clone(), comment);
         let initial = render(&mut model);
         assert!(initial.contains("[←/→] Previous/next item"), "{initial}");
         assert!(initial.contains("note line 01"), "{initial}");

@@ -14,7 +14,7 @@ From the Oracle MVP repository:
   target/atomic-subject-mask-probe-v1/review-session.json
 ```
 
-The subject is fixed. Review its mask in the full original note. `←` and `→` move between items, including reviewed items, without changing any decisions. `↑` and `↓` scroll within the note. The heading shows the current item's saved decision.
+The subject is fixed. Review its mask inline in the full-width original note. When the review input supplies an `assessment`, it appears in a separate “My reasoning” panel below the note; it is not a saved decision. `←` and `→` move between items, including reviewed items, without changing any decisions. `Tab` switches panels; `↑`/`↓` or `j`/`k` scroll the active panel. The heading shows the current item's saved decision.
 
 `A` approves, `R` disapproves, `C` edits an optional comment, `S` records a skip, and `Ctrl-C` saves and exits. A new decision replaces only the current item's decision, then advances to an unfinished item. No requirement to finish the batch. Resuming normally starts at the first unfinished item.
 

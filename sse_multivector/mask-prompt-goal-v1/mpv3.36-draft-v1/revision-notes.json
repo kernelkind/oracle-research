@@ -1,0 +1,21 @@
+{
+  "version": "MPv3.36",
+  "status": "draft; not inference-tested or frozen",
+  "base_version": "MPv3.34",
+  "base_status": "tested; unchanged",
+  "scope": "Whole-prompt semantic revision against MPv3.34; preserves MPv3.35 as an untested earlier proposal.",
+  "changes": [
+    "Frame the task as extracting a mask. Preserve the user's exact union definition.",
+    "Keep three distinct stages: understand the fixed target, decide whether its meaning is expressible after removing extraneous wording, then construct the mask.",
+    "Replace blanket partial-concept repetition with all genuine contributions, including repetitions. Whole-mask completeness does not require per-fragment completeness.",
+    "Keep the bicycle examples for jointly contributing words across sentences, removable details and repeated repairs.",
+    "Revise the reading post so the additional book mention is explicitly about collecting. Add a Books target that includes the hashtag; reading targets exclude that separate collecting reference. This avoids relying on a disputed interpretation of an unattached topic tag."
+  ],
+  "preserved": "Exact abstraction level, contextual interpretation, diagnostics, empty output, identifier exclusions, selection syntax, output schema, actual input layout, and bicycle/furniture examples.",
+  "output_schema": "../mpv3.34-draft-v1/output-schema.json",
+  "guidance": "https://developers.openai.com/api/docs/guides/latest-model/gpt-6-astra.md#prompting-best-practices",
+  "guidance_used": "Direct instructions, consistent examples and no conflicting task requirements. This is guidance for prompt clarity, not evidence validating the semantic policy.",
+  "validation_scope": "Offline example indexing/decoding and revision preservation only; not an evaluation of model behavior.",
+  "not_performed": "No inference, SSE, hierarchy work, active configuration changes, baseline edits or commits.",
+  "next": "Review the full MPv3.34-to-MPv3.36 delta before testing. If approved, test genuine distributed and repeated contributions against separate mentions of a shared concept, plus exact-scope empty cases."
+}

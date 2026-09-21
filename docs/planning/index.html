@@ -8,17 +8,22 @@
   <title>Oracle release plan · read-only</title>
   <link rel="icon" href="data:,">
   <style>
-    :root { color-scheme: light; font-family: system-ui, sans-serif; color: #24364b; }
-    body { margin: 0; background: #fff; }
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; color: #e6edf3;
+      --ge-dark-color: #161b22; }
+    body { margin: 0; background: #161b22; height: 100dvh; display: flex; flex-direction: column; }
     header { display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-      padding: 14px 22px; border-bottom: 1px solid #d7dee8; background: #f5f7fa; }
+      flex-shrink: 0; padding: 14px 22px; border-bottom: 1px solid #374151; background: #1c2531; }
     h1 { margin: 0; font-size: 18px; }
     #status { flex: 1; font-size: 14px; }
-    button { font: inherit; padding: 6px 14px; cursor: pointer; background: white;
-      color: #24364b; border: 1px solid #aab7c8; border-radius: 5px; }
-    main { padding: 55px 22px 22px; }
+    button { font: inherit; padding: 6px 14px; cursor: pointer; background: #263445;
+      color: #e5e7eb; border: 1px solid #536378; border-radius: 5px; }
+    button:hover { background: #324356; }
+    button:focus-visible { outline: 2px solid #93c5fd; outline-offset: 2px; }
+    main { padding: 12px 22px 22px; flex: 1; min-height: 0; overflow: auto; }
     #diagram { position: relative; width: 100%; min-height: 100px; }
-    #status[role="alert"] { color: #a4262c; }
+    .diagram-toolbar { position: sticky !important; top: 0 !important; left: 0 !important;
+      width: 100% !important; z-index: 2 !important; }
+    #status[role="alert"] { color: #fca5a5; }
   </style>
   <script>
     // Keep the renderer and any attempted auxiliary loads on this host.
@@ -54,19 +59,28 @@
         }
         diagram.setAttribute('data-mxgraph', JSON.stringify({
           xml,
+          'dark-mode': 'dark',
           toolbar: 'pages zoom',
           'toolbar-nohide': true,
-          'max-height': Math.max(400, window.innerHeight - 150),
-          'auto-fit': true,
+          'auto-fit': false,
+          'allow-zoom-out': false,
           'browser-translate': false,
           editable: false,
           lightbox: false,
           nav: false,
-          center: true,
+          center: false,
           border: 12
         }));
-        GraphViewer.createViewerForElement(diagram);
-        status.textContent = 'Read-only · Refresh to load the latest saved plan. Use the toolbar to change pages or zoom.';
+        GraphViewer.createViewerForElement(diagram, viewer => {
+          viewer.toolbar.classList.add('diagram-toolbar');
+          // The bundled viewer's "Fit" action restores its initial view.
+          const resetZoom = viewer.toolbar.querySelector('[title="Fit"]');
+          resetZoom.title = 'Reset zoom';
+          resetZoom.textContent = '100%';
+          diagram.before(viewer.toolbar);
+          viewer.addListener('graphChanged', () => diagram.parentElement.scrollTo(0, 0));
+        });
+        status.textContent = 'Read-only · Scroll to explore. Toolbar: pages and zoom. Refresh loads the latest saved plan.';
       } catch (error) {
         diagram.replaceChildren();
         status.setAttribute('role', 'alert');

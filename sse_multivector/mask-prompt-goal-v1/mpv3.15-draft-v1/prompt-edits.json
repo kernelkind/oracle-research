@@ -1,0 +1,9 @@
+{
+  "base_sha256": "0b39911a34d8f4aadc6241b0715821e3bfbda69d3eb0beeb7fac0243da26ea6a",
+  "edits": [
+    {
+      "old": "Within each occurrence, remove any word or fragment if the remaining wording still identifies who or what the supplied subject refers to and conveys its whole meaning.",
+      "new": "Within each occurrence, select only the wording needed to express the supplied subject."
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "base_sha256": "0b39911a34d8f4aadc6241b0715821e3bfbda69d3eb0beeb7fac0243da26ea6a",
+  "edits": [
+    {
+      "old": "<post>\n{POST}\n</post>",
+      "new": "<examples>\nEach example is a separate request using this same post and indexed post:\n\n<example_post>\nMy train arrived twenty minutes behind schedule. The next train was late too. I also finished a detective novel today.\n</example_post>\n\n<example_indexed_post>\n[1]My [2]train [3]arrived [4]twenty [5]minutes [6]behind [7]schedule. [8]The [9]next [10]train [11]was [12]late [13]too. [14]I [15]also [16]finished [17]a [18]detective [19]novel [20]today.\n</example_indexed_post>\n\n<example>\n<subject>Trains</subject>\n<response>[{\"start\":2,\"end\":2},{\"start\":10,\"end\":10}]</response>\n</example>\n\n<example>\n<subject>Transport</subject>\n<response>[{\"start\":2,\"end\":2},{\"start\":10,\"end\":10}]</response>\n</example>\n\n<example>\n<subject>Train delays</subject>\n<response>[{\"start\":2,\"end\":2},{\"start\":6,\"end\":7,\"end_marked\":\"⟦schedule⟧.\"},{\"start\":10,\"end\":10},{\"start\":12,\"end\":12}]</response>\n</example>\n\n<example>\n<subject>The author's train arriving twenty minutes late</subject>\n<response>[{\"start\":1,\"end\":7,\"end_marked\":\"⟦schedule⟧.\"}]</response>\n</example>\n</examples>\n\n<post>\n{POST}\n</post>"
+    }
+  ]
+}

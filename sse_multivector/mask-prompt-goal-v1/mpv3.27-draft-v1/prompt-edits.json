@@ -1,0 +1,9 @@
+{
+  "base_sha256": "1126551f80032705a42a3ba3c4e413f9b2624e242f20ab48717bf2011521ef20",
+  "edits": [
+    {
+      "old": "Use the complete post to interpret the fixed subject. Match its level of generality: keep the details it specifies and exclude details that make the mask more specific. Select every occurrence expressing it at that level, explicitly or implicitly, including repeated expressions of the same meaning. The mask must convey the supplied subject's whole meaning; this may require multiple fragments.",
+      "new": "Use the complete post to interpret the fixed subject and the source wording, including idioms and implied meanings. Select expressions of the supplied meaning, not descriptions of particular examples that merely demonstrate it. Match the subject's level of generality: keep the details it specifies and exclude details that make the mask more specific. Select every occurrence expressing it at that level, including repeated expressions of the same meaning. The mask must convey the supplied subject's whole meaning; this may require multiple fragments."
+    }
+  ]
+}

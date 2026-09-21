@@ -65,8 +65,15 @@ function compileSchema(schema) {
 /** Prepare the exact prompt and explicitly selected route, without reading any task inputs. */
 export async function prepare(config) {
   if (!config || typeof config !== 'object' || Array.isArray(config)) throw new Error('Config must be an object');
-  const allowed = new Set(['provider', 'model', 'reasoning', 'prompt', 'schema', 'max_output_tokens', 'timeout_seconds']);
+  const allowed = new Set(['provider', 'model', 'reasoning', 'prompt', 'schema', 'max_output_tokens', 'timeout_seconds', 'debug']);
   for (const key of Object.keys(config)) if (!allowed.has(key)) throw new Error(`Unknown config field: ${key}`);
+  if ('debug' in config) {
+    if (config.provider !== 'openrouter') throw new Error('debug is supported only for OpenRouter');
+    if (!config.debug || typeof config.debug !== 'object' || Array.isArray(config.debug) ||
+        Object.keys(config.debug).length !== 1 || typeof config.debug.echo_upstream_body !== 'boolean') {
+      throw new Error('debug must be an object containing only boolean echo_upstream_body');
+    }
+  }
   if (typeof config.prompt !== 'string') throw new Error('prompt must be a string');
   if (!nonempty(config.model)) throw new Error('model must be a nonempty string');
   // pi-ai removes unpaired surrogates. Refuse them instead of silently changing the prompt.
@@ -95,7 +102,7 @@ export async function prepare(config) {
   const schema = hasSchema ? structuredClone(config.schema) : null;
   const validate = hasSchema ? compileSchema(schema) : null;
   return {
-    model, reasoning: config.reasoning, prompt: config.prompt,
+    model, reasoning: config.reasoning, prompt: config.prompt, debug: structuredClone(config.debug),
     max_output_tokens: config.max_output_tokens ?? null, timeout_seconds: timeout,
     prompt_sha256: sha256(config.prompt), schema, schema_name: 'output',
     schema_sha256: hasSchema ? sha256(JSON.stringify(schema)) : null, validate,
@@ -120,6 +127,7 @@ function formatPayload(payload, request) {
       type: 'json_schema', json_schema: { name: request.schema_name, strict: true, schema: request.schema },
     };
     payload.provider = { require_parameters: true, allow_fallbacks: false };
+    if (request.debug) payload.debug = request.debug;
   }
   return payload;
 }
@@ -136,11 +144,58 @@ async function wireRequest(input, options) {
   return { url: request.url, method: request.method, headers: safeHeaders(request.headers), body: JSON.parse(body.toString('utf8')) };
 }
 
-// Observe bounded per-event metadata, not a second copy of the complete token stream.
-function observeResponse(response, metadata) {
+// Keep useful error fields, never arbitrary provider bodies, headers, or stacks.
+function errorDetails(error, redact, depth = 0) {
+  const details = {};
+  for (const key of ['name', 'code', 'status', 'type', 'message']) {
+    const value = error?.[key];
+    if (typeof value === 'string') details[key] = redact(value).slice(0, 1024);
+    else if (typeof value === 'number' && Number.isFinite(value)) details[key] = value;
+  }
+  Object.assign(details, scalarFields(error?.metadata, ['provider_name', 'error_type', 'provider_code'], redact));
+  if (error?.cause && depth < 2) details.cause = errorDetails(error.cause, redact, depth + 1);
+  return details;
+}
+
+function scalarFields(value, keys, redact) {
+  return Object.fromEntries(keys.flatMap(key => {
+    const item = value?.[key];
+    return typeof item === 'string' ? [[key, redact(item).slice(0, 1024)]]
+      : typeof item === 'boolean' || (typeof item === 'number' && Number.isFinite(item)) ? [[key, item]] : [];
+  }));
+}
+
+// Echoes may contain provider-owned fields. Retain settings and fingerprints,
+// never the arbitrary body, headers, input text, or encrypted reasoning.
+function upstreamRequestSummary(body, redact) {
+  const summary = scalarFields(body, ['model', 'stream', 'store', 'max_tokens', 'max_completion_tokens', 'max_output_tokens'], redact);
+  summary.body_sha256 = sha256(JSON.stringify(body));
+  if (body.reasoning) summary.reasoning = scalarFields(body.reasoning, ['effort', 'max_tokens', 'summary', 'enabled', 'exclude'], redact);
+  const format = body.text?.format ?? body.response_format?.json_schema;
+  if (format) {
+    summary.format = scalarFields(format, ['type', 'name', 'strict'], redact);
+    if (format.schema !== undefined) summary.schema_sha256 = sha256(JSON.stringify(format.schema));
+  }
+  const input = body.input ?? body.messages;
+  if (input !== undefined) {
+    summary.input_sha256 = sha256(JSON.stringify(input));
+    const texts = typeof input === 'string' ? [input] : Array.isArray(input) ? input.flatMap(item =>
+      typeof item.content === 'string' ? [item.content] : Array.isArray(item.content) ?
+        item.content.flatMap(part => typeof part.text === 'string' ? [part.text] : []) : []) : [];
+    summary.prompt_text_sha256 = sha256(texts.join(''));
+  }
+  if (typeof body.instructions === 'string') summary.instructions_sha256 = sha256(body.instructions);
+  return summary;
+}
+
+// Observe metadata and timing without retaining another copy of the token stream.
+function observeResponse(response, metadata, timing, elapsed, redact, captureDebug) {
+  timing.headers_ms = elapsed();
   metadata.http_status = response.status;
-  const requestId = response.headers.get('x-request-id');
-  if (requestId) metadata.request_id = requestId;
+  for (const [header, key] of [['x-request-id', 'request_id'], ['retry-after', 'retry_after']]) {
+    const value = response.headers.get(header);
+    if (value) metadata[key] = redact(value).slice(0, 1024);
+  }
   if (!response.ok || !response.body || !response.headers.get('content-type')?.includes('text/event-stream')) return response;
   const decoder = new TextDecoder();
   let buffer = '';
@@ -149,16 +204,42 @@ function observeResponse(response, metadata) {
     if (!data.length) return;
     try {
       const event = JSON.parse(data.join('\n'));
+      const now = elapsed();
+      const gap = now - (timing.last_event_ms ?? timing.headers_ms);
+      timing.max_event_gap_ms = Math.max(timing.max_event_gap_ms, gap);
+      timing.first_event_ms ??= now;
+      timing.last_event_ms = now;
+      timing.event_count++;
       const value = event.response ?? event;
       for (const key of ['id', 'model', 'provider', 'usage', 'service_tier']) {
         if (value[key] !== undefined && value[key] !== null) metadata[key] = value[key];
       }
+      const error = value.error ?? (event.type === 'error' ? event : null);
+      const debug = event.debug?.echo_upstream_body;
+      if (captureDebug && debug && typeof debug === 'object' && !Array.isArray(debug)) {
+        metadata.upstream_requests ??= [];
+        if (metadata.upstream_requests.length < 16) metadata.upstream_requests.push(upstreamRequestSummary(debug, redact));
+        else metadata.upstream_requests_dropped = (metadata.upstream_requests_dropped ?? 0) + 1;
+      }
+      if (timing.event_trace) {
+        const fields = [...new Set((event.choices ?? []).flatMap(choice => Object.keys(choice.delta ?? {})))];
+        if (timing.event_trace.length < 256) timing.event_trace.push({ at_ms: now, gap_ms: gap,
+          kind: error ? 'error' : debug ? 'debug' : fields.length ? 'delta' : 'metadata',
+          delta_fields: fields.map(field => redact(field).slice(0, 128)).slice(0, 32),
+        });
+        else timing.event_trace_dropped++;
+      }
+      if (error) {
+        metadata.error = errorDetails(error, redact);
+        timing.error_ms = now;
+      } else timing.last_non_error_event_ms = now;
     } catch { /* [DONE] or non-JSON event; pi-ai remains the response parser. */ }
     data = [];
   }
   function line(value) {
     if (!value) dispatch();
     else if (value.startsWith('data:')) data.push(value.slice(5).replace(/^ /, ''));
+    else if (value.startsWith(':')) timing.comment_count++;
   }
   function consume() {
     let end;
@@ -167,19 +248,42 @@ function observeResponse(response, metadata) {
       buffer = buffer.slice(end + 1);
     }
   }
-  const body = response.body.pipeThrough(new TransformStream({
-    transform(chunk, controller) {
-      buffer += decoder.decode(chunk, { stream: true });
+  const reader = response.body.getReader();
+  const body = new ReadableStream({
+    async pull(controller) {
+      let next;
+      try { next = await reader.read(); }
+      catch (error) {
+        metadata.transport_error = { phase: 'body', ...errorDetails(error, redact) };
+        timing.error_ms = elapsed();
+        reader.releaseLock();
+        controller.error(error);
+        return;
+      }
+      if (next.done) {
+        buffer += decoder.decode();
+        consume();
+        if (buffer) line(buffer.replace(/\r$/, ''));
+        dispatch();
+        timing.stream_end_ms = elapsed();
+        reader.releaseLock();
+        controller.close();
+        return;
+      }
+      const now = elapsed();
+      timing.max_byte_gap_ms = Math.max(timing.max_byte_gap_ms, now - (timing.last_byte_ms ?? timing.headers_ms));
+      timing.first_byte_ms ??= now;
+      timing.last_byte_ms = now;
+      timing.byte_count += next.value.byteLength;
+      buffer += decoder.decode(next.value, { stream: true });
       consume();
-      controller.enqueue(chunk);
+      controller.enqueue(next.value);
     },
-    flush() {
-      buffer += decoder.decode();
-      consume();
-      if (buffer) line(buffer.replace(/\r$/, ''));
-      dispatch();
+    async cancel(reason) {
+      try { await reader.cancel(reason); }
+      finally { reader.releaseLock(); }
     },
-  }));
+  }, { highWaterMark: 0 });
   return new Response(body, { status: response.status, statusText: response.statusText, headers: response.headers });
 }
 
@@ -217,6 +321,13 @@ export async function execute(request, { apiKey, fetch = globalThis.fetch, signa
   let wire;
   let calls = 0;
   const responseMetadata = {};
+  const timing = { headers_ms: null, first_byte_ms: null, last_byte_ms: null,
+    first_event_ms: null, last_event_ms: null, stream_end_ms: null, error_ms: null,
+    event_count: 0, byte_count: 0, comment_count: 0, max_byte_gap_ms: 0, max_event_gap_ms: 0,
+    last_non_error_event_ms: null,
+    ...(request.debug?.echo_upstream_body ? { event_trace: [], event_trace_dropped: 0 } : {}) };
+  const started = performance.now();
+  const elapsed = () => Math.round(performance.now() - started);
   const options = {
     apiKey, transport: 'sse', cacheRetention: 'none', maxRetries: 0, timeoutMs: request.timeout_seconds * 1000,
     signal: abort,
@@ -227,20 +338,27 @@ export async function execute(request, { apiKey, fetch = globalThis.fetch, signa
       if (calls !== 0) throw new Error('Only one HTTP attempt is permitted');
       calls++;
       wire = await wireRequest(input, init);
-      return observeResponse(await fetch(input, init), responseMetadata);
+      let response;
+      try { response = await fetch(input, init); }
+      catch (error) {
+        responseMetadata.transport_error = { phase: 'headers', ...errorDetails(error, redact) };
+        timing.error_ms = elapsed();
+        throw error;
+      }
+      return observeResponse(response, responseMetadata, timing, elapsed, redact, request.debug?.echo_upstream_body);
     },
   };
   const context = { messages: [{ role: 'user', content: request.prompt, timestamp: 0 }] };
   const stream = request.model.provider === 'openai-codex' ? codexStream : openrouterStream;
-  const started = Date.now();
   const events = stream(request.model, context, options);
   for await (const _event of events) { /* Drain incrementally; the final message retains the output. */ }
   const result = await events.result();
+  if (abort.aborted) responseMetadata.abort_reason = errorDetails(abort.reason, redact);
   const raw = result.content.filter(item => item.type === 'text').map(item => item.text).join('');
   return {
     ...provenance, provider: request.model.provider, model: request.model.id, reasoning: request.reasoning,
     prompt_sha256: request.prompt_sha256, schema_sha256: request.schema_sha256,
-    elapsed_ms: Date.now() - started, request: wire ?? null, response_metadata: redact(responseMetadata),
+    elapsed_ms: elapsed(), timing, request: wire ?? null, response_metadata: redact(responseMetadata),
     response_id: redact(result.responseId ?? null), response_model: redact(result.responseModel ?? null),
     provider_thinking_level: result.providerThinkingLevel ?? null,
     http_attempts: calls, stop_reason: result.stopReason, raw_stop_reason: result.rawStopReason ?? null,
@@ -324,6 +442,7 @@ Optional: schema, timeout_seconds (default 300). No tools, history, retries, or 
 Providers: openai-codex subscription; OpenRouter models using pi-ai openai-completions.
 Other catalog transports are rejected explicitly; no model substitution or rerouting.
 OpenRouter requires max_output_tokens. Subscription output caps are unsupported.
+OpenRouter-only debug: {"echo_upstream_body":true} records upstream settings and a bounded event timeline.
 reasoning selects a supported pi-ai effort or provider-default (no requested preference).
 schema is validated locally without coercion; omitted schema accepts plain text.
 JSON Schema draft-07 (default), 2019-09, and 2020-12 are supported without remote refs.

@@ -12,13 +12,47 @@ compute locations and budget remain in [release decisions](release-decisions.md)
 - The user described the low-memory approach below as reasonable after
   discussing what it retains and recomputes. This is acceptance of its
   plausibility, not selection of an implementation or approval to run a test.
+- Subsequently authorized defining the bounded performance test below. Its
+  procedure and proposed $10 ceiling have not been approved for execution.
 - This workstream remains planning and investigation. No replacement algorithm,
   changed grouping rules, implementation work, GPU rental or spending has been
   approved here.
+- This is a concurrent scalability investigation, not a refactor of the working
+  pipeline. Any subsequently authorized prototype must be isolated: do not
+  modify existing pipeline code, redirect its commands, overwrite its artifacts
+  or alter the environment used by concurrent work. Read saved inputs/results
+  without changing them and keep experimental code, builds and outputs separate.
+  The user agreed to a separate Git worktree with separate build outputs and
+  results, then authorized its setup only. The worktree is now created as
+  recorded below. Prototype implementation and benchmark execution remain
+  unapproved.
 - Do not modify the diagram without direct user permission. This written record
   does not authorize a diagram update or change task readiness on it.
 - Keep decisions and findings here as the discussion develops. Present findings
   in small, concise increments in chat; do not repeat the full audit at once.
+
+## Investigation worktree
+
+Created September 20, 2026; setup only, with no build, prototype or experiment.
+
+| Item | Location or identity |
+| --- | --- |
+| Worktree | `/home/dev/src/notedeck_worktrees/algos/oracle-mvp-scalability` |
+| Branch | `experiment/scalability-v1` |
+| Starting commit | `1315f309078e43152ed2f48c300cc0e1cf75e6ea` |
+| Dedicated build directory | `target/` inside that worktree |
+| Dedicated result directory | `scalability-results/` inside that worktree |
+
+The current scalability note is carried into the new worktree. Unrelated
+uncommitted changes in the original worktree are not copied or altered. Future
+builds must explicitly use the dedicated build directory; existing launchers
+must be checked for absolute paths before reuse. No dependencies were installed
+or shared build configuration changed during setup.
+
+A worktree isolates working files, not host CPU/memory or the repository's
+lifetime spending limit. Resource limits must be settled before experiments;
+a worktree's ledger snapshot is not a separate budget or proof of current
+available funds. No paid action is authorized by this setup.
 
 ## HDBSCAN: confirmed limitation in the current code
 
@@ -100,15 +134,74 @@ Evidence: [historical token estimate](../../sse_multivector/TOKEN-USAGE-ESTIMATE
 [TRUE CPU timing](../../sse_multivector/navigation-research-v1/TRUE04/completion.json),
 and [coffee/tea membership workload](../../sse_multivector/navigation-research-v1/TRUE14/plan.json).
 
-## Suggested next step — not approved
+## Bounded performance test — draft, execution not approved
 
-Define a bounded performance test of the unchanged HDBSCAN calculations,
-including compatibility checks against saved results, representative vector
-counts, runtime and peak-memory measurements, and a maximum GPU charge.
-Implementation, hardware, test procedure and spending need explicit approval.
+Question: can memory-bounded execution of our unchanged HDBSCAN calculation
+preserve the groups and run quickly enough to justify a larger feasibility
+trial? A small pilot cannot by itself certify the final launch build.
 
-The decision it should inform is whether the exact calculation can fit the
-launch deadline and remaining budget, or whether further investigation is
-needed. Removing the memory obstacle does not answer that question; a small
-matching result alone would not answer it either. No approximation, corpus-size
-reduction or change to grouping rules is pre-approved if performance falls short.
+### 1. Check preservation locally before renting a GPU
+
+Reuse the frozen vectors and complete results from the original food/drink
+collection, music collection, and their combined collection. They contain 945,
+1,057 and 2,002 supplied vectors respectively, before exact-vector aliasing.
+Do not regenerate subjects, masks or SSE vectors for this comparison.
+
+Require identical group memberships and ungrouped-mask sets, ignoring arbitrary
+cluster IDs. Check the cross-note nearest distances, angular connection costs
+and density hierarchy, not just the final number of groups. Existing tests for
+cross-note cores, aliases and equal-distance cases provide additional checks.
+Numerical differences must be explained; do not require identical internal
+tree edges when tied alternatives represent the same hierarchy. Unexplained
+membership differences stop advancement to larger runs.
+
+This requires an isolated prototype, which has not been implemented or selected
+here. Exercise that prototype's actual grouping path, not a substitute
+calculation created only for the test. Compare against the existing saved
+baseline without modifying the working pipeline. Local preparation and
+execution still require approval; no paid resources are needed for this step.
+
+Sources: [food/drink result](../../sse_multivector/real-note-fine-segmentation-v1/hdbscan-cross-note/response.json),
+[music result](../../sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/HDBv2-music100/response.json),
+and [combined result](../../sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/HDBv2-combined200/response.json).
+
+### 2. Measure complete runtime and memory at increasing sizes
+
+Before a paid run, identify the larger input artifacts, vector counts, hardware,
+implementation, precision and resource limits. The verified small collections
+above are not a representative million-note workload. A larger suitable SSE
+pool has not been identified in this investigation; its provenance and any
+generation work need to be settled separately. Do not inflate the sample by
+duplicating vectors and present the result as a representative scale test.
+
+Measure end-to-end grouping time, host and GPU peak memory, and the separate
+time spent loading/canonicalizing vectors, finding cross-note neighbors,
+building connections, and selecting groups. Include transfers and setup in
+the rental cost. GPU distance throughput alone is not an HDBSCAN benchmark.
+Repeat a completed size to check timing variability before using its rate.
+
+Use observed growth to decide whether the next size fits the approved limits.
+Do not extrapolate linearly across quadratic work. Synthetic inputs, if later
+approved, can test resource limits but cannot establish actual SSE grouping
+quality or data-dependent runtime. Report the largest real workload completed
+and distinguish measurements from projections.
+
+### 3. Bound the pilot and report what it establishes
+
+Propose a **$10 total maximum** for the initial paid feasibility test, including
+setup, storage, transfers and failed attempts. This is an exploratory ceiling
+(1% of the lifetime cap), not a price quote, an allocation, or evidence that the
+test will fit. No amount has been reserved in the ledger. A suitable rental
+quote and enforceable provider-side termination limit are prerequisites to
+spending, along with explicit approval and the existing budget admission check.
+
+Stop before a larger case would exceed the cost or memory limit, on unexplained
+grouping changes, or if no safe paid termination limit can be established.
+No automatic larger rental, approximation, corpus reduction, metric change or
+new input-generation run follows a failed or inconclusive result.
+
+The report should establish one of: the unchanged calculation warrants a
+larger trial; the tested path exceeds the resource limits; or the evidence is
+still insufficient. It must not declare million-note feasibility from small
+matching cases or synthetic stress tests. Whether the full build fits the
+deadline and budget remains a later decision using all pipeline stages.

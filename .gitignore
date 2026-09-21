@@ -1,12 +1,53 @@
 /target/
 /reference_map/.*.lock
 __pycache__/
+.model-request-history/
 .budget-ledger.json.lock
-# TRUE04's large raw logits stay local; inputs, scores and hashes are tracked.
-/sse_multivector/navigation-research-v1/TRUE04/first-token-logits.npy
-# TRUE10 follows the same policy for its full pairwise run.
-/sse_multivector/navigation-research-v1/TRUE10/run/first-token-logits.npy
-# TRUE12 retains its raw logits locally and records their hash.
-/sse_multivector/navigation-research-v1/TRUE12/first-token-logits.npy
-# TRUE14 preserves the same local-logit, tracked-score policy.
-/sse_multivector/navigation-research-v1/TRUE14/run/first-token-logits.npy
+
+# Experiment data stays local. Ignore files, not experiment directories: those
+# also contain source code, tests, prompts and maintained documentation.
+# Existing tracked artifacts are unaffected; these rules do not untrack them.
+/sse_multivector/*-v[0-9]*/**/*.json
+/sse_multivector/*-v[0-9]*/**/*.jsonl
+/sse_multivector/*-v[0-9]*/**/*.csv
+/sse_multivector/*-v[0-9]*/**/*.tsv
+/sse_multivector/*-v[0-9]*/**/*.log
+/sse_multivector/*-v[0-9]*/**/*.stdout
+/sse_multivector/*-v[0-9]*/**/*.stderr
+/sse_multivector/*-v[0-9]*/**/stdout.txt
+/sse_multivector/*-v[0-9]*/**/stderr.txt
+/sse_multivector/*-v[0-9]*/**/.*.lock
+
+# JSON source definitions and prompt-version metadata are not run data.
+!/sse_multivector/*-v[0-9]*/**/*schema.json
+!/sse_multivector/*-v[0-9]*/**/schemas/**/*.json
+!/sse_multivector/*-v[0-9]*/**/package.json
+!/sse_multivector/*-v[0-9]*/**/package-lock.json
+!/sse_multivector/*-v[0-9]*/**/*prompt-versions.json
+!/sse_multivector/*-v[0-9]*/**/edits.json
+!/sse_multivector/*-v[0-9]*/**/prompt-edits.json
+!/sse_multivector/*-v[0-9]*/**/*.revision.json
+!/sse_multivector/*-v[0-9]*/**/revision-notes.json
+!/sse_multivector/*-v[0-9]*/**/tests/fixtures/**/*.json
+!/sse_multivector/*-v[0-9]*/**/tests/fixtures/**/*.jsonl
+
+# The batch runner writes these schema copies into its run directories.
+/sse_multivector/*-v[0-9]*/**/prompt-output-schema.json
+/sse_multivector/*-v[0-9]*/**/subject-output-schema.json
+
+# Generated text from the museum-example trial, not reusable prompt templates.
+/sse_multivector/subject-prompt-goal-v1/asv6.31-museum-example-v1/generated-index.txt
+/sse_multivector/subject-prompt-goal-v1/asv6.31-museum-example-v1/completed-index-v1.txt
+
+# Numeric arrays, model weights and other generated binary datasets.
+/sse_multivector/**/*.f32le
+/sse_multivector/**/*.npy
+/sse_multivector/**/*.npz
+/sse_multivector/**/*.bin
+/sse_multivector/**/*.safetensors
+/sse_multivector/**/*.pt
+/sse_multivector/**/*.pth
+/sse_multivector/**/*.onnx
+/sse_multivector/**/*.gguf
+/sse_multivector/**/*.parquet
+/sse_multivector/**/*.arrow

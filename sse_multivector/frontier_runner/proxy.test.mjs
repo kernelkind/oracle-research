@@ -37,6 +37,7 @@ test('OpenRouter consumes only the shared local Pi endpoint and capability', asy
   for (const [entry, request, flags] of [
     [cli, input, ['--pi-config']],
     [cli, input, []],
+    [cli, { ...input, debug: { echo_upstream_body: true } }, []],
     [new URL('runner.mjs', import.meta.url).pathname,
       { provider: input.provider, model: input.model, reasoning: input.reasoning,
         max_output_tokens: 40, stage: 'masks', text: 'bread', subject: 'bread' }, []],
@@ -54,10 +55,12 @@ test('OpenRouter consumes only the shared local Pi endpoint and capability', asy
     const result = JSON.parse(stdout);
     assert.equal(result.valid, true, result.error);
     assert.equal(result.request.url, baseUrl + '/chat/completions');
+    assert.deepEqual(result.request.body.debug, request.debug);
+    if (request.debug) assert.equal(result.timing.event_trace.length, 2);
     assert.ok(!(stdout + stderr).includes(key));
     assert.ok(!(stdout + stderr).includes('DO_NOT_USE_UPSTREAM_KEY'));
   }
-  assert.equal(requests.length, 3);
+  assert.equal(requests.length, 4);
   assert.ok(requests.every(r => r.url === '/openrouter/api/v1/chat/completions' && r.authorization === `Bearer ${key}`));
 });
 

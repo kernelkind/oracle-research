@@ -32,6 +32,7 @@ Return only a JSON object: {"prominence":0}"""
 
 
 FAKE_RUNNER = r"""#!/usr/bin/env python3
+import fcntl
 import json
 import os
 from pathlib import Path
@@ -40,11 +41,13 @@ import sys
 
 def append_log(value):
     path = Path(os.environ["FAKE_RUNNER_LOG"])
-    existing = []
-    if path.exists():
-        existing = json.loads(path.read_text(encoding="utf-8"))
-    existing.append(value)
-    path.write_text(json.dumps(existing), encoding="utf-8")
+    with path.with_suffix(".lock").open("a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        existing = []
+        if path.exists():
+            existing = json.loads(path.read_text(encoding="utf-8"))
+        existing.append(value)
+        path.write_text(json.dumps(existing), encoding="utf-8")
 
 
 if "--version" in sys.argv:
@@ -57,6 +60,15 @@ if "--identity" in sys.argv:
 request = json.loads(sys.stdin.read())
 prompt = request["prompt"]
 argv = sys.argv[1:]
+if os.environ.get("FAKE_RUNNER_BARRIER"):
+    import time
+    barrier = Path(os.environ["FAKE_RUNNER_BARRIER"])
+    (barrier / str(os.getpid())).touch()
+    until = time.monotonic() + 3
+    while len(list(barrier.iterdir())) < int(os.environ.get("FAKE_RUNNER_BARRIER_COUNT", "2")):
+        if time.monotonic() > until:
+            raise SystemExit("expected calls did not run concurrently")
+        time.sleep(0.01)
 if prompt.startswith("GENERIC PROMPT"):
     stage = "prompt"
 elif prompt.startswith("CLAIM INSTRUCTION"):
@@ -179,6 +191,487 @@ print(json.dumps(result))
 
 
 class ExtractionPipelineTests(unittest.TestCase):
+    def test_saved_subject_masks_generate_review_and_resume_without_more_calls(self):
+        source = self.root / "saved-subjects.json"
+        source.write_text(json.dumps({"schema_version": 1, "notes": [{
+            "note_id": "N1", "text": "Tea helps. Tea helps.",
+            "subjects": [
+                {"number": "1", "subject": "Tea", "context": "MUST NOT BE SENT"},
+                {"number": "1.1", "subject": "Tea drinking"},
+            ],
+        }]}))
+        template = self.root / "mask.md"
+        template.write_text("GENERIC PROMPT\n<post>{POST}</post>\n<subject>{SUBJECT}</subject>\n")
+        config = self.root / "masks-config.json"
+        config.write_text(json.dumps({
+            "schema_version": 1, "runner_binary": str(self.fake_runner),
+            "provider": "openai-codex", "auth_file": str(self.auth_file),
+            "input_path": str(source), "prompt_path": str(template),
+            "run_directory": str(self.run_directory), "model": "candidate/mask",
+            "reasoning_effort": "low", "concurrency": 2,
+        }))
+        command = [sys.executable, str(RUNNER), "masks", str(config)]
+        environment = {**os.environ, "FAKE_RUNNER_LOG": str(self.log_path),
+                       "FAKE_RUNNER_PROMPT_RESPONSE": '["Tea helps"]'}
+        barrier = self.root / "concurrent-calls"
+        barrier.mkdir()
+        environment["FAKE_RUNNER_BARRIER"] = str(barrier)
+        result = subprocess.run(command, env=environment, capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        summary = json.loads(result.stdout)
+        self.assertEqual(summary["new_attempts"], 2)
+        self.assertEqual(summary["usage"]["input_tokens"], 200)
+        self.assertEqual(summary["usage"]["output_tokens"], 40)
+        review = json.loads((self.run_directory / "review.json").read_text())
+        self.assertEqual([item["subject"] for item in review["items"]], ["Tea", "Tea drinking"])
+        self.assertTrue(all(item["note"] == "Tea helps. Tea helps." for item in review["items"]))
+        self.assertTrue(all(item["fragments"] == [{"text": "Tea helps", "occurrence": 1}]
+                            for item in review["items"]))
+        self.assertFalse((self.run_directory / "review-session.json").exists())
+        self.assertEqual(len(self.calls()), 2)
+        expected = {template.read_text().replace("{POST}", "Tea helps. Tea helps.")
+                    .replace("{SUBJECT}", subject) for subject in ["Tea", "Tea drinking"]}
+        self.assertEqual({call["prompt"] for call in self.calls()}, expected)
+        self.assertEqual(len({call["cwd"] for call in self.calls()}), 2)
+        for call in self.calls():
+            self.assertNotIn("MUST NOT BE SENT", call["prompt"])
+            self.assertNotIn("schema", call["request"])
+        validation = json.loads((self.run_directory / "validation.json").read_text())
+        self.assertEqual(validation["valid"], 2)
+        self.assertEqual(validation["ambiguous_occurrences"], 2)
+        resumed = subprocess.run(command, env=environment, capture_output=True, text=True, timeout=30)
+        self.assertEqual(resumed.returncode, 0, resumed.stderr)
+        self.assertEqual(json.loads(resumed.stdout)["new_attempts"], 0)
+        self.assertEqual(len(self.calls()), 2)
+
+    def mask_batch_fixture(self, *, response='["Tea helps"]', subjects=None):
+        source = self.root / "saved-subjects.json"
+        source.write_text(json.dumps({"schema_version": 1, "notes": [{
+            "note_id": "N1", "text": "Tea helps. Tea helps. https://example.com",
+            "subjects": subjects or ["Tea"],
+        }]}))
+        template = self.root / "mask.md"
+        template.write_text("GENERIC PROMPT\n<post>{POST}</post>\n<subject>{SUBJECT}</subject>\n")
+        path = self.root / "masks-config.json"
+        path.write_text(json.dumps({
+            "schema_version": 1, "runner_binary": str(self.fake_runner),
+            "provider": "openai-codex", "auth_file": str(self.auth_file),
+            "input_path": str(source), "prompt_path": str(template),
+            "run_directory": str(self.run_directory), "model": "candidate/mask",
+            "reasoning_effort": "low", "concurrency": 2,
+        }))
+        self.mask_environment = {**os.environ, "FAKE_RUNNER_LOG": str(self.log_path),
+                                 "FAKE_RUNNER_PROMPT_RESPONSE": response}
+        return path
+
+    def invoke_masks(self, path, *args, environment=None):
+        return subprocess.run([sys.executable, str(RUNNER), "masks", str(path), *args],
+                              env={**self.mask_environment, **(environment or {})},
+                              capture_output=True, text=True, timeout=30)
+
+    def test_mask_batch_reuses_exact_requests_across_run_directories(self):
+        path = self.mask_batch_fixture()
+        first = self.invoke_masks(path)
+        self.assertEqual(first.returncode, 0, first.stderr)
+        original_receipts = (self.run_directory / "results.jsonl").read_bytes()
+        config = json.loads(path.read_text())
+        other_run = self.root / "another-run"
+        config["run_directory"] = str(other_run)
+        other_config = self.root / "another-config.json"
+        other_config.write_text(json.dumps(config))
+
+        second = self.invoke_masks(other_config)
+
+        self.assertEqual(second.returncode, 0, second.stderr)
+        self.assertEqual(len(self.calls()), 1, "an identical request must not spend again")
+        summary = json.loads(second.stdout)
+        self.assertEqual(summary["new_attempts"], 0)
+        self.assertEqual(summary["reused_results"], 1)
+        self.assertEqual(summary["usage"]["input_tokens"], 0)
+        record = json.loads((other_run / "results.jsonl").read_text())
+        self.assertEqual(record["execution"], "cross_run_reuse")
+        self.assertEqual(record["reused_from"]["results_path"],
+                         str(self.run_directory / "results.jsonl"))
+        self.assertEqual(original_receipts, (self.run_directory / "results.jsonl").read_bytes())
+        self.assertEqual(self.invoke_masks(other_config).returncode, 0)
+        self.assertEqual(self.invoke_masks(other_config, "--collect-only").returncode, 0)
+        self.assertEqual(len(self.calls()), 1)
+
+    def next_mask_config(self, path, name="next", **changes):
+        config = json.loads(path.read_text())
+        config.update(run_directory=str(self.root / name), **changes)
+        target = self.root / (name + "-config.json")
+        target.write_text(json.dumps(config))
+        return target
+
+    def test_mask_batch_repeat_is_explicit_and_resume_still_does_not_spend(self):
+        path = self.mask_batch_fixture()
+        self.assertEqual(self.invoke_masks(path).returncode, 0)
+        next_path = self.next_mask_config(path)
+        repeated = self.invoke_masks(next_path, "--repeat")
+        self.assertEqual(repeated.returncode, 0, repeated.stderr)
+        self.assertEqual(json.loads(repeated.stdout)["new_attempts"], 1)
+        self.assertEqual(json.loads(repeated.stdout)["reused_results"], 0)
+        manifest = json.loads((self.root / "next" / "manifest.json").read_text())
+        self.assertTrue(manifest["request_reuse"]["intentional_repeat"])
+        self.assertEqual(self.invoke_masks(next_path).returncode, 0)
+        self.assertEqual(len(self.calls()), 2)
+        # A repeat cannot silently turn an existing reused result into a fresh trial.
+        refused = self.invoke_masks(path, "--repeat")
+        self.assertEqual(refused.returncode, 1)
+        self.assertIn("use a new", refused.stderr)
+        self.assertEqual(len(self.calls()), 2)
+
+    def test_cross_run_reuse_distinguishes_prompt_and_runtime_settings(self):
+        path = self.mask_batch_fixture()
+        self.assertEqual(self.invoke_masks(path).returncode, 0)
+        for index, change in enumerate([
+            {"model": "candidate/other"}, {"reasoning_effort": "medium"},
+            {"timeout_seconds": 123},
+            {"provider": "openrouter", "auth_file": None, "max_output_tokens": 321},
+            {"provider": "openrouter", "auth_file": None, "max_output_tokens": 322},
+        ]):
+            with self.subTest(change=change):
+                next_path = self.next_mask_config(path, f"changed-{index}", **change)
+                result = self.invoke_masks(next_path)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(json.loads(result.stdout)["new_attempts"], 1)
+                self.assertEqual(len(self.calls()), index + 2)
+        with (self.root / "mask.md").open("a") as template:
+            template.write("A changed instruction.\n")
+        result = self.invoke_masks(self.next_mask_config(path, "changed-prompt"))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(len(self.calls()), 7)
+
+    def test_cross_run_reuse_reads_preexisting_receipts_without_an_index(self):
+        path = self.mask_batch_fixture()
+        self.assertEqual(self.invoke_masks(path).returncode, 0)
+        for entry in (self.root / ".model-request-history").iterdir():
+            entry.unlink()
+        # Simulate a saved batch predating this feature, without altering its answer.
+        manifest_path = self.run_directory / "manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        manifest.pop("request_reuse")
+        manifest_path.write_text(json.dumps(manifest, sort_keys=True))
+        ledger = self.run_directory / "results.jsonl"
+        record = json.loads(ledger.read_text())
+        record["manifest_sha256"] = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+        ledger.write_text(json.dumps(record) + "\n")
+        result = self.invoke_masks(self.next_mask_config(path))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(len(self.calls()), 1)
+
+    def test_cross_run_reuse_refuses_tampered_source_without_spending(self):
+        path = self.mask_batch_fixture()
+        self.assertEqual(self.invoke_masks(path).returncode, 0)
+        ledger = self.run_directory / "results.jsonl"
+        record = json.loads(ledger.read_text())
+        record["final_output_raw"] = '["Tea"]'
+        ledger.write_text(json.dumps(record) + "\n")
+        result = self.invoke_masks(self.next_mask_config(path))
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("source receipt hash differs", result.stderr)
+        self.assertEqual(len(self.calls()), 1)
+
+    def test_cross_run_reuse_validates_unindexed_source_not_only_prompt_hash(self):
+        path = self.mask_batch_fixture()
+        self.assertEqual(self.invoke_masks(path).returncode, 0)
+        for entry in (self.root / ".model-request-history").iterdir():
+            entry.unlink()
+        ledger = self.run_directory / "results.jsonl"
+        record = json.loads(ledger.read_text())
+        record["response"] = '["tampered"]'
+        ledger.write_text(json.dumps(record) + "\n")
+        result = self.invoke_masks(self.next_mask_config(path))
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("cannot verify request history source", result.stderr)
+        self.assertEqual(len(self.calls()), 1)
+
+    def test_cross_run_reuse_resume_refuses_changed_answer(self):
+        path = self.mask_batch_fixture()
+        self.assertEqual(self.invoke_masks(path).returncode, 0)
+        next_path = self.next_mask_config(path)
+        self.assertEqual(self.invoke_masks(next_path).returncode, 0)
+        ledger = self.root / "next" / "results.jsonl"
+        record = json.loads(ledger.read_text())
+        record["response"] = '["Tea"]'
+        ledger.write_text(json.dumps(record) + "\n")
+        result = self.invoke_masks(next_path)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("differs from its source receipt", result.stderr)
+        self.assertEqual(len(self.calls()), 1)
+
+    def test_cross_run_reuse_does_not_reuse_failed_calls(self):
+        path = self.mask_batch_fixture()
+        failed = self.invoke_masks(path, environment={"FAKE_RUNNER_FAIL_STAGE": "prompt"})
+        self.assertEqual(failed.returncode, 1)
+        result = self.invoke_masks(self.next_mask_config(path))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(len(self.calls()), 2)
+
+    def test_cross_run_reuse_keeps_parallel_identical_requests_to_one_call(self):
+        path = self.mask_batch_fixture(subjects=["Tea", "Tea"])
+        next_path = self.next_mask_config(path)
+        processes = [subprocess.Popen(
+            [sys.executable, str(RUNNER), "masks", str(config)],
+            env=self.mask_environment, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        ) for config in (path, next_path)]
+        for process in processes:
+            stdout, stderr = process.communicate(timeout=30)
+            self.assertEqual(process.returncode, 0, stderr)
+            self.assertEqual(json.loads(stdout)["valid"], 2)
+        self.assertEqual(len(self.calls()), 1)
+
+    def test_intentional_repeat_keeps_identical_trials_independent_and_concurrent(self):
+        path = self.mask_batch_fixture(subjects=["Tea", "Tea"])
+        barrier = self.root / "barrier"
+        barrier.mkdir()
+        result = self.invoke_masks(path, "--repeat", environment={"FAKE_RUNNER_BARRIER": str(barrier)})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)["new_attempts"], 2)
+        self.assertEqual(json.loads(result.stdout)["reused_results"], 0)
+        self.assertEqual(len(self.calls()), 2)
+        self.assertEqual(self.invoke_masks(path).returncode, 0)
+        self.assertEqual(len(self.calls()), 2)
+
+    def test_cross_run_reuse_distinguishes_transport_identity(self):
+        path = self.mask_batch_fixture()
+        self.assertEqual(self.invoke_masks(path).returncode, 0)
+        self.fake_runner.write_text(FAKE_RUNNER.replace('"e" * 64', '"f" * 64'))
+        result = self.invoke_masks(self.next_mask_config(path))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(len(self.calls()), 2)
+
+    def test_cross_run_reuse_discovers_sibling_runs_within_repository(self):
+        (self.root / ".git").mkdir()
+        path = self.mask_batch_fixture()
+        self.assertEqual(self.invoke_masks(path).returncode, 0)
+        next_path = self.next_mask_config(path)
+        nested = self.root / "another-experiment"
+        nested.mkdir()
+        moved = nested / "config.json"
+        next_path.rename(moved)
+        result = self.invoke_masks(moved)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(len(self.calls()), 1)
+
+    def test_cross_run_reuse_can_search_an_explicit_history_root(self):
+        path = self.mask_batch_fixture()
+        self.assertEqual(self.invoke_masks(path).returncode, 0)
+        next_path = self.next_mask_config(path)
+        nested = self.root / "another-experiment"
+        nested.mkdir()
+        moved = nested / "config.json"
+        next_path.rename(moved)
+        result = self.invoke_masks(moved, "--history-root", str(self.root))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(len(self.calls()), 1)
+
+    def test_cross_run_reuse_ignores_job_ids_but_not_subject_or_note_text(self):
+        path = self.mask_batch_fixture()
+        self.assertEqual(self.invoke_masks(path).returncode, 0)
+        source = self.root / "saved-subjects.json"
+        content = json.loads(source.read_text())
+        content["notes"][0]["note_id"] = "different-id"
+        source.write_text(json.dumps(content))
+        self.assertEqual(self.invoke_masks(self.next_mask_config(path, "renamed")).returncode, 0)
+        self.assertEqual(len(self.calls()), 1)
+        content["notes"][0]["subjects"] = ["Tea helps"]
+        source.write_text(json.dumps(content))
+        self.assertEqual(self.invoke_masks(self.next_mask_config(path, "subject-changed")).returncode, 0)
+        self.assertEqual(len(self.calls()), 2)
+        content["notes"][0]["text"] += " Another sentence."
+        source.write_text(json.dumps(content))
+        self.assertEqual(self.invoke_masks(self.next_mask_config(path, "note-changed")).returncode, 0)
+        self.assertEqual(len(self.calls()), 3)
+
+    def test_cross_run_reuse_finds_valid_mask_among_multiple_past_answers(self):
+        path = self.mask_batch_fixture(response='["not in note"]')
+        self.assertEqual(self.invoke_masks(path).returncode, 1)
+        good = self.next_mask_config(path, "valid")
+        self.assertEqual(self.invoke_masks(good, environment={
+            "FAKE_RUNNER_PROMPT_RESPONSE": '["Tea helps"]'}).returncode, 0)
+        for entry in (self.root / ".model-request-history").iterdir():
+            entry.unlink()
+        result = self.invoke_masks(self.next_mask_config(path, "third"))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(len(self.calls()), 2)
+
+    def test_generic_prompt_reuse_matches_schema_and_preserves_order(self):
+        path = self.root / "prompt.json"
+        schema = {"type": "object", "properties": {
+            "context": {"type": "string"}, "subject": {"type": "string"}},
+            "required": ["context", "subject"], "additionalProperties": False}
+        config = {"schema_version": 1, "runner_binary": str(self.fake_runner),
+                  "provider": "openai-codex", "auth_file": str(self.auth_file),
+                  "run_directory": str(self.run_directory), "model": "candidate/prompt",
+                  "reasoning_effort": "low", "output_schema": schema,
+                  "prompts": [{"prompt_id": "first", "text": "GENERIC PROMPT"}]}
+        path.write_text(json.dumps(config))
+        environment = {"FAKE_RUNNER_PROMPT_RESPONSE": '{"context":"test","subject":"tea"}'}
+        first = self.invoke_prompt_config(path, extra_environment=environment)
+        self.assertEqual(first.returncode, 0, first.stderr)
+        config["run_directory"] = str(self.root / "same-schema")
+        config["prompts"][0]["prompt_id"] = "second"
+        path.write_text(json.dumps(config))
+        same = self.invoke_prompt_config(path, extra_environment=environment)
+        self.assertEqual(same.returncode, 0, same.stderr)
+        self.assertEqual(len(self.calls()), 1)
+        schema["properties"] = dict(reversed(list(schema["properties"].items())))
+        config["run_directory"] = str(self.root / "reordered")
+        path.write_text(json.dumps(config))
+        ordered = self.invoke_prompt_config(path, extra_environment=environment)
+        self.assertEqual(ordered.returncode, 0, ordered.stderr)
+        self.assertEqual(len(self.calls()), 2)
+        del config["output_schema"]
+        config["run_directory"] = str(self.root / "no-schema")
+        path.write_text(json.dumps(config))
+        absent = self.invoke_prompt_config(path, extra_environment=environment)
+        self.assertEqual(absent.returncode, 0, absent.stderr)
+        self.assertEqual(len(self.calls()), 3)
+        config["run_directory"] = str(self.root / "repeat")
+        path.write_text(json.dumps(config))
+        repeated = self.invoke_prompt_config(path, "--repeat", extra_environment=environment)
+        self.assertEqual(repeated.returncode, 0, repeated.stderr)
+        self.assertEqual(len(self.calls()), 4)
+
+    def test_mask_batch_position_format_and_empty_results(self):
+        path = self.mask_batch_fixture(response=json.dumps({"meaning": "Tea", "expressible": True,
+            "evidence": "Second Tea", "mask": [[3, 3]]}))
+        config = json.loads(path.read_text())
+        source = Path(config["input_path"])
+        data = json.loads(source.read_text())
+        data["notes"][0]["text"] = "Tea helps Tea"
+        source.write_text(json.dumps(data))
+        template = Path(config["prompt_path"])
+        template.write_text("GENERIC PROMPT\n{POST}\n{INDEXED_POST}\n{SUBJECT}")
+        config["mask_format"] = "word_positions"
+        config["output_schema"] = {"type": "object"}
+        path.write_text(json.dumps(config))
+        result = self.invoke_masks(path)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        validation = json.loads((self.run_directory / "validation.json").read_text())
+        self.assertEqual(validation["checks"][0]["ranges"], [{"start": 10, "end": 13}])
+        self.assertEqual(validation["checks"][0]["fragments"], [{"text": "Tea", "occurrence": 2}])
+        self.assertIn("[1]Tea [2]helps [3]Tea", self.calls()[0]["prompt"])
+        other = self.next_mask_config(path, "empty-position-mask")
+        data["notes"][0]["subjects"] = ["No wording for this heading"]
+        source.write_text(json.dumps(data))
+        empty = self.invoke_masks(other, environment={"FAKE_RUNNER_PROMPT_RESPONSE": json.dumps(
+            {"meaning": "Broad heading", "expressible": False, "evidence": "Not expressible", "mask": []})})
+        self.assertEqual(empty.returncode, 0, empty.stderr)
+        validation = json.loads((self.root / "empty-position-mask/validation.json").read_text())
+        self.assertEqual((validation["valid"], validation["empty"], validation["invalid"]), (1, 1, 0))
+
+    def test_mask_batch_prepare_and_collect_do_not_send(self):
+        path = self.mask_batch_fixture()
+        prepared = self.invoke_masks(path, "--prepare-only")
+        self.assertEqual(prepared.returncode, 0, prepared.stderr)
+        self.assertEqual(self.calls(), [])
+        empty = self.invoke_masks(path, "--collect-only")
+        self.assertEqual(empty.returncode, 1)
+        self.assertEqual(self.calls(), [])
+        run = self.invoke_masks(path)
+        self.assertEqual(run.returncode, 0, run.stderr)
+        review = (self.run_directory / "review.json").read_bytes()
+        self.auth_file.unlink()
+        collected = self.invoke_masks(path, "--collect-only")
+        self.assertEqual(collected.returncode, 0, collected.stderr)
+        self.assertEqual(len(self.calls()), 1)
+        self.assertEqual(review, (self.run_directory / "review.json").read_bytes())
+
+    def test_mask_batch_invalid_masks_are_saved_not_repaired_or_approved(self):
+        for response in ['["not in note"]', '["https://example.com"]', '[]', 'invalid JSON']:
+            with self.subTest(response=response):
+                self.run_directory = self.root / str(len(self.calls()))
+                path = self.mask_batch_fixture(response=response)
+                before = len(self.calls())
+                run = self.invoke_masks(path)
+                self.assertEqual(run.returncode, 1, run.stderr)
+                validation = json.loads((self.run_directory / "validation.json").read_text())
+                self.assertEqual(validation["invalid"], 1)
+                self.assertFalse((self.run_directory / "review.json").exists())
+                self.assertFalse((self.run_directory / "review-session.json").exists())
+                self.assertEqual(len(self.calls()), before + 1)
+                again = self.invoke_masks(path)
+                self.assertEqual(again.returncode, 1)
+                self.assertEqual(len(self.calls()), before + 1)
+
+    def test_mask_batch_failure_stops_later_waves_and_requires_explicit_retry(self):
+        path = self.mask_batch_fixture(subjects=["Tea", "Tea drinking", "Drinks", "Tea leaves", "Leaves"])
+        failed = self.invoke_masks(path, environment={"FAKE_RUNNER_FAIL_STAGE": "prompt"})
+        self.assertEqual(failed.returncode, 1)
+        self.assertEqual(len(self.calls()), 2)
+        blocked = self.invoke_masks(path)
+        self.assertEqual(blocked.returncode, 1)
+        self.assertEqual(len(self.calls()), 2)
+        retried = self.invoke_masks(path, "--retry-failed")
+        self.assertEqual(retried.returncode, 0, retried.stderr)
+        self.assertEqual(len(self.calls()), 7)
+        records = [json.loads(line) for line in (self.run_directory / "results.jsonl").read_text().splitlines()]
+        self.assertEqual(sum(r["attempt"] == 2 for r in records), 2)
+
+    def test_mask_batch_changed_prompt_or_input_refuses_resume(self):
+        path = self.mask_batch_fixture()
+        self.assertEqual(self.invoke_masks(path).returncode, 0)
+        for name in ["mask.md", "saved-subjects.json"]:
+            target = self.root / name
+            original = target.read_bytes()
+            target.write_bytes(original + b"\n")
+            result = self.invoke_masks(path)
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("run manifest does not match", result.stderr)
+            self.assertEqual(len(self.calls()), 1)
+            target.write_bytes(original)
+
+    def test_mask_batch_preserves_literal_placeholders_in_source_and_subject(self):
+        path = self.mask_batch_fixture(subjects=["Tea {POST}"])
+        source = self.root / "saved-subjects.json"
+        data = json.loads(source.read_text())
+        data["notes"][0]["text"] = "Tea helps. Literal {SUBJECT}."
+        source.write_text(json.dumps(data))
+        self.assertEqual(self.invoke_masks(path).returncode, 0)
+        self.assertIn("<post>Tea helps. Literal {SUBJECT}.</post>", self.calls()[0]["prompt"])
+        self.assertIn("<subject>Tea {POST}</subject>", self.calls()[0]["prompt"])
+
+    def test_mask_batch_ambiguous_occurrences_obey_all_fragment_order(self):
+        path = self.mask_batch_fixture(response='["Tea helps", "Tea helps"]')
+        result = self.invoke_masks(path)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        review = json.loads((self.run_directory / "review.json").read_text())
+        self.assertEqual([f["occurrence"] for f in review["items"][0]["fragments"]], [1, 2])
+        self.assertEqual(json.loads(result.stdout)["ambiguous_occurrences"], 0)
+
+    def test_mask_batch_concurrent_invocation_is_rejected_without_calls(self):
+        import fcntl
+        path = self.mask_batch_fixture()
+        lock_path = self.run_directory.with_name("." + self.run_directory.name + ".lock")
+        with lock_path.open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            result = self.invoke_masks(path)
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("already active", result.stderr)
+            self.assertEqual(self.calls(), [])
+
+    def test_mask_batch_note_filter_and_existing_subject_output_shape(self):
+        path = self.mask_batch_fixture()
+        source = self.root / "saved-subjects.json"
+        data = json.loads(source.read_text())
+        data["notes"].append({"note_id": "N2", "text": "Tea helps.",
+                              "subjects": [{"source_index": 0, "text": "Tea drinking"}]})
+        source.write_text(json.dumps(data))
+        config = json.loads(path.read_text())
+        config["note_ids"] = ["N2"]
+        path.write_text(json.dumps(config))
+        result = self.invoke_masks(path)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(len(self.calls()), 1)
+        review = json.loads((self.run_directory / "review.json").read_text())
+        self.assertEqual(review["items"][0]["note_id"], "N2")
+        self.assertEqual(review["items"][0]["subject"], "Tea drinking")
+
+
+
     def test_prior_run_reuse_requires_the_same_provider(self):
         self.prepare_prior_run_reuse()
         config = json.loads(self.config_path.read_text())
@@ -1467,6 +1960,91 @@ class ExtractionPipelineTests(unittest.TestCase):
             manifest["takeaway_input_normalization_version"],
         )
 
+    def test_generic_prompts_allow_pi_auth_without_a_plaintext_file(self) -> None:
+        config_path = self.root / "pi-auth-prompt.json"
+        config_path.write_text(json.dumps({
+            "schema_version": 1,
+            "runner_binary": str(self.fake_runner),
+            "provider": "openai-codex",
+            "auth_file": None,
+            "run_directory": str(self.root / "pi-auth-run"),
+            "model": "candidate/label",
+            "reasoning_effort": "low",
+            "prompts": [{"prompt_id": "one", "text": "Unchanged prompt"}],
+        }), encoding="utf-8")
+        completed = self.invoke_prompt_config(config_path)
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        calls = [call for call in self.calls() if call["kind"] == "exec"]
+        self.assertEqual(1, len(calls))
+        self.assertEqual(["run", "--send"], calls[0]["argv"])
+        self.assertEqual("Unchanged prompt", calls[0]["prompt"])
+
+    def prompt_batch_config(self, name, count, **settings):
+        path = self.root / f"{name}.json"
+        config = {
+            "schema_version": 1, "runner_binary": str(self.fake_runner),
+            "provider": "openai-codex", "auth_file": str(self.auth_file),
+            "run_directory": str(self.root / name), "model": "candidate/label",
+            "reasoning_effort": "low", "prompts": [
+                {"prompt_id": str(i), "text": f"GENERIC PROMPT {name} {i}"} for i in range(count)
+            ], **settings,
+        }
+        path.write_text(json.dumps(config), encoding="utf-8")
+        return path, config
+
+    def test_generic_prompt_batches_default_to_16_and_allow_concurrency_overrides(self):
+        for limit in (None, 1, 3, 24):
+            with self.subTest(limit=limit):
+                expected = 16 if limit is None else limit
+                settings = {} if limit is None else {"concurrency": limit}
+                path, config = self.prompt_batch_config(f"parallel-{expected}", expected + 1, **settings)
+                barrier = self.root / f"barrier-{expected}"
+                barrier.mkdir()
+                completed = self.invoke_prompt_config(path, extra_environment={
+                    "FAKE_RUNNER_BARRIER": str(barrier), "FAKE_RUNNER_BARRIER_COUNT": str(expected),
+                })
+                self.assertEqual(0, completed.returncode, completed.stderr)
+                run = Path(config["run_directory"])
+                self.assertEqual(expected, json.loads((run / "manifest.json").read_text())["concurrency"])
+                output = json.loads((run / "output.json").read_text())
+                self.assertEqual([p["prompt_id"] for p in config["prompts"]],
+                                 [r["prompt_id"] for r in output["responses"]])
+                before = len(self.calls())
+                self.assertEqual(0, self.invoke_prompt_config(path).returncode)
+                self.assertEqual(before, len(self.calls()), "resume must not repeat completed calls")
+                if limit is None:
+                    reuse_path = self.root / "reuse-different-concurrency.json"
+                    reuse_path.write_text(json.dumps({**config, "concurrency": 1,
+                        "run_directory": str(self.root / "reuse-different-concurrency")}), encoding="utf-8")
+                    reused = self.invoke_prompt_config(reuse_path)
+                    self.assertEqual(0, reused.returncode, reused.stderr)
+                    self.assertEqual(before, len(self.calls()), "concurrency must not invalidate request reuse")
+        for call in self.calls():
+            self.assertNotIn("concurrency", call["request"], "scheduling must not change model inputs")
+
+    def test_generic_prompt_concurrency_rejects_invalid_limits_before_calls(self):
+        for index, limit in enumerate((0, -1, True, 1.5, "16", None)):
+            with self.subTest(limit=limit):
+                path, _ = self.prompt_batch_config(f"invalid-{index}", 1, concurrency=limit)
+                completed = self.invoke_prompt_config(path)
+                self.assertNotEqual(0, completed.returncode)
+                self.assertIn("concurrency must be a positive integer", completed.stderr)
+        self.assertEqual([], self.calls())
+
+    def test_generic_prompt_concurrency_preserves_failure_boundary_and_explicit_retry(self):
+        path, config = self.prompt_batch_config("parallel-failure", 5, concurrency=3)
+        failed = self.invoke_prompt_config(path, extra_environment={"FAKE_RUNNER_FAIL_STAGE": "prompt"})
+        self.assertNotEqual(0, failed.returncode)
+        self.assertEqual(3, len(self.calls()), "failure must stop the next wave")
+        blocked = self.invoke_prompt_config(path)
+        self.assertNotEqual(0, blocked.returncode)
+        self.assertEqual(3, len(self.calls()), "failed calls require explicit retry")
+        resumed = self.invoke_prompt_config(path, "--retry-failed")
+        self.assertEqual(0, resumed.returncode, resumed.stderr)
+        self.assertEqual(8, len(self.calls()))
+        output = json.loads((Path(config["run_directory"]) / "output.json").read_text())
+        self.assertEqual(5, len(output["responses"]))
+
     def test_runs_generic_prompts_without_adding_tools_or_prompt_text(self) -> None:
         prompt_run_directory = self.root / "prompt-run"
         prompts = [
@@ -1495,7 +2073,7 @@ class ExtractionPipelineTests(unittest.TestCase):
         self.assertEqual(0, completed.returncode, completed.stderr)
         calls = [call for call in self.calls() if call["kind"] == "exec"]
         self.assertEqual(["prompt", "prompt"], [call["stage"] for call in calls])
-        self.assertEqual(
+        self.assertCountEqual(
             [row["text"] for row in prompts], [call["prompt"] for call in calls]
         )
         self.assertEqual(2, len({call["cwd"] for call in calls}))

@@ -189,3 +189,177 @@ fn subject_wraps_above_full_note_and_review_controls_are_optional() {
     })
     .unwrap();
 }
+
+#[test]
+fn mask_review_shows_reasoning_below_the_complete_note_without_prefilling_a_decision() {
+    let dir = tempfile::tempdir().unwrap();
+    let input = dir.path().join("input.json");
+    let session = dir.path().join("session.json");
+    let mut data = batch();
+    let assessment = "The mask includes both the reading activity and its location.";
+    data["items"][0]["assessment"] = json!(assessment);
+    write(&input, &data);
+    let original = fs::read(&input).unwrap();
+
+    run_mask_prompt_review(&input, &session, |screen, comment| {
+        assert_eq!(screen.title.as_deref(), Some("Café reading"));
+        assert!(screen.heading.contains("Not reviewed"));
+        assert!(comment.is_empty());
+        let ApprovalEvidenceLayout::Paged(panels) = &screen.evidence else {
+            panic!("expected the complete note and separate reasoning")
+        };
+        assert_eq!(panels.len(), 2, "the saved assessment must be visible");
+        assert_eq!(
+            panels[0].body,
+            "At the ⟦café⟧, ⟦I read⟧; the café was quiet."
+        );
+        assert_eq!(panels[1].title, "My reasoning");
+        assert_eq!(panels[1].body, assessment);
+
+        for (width, height) in [(72, 24), (100, 32), (120, 40)] {
+            let mut model =
+                ApprovalTuiModel::new_navigable_stacked_review(screen.clone(), comment.clone());
+            let mut terminal = Terminal::new(TestBackend::new(width, height)).unwrap();
+            terminal.draw(|frame| model.render(frame)).unwrap();
+            let buffer = terminal.backend().buffer();
+            let lines = (0..height)
+                .map(|y| {
+                    (0..width)
+                        .map(|x| buffer[(x, y)].symbol())
+                        .collect::<String>()
+                })
+                .collect::<Vec<_>>();
+            let rendered = lines.join("\n");
+            for expected in [
+                "Café reading",
+                "⟦café⟧",
+                "⟦I read⟧",
+                "My reasoning",
+                assessment,
+                "[A]",
+                "[R]",
+                "[C]",
+                "[S]",
+                "[←/→]",
+                "[Tab/Shift-Tab]",
+                "[Ctrl-C]",
+            ] {
+                assert!(
+                    rendered.contains(expected),
+                    "missing {expected}:\n{rendered}"
+                );
+            }
+            let note_row = lines
+                .iter()
+                .position(|line| line.contains("⟦café⟧"))
+                .unwrap();
+            let reasoning_row = lines
+                .iter()
+                .position(|line| line.contains("My reasoning"))
+                .unwrap();
+            assert!(note_row < reasoning_row, "{rendered}");
+        }
+        Ok(ApprovalTuiAction::Pause)
+    })
+    .unwrap();
+
+    assert_eq!(fs::read(&input).unwrap(), original);
+    let saved: Value = serde_json::from_slice(&fs::read(&session).unwrap()).unwrap();
+    assert!(
+        saved["session"]["decisions"]
+            .as_object()
+            .unwrap()
+            .values()
+            .all(|decision| { decision["outcome"].is_null() && decision["comment"] == "" })
+    );
+}
+
+#[test]
+fn complete_note_and_reasoning_scroll_independently_in_mask_review() {
+    use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
+
+    let dir = tempfile::tempdir().unwrap();
+    let input = dir.path().join("input.json");
+    let session = dir.path().join("session.json");
+    let note = (0..40)
+        .map(|n| format!("Note line {n:02}."))
+        .collect::<Vec<_>>()
+        .join("\n");
+    let assessment = (0..40)
+        .map(|n| format!("Reasoning line {n:02}."))
+        .collect::<Vec<_>>()
+        .join("\n");
+    write(
+        &input,
+        &json!({
+            "schema_version": 1, "batch_id": "long-mask-review", "items": [{
+                "item_id": "M01", "note_id": "note1", "subject": "Long note",
+                "note": note, "assessment": assessment,
+                "fragments": [{"text": "Note line 00.", "occurrence": 1}]
+            }]
+        }),
+    );
+
+    run_mask_prompt_review(&input, &session, |screen, comment| {
+        let mut model = ApprovalTuiModel::new_navigable_stacked_review(screen, comment);
+        let mut terminal = Terminal::new(TestBackend::new(72, 24)).unwrap();
+        let render = |terminal: &mut Terminal<TestBackend>, model: &mut ApprovalTuiModel| {
+            terminal.draw(|frame| model.render(frame)).unwrap();
+            let buffer = terminal.backend().buffer();
+            (0..24)
+                .map(|y| (0..72).map(|x| buffer[(x, y)].symbol()).collect::<String>())
+                .collect::<Vec<_>>()
+                .join("\n")
+        };
+        let press = |model: &mut ApprovalTuiModel, code| {
+            model.handle_event(Event::Key(KeyEvent::new(code, KeyModifiers::NONE)))
+        };
+        let first = render(&mut terminal, &mut model);
+        assert!(first.contains("⟦Note line 00.⟧"), "{first}");
+        assert!(first.contains("Reasoning line 00."), "{first}");
+
+        let mut seen = String::new();
+        for _ in 0..45 {
+            let rendered = render(&mut terminal, &mut model);
+            assert!(rendered.contains("Reasoning line 00."), "{rendered}");
+            seen.push_str(&rendered);
+            assert_eq!(
+                press(&mut model, KeyCode::Char('j')),
+                ApprovalTuiAction::None
+            );
+        }
+        for line in 0..40 {
+            assert!(seen.contains(&format!("Note line {line:02}.")));
+        }
+        press(&mut model, KeyCode::Tab);
+        seen.clear();
+        for _ in 0..45 {
+            let rendered = render(&mut terminal, &mut model);
+            assert!(rendered.contains("Note line 39."), "{rendered}");
+            seen.push_str(&rendered);
+            assert_eq!(press(&mut model, KeyCode::Down), ApprovalTuiAction::None);
+        }
+        for line in 0..40 {
+            assert!(seen.contains(&format!("Reasoning line {line:02}.")));
+        }
+        press(&mut model, KeyCode::BackTab);
+        let last = render(&mut terminal, &mut model);
+        assert!(last.contains("Note line 39."), "{last}");
+        assert!(last.contains("Reasoning line 39."), "{last}");
+        press(&mut model, KeyCode::Home);
+        let reset_note = render(&mut terminal, &mut model);
+        assert!(reset_note.contains("⟦Note line 00.⟧"), "{reset_note}");
+        assert!(reset_note.contains("Reasoning line 39."), "{reset_note}");
+
+        assert_eq!(
+            press(&mut model, KeyCode::Right),
+            ApprovalTuiAction::NextItem
+        );
+        assert_eq!(
+            press(&mut model, KeyCode::Left),
+            ApprovalTuiAction::PreviousItem
+        );
+        Ok(ApprovalTuiAction::Pause)
+    })
+    .unwrap();
+}

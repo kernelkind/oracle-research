@@ -1,0 +1,11 @@
+{
+  "version": "MPv3.40",
+  "status": "draft for review; not tested or adopted",
+  "source_draft": "MPv3.39",
+  "approved_tested_baseline": "MPv3.37",
+  "change": "Replace all eight occurrences of target with supplied subject; no other prompt bytes change.",
+  "authorization": "The user approved using supplied subject consistently to avoid introducing a confusing synonym.",
+  "preserved": "Previous drafts, intended masking rules, examples, output format, original notes, subjects and saved responses.",
+  "validation": "The saved result exactly matches the source draft with the eight terminology substitutions; source hashes remain unchanged. No model inference.",
+  "next": "Review the full delta against MPv3.37 before any test."
+}

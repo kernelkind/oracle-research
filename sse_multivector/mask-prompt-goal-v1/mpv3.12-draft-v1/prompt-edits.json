@@ -1,0 +1,13 @@
+{
+  "base_sha256": "a0133ef90657a2b1c07fb26514e52f1355c78ad5f16a090544f9fc89b4d32e89",
+  "edits": [
+    {
+      "old": "Use the complete post to interpret the fixed subject. Select every occurrence expressing it, explicitly or implicitly, including repeated expressions of the same meaning. The mask must identify who or what the subject refers to and convey its whole meaning; this may require multiple fragments.",
+      "new": "Use the complete post to understand what each passage means. Select every occurrence expressing the supplied subject, explicitly or implicitly, including repeated expressions of the same meaning. Combine fragments from different parts of the post when needed to convey the whole meaning of the supplied subject."
+    },
+    {
+      "old": "Within each occurrence, remove any word or fragment if the remaining wording still identifies who or what the supplied subject refers to and conveys its whole meaning. Preserve the supplied subject's meaning, not every meaning in the original wording. Fragments may be individual words and need not form grammatical prose.",
+      "new": "Within each occurrence, keep only the wording needed to express the supplied subject at its stated level of detail. A detail belongs in the mask when the subject requires it, not merely because it is true of the particular occurrence. Fragments may be individual words or parts of words and need not form grammatical prose."
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "base_sha256": "9b07da9be7fd9e2f3aa5b5543d97d3e03019046acded28374791cf1c30cf8348",
+  "edits": [
+    {
+      "old": "<post>\n{POST}\n</post>",
+      "new": "<examples>\n<example_post>\nMy train arrived twenty minutes late.\n</example_post>\n\n<example_indexed_post>\n[1]My [2]train [3]arrived [4]twenty [5]minutes [6]late.\n</example_indexed_post>\n\n<example>\n<subject>Trains</subject>\n<response>[{\"start\":2,\"end\":2}]</response>\n</example>\n\n<example>\n<subject>The author's train arriving twenty minutes late</subject>\n<response>[{\"start\":1,\"end\":6,\"end_marked\":\"⟦late⟧.\"}]</response>\n</example>\n</examples>\n\n<post>\n{POST}\n</post>"
+    }
+  ]
+}
