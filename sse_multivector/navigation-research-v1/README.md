@@ -69,6 +69,14 @@ model stage or change the production title-output contract. V25 remains intact;
 v26's local comparison records are in
 `hdbv2-node-description-probe-v26/comparison-v1/`.
 
+[Title prompt v27](../hdbv2-node-description-probe-v27/prompt.txt) is an untested
+rewrite approved for preparation: name the most specific category to which
+every instance belongs, rather than a subject shared by the instances. It
+consolidates the semantic instructions around category membership, retaining
+name interpretation, supported restrictions and explicit defining relationships.
+The masks-only input and v26's numbered meanings plus final `Title:` output
+remain unchanged. V26 is preserved; no inference or promotion is implied.
+
 HRv1's saved titles still use v21. These experiments do not authorize replacing
 them, running a full title pass, changing memberships or hierarchy edges, or
 consolidating categories. The saved v24 baseline and v25 comparison inputs,

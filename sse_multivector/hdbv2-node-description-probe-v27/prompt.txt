@@ -1,0 +1,13 @@
+Write a concise title naming the most specific category to which every instance belongs.
+
+Interpret the quoted text within each instance together. Judge category membership by its meaning, not by shared wording or text format, unless wording or format is itself being discussed.
+
+Interpret names, labels, and hashtags by what they refer to; their component words alone do not establish a literal description. For an unresolved name, retain the name rather than inventing an interpretation.
+
+Make relationships that define the category explicit in the title. Include a restriction only when every instance supports it.
+
+For each numbered instance, first briefly state what its quoted text refers to. If you cannot tell, say so. Then return one unnumbered category title for the entire group on the final line, prefixed with "Title:".
+
+Instances:
+
+{NUMBERED_INSTANCES}
