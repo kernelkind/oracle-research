@@ -69,16 +69,17 @@ model stage or change the production title-output contract. V25 remains intact;
 v26's local comparison records are in
 `hdbv2-node-description-probe-v26/comparison-v1/`.
 
-[Title prompt v28](../hdbv2-node-description-probe-v28/prompt.txt) is an untested
+[Title prompt v29](../hdbv2-node-description-probe-v29/prompt.txt) is an untested
 rewrite approved for preparation: name the most specific category to which
 every instance belongs, rather than a subject shared by the instances. It
 consolidates the semantic instructions around category membership, retaining
 name interpretation, supported restrictions and explicit defining relationships.
-It changes only [v27](../hdbv2-node-description-probe-v27/prompt.txt)'s output
-instruction: return one unnumbered title, without per-instance explanations or
-a `Title:` prefix. The masks-only input and category-membership instructions
-remain unchanged. Earlier versions are preserved; no inference or promotion
-is implied.
+It changes only [v28](../hdbv2-node-description-probe-v28/prompt.txt)'s output
+instruction: return a JSON object with one string field, `title`, without
+per-instance explanations. The masks-only input and category-membership
+instructions remain unchanged. This is a prompt-only change, not a runner or
+schema-enforcement change. Earlier versions are preserved; no inference or
+promotion is implied.
 
 HRv1's saved titles still use v21. These experiments do not authorize replacing
 them, running a full title pass, changing memberships or hierarchy edges, or
