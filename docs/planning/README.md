@@ -38,7 +38,7 @@ choices or execution. No workstream or agent assignment starts without explicit
 authorization.
 
 Page 1 highlights readiness: green means ready to start, blue means in progress,
-and grey means waiting, paused or complete, as labeled. If preparation can start
+and grey means waiting, blocked, paused or complete, as labeled. If preparation can start
 but later work cannot, show them as separate nodes linked by a dependency—not
 as one partly ready task. Node 18 is green for preparing training code for the
 fine-tuning pilot: fine-tune each candidate, save/reload trained weights and
@@ -49,13 +49,41 @@ criteria and reviewed pilot data are available. The 05 + 18 dependencies on
 Muse high and Astra low. No training-data generator is selected. Completing the
 selection comparison (17) still needs 19 and validated prompts (01 + 04).
 Node 01 is complete: the subject and mask prompts are finished, as confirmed by
-the user on September 20. Node 02 is blue: the 100-note hierarchy is being
-generated; its review and validation are still pending.
+the user on September 20. On September 21, the user reported the 100-note build
+blocked by an inadequate category-title prompt. Node 02 is grey and marked
+blocked: TRUE needs accurate category titles for node placement. Hierarchy
+review and validation remain pending. Node 23, fixing and validating the
+category-title prompt, is blue and in progress, confirmed by the user. Its solid
+arrow to 02 makes the blocking work explicit; this does not reopen the subject
+or mask prompts. Additional rows expose the remaining construction work;
+lower lanes and connector routes have space for these additions.
 Node 04 (mask prominence) is grey and marked paused: work started, but the user
-paused it for the mask prompt. That prerequisite is now satisfied; resumption
-has not been confirmed. It need not wait for the 100-note hierarchy. Its prompt
-and validation are not complete. The top summary names only the green workstreams. Readiness
+paused it for the mask prompt. That prerequisite is now satisfied, but the user
+confirmed on September 21 that prominence has not resumed. It need not wait for
+the 100-note hierarchy or title correction. Its prompt and validation are not
+complete. The top summary names only the green workstreams. Readiness
 does not authorize research, implementation, agent assignment or spending.
+
+Nodes 24–26 are ready to start from saved evidence: recover missing memberships,
+handle category equivalence and TRUE cycles, and collapse equal-note navigation
+steps. Node 27 turns mask prominence into category-note ordering and needs 04.
+These four results are required to complete the 500-note validation in 03;
+they do not expand the current limited 100-note diagnostic or prevent preliminary
+200/300-note work. The original 04 → 03 dependency is now explicit as 04 → 27 → 03.
+No membership algorithm, cycle-resolution method or ranking formula is selected.
+
+Node 28 is separate from scale measurements: implement and validate a runnable
+launch-scale build, including cosine-filtered TRUE and handling large-group
+title inputs. It needs the validated small-corpus workflow (03) and findings
+from 21 and 22, and is required before completing full-build feasibility (10).
+The early assessment (20) does not wait for 28. Recovery measurements from 24
+are a dashed input to 20; include graph-processing costs from the hierarchy
+builds too. Neither measurement nor a planning card authorizes implementation.
+
+Pilot 06 includes a small hierarchy built from pilot-model outputs before model
+selection. Final-model verification in 11 remains required. The second page
+lists these completion dependencies separately from week assignments; dates
+have not changed.
 
 Page 2 shows protocol, service and Notedeck work in a separate parallel track
 alongside hierarchy and model development. Its cards show dependencies, not
@@ -70,7 +98,8 @@ The pipeline note distinguishes training-label generation from applying the
 released masks-and-prominence extractor to the final corpus.
 
 Node 22 is ready to measure SSE, category-title and TRUE processing time, memory
-and cost using existing masks and categories. It does not wait for 21, which
+and cost using existing masks and categories, including title input growth as
+groups grow. It does not wait for 21, which
 assesses whether our HDBSCAN grouping can meet the intended corpus size, budget
 and deadline, and identifies work required without presuming replacement.
 Node 20 combines these findings with mask/prominence generation measurements
@@ -80,7 +109,8 @@ selection (09), and stays grey pending inputs from 21 and 22. The dashed inputs
 from 06 and 03 allow available evidence to inform the assessment without
 requiring either workstream to finish first. Measurement procedures remain open.
 
-Node 10 checks whether generating launch-corpus masks and prominence with our
+Node 10 needs the working build from 28, not just stage estimates. It checks whether
+generating launch-corpus masks and prominence with our
 fine-tuned model, then constructing the full hierarchy, fits the remaining time
 and budget. Node 11 tests a sample hierarchy built from that model's outputs.
 These are distinct checks: full-build feasibility and hierarchy quality. Both

@@ -1,6 +1,6 @@
 # October 18 release decisions
 
-Updated September 20, 2026. This is the written record of the planning discussion.
+Updated September 21, 2026. This is the written record of the planning discussion.
 Agreed requirements, tentative choices and existing-data facts are distinguished
 below. The overall plan is not approved. Approval of an individual requirement
 or diagram edit does not approve the whole plan. The diagram incorporates the
@@ -12,17 +12,26 @@ timing. It does not select implementation methods or experimental procedures.
 Readiness is not authorization to research, implement, assign agents or spend;
 each task requires explicit approval to begin.
 
-Current status, confirmed by the user on September 20: the subject and mask
-prompts are finished (01 complete). The 100-note hierarchy is being generated
-(02 in progress); its review and validation remain pending. Mask-prominence work
-(04) was paused for the mask prompt. That prerequisite is now satisfied, but
-resumption has not been confirmed. It need not wait for the 100-note hierarchy;
-its prompt and validation are not complete. The user reports work on 19 underway,
+The subject and mask prompts are finished (01 complete), confirmed by the user
+on September 20. On September 21, the user reported the 100-note hierarchy build
+blocked by the category-title prompt (02 blocked). TRUE uses category descriptions
+for node placement; incorrect titles undermine those decisions. Correcting the
+title prompt is required before completing the build and hierarchy review.
+The user confirmed that correction is underway. It is now explicit as
+23 · Fix and validate category-title prompt, in progress, with a prerequisite
+arrow to 02. The subject and mask prompts remain complete; this is a separate
+downstream blocker. Prompt changes and validation procedures belong to that
+workstream, not this planning discussion.
+Mask-prominence work (04) remains paused, confirmed by the user on September 21.
+Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
+hierarchy or title correction. Its prompt and validation are not complete.
+The user reports work on 19 underway,
 comparing Muse high and Astra low; no training-data generator is selected.
 This does not establish completion of the subject/mask/prominence comparison (17).
-Dates and dependency relationships are unchanged; completing 01 satisfies that
-prerequisite without completing downstream work. This update does not start
-another workstream or approve the plan.
+Dates are unchanged. The additional construction dependencies below expose
+unfinished work; 23 → 02 records the current title blocker. Completing 01 does
+not complete downstream work. This records work and planning requirements, not
+authorization to start another workstream or approval of the overall plan.
 
 ## Agreed release goal
 
@@ -192,6 +201,42 @@ existing experimental pipeline implements all these stages end to end.
 Recovering missing category memberships is a separate operation. HDBSCAN's raw
 tree is not the specified launch hierarchy.
 
+### Remaining construction work and completion dependencies
+
+The user approved surfacing the audit findings in the dependency map. These are
+required outcomes, not selected implementation methods or new dates:
+
+| Task | Required result | Completion dependency |
+| --- | --- | --- |
+| **24 · Recover missing category memberships** | A repeatable recovery process beyond the six Coffee/Tea categories, covering masks left unassigned or grouped elsewhere. Measure its work and cost. | Required to finish 03; available measurements inform 20 without waiting for all of 24. |
+| **25 · Handle category equivalence and TRUE cycles** | Apply exact mask-set consolidation and establish repeatable handling of semantic equivalents and cyclic TRUE answers. A cycle or equal title alone does not justify merging. | Required to finish 03. |
+| **26 · Collapse equal-note navigation steps** | Implement and validate the required navigation simplification, including shared children, while preserving note sets, masks and provenance. | Required to finish 03. |
+| **27 · Order category notes using mask prominence** | Define and implement how relevant mask scores produce category-note order, including multiple masks and shared descendants. | Needs prominence definition 04; required to finish 03. |
+| **28 · Implement and validate the launch-scale build** | Turn scale findings into a runnable build preserving validated hierarchy behavior, including cosine-filtered TRUE and large-group title inputs. | Needs 03 + 21 + 22; required to finish full-build feasibility 10. |
+
+24–26 can start from saved artifacts; they are not marked in progress. 27 waits
+for 04, which remains paused. 28 waits for the validated small-corpus workflow
+and scale findings. Readiness does not authorize execution. Membership methods,
+category-equivalence/cycle handling, shared-child implementation, ranking rules
+and scale implementation choices remain open.
+
+The current 100-note diagnostic keeps its limited scope, including no membership
+expansion. Preliminary 200/300-note work can follow 02 while these stages develop.
+Completing the full 500-note validation (03) requires 24–27; the earlier prominence
+dependency is now explicit as 04 → 27 → 03. The stages' internal processing order
+must respect their inputs, but this does not impose a serial development schedule.
+
+Pilot **06** also includes a small hierarchy built from pilot-model outputs before
+model selection. Use that check to detect downstream consequences of extraction
+errors; distinguish those from failures in the shared hierarchy pipeline. **11**
+still verifies the final fine-tuned model before the launch build. The new pilot
+check belongs within 06 rather than a separate node or a dependency on finishing
+the final fine-tune.
+
+Early scale assessment 20 includes membership-recovery and graph-processing
+costs, not only model calls. It can use available evidence from 24 and the growing
+hierarchy builds; it does not wait for the finished implementation in 28.
+
 Service testing needs both the protocol and a saved hierarchy snapshot. The
 100-note hierarchy can supply the initial snapshot; service development need
 not wait for the final corpus build. Public launch requires the final snapshot.
@@ -235,6 +280,7 @@ It does not approve implementation, benchmarks, spending or diagram changes.
   measurements of other stages.
 - **22 · Measure SSE, category-title and TRUE processing costs:** use existing
   masks and categories to measure time, memory and cost for these three stages.
+  Include how title input length grows with group size, not only cost per call.
   This is ready independently of 21's HDBSCAN assessment. No measurement
   procedure, hardware choice or spending is approved here.
 - **20 · Assess full hierarchy-build resources:** combine stage measurements
@@ -242,6 +288,8 @@ It does not approve implementation, benchmarks, spending or diagram changes.
   from the fine-tuning pilot (06), and mask/category/cosine-filtered-pair counts
   from the growing hierarchy builds (03). Estimate launch-build time, memory and
   cost to inform an affordable corpus size while preserving hierarchy quality.
+  Include membership-recovery and graph-processing costs; available recovery
+  measurements from 24 are an additional dashed input.
   It stays grey pending inputs from 21 and 22. The dashed 06 and 03 inputs allow
   available evidence to be used without waiting for those workstreams to finish.
   Per-pair TRUE cost alone does not establish total hierarchy-build cost.
@@ -252,8 +300,9 @@ It does not approve implementation, benchmarks, spending or diagram changes.
 - **10 · Check full-build time and cost:** establish whether our fine-tuned model
   can generate masks and prominence for the selected launch corpus, and the
   remaining pipeline can construct its full hierarchy, within the remaining
-  budget and before October 18. This needs the trained model, corpus selection
-  and resource measurements; early estimates alone do not establish feasibility.
+  budget and before October 18. This needs the trained model, corpus selection,
+  resource measurements and the runnable build from 28; early estimates alone
+  do not establish feasibility.
 - **11 · Test hierarchy with fine-tuned model:** build a sample hierarchy from
   that model's masks and prominence; check browsing and whether the complete
   pipeline works before processing the full launch corpus.

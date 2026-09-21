@@ -43,7 +43,7 @@ class PlanningViewerTest(unittest.TestCase):
         self.assertIn("prepared", labels["week5"])
         self.assertIn("prepared", labels["week-launch"])
 
-    def test_prompts_complete_hierarchy_build_active_prominence_not_resumed(self):
+    def test_hierarchy_blocked_on_titles_without_reopening_extraction_prompts(self):
         diagram = Path(__file__).resolve().parents[1] / "docs/planning/october-18-release.drawio"
         root = ET.parse(diagram).find("./diagram[@id='dependencies']/mxGraphModel/root")
         cells = {cell.get("id"): cell for cell in root.findall("mxCell")}
@@ -51,14 +51,23 @@ class PlanningViewerTest(unittest.TestCase):
         self.assertIn("Subject and mask prompts finished", cells["h1"].get("value"))
         self.assertNotIn("IN PROGRESS", cells["h1"].get("value"))
         self.assertIn("fillColor=light-dark(#f7f8fa,", cells["h1"].get("style"))
-        self.assertIn("IN PROGRESS", cells["h2"].get("value"))
-        self.assertIn("Generation underway; review pending", cells["h2"].get("value"))
-        self.assertIn("fillColor=light-dark(#e7f1ff,", cells["h2"].get("style"))
+        self.assertIn("h-title", cells)
+        self.assertIn("23 · Fix and validate category-title prompt", cells["h-title"].get("value"))
+        self.assertIn("IN PROGRESS", cells["h-title"].get("value"))
+        self.assertIn("fillColor=light-dark(#e7f1ff,", cells["h-title"].get("style"))
+        self.assertNotIn("23 ·", cells["ready-summary"].get("value"))
+        edge = cells["e-title-h2"]
+        self.assertEqual((edge.get("source"), edge.get("target")), ("h-title", "h2"))
+        self.assertNotIn("dashed=1", edge.get("style"))
+        self.assertIn("BLOCKED", cells["h2"].get("value"))
+        self.assertIn("Waiting for category-title correction (23) before TRUE placement", cells["h2"].get("value"))
+        self.assertIn("fillColor=light-dark(#f7f8fa,", cells["h2"].get("style"))
+        self.assertNotIn("IN PROGRESS", cells["h2"].get("value"))
         self.assertNotIn("WAITING FOR 01", cells["h2"].get("value"))
         self.assertIn("WAITING FOR 04", cells["m1"].get("value"))
         self.assertNotIn("WAITING FOR 01", cells["m1"].get("value"))
         self.assertIn("PAUSED", cells["m0"].get("value"))
-        self.assertIn("Mask prompt finished; resumption not confirmed", cells["m0"].get("value"))
+        self.assertIn("Mask prompt finished; prominence remains paused", cells["m0"].get("value"))
         self.assertIn("fillColor=light-dark(#f7f8fa,", cells["m0"].get("style"))
         self.assertNotIn("IN PROGRESS", cells["m0"].get("value"))
         self.assertNotIn("READY TO START", cells["m0"].get("value"))
@@ -78,13 +87,63 @@ class PlanningViewerTest(unittest.TestCase):
         self.assertIn("final snapshot (12)", cells["week-launch"].get("value"))
         self.assertIn("October 18", cells["week-launch"].get("value"))
         self.assertNotIn("prepare service", cells["week4"].get("value"))
-        self.assertIn("04 · Mask prominence: mask prompt finished; resumption not confirmed", cells["week-subtitle"].get("value"))
+        self.assertIn("04 · Mask prominence remains paused; mask prompt is finished", cells["week-subtitle"].get("value"))
         self.assertIn("Subject and mask prompts finished", cells["week1"].get("value"))
-        self.assertIn("100-note hierarchy generation underway; review pending", cells["week1"].get("value"))
+        self.assertIn("100-note hierarchy blocked by the title-generation prompt", cells["week1"].get("value"))
+        self.assertIn("TRUE needs accurate category titles for node placement", cells["week1"].get("value"))
+        self.assertIn("23 · Category-title prompt correction in progress", cells["week1"].get("value"))
+        self.assertIn("Map: 01–02, 23", cells["week1"].get("value"))
         lane = cells["week-delivery"].find("mxGeometry")
         self.assertGreaterEqual(float(lane.get("width")), 1600)
         week = cells["week1"].find("mxGeometry")
         self.assertGreater(float(lane.get("y")), float(week.get("y")) + float(week.get("height")))
+
+    def test_missing_pipeline_work_has_completion_dependencies(self):
+        diagram = Path(__file__).resolve().parents[1] / "docs/planning/october-18-release.drawio"
+        root = ET.parse(diagram).find("./diagram[@id='dependencies']/mxGraphModel/root")
+        cells = {cell.get("id"): cell for cell in root.findall("mxCell")}
+        edges = {(cell.get("source"), cell.get("target")): cell
+                 for cell in cells.values() if cell.get("edge") == "1"}
+        for key, number in [("h-recovery", "24"), ("h-relations", "25"), ("h-collapse", "26")]:
+            with self.subTest(task=number):
+                self.assertIn(key, cells)
+                self.assertIn(number + " ·", cells[key].get("value"))
+                self.assertIn("READY TO START", cells[key].get("value"))
+                self.assertIn("fillColor=light-dark(#e6f4ea,", cells[key].get("style"))
+                self.assertIn(number + " ·", cells["ready-summary"].get("value"))
+                self.assertIn((key, "h3"), edges)
+                self.assertNotIn("dashed=1", edges[key, "h3"].get("style"))
+                self.assertNotIn((key, "h2"), edges, "Keep the initial diagnostic's scope unchanged")
+        for pair in [("m0", "m-order"), ("m-order", "h3"),
+                     ("h3", "s-build"), ("s-hdbscan", "s-build"),
+                     ("s-stage-costs", "s-build"), ("s-build", "s2")]:
+            self.assertIn(pair, edges)
+            self.assertNotIn("dashed=1", edges[pair].get("style"))
+        self.assertIn("NEEDS 04", cells["m-order"].get("value"))
+        self.assertIn("NEEDS 03 + 21 + 22", cells["s-build"].get("value"))
+        for key in ("m-order", "s-build"):
+            self.assertIn("fillColor=light-dark(#f7f8fa,", cells[key].get("style"))
+            self.assertNotIn("READY TO START", cells[key].get("value"))
+        self.assertIn("FINISH WITH 24–27", cells["h3"].get("value"))
+        self.assertIn("08 + 09 + 20 + 28", cells["s2"].get("value"))
+        self.assertIn("dashed=1", edges["h-recovery", "s-analysis"].get("style"))
+        self.assertIn("membership recovery", cells["s-analysis"].get("value"))
+        self.assertIn("title input growth", cells["s-stage-costs"].get("value"))
+        self.assertIn("small hierarchy from pilot outputs before model selection", cells["m2"].get("value"))
+        self.assertNotIn(("s-build", "s-analysis"), edges, "Early estimates must not wait for the finished implementation")
+        pending = {key: set() for key in cells}
+        for (source, target), edge in edges.items():
+            if "dashed=1" not in edge.get("style"):
+                pending[target].add(source)
+        while pending:
+            ready = {key for key, deps in pending.items() if not deps}
+            self.assertTrue(ready, "Completion dependencies must not contain a cycle")
+            pending = {key: deps - ready for key, deps in pending.items() if key not in ready}
+        weekly = ET.parse(diagram).find("./diagram[@id='weekly-targets']/mxGraphModel/root")
+        labels = {cell.get("id"): cell.get("value", "") for cell in weekly.findall("mxCell")}
+        for number in ("24", "25", "26", "27", "28"):
+            self.assertIn(number, labels["week-pipeline"])
+        self.assertIn("not new week assignments", labels["week-pipeline-heading"])
 
     def test_ready_preparation_is_separate_from_blocked_work(self):
         diagram = Path(__file__).resolve().parents[1] / "docs/planning/october-18-release.drawio"
@@ -367,8 +426,14 @@ class PlanningViewerTest(unittest.TestCase):
                 wait_for_text("save/reload its trained weights")
                 wait_for_text("19 · Plan training-data generator comparison")
                 wait_for_text("Subject and mask prompts finished")
-                wait_for_text("Generation underway; review pending")
-                wait_for_text("Mask prompt finished; resumption not confirmed")
+                wait_for_text("Waiting for category-title correction (23) before TRUE placement")
+                wait_for_text("23 · Fix and validate category-title prompt")
+                wait_for_text("Mask prompt finished; prominence remains paused")
+                wait_for_text("24 · Recover missing category memberships")
+                wait_for_text("25 · Handle category equivalence and TRUE cycles")
+                wait_for_text("26 · Collapse equal-note navigation steps")
+                wait_for_text("27 · Order category notes using mask prominence")
+                wait_for_text("28 · Implement and validate the launch-scale build")
                 wait_for_text("17 · Compare training-data generators")
                 wait_for_text("06 · Compare models to fine-tune")
                 wait_for_text("weight-release permission before selection")
@@ -408,8 +473,10 @@ class PlanningViewerTest(unittest.TestCase):
                 wait_for_text("Fine-tune the mask/prominence model")
                 wait_for_text("Build launch hierarchy snapshot")
                 wait_for_text("Prepare runnable code")
-                wait_for_text("04 · Mask prominence: mask prompt finished; resumption not confirmed")
-                wait_for_text("100-note hierarchy generation underway; review pending")
+                wait_for_text("04 · Mask prominence remains paused; mask prompt is finished")
+                wait_for_text("Additional completion dependencies—not new week assignments")
+                wait_for_text("100-note hierarchy blocked by the title-generation prompt")
+                wait_for_text("23 · Category-title prompt correction in progress")
                 wait_for_text("Parallel track · protocol, service and Notedeck")
                 wait_for_text("Notedeck can start with 13")
                 wait_for_text("22: measure SSE, category titles and TRUE")

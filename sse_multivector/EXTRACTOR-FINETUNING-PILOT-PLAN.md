@@ -24,6 +24,8 @@ Approved requirements:
 - Compare Qwen3.8-27B, Gemma 4 31B instruction-tuned, and T5Gemma 9B–9B
   PrefixLM instruction-tuned.
 - Include a baseline without task-specific fine-tuning for every model.
+- Check a small hierarchy built from pilot-model outputs before model selection,
+  rather than leaving the first downstream check until after final training.
 - Confirm permission to release fine-tuned weights during model selection (06),
   before committing to the larger training run. Training-data provider
   permissions remain part of the annotation-model pilot (17).
@@ -98,10 +100,13 @@ a correction workflow is not assumed. Dataset size and the time required to
 produce suitable data also remain open. The target does not establish
 feasibility or change the pilot's proposed sizes.
 
-The experiment excludes title generation, SSE changes, and segmentation.
-Extractor quality alone would not establish the quality or total build cost of
-a complete discovery hierarchy. SSE, HDBSCAN, category titles and TRUE require
-separate scale measurements.
+The pilot includes a small hierarchy built from its masks and prominence before
+model selection, using the hierarchy construction being validated. This does not
+authorize changes to the title prompt, SSE, grouping method or segmentation. Distinguish
+extractor errors from failures in the shared downstream pipeline; a parsing or
+mask-overlap score alone does not establish hierarchy quality. Release-plan
+task 11 still checks the final fine-tuned model. This early check does not replace
+the separate scale measurements or establish the full build's cost.
 
 ## Models and required untuned baselines
 
