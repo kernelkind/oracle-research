@@ -61,7 +61,15 @@ definition-style expansion with ASv6.48's name-handling instruction, including
 retaining the name of an unresolved named subject. All other title instructions
 and the masks-only input contract remain unchanged.
 
-HRv1's saved titles still use v21. This experiment does not authorize replacing
+[Title prompt v26](../hdbv2-node-description-probe-v26/prompt.txt) is a separate,
+tested but unpromoted diagnostic candidate. It preserves v25's semantic rules
+and replaces only the output instruction: brief numbered instance meanings
+precede a final `Title:` line in the same response. It does not add a second
+model stage or change the production title-output contract. V25 remains intact;
+v26's local comparison records are in
+`hdbv2-node-description-probe-v26/comparison-v1/`.
+
+HRv1's saved titles still use v21. These experiments do not authorize replacing
 them, running a full title pass, changing memberships or hierarchy edges, or
 consolidating categories. The saved v24 baseline and v25 comparison inputs,
 receipts and assessment remain local experiment data under
