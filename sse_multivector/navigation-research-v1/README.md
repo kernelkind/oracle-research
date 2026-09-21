@@ -40,9 +40,11 @@ The existing `true_graph_equivalence.py` replays explicit reviewed approvals;
 it does not generate them. Its cutoff-based checks also must not silently be
 substituted for the current native-answer graph rule.
 
-The earlier GDC09 equal-note collapse operates on a tree. The exact handling of
-shared children in the current multi-parent graph must be specified before
-implementation; deleting a shared child globally is not implied by the rule.
+The earlier GDC09 equal-note collapse operates on a tree. A proposed
+[shared-child specification](#shared-child-collapse-specification-not-enabled)
+has now been checked against saved memberships and a small shared-child example;
+it is not enabled in the browser. Deleting a shared child globally is not
+implied by the rule.
 Unconditional single-child absorption is a separate earlier experiment, not
 part of the equal-note requirement.
 
@@ -51,6 +53,88 @@ recording any remaining differences. Existing saved hierarchies are historical
 evidence, not proof that these requirements were applied. No prompt, grouping,
 relationship, membership-expansion or title-repair policy changes are approved
 by these requirements.
+
+## Shared-child collapse specification (not enabled)
+
+The user approved specifying and checking this behavior independently of the
+title-prompt work. The following is the proposed display behavior, not an
+implemented transformation or approval of semantic category consolidation.
+`true_graph_categories.py` currently exports every saved reduced edge, and the
+browser follows those edges. Existing single-child absorption is a different
+operation and refuses shared categories.
+
+**Keep the raw hierarchy; simplify only the displayed child choices.** Compute
+each category's complete post-ID set from its original direct memberships and
+raw descendants, before deciding which navigation steps to skip. Require an
+acyclic graph. Do not recompute these memberships from the simplified menus.
+
+For each displayed parent P:
+
+1. Walk its raw children in saved order. If child C has exactly P's complete
+   post set, omit that navigation step and examine C's children in its place.
+   Repeat through equal-set chains. Retain a child with a strict subset,
+   including a one-post child; this adds no minimum-size filter.
+2. Apply this decision separately for every parent. If another parent Q has
+   more posts than C, keep C under Q. Do not remove C from the raw inventory,
+   transfer its memberships to P, or rename either category.
+3. If several skipped routes reach the same displayed category ID, list that
+   ID once at its first occurrence. Distinct IDs remain separate, even when
+   their labels or post sets match. Keep the raw edges and a per-parent record
+   of skipped category IDs so all original routes remain traceable. A single
+   global original-to-surviving-node mapping cannot represent shared children.
+4. Keep the navigation root. Apply the same child-step rule there; do not
+   replace the root or suppress unrelated top-level choices.
+
+The note actions must remain distinct:
+
+- **N:** unchanged original recursive posts and their category-specific masks.
+- **D:** unchanged original direct assignments, including posts also in children.
+  Skipping a child must not turn its posts into direct assignments to its parent.
+- **O (proposed):** original recursive posts minus the union of the displayed
+  children's complete post sets. O may gain posts after collapse; it describes
+  the choices currently shown. Keep the current category's original individual
+  masks and IDs, without importing masks belonging only to another branch.
+
+Collapsed labels and IDs must remain inspectable with their parent-specific
+provenance. Categories skipped on every route remain in the raw graph and its
+evidence. This specification does not make them semantically equivalent.
+
+### Checks and remaining implementation work
+
+The saved TRUE13 **pre-membership-expansion** baseline was reconstructed through
+`build_graph(..., decision_rule='native')` and `derive_note_memberships`, matching
+the saved graph and memberships exactly. Its 59 categories have 37 reduced
+edges, four shared categories, and 77 represented posts. **None of those edges
+has equal complete post sets**, so the proposed collapse leaves that baseline
+unchanged. `category_mask_instances.reconstruct` also recovered the original
+mask IDs without changing the saved combined highlights. The existing browser's
+`--check` accepted the baseline and original source posts.
+
+A structural example was checked through the production graph and membership
+functions, using synthetic relation answers, not model inference:
+
+- Raw edges: A → C, B → C, C → D.
+- Direct posts: A={1}, B={3}, C={2}, D={1}.
+- Complete posts: A=C={1,2}, B={1,2,3}, D={1}.
+- Proposed displayed edges: A → D, B → C, C → D.
+
+Changing the **raw** A → C edge to A → D loses post 2 from A. Transferring C's
+post 2 into A instead changes A's direct membership. Retaining the raw graph
+avoids both: A's N remains {1,2}, D remains {1}, and proposed O becomes {2}.
+C remains available under B with its own masks and identity.
+
+The 34 existing TRUE graph, membership, category-export and individual-mask
+tests passed. The two older diffusion-category test modules could not import
+because this Python environment lacks NumPy. These checks validate current
+production behavior and the specification's inputs; they do **not** establish
+that the proposed browser behavior is implemented or integration-tested.
+
+Before enabling it, production-path tests must cover the shared-child example,
+equal-set chains and leaves, root retention, strict-subset single children,
+distinct siblings with equal post sets, repeated promoted IDs, unchanged N/D
+and branch-local masks, proposed O behavior, and inspectable collapsed IDs.
+The browser and frozen artifacts remain unchanged pending that work and review
+of the proposed behavior, especially O's displayed-child definition.
 
 ## Current evaluation decisions — September 15, 2026
 
