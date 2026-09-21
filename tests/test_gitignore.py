@@ -44,6 +44,20 @@ class GitIgnoreTests(unittest.TestCase):
         ]
         self.assertEqual(self.ignored(paths), set(paths))
 
+    def test_rendered_markdown_and_accidental_terminal_output_are_ignored(self):
+        paths = [
+            "sse_multivector/mask-prompt-goal-v1/asv6.37-handoff-v1/RESULTS.md",
+            "sse_multivector/subject-prompt-goal-v1/asv6.28-fresh-v1/full-outputs.md",
+            "sse_multivector/subject-prompt-goal-v1/asv6.24-comparison-v1/N065-asv6.23-t1/run/model-instructions.md",
+            "sse_multivector/subject-prompt-goal-v1/asv6.31-diverse-v1/E0347.md",
+            "sse_multivector/subject-prompt-goal-v1/asv6.35-comparison-v1/N065.md",
+            "sse_multivector/subject-prompt-goal-v1/asv6.31-named-examples-v1/H04814.md",
+            "sse_multivector/subject-prompt-goal-v1/asv6.31-named-examples-v1/J00035.md",
+            "sse_multivector/prominence-prompt-goal-v1/ppv10-mixed-notes-v1/assessment.md",
+            "sse_multivector/mask-prompt-goal-v1/--unified=10000 ",
+        ]
+        self.assertEqual(self.ignored(paths), set(paths))
+
     def test_code_prompts_docs_and_schema_sources_remain_visible(self):
         paths = [
             "sse_multivector/hierarchy_refresh.py",
@@ -55,6 +69,10 @@ class GitIgnoreTests(unittest.TestCase):
             "sse_multivector/hierarchy-refresh-v1/run/README.md",
             "sse_multivector/mask-prompt-goal-v1/mpv3.43-draft-v1/mask-prompt.md",
             "sse_multivector/subject-prompt-goal-v1/asv6.48/ASv6.48.md",
+            "sse_multivector/subject-prompt-goal-v1/asv6.31-diverse-v1/README.md",
+            "sse_multivector/subject-prompt-goal-v1/asv6.31-diverse-v1/E0347-prompt.md",
+            "sse_multivector/subject-prompt-goal-v1/asv6.31-diverse-v1/run/prompt.md",
+            "sse_multivector/subject-prompt-goal-v1/asv6.31-diverse-v1/test_results.py",
             "sse_multivector/hdbv2-node-description-probe-v21/prompt.txt",
             "sse_multivector/subject-prompt-goal-v1/example/output-schema.json",
             "sse_multivector/subject-prompt-goal-v1/example/schemas/selection.json",

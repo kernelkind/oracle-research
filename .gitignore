@@ -39,6 +39,18 @@ __pycache__/
 /sse_multivector/subject-prompt-goal-v1/asv6.31-museum-example-v1/generated-index.txt
 /sse_multivector/subject-prompt-goal-v1/asv6.31-museum-example-v1/completed-index-v1.txt
 
+# Rendered trial inputs, outputs and per-post reports are data even in Markdown.
+/sse_multivector/*-v[0-9]*/**/RESULTS.md
+/sse_multivector/*-v[0-9]*/**/full-outputs.md
+/sse_multivector/*-v[0-9]*/**/run/model-instructions.md
+/sse_multivector/subject-prompt-goal-v1/asv*-v[0-9]*/N[0-9][0-9][0-9].md
+/sse_multivector/subject-prompt-goal-v1/asv*-v[0-9]*/E[0-9][0-9][0-9][0-9].md
+/sse_multivector/subject-prompt-goal-v1/asv*-v[0-9]*/[HJ][0-9][0-9][0-9][0-9][0-9].md
+/sse_multivector/prominence-prompt-goal-v1/ppv10-mixed-notes-v1/assessment.md
+
+# Accidental captured terminal diff; [ ] matches its literal trailing space.
+/sse_multivector/mask-prompt-goal-v1/--unified=10000[ ]
+
 # Numeric arrays, model weights and other generated binary datasets.
 /sse_multivector/**/*.f32le
 /sse_multivector/**/*.npy
