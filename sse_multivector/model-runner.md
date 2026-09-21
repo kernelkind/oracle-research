@@ -67,8 +67,11 @@ SDK predates that release.
 
 Schemas are checked locally without coercion, inserted defaults, removed
 properties, or remote reference fetching. Draft-07, 2019-09, and 2020-12 are
-supported. Provider support can be narrower: the exact schema is requested,
-and a provider rejection stays a failure rather than causing a format fallback.
+supported. OpenRouter requests set `require_parameters: true` and
+`allow_fallbacks: true`, allowing another compatible provider to serve the same
+model if the first provider fails. The requested model, reasoning and schema
+remain unchanged; unsupported parameters are not removed or relaxed. If no
+compatible provider accepts the request, it fails rather than changing format.
 
 Saved results include response status, request/generation IDs when supplied,
 and `Retry-After` when visible through the credential service. Streaming error
@@ -155,7 +158,9 @@ Timeouts and output-token caps are not monetary hard caps.
 Each call has one user message, empty application-supplied system instructions,
 and no tools, history, AGENTS.md, skills, environment context, or added instruction
 sentence. The model's response does not trigger tools or additional calls.
-No automatic retries, response repair, or model substitution occurs.
+The runner makes no automatic retries, response repair, or model substitution.
+OpenRouter may try multiple providers internally under the fallback policy above;
+`http_attempts` counts the runner's HTTP attempts, not OpenRouter's provider attempts.
 
 ## Result
 

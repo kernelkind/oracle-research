@@ -54,6 +54,17 @@ for (const route of [codex, openrouter]) {
   });
 }
 
+test('OpenRouter allows compatible provider fallback without changing model, effort or schema', async () => {
+  const route = { provider: 'openrouter', model: 'z-ai/glm-5.3-flash', reasoning: 'high' };
+  const result = await preview(await prepare(config(route, { schema })));
+  assert.deepEqual(result.body.provider, { require_parameters: true, allow_fallbacks: true });
+  assert.equal(result.body.model, route.model);
+  assert.deepEqual(result.body.reasoning, { effort: 'high' });
+  assert.deepEqual(result.body.response_format.json_schema, { name: 'output', strict: true, schema });
+  assert.equal(result.body.max_tokens, undefined);
+  assert.equal(result.body.max_completion_tokens, undefined);
+});
+
 test('OpenRouter omitted or null cap sends no SDK-default token limit', async () => {
   const capped = await preview(await prepare(config(openrouter, { reasoning: 'medium', schema })));
   assert.equal(capped.body.max_tokens, 4096);

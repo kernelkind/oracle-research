@@ -131,7 +131,7 @@ function formatPayload(payload, request) {
     if (request.schema !== null) payload.response_format = {
       type: 'json_schema', json_schema: { name: request.schema_name, strict: true, schema: request.schema },
     };
-    payload.provider = { require_parameters: true, allow_fallbacks: false };
+    payload.provider = { require_parameters: true, allow_fallbacks: true };
     if (request.debug) payload.debug = request.debug;
   }
   return payload;

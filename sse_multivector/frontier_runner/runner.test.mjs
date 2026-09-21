@@ -70,7 +70,7 @@ for (const route of [astra, muse,
     assert.equal(out.body.reasoning.effort, 'low');
     assert.ok(out.headers.authorization.includes('REDACTED'));
     if (route.provider === 'openrouter') {
-      assert.deepEqual(out.body.provider, { require_parameters: true, allow_fallbacks: false });
+      assert.deepEqual(out.body.provider, { require_parameters: true, allow_fallbacks: true });
       assert.equal(out.body.max_tokens, 4096);
     } else {
       assert.equal(out.url, 'https://chatgpt.com/backend-api/codex/responses');
