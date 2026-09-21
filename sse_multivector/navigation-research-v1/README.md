@@ -67,7 +67,9 @@ and replaces only the output instruction: brief numbered instance meanings
 precede a final `Title:` line in the same response. It does not add a second
 model stage or change the production title-output contract. V25 remains intact;
 v26's local comparison records are in
-`hdbv2-node-description-probe-v26/comparison-v1/`.
+`hdbv2-node-description-probe-v26/comparison-v1/`, with a MiMo V2.6 Pro
+within-model reference in `hdbv2-node-description-probe-v26/comparison-mimo-v1/`
+whose prompts are byte-identical to the Astra run's.
 
 [Title prompt v29](../hdbv2-node-description-probe-v29/prompt.txt) is a tested
 but unpromoted rewrite: name the most specific category to which every instance
