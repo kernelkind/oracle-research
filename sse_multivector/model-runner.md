@@ -51,8 +51,10 @@ Optional fields:
 
 - `schema`: a JSON Schema for the response. Omit it for ordinary text.
 - `timeout_seconds`: integer from 1 to 3600; default 300.
-- `max_output_tokens`: required for OpenRouter. Rejected for subscription calls,
-  because that SDK transport does not enforce it.
+- `max_output_tokens`: optional for OpenRouter. Omit it or use null to send no
+  caller token cap; the runner also removes the SDK's default cap. The provider
+  can still impose its own limit. Positive integers retain the explicit cap.
+  Rejected for subscription calls, because that SDK transport does not enforce it.
 - `debug`: OpenRouter-only object containing `echo_upstream_body: true` or
   `false`. Omit it for ordinary calls. Enabling it requests OpenRouter's upstream
   request echo and records a bounded event timeline; it changes no model settings.
@@ -233,8 +235,9 @@ from the repository root. For subscription calls, set `auth_file` to null to use
 the selected account's credential service. File paths are no longer
 supported. Preserve historical configs and use a fresh run directory for the
 changed runner identity.
-For OpenRouter set `auth_file` to null and supply
-`max_output_tokens`. Paths resolve relative to the configuration file.
+For OpenRouter set `auth_file` to null. Supply `max_output_tokens` only when a
+caller cap is wanted; omitted or null sends no caller cap. Paths resolve relative
+to the configuration file.
 Extraction-specific normalization, schemas, note loading, and prompt registries
 belong to the workflow, not the general runner.
 

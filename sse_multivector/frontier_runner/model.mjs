@@ -88,7 +88,7 @@ export async function prepare(config) {
     model = config.model === deepseek.id ? deepseek : Object.hasOwn(OPENROUTER_MODELS, config.model) ? OPENROUTER_MODELS[config.model] : undefined;
     if (!model) throw new Error('Unknown OpenRouter model in the pinned pi-ai catalog; no model substitution');
     if (model.api !== 'openai-completions') throw new Error(`Unsupported OpenRouter transport: ${model.api}; this runner supports openai-completions, without rerouting models`);
-    if (!integer(config.max_output_tokens, 1, model.maxTokens)) throw new Error('OpenRouter requires max_output_tokens within the model limit');
+    if (config.max_output_tokens != null && !integer(config.max_output_tokens, 1, model.maxTokens)) throw new Error('OpenRouter max_output_tokens must be within the model limit when supplied');
     model = { ...model, compat: { ...model.compat, maxTokensField: 'max_tokens' } };
   } else {
     throw new Error('provider must be openai-codex (subscription) or openrouter');
@@ -122,6 +122,11 @@ function formatPayload(payload, request) {
     };
     else delete payload.text;
   } else {
+    if (request.max_output_tokens === null) {
+      // The SDK otherwise supplies a catalog default even when the caller omitted the cap.
+      delete payload.max_tokens;
+      delete payload.max_completion_tokens;
+    }
     if (request.reasoning === 'provider-default') delete payload.reasoning;
     if (request.schema !== null) payload.response_format = {
       type: 'json_schema', json_schema: { name: request.schema_name, strict: true, schema: request.schema },
@@ -441,7 +446,7 @@ Required: provider, model, reasoning, prompt (sent exactly as supplied).
 Optional: schema, timeout_seconds (default 300). No tools, history, retries, or prompt repair.
 Providers: openai-codex subscription; OpenRouter models using pi-ai openai-completions.
 Other catalog transports are rejected explicitly; no model substitution or rerouting.
-OpenRouter requires max_output_tokens. Subscription output caps are unsupported.
+OpenRouter max_output_tokens is optional; omitted or null sends no caller cap. Subscription output caps are unsupported.
 OpenRouter-only debug: {"echo_upstream_body":true} records upstream settings and a bounded event timeline.
 reasoning selects a supported pi-ai effort or provider-default (no requested preference).
 schema is validated locally without coercion; omitted schema accepts plain text.

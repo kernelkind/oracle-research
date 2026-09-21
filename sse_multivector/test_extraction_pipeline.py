@@ -1992,6 +1992,26 @@ class ExtractionPipelineTests(unittest.TestCase):
         path.write_text(json.dumps(config), encoding="utf-8")
         return path, config
 
+    def test_openrouter_prompt_batch_allows_omitted_or_null_output_cap(self):
+        for name, settings in (("absent", {}), ("null", {"max_output_tokens": None})):
+            with self.subTest(name=name):
+                path, config = self.prompt_batch_config(
+                    f"uncapped-{name}", 2, provider="openrouter", auth_file=None,
+                    reasoning_effort="medium", **settings,
+                )
+                before = len(self.calls())
+                completed = self.invoke_prompt_config(path)
+                self.assertEqual(0, completed.returncode, completed.stderr)
+                calls = self.calls()[before:]
+                self.assertEqual(2, len(calls))
+                for call in calls:
+                    self.assertNotIn("max_output_tokens", call["request"])
+                    self.assertEqual("medium", call["request"]["reasoning"])
+                manifest = json.loads((Path(config["run_directory"]) / "manifest.json").read_text())
+                self.assertIsNone(manifest["max_output_tokens"])
+                self.assertEqual(0, self.invoke_prompt_config(path).returncode)
+                self.assertEqual(before + 2, len(self.calls()))
+
     def test_generic_prompt_batches_default_to_16_and_allow_concurrency_overrides(self):
         for limit in (None, 1, 3, 24):
             with self.subTest(limit=limit):

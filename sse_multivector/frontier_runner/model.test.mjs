@@ -54,6 +54,26 @@ for (const route of [codex, openrouter]) {
   });
 }
 
+test('OpenRouter omitted or null cap sends no SDK-default token limit', async () => {
+  const capped = await preview(await prepare(config(openrouter, { reasoning: 'medium', schema })));
+  assert.equal(capped.body.max_tokens, 4096);
+  const expected = structuredClone(capped.body);
+  delete expected.max_tokens;
+  for (const cap of [undefined, null]) {
+    const input = config(openrouter, { reasoning: 'medium', schema });
+    if (cap === undefined) delete input.max_output_tokens;
+    else input.max_output_tokens = cap;
+    const prepared = await prepare(input);
+    const result = await execute(prepared, { apiKey: 'test-only', fetch: async (_url, options) => {
+      assert.deepEqual(JSON.parse(options.body), expected);
+      return reply('{"count":2,"label":null}');
+    } });
+    assert.equal(result.valid, true);
+    assert.equal(result.http_attempts, 1);
+    assert.deepEqual((await preview(prepared)).body, expected);
+  }
+});
+
 test('plain-text output succeeds without JSON parsing; response and usage provenance survive', async () => {
   const text = 'A normal answer, not JSON.\n';
   const result = await run(text);
@@ -120,8 +140,9 @@ test('invalid requests fail before transport without silently rewriting prompt, 
   await assert.rejects(prepare(config({ ...codex, model: 'unknown-model' })), /model/i);
   await assert.rejects(prepare(config({ ...openrouter, model: 'anthropic/claude-3-haiku' })), /unsupported.*transport/i);
   await assert.rejects(prepare(config(codex, { max_output_tokens: 100 })), /output.*cap|output.*limit/i);
-  await assert.rejects(prepare(config({ ...openrouter, max_output_tokens: undefined })), /max_output_tokens/);
-  await assert.rejects(prepare(config({ ...openrouter, max_output_tokens: 0 })), /max_output_tokens/);
+  for (const cap of [0, -1, true, '4096', 1.5, Number.MAX_SAFE_INTEGER]) {
+    await assert.rejects(prepare(config({ ...openrouter, max_output_tokens: cap })), /max_output_tokens/);
+  }
   await assert.rejects(prepare(config(openrouter, { timeout_seconds: 0 })), /timeout_seconds/);
   await assert.rejects(prepare(config({ ...codex, provider: 'openai' })), /provider/);
 });

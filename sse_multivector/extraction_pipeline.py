@@ -408,8 +408,8 @@ def _runtime_options(value: dict[str, Any], base: Path) -> dict[str, Any]:
         raise RunnerError("timeout_seconds must be an integer from 1 to 3600")
     cap = value.get("max_output_tokens")
     if provider == "openrouter":
-        if isinstance(cap, bool) or not isinstance(cap, int) or cap < 1:
-            raise RunnerError("OpenRouter requires positive max_output_tokens")
+        if cap is not None and (isinstance(cap, bool) or not isinstance(cap, int) or cap < 1):
+            raise RunnerError("OpenRouter max_output_tokens must be positive when supplied")
     elif cap is not None:
         raise RunnerError("subscription transport does not enforce max_output_tokens")
     return {
