@@ -89,6 +89,12 @@ decision. The saved v21 and v25-v26 outputs were produced by Astra, so
 cross-model differences mix prompt and model changes. Earlier versions are
 preserved; no promotion or production change is implied.
 
+[Title prompt v30](../hdbv2-node-description-probe-v30/prompt.txt) is an untested
+draft built on v29, informed by the v26/v29 MiMo references: retain unresolved
+names without literal component readings or defining glosses, name the category
+rather than the mentions, and return the JSON object without Markdown fences.
+It changes no other instruction and is not tested or promoted.
+
 HRv1's saved titles still use v21. These experiments do not authorize replacing
 them, running a full title pass, changing memberships or hierarchy edges, or
 consolidating categories. The saved v24 baseline and v25 comparison inputs,
