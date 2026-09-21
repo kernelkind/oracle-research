@@ -53,6 +53,20 @@ evidence, not proof that these requirements were applied. No prompt, grouping,
 relationship, membership-expansion or title-repair policy changes are approved
 by these requirements.
 
+## Current title-prompt experiment
+
+[Title prompt v25](../hdbv2-node-description-probe-v25/prompt.txt) is tested but
+not promoted. The approved bounded comparison replaces v24's instruction against
+definition-style expansion with ASv6.48's name-handling instruction, including
+retaining the name of an unresolved named subject. All other title instructions
+and the masks-only input contract remain unchanged.
+
+HRv1's saved titles still use v21. This experiment does not authorize replacing
+them, running a full title pass, changing memberships or hierarchy edges, or
+consolidating categories. The saved v24 baseline and v25 comparison inputs,
+receipts and assessment remain local experiment data under
+`hdbv2-node-description-probe-v25/comparison-v1/`.
+
 ## Shared-child collapse
 
 The user approved implementing this behavior independently of the title-prompt
