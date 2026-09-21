@@ -35,6 +35,16 @@ const deepseek = {
   compat: { supportsDeveloperRole: false, thinkingFormat: 'openrouter', maxTokensField: 'max_tokens' },
 };
 
+// This pinned catalog predates V2.6. Exact model metadata, not an alias.
+// OpenRouter /api/v1/models inspected 2026-09-21; catalog costs are not invoices or caps.
+const mimo = {
+  id: 'xiaomi/mimo-v2.6-pro', name: 'Xiaomi: MiMo-V2.6-Pro',
+  provider: 'openrouter', api: 'openai-completions', baseUrl: 'https://openrouter.ai/api/v1',
+  input: ['text', 'image'], reasoning: true, contextWindow: 1048576, maxTokens: 131072,
+  cost: { input: 0.435, output: 0.87, cacheRead: 0.0036, cacheWrite: 0 },
+  compat: { supportsDeveloperRole: false, thinkingFormat: 'openrouter', maxTokensField: 'max_tokens' },
+};
+
 async function identity() {
   const hash = createHash('sha256');
   for (const path of ['model.mjs', 'package-lock.json', '../run-model.sh']) {
@@ -85,7 +95,9 @@ export async function prepare(config) {
     if (model.api !== 'openai-codex-responses') throw new Error(`Unsupported subscription transport: ${model.api}`);
     if ('max_output_tokens' in config) throw new Error('pi-ai subscription transport does not enforce an output token cap; use timeout_seconds');
   } else if (config.provider === 'openrouter') {
-    model = config.model === deepseek.id ? deepseek : Object.hasOwn(OPENROUTER_MODELS, config.model) ? OPENROUTER_MODELS[config.model] : undefined;
+    model = config.model === mimo.id ? mimo
+      : config.model === deepseek.id ? deepseek
+      : Object.hasOwn(OPENROUTER_MODELS, config.model) ? OPENROUTER_MODELS[config.model] : undefined;
     if (!model) throw new Error('Unknown OpenRouter model in the pinned pi-ai catalog; no model substitution');
     if (model.api !== 'openai-completions') throw new Error(`Unsupported OpenRouter transport: ${model.api}; this runner supports openai-completions, without rerouting models`);
     if (config.max_output_tokens != null && !integer(config.max_output_tokens, 1, model.maxTokens)) throw new Error('OpenRouter max_output_tokens must be within the model limit when supplied');

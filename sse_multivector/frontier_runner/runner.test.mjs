@@ -51,6 +51,7 @@ test('676 selected inputs match the existing frozen production formatter', async
 
 for (const route of [astra, muse,
   { ...muse, model: 'deepseek/deepseek-v4.1-flash' },
+  { ...muse, model: 'xiaomi/mimo-v2.6-pro' },
   { ...muse, model: 'z-ai/glm-5.3-flash' }]) {
   test(`${route.model}: actual pi-ai payload has one user message, no added instructions/history/tools`, async () => {
     const out = await preview(await prepare(config(route)));

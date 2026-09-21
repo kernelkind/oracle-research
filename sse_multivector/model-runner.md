@@ -62,8 +62,9 @@ Optional fields:
 Unknown fields, models, reasoning settings, and unsupported transports fail
 explicitly. The pinned pi-ai catalog supplies model metadata; OpenRouter entries
 using `openai-completions` are supported. Other catalog transports are not silently
-rerouted. DeepSeek V4.1 Flash has an explicit catalog addition because the pinned
-SDK predates that release.
+rerouted. DeepSeek V4.1 Flash and Xiaomi MiMo V2.6 Pro
+(`xiaomi/mimo-v2.6-pro`) have explicit catalog additions because the pinned SDK
+predates those releases.
 
 Schemas are checked locally without coercion, inserted defaults, removed
 properties, or remote reference fetching. Draft-07, 2019-09, and 2020-12 are

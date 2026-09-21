@@ -65,6 +65,19 @@ test('OpenRouter allows compatible provider fallback without changing model, eff
   assert.equal(result.body.max_completion_tokens, undefined);
 });
 
+test('pinned MiMo route uses exact metadata with standard graded reasoning', async () => {
+  const route = { provider: 'openrouter', model: 'xiaomi/mimo-v2.6-pro', reasoning: 'high' };
+  const result = await preview(await prepare(config(route, { schema })));
+  assert.equal(result.body.model, route.model);
+  assert.deepEqual(result.body.reasoning, { effort: 'high' });
+  assert.deepEqual(result.body.provider, { require_parameters: true, allow_fallbacks: true });
+  assert.deepEqual(result.body.response_format.json_schema, { name: 'output', strict: true, schema });
+  assert.equal(result.body.max_tokens, undefined);
+  await assert.doesNotReject(prepare(config(route, { reasoning: 'medium' })));
+  await assert.rejects(prepare(config(route, { reasoning: 'max' })), /reasoning/);
+  await assert.rejects(prepare(config({ ...route, model: 'xiaomi/mimo-v2.6-flash' })), /Unknown OpenRouter model/);
+});
+
 test('OpenRouter omitted or null cap sends no SDK-default token limit', async () => {
   const capped = await preview(await prepare(config(openrouter, { reasoning: 'medium', schema })));
   assert.equal(capped.body.max_tokens, 4096);
