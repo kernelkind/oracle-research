@@ -1,0 +1,5 @@
+For each instance, briefly explain what the quoted text refers to. Interpret the quoted text within each instance together. If you cannot tell, say so.
+
+Instances:
+
+{NUMBERED_INSTANCES}
