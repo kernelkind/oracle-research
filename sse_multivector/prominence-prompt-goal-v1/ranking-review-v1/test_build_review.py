@@ -72,6 +72,10 @@ class MarkSpansTests(unittest.TestCase):
             with self.subTest(spans=spans), self.assertRaises(ValueError):
                 br.mark_spans("coffee", spans)
 
+    def test_display_collapses_whitespace_but_keeps_the_marks(self):
+        self.assertEqual("a b\n\nc ⟦d⟧",
+                         br.display("a   b\n\n\n\nc ⟦d⟧"))
+
 
 class CoverageTests(unittest.TestCase):
     def test_every_case_appears_in_exactly_one_placement(self):
@@ -141,10 +145,10 @@ class RealDataTests(unittest.TestCase):
         card = self.cards["S9c440e7f47"]
         self.assertIn("⟦coffee⟧", card["text"])
         self.assertIn("⟦Coffee⟧", card["text"])
-        self.assertIn("1.", card["text"])
+        self.assertIn("1 · N029", card["text"])
         comment = card["results"][0]["comment"]
         self.assertIn("node-note order", comment.lower())
-        self.assertIn("R03 (88) > R04 (2) clear_cross_note: ordered, gap 86", comment)
+        self.assertIn("as expected: R03 over R04 (88 vs 2, gap 86)", comment)
 
     def test_outputs_are_the_saved_verbatim_responses(self):
         card = self.cards["S9c440e7f47"]
@@ -165,7 +169,7 @@ class RealDataTests(unittest.TestCase):
     def test_gap_sections_carry_the_unplaced_cases(self):
         unassigned = self.cards["unassigned"]["results"][0]["comment"]
         self.assertIn("task 24", unassigned)
-        self.assertIn("Preserved disagreement:", unassigned)
+        self.assertIn("PRESERVED DISAGREEMENT", unassigned)
         self.assertIn("S68ce4fd21f", unassigned)  # cross-placement pair note
         outside = self.cards["outside-corpus"]["results"][0]["comment"]
         self.assertIn("not in the hierarchy corpus", outside)

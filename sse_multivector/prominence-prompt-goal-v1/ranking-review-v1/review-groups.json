@@ -4,33 +4,33 @@
   "prompt_status": "user-approved, tested experimentally, not production-frozen",
   "prompt_path": "../ppv10-draft-v1/PPv10.md",
   "prompt_sha256": "d40835fb0b104865727c0b0a2bde4074afb642991d9bddc424d5379ef4b038ea",
-  "purpose": "Node-note order review against the saved HDBv2 (hdbscan-cross-note) hierarchy: how saved PPv10 scores order each node's notes, and where saved coverage cannot order a node at all. The consumer of prominence is task 27, node-note ordering; nothing here is judged outside that.",
+  "purpose": "Node-note order review against the saved HDBv2 hierarchy: how saved PPv10 scores order each node's notes, and where saved coverage cannot order a node at all. The consumer of prominence is node-note ordering (plan task 27); nothing here is judged outside that.",
   "studies": ["ppv10-ranking-v1", "ppv10-mixed-notes-v1"],
-  "expectations_note": "Predeclared expectations and order checks are assistant judgments recorded before inference, not user-approved gold labels. Mechanical order checks are not an accuracy rate.",
-  "limits_note": "Limits: one saved call per case; order rows are a mechanical display of scores, and combining one note's multiple masks within a node is undecided (task 27) — no sum, max, or average is applied. Masks are unchanged saved inputs from several extraction versions; prominence is not mask correctness, category membership, truth, quality, usefulness, or personal interest. Node membership is the saved HDBv2 assignment; this review changes no membership and validates neither clustering nor titles. PPv10 is not production-frozen and the production registry still freezes PPv2.",
+  "expectations_note": "assistant predeclarations only",
+  "limits_note": "masks and node membership unchanged · how one note's several masks in a node combine is undecided (no sum/max/average; task 27) · checks are not an accuracy rate · PPv10 not production-frozen; registry still freezes PPv2",
   "preserved_disagreements": [
     {
       "cases": ["M03"],
-      "text": "The vacuum sealer mask was predeclared as a major focus (70-89); the score of 58 labels it secondary. The post also extensively covers meat preparation and animal feed, so the boundary is arguable. The mask is in no node, so no harmful node-note order follows from this score yet. Do not hide this, and do not add a prompt rule just to raise it."
+      "text": "Predeclared as a major focus (70-89); the score of 58 is secondary. The post also covers meat preparation and animal feed, so the boundary is arguable, and the mask is in no node, so no node-note order is affected yet. Do not hide this, and do not add a prompt rule just to raise it."
     }
   ],
   "open_questions": [
-    "Eight scored masks belong to no node (task 24 territory): their scores order nothing until membership recovery places them.",
-    "Only S9c440e7f47 has complete saved scores. Comparable saved scores for every node's remaining masks are the missing evidence for the actual ordering decision.",
-    "One note with multiple masks in one node is present (Sbb8511308a, S68ce4fd21f): task 27's combination rule is undecided and must not be smuggled in as sum, max, or average."
+    "Eight scored masks belong to no node (task 24): their scores order nothing until membership recovery places them.",
+    "Only S9c440e7f47 has complete saved scores. Comparable saved scores for each node's remaining masks are the missing evidence for the actual ordering decision.",
+    "One note with several masks in one node is present (Sbb8511308a, S68ce4fd21f): how those combine is undecided (task 27) and must not be smuggled in as sum, max, or average."
   ],
   "nodes": [
     {
       "id": "S9c440e7f47",
-      "commentary": "Two bare coffee tokens in hashtag-style posts: the mostly-hashtag second-coffee post (N029) and the animal-ethics-quotation post (N048). Both masks have saved scores, so this is the only node whose note order is fully supported. Judgment: opening this node, is the second-coffee post correctly ahead of the quotation post, whose coffee is a stray hashtag?"
+      "commentary": "Two bare coffee tokens in hashtag-style posts: a mostly-hashtag second-coffee post and an animal-ethics quotation with a stray Coffee hashtag. Both masks are scored, so this is the only node with a complete saved order. Is the second-coffee post correctly ahead of the quotation post?"
     },
     {
       "id": "Sbb8511308a",
-      "commentary": "A coffee node across three notes: More coffee in cool places (N035), Iced coffee, served in ice (N036), and Is there coffee for me? (N044). N035 contributes two overlapping masks in this node and the dog-coffee note is unscored, so the full node-note order cannot be produced from saved scores without task 27's undecided combination rule and two more scores. The two scored notes tie at 95 and no order between them was predeclared."
+      "commentary": "A coffee node over three posts: More coffee in cool places; Iced coffee, served in ice; and Is there coffee for me? The first post contributes two overlapping masks here and the dog-coffee post is unscored, so the full order needs two more scores and the undecided multi-mask rule. The two scored posts tie at 95; no order between them was predeclared."
     },
     {
       "id": "S68ce4fd21f",
-      "commentary": "A post-Christmas node: Santa didn't show (N032, three masks), after-Christmas slowdown (N061, three masks), printing Christmas cards (N079, two masks), and today is a gift (N092, one mask). Only the today-is-a-gift mask is scored, so saved scores cannot order this node at all. Its membership is also the one scored placement whose own note's sibling mask sits unassigned."
+      "commentary": "A post-Christmas node: a Santa-didn't-show post, an after-Christmas slowdown post, a printing-Christmas-cards diary, and the daily update's today-is-a-gift closing. Only that last mask is scored, so saved scores cannot order this node at all."
     }
   ],
   "sections": [
@@ -38,13 +38,13 @@
       "id": "unassigned",
       "title": "Unassigned masks · 8 scored masks in no node (task 24)",
       "cases": ["M01", "M02", "M03", "M04", "M05", "M07", "M10", "M11"],
-      "commentary": "These masks are members of no HDBv2 node — the membership gap task 24 exists to close. Their scores currently produce no node-note order; they are evidence about the scorer only until recovery places them. Note that M05 and M06 are one note's two masks in different placements, so even their within-note contrast crosses placements."
+      "commentary": "These masks belong to no node — the membership gap of plan task 24. Their scores order nothing until they are placed. M05 and M06 are one note's two masks in different places (M06 sits in node S68ce4fd21f), so even their within-note contrast crosses cards."
     },
     {
       "id": "outside-corpus",
       "title": "Outside the hierarchy corpus · 6 control masks (no node placement)",
       "cases": ["R05", "R06", "R07", "R08", "M08", "M09"],
-      "commentary": "These masks are not in the hierarchy corpus at all: their notes come from earlier mask-prompt assessments, so no node placement exists for them. They remain prompt-behavior controls — including the baby/Nostr within-note control — and say nothing about node-note order."
+      "commentary": "These masks are not in the hierarchy corpus at all: their notes come from earlier mask-prompt assessments. They stay as prompt-behavior controls — including the baby/Nostr within-note control — and say nothing about node-note order."
     }
   ]
 }

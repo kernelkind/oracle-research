@@ -8,6 +8,7 @@ plus the placement gaps; the question on each node card is node-note order.
 """
 import hashlib
 import json
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -274,58 +275,67 @@ def _node_view(node, instances, vectors, cases, case_ids):
             "scored_count": len(case_ids)}
 
 
-def _order_lines(row):
-    masks = ", ".join(
-        f"{instance['instance']} ({case['score'] if case else 'unscored'})"
+def display(text):
+    """Whitespace-collapsed card face; the exact saved text stays under i."""
+    return re.sub(r"\n{3,}", "\n\n", re.sub(r"[ \t]+", " ", text)).strip()
+
+
+def _order_line(row):
+    masks = " + ".join(
+        f"{instance['instance']}={case['score'] if case else 'unscored'}"
         for (instance, _vector), case in row["members"])
     if row["best"] is None:
-        head = f"no saved score — position unknown — masks {masks}"
+        line = f"  {row['note_short']}: no score — position unknown — masks here: {masks}"
     else:
-        case = next(case for (_i, _v), case in row["members"] if case)
-        head = f"{case['id']} best {row['best']} — masks {masks}"
+        line = f"  {row['note_short']}: {row['best']} — masks here: {masks}"
     if len(row["members"]) > 1:
-        head += f" — {len(row['members'])} masks in this node; combination undecided (task 27)"
-    return f"  {row['note_short']}: {head}"
+        line += f" — {len(row['members'])} masks here; how they combine is undecided"
+    return line
 
 
 def _comment(parts):
     return "\n\n".join(part for part in parts if part)
 
 
-def _checks_block(card_id, comparisons, context):
+def _checks_block(card_id, comparisons):
+    lines = ["PREDECLARED CHECKS — before inference, not gold labels; "
+             "not an accuracy rate"]
     if not comparisons:
-        return ""
-    lines = ["Predeclared order checks — mechanical order only, ties and reversals kept "
-             "separate, not an accuracy rate:"]
+        lines.append("  none for this card")
+        return "\n".join(lines)
+    words = {"ordered": "as expected", "tie": "no separation", "reversed": "REVERSED"}
     for comparison in comparisons:
-        line = (f"{comparison['higher']} ({comparison['higher_score']}) > "
-                f"{comparison['lower']} ({comparison['lower_score']}) "
-                f"{comparison['kind']}: {comparison['result']}, gap {comparison['gap']}")
+        line = (f"  {words[comparison['result']]}: {comparison['higher']} over "
+                f"{comparison['lower']} ({comparison['higher_score']} vs "
+                f"{comparison['lower_score']}, gap {abs(comparison['gap'])})")
         if comparison["informational"]:
-            line += " (informational only)"
+            line += " — tentative/related, informational only"
         if comparison["crosses"]:
-            line += (f" — crosses placements ({comparison['higher']} in "
+            line += (f" — spans two cards ({comparison['higher']} in "
                      f"{comparison['crosses'][0]}, {comparison['lower']} in "
-                     f"{comparison['crosses'][1]}); not a node-note order")
+                     f"{comparison['crosses'][1]}); not this node's order")
         lines.append(line)
     return "\n".join(lines)
 
 
 def _expectations_block(cases_in_order, note):
-    lines = ["Predeclared expectation, recorded before inference by the assistant, "
-             "not a gold label:"]
+    lines = ["EXPECTATIONS — recorded before inference, not gold labels"]
     for case in cases_in_order:
-        lines.append(f"  {case['id']}: " + (case.get("expectation") or
-                     "None recorded for this case; see the predeclared order checks."))
-    lines.append(note)
+        lines.append(f"  {case['id']}: " + (case.get("expectation") or "none recorded"))
     return "\n".join(lines)
 
 
 def _scorer_block(context):
     scorer = context["scorer"]
-    return (f"Scorer: {scorer['model']} reasoning {scorer['reasoning_effort']} via "
-            f"{scorer['provider']}; one saved call per case; unchanged PPv10 "
-            f"(sha256 {context['prompt_sha256'][:12]}…).")
+    return ("PROVENANCE\n"
+            f"  one saved call per mask · {scorer['model']} "
+            f"{scorer['reasoning_effort']} via {scorer['provider']} · "
+            f"PPv10 unchanged (sha256 {context['prompt_sha256'][:12]}…)")
+
+
+def _disagreement(case, context):
+    text = context["disagreements"].get(case["id"])
+    return f"PRESERVED DISAGREEMENT\n  {case['id']}: {text}" if text else ""
 
 
 def _card_cases(node, context):
@@ -348,7 +358,7 @@ def render_review(context):
 
 
 def _node_card(node, context):
-    cases = [case for case in _card_cases(node, context)]
+    cases = _card_cases(node, context)
     scored, total = node["scored_count"], node["mask_count"]
     if scored == total:
         status = f"order complete ({scored}/{total} masks scored)"
@@ -356,33 +366,29 @@ def _node_card(node, context):
         status = f"order partial ({scored}/{total} masks scored)"
     else:
         status = f"order unscored ({total - scored} of {total} masks unscored)"
-    header = (f"Node {node['id']} — HDBv2 (hdbscan-cross-note): {node['note_count']} notes, "
-              f"{total} masks.\n\nReview question: opening this node, do the notes most "
-              f"directly about it come first?\n\nThe order below is a mechanical display "
-              f"of saved PPv10 scores, not an agreed rule (task 27).\n\n")
+    header = (f"NODE {node['id']} · {node['note_count']} notes · {total} masks · {status}\n"
+              f"Opening this node: are the most-about notes first? Shown order is the "
+              f"saved scores, display only.\n"
+              f"(Note text whitespace-collapsed here; exact text and scorer input under i.)\n\n")
     blocks = []
     for index, row in enumerate(node["rows"], 1):
-        labels = ", ".join(
-            f"{instance['instance']} ({case['score'] if case else 'unscored'})"
+        score = f"score {row['best']}" if row["best"] is not None else "no score"
+        masks = " · ".join(
+            f"{instance['instance']}={case['score'] if case else 'unscored'}"
             for (instance, _vector), case in row["members"])
-        head = (f"{index}. {row['note_short']} · "
-                f"{row['best'] if row['best'] is not None else 'no saved score'} "
-                f"· masks here: {labels}")
         text = row["members"][0][0][0]["text"]
-        spans = [instance["byte_spans"] for (instance, _v), _c in row["members"]
-                 for instance in [instance]]
-        flat = [span for spans_group in spans for span in spans_group]
-        blocks.append(f"{head}\n{mark_spans(text, flat)}")
-    order_lines = [_order_lines(row) for row in node["rows"]]
+        flat = [span for (instance, _v), _c in row["members"]
+                for span in instance["byte_spans"]]
+        blocks.append(f"{index} · {row['note_short']} · {score}\n"
+                      f"  masks here: {masks}\n{display(mark_spans(text, flat))}")
     comment = _comment([
-        f"My assessment: {node['commentary']}",
-        "Node-note order from saved PPv10 scores — mechanical display only; combining "
-        "one note's multiple masks is undecided (task 27):\n" + "\n".join(order_lines),
-        _checks_block(node["id"], context["comparisons_by_card"].get(node["id"], []), context),
+        "WHAT THIS NODE IS\n  " + node["commentary"],
+        "ORDER (node-note order)\n" + "\n".join(_order_line(row) for row in node["rows"]),
+        _checks_block(node["id"], context["comparisons_by_card"].get(node["id"], [])),
         _expectations_block(cases, context["expectations_note"]),
         *(_disagreement(case, context) for case in cases),
         _scorer_block(context),
-        context["limits_note"],
+        f"LIMITS\n  {context['limits_note']}",
     ])
     return {
         "id": node["id"],
@@ -396,17 +402,18 @@ def _node_card(node, context):
 
 def _section_card(section, context):
     cases = section["cases_sorted"]
-    header = (f"{section['title']}\n\nReview question does not apply here until these "
-              f"masks are placed in nodes.\n\n")
+    header = (f"{section['title']}\nNo node-note order to judge until these masks are "
+              f"placed in nodes.\n\n")
     blocks = [f"{case['id']} · score {case['score']} · {BAND_LABELS[band(case['score'])]}"
-              f" · {case['label']}\n{case['input']['marked_post']}" for case in cases]
+              f" · {case['label']}\n{display(case['input']['marked_post'])}"
+              for case in cases]
     comment = _comment([
-        f"My assessment: {section['commentary']}",
-        _checks_block(section["id"], context["comparisons_by_card"].get(section["id"], []), context),
+        "WHAT THIS IS\n  " + section["commentary"],
+        _checks_block(section["id"], context["comparisons_by_card"].get(section["id"], [])),
         _expectations_block(cases, context["expectations_note"]),
         *(_disagreement(case, context) for case in cases),
         _scorer_block(context),
-        context["limits_note"],
+        f"LIMITS\n  {context['limits_note']}",
     ])
     return {
         "id": section["id"],
@@ -416,11 +423,6 @@ def _section_card(section, context):
         "results": [{"model": _model_pane(context), "output": _outputs_block(cases),
                      "comment": comment}],
     }
-
-
-def _disagreement(case, context):
-    text = context["disagreements"].get(case["id"])
-    return f"Preserved disagreement: {text}" if text else ""
 
 
 def _model_pane(context):
