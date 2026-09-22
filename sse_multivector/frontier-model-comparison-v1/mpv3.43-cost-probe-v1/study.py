@@ -206,35 +206,53 @@ def collect_one(candidate, note, decoder):
     manifest = read(run_directory(name) / "manifest.json")
     records = [json.loads(line) for line in
                (run_directory(name) / "results.jsonl").read_text().splitlines()]
-    if len(records) != SUBJECT_COUNT:
-        raise ValueError(f"{name}: expected {SUBJECT_COUNT} saved attempts")
     by_id = {job.prompt_id: job for job in config.prompts}
-    rows = []
+    grouped = {}
     for record in records:
         item_id = record.get("job_key", "").removeprefix("prompt:")
         if record.get("execution") == "cross_run_reuse":
             raise ValueError(f"{name}:{item_id}: reused answer, not a fresh send")
+        grouped.setdefault(item_id, []).append(record)
+    expected = {f"M{index:03d}" for index in range(1, SUBJECT_COUNT + 1)}
+    if set(grouped) != expected:
+        raise ValueError(f"{name}: expected attempts for exactly {sorted(expected)}")
+    rows = []
+    for item_id in sorted(grouped):
+        attempts = grouped[item_id]
+        succeeded = [r for r in attempts if r.get("status") == "succeeded"]
+        if not succeeded:
+            raise ValueError(f"{name}:{item_id}: no successful attempt")
+        record = succeeded[-1]
         pipeline.validate_prompt_receipt(
             dataclasses.replace(config, prompts=(by_id[item_id],)), manifest, record)
+        for other in attempts:
+            if other is record:
+                continue
+            if (other.get("prompt_sha256") != record.get("prompt_sha256")
+                    or other.get("request_sha256") != record.get("request_sha256")):
+                raise ValueError(
+                    f"{name}:{item_id}: failed attempt identity differs from "
+                    "the validated request")
         subject = next(entry for entry in metadata["items"]
                        if entry["item_id"] == item_id)
         row = {
             "item_id": item_id,
             "subject": subject["subject"],
+            "attempts": len(attempts),
+            "failed_attempts_without_usage": sum(
+                1 for r in attempts if r.get("status") != "succeeded"),
             "status": record.get("status"),
-            "error": record.get("error"),
             "elapsed_seconds": record.get("elapsed_seconds"),
             "usage": record.get("usage"),
         }
-        if record.get("status") == "succeeded":
-            response, ranges = decoder.decode(record["final_output_raw"], note["text"])
-            row["diagnostics"] = {
-                "meaning": response["meaning"],
-                "expressible": response["expressible"],
-                "evidence": response["evidence"],
-            }
-            row["fragment_count"] = len(ranges)
-            row["empty_mask"] = not ranges
+        response, ranges = decoder.decode(record["final_output_raw"], note["text"])
+        row["diagnostics"] = {
+            "meaning": response["meaning"],
+            "expressible": response["expressible"],
+            "evidence": response["evidence"],
+        }
+        row["fragment_count"] = len(ranges)
+        row["empty_mask"] = not ranges
         rows.append(row)
     return {
         "model": candidate["model"],
@@ -246,8 +264,10 @@ def collect_one(candidate, note, decoder):
 
 def usage_totals(rows):
     totals = {
-        "attempts": len(rows),
+        "calls": len(rows),
         "succeeded": sum(1 for row in rows if row["status"] == "succeeded"),
+        "failed_attempts_without_usage": sum(
+            row["failed_attempts_without_usage"] for row in rows),
         "input_tokens": 0,
         "cache_read_tokens": 0,
         "cache_write_tokens": 0,
@@ -272,23 +292,41 @@ def usage_totals(rows):
 
 def collect():
     check_pins()
+    collector_changes = {}
     for path, expected in read(ROOT / "input-hashes.json").items():
-        if digest(Path(path)) != expected:
-            raise ValueError("pinned input changed: " + path)
+        actual = digest(Path(path))
+        if actual == expected:
+            continue
+        if Path(path) == ROOT / "study.py":
+            # The collector itself may be refined after prepare (retry
+            # handling). Model inputs stay strictly pinned; both hashes and
+            # the reason are recorded in results.json.
+            collector_changes[path] = {
+                "sha256_at_prepare": expected, "sha256_at_collect": actual,
+                "reason": "collector refined to select each item's successful "
+                         "attempt after the saved zero-usage sandbox failures; "
+                         "no model input or request changed",
+            }
+            continue
+        raise ValueError("pinned input changed: " + path)
     note = selected_note()
     decoder = decoder_module()
     if digest(DECODER) != DECODER_SHA256:
         raise ValueError("position decoder changed")
     candidates = {c["name"]: collect_one(c, note, decoder) for c in CANDIDATES}
     names = [c["name"] for c in CANDIDATES]
-    prompt_hashes = [
-        [row.get("prompt_sha256") for row in
-         [json.loads(line) for line in
-          (run_directory(name) / "results.jsonl").read_text().splitlines()]]
-        for name in names
-    ]
+    prompt_hashes = []
+    for name in names:
+        rows = [json.loads(line) for line in
+                (run_directory(name) / "results.jsonl").read_text().splitlines()]
+        selected = {}
+        for row in rows:
+            if row.get("status") == "succeeded":
+                selected[row.get("job_key")] = row.get("prompt_sha256")
+        prompt_hashes.append(selected)
     if prompt_hashes[0] != prompt_hashes[1]:
         raise ValueError("candidate runs did not use identical rendered prompts")
+    results_prompt_hashes = prompt_hashes[0]
     results = {
         "experiment": EXPERIMENT,
         "prompt_version": PROMPT_VERSION,
@@ -298,6 +336,8 @@ def collect():
         "note_label": NOTE_LABEL,
         "note_characters": len(note["text"]),
         "requests_byte_identical_across_candidates": True,
+        "selected_prompt_sha256_by_job": results_prompt_hashes,
+        "collector_changes": collector_changes,
         "candidates": candidates,
     }
     save(ROOT / "results.json", results)
@@ -309,6 +349,7 @@ def collect():
             value["totals"]["output_tokens_including_reasoning"]),
         "reasoning_tokens": value["totals"]["reasoning_tokens"],
         "succeeded": value["totals"]["succeeded"],
+        "failed_attempts_without_usage": value["totals"]["failed_attempts_without_usage"],
     } for name, value in candidates.items()}
     print(json.dumps(summary, indent=2))
 

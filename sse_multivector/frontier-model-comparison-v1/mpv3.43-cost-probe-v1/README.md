@@ -1,7 +1,7 @@
 # MPv3.43 mask-call cost probe — MiMo high and Muse high
 
-Status: prepared; inference runs pending. This is the cost/caching probe for
-teacher selection (SP + MP scope), not a quality comparison. It measures
+Status: completed 2026-09-22 UTC. This is the cost/caching probe for
+teacher selection (SP + MP scope), not a quality comparison. It measured
 per-call usage, prefix-cache engagement and provider-reported cost at the
 production mask-batch shape so the teacher-cost estimate can replace its
 assumption bands with captured numbers.
@@ -69,6 +69,41 @@ python3 sse_multivector/frontier-model-comparison-v1/mpv3.43-cost-probe-v1/study
 
 ## Findings
 
-Pending the runs. Recorded per candidate: captured cost per call and per
-mask-call input/output split, `cacheRead` engagement across the eight
-same-prefix calls, and reasoning-token share of output.
+Sixteen fresh calls completed (eight per candidate); every successful
+receipt passes `validate_prompt_receipt`. Two earlier launch attempts per
+candidate failed locally with zero HTTP attempts and zero usage during the
+credential-sandbox outage described below; those receipts are preserved and
+bound to the validated requests by request identity.
+
+| Captured per mask call | MiMo V2.6 Pro high | Muse Spark 1.3 Contributor high |
+| --- | --- | --- |
+| Cost (provider-reported) | $0.00030–0.00143 (avg **$0.00070**) | $0.00039–0.00073 (avg **$0.00048**) |
+| Input tokens | 2,202 cold; 23–27 warm | 2,055–2,058 every call |
+| Cache-read tokens | 2,176 on 6 of 7 warm calls (one mid-batch miss) | none (route reports no caching) |
+| Cache-read share of input | **74.2%** | 0% |
+| Output incl. reasoning | 184–1,323 (avg 511; 3,452 of 4,086 are reasoning) | 924–2,604 (avg 1,372; 10,164 of 10,973 are reasoning) |
+| Wall time per call | 6.9–37.3 s | 13.6–37.3 s |
+| Total, 8 calls | $0.005580 | $0.003840 |
+
+The two open questions are answered: **MiMo's prefix caching engages at the
+mask-batch shape** (cache-read priced at $0.0036/M in the receipts), and
+MiMo-high reasoning on mask calls is moderate (~430 tokens/call) while
+Muse-high reasoning is heavy (~1,270 tokens/call).
+
+Scale implication, per 1,000 notes (9,820 mask calls plus 1,000 subject
+calls at Astra's measured volume shape): Astra ≈ $7.2 with its measured
+62.6% caching; **MiMo high ≈ $8–9.5** (≈1.3× Astra, approaching parity if
+cache misses are rarer at scale); **Muse high ≈ $5.8–6.4** (≈0.8× Astra).
+Mask-call costs are measured; candidate subject-call costs remain
+extrapolated from the saved ASv6.48 subject runs.
+
+## Launch-context note
+
+Before the successful pass, launches failed at `agent-account exec pi`'s
+nested Bubblewrap overlay (`Can't bind mount … models.json`) with zero HTTP
+attempts and zero usage: inside any Pi credential view that path is already
+a read-only bind of an unlinked temp file, and the per-launch overlay
+cannot mount over it. The batches completed when launched from a plain
+namespace via `systemd-run --user`, with the same runner and the same
+credential-service routing. The preserved failure receipts remain in the
+run directories.
