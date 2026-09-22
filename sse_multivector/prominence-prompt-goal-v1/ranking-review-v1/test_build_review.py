@@ -1,4 +1,4 @@
-"""Tests for the node-note order review batch builder; no model execution."""
+"""Tests for the node-note walk batch builder; no model execution."""
 import json
 import subprocess
 import tempfile
@@ -24,10 +24,10 @@ def minimal_review():
             {"id": "N1", "title": "First", "text": "complete note",
              "model_input": '{"mask": ["note"]}',
              "results": [{"model": "PPv10", "output": "{\"prominence\":1}",
-                          "comment": "My assessment: fine."}]},
+                          "comment": "fine."}]},
             {"id": "N2", "title": "Second", "text": "other note",
              "results": [{"model": "PPv10", "output": "{\"prominence\":2}",
-                          "comment": "My assessment: fine."}]},
+                          "comment": "fine."}]},
         ],
     }
 
@@ -54,28 +54,13 @@ class VerdictTests(unittest.TestCase):
         self.assertEqual(("reversed", -20), br.verdict(58, 78))
 
 
-class MarkSpansTests(unittest.TestCase):
-    def test_marks_selections_and_merges_overlaps(self):
-        self.assertEqual("More ⟦coffee⟧ in cool places",
-                         br.mark_spans("More coffee in cool places", [[5, 11]]))
-        self.assertEqual("⟦More coffee⟧ in cool places",
-                         br.mark_spans("More coffee in cool places", [[0, 11], [5, 11]]))
-
-    def test_byte_spans_are_utf8_offsets(self):
-        text = "☕ coffee"
-        self.assertEqual("☕ ⟦coffee⟧", br.mark_spans(text, [[4, 10]]))
-        with self.assertRaises(ValueError):
-            br.mark_spans(text, [[1, 3]])
-
-    def test_rejects_empty_or_out_of_range(self):
-        for spans in ([], [[0, 100]], [[3, 3]]):
-            with self.subTest(spans=spans), self.assertRaises(ValueError):
-                br.mark_spans("coffee", spans)
-
-    def test_mask_lines_follow_the_verified_fragment_display(self):
-        self.assertEqual("V244  ⟦coffee⟧\n\nV277  ⟦More⟧ ⟦coffee⟧",
-                         br._mask_lines([("V244", ["coffee"]),
-                                         ("V277", ["More", "coffee"])]))
+class MaskLineTests(unittest.TestCase):
+    def test_verified_fragment_display_with_scores(self):
+        self.assertEqual(
+            "V244  ⟦coffee⟧ — score 88\n"
+            "V277  ⟦More⟧ ⟦coffee⟧ — score unscored",
+            br._mask_lines([("V244", ["coffee"], 88),
+                            ("V277", ["More", "coffee"], None)]))
 
 
 class CoverageTests(unittest.TestCase):
@@ -134,53 +119,54 @@ class RealDataTests(unittest.TestCase):
         placed = [case for cases in self.context["placements"].values() for case in cases]
         self.assertEqual(sorted(placed), sorted(self.context["cases"]))
 
-    def test_cards_are_nodes_then_gap_sections(self):
-        self.assertEqual(
-            ["S9c440e7f47", "Sbb8511308a", "S68ce4fd21f", "unassigned", "outside-corpus"],
-            [note["id"] for note in self.review["notes"]])
-        self.assertIn("complete", self.cards["S9c440e7f47"]["title"])
-        self.assertIn("partial", self.cards["Sbb8511308a"]["title"])
-        self.assertIn("unscored", self.cards["S68ce4fd21f"]["title"])
+    def test_the_walk_is_node_order_then_gap_sections(self):
+        ids = [note["id"] for note in self.review["notes"]]
+        self.assertEqual(19, len(ids))
+        self.assertEqual(["S9c440e7f47-N029", "S9c440e7f47-N048",
+                          "Sbb8511308a-N035", "Sbb8511308a-N036", "Sbb8511308a-N079",
+                          "S68ce4fd21f-N092"], ids[:6])
+        self.assertIn("unassigned-N100", ids)
+        self.assertIn("outside-corpus-R07+R08", ids)
 
-    def test_node_card_shows_marked_masks_and_the_produced_order(self):
-        card = self.cards["S9c440e7f47"]
+    def test_each_card_is_one_complete_note_verbatim(self):
         cases = self.context["cases"]
-        self.assertIn("V244  ⟦coffee⟧", card["text"])
-        self.assertIn("V381  ⟦Coffee⟧", card["text"])
-        self.assertIn("1 · N029", card["text"])
-        self.assertIn(cases["R03"]["text"], card["text"])
-        self.assertIn(cases["R04"]["text"], card["text"])
-        comment = card["results"][0]["comment"]
-        self.assertIn("node-note order", comment.lower())
-        self.assertIn("as expected: R03 over R04 (88 vs 2, gap 86)", comment)
+        self.assertEqual(cases["R03"]["text"], self.cards["S9c440e7f47-N029"]["text"])
+        self.assertEqual(cases["M03"]["text"], self.cards["unassigned-N100"]["text"])
+        for card in self.review["notes"]:
+            with self.subTest(card=card["id"]):
+                self.assertNotIn("⟦", card["text"])
+
+    def test_title_states_node_position_note_and_score(self):
+        self.assertEqual("S9c440e7f47 · position 1 of 2 · N029 · score 88",
+                         self.cards["S9c440e7f47-N029"]["title"])
+
+    def test_comment_is_short_and_carries_only_the_essentials(self):
+        comment = self.cards["S9c440e7f47-N029"]["results"][0]["comment"]
+        self.assertLess(len(comment), 700)
+        self.assertIn("V244  ⟦coffee⟧ — score 88", comment)
+        self.assertIn("predeclared R03 over R04: holds (88 vs 2)", comment)
+        for crammed in ("LIMITS", "EXPECTATIONS", "PREDECLARED CHECKS", "PROVENANCE"):
+            self.assertNotIn(crammed, comment)
+
+    def test_multi_mask_and_unscored_flags(self):
+        multi = self.cards["Sbb8511308a-N035"]["results"][0]["comment"]
+        self.assertIn("2 masks in this node; how they combine is undecided", multi)
+        unscored = self.cards["Sbb8511308a-N079"]["results"][0]["comment"]
+        self.assertIn("position unknown", unscored)
+        self.assertIn("score unscored", unscored)
+
+    def test_gap_cards_state_that_there_is_nothing_to_order(self):
+        unassigned = self.cards["unassigned-N100"]["results"][0]["comment"]
+        self.assertIn("task 24", unassigned)
+        self.assertIn("PRESERVED DISAGREEMENT (M03)", unassigned)
+        baby = self.cards["outside-corpus-R07+R08"]
+        self.assertIn("score 94, 3", baby["title"])
+        self.assertIn("R07  ⟦baby⟧ ⟦baby⟧ — score 94", baby["results"][0]["comment"])
 
     def test_outputs_are_the_saved_verbatim_responses(self):
-        card = self.cards["S9c440e7f47"]
-        output = card["results"][0]["output"]
-        self.assertIn('{"prominence":88}', output)
-        self.assertIn('{"prominence":2}', output)
         cases = self.context["cases"]
-        self.assertEqual(cases["R03"]["raw"], '{"prominence":88}')
-
-    def test_multiple_masks_per_note_are_flagged_as_undecided(self):
-        comment = self.cards["Sbb8511308a"]["results"][0]["comment"]
-        self.assertIn("V277", comment)
-        self.assertIn("undecided", comment)
-        self.assertIn("task 27", comment)
-        sparse = self.cards["S68ce4fd21f"]["results"][0]["comment"]
-        self.assertIn("position unknown", sparse)
-
-    def test_gap_sections_carry_the_unplaced_cases(self):
-        unassigned = self.cards["unassigned"]["results"][0]["comment"]
-        self.assertIn("task 24", unassigned)
-        self.assertIn("PRESERVED DISAGREEMENT", unassigned)
-        self.assertIn("S68ce4fd21f", unassigned)  # cross-placement pair note
-        self.assertIn(self.context["cases"]["M03"]["text"],
-                      self.cards["unassigned"]["text"])  # complete note, verbatim
-        outside = self.cards["outside-corpus"]["results"][0]["comment"]
-        self.assertIn("not in the hierarchy corpus", outside)
-
-    def test_review_labels_the_prompt_version_and_status(self):
+        self.assertEqual(f"R03: {cases['R03']['raw']}",
+                         self.cards["S9c440e7f47-N029"]["results"][0]["output"])
         self.assertIn("PPv10", self.review["title"])
         self.assertIn("user-approved, tested experimentally, not production-frozen",
                       self.review["title"])
@@ -196,7 +182,7 @@ class RealDataTests(unittest.TestCase):
             run = subprocess.run([str(REVIEW_BINARY), str(path), "--check"],
                                  capture_output=True, text=True)
         self.assertEqual(0, run.returncode, run.stderr)
-        self.assertIn("5 notes", run.stdout)
+        self.assertIn("19 notes", run.stdout)
 
 
 if __name__ == '__main__':

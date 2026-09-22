@@ -1,10 +1,11 @@
 """Build the model-output-review batch for the PPv10 node-note order review.
 
-Reads only local, already-saved study artifacts, the saved HDBv2 hierarchy
-(hdbscan-cross-note) membership, and the review layout definition. Runs no
-model calls and writes one derived artifact, review.json, the schema-1 batch
-consumed by the existing `model-output-review` TUI. Cards are hierarchy nodes
-plus the placement gaps; the question on each node card is node-note order.
+The batch is the node-note walk: one complete note per card, stepped in the
+order the saved scores produce, each card answering only where the note sits,
+which mask places it there, and its score. Analysis lives in README.md, not in
+the cards. Reads only local, already-saved study artifacts, the saved HDBv2
+(hdbscan-cross-note) membership, and the layout definition. Runs no model
+calls and writes one derived artifact, review.json.
 """
 import hashlib
 import json
@@ -60,30 +61,13 @@ def verdict(higher_score, lower_score):
     return "reversed", gap
 
 
-def mark_spans(text, byte_spans):
-    """Render complete note text with the masks' UTF-8 byte spans merged and marked."""
-    source = text.encode("utf-8")
-    spans = []
-    for start, end in byte_spans:
-        if not 0 <= start < end <= len(source):
-            raise ValueError("invalid byte span")
-        left = len(source[:start].decode("utf-8"))
-        right = left + len(source[start:end].decode("utf-8"))
-        spans.append([left, right])
-    if not spans:
-        raise ValueError("empty mask spans")
-    merged = []
-    for left, right in sorted(spans):
-        if merged and left <= merged[-1][1]:
-            merged[-1][1] = max(merged[-1][1], right)
-        else:
-            merged.append([left, right])
-    parts, cursor = [], 0
-    for left, right in merged:
-        parts.extend((text[cursor:left], "⟦", text[left:right], "⟧"))
-        cursor = right
-    parts.append(text[cursor:])
-    return "".join(parts)
+def _mask_lines(masks):
+    """Verified mask display: one line per mask, bracketed fragments separated by
+    spaces (fine-segmentation-review render_instances convention), then its score."""
+    return "\n".join(
+        f"{label}  " + " ".join(f"⟦{fragment}⟧" for fragment in fragments)
+        + f" — score {score if score is not None else 'unscored'}"
+        for label, fragments, score in masks)
 
 
 def check_coverage(placements, case_ids):
@@ -187,37 +171,30 @@ def build_context():
         placements.setdefault(node_id or "unassigned", []).append(case["id"])
     check_coverage(placements, list(cases))
 
-    declared_sections = {section["id"]: section["cases"]
-                         for section in definition["sections"]}
+    node_ids = {node["id"] for node in definition["nodes"]}
     derived_sections = {key: sorted(value) for key, value in placements.items()
-                        if key not in {node["id"] for node in definition["nodes"]}}
-    if derived_sections != {key: sorted(value)
-                            for key, value in declared_sections.items()}:
+                        if key not in node_ids}
+    declared_sections = {section["id"]: sorted(section["cases"])
+                         for section in definition["sections"]}
+    if derived_sections != declared_sections:
         raise ValueError("declared gap sections do not match the derived placement")
 
-    node_views = []
-    for node in definition["nodes"]:
-        node_views.append(_node_view(node, nodes[node["id"]], vectors, cases,
-                                     placements[node["id"]]))
-    section_views = [{"id": section["id"], "title": section["title"],
-                      "commentary": section["commentary"],
-                      "cases_sorted": sorted((cases[case_id] for case_id in section["cases"]),
-                                             key=lambda case: (-case["score"], case["id"]))}
-                     for section in definition["sections"]]
+    node_views = [_node_view(node, nodes[node["id"]], vectors, cases,
+                             placements[node["id"]])
+                  for node in definition["nodes"]]
+    section_views = [_section_view(section, cases) for section in definition["sections"]]
 
-    all_comparisons = [comparison for study in studies.values()
-                       for comparison in study["comparisons"]]
     owner = {case: key for key, placed in placements.items() for case in placed}
-    comparisons_by_card = {}
-    for comparison in all_comparisons:
-        high, low = cases[comparison["higher"]], cases[comparison["lower"]]
-        result, gap = verdict(high["score"], low["score"])
-        entry = {**comparison, "result": result, "gap": gap,
-                 "higher_score": high["score"], "lower_score": low["score"],
-                 "informational": not comparison["kind"].startswith("clear"),
-                 "crosses": None if owner[comparison["higher"]] == owner[comparison["lower"]]
-                 else (owner[comparison["higher"]], owner[comparison["lower"]])}
-        comparisons_by_card.setdefault(owner[comparison["higher"]], []).append(entry)
+    comparisons = []
+    for study in studies.values():
+        for comparison in study["comparisons"]:
+            high, low = cases[comparison["higher"]], cases[comparison["lower"]]
+            result, gap = verdict(high["score"], low["score"])
+            comparisons.append({**comparison, "result": result, "gap": gap,
+                                "higher_score": high["score"], "lower_score": low["score"],
+                                "crosses": None if owner[comparison["higher"]] ==
+                                owner[comparison["lower"]]
+                                else (owner[comparison["higher"]], owner[comparison["lower"]])})
 
     summaries = [study["summary"] for study in studies.values()]
     for summary in summaries[1:]:
@@ -231,21 +208,12 @@ def build_context():
         "prompt_sha256": definition["prompt_sha256"],
         "disagreements": {case_id: item["text"] for item in definition["preserved_disagreements"]
                           for case_id in item["cases"]},
-        "expectations_note": definition["expectations_note"],
-        "limits_note": definition["limits_note"],
         "cases": cases,
-        "placement_of": {case: key for key, placed in placements.items()
-                         for case in placed},
+        "placement_of": owner,
         "placements": placements,
         "nodes": node_views,
         "sections": section_views,
-        "comparisons_by_card": comparisons_by_card,
-        "clear_counts": {result: sum(1 for entry in
-                                     [e for group in comparisons_by_card.values()
-                                      for e in group]
-                                     if entry["kind"].startswith("clear")
-                                     and entry["result"] == result)
-                         for result in ("ordered", "tie", "reversed")},
+        "comparisons": comparisons,
         "scorer": summaries[0],
         "provenance": [{"path": str(path.relative_to(REPO)), "sha256": digest(path)}
                        for path in [PROMPT, GROUPS_FILE, VECTOR_MAP, PACKETS] +
@@ -256,9 +224,7 @@ def build_context():
 
 def _node_view(node, instances, vectors, cases, case_ids):
     """Group one node's masks by note and order notes by their best saved score."""
-    scored = {}
-    for case_id in case_ids:
-        scored[cases[case_id]["source_id"]] = cases[case_id]
+    scored = {cases[case_id]["source_id"]: cases[case_id] for case_id in case_ids}
     by_note = {}
     for instance in instances:
         vector = vectors[instance["vector_id"]]
@@ -269,170 +235,120 @@ def _node_view(node, instances, vectors, cases, case_ids):
         best = max((case["score"] for case in member_cases if case), default=None)
         members = sorted(zip(members, member_cases),
                          key=lambda pair: pair[0][0]["byte_spans"][0])
-        rows.append({"note_short": note_short, "members": members, "best": best})
+        rows.append({"note_short": note_short, "members": members, "best": best,
+                     "text": members[0][0][0]["text"]})
     rows.sort(key=lambda row: (row["best"] is None, -(row["best"] or 0), row["note_short"]))
-    return {"id": node["id"], "commentary": node["commentary"], "rows": rows,
-            "note_count": len(rows), "mask_count": len(instances),
-            "scored_count": len(case_ids)}
+    return {"id": node["id"], "label": node["label"], "rows": rows}
 
 
-def _mask_lines(masks):
-    """Verified mask display: one line per mask, bracketed fragments separated by
-    spaces (fine-segmentation-review render_instances convention)."""
-    return "\n\n".join(
-        f"{label}  " + " ".join(f"⟦{fragment}⟧" for fragment in fragments)
-        for label, fragments in masks)
-
-
-def _order_line(row):
-    masks = " + ".join(
-        f"{instance['instance']}={case['score'] if case else 'unscored'}"
-        for (instance, _vector), case in row["members"])
-    if row["best"] is None:
-        line = f"  {row['note_short']}: no score — position unknown — masks here: {masks}"
-    else:
-        line = f"  {row['note_short']}: {row['best']} — masks here: {masks}"
-    if len(row["members"]) > 1:
-        line += f" — {len(row['members'])} masks here; how they combine is undecided"
-    return line
-
-
-def _comment(parts):
-    return "\n\n".join(part for part in parts if part)
-
-
-def _checks_block(card_id, comparisons):
-    lines = ["PREDECLARED CHECKS — before inference, not gold labels; "
-             "not an accuracy rate"]
-    if not comparisons:
-        lines.append("  none for this card")
-        return "\n".join(lines)
-    words = {"ordered": "as expected", "tie": "no separation", "reversed": "REVERSED"}
-    for comparison in comparisons:
-        line = (f"  {words[comparison['result']]}: {comparison['higher']} over "
-                f"{comparison['lower']} ({comparison['higher_score']} vs "
-                f"{comparison['lower_score']}, gap {abs(comparison['gap'])})")
-        if comparison["informational"]:
-            line += " — tentative/related, informational only"
-        if comparison["crosses"]:
-            line += (f" — spans two cards ({comparison['higher']} in "
-                     f"{comparison['crosses'][0]}, {comparison['lower']} in "
-                     f"{comparison['crosses'][1]}); not this node's order")
-        lines.append(line)
-    return "\n".join(lines)
-
-
-def _expectations_block(cases_in_order, note):
-    lines = ["EXPECTATIONS — recorded before inference, not gold labels"]
-    for case in cases_in_order:
-        lines.append(f"  {case['id']}: " + (case.get("expectation") or "none recorded"))
-    return "\n".join(lines)
-
-
-def _scorer_block(context):
-    scorer = context["scorer"]
-    return ("PROVENANCE\n"
-            f"  one saved call per mask · {scorer['model']} "
-            f"{scorer['reasoning_effort']} via {scorer['provider']} · "
-            f"PPv10 unchanged (sha256 {context['prompt_sha256'][:12]}…)")
-
-
-def _disagreement(case, context):
-    text = context["disagreements"].get(case["id"])
-    return f"PRESERVED DISAGREEMENT\n  {case['id']}: {text}" if text else ""
-
-
-def _card_cases(node, context):
-    return [case for row in node["rows"] for (_instance, _vector), case in row["members"]
-            if case] if "rows" in node else node["cases_sorted"]
+def _section_view(section, cases):
+    """Group a gap section's cases by note, best score first."""
+    by_note = {}
+    for case_id in section["cases"]:
+        case = cases[case_id]
+        by_note.setdefault(case["note_id"], []).append(case)
+    rows = []
+    for _note_id, members in by_note.items():
+        members.sort(key=lambda case: case["id"])
+        first = members[0]
+        note_short = (first["source_id"].rsplit("-", 1)[0]
+                      if first["format"] == "corpus"
+                      else "+".join(case["id"] for case in members))
+        rows.append({"note_short": note_short,
+                     "cases": members,
+                     "best": max(case["score"] for case in members),
+                     "text": first["text"]})
+    rows.sort(key=lambda row: (-row["best"], row["note_short"]))
+    return {"id": section["id"], "title": section["title"], "label": section["label"],
+            "rows": rows}
 
 
 def render_review(context):
-    """Render the schema-1 batch: hierarchy node cards first, then the gap sections."""
-    notes = [_node_card(node, context) for node in context["nodes"]]
-    notes += [_section_card(section, context) for section in context["sections"]]
+    """Render the node-note walk: one complete note per card, in order."""
+    notes = []
+    for node in context["nodes"]:
+        total = len(node["rows"])
+        for index, row in enumerate(node["rows"], 1):
+            notes.append(_note_card(
+                context, placement=node["id"], label=node["label"], row=row,
+                position=f"position {index} of {total}", in_node=True,
+                member_cases=[case for (_i, _v), case in row["members"] if case],
+                mask_labels=[(instance["instance"], vector["fragments"],
+                              case["score"] if case else None)
+                             for (instance, vector), case in row["members"]]))
+    for section in context["sections"]:
+        total = len(section["rows"])
+        for index, row in enumerate(section["rows"], 1):
+            notes.append(_note_card(
+                context, placement=section["id"], label=section["label"], row=row,
+                position=f"{index} of {total} (unordered)", in_node=False,
+                member_cases=row["cases"],
+                mask_labels=[(case.get("short_id") or case["id"], case["mask"],
+                              case["score"]) for case in row["cases"]]))
     review = {
         "schema_version": 1,
         "title": (f"PPv10 node-note order review v1 · {context['prompt_version']}: "
-                  f"{context['prompt_status']} · HDBv2 nodes; mechanical display order only"),
+                  f"{context['prompt_status']} · the node-note walk, one complete note "
+                  f"per card"),
         "notes": notes,
     }
     check_review(review)
     return review
 
 
-def _node_card(node, context):
-    cases = _card_cases(node, context)
-    scored, total = node["scored_count"], node["mask_count"]
-    if scored == total:
-        status = f"order complete ({scored}/{total} masks scored)"
-    elif scored > 1:
-        status = f"order partial ({scored}/{total} masks scored)"
+def _score_text(member_cases):
+    scores = sorted({case["score"] for case in member_cases}, reverse=True)
+    return "score " + ", ".join(str(score) for score in scores) if scores else "no score"
+
+
+def _note_card(context, placement, label, row, position, member_cases, mask_labels,
+               in_node):
+    key = row["note_short"]
+    title = f"{placement} · {position} · {key} · {_score_text(member_cases)}"
+    if in_node:
+        placement_line = (f"{placement} ({label}) · {position} · "
+                          f"order shown is the saved scores, display only")
     else:
-        status = f"order unscored ({total - scored} of {total} masks unscored)"
-    header = (f"NODE {node['id']} · {node['note_count']} notes · {total} masks · {status}\n"
-              f"Opening this node: are the most-about notes first? Shown order is the "
-              f"saved scores, display only.\n"
-              f"(Each mask above its complete, unchanged note; exact scorer input under i.)\n\n")
-    blocks = []
-    for index, row in enumerate(node["rows"], 1):
-        score = f"score {row['best']}" if row["best"] is not None else "no score"
-        masks = " · ".join(
-            f"{instance['instance']}={case['score'] if case else 'unscored'}"
-            for (instance, _vector), case in row["members"])
-        text = row["members"][0][0][0]["text"]
-        blocks.append(
-            f"{index} · {row['note_short']} · {score} · masks here: {masks}\n\n"
-            + _mask_lines([(instance["instance"], vector["fragments"])
-                           for (instance, vector), _case in row["members"]])
-            + f"\n\n{text}")
-    comment = _comment([
-        "WHAT THIS NODE IS\n  " + node["commentary"],
-        "ORDER (node-note order)\n" + "\n".join(_order_line(row) for row in node["rows"]),
-        _checks_block(node["id"], context["comparisons_by_card"].get(node["id"], [])),
-        _expectations_block(cases, context["expectations_note"]),
-        *(_disagreement(case, context) for case in cases),
-        _scorer_block(context),
-        f"LIMITS\n  {context['limits_note']}",
-    ])
-    return {
-        "id": node["id"],
-        "title": f"{node['id']} · {node['note_count']} notes, {total} masks · {status}",
-        "text": header + "\n\n".join(blocks),
-        "model_input": _inputs_block(cases),
-        "results": [{"model": _model_pane(context), "output": _outputs_block(cases),
-                     "comment": comment}],
+        placement_line = f"{placement} ({label}) · {position}"
+    lines = [placement_line, _mask_lines(mask_labels)]
+    if in_node and row["best"] is None:
+        lines.append("position unknown: this note has no saved score")
+    if in_node and len(mask_labels) > 1:
+        lines.append(f"{len(mask_labels)} masks in this node; how they combine is "
+                     f"undecided (no sum/max/average)")
+    case_ids = {case["id"] for case in member_cases}
+    for comparison in context["comparisons"]:
+        if not case_ids & {comparison["higher"], comparison["lower"]}:
+            continue
+        words = {"ordered": "holds", "tie": "no separation", "reversed": "REVERSED"}
+        line = (f"predeclared {comparison['higher']} over {comparison['lower']}: "
+                f"{words[comparison['result']]} ({comparison['higher_score']} vs "
+                f"{comparison['lower_score']})")
+        if comparison["crosses"]:
+            line += (f" — spans two placements ({comparison['higher']} in "
+                     f"{comparison['crosses'][0]}, {comparison['lower']} in "
+                     f"{comparison['crosses'][1]})")
+        lines.append(line)
+    for case in member_cases:
+        disagreement = context["disagreements"].get(case["id"])
+        if disagreement:
+            lines.append(f"PRESERVED DISAGREEMENT ({case['id']}): {disagreement}")
+    scorer = context["scorer"]
+    lines.append(f"one saved call per mask · {scorer['model']} {scorer['reasoning_effort']} "
+                 f"via {scorer['provider']} · PPv10 unchanged "
+                 f"{context['prompt_sha256'][:12]}…")
+    card = {
+        "id": f"{placement}-{key}",
+        "title": title,
+        "text": row["text"],
+        "results": [{"model": _model_pane(context),
+                     "output": _outputs_block(member_cases)
+                     or "no saved output — this mask was never scored",
+                     "comment": "\n".join(lines)}],
     }
-
-
-def _section_card(section, context):
-    cases = section["cases_sorted"]
-    header = (f"{section['title']}\nNo node-note order to judge until these masks are "
-              f"placed in nodes.\n\n")
-    blocks = []
-    for case in cases:
-        label = case.get("short_id") or case["id"]
-        blocks.append(
-            f"{case['id']} · score {case['score']} · {BAND_LABELS[band(case['score'])]}"
-            f" · {case['label']}\n\n"
-            + _mask_lines([(label, case["mask"])])
-            + f"\n\n{case['text']}")
-    comment = _comment([
-        "WHAT THIS IS\n  " + section["commentary"],
-        _checks_block(section["id"], context["comparisons_by_card"].get(section["id"], [])),
-        _expectations_block(cases, context["expectations_note"]),
-        *(_disagreement(case, context) for case in cases),
-        _scorer_block(context),
-        f"LIMITS\n  {context['limits_note']}",
-    ])
-    return {
-        "id": section["id"],
-        "title": section["title"],
-        "text": header + "\n\n".join(blocks),
-        "model_input": _inputs_block(cases),
-        "results": [{"model": _model_pane(context), "output": _outputs_block(cases),
-                     "comment": comment}],
-    }
+    if member_cases:
+        card["model_input"] = _inputs_block(member_cases)
+    return card
 
 
 def _model_pane(context):
@@ -455,12 +371,9 @@ def main():
     review = render_review(context)
     OUTPUT.write_text(json.dumps(review, ensure_ascii=False, indent=2) + "\n",
                       encoding="utf-8")
-    counts = context["clear_counts"]
     print(f"wrote {OUTPUT}")
-    print(f"{len(review['notes'])} cards: {len(context['nodes'])} nodes + "
-          f"{len(context['sections'])} gap sections; clear comparisons: "
-          f"{counts['ordered']} ordered, {counts['tie']} ties, "
-          f"{counts['reversed']} reversed (mechanical, not accuracy)")
+    print(f"{len(review['notes'])} note cards: {len(context['nodes'])} nodes then "
+          f"{len(context['sections'])} gap sections (analysis lives in README.md)")
 
 
 if __name__ == "__main__":
