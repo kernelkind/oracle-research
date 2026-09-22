@@ -1,0 +1,97 @@
+{
+  "review": "PPv10 prominence ranking review v1",
+  "prompt_version": "PPv10",
+  "prompt_status": "user-approved, tested experimentally, not production-frozen",
+  "prompt_path": "../ppv10-draft-v1/PPv10.md",
+  "prompt_sha256": "d40835fb0b104865727c0b0a2bde4074afb642991d9bddc424d5379ef4b038ea",
+  "purpose": "Grouping of saved PPv10 scores by selection meaning, for reading whether the most directly about a category notes sort first where comparable saved masks exist.",
+  "studies": ["ppv10-ranking-v1", "ppv10-mixed-notes-v1"],
+  "caveats": [
+    "Grouped from already-saved scores only. One call per case; no repeatability, numerical calibration, or general reliability is established.",
+    "Pairs and their order are predeclared assistant judgments, not user-approved gold labels. These are mechanical order checks, not an accuracy percentage.",
+    "Only the coffee group and the reading pair compare different notes. Every other pair is within one note, so cross-note ranking outside coffee remains insufficiently tested.",
+    "Tentative and related-content pairs are informational: small gaps such as 86 versus 85 establish no meaningful separation, and both orders can be defensible.",
+    "Masks are unchanged saved inputs from several extraction versions. Prominence is not mask correctness, category membership, truth, quality, usefulness, or personal interest, and nothing here validates extraction or hierarchy construction.",
+    "PPv10 is unchanged and not production-frozen. The production registry still freezes PPv2 and was deliberately not touched."
+  ],
+  "preserved_disagreements": [
+    {
+      "cases": ["M03"],
+      "text": "The vacuum sealer was predeclared as a major focus (70-89); the score of 58 labels it secondary. The post also extensively covers meat preparation and animal feed, so the boundary is arguable, and no harmful cross-note ordering has been demonstrated from this score. Do not hide this, and do not add a prompt rule just to raise it."
+    }
+  ],
+  "open_questions": [
+    "The missing evidence for the actual product question is cross-note ranking with comparable saved masks outside coffee, including substantial secondary mentions. Search saved extractions for those sets before proposing any new calls.",
+    "How several masks' scores combine when one note appears under a node multiple ways is undecided. No sum, max, or average rule is implied by this review."
+  ],
+  "groups": [
+    {
+      "id": "G1",
+      "title": "Coffee across notes",
+      "kind": "cross_note",
+      "cases": ["R01", "R02", "R03", "R04"],
+      "commentary": "The three predeclared clear cross-note comparisons order as expected with large gaps. The mostly-hashtag second-coffee post scores 88, so the result is not explained by a blanket hashtag penalty. No order was predeclared between R03 and R01/R02."
+    },
+    {
+      "id": "G2",
+      "title": "Coffee shops across notes (predeclared tentative)",
+      "kind": "cross_note",
+      "cases": ["R05", "R06"],
+      "commentary": "The one-point gap establishes no meaningful separation. Both high scores are defensible: a rave specifically at a coffee shop makes the venue part of the point. This is not a demonstrated failure and not evidence for either order."
+    },
+    {
+      "id": "G3",
+      "title": "Reading across notes (different mask scopes)",
+      "kind": "cross_note",
+      "cases": ["M07", "M08"],
+      "commentary": "Orders as expected, but the masks differ in specificity: bedtime-reading advice among many lifestyle recommendations versus reading as a focused subject. Related content only, not a controlled identical-meaning ranking test; do not equate the two selections' meanings."
+    },
+    {
+      "id": "G4",
+      "title": "Baby update (within-note control)",
+      "kind": "within_note",
+      "cases": ["R07", "R08"],
+      "commentary": "Same note, two hashtag-only selections: baby selections central, nostr selections incidental. Supports scoring selections together in complete context; says nothing about cross-note ranking in those domains."
+    },
+    {
+      "id": "G5",
+      "title": "Mixed diary: audiobook change versus Brussels",
+      "kind": "within_note",
+      "cases": ["M01", "M02"],
+      "commentary": "Clear pair ordered as expected: a developed topic over background detail to a gift anecdote."
+    },
+    {
+      "id": "G6",
+      "title": "Product post: vacuum sealer versus previous FoodSaver use",
+      "kind": "within_note",
+      "cases": ["M03", "M04"],
+      "commentary": "Clear pair ordered as expected. The higher score itself carries the preserved disagreement below: secondary rather than the predeclared major focus."
+    },
+    {
+      "id": "G7",
+      "title": "Daily update: safety plan versus closing sentiment",
+      "kind": "within_note",
+      "cases": ["M05", "M06"],
+      "commentary": "Clear pair ordered as expected: a developed plan and its motivation over a brief closing sentiment."
+    },
+    {
+      "id": "G8",
+      "title": "Shared meal: meal sharing versus workshop context",
+      "kind": "within_note",
+      "cases": ["M10", "M11"],
+      "commentary": "Predeclared tentative and ordered as expected. Education also frames the post, so the workshop score is defensible; the gap supports separating secondary from major content but is one pair only."
+    }
+  ],
+  "singletons": [
+    {
+      "id": "M09",
+      "commentary": "Guitars throughout a long capo/retuning question: plausibly central as a focused long-note control. No predeclared comparison, so it supports nothing about ordering."
+    }
+  ],
+  "separate_work": [
+    {
+      "id": "H15",
+      "commentary": "Another agent's one-call probe: unchanged PPv10 on the saved MPv3.43 mask Rise and grind in a coffee-bean note, meta/muse-spark-1.3-contributor at reasoning high through OpenRouter. It had no predeclared semantic expectation and is not part of the two Astra evaluations above. A valid score is not semantic validation or a model comparison; the subject metadata saved alongside it is not the scorer's input."
+    }
+  ]
+}

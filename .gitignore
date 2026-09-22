@@ -18,12 +18,17 @@ __pycache__/
 /sse_multivector/*-v[0-9]*/**/stderr.txt
 /sse_multivector/*-v[0-9]*/**/.*.lock
 
+# Generated review pages embed corpus notes and model outputs. The builders and
+# their layout definitions stay tracked.
+/sse_multivector/*-v[0-9]*/**/review.html
+
 # JSON source definitions and prompt-version metadata are not run data.
 !/sse_multivector/*-v[0-9]*/**/*schema.json
 !/sse_multivector/*-v[0-9]*/**/schemas/**/*.json
 !/sse_multivector/*-v[0-9]*/**/package.json
 !/sse_multivector/*-v[0-9]*/**/package-lock.json
 !/sse_multivector/*-v[0-9]*/**/*prompt-versions.json
+!/sse_multivector/*-v[0-9]*/**/review-groups.json
 !/sse_multivector/*-v[0-9]*/**/edits.json
 !/sse_multivector/*-v[0-9]*/**/prompt-edits.json
 !/sse_multivector/*-v[0-9]*/**/*.revision.json
