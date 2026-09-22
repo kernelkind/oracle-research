@@ -16,9 +16,11 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 ./sse_multivector/prominence-prompt-goal-v1/ranking-review-v1/run-review.sh
 ```
 
-The launcher builds the existing `model-output-review` binary through Nix with
-two build jobs, then opens the saved batch. No model calls are made by the UI;
-it is read-only and saves no decisions.
+The launcher opens the saved batch with the prebuilt `model-output-review`
+binary — no downloads, no model calls; the UI is read-only and saves no
+decisions. If that binary is missing, the launcher first builds it through Nix
+with two build jobs (large toolchain download); set `REVIEW_REBUILD=1` to force
+that build.
 
 - One card per saved mask/post pair, 19 cards across 13 notes. Left/right moves
   through the score-sorted sets; `--start-at R03` reopens a card by case ID.
