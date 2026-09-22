@@ -127,6 +127,7 @@ class RealDataTests(unittest.TestCase):
         self.assertIn("rank 1/4", self.review["notes"][0]["title"])
         self.assertIn("score 95", self.review["notes"][0]["title"])
         self.assertIn("central 90–100", self.review["notes"][0]["title"])
+        self.assertIn("Coffee: more coffee in cool places", self.review["notes"][0]["title"])
 
     def test_review_preserves_saved_outputs_and_exact_inputs(self):
         cases = self.context["cases"]
@@ -147,6 +148,13 @@ class RealDataTests(unittest.TestCase):
         self.assertIn("clear_cross_note: ordered, gap 93", comment)
         vacuum = next(n for n in self.review["notes"] if n["id"] == "M03")
         self.assertIn("Preserved disagreement:", vacuum["results"][0]["comment"])
+
+    def test_each_card_identifies_its_own_selection(self):
+        r08 = next(n for n in self.review["notes"] if n["id"] == "R08")
+        self.assertIn("Baby update: nostr selections inside two hashtags", r08["title"])
+        self.assertTrue(r08["results"][0]["comment"]
+                        .startswith("Selection on this card: “nostr”, “nostr”. "
+                                    "Case R08 — Baby update: nostr selections"))
 
     def test_review_labels_the_prompt_version_and_status(self):
         self.assertIn("PPv10", self.review["title"])

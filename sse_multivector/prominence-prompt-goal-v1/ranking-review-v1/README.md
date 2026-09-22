@@ -24,15 +24,17 @@ that build.
 
 - One card per saved mask/post pair, 19 cards across 13 notes. Left/right moves
   through the score-sorted sets; `--start-at R03` reopens a card by case ID.
-- The card title shows the group, its rank in the score-sorted set, the saved
-  score, and its PPv10 anchor band. The first pane is the complete source note.
+- The card title names the group, the case label identifying the selection, its
+  rank in the score-sorted set, the saved score, and its PPv10 anchor band. The
+  first pane is the complete source note.
 - `i` shows the exact scorer input: the one JSON object with `mask` and
   `marked_post`. The output pane is the saved model output verbatim. Tab picks
   which pane up/down scrolls.
-- The comment pane is assistant text, separate from the saved output:
-  post-hoc assessment first, then the group's predeclared order checks with
-  their mechanical verdicts, the predeclared expectation recorded before
-  inference, scorer provenance, and the standing limits.
+- The comment pane is assistant text, separate from the saved output: which
+  selection this card scores first, then the post-hoc assessment, the group's
+  predeclared order checks with their mechanical verdicts, the predeclared
+  expectation recorded before inference, scorer provenance, and the standing
+  limits.
 - Score-sorted display order is a viewing choice, not a claim that any order is
   uniquely correct.
 

@@ -206,7 +206,9 @@ def _comment(case, assessment, group_line, order_lines, disagreement, context):
     expectation = case.get("expectation") or \
         "None recorded for this case; see the predeclared order checks above."
     scorer = context["scorer"]
-    parts = [f"My assessment: {assessment}"]
+    fragments = ", ".join(f"“{fragment}”" for fragment in case["mask"])
+    parts = [f"Selection on this card: {fragments}. Case {case['id']} — {case['label']}.",
+             f"My assessment: {assessment}"]
     if disagreement:
         parts.append(f"Preserved disagreement: {disagreement}")
     parts.append(group_line)
@@ -231,8 +233,7 @@ def render_review(context):
     notes = []
     for group in context["groups"]:
         ranking = ", ".join(f"{case['id']} {case['score']}" for case in group["cases_sorted"])
-        group_label = f"{group['id']} · {group['title']}"
-        group_line = (f"Group {group_label} "
+        group_line = (f"Group {group['id']} · {group['title']} "
                       f"({group['kind'].replace('_', '-')}), score-sorted: {ranking}.")
         order_lines = [
             f"{comparison['higher']} ({comparison['higher_score']}) > "
@@ -241,13 +242,13 @@ def render_review(context):
             f"{' (informational only)' if comparison['informational'] else ''}"
             for comparison in group["comparisons"]]
         for rank, case in enumerate(group["cases_sorted"], 1):
-            notes.append(_note(case, group_label=group_label, rank=rank,
+            notes.append(_note(case, group_id=group["id"], rank=rank,
                                total=len(group["cases_sorted"]),
                                assessment=group["commentary"], group_line=group_line,
                                order_lines=order_lines, context=context))
     for singleton in context["singletons"]:
         case = singleton["case"]
-        notes.append(_note(case, group_label="Singleton", rank=None, total=None,
+        notes.append(_note(case, group_id=None, rank=None, total=None,
                            assessment=singleton["commentary"],
                            group_line="Singleton · no predeclared comparison in its "
                                       "study plan.",
@@ -262,13 +263,13 @@ def render_review(context):
     return review
 
 
-def _note(case, group_label, rank, total, assessment, group_line, order_lines, context):
+def _note(case, group_id, rank, total, assessment, group_line, order_lines, context):
     name = band(case["score"])
     score_text = f"score {case['score']} · {BAND_LABELS[name]}"
     if rank is None:
-        title = f"{group_label} · {score_text}"
+        title = f"Singleton · {case['label']} · {score_text}"
     else:
-        title = f"{group_label} · rank {rank}/{total} · {score_text}"
+        title = f"{group_id} · {case['label']} · rank {rank}/{total} · {score_text}"
     return {
         "id": case["id"],
         "title": title,

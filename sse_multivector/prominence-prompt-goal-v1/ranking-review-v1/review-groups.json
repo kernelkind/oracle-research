@@ -51,7 +51,7 @@
       "title": "Baby update (within-note control)",
       "kind": "within_note",
       "cases": ["R07", "R08"],
-      "commentary": "Same note, two hashtag-only selections: baby selections central, nostr selections incidental. Supports scoring selections together in complete context; says nothing about cross-note ranking in those domains."
+      "commentary": "Two hashtag-only selections from one update, scored on separate cards. The baby selections are the update's subject; the nostr selections appear only as posting context inside hashtag tokens. This is a within-note control for complete-context scoring and says nothing about cross-note ranking in those domains."
     },
     {
       "id": "G5",
@@ -65,7 +65,7 @@
       "title": "Product post: vacuum sealer versus previous FoodSaver use",
       "kind": "within_note",
       "cases": ["M03", "M04"],
-      "commentary": "Clear pair ordered as expected. The higher score itself carries the preserved disagreement below: secondary rather than the predeclared major focus."
+      "commentary": "Clear pair ordered as expected. The M03 card also records a preserved disagreement about its own score: secondary rather than the predeclared major focus."
     },
     {
       "id": "G7",
