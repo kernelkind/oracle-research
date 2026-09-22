@@ -32,10 +32,10 @@ that build.
 - Five cards: the three nodes that contain saved scores, then the two placement
   gaps. Left/right moves between cards; `--start-at S9c440e7f47` reopens one.
 - Each node card title states its size and whether its order is supported:
-  complete, partial, or unscored. The first pane shows the node's notes in
-  score order with every mask the note contributes **to this node** marked;
-  note text is whitespace-collapsed on the card face, with the exact saved
-  text and scorer input under `i`.
+  complete, partial, or unscored. The first pane follows the verified review-UI
+  conventions: each member mask on its own line as `V276  ⟦coffee⟧` (bracketed
+  fragments separated by spaces, blank lines between masks), above the note's
+  complete, unchanged text. The exact scorer input is under `i`.
 - `i` shows the exact scorer inputs for the card's scored masks. The output
   pane is the saved model output verbatim, one line per scored mask. The
   comment pane is assistant text: assessment, the produced order, predeclared

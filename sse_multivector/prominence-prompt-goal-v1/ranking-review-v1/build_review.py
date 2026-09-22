@@ -8,7 +8,6 @@ plus the placement gaps; the question on each node card is node-note order.
 """
 import hashlib
 import json
-import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -173,9 +172,11 @@ def build_context():
     placements = {}
     for case in cases.values():
         if case["format"] != "corpus":
+            case["short_id"] = None
             placements.setdefault("outside-corpus", []).append(case["id"])
             continue
         vector = subjects.get(case["source_id"])
+        case["short_id"] = vector["short_id"] if vector else None
         node_id = None
         if vector is not None:
             for candidate, instances in nodes.items():
@@ -275,9 +276,12 @@ def _node_view(node, instances, vectors, cases, case_ids):
             "scored_count": len(case_ids)}
 
 
-def display(text):
-    """Whitespace-collapsed card face; the exact saved text stays under i."""
-    return re.sub(r"\n{3,}", "\n\n", re.sub(r"[ \t]+", " ", text)).strip()
+def _mask_lines(masks):
+    """Verified mask display: one line per mask, bracketed fragments separated by
+    spaces (fine-segmentation-review render_instances convention)."""
+    return "\n\n".join(
+        f"{label}  " + " ".join(f"⟦{fragment}⟧" for fragment in fragments)
+        for label, fragments in masks)
 
 
 def _order_line(row):
@@ -369,7 +373,7 @@ def _node_card(node, context):
     header = (f"NODE {node['id']} · {node['note_count']} notes · {total} masks · {status}\n"
               f"Opening this node: are the most-about notes first? Shown order is the "
               f"saved scores, display only.\n"
-              f"(Note text whitespace-collapsed here; exact text and scorer input under i.)\n\n")
+              f"(Each mask above its complete, unchanged note; exact scorer input under i.)\n\n")
     blocks = []
     for index, row in enumerate(node["rows"], 1):
         score = f"score {row['best']}" if row["best"] is not None else "no score"
@@ -377,10 +381,11 @@ def _node_card(node, context):
             f"{instance['instance']}={case['score'] if case else 'unscored'}"
             for (instance, _vector), case in row["members"])
         text = row["members"][0][0][0]["text"]
-        flat = [span for (instance, _v), _c in row["members"]
-                for span in instance["byte_spans"]]
-        blocks.append(f"{index} · {row['note_short']} · {score}\n"
-                      f"  masks here: {masks}\n{display(mark_spans(text, flat))}")
+        blocks.append(
+            f"{index} · {row['note_short']} · {score} · masks here: {masks}\n\n"
+            + _mask_lines([(instance["instance"], vector["fragments"])
+                           for (instance, vector), _case in row["members"]])
+            + f"\n\n{text}")
     comment = _comment([
         "WHAT THIS NODE IS\n  " + node["commentary"],
         "ORDER (node-note order)\n" + "\n".join(_order_line(row) for row in node["rows"]),
@@ -404,9 +409,14 @@ def _section_card(section, context):
     cases = section["cases_sorted"]
     header = (f"{section['title']}\nNo node-note order to judge until these masks are "
               f"placed in nodes.\n\n")
-    blocks = [f"{case['id']} · score {case['score']} · {BAND_LABELS[band(case['score'])]}"
-              f" · {case['label']}\n{display(case['input']['marked_post'])}"
-              for case in cases]
+    blocks = []
+    for case in cases:
+        label = case.get("short_id") or case["id"]
+        blocks.append(
+            f"{case['id']} · score {case['score']} · {BAND_LABELS[band(case['score'])]}"
+            f" · {case['label']}\n\n"
+            + _mask_lines([(label, case["mask"])])
+            + f"\n\n{case['text']}")
     comment = _comment([
         "WHAT THIS IS\n  " + section["commentary"],
         _checks_block(section["id"], context["comparisons_by_card"].get(section["id"], [])),

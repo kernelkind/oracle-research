@@ -72,9 +72,10 @@ class MarkSpansTests(unittest.TestCase):
             with self.subTest(spans=spans), self.assertRaises(ValueError):
                 br.mark_spans("coffee", spans)
 
-    def test_display_collapses_whitespace_but_keeps_the_marks(self):
-        self.assertEqual("a b\n\nc ⟦d⟧",
-                         br.display("a   b\n\n\n\nc ⟦d⟧"))
+    def test_mask_lines_follow_the_verified_fragment_display(self):
+        self.assertEqual("V244  ⟦coffee⟧\n\nV277  ⟦More⟧ ⟦coffee⟧",
+                         br._mask_lines([("V244", ["coffee"]),
+                                         ("V277", ["More", "coffee"])]))
 
 
 class CoverageTests(unittest.TestCase):
@@ -143,9 +144,12 @@ class RealDataTests(unittest.TestCase):
 
     def test_node_card_shows_marked_masks_and_the_produced_order(self):
         card = self.cards["S9c440e7f47"]
-        self.assertIn("⟦coffee⟧", card["text"])
-        self.assertIn("⟦Coffee⟧", card["text"])
+        cases = self.context["cases"]
+        self.assertIn("V244  ⟦coffee⟧", card["text"])
+        self.assertIn("V381  ⟦Coffee⟧", card["text"])
         self.assertIn("1 · N029", card["text"])
+        self.assertIn(cases["R03"]["text"], card["text"])
+        self.assertIn(cases["R04"]["text"], card["text"])
         comment = card["results"][0]["comment"]
         self.assertIn("node-note order", comment.lower())
         self.assertIn("as expected: R03 over R04 (88 vs 2, gap 86)", comment)
@@ -171,6 +175,8 @@ class RealDataTests(unittest.TestCase):
         self.assertIn("task 24", unassigned)
         self.assertIn("PRESERVED DISAGREEMENT", unassigned)
         self.assertIn("S68ce4fd21f", unassigned)  # cross-placement pair note
+        self.assertIn(self.context["cases"]["M03"]["text"],
+                      self.cards["unassigned"]["text"])  # complete note, verbatim
         outside = self.cards["outside-corpus"]["results"][0]["comment"]
         self.assertIn("not in the hierarchy corpus", outside)
 
