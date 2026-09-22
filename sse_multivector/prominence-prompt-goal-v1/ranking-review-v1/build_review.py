@@ -19,6 +19,9 @@ PROMPT = GOAL / "ppv10-draft-v1" / "PPv10.md"
 GROUPS_FILE = ROOT / "review-groups.json"
 VECTOR_MAP = CORPUS / "vectors" / "vector-map.json"
 PACKETS = CORPUS / "hdbscan-cross-note" / "review" / "review.json"
+TITLES = GOAL.parent / "hdbv2-node-titles-v21-astra-low" / "titles.json"
+NAV_CATEGORIES = GOAL.parent / "navigation-research-v1" / "TRUE14" / "categories.json"
+VERDICTS = CORPUS / "review-handoff" / "baseline" / "user-response.json"
 OUTPUT = ROOT / "review.json"
 
 MODEL_PANE = "PPv10 prominence · {model} reasoning {effort}"
@@ -140,6 +143,25 @@ def load_nodes():
     return vectors, subjects, nodes
 
 
+def load_titles():
+    """Saved node titles (hdbv2-node-titles-v21, then TRUE14 hierarchy labels)
+    and saved user semantic-review verdicts."""
+    generated = {entry["group"]: entry["title"] for entry in read(TITLES)["groups"]}
+    labels = {node["node_id"]: node["label"]
+              for node in read(NAV_CATEGORIES)["nodes"]}
+    verdicts = {item["packet"]: item["verdict"] for item in read(VERDICTS)["judgments"]}
+    titles = {}
+    for node_id in set(generated) | set(labels):
+        if node_id in generated:
+            titles[node_id] = {"title": generated[node_id],
+                               "source": "hdbv2-node-titles-v21"}
+        else:
+            titles[node_id] = {"title": labels[node_id], "source": "TRUE14 label"}
+    for node_id, entry in titles.items():
+        entry["verdict"] = verdicts.get(node_id)
+    return titles
+
+
 def build_context():
     """Assemble the review model from saved artifacts; raises on any gap."""
     definition = read(GROUPS_FILE)
@@ -152,6 +174,7 @@ def build_context():
     cases = {case_id: case for study in studies.values()
              for case_id, case in study["cases"].items()}
     vectors, subjects, nodes = load_nodes()
+    titles = load_titles()
 
     placements = {}
     for case in cases.values():
@@ -180,7 +203,7 @@ def build_context():
         raise ValueError("declared gap sections do not match the derived placement")
 
     node_views = [_node_view(node, nodes[node["id"]], vectors, cases,
-                             placements[node["id"]])
+                             placements[node["id"]], titles.get(node["id"]))
                   for node in definition["nodes"]]
     section_views = [_section_view(section, cases) for section in definition["sections"]]
 
@@ -216,13 +239,14 @@ def build_context():
         "comparisons": comparisons,
         "scorer": summaries[0],
         "provenance": [{"path": str(path.relative_to(REPO)), "sha256": digest(path)}
-                       for path in [PROMPT, GROUPS_FILE, VECTOR_MAP, PACKETS] +
+                       for path in [PROMPT, GROUPS_FILE, VECTOR_MAP, PACKETS,
+                                    TITLES, NAV_CATEGORIES, VERDICTS] +
                        [GOAL / name / file for name in definition["studies"]
                         for file in ("plan.json", "inputs.json", "results.json")]],
     }
 
 
-def _node_view(node, instances, vectors, cases, case_ids):
+def _node_view(node, instances, vectors, cases, case_ids, title_entry):
     """Group one node's masks by note and order notes by their best saved score."""
     scored = {cases[case_id]["source_id"]: cases[case_id] for case_id in case_ids}
     by_note = {}
@@ -238,7 +262,10 @@ def _node_view(node, instances, vectors, cases, case_ids):
         rows.append({"note_short": note_short, "members": members, "best": best,
                      "text": members[0][0][0]["text"]})
     rows.sort(key=lambda row: (row["best"] is None, -(row["best"] or 0), row["note_short"]))
-    return {"id": node["id"], "label": node["label"], "rows": rows}
+    return {"id": node["id"], "rows": rows,
+            "title": (title_entry or {}).get("title"),
+            "title_source": (title_entry or {}).get("source"),
+            "verdict": (title_entry or {}).get("verdict")}
 
 
 def _section_view(section, cases):
@@ -268,10 +295,15 @@ def render_review(context):
     notes = []
     for node in context["nodes"]:
         total = len(node["rows"])
+        title = f'"{node["title"]}"' if node["title"] else "(no saved title)"
+        name = f"{node['id']} {title}"
         for index, row in enumerate(node["rows"], 1):
+            position = f"position {index} of {total}"
             notes.append(_note_card(
-                context, placement=node["id"], label=node["label"], row=row,
-                position=f"position {index} of {total}", in_node=True,
+                context, name=name,
+                placement_line=f"{name} · {position} · order shown is the saved "
+                               f"scores, display only",
+                row=row, position=position, in_node=True,
                 member_cases=[case for (_i, _v), case in row["members"] if case],
                 mask_labels=[(instance["instance"], vector["fragments"],
                               case["score"] if case else None)
@@ -279,9 +311,11 @@ def render_review(context):
     for section in context["sections"]:
         total = len(section["rows"])
         for index, row in enumerate(section["rows"], 1):
+            position = f"{index} of {total} (unordered)"
             notes.append(_note_card(
-                context, placement=section["id"], label=section["label"], row=row,
-                position=f"{index} of {total} (unordered)", in_node=False,
+                context, name=section["id"],
+                placement_line=f"{section['id']} ({section['label']}) · {position}",
+                row=row, position=position, in_node=False,
                 member_cases=row["cases"],
                 mask_labels=[(case.get("short_id") or case["id"], case["mask"],
                               case["score"]) for case in row["cases"]]))
@@ -301,15 +335,10 @@ def _score_text(member_cases):
     return "score " + ", ".join(str(score) for score in scores) if scores else "no score"
 
 
-def _note_card(context, placement, label, row, position, member_cases, mask_labels,
+def _note_card(context, name, placement_line, row, position, member_cases, mask_labels,
                in_node):
     key = row["note_short"]
-    title = f"{placement} · {position} · {key} · {_score_text(member_cases)}"
-    if in_node:
-        placement_line = (f"{placement} ({label}) · {position} · "
-                          f"order shown is the saved scores, display only")
-    else:
-        placement_line = f"{placement} ({label}) · {position}"
+    title = f"{name} · {position} · {key} · {_score_text(member_cases)}"
     lines = [placement_line, _mask_lines(mask_labels)]
     if in_node and row["best"] is None:
         lines.append("position unknown: this note has no saved score")
@@ -338,7 +367,7 @@ def _note_card(context, placement, label, row, position, member_cases, mask_labe
                  f"via {scorer['provider']} · PPv10 unchanged "
                  f"{context['prompt_sha256'][:12]}…")
     card = {
-        "id": f"{placement}-{key}",
+        "id": f"{name.split()[0]}-{key}",
         "title": title,
         "text": row["text"],
         "results": [{"model": _model_pane(context),

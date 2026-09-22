@@ -136,9 +136,12 @@ class RealDataTests(unittest.TestCase):
             with self.subTest(card=card["id"]):
                 self.assertNotIn("⟦", card["text"])
 
-    def test_title_states_node_position_note_and_score(self):
-        self.assertEqual("S9c440e7f47 · position 1 of 2 · N029 · score 88",
+    def test_title_states_node_title_position_note_and_score(self):
+        self.assertEqual('S9c440e7f47 "Coffee" · position 1 of 2 · N029 · score 88',
                          self.cards["S9c440e7f47-N029"]["title"])
+        self.assertEqual('Sbb8511308a "Coffee" · position 1 of 3 · N035 · score 95',
+                         self.cards["Sbb8511308a-N035"]["title"])
+        self.assertIn("(no saved title)", self.cards["S68ce4fd21f-N092"]["title"])
 
     def test_comment_is_short_and_carries_only_the_essentials(self):
         comment = self.cards["S9c440e7f47-N029"]["results"][0]["comment"]

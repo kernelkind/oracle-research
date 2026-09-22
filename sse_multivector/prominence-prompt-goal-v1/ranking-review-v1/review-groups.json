@@ -13,9 +13,9 @@
     }
   ],
   "nodes": [
-    { "id": "S9c440e7f47", "label": "coffee, hashtag-style posts" },
-    { "id": "Sbb8511308a", "label": "coffee posts" },
-    { "id": "S68ce4fd21f", "label": "post-Christmas posts" }
+    { "id": "S9c440e7f47" },
+    { "id": "Sbb8511308a" },
+    { "id": "S68ce4fd21f" }
   ],
   "sections": [
     {

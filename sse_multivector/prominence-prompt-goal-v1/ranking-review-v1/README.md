@@ -38,18 +38,31 @@ that build.
 
 ## The walk
 
-- **S9c440e7f47** (coffee, hashtag-style posts) — 2 notes, order complete:
+- **S9c440e7f47 "Coffee"** — 2 notes in this packet, order complete:
   second-coffee post (88) then the animal-ethics-quotation post (2).
-- **Sbb8511308a** (coffee posts) — 3 notes, order partial: two posts at 95
-  (no order predeclared between them), dog-coffee post unscored, and one post
-  carries two overlapping masks (V276 scored, V277 unscored).
-- **S68ce4fd21f** (post-Christmas posts) — 4 notes, order mostly unknown:
-  only the today-is-a-gift mask is scored (18); three posts carry multiple
-  masks.
+- **Sbb8511308a "Coffee"** — 3 notes, order partial: two posts at 95 (no order
+  predeclared between them), dog-coffee post unscored, and one post carries two
+  overlapping masks (V276 scored, V277 unscored).
+- **S68ce4fd21f** (no saved title) — 4 notes, order mostly unknown: only the
+  today-is-a-gift mask is scored (18); three posts carry multiple masks.
 - **Unassigned** — 5 notes / 8 masks in no node (task 24). Their scores order
   nothing until membership recovery places them.
 - **Outside the corpus** — 5 notes / 6 control masks, including the baby/Nostr
   within-note control (94 vs 3 on one note). No node placement exists.
+
+Node titles are the saved ones, not paraphrases: `hdbv2-node-titles-v21-astra-low`
+records `Coffee` for both coffee nodes (assistant-accepted, no user approval on
+record); the TRUE14 hierarchy label for S9c440e7f47 is also `Coffee`. S68ce4fd21f
+has no saved title — it is one of three groups excluded from the v15 title runs
+(61 of 64 accepted). Saved user semantic-review verdicts
+(`real-note-fine-segmentation-v1/review-handoff/baseline/user-response.json`):
+S9c440e7f47 valid, Sbb8511308a valid, S68ce4fd21f none on record.
+
+Hierarchy context worth knowing while reviewing: in the TRUE14 navigation
+hierarchy, `Coffee` (S9c440e7f47) is a parent node with four child nodes and 22
+notes including descendants, while this packet's own membership is 2 masks / 2
+notes. Ordering a node's notes across shared descendants is part of task 27 and
+is not decided by this walk.
 
 ## Analysis (kept out of the cards)
 
@@ -85,11 +98,12 @@ validates neither clustering nor titles; PPv10 is not production-frozen.
 
 ## Files
 
-- `review-groups.json` — walk layout: node labels, gap sections, preserved
+- `review-groups.json` — walk layout: node ids, gap sections, preserved
   disagreements (source, tracked).
 - `build_review.py` — builder; joins study scores to HDBv2 membership and
-  refuses to build on prompt-hash mismatches, undeclared placements, coverage
-  gaps, or any schema-1 violation the review tool would reject.
+  loads saved node titles and user verdicts; refuses to build on prompt-hash
+  mismatches, undeclared placements, coverage gaps, or any schema-1 violation
+  the review tool would reject.
 - `test_build_review.py` — unit tests plus integration tests over the real
   saved artifacts and the release review binary (skipped where local-only).
   Pins include: every card is one complete note byte-verbatim with no marks or
