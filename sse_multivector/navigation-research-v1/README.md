@@ -81,7 +81,8 @@ instruction: return a JSON object with one string field, `title`, without
 per-instance explanations. The masks-only input and category-membership
 instructions remain unchanged. This is a prompt-only change, not a runner or
 schema-enforcement change. Its comparison records are in
-`hdbv2-node-description-probe-v29/comparison-mimo-v1/`.
+`hdbv2-node-description-probe-v29/comparison-mimo-v1/`, with a high-effort
+rerun in `hdbv2-node-description-probe-v29/comparison-mimo-high-v1/`.
 
 Category-title comparisons now use Xiaomi MiMo V2.6 Pro
 (`xiaomi/mimo-v2.6-pro`) through OpenRouter instead of Astra, per the user's
