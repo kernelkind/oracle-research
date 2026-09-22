@@ -1,97 +1,50 @@
 {
-  "review": "PPv10 prominence ranking review v1",
+  "review": "PPv10 node-note order review v1",
   "prompt_version": "PPv10",
   "prompt_status": "user-approved, tested experimentally, not production-frozen",
   "prompt_path": "../ppv10-draft-v1/PPv10.md",
   "prompt_sha256": "d40835fb0b104865727c0b0a2bde4074afb642991d9bddc424d5379ef4b038ea",
-  "purpose": "Grouping of saved PPv10 scores by selection meaning, for reading whether the most directly about a category notes sort first where comparable saved masks exist.",
+  "purpose": "Node-note order review against the saved HDBv2 (hdbscan-cross-note) hierarchy: how saved PPv10 scores order each node's notes, and where saved coverage cannot order a node at all. The consumer of prominence is task 27, node-note ordering; nothing here is judged outside that.",
   "studies": ["ppv10-ranking-v1", "ppv10-mixed-notes-v1"],
-  "caveats": [
-    "Grouped from already-saved scores only. One call per case; no repeatability, numerical calibration, or general reliability is established.",
-    "Pairs and their order are predeclared assistant judgments, not user-approved gold labels. These are mechanical order checks, not an accuracy percentage.",
-    "Only the coffee group and the reading pair compare different notes. Every other pair is within one note, so cross-note ranking outside coffee remains insufficiently tested.",
-    "Tentative and related-content pairs are informational: small gaps such as 86 versus 85 establish no meaningful separation, and both orders can be defensible.",
-    "Masks are unchanged saved inputs from several extraction versions. Prominence is not mask correctness, category membership, truth, quality, usefulness, or personal interest, and nothing here validates extraction or hierarchy construction.",
-    "PPv10 is unchanged and not production-frozen. The production registry still freezes PPv2 and was deliberately not touched."
-  ],
+  "expectations_note": "Predeclared expectations and order checks are assistant judgments recorded before inference, not user-approved gold labels. Mechanical order checks are not an accuracy rate.",
+  "limits_note": "Limits: one saved call per case; order rows are a mechanical display of scores, and combining one note's multiple masks within a node is undecided (task 27) — no sum, max, or average is applied. Masks are unchanged saved inputs from several extraction versions; prominence is not mask correctness, category membership, truth, quality, usefulness, or personal interest. Node membership is the saved HDBv2 assignment; this review changes no membership and validates neither clustering nor titles. PPv10 is not production-frozen and the production registry still freezes PPv2.",
   "preserved_disagreements": [
     {
       "cases": ["M03"],
-      "text": "The vacuum sealer was predeclared as a major focus (70-89); the score of 58 labels it secondary. The post also extensively covers meat preparation and animal feed, so the boundary is arguable, and no harmful cross-note ordering has been demonstrated from this score. Do not hide this, and do not add a prompt rule just to raise it."
+      "text": "The vacuum sealer mask was predeclared as a major focus (70-89); the score of 58 labels it secondary. The post also extensively covers meat preparation and animal feed, so the boundary is arguable. The mask is in no node, so no harmful node-note order follows from this score yet. Do not hide this, and do not add a prompt rule just to raise it."
     }
   ],
   "open_questions": [
-    "The missing evidence for the actual product question is cross-note ranking with comparable saved masks outside coffee, including substantial secondary mentions. Search saved extractions for those sets before proposing any new calls.",
-    "How several masks' scores combine when one note appears under a node multiple ways is undecided. No sum, max, or average rule is implied by this review."
+    "Eight scored masks belong to no node (task 24 territory): their scores order nothing until membership recovery places them.",
+    "Only S9c440e7f47 has complete saved scores. Comparable saved scores for every node's remaining masks are the missing evidence for the actual ordering decision.",
+    "One note with multiple masks in one node is present (Sbb8511308a, S68ce4fd21f): task 27's combination rule is undecided and must not be smuggled in as sum, max, or average."
   ],
-  "groups": [
+  "nodes": [
     {
-      "id": "G1",
-      "title": "Coffee across notes",
-      "kind": "cross_note",
-      "cases": ["R01", "R02", "R03", "R04"],
-      "commentary": "The three predeclared clear cross-note comparisons order as expected with large gaps. The mostly-hashtag second-coffee post scores 88, so the result is not explained by a blanket hashtag penalty. No order was predeclared between R03 and R01/R02."
+      "id": "S9c440e7f47",
+      "commentary": "Two bare coffee tokens in hashtag-style posts: the mostly-hashtag second-coffee post (N029) and the animal-ethics-quotation post (N048). Both masks have saved scores, so this is the only node whose note order is fully supported. Judgment: opening this node, is the second-coffee post correctly ahead of the quotation post, whose coffee is a stray hashtag?"
     },
     {
-      "id": "G2",
-      "title": "Coffee shops across notes (predeclared tentative)",
-      "kind": "cross_note",
-      "cases": ["R05", "R06"],
-      "commentary": "The one-point gap establishes no meaningful separation. Both high scores are defensible: a rave specifically at a coffee shop makes the venue part of the point. This is not a demonstrated failure and not evidence for either order."
+      "id": "Sbb8511308a",
+      "commentary": "A coffee node across three notes: More coffee in cool places (N035), Iced coffee, served in ice (N036), and Is there coffee for me? (N044). N035 contributes two overlapping masks in this node and the dog-coffee note is unscored, so the full node-note order cannot be produced from saved scores without task 27's undecided combination rule and two more scores. The two scored notes tie at 95 and no order between them was predeclared."
     },
     {
-      "id": "G3",
-      "title": "Reading across notes (different mask scopes)",
-      "kind": "cross_note",
-      "cases": ["M07", "M08"],
-      "commentary": "Orders as expected, but the masks differ in specificity: bedtime-reading advice among many lifestyle recommendations versus reading as a focused subject. Related content only, not a controlled identical-meaning ranking test; do not equate the two selections' meanings."
-    },
-    {
-      "id": "G4",
-      "title": "Baby update (within-note control)",
-      "kind": "within_note",
-      "cases": ["R07", "R08"],
-      "commentary": "Two hashtag-only selections from one update, scored on separate cards. The baby selections are the update's subject; the nostr selections appear only as posting context inside hashtag tokens. This is a within-note control for complete-context scoring and says nothing about cross-note ranking in those domains."
-    },
-    {
-      "id": "G5",
-      "title": "Mixed diary: audiobook change versus Brussels",
-      "kind": "within_note",
-      "cases": ["M01", "M02"],
-      "commentary": "Clear pair ordered as expected: a developed topic over background detail to a gift anecdote."
-    },
-    {
-      "id": "G6",
-      "title": "Product post: vacuum sealer versus previous FoodSaver use",
-      "kind": "within_note",
-      "cases": ["M03", "M04"],
-      "commentary": "Clear pair ordered as expected. The M03 card also records a preserved disagreement about its own score: secondary rather than the predeclared major focus."
-    },
-    {
-      "id": "G7",
-      "title": "Daily update: safety plan versus closing sentiment",
-      "kind": "within_note",
-      "cases": ["M05", "M06"],
-      "commentary": "Clear pair ordered as expected: a developed plan and its motivation over a brief closing sentiment."
-    },
-    {
-      "id": "G8",
-      "title": "Shared meal: meal sharing versus workshop context",
-      "kind": "within_note",
-      "cases": ["M10", "M11"],
-      "commentary": "Predeclared tentative and ordered as expected. Education also frames the post, so the workshop score is defensible; the gap supports separating secondary from major content but is one pair only."
+      "id": "S68ce4fd21f",
+      "commentary": "A post-Christmas node: Santa didn't show (N032, three masks), after-Christmas slowdown (N061, three masks), printing Christmas cards (N079, two masks), and today is a gift (N092, one mask). Only the today-is-a-gift mask is scored, so saved scores cannot order this node at all. Its membership is also the one scored placement whose own note's sibling mask sits unassigned."
     }
   ],
-  "singletons": [
+  "sections": [
     {
-      "id": "M09",
-      "commentary": "Guitars throughout a long capo/retuning question: plausibly central as a focused long-note control. No predeclared comparison, so it supports nothing about ordering."
-    }
-  ],
-  "separate_work": [
+      "id": "unassigned",
+      "title": "Unassigned masks · 8 scored masks in no node (task 24)",
+      "cases": ["M01", "M02", "M03", "M04", "M05", "M07", "M10", "M11"],
+      "commentary": "These masks are members of no HDBv2 node — the membership gap task 24 exists to close. Their scores currently produce no node-note order; they are evidence about the scorer only until recovery places them. Note that M05 and M06 are one note's two masks in different placements, so even their within-note contrast crosses placements."
+    },
     {
-      "id": "H15",
-      "commentary": "Another agent's one-call probe: unchanged PPv10 on the saved MPv3.43 mask Rise and grind in a coffee-bean note, meta/muse-spark-1.3-contributor at reasoning high through OpenRouter. It had no predeclared semantic expectation and is not part of the two Astra evaluations above. A valid score is not semantic validation or a model comparison; the subject metadata saved alongside it is not the scorer's input."
+      "id": "outside-corpus",
+      "title": "Outside the hierarchy corpus · 6 control masks (no node placement)",
+      "cases": ["R05", "R06", "R07", "R08", "M08", "M09"],
+      "commentary": "These masks are not in the hierarchy corpus at all: their notes come from earlier mask-prompt assessments, so no node placement exists for them. They remain prompt-behavior controls — including the baby/Nostr within-note control — and say nothing about node-note order."
     }
   ]
 }
