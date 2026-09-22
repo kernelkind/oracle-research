@@ -37,10 +37,10 @@ class PlanningViewerTest(unittest.TestCase):
             with self.subTest(hierarchy_release=term):
                 self.assertIn(term, labels["s4"])
                 self.assertIn(term, labels["week4"])
-        for term in ("prepared model (08)", "continual-update path (12)"):
+        for term in ("distilled model (08)", "continual-update path (12)"):
             self.assertIn(term, labels["d4"])
         self.assertIn("evaluation results", labels["week3"])
-        self.assertIn("prepared", labels["week5"])
+        self.assertIn("distilled model (08)", labels["week5"])
         self.assertIn("prepared", labels["week-launch"])
 
     def test_hierarchy_blocked_on_titles_without_reopening_extraction_prompts(self):
@@ -52,7 +52,7 @@ class PlanningViewerTest(unittest.TestCase):
         self.assertNotIn("IN PROGRESS", cells["h1"].get("value"))
         self.assertIn("fillColor=light-dark(#f7f8fa,", cells["h1"].get("style"))
         self.assertIn("h-title", cells)
-        self.assertIn("23 · Fix and validate category-title prompt", cells["h-title"].get("value"))
+        self.assertIn("23 · Fix and validate node-title prompt", cells["h-title"].get("value"))
         self.assertIn("IN PROGRESS", cells["h-title"].get("value"))
         self.assertIn("fillColor=light-dark(#e7f1ff,", cells["h-title"].get("style"))
         self.assertNotIn("23 ·", cells["ready-summary"].get("value"))
@@ -60,11 +60,11 @@ class PlanningViewerTest(unittest.TestCase):
         self.assertEqual((edge.get("source"), edge.get("target")), ("h-title", "h2"))
         self.assertNotIn("dashed=1", edge.get("style"))
         self.assertIn("BLOCKED", cells["h2"].get("value"))
-        self.assertIn("Waiting for category-title correction (23) before TRUE placement", cells["h2"].get("value"))
+        self.assertIn("Waiting for node-title correction (23) before TRUE placement", cells["h2"].get("value"))
         self.assertIn("fillColor=light-dark(#f7f8fa,", cells["h2"].get("style"))
         self.assertNotIn("IN PROGRESS", cells["h2"].get("value"))
         self.assertNotIn("WAITING FOR 01", cells["h2"].get("value"))
-        self.assertIn("WAITING FOR 04", cells["m1"].get("value"))
+        self.assertIn("WAITING FOR 04 + 17", cells["m1"].get("value"))
         self.assertNotIn("WAITING FOR 01", cells["m1"].get("value"))
         self.assertIn("PAUSED", cells["m0"].get("value"))
         self.assertIn("Mask prompt finished; prominence remains paused", cells["m0"].get("value"))
@@ -90,8 +90,8 @@ class PlanningViewerTest(unittest.TestCase):
         self.assertIn("04 · Mask prominence remains paused; mask prompt is finished", cells["week-subtitle"].get("value"))
         self.assertIn("Subject and mask prompts finished", cells["week1"].get("value"))
         self.assertIn("100-note hierarchy blocked by the title-generation prompt", cells["week1"].get("value"))
-        self.assertIn("TRUE needs accurate category titles for node placement", cells["week1"].get("value"))
-        self.assertIn("23 · Category-title prompt correction in progress", cells["week1"].get("value"))
+        self.assertIn("TRUE needs accurate node titles for placement", cells["week1"].get("value"))
+        self.assertIn("23 · Node-title prompt correction in progress", cells["week1"].get("value"))
         self.assertIn("Map: 01–02, 23", cells["week1"].get("value"))
         lane = cells["week-delivery"].find("mxGeometry")
         self.assertGreaterEqual(float(lane.get("width")), 1600)
@@ -154,7 +154,7 @@ class PlanningViewerTest(unittest.TestCase):
         comparison = cells["m-annotator"]
         self.assertIn("IN PROGRESS", comparison.get("value"))
         self.assertIn("fillColor=light-dark(#e7f1ff,", comparison.get("style"))
-        self.assertIn("Muse high vs Astra low; no model selected", comparison.get("value"))
+        self.assertIn("Muse high vs Astra low; no teacher selected", comparison.get("value"))
         self.assertIn("FINISH WITH 04", comparison.get("value"))
         self.assertNotIn("17 ·", cells["ready-summary"].get("value"))
         incoming = set()
@@ -165,6 +165,12 @@ class PlanningViewerTest(unittest.TestCase):
                 if cell.get("target") == "m-annotator":
                     incoming.add(cell.get("source"))
         self.assertEqual(incoming, {"h1", "m0"})
+        outgoing = {(cell.get("source"), cell.get("target")): cell
+                    for cell in cells.values() if cell.get("edge") == "1"}
+        self.assertIn(("m-annotator", "m1"), outgoing,
+                      "The selected teachers must write 05's labels")
+        self.assertNotIn("dashed=1", outgoing[("m-annotator", "m1")].get("style"))
+        self.assertIn("teachers", cells["m1"].get("value"))
         for cell in document.findall(".//mxCell"):
             self.assertNotIn("19 ·", cell.get("value", ""))
 
@@ -206,8 +212,8 @@ class PlanningViewerTest(unittest.TestCase):
         self.assertIn("NEEDS 21 + 22", cells["s-analysis"].get("value"))
         self.assertNotIn("20 ·", cells["ready-summary"].get("value"))
         self.assertIn("21 · Assess HDBSCAN at launch scale", cells["ready-summary"].get("value"))
-        self.assertIn("22 · Measure SSE, category-title and TRUE processing costs", cells["ready-summary"].get("value"))
-        self.assertIn("existing masks and categories", cells["s-stage-costs"].get("value"))
+        self.assertIn("22 · Measure SSE, node-title and TRUE processing costs", cells["ready-summary"].get("value"))
+        self.assertIn("existing masks and nodes", cells["s-stage-costs"].get("value"))
         for pair in [("s-analysis", "s1"), ("s-analysis", "s2"), ("s1", "s2"),
                      ("m4", "s2"), ("s-hdbscan", "s-analysis"), ("s-stage-costs", "s-analysis")]:
             self.assertIn(pair, edges)
@@ -235,9 +241,9 @@ class PlanningViewerTest(unittest.TestCase):
         for node in ("s2", "s3"):
             self.assertNotIn("RELATIONSHIP OPEN", cells[node].get("value"))
         self.assertIn("Check full-build time and cost", cells["s2"].get("value"))
-        self.assertIn("Test hierarchy with fine-tuned model", cells["s3"].get("value"))
+        self.assertIn("Test hierarchy with the distilled model", cells["s3"].get("value"))
         self.assertIn("Training labels:", cells["h-note"].get("value"))
-        self.assertIn("Fine-tuned model:", cells["h-note"].get("value"))
+        self.assertIn("Distilled model:", cells["h-note"].get("value"))
         self.assertIn("does not authorize execution", cells["legend"].get("value"))
         self.assertIn("Overall plan not approved", cells["subtitle"].get("value"))
 
@@ -246,13 +252,13 @@ class PlanningViewerTest(unittest.TestCase):
         root = ET.parse(diagram)
         labels = {cell.get("id"): cell.get("value", "")
                   for cell in root.findall("./diagram/mxGraphModel/root/mxCell")}
-        for term in ("fine-tuned model", "masks", "prominence", "hierarchy", "budget"):
+        for term in ("distilled model", "masks", "prominence", "hierarchy", "budget"):
             with self.subTest(term=term):
                 self.assertIn(term, labels["s2"])
-        self.assertIn("Compare training-data generators", labels["m-annotator"])
-        self.assertIn("Compare models to fine-tune", labels["m2"])
+        self.assertIn("Compare teachers", labels["m-annotator"])
+        self.assertIn("Choose the model to train", labels["m2"])
         self.assertNotIn("SP + MP", labels["h1"])
-        for term in ("fine-tuned model", "masks", "prominence", "hierarchy"):
+        for term in ("distilled model", "masks", "prominence", "hierarchy"):
             with self.subTest(weekly_term=term):
                 self.assertIn(term, labels["week4"])
 
@@ -440,29 +446,31 @@ class PlanningViewerTest(unittest.TestCase):
                 wait_for_text("save/reload its trained weights")
                 self.assertFalse(evaluate("document.body.innerText.includes('19 · Plan training-data generator comparison')"))
                 wait_for_text("Subject and mask prompts finished")
-                wait_for_text("Waiting for category-title correction (23) before TRUE placement")
-                wait_for_text("23 · Fix and validate category-title prompt")
+                wait_for_text("Waiting for node-title correction (23) before TRUE placement")
+                wait_for_text("23 · Fix and validate node-title prompt")
                 wait_for_text("Mask prompt finished; prominence remains paused")
-                wait_for_text("24 · Recover missing category memberships")
-                wait_for_text("25 · Handle category equivalence and TRUE cycles")
+                wait_for_text("24 · Recover missing node memberships")
+                wait_for_text("25 · Handle node equivalence and TRUE cycles")
                 wait_for_text("26 · Collapse equal-note navigation steps")
-                wait_for_text("27 · Order category notes using mask prominence")
+                wait_for_text("27 · Order node notes using mask prominence")
                 wait_for_text("28 · Implement and validate the launch-scale build")
-                wait_for_text("17 · Compare training-data generators")
-                wait_for_text("06 · Compare models to fine-tune")
+                wait_for_text("17 · Compare teachers")
+                wait_for_text("06 · Choose the model to train")
+                wait_for_text("05 · Prepare pilot training data")
+                wait_for_text("Labels are written by the teachers")
                 wait_for_text("weight-release permission before selection")
                 wait_for_text("Verify loading and mask/prominence generation")
-                wait_for_text("prepared model (08)")
+                wait_for_text("distilled model (08)")
                 wait_for_text("20 · Assess full hierarchy-build resources")
-                wait_for_text("22 · Measure SSE, category-title and TRUE processing costs")
+                wait_for_text("22 · Measure SSE, node-title and TRUE processing costs")
                 wait_for_text("21 · Assess HDBSCAN at launch scale")
                 wait_for_text("10 · Check full-build time and cost")
-                wait_for_text("our fine-tuned model")
+                wait_for_text("the distilled model")
                 wait_for_text("NEEDS 21 + 22")
-                wait_for_text("Cosine cutoff selects category pairs")
+                wait_for_text("Cosine cutoff selects node pairs")
                 wait_for_text("Training labels:")
-                wait_for_text("Fine-tuned model:")
-                wait_for_text("11 · Test hierarchy with fine-tuned model")
+                wait_for_text("Distilled model:")
+                wait_for_text("11 · Test hierarchy with the distilled model")
                 self.assertFalse(evaluate("document.body.innerText.includes('RELATIONSHIP OPEN')"))
                 wait_for_text("Overall plan not approved")
                 assert_dark_mode()
@@ -484,16 +492,16 @@ class PlanningViewerTest(unittest.TestCase):
                 })()"""), "Page controls must stay visible while scrolling")
                 evaluate("document.querySelector('[title=\"Next Page\"]').click()")
                 wait_for_text("Proposed weekly targets")
-                wait_for_text("Fine-tune the mask/prominence model")
+                wait_for_text("Distill the model")
                 wait_for_text("Build launch hierarchy snapshot")
                 wait_for_text("Prepare runnable code")
                 wait_for_text("04 · Mask prominence remains paused; mask prompt is finished")
                 wait_for_text("Additional completion dependencies—not new week assignments")
                 wait_for_text("100-note hierarchy blocked by the title-generation prompt")
-                wait_for_text("23 · Category-title prompt correction in progress")
+                wait_for_text("23 · Node-title prompt correction in progress")
                 wait_for_text("Parallel track · protocol, service and Notedeck")
                 wait_for_text("Notedeck can start with 13")
-                wait_for_text("22: measure SSE, category titles and TRUE")
+                wait_for_text("22: measure SSE, node titles and TRUE")
                 assert_dark_mode()
                 assert_palette_contrast()
                 assert_readable_size()

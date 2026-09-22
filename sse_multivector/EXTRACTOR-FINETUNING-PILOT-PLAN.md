@@ -1,4 +1,4 @@
-# Extractor fine-tuning pilot
+# Fine-tuning pilot
 
 ## Status and scope
 
@@ -7,17 +7,19 @@ and open questions. Published model evidence belongs in
 [Model research](EXTRACTOR-FINETUNING-MODEL-RESEARCH.md); published data-volume
 evidence belongs in [Training-data research](SUBJECT-MASK-TRAINING-DATA-RESEARCH.md).
 
-This pilot selects the model we will fine-tune and release, not the model that
-generates its training data. The separate [annotation-model pilot](../docs/planning/release-decisions.md#two-separate-model-pilots)
+This pilot selects the model we will fine-tune and release (the distilled
+model), not the teachers that write its training data. The separate
+[teacher-comparison pilot](../docs/planning/release-decisions.md#two-separate-model-pilots)
 has Muse Spark 1.3 Contributor as its leading, unselected candidate. Existing
-[annotation research](TOKEN-USAGE-ESTIMATE-1M-NOTES.md#lower-cost-annotation-models)
+[teacher research](TOKEN-USAGE-ESTIMATE-1M-NOTES.md#lower-cost-annotation-models)
 and the [12-note subject diagnostic](frontier-model-comparison-v1/asv6.23-diagnostic-v2/results.md)
 inform that choice; they do not establish mask or prominence quality.
-The [annotation-model pilot](../docs/planning/release-decisions.md#annotation-model-pilot-evaluation-plan)
+The [teacher-comparison pilot](../docs/planning/release-decisions.md#teacher-comparison-pilot-evaluation-plan)
 compares candidates for quality, speed, cost and training-data feasibility; its
 experimental procedure and treatment of unsuitable annotations remain open.
 This fine-tuning pilot informs the training-volume decision and schedule check;
-the annotation pilot does not determine how much training data the extractor needs.
+the teacher comparison does not determine how much training data the distilled
+model needs.
 
 Approved requirements:
 
@@ -28,7 +30,7 @@ Approved requirements:
   rather than leaving the first downstream check until after final training.
 - Confirm permission to release fine-tuned weights during model selection (06),
   before committing to the larger training run. Training-data provider
-  permissions remain part of the annotation-model pilot (17).
+  permissions remain part of the teacher-comparison pilot (17).
 - Measure unseen-note quality before and after training, improvement as training
   data increases, actual training resources and cost, and batched generation
   speed. Include both masks and prominence in the release-model evaluation.
@@ -47,7 +49,7 @@ authorizations remain open. No rental or training run has started for this pilot
 The release plan's **18 · Prepare training code for the fine-tuning pilot** is
 ready for preparing code to fine-tune each candidate, save/reload its trained
 weights and generate evaluation outputs. Final training-example formatting and
-mask/prominence quality evaluation remain in **06 · Compare models to fine-tune**,
+mask/prominence quality evaluation remain in **06 · Choose the model to train**,
 which waits for the agreed output format, prominence criteria and reviewed pilot
 data as well as the training setup. Readiness is not authorization to begin work;
 this planning decision selects no framework or training method.
@@ -67,11 +69,11 @@ dataset is not required. See [publication preparation](../docs/planning/release-
 complete original note → complete set of grouped source-text masks + prominence per mask
 ```
 
-The extractor must discover subjects as well as locate their evidence. The
+The distilled model must discover subjects as well as locate their evidence. The
 input does not supply a subject list. Masks may contain separated fragments,
 overlap other masks, and vary in number. The production output need not include
 the intermediate English subject descriptions. Masks feed unchanged SSE;
-prominence supports ordering notes within categories.
+prominence supports ordering notes within nodes.
 
 Assess prominence from the complete note and the particular mask, without
 requiring a generated subject description. Prominence prompt development and
@@ -79,7 +81,7 @@ scoring calibration are a separate workstream from release planning.
 
 Use the subject and mask prompts validated by the current extraction work, not
 the superseded ASv6.23 / MPv3.5 commitment. Freeze the exact prompt versions,
-annotation model settings, output format and reviewed labels for each controlled
+teacher model settings, output format and reviewed labels for each controlled
 comparison. This plan does not select successor prompt versions. Preserve the
 per-note subject hierarchies, raw annotations and review findings for diagnosis;
 do not silently mix outputs from different annotation policies.
@@ -87,11 +89,12 @@ do not silently mix outputs from different annotation policies.
 The prominence definition, annotation prompt, output representation and evaluation
 criteria still need to be settled. Report any earlier mask-only results as
 mask-only evidence; they cannot establish prominence quality or the cost of
-generating both outputs. Bulk training-data generation requires both the
-500-note hierarchy validation and annotation-model selection in the
-[release plan](../docs/planning/release-decisions.md). Earlier fine-tuning preparation
-and pilots can use reviewed data from the existing annotation process without
-waiting for the cheaper annotator to be selected.
+generating both outputs. Generating the full training data requires both the
+500-note hierarchy validation and the teacher selection in the
+[release plan](../docs/planning/release-decisions.md). The same teachers must
+write both the pilot training data and the full training data, per the user's
+direction of September 21, 2026. Work that consumes no labels may use any data
+and need not wait for the teacher selection.
 
 The agreed readiness target for the larger fine-tune's training data is
 **September 27, 2026**, including masks and prominence, with training/evaluation
@@ -103,9 +106,9 @@ feasibility or change the pilot's proposed sizes.
 The pilot includes a small hierarchy built from its masks and prominence before
 model selection, using the hierarchy construction being validated. This does not
 authorize changes to the title prompt, SSE, grouping method or segmentation. Distinguish
-extractor errors from failures in the shared downstream pipeline; a parsing or
+distilled-model errors from failures in the shared downstream pipeline; a parsing or
 mask-overlap score alone does not establish hierarchy quality. Release-plan
-task 11 still checks the final fine-tuned model. This early check does not replace
+task 11 still checks the final distilled model. This early check does not replace
 the separate scale measurements or establish the full build's cost.
 
 ## Models and required untuned baselines

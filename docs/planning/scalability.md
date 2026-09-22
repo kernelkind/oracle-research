@@ -66,8 +66,8 @@ For illustration, one float64 matrix for ten million distinct vectors occupies
 800 TB, whereas the 768-dimensional float32 vectors themselves occupy about
 31 GB. These are decimal storage calculations, not measured peak memory. The
 current code holds additional data and copies. Roughly ten vectors per note
-occurred in older selected samples; that is not a forecast for the new extractor
-or a commitment to ten million distinct vectors.
+occurred in older selected samples; that is not a forecast for the distilled
+model or a commitment to ten million distinct vectors.
 
 Sources: [cosine matrix](../../src/fine_region_partition.rs),
 [HDBSCAN implementation](../../src/fine_region_hdbscan.rs), and
@@ -120,11 +120,11 @@ benchmarks are not evidence for our 768-dimensional SSE workload.
 
 | Stage | Evidence and remaining question |
 | --- | --- |
-| Mask/prominence generation | The intended fine-tuned extractor receives a complete note and emits its masks and prominence. Its speed and cost are unmeasured. The old 30-billion-token estimate describes the annotation process, not this production path. |
+| Mask/prominence generation | The intended distilled model receives a complete note and emits its masks and prominence. Its speed and cost are unmeasured. The old 30-billion-token estimate describes the teacher pipeline, not this production path. |
 | SSE | Two saved 100-note CPU runs took about 67 seconds each. The encoder processes a note once, then pools its selected token representations for each mask. Large-batch GPU throughput remains unmeasured. |
-| Category titles | Current inputs include all distinct mask instances in each group. Neither launch-scale category counts nor group-input sizes are established; scaling 61 groups to 610,000 is not a forecast. |
-| TRUE category links | Intended launch work uses cosine-filtered candidate pairs, not exhaustive TRUE comparisons. Both retained-pair counts and GPU throughput remain unknown; filtering must preserve useful links. |
-| Missing memberships | This is separate from linking categories. The coffee/tea test checked 945 masks against six categories. A scalable recovery procedure has not been selected here. |
+| Node titles | Current inputs include all distinct mask instances in each group. Neither launch-scale node counts nor group-input sizes are established; scaling 61 groups to 610,000 is not a forecast. |
+| TRUE node links | Intended launch work uses cosine-filtered candidate pairs, not exhaustive TRUE comparisons. Both retained-pair counts and GPU throughput remain unknown; filtering must preserve useful links. |
+| Missing memberships | This is separate from linking nodes. The coffee/tea test checked 945 masks against six nodes. A scalable recovery procedure has not been selected here. |
 
 Evidence: [historical token estimate](../../sse_multivector/TOKEN-USAGE-ESTIMATE-1M-NOTES.md),
 [SSE worker](../../sse_multivector/worker.py),
