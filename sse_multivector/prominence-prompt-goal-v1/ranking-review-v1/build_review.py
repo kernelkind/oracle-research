@@ -1,29 +1,21 @@
-"""Build the read-only PPv10 ranking review UI from saved study artifacts.
+"""Build the model-output-review batch for the PPv10 ranking review.
 
-Reads only local, already-saved study outputs and the review layout definition.
-Runs no model calls and writes one derived artifact, review.html.
+Reads only local, already-saved study artifacts and the review layout
+definition. Runs no model calls and writes one derived artifact, review.json,
+the schema-1 batch consumed by the existing `model-output-review` TUI.
 """
 import hashlib
-import html
 import json
-from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 GOAL = ROOT.parent
+REPO = ROOT.parents[2]
 PROMPT = GOAL / "ppv10-draft-v1" / "PPv10.md"
 GROUPS_FILE = ROOT / "review-groups.json"
-OUTPUT = ROOT / "review.html"
+OUTPUT = ROOT / "review.json"
 
-SEPARATE_STUDY = "ppv10-mpv3.43-muse13high-v1"
-
-BANDS = {
-    "central": (90, 100, "central 90–100"),
-    "major": (70, 89, "major 70–89"),
-    "secondary": (40, 69, "secondary 40–69"),
-    "incidental": (10, 39, "incidental 10–39"),
-    "absent": (0, 9, "essentially absent 0–9"),
-}
+MODEL_PANE = "PPv10 prominence · {model} reasoning {effort}"
 
 
 def read(path):
@@ -38,30 +30,30 @@ def band(score):
     """Map a prominence score to its PPv10 anchor band name."""
     if isinstance(score, bool) or not isinstance(score, int):
         raise ValueError("score must be an integer")
-    for name, (low, high, _label) in BANDS.items():
+    bands = {"central": (90, 100), "major": (70, 89), "secondary": (40, 69),
+             "incidental": (10, 39), "absent": (0, 9)}
+    for name, (low, high) in bands.items():
         if low <= score <= high:
             return name
     raise ValueError("score outside 0-100")
 
 
+BAND_LABELS = {
+    "central": "central 90–100", "major": "major 70–89", "secondary": "secondary 40–69",
+    "incidental": "incidental 10–39", "absent": "essentially absent 0–9",
+}
+
+
 def verdict(higher_score, lower_score):
     """Mechanical order check for one predeclared pair: ordered, tie, or reversed."""
-    if band(higher_score) is None or band(lower_score) is None:
-        raise ValueError("scores must be valid")
+    band(higher_score)
+    band(lower_score)
     gap = higher_score - lower_score
     if gap > 0:
         return "ordered", gap
     if gap == 0:
         return "tie", 0
     return "reversed", gap
-
-
-def marked_html(marked_post):
-    """Render the complete marked post with escaped text and highlighted selections."""
-    if not marked_post or marked_post.count("⟦") != marked_post.count("⟧") or "⟦" not in marked_post:
-        raise ValueError("missing or unbalanced mask markers")
-    return (html.escape(marked_post)
-            .replace("⟦", "<mark>").replace("⟧", "</mark>"))
 
 
 def check_coverage(placements, case_ids):
@@ -89,6 +81,29 @@ def check_comparisons(comparisons, placements):
             raise ValueError("comparison cases do not share one review group")
 
 
+def check_review(review):
+    """Mirror the model-output-review loader's schema-1 validation."""
+    if review.get("schema_version") != 1 or not review.get("title", "").strip() \
+            or not review.get("notes"):
+        raise ValueError("expected a nonempty schema-1 review")
+    models = [result.get("model", "") for result in review["notes"][0].get("results", [])]
+    if not models or len(set(models)) != len(models):
+        raise ValueError("expected a nonempty list of distinct models")
+    ids = set()
+    for note in review["notes"]:
+        model_input = note.get("model_input")
+        if any(not str(note.get(key, "")).strip() for key in ("id", "title", "text")) \
+                or (model_input is not None and not model_input.strip()) \
+                or note["id"] in ids:
+            raise ValueError("empty note fields or duplicate note IDs")
+        ids.add(note["id"])
+        if [result.get("model", "") for result in note.get("results", [])] != models:
+            raise ValueError("all notes must have the same models in the same order")
+        if any(not str(result.get(key, "")).strip()
+               for result in note.get("results", []) for key in ("model", "output", "comment")):
+            raise ValueError("model names, outputs, and comments must not be empty")
+
+
 def load_study(name):
     """Merge one study's plan, saved inputs, and saved scores by case id."""
     directory = GOAL / name
@@ -100,9 +115,9 @@ def load_study(name):
     for item in inputs:
         case = dict(item)
         case["mask"] = item["input"]["mask"]
-        case["marked_post"] = item["input"]["marked_post"]
         case["study"] = name
         case["score"] = scores[item["id"]]["score"]
+        case["raw"] = scores[item["id"]]["raw"]
         cases[item["id"]] = case
     return {
         "name": name,
@@ -111,30 +126,8 @@ def load_study(name):
         "prompt_sha256": plan["prompt_sha256"],
         "summary": {"model": results["model"],
                     "reasoning_effort": results["reasoning_effort"],
+                    "provider": plan["provider"],
                     "calls": results["new_calls"],
-                    "tokens": results["usage"]["totalTokens"]},
-    }
-
-
-def load_separate_probe():
-    """Load the separately saved Muse probe as one case card."""
-    directory = GOAL / SEPARATE_STUDY
-    inputs = read(directory / "inputs.json")
-    results = read(directory / "results.json")
-    return {
-        "id": results["case"],
-        "study": SEPARATE_STUDY,
-        "label": "Coffee-bean note scored with the saved MPv3.43 mask",
-        "note_id": inputs["note_id"],
-        "source_id": "",
-        "source": "saved mask from meta/muse-spark-1.3 mask work",
-        "expectation": "",
-        "mask": results["fragments"],
-        "marked_post": inputs["input"]["marked_post"],
-        "score": results["score"],
-        "summary": {"model": results["model"],
-                    "reasoning_effort": results["reasoning_effort"],
-                    "calls": 1,
                     "tokens": results["usage"]["totalTokens"]},
     }
 
@@ -181,267 +174,126 @@ def build_context():
             result, _gap = verdict(high["score"], low["score"])
             clear_counts[result] += 1
 
-    separate = None
-    if (GOAL / SEPARATE_STUDY / "results.json").exists():
-        probe = load_separate_probe()
-        separate = {**probe,
-                    "commentary": next(item["commentary"] for item in definition["separate_work"]
-                                      if item["id"] == probe["id"])}
-
-    provenance = [{"path": str(PROMPT.relative_to(ROOT.parents[2])), "sha256": digest(PROMPT)},
-                  {"path": str(GROUPS_FILE.relative_to(ROOT.parents[2])), "sha256": digest(GROUPS_FILE)}]
-    for name in definition["studies"]:
-        for file in ("plan.json", "inputs.json", "results.json"):
-            path = GOAL / name / file
-            provenance.append({"path": str(path.relative_to(ROOT.parents[2])),
-                               "sha256": digest(path)})
+    summaries = [study["summary"] for study in studies.values()]
+    for summary in summaries[1:]:
+        if (summary["model"], summary["reasoning_effort"]) != \
+                (summaries[0]["model"], summaries[0]["reasoning_effort"]):
+            raise ValueError("studies disagree on the scorer model")
 
     return {
         "prompt_version": definition["prompt_version"],
         "prompt_status": definition["prompt_status"],
         "prompt_sha256": definition["prompt_sha256"],
-        "purpose": definition["purpose"],
         "caveats": definition["caveats"],
-        "disagreements": definition["preserved_disagreements"],
-        "open_questions": definition["open_questions"],
+        "disagreements": {case_id: item["text"] for item in definition["preserved_disagreements"]
+                          for case_id in item["cases"]},
         "cases": cases,
         "groups": group_views,
         "singletons": [{"case": cases[item["id"]], "commentary": item["commentary"]}
                        for item in singletons],
-        "separate": separate,
         "clear_counts": clear_counts,
-        "informational_pairs": sum(1 for c in all_comparisons
-                                  if not c["kind"].startswith("clear")),
-        "study_summaries": [{"name": name, **study["summary"]}
-                            for name, study in studies.items()],
-        "provenance": provenance,
-        "generated": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+        "informational_pairs": sum(1 for comparison in all_comparisons
+                                  if not comparison["kind"].startswith("clear")),
+        "scorer": summaries[0],
+        "provenance": [{"path": str(path.relative_to(REPO)), "sha256": digest(path)}
+                       for path in [PROMPT, GROUPS_FILE] +
+                       [GOAL / name / file for name in definition["studies"]
+                        for file in ("plan.json", "inputs.json", "results.json")]],
     }
 
 
-def _case_card(case, rank=None):
-    name = band(case["score"])
-    label = BANDS[name][2]
-    mask = " ".join(f"<code>{html.escape(fragment)}</code>" for fragment in case["mask"])
-    source = html.escape(" · ".join(part for part in
-                                   (case["study"], case.get("source_id", ""),
-                                    case.get("source", "")) if part))
-    expectation = (f'<p class="expectation"><b>Predeclared expectation:</b> '
-                   f'{html.escape(case["expectation"])}</p>'
-                   if case.get("expectation") else "")
-    rank_html = f'<span class="rank">#{rank}</span>' if rank is not None else ""
-    return f"""
-      <article class="case">
-        <div class="case-head">{rank_html}<span class="score band-{name}">{case["score"]}</span>
-          <span class="band band-{name}">{label}</span>
-          <span class="cid">{html.escape(case["id"])}</span>
-          <span class="case-label">{html.escape(case["label"])}</span></div>
-        <p class="mask">mask: {mask}</p>
-        {expectation}
-        <details><summary>complete marked post</summary>
-          <pre class="post">{marked_html(case["marked_post"])}</pre></details>
-        <p class="prov">{source}</p>
-      </article>"""
+def _comment(case, assessment, group_line, order_lines, disagreement, context):
+    expectation = case.get("expectation") or \
+        "None recorded for this case; see the predeclared order checks above."
+    scorer = context["scorer"]
+    parts = [f"My assessment: {assessment}"]
+    if disagreement:
+        parts.append(f"Preserved disagreement: {disagreement}")
+    parts.append(group_line)
+    if order_lines:
+        parts.append("Predeclared order checks — mechanical order only, ties and "
+                     "reversals kept separate, not an accuracy rate:")
+        parts.append("\n".join(order_lines))
+    parts.append("Predeclared expectation, recorded before inference by the assistant, "
+                 f"not a gold label: {expectation}")
+    parts.append(f"Scorer: {scorer['model']} reasoning {scorer['reasoning_effort']} via "
+                 f"{scorer['provider']}; one saved call per case; unchanged PPv10 "
+                 f"(sha256 {context['prompt_sha256'][:12]}…).")
+    parts.append("Limits: saved masks unchanged and from several extraction versions; "
+                 "prominence is not mask correctness, category membership, truth, quality, "
+                 "usefulness, or personal interest; the production registry still freezes "
+                 "PPv2 and PPv10 is not production-frozen.")
+    return "\n\n".join(parts)
 
 
-def _comparison_row(comparison):
-    result = comparison["result"]
-    suffix = " · informational" if comparison["informational"] else ""
-    return f"""
-      <div class="comparison">
-        <span class="pair">{html.escape(comparison["higher"])} ({comparison["higher_score"]})
-          &gt; {html.escape(comparison["lower"])} ({comparison["lower_score"]})</span>
-        <span class="tag">{html.escape(comparison["kind"])}</span>
-        <span class="result result-{result}">{result}, gap {comparison["gap"]}{suffix}</span>
-        <p class="reason">{html.escape(comparison["reason"])}</p>
-      </div>"""
-
-
-def render_html(context):
-    """Render the complete self-contained read-only review page."""
-    counts = context["clear_counts"]
-    informational = context["informational_pairs"]
-    caveats = "".join(f"\n        <li>{html.escape(text)}</li>"
-                      for text in context["caveats"])
-    disagreements = "".join(
-        f'\n        <li><b>{html.escape(", ".join(item["cases"]))}:</b> {html.escape(item["text"])}</li>'
-        for item in context["disagreements"])
-    open_questions = "".join(f"\n        <li>{html.escape(text)}</li>"
-                             for text in context["open_questions"])
-
-    group_sections = []
+def render_review(context):
+    """Render the schema-1 model-output-review batch, one note per mask/post pair."""
+    notes = []
     for group in context["groups"]:
-        cards = "".join(_case_card(case, rank)
-                        for rank, case in enumerate(group["cases_sorted"], 1))
-        rows = "".join(_comparison_row(comparison)
-                       for comparison in group["comparisons"])
-        group_sections.append(f"""
-    <section class="group">
-      <h2>{html.escape(group["id"])} · {html.escape(group["title"])}
-        <span class="kind">{html.escape(group["kind"].replace("_", "-"))}</span></h2>
-      <p class="commentary">{html.escape(group["commentary"])}</p>
-      <p class="sort-note">Cases sorted by saved score, highest first. Rank is display order, not a claim of correctness.</p>
-      <div class="cases">{cards}</div>
-      <div class="comparisons"><h3>Predeclared comparisons</h3>{rows}</div>
-    </section>""")
+        ranking = ", ".join(f"{case['id']} {case['score']}" for case in group["cases_sorted"])
+        group_label = f"{group['id']} · {group['title']}"
+        group_line = (f"Group {group_label} "
+                      f"({group['kind'].replace('_', '-')}), score-sorted: {ranking}.")
+        order_lines = [
+            f"{comparison['higher']} ({comparison['higher_score']}) > "
+            f"{comparison['lower']} ({comparison['lower_score']}) "
+            f"{comparison['kind']}: {comparison['result']}, gap {comparison['gap']}"
+            f"{' (informational only)' if comparison['informational'] else ''}"
+            for comparison in group["comparisons"]]
+        for rank, case in enumerate(group["cases_sorted"], 1):
+            notes.append(_note(case, group_label=group_label, rank=rank,
+                               total=len(group["cases_sorted"]),
+                               assessment=group["commentary"], group_line=group_line,
+                               order_lines=order_lines, context=context))
+    for singleton in context["singletons"]:
+        case = singleton["case"]
+        notes.append(_note(case, group_label="Singleton", rank=None, total=None,
+                           assessment=singleton["commentary"],
+                           group_line="Singleton · no predeclared comparison in its "
+                                      "study plan.",
+                           order_lines=[], context=context))
+    review = {
+        "schema_version": 1,
+        "title": (f"PPv10 prominence ranking review v1 · {context['prompt_version']}: "
+                  f"{context['prompt_status']} · mechanical order checks only"),
+        "notes": notes,
+    }
+    check_review(review)
+    return review
 
-    singleton_cards = "".join(
-        f'<div class="singleton">{_case_card(item["case"])}'
-        f'<p class="commentary">{html.escape(item["commentary"])}</p></div>'
-        for item in context["singletons"])
 
-    separate_html = ""
-    if context["separate"]:
-        probe = context["separate"]
-        summary = probe["summary"]
-        separate_html = f"""
-    <section class="group separate">
-      <h2>Separate work · one-call Muse probe</h2>
-      <p class="commentary">{html.escape(probe["commentary"])}</p>
-      {_case_card(probe)}
-      <p class="prov">{html.escape(probe["study"])} · {html.escape(summary["model"])} ·
-        reasoning {html.escape(str(summary["reasoning_effort"]))}</p>
-    </section>"""
-
-    summaries = " · ".join(
-        f'{html.escape(item["name"])}: {html.escape(item["model"])} reasoning '
-        f'{html.escape(str(item["reasoning_effort"]))}, {item["calls"]} calls, '
-        f'{item["tokens"]} reported tokens'
-        for item in context["study_summaries"])
-    provenance = "".join(
-        f'\n        <li><code>{html.escape(item["path"])}</code> sha256 {html.escape(item["sha256"])}</li>'
-        for item in context["provenance"])
-
-    return f"""<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; base-uri 'none'; form-action 'none'">
-  <title>PPv10 ranking review v1 · read-only</title>
-  <link rel="icon" href="data:,">
-  <style>
-    :root {{ color-scheme: dark; font-family: system-ui, sans-serif; color: #e6edf3; }}
-    body {{ margin: 0; background: #161b22; }}
-    header {{ padding: 16px 24px; border-bottom: 1px solid #374151; background: #1c2531; }}
-    h1 {{ margin: 0 0 6px; font-size: 20px; }}
-    h2 {{ font-size: 17px; margin: 0 0 4px; }}
-    h3 {{ font-size: 14px; margin: 12px 0 4px; color: #9fb0c3; }}
-    main {{ max-width: 1080px; margin: 0 auto; padding: 18px 24px 48px; }}
-    .status {{ font-size: 14px; }}
-    .banner {{ background: #2d2410; border: 1px solid #806020; border-radius: 6px;
-      padding: 10px 14px; font-size: 14px; margin: 14px 0; }}
-    .summary {{ background: #1c2531; border: 1px solid #374151; border-radius: 6px;
-      padding: 10px 14px; font-size: 14px; }}
-    ul {{ margin: 6px 0; padding-left: 22px; font-size: 14px; }}
-    li {{ margin: 3px 0; }}
-    section.group {{ background: #1c2531; border: 1px solid #374151; border-radius: 8px;
-      padding: 14px 16px; margin: 16px 0; }}
-    .kind {{ font-size: 12px; font-weight: normal; color: #9fb0c3;
-      border: 1px solid #536378; border-radius: 10px; padding: 1px 8px; margin-left: 8px; }}
-    .commentary {{ font-size: 14px; margin: 6px 0; }}
-    .sort-note {{ font-size: 12px; color: #8b949e; }}
-    article.case {{ border: 1px solid #374151; border-radius: 6px; padding: 10px 12px;
-      margin: 10px 0; background: #161b22; }}
-    .case-head {{ display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }}
-    .rank {{ color: #8b949e; font-size: 13px; }}
-    .score {{ font-size: 20px; font-weight: 700; padding: 1px 9px; border-radius: 6px; }}
-    .band {{ font-size: 12px; }}
-    .cid {{ font-family: ui-monospace, monospace; font-size: 13px; color: #9fb0c3; }}
-    .case-label {{ font-size: 14px; }}
-    .band-central {{ background: #12351f; color: #3fb950; border: 1px solid #2ea04366; }}
-    .band-major {{ background: #10263d; color: #58a6ff; border: 1px solid #388bfd66; }}
-    .band-secondary {{ background: #2d2410; color: #d29922; border: 1px solid #bb800966; }}
-    .band-incidental {{ background: #331c0e; color: #db6d28; border: 1px solid #bd561d66; }}
-    .band-absent {{ background: #21262d; color: #8b949e; border: 1px solid #484f58; }}
-    .mask {{ font-size: 13px; margin: 8px 0 4px; }}
-    .mask code {{ background: #21262d; border-radius: 4px; padding: 1px 5px; }}
-    .expectation {{ font-size: 13px; margin: 4px 0; color: #c9d5e3; }}
-    details {{ margin: 6px 0; }}
-    summary {{ cursor: pointer; font-size: 13px; color: #79c0ff; }}
-    pre.post {{ white-space: pre-wrap; word-break: break-word; background: #0d1117;
-      border: 1px solid #30363d; border-radius: 6px; padding: 10px; font-size: 13px; }}
-    mark {{ background: #1f6feb55; color: inherit; border-bottom: 2px solid #58a6ff;
-      border-radius: 2px; padding: 0 1px; }}
-    .prov {{ font-size: 12px; color: #8b949e; margin: 6px 0 0; }}
-    .comparisons {{ margin-top: 8px; }}
-    .comparison {{ border-left: 3px solid #536378; padding: 4px 10px; margin: 8px 0; }}
-    .pair {{ font-family: ui-monospace, monospace; font-size: 13px; }}
-    .tag {{ font-size: 12px; color: #9fb0c3; margin-left: 10px; }}
-    .result {{ font-size: 12px; margin-left: 10px; }}
-    .result-ordered {{ color: #3fb950; }}
-    .result-tie {{ color: #d29922; }}
-    .result-reversed {{ color: #f85149; }}
-    .reason {{ font-size: 13px; margin: 4px 0 0; color: #c9d5e3; }}
-    .disagreement {{ background: #331c0e; border: 1px solid #bd561d66; border-radius: 6px;
-      padding: 10px 14px; font-size: 14px; }}
-    footer {{ border-top: 1px solid #374151; padding: 14px 24px; font-size: 12px;
-      color: #8b949e; }}
-    footer code {{ word-break: break-all; }}
-    button {{ font: inherit; padding: 5px 12px; cursor: pointer; background: #263445;
-      color: #e5e7eb; border: 1px solid #536378; border-radius: 5px; margin-left: 8px; }}
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Prominence ranking review v1 — {html.escape(context["prompt_version"])}
-      <span class="kind">{html.escape(context["prompt_status"])}</span>
-      <button type="button" id="expand">Expand all posts</button>
-      <button type="button" id="collapse">Collapse all</button></h1>
-    <p class="status">Read-only review of already-saved scores grouped by selection meaning.
-      No inference was run to build this page. {html.escape(context["purpose"])}</p>
-    <p class="status">Prompt sha256 {html.escape(context["prompt_sha256"])}
-      (verified at build time against PPv10.md).</p>
-  </header>
-  <main>
-    <div class="banner"><b>Standing limits:</b>
-      <ul>{caveats}</ul></div>
-    <div class="summary">Mechanical order checks on predeclared pairs:
-      <b>{counts["ordered"]}</b> clear ordered · <b>{counts["tie"]}</b> clear ties ·
-      <b>{counts["reversed"]}</b> clear reversed; {informational} tentative/related pairs are
-      informational only. Counts are not an accuracy measurement and the expectations are
-      assistant predeclarations, not user-approved gold labels.</div>
-{"".join(group_sections)}
-    <section class="group">
-      <h2>Single cases with no predeclared comparison</h2>
-      {singleton_cards}
-    </section>
-    <section class="group disagreement">
-      <h2>Preserved disagreements</h2>
-      <ul>{disagreements}</ul>
-    </section>
-    <section class="group">
-      <h2>Open questions</h2>
-      <ul>{open_questions}</ul>
-    </section>
-{separate_html}
-  </main>
-  <footer>
-    <p>Saved runs: {summaries}. Subscription catalog cost fields are not invoices.</p>
-    <p>Build inputs and hashes:</p>
-    <ul>{provenance}</ul>
-    <p>Generated {html.escape(context["generated"])} by build_review.py from saved artifacts
-      only. review.html is a derived local artifact and is excluded from commits.</p>
-  </footer>
-  <script>
-    document.getElementById('expand').addEventListener('click', () =>
-      document.querySelectorAll('details').forEach(d => d.open = true));
-    document.getElementById('collapse').addEventListener('click', () =>
-      document.querySelectorAll('details').forEach(d => d.open = false));
-  </script>
-</body>
-</html>
-"""
+def _note(case, group_label, rank, total, assessment, group_line, order_lines, context):
+    name = band(case["score"])
+    score_text = f"score {case['score']} · {BAND_LABELS[name]}"
+    if rank is None:
+        title = f"{group_label} · {score_text}"
+    else:
+        title = f"{group_label} · rank {rank}/{total} · {score_text}"
+    return {
+        "id": case["id"],
+        "title": title,
+        "text": case["text"],
+        "model_input": json.dumps(case["input"], ensure_ascii=False, indent=2),
+        "results": [{
+            "model": MODEL_PANE.format(model=context["scorer"]["model"],
+                                       effort=context["scorer"]["reasoning_effort"]),
+            "output": case["raw"],
+            "comment": _comment(case, assessment, group_line, order_lines,
+                                context["disagreements"].get(case["id"]), context),
+        }],
+    }
 
 
 def main():
     context = build_context()
-    OUTPUT.write_text(render_html(context), encoding="utf-8")
+    review = render_review(context)
+    OUTPUT.write_text(json.dumps(review, ensure_ascii=False, indent=2) + "\n",
+                      encoding="utf-8")
     counts = context["clear_counts"]
     print(f"wrote {OUTPUT}")
-    print(f"cases: {len(context['cases'])}, groups: {len(context['groups'])}, "
-          f"clear comparisons: {counts}")
+    print(f"{len(review['notes'])} notes, 1 model pane; clear comparisons: "
+          f"{counts['ordered']} ordered, {counts['tie']} ties, "
+          f"{counts['reversed']} reversed (mechanical, not accuracy)")
 
 
 if __name__ == "__main__":

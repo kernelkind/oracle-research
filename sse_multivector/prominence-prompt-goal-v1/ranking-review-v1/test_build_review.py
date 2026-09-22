@@ -1,4 +1,7 @@
-"""Tests for the read-only PPv10 ranking review builder; no model execution."""
+"""Tests for the model-output-review batch builder; no model execution."""
+import json
+import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -9,6 +12,23 @@ HAVE_DATA = all(
     for name in ("ppv10-ranking-v1", "ppv10-mixed-notes-v1")
     for file in ("plan.json", "inputs.json", "results.json")
 )
+REVIEW_BINARY = br.ROOT.parents[2] / "target" / "release" / "model-output-review"
+
+
+def minimal_review():
+    return {
+        "schema_version": 1,
+        "title": "Example review",
+        "notes": [
+            {"id": "N1", "title": "First", "text": "complete note",
+             "model_input": '{"mask": ["note"]}',
+             "results": [{"model": "PPv10", "output": "{\"prominence\":1}",
+                          "comment": "My assessment: fine."}]},
+            {"id": "N2", "title": "Second", "text": "other note",
+             "results": [{"model": "PPv10", "output": "{\"prominence\":2}",
+                          "comment": "My assessment: fine."}]},
+        ],
+    }
 
 
 class BandTests(unittest.TestCase):
@@ -33,23 +53,6 @@ class VerdictTests(unittest.TestCase):
         self.assertEqual(("reversed", -20), br.verdict(58, 78))
 
 
-class MarkedHtmlTests(unittest.TestCase):
-    def test_highlights_marks_and_escapes_text(self):
-        self.assertEqual(
-            "x&lt;y <mark>coffee</mark> ☕",
-            br.marked_html("x<y ⟦coffee⟧ ☕"))
-
-    def test_repeated_selections_each_get_a_highlight(self):
-        self.assertEqual(
-            "<mark>baby</mark> #<mark>baby</mark>",
-            br.marked_html("⟦baby⟧ #⟦baby⟧"))
-
-    def test_rejects_unbalanced_or_missing_markers(self):
-        for marked in ("plain", "⟦a", "a⟧", ""):
-            with self.subTest(marked=marked), self.assertRaises(ValueError):
-                br.marked_html(marked)
-
-
 class CoverageTests(unittest.TestCase):
     def test_every_case_appears_exactly_once(self):
         groups = [{"id": "G1", "cases": ["R01", "R02"]}, {"id": "G2", "cases": ["R03"]}]
@@ -66,11 +69,35 @@ class CoverageTests(unittest.TestCase):
             br.check_comparisons([{"higher": "R01", "lower": "R03", "kind": "clear"}], groups)
 
 
+class SchemaCheckTests(unittest.TestCase):
+    def test_accepts_a_valid_review(self):
+        br.check_review(minimal_review())
+
+    def test_rejects_broken_reviews(self):
+        breakers = [
+            lambda r: r.update(schema_version=2),
+            lambda r: r.update(title="  "),
+            lambda r: r.update(notes=[]),
+            lambda r: r["notes"][1].update(id="N1"),
+            lambda r: r["notes"][0].update(text=""),
+            lambda r: r["notes"][0].update(model_input=""),
+            lambda r: r["notes"][0]["results"][0].update(comment=" "),
+            lambda r: r["notes"][1]["results"][0].update(model="Other"),
+            lambda r: r["notes"][1].update(results=[]),
+        ]
+        for index, break_it in enumerate(breakers):
+            review = minimal_review()
+            break_it(review)
+            with self.subTest(index=index), self.assertRaises(ValueError):
+                br.check_review(review)
+
+
 @unittest.skipUnless(HAVE_DATA, "saved study artifacts are local-only")
 class RealDataTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.context = br.build_context()
+        cls.review = br.render_review(cls.context)
 
     def test_cases_carry_saved_scores_and_inputs(self):
         cases = self.context["cases"]
@@ -78,43 +105,66 @@ class RealDataTests(unittest.TestCase):
         self.assertEqual(95, cases["R01"]["score"])
         self.assertEqual(["coffee"], cases["R01"]["mask"])
         self.assertEqual(58, cases["M03"]["score"])
-        self.assertEqual("central", br.band(cases["M09"]["score"]))
 
     def test_predeclared_comparisons_get_mechanical_verdicts(self):
         comparisons = [c for g in self.context["groups"] for c in g["comparisons"]]
         self.assertEqual(10, len(comparisons))
         by_pair = {(c["higher"], c["lower"]): c for c in comparisons}
-        self.assertEqual("ordered", by_pair[("R01", "R04")]["result"])
-        self.assertEqual(93, by_pair[("R01", "R04")]["gap"])
-        self.assertEqual("ordered", by_pair[("R05", "R06")]["result"])
+        self.assertEqual(("ordered", 93),
+                         (by_pair[("R01", "R04")]["result"], by_pair[("R01", "R04")]["gap"]))
         self.assertEqual(1, by_pair[("R05", "R06")]["gap"])
-        self.assertEqual("ordered", by_pair[("M11", "M10")]["result"])
+        self.assertTrue(by_pair[("M08", "M07")]["informational"])
 
     def test_clear_counts_are_mechanical_not_an_accuracy_rate(self):
         self.assertEqual({"ordered": 7, "tie": 0, "reversed": 0},
                          self.context["clear_counts"])
 
-    def test_cross_note_groups_precede_within_note_groups(self):
-        kinds = [g["kind"] for g in self.context["groups"]]
-        self.assertEqual(sorted(kinds), kinds)
-        self.assertIn("cross_note", kinds)
-        self.assertIn("within_note", kinds)
+    def test_review_is_score_sorted_within_groups(self):
+        ids = [note["id"] for note in self.review["notes"]]
+        self.assertEqual(
+            ["R01", "R02", "R03", "R04", "R05", "R06", "M08", "M07", "R07", "R08",
+             "M01", "M02", "M03", "M04", "M05", "M06", "M11", "M10", "M09"], ids)
+        self.assertIn("rank 1/4", self.review["notes"][0]["title"])
+        self.assertIn("score 95", self.review["notes"][0]["title"])
+        self.assertIn("central 90–100", self.review["notes"][0]["title"])
 
-    def test_html_escapes_posts_highlights_masks_and_keeps_caveats(self):
-        html_text = br.render_html(self.context)
-        self.assertIn("PPv10", html_text)
-        self.assertIn("user-approved, tested experimentally, not production-frozen", html_text)
-        self.assertIn("not an accuracy", html_text)
-        self.assertIn("<mark>coffee</mark>", html_text)
-        self.assertNotIn("⟦", html_text)
-        self.assertNotIn("<script>alert", html_text)
+    def test_review_preserves_saved_outputs_and_exact_inputs(self):
+        cases = self.context["cases"]
+        for note in self.review["notes"]:
+            case = cases[note["id"]]
+            with self.subTest(case=case["id"]):
+                self.assertEqual(case["raw"], note["results"][0]["output"])
+                self.assertEqual(
+                    json.dumps(case["input"], ensure_ascii=False, indent=2),
+                    note["model_input"])
+                self.assertEqual(case["text"], note["text"])
 
-    def test_separate_muse_probe_is_still_available(self):
-        if not (br.GOAL / "ppv10-mpv3.43-muse13high-v1" / "results.json").exists():
-            self.skipTest("muse probe artifacts are local-only")
-        html_text = br.render_html(self.context)
-        self.assertIn("Rise and grind", html_text)
-        self.assertIn("muse-spark-1.3-contributor", html_text)
+    def test_comments_separate_assessment_expectation_and_limits(self):
+        comment = self.review["notes"][0]["results"][0]["comment"]
+        self.assertIn("My assessment:", comment)
+        self.assertIn("Predeclared expectation", comment)
+        self.assertIn("not an accuracy rate", comment)
+        self.assertIn("clear_cross_note: ordered, gap 93", comment)
+        vacuum = next(n for n in self.review["notes"] if n["id"] == "M03")
+        self.assertIn("Preserved disagreement:", vacuum["results"][0]["comment"])
+
+    def test_review_labels_the_prompt_version_and_status(self):
+        self.assertIn("PPv10", self.review["title"])
+        self.assertIn("user-approved, tested experimentally, not production-frozen",
+                      self.review["title"])
+        br.check_review(self.review)
+
+    @unittest.skipUnless(HAVE_DATA and REVIEW_BINARY.exists(),
+                         "release model-output-review binary is not built")
+    def test_production_review_tool_accepts_the_batch(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "review.json"
+            path.write_text(json.dumps(self.review, ensure_ascii=False, indent=2) + "\n",
+                            encoding="utf-8")
+            run = subprocess.run([str(REVIEW_BINARY), str(path), "--check"],
+                                 capture_output=True, text=True)
+        self.assertEqual(0, run.returncode, run.stderr)
+        self.assertIn("19 notes", run.stdout)
 
 
 if __name__ == '__main__':
