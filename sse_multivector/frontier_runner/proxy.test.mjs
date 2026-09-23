@@ -9,7 +9,8 @@ import { test } from 'node:test';
 const cli = new URL('model.mjs', import.meta.url).pathname;
 const config = { provider: 'openai-codex', model: 'gpt-6-astra', reasoning: 'low', prompt: 'Offline only.' };
 
-test('OpenRouter consumes only the shared local Pi endpoint and capability', async t => {
+for (const environmentBacked of [false, true]) {
+test(`OpenRouter uses local Pi configuration (${environmentBacked ? 'environment reference' : 'legacy literal'})`, async t => {
   const home = await mkdtemp(join(tmpdir(), 'oracle-openrouter-service-'));
   t.after(() => rm(home, { recursive: true, force: true }));
   const key = 'LOCAL_OPENROUTER_CAPABILITY';
@@ -27,8 +28,11 @@ test('OpenRouter consumes only the shared local Pi endpoint and capability', asy
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   t.after(() => { server.closeAllConnections(); server.close(); });
   const baseUrl = `http://127.0.0.1:${server.address().port}/openrouter/api/v1`;
-  await writeFile(join(home, 'models.json'), JSON.stringify({ providers: { openrouter: { baseUrl, apiKey: key } } }));
-  await writeFile(join(home, 'auth.json'), JSON.stringify({ openrouter: { type: 'api_key', key } }));
+  await writeFile(join(home, 'models.json'), JSON.stringify({ providers: { openrouter: {
+    baseUrl, apiKey: environmentBacked ? '$AGENT_OPENROUTER_CAPABILITY' : key,
+  } } }));
+  await writeFile(join(home, 'auth.json'), environmentBacked ? 'MUST_NOT_READ_NATIVE_AUTH' :
+    JSON.stringify({ openrouter: { type: 'api_key', key } }));
   const input = { provider: 'openrouter', model: 'meta/muse-spark-1.3-contributor',
     reasoning: 'low', max_output_tokens: 40, prompt: 'Offline only.' };
   await writeFile(join(home, 'agent-account'), `#!${process.execPath}\n` +
@@ -43,7 +47,8 @@ test('OpenRouter consumes only the shared local Pi endpoint and capability', asy
         max_output_tokens: 40, stage: 'masks', text: 'bread', subject: 'bread' }, []],
   ]) {
     const child = spawn(process.execPath, [entry, 'run', '--send', ...flags], {
-      env: { ...process.env, PATH: home, PI_CODING_AGENT_DIR: home, OPENROUTER_API_KEY: 'DO_NOT_USE_UPSTREAM_KEY' },
+      env: { ...process.env, PATH: home, PI_CODING_AGENT_DIR: home, OPENROUTER_API_KEY: 'DO_NOT_USE_UPSTREAM_KEY',
+        AGENT_OPENROUTER_CAPABILITY: environmentBacked ? key : 'DO_NOT_OVERRIDE_LEGACY_KEY' },
       stdio: ['pipe', 'pipe', 'pipe'], timeout: 10000,
     });
     let stdout = '', stderr = '';
@@ -59,9 +64,47 @@ test('OpenRouter consumes only the shared local Pi endpoint and capability', asy
     if (request.debug) assert.equal(result.timing.event_trace.length, 2);
     assert.ok(!(stdout + stderr).includes(key));
     assert.ok(!(stdout + stderr).includes('DO_NOT_USE_UPSTREAM_KEY'));
+    // First request ignores invalid auth.json; subsequent requests work without it.
+    if (environmentBacked) await rm(join(home, 'auth.json'), { force: true });
   }
   assert.equal(requests.length, 4);
   assert.ok(requests.every(r => r.url === '/openrouter/api/v1/chat/completions' && r.authorization === `Bearer ${key}`));
+});
+}
+
+test('OpenRouter environment handoff rejects invalid routing or capabilities without fallback', async t => {
+  const home = await mkdtemp(join(tmpdir(), 'oracle-openrouter-refusal-'));
+  t.after(() => rm(home, { recursive: true, force: true }));
+  const reference = '$AGENT_OPENROUTER_CAPABILITY';
+  const local = 'http://127.0.0.1:9/openrouter/api/v1';
+  const key = 'LOCAL_SECRET_SENTINEL';
+  const input = { provider: 'openrouter', model: 'meta/muse-spark-1.3-contributor', reasoning: 'low', prompt: 'Offline only.' };
+  for (const [baseUrl, apiKey, capability] of [
+    [local, reference, undefined], [local, reference, ''], [local, reference, 'BAD SECRET'],
+    [local, reference, 'BAD\nSECRET'], [local, '$OPENROUTER_API_KEY', key],
+    [local, '!echo DO_NOT_EXECUTE', key], [local, '${AGENT_OPENROUTER_CAPABILITY}', key],
+    ['https://openrouter.ai/api/v1', reference, key],
+    ['http://user:password@127.0.0.1:9/openrouter/api/v1', reference, key],
+    [local + '?PRIVATE_QUERY', reference, key], [local + '#PRIVATE_FRAGMENT', reference, key],
+    ['http://127.0.0.1:9/main/pi', reference, key],
+  ]) {
+    await writeFile(join(home, 'models.json'), JSON.stringify({ providers: { openrouter: { baseUrl, apiKey } } }));
+    // Even a matching native entry must not rescue a missing variable or an unsupported reference.
+    await writeFile(join(home, 'auth.json'), JSON.stringify({ openrouter: { type: 'api_key', key: apiKey } }));
+    const env = { ...process.env, HOME: home, PATH: home, PI_CODING_AGENT_DIR: home,
+      OPENROUTER_API_KEY: 'UPSTREAM_SECRET', OPENAI_API_KEY: 'OTHER_UPSTREAM_SECRET' };
+    delete env.AGENT_OPENROUTER_CAPABILITY;
+    if (capability !== undefined) env.AGENT_OPENROUTER_CAPABILITY = capability;
+    const result = spawnSync(process.execPath, [cli, 'run', '--send', '--pi-config'], {
+      input: JSON.stringify(input), encoding: 'utf8', env, timeout: 10000,
+    });
+    assert.equal(result.status, 1);
+    assert.equal(result.stdout, '');
+    assert.match(result.stderr, /Valid local Pi configuration is required/);
+    for (const secret of [key, 'UPSTREAM_SECRET', 'PRIVATE_QUERY', 'PRIVATE_FRAGMENT', 'password', 'BAD']) {
+      assert.ok(!result.stderr.includes(secret));
+    }
+  }
 });
 
 test('ordinary subscription commands use the selected Pi service without a flag or bearer export', async t => {

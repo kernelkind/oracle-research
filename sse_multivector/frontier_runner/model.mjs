@@ -429,23 +429,34 @@ export async function launchWithSelectedPi(input) {
 }
 
 export async function localPiConnection(providerName = 'openai-codex') {
-  // agent-account owns selection. Read only the native Pi files in this
-  // process's selected view; never reselect via a child Pi invocation.
+  // agent-account owns selection. Use this process's native Pi configuration
+  // and captured local capability; never reselect via a child Pi invocation.
   try {
     const directory = process.env.PI_CODING_AGENT_DIR || join(homedir(), '.pi', 'agent');
     const models = JSON.parse(await readFile(join(directory, 'models.json'), 'utf8'));
-    const auth = JSON.parse(await readFile(join(directory, 'auth.json'), 'utf8'));
     if (!['openai-codex', 'openrouter'].includes(providerName)) throw new Error();
     const provider = models.providers?.[providerName];
-    const credential = auth[providerName];
     const endpoint = new URL(provider.baseUrl);
     const route = providerName === 'openrouter' ? /^\/openrouter\/api\/v1\/?$/ : /^\/[A-Za-z0-9_-]+\/pi\/?$/;
     if (endpoint.protocol !== 'http:' || !['127.0.0.1', '[::1]'].includes(endpoint.hostname) ||
         !endpoint.port || endpoint.username || endpoint.password || endpoint.search || endpoint.hash ||
-        !route.test(endpoint.pathname) ||
-        credential?.type !== 'api_key' || !nonempty(credential.key) ||
-        credential.key !== provider.apiKey) throw new Error();
-    return { baseUrl: endpoint.href.replace(/\/$/, ''), apiKey: credential.key };
+        !route.test(endpoint.pathname)) throw new Error();
+    let apiKey;
+    if (providerName === 'openrouter' && provider.apiKey === '$AGENT_OPENROUTER_CAPABILITY') {
+      // Stock Pi interpolation, captured by the launcher; never an upstream key.
+      // This format neither reads auth.json nor falls back when the variable is absent.
+      apiKey = process.env.AGENT_OPENROUTER_CAPABILITY;
+      if (typeof apiKey !== 'string' || !/^[\x21-\x7e]+$/.test(apiKey)) throw new Error();
+    } else {
+      // Keep the installed literal endpoint/token handoff working during rollout.
+      // Do not interpret arbitrary environment references or execute key commands.
+      if (providerName === 'openrouter' && /^[!$]/.test(provider.apiKey)) throw new Error();
+      const auth = JSON.parse(await readFile(join(directory, 'auth.json'), 'utf8'));
+      const credential = auth[providerName];
+      if (credential?.type !== 'api_key' || !nonempty(credential.key) || credential.key !== provider.apiKey) throw new Error();
+      apiKey = credential.key;
+    }
+    return { baseUrl: endpoint.href.replace(/\/$/, ''), apiKey };
   } catch {
     // Do not export a real bearer or fall back to the upstream endpoint.
     throw new Error('Valid local Pi configuration is required; run through agent-account exec pi');

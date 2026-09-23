@@ -145,9 +145,22 @@ service route is active; the production runner's local configuration handoff was
 verified without inference. On 2026-09-20, ten ASv6.48 Muse requests also completed
 through the ordinary saved-batch launcher; their receipts and provider-reported
 charges are in `frontier-model-comparison-v1/asv6.48-muse-v1/`.
+
+The reader also accepts the native OpenRouter configuration whose `apiKey` is
+exactly `$AGENT_OPENROUTER_CAPABILITY`: the launcher supplies that local capability
+in the process environment, while `baseUrl` remains the validated loopback
+`/openrouter/api/v1` route. This form does not read `auth.json`. Missing or malformed
+capabilities, other environment references, key commands, and nonlocal endpoints
+fail without falling back to stored or upstream credentials. No general-purpose
+interpolation or command execution is added to the runner.
+
+The existing literal `models.json` key plus matching `auth.json` entry remains
+supported during the separate launcher rollout. OpenAI subscription configuration
+is unchanged. Reader support does not mean the new launcher has been deployed.
 Do not put credentials in request JSON or repository files. Returned request
-headers redact the local capability. Offline checks cover ordinary and frozen
-adapter calls with the real pi-ai transport; no paid verification is implied.
+headers redact the local capability. Offline checks cover both OpenRouter
+configuration forms, ordinary and frozen adapter calls with the real pi-ai
+transport, and refusal without fallback; no paid verification is implied.
 
 **A send flag is not spending approval.** The [repository budget rules](../AGENTS.md)
 authorize user-requested OpenRouter work roughly estimated at $1 or less without
