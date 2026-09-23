@@ -103,11 +103,12 @@ fences or commentary. Its ten-group paired comparison records are under
 `hdbv2-node-description-probe-v31/`. V30's broader three-change draft is
 preserved, untested.
 
-[Title prompt v32](../hdbv2-node-description-probe-v32/prompt.txt) is an untested
-draft: v31 plus the two-case title rule — when every instance expresses the
-same named thing, use that name exactly as written and without a gloss;
-otherwise name the smallest genuine category containing every instance's
-referent. It replaces the opening's "most specific category" framing.
+[Title prompt v32](../hdbv2-node-description-probe-v32/prompt.txt) is a tested
+but unpromoted draft: v31 plus the two-case title rule — when every instance
+expresses the same named thing, use that name exactly as written and without a
+gloss; otherwise name the smallest genuine category containing every instance's
+referent. It replaces the opening's "most specific category" framing. Its
+paired comparison records are under `hdbv2-node-description-probe-v32/`.
 
 HRv1's saved titles still use v21. These experiments do not authorize replacing
 them, running a full title pass, changing memberships or hierarchy edges, or
