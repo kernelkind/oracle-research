@@ -392,7 +392,6 @@ def collect_mask_run(name, cases_by_id, decoder, suffix=""):
     records = [json.loads(line) for line in
                (run_directory(name) / "results.jsonl").read_text().splitlines()]
     by_id = {job.prompt_id: job for job in config.prompts}
-    job = next(j for j in read(ROOT / "plan.json")["jobs"] if j["run"] == name)
     grouped = {}
     for record in records:
         item_id = record.get("job_key", "").removeprefix("prompt:")
@@ -412,34 +411,69 @@ def collect_mask_run(name, cases_by_id, decoder, suffix=""):
                     other.get("prompt_sha256") != record.get("prompt_sha256")
                     or other.get("request_sha256") != record.get("request_sha256")):
                 raise ValueError(f"{name}:{item_id}: failed attempt identity differs")
-        case_id = job["item_to_case"][item_id]
+        entry = next(e for e in metadata["items"] if e["item_id"] == item_id)
+        matches = [case_id for case_id, case in cases_by_id.items()
+                   if case["note_id"] == entry["note_id"]
+                   and case["subject"] == entry["subject"]]
+        if len(matches) != 1:
+            raise ValueError(
+                f"{name}:{item_id}: expected exactly one case for this note and "
+                f"subject, found {matches}")
+        case_id = matches[0]
         case = cases_by_id[case_id]
-        response, ranges = decoder.decode(record["final_output_raw"], case["text"])
-        rows[case_id + suffix] = {
-            "spans": [[r["start"], r["end"]] for r in ranges],
+        row = {
             "attempts": len(attempts),
             "failed_attempts_without_usage": len(attempts) - len(succeeded),
             "usage": record.get("usage"),
             "elapsed_seconds": record.get("elapsed_seconds"),
         }
+        try:
+            response, ranges = decoder.decode(record["final_output_raw"], case["text"])
+        except ValueError as failure:
+            row.update(spans=None, decode_error=str(failure))
+        else:
+            row.update(spans=[[r["start"], r["end"]] for r in ranges])
+        rows[case_id + suffix] = row
     return rows
 
 
 def collect_sp_run(decoder):
-    config = pipeline.PromptRunnerConfig.load(config_path("mimo-high-sp"))
-    manifest = read(run_directory("mimo-high-sp") / "manifest.json")
-    records = [json.loads(line) for line in
-               (run_directory("mimo-high-sp") / "results.jsonl").read_text().splitlines()]
-    by_id = {job.prompt_id: job for job in config.prompts}
     rows = {}
-    for record in records:
-        label = record.get("job_key", "").removeprefix("prompt:")
-        pipeline.validate_prompt_receipt(
-            dataclasses.replace(config, prompts=(by_id[label],)), manifest, record)
-        subjects = (json.loads(record["final_output_raw"])["subjects"]
-                    if record.get("status") == "succeeded" else None)
-        rows[label] = {"subjects": subjects, "usage": record.get("usage"),
-                       "elapsed_seconds": record.get("elapsed_seconds")}
+    for name in ("mimo-high-sp", "mimo-high-sp-retry"):
+        if not (run_directory(name) / "results.jsonl").exists():
+            continue
+        config = pipeline.PromptRunnerConfig.load(config_path(name))
+        manifest = read(run_directory(name) / "manifest.json")
+        records = [json.loads(line) for line in
+                   (run_directory(name) / "results.jsonl").read_text().splitlines()]
+        by_id = {job.prompt_id: job for job in config.prompts}
+        grouped = {}
+        for record in records:
+            label = record.get("job_key", "").removeprefix("prompt:")
+            if record.get("execution") == "cross_run_reuse":
+                raise ValueError(f"{name}:{label}: reused answer, not a fresh send")
+            grouped.setdefault(label, []).append(record)
+        for label, attempts in grouped.items():
+            succeeded = [r for r in attempts if r.get("status") == "succeeded"]
+            if not succeeded or label in rows:
+                continue
+            record = succeeded[-1]
+            pipeline.validate_prompt_receipt(
+                dataclasses.replace(config, prompts=(by_id[label],)), manifest, record)
+            for other in attempts:
+                if other is not record and (
+                        other.get("prompt_sha256") != record.get("prompt_sha256")
+                        or other.get("request_sha256") != record.get("request_sha256")):
+                    raise ValueError(
+                        f"{name}:{label}: failed attempt identity differs")
+            rows[label] = {
+                "subjects": json.loads(record["final_output_raw"])["subjects"],
+                "usage": record.get("usage"),
+                "elapsed_seconds": record.get("elapsed_seconds"),
+                "attempts": len(attempts),
+                "failed_attempts_without_usage": len(attempts) - len(succeeded),
+                "run": name,
+            }
     return rows
 
 
@@ -453,8 +487,11 @@ def collect():
         if Path(path) == ROOT / "study.py":
             collector_changes[path] = {
                 "sha256_at_prepare": expected, "sha256_at_collect": actual,
-                "reason": "collector/packet code refined after prepare; no model "
-                         "input or request changed",
+                "reason": "collect binds items to cases by (note_id, subject) "
+                         "identity after prepare's order-based item_to_case "
+                         "mapping proved wrong (note-grouped runner order "
+                         "differs from flat case order); requests and prompts "
+                         "are unchanged and were always correct",
             }
             continue
         raise ValueError("pinned input changed: " + path)
@@ -513,21 +550,33 @@ def packets():
     for case in results["mask_cases"]:
         arms = {"astra-low": {"spans": case["reference_spans"]}}
         for candidate in ("mimo-high", "muse-high"):
-            arms[candidate] = {"spans": results["mask"][candidate][case["id"]]["spans"]}
+            arms[candidate] = {"spans": results["mask"][candidate][case["id"]]["spans"],
+                               "decode_error": results["mask"][candidate][case["id"]].get("decode_error")}
             if case["id"] in set(results["repeat_ids"]):
-                arms[f"{candidate}#t2"] = {
-                    "spans": results["mask"][candidate][case["id"] + "#t2"]["spans"]}
+                again = results["mask"][candidate][case["id"] + "#t2"]
+                arms[f"{candidate}#t2"] = {"spans": again["spans"],
+                                          "decode_error": again.get("decode_error")}
         for arm, payload in arms.items():
+            spans = payload["spans"]
+            if spans:
+                answer = marked(case["text"], spans)
+            elif spans is not None:
+                answer = "(empty mask)"
+            else:
+                answer = "(output failed mechanical validation)"
             items.append({
                 "kind": "mask", "case_id": case["id"], "arm": arm,
-                "post": case["text"], "subject": case["subject"],
-                "answer": (marked(case["text"], payload["spans"])
-                           if payload["spans"] else "(empty mask)"),
+                "post": case["text"], "subject": case["subject"], "answer": answer,
             })
     sp = read(ROOT / "sp-cases.json")
+    excluded = []
     for case in sp:
+        mimo = results["sp"]["mimo-high"].get(case["id"])
+        if not mimo or not mimo.get("subjects"):
+            excluded.append(case["id"])
+            continue
         arms = {"astra-low": case["astra_subjects"], "muse-high": case["muse_subjects"],
-                "mimo-high": results["sp"]["mimo-high"][case["id"]]["subjects"]}
+                "mimo-high": mimo["subjects"]}
         for arm, subjects in arms.items():
             items.append({
                 "kind": "sp", "case_id": case["id"], "arm": arm,
@@ -553,7 +602,8 @@ def packets():
     save(ROOT / "packet-a.json", {"items": packet_a})
     save(ROOT / "packet-b.json", {"items": packet_b})
     print(json.dumps({"items": len(items), "packet_a": len(packet_a),
-                      "packet_b": len(packet_b), "overlap": PACKET_OVERLAP}))
+                      "packet_b": len(packet_b), "overlap": PACKET_OVERLAP,
+                      "excluded_sp_cases": excluded}))
 
 
 def report():
@@ -576,7 +626,13 @@ def report():
     summary = [{"kind": kind, "arm": arm, "n": v["n"],
                 "acceptable_rate": v["acceptable"] / v["n"]}
                for (kind, arm), v in sorted(rates.items())]
+    results = read(ROOT / "results.json")
+    format_failures = {
+        candidate: sorted(key for key, row in rows.items()
+                          if row.get("decode_error"))
+        for candidate, rows in results["mask"].items()}
     print(json.dumps({"rates": summary, "parity_rule": PARITY_RULE,
+                      "format_failures": format_failures,
                       "scored_slots": len(scores)}, indent=2))
 
 

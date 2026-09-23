@@ -97,4 +97,40 @@ python3 sse_multivector/frontier-model-comparison-v1/sp-mp-teacher-parity-v1/stu
 
 ## Findings
 
-Pending the runs and scoring.
+Interim, from the completed first scoring pass (packet A: 129 of 234 blind
+slots, roughly half the items per arm). Packet B and the parity verdict await
+the second scorer; N080/N096 await the background subject retry.
+
+| Acceptable rate (packet-A subset) | Astra low (saved) | Muse high | MiMo high |
+| --- | ---: | ---: | ---: |
+| MPv3.43 masks | 91.4% (n=35) | 89.5% (n=38) | 87.8% (n=41) |
+| ASv6.48 subject sets | 100% (n=4) | 60% (n=5) | 83% (n=6) |
+
+- **Format compliance is 100% for both candidates** (all 150 mask outputs
+  decode mechanically). An earlier run of this collection reported massive
+  format failures; that was a collector bug (an order-based item/case mapping
+  that paired outputs with the wrong posts), fixed in `collect` by binding
+  items to cases on (note, subject) identity. Prompts and requests were always
+  correct and unchanged. The fix is recorded in `results.json`'s
+  `collector_changes`.
+- Mask quality is close to Astra on this sample — inside the predeclared
+  10-point margin. Error signatures seen: wrong-scope additions (Looking and
+  reaching retained for interest-only subjects) and one missed repetition.
+  Astra itself fails too (one false-empty-class error among 35).
+- SP subject sets show more variance at tiny n: the recurring candidate error
+  is a dual reading of `#grownostr` (plain meaning plus an asserted
+  "documenting children's growth" reading). Two notes (N080, N096) are
+  excluded pending retry.
+- Cost captured this round: MiMo high $0.592 (masks $0.334 + subjects $0.258)
+  at 4,481 output tokens per mask call (vs 431 in the cost probe — these pairs
+  elicit far heavier reasoning); Muse high $0.064 at 3,188 per call. Combined
+  with the cost probe: Muse stays ~0.8x Astra; MiMo rises to roughly 1.1-1.5x
+  Astra once hard pairs and its transport retries are included.
+- **Feasibility finding:** MiMo high dropped 14 of 97 attempts mid-generation
+  ("Network connection lost", provider timeouts) and needs >30 minutes for the
+  largest subject sets; Muse high completed 75/75 without a failure but its
+  subject sets carry the dual-reading concern.
+
+Pending: packet-B scoring and consistency check on the 24-slot overlap, the
+N080/N096 retry outcome (a 3600-second attempt is running), and the final
+parity-rule verdict.
