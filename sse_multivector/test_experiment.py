@@ -134,7 +134,8 @@ class ExperimentTests(unittest.TestCase):
         viewer.write_text(
             "#!/usr/bin/env python3\nimport json,sys\nfrom pathlib import Path\n"
             "data=json.loads(Path(sys.argv[1]).read_text())\n"
-            "assert len(data['orderings'])==4\n"
+            "assert len(data['orderings'])==2\n"
+            "assert data['orderings'][1]['name']=='Linear cosine'\n"
             "assert data['orderings'][0]['note_ids']==['tea-first','tea-second']\n"
             "assert data['orderings'][1]['note_ids']==['tea-second','tea-first']\n"
         )

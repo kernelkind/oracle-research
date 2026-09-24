@@ -34,13 +34,28 @@ class ProminenceRankingTests(unittest.TestCase):
         result = add_rankings(batch, report, scores)
         self.assertEqual((batch, report, scores), before)
         self.assertEqual([o["note_ids"] for o in result["orderings"]],
-                         [["a", "b", "c", "d"], ["a", "b", "c", "d"],
-                          ["a", "b", "c", "d"], ["b", "a", "c", "d"]])
+                         [["a", "b", "c", "d"], ["b", "a", "c", "d"]])
         self.assertEqual([n["text"] for n in result["notes"]], ["⟦tea⟧"] * 4)
-        self.assertIn("60.00", result["notes"][0]["results"][0]["output"])
+        self.assertIn("Linear cosine: 52.00", result["notes"][0]["results"][0]["output"])
+        self.assertIn("Linear cosine: 40.50", result["notes"][3]["results"][0]["output"])
         self.assertIn("unranked", result["notes"][2]["title"])
         self.assertNotIn("score 100", result["notes"][0]["title"])
         self.assertIn("tied", result["notes"][0]["results"][0]["comment"])
+
+    def test_linear_normalization_uses_native_bounds_and_preserves_ties(self):
+        from sse_multivector.prominence_ranking import add_rankings
+        for cosine, expected in [(-1, 0), (0, 50), (1, 100),
+                                 (-1.0000001, 0), (1.0000001, 100)]:
+            batch, report, scores = self.fixture()
+            scores["groups"]["Coffee"][0]["cosine"] = cosine
+            result = add_rankings(batch, report, scores)
+            self.assertIn(f"Linear cosine: {expected:.2f}",
+                          result["notes"][0]["results"][0]["output"])
+        batch, report, scores = self.fixture()
+        scores["groups"]["Coffee"][0]["cosine"] = .2
+        result = add_rankings(batch, report, scores)
+        for card in result["notes"][:2]:
+            self.assertIn("Linear cosine: 60.00 · rank 1/2", card["results"][0]["output"])
 
     def test_stale_missing_duplicate_and_invalid_cosines_are_refused(self):
         from sse_multivector.prominence_ranking import add_rankings

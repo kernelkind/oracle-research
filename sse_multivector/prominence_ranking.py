@@ -4,8 +4,7 @@ import copy
 import math
 
 
-VARIANTS = (("Prominence", 0), ("Cosine 25%", .25),
-            ("Cosine 50%", .5), ("Cosine 100%", 1))
+VARIANTS = ("Prominence", "Linear cosine")
 
 
 def add_rankings(batch, report, comparison):
@@ -37,9 +36,8 @@ def add_rankings(batch, report, comparison):
         if (type(cosine) not in (float, int) or not math.isfinite(cosine)
                 or not -1.000001 <= cosine <= 1.000001):
             raise ValueError(f"invalid cosine: {cid}")
-        relevance = math.sqrt(max(0, min(1, cosine)))
-        values[cid] = [expected["prominence"] * ((1 - weight) + weight * relevance)
-                       for _, weight in VARIANTS]
+        weight = (max(-1, min(1, cosine)) + 1) / 2
+        values[cid] = [expected["prominence"], expected["prominence"] * weight]
         card = cards[cid]
         card["title"] = (f"{evidence['node_title']} [{evidence['node_id']}] · "
                          f"{evidence['note_id']} · {', '.join(evidence['mask_ids'])}")
@@ -47,7 +45,7 @@ def add_rankings(batch, report, comparison):
             f"Prominence: {expected['prominence']} / 100\nCosine: {cosine:.4f}\n"
         )
     result["orderings"] = []
-    for index, (name, weight) in enumerate(VARIANTS):
+    for index, name in enumerate(VARIANTS):
         ordering = []
         for ids in groups.values():
             ranked = sorted(ids, key=lambda cid: (
@@ -68,8 +66,9 @@ def add_rankings(batch, report, comparison):
     for card in result["notes"]:
         card["results"][0]["comment"] += (
             "\n\nRanking diagnostic, not calibrated relevance. "
-            "score = prominence × (1 − w + w × sqrt(max(0, cosine))); "
-            "w = 0, 0.25, 0.5, 1. Equal scores are tied; case IDs stabilize order. "
+            "Linear cosine score = prominence × (cosine + 1) / 2. "
+            "Cosine's native range −1..1 maps to weight 0..1; this is not a probability. "
+            "Equal scores are tied; case IDs stabilize order. "
             "Press s to change ordering at the same position (the post may change). "
             "Memberships and model outputs are unchanged. No post-score aggregation."
         )

@@ -526,14 +526,15 @@ For an offline ranking comparison, add `--cosine-comparison FILE` to prominence
 comparison. Each scored case must match its saved node title/ID, post ID, mask
 IDs, fragments and prominence; missing/stale scores are refused. Other nodes in
 the comparison file are permitted. Unscored experiment cases stay visible.
-The viewer shows four fixed diagnostic orders, not a fitted relevance model:
+The viewer compares prominence alone against one linear normalization:
 
-`score = prominence * (1 - w + w * sqrt(max(0, cosine)))`
+`score = prominence * (cosine + 1) / 2`
 
-The weights are 0 (prominence alone), 0.25, 0.5 and 1. Negative cosine contributes
-zero; floating-point overshoot above 1 is clipped. Press `s` to cycle ordering
+Cosine's native range −1..1 maps to weight 0..1: cosine zero gives weight 0.5,
+not zero. Floating-point overshoot outside −1..1 is clipped. There are no fitted
+thresholds or strength settings. Press `s` to switch ordering
 at the same position: **the displayed post may change**. Nodes stay grouped,
-each card still shows only one mask inline, and all four scores and tied ranks
+each card still shows only one mask inline, and both scores and tied ranks
 are visible. Case IDs stabilize ties; they do not establish quality differences.
 These settings do not change PPv10, memberships, saved outputs or production
 ranking. They neither aggregate posts nor establish a calibrated relevance score.
