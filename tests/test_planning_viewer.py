@@ -102,8 +102,10 @@ class PlanningViewerTest(unittest.TestCase):
         self.assertIn("25 must finish before 02 can finish", cells["week1"].get("value"))
         self.assertIn("23 · Node-title prompt complete", cells["week1"].get("value"))
         self.assertIn("Map: 01–02, 23, 25", cells["week1"].get("value"))
-        self.assertIn("Check correctness and scalable strategies in each run",
-                      cells["week2"].get("value"))
+        for stage in ("200: correctness + prominence ordering",
+                      "300: correctness + scalable construction",
+                      "500: combined validation + build profiling"):
+            self.assertIn(stage, cells["week2"].get("value"))
         lane = cells["week-delivery"].find("mxGeometry")
         self.assertGreaterEqual(float(lane.get("width")), 1600)
         week = cells["week1"].find("mxGeometry")
@@ -147,7 +149,10 @@ class PlanningViewerTest(unittest.TestCase):
             self.assertIn("fillColor=light-dark(#f7f8fa,", cells[key].get("style"))
             self.assertNotIn("READY TO START", cells[key].get("value"))
         self.assertIn("FINISH WITH 24–27", cells["h3"].get("value"))
-        self.assertIn("correctness and scalable strategies", cells["h3"].get("value"))
+        for stage in ("200: prominence + correctness",
+                      "300: scalable construction + correctness",
+                      "500: combine both; profile build"):
+            self.assertIn(stage, cells["h3"].get("value"))
         self.assertIn("pair filtering keeps useful links", cells["h3"].get("value"))
         self.assertIn("08 + 09 + 20 + 28", cells["s2"].get("value"))
         self.assertIn("dashed=1", edges["h-recovery", "s-analysis"].get("style"))

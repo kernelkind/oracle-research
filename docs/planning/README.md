@@ -72,11 +72,13 @@ Node 27 turns mask prominence into node-note ordering and needs 04.
 Task 25 is also required to finish the 100-note result in 02; TRUE work can
 begin before 25 is complete. All four results are required to complete the
 500-note validation in 03. The 100-note run checks correctness at minimal
-scope; the 200/300/500-note runs check correctness while testing scalable
-strategies, including whether filtering retains useful TRUE links. Membership
-recovery does not expand the current limited 100-note diagnostic or prevent
-preliminary 200/300-note work. The original 04 → 03 dependency is now explicit
-as 04 → 27 → 03.
+scope. The 200-note run adds prominence-based note ordering; the 300-note run
+tests scalable construction, including whether filtering retains useful TRUE
+links; the 500-note run validates the combined pipeline and profiles its build.
+Membership recovery does not expand the limited 100-note diagnostic. The
+200-note construction can start while prominence is paused, but its ordering
+check needs 04 and 27; 300-note work need not wait for that check. The
+04 → 27 → 03 completion dependency is unchanged.
 No membership algorithm, cycle-resolution method or ranking formula is selected.
 
 The September 23 user checkpoint confirmed 17 in progress, 13 and 18 not

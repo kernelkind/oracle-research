@@ -144,15 +144,16 @@ acceptable; repeatedly misleading navigation cannot. Concrete examples from
 the builds should inform acceptance, not an invented accuracy percentage.
 
 The 100-note build tests hierarchy correctness at minimal scope and establishes
-an initial useful hierarchy. The planned 200-note / 2-topic, 300-note / 3-topic
-and 500-note / 5-topic builds test correctness across increasing subject
-coverage while introducing and testing scalable construction strategies. These
-are not merely tests of handling more notes. In particular, candidate-pair
+an initial useful hierarchy. The planned 200-note / 2-topic build checks
+correctness and prominence-based note ordering. The 300-note / 3-topic build
+checks correctness while testing scalable construction choices; candidate-pair
 filtering must preserve useful parent–child links, not just reduce TRUE calls.
-Validate prominence in the 500-note hierarchy.
+The 500-note / 5-topic build checks the combined pipeline and profiles build
+time and memory to find bottlenecks. All three increase subject coverage; none
+is merely a test of handling more notes.
 
-Runtime, memory and million-note processing cost require separate measurements.
-Success at 500 notes does not by itself establish production-scale feasibility.
+Runtime, memory and million-note processing cost still require separate
+measurements. Profiling 500 notes does not establish launch-scale feasibility.
 
 The [fine-tuning pilot](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md)
 must measure unseen-note mask and prominence quality before and after training,
@@ -316,12 +317,13 @@ implementation choices remain open.
 The current 100-note diagnostic checks correctness at minimal scope, without
 membership expansion or a claim to exercise scalable construction. It can
 start TRUE work before 25 is finished, but cannot finish if equivalence or
-cycles prevent a valid browsable graph. Preliminary 200/300-note work can
-follow 02 while the remaining stages develop. Each larger run checks both
-correctness and scalable strategies; completing the full 500-note validation
-(03) requires 24–27. The earlier prominence dependency is now explicit as
-04 → 27 → 03. The stages' internal processing order must respect their inputs,
-but this does not impose a serial development schedule.
+cycles prevent a valid browsable graph. Preliminary 200-note construction can
+follow 02 while prominence is paused, but its note-ordering check needs 04 and
+27. The 300-note scalable-construction work can proceed without waiting for
+that ordering check. Completing the combined 500-note validation (03) requires
+24–27. The prominence dependency remains 04 → 27 → 03. The stages' internal
+processing order must respect their inputs, but this does not impose a serial
+development schedule.
 
 Pilot **06** also includes a small hierarchy built from pilot-model outputs before
 model selection. Use that check to detect downstream consequences of extraction
@@ -428,11 +430,12 @@ cutoff, measured rates and counts, and the final corpus size remain open.
 
 ## Approved scheduling changes
 
-1. Start the 200/300-note validation after the good 100-note hierarchy, while
-   prominence is developed in parallel. Those larger runs test correctness and
-   scalable construction strategies together. Prominence is required to
-   complete the combined 500-note validation, not to start every broader-corpus
-   test.
+1. After the good 100-note hierarchy, use 200 notes to test correctness and
+   prominence-based ordering, 300 to test correctness and scalable construction,
+   and 500 to validate them together and profile the build. The 200-note
+   construction can start while prominence is paused, but its ordering check
+   cannot finish without 04 and 27. The 300-note work need not wait for that
+   check. The combined 500-note validation still needs 24–27.
 2. Start scale measurements during Week 2. Measure the complete build, including
    SSE, HDBSCAN, node titles and cosine-filtered TRUE comparisons, rather
    than relying only on distilled-model training or generation speed. Node 22
