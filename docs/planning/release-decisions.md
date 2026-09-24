@@ -1,6 +1,6 @@
 # October 18 release decisions
 
-Updated September 23, 2026. This is the written record of the planning discussion.
+Updated September 24, 2026. This is the written record of the planning discussion.
 Agreed requirements, tentative choices and existing-data facts are distinguished
 below. The overall plan is not approved. Approval of an individual requirement
 or diagram edit does not approve the whole plan. The diagram incorporates the
@@ -13,15 +13,15 @@ Readiness is not authorization to research, implement, assign agents or spend;
 each task requires explicit approval to begin.
 
 The subject and mask prompts are finished (01 complete), confirmed by the user
-on September 20. On September 21, the user reported the 100-note hierarchy build
-blocked by the node-title prompt (02 blocked). TRUE uses node descriptions
-for placement; incorrect titles undermine those decisions. Correcting the
-title prompt is required before completing the build and hierarchy review.
-The user confirmed that correction is underway. It is now explicit as
-23 · Fix and validate node-title prompt, in progress, with a prerequisite
-arrow to 02. The subject and mask prompts remain complete; this is a separate
-downstream blocker. Prompt changes and validation procedures belong to that
-workstream, not this planning discussion.
+on September 20. On September 24, the user confirmed that the node-title prompt
+is finished (23 complete). The [frozen v38/Luna max title pass](../../sse_multivector/navigation-research-v1/README.md#current-title-prompt-experiment) has produced
+valid titles for all 129 groups in the 100-note build: 108 new calls and 21
+reused results. The saved HRv1 hierarchy still uses the older v21 titles.
+Task 02 is ready to resume with the saved v38 titles: TRUE placement and
+hierarchy review remain. The solid 23 → 02 prerequisite is satisfied.
+The full pass was mechanically valid; spot checks found some questionable
+titles, and the user has not approved every output. Prompt changes and
+validation procedures belong to that workstream, not this planning discussion.
 Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
 hierarchy or title correction. Its prompt and validation are not complete.
@@ -29,17 +29,20 @@ The user confirms 17 is underway, comparing Muse high and Astra low;
 no teacher is selected.
 This does not establish completion of the subject/mask/prominence comparison (17).
 Dates are unchanged. The additional construction dependencies below expose
-unfinished work; 23 → 02 records the current title blocker. Completing 01 does
-not complete downstream work. This records work and planning requirements, not
-authorization to start another workstream or approval of the overall plan.
+unfinished work. Completing 01 and 23 does not complete the hierarchy. This
+records work and planning requirements, not authorization to start another
+workstream or approval of the overall plan.
 
-### Status confirmed with the user — September 23
+### Status checkpoint — September 24
+
+Tasks 02 and 23 were updated on September 24. Other rows were last confirmed
+with the user on September 23.
 
 | Task | Current status |
 | --- | --- |
 | 01 · Subject and mask prompts | Finished. |
-| 02 · Build and review 100-note hierarchy | Still blocked on the node-title prompt. |
-| 23 · Fix and validate node-title prompt | In progress. |
+| 02 · Build and review 100-note hierarchy | Ready to resume with saved v38 titles; TRUE placement and review pending. |
+| 23 · Fix and validate node-title prompt | Finished; 129 titles saved. |
 | 04 · Define mask prominence | Paused. Earlier experimental results do not establish that work is active now. |
 | 17 · Compare teachers | In progress; no completed selection established. |
 | 26 · Collapse equal-note navigation steps | Implemented and regression-tested; validation on the rebuilt hierarchy is waiting. |
@@ -51,7 +54,7 @@ authorization to start another workstream or approval of the overall plan.
 | 22 · Measure SSE, node-title and TRUE processing costs | No further progress. |
 
 This checkpoint changes statuses only, not dates, dependencies, methods or
-authorization. The green cards identify ready work, not work already started.
+authorization. Green cards identify work ready now, not work currently underway.
 
 ## Vocabulary
 

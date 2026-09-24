@@ -37,7 +37,7 @@ not approve the full plan. This discussion concerns planning, not implementation
 choices or execution. No workstream or agent assignment starts without explicit
 authorization.
 
-Page 1 highlights readiness: green means ready to start, blue means in progress,
+Page 1 highlights readiness: green means ready to start or resume, blue means in progress,
 and grey means waiting, blocked, paused or complete, as labeled. If preparation can start
 but later work cannot, show them as separate nodes linked by a dependency—not
 as one partly ready task. Node 18 is green for preparing training code for the
@@ -49,15 +49,13 @@ criteria and reviewed pilot data are available. The 05 + 18 dependencies on
 Muse high and Astra low. No teacher is selected. Completing the
 comparison still requires validated prompts (01 + 04); prominence remains
 unfinished. Comparison planning is part of 17, not a separate task.
-Node 01 is complete: the subject and mask prompts are finished, as confirmed by
-the user on September 20. On September 21, the user reported the 100-note build
-blocked by an inadequate node-title prompt. Node 02 is grey and marked
-blocked: TRUE needs accurate node titles for placement. Hierarchy
-review and validation remain pending. Node 23, fixing and validating the
-node-title prompt, is blue and in progress, confirmed by the user. Its solid
-arrow to 02 makes the blocking work explicit; this does not reopen the subject
-or mask prompts. Additional rows expose the remaining construction work;
-lower lanes and connector routes have space for these additions.
+Node 01 is complete: the subject and mask prompts are finished. On September 24,
+the user confirmed that the node-title prompt is finished. Node 23 is complete,
+and all 129 HDBSCAN groups have saved v38/Luna max titles. Node 02 is ready to
+resume: TRUE placement and review with those titles remain. Its solid 23 → 02
+arrow records a satisfied prerequisite. The saved HRv1 hierarchy still uses
+v21 titles, and a valid title response is not a user-approved title. Additional
+rows expose the remaining construction work.
 Node 04 (mask prominence) is grey and marked paused, reconfirmed by the user on
 September 23. Earlier experimental work does not establish that it is active
 now. Its mask-prompt prerequisite is satisfied. It need not wait for
@@ -75,10 +73,10 @@ they do not expand the current limited 100-note diagnostic or prevent preliminar
 200/300-note work. The original 04 → 03 dependency is now explicit as 04 → 27 → 03.
 No membership algorithm, cycle-resolution method or ranking formula is selected.
 
-The September 23 user checkpoint also confirms 02 remains blocked on 23,
-17 and 23 are in progress, 13 and 18 have not started, and 21–22 have made no
-further progress. Dates and dependencies are unchanged. See the
-[confirmed status table](release-decisions.md#status-confirmed-with-the-user--september-23).
+The September 23 user checkpoint confirmed 17 in progress, 13 and 18 not
+started, and 21–22 without further progress. Tasks 02 and 23 were updated on
+September 24. Dates and dependencies are unchanged. See the
+[status record](release-decisions.md#status-checkpoint--september-24).
 
 Node 28 is separate from scale measurements: implement and validate a runnable
 launch-scale build, including cosine-filtered TRUE and handling large-group
