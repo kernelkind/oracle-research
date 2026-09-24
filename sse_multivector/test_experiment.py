@@ -139,6 +139,8 @@ class ExperimentTests(unittest.TestCase):
             [high["id"], low["id"], "failed", "malformed", "other"],
         )
         self.assertIn("score 90", batch["notes"][0]["title"])
+        self.assertEqual(batch["notes"][0]["results"][0]["output"], "Prominence: 90 / 100")
+        self.assertEqual(high["output"], '{"prominence":90}')
         self.assertIn("unranked", batch["notes"][2]["title"])
         self.assertIn("provider failure", batch["notes"][2]["results"][0]["comment"])
         self.assertEqual(batch["notes"][3]["results"][0]["output"], "not json")

@@ -339,8 +339,11 @@ def prominence_review_batch(plan, report):
                     "results": [
                         {
                             "model": plan["prompt"]["id"],
-                            "output": case.get("output")
-                            or f"No output: {case['status']}",
+                            "output": (
+                                f"Prominence: {score} / 100"
+                                if valid
+                                else case.get("output") or f"No output: {case['status']}"
+                            ),
                             "comment": "\n".join(comments),
                         }
                     ],
