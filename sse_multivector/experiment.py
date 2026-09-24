@@ -163,6 +163,14 @@ def prepare(args):
     else:
         setup = spec_setup(args.spec)
         baseline = report(args.baseline.resolve()) if args.baseline else None
+    if args.only:
+        requested = set(args.only)
+        unknown = requested - {c["id"] for c in setup["cases"]}
+        if unknown:
+            raise ValueError(f"unknown --only case IDs: {', '.join(sorted(unknown))}")
+        setup["cases"] = [c for c in setup["cases"] if c["id"] in requested]
+        if baseline is not None:
+            baseline = {**baseline, "cases": [c for c in baseline["cases"] if c["id"] in requested]}
     # Job IDs from historical batches are not the candidate's stable case IDs.
     setup["cases"] = [
         {k: v for k, v in c.items() if k != "job_id"} for c in setup["cases"]
@@ -196,10 +204,10 @@ def prepare(args):
     elif args.prompt_id:
         raise ValueError("--prompt-id requires --prompt")
     if args.import_config and (
-        args.from_experiment or args.baseline or args.prompt or args.repeat or overrides
+        args.from_experiment or args.baseline or args.prompt or args.repeat or args.only or overrides
     ):
         raise ValueError(
-            "--import-config requires an exact spec, without baseline, prompt override or repeat"
+            "--import-config requires an exact spec, without baseline, prompt override, repeat or --only"
         )
     destination.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(
@@ -803,6 +811,8 @@ def parser():
     start.add_argument("--spec", type=Path)
     start.add_argument("--from", dest="from_experiment", type=Path)
     p.add_argument("--baseline", type=Path)
+    p.add_argument("--only", action="append", metavar="CASE_ID",
+                   help="prepare only this case (repeat for several); preserves exact inputs and matching baseline")
     p.add_argument("--prompt", type=Path)
     p.add_argument("--prompt-id")
     p.add_argument("--repeat", action="store_true")

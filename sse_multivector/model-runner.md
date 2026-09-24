@@ -358,7 +358,12 @@ python3 sse_multivector/experiment.py prepare experiments/E2 \
 
 Optional `--model`, `--reasoning-effort`, `--provider`, `--concurrency` and
 `--max-output-tokens` override only the stated settings during preparation.
-To change cases or other settings, prepare from a new spec and use
+Add `--only CASE_ID` once per case to prepare a subset, without copying inputs
+or rerunning the baseline. Only selected cases and their matching saved baseline
+entries are frozen; all other cases remain in the source experiment. Unknown
+IDs are refused, and exact-request reuse remains enabled. This selection also
+works with `--spec`, but not historical `--import-config`.
+To change input content or other settings, prepare from a new spec and use
 `--baseline experiments/E1`. Case IDs **and actual template-variable values**
 must agree before outputs are paired. Same-ID/different-input cases are reported
 as `input_mismatch`, not silently compared. Baseline-only case IDs are retained

@@ -16,6 +16,30 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_prepare_subset_preserves_exact_inputs_baseline_and_reuse(self):
+        self.prepare()
+        self.cli("run", "E1")
+        original = self.show()["cases"][1]
+        self.cli("prepare", "E2", "--from", "E1", "--only", "two")
+        subset = self.show("E2")["cases"]
+        self.assertEqual([c["id"] for c in subset], ["two"])
+        self.assertEqual(subset[0]["prompt"], original["prompt"])
+        self.assertEqual(subset[0]["inputs"], original["inputs"])
+        self.assertEqual(subset[0]["baseline"]["output"], original["output"])
+        self.cli("run", "E2")
+        self.assertEqual(len(self.calls()), 2)
+        self.cli("prepare", "E3", "--from", "E1", "--only", "two",
+                 "--model", "fixture/other", "--reasoning-effort", "low")
+        self.cli("run", "E3")
+        self.assertEqual(len(self.calls()), 3)
+        self.assertEqual(self.calls()[-1]["prompt"], original["prompt"])
+        self.assertEqual(self.calls()[-1]["request"]["model"], "fixture/other")
+        plan = json.loads((self.root / "E3" / "experiment.json").read_text())["plan"]
+        self.assertEqual([c["id"] for c in plan["baseline"]["cases"]], ["two"])
+        error = self.cli("prepare", "bad", "--from", "E1", "--only", "unknown", ok=False)
+        self.assertIn("unknown --only", error.stderr)
+        self.assertFalse((self.root / "bad").exists())
+
     def test_explicit_prominence_selection_keeps_missing_results_without_judgments(self):
         self.prominence_spec()
         self.prepare()
