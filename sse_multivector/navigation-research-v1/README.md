@@ -142,7 +142,17 @@ finding a shared type. No corresponding prompt change is approved yet.
 
 This single-draw comparison does not establish an overall improvement over v32;
 the observed regressions argue against promotion. Transport failures are not
-counted as incorrect titles. Prompts and production titles remain unchanged.
+counted as incorrect titles. V34 and production titles remain unchanged.
+
+[Title prompt v35](../hdbv2-node-description-probe-v35/prompt.txt) is an untested
+draft against last-approved v34, prepared for wording review only. It asks for
+the most specific organizing topic in a topic hierarchy, allowing instances to
+express different levels or aspects of that topic. The group may clarify an
+instance's meaning, but every instance must fit under the title; this replaces
+v34's independent full-meaning support requirement. Name handling, masks-only
+inputs and JSON output remain unchanged, with no added examples. The revision
+receipt records the exact base and edits. Wording approval and testing remain
+open; no inference or production-title change is authorized by this draft.
 
 HRv1's saved titles still use v21. These experiments do not authorize replacing
 them, running a full title pass, changing memberships or hierarchy edges, or
