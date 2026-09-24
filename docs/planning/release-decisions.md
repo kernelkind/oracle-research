@@ -285,10 +285,16 @@ earlier evidence. Reuse unaffected saved stages, but recompute downstream
 merges, memberships and navigation when their inputs change. This is a build
 requirement, not a claim that the current runner already implements it.
 
-Still open for user discussion: recovery from failed or incomplete stages,
-and precisely how the historically curated first hierarchy
-will be reprocessed for comparison. Recording HD03 as a candidate does not
-authorize implementation, inference or another hierarchy run.
+**Hierarchy execution recovery (clarified September 24):** retry failed model
+calls and reuse successful results. Preserve failed-attempt receipts and the
+original inputs/settings; failure is not a No answer or permission to drop a
+node. This is routine recovery, not an unresolved hierarchy-design choice. It
+does not authorize a new run, unlimited retries or changes to the general
+runner's current retry implementation.
+
+Still open for user discussion: precisely how the historically curated first
+hierarchy will be reprocessed for comparison. Recording HD03 as a candidate
+does not authorize implementation, inference or another hierarchy run.
 
 Recovering missing node memberships is a separate operation. HDBSCAN's raw
 tree is not the specified launch hierarchy.
