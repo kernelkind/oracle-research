@@ -158,7 +158,17 @@ Category subsumption retains its ordinary broad-to-narrow meaning. Interpreting
 an observed mask within a group does not redefine the category named by that
 mask, alter group membership, or validate downstream placement by itself.
 
-The frozen v1 title prompt receives one numbered instance per vector:
+For the next hierarchy experiment, the user has frozen
+[title prompt v38](../../../sse_multivector/hdbv2-node-description-probe-v38/prompt.txt)
+with `gpt-6-luna` at `max` reasoning effort. The
+[full-run spec](../../../sse_multivector/experiment_specs/title-v38-full-luna-max.json)
+uses the existing masks-only input adapter, deduplicates identical same-post
+masks, and returns a JSON object containing `title`. Saved matching v38 outputs
+are reused. This freezes the next experiment's title configuration, not the
+correctness of every output or any hierarchy edge. The saved v21 hierarchy
+remains the comparison baseline; memberships and graph construction are unchanged.
+
+The earlier frozen v1 baseline receives one numbered instance per vector:
 
 ```text
 Instances:
@@ -179,7 +189,7 @@ It changes only “the semantic similarity among these instances” to
 “the subject matter shared by these instances.” The input format is unchanged.
 It aims to make titles name the shared subject rather than the text's
 presentation, addressing the user-confirmed “Keywords” description error.
-v1 remains the frozen baseline, and its
+v1 remains the baseline for that historical comparison, and its
 [three-node HDBv2 probe](../../../sse_multivector/hdbv2-node-description-probe-v1/README.md)
 and raw results remain unchanged. The
 [v1/v2 comparison](../../../sse_multivector/hdbv2-node-description-probe-v2/README.md)

@@ -55,6 +55,32 @@ by these requirements.
 
 ## Current title-prompt experiment
 
+The frozen title configuration for the **next hierarchy experiment** is
+[v38](../hdbv2-node-description-probe-v38/prompt.txt) with `gpt-6-luna`, reasoning
+effort `max`. The user approved generating titles for all 129 HRv1 source groups
+with the unchanged prompt, reusing the twenty saved matching v38 results.
+`experiment_specs/title-v38-full-luna-max.json` defines the full run, saved under
+`experiments/title-v38-full-luna-max/`. No title-based filtering, semantic merging,
+membership changes or hierarchy construction is authorized by this title pass.
+The existing v21 hierarchy and all earlier outputs remain comparison evidence.
+
+The full pass completed with **129 valid titles, 108 new calls, 21 reused
+results and no retries**. Reuse comprises the twenty prior v38 outputs plus
+one identical request already answered during this run; this reuses inference,
+not node identity. Every source group remains present. Receipts, parsed titles
+and provenance are in the experiment's `report.json` and `run/` outputs.
+All 129 are available through `experiment.py review ... --ui`.
+
+Spot checks identified `Coffee and beans` losing the coffee-bean relationship,
+`Food and food containers` losing the shared lunch topic, and `Beer` failing to
+cover a mixed group containing brekkie and Khyber Pass. `Bread baking` and
+`Sunday greetings` have unresolved scope questions. These observations are
+recorded as agent reviews, not user decisions or an exhaustive semantic audit;
+unreviewed titles are not implicitly approved. No outputs were repaired, nodes
+excluded, or frozen prompt rules changed. Next, use the saved title set for
+the hierarchy-placement experiment under the declared processing rules, with
+the v21 baseline preserved, after separate authorization for that run.
+
 [Title prompt v25](../hdbv2-node-description-probe-v25/prompt.txt) is tested but
 not promoted. The approved bounded comparison replaces v24's instruction against
 definition-style expansion with ASv6.48's name-handling instruction, including
@@ -84,7 +110,7 @@ schema-enforcement change. Its comparison records are under
 `hdbv2-node-description-probe-v29/`, including low- and high-effort MiMo
 runs and a high-effort variety expansion to ten groups.
 
-Category-title comparisons now use Xiaomi MiMo V2.6 Pro
+The v25-v37 comparison sequence used Xiaomi MiMo V2.6 Pro
 (`xiaomi/mimo-v2.6-pro`) through OpenRouter instead of Astra, per the user's
 decision. The saved v21 and v25-v26 outputs were produced by Astra, so
 cross-model differences mix prompt and model changes. Earlier versions are
@@ -226,7 +252,8 @@ on these new inputs, so this cannot rank Luna against Sol.
 
 The user subsequently approved the wording and test of [title prompt
 v38](../hdbv2-node-description-probe-v38/prompt.txt), based directly on v37.
-It is **tested, not promoted**. It distinguishes naming a shared topic from
+It is now **frozen for the next hierarchy experiment**. It distinguishes naming
+a shared topic from
 summarizing the group's contents, and retaining category-defining details from
 appending subtopics already covered by its name. Specificity, inclusion of every
 instance, name handling, masks-only inputs and JSON output remain requirements.
@@ -267,12 +294,13 @@ beverage consumption`, `Children`, `homesteading`, `Pantry food storage`, and
 remaining title, `Movement`, covers its masks but may be unnecessarily broad:
 three instances mention walking and one says motion. That is a specificity
 question, not an established membership failure. All ten remain in the review
-UI with reasoning. Recommend reviewing this uncertainty and retaining v38
-without another wording change; no full run or production promotion is implied.
+UI with reasoning. The user accepted proceeding without another wording change,
+then approved freezing v38/Luna max and generating the remaining titles as
+described above. This is not a blanket approval of every generated title.
 
-HRv1's saved titles still use v21. These experiments do not authorize replacing
-them, running a full title pass, changing memberships or hierarchy edges, or
-consolidating categories. The saved v24 baseline and v25 comparison inputs,
+HRv1's saved titles still use v21. The new full title pass does not overwrite
+them, change memberships or hierarchy edges, or consolidate categories.
+The saved v24 baseline and v25 comparison inputs,
 receipts and assessment remain local experiment data under
 `hdbv2-node-description-probe-v25/comparison-v1/`.
 

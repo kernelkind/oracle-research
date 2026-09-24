@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "v38",
+    "path": "../hdbv2-node-description-probe-v38/prompt.txt"
+  },
+  "dataset": {
+    "adapter": "titles",
+    "path": "../hierarchy-refresh-v1/source-packets.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6-luna",
+    "reasoning_effort": "max",
+    "timeout_seconds": 1800,
+    "concurrency": 6
+  }
+}
