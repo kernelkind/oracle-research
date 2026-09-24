@@ -61,7 +61,9 @@ Node 04 (mask prominence) is grey and marked paused, reconfirmed by the user on
 September 23. Earlier experimental work does not establish that it is active
 now. Its mask-prompt prerequisite is satisfied. It need not wait for
 the 100-note hierarchy or title correction. Its prompt and validation are not
-complete. The top summary names only the green workstreams. Readiness
+complete. The user plans to revisit its open questions during the 100-note
+build as the hierarchy becomes clearer; the exact point is open. The top
+summary names only the green workstreams. Readiness
 does not authorize research, implementation, agent assignment or spending.
 
 Nodes 24–25 are ready but not started: recover missing memberships and handle

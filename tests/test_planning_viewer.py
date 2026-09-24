@@ -96,6 +96,7 @@ class PlanningViewerTest(unittest.TestCase):
         self.assertIn("October 18", cells["week-launch"].get("value"))
         self.assertNotIn("prepare service", cells["week4"].get("value"))
         self.assertIn("04 · Mask prominence remains paused; mask prompt is finished", cells["week-subtitle"].get("value"))
+        self.assertIn("Revisit during the 100-note build", cells["week-subtitle"].get("value"))
         self.assertIn("Subject and mask prompts finished", cells["week1"].get("value"))
         self.assertIn("v38 titles saved for all 129 groups", cells["week1"].get("value"))
         self.assertIn("check correctness at minimal scope", cells["week1"].get("value"))

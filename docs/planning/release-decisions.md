@@ -28,6 +28,9 @@ validation procedures belong to that workstream, not this planning discussion.
 Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
 hierarchy or title correction. Its prompt and validation are not complete.
+The user plans to revisit its open questions during the 100-note hierarchy
+build, using what that hierarchy reveals. The exact point remains open; this
+does not mark 04 active or authorize work to resume.
 The user confirms 17 is underway, comparing Muse high and Astra low;
 no teacher is selected.
 This does not establish completion of the subject/mask/prominence comparison (17).
