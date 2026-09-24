@@ -110,15 +110,28 @@ gloss; otherwise name the smallest genuine category containing every instance's
 referent. It replaces the opening's "most specific category" framing. Its
 paired comparison records are under `hdbv2-node-description-probe-v32/`.
 
-[Title prompt v34](../hdbv2-node-description-probe-v34/prompt.txt) is an untested
-draft based on v32. It folds the existing distinction between naming the node
-and describing the instances as text into the main task statement, removing
-the duplicate sentence. It also requires each instance to support the title's
+[Title prompt v34](../hdbv2-node-description-probe-v34/prompt.txt) is a partially
+tested, unpromoted draft based on v32. It folds the existing distinction between
+naming the node and describing the instances as text into the main task
+statement, removing the duplicate sentence. It also requires each instance to support the title's
 full meaning on its own. It replaces
 [v33](../hdbv2-node-description-probe-v33/prompt.txt)'s application-specific
 opening without adding browsing context. Name handling, masks-only inputs and
-JSON output remain unchanged. Earlier versions are preserved; no model test,
-promotion or production change is implied.
+JSON output remain unchanged. Its comparison uses the same 20 v32 robustness
+groups and MiMo high-effort settings, importing saved v32 results without new
+baseline calls. Records and agent assessments are under
+`experiments/title-v34-vs-v32/`, managed through `experiment.py`.
+
+The first run returned four valid JSON titles; two calls timed out and the
+remaining 14 were not started. No requests were retried. Among the completed
+cases, `satoshi` was unchanged and acceptable, while `Words relating to
+preservation` retained the clear text-description failure. Two changes remain
+uncertain: `chocolate` may exclude the cacao-only instance, and `Book-related
+topics` removes the explicit "Terms" framing but assumes a book context not
+independently established by every mask. These are agent assessments, not user
+decisions. The incomplete comparison does not establish an overall improvement;
+review these cases before deciding whether to resume it. No prompt, promotion
+or production change was made.
 
 HRv1's saved titles still use v21. These experiments do not authorize replacing
 them, running a full title pass, changing memberships or hierarchy edges, or
