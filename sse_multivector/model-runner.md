@@ -492,7 +492,9 @@ neither mechanical validation nor agent assessment becomes a user approval.
 For titles or masks, `review experiments/E1 --ui` exports compatible cases and
 launches the existing `target/release/sse-mask-review` UI. Override its path with
 `--ui-binary` if necessary. It never builds the binary or calls a model.
-Sessions are tied to batch contents. The current mask UI cannot show empty or
+Title comparisons may use the same prompt version on both sides, including
+model comparisons; candidate and baseline roles remain distinct. Sessions are
+tied to batch contents. The current mask UI cannot show empty or
 invalid masks: the CLI explicitly lists excluded IDs/statuses, and they remain
 available through `show --case` and CLI review. Generic tasks use the same
 inspection/judgment CLI without a special UI.

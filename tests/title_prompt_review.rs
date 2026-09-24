@@ -232,6 +232,56 @@ fn navigation_wraps_and_resumes_the_current_card_without_deciding() {
 }
 
 #[test]
+fn same_prompt_comparisons_preserve_candidate_baseline_and_saved_decisions() {
+    for assessed in [false, true] {
+        let directory = tempfile::tempdir().unwrap();
+        let input = directory.path().join("input.json");
+        let session = directory.path().join("session.json");
+        let mut data = batch();
+        data["baseline_version"] = data["candidate_version"].clone();
+        data["items"].as_array_mut().unwrap().truncate(1);
+        if assessed {
+            data["items"][0]["assessment"] = json!("Uncertain: review the scope.");
+        }
+        write(&input, &data);
+        let original = fs::read(&input).unwrap();
+        let outcome = run_title_prompt_review(&input, &session, None, |screen, comment| {
+            let comparison = if assessed {
+                screen.guidance.as_ref().unwrap().body.as_str()
+            } else {
+                let ApprovalEvidenceLayout::Paged(evidence) = &screen.evidence else {
+                    panic!("missing title evidence")
+                };
+                evidence[0].body.as_str()
+            };
+            assert!(comparison.contains("v4"));
+            assert!(comparison.contains("baseline"));
+            assert!(comparison.contains("Coffee preparation"));
+            assert!(comparison.contains("Home coffee preparation"));
+            Ok(action(screen, comment, KeyCode::Char('a')))
+        })
+        .unwrap();
+        assert_eq!(
+            outcome,
+            TitlePromptReviewOutcome::Completed {
+                approved: 1,
+                rejected: 0,
+                skipped: 0,
+            }
+        );
+        assert_eq!(
+            read(&session)["session"]["decisions"]["S001"]["outcome"],
+            "approved"
+        );
+        run_title_prompt_review(&input, &session, None, |_, _| {
+            panic!("completed decision was lost")
+        })
+        .unwrap();
+        assert_eq!(fs::read(&input).unwrap(), original);
+    }
+}
+
+#[test]
 fn invalid_input_or_start_id_fails_without_creating_a_session() {
     let directory = tempfile::tempdir().unwrap();
     let input = directory.path().join("input.json");
@@ -240,7 +290,7 @@ fn invalid_input_or_start_id_fails_without_creating_a_session() {
         ("/schema_version", json!(2)),
         ("/batch_id", json!(" ")),
         ("/candidate_version", json!("")),
-        ("/baseline_version", json!("v4")),
+        ("/baseline_version", json!(" ")),
         ("/items", json!([])),
         ("/items/0/candidate_title", json!("")),
         ("/items/0/baseline_title", json!(" ")),

@@ -99,7 +99,6 @@ impl TitleReviewBatch {
             || self.batch_id.trim().is_empty()
             || self.candidate_version.trim().is_empty()
             || self.baseline_version.trim().is_empty()
-            || self.candidate_version == self.baseline_version
             || self.items.is_empty()
         {
             return Err(Error::ExperimentState("invalid title review batch".into()));

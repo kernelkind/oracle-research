@@ -192,11 +192,10 @@ The book title now names subject matter rather than terminology, but remains
 a long enumeration: `Books, their authorship, and ways of reading or listening
 to them`. The advice and mixed mental/literal fog groups remain uncertain.
 All 20 titles, comparisons and agent comments are saved through the experiment
-CLI. UI export succeeded, but launch failed because the title review validator
-rejects equal candidate and baseline prompt versions (both legitimately v37 in
-this model comparison). No user decisions or production promotion are inferred.
-The proposed next step is to support same-prompt model comparisons in the review
-UI, then review those scope choices before another prompt revision or broader run.
+CLI. The title review UI now accepts equal candidate and baseline prompt versions
+(both legitimately v37 in this model comparison). Candidate means Sol low;
+baseline means the saved MiMo run. No user decisions or production promotion are
+inferred. Review those scope choices before another prompt revision or broader run.
 
 The runner now recognizes exact `gpt-6-sol` metadata without substituting
 GPT-5.6 Sol or changing existing routes. Its regression was observed failing
