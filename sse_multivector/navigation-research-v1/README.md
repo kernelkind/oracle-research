@@ -247,10 +247,28 @@ unchanged. No clear regression was identified in this sample.
 
 This is a promising single-draw diagnostic comparison, not proof of reliability
 or downstream hierarchy improvement. All ten outputs and agent reasoning are
-in the review UI, with user decisions separate. The recommended next step is
-a fresh diverse sample with v38 unchanged, not another wording revision.
+in the review UI, with user decisions separate. The user accepted proceeding
+with v38 unchanged to the fresh sample below.
 The agreed stopping rule remains: if further comparisons merely trade errors,
 stop this wording sequence instead of immediately drafting the next version.
+
+The fresh sample uses `experiment_specs/title-v38-fresh-luna-max.json`, with
+outputs and agent reviews in `experiments/title-v38-fresh-luna-max/`. Its ten
+groups were selected before inference and do not overlap the preceding thirty
+group IDs. They still come from the same source corpus, not an independent
+corpus or a statistically representative sample. Prompt bytes and Luna-max
+settings match the v38 comparison. All ten completed in ten attempts without
+retries; no baseline was run.
+
+Agent assessment: nine acceptable, one uncertain. Titles include `Morning
+coffee`, `Vacuum sealing`, `Christmas`, `Asian cuisine`, `Excessive food and
+beverage consumption`, `Children`, `homesteading`, `Pantry food storage`, and
+`gift`. They cover varied instances without long subtopic enumerations. The
+remaining title, `Movement`, covers its masks but may be unnecessarily broad:
+three instances mention walking and one says motion. That is a specificity
+question, not an established membership failure. All ten remain in the review
+UI with reasoning. Recommend reviewing this uncertainty and retaining v38
+without another wording change; no full run or production promotion is implied.
 
 HRv1's saved titles still use v21. These experiments do not authorize replacing
 them, running a full title pass, changing memberships or hierarchy edges, or
