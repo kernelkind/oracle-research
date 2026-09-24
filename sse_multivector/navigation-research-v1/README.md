@@ -113,8 +113,8 @@ paired comparison records are under `hdbv2-node-description-probe-v32/`.
 [Title prompt v34](../hdbv2-node-description-probe-v34/prompt.txt) is a partially
 tested, unpromoted draft based on v32. It folds the existing distinction between
 naming the node and describing the instances as text into the main task
-statement, removing the duplicate sentence. It also requires each instance to support the title's
-full meaning on its own. It replaces
+statement, removing the duplicate sentence. It also requires each instance to
+support the title's full meaning on its own. It replaces
 [v33](../hdbv2-node-description-probe-v33/prompt.txt)'s application-specific
 opening without adding browsing context. Name handling, masks-only inputs and
 JSON output remain unchanged. Its comparison uses the same 20 v32 robustness
@@ -122,16 +122,27 @@ groups and MiMo high-effort settings, importing saved v32 results without new
 baseline calls. Records and agent assessments are under
 `experiments/title-v34-vs-v32/`, managed through `experiment.py`.
 
-The first run returned four valid JSON titles; two calls timed out and the
-remaining 14 were not started. No requests were retried. Among the completed
-cases, `satoshi` was unchanged and acceptable, while `Words relating to
-preservation` retained the clear text-description failure. Two changes remain
-uncertain: `chocolate` may exclude the cacao-only instance, and `Book-related
-topics` removes the explicit "Terms" framing but assumes a book context not
-independently established by every mask. These are agent assessments, not user
-decisions. The incomplete comparison does not establish an overall improvement;
-review these cases before deciding whether to resume it. No prompt, promotion
-or production change was made.
+The approved provider-only resume reached all 14 previously unstarted cases
+and successfully retried beef once. It preserved the four completed outputs
+and did not retry the local vegetable timeout. The combined run now contains
+16 valid JSON titles and four unresolved cases, with none unstarted. Vegetables,
+garlic and kitchen/worktop have local timeouts; fog/haze returned an empty
+answer after 131,072 reported completion tokens. Its recorded stop reason is
+`stop`, not an explicit token-limit error. These failures were not retried.
+
+All completed titles have agent assessments in the existing review UI. The user
+accepted `satoshi` and `chocolate` and rejected `Words relating to preservation`.
+New clear concerns are `Statements about coffee` replacing `coffee`, `tallow`
+excluding the `Tbone` instance, and `Cooked meals prepared to eat` losing the
+shared potato detail. The last is a loss of specificity, not a membership
+contradiction. `Tips for personal well-being` remains uncertain. For
+`Book-related topics`, the user suggested `Literature`; the open design question
+is naming an organizing topic for instances at different levels, rather than
+finding a shared type. No corresponding prompt change is approved yet.
+
+This single-draw comparison does not establish an overall improvement over v32;
+the observed regressions argue against promotion. Transport failures are not
+counted as incorrect titles. Prompts and production titles remain unchanged.
 
 HRv1's saved titles still use v21. These experiments do not authorize replacing
 them, running a full title pass, changing memberships or hierarchy edges, or
