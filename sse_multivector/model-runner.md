@@ -501,6 +501,23 @@ approval. This duplicated, mask-sorted view is solely for prominence-prompt
 evaluation. It neither combines mask scores nor defines production post ranking
 or deduplication. Prominence review performs no inference or automatic build.
 
+For an offline ranking comparison, add `--cosine-comparison FILE` to prominence
+`review --ui`. FILE is a saved `prominence_cosine.py` or `prominence_centroid.py`
+comparison. Each scored case must match its saved node title/ID, post ID, mask
+IDs, fragments and prominence; missing/stale scores are refused. Other nodes in
+the comparison file are permitted. Unscored experiment cases stay visible.
+The viewer shows four fixed diagnostic orders, not a fitted relevance model:
+
+`score = prominence * (1 - w + w * sqrt(max(0, cosine)))`
+
+The weights are 0 (prominence alone), 0.25, 0.5 and 1. Negative cosine contributes
+zero; floating-point overshoot above 1 is clipped. Press `s` to cycle ordering
+at the same position: **the displayed post may change**. Nodes stay grouped,
+each card still shows only one mask inline, and all four scores and tied ranks
+are visible. Case IDs stabilize ties; they do not establish quality differences.
+These settings do not change PPv10, memberships, saved outputs or production
+ranking. They neither aggregate posts nor establish a calibrated relevance score.
+
 ### Revision: explicit approved base, full-context diff
 
 Use a new versioned destination and the last approved prompt as the base:

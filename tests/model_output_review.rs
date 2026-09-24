@@ -83,6 +83,46 @@ fn original_note_output_and_separate_comments_are_visible_at_both_layout_sizes()
 }
 
 #[test]
+fn saved_orderings_switch_posts_at_the_same_rank_and_preserve_navigation() {
+    let mut data = packet();
+    data["orderings"] = json!([
+        {"name": "Prominence", "note_ids": ["H06", "H21"]},
+        {"name": "Cosine 50%", "note_ids": ["H21", "H06"]}
+    ]);
+    let mut model = load(&data, None);
+    assert!(render(&mut model, 120, 32).contains("Order: Prominence"));
+    model.handle_event(key(KeyCode::Char('i')));
+    model.handle_event(key(KeyCode::Char('s')));
+    let screen = render(&mut model, 120, 32);
+    assert!(screen.contains("Order: Cosine 50%"), "{screen}");
+    assert!(screen.contains("Original second note"), "{screen}");
+    assert!(screen.contains("1 of 2"), "{screen}");
+    model.handle_event(key(KeyCode::Right));
+    assert!(render(&mut model, 120, 32).contains("Original first note"));
+    model.handle_event(key(KeyCode::Char('s')));
+    assert!(render(&mut model, 120, 32).contains("Original second note"));
+}
+
+#[test]
+fn orderings_must_be_complete_permutations_with_unique_nonempty_names() {
+    for orders in [
+        json!([{"name":"X", "note_ids":["H06"]}]),
+        json!([{"name":"X", "note_ids":["H06", "H06"]}]),
+        json!([{"name":"X", "note_ids":["H06", "unknown"]}]),
+        json!([{"name":"", "note_ids":["H06", "H21"]}]),
+        json!([{"name":"X", "note_ids":["H06", "H21"]},
+               {"name":"X", "note_ids":["H21", "H06"]}]),
+    ] {
+        let mut data = packet();
+        data["orderings"] = orders;
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("review.json");
+        fs::write(&path, serde_json::to_vec(&data).unwrap()).unwrap();
+        assert!(ModelOutputReview::load(path, None).is_err());
+    }
+}
+
+#[test]
 fn model_selection_keeps_note_and_note_navigation_keeps_model() {
     let mut model = load(&packet(), None);
     for (code, output) in [

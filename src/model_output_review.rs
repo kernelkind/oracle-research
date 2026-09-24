@@ -1,6 +1,6 @@
 //! Read-only comparison of saved model outputs against complete source notes.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::io;
 use std::path::Path;
 
@@ -22,6 +22,27 @@ struct Review {
     schema_version: u32,
     title: String,
     notes: Vec<Note>,
+    #[serde(default)]
+    orderings: Vec<ReviewOrdering>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReviewOrdering {
+    name: String,
+    note_ids: Vec<String>,
+}
+
+impl Review {
+    fn apply_ordering(&mut self, index: usize) {
+        let positions: BTreeMap<_, _> = self.orderings[index]
+            .note_ids
+            .iter()
+            .enumerate()
+            .map(|(i, id)| (id.as_str(), i))
+            .collect();
+        self.notes.sort_by_key(|note| positions[note.id.as_str()]);
+    }
 }
 
 #[derive(Deserialize)]
@@ -53,6 +74,7 @@ pub struct ModelOutputReview {
     review: Review,
     note: usize,
     model: usize,
+    ordering: usize,
     panel: usize,
     show_model_input: bool,
     scroll: [u16; 3],
@@ -61,7 +83,7 @@ pub struct ModelOutputReview {
 
 impl ModelOutputReview {
     pub fn load(path: impl AsRef<Path>, start_at: Option<&str>) -> io::Result<Self> {
-        let review: Review = serde_json::from_slice(&std::fs::read(path)?)
+        let mut review: Review = serde_json::from_slice(&std::fs::read(path)?)
             .map_err(|error| invalid(format!("invalid model-output review: {error}")))?;
         if review.schema_version != 1 || review.title.trim().is_empty() || review.notes.is_empty() {
             return Err(invalid("expected a nonempty schema-1 model-output review"));
@@ -107,6 +129,21 @@ impl ModelOutputReview {
                 ));
             }
         }
+        let mut ordering_names = BTreeSet::new();
+        for ordering in &review.orderings {
+            if ordering.name.trim().is_empty()
+                || !ordering_names.insert(&ordering.name)
+                || ordering.note_ids.len() != ids.len()
+                || ordering.note_ids.iter().collect::<BTreeSet<_>>() != ids
+            {
+                return Err(invalid(
+                    "orderings require distinct names and complete note-ID permutations",
+                ));
+            }
+        }
+        if !review.orderings.is_empty() {
+            review.apply_ordering(0);
+        }
         let note = match start_at {
             Some(id) => review
                 .notes
@@ -119,6 +156,7 @@ impl ModelOutputReview {
             review,
             note,
             model: 0,
+            ordering: 0,
             panel: 0,
             show_model_input: false,
             scroll: [0; 3],
@@ -193,6 +231,11 @@ impl ModelOutputReview {
             KeyCode::Char('[') => self.select_model((self.model + models - 1) % models),
             KeyCode::Char(']') => self.select_model((self.model + 1) % models),
             KeyCode::Char(number @ '1'..='9') => self.select_model(number as usize - '1' as usize),
+            KeyCode::Char('s') if !self.review.orderings.is_empty() => {
+                self.ordering = (self.ordering + 1) % self.review.orderings.len();
+                self.review.apply_ordering(self.ordering);
+                self.select_note(self.note);
+            }
             KeyCode::Char('i') if self.review.notes[self.note].model_input.is_some() => {
                 self.show_model_input = !self.show_model_input;
                 self.scroll[0] = 0;
@@ -240,29 +283,39 @@ impl ModelOutputReview {
             .wrap(Wrap { trim: false })
             .line_count(area.width)
             .clamp(1, 3) as u16;
+        let header_height = if self.review.orderings.is_empty() {
+            2
+        } else {
+            3
+        };
         let rows = Layout::vertical([
-            Constraint::Length(2 + choices_height),
+            Constraint::Length(header_height + choices_height),
             Constraint::Min(12),
             Constraint::Length(3),
         ])
         .split(area);
-        let header = Layout::vertical([Constraint::Length(2), Constraint::Min(1)]).split(rows[0]);
-        frame.render_widget(
-            Paragraph::new(vec![
-                Line::styled(
-                    format!("Read-only · {}", terminal_safe(&self.review.title)),
-                    accent_style(),
-                ),
-                Line::from(format!(
-                    "{} · {} of {} · {}",
-                    terminal_safe(&note.id),
-                    self.note + 1,
-                    self.review.notes.len(),
-                    terminal_safe(&note.title)
-                )),
-            ]),
-            header[0],
-        );
+        let header = Layout::vertical([Constraint::Length(header_height), Constraint::Min(1)])
+            .split(rows[0]);
+        let mut heading = vec![
+            Line::styled(
+                format!("Read-only · {}", terminal_safe(&self.review.title)),
+                accent_style(),
+            ),
+            Line::from(format!(
+                "{} · {} of {} · {}",
+                terminal_safe(&note.id),
+                self.note + 1,
+                self.review.notes.len(),
+                terminal_safe(&note.title)
+            )),
+        ];
+        if let Some(ordering) = self.review.orderings.get(self.ordering) {
+            heading.push(Line::from(format!(
+                "Order: {} · s: change order, keep position",
+                terminal_safe(&ordering.name)
+            )));
+        }
+        frame.render_widget(Paragraph::new(heading), header[0]);
         frame.render_widget(
             Paragraph::new(choices).wrap(Wrap { trim: false }),
             header[1],

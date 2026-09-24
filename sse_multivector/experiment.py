@@ -604,6 +604,8 @@ def run(directory, max_new_attempts=None, runner_upgrade_reason=None):
 
 def review(args):
     directory = args.experiment.resolve()
+    if args.cosine_comparison and not args.ui:
+        raise ValueError("--cosine-comparison requires --ui")
     with locked(directory):
         result = report(directory)
         if args.ui:
@@ -611,6 +613,14 @@ def review(args):
                 raise ValueError("--ui cannot record a CLI judgment")
             plan, _, _ = load(directory)
             batch, excluded = inputs.review_batch(plan, result)
+            if args.cosine_comparison:
+                if plan["dataset"]["adapter"] != "prominence":
+                    raise ValueError("--cosine-comparison requires prominence cases")
+                try:
+                    from .prominence_ranking import add_rankings
+                except ImportError:
+                    from prominence_ranking import add_rankings
+                batch = add_rankings(batch, result, read(args.cosine_comparison))
             if plan["dataset"]["adapter"] == "prominence":
                 # The existing model-output viewer is read-only: do not create
                 # approval sessions or pass its cards to the title/mask UI.
@@ -818,6 +828,8 @@ def parser():
     p.add_argument("--comment")
     p.add_argument("--ui", action="store_true")
     p.add_argument("--ui-binary", type=Path)
+    p.add_argument("--cosine-comparison", type=Path,
+                   help="saved prominence_cosine/centroid comparison; adds offline ranking orders")
     return root
 
 

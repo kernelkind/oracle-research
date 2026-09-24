@@ -116,6 +116,35 @@ class ExperimentTests(unittest.TestCase):
             with self.subTest(raw=raw), self.assertRaises(ValueError):
                 inputs.validate({"adapter": "prominence"}, case, raw, None)
 
+    def test_cosine_review_uses_saved_results_without_calls_or_decisions(self):
+        self.prominence_spec()
+        self.prepare()
+        self.cli("run", "E1", env={"FAKE_RUNNER_PROMPT_RESPONSE": '{"prominence":80}'})
+        before = self.calls()
+        rows = []
+        for case in self.show("E1")["cases"]:
+            evidence = case["evidence"]
+            rows.append(dict(id=case["id"], node_id="tea", title="Tea", note_id="N1",
+                             mask_ids=evidence["mask_ids"], prominence=80,
+                             fragments=[evidence["text"].encode()[a:b].decode()
+                                        for a, b in evidence["byte_spans"]],
+                             cosine=.1 if case["id"] == "tea-first" else .9))
+        self.write("cosines.json", {"groups": {"tea": rows}})
+        viewer = self.root / "viewer"
+        viewer.write_text(
+            "#!/usr/bin/env python3\nimport json,sys\nfrom pathlib import Path\n"
+            "data=json.loads(Path(sys.argv[1]).read_text())\n"
+            "assert len(data['orderings'])==4\n"
+            "assert data['orderings'][0]['note_ids']==['tea-first','tea-second']\n"
+            "assert data['orderings'][1]['note_ids']==['tea-second','tea-first']\n"
+        )
+        viewer.chmod(0o755)
+        self.cli("review", "E1", "--ui", "--ui-binary", viewer,
+                 "--cosine-comparison", "cosines.json")
+        self.assertEqual(self.calls(), before)
+        self.assertFalse((self.root / "E1" / "reviews.jsonl").exists())
+        self.assertFalse((self.root / "E1" / "review-ui.json").exists())
+
     def test_prominence_review_sorts_within_nodes_without_omitting_failures(self):
         from sse_multivector import experiment_inputs as inputs
 
