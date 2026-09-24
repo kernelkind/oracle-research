@@ -12,7 +12,7 @@ from pathlib import Path
 
 from prepare_category_title_inputs import prepare
 from true_category_graph import _reachability, build_graph
-from true_graph_notes import derive_note_memberships
+from true_graph_notes import _matched_instance, derive_note_memberships
 
 
 POLICIES = {
@@ -29,15 +29,37 @@ def _digest(value):
     return hashlib.sha256(payload.encode('utf-8')).hexdigest()
 
 
-def merge_graph(titles, scores, source_packets):
+def union_packet(group, members, evidence):
+    """Union exact masks, retaining complete member-scoped source records."""
+    masks = {}
+    for member in members:
+        for item in evidence[member]:
+            key = (item['note_id'], tuple(tuple(span) for span in item['byte_spans']))
+            if key not in masks:
+                record = deepcopy(item)
+                if len(members) > 1:
+                    record['instance'] = 'mask-' + _digest(key)
+                record['origins'] = []
+                masks[key] = record
+            elif (masks[key]['text'] != item['text']
+                  or masks[key]['fragments'] != item['fragments']):
+                raise ValueError('conflicting text for identical mask')
+            masks[key]['origins'].append(dict(source_group_id=member,
+                                              source_instance=deepcopy(item)))
+    return dict(packet=group, instances=[masks[key] for key in sorted(masks)])
+
+
+def merge_graph(titles, scores, source_packets, *, original_members=None):
     """Keep raw inputs and return an SCC-contracted DAG with mask/edge origins.
 
     Singleton IDs/titles survive. New IDs hash sorted original member IDs; new
     titles are None/pending, never a member's arbitrarily chosen title. Naming
     packets can go straight to the existing title preparation adapter. All
     selected original masks survive in origins; same-post equal ordered byte
-    spans appear only once in each output node. Unused packet instances remain
-    in the raw inputs, not the merged membership.
+    spans appear only once in each output node, retaining all their aliases.
+    Other packet masks remain in the raw inputs, not the merged membership.
+    When exact-mask-set consolidation ran first, original_members carries its
+    mapping so cycle IDs hash original nodes rather than intermediate IDs.
 
     Complete native answers are required. Missing/unresolved results must be
     recovered upstream, not interpreted as No. This stage performs no retries.
@@ -48,41 +70,49 @@ def merge_graph(titles, scores, source_packets):
         raise ValueError('unresolved native answers: recover them before merging')
     original_memberships = derive_note_memberships(raw, source_packets)
     by_id = {n['group']: n for n in titles['groups']}
+    originals = original_members if original_members is not None else {key: [key] for key in by_id}
+    if set(originals) != set(by_id):
+        raise ValueError('original-member mapping must cover the TRUE node inventory')
+    seen = set()
+    for members in originals.values():
+        if (not isinstance(members, list) or not members
+                or any(not isinstance(m, str) or not m for m in members)
+                or len(set(members)) != len(members) or seen.intersection(members)):
+            raise ValueError('original-member lists must be nonempty and disjoint')
+        seen.update(members)
     evidence = {n['group']: n for n in original_memberships['nodes']}
+    packet_by_id = {p['packet']: p for p in source_packets['packets']}
+    # Title preparation shows each exact mask once. Preserve the source aliases
+    # of those masks too, without admitting any additional mask identities.
+    origins = {}
+    for member in by_id:
+        selected = {(i['note_id'], tuple(map(tuple, i['byte_spans'])))
+                    for i in evidence[member]['matched_instances']}
+        rows = packet_by_id[member]['instances']
+        origins[member] = [
+            _matched_instance(i, rows, member) for i in rows
+            if (i['note_id'], tuple(map(tuple, i['byte_spans']))) in selected]
     components = sorted(sorted(c) for c in raw['strongly_connected_components'])
     mapping, nodes, packets = {}, [], []
     for members in components:
         merged = len(members) > 1
-        group = ('merged-' + _digest(members)) if merged else members[0]
+        original_ids = sorted(m for member in members for m in originals[member])
+        group = ('merged-' + _digest(original_ids)) if merged else members[0]
         if merged and group in by_id:
             raise ValueError('merged ID collides with original ID: ' + group)
         if group in mapping.values():
             raise ValueError('merged ID collision: ' + group)
         mapping.update({member: group for member in members})
-        masks = {}
-        for member in members:
-            for item in evidence[member]['matched_instances']:
-                key = (item['note_id'], tuple(tuple(span) for span in item['byte_spans']))
-                if key not in masks:
-                    record = deepcopy(item)
-                    if merged:
-                        record['instance'] = 'mask-' + _digest(key)
-                    record['origins'] = []
-                    masks[key] = record
-                elif (masks[key]['text'] != item['text']
-                      or masks[key]['fragments'] != item['fragments']):
-                    raise ValueError('conflicting text for identical mask')
-                masks[key]['origins'].append(dict(source_group_id=member,
-                                                  source_instance=deepcopy(item)))
-        instances = [masks[key] for key in sorted(masks)]
+        packet = union_packet(group, members, origins)
+        instances = packet['instances']
         node = {} if merged else deepcopy(by_id[members[0]])
-        node.update(group=group, source_group_ids=members,
+        node.update(group=group, source_group_ids=original_ids,
                     title=None if merged else by_id[members[0]]['title'],
                     title_status='pending' if merged else 'original',
                     instances=[dict(instance=i['instance'], fragments=i['fragments'])
                                for i in instances])
         nodes.append(node)
-        packets.append(dict(packet=group, instances=instances))
+        packets.append(packet)
 
     # Reuse the title adapter's exact-mask validation, including cross-packet
     # source-text consistency. Only selected instances participate.
@@ -129,6 +159,8 @@ def merge_graph(titles, scores, source_packets):
                 != set(merged_memberships[group]['recursive_note_ids'])):
             raise ValueError('contraction changed recursive post membership: ' + original)
     source = dict(titles=titles, scores=scores, source_packets=source_packets)
+    if original_members is not None:
+        source['original_members'] = original_members
     result = dict(
         schema_version=1, policies=POLICIES,
         source_sha256={name: _digest(value) for name, value in source.items()},

@@ -17,11 +17,11 @@ on September 20. On September 24, the user confirmed that the node-title prompt
 is finished (23 complete). The [frozen v38/Luna max title pass](../../sse_multivector/navigation-research-v1/README.md#current-title-prompt-experiment) has produced
 valid titles for all 129 groups in the 100-note build: 108 new calls and 21
 reused results. The saved HRv1 hierarchy still uses the older v21 titles.
-Task 02 is ready to resume, but the saved v38 titles must first be connected to
-its TRUE inputs; the existing HRv1 runner and saved TRUE inputs still use v21.
-TRUE placement, any necessary cycle/equivalence handling, and hierarchy review
-remain. The solid 23 → 02 prerequisite is satisfied; 25 is required to finish
-02, not to start its TRUE work.
+Task 02 is ready to resume. The offline construction path has validated those
+saved v38 titles and prepared all 16,512 directed TRUE inputs without inference.
+The historical HRv1 runner and artifacts remain on v21. TRUE placement, merged
+naming and hierarchy review remain. The solid 23 → 02 prerequisite is satisfied;
+25 is required to finish 02, not to start its TRUE work.
 The full pass was mechanically valid; spot checks found some questionable
 titles, and the user has not approved every output. Prompt changes and
 validation procedures belong to that workstream, not this planning discussion.
@@ -41,13 +41,13 @@ workstream or approval of the overall plan.
 
 ### Status checkpoint — September 24
 
-Tasks 02 and 23 were updated on September 24. Other rows were last confirmed
+Tasks 02, 23 and 25 were updated on September 24. Other rows were last confirmed
 with the user on September 23.
 
 | Task | Current status |
 | --- | --- |
 | 01 · Subject and mask prompts | Finished. |
-| 02 · Build and review 100-note hierarchy | Ready to resume; connect saved v38 titles to TRUE inputs, then complete placement and minimal-scope correctness review. Task 25 is a finish gate. |
+| 02 · Build and review 100-note hierarchy | Ready to resume; v38 TRUE inputs prepared offline. Placement, merged naming and minimal-scope correctness review remain. Task 25 is a finish gate. |
 | 23 · Fix and validate node-title prompt | Finished; 129 titles saved. |
 | 04 · Define mask prominence | Paused. Earlier experimental results do not establish that work is active now. |
 | 17 · Compare teachers | In progress; no completed selection established. |
@@ -55,7 +55,7 @@ with the user on September 23.
 | 13 · Define Nostr hierarchy protocol | Not started. |
 | 18 · Prepare training code for the fine-tuning pilot | Not started. |
 | 24 · Recover missing node memberships | Not started. |
-| 25 · Handle node equivalence and TRUE cycles | Reversible native-cycle merge stage implemented and checked offline; exact-mask-set node consolidation and build integration remain. |
+| 25 · Handle node equivalence and TRUE cycles | Both merge stages and naming/browser integration implemented and checked offline; live naming and rebuilt-hierarchy validation remain. |
 | 21 · Assess HDBSCAN at launch scale | No further progress; earlier investigation remains evidence, not launch-scale validation. |
 | 22 · Measure SSE, node-title and TRUE processing costs | No further progress. |
 
@@ -261,9 +261,10 @@ the merged node's displayed title from their combined, deduplicated masks using
 the existing frozen title configuration (v38/Luna max). Do not arbitrarily
 choose a member's title. Preserve every original title and node ID. This call
 only names the merged node: it does not decide the merge, change its links or
-trigger another round of TRUE comparisons. This naming decision is not yet
-implemented and does not authorize model calls or settle the remaining merge
-implementation details.
+trigger another round of TRUE comparisons. The offline preparation, verified
+title collection and browser export are implemented; live naming validation
+remains. This does not authorize model calls or settle the provisional merge
+policy.
 
 ### Reversible hierarchy design decisions
 
@@ -276,9 +277,9 @@ user before implementation; do not resolve them through per-node exceptions.
 | ID | Choice and status | Uncertainty / tradeoff | How to revisit it |
 | --- | --- | --- | --- |
 | HD01 | **Current experiment rule:** native TRUE Yes creates an edge; no score cutoff. | Native answers miss useful links; the tested cutoff adds both useful and incorrect links. Neither is assumed correct. | Preserve exact title inputs, generated answers, scores and runtime identity; rebuild edges from saved outputs under another explicitly selected rule. |
-| HD02 | **Provisional merge rule:** merge mutually reachable nodes (strongly connected components). Offline stage implemented and replay-tested; full-build integration pending. | Correct subsumption cycles imply equivalence, but predicted cycles can be wrong. The user identified Beef / Beef products as an incorrect NEv2 merge. Saved examples have pairwise mutual Yes answers; a synthetic regression also covers longer cycles without them. | Keep the original nodes, masks, titles, edges and component membership. Rebuild from the pre-merge graph instead of trying to split a merged record after originals were discarded. |
+| HD02 | **Provisional merge rule:** merge mutually reachable nodes (strongly connected components). Offline construction stages integrated and tested; rebuilt-hierarchy validation pending. | Correct subsumption cycles imply equivalence, but predicted cycles can be wrong. The user identified Beef / Beef products as an incorrect NEv2 merge. Saved examples have pairwise mutual Yes answers; a synthetic regression also covers longer cycles without them. | Keep the original nodes, masks, titles, edges and component membership. Rebuild from the pre-merge graph instead of trying to split a merged record after originals were discarded. |
 | HD03 | **Candidate, mechanically tested but not settled:** retain any accepted incoming/outgoing connection of a merged member, preserving existing paths. | This favors accepted paths over contradictory direct No answers. The contradiction can exist before merging: Beef -> Beef products -> Steak, alongside a direct No for Beef -> Steak. Record the disagreement; do not silently repair it. | Preserve every Yes and No and the original edge contributors. A different conflict policy starts from those answers and may require recomputing merges and descendants, not merely editing the displayed links. |
-| HD04 | **Approved naming design, not implemented:** generate the merged title as described above; do not rerun TRUE merely because it changes. | The new wording may suggest a different scope from the original titles used by TRUE. The naming call does not establish new relationship evidence. | Save member titles, combined-mask input, prompt/model settings and generated title. A naming-only alternative need not rerun extraction or TRUE; using new titles for relationships would be a separate design change. |
+| HD04 | **Implemented, live validation pending:** generate the merged title through the frozen title workflow; bind returned names to exact combined-mask inputs and change labels only. | The new wording may suggest a different scope from the original titles used by TRUE. The naming call does not establish new relationship evidence. | Save member titles, combined-mask input, prompt/model settings and generated title. A naming-only alternative need not rerun extraction or TRUE; using new titles for relationships would be a separate design change. |
 | HD05 | **Implemented and tested:** derive a new merged-node ID from the SHA-256 of the sorted original member-ID list, preserving every original ID. | The same members produce the same merged ID regardless of member order or displayed title. This identifies the merge, not independently verified semantic equivalence. | Keep the original-member mapping and ID-rule version. A different membership or ID rule can be rebuilt from that mapping; changing only the displayed title must not change the ID. |
 | HD06 | **Approved comparison design, not implemented:** preserve the first run's original reviewed view and create a separate reprocessed view from its saved nodes and TRUE answers using the new run's merging and navigation rules. Compare the new run primarily against the reprocessed view. | The first run included manual extraction corrections, group exclusions and a title override. Matching downstream rules does not make those inputs an untouched automatic baseline. | Freeze the original subjects, masks, node titles, answers and reviewed artifacts; do not regenerate them. Record the reprocessing policies and historical interventions separately so the original and reprocessed views remain inspectable. |
 
@@ -290,9 +291,13 @@ merges, memberships and navigation when their inputs change. This is a build
 requirement, not a claim that the current runner already implements it.
 The [offline merge stage](../../sse_multivector/navigation-research-v1/README.md#reversible-merge-stage)
 records policy versions, source hashes and reversible inputs. Saved NEv2 and
-TRUE10 replays preserve paths and post membership. HD04 has prepared combined
-mask packets but no generated merged titles; HD06 still lacks a published
-reprocessed browser view. This check made no model calls or full hierarchy run.
+TRUE10 replays preserve paths and post membership. The [offline construction
+path](../../sse_multivector/navigation-research-v1/README.md#offline-construction-path)
+now connects exact-mask-set consolidation, receipt-validated v38 titles, TRUE
+input preparation, cycle merging, naming and browser export. HD04 has a prepared
+four-case naming experiment but no live merged titles; HD06 still lacks a
+published reprocessed browser view. These checks made no model calls or full
+hierarchy run.
 
 **Hierarchy execution recovery (clarified September 24):** retry failed model
 calls and reuse successful results. Preserve failed-attempt receipts and the
@@ -324,7 +329,8 @@ required outcomes, not selected implementation methods or new dates:
 | **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered TRUE and large-group title inputs. | Needs 03 + 21 + 22; required to finish full-build feasibility 10. |
 
 24 can start from saved artifacts and remains unstarted. 25 has an offline
-merge stage checked against saved results; construction integration remains.
+construction path checked against saved results; live naming and validation
+on the rebuilt hierarchy remain.
 For 26, the [browser implementation and regression checks](../../sse_multivector/navigation-research-v1/README.md#shared-child-collapse)
 are complete; validation on the rebuilt HRv1 hierarchy awaits graph packaging.
 27 waits for 04, which remains paused. 28 waits for the validated small-corpus

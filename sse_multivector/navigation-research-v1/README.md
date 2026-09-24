@@ -40,7 +40,7 @@ The existing `true_graph_equivalence.py` replays explicit reviewed approvals;
 it does not generate them. Its cutoff-based checks also must not silently be
 substituted for the current native-answer graph rule.
 
-**Merged-node naming — approved design, implementation pending:** after a
+**Merged-node naming — implemented, live validation pending:** after a
 merge, use the [frozen v38 title prompt](../hdbv2-node-description-probe-v38/prompt.txt)
 with the frozen Luna-max configuration on the combined masks, deduplicated by
 the same-post exact-mask identity above. Generate a displayed title rather than
@@ -56,8 +56,9 @@ merged-node naming (HD04), and stable merged IDs derived from original member
 IDs (HD05). These statuses must remain distinct: a candidate is
 not an adopted rule. Future run manifests must identify the selected policy
 versions and retain the pre-merge nodes, all TRUE answers, mask origins and title
-inputs/outputs so alternatives can reuse unchanged work. The offline merging
-stage below is implemented; full-build integration is still pending. This
+inputs/outputs so alternatives can reuse unchanged work. Both merge stages,
+title collection and browser export are connected in the offline construction
+path below. Live naming and validation on the rebuilt hierarchy remain. This
 register authorizes no new run.
 
 ### Reversible merge stage
@@ -76,9 +77,10 @@ spans, retaining every contributing instance. Merged titles are explicitly
 `null`/`pending`, with `naming_source_packets` ready for the existing title
 adapter and frozen v38/Luna-max configuration. No naming inference is performed.
 Do not pass this artifact off as scored titles to the historical exporter:
-integrating pending naming and the derived graph into the build/browser is
-still required. Pre-TRUE identical-mask-set node consolidation remains separate
-unfinished work; within-node mask deduplication does not implement that stage.
+`hierarchy_build.py package` validates the merge and its naming experiment
+separately, then uses the shared browser renderer. `hierarchy_build.py nodes`
+implements pre-TRUE identical-mask-set node consolidation; it is distinct from
+deduplicating masks within a node.
 
 The September 24 offline replay matched the saved NEv2 component partition,
 edge contributors and reduced edges: **24 → 19 nodes**, 14 external edges,
@@ -108,6 +110,44 @@ packets by ID with each `consolidations[].source_packets` entry. Use the origina
 `TRUE10/titles.json` and `TRUE10/graph/scores.json`, not the manually consolidated
 scores. Keep original reviewed artifacts untouched. This offline check is not
 yet the separate published comparison view required by HD06.
+
+### Offline construction path
+
+`hierarchy_build.py` connects the saved-data stages without executing models:
+
+1. `nodes SOURCE_PACKETS OUTPUT_DIRECTORY` compares sets of post IDs and ordered
+   byte spans. Equal sets merge; strict subsets stay. Original packets and ID
+   mappings are saved, together with a v38/Luna-max title experiment spec.
+2. Use the existing `experiment.py prepare/run` workflow for titles. `true-inputs
+   NODES_JSON TITLE_EXPERIMENT OUTPUT_DIRECTORY` revalidates receipts, frozen
+   settings, complete inventory and exact inputs, then emits all directed TRUE
+   inputs. It can collect existing matching results without rerunning titles.
+3. After the existing TRUE scorer/reuse workflow supplies complete scores,
+   `merge TITLE_DIRECTORY SCORES_JSON OUTPUT_DIRECTORY` applies HD01–03. IDs
+   use original members across both stages, not intermediate merged IDs. The
+   artifact retains pre-TRUE consolidation and all original TRUE evidence.
+4. Its naming spec goes through the same `experiment.py` workflow. `package
+   MERGE_JSON SOURCE MAPPING OUTPUT_DIRECTORY --naming-experiment EXPERIMENT`
+   binds those results to the combined masks and changes labels only. Pending
+   names block publication. With no cycle merges, omit the naming experiment.
+   `naming MERGE_JSON OUTPUT_DIRECTORY` also prepares naming for an existing
+   standalone reversible-merge artifact.
+
+Output directories are exclusive and locally ignored. The package contains
+`categories.json`, named graph/membership evidence and original provenance.
+The existing browser opens it with `--categories`, the original source file,
+and `--collapse-equal-note-steps`; individual masks retain original IDs and
+aliases. The historical `hierarchy_refresh.py` v21 path and its artifacts are
+unchanged. Model execution, cache identity checks and spending approval stay
+with their existing tools, not this offline module.
+
+September 24 checks: all **129** HRv1 packets remain distinct; all saved v38
+titles match and produce **16,512 prepared inputs, not scored comparisons**.
+The prepared four-case NEv2 merged-naming experiment made zero model calls.
+Tests cover both merges through naming and browser export, using synthetic
+responses. Separately, an export of the saved acyclic 58-node baseline passed
+the actual browser's `--check` with equal-note collapse. That is an integration
+check, not the new HD06 reprocessed baseline or live merged-title validation.
 
 The earlier GDC09 equal-note collapse operates on a tree. The current category
 browser also implements [shared-child collapse](#shared-child-collapse) as a
@@ -467,9 +507,10 @@ unchanged N/D and branch-local masks, O's displayed-child behavior, inspectable
 skipped IDs, cycle rejection, and opt-in compatibility. An integration test
 runs the actual refresh launcher and browser on fixtures for both views.
 
-The real HRv1 graph remains unpackaged pending the independent title and
-semantic-consolidation work. No title, relation, membership or saved artifact
-was changed to implement this navigation rule.
+The refreshed v38 HRv1 graph remains unbuilt: titles are saved and the offline
+construction path above is implemented, but full TRUE inference, merged naming
+and hierarchy review have not run. No title, relation, membership or saved
+artifact was changed to implement this navigation rule.
 
 ## Current evaluation decisions — September 15, 2026
 

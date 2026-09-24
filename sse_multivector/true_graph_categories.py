@@ -31,6 +31,21 @@ def export(canonical_path, graph_path, memberships_path, source_path, mapping_pa
     if memberships != expected_notes:
         raise ValueError('saved memberships differ from the graph and source masks')
 
+    spec = render_categories(graph, memberships, source_path, mapping_path,
+                             hierarchy_id=hierarchy_id)
+    with output_path.open('x') as stream:
+        json.dump(spec, stream, ensure_ascii=False, indent=2, allow_nan=False)
+        stream.write('\n')
+    return spec
+
+
+def render_categories(graph, memberships, source_path, mapping_path, *, hierarchy_id):
+    """Render a caller-validated DAG and memberships for the existing browser.
+
+    Native export validates against raw TRUE answers. Reversible-merge export
+    validates by replaying the merge and binding names to their saved inputs.
+    """
+
     source_bytes = Path(source_path).read_bytes()
     originals = {}
     for note in json.loads(source_bytes)['notes']:
@@ -94,9 +109,6 @@ def export(canonical_path, graph_path, memberships_path, source_path, mapping_pa
                 notes=sorted((dict(note_id=n, note_short_id=short_ids[n]) for n in all_notes),
                              key=lambda n: n['note_short_id']),
                 nodes=nodes, note_masks=masks)
-    with output_path.open('x') as stream:
-        json.dump(spec, stream, ensure_ascii=False, indent=2, allow_nan=False)
-        stream.write('\n')
     return spec
 
 

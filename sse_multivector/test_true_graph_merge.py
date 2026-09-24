@@ -104,6 +104,16 @@ class MergeTests(unittest.TestCase):
         self.assertEqual(result['graph']['raw_edges'][0]['source_score_ids'],
                          ['A-contains-C', 'B-contains-C'])
 
+    def test_title_dedup_does_not_discard_source_mask_aliases(self):
+        titles, scores, packets = inputs(set())
+        alias = deepcopy(packets['packets'][0]['instances'][0])
+        alias.update(instance='duplicate-mask', vector_id='duplicate-vector')
+        packets['packets'][0]['instances'].append(alias)
+        result = merge_graph(titles, scores, packets)
+        mask = result['source_packets']['packets'][0]['instances'][0]
+        self.assertEqual([o['source_instance']['instance'] for o in mask['origins']],
+                         ['Va', 'duplicate-mask'])
+
     def test_native_no_above_cutoff_does_not_form_a_cycle(self):
         titles, scores, packets = inputs({('A', 'B')})
         reverse = next(r for r in scores if r['id'] == 'B-contains-A')

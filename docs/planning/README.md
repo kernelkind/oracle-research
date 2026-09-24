@@ -55,9 +55,10 @@ unfinished. Comparison planning is part of 17, not a separate task.
 Node 01 is complete: the subject and mask prompts are finished. On September 24,
 the user confirmed that the node-title prompt is finished. Node 23 is complete,
 and all 129 HDBSCAN groups have saved v38/Luna max titles. Node 02 is ready to
-resume, but those titles must first be connected to its TRUE inputs; the saved
-HRv1 runner and inputs still use v21. TRUE placement and minimal-scope
-correctness review remain. Its solid 23 → 02 arrow records a satisfied
+resume: the offline construction path has prepared all 16,512 directed TRUE
+inputs from those saved titles without inference. The historical HRv1 path
+remains on v21. TRUE placement, merged naming and minimal-scope correctness
+review remain. Its solid 23 → 02 arrow records a satisfied
 prerequisite. A valid title response is not a user-approved title. Additional
 rows expose the remaining construction work.
 Node 04 (mask prominence) is grey and marked paused, reconfirmed by the user on
@@ -70,9 +71,9 @@ summary names only the green workstreams. Readiness
 does not authorize research, implementation, agent assignment or spending.
 
 Node 24 is ready but not started: recover missing memberships. Node 25 is ready
-to resume: its reversible native-cycle merge stage is implemented and checked
-against saved results; exact-mask-set node consolidation and full-build
-integration remain. The merge policy is provisional, not proven equivalence.
+to resume: both merge stages and naming/browser integration are implemented
+and checked offline; live naming and rebuilt-hierarchy validation remain.
+The merge policy is provisional, not proven equivalence.
 Node 26 is grey: its navigation collapse is
 implemented and regression-tested; validation on the rebuilt hierarchy is
 pending. It is not in the ready-to-start summary.

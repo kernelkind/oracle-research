@@ -69,7 +69,7 @@ class PlanningViewerTest(unittest.TestCase):
         self.assertNotIn("dashed=1", edge.get("style"))
         self.assertIn("READY TO RESUME", cells["h2"].get("value"))
         self.assertIn("saved v38 titles", cells["h2"].get("value"))
-        self.assertIn("Connect saved v38 titles to TRUE inputs", cells["h2"].get("value"))
+        self.assertIn("TRUE inputs prepared from saved v38 titles", cells["h2"].get("value"))
         self.assertIn("correctness at minimal scope", cells["h2"].get("value"))
         self.assertIn("finish requires 25", cells["h2"].get("value"))
         self.assertIn("fillColor=light-dark(#e6f4ea,", cells["h2"].get("style"))
@@ -137,8 +137,8 @@ class PlanningViewerTest(unittest.TestCase):
         self.assertNotIn(("h-recovery", "h2"), edges,
                          "Membership expansion is outside the initial diagnostic")
         self.assertIn(("h-relations", "h2"), edges)
-        self.assertIn("checked offline; policy remains provisional", cells["h-relations"].get("value"))
-        self.assertIn("full-build integration remain", cells["h-relations"].get("value"))
+        self.assertIn("cycle policy remains provisional", cells["h-relations"].get("value"))
+        self.assertIn("Validate on rebuilt hierarchy", cells["h-relations"].get("value"))
         self.assertNotIn("dashed=1", edges["h-relations", "h2"].get("style"))
         collapse = cells["h-collapse"]
         self.assertIn("VALIDATION PENDING", collapse.get("value"))
