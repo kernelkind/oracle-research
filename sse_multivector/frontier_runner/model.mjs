@@ -24,6 +24,19 @@ const sha256 = text => createHash('sha256').update(text).digest('hex');
 const nonempty = value => typeof value === 'string' && value.trim().length > 0;
 const integer = (value, min, max) => Number.isSafeInteger(value) && value >= min && value <= max;
 
+// Exact Luna metadata: official model page and API pricing, checked 2026-09-24.
+// https://developers.openai.com/api/docs/models/gpt-6-luna
+// https://developers.openai.com/api/docs/pricing#text-tokens
+// Reference API rates are not subscription usage or bills.
+const luna = {
+  id: 'gpt-6-luna', name: 'GPT-6 Luna',
+  provider: 'openai-codex', api: 'openai-codex-responses', baseUrl: 'https://chatgpt.com/backend-api',
+  input: ['text', 'image'], reasoning: true, contextWindow: 1050000, maxTokens: 128000,
+  thinkingLevelMap: { off: 'none', minimal: null, low: 'low', medium: 'medium', high: 'high', xhigh: 'xhigh', max: 'max' },
+  cost: { input: 0.10, output: 0.50, cacheRead: 0.01, cacheWrite: 0.125,
+    tiers: [{ inputTokensAbove: 272000, input: 0.20, output: 0.75, cacheRead: 0.02, cacheWrite: 0.25 }] },
+};
+
 // The pinned catalog predates GPT-6 Sol. Exact metadata, not a GPT-5.6 alias.
 // Verified 2026-09-24: https://developers.openai.com/api/docs/models/gpt-6-sol
 // API reference rates: https://developers.openai.com/api/docs/changelog#sep-22
@@ -115,6 +128,7 @@ export async function prepare(config) {
   let model;
   if (config.provider === 'openai-codex') {
     model = config.model === sol.id ? sol
+      : config.model === luna.id ? luna
       : Object.hasOwn(OPENAI_CODEX_MODELS, config.model) ? OPENAI_CODEX_MODELS[config.model] : undefined;
     if (!model) throw new Error('Unknown subscription model in the pinned pi-ai catalog; no model substitution');
     if (model.api !== 'openai-codex-responses') throw new Error(`Unsupported subscription transport: ${model.api}`);

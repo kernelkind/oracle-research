@@ -52,6 +52,13 @@ checked September 24, 2026. Catalog cost estimates are not subscription bills.
 
 ## Request
 
+The exact subscription model `gpt-6-luna` is also supplied explicitly for the
+pinned SDK. It accepts `off`, `low`, `medium`, `high`, `xhigh`, `max`, and
+`provider-default`, but not `minimal`. See the official
+[Luna model page](https://developers.openai.com/api/docs/models/gpt-6-luna).
+Its API reference cost metadata is not a subscription-capacity estimate;
+the teacher comparison uses the subscription route with no paid API fallback.
+
 Required fields:
 
 - `provider`: `openai-codex` for subscription access, or `openrouter`.

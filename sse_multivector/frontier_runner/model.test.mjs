@@ -27,6 +27,19 @@ const run = async (text, extra = {}, finish = 'stop') => execute(await prepare(c
   apiKey: 'test-only', fetch: async () => reply(text, finish),
 });
 
+test('GPT-6 Luna uses the exact subscription model and max effort without a caller cap', async () => {
+  const route = { provider: 'openai-codex', model: 'gpt-6-luna', reasoning: 'max' };
+  const result = await preview(await prepare(config(route, { schema })));
+  assert.equal(result.body.model, 'gpt-6-luna');
+  assert.deepEqual(result.body.reasoning, { effort: 'max' });
+  assert.equal(result.body.max_output_tokens, undefined);
+  assert.equal(result.credentials_read, false);
+  assert.equal(result.network_requests, 0);
+  assert.deepEqual(result.body.text.format.schema, schema);
+  await assert.rejects(prepare(config(route, { reasoning: 'minimal' })), /reasoning/);
+  await assert.rejects(prepare(config(route, { max_output_tokens: 100 })), /output.*cap/);
+});
+
 for (const route of [codex, openrouter]) {
   test(`${route.provider}: arbitrary prompt is the only message and needs no schema`, async () => {
     const request = await prepare(config(route));
