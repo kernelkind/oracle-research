@@ -206,6 +206,25 @@ test invokes the retired saved-batch command and was left unchanged. Live
 comparison succeeded through the subscription service; catalog cost estimates
 are not incremental API charges, and no paid fallback was used.
 
+The next authorized sample switched to **GPT-6 Luna, max** at the user's request,
+before any new Sol calls. Unchanged v37 was tested on ten groups outside the
+previous twenty, selected before inference for diversity: a publication name,
+kindness, photography, exercise, sleep, bread ingredients, coffee flavor, peace,
+controversy and coffee shops. The reusable spec is
+`experiment_specs/title-v37-diverse-luna-max.json`; saved outputs and attributed
+reviews are under `experiments/title-v37-diverse-luna-max/`. All ten completed
+in ten attempts without retries, through the existing subscription route.
+
+Agent assessment: five acceptable, one rejected, four uncertain. The clear
+failure is `Granting privileges based on kindness, goodness, and generosity
+rather than status`: most instances express virtues without that relationship.
+Photography, exercise, sleep and controversy titles cover their masks but
+unnecessarily enumerate subtopics; these are borderline concision judgments,
+not four established membership failures. All ten are available in the review
+UI with reasoning and no inferred user decisions. There is no paired baseline
+on these new inputs, so this cannot rank Luna against Sol. Next, review the
+scope failure and enumeration cases before deciding whether to revise v37.
+
 HRv1's saved titles still use v21. These experiments do not authorize replacing
 them, running a full title pass, changing memberships or hierarchy edges, or
 consolidating categories. The saved v24 baseline and v25 comparison inputs,
