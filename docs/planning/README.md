@@ -15,8 +15,10 @@ using the bundled renderer's native dark-mode setting. The diagram uses native
 `light-dark()` color pairs: original light colors plus an explicit dark palette.
 Lighter charcoal cards, off-white task text and visible borders distinguish tasks
 from the canvas and subtly shaded workstreams. Green and blue status accents
-remain; waiting tasks do not have dimmed body text. Layout, content and dependency
-meanings are unchanged. No renderer patch or custom color-conversion code is used.
+remain; waiting tasks do not have dimmed body text. Completed cards alone use
+muted fill, border and text while retaining readable titles. Layout and
+dependency meanings are unchanged. No renderer patch or custom color-conversion
+code is used.
 
 Both pages open at readable size instead of shrinking the entire diagram to
 fit the window. Scroll horizontally and vertically to explore; the page and
@@ -38,7 +40,7 @@ choices or execution. No workstream or agent assignment starts without explicit
 authorization.
 
 Page 1 highlights readiness: green means ready to start or resume, blue means in progress,
-and grey means waiting, blocked, paused or complete, as labeled. If preparation can start
+grey means waiting, blocked or paused, and muted grey means complete. If preparation can start
 but later work cannot, show them as separate nodes linked by a dependency—not
 as one partly ready task. Node 18 is green for preparing training code for the
 fine-tuning pilot: fine-tune each candidate, save/reload trained weights and

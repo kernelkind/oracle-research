@@ -50,13 +50,19 @@ class PlanningViewerTest(unittest.TestCase):
         self.assertIn("COMPLETE", cells["h1"].get("value"))
         self.assertIn("Subject and mask prompts finished", cells["h1"].get("value"))
         self.assertNotIn("IN PROGRESS", cells["h1"].get("value"))
-        self.assertIn("fillColor=light-dark(#f7f8fa,", cells["h1"].get("style"))
+        completed_style = (
+            "fillColor=light-dark(#fbfbfc, #232a33)",
+            "strokeColor=light-dark(#d9dde2, #566575)",
+            "fontColor=light-dark(#697583, #c2cbd5)",
+        )
+        for key in ("h1", "h-title"):
+            for part in completed_style:
+                self.assertIn(part, cells[key].get("style"))
         self.assertIn("h-title", cells)
         self.assertIn("23 · Fix and validate node-title prompt", cells["h-title"].get("value"))
         self.assertIn("COMPLETE", cells["h-title"].get("value"))
         self.assertIn("129", cells["h-title"].get("value"))
         self.assertIn("v38", cells["h-title"].get("value"))
-        self.assertIn("fillColor=light-dark(#f7f8fa,", cells["h-title"].get("style"))
         self.assertNotIn("23 ·", cells["ready-summary"].get("value"))
         edge = cells["e-title-h2"]
         self.assertEqual((edge.get("source"), edge.get("target")), ("h-title", "h2"))
@@ -429,6 +435,34 @@ class PlanningViewerTest(unittest.TestCase):
                     self.assertGreaterEqual(measured["textContrast"], 7, "Task text needs strong contrast")
                     self.assertGreaterEqual(min(measured["textRGB"]), 220, "Task text, including waiting tasks, must be off-white")
 
+                def assert_completed_cards_recede(scheme):
+                    evaluate(f"document.querySelector('#diagram').style.colorScheme = '{scheme}'")
+                    measured = json.loads(evaluate("""JSON.stringify((() => {
+                        const rgb = color => color.match(/[\\d.]+/g).slice(0, 3).map(Number);
+                        const luminance = color => rgb(color).map(c => c / 255)
+                            .map(c => c <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4)
+                            .reduce((sum, c, i) => sum + c * [.2126, .7152, .0722][i], 0);
+                        const contrast = (a, b) => {
+                            a = luminance(a); b = luminance(b);
+                            return (Math.max(a, b) + .05) / (Math.min(a, b) + .05);
+                        };
+                        const completed = getComputedStyle(document.querySelector('svg [fill*="#fbfbfc"]'));
+                        const waiting = getComputedStyle(document.querySelector('svg [fill*="#f7f8fa"]'));
+                        const label = [...document.querySelectorAll('svg foreignObject div > div > div')]
+                            .find(e => e.textContent.includes('01 · Fix subject and mask prompts'));
+                        return {completedFill: luminance(completed.fill),
+                            waitingFill: luminance(waiting.fill),
+                            completedBorder: contrast(completed.stroke, completed.fill),
+                            waitingBorder: contrast(waiting.stroke, waiting.fill),
+                            completedText: contrast(getComputedStyle(label).color, completed.fill)};
+                    })())"""))
+                    if scheme == "dark":
+                        self.assertLess(measured["completedFill"], measured["waitingFill"])
+                    else:
+                        self.assertGreater(measured["completedFill"], measured["waitingFill"])
+                    self.assertLess(measured["completedBorder"], measured["waitingBorder"])
+                    self.assertGreaterEqual(measured["completedText"], 4.5)
+
                 def assert_clear_labels():
                     # Measure rendered text against card geometry and all edge captions.
                     problems = evaluate("""JSON.stringify((() => {
@@ -506,6 +540,10 @@ class PlanningViewerTest(unittest.TestCase):
                 wait_for_text("Overall plan not approved")
                 assert_dark_mode()
                 assert_palette_contrast()
+                assert_completed_cards_recede("dark")
+                assert_completed_cards_recede("light")
+                capture_page("dependencies-light")
+                evaluate("document.querySelector('#diagram').style.colorScheme = 'dark'")
                 assert_readable_size()
                 assert_clear_labels()
                 capture_page("dependencies")
