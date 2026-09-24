@@ -52,9 +52,10 @@ unfinished. Comparison planning is part of 17, not a separate task.
 Node 01 is complete: the subject and mask prompts are finished. On September 24,
 the user confirmed that the node-title prompt is finished. Node 23 is complete,
 and all 129 HDBSCAN groups have saved v38/Luna max titles. Node 02 is ready to
-resume: TRUE placement and review with those titles remain. Its solid 23 → 02
-arrow records a satisfied prerequisite. The saved HRv1 hierarchy still uses
-v21 titles, and a valid title response is not a user-approved title. Additional
+resume, but those titles must first be connected to its TRUE inputs; the saved
+HRv1 runner and inputs still use v21. TRUE placement and minimal-scope
+correctness review remain. Its solid 23 → 02 arrow records a satisfied
+prerequisite. A valid title response is not a user-approved title. Additional
 rows expose the remaining construction work.
 Node 04 (mask prominence) is grey and marked paused, reconfirmed by the user on
 September 23. Earlier experimental work does not establish that it is active
@@ -68,20 +69,27 @@ node equivalence and TRUE cycles. Node 26 is grey: its navigation collapse is
 implemented and regression-tested; validation on the rebuilt hierarchy is
 pending. It is not in the ready-to-start summary.
 Node 27 turns mask prominence into node-note ordering and needs 04.
-These four results are required to complete the 500-note validation in 03;
-they do not expand the current limited 100-note diagnostic or prevent preliminary
-200/300-note work. The original 04 → 03 dependency is now explicit as 04 → 27 → 03.
+Task 25 is also required to finish the 100-note result in 02; TRUE work can
+begin before 25 is complete. All four results are required to complete the
+500-note validation in 03. The 100-note run checks correctness at minimal
+scope; the 200/300/500-note runs check correctness while testing scalable
+strategies, including whether filtering retains useful TRUE links. Membership
+recovery does not expand the current limited 100-note diagnostic or prevent
+preliminary 200/300-note work. The original 04 → 03 dependency is now explicit
+as 04 → 27 → 03.
 No membership algorithm, cycle-resolution method or ranking formula is selected.
 
 The September 23 user checkpoint confirmed 17 in progress, 13 and 18 not
 started, and 21–22 without further progress. Tasks 02 and 23 were updated on
-September 24. Dates and dependencies are unchanged. See the
+September 24; the later planning correction adds 25 → 02 as a finish dependency.
+Dates are unchanged. See the
 [status record](release-decisions.md#status-checkpoint--september-24).
 
-Node 28 is separate from scale measurements: implement and validate a runnable
-launch-scale build, including cosine-filtered TRUE and handling large-group
-title inputs. It needs the validated small-corpus workflow (03) and findings
-from 21 and 22, and is required before completing full-build feasibility (10).
+Node 28 is separate from scale measurements: turn the strategies tested in 03
+into a runnable launch-scale build, including cosine-filtered TRUE and handling
+large-group title inputs. It needs the validated larger-corpus workflow (03)
+and findings from 21 and 22, and is required before completing full-build
+feasibility (10).
 The early assessment (20) does not wait for 28. Recovery measurements from 24
 are a dashed input to 20; include graph-processing costs from the hierarchy
 builds too. Neither measurement nor a planning card authorizes implementation.
@@ -93,7 +101,8 @@ have not changed.
 
 Page 2 shows protocol, service and Notedeck work in a separate parallel track
 alongside hierarchy and model development. Its cards show dependencies, not
-new week assignments: service testing needs the protocol and 100-note snapshot;
+new week assignments: service development can begin after the protocol;
+testing with a saved hierarchy needs the 100-note snapshot as well;
 Notedeck can start from the protocol, and integration needs the service. Launch
 still needs the final snapshot. Exact start/completion dates remain open.
 

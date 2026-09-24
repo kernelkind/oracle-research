@@ -17,8 +17,11 @@ on September 20. On September 24, the user confirmed that the node-title prompt
 is finished (23 complete). The [frozen v38/Luna max title pass](../../sse_multivector/navigation-research-v1/README.md#current-title-prompt-experiment) has produced
 valid titles for all 129 groups in the 100-note build: 108 new calls and 21
 reused results. The saved HRv1 hierarchy still uses the older v21 titles.
-Task 02 is ready to resume with the saved v38 titles: TRUE placement and
-hierarchy review remain. The solid 23 → 02 prerequisite is satisfied.
+Task 02 is ready to resume, but the saved v38 titles must first be connected to
+its TRUE inputs; the existing HRv1 runner and saved TRUE inputs still use v21.
+TRUE placement, any necessary cycle/equivalence handling, and hierarchy review
+remain. The solid 23 → 02 prerequisite is satisfied; 25 is required to finish
+02, not to start its TRUE work.
 The full pass was mechanically valid; spot checks found some questionable
 titles, and the user has not approved every output. Prompt changes and
 validation procedures belong to that workstream, not this planning discussion.
@@ -41,7 +44,7 @@ with the user on September 23.
 | Task | Current status |
 | --- | --- |
 | 01 · Subject and mask prompts | Finished. |
-| 02 · Build and review 100-note hierarchy | Ready to resume with saved v38 titles; TRUE placement and review pending. |
+| 02 · Build and review 100-note hierarchy | Ready to resume; connect saved v38 titles to TRUE inputs, then complete placement and minimal-scope correctness review. Task 25 is a finish gate. |
 | 23 · Fix and validate node-title prompt | Finished; 129 titles saved. |
 | 04 · Define mask prominence | Paused. Earlier experimental results do not establish that work is active now. |
 | 17 · Compare teachers | In progress; no completed selection established. |
@@ -53,8 +56,9 @@ with the user on September 23.
 | 21 · Assess HDBSCAN at launch scale | No further progress; earlier investigation remains evidence, not launch-scale validation. |
 | 22 · Measure SSE, node-title and TRUE processing costs | No further progress. |
 
-This checkpoint changes statuses only, not dates, dependencies, methods or
-authorization. Green cards identify work ready now, not work currently underway.
+This checkpoint records statuses. The later approved correction adds 25 → 02
+as a finish dependency; dates, methods and authorization remain unchanged.
+Green cards identify work ready now, not work currently underway.
 
 ## Vocabulary
 
@@ -139,10 +143,13 @@ narrow meaningfully, and lead to relevant notes? Occasional errors can be
 acceptable; repeatedly misleading navigation cannot. Concrete examples from
 the builds should inform acceptance, not an invented accuracy percentage.
 
-The 100-note build establishes an initial useful hierarchy. The planned
-200-note / 2-topic, 300-note / 3-topic and 500-note / 5-topic builds test whether
-that browsing quality survives increasing subject coverage. They are not merely
-tests of handling more notes. Validate prominence in the 500-note hierarchy.
+The 100-note build tests hierarchy correctness at minimal scope and establishes
+an initial useful hierarchy. The planned 200-note / 2-topic, 300-note / 3-topic
+and 500-note / 5-topic builds test correctness across increasing subject
+coverage while introducing and testing scalable construction strategies. These
+are not merely tests of handling more notes. In particular, candidate-pair
+filtering must preserve useful parent–child links, not just reduce TRUE calls.
+Validate prominence in the 500-note hierarchy.
 
 Runtime, memory and million-note processing cost require separate measurements.
 Success at 500 notes does not by itself establish production-scale feasibility.
@@ -265,10 +272,10 @@ required outcomes, not selected implementation methods or new dates:
 | Task | Required result | Completion dependency |
 | --- | --- | --- |
 | **24 · Recover missing node memberships** | A repeatable recovery process beyond the six Coffee/Tea nodes, covering masks left unassigned or grouped elsewhere. Measure its work and cost. | Required to finish 03; available measurements inform 20 without waiting for all of 24. |
-| **25 · Handle node equivalence and TRUE cycles** | Apply exact mask-set consolidation and establish repeatable handling of semantic equivalents and cyclic TRUE answers. A cycle or equal title alone does not justify merging. | Required to finish 03. |
+| **25 · Handle node equivalence and TRUE cycles** | Apply exact mask-set consolidation and establish repeatable handling of semantic equivalents and cyclic TRUE answers. A cycle or equal title alone does not justify merging. | Required to finish 02 and therefore 03; 02 can begin TRUE work first. |
 | **26 · Collapse equal-note navigation steps** | Implement and validate the required navigation simplification, including shared children, while preserving note sets, masks and provenance. | Required to finish 03. |
 | **27 · Order node notes using mask prominence** | Define and implement how relevant mask scores produce node-note order, including multiple masks and shared descendants. | Needs prominence definition 04; required to finish 03. |
-| **28 · Implement and validate the launch-scale build** | Turn scale findings into a runnable build preserving validated hierarchy behavior, including cosine-filtered TRUE and large-group title inputs. | Needs 03 + 21 + 22; required to finish full-build feasibility 10. |
+| **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered TRUE and large-group title inputs. | Needs 03 + 21 + 22; required to finish full-build feasibility 10. |
 
 24 and 25 can start from saved artifacts; they are not marked in progress.
 For 26, the [browser implementation and regression checks](../../sse_multivector/navigation-research-v1/README.md#shared-child-collapse)
@@ -278,11 +285,15 @@ workflow and scale findings. Readiness does not authorize execution. Membership
 methods, node-equivalence/cycle handling, ranking rules and scale
 implementation choices remain open.
 
-The current 100-note diagnostic keeps its limited scope, including no membership
-expansion. Preliminary 200/300-note work can follow 02 while these stages develop.
-Completing the full 500-note validation (03) requires 24–27; the earlier prominence
-dependency is now explicit as 04 → 27 → 03. The stages' internal processing order
-must respect their inputs, but this does not impose a serial development schedule.
+The current 100-note diagnostic checks correctness at minimal scope, without
+membership expansion or a claim to exercise scalable construction. It can
+start TRUE work before 25 is finished, but cannot finish if equivalence or
+cycles prevent a valid browsable graph. Preliminary 200/300-note work can
+follow 02 while the remaining stages develop. Each larger run checks both
+correctness and scalable strategies; completing the full 500-note validation
+(03) requires 24–27. The earlier prominence dependency is now explicit as
+04 → 27 → 03. The stages' internal processing order must respect their inputs,
+but this does not impose a serial development schedule.
 
 Pilot **06** also includes a small hierarchy built from pilot-model outputs before
 model selection. Use that check to detect downstream consequences of extraction
@@ -390,8 +401,10 @@ cutoff, measured rates and counts, and the final corpus size remain open.
 ## Approved scheduling changes
 
 1. Start the 200/300-note validation after the good 100-note hierarchy, while
-   prominence is developed in parallel. Prominence is required to complete the
-   combined 500-note validation, not to start every broader-corpus test.
+   prominence is developed in parallel. Those larger runs test correctness and
+   scalable construction strategies together. Prominence is required to
+   complete the combined 500-note validation, not to start every broader-corpus
+   test.
 2. Start scale measurements during Week 2. Measure the complete build, including
    SSE, HDBSCAN, node titles and cosine-filtered TRUE comparisons, rather
    than relying only on distilled-model training or generation speed. Node 22
@@ -407,7 +420,8 @@ cutoff, measured rates and counts, and the final corpus size remain open.
    Do not leave the first complete integration to Week 5; preserve time then
    for verification and fixes. Show this work as an explicit parallel track on
    the weekly diagram, alongside hierarchy/model development rather than mainly
-   under Weeks 4–5. Service testing still needs the protocol and 100-note snapshot;
+   under Weeks 4–5. Service development can begin after the protocol; testing
+   with the saved hierarchy needs the 100-note snapshot as well.
    Notedeck can start from the protocol and finish integration with the service.
    Launch still needs the final snapshot. The track adds no week assignments or
    dates; the earlier integration date remains open.
