@@ -261,6 +261,33 @@ trigger another round of TRUE comparisons. This naming decision is not yet
 implemented and does not authorize model calls or settle the remaining merge
 implementation details.
 
+### Reversible hierarchy design decisions
+
+The user requested this register on September 24 so uncertain choices remain
+explicit and can be unwound. These are experiment choices, not claims of
+correctness or completion. Alternatives listed here are not approved work.
+Bring changes to these choices, and newly discovered design choices, to the
+user before implementation; do not resolve them through per-node exceptions.
+
+| ID | Choice and status | Uncertainty / tradeoff | How to revisit it |
+| --- | --- | --- | --- |
+| HD01 | **Current experiment rule:** native TRUE Yes creates an edge; no score cutoff. | Native answers miss useful links; the tested cutoff adds both useful and incorrect links. Neither is assumed correct. | Preserve exact title inputs, generated answers, scores and runtime identity; rebuild edges from saved outputs under another explicitly selected rule. |
+| HD02 | **Provisional merge rule:** merge mutually reachable nodes (strongly connected components). General integration is pending. | Correct subsumption cycles imply equivalence, but predicted cycles can be wrong. The user identified Beef / Beef products as an incorrect NEv2 merge. No tested component required a longer cycle without pairwise mutual Yes answers. | Keep the original nodes, masks, titles, edges and component membership. Rebuild from the pre-merge graph instead of trying to split a merged record after originals were discarded. |
+| HD03 | **Candidate to test, not settled:** retain any accepted incoming/outgoing connection of a merged member, preserving existing paths. | This favors accepted paths over contradictory direct No answers. The contradiction can exist before merging: Beef -> Beef products -> Steak, alongside a direct No for Beef -> Steak. Record the disagreement; do not silently repair it. | Preserve every Yes and No and the original edge contributors. A different conflict policy starts from those answers and may require recomputing merges and descendants, not merely editing the displayed links. |
+| HD04 | **Approved naming design, not implemented:** generate the merged title as described above; do not rerun TRUE merely because it changes. | The new wording may suggest a different scope from the original titles used by TRUE. The naming call does not establish new relationship evidence. | Save member titles, combined-mask input, prompt/model settings and generated title. A naming-only alternative need not rerun extraction or TRUE; using new titles for relationships would be a separate design change. |
+
+Before a future run, record the selected decision IDs, their exact policy
+versions and source hashes in its manifest. Preserve raw outputs separately
+from derived graphs and browser views; later experiments must not overwrite
+earlier evidence. Reuse unaffected saved stages, but recompute downstream
+merges, memberships and navigation when their inputs change. This is a build
+requirement, not a claim that the current runner already implements it.
+
+Still open for user discussion: merged-ID rules, recovery from failed or
+incomplete stages, and precisely how the historically curated first hierarchy
+will be reprocessed for comparison. Recording HD03 as a candidate does not
+authorize implementation, inference or another hierarchy run.
+
 Recovering missing node memberships is a separate operation. HDBSCAN's raw
 tree is not the specified launch hierarchy.
 

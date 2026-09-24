@@ -49,6 +49,15 @@ IDs. This is a naming call only, not a merge decision or a change to the saved
 links. It does not trigger another TRUE pass. The approval does not authorize
 inference or rewrite historical titles, scores or hierarchy artifacts.
 
+The [reversible design-decision register](../../docs/planning/release-decisions.md#reversible-hierarchy-design-decisions)
+tracks the native-answer rule (HD01), provisional cycle merging (HD02), the
+candidate rule for preserving links despite conflicting answers (HD03), and
+merged-node naming (HD04). These statuses must remain distinct: a candidate is
+not an adopted rule. Future run manifests must identify the selected policy
+versions and retain the pre-merge nodes, all TRUE answers, mask origins and title
+inputs/outputs so alternatives can reuse unchanged work. The general merging
+and replay integration is still pending; this register authorizes no new run.
+
 The earlier GDC09 equal-note collapse operates on a tree. The current category
 browser also implements [shared-child collapse](#shared-child-collapse) as a
 navigation-only option, enabled for both sides of the HRv1 comparison.
