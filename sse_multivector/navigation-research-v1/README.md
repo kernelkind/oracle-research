@@ -110,12 +110,15 @@ gloss; otherwise name the smallest genuine category containing every instance's
 referent. It replaces the opening's "most specific category" framing. Its
 paired comparison records are under `hdbv2-node-description-probe-v32/`.
 
-[Title prompt v33](../hdbv2-node-description-probe-v33/prompt.txt) is an untested
-draft based on v32. It identifies the task as naming a node in a hierarchy for
-browsing posts and replaces the restriction sentence with a requirement that
-each instance support the title's full meaning on its own. Name handling,
-masks-only inputs and JSON output remain unchanged. V32 is preserved; no model
-test, promotion or production change is implied.
+[Title prompt v34](../hdbv2-node-description-probe-v34/prompt.txt) is an untested
+draft based on v32. It folds the existing distinction between naming the node
+and describing the instances as text into the main task statement, removing
+the duplicate sentence. It also requires each instance to support the title's
+full meaning on its own. It replaces
+[v33](../hdbv2-node-description-probe-v33/prompt.txt)'s application-specific
+opening without adding browsing context. Name handling, masks-only inputs and
+JSON output remain unchanged. Earlier versions are preserved; no model test,
+promotion or production change is implied.
 
 HRv1's saved titles still use v21. These experiments do not authorize replacing
 them, running a full title pass, changing memberships or hierarchy edges, or
