@@ -40,7 +40,7 @@ The existing `true_graph_equivalence.py` replays explicit reviewed approvals;
 it does not generate them. Its cutoff-based checks also must not silently be
 substituted for the current native-answer graph rule.
 
-**Merged-node naming — implemented, live validation pending:** after a
+**Merged-node naming — implemented, four-node live check complete:** after a
 merge, use the [frozen v38 title prompt](../hdbv2-node-description-probe-v38/prompt.txt)
 with the frozen Luna-max configuration on the combined masks, deduplicated by
 the same-post exact-mask identity above. Generate a displayed title rather than
@@ -58,8 +58,8 @@ not an adopted rule. Future run manifests must identify the selected policy
 versions and retain the pre-merge nodes, all TRUE answers, mask origins and title
 inputs/outputs so alternatives can reuse unchanged work. Both merge stages,
 title collection and browser export are connected in the offline construction
-path below. Live naming and validation on the rebuilt hierarchy remain. This
-register authorizes no new run.
+path below. The four-node naming check is complete; validation on the full
+rebuilt hierarchy remains. This register authorizes no new run.
 
 ### Reversible merge stage
 
@@ -143,11 +143,25 @@ with their existing tools, not this offline module.
 
 September 24 checks: all **129** HRv1 packets remain distinct; all saved v38
 titles match and produce **16,512 prepared inputs, not scored comparisons**.
-The prepared four-case NEv2 merged-naming experiment made zero model calls.
+Preparation of the four-case NEv2 merged-naming experiment made zero model calls.
 Tests cover both merges through naming and browser export, using synthetic
 responses. Separately, an export of the saved acyclic 58-node baseline passed
 the actual browser's `--check` with equal-note collapse. That is an integration
 check, not the new HD06 reprocessed baseline or live merged-title validation.
+
+The subsequent authorized four-case naming run completed with four valid
+v38/Luna-max responses, four subscription calls and no retries: `coffee`,
+`Beef and beef products`, `Food items`, and `Good morning greetings`.
+Receipts remain in `experiments/hierarchy-merged-names-nev2-v1/`; the resulting
+19-node, 75-post sample is in `target/hierarchy-build-v1/nev2-browser/`.
+All 12 reduced links and complete reachability remain unchanged by naming.
+The actual browser passed `--check`; interactive inspection covered navigation,
+direct notes and the outside-children view with separate masks and original IDs.
+The agent found the titles reasonable for the combined masks, not proof of
+equivalence: the known Beef / Beef products merge and Coffee shop → coffeechain
+link remain. Full merged IDs truncate some titles in navigation lists; shortening
+their display is a suggested UI follow-up, not an implemented change. No full
+hierarchy inference, graph repair or new user semantic approvals occurred.
 
 The earlier GDC09 equal-note collapse operates on a tree. The current category
 browser also implements [shared-child collapse](#shared-child-collapse) as a

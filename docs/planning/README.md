@@ -72,7 +72,8 @@ does not authorize research, implementation, agent assignment or spending.
 
 Node 24 is ready but not started: recover missing memberships. Node 25 is ready
 to resume: both merge stages and naming/browser integration are implemented
-and checked offline; live naming and rebuilt-hierarchy validation remain.
+and checked offline, with a four-node live naming/UI check complete.
+Full rebuilt-hierarchy validation remains.
 The merge policy is provisional, not proven equivalence.
 Node 26 is grey: its navigation collapse is
 implemented and regression-tested; validation on the rebuilt hierarchy is
