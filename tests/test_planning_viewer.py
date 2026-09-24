@@ -104,7 +104,7 @@ class PlanningViewerTest(unittest.TestCase):
         cells = {cell.get("id"): cell for cell in root.findall("mxCell")}
         edges = {(cell.get("source"), cell.get("target")): cell
                  for cell in cells.values() if cell.get("edge") == "1"}
-        for key, number in [("h-recovery", "24"), ("h-relations", "25"), ("h-collapse", "26")]:
+        for key, number in [("h-recovery", "24"), ("h-relations", "25")]:
             with self.subTest(task=number):
                 self.assertIn(key, cells)
                 self.assertIn(number + " ·", cells[key].get("value"))
@@ -114,6 +114,13 @@ class PlanningViewerTest(unittest.TestCase):
                 self.assertIn((key, "h3"), edges)
                 self.assertNotIn("dashed=1", edges[key, "h3"].get("style"))
                 self.assertNotIn((key, "h2"), edges, "Keep the initial diagnostic's scope unchanged")
+        collapse = cells["h-collapse"]
+        self.assertIn("VALIDATION PENDING", collapse.get("value"))
+        self.assertIn("Implemented and regression-tested", collapse.get("value"))
+        self.assertIn("fillColor=light-dark(#f7f8fa,", collapse.get("style"))
+        self.assertNotIn("26 ·", cells["ready-summary"].get("value"))
+        self.assertIn(("h-collapse", "h3"), edges)
+        self.assertIn("Status confirmed September 23", cells["subtitle"].get("value"))
         for pair in [("m0", "m-order"), ("m-order", "h3"),
                      ("h3", "s-build"), ("s-hdbscan", "s-build"),
                      ("s-stage-costs", "s-build"), ("s-build", "s2")]:

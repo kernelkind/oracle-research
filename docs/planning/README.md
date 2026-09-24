@@ -58,20 +58,27 @@ node-title prompt, is blue and in progress, confirmed by the user. Its solid
 arrow to 02 makes the blocking work explicit; this does not reopen the subject
 or mask prompts. Additional rows expose the remaining construction work;
 lower lanes and connector routes have space for these additions.
-Node 04 (mask prominence) is grey and marked paused: work started, but the user
-paused it for the mask prompt. That prerequisite is now satisfied, but the user
-confirmed on September 21 that prominence has not resumed. It need not wait for
+Node 04 (mask prominence) is grey and marked paused, reconfirmed by the user on
+September 23. Earlier experimental work does not establish that it is active
+now. Its mask-prompt prerequisite is satisfied. It need not wait for
 the 100-note hierarchy or title correction. Its prompt and validation are not
 complete. The top summary names only the green workstreams. Readiness
 does not authorize research, implementation, agent assignment or spending.
 
-Nodes 24–26 are ready to start from saved evidence: recover missing memberships,
-handle node equivalence and TRUE cycles, and collapse equal-note navigation
-steps. Node 27 turns mask prominence into node-note ordering and needs 04.
+Nodes 24–25 are ready but not started: recover missing memberships and handle
+node equivalence and TRUE cycles. Node 26 is grey: its navigation collapse is
+implemented and regression-tested; validation on the rebuilt hierarchy is
+pending. It is not in the ready-to-start summary.
+Node 27 turns mask prominence into node-note ordering and needs 04.
 These four results are required to complete the 500-note validation in 03;
 they do not expand the current limited 100-note diagnostic or prevent preliminary
 200/300-note work. The original 04 → 03 dependency is now explicit as 04 → 27 → 03.
 No membership algorithm, cycle-resolution method or ranking formula is selected.
+
+The September 23 user checkpoint also confirms 02 remains blocked on 23,
+17 and 23 are in progress, 13 and 18 have not started, and 21–22 have made no
+further progress. Dates and dependencies are unchanged. See the
+[confirmed status table](release-decisions.md#status-confirmed-with-the-user--september-23).
 
 Node 28 is separate from scale measurements: implement and validate a runnable
 launch-scale build, including cosine-filtered TRUE and handling large-group

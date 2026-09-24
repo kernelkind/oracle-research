@@ -1,6 +1,6 @@
 # October 18 release decisions
 
-Updated September 21, 2026. This is the written record of the planning discussion.
+Updated September 23, 2026. This is the written record of the planning discussion.
 Agreed requirements, tentative choices and existing-data facts are distinguished
 below. The overall plan is not approved. Approval of an individual requirement
 or diagram edit does not approve the whole plan. The diagram incorporates the
@@ -22,7 +22,7 @@ The user confirmed that correction is underway. It is now explicit as
 arrow to 02. The subject and mask prompts remain complete; this is a separate
 downstream blocker. Prompt changes and validation procedures belong to that
 workstream, not this planning discussion.
-Mask-prominence work (04) remains paused, confirmed by the user on September 21.
+Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
 hierarchy or title correction. Its prompt and validation are not complete.
 The user confirms 17 is underway, comparing Muse high and Astra low;
@@ -32,6 +32,26 @@ Dates are unchanged. The additional construction dependencies below expose
 unfinished work; 23 → 02 records the current title blocker. Completing 01 does
 not complete downstream work. This records work and planning requirements, not
 authorization to start another workstream or approval of the overall plan.
+
+### Status confirmed with the user — September 23
+
+| Task | Current status |
+| --- | --- |
+| 01 · Subject and mask prompts | Finished. |
+| 02 · Build and review 100-note hierarchy | Still blocked on the node-title prompt. |
+| 23 · Fix and validate node-title prompt | In progress. |
+| 04 · Define mask prominence | Paused. Earlier experimental results do not establish that work is active now. |
+| 17 · Compare teachers | In progress; no completed selection established. |
+| 26 · Collapse equal-note navigation steps | Implemented and regression-tested; validation on the rebuilt hierarchy is waiting. |
+| 13 · Define Nostr hierarchy protocol | Not started. |
+| 18 · Prepare training code for the fine-tuning pilot | Not started. |
+| 24 · Recover missing node memberships | Not started. |
+| 25 · Handle node equivalence and TRUE cycles | Not started. |
+| 21 · Assess HDBSCAN at launch scale | No further progress; earlier investigation remains evidence, not launch-scale validation. |
+| 22 · Measure SSE, node-title and TRUE processing costs | No further progress. |
+
+This checkpoint changes statuses only, not dates, dependencies, methods or
+authorization. The green cards identify ready work, not work already started.
 
 ## Vocabulary
 
@@ -49,8 +69,7 @@ Task titles approved with this vocabulary: 17 · Compare teachers; 05 · Prepare
 pilot training data; 06 · Choose the model to train; 07 · Generate full training
 data; 08 · Distill and package the model; 11 · Test hierarchy with the distilled
 model; titles using "category" use "node" (22, 23, 24, 25, 27). This record uses
-the new names; diagram cards still show the previous wording until their rename
-is explicitly approved and applied. Frozen experiment and research evidence keeps
+the new names, as do both diagram pages. Frozen experiment and research evidence keeps
 the wording of its time.
 
 ## Agreed release goal
