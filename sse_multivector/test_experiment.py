@@ -1,6 +1,7 @@
 """Offline integration tests of the supported experiment CLI and real runner engine."""
 
 import json
+import hashlib
 import os
 from pathlib import Path
 import subprocess
@@ -152,17 +153,160 @@ class ExperimentTests(unittest.TestCase):
         self.assertIn("changed", result.stderr)
         self.assertEqual(self.calls(), [])
 
-    def test_failed_and_unrun_are_separate_and_never_automatically_retried(self):
+    def test_local_failure_does_not_block_others_or_retry_on_resume(self):
         self.prepare()
-        self.cli("run", "E1", ok=False, env={"FAKE_RUNNER_FAIL_STAGE": "prompt"})
+        self.cli("run", "E1", ok=False, env={"FAKE_RUNNER_FAILURES": json.dumps({
+            "Tea": {"metadata": {"abort_reason": {"name": "TimeoutError"}}}
+        })})
         report = self.show()
         self.assertEqual(report["summary"]["failed"], 1)
-        self.assertEqual(report["summary"]["unrun"], 1)
+        self.assertEqual(report["summary"]["valid"], 1)
+        self.assertEqual(report["cases"][0]["failure_kind"], "local")
         self.cli("run", "E1", ok=False)
-        self.assertEqual(len(self.calls()), 1)
-        self.cli("run", "E1", "--retry-failed")
+        self.assertEqual(len(self.calls()), 2)
+
+    def test_provider_timeout_retries_once_and_preserves_both_receipts(self):
+        self.prepare()
+        self.cli("run", "E1", env={"FAKE_RUNNER_FAILURES": json.dumps({
+            "Tea": {"attempts": 1, "metadata": {"http_status": 200,
+                "error": {"code": 504, "message": "Upstream idle timeout exceeded"}}}
+        })})
         self.assertEqual(len(self.calls()), 3)
         self.assertEqual(self.show()["summary"]["valid"], 2)
+        records = [json.loads(line) for line in (self.root / "E1/run/results.jsonl").read_text().splitlines()]
+        self.assertEqual([r["status"] for r in records if r["note_id"] == "one"], ["failed", "succeeded"])
+        self.cli("run", "E1")
+        self.assertEqual(len(self.calls()), 3)
+
+    def test_provider_retry_limit_survives_resume(self):
+        self.prepare()
+        failure = {"FAKE_RUNNER_FAILURES": json.dumps({"Tea": {"metadata": {"http_status": 503}}})}
+        self.cli("run", "E1", ok=False, env=failure)
+        self.assertEqual(len(self.calls()), 3)
+        self.cli("run", "E1", ok=False)
+        self.assertEqual(len(self.calls()), 3)
+        self.assertEqual(self.show()["summary"]["valid"], 1)
+
+    def test_unknown_failure_is_not_retried(self):
+        self.prepare()
+        self.cli("run", "E1", ok=False, env={"FAKE_RUNNER_FAIL_STAGE": "prompt"})
+        self.assertEqual(len(self.calls()), 2)
+        self.assertEqual(self.show()["summary"]["failed"], 2)
+
+    def test_malformed_provider_metadata_is_unknown_and_does_not_block_other_cases(self):
+        self.prepare()
+        self.cli("run", "E1", ok=False, env={"FAKE_RUNNER_FAILURES": json.dumps({
+            "Tea": {"metadata": ["not an error object"]}
+        })})
+        self.assertEqual(len(self.calls()), 2)
+        self.assertEqual(self.show()["cases"][0]["failure_kind"], "unknown")
+
+    def test_shared_auth_error_stops_later_cases(self):
+        self.prepare()
+        self.cli("run", "E1", ok=False, env={"FAKE_RUNNER_FAILURES": json.dumps({
+            "Tea": {"metadata": {"http_status": 401}}
+        })})
+        self.assertEqual(len(self.calls()), 1)
+        self.assertEqual(self.show()["summary"]["unrun"], 1)
+
+    def test_explicit_new_attempt_allowance_bounds_calls(self):
+        self.prepare()
+        self.cli("run", "E1", "--max-new-attempts", "1", ok=False)
+        self.assertEqual(len(self.calls()), 1)
+        self.assertEqual(self.show()["summary"]["unrun"], 1)
+        self.cli("run", "E1", "--max-new-attempts", "1")
+        self.assertEqual(len(self.calls()), 2)
+
+    def test_slow_case_does_not_block_later_independent_case(self):
+        spec = json.loads(self.spec.read_text())
+        spec["runner"]["concurrency"] = 2
+        self.write("spec.json", spec)
+        data = json.loads(self.cases.read_text())
+        data["cases"].append({"id": "three", "inputs": {"POST": "Third"}})
+        self.write("cases.json", data)
+        self.prepare()
+        marker = str(self.root / "third-started")
+        self.cli("run", "E1", env={"FAKE_RUNNER_SEQUENCE": json.dumps({
+            "Tea": {"wait_for": marker}, "Third": {"touch": marker}
+        })})
+        self.assertEqual(self.show()["summary"]["valid"], 3)
+
+    def test_local_abort_overrides_provider_error_and_unknown_transport_not_retried(self):
+        self.prepare()
+        self.cli("run", "E1", ok=False, env={"FAKE_RUNNER_FAILURES": json.dumps({
+            "Tea": {"metadata": {"http_status": 503, "abort_reason": {"name": "TimeoutError"}}},
+            "Coffee": {"metadata": {"http_status": 200, "transport_error": {"message": "connection lost"}}}
+        })})
+        self.assertEqual(len(self.calls()), 2)
+        self.assertEqual([c["failure_kind"] for c in self.show()["cases"]], ["local", "unknown"])
+
+    def test_execution_upgrade_is_explicit_preserves_results_and_is_audited(self):
+        self.prepare()
+        self.cli("run", "E1", "--max-new-attempts", "1", ok=False)
+        before = (self.root / "E1/run/results.jsonl").read_bytes()
+        envelope = json.loads((self.root / "E1/experiment.json").read_text())
+        envelope["plan"]["code"]["experiment.py"] = "0" * 64
+        envelope["sha256"] = hashlib.sha256((json.dumps(envelope["plan"], ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode()).hexdigest()
+        self.write("E1/experiment.json", envelope)
+        self.cli("run", "E1", ok=False)
+        self.assertEqual(len(self.calls()), 1)
+        self.cli("run", "E1", "--runner-upgrade-reason", "Approved failure handling update")
+        self.assertEqual(len(self.calls()), 2)
+        self.assertTrue((self.root / "E1/run/results.jsonl").read_bytes().startswith(before))
+        self.assertTrue((self.root / "E1/code-upgrades.jsonl").exists())
+        self.cli("run", "E1")
+        self.assertEqual(len(self.calls()), 2)
+
+    def test_engine_upgrade_records_new_receipt_provenance(self):
+        self.prepare()
+        manifest = json.loads((self.root / "E1/run/manifest.json").read_text())
+        manifest["wrapper_sha256"] = "0" * 64
+        (self.root / "E1/run/manifest.json").write_text(
+            json.dumps(manifest, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n")
+        envelope = json.loads((self.root / "E1/experiment.json").read_text())
+        def digest(value):
+            return hashlib.sha256((json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode()).hexdigest()
+        envelope["plan"]["manifest_sha256"] = digest(manifest)
+        envelope["plan"]["code"]["extraction_pipeline.py"] = "0" * 64
+        envelope["sha256"] = digest(envelope["plan"])
+        self.write("E1/experiment.json", envelope)
+        self.cli("run", "E1", "--runner-upgrade-reason", "Approved executor upgrade")
+        self.assertEqual(self.show()["summary"]["valid"], 2)
+        self.assertTrue((self.root / "E1/run/runner-upgrades.jsonl").exists())
+        self.cli("run", "E1")
+        self.assertEqual(len(self.calls()), 2)
+
+    def test_long_retry_after_is_not_ignored(self):
+        self.prepare()
+        self.cli("run", "E1", ok=False, env={"FAKE_RUNNER_FAILURES": json.dumps({
+            "Tea": {"metadata": {"http_status": 429, "retry_after": "120"}}
+        })})
+        self.assertEqual(len(self.calls()), 2)
+        self.assertEqual(self.show()["summary"]["valid"], 1)
+
+    def test_validation_failure_never_retries_even_with_provider_error_metadata(self):
+        self.prepare()
+        self.cli("run", "E1", ok=False, env={"FAKE_RUNNER_RESULT_OVERRIDE": json.dumps({
+            "valid": False, "response_metadata": {"http_status": 503}
+        })})
+        self.assertEqual(len(self.calls()), 2)
+        self.assertEqual([c["failure_kind"] for c in self.show()["cases"]], ["local", "local"])
+
+    def test_resume_retries_provider_case_but_not_local_case(self):
+        data = json.loads(self.cases.read_text())
+        data["cases"].append({"id": "three", "inputs": {"POST": "Third"}})
+        self.write("cases.json", data)
+        self.prepare()
+        self.cli("run", "E1", "--max-new-attempts", "2", ok=False,
+                 env={"FAKE_RUNNER_FAILURES": json.dumps({
+                     "Tea": {"metadata": {"http_status": 504}},
+                     "Coffee": {"metadata": {"abort_reason": {"name": "TimeoutError"}}}
+                 })})
+        self.assertEqual(len(self.calls()), 2)
+        self.cli("run", "E1", ok=False)
+        self.assertEqual(len(self.calls()), 4)
+        self.assertEqual(self.show()["summary"]["valid"], 2)
+        self.assertEqual(self.show()["cases"][1]["failure_kind"], "local")
 
     def test_same_id_different_inputs_cannot_be_paired_with_baseline(self):
         self.prepare()

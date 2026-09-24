@@ -339,12 +339,39 @@ as `input_mismatch`, not silently compared. Baseline-only case IDs are retained
 in the report. Text changes are never reported as semantic improvement.
 
 `run` executes the frozen setup, not subsequently edited source files.
-Editing a frozen config, manifest, runner or workflow code is refused. Prepare
-a new directory after such changes. Completed successful calls resume without
-sending again; failed calls require explicit `run ... --retry-failed`.
-Malformed completed output is retained and is not automatically repaired or
-retried. The executor preserves bounded waves: already-running calls finish on
-failure, later waves stop. A lock prevents simultaneous runs of one experiment.
+Editing a frozen config, manifest or model transport is refused. Prepare a new
+directory for different inputs/settings. After inspecting an approved workflow
+code change, `run --runner-upgrade-reason "..."` records the old/new code hashes
+and the saved-result prefix hash without rewriting the original plan or receipts.
+Engine changes also use the existing `runner-upgrades.jsonl` provenance ledger.
+Without that explicit reason, changed workflow code still refuses to run.
+
+The shared prompt executor fills available concurrency slots independently; a
+slow or failed case does not hold later cases behind a batch barrier. Only an
+explicit temporary provider error (HTTP/stream error code 408, 429, 500, 502,
+503 or 504) qualifies for automatic retry. Each case has at most two total
+attempts across resumes, with a two-second minimum delay. `Retry-After` is
+honored; invalid values or waits above 60 seconds leave the case unresolved
+rather than retrying early. Local aborts override provider metadata. Our own
+timeouts, validation/parsing errors and unknown transport failures are never
+retried. Malformed completed output is retained, not repaired. The experiment
+CLI no longer offers a blanket `--retry-failed` override.
+
+Provider authentication, credit/permission or endpoint errors (401, 402, 403,
+404) stop new scheduling, as do preflight/provenance errors or exhausted attempt
+allowances. Already-running calls retain their receipts. Other failures remain
+visible while independent cases continue; a partial run exits nonzero. Resuming
+preserves completed answers and skips ineligible/exhausted failures.
+
+`run --max-new-attempts N` caps newly sent calls, including retries, without
+counting reuse. Without this optional tighter bound, the two-total-attempts rule
+still applies to every case. Reserve spending for the full allowed attempt
+count before running, including potentially billed failures; an attempt cap is
+not a provider-side dollar cap. Each attempt retains its native receipt and
+usage evidence. `show --case ID` identifies the failed case's `failure_kind`.
+A lock prevents simultaneous runs of one experiment. Dependent production
+extraction stages and the single-call transport retain their own contracts;
+this policy applies to the shared independent prompt-batch executor.
 
 For an independent repetition, prepare a new directory with `--repeat`:
 

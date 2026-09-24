@@ -409,6 +409,7 @@ def report(directory):
                 row.update(
                     status="failed",
                     error=record.get("error"),
+                    failure_kind=engine.prompt_failure_kind(record),
                     output=record.get("final_output_raw"),
                 )
             else:
@@ -528,7 +529,32 @@ def report(directory):
     return result
 
 
-def run(directory, retry_failed):
+def execution_upgrade(directory, plan, reason):
+    """Audit an explicitly approved code transition without rewriting frozen inputs."""
+    active = plan["code"]
+    current = {name: engine._sha256_file(Path(__file__).with_name(name)) for name in active}
+    path = directory / "code-upgrades.jsonl"
+    results_path = Path(plan["run_directory"]) / "results.jsonl"
+    results = results_path.read_bytes() if results_path.exists() else b""
+    for line in path.read_bytes().splitlines() if path.exists() else []:
+        entry = json.loads(line)
+        if (entry["from"] != active or set(entry["to"]) != set(active)
+                or entry["results_prefix_bytes"] > len(results)
+                or entry["results_prefix_bytes"] < 0
+                or engine._sha256_bytes(results[:entry["results_prefix_bytes"]]) != entry["results_prefix_sha256"]):
+            raise ValueError("invalid execution code upgrade history")
+        active = entry["to"]
+    if current != active:
+        if not reason or not reason.strip():
+            raise ValueError("experiment code changed; inspect it and supply --runner-upgrade-reason, or prepare a new experiment")
+        engine._append_json_line(path, {
+            "from": active, "to": current, "reason": reason,
+            "results_prefix_bytes": len(results),
+            "results_prefix_sha256": engine._sha256_bytes(results),
+        })
+
+
+def run(directory, max_new_attempts=None, runner_upgrade_reason=None):
     directory = directory.resolve()
     with locked(directory):
         plan, config, manifest = load(directory)
@@ -536,15 +562,16 @@ def run(directory, retry_failed):
             raise ValueError(
                 "imported experiments are read-only; prepare --from this experiment to run a candidate"
             )
-        for name, expected in plan["code"].items():
-            if engine._sha256_file(Path(__file__).with_name(name)) != expected:
-                raise ValueError(
-                    "experiment code changed since preparation; prepare a new experiment"
-                )
         identity = engine._runner_identity(config)
         if any(identity[k] != manifest[k] for k in ("runner_version", "runner_sha256")):
             raise ValueError("model runner changed since preparation")
         engine._validate_auth_file(config.auth_file)
+        execution_upgrade(directory, plan, runner_upgrade_reason)
+        provenance = engine._load_runner_upgrades(
+            config.run_directory, manifest_sha256=inputs.digest(manifest),
+            initial_wrapper_sha256=manifest["wrapper_sha256"],
+        )
+        wrapper_changed = provenance.active_wrapper_sha256 != engine._sha256_file(Path(engine.__file__))
         error = None
         cases = {c["id"]: c for c in plan["cases"]}
 
@@ -557,9 +584,11 @@ def run(directory, retry_failed):
             engine._execute_prompt_batch(
                 config,
                 manifest,
-                retry_failed=retry_failed,
+                retry_failed=False,
                 concurrency=config.concurrency,
                 validate_output=validate_output,
+                max_new_attempts=max_new_attempts,
+                runner_upgrade_reason=runner_upgrade_reason if wrapper_changed else None,
             )
         except engine.RunnerError as caught:
             error = caught
@@ -739,10 +768,12 @@ def parser():
     )
     p = commands.add_parser(
         "run",
-        help="execute only a prepared experiment; resume without implicit retries",
+        help="execute a prepared experiment; retry only temporary provider errors",
     )
     p.add_argument("experiment", type=Path)
-    p.add_argument("--retry-failed", action="store_true")
+    p.add_argument("--max-new-attempts", type=int,
+                   help="cap newly sent attempts, including provider retries; reserve spending for this allowance")
+    p.add_argument("--runner-upgrade-reason", help="explicitly approve and audit a workflow-code upgrade; frozen inputs/settings remain immutable")
     p = commands.add_parser(
         "show", help="inspect all cases, or exact case evidence; no inference"
     )
@@ -781,7 +812,11 @@ def main(argv=None):
                 raise ValueError("--from already specifies the baseline")
             compact(prepare(args), prepared=True)
         elif args.command == "run":
-            result = run(args.experiment, args.retry_failed)
+            if args.max_new_attempts is not None and args.max_new_attempts < 1:
+                raise ValueError("--max-new-attempts must be positive")
+            if args.runner_upgrade_reason is not None and not args.runner_upgrade_reason.strip():
+                raise ValueError("--runner-upgrade-reason must not be blank")
+            result = run(args.experiment, args.max_new_attempts, args.runner_upgrade_reason)
             compact(result)
             return int(
                 any(

@@ -8,7 +8,9 @@ import difflib
 import importlib.util
 import fcntl
 import hashlib
+import heapq
 import json
+import math
 import os
 import re
 import shutil
@@ -18,9 +20,11 @@ import sys
 import tempfile
 import threading
 import time
-from concurrent.futures import ThreadPoolExecutor
+from collections import deque
+from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from contextlib import contextmanager
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
+from email.utils import parsedate_to_datetime
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Callable, Sequence
@@ -108,15 +112,17 @@ class NewJobBudget:
     used: int = 0
     completed_notes: int = 0
     completed_takeaways: int = 0
+    lock: Any = field(default_factory=threading.Lock, repr=False)
 
     @property
     def exhausted(self) -> bool:
         return self.limit is not None and self.used >= self.limit
 
     def claim(self) -> None:
-        if self.limit is not None and self.used >= self.limit:
-            raise NewJobLimitReached
-        self.used += 1
+        with self.lock:
+            if self.limit is not None and self.used >= self.limit:
+                raise NewJobLimitReached
+            self.used += 1
 
 
 @dataclass(frozen=True)
@@ -2999,13 +3005,62 @@ def run_prompts(
                                  concurrency=config.concurrency)
 
 
+def prompt_failure_kind(record: dict[str, Any]) -> str:
+    """Retry only explicit transient provider responses, never inferred outages."""
+    result = record.get("model_result") or {}
+    if not isinstance(result, dict):
+        return "unknown"
+    metadata = result.get("response_metadata") or {}
+    if not isinstance(metadata, dict):
+        return "unknown"
+    # A local abort or successful transport followed by validation failure takes
+    # precedence over any provider metadata that happened to arrive earlier.
+    if metadata.get("abort_reason") or record.get("exit_code") in (None, 0):
+        return "local"
+    error = metadata.get("error") or {}
+    code = error.get("code") if isinstance(error, dict) else None
+    if code is None:
+        code = metadata.get("http_status")
+    if isinstance(code, str) and code.isdecimal():
+        code = int(code)
+    if code in (401, 402, 403, 404):
+        return "provider_fatal"
+    if code in (408, 429, 500, 502, 503, 504):
+        return "provider_transient"
+    return "unknown"
+
+
+def provider_retry_delay(record: dict[str, Any]) -> float | None:
+    """At most one retry per case, with a bounded delay honoring Retry-After."""
+    if prompt_failure_kind(record) != "provider_transient" or record["attempt"] >= 2:
+        return None
+    value = (record.get("model_result") or {}).get("response_metadata", {}).get("retry_after")
+    delay = 2.0
+    if value is not None:
+        try:
+            try:
+                delay = float(value)
+            except ValueError:
+                delay = parsedate_to_datetime(value).timestamp() - time.time()
+        except (ValueError, TypeError, OverflowError):
+            return None
+        if not math.isfinite(delay) or delay > 60:
+            return None
+    return max(2.0, delay)
+
+
 def _execute_prompt_batch(
     config: PromptRunnerConfig, manifest: dict[str, Any], *,
     retry_failed: bool, concurrency: int = 1,
     validate_output: Callable[[PromptJob, str], None] | None = None,
+    max_new_attempts: int | None = None,
+    runner_upgrade_reason: str | None = None,
 ) -> dict[str, object]:
     runner_version = manifest["runner_version"]
-    prepared_manifest = _prepare_manifest_directory(config.run_directory, manifest)
+    proposed_manifest = {**manifest, "wrapper_sha256": _sha256_file(Path(__file__).resolve())}
+    prepared_manifest = _prepare_manifest_directory(
+        config.run_directory, proposed_manifest, runner_upgrade_reason=runner_upgrade_reason
+    )
     manifest_sha256 = prepared_manifest.manifest_sha256
     schema_path = None
     if config.output_schema is not None:
@@ -3017,6 +3072,8 @@ def _execute_prompt_batch(
         manifest_sha256,
         prepared_manifest.provenance,
     )
+    provenance = _append_runner_upgrade(config.run_directory, prepared_manifest)
+    budget = NewJobBudget(max_new_attempts)
     (config.run_directory / "output.json").unlink(missing_ok=True)
     options = manifest["request_reuse"]
     history = RequestHistory(Path(options["history_root"]), exclude_run=config.run_directory)
@@ -3056,8 +3113,9 @@ def _execute_prompt_batch(
             schema=config.output_schema,
             results_path=results_path,
             latest=latest,
-            retry_failed=retry_failed,
-            execution_wrapper_sha256=prepared_manifest.provenance.active_wrapper_sha256,
+            retry_failed=previous is not None and prompt_failure_kind(previous) == "provider_transient",
+            new_job_budget=budget,
+            execution_wrapper_sha256=provenance.active_wrapper_sha256,
         )
         if previous is not None:
             response = _run_job(**arguments)
@@ -3081,6 +3139,7 @@ def _execute_prompt_batch(
                     else:
                         reference, source = reusable
                         record = _reused_prompt_record(config, manifest, prompt, reference, source)
+                        record["wrapper_sha256"] = provenance.active_wrapper_sha256
                         _append_json_line(results_path, record)
                         latest[job_key] = record
                         response = record["response"]
@@ -3088,20 +3147,69 @@ def _execute_prompt_batch(
             raise AssertionError("successful prompt job returned structured output")
         return {"prompt_id": prompt.prompt_id, "response": response}
 
-    responses: list[dict[str, str]] = []
-    # Bound both active work and queued work. A failure stops subsequent waves;
-    # already-running calls finish and retain their receipts for resume.
-    if concurrency == 1:
-        responses = [execute(prompt) for prompt in config.prompts]
-    else:
-        with ThreadPoolExecutor(max_workers=concurrency) as pool:
-            for start in range(0, len(config.prompts), concurrency):
-                responses.extend(pool.map(execute, config.prompts[start:start + concurrency]))
+    ready = deque()
+    delayed = []
+    responses = {}
+    failures = []
+    fatal = False
+    for index, prompt in enumerate(config.prompts):
+        previous = latest.get("prompt:" + prompt.prompt_id)
+        if previous is not None and previous["status"] == "failed":
+            kind = prompt_failure_kind(previous)
+            delay = provider_retry_delay(previous)
+            if delay is not None:
+                heapq.heappush(delayed, (time.monotonic() + delay, index, prompt))
+            else:
+                failures.append(f"{prompt.prompt_id}: {previous.get('error')}")
+                fatal |= kind == "provider_fatal"
+        else:
+            ready.append((index, prompt))
+    # Keep at most concurrency futures. Slow calls and retry delays do not hold
+    # unrelated cases behind a wave barrier. Each case has two lifetime attempts.
+    with ThreadPoolExecutor(max_workers=concurrency) as pool:
+        active = {}
+        while active or (not fatal and (ready or delayed)):
+            while delayed and delayed[0][0] <= time.monotonic():
+                _, index, prompt = heapq.heappop(delayed)
+                ready.append((index, prompt))
+            while ready and len(active) < concurrency and not fatal:
+                index, prompt = ready.popleft()
+                previous = latest.get("prompt:" + prompt.prompt_id)
+                active[pool.submit(execute, prompt)] = (index, prompt, previous)
+            if not active:
+                if delayed and not fatal:
+                    time.sleep(max(0, delayed[0][0] - time.monotonic()))
+                continue
+            delay = (max(0, delayed[0][0] - time.monotonic())
+                     if delayed and len(active) < concurrency and not fatal else None)
+            completed, _ = wait(active, timeout=delay, return_when=FIRST_COMPLETED)
+            for future in completed:
+                index, prompt, previous = active.pop(future)
+                try:
+                    responses[index] = future.result()
+                except NewJobLimitReached:
+                    failures.append("new-attempt allowance exhausted")
+                    fatal = True
+                except RunnerError:
+                    record = latest.get("prompt:" + prompt.prompt_id)
+                    # No new receipt means a preflight/provenance/local invariant
+                    # failed, not a provider request eligible for retry.
+                    if record is previous or record is None:
+                        raise
+                    kind = prompt_failure_kind(record)
+                    delay = provider_retry_delay(record)
+                    if delay is not None and not fatal:
+                        heapq.heappush(delayed, (time.monotonic() + delay, index, prompt))
+                    else:
+                        failures.append(f"{prompt.prompt_id}: {record.get('error')}")
+                        fatal |= kind == "provider_fatal"
+    if failures:
+        raise RunnerError("unresolved prompt cases: " + ", ".join(failures))
 
     output: dict[str, object] = {
         "schema_version": SCHEMA_VERSION,
         "manifest_sha256": manifest_sha256,
-        "responses": responses,
+        "responses": [responses[i] for i in sorted(responses)],
     }
     _atomic_write(config.run_directory / "output.json", _canonical_json_bytes(output))
     return output

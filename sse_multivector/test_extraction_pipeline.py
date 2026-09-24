@@ -85,6 +85,16 @@ if "--identity" in sys.argv:
 request = json.loads(sys.stdin.read())
 prompt = request["prompt"]
 argv = sys.argv[1:]
+for text, action in json.loads(os.environ.get("FAKE_RUNNER_SEQUENCE", "{}")).items():
+    if text in prompt:
+        import time
+        if action.get("touch"):
+            Path(action["touch"]).touch()
+        until = time.monotonic() + 3
+        while action.get("wait_for") and not Path(action["wait_for"]).exists():
+            if time.monotonic() > until:
+                raise SystemExit("independent case did not start")
+            time.sleep(0.01)
 if os.environ.get("FAKE_RUNNER_BARRIER"):
     import time
     barrier = Path(os.environ["FAKE_RUNNER_BARRIER"])
@@ -211,6 +221,15 @@ result = {
     "request": {"body": {"model": request["model"], ("input" if request["provider"] == "openai-codex" else "messages"): [{"role": "user", "content": prompt}], **(({"text": {"format": {"schema": request["schema"]}}} if request["provider"] == "openai-codex" else {"response_format": {"json_schema": {"schema": request["schema"]}}}) if "schema" in request else {})}}, "response_metadata": {},
 }
 result.update(json.loads(os.environ.get("FAKE_RUNNER_RESULT_OVERRIDE", "{}")))
+failures = json.loads(os.environ.get("FAKE_RUNNER_FAILURES", "{}"))
+for text, failure in failures.items():
+    if text in prompt:
+        attempts = sum(c["prompt"] == prompt for c in json.loads(Path(os.environ["FAKE_RUNNER_LOG"]).read_text()))
+        if attempts <= failure.get("attempts", 100):
+            result.update(valid=False, error="fixture failure", stop_reason="error",
+                          response_metadata=failure["metadata"])
+            print(json.dumps(result))
+            raise SystemExit(1)
 print(json.dumps(result))
 """
 
@@ -622,19 +641,19 @@ class ExtractionPipelineTests(unittest.TestCase):
                 self.assertEqual(again.returncode, 1)
                 self.assertEqual(len(self.calls()), before + 1)
 
-    def test_mask_batch_failure_stops_later_waves_and_requires_explicit_retry(self):
+    def test_mask_batch_unknown_failures_continue_without_retry(self):
         path = self.mask_batch_fixture(subjects=["Tea", "Tea drinking", "Drinks", "Tea leaves", "Leaves"])
         failed = self.invoke_masks(path, environment={"FAKE_RUNNER_FAIL_STAGE": "prompt"})
         self.assertEqual(failed.returncode, 1)
-        self.assertEqual(len(self.calls()), 2)
+        self.assertEqual(len(self.calls()), 5)
         blocked = self.invoke_masks(path)
         self.assertEqual(blocked.returncode, 1)
-        self.assertEqual(len(self.calls()), 2)
+        self.assertEqual(len(self.calls()), 5)
         retried = self.invoke_masks(path, "--retry-failed")
-        self.assertEqual(retried.returncode, 0, retried.stderr)
-        self.assertEqual(len(self.calls()), 7)
+        self.assertEqual(retried.returncode, 1, retried.stderr)
+        self.assertEqual(len(self.calls()), 5)
         records = [json.loads(line) for line in (self.run_directory / "results.jsonl").read_text().splitlines()]
-        self.assertEqual(sum(r["attempt"] == 2 for r in records), 2)
+        self.assertEqual(sum(r["attempt"] == 2 for r in records), 0)
 
     def test_mask_batch_changed_prompt_or_input_refuses_resume(self):
         path = self.mask_batch_fixture()
@@ -2070,19 +2089,18 @@ class ExtractionPipelineTests(unittest.TestCase):
                 self.assertIn("concurrency must be a positive integer", completed.stderr)
         self.assertEqual([], self.calls())
 
-    def test_generic_prompt_concurrency_preserves_failure_boundary_and_explicit_retry(self):
+    def test_generic_prompt_concurrency_continues_and_does_not_retry_unknown_errors(self):
         path, config = self.prompt_batch_config("parallel-failure", 5, concurrency=3)
         failed = self.invoke_prompt_config(path, extra_environment={"FAKE_RUNNER_FAIL_STAGE": "prompt"})
         self.assertNotEqual(0, failed.returncode)
-        self.assertEqual(3, len(self.calls()), "failure must stop the next wave")
+        self.assertEqual(5, len(self.calls()), "independent calls must continue")
         blocked = self.invoke_prompt_config(path)
         self.assertNotEqual(0, blocked.returncode)
-        self.assertEqual(3, len(self.calls()), "failed calls require explicit retry")
+        self.assertEqual(5, len(self.calls()), "unknown errors cannot be retried")
         resumed = self.invoke_prompt_config(path, "--retry-failed")
-        self.assertEqual(0, resumed.returncode, resumed.stderr)
-        self.assertEqual(8, len(self.calls()))
-        output = json.loads((Path(config["run_directory"]) / "output.json").read_text())
-        self.assertEqual(5, len(output["responses"]))
+        self.assertNotEqual(0, resumed.returncode, resumed.stderr)
+        self.assertEqual(5, len(self.calls()))
+        self.assertFalse((Path(config["run_directory"]) / "output.json").exists())
 
     def test_runs_generic_prompts_without_adding_tools_or_prompt_text(self) -> None:
         prompt_run_directory = self.root / "prompt-run"
@@ -2363,7 +2381,7 @@ class ExtractionPipelineTests(unittest.TestCase):
         self.assertIn("--reasoning-effort", missing_effort.stderr)
         self.assertEqual([], self.calls())
 
-    def test_generic_prompt_failure_is_audited_and_requires_explicit_retry(
+    def test_generic_prompt_unknown_failure_is_audited_and_not_retried(
         self,
     ) -> None:
         prompt_run_directory = self.root / "prompt-run"
@@ -2404,12 +2422,13 @@ class ExtractionPipelineTests(unittest.TestCase):
         calls_before = len(self.calls())
         blocked = self.invoke_prompt_config(config_path)
         self.assertNotEqual(0, blocked.returncode)
-        self.assertIn("--retry-failed", blocked.stderr)
+        self.assertIn("unresolved prompt cases", blocked.stderr)
         self.assertEqual(calls_before, len(self.calls()))
 
         retried = self.invoke_prompt_config(config_path, "--retry-failed")
-        self.assertEqual(0, retried.returncode, retried.stderr)
-        self.assertTrue((prompt_run_directory / "output.json").is_file())
+        self.assertNotEqual(0, retried.returncode, retried.stderr)
+        self.assertEqual(calls_before, len(self.calls()))
+        self.assertFalse((prompt_run_directory / "output.json").is_file())
 
     def test_generic_prompt_config_rejects_duplicate_ids_before_spawning(
         self,
