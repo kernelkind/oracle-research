@@ -45,6 +45,17 @@ const mimo = {
   compat: { supportsDeveloperRole: false, thinkingFormat: 'openrouter', maxTokensField: 'max_tokens' },
 };
 
+// OpenRouter /api/v1/models inspected 2026-09-24. Flash advertises a thinking
+// toggle, not graded efforts. Keep this separate from the existing Pro route.
+const mimoFlash = {
+  id: 'xiaomi/mimo-v2.6-flash', name: 'Xiaomi: MiMo-V2.6-Flash',
+  provider: 'openrouter', api: 'openai-completions', baseUrl: 'https://openrouter.ai/api/v1',
+  input: ['text', 'image'], reasoning: true, contextWindow: 1048576, maxTokens: 131072,
+  thinkingLevelMap: { off: 'none', minimal: null, low: null, medium: null, high: null, xhigh: null, max: null },
+  cost: { input: 0.14, output: 0.28, cacheRead: 0.0028, cacheWrite: 0 },
+  compat: { supportsDeveloperRole: false, thinkingFormat: 'openrouter', maxTokensField: 'max_tokens' },
+};
+
 async function identity() {
   const hash = createHash('sha256');
   for (const path of ['model.mjs', 'package-lock.json', '../run-model.sh']) {
@@ -96,6 +107,7 @@ export async function prepare(config) {
     if ('max_output_tokens' in config) throw new Error('pi-ai subscription transport does not enforce an output token cap; use timeout_seconds');
   } else if (config.provider === 'openrouter') {
     model = config.model === mimo.id ? mimo
+      : config.model === mimoFlash.id ? mimoFlash
       : config.model === deepseek.id ? deepseek
       : Object.hasOwn(OPENROUTER_MODELS, config.model) ? OPENROUTER_MODELS[config.model] : undefined;
     if (!model) throw new Error('Unknown OpenRouter model in the pinned pi-ai catalog; no model substitution');
@@ -105,7 +117,11 @@ export async function prepare(config) {
   } else {
     throw new Error('provider must be openai-codex (subscription) or openrouter');
   }
-  if (config.reasoning !== 'provider-default' && !getSupportedThinkingLevels(model).includes(config.reasoning)) {
+  if (config.reasoning === 'on') {
+    if (config.provider !== 'openrouter' || !model.reasoning) {
+      throw new Error('Explicit reasoning on requires an OpenRouter reasoning model');
+    }
+  } else if (config.reasoning !== 'provider-default' && !getSupportedThinkingLevels(model).includes(config.reasoning)) {
     throw new Error('Unsupported reasoning setting; choose a supported effort or provider-default');
   }
   const timeout = config.timeout_seconds ?? 300;
@@ -140,6 +156,7 @@ function formatPayload(payload, request) {
       delete payload.max_completion_tokens;
     }
     if (request.reasoning === 'provider-default') delete payload.reasoning;
+    if (request.reasoning === 'on') payload.reasoning = { enabled: true };
     if (request.schema !== null) payload.response_format = {
       type: 'json_schema', json_schema: { name: request.schema_name, strict: true, schema: request.schema },
     };
@@ -348,7 +365,7 @@ export async function execute(request, { apiKey, fetch = globalThis.fetch, signa
   const options = {
     apiKey, transport: 'sse', cacheRetention: 'none', maxRetries: 0, timeoutMs: request.timeout_seconds * 1000,
     signal: abort,
-    reasoningEffort: request.reasoning === 'provider-default' ? undefined : request.reasoning === 'off' ? 'none' : request.reasoning,
+    reasoningEffort: ['provider-default', 'on'].includes(request.reasoning) ? undefined : request.reasoning === 'off' ? 'none' : request.reasoning,
     ...(request.max_output_tokens === null ? {} : { maxTokens: request.max_output_tokens }),
     onPayload: payload => formatPayload(payload, request),
     fetch: async (input, init) => {
@@ -471,7 +488,7 @@ Providers: openai-codex subscription; OpenRouter models using pi-ai openai-compl
 Other catalog transports are rejected explicitly; no model substitution or rerouting.
 OpenRouter max_output_tokens is optional; omitted or null sends no caller cap. Subscription output caps are unsupported.
 OpenRouter-only debug: {"echo_upstream_body":true} records upstream settings and a bounded event timeline.
-reasoning selects a supported pi-ai effort or provider-default (no requested preference).
+reasoning selects a supported pi-ai effort, provider-default (no preference), or on (OpenRouter thinking enabled without a requested effort).
 schema is validated locally without coercion; omitted schema accepts plain text.
 JSON Schema draft-07 (default), 2019-09, and 2020-12 are supported without remote refs.
 Provider schema support may be narrower; unsupported parameters remain request failures.

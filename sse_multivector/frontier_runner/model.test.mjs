@@ -75,7 +75,40 @@ test('pinned MiMo route uses exact metadata with standard graded reasoning', asy
   assert.equal(result.body.max_tokens, undefined);
   await assert.doesNotReject(prepare(config(route, { reasoning: 'medium' })));
   await assert.rejects(prepare(config(route, { reasoning: 'max' })), /reasoning/);
-  await assert.rejects(prepare(config({ ...route, model: 'xiaomi/mimo-v2.6-flash' })), /Unknown OpenRouter model/);
+});
+
+for (const model of ['qwen/qwen3.8-flash', 'xiaomi/mimo-v2.6-flash']) {
+  test(`${model}: explicit thinking on sends a toggle, not an effort or token cap`, async () => {
+    const request = await prepare(config({ provider: 'openrouter', model, reasoning: 'on' }, { schema }));
+    const result = await preview(request);
+    assert.equal(result.credentials_read, false);
+    assert.equal(result.network_requests, 0);
+    assert.equal(result.body.model, model);
+    assert.deepEqual(result.body.reasoning, { enabled: true });
+    assert.deepEqual(result.body.provider, { require_parameters: true, allow_fallbacks: true });
+    assert.deepEqual(result.body.response_format.json_schema.schema, schema);
+    assert.equal(result.body.messages[0].content, prompt);
+    assert.equal(result.body.max_tokens, undefined);
+    assert.equal(result.body.max_completion_tokens, undefined);
+    const receipt = await execute(request, { apiKey: 'test-only', fetch: async (_url, options) => {
+      assert.deepEqual(JSON.parse(options.body), result.body);
+      return reply('{"count":2,"label":null}');
+    } });
+    assert.equal(receipt.valid, true);
+    assert.equal(receipt.reasoning, 'on');
+    const defaults = await preview(await prepare(config({ provider: 'openrouter', model, reasoning: 'provider-default' })));
+    assert.equal(defaults.body.reasoning, undefined);
+  });
+}
+
+test('thinking on refuses subscription and non-reasoning routes; MiMo Flash refuses invented effort levels', async () => {
+  await assert.rejects(prepare(config(codex, { reasoning: 'on' })), /reasoning/i);
+  await assert.rejects(prepare(config({ provider: 'openrouter', model: 'openai/gpt-4o', reasoning: 'on' })), /reasoning/i);
+  for (const reasoning of ['low', 'medium', 'high', 'max']) {
+    await assert.rejects(prepare(config({ provider: 'openrouter', model: 'xiaomi/mimo-v2.6-flash', reasoning })), /reasoning/i);
+  }
+  const disabled = await preview(await prepare(config({ provider: 'openrouter', model: 'xiaomi/mimo-v2.6-flash', reasoning: 'off' })));
+  assert.deepEqual(disabled.body.reasoning, { effort: 'none' });
 });
 
 test('OpenRouter omitted or null cap sends no SDK-default token limit', async () => {

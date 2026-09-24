@@ -45,7 +45,10 @@ Required fields:
 
 - `provider`: `openai-codex` for subscription access, or `openrouter`.
 - `model`: the exact model ID.
-- `reasoning`: a supported pi-ai effort, or `provider-default`.
+- `reasoning`: a supported pi-ai effort, `provider-default`, or `on`.
+  `provider-default` sends no reasoning preference. `on` is OpenRouter-only
+  for reasoning models and sends exactly `reasoning: {"enabled": true}`,
+  without choosing an effort or thinking budget. It does not impose an output cap.
 - `prompt`: the exact string to send. Whitespace and Unicode are preserved.
   Invalid Unicode is rejected rather than silently changed.
 
@@ -64,9 +67,12 @@ Optional fields:
 Unknown fields, models, reasoning settings, and unsupported transports fail
 explicitly. The pinned pi-ai catalog supplies model metadata; OpenRouter entries
 using `openai-completions` are supported. Other catalog transports are not silently
-rerouted. DeepSeek V4.1 Flash and Xiaomi MiMo V2.6 Pro
-(`xiaomi/mimo-v2.6-pro`) have explicit catalog additions because the pinned SDK
-predates those releases.
+rerouted. DeepSeek V4.1 Flash, Xiaomi MiMo V2.6 Pro
+(`xiaomi/mimo-v2.6-pro`) and Flash (`xiaomi/mimo-v2.6-flash`) have explicit catalog
+additions because the pinned SDK predates those releases. MiMo Flash accepts
+`on`, `off` and `provider-default`, not unverified graded effort levels.
+Offline serialization verifies the requested settings, not provider acceptance
+or the amount of reasoning a provider actually performs.
 
 Schemas are checked locally without coercion, inserted defaults, removed
 properties, or remote reference fetching. Draft-07, 2019-09, and 2020-12 are
@@ -258,6 +264,8 @@ instruction to run this model:
 
 The optional `runner_binary` defaults to this repository's `run-model.sh`.
 Use `provider: "openrouter"` and an explicitly chosen model for OpenRouter.
+Set `reasoning_effort: "on"` (CLI: `--reasoning-effort on`) to request thinking
+without selecting a graded effort. This uses the same transport setting above.
 The transport's credential rules apply. Optional `timeout_seconds`,
 `max_output_tokens` and `output_schema` are forwarded unchanged; schema property
 order is preserved. Subscription transport does not accept an output-token cap.

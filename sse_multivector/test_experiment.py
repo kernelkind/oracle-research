@@ -16,6 +16,19 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_thinking_on_survives_prepare_run_and_receipts(self):
+        self.prepare()
+        self.cli(
+            "prepare", "thinking", "--from", "E1", "--provider", "openrouter",
+            "--model", "xiaomi/mimo-v2.6-flash", "--reasoning-effort", "on",
+        )
+        self.assertEqual(self.show("thinking")["settings"]["reasoning_effort"], "on")
+        self.cli("run", "thinking")
+        for call in self.calls():
+            self.assertEqual(call["request"]["reasoning"], "on")
+            self.assertEqual(call["request"]["model"], "xiaomi/mimo-v2.6-flash")
+        self.assertEqual(self.show("thinking")["summary"]["valid"], 2)
+
     def prominence_spec(self):
         self.prompt.write_text("GENERIC PROMPT {INPUT_JSON}")
         self.write(
