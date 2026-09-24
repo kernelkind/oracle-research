@@ -39,6 +39,17 @@ intercepted HTTP request. It prints the decoded request body and redacted header
 not an approximation of the API input. It cannot establish server acceptance or
 reveal hidden provider-side instructions.
 
+`openai-codex` also accepts the exact model ID `gpt-6-sol`. Its metadata is
+explicitly supplied because pi-ai 0.85.1 predates this model; it is not an alias
+for GPT-5.6 Sol. Supported efforts are `low`, `medium`, `high`, `xhigh`, `max`,
+and `off` (sent as `none`); `provider-default` omits the preference. `minimal`
+is rejected rather than silently mapped. The existing subscription credential
+service and output-cap restrictions are unchanged, with no paid API fallback.
+Model limits and reference pricing come from the official
+[model page](https://developers.openai.com/api/docs/models/gpt-6-sol) and
+[release entry](https://developers.openai.com/api/docs/changelog#sep-22),
+checked September 24, 2026. Catalog cost estimates are not subscription bills.
+
 ## Request
 
 Required fields:

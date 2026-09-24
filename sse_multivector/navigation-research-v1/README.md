@@ -176,6 +176,37 @@ There are only 16 usable v34 answers for paired semantic comparison. The
 existing UI contains all 19 valid titles and agent comments; the unresolved
 case remains visible through the CLI. Production titles remain unchanged.
 
+The user then approved testing unchanged v37 with **GPT-6 Sol, low**, through
+the subscription runner. `experiments/title-v37-sol-low-vs-mimo/` preserves the
+same 20 inputs and prompt bytes and uses saved MiMo v37 outputs without baseline
+inference. One case first verified live model acceptance; resuming preserved it.
+All 20 cases completed in 20 attempts with no retries. This changes model,
+provider and effort together; it is not a prompt-only comparison.
+
+Agent review records 15 acceptable, one rejected and four uncertain titles.
+`Meals with potatoes and vegetables` restores the shared detail and removes
+the unsupported home restriction. `Beef products and processing` no longer
+drops Tbone, but the beef-only scope is uncertain because tallow need not come
+from beef. `Food preservation` similarly narrows generic preservation masks.
+The book title now names subject matter rather than terminology, but remains
+a long enumeration: `Books, their authorship, and ways of reading or listening
+to them`. The advice and mixed mental/literal fog groups remain uncertain.
+All 20 titles, comparisons and agent comments are saved through the experiment
+CLI. UI export succeeded, but launch failed because the title review validator
+rejects equal candidate and baseline prompt versions (both legitimately v37 in
+this model comparison). No user decisions or production promotion are inferred.
+The proposed next step is to support same-prompt model comparisons in the review
+UI, then review those scope choices before another prompt revision or broader run.
+
+The runner now recognizes exact `gpt-6-sol` metadata without substituting
+GPT-5.6 Sol or changing existing routes. Its regression was observed failing
+before implementation and passing afterward, including actual SDK request
+serialization and offline response decoding. The Python workflow suites passed
+147 tests. The Node runner suite passed 61 of 62: the remaining existing proxy
+test invokes the retired saved-batch command and was left unchanged. Live
+comparison succeeded through the subscription service; catalog cost estimates
+are not incremental API charges, and no paid fallback was used.
+
 HRv1's saved titles still use v21. These experiments do not authorize replacing
 them, running a full title pass, changing memberships or hierarchy edges, or
 consolidating categories. The saved v24 baseline and v25 comparison inputs,

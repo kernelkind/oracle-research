@@ -24,6 +24,19 @@ const sha256 = text => createHash('sha256').update(text).digest('hex');
 const nonempty = value => typeof value === 'string' && value.trim().length > 0;
 const integer = (value, min, max) => Number.isSafeInteger(value) && value >= min && value <= max;
 
+// The pinned catalog predates GPT-6 Sol. Exact metadata, not a GPT-5.6 alias.
+// Verified 2026-09-24: https://developers.openai.com/api/docs/models/gpt-6-sol
+// API reference rates: https://developers.openai.com/api/docs/changelog#sep-22
+// Catalog estimates are not subscription charges.
+const sol = {
+  id: 'gpt-6-sol', name: 'GPT-6 Sol',
+  provider: 'openai-codex', api: 'openai-codex-responses', baseUrl: 'https://chatgpt.com/backend-api',
+  input: ['text', 'image'], reasoning: true, contextWindow: 1050000, maxTokens: 128000,
+  thinkingLevelMap: { off: 'none', minimal: null, low: 'low', medium: 'medium', high: 'high', xhigh: 'xhigh', max: 'max' },
+  cost: { input: 2, output: 10, cacheRead: 0.2, cacheWrite: 2.5,
+    tiers: [{ inputTokensAbove: 272000, input: 4, output: 15, cacheRead: 0.4, cacheWrite: 5 }] },
+};
+
 // This pinned catalog predates V4.1. Exact model metadata, not a V4 alias.
 // OpenRouter /api/v1/models inspected 2026-09-16; catalog costs are not invoices or caps.
 const deepseek = {
@@ -101,7 +114,8 @@ export async function prepare(config) {
   if (!config.prompt.isWellFormed()) throw new Error('prompt must contain well-formed Unicode; unpaired surrogates are unsupported');
   let model;
   if (config.provider === 'openai-codex') {
-    model = Object.hasOwn(OPENAI_CODEX_MODELS, config.model) ? OPENAI_CODEX_MODELS[config.model] : undefined;
+    model = config.model === sol.id ? sol
+      : Object.hasOwn(OPENAI_CODEX_MODELS, config.model) ? OPENAI_CODEX_MODELS[config.model] : undefined;
     if (!model) throw new Error('Unknown subscription model in the pinned pi-ai catalog; no model substitution');
     if (model.api !== 'openai-codex-responses') throw new Error(`Unsupported subscription transport: ${model.api}`);
     if ('max_output_tokens' in config) throw new Error('pi-ai subscription transport does not enforce an output token cap; use timeout_seconds');

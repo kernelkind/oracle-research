@@ -3,6 +3,7 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { zstdDecompressSync } from 'node:zlib';
 import { test } from 'node:test';
 import { prepare, preview, execute, VERSION } from './model.mjs';
 
@@ -188,6 +189,49 @@ test('catalog models and supported caller reasoning are not restricted to the ex
   }
   await assert.rejects(prepare(config({ ...codex, reasoning: 'off' })), /reasoning/);
   await assert.rejects(prepare(config({ ...codex, reasoning: 'invented' })), /reasoning/);
+});
+
+test('GPT-6 Sol uses its exact subscription model and requested effort without substitution', async () => {
+  const route = { ...codex, model: 'gpt-6-sol' };
+  const request = await prepare(config(route));
+  const result = await preview(request);
+  assert.equal(request.model.id, 'gpt-6-sol');
+  assert.equal(request.model.api, 'openai-codex-responses');
+  assert.equal(request.model.contextWindow, 1050000);
+  assert.equal(request.model.maxTokens, 128000);
+  assert.equal(result.network_requests, 0);
+  assert.equal(result.credentials_read, false);
+  assert.equal(result.body.model, 'gpt-6-sol');
+  assert.deepEqual(result.body.reasoning, { effort: 'low' });
+  assert.equal(result.body.input[0].content[0].text, prompt);
+  const item = { id: 'msg-sol', type: 'message', role: 'assistant', status: 'completed',
+    content: [{ type: 'output_text', text: 'Sol response', annotations: [] }] };
+  const token = 'test.' + Buffer.from(JSON.stringify({ 'https://api.openai.com/auth': { chatgpt_account_id: 'test-account' } })).toString('base64') + '.signature';
+  const receipt = await execute(request, { apiKey: token, fetch: async (_url, options) => {
+    const sent = new Request(_url, options);
+    let body = Buffer.from(await sent.arrayBuffer());
+    if (sent.headers.get('content-encoding') === 'zstd') body = zstdDecompressSync(body);
+    assert.deepEqual(JSON.parse(body.toString('utf8')), result.body);
+    return sse([
+      { type: 'response.created', response: { id: 'resp-sol', status: 'in_progress' } },
+      { type: 'response.output_item.added', output_index: 0, item: { ...item, content: [] } },
+      { type: 'response.output_text.delta', output_index: 0, content_index: 0, delta: 'Sol response' },
+      { type: 'response.output_item.done', output_index: 0, item },
+      { type: 'response.completed', response: { id: 'resp-sol', model: 'gpt-6-sol', status: 'completed', output: [item],
+        usage: { input_tokens: 10, output_tokens: 2 } } },
+    ]);
+  } });
+  assert.equal(receipt.valid, true, receipt.error);
+  assert.equal(receipt.output, 'Sol response');
+  assert.equal(receipt.model, 'gpt-6-sol');
+  assert.equal(receipt.reasoning, 'low');
+  assert.equal(receipt.http_attempts, 1);
+  for (const reasoning of ['off', 'medium', 'high', 'xhigh', 'max']) {
+    const other = await preview(await prepare(config({ ...route, reasoning })));
+    assert.deepEqual(other.body.reasoning, { effort: reasoning === 'off' ? 'none' : reasoning });
+  }
+  await assert.rejects(prepare(config({ ...route, reasoning: 'minimal' })), /reasoning/);
+  await assert.rejects(prepare(config(route, { max_output_tokens: 100 })), /output.*cap|output.*limit/i);
 });
 
 test('invalid requests fail before transport without silently rewriting prompt, model, schema, or caps', async () => {
