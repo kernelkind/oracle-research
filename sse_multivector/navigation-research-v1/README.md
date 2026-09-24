@@ -144,15 +144,18 @@ This single-draw comparison does not establish an overall improvement over v32;
 the observed regressions argue against promotion. Transport failures are not
 counted as incorrect titles. V34 and production titles remain unchanged.
 
-[Title prompt v35](../hdbv2-node-description-probe-v35/prompt.txt) is an untested
-draft against last-approved v34, prepared for wording review only. It asks for
-the most specific organizing topic in a topic hierarchy, allowing instances to
-express different levels or aspects of that topic. The group may clarify an
-instance's meaning, but every instance must fit under the title; this replaces
-v34's independent full-meaning support requirement. Name handling, masks-only
-inputs and JSON output remain unchanged, with no added examples. The revision
-receipt records the exact base and edits. Wording approval and testing remain
-open; no inference or production-title change is authorized by this draft.
+[Title prompt v36](../hdbv2-node-description-probe-v36/prompt.txt) is the current
+untested draft against last-approved v34, prepared for wording review only.
+It asks for the most specific topic containing every instance in a topic
+hierarchy, replacing independent full-meaning support with a requirement that
+every instance belong under the title. It omits
+[v35](../hdbv2-node-description-probe-v35/prompt.txt)'s additional permissions to
+use the group to clarify an instance and to accept different levels or aspects
+of a topic: those could encourage reinterpretation or mere association instead
+of membership. V35 remains untested, not adopted. Name handling, masks-only
+inputs and JSON output remain unchanged, with no added examples. The v36
+revision receipt records the exact v34 base and edits. Wording approval and
+testing remain open; no inference or production-title change has been made.
 
 HRv1's saved titles still use v21. These experiments do not authorize replacing
 them, running a full title pass, changing memberships or hierarchy edges, or
