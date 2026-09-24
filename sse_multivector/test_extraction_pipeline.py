@@ -11,6 +11,31 @@ from pathlib import Path
 
 RUNNER = Path(__file__).with_name("extraction_pipeline.py")
 CLAIM_RUNNER = Path(__file__).with_name("claim_exec.py")
+
+
+def batch_engine_command(mode, config, *flags):
+    """Exercise retained engine APIs in isolated processes, not retired public commands."""
+    driver = r'''
+import json, sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[1])
+import extraction_pipeline as engine
+mode, path, *flags = sys.argv[2:]
+options = dict(retry_failed="--retry-failed" in flags, repeat="--repeat" in flags,
+               history_root=Path(flags[flags.index("--history-root") + 1]) if "--history-root" in flags else None)
+try:
+    if mode == "masks":
+        summary = engine.run_masks(Path(path), **options, prepare_only="--prepare-only" in flags,
+                                   collect_only="--collect-only" in flags)
+        print(json.dumps(summary))
+        sys.exit(1 if summary.get("invalid") else 0)
+    output = engine.run_prompts(Path(path), **options)
+    print(json.dumps({"prompts": len(output["responses"])}))
+except engine.RunnerError as error:
+    print(error, file=sys.stderr)
+    sys.exit(1)
+'''
+    return [sys.executable, "-c", driver, str(RUNNER.parent), mode, str(config), *flags]
 APPROVED_PROMINENCE_PROMPT = """Assign a prominence score to the one fixed takeaway below.
 
 The score has one downstream meaning: the takeaway's vector may place this complete post in a fine-subject result matching the takeaway's complete meaning. Score how strongly the complete post is about that complete meaning so the score can help order notes within that result.
@@ -210,7 +235,7 @@ class ExtractionPipelineTests(unittest.TestCase):
             "run_directory": str(self.run_directory), "model": "candidate/mask",
             "reasoning_effort": "low", "concurrency": 2,
         }))
-        command = [sys.executable, str(RUNNER), "masks", str(config)]
+        command = batch_engine_command("masks", config)
         environment = {**os.environ, "FAKE_RUNNER_LOG": str(self.log_path),
                        "FAKE_RUNNER_PROMPT_RESPONSE": '["Tea helps"]'}
         barrier = self.root / "concurrent-calls"
@@ -265,7 +290,7 @@ class ExtractionPipelineTests(unittest.TestCase):
         return path
 
     def invoke_masks(self, path, *args, environment=None):
-        return subprocess.run([sys.executable, str(RUNNER), "masks", str(path), *args],
+        return subprocess.run(batch_engine_command("masks", path, *args),
                               env={**self.mask_environment, **(environment or {})},
                               capture_output=True, text=True, timeout=30)
 
@@ -413,7 +438,7 @@ class ExtractionPipelineTests(unittest.TestCase):
         path = self.mask_batch_fixture(subjects=["Tea", "Tea"])
         next_path = self.next_mask_config(path)
         processes = [subprocess.Popen(
-            [sys.executable, str(RUNNER), "masks", str(config)],
+            batch_engine_command("masks", config),
             env=self.mask_environment, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
         ) for config in (path, next_path)]
         for process in processes:
@@ -1025,13 +1050,7 @@ class ExtractionPipelineTests(unittest.TestCase):
         environment["OPENAI_API_KEY"] = "ambient-openai-key"
         environment.update(extra_environment or {})
         return subprocess.run(
-            [
-                sys.executable,
-                str(RUNNER),
-                "prompt",
-                str(config_path),
-                *extra_arguments,
-            ],
+            batch_engine_command("prompt", config_path, *extra_arguments),
             check=False,
             capture_output=True,
             text=True,

@@ -30,21 +30,11 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 python3 sse_multivector/frontier-model-comparison-v1/mpv3.43-cost-probe-v1/study.py prepare
 ```
 
-Run one candidate's eight saved-batch calls:
-
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/extraction_pipeline.py masks \
-  sse_multivector/frontier-model-comparison-v1/mpv3.43-cost-probe-v1/config-mimo-high.json \
-  --repeat
-```
-
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/extraction_pipeline.py masks \
-  sse_multivector/frontier-model-comparison-v1/mpv3.43-cost-probe-v1/config-muse-high.json \
-  --repeat
-```
+New experiments use [the shared experiment workflow](../../model-runner.md#prompt-experiments-one-supported-workflow).
+The old saved-batch CLI is retired. Preserve these inputs and receipts as evidence;
+import them with an explicit template/input mapping rather than rerunning the baseline.
+The preparation/collection scripts below describe this saved study, not a second
+supported workflow for new prompt experiments.
 
 Collect (verifies pinned inputs and every saved receipt, decodes masks with
 the pinned `mask_positions.py` decoder, and extracts usage, cache and cost):

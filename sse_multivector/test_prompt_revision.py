@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 
 
-CLI = Path(__file__).with_name("extraction_pipeline.py")
+CLI = Path(__file__).with_name("experiment.py")
 
 
 class PromptRevisionTests(unittest.TestCase):
@@ -42,7 +42,7 @@ class PromptRevisionTests(unittest.TestCase):
             path.write_text(text, encoding="utf-8")
             edits_path = str(path)
         return subprocess.run(
-            [sys.executable, str(CLI), "revise-prompt", str(self.base),
+            [sys.executable, str(CLI), "revise", str(self.base),
              str(destination or self.destination), "--edits", edits_path],
             input=None if from_file else text,
             text=True, capture_output=True, cwd=self.root,
@@ -50,7 +50,7 @@ class PromptRevisionTests(unittest.TestCase):
             timeout=10, check=False,
         )
 
-    def test_creates_exact_revision_and_receipt_without_echoing_examples(self):
+    def test_creates_exact_revision_and_receipt_with_full_context(self):
         request = self.request()
         result = self.run_revision(request)
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -64,7 +64,7 @@ class PromptRevisionTests(unittest.TestCase):
         self.assertEqual(receipt["edits"], request["edits"])
         self.assertIn("-Old instruction.", result.stdout)
         self.assertIn("+New instruction.", result.stdout)
-        self.assertNotIn("UNCHANGED EXAMPLE", result.stdout)
+        self.assertIn("UNCHANGED EXAMPLE", result.stdout)
         self.assertIn("Created", result.stderr)
 
     def test_edits_match_original_not_text_inserted_by_another_edit(self):
@@ -146,7 +146,7 @@ class PromptRevisionTests(unittest.TestCase):
         self.assertIn("could not read baseline", result.stderr)
         self.assertFalse(self.destination.exists())
         result = subprocess.run(
-            [sys.executable, str(CLI), "revise-prompt", str(self.base),
+            [sys.executable, str(CLI), "revise", str(self.base),
              str(self.destination), "--edits", "-"],
             input="not json", text=True, capture_output=True, timeout=10,
         )
@@ -159,7 +159,7 @@ class PromptRevisionTests(unittest.TestCase):
         processes = []
         for replacement in ("First revision.", "Second revision."):
             process = subprocess.Popen(
-                [sys.executable, str(CLI), "revise-prompt", str(self.base),
+                [sys.executable, str(CLI), "revise", str(self.base),
                  str(self.destination), "--edits", "-"],
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                 text=True,
@@ -184,7 +184,7 @@ class PromptRevisionTests(unittest.TestCase):
 
     def test_help_explains_input_and_offline_behavior(self):
         result = subprocess.run(
-            [sys.executable, str(CLI), "revise-prompt", "--help"],
+            [sys.executable, str(CLI), "revise", "--help"],
             text=True, capture_output=True, timeout=10, check=False,
         )
         self.assertEqual(result.returncode, 0, result.stderr)

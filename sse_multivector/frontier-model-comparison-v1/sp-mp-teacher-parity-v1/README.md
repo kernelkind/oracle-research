@@ -45,16 +45,11 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 python3 sse_multivector/frontier-model-comparison-v1/sp-mp-teacher-parity-v1/study.py prepare
 ```
 
-Inference runs use the canonical saved-batch runner. Launch them from a plain
-namespace (`systemd-run --user`, see the credential-service sandbox blocker
-recorded in `mpv3.43-cost-probe-v1/README.md`); the routing is unchanged:
-
-```bash
-systemd-run --user --pipe --wait --collect -E HOME=/home/dev -E PATH=/etc/profiles/per-user/dev/bin:/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:/usr/bin:/bin /run/current-system/sw/bin/bash -c 'cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && python3 sse_multivector/extraction_pipeline.py masks sse_multivector/frontier-model-comparison-v1/sp-mp-teacher-parity-v1/config-mimo-high-mp-t1.json --repeat'
-```
-
-(the same with `config-muse-high-mp-t1.json`, `config-mimo-high-sp.json`, and
-the `*-t2.json` repeat batches afterwards.)
+New experiments use [the shared experiment workflow](../../model-runner.md#prompt-experiments-one-supported-workflow).
+The old saved-batch CLI is retired. Preserve these inputs and receipts as evidence;
+import them with an explicit template/input mapping rather than rerunning the baseline.
+The preparation/collection scripts below describe this saved study, not a second
+supported workflow for new prompt experiments.
 
 Collect (verifies pinned inputs and every saved receipt, decodes masks with
 the pinned decoder, extracts usage and cost):

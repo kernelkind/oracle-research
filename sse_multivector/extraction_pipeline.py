@@ -23,7 +23,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass, replace
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any, Callable, Sequence
 
 
 SCHEMA_VERSION = 1
@@ -2953,6 +2953,7 @@ def revise_prompt(base_path: Path, destination: Path, request: object) -> str:
         original_text.splitlines(keepends=True),
         revised.decode("utf-8").splitlines(keepends=True),
         fromfile=str(base_path), tofile=str(destination),
+        n=max(len(original_text.splitlines()), len(revised.splitlines())),
     )
     diff = "".join(
         line if line.endswith("\n") else line + "\n\\ No newline at end of file\n"
@@ -3001,6 +3002,7 @@ def run_prompts(
 def _execute_prompt_batch(
     config: PromptRunnerConfig, manifest: dict[str, Any], *,
     retry_failed: bool, concurrency: int = 1,
+    validate_output: Callable[[PromptJob, str], None] | None = None,
 ) -> dict[str, object]:
     runner_version = manifest["runner_version"]
     prepared_manifest = _prepare_manifest_directory(config.run_directory, manifest)
@@ -3020,13 +3022,20 @@ def _execute_prompt_batch(
     history = RequestHistory(Path(options["history_root"]), exclude_run=config.run_directory)
     mask_notes = {item["item_id"]: item["note"] for item in manifest.get("items", [])}
 
+    def valid_for_reuse(prompt: PromptJob, raw: str) -> bool:
+        try:
+            if validate_output is not None:
+                validate_output(prompt, raw)
+            elif prompt.prompt_id in mask_notes:
+                _map_mask_fragments(raw, mask_notes[prompt.prompt_id], manifest.get("mask_format", "fragments"))
+        except (RunnerError, ValueError):
+            return False
+        return True
+
     def remember(key: str, prompt: PromptJob) -> None:
         record = latest["prompt:" + prompt.prompt_id]
-        if prompt.prompt_id in mask_notes:
-            try:
-                _map_mask_fragments(record["final_output_raw"], mask_notes[prompt.prompt_id], manifest.get("mask_format", "fragments"))
-            except (RunnerError, ValueError):
-                return
+        if not valid_for_reuse(prompt, record["final_output_raw"]):
+            return
         history.remember(key, results_path, record)
 
     def execute(prompt: PromptJob) -> dict[str, str]:
@@ -3062,11 +3071,8 @@ def _execute_prompt_batch(
                 with history.lock(key):
                     reusable = None
                     for reference, source in history.matches(key):
-                        if prompt.prompt_id in mask_notes:
-                            try:
-                                _map_mask_fragments(source["final_output_raw"], mask_notes[prompt.prompt_id], manifest.get("mask_format", "fragments"))
-                            except (RunnerError, ValueError):
-                                continue
+                        if not valid_for_reuse(prompt, source["final_output_raw"]):
+                            continue
                         reusable = reference, source
                         break
                     if reusable is None:
@@ -3132,13 +3138,41 @@ def _load_mask_batch(
     if output_schema is not None and (not isinstance(output_schema, dict) or output_schema.get("type") != "object"):
         raise RunnerError("output_schema must describe an object")
     source = _expect_object(_load_json(source_path, "input_path"), "input")
+    items, prompts = prepare_mask_inputs(source, template, mask_format, value.get("note_ids"))
+    config = PromptRunnerConfig(
+        config_path=path,
+        runner_binary=_resolve_executable(value["runner_binary"], "runner_binary", path.parent),
+        **_runtime_options(value, path.parent),
+        run_directory=_resolve_path(value["run_directory"], "run_directory", path.parent),
+        model=_expect_identifier(value["model"], "model"),
+        reasoning_effort=_expect_identifier(value["reasoning_effort"], "reasoning_effort"),
+        prompts=tuple(prompts),
+        output_schema=output_schema,
+    )
+    metadata = {"input_path": str(source_path), "input_sha256": _sha256_file(source_path),
+                "prompt_path": str(template_path), "prompt_sha256": _sha256_file(template_path),
+                "concurrency": concurrency, "items": items}
+    if mask_format != "fragments":
+        metadata["mask_format"] = mask_format
+        metadata["position_decoder_sha256"] = _sha256_file(Path(__file__).with_name("mask_positions.py"))
+    return config, metadata, source
+
+
+def prepare_mask_inputs(source, template, mask_format="word_positions", note_ids=None):
+    """Expand saved subjects without leaking their diagnostic context into inputs."""
+    if any(template.count(p) != 1 for p in ("{POST}", "{SUBJECT}")):
+        raise RunnerError("mask prompt must contain {POST} and {SUBJECT} exactly once")
+    if mask_format not in ("word_positions", "fragments"):
+        raise RunnerError("mask_format must be fragments or word_positions")
+    if mask_format == "word_positions" and template.count("{INDEXED_POST}") != 1:
+        raise RunnerError("word_positions requires {INDEXED_POST} exactly once")
     notes = source.get("notes")
     if (type(source.get("schema_version")) is not int or source["schema_version"] != 1
             or not isinstance(notes, list) or not notes):
         raise RunnerError("input must contain schema_version 1 and nonempty notes")
     selected = None
-    if "note_ids" in value:
-        ids = _validate_string_array(value["note_ids"], "note_ids", allow_empty=False)
+    if note_ids is not None:
+        ids = _validate_string_array(note_ids, "note_ids", allow_empty=False)
         selected = set(ids)
         if len(selected) != len(ids):
             raise RunnerError("duplicate note_ids")
@@ -3178,23 +3212,7 @@ def _load_mask_batch(
         raise RunnerError(f"unknown note_ids: {sorted(selected - seen)}")
     if not items:
         raise RunnerError("selected notes have no subjects")
-    config = PromptRunnerConfig(
-        config_path=path,
-        runner_binary=_resolve_executable(value["runner_binary"], "runner_binary", path.parent),
-        **_runtime_options(value, path.parent),
-        run_directory=_resolve_path(value["run_directory"], "run_directory", path.parent),
-        model=_expect_identifier(value["model"], "model"),
-        reasoning_effort=_expect_identifier(value["reasoning_effort"], "reasoning_effort"),
-        prompts=tuple(prompts),
-        output_schema=output_schema,
-    )
-    metadata = {"input_path": str(source_path), "input_sha256": _sha256_file(source_path),
-                "prompt_path": str(template_path), "prompt_sha256": _sha256_file(template_path),
-                "concurrency": concurrency, "items": items}
-    if mask_format != "fragments":
-        metadata["mask_format"] = mask_format
-        metadata["position_decoder_sha256"] = _sha256_file(Path(__file__).with_name("mask_positions.py"))
-    return config, metadata, source
+    return items, prompts
 
 
 @lru_cache(maxsize=1)
@@ -3436,32 +3454,6 @@ def _argument_parser() -> argparse.ArgumentParser:
         description="Run extraction workflows and audited batches through the model runner"
     )
     subcommands = parser.add_subparsers(dest="command", required=True)
-    revision_parser = subcommands.add_parser(
-        "revise-prompt", help="create a prompt version from exact edits; no model calls",
-        description=(
-            "Create a new prompt file and its .revision.json receipt without overwriting. "
-            "The original stays unchanged. Only the diff is printed to stdout; "
-            "no credentials or model calls are used."
-        ),
-        epilog=(
-            'Edits JSON: {"base_sha256":"<sha256sum of baseline>",'
-            '"edits":[{"old":"exact existing text","new":"replacement text"}]}\n'
-            'Every "old" must match exactly once in the original baseline; edits must not overlap.\n'
-            'All matches use the original, not earlier replacements. Use "new":"" to delete text.\n'
-            'Unchanged bytes, including line endings, are preserved.\n'
-            'Example: extraction_pipeline.py revise-prompt v1.md v2.md --edits changes.json'
-        ),
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
-    revision_parser.add_argument("base", type=Path, help="existing UTF-8 prompt file")
-    revision_parser.add_argument("destination", type=Path, help="new prompt file; must not exist")
-    revision_parser.add_argument("--edits", required=True, help="edits JSON file, or - to read stdin")
-    masks_parser = subcommands.add_parser("masks", help="generate masks for saved subjects and prepare review")
-    masks_parser.add_argument("config", type=Path)
-    masks_parser.add_argument("--retry-failed", action="store_true")
-    mask_mode = masks_parser.add_mutually_exclusive_group()
-    mask_mode.add_argument("--prepare-only", action="store_true", help="save exact inputs without model calls")
-    mask_mode.add_argument("--collect-only", action="store_true", help="validate saved outputs and rebuild review without calls")
     run_parser = subcommands.add_parser("run", help="run or resume a batch")
     run_parser.add_argument("config", type=Path)
     run_parser.add_argument(
@@ -3501,13 +3493,13 @@ def _argument_parser() -> argparse.ArgumentParser:
         help="pause successfully after spawning at most this many uncached jobs",
     )
     prompt_parser = subcommands.add_parser(
-        "prompt", help="run one direct prompt or a preserved prompt batch"
+        "prompt", help="run one direct prompt (saved experiments use experiment.py)"
     )
     prompt_parser.add_argument(
         "config",
         type=Path,
         nargs="?",
-        help="batch configuration; omit when using --text",
+        help=argparse.SUPPRESS,
     )
     prompt_parser.add_argument(
         "--text",
@@ -3523,56 +3515,18 @@ def _argument_parser() -> argparse.ArgumentParser:
     prompt_parser.add_argument(
         "--output-schema",
         type=Path,
-        help="JSON output schema file for --text; batches use config.output_schema",
+        help="JSON output schema file for --text",
     )
-    prompt_parser.add_argument(
-        "--retry-failed",
-        action="store_true",
-        help="explicitly retry failed jobs in config-based batch mode",
-    )
-    for batch_parser in (prompt_parser, masks_parser):
-        batch_parser.add_argument(
-            "--repeat", action="store_true",
-            help="intentionally make fresh calls in a new run instead of reusing identical requests",
-        )
-        batch_parser.add_argument(
-            "--history-root", type=Path,
-            help="search saved runs under this directory (default: config's repository, or config directory)",
-        )
     return parser
 
 
 def main(arguments: Sequence[str] | None = None) -> int:
     parsed = _argument_parser().parse_args(arguments)
     try:
-        if parsed.command == "revise-prompt":
-            if parsed.edits == "-":
-                try:
-                    request = json.load(sys.stdin)
-                except (ValueError, UnicodeError) as error:
-                    raise RunnerError(f"could not read edits JSON from stdin: {error}") from error
-            else:
-                request = _load_json(Path(parsed.edits).expanduser(), "--edits")
-            diff = revise_prompt(parsed.base, parsed.destination, request)
-            sys.stdout.write(diff)
-            print(f"Created {parsed.destination}; provenance: {parsed.destination}.revision.json", file=sys.stderr)
-            return 0
-        if parsed.command == "masks":
-            if parsed.retry_failed and (parsed.prepare_only or parsed.collect_only):
-                raise RunnerError("--retry-failed requires execution")
-            summary = run_masks(parsed.config, retry_failed=parsed.retry_failed,
-                                prepare_only=parsed.prepare_only, collect_only=parsed.collect_only,
-                                repeat=parsed.repeat, history_root=parsed.history_root)
-            print(json.dumps(summary, sort_keys=True))
-            return 1 if summary.get("invalid") else 0
         if parsed.command == "prompt":
             if parsed.text is not None:
                 if parsed.config is not None:
                     raise RunnerError("use either a config path or --text, not both")
-                if parsed.retry_failed:
-                    raise RunnerError("--retry-failed is only valid with a config path")
-                if parsed.repeat or parsed.history_root is not None:
-                    raise RunnerError("--repeat and --history-root require a saved batch config")
                 output_schema = None
                 if parsed.output_schema is not None:
                     output_schema = _expect_object(
@@ -3597,30 +3551,7 @@ def main(arguments: Sequence[str] | None = None) -> int:
                 )
                 sys.stdout.write(response)
                 return 0
-            if parsed.config is None:
-                raise RunnerError("provide a config path or use --text")
-            if any(
-                value is not None
-                for value in (
-                    parsed.model,
-                    parsed.reasoning_effort,
-                    parsed.auth_file,
-                    parsed.runner_binary,
-                    parsed.provider,
-                    parsed.max_output_tokens,
-                    parsed.timeout_seconds,
-                    parsed.output_schema,
-                )
-            ):
-                raise RunnerError(
-                    "--model, --reasoning-effort, --auth-file, --provider, "
-                    "--runner-binary, --max-output-tokens, --timeout-seconds, "
-                    "and --output-schema are only valid with --text"
-                )
-            output = run_prompts(parsed.config, retry_failed=parsed.retry_failed,
-                                 repeat=parsed.repeat, history_root=parsed.history_root)
-            print(json.dumps({"prompts": len(output["responses"])}, sort_keys=True))
-            return 0
+            raise RunnerError("saved batches moved to experiment.py prepare/run; direct calls require --text")
         if parsed.command == "subjects":
             outcome = run_subjects(
                 parsed.config,

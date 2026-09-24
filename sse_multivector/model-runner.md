@@ -4,11 +4,13 @@
 It replaces the removed `codex_exec.py` execution tool. No subject, mask, title,
 corpus, or model is selected for you.
 
-Use this tool for new model calls. The [extraction pipeline](extraction_pipeline.py)
+Use this transport for standalone model calls. For prompt experiments, start with
+[the shared experiment workflow](#prompt-experiments-one-supported-workflow).
+The [extraction pipeline](extraction_pipeline.py)
 and [frozen comparison adapter](frontier_runner/runner.mjs) are callers of the
 same transport, not separate model-execution implementations.
 
-For offline prompt revisions, run `extraction_pipeline.py revise-prompt --help`.
+For offline prompt revisions, run `experiment.py revise --help`.
 It documents exact edits against a baseline hash, preservation and refusal checks,
 diff-only output, and the automatically generated revision receipt. It makes no
 model calls; revision instructions are kept in that command's help.
@@ -213,234 +215,278 @@ nix shell nixpkgs#nodejs_24 --command npm ci --ignore-scripts --no-audit --no-fu
 
 The SDK is pinned to pi-ai 0.85.1 in [package-lock.json](frontier_runner/package-lock.json).
 
-## Preserved batches and extraction workflows
+## Prompt experiments: one supported workflow
 
-[extraction_pipeline.py](extraction_pipeline.py) retains arbitrary prompt batches,
-subject extraction, and the existing takeaway/prominence/mask workflows.
-[claim_exec.py](claim_exec.py) retains claim extraction. These scripts construct
-task inputs and save progress; they invoke `run-model.sh` for model execution.
+Use [experiment.py](experiment.py) for saved prompt experiments. It owns input
+rendering, batching, receipts, request reuse, comparisons, usage, revision diffs
+and review exports. Do not write per-case configs, orchestrate waves, add inline
+collection scripts, total usage by hand, or hand-edit review JSON.
 
-Saved run artifacts are experiment data and must not be committed. Preserve them
-outside Git for reuse and investigation; this policy does not authorize deleting
-existing results. Reusable code, tests, prompts and maintained documentation are
-separate from run data even when stored beside it. Repository ignore rules now
-exclude data files in versioned SSE experiment directories, including rendered
-per-run configurations and generated schema copies, without hiding whole
-directories. Source schemas, prompt-version metadata and test fixtures remain
-eligible for tracking. Numeric arrays and model-weight files under
-`sse_multivector/` are also ignored. Existing tracked experiment data is unchanged:
-ignore rules do not remove files already in Git.
+Only `run` performs inference. `prepare`, `show`, `revise` and `review` do
+not call a model. Preparation checks the local runner identity, not credentials
+or provider acceptance. User approval and the repository spending rules still
+apply before `run`; preparing an experiment does not authorize spending.
 
-A prompt-batch configuration uses:
+The general `run-model.sh` transport remains available to non-experiment callers.
+Production extraction `extraction_pipeline.py run` / `subjects` and
+`claim_exec.py` retain their separate extraction contracts. The former public
+`extraction_pipeline.py prompt CONFIG`, `masks` and `revise-prompt` paths are
+retired. Their reusable execution/validation functions are shared internally;
+historical receipts and data are not deleted or rewritten.
+
+### First experiment
+
+Create one reusable spec with an explicitly versioned prompt. Paths in the spec
+resolve relative to that spec. Model/provider/settings are choices, not defaults
+selected by the experiment tool. This example spec is illustrative, not an
+instruction to run this model:
 
 ```json
 {
   "schema_version": 1,
-  "runner_binary": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-model.sh",
-  "provider": "openai-codex",
-  "auth_file": null,
-  "run_directory": "new-run",
-  "model": "gpt-6-astra",
-  "reasoning_effort": "low",
-  "concurrency": 16,
-  "prompts": [
-    {"prompt_id": "example", "text": "Your exact prompt"}
+  "prompt": {"id": "P1", "path": "prompts/P1.txt"},
+  "dataset": {"adapter": "generic", "path": "cases.json"},
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "concurrency": 4
+  }
+}
+```
+
+The optional `runner_binary` defaults to this repository's `run-model.sh`.
+Use `provider: "openrouter"` and an explicitly chosen model for OpenRouter.
+The transport's credential rules apply. Optional `timeout_seconds`,
+`max_output_tokens` and `output_schema` are forwarded unchanged; schema property
+order is preserved. Subscription transport does not accept an output-token cap.
+
+Generic input data:
+
+```json
+{
+  "cases": [
+    {
+      "id": "post-1",
+      "inputs": {"POST": "Tea helps."},
+      "evidence": {"review_context": "Not sent to the model."}
+    }
   ]
 }
 ```
 
-Execute with `python3 sse_multivector/extraction_pipeline.py prompt CONFIG.json`
-from the repository root. For subscription calls, set `auth_file` to null to use
-the selected account's credential service. File paths are no longer
-supported. Preserve historical configs and use a fresh run directory for the
-changed runner identity.
-For OpenRouter set `auth_file` to null. Supply `max_output_tokens` only when a
-caller cap is wanted; omitted or null sends no caller cap. Paths resolve relative
-to the configuration file.
-Extraction-specific normalization, schemas, note loading, and prompt registries
-belong to the workflow, not the general runner.
+P1's template contains `{POST}`. Any UPPER_CASE variable name is supported;
+all supplied variables must occur in the template and all placeholders must
+have values. Literal JSON braces are untouched. Substitution is single-pass:
+a placeholder-looking string inside a post is never substituted again.
+`evidence` is saved only for review, never implicitly appended to the prompt.
 
-Saved `prompt` batches default to **16 concurrent calls**. Set `concurrency` to
-any positive integer to override that limit; `1` requests sequential execution.
-The existing executor limits both active and queued work in waves. If a call
-fails, already-started calls finish and save their receipts, but later waves do
-not start. Final responses remain in input order even when calls finish out of
-order. Concurrency is recorded in the batch manifest, not sent to the model or
-included in the identical-request reuse key. It is a local scheduling limit,
-not a statement of the provider's rate limits. The single-call `run-model.sh`
-transport and the separate `masks` concurrency settings below are unchanged.
-
-Batches save manifests, per-attempt results, and final output. Repeating an
-unchanged configuration reuses completed jobs; failed jobs require an explicit
-`--retry-failed`. Changes in inputs, settings, or transport identity require a new
-run directory. Workflow-code changes also require one by default. Pipeline batch
-mode retains the explicit `--runner-upgrade-reason` exception for wrapper-only
-changes, recording the boundary in its upgrade ledger; this cannot change the
-transport or disguise historical Codex calls as pi-ai calls.
-New subject and claim manifests use schema version 2
-to distinguish the new execution provenance.
-
-### Reusing requests across saved runs
-
-Saved `prompt` and `masks` batches look up identical successful requests before
-sending. The SHA-256 key includes the **complete rendered prompt** (including the
-note and subject), provider, model, reasoning setting, output schema and property
-order, output-token limit, timeout, and transport identity. Run paths, job IDs,
-prompt-version labels, and credential-file paths do not determine equivalence.
-Changing an instruction or the source text therefore requires a new call.
-
-By default, history is searched under the configuration's Git repository, or its
-directory when outside a repository. `--history-root DIRECTORY` selects a shared
-location explicitly. Saved pi-ai receipts from before this feature are eligible;
-legacy Codex calls with different context are not. The ignored
-`.model-request-history/` directory contains request locks and receipt references,
-not additional copies of prompts or credentials. Batches sharing a history root
-serialize only identical requests; unrelated requests remain concurrent.
-
-Reuse verifies the original manifest, exact request, and response hashes.
-Corrupt matching evidence stops execution rather than silently spending again.
-Failed calls and mechanically invalid masks are not reused. A valid receipt is
-not semantic approval: an unwanted but structurally valid answer requires an
-intentional repeat or a changed prompt.
-
-The new run records `execution: "cross_run_reuse"`, `request_sha256`, and
-`reused_from`, pointing to the original receipt. It records zero new usage and
-does not count the result as another independent trial. Keep the original files
-available for verification. Mask summaries distinguish `reused_results` from
-`new_attempts` and `saved_attempts`, which count actual model calls.
-
-For an **intentional independent trial**, use a new run directory and `--repeat`:
+Save the spec at `experiment-spec.json`, then prepare:
 
 ```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
-python3 sse_multivector/extraction_pipeline.py masks repeat-config.json --repeat
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py prepare experiments/E1 \
+  --spec experiment-spec.json
 ```
 
-This choice is recorded in the manifest. Resuming that run still reuses its own
-completed jobs; `--repeat` does not overwrite results. `prompt CONFIG.json`
-accepts the same option. The bare `run-model.sh` transport, unsaved `prompt --text`
-calls, and the older full-pipeline/subject/claim workflows are unchanged; their
-existing explicit reuse mechanisms remain separate.
-
-### Saved subjects → masks → review
-
-Use `extraction_pipeline.py masks CONFIG.json` for this workflow. One config
-covers the whole selection; do not create a config per subject or launch waves
-manually. The general pi-ai runner is unchanged and remains usable for arbitrary
-prompts, text responses, and caller-provided schemas.
-
-The input is a saved JSON document with `schema_version: 1` and `notes`. Each note
-has `note_id`, the complete original `text`, and a `subjects` array. Subjects may
-be strings, ASv6.37 objects with `subject`, or existing pipeline objects with
-`text`. Extra provenance, heading numbers, and context fields are retained in
-the input snapshot but **are not sent** to mask calls. Optional `note_ids` selects
-notes by their exact IDs; every subject from each selected note is included.
-
-```json
-{
-  "schema_version": 1,
-  "runner_binary": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-model.sh",
-  "provider": "openai-codex",
-  "auth_file": null,
-  "input_path": "saved-subjects.json",
-  "prompt_path": "mask-prompt.md",
-  "run_directory": "mask-run",
-  "model": "gpt-6-astra",
-  "reasoning_effort": "low",
-  "concurrency": 10
-}
-```
-
-The current frozen subject-mask baseline is MPv3.43 with Astra low. Its
-`frozen_subject_mask_prompt` entry in [the mask registry](mask-prompt-versions.json)
-records the prompt path/hash, `mask_format` and output-schema path, relative to
-that registry. Set the batch's `prompt_path` and `mask_format` accordingly and
-load the schema file's contents into `output_schema`. The separate
-`frozen_takeaway_mask_prompt_version` is legacy MPv3.4, not the current subject
-baseline. Existing run configurations keep their explicit versions/paths; the
-runner does not automatically select either frozen entry.
-
-The caller supplies the prompt and model. The template must contain `{POST}` and
-`{SUBJECT}` exactly once each. The default `mask_format: "fragments"` preserves
-the legacy fragment-array output. For positional prompts such as MPv3.43, set
-`mask_format: "word_positions"` and supply the prompt's `output_schema`; the
-template must also contain `{INDEXED_POST}` exactly once. This inserts numbered
-words alongside the unchanged original post. No extra instructions are added.
-Each new call gets a fresh isolated context;
-identical saved requests are reused as described above. OpenRouter
-uses the same explicit auth/output-cap rules as other pipeline modes.
-
-From the repository root, with your config saved as `mask-config.json`:
+Preparation prints the exact case/call count and current reuse availability,
+saves the template/inputs/settings, and makes **zero model calls**. Inspect one
+case before obtaining inference authorization:
 
 ```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
-python3 sse_multivector/extraction_pipeline.py masks mask-config.json
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py show experiments/E1 --case post-1
 ```
 
-The command saves raw receipts, verifies request isolation, validates exact source
-fragments and their order, and writes the existing mask-review format to
-`mask-run/review.json`. In legacy fragment mode it flags ambiguous occurrence
-positions and displays the first occurrence compatible with source order; this
-is not a model-supplied position. In word-position mode it decodes inclusive
-word ranges and unique within-word selections into exact character ranges,
-rejecting invalid bounds, order, overlaps and ambiguous matches. Valid empty
-masks are retained in `validation.json`, alongside MPv3.43 diagnostic fields,
-but omitted from the existing nonempty-only review cards. Invalid output is
-never converted into an empty mask. Full URLs and encoded Nostr identifiers in returned fragments are
-rejected mechanically. Semantic correctness still requires review: the tool
-does not approve masks, invent assessments, edit responses, or fill user decisions.
-Its compact JSON summary reports new attempts, validation counts and cumulative
-token usage across all saved attempts, including failures. Reasoning tokens are
-already included in output tokens; missing usage is reported rather than assumed
-free. These are usage receipts, not subscription invoices.
-
-- `--prepare-only` saves the input snapshot and exact rendered prompts in the
-  manifest without reading credentials or making model calls. It still checks
-  the local runner's identity; this is not a provider wire preview.
-- `--collect-only` verifies saved receipts and rebuilds validation/review files
-  without credentials or inference. It never adopts unrelated historical runs.
-- Resume with the same command. Successful calls are reused; failed calls require
-  explicit `--retry-failed`. Invalid mask text is preserved, not automatically
-  repaired or regenerated.
-- `concurrency` defaults to 1 and accepts 1–12. It limits active and queued work,
-  not operating-system memory. Failure stops later waves; calls already running
-  finish and save their receipts. A lock prevents simultaneous execution of the
-  same mask run. Existing external memory limits can still wrap the command.
-- A nonzero exit status and `validation.json` identify failed, invalid, or unrun
-  items. Only mechanically valid masks enter the review file. A partial review
-  is therefore not evidence that every requested mask succeeded.
-
-Open the results separately:
+After authorization:
 
 ```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
-./target/release/sse-mask-review review-masks \
-  mask-run/review.json mask-run/review-session.json
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py run experiments/E1
 ```
 
-Review decisions remain separate and are never overwritten by generation. If
-additional results change a partial review, the UI rejects the old session's
-fingerprint; use a new session path and preserve the earlier decisions.
+No collect step is needed. Raw receipts and outputs are in `run/`;
+`report.json` contains every case, validation, usage and comparison.
+`show` re-reads the receipts rather than trusting a stale report, including
+during incomplete runs. Default output is a compact case/status list;
+`--case ID` shows the exact model input, output, baseline, validation and
+review evidence. `--json` provides machine-readable output.
 
-The real-note experiment's older `generation.py` and `omission_calls.py`
-preparation commands still require `--auth-file PATH`; they cannot launch new
-service-backed runs unchanged. Use the canonical saved-batch configs above for
-new calls. Their collection commands still read saved legacy runs without
-invoking the retired tool. The CREC-119 launchers require a new configuration
-path rather than silently reusing their archived Codex configurations.
+Experiment directories are **generated artifacts**, with a local `.gitignore`
+ignoring their contents from the outset. Keep reusable prompts, specs, tests and
+maintained documentation **outside** these directories. Do not force-add
+experiment artifacts to Git.
 
-## Historical experiments
+### Next version and independent trials
 
-Existing configs and results remain untouched as historical evidence. Old
-`codex_binary`/`codex_home` configs cannot silently resume through pi-ai.
-Choose explicit new runtime settings and a fresh run directory.
+`--from` names an existing experiment directory, not a prompt file. It inherits
+its cases, evidence and settings; its current saved outputs become a frozen
+comparison baseline. It never reruns that baseline:
 
-[generation_history.py](generation_history.py) only reads historical formats and
-reconstructs their recorded metadata. It has no model-execution entry point.
-When an old audit checks the retired runner's source hash, the source bytes are
-read from a pinned Git revision and never executed. The review tool separately
-recognizes legacy and new manifests, preserving their provenance checks.
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py prepare experiments/E2 \
+  --from experiments/E1 --prompt prompts/P2.txt --prompt-id P2
+```
 
-The [frozen comparison launcher](run-frontier-comparison.sh) still loads the
-approved ASv6.23/MPv3.5 inputs. It is an experiment-specific adapter; other agents
-should use `run-model.sh` for arbitrary prompts.
+Optional `--model`, `--reasoning-effort`, `--provider`, `--concurrency` and
+`--max-output-tokens` override only the stated settings during preparation.
+To change cases or other settings, prepare from a new spec and use
+`--baseline experiments/E1`. Case IDs **and actual template-variable values**
+must agree before outputs are paired. Same-ID/different-input cases are reported
+as `input_mismatch`, not silently compared. Baseline-only case IDs are retained
+in the report. Text changes are never reported as semantic improvement.
+
+`run` executes the frozen setup, not subsequently edited source files.
+Editing a frozen config, manifest, runner or workflow code is refused. Prepare
+a new directory after such changes. Completed successful calls resume without
+sending again; failed calls require explicit `run ... --retry-failed`.
+Malformed completed output is retained and is not automatically repaired or
+retried. The executor preserves bounded waves: already-running calls finish on
+failure, later waves stop. A lock prevents simultaneous runs of one experiment.
+
+For an independent repetition, prepare a new directory with `--repeat`:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py prepare experiments/E1-repeat \
+  --from experiments/E1 --repeat
+```
+
+This disables cross-run reuse for that trial; resuming it still preserves its
+own successful calls. For three repetitions, prepare three such directories.
+Without `--repeat`, successful matching requests may be reused, including
+historical pi-ai runs. Reuse is not another sample.
+
+History defaults to the first experiment's parent directory and is inherited by
+`--from`; use
+`--history-root DIRECTORY` to share history with older runs elsewhere.
+The request key includes full rendered text, provider, model, reasoning, schema
+including property order, token cap, timeout and transport identity. Labels and
+case IDs do not determine reuse. Original receipts remain necessary and are
+verified; corrupt matching evidence stops execution instead of silently spending
+again. Reused results contribute zero new attempts or usage. Reported costs are
+catalog estimates, not invoices; missing usage is explicit. Reasoning tokens
+are already included in output tokens.
+
+### Title and mask preparation
+
+The core workflow is task-independent. Optional adapters use the existing
+production preparation and decoding functions:
+
+- `dataset.adapter: "titles"`: `path` points to source packets with
+  `packets[].packet` and `instances[]` (instance/vector/post IDs, original text,
+  UTF-8 byte spans, fragments). Optional `select` lists exact packet IDs.
+  The adapter verifies spans, deduplicates identical same-post masks, retains
+  provenance and renders `{NUMBERED_INSTANCES}`. **Only the quoted masks go to
+  the model.** Full posts and IDs remain review evidence. Expected output:
+  `{"title":"..."}`.
+- `dataset.adapter: "masks"`: `path` points to
+  `{"schema_version":1,"notes":[{"note_id":"...","text":"...","subjects":[...]}]}`.
+  Optional `select` lists exact post IDs. Each subject becomes a case; the
+  preview reports both post and call counts. Subjects may be strings or objects
+  using `subject` or `text`. Diagnostic context/heading numbers are not sent.
+  Case IDs derive from post ID and subject, not batch order.
+  Templates require `{POST}`, `{SUBJECT}`, and (for the default
+  `mask_format: "word_positions"`) `{INDEXED_POST}`.
+  Legacy `mask_format: "fragments"` is available for historical comparisons.
+
+The mask decoder validates bounds, source text, ordering, overlap, within-word
+uniqueness and the response contract. A valid empty mask is `empty`, not a
+failure. Reports distinguish `valid`, `empty`, `malformed`, `invalid_receipt`,
+`failed` and `unrun`. Mechanical validity is not semantic approval.
+
+The frozen subject-mask baseline remains MPv3.43, identified in
+[mask-prompt-versions.json](mask-prompt-versions.json). This infrastructure does
+not choose, edit or promote prompts or models.
+
+### Review without hand-editing files
+
+Inspect exact evidence using `show --case ID`. Record agent assessment separately
+from an explicit user decision:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py review experiments/E1 \
+  --case post-1 --role agent --verdict uncertain \
+  --comment "Needs the user's decision on scope."
+```
+
+Verdicts are `accept`, `reject` or `uncertain`. Use `--role user` **only to
+record a decision the user actually made**. Reviews carry input/output hashes;
+neither mechanical validation nor agent assessment becomes a user approval.
+
+For titles or masks, `review experiments/E1 --ui` exports compatible cases and
+launches the existing `target/release/sse-mask-review` UI. Override its path with
+`--ui-binary` if necessary. It never builds the binary or calls a model.
+Sessions are tied to batch contents. The current mask UI cannot show empty or
+invalid masks: the CLI explicitly lists excluded IDs/statuses, and they remain
+available through `show --case` and CLI review. Generic tasks use the same
+inspection/judgment CLI without a special UI.
+Agent assessments appear separately from user decisions in the existing UI.
+`show` reads the UI's hashed sessions, alongside CLI-recorded reviews; it does not
+invent approvals. Reviews of an earlier output remain visible but are marked
+`current: false` if the output changes.
+
+### Revision: explicit approved base, full-context diff
+
+Use a new versioned destination and the last approved prompt as the base:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py revise prompts/P1.txt prompts/P2.txt \
+  --edits prompt-edits.json
+```
+
+Edits file: `{"edits":[{"old":"exact text","new":"replacement"}]}`.
+The tool computes the baseline hash automatically; an optional
+`base_sha256` pins an expected hash. Every old string must match exactly once
+in the original; edits cannot overlap or be no-ops. Unchanged bytes are
+preserved, existing destinations are never overwritten, and the prompt and
+`.revision.json` receipt are published together. Standard output is **only the
+full-context unified diff**, suitable for piping to delta. No model calls occur.
+
+### Importing existing results
+
+A historical run requires a spec identifying its original template, actual
+inputs and settings. Then:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py prepare experiments/imported-baseline \
+  --spec baseline-spec.json --import-config path/to/saved-config.json
+```
+
+Import verifies the rendered prompts against the saved config and manifest and
+validates successful receipts. Every saved job must map exactly once; it does
+not reverse-engineer input variables from arbitrary rendered strings. Imported
+experiments are read-only, reference the old results, and cannot be run. Use
+`prepare --from experiments/imported-baseline` for a new candidate. The
+original saved files must remain available.
+
+Pre-pi Codex formats remain readable through
+[generation_history.py](generation_history.py), not importable as native pi-ai
+receipts. Old per-call preparation scripts and archived job commands are not
+supported new-experiment entry points; use the workflow above. Their collectors
+remain for historical evidence. The frozen comparison launcher remains a
+separate frozen extraction adapter, not a general prompt-experiment interface.
+
+### Offline verification and extension
+
+Run the CLI and engine regression tests without credentials or inference:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 -m unittest sse_multivector.test_experiment \
+  sse_multivector.test_prompt_revision \
+  sse_multivector.test_extraction_pipeline \
+  sse_multivector.test_category_title_inputs
+```
+
+Add task-specific preparation/validation in
+[experiment_inputs.py](experiment_inputs.py) only when generic variables and
+optional schema are insufficient. Keep rendering/review evidence separate.
+Reuse the shared executor and receipts; do not add a second execution path or
+an experiment-specific report script. Tests must exercise the actual CLI and
+production engine using offline transport fixtures.

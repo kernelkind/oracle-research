@@ -2,7 +2,7 @@
 
 No login, model execution, batch execution, or transport is provided here.
 Retired source bytes are read from the pinned Git revision, never executed.
-New model calls belong to run-model.sh; new batches to extraction_pipeline.py.
+Standalone model calls belong to run-model.sh; prompt experiments to experiment.py.
 """
 from __future__ import annotations
 import hashlib

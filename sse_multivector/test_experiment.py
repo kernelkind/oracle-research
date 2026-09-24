@@ -1,0 +1,569 @@
+"""Offline integration tests of the supported experiment CLI and real runner engine."""
+
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import unittest
+
+from sse_multivector.test_extraction_pipeline import FAKE_RUNNER
+
+
+CLI = Path(__file__).with_name("experiment.py")
+
+
+class ExperimentTests(unittest.TestCase):
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name)
+        self.runner = self.root / "runner"
+        self.runner.write_text(FAKE_RUNNER)
+        self.runner.chmod(0o755)
+        self.log = self.root / "calls.json"
+        self.prompt = self.root / "v1.txt"
+        self.prompt.write_text('GENERIC PROMPT {POST}\n{"literal_json":true}\n')
+        self.cases = self.write(
+            "cases.json",
+            {
+                "cases": [
+                    {
+                        "id": "one",
+                        "inputs": {"POST": "Tea {POST}"},
+                        "evidence": {"private": "REVIEW ONLY"},
+                    },
+                    {"id": "two", "inputs": {"POST": "Coffee"}},
+                ]
+            },
+        )
+        self.spec = self.write(
+            "spec.json",
+            {
+                "schema_version": 1,
+                "prompt": {"id": "P1", "path": "v1.txt"},
+                "dataset": {"adapter": "generic", "path": "cases.json"},
+                "runner": {
+                    "runner_binary": str(self.runner),
+                    "auth_file": None,
+                    "provider": "openai-codex",
+                    "model": "fixture/model",
+                    "reasoning_effort": "low",
+                    "concurrency": 1,
+                },
+            },
+        )
+
+    def write(self, name, value):
+        path = self.root / name
+        path.write_text(json.dumps(value))
+        return path
+
+    def cli(self, *args, ok=True, env=None):
+        result = subprocess.run(
+            [sys.executable, str(CLI), *map(str, args)],
+            cwd=self.root,
+            env={**os.environ, "FAKE_RUNNER_LOG": str(self.log), **(env or {})},
+            text=True,
+            capture_output=True,
+            timeout=30,
+        )
+        if ok:
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        else:
+            self.assertNotEqual(result.returncode, 0, result.stdout)
+        return result
+
+    def prepare(self, name="E1", *args):
+        return self.cli("prepare", name, "--spec", self.spec, *args)
+
+    def show(self, name="E1", *args):
+        return json.loads(self.cli("show", name, *args, "--json").stdout)
+
+    def calls(self):
+        return json.loads(self.log.read_text()) if self.log.exists() else []
+
+    def test_prepare_is_offline_freezes_inputs_and_separates_review_evidence(self):
+        result = self.prepare()
+        self.assertIn("Model calls made: 0", result.stdout)
+        self.assertEqual(self.calls(), [])
+        case = self.show("E1", "--case", "one")
+        self.assertIn("Tea {POST}", case["prompt"])
+        self.assertNotIn("REVIEW ONLY", case["prompt"])
+        self.assertEqual(case["evidence"]["private"], "REVIEW ONLY")
+        self.assertEqual(case["status"], "unrun")
+        self.prompt.write_text("Changed source after prepare")
+        self.cli("run", "E1")
+        self.assertEqual(len(self.calls()), 2)
+        self.assertTrue(
+            all(c["prompt"].startswith("GENERIC PROMPT") for c in self.calls())
+        )
+
+    def test_inherit_baseline_resume_and_repeat_are_distinct(self):
+        self.prepare()
+        self.cli("run", "E1")
+        self.cli("run", "E1")
+        self.assertEqual(len(self.calls()), 2)
+        self.cli("prepare", "E2", "--from", "E1")
+        self.assertEqual(self.show("E2")["requests"]["reusable"], 2)
+        self.cli("run", "E2")
+        report = self.show("E2")
+        self.assertEqual(report["summary"]["reused"], 2)
+        self.assertEqual(report["usage"]["input_tokens"], 0)
+        self.assertEqual(report["comparison"]["unchanged"], 2)
+        self.cli("prepare", "E3", "--from", "E1", "--repeat")
+        self.cli("run", "E3")
+        self.assertEqual(len(self.calls()), 4)
+        self.cli("run", "E3")
+        self.assertEqual(len(self.calls()), 4)
+
+    def test_changed_prompt_uses_saved_baseline_and_reports_no_quality_verdict(self):
+        self.prepare()
+        self.cli("run", "E1")
+        next_prompt = self.root / "v2.txt"
+        next_prompt.write_text("GENERIC PROMPT revised {POST}")
+        self.cli(
+            "prepare",
+            "E2",
+            "--from",
+            "E1",
+            "--prompt",
+            next_prompt,
+            "--prompt-id",
+            "P2",
+        )
+        self.cli("run", "E2")
+        self.assertEqual(len(self.calls()), 4)
+        report = self.show("E2")
+        self.assertEqual(report["comparison"]["changed"], 2)
+        self.assertNotIn("improvement", report)
+        self.assertEqual(
+            self.show("E2", "--case", "one")["baseline"]["status"], "valid"
+        )
+
+    def test_prepared_artifact_tampering_refuses_to_send(self):
+        self.prepare()
+        config = self.root / "E1" / "runner-config.json"
+        value = json.loads(config.read_text())
+        value["model"] = "other/model"
+        config.write_text(json.dumps(value))
+        result = self.cli("run", "E1", ok=False)
+        self.assertIn("changed", result.stderr)
+        self.assertEqual(self.calls(), [])
+
+    def test_failed_and_unrun_are_separate_and_never_automatically_retried(self):
+        self.prepare()
+        self.cli("run", "E1", ok=False, env={"FAKE_RUNNER_FAIL_STAGE": "prompt"})
+        report = self.show()
+        self.assertEqual(report["summary"]["failed"], 1)
+        self.assertEqual(report["summary"]["unrun"], 1)
+        self.cli("run", "E1", ok=False)
+        self.assertEqual(len(self.calls()), 1)
+        self.cli("run", "E1", "--retry-failed")
+        self.assertEqual(len(self.calls()), 3)
+        self.assertEqual(self.show()["summary"]["valid"], 2)
+
+    def test_same_id_different_inputs_cannot_be_paired_with_baseline(self):
+        self.prepare()
+        self.cli("run", "E1")
+        data = json.loads(self.cases.read_text())
+        data["cases"][0]["inputs"]["POST"] = "Changed actual input"
+        self.cases.write_text(json.dumps(data))
+        self.prepare("E2", "--baseline", "E1")
+        report = self.show("E2")
+        self.assertEqual(report["comparison"]["input_mismatch"], 1)
+        self.assertIsNone(self.show("E2", "--case", "one")["baseline"])
+        self.assertEqual(len(self.calls()), 2)
+
+    def test_reviews_keep_assessments_and_user_decisions_separate(self):
+        self.prepare()
+        self.cli(
+            "review",
+            "E1",
+            "--case",
+            "one",
+            "--role",
+            "agent",
+            "--verdict",
+            "uncertain",
+            "--comment",
+            "Needs human review",
+        )
+        self.cli(
+            "review",
+            "E1",
+            "--case",
+            "one",
+            "--role",
+            "user",
+            "--verdict",
+            "accept",
+            "--comment",
+            "Explicit user decision",
+        )
+        case = self.show("E1", "--case", "one")
+        self.assertEqual([x["role"] for x in case["reviews"]], ["agent", "user"])
+        self.assertEqual(case["status"], "unrun")
+        self.assertEqual(self.calls(), [])
+
+    def mask_spec(self):
+        self.prompt.write_text("GENERIC PROMPT\n{POST}\n{SUBJECT}\n{INDEXED_POST}")
+        self.cases.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "notes": [
+                        {
+                            "note_id": "N1",
+                            "text": "Tea helps. Tea helps.",
+                            "subjects": [
+                                {"subject": "Tea", "context": "REVIEW ONLY"},
+                                {"subject": "Tea drinking"},
+                            ],
+                        },
+                    ],
+                }
+            )
+        )
+        value = json.loads(self.spec.read_text())
+        value["dataset"]["adapter"] = "masks"
+        self.spec.write_text(json.dumps(value))
+
+    def test_masks_expand_subjects_decode_positions_and_keep_empty_visible(self):
+        self.mask_spec()
+        result = self.prepare()
+        self.assertIn("Posts: 1; subjects/calls: 2", result.stdout)
+        response = json.dumps(
+            {"meaning": "Tea", "expressible": False, "evidence": "none", "mask": []}
+        )
+        self.cli("run", "E1", env={"FAKE_RUNNER_PROMPT_RESPONSE": response})
+        report = self.show()
+        self.assertEqual(report["summary"]["empty"], 2)
+        self.assertEqual(len(report["cases"]), 2)
+        self.assertTrue(
+            all("REVIEW ONLY" not in call["prompt"] for call in self.calls())
+        )
+        case_id = report["cases"][0]["id"]
+        data = json.loads(self.cases.read_text())
+        data["notes"][0]["subjects"].reverse()
+        self.cases.write_text(json.dumps(data))
+        self.prepare("E2", "--baseline", "E1")
+        self.assertEqual(self.show("E2")["cases"][1]["id"], case_id)
+
+    def test_bad_mask_is_malformed_and_is_not_repaired_or_retried(self):
+        self.mask_spec()
+        self.prepare()
+        self.cli(
+            "run", "E1", ok=False, env={"FAKE_RUNNER_PROMPT_RESPONSE": '{"mask": []}'}
+        )
+        self.assertEqual(self.show()["summary"]["malformed"], 2)
+        self.cli("run", "E1", ok=False)
+        self.assertEqual(len(self.calls()), 2)
+        self.assertFalse((self.root / "E1/reviews.jsonl").exists())
+
+    def test_titles_dedup_masks_and_keep_full_posts_out_of_model_input(self):
+        self.prompt.write_text("GENERIC PROMPT\n{NUMBERED_INSTANCES}")
+        instance = {
+            "instance": "V1",
+            "vector_id": "v1",
+            "note_id": "N1",
+            "text": "Tea PRIVATE POST CONTEXT",
+            "byte_spans": [[0, 3]],
+            "fragments": ["Tea"],
+        }
+        self.cases.write_text(
+            json.dumps(
+                {
+                    "packets": [
+                        {
+                            "packet": "T1",
+                            "instances": [
+                                instance,
+                                {**instance, "instance": "V2", "vector_id": "v2"},
+                            ],
+                        }
+                    ]
+                }
+            )
+        )
+        value = json.loads(self.spec.read_text())
+        value["dataset"]["adapter"] = "titles"
+        self.spec.write_text(json.dumps(value))
+        self.prepare()
+        self.cli("run", "E1", env={"FAKE_RUNNER_PROMPT_RESPONSE": '{"title":"Tea"}'})
+        case = self.show("E1", "--case", "T1")
+        self.assertEqual(case["parsed"]["title"], "Tea")
+        self.assertNotIn("PRIVATE", self.calls()[0]["prompt"])
+        self.assertEqual(case["evidence"]["duplicates_removed"], 1)
+
+    def test_json_schema_order_and_settings_are_preserved(self):
+        value = json.loads(self.spec.read_text())
+        schema = {
+            "type": "object",
+            "properties": {"z": {"type": "string"}, "a": {"type": "string"}},
+            "required": ["z", "a"],
+            "additionalProperties": False,
+        }
+        value["runner"]["output_schema"] = schema
+        self.spec.write_text(json.dumps(value))
+        self.prepare()
+        self.cli(
+            "run",
+            "E1",
+            env={"FAKE_RUNNER_PROMPT_RESPONSE": '{"z":"first","a":"second"}'},
+        )
+        self.assertEqual(
+            list(self.calls()[0]["request"]["schema"]["properties"]), ["z", "a"]
+        )
+        self.cli(
+            "prepare",
+            "E2",
+            "--from",
+            "E1",
+            "--model",
+            "fixture/other",
+            "--reasoning-effort",
+            "high",
+        )
+        self.assertEqual(self.show("E2")["requests"]["new"], 2)
+
+    def test_import_verifies_rendered_inputs_and_does_not_rerun_old_batch(self):
+        self.prepare()
+        self.cli("run", "E1")
+        config = self.root / "E1/runner-config.json"
+        self.prepare("imported", "--import-config", config)
+        self.assertEqual(self.show("imported")["summary"]["valid"], 2)
+        self.cli("run", "imported", ok=False)
+        self.cli("prepare", "candidate", "--from", "imported")
+        self.cli("run", "candidate")
+        self.assertEqual(self.show("candidate")["comparison"]["unchanged"], 2)
+        self.assertEqual(len(self.calls()), 2)
+        self.prompt.write_text("GENERIC PROMPT WRONG {POST}")
+        result = self.cli(
+            "prepare",
+            "bad-import",
+            "--spec",
+            self.spec,
+            "--import-config",
+            config,
+            ok=False,
+        )
+        self.assertIn("mapping", result.stderr)
+        self.assertFalse((self.root / "bad-import").exists())
+
+    def test_import_maps_legacy_ids_but_candidate_uses_stable_case_ids(self):
+        self.prepare()
+        self.cli("run", "E1")
+        value = json.loads(self.cases.read_text())
+        for case in value["cases"]:
+            case["id"] = "stable-" + case["id"]
+        self.cases.write_text(json.dumps(value))
+        self.prepare("imported", "--import-config", self.root / "E1/runner-config.json")
+        self.cli("prepare", "E2", "--from", "imported")
+        self.cli("run", "E2")
+        self.assertEqual(self.show("E2")["summary"]["valid"], 2)
+        self.assertEqual(len(self.calls()), 2)
+
+    def test_inherited_history_root_is_not_silently_changed(self):
+        self.prepare()
+        self.cli("run", "E1")
+        (self.root / "elsewhere").mkdir()
+        self.cli("prepare", "elsewhere/E2", "--from", "E1")
+        self.assertEqual(self.show("elsewhere/E2")["requests"]["reusable"], 2)
+
+    def test_active_run_lock_blocks_execution_but_not_show(self):
+        import fcntl
+
+        self.prepare()
+        with (self.root / "E1/.experiment.lock").open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            result = self.cli("run", "E1", ok=False)
+            self.assertIn("already active", result.stderr)
+            self.assertEqual(self.show()["summary"]["unrun"], 2)
+        self.assertEqual(self.calls(), [])
+
+    def test_generic_selection_does_not_silently_run_unselected_cases(self):
+        value = json.loads(self.spec.read_text())
+        value["dataset"]["select"] = ["two"]
+        self.spec.write_text(json.dumps(value))
+        self.prepare()
+        self.assertEqual(self.show()["summary"]["cases"], 1)
+        self.cli("run", "E1")
+        self.assertEqual(len(self.calls()), 1)
+
+    def test_show_includes_exact_settings_without_opening_artifact_files(self):
+        self.prepare()
+        self.assertEqual(self.show()["settings"]["model"], "fixture/model")
+        self.assertEqual(
+            self.show("E1", "--case", "one")["settings"]["reasoning_effort"], "low"
+        )
+
+    def test_title_review_opens_the_existing_ui_without_inference(self):
+        self.test_titles_dedup_masks_and_keep_full_posts_out_of_model_input()
+        self.open_existing_ui_and_approve()
+        self.assertEqual(len(self.calls()), 1)
+        decisions = self.show("E1", "--case", "T1")["reviews"]
+        self.assertEqual(decisions[-1]["role"], "user")
+        self.assertEqual(decisions[-1]["verdict"], "accept")
+
+    def test_mask_review_opens_the_existing_ui_and_preserves_decisions(self):
+        self.mask_spec()
+        self.prepare()
+        response = json.dumps(
+            {"meaning": "Tea", "expressible": True, "evidence": "Tea", "mask": [[1, 1]]}
+        )
+        self.cli("run", "E1", env={"FAKE_RUNNER_PROMPT_RESPONSE": response})
+        self.open_existing_ui_and_approve()
+        self.assertEqual(len(self.calls()), 2)
+        for case in self.show()["cases"]:
+            self.assertEqual(case["reviews"][-1]["verdict"], "accept")
+
+    def open_existing_ui_and_approve(self):
+        import fcntl
+        import pty
+        import select
+        import signal
+        import struct
+        import termios
+        import time
+
+        binary = CLI.parents[1] / "target/release/sse-mask-review"
+        if not binary.is_file():
+            self.skipTest("existing review UI binary unavailable")
+        master, slave = pty.openpty()
+        fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", 40, 100, 0, 0))
+        process = subprocess.Popen(
+            [sys.executable, str(CLI), "review", str(self.root / "E1"), "--ui"],
+            stdin=slave,
+            stdout=slave,
+            stderr=slave,
+            env={**os.environ, "TERM": "xterm"},
+            start_new_session=True,
+        )
+        os.close(slave)
+        captured = b""
+        try:
+            deadline = time.monotonic() + 8
+            while process.poll() is None and time.monotonic() < deadline:
+                if select.select([master], [], [], 0.1)[0]:
+                    try:
+                        captured += os.read(master, 65536)
+                    except OSError:
+                        break
+                    if b"Tea" in captured:
+                        os.write(master, b"a\r")
+            process.wait(timeout=2)
+            self.assertEqual(process.returncode, 0, captured.decode(errors="replace"))
+            self.assertEqual(len(list((self.root / "E1").glob("ui-*-session.json"))), 1)
+        finally:
+            if process.poll() is None:
+                os.killpg(process.pid, signal.SIGKILL)
+                process.wait()
+            os.close(master)
+
+    def test_rejects_missing_variables_unknown_settings_and_overwrite_without_calls(
+        self,
+    ):
+        self.prompt.write_text("{POST} {MISSING}")
+        self.cli("prepare", "E1", "--spec", self.spec, ok=False)
+        self.assertFalse((self.root / "E1").exists())
+        self.prompt.write_text("GENERIC PROMPT {POST}")
+        self.prepare()
+        self.cli("prepare", "E1", "--spec", self.spec, ok=False)
+        value = json.loads(self.spec.read_text())
+        value["runner"]["temprature"] = 1
+        self.spec.write_text(json.dumps(value))
+        self.cli("prepare", "E2", "--spec", self.spec, ok=False)
+        self.assertEqual(self.calls(), [])
+
+    def test_old_public_batch_commands_are_retired(self):
+        pipeline = CLI.with_name("extraction_pipeline.py")
+        result = subprocess.run(
+            [sys.executable, str(pipeline), "--help"], capture_output=True, text=True
+        )
+        self.assertNotIn("revise-prompt", result.stdout)
+        self.assertNotIn("{revise-prompt,masks", result.stdout)
+        result = subprocess.run(
+            [sys.executable, str(pipeline), "prompt", "old-config.json"],
+            capture_output=True,
+            text=True,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("experiment.py", result.stderr)
+        help_result = subprocess.run(
+            [sys.executable, str(pipeline), "prompt", "--help"],
+            capture_output=True,
+            text=True,
+        )
+        self.assertNotIn("--repeat", help_result.stdout)
+
+    def test_invalid_title_is_not_reused_in_a_new_experiment(self):
+        self.test_titles_dedup_masks_and_keep_full_posts_out_of_model_input()
+        self.cli("prepare", "bad", "--from", "E1", "--repeat")
+        self.cli(
+            "run", "bad", ok=False, env={"FAKE_RUNNER_PROMPT_RESPONSE": "not json"}
+        )
+        # Use a history root containing only the invalid run, not E1's valid answer.
+        self.cli(
+            "prepare", "next", "--from", "bad", "--history-root", self.root / "bad"
+        )
+        self.assertEqual(self.show("next")["requests"]["new"], 1)
+        self.cli("run", "next", env={"FAKE_RUNNER_PROMPT_RESPONSE": '{"title":"Tea"}'})
+        self.assertEqual(len(self.calls()), 3)
+
+    def test_review_of_unrun_case_is_marked_stale_after_output_exists(self):
+        self.prepare()
+        self.cli(
+            "review",
+            "E1",
+            "--case",
+            "one",
+            "--role",
+            "agent",
+            "--verdict",
+            "uncertain",
+            "--comment",
+            "Input review only",
+        )
+        self.cli("run", "E1")
+        self.assertFalse(self.show("E1", "--case", "one")["reviews"][0]["current"])
+
+    def test_absent_cost_estimate_is_not_reported_as_zero_cost(self):
+        self.prepare()
+        self.cli("run", "E1")
+        self.assertIsNone(self.show()["usage"]["catalog_cost_estimate_usd"])
+        self.assertEqual(self.show()["usage"]["attempts_without_cost_estimate"], 2)
+
+    def test_saved_v32_titles_import_read_only_when_local_artifacts_exist(self):
+        source = CLI.parent / "hierarchy-refresh-v1/source-packets.json"
+        base = CLI.parent / "hdbv2-node-description-probe-v32/robustness-v1"
+        if not (source.is_file() and (base / "config.json").is_file()):
+            self.skipTest("local v32 experiment artifacts unavailable")
+        config = json.loads((base / "config.json").read_text())
+        plan = json.loads((base / "plan.json").read_text())
+        spec = {
+            "schema_version": 1,
+            "prompt": {"id": "v32", "path": str(base.parent / "prompt.txt")},
+            "dataset": {
+                "adapter": "titles",
+                "path": str(source),
+                "select": plan["groups"],
+            },
+            "runner": {
+                k: v
+                for k, v in config.items()
+                if k not in {"schema_version", "prompts", "run_directory"}
+            },
+        }
+        self.spec.write_text(json.dumps(spec))
+        before = (base / "run/results.jsonl").read_bytes()
+        self.prepare("imported", "--import-config", base / "config.json")
+        report = self.show("imported")
+        self.assertEqual(report["summary"]["valid"], 20)
+        self.assertEqual((base / "run/results.jsonl").read_bytes(), before)
+        self.assertEqual(self.calls(), [])
+
+
+if __name__ == "__main__":
+    unittest.main()
