@@ -192,11 +192,11 @@ Propose a **$10 total maximum** for the initial paid feasibility test, including
 setup, storage, transfers and failed attempts. This is an exploratory ceiling
 (1% of the lifetime cap), not a price quote, an allocation, or evidence that the
 test will fit. No amount has been reserved in the ledger. A suitable rental
-quote and enforceable provider-side termination limit are prerequisites to
-spending, along with explicit approval and the existing budget admission check.
+quote, explicit approval and the existing budget admission check are
+prerequisites to spending. A provider-enforced termination limit is not required.
 
 Stop before a larger case would exceed the cost or memory limit, on unexplained
-grouping changes, or if no safe paid termination limit can be established.
+grouping changes, or if continued work cannot stay within the approved budget.
 No automatic larger rental, approximation, corpus reduction, metric change or
 new input-generation run follows a failed or inconclusive result.
 

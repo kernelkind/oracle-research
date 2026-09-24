@@ -173,8 +173,8 @@ transport, and refusal without fallback; no paid verification is implied.
 **A send flag is not spending approval.** The [repository budget rules](../AGENTS.md)
 authorize user-requested OpenRouter work roughly estimated at $1 or less without
 another approval question or a provider-side cap; use a quick judgment, not a
-detailed calculation. Other paid work still needs explicit spending approval and
-a provider-side limit. Ledger accounting and the lifetime ceiling always apply.
+detailed calculation. Other paid work still needs explicit spending approval,
+but not a provider-enforced cap. Ledger accounting and the lifetime ceiling always apply.
 Timeouts and output-token caps are not monetary hard caps.
 
 Each call has one user message, empty application-supplied system instructions,

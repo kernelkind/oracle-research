@@ -397,7 +397,8 @@ There is no separate parameter-count, GPU-memory, or single-machine ceiling.
 The spending code and ledger enforce the approved $1,000 cap. The repository
 rules give standing approval for user-requested OpenRouter work roughly estimated
 at $1 or less, without a provider-side cap. Other paid runs need an explicitly
-approved maximum charge and a provider-side limit that enforces it.
+approved maximum charge. Provider-enforced spending caps are not required;
+ledger accounting and the lifetime ceiling still apply.
 
 ## Next approval
 
