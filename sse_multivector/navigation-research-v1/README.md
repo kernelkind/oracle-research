@@ -40,6 +40,15 @@ The existing `true_graph_equivalence.py` replays explicit reviewed approvals;
 it does not generate them. Its cutoff-based checks also must not silently be
 substituted for the current native-answer graph rule.
 
+**Merged-node naming — approved design, implementation pending:** after a
+merge, use the [frozen v38 title prompt](../hdbv2-node-description-probe-v38/prompt.txt)
+with the frozen Luna-max configuration on the combined masks, deduplicated by
+the same-post exact-mask identity above. Generate a displayed title rather than
+arbitrarily selecting a member's title; preserve all original titles and node
+IDs. This is a naming call only, not a merge decision or a change to the saved
+links. It does not trigger another TRUE pass. The approval does not authorize
+inference or rewrite historical titles, scores or hierarchy artifacts.
+
 The earlier GDC09 equal-note collapse operates on a tree. The current category
 browser also implements [shared-child collapse](#shared-child-collapse) as a
 navigation-only option, enabled for both sides of the HRv1 comparison.

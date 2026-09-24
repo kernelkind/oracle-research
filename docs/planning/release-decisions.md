@@ -245,6 +245,15 @@ saved memberships. Repeatable semantic-equivalence decisions remain open.
 This is not a claim that the existing experimental pipeline implements all
 these stages end to end.
 
+**Merged-node naming (approved September 24):** once nodes are merged, generate
+the merged node's displayed title from their combined, deduplicated masks using
+the existing frozen title configuration (v38/Luna max). Do not arbitrarily
+choose a member's title. Preserve every original title and node ID. This call
+only names the merged node: it does not decide the merge, change its links or
+trigger another round of TRUE comparisons. This naming decision is not yet
+implemented and does not authorize model calls or settle the remaining merge
+implementation details.
+
 Recovering missing node memberships is a separate operation. HDBSCAN's raw
 tree is not the specified launch hierarchy.
 
