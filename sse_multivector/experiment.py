@@ -611,6 +611,23 @@ def review(args):
                 raise ValueError("--ui cannot record a CLI judgment")
             plan, _, _ = load(directory)
             batch, excluded = inputs.review_batch(plan, result)
+            if plan["dataset"]["adapter"] == "prominence":
+                # The existing model-output viewer is read-only: do not create
+                # approval sessions or pass its cards to the title/mask UI.
+                batch_path = directory / ("ui-" + inputs.digest(batch)[:16] + ".json")
+                write(batch_path, batch)
+                binary = (
+                    args.ui_binary
+                    or Path(__file__).resolve().parents[1]
+                    / "target/release/model-output-review"
+                )
+                print(
+                    f"UI: {len(batch['notes'])} mask entries; unscored cases included. No model calls or saved UI decisions."
+                )
+                completed = subprocess.run([str(binary), str(batch_path)], check=False)
+                if completed.returncode:
+                    raise ValueError(f"review UI exited with {completed.returncode}")
+                return
             print(
                 f"UI: {len(batch['items'])} cases; {len(excluded)} not supported by this UI (still in show/report.json)."
             )

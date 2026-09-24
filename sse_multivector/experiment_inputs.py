@@ -41,6 +41,73 @@ def render(template, inputs):
     return re.sub(r"\{([A-Z][A-Z0-9_]*)\}", substitute, template)
 
 
+def prepare_prominence(source, selected=None):
+    """Render one exact saved mask per case, retaining node metadata only for review."""
+    cases, nodes, posts, ids = [], {}, {}, set()
+    for item in source["cases"]:
+        engine._expect_fields(
+            item,
+            "prominence case",
+            {
+                "id",
+                "node_id",
+                "node_title",
+                "note_id",
+                "text",
+                "mask_ids",
+                "byte_spans",
+            },
+        )
+        for field in ("id", "node_id", "node_title", "note_id", "text"):
+            engine._expect_string(item[field], field)
+        if item["id"] in ids:
+            raise ValueError("duplicate case identity")
+        ids.add(item["id"])
+        mask_ids = engine._validate_string_array(
+            item["mask_ids"], "mask_ids", allow_empty=False
+        )
+        if len(set(mask_ids)) != len(mask_ids):
+            raise ValueError("duplicate mask IDs")
+        for lookup, key, value in (
+            (nodes, item["node_id"], item["node_title"]),
+            (posts, item["note_id"], item["text"]),
+        ):
+            if key in lookup and lookup[key] != value:
+                raise ValueError("conflicting node title or source post")
+            lookup[key] = value
+        raw, cursor, marked, fragments = item["text"].encode("utf-8"), 0, [], []
+        spans = item["byte_spans"]
+        if not isinstance(spans, list) or not spans:
+            raise ValueError("prominence requires a nonempty saved mask")
+        for span in spans:
+            if (
+                not isinstance(span, list)
+                or len(span) != 2
+                or any(type(x) is not int for x in span)
+                or not cursor <= span[0] < span[1] <= len(raw)
+            ):
+                raise ValueError("invalid prominence mask byte spans")
+            start, end = span
+            fragment = raw[start:end].decode("utf-8")
+            marked.extend((raw[cursor:start].decode("utf-8"), "⟦", fragment, "⟧"))
+            fragments.append(fragment)
+            cursor = end
+        marked.append(raw[cursor:].decode("utf-8"))
+        payload = {"mask": fragments, "marked_post": "".join(marked)}
+        cases.append(
+            {
+                "id": item["id"],
+                "evidence": item,
+                "inputs": {"INPUT_JSON": json.dumps(payload, ensure_ascii=False)},
+            }
+        )
+    if selected is not None:
+        if set(selected) - ids:
+            raise ValueError("unknown case requested")
+        cases = [c for c in cases if c["id"] in selected]
+    return cases
+
+
 def prepare(dataset, source, template):
     adapter = dataset["adapter"]
     if "select" in dataset:
@@ -63,6 +130,8 @@ def prepare(dataset, source, template):
             if set(dataset["select"]) - {c["id"] for c in cases}:
                 raise ValueError("unknown case requested")
             cases = [c for c in cases if c["id"] in dataset["select"]]
+    elif adapter == "prominence":
+        cases = prepare_prominence(source, dataset.get("select"))
     elif adapter == "titles":
         groups = prepare_titles(
             source, "{NUMBERED_INSTANCES}", dataset.get("select", [])
@@ -110,6 +179,18 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter == "prominence":
+        value = json.loads(
+            raw, object_pairs_hook=engine._position_decoder().unique_object
+        )
+        if (
+            not isinstance(value, dict)
+            or set(value) != {"prominence"}
+            or type(value["prominence"]) is not int
+            or not 0 <= value["prominence"] <= 100
+        ):
+            raise ValueError("expected one integer prominence score from 0 through 100")
+        result["parsed"] = value
     if schema is not None or adapter == "titles":
         result["parsed"] = json.loads(raw)
     if adapter == "titles":
@@ -145,6 +226,8 @@ def validate(dataset, case, raw, schema):
 def review_batch(plan, report):
     """Translate compatible cases to the existing UI; list all unsupported cases."""
     adapter = plan["dataset"]["adapter"]
+    if adapter == "prominence":
+        return prominence_review_batch(plan, report), []
     if adapter not in {"titles", "masks"}:
         raise ValueError(
             "generic experiments use review --case, not a task-specific UI"
@@ -197,6 +280,77 @@ def review_batch(plan, report):
     # Keep Rust struct field order for review_state::value_sha256 compatibility.
     batch["items"] = items
     return batch, excluded
+
+
+def prominence_review_batch(plan, report):
+    """Full-post, single-mask cards; scores order masks, never aggregated posts."""
+    groups = {}
+    for case in report["cases"]:
+        groups.setdefault(case["evidence"]["node_id"], []).append(case)
+    notes = []
+    for cases in groups.values():
+        cases = sorted(
+            cases,
+            key=lambda c: (
+                c["status"] != "valid",
+                -c["parsed"]["prominence"] if c["status"] == "valid" else 0,
+                c["id"],
+            ),
+        )
+        scored = sum(c["status"] == "valid" for c in cases)
+        for position, case in enumerate(cases, 1):
+            evidence = case["evidence"]
+            valid = case["status"] == "valid"
+            score = case["parsed"]["prominence"] if valid else None
+            place = (
+                f"{position}/{scored} · score {score}"
+                if valid
+                else f"unranked · {case['status']}"
+            )
+            comments = [
+                "One mask per entry; repeated posts are intentional. Equal scores are tied."
+            ]
+            if case.get("error"):
+                comments.append(str(case["error"]))
+            for review in case["reviews"]:
+                if review["current"]:
+                    comments.append(
+                        f"{review['role']}: {review['verdict']}. {review['comment']}"
+                    )
+            baseline = case.get("baseline")
+            if (
+                baseline
+                and baseline.get("status") == "valid"
+                and isinstance(baseline.get("parsed"), dict)
+                and type(baseline["parsed"].get("prominence")) is int
+            ):
+                comments.append(
+                    f"Baseline prominence: {baseline['parsed']['prominence']}"
+                )
+            notes.append(
+                {
+                    "id": case["id"],
+                    "title": (
+                        f"{evidence['node_title']} [{evidence['node_id']}] · {place} · "
+                        f"{evidence['note_id']} · {', '.join(evidence['mask_ids'])}"
+                    ),
+                    "text": json.loads(case["inputs"]["INPUT_JSON"])["marked_post"],
+                    "model_input": case["prompt"],
+                    "results": [
+                        {
+                            "model": plan["prompt"]["id"],
+                            "output": case.get("output")
+                            or f"No output: {case['status']}",
+                            "comment": "\n".join(comments),
+                        }
+                    ],
+                }
+            )
+    return {
+        "schema_version": 1,
+        "title": f"{plan['prompt']['id']} · prominence prompt evaluation · one mask per post entry",
+        "notes": notes,
+    }
 
 
 def ui_reviews(binding, batch, envelope):

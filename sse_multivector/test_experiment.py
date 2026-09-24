@@ -16,6 +16,165 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def prominence_spec(self):
+        self.prompt.write_text("GENERIC PROMPT {INPUT_JSON}")
+        self.write(
+            "cases.json",
+            {
+                "cases": [
+                    {
+                        "id": "tea-first",
+                        "node_id": "tea",
+                        "node_title": "Tea",
+                        "note_id": "N1",
+                        "text": "☕ Tea, then tea.",
+                        "mask_ids": ["V1"],
+                        "byte_spans": [[4, 7]],
+                    },
+                    {
+                        "id": "tea-second",
+                        "node_id": "tea",
+                        "node_title": "Tea",
+                        "note_id": "N1",
+                        "text": "☕ Tea, then tea.",
+                        "mask_ids": ["V2", "V3"],
+                        "byte_spans": [[14, 17]],
+                    },
+                ]
+            },
+        )
+        value = json.loads(self.spec.read_text())
+        value["dataset"]["adapter"] = "prominence"
+        self.spec.write_text(json.dumps(value))
+
+    def test_prominence_ui_shows_each_full_post_mask_and_unrun_case_without_calls(self):
+        self.prominence_spec()
+        self.prepare()
+        viewer = self.root / "viewer"
+        viewer.write_text(
+            "#!/usr/bin/env python3\nimport json, sys\nfrom pathlib import Path\n"
+            "assert len(sys.argv) == 2, sys.argv\n"
+            "batch = json.loads(Path(sys.argv[1]).read_text())\n"
+            "Path(__file__).with_suffix('.json').write_text(json.dumps(batch))\n"
+        )
+        viewer.chmod(0o755)
+        self.cli("review", "E1", "--ui", "--ui-binary", viewer)
+        batch = json.loads(viewer.with_suffix(".json").read_text())
+        self.assertEqual(
+            [n["text"] for n in batch["notes"]],
+            ["☕ ⟦Tea⟧, then tea.", "☕ Tea, then ⟦tea⟧."],
+        )
+        self.assertTrue(all("unrun" in n["title"] for n in batch["notes"]))
+        self.assertIn("V2, V3", batch["notes"][1]["title"])
+        self.assertEqual(self.calls(), [])
+        self.assertFalse((self.root / "E1" / "review-ui.json").exists())
+        self.assertEqual(self.show("E1", "--case", "tea-first")["reviews"], [])
+        binary = CLI.parents[1] / "target/release/model-output-review"
+        if binary.is_file():
+            check = subprocess.run(
+                [str(binary), str(viewer.with_suffix(".json")), "--check"],
+                capture_output=True,
+                text=True,
+                timeout=10,
+            )
+            self.assertEqual(check.returncode, 0, check.stderr)
+
+    def test_prominence_validates_scores_and_never_sends_node_metadata(self):
+        self.prominence_spec()
+        self.prepare()
+        self.cli("run", "E1", env={"FAKE_RUNNER_PROMPT_RESPONSE": '{"prominence":0}'})
+        case = self.show("E1", "--case", "tea-first")
+        self.assertEqual(case["parsed"], {"prominence": 0})
+        self.assertEqual(case["status"], "valid")
+        for call in self.calls():
+            payload = json.loads(call["prompt"].removeprefix("GENERIC PROMPT "))
+            self.assertEqual(set(payload), {"mask", "marked_post"})
+        from sse_multivector import experiment_inputs as inputs
+
+        for raw in [
+            '{"prominence":true}',
+            '{"prominence":1.5}',
+            '{"prominence":101}',
+            '{"prominence":-1}',
+            '{"prominence":5,"extra":1}',
+            '{"prominence":1,"prominence":2}',
+            "broken",
+        ]:
+            with self.subTest(raw=raw), self.assertRaises(ValueError):
+                inputs.validate({"adapter": "prominence"}, case, raw, None)
+
+    def test_prominence_review_sorts_within_nodes_without_omitting_failures(self):
+        from sse_multivector import experiment_inputs as inputs
+
+        self.prominence_spec()
+        self.prepare()
+        rows = self.show()["cases"]
+        low, high = rows
+        low.update(
+            status="valid", output='{"prominence":10}', parsed={"prominence": 10}
+        )
+        high.update(
+            status="valid", output='{"prominence":90}', parsed={"prominence": 90}
+        )
+        import copy
+
+        other = copy.deepcopy(low)
+        other.update(id="other")
+        other["evidence"].update(node_id="other", node_title="Other node")
+        failed = copy.deepcopy(low)
+        failed.update(
+            id="failed", status="failed", output=None, error="provider failure"
+        )
+        malformed = copy.deepcopy(low)
+        malformed.update(
+            id="malformed", status="malformed", output="not json", error="invalid JSON"
+        )
+        plan = json.loads((self.root / "E1" / "experiment.json").read_text())["plan"]
+        batch, excluded = inputs.review_batch(
+            plan, {"cases": [low, other, failed, high, malformed]}
+        )
+        self.assertEqual(excluded, [])
+        self.assertEqual(
+            [n["id"] for n in batch["notes"]],
+            [high["id"], low["id"], "failed", "malformed", "other"],
+        )
+        self.assertIn("score 90", batch["notes"][0]["title"])
+        self.assertIn("unranked", batch["notes"][2]["title"])
+        self.assertIn("provider failure", batch["notes"][2]["results"][0]["comment"])
+        self.assertEqual(batch["notes"][3]["results"][0]["output"], "not json")
+        high["parsed"]["prominence"] = 10
+        tied, _ = inputs.review_batch(plan, {"cases": [high, low]})
+        self.assertEqual(
+            [n["id"] for n in tied["notes"]], sorted([high["id"], low["id"]])
+        )
+
+    def test_prominence_input_keeps_fragments_together_and_rejects_invalid_offsets(
+        self,
+    ):
+        from sse_multivector import experiment_inputs as inputs
+
+        self.prominence_spec()
+        source = json.loads(self.cases.read_text())
+        source["cases"] = source["cases"][:1]
+        item = source["cases"][0]
+        item["byte_spans"] = [[4, 7], [14, 17]]
+        prepared = inputs.prepare({"adapter": "prominence"}, source, "{INPUT_JSON}")
+        payload = json.loads(prepared[0]["inputs"]["INPUT_JSON"])
+        self.assertEqual(
+            payload, {"mask": ["Tea", "tea"], "marked_post": "☕ ⟦Tea⟧, then ⟦tea⟧."}
+        )
+        for spans in [
+            [],
+            [[0, 1]],
+            [[4, 99]],
+            [[4, 7], [6, 8]],
+            [[14, 17], [4, 7]],
+            [[True, 3]],
+        ]:
+            item["byte_spans"] = spans
+            with self.subTest(spans=spans), self.assertRaises(ValueError):
+                inputs.prepare({"adapter": "prominence"}, source, "{INPUT_JSON}")
+
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)

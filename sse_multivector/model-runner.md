@@ -397,7 +397,7 @@ again. Reused results contribute zero new attempts or usage. Reported costs are
 catalog estimates, not invoices; missing usage is explicit. Reasoning tokens
 are already included in output tokens.
 
-### Title and mask preparation
+### Title, mask and prominence preparation
 
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:
@@ -418,6 +418,25 @@ production preparation and decoding functions:
   Templates require `{POST}`, `{SUBJECT}`, and (for the default
   `mask_format: "word_positions"`) `{INDEXED_POST}`.
   Legacy `mask_format: "fragments"` is available for historical comparisons.
+- `dataset.adapter: "prominence"`: `path` points to a `cases` array, with one
+  saved mask per case. Optional `select` lists case IDs. Each case contains
+  `id`, `node_id`, `node_title`, `note_id`, `text` (the complete original post),
+  `mask_ids` (including aliases), and `byte_spans` (ordered, nonoverlapping
+  UTF-8 byte offsets, end exclusive). For example:
+
+  ```json
+  {"cases":[{"id":"tea-V1","node_id":"tea","node_title":"Tea",
+    "note_id":"N1","text":"I want tea.","mask_ids":["V1"],
+    "byte_spans":[[7,10]]}]}
+  ```
+
+  The adapter verifies offsets and constructs `{INPUT_JSON}` containing only
+  `mask` (fragment strings) and `marked_post` (the full post with `⟦…⟧` around
+  each fragment of this one mask). Node titles and IDs are review-only; they
+  never enter the model input. Expected output is exactly
+  `{"prominence":INTEGER}`, from 0 through 100. Invalid scores are reported as
+  malformed, not ranked. This supports **PPv10**, unchanged and experimentally
+  tested, not production-frozen; the adapter does not choose the prompt/model.
 
 The mask decoder validates bounds, source text, ordering, overlap, within-word
 uniqueness and the response contract. A valid empty mask is `empty`, not a
@@ -455,6 +474,24 @@ Agent assessments appear separately from user decisions in the existing UI.
 `show` reads the UI's hashed sessions, alongside CLI-recorded reviews; it does not
 invent approvals. Reviews of an earlier output remain visible but are marked
 `current: false` if the output changes.
+
+For prominence, the same `review EXPERIMENT --ui` command opens the existing
+`target/release/model-output-review` viewer (override with `--ui-binary`). Each
+card shows the **complete post with one mask marked inline**, its node title/ID,
+post ID, all mask IDs and score. Multiple masks on one post produce multiple
+cards. Nodes retain their first appearance order; within each node, valid
+scores descend, ties use case-ID order without implying a quality difference.
+Failed, malformed, invalid-receipt and unrun cases remain visible as **unranked**
+cards after that node's scored cards, with status/errors and any saved raw output.
+Nothing is dropped or assigned an invented zero. Press `i` for the exact model
+prompt. Current CLI assessments/decisions and available baseline scores appear
+in the separate comment pane.
+
+This viewer is read-only and saves no decisions; record judgments with the same
+`review --case ... --role ...` CLI above. Opening or exiting the UI never implies
+approval. This duplicated, mask-sorted view is solely for prominence-prompt
+evaluation. It neither combines mask scores nor defines production post ranking
+or deduplication. Prominence review performs no inference or automatic build.
 
 ### Revision: explicit approved base, full-context diff
 
