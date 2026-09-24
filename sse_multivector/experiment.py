@@ -608,6 +608,8 @@ def review(args):
         raise ValueError("--cosine-comparison requires --ui")
     if args.flagged_only and not args.ui:
         raise ValueError("--flagged-only requires --ui")
+    if args.only and not args.ui:
+        raise ValueError("--only requires --ui")
     with locked(directory):
         result = report(directory)
         if args.ui:
@@ -615,10 +617,18 @@ def review(args):
                 raise ValueError("--ui cannot record a CLI judgment")
             plan, _, _ = load(directory)
             selected = None
-            if args.flagged_only:
+            if args.flagged_only or args.only:
                 if plan["dataset"]["adapter"] not in {"masks", "prominence"}:
-                    raise ValueError("--flagged-only supports masks and prominence")
-                selected = [c["id"] for c in result["cases"] if inputs.is_flagged(c)]
+                    raise ValueError("--flagged-only/--only support masks and prominence")
+                requested = set(args.only or [])
+                unknown = requested - {c["id"] for c in result["cases"]}
+                if unknown:
+                    raise ValueError(f"unknown --only case IDs: {', '.join(sorted(unknown))}")
+                selected = [
+                    c["id"] for c in result["cases"]
+                    if (not requested or c["id"] in requested)
+                    and (not args.flagged_only or inputs.is_flagged(c))
+                ]
                 if not selected:
                     print("No flagged cases. No model calls or review decisions changed.")
                     return
@@ -843,6 +853,8 @@ def parser():
     p.add_argument("--ui", action="store_true")
     p.add_argument("--flagged-only", action="store_true",
                    help="mask/prominence UI: current reject/uncertain reviews and unresolved failures")
+    p.add_argument("--only", action="append", metavar="CASE_ID",
+                   help="mask/prominence UI: show this case (repeat for several); intersects --flagged-only")
     p.add_argument("--ui-binary", type=Path)
     p.add_argument("--cosine-comparison", type=Path,
                    help="saved prominence_cosine/centroid comparison; adds offline ranking orders")

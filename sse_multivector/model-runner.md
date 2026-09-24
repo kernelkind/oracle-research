@@ -512,6 +512,10 @@ The latest current user decision takes precedence: `accept` hides the case from
 this view; `reject` or `uncertain` keeps it visible. Stale assessments do not flag
 new outputs. With no matches, the command reports that and opens no viewer.
 This is a saved-evidence filter, not a new model judgment or an accuracy measure.
+To choose specific mask or prominence cases without editing reviews, use
+`--only CASE_ID` once per case. Unknown IDs are refused. Combined with
+`--flagged-only`, only flagged cases from that selection are shown. Existing
+case order and within-node score ordering are retained, not the argument order.
 
 Mask filtering restricts navigation in the existing viewer (`--only` case IDs)
 without changing the full batch or its session fingerprint. Full and focused

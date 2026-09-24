@@ -16,6 +16,29 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_explicit_prominence_selection_keeps_missing_results_without_judgments(self):
+        self.prominence_spec()
+        self.prepare()
+        viewer = self.root / "viewer"
+        viewer.write_text(
+            "#!/usr/bin/env python3\nimport sys\nfrom pathlib import Path\n"
+            "Path(__file__).with_suffix('.json').write_text(Path(sys.argv[1]).read_text())\n"
+        )
+        viewer.chmod(0o755)
+        self.cli("review", "E1", "--ui", "--only", "tea-second", "--ui-binary", viewer)
+        batch = json.loads(viewer.with_suffix(".json").read_text())
+        self.assertEqual([n["id"] for n in batch["notes"]], ["tea-second"])
+        self.assertIn("unrun", batch["notes"][0]["title"])
+        self.assertFalse((self.root / "E1" / "reviews.jsonl").exists())
+        self.cli("review", "E1", "--ui", "--only", "tea-second", "--only", "tea-first",
+                 "--flagged-only", "--ui-binary", viewer)
+        batch = json.loads(viewer.with_suffix(".json").read_text())
+        self.assertEqual([n["id"] for n in batch["notes"]], ["tea-first", "tea-second"])
+        for args in [("--ui", "--only", "missing"), ("--only", "tea-first")]:
+            error = self.cli("review", "E1", *args, ok=False)
+            self.assertIn("--only", error.stderr)
+        self.assertEqual(self.calls(), [])
+
     def test_flagged_mask_review_keeps_empty_results_and_full_session_batch(self):
         self.mask_spec()
         self.prepare()
@@ -46,6 +69,12 @@ class ExperimentTests(unittest.TestCase):
         self.cli("review", "E1", "--ui", "--ui-binary", viewer)
         full = json.loads(viewer.with_suffix(".json").read_text())
         self.assertEqual(full["args"][:3], flagged["args"][:3])
+        self.cli("review", "E1", "--ui", "--only", cases[0]["id"], "--ui-binary", viewer)
+        explicit = json.loads(viewer.with_suffix(".json").read_text())
+        self.assertEqual(explicit, flagged)
+        no_match = self.cli("review", "E1", "--ui", "--only", cases[1]["id"],
+                            "--flagged-only", "--ui-binary", self.root / "missing-binary")
+        self.assertIn("No flagged cases", no_match.stdout)
         self.assertEqual(self.calls(), before)
         self.assertEqual(self.show()["cases"][0]["reviews"][-1]["role"], "agent")
 
