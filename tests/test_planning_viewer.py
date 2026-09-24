@@ -377,18 +377,13 @@ class PlanningViewerTest(unittest.TestCase):
                         screenshot = call("browsingContext.captureScreenshot", {"context": context})
                         (destination / f"{name}.png").write_bytes(base64.b64decode(screenshot["data"]))
 
-                def assert_readable_size():
-                    # Measure the rendered SVG, not just its configuration.
-                    self.assertGreaterEqual(evaluate("""(() => {
-                        const label = document.querySelector('svg foreignObject');
-                        return label.getScreenCTM().a;
-                    })()"""), 1, "Opening a page must not shrink its text to fit the whole map")
+                def assert_navigable_view():
                     self.assertTrue(evaluate("""(() => {
                         const main = document.querySelector('main');
-                        return main.scrollWidth > main.clientWidth &&
-                            main.scrollHeight > main.clientHeight &&
-                            getComputedStyle(main).overflow === 'auto';
-                    })()"""), "The readable-size map must scroll in both directions")
+                        const svg = document.querySelector('svg').getBoundingClientRect();
+                        return getComputedStyle(main).overflow === 'auto' &&
+                            svg.width > 0 && svg.height > 0;
+                    })()"""), "The zoomed map must remain visible and scrollable")
 
                 def assert_dark_mode():
                     self.assertEqual(evaluate("getComputedStyle(document.documentElement).colorScheme"), "dark")
@@ -490,8 +485,9 @@ class PlanningViewerTest(unittest.TestCase):
                                 y + +g.getAttribute('height')).matrixTransform(label.matrix);
                             const box = {left: start.x, top: start.y, right: end.x, bottom: end.y};
                             const actual = label.element.getBoundingClientRect();
-                            if (actual.left < box.left + 4 || actual.right > box.right - 4 ||
-                                actual.top < box.top + 4 || actual.bottom > box.bottom - 4) {
+                            const margin = 4 * label.matrix.a;
+                            if (actual.left < box.left + margin || actual.right > box.right - margin ||
+                                actual.top < box.top + margin || actual.bottom > box.bottom - margin) {
                                 problems.push(cell.id + ': text lacks space inside its card; bottom gap=' +
                                     (box.bottom - actual.bottom).toFixed(1));
                             }
@@ -543,11 +539,17 @@ class PlanningViewerTest(unittest.TestCase):
                 wait_for_text("Overall plan not approved")
                 assert_dark_mode()
                 assert_palette_contrast()
+                initial_scale = evaluate("document.querySelector('svg foreignObject').getScreenCTM().a")
+                evaluate("document.querySelector('[title=\"Reset zoom\"]').click()")
+                for _ in range(3):
+                    evaluate("document.querySelector('[title=\"Zoom Out\"]').click()")
+                three_press_scale = evaluate("document.querySelector('svg foreignObject').getScreenCTM().a")
+                self.assertAlmostEqual(initial_scale, three_press_scale, places=3)
                 assert_completed_cards_recede("dark")
                 assert_completed_cards_recede("light")
                 capture_page("dependencies-light")
                 evaluate("document.querySelector('#diagram').style.colorScheme = 'dark'")
-                assert_readable_size()
+                assert_navigable_view()
                 assert_clear_labels()
                 capture_page("dependencies")
                 self.assertGreater(evaluate("document.querySelectorAll('svg [fill=\"#e6f4ea\"]').length"), 0)
@@ -574,20 +576,30 @@ class PlanningViewerTest(unittest.TestCase):
                 wait_for_text("Parallel track · protocol, service and Notedeck")
                 wait_for_text("Notedeck can start with 13")
                 wait_for_text("22: measure SSE, node titles and TRUE")
+                self.assertAlmostEqual(
+                    evaluate("document.querySelector('svg foreignObject').getScreenCTM().a"),
+                    three_press_scale, places=3)
                 assert_dark_mode()
                 assert_palette_contrast()
-                assert_readable_size()
+                assert_navigable_view()
                 assert_clear_labels()
                 capture_page("weekly-targets")
                 self.assertEqual(evaluate("document.querySelector('main').scrollTop"), 0)
                 self.assertEqual(evaluate("document.querySelector('main').scrollLeft"), 0)
                 evaluate("document.querySelector('[title=\"Zoom Out\"]').click()")
-                self.assertLess(evaluate("document.querySelector('svg foreignObject').getScreenCTM().a"), 1)
+                self.assertLess(evaluate("document.querySelector('svg foreignObject').getScreenCTM().a"),
+                                three_press_scale)
                 evaluate("document.querySelector('[title=\"Zoom In\"]').click()")
-                assert_readable_size()
+                self.assertAlmostEqual(
+                    evaluate("document.querySelector('svg foreignObject').getScreenCTM().a"),
+                    three_press_scale, places=3)
+                assert_navigable_view()
                 evaluate("document.querySelector('[title=\"Zoom Out\"]').click()")
                 evaluate("document.querySelector('[title=\"Reset zoom\"]').click()")
-                assert_readable_size()
+                self.assertAlmostEqual(
+                    evaluate("document.querySelector('svg foreignObject').getScreenCTM().a"),
+                    1, places=3)
+                assert_navigable_view()
                 # A laptop-size window must not trigger whole-map shrink-to-fit.
                 call("browsingContext.setViewport", {
                     "context": context, "viewport": {"width": 1280, "height": 800},
@@ -595,7 +607,10 @@ class PlanningViewerTest(unittest.TestCase):
                 })
                 evaluate("document.querySelector('[title=\"Previous Page\"]').click()")
                 wait_for_text("TRUE compares descriptions")
-                assert_readable_size()
+                self.assertAlmostEqual(
+                    evaluate("document.querySelector('svg foreignObject').getScreenCTM().a"),
+                    three_press_scale, places=3)
+                assert_navigable_view()
                 external = evaluate("JSON.stringify(performance.getEntriesByType('resource').map(r=>r.name).filter(u=>!u.startsWith(location.origin+'/')&&!u.startsWith('data:')))")
                 self.assertEqual(json.loads(external), [], "Viewer fetched a resource outside its own host")
 

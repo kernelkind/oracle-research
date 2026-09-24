@@ -73,12 +73,18 @@
         }));
         GraphViewer.createViewerForElement(diagram, viewer => {
           viewer.toolbar.classList.add('diagram-toolbar');
-          // The bundled viewer's "Fit" action restores its initial view.
+          // The bundled viewer's "Fit" action restores 100%.
           const resetZoom = viewer.toolbar.querySelector('[title="Fit"]');
           resetZoom.title = 'Reset zoom';
           resetZoom.textContent = '100%';
           diagram.before(viewer.toolbar);
-          viewer.addListener('graphChanged', () => diagram.parentElement.scrollTo(0, 0));
+          const zoomOut = viewer.toolbar.querySelector('[title="Zoom Out"]');
+          const showPageAtDefaultZoom = () => {
+            for (let press = 0; press < 3; press++) zoomOut.click();
+            diagram.parentElement.scrollTo(0, 0);
+          };
+          viewer.addListener('graphChanged', showPageAtDefaultZoom);
+          showPageAtDefaultZoom();
         });
         status.textContent = 'Read-only · Scroll to explore. Toolbar: pages and zoom. Refresh loads the latest saved plan.';
       } catch (error) {

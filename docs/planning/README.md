@@ -20,11 +20,12 @@ muted fill, border and text while retaining readable titles. Layout and
 dependency meanings are unchanged. No renderer patch or custom color-conversion
 code is used.
 
-Both pages open at readable size instead of shrinking the entire diagram to
-fit the window. Scroll horizontally and vertically to explore; the page and
-zoom controls stay visible. Switching pages starts at the top-left. Zoom out
-for an overview; **100%** restores readable size. Cards and connector captions
-have separate space; layout changes do not change task wording or dependencies.
+Both pages open at a fixed overview zoom, equivalent to pressing Zoom Out three
+times from 100%, rather than fitting to the window. Scroll to explore; the page
+and zoom controls stay visible. Switching pages restores that default zoom and
+starts at the top-left. **100%** restores full-size text. Cards and connector
+captions have separate space; layout changes do not change task wording or
+dependencies.
 
 Each task's title and description must identify the work and intended result
 without tracing arrows. Name the model's role—teacher or
