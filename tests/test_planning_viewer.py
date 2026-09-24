@@ -128,7 +128,8 @@ class PlanningViewerTest(unittest.TestCase):
             with self.subTest(task=number):
                 self.assertIn(key, cells)
                 self.assertIn(number + " ·", cells[key].get("value"))
-                self.assertIn("READY TO START", cells[key].get("value"))
+                status = "READY TO RESUME" if number == "25" else "READY TO START"
+                self.assertIn(status, cells[key].get("value"))
                 self.assertIn("fillColor=light-dark(#e6f4ea,", cells[key].get("style"))
                 self.assertIn(number + " ·", cells["ready-summary"].get("value"))
                 self.assertIn((key, "h3"), edges)
@@ -136,6 +137,8 @@ class PlanningViewerTest(unittest.TestCase):
         self.assertNotIn(("h-recovery", "h2"), edges,
                          "Membership expansion is outside the initial diagnostic")
         self.assertIn(("h-relations", "h2"), edges)
+        self.assertIn("checked offline; policy remains provisional", cells["h-relations"].get("value"))
+        self.assertIn("full-build integration remain", cells["h-relations"].get("value"))
         self.assertNotIn("dashed=1", edges["h-relations", "h2"].get("style"))
         collapse = cells["h-collapse"]
         self.assertIn("VALIDATION PENDING", collapse.get("value"))

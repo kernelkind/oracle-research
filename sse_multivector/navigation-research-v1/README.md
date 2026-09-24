@@ -32,10 +32,10 @@ cleanups. They do not authorize a new run or change the frozen experiment data.
    surviving destinations' post memberships and mask evidence. Keep the raw
    category graph separately; this is not a claim of semantic equivalence.
 
-Beyond exact mask-set identity, semantic category consolidation is a separate
-stage whose repeatable decision procedure remains open. Identical labels,
-reciprocal TRUE answers, or equal post sets in separate branches do not
-automatically authorize merging.
+Beyond exact mask-set identity, semantic consolidation remains provisional.
+The opt-in HD02 experiment merges mutually reachable nodes; it does not establish
+that cycles mean genuine semantic equivalence. Identical labels or equal post
+sets alone do not authorize merging.
 The existing `true_graph_equivalence.py` replays explicit reviewed approvals;
 it does not generate them. Its cutoff-based checks also must not silently be
 substituted for the current native-answer graph rule.
@@ -56,8 +56,58 @@ merged-node naming (HD04), and stable merged IDs derived from original member
 IDs (HD05). These statuses must remain distinct: a candidate is
 not an adopted rule. Future run manifests must identify the selected policy
 versions and retain the pre-merge nodes, all TRUE answers, mask origins and title
-inputs/outputs so alternatives can reuse unchanged work. The general merging
-and replay integration is still pending; this register authorizes no new run.
+inputs/outputs so alternatives can reuse unchanged work. The offline merging
+stage below is implemented; full-build integration is still pending. This
+register authorizes no new run.
+
+### Reversible merge stage
+
+`true_graph_merge.py` implements HD01–03 and HD05 as a separate derived graph.
+It requires complete native TRUE answers, contracts strongly connected
+components, and preserves every accepted external edge with its original score
+IDs. It retains all original titles, answers, packets and cycle/conflict
+diagnostics, plus policy versions and SHA-256 hashes of canonical JSON inputs.
+Singleton IDs survive; merged IDs hash the sorted original member-ID list.
+Rebuild from the saved `source` payload to try another policy; no raw data is
+rewritten and no synthetic TRUE answers are created for merged titles.
+
+Masks are deduplicated within each output node by post ID and ordered byte
+spans, retaining every contributing instance. Merged titles are explicitly
+`null`/`pending`, with `naming_source_packets` ready for the existing title
+adapter and frozen v38/Luna-max configuration. No naming inference is performed.
+Do not pass this artifact off as scored titles to the historical exporter:
+integrating pending naming and the derived graph into the build/browser is
+still required. Pre-TRUE identical-mask-set node consolidation remains separate
+unfinished work; within-node mask deduplication does not implement that stage.
+
+The September 24 offline replay matched the saved NEv2 component partition,
+edge contributors and reduced edges: **24 → 19 nodes**, 14 external edges,
+12 reduced edges, all 177 mask origins and 75 posts preserved. Reprocessing
+original TRUE10 matched TRUE11's partition and edges modulo new IDs:
+**60 → 58 nodes**, 48 external edges, 36 reduced edges, 232 mask origins and
+77 posts preserved. Every original node's recursive post set and external
+reachability are checked by the implementation. The known wrong Beef / Beef
+products merge remains visible; this is mechanical validation, not approval of
+every merge. No new model calls or full hierarchy run were made.
+
+For example, replay NEv2 into a new ignored artifact (the command refuses to
+overwrite an existing output):
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/true_graph_merge.py \
+  target/node-equivalence-graph-v2/titles.json \
+  target/node-equivalence-graph-v2/scores.json \
+  sse_multivector/hierarchy-refresh-v1/source-packets.json \
+  target/node-equivalence-graph-v2/reversible-merge-v1.json
+```
+
+For original TRUE10, recover original source packets from
+`TRUE10/derived/canonical.json`: start with `source_packets.packets`, then replace
+packets by ID with each `consolidations[].source_packets` entry. Use the original
+`TRUE10/titles.json` and `TRUE10/graph/scores.json`, not the manually consolidated
+scores. Keep original reviewed artifacts untouched. This offline check is not
+yet the separate published comparison view required by HD06.
 
 The earlier GDC09 equal-note collapse operates on a tree. The current category
 browser also implements [shared-child collapse](#shared-child-collapse) as a

@@ -55,7 +55,7 @@ with the user on September 23.
 | 13 · Define Nostr hierarchy protocol | Not started. |
 | 18 · Prepare training code for the fine-tuning pilot | Not started. |
 | 24 · Recover missing node memberships | Not started. |
-| 25 · Handle node equivalence and TRUE cycles | Not started. |
+| 25 · Handle node equivalence and TRUE cycles | Reversible native-cycle merge stage implemented and checked offline; exact-mask-set node consolidation and build integration remain. |
 | 21 · Assess HDBSCAN at launch scale | No further progress; earlier investigation remains evidence, not launch-scale validation. |
 | 22 · Measure SSE, node-title and TRUE processing costs | No further progress. |
 
@@ -276,10 +276,10 @@ user before implementation; do not resolve them through per-node exceptions.
 | ID | Choice and status | Uncertainty / tradeoff | How to revisit it |
 | --- | --- | --- | --- |
 | HD01 | **Current experiment rule:** native TRUE Yes creates an edge; no score cutoff. | Native answers miss useful links; the tested cutoff adds both useful and incorrect links. Neither is assumed correct. | Preserve exact title inputs, generated answers, scores and runtime identity; rebuild edges from saved outputs under another explicitly selected rule. |
-| HD02 | **Provisional merge rule:** merge mutually reachable nodes (strongly connected components). General integration is pending. | Correct subsumption cycles imply equivalence, but predicted cycles can be wrong. The user identified Beef / Beef products as an incorrect NEv2 merge. No tested component required a longer cycle without pairwise mutual Yes answers. | Keep the original nodes, masks, titles, edges and component membership. Rebuild from the pre-merge graph instead of trying to split a merged record after originals were discarded. |
-| HD03 | **Candidate to test, not settled:** retain any accepted incoming/outgoing connection of a merged member, preserving existing paths. | This favors accepted paths over contradictory direct No answers. The contradiction can exist before merging: Beef -> Beef products -> Steak, alongside a direct No for Beef -> Steak. Record the disagreement; do not silently repair it. | Preserve every Yes and No and the original edge contributors. A different conflict policy starts from those answers and may require recomputing merges and descendants, not merely editing the displayed links. |
+| HD02 | **Provisional merge rule:** merge mutually reachable nodes (strongly connected components). Offline stage implemented and replay-tested; full-build integration pending. | Correct subsumption cycles imply equivalence, but predicted cycles can be wrong. The user identified Beef / Beef products as an incorrect NEv2 merge. Saved examples have pairwise mutual Yes answers; a synthetic regression also covers longer cycles without them. | Keep the original nodes, masks, titles, edges and component membership. Rebuild from the pre-merge graph instead of trying to split a merged record after originals were discarded. |
+| HD03 | **Candidate, mechanically tested but not settled:** retain any accepted incoming/outgoing connection of a merged member, preserving existing paths. | This favors accepted paths over contradictory direct No answers. The contradiction can exist before merging: Beef -> Beef products -> Steak, alongside a direct No for Beef -> Steak. Record the disagreement; do not silently repair it. | Preserve every Yes and No and the original edge contributors. A different conflict policy starts from those answers and may require recomputing merges and descendants, not merely editing the displayed links. |
 | HD04 | **Approved naming design, not implemented:** generate the merged title as described above; do not rerun TRUE merely because it changes. | The new wording may suggest a different scope from the original titles used by TRUE. The naming call does not establish new relationship evidence. | Save member titles, combined-mask input, prompt/model settings and generated title. A naming-only alternative need not rerun extraction or TRUE; using new titles for relationships would be a separate design change. |
-| HD05 | **Approved ID design, not implemented:** derive a new merged-node ID deterministically from the set of original member IDs, preserving every original ID. | The same members must produce the same merged ID regardless of member order or displayed title. This identifies the merge, not independently verified semantic equivalence. | Keep the original-member mapping and ID-rule version. A different membership or ID rule can be rebuilt from that mapping; changing only the displayed title must not change the ID. |
+| HD05 | **Implemented and tested:** derive a new merged-node ID from the SHA-256 of the sorted original member-ID list, preserving every original ID. | The same members produce the same merged ID regardless of member order or displayed title. This identifies the merge, not independently verified semantic equivalence. | Keep the original-member mapping and ID-rule version. A different membership or ID rule can be rebuilt from that mapping; changing only the displayed title must not change the ID. |
 | HD06 | **Approved comparison design, not implemented:** preserve the first run's original reviewed view and create a separate reprocessed view from its saved nodes and TRUE answers using the new run's merging and navigation rules. Compare the new run primarily against the reprocessed view. | The first run included manual extraction corrections, group exclusions and a title override. Matching downstream rules does not make those inputs an untouched automatic baseline. | Freeze the original subjects, masks, node titles, answers and reviewed artifacts; do not regenerate them. Record the reprocessing policies and historical interventions separately so the original and reprocessed views remain inspectable. |
 
 Before a future run, record the selected decision IDs, their exact policy
@@ -288,6 +288,11 @@ from derived graphs and browser views; later experiments must not overwrite
 earlier evidence. Reuse unaffected saved stages, but recompute downstream
 merges, memberships and navigation when their inputs change. This is a build
 requirement, not a claim that the current runner already implements it.
+The [offline merge stage](../../sse_multivector/navigation-research-v1/README.md#reversible-merge-stage)
+records policy versions, source hashes and reversible inputs. Saved NEv2 and
+TRUE10 replays preserve paths and post membership. HD04 has prepared combined
+mask packets but no generated merged titles; HD06 still lacks a published
+reprocessed browser view. This check made no model calls or full hierarchy run.
 
 **Hierarchy execution recovery (clarified September 24):** retry failed model
 calls and reuse successful results. Preserve failed-attempt receipts and the
@@ -318,7 +323,8 @@ required outcomes, not selected implementation methods or new dates:
 | **27 · Order node notes using mask prominence** | Define and implement how relevant mask scores produce node-note order, including multiple masks and shared descendants. | Needs prominence definition 04; required to finish 03. |
 | **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered TRUE and large-group title inputs. | Needs 03 + 21 + 22; required to finish full-build feasibility 10. |
 
-24 and 25 can start from saved artifacts; they are not marked in progress.
+24 can start from saved artifacts and remains unstarted. 25 has an offline
+merge stage checked against saved results; construction integration remains.
 For 26, the [browser implementation and regression checks](../../sse_multivector/navigation-research-v1/README.md#shared-child-collapse)
 are complete; validation on the rebuilt HRv1 hierarchy awaits graph packaging.
 27 waits for 04, which remains paused. 28 waits for the validated small-corpus

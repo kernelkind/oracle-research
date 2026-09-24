@@ -68,8 +68,11 @@ build as the hierarchy becomes clearer; the exact point is open. The top
 summary names only the green workstreams. Readiness
 does not authorize research, implementation, agent assignment or spending.
 
-Nodes 24–25 are ready but not started: recover missing memberships and handle
-node equivalence and TRUE cycles. Node 26 is grey: its navigation collapse is
+Node 24 is ready but not started: recover missing memberships. Node 25 is ready
+to resume: its reversible native-cycle merge stage is implemented and checked
+against saved results; exact-mask-set node consolidation and full-build
+integration remain. The merge policy is provisional, not proven equivalence.
+Node 26 is grey: its navigation collapse is
 implemented and regression-tested; validation on the rebuilt hierarchy is
 pending. It is not in the ready-to-start summary.
 Node 27 turns mask prominence into node-note ordering and needs 04.
