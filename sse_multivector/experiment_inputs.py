@@ -223,6 +223,18 @@ def validate(dataset, case, raw, schema):
     return result
 
 
+def is_flagged(case):
+    """Current user decisions take precedence; an empty mask alone is not a failure."""
+    reviews = [r for r in case["reviews"] if r["current"]]
+    users = [r for r in reviews if r["role"] == "user"]
+    if users:
+        return users[-1]["verdict"] in {"reject", "uncertain"}
+    agents = [r for r in reviews if r["role"] == "agent"]
+    return case["status"] not in {"valid", "empty"} or bool(
+        agents and agents[-1]["verdict"] in {"reject", "uncertain"}
+    )
+
+
 def review_batch(plan, report):
     """Translate compatible cases to the existing UI; list all unsupported cases."""
     adapter = plan["dataset"]["adapter"]
@@ -234,7 +246,7 @@ def review_batch(plan, report):
         )
     items, excluded = [], []
     for case in report["cases"]:
-        if case["status"] != "valid":
+        if adapter == "titles" and case["status"] != "valid":
             excluded.append({"id": case["id"], "reason": case["status"]})
             continue
         if adapter == "titles":
@@ -257,7 +269,7 @@ def review_batch(plan, report):
                     "note_id": case["evidence"]["note_id"],
                     "subject": case["inputs"]["SUBJECT"],
                     "note": case["inputs"]["POST"],
-                    "fragments": case["fragments"],
+                    "fragments": case["fragments"] if case["status"] == "valid" else [],
                 }
             )
         assessments = [
@@ -268,6 +280,14 @@ def review_batch(plan, report):
             items[-1]["assessment"] = f"Agent: {latest['verdict']}. {latest['comment']}"
         if adapter == "masks":
             items[-1]["details"] = "Generated mask; not semantically approved."
+            if case["status"] != "valid":
+                items[-1]["details"] = "\n\n".join(
+                    str(value) for value in (
+                        f"Result status: {case['status']}", case.get("error"),
+                        case.get("output"),
+                    ) if value
+                )
+                items[-1]["result_status"] = case["status"]
     batch = {
         "schema_version": 1,
         "batch_id": "experiment-" + digest(items)[:16],

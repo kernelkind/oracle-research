@@ -36,6 +36,30 @@ struct MaskReviewItem {
     assessment: String,
     #[serde(default, skip_serializing_if = "String::is_empty")]
     details: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    result_status: Option<MaskResultStatus>,
+}
+
+#[derive(Clone, Copy, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case")]
+enum MaskResultStatus {
+    Empty,
+    Failed,
+    Malformed,
+    InvalidReceipt,
+    Unrun,
+}
+
+impl MaskResultStatus {
+    fn label(self) -> &'static str {
+        match self {
+            Self::Empty => "No mask returned (empty)",
+            Self::Failed => "No usable mask: failed request",
+            Self::Malformed => "No usable mask: malformed output",
+            Self::InvalidReceipt => "No usable mask: invalid receipt",
+            Self::Unrun => "No mask: request not run",
+        }
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -93,7 +117,25 @@ pub fn run_mask_prompt_review_from(
     start_at: Option<&str>,
     review: impl FnMut(ApprovalScreen, String) -> io::Result<ApprovalTuiAction>,
 ) -> Result<MaskPromptReviewOutcome> {
-    run_review_from(batch_path, session_path, start_at, ReviewPurpose::MaskQuality, review)
+    run_mask_prompt_review_selected(batch_path, session_path, start_at, None, review)
+}
+
+/// Restrict navigation, keeping the complete batch and its saved decisions intact.
+pub fn run_mask_prompt_review_selected(
+    batch_path: impl AsRef<Path>,
+    session_path: impl AsRef<Path>,
+    start_at: Option<&str>,
+    only: Option<&[&str]>,
+    review: impl FnMut(ApprovalScreen, String) -> io::Result<ApprovalTuiAction>,
+) -> Result<MaskPromptReviewOutcome> {
+    run_review_from(
+        batch_path,
+        session_path,
+        start_at,
+        only,
+        ReviewPurpose::MaskQuality,
+        review,
+    )
 }
 
 /// Review whether fixed mask evidence justifies adding a note to a category.
@@ -104,13 +146,21 @@ pub fn run_category_membership_review_from(
     start_at: Option<&str>,
     review: impl FnMut(ApprovalScreen, String) -> io::Result<ApprovalTuiAction>,
 ) -> Result<MaskPromptReviewOutcome> {
-    run_review_from(batch_path, session_path, start_at, ReviewPurpose::CategoryMembership, review)
+    run_review_from(
+        batch_path,
+        session_path,
+        start_at,
+        None,
+        ReviewPurpose::CategoryMembership,
+        review,
+    )
 }
 
 fn run_review_from(
     batch_path: impl AsRef<Path>,
     session_path: impl AsRef<Path>,
     start_at: Option<&str>,
+    only: Option<&[&str]>,
     purpose: ReviewPurpose,
     mut review: impl FnMut(ApprovalScreen, String) -> io::Result<ApprovalTuiAction>,
 ) -> Result<MaskPromptReviewOutcome> {
@@ -150,15 +200,36 @@ fn run_review_from(
                 "conflicting source text for one note ID".into(),
             ));
         }
-        let spans = resolve_fragments(&item.fragments, &item.note, &item.note_id, &item.item_id)?;
-        highlights.push(highlighted_note(&item.note, &spans));
+        if item.result_status.is_some() {
+            if !item.fragments.is_empty() || matches!(purpose, ReviewPurpose::CategoryMembership) {
+                return Err(Error::ExperimentState(
+                    "missing mask result must have no fragments and is only valid for mask-quality review".into(),
+                ));
+            }
+            highlights.push(item.note.clone());
+        } else {
+            let spans =
+                resolve_fragments(&item.fragments, &item.note, &item.note_id, &item.item_id)?;
+            highlights.push(highlighted_note(&item.note, &spans));
+        }
+    }
+    let selected: Vec<_> = batch
+        .items
+        .iter()
+        .enumerate()
+        .filter(|(_, item)| only.is_none_or(|ids| ids.contains(&item.item_id.as_str())))
+        .map(|(index, _)| index)
+        .collect();
+    if selected.is_empty() || only.is_some_and(|ids| ids.len() != selected.len()) {
+        return Err(Error::ExperimentState(
+            "empty, duplicate or unknown mask review selection".into(),
+        ));
     }
     let start_index = start_at
         .map(|id| {
-            batch
-                .items
+            selected
                 .iter()
-                .position(|item| item.item_id == id)
+                .position(|&index| batch.items[index].item_id == id)
                 .ok_or_else(|| Error::ExperimentState(format!("unknown mask review item {id}")))
         })
         .transpose()?;
@@ -197,14 +268,19 @@ fn run_review_from(
         },
     };
     save_session(session_path, &session)?;
-    let mut current = start_index.or_else(|| {
-        batch
-            .items
-            .iter()
-            .position(|item| session.decisions[&item.item_id].outcome.is_none())
-    });
+    let mut current = start_index
+        .or_else(|| {
+            selected.iter().position(|&index| {
+                session.decisions[&batch.items[index].item_id]
+                    .outcome
+                    .is_none()
+            })
+        })
+        // Flagged decisions (including rejections) must remain browsable on reopen.
+        .or_else(|| only.map(|_| 0));
     while let Some(index) = current {
-        let item = &batch.items[index];
+        let item_index = selected[index];
+        let item = &batch.items[item_index];
         let status = match session.decisions[&item.item_id].outcome {
             None => "Not reviewed",
             Some(MaskDecision::Approved) => "Approved",
@@ -214,7 +290,7 @@ fn run_review_from(
         let mut evidence = vec![ApprovalEvidence {
             title: "Note".into(),
             annotation: String::new(),
-            body: highlights[index].clone(),
+            body: highlights[item_index].clone(),
         }];
         if !item.assessment.trim().is_empty() {
             evidence.push(ApprovalEvidence {
@@ -224,7 +300,7 @@ fn run_review_from(
             });
         }
         let mut screen = ApprovalScreen {
-                heading: format!("Mask review · {} of {} · {} · {status}", index + 1, batch.items.len(), item.item_id),
+                heading: format!("Mask review · {} of {} · {} · {status}", index + 1, selected.len(), item.item_id),
                 title: Some(item.subject.clone()),
                 scope: "Does this mask express the whole subject without including text belonging only to something else?".into(),
                 approve_label: "Approve".into(),
@@ -236,10 +312,30 @@ fn run_review_from(
                 }),
                 evidence: ApprovalEvidenceLayout::Paged(evidence),
             };
+        if let Some(result_status) = item.result_status {
+            screen.scope = format!(
+                "{} · Is this result acceptable for the supplied subject?",
+                result_status.label()
+            );
+            screen.guidance.as_mut().expect("mask guidance").body =
+                "The complete note is unhighlighted because there is no usable mask. An empty mask is not automatically an error. Review whether the subject can be expressed by selecting text from this note. Failed or malformed output is not an empty-mask answer. A/R saves your decision; C comments; S skips; Ctrl-C exits.".into();
+            if !item.details.is_empty() {
+                if let ApprovalEvidenceLayout::Paged(evidence) = &mut screen.evidence {
+                    evidence.push(ApprovalEvidence {
+                        title: "Result".into(),
+                        annotation: String::new(),
+                        body: item.details.clone(),
+                    });
+                }
+            }
+        }
         if matches!(purpose, ReviewPurpose::CategoryMembership) {
             screen.heading = format!(
                 "{} · {} of {} · {} · {status}",
-                batch.batch_id, index + 1, batch.items.len(), item.item_id
+                batch.batch_id,
+                index + 1,
+                batch.items.len(),
+                item.item_id
             );
             screen.scope = format!(
                 "Does the highlighted evidence justify adding this note to {}?",
@@ -278,11 +374,11 @@ fn run_review_from(
         match action {
             ApprovalTuiAction::Pause => return Ok(MaskPromptReviewOutcome::Paused),
             ApprovalTuiAction::PreviousItem => {
-                current = Some((index + batch.items.len() - 1) % batch.items.len());
+                current = Some((index + selected.len() - 1) % selected.len());
                 continue;
             }
             ApprovalTuiAction::NextItem => {
-                current = Some((index + 1) % batch.items.len());
+                current = Some((index + 1) % selected.len());
                 continue;
             }
             ApprovalTuiAction::None => {
@@ -305,17 +401,18 @@ fn run_review_from(
         }
         save_session(session_path, &session)?;
         if advance {
-            current = (1..=batch.items.len())
-                .map(|offset| (index + offset) % batch.items.len())
+            current = (1..=selected.len())
+                .map(|offset| (index + offset) % selected.len())
                 .find(|&next| {
-                    session.decisions[&batch.items[next].item_id]
+                    session.decisions[&batch.items[selected[next]].item_id]
                         .outcome
                         .is_none()
                 });
         }
     }
     let (mut approved, mut rejected, mut skipped) = (0, 0, 0);
-    for decision in session.decisions.values() {
+    for index in selected {
+        let decision = &session.decisions[&batch.items[index].item_id];
         match decision.outcome {
             Some(MaskDecision::Approved) => approved += 1,
             Some(MaskDecision::Rejected) => rejected += 1,

@@ -16,6 +16,99 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_flagged_mask_review_keeps_empty_results_and_full_session_batch(self):
+        self.mask_spec()
+        self.prepare()
+        response = json.dumps(
+            {"meaning": "Tea", "expressible": False, "evidence": "none", "mask": []}
+        )
+        self.cli("run", "E1", env={"FAKE_RUNNER_PROMPT_RESPONSE": response})
+        cases = self.show()["cases"]
+        self.cli("review", "E1", "--case", cases[0]["id"], "--role", "agent",
+                 "--verdict", "reject", "--comment", "Tea is directly selectable.")
+        viewer = self.root / "viewer"
+        viewer.write_text(
+            "#!/usr/bin/env python3\nimport json,sys\nfrom pathlib import Path\n"
+            "Path(__file__).with_suffix('.json').write_text(json.dumps({"
+            "'args':sys.argv[1:], 'batch':json.loads(Path(sys.argv[2]).read_text())}))\n"
+        )
+        viewer.chmod(0o755)
+        before = self.calls()
+        self.cli("review", "E1", "--ui", "--flagged-only", "--ui-binary", viewer)
+        flagged = json.loads(viewer.with_suffix(".json").read_text())
+        self.assertEqual(flagged["args"][3:], ["--only", cases[0]["id"]])
+        self.assertEqual(len(flagged["batch"]["items"]), 2)
+        item = flagged["batch"]["items"][0]
+        self.assertEqual(item["fragments"], [])
+        self.assertEqual(item["result_status"], "empty")
+        self.assertEqual(item["note"], cases[0]["inputs"]["POST"])
+        self.assertIn("Tea is directly selectable", item["assessment"])
+        self.cli("review", "E1", "--ui", "--ui-binary", viewer)
+        full = json.loads(viewer.with_suffix(".json").read_text())
+        self.assertEqual(full["args"][:3], flagged["args"][:3])
+        self.assertEqual(self.calls(), before)
+        self.assertEqual(self.show()["cases"][0]["reviews"][-1]["role"], "agent")
+
+    def test_flagged_selection_uses_current_reviews_and_user_decisions(self):
+        from sse_multivector import experiment_inputs as inputs
+
+        def case(status="valid", reviews=()):
+            return dict(status=status, reviews=reviews)
+
+        def review(role, verdict, current=True):
+            return dict(role=role, verdict=verdict, current=current)
+
+        self.assertFalse(inputs.is_flagged(case()))
+        self.assertFalse(inputs.is_flagged(case("empty")))
+        for status in ("failed", "unrun", "malformed", "invalid_receipt"):
+            self.assertTrue(inputs.is_flagged(case(status)))
+        self.assertTrue(inputs.is_flagged(case("empty", [review("agent", "reject")])))
+        self.assertFalse(inputs.is_flagged(case(reviews=[review("agent", "reject", False)])))
+        self.assertFalse(inputs.is_flagged(case(reviews=[review("agent", "reject"), review("agent", "accept")])))
+        self.assertFalse(inputs.is_flagged(case("failed", [review("user", "accept"), review("agent", "reject")])))
+        self.assertTrue(inputs.is_flagged(case(reviews=[review("user", "uncertain")])))
+
+    def test_flagged_prominence_review_keeps_unscored_and_no_match_is_safe(self):
+        self.prominence_spec()
+        self.prepare()
+        self.cli("run", "E1", "--max-new-attempts", "1",
+                 env={"FAKE_RUNNER_PROMPT_RESPONSE": '{"prominence":80}'}, ok=False)
+        viewer = self.root / "viewer"
+        viewer.write_text(
+            "#!/usr/bin/env python3\nimport json,sys\nfrom pathlib import Path\n"
+            "Path(__file__).with_suffix('.json').write_text(Path(sys.argv[1]).read_text())\n"
+        )
+        viewer.chmod(0o755)
+        before = self.calls()
+        self.cli("review", "E1", "--ui", "--flagged-only", "--ui-binary", viewer)
+        batch = json.loads(viewer.with_suffix(".json").read_text())
+        self.assertEqual([n["id"] for n in batch["notes"]], ["tea-second"])
+        self.assertIn("unrun", batch["notes"][0]["title"])
+        self.assertIn("No output", batch["notes"][0]["results"][0]["output"])
+        self.cli("review", "E1", "--case", "tea-second", "--role", "user",
+                 "--verdict", "accept", "--comment", "Acknowledged missing score")
+        result = self.cli("review", "E1", "--ui", "--flagged-only", "--ui-binary", self.root / "missing-binary")
+        self.assertIn("No flagged cases", result.stdout)
+        self.assertFalse((self.root / "E1" / "review-ui.json").exists())
+        self.assertEqual(self.calls(), before)
+        error = self.cli("review", "E1", "--flagged-only", ok=False)
+        self.assertIn("requires --ui", error.stderr)
+
+    def test_mask_review_includes_failed_and_unrun_without_fabricating_spans(self):
+        from sse_multivector import experiment_inputs as inputs
+
+        self.mask_spec()
+        self.prepare()
+        result = self.show()
+        result["cases"][0].update(status="malformed", output="broken JSON", error="invalid JSON")
+        plan = json.loads((self.root / "E1" / "experiment.json").read_text())["plan"]
+        batch, excluded = inputs.review_batch(plan, result)
+        self.assertEqual(excluded, [])
+        self.assertEqual([i["result_status"] for i in batch["items"]], ["malformed", "unrun"])
+        self.assertTrue(all(i["fragments"] == [] for i in batch["items"]))
+        self.assertIn("broken JSON", batch["items"][0]["details"])
+        self.assertIn("invalid JSON", batch["items"][0]["details"])
+
     def test_thinking_on_survives_prepare_run_and_receipts(self):
         self.prepare()
         self.cli(
@@ -767,7 +860,24 @@ class ExperimentTests(unittest.TestCase):
         for case in self.show()["cases"]:
             self.assertEqual(case["reviews"][-1]["verdict"], "accept")
 
-    def open_existing_ui_and_approve(self):
+    def test_flagged_empty_mask_ui_records_only_selected_decision(self):
+        self.mask_spec()
+        self.prepare()
+        response = json.dumps(
+            {"meaning": "Tea", "expressible": False, "evidence": "none", "mask": []}
+        )
+        self.cli("run", "E1", env={"FAKE_RUNNER_PROMPT_RESPONSE": response})
+        cases = self.show()["cases"]
+        self.cli("review", "E1", "--case", cases[0]["id"], "--role", "agent",
+                 "--verdict", "uncertain", "--comment", "Review the empty answer.")
+        self.open_existing_ui_and_approve("--flagged-only")
+        cases = self.show()["cases"]
+        self.assertEqual(cases[0]["reviews"][-1]["role"], "user")
+        self.assertEqual(cases[0]["reviews"][-1]["verdict"], "accept")
+        self.assertEqual(cases[1]["reviews"], [])
+        self.assertEqual(len(self.calls()), 2)
+
+    def open_existing_ui_and_approve(self, *options):
         import fcntl
         import pty
         import select
@@ -782,7 +892,7 @@ class ExperimentTests(unittest.TestCase):
         master, slave = pty.openpty()
         fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", 40, 100, 0, 0))
         process = subprocess.Popen(
-            [sys.executable, str(CLI), "review", str(self.root / "E1"), "--ui"],
+            [sys.executable, str(CLI), "review", str(self.root / "E1"), "--ui", *options],
             stdin=slave,
             stdout=slave,
             stderr=slave,

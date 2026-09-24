@@ -606,12 +606,24 @@ def review(args):
     directory = args.experiment.resolve()
     if args.cosine_comparison and not args.ui:
         raise ValueError("--cosine-comparison requires --ui")
+    if args.flagged_only and not args.ui:
+        raise ValueError("--flagged-only requires --ui")
     with locked(directory):
         result = report(directory)
         if args.ui:
             if any((args.case, args.role, args.verdict, args.comment)):
                 raise ValueError("--ui cannot record a CLI judgment")
             plan, _, _ = load(directory)
+            selected = None
+            if args.flagged_only:
+                if plan["dataset"]["adapter"] not in {"masks", "prominence"}:
+                    raise ValueError("--flagged-only supports masks and prominence")
+                selected = [c["id"] for c in result["cases"] if inputs.is_flagged(c)]
+                if not selected:
+                    print("No flagged cases. No model calls or review decisions changed.")
+                    return
+                if plan["dataset"]["adapter"] == "prominence":
+                    result = {**result, "cases": [c for c in result["cases"] if c["id"] in selected]}
             batch, excluded = inputs.review_batch(plan, result)
             if args.cosine_comparison:
                 if plan["dataset"]["adapter"] != "prominence":
@@ -639,7 +651,8 @@ def review(args):
                     raise ValueError(f"review UI exited with {completed.returncode}")
                 return
             print(
-                f"UI: {len(batch['items'])} cases; {len(excluded)} not supported by this UI (still in show/report.json)."
+                f"UI: {len(selected) if selected is not None else len(batch['items'])} cases; "
+                f"{len(excluded)} not supported by this UI (still in show/report.json)."
             )
             for item in excluded:
                 print(f"  {item['id']}: {item['reason']}")
@@ -688,6 +701,7 @@ def review(args):
                     command,
                     str(batch_path),
                     str(directory / (name + "-session.json")),
+                    *(["--only", ",".join(selected)] if selected is not None else []),
                 ],
                 check=False,
             )
@@ -827,6 +841,8 @@ def parser():
     p.add_argument("--verdict", choices=("accept", "reject", "uncertain"))
     p.add_argument("--comment")
     p.add_argument("--ui", action="store_true")
+    p.add_argument("--flagged-only", action="store_true",
+                   help="mask/prominence UI: current reject/uncertain reviews and unresolved failures")
     p.add_argument("--ui-binary", type=Path)
     p.add_argument("--cosine-comparison", type=Path,
                    help="saved prominence_cosine/centroid comparison; adds offline ranking orders")

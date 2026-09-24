@@ -6,7 +6,7 @@ use std::path::Path;
 use std::process::ExitCode;
 
 use oracle_mvp::mask_prompt_review::{
-    MaskPromptReviewOutcome, run_category_membership_review_from, run_mask_prompt_review_from,
+    MaskPromptReviewOutcome, run_category_membership_review_from, run_mask_prompt_review_selected,
 };
 use oracle_mvp::reference_tui::ReferenceTerminal;
 use oracle_mvp::sse_mask_review::{
@@ -24,7 +24,7 @@ const USAGE: &str = "usage: sse-mask-review \
     sse-mask-review iterate <generation-run-directory> <prompt-review-session.json> [--only <note:subject,...>]\n       \
     sse-mask-review review-subjects <experiment-directory>\n       \
     sse-mask-review review-claims <experiment-directory>\n       \
-    sse-mask-review review-masks <mask-review.json> <mask-session.json> [--start-at <item-id>]\n       \
+    sse-mask-review review-masks <mask-review.json> <mask-session.json> [--start-at <item-id>] [--only <item-id,...>]\n       \
     sse-mask-review review-titles <title-review.json> <title-session.json> [--start-at <item-id>] [--comments <comments.json>]\n       \
     sse-mask-review review-membership <membership-review.json> <membership-session.json> [--start-at <item-id>]";
 
@@ -136,25 +136,32 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         }
         return Ok(());
     }
-    let mask_review = match arguments.as_slice() {
-        [command, batch, session] if command == "review-masks" || command == "review-membership" => {
-            Some((command, batch, session, None))
-        }
-        [command, batch, session, flag, item]
-            if (command == "review-masks" || command == "review-membership") && flag == "--start-at" =>
-        {
-            Some((command, batch, session, Some(item.as_str())))
-        }
-        _ => None,
-    };
-    if let Some((command, batch, session, start_at)) = mask_review {
+    if let [command, batch, session, options @ ..] = arguments.as_slice()
+        && (command == "review-masks" || command == "review-membership")
+    {
         let membership = command == "review-membership";
+        let mut start_at = None;
+        let mut only = None;
+        let mut options = options.chunks_exact(2);
+        for option in &mut options {
+            match option[0].as_str() {
+                "--start-at" if start_at.is_none() => start_at = Some(option[1].as_str()),
+                "--only" if !membership && only.is_none() => {
+                    only = Some(option[1].split(',').collect::<Vec<_>>());
+                }
+                _ => return Err(USAGE.into()),
+            }
+        }
+        if !options.remainder().is_empty() {
+            return Err(USAGE.into());
+        }
         if !std::io::stdin().is_terminal() || !std::io::stdout().is_terminal() {
             return Err(if membership {
                 "the category membership review must be started from an interactive terminal"
             } else {
                 "the mask prompt review must be started from an interactive terminal"
-            }.into());
+            }
+            .into());
         }
         let mut terminal = ReferenceTerminal::new()?;
         let outcome = if membership {
@@ -162,9 +169,13 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 terminal.review_navigable_stacked(screen, comment)
             })?
         } else {
-            run_mask_prompt_review_from(batch, session, start_at, |screen, comment| {
-                terminal.review_navigable_stacked(screen, comment)
-            })?
+            run_mask_prompt_review_selected(
+                batch,
+                session,
+                start_at,
+                only.as_deref(),
+                |screen, comment| terminal.review_navigable_stacked(screen, comment),
+            )?
         };
         drop(terminal);
         let label = if membership { "Membership" } else { "Mask" };

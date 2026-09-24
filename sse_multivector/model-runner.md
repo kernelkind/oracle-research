@@ -494,14 +494,32 @@ launches the existing `target/release/sse-mask-review` UI. Override its path wit
 `--ui-binary` if necessary. It never builds the binary or calls a model.
 Title comparisons may use the same prompt version on both sides, including
 model comparisons; candidate and baseline roles remain distinct. Sessions are
-tied to batch contents. The current mask UI cannot show empty or
-invalid masks: the CLI explicitly lists excluded IDs/statuses, and they remain
-available through `show --case` and CLI review. Generic tasks use the same
+tied to batch contents. Mask review includes empty, failed, malformed,
+invalid-receipt and unrun results. These show the complete unhighlighted note,
+an explicit result status and saved result/error details, never invented spans.
+An empty mask is not automatically an error; a failed request is not an empty
+answer. Invalid title outputs are still listed as excluded. Generic tasks use the same
 inspection/judgment CLI without a special UI.
 Agent assessments appear separately from user decisions in the existing UI.
 `show` reads the UI's hashed sessions, alongside CLI-recorded reviews; it does not
 invent approvals. Reviews of an earlier output remain visible but are marked
 `current: false` if the output changes.
+
+For masks or prominence, add `--flagged-only` to `review EXPERIMENT --ui`.
+It selects current agent `reject`/`uncertain` assessments and unresolved failed,
+malformed, invalid-receipt or unrun results. Empty masks require an explicit flag.
+The latest current user decision takes precedence: `accept` hides the case from
+this view; `reject` or `uncertain` keeps it visible. Stale assessments do not flag
+new outputs. With no matches, the command reports that and opens no viewer.
+This is a saved-evidence filter, not a new model judgment or an accuracy measure.
+
+Mask filtering restricts navigation in the existing viewer (`--only` case IDs)
+without changing the full batch or its session fingerprint. Full and focused
+views therefore share decisions, comments and resume state. Cases outside the
+selection are untouched. Agent reasoning stays separate from your decisions.
+Prominence filtering keeps that viewer read-only; its decision contract below
+does not change. Masks and prominence remain separate reviews, so a mask-quality
+comment copied to prominence may appear in both views.
 
 For prominence, the same `review EXPERIMENT --ui` command opens the existing
 `target/release/model-output-review` viewer (override with `--ui-binary`). Each

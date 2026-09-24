@@ -1,6 +1,8 @@
 use std::fs;
 
-use oracle_mvp::mask_prompt_review::{MaskPromptReviewOutcome, run_mask_prompt_review};
+use oracle_mvp::mask_prompt_review::{
+    MaskPromptReviewOutcome, run_mask_prompt_review, run_mask_prompt_review_selected,
+};
 use oracle_mvp::reference_map::ReviewOutcome;
 use oracle_mvp::reference_tui::{ApprovalEvidenceLayout, ApprovalTuiAction, ApprovalTuiModel};
 use ratatui::{Terminal, backend::TestBackend};
@@ -25,6 +27,143 @@ fn batch() -> Value {
 
 fn write(path: &std::path::Path, value: &Value) {
     fs::write(path, serde_json::to_vec_pretty(value).unwrap()).unwrap();
+}
+
+#[test]
+fn explicit_empty_and_failed_results_show_full_note_and_separate_reasoning() {
+    let dir = tempfile::tempdir().unwrap();
+    let input = dir.path().join("input.json");
+    let session = dir.path().join("session.json");
+    let mut data = batch();
+    data["items"].as_array_mut().unwrap().truncate(2);
+    for (index, status) in ["empty", "failed"].iter().enumerate() {
+        data["items"][index]["fragments"] = json!([]);
+        data["items"][index]["result_status"] = json!(status);
+        data["items"][index]["assessment"] = json!("Agent: uncertain. Needs your decision.");
+        data["items"][index]["details"] = json!("Saved result details");
+    }
+    write(&input, &data);
+    let mut seen = 0;
+    run_mask_prompt_review(&input, &session, |screen, comment| {
+        let ApprovalEvidenceLayout::Paged(evidence) = &screen.evidence else {
+            panic!()
+        };
+        assert_eq!(evidence[0].body, "At the café, I read; the café was quiet.");
+        assert!(screen.scope.contains(if seen == 0 {
+            "No mask returned"
+        } else {
+            "failed"
+        }));
+        assert!(
+            evidence
+                .iter()
+                .any(|e| e.title == "My reasoning" && e.body.contains("Needs your decision"))
+        );
+        assert!(
+            evidence
+                .iter()
+                .any(|e| e.title == "Result" && e.body == "Saved result details")
+        );
+        assert!(comment.is_empty());
+        seen += 1;
+        Ok(ApprovalTuiAction::Submit {
+            outcome: ReviewOutcome::Rejected,
+            comment: "User decision".into(),
+        })
+    })
+    .unwrap();
+    assert_eq!(seen, 2);
+    let stored: Value = serde_json::from_slice(&fs::read(session).unwrap()).unwrap();
+    assert_eq!(
+        stored["session"]["decisions"]["M01"]["comment"],
+        "User decision"
+    );
+}
+
+#[test]
+fn selection_preserves_shared_session_and_navigates_only_selected_items() {
+    let dir = tempfile::tempdir().unwrap();
+    let input = dir.path().join("input.json");
+    let session = dir.path().join("session.json");
+    write(&input, &batch());
+    let mut actions = [
+        ApprovalTuiAction::NextItem,
+        ApprovalTuiAction::PreviousItem,
+        ApprovalTuiAction::Submit {
+            outcome: ReviewOutcome::Rejected,
+            comment: "Selected decision".into(),
+        },
+        ApprovalTuiAction::Pause,
+    ]
+    .into_iter();
+    let mut expected = ["M01", "M03", "M01", "M03"].into_iter();
+    run_mask_prompt_review_selected(
+        &input,
+        &session,
+        None,
+        Some(&["M01", "M03"]),
+        |screen, _| {
+            assert!(screen.heading.contains(expected.next().unwrap()));
+            assert!(screen.heading.contains("of 2"));
+            Ok(actions.next().unwrap())
+        },
+    )
+    .unwrap();
+    let before = fs::read(&session).unwrap();
+    run_mask_prompt_review(&input, &session, |screen, _| {
+        assert!(screen.heading.contains("M02"));
+        assert!(screen.heading.contains("of 3"));
+        Ok(ApprovalTuiAction::Pause)
+    })
+    .unwrap();
+    assert_eq!(before, fs::read(&session).unwrap());
+    run_mask_prompt_review_selected(
+        &input,
+        &session,
+        Some("M01"),
+        Some(&["M01"]),
+        |screen, comment| {
+            assert!(screen.heading.contains("Disapproved"));
+            assert_eq!(comment, "Selected decision");
+            Ok(ApprovalTuiAction::Pause)
+        },
+    )
+    .unwrap();
+    for ids in [&[][..], &["unknown"][..], &["M01", "M01"][..]] {
+        assert!(
+            run_mask_prompt_review_selected(&input, &session, None, Some(ids), |_, _| panic!())
+                .is_err()
+        );
+    }
+    assert_eq!(before, fs::read(&session).unwrap());
+    let mut reopened = false;
+    run_mask_prompt_review_selected(&input, &session, None, Some(&["M01"]), |screen, comment| {
+        reopened = true;
+        assert!(screen.heading.contains("Disapproved"));
+        assert_eq!(comment, "Selected decision");
+        Ok(ApprovalTuiAction::Pause)
+    })
+    .unwrap();
+    assert!(
+        reopened,
+        "a selected rejected case must remain browsable after review"
+    );
+}
+
+#[test]
+fn missing_mask_status_cannot_hide_fragments_or_be_used_as_membership_evidence() {
+    use oracle_mvp::mask_prompt_review::run_category_membership_review_from;
+    let dir = tempfile::tempdir().unwrap();
+    let input = dir.path().join("input.json");
+    let session = dir.path().join("session.json");
+    let mut data = batch();
+    data["items"][0]["result_status"] = json!("empty");
+    write(&input, &data);
+    assert!(run_mask_prompt_review(&input, &session, |_, _| panic!()).is_err());
+    data["items"][0]["fragments"] = json!([]);
+    write(&input, &data);
+    assert!(run_category_membership_review_from(&input, &session, None, |_, _| panic!()).is_err());
+    assert!(!session.exists());
 }
 
 #[test]
