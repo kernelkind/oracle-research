@@ -136,28 +136,45 @@ New clear concerns are `Statements about coffee` replacing `coffee`, `tallow`
 excluding the `Tbone` instance, and `Cooked meals prepared to eat` losing the
 shared potato detail. The last is a loss of specificity, not a membership
 contradiction. `Tips for personal well-being` remains uncertain. For
-`Book-related topics`, the user suggested `Literature`; the open design question
-is naming an organizing topic for instances at different levels, rather than
-finding a shared type. No corresponding prompt change is approved yet.
+`Book-related topics`, the user suggested `Literature`, motivating v37's
+organizing-topic framing below rather than requiring a shared type. This does
+not establish `Literature` as the uniquely correct title.
 
 This single-draw comparison does not establish an overall improvement over v32;
 the observed regressions argue against promotion. Transport failures are not
 counted as incorrect titles. V34 and production titles remain unchanged.
 
-[Title prompt v37](../hdbv2-node-description-probe-v37/prompt.txt) is the current
-untested draft against last-approved v34, prepared for wording review only.
-It removes only "in a topic hierarchy" from
-[v36](../hdbv2-node-description-probe-v36/prompt.txt), as approved by the user.
-It asks for the most specific topic containing every instance,
-replacing independent full-meaning support with a requirement that
-every instance belong under the title. It omits
-[v35](../hdbv2-node-description-probe-v35/prompt.txt)'s additional permissions to
-use the group to clarify an instance and to accept different levels or aspects
-of a topic: those could encourage reinterpretation or mere association instead
-of membership. V35 remains untested, not adopted. Name handling, masks-only
-inputs and JSON output remain unchanged, with no added examples. The v37
-revision receipt records the exact v34 base and edits. Wording approval and
-testing remain open; no inference or production-title change has been made.
+[Title prompt v37](../hdbv2-node-description-probe-v37/prompt.txt) has
+user-approved wording and is tested, not promoted. Based on v34, it asks for
+the most specific topic containing every instance rather than independent
+support for the title's full meaning. It removes only "in a topic hierarchy"
+from [v36](../hdbv2-node-description-probe-v36/prompt.txt) and does not include
+[v35](../hdbv2-node-description-probe-v35/prompt.txt)'s extra interpretive
+permissions. V35 and v36 remain untested. Name handling, masks-only inputs and
+JSON output are unchanged; there are no added examples.
+
+`experiments/title-v37-vs-v34/` uses the same 20 cases and MiMo V2.6 Pro high
+settings, with saved v34 answers and no baseline inference. All cases were
+attempted: 19 valid JSON titles and one unresolved kitchen/worktop case across
+24 attempts. Four explicit provider 502 errors each received one retry; three
+recovered, while kitchen/worktop's retry ended with a socket closure classified
+as unknown. That failure was not retried again or counted as an incorrect title.
+
+Agent assessments, separate from user decisions, are saved through the shared
+review CLI: 14 acceptable, three rejected and two uncertain titles. Coffee and
+preservation stop describing the input as text. However, the book group becomes
+`Book, reading, and writing terminology`; `tallow` still excludes Tbone; and
+`Home-cooked meals` adds an unsupported home restriction while still omitting
+the shared potato detail. The raw-food title is wordier, and `mental health`
+loses specificity relative to psychological distress without a clear membership
+error. The uncertain advice group may be loosely grouped; the fog group mixes
+mental fog and literal haze, with disambiguating source context absent from the
+model's masks-only input. These are not clean title-prompt-only failures.
+
+This single comparison is mixed and does not establish overall improvement.
+There are only 16 usable v34 answers for paired semantic comparison. The
+existing UI contains all 19 valid titles and agent comments; the unresolved
+case remains visible through the CLI. Production titles remain unchanged.
 
 HRv1's saved titles still use v21. These experiments do not authorize replacing
 them, running a full title pass, changing memberships or hierarchy edges, or
