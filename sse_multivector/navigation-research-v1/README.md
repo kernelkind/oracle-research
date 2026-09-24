@@ -222,8 +222,18 @@ Photography, exercise, sleep and controversy titles cover their masks but
 unnecessarily enumerate subtopics; these are borderline concision judgments,
 not four established membership failures. All ten are available in the review
 UI with reasoning and no inferred user decisions. There is no paired baseline
-on these new inputs, so this cannot rank Luna against Sol. Next, review the
-scope failure and enumeration cases before deciding whether to revise v37.
+on these new inputs, so this cannot rank Luna against Sol.
+
+The user subsequently authorized preparing a revision. [Title prompt
+v38](../hdbv2-node-description-probe-v38/prompt.txt) is an **untested draft**
+based directly on approved v37. It distinguishes naming a shared topic from
+summarizing the group's contents, and retaining category-defining details from
+appending subtopics already covered by its name. Specificity, inclusion of every
+instance, name handling, masks-only inputs and JSON output remain requirements.
+It does not reinstate v34's independent-support requirement. No new examples,
+word limit, model calls or production changes were added. After wording review,
+the proposed test is the same ten Luna-max inputs against saved v37 outputs,
+checking the scope failure and enumeration without losing shared bread details.
 
 HRv1's saved titles still use v21. These experiments do not authorize replacing
 them, running a full title pass, changing memberships or hierarchy edges, or

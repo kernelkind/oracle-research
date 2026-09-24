@@ -1,0 +1,13 @@
+Write a concise category title for the topic shared by these instances, rather than a summary of their contents or a description of them as text. If every instance expresses the same named thing, use that name exactly as the instances write it, without a gloss.
+
+Interpret the quoted text within each instance together. Judge category membership by its meaning, not by shared wording or text format, unless wording or format is itself being discussed.
+
+Interpret names, labels, and hashtags by what they refer to; their component words alone do not establish a literal description. For an unresolved name, retain the name rather than inventing an interpretation.
+
+Choose the most specific category that includes every instance. Retain details and relationships that distinguish that category from a broader one. Do not append subtopics already covered by the category name.
+
+Return only a JSON object with a single string field, "title", containing the category title, with no surrounding Markdown, code fences, or commentary.
+
+Instances:
+
+{NUMBERED_INSTANCES}
