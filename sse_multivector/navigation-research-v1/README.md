@@ -224,16 +224,33 @@ not four established membership failures. All ten are available in the review
 UI with reasoning and no inferred user decisions. There is no paired baseline
 on these new inputs, so this cannot rank Luna against Sol.
 
-The user subsequently authorized preparing a revision. [Title prompt
-v38](../hdbv2-node-description-probe-v38/prompt.txt) is an **untested draft**
-based directly on approved v37. It distinguishes naming a shared topic from
+The user subsequently approved the wording and test of [title prompt
+v38](../hdbv2-node-description-probe-v38/prompt.txt), based directly on v37.
+It is **tested, not promoted**. It distinguishes naming a shared topic from
 summarizing the group's contents, and retaining category-defining details from
 appending subtopics already covered by its name. Specificity, inclusion of every
 instance, name handling, masks-only inputs and JSON output remain requirements.
 It does not reinstate v34's independent-support requirement. No new examples,
-word limit, model calls or production changes were added. After wording review,
-the proposed test is the same ten Luna-max inputs against saved v37 outputs,
-checking the scope failure and enumeration without losing shared bread details.
+word limit or production changes were added.
+
+`experiments/title-v38-vs-v37-luna-max/` compares the same ten inputs and Luna-max
+settings against saved v37 outputs, with no baseline inference. All ten completed
+in ten attempts without retries. The preselected checks were the kindness scope
+failure, redundant enumeration, and retention of the shared bread ingredients.
+Agent assessment accepts all ten: `Kindness, goodness, and generosity` removes
+the privileges restriction; `Photography`, `Workouts`, and `Sleep` replace
+contents summaries; `Cranberry rosemary bread` preserves both ingredient details.
+`Coffee taste and flavor` uses the group collectively to interpret the generic
+flavor mask, consistent with v37/v38 rather than independent entailment.
+The controversy title is less enumerative; Dezeen, peace and Coffee shop are
+unchanged. No clear regression was identified in this sample.
+
+This is a promising single-draw diagnostic comparison, not proof of reliability
+or downstream hierarchy improvement. All ten outputs and agent reasoning are
+in the review UI, with user decisions separate. The recommended next step is
+a fresh diverse sample with v38 unchanged, not another wording revision.
+The agreed stopping rule remains: if further comparisons merely trade errors,
+stop this wording sequence instead of immediately drafting the next version.
 
 HRv1's saved titles still use v21. These experiments do not authorize replacing
 them, running a full title pass, changing memberships or hierarchy edges, or
