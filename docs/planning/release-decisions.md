@@ -275,6 +275,7 @@ user before implementation; do not resolve them through per-node exceptions.
 | HD02 | **Provisional merge rule:** merge mutually reachable nodes (strongly connected components). General integration is pending. | Correct subsumption cycles imply equivalence, but predicted cycles can be wrong. The user identified Beef / Beef products as an incorrect NEv2 merge. No tested component required a longer cycle without pairwise mutual Yes answers. | Keep the original nodes, masks, titles, edges and component membership. Rebuild from the pre-merge graph instead of trying to split a merged record after originals were discarded. |
 | HD03 | **Candidate to test, not settled:** retain any accepted incoming/outgoing connection of a merged member, preserving existing paths. | This favors accepted paths over contradictory direct No answers. The contradiction can exist before merging: Beef -> Beef products -> Steak, alongside a direct No for Beef -> Steak. Record the disagreement; do not silently repair it. | Preserve every Yes and No and the original edge contributors. A different conflict policy starts from those answers and may require recomputing merges and descendants, not merely editing the displayed links. |
 | HD04 | **Approved naming design, not implemented:** generate the merged title as described above; do not rerun TRUE merely because it changes. | The new wording may suggest a different scope from the original titles used by TRUE. The naming call does not establish new relationship evidence. | Save member titles, combined-mask input, prompt/model settings and generated title. A naming-only alternative need not rerun extraction or TRUE; using new titles for relationships would be a separate design change. |
+| HD05 | **Approved ID design, not implemented:** derive a new merged-node ID deterministically from the set of original member IDs, preserving every original ID. | The same members must produce the same merged ID regardless of member order or displayed title. This identifies the merge, not independently verified semantic equivalence. | Keep the original-member mapping and ID-rule version. A different membership or ID rule can be rebuilt from that mapping; changing only the displayed title must not change the ID. |
 
 Before a future run, record the selected decision IDs, their exact policy
 versions and source hashes in its manifest. Preserve raw outputs separately
@@ -283,8 +284,8 @@ earlier evidence. Reuse unaffected saved stages, but recompute downstream
 merges, memberships and navigation when their inputs change. This is a build
 requirement, not a claim that the current runner already implements it.
 
-Still open for user discussion: merged-ID rules, recovery from failed or
-incomplete stages, and precisely how the historically curated first hierarchy
+Still open for user discussion: recovery from failed or incomplete stages,
+and precisely how the historically curated first hierarchy
 will be reprocessed for comparison. Recording HD03 as a candidate does not
 authorize implementation, inference or another hierarchy run.
 
