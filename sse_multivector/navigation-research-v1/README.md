@@ -144,16 +144,18 @@ This single-draw comparison does not establish an overall improvement over v32;
 the observed regressions argue against promotion. Transport failures are not
 counted as incorrect titles. V34 and production titles remain unchanged.
 
-[Title prompt v36](../hdbv2-node-description-probe-v36/prompt.txt) is the current
+[Title prompt v37](../hdbv2-node-description-probe-v37/prompt.txt) is the current
 untested draft against last-approved v34, prepared for wording review only.
-It asks for the most specific topic containing every instance in a topic
-hierarchy, replacing independent full-meaning support with a requirement that
+It removes only "in a topic hierarchy" from
+[v36](../hdbv2-node-description-probe-v36/prompt.txt), as approved by the user.
+It asks for the most specific topic containing every instance,
+replacing independent full-meaning support with a requirement that
 every instance belong under the title. It omits
 [v35](../hdbv2-node-description-probe-v35/prompt.txt)'s additional permissions to
 use the group to clarify an instance and to accept different levels or aspects
 of a topic: those could encourage reinterpretation or mere association instead
 of membership. V35 remains untested, not adopted. Name handling, masks-only
-inputs and JSON output remain unchanged, with no added examples. The v36
+inputs and JSON output remain unchanged, with no added examples. The v37
 revision receipt records the exact v34 base and edits. Wording approval and
 testing remain open; no inference or production-title change has been made.
 
