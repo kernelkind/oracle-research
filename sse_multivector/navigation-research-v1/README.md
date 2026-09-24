@@ -67,8 +67,18 @@ Unconditional single-child absorption is a separate earlier experiment, not
 part of the equal-note requirement.
 
 Use the same declared processing rules for both sides of an old/new comparison,
-recording any remaining differences. Existing saved hierarchies are historical
-evidence, not proof that these requirements were applied. No prompt, grouping,
+recording any remaining differences. **HD06, approved design with implementation
+pending:** keep the first run's original reviewed view unchanged and create a
+separate reprocessed view from its saved nodes and TRUE answers. Apply the new
+run's merging and navigation rules to that copy; use it as the primary baseline
+for the new run. Do not regenerate old subjects, masks or original node titles.
+Disclose the first run's manual corrections, group exclusions and title override;
+reprocessing does not remove that curation. Titles for newly merged nodes follow
+HD04 separately. Membership expansion remains excluded from the new comparison.
+The existing launcher does not yet provide this three-view comparison.
+
+Existing saved hierarchies are historical evidence, not proof that these
+requirements were applied. No prompt, grouping,
 relationship, membership-expansion or title-repair policy changes are approved
 by these requirements.
 

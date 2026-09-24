@@ -280,6 +280,7 @@ user before implementation; do not resolve them through per-node exceptions.
 | HD03 | **Candidate to test, not settled:** retain any accepted incoming/outgoing connection of a merged member, preserving existing paths. | This favors accepted paths over contradictory direct No answers. The contradiction can exist before merging: Beef -> Beef products -> Steak, alongside a direct No for Beef -> Steak. Record the disagreement; do not silently repair it. | Preserve every Yes and No and the original edge contributors. A different conflict policy starts from those answers and may require recomputing merges and descendants, not merely editing the displayed links. |
 | HD04 | **Approved naming design, not implemented:** generate the merged title as described above; do not rerun TRUE merely because it changes. | The new wording may suggest a different scope from the original titles used by TRUE. The naming call does not establish new relationship evidence. | Save member titles, combined-mask input, prompt/model settings and generated title. A naming-only alternative need not rerun extraction or TRUE; using new titles for relationships would be a separate design change. |
 | HD05 | **Approved ID design, not implemented:** derive a new merged-node ID deterministically from the set of original member IDs, preserving every original ID. | The same members must produce the same merged ID regardless of member order or displayed title. This identifies the merge, not independently verified semantic equivalence. | Keep the original-member mapping and ID-rule version. A different membership or ID rule can be rebuilt from that mapping; changing only the displayed title must not change the ID. |
+| HD06 | **Approved comparison design, not implemented:** preserve the first run's original reviewed view and create a separate reprocessed view from its saved nodes and TRUE answers using the new run's merging and navigation rules. Compare the new run primarily against the reprocessed view. | The first run included manual extraction corrections, group exclusions and a title override. Matching downstream rules does not make those inputs an untouched automatic baseline. | Freeze the original subjects, masks, node titles, answers and reviewed artifacts; do not regenerate them. Record the reprocessing policies and historical interventions separately so the original and reprocessed views remain inspectable. |
 
 Before a future run, record the selected decision IDs, their exact policy
 versions and source hashes in its manifest. Preserve raw outputs separately
@@ -295,9 +296,11 @@ node. This is routine recovery, not an unresolved hierarchy-design choice. It
 does not authorize a new run, unlimited retries or changes to the general
 runner's current retry implementation.
 
-Still open for user discussion: precisely how the historically curated first
-hierarchy will be reprocessed for comparison. Recording HD03 as a candidate
-does not authorize implementation, inference or another hierarchy run.
+For HD06, original node titles remain frozen; naming a newly merged node is
+the separate HD04 operation, not regeneration of those original titles. Keep
+the new comparison free of the excluded membership-expansion experiment.
+Recording these designs, or HD03 as a candidate, does not authorize
+implementation, inference or another hierarchy run.
 
 Recovering missing node memberships is a separate operation. HDBSCAN's raw
 tree is not the specified launch hierarchy.
