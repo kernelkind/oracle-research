@@ -23,7 +23,7 @@ IMAGE_URL = "https://cloud-images.ubuntu.com/noble/20260911/noble-server-cloudim
 IMAGE_SHA256 = "612b2c0cc1bc413a6cb8c38fd611794caf0f2b436c50013d8b3794db12ad7354"
 PACKAGE_FILES = (
     "distillation_run.py", "distillation_data.py", "extraction_pipeline.py", "mask_positions.py",
-    "test_distillation_run.py", "test_distillation_data.py",
+    "test_distillation_run.py", "test_distillation_data.py", "test_distillation_deploy.py", "distillation_deploy.py",
     "distillation/Dockerfile", "distillation/requirements.in", "distillation/requirements.lock",
 )
 
@@ -35,8 +35,11 @@ def prepare_package(source, destination):
         target = destination / "sse_multivector" / name
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source_path, target)
+    (destination / "gte").mkdir()
+    shutil.copyfile(source / "gte/full_build_package.py", destination / "gte/full_build_package.py")
     write_json(destination / "package.json", {name: sha256(destination / "sse_multivector" / name)
-                                             for name in PACKAGE_FILES})
+                                             for name in PACKAGE_FILES} | {
+        "gte/full_build_package.py": sha256(destination / "gte/full_build_package.py")})
 
 
 def verified_image(cache):
@@ -132,6 +135,35 @@ docker run --rm --network none -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1 \\
   -e DISTILLATION_TEST_OUTPUT=/results/workflow -v "$result_dir":/results \\
   notedeck-distillation:local python -m unittest -v \\
   sse_multivector.test_distillation_run
+# Launch the exact image as a separate SSH target, as Vast does. It has no
+# source mount or fixture volume; the operator must transfer every input.
+ssh-keygen -q -t ed25519 -N '' -f "$result_dir/deployment-key"
+chmod 600 "$result_dir/deployment-key"
+docker network create --internal distillation-local
+cleanup_target() {
+  docker logs distillation-target > "$result_dir/ssh-target.log" 2>&1 || true
+  docker rm -f distillation-target >/dev/null 2>&1 || true
+  docker network rm distillation-local >/dev/null 2>&1 || true
+  rm -f "$result_dir/deployment-key" "$result_dir/deployment-key.pub"
+}
+trap cleanup_target EXIT
+docker run -d --name distillation-target --network distillation-local \\
+  --network-alias target -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1 \\
+  --entrypoint /bin/bash notedeck-distillation:local -c \\
+  'mkdir -p /run/sshd; ssh-keygen -A; exec /usr/sbin/sshd -D -e -o PasswordAuthentication=no -o PermitRootLogin=prohibit-password'
+docker cp "$result_dir/deployment-key.pub" distillation-target:/tmp/authorized_keys
+docker exec distillation-target bash -c \\
+  'mkdir -p /root/.ssh; cp /tmp/authorized_keys /root/.ssh/authorized_keys; chmod 700 /root/.ssh; chmod 600 /root/.ssh/authorized_keys'
+cat > "$result_dir/ssh-target.json" <<'TARGET'
+{"host":"root@target","port":22,"identity":"/results/deployment-key"}
+TARGET
+docker run --rm --network distillation-local \\
+  -e DISTILLATION_TEST_OUTPUT=/results/workflow \\
+  -e DISTILLATION_DEPLOY_OUTPUT=/results/deployment-tests \\
+  -e DISTILLATION_SSH_TARGET=/results/ssh-target.json -v "$result_dir":/results \\
+  notedeck-distillation:local python -m unittest -v sse_multivector.test_distillation_deploy
+docker logs distillation-target > "$result_dir/ssh-target.log" 2>&1
+rm "$result_dir/deployment-key" "$result_dir/deployment-key.pub"
 docker save notedeck-distillation:local | gzip -1 > "$result_dir/container.tar.gz"
 """
                 print("Building container and running offline tests inside VM", flush=True)

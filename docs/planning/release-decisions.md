@@ -62,7 +62,7 @@ were last confirmed with the user on September 23.
 | 17 · Compare teachers | In progress; no completed selection established. |
 | 26 · Collapse equal-note navigation steps | Implemented and regression-tested; validation on the rebuilt hierarchy is waiting. |
 | 13 · Define Nostr hierarchy protocol | Not started. |
-| 18 · Prepare training code for the fine-tuning pilot | In progress; automated workflow passes local VM tests with a tiny model. Candidate recipes and GPU validation remain. |
+| 18 · Prepare training code for the fine-tuning pilot | In progress; local VM rehearses deployment over SSH as well as training. Freeze candidate recipes before the actual GPU pilot. |
 | 24 · Recover missing node memberships | Not started. |
 | 25 · Handle node equivalence and TRUE cycles | Both merge stages and naming/browser integration implemented; four-merge user review complete (three accepted, Beef rejected). Full rebuilt-hierarchy validation remains. |
 | 21 · Assess HDBSCAN at launch scale | No further progress; earlier investigation remains evidence, not launch-scale validation. |
@@ -196,8 +196,16 @@ before deploying on rented hardware. The local test uses a tiny model and
 synthetic data, including actual weight updates, checkpoint interruption/resume,
 save/reload and two-step evaluation. All seven local workflow tests passed;
 interrupted training reproduced the uninterrupted adapter weights exactly.
-Candidate quality, full-model memory use and CUDA/NF4 compatibility still
-require GPU validation. Task 18 is in progress.
+The user clarified that the VM must rehearse the deployment process used on
+Vast: prepare an immutable image and frozen inputs locally, upload the inputs,
+start the experiment automatically, reconnect and retrieve verified results.
+Follow the existing GTE Vast deployment pattern; no manual code edits on the
+rented server. The distillation SSH operator runs against a separate container
+inside the VM, using the image's installed code and dependencies. Candidate
+quality, full-model memory use and CUDA/NF4 compatibility are checked during
+the actual pilot, without a separate throwaway GPU training run. Candidate
+recipes and the paid launch configuration remain to be frozen. Task 18 is in
+progress.
 The user accepted a $25 total maximum for GPU setup, baselines and initial
 fine-tunes across the three candidates, including storage, transfers and failed
 attempts. No rental has started; ledger admission precedes any paid commitment.

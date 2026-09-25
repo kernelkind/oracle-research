@@ -235,6 +235,8 @@ class PlanningViewerTest(unittest.TestCase):
         self.assertIn("local VM", cells["m-setup"].get("value"))
         self.assertIn("save/reload", cells["m-setup"].get("value"))
         self.assertIn("outputs for evaluation", cells["m-setup"].get("value"))
+        self.assertIn("SSH", cells["m-setup"].get("value"))
+        self.assertIn("actual pilot", cells["m-setup"].get("value"))
         self.assertIn("Format examples and evaluate", cells["m2"].get("value"))
         self.assertIn(("s1", "s2"), edges)
         self.assertIn(("m2", "s-analysis"), edges)

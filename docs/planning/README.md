@@ -94,9 +94,13 @@ subject to ledger admission; no rental has started. This does not complete
 release-model selection. The user approved automated local VM validation before
 rented-hardware deployment: baseline, real training, interruption/resume,
 save/reload and evaluation with a tiny model. Those local tests pass, including
-exact interrupted-versus-uninterrupted adapter weights. The same pinned container will
-support the later GPU check; CPU results do not establish candidate quality,
-GPU compatibility, memory use or speed.
+exact interrupted-versus-uninterrupted adapter weights. The clarified local
+requirement also covers deployment: frozen inputs uploaded over SSH to a
+separate container, automatic execution, reconnect and verified retrieval,
+following the existing GTE Vast process. Code and dependencies are built into
+the image locally; rented servers receive inputs and run the installed code.
+Candidate settings and paid launch configuration remain open. GPU compatibility,
+memory use, speed and quality are checked during the actual pilot.
 Node 17 is blue and in progress: the user reports comparing
 Muse high and Astra low. No teacher is selected. Task 17 also requires an A/B
 comparison of the resulting hierarchies on the same notes before selection;

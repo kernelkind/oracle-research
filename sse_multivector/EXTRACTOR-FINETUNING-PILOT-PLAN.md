@@ -125,8 +125,10 @@ data to complete release-model selection. The informal experiment above is
 authorized to begin preparation without prominence. The user subsequently
 approved building and testing the automated workflow in a local VM before
 deploying it on rented hardware. The implementation uses Transformers Trainer
-and PEFT in a pinned PyTorch container. Candidate GPU compatibility and training
-settings remain to be validated.
+and PEFT in a pinned PyTorch container. The user clarified that this must
+rehearse deployment as previously done on Vast, with no manual code editing
+on the rented server. Candidate training settings and paid launch configuration
+remain to be frozen; GPU compatibility is checked during the actual pilot.
 
 ### Local VM workflow
 
@@ -135,6 +137,10 @@ including real LoRA updates, exact weight equality after interruption/resume,
 save/reload, valid and malformed outputs, empty masks, and exclusion of teacher
 subjects from evaluation mask calls. The 87 existing extraction tests and all
 10 planning-viewer tests also passed, including the Firefox browser check.
+The deployment rehearsal also passed in a fresh VM: package verification,
+two sequential runs, reconnect, completed-result reuse, failure retrieval and
+runtime-limit enforcement. The SSH target received its inputs exclusively
+through the production operator; it had no shared source or input volume.
 
 Run from the repository root:
 
@@ -148,7 +154,7 @@ The host needs QEMU, KVM access, `qemu-img`, `genisoimage`, SSH and SCP. It does
 not need a Docker daemon or root access. A checksum-pinned Ubuntu image runs
 Docker inside a VM with four virtual CPUs, 12 GiB RAM and a sparse 64 GiB disk.
 SSH binds only to loopback. The package contains an explicit source-file list;
-credentials and annotation artifacts are not copied into it. Each attempt gets
+credentials and annotation artifacts are not copied into the build context. Each attempt gets
 a source snapshot, serial/build logs and a result directory. Use a new
 `--directory` for a clean-machine test; reusing it retains the stopped VM disk
 and Docker cache. The launcher collects results and stops the VM on exit.
@@ -160,8 +166,63 @@ tiny model and synthetic subject/mask examples. They exercise the real dataset
 export, answer-only training, baseline generation, checkpointing, adapter
 save/reload and two-step evaluation. The interruption test kills training,
 resumes it and compares weights with an uninterrupted run. A successful VM run
-exports `results/container.tar.gz`, ready for a later `docker load`; the VM
+exports `results/container.tar.gz` for local import and registry publication; the VM
 disk, image, model weights, data and logs remain ignored under `target/`.
+
+The VM also starts a separate container from that image, accessible over SSH
+on an internal Docker network. That target has no source checkout or shared
+input volume. `distillation_deploy.py` prepares a hashed input package locally,
+uploads it, checks that the installed code and dependency lock match, starts a
+detached worker, waits and retrieves hashed results. The same operator connects
+to the SSH endpoint of a Vast container. Vast runs the image directly; the
+operator does not require Docker inside the rented container.
+
+The deployment tests run two configurations in sequence, reconnect from a new
+operator process, reuse completed results, and retrieve training failures and
+runtime-limit failures without retrying them. Inputs and results reuse the
+manifest implementation from `gte/full_build_package.py`; the earlier operator
+is `gte/vast_full_build.py`. Code changes require rebuilding and retesting
+locally, then creating a new package. Do not patch code on a rental.
+
+After the candidate JSON configurations are finalized, prepare the package
+locally (repeat `--config` for each candidate; filenames become run names):
+
+```sh
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+python3 -m sse_multivector.distillation_deploy prepare \
+  --config target/distillation-pilot-v1/configs/qwen.json \
+  --config target/distillation-pilot-v1/configs/gemma-dense.json \
+  --config target/distillation-pilot-v1/configs/gemma-moe.json \
+  --timeout-seconds "$PILOT_TIMEOUT_SECONDS" \
+  --output target/distillation-pilot-v1/package
+```
+
+This command is a usage template; those candidate configurations and
+`PILOT_TIMEOUT_SECONDS` are not yet selected. The package contains data, mask prompts, configurations and optional
+local model files. Remote model IDs require immutable revisions. Paths are
+rewritten to the same container layout during local preparation, before upload.
+
+Once the tested image is published by digest and an admitted Vast instance is
+running it, launch from the local checkout matching that package:
+
+```sh
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+python3 -m sse_multivector.distillation_deploy run \
+  --package target/distillation-pilot-v1/package \
+  --output target/distillation-pilot-v1/deployment \
+  --host "$VAST_SSH_HOST" --port "$VAST_SSH_PORT" \
+  --identity "$VAST_SSH_KEY"
+```
+
+Set the SSH variables from the admitted instance's endpoint and local key.
+The command transfers inputs, starts all runs, waits and retrieves logs,
+checkpoints, adapters and reports. Repeat the exact command after a connection
+failure; completed jobs are not rerun. `--start-only` returns after launch.
+The worker's frozen runtime limit includes all configured runs and survives
+reconnects. It is a worker timeout, not a provider billing cap. Instance rental,
+registry publication, ledger admission and instance destruction are outside
+this SSH operator; their actual paid launch configuration remains unfinished.
+No registry publication or paid deployment has occurred.
 
 `distillation_run.py CONFIG --output DIRECTORY` performs baseline → training →
 reload → evaluation → report. Invoke it as
@@ -190,8 +251,9 @@ selected non-whitespace source characters. These mechanical measurements do
 not establish semantic correctness or approval; semantic review remains open.
 
 CPU VM validation cannot establish candidate quality, CUDA/NF4 compatibility,
-full-model memory requirements or speed. Those need the later short GPU check.
-The actual candidate baselines and fine-tunes have not run.
+full-model memory requirements or speed. Those are checked during the actual
+pilot; there is no separate throwaway GPU training run. The actual candidate
+baselines and fine-tunes have not run.
 
 The later final fine-tune (08) also prepares trained weights, necessary
 supporting files, usage instructions and evaluation results for publication.
@@ -569,8 +631,8 @@ ledger accounting and the lifetime ceiling still apply.
 
 The informal dataset is prepared for one fine-tune per candidate on both
 existing prompted tasks. The automated workflow passes local VM validation.
-Next freeze candidate recipes, including task sampling, and check GPU
-compatibility. Establish each candidate's two-step baseline
+Next freeze candidate recipes, including task sampling, and the paid launch
+configuration for the locally tested image and input package. Establish each candidate's two-step baseline
 before fine-tuning and compare on the same held-out notes using its own generated
 subjects. Paid work must fit the approved $25 total and ledger admission.
 Prominence and the larger dataset-size schedule can wait.
