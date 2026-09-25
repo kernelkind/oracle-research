@@ -12,6 +12,17 @@ from sse_multivector.test_distillation_data import DistillationDataTests
 
 
 class PackageTests(unittest.TestCase):
+    def test_offer_checks_returned_storage_inclusive_price_and_total_budget(self):
+        settings = read_json(Path(__file__).parent / "distillation/vast-launch.json")
+        offer = {**settings["offer_equals"], **settings["offer_minimums"],
+                 **settings["offer_maximums"], "id": 123, "driver_version": "595.58.03",
+                 "dph_base": 1.5, "storage_cost": .24, "storage_total_cost": .1}
+        self.assertEqual(deploy.check_offer(settings, offer)["maximum_charge_usd"], "24.60")
+        for key, value in (("dph_total", 1.61), ("gpu_ram", 48000), ("inet_up_cost", float("nan")),
+                           ("storage_total_cost", 0), ("driver_version", "570.00.00")):
+            with self.subTest(field=key), self.assertRaises(ValueError):
+                deploy.check_offer(settings, {**offer, key: value})
+
     def test_frozen_package_is_portable_and_rejects_changed_inputs(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

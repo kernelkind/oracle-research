@@ -34,8 +34,8 @@ valid empty results. The existing production mask-input preparation excludes
 the teacher's diagnostic context from mask inputs. Equivalent source selections
 are canonicalized without changing their selected text. No semantic repair or
 deduplication across different subjects is applied to the training examples.
-Task sampling or weighting must be specified before training; concatenating
-all rows would give masking many more examples than subject generation.
+The frozen informal recipe samples 20% subject examples and 80% mask examples
+with replacement, using the same seeded schedule for every candidate.
 
 The superseded DPv1 draft has been removed. Its earlier ignored export at
 `target/distillation-pilot-v1/data` is not the active dataset. The new export
@@ -68,8 +68,8 @@ larger evaluation and release decision; prominence is excluded only from this
 initial informal experiment. The user accepted the proposed **$25 total maximum**
 for GPU setup, untuned baselines and initial fine-tunes across the three
 candidates. This includes storage, transfers and failed attempts, within the
-existing lifetime cap. Training settings remain to be settled and ledger
-admission is required before accepting any paid commitment.
+existing lifetime cap. The informal settings and Vast limits below are frozen
+locally; ledger admission is required before accepting any paid commitment.
 
 This document contains our experimental plan, decisions, preparation findings,
 and open questions. Published model evidence belongs in
@@ -127,8 +127,67 @@ approved building and testing the automated workflow in a local VM before
 deploying it on rented hardware. The implementation uses Transformers Trainer
 and PEFT in a pinned PyTorch container. The user clarified that this must
 rehearse deployment as previously done on Vast, with no manual code editing
-on the rented server. Candidate training settings and paid launch configuration
-remain to be frozen; GPU compatibility is checked during the actual pilot.
+on the rented server. Candidate training settings and Vast launch limits are
+now frozen locally. The user explicitly withheld publication; GPU compatibility
+is checked during the actual pilot.
+
+### Frozen informal settings
+
+The maintained configurations are [Qwen](distillation/qwen.json),
+[Gemma dense](distillation/gemma-dense.json) and
+[Gemma MoE](distillation/gemma-moe.json). Their exact checkpoint revisions are:
+
+| Candidate | Hugging Face revision |
+|---|---|
+| `Qwen/Qwen3.8-27B` | `1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0` |
+| `google/gemma-4-31B-it` | `842da3794eaa0b77d5f08bae87a17459d91ff475` |
+| `google/gemma-4-26B-A4B-it` | `4d7ae4984b7db7de8f8457170b3f1a419ee76d52` |
+
+All three use these starting settings. They are implementation choices for this
+short experiment, not claims of optimal settings or the larger pilot's recipe.
+
+| Setting | Value |
+|---|---|
+| Frozen base weights | BF16; no quantization |
+| LoRA | Rank 16, alpha 32, dropout 0 |
+| Updates | 128 optimizer steps; batch 1, accumulation 8 |
+| Optimizer | AdamW; constant learning rate 0.0001, no warmup or weight decay; gradient clipping 1 |
+| Task sampling | 20% subjects, 80% masks; seed 17; with replacement |
+| Memory | Gradient checkpointing with `use_reentrant=False`; training KV cache disabled |
+| Training context | 8,192 tokens; reject overlength examples |
+| Generation | Greedy, thinking disabled; up to 4,096 subject tokens or 512 mask tokens |
+| Subject limit | 128 per note; exceeding it is an evaluation failure |
+| Checkpoints | Every 32 steps; retain two resumable checkpoints |
+
+The seeded schedule draws **211 subject rows (74 distinct) and 813 mask rows
+(659 distinct)**. This short run does not cover every row and is not one epoch.
+The subject share gives the smaller task repeated exposure while most updates
+still concern masks. Rank 16 and learning rate 0.0001 are conservative starting
+choices; a single short run cannot determine the best recipe.
+
+Adapters target attention and shared MLP projections. Qwen also adapts its
+linear-attention projections. Gemma MoE's router and expert tensors remain
+frozen; this tests that adapter recipe, not adaptation of every expert.
+All candidates load their text model from the original multimodal checkpoint,
+checking that every required text weight loaded. The image includes pinned
+FLA Core 0.5.2 for Qwen's CUDA path in a separately locked package directory;
+the runner adds that directory only for CUDA execution. CPU runs use the
+reference implementation. The VM also checks that the CUDA functions import.
+No optional compiled causal-convolution extension is required.
+
+BF16 avoids uncertain quantization of Gemma's bare expert tensors. The selected
+96 GB GPU provides room beyond the roughly 52–63 GB checkpoint weights, but
+full-size training memory use and speed have not been measured. All three
+candidates use the same precision, sampling schedule and evaluation process.
+
+The actual pinned tokenizers pass preparation for all 1,940 rows and the 20
+evaluation inputs. Maximum training lengths are 6,531 tokens for Qwen and
+6,440 for both Gemmas; maximum saved subject answers are 3,370/3,352 tokens,
+and mask answers 216/214. Generation allowances fit the evaluation inputs.
+Training uses the exact thinking-disabled generation prefix, the saved answer,
+and the native turn ending; only the answer and turn ending receive loss.
+This handles Gemma's template, which inserts its empty thought channel into
+generation prompts but omits it when rendering saved answers.
 
 ### Local VM workflow
 
@@ -137,10 +196,19 @@ including real LoRA updates, exact weight equality after interruption/resume,
 save/reload, valid and malformed outputs, empty masks, and exclusion of teacher
 subjects from evaluation mask calls. The 87 existing extraction tests and all
 10 planning-viewer tests also passed, including the Firefox browser check.
-The deployment rehearsal also passed in a fresh VM: package verification,
+Candidate checks additionally exercise tiny versions of Qwen hybrid attention,
+Gemma dense and Gemma MoE: original text-weight loading, real adapter updates,
+gradient checkpointing and save/reload. The deployment rehearsal passed in a
+fresh VM and passed again for the updated image: package verification,
 two sequential runs, reconnect, completed-result reuse, failure retrieval and
 runtime-limit enforcement. The SSH target received its inputs exclusively
 through the production operator; it had no shared source or input volume.
+The final image also passed `--through preflight` for all three frozen candidate
+configurations using the actual dataset and cached pinned tokenizers, offline
+inside the VM. `target/distillation-pilot-v1/launch-preparation.json` records the
+exported image ID/archive hash, package hash, source/configuration hashes and
+validation reports. It explicitly records that the image is unpublished and
+that no full-size GPU run has occurred. The VM is stopped.
 
 Run from the repository root:
 
@@ -184,23 +252,22 @@ manifest implementation from `gte/full_build_package.py`; the earlier operator
 is `gte/vast_full_build.py`. Code changes require rebuilding and retesting
 locally, then creating a new package. Do not patch code on a rental.
 
-After the candidate JSON configurations are finalized, prepare the package
-locally (repeat `--config` for each candidate; filenames become run names):
+Prepare the frozen candidate package locally. Filenames become run names;
+the candidates execute sequentially in the order below:
 
 ```sh
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 python3 -m sse_multivector.distillation_deploy prepare \
-  --config target/distillation-pilot-v1/configs/qwen.json \
-  --config target/distillation-pilot-v1/configs/gemma-dense.json \
-  --config target/distillation-pilot-v1/configs/gemma-moe.json \
-  --timeout-seconds "$PILOT_TIMEOUT_SECONDS" \
+  --config sse_multivector/distillation/qwen.json \
+  --config sse_multivector/distillation/gemma-dense.json \
+  --config sse_multivector/distillation/gemma-moe.json \
+  --timeout-seconds 43200 \
   --output target/distillation-pilot-v1/package
 ```
 
-This command is a usage template; those candidate configurations and
-`PILOT_TIMEOUT_SECONDS` are not yet selected. The package contains data, mask prompts, configurations and optional
-local model files. Remote model IDs require immutable revisions. Paths are
-rewritten to the same container layout during local preparation, before upload.
+The output must be new. The package contains data, mask prompts, configurations
+and optional local model files. Remote model IDs require immutable revisions.
+Paths are rewritten to the same container layout during local preparation, before upload.
 
 Once the tested image is published by digest and an admitted Vast instance is
 running it, launch from the local checkout matching that package:
@@ -221,26 +288,28 @@ failure; completed jobs are not rerun. `--start-only` returns after launch.
 The worker's frozen runtime limit includes all configured runs and survives
 reconnects. It is a worker timeout, not a provider billing cap. Instance rental,
 registry publication, ledger admission and instance destruction are outside
-this SSH operator; their actual paid launch configuration remains unfinished.
-No registry publication or paid deployment has occurred.
+this SSH operator. The launch configuration below specifies those limits and
+required actions. No registry publication or paid deployment has occurred.
 
 `distillation_run.py CONFIG --output DIRECTORY` performs baseline → training →
 reload → evaluation → report. Invoke it as
 `python -m sse_multivector.distillation_run` inside the container. Passing
-`--through baseline` or `--through train` stops there; repeating the same command
+`--through preflight` checks real tokenization without loading model weights;
+`--through baseline` or `--through train` stops there. Repeating the same command
 resumes. Config, input hashes, source hashes and library versions are frozen.
 Changed settings require a new output directory. Completed calls, including
 malformed responses, are preserved without automatic retries. Only fully
 written checkpoints with verified hashes are eligible for training resume.
 
 The JSON config requires explicit model/revision, prepared-data and mask-prompt
-paths; CPU/CUDA and none/NF4 quantization; seed, sequence/output limits, subject
-limit, steps, checkpoint interval, batch size, gradient accumulation, learning
-rate, subject sampling fraction, LoRA rank/alpha and CPU thread count. Remote
-models require a commit revision. The tiny test's values are test-fixture
+paths; CPU/CUDA and none/NF4 quantization; seed, sequence and per-task output
+limits, subject limit, steps, checkpoint interval, batch size, gradient
+accumulation, learning rate, subject sampling fraction, LoRA rank/alpha/targets,
+gradient checkpointing and CPU thread count. Remote models require a commit
+revision. The tiny test's values are test-fixture
 settings, not selected recipes for the three candidates. Sampling uses a seeded
 schedule with the configured subject probability and records realized counts.
-The adapter targets all supported linear layers. Overlength examples fail;
+The candidate files specify the adapted projections. Overlength examples fail;
 the runner does not truncate training answers.
 
 The automatic report separates malformed subject/mask outputs, valid empty
@@ -250,10 +319,67 @@ micro averaging over unique nonempty selections per note. Exact matching uses
 selected non-whitespace source characters. These mechanical measurements do
 not establish semantic correctness or approval; semantic review remains open.
 
-CPU VM validation cannot establish candidate quality, CUDA/NF4 compatibility,
+CPU VM validation cannot establish candidate quality, CUDA kernel compatibility,
 full-model memory requirements or speed. Those are checked during the actual
 pilot; there is no separate throwaway GPU training run. The actual candidate
 baselines and fine-tunes have not run.
+
+### Vast launch configuration — unpublished
+
+[The launch configuration](distillation/vast-launch.json) freezes the search,
+create options and admission limits. It reuses the existing private Docker Hub
+repository `docker.io/kernelkind/oracle-mvp`, with tag `distillation-pilot-v1`.
+The eventual create command must use its published **registry digest**. The
+local image ID is not a registry digest; one does not exist before publication.
+Publish the exact VM-exported image only after the user lifts the current hold.
+
+- One on-demand RTX PRO 6000 WS, 600 W, 96 GB; at least 128 GiB host RAM,
+  eight effective CPU cores, 300 GB disk, direct SSH and NVIDIA driver 580.95.05.
+- Run Qwen, Gemma dense and Gemma MoE sequentially in the same container.
+  Downloads total approximately 170 GB before image/input transfers; keep the
+  pinned Hugging Face weights cached on the instance for baseline, training
+  and reload. No access token was needed for their metadata on September 25.
+- Maximum returned price **$1.60/hour including 300 GB storage**, for at most
+  **14 hours from instance creation**. The worker gets 12 hours for all three
+  runs including model downloads; setup and retrieval share the remaining two.
+- Transfer allowances: **200 GB inbound and 20 GB outbound**, each at no more
+  than $0.01/GB. These are decimal GB. Maximum planned charge is
+  `14 × $1.60 + 200 × $0.01 + 20 × $0.01 = $24.60`.
+- The approved $25 covers the entire experiment, including failures. Any retry
+  consumes its remaining allowance; it does not receive another $25. No retry,
+  longer rental, larger disk or higher rate is authorized by these files.
+
+A read-only September 25 search returned offer 44375763 at **$1.55/hour with
+300 GB storage**. This is a quote, not a reservation; refresh it before launch.
+The search's rate filter can be applied before storage is added, so validate
+its returned total with the production checker:
+
+```sh
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+python3 -m sse_multivector.distillation_deploy check-offer \
+  --settings sse_multivector/distillation/vast-launch.json \
+  --offers target/distillation-pilot-v1/candidate-research/vast-offers.json \
+  --offer-id 44375763
+```
+
+The checker verifies hardware, driver, availability, duration, storage-inclusive
+price and the total allowance. It performs no paid action and does not establish
+ledger admission. Refresh offers using the configuration's `search_query` and
+`search_options`; refresh/check again immediately before accepting a rental.
+
+For the eventual approved deployment: reconcile and commit the budget ledger,
+reserve the remaining pilot maximum, then use `vastai create instance` with the
+chosen offer, published image digest, configured label and `create_options`.
+Use the existing private-registry login procedure in
+[`gte/vast-calibration-runbook.txt`](../gte/vast-calibration-runbook.txt), with a
+read-only pull credential supplied locally. Never put it in the package or logs.
+Record creation time and instance ID; invoke the SSH operator above as soon as
+SSH is ready. Retrieve outputs on success or failure, then destroy the instance
+with `vastai destroy instance INSTANCE_ID -y --raw` and verify destruction.
+Destroy by the 14-hour rental deadline even if work or retrieval is incomplete;
+monitor transfers against their allowances. Reconcile actual charges afterward.
+The worker timeout alone does not stop Vast billing. No rental is admitted by
+this preparation, and completion within these limits is not yet measured.
 
 The later final fine-tune (08) also prepares trained weights, necessary
 supporting files, usage instructions and evaluation results for publication.
@@ -631,8 +757,10 @@ ledger accounting and the lifetime ceiling still apply.
 
 The informal dataset is prepared for one fine-tune per candidate on both
 existing prompted tasks. The automated workflow passes local VM validation.
-Next freeze candidate recipes, including task sampling, and the paid launch
-configuration for the locally tested image and input package. Establish each candidate's two-step baseline
+Candidate recipes and Vast limits are frozen; the tested image and input package
+remain local. Await explicit permission to publish the image. Before paid launch,
+inspect close paraphrases across the split, refresh the offer and complete ledger
+admission. Establish each candidate's two-step baseline
 before fine-tuning and compare on the same held-out notes using its own generated
 subjects. Paid work must fit the approved $25 total and ledger admission.
 Prominence and the larger dataset-size schedule can wait.

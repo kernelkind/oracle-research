@@ -24,7 +24,10 @@ IMAGE_SHA256 = "612b2c0cc1bc413a6cb8c38fd611794caf0f2b436c50013d8b3794db12ad7354
 PACKAGE_FILES = (
     "distillation_run.py", "distillation_data.py", "extraction_pipeline.py", "mask_positions.py",
     "test_distillation_run.py", "test_distillation_data.py", "test_distillation_deploy.py", "distillation_deploy.py",
+    "test_distillation_candidates.py",
+    "distillation/vast-launch.json",
     "distillation/Dockerfile", "distillation/requirements.in", "distillation/requirements.lock",
+    "distillation/requirements-gpu.in", "distillation/requirements-gpu.lock",
 )
 
 
@@ -131,6 +134,8 @@ mkdir -p /source "$result_dir"
 mount -t 9p -o trans=virtio,version=9p2000.L,ro source /source
 docker build --tag notedeck-distillation:local -f /source/sse_multivector/distillation/Dockerfile /source
 docker image inspect notedeck-distillation:local > "$result_dir/image.json"
+docker run --rm --network none -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1 \\
+  notedeck-distillation:local python -m unittest -v sse_multivector.test_distillation_candidates
 docker run --rm --network none -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1 \\
   -e DISTILLATION_TEST_OUTPUT=/results/workflow -v "$result_dir":/results \\
   notedeck-distillation:local python -m unittest -v \\

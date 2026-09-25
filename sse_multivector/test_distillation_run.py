@@ -96,9 +96,10 @@ class TinyWorkflowTests(unittest.TestCase):
         tokenizer.save_pretrained(root / "model")
         cls.config = {"model": str(root / "model"), "revision": None, "data": str(root / "data"),
             "mask_prompt": str(mask_prompt), "device": "cpu", "quantization": "none", "seed": 17,
-            "max_length": 512, "max_new_tokens": 120, "max_subjects": 8, "max_steps": 240,
+            "max_length": 512, "max_new_tokens": {"subjects": 120, "mask": 120}, "max_subjects": 8, "max_steps": 240,
             "save_steps": 20, "batch_size": 4, "gradient_accumulation_steps": 1,
-            "learning_rate": .01, "subject_fraction": .5, "lora_rank": 16, "lora_alpha": 32, "threads": 2}
+            "learning_rate": .01, "subject_fraction": .5, "lora_rank": 16, "lora_alpha": 32, "threads": 2,
+            "gradient_checkpointing": False, "lora_target_modules": "all-linear"}
         distillation_run.write_json(root / "config.json", cls.config)
         cls.tokenizer = tokenizer
 

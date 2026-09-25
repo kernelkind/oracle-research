@@ -62,7 +62,7 @@ were last confirmed with the user on September 23.
 | 17 · Compare teachers | In progress; no completed selection established. |
 | 26 · Collapse equal-note navigation steps | Implemented and regression-tested; validation on the rebuilt hierarchy is waiting. |
 | 13 · Define Nostr hierarchy protocol | Not started. |
-| 18 · Prepare training code for the fine-tuning pilot | In progress; local VM rehearses deployment over SSH as well as training. Freeze candidate recipes before the actual GPU pilot. |
+| 18 · Prepare training code for the fine-tuning pilot | Candidate recipes and Vast limits frozen locally; VM tests training and SSH deployment. Image remains unpublished. |
 | 24 · Recover missing node memberships | Not started. |
 | 25 · Handle node equivalence and TRUE cycles | Both merge stages and naming/browser integration implemented; four-merge user review complete (three accepted, Beef rejected). Full rebuilt-hierarchy validation remains. |
 | 21 · Assess HDBSCAN at launch scale | No further progress; earlier investigation remains evidence, not launch-scale validation. |
@@ -202,10 +202,12 @@ start the experiment automatically, reconnect and retrieve verified results.
 Follow the existing GTE Vast deployment pattern; no manual code edits on the
 rented server. The distillation SSH operator runs against a separate container
 inside the VM, using the image's installed code and dependencies. Candidate
-quality, full-model memory use and CUDA/NF4 compatibility are checked during
+quality, full-model memory use and CUDA compatibility are checked during
 the actual pilot, without a separate throwaway GPU training run. Candidate
-recipes and the paid launch configuration remain to be frozen. Task 18 is in
-progress.
+recipes and Vast limits are now frozen locally: BF16 LoRA, 128 steps per
+candidate, one 96 GB GPU, and at most $24.60 under the approved $25 total.
+The user explicitly withheld publication. The candidate configurations and
+launch procedure are recorded in the pilot plan; no paid launch has occurred.
 The user accepted a $25 total maximum for GPU setup, baselines and initial
 fine-tunes across the three candidates, including storage, transfers and failed
 attempts. No rental has started; ledger admission precedes any paid commitment.
@@ -227,8 +229,9 @@ Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third
 candidate replaces T5Gemma 9B–9B PrefixLM instruction-tuned. Compare its mask
 and prominence quality and total training-and-generation cost with the dense
 candidates; lower active parameter count does not establish a cost advantage.
-Training settings, final example format, prominence criteria and spending
-amounts remain open. This candidate selection authorizes no training or rentals.
+The larger pilot's training settings, final example format, prominence criteria
+and spending amounts remain open. The informal subject/mask settings and $25
+approval above apply only to the current short experiment.
 
 The [teacher research](../../sse_multivector/TOKEN-USAGE-ESTIMATE-1M-NOTES.md#lower-cost-annotation-models)
 already identifies Muse. A later [12-note diagnostic](../../sse_multivector/frontier-model-comparison-v1/asv6.23-diagnostic-v2/results.md)

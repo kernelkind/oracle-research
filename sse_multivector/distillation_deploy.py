@@ -7,6 +7,7 @@ Instance creation and budget admission precede this operator.
 """
 import argparse
 import contextlib
+from decimal import Decimal, InvalidOperation
 import fcntl
 import json
 import os
@@ -29,11 +30,54 @@ CODE_FILES = (
     "sse_multivector/distillation_deploy.py", "sse_multivector/distillation_run.py",
     "sse_multivector/distillation_data.py", "sse_multivector/extraction_pipeline.py",
     "sse_multivector/mask_positions.py", "sse_multivector/distillation/requirements.lock",
+    "sse_multivector/distillation/requirements-gpu.lock",
     "sse_multivector/distillation/Dockerfile",
     "gte/full_build_package.py",
 )
 REMOTE_BASE = "/workspace/distillation"
 REMOTE_PYTHON = "/opt/distillation-venv/bin/python"
+
+
+def check_offer(settings, offer):
+    """Check a saved quote; this neither admits spending nor creates an instance."""
+    def number(value):
+        try:
+            result = Decimal(str(value))
+        except InvalidOperation as error:
+            raise ValueError("invalid numeric quote") from error
+        if not result.is_finite() or result < 0:
+            raise ValueError("invalid numeric quote")
+        return result
+
+    for key, value in settings["offer_equals"].items():
+        if offer.get(key) != value:
+            raise ValueError(f"offer differs: {key}")
+    for key, value in settings["offer_minimums"].items():
+        if number(offer.get(key)) < number(value):
+            raise ValueError(f"offer below minimum: {key}")
+    for key, value in settings["offer_maximums"].items():
+        if number(offer.get(key)) > number(value):
+            raise ValueError(f"offer above maximum: {key}")
+    driver = tuple(int(part) for part in offer.get("driver_version", "").split("."))
+    if driver < tuple(settings["minimum_driver"]):
+        raise ValueError("driver too old for the pinned CUDA image")
+    # Vast's search ceiling can be applied before --storage is added. Check
+    # the actual returned total and prove the requested disk is included.
+    storage = number(offer.get("storage_total_cost"))
+    expected = number(offer.get("storage_cost")) * number(settings["disk_gb"]) / 720
+    if (storage + Decimal("0.000001") < expected or
+            number(offer.get("dph_base")) + storage > number(offer["dph_total"]) + Decimal("0.000001")):
+        raise ValueError("quote does not include requested storage")
+    limits = settings["offer_maximums"]
+    maximum = (number(limits["dph_total"]) * number(settings["rental_hours"]) +
+               number(limits["inet_down_cost"]) * number(settings["inbound_gb"]) +
+               number(limits["inet_up_cost"]) * number(settings["outbound_gb"]))
+    if maximum > number(settings["approved_maximum_usd"]):
+        raise ValueError("launch allowances exceed the approved maximum")
+    return {"offer_id": offer["id"], "quoted_hourly_usd": str(offer["dph_total"]),
+            "maximum_charge_usd": f"{maximum:.2f}", "spending_admitted": False,
+            "image_repository": settings["image_repository"], "create_options": settings["create_options"],
+            "label": settings["label"], "worker_timeout_seconds": settings["worker_timeout_seconds"]}
 
 
 def code_hashes():
@@ -324,6 +368,10 @@ def main():
     prepare_parser.add_argument("--config", type=Path, action="append", required=True)
     prepare_parser.add_argument("--output", type=Path, required=True)
     prepare_parser.add_argument("--timeout-seconds", type=int, required=True)
+    offer_parser = commands.add_parser("check-offer", help="validate a saved quote without renting")
+    offer_parser.add_argument("--settings", type=Path, required=True)
+    offer_parser.add_argument("--offers", type=Path, required=True)
+    offer_parser.add_argument("--offer-id", type=int, required=True)
     run_parser = commands.add_parser("run")
     run_parser.add_argument("--package", type=Path, required=True)
     run_parser.add_argument("--output", type=Path, required=True)
@@ -339,6 +387,14 @@ def main():
     args = parser.parse_args()
     if args.operation == "prepare":
         result = {"package_sha256": prepare(args.config, args.output, args.timeout_seconds)}
+    elif args.operation == "check-offer":
+        offers = read_json(args.offers)
+        if isinstance(offers, dict):
+            offers = offers["offers"]
+        matches = [o for o in offers if o["id"] == args.offer_id]
+        if len(matches) != 1:
+            raise ValueError("expected exactly one matching offer")
+        result = check_offer(read_json(args.settings), matches[0])
     elif args.operation == "run":
         result = operate(args.package, args.output,
             {"host": args.host, "port": args.port, "identity": str(args.identity.resolve())}, args.start_only)
