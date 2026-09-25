@@ -16,6 +16,57 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_title_review_selection_preserves_assessments_without_inference(self):
+        self.prompt.write_text("GENERIC PROMPT\n{NUMBERED_INSTANCES}")
+        self.cases.write_text(json.dumps({"packets": [
+            {"packet": key, "instances": [{"instance": key, "vector_id": key,
+                "note_id": key, "text": text, "byte_spans": [[0, len(text)]],
+                "fragments": [text]}]}
+            for key, text in [("T1", "Tea"), ("T2", "Coffee"), ("T3", "Milk")]
+        ]}))
+        spec = json.loads(self.spec.read_text())
+        spec["dataset"]["adapter"] = "titles"
+        self.spec.write_text(json.dumps(spec))
+        self.prepare()
+        self.cli("run", "E1", env={"FAKE_RUNNER_PROMPT_RESPONSE": '{"title":"Tea"}'})
+        for key, verdict in [("T1", "reject"), ("T2", "uncertain"), ("T3", "accept")]:
+            self.cli("review", "E1", "--case", key, "--role", "agent",
+                     "--verdict", verdict, "--comment", "Scope assessment for " + key)
+        viewer = self.root / "viewer"
+        viewer.write_text(
+            "#!/usr/bin/env python3\nimport json,sys\nfrom pathlib import Path\n"
+            "Path(__file__).with_suffix('.json').write_text(json.dumps({"
+            "'args':sys.argv[1:], 'batch':json.loads(Path(sys.argv[2]).read_text())}))\n"
+        )
+        viewer.chmod(0o755)
+        before = self.calls()
+        self.cli("review", "E1", "--ui", "--only", "T1", "--ui-binary", viewer)
+        selected = json.loads(viewer.with_suffix(".json").read_text())
+        self.assertEqual(selected["args"][0], "review-titles")
+        self.assertEqual(len(selected["args"]), 3)
+        self.assertEqual([x["item_id"] for x in selected["batch"]["items"]], ["T1"])
+        self.assertIn("Scope assessment for T1", selected["batch"]["items"][0]["assessment"])
+        binding = json.loads((self.root / "E1/review-ui.json").read_text())[0]
+        self.assertEqual(list(binding["cases"]), ["T1"])
+        self.cli("review", "E1", "--ui", "--flagged-only", "--ui-binary", viewer)
+        flagged = json.loads(viewer.with_suffix(".json").read_text())
+        self.assertEqual([x["item_id"] for x in flagged["batch"]["items"]], ["T1", "T2"])
+        self.cli("review", "E1", "--ui", "--ui-binary", viewer)
+        full = json.loads(viewer.with_suffix(".json").read_text())
+        self.assertEqual(len(full["batch"]["items"]), 3)
+        no_match = self.cli("review", "E1", "--ui", "--only", "T3", "--flagged-only",
+                            "--ui-binary", self.root / "missing-binary")
+        self.assertIn("No flagged cases", no_match.stdout)
+        error = self.cli("review", "E1", "--ui", "--only", "missing", ok=False)
+        self.assertIn("unknown --only", error.stderr)
+        self.assertEqual(self.calls(), before)
+
+    def test_filtered_title_review_opens_existing_ui_and_preserves_decisions(self):
+        self.test_titles_dedup_masks_and_keep_full_posts_out_of_model_input()
+        self.open_existing_ui_and_approve("--only", "T1")
+        self.assertEqual(len(self.calls()), 1)
+        self.assertEqual(self.show("E1", "--case", "T1")["reviews"][-1]["verdict"], "accept")
+
     def test_prepare_subset_preserves_exact_inputs_baseline_and_reuse(self):
         self.prepare()
         self.cli("run", "E1")

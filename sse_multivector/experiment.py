@@ -626,8 +626,8 @@ def review(args):
             plan, _, _ = load(directory)
             selected = None
             if args.flagged_only or args.only:
-                if plan["dataset"]["adapter"] not in {"masks", "prominence"}:
-                    raise ValueError("--flagged-only/--only support masks and prominence")
+                if plan["dataset"]["adapter"] not in {"titles", "masks", "prominence"}:
+                    raise ValueError("--flagged-only/--only support titles, masks and prominence")
                 requested = set(args.only or [])
                 unknown = requested - {c["id"] for c in result["cases"]}
                 if unknown:
@@ -640,7 +640,7 @@ def review(args):
                 if not selected:
                     print("No flagged cases. No model calls or review decisions changed.")
                     return
-                if plan["dataset"]["adapter"] == "prominence":
+                if plan["dataset"]["adapter"] in {"titles", "prominence"}:
                     result = {**result, "cases": [c for c in result["cases"] if c["id"] in selected]}
             batch, excluded = inputs.review_batch(plan, result)
             if args.cosine_comparison:
@@ -719,7 +719,8 @@ def review(args):
                     command,
                     str(batch_path),
                     str(directory / (name + "-session.json")),
-                    *(["--only", ",".join(selected)] if selected is not None else []),
+                    *(["--only", ",".join(selected)]
+                      if selected is not None and plan["dataset"]["adapter"] == "masks" else []),
                 ],
                 check=False,
             )
@@ -862,9 +863,9 @@ def parser():
     p.add_argument("--comment")
     p.add_argument("--ui", action="store_true")
     p.add_argument("--flagged-only", action="store_true",
-                   help="mask/prominence UI: current reject/uncertain reviews and unresolved failures")
+                   help="title/mask/prominence UI: current reject/uncertain reviews and unresolved failures")
     p.add_argument("--only", action="append", metavar="CASE_ID",
-                   help="mask/prominence UI: show this case (repeat for several); intersects --flagged-only")
+                   help="title/mask/prominence UI: show this case (repeat for several); intersects --flagged-only")
     p.add_argument("--ui-binary", type=Path)
     p.add_argument("--cosine-comparison", type=Path,
                    help="saved prominence_cosine/centroid comparison; adds offline ranking orders")

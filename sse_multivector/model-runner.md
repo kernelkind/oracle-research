@@ -530,17 +530,21 @@ Agent assessments appear separately from user decisions in the existing UI.
 invent approvals. Reviews of an earlier output remain visible but are marked
 `current: false` if the output changes.
 
-For masks or prominence, add `--flagged-only` to `review EXPERIMENT --ui`.
+For titles, masks or prominence, add `--flagged-only` to `review EXPERIMENT --ui`.
 It selects current agent `reject`/`uncertain` assessments and unresolved failed,
 malformed, invalid-receipt or unrun results. Empty masks require an explicit flag.
 The latest current user decision takes precedence: `accept` hides the case from
 this view; `reject` or `uncertain` keeps it visible. Stale assessments do not flag
 new outputs. With no matches, the command reports that and opens no viewer.
 This is a saved-evidence filter, not a new model judgment or an accuracy measure.
-To choose specific mask or prominence cases without editing reviews, use
+To choose specific title, mask or prominence cases without editing reviews, use
 `--only CASE_ID` once per case. Unknown IDs are refused. Combined with
 `--flagged-only`, only flagged cases from that selection are shown. Existing
 case order and within-node score ordering are retained, not the argument order.
+Title filtering exports only selected cases into a content-addressed batch,
+with their masks, agent assessments and matching review bindings. Unselected
+cases are not presented or assigned decisions. Malformed title outputs remain
+unsupported by the title viewer and are listed in `show`/`report.json`.
 
 Mask filtering restricts navigation in the existing viewer (`--only` case IDs)
 without changing the full batch or its session fingerprint. Full and focused
