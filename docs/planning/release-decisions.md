@@ -326,7 +326,15 @@ are now hidden during browsing to avoid title truncation and remain available
 in `?` analysis; stored IDs and displayed mask IDs are unchanged. HD06 still lacks a
 published reprocessed browser view.
 
-**Full rebuilt hierarchy (authorized September 25):** local TRUE scoring is
+**HR02 — second 100-post hierarchy:** the goal, clarified by the user on
+September 25, is to generate a hierarchy the user is pleased with, not to
+optimize cost, speed or teacher selection. Model comparisons are not its success
+criterion; discussion of all-Astra/all-Luna variants has not authorized runs.
+The architecture is unchanged. Any model change remains a separate decision.
+HR02 is the experiment's discussion ID; existing artifact paths and frozen
+internal run IDs are retained, including `HRv1-full-v38` for current scoring.
+
+**HR02 execution (authorized September 25):** local TRUE scoring is
 underway for all 129 saved nodes, with exact-input cache reuse. The frozen plan
 is `target/hierarchy-build-v1/full-true-v1/plan.json`; it records policy versions,
 source/input hashes and cache provenance. HD01–05 remain unchanged, including

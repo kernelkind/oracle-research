@@ -149,6 +149,13 @@ responses. Separately, an export of the saved acyclic 58-node baseline passed
 the actual browser's `--check` with equal-note collapse. That is an integration
 check, not the new HD06 reprocessed baseline or live merged-title validation.
 
+**HR02 — second 100-post hierarchy:** generate a hierarchy the user is pleased
+with. The user clarified that this experiment is not an optimization exercise
+or teacher-selection comparison. Keep the architecture unchanged; model
+changes and comparison runs require separate approval. HR02 names the experiment
+for discussion, without renaming existing artifacts or changing frozen run IDs.
+The current scoring manifest's internal ID remains `HRv1-full-v38`.
+
 **September 25 full-run checkpoint:** the user authorized building the full
 second 100-post hierarchy with the existing provisional rules, without
 membership expansion or a Beef-specific repair. `hierarchy_true_scoring.py`

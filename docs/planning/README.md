@@ -63,6 +63,9 @@ remains on v21. TRUE placement, merged naming and minimal-scope correctness
 review remain. Its solid 23 → 02 arrow records a satisfied
 prerequisite. A valid title response is not a user-approved title. Additional
 rows expose the remaining construction work.
+This second 100-post experiment is **HR02**: generate a hierarchy the user is
+pleased with, not optimize cost, speed or teacher selection. This goal does not
+authorize model changes or comparison runs; the architecture is unchanged.
 Node 04 (mask prominence) is grey and marked paused, reconfirmed by the user on
 September 23. Earlier experimental work does not establish that it is active
 now. Its mask-prompt prerequisite is satisfied. It need not wait for
