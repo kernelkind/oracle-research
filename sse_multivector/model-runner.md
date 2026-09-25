@@ -485,9 +485,12 @@ production preparation and decoding functions:
   `S6dde8fffb9-V0974` (coffee shops in the laptop-ban incident), **20–40**;
   and `Sa01eaf30fd-V1298` (incidental tea in the long diary), **1–5**.
   These are human calibration judgments, not mathematically derived percentages.
-  [PPv12](prominence-prompt-goal-v1/ppv12-draft-v1/PPv12.md) is an untested draft
-  against approved PPv11, pending review. It balances the selected content's
-  contribution in context with the meaning supplied by unselected wording.
+  [PPv13](prominence-prompt-goal-v1/ppv13-draft-v1/PPv13.md) is the current untested
+  draft against approved PPv11, pending review. It asks for the percentage of the
+  post's semantic meaning represented by the mask in context, with only the
+  endpoints defined: 0 means none; 100 means all. It removes the qualitative
+  scoring bands and does not use PPv12's separate importance instruction.
+  PPv12 remains an untested, unapproved prior draft; prompt versions are immutable.
   The three anchors remain outside the prompt. Inputs, JSON output and ranking
   behavior are unchanged; no new inference or production promotion is authorized
   by preparing the draft.
