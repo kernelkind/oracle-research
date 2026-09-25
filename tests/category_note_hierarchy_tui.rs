@@ -87,6 +87,39 @@ fn screen(model: &mut ManualNoteExplorer) -> String {
 }
 
 #[test]
+fn long_node_ids_are_hidden_while_browsing_but_available_in_analysis() {
+    let mut data = hierarchy();
+    let id = format!("merged-{}", "a".repeat(64));
+    let title = "Coffee brewing and preparation";
+    let mut coffee = data.nodes.remove("coffee").unwrap();
+    coffee.node_id = id.clone();
+    coffee.label = title.to_owned();
+    data.nodes.insert(id.clone(), coffee);
+    data.nodes.get_mut("root").unwrap().children[0] = id.clone();
+    let mut model = ManualNoteExplorer::categories(data);
+
+    let menu = screen(&mut model);
+    assert!(menu.contains(title), "{menu}");
+    assert!(!menu.contains("merged-"), "{menu}");
+    assert!(!menu.contains("[root]"), "{menu}");
+    key(&mut model, KeyCode::Enter);
+    let child = screen(&mut model);
+    assert!(child.contains(title), "{child}");
+    assert!(!child.contains("merged-"), "{child}");
+    for action in ['N', 'D', 'O'] {
+        key(&mut model, KeyCode::Char(action));
+        let notes = screen(&mut model);
+        assert!(!notes.contains("merged-"), "{notes}");
+        key(&mut model, KeyCode::Esc);
+    }
+    key(&mut model, KeyCode::Char('?'));
+    let analysis = screen(&mut model);
+    assert!(analysis.contains(&id), "{analysis}");
+    key(&mut model, KeyCode::Esc);
+    assert_eq!(screen(&mut model), child);
+}
+
+#[test]
 fn category_menus_show_only_immediate_children_and_enter_never_opens_notes() {
     let mut model = ManualNoteExplorer::categories(hierarchy());
     let root = screen(&mut model);

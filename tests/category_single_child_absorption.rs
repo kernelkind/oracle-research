@@ -95,14 +95,17 @@ fn absorbed_categories_are_not_choices_and_all_their_notes_still_open() {
             .join("\n")
     };
     let menu = screen(&mut model);
-    for expected in [
-        "Title root [root]",
-        "[left] Title left",
-        "[right] Title right",
-    ] {
+    for expected in ["Title root", "Title left", "Title right"] {
         assert!(menu.contains(expected), "{menu}");
     }
-    for absent in ["Title middle", "Title branch", "Title leaf"] {
+    for absent in [
+        "Title middle",
+        "Title branch",
+        "Title leaf",
+        "[root]",
+        "[left]",
+        "[right]",
+    ] {
         assert!(!menu.contains(absent), "{menu}");
     }
     let key = |model: &mut ManualNoteExplorer, code| {
@@ -119,7 +122,7 @@ fn absorbed_categories_are_not_choices_and_all_their_notes_still_open() {
     assert_eq!(screen(&mut model), menu);
     key(&mut model, KeyCode::Enter);
     let left = screen(&mut model);
-    assert!(left.contains("Title root > Title left [left]"), "{left}");
+    assert!(left.contains("Title root > Title left"), "{left}");
     assert!(left.contains("No child categories"), "{left}");
     key(&mut model, KeyCode::Char('N'));
     assert!(screen(&mut model).contains("Original note 3."));

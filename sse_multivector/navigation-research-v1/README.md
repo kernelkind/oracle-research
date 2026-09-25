@@ -159,9 +159,10 @@ The actual browser passed `--check`; interactive inspection covered navigation,
 direct notes and the outside-children view with separate masks and original IDs.
 The agent found the titles reasonable for the combined masks, not proof of
 equivalence: the known Beef / Beef products merge and Coffee shop → coffeechain
-link remain. Full merged IDs truncate some titles in navigation lists; shortening
-their display is a suggested UI follow-up, not an implemented change. No full
-hierarchy inference, graph repair or new user semantic approvals occurred.
+link remain. Node IDs are hidden from browsing lists and headings to avoid title
+truncation; full IDs remain available in `?` analysis. Stored IDs and displayed
+mask IDs are unchanged. No full hierarchy inference, graph repair or new user
+semantic approvals occurred.
 
 The earlier GDC09 equal-note collapse operates on a tree. The current category
 browser also implements [shared-child collapse](#shared-child-collapse) as a

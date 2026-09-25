@@ -232,13 +232,8 @@ impl ManualNoteExplorer {
             .children
             .iter()
             .map(|id| {
-                let identifier = if self.categories_only {
-                    format!("[{}] ", terminal_safe(id))
-                } else {
-                    String::new()
-                };
                 format!(
-                    "{identifier}{} · {}",
+                    "{} · {}",
                     self.category_title(id),
                     note_count(self.hierarchy.note_ids(id).len())
                 )
@@ -487,7 +482,7 @@ impl ManualNoteExplorer {
             .as_ref()
             .and_then(|notes| instances.get(notes.mask_cursor))
             .cloned();
-        let category_id = if self.categories_only {
+        let category_id = if self.categories_only && self.analysis_scroll.is_some() {
             format!(" [{}]", terminal_safe(&self.category().node_id))
         } else {
             String::new()

@@ -297,8 +297,9 @@ path](../../sse_multivector/navigation-research-v1/README.md#offline-constructio
 now connects exact-mask-set consolidation, receipt-validated v38 titles, TRUE
 input preparation, cycle merging, naming and browser export. HD04's subsequent
 four-case naming run produced four valid titles without changing the sample's
-links. The 19-node browser passed mechanical and interactive checks, revealing
-long-ID title truncation as a suggested UI follow-up. HD06 still lacks a
+links. The 19-node browser passed mechanical and interactive checks. Node IDs
+are now hidden during browsing to avoid title truncation and remain available
+in `?` analysis; stored IDs and displayed mask IDs are unchanged. HD06 still lacks a
 published reprocessed browser view. No full hierarchy run was started.
 
 **Hierarchy execution recovery (clarified September 24):** retry failed model

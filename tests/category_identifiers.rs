@@ -22,25 +22,24 @@ fn screen(model: &mut ManualNoteExplorer) -> String {
 }
 
 #[test]
-fn saved_gdc09_category_ids_appear_with_their_labels_and_note_counts() {
+fn saved_gdc09_categories_show_labels_and_note_counts_without_ids() {
     let hierarchy = ManualNoteHierarchy::load(
         Path::new("sse_multivector/geometric-hierarchy-v1/GDC09/categories.json"),
         Path::new("sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json"),
     )
     .unwrap();
     let root = &hierarchy.nodes[&hierarchy.root_node_id];
-    let expected_heading = format!("{} [{}]", root.label, root.node_id);
+    let expected_heading = root.label.clone();
+    let ids = std::iter::once(&root.node_id)
+        .chain(root.children.iter())
+        .map(|id| format!("[{id}]"))
+        .collect::<Vec<_>>();
     let expected_rows = root
         .children
         .iter()
         .map(|id| {
             let child = &hierarchy.nodes[id];
-            format!(
-                "[{}] {} · {} notes",
-                child.node_id,
-                child.label,
-                hierarchy.note_ids(id).len()
-            )
+            format!("{} · {} notes", child.label, hierarchy.note_ids(id).len())
         })
         .collect::<Vec<_>>();
     let mut model = ManualNoteExplorer::categories(hierarchy);
@@ -50,6 +49,9 @@ fn saved_gdc09_category_ids_appear_with_their_labels_and_note_counts() {
             rendered.contains(expected),
             "missing saved category identity {expected:?}:\n{rendered}"
         );
+    }
+    for id in ids {
+        assert!(!rendered.contains(&id), "{rendered}");
     }
     assert!(rendered.contains("GDC09-note-categories"), "{rendered}");
 }
@@ -89,25 +91,25 @@ fn repeated_labels_keep_the_current_id_across_notes_analysis_and_back_navigation
     };
     let mut model = ManualNoteExplorer::categories(hierarchy);
     let root = screen(&mut model);
-    for expected in [
-        "All notes [0]",
-        "[17] Coffee · 1 note",
-        "[29] Coffee · 1 note",
-    ] {
+    for expected in ["All notes", "Coffee · 1 note"] {
         assert!(root.contains(expected), "missing {expected}:\n{root}");
+    }
+    assert_eq!(root.matches("Coffee · 1 note").count(), 2, "{root}");
+    for id in ["[0]", "[17]", "[29]"] {
+        assert!(!root.contains(id), "{root}");
     }
     for id in ["17", "29"] {
         let selected_root = screen(&mut model);
         key(&mut model, KeyCode::Enter);
         let category = screen(&mut model);
-        let breadcrumb = format!("All notes > Coffee [{id}]");
-        assert!(category.contains(&breadcrumb), "{category}");
+        let breadcrumb = "All notes > Coffee";
+        assert!(category.contains(breadcrumb), "{category}");
         assert!(!category.contains("All notes [0] >"), "{category}");
         assert!(category.contains("No child categories"), "{category}");
 
         key(&mut model, KeyCode::Char('N'));
         let note = screen(&mut model);
-        assert!(note.contains(&breadcrumb), "{note}");
+        assert!(note.contains(breadcrumb), "{note}");
         assert!(
             note.contains("Original note text, without category metadata."),
             "{note}"
@@ -121,7 +123,10 @@ fn repeated_labels_keep_the_current_id_across_notes_analysis_and_back_navigation
         }
         key(&mut model, KeyCode::Char('?'));
         let analysis = screen(&mut model);
-        assert!(analysis.contains(&breadcrumb), "{analysis}");
+        assert!(
+            analysis.contains(&format!("{breadcrumb} [{id}]")),
+            "{analysis}"
+        );
         assert!(analysis.contains("GDC09"), "{analysis}");
         assert!(
             analysis.contains("Original category analysis."),

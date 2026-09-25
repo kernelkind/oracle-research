@@ -174,7 +174,7 @@ fn tui_preserves_n_d_masks_other_route_and_back_while_o_uses_displayed_children(
     key(&mut model, KeyCode::Enter);
     let a = screen(&mut model);
     assert!(a.contains("All notes > Parent A"), "{a}");
-    assert!(a.contains("[D] Child D"), "{a}");
+    assert!(a.contains("Child D"), "{a}");
     assert!(!a.contains("Shared C"), "{a}");
     key(&mut model, KeyCode::Char('?'));
     let analysis = screen(&mut model);
@@ -231,7 +231,7 @@ fn tui_preserves_n_d_masks_other_route_and_back_while_o_uses_displayed_children(
     let root_b_selected = screen(&mut model);
     key(&mut model, KeyCode::Enter);
     let b = screen(&mut model);
-    assert!(b.contains("[C] Shared C"), "{b}");
+    assert!(b.contains("Shared C"), "{b}");
     key(&mut model, KeyCode::Char('N'));
     let b_note = screen(&mut model);
     assert!(b_note.contains("Note 1 of 3"), "{b_note}");
@@ -325,7 +325,7 @@ fn root_survives_even_when_every_child_step_is_equal() {
     assert_eq!(hierarchy.nodes.len(), 5);
     let mut model = ManualNoteExplorer::categories_with_masks(hierarchy, None, true);
     let menu = screen(&mut model);
-    assert!(menu.contains("All notes [root] · 4 notes"), "{menu}");
+    assert!(menu.contains("All notes · 4 notes"), "{menu}");
     assert!(menu.contains("No child categories"), "{menu}");
     key(&mut model, KeyCode::Char('N'));
     assert!(screen(&mut model).contains("Note 1 of 4"));
