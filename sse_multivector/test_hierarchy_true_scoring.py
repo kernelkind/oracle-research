@@ -13,6 +13,59 @@ from hierarcaps_mask_probe import sha256
 
 
 class HierarchyTrueScoringTests(unittest.TestCase):
+    def setup_partial(self, root):
+        titles, bundle, pairs = self.setup_inputs(root)
+        cached = bundle/'run/scores.jsonl'
+        rows = [json.loads(line) for line in cached.read_text().splitlines()]
+        cached.write_text('')
+        (bundle/'run/completion.json').write_text(json.dumps({'scores_sha256':sha256(cached)}))
+        partial = root/'partial'
+        prepare(titles, bundle, partial)
+        run = partial/'run'; run.mkdir()
+        save(run/'inputs.json', pairs)
+        save(run/'started.json', dict(plan_sha256=sha256(partial/'plan.json'),
+                                     inputs_sha256=sha256(run/'inputs.json')))
+        for name in ('config.json','model-files.json'):
+            (run/name).write_bytes((bundle/'run'/name).read_bytes())
+        (run/'scores.jsonl').write_text(json.dumps(rows[0])+'\n')
+        return titles, bundle, partial, pairs
+
+    def test_stopped_partial_cache_reuses_only_finished_rows(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d); titles, bundle, partial, pairs = self.setup_partial(root)
+            out = root/'scoring'
+            plan = prepare(titles, bundle, out, partial_cache=partial)
+            self.assertEqual(plan['reused_inputs'], 1)
+            self.assertEqual(plan['fresh_inputs'], len(pairs)-1)
+            self.assertFalse((partial/'run/completion.json').exists())
+            with self.assertRaises(FileNotFoundError): collect(out)
+            verify(out)
+            with (partial/'run/scores.jsonl').open('a') as stream:
+                stream.write('\n')
+            with self.assertRaises(ValueError): verify(out)
+
+    def test_partial_cache_rejects_changed_inputs_identity_and_incomplete_rows(self):
+        for mutation in ('plan', 'inputs', 'config', 'model', 'row', 'truncated'):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as d:
+                root = Path(d); titles, bundle, partial, _ = self.setup_partial(root)
+                run = partial/'run'
+                if mutation == 'plan':
+                    (partial/'plan.json').write_text('{}')
+                elif mutation == 'inputs':
+                    (run/'inputs.json').write_text('[]')
+                elif mutation == 'config':
+                    (run/'config.json').write_text('{"device":"cuda"}')
+                elif mutation == 'model':
+                    (run/'model-files.json').write_text('{}')
+                elif mutation == 'row':
+                    row = json.loads((run/'scores.jsonl').read_text())
+                    row['id'] = 'not-the-saved-input'
+                    (run/'scores.jsonl').write_text(json.dumps(row)+'\n')
+                else:
+                    with (run/'scores.jsonl').open('a') as stream: stream.write('{')
+                with self.assertRaises(ValueError):
+                    prepare(titles, bundle, root/'bad', partial_cache=partial)
+
     def setup_inputs(self, root):
         from hierarchy_true_scoring import CODE, SHARED
         titles_dir = root/'titles'; titles_dir.mkdir()

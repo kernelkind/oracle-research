@@ -154,7 +154,8 @@ with. The user reaffirmed that this experiment is not an optimization exercise
 or teacher-selection comparison. Keep the architecture unchanged; model
 changes and comparison runs require separate approval. HR02 names the experiment
 for discussion, without renaming existing artifacts or changing frozen run IDs.
-The current scoring manifest's internal ID remains `HRv1-full-v38`.
+The earlier scoring manifest retains `HRv1-full-v38`; the current Astra-title
+run uses `HR02-v38-gpt-6-astra`.
 
 **September 25 full-run checkpoint:** the user authorized building the full
 second 100-post hierarchy with the existing provisional rules, without
@@ -163,19 +164,28 @@ wraps the unchanged local TRUE scorer: `prepare` freezes titles, inputs,
 verified cache receipts, implementation hashes and policy versions; `infer`
 executes only missing inputs; `collect` requires complete, verified answers
 before reconstructing all pairs; `verify` checks frozen files without inference.
-The 129 nodes yield 16,512 directed pairs and 14,766 distinct inputs: 559 reused,
-14,207 fresh, no cache disagreements. The frozen run lives at
-`target/hierarchy-build-v1/full-true-v1/`.
+The user subsequently approved switching to the reviewed Astra titles while
+retaining every node. The 129 nodes yield 16,512 directed pairs and 14,525
+distinct inputs: 1,629 reused, 12,896 fresh, no cache disagreements. The frozen
+run lives at `target/hierarchy-build-v1/astra-true-v1/`; its title inputs are in
+`target/hierarchy-build-v1/astra-titles-v1/`.
 
-Scoring is running under the user service
-`oracle-hierarchy-full-true-v1-restart1.service`, CPU float32, four threads,
-batch size four, 60 GiB memory limit and no swap. This service collects answers
-and builds `target/hierarchy-build-v1/full-merge-v1/` after successful inference.
+Scoring is running under `oracle-hr02-astra-true-v1.service`, CPU float32, four
+threads, batch size four, 60 GiB memory limit and no swap. This service collects
+answers and builds `target/hierarchy-build-v1/astra-merge-v1/` after successful
+inference. The earlier Luna-title service is stopped with 5,092 completed rows
+preserved in `target/hierarchy-build-v1/full-true-v1/`, not marked complete.
+`prepare --partial-cache` verifies that stopped run's frozen requests, model
+and scorer, then reuses only fully written exact-input answers. It rejects
+malformed/mismatched rows and freezes their hashes against later changes;
+unfinished comparisons never become No. Current user reviews are retained
+through merging, and browser analysis flags rejected original titles even
+when their nodes merge. Reviews do not alter scoring text or filter nodes.
 Merged naming through v38/Luna max, browser packaging and review remain pending.
 HD02/03 remain provisional; no graph repair or new merge approval is implied.
 The earlier launch failed before inference because systemd expanded a shell
 array; the restart disables that expansion and repeats no successful inference.
-The wrapper and five related regression suites passed 48 tests. This verifies
+The updated wrapper and six related regression suites passed 63 tests. This verifies
 mechanics, not semantic quality or completion of the full run or HD06 comparison.
 
 The earlier authorized four-case naming run completed with four valid
@@ -290,8 +300,8 @@ cover a mixed group containing brekkie and Khyber Pass. `Bread baking` and
 `Sunday greetings` have unresolved scope questions. These observations are
 recorded as agent reviews, not user decisions or an exhaustive semantic audit;
 unreviewed titles are not implicitly approved. No outputs were repaired, nodes
-excluded, or frozen prompt rules changed. The saved Luna title set is now being
-scored by TRUE; it and the v21 baseline remain untouched.
+excluded, or frozen prompt rules changed. The saved Luna titles and v21 baseline
+remain untouched; the subsequent switch to Astra-title scoring is described above.
 
 **HR02 Astra-low title pass (authorized September 25):** individual titles were
 generated with unchanged v38 and identical groups, using `experiment.py prepare
@@ -310,11 +320,15 @@ exist in the groups: growing food mixed with grownostr, chocolate mixed with
 Guarani, Linux with chemicals, and Paraguay with food ingredients. They are not
 evidence that title rewriting alone will solve the problem. `Coffee beans` and
 `Lunch` address the earlier relationship-loss examples. These are agent
-judgments, not user approvals or an accuracy estimate. Review the flagged
-cases before adopting the Astra titles for TRUE; do not silently repair or
-exclude groups. The existing Luna-title TRUE run continues until a switch is
-separately authorized. Merged-title configuration has not been changed by this
-individual-title task.
+judgments, not user approvals or an accuracy estimate.
+
+The user reviewed the four agent-rejected cases: `grownostr` and `guarani`
+accepted; `Daily painting` and `Brands` rejected, with no comments. Those
+decisions do not imply approval of the three agent-uncertain cases or establish
+a general title policy. The user then approved proceeding to TRUE with all
+Astra titles, retaining every node and visibly flagging the two failures.
+No prompt edits or per-node repairs are included. Merged-title configuration
+remains v38/Luna max; the full hierarchy still requires review.
 
 [Title prompt v25](../hdbv2-node-description-probe-v25/prompt.txt) is tested but
 not promoted. The approved bounded comparison replaces v24's instruction against

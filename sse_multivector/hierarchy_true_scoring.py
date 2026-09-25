@@ -31,7 +31,7 @@ def run_identity(run, sources):
                 source_sha256=sources)
 
 
-def prepare(titles_directory, cache_bundle, output):
+def prepare(titles_directory, cache_bundle, output, *, partial_cache=None):
     titles_directory, cache_bundle = Path(titles_directory).resolve(), Path(cache_bundle).resolve()
     nodes = read(titles_directory/'nodes.json')
     if consolidate_nodes(nodes['source']) != nodes:
@@ -68,6 +68,39 @@ def prepare(titles_directory, cache_bundle, output):
         for filename in ('scores.jsonl','config.json','model-files.json','completion.json'):
             protect(run/filename)
         caches.append((str(source), [json.loads(line) for line in source.read_text().splitlines()]))
+    if partial_cache is not None:
+        # A stopped run is not complete. Reuse its fully written prefix only,
+        # binding every row to the frozen requests and unchanged model/scorer.
+        partial = Path(partial_cache).resolve(); run = partial/'run'
+        started = read(run/'started.json')
+        if (sha256(partial/'plan.json') != started['plan_sha256']
+                or sha256(partial/'plan.json') != read(partial/'frozen.json')['plan_sha256']
+                or sha256(run/'inputs.json') != started['inputs_sha256']):
+            raise ValueError('partial cache frozen inputs changed')
+        partial_plan = read(partial/'plan.json')
+        attested = {str(path(p)): h for p, h in partial_plan['protected_sha256'].items()}
+        if any(attested.get(str(CODE/n)) != sources[n] for n in SHARED):
+            raise ValueError('partial cache scorer differs')
+        reuse_path = partial/'reuse.json'
+        if attested.get(str(reuse_path)) != sha256(reuse_path):
+            raise ValueError('partial cache request plan changed')
+        requests = read(run/'inputs.json')
+        if requests != read(reuse_path)['missing_inputs']:
+            raise ValueError('partial cache requests differ from its plan')
+        validate_cache_identity(run_identity(run, sources), reference)
+        for p in (partial/'plan.json', partial/'frozen.json', reuse_path,
+                  *(run/n for n in ('started.json', 'inputs.json', 'config.json',
+                                   'model-files.json', 'scores.jsonl'))):
+            protect(p)
+        source = run/'scores.jsonl'
+        rows = [json.loads(line) for line in source.read_text().splitlines()]
+        if len(rows) > len(requests) or any(
+                any(row.get(k) != v for k, v in request.items())
+                for row, request in zip(rows, requests)):
+            raise ValueError('partial cache rows differ from its frozen request prefix')
+        if sha256(source) != protected[str(source)]:
+            raise ValueError('partial cache is still changing; stop its writer before reuse')
+        caches.append((str(source), rows))
     reuse = plan_reuse(inputs, caches)
     for p in [cache_bundle/'plan.json', cache_bundle/'reference.json', cache_bundle/'run/started.json',
               *(titles_directory/n for n in ('nodes.json','title-report.json','titles.json','true-inputs.json')),
@@ -80,7 +113,7 @@ def prepare(titles_directory, cache_bundle, output):
     save(out/'reference.json', reference)
     for filename in ('inputs.json','reuse.json','reference.json'):
         protect(out/filename)
-    plan = dict(schema_version=1, experiment='HRv1-full-v38', title_directory=str(titles_directory),
+    plan = dict(schema_version=1, experiment='HR02-v38-' + titles['settings']['model'], title_directory=str(titles_directory),
                 policies=POLICIES, nodes=len(titles['groups']), directions=len(inputs),
                 distinct_inputs=reuse['distinct_inputs'], reused_inputs=len(reuse['reused']),
                 fresh_inputs=len(reuse['missing_inputs']), conflicts=len(reuse['conflicts']),
@@ -153,11 +186,13 @@ def main():
     sub = parser.add_subparsers(dest='phase',required=True)
     p = sub.add_parser('prepare')
     for arg in ('titles','cache_bundle','output'): p.add_argument(arg,type=Path)
+    p.add_argument('--partial-cache', type=Path,
+                   help='Stopped scoring directory; reuse verified complete rows, not unfinished requests')
     for phase in ('infer','collect','verify'): sub.add_parser(phase).add_argument('output',type=Path)
     args = parser.parse_args()
     try:
         if args.phase == 'prepare':
-            plan = prepare(args.titles,args.cache_bundle,args.output)
+            plan = prepare(args.titles,args.cache_bundle,args.output,partial_cache=args.partial_cache)
             print(json.dumps({k:plan[k] for k in ('nodes','directions','distinct_inputs','reused_inputs','fresh_inputs','conflicts')}))
         elif args.phase == 'infer': infer(args.output)
         elif args.phase == 'collect': print('Collected',len(collect(args.output)),'directed answers')

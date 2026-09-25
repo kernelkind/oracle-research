@@ -69,12 +69,15 @@ def consolidate_nodes(source):
                 original_members=originals)
 
 
-def titles_from_report(packets, report):
+def titles_from_report(packets, report, *, include_reviews=False):
     """Bind a receipt-validated experiment report to these exact title inputs."""
-    settings = dict(provider='openai-codex', model='gpt-6-luna', reasoning_effort='max')
+    settings = {k: report.get('settings', {}).get(k)
+                for k in ('provider', 'model', 'reasoning_effort')}
     if (report.get('prompt_id') != 'v38' or report.get('adapter') != 'titles'
-            or any(report.get('settings', {}).get(k) != v for k, v in settings.items())):
-        raise ValueError('frozen v38/Luna-max title experiment required')
+            or settings['provider'] != 'openai-codex'
+            or (settings['model'], settings['reasoning_effort']) not in
+               {('gpt-6-luna', 'max'), ('gpt-6-astra', 'low')}):
+        raise ValueError('frozen v38/Luna-max or v38/Astra-low title experiment required')
     prepared = prepare(packets, TITLE.read_text(), [])
     packet_by_id = {p['packet']: p for p in packets['packets']}
     cases = report['cases']
@@ -92,6 +95,8 @@ def titles_from_report(packets, report):
                 or not isinstance(title, str) or not title.strip() or '\n' in title):
             raise ValueError('missing, invalid or mismatched title: ' + group['group'])
         groups.append(dict(group, title=title, receipt=deepcopy(case['receipt'])))
+        if include_reviews and case.get('reviews'):
+            groups[-1]['reviews'] = deepcopy(case['reviews'])
     return dict(prompt_version='v38', settings=settings, report_sha256=_digest(report), groups=groups)
 
 
@@ -116,6 +121,9 @@ def name_merge(merged, report):
     if pending['packets']:
         if report is None:
             raise ValueError('merged titles are pending; a completed naming experiment is required')
+        if (report.get('settings', {}).get('model') != 'gpt-6-luna'
+                or report.get('settings', {}).get('reasoning_effort') != 'max'):
+            raise ValueError('merged naming remains frozen to v38/Luna-max')
         names = {n['group']: n['title'] for n in titles_from_report(pending, report)['groups']}
     elif report is not None:
         raise ValueError('no merged nodes require naming')
@@ -147,10 +155,19 @@ def package_merge(merged, report, source, mapping, output):
         node['matched_instances'] = [i for m in node['matched_instances'] for i in _original_instances(m)]
     spec = reconstruct(spec, original_masks, [], Path(source).read_bytes())
     nodes = {n['group']: n for n in named['graph']['nodes']}
+    rejected_titles = {}
+    for original in merged['source']['titles']['groups']:
+        users = [r for r in original.get('reviews', [])
+                 if r.get('role') == 'user' and r.get('current')]
+        if users and users[-1].get('verdict') == 'reject':
+            group = merged['member_to_group'][original['group']]
+            rejected_titles.setdefault(group, []).append(original['title'])
     for node in spec['nodes']:
         if node['node_id'] in nodes:
             members = nodes[node['node_id']]['source_group_ids']
             node['analysis'] += ' Original nodes: ' + ', '.join(members) + '. Merging is provisional; displayed names do not change saved TRUE answers.'
+            for title in rejected_titles.get(node['node_id'], []):
+                node['analysis'] += ' User rejected original title: ' + title + '. Node retained; TRUE used this wording.'
     out = artifact_directory(output)
     save(out / 'named-graph.json', named)
     save(out / 'categories.json', spec)
@@ -210,6 +227,8 @@ def merge_saved(title_directory, scores_path, output):
     titles = titles_from_report(nodes['source_packets'], read(directory / 'title-report.json'))
     if titles != read(directory / 'titles.json') or prepare_inputs(titles) != read(directory / 'true-inputs.json'):
         raise ValueError('saved TRUE inputs differ from frozen titles')
+    titles = titles_from_report(nodes['source_packets'], read(directory / 'title-report.json'),
+                                include_reviews=True)
     merged = merge_graph(titles, read(scores_path), nodes['source_packets'],
                          original_members=nodes['original_members'])
     merged['node_consolidation'] = nodes

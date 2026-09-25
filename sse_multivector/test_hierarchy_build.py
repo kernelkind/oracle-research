@@ -70,6 +70,43 @@ class HierarchyBuildTests(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(ValueError):
                 titles_from_report(packets,wrong)
 
+    def test_astra_titles_preserve_reviews_without_filtering_nodes(self):
+        packets = fixture()['canonical']['source_packets']
+        report = report_for(packets)
+        report['settings'].update(model='gpt-6-astra', reasoning_effort='low')
+        reviews = [dict(role='user', verdict='reject', current=True, comment='')]
+        report['cases'][0]['reviews'] = reviews
+        titles = titles_from_report(packets, report, include_reviews=True)
+        self.assertEqual(titles['settings'], report['settings'])
+        self.assertEqual(len(titles['groups']), 4)
+        self.assertEqual(titles['groups'][0]['reviews'], reviews)
+        self.assertNotIn('reviews', titles_from_report(packets, report)['groups'][0])
+        for effort in ('max', 'off'):
+            report['settings']['reasoning_effort'] = effort
+            with self.assertRaises(ValueError):
+                titles_from_report(packets, report)
+
+    def test_user_title_rejection_survives_merge_and_browser_export(self):
+        values = fixture(); canonical = values['canonical']
+        original = canonical['titles']['groups'][0]
+        original['reviews'] = [dict(role='user', verdict='reject', current=True)]
+        for row in canonical['scores']:
+            if (row['a_id'], row['b_id']) in {('A','B'),('B','A')}:
+                row.update(predicted=True, generated_text='1', generated_token_ids=[0,209,1])
+        merged = merge_graph(**canonical)
+        report = report_for(merged['naming_source_packets'])
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)
+            for field in ('source', 'mapping'):
+                (path/(field+'.json')).write_text(json.dumps(values[field]))
+            spec = package_merge(merged, report, path/'source.json', path/'mapping.json', path/'out')
+            flagged = [n for n in spec['nodes'] if 'User rejected original title:' in n['analysis']]
+            self.assertEqual(len(flagged), 1)
+            self.assertIn(original['title'], flagged[0]['analysis'])
+        report['settings'].update(model='gpt-6-astra', reasoning_effort='low')
+        with self.assertRaises(ValueError):
+            name_merge(merged, report)
+
     def test_cycle_after_exact_merge_uses_original_ids(self):
         values=fixture(); canonical=values['canonical']
         for row in canonical['scores']:

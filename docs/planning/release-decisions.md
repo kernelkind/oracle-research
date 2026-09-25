@@ -19,12 +19,15 @@ valid titles for all 129 groups in the 100-note build: 108 new calls and 21
 reused results. The saved HRv1 hierarchy still uses the older v21 titles.
 The subsequent authorized HR02 Astra-low pass used unchanged v38 and identical
 groups: 129 valid titles, 128 new calls and one reused result. Agent inspection
-is complete with seven flagged cases; user review and adoption for TRUE remain
-pending. The running TRUE job still uses the Luna titles.
+is complete with seven flagged cases. The user accepted `grownostr` and
+`guarani`, rejected `Daily painting` and `Brands`, and approved proceeding to
+TRUE with all Astra titles, retaining all nodes and flagging the two failures.
+The Luna-title run is stopped with 5,092 completed answers preserved.
 Task 02 resumed with the user's approval on September 25. The construction path
 validated those saved v38 titles and prepared all 16,512 directed TRUE inputs.
-Local scoring is underway: 14,207 distinct inputs need fresh inference, with
-559 distinct inputs reused from verified saved results.
+Local Astra-title scoring is underway: 12,896 distinct inputs need fresh
+inference, with 1,629 reused from verified saved results, including exact
+matches from the stopped Luna-title run.
 The historical HRv1 runner and artifacts remain on v21. TRUE placement, merged
 naming and hierarchy review remain. The solid 23 → 02 prerequisite is satisfied;
 25 is required to finish 02, not to start its TRUE work.
@@ -347,18 +350,21 @@ published reprocessed browser view.
 September 25, is to generate a hierarchy the user is pleased with, not to
 optimize cost, speed or teacher selection. Model comparisons are not its success
 criterion. The user subsequently authorized individual title generation and
-inspection with Astra low and unchanged v38, reusing all upstream data. This
-does not authorize an all-Luna comparison, new TRUE scoring or merged-title calls.
-The architecture is unchanged; the existing Luna-title TRUE run stays running.
+inspection with Astra low and unchanged v38, reusing all upstream data, then
+approved TRUE scoring of those titles with all nodes retained and the two
+user-rejected titles flagged. This does not authorize an all-Luna comparison
+or change merged-title configuration. The architecture is unchanged.
 HR02 is the experiment's discussion ID; existing artifact paths and frozen
-internal run IDs are retained, including `HRv1-full-v38` for current scoring.
+internal run IDs are retained; the new scoring run is `HR02-v38-gpt-6-astra`.
 
 **HR02 execution (authorized September 25):** local TRUE scoring is
 underway for all 129 saved nodes, with exact-input cache reuse. The frozen plan
-is `target/hierarchy-build-v1/full-true-v1/plan.json`; it records policy versions,
+is `target/hierarchy-build-v1/astra-true-v1/plan.json`; it records policy versions,
 source/input hashes and cache provenance. HD01–05 remain unchanged, including
 the provisional HD02/03 rules. No membership expansion or Beef-specific repair
-is included. Scoring completion, full merged naming, browser export and review
+is included. The earlier Luna-title run is stopped, not complete; its saved
+prefix supplies only verified exact-input answers to the new run. Scoring
+completion, full merged naming, browser export and review
 remain pending; starting this run does not settle the merge policies.
 
 **Hierarchy execution recovery (clarified September 24):** retry failed model
