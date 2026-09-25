@@ -469,6 +469,12 @@ production preparation and decoding functions:
   malformed, not ranked. This supports **PPv10**, unchanged and experimentally
   tested, not production-frozen; the adapter does not choose the prompt/model.
 
+  **PPv11** is an untested [draft](prominence-prompt-goal-v1/ppv11-draft-v1/PPv11.md)
+  for review against PPv10. It replaces topic-centrality scoring with an estimate
+  of the post's meaning expressed by the mask. Inputs and the output contract
+  are unchanged; it does not replace the saved PPv10 baseline or establish
+  calibrated percentages. No PPv11 inference has been run.
+
   Alternatively, `path` may point to a saved title experiment's `report.json`
   (`adapter: "titles"` in that report). In this form, `select` names node IDs.
   Each selected title must be valid. Its original packet supplies all member
