@@ -220,8 +220,7 @@ class PlanningViewerTest(unittest.TestCase):
         cells = {cell.get("id"): cell for cell in root.findall("mxCell")}
         edges = {(cell.get("source"), cell.get("target"))
                  for cell in cells.values() if cell.get("edge") == "1"}
-        for ready, blocked in [("m-setup", "m2"),
-                               ("s-hdbscan", "s-analysis"), ("s-stage-costs", "s-analysis")]:
+        for ready, blocked in [("s-hdbscan", "s-analysis"), ("s-stage-costs", "s-analysis")]:
             with self.subTest(ready=ready):
                 self.assertIn(ready, cells, "Executable preparation needs its own node")
                 self.assertIn("fillColor=light-dark(#e6f4ea,", cells[ready].get("style"))
@@ -231,7 +230,9 @@ class PlanningViewerTest(unittest.TestCase):
         self.assertIn(("m1", "m2"), edges)
         self.assertIn(("m-setup", "m2"), edges)
         self.assertNotIn("STARTING SCOPE UNRESOLVED", cells["m-setup"].get("value"))
-        self.assertIn("18 · Prepare training code for the fine-tuning pilot", cells["ready-summary"].get("value"))
+        self.assertNotIn("18 · Prepare training code for the fine-tuning pilot", cells["ready-summary"].get("value"))
+        self.assertIn("IN PROGRESS", cells["m-setup"].get("value"))
+        self.assertIn("local VM", cells["m-setup"].get("value"))
         self.assertIn("save/reload", cells["m-setup"].get("value"))
         self.assertIn("outputs for evaluation", cells["m-setup"].get("value"))
         self.assertIn("Format examples and evaluate", cells["m2"].get("value"))
@@ -510,7 +511,7 @@ class PlanningViewerTest(unittest.TestCase):
                 wait_for_text("TRUE compares descriptions")
                 wait_for_text("Ready to start or resume")
                 wait_for_text("18 · Prepare training code for the fine-tuning pilot")
-                wait_for_text("save/reload its trained weights")
+                wait_for_text("Automate and test in a local VM")
                 self.assertFalse(evaluate("document.body.innerText.includes('19 · Plan training-data generator comparison')"))
                 wait_for_text("Subject and mask prompts finished")
                 wait_for_text("READY TO RESUME")

@@ -50,7 +50,7 @@ workstream or approval of the overall plan.
 
 ### Status checkpoint — September 25
 
-Tasks 02 and 25 were updated on September 25; 23 on September 24. Other rows
+Tasks 02, 18 and 25 were updated on September 25; 23 on September 24. Other rows
 were last confirmed with the user on September 23.
 
 | Task | Current status |
@@ -62,7 +62,7 @@ were last confirmed with the user on September 23.
 | 17 · Compare teachers | In progress; no completed selection established. |
 | 26 · Collapse equal-note navigation steps | Implemented and regression-tested; validation on the rebuilt hierarchy is waiting. |
 | 13 · Define Nostr hierarchy protocol | Not started. |
-| 18 · Prepare training code for the fine-tuning pilot | Not started. |
+| 18 · Prepare training code for the fine-tuning pilot | In progress; automated workflow passes local VM tests with a tiny model. Candidate recipes and GPU validation remain. |
 | 24 · Recover missing node memberships | Not started. |
 | 25 · Handle node equivalence and TRUE cycles | Both merge stages and naming/browser integration implemented; four-merge user review complete (three accepted, Beef rejected). Full rebuilt-hierarchy validation remains. |
 | 21 · Assess HDBSCAN at launch scale | No further progress; earlier investigation remains evidence, not launch-scale validation. |
@@ -185,12 +185,19 @@ on both existing prompted tasks: note → subject hierarchy, then note + subject
 evaluation each use that candidate's own generated subjects for the mask calls.
 Direct-mask generation is deferred for this informal pilot.
 This initial informal experiment may use current saved annotations before
-prominence and final teacher selection are ready. Local data preparation has
-started; no candidate baseline, training run or rental has run. See the
+prominence and final teacher selection are ready. Local data is prepared;
+no candidate baseline, training run or rental has run. See the
 [current pilot preparation](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md#status-and-scope).
 The release model still requires prominence. Candidate selection, the larger
 pilot's evaluation requirements, full-data gates and paid-resource approval
 rules remain in force; the informal result does not complete 06.
+The user approved automating and testing the complete workflow in a local VM
+before deploying on rented hardware. The local test uses a tiny model and
+synthetic data, including actual weight updates, checkpoint interruption/resume,
+save/reload and two-step evaluation. All seven local workflow tests passed;
+interrupted training reproduced the uninterrupted adapter weights exactly.
+Candidate quality, full-model memory use and CUDA/NF4 compatibility still
+require GPU validation. Task 18 is in progress.
 The user accepted a $25 total maximum for GPU setup, baselines and initial
 fine-tunes across the three candidates, including storage, transfers and failed
 attempts. No rental has started; ledger admission precedes any paid commitment.

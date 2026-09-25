@@ -76,7 +76,7 @@ authorization.
 Page 1 highlights readiness: green means ready to start or resume, blue means in progress,
 grey means waiting, blocked or paused, and muted grey means complete. If preparation can start
 but later work cannot, show them as separate nodes linked by a dependency—not
-as one partly ready task. Node 18 is green for preparing training code for the
+as one partly ready task. Node 18 is blue and in progress, preparing training code for the
 fine-tuning pilot: fine-tune each candidate, save/reload trained weights and
 generate outputs for evaluation. Final training-example formatting and
 mask/prominence evaluation remain in 06, after the agreed output format,
@@ -91,7 +91,12 @@ learning both prompted tasks: generate subjects, then mask each generated
 subject. Direct-mask generation is deferred for this informal experiment.
 The $25 total accepted for setup, baselines and initial fine-tunes remains
 subject to ledger admission; no rental has started. This does not complete
-release-model selection.
+release-model selection. The user approved automated local VM validation before
+rented-hardware deployment: baseline, real training, interruption/resume,
+save/reload and evaluation with a tiny model. Those local tests pass, including
+exact interrupted-versus-uninterrupted adapter weights. The same pinned container will
+support the later GPU check; CPU results do not establish candidate quality,
+GPU compatibility, memory use or speed.
 Node 17 is blue and in progress: the user reports comparing
 Muse high and Astra low. No teacher is selected. Task 17 also requires an A/B
 comparison of the resulting hierarchies on the same notes before selection;

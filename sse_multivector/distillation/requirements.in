@@ -1,0 +1,9 @@
+# Torch and its CUDA runtime are supplied by Dockerfile's immutable base.
+# Pin Torch for resolution; the lock's recorded command omits those packages.
+torch==2.12.1
+transformers==5.17.0
+peft==0.21.0
+accelerate==1.15.0
+bitsandbytes==0.50.2
+# The pinned PyTorch base includes spin 0.18, which requires Click <8.4.
+click==8.3.1

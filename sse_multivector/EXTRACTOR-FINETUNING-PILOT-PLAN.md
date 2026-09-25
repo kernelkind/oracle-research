@@ -117,13 +117,81 @@ sizes, exact training settings, hardware allocations, and individual spending
 authorizations remain open. No rental or training run has started for this pilot.
 
 The release plan's **18 · Prepare training code for the fine-tuning pilot** is
-ready for preparing code to fine-tune each candidate, save/reload its trained
+in progress: prepare code to fine-tune each candidate, save/reload its trained
 weights and generate evaluation outputs. Final training-example formatting and
 mask/prominence quality evaluation remain in **06 · Choose the model to train**,
 which needs the agreed output format, prominence criteria and reviewed pilot
 data to complete release-model selection. The informal experiment above is
-authorized to begin preparation without prominence. No training framework or
-paid rental has been selected by that authorization.
+authorized to begin preparation without prominence. The user subsequently
+approved building and testing the automated workflow in a local VM before
+deploying it on rented hardware. The implementation uses Transformers Trainer
+and PEFT in a pinned PyTorch container. Candidate GPU compatibility and training
+settings remain to be validated.
+
+### Local VM workflow
+
+**September 25 validation:** all seven workflow tests passed inside the VM,
+including real LoRA updates, exact weight equality after interruption/resume,
+save/reload, valid and malformed outputs, empty masks, and exclusion of teacher
+subjects from evaluation mask calls. The 87 existing extraction tests and all
+10 planning-viewer tests also passed, including the Firefox browser check.
+
+Run from the repository root:
+
+```sh
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+python3 -m sse_multivector.distillation_vm \
+  --directory target/distillation-vm
+```
+
+The host needs QEMU, KVM access, `qemu-img`, `genisoimage`, SSH and SCP. It does
+not need a Docker daemon or root access. A checksum-pinned Ubuntu image runs
+Docker inside a VM with four virtual CPUs, 12 GiB RAM and a sparse 64 GiB disk.
+SSH binds only to loopback. The package contains an explicit source-file list;
+credentials and annotation artifacts are not copied into it. Each attempt gets
+a source snapshot, serial/build logs and a result directory. Use a new
+`--directory` for a clean-machine test; reusing it retains the stopped VM disk
+and Docker cache. The launcher collects results and stops the VM on exit.
+
+The container's CUDA/PyTorch base is pinned by digest, and Python dependencies
+are version/hash locked. The same container runs CPU validation locally and
+can later run on a GPU. Tests run with networking disabled, using a generated
+tiny model and synthetic subject/mask examples. They exercise the real dataset
+export, answer-only training, baseline generation, checkpointing, adapter
+save/reload and two-step evaluation. The interruption test kills training,
+resumes it and compares weights with an uninterrupted run. A successful VM run
+exports `results/container.tar.gz`, ready for a later `docker load`; the VM
+disk, image, model weights, data and logs remain ignored under `target/`.
+
+`distillation_run.py CONFIG --output DIRECTORY` performs baseline → training →
+reload → evaluation → report. Invoke it as
+`python -m sse_multivector.distillation_run` inside the container. Passing
+`--through baseline` or `--through train` stops there; repeating the same command
+resumes. Config, input hashes, source hashes and library versions are frozen.
+Changed settings require a new output directory. Completed calls, including
+malformed responses, are preserved without automatic retries. Only fully
+written checkpoints with verified hashes are eligible for training resume.
+
+The JSON config requires explicit model/revision, prepared-data and mask-prompt
+paths; CPU/CUDA and none/NF4 quantization; seed, sequence/output limits, subject
+limit, steps, checkpoint interval, batch size, gradient accumulation, learning
+rate, subject sampling fraction, LoRA rank/alpha and CPU thread count. Remote
+models require a commit revision. The tiny test's values are test-fixture
+settings, not selected recipes for the three candidates. Sampling uses a seeded
+schedule with the configured subject probability and records realized counts.
+The adapter targets all supported linear layers. Overlength examples fail;
+the runner does not truncate training answers.
+
+The automatic report separates malformed subject/mask outputs, valid empty
+masks and reference agreement. Token overlap uses whitespace-delimited source
+words (any selected part includes that word), with one-to-one matching and
+micro averaging over unique nonempty selections per note. Exact matching uses
+selected non-whitespace source characters. These mechanical measurements do
+not establish semantic correctness or approval; semantic review remains open.
+
+CPU VM validation cannot establish candidate quality, CUDA/NF4 compatibility,
+full-model memory requirements or speed. Those need the later short GPU check.
+The actual candidate baselines and fine-tunes have not run.
 
 The later final fine-tune (08) also prepares trained weights, necessary
 supporting files, usage instructions and evaluation results for publication.
@@ -315,8 +383,10 @@ and F1 using this rule, with exact-match scores calculated separately.
 This follows the matching approach in
 [PropSegmEnt, sections 3.2 and 5.1](https://aclanthology.org/2023.findings-acl.565.pdf).
 The 80% cutoff is an initial mask-matching rule, not a required model accuracy.
-Source tokenization, how scores are averaged across notes, and which score
-selects training checkpoints remain open.
+For the larger pilot, source tokenization, score averaging and the score used
+to select training checkpoints remain open. The informal automated workflow's
+mechanical scoring is specified above; it trains for a fixed number of steps
+and does not select checkpoints using these scores.
 
 ### Required pilot measurements
 
@@ -498,8 +568,9 @@ ledger accounting and the lifetime ceiling still apply.
 ## Next step
 
 The informal dataset is prepared for one fine-tune per candidate on both
-existing prompted tasks. Next prepare the training setup, including how the
-two tasks are sampled or weighted. Establish each candidate's two-step baseline
+existing prompted tasks. The automated workflow passes local VM validation.
+Next freeze candidate recipes, including task sampling, and check GPU
+compatibility. Establish each candidate's two-step baseline
 before fine-tuning and compare on the same held-out notes using its own generated
 subjects. Paid work must fit the approved $25 total and ledger admission.
 Prominence and the larger dataset-size schedule can wait.

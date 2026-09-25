@@ -1,0 +1,185 @@
+"""Build and test the distillation container in an unprivileged local QEMU VM.
+
+Use a new --directory for a clean-machine check. An existing directory reuses
+its stopped VM disk and Docker cache, but snapshots code and results per attempt.
+No host Docker daemon, root access, credentials, or rented hardware is used.
+"""
+import argparse
+import fcntl
+import json
+import os
+from pathlib import Path
+import shutil
+import signal
+import socket
+import subprocess
+import time
+import urllib.request
+
+from sse_multivector.distillation_run import sha256, write_json
+
+
+IMAGE_URL = "https://cloud-images.ubuntu.com/noble/20260911/noble-server-cloudimg-amd64.img"
+IMAGE_SHA256 = "612b2c0cc1bc413a6cb8c38fd611794caf0f2b436c50013d8b3794db12ad7354"
+PACKAGE_FILES = (
+    "distillation_run.py", "distillation_data.py", "extraction_pipeline.py", "mask_positions.py",
+    "test_distillation_run.py", "test_distillation_data.py",
+    "distillation/Dockerfile", "distillation/requirements.in", "distillation/requirements.lock",
+)
+
+
+def prepare_package(source, destination):
+    destination.mkdir(parents=True)
+    for name in PACKAGE_FILES:
+        source_path = source / "sse_multivector" / name
+        target = destination / "sse_multivector" / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source_path, target)
+    write_json(destination / "package.json", {name: sha256(destination / "sse_multivector" / name)
+                                             for name in PACKAGE_FILES})
+
+
+def verified_image(cache):
+    cache.mkdir(parents=True, exist_ok=True)
+    path = cache / (IMAGE_SHA256 + ".qcow2")
+    if not path.exists():
+        temporary = path.with_suffix(".part")
+        print("Downloading Ubuntu VM image", flush=True)
+        with urllib.request.urlopen(IMAGE_URL, timeout=60) as response, temporary.open("wb") as output:
+            shutil.copyfileobj(response, output)
+        if sha256(temporary) != IMAGE_SHA256:
+            raise ValueError("downloaded VM image hash mismatch")
+        temporary.replace(path)
+    if sha256(path) != IMAGE_SHA256:
+        raise ValueError("cached VM image hash mismatch")
+    return path.resolve()
+
+
+def execute(directory, cache):
+    for command in ("qemu-system-x86_64", "qemu-img", "genisoimage", "ssh", "ssh-keygen", "scp"):
+        if not shutil.which(command):
+            raise RuntimeError(f"missing local prerequisite: {command}")
+    with open("/dev/kvm", "rb+") as kvm:
+        if fcntl.ioctl(kvm, 0xAE00, 0) != 12:
+            raise RuntimeError("KVM API 12 required")
+    directory = directory.resolve()
+    directory.mkdir(parents=True, exist_ok=True)
+    with (directory / ".lock").open("w") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        base = verified_image(cache)
+        attempt = directory / f"attempt-{time.time_ns()}"
+        attempt.mkdir()
+        package = attempt / "package"
+        prepare_package(Path(__file__).resolve().parents[1], package)
+        key = directory / "ssh-key"
+        if not key.exists():
+            subprocess.run(["ssh-keygen", "-q", "-t", "ed25519", "-N", "", "-f", str(key)], check=True)
+        disk = directory / "disk.qcow2"
+        if not disk.exists():
+            subprocess.run(["qemu-img", "create", "-f", "qcow2", "-F", "qcow2", "-b", str(base), str(disk), "64G"], check=True)
+        seed = directory / "seed"
+        seed.mkdir(exist_ok=True)
+        (seed / "meta-data").write_text("instance-id: distillation-local\nlocal-hostname: distillation-local\n")
+        (seed / "user-data").write_text("#cloud-config\n" + json.dumps({
+            "disable_root": False, "ssh_pwauth": False,
+            "users": [{"name": "root", "ssh_authorized_keys": [key.with_suffix(".pub").read_text().strip()]}],
+            "package_update": True, "packages": ["docker.io"],
+            "runcmd": [["systemctl", "enable", "--now", "docker"]]}) + "\n")
+        iso = directory / "seed.iso"
+        subprocess.run(["genisoimage", "-quiet", "-output", str(iso), "-volid", "cidata", "-joliet", "-rock",
+                        str(seed / "user-data"), str(seed / "meta-data")], check=True)
+        with socket.socket() as listener:
+            listener.bind(("127.0.0.1", 0))
+            port = listener.getsockname()[1]
+        options = ["-F", "/dev/null", "-i", str(key), "-o", "BatchMode=yes", "-o", "ConnectTimeout=3",
+                   "-o", "StrictHostKeyChecking=accept-new", "-o", f"UserKnownHostsFile={directory / 'known_hosts'}"]
+        ssh = ["ssh", *options, "-p", str(port), "root@127.0.0.1"]
+        cmd = ["qemu-system-x86_64", "-enable-kvm", "-cpu", "host", "-smp", "4", "-m", "12288",
+               "-display", "none", "-serial", "stdio", "-monitor", "none",
+               "-drive", f"file={disk},if=virtio,format=qcow2",
+               "-drive", f"file={iso},media=cdrom,readonly=on",
+               "-netdev", f"user,id=net0,hostfwd=tcp:127.0.0.1:{port}-:22",
+               "-device", "virtio-net-pci,netdev=net0",
+               "-virtfs", f"local,path={package},mount_tag=source,security_model=none,readonly=on"]
+        if any("," in str(p) for p in (disk, iso, package)):
+            raise ValueError("VM paths cannot contain commas")
+        write_json(attempt / "launch.json", {"image_url": IMAGE_URL, "image_sha256": IMAGE_SHA256,
+                                            "command": cmd, "started": time.time()})
+        connected = False
+        result_directory = "/results/" + attempt.name
+        with (attempt / "serial.log").open("w") as serial:
+            process = subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=serial, stderr=subprocess.STDOUT)
+            print(f"VM started; logs: {attempt}", flush=True)
+            try:
+                deadline = time.monotonic() + 240
+                while time.monotonic() < deadline:
+                    if process.poll() is not None:
+                        raise RuntimeError("VM exited during boot; see serial.log")
+                    result = subprocess.run([*ssh, "true"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    if result.returncode == 0:
+                        connected = True
+                        break
+                    time.sleep(2)
+                if not connected:
+                    raise TimeoutError("VM SSH did not become ready")
+                script = "set -euo pipefail\nresult_dir=" + result_directory + "\n" + """
+cloud-init status --wait
+mkdir -p /source "$result_dir"
+mount -t 9p -o trans=virtio,version=9p2000.L,ro source /source
+docker build --tag notedeck-distillation:local -f /source/sse_multivector/distillation/Dockerfile /source
+docker image inspect notedeck-distillation:local > "$result_dir/image.json"
+docker run --rm --network none -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1 \\
+  -e DISTILLATION_TEST_OUTPUT=/results/workflow -v "$result_dir":/results \\
+  notedeck-distillation:local python -m unittest -v \\
+  sse_multivector.test_distillation_run
+docker save notedeck-distillation:local | gzip -1 > "$result_dir/container.tar.gz"
+"""
+                print("Building container and running offline tests inside VM", flush=True)
+                with (attempt / "execution.log").open("w") as log:
+                    result = subprocess.run([*ssh, "bash -se"], input=script, text=True,
+                                            stdout=log, stderr=subprocess.STDOUT, timeout=2400)
+                if result.returncode:
+                    raise RuntimeError("VM test command failed; see execution.log and collected workflow logs")
+            finally:
+                collected = None
+                try:
+                    if connected and process.poll() is None:
+                        print("Collecting results and stopping VM", flush=True)
+                        collected = subprocess.run(["scp", *options, "-P", str(port), "-r",
+                            "root@127.0.0.1:" + result_directory, str(attempt / "results")], timeout=300)
+                finally:
+                    try:
+                        if connected and process.poll() is None:
+                            subprocess.run([*ssh, "poweroff"], stdout=subprocess.DEVNULL,
+                                           stderr=subprocess.DEVNULL, timeout=10)
+                    finally:
+                        try:
+                            process.wait(timeout=30)
+                        except subprocess.TimeoutExpired:
+                            process.terminate()
+                            try:
+                                process.wait(timeout=10)
+                            except subprocess.TimeoutExpired:
+                                process.kill()
+                                process.wait()
+            if not collected or collected.returncode:
+                raise RuntimeError("failed to collect VM results")
+        write_json(attempt / "complete.json", {"status": "passed", "vm_stopped": True,
+            "container_sha256": sha256(attempt / "results" / "container.tar.gz"),
+            "report": "results/workflow/interrupted/report.json"})
+        print(f"VM validation passed: {attempt}", flush=True)
+
+
+def main():
+    def terminate(signum, frame):
+        raise KeyboardInterrupt("VM launcher interrupted")
+    signal.signal(signal.SIGTERM, terminate)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--directory", type=Path, required=True)
+    parser.add_argument("--cache", type=Path, default=Path("target/distillation-vm-cache"))
+    args = parser.parse_args()
+    execute(args.directory, args.cache)
+
+
+if __name__ == "__main__":
+    main()
