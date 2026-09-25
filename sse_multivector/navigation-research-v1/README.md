@@ -186,8 +186,12 @@ Optional `--decisions FILE` imports display-only prior user decisions. The
 file has a `decisions` list; each entry supplies the exact original `members`,
 `decision` (`keep_separate` or `merge`), and a nonempty `source` citing the user
 decision. Unknown/duplicate member sets and unsupported decisions are rejected.
-This labels the review; it does not alter the graph. The sample labels the
-user's Beef / Beef products rejection; other merges remain undecided.
+This labels the review; it does not alter the graph. On September 25 the user
+accepted the Coffee, Food, and morning-greetings merges ("the other 3 look
+fine"); Beef / Beef products remains rejected. All four sample merges are now
+reviewed. These are case decisions on a selected stress sample, not an accuracy
+estimate or blanket approval of HD02/HD03. No graph repairs or new inference
+were performed. The decisions are saved in the package's `review-decisions.json`.
 
 The existing `model-output-review` viewer accepts optional `labels` for
 `source`, `alternate_source`, `output`, `comment`, `item` and `variant`;
@@ -203,7 +207,7 @@ The four-merge sample can be opened with:
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 target/infomap-review-build/debug/model-output-review \
-  target/hierarchy-build-v1/nev2-browser/merge-review-v2.json
+  target/hierarchy-build-v1/nev2-browser/merge-review-v3.json
 ```
 
 Use Left/Right for merges, Up/Down to scroll detail views and `q` to quit.
