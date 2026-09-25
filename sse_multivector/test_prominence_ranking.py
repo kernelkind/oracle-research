@@ -6,6 +6,28 @@ from sse_multivector import experiment_inputs
 
 
 class ProminenceRankingTests(unittest.TestCase):
+    def test_prominence_prepares_original_members_from_selected_title_report(self):
+        packet = {"packet": "G", "instances": [
+            dict(instance="V1", vector_id="v1", note_id="N", text="Tea tea",
+                 byte_spans=[[0, 3]], fragments=["Tea"]),
+            dict(instance="V2", vector_id="v2", note_id="N", text="Tea tea",
+                 byte_spans=[[0, 3]], fragments=["Tea"]),
+        ]}
+        source = {"adapter": "titles", "cases": [
+            dict(id="G", status="valid", parsed={"title": "Tea"}, evidence={"packet": packet}),
+            dict(id="unselected", status="failed", evidence={}),
+        ]}
+        cases = experiment_inputs.prepare(
+            {"adapter": "prominence", "select": ["G"]}, source, "{INPUT_JSON}")
+        self.assertEqual(len(cases), 1)
+        self.assertEqual(cases[0]["evidence"]["mask_ids"], ["V1", "V2"])
+        self.assertEqual(cases[0]["evidence"]["node_title"], "Tea")
+        self.assertNotIn("node_title", cases[0]["inputs"]["INPUT_JSON"])
+        for selection in [["missing"], ["unselected"]]:
+            with self.assertRaises(ValueError):
+                experiment_inputs.prepare({"adapter": "prominence", "select": selection},
+                                          source, "{INPUT_JSON}")
+
     def fixture(self):
         cases = []
         rows = []

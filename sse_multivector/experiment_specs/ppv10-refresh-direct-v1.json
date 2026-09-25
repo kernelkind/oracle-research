@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "PPv10",
+    "path": "../prominence-prompt-goal-v1/ppv10-draft-v1/PPv10.md"
+  },
+  "dataset": {
+    "adapter": "prominence",
+    "path": "../experiments/title-v38-full-luna-max/report.json",
+    "select": ["S64fcf6c1d7", "S29074d29b6", "S6dde8fffb9", "Sa01eaf30fd", "S1fe681cb8e"]
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "concurrency": 4,
+    "timeout_seconds": 600
+  }
+}

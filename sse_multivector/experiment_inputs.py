@@ -43,6 +43,30 @@ def render(template, inputs):
 
 def prepare_prominence(source, selected=None):
     """Render one exact saved mask per case, retaining node metadata only for review."""
+    if source.get("adapter") == "titles":
+        available = {c["id"]: c for c in source["cases"]}
+        if len(available) != len(source["cases"]):
+            raise ValueError("duplicate title case identity")
+        if selected is not None and set(selected) - available.keys():
+            raise ValueError("unknown title group requested")
+        members = []
+        for cid, case in available.items():
+            if selected is not None and cid not in selected:
+                continue
+            if case["status"] != "valid":
+                raise ValueError(f"title is not valid: {cid}")
+            packet = case["evidence"]["packet"]
+            if packet["packet"] != cid:
+                raise ValueError("title packet identity mismatch")
+            # Reuse the title adapter's exact-span validation and same-post deduplication.
+            group = prepare_titles({"packets": [packet]}, "{NUMBERED_INSTANCES}", [cid])[0]
+            posts = {i["note_id"]: i["text"] for i in packet["instances"]}
+            for mask in group["sources"]:
+                members.append(dict(id=f"{cid}-{mask['instance']}", node_id=cid,
+                                    node_title=case["parsed"]["title"], note_id=mask["note_id"],
+                                    text=posts[mask["note_id"]], mask_ids=mask["source_instances"],
+                                    byte_spans=mask["byte_spans"]))
+        source, selected = {"cases": members}, None
     cases, nodes, posts, ids = [], {}, {}, set()
     for item in source["cases"]:
         engine._expect_fields(

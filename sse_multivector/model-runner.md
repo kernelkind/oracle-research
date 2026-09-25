@@ -469,6 +469,15 @@ production preparation and decoding functions:
   malformed, not ranked. This supports **PPv10**, unchanged and experimentally
   tested, not production-frozen; the adapter does not choose the prompt/model.
 
+  Alternatively, `path` may point to a saved title experiment's `report.json`
+  (`adapter: "titles"` in that report). In this form, `select` names node IDs.
+  Each selected title must be valid. Its original packet supplies all member
+  masks and complete posts, with the same exact-span validation and same-post
+  deduplication as title preparation. No membership expansion, title merging or
+  title inference occurs. The report is hashed as an input and its contents are
+  frozen into the prominence experiment; refresh the source report first if its
+  upstream run has changed. Other unselected invalid title cases are ignored.
+
 The mask decoder validates bounds, source text, ordering, overlap, within-word
 uniqueness and the response contract. A valid empty mask is `empty`, not a
 failure. Reports distinguish `valid`, `empty`, `malformed`, `invalid_receipt`,
@@ -565,6 +574,15 @@ each card still shows only one mask inline, and both scores and tied ranks
 are visible. Case IDs stabilize ties; they do not establish quality differences.
 These settings do not change PPv10, memberships, saved outputs or production
 ranking. They neither aggregate posts nor establish a calibrated relevance score.
+
+`prominence_cosine.py prepare` accepts either the historical normalized-vector
+directory or a hierarchy-refresh directory containing `vector-map.json`,
+`worker-request.json` and `worker-result/`. The latter reads the original raw
+vectors without re-encoding them, verifies receipt hashes and row/span identity,
+and freezes their hashes. Both formats require title encoding with the same
+checkpoint/settings and replay checks before `collect` emits a comparison.
+This diagnostic makes no prompt calls; the shared experiment runner remains the
+only prompt-experiment workflow.
 
 ### Revision: explicit approved base, full-context diff
 

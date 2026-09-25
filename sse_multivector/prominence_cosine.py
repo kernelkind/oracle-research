@@ -56,20 +56,55 @@ def decode(path, dimensions, code):
     return list(struct.iter_unpack("<" + code * dimensions, raw))
 
 
+def load_vectors(vectors):
+    """Read either preserved normalized vectors or a refresh worker's raw vectors."""
+    protected = {}
+    rows = read(vectors / "vector-map.json")["vectors"]
+    if (vectors / "manifest.json").exists():
+        manifest = read(vectors / "manifest.json")
+        for name in ("vector-map.json", "normalized-vectors.f64le", "encoder.json"):
+            path = vectors / name
+            if sha(path) != manifest["files"][name]["sha256"]:
+                raise ValueError(f"saved vector artifact changed: {name}")
+            protected[str(path)] = sha(path)
+        encoder = read(vectors / "encoder.json")
+        vector_file, code = vectors / "normalized-vectors.f64le", "d"
+    else:
+        receipt_path = vectors / "worker-result/worker-receipt.json"
+        encoder = read(receipt_path)
+        request_path = vectors / "worker-request.json"
+        request = read(request_path)
+        vector_file, code = vectors / "worker-result/raw-vectors.f32le", "f"
+        if (sha(request_path) != encoder["request_sha256"]
+                or request["proposal_sha256"] != encoder["proposal_sha256"]
+                or sha(vector_file) != encoder["files"][vector_file.name]["sha256"]):
+            raise ValueError("refresh vector/request hash mismatch")
+        requested = [(n, s) for n in request["notes"] for s in n["subjects"]]
+        if not len(rows) == len(requested) == len(encoder["rows"]) == encoder["row_count"]:
+            raise ValueError("refresh vector row count mismatch")
+        for ordinal, (row, measured, (post, subject)) in enumerate(zip(rows, encoder["rows"], requested)):
+            if (measured["ordinal"] != ordinal
+                    or row["note_id"] != measured["note_id"] or row["note_id"] != post["note_id"]
+                    or row["worker_subject_id"] != measured["subject_id"]
+                    or row["worker_subject_id"] != subject["subject_id"]):
+                raise ValueError("refresh vector row identity mismatch")
+            if (row["byte_spans"] != subject["byte_spans"] or row["fragments"] !=
+                    [post["text"].encode()[a:b].decode() for a, b in subject["byte_spans"]]):
+                raise ValueError("refresh vector span mismatch")
+            row["ordinal"] = ordinal
+        for path in (vectors / "vector-map.json", receipt_path, request_path, vector_file):
+            protected[str(path)] = sha(path)
+    if len(decode(vector_file, encoder["model"]["dimensions"], code)) != len(rows):
+        raise ValueError("vector byte count differs from mapping")
+    return rows, encoder, vector_file, code, protected
+
+
 def prepare(args):
     output = args.output.resolve()
     if output.exists():
         raise ValueError("output already exists")
     vectors = args.vectors.resolve()
-    manifest = read(vectors / "manifest.json")
-    protected = {}
-    for name in ("vector-map.json", "normalized-vectors.f64le", "encoder.json"):
-        path = vectors / name
-        if sha(path) != manifest["files"][name]["sha256"]:
-            raise ValueError(f"saved vector artifact changed: {name}")
-        protected[str(path)] = sha(path)
-    mapping = read(vectors / "vector-map.json")
-    rows = mapping["vectors"]
+    rows, encoder, vector_file, vector_code, protected = load_vectors(vectors)
     lookup = {r["short_id"]: r for r in rows}
     if len(lookup) != len(rows) or any(r["ordinal"] != i for i, r in enumerate(rows)):
         raise ValueError("vector map has duplicate IDs or unexpected row order")
@@ -92,7 +127,7 @@ def prepare(args):
             titles[nid] = title
             for mid in e["mask_ids"]:
                 saved = lookup[mid]
-                if (saved["byte_spans"] != e["byte_spans"] or saved["note_short_id"] != e["note_id"]
+                if (saved["byte_spans"] != e["byte_spans"] or e["note_id"] not in (saved["note_short_id"], saved["note_id"])
                         or saved["fragments"] != [e["text"].encode()[a:b].decode() for a,b in e["byte_spans"]]):
                     raise ValueError(f"mask differs from saved vector: {mid}")
                 originals[mid] = e
@@ -115,18 +150,19 @@ def prepare(args):
         notes.append(dict(note_id=lookup[mid]["note_id"], text=e["text"],
                           subjects=[dict(subject_id=hashlib.sha256(mid.encode()).hexdigest()[:16],
                                          byte_spans=e["byte_spans"])]))
-    encoder = read(vectors / "encoder.json")
     config = read(args.worker_config)
     for key in ("checkpoint_sha256", "base_model_artifact_tree_sha256", "model", "note_batch_size"):
         if config[key] != encoder[key]:
             raise ValueError(f"encoder differs: {key}")
-    if config["device"] != "cpu" or sha(Path(worker.__file__)) != encoder["worker_sha256"]:
+    if (config["device"] != "cpu" or ("worker_sha256" in encoder
+            and sha(Path(worker.__file__)) != encoder["worker_sha256"])):
         raise ValueError("expected original CPU worker")
     for path in (Path(__file__).resolve(), Path(worker.__file__).resolve(), args.worker_config.resolve()):
         protected[str(path)] = sha(path)
     output.mkdir(parents=True)
     plan = dict(schema_version=1, cases=cases, title_rows=title_rows, replays=replays,
                 vectors=str(vectors), protected=protected, encoder=encoder,
+                vector_file=str(vector_file), vector_code=vector_code,
                 formula="prominence (0..100) * raw cosine; no clipping or fitted calibration",
                 parity_min_cosine=0.999999, parity_max_normalized_component_error=0.00001)
     save(output / "plan.json", plan)
@@ -156,15 +192,17 @@ def collect(output):
         raise ValueError("worker rows differ from request")
     dim = plan["encoder"]["model"]["dimensions"]
     fresh = decode(output / "result/raw-vectors.f32le", dim, "f")
-    saved = decode(Path(plan["vectors"]) / "normalized-vectors.f64le", dim, "d")
+    saved = decode(Path(plan.get("vector_file", str(Path(plan["vectors"]) / "normalized-vectors.f64le"))),
+                   dim, plan.get("vector_code", "d"))
     if len(fresh) != len(receipt["rows"]):
         raise ValueError("vector count differs from receipt")
     parity = {}
     for mid, p in plan["replays"].items():
         a,b = fresh[p["row"]],saved[p["ordinal"]]
         norm = math.sqrt(math.fsum(x*x for x in a))
+        saved_norm = math.sqrt(math.fsum(x*x for x in b))
         similarity = cosine(a,b)
-        error = max(abs(x/norm-y) for x,y in zip(a,b))
+        error = max(abs(x/norm-y/saved_norm) for x,y in zip(a,b))
         parity[mid] = dict(cosine=similarity, maximum_normalized_component_error=error)
         if similarity < plan["parity_min_cosine"] or error > plan["parity_max_normalized_component_error"]:
             raise ValueError(f"replay failed: {mid}: {parity[mid]}")
