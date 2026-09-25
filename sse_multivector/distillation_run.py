@@ -297,8 +297,8 @@ def verify_saved(directory):
 def load_gpu_packages(config):
     # FLA dispatches to Triton even for CPU tensors if importable. Keep its
     # packaged CUDA kernels optional so this image also supports CPU execution.
-    if config["device"] == "cuda" and os.environ.get("DISTILLATION_GPU_PACKAGES"):
-        site.addsitedir(os.environ["DISTILLATION_GPU_PACKAGES"])
+    if config["device"] == "cuda":
+        site.addsitedir(str(Path(sys.prefix).parent / "distillation-gpu"))
 
 
 def load_model(config, adapter=None):

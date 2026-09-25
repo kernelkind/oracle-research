@@ -15,6 +15,7 @@ from pathlib import Path
 import re
 import shlex
 import shutil
+import signal
 import subprocess
 import sys
 import tarfile
@@ -31,8 +32,11 @@ CODE_FILES = (
     "sse_multivector/distillation_data.py", "sse_multivector/extraction_pipeline.py",
     "sse_multivector/mask_positions.py", "sse_multivector/distillation/requirements.lock",
     "sse_multivector/distillation/requirements-gpu.lock",
+    "sse_multivector/distillation_start.py",
+    "sse_multivector/distillation_vast.py", "sse_multivector/distillation/vast-launch.json",
     "sse_multivector/distillation/Dockerfile",
     "gte/full_build_package.py",
+    "gte/calibration_package.py", "gte/vast_private_create.py",
 )
 REMOTE_BASE = "/workspace/distillation"
 REMOTE_PYTHON = "/opt/distillation-venv/bin/python"
@@ -84,9 +88,9 @@ def code_hashes():
     return {name: sha256(CODE_ROOT / name) for name in CODE_FILES}
 
 
-def prepare(config_paths, output, timeout_seconds):
+def prepare(config_paths, output, timeout_seconds, through="report"):
     """Copy only explicit inputs; no source code, credentials or host config."""
-    if timeout_seconds <= 0 or not config_paths:
+    if timeout_seconds <= 0 or not config_paths or through not in ("preflight", "baseline", "train", "report"):
         raise ValueError("runs and a positive timeout are required")
     output = Path(output).resolve()
     if output.exists():
@@ -123,7 +127,7 @@ def prepare(config_paths, output, timeout_seconds):
             relative = "configs/" + name + ".json"
             write_json(staging / relative, config)
             runs.append(relative)
-        write_json(staging / "job.json", {"runs": runs, "timeout_seconds": timeout_seconds,
+        write_json(staging / "job.json", {"runs": runs, "timeout_seconds": timeout_seconds, "through": through,
                                           "code": code_hashes()})
         write_manifest(staging, staging / "manifest.json", "distillation-inputs")
         staging.rename(output)
@@ -219,10 +223,16 @@ def remote_start(root):
 
 
 def remote_worker(root, lock_fd):
+    def stop(signum, frame):
+        raise RuntimeError("stopped by controller")
+    signal.signal(signal.SIGTERM, stop)
     # Parent may still be publishing the PID while this process starts.
     with locked_wait(root / ".start.lock"):
         state = read_json(root / "state.json")
     try:
+        write_json(root / "worker-ready.json", {"pid": os.getpid()})
+        if (root / "stop-requested").exists():
+            raise RuntimeError("stopped by controller")
         os.fstat(lock_fd)
         job = verify_package(root / "package")
         environment = {**os.environ, "PYTHONPATH": str(CODE_ROOT), "PYTHONUNBUFFERED": "1"}
@@ -232,9 +242,9 @@ def remote_worker(root, lock_fd):
                 raise TimeoutError("experiment exceeded its frozen runtime limit")
             name = Path(config).stem
             with (root / "results" / (name + ".log")).open("a") as log:
-                result = subprocess.run(
+                result = run_process(
                     [sys.executable, "-m", "sse_multivector.distillation_run",
-                     "package/" + config, "--output", "results/" + name], cwd=root,
+                     "package/" + config, "--output", "results/" + name, "--through", job["through"]], cwd=root,
                     stdout=log, stderr=subprocess.STDOUT, env=environment, timeout=remaining)
             if result.returncode:
                 raise RuntimeError(f"run {name} failed with exit code {result.returncode}; see {name}.log")
@@ -246,6 +256,28 @@ def remote_worker(root, lock_fd):
         state["finished"] = time.time()
         write_json(root / "state.json", state)
         os.close(lock_fd)
+
+
+def remote_stop(root):
+    state = remote_status(root)
+    if state["state"] != "running":
+        return state
+    (root / "stop-requested").touch()
+    deadline = time.time() + 60
+    while worker_running(root):
+        ready = root / "worker-ready.json"
+        if ready.exists() and read_json(ready)["pid"] == state["pid"]:
+            try:
+                os.kill(state["pid"], signal.SIGTERM)
+            except ProcessLookupError:
+                pass
+            break
+        if time.time() >= deadline:
+            raise TimeoutError("worker did not acknowledge stop")
+        time.sleep(.1)
+    while worker_running(root) and time.time() < deadline:
+        time.sleep(.1)
+    return remote_status(root)
 
 
 @contextlib.contextmanager
@@ -281,10 +313,37 @@ def ssh_command(target, output, operation, root):
             "-o", "UserKnownHostsFile=" + str(output / "known_hosts"), host, remote]
 
 
+def run_process(command, timeout, **kwargs):
+    """Bound the whole process group, including download/training children."""
+    with subprocess.Popen(command, start_new_session=True, **kwargs) as process:
+        try:
+            process.wait(timeout=timeout)
+        except BaseException:
+            os.killpg(process.pid, signal.SIGKILL)
+            process.wait()
+            raise
+        return process
+
+
+def retry_connection(action, deadline):
+    # A transport loss is safe to retry: remote starts are locked and completed
+    # results are immutable. Application errors must remain visible.
+    recovery_deadline = deadline
+    while time.time() < recovery_deadline:
+        try:
+            return action()
+        except (ConnectionError, subprocess.TimeoutExpired):
+            recovery_deadline = min(recovery_deadline, time.time() + 300)
+            time.sleep(min(5, max(0, recovery_deadline - time.time())))
+    raise TimeoutError("SSH connection did not recover before the deployment deadline")
+
+
 def remote_json(target, output, operation, root):
     result = subprocess.run(ssh_command(target, output, operation, root),
                             capture_output=True, text=True, timeout=120)
     if result.returncode:
+        if result.returncode == 255:
+            raise ConnectionError(f"SSH {operation} connection failed")
         raise RuntimeError(f"SSH {operation} failed: {result.stderr.strip()}")
     return json.loads(result.stdout)
 
@@ -299,6 +358,8 @@ def upload(package, target, output, root):
             if source.poll() is None:
                 source.terminate()
         status = source.wait()
+    if result.returncode == 255:
+        raise ConnectionError("package upload connection failed")
     if result.returncode or status:
         raise RuntimeError("package upload failed: " + result.stderr.decode(errors="replace"))
 
@@ -314,6 +375,8 @@ def retrieve(target, output, root):
         result = subprocess.run(ssh_command(target, output, "_export", root),
                                 stdout=archive, stderr=subprocess.PIPE, timeout=3600)
     if result.returncode:
+        if result.returncode == 255:
+            raise ConnectionError("result retrieval connection failed")
         raise RuntimeError("result retrieval failed: " + result.stderr.decode(errors="replace"))
     with tarfile.open(archive_path) as archive:
         archive.extractall(staging, filter="data")
@@ -326,7 +389,23 @@ def retrieve(target, output, root):
     return state
 
 
-def operate(package, output, target, start_only=False):
+def operate(package, output, target, start_only=False, stop=False):
+    job = verify_package(Path(package))
+    output = Path(output).resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    # Persist the deadline, so reconnects cannot extend rental work indefinitely.
+    with locked(output / ".operator.lock"):
+        result = output / "result/deployment.json"
+        if result.exists() and read_json(result)["state"] != "interrupted":
+            return operate_once(package, output, target, start_only, stop)
+        path = output / "deadline.json"
+        if not path.exists():
+            write_json(path, {"deadline": time.time() + job["timeout_seconds"] + 600})
+        return retry_connection(lambda: operate_once(package, output, target, start_only, stop),
+                                time.time() + 120 if stop else read_json(path)["deadline"])
+
+
+def operate_once(package, output, target, start_only=False, stop=False):
     package, output = Path(package).resolve(), Path(output).resolve()
     verify_package(package)
     digest = sha256(package / "manifest.json")
@@ -348,6 +427,9 @@ def operate(package, output, target, start_only=False):
             # Keep retrieved evidence while an explicit repeat resumes the job.
             (output / "result").rename(output / f"interrupted-{state['starts']}")
         state = remote_json(target, output, "_status", root)
+        if stop:
+            remote_json(target, output, "_stop", root)
+            return retrieve(target, output, root)
         if state["state"] == "missing":
             if state["code"] != code_hashes():
                 raise ValueError("remote container differs from the prepared code")
@@ -368,6 +450,7 @@ def main():
     prepare_parser.add_argument("--config", type=Path, action="append", required=True)
     prepare_parser.add_argument("--output", type=Path, required=True)
     prepare_parser.add_argument("--timeout-seconds", type=int, required=True)
+    prepare_parser.add_argument("--through", choices=("preflight", "baseline", "train", "report"), default="report")
     offer_parser = commands.add_parser("check-offer", help="validate a saved quote without renting")
     offer_parser.add_argument("--settings", type=Path, required=True)
     offer_parser.add_argument("--offers", type=Path, required=True)
@@ -379,14 +462,15 @@ def main():
     run_parser.add_argument("--port", type=int, default=22)
     run_parser.add_argument("--identity", type=Path, required=True)
     run_parser.add_argument("--start-only", action="store_true")
-    for name in ("_receive", "_start", "_status", "_worker", "_export"):
+    run_parser.add_argument("--stop", action="store_true")
+    for name in ("_receive", "_start", "_status", "_worker", "_export", "_stop"):
         remote = commands.add_parser(name, help=argparse.SUPPRESS)
         remote.add_argument("--root", type=Path, required=True)
         if name == "_worker":
             remote.add_argument("--lock-fd", type=int, required=True)
     args = parser.parse_args()
     if args.operation == "prepare":
-        result = {"package_sha256": prepare(args.config, args.output, args.timeout_seconds)}
+        result = {"package_sha256": prepare(args.config, args.output, args.timeout_seconds, args.through)}
     elif args.operation == "check-offer":
         offers = read_json(args.offers)
         if isinstance(offers, dict):
@@ -397,7 +481,7 @@ def main():
         result = check_offer(read_json(args.settings), matches[0])
     elif args.operation == "run":
         result = operate(args.package, args.output,
-            {"host": args.host, "port": args.port, "identity": str(args.identity.resolve())}, args.start_only)
+            {"host": args.host, "port": args.port, "identity": str(args.identity.resolve())}, args.start_only, args.stop)
     else:
         if args.root.parent != Path(REMOTE_BASE) or not re.fullmatch(r"[a-f0-9]{64}", args.root.name):
             raise ValueError("invalid remote experiment directory")
@@ -407,7 +491,7 @@ def main():
         if args.operation == "_worker":
             remote_worker(args.root, args.lock_fd)
             return
-        result = {"_receive": remote_receive, "_start": remote_start, "_status": remote_status}[args.operation](args.root)
+        result = {"_receive": remote_receive, "_start": remote_start, "_status": remote_status, "_stop": remote_stop}[args.operation](args.root)
     print(json.dumps(result))
     if args.operation == "run" and result.get("state") in ("failed", "interrupted"):
         raise SystemExit(1)

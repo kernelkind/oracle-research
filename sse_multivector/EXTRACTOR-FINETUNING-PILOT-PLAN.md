@@ -203,12 +203,19 @@ fresh VM and passed again for the updated image: package verification,
 two sequential runs, reconnect, completed-result reuse, failure retrieval and
 runtime-limit enforcement. The SSH target received its inputs exclusively
 through the production operator; it had no shared source or input volume.
-The final image also passed `--through preflight` for all three frozen candidate
-configurations using the actual dataset and cached pinned tokenizers, offline
-inside the VM. `target/distillation-pilot-v1/launch-preparation.json` records the
-exported image ID/archive hash, package hash, source/configuration hashes and
-validation reports. It explicitly records that the image is unpublished and
-that no full-size GPU run has occurred. The VM is stopped.
+An audit then reproduced an SSH-specific defect: OpenSSH discarded the
+environment variable used to locate the GPU packages. Those earlier image and
+package receipts are superseded. GPU packages now resolve from the installed
+Python interpreter's prefix. The image owns its SSH entrypoint and explicitly
+preserves the runtime PATH, NVIDIA library path and CUDA device selection.
+Vast's args mode uses that same entrypoint without injecting startup scripts.
+The VM tests CUDA-config preflight and FLA imports through actual SSH sessions,
+as well as runtime-limit and early-stop result retrieval. Rental lifecycle tests
+simulate the provider boundary while running the real SSH operator: creation,
+lost acknowledgements, success/failure retrieval and verified destruction.
+`target/distillation-pilot-v1/launch-preparation.json` records the current
+exported image, package identities and completed validation. Nothing is published;
+no full-size GPU run has occurred. These CPU checks cannot prove GPU execution.
 
 Run from the repository root:
 
@@ -237,6 +244,12 @@ resumes it and compares weights with an uninterrupted run. A successful VM run
 exports `results/container.tar.gz` for local import and registry publication; the VM
 disk, image, model weights, data and logs remain ignored under `target/`.
 
+`distillation_deploy prepare --through preflight` freezes a package that only
+checks tokenization and dependencies. For offline validation of real candidates,
+use their cached pinned tokenizer directories as the local model paths; no full
+weights are required. Pass that package to the VM with `--preflight-package`.
+It runs through the same uploaded-package SSH path, on the actual pilot data.
+
 The VM also starts a separate container from that image, accessible over SSH
 on an internal Docker network. That target has no source checkout or shared
 input volume. `distillation_deploy.py` prepares a hashed input package locally,
@@ -262,7 +275,7 @@ python3 -m sse_multivector.distillation_deploy prepare \
   --config sse_multivector/distillation/gemma-dense.json \
   --config sse_multivector/distillation/gemma-moe.json \
   --timeout-seconds 43200 \
-  --output target/distillation-pilot-v1/package
+  --output target/distillation-pilot-v1/package-v3
 ```
 
 The output must be new. The package contains data, mask prompts, configurations
@@ -275,7 +288,7 @@ running it, launch from the local checkout matching that package:
 ```sh
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 python3 -m sse_multivector.distillation_deploy run \
-  --package target/distillation-pilot-v1/package \
+  --package target/distillation-pilot-v1/package-v3 \
   --output target/distillation-pilot-v1/deployment \
   --host "$VAST_SSH_HOST" --port "$VAST_SSH_PORT" \
   --identity "$VAST_SSH_KEY"
@@ -283,13 +296,16 @@ python3 -m sse_multivector.distillation_deploy run \
 
 Set the SSH variables from the admitted instance's endpoint and local key.
 The command transfers inputs, starts all runs, waits and retrieves logs,
-checkpoints, adapters and reports. Repeat the exact command after a connection
-failure; completed jobs are not rerun. `--start-only` returns after launch.
+checkpoints, adapters and reports. Connection failures get a bounded automatic
+recovery window; completed jobs are not rerun. `--start-only` returns after launch.
+`--stop` stops the worker and retrieves partial results. Training failures are
+retrieved without retrying training. Deadline handling kills subprocess groups,
+including download/training children.
 The worker's frozen runtime limit includes all configured runs and survives
 reconnects. It is a worker timeout, not a provider billing cap. Instance rental,
-registry publication, ledger admission and instance destruction are outside
-this SSH operator. The launch configuration below specifies those limits and
-required actions. No registry publication or paid deployment has occurred.
+registry publication and ledger admission precede this SSH operator.
+`distillation_vast.py` controls creation, readiness, the SSH operator and
+destruction automatically. No registry publication or paid deployment has occurred.
 
 `distillation_run.py CONFIG --output DIRECTORY` performs baseline → training →
 reload → evaluation → report. Invoke it as
@@ -338,7 +354,8 @@ Publish the exact VM-exported image only after the user lifts the current hold.
 - Run Qwen, Gemma dense and Gemma MoE sequentially in the same container.
   Downloads total approximately 170 GB before image/input transfers; keep the
   pinned Hugging Face weights cached on the instance for baseline, training
-  and reload. No access token was needed for their metadata on September 25.
+  and reload. Anonymous HEAD requests to one pinned weight shard per candidate
+  returned HTTP 200 on September 25; no Hugging Face token is required by this setup.
 - Maximum returned price **$1.60/hour including 300 GB storage**, for at most
   **14 hours from instance creation**. The worker gets 12 hours for all three
   runs including model downloads; setup and retrieval share the remaining two.
@@ -367,19 +384,39 @@ price and the total allowance. It performs no paid action and does not establish
 ledger admission. Refresh offers using the configuration's `search_query` and
 `search_options`; refresh/check again immediately before accepting a rental.
 
-For the eventual approved deployment: reconcile and commit the budget ledger,
-reserve the remaining pilot maximum, then use `vastai create instance` with the
-chosen offer, published image digest, configured label and `create_options`.
-Use the existing private-registry login procedure in
-[`gte/vast-calibration-runbook.txt`](../gte/vast-calibration-runbook.txt), with a
-read-only pull credential supplied locally. Never put it in the package or logs.
-Record creation time and instance ID; invoke the SSH operator above as soon as
-SSH is ready. Retrieve outputs on success or failure, then destroy the instance
-with `vastai destroy instance INSTANCE_ID -y --raw` and verify destruction.
-Destroy by the 14-hour rental deadline even if work or retrieval is incomplete;
-monitor transfers against their allowances. Reconcile actual charges afterward.
-The worker timeout alone does not stop Vast billing. No rental is admitted by
-this preparation, and completion within these limits is not yet measured.
+For the eventual approved deployment: publish the exact VM-exported image,
+reconcile and commit the budget ledger, then reserve the pilot maximum. The
+controller requires a `distillation_reservation` entry binding `reservation_id`,
+`image` (registry digest), `package_sha256`, `deployment_directory` and
+`reserved_maximum_charge_cents` (2500). Publication remains on hold; this
+preparation does not create a reservation.
+
+Run `python3 -m sse_multivector.distillation_vast` locally with `--package`,
+`--output`, `--image`, `--offer-id`, `--identity`, `--pull-credential-file` and
+`--reservation-id`. Use a persistent local service so closing a terminal does
+not stop the controller. It checks the committed reservation, matching SSH key,
+cached Vast 1.4.1 CLI and fresh offer before creation. The registry pull token
+is read locally and passed through stdin to the existing
+`gte/vast_private_create.py`; it never enters the image, input package or logs.
+The Vast API credential also stays local.
+
+The controller creates at most once, using an exclusive attempt marker and a
+unique saved label. A lost response is recovered by listing that label; it
+never rents a replacement automatically. It uses args mode, the baked
+`/usr/local/bin/distillation-sshd` entrypoint, port 22 and an encoded public key.
+It verifies the actual image, hardware identity, rate and transfer counters,
+waits for startup, runs the SSH operator and retrieves verified outputs.
+Success and failure both lead to destruction, followed by a check that the
+instance has disappeared. Controller state and deadlines persist on disk.
+It stops work 15 minutes before the 14-hour deadline, allowing bounded partial
+retrieval and destruction retries. Application failures do not trigger code
+edits, installs or additional training attempts on the rental.
+
+The local controller must remain available. An unreachable provider or failed
+GPU/host can still prevent retrieval or destruction; software cannot guarantee
+zero crashes or a provider billing cutoff. The controller reports an unconfirmed
+destruction instead of claiming success. Reconcile actual charges afterward.
+Completion within the rental allowance remains unmeasured.
 
 The later final fine-tune (08) also prepares trained weights, necessary
 supporting files, usage instructions and evaluation results for publication.

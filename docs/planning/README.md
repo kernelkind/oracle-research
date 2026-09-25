@@ -109,6 +109,10 @@ requirement also covers deployment: frozen inputs uploaded over SSH to a
 separate container, automatic execution, reconnect and verified retrieval,
 following the existing GTE Vast process. Code and dependencies are built into
 the image locally; rented servers receive inputs and run the installed code.
+The same image-owned SSH entrypoint is tested locally and configured for Vast
+args mode. The local controller automates creation, reconnect, result retrieval
+and verified destruction. A reproduced SSH GPU-package lookup defect is fixed;
+CUDA preflight over SSH and simulated-provider lifecycle tests cover this path.
 Candidate settings and Vast limits are frozen locally: BF16 LoRA, 128 steps
 per candidate, and one 96 GB GPU within the approved $25 total. The user
 explicitly withheld publication. GPU compatibility, memory use, speed and

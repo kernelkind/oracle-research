@@ -13,7 +13,8 @@ from pathlib import Path
 
 
 def vast_create_arguments(
-    offer_id: str, image: str, label: str, docker_pat: str
+    offer_id: str, image: str, label: str, docker_pat: str, *,
+    disk_gb: int = 200, entrypoint: str | None = None, environment: str | None = None,
 ) -> list[str]:
     if not offer_id.isdecimal() or int(offer_id) <= 0:
         raise ValueError("offer ID must be a positive integer")
@@ -21,7 +22,9 @@ def vast_create_arguments(
         raise ValueError("image and label must be immutable and nonempty")
     if not docker_pat or any(character.isspace() for character in docker_pat):
         raise ValueError("Docker credential must be one nonempty token")
-    return [
+    if type(disk_gb) is not int or disk_gb <= 0:
+        raise ValueError("disk size must be a positive integer")
+    arguments = [
         "vastai",
         "create",
         "instance",
@@ -31,16 +34,19 @@ def vast_create_arguments(
         "--login",
         f"-u kernelkind -p {docker_pat} docker.io",
         "--disk",
-        "200",
+        str(disk_gb),
         "--label",
         label,
-        "--ssh",
-        "--direct",
         "--cancel-unavail",
         "--raw",
         "--retry",
         "1",
     ]
+    if entrypoint is None:
+        arguments[arguments.index("--cancel-unavail"):arguments.index("--cancel-unavail")] = ["--ssh", "--direct"]
+    else:
+        arguments += ["--entrypoint", entrypoint, "--env", environment or "", "--args"]
+    return arguments
 
 
 def write_attempt_marker(path: Path) -> None:
@@ -153,13 +159,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("label")
     parser.add_argument("attempt_marker", type=Path)
     parser.add_argument("outcome", type=Path)
+    parser.add_argument("--disk-gb", type=int, default=200)
+    parser.add_argument("--entrypoint")
+    parser.add_argument("--environment")
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
     docker_pat = sys.stdin.read().strip()
-    arguments = vast_create_arguments(args.offer_id, args.image, args.label, docker_pat)
+    arguments = vast_create_arguments(args.offer_id, args.image, args.label, docker_pat,
+        disk_gb=args.disk_gb, entrypoint=args.entrypoint, environment=args.environment)
     del docker_pat
     from vastai.cli.main import main as vast_main
 

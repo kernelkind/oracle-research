@@ -5,6 +5,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from sse_multivector import distillation_deploy as deploy
 from sse_multivector.distillation_run import read_json, write_json, sha256
@@ -12,6 +13,17 @@ from sse_multivector.test_distillation_data import DistillationDataTests
 
 
 class PackageTests(unittest.TestCase):
+    def test_connection_retry_is_bounded_and_does_not_retry_application_errors(self):
+        with patch.object(deploy.time, "sleep"), patch.object(deploy.time, "time", return_value=0):
+            with patch.object(deploy, "remote_json", side_effect=[ConnectionError("dropped"), {"state": "running"}]) as call:
+                result = deploy.retry_connection(lambda: deploy.remote_json(None, None, None, None), 10)
+                self.assertEqual(result["state"], "running")
+                self.assertEqual(call.call_count, 2)
+        with patch.object(deploy.time, "time", return_value=0), self.assertRaisesRegex(RuntimeError, "bad code"):
+            deploy.retry_connection(lambda: (_ for _ in ()).throw(RuntimeError("bad code")), 10)
+        with patch.object(deploy.time, "time", return_value=20), self.assertRaises(TimeoutError):
+            deploy.retry_connection(lambda: None, 10)
+
     def test_offer_checks_returned_storage_inclusive_price_and_total_budget(self):
         settings = read_json(Path(__file__).parent / "distillation/vast-launch.json")
         offer = {**settings["offer_equals"], **settings["offer_minimums"],
@@ -34,14 +46,21 @@ class PackageTests(unittest.TestCase):
             write_json(config, {"data": str(root / "prepared"), "mask_prompt": str(root / "masks.txt"),
                                 "model": str(model), "revision": None})
             package = root / "package"
-            deploy.prepare([config], package, 600)
+            deploy.prepare([config], package, 600, through="preflight")
             job = deploy.verify_package(package)
             copied = read_json(package / job["runs"][0])
             for key in ("data", "mask_prompt", "model"):
                 self.assertTrue(copied[key].startswith("package/"))
                 self.assertNotIn(str(root), copied[key])
             self.assertEqual(job["timeout_seconds"], 600)
+            self.assertEqual(job["through"], "preflight")
             self.assertFalse(any(p.suffix == ".py" for p in package.rglob("*")))
+            output = root / "deployment"
+            write_json(output / "deadline.json", {"deadline": 1})
+            saved = {"state": "complete", "package_sha256": sha256(package / "manifest.json")}
+            write_json(output / "result/deployment.json", saved)
+            deploy.write_manifest(output / "result", output / "result/manifest.json", "distillation-results")
+            self.assertEqual(deploy.operate(package, output, {"host": "unused"}), saved)
             mask = package.parent / copied["mask_prompt"]
             mask.write_text("changed")
             with self.assertRaisesRegex(ValueError, "manifest"):
@@ -62,6 +81,21 @@ class SSHDeploymentTests(unittest.TestCase):
                 "--package", str(package), "--output", str(output),
                 "--host", self.target["host"], "--port", str(self.target["port"]),
                 "--identity", self.target["identity"], *extra]
+
+    def test_cuda_preflight_and_runtime_environment_through_image_entrypoint(self):
+        config = read_json(self.fixture / "config.json")
+        config["device"] = "cuda"
+        path = self.root / "cuda.json"
+        write_json(path, config)
+        package, output = self.root / "cuda-package", self.root / "cuda-deployment"
+        deploy.prepare([path], package, 60, through="preflight")
+        subprocess.run(self.command(package, output), check=True, timeout=120)
+        manifest = read_json(output / "result/cuda/manifest.json")
+        self.assertEqual(manifest["packages"]["fla-core"], "0.5.2")
+        self.assertTrue((output / "result/cuda/preflight.json").exists())
+        command = deploy.ssh_command(self.target, output, "_status", "/unused")
+        command[-1] = "cd /work && python -c 'import os,sys; assert sys.prefix == \"/opt/distillation-venv\"; assert \"/usr/local/nvidia/lib64\" in os.environ[\"LD_LIBRARY_PATH\"]; from sse_multivector.distillation_run import load_gpu_packages; load_gpu_packages({\"device\":\"cuda\"}); from fla.ops.gated_delta_rule import chunk_gated_delta_rule'"
+        subprocess.run(command, check=True, timeout=60)
 
     def test_remote_job_survives_operator_exit_and_retrieves_verified_results(self):
         config = read_json(self.fixture / "config.json")
@@ -84,6 +118,7 @@ class SSHDeploymentTests(unittest.TestCase):
             report = read_json(output / "result" / name / "report.json")
             self.assertTrue(report["training"]["reload_matches"])
         before = sha256(output / "result" / "manifest.json")
+        write_json(output / "deadline.json", {"deadline": 1})
         subprocess.run(self.command(package, output), check=True, timeout=30)
         self.assertEqual(sha256(output / "result" / "manifest.json"), before)
 
@@ -115,6 +150,20 @@ class SSHDeploymentTests(unittest.TestCase):
         result = read_json(output / "result" / "deployment.json")
         self.assertEqual(result["state"], "failed")
         self.assertLess(result["finished"] - result["deadline"], 10)
+
+    def test_early_stop_retrieves_partial_results(self):
+        config = read_json(self.fixture / "config.json")
+        config["max_steps"] = 1000000
+        path = self.root / "stopped.json"
+        write_json(path, config)
+        package, output = self.root / "stopped-package", self.root / "stopped-deployment"
+        deploy.prepare([path], package, 600)
+        subprocess.run(self.command(package, output, "--start-only"), check=True, timeout=60)
+        result = subprocess.run(self.command(package, output, "--stop"), capture_output=True, text=True, timeout=60)
+        self.assertEqual(result.returncode, 1)
+        state = read_json(output / "result/deployment.json")
+        self.assertEqual(state["state"], "failed")
+        self.assertIn("stopped by controller", state["error"])
 
 
 if __name__ == "__main__":

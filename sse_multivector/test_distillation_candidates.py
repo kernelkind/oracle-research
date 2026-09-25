@@ -3,6 +3,7 @@ import tempfile
 import unittest
 import subprocess
 import sys
+import os
 from pathlib import Path
 
 from sse_multivector import distillation_run as runner
@@ -48,7 +49,8 @@ class GPUPackageTests(unittest.TestCase):
             "load_gpu_packages({'device': 'cuda'}); "
             "from fla.ops.gated_delta_rule import chunk_gated_delta_rule, fused_recurrent_gated_delta_rule; "
             "from importlib.metadata import version; assert version('fla-core') == '0.5.2'"],
-            check=True, timeout=60)
+            check=True, timeout=60,
+            env={k: v for k, v in os.environ.items() if k != "DISTILLATION_GPU_PACKAGES"})
 
 
 class CandidateArchitectureTests(unittest.TestCase):

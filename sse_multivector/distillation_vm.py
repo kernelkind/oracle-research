@@ -17,6 +17,7 @@ import time
 import urllib.request
 
 from sse_multivector.distillation_run import sha256, write_json
+from sse_multivector.distillation_deploy import verify_package
 
 
 IMAGE_URL = "https://cloud-images.ubuntu.com/noble/20260911/noble-server-cloudimg-amd64.img"
@@ -24,7 +25,7 @@ IMAGE_SHA256 = "612b2c0cc1bc413a6cb8c38fd611794caf0f2b436c50013d8b3794db12ad7354
 PACKAGE_FILES = (
     "distillation_run.py", "distillation_data.py", "extraction_pipeline.py", "mask_positions.py",
     "test_distillation_run.py", "test_distillation_data.py", "test_distillation_deploy.py", "distillation_deploy.py",
-    "test_distillation_candidates.py",
+    "test_distillation_candidates.py", "distillation_start.py", "distillation_vast.py", "test_distillation_vast.py",
     "distillation/vast-launch.json",
     "distillation/Dockerfile", "distillation/requirements.in", "distillation/requirements.lock",
     "distillation/requirements-gpu.in", "distillation/requirements-gpu.lock",
@@ -40,6 +41,8 @@ def prepare_package(source, destination):
         shutil.copyfile(source_path, target)
     (destination / "gte").mkdir()
     shutil.copyfile(source / "gte/full_build_package.py", destination / "gte/full_build_package.py")
+    shutil.copyfile(source / "gte/calibration_package.py", destination / "gte/calibration_package.py")
+    shutil.copyfile(source / "gte/vast_private_create.py", destination / "gte/vast_private_create.py")
     write_json(destination / "package.json", {name: sha256(destination / "sse_multivector" / name)
                                              for name in PACKAGE_FILES} | {
         "gte/full_build_package.py": sha256(destination / "gte/full_build_package.py")})
@@ -61,7 +64,9 @@ def verified_image(cache):
     return path.resolve()
 
 
-def execute(directory, cache):
+def execute(directory, cache, preflight_package=None):
+    if preflight_package is not None and verify_package(preflight_package)["through"] != "preflight":
+        raise ValueError("VM candidate validation requires a preflight package")
     for command in ("qemu-system-x86_64", "qemu-img", "genisoimage", "ssh", "ssh-keygen", "scp"):
         if not shutil.which(command):
             raise RuntimeError(f"missing local prerequisite: {command}")
@@ -128,6 +133,10 @@ def execute(directory, cache):
                     time.sleep(2)
                 if not connected:
                     raise TimeoutError("VM SSH did not become ready")
+                if preflight_package is not None:
+                    subprocess.run([*ssh, "mkdir -p " + result_directory], check=True, timeout=30)
+                    subprocess.run(["scp", *options, "-P", str(port), "-r", str(preflight_package),
+                        "root@127.0.0.1:" + result_directory + "/preflight-package"], check=True, timeout=300)
                 script = "set -euo pipefail\nresult_dir=" + result_directory + "\n" + """
 cloud-init status --wait
 mkdir -p /source "$result_dir"
@@ -135,10 +144,10 @@ mount -t 9p -o trans=virtio,version=9p2000.L,ro source /source
 docker build --tag notedeck-distillation:local -f /source/sse_multivector/distillation/Dockerfile /source
 docker image inspect notedeck-distillation:local > "$result_dir/image.json"
 docker run --rm --network none -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1 \\
-  notedeck-distillation:local python -m unittest -v sse_multivector.test_distillation_candidates
+  --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v sse_multivector.test_distillation_candidates
 docker run --rm --network none -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1 \\
   -e DISTILLATION_TEST_OUTPUT=/results/workflow -v "$result_dir":/results \\
-  notedeck-distillation:local python -m unittest -v \\
+  --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \\
   sse_multivector.test_distillation_run
 # Launch the exact image as a separate SSH target, as Vast does. It has no
 # source mount or fixture volume; the operator must transfer every input.
@@ -152,13 +161,16 @@ cleanup_target() {
   rm -f "$result_dir/deployment-key" "$result_dir/deployment-key.pub"
 }
 trap cleanup_target EXIT
+# This is the image's production entrypoint, with only its public SSH key supplied.
+public_key=$(base64 -w0 "$result_dir/deployment-key.pub")
 docker run -d --name distillation-target --network distillation-local \\
-  --network-alias target -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1 \\
-  --entrypoint /bin/bash notedeck-distillation:local -c \\
-  'mkdir -p /run/sshd; ssh-keygen -A; exec /usr/sbin/sshd -D -e -o PasswordAuthentication=no -o PermitRootLogin=prohibit-password'
-docker cp "$result_dir/deployment-key.pub" distillation-target:/tmp/authorized_keys
-docker exec distillation-target bash -c \\
-  'mkdir -p /root/.ssh; cp /tmp/authorized_keys /root/.ssh/authorized_keys; chmod 700 /root/.ssh; chmod 600 /root/.ssh/authorized_keys'
+  --network-alias target -e DISTILLATION_SSH_PUBLIC_KEY_BASE64="$public_key" \\
+  notedeck-distillation:local
+for attempt in $(seq 1 30); do
+  if docker exec distillation-target test -f /etc/ssh/ssh_host_ed25519_key; then break; fi
+  test "$(docker inspect -f '{{.State.Running}}' distillation-target)" = true
+  sleep 1
+done
 cat > "$result_dir/ssh-target.json" <<'TARGET'
 {"host":"root@target","port":22,"identity":"/results/deployment-key"}
 TARGET
@@ -166,7 +178,15 @@ docker run --rm --network distillation-local \\
   -e DISTILLATION_TEST_OUTPUT=/results/workflow \\
   -e DISTILLATION_DEPLOY_OUTPUT=/results/deployment-tests \\
   -e DISTILLATION_SSH_TARGET=/results/ssh-target.json -v "$result_dir":/results \\
-  notedeck-distillation:local python -m unittest -v sse_multivector.test_distillation_deploy
+  --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \\
+  sse_multivector.test_distillation_deploy sse_multivector.test_distillation_vast
+if test -d "$result_dir/preflight-package"; then
+  docker run --rm --network distillation-local \\
+    -v "$result_dir":/results --entrypoint /opt/distillation-venv/bin/python \\
+    notedeck-distillation:local -m sse_multivector.distillation_deploy run \\
+    --package /results/preflight-package --output /results/candidate-preflight \\
+    --host root@target --port 22 --identity /results/deployment-key
+fi
 docker logs distillation-target > "$result_dir/ssh-target.log" 2>&1
 rm "$result_dir/deployment-key" "$result_dir/deployment-key.pub"
 docker save notedeck-distillation:local | gzip -1 > "$result_dir/container.tar.gz"
@@ -214,8 +234,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--directory", type=Path, required=True)
     parser.add_argument("--cache", type=Path, default=Path("target/distillation-vm-cache"))
+    parser.add_argument("--preflight-package", type=Path)
     args = parser.parse_args()
-    execute(args.directory, args.cache)
+    execute(args.directory, args.cache, args.preflight_package)
 
 
 if __name__ == "__main__":

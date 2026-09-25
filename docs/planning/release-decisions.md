@@ -210,7 +210,14 @@ Vast: prepare an immutable image and frozen inputs locally, upload the inputs,
 start the experiment automatically, reconnect and retrieve verified results.
 Follow the existing GTE Vast deployment pattern; no manual code edits on the
 rented server. The distillation SSH operator runs against a separate container
-inside the VM, using the image's installed code and dependencies. Candidate
+inside the VM, using the image's installed code and dependencies. Deployment
+now uses the image's own SSH entrypoint in Vast args mode, preserving
+the tested startup. A reproduced SSH GPU-package lookup defect was fixed; the
+VM exercises CUDA preflight over SSH. The local rental controller automates
+creation, bounded reconnect, result retrieval and verified destruction, with
+provider responses simulated in local lifecycle tests. No code edits or package
+installs belong on a running rental. These tests cannot guarantee GPU execution
+or provider availability. Candidate
 quality, full-model memory use and CUDA compatibility are checked during
 the actual pilot, without a separate throwaway GPU training run. Candidate
 recipes and Vast limits are now frozen locally: BF16 LoRA, 128 steps per
