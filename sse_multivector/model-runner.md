@@ -480,6 +480,18 @@ production preparation and decoding functions:
   retains every case, including the known group/title mismatch. PPv10 evidence
   remains unchanged; no new cosine comparison or production promotion was made.
 
+  The user judged most PPv11 scores too low and agreed to three provisional
+  evaluation ranges: `Sa01eaf30fd-V0586` (tea in the short desire post), **60–80**;
+  `S6dde8fffb9-V0974` (coffee shops in the laptop-ban incident), **20–40**;
+  and `Sa01eaf30fd-V1298` (incidental tea in the long diary), **1–5**.
+  These are human calibration judgments, not mathematically derived percentages.
+  [PPv12](prominence-prompt-goal-v1/ppv12-draft-v1/PPv12.md) is an untested draft
+  against approved PPv11, pending review. It balances the selected content's
+  contribution in context with the meaning supplied by unselected wording.
+  The three anchors remain outside the prompt. Inputs, JSON output and ranking
+  behavior are unchanged; no new inference or production promotion is authorized
+  by preparing the draft.
+
   Alternatively, `path` may point to a saved title experiment's `report.json`
   (`adapter: "titles"` in that report). In this form, `select` names node IDs.
   Each selected title must be valid. Its original packet supplies all member
