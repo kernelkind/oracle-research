@@ -179,6 +179,14 @@ stages or approve a dataset size, hardware rental or spending allocation.
   [existing fine-tuning pilot](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md),
   not the teacher selection.
 
+**Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
+Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third
+candidate replaces T5Gemma 9B–9B PrefixLM instruction-tuned. Compare its mask
+and prominence quality and total training-and-generation cost with the dense
+candidates; lower active parameter count does not establish a cost advantage.
+Training settings, final example format, prominence criteria and spending
+amounts remain open. This candidate selection authorizes no training or rentals.
+
 The [teacher research](../../sse_multivector/TOKEN-USAGE-ESTIMATE-1M-NOTES.md#lower-cost-annotation-models)
 already identifies Muse. A later [12-note diagnostic](../../sse_multivector/frontier-model-comparison-v1/asv6.23-diagnostic-v2/results.md)
 found it promising on subjects with ASv6.23, but with some context omissions.

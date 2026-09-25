@@ -23,8 +23,8 @@ model needs.
 
 Approved requirements:
 
-- Compare Qwen3.8-27B, Gemma 4 31B instruction-tuned, and T5Gemma 9B–9B
-  PrefixLM instruction-tuned.
+- Compare Qwen3.8-27B, Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B
+  instruction-tuned.
 - Include a baseline without task-specific fine-tuning for every model.
 - Check a small hierarchy built from pilot-model outputs before model selection,
   rather than leaving the first downstream check until after final training.
@@ -117,7 +117,16 @@ the separate scale measurements or establish the full build's cost.
 |---|---|---|
 | Qwen3.8-27B | QLoRA | General-model candidate |
 | Gemma 4 31B instruction-tuned | QLoRA | Different pretrained foundation |
-| T5Gemma 9B–9B PrefixLM instruction-tuned | LoRA | Encoder–decoder alternative |
+| Gemma 4 26B-A4B instruction-tuned | Open; published adapter-training path | Mixture-of-experts quality–cost comparison |
+
+The user approved these three candidates on September 24, 2026, replacing
+T5Gemma 9B–9B PrefixLM instruction-tuned with Gemma 4 26B-A4B instruction-tuned.
+The MoE candidate tests whether lower active computation can reduce corpus
+generation cost while preserving mask and prominence quality. Its actual
+batched speed and task quality remain unmeasured; fewer active parameters do
+not establish lower training memory or cost. See the
+[published evidence](EXTRACTOR-FINETUNING-MODEL-RESEARCH.md#gemma-4-26b-a4b).
+This selects candidates, not a training recipe or spending amount.
 
 For each model, evaluate its original released checkpoint before training on
 our annotations. Its existing pretraining and instruction tuning remain intact.
@@ -137,7 +146,7 @@ not a replacement for these three baselines.
 Different models can use appropriate training settings and native input
 formatting. Comparing their practical quality and cost does not isolate the
 effect of architecture alone. A Qwen-only setup test cannot establish that
-Gemma or T5Gemma's training setup works.
+either Gemma checkpoint's training setup works.
 
 ## Proposed data
 
@@ -337,17 +346,18 @@ allocating larger-run spending:
 |---|---|---:|
 | Qwen3.8-27B, QLoRA | One A6000 48GB | 1–4 hours |
 | Gemma 4 31B, QLoRA | One A6000 48GB | 2–6 hours |
-| T5Gemma 9B–9B, LoRA | One H100 80GB | 0.5–3 hours |
+| Gemma 4 26B-A4B, method open | Open | Not estimated |
 
 Allow an additional 1–3 hours per model for downloading, loading, checkpointing,
-and evaluation, excluding annotation work and troubleshooting. T5Gemma's setup
-is the least certain. The [published hardware evidence](EXTRACTOR-FINETUNING-MODEL-RESEARCH.md#published-training-hardware-and-weight-storage)
+and evaluation, excluding annotation work and troubleshooting. The earlier
+T5Gemma runtime estimate does not transfer to Gemma 4 26B-A4B. The
+[published hardware evidence](EXTRACTOR-FINETUNING-MODEL-RESEARCH.md#published-training-hardware-and-weight-storage)
 does not establish measured memory use for this particular workload.
 
 Read-only Vast offer searches on 2026-09-15 found A6000 48GB offers around
 $0.54–0.56/hour and H100 80GB offers around $2.19–2.59/hour, including 200GB
-storage and excluding transfers. The calculations below use rounded planning
-rates of $0.60/hour for an A6000 and $2.60/hour for an H100. Availability and
+storage and excluding transfers. The remaining calculations below use a rounded
+planning rate of $0.60/hour for an A6000. Availability and
 prices can change; no offer was reserved. See [Vast pricing](https://docs.vast.ai/guides/instances/pricing).
 
 ### Larger-training cost scenarios — provisional
@@ -356,11 +366,11 @@ Saved on 2026-09-15 for reference, not as approved dataset sizes or spending.
 Each cell estimates one training run with three passes through the data,
 using the model and GPU pairing above.
 
-| Training notes | Qwen3.8-27B | Gemma 4 31B | T5Gemma 9B–9B |
+| Training notes | Qwen3.8-27B | Gemma 4 31B | Gemma 4 26B-A4B |
 |---:|---:|---:|---:|
-| 10,000 | $6–24 | $12–36 | $13–78 |
-| 25,000 | $15–60 | $30–90 | $33–195 |
-| 50,000 | $30–120 | $60–180 | $65–390 |
+| 10,000 | $6–24 | $12–36 | Not estimated |
+| 25,000 | $15–60 | $30–90 | Not estimated |
+| 50,000 | $30–120 | $60–180 | Not estimated |
 
 These are linear extrapolations from the unmeasured runtime ranges above:
 

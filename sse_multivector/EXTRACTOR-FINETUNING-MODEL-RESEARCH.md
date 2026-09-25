@@ -80,6 +80,16 @@ Unsloth's Gemma 4 training guide also reports that 31B QLoRA works with 22GB GPU
 
 **Judgment.** A strong independent dense-model candidate with both structured-extraction and adapter-training evidence. Neither establishes subject-mask accuracy.
 
+### Gemma 4 26B-A4B
+
+The instruction-tuned MoE checkpoint has approximately 26B total and 3.8B active parameters per token. It is ungated and Apache-2.0 licensed. The Gemma 4 report gives MMLU Pro scores of 82.6 for this model and 85.2 for 31B, while other benchmark gaps are larger. These are reasons to test its retained understanding, not predictions of mask or prominence quality.[^7][^25]
+
+Unsloth publishes an adapter-training notebook for this checkpoint. Its saved 60-step run reports 48.99 GiB peak reserved memory and 22.1 minutes on one A100 80GB. The corresponding 31B notebook reports 21.43 GiB and 6.5 minutes on an A100 40GB. Different hardware and adapter details prevent a controlled speed comparison; neither run establishes minimum memory or our workload's cost. They do show that fewer active parameters do not guarantee cheaper training.[^26]
+
+Lower active computation could reduce corpus-generation cost, but total expert storage, batching, quantization and serving software affect realized throughput. vLLM lists native Gemma 4 and LoRA support. T5Gemma is absent from its native support list, although Transformers supports it; this is uncertainty about an efficient serving path, not an inability to run the model.[^27]
+
+**Judgment.** A credible quality–cost comparison with dense Gemma 31B. Its mask quality, prominence quality and batched generation cost require measurement. Comparing these checkpoints does not isolate architecture alone.
+
 ## Encoder–decoder candidates
 
 ### T5Gemma 9B-9B PrefixLM instruction-tuned
@@ -87,6 +97,8 @@ Unsloth's Gemma 4 training guide also reports that 31B QLoRA works with 22GB GPU
 The model adapts Gemma 2 weights into separate encoder and decoder networks. The released model card reports 2T adaptation tokens; the PrefixLM approach combines prefix-continuation learning with knowledge distillation. Public checkpoint metadata counts **20,333,401,088 parameters**, not 9B total.[^14][^15]
 
 This preserves substantial pretrained knowledge while separating full-input encoding from answer generation. It provides a larger, older-foundation alternative to the smaller T5Gemma 2 release discussed below.
+
+The encoder runs once per input; only the decoder generates each subsequent output token while attending to encoder outputs. The paper reports latency similar to decoder-only Gemma 2 9B for its 9B–9B model, with better evaluated quality. That experiment used 200 GSM8K questions at batch size one and does not establish batched source-mask throughput. Decoder-only models also receive the complete note before generating their first output token.[^14]
 
 **Why PrefixLM first within this family?** Its published generation-oriented results provide a reason to try it, whereas UL2's stronger encoder representations do not directly answer the generated-mask question. This is a starting hypothesis, not a demonstrated superiority on masks. The UL2 checkpoint remains a legitimate comparison.[^14]
 
@@ -127,9 +139,10 @@ The following numbers are **arithmetic estimates for weights alone**, at two byt
 | Nemotron 3 Ultra | 550B | 55B | 1.1 TB |
 | Qwen3.8-27B language model | 27B | — | 54 GB |
 | Gemma 4 31B | Approximately 31B | — | 62 GB |
+| Gemma 4 26B-A4B | Approximately 26B | 3.8B | 52 GB |
 | T5Gemma 9B-9B | 20.33B | — | 40.7 GB |
 
-Parameter counts come from the releases above.[^1][^2][^5][^7][^15] The storage values are calculated, not measured deployments. Mixture-of-experts models use only part of their weights for each token, but the remaining experts must still be stored and made available; active parameter count is not their complete memory footprint.
+Parameter counts come from the releases above.[^1][^2][^5][^7][^15][^25] The storage values are calculated, not measured deployments. Mixture-of-experts models use only part of their weights for each token, but the remaining experts must still be stored and made available; active parameter count is not their complete memory footprint.
 
 Full-parameter fine-tuning additionally maintains trainable state for the model. LoRA trains a much smaller set of added parameters but still requires access to the foundation weights, as illustrated by the adaptation implementations above.[^3][^4][^6] Quantization, sequence length, batch size, parallelism, and optimizer choice materially affect the actual requirement. An inference demonstration on one GPU is not a training-resource estimate.
 
@@ -143,8 +156,9 @@ The public implementation evidence is more concrete than guessing one universal 
 | Qwen3.8-27B | Community 4-bit QLoRA for fact extraction | One RTX 3090, 24GB | Lower-memory task adaptation; different outputs and evaluation from our masks |
 | Gemma 4 31B | Full fine-tuning for receipt-to-JSON extraction | 8 A100 80GB or H100 80GB GPUs in the guide | A concrete structured-extraction training path |
 | Gemma 4 31B | QLoRA training guide and notebook | Reported 22GB GPU memory | Lower-memory adapter-training support; not a measured subject-mask workload |
+| Gemma 4 26B-A4B | Adapter-training notebook, 60 steps | One A100 80GB; 48.99 GiB peak reserved | Working published training example; not a minimum-memory or mask-quality result |
 
-These configurations are **not established minimum requirements**.[^3][^4][^6][^8][^23][^24] They use different tasks and training methods, so their GPU counts do not form a fair efficiency benchmark.
+These configurations are **not established minimum requirements**.[^3][^4][^6][^8][^23][^24][^26] They use different tasks and training methods, so their GPU counts do not form a fair efficiency benchmark.
 
 The economic question remains important because the extractor is intended to replace repeated frontier-model calls. A larger fine-tuned model may be worthwhile if it materially reduces errors or if its batched throughput is favorable. A smaller model may deliver equivalent usable masks at lower cost. Neither result follows from model size alone, and this research does not establish a break-even volume.
 
@@ -178,3 +192,6 @@ The studies use different input distributions, annotation policies, model sizes,
 [^22]: Google, [FLAN-UL2 model card](https://huggingface.co/google/flan-ul2). Pretraining objective, instruction tuning, model size, and comparison with FLAN-T5-XXL.
 [^23]: Thomas Davis, [Donto Qwen3.8-27B predicate extractor](https://huggingface.co/ajaxdavis/donto-qwen3.8-27b-predicate-extractor?library=peft). Community release reporting single-RTX-3090 QLoRA training, multi-stage fact extraction, and limitations; not a source-mask benchmark.
 [^24]: Unsloth, [Gemma 4 fine-tuning guide](https://unsloth.ai/docs/models/gemma-4/train). QLoRA support, reported 22GB memory for the 31B model, and training notebook.
+[^25]: Google, [Gemma 4 26B-A4B instruction-tuned checkpoint](https://huggingface.co/google/gemma-4-26B-A4B-it). Architecture, active parameters, license and access status.
+[^26]: Unsloth, [Gemma 4 26B-A4B text-training notebook](https://github.com/unslothai/notebooks/blob/main/nb/Gemma4_%2826B_A4B%29-Text.ipynb) and [Gemma 4 31B text-training notebook](https://github.com/unslothai/notebooks/blob/main/nb/Gemma4_%2831B%29-Text.ipynb). Saved training outputs inspected September 24, 2026; resource figures describe those demonstrations only.
+[^27]: vLLM, [supported models](https://github.com/vllm-project/vllm/blob/main/docs/models/supported_models.md); Hugging Face, [T5Gemma in Transformers](https://huggingface.co/docs/transformers/model_doc/t5gemma). Serving-support evidence inspected September 24, 2026.
