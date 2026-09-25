@@ -56,6 +56,38 @@ fn render(model: &mut ModelOutputReview, width: u16, height: u16) -> String {
 }
 
 #[test]
+fn merge_review_uses_its_own_labels_and_keeps_before_after_and_evidence_separate() {
+    let mut data = packet();
+    data["labels"] = json!({
+        "source": "Before", "alternate_source": "Full posts", "output": "After",
+        "comment": "TRUE answers", "item": "Merge", "variant": "Result"
+    });
+    let mut model = load(&data, None);
+    let screen = render(&mut model, 140, 40);
+    for expected in [
+        "Before",
+        "After",
+        "TRUE answers",
+        "Merge",
+        "Original first note",
+    ] {
+        assert!(screen.contains(expected), "{screen}");
+    }
+    for absent in [
+        "Complete note",
+        "My comments",
+        "Model input",
+        "Astra output",
+    ] {
+        assert!(!screen.contains(absent), "{screen}");
+    }
+    model.handle_event(key(KeyCode::Char('i')));
+    assert!(render(&mut model, 140, 40).contains("Prepared first note."));
+    model.handle_event(key(KeyCode::Right));
+    assert!(render(&mut model, 140, 40).contains("2 of 2"));
+}
+
+#[test]
 fn original_note_output_and_separate_comments_are_visible_at_both_layout_sizes() {
     for (width, height) in [(72, 24), (120, 32)] {
         let mut model = load(&packet(), None);

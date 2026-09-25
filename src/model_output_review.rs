@@ -24,6 +24,20 @@ struct Review {
     notes: Vec<Note>,
     #[serde(default)]
     orderings: Vec<ReviewOrdering>,
+    #[serde(default)]
+    labels: ReviewLabels,
+}
+
+/// Optional presentation labels let saved non-post comparisons use the same viewer.
+#[derive(Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReviewLabels {
+    source: Option<String>,
+    alternate_source: Option<String>,
+    output: Option<String>,
+    comment: Option<String>,
+    item: Option<String>,
+    variant: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -87,6 +101,21 @@ impl ModelOutputReview {
             .map_err(|error| invalid(format!("invalid model-output review: {error}")))?;
         if review.schema_version != 1 || review.title.trim().is_empty() || review.notes.is_empty() {
             return Err(invalid("expected a nonempty schema-1 model-output review"));
+        }
+        let labels = &review.labels;
+        if [
+            &labels.source,
+            &labels.alternate_source,
+            &labels.output,
+            &labels.comment,
+            &labels.item,
+            &labels.variant,
+        ]
+        .into_iter()
+        .flatten()
+        .any(|s| s.trim().is_empty())
+        {
+            return Err(invalid("review labels must not be empty"));
         }
         let models: Vec<_> = review.notes[0]
             .results
@@ -166,10 +195,12 @@ impl ModelOutputReview {
 
     pub fn check_summary(&self) -> String {
         format!(
-            "{}: {} notes, {} models; read-only saved outputs, no model calls or saved decisions.",
+            "{}: {} {}s, {} {}s; read-only saved outputs, no model calls or saved decisions.",
             terminal_safe(&self.review.title),
             self.review.notes.len(),
-            self.review.notes[0].results.len()
+            terminal_safe(self.review.labels.item.as_deref().unwrap_or("note")),
+            self.review.notes[0].results.len(),
+            terminal_safe(self.review.labels.variant.as_deref().unwrap_or("model")),
         )
     }
 
@@ -339,21 +370,31 @@ impl ModelOutputReview {
             .split(rows[1]);
             [stacked[0], stacked[1], stacked[2]]
         };
+        let labels = &self.review.labels;
+        let source_label = labels.source.as_deref().unwrap_or("Complete note");
+        let alternate_label = labels.alternate_source.as_deref().unwrap_or("Model input");
         let (note_title, note_text) = match (self.show_model_input, &note.model_input) {
-            (true, Some(input)) => ("Model input · i: original", input),
-            (false, Some(_)) => ("Complete note · i: model input", &note.text),
-            _ => ("Complete note", &note.text),
+            (true, Some(input)) => (format!("{alternate_label} · i: {source_label}"), input),
+            (false, Some(_)) => (format!("{source_label} · i: {alternate_label}"), &note.text),
+            _ => (source_label.to_owned(), &note.text),
         };
-        let output_title = format!("{} output", terminal_safe(&result.model));
+        let output_title = labels
+            .output
+            .clone()
+            .unwrap_or_else(|| format!("{} output", result.model));
         for (panel, title, content) in [
-            (0, note_title, note_text.as_str()),
+            (0, note_title.as_str(), note_text.as_str()),
             (1, output_title.as_str(), result.output.as_str()),
-            (2, "My comments", result.comment.as_str()),
+            (
+                2,
+                labels.comment.as_deref().unwrap_or("My comments"),
+                result.comment.as_str(),
+            ),
         ] {
             render_scrollable_panel(
                 frame,
                 panes[panel],
-                title,
+                &terminal_safe(title),
                 &terminal_safe(content),
                 &mut self.scroll[panel],
                 &mut self.half_page_lines[panel],
@@ -362,9 +403,17 @@ impl ModelOutputReview {
         }
         frame.render_widget(
             Paragraph::new(vec![
-                Line::from("1–4 / [ ] Model   ←/→ h/l n/p Note   Tab / Shift-Tab Pane"),
+                Line::from(format!(
+                    "1–4 / [ ] {}   ←/→ h/l n/p {}   Tab / Shift-Tab Pane",
+                    terminal_safe(labels.variant.as_deref().unwrap_or("Model")),
+                    terminal_safe(labels.item.as_deref().unwrap_or("Note"))
+                )),
                 Line::from("↑/↓ j/k Scroll   PgUp/Dn Page   Ctrl-U/D Half-page   g/G Top/end"),
-                Line::from("i Original/model input   q / Esc / Ctrl-C Exit   No saved decisions"),
+                Line::from(if labels.source.is_some() {
+                    "i Toggle left pane   q / Esc / Ctrl-C Exit   No saved decisions"
+                } else {
+                    "i Original/model input   q / Esc / Ctrl-C Exit   No saved decisions"
+                }),
             ])
             .style(secondary_style()),
             rows[2],

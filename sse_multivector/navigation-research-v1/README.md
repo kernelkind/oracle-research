@@ -164,6 +164,42 @@ truncation; full IDs remain available in `?` analysis. Stored IDs and displayed
 mask IDs are unchanged. No full hierarchy inference, graph repair or new user
 semantic approvals occurred.
 
+### Reviewing a merge before browsing the hierarchy
+
+The combined title can sound sensible even when distinct nodes were wrongly
+merged. Use `hierarchy_merge_review.py PACKAGE OUTPUT` to derive a read-only
+before/after review from a `hierarchy_build.py package` directory. It replays
+the saved merge and naming evidence before export; it does not run models,
+change the graph or record approvals. The output path must be new.
+
+Each page shows the original groups' titles and masks separately, the combined
+title and resulting parent/child connections, and all internal native TRUE
+answers (including No answers). Retained links also show their original
+contributing answers and conflicting direct rejections. These are the saved
+graph links, before any equal-post navigation collapse. TRUE compared original
+titles, not the newly generated combined title. Exact model inputs are below
+the answers. Full posts with each mask marked are available with `i`.
+
+The existing `model-output-review` viewer accepts optional `labels` for
+`source`, `alternate_source`, `output`, `comment`, `item` and `variant`;
+omitting them preserves its normal post/model comparison labels. Merge review
+uses Before, After and TRUE answers rather than mislabeling groups as posts or
+saved TRUE evidence as agent commentary. Group numbers distinguish identical
+titles without displaying long node IDs; original mask IDs remain visible.
+Identical same-post masks within a group share one row retaining their aliases.
+
+The four-merge sample can be opened with:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+target/infomap-review-build/debug/model-output-review \
+  target/hierarchy-build-v1/nev2-browser/merge-review.json
+```
+
+Use Left/Right for merges, Tab for the pane, Up/Down to scroll, `i` for
+masks/full posts and `q` to quit. Review whether a merge removes a redundant
+distinction or erases a useful one; inspect overall browsing separately.
+
 The earlier GDC09 equal-note collapse operates on a tree. The current category
 browser also implements [shared-child collapse](#shared-child-collapse) as a
 navigation-only option, enabled for both sides of the HRv1 comparison.
