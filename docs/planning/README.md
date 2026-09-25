@@ -10,6 +10,39 @@ read-only using draw.io's renderer. Refresh the browser after saving changes;
 no export or copied preview is needed. The page fetches the source and renderer
 from its own host only.
 
+## Focusable graph prototype
+
+Open [graph-prototype.html](graph-prototype.html) on the same tailnet host to try
+an alternative, read-only dependency view. It reads the task cards and arrows
+from the dependency page of `october-18-release.drawio` on every load; it does
+not maintain another task list or change the draft plan. The current draw.io
+viewer remains the baseline. Task statuses and wording mirror the diagram,
+including any lag behind the written status checkpoint.
+
+The prototype initially focuses on task 02. Choose another task or click a
+node to refocus. Show zero to three steps in either or both directions, or
+show all tasks. A `+N other links` label means the node has arrows not drawn in
+the current view. The right panel always lists the selected task's direct links,
+including those outside the view. Solid arrows mean prerequisites for finishing;
+dashed arrows mean helpful inputs. Start conditions remain in task descriptions
+because the existing diagram does not encode them separately. No user choice
+or approval is inferred from a task's status.
+
+The browser uses local copies of Cytoscape.js 3.34.3, ELK.js 0.12.0 and
+cytoscape-elk 2.3.0; no external service or build step is needed. The bundles
+come from their npm source tarballs:
+[Cytoscape.js](https://registry.npmjs.org/cytoscape/-/cytoscape-3.34.3.tgz),
+[ELK.js](https://registry.npmjs.org/elkjs/-/elkjs-0.12.0.tgz), and
+[cytoscape-elk](https://registry.npmjs.org/cytoscape-elk/-/cytoscape-elk-2.3.0.tgz).
+Their licenses are retained in `vendor/`.
+SHA-256 (in that order):
+
+```text
+5f3b5b529546d5af1fc5628590af033b74511a5b6f789f5f4682845863228b91  cytoscape.min.js
+1222e44f953ce7746af23801e723708f8e6f436b8b377a6a5fc7552f34a307b3  elk.bundled.js
+25acbb9dea9b0dc6fef0e79b697547ee56e579f0e1c22ae4353131e72c7e140a  cytoscape-elk.js
+```
+
 The viewer opens in dark mode, including the diagram and page/zoom toolbar,
 using the bundled renderer's native dark-mode setting. The diagram uses native
 `light-dark()` color pairs: original light colors plus an explicit dark palette.
