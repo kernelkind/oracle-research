@@ -66,6 +66,9 @@ rows expose the remaining construction work.
 This second 100-post experiment is **HR02**: generate a hierarchy the user is
 pleased with, not optimize cost, speed or teacher selection. This goal does not
 authorize model changes or comparison runs; the architecture is unchanged.
+A separately authorized Astra-low title pass is now complete: unchanged v38,
+the same 129 groups, all outputs valid, seven agent-review flags. Adopting those
+titles for TRUE remains pending; the existing Luna-title scoring run continues.
 Node 04 (mask prominence) is grey and marked paused, reconfirmed by the user on
 September 23. Earlier experimental work does not establish that it is active
 now. Its mask-prompt prerequisite is satisfied. It need not wait for

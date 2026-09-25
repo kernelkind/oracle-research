@@ -17,6 +17,10 @@ on September 20. On September 24, the user confirmed that the node-title prompt
 is finished (23 complete). The [frozen v38/Luna max title pass](../../sse_multivector/navigation-research-v1/README.md#current-title-prompt-experiment) has produced
 valid titles for all 129 groups in the 100-note build: 108 new calls and 21
 reused results. The saved HRv1 hierarchy still uses the older v21 titles.
+The subsequent authorized HR02 Astra-low pass used unchanged v38 and identical
+groups: 129 valid titles, 128 new calls and one reused result. Agent inspection
+is complete with seven flagged cases; user review and adoption for TRUE remain
+pending. The running TRUE job still uses the Luna titles.
 Task 02 resumed with the user's approval on September 25. The construction path
 validated those saved v38 titles and prepared all 16,512 directed TRUE inputs.
 Local scoring is underway: 14,207 distinct inputs need fresh inference, with
@@ -326,11 +330,13 @@ are now hidden during browsing to avoid title truncation and remain available
 in `?` analysis; stored IDs and displayed mask IDs are unchanged. HD06 still lacks a
 published reprocessed browser view.
 
-**HR02 — second 100-post hierarchy:** the goal, clarified by the user on
+**HR02 — second 100-post hierarchy:** the existing goal, reaffirmed by the user on
 September 25, is to generate a hierarchy the user is pleased with, not to
 optimize cost, speed or teacher selection. Model comparisons are not its success
-criterion; discussion of all-Astra/all-Luna variants has not authorized runs.
-The architecture is unchanged. Any model change remains a separate decision.
+criterion. The user subsequently authorized individual title generation and
+inspection with Astra low and unchanged v38, reusing all upstream data. This
+does not authorize an all-Luna comparison, new TRUE scoring or merged-title calls.
+The architecture is unchanged; the existing Luna-title TRUE run stays running.
 HR02 is the experiment's discussion ID; existing artifact paths and frozen
 internal run IDs are retained, including `HRv1-full-v38` for current scoring.
 

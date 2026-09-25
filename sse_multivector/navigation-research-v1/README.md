@@ -150,7 +150,7 @@ the actual browser's `--check` with equal-note collapse. That is an integration
 check, not the new HD06 reprocessed baseline or live merged-title validation.
 
 **HR02 — second 100-post hierarchy:** generate a hierarchy the user is pleased
-with. The user clarified that this experiment is not an optimization exercise
+with. The user reaffirmed that this experiment is not an optimization exercise
 or teacher-selection comparison. Keep the architecture unchanged; model
 changes and comparison runs require separate approval. HR02 names the experiment
 for discussion, without renaming existing artifacts or changing frozen run IDs.
@@ -268,7 +268,7 @@ by these requirements.
 
 ## Current title-prompt experiment
 
-The frozen title configuration for the **next hierarchy experiment** is
+The frozen title configuration used by the **currently running TRUE job** is
 [v38](../hdbv2-node-description-probe-v38/prompt.txt) with `gpt-6-luna`, reasoning
 effort `max`. The user approved generating titles for all 129 HRv1 source groups
 with the unchanged prompt, reusing the twenty saved matching v38 results.
@@ -290,9 +290,31 @@ cover a mixed group containing brekkie and Khyber Pass. `Bread baking` and
 `Sunday greetings` have unresolved scope questions. These observations are
 recorded as agent reviews, not user decisions or an exhaustive semantic audit;
 unreviewed titles are not implicitly approved. No outputs were repaired, nodes
-excluded, or frozen prompt rules changed. Next, use the saved title set for
-the hierarchy-placement experiment under the declared processing rules, with
-the v21 baseline preserved, after separate authorization for that run.
+excluded, or frozen prompt rules changed. The saved Luna title set is now being
+scored by TRUE; it and the v21 baseline remain untouched.
+
+**HR02 Astra-low title pass (authorized September 25):** individual titles were
+generated with unchanged v38 and identical groups, using `experiment.py prepare
+--from` the full Luna experiment with only model/effort overridden. The saved
+experiment is `experiments/hr02-title-v38-astra-low/`. It completed with 129 valid
+titles, 128 new subscription calls, one identical-request reuse and no inference
+failures or retries. Subjects, masks, SSE, HDBSCAN and the running TRUE job were
+unchanged. No new TRUE comparisons or merged-title calls were started.
+
+Agent inspection covered all 129 outputs against their quoted masks, with
+source-post checks for questionable meanings. Seven current agent assessments
+are saved through the runner: scope failures in `Daily painting`, `grownostr`,
+`guarani` and `Brands`; uncertainties in `Fog and haze`, `Chemical substances
+and operating systems`, and `Food and Paraguay`. Several concerns already
+exist in the groups: growing food mixed with grownostr, chocolate mixed with
+Guarani, Linux with chemicals, and Paraguay with food ingredients. They are not
+evidence that title rewriting alone will solve the problem. `Coffee beans` and
+`Lunch` address the earlier relationship-loss examples. These are agent
+judgments, not user approvals or an accuracy estimate. Review the flagged
+cases before adopting the Astra titles for TRUE; do not silently repair or
+exclude groups. The existing Luna-title TRUE run continues until a switch is
+separately authorized. Merged-title configuration has not been changed by this
+individual-title task.
 
 [Title prompt v25](../hdbv2-node-description-probe-v25/prompt.txt) is tested but
 not promoted. The approved bounded comparison replaces v24's instruction against
