@@ -2,6 +2,56 @@
 
 ## Status and scope
 
+**September 25: start an informal subject-and-mask pilot.** The user approved
+using the data already on hand with the latest subject and mask prompts,
+establishing untuned baselines and testing fine-tuning without prominence.
+Teachers supply the subject and mask annotations; each candidate receives a
+complete note and generates its masks directly, before and after fine-tuning.
+This first experiment can proceed while prominence and final teacher selection
+remain unfinished. It does not select the release model or settle the larger
+pilot's dataset sizes, training recipe, or spending allocation.
+
+The available starting package is the refreshed 100-post collection, generated
+with ASv6.48 and the frozen MPv3.43 working baseline using Astra low: 2,383
+subject entries, 252 valid empty masks, and 1,674 distinct nonempty masks.
+These are saved teacher outputs, not individually approved semantic labels.
+The initial local preparation uses 80 training notes and 20 evaluation notes,
+keeping same-author and identical-content notes together. The split is an
+implementation choice for this informal experiment, not a new release gate.
+Close paraphrases still require inspection before training.
+
+[DPv1](distillation-prompts/DPv1.md) is a **draft, untested** direct-mask
+instruction derived from those prompts. It uses their word-position mask
+representation and requests all distinct nonempty masks in one response.
+Original subjects, duplicate masks, valid empty results and diagnostics remain
+in the reference data. This transformation does not repair teacher judgments.
+Use the same instruction and output format for each candidate's before/after
+comparison. DPv1 is not a replacement for either teacher prompt.
+
+Offline preparation is reproducible with:
+
+```sh
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+python3 -m sse_multivector.distillation_data \
+  --source sse_multivector/hierarchy-refresh-v1/source.json \
+  --annotations sse_multivector/hierarchy-refresh-v1/masked-posts.json \
+  --prompt sse_multivector/distillation-prompts/DPv1.md \
+  --prompt-id DPv1 \
+  --evaluation-notes 20 \
+  --seed informal-pilot-v1 \
+  --output target/distillation-pilot-v1/data
+```
+
+The destination must be new. The manifest records input/output hashes and
+note IDs; evaluation inputs contain no teacher answers. Data stays ignored
+under `target/`. Conversion checks every selection using the existing mask
+decoder. No candidate baseline, fine-tune or GPU rental has run yet.
+
+The release model still needs prominence. The requirements below describe the
+larger evaluation and release decision; prominence is excluded only from this
+initial informal experiment. Training settings and paid-run maximum charges
+remain to be settled before execution.
+
 This document contains our experimental plan, decisions, preparation findings,
 and open questions. Published model evidence belongs in
 [Model research](EXTRACTOR-FINETUNING-MODEL-RESEARCH.md); published data-volume
@@ -51,9 +101,10 @@ The release plan's **18 · Prepare training code for the fine-tuning pilot** is
 ready for preparing code to fine-tune each candidate, save/reload its trained
 weights and generate evaluation outputs. Final training-example formatting and
 mask/prominence quality evaluation remain in **06 · Choose the model to train**,
-which waits for the agreed output format, prominence criteria and reviewed pilot
-data as well as the training setup. Readiness is not authorization to begin work;
-this planning decision selects no framework or training method.
+which needs the agreed output format, prominence criteria and reviewed pilot
+data to complete release-model selection. The informal experiment above is
+authorized to begin preparation without prominence. No training framework or
+paid rental has been selected by that authorization.
 
 The later final fine-tune (08) also prepares trained weights, necessary
 supporting files, usage instructions and evaluation results for publication.
@@ -93,8 +144,9 @@ mask-only evidence; they cannot establish prominence quality or the cost of
 generating both outputs. Starting full training-data generation requires both
 successful completion of the 500-note hierarchy validation and teacher
 selection in the [release plan](../docs/planning/release-decisions.md). The
-same teachers must write both the pilot training data and the full training
-data, per the user's direction of September 21, 2026. Work that consumes no
+same teachers must write both the larger pilot training data and the full training
+data, per the user's direction of September 21, 2026. The September 25 informal
+experiment may reuse current saved annotations before that selection. Work that consumes no
 labels may use any data and need not wait for the teacher selection.
 
 The agreed readiness target for the larger fine-tune's training data is
@@ -159,13 +211,16 @@ either Gemma checkpoint's training setup works.
 | Validation set | 100 | Compare development runs and select settings |
 | Final test set | 200 | Evaluate selected candidates after development stops |
 
-These counts are proposed measurement points, not demonstrated requirements.
+These counts are proposed measurement points for the larger pilot, not the
+initial informal experiment using the available 100 notes or demonstrated requirements.
 One thousand notes is not a prerequisite for the first training experiment.
 
 The 500-note set retains the original 250; the 1,000-note set retains the 500.
 All models receive the same sets. Choose broadly varied real notes while keeping
 topic, writing-style, and length mixtures similar across sizes. Do not simply
-use our food/music-heavy existing annotations as the initial training set.
+use our food/music-heavy existing annotations as evidence of broad coverage.
+The informal experiment deliberately starts with available data; its findings
+must be described in terms of that selected collection.
 
 Split before training. Keep duplicate, closely related, and same-author material
 within one split. Reserve the final test notes now, but defer their annotation
@@ -413,7 +468,8 @@ ledger accounting and the lifetime ceiling still apply.
 
 ## Next approval
 
-The measurement requirements above are approved. Next settle the remaining
-experimental design, note splits and annotation format, including prominence.
-The dataset-size schedule, exact run settings and spending amounts remain open;
-this document does not authorize rentals, annotation calls or training runs.
+Preparation of the informal subject-and-mask experiment is underway. Next
+finalize its direct-mask instruction and training setup, then obtain a maximum
+charge approval before paid execution. Establish each candidate's baseline
+before fine-tuning and compare on the same held-out notes. Prominence and the
+larger dataset-size schedule can wait; paid rentals are not yet authorized.

@@ -525,7 +525,7 @@ class PlanningViewerTest(unittest.TestCase):
                 wait_for_text("17 · Compare teachers")
                 wait_for_text("06 · Choose the model to train")
                 wait_for_text("05 · Prepare pilot training data")
-                wait_for_text("Labels are written by the teachers")
+                wait_for_text("Informal start: available subject/mask data; no prominence")
                 wait_for_text("weight-release permission before selection")
                 wait_for_text("Verify loading and mask/prominence generation")
                 wait_for_text("distilled model (08)")

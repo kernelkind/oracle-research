@@ -80,8 +80,14 @@ as one partly ready task. Node 18 is green for preparing training code for the
 fine-tuning pilot: fine-tune each candidate, save/reload trained weights and
 generate outputs for evaluation. Final training-example formatting and
 mask/prominence evaluation remain in 06, after the agreed output format,
-criteria and reviewed pilot data are available. The 05 + 18 dependencies on
-06 are unchanged. Node 17 is blue and in progress: the user reports comparing
+criteria and reviewed pilot data are available for release-model selection.
+On September 25 the user approved an informal first experiment using existing
+data from the latest subject and mask prompts, with untuned baselines and no
+prominence. Local preparation is underway; candidate inference, training and
+rentals have not run. The 05 + 18 dependencies describe completing 06; this
+informal start can use saved annotations before prominence and teacher
+selection are finished. It does not complete model selection or approve spending.
+Node 17 is blue and in progress: the user reports comparing
 Muse high and Astra low. No teacher is selected. Task 17 also requires an A/B
 comparison of the resulting hierarchies on the same notes before selection;
 label quality alone is insufficient. Completing the comparison still requires

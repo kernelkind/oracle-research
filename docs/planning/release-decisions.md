@@ -173,6 +173,18 @@ stages or approve a dataset size, hardware rental or spending allocation.
 
 ## Two separate model pilots
 
+**September 25 informal start:** the user approved beginning the fine-tuning
+pilot with available data from the latest subject and mask prompts, excluding
+prominence for now and establishing untuned baselines. The teachers generate
+subjects and masks; candidates learn complete note → complete mask set.
+This initial informal experiment may use current saved annotations before
+prominence and final teacher selection are ready. Local data preparation has
+started; no candidate baseline, training run or rental has run. See the
+[current pilot preparation](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md#status-and-scope).
+The release model still requires prominence. Candidate selection, the larger
+pilot's evaluation requirements, full-data gates and paid-resource approval
+rules remain in force; the informal result does not complete 06.
+
 - **Teacher-comparison pilot (17):** choose the teachers that write the training
   data. The current comparison is Muse high versus Astra low; no teacher is
   selected. Assess subjects, masks, prominence and the resulting hierarchies,
@@ -202,8 +214,9 @@ equivalence to Astra. Its subject-only cost is not a complete labeling estimate.
 Selecting the teachers and successfully completing the 500-note / 5-topic
 hierarchy validation are both prerequisites for starting full training-data
 generation (07). A finished but unsuccessful run does not clear this gate.
-The same teachers must write both the pilot training data (05) and the full
-training data (07), as the user directed on September 21, 2026. Work that
+For the larger pilot, the same teachers must write both the pilot training data
+(05) and the full training data (07), as the user directed on September 21, 2026.
+The informal start above may reuse existing annotations before selection. Work that
 consumes no labels, such as 18's training-code preparation, may use any data and
 need not wait for the teacher selection.
 
@@ -493,10 +506,11 @@ does not require the final prominence definition or training-output format and
 does not select a framework or training method.
 
 Final training-example formatting and mask/prominence quality evaluation remain
-within **06 · Choose the model to train**, once the agreed output format,
-prominence criteria and reviewed pilot data are available. Node 06 still depends
-on 05 and 18; no extra node or new dependency is needed. Marking 18 ready does not
-authorize implementation or pilot runs.
+within **06 · Choose the model to train**. Its completion needs the agreed output
+format, prominence criteria, reviewed pilot data and training setup (05 + 18).
+The September 25 informal subject-and-mask experiment can start preparation
+using available data while those completion requirements remain outstanding.
+That authorization does not approve a GPU rental or a spending amount.
 
 These are planning dependencies, not approval for measurements, model calls or
 paid runs in this discussion. Measurement procedures, sample sizes, the cosine
