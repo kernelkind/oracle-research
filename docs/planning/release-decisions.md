@@ -1,6 +1,6 @@
 # October 18 release decisions
 
-Updated September 24, 2026. This is the written record of the planning discussion.
+Updated September 25, 2026. This is the written record of the planning discussion.
 Agreed requirements, tentative choices and existing-data facts are distinguished
 below. The overall plan is not approved. Approval of an individual requirement
 or diagram edit does not approve the whole plan. The diagram incorporates the
@@ -17,8 +17,10 @@ on September 20. On September 24, the user confirmed that the node-title prompt
 is finished (23 complete). The [frozen v38/Luna max title pass](../../sse_multivector/navigation-research-v1/README.md#current-title-prompt-experiment) has produced
 valid titles for all 129 groups in the 100-note build: 108 new calls and 21
 reused results. The saved HRv1 hierarchy still uses the older v21 titles.
-Task 02 is ready to resume. The offline construction path has validated those
-saved v38 titles and prepared all 16,512 directed TRUE inputs without inference.
+Task 02 resumed with the user's approval on September 25. The construction path
+validated those saved v38 titles and prepared all 16,512 directed TRUE inputs.
+Local scoring is underway: 14,207 distinct inputs need fresh inference, with
+559 distinct inputs reused from verified saved results.
 The historical HRv1 runner and artifacts remain on v21. TRUE placement, merged
 naming and hierarchy review remain. The solid 23 → 02 prerequisite is satisfied;
 25 is required to finish 02, not to start its TRUE work.
@@ -39,15 +41,15 @@ unfinished work. Completing 01 and 23 does not complete the hierarchy. This
 records work and planning requirements, not authorization to start another
 workstream or approval of the overall plan.
 
-### Status checkpoint — September 24
+### Status checkpoint — September 25
 
-Tasks 02, 23 and 25 were updated on September 24. Other rows were last confirmed
-with the user on September 23.
+Tasks 02 and 25 were updated on September 25; 23 on September 24. Other rows
+were last confirmed with the user on September 23.
 
 | Task | Current status |
 | --- | --- |
 | 01 · Subject and mask prompts | Finished. |
-| 02 · Build and review 100-note hierarchy | Ready to resume; v38 TRUE inputs prepared offline. Placement, merged naming and minimal-scope correctness review remain. Task 25 is a finish gate. |
+| 02 · Build and review 100-note hierarchy | In progress; full v38 TRUE scoring underway. Merged naming, browser export and minimal-scope correctness review remain. Task 25 is a finish gate. |
 | 23 · Fix and validate node-title prompt | Finished; 129 titles saved. |
 | 04 · Define mask prominence | Paused. Earlier experimental results do not establish that work is active now. |
 | 17 · Compare teachers | In progress; no completed selection established. |
@@ -315,7 +317,15 @@ four-case naming run produced four valid titles without changing the sample's
 links. The 19-node browser passed mechanical and interactive checks. Node IDs
 are now hidden during browsing to avoid title truncation and remain available
 in `?` analysis; stored IDs and displayed mask IDs are unchanged. HD06 still lacks a
-published reprocessed browser view. No full hierarchy run was started.
+published reprocessed browser view.
+
+**Full rebuilt hierarchy (authorized September 25):** local TRUE scoring is
+underway for all 129 saved nodes, with exact-input cache reuse. The frozen plan
+is `target/hierarchy-build-v1/full-true-v1/plan.json`; it records policy versions,
+source/input hashes and cache provenance. HD01–05 remain unchanged, including
+the provisional HD02/03 rules. No membership expansion or Beef-specific repair
+is included. Scoring completion, full merged naming, browser export and review
+remain pending; starting this run does not settle the merge policies.
 
 **Hierarchy execution recovery (clarified September 24):** retry failed model
 calls and reuse successful results. Preserve failed-attempt receipts and the

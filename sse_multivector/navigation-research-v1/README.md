@@ -149,7 +149,29 @@ responses. Separately, an export of the saved acyclic 58-node baseline passed
 the actual browser's `--check` with equal-note collapse. That is an integration
 check, not the new HD06 reprocessed baseline or live merged-title validation.
 
-The subsequent authorized four-case naming run completed with four valid
+**September 25 full-run checkpoint:** the user authorized building the full
+second 100-post hierarchy with the existing provisional rules, without
+membership expansion or a Beef-specific repair. `hierarchy_true_scoring.py`
+wraps the unchanged local TRUE scorer: `prepare` freezes titles, inputs,
+verified cache receipts, implementation hashes and policy versions; `infer`
+executes only missing inputs; `collect` requires complete, verified answers
+before reconstructing all pairs; `verify` checks frozen files without inference.
+The 129 nodes yield 16,512 directed pairs and 14,766 distinct inputs: 559 reused,
+14,207 fresh, no cache disagreements. The frozen run lives at
+`target/hierarchy-build-v1/full-true-v1/`.
+
+Scoring is running under the user service
+`oracle-hierarchy-full-true-v1-restart1.service`, CPU float32, four threads,
+batch size four, 60 GiB memory limit and no swap. This service collects answers
+and builds `target/hierarchy-build-v1/full-merge-v1/` after successful inference.
+Merged naming through v38/Luna max, browser packaging and review remain pending.
+HD02/03 remain provisional; no graph repair or new merge approval is implied.
+The earlier launch failed before inference because systemd expanded a shell
+array; the restart disables that expansion and repeats no successful inference.
+The wrapper and five related regression suites passed 48 tests. This verifies
+mechanics, not semantic quality or completion of the full run or HD06 comparison.
+
+The earlier authorized four-case naming run completed with four valid
 v38/Luna-max responses, four subscription calls and no retries: `coffee`,
 `Beef and beef products`, `Food items`, and `Good morning greetings`.
 Receipts remain in `experiments/hierarchy-merged-names-nev2-v1/`; the resulting
@@ -161,8 +183,8 @@ The agent found the titles reasonable for the combined masks, not proof of
 equivalence: the known Beef / Beef products merge and Coffee shop → coffeechain
 link remain. Node IDs are hidden from browsing lists and headings to avoid title
 truncation; full IDs remain available in `?` analysis. Stored IDs and displayed
-mask IDs are unchanged. No full hierarchy inference, graph repair or new user
-semantic approvals occurred.
+mask IDs are unchanged. That four-case naming run performed no full hierarchy
+inference or graph repair and established no new user semantic approvals.
 
 ### Reviewing a merge before browsing the hierarchy
 

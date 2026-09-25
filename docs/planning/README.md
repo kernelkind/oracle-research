@@ -54,9 +54,9 @@ comparison still requires validated prompts (01 + 04); prominence remains
 unfinished. Comparison planning is part of 17, not a separate task.
 Node 01 is complete: the subject and mask prompts are finished. On September 24,
 the user confirmed that the node-title prompt is finished. Node 23 is complete,
-and all 129 HDBSCAN groups have saved v38/Luna max titles. Node 02 is ready to
-resume: the offline construction path has prepared all 16,512 directed TRUE
-inputs from those saved titles without inference. The historical HRv1 path
+and all 129 HDBSCAN groups have saved v38/Luna max titles. Node 02 resumed with
+user approval on September 25: local TRUE scoring is underway for all 16,512
+directed pairs, reusing verified identical inputs. The historical HRv1 path
 remains on v21. TRUE placement, merged naming and minimal-scope correctness
 review remain. Its solid 23 → 02 arrow records a satisfied
 prerequisite. A valid title response is not a user-approved title. Additional
