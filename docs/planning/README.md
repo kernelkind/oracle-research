@@ -1,25 +1,32 @@
-# Release-plan viewer
+# Release-plan views
 
 [Release decisions and open questions](release-decisions.md) records the planning
 discussion, including corpus scope, validation, Vast.ai compute and rented hosting.
 [Scalability findings and decisions](scalability.md) records the separate
 read-only investigation, the low-memory HDBSCAN discussion and unapproved next steps.
 
-`october-18-release.drawio` is the editable source. `index.html` displays it
-read-only using draw.io's renderer. Refresh the browser after saving changes;
-no export or copied preview is needed. The page fetches the source and renderer
-from its own host only.
+`release-plan.json` is the current task-and-dependency source for the focused
+graph. Agents update it from explicitly approved planning changes; the user
+does not need to edit it. Each task has a two-digit `id`, `title`, `status`, and
+plain-text `description`. Links run from prerequisite `source` to dependent
+`target`, with `kind` set to `required` (needed to finish) or `helpful` (an
+input that does not block finishing); `label` is optional. The browser rejects
+missing endpoints, duplicate IDs or links, and unknown statuses or link kinds.
+The written decision record remains the source for requirements, rationale,
+approvals, and open questions. Task readiness is not authorization to begin.
 
-## Focusable graph prototype
+The earlier `october-18-release.drawio` and its read-only [viewer](index.html)
+remain available, including the proposed weekly-targets page. They are not the
+source for current task status and may lag the JSON graph. The default route
+and disposition of that older view remain open.
 
-Open [graph-prototype.html](graph-prototype.html) on the same tailnet host to try
-an alternative, read-only dependency view. It reads the task cards and arrows
-from the dependency page of `october-18-release.drawio` on every load; it does
-not maintain another task list or change the draft plan. The current draw.io
-viewer remains the baseline. Task statuses and wording mirror the diagram,
-including any lag behind the written status checkpoint.
+## Focused task graph
 
-The prototype initially focuses on task 02. Choose another task or click a
+Open [graph-prototype.html](graph-prototype.html) on the tailnet host for the
+read-only dependency view. It loads `release-plan.json` on every visit and
+arranges the graph automatically. It does not change the draft plan.
+
+The graph initially focuses on task 02. Choose another task or click a
 node to refocus. Show zero to three steps in either or both directions, or
 show all tasks. A `+N other links` label means the node has arrows not drawn in
 the current view. The right panel always lists the selected task's direct links,
@@ -43,6 +50,9 @@ SHA-256 (in that order):
 25acbb9dea9b0dc6fef0e79b697547ee56e579f0e1c22ae4353131e72c7e140a  cytoscape-elk.js
 ```
 
+## Earlier draw.io snapshot
+
+The following describes the older diagram, not the current JSON task status.
 The viewer opens in dark mode, including the diagram and page/zoom toolbar,
 using the bundled renderer's native dark-mode setting. The diagram uses native
 `light-dark()` color pairs: original light colors plus an explicit dark palette.
@@ -65,9 +75,9 @@ without tracing arrows. Name the model's role—teacher or
 the distilled model—rather than saying only “the model.” Arrows
 explain prerequisites; they should not supply a task's missing meaning.
 
-Only add approved decisions to the diagram. Permission to investigate or draft
-a proposal does not approve its contents. Keep proposals in the written plan
-until the user explicitly approves them for the diagram.
+Only add approved decisions to the task data and views. Permission to
+investigate or draft a proposal does not approve its contents. Keep proposals
+in the written plan until the user explicitly approves them for the graph.
 The overall plan remains unapproved; approving a card or wording change does
 not approve the full plan. This discussion concerns planning, not implementation
 choices or execution. No workstream or agent assignment starts without explicit
@@ -221,10 +231,12 @@ development; final verification needs the actual release artifacts. This does
 not add a training-dataset publication requirement or select publishing formats
 or locations. See [publication preparation](release-decisions.md#publication-preparation).
 
-## Diagram tooling decision — September 20, 2026
+## Earlier diagram-tooling investigation — September 20, 2026
 
-Keep draw.io and the existing viewer for now. Renderer replacement is deferred;
-no alternative has been selected. Resume release planning, not tooling work.
+The September 20 decision kept draw.io while no replacement had been selected.
+The later focused graph now uses Cytoscape and ELK with JSON task data. The
+findings below explain why other renderers were not selected at that point;
+they do not describe the current graph's data source.
 
 Retain these findings for a future upgrade:
 

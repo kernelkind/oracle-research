@@ -19,73 +19,54 @@
   let allMode = false;
   const history = [];
 
-  function textLines(markup) {
-    const body = new DOMParser().parseFromString(markup, 'text/html').body;
-    body.querySelectorAll('br').forEach(breakElement => breakElement.replaceWith('\n'));
-    return body.textContent.split('\n').map(line => line.trim()).filter(Boolean);
-  }
+  const statusKeys = {
+    COMPLETE: 'complete',
+    'IN PROGRESS': 'active',
+    'READY TO START': 'ready',
+    'READY TO RESUME': 'ready',
+    PAUSED: 'paused',
+    'VALIDATION PENDING': 'waiting',
+    WAITING: 'waiting',
+  };
 
-  function taskFromCell(cell) {
-    if (cell.getAttribute('vertex') !== '1') return null;
-    const markup = cell.getAttribute('value') || '';
-    const body = new DOMParser().parseFromString(markup, 'text/html').body;
-    const titleElement = [...body.querySelectorAll('b')].find(element =>
-      /^\d{2}\s*·\s*/u.test(element.textContent.trim()));
-    if (!titleElement) return null;
-    const titleLine = titleElement.textContent.trim();
-    const match = titleLine.match(/^(\d{2})\s*·\s*(.+)$/u);
-    const lines = textLines(markup);
-    const titleIndex = lines.indexOf(titleLine);
-    if (!match || titleIndex < 0) throw new Error(`Could not read task ${cell.id}`);
-    const status = lines.slice(0, titleIndex).at(-1) || 'WAITING';
-    const statusKey = status.includes('COMPLETE') ? 'complete'
-      : status.includes('IN PROGRESS') ? 'active'
-        : status.includes('READY') ? 'ready'
-          : status.includes('PAUSED') ? 'paused' : 'waiting';
-    return {
-      id: cell.id,
-      number: match[1],
-      title: match[2],
-      status,
-      statusKey,
-      description: lines.slice(titleIndex + 1).join('\n'),
-    };
-  }
-
-  function readPlan(xml) {
-    const document = new DOMParser().parseFromString(xml, 'application/xml');
-    if (document.querySelector('parsererror')) throw new Error('The plan XML is invalid');
-    const root = document.querySelector('diagram[id="dependencies"] mxGraphModel root');
-    if (!root) throw new Error('The dependency page is missing');
-    const cells = [...root.querySelectorAll('mxCell')];
-    const foundTasks = new Map();
-    for (const cell of cells) {
-      const task = taskFromCell(cell);
-      if (task) foundTasks.set(task.id, task);
+  function readPlan(data) {
+    if (!data || !Array.isArray(data.tasks) || !Array.isArray(data.links)) {
+      throw new Error('The task file needs tasks and links arrays');
     }
-    if (foundTasks.size < 20) throw new Error('Too few task cards found in the plan');
-    const foundLinks = cells.filter(cell => cell.getAttribute('edge') === '1')
-      .filter(cell => foundTasks.has(cell.getAttribute('source')) &&
-        foundTasks.has(cell.getAttribute('target')))
-      .map(cell => ({
-        id: cell.id,
-        source: cell.getAttribute('source'),
-        target: cell.getAttribute('target'),
-        helpful: (cell.getAttribute('style') || '').includes('dashed=1'),
-        label: textLines(cell.getAttribute('value') || '').join(' '),
-      }));
+    const foundTasks = new Map();
+    for (const task of data.tasks) {
+      if (!task || typeof task.id !== 'string' || !/^\d{2}$/.test(task.id) ||
+        typeof task.title !== 'string' || !task.title.trim() ||
+        typeof task.description !== 'string' || !Object.hasOwn(statusKeys, task.status) ||
+        foundTasks.has(task.id)) {
+        throw new Error(`Invalid or duplicate task ${task?.id ?? '(missing ID)'}`);
+      }
+      foundTasks.set(task.id, {...task, statusKey: statusKeys[task.status]});
+    }
+    if (!foundTasks.size) throw new Error('No tasks found in the task file');
+    const seenLinks = new Set();
+    const foundLinks = data.links.map(link => {
+      const id = `${link?.source}-${link?.target}-${link?.kind}`;
+      if (!link || !foundTasks.has(link.source) || !foundTasks.has(link.target) ||
+        link.source === link.target || !['required', 'helpful'].includes(link.kind) ||
+        (link.label !== undefined && typeof link.label !== 'string') || seenLinks.has(id)) {
+        throw new Error(`Invalid or duplicate link ${id}`);
+      }
+      seenLinks.add(id);
+      return {...link, id, label: link.label || '', helpful: link.kind === 'helpful'};
+    });
     if (!foundLinks.length) throw new Error('No task dependencies found in the plan');
     return {tasks: foundTasks, links: foundLinks};
   }
 
   function sortedTasks() {
     return [...tasks.values()].sort((a, b) =>
-      Number(a.number) - Number(b.number) || a.title.localeCompare(b.title));
+      Number(a.id) - Number(b.id) || a.title.localeCompare(b.title));
   }
 
   function displayName(id) {
     const task = tasks.get(id);
-    return `${task.number} · ${task.title}`;
+    return `${task.id} · ${task.title}`;
   }
 
   function visibleTaskIds() {
@@ -124,8 +105,7 @@
     }
     const list = document.createElement('div');
     list.className = 'related';
-    relatedLinks.sort((a, b) => Number(tasks.get(a[otherEnd]).number) -
-      Number(tasks.get(b[otherEnd]).number));
+    relatedLinks.sort((a, b) => Number(a[otherEnd]) - Number(b[otherEnd]));
     for (const link of relatedLinks) {
       const button = document.createElement('button');
       button.type = 'button';
@@ -187,7 +167,7 @@
       graph.nodes().forEach(node => {
         const task = tasks.get(node.id());
         const hidden = hiddenByTask.get(node.id());
-        node.data('label', `${task.number} · ${task.title}${hidden ? `\n+${hidden} other links` : ''}`);
+        node.data('label', `${task.id} · ${task.title}${hidden ? `\n+${hidden} other links` : ''}`);
         node.toggleClass('hidden', !visible.has(node.id()));
         node.toggleClass('focused', node.id() === focusId);
       });
@@ -284,16 +264,16 @@
         throw new Error('Graph libraries did not load');
       }
       if (!cytoscape('layout', 'elk')) cytoscape.use(cytoscapeElk);
-      const response = await fetch('october-18-release.drawio', {cache: 'no-store'});
-      if (!response.ok) throw new Error(`The plan returned HTTP ${response.status}`);
-      ({tasks, links} = readPlan(await response.text()));
+      const response = await fetch('release-plan.json', {cache: 'no-store'});
+      if (!response.ok) throw new Error(`The task file returned HTTP ${response.status}`);
+      ({tasks, links} = readPlan(await response.json()));
       for (const task of sortedTasks()) {
         const option = document.createElement('option');
         option.value = task.id;
         option.textContent = displayName(task.id);
         taskSelect.append(option);
       }
-      focusId = tasks.has('h2') ? 'h2' : sortedTasks()[0].id;
+      focusId = tasks.has('02') ? '02' : sortedTasks()[0].id;
       createGraph();
       taskSelect.addEventListener('change', () => chooseFocus(taskSelect.value));
       depthSelect.addEventListener('change', () => { allMode = false; render(); });

@@ -3,9 +3,17 @@
 Updated September 25, 2026. This is the written record of the planning discussion.
 Agreed requirements, tentative choices and existing-data facts are distinguished
 below. The overall plan is not approved. Approval of an individual requirement
-or diagram edit does not approve the whole plan. The diagram incorporates the
-approved scheduling changes below; other weekly targets and exact dates remain
-proposals.
+or task-view edit does not approve the whole plan. The earlier draw.io diagram
+incorporates the approved scheduling changes below; other weekly targets and
+exact dates remain proposals.
+
+The user approved a read-only focused task graph backed by
+[`release-plan.json`](release-plan.json). Agents maintain its task text, status
+and dependencies from explicit instructions; Cytoscape and ELK render it without
+manual coordinates. This document remains the source for decisions and their
+rationale. The original draw.io viewer remains available for its proposed
+weekly-targets page, but may lag current task status. Whether to make the graph
+the default URL or retire that older view remains open.
 
 This discussion is for planning: outcomes, dependencies, open decisions and
 timing. It does not select implementation methods or experimental procedures.
@@ -52,8 +60,9 @@ workstream or approval of the overall plan.
 
 Tasks 02, 18 and 25 were updated on September 25; 23 on September 24. Other rows
 were last confirmed with the user on September 23.
+This is a dated checkpoint; current task status appears in `release-plan.json`.
 
-| Task | Current status |
+| Task | Status at checkpoint |
 | --- | --- |
 | 01 · Subject and mask prompts | Finished. |
 | 02 · Build and review 100-note hierarchy | In progress; full v38 TRUE scoring underway. Merged naming, browser export and minimal-scope correctness review remain. Task 25 is a finish gate. |

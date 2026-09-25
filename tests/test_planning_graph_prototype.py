@@ -26,6 +26,7 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
             tmp = Path(tmp)
             public = tmp / "public"
             shutil.copytree(source, public)
+            (public / "october-18-release.drawio").unlink()
             handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=public)
             server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
             thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -95,7 +96,7 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 url = f"http://127.0.0.1:{server.server_port}/graph-prototype.html"
                 call("browsingContext.navigate", {"context": context, "url": url, "wait": "complete"})
                 wait_for("document.querySelector('#graph-status')?.textContent.includes('Showing')")
-                self.assertEqual(evaluate("document.querySelector('#focus-task').value"), "h2")
+                self.assertEqual(evaluate("document.querySelector('#focus-task').value"), "02")
                 self.assertEqual(evaluate("document.querySelector('#depth').value"), "1")
                 counts = evaluate("document.querySelector('#graph-status').textContent.match(/Showing (\\d+) of (\\d+) tasks/)?.slice(1).join(',')")
                 focused_count, total_count = map(int, counts.split(","))
@@ -104,6 +105,7 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertIn("other links", evaluate("document.querySelector('#graph-status').textContent"))
                 self.assertIn("needed to finish", evaluate("document.querySelector('#details').innerText.toLowerCase()"))
                 self.assertIn("Handle node equivalence and TRUE cycles", evaluate("document.querySelector('#details').innerText"))
+                self.assertIn("IN PROGRESS", evaluate("document.querySelector('#details').innerText"))
                 self.assertTrue(evaluate("document.querySelector('#graph canvas')?.getBoundingClientRect().width > 500"))
                 capture("focused")
 
@@ -115,9 +117,9 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 two_step_count = int(evaluate("document.querySelector('#graph-status').textContent.match(/Showing (\\d+)/)[1]"))
                 self.assertGreater(two_step_count, focused_count)
                 evaluate("[...document.querySelectorAll('#details .related button')].find(button => button.textContent.startsWith('25 ·'))?.click()")
-                wait_for("document.querySelector('#focus-task').value === 'h-relations'")
+                wait_for("document.querySelector('#focus-task').value === '25'")
                 evaluate("document.querySelector('#go-back').click()")
-                wait_for("document.querySelector('#focus-task').value === 'h2'")
+                wait_for("document.querySelector('#focus-task').value === '02'")
 
                 evaluate("document.querySelector('#depth').value = '0'; document.querySelector('#depth').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#graph-status').textContent.includes('Showing 1 of ')")
@@ -127,13 +129,17 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertTrue(evaluate("document.querySelector('#depth').disabled"))
                 capture("all-tasks")
 
-                # The graph must be derived from the served plan, not a copied task list.
-                diagram = public / "october-18-release.drawio"
-                diagram.write_text(diagram.read_text().replace(
-                    "02 · Build and review 100-note hierarchy",
-                    "02 · Review refreshed 100-note hierarchy"))
+                # The graph must be derived from the served task data, not draw.io.
+                data_file = public / "release-plan.json"
+                data = json.loads(data_file.read_text())
+                next(task for task in data["tasks"] if task["id"] == "02")["title"] = "Review refreshed 100-note hierarchy"
+                data_file.write_text(json.dumps(data))
                 call("browsingContext.reload", {"context": context, "wait": "complete"})
                 wait_for("document.querySelector('#details')?.innerText.includes('Review refreshed 100-note hierarchy')")
+                data["links"][0]["target"] = "99"
+                data_file.write_text(json.dumps(data))
+                call("browsingContext.reload", {"context": context, "wait": "complete"})
+                wait_for("document.querySelector('#graph-status')?.textContent.includes('Invalid or duplicate link')")
                 external = evaluate("JSON.stringify(performance.getEntriesByType('resource').map(r => r.name).filter(u => !u.startsWith(location.origin + '/') && !u.startsWith('data:')))")
                 self.assertEqual(json.loads(external), [], "Prototype must not fetch resources off-host")
                 call("session.end", {})
