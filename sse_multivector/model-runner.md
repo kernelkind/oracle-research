@@ -485,15 +485,20 @@ production preparation and decoding functions:
   `S6dde8fffb9-V0974` (coffee shops in the laptop-ban incident), **20–40**;
   and `Sa01eaf30fd-V1298` (incidental tea in the long diary), **1–5**.
   These are human calibration judgments, not mathematically derived percentages.
-  [PPv13](prominence-prompt-goal-v1/ppv13-draft-v1/PPv13.md) is the current untested
-  draft against approved PPv11, pending review. It asks for the percentage of the
+  [PPv13](prominence-prompt-goal-v1/ppv13-draft-v1/PPv13.md) is approved for testing
+  and tested experimentally, not production-frozen. It asks for the percentage of the
   post's semantic meaning represented by the mask in context, with only the
   endpoints defined: 0 means none; 100 means all. It removes the qualitative
   scoring bands and does not use PPv12's separate importance instruction.
   PPv12 remains an untested, unapproved prior draft; prompt versions are immutable.
-  The three anchors remain outside the prompt. Inputs, JSON output and ranking
-  behavior are unchanged; no new inference or production promotion is authorized
-  by preparing the draft.
+  The three anchors remain outside the prompt. `experiments/ppv13-refresh-direct-v1`
+  used the same 24 cases and Astra low with saved PPv11 baselines: 24 valid outputs,
+  24 attempts, no retries or baseline calls. The anchors scored **40**, **16** and
+  **1** respectively: short-post tea still misses the agreed range, coffee-shop
+  coverage is closer but below range, and incidental tea is within range. This
+  does not establish overall accuracy. Agent assessments are in the comment-enabled
+  review UI. Inputs, JSON output, cosine and ranking behavior remain unchanged;
+  no production promotion or further inference follows from this result.
 
   Alternatively, `path` may point to a saved title experiment's `report.json`
   (`adapter: "titles"` in that report). In this form, `select` names node IDs.
