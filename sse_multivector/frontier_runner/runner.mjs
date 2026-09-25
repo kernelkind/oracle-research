@@ -120,8 +120,8 @@ Subscription auth: the selected account's credential service, launched automatic
 No upstream credential export, auth files, or paid OpenAI API fallback.
 OpenRouter auth: the same local credential service, with one shared provider key.
 Never reads OPENROUTER_API_KEY or OPENAI_API_KEY; no direct upstream fallback.
-Before paid execution, obtain approved maximum spend, record the commitment in
-budget-ledger.json, and configure the required external provider-side spending limit.
+Before paid execution, obtain approved maximum spend and record the commitment in
+budget-ledger.json. Provider-enforced spending caps are not required.
 Timeouts/output limits are not spending approval or a monetary hard cap.
 Local output checks test JSON/source integrity, NOT semantic correctness.
 `;

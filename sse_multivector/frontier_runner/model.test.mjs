@@ -7,6 +7,18 @@ import { zstdDecompressSync } from 'node:zlib';
 import { test } from 'node:test';
 import { prepare, preview, execute, VERSION } from './model.mjs';
 
+for (const script of ['model.mjs', 'runner.mjs']) {
+  test(`${script}: CLI help preserves spending approval without requiring provider caps`, () => {
+    const result = spawnSync(process.execPath, [new URL(script, import.meta.url).pathname, '--help'],
+      { encoding: 'utf8', env: {} });
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /approved maximum spend/);
+    assert.match(result.stdout, /budget-ledger\.json/);
+    assert.match(result.stdout, /Provider-enforced spending caps are not required/);
+    assert.doesNotMatch(result.stdout, /configure the required external provider-side spending limit/);
+  });
+}
+
 const codex = { provider: 'openai-codex', model: 'gpt-6-astra', reasoning: 'low' };
 const openrouter = { provider: 'openrouter', model: 'meta/muse-spark-1.3-contributor', reasoning: 'low', max_output_tokens: 4096 };
 const prompt = '  Arbitrary prompt.\r\nKeep {POST}, <tags>, nostr:npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqq and 🦉 exactly.\n';

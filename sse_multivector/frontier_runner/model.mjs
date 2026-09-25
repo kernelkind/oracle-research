@@ -526,8 +526,8 @@ No upstream credential export, auth files, or paid OpenAI API fallback.
 OpenRouter auth: the same local credential service, with one shared provider key.
 Never reads OPENROUTER_API_KEY or OPENAI_API_KEY; no direct upstream fallback.
 --version prints versions; --identity prints versions and source/dependency SHA-256.
-Before paid execution, obtain approved maximum spend, record the commitment in
-budget-ledger.json, and configure the required external provider-side spending limit.
+Before paid execution, obtain approved maximum spend and record the commitment in
+budget-ledger.json. Provider-enforced spending caps are not required.
 Timeouts/output limits are not spending approval or monetary hard caps.
 `;
 
