@@ -511,6 +511,11 @@ production preparation and decoding functions:
   rerunning it. All three calls returned valid outputs; the tea-only mask still
   missed the agreed range. This post contains no URLs or encoded identifiers,
   so the new exclusion rule's effect remains untested.
+  `experiments/ppv14-tea-all-combinations-v1` extends that post to all 63
+  nonempty whole-word subsets, merging adjacent selections. All outputs are
+  valid: 60 new Astra-low calls and three exact-request reuses, with no retries.
+  The shared prominence UI exposes every mask and separate agent assessments;
+  exhaustive coverage of this one post does not establish calibrated scores.
 
   Alternatively, `path` may point to a saved title experiment's `report.json`
   (`adapter: "titles"` in that report). In this form, `select` names node IDs.
