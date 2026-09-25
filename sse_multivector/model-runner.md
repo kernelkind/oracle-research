@@ -500,11 +500,17 @@ production preparation and decoding functions:
   review UI. Inputs, JSON output, cosine and ranking behavior remain unchanged;
   no production promotion or further inference follows from this result.
 
-  [PPv14](prominence-prompt-goal-v1/ppv14-draft-v1/PPv14.md) is a draft, not yet
-  tested. Its only change from PPv13 implements the approved exclusion of URLs
-  and opaque encoded identifiers from the post's assessed semantic meaning;
+  [PPv14](prominence-prompt-goal-v1/ppv14-draft-v1/PPv14.md) is approved and tested
+  experimentally, not production-frozen. Its only change from PPv13 implements
+  the approved exclusion of URLs and opaque encoded identifiers from the post's
+  assessed semantic meaning;
   surrounding prose about them still counts. Scoring, input and output formats
   are unchanged. PPv13 and its saved results remain unchanged.
+  `experiments/ppv14-short-tea-v1` tests three masks of the same short tea post
+  with Astra low, reusing the saved PPv13 tea score as a baseline without
+  rerunning it. All three calls returned valid outputs; the tea-only mask still
+  missed the agreed range. This post contains no URLs or encoded identifiers,
+  so the new exclusion rule's effect remains untested.
 
   Alternatively, `path` may point to a saved title experiment's `report.json`
   (`adapter: "titles"` in that report). In this form, `select` names node IDs.
