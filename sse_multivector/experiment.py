@@ -382,6 +382,12 @@ def report(directory):
         else []
     )
     reviews_path = directory / "reviews.jsonl"
+    comments_path = directory / "ui-comments.json"
+    comments = (
+        inputs.prominence_comments(read(comments_path))
+        if plan["dataset"]["adapter"] == "prominence" and comments_path.exists()
+        else {}
+    )
     reviews = (
         [json.loads(line) for line in reviews_path.read_bytes().splitlines()]
         if reviews_path.exists()
@@ -469,6 +475,13 @@ def report(directory):
             for r in reviews
             if r["case_id"] == case["id"]
         ]
+        row["reviews"].extend(
+            {"case_id": case["id"], "role": "user", "verdict": "comment",
+             "comment": comment["comment"], "source": comments_path.name,
+             "current": key == inputs.prominence_comment_key(row)}
+            for key, comment in comments.items()
+            if comment["note_id"] == case["id"] and comment["comment"]
+        )
         comparisons[row["comparison"]] += 1
         cases.append(row)
     usage = {
@@ -652,8 +665,7 @@ def review(args):
                     from prominence_ranking import add_rankings
                 batch = add_rankings(batch, result, read(args.cosine_comparison))
             if plan["dataset"]["adapter"] == "prominence":
-                # The existing model-output viewer is read-only: do not create
-                # approval sessions or pass its cards to the title/mask UI.
+                # Comments are separate from approval sessions and model outputs.
                 batch_path = directory / ("ui-" + inputs.digest(batch)[:16] + ".json")
                 write(batch_path, batch)
                 binary = (
@@ -662,11 +674,15 @@ def review(args):
                     / "target/release/model-output-review"
                 )
                 print(
-                    f"UI: {len(batch['notes'])} mask entries; unscored cases included. No model calls or saved UI decisions."
+                    f"UI: {len(batch['notes'])} mask entries; c: comment. No model calls or implied decisions."
                 )
-                completed = subprocess.run([str(binary), str(batch_path)], check=False)
+                completed = subprocess.run(
+                    [str(binary), str(batch_path), "--comments", str(directory / "ui-comments.json")],
+                    check=False,
+                )
                 if completed.returncode:
                     raise ValueError(f"review UI exited with {completed.returncode}")
+                write(directory / "report.json", report(directory))
                 return
             print(
                 f"UI: {len(selected) if selected is not None else len(batch['items'])} cases; "

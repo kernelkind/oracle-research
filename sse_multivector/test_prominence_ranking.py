@@ -1,4 +1,5 @@
 import copy
+import json
 import math
 import unittest
 
@@ -40,6 +41,7 @@ class ProminenceRankingTests(unittest.TestCase):
             cases.append(dict(id=cid, evidence=evidence,
                               status="valid" if prominence is not None else "unrun",
                               parsed={"prominence": prominence}, reviews=[], prompt="PPv10",
+                              output=json.dumps({"prominence": prominence}) if prominence is not None else None,
                               inputs={"INPUT_JSON": '{"marked_post":"⟦tea⟧"}'}))
             if prominence is not None:
                 rows.append(dict(id=cid, node_id=node, title=node, note_id="N1",

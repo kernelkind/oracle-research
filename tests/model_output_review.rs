@@ -56,6 +56,92 @@ fn render(model: &mut ModelOutputReview, width: u16, height: u16) -> String {
 }
 
 #[test]
+fn comments_save_cancel_reopen_and_follow_item_not_sort_position() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("comments.json");
+    let mut data = packet();
+    data["orderings"] = json!([
+        {"name": "First", "note_ids": ["H06", "H21"]},
+        {"name": "Second", "note_ids": ["H21", "H06"]}
+    ]);
+    let mut model = load(&data, None).with_comments(&path).unwrap();
+    assert!(!path.exists(), "opening is not a review decision");
+    model.handle_event(key(KeyCode::Char('c')));
+    model.handle_event(Event::Paste("Too high — 日本語q".into()));
+    model.handle_event(key(KeyCode::Backspace));
+    assert!(render(&mut model, 120, 32).contains("Too high — 日本語"));
+    model.handle_event(key(KeyCode::Enter));
+    assert!(render(&mut model, 120, 32).contains("Your comment:"));
+    assert!(render(&mut model, 120, 32).contains("Too high — 日本語"));
+    let saved = fs::read(&path).unwrap();
+    model.handle_event(key(KeyCode::Char('c')));
+    model.handle_event(Event::Paste(" cancelled".into()));
+    model.handle_event(key(KeyCode::Esc));
+    assert_eq!(fs::read(&path).unwrap(), saved);
+    assert!(!render(&mut model, 120, 32).contains("cancelled"));
+    model.handle_event(key(KeyCode::Char('s')));
+    assert!(!render(&mut model, 120, 32).contains("Too high"));
+    model.handle_event(key(KeyCode::Right));
+    assert!(render(&mut model, 120, 32).contains("Too high"));
+    model.handle_event(key(KeyCode::Char('2')));
+    assert!(!render(&mut model, 120, 32).contains("Too high"));
+    assert!(
+        load(&data, None).with_comments(&path).is_err(),
+        "one writer only"
+    );
+    drop(model);
+    let mut reopened = load(&data, None).with_comments(&path).unwrap();
+    assert!(render(&mut reopened, 120, 32).contains("Too high"));
+    drop(reopened);
+    data["notes"][0]["results"][0]["output"] = json!("Changed output");
+    let mut changed = load(&data, None).with_comments(&path).unwrap();
+    assert!(!render(&mut changed, 120, 32).contains("Too high"));
+    assert_eq!(fs::read(&path).unwrap(), saved, "retain stale comments");
+}
+
+#[test]
+fn supplied_comment_identity_survives_ranking_display_and_filter_changes() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("comments.json");
+    let mut data = packet();
+    data["notes"][0]["results"][0]["comment_key"] = json!("stable-evidence-key");
+    let mut model = load(&data, None).with_comments(&path).unwrap();
+    model.handle_event(key(KeyCode::Char('c')));
+    model.handle_event(Event::Paste("Review this score".into()));
+    model.handle_event(key(KeyCode::Enter));
+    drop(model);
+    data["notes"].as_array_mut().unwrap().truncate(1);
+    data["notes"][0]["results"][0]["output"] = json!("Score with additional ranking metrics");
+    data["notes"][0]["results"][0]["comment"] = json!("Updated agent assessment");
+    let mut model = load(&data, None).with_comments(&path).unwrap();
+    let screen = render(&mut model, 120, 32);
+    assert!(screen.contains("Review this score"));
+    assert!(screen.contains("Updated agent assessment"));
+}
+
+#[test]
+fn failed_comment_save_keeps_editor_and_text_visible() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("comments.json");
+    let mut model = load(&packet(), None).with_comments(&path).unwrap();
+    fs::create_dir(&path).unwrap();
+    model.handle_event(key(KeyCode::Char('c')));
+    model.handle_event(Event::Paste("Do not lose this".into()));
+    model.handle_event(key(KeyCode::Enter));
+    let screen = render(&mut model, 120, 32);
+    assert!(screen.contains("Not saved:"), "{screen}");
+    assert!(screen.contains("Do not lose this"), "{screen}");
+    fs::remove_dir(&path).unwrap();
+    model.handle_event(key(KeyCode::Enter));
+    assert!(path.is_file());
+    drop(model);
+    let mut corrupted: Value = serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
+    corrupted["state_sha256"] = json!("wrong");
+    fs::write(&path, serde_json::to_vec(&corrupted).unwrap()).unwrap();
+    assert!(load(&packet(), None).with_comments(&path).is_err());
+}
+
+#[test]
 fn summary_review_hides_evidence_until_requested_and_returns_on_escape() {
     let mut data = packet();
     for note in data["notes"].as_array_mut().unwrap() {

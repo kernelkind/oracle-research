@@ -263,7 +263,7 @@ class ExperimentTests(unittest.TestCase):
         viewer = self.root / "viewer"
         viewer.write_text(
             "#!/usr/bin/env python3\nimport json, sys\nfrom pathlib import Path\n"
-            "assert len(sys.argv) == 2, sys.argv\n"
+            "assert len(sys.argv) == 4 and sys.argv[2] == '--comments', sys.argv\n"
             "batch = json.loads(Path(sys.argv[1]).read_text())\n"
             "Path(__file__).with_suffix('.json').write_text(json.dumps(batch))\n"
         )
@@ -288,6 +288,85 @@ class ExperimentTests(unittest.TestCase):
                 timeout=10,
             )
             self.assertEqual(check.returncode, 0, check.stderr)
+
+    def test_prominence_ui_comments_persist_without_becoming_decisions(self):
+        self.prominence_spec()
+        self.prepare()
+        viewer = self.root / "viewer"
+        viewer.write_text(
+            "#!/usr/bin/env python3\nimport json, sys, hashlib\nfrom pathlib import Path\n"
+            "assert sys.argv[2] == '--comments'\n"
+            "batch = json.loads(Path(sys.argv[1]).read_text())\n"
+            "note = batch['notes'][0]; result = note['results'][0]\n"
+            "session = {'comments': {result['comment_key']: {'note_id': note['id'], "
+            "'model': result['model'], 'comment': 'Too high — 日本語'}}}\n"
+            "raw = json.dumps(session, ensure_ascii=False, separators=(',', ':')).encode()\n"
+            "Path(sys.argv[3]).write_text(json.dumps({'schema_version': 1, "
+            "'state_sha256': hashlib.sha256(raw).hexdigest(), 'session': session}))\n"
+        )
+        viewer.chmod(0o755)
+        self.cli("review", "E1", "--ui", "--only", "tea-first", "--ui-binary", viewer)
+        case = self.show("E1", "--case", "tea-first")
+        review = case["reviews"][-1]
+        self.assertEqual(review["comment"], "Too high — 日本語")
+        self.assertEqual(review["verdict"], "comment")
+        self.assertEqual(review["role"], "user")
+        self.assertTrue(review["current"])
+        self.assertEqual(self.show("E1", "--case", "tea-second")["reviews"], [])
+        self.cli("run", "E1", env={"FAKE_RUNNER_PROMPT_RESPONSE": '{"prominence":80}'})
+        stale = self.show("E1", "--case", "tea-first")["reviews"][-1]
+        self.assertFalse(stale["current"])
+        from sse_multivector import experiment_inputs as inputs
+        self.assertTrue(inputs.is_flagged({"status": "valid", "reviews": [
+            {"role": "agent", "verdict": "uncertain", "current": True}, review]}))
+
+    def test_prominence_comments_round_trip_through_real_ui(self):
+        import fcntl
+        import pty
+        import select
+        import signal
+        import struct
+        import termios
+        import time
+
+        binary = CLI.parents[1] / "target/release/model-output-review"
+        if not binary.is_file():
+            self.skipTest("model-output-review binary unavailable")
+        self.prominence_spec()
+        self.prepare()
+        master, slave = pty.openpty()
+        fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", 40, 120, 0, 0))
+        process = subprocess.Popen(
+            [sys.executable, str(CLI), "review", str(self.root / "E1"),
+             "--ui", "--only", "tea-first"], stdin=slave, stdout=slave, stderr=slave,
+            env={**os.environ, "TERM": "xterm"}, start_new_session=True)
+        os.close(slave)
+        captured, sent = b"", False
+        try:
+            deadline = time.monotonic() + 15
+            while process.poll() is None and time.monotonic() < deadline:
+                if select.select([master], [], [], 0.1)[0]:
+                    try:
+                        captured += os.read(master, 65536)
+                    except OSError:
+                        break
+                    if not sent and b"Add/edit" in captured:
+                        os.write(master, b"cNeeds review\rq")
+                        sent = True
+            process.wait(timeout=2)
+            self.assertEqual(process.returncode, 0, captured.decode(errors="replace"))
+            self.assertTrue(sent)
+        finally:
+            if process.poll() is None:
+                os.killpg(process.pid, signal.SIGKILL)
+                process.wait()
+            os.close(master)
+        case = self.show("E1", "--case", "tea-first")
+        self.assertEqual(case["reviews"][-1]["comment"], "Needs review")
+        self.assertEqual(case["reviews"][-1]["verdict"], "comment")
+        self.assertTrue(case["reviews"][-1]["current"])
+        self.assertEqual(self.show("E1", "--case", "tea-second")["reviews"], [])
+        self.assertEqual(self.calls(), [])
 
     def test_prominence_validates_scores_and_never_sends_node_metadata(self):
         self.prominence_spec()

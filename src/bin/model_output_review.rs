@@ -3,7 +3,8 @@ use std::process::ExitCode;
 
 use oracle_mvp::model_output_review::ModelOutputReview;
 
-const USAGE: &str = "usage: model-output-review REVIEW.json [--start-at ID] [--check]";
+const USAGE: &str =
+    "usage: model-output-review REVIEW.json [--start-at ID] [--comments FILE] [--check]";
 
 fn main() -> ExitCode {
     match run() {
@@ -19,6 +20,9 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     let arguments = std::env::args().skip(1).collect::<Vec<_>>();
     if matches!(arguments.as_slice(), [argument] if argument == "--help" || argument == "-h") {
         println!(
+            "--comments FILE enables separate user comments: c/e Edit, Enter Save, Esc Cancel. Comments are not decisions."
+        );
+        println!(
             "{USAGE}\nCompare complete notes, saved model outputs, and separate comments.\nNo model calls or saved decisions. --check validates without opening a terminal.\n1–4 or [ / ]: model (number keys 1–9 supported). Left/Right or h/l n/p: note.\ns: next saved ordering, keeping position (when orderings are supplied).\nTab/Shift-Tab: pane. Up/Down or j/k: scroll. PgUp/PgDown: page.\nCtrl-U/D: half-page. g/G: top/bottom. i: original/model input if different.\nq/Esc/Ctrl-C: exit."
         );
         return Ok(());
@@ -30,16 +34,21 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         .ok_or(USAGE)?;
     let mut start_at = None;
     let mut check = false;
+    let mut comments = None;
     while let Some(option) = arguments.next() {
         match option.as_str() {
             "--start-at" if start_at.is_none() => {
                 start_at = Some(arguments.next().ok_or(USAGE)?.as_str());
             }
             "--check" if !check => check = true,
+            "--comments" if comments.is_none() => comments = Some(arguments.next().ok_or(USAGE)?),
             _ => return Err(USAGE.into()),
         }
     }
-    let review = ModelOutputReview::load(path, start_at)?;
+    let mut review = ModelOutputReview::load(path, start_at)?;
+    if let Some(path) = comments {
+        review = review.with_comments(path)?;
+    }
     if check {
         println!("{}", review.check_summary());
         return Ok(());

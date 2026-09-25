@@ -250,7 +250,7 @@ def validate(dataset, case, raw, schema):
 def is_flagged(case):
     """Current user decisions take precedence; an empty mask alone is not a failure."""
     reviews = [r for r in case["reviews"] if r["current"]]
-    users = [r for r in reviews if r["role"] == "user"]
+    users = [r for r in reviews if r["role"] == "user" and r["verdict"] != "comment"]
     if users:
         return users[-1]["verdict"] in {"reject", "uncertain"}
     agents = [r for r in reviews if r["role"] == "agent"]
@@ -326,6 +326,18 @@ def review_batch(plan, report):
     return batch, excluded
 
 
+def prominence_comment_key(case):
+    return digest({"id": case["id"], "prompt": case["prompt"], "output": case["output"]})
+
+
+def prominence_comments(envelope):
+    session = envelope["session"]
+    checksum = hashlib.sha256(engine._ordered_json_bytes(session)[:-1]).hexdigest()
+    if envelope.get("schema_version") != 1 or envelope.get("state_sha256") != checksum:
+        raise ValueError("review comments failed their state hash")
+    return session["comments"]
+
+
 def prominence_review_batch(plan, report):
     """Full-post, single-mask cards; scores order masks, never aggregated posts."""
     groups = {}
@@ -357,7 +369,7 @@ def prominence_review_batch(plan, report):
             if case.get("error"):
                 comments.append(str(case["error"]))
             for review in case["reviews"]:
-                if review["current"]:
+                if review["current"] and review["verdict"] != "comment":
                     comments.append(
                         f"{review['role']}: {review['verdict']}. {review['comment']}"
                     )
@@ -383,6 +395,7 @@ def prominence_review_batch(plan, report):
                     "results": [
                         {
                             "model": plan["prompt"]["id"],
+                            "comment_key": prominence_comment_key(case),
                             "output": (
                                 f"Prominence: {score} / 100"
                                 if valid

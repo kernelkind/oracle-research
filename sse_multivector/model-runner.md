@@ -550,8 +550,8 @@ Mask filtering restricts navigation in the existing viewer (`--only` case IDs)
 without changing the full batch or its session fingerprint. Full and focused
 views therefore share decisions, comments and resume state. Cases outside the
 selection are untouched. Agent reasoning stays separate from your decisions.
-Prominence filtering keeps that viewer read-only; its decision contract below
-does not change. Masks and prominence remain separate reviews, so a mask-quality
+Prominence filtering preserves user comments across full and focused views;
+it does not infer decisions. Masks and prominence remain separate reviews, so a mask-quality
 comment copied to prominence may appear in both views.
 
 For prominence, the same `review EXPERIMENT --ui` command opens the existing
@@ -566,9 +566,19 @@ Nothing is dropped or assigned an invented zero. Press `i` for the exact model
 prompt. Current CLI assessments/decisions and available baseline scores appear
 in the separate comment pane.
 
-This viewer is read-only and saves no decisions; record judgments with the same
-`review --case ... --role ...` CLI above. Opening or exiting the UI never implies
-approval. This duplicated, mask-sorted view is solely for prominence-prompt
+Press `c` (or `e`) to add/edit **Your comment**, separately from the agent's
+assessment. Enter saves immediately, Esc cancels; pasted text is supported.
+Comments are stored atomically in `ui-comments.json`, under the existing review
+session lock/hash protections. Each comment follows its exact case, prompt and
+output across sorting, ranking displays, filtering and reopening. Changed model
+evidence keeps old comments visible as stale in `show`, never attached to the new
+result. Save failures leave the editor and text intact with an error message.
+Comments appear in `show`/`report.json` as user comments, not verdicts; they do not
+clear agent flags or imply approval/rejection. Record explicit judgments with the
+same `review --case ... --role ...` CLI above. Opening or exiting never implies
+approval. The general `model-output-review` binary enables this behavior with
+`--comments FILE`; without that option it remains read-only.
+This duplicated, mask-sorted view is solely for prominence-prompt
 evaluation. It neither combines mask scores nor defines production post ranking
 or deduplication. Prominence review performs no inference or automatic build.
 
