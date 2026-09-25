@@ -500,6 +500,12 @@ production preparation and decoding functions:
   review UI. Inputs, JSON output, cosine and ranking behavior remain unchanged;
   no production promotion or further inference follows from this result.
 
+  [PPv14](prominence-prompt-goal-v1/ppv14-draft-v1/PPv14.md) is a draft, not yet
+  tested. Its only change from PPv13 implements the approved exclusion of URLs
+  and opaque encoded identifiers from the post's assessed semantic meaning;
+  surrounding prose about them still counts. Scoring, input and output formats
+  are unchanged. PPv13 and its saved results remain unchanged.
+
   Alternatively, `path` may point to a saved title experiment's `report.json`
   (`adapter: "titles"` in that report). In this form, `select` names node IDs.
   Each selected title must be valid. Its original packet supplies all member
