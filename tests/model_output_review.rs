@@ -56,6 +56,59 @@ fn render(model: &mut ModelOutputReview, width: u16, height: u16) -> String {
 }
 
 #[test]
+fn summary_review_hides_evidence_until_requested_and_returns_on_escape() {
+    let mut data = packet();
+    for note in data["notes"].as_array_mut().unwrap() {
+        note["results"].as_array_mut().unwrap().truncate(1);
+        note["summary"] = json!(
+            "We merged Beef and Beef products into one node.\n\nShould they stay separate?\n\nKnown decision: Keep separate."
+        );
+    }
+    for (width, height) in [(72, 24), (100, 24), (155, 42)] {
+        let mut model = load(&data, None);
+        let summary = render(&mut model, width, height);
+        assert!(summary.contains("Should they stay separate?"), "{summary}");
+        assert!(
+            summary.contains("Known decision: Keep separate."),
+            "{summary}"
+        );
+        for absent in [
+            "Original first note",
+            "Archived Astra subject",
+            "Astra is a reference",
+            "My comments",
+            "Tab",
+            "H06",
+        ] {
+            assert!(!summary.contains(absent), "{summary}");
+        }
+        model.handle_event(key(KeyCode::Char('m')));
+        let masks = render(&mut model, width, height);
+        assert!(masks.contains("Original first note"), "{masks}");
+        assert!(!masks.contains("Archived Astra subject"), "{masks}");
+        model.handle_event(key(KeyCode::Char('i')));
+        assert!(render(&mut model, width, height).contains("Prepared first note."));
+        assert_eq!(
+            model.handle_event(key(KeyCode::Esc)),
+            ModelOutputReviewAction::None
+        );
+        assert_eq!(render(&mut model, width, height), summary);
+        model.handle_event(key(KeyCode::Char('w')));
+        assert!(render(&mut model, width, height).contains("Astra is a reference"));
+        model.handle_event(key(KeyCode::Char('c')));
+        assert!(render(&mut model, width, height).contains("Archived Astra subject"));
+        model.handle_event(key(KeyCode::Right));
+        let second = render(&mut model, width, height);
+        assert!(second.contains("2 of 2"), "{second}");
+        assert!(!second.contains("Archived Astra subject"), "{second}");
+        assert_eq!(
+            model.handle_event(key(KeyCode::Char('q'))),
+            ModelOutputReviewAction::Quit
+        );
+    }
+}
+
+#[test]
 fn merge_review_uses_its_own_labels_and_keeps_before_after_and_evidence_separate() {
     let mut data = packet();
     data["labels"] = json!({

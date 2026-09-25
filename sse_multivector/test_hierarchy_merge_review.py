@@ -84,6 +84,25 @@ class MergeReviewTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'no cycle merges'):
                 build_review(package)
 
+    def test_summary_and_known_decision_are_separate_from_evidence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            package = self.package(Path(directory), {('A','B'), ('B','A')})
+            decisions = {'decisions': [{'members': ['B', 'A'], 'decision': 'keep_separate',
+                                        'source': 'User explicitly rejected this merge.'}]}
+            item = build_review(package, decisions)['notes'][0]
+            self.assertIn('Should they stay separate?', item['summary'])
+            self.assertIn('Known decision: Keep separate.', item['summary'])
+            for absent in ('VA', 'premise:', 'Parents', 'posts'):
+                self.assertNotIn(absent, item['summary'])
+            self.assertIn('User explicitly rejected', item['results'][0]['comment'])
+            undecided = build_review(package)['notes'][0]['summary']
+            self.assertIn('Not yet decided.', undecided)
+            for bad in ({'members': ['A','C'], 'decision': 'keep_separate', 'source': 'User'},
+                        {'members': ['A','B'], 'decision': 'unknown', 'source': 'User'},
+                        {'members': ['A','B'], 'decision': 'keep_separate', 'source': ''}):
+                with self.assertRaises(ValueError):
+                    build_review(package, {'decisions': [bad]})
+
     def test_tampered_named_graph_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             package = self.package(Path(directory), {('A','B'), ('B','A'), ('B','C')})

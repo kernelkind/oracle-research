@@ -66,6 +66,7 @@ struct Note {
     title: String,
     text: String,
     model_input: Option<String>,
+    summary: Option<String>,
     results: Vec<ModelResult>,
 }
 
@@ -93,6 +94,9 @@ pub struct ModelOutputReview {
     show_model_input: bool,
     scroll: [u16; 3],
     half_page_lines: [u16; 3],
+    focus_panel: Option<usize>,
+    focus_scroll: u16,
+    focus_half_page: u16,
 }
 
 impl ModelOutputReview {
@@ -127,6 +131,15 @@ impl ModelOutputReview {
         }
         let mut ids = BTreeSet::new();
         for note in &review.notes {
+            if note
+                .summary
+                .as_ref()
+                .is_some_and(|summary| summary.trim().is_empty() || note.results.len() != 1)
+            {
+                return Err(invalid(
+                    "summary reviews require nonempty summaries and one result per item",
+                ));
+            }
             if [&note.id, &note.title, &note.text]
                 .iter()
                 .any(|value| value.trim().is_empty())
@@ -190,6 +203,9 @@ impl ModelOutputReview {
             show_model_input: false,
             scroll: [0; 3],
             half_page_lines: [1; 3],
+            focus_panel: None,
+            focus_scroll: 0,
+            focus_half_page: 1,
         })
     }
 
@@ -220,6 +236,8 @@ impl ModelOutputReview {
         self.note = note;
         self.scroll.fill(0);
         self.show_model_input = false;
+        self.focus_panel = None;
+        self.focus_scroll = 0;
     }
 
     pub fn handle_event(&mut self, event: Event) -> ModelOutputReviewAction {
@@ -232,8 +250,17 @@ impl ModelOutputReview {
         if !matches!(key.kind, KeyEventKind::Press | KeyEventKind::Repeat) {
             return ModelOutputReviewAction::None;
         }
-        let scroll = &mut self.scroll[self.panel];
-        let half_page = self.half_page_lines[self.panel];
+        let focused = self.review.notes[self.note].summary.is_some();
+        let scroll = if focused {
+            &mut self.focus_scroll
+        } else {
+            &mut self.scroll[self.panel]
+        };
+        let half_page = if focused {
+            self.focus_half_page
+        } else {
+            self.half_page_lines[self.panel]
+        };
         if key.modifiers == KeyModifiers::CONTROL {
             match key.code {
                 KeyCode::Char('d') => *scroll = scroll.saturating_add(half_page),
@@ -250,7 +277,20 @@ impl ModelOutputReview {
         }
         let models = self.review.notes[self.note].results.len();
         match key.code {
+            KeyCode::Esc if focused && self.focus_panel.is_some() => {
+                self.focus_panel = None;
+                self.focus_scroll = 0;
+            }
             KeyCode::Char('q') | KeyCode::Esc => return ModelOutputReviewAction::Quit,
+            KeyCode::Char(action @ ('m' | 'w' | 'c')) if focused => {
+                self.focus_panel = Some(match action {
+                    'm' => 0,
+                    'c' => 1,
+                    _ => 2,
+                });
+                self.focus_scroll = 0;
+                self.show_model_input = false;
+            }
             KeyCode::Left | KeyCode::Char('h' | 'p') => {
                 self.select_note(
                     (self.note + self.review.notes.len() - 1) % self.review.notes.len(),
@@ -267,12 +307,16 @@ impl ModelOutputReview {
                 self.review.apply_ordering(self.ordering);
                 self.select_note(self.note);
             }
-            KeyCode::Char('i') if self.review.notes[self.note].model_input.is_some() => {
+            KeyCode::Char('i')
+                if self.review.notes[self.note].model_input.is_some()
+                    && (!focused || self.focus_panel == Some(0)) =>
+            {
                 self.show_model_input = !self.show_model_input;
                 self.scroll[0] = 0;
+                self.focus_scroll = 0;
             }
-            KeyCode::Tab => self.panel = (self.panel + 1) % 3,
-            KeyCode::BackTab => self.panel = (self.panel + 2) % 3,
+            KeyCode::Tab if !focused => self.panel = (self.panel + 1) % 3,
+            KeyCode::BackTab if !focused => self.panel = (self.panel + 2) % 3,
             KeyCode::Up | KeyCode::Char('k') => *scroll = scroll.saturating_sub(1),
             KeyCode::Down | KeyCode::Char('j') => *scroll = scroll.saturating_add(1),
             KeyCode::PageUp => *scroll = scroll.saturating_sub(half_page.saturating_mul(2)),
@@ -284,6 +328,74 @@ impl ModelOutputReview {
         ModelOutputReviewAction::None
     }
 
+    fn render_summary(&mut self, frame: &mut Frame<'_>) {
+        let note = &self.review.notes[self.note];
+        let result = &note.results[0];
+        let rows = Layout::vertical([
+            Constraint::Length(2),
+            Constraint::Min(4),
+            Constraint::Length(2),
+        ])
+        .split(frame.area());
+        frame.render_widget(
+            Paragraph::new(format!(
+                "{} {} of {}",
+                terminal_safe(self.review.labels.item.as_deref().unwrap_or("Item")),
+                self.note + 1,
+                self.review.notes.len()
+            ))
+            .style(accent_style()),
+            rows[0],
+        );
+        let (title, content, controls) = match self.focus_panel {
+            None => (
+                "Question",
+                note.summary.as_deref().expect("summary view"),
+                "m Masks   w Why merged?   q Quit",
+            ),
+            Some(0) => (
+                if self.show_model_input {
+                    "Full posts"
+                } else {
+                    "Masks · original groups"
+                },
+                if self.show_model_input {
+                    note.model_input.as_deref().unwrap_or(&note.text)
+                } else {
+                    &note.text
+                },
+                "↑/↓ Scroll   i Masks/full posts   Esc Back   q Quit",
+            ),
+            Some(1) => (
+                "Resulting connections",
+                result.output.as_str(),
+                "↑/↓ Scroll   Esc Back   q Quit",
+            ),
+            Some(_) => (
+                "Why merged?",
+                result.comment.as_str(),
+                "↑/↓ Scroll   c Connections   Esc Back   q Quit",
+            ),
+        };
+        render_scrollable_panel(
+            frame,
+            rows[1],
+            title,
+            &terminal_safe(content),
+            &mut self.focus_scroll,
+            &mut self.focus_half_page,
+            true,
+        );
+        frame.render_widget(
+            Paragraph::new(vec![
+                Line::from(controls),
+                Line::from("←/→ Previous/next   Read-only"),
+            ])
+            .style(secondary_style()),
+            rows[2],
+        );
+    }
+
     pub fn render(&mut self, frame: &mut Frame<'_>) {
         let area = frame.area();
         if area.width < MIN_WIDTH || area.height < MIN_HEIGHT {
@@ -291,6 +403,10 @@ impl ModelOutputReview {
                 Paragraph::new("Resize to at least 72 × 24.\nq / Esc / Ctrl-C exits."),
                 area,
             );
+            return;
+        }
+        if self.review.notes[self.note].summary.is_some() {
+            self.render_summary(frame);
             return;
         }
         let note = &self.review.notes[self.note];

@@ -172,20 +172,30 @@ before/after review from a `hierarchy_build.py package` directory. It replays
 the saved merge and naming evidence before export; it does not run models,
 change the graph or record approvals. The output path must be new.
 
-Each page shows the original groups' titles and masks separately, the combined
-title and resulting parent/child connections, and all internal native TRUE
-answers (including No answers). Retained links also show their original
-contributing answers and conflicting direct rejections. These are the saved
-graph links, before any equal-post navigation collapse. TRUE compared original
-titles, not the newly generated combined title. Exact model inputs are below
-the answers. Full posts with each mask marked are available with `i`.
+The main screen shows only the original group titles, their combined title,
+“Should they stay separate?”, and any known user decision. Masks (`m`) and
+the reason for merging (`w`) open separately in one full-width view; Escape
+returns to the question. Counts, links and model inputs do not crowd the main
+screen. Within masks, `i` switches to full posts with each mask marked. Within
+the explanation, `c` shows resulting connections. All saved native TRUE answers
+remain available, including direct No answers that conflict with accepted
+paths. Connections are saved graph links, before equal-post navigation collapse.
+TRUE compared original titles, not the newly generated combined title.
+
+Optional `--decisions FILE` imports display-only prior user decisions. The
+file has a `decisions` list; each entry supplies the exact original `members`,
+`decision` (`keep_separate` or `merge`), and a nonempty `source` citing the user
+decision. Unknown/duplicate member sets and unsupported decisions are rejected.
+This labels the review; it does not alter the graph. The sample labels the
+user's Beef / Beef products rejection; other merges remain undecided.
 
 The existing `model-output-review` viewer accepts optional `labels` for
 `source`, `alternate_source`, `output`, `comment`, `item` and `variant`;
-omitting them preserves its normal post/model comparison labels. Merge review
-uses Before, After and TRUE answers rather than mislabeling groups as posts or
-saved TRUE evidence as agent commentary. Group numbers distinguish identical
-titles without displaying long node IDs; original mask IDs remain visible.
+omitting them preserves its normal post/model comparison labels. An optional
+nonempty per-item `summary`, with one saved result, enables the decision-first
+merge view. Existing comparisons without summaries retain their pane layout.
+Group numbers distinguish identical titles without displaying long node IDs;
+original mask IDs remain visible in the mask view.
 Identical same-post masks within a group share one row retaining their aliases.
 
 The four-merge sample can be opened with:
@@ -193,12 +203,12 @@ The four-merge sample can be opened with:
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 target/infomap-review-build/debug/model-output-review \
-  target/hierarchy-build-v1/nev2-browser/merge-review.json
+  target/hierarchy-build-v1/nev2-browser/merge-review-v2.json
 ```
 
-Use Left/Right for merges, Tab for the pane, Up/Down to scroll, `i` for
-masks/full posts and `q` to quit. Review whether a merge removes a redundant
-distinction or erases a useful one; inspect overall browsing separately.
+Use Left/Right for merges, Up/Down to scroll detail views and `q` to quit.
+Review whether a merge removes a redundant distinction or erases a useful one;
+inspect overall browsing separately.
 
 The earlier GDC09 equal-note collapse operates on a tree. The current category
 browser also implements [shared-child collapse](#shared-child-collapse) as a

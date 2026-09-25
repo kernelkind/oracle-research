@@ -39,7 +39,7 @@ def group_masks(node):
     return list(masks.values())
 
 
-def build_review(package):
+def build_review(package, decisions=None):
     package = Path(package)
     merged = read(package/'provenance.json')['merge']
     named = read(package/'named-graph.json')
@@ -51,6 +51,26 @@ def build_review(package):
     nodes = {n['group']: n for n in named['graph']['nodes']}
     memberships = {n['group']: n for n in named['memberships']['nodes']}
     mapping = merged['member_to_group']
+    # Imported user decisions label the review; they never alter the graph.
+    if decisions is not None and (not isinstance(decisions, dict)
+            or set(decisions) != {'decisions'} or not isinstance(decisions['decisions'], list)):
+        raise ValueError('expected a decisions list')
+    known = {}
+    merge_members = {tuple(sorted(n['source_group_ids'])) for n in nodes.values()
+                     if sum(g == n['group'] for g in mapping.values()) > 1}
+    for decision in (decisions or {}).get('decisions', []):
+        if not isinstance(decision, dict):
+            raise ValueError('expected a user decision object')
+        members = decision.get('members', [])
+        if (not isinstance(members, list) or not all(isinstance(m, str) for m in members)
+                or len(set(members)) != len(members)):
+            raise ValueError('decision members must be distinct node IDs')
+        key = tuple(sorted(members))
+        if (key not in merge_members or key in known
+                or decision.get('decision') not in ('keep_separate', 'merge')
+                or not isinstance(decision.get('source'), str) or not decision['source'].strip()):
+            raise ValueError('decision must match one saved merge and cite the user decision')
+        known[key] = decision
     scores = merged['source']['scores']
     accepted = {r['id'] for r in merged['raw_graph']['raw_edges']}
     notes = []
@@ -112,8 +132,9 @@ def build_review(package):
 
         internal = sorted((r for r in scores if r['a_id'] in labels and r['b_id'] in labels),
                           key=lambda r: (r['a_id'], r['b_id']))
-        evidence = [f'{labels[r["a_id"]]} contains {labels[r["b_id"]]}: '
-                    + ('Yes' if r['id'] in accepted else 'No') for r in internal]
+        evidence = [f'{labels[m]}: {original[m]["title"]}' for m in members] + ['']
+        evidence += [f'{labels[r["a_id"]]} contains {labels[r["b_id"]]}: '
+                     + ('Yes' if r['id'] in accepted else 'No') for r in internal]
         evidence.extend(['', 'Rule being tested: every group can reach every other through Yes links, '
                          'so merge them. This does not prove they mean the same thing.',
                          'TRUE saw the original titles, not the masks or the new combined title.',
@@ -121,9 +142,18 @@ def build_review(package):
         for row in internal:
             evidence.extend([f'{labels[row["a_id"]]} contains {labels[row["b_id"]]}',
                              row['model_input'], 'Generated: ' + row['generated_text'], ''])
+        decision = known.get(tuple(sorted(after['source_group_ids'])))
+        status = 'Not yet decided.'
+        if decision:
+            status = 'Known decision: ' + ('Keep separate.' if decision['decision'] == 'keep_separate' else 'Merge.')
+            evidence.extend(['Prior user decision: ' + status, decision['source']])
+        summary = ['We merged these groups:', '']
+        summary += [f'  {i}. {original[m]["title"]}' for i, m in enumerate(members, 1)]
+        summary += ['', 'Into one node: ' + after['title'], '', 'Should they stay separate?', '', status]
         notes.append(dict(id=f'M{len(notes)+1:02}',
                           title=' + '.join(original[m]['title'] for m in members) + ' → ' + after['title'],
                           text='\n'.join(before), model_input='\n'.join(posts),
+                          summary='\n'.join(summary),
                           results=[dict(model='Saved merge', output='\n'.join(output), comment='\n'.join(evidence))]))
     if not notes:
         raise ValueError('no cycle merges in this package')
@@ -133,8 +163,8 @@ def build_review(package):
                             item='Merge', variant='Result'), notes=notes)
 
 
-def export_review(package, output):
-    review = build_review(package)
+def export_review(package, output, decisions=None):
+    review = build_review(package, decisions)
     save(Path(output), review)
     return review
 
@@ -143,9 +173,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('package', type=Path)
     parser.add_argument('output', type=Path)
+    parser.add_argument('--decisions', type=Path, help='saved user decisions; display only')
     args = parser.parse_args()
     try:
-        review = export_review(args.package, args.output)
+        review = export_review(args.package, args.output, read(args.decisions) if args.decisions else None)
         print(f'Saved {len(review["notes"])} merges for read-only review: {args.output}')
     except (ValueError, KeyError, OSError) as error:
         parser.exit(1, f'{error}\n')
