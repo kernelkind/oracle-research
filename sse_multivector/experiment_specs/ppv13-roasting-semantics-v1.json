@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "PPv13",
+    "path": "../prominence-prompt-goal-v1/ppv13-draft-v1/PPv13.md"
+  },
+  "dataset": {
+    "adapter": "prominence",
+    "path": "../prominence-prompt-goal-v1/ppv13-roasting-semantics-v1/cases.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "concurrency": 4,
+    "timeout_seconds": 600
+  }
+}
