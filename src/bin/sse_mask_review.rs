@@ -83,10 +83,8 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                         &assistant_comment.assessment_summary,
                         &assistant_comment.comment,
                     )
-                } else if screen.title.is_some() {
-                    terminal.review_title(screen, comment)
                 } else {
-                    terminal.review_navigable_prompt_iteration(screen, comment)
+                    terminal.review_title(screen, comment)
                 }
             },
         )?;

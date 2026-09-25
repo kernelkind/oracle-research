@@ -374,9 +374,16 @@ pub fn run_title_prompt_review_with_comments(
             action,
             ApprovalTuiAction::Submit { .. } | ApprovalTuiAction::Skip { .. }
         );
+        let navigation = matches!(
+            action,
+            ApprovalTuiAction::PreviousItem | ApprovalTuiAction::NextItem
+        );
         let decision = session.decisions.get_mut(id).expect("validated item ID");
         match action {
-            ApprovalTuiAction::Pause => return Ok(TitlePromptReviewOutcome::Paused),
+            ApprovalTuiAction::Pause => {
+                save_session(session_path, &session)?;
+                return Ok(TitlePromptReviewOutcome::Paused);
+            }
             ApprovalTuiAction::PreviousItem => {
                 session.current_item = Some(
                     batch.items[(index + batch.items.len() - 1) % batch.items.len()]
@@ -412,7 +419,9 @@ pub fn run_title_prompt_review_with_comments(
                 .find(|id| session.decisions[*id].outcome.is_none())
                 .cloned();
         }
-        save_session(session_path, &session)?;
+        if !navigation {
+            save_session(session_path, &session)?;
+        }
     }
     let (mut approved, mut rejected, mut skipped) = (0, 0, 0);
     for decision in session.decisions.values() {

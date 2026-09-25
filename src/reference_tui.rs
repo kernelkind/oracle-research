@@ -1,5 +1,6 @@
 //! Full-screen review and navigation interfaces for the reference map.
 
+use std::collections::VecDeque;
 use std::io::{self, Stdout};
 use std::time::Duration;
 
@@ -1543,6 +1544,7 @@ impl ReferenceNavigationTuiModel {
 
 pub struct ReferenceTerminal {
     terminal: Terminal<CrosstermBackend<Stdout>>,
+    pending_navigation: VecDeque<Event>,
 }
 
 impl ReferenceTerminal {
@@ -1565,7 +1567,10 @@ impl ReferenceTerminal {
                 return Err(error);
             }
         };
-        Ok(Self { terminal })
+        Ok(Self {
+            terminal,
+            pending_navigation: VecDeque::new(),
+        })
     }
 
     pub fn review(&mut self, screen: ApprovalScreen) -> io::Result<ApprovalTuiAction> {
@@ -1605,7 +1610,12 @@ impl ReferenceTerminal {
         screen: ApprovalScreen,
         comment: String,
     ) -> io::Result<ApprovalTuiAction> {
-        self.run_review_model(ApprovalTuiModel::new_title_review(screen, comment))
+        let model = if screen.title.is_some() {
+            ApprovalTuiModel::new_title_review(screen, comment)
+        } else {
+            ApprovalTuiModel::new_navigable_prompt_iteration(screen, comment)
+        };
+        self.run_title_review_model(model)
     }
 
     pub fn review_title_with_comment(
@@ -1615,12 +1625,37 @@ impl ReferenceTerminal {
         assessment_summary: &str,
         assistant_comment: &str,
     ) -> io::Result<ApprovalTuiAction> {
-        self.run_review_model(ApprovalTuiModel::new_title_review_with_comment(
+        self.run_title_review_model(ApprovalTuiModel::new_title_review_with_comment(
             screen,
             user_comment,
             assessment_summary,
             assistant_comment,
         ))
+    }
+
+    fn run_title_review_model(
+        &mut self,
+        mut model: ApprovalTuiModel,
+    ) -> io::Result<ApprovalTuiAction> {
+        // Keep navigation across card boundaries, but discard queued decisions
+        // and comment input so they cannot apply to a card not yet reviewed.
+        while event::poll(Duration::ZERO)? {
+            let input = event::read()?;
+            if is_control_c_event(&input) {
+                self.pending_navigation.clear();
+                return Ok(ApprovalTuiAction::Pause);
+            }
+            if matches!(&input, Event::Key(key)
+                if key.kind == KeyEventKind::Press
+                    && key.modifiers.is_empty()
+                    && matches!(key.code, KeyCode::Left | KeyCode::Right | KeyCode::Up
+                        | KeyCode::Down | KeyCode::PageUp | KeyCode::PageDown
+                        | KeyCode::Home | KeyCode::End))
+            {
+                self.pending_navigation.push_back(input);
+            }
+        }
+        self.run_review_model_stateful(&mut model, false)
     }
 
     pub(crate) fn run_review_model<M>(&mut self, mut model: M) -> io::Result<M::Action>
@@ -1643,7 +1678,11 @@ impl ReferenceTerminal {
         }
         loop {
             self.terminal.draw(|frame| model.render_terminal(frame))?;
-            let action = model.handle_terminal_event(event::read()?);
+            let input = match self.pending_navigation.pop_front() {
+                Some(input) => input,
+                None => event::read()?,
+            };
+            let action = model.handle_terminal_event(input);
             if action != M::none_action() {
                 return Ok(action);
             }

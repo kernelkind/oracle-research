@@ -546,6 +546,14 @@ with their masks, agent assessments and matching review bindings. Unselected
 cases are not presented or assigned decisions. Malformed title outputs remain
 unsupported by the title viewer and are listed in `show`/`report.json`.
 
+Title-card navigation stays in memory rather than synchronously saving on each
+arrow press. Decisions, skips and comments still save durably; Ctrl-C also saves
+the current card before exiting. A crash may lose navigation since the last
+save, not previously saved decisions. Queued navigation keys survive card
+changes; queued decisions and comment input are discarded so they cannot apply
+to a card the user has not reviewed. Other review modes keep their existing
+input and persistence behavior.
+
 Mask filtering restricts navigation in the existing viewer (`--only` case IDs)
 without changing the full batch or its session fingerprint. Full and focused
 views therefore share decisions, comments and resume state. Cases outside the
