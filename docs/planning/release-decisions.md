@@ -193,10 +193,11 @@ found it promising on subjects with ASv6.23, but with some context omissions.
 That diagnostic tested neither masks nor prominence, and did not establish
 equivalence to Astra. Its subject-only cost is not a complete labeling estimate.
 
-Selecting the teachers and completing the 500-note validation are both
-prerequisites for generating the full training data (07). The same teachers must
-write both the pilot training data (05) and the full training data (07): the
-user directed on September 21, 2026 that they come from one source. Work that
+Selecting the teachers and successfully completing the 500-note / 5-topic
+hierarchy validation are both prerequisites for starting full training-data
+generation (07). A finished but unsuccessful run does not clear this gate.
+The same teachers must write both the pilot training data (05) and the full
+training data (07), as the user directed on September 21, 2026. Work that
 consumes no labels, such as 18's training-code preparation, may use any data and
 need not wait for the teacher selection.
 
@@ -500,13 +501,15 @@ cutoff, measured rates and counts, and the final corpus size remain open.
    The volume, quality checks and handling of unsuitable annotations remain
    open; the target does not prescribe a correction workflow.
 
-The October 18 deadline and release requirements are unchanged. The full
-training data follows the 500-note validation and the teacher selection.
-Starting the final fine-tune requires both the selected base model and
-sufficient reviewed training data. September 27 is an agreed readiness target,
-not a demonstrated completion forecast. Training volume and the time required
-to produce suitable data remain unresolved. These timing decisions do not authorize work
-to begin or establish that the full schedule fits.
+The October 18 deadline and release requirements are unchanged. Full
+training-data generation starts only after successful completion of the
+500-note hierarchy validation and teacher selection; the September 27 target
+does not override this gate. Starting the final fine-tune requires both the
+selected base model and sufficient reviewed training data. September 27 is an
+agreed readiness target, not a demonstrated completion forecast. Training
+volume and the time required to produce suitable data remain unresolved. These
+timing decisions do not authorize work to begin or establish that the full
+schedule fits.
 
 ## Compute, hosting and budget
 

@@ -89,12 +89,12 @@ do not silently mix outputs from different annotation policies.
 The prominence definition, annotation prompt, output representation and evaluation
 criteria still need to be settled. Report any earlier mask-only results as
 mask-only evidence; they cannot establish prominence quality or the cost of
-generating both outputs. Generating the full training data requires both the
-500-note hierarchy validation and the teacher selection in the
-[release plan](../docs/planning/release-decisions.md). The same teachers must
-write both the pilot training data and the full training data, per the user's
-direction of September 21, 2026. Work that consumes no labels may use any data
-and need not wait for the teacher selection.
+generating both outputs. Starting full training-data generation requires both
+successful completion of the 500-note hierarchy validation and teacher
+selection in the [release plan](../docs/planning/release-decisions.md). The
+same teachers must write both the pilot training data and the full training
+data, per the user's direction of September 21, 2026. Work that consumes no
+labels may use any data and need not wait for the teacher selection.
 
 The agreed readiness target for the larger fine-tune's training data is
 **September 27, 2026**, including masks and prominence, with training/evaluation

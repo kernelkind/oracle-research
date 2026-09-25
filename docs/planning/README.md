@@ -119,8 +119,10 @@ Notedeck can start from the protocol, and integration needs the service. Launch
 still needs the final snapshot. Exact start/completion dates remain open.
 
 The fine-tuning pilot (06) informs the training-volume decision required to
-complete the full training data (07). Its dashed arrow does not require the whole pilot to
-finish before any bulk generation can start. The agreed 03 + 17 gates remain.
+complete the full training data (07). Its dashed arrow does not require the
+whole pilot to finish before bulk generation can start. But 07 cannot start
+until the 500-note hierarchy validation (03) succeeds and the teachers are
+selected (17).
 The pipeline note distinguishes training-label generation from applying
 the distilled model to the final corpus.
 
