@@ -89,6 +89,9 @@ python3 sse_multivector/frontier-model-comparison-v1/sp-mp-teacher-parity-v1/stu
 - Blind scoring strips model-supplied diagnostics; verdicts judge masks and
   subject sets only. One scorer per packet with an overlap consistency check
   is not a multi-rater study.
+- This round does not compare prominence or resulting hierarchies. Its label
+  parity verdict alone cannot select teachers; task 17 also requires an A/B
+  comparison of hierarchies built from candidate outputs.
 
 ## Findings
 

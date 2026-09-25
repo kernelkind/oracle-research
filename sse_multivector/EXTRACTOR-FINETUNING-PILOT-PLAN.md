@@ -15,8 +15,9 @@ has Muse Spark 1.3 Contributor as its leading, unselected candidate. Existing
 and the [12-note subject diagnostic](frontier-model-comparison-v1/asv6.23-diagnostic-v2/results.md)
 inform that choice; they do not establish mask or prominence quality.
 The [teacher-comparison pilot](../docs/planning/release-decisions.md#teacher-comparison-pilot-evaluation-plan)
-compares candidates for quality, speed, cost and training-data feasibility; its
-experimental procedure and treatment of unsuitable annotations remain open.
+compares the quality of candidate subjects, masks, prominence and resulting
+hierarchies, as well as generation speed, cost and training-data feasibility.
+Its experimental procedure and treatment of unsuitable annotations remain open.
 This fine-tuning pilot informs the training-volume decision and schedule check;
 the teacher comparison does not determine how much training data the distilled
 model needs.

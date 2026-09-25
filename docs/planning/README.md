@@ -49,9 +49,11 @@ generate outputs for evaluation. Final training-example formatting and
 mask/prominence evaluation remain in 06, after the agreed output format,
 criteria and reviewed pilot data are available. The 05 + 18 dependencies on
 06 are unchanged. Node 17 is blue and in progress: the user reports comparing
-Muse high and Astra low. No teacher is selected. Completing the
-comparison still requires validated prompts (01 + 04); prominence remains
-unfinished. Comparison planning is part of 17, not a separate task.
+Muse high and Astra low. No teacher is selected. Task 17 also requires an A/B
+comparison of the resulting hierarchies on the same notes before selection;
+label quality alone is insufficient. Completing the comparison still requires
+validated prompts (01 + 04); prominence remains unfinished. Comparison
+planning is part of 17, not a separate task.
 Node 01 is complete: the subject and mask prompts are finished. On September 24,
 the user confirmed that the node-title prompt is finished. Node 23 is complete,
 and all 129 HDBSCAN groups have saved v38/Luna max titles. Node 02 resumed with

@@ -171,7 +171,7 @@ stages or approve a dataset size, hardware rental or spending allocation.
 
 - **Teacher-comparison pilot (17):** choose the teachers that write the training
   data. The current comparison is Muse high versus Astra low; no teacher is
-  selected. Assess subjects, masks and prominence with the validated prompts,
+  selected. Assess subjects, masks, prominence and the resulting hierarchies,
   along with generation time, cost and feasibility. How unsuitable annotations
   are handled remains open; repairing them is not an assumed workflow. Check the
   provider's data-use and output-use terms before producing training data at
@@ -215,6 +215,12 @@ The comparison needs to establish:
 - Whether candidates produce suitable subjects, masks and prominence under the
   validated requirements. Subject-only evidence does not establish mask or
   prominence quality.
+- Whether hierarchies built from each candidate's own subjects, masks and
+  prominence on the same notes, with downstream construction held fixed, offer
+  useful browsing paths.
+  Compare the hierarchies before selecting teachers; distinguish differences
+  caused by teacher outputs from failures shared by the construction pipeline.
+  Label-only parity does not settle the selection.
 - Whether the selected teachers can supply the intended training data
   within the available time and budget.
 - Whether provider data-use and output-use terms permit the intended training
@@ -224,10 +230,11 @@ Completing 17 needs the validated subject/mask prompts from 01 and prominence
 requirements and prompt from 04. These are completion prerequisites; independent
 comparison work is already underway.
 
-Samples, comparison procedures, review coverage, treatment of unsuitable
-annotations and acceptance decisions remain open. No generate–repair–train
-workflow is prescribed. Those details belong to the evaluation workstream, not
-to assumptions made by this release plan.
+The hierarchy A/B comparison is part of 17, not a separate task. The sample,
+comparison procedure, review coverage, treatment of unsuitable annotations and
+acceptance decisions remain open. No generate–repair–train workflow is
+prescribed. Those details belong to the evaluation workstream, not to
+assumptions made by this release plan.
 
 Completing the full training data (07) also requires an agreed training volume,
 informed by the fine-tuning pilot (06). Its evidence is an input to that decision;

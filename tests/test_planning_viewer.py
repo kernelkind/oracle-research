@@ -194,6 +194,7 @@ class PlanningViewerTest(unittest.TestCase):
         self.assertIn("IN PROGRESS", comparison.get("value"))
         self.assertIn("fillColor=light-dark(#e7f1ff,", comparison.get("style"))
         self.assertIn("Muse high vs Astra low; no teacher selected", comparison.get("value"))
+        self.assertIn("A/B test resulting hierarchies on the same notes", comparison.get("value"))
         self.assertIn("FINISH WITH 04", comparison.get("value"))
         self.assertNotIn("17 ·", cells["ready-summary"].get("value"))
         incoming = set()
