@@ -5,8 +5,13 @@
 **September 25: start an informal subject-and-mask pilot.** The user approved
 using the data already on hand with the latest subject and mask prompts,
 establishing untuned baselines and testing fine-tuning without prominence.
-Teachers supply the subject and mask annotations; each candidate receives a
-complete note and generates its masks directly, before and after fine-tuning.
+The user subsequently approved **one fine-tune per candidate, learning both
+prompted tasks**. Subject examples pair ASv6.48 + the complete note with the
+teacher's subject hierarchy. Mask examples pair MPv3.43 + the complete note +
+one subject with the teacher's full mask response. Both tasks update the same
+model or adapter. At evaluation, that model generates subjects first, then
+runs the mask prompt for each of its own generated subjects. Establish the
+untuned baseline with this same process. Direct-mask generation is deferred.
 This first experiment can proceed while prominence and final teacher selection
 remain unfinished. It does not select the release model or settle the larger
 pilot's dataset sizes, training recipe, or spending allocation.
@@ -20,13 +25,21 @@ keeping same-author and identical-content notes together. The split is an
 implementation choice for this informal experiment, not a new release gate.
 Close paraphrases still require inspection before training.
 
-[DPv1](distillation-prompts/DPv1.md) is a **draft, untested** direct-mask
-instruction derived from those prompts. It uses their word-position mask
-representation and requests all distinct nonempty masks in one response.
-Original subjects, duplicate masks, valid empty results and diagnostics remain
-in the reference data. This transformation does not repair teacher judgments.
-Use the same instruction and output format for each candidate's before/after
-comparison. DPv1 is not a replacement for either teacher prompt.
+The prepared training dataset contains **80 subject examples and 1,860 mask
+examples**. The task prompts distinguish which answer the model should produce;
+these are two tasks within one fine-tune, not separately trained models.
+Subject responses retain numbering, context and subject text. Mask responses
+retain meaning, expressible, evidence and word-position selections, including
+valid empty results. The existing production mask-input preparation excludes
+the teacher's diagnostic context from mask inputs. Equivalent source selections
+are canonicalized without changing their selected text. No semantic repair or
+deduplication across different subjects is applied to the training examples.
+Task sampling or weighting must be specified before training; concatenating
+all rows would give masking many more examples than subject generation.
+
+The superseded DPv1 draft has been removed. Its earlier ignored export at
+`target/distillation-pilot-v1/data` is not the active dataset. The new export
+below preserves exactly the same 80/20 note split and the original annotations.
 
 Offline preparation is reproducible with:
 
@@ -35,22 +48,28 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 python3 -m sse_multivector.distillation_data \
   --source sse_multivector/hierarchy-refresh-v1/source.json \
   --annotations sse_multivector/hierarchy-refresh-v1/masked-posts.json \
-  --prompt sse_multivector/distillation-prompts/DPv1.md \
-  --prompt-id DPv1 \
+  --subject-prompt sse_multivector/subject-prompt-goal-v1/asv6.48/ASv6.48.md \
+  --mask-prompt sse_multivector/mask-prompt-goal-v1/mpv3.43-draft-v1/mask-prompt.md \
+  --subject-prompt-id ASv6.48 \
+  --mask-prompt-id MPv3.43 \
   --evaluation-notes 20 \
   --seed informal-pilot-v1 \
-  --output target/distillation-pilot-v1/data
+  --output target/distillation-pilot-v1/two-task-data
 ```
 
 The destination must be new. The manifest records input/output hashes and
-note IDs; evaluation inputs contain no teacher answers. Data stays ignored
+note IDs; evaluation starts with subject-prompt inputs containing no teacher
+answers. Its mask inputs must use the candidate's generated subjects. Data stays ignored
 under `target/`. Conversion checks every selection using the existing mask
 decoder. No candidate baseline, fine-tune or GPU rental has run yet.
 
 The release model still needs prominence. The requirements below describe the
 larger evaluation and release decision; prominence is excluded only from this
-initial informal experiment. Training settings and paid-run maximum charges
-remain to be settled before execution.
+initial informal experiment. The user accepted the proposed **$25 total maximum**
+for GPU setup, untuned baselines and initial fine-tunes across the three
+candidates. This includes storage, transfers and failed attempts, within the
+existing lifetime cap. Training settings remain to be settled and ledger
+admission is required before accepting any paid commitment.
 
 This document contains our experimental plan, decisions, preparation findings,
 and open questions. Published model evidence belongs in
@@ -116,6 +135,10 @@ formats and publishing locations remain open, and publishing the training
 dataset is not required. See [publication preparation](../docs/planning/release-decisions.md#publication-preparation).
 
 ## Task and training annotations
+
+The informal pilot above preserves both prompted tasks. The intended direct
+release task below remains a later experiment; it is not the informal pilot's
+training-output contract.
 
 ```text
 complete original note → complete set of grouped source-text masks + prominence per mask
@@ -191,7 +214,10 @@ Within that model's before/after comparison, keep these unchanged:
 - Decoding settings and inference precision.
 - Semantic review criteria and mechanical checks.
 
-Both versions receive the original note, without reference subjects or masks.
+Both versions begin with the original note, without reference subjects or masks.
+For the informal two-step pilot, the subsequent mask calls receive subjects
+generated by that same candidate version. Teacher-supplied subjects may support
+separate mask diagnostics, but do not establish end-to-end extraction quality.
 Preserve all original outputs. The untuned result is the zero-training-note
 point on that model's learning curve. The Astra pipeline is a separate reference,
 not a replacement for these three baselines.
@@ -442,7 +468,10 @@ evaluation, transfers, troubleshooting, and annotation generation are additional
 ### Approved allocation
 
 The user approved one shared **$1,000 lifetime budget** and **$0 reserved for
-future work**. Nothing is currently earmarked for the pilot or larger fine-tune.
+future work**. The subsequent approval permits up to **$25 total** for the
+informal pilot's GPU setup, baselines and initial fine-tunes. No commitment has
+yet been accepted or entered for that work; record it before renting. No amount
+is earmarked for the larger fine-tune.
 The previously proposed $500 fine-tuning reserve was not approved. Model and
 training-cost estimates above remain planning scenarios, not spending authority.
 Any paid annotation work shares the same lifetime budget.
@@ -466,10 +495,11 @@ at $1 or less, without a provider-side cap. Other paid runs need an explicitly
 approved maximum charge. Provider-enforced spending caps are not required;
 ledger accounting and the lifetime ceiling still apply.
 
-## Next approval
+## Next step
 
-Preparation of the informal subject-and-mask experiment is underway. Next
-finalize its direct-mask instruction and training setup, then obtain a maximum
-charge approval before paid execution. Establish each candidate's baseline
-before fine-tuning and compare on the same held-out notes. Prominence and the
-larger dataset-size schedule can wait; paid rentals are not yet authorized.
+The informal dataset is prepared for one fine-tune per candidate on both
+existing prompted tasks. Next prepare the training setup, including how the
+two tasks are sampled or weighted. Establish each candidate's two-step baseline
+before fine-tuning and compare on the same held-out notes using its own generated
+subjects. Paid work must fit the approved $25 total and ledger admission.
+Prominence and the larger dataset-size schedule can wait.

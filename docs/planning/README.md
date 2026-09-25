@@ -86,7 +86,12 @@ data from the latest subject and mask prompts, with untuned baselines and no
 prominence. Local preparation is underway; candidate inference, training and
 rentals have not run. The 05 + 18 dependencies describe completing 06; this
 informal start can use saved annotations before prominence and teacher
-selection are finished. It does not complete model selection or approve spending.
+selection are finished. The user then approved one fine-tune per candidate
+learning both prompted tasks: generate subjects, then mask each generated
+subject. Direct-mask generation is deferred for this informal experiment.
+The $25 total accepted for setup, baselines and initial fine-tunes remains
+subject to ledger admission; no rental has started. This does not complete
+release-model selection.
 Node 17 is blue and in progress: the user reports comparing
 Muse high and Astra low. No teacher is selected. Task 17 also requires an A/B
 comparison of the resulting hierarchies on the same notes before selection;

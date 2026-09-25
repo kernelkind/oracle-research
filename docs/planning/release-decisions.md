@@ -179,7 +179,11 @@ stages or approve a dataset size, hardware rental or spending allocation.
 **September 25 informal start:** the user approved beginning the fine-tuning
 pilot with available data from the latest subject and mask prompts, excluding
 prominence for now and establishing untuned baselines. The teachers generate
-subjects and masks; candidates learn complete note → complete mask set.
+subjects and masks. The user subsequently approved one fine-tune per candidate
+on both existing prompted tasks: note → subject hierarchy, then note + subject
+→ mask. Both tasks train the same model or adapter. Baseline and trained
+evaluation each use that candidate's own generated subjects for the mask calls.
+Direct-mask generation is deferred for this informal pilot.
 This initial informal experiment may use current saved annotations before
 prominence and final teacher selection are ready. Local data preparation has
 started; no candidate baseline, training run or rental has run. See the
@@ -187,6 +191,9 @@ started; no candidate baseline, training run or rental has run. See the
 The release model still requires prominence. Candidate selection, the larger
 pilot's evaluation requirements, full-data gates and paid-resource approval
 rules remain in force; the informal result does not complete 06.
+The user accepted a $25 total maximum for GPU setup, baselines and initial
+fine-tunes across the three candidates, including storage, transfers and failed
+attempts. No rental has started; ledger admission precedes any paid commitment.
 
 - **Teacher-comparison pilot (17):** choose the teachers that write the training
   data. The current comparison is Muse high versus Astra low; no teacher is
@@ -516,7 +523,8 @@ within **06 · Choose the model to train**. Its completion needs the agreed outp
 format, prominence criteria, reviewed pilot data and training setup (05 + 18).
 The September 25 informal subject-and-mask experiment can start preparation
 using available data while those completion requirements remain outstanding.
-That authorization does not approve a GPU rental or a spending amount.
+The subsequent $25 informal-pilot approval above bounds paid execution;
+training settings and ledger admission still need to be established.
 
 These are planning dependencies, not approval for measurements, model calls or
 paid runs in this discussion. Measurement procedures, sample sizes, the cosine
