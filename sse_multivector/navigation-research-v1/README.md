@@ -161,27 +161,35 @@ for discussion, without renaming existing artifacts or changing frozen run IDs.
 The earlier scoring manifest retains `HRv1-full-v38`; the current Astra-title
 run uses `HR02-v38-gpt-6-astra`.
 
-**NSPv1 — diagnostic subsumption prompt, draft and untested:** the user authorized
-preparing [NSPv1](../node-subsumption-prompt-v1/prompt.txt) for review, not model
-calls or another hierarchy build. The proposed diagnostic changes only the
-relationship judgments, using the same 129 original Astra-low v38 node titles
-before TRUE's semantic merges, not the 116 displayed nodes. Subjects, masks,
-vectors, HDBSCAN groups and titles remain fixed; judgments would pass through
-the existing merging, naming and navigation stages. Neither source posts and
-masks nor saved TRUE judgments are model inputs. They remain review evidence.
-The prompt asks one directed containment question; an eventual comparison must
-cover both directions, and must evaluate rejections as well as acceptances.
-NSPv1 proposes `yes`, `no`, or `uncertain` plus a short decision explanation.
-Uncertainty is not a No; its handling must be agreed before graph construction.
-Prompt approval, model/settings, execution scope and inference remain open.
-The draft is not wired into the runner or graph builder. A successful diagnostic
-would establish a useful comparison, not ground truth, a scalable placement
-method, or completion of later production-validation gates. Existing TRUE
-artifacts and provisional HD01–HD06 rules are unchanged.
-Following the official [reasoning-model prompting guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively),
-the draft uses a direct task, explicit scope and output contract, no worked
-examples, and no prescribed chain of thought. This is prompt-design guidance,
-not evidence of subsumption accuracy.
+**NSPv2 — diagnostic subsumption prompt, tested, not production-frozen:** the
+user approved the shorter [NSPv2](../node-subsumption-prompt-v2/prompt.txt) and a
+four-pair pilot, both directions, with Astra low. The shared runner completed
+eight subscription calls: eight valid outputs, no retries or reuse. All eight
+matched the agent expectations recorded before inference; the corresponding
+saved TRUE answers matched four. These deliberately selected failures and one
+working control do not estimate general accuracy. No uncertainty answers
+occurred, so uncertainty handling is still untested.
+
+The pairs were Food and drink / Bread, nostr / Food and drink, coffee / Coffee,
+and Amusement / Having a good day. All titles exactly match original HR02
+inputs before TRUE's semantic merges. Only the two titles and the prompt went
+to the model; saved TRUE decisions and agent expectations stayed in review-only
+evidence. TRUE and NSPv1 were not run. The experiment and receipts are in
+`experiments/nspv2-hr02-four-pairs-v1/`; the reusable
+[spec](../experiment_specs/nspv2-hr02-four-pairs-astra-low.json) fixes the prompt,
+model and output contract. Agent assessments are saved through the runner,
+separately from user judgments. NSPv1 remains an untested, rejected draft kept
+as NSPv2's revision source, not a current candidate.
+
+No hierarchy was rebuilt. A full comparison would start with the same 129
+original titled nodes, not the 116 nodes produced by TRUE's merges, and retain
+subjects, masks, vectors, groups, titles and existing construction rules.
+Further inference and graph construction require approval. Uncertainty is not
+a No; its handling remains open before graph construction. A useful diagnostic
+would not establish ground truth, a scalable placement method, or completion
+of later production-validation gates. Existing TRUE artifacts and provisional
+HD01–HD06 rules are unchanged. NSPv2 uses the direct, example-free starting point
+recommended in the official [reasoning-model prompting guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively).
 
 **September 25 full-run checkpoint:** the user authorized building the full
 second 100-post hierarchy with the existing provisional rules, without

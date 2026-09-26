@@ -43,13 +43,15 @@ prerequisites are satisfied. The provisional cycle rules are assessed in 02.
 The full pass was mechanically valid; spot checks found some questionable
 titles, and the user has not approved every output. Prompt changes and
 validation procedures belong to that workstream, not this planning discussion.
-After reviewing hierarchy failures, the user authorized drafting a frontier-model
-subsumption prompt for a diagnostic comparison, not inference or a production
-replacement for TRUE. [NSPv1 is draft and untested](../../sse_multivector/navigation-research-v1/README.md).
-The proposed comparison retains the 129 original titled nodes before TRUE
-merges and the existing construction rules. The saved HR02 hierarchy, task
-statuses and downstream validation gates remain unchanged; scalable relationship
-inference is unresolved.
+The user subsequently approved the simplified
+[NSPv2 diagnostic prompt and four-pair pilot](../../sse_multivector/navigation-research-v1/README.md).
+Eight Astra-low subscription calls checked both directions: all outputs were
+valid and matched pre-run agent expectations, versus four of the saved TRUE
+answers. This selected smoke test does not establish general accuracy or a
+validated hierarchy. No hierarchy was rebuilt. A full comparison would retain
+the 129 original titles before TRUE merges and existing construction rules;
+further inference and graph construction remain unapproved. Scalable
+relationship inference and downstream validation gates remain unresolved.
 Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
 hierarchy or title correction. Its prompt and validation are not complete.

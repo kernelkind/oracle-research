@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "NSPv2",
+    "path": "../node-subsumption-prompt-v2/prompt.txt"
+  },
+  "dataset": {
+    "adapter": "generic",
+    "path": "../../target/hierarchy-build-v1/nspv2-pilot-inputs-v1/cases.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "concurrency": 4,
+    "timeout_seconds": 300,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "contains": {
+          "type": "string",
+          "enum": [
+            "yes",
+            "no",
+            "uncertain"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "contains",
+        "reason"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
