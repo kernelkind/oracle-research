@@ -63,6 +63,10 @@ remained Yes / No and still justified them as coffee-shop business chains.
 Preserving the marker did not prevent that interpretation in this draw; both
 justifications are rejected in agent review. No baseline was rerun, and no
 prompt, saved original title or hierarchy was changed.
+The user then requested explicit social-media source context in the subsumption
+prompt. NSPv3 is drafted from NSPv2 with only "derived from social media posts"
+added to its opening description. Its exact wording awaits review; it is
+untested, with no additional uncertainty rule or active experiment change.
 No hierarchy was rebuilt. A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
 and graph construction remain unapproved. Scalable relationship inference and

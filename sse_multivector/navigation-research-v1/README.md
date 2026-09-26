@@ -216,6 +216,14 @@ batch because adding # changes the input; the old answers were inspected as an
 input-change comparison, not presented as identical-input trials. No hierarchy
 was rebuilt.
 
+**NSPv3 — draft, untested:** the user requested that the subsumption prompt
+identify social media posts as the source, so hashtag syntax has that context.
+[NSPv3](../node-subsumption-prompt-v3/prompt.txt) adds only "derived from social
+media posts" to NSPv2's first sentence. The shared revision tool preserves the
+baseline hash and exact delta. The remaining instructions and output contract
+are unchanged; no extra uncertainty instruction is added. Wording review and
+test authorization remain pending; existing specs and saved calls stay on NSPv2.
+
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
 Both batches retain original pre-merge node IDs, exact title inputs, expectations,
