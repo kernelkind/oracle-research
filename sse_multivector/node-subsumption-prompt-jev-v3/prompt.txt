@@ -1,0 +1,14 @@
+{
+  "state": {"A": "{A_TITLE}", "B": "{B_TITLE}"},
+  "questions": {
+    "contains": {
+      "type": "choice",
+      "instructions": "A and B name topics used to organize social media posts. Does B fall entirely within A's subject matter? Answer yes if discussing B is necessarily discussing A, including when both titles name the same topic. Mere association or partial overlap is not enough: if B can be discussed without discussing A itself, answer no. If you cannot determine this from the meanings of the titles, answer uncertain.",
+      "criteria": {
+        "yes": "Yes",
+        "no": "No",
+        "uncertain": "Cannot determine this from the meanings of the titles"
+      }
+    }
+  }
+}

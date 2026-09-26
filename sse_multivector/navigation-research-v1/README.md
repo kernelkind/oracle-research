@@ -550,20 +550,21 @@ target/infomap-review-build/debug/sse-subject-navigation \
   sse_multivector/hierarchy-refresh-v1/masked-posts.json
 ```
 
-**NSP-Jev-v2 — draft only, not tested or adopted:** after inspecting the section,
-the user requested reconsidering the relationship question against ASv6.48,
-MPv3.43 and TPv38. The [draft](../node-subsumption-prompt-jev-v2/prompt.txt)
-replaces only NSP-Jev-v1's question instructions. It compares the subjects named
-by the titles, using the subject-index framing and preserving their stated
-generality and scope-defining details. Subject containment is not restricted
-to kinds of objects, but relatedness or partial overlap is insufficient.
-The source post's other meanings do not define the named subject's scope.
-State inputs, Yes/No/Uncertain options and output format are unchanged. No
-examples, masks, source posts or pipeline descriptions are added to the input.
-The contradictory chain establishes inconsistent decisions, not a proven
-prompting cause. NSP-Jev-v1, saved outputs and graphs remain unchanged; the
-draft requires review before any inference. If approved, the same nine-node
-section can isolate this wording change against its saved baseline.
+**NSP-Jev-v3 — draft only, not tested or adopted:** the user requested fixing
+the relationship prompt after examining whether the v2 draft stood on its own.
+The [new draft](../node-subsumption-prompt-jev-v3/prompt.txt) is based directly
+on tested NSP-Jev-v1. It asks whether B falls entirely within A's subject matter:
+discussing B must necessarily discuss A, not merely something associated with
+A. Equivalent subjects count as Yes; partial overlap is insufficient. V2's
+subject-index analogy and classification language are omitted; v2 remains a
+superseded, untested prompt version, not a baseline. State inputs, choices and
+output format are unchanged, with no examples or additional input data.
+V1's question can already express subject containment; there is no evidence
+that Jev required explicit mentions or confused source-post contents with
+subject scope. The contradictory chain establishes inconsistent decisions,
+not a proven prompting cause. V1, saved outputs and graphs remain unchanged.
+The draft needs review before inference; if approved, compare the same
+nine-node section against its saved v1 baseline without rerunning that baseline.
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
