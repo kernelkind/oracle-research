@@ -237,6 +237,21 @@ Original node IDs, both exact inputs, saved baseline receipts and separate
 agent reviews remain available. No user result verdicts were invented. Existing
 specs, original titles, previous outputs and the hierarchy remain unchanged.
 
+The subsequently authorized `experiments/nspv3-hr02-diverse-pairs-v1/` batch
+tested three other original HR02 pairs in both directions with unchanged
+NSPv3 / Astra low. All six new subscription calls were valid, with no retries,
+reuse or baseline reruns. Results matched the pre-run agent expectations:
+brisket / Brisket on a smoker = Yes/No; Meat consumption / Attitudes toward
+meat consumption = Yes/No; Good morning greetings / Early morning = No/No.
+Agent review accepted all six explanations. The saved native TRUE answers
+matched five expectations, missing Meat consumption containing Attitudes
+toward meat consumption. TRUE was review-only evidence, not a rerun or a
+fabricated experiment baseline. The reusable
+[spec](../experiment_specs/nspv3-hr02-diverse-pairs-astra-low.json) and retained
+original node IDs make the inputs reproducible and the exact answers reusable.
+This is a selected six-direction check, not a general accuracy estimate or
+a test of how the decisions combine into a graph. No hierarchy was built.
+
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
 Both batches retain original pre-merge node IDs, exact title inputs, expectations,

@@ -73,6 +73,15 @@ The reverse stayed No with an unsupported coffee-shop-chain justification.
 Agent review accepts the uncertainty and rejects the reverse explanation.
 This is partial improvement in one draw, not resolved placement or general
 validation; NSPv3 is tested, not production-frozen.
+The next authorized small batch used three other original HR02 node pairs:
+brisket / Brisket on a smoker, Meat consumption / Attitudes toward meat
+consumption, and Good morning greetings / Early morning. Six new NSPv3 /
+Astra-low calls were valid and matched the expectations recorded before
+inference: Yes/No, Yes/No and No/No respectively. Agent review accepted all six
+explanations; saved TRUE matched five of the six expectations. No retries,
+reused calls, baseline reruns or prompt changes occurred. Original node IDs
+and receipts are retained for later diagnostic reuse. This selected sample
+does not establish general accuracy or graph consistency.
 No hierarchy was rebuilt. A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
 and graph construction remain unapproved. Scalable relationship inference and
