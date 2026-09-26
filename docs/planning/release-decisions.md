@@ -55,6 +55,10 @@ assumed coffeechain meant a chain of coffee businesses; their justifications
 are rejected in agent review and the intended title-only boundary remains
 unresolved. No answer used the available `uncertain` option. The prompt,
 settings and hierarchy are unchanged; neither batch reran earlier calls.
+The user identified a title issue: this node should have retained `#coffeechain`,
+not `coffeechain`. Some source masks already include the hashtag marker, so this
+is not solely a masking issue. This records the intended title; no prompt or
+saved title has been changed, and its effect on subsumption remains untested.
 No hierarchy was rebuilt. A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
 and graph construction remain unapproved. Scalable relationship inference and

@@ -195,6 +195,13 @@ verified correct merely because it may be a defensible link decision. No model
 answer used `uncertain`, so offering that option did not prevent an unsupported
 interpretation. The intended title-only boundary remains unresolved.
 
+The user subsequently confirmed that the node title should have preserved
+`#coffeechain`. The source masks include both `#coffeechain` and `coffeechain`,
+but TPv38 returned `coffeechain`; NSPv2 saw only that title. Record this as a
+title issue, not solely a mask issue. The intended title is `#coffeechain`;
+the frozen prompts, saved titles and relationship outputs remain unchanged.
+Whether preserving the marker changes the relationship answer is untested.
+
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
 Both batches retain original pre-merge node IDs, exact title inputs, expectations,
