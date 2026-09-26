@@ -413,9 +413,9 @@ Runner-reported usage, with reasoning already included in output:
 | Twelve reused evaluation directions | 1,292 | 2,861 | 2,493 | 0.0015597 |
 
 These catalog estimates are not paid invoices or subscription-quota ratios.
-The proposed harder-pair expectations remain under discussion, particularly
-where titles admit different scopes. No harder-pair inference or connected
-hierarchy construction was performed or approved. TPv38, NSPv3, earlier
+At that checkpoint the proposed harder-pair expectations remained under
+discussion, particularly where titles admit different scopes. No harder-pair
+inference or connected hierarchy construction had been approved. TPv38, NSPv3, earlier
 variants, baseline experiments and model routing remain unchanged.
 
 **NSP-Jev-v1 — approved and tested, not frozen:** the user requested
@@ -457,15 +457,56 @@ Provider-reported costs, as totaled by the experiment runner, were $0.000095676
 for six earlier directions, $0.000031752 for two hashtag directions, and
 $0.000190596 for twelve reused evaluation directions. Every attempt has a
 native charge. This single draw does not establish repeatability, general accuracy or a
-production replacement for TRUE. Keep NSP-Jev-v1 unchanged; the suggested next
-step is a small harder-pair test after settling expected relationships, not
-an authorized full hierarchy run.
+production replacement for TRUE. The subsequent harder-pair test below keeps
+NSP-Jev-v1 unchanged; no full hierarchy run is authorized.
 
 Implementation verification: all 144 experiment/extraction Python tests passed.
 The JavaScript suite passed 71/72 tests, including all seven System One tests;
 the remaining proxy test calls the retired `extraction_pipeline.py prompt`
 batch CLI and fails before any provider request. That unrelated test was not
 changed. The 20 live cases also validated through the production runner.
+
+**NSP-Jev-v1 harder sample — completed:** after the user approved a small
+harder test, `experiments/nsp-jev-v1-hr02-harder-pairs-v1/` checked 13 new
+directions using [this spec](../experiment_specs/nsp-jev-v1-hr02-harder-pairs.json).
+The nine pre-run agent expectations cover Foods/Foods (one identical-input
+control), Raw food/Veganism, Seeds and seed-derived products/Coffee beans,
+Food and drink/Fasting, and Workouts/Personal habit changes (both directions
+for each non-control pair). Exact titles and node IDs were verified against
+the original HR02 title snapshot. The other four directions concern
+Christmas/Festive gatherings and Food and cooking/Food and dining; they were
+marked unresolved before inference, not relabeled after seeing outputs.
+No masks, expected answers, or review comments were sent to Jev.
+
+Jev matched 8/9 pre-run expectations (7/8 excluding the identical-title control).
+The mismatch was Food and drink containing Fasting: No 0.88 / Yes 0.08 /
+Uncertain 0.04, against the intended topic interpretation that abstention from
+food/drink is itself a food/drink topic. Jev provides no explanation, so its
+reason for rejecting that interpretation is unknown. This is an agent-labeled
+expectation, not a new user decision about the hierarchy's scope.
+
+All four unscored outputs remain visible:
+
+| A (proposed parent) | B | Jev choice | Yes / No / Uncertain |
+| --- | --- | --- | --- |
+| Christmas | Festive gatherings | No | 0 / 0.99 / 0.01 |
+| Festive gatherings | Christmas | Yes | 0.66 / 0.28 / 0.05 |
+| Food and cooking | Food and dining | No | 0.20 / 0.66 / 0.14 |
+| Food and dining | Food and cooking | No | 0.36 / 0.49 / 0.15 |
+
+Probabilities are preserved as reported; one distribution sums to 0.99 through
+provider rounding. They are not calibrated accuracy measurements. Christmas
+as an entire holiday versus celebrations remains an interpretation issue;
+neither food-topic title has an agreed boundary here. None of these four
+decisions is counted as correct or incorrect. All 13 agent assessments are
+stored separately through the shared review command; no user verdicts were
+invented. No prompt edits, cutoff fitting or hierarchy construction followed.
+
+All 13 calls validated, with no retries, reuse or baseline/Astra/Luna calls.
+Runner totals: 4,908 input tokens, 520 output tokens, provider-reported charge
+$0.000206136; every receipt includes billing. The suggested next step is comparing unchanged NSP-Luna-v3
+on these same inputs before changing either prompt; that inference is not
+authorized by this completed Jev test.
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).

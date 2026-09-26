@@ -150,6 +150,18 @@ No but remain unscored because their expectations are unresolved. Jev does
 not explain its decisions; probability values do not establish calibration
 or identify its interpretation of a title. The sample is reused and small.
 The original prompts, hierarchy and construction rules remain unchanged.
+The user approved a small harder sample with unchanged NSP-Jev-v1. Thirteen
+new judgments covered six original HR02 title pairs in both directions plus
+one identical Foods-title control. Nine expectations were recorded by the
+agent before inference; four directions involving Christmas/Festive gatherings
+and Food and cooking/Food and dining remained explicitly unscored. Jev matched
+8/9 expectations, rejecting Food and drink containing Fasting (No 0.88 versus
+the intended topic-containment Yes). On unresolved pairs it placed Christmas
+under Festive gatherings, rejected the reverse, and rejected both directions
+between the two food-topic titles. These are not user-approved relationships.
+All 13 calls were valid without retries, reuse or baseline calls; native charge
+was $0.000206136. No prompt or hierarchy change followed. Comparing Luna on
+this sample is suggested, not yet authorized.
 No hierarchy was rebuilt. A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
 and graph construction remain unapproved. Scalable relationship inference and
