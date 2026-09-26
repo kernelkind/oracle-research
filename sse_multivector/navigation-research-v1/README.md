@@ -550,9 +550,9 @@ target/infomap-review-build/debug/sse-subject-navigation \
   sse_multivector/hierarchy-refresh-v1/masked-posts.json
 ```
 
-**NSP-Jev-v3 — draft only, not tested or adopted:** the user requested fixing
+**NSP-Jev-v3 — wording approved, not tested or adopted:** the user requested fixing
 the relationship prompt after examining whether the v2 draft stood on its own.
-The [new draft](../node-subsumption-prompt-jev-v3/prompt.txt) is based directly
+The [approved wording](../node-subsumption-prompt-jev-v3/prompt.txt) is based directly
 on tested NSP-Jev-v1. It asks whether B falls entirely within A's subject matter:
 discussing B must necessarily discuss A, not merely something associated with
 A. Equivalent subjects count as Yes; partial overlap is insufficient. V2's
@@ -563,8 +563,9 @@ V1's question can already express subject containment; there is no evidence
 that Jev required explicit mentions or confused source-post contents with
 subject scope. The contradictory chain establishes inconsistent decisions,
 not a proven prompting cause. V1, saved outputs and graphs remain unchanged.
-The draft needs review before inference; if approved, compare the same
-nine-node section against its saved v1 baseline without rerunning that baseline.
+The user approved this wording. No new inference has been performed or
+authorized. The suggested next test compares the same nine-node section against
+its saved v1 baseline without rerunning that baseline.
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
