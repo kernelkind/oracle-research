@@ -694,6 +694,18 @@ production preparation and decoding functions:
   that source directly as generic input failed before inference. No runner
   code or saved input was changed to work around that incompatibility.
 
+  `experiments/ppv24-warning-v1` tested "Careful—the tea is hot!" with the
+  single-word masks "tea" and "hot" in two Astra-low subscription calls.
+  Generic diagnostic inputs were verified identical to the saved PPv15
+  warning inputs before inference. Both responses were valid, with no retries,
+  reuse or baseline reruns. "Tea" scored 20 and described posts referring to
+  tea without its condition or a warning; "hot" scored 40 and described high
+  temperature without object identity or explicit caution. This matches the
+  user-endorsed ordering, but saved PPv15 already had that ordering (25/55).
+  It is not evidence of improvement, calibrated percentages or repeatability.
+  Whether 40 appropriately values heat in this warning remains open. Agent
+  assessments are uncertain; PPv24 is unchanged and not production-frozen.
+
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
   scoring-prompt changes, and does not waive spending authorization or ledger

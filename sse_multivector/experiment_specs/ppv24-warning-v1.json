@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "PPv24",
+    "path": "../prominence-prompt-goal-v1/ppv24-draft-v1/PPv24.md"
+  },
+  "dataset": {
+    "adapter": "generic",
+    "path": "../prominence-prompt-goal-v1/ppv24-warning-v1/cases.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "concurrency": 4,
+    "timeout_seconds": 600,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "post_class": {"type": "string"},
+        "missing_meaning": {"type": "string"},
+        "prominence": {"type": "integer", "minimum": 0, "maximum": 100}
+      },
+      "required": ["post_class", "missing_meaning", "prominence"],
+      "additionalProperties": false
+    }
+  }
+}
