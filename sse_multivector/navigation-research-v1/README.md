@@ -252,6 +252,44 @@ original node IDs make the inputs reproducible and the exact answers reusable.
 This is a selected six-direction check, not a general accuracy estimate or
 a test of how the decisions combine into a graph. No hierarchy was built.
 
+**NSPv3 / Luna max — eight-direction comparison, tested, not adopted:** the
+user approved testing the eight existing NSPv3 cases and assessing semantics
+and usage. The shared runner prepared
+`experiments/nspv3-hr02-diverse-pairs-luna-max-v1/` and
+`experiments/nspv3-hr02-hashtag-luna-max-v1/` from their corresponding Astra
+experiments with `--model gpt-6-luna --reasoning-effort max`. Exact prompts,
+title inputs, original IDs and output schema were verified unchanged. The
+eight new subscription calls all validated, with no retries, reuse or Astra
+reruns. No paid-provider fallback, prompt change or graph construction occurred.
+
+Luna matched five of six clear pre-recorded expectations. It rejected Meat
+consumption containing Attitudes toward meat consumption, restricting the
+parent to the behavior itself instead of the subject topic. Its correct
+reverse No explanation calls attitudes narrower, implying the forward link
+that the other call rejected. Agent review flags the forward miss and records
+the reasoning conflict; Astra agreement is not the quality criterion.
+For coffee shop / #coffeechain, Luna answered Uncertain/No. The first answer
+still starts from a coffee-chain interpretation and is marked uncertain in
+agent review; the reverse explanation remains unsupported and is rejected.
+The intended hashtag boundary is not converted into a gold binary label.
+
+Runner-reported usage is retained per batch below. Output includes reasoning;
+the reasoning column is a subset, not additional tokens.
+
+| Batch | Model / effort | Input | Output | Reasoning within output | Catalog estimate, USD |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Six clear directions | Astra low, saved | 562 | 331 | 144 | 0.02217 |
+| Six clear directions | Luna max | 562 | 1,177 | 988 | 0.0006447 |
+| Two hashtag directions | Astra low, saved | 184 | 147 | 76 | 0.00919 |
+| Two hashtag directions | Luna max | 184 | 961 | 889 | 0.0004989 |
+
+The batch estimates are approximately 34x and 18x lower for Luna, respectively.
+More reasoning tokens mean the 100x per-token price difference did not become
+a 100x per-call reduction. These subscription runs incurred no measured API
+bill, and catalog estimates do not establish subscription quota consumption.
+This small selected comparison does not establish model-wide accuracy,
+repeatability or graph quality. The 16,512-direction run remains unapproved.
+
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
 Both batches retain original pre-merge node IDs, exact title inputs, expectations,

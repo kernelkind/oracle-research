@@ -82,6 +82,20 @@ explanations; saved TRUE matched five of the six expectations. No retries,
 reused calls, baseline reruns or prompt changes occurred. Original node IDs
 and receipts are retained for later diagnostic reuse. This selected sample
 does not establish general accuracy or graph consistency.
+The user approved Luna max on the eight saved NSPv3 directions, assessing
+semantics and token usage before any larger run. Both model-comparison batches
+completed with eight valid new subscription calls, no retries or reuse, and no
+Astra reruns. Luna matched five of the six clear pre-run expectations, missing
+Meat consumption containing Attitudes toward meat consumption by treating the
+parent as an action instead of a subject topic. Its reverse explanation calls
+attitudes narrower, conflicting with that interpretation. The hashtag answers
+remain Uncertain/No with unresolved or unsupported coffee-business-chain
+reasoning. Luna remains a candidate, not an adopted relationship model.
+Runner-reported output tokens (including reasoning) were 1,177 versus Astra's
+331 on the six clear cases, and 961 versus 147 on the two hashtag cases; input
+counts were unchanged at 562 and 184 respectively. Catalog estimates were
+about 34x and 18x cheaper for Luna on these batches, not 100x cheaper per call.
+These are subscription runs, not paid invoices or measured quota ratios.
 No hierarchy was rebuilt. A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
 and graph construction remain unapproved. Scalable relationship inference and
