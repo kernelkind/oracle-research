@@ -37,8 +37,8 @@ Local Astra-title scoring completed: 12,896 fresh inputs and 1,629 reused
 inputs cover all 16,512 directions. The provisional graph has 116 nodes and
 56 reduced links. All six merged titles are now generated with unchanged
 v38/Astra low, as subsequently approved, without changing merges or links.
-The historical HRv1 runner and artifacts remain on v21. Browser export and
-hierarchy review remain. The solid 23 → 02 prerequisite is satisfied;
+The historical HRv1 runner and artifacts remain on v21. HR02 browser export
+is complete; hierarchy review remains. The solid 23 → 02 prerequisite is satisfied;
 25 is required to finish 02, not to start its TRUE work.
 The full pass was mechanically valid; spot checks found some questionable
 titles, and the user has not approved every output. Prompt changes and
@@ -66,7 +66,7 @@ This is a dated checkpoint; current task status appears in `release-plan.json`.
 | Task | Status at checkpoint |
 | --- | --- |
 | 01 · Subject and mask prompts | Finished. |
-| 02 · Build and review 100-note hierarchy | In progress; TRUE scoring and six merged titles complete. Browser export and minimal-scope correctness review remain. Task 25 is a finish gate. |
+| 02 · Build and review 100-note hierarchy | In progress; TRUE scoring, six merged titles and browser export complete. Minimal-scope correctness review remains. Task 25 is a finish gate. |
 | 23 · Fix and validate node-title prompt | Finished; 129 titles saved. |
 | 04 · Define mask prominence | Paused. Earlier experimental results do not establish that work is active now. |
 | 17 · Compare teachers | In progress; no completed selection established. |
@@ -414,8 +414,11 @@ is included. The earlier Luna-title run is stopped, not complete; its saved
 prefix supplied only verified exact-input answers to the new run. Six merged
 titles completed in `experiments/hr02-merged-titles-v38-astra-low/` with six
 subscription calls, no retries, and verified unchanged links/reachability.
-The 116-node graph and 56 reduced links remain provisional. Browser export
-and review remain pending; completed inference does not settle the merge policies.
+The 116-node graph and 56 reduced links remain provisional. Browser export is
+saved in `target/hierarchy-build-v1/hr02-browser-v1/`; the existing viewer passed
+`--check` and interactive navigation/mask checks. It shows 98 represented posts
+and adds an All notes entry. Both user-rejected titles remain flagged in analysis.
+User review remains pending; completed inference does not settle the merge policies.
 
 **Hierarchy execution recovery (clarified September 24):** retry failed model
 calls and reuse successful results. Preserve failed-attempt receipts and the

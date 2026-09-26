@@ -131,8 +131,8 @@ and all 129 HDBSCAN groups have saved v38/Luna max titles. Node 02 resumed with
 user approval on September 25: local TRUE scoring completed for all 16,512
 directed pairs, reusing verified identical inputs. The provisional graph has
 116 nodes and 56 reduced links; all six merged titles are generated with
-v38/Astra low. The historical HRv1 path remains on v21. Browser export and
-minimal-scope correctness review remain. Its solid 23 → 02 arrow records a satisfied
+v38/Astra low. The historical HRv1 path remains on v21. HR02 browser export is
+complete; minimal-scope correctness review remains. Its solid 23 → 02 arrow records a satisfied
 prerequisite. A valid title response is not a user-approved title. Additional
 rows expose the remaining construction work.
 This second 100-post experiment is **HR02**: generate a hierarchy the user is

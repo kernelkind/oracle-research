@@ -10,7 +10,7 @@
       "id": "02",
       "title": "Build and review 100-note hierarchy",
       "status": "IN PROGRESS",
-      "description": "TRUE scoring and six Astra-low v38 merged titles complete: 116 nodes, 56 links.\nCheck hierarchy correctness at minimal scope.\nBrowser export and review remain; finish requires 25."
+      "description": "TRUE scoring, six Astra-low v38 merged titles and browser export complete: 116 nodes, 56 links.\nReview hierarchy correctness at minimal scope in the existing viewer.\nUser review remains; finish requires 25."
     },
     {
       "id": "03",

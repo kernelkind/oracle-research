@@ -193,7 +193,23 @@ six subscription calls and no retries: `Bitcoin`, `coffee`, `nostr`,
 mask inputs and receipts validate; applying the names preserves all links and
 reachability. Agent inspection found broadly reasonable names, not proof of
 valid merges; the food group's `Khyber Pass` instance remains for review.
-Browser packaging and full hierarchy review remain pending.
+The complete package is in `target/hierarchy-build-v1/hr02-browser-v1/`.
+The existing `sse-subject-navigation` viewer passed `--check` with equal-note
+navigation collapse and interactive navigation/mask checks. It displays 116
+hierarchy nodes plus All notes, covering 98 represented posts. Both rejected
+original titles remain flagged in analysis; O retains separate masks and IDs.
+No nodes, memberships or links were removed to improve the display. The older
+launcher remains on its original artifacts. Open HR02 directly:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+target/infomap-review-build/debug/sse-subject-navigation \
+  --categories target/hierarchy-build-v1/hr02-browser-v1/categories.json \
+  sse_multivector/hierarchy-refresh-v1/masked-posts.json \
+  --collapse-equal-note-steps
+```
+
+Full user hierarchy review remains pending.
 HD02/03 remain provisional; no graph repair or new merge approval is implied.
 The earlier launch failed before inference because systemd expanded a shell
 array; the restart disables that expansion and repeats no successful inference.
@@ -650,7 +666,7 @@ skipped IDs, cycle rejection, and opt-in compatibility. An integration test
 runs the actual refresh launcher and browser on fixtures for both views.
 
 HR02 has now completed TRUE inference and merged naming through the construction
-path above; browser export and hierarchy review remain. Reprocessing the older
+path above and its browser package is ready; hierarchy review remains. Reprocessing the older
 HRv1 comparison under HD06 is still pending. No title, relation, membership or
 saved artifact was changed to implement this navigation rule.
 
