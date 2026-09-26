@@ -230,9 +230,17 @@ provisional merge, naming and navigation rules. The reversible merge kernel
 now accepts receipt-validated Jev decisions without fabricating TRUE scores;
 HD01 uses native Jev Yes, while HD02–05 stay unchanged. The five cycle groups
 involve repeated morning-greetings, Bitcoin, Nostr, Coffee and Foods titles.
-Merged names use the existing v38/Astra-low workflow with exact-request reuse.
-Construction is in progress; no Jev browser has been published yet. Scalable
-relationship inference and downstream validation gates remain unresolved.
+Merged names used the existing v38/Astra-low workflow with reuse enabled:
+five new valid subscription calls, no retries, produced Bitcoin, coffee,
+nostr, Foods and Good morning greetings. The completed separate browser is
+`target/hierarchy-build-v1/hr02-jev-browser-v1/`: 118 hierarchy nodes, 84 reduced
+links, 52 roots and 98 represented posts. All 129 original nodes, 629 source
+masks and 16,512 decisions remain traceable; the 27 rejected-but-reachable
+pairs were recorded, not repaired. Naming preserved links and reachability.
+The viewer passed `--check` and interactive leaf-note/O-view checks with the
+existing equal-note navigation collapse. Saved TRUE artifacts are unchanged.
+This is ready for user quality review, not a validated hierarchy or production
+adoption. Scalable relationship inference and downstream gates remain open.
 Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
 hierarchy or title correction. Its prompt and validation are not complete.

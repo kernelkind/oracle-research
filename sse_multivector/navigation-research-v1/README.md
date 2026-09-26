@@ -790,11 +790,38 @@ mask/edge origins remain saved, including all 27 rejected-but-reachable pairs.
 
 The raw graph has five cycle groups: repeated morning-greetings, Bitcoin,
 Nostr, Coffee and Foods titles. Merged names use unchanged v38 with Astra low,
-through the shared experiment runner with reuse enabled. Construction is in
-progress; no Jev browser has been published yet. The integration passed its
+through the shared experiment runner with reuse enabled. The integration passed its
 two initial failing tests after implementation and all 52 relevant regressions,
 including the unchanged TRUE path, naming-only changes, mask IDs and refusal
 of unresolved or mismatched evidence. Saved TRUE artifacts remain intact.
+
+**Browser build completed:** `target/hierarchy-build-v1/jev-merge-v1/` retains
+the reversible merge, all original decisions and source packets. Naming uses
+the [reusable spec](../experiment_specs/hr02-jev-merged-titles-v38-astra-low.json)
+and `experiments/hr02-jev-merged-titles-v38-astra-low/`: five valid new subscription
+calls, zero reuse, no retries, producing `Bitcoin`, `coffee`, `nostr`, `Foods`
+and `Good morning greetings`. No relationship decisions were rerun. The runner
+reports 1,446 input and 48 output tokens; its $0.01686 catalog estimate is not
+a provider charge.
+
+`target/hierarchy-build-v1/hr02-jev-browser-v1/` contains **118 hierarchy nodes,
+84 reduced links, 52 roots and 98 posts**, plus the UI's All notes navigation
+entry. All 129 original nodes and 629 source masks/IDs remain traceable.
+Naming preserved the raw links, reduced links and reachability exactly. The
+27 rejected-but-reachable original decisions remain in the merge provenance;
+none was corrected to make the graph consistent. The existing viewer passed
+`--check` and an interactive check: `l` on a leaf opens its notes; `O` switches
+to individual masks with original IDs. Equal-note collapse affects navigation,
+not saved nodes or masks. This is ready for user quality review, not evidence
+that the hierarchy is semantically correct. Open the separate Jev view:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+target/infomap-review-build/debug/sse-subject-navigation \
+  --categories target/hierarchy-build-v1/hr02-jev-browser-v1/categories.json \
+  sse_multivector/hierarchy-refresh-v1/masked-posts.json \
+  --collapse-equal-note-steps
+```
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
@@ -805,12 +832,12 @@ result adapter was added by those two batches. No baseline calls,
 prompt changes, TRUE calls or hierarchy construction were performed. The small,
 diverse-case test follows the official [evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices#example-qa-over-docs).
 
-Outside the selected Jev diagnostic above, no hierarchy was rebuilt. A full comparison would start with the same 129
-original titled nodes, not the 116 nodes produced by TRUE's merges, and retain
-subjects, masks, vectors, groups, titles and existing construction rules.
-Full Jev inference is complete and its graph construction is now approved.
-Uncertainty is not
-a No; its handling remains open before graph construction. A useful diagnostic
+The full Jev view above starts from the same 129 original titled nodes, not the
+116 nodes produced by TRUE's merges, retaining subjects, masks, vectors, groups,
+original titles and the existing merge/naming/navigation rules. Its native
+Yes decisions replace TRUE's native Yes decisions only in this separate view.
+Uncertainty is not a No. This run had none; the merge stage refuses unresolved
+answers, and a different policy for future uncertain results remains open. A useful diagnostic
 would not establish ground truth, a scalable placement method, or completion
 of later production-validation gates. Existing TRUE artifacts and provisional
 HD01–HD06 rules are unchanged. NSPv2 uses the direct, example-free starting point
@@ -866,7 +893,7 @@ target/infomap-review-build/debug/sse-subject-navigation \
 
 The user reviewed HR02 and found it promising, but TRUE's relationship
 judgments were not good enough to validate the hierarchy. The two NSPv2 batches
-above did not rebuild it; the full frontier diagnostic remains pending.
+above did not rebuild it; the separate full Jev view is now available above.
 Opening a leaf with `l`, Right or Enter now shows its notes immediately,
 including when equal-note collapse leaves no displayed children. Escape or
 Backspace returns directly to the parent selection. N/D/O remain available
