@@ -755,9 +755,27 @@ production preparation and decoding functions:
   1–5 range, though its class adds "desired" despite only "tea" being selected.
   Coffee shops scores well below the prior provisional 20–40 range, although
   its class correctly leaves the incident, attitudes and actions unspecified.
-  All three agent assessments remain uncertain for these distinct reasons;
-  no new user judgments are inferred. Discuss the coffee-shop score before
-  revising the prompt. PPv24 remains unchanged and not production-frozen.
+  The initial agent assessments were uncertain for these distinct reasons.
+  After reviewing the marked coffee-shop post, the user judged 7 probably
+  reasonable, superseding the earlier provisional 20–40 expectation for this
+  case. That acceptance is recorded separately as a user review. The other
+  two cases have no new user judgment. PPv24 remains unchanged and not
+  production-frozen.
+
+  `experiments/ppv24-other-topics-v1` tested three saved masks from
+  `ppv10-mixed-notes-v1/inputs.json`: M05 (cabin bathroom safety bars), M07
+  (reading before bedtime in a lifestyle list), and M09 (six guitar mentions
+  in a capo/retuning question). Generic inputs were mechanically copied from
+  the saved input objects; no expectations were included in model inputs.
+  Three Astra-low subscription calls returned valid responses without retries,
+  reuse or baseline reruns. Scores were 39/4/8. The classes respectively
+  represented the fall concern and installation judgment, the one reading
+  recommendation, and guitars without the tuning issue. Missing meaning
+  identified the surrounding daily update and older guests/shopping details,
+  other advice and invitation for additions, and the detailed tuning question.
+  The agent accepted all three as plausible, not as user-approved or calibrated
+  percentages. PPv24 is unchanged. Most recent real-post tests cover low or
+  intermediate scores; test real masks representing most of a post next.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
