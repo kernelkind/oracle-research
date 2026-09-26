@@ -779,25 +779,37 @@ tokens. The service ran from 20:48:51Z to
 21:34:16Z (**45 minutes 25 seconds**), including local report generation. No
 inference or polling process remains active.
 
-This stage generated decisions only. No graph construction, merging, prompt
-revision or production adoption occurred; saved TRUE artifacts remain intact.
-Next proposed step: use these saved decisions to construct and inspect the
-hierarchy under the existing provisional rules, after user approval.
+The inference stage generated decisions only. The user subsequently approved
+constructing the hierarchy using the existing provisional rules. The production
+`decision_hierarchy.py merge` path revalidates the saved experiment receipts,
+binds decisions to the original reviewed titles and masks, and applies the same
+reversible contraction kernel as TRUE. It does not fabricate TRUE scores.
+The decision-source HD01 policy is `complete-boolean-decisions-yes-v1`;
+HD02–05 are unchanged. Original decisions, receipts, model/prompt identity and
+mask/edge origins remain saved, including all 27 rejected-but-reachable pairs.
+
+The raw graph has five cycle groups: repeated morning-greetings, Bitcoin,
+Nostr, Coffee and Foods titles. Merged names use unchanged v38 with Astra low,
+through the shared experiment runner with reuse enabled. Construction is in
+progress; no Jev browser has been published yet. The integration passed its
+two initial failing tests after implementation and all 52 relevant regressions,
+including the unchanged TRUE path, naming-only changes, mask IDs and refusal
+of unresolved or mismatched evidence. Saved TRUE artifacts remain intact.
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
 Both batches retain original pre-merge node IDs, exact title inputs, expectations,
 receipts and separate agent assessments. Matching requests can be reused by the
 shared runner; rejected judgments are not validated graph links, and no frontier
-result adapter has been added to the hierarchy builder. No baseline calls,
+result adapter was added by those two batches. No baseline calls,
 prompt changes, TRUE calls or hierarchy construction were performed. The small,
 diverse-case test follows the official [evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices#example-qa-over-docs).
 
 Outside the selected Jev diagnostic above, no hierarchy was rebuilt. A full comparison would start with the same 129
 original titled nodes, not the 116 nodes produced by TRUE's merges, and retain
 subjects, masks, vectors, groups, titles and existing construction rules.
-The full Jev inference run above is approved; graph construction still requires
-approval. Uncertainty is not
+Full Jev inference is complete and its graph construction is now approved.
+Uncertainty is not
 a No; its handling remains open before graph construction. A useful diagnostic
 would not establish ground truth, a scalable placement method, or completion
 of later production-validation gates. Existing TRUE artifacts and provisional

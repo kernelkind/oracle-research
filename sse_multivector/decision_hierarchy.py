@@ -1,7 +1,8 @@
 """Prepare title-pair decisions and export validated Jev answers to the existing UI.
 
-Offline only. No fabricated TRUE scores, cycle repair, node merging, new titles,
-membership expansion or inference. Use experiment.py for paid execution.
+Offline only. The explicit merge stage uses the existing reversible contraction
+rules. No fabricated TRUE scores, cycle repair, membership expansion or inference.
+Use experiment.py for model execution, including merged titles.
 """
 import argparse
 from copy import deepcopy
@@ -10,8 +11,10 @@ from pathlib import Path
 
 from category_mask_instances import reconstruct
 from experiment_inputs import render
-from hierarchy_build import artifact_directory, read, save, _original_instances
+from hierarchy_build import (artifact_directory, read, save, _original_instances,
+                             consolidate_nodes, titles_from_report, prepare_naming)
 from true_category_graph import graph_from_decisions
+from true_graph_merge import _digest, merge_decisions
 from true_graph_categories import render_categories
 from true_graph_notes import derive_note_memberships
 
@@ -102,6 +105,36 @@ def package_view(titles, packets, report, source, mapping, output, *, prompt=Non
     return spec
 
 
+def merge_report(titles, packets, report, *, prompt, original_members=None):
+    graph = graph_from_report(titles, report, prompt=prompt)
+    return merge_decisions(titles, graph['decisions'], packets,
+                           original_members=original_members,
+                           decision_context=dict(label=f'Jev · {prompt["id"]}',
+                                                 prompt=deepcopy(prompt),
+                                                 settings=deepcopy(report['settings']),
+                                                 report_sha256=_digest(report)))
+
+
+def merge_saved(title_directory, experiment, output):
+    from experiment import load, report
+    directory = Path(title_directory)
+    nodes = read(directory/'nodes.json')
+    if consolidate_nodes(nodes['source']) != nodes:
+        raise ValueError('saved node consolidation differs from source')
+    title_report = read(directory/'title-report.json')
+    if titles_from_report(nodes['source_packets'], title_report) != read(directory/'titles.json'):
+        raise ValueError('saved titles differ from frozen title report')
+    titles = titles_from_report(nodes['source_packets'], title_report, include_reviews=True)
+    plan, _, _ = load(experiment)
+    decisions = report(experiment)
+    merged = merge_report(titles, nodes['source_packets'], decisions, prompt=plan['prompt'],
+                          original_members=nodes['original_members'])
+    merged['node_consolidation'] = nodes
+    prepare_naming(merged, output)
+    save(Path(output)/'decision-report.json', decisions)
+    return merged
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
@@ -110,10 +143,16 @@ def main():
     p.add_argument('--node', action='append', required=True)
     p = commands.add_parser('package')
     for name in ['section', 'experiment', 'source', 'mapping', 'output']: p.add_argument(name, type=Path)
+    p = commands.add_parser('merge')
+    for name in ['titles_directory', 'experiment', 'output']: p.add_argument(name, type=Path)
     args = parser.parse_args()
     if args.command == 'prepare':
         cases = prepare_section(args.titles, args.nodes, args.node, args.output)
         print(f'{len(args.node)} nodes; {len(cases)} directed comparisons; no inference')
+    elif args.command == 'merge':
+        merged = merge_saved(args.titles_directory, args.experiment, args.output)
+        print(f'{len(merged["graph"]["nodes"])} nodes; '
+              f'{len(merged["naming_source_packets"]["packets"])} merged titles pending; {args.output}')
     else:
         from experiment import load, report
         plan, _, _ = load(args.experiment)

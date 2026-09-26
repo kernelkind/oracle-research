@@ -23,6 +23,53 @@ def decision_report(titles, accepted=(), uncertain=()):
 
 
 class DecisionHierarchyTests(unittest.TestCase):
+    def test_jev_cycles_use_existing_merge_naming_and_browser_path(self):
+        from decision_hierarchy import merge_report
+        from hierarchy_build import name_merge, package_merge, validate_merge
+        from test_hierarchy_build import report_for
+        values = fixture()
+        titles = values['canonical']['titles']
+        packets = values['canonical']['source_packets']
+        report = decision_report(titles, [('A','B'), ('B','C'), ('C','A'), ('C','D')])
+        merged = merge_report(titles, packets, report,
+                              prompt=dict(id='NSP-Jev-v1', text=PROMPT.read_text()))
+        validate_merge(merged)
+        self.assertNotIn('scores', merged['source'])
+        self.assertEqual(len(merged['source']['decisions']), 12)
+        self.assertEqual(merged['graph']['stats']['nodes'], 2)
+        self.assertEqual(merged['graph']['stats']['merged_components'], 1)
+        group = merged['member_to_group']['A']
+        self.assertEqual(merged['graph']['reachability'][group], ['D'])
+        self.assertIn('A-contains-D', [r['id'] for r in merged['raw_graph']['reachable_rejected_pairs']])
+        naming = report_for(merged['naming_source_packets'])
+        named = name_merge(merged, naming)
+        self.assertEqual(named['graph']['raw_edges'], merged['graph']['raw_edges'])
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for key in ['source', 'mapping']:
+                (root / (key+'.json')).write_text(json.dumps(values[key]))
+            spec = package_merge(merged, naming, root/'source.json', root/'mapping.json', root/'view')
+            self.assertIn('Jev', spec['hierarchy_id'])
+            self.assertNotIn('TRUE', json.dumps(spec))
+            ids = {i for notes in spec['mask_instances'].values()
+                   for masks in notes.values() for mask in masks for i in mask['ids']}
+            self.assertTrue({'VA','VB','VC','VD'} <= ids)
+        merged['graph']['raw_edges'] = []
+        with self.assertRaises(ValueError):
+            validate_merge(merged)
+
+    def test_jev_merge_refuses_unresolved_or_changed_inputs(self):
+        from decision_hierarchy import merge_report
+        values = fixture()['canonical']
+        for kind in ['uncertain', 'input', 'missing']:
+            report = decision_report(values['titles'])
+            if kind == 'uncertain': report['cases'][0]['parsed']['contains']['choice'] = 'uncertain'
+            elif kind == 'input': report['cases'][0]['inputs']['A_TITLE'] = 'changed'
+            else: report['cases'].pop()
+            with self.subTest(kind=kind), self.assertRaises(ValueError):
+                merge_report(values['titles'], values['source_packets'], report,
+                             prompt=dict(id='NSP-Jev-v1', text=PROMPT.read_text()))
+
     def test_saved_prompt_version_is_validated_and_labeled_in_browser(self):
         values = fixture()
         titles = values['canonical']['titles']

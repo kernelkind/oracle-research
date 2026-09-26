@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Offline hierarchy stages using frozen title experiments and saved TRUE answers.
+"""Offline hierarchy stages using frozen titles and saved relationship decisions.
 
 No command here performs inference. Title requests use experiment.py; TRUE
 inputs use the existing scorer. Historical hierarchy_refresh artifacts stay put.
@@ -13,7 +13,7 @@ from category_mask_instances import reconstruct
 from prepare_category_title_inputs import prepare
 from true_category_graph import prepare_inputs
 from true_graph_categories import render_categories
-from true_graph_merge import _digest, merge_graph, union_packet
+from true_graph_merge import _digest, merge_graph, merge_decisions, union_packet
 from true_graph_notes import derive_note_memberships
 
 SSE = Path(__file__).resolve().parent
@@ -101,13 +101,14 @@ def titles_from_report(packets, report, *, include_reviews=False):
 
 
 def validate_merge(merged):
-    expected = merge_graph(**merged['source'])
+    merge = merge_decisions if 'decisions' in merged['source'] else merge_graph
+    expected = merge(**merged['source'])
     if 'node_consolidation' in merged:
         nodes = merged['node_consolidation']
         if (consolidate_nodes(nodes['source']) != nodes
                 or nodes['source_packets'] != merged['source']['source_packets']
                 or nodes['original_members'] != merged['source'].get('original_members')):
-            raise ValueError('pre-TRUE node consolidation differs from saved merge inputs')
+            raise ValueError('node consolidation differs from saved merge inputs')
         expected['node_consolidation'] = nodes
     if expected != merged:
         raise ValueError('saved merge differs from replay of its original evidence')
@@ -143,8 +144,10 @@ def _original_instances(mask):
 
 def package_merge(merged, report, source, mapping, output):
     named = name_merge(merged, report)
+    label = merged['source'].get('decision_context', {}).get('label', 'TRUE')
     spec = render_categories(named['graph'], named['memberships'], source, mapping,
-                             hierarchy_id='Reversible native TRUE hierarchy · no membership expansion')
+                             hierarchy_id=f'Reversible native {label} hierarchy · no membership expansion',
+                             connection_description=f'Saved native {label} connections; not manually corrected.')
     # Browser masks display the original IDs, including aliases across both
     # merge stages, rather than only the derived union's synthetic instance ID.
     original_masks = deepcopy(named['memberships'])
@@ -162,9 +165,9 @@ def package_merge(merged, report, source, mapping, output):
     for node in spec['nodes']:
         if node['node_id'] in nodes:
             members = nodes[node['node_id']]['source_group_ids']
-            node['analysis'] += ' Original nodes: ' + ', '.join(members) + '. Merging is provisional; displayed names do not change saved TRUE answers.'
+            node['analysis'] += ' Original nodes: ' + ', '.join(members) + f'. Merging is provisional; displayed names do not change saved {label} answers.'
             for title in rejected_titles.get(node['node_id'], []):
-                node['analysis'] += ' User rejected original title: ' + title + '. Node retained; TRUE used this wording.'
+                node['analysis'] += ' User rejected original title: ' + title + f'. Node retained; {label} used this wording.'
     out = artifact_directory(output)
     save(out / 'named-graph.json', named)
     save(out / 'categories.json', spec)

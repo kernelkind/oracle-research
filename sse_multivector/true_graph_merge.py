@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Reversibly contract native TRUE cycles, without inference or title repair.
+"""Reversibly contract native relationship cycles, without inference or title repair.
 
-This is an opt-in derived graph, not a replacement set of TRUE score rows.
+This is an opt-in derived graph, not a replacement set of original decisions.
 HD02/HD03 remain provisional: paths may disagree with saved direct No answers.
 """
 import argparse
@@ -11,7 +11,7 @@ import json
 from pathlib import Path
 
 from prepare_category_title_inputs import prepare
-from true_category_graph import _reachability, build_graph
+from true_category_graph import _reachability, build_graph, graph_from_decisions
 from true_graph_notes import _matched_instance, derive_note_memberships
 
 
@@ -66,13 +66,27 @@ def merge_graph(titles, scores, source_packets, *, original_members=None):
     Original score rows are never relabeled with new IDs or generated titles.
     """
     raw = build_graph(titles, scores, decision_rule='native')
+    source = dict(titles=titles, scores=scores, source_packets=source_packets)
+    return _contract_graph(titles, raw, source_packets, original_members, source, POLICIES)
+
+
+def merge_decisions(titles, decisions, source_packets, *, decision_context, original_members=None):
+    """Apply the same contraction to validated native decisions, without TRUE scores."""
+    raw = graph_from_decisions(titles['groups'], decisions)
+    source = dict(titles=titles, decisions=decisions, source_packets=source_packets,
+                  decision_context=decision_context)
+    policies = dict(POLICIES, HD01='complete-boolean-decisions-yes-v1')
+    return _contract_graph(titles, raw, source_packets, original_members, source, policies)
+
+
+def _contract_graph(titles, raw, source_packets, original_members, source, policies):
     if raw['unresolved_native_rows']:
         raise ValueError('unresolved native answers: recover them before merging')
     original_memberships = derive_note_memberships(raw, source_packets)
     by_id = {n['group']: n for n in titles['groups']}
     originals = original_members if original_members is not None else {key: [key] for key in by_id}
     if set(originals) != set(by_id):
-        raise ValueError('original-member mapping must cover the TRUE node inventory')
+        raise ValueError('original-member mapping must cover the node inventory')
     seen = set()
     for members in originals.values():
         if (not isinstance(members, list) or not members
@@ -158,11 +172,10 @@ def merge_graph(titles, scores, source_packets, *, original_members=None):
         if (set(evidence[original]['recursive_note_ids'])
                 != set(merged_memberships[group]['recursive_note_ids'])):
             raise ValueError('contraction changed recursive post membership: ' + original)
-    source = dict(titles=titles, scores=scores, source_packets=source_packets)
     if original_members is not None:
         source['original_members'] = original_members
     result = dict(
-        schema_version=1, policies=POLICIES,
+        schema_version=1, policies=policies,
         source_sha256={name: _digest(value) for name, value in source.items()},
         source=source, raw_graph=raw, graph=graph, member_to_group=mapping,
         internal_accepted_score_ids=sorted(internal), source_packets=merged_packets,

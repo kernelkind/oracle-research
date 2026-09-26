@@ -224,10 +224,15 @@ retry; every response passed format and receipt checks. Native choices were
 241 Yes, 16,271 No and zero uncertain; these are not accuracy measurements.
 Native cost was $0.253775508. Runtime including local reporting was 45 minutes 25 seconds.
 All original Astra-low TPv38 titles and upstream artifacts remain unchanged. Every answer,
-probability and uncertainty is retained; uncertainty is not a No. This approval
-covers inference only, not graph construction, merges or production adoption.
-No full Jev hierarchy has been built. Scalable relationship inference and
-downstream validation gates remain unresolved.
+probability and uncertainty is retained; uncertainty is not a No. The user
+subsequently approved constructing the Jev hierarchy using the existing
+provisional merge, naming and navigation rules. The reversible merge kernel
+now accepts receipt-validated Jev decisions without fabricating TRUE scores;
+HD01 uses native Jev Yes, while HD02–05 stay unchanged. The five cycle groups
+involve repeated morning-greetings, Bitcoin, Nostr, Coffee and Foods titles.
+Merged names use the existing v38/Astra-low workflow with exact-request reuse.
+Construction is in progress; no Jev browser has been published yet. Scalable
+relationship inference and downstream validation gates remain unresolved.
 Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
 hierarchy or title correction. Its prompt and validation are not complete.
