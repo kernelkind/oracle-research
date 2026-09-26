@@ -1,0 +1,14 @@
+{
+  "state": {"A": "{A_TITLE}", "B": "{B_TITLE}"},
+  "questions": {
+    "contains": {
+      "type": "choice",
+      "instructions": "A and B are subject headings in a hierarchy used to organize social-media posts, like a book's subject index. Does the subject named by A include the whole subject named by B, either as the same subject or as a more specific subject? Compare the subjects at the levels of generality their titles express, preserving details and relationships that limit their scope. This is containment of subject matter, not just 'is a kind of' classification. Relatedness or partial overlap is not enough. If you cannot determine this from the meanings of the titles, answer uncertain.",
+      "criteria": {
+        "yes": "Yes",
+        "no": "No",
+        "uncertain": "Cannot determine this from the meanings of the titles"
+      }
+    }
+  }
+}
