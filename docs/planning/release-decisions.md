@@ -212,13 +212,16 @@ Coffee → Coffee flavor and Positive emotions and attitudes → Enjoyment of fo
 The two discrepancies are against agent expectations, not newly user-confirmed
 ground truth; Daily painting remains explicitly conditional. Cooking ideas and
 Cooking times were accepted beneath Cooking, so this does not demonstrate a
-blanket inability to recognize topic aspects. Next: obtain user judgments on
-the two mismatches and the painting interpretation, then assess the combined
-error pattern before any new prompt or experiment. No hierarchy was built.
-No full hierarchy was rebuilt or prompt production-adopted.
-A full comparison would retain the 129 original
-titles before TRUE merges and existing construction rules; further inference
-and graph construction remain unapproved. Scalable relationship inference and
+blanket inability to recognize topic aspects. Those labels remain unresolved;
+the user then approved proceeding with all 16,512 directional judgments across
+the same 129 original nodes, using unchanged NSP-Jev-v3 and Jev provider-default
+at ten concurrent calls. The prepared experiment is
+`sse_multivector/experiments/nsp-jev-v3-hr02-full-v1/`; preparation found 100
+matching saved answers to reuse and 16,412 initially new requests. All original
+Astra-low TPv38 titles and upstream artifacts remain unchanged. Every answer,
+probability and uncertainty is retained; uncertainty is not a No. This approval
+covers inference only, not graph construction, merges or production adoption.
+No full Jev hierarchy has been built. Scalable relationship inference and
 downstream validation gates remain unresolved.
 Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note

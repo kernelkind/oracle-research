@@ -736,12 +736,38 @@ claim that Jev always fails activity-related or property-related containment
 would overstate the evidence. No explanation of the classifier's internal
 interpretation is available from Choice outputs.
 
-Together with the repeated meat-attitudes miss, the new discrepancies warrant
-examining missed valid containment across cases, not more repetitions of a
-single pair. Next: get user judgments on these two labels and the painting
-assumption, then evaluate the combined pattern before any further prompt or
-test. Prompt/input identity and frozen-label checks passed; no production code
-changed and no new hierarchy was built.
+Together with the repeated meat-attitudes miss, the new discrepancies suggest
+missed valid containment as a risk, not grounds for more repetitions of a
+single pair. These two labels and the painting assumption remain unresolved.
+The user subsequently approved the full directional run below, rather than
+another small validation test. Prompt/input identity and frozen-label checks
+passed; no production code changed and no new hierarchy was built.
+
+### Jev full HR02 directional judgments
+
+The user approved unchanged **NSP-Jev-v3**, `typesafe/jev-1.13` provider-default,
+and **10 concurrent calls** across all 129 original pre-merge HR02 nodes.
+The [reusable spec](../experiment_specs/nsp-jev-v3-hr02-full.json) prepares
+`experiments/nsp-jev-v3-hr02-full-v1/` from the existing `decision_hierarchy.py
+prepare` path, selecting every ID from
+`target/hierarchy-build-v1/astra-titles-v1/titles.json`. Inputs are saved in
+`target/hierarchy-build-v1/jev-full-v1/cases.json`; subjects, masks, vectors,
+groups and Astra-low TPv38 titles are unchanged. The preparer's generated v1
+spec is not used: the reusable spec explicitly selects NSP-Jev-v3.
+
+Preparation verified all **16,512 directed pairs**, exact title-only JSON states,
+unchanged prompt text and frozen provenance. It found **100 reusable answers**
+and **16,412 initially new requests**. Six existing decision-hierarchy tests
+passed. The ordinary cost estimate is about $0.29; the $1 experiment allowance includes eligible provider-only retries, bounded to two total attempts per
+case and 33,024 new attempts overall. Exact-request reuse stays enabled;
+this is not an independent repeat trial. Native answers, probabilities,
+uncertainties and receipts remain available, without treating probabilities
+as calibrated accuracy or uncertainty as rejection.
+
+This stage generates decisions only. No graph construction, merging, prompt
+revision or production adoption is included; saved TRUE artifacts remain intact.
+After completion, verify coverage, failures and actual usage before proposing
+how to inspect a hierarchy using these decisions.
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
@@ -755,7 +781,8 @@ diverse-case test follows the official [evaluation guidance](https://developers.
 Outside the selected Jev diagnostic above, no hierarchy was rebuilt. A full comparison would start with the same 129
 original titled nodes, not the 116 nodes produced by TRUE's merges, and retain
 subjects, masks, vectors, groups, titles and existing construction rules.
-Further inference and graph construction require approval. Uncertainty is not
+The full Jev inference run above is approved; graph construction still requires
+approval. Uncertainty is not
 a No; its handling remains open before graph construction. A useful diagnostic
 would not establish ground truth, a scalable placement method, or completion
 of later production-validation gates. Existing TRUE artifacts and provisional
