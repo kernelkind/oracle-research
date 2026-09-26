@@ -1,0 +1,9 @@
+{
+  "base_sha256": "a06eedb69a46a1b5da8658acca75e07cd6e70a366d0527e5aa259dc5345c3809",
+  "edits": [
+    {
+      "old": "Assess the selected fragments together in the context of the post.",
+      "new": "Assess the selected fragments together. Use the complete post to interpret the selected wording, but do not credit the mask with information supplied only by unselected wording."
+    }
+  ]
+}

@@ -549,9 +549,17 @@ production preparation and decoding functions:
   hotness as missing, and scored 85. This supports contextual attribution of
   the speaker in the diagnostic; it does not prove why the earlier scoring-only
   responses occurred. The output intervention and single trial per case limit
-  the inference. Agent assessment is saved separately. The proposed next focus
-  is clarifying what unselected context may contribute to represented meaning;
-  PPv15 remains unchanged and PPv15-D1 is not a production replacement.
+  the inference. Agent assessment is saved separately. PPv15 remains unchanged
+  and PPv15-D1 is not a production replacement.
+
+  [PPv16](prominence-prompt-goal-v1/ppv16-draft-v1/PPv16.md) is an untested
+  draft against the approved scoring prompt PPv15, not the diagnostic PPv15-D1.
+  It clarifies that the complete post helps interpret selected wording, but
+  information supplied only by unselected wording is not credited to the mask.
+  All other instructions and the score-only JSON output remain unchanged.
+  No model calls accompany this revision. Review is pending; the proposed next
+  test is the tea speaker contrast together with the compact/complete roasting
+  comparison, checking omission of information versus grammatical wording.
 
   Alternatively, `path` may point to a saved title experiment's `report.json`
   (`adapter: "titles"` in that report). In this form, `select` names node IDs.
