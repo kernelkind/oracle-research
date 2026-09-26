@@ -1176,6 +1176,40 @@ class ExperimentTests(unittest.TestCase):
         self.assertIsNone(self.show()["usage"]["catalog_cost_estimate_usd"])
         self.assertEqual(self.show()["usage"]["attempts_without_cost_estimate"], 2)
 
+    def test_provider_cost_is_reported_separately_from_catalog_estimate(self):
+        self.prepare()
+        self.cli("run", "E1", env={"FAKE_RUNNER_RESULT_OVERRIDE": json.dumps({
+            "response_metadata": {"usage": {"cost": 0.0001}}
+        })})
+        usage = self.show()["usage"]
+        self.assertAlmostEqual(usage["provider_reported_cost_usd"], 0.0002)
+        self.assertEqual(usage["attempts_without_provider_cost"], 0)
+        self.assertIsNone(usage["catalog_cost_estimate_usd"])
+
+    def test_systemone_wire_receipt_binds_exact_state_questions_and_local_schema(self):
+        import copy
+        from types import SimpleNamespace
+        from sse_multivector import extraction_pipeline as engine
+        state = {"state": "Coffee", "questions": {"x": {"type": "noul", "instructions": "Is this food?"}}}
+        prompt = json.dumps(state)
+        config = SimpleNamespace(provider="openrouter", model="typesafe/jev-1.13", reasoning_effort="provider-default")
+        identity = {"runner_version": "oracle-model-runner/1", "runner_sha256": "e" * 64}
+        output = {"x": {"type": "noul", "noul": 0.4}}
+        schema = {"type": "object"}
+        result = {**identity, "provider": config.provider, "model": config.model,
+            "reasoning": config.reasoning_effort, "prompt_sha256": engine._sha256_bytes(prompt.encode()),
+            "schema_sha256": engine._sha256_bytes(engine._ordered_json_bytes(schema)),
+            "valid": True, "stop_reason": "stop", "http_attempts": 1, "error": None,
+            "raw_text": json.dumps(output), "output": output,
+            "request": {"url": "http://127.0.0.1:18743/openrouter/api/v1/systemone",
+                "body": {"model": config.model, **state}}}
+        engine._validate_model_result(config, config, prompt, schema, identity, result)
+        for key, value in [("state", "Tea"), ("questions", {}), ("messages", [])]:
+            changed = copy.deepcopy(result)
+            changed["request"]["body"][key] = value
+            with self.assertRaises(engine.RunnerError):
+                engine._validate_model_result(config, config, prompt, schema, identity, changed)
+
     def test_saved_v32_titles_import_read_only_when_local_artifacts_exist(self):
         source = CLI.parent / "hierarchy-refresh-v1/source-packets.json"
         base = CLI.parent / "hdbv2-node-description-probe-v32/robustness-v1"

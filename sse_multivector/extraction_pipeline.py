@@ -1788,14 +1788,21 @@ def _validate_model_result(
         if config.provider == "openai-codex"
         else (body.get("response_format") or {}).get("json_schema", {}).get("schema")
     )
-    if not _same_json(wire_schema, schema):
+    systemone = config.provider == "openrouter" and stage.model == "typesafe/jev-1.13"
+    if not _same_json(wire_schema, None if systemone else schema):
         raise RunnerError("model result wire schema differs from caller schema")
     if schema is None:
         if result.get("schema_sha256") is not None:
             raise RunnerError("model result unexpectedly reports a schema")
     else:
         _expect_sha256(result.get("schema_sha256"), "model result.schema_sha256")
-    text = _wire_prompt(result, config.provider)
+    if systemone:
+        expected_body = {"model": stage.model, **json.loads(prompt)}
+        if not _same_json(body, expected_body) or not result["request"].get("url", "").endswith("/api/v1/systemone"):
+            raise RunnerError("System One request differs from exact state/questions")
+        text = prompt
+    else:
+        text = _wire_prompt(result, config.provider)
     if (
         text != prompt
         or body.get("model") != stage.model
@@ -1804,7 +1811,7 @@ def _validate_model_result(
         or body.get("previous_response_id")
     ):
         raise RunnerError("model result request differs from the exact isolated prompt")
-    output = raw if schema is None else json.loads(raw)
+    output = raw if schema is None and not systemone else json.loads(raw)
     if not _same_json(result.get("output"), output):
         raise RunnerError("model result output differs from its raw response")
 

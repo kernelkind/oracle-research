@@ -13,6 +13,7 @@ from dataclasses import replace
 from datetime import datetime, timezone
 import fcntl
 import json
+import math
 from pathlib import Path
 import shlex
 import subprocess
@@ -493,9 +494,19 @@ def report(directory):
         "attempts_without_usage": 0,
         "catalog_cost_estimate_usd": 0,
         "attempts_without_cost_estimate": 0,
+        "provider_reported_cost_usd": 0,
+        "attempts_without_provider_cost": 0,
     }
     attempts = [r for r in records if r.get("execution") != "cross_run_reuse"]
     for record in attempts:
+        native = record
+        for key in ("model_result", "response_metadata", "usage"):
+            native = native.get(key) if isinstance(native, dict) else None
+        charge = native.get("cost") if isinstance(native, dict) else None
+        if type(charge) in (int, float) and math.isfinite(charge) and charge >= 0:
+            usage["provider_reported_cost_usd"] += charge
+        else:
+            usage["attempts_without_provider_cost"] += 1
         saved = record.get("usage")
         if not isinstance(saved, dict):
             usage["attempts_without_usage"] += 1
@@ -516,6 +527,8 @@ def report(directory):
             usage["catalog_cost_estimate_usd"] += estimate
     if usage["attempts_without_cost_estimate"]:
         usage["catalog_cost_estimate_usd"] = None
+    if usage["attempts_without_provider_cost"]:
+        usage["provider_reported_cost_usd"] = None
     summary = {
         s: sum(c["status"] == s for c in cases)
         for s in ("valid", "empty", "malformed", "invalid_receipt", "failed", "unrun")

@@ -23,6 +23,51 @@ const PI_AI_VERSION = '0.85.1';
 const sha256 = text => createHash('sha256').update(text).digest('hex');
 const nonempty = value => typeof value === 'string' && value.trim().length > 0;
 const integer = (value, min, max) => Number.isSafeInteger(value) && value >= min && value <= max;
+// Jev is not a chat model; pi-ai has no System One transport. Use its documented
+// endpoint explicitly, under the same credential, receipt and no-retry contract.
+const jev = { id: 'typesafe/jev-1.13', provider: 'openrouter', api: 'systemone',
+  baseUrl: 'https://openrouter.ai/api/v1', reasoning: false };
+const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+const probability = value => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 1;
+
+function prepareDecisions(config) {
+  if (config.reasoning !== 'provider-default' || config.max_output_tokens != null || config.debug !== undefined) {
+    throw new Error('System One requires provider-default reasoning and no output cap or chat debug settings');
+  }
+  const payload = JSON.parse(config.prompt);
+  if (!object(payload) || Object.keys(payload).some(key => !['state', 'questions'].includes(key)) ||
+      !Object.hasOwn(payload, 'state') || !object(payload.questions) || !Object.keys(payload.questions).length) {
+    throw new Error('System One prompt must encode JSON with state and nonempty questions only');
+  }
+  for (const q of Object.values(payload.questions)) {
+    if (!object(q) || Object.keys(q).some(key => !['type', 'instructions', 'criteria'].includes(key)) ||
+        !['choice', 'noul', 'score'].includes(q.type) || q.instructions == null) throw new Error('Invalid System One question');
+    if (q.type === 'choice' && (!object(q.criteria) || !integer(Object.keys(q.criteria).length, 1, 255))) {
+      throw new Error('Choice requires 1–255 named criteria');
+    }
+    if (q.type === 'score' && (!Array.isArray(q.criteria) || !integer(q.criteria.length, 2, 10))) {
+      throw new Error('Score requires 2–10 ordered criteria');
+    }
+    if (q.type === 'noul' && q.criteria !== undefined && (!object(q.criteria) ||
+        Object.keys(q.criteria).some(key => !['true', 'false'].includes(key)))) throw new Error('Invalid Noul criteria');
+  }
+  return payload;
+}
+
+function validateDecisions(questions, answers) {
+  if (!object(answers) || Object.keys(answers).length !== Object.keys(questions).length) return false;
+  return Object.entries(questions).every(([id, q]) => {
+    const a = answers[id];
+    if (!object(a) || a.type !== q.type) return false;
+    if (q.type === 'noul') return probability(a.noul);
+    const keys = Object.keys(q.criteria);
+    if (!probability(a.confidence) || !object(a.probabilities) ||
+        Object.keys(a.probabilities).length !== keys.length || !keys.every(key => probability(a.probabilities[key])) ||
+        Math.abs(Object.values(a.probabilities).reduce((sum, p) => sum + p, 0) - 1) > 0.02) return false;
+    return q.type === 'choice' ? keys.includes(a.choice)
+      : typeof a.score === 'number' && Number.isFinite(a.score) && a.score >= 0 && a.score <= keys.length - 1;
+  });
+}
 
 // Exact Luna metadata: official model page and API pricing, checked 2026-09-24.
 // https://developers.openai.com/api/docs/models/gpt-6-luna
@@ -134,17 +179,19 @@ export async function prepare(config) {
     if (model.api !== 'openai-codex-responses') throw new Error(`Unsupported subscription transport: ${model.api}`);
     if ('max_output_tokens' in config) throw new Error('pi-ai subscription transport does not enforce an output token cap; use timeout_seconds');
   } else if (config.provider === 'openrouter') {
-    model = config.model === mimo.id ? mimo
+    model = config.model === jev.id ? jev
+      : config.model === mimo.id ? mimo
       : config.model === mimoFlash.id ? mimoFlash
       : config.model === deepseek.id ? deepseek
       : Object.hasOwn(OPENROUTER_MODELS, config.model) ? OPENROUTER_MODELS[config.model] : undefined;
     if (!model) throw new Error('Unknown OpenRouter model in the pinned pi-ai catalog; no model substitution');
-    if (model.api !== 'openai-completions') throw new Error(`Unsupported OpenRouter transport: ${model.api}; this runner supports openai-completions, without rerouting models`);
+    if (!['openai-completions', 'systemone'].includes(model.api)) throw new Error(`Unsupported OpenRouter transport: ${model.api}; no model rerouting`);
     if (config.max_output_tokens != null && !integer(config.max_output_tokens, 1, model.maxTokens)) throw new Error('OpenRouter max_output_tokens must be within the model limit when supplied');
     model = { ...model, compat: { ...model.compat, maxTokensField: 'max_tokens' } };
   } else {
     throw new Error('provider must be openai-codex (subscription) or openrouter');
   }
+  const decisions = model.api === 'systemone' ? prepareDecisions(config) : null;
   if (config.reasoning === 'on') {
     if (config.provider !== 'openrouter' || !model.reasoning) {
       throw new Error('Explicit reasoning on requires an OpenRouter reasoning model');
@@ -158,7 +205,7 @@ export async function prepare(config) {
   const schema = hasSchema ? structuredClone(config.schema) : null;
   const validate = hasSchema ? compileSchema(schema) : null;
   return {
-    model, reasoning: config.reasoning, prompt: config.prompt, debug: structuredClone(config.debug),
+    model, decisions, reasoning: config.reasoning, prompt: config.prompt, debug: structuredClone(config.debug),
     max_output_tokens: config.max_output_tokens ?? null, timeout_seconds: timeout,
     prompt_sha256: sha256(config.prompt), schema, schema_name: 'output',
     schema_sha256: hasSchema ? sha256(JSON.stringify(schema)) : null, validate,
@@ -374,9 +421,68 @@ function redactor(apiKey) {
   return redact;
 }
 
+async function executeDecisions(request, { apiKey, fetch, signal }) {
+  const provenance = await identity();
+  const redact = redactor(apiKey);
+  const abort = AbortSignal.any([AbortSignal.timeout(request.timeout_seconds * 1000), ...(signal ? [signal] : [])]);
+  const started = performance.now();
+  const url = `${request.model.baseUrl.replace(/\/$/, '')}/systemone`;
+  const init = { method: 'POST', redirect: 'error', signal: abort,
+    headers: { authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ model: request.model.id, ...request.decisions }) };
+  const wire = await wireRequest(url, init);
+  const metadata = {};
+  let rawResponse = '', raw = '', stop = 'error', error = null, usage = null, valid = false, validationError = null, output = null;
+  let phase = 'headers';
+  try {
+    const response = await fetch(url, init);
+    metadata.http_status = response.status;
+    for (const [header, key] of [['retry-after', 'retry_after'], ['x-request-id', 'request_id']]) {
+      if (response.headers.has(header)) metadata[key] = response.headers.get(header);
+    }
+    phase = 'body';
+    rawResponse = await response.text();
+    phase = 'parse';
+    const body = JSON.parse(rawResponse);
+    for (const key of ['id', 'model', 'provider', 'usage']) if (body[key] != null) metadata[key] = body[key];
+    if (body.usage && Number.isSafeInteger(body.usage.input_tokens) && Number.isSafeInteger(body.usage.output_tokens)) {
+      usage = { input: body.usage.input_tokens, output: body.usage.output_tokens,
+        totalTokens: body.usage.input_tokens + body.usage.output_tokens };
+    }
+    if (!response.ok || body.error) {
+      metadata.error = errorDetails(body.error, redact);
+      error = body.error?.message ?? `System One HTTP ${response.status}`;
+    } else {
+      stop = 'stop';
+      output = body.answers ?? null;
+      raw = output === null ? '' : JSON.stringify(output);
+      valid = validateDecisions(request.decisions.questions, output);
+      validationError = valid ? null : 'Invalid or missing System One answers';
+      if (valid && request.validate && !request.validate(output)) {
+        valid = false;
+        validationError = `Output does not match JSON schema: ${JSON.stringify(request.validate.errors)}`;
+      }
+    }
+  } catch (failure) {
+    error = failure.message;
+    if (phase !== 'parse') metadata.transport_error = { phase, ...errorDetails(failure, redact) };
+    else validationError = 'System One response is not valid JSON';
+  }
+  if (abort.aborted) metadata.abort_reason = errorDetails(abort.reason, redact);
+  return redact({ ...provenance, provider: request.model.provider, model: request.model.id, reasoning: request.reasoning,
+    prompt_sha256: request.prompt_sha256, schema_sha256: request.schema_sha256,
+    elapsed_ms: Math.round(performance.now() - started), request: wire, response_metadata: metadata,
+    response_id: metadata.id ?? null, response_model: metadata.model ?? null, provider_thinking_level: null,
+    http_attempts: 1, stop_reason: stop, raw_stop_reason: null, diagnostics: [], error,
+    raw_response: rawResponse, raw_text: raw, output, valid, validation_error: validationError, usage,
+    usage_note: 'System One native token counts; provider-reported USD charge is response_metadata.usage.cost. raw_text serializes typed answers; it is not generated prose.',
+  });
+}
+
 /** Invoke pi-ai once through an explicit credential and transport. No auth discovery or fallback. */
 export async function execute(request, { apiKey, fetch = globalThis.fetch, signal } = {}) {
   if (!nonempty(apiKey)) throw new Error('Explicit credentials are required for execution');
+  if (request.model.api === 'systemone') return executeDecisions(request, { apiKey, fetch, signal });
   const provenance = await identity();
   const redact = redactor(apiKey);
   const abort = AbortSignal.any([AbortSignal.timeout(request.timeout_seconds * 1000), ...(signal ? [signal] : [])]);
@@ -446,7 +552,7 @@ export async function preview(request) {
     provider: result.provider, model: result.model, reasoning: result.reasoning,
     prompt_sha256: request.prompt_sha256, schema_sha256: request.schema_sha256, prompt: request.prompt,
     credentials_read: false, network_requests: 0, ...result.request,
-    notice: 'Actual pi-ai HTTP body decoded for inspection; authentication headers are placeholders. Server acceptance and hidden provider behavior are untested.',
+    notice: 'Actual transport HTTP body decoded for inspection; authentication headers are placeholders. Server acceptance and hidden provider behavior are untested.',
   };
 }
 
@@ -512,7 +618,9 @@ const help = `Usage: run-model.sh preview|run [CONFIG.json] [--send]
 Reads one JSON config from file or stdin; writes one JSON result to stdout.
 Required: provider, model, reasoning, prompt (sent exactly as supplied).
 Optional: schema, timeout_seconds (default 300). No tools, history, retries, or prompt repair.
-Providers: openai-codex subscription; OpenRouter models using pi-ai openai-completions.
+Providers: openai-codex subscription; OpenRouter chat via pi-ai; Jev via System One.
+Jev prompt: JSON encoding of {state, questions}; reasoning must be provider-default.
+Jev schema validates answers locally; no output caps or chat debug settings.
 Other catalog transports are rejected explicitly; no model substitution or rerouting.
 OpenRouter max_output_tokens is optional; omitted or null sends no caller cap. Subscription output caps are unsupported.
 OpenRouter-only debug: {"echo_upstream_body":true} records upstream settings and a bounded event timeline.
