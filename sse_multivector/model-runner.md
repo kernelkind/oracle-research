@@ -876,12 +876,24 @@ production preparation and decoding functions:
   was performed for this revision; scoring consistency remains untested.
 
   [PPv26-D1](prominence-prompt-goal-v1/ppv26-diagnostic-v1/PPv26-D1.md) is an
-  untested diagnostic draft against approved PPv26. Only the output instructions
+  tested diagnostic variant against approved PPv26. Only the output instructions
   change: an allocation array describes each part of meaning and its allocated,
   represented and missing points. Allocated points total 100; represented points
   total prominence; each entry's represented and missing points exhaust its
   allocation. This is an inspectable model output, not access to hidden reasoning.
-  PPv26 remains unchanged. No inference calls were made for this draft.
+  PPv26 remains unchanged. No inference calls were made during drafting.
+
+  `experiments/ppv26-allocation-v1` subsequently tested the saved M2033 claim
+  and reaction-only masks in two Astra-low subscription calls, without retries,
+  reuse or baseline reruns. Both responses were valid and all allocation sums
+  checked out. Claim-only scored 85 (40 for the half-life claim, 45 for its
+  seed-oil application, 15 missing for the reaction). Reaction-only scored 15
+  (45/40 missing for the two factual parts, 15 represented for the reaction).
+  The pair sums to 100, but the factual weights shifted between calls. The
+  agent marked both uncertain: reaction weighting and possible overlap between
+  the claim and its explanatory restatement require judgment; arithmetic alone
+  does not establish semantic quality or repeatability. No replacement score
+  has been approved by the user. PPv26-D1 wording remains unchanged.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
