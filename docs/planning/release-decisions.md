@@ -163,8 +163,9 @@ All 13 calls were valid without retries, reuse or baseline calls; native charge
 was $0.000206136. No prompt or hierarchy change followed. Comparing Luna on
 this sample was suggested but not run. The user subsequently accepted Jev's
 No for Food and drink containing Fasting, correcting the agent's expected
-boundary. With that human correction all nine scored judgments are accepted;
-four scope ambiguities remain unresolved. The user approved instead a small
+boundary. With that human correction all nine scored judgments match the
+current expectations; this does not make the other agent labels user-approved.
+Four scope ambiguities remain unresolved. The user approved instead a small
 connected Jev section in the existing hierarchy UI: nine original food/cooking,
 cuisine and bread nodes, all 72 directed pairs, unchanged NSP-Jev-v1 and no
 membership expansion. Every selected node is retained; this is a selected
@@ -184,8 +185,14 @@ The graph now has 16 raw links, 10 reduced links, two roots, no cycles and no
 rejected-but-reachable pairs. Food and drink → Cooking remains No: the original
 contradiction disappeared by removing a link, not accepting that relationship.
 Consistency does not establish semantic improvement. All original nodes and
-memberships are retained, and the v3 viewer check passed. Next is user inspection
-of the split between Food and drink and Food and cooking, not more inference.
+memberships are retained, and the v3 viewer check passed. The user subsequently
+rejected using the assembled hierarchy to validate Jev's prompt. The approved
+next direction is pairwise validation first: agree on expected answers for a
+small set of actual node-title pairs, keep disputed labels separate, then test
+the prompt with repetitions before returning to hierarchy evaluation. The
+candidate pairs in the navigation research README have been checked against
+saved titles; their proposed labels still need user confirmation. No new calls,
+prompt changes, benchmark accuracy claim or graph-based acceptance followed.
 No full hierarchy was rebuilt or prompt production-adopted.
 A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference

@@ -509,10 +509,12 @@ on these same inputs before changing either prompt; that inference is not
 authorized by this completed Jev test. The user then explicitly accepted No
 for Food and drink containing Fasting. The user review and superseding agent
 assessment are recorded separately; the original pre-run expectation remains
-as history. Under that corrected boundary all nine scored decisions are
-accepted, with the other four judgments still unresolved.
+as history. Under that corrected boundary all nine scored decisions match the
+current expectations, with the other four judgments still unresolved. Only
+the Fasting correction is an explicit user verdict; the remaining labels are
+agent expectations, not user-confirmed ground truth.
 
-**Jev connected-section diagnostic — completed, awaiting user inspection:** the user chose to inspect
+**Jev connected-section diagnostic — completed, not a prompt-validation gate:** the user chose to inspect
 a small connected section in the existing hierarchy UI rather than run the
 suggested Luna comparison. `decision_hierarchy.py prepare` takes an explicit
 list of original node IDs, retains their exact titles and masks, and generates
@@ -593,8 +595,8 @@ no merges, repairs, new titles or membership expansion were applied. The CLI
 export now validates the saved experiment's prompt instead of hard-coding v1,
 and labels the viewer with that version. Its new regression test failed before
 implementation; all 54 graph/browser/merge tests subsequently passed, as did
-the v3 viewer's `--check`. Next: inspect the Food and drink / Food and cooking
-split before proposing another prompt or widening the experiment.
+the v3 viewer's `--check`. The user subsequently rejected using hierarchy
+inspection to validate Jev's prompt; pairwise validation below comes first.
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
@@ -602,6 +604,60 @@ target/infomap-review-build/debug/sse-subject-navigation \
   --categories target/hierarchy-build-v1/jev-v3-section-browser-v1/categories.json \
   sse_multivector/hierarchy-refresh-v1/masked-posts.json
 ```
+
+### Jev pairwise validation before hierarchy evaluation
+
+The user approved returning to pairwise judgments before evaluating an
+assembled hierarchy. NSP-Jev-v3 and saved results remain unchanged. This is a
+candidate test set awaiting expected-answer confirmation, not a scored
+benchmark or a claim that the prompt works. No new inference was performed.
+
+All titles below were verified against `experiments/hr02-title-v38-astra-low/report.json`.
+The proposed answer asks whether A contains B and, separately, B contains A:
+
+| A | B | A contains B | B contains A | Purpose |
+| --- | --- | --- | --- | --- |
+| brisket | Brisket on a smoker | Yes | No | Narrower subject, including preparation |
+| Asian cuisine | Chinese cuisine | Yes | No | Regional containment |
+| Physical movement | Workouts | Yes | No | Non-food containment |
+| Meat consumption | Attitudes toward meat consumption | Yes | No | Subject matter, not only kinds of objects |
+| Foods | Foods | Yes | Yes | Identical-title equivalence control |
+| Raw food | Veganism | No | No | Overlap without containment |
+| coffee shop | Coffee beans | No | No | Association without containment |
+| Food and drink | Fasting | No | No | User-corrected boundary |
+| brisket | Music | No | No | Unrelated subjects |
+
+Except for Food and drink → Fasting = No, these are agent-proposed labels,
+not recorded user approvals. The reverse Fasting direction also needs
+confirmation. Earlier expectations and the explicit Fasting correction are
+preserved in the shared Jev `diverse-pairs-v2`, `fresh-pairs-v2` and
+`harder-pairs-v1` reports/reviews; the unrelated brisket/Music pair is newly
+proposed, not newly generated titles. Those nodes are `S3227bf9396` and
+`S9f8ab11969`. The two Foods nodes are `S881962e13d` and `S718bf55ec2`.
+Both Foods directions render the same request and count as one unique input,
+not independent evidence. This control does not test equivalence between
+different wording or authorize merging the nodes.
+
+Keep unresolved scope questions visible and outside an accuracy denominator
+until their expected answers are settled. In particular:
+
+- Psychology and philosophy / Psychological distress: the earlier agent-scored
+  Jev miss remains visible; the compound title's intended scope is not user-confirmed.
+- Food and drink / Cooking; Food and drink / Food and cooking; Food and cooking /
+  Food and dining: do not use the graph's consistency to choose their labels.
+- Cooking / Chinese cuisine, sourdough bread, Cranberry and rosemary bread:
+  v3's changed rejections are not automatically improvements or failures.
+- Christmas / Festive gatherings: the distinction between the holiday and
+  a celebration was discussed, but final pair labels were not recorded.
+- coffee shop / #coffeechain: do not guess the unresolved name's meaning.
+
+Next: obtain confirmation/corrections to the nine-row proposal. Then evaluate
+unchanged NSP-Jev-v3 with a few independent repetitions per unique input,
+preserving saved matching outputs as existing observations, not generating
+another baseline. Freeze labels before new results; report disagreements and
+repeat consistency separately, without claiming general accuracy from this
+small, mostly reused sample. Unresolved labels are not automatically expected
+model `uncertain` answers. Build no new hierarchy as part of this validation.
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
