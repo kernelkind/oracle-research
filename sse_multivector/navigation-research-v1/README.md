@@ -608,12 +608,12 @@ target/infomap-review-build/debug/sse-subject-navigation \
 ### Jev pairwise validation before hierarchy evaluation
 
 The user approved returning to pairwise judgments before evaluating an
-assembled hierarchy. NSP-Jev-v3 and saved results remain unchanged. This is a
-candidate test set awaiting expected-answer confirmation, not a scored
-benchmark or a claim that the prompt works. No new inference was performed.
+assembled hierarchy, then confirmed the nine-row expected-answer proposal.
+NSP-Jev-v3 and saved results remain unchanged. This is a small agreed test set,
+not a claim of general accuracy or evidence that the prompt works.
 
 All titles below were verified against `experiments/hr02-title-v38-astra-low/report.json`.
-The proposed answer asks whether A contains B and, separately, B contains A:
+The agreed answer asks whether A contains B and, separately, B contains A:
 
 | A | B | A contains B | B contains A | Purpose |
 | --- | --- | --- | --- | --- |
@@ -627,9 +627,10 @@ The proposed answer asks whether A contains B and, separately, B contains A:
 | Food and drink | Fasting | No | No | User-corrected boundary |
 | brisket | Music | No | No | Unrelated subjects |
 
-Except for Food and drink → Fasting = No, these are agent-proposed labels,
-not recorded user approvals. The reverse Fasting direction also needs
-confirmation. Earlier expectations and the explicit Fasting correction are
+All labels in this table are now user-confirmed, including both directions.
+They were frozen into the new experiment's evidence before new inference;
+only the titles, not labels or review comments, are sent to Jev.
+Earlier expectations and the explicit Fasting correction are
 preserved in the shared Jev `diverse-pairs-v2`, `fresh-pairs-v2` and
 `harder-pairs-v1` reports/reviews; the unrelated brisket/Music pair is newly
 proposed, not newly generated titles. Those nodes are `S3227bf9396` and
@@ -651,13 +652,16 @@ until their expected answers are settled. In particular:
   a celebration was discussed, but final pair labels were not recorded.
 - coffee shop / #coffeechain: do not guess the unresolved name's meaning.
 
-Next: obtain confirmation/corrections to the nine-row proposal. Then evaluate
-unchanged NSP-Jev-v3 with a few independent repetitions per unique input,
-preserving saved matching outputs as existing observations, not generating
-another baseline. Freeze labels before new results; report disagreements and
-repeat consistency separately, without claiming general accuracy from this
-small, mostly reused sample. Unresolved labels are not automatically expected
-model `uncertain` answers. Build no new hierarchy as part of this validation.
+The approved evaluation uses [this spec](../experiment_specs/nsp-jev-v3-hr02-agreed-pairs.json)
+and three observations per unique input. Shared preparation for
+`experiments/nsp-jev-v3-agreed-pairs-r1/` verified 17 exact title inputs, with
+15 new requests and two reusable v3 answers. The two further trials use the
+runner's explicit `--repeat` option: 49 new calls and two saved observations
+overall, before any eligible provider retries. Saved observations count once;
+neither v1 nor a separate baseline is rerun. Report agreement and consistency
+separately, without claiming general accuracy from this small, mostly reused
+sample. Unresolved labels are not automatically expected model `uncertain`
+answers. No hierarchy construction is part of this validation.
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).

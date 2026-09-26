@@ -190,9 +190,12 @@ rejected using the assembled hierarchy to validate Jev's prompt. The approved
 next direction is pairwise validation first: agree on expected answers for a
 small set of actual node-title pairs, keep disputed labels separate, then test
 the prompt with repetitions before returning to hierarchy evaluation. The
-candidate pairs in the navigation research README have been checked against
-saved titles; their proposed labels still need user confirmation. No new calls,
-prompt changes, benchmark accuracy claim or graph-based acceptance followed.
+candidate pairs in the navigation research README were checked against saved
+titles, and the user confirmed all proposed labels. The approved repeated test
+uses unchanged NSP-Jev-v3: 17 unique inputs, three observations each, reusing
+two saved v3 answers and requesting 49 new answers. The identical Foods/Foods
+directions count as one input. Disputed labels remain separate and unscored.
+No prompt change, general accuracy claim or graph-based acceptance is implied.
 No full hierarchy was rebuilt or prompt production-adopted.
 A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
