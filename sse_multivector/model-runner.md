@@ -852,6 +852,17 @@ production preparation and decoding functions:
   no improvement on the target case; a one-point control change is not a
   meaningful quality finding. PPv24 and PPv25 remain unchanged.
 
+  `experiments/ppv25-reaction-only-v1` selected only "Horrifying" in the
+  same M2033 post. One Astra-low subscription call returned a valid score of
+  12, with class "Posts expressing horror or alarm about something unspecified."
+  Missing meaning identified the detailed health claim and that its claimed
+  persistence is what the author finds horrifying. No retry, reuse or baseline
+  rerun occurred; the claim-only score of 92 remains saved evidence. The agent
+  marked this diagnostic uncertain: the user has not judged reaction-only
+  coverage, and a low standalone score does not settle the loss from omitting
+  that reaction from a near-complete mask. No assumption that the two masks
+  form additive semantic partitions is introduced. PPv25 is unchanged.
+
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
   scoring-prompt changes, and does not waive spending authorization or ledger
