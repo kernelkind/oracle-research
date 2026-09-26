@@ -644,9 +644,24 @@ production preparation and decoding functions:
   not be overinterpreted from one trial per case. Score-only responses do not
   show whether alternative posts were identified or what missing meaning was
   recognized. Agent assessments are saved separately; PPv21 is unchanged and
-  the four-call allowance is exhausted. The recommended next diagnostic is to
-  request explicit alternative posts for the tea pair before another revision,
-  while recognizing that changing the output format may affect the result.
+  the four-call allowance is exhausted.
+
+  [PPv21-D1](prominence-prompt-goal-v1/ppv21-diagnostic-v1/PPv21-D1.md) is a
+  tested diagnostic-only variant. Only the output instruction changes: return
+  `alternative_posts`, `missing_meaning`, and `prominence`.
+  `experiments/ppv21-diagnostic-v1` reuses the exact tea inputs through the
+  generic adapter and compares against saved PPv21 outputs. The user authorized
+  two Astra-low subscription calls: both valid, with no retries, reuse or
+  baseline reruns. Without "I", the alternatives were "I want some iced tea
+  too." and "They want some hot tea too."; the response identified the speaker
+  and hotness as missing and scored 75. With "I", both alternatives retained
+  the speaker and changed the temperature; it identified hotness as missing
+  and scored 90. This matches the intended distinction in this diagnostic
+  trial, unlike saved score-only PPv21 (90/87). Output-format effects and trial
+  variation remain unresolved; this is not access to prior responses' reasoning
+  or evidence of calibrated percentages. Agent assessments are separate from
+  user decisions. PPv21 is unchanged. The recommended next check is the same
+  diagnostic format on the roasting pair before adopting expanded output.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
