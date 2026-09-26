@@ -655,13 +655,40 @@ until their expected answers are settled. In particular:
 The approved evaluation uses [this spec](../experiment_specs/nsp-jev-v3-hr02-agreed-pairs.json)
 and three observations per unique input. Shared preparation for
 `experiments/nsp-jev-v3-agreed-pairs-r1/` verified 17 exact title inputs, with
-15 new requests and two reusable v3 answers. The two further trials use the
-runner's explicit `--repeat` option: 49 new calls and two saved observations
-overall, before any eligible provider retries. Saved observations count once;
-neither v1 nor a separate baseline is rerun. Report agreement and consistency
-separately, without claiming general accuracy from this small, mostly reused
-sample. Unresolved labels are not automatically expected model `uncertain`
-answers. No hierarchy construction is part of this validation.
+15 new requests and two reusable v3 answers. The completed `-r2` and `-r3`
+trials used the runner's explicit `--repeat` option. All 51 observations are
+valid: 49 new calls, two saved observations and no retries. Saved observations
+count once; neither v1 nor a separate baseline was rerun.
+
+All three trials matched **16/17 agreed labels** (94.1% on this selected set;
+48/51 observations, not 51 distinct test inputs). All 17 choices stayed the
+same across trials. The only mismatch was **Meat consumption → Attitudes
+toward meat consumption**, No in all three against the user-approved Yes.
+No probabilities were 0.85, 0.85 and 0.82; these are not calibrated accuracies.
+Each trial matched four of five expected Yes answers, including the identical-
+title control, and all twelve expected No answers. No model Uncertain answers
+occurred. The three failures have separate agent-reject reviews through the
+shared runner; expected labels were not revised after seeing results.
+
+Per-trial usage and billing from the shared reports:
+
+| Trial | New / reused | Input tokens | Output tokens | Native charge (USD) |
+| --- | --- | --- | --- | --- |
+| r1 | 15 / 2 | 6,281 | 600 | 0.000263802 |
+| r2 | 17 / 0 | 7,115 | 680 | 0.00029883 |
+| r3 | 17 / 0 | 7,115 | 680 | 0.00029883 |
+
+Every new receipt includes billing. Prompt, input
+identity, agreed-label and distinct-receipt checks passed. No production code
+changed, and no hierarchy was built. Unresolved pairs above remain separate;
+unresolved labels are not automatically expected model `uncertain` answers.
+This small, mostly reused sample does not establish general accuracy.
+
+The saved v1 response to the failed pair was Yes (0.54 Yes / 0.39 No / 0.07
+Uncertain), from `experiments/nsp-jev-v1-hr02-diverse-pairs-v2/`. That one draw
+does not establish reliable superiority. Next suggested check: repeat v1 on
+this same input twice, retaining the saved answer as its first observation,
+before another wording change. No further calls are authorized or performed.
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).

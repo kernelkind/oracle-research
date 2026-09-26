@@ -191,11 +191,17 @@ next direction is pairwise validation first: agree on expected answers for a
 small set of actual node-title pairs, keep disputed labels separate, then test
 the prompt with repetitions before returning to hierarchy evaluation. The
 candidate pairs in the navigation research README were checked against saved
-titles, and the user confirmed all proposed labels. The approved repeated test
-uses unchanged NSP-Jev-v3: 17 unique inputs, three observations each, reusing
-two saved v3 answers and requesting 49 new answers. The identical Foods/Foods
-directions count as one input. Disputed labels remain separate and unscored.
-No prompt change, general accuracy claim or graph-based acceptance is implied.
+titles, and the user confirmed all proposed labels. The repeated test completed
+with unchanged NSP-Jev-v3: 17 unique inputs, three observations each, two saved
+v3 answers reused and 49 new valid calls, without retries. Each trial matched
+16/17 labels. Meat consumption → Attitudes toward meat consumption was the
+sole failure, returning No in all three trials against the agreed Yes. All
+17 inputs retained their choices across repetitions; this is selected-sample
+consistency, not general accuracy. The identical Foods/Foods directions count
+as one input. Disputed labels remain separate and unscored. No prompt change
+or hierarchy construction followed. Since saved v1 answered the failed pair
+Yes once, the suggested next check is two further v1 trials on that same input
+before another prompt edit; those calls have not been performed or authorized.
 No full hierarchy was rebuilt or prompt production-adopted.
 A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
