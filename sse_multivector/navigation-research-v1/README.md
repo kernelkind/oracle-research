@@ -239,7 +239,9 @@ target/infomap-review-build/debug/sse-subject-navigation \
   --collapse-equal-note-steps
 ```
 
-Full user hierarchy review remains pending.
+The user reviewed HR02 and found it promising, but TRUE's relationship
+judgments were not good enough to validate the hierarchy. The NSPv2 pilot
+above did not rebuild it; the full frontier diagnostic remains pending.
 Opening a leaf with `l`, Right or Enter now shows its notes immediately,
 including when equal-note collapse leaves no displayed children. Escape or
 Backspace returns directly to the parent selection. N/D/O remain available
@@ -703,9 +705,13 @@ skipped IDs, cycle rejection, and opt-in compatibility. An integration test
 runs the actual refresh launcher and browser on fixtures for both views.
 
 HR02 has now completed TRUE inference and merged naming through the construction
-path above and its browser package is ready; hierarchy review remains. Reprocessing the older
-HRv1 comparison under HD06 is still pending. No title, relation, membership or
-saved artifact was changed to implement this navigation rule.
+path above and its browser package is ready. The user reviewed it and found it
+promising, but TRUE's relationship judgments were not good enough to validate
+the hierarchy. A frontier-call replacement is planned as a diagnostic of the
+other stages. The eight-answer NSPv2 pilot above has not rebuilt the hierarchy.
+Reprocessing the older HRv1 comparison under HD06 is still pending. No title,
+relation, membership or saved artifact was changed to implement this navigation
+rule.
 
 ## Current evaluation decisions — September 15, 2026
 

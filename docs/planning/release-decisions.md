@@ -38,11 +38,11 @@ inputs cover all 16,512 directions. The provisional graph has 116 nodes and
 56 reduced links. All six merged titles are now generated with unchanged
 v38/Astra low, as subsequently approved, without changing merges or links.
 The historical HRv1 runner and artifacts remain on v21. HR02 browser export
-is complete; hierarchy review remains. The 23 → 02 and 25 → 02 implementation
-prerequisites are satisfied. The provisional cycle rules are assessed in 02.
-The full pass was mechanically valid; spot checks found some questionable
-titles, and the user has not approved every output. Prompt changes and
-validation procedures belong to that workstream, not this planning discussion.
+is complete. The user reviewed it and found it promising, but judged TRUE's
+relationship decisions unsuitable. Task 02 stays open: a frontier-call
+replacement is the next diagnostic for whether the other stages hold up, not
+yet a production choice or validation of those stages. The 23 → 02 and 25 → 02
+implementation prerequisites are satisfied; 25 stays complete.
 The user subsequently approved the simplified
 [NSPv2 diagnostic prompt and four-pair pilot](../../sse_multivector/navigation-research-v1/README.md).
 Eight Astra-low subscription calls checked both directions: all outputs were
@@ -68,14 +68,14 @@ workstream or approval of the overall plan.
 
 ### Status checkpoint — September 25
 
-Tasks 02, 18 and 25 were updated on September 25; 23 on September 24. Other rows
-were last confirmed with the user on September 23.
+Tasks 02, 18, 22 and 25 were updated on September 25; 23 on September 24.
+Other rows were last confirmed with the user on September 23.
 This is a dated checkpoint; current task status appears in `release-plan.json`.
 
 | Task | Status at checkpoint |
 | --- | --- |
 | 01 · Subject and mask prompts | Finished. |
-| 02 · Build and review 100-note hierarchy | In progress; TRUE scoring, six merged titles and browser export complete. Minimal-scope correctness review remains; the task 25 implementation gate is satisfied. |
+| 02 · Build and review 100-note hierarchy | In progress; HR02 was generated and reviewed. Promising, but TRUE's relationship decisions prevent validation. Frontier replacement is the next diagnostic; task 25's implementation gate is satisfied. |
 | 23 · Fix and validate node-title prompt | Finished; 129 titles saved. |
 | 04 · Define mask prominence | Paused. Earlier experimental results do not establish that work is active now. |
 | 17 · Compare teachers | In progress; no completed selection established. |
@@ -85,7 +85,7 @@ This is a dated checkpoint; current task status appears in `release-plan.json`.
 | 24 · Recover missing node memberships | Not started. |
 | 25 · Handle node equivalence and TRUE cycles | Complete for HR02: exact-mask consolidation and reversible cycle handling are implemented and tested, with naming/browser integration. The merge rules remain provisional; hierarchy-quality review belongs to 02. |
 | 21 · Assess HDBSCAN at launch scale | No further progress; earlier investigation remains evidence, not launch-scale validation. |
-| 22 · Measure SSE, node-title and TRUE processing costs | No further progress. |
+| 22 · Measure SSE, node-title and relationship-check costs | No further progress; TRUE timing remains baseline evidence, not an assumed launch method. |
 
 This checkpoint records statuses. The later approved correction adds 25 → 02
 as a finish dependency; dates, methods and authorization remain unchanged.
@@ -174,11 +174,13 @@ narrow meaningfully, and lead to relevant notes? Occasional errors can be
 acceptable; repeatedly misleading navigation cannot. Concrete examples from
 the builds should inform acceptance, not an invented accuracy percentage.
 
-The 100-note build tests hierarchy correctness at minimal scope and establishes
-an initial useful hierarchy. The planned 200-note / 2-topic build checks
+The 100-note work tests hierarchy correctness at minimal scope and must
+establish an initial useful hierarchy; HR02 has not yet met that gate. The
+planned 200-note / 2-topic build checks
 correctness and prominence-based note ordering. The 300-note / 3-topic build
 checks correctness while testing scalable construction choices; candidate-pair
-filtering must preserve useful parent–child links, not just reduce TRUE calls.
+filtering must preserve useful parent–child links, not just reduce relationship
+checks.
 The 500-note / 5-topic build checks the combined pipeline and profiles build
 time and memory to find bottlenecks. All three increase subject coverage; none
 is merely a test of handling more notes.
@@ -327,12 +329,13 @@ English subject descriptions. The plan does not require a separate
 subject-generation call for each final-corpus note.
 
 The shared hierarchy construction is masks → SSE vectors → flat HDBSCAN groups →
-node descriptions → cosine-filtered candidate pairs → TRUE subsumption
-checks → directed node hierarchy. Prominence supports note ordering. The
-cosine cutoff and its implementation remain open. This describes the intended
-build, not a claim that existing all-pairs experiments already implement
-filtering. Fewer TRUE comparisons alone do not establish success: filtering
-must preserve useful parent–child links.
+node descriptions → cosine-filtered candidate pairs → subsumption judgments →
+directed node hierarchy. Prominence supports note ordering. The relationship
+method remains open: TRUE generated HR02, but its judgments were not good
+enough; a frontier-call replacement is a diagnostic, not a production choice.
+The cosine cutoff and its implementation remain open. Existing all-pairs
+experiments do not establish filtered behavior; filtering must preserve useful
+parent–child links, not merely reduce calls.
 
 The formal process also requires identical same-post masks to be deduplicated
 before SSE, nodes with identical mask sets to be merged before hierarchy
@@ -357,9 +360,9 @@ choose a member's title. Preserve every original title and node ID. This call
 only names the merged node: it does not decide the merge, change its links or
 trigger another round of TRUE comparisons. The offline preparation, verified
 title collection and browser export are implemented; a four-node live check
-is complete. Full hierarchy review remains. This does not authorize further
-model calls or settle the provisional merge
-policy.
+is complete. HR02 was reviewed and found promising, but TRUE's relationship
+quality blocks validation. This does not authorize further model calls or
+settle the provisional merge policy.
 
 ### Reversible hierarchy design decisions
 
@@ -427,7 +430,10 @@ The 116-node graph and 56 reduced links remain provisional. Browser export is
 saved in `target/hierarchy-build-v1/hr02-browser-v1/`; the existing viewer passed
 `--check` and interactive navigation/mask checks. It shows 98 represented posts
 and adds an All notes entry. Both user-rejected titles remain flagged in analysis.
-User review remains pending; completed inference does not settle the merge policies.
+The user reviewed the hierarchy and found it promising but not validated:
+TRUE's relationship decisions were not a good fit. A frontier-call replacement
+is planned as a diagnostic of the remaining stages. Completed inference and
+this review do not settle the provisional merge policies.
 
 **Hierarchy execution recovery (clarified September 24):** retry failed model
 calls and reuse successful results. Preserve failed-attempt receipts and the
@@ -453,31 +459,32 @@ required outcomes, not selected implementation methods or new dates:
 | Task | Required result | Completion dependency |
 | --- | --- | --- |
 | **24 · Recover missing node memberships** | A repeatable recovery process beyond the six Coffee/Tea nodes, covering masks left unassigned or grouped elsewhere. Measure its work and cost. | Required to finish 03; available measurements inform 20 without waiting for all of 24. |
-| **25 · Handle node equivalence and TRUE cycles** | Apply exact mask-set consolidation and a reversible, repeatable rule for HR02's equivalence candidates and cyclic TRUE answers. Provisional contraction does not prove that a cycle or equal title means semantic equivalence. | Implemented for HR02; its finish dependency for 02 is satisfied. Evaluate the resulting hierarchy under 02. |
+| **25 · Handle node equivalence and TRUE cycles** | Apply exact mask-set consolidation and a reversible, repeatable rule for HR02's equivalence candidates and cyclic TRUE answers. Provisional contraction does not prove that a cycle or equal title means semantic equivalence. | Implemented for HR02; its finish dependency for 02 is satisfied. Quality validation remains in 02. |
 | **26 · Collapse equal-note navigation steps** | Implement and validate the required navigation simplification, including shared children, while preserving note sets, masks and provenance. | Required to finish 03. |
 | **27 · Order node notes using mask prominence** | Define and implement how relevant mask scores produce node-note order, including multiple masks and shared descendants. | Needs prominence definition 04; required to finish 03. |
-| **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered TRUE and large-group title inputs. | Needs 03 + 21 + 22; required to finish full-build feasibility 10. |
+| **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered relationship checks and large-group title inputs. The relationship method is open. | Needs 03 + 21 + 22; required to finish full-build feasibility 10. |
 
 24 can start from saved artifacts and remains unstarted. 25 is complete for
 HR02: both merge stages, provenance-preserving naming and browser export are
 implemented and tested. The four-merge user review accepted three and rejected
-Beef; it was not blanket approval of the provisional rule. Review of the full
-rebuilt hierarchy remains in 02.
+Beef; it was not blanket approval of the provisional rule. Further quality
+validation of the rebuilt hierarchy remains in 02.
 For 26, the [browser implementation and regression checks](../../sse_multivector/navigation-research-v1/README.md#shared-child-collapse)
-are complete; validation on the rebuilt HRv1 hierarchy awaits graph packaging.
+are complete; validation of this simplification in a rebuilt hierarchy remains
+pending.
 27 waits for 04, which remains paused. 28 waits for the validated small-corpus
 workflow and scale findings. Readiness does not authorize execution. Membership
 methods, final node-equivalence/cycle policy, ranking rules and scale
 implementation choices remain open.
 
-The current 100-note diagnostic checks correctness at minimal scope, without
-membership expansion or a claim to exercise scalable construction. Task 25's
-implementation gate is satisfied; 02 still needs review of the browsable graph,
-including whether provisional cycle merges make useful navigation. Preliminary
-200-note construction can follow 02 while prominence is paused, but its
-note-ordering check needs 04 and 27. The 300-note scalable-construction work
-can proceed without waiting for
-that ordering check. Completing the combined 500-note validation (03) requires
+The 100-note build exposed a relationship-quality blocker at minimal scope,
+without membership expansion or a claim to exercise scalable construction.
+Task 25's implementation gate is satisfied. Task 02 remains open while a
+frontier-call diagnostic tests whether the other stages support a useful
+hierarchy. Preliminary 200-note construction can follow 02 while prominence
+is paused, but its note-ordering check needs 04 and 27. The 300-note
+scalable-construction work can proceed without waiting for that ordering
+check. Completing the combined 500-note validation (03) requires
 24–27. The prominence dependency remains 04 → 27 → 03. The stages' internal
 processing order must respect their inputs, but this does not impose a serial
 development schedule.
@@ -534,9 +541,11 @@ It does not approve implementation, benchmarks, spending or diagram changes.
   It does not presume that HDBSCAN or its implementation must be replaced. Its
   findings are needed for the HDBSCAN portion of 20; they do not block independent
   measurements of other stages.
-- **22 · Measure SSE, node-title and TRUE processing costs:** use existing
-  masks and nodes to measure time, memory and cost for these three stages.
-  Include how title input length grows with group size, not only cost per call.
+- **22 · Measure SSE, node-title and relationship-check costs:** use existing
+  masks and nodes to measure time, memory and cost. Preserve TRUE's historical
+  rate as a baseline, but include the eventually selected relationship method
+  before completing build-cost estimates. Include how title input length grows
+  with group size, not only cost per call.
   This is ready independently of 21's HDBSCAN assessment. No measurement
   procedure, hardware choice or spending is approved here.
 - **20 · Assess full hierarchy-build resources:** combine stage measurements
@@ -548,7 +557,7 @@ It does not approve implementation, benchmarks, spending or diagram changes.
   measurements from 24 are an additional dashed input.
   It stays grey pending inputs from 21 and 22. The dashed 06 and 03 inputs allow
   available evidence to be used without waiting for those workstreams to finish.
-  Per-pair TRUE cost alone does not establish total hierarchy-build cost.
+  Per-pair relationship cost alone does not establish total hierarchy-build cost.
 - **09 · Choose notes for launch hierarchy:** use the early measurements, agreed
   corpus scope and useful-coverage requirements to choose the intended corpus and
   freeze its IDs. Corpus size is not fixed before feasibility is investigated;
@@ -596,14 +605,13 @@ cutoff, measured rates and counts, and the final corpus size remain open.
    cannot finish without 04 and 27. The 300-note work need not wait for that
    check. The combined 500-note validation still needs 24–27.
 2. Start scale measurements during Week 2. Measure the complete build, including
-   SSE, HDBSCAN, node titles and cosine-filtered TRUE comparisons, rather
+   SSE, HDBSCAN, node titles and cosine-filtered relationship checks, rather
    than relying only on distilled-model training or generation speed. Node 22
-   measures SSE, node titles and TRUE using existing masks and nodes,
-   independently
-   of 21's HDBSCAN assessment. Node 20 combines those findings with pilot-model
-   measurements and growing-build counts as they become available. The combined
-   assessment informs corpus selection in 09. Node 10
-   then checks time and cost for mask and prominence generation with the
+   measures SSE, node titles and relationship checks using existing masks and
+   nodes, independently of 21's HDBSCAN assessment. Node 20 combines those
+   findings with pilot-model measurements and growing-build counts as they
+   become available. The combined assessment informs corpus selection in 09.
+   Node 10 then checks time and cost for mask and prominence generation with the
    distilled model and hierarchy construction across the intended launch corpus.
 3. Bring protocol work and basic service/Notedeck integration forward, using a
    small saved hierarchy snapshot rather than waiting for the final corpus.

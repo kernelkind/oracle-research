@@ -10,7 +10,7 @@
       "id": "02",
       "title": "Build and review 100-note hierarchy",
       "status": "IN PROGRESS",
-      "description": "TRUE scoring, six Astra-low v38 merged titles and browser export complete: 116 nodes, 56 links.\nReview hierarchy correctness at minimal scope in the existing viewer.\nTask 25's implementation gate is satisfied; user review remains."
+      "description": "HR02 was generated and reviewed: promising, but TRUE's relationship decisions are not good enough.\nA frontier-call replacement is the next diagnostic to test whether the other stages hold up.\nThe 100-note hierarchy is not yet validated; task 25 remains complete."
     },
     {
       "id": "03",
@@ -122,9 +122,9 @@
     },
     {
       "id": "22",
-      "title": "Measure SSE, node-title and TRUE processing costs",
+      "title": "Measure SSE, node-title and relationship-check costs",
       "status": "READY TO START",
-      "description": "Use existing masks and nodes to measure time, memory and cost. Include title input growth with group size."
+      "description": "Measure SSE and node-title work using existing masks and nodes. Retain TRUE's measured baseline; include whichever relationship method is eventually selected before completing build-cost estimates. Include title input growth with group size."
     },
     {
       "id": "23",
@@ -160,7 +160,7 @@
       "id": "28",
       "title": "Implement and validate the launch-scale build",
       "status": "WAITING",
-      "description": "Make the strategies tested in 03 runnable at launch scale, preserving validated hierarchy behavior. Include cosine-filtered TRUE and title inputs for large groups.\nImplementation choices remain open.\nNEEDS 03 + 21 + 22"
+      "description": "Make the strategies tested in 03 runnable at launch scale, preserving validated hierarchy behavior. Include cosine-filtered relationship checks and title inputs for large groups.\nThe relationship method remains open.\nNEEDS 03 + 21 + 22"
     }
   ],
   "links": [

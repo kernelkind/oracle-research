@@ -131,13 +131,16 @@ and all 129 HDBSCAN groups have saved v38/Luna max titles. Node 02 resumed with
 user approval on September 25: local TRUE scoring completed for all 16,512
 directed pairs, reusing verified identical inputs. The provisional graph has
 116 nodes and 56 reduced links; all six merged titles are generated with
-v38/Astra low. The historical HRv1 path remains on v21. HR02 browser export is
-complete; minimal-scope correctness review remains. Its solid 23 → 02 arrow records a satisfied
-prerequisite. A valid title response is not a user-approved title. Additional
-rows expose the remaining construction work.
+v38/Astra low. The historical HRv1 path remains on v21. HR02 was generated
+and reviewed: promising, but TRUE's relationship decisions prevent validation.
+A frontier call in place of TRUE is the next diagnostic to test the other
+stages; it is not a production choice. An eight-answer NSPv2 pilot is complete,
+but no revised hierarchy has been built. Node 02 remains in progress, while
+its 23 and 25 prerequisites are satisfied. Additional rows expose remaining
+construction work.
 This second 100-post experiment is **HR02**: generate a hierarchy the user is
-pleased with, not optimize cost, speed or teacher selection. This goal does not
-authorize model changes or comparison runs; the architecture is unchanged.
+pleased with, not optimize cost, speed or teacher selection. The diagnostic
+does not change the saved HR02 build or establish a validated launch design.
 A separately authorized Astra-low title pass is now complete: unchanged v38,
 the same 129 groups, all outputs valid, seven agent-review flags. The user
 accepted `grownostr` and `guarani`, rejected `Daily painting` and `Brands`, and
@@ -164,9 +167,10 @@ summary.
 Node 27 turns mask prominence into node-note ordering and needs 04.
 Task 25's finish dependency for 02 is satisfied. All four results are required
 to complete the 500-note validation in 03. The 100-note run checks correctness
-at minimal scope. The 200-note run adds prominence-based note ordering; the 300-note run
-tests scalable construction, including whether filtering retains useful TRUE
-links; the 500-note run validates the combined pipeline and profiles its build.
+at minimal scope. The 200-note run adds prominence-based note ordering; the
+300-note run tests scalable construction, including whether filtering retains
+useful parent–child links; the 500-note run validates the combined pipeline
+and profiles its build.
 Membership recovery does not expand the limited 100-note diagnostic. The
 200-note construction can start while prominence is paused, but its ordering
 check needs 04 and 27; 300-note work need not wait for that check. The
@@ -181,10 +185,10 @@ Dates are unchanged. See the
 [status record](release-decisions.md#status-checkpoint--september-25).
 
 Node 28 is separate from scale measurements: turn the strategies tested in 03
-into a runnable launch-scale build, including cosine-filtered TRUE and handling
-large-group title inputs. It needs the validated larger-corpus workflow (03)
-and findings from 21 and 22, and is required before completing full-build
-feasibility (10).
+into a runnable launch-scale build, including cosine-filtered relationship
+checks and handling large-group title inputs. It needs the validated
+larger-corpus workflow (03) and findings from 21 and 22, and is required
+before completing full-build feasibility (10).
 The early assessment (20) does not wait for 28. Recovery measurements from 24
 are a dashed input to 20; include graph-processing costs from the hierarchy
 builds too. Neither measurement nor a planning card authorizes implementation.
@@ -209,11 +213,12 @@ selected (17).
 The pipeline note distinguishes training-label generation from applying
 the distilled model to the final corpus.
 
-Node 22 is ready to measure SSE, node-title and TRUE processing time, memory
+Node 22 is ready to measure SSE, node-title and relationship-check time, memory
 and cost using existing masks and nodes, including title input growth as
-groups grow. It does not wait for 21, which
-assesses whether our HDBSCAN grouping can meet the intended corpus size, budget
-and deadline, and identifies work required without presuming replacement.
+groups grow. TRUE remains a measured baseline; the eventual relationship
+method is open. Node 22 does not wait for 21, which assesses whether our
+HDBSCAN grouping can meet the intended corpus size, budget and deadline, and
+identifies work required without presuming replacement.
 Node 20 combines these findings with mask/prominence generation measurements
 from pilot 06 and mask/node/cosine-filtered-pair counts from the growing
 hierarchy builds. It estimates full-build resources to inform launch-corpus
