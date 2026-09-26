@@ -895,6 +895,26 @@ production preparation and decoding functions:
   does not establish semantic quality or repeatability. No replacement score
   has been approved by the user. PPv26-D1 wording remains unchanged.
 
+  The user approved a mask-independent allocation diagnostic, not a production
+  architecture change. [PPv26-D2A](prominence-prompt-goal-v1/ppv26-independent-v1/PPv26-D2A.md)
+  allocates meaning from the unmarked post alone;
+  [PPv26-D2B](prominence-prompt-goal-v1/ppv26-independent-v1/PPv26-D2B.md)
+  assesses each mask against that saved allocation without changing it. Both
+  are diagnostic variants derived against approved PPv26, which remains unchanged.
+  `experiments/ppv26-independent-allocation-v1` and
+  `experiments/ppv26-independent-scoring-v1` used three Astra-low subscription
+  calls total, without retries, reuse or baseline reruns. The first allocated
+  85 points to the combined claim/explanation and 15 to horror. This does not
+  support the agent's suspicion that separate repetition entries caused 85/15.
+  Both scoring calls preserved the allocation verbatim and passed arithmetic
+  checks. Claim-only scored 85; reaction-only scored 10, withholding five of
+  the reaction's 15 points because the mask did not specify what prompted it.
+  Thus fixed weights did not produce complementary scores: the pair totals 95.
+  Interpretation of the reaction in context remains unresolved, as does whether
+  85/15 is a good allocation. The agent marked all three results uncertain.
+  The runner flags the prior D1 baseline as input-mismatched because D2B adds
+  the allocation; the old outputs remain evidence, not an identical-input test.
+
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
   scoring-prompt changes, and does not waive spending authorization or ledger
