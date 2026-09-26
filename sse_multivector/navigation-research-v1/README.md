@@ -367,7 +367,7 @@ baseline reruns, Astra calls, prompt changes or graph construction occurred.
 All 12 reviews and original receipts are retained for later diagnostic reuse.
 Further inference and hierarchy construction remain unapproved.
 
-**NSP-Luna-v3 — Luna-only draft, untested:** the user requested a task-specific
+**NSP-Luna-v3 — Luna-only, approved and tested, not frozen:** the user requested a task-specific
 rewrite after finding the [NSP-Luna-v2](../node-subsumption-prompt-luna-v2/prompt.txt)
 draft too dependent on title-generation wording. NSP-Luna-v2 remains preserved
 as a superseded, untested prompt version, not an inference baseline.
@@ -381,10 +381,42 @@ contract and title placeholders remain unchanged; no title-generation rules,
 examples or reasoning steps are added.
 The [official reasoning-model guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
 informed the single direct question, not a claim that the wording is effective.
+
+The user approved testing the draft. The shared runner prepared three
+comparisons from the corresponding saved NSPv3/Luna-max experiments:
+`experiments/nsp-luna-v3-hr02-diverse-pairs-v1/` (six directions),
+`experiments/nsp-luna-v3-hr02-hashtag-v1/` (two), and
+`experiments/nsp-luna-v3-hr02-fresh-pairs-v1/` (12). Despite the retained batch
+name, the last 12 are reused evaluation cases in this comparison, not fresh
+holdout data. Exact title inputs, original IDs, model/settings and output
+schema were verified unchanged; only the approved prompt delta was sent.
+All 20 new subscription calls validated, with no retries, reuse, Astra calls
+or baseline reruns.
+
+All 18 clear expectations matched, versus 17 for saved NSPv3. Meat consumption
+containing Attitudes toward meat consumption changed from No to Yes, correctly
+calling attitudes a subtopic; the reverse remained No with a consistent
+explanation. The remaining 17 clear decisions stayed correct. The two hashtag
+directions remained Uncertain/No. The forward uncertainty still refers to a
+coffee chain without establishing the hashtag's meaning; agent review leaves
+it uncertain. The reverse still assumes a coffee-business chain and its
+explanation is rejected. Neither direction is converted to a gold binary label.
+All 20 agent reviews are recorded separately from user verdicts. This draw
+shows a useful improvement, not repeatability or general hierarchy accuracy.
+
+Runner-reported usage, with reasoning already included in output:
+
+| Batch | Input | Output | Reasoning within output | Catalog estimate, USD |
+| --- | ---: | ---: | ---: | ---: |
+| Six earlier clear directions | 658 | 1,349 | 1,157 | 0.0007403 |
+| Two hashtag directions | 216 | 528 | 462 | 0.0002856 |
+| Twelve reused evaluation directions | 1,292 | 2,861 | 2,493 | 0.0015597 |
+
+These catalog estimates are not paid invoices or subscription-quota ratios.
 The proposed harder-pair expectations remain under discussion, particularly
-where titles admit different scopes. Neither testing this draft nor building
-a connected hierarchy has been approved. TPv38, NSPv3, earlier variants,
-saved experiments and model routing remain unchanged.
+where titles admit different scopes. No harder-pair inference or connected
+hierarchy construction was performed or approved. TPv38, NSPv3, earlier
+variants, baseline experiments and model routing remain unchanged.
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).

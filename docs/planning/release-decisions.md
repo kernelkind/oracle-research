@@ -123,11 +123,20 @@ pairs exposed title-interpretation ambiguity; those proposed expectations are
 not agreed ground truth. After reviewing the TPv38-inspired NSP-Luna-v2 draft,
 the user requested a task-specific rewrite rather than transplanted title rules.
 [NSP-Luna-v3](../../sse_multivector/node-subsumption-prompt-luna-v3/prompt.txt)
-is prepared against NSPv3 for review only: would every post about B also be
+asks: would every post about B also be
 about A? It adds an uncertainty condition when title meanings do not establish
-the answer, retaining the output contract. It is untested and only for
+the answer, retaining the output contract. It is approved and tested, not frozen,
+and only for
 `gpt-6-luna` / `max`, not Astra. NSP-Luna-v2 remains a superseded, untested
 draft; TPv38, NSPv3 and saved results are unchanged.
+The authorized comparison checked the 20 existing Luna cases against saved
+NSPv3 answers, with no baseline reruns. All 20 new calls validated without
+retries or reuse. All 18 clear expectations matched, versus 17 in the saved
+NSPv3 results: Meat consumption containing Attitudes toward meat consumption
+changed to Yes with a consistent reverse No explanation. The two hashtag
+directions remain Uncertain/No with unresolved or unsupported business-chain
+reasoning. This is a single-draw improvement on reused cases, not general
+validation. No harder-pair tests or connected-hierarchy work were performed.
 No hierarchy was rebuilt. A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
 and graph construction remain unapproved. Scalable relationship inference and
