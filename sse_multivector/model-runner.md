@@ -915,6 +915,22 @@ production preparation and decoding functions:
   The runner flags the prior D1 baseline as input-mismatched because D2B adds
   the allocation; the old outputs remain evidence, not an identical-input test.
 
+  The user set aside the word-allocation pivot (PPv28/PPv29 drafts) and returned
+  to assessing the mask-independent meaning allocation. These drafts were not
+  tested or adopted. PPv27's reference-interpretation revision also remains an
+  untested draft; approved PPv26 is unchanged.
+
+  A second post, synthetic and explicitly authorized, was tested using unchanged
+  PPv26-D2A in `experiments/ppv26-relief-v1`, with the reusable spec
+  `experiment_specs/ppv26-relief-v1.json`. The post described a daughter's scans
+  showing no sign of cancer after three years of treatment, followed by the
+  parent's overwhelming relief. One Astra-low subscription call, without masks
+  or suggested scores, allocated 60 to the scan result, 18 to the treatment
+  duration, and 22 to relief. The total is 100; no retries, reuse, or baseline
+  reruns occurred. The agent marked the result uncertain; no user judgment has
+  been recorded. Two posts do not establish systematic reaction underweighting
+  or calibrated percentages. No prompt changed for this test.
+
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
   scoring-prompt changes, and does not waive spending authorization or ledger
