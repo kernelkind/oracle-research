@@ -625,14 +625,28 @@ production preparation and decoding functions:
   not a blanket prohibition on interpreting idioms or references.
 
   [PPv21](prominence-prompt-goal-v1/ppv21-draft-v1/PPv21.md) is now the latest
-  user-approved wording and the baseline for future revisions. It is untested,
-  not production-frozen. It asks for alternative posts consistent with the
-  mask's meaning but differing in the complete post's meaning, then assesses
+  user-approved wording and the baseline for future revisions. It is tested
+  experimentally, not production-frozen. It asks for alternative posts consistent
+  with the mask's meaning but differing in the complete post's meaning, then assesses
   the importance of represented and missing meaning. It consistently uses
   post, mask, fragments, and meaning. The numerical scale, URL/identifier
   exclusion and score-only JSON contract remain unchanged. PPv17 and the
   intervening drafts remain immutable; approval of PPv21's wording does not
   establish improved scores or authorize a broad experiment.
+
+  The user authorized four Astra-low subscription calls, bounded at two
+  attempts each for `experiments/ppv21-tea-contrast-v1` and
+  `experiments/ppv21-roasting-contrast-v1`. All four outputs were valid, with
+  no retries, reuse or baseline reruns. Tea without/with "I" scored 90/87
+  (saved PPv17: 90/85), still not demonstrating the intended loss from omitting
+  the speaker. Compact/complete roasting scored 93/91 (saved PPv17: 93/92),
+  retaining approximate equivalence. Small differences and reversals should
+  not be overinterpreted from one trial per case. Score-only responses do not
+  show whether alternative posts were identified or what missing meaning was
+  recognized. Agent assessments are saved separately; PPv21 is unchanged and
+  the four-call allowance is exhausted. The recommended next diagnostic is to
+  request explicit alternative posts for the tea pair before another revision,
+  while recognizing that changing the output format may affect the result.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
