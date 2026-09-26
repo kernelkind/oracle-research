@@ -667,16 +667,32 @@ production preparation and decoding functions:
   represent everything the mask represents, while allowing whatever it leaves
   unspecified to vary. PPv21-D1's examples demonstrate recognition of
   particular missing meaning but do not establish that class.
-  [PPv24](prominence-prompt-goal-v1/ppv24-draft-v1/PPv24.md) is an unapproved,
-  untested draft against approved PPv21. The user found PPv23's abstract class
+  [PPv24](prominence-prompt-goal-v1/ppv24-draft-v1/PPv24.md) is approved for
+  testing and experimentally tested, not production-frozen. It was drafted
+  against PPv21. The user found PPv23's abstract class
   comparison unclear and authorized rebuilding the instruction around what
   the fragments specify and leave unspecified, then identifying what the
   complete post specifies that the mask does not. "Class" names that
   description rather than introducing the operation. PPv24 requests
   `post_class`, `missing_meaning`, and `prominence`; scoring instructions are
   unchanged. PPv22 and PPv23 remain unapproved, untested prior drafts. PPv21
-  and prior versions remain unchanged. No inference or experiment-schema
-  change accompanies PPv24; review its wording before testing.
+  and prior versions remain unchanged.
+
+  `experiments/ppv24-tea-contrast-v1` used two Astra-low subscription calls
+  with identical saved tea inputs and PPv21-D1 as the saved baseline. Both
+  responses were valid; no retries, reuse or baseline reruns occurred. The
+  generic adapter validates the three diagnostic fields. Without "I", the
+  class left speaker identity and temperature unspecified and scored 75;
+  with "I", it retained the speaker, left temperature and quantity unspecified,
+  and scored 85 (saved PPv21-D1: 75/90). These are class descriptions rather
+  than example posts and recognize the intended speaker distinction. However,
+  only the second response mentions the omitted vague quantity "some", and
+  neither calibrated percentages nor repeatability are established. Agent
+  assessments remain uncertain and separate from user decisions. The initially
+  proposed roasting regression was not run: its saved source uses the
+  score-only prominence adapter, which rejects diagnostic fields. Preparing
+  that source directly as generic input failed before inference. No runner
+  code or saved input was changed to work around that incompatibility.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
