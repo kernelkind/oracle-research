@@ -729,8 +729,19 @@ production preparation and decoding functions:
   drinker even though "I" was unselected, and did not list identity as missing.
   The agent accepted the first case and rejected the second class description;
   this does not reject its score or establish how the identity error affected
-  scoring. User judgment, repeatability and score calibration remain open.
-  PPv24 is unchanged.
+  scoring. User judgment and score calibration remain open.
+
+  `experiments/ppv24-health-identity-repeat-v1` independently repeated only
+  the quantity/timeframe case with `--repeat`, identical inputs/settings and
+  one Astra-low subscription call. It returned 60 again. The class described
+  consumption of more than a gallon of an unspecified drink in under 24 hours,
+  without specifying an attitude; it did not identify the drinker as the
+  author. The author inference therefore did not recur in this second trial.
+  Missing meaning named hot tea and the health concern, without explicitly
+  enumerating missing drinker identity. The response was valid, with no retry
+  or request reuse. The agent accepted the revised class description; this
+  does not establish general reliability, exhaustive missing-meaning reporting
+  or that class-description errors cannot affect scores. PPv24 is unchanged.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
