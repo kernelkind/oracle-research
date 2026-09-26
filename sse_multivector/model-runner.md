@@ -743,6 +743,22 @@ production preparation and decoding functions:
   does not establish general reliability, exhaustive missing-meaning reporting
   or that class-description errors cannot affect scores. PPv24 is unchanged.
 
+  `experiments/ppv24-real-posts-v1` tested three diverse saved real-post masks
+  from the earlier review: `S29074d29b6-V1524` (fragmented decaf-drinker
+  motivation), `Sa01eaf30fd-V1298` (incidental tea in the long diary), and
+  `S6dde8fffb9-V0974` (coffee shops in the laptop-ban incident). Generic
+  inputs were mechanically copied from saved PPv13 inputs and equality was
+  verified before inference. Three Astra-low subscription calls were valid,
+  without retries, reuse or baseline reruns. Scores were 52/1/7 versus saved
+  PPv13's 64/1/16. The decaf description combines fragments coherently but
+  its absolute score has no user target. Diary tea remains in the provisional
+  1–5 range, though its class adds "desired" despite only "tea" being selected.
+  Coffee shops scores well below the prior provisional 20–40 range, although
+  its class correctly leaves the incident, attitudes and actions unspecified.
+  All three agent assessments remain uncertain for these distinct reasons;
+  no new user judgments are inferred. Discuss the coffee-shop score before
+  revising the prompt. PPv24 remains unchanged and not production-frozen.
+
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
   scoring-prompt changes, and does not waive spending authorization or ledger
