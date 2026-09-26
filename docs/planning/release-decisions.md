@@ -215,10 +215,15 @@ Cooking times were accepted beneath Cooking, so this does not demonstrate a
 blanket inability to recognize topic aspects. Those labels remain unresolved;
 the user then approved proceeding with all 16,512 directional judgments across
 the same 129 original nodes, using unchanged NSP-Jev-v3 and Jev provider-default
-at ten concurrent calls. The prepared experiment is
+at ten concurrent calls. The completed experiment is
 `sse_multivector/experiments/nsp-jev-v3-hr02-full-v1/`; preparation found 100
-matching saved answers to reuse and 16,412 initially new requests. All original
-Astra-low TPv38 titles and upstream artifacts remain unchanged. Every answer,
+matching saved answers to reuse and 16,412 initially new requests. Execution
+completed all 16,512 judgments: 14,426 new calls and 2,086 exact-request reuses,
+including matches becoming available during the run. No calls failed or needed
+retry; every response passed format and receipt checks. Native choices were
+241 Yes, 16,271 No and zero uncertain; these are not accuracy measurements.
+Native cost was $0.253775508. Runtime including local reporting was 45 minutes 25 seconds.
+All original Astra-low TPv38 titles and upstream artifacts remain unchanged. Every answer,
 probability and uncertainty is retained; uncertainty is not a No. This approval
 covers inference only, not graph construction, merges or production adoption.
 No full Jev hierarchy has been built. Scalable relationship inference and

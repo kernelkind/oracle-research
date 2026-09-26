@@ -758,16 +758,31 @@ spec is not used: the reusable spec explicitly selects NSP-Jev-v3.
 Preparation verified all **16,512 directed pairs**, exact title-only JSON states,
 unchanged prompt text and frozen provenance. It found **100 reusable answers**
 and **16,412 initially new requests**. Six existing decision-hierarchy tests
-passed. The ordinary cost estimate is about $0.29; the $1 experiment allowance includes eligible provider-only retries, bounded to two total attempts per
+passed. The ordinary cost estimate was about $0.29; the $1 experiment allowance included eligible provider-only retries, bounded to two total attempts per
 case and 33,024 new attempts overall. Exact-request reuse stays enabled;
 this is not an independent repeat trial. Native answers, probabilities,
 uncertainties and receipts remain available, without treating probabilities
 as calibrated accuracy or uncertainty as rejection.
 
-This stage generates decisions only. No graph construction, merging, prompt
-revision or production adoption is included; saved TRUE artifacts remain intact.
-After completion, verify coverage, failures and actual usage before proposing
-how to inspect a hierarchy using these decisions.
+**Completed September 26:** the shared runner reports all **16,512 judgments
+valid**, with **14,426 new calls**, **2,086 exact-request reuses**, no retries,
+failed calls, malformed responses or missing billing. Reuse grew beyond the
+preparation count because identical inputs became available during execution;
+all original nodes and directed pairs remain present. Native choices are
+**241 Yes, 16,271 No, zero uncertain**. Valid means structurally usable with
+verified receipts, not semantically correct. The complete inventory, exact
+original title inputs, frozen prompt/settings, choices and probabilities were
+checked; all six existing decision-hierarchy tests passed again.
+
+Native billing totals **$0.253775508**, with 6,042,274 input and 577,040 output
+tokens. The service ran from 20:48:51Z to
+21:34:16Z (**45 minutes 25 seconds**), including local report generation. No
+inference or polling process remains active.
+
+This stage generated decisions only. No graph construction, merging, prompt
+revision or production adoption occurred; saved TRUE artifacts remain intact.
+Next proposed step: use these saved decisions to construct and inspect the
+hierarchy under the existing provisional rules, after user approval.
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
