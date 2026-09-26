@@ -534,9 +534,24 @@ production preparation and decoding functions:
   comparison did not show the agreed substantial loss when omitting the speaker.
   Agent assessments are recorded separately through the shared review command.
   These single trials check relative ordering, not calibrated percentages or
-  repeatability. PPv15 and its predecessors remain unchanged; no prompt revision
-  or further inference was performed. The next proposed focus is missing
-  information in the tea comparison, not production promotion.
+  repeatability. PPv15 and its predecessors remain unchanged; no production
+  promotion follows from these trials.
+
+  [PPv15-D1](prominence-prompt-goal-v1/ppv15-diagnostic-v1/PPv15-D1.md) is a
+  tested diagnostic-only variant. It changes only the output instruction to
+  request brief `represented_meaning` and `missing_meaning` fields before the
+  score. `experiments/ppv15-diagnostic-v1` uses the generic adapter for this
+  three-field response, with the exact saved prominence inputs for the two
+  tea masks differing only in selection of "I". The user authorized two
+  independent Astra-low subscription calls: both valid, no retries or reuse.
+  Neither earlier scores nor the suspected explanation entered the prompts.
+  Both responses counted the speaker's desire as represented, listed only
+  hotness as missing, and scored 85. This supports contextual attribution of
+  the speaker in the diagnostic; it does not prove why the earlier scoring-only
+  responses occurred. The output intervention and single trial per case limit
+  the inference. Agent assessment is saved separately. The proposed next focus
+  is clarifying what unselected context may contribute to represented meaning;
+  PPv15 remains unchanged and PPv15-D1 is not a production replacement.
 
   Alternatively, `path` may point to a saved title experiment's `report.json`
   (`adapter: "titles"` in that report). In this form, `select` names node IDs.
