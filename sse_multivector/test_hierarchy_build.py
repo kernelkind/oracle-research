@@ -104,8 +104,15 @@ class HierarchyBuildTests(unittest.TestCase):
             self.assertEqual(len(flagged), 1)
             self.assertIn(original['title'], flagged[0]['analysis'])
         report['settings'].update(model='gpt-6-astra', reasoning_effort='low')
-        with self.assertRaises(ValueError):
-            name_merge(merged, report)
+        named = name_merge(merged, report)
+        self.assertEqual(named['naming_report']['settings'], report['settings'])
+        for field in ('raw_edges', 'transitive_reduced_edges', 'reachability'):
+            self.assertEqual(named['graph'][field], merged['graph'][field])
+        self.assertEqual({n['group']: n['title'] for n in named['graph']['nodes']
+                          if n['title_status'] == 'generated'},
+                         {c['id']: c['parsed']['title'] for c in report['cases']})
+        report['settings']['reasoning_effort'] = 'max'
+        with self.assertRaises(ValueError): name_merge(merged, report)
 
     def test_cycle_after_exact_merge_uses_original_ids(self):
         values=fixture(); canonical=values['canonical']

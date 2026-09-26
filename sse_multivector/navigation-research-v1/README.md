@@ -40,14 +40,16 @@ The existing `true_graph_equivalence.py` replays explicit reviewed approvals;
 it does not generate them. Its cutoff-based checks also must not silently be
 substituted for the current native-answer graph rule.
 
-**Merged-node naming — implemented, four-node live check complete:** after a
+**Merged-node naming — implemented, HR02 six-node naming complete:** after a
 merge, use the [frozen v38 title prompt](../hdbv2-node-description-probe-v38/prompt.txt)
-with the frozen Luna-max configuration on the combined masks, deduplicated by
+with the approved teacher configuration on the combined masks, deduplicated by
 the same-post exact-mask identity above. Generate a displayed title rather than
 arbitrarily selecting a member's title; preserve all original titles and node
 IDs. This is a naming call only, not a merge decision or a change to the saved
 links. It does not trigger another TRUE pass. The approval does not authorize
-inference or rewrite historical titles, scores or hierarchy artifacts.
+inference or rewrite historical titles, scores or hierarchy artifacts. HR02
+now uses Astra low for its six merged titles, as explicitly approved; the
+earlier Luna-max naming results remain unchanged.
 
 The [reversible design-decision register](../../docs/planning/release-decisions.md#reversible-hierarchy-design-decisions)
 tracks the native-answer rule (HD01), provisional cycle merging (HD02), the
@@ -75,7 +77,9 @@ rewritten and no synthetic TRUE answers are created for merged titles.
 Masks are deduplicated within each output node by post ID and ordered byte
 spans, retaining every contributing instance. Merged titles are explicitly
 `null`/`pending`, with `naming_source_packets` ready for the existing title
-adapter and frozen v38/Luna-max configuration. No naming inference is performed.
+adapter and frozen v38 prompt. The saved default spec uses Luna max; HR02
+overrides model/effort to Astra low through `experiment.py prepare` without
+editing that saved spec. No naming inference is performed by merge preparation.
 Do not pass this artifact off as scored titles to the historical exporter:
 `hierarchy_build.py package` validates the merge and its naming experiment
 separately, then uses the shared browser renderer. `hierarchy_build.py nodes`
@@ -170,10 +174,11 @@ distinct inputs: 1,629 reused, 12,896 fresh, no cache disagreements. The frozen
 run lives at `target/hierarchy-build-v1/astra-true-v1/`; its title inputs are in
 `target/hierarchy-build-v1/astra-titles-v1/`.
 
-Scoring is running under `oracle-hr02-astra-true-v1.service`, CPU float32, four
+Scoring completed under `oracle-hr02-astra-true-v1.service`, CPU float32, four
 threads, batch size four, 60 GiB memory limit and no swap. This service collects
-answers and builds `target/hierarchy-build-v1/astra-merge-v1/` after successful
-inference. The earlier Luna-title service is stopped with 5,092 completed rows
+answers and built `target/hierarchy-build-v1/astra-merge-v1/` after successful
+inference: 116 nodes, 56 reduced links, six merged nodes. The earlier Luna-title
+service is stopped with 5,092 completed rows
 preserved in `target/hierarchy-build-v1/full-true-v1/`, not marked complete.
 `prepare --partial-cache` verifies that stopped run's frozen requests, model
 and scorer, then reuses only fully written exact-input answers. It rejects
@@ -181,12 +186,19 @@ malformed/mismatched rows and freezes their hashes against later changes;
 unfinished comparisons never become No. Current user reviews are retained
 through merging, and browser analysis flags rejected original titles even
 when their nodes merge. Reviews do not alter scoring text or filter nodes.
-Merged naming through v38/Luna max, browser packaging and review remain pending.
+The user approved Astra low for the six merged titles, keeping v38 unchanged.
+`experiments/hr02-merged-titles-v38-astra-low/` completed with six valid titles,
+six subscription calls and no retries: `Bitcoin`, `coffee`, `nostr`,
+`Positive mood`, `Food and drink`, and `Good morning greetings`. Exact combined
+mask inputs and receipts validate; applying the names preserves all links and
+reachability. Agent inspection found broadly reasonable names, not proof of
+valid merges; the food group's `Khyber Pass` instance remains for review.
+Browser packaging and full hierarchy review remain pending.
 HD02/03 remain provisional; no graph repair or new merge approval is implied.
 The earlier launch failed before inference because systemd expanded a shell
 array; the restart disables that expansion and repeats no successful inference.
 The updated wrapper and six related regression suites passed 63 tests. This verifies
-mechanics, not semantic quality or completion of the full run or HD06 comparison.
+mechanics, not semantic quality or completion of hierarchy review or HD06.
 
 The earlier authorized four-case naming run completed with four valid
 v38/Luna-max responses, four subscription calls and no retries: `coffee`,
@@ -327,8 +339,8 @@ accepted; `Daily painting` and `Brands` rejected, with no comments. Those
 decisions do not imply approval of the three agent-uncertain cases or establish
 a general title policy. The user then approved proceeding to TRUE with all
 Astra titles, retaining every node and visibly flagging the two failures.
-No prompt edits or per-node repairs are included. Merged-title configuration
-remains v38/Luna max; the full hierarchy still requires review.
+No prompt edits or per-node repairs are included. The user subsequently approved
+v38/Astra low for merged titles too; the full hierarchy still requires review.
 
 [Title prompt v25](../hdbv2-node-description-probe-v25/prompt.txt) is tested but
 not promoted. The approved bounded comparison replaces v24's instruction against
@@ -637,10 +649,10 @@ unchanged N/D and branch-local masks, O's displayed-child behavior, inspectable
 skipped IDs, cycle rejection, and opt-in compatibility. An integration test
 runs the actual refresh launcher and browser on fixtures for both views.
 
-The refreshed v38 HRv1 graph remains unbuilt: titles are saved and the offline
-construction path above is implemented, but full TRUE inference, merged naming
-and hierarchy review have not run. No title, relation, membership or saved
-artifact was changed to implement this navigation rule.
+HR02 has now completed TRUE inference and merged naming through the construction
+path above; browser export and hierarchy review remain. Reprocessing the older
+HRv1 comparison under HD06 is still pending. No title, relation, membership or
+saved artifact was changed to implement this navigation rule.
 
 ## Current evaluation decisions — September 15, 2026
 

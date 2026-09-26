@@ -121,9 +121,6 @@ def name_merge(merged, report):
     if pending['packets']:
         if report is None:
             raise ValueError('merged titles are pending; a completed naming experiment is required')
-        if (report.get('settings', {}).get('model') != 'gpt-6-luna'
-                or report.get('settings', {}).get('reasoning_effort') != 'max'):
-            raise ValueError('merged naming remains frozen to v38/Luna-max')
         names = {n['group']: n['title'] for n in titles_from_report(pending, report)['groups']}
     elif report is not None:
         raise ValueError('no merged nodes require naming')

@@ -33,11 +33,12 @@ TRUE with all Astra titles, retaining all nodes and flagging the two failures.
 The Luna-title run is stopped with 5,092 completed answers preserved.
 Task 02 resumed with the user's approval on September 25. The construction path
 validated those saved v38 titles and prepared all 16,512 directed TRUE inputs.
-Local Astra-title scoring is underway: 12,896 distinct inputs need fresh
-inference, with 1,629 reused from verified saved results, including exact
-matches from the stopped Luna-title run.
-The historical HRv1 runner and artifacts remain on v21. TRUE placement, merged
-naming and hierarchy review remain. The solid 23 → 02 prerequisite is satisfied;
+Local Astra-title scoring completed: 12,896 fresh inputs and 1,629 reused
+inputs cover all 16,512 directions. The provisional graph has 116 nodes and
+56 reduced links. All six merged titles are now generated with unchanged
+v38/Astra low, as subsequently approved, without changing merges or links.
+The historical HRv1 runner and artifacts remain on v21. Browser export and
+hierarchy review remain. The solid 23 → 02 prerequisite is satisfied;
 25 is required to finish 02, not to start its TRUE work.
 The full pass was mechanically valid; spot checks found some questionable
 titles, and the user has not approved every output. Prompt changes and
@@ -65,7 +66,7 @@ This is a dated checkpoint; current task status appears in `release-plan.json`.
 | Task | Status at checkpoint |
 | --- | --- |
 | 01 · Subject and mask prompts | Finished. |
-| 02 · Build and review 100-note hierarchy | In progress; full v38 TRUE scoring underway. Merged naming, browser export and minimal-scope correctness review remain. Task 25 is a finish gate. |
+| 02 · Build and review 100-note hierarchy | In progress; TRUE scoring and six merged titles complete. Browser export and minimal-scope correctness review remain. Task 25 is a finish gate. |
 | 23 · Fix and validate node-title prompt | Finished; 129 titles saved. |
 | 04 · Define mask prominence | Paused. Earlier experimental results do not establish that work is active now. |
 | 17 · Compare teachers | In progress; no completed selection established. |
@@ -337,7 +338,9 @@ these stages end to end.
 
 **Merged-node naming (approved September 24):** once nodes are merged, generate
 the merged node's displayed title from their combined, deduplicated masks using
-the existing frozen title configuration (v38/Luna max). Do not arbitrarily
+the frozen v38 prompt. HR02 now uses Astra low for merged titles as well as
+individual titles, explicitly approved after scoring completed; earlier
+Luna-max artifacts remain unchanged. Do not arbitrarily
 choose a member's title. Preserve every original title and node ID. This call
 only names the merged node: it does not decide the merge, change its links or
 trigger another round of TRUE comparisons. The offline preparation, verified
@@ -393,20 +396,23 @@ optimize cost, speed or teacher selection. Model comparisons are not its success
 criterion. The user subsequently authorized individual title generation and
 inspection with Astra low and unchanged v38, reusing all upstream data, then
 approved TRUE scoring of those titles with all nodes retained and the two
-user-rejected titles flagged. This does not authorize an all-Luna comparison
-or change merged-title configuration. The architecture is unchanged.
+user-rejected titles flagged. After scoring, the user also approved Astra low
+for the six merged titles with unchanged v38. This does not authorize an
+all-Luna comparison. The architecture is unchanged.
 HR02 is the experiment's discussion ID; existing artifact paths and frozen
 internal run IDs are retained; the new scoring run is `HR02-v38-gpt-6-astra`.
 
-**HR02 execution (authorized September 25):** local TRUE scoring is
-underway for all 129 saved nodes, with exact-input cache reuse. The frozen plan
+**HR02 execution (authorized September 25):** local TRUE scoring completed
+for all 129 saved nodes, with exact-input cache reuse. The frozen plan
 is `target/hierarchy-build-v1/astra-true-v1/plan.json`; it records policy versions,
 source/input hashes and cache provenance. HD01–05 remain unchanged, including
 the provisional HD02/03 rules. No membership expansion or Beef-specific repair
 is included. The earlier Luna-title run is stopped, not complete; its saved
-prefix supplies only verified exact-input answers to the new run. Scoring
-completion, full merged naming, browser export and review
-remain pending; starting this run does not settle the merge policies.
+prefix supplied only verified exact-input answers to the new run. Six merged
+titles completed in `experiments/hr02-merged-titles-v38-astra-low/` with six
+subscription calls, no retries, and verified unchanged links/reachability.
+The 116-node graph and 56 reduced links remain provisional. Browser export
+and review remain pending; completed inference does not settle the merge policies.
 
 **Hierarchy execution recovery (clarified September 24):** retry failed model
 calls and reuse successful results. Preserve failed-attempt receipts and the
