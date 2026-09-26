@@ -718,6 +718,20 @@ production preparation and decoding functions:
   The agent accepted this case; it does not establish general calibration or
   repeatability. PPv24 is unchanged and not production-frozen.
 
+  `experiments/ppv24-health-v1` tested the saved health-concern post with
+  "drank" + "tea" and "drank over a gallon" + "in less than 24 hours".
+  Both generic diagnostic inputs were verified identical to saved PPv15
+  inputs. Two Astra-low subscription calls returned valid responses without
+  retries, reuse or baseline reruns. Scores were 25 and 60 (saved PPv15:
+  25/55), matching the user-endorsed ordering. The first class correctly left
+  drinker identity, amount, temperature, timeframe and health concern
+  unspecified. The second class incorrectly specified "the author" as the
+  drinker even though "I" was unselected, and did not list identity as missing.
+  The agent accepted the first case and rejected the second class description;
+  this does not reject its score or establish how the identity error affected
+  scoring. User judgment, repeatability and score calibration remain open.
+  PPv24 is unchanged.
+
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
   scoring-prompt changes, and does not waive spending authorization or ledger
