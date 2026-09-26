@@ -836,8 +836,21 @@ production preparation and decoding functions:
   not proof of the original cause; anchoring remains possible. It suggests
   examining factual versus evaluative weighting. PPv24 explicitly asks how the
   complete post supports represented meaning, but does not apply that same
-  question to missing meaning. That asymmetry is a candidate to examine, not
-  an established cause or authorization to edit the scoring prompt.
+  question to missing meaning. That asymmetry was a candidate to test, not
+  an established cause.
+
+  [PPv25](prominence-prompt-goal-v1/ppv25-draft-v1/PPv25.md) is approved for
+  testing and experimentally tested, not production-frozen. Its sole change
+  against PPv24 asks how the post develops, supports or depends on each of
+  represented and missing meaning. `experiments/ppv25-high-coverage-v1`
+  inherited the same three inputs/settings and saved PPv24 baseline without
+  rerunning it. Three Astra-low subscription calls returned valid responses,
+  with no retries or reuse. M174/M394/M2033 scored 100/97/92 versus 100/98/92.
+  The disputed health-claim score remains 92 despite correctly identifying
+  the missing emotional judgment. The agent accepted the two controls and
+  rejected M2033 against the user's prior judgment. This trial demonstrates
+  no improvement on the target case; a one-point control change is not a
+  meaningful quality finding. PPv24 and PPv25 remain unchanged.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
