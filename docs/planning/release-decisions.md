@@ -193,6 +193,9 @@ subjects and masks. The user subsequently approved one fine-tune per candidate
 on both existing prompted tasks: note → subject hierarchy, then note + subject
 → mask. Both tasks train the same model or adapter. Baseline and trained
 evaluation each use that candidate's own generated subjects for the mask calls.
+The user approved batching independent evaluation mask requests, with the same
+batching and generation settings before and after training. The current recipe
+uses up to four masks from one note per batch; training settings are unchanged.
 Direct-mask generation is deferred for this informal pilot.
 This initial informal experiment may use current saved annotations before
 prominence and final teacher selection are ready. Local data is prepared;
@@ -204,7 +207,7 @@ rules remain in force; the informal result does not complete 06.
 The user approved automating and testing the complete workflow in a local VM
 before deploying on rented hardware. The local test uses a tiny model and
 synthetic data, including actual weight updates, checkpoint interruption/resume,
-save/reload and two-step evaluation. All seven local workflow tests passed;
+save/reload and two-step evaluation. The local workflow tests passed;
 interrupted training reproduced the uninterrupted adapter weights exactly.
 The user clarified that the VM must rehearse the deployment process used on
 Vast: prepare an immutable image and frozen inputs locally, upload the inputs,

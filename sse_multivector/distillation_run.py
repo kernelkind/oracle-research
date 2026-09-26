@@ -148,26 +148,45 @@ def parse_subjects(raw):
 
 
 def generate(model, tokenizer, messages, config, task="subjects"):
+    batch = generate_batch(model, tokenizer, [messages], config, task)
+    return {**batch["answers"][0], "seconds": batch["seconds"]}
+
+
+def generate_batch(model, tokenizer, messages, config, task):
     import torch
-    encoded = tokenizer.encode(generation_prompt(tokenizer, messages), add_special_tokens=False)
+    if not messages:
+        raise ValueError("generation batch must not be empty")
+    encoded = [tokenizer.encode(generation_prompt(tokenizer, prompt), add_special_tokens=False)
+               for prompt in messages]
     allowance = config["max_new_tokens"][task]
-    if len(encoded) + allowance > config["max_length"]:
+    width = max(map(len, encoded))
+    if width + allowance > config["max_length"]:
         raise ValueError("generation input plus output allowance exceeds max_length")
-    inputs = torch.tensor([encoded], device=config["device"])
+    # Decoder-only generation must end every row with its real prompt. Build
+    # left padding without changing the tokenizer's right padding for training.
+    inputs = torch.tensor([[tokenizer.pad_token_id] * (width - len(row)) + row for row in encoded],
+                          device=config["device"])
+    attention = torch.tensor([[0] * (width - len(row)) + [1] * len(row) for row in encoded],
+                             device=config["device"])
     eos = model.generation_config.eos_token_id
     eos = tokenizer.eos_token_id if eos is None else eos
     stop_ids = [eos] if isinstance(eos, int) else eos
     model.eval()
     started = time.monotonic()
     with torch.inference_mode():
-        result = model.generate(input_ids=inputs, attention_mask=torch.ones_like(inputs),
+        result = model.generate(input_ids=inputs, attention_mask=attention,
                                 do_sample=False, max_new_tokens=allowance, use_cache=True,
                                 pad_token_id=tokenizer.pad_token_id,
                                 eos_token_id=eos)
-    answer = result[0, len(encoded):].tolist()
-    return {"raw": tokenizer.decode(answer, skip_special_tokens=True),
-            "tokens": len(answer), "seconds": time.monotonic() - started,
-            "truncated": not answer or answer[-1] not in stop_ids}
+    rows = result[:, width:].tolist()  # Also waits for CUDA before stopping the timer.
+    elapsed = time.monotonic() - started
+    answers = []
+    for row in rows:
+        stop = next((i for i, token in enumerate(row) if token in stop_ids), None)
+        answer = row if stop is None else row[:stop + 1]
+        answers.append({"raw": tokenizer.decode(answer, skip_special_tokens=True),
+                        "tokens": len(answer), "truncated": stop is None})
+    return {"answers": answers, "seconds": elapsed}
 
 
 def evaluate(model, tokenizer, data, config, directory):
@@ -209,16 +228,29 @@ def evaluate(model, tokenizer, data, config, directory):
             _, prompts = prepare_mask_inputs({"schema_version": 1, "notes": [{
                 "note_id": note_id, "text": original["text"], "subjects": result["subjects"]}]},
                 data["mask_prompt"])
-            for number, (subject, prompt) in enumerate(zip(result["subjects"], prompts)):
-                answer = call(note_directory / f"mask-{number:04}.json",
-                              [{"role": "user", "content": prompt.text}], "mask")
-                try:
-                    if answer["truncated"]:
-                        raise ValueError("mask answer reached output limit")
-                    response, spans = decode(answer["raw"], original["text"])
-                    result["masks"].append({"subject": subject, "response": response, "spans": spans})
-                except (ValueError, TypeError) as error:
-                    result["errors"].append({"task": "mask", "subject": subject, "error": str(error)})
+            for start in range(0, len(prompts), config["mask_batch_size"]):
+                stop = start + config["mask_batch_size"]
+                messages = [[{"role": "user", "content": p.text}] for p in prompts[start:stop]]
+                path = note_directory / f"masks-{start:04}.json"
+                if path.exists():
+                    batch = read_json(path)
+                    if batch["messages"] != messages:
+                        raise ValueError("saved evaluation input differs")
+                else:
+                    batch = {"messages": messages, **generate_batch(model, tokenizer, messages, config, "mask")}
+                    # Publish the whole batch at once. Resumes retain the same
+                    # grouping and never repeat saved malformed/empty answers.
+                    write_json(path, batch)
+                if len(batch["answers"]) != len(messages):
+                    raise ValueError("generation batch answer count differs")
+                for subject, answer in zip(result["subjects"][start:stop], batch["answers"]):
+                    try:
+                        if answer["truncated"]:
+                            raise ValueError("mask answer reached output limit")
+                        response, spans = decode(answer["raw"], original["text"])
+                        result["masks"].append({"subject": subject, "response": response, "spans": spans})
+                    except (ValueError, TypeError) as error:
+                        result["errors"].append({"task": "mask", "subject": subject, "error": str(error)})
         notes.append(result)
     write_json(directory / "results.json", notes)
     write_json(directory / "complete.json", file_hashes(directory))
@@ -418,7 +450,7 @@ def run(config_path, output, through="report"):
     required = {"model", "revision", "data", "mask_prompt", "device", "quantization", "seed",
         "max_length", "max_new_tokens", "max_subjects", "max_steps", "save_steps", "batch_size",
         "gradient_accumulation_steps", "learning_rate", "subject_fraction", "lora_rank", "lora_alpha", "threads",
-        "gradient_checkpointing", "lora_target_modules"}
+        "gradient_checkpointing", "lora_target_modules", "mask_batch_size"}
     if set(config) != required:
         raise ValueError(f"configuration fields differ: {set(config) ^ required}")
     for key in required - {"model", "revision", "data", "mask_prompt", "device", "quantization",

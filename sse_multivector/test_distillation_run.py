@@ -6,6 +6,7 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 from sse_multivector import distillation_run
@@ -14,6 +15,40 @@ from sse_multivector import distillation_data
 
 
 class DataContractTests(unittest.TestCase):
+    def test_mask_batches_preserve_subject_order_and_resume_without_repeating_saved_answers(self):
+        subjects = [{"number": str(i + 1), "context": "Tea is named.", "subject": f"Tea {i}"}
+                    for i in range(5)]
+        data = {"evaluation": [{"note_id": "a", "messages": [{"role": "user", "content": "Subjects?"}]}],
+                "references": {"a": {"text": "Tea tastes good.", "subjects": [{"subject": "Teacher only"}]}},
+                "mask_prompt": "{POST}\n{INDEXED_POST}\nSubject: {SUBJECT}"}
+        subject_answer = {"raw": json.dumps({"subjects": subjects}), "truncated": False}
+        valid = json.dumps({"meaning": "Tea", "expressible": True, "evidence": "Tea", "mask": [[1, 1]]})
+        empty = json.dumps({"meaning": "Drink", "expressible": False, "evidence": "Only tea", "mask": []})
+        def batch(raw):
+            return {"answers": [{"raw": r, "tokens": 10, "truncated": False} for r in raw], "seconds": 1.0}
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary)
+            config = {"mask_batch_size": 2, "max_subjects": 8}
+            with patch.object(distillation_run, "generate", return_value=subject_answer), \
+                    patch.object(distillation_run, "generate_batch", side_effect=[batch([valid, "bad JSON"]), RuntimeError("interrupted")]):
+                with self.assertRaisesRegex(RuntimeError, "interrupted"):
+                    distillation_run.evaluate(None, None, data, config, output)
+            saved = distillation_run.file_hashes(output)
+            with patch.object(distillation_run, "generate", side_effect=AssertionError("repeated subjects")), \
+                    patch.object(distillation_run, "generate_batch", side_effect=[batch([empty, valid]), batch([valid])]) as calls:
+                results = distillation_run.evaluate(None, None, data, config, output)
+            self.assertEqual([len(call.args[2]) for call in calls.call_args_list], [2, 1])
+            self.assertEqual([m["subject"]["number"] for m in results[0]["masks"]], ["1", "3", "4", "5"])
+            self.assertEqual(results[0]["errors"][0]["subject"]["number"], "2")
+            for name, digest in saved.items():
+                self.assertEqual(distillation_run.sha256(output / name), digest)
+            for path in (output / "note-0000").glob("masks-*.json"):
+                saved_batch = distillation_run.read_json(path)
+                for messages in saved_batch["messages"]:
+                    self.assertNotIn("Teacher only", messages[0]["content"])
+            with patch.object(distillation_run, "generate_batch", side_effect=AssertionError("repeated complete batch")):
+                self.assertEqual(distillation_run.evaluate(None, None, data, config, output), results)
+
     def test_changed_training_data_is_rejected_before_loading_a_model(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -97,7 +132,7 @@ class TinyWorkflowTests(unittest.TestCase):
         cls.config = {"model": str(root / "model"), "revision": None, "data": str(root / "data"),
             "mask_prompt": str(mask_prompt), "device": "cpu", "quantization": "none", "seed": 17,
             "max_length": 512, "max_new_tokens": {"subjects": 120, "mask": 120}, "max_subjects": 8, "max_steps": 240,
-            "save_steps": 20, "batch_size": 4, "gradient_accumulation_steps": 1,
+            "save_steps": 20, "batch_size": 4, "mask_batch_size": 4, "gradient_accumulation_steps": 1,
             "learning_rate": .01, "subject_fraction": .5, "lora_rank": 16, "lora_alpha": 32, "threads": 2,
             "gradient_checkpointing": False, "lora_target_modules": "all-linear"}
         distillation_run.write_json(root / "config.json", cls.config)
@@ -121,6 +156,49 @@ class TinyWorkflowTests(unittest.TestCase):
             self.assertEqual(answer_ids[-1], self.tokenizer.eos_token_id)
             with self.assertRaisesRegex(ValueError, "exceeds"):
                 distillation_run.encode_example(self.tokenizer, row, len(encoded["input_ids"]) - 1)
+
+    def test_batched_generation_handles_left_padding_stop_tokens_and_output_limits(self):
+        import torch
+        from transformers import LogitsProcessor
+        tokenizer = self.tokenizer
+        model = distillation_run.load_model(self.config)
+        eos, other_eos = tokenizer.eos_token_id, tokenizer.convert_tokens_to_ids("<user>")
+        token = tokenizer.encode("Tea", add_special_tokens=False)[0]
+        model.generation_config.eos_token_id = [eos, other_eos]
+        messages = [[{"role": "user", "content": text}] for text in ("Tea", "Tea tastes good.", "Tea is a drink. Tea tastes good.")]
+        encoded = [tokenizer.encode(distillation_run.generation_prompt(tokenizer, m), add_special_tokens=False) for m in messages]
+        width = max(map(len, encoded))
+        sequences = [[token, eos], [token, token, other_eos], [token] * 4]
+        class Stops(LogitsProcessor):
+            def __call__(self, ids, scores):
+                step = ids.shape[1] - width
+                scores.fill_(-torch.inf)
+                for index, sequence in enumerate(sequences):
+                    scores[index, sequence[min(step, len(sequence) - 1)]] = 0
+                return scores
+        original = model.generate
+        def controlled(**kwargs):
+            return original(**kwargs, logits_processor=[Stops()])
+        old_pad = tokenizer.pad_token
+        try:
+            tokenizer.pad_token = tokenizer.eos_token
+            with patch.object(model, "generate", side_effect=controlled) as generation:
+                result = distillation_run.generate_batch(model, tokenizer, messages,
+                    {**self.config, "max_new_tokens": {"subjects": 120, "mask": 4}}, "mask")
+            self.assertEqual(generation.call_count, 1)
+            inputs = generation.call_args.kwargs
+            for i, row in enumerate(encoded):
+                self.assertEqual(inputs["input_ids"][i].tolist(), [eos] * (width - len(row)) + row)
+                self.assertEqual(inputs["attention_mask"][i].tolist(), [0] * (width - len(row)) + [1] * len(row))
+            self.assertEqual([a["tokens"] for a in result["answers"]], [2, 3, 4])
+            self.assertEqual([a["truncated"] for a in result["answers"]], [False, False, True])
+            self.assertEqual([a["raw"] for a in result["answers"]], [tokenizer.decode(s, skip_special_tokens=True) for s in sequences])
+            self.assertGreater(result["seconds"], 0)
+            self.assertEqual(tokenizer.padding_side, "right")
+            with self.assertRaisesRegex(ValueError, "exceeds"):
+                distillation_run.generate_batch(model, tokenizer, messages, {**self.config, "max_length": width}, "mask")
+        finally:
+            tokenizer.pad_token = old_pad
 
     def test_training_resume_reload_and_two_step_evaluation(self):
         from safetensors.torch import load_file
@@ -166,13 +244,15 @@ class TinyWorkflowTests(unittest.TestCase):
         for index, result in enumerate(results):
             note_directory = interrupted / "trained" / f"note-{index:04}"
             if any(e["task"] == "subjects" for e in result["errors"]):
-                self.assertFalse(list(note_directory.glob("mask-*.json")))
+                self.assertFalse(list(note_directory.glob("masks-*.json")))
                 continue
             generated = distillation_run.read_json(note_directory / "subjects.json")["answer"]["raw"]
             subjects = distillation_run.parse_subjects(generated)
-            for index, subject in enumerate(subjects):
-                saved = distillation_run.read_json(note_directory / f"mask-{index:04}.json")
-                self.assertIn("Subject: " + subject["subject"], saved["messages"][0]["content"])
+            messages = [messages for path in sorted(note_directory.glob("masks-*.json"))
+                        for messages in distillation_run.read_json(path)["messages"]]
+            self.assertEqual(len(messages), len(subjects))
+            for subject, prompt in zip(subjects, messages):
+                self.assertIn("Subject: " + subject["subject"], prompt[0]["content"])
         before = distillation_run.file_hashes(interrupted)
         with (root / "repeat.log").open("w") as log:
             subprocess.run(self.command(interrupted), stdout=log, stderr=subprocess.STDOUT, check=True, timeout=120)
@@ -190,11 +270,11 @@ class TinyWorkflowTests(unittest.TestCase):
         model = distillation_run.load_model(self.config, interrupted / "adapter")
         separate = root / "own-subjects"
         distillation_run.evaluate(model, self.tokenizer, data, self.config, separate)
-        calls = list(separate.glob("note-*/mask-*.json"))
+        calls = list(separate.glob("note-*/masks-*.json"))
         self.assertTrue(calls)
         for path in calls:
-            content = distillation_run.read_json(path)["messages"][0]["content"]
-            self.assertNotIn("Teacher-only subject", content)
+            for messages in distillation_run.read_json(path)["messages"]:
+                self.assertNotIn("Teacher-only subject", messages[0]["content"])
 
 
 if __name__ == "__main__":

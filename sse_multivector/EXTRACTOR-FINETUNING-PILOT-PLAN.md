@@ -156,6 +156,7 @@ short experiment, not claims of optimal settings or the larger pilot's recipe.
 | Memory | Gradient checkpointing with `use_reentrant=False`; training KV cache disabled |
 | Training context | 8,192 tokens; reject overlength examples |
 | Generation | Greedy, thinking disabled; up to 4,096 subject tokens or 512 mask tokens |
+| Evaluation batches | Generate subjects for one note, then up to four independent mask prompts per batch; identical settings before and after training |
 | Subject limit | 128 per note; exceeding it is an evaluation failure |
 | Checkpoints | Every 32 steps; retain two resumable checkpoints |
 
@@ -175,6 +176,16 @@ the runner adds that directory only for CUDA execution. CPU runs use the
 reference implementation. The VM also checks that the CUDA functions import.
 No optional compiled causal-convolution extension is required.
 
+The user approved batching evaluation mask requests for efficiency. Each note's
+subjects are generated first, then its mask prompts are processed in their
+original order in groups of at most four (`mask_batch_size`). Training batch
+size and accumulation are unchanged. Generation uses left padding with an
+explicit attention mask; training retains right padding. Each answer stops at
+its first model stop token, excluding later batch padding from decoding and
+token counts. CPU checks compare single-request and batched answers on all
+three tiny candidate architectures before and after adapter training. Full-size
+GPU numerical equivalence, throughput and memory use remain unmeasured.
+
 BF16 avoids uncertain quantization of Gemma's bare expert tensors. The selected
 96 GB GPU provides room beyond the roughly 52–63 GB checkpoint weights, but
 full-size training memory use and speed have not been measured. All three
@@ -191,11 +202,13 @@ generation prompts but omits it when rendering saved answers.
 
 ### Local VM workflow
 
-**September 25 validation:** all seven workflow tests passed inside the VM,
-including real LoRA updates, exact weight equality after interruption/resume,
+**September 25 validation:** local workflow tests cover
+real LoRA updates, exact weight equality after interruption/resume,
 save/reload, valid and malformed outputs, empty masks, and exclusion of teacher
-subjects from evaluation mask calls. The 87 existing extraction tests and all
-10 planning-viewer tests also passed, including the Firefox browser check.
+subjects from evaluation mask calls. Batching tests additionally cover left
+padding, multiple stop tokens, output limits, stable answer ordering, partial
+final batches and reuse after interruption. Earlier preparation also passed
+87 extraction tests and 10 planning-viewer tests, including the Firefox check.
 Candidate checks additionally exercise tiny versions of Qwen hybrid attention,
 Gemma dense and Gemma MoE: original text-weight loading, real adapter updates,
 gradient checkpointing and save/reload. The deployment rehearsal passed in a
@@ -275,7 +288,7 @@ python3 -m sse_multivector.distillation_deploy prepare \
   --config sse_multivector/distillation/gemma-dense.json \
   --config sse_multivector/distillation/gemma-moe.json \
   --timeout-seconds 43200 \
-  --output target/distillation-pilot-v1/package-v3
+  --output target/distillation-pilot-v1/package-v4
 ```
 
 The output must be new. The package contains data, mask prompts, configurations
@@ -288,7 +301,7 @@ running it, launch from the local checkout matching that package:
 ```sh
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 python3 -m sse_multivector.distillation_deploy run \
-  --package target/distillation-pilot-v1/package-v3 \
+  --package target/distillation-pilot-v1/package-v4 \
   --output target/distillation-pilot-v1/deployment \
   --host "$VAST_SSH_HOST" --port "$VAST_SSH_PORT" \
   --identity "$VAST_SSH_KEY"
@@ -316,10 +329,15 @@ resumes. Config, input hashes, source hashes and library versions are frozen.
 Changed settings require a new output directory. Completed calls, including
 malformed responses, are preserved without automatic retries. Only fully
 written checkpoints with verified hashes are eligible for training resume.
+Mask answers are saved together in one atomic `masks-NNNN.json` file per batch,
+including every prompt and one measured generation duration for the batch.
+Resuming reuses the whole saved batch, including malformed and empty answers;
+the final incomplete group can contain fewer than four requests.
 
 The JSON config requires explicit model/revision, prepared-data and mask-prompt
 paths; CPU/CUDA and none/NF4 quantization; seed, sequence and per-task output
-limits, subject limit, steps, checkpoint interval, batch size, gradient
+limits, subject limit, steps, checkpoint interval, training batch size,
+evaluation `mask_batch_size`, gradient
 accumulation, learning rate, subject sampling fraction, LoRA rank/alpha/targets,
 gradient checkpointing and CPU thread count. Remote models require a commit
 revision. The tiny test's values are test-fixture

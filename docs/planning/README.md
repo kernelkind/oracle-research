@@ -99,6 +99,8 @@ informal start can use saved annotations before prominence and teacher
 selection are finished. The user then approved one fine-tune per candidate
 learning both prompted tasks: generate subjects, then mask each generated
 subject. Direct-mask generation is deferred for this informal experiment.
+The approved evaluation batching processes up to four independent masks from
+one note together, using the same settings before and after training.
 The $25 total accepted for setup, baselines and initial fine-tunes remains
 subject to ledger admission; no rental has started. This does not complete
 release-model selection. The user approved automated local VM validation before

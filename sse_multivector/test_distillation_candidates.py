@@ -4,6 +4,7 @@ import unittest
 import subprocess
 import sys
 import os
+from unittest.mock import patch
 from pathlib import Path
 
 from sse_multivector import distillation_run as runner
@@ -54,6 +55,18 @@ class GPUPackageTests(unittest.TestCase):
 
 
 class CandidateArchitectureTests(unittest.TestCase):
+    def assert_batch_matches_single(self, model, tokenizer, config):
+        messages = [[{"role": "user", "content": text}] for text in
+                    ("Tea", "Tea tastes good.", "Tea is a drink.", "Tea tastes good. Only tea is named.")]
+        config = {**config, "max_new_tokens": {"subjects": 8, "mask": 8}}
+        with patch.object(model, "generate", wraps=model.generate) as calls:
+            batched = runner.generate_batch(model, tokenizer, messages, config, "mask")
+        self.assertEqual(calls.call_count, 1)
+        self.assertEqual(calls.call_args.kwargs["input_ids"].shape[0], 4)
+        for prompt, answer in zip(messages, batched["answers"]):
+            single = runner.generate(model, tokenizer, prompt, config, "mask")
+            self.assertEqual(answer, {key: single[key] for key in ("raw", "tokens", "truncated")})
+
     def test_text_weights_training_checkpointing_and_reload(self):
         import torch
         from safetensors.torch import save_file
@@ -102,6 +115,7 @@ class CandidateArchitectureTests(unittest.TestCase):
                         self.assertEqual(type(loaded), model_class)
                         for key, value in original.state_dict().items():
                             self.assertTrue(torch.equal(value, loaded.state_dict()[key]), key)
+                        self.assert_batch_matches_single(loaded, fixture.tokenizer, config)
                         del loaded, original
                         data = runner.load_data(config["data"], config["mask_prompt"])
                         output = root / "run"
@@ -113,6 +127,7 @@ class CandidateArchitectureTests(unittest.TestCase):
                         self.assertTrue(any(torch.count_nonzero(p).item() for p in changed))
                         self.assertFalse(any("experts" in n or "router" in n
                                              for n, p in trained.named_parameters() if p.requires_grad))
+                        self.assert_batch_matches_single(trained, fixture.tokenizer, config)
                         del trained
         finally:
             fixtures.TinyWorkflowTests.tearDownClass()
