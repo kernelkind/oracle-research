@@ -1,0 +1,12 @@
+A and B are titles of subject categories derived from social media posts. Does category A contain the entire category B?
+
+Each title names a topic of discussion, not merely a type of object or action. Preserve its full scope, including the details and relationships stated in the title.
+
+Interpret names, labels, and hashtags by what they refer to; their component words alone do not establish a literal description. If a title's meaning is unresolved and affects the containment decision, answer "uncertain" rather than inventing an interpretation.
+
+Return only JSON with:
+- "contains": "yes", "no", or "uncertain".
+- "reason": one short sentence explaining the decision.
+
+A: {A_TITLE}
+B: {B_TITLE}

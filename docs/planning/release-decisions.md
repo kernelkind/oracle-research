@@ -118,6 +118,13 @@ One explanation loosely called Early morning broader than Morning coffee,
 although both directions correctly rejected containment. The fresh sample is
 encouraging, not a general accuracy estimate or resolution of earlier failures.
 No prompt or model is production-adopted by this result.
+The user deferred the proposed connected-hierarchy test. Discussion of harder
+pairs exposed title-interpretation ambiguity; those proposed expectations are
+not agreed ground truth. The user then requested a Luna-only draft informed by
+the frozen TPv38 title prompt. [NSP-Luna-v2](../../sse_multivector/node-subsumption-prompt-luna-v2/prompt.txt)
+is prepared against NSPv3 for review only: topic interpretation, preservation
+of stated scope, and no invented name/hashtag meaning. It is untested and only
+for `gpt-6-luna` / `max`, not Astra. TPv38, NSPv3 and saved results are unchanged.
 No hierarchy was rebuilt. A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
 and graph construction remain unapproved. Scalable relationship inference and

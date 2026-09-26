@@ -367,6 +367,24 @@ baseline reruns, Astra calls, prompt changes or graph construction occurred.
 All 12 reviews and original receipts are retained for later diagnostic reuse.
 Further inference and hierarchy construction remain unapproved.
 
+**NSP-Luna-v2 — Luna-only draft, untested:** after deferring the proposed
+connected-hierarchy test, the user requested a draft drawing on frozen TPv38's
+title-interpretation rules. [NSP-Luna-v2](../node-subsumption-prompt-luna-v2/prompt.txt)
+is for `gpt-6-luna` / `max` only; do not use it for Astra. The base is NSPv3,
+not the unsuccessful NSP-Luna-v1 variant. The shared revision receipt records
+the exact edit and hashes. Two paragraphs clarify that titles name discussion
+topics rather than merely types of objects/actions, preserve stated scope,
+and interpret names and hashtags by their referents without inventing meaning.
+Unresolved meaning warrants `uncertain` when it affects the decision.
+The original containment question, social-media context, output contract and
+title placeholders are unchanged; there are no examples or reasoning steps.
+The [official reasoning-model guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
+informed the direct, example-free wording, not a claim that it is effective.
+The proposed harder-pair expectations remain under discussion, particularly
+where titles admit different scopes. Neither testing this draft nor building
+a connected hierarchy has been approved. TPv38, NSPv3, earlier variants,
+saved experiments and model routing remain unchanged.
+
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
 Both batches retain original pre-merge node IDs, exact title inputs, expectations,
