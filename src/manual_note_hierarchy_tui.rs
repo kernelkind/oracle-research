@@ -21,7 +21,7 @@ use crate::titled_merge_hierarchy::TitledMergeHierarchy;
 
 const CONTROLS: &str = "In categories, j/k or Up/Down chooses an item; Enter/l or Right opens it. h, Backspace or Escape returns to the parent. Child categories are separate from the actions for viewing all notes or notes outside children.\n\nIn original notes, h/l or Left/Right changes the note; j/k or Up/Down scrolls. Backspace or Escape returns to the category choices.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis manual proposal is read-only. Nothing is written or approved.";
 
-const CATEGORY_CONTROLS: &str = "In categories, only immediate child categories are listed. j/k or Up/Down chooses a child; Enter/l or Right descends into it, including a category with no children. N opens all original notes at the CURRENT category, including descendants and deduplicating shared notes. D opens only notes assigned directly to the current category, including direct notes that also appear in children. O opens notes at the current category that appear in none of its children or deeper descendants. h, Backspace or Escape returns to the parent.\n\nN and D combine the current category's masks into one ⟦highlight⟧ on each full original note. O shows one original mask at a time with its ID; [ and ] switch masks. Identical masks share a display and list all original IDs. Older files without individual masks are explicitly marked unavailable and retain their saved combined highlights. Masks belonging only to other branches are excluded. h/l or Left/Right changes the note and returns to its first mask; j/k or Up/Down scrolls. Backspace or Escape returns to the same category menu and selection.\n\nPaths use Category > Child > Grandchild and wrap. If older ancestors cannot fit above the notes, an ellipsis marks them and the complete path appears in this analysis screen.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis category hierarchy is read-only. Nothing is written or approved.";
+const CATEGORY_CONTROLS: &str = "In categories, only immediate child categories are listed. j/k or Up/Down chooses a child; Enter/l or Right opens the selected child, showing its notes immediately when it has no displayed children. N opens all original notes at the CURRENT category, including descendants and deduplicating shared notes. D opens only notes assigned directly to the current category, including direct notes that also appear in children. O opens notes at the current category that appear in none of its children or deeper descendants. h, Backspace or Escape returns to the parent.\n\nN and D combine the current category's masks into one ⟦highlight⟧ on each full original note. O shows one original mask at a time with its ID; [ and ] switch masks. Identical masks share a display and list all original IDs. Older files without individual masks are explicitly marked unavailable and retain their saved combined highlights. Masks belonging only to other branches are excluded. h/l or Left/Right changes the note and returns to its first mask; j/k or Up/Down scrolls. Backspace or Escape returns to the same category menu and selection. When notes opened automatically on entering a leaf, Backspace or Escape returns directly to its parent; N, D and O switch the leaf's note view.\n\nPaths use Category > Child > Grandchild and wrap. If older ancestors cannot fit above the notes, an ellipsis marks them and the complete path appears in this analysis screen.\n\nCtrl-D/U scrolls half a page; Ctrl-F/B or PageDown/PageUp scrolls a full page. gg or Home goes to the top; G or End goes to the end. ? shows the current category's analysis and these controls. Q or Ctrl-C exits.\n\nThis category hierarchy is read-only. Nothing is written or approved.";
 
 struct CategoryFrame {
     node_id: String,
@@ -29,7 +29,7 @@ struct CategoryFrame {
     navigation: CategoryNavigation,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 enum NoteScope {
     All,
     Direct,
@@ -257,6 +257,18 @@ impl ManualNoteExplorer {
     }
 
     fn show_notes(&mut self, scope: NoteScope, leave_category: bool) {
+        if self
+            .notes
+            .as_ref()
+            .is_some_and(|notes| notes.scope == scope)
+        {
+            return;
+        }
+        let leave_category = leave_category
+            || self
+                .notes
+                .as_ref()
+                .is_some_and(|notes| notes.leave_category);
         let id = &self.category().node_id;
         let mut note_ids = match scope {
             NoteScope::All => self.hierarchy.note_ids(id),
@@ -297,9 +309,11 @@ impl ManualNoteExplorer {
                 cursor: 0,
                 navigation,
             });
-            if !self.categories_only && self.category().children.is_empty() {
+            if self.navigation().children.is_empty() {
                 self.show_notes(NoteScope::All, true);
             }
+        } else if self.categories_only && self.navigation().children.is_empty() {
+            self.show_notes(NoteScope::All, false);
         } else if !self.categories_only {
             let scope = if cursor > self.navigation().children.len() {
                 NoteScope::OutsideChildren
@@ -398,6 +412,8 @@ impl ManualNoteExplorer {
             }
             other => other,
         };
+        let can_open_notes =
+            self.categories_only && self.notes.as_ref().is_none_or(|notes| notes.leave_category);
         match code {
             KeyCode::Esc | KeyCode::Backspace => self.back(),
             KeyCode::Char('?') => {
@@ -414,13 +430,13 @@ impl ManualNoteExplorer {
             KeyCode::Home => self.jump(false),
             KeyCode::End => self.jump(true),
             _ if self.analysis_scroll.is_some() => {}
-            KeyCode::Char('n' | 'N') if self.categories_only && self.notes.is_none() => {
+            KeyCode::Char('n' | 'N') if can_open_notes => {
                 self.show_notes(NoteScope::All, false);
             }
-            KeyCode::Char('d' | 'D') if self.categories_only && self.notes.is_none() => {
+            KeyCode::Char('d' | 'D') if can_open_notes => {
                 self.show_notes(NoteScope::Direct, false);
             }
-            KeyCode::Char('o' | 'O') if self.categories_only && self.notes.is_none() => {
+            KeyCode::Char('o' | 'O') if can_open_notes => {
                 self.show_notes(NoteScope::OutsideChildren, false);
             }
             KeyCode::Char('[' | ']') if self.notes.is_some() => {

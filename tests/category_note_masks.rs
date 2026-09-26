@@ -273,6 +273,7 @@ fn individual_fixture() -> (TempDir, Value) {
 fn o_shows_one_original_mask_and_its_ids_without_changing_n_or_d() {
     let (dir, spec) = individual_fixture();
     let mut model = explorer(&dir, &spec);
+    let parent = screen(&mut model);
     key(&mut model, KeyCode::Enter);
     let menu = screen(&mut model);
     key(&mut model, KeyCode::Char('O'));
@@ -303,8 +304,10 @@ fn o_shows_one_original_mask_and_its_ids_without_changing_n_or_d() {
     key(&mut model, KeyCode::Char('['));
     assert_eq!(screen(&mut model), first);
     key(&mut model, KeyCode::Esc);
-    assert_eq!(screen(&mut model), menu);
+    assert_eq!(screen(&mut model), parent);
     for action in ['N', 'D'] {
+        key(&mut model, KeyCode::Enter);
+        assert_eq!(screen(&mut model), menu);
         key(&mut model, KeyCode::Char(action));
         let combined = screen(&mut model);
         assert!(

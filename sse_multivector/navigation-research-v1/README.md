@@ -210,6 +210,13 @@ target/infomap-review-build/debug/sse-subject-navigation \
 ```
 
 Full user hierarchy review remains pending.
+Opening a leaf with `l`, Right or Enter now shows its notes immediately,
+including when equal-note collapse leaves no displayed children. Escape or
+Backspace returns directly to the parent selection. N/D/O remain available
+to switch the automatically opened leaf's note view; O still shows individual
+masks and IDs. Opening a non-leaf still shows its children. A root with no
+displayed children also opens notes with `l`; returning keeps that root.
+This is navigation only, not a hierarchy or membership change.
 HD02/03 remain provisional; no graph repair or new merge approval is implied.
 The earlier launch failed before inference because systemd expanded a shell
 array; the restart disables that expansion and repeats no successful inference.

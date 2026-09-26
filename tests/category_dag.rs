@@ -132,7 +132,7 @@ fn diamond_loads_once_and_both_category_routes_keep_masks_breadcrumbs_and_back()
             shared.contains(&format!("Subjects > {parent_label} > Shared")),
             "{shared}"
         );
-        assert!(shared.contains("No child categories"), "{shared}");
+        assert!(shared.contains("Left ⟦shared⟧ right."), "{shared}");
         key(&mut model, KeyCode::Char('N'));
         let shared_note = screen(&mut model);
         assert!(
@@ -144,8 +144,6 @@ fn diamond_loads_once_and_both_category_routes_keep_masks_breadcrumbs_and_back()
             shared_note.contains(&format!("Subjects > {parent_label} > Shared")),
             "{shared_note}"
         );
-        key(&mut model, KeyCode::Esc);
-        assert_eq!(screen(&mut model), shared);
         key(&mut model, KeyCode::Esc);
         assert_eq!(screen(&mut model), parent);
         key(&mut model, KeyCode::Esc);

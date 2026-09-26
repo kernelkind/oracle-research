@@ -86,11 +86,13 @@ fn category_breadcrumbs_keep_every_ancestor_at_every_depth() {
     for depth in 1..=SHORT_PATH.len() {
         let menu = screen(&mut model);
         assert_breadcrumb(&menu, &SHORT_PATH[..depth]);
-        assert!(menu.contains("N Notes"), "{menu}");
+        if depth < SHORT_PATH.len() {
+            assert!(menu.contains("N Notes"), "{menu}");
+        }
         key(&mut model, KeyCode::Enter);
     }
     let leaf = screen(&mut model);
-    assert!(leaf.contains("No child categories"), "{leaf}");
+    assert!(leaf.contains("Original opening."), "{leaf}");
 }
 
 #[test]
@@ -103,6 +105,9 @@ fn original_notes_keep_every_ancestor_at_every_depth() {
         assert_breadcrumb(&note, &SHORT_PATH[..depth]);
         assert!(note.contains("Original opening."), "{note}");
         assert!(note.contains("Note 1 of 1"), "{note}");
+        if depth == SHORT_PATH.len() {
+            break;
+        }
         key(&mut model, KeyCode::Esc);
         assert_eq!(screen(&mut model), menu);
         key(&mut model, KeyCode::Enter);
@@ -144,8 +149,7 @@ fn wrapped_full_breadcrumbs_preserve_notes_and_navigation_at_80_by_24() {
     }
     let menu = screen(&mut model);
     assert_breadcrumb(&menu, &labels);
-    assert!(menu.contains("No child categories"), "{menu}");
-    assert!(menu.contains("N Notes"), "{menu}");
+    assert!(menu.contains("Original opening."), "{menu}");
 
     key(&mut model, KeyCode::Char('N'));
     let note = screen(&mut model);
@@ -171,8 +175,6 @@ fn wrapped_full_breadcrumbs_preserve_notes_and_navigation_at_80_by_24() {
     );
     key(&mut model, KeyCode::Esc);
     assert_eq!(screen(&mut model), ending);
-    key(&mut model, KeyCode::Esc);
-    assert_eq!(screen(&mut model), menu);
     key(&mut model, KeyCode::Esc);
     let parent = screen(&mut model);
     assert_breadcrumb(&parent, &labels[..labels.len() - 1]);

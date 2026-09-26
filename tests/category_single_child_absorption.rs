@@ -123,7 +123,7 @@ fn absorbed_categories_are_not_choices_and_all_their_notes_still_open() {
     key(&mut model, KeyCode::Enter);
     let left = screen(&mut model);
     assert!(left.contains("Title root > Title left"), "{left}");
-    assert!(left.contains("No child categories"), "{left}");
+    assert!(left.contains("Original note 3."), "{left}");
     key(&mut model, KeyCode::Char('N'));
     assert!(screen(&mut model).contains("Original note 3."));
     key(&mut model, KeyCode::Char('l'));

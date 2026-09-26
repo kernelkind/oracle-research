@@ -222,7 +222,6 @@ fn tui_preserves_n_d_masks_other_route_and_back_while_o_uses_displayed_children(
     assert!(leaf.contains("VD · Mask 1 of 1"), "{leaf}");
     assert!(leaf.contains("alpha ⟦delta⟧"), "{leaf}");
     key(&mut model, KeyCode::Esc);
-    key(&mut model, KeyCode::Esc);
     assert_eq!(screen(&mut model), a);
     key(&mut model, KeyCode::Esc);
     assert_eq!(screen(&mut model), root);
@@ -266,7 +265,7 @@ fn equal_chains_including_leaves_collapse_without_losing_note_access() {
     screen(&mut model);
     key(&mut model, KeyCode::Enter);
     let menu = screen(&mut model);
-    assert!(menu.contains("No child categories"), "{menu}");
+    assert!(menu.contains("Note 1 of 2"), "{menu}");
     key(&mut model, KeyCode::Enter);
     assert_eq!(screen(&mut model), menu);
     key(&mut model, KeyCode::Char('O'));

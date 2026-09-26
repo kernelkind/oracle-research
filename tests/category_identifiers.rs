@@ -105,7 +105,7 @@ fn repeated_labels_keep_the_current_id_across_notes_analysis_and_back_navigation
         let breadcrumb = "All notes > Coffee";
         assert!(category.contains(breadcrumb), "{category}");
         assert!(!category.contains("All notes [0] >"), "{category}");
-        assert!(category.contains("No child categories"), "{category}");
+        assert!(category.contains("Original note text"), "{category}");
 
         key(&mut model, KeyCode::Char('N'));
         let note = screen(&mut model);
@@ -134,8 +134,6 @@ fn repeated_labels_keep_the_current_id_across_notes_analysis_and_back_navigation
         );
         key(&mut model, KeyCode::Esc);
         assert_eq!(screen(&mut model), note);
-        key(&mut model, KeyCode::Esc);
-        assert_eq!(screen(&mut model), category);
         key(&mut model, KeyCode::Char('?'));
         assert_eq!(screen(&mut model), analysis);
         key(&mut model, KeyCode::Esc);

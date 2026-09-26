@@ -120,7 +120,45 @@ fn long_node_ids_are_hidden_while_browsing_but_available_in_analysis() {
 }
 
 #[test]
-fn category_menus_show_only_immediate_children_and_enter_never_opens_notes() {
+fn opening_a_leaf_shows_notes_and_back_restores_the_parent_selection() {
+    for action in [KeyCode::Char('l'), KeyCode::Right, KeyCode::Enter] {
+        let mut model = ManualNoteExplorer::categories(hierarchy());
+        screen(&mut model);
+        key(&mut model, KeyCode::Enter);
+        let parent = screen(&mut model);
+        key(&mut model, action);
+        let first = screen(&mut model);
+        assert!(first.contains("Original opening."), "{first}");
+        assert!(first.contains("Note 1 of 2"), "{first}");
+        assert!(!first.contains("No child categories"), "{first}");
+        key(&mut model, KeyCode::Char('l'));
+        let second = screen(&mut model);
+        assert!(second.contains("Shared original note."));
+        key(&mut model, KeyCode::Char('N'));
+        assert_eq!(screen(&mut model), second);
+        key(&mut model, KeyCode::Esc);
+        assert_eq!(screen(&mut model), parent);
+    }
+}
+
+#[test]
+fn empty_leaf_opens_an_explicit_empty_note_view_and_returns_to_parent() {
+    let mut data = hierarchy();
+    data.nodes.get_mut("music").unwrap().note_ids.clear();
+    let mut model = ManualNoteExplorer::categories(data);
+    screen(&mut model);
+    key(&mut model, KeyCode::Down);
+    let parent = screen(&mut model);
+    key(&mut model, KeyCode::Char('l'));
+    let empty = screen(&mut model);
+    assert!(empty.contains("No notes in this view."), "{empty}");
+    assert!(!empty.contains("Note 1 of 0"), "{empty}");
+    key(&mut model, KeyCode::Backspace);
+    assert_eq!(screen(&mut model), parent);
+}
+
+#[test]
+fn category_menus_show_immediate_children_and_leaves_open_notes() {
     let mut model = ManualNoteExplorer::categories(hierarchy());
     let root = screen(&mut model);
     for expected in ["Subjects", "Coffee", "Music", "3 notes", "N Notes"] {
@@ -143,8 +181,7 @@ fn category_menus_show_only_immediate_children_and_enter_never_opens_notes() {
     key(&mut model, KeyCode::Char('l'));
     let leaf = screen(&mut model);
     assert!(leaf.contains("Subjects > Coffee > Espresso"), "{leaf}");
-    assert!(leaf.contains("No child categories"), "{leaf}");
-    assert!(!leaf.contains("Original"), "{leaf}");
+    assert!(leaf.contains("Original opening."), "{leaf}");
     assert!(!leaf.contains("View all"), "{leaf}");
     key(&mut model, KeyCode::Enter);
     assert_eq!(screen(&mut model), leaf);
@@ -153,8 +190,6 @@ fn category_menus_show_only_immediate_children_and_enter_never_opens_notes() {
     assert!(note.contains("Original opening."), "{note}");
     assert!(note.contains("Note 1 of 2"), "{note}");
     assert!(!note.contains("Description"), "{note}");
-    key(&mut model, KeyCode::Esc);
-    assert_eq!(screen(&mut model), leaf);
     key(&mut model, KeyCode::Esc);
     assert_eq!(screen(&mut model), coffee);
     key(&mut model, KeyCode::Char('h'));
@@ -184,13 +219,11 @@ fn n_opens_current_level_with_recursive_deduplicated_notes_and_restores_selectio
     key(&mut model, KeyCode::Enter);
     let music = screen(&mut model);
     assert!(music.contains("Subjects > Music"), "{music}");
-    assert!(!music.contains("Shared original note."), "{music}");
+    assert!(music.contains("Shared original note."), "{music}");
     key(&mut model, KeyCode::Char('N'));
     let note = screen(&mut model);
     assert!(note.contains("Shared original note."), "{note}");
     assert!(note.contains("Note 1 of 1"), "{note}");
-    key(&mut model, KeyCode::Esc);
-    assert_eq!(screen(&mut model), music);
     key(&mut model, KeyCode::Esc);
     assert_eq!(screen(&mut model), root_with_music_selected);
     key(&mut model, KeyCode::Char('k'));
@@ -241,7 +274,7 @@ fn leaf_root_starts_on_a_category_screen_and_notes_return_to_it() {
     let initial = screen(&mut model);
     assert!(initial.contains("No child categories"), "{initial}");
     assert!(!initial.contains("Original"), "{initial}");
-    key(&mut model, KeyCode::Char('N'));
+    key(&mut model, KeyCode::Char('l'));
     assert!(screen(&mut model).contains("Original opening."));
     key(&mut model, KeyCode::Esc);
     assert_eq!(screen(&mut model), initial);
@@ -318,7 +351,7 @@ fn forty_ancestors_keep_the_current_category_and_original_notes_usable_at_80_col
     key(&mut model, KeyCode::Enter);
     let leaf = compact_screen(&mut model);
     assert!(leaf.contains("Leaf subject"), "{leaf}");
-    assert!(leaf.contains("No child categories"), "{leaf}");
+    assert!(leaf.contains("Original opening."), "{leaf}");
     key(&mut model, KeyCode::Esc);
     assert_eq!(compact_screen(&mut model), menu);
 }
@@ -426,8 +459,9 @@ fn direct_action_respects_analysis_notes_and_control_d_scrolling() {
     assert_eq!(compact_screen(&mut model), analysis);
     key(&mut model, KeyCode::Esc);
     key(&mut model, KeyCode::Enter);
+    let parent_menu = compact_screen(&mut model);
     key(&mut model, KeyCode::Enter);
-    let leaf_menu = compact_screen(&mut model);
+    assert!(compact_screen(&mut model).contains("Original opening."));
     key(&mut model, KeyCode::Char('D'));
     let first = compact_screen(&mut model);
     assert!(first.contains("Original opening."), "{first}");
@@ -440,7 +474,7 @@ fn direct_action_respects_analysis_notes_and_control_d_scrolling() {
     control(&mut model, 'u');
     assert_eq!(compact_screen(&mut model), first);
     key(&mut model, KeyCode::Esc);
-    assert_eq!(compact_screen(&mut model), leaf_menu);
+    assert_eq!(compact_screen(&mut model), parent_menu);
     let mut legacy = ManualNoteExplorer::new(hierarchy());
     let menu = compact_screen(&mut legacy);
     key(&mut legacy, KeyCode::Char('D'));
