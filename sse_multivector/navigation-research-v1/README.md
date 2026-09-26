@@ -512,7 +512,7 @@ assessment are recorded separately; the original pre-run expectation remains
 as history. Under that corrected boundary all nine scored decisions are
 accepted, with the other four judgments still unresolved.
 
-**Jev connected-section diagnostic — approved:** the user chose to inspect
+**Jev connected-section diagnostic — completed, awaiting user inspection:** the user chose to inspect
 a small connected section in the existing hierarchy UI rather than run the
 suggested Luna comparison. `decision_hierarchy.py prepare` takes an explicit
 list of original node IDs, retains their exact titles and masks, and generates
@@ -526,6 +526,30 @@ instead of invoking an unapproved repair or merge. There is no new title
 generation or membership expansion. On a DAG, transitive reduction preserves
 reachability. The default browser package retains every selected node.
 
+The fixed selection was Food and drink (`S83f8d64ef6`), Food and cooking
+(`S8d84647626`), Cooking (`Se064318ca3`), Asian cuisine (`S314f23bffc`),
+Chinese cuisine (`Se0ed29476c`), Italian foods (`S6c57981668`), Bread
+(`Se2208ea404`), sourdough bread (`S5be72f875b`), and Cranberry and rosemary
+bread (`S14ab091413`). All 72 decisions validated: 70 new calls, two reused,
+no retries. Runner usage was 26,512 input and 2,800 output tokens; all new
+receipts report charges, totaling $0.001113504 (ledger rounded up to one cent).
+
+The graph has 20 Yes edges, 11 after transitive reduction, one root, no cycles
+and no Uncertain answers. One direct No is contradicted by an accepted chain:
+Food and drink → Cooking is No, but Food and drink → Food and cooking → Cooking
+is accepted. This remains recorded, without repair. The browser preserves all
+nine nodes and original masks across 49 posts; equal-note collapse is off.
+Its `--check` passed. Adapter verification passed 145 workflow tests and 43
+graph/browser/merge tests. No full HR02 run or additional inference followed.
+Next: inspect the placements in the existing UI:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+target/infomap-review-build/debug/sse-subject-navigation \
+  --categories target/hierarchy-build-v1/jev-section-browser-v1/categories.json \
+  sse_multivector/hierarchy-refresh-v1/masked-posts.json
+```
+
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
 Both batches retain original pre-merge node IDs, exact title inputs, expectations,
@@ -535,7 +559,7 @@ result adapter has been added to the hierarchy builder. No baseline calls,
 prompt changes, TRUE calls or hierarchy construction were performed. The small,
 diverse-case test follows the official [evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices#example-qa-over-docs).
 
-No hierarchy was rebuilt. A full comparison would start with the same 129
+Outside the selected Jev diagnostic above, no hierarchy was rebuilt. A full comparison would start with the same 129
 original titled nodes, not the 116 nodes produced by TRUE's merges, and retain
 subjects, masks, vectors, groups, titles and existing construction rules.
 Further inference and graph construction require approval. Uncertainty is not

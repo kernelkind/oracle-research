@@ -170,7 +170,14 @@ cuisine and bread nodes, all 72 directed pairs, unchanged NSP-Jev-v1 and no
 membership expansion. Every selected node is retained; this is a selected
 diagnostic, not the complete food hierarchy or a full HR02 run. Cycles are
 reported without silently deleting links or merging nodes.
-No hierarchy was rebuilt. A full comparison would retain the 129 original
+The approved section is now built: 72 valid decisions (70 new calls and two
+reused), 20 Yes links reduced to 11, one root and no cycles or Uncertain answers.
+One rejected relationship is nevertheless reachable: Food and drink → Cooking
+was No, while Food and drink → Food and cooking → Cooking was accepted. No
+repair was applied. All nine nodes and original memberships are visible in the
+existing viewer, whose check passed. Native charge was $0.001113504. Next is
+user inspection, not more inference. No full hierarchy was rebuilt.
+A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
 and graph construction remain unapproved. Scalable relationship inference and
 downstream validation gates remain unresolved.
