@@ -576,9 +576,22 @@ production preparation and decoding functions:
   (saved PPv15: 92/90). Agent assessments are saved separately. These single
   trials do not establish calibrated percentages, repeatability or the cause
   of the tea result. PPv17 was not edited after testing; the four-call allowance
-  is exhausted. The proposed next investigation is whether the model also
-  credits an unselected named person, distinguishing contextual attribution
-  from interpreting the tea mask as first-person shorthand before revising again.
+  is exhausted.
+
+  [PPv17-D1](prominence-prompt-goal-v1/ppv17-diagnostic-v1/PPv17-D1.md) is a
+  tested diagnostic-only variant with the same output extension as PPv15-D1;
+  PPv17's scoring instructions are unchanged. In the separately authorized
+  `experiments/ppv17-named-person-v1`, two Astra-low subscription calls compared
+  masks including and omitting "Maya" in "Maya wants some hot tea too." Both
+  outputs were valid, with no retries, reuse or baseline calls. The omitted-name
+  mask scored 70 and explicitly listed Maya as missing; selecting Maya scored
+  88 and represented her desire. This weakens a blanket context-restoration
+  explanation but does not establish why the first-person case behaved
+  differently. The earlier first-person diagnostic used PPv15-D1, so comparing
+  explanations across the two probes also changes the scoring prompt. The
+  proposed next check is the saved first-person pair under PPv17-D1 (two calls,
+  not yet authorized), before another scoring-prompt edit. Agent assessment is
+  recorded separately; numeric calibration and repeatability remain open.
 
   Alternatively, `path` may point to a saved title experiment's `report.json`
   (`adapter: "titles"` in that report). In this form, `select` names node IDs.
