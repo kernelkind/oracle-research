@@ -807,8 +807,22 @@ production preparation and decoding functions:
   identified the surrounding daily update and older guests/shopping details,
   other advice and invitation for additions, and the detailed tuning question.
   The agent accepted all three as plausible, not as user-approved or calibrated
-  percentages. PPv24 is unchanged. Most recent real-post tests cover low or
-  intermediate scores; test real masks representing most of a post next.
+  percentages. PPv24 is unchanged.
+
+  `experiments/ppv24-high-coverage-v1` tested three saved masks from
+  `hierarchy-refresh-v1/masked-posts.json`, selected before inference to
+  represent most of their real posts. The production prominence preparation
+  helper reconstructed the exact fragments from saved UTF-8 spans; the generic
+  adapter retained PPv24's diagnostic output contract. Three Astra-low
+  subscription calls returned valid responses with no retries, reuse or
+  baseline reruns. M174 (the entire meal-planning statement) scored 100 with
+  no missing meaning; M394 (fragmented lunch-packing statement) scored 98,
+  omitting only "just" and the effort/strain emoji; M2033 (the detailed
+  linoleic-acid claim) scored 92, identifying "Horrifying" as the missing
+  author judgment. The agent accepted the first two and marked the third
+  uncertain pending user judgment about that reaction's weight. This assesses
+  representation of the health claim, not its medical accuracy. No user
+  approval or general score calibration is inferred; PPv24 is unchanged.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
