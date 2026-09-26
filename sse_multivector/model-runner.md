@@ -703,8 +703,20 @@ production preparation and decoding functions:
   temperature without object identity or explicit caution. This matches the
   user-endorsed ordering, but saved PPv15 already had that ordering (25/55).
   It is not evidence of improvement, calibrated percentages or repeatability.
-  Whether 40 appropriately values heat in this warning remains open. Agent
-  assessments are uncertain; PPv24 is unchanged and not production-frozen.
+  The user subsequently judged 30–40 reasonable for "hot", resolving the
+  agent's concern about that score, and predicted about 80 for "Careful" +
+  "hot". That score judgment is recorded separately as a user review, not
+  general approval of PPv24 or its calibration.
+
+  `experiments/ppv24-warning-combined-v1` tested the combined mask in one
+  Astra-low subscription call without supplying the expected score to the
+  model. It returned 80, with class "Posts warning someone to be careful
+  because something is hot." and missing meaning "The hot thing being warned
+  about is tea." The response was valid, with no retry or reuse; the hot-only
+  score of 40 was read from the saved run, not rerun. This matches the user's
+  prior expectation and recognizes the warning across separate fragments.
+  The agent accepted this case; it does not establish general calibration or
+  repeatability. PPv24 is unchanged and not production-frozen.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
