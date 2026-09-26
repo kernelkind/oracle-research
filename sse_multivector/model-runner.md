@@ -517,6 +517,17 @@ production preparation and decoding functions:
   The shared prominence UI exposes every mask and separate agent assessments;
   exhaustive coverage of this one post does not establish calibrated scores.
 
+  [PPv15](prominence-prompt-goal-v1/ppv15-draft-v1/PPv15.md) is a draft against
+  the last-approved PPv14, awaiting review and untested. It replaces PPv14's
+  topic-focused guidance with the selected meaning's role in the particular
+  message and the effect of what the mask leaves unspecified. Equivalent
+  meanings within the same post should receive similar scores regardless of
+  word count or grammatical completeness. The definition, URL/identifier
+  exclusion, scoring range and input/output contract remain unchanged. No
+  examples or numerical anchors were added. The proposed next step is a manual
+  walkthrough of the tea, warning, health-concern and compact-roasting cases;
+  drafting does not authorize inference or promote PPv15 over PPv14.
+
   Alternatively, `path` may point to a saved title experiment's `report.json`
   (`adapter: "titles"` in that report). In this form, `select` names node IDs.
   Each selected title must be valid. Its original packet supplies all member
