@@ -612,9 +612,19 @@ production preparation and decoding functions:
   even without numerical scoring. The input contained neither the intended
   answer nor previous scores. One trial in one order does not establish
   repeatability, position independence or the cause of prior responses.
-  Agent assessment is recorded separately; PPv17 remains unchanged. The proposed
-  next step is to clarify the distinction between omitted grammar and omitted
-  semantic information before changing the numerical scoring guidance.
+  Agent assessment is recorded separately; PPv17 remains unchanged.
+
+  [PPv18](prominence-prompt-goal-v1/ppv18-draft-v1/PPv18.md) is an unapproved,
+  untested draft. The user rejected its clarification as insufficient: telling
+  the model to count unspecified information as missing does not establish
+  which information the mask leaves unspecified. The approved direction is to
+  reconsider interpretation around what could differ about the post's message
+  while remaining compatible with the selected meaning, then assess how
+  important those differences are to this particular post. This distinguishes
+  what the mask leaves possible from a reader's likely reconstruction; it is
+  not a blanket prohibition on interpreting idioms or references. PPv17 remains
+  the approved baseline. Replacement wording and evaluation remain open; no
+  new prompt or numerical scoring change has been approved by this decision.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
