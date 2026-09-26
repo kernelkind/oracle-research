@@ -660,8 +660,15 @@ production preparation and decoding functions:
   trial, unlike saved score-only PPv21 (90/87). Output-format effects and trial
   variation remain unresolved; this is not access to prior responses' reasoning
   or evidence of calibrated percentages. Agent assessments are separate from
-  user decisions. PPv21 is unchanged. The recommended next check is the same
-  diagnostic format on the roasting pair before adopting expanded output.
+  user decisions. PPv21 is unchanged.
+
+  The user clarified that the model must identify the class of alternative
+  posts consistent with the mask's meaning, not merely give example posts.
+  PPv21-D1's examples demonstrate recognition of particular missing meaning
+  but do not establish that class. The next proposed step is to draft this
+  class-level comparison against approved PPv21 before further testing. The
+  exact wording and output format remain open; no prompt or schema has been
+  changed by this clarification.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
