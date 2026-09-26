@@ -585,13 +585,23 @@ production preparation and decoding functions:
   masks including and omitting "Maya" in "Maya wants some hot tea too." Both
   outputs were valid, with no retries, reuse or baseline calls. The omitted-name
   mask scored 70 and explicitly listed Maya as missing; selecting Maya scored
-  88 and represented her desire. This weakens a blanket context-restoration
-  explanation but does not establish why the first-person case behaved
-  differently. The earlier first-person diagnostic used PPv15-D1, so comparing
-  explanations across the two probes also changes the scoring prompt. The
-  proposed next check is the saved first-person pair under PPv17-D1 (two calls,
-  not yet authorized), before another scoring-prompt edit. Agent assessment is
-  recorded separately; numeric calibration and repeatability remain open.
+  88 and represented her desire. `experiments/ppv17-first-person-diagnostic-v1`
+  then tested the saved first-person pair under the same PPv17-D1 prompt and
+  Astra-low settings: two valid subscription calls, no retries, reuse or
+  baseline calls. Without "I", the response explicitly listed the speaker and
+  hotness as missing and scored 79; with "I", it represented the speaker's
+  desire and scored 85. This weakens both blanket context-restoration and
+  first-person-shorthand explanations: the diagnostic recognized the omission
+  but assigned it a small score difference. It does not establish why earlier
+  scoring-only responses differed, calibrated percentages or repeatability.
+  Agent assessments are recorded separately; PPv17 and PPv17-D1 are unchanged.
+  The next useful check is whether explicit meaning summaries improve scoring
+  across different posts, rather than adding a pronoun-specific prompt rule.
+
+  The user has authorized small, in-scope prominence diagnostics without
+  repeated permission requests. This does not authorize broad experiments or
+  scoring-prompt changes, and does not waive spending authorization or ledger
+  rules. Keep calls bounded and reuse saved baselines.
 
   Alternatively, `path` may point to a saved title experiment's `report.json`
   (`adapter: "titles"` in that report). In this form, `select` names node IDs.
