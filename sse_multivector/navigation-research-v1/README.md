@@ -290,7 +290,7 @@ bill, and catalog estimates do not establish subscription quota consumption.
 This small selected comparison does not establish model-wide accuracy,
 repeatability or graph quality. The 16,512-direction run remains unapproved.
 
-**NSP-Luna-v1 — Luna-only draft, untested:** the user requested a minimal
+**NSP-Luna-v1 — Luna-only, approved and tested, not adopted:** the user requested a minimal
 topic-containment clarification, explicitly separate from Astra's prompt.
 [NSP-Luna-v1](../node-subsumption-prompt-luna-v1/prompt.txt) is for
 `gpt-6-luna` / `max` only; do not use it for Astra. NSPv3 remains unchanged.
@@ -299,10 +299,37 @@ topic named by B falls within the topic named by A, as a subtopic or the same
 topic. Social-media context, output format and title placeholders are unchanged.
 The revision receipt preserves the NSPv3 baseline hash and exact edit.
 Following the official [prompting guidance](https://developers.openai.com/api/docs/guides/prompt-engineering),
-the draft states the intended relation directly, with no additional examples
-or reasoning procedure. This is a wording hypothesis, not evidence of improved
-accuracy. Review the full NSPv3-to-NSP-Luna-v1 delta before approving inference;
-no experiment, model routing or hierarchy is changed by preparing this draft.
+the prompt states the intended relation directly, with no additional examples
+or reasoning procedure. The user approved the full delta and its eight-case test.
+
+The shared runner prepared `experiments/nsp-luna-v1-hr02-diverse-pairs-v1/`
+and `experiments/nsp-luna-v1-hr02-hashtag-v1/` from their saved Luna/NSPv3
+baselines. Only the approved question changed; title inputs, original IDs,
+model/effort and output contract stayed fixed. All eight new subscription
+calls validated, with no retries, reuse, baseline reruns or Astra calls.
+
+Five of six clear expectations still matched. Meat consumption containing
+Attitudes toward meat consumption remained No, again justified by restricting
+the parent to the practice itself. Its reverse No explanation still called
+meat consumption broader, contradicting the forward reasoning. Coffee shop containing
+#coffeechain changed from Uncertain to an unsupported Yes: "A coffee chain is
+a type of coffee shop." The reverse remained No with a business-chain
+interpretation. Both hashtag explanations are rejected in agent review; the
+intended binary boundary remains unresolved, not a fabricated gold label.
+The other five clear judgments are accepted. All eight agent assessments are
+saved separately from user verdicts. No semantic improvement supports adopting
+this revision on this draw; the sample does not establish general model quality.
+
+Runner-reported usage, with reasoning already included in output:
+
+| Batch | Input | Output | Reasoning within output | Catalog estimate, USD |
+| --- | ---: | ---: | ---: | ---: |
+| Six clear directions | 664 | 1,053 | 849 | 0.0005929 |
+| Two hashtag directions | 218 | 390 | 324 | 0.0002168 |
+
+These are subscription calls, not API bills or measured subscription-quota
+ratios. The original NSPv3 prompts, saved outputs and hierarchy are unchanged;
+no additional inference or graph construction is approved.
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
