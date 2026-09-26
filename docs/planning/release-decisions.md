@@ -64,9 +64,15 @@ Preserving the marker did not prevent that interpretation in this draw; both
 justifications are rejected in agent review. No baseline was rerun, and no
 prompt, saved original title or hierarchy was changed.
 The user then requested explicit social-media source context in the subsumption
-prompt. NSPv3 is drafted from NSPv2 with only "derived from social media posts"
-added to its opening description. Its exact wording awaits review; it is
-untested, with no additional uncertainty rule or active experiment change.
+prompt and approved NSPv3, which adds only "derived from social media posts"
+to NSPv2's opening description. The authorized two-call Astra-low comparison
+used the same hashtag titles and saved NSPv2 baseline without rerunning it.
+Both outputs were valid: coffee shop contains #coffeechain changed from Yes to
+Uncertain, recognizing that the hashtag alone does not establish containment.
+The reverse stayed No with an unsupported coffee-shop-chain justification.
+Agent review accepts the uncertainty and rejects the reverse explanation.
+This is partial improvement in one draw, not resolved placement or general
+validation; NSPv3 is tested, not production-frozen.
 No hierarchy was rebuilt. A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
 and graph construction remain unapproved. Scalable relationship inference and

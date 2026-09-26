@@ -216,13 +216,26 @@ batch because adding # changes the input; the old answers were inspected as an
 input-change comparison, not presented as identical-input trials. No hierarchy
 was rebuilt.
 
-**NSPv3 — draft, untested:** the user requested that the subsumption prompt
+**NSPv3 — approved and tested, not production-frozen:** the user requested that the subsumption prompt
 identify social media posts as the source, so hashtag syntax has that context.
 [NSPv3](../node-subsumption-prompt-v3/prompt.txt) adds only "derived from social
 media posts" to NSPv2's first sentence. The shared revision tool preserves the
 baseline hash and exact delta. The remaining instructions and output contract
-are unchanged; no extra uncertainty instruction is added. Wording review and
-test authorization remain pending; existing specs and saved calls stay on NSPv2.
+are unchanged; no extra uncertainty instruction is added.
+
+The approved `experiments/nspv3-hr02-hashtag-v1/` comparison was prepared with
+`--from experiments/nspv2-hr02-hashtag-v1`, changing only to the NSPv3 prompt.
+It completed two new Astra-low subscription calls, both valid, with no retries,
+reuse or baseline reruns. Coffee shop contains #coffeechain changed from Yes to
+Uncertain: the reason recognizes that the hashtag alone does not establish that
+its posts all fall under coffee shop. Agent review accepts that calibrated
+uncertainty, not a binary graph decision. The reverse remained No because
+"Coffee shops include independent businesses, not just coffee chains"; that
+unsupported interpretation is still rejected. The source context helped in one
+direction in this draw, but did not resolve the name or establish repeatability.
+Original node IDs, both exact inputs, saved baseline receipts and separate
+agent reviews remain available. No user result verdicts were invented. Existing
+specs, original titles, previous outputs and the hierarchy remain unchanged.
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
