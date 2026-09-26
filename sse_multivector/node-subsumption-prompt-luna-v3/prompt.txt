@@ -1,0 +1,10 @@
+A and B name topics used to organize social media posts. Would every post about B also be about A?
+
+If you cannot determine this from the meanings of the titles, answer "uncertain".
+
+Return only JSON with:
+- "contains": "yes", "no", or "uncertain".
+- "reason": one short sentence explaining the decision.
+
+A: {A_TITLE}
+B: {B_TITLE}

@@ -367,19 +367,20 @@ baseline reruns, Astra calls, prompt changes or graph construction occurred.
 All 12 reviews and original receipts are retained for later diagnostic reuse.
 Further inference and hierarchy construction remain unapproved.
 
-**NSP-Luna-v2 — Luna-only draft, untested:** after deferring the proposed
-connected-hierarchy test, the user requested a draft drawing on frozen TPv38's
-title-interpretation rules. [NSP-Luna-v2](../node-subsumption-prompt-luna-v2/prompt.txt)
-is for `gpt-6-luna` / `max` only; do not use it for Astra. The base is NSPv3,
-not the unsuccessful NSP-Luna-v1 variant. The shared revision receipt records
-the exact edit and hashes. Two paragraphs clarify that titles name discussion
-topics rather than merely types of objects/actions, preserve stated scope,
-and interpret names and hashtags by their referents without inventing meaning.
-Unresolved meaning warrants `uncertain` when it affects the decision.
-The original containment question, social-media context, output contract and
-title placeholders are unchanged; there are no examples or reasoning steps.
+**NSP-Luna-v3 — Luna-only draft, untested:** the user requested a task-specific
+rewrite after finding the [NSP-Luna-v2](../node-subsumption-prompt-luna-v2/prompt.txt)
+draft too dependent on title-generation wording. NSP-Luna-v2 remains preserved
+as a superseded, untested prompt version, not an inference baseline.
+[NSP-Luna-v3](../node-subsumption-prompt-luna-v3/prompt.txt) is for
+`gpt-6-luna` / `max` only; do not use it for Astra. The base and full review
+delta are NSPv3. The shared revision receipt records the exact edit and hashes.
+The task now asks: "Would every post about B also be about A?" This concerns
+the topics' possible coverage, not merely current attached posts. It instructs
+`uncertain` when title meanings do not establish the answer. The output
+contract and title placeholders remain unchanged; no title-generation rules,
+examples or reasoning steps are added.
 The [official reasoning-model guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
-informed the direct, example-free wording, not a claim that it is effective.
+informed the single direct question, not a claim that the wording is effective.
 The proposed harder-pair expectations remain under discussion, particularly
 where titles admit different scopes. Neither testing this draft nor building
 a connected hierarchy has been approved. TPv38, NSPv3, earlier variants,
