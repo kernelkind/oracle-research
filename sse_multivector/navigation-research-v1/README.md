@@ -517,7 +517,8 @@ a small connected section in the existing hierarchy UI rather than run the
 suggested Luna comparison. `decision_hierarchy.py prepare` takes an explicit
 list of original node IDs, retains their exact titles and masks, and generates
 every directed pair for the shared experiment runner. `package` revalidates
-experiment receipts and exact titles before reusing the existing graph
+experiment receipts, exact titles and rendered instructions against the saved
+experiment's frozen prompt version before reusing the existing graph
 analysis, note memberships and individual-mask renderer. It accepts only
 native Yes choices as edges, preserving No/Uncertain decisions and all
 probabilities; it does not fabricate TRUE scores. Cycles and rejected-but-
@@ -540,8 +541,8 @@ Food and drink → Cooking is No, but Food and drink → Food and cooking → Co
 is accepted. This remains recorded, without repair. The browser preserves all
 nine nodes and original masks across 49 posts; equal-note collapse is off.
 Its `--check` passed. Adapter verification passed 145 workflow tests and 43
-graph/browser/merge tests. No full HR02 run or additional inference followed.
-Next: inspect the placements in the existing UI:
+graph/browser/merge tests. No full HR02 run followed. The v1 baseline remains
+available in the existing UI:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
@@ -550,7 +551,7 @@ target/infomap-review-build/debug/sse-subject-navigation \
   sse_multivector/hierarchy-refresh-v1/masked-posts.json
 ```
 
-**NSP-Jev-v3 — wording approved, not tested or adopted:** the user requested fixing
+**NSP-Jev-v3 — approved and tested, not production-adopted:** the user requested fixing
 the relationship prompt after examining whether the v2 draft stood on its own.
 The [approved wording](../node-subsumption-prompt-jev-v3/prompt.txt) is based directly
 on tested NSP-Jev-v1. It asks whether B falls entirely within A's subject matter:
@@ -563,9 +564,44 @@ V1's question can already express subject containment; there is no evidence
 that Jev required explicit mentions or confused source-post contents with
 subject scope. The contradictory chain establishes inconsistent decisions,
 not a proven prompting cause. V1, saved outputs and graphs remain unchanged.
-The user approved this wording. No new inference has been performed or
-authorized. The suggested next test compares the same nine-node section against
-its saved v1 baseline without rerunning that baseline.
+The user approved this wording and then its comparison on the same nine nodes.
+`experiments/nsp-jev-v3-hr02-section-v1/` completed 72 valid new calls, without
+retries, reuse or baseline reruns. All title inputs and model settings match v1.
+Runner totals: 30,216 input tokens, 2,880 output tokens and $0.001269072 native
+charge, present on all receipts. 
+
+Exactly four choices changed, all Yes → No:
+
+| Proposed parent | Proposed child |
+| --- | --- |
+| Food and drink | Food and cooking |
+| Cooking | Chinese cuisine |
+| Cooking | sourdough bread |
+| Cooking | Cranberry and rosemary bread |
+
+The other 68 choices are unchanged. The shared runner's 67 changed outputs
+include probability changes; that is not 67 changed decisions. Raw edges fell
+from 20 to 16, reduced edges from 11 to 10, and roots increased from one to two.
+There are no cycles, Uncertain answers or rejected-but-reachable pairs. The
+original contradiction disappeared because Food and drink → Food and cooking
+became No, not because Food and drink → Cooking became Yes; that rejection
+remains (No probability 0.82 versus 0.53). Consistency alone is not accuracy.
+No inference about Jev's reasoning is supported by its Choice-only output.
+
+All nine nodes, original masks and memberships across 49 posts are retained;
+no merges, repairs, new titles or membership expansion were applied. The CLI
+export now validates the saved experiment's prompt instead of hard-coding v1,
+and labels the viewer with that version. Its new regression test failed before
+implementation; all 54 graph/browser/merge tests subsequently passed, as did
+the v3 viewer's `--check`. Next: inspect the Food and drink / Food and cooking
+split before proposing another prompt or widening the experiment.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+target/infomap-review-build/debug/sse-subject-navigation \
+  --categories target/hierarchy-build-v1/jev-v3-section-browser-v1/categories.json \
+  sse_multivector/hierarchy-refresh-v1/masked-posts.json
+```
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).

@@ -54,10 +54,12 @@ def prepare_section(titles_path, nodes_path, selected, output):
     return cases
 
 
-def graph_from_report(titles, report):
-    if report.get('prompt_id') != 'NSP-Jev-v1' or any(report.get('settings', {}).get(k) != v for k,v in
+def graph_from_report(titles, report, *, prompt=None):
+    if prompt is None:
+        prompt = dict(id='NSP-Jev-v1', text=PROMPT.read_text())
+    if report.get('prompt_id') != prompt['id'] or any(report.get('settings', {}).get(k) != v for k,v in
             dict(provider='openrouter', model='typesafe/jev-1.13', reasoning_effort='provider-default').items()):
-        raise ValueError('NSP-Jev-v1 / Jev provider-default report required')
+        raise ValueError('matching prompt version / Jev provider-default report required')
     cases = report['cases']
     by_id = {c['id']: c for c in cases}
     expected = make_cases(titles)
@@ -69,18 +71,18 @@ def graph_from_report(titles, report):
         choice = case.get('parsed', {}).get('contains', {}).get('choice')
         if (case.get('status') != 'valid' or not case.get('receipt') or
                 case.get('inputs') != row['inputs'] or choice not in {'yes', 'no', 'uncertain'} or
-                case.get('prompt') != render(PROMPT.read_text(), row['inputs'])):
+                case.get('prompt') != render(prompt['text'], row['inputs'])):
             raise ValueError('missing, invalid or changed decision: ' + row['id'])
         rows.append(dict(id=row['id'], a_id=row['evidence']['original_a_id'], b_id=row['evidence']['original_b_id'],
                          predicted={'yes':True, 'no':False, 'uncertain':None}[choice],
                          answer=deepcopy(case['parsed']['contains']), receipt=deepcopy(case['receipt'])))
     graph = graph_from_decisions(titles['groups'], rows)
-    graph.update(decision_rule='choice', edge_rule='contains.choice == yes', decisions=rows)
+    graph.update(prompt_id=prompt['id'], decision_rule='choice', edge_rule='contains.choice == yes', decisions=rows)
     return graph
 
 
-def package_view(titles, packets, report, source, mapping, output):
-    graph = graph_from_report(titles, report)
+def package_view(titles, packets, report, source, mapping, output, *, prompt=None):
+    graph = graph_from_report(titles, report, prompt=prompt)
     memberships = derive_note_memberships(graph, packets)
     out = artifact_directory(output)
     save(out/'graph.json', graph)
@@ -90,7 +92,7 @@ def package_view(titles, packets, report, source, mapping, output):
     if graph['cycle_components']:
         raise ValueError('cycle prevents DAG browsing; all decisions saved in graph.json, no edges removed')
     spec = render_categories(graph, memberships, source, mapping,
-                             hierarchy_id='HR02 Jev section · NSP-Jev-v1 · original memberships',
+                             hierarchy_id=f'HR02 Jev section · {graph["prompt_id"]} · original memberships',
                              connection_description='Saved Jev Choice answers; no manual corrections or membership expansion.')
     original = deepcopy(memberships)
     for node in original['nodes']:
@@ -113,9 +115,10 @@ def main():
         cases = prepare_section(args.titles, args.nodes, args.node, args.output)
         print(f'{len(args.node)} nodes; {len(cases)} directed comparisons; no inference')
     else:
-        from experiment import report
+        from experiment import load, report
+        plan, _, _ = load(args.experiment)
         spec = package_view(read(args.section/'titles.json'), read(args.section/'source-packets.json'),
-                            report(args.experiment), args.source, args.mapping, args.output)
+                            report(args.experiment), args.source, args.mapping, args.output, prompt=plan['prompt'])
         print(f'{len(spec["nodes"])-1} nodes and {len(spec["notes"])} posts; {args.output}/categories.json')
 
 

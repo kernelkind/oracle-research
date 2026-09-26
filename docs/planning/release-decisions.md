@@ -170,13 +170,23 @@ cuisine and bread nodes, all 72 directed pairs, unchanged NSP-Jev-v1 and no
 membership expansion. Every selected node is retained; this is a selected
 diagnostic, not the complete food hierarchy or a full HR02 run. Cycles are
 reported without silently deleting links or merging nodes.
-The approved section is now built: 72 valid decisions (70 new calls and two
+The approved v1 section was built: 72 valid decisions (70 new calls and two
 reused), 20 Yes links reduced to 11, one root and no cycles or Uncertain answers.
 One rejected relationship is nevertheless reachable: Food and drink → Cooking
 was No, while Food and drink → Food and cooking → Cooking was accepted. No
 repair was applied. All nine nodes and original memberships are visible in the
-existing viewer, whose check passed. Native charge was $0.001113504. Next is
-user inspection, not more inference. No full hierarchy was rebuilt.
+existing viewer, whose check passed. Native charge was $0.001113504.
+The user then approved NSP-Jev-v3 and its same-section comparison. All 72 new
+calls validated without retries or baseline reruns ($0.001269072 native charge).
+Four choices changed from Yes to No: Food and drink → Food and cooking, and
+Cooking → Chinese cuisine / sourdough bread / Cranberry and rosemary bread.
+The graph now has 16 raw links, 10 reduced links, two roots, no cycles and no
+rejected-but-reachable pairs. Food and drink → Cooking remains No: the original
+contradiction disappeared by removing a link, not accepting that relationship.
+Consistency does not establish semantic improvement. All original nodes and
+memberships are retained, and the v3 viewer check passed. Next is user inspection
+of the split between Food and drink and Food and cooking, not more inference.
+No full hierarchy was rebuilt or prompt production-adopted.
 A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
 and graph construction remain unapproved. Scalable relationship inference and

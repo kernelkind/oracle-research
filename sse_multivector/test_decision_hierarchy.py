@@ -23,6 +23,32 @@ def decision_report(titles, accepted=(), uncertain=()):
 
 
 class DecisionHierarchyTests(unittest.TestCase):
+    def test_saved_prompt_version_is_validated_and_labeled_in_browser(self):
+        values = fixture()
+        titles = values['canonical']['titles']
+        report = decision_report(titles, [('A','C')])
+        prompt = dict(id='NSP-Jev-v3', text=(PROMPT.parent.parent /
+                      'node-subsumption-prompt-jev-v3/prompt.txt').read_text())
+        report['prompt_id'] = prompt['id']
+        for case in report['cases']:
+            case['prompt'] = render(prompt['text'], case['inputs'])
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for key in ['source', 'mapping']:
+                (root / (key+'.json')).write_text(json.dumps(values[key]))
+            spec = package_view(titles, values['canonical']['source_packets'], report,
+                                root/'source.json', root/'mapping.json', root/'view', prompt=prompt)
+            self.assertIn('NSP-Jev-v3', spec['hierarchy_id'])
+            graph = json.loads((root/'view/graph.json').read_text())
+            self.assertEqual(graph['prompt_id'], prompt['id'])
+            self.assertEqual(len(graph['decisions']), 12)
+        for kind in ['wrong_version', 'wrong_text']:
+            changed = deepcopy(report)
+            if kind == 'wrong_version': changed['prompt_id'] = 'NSP-Jev-v1'
+            else: changed['cases'][0]['prompt'] += 'Changed'
+            with self.subTest(kind=kind), self.assertRaises(ValueError):
+                graph_from_report(titles, changed, prompt=prompt)
+
     def test_complete_pairs_and_reduction_retain_disconnected_node(self):
         titles = fixture()['canonical']['titles']
         report = decision_report(titles, [('A','B'), ('B','C'), ('A','C')], [('D','A')])
