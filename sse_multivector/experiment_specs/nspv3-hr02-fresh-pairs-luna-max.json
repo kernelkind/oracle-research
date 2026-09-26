@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "NSPv3",
+    "path": "../node-subsumption-prompt-v3/prompt.txt"
+  },
+  "dataset": {
+    "adapter": "generic",
+    "path": "../../target/hierarchy-build-v1/nspv3-fresh-luna-inputs-v1/cases.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6-luna",
+    "reasoning_effort": "max",
+    "concurrency": 4,
+    "timeout_seconds": 300,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "contains": {
+          "type": "string",
+          "enum": ["yes", "no", "uncertain"]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": ["contains", "reason"],
+      "additionalProperties": false
+    }
+  }
+}

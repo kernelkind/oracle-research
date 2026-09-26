@@ -331,6 +331,42 @@ These are subscription calls, not API bills or measured subscription-quota
 ratios. The original NSPv3 prompts, saved outputs and hierarchy are unchanged;
 no additional inference or graph construction is approved.
 
+**NSPv3 / Luna max — fresh-pair check, tested:** the user approved a small
+fresh sample after NSP-Luna-v1 failed to improve the earlier cases. The shared
+runner used [this spec](../experiment_specs/nspv3-hr02-fresh-pairs-luna-max.json)
+and `experiments/nspv3-hr02-fresh-pairs-luna-max-v1/`. Inputs are exact original
+HR02 titles and IDs from `target/hierarchy-build-v1/astra-titles-v1/titles.json`.
+Both directions of six pairs were selected before inference; none had appeared
+in the preceding NSP experiments. Expectations are agent assessments, not user
+verdicts. The prompt, model, effort and output schema match the saved NSPv3 /
+Luna-max configuration, with no title overrides or masks sent to the model.
+
+| A | B | Expected and returned: A contains B / B contains A |
+| --- | --- | --- |
+| Asian cuisine | Chinese cuisine | Yes / No |
+| Physical movement | Workouts | Yes / No |
+| Psychology and philosophy | Psychological distress | Yes / No |
+| Food and drink | Enjoyment of food | Yes / No |
+| Morning coffee | Early morning | No / No |
+| coffee shop | Coffee beans | No / No |
+
+All 12 outputs were valid and matched the pre-recorded expectations. Agent
+review accepts the decisions, while noting that the Morning coffee / Early
+morning explanation loosely calls the latter broader despite correctly
+rejecting containment both ways. The coffee-shop/beans place/product
+distinction is true but is not by itself a general test of topic containment.
+Food and drink containing Enjoyment of food shows the earlier meat-consumption
+error does not occur for every feeling-about-a-topic case; it does not erase
+that failure. This selected sample is not a random accuracy estimate,
+repeatability test or validation of graph consistency.
+
+The 12 new subscription calls used 1,100 input tokens and 2,185 output tokens,
+including 1,816 reasoning tokens. The runner's catalog estimate is $0.0012025,
+not a paid invoice or subscription-quota measurement. No retries, reuse,
+baseline reruns, Astra calls, prompt changes or graph construction occurred.
+All 12 reviews and original receipts are retained for later diagnostic reuse.
+Further inference and hierarchy construction remain unapproved.
+
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
 Both batches retain original pre-merge node IDs, exact title inputs, expectations,

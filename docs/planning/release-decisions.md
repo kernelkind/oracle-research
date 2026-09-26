@@ -108,6 +108,16 @@ asserting a coffee-business-chain meaning; the reverse stayed No with the same
 unsupported interpretation. The intended hashtag boundary remains unresolved.
 This draw provides no semantic improvement supporting adoption of NSP-Luna-v1;
 it does not establish Luna's general accuracy. Prompts and hierarchy are unchanged.
+The user then approved a small fresh-pair check with unchanged NSPv3 / Luna max.
+Six previously untested HR02 pairs were checked in both directions, covering
+cuisine, exercise, psychology, enjoyment of food, temporal overlap and related
+coffee topics. All 12 decisions matched agent expectations recorded before
+inference, including Food and drink containing Enjoyment of food. All calls
+were valid and new, with no retries, reuse, baseline reruns or Astra calls.
+One explanation loosely called Early morning broader than Morning coffee,
+although both directions correctly rejected containment. The fresh sample is
+encouraging, not a general accuracy estimate or resolution of earlier failures.
+No prompt or model is production-adopted by this result.
 No hierarchy was rebuilt. A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
 and graph construction remain unapproved. Scalable relationship inference and
