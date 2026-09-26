@@ -153,32 +153,32 @@ build as the hierarchy becomes clearer; the exact point is open. The top
 summary names only the green workstreams. Readiness
 does not authorize research, implementation, agent assignment or spending.
 
-Node 24 is ready but not started: recover missing memberships. Node 25 is ready
-to resume: both merge stages and naming/browser integration are implemented
-and checked offline, with a four-node live naming/UI check complete.
-Full rebuilt-hierarchy validation remains.
-The merge policy is provisional, not proven equivalence.
-Node 26 is grey: its navigation collapse is
-implemented and regression-tested; validation on the rebuilt hierarchy is
-pending. It is not in the ready-to-start summary.
+Node 24 is ready but not started: recover missing memberships. Node 25 is
+complete for HR02: exact-mask-set consolidation and reversible TRUE-cycle
+handling are implemented and tested, and the merged graph is named and
+browsable. The merge policy remains provisional; review of its results belongs
+to 02, not to the completed implementation task.
+Node 26 is grey: its navigation collapse is implemented and regression-tested;
+validation on the rebuilt hierarchy is pending. It is not in the ready-to-start
+summary.
 Node 27 turns mask prominence into node-note ordering and needs 04.
-Task 25 is also required to finish the 100-note result in 02; TRUE work can
-begin before 25 is complete. All four results are required to complete the
-500-note validation in 03. The 100-note run checks correctness at minimal
-scope. The 200-note run adds prominence-based note ordering; the 300-note run
+Task 25's finish dependency for 02 is satisfied. All four results are required
+to complete the 500-note validation in 03. The 100-note run checks correctness
+at minimal scope. The 200-note run adds prominence-based note ordering; the 300-note run
 tests scalable construction, including whether filtering retains useful TRUE
 links; the 500-note run validates the combined pipeline and profiles its build.
 Membership recovery does not expand the limited 100-note diagnostic. The
 200-note construction can start while prominence is paused, but its ordering
 check needs 04 and 27; 300-note work need not wait for that check. The
 04 → 27 → 03 completion dependency is unchanged.
-No membership algorithm, cycle-resolution method or ranking formula is selected.
+No membership algorithm, final cycle-resolution method or ranking formula is
+selected.
 
 The September 23 user checkpoint confirmed 17 in progress, 13 and 18 not
 started, and 21–22 without further progress. Tasks 02 and 23 were updated on
 September 24; the later planning correction adds 25 → 02 as a finish dependency.
 Dates are unchanged. See the
-[status record](release-decisions.md#status-checkpoint--september-24).
+[status record](release-decisions.md#status-checkpoint--september-25).
 
 Node 28 is separate from scale measurements: turn the strategies tested in 03
 into a runnable launch-scale build, including cosine-filtered TRUE and handling

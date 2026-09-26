@@ -141,8 +141,8 @@
     {
       "id": "25",
       "title": "Handle node equivalence and TRUE cycles",
-      "status": "READY TO RESUME",
-      "description": "Both merge stages and naming/browser path implemented; cycle policy remains provisional.\nFour-node live naming/UI check complete. Validate on rebuilt hierarchy."
+      "status": "COMPLETE",
+      "description": "Exact-mask-set consolidation and reversible TRUE-cycle handling are implemented and tested for HR02.\nThe merged graph is named and browsable; its provisional merge rules are evaluated during task 02."
     },
     {
       "id": "26",

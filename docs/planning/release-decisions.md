@@ -38,8 +38,8 @@ inputs cover all 16,512 directions. The provisional graph has 116 nodes and
 56 reduced links. All six merged titles are now generated with unchanged
 v38/Astra low, as subsequently approved, without changing merges or links.
 The historical HRv1 runner and artifacts remain on v21. HR02 browser export
-is complete; hierarchy review remains. The solid 23 → 02 prerequisite is satisfied;
-25 is required to finish 02, not to start its TRUE work.
+is complete; hierarchy review remains. The 23 → 02 and 25 → 02 implementation
+prerequisites are satisfied. The provisional cycle rules are assessed in 02.
 The full pass was mechanically valid; spot checks found some questionable
 titles, and the user has not approved every output. Prompt changes and
 validation procedures belong to that workstream, not this planning discussion.
@@ -66,7 +66,7 @@ This is a dated checkpoint; current task status appears in `release-plan.json`.
 | Task | Status at checkpoint |
 | --- | --- |
 | 01 · Subject and mask prompts | Finished. |
-| 02 · Build and review 100-note hierarchy | In progress; TRUE scoring, six merged titles and browser export complete. Minimal-scope correctness review remains. Task 25 is a finish gate. |
+| 02 · Build and review 100-note hierarchy | In progress; TRUE scoring, six merged titles and browser export complete. Minimal-scope correctness review remains; the task 25 implementation gate is satisfied. |
 | 23 · Fix and validate node-title prompt | Finished; 129 titles saved. |
 | 04 · Define mask prominence | Paused. Earlier experimental results do not establish that work is active now. |
 | 17 · Compare teachers | In progress; no completed selection established. |
@@ -74,7 +74,7 @@ This is a dated checkpoint; current task status appears in `release-plan.json`.
 | 13 · Define Nostr hierarchy protocol | Not started. |
 | 18 · Prepare training code for the fine-tuning pilot | Candidate recipes and Vast limits frozen locally; VM tests training and SSH deployment. Image remains unpublished. |
 | 24 · Recover missing node memberships | Not started. |
-| 25 · Handle node equivalence and TRUE cycles | Both merge stages and naming/browser integration implemented; four-merge user review complete (three accepted, Beef rejected). Full rebuilt-hierarchy validation remains. |
+| 25 · Handle node equivalence and TRUE cycles | Complete for HR02: exact-mask consolidation and reversible cycle handling are implemented and tested, with naming/browser integration. The merge rules remain provisional; hierarchy-quality review belongs to 02. |
 | 21 · Assess HDBSCAN at launch scale | No further progress; earlier investigation remains evidence, not launch-scale validation. |
 | 22 · Measure SSE, node-title and TRUE processing costs | No further progress. |
 
@@ -363,9 +363,9 @@ user before implementation; do not resolve them through per-node exceptions.
 | ID | Choice and status | Uncertainty / tradeoff | How to revisit it |
 | --- | --- | --- | --- |
 | HD01 | **Current experiment rule:** native TRUE Yes creates an edge; no score cutoff. | Native answers miss useful links; the tested cutoff adds both useful and incorrect links. Neither is assumed correct. | Preserve exact title inputs, generated answers, scores and runtime identity; rebuild edges from saved outputs under another explicitly selected rule. |
-| HD02 | **Provisional merge rule:** merge mutually reachable nodes (strongly connected components). Offline construction stages integrated and tested; rebuilt-hierarchy validation pending. | Correct subsumption cycles imply equivalence, but predicted cycles can be wrong. The user identified Beef / Beef products as an incorrect NEv2 merge. Saved examples have pairwise mutual Yes answers; a synthetic regression also covers longer cycles without them. | Keep the original nodes, masks, titles, edges and component membership. Rebuild from the pre-merge graph instead of trying to split a merged record after originals were discarded. |
-| HD03 | **Candidate, mechanically tested but not settled:** retain any accepted incoming/outgoing connection of a merged member, preserving existing paths. | This favors accepted paths over contradictory direct No answers. The contradiction can exist before merging: Beef -> Beef products -> Steak, alongside a direct No for Beef -> Steak. Record the disagreement; do not silently repair it. | Preserve every Yes and No and the original edge contributors. A different conflict policy starts from those answers and may require recomputing merges and descendants, not merely editing the displayed links. |
-| HD04 | **Implemented, four-node live check complete:** generate the merged title through the frozen title workflow; bind returned names to exact combined-mask inputs and change labels only. | The new wording may suggest a different scope from the original titles used by TRUE. The naming call does not establish new relationship evidence. | Save member titles, combined-mask input, prompt/model settings and generated title. A naming-only alternative need not rerun extraction or TRUE; using new titles for relationships would be a separate design change. |
+| HD02 | **Provisional merge rule:** merge mutually reachable nodes (strongly connected components). Implemented and tested; HR02 is exported for quality review under task 02. | Correct subsumption cycles imply equivalence, but predicted cycles can be wrong. The user identified Beef / Beef products as an incorrect NEv2 merge. Saved examples have pairwise mutual Yes answers; a synthetic regression also covers longer cycles without them. | Keep the original nodes, masks, titles, edges and component membership. Rebuild from the pre-merge graph instead of trying to split a merged record after originals were discarded. |
+| HD03 | **Current HR02 experimental rule, mechanically tested but not settled:** retain any accepted incoming/outgoing connection of a merged member, preserving existing paths. | This favors accepted paths over contradictory direct No answers. The contradiction can exist before merging: Beef -> Beef products -> Steak, alongside a direct No for Beef -> Steak. Record the disagreement; do not silently repair it. | Preserve every Yes and No and the original edge contributors. A different conflict policy starts from those answers and may require recomputing merges and descendants, not merely editing the displayed links. |
+| HD04 | **Implemented:** generate merged titles through the frozen title workflow; bind returned names to exact combined-mask inputs and change labels only. Four-node live check and all six HR02 merged titles are complete. | The new wording may suggest a different scope from the original titles used by TRUE. The naming call does not establish new relationship evidence. | Save member titles, combined-mask input, prompt/model settings and generated title. A naming-only alternative need not rerun extraction or TRUE; using new titles for relationships would be a separate design change. |
 | HD05 | **Implemented and tested:** derive a new merged-node ID from the SHA-256 of the sorted original member-ID list, preserving every original ID. | The same members produce the same merged ID regardless of member order or displayed title. This identifies the merge, not independently verified semantic equivalence. | Keep the original-member mapping and ID-rule version. A different membership or ID rule can be rebuilt from that mapping; changing only the displayed title must not change the ID. |
 | HD06 | **Approved comparison design, not implemented:** preserve the first run's original reviewed view and create a separate reprocessed view from its saved nodes and TRUE answers using the new run's merging and navigation rules. Compare the new run primarily against the reprocessed view. | The first run included manual extraction corrections, group exclusions and a title override. Matching downstream rules does not make those inputs an untouched automatic baseline. | Freeze the original subjects, masks, node titles, answers and reviewed artifacts; do not regenerate them. Record the reprocessing policies and historical interventions separately so the original and reprocessed views remain inspectable. |
 
@@ -444,28 +444,30 @@ required outcomes, not selected implementation methods or new dates:
 | Task | Required result | Completion dependency |
 | --- | --- | --- |
 | **24 · Recover missing node memberships** | A repeatable recovery process beyond the six Coffee/Tea nodes, covering masks left unassigned or grouped elsewhere. Measure its work and cost. | Required to finish 03; available measurements inform 20 without waiting for all of 24. |
-| **25 · Handle node equivalence and TRUE cycles** | Apply exact mask-set consolidation and establish repeatable handling of semantic equivalents and cyclic TRUE answers. A cycle or equal title alone does not justify merging. | Required to finish 02 and therefore 03; 02 can begin TRUE work first. |
+| **25 · Handle node equivalence and TRUE cycles** | Apply exact mask-set consolidation and a reversible, repeatable rule for HR02's equivalence candidates and cyclic TRUE answers. Provisional contraction does not prove that a cycle or equal title means semantic equivalence. | Implemented for HR02; its finish dependency for 02 is satisfied. Evaluate the resulting hierarchy under 02. |
 | **26 · Collapse equal-note navigation steps** | Implement and validate the required navigation simplification, including shared children, while preserving note sets, masks and provenance. | Required to finish 03. |
 | **27 · Order node notes using mask prominence** | Define and implement how relevant mask scores produce node-note order, including multiple masks and shared descendants. | Needs prominence definition 04; required to finish 03. |
 | **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered TRUE and large-group title inputs. | Needs 03 + 21 + 22; required to finish full-build feasibility 10. |
 
-24 can start from saved artifacts and remains unstarted. 25 has an offline
-construction path checked against saved results and a completed four-node
-live naming/UI check and four-merge user review (three accepted, Beef rejected);
-validation on the full rebuilt hierarchy remains.
+24 can start from saved artifacts and remains unstarted. 25 is complete for
+HR02: both merge stages, provenance-preserving naming and browser export are
+implemented and tested. The four-merge user review accepted three and rejected
+Beef; it was not blanket approval of the provisional rule. Review of the full
+rebuilt hierarchy remains in 02.
 For 26, the [browser implementation and regression checks](../../sse_multivector/navigation-research-v1/README.md#shared-child-collapse)
 are complete; validation on the rebuilt HRv1 hierarchy awaits graph packaging.
 27 waits for 04, which remains paused. 28 waits for the validated small-corpus
 workflow and scale findings. Readiness does not authorize execution. Membership
-methods, node-equivalence/cycle handling, ranking rules and scale
+methods, final node-equivalence/cycle policy, ranking rules and scale
 implementation choices remain open.
 
 The current 100-note diagnostic checks correctness at minimal scope, without
-membership expansion or a claim to exercise scalable construction. It can
-start TRUE work before 25 is finished, but cannot finish if equivalence or
-cycles prevent a valid browsable graph. Preliminary 200-note construction can
-follow 02 while prominence is paused, but its note-ordering check needs 04 and
-27. The 300-note scalable-construction work can proceed without waiting for
+membership expansion or a claim to exercise scalable construction. Task 25's
+implementation gate is satisfied; 02 still needs review of the browsable graph,
+including whether provisional cycle merges make useful navigation. Preliminary
+200-note construction can follow 02 while prominence is paused, but its
+note-ordering check needs 04 and 27. The 300-note scalable-construction work
+can proceed without waiting for
 that ordering check. Completing the combined 500-note validation (03) requires
 24–27. The prominence dependency remains 04 → 27 → 03. The stages' internal
 processing order must respect their inputs, but this does not impose a serial
