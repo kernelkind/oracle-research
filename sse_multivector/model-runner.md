@@ -552,14 +552,22 @@ production preparation and decoding functions:
   the inference. Agent assessment is saved separately. PPv15 remains unchanged
   and PPv15-D1 is not a production replacement.
 
-  [PPv16](prominence-prompt-goal-v1/ppv16-draft-v1/PPv16.md) is an untested
-  draft against the approved scoring prompt PPv15, not the diagnostic PPv15-D1.
-  It clarifies that the complete post helps interpret selected wording, but
-  information supplied only by unselected wording is not credited to the mask.
-  All other instructions and the score-only JSON output remain unchanged.
-  No model calls accompany this revision. Review is pending; the proposed next
-  test is the tea speaker contrast together with the compact/complete roasting
-  comparison, checking omission of information versus grammatical wording.
+  [PPv16](prominence-prompt-goal-v1/ppv16-draft-v1/PPv16.md) remains an
+  unapproved, untested prior draft; its prompt is unchanged. The user questioned
+  whether its distinction between interpreting and supplying information was
+  clear enough and requested a revision of the main guidance.
+
+  [PPv17](prominence-prompt-goal-v1/ppv17-draft-v1/PPv17.md) is the new untested
+  draft, based directly on approved PPv15 rather than PPv16 or diagnostic PPv15-D1.
+  It separates determining what the fragments jointly express and leave open
+  from judging the significance of preserved and missing meaning to the post.
+  The post resolves word meanings for the first judgment and supplies the
+  message against which the second is made. The semantic-percentage definition,
+  URL/identifier exclusion, grammar/word-count guidance, scale and score-only
+  JSON output are unchanged. No examples, fixed weights or diagnostic fields
+  were added, and no model calls were made. Wording approval is pending;
+  the proposed next test remains the tea speaker contrast plus compact/complete
+  roasting, checking loss of information without penalizing omitted grammar.
 
   Alternatively, `path` may point to a saved title experiment's `report.json`
   (`adapter: "titles"` in that report). In this form, `select` names node IDs.
