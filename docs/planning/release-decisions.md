@@ -200,12 +200,21 @@ sole failure, returning No in all three trials against the agreed Yes. All
 consistency, not general accuracy. The identical Foods/Foods directions count
 as one input. Disputed labels remain separate and unscored. No prompt change
 or hierarchy construction followed. The user rejected further investigation
-of that single miss and approved a fresh balanced sample instead. The prepared
+of that single miss and approved a fresh balanced sample instead. The completed
 test has twelve previously untested directions, six expected Yes and six No,
 across art, emotions, cooking and coffee, with unchanged NSP-Jev-v3 and one
 initial call per input. Expectations are recorded by the agent before inference,
 not represented as new user approvals. The Daily painting label assumes its
 ordinary artistic meaning; this assumption was disclosed before inference.
+All twelve new calls validated without retries, reuse or baseline reruns.
+Jev matched four of six expected Yes and all six expected No. It rejected
+Coffee → Coffee flavor and Positive emotions and attitudes → Enjoyment of food.
+The two discrepancies are against agent expectations, not newly user-confirmed
+ground truth; Daily painting remains explicitly conditional. Cooking ideas and
+Cooking times were accepted beneath Cooking, so this does not demonstrate a
+blanket inability to recognize topic aspects. Next: obtain user judgments on
+the two mismatches and the painting interpretation, then assess the combined
+error pattern before any new prompt or experiment. No hierarchy was built.
 No full hierarchy was rebuilt or prompt production-adopted.
 A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference

@@ -713,6 +713,36 @@ frozen into case evidence, not sent to the model. Previously unresolved pairs
 remain separate. No prompt editing, old-baseline rerun or hierarchy generation
 is part of this test. Judge patterns across cases, not perfection on one pair.
 
+The run completed with twelve valid new calls, no retries, reuse or baseline
+reruns. Runner usage was 5,030 input tokens and 480 output tokens; all receipts
+report native charges, totaling $0.00021126. 
+
+Ten of twelve choices matched the pre-run agent expectations: four of six
+expected Yes and all six expected No. This is label agreement on a selected
+sample, not established general accuracy. The two mismatches were:
+
+| A | B | Expected | Jev | No probability |
+| --- | --- | --- | --- | --- |
+| Coffee | Coffee flavor | Yes | No | 0.86 |
+| Positive emotions and attitudes | Enjoyment of food | Yes | No | 0.99 |
+
+Both have agent-reject reviews, pending user confirmation of their labels.
+Art → Daily painting matched Yes but has a separate agent-uncertain review
+because the pre-run artistic reading is conditional; it remains visible in
+the twelve-case denominator rather than silently disappearing. The
+reverse Art/painting and emotions/enjoyment rejections matched expectations.
+Cooking → Cooking ideas and Cooking → Cooking times both returned Yes, so a
+claim that Jev always fails activity-related or property-related containment
+would overstate the evidence. No explanation of the classifier's internal
+interpretation is available from Choice outputs.
+
+Together with the repeated meat-attitudes miss, the new discrepancies warrant
+examining missed valid containment across cases, not more repetitions of a
+single pair. Next: get user judgments on these two labels and the painting
+assumption, then evaluate the combined pattern before any further prompt or
+test. Prompt/input identity and frozen-label checks passed; no production code
+changed and no new hierarchy was built.
+
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
 Both batches retain original pre-merge node IDs, exact title inputs, expectations,
