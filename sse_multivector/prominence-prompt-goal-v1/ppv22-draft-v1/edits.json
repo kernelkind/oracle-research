@@ -1,0 +1,13 @@
+{
+  "base_sha256": "be8c98d4052083736a53bfa9f504bafa5825d3ffaf8b0c3e2a42afe244e75512",
+  "edits": [
+    {
+      "old": "Use the complete post to interpret the meaning of the fragments. Identify alternative posts consistent with the meaning represented by the fragments together but differing in some of the complete post’s meaning. These differences identify meaning missing from the mask.",
+      "new": "Use the complete post to interpret the meaning of the fragments. Describe the class of posts consistent with the meaning represented by the fragments together, stating the meaning shared by all posts in the class and what the mask leaves unspecified. Compare this class with the complete post to identify meaning missing from the mask."
+    },
+    {
+      "old": "Return only a JSON object with one integer field, \"prominence\".",
+      "new": "Return only a JSON object with three fields: \"post_class\" (a brief description of the class, not example posts), \"missing_meaning\" (a brief description of the meaning missing from the mask), and \"prominence\" (the integer score)."
+    }
+  ]
+}
