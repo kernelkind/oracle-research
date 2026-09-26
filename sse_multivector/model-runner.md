@@ -662,13 +662,18 @@ production preparation and decoding functions:
   or evidence of calibrated percentages. Agent assessments are separate from
   user decisions. PPv21 is unchanged.
 
-  The user clarified that the model must identify the class of alternative
-  posts consistent with the mask's meaning, not merely give example posts.
-  PPv21-D1's examples demonstrate recognition of particular missing meaning
-  but do not establish that class. The next proposed step is to draft this
-  class-level comparison against approved PPv21 before further testing. The
-  exact wording and output format remain open; no prompt or schema has been
-  changed by this clarification.
+  The user clarified that the model must identify a class, not merely give
+  example posts, and authorized defining it as all possible posts that
+  represent everything the mask represents, while allowing whatever it leaves
+  unspecified to vary. PPv21-D1's examples demonstrate recognition of
+  particular missing meaning but do not establish that class.
+  [PPv23](prominence-prompt-goal-v1/ppv23-draft-v1/PPv23.md) is an unapproved,
+  untested draft against approved PPv21. It defines the class and requests
+  `post_class`, `missing_meaning`, and `prominence`; scoring instructions are
+  unchanged. PPv22 remains an unapproved, untested prior draft whose use of
+  "class" the user found insufficiently defined. PPv21 and prior versions
+  remain unchanged. No inference or experiment-schema change accompanies
+  PPv23; review its wording before testing.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
