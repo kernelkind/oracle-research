@@ -667,13 +667,16 @@ production preparation and decoding functions:
   represent everything the mask represents, while allowing whatever it leaves
   unspecified to vary. PPv21-D1's examples demonstrate recognition of
   particular missing meaning but do not establish that class.
-  [PPv23](prominence-prompt-goal-v1/ppv23-draft-v1/PPv23.md) is an unapproved,
-  untested draft against approved PPv21. It defines the class and requests
+  [PPv24](prominence-prompt-goal-v1/ppv24-draft-v1/PPv24.md) is an unapproved,
+  untested draft against approved PPv21. The user found PPv23's abstract class
+  comparison unclear and authorized rebuilding the instruction around what
+  the fragments specify and leave unspecified, then identifying what the
+  complete post specifies that the mask does not. "Class" names that
+  description rather than introducing the operation. PPv24 requests
   `post_class`, `missing_meaning`, and `prominence`; scoring instructions are
-  unchanged. PPv22 remains an unapproved, untested prior draft whose use of
-  "class" the user found insufficiently defined. PPv21 and prior versions
-  remain unchanged. No inference or experiment-schema change accompanies
-  PPv23; review its wording before testing.
+  unchanged. PPv22 and PPv23 remain unapproved, untested prior drafts. PPv21
+  and prior versions remain unchanged. No inference or experiment-schema
+  change accompanies PPv24; review its wording before testing.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
