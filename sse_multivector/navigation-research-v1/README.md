@@ -686,9 +686,32 @@ This small, mostly reused sample does not establish general accuracy.
 
 The saved v1 response to the failed pair was Yes (0.54 Yes / 0.39 No / 0.07
 Uncertain), from `experiments/nsp-jev-v1-hr02-diverse-pairs-v2/`. That one draw
-does not establish reliable superiority. Next suggested check: repeat v1 on
-this same input twice, retaining the saved answer as its first observation,
-before another wording change. No further calls are authorized or performed.
+does not establish reliable superiority. Repeating v1 on that input was
+suggested, but the user rejected this single-miss investigation. No v1 repeats
+were performed. The approved next test is the fresh balanced sample below.
+
+### Jev fresh balanced sample
+
+The user approved keeping NSP-Jev-v3 unchanged and testing fresh actual node
+titles, with expectations recorded before inference and one call per input.
+The [spec](../experiment_specs/nsp-jev-v3-hr02-fresh-balanced.json) prepares
+`experiments/nsp-jev-v3-fresh-balanced-v1/`: twelve directed judgments, six
+expected Yes and six expected No. Exact titles were verified against the saved
+HR02 Astra title report. No matching directions occur in successful saved NSP
+reports; preparation found twelve new requests and no reusable ones. These are
+agent expectations, not additional user-confirmed labels or a random sample.
+
+Expected Yes: Art → Daily painting; Positive emotions and attitudes → Amusement
+and → Enjoyment of food; Cooking → Cooking ideas and → Cooking times; Coffee
+→ Coffee flavor. Expected No: Daily painting → Art; Amusement and Enjoyment
+of food → Positive emotions and attitudes; Cooking ideas → Cooking times;
+Moral goodness → Positive emotions and attitudes; coffee shop → Morning coffee.
+The first Yes assumes the ordinary artistic meaning of painting; it does not
+establish that the existing Daily painting title accurately names its masks.
+That assumption was disclosed before inference. All labels and reasons are
+frozen into case evidence, not sent to the model. Previously unresolved pairs
+remain separate. No prompt editing, old-baseline rerun or hierarchy generation
+is part of this test. Judge patterns across cases, not perfection on one pair.
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).

@@ -199,9 +199,13 @@ sole failure, returning No in all three trials against the agreed Yes. All
 17 inputs retained their choices across repetitions; this is selected-sample
 consistency, not general accuracy. The identical Foods/Foods directions count
 as one input. Disputed labels remain separate and unscored. No prompt change
-or hierarchy construction followed. Since saved v1 answered the failed pair
-Yes once, the suggested next check is two further v1 trials on that same input
-before another prompt edit; those calls have not been performed or authorized.
+or hierarchy construction followed. The user rejected further investigation
+of that single miss and approved a fresh balanced sample instead. The prepared
+test has twelve previously untested directions, six expected Yes and six No,
+across art, emotions, cooking and coffee, with unchanged NSP-Jev-v3 and one
+initial call per input. Expectations are recorded by the agent before inference,
+not represented as new user approvals. The Daily painting label assumes its
+ordinary artistic meaning; this assumption was disclosed before inference.
 No full hierarchy was rebuilt or prompt production-adopted.
 A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
