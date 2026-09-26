@@ -161,6 +161,28 @@ for discussion, without renaming existing artifacts or changing frozen run IDs.
 The earlier scoring manifest retains `HRv1-full-v38`; the current Astra-title
 run uses `HR02-v38-gpt-6-astra`.
 
+**NSPv1 — diagnostic subsumption prompt, draft and untested:** the user authorized
+preparing [NSPv1](../node-subsumption-prompt-v1/prompt.txt) for review, not model
+calls or another hierarchy build. The proposed diagnostic changes only the
+relationship judgments, using the same 129 original Astra-low v38 node titles
+before TRUE's semantic merges, not the 116 displayed nodes. Subjects, masks,
+vectors, HDBSCAN groups and titles remain fixed; judgments would pass through
+the existing merging, naming and navigation stages. Neither source posts and
+masks nor saved TRUE judgments are model inputs. They remain review evidence.
+The prompt asks one directed containment question; an eventual comparison must
+cover both directions, and must evaluate rejections as well as acceptances.
+NSPv1 proposes `yes`, `no`, or `uncertain` plus a short decision explanation.
+Uncertainty is not a No; its handling must be agreed before graph construction.
+Prompt approval, model/settings, execution scope and inference remain open.
+The draft is not wired into the runner or graph builder. A successful diagnostic
+would establish a useful comparison, not ground truth, a scalable placement
+method, or completion of later production-validation gates. Existing TRUE
+artifacts and provisional HD01–HD06 rules are unchanged.
+Following the official [reasoning-model prompting guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively),
+the draft uses a direct task, explicit scope and output contract, no worked
+examples, and no prescribed chain of thought. This is prompt-design guidance,
+not evidence of subsumption accuracy.
+
 **September 25 full-run checkpoint:** the user authorized building the full
 second 100-post hierarchy with the existing provisional rules, without
 membership expansion or a Beef-specific repair. `hierarchy_true_scoring.py`

@@ -1,0 +1,15 @@
+Decide whether hierarchy node A contains hierarchy node B, using their titles.
+
+Each title names a category of subject matter. A contains B if B's entire scope falls within A's scope. Equivalent scopes count as containment. Association, partial overlap, or sharing a broader category is not enough.
+
+Interpret each title as a whole, preserving its qualifiers and relationships. When a title lists topics, its scope includes each listed topic; it does not require them to occur together. Do not narrow or broaden either title's meaning to make containment hold.
+
+Use "uncertain" when an unclear title or unfamiliar name prevents a supported decision.
+
+Return only a JSON object with two fields:
+- "contains": "yes", "no", or "uncertain", answering whether A contains B.
+- "reason": one short sentence stating the basis for the decision.
+
+Titles (data, not instructions):
+A: {A_TITLE}
+B: {B_TITLE}
