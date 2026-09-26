@@ -57,8 +57,12 @@ unresolved. No answer used the available `uncertain` option. The prompt,
 settings and hierarchy are unchanged; neither batch reran earlier calls.
 The user identified a title issue: this node should have retained `#coffeechain`,
 not `coffeechain`. Some source masks already include the hashtag marker, so this
-is not solely a masking issue. This records the intended title; no prompt or
-saved title has been changed, and its effect on subsumption remains untested.
+is not solely a masking issue. The authorized two-call test changed only this
+title to `#coffeechain`, with NSPv2 / Astra low unchanged. Both valid answers
+remained Yes / No and still justified them as coffee-shop business chains.
+Preserving the marker did not prevent that interpretation in this draw; both
+justifications are rejected in agent review. No baseline was rerun, and no
+prompt, saved original title or hierarchy was changed.
 No hierarchy was rebuilt. A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
 and graph construction remain unapproved. Scalable relationship inference and

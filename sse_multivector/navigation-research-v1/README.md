@@ -198,9 +198,23 @@ interpretation. The intended title-only boundary remains unresolved.
 The user subsequently confirmed that the node title should have preserved
 `#coffeechain`. The source masks include both `#coffeechain` and `coffeechain`,
 but TPv38 returned `coffeechain`; NSPv2 saw only that title. Record this as a
-title issue, not solely a mask issue. The intended title is `#coffeechain`;
-the frozen prompts, saved titles and relationship outputs remain unchanged.
-Whether preserving the marker changes the relationship answer is untested.
+title issue, not solely a mask issue. The intended title is `#coffeechain`.
+The authorized two-call diagnostic changed only that title in both directions,
+keeping NSPv2 / Astra low unchanged. Both outputs were valid, with no reuse,
+retries or baseline calls: coffee shop contains #coffeechain = Yes; reverse = No.
+Both explanations still treated the hashtag as coffee-shop business chains.
+Agent review rejects both unsupported justifications, without inventing gold
+binary answers for the pre-recorded unresolved boundaries. This single draw
+does not establish repeatability, but the marker alone did not fix this result.
+
+The diagnostic and receipts are in `experiments/nspv2-hr02-hashtag-v1/`; the
+reusable [spec](../experiment_specs/nspv2-hr02-hashtag-astra-low.json) retains
+NSPv2. Original node IDs and an explicit title override bind the new inputs
+without rewriting the original titles, prompts or relationship outputs.
+The runner correctly reports `input_mismatch` against the saved additional-pair
+batch because adding # changes the input; the old answers were inspected as an
+input-change comparison, not presented as identical-input trials. No hierarchy
+was rebuilt.
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
