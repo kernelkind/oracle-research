@@ -595,8 +595,26 @@ production preparation and decoding functions:
   but assigned it a small score difference. It does not establish why earlier
   scoring-only responses differed, calibrated percentages or repeatability.
   Agent assessments are recorded separately; PPv17 and PPv17-D1 are unchanged.
-  The next useful check is whether explicit meaning summaries improve scoring
-  across different posts, rather than adding a pronoun-specific prompt rule.
+  The six-point gap alone does not establish a scoring failure: the desired
+  numerical separation has not been calibrated.
+
+  [PPv17-D2](prominence-prompt-goal-v1/ppv17-pairwise-diagnostic-v1/PPv17-D2.md)
+  is a tested diagnostic-only pairwise variant derived directly from PPv17.
+  It retains the meaning-assessment guidance but compares two masks without
+  numerical scores, allowing a tie or uncertainty and requesting a brief
+  explanation. `experiments/ppv17-pairwise-diagnostic-v1` used one valid
+  Astra-low subscription call, with no retries, reuse or baseline calls. For
+  "I want some hot tea too.", A retained "I want some" + "tea too." and B
+  retained "want some hot tea too." The model chose B because it considered
+  the speaker "naturally implicit", not because it explicitly judged temperature
+  more important than a fully missing speaker. This disagrees with the intended
+  comparison and shows that recognizing missing meaning remains unsettled,
+  even without numerical scoring. The input contained neither the intended
+  answer nor previous scores. One trial in one order does not establish
+  repeatability, position independence or the cause of prior responses.
+  Agent assessment is recorded separately; PPv17 remains unchanged. The proposed
+  next step is to clarify the distinction between omitted grammar and omitted
+  semantic information before changing the numerical scoring guidance.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or

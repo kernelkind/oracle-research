@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "PPv17-D2",
+    "path": "../prominence-prompt-goal-v1/ppv17-pairwise-diagnostic-v1/PPv17-D2.md"
+  },
+  "dataset": {
+    "adapter": "generic",
+    "path": "../prominence-prompt-goal-v1/ppv17-pairwise-diagnostic-v1/cases.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "concurrency": 1,
+    "timeout_seconds": 600,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "explanation": {"type": "string"},
+        "preserves_more": {"type": "string", "enum": ["A", "B", "tie", "uncertain"]}
+      },
+      "required": ["explanation", "preserves_more"],
+      "additionalProperties": false
+    }
+  }
+}
