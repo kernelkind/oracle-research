@@ -557,17 +557,28 @@ production preparation and decoding functions:
   whether its distinction between interpreting and supplying information was
   clear enough and requested a revision of the main guidance.
 
-  [PPv17](prominence-prompt-goal-v1/ppv17-draft-v1/PPv17.md) is the new untested
-  draft, based directly on approved PPv15 rather than PPv16 or diagnostic PPv15-D1.
+  [PPv17](prominence-prompt-goal-v1/ppv17-draft-v1/PPv17.md) is approved for testing
+  and tested experimentally, not production-frozen. It is based directly on
+  PPv15 rather than PPv16 or diagnostic PPv15-D1.
   It separates determining what the fragments jointly express and leave open
   from judging the significance of preserved and missing meaning to the post.
   The post resolves word meanings for the first judgment and supplies the
   message against which the second is made. The semantic-percentage definition,
   URL/identifier exclusion, grammar/word-count guidance, scale and score-only
   JSON output are unchanged. No examples, fixed weights or diagnostic fields
-  were added, and no model calls were made. Wording approval is pending;
-  the proposed next test remains the tea speaker contrast plus compact/complete
-  roasting, checking loss of information without penalizing omitted grammar.
+  were added. The user authorized four new Astra-low subscription calls total,
+  including retries: `experiments/ppv17-tea-contrast-v1` and
+  `experiments/ppv17-roasting-contrast-v1`, each capped at two attempts. All four
+  outputs were valid, with no retries or reuse and no baseline reruns. The tea
+  contrast still lacks the intended loss for omitting the speaker: without
+  "I" scored 90 and with "I" scored 85, versus saved PPv15 scores of 90 and 88.
+  Compact/complete roasting scored 93/92, preserving approximate equivalence
+  (saved PPv15: 92/90). Agent assessments are saved separately. These single
+  trials do not establish calibrated percentages, repeatability or the cause
+  of the tea result. PPv17 was not edited after testing; the four-call allowance
+  is exhausted. The proposed next investigation is whether the model also
+  credits an unselected named person, distinguishing contextual attribution
+  from interpreting the tea mask as first-person shorthand before revising again.
 
   Alternatively, `path` may point to a saved title experiment's `report.json`
   (`adapter: "titles"` in that report). In this form, `select` names node IDs.
