@@ -53,6 +53,17 @@ opening a terminal. The earlier unlabeled viewers remain unchanged.
 
 Each command opens the saved hierarchy with the default two-note display minimum, initially focused on one example. Children remain nested. Press `j/k` to select, `l` to expand, and `Enter` on a mask to see its full original note. `Esc` returns to the hierarchy; `u` moves upward. Unopened siblings appear above the branch already opened. `q` exits. Omit `--start-at` to begin at the root.
 
+The current `hdbscan-hierarchy` viewer also opens full posts for the selected
+group: **N** shows all posts including descendants, **D** shows directly assigned
+posts (including ones also present in children), and **O** shows posts occurring
+in none of its children or deeper descendants. With a mask selected, these
+actions use its containing group. N/D combine the selected scope's highlights;
+O shows each original mask separately with its IDs. `[` / `]` changes masks,
+`h/l` changes posts, and `j/k` scrolls. Escape or Backspace restores the tree's
+previous selection. These actions do not alter membership or apply another
+display minimum. Previously built binaries must be rebuilt to get these keys;
+the three HR02 side-tree commands use `target/debug/hdbscan-hierarchy`.
+
 ### Manual coffee example
 
 This separate, read-only proposal was constructed from the original notes,

@@ -81,6 +81,122 @@ fn screen(model: &mut HierarchyExplorer, width: u16, height: u16) -> String {
 }
 
 #[test]
+fn group_note_scopes_show_full_posts_and_keep_outside_masks_separate() {
+    let mut hierarchy = fixture();
+    // A direct mask's post also occurs deeper in a child: D includes it, O does not.
+    let mut shared = hierarchy.vectors[&1][0].clone();
+    shared.id = "V008".into();
+    hierarchy.vectors.insert(6, vec![shared]);
+    let mut second = hierarchy.vectors[&0][0].clone();
+    second.id = "V009".into();
+    let start = second.text.find("Original context").unwrap();
+    second.byte_spans = vec![(start, start + "Original context".len())];
+    second.fragments = vec!["Original context".into()];
+    hierarchy.vectors.insert(7, vec![second]);
+    hierarchy
+        .groups
+        .get_mut(&10)
+        .unwrap()
+        .vectors
+        .extend([6, 7]);
+    hierarchy.groups.get_mut(&10).unwrap().vector_count = 8;
+    // Two masks of one post use the same complete source text.
+    for (point, fragment) in [(2, "Beach"), (3, "Shoreline")] {
+        let mask = &mut hierarchy.vectors.get_mut(&point).unwrap()[0];
+        mask.text = "Before Beach Shoreline after. Original context.".into();
+        let start = mask.text.find(fragment).unwrap();
+        mask.byte_spans = vec![(start, start + fragment.len())];
+    }
+    let mut model = HierarchyExplorer::new_note_navigation(hierarchy, Some(10)).unwrap();
+    key(&mut model, KeyCode::Char('o'));
+    let outside = screen(&mut model, 120, 30);
+    assert!(outside.contains("Notes outside children"), "{outside}");
+    assert!(outside.contains("Note 1 of 1"));
+    assert!(outside.contains("V001") && outside.contains("Mask 1 of 2"));
+    assert!(outside.contains("Before ⟦Root-only meaning⟧ after. Original context."));
+    assert!(!outside.contains("⟦Original context⟧"));
+    key(&mut model, KeyCode::Char(']'));
+    let second = screen(&mut model, 120, 30);
+    assert!(second.contains("V009") && second.contains("Mask 2 of 2"));
+    assert!(second.contains("Before Root-only meaning after. ⟦Original context⟧."));
+    key(&mut model, KeyCode::Char('d'));
+    let direct = screen(&mut model, 120, 30);
+    assert!(direct.contains("Direct notes") && direct.contains("Note 1 of 2"));
+    assert!(direct.contains("⟦Root-only meaning⟧ after. ⟦Original context⟧"));
+    key(&mut model, KeyCode::Right);
+    assert!(screen(&mut model, 120, 30).contains("Before ⟦Parent-only meaning⟧ after."));
+    key(&mut model, KeyCode::Char('n'));
+    assert!(screen(&mut model, 120, 30).contains("Note 1 of 5"));
+    key(&mut model, KeyCode::Right);
+    key(&mut model, KeyCode::Right);
+    assert!(screen(&mut model, 120, 30).contains("Before ⟦Beach⟧ ⟦Shoreline⟧ after."));
+    key(&mut model, KeyCode::Esc);
+    assert!(screen(&mut model, 120, 30).contains("Showing branch 10"));
+}
+
+#[test]
+fn group_notes_handle_empty_outside_and_leaf_membership() {
+    let mut hierarchy = fixture();
+    hierarchy.groups.get_mut(&10).unwrap().vectors.clear();
+    let mut model = HierarchyExplorer::new(hierarchy.clone(), Some(10)).unwrap();
+    key(&mut model, KeyCode::Char('o'));
+    let empty = screen(&mut model, 100, 25);
+    assert!(empty.contains("No notes outside children."), "{empty}");
+    key(&mut model, KeyCode::Right);
+    key(&mut model, KeyCode::Char(']'));
+    assert!(screen(&mut model, 100, 25).contains("No notes outside children."));
+    let mut leaf = HierarchyExplorer::new(hierarchy, Some(12)).unwrap();
+    key(&mut leaf, KeyCode::Char('o'));
+    let content = screen(&mut leaf, 100, 25);
+    assert!(content.contains("Note 1 of 1") && content.contains("Before ⟦Coffee⟧ after."));
+}
+
+#[test]
+fn outside_notes_exclude_grandchild_posts_and_preserve_alias_ids() {
+    let mut hierarchy = fixture();
+    let mut shared = hierarchy.vectors[&4][0].clone();
+    shared.id = "V010".into();
+    hierarchy.vectors.insert(6, vec![shared]);
+    hierarchy.groups.get_mut(&10).unwrap().vectors.push(6);
+    let mut alias = hierarchy.vectors[&0][0].clone();
+    alias.id = "V011".into();
+    hierarchy.vectors.get_mut(&0).unwrap().push(alias);
+    let mut model = HierarchyExplorer::new_selection(hierarchy.clone(), Some(10)).unwrap();
+    key(&mut model, KeyCode::Char('O'));
+    let outside = screen(&mut model, 100, 25);
+    assert!(outside.contains("Note 1 of 1"), "{outside}");
+    assert!(outside.contains("V001, V011") && outside.contains("Mask 1 of 1"));
+    key(&mut model, KeyCode::Char('D'));
+    assert!(screen(&mut model, 100, 25).contains("Note 1 of 2"));
+    key(&mut model, KeyCode::Char('l'));
+    assert!(screen(&mut model, 100, 25).contains("Before ⟦Office⟧ after."));
+    key(&mut model, KeyCode::Backspace);
+    // Raw view puts direct masks before children; selection view does the opposite.
+    let mut model = HierarchyExplorer::new(hierarchy, Some(10)).unwrap();
+    key(&mut model, KeyCode::Down); // root's own mask, not a group row
+    key(&mut model, KeyCode::Char('O'));
+    assert!(screen(&mut model, 100, 25).contains("Group 10"));
+}
+
+#[test]
+fn all_notes_union_overlapping_masks_and_deduplicate_shared_children() {
+    let mut hierarchy = fixture();
+    // Two routes reach the same child; all-note membership must not be doubled.
+    hierarchy.groups.get_mut(&12).unwrap().children.push(14);
+    let mut overlap = hierarchy.vectors[&0][0].clone();
+    overlap.id = "V012".into();
+    overlap.byte_spans = vec![(0, 11)];
+    overlap.fragments = vec![overlap.text[..11].into()];
+    hierarchy.vectors.insert(6, vec![overlap]);
+    hierarchy.groups.get_mut(&10).unwrap().vectors.push(6);
+    let mut model = HierarchyExplorer::new(hierarchy, Some(10)).unwrap();
+    key(&mut model, KeyCode::Char('N'));
+    let all = screen(&mut model, 100, 25);
+    assert!(all.contains("Note 1 of 5"), "{all}");
+    assert!(all.contains("⟦Before Root-only meaning⟧ after."));
+}
+
+#[test]
 fn showing_parent_preserves_nested_expansion_and_parent_only_masks() {
     let mut model = HierarchyExplorer::new(fixture(), Some(11)).unwrap();
     let initial = screen(&mut model, 100, 40);

@@ -26,7 +26,39 @@ enum Selection {
 #[derive(Clone, Copy)]
 enum Detail {
     Note(usize, usize),
+    GroupNotes,
     Help,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum NoteScope {
+    All,
+    Direct,
+    OutsideChildren,
+}
+
+impl NoteScope {
+    fn label(self) -> &'static str {
+        match self {
+            Self::All => "All notes",
+            Self::Direct => "Direct notes",
+            Self::OutsideChildren => "Notes outside children",
+        }
+    }
+}
+
+struct GroupMask {
+    point: usize,
+    alias: usize,
+    ids: Vec<String>,
+}
+
+struct GroupNoteBrowser {
+    group: usize,
+    scope: NoteScope,
+    posts: Vec<Vec<GroupMask>>,
+    note: usize,
+    mask: usize,
 }
 
 struct Row {
@@ -43,6 +75,8 @@ h/j/k/l match Left/Down/Up/Right. Up/Down selects a group or mask. Right expands
 U shows the parent of the displayed branch, preserving expansion and selection. F focuses the selected group as the displayed branch.\n\
 Ctrl-F/B or PageDown/PageUp scroll a page; Ctrl-U/D scroll half a page up/down. gg or Home moves to the beginning; G or End moves to the end. Shift-Left/Right scroll horizontally in deep branches.\n\
 Enter opens a mask's full original note with inline brackets, or toggles a selected group. Escape returns from the note or this help.";
+
+const GROUP_NOTE_CONTROLS: &str = "N opens all notes in the selected group, including descendants. D opens its directly assigned notes, even when also present in children. O opens notes present in none of its children or deeper descendants. With a mask selected, these keys use its containing group.\nN/D combine that scope's masks on each full post. O keeps masks separate with their original IDs; [ and ] switch masks. Identical masks list all IDs together. h/l or Left/Right changes posts; j/k scrolls. N/D/O switches scope; Escape or Backspace returns to the same tree selection. These views do not change or filter the saved tree.";
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum HierarchyView {
@@ -71,6 +105,7 @@ pub struct HierarchyExplorer {
     viewport: Option<(u16, u16)>,
     follow_selection: bool,
     detail: Option<Detail>,
+    group_notes: Option<GroupNoteBrowser>,
     detail_scroll: usize,
     pending_g: bool,
 }
@@ -146,6 +181,7 @@ impl HierarchyExplorer {
             viewport: None,
             follow_selection: true,
             detail: None,
+            group_notes: None,
             detail_scroll: 0,
             pending_g: false,
         })
@@ -179,6 +215,151 @@ impl HierarchyExplorer {
         match self.note_short_ids.get(&mask.note_id) {
             Some(short_id) => format!("{ids} · {}", terminal_safe(short_id)),
             None => ids,
+        }
+    }
+
+    fn show_group_notes(&mut self, scope: NoteScope) {
+        let path = match &self.selected {
+            Selection::Group(path) | Selection::Mask(path, _, _) => path,
+        };
+        let group = *path.last().unwrap();
+        if self.group_notes.as_ref().is_some_and(|notes| {
+            matches!(self.detail, Some(Detail::GroupNotes))
+                && notes.group == group
+                && notes.scope == scope
+        }) {
+            return;
+        }
+        let mut descendants = BTreeSet::new();
+        let mut visited = BTreeSet::new();
+        let mut pending = self.hierarchy.groups[&group].children.clone();
+        while let Some(id) = pending.pop() {
+            if visited.insert(id) {
+                let child = &self.hierarchy.groups[&id];
+                descendants.extend(child.vectors.iter().copied());
+                pending.extend(child.children.iter().copied());
+            }
+        }
+        let child_notes: BTreeSet<_> = descendants
+            .iter()
+            .flat_map(|point| self.hierarchy.vectors[point].iter())
+            .map(|mask| mask.note_id.as_str())
+            .collect();
+        let mut points: BTreeSet<_> = self.hierarchy.groups[&group]
+            .vectors
+            .iter()
+            .copied()
+            .collect();
+        if scope == NoteScope::All {
+            points.extend(descendants.iter().copied());
+        }
+        let mut posts = BTreeMap::<&str, BTreeMap<Vec<(usize, usize)>, GroupMask>>::new();
+        for point in points {
+            for (alias, mask) in self.hierarchy.vectors[&point].iter().enumerate() {
+                if scope == NoteScope::OutsideChildren
+                    && child_notes.contains(mask.note_id.as_str())
+                {
+                    continue;
+                }
+                let entry = posts
+                    .entry(&mask.note_id)
+                    .or_default()
+                    .entry(mask.byte_spans.clone())
+                    .or_insert_with(|| GroupMask {
+                        point,
+                        alias,
+                        ids: Vec::new(),
+                    });
+                if !entry.ids.contains(&mask.id) {
+                    entry.ids.push(mask.id.clone());
+                }
+            }
+        }
+        self.group_notes = Some(GroupNoteBrowser {
+            group,
+            scope,
+            posts: posts
+                .into_values()
+                .map(|masks| masks.into_values().collect())
+                .collect(),
+            note: 0,
+            mask: 0,
+        });
+        self.detail = Some(Detail::GroupNotes);
+        self.detail_scroll = 0;
+    }
+
+    fn group_note_content(&self) -> (String, String) {
+        let notes = self
+            .group_notes
+            .as_ref()
+            .expect("group note browser is open");
+        let title = format!(
+            "Group {}{} · {}",
+            notes.group,
+            self.run_suffix(),
+            notes.scope.label()
+        );
+        let Some(masks) = notes.posts.get(notes.note) else {
+            return (
+                title,
+                match notes.scope {
+                    NoteScope::All => "No notes in this group.",
+                    NoteScope::Direct => "No directly assigned notes.",
+                    NoteScope::OutsideChildren => "No notes outside children.",
+                }
+                .into(),
+            );
+        };
+        let selected = &masks[notes.mask];
+        let original = &self.hierarchy.vectors[&selected.point][selected.alias];
+        let post_id = self
+            .note_short_ids
+            .get(&original.note_id)
+            .map(String::as_str)
+            .unwrap_or(&original.note_id);
+        let position = format!(
+            "Note {} of {} · {}",
+            notes.note + 1,
+            notes.posts.len(),
+            terminal_safe(post_id)
+        );
+        if notes.scope == NoteScope::OutsideChildren {
+            (
+                format!(
+                    "{title}\n{position}\n{} · Mask {} of {}",
+                    terminal_safe(&selected.ids.join(", ")),
+                    notes.mask + 1,
+                    masks.len()
+                ),
+                inline_note(original),
+            )
+        } else {
+            let mut spans: Vec<_> = masks
+                .iter()
+                .flat_map(|mask| {
+                    self.hierarchy.vectors[&mask.point][mask.alias]
+                        .byte_spans
+                        .iter()
+                        .copied()
+                })
+                .collect();
+            spans.sort_unstable();
+            let mut combined: Vec<(usize, usize)> = Vec::new();
+            for (start, end) in spans {
+                if let Some(last) = combined.last_mut().filter(|last| start <= last.1) {
+                    last.1 = last.1.max(end);
+                } else {
+                    combined.push((start, end));
+                }
+            }
+            (
+                format!("{title}\n{position}"),
+                terminal_safe(&crate::sse_mask_review::highlighted_note(
+                    &original.text,
+                    &combined,
+                )),
+            )
         }
     }
 
@@ -223,10 +404,53 @@ impl HierarchyExplorer {
         if matches!(code, KeyCode::Char('q' | 'Q')) {
             return true;
         }
+        if self.detail.is_none() || matches!(self.detail, Some(Detail::GroupNotes)) {
+            let scope = match code {
+                KeyCode::Char('n' | 'N') => Some(NoteScope::All),
+                KeyCode::Char('d' | 'D') => Some(NoteScope::Direct),
+                KeyCode::Char('o' | 'O') => Some(NoteScope::OutsideChildren),
+                _ => None,
+            };
+            if let Some(scope) = scope {
+                self.show_group_notes(scope);
+                return false;
+            }
+        }
+        if matches!(self.detail, Some(Detail::GroupNotes)) {
+            let notes = self
+                .group_notes
+                .as_mut()
+                .expect("group note browser is open");
+            match code {
+                KeyCode::Left | KeyCode::Right if !notes.posts.is_empty() => {
+                    notes.note = notes
+                        .note
+                        .saturating_add_signed(if code == KeyCode::Right { 1 } else { -1 })
+                        .min(notes.posts.len() - 1);
+                    notes.mask = 0;
+                    self.detail_scroll = 0;
+                    return false;
+                }
+                KeyCode::Char('[' | ']')
+                    if notes.scope == NoteScope::OutsideChildren && !notes.posts.is_empty() =>
+                {
+                    let count = notes.posts[notes.note].len();
+                    notes.mask = if code == KeyCode::Char(']') {
+                        (notes.mask + 1) % count
+                    } else {
+                        (notes.mask + count - 1) % count
+                    };
+                    self.detail_scroll = 0;
+                    return false;
+                }
+                _ => {}
+            }
+        }
         if self.detail.is_some() {
             match code {
-                KeyCode::Esc => {
+                KeyCode::Esc | KeyCode::Backspace => {
                     self.detail = None;
+                    self.group_notes = None;
                     self.follow_selection = true;
                 }
                 KeyCode::Up => self.scroll_by(-1),
@@ -582,7 +806,7 @@ impl HierarchyExplorer {
             HELP_COUNTS
         };
         format!(
-            "{intro}\n\n{counts}\n\n{minimum}{masks}\n{HELP_CONTROLS}\n\n{decisions}{comparison} Nothing is written to the source files or review sessions. Q or Ctrl-C exits."
+            "{intro}\n\n{counts}\n\n{minimum}{masks}\n{HELP_CONTROLS}\n\n{GROUP_NOTE_CONTROLS}\n\n{decisions}{comparison} Nothing is written to the source files or review sessions. Q or Ctrl-C exits."
         )
     }
 
@@ -602,6 +826,7 @@ impl HierarchyExplorer {
         }
         let detail = self.detail.map(|detail| {
             let (mut title, content) = match detail {
+                Detail::GroupNotes => self.group_note_content(),
                 Detail::Help => (
                     if self.view == HierarchyView::Selection {
                         "HDBv2 selection help · proposal · read-only".to_owned()
@@ -636,20 +861,22 @@ impl HierarchyExplorer {
             if self.show_parent_masks == Some(true) {
                 title.push_str("\nAll parent masks shown in hierarchy");
             }
-            let title = if matches!(
-                self.view,
-                HierarchyView::Infomap | HierarchyView::Containment
-            ) {
+            let title = if matches!(detail, Detail::GroupNotes)
+                || matches!(
+                    self.view,
+                    HierarchyView::Infomap | HierarchyView::Containment
+                ) {
                 wrap_text(&title, usize::from(area.width)).join("\n")
             } else {
                 title
             };
             (title, content)
         });
-        let title_height = if matches!(
-            self.view,
-            HierarchyView::Infomap | HierarchyView::Containment
-        ) {
+        let title_height = if matches!(self.detail, Some(Detail::GroupNotes))
+            || matches!(
+                self.view,
+                HierarchyView::Infomap | HierarchyView::Containment
+            ) {
             detail.as_ref().map_or(2, |(title, _)| {
                 title
                     .lines()
@@ -689,7 +916,11 @@ impl HierarchyExplorer {
             );
             frame.render_widget(
                 Paragraph::new(
-                    "j/k ↑/↓ Scroll  Ctrl-F/B Page  gg/G Top/end\nEsc Return to hierarchy  Q Quit",
+                    if matches!(self.detail, Some(Detail::GroupNotes)) {
+                        "h/l Post  j/k Scroll  [/] Mask\nN All  D Direct  O Outside children\nEsc/Backspace Tree  Q Quit"
+                    } else {
+                        "j/k ↑/↓ Scroll  Ctrl-F/B Page  gg/G Top/end\nEsc Return to hierarchy  Q Quit"
+                    },
                 )
                 .style(secondary_style()),
                 areas[2],
@@ -820,7 +1051,7 @@ impl HierarchyExplorer {
             Some(false) => "  a Show parent masks",
             None => "",
         };
-        frame.render_widget(Paragraph::new(format!("j/k ↑/↓ Select  h/l ←/→ Collapse/expand  PgUp/PgDn Scroll\nU Show parent  F Focus group  {enter}\ngg/G Top/end  ? Help  Q Quit{parent_masks}")).style(secondary_style()), areas[2]);
+        frame.render_widget(Paragraph::new(format!("j/k ↑/↓ Select  h/l ←/→ Collapse/expand  PgUp/PgDn Scroll\nU Show parent  F Focus group  {enter}\nN All notes  D Direct  O Outside children  ? Help  Q Quit{parent_masks}")).style(secondary_style()), areas[2]);
     }
 }
 
