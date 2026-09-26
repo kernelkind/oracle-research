@@ -1,0 +1,8 @@
+A and B are titles of subject categories derived from social media posts. Does the entire topic named by B fall within the topic named by A, either as a subtopic or as the same topic?
+
+Return only JSON with:
+- "contains": "yes", "no", or "uncertain".
+- "reason": one short sentence explaining the decision.
+
+A: {A_TITLE}
+B: {B_TITLE}

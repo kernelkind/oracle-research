@@ -290,6 +290,20 @@ bill, and catalog estimates do not establish subscription quota consumption.
 This small selected comparison does not establish model-wide accuracy,
 repeatability or graph quality. The 16,512-direction run remains unapproved.
 
+**NSP-Luna-v1 — Luna-only draft, untested:** the user requested a minimal
+topic-containment clarification, explicitly separate from Astra's prompt.
+[NSP-Luna-v1](../node-subsumption-prompt-luna-v1/prompt.txt) is for
+`gpt-6-luna` / `max` only; do not use it for Astra. NSPv3 remains unchanged.
+The shared revision tool changes only the question to ask whether the entire
+topic named by B falls within the topic named by A, as a subtopic or the same
+topic. Social-media context, output format and title placeholders are unchanged.
+The revision receipt preserves the NSPv3 baseline hash and exact edit.
+Following the official [prompting guidance](https://developers.openai.com/api/docs/guides/prompt-engineering),
+the draft states the intended relation directly, with no additional examples
+or reasoning procedure. This is a wording hypothesis, not evidence of improved
+accuracy. Review the full NSPv3-to-NSP-Luna-v1 delta before approving inference;
+no experiment, model routing or hierarchy is changed by preparing this draft.
+
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
 Both batches retain original pre-merge node IDs, exact title inputs, expectations,

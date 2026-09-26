@@ -96,6 +96,10 @@ Runner-reported output tokens (including reasoning) were 1,177 versus Astra's
 counts were unchanged at 562 and 184 respectively. Catalog estimates were
 about 34x and 18x cheaper for Luna on these batches, not 100x cheaper per call.
 These are subscription runs, not paid invoices or measured quota ratios.
+The user requested a Luna-only wording draft clarifying topic containment.
+[NSP-Luna-v1](../../sse_multivector/node-subsumption-prompt-luna-v1/prompt.txt)
+is prepared for review, not approved for inference or adopted. It is scoped to
+`gpt-6-luna` / `max`; do not use it for Astra. Astra retains unchanged NSPv3.
 No hierarchy was rebuilt. A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
 and graph construction remain unapproved. Scalable relationship inference and
