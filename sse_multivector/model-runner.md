@@ -517,16 +517,26 @@ production preparation and decoding functions:
   The shared prominence UI exposes every mask and separate agent assessments;
   exhaustive coverage of this one post does not establish calibrated scores.
 
-  [PPv15](prominence-prompt-goal-v1/ppv15-draft-v1/PPv15.md) is a draft against
-  the last-approved PPv14, awaiting review and untested. It replaces PPv14's
+  [PPv15](prominence-prompt-goal-v1/ppv15-draft-v1/PPv15.md) is approved for testing
+  and tested experimentally, not production-frozen. Based on PPv14, it replaces its
   topic-focused guidance with the selected meaning's role in the particular
   message and the effect of what the mask leaves unspecified. Equivalent
   meanings within the same post should receive similar scores regardless of
   word count or grammatical completeness. The definition, URL/identifier
   exclusion, scoring range and input/output contract remain unchanged. No
-  examples or numerical anchors were added. The proposed next step is a manual
-  walkthrough of the tea, warning, health-concern and compact-roasting cases;
-  drafting does not authorize inference or promote PPv15 over PPv14.
+  examples or numerical anchors were added. Following the manual walkthrough,
+  the user authorized the small contrast test: `experiments/ppv15-tea-contrasts-v1`
+  (eight masks), `experiments/ppv15-warning-health-v1` (six), and
+  `experiments/ppv15-roasting-contrasts-v1` (two). All 16 Astra-low subscription
+  calls returned valid scores, with no retries, reused answers or baseline calls.
+  Warning and health comparisons favored the meaning motivating the message;
+  compact and complete central roasting sentences scored similarly. The tea
+  comparison did not show the agreed substantial loss when omitting the speaker.
+  Agent assessments are recorded separately through the shared review command.
+  These single trials check relative ordering, not calibrated percentages or
+  repeatability. PPv15 and its predecessors remain unchanged; no prompt revision
+  or further inference was performed. The next proposed focus is missing
+  information in the tea comparison, not production promotion.
 
   Alternatively, `path` may point to a saved title experiment's `report.json`
   (`adapter: "titles"` in that report). In this form, `select` names node IDs.
