@@ -819,10 +819,25 @@ production preparation and decoding functions:
   no missing meaning; M394 (fragmented lunch-packing statement) scored 98,
   omitting only "just" and the effort/strain emoji; M2033 (the detailed
   linoleic-acid claim) scored 92, identifying "Horrifying" as the missing
-  author judgment. The agent accepted the first two and marked the third
-  uncertain pending user judgment about that reaction's weight. This assesses
-  representation of the health claim, not its medical accuracy. No user
-  approval or general score calibration is inferred; PPv24 is unchanged.
+  author judgment. The agent accepted the first two and initially marked the
+  third uncertain. The user subsequently rejected 92 as too high, judging
+  "Horrifying" worth substantially more than the remaining eight points; no
+  replacement percentage was specified. This assesses representation of the
+  health claim, not its medical accuracy. PPv24 is unchanged.
+
+  [PPv24-D1](prominence-prompt-goal-v1/ppv24-diagnostic-v1/PPv24-D1.md) is a
+  tested diagnostic-only variant against PPv24. It assesses a supplied saved
+  response without rescoring or claiming access to original hidden reasoning.
+  `experiments/ppv24-diagnostic-v1` made one valid Astra-low subscription call,
+  with no retry or reuse. The input includes M2033 and its saved response but
+  excludes the user's judgment. It supported 92, describing the claim as
+  "nearly all of the substantive message" and the omitted reaction as
+  "meaningful negative framing". This is a fresh score-conditioned assessment,
+  not proof of the original cause; anchoring remains possible. It suggests
+  examining factual versus evaluative weighting. PPv24 explicitly asks how the
+  complete post supports represented meaning, but does not apply that same
+  question to missing meaning. That asymmetry is a candidate to examine, not
+  an established cause or authorization to edit the scoring prompt.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
