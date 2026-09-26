@@ -927,9 +927,12 @@ production preparation and decoding functions:
   parent's overwhelming relief. One Astra-low subscription call, without masks
   or suggested scores, allocated 60 to the scan result, 18 to the treatment
   duration, and 22 to relief. The total is 100; no retries, reuse, or baseline
-  reruns occurred. The agent marked the result uncertain; no user judgment has
-  been recorded. Two posts do not establish systematic reaction underweighting
-  or calibrated percentages. No prompt changed for this test.
+  reruns occurred. The agent initially marked the result uncertain. After
+  reviewing the complete post and allocation, the user accepted 60/18/22 as
+  reasonable; this is recorded separately as a user acceptance in the runner.
+  The earlier 85/15 allocation remains unresolved. Two posts do not establish
+  systematic reaction underweighting or calibrated percentages. No prompt
+  changed for this test.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
