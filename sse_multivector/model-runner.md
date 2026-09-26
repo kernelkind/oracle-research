@@ -863,8 +863,17 @@ production preparation and decoding functions:
   rerun occurred; the claim-only score of 92 remains saved evidence. The agent
   marked this diagnostic uncertain: the user has not judged reaction-only
   coverage, and a low standalone score does not settle the loss from omitting
-  that reaction from a near-complete mask. No assumption that the two masks
-  form additive semantic partitions is introduced. PPv25 is unchanged.
+  that reaction from a near-complete mask. The user subsequently clarified
+  that prominence allocates a fixed 100 points among parts of the complete
+  post's meaning. Represented and missing shares must exhaust that budget;
+  importance is assessed within the complete post, not in isolation. This
+  supersedes the agent's proposed non-additive interpretation, without
+  establishing replacement scores for either mask. PPv25 is unchanged.
+
+  [PPv26](prominence-prompt-goal-v1/ppv26-draft-v1/PPv26.md) is an untested
+  draft against approved PPv25. It makes the fixed-budget allocation explicit
+  while retaining the class interpretation and output contract. No inference
+  was performed for this revision; scoring consistency remains untested.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
