@@ -48,10 +48,17 @@ The user subsequently approved the simplified
 Eight Astra-low subscription calls checked both directions: all outputs were
 valid and matched pre-run agent expectations, versus four of the saved TRUE
 answers. This selected smoke test does not establish general accuracy or a
-validated hierarchy. No hierarchy was rebuilt. A full comparison would retain
-the 129 original titles before TRUE merges and existing construction rules;
-further inference and graph construction remain unapproved. Scalable
-relationship inference and downstream validation gates remain unresolved.
+validated hierarchy. The user then approved eight further calls on real HR02
+nodes, with judgments retained for reuse in the diagnostic. All were valid;
+six matched pre-run agent expectations. Both coffee shop / coffeechain answers
+assumed coffeechain meant a chain of coffee businesses; their justifications
+are rejected in agent review and the intended title-only boundary remains
+unresolved. No answer used the available `uncertain` option. The prompt,
+settings and hierarchy are unchanged; neither batch reran earlier calls.
+No hierarchy was rebuilt. A full comparison would retain the 129 original
+titles before TRUE merges and existing construction rules; further inference
+and graph construction remain unapproved. Scalable relationship inference and
+downstream validation gates remain unresolved.
 Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
 hierarchy or title correction. Its prompt and validation are not complete.

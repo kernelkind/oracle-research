@@ -168,7 +168,7 @@ eight subscription calls: eight valid outputs, no retries or reuse. All eight
 matched the agent expectations recorded before inference; the corresponding
 saved TRUE answers matched four. These deliberately selected failures and one
 working control do not estimate general accuracy. No uncertainty answers
-occurred, so uncertainty handling is still untested.
+occurred in that first batch.
 
 The pairs were Food and drink / Bread, nostr / Food and drink, coffee / Coffee,
 and Amusement / Having a good day. All titles exactly match original HR02
@@ -180,6 +180,29 @@ evidence. TRUE and NSPv1 were not run. The experiment and receipts are in
 model and output contract. Agent assessments are saved through the runner,
 separately from user judgments. NSPv1 remains an untested, rejected draft kept
 as NSPv2's revision source, not a current candidate.
+
+The user approved a second four-pair batch only on the condition that its
+judgments be reusable in the eventual diagnostic hierarchy. Unchanged NSPv2 /
+Astra low completed eight new subscription calls, all structurally valid, with
+no retries or reuse. Cooking / Food and cooking, Animals / Dogs, and Music /
+Festive gatherings matched all six pre-run agent expectations; saved TRUE
+matched four of those six. These are selected cases, not an accuracy estimate.
+For coffee shop / coffeechain, both pre-run expectations were unresolved. Astra
+answered Yes / No by interpreting coffeechain as a chain of coffee businesses.
+The source node instead contains `#coffeechain` / `coffeechain` masks. Both
+justifications are rejected in agent review; the reverse No is not counted as
+verified correct merely because it may be a defensible link decision. No model
+answer used `uncertain`, so offering that option did not prevent an unsupported
+interpretation. The intended title-only boundary remains unresolved.
+
+The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
+reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
+Both batches retain original pre-merge node IDs, exact title inputs, expectations,
+receipts and separate agent assessments. Matching requests can be reused by the
+shared runner; rejected judgments are not validated graph links, and no frontier
+result adapter has been added to the hierarchy builder. No baseline calls,
+prompt changes, TRUE calls or hierarchy construction were performed. The small,
+diverse-case test follows the official [evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices#example-qa-over-docs).
 
 No hierarchy was rebuilt. A full comparison would start with the same 129
 original titled nodes, not the 116 nodes produced by TRUE's merges, and retain
@@ -240,7 +263,7 @@ target/infomap-review-build/debug/sse-subject-navigation \
 ```
 
 The user reviewed HR02 and found it promising, but TRUE's relationship
-judgments were not good enough to validate the hierarchy. The NSPv2 pilot
+judgments were not good enough to validate the hierarchy. The two NSPv2 batches
 above did not rebuild it; the full frontier diagnostic remains pending.
 Opening a leaf with `l`, Right or Enter now shows its notes immediately,
 including when equal-note collapse leaves no displayed children. Escape or
@@ -708,7 +731,7 @@ HR02 has now completed TRUE inference and merged naming through the construction
 path above and its browser package is ready. The user reviewed it and found it
 promising, but TRUE's relationship judgments were not good enough to validate
 the hierarchy. A frontier-call replacement is planned as a diagnostic of the
-other stages. The eight-answer NSPv2 pilot above has not rebuilt the hierarchy.
+other stages. The two eight-answer NSPv2 batches above have not rebuilt the hierarchy.
 Reprocessing the older HRv1 comparison under HD06 is still pending. No title,
 relation, membership or saved artifact was changed to implement this navigation
 rule.

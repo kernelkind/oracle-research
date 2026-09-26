@@ -134,8 +134,9 @@ directed pairs, reusing verified identical inputs. The provisional graph has
 v38/Astra low. The historical HRv1 path remains on v21. HR02 was generated
 and reviewed: promising, but TRUE's relationship decisions prevent validation.
 A frontier call in place of TRUE is the next diagnostic to test the other
-stages; it is not a production choice. An eight-answer NSPv2 pilot is complete,
-but no revised hierarchy has been built. Node 02 remains in progress, while
+stages; it is not a production choice. Two eight-answer NSPv2 batches are complete;
+the second exposed an unsupported interpretation of coffeechain. No revised
+hierarchy has been built. Node 02 remains in progress, while
 its 23 and 25 prerequisites are satisfied. Additional rows expose remaining
 construction work.
 This second 100-post experiment is **HR02**: generate a hierarchy the user is
