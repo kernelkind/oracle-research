@@ -39,7 +39,8 @@ def export(canonical_path, graph_path, memberships_path, source_path, mapping_pa
     return spec
 
 
-def render_categories(graph, memberships, source_path, mapping_path, *, hierarchy_id):
+def render_categories(graph, memberships, source_path, mapping_path, *, hierarchy_id,
+                      connection_description='Saved native TRUE connections; not manually corrected.'):
     """Render a caller-validated DAG and memberships for the existing browser.
 
     Native export validates against raw TRUE answers. Reversible-merge export
@@ -95,7 +96,7 @@ def render_categories(graph, memberships, source_path, mapping_path, *, hierarch
         parent_names = ', '.join(f'{by_id[p]["title"]} [{p}]' for p in parents[key])
         nodes.append(dict(node_id=key, label=node['title'], children=children[key],
             note_ids=sorted(short_ids[n] for n in node['own_note_ids']),
-            analysis=f'Saved native TRUE connections; not manually corrected. '
+            analysis=f'{connection_description} '
                      f'{node["own_note_count"]} notes directly represented; '
                      f'{node["recursive_note_count"]} including descendants. '
                      f'Parent categories: {parent_names or "none (shown under All notes)"}.'))

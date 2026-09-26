@@ -161,7 +161,15 @@ under Festive gatherings, rejected the reverse, and rejected both directions
 between the two food-topic titles. These are not user-approved relationships.
 All 13 calls were valid without retries, reuse or baseline calls; native charge
 was $0.000206136. No prompt or hierarchy change followed. Comparing Luna on
-this sample is suggested, not yet authorized.
+this sample was suggested but not run. The user subsequently accepted Jev's
+No for Food and drink containing Fasting, correcting the agent's expected
+boundary. With that human correction all nine scored judgments are accepted;
+four scope ambiguities remain unresolved. The user approved instead a small
+connected Jev section in the existing hierarchy UI: nine original food/cooking,
+cuisine and bread nodes, all 72 directed pairs, unchanged NSP-Jev-v1 and no
+membership expansion. Every selected node is retained; this is a selected
+diagnostic, not the complete food hierarchy or a full HR02 run. Cycles are
+reported without silently deleting links or merging nodes.
 No hierarchy was rebuilt. A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
 and graph construction remain unapproved. Scalable relationship inference and

@@ -102,6 +102,9 @@ Use `reasoning: "provider-default"`; output caps and chat debug settings are
 unsupported. Optional `schema` validates the returned answers locally, not on
 the wire. `output` contains the native answers, including probabilities and
 confidence; `raw_text` is their JSON serialization, not generated prose.
+Cross-run reuse recovers the local schema from the saved source runner config
+and checks it against the immutable receipt hash; no schema is invented from
+the schema-free System One wire body. Preserve the source config with receipts.
 `raw_response` preserves the response body, with local credentials redacted.
 Native billing stays in `response_metadata.usage.cost`; the experiment report
 separately totals `provider_reported_cost_usd`, reporting null if any attempted

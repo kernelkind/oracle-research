@@ -506,7 +506,25 @@ All 13 calls validated, with no retries, reuse or baseline/Astra/Luna calls.
 Runner totals: 4,908 input tokens, 520 output tokens, provider-reported charge
 $0.000206136; every receipt includes billing. The suggested next step is comparing unchanged NSP-Luna-v3
 on these same inputs before changing either prompt; that inference is not
-authorized by this completed Jev test.
+authorized by this completed Jev test. The user then explicitly accepted No
+for Food and drink containing Fasting. The user review and superseding agent
+assessment are recorded separately; the original pre-run expectation remains
+as history. Under that corrected boundary all nine scored decisions are
+accepted, with the other four judgments still unresolved.
+
+**Jev connected-section diagnostic — approved:** the user chose to inspect
+a small connected section in the existing hierarchy UI rather than run the
+suggested Luna comparison. `decision_hierarchy.py prepare` takes an explicit
+list of original node IDs, retains their exact titles and masks, and generates
+every directed pair for the shared experiment runner. `package` revalidates
+experiment receipts and exact titles before reusing the existing graph
+analysis, note memberships and individual-mask renderer. It accepts only
+native Yes choices as edges, preserving No/Uncertain decisions and all
+probabilities; it does not fabricate TRUE scores. Cycles and rejected-but-
+reachable pairs remain diagnostic data. A cycle blocks DAG browser export
+instead of invoking an unapproved repair or merge. There is no new title
+generation or membership expansion. On a DAG, transitive reduction preserves
+reachability. The default browser package retains every selected node.
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
 reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).

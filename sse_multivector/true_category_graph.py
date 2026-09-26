@@ -144,8 +144,29 @@ def build_graph(titles, scores, threshold=THRESHOLD, *, decision_rule='cutoff'):
     inputs = prepare_inputs(titles)
     rows = _validated_scores(inputs, scores)
     nodes = titles['groups']
-    ids = [node['group'] for node in nodes]
     field = 'threshold_predicted' if decision_rule == 'cutoff' else 'predicted'
+    result = graph_from_decisions(nodes, rows, field=field)
+    result.update(threshold=THRESHOLD, threshold_rule='entailment_score > 0.142')
+    if decision_rule == 'native':
+        result.update(decision_rule='native', edge_rule='predicted is True',
+                      threshold=None, threshold_rule=None)
+    return result
+
+
+def graph_from_decisions(nodes, rows, *, field='predicted'):
+    """Analyze complete directed decisions without model-specific scoring rules.
+
+    Callers validate their model receipts first. Keep all nodes, raw decisions,
+    cycles, and rejected-but-reachable pairs; reduce only acyclic graphs.
+    """
+    ids = [node['group'] for node in nodes]
+    if not ids or len(set(ids)) != len(ids):
+        raise ValueError('unique nonempty node inventory required')
+    pairs = [(row['a_id'], row['b_id']) for row in rows]
+    if len(set(pairs)) != len(pairs) or set(pairs) != {(a,b) for a in ids for b in ids if a != b}:
+        raise ValueError('complete unique ordered pair decisions required')
+    if any(row.get(field) is not None and type(row[field]) is not bool for row in rows):
+        raise ValueError('decisions must be True, False or None')
     raw_edges = [row for row in rows if row[field] is True]
     adjacency = {key: set() for key in ids}
     parents = {key: set() for key in ids}
@@ -192,7 +213,6 @@ def build_graph(titles, scores, threshold=THRESHOLD, *, decision_rule='cutoff'):
     reachable_rejected = [row for row in rows if row[field] is False
                           and row['b_id'] in reachable[row['a_id']]]
     result = dict(
-        threshold=THRESHOLD, threshold_rule='entailment_score > 0.142',
         nodes=nodes, raw_edges=raw_edges, roots=roots,
         strongly_connected_components=components, cycle_components=cycle_components,
         cycle_edges=cycle_edges, mutual_acceptance=mutual,
@@ -206,7 +226,4 @@ def build_graph(titles, scores, threshold=THRESHOLD, *, decision_rule='cutoff'):
                    mutual_acceptance=len(mutual), native_unresolved=len(unresolved),
                    reachable_rejected_pairs=len(reachable_rejected),
                    transitive_reduced_edges=None if reduced is None else len(reduced)))
-    if decision_rule == 'native':
-        result.update(decision_rule='native', edge_rule='predicted is True',
-                      threshold=None, threshold_rule=None)
     return deepcopy(result)

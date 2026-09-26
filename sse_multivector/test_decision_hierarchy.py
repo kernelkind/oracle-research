@@ -1,0 +1,85 @@
+"""Native decision reports reuse graph analysis and the existing mask browser."""
+from copy import deepcopy
+import json
+from pathlib import Path
+import tempfile
+import unittest
+
+from decision_hierarchy import make_cases, graph_from_report, package_view, PROMPT
+from experiment_inputs import render
+from test_true_graph_categories import fixture
+
+
+def decision_report(titles, accepted=(), uncertain=()):
+    cases = make_cases(titles)
+    for case in cases:
+        pair = case['evidence']['original_a_id'], case['evidence']['original_b_id']
+        choice = 'yes' if pair in accepted else 'uncertain' if pair in uncertain else 'no'
+        case.update(status='valid', receipt={'record_sha256': 'fixture'},
+                    prompt=render(PROMPT.read_text(), case['inputs']),
+                    parsed={'contains': {'type': 'choice', 'choice': choice}})
+    return dict(prompt_id='NSP-Jev-v1', settings=dict(provider='openrouter', model='typesafe/jev-1.13',
+                reasoning_effort='provider-default'), cases=cases)
+
+
+class DecisionHierarchyTests(unittest.TestCase):
+    def test_complete_pairs_and_reduction_retain_disconnected_node(self):
+        titles = fixture()['canonical']['titles']
+        report = decision_report(titles, [('A','B'), ('B','C'), ('A','C')], [('D','A')])
+        graph = graph_from_report(titles, report)
+        self.assertEqual(len(report['cases']), 12)
+        self.assertEqual(graph['roots'], ['A', 'D'])
+        self.assertEqual([(e['a_id'], e['b_id']) for e in graph['transitive_reduced_edges']], [('A','B'), ('B','C')])
+        self.assertEqual(graph['stats']['native_unresolved'], 1)
+        self.assertNotIn('threshold', graph)
+        self.assertTrue(all('receipt' in e for e in graph['raw_edges']))
+
+    def test_incomplete_changed_or_unvalidated_answers_are_rejected(self):
+        titles = fixture()['canonical']['titles']
+        for kind in ['missing', 'duplicate', 'input', 'prompt', 'status', 'receipt', 'choice', 'model']:
+            report = decision_report(titles)
+            if kind == 'missing': report['cases'].pop()
+            elif kind == 'duplicate': report['cases'].append(deepcopy(report['cases'][0]))
+            elif kind == 'input': report['cases'][0]['inputs']['A_TITLE'] = 'Changed'
+            elif kind == 'prompt': report['cases'][0]['prompt'] += 'Changed'
+            elif kind == 'status': report['cases'][0]['status'] = 'failed'
+            elif kind == 'receipt': report['cases'][0].pop('receipt')
+            elif kind == 'choice': report['cases'][0]['parsed']['contains']['choice'] = 'maybe'
+            else: report['settings']['model'] = 'different'
+            with self.subTest(kind=kind), self.assertRaises(ValueError):
+                graph_from_report(titles, report)
+
+    def test_cycles_and_transitive_rejections_remain_diagnostics(self):
+        titles = fixture()['canonical']['titles']
+        graph = graph_from_report(titles, decision_report(titles, [('A','B'), ('B','C'), ('C','A')]))
+        self.assertEqual(graph['cycle_components'], [['A','B','C']])
+        self.assertIsNone(graph['transitive_reduced_edges'])
+        self.assertEqual(len(graph['nodes']), 4)
+        self.assertEqual(len(graph['reachable_rejected_pairs']), 3)
+
+    def test_identical_titles_do_not_merge_or_drop_nodes(self):
+        titles = fixture()['canonical']['titles']
+        titles['groups'][1]['title'] = titles['groups'][0]['title']
+        graph = graph_from_report(titles, decision_report(titles, [('A','B'), ('B','A')]))
+        self.assertEqual(len(graph['nodes']), 4)
+        self.assertEqual(graph['cycle_components'], [['A','B']])
+
+    def test_existing_browser_retains_all_nodes_and_exact_individual_masks(self):
+        values = fixture()
+        titles = values['canonical']['titles']
+        report = decision_report(titles, [('A','C'), ('C','D'), ('A','D')])
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for key in ['source', 'mapping']:
+                (root / (key+'.json')).write_text(json.dumps(values[key]))
+            spec = package_view(titles, values['canonical']['source_packets'], report,
+                                root/'source.json', root/'mapping.json', root/'view')
+            self.assertEqual({n['node_id'] for n in spec['nodes']}, {'root','A','B','C','D'})
+            self.assertTrue(all('Jev' in n['analysis'] for n in spec['nodes'] if n['node_id'] != 'root'))
+            self.assertIn('mask_instances', spec)
+            cycle = decision_report(titles, [('A','B'), ('B','A')])
+            with self.assertRaisesRegex(ValueError, 'cycle'):
+                package_view(titles, values['canonical']['source_packets'], cycle,
+                             root/'source.json', root/'mapping.json', root/'cycle')
+            self.assertTrue((root/'cycle/graph.json').exists())
+            self.assertFalse((root/'cycle/categories.json').exists())

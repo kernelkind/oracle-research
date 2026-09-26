@@ -2047,6 +2047,11 @@ def _read_request_source(reference: object, request_key: str) -> dict[str, Any]:
         schema = ((body.get("text") or {}).get("format", {}).get("schema")
                   if manifest["provider"] == "openai-codex" else
                   (body.get("response_format") or {}).get("json_schema", {}).get("schema"))
+        if manifest["provider"] == "openrouter" and manifest["model"] == "typesafe/jev-1.13":
+            # System One schemas validate locally, so none is sent on the wire.
+            # Recover its original property order; immutable receipt hashes below
+            # still reject a changed schema instead of trusting the config file.
+            schema = _load_json(Path(manifest["config_path"]), "source config").get("output_schema")
         prompt = next(p for p in manifest["prompts"] if p["prompt_id"] == record["note_id"])
         config = PromptRunnerConfig(
             config_path=Path(manifest["config_path"]),

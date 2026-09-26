@@ -1186,6 +1186,30 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(usage["attempts_without_provider_cost"], 0)
         self.assertIsNone(usage["catalog_cost_estimate_usd"])
 
+    def test_systemone_reuse_verifies_local_schema_without_wire_schema(self):
+        self.prompt.write_text('{"state":"{POST}","questions":{"x":{"type":"noul","instructions":"Food?"}}}')
+        self.write('cases.json', {'cases':[{'id':'one','inputs':{'POST':'Tea'}}]})
+        spec = json.loads(self.spec.read_text())
+        spec['runner'].update(provider='openrouter', model='typesafe/jev-1.13', reasoning_effort='provider-default',
+                              output_schema={'type':'object','required':['x']})
+        self.write('spec.json', spec)
+        self.prepare()
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE':'{"x":{"type":"noul","noul":0.9}}',
+            'FAKE_RUNNER_RESULT_OVERRIDE': json.dumps({'request': {
+                'url':'http://127.0.0.1:18743/openrouter/api/v1/systemone',
+                'body':{'model':'typesafe/jev-1.13', 'state':'Tea',
+                        'questions':{'x':{'type':'noul','instructions':'Food?'}}}}})})
+        before = len(self.calls())
+        self.cli('prepare', 'E2', '--from', 'E1')
+        self.cli('run', 'E2')
+        self.assertEqual(len(self.calls()), before)
+        self.assertEqual(self.show('E2')['summary']['reused'], 1)
+        saved = json.loads((self.root/'E1/runner-config.json').read_text())
+        saved['output_schema'] = {'type':'object','required':['changed']}
+        self.write('E1/runner-config.json', saved)
+        failed = self.cli('prepare', 'E3', '--from', 'E2', ok=False)
+        self.assertIn('cannot verify request history source', failed.stderr)
+
     def test_systemone_wire_receipt_binds_exact_state_questions_and_local_schema(self):
         import copy
         from types import SimpleNamespace
