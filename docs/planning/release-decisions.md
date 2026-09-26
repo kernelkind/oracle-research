@@ -137,6 +137,19 @@ changed to Yes with a consistent reverse No explanation. The two hashtag
 directions remain Uncertain/No with unresolved or unsupported business-chain
 reasoning. This is a single-draw improvement on reused cases, not general
 validation. No harder-pair tests or connected-hierarchy work were performed.
+The user then approved testing `typesafe/jev-1.13` through OpenRouter and
+adding its separate System One transport to the shared runner. 
+[NSP-Jev-v1](../../sse_multivector/node-subsumption-prompt-jev-v1/prompt.txt)
+preserves NSP-Luna-v3's containment question and exact title inputs, replacing
+generated JSON/reasons with native Yes/No/Uncertain Choice answers. It is
+tested, not frozen or adopted. Twenty new calls completed with valid receipts,
+no retries, reuse or baseline calls. Jev matched 17/18 previously recorded
+clear expectations, versus saved Luna's 18/18; it rejected Psychology and
+philosophy containing Psychological distress. Both hashtag directions were
+No but remain unscored because their expectations are unresolved. Jev does
+not explain its decisions; probability values do not establish calibration
+or identify its interpretation of a title. The sample is reused and small.
+The original prompts, hierarchy and construction rules remain unchanged.
 No hierarchy was rebuilt. A full comparison would retain the 129 original
 titles before TRUE merges and existing construction rules; further inference
 and graph construction remain unapproved. Scalable relationship inference and

@@ -82,6 +82,38 @@ Optional fields:
   `false`. Omit it for ordinary calls. Enabling it requests OpenRouter's upstream
   request echo and records a bounded event timeline; it changes no model settings.
 
+### Jev / System One
+
+`typesafe/jev-1.13` uses OpenRouter's `/api/v1/systemone` endpoint, not chat
+completions. The shared runner implements this non-streaming transport directly
+because the pinned pi-ai SDK has no System One transport. It still uses the
+same local credential service, request identity, experiment workflow, and
+single-attempt receipts. There is no upstream credential fallback or redirect.
+
+For this model, `prompt` must be a JSON-encoded object containing exactly
+`state` and `questions`, using the [System One request format](https://openrouter.ai/docs/guides/community/typesafe-sdk).
+No model ID belongs inside that object; the caller's `model` setting supplies it.
+Each question has `type`, `instructions` and, when applicable, `criteria`.
+Choice supports up to 255 named options; Noul returns a yes probability; Score
+uses 2–10 ordered levels. Multiple questions may share one state. This is a
+general interface, not restricted to hierarchy comparisons.
+
+Use `reasoning: "provider-default"`; output caps and chat debug settings are
+unsupported. Optional `schema` validates the returned answers locally, not on
+the wire. `output` contains the native answers, including probabilities and
+confidence; `raw_text` is their JSON serialization, not generated prose.
+`raw_response` preserves the response body, with local credentials redacted.
+Native billing stays in `response_metadata.usage.cost`; the experiment report
+separately totals `provider_reported_cost_usd`, reporting null if any attempted
+call lacks a charge. It does not relabel native charges as catalog estimates.
+
+The normal generic adapter can render a JSON prompt template. Its substitutions
+are literal, not JSON-escaped: check that each rendered prompt parses and retains
+the exact state values before sending. Programmatic callers should serialize
+their complete state/questions object using a JSON serializer.
+NSP-Jev-v1 uses this interface for the approved 20-case comparison; it does not
+replace the Luna-only or Astra prompts.
+
 Unknown fields, models, reasoning settings, and unsupported transports fail
 explicitly. The pinned pi-ai catalog supplies model metadata; OpenRouter entries
 using `openai-completions` are supported. Other catalog transports are not silently
@@ -195,7 +227,7 @@ detailed calculation. Other paid work still needs explicit spending approval,
 but not a provider-enforced cap. Ledger accounting and the lifetime ceiling always apply.
 Timeouts and output-token caps are not monetary hard caps.
 
-Each call has one user message, empty application-supplied system instructions,
+Each chat call has one user message, empty application-supplied system instructions,
 and no tools, history, AGENTS.md, skills, environment context, or added instruction
 sentence. The model's response does not trigger tools or additional calls.
 The runner makes no automatic retries, response repair, or model substitution.
@@ -238,6 +270,7 @@ nix shell nixpkgs#nodejs_24 --command npm ci --ignore-scripts --no-audit --no-fu
 ```
 
 The SDK is pinned to pi-ai 0.85.1 in [package-lock.json](frontier_runner/package-lock.json).
+Jev's separate System One transport does not pass through that SDK.
 
 ## Prompt experiments: one supported workflow
 
