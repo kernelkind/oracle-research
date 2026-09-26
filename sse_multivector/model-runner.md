@@ -870,10 +870,18 @@ production preparation and decoding functions:
   supersedes the agent's proposed non-additive interpretation, without
   establishing replacement scores for either mask. PPv25 is unchanged.
 
-  [PPv26](prominence-prompt-goal-v1/ppv26-draft-v1/PPv26.md) is an untested
-  draft against approved PPv25. It makes the fixed-budget allocation explicit
+  [PPv26](prominence-prompt-goal-v1/ppv26-draft-v1/PPv26.md) is approved and
+  untested, not production-frozen. Against PPv25 it makes the fixed-budget allocation explicit
   while retaining the class interpretation and output contract. No inference
   was performed for this revision; scoring consistency remains untested.
+
+  [PPv26-D1](prominence-prompt-goal-v1/ppv26-diagnostic-v1/PPv26-D1.md) is an
+  untested diagnostic draft against approved PPv26. Only the output instructions
+  change: an allocation array describes each part of meaning and its allocated,
+  represented and missing points. Allocated points total 100; represented points
+  total prominence; each entry's represented and missing points exhaust its
+  allocation. This is an inspectable model output, not access to hidden reasoning.
+  PPv26 remains unchanged. No inference calls were made for this draft.
 
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
