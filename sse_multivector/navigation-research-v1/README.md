@@ -780,10 +780,10 @@ review UI, including original mask IDs and complete source posts. Prior HR02,
 Jev and HDBSCAN artifacts remain untouched. Quality and whether to pursue this
 approach remain open until review.
 
-**Current checkpoint: Luna/max completion authorized.** At the decision, 820
-of 930 titles were complete and 110 remained. Muse scheduling is stopped;
-already-admitted calls drain before the exact missing set is frozen for Luna.
-Retain any additional successful Muse titles instead of generating duplicates.
+**Current checkpoint: Luna/max running on 106 remaining titles.** Muse is stopped
+and fully drained. Four additional successes during drain bring its total to
+824, preserved across its four reports. The Luna run contains exactly the
+106 missing titles, not the earlier live count of 110; nothing successful is rerun.
 All five receipt-validated reports are required when packaging; duplicate
 successes, changed prompts, unsupported model/effort combinations and missing
 titles are rejected. TPv38 and the source masks remain unchanged. The hierarchy
