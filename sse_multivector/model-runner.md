@@ -1034,6 +1034,22 @@ production preparation and decoding functions:
   This tests mask prominence only, not title relevance or final post ordering.
   Neither prompt was changed or promoted.
 
+  The next ordering diagnostic retained all four original Bitcoin-node masks
+  (S1fe681cb8e), verified to come from four distinct posts. Experiments
+  `ppv26-bitcoin-allocation-v1` and `ppv26-bitcoin-scoring-v1` under `experiments/`
+  used unchanged PPv26-D2A/PPv26-D3, with matching reusable specs under
+  `experiment_specs/`. Eight Astra-low subscription calls completed without
+  retries, reuse, or baseline reruns. Inputs preserved the saved masks exactly;
+  titles and grouping metadata were review evidence only. Allocations totaled
+  100; scoring retained every meaning/weight and passed all arithmetic checks.
+  Descending scores: V0180 calendar trivia with Bitcoin hashtags 9, V0441
+  second-coffee hashtag post 7, V0745 island-life heading/hashtag mentions 6,
+  V0794 workshop/hospitality story 5. All select only Bitcoin mentions, not the
+  surrounding narrative. Agent reviews mark all uncertain for fine cross-post
+  ordering: consistently low coverage is plausible, but the narrow 5–9 range
+  is weak evidence of meaningful rank differences. No clear semantic failure
+  or user ordering verdict is established. No prompt or membership changed.
+
   The user has authorized small, in-scope prominence diagnostics, explicitly
   including prompt ablations, without repeated permission requests. Prepare
   versioned diagnostic variants and run these ablations without pausing for
