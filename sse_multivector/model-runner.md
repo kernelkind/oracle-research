@@ -996,6 +996,23 @@ production preparation and decoding functions:
   this small constructed sample, which does not establish real-corpus quality
   or repeatability. No prompt changed or was promoted.
 
+  The following real-post sample reused exact saved masks: decaf motivation
+  S29074d29b6-V1524, bathroom safety bars M05, six guitar mentions M09, and
+  near-complete lunch packing M394. `experiments/ppv26-real-allocation-v1`
+  and `experiments/ppv26-real-scoring-v1` used unchanged PPv26-D2A and PPv26-D3
+  (matching reusable specs under `experiment_specs/`). Eight Astra-low
+  subscription calls completed: four allocations and four scores, without
+  retries, reuse, or baseline reruns. All original mask inputs were verified
+  unchanged; every allocation totals 100 and every scoring output preserves
+  its meanings/weights and passes arithmetic checks. Scores were 38/27/5/95.
+  Agent reviews accept the qualitative low guitar-topic and high lunch-coverage
+  behavior; decaf 38 and safety bars 27 remain uncertain weighting judgments,
+  not established failures. The allocations and scores have no user approval.
+  Older PPv24 scores (52/39/8/98) are saved context only: the two-stage workflow
+  differs, so changes cannot be attributed solely to removing class analysis.
+  No prompt changed or was promoted. Review the uncertain real cases before
+  making another scoring revision.
+
   The user has authorized small, in-scope prominence diagnostics, explicitly
   including prompt ablations, without repeated permission requests. Prepare
   versioned diagnostic variants and run these ablations without pausing for
