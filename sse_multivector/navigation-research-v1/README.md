@@ -761,7 +761,8 @@ shared experiment runner for all inference. Reusable specs are
 `experiment_specs/hr02-m06-jev-nesting-v1.json`. Generated inputs and views
 live only under `target/hr02-m06-muse-jev-v1/`; title execution uses
 `experiments/hr02-m06-muse-titles-v1-bounded/` and its explicit uncapped
-continuation `experiments/hr02-m06-muse-titles-v1-uncapped/`. The earlier initial
+continuations `experiments/hr02-m06-muse-titles-v1-uncapped/` and
+`experiments/hr02-m06-muse-titles-v1-uncapped-continuation/`. The earlier initial
 preparation was never executed. The approved total allowance remains $2;
 continuation uses the shared runner's cumulative dollar budget rather than an
 imposed response-length cap. The source spec now omits `max_output_tokens`.
@@ -775,16 +776,20 @@ review UI, including original mask IDs and complete source posts. Prior HR02,
 Jev and HDBSCAN artifacts remain untouched. Quality and whether to pursue this
 approach remain open until review.
 
-**Current checkpoint: uncapped continuation approved.** Muse exhausted the
+**Current checkpoint: uncapped continuation running after provider failure.** Muse exhausted the
 imposed 6,500-token allowance on several cases before returning any title.
 The scheduler was interrupted and in-flight calls drained normally; all receipts
 and successful titles are preserved. The shared report records partial progress,
 and the first stage's billing was settled. The user rejected the response cap
 and approved continuation: retain all 120 successful titles and select only the
-810 incomplete cases in a separate uncapped experiment. Both receipt-validated
-reports are required when packaging; duplicate successes are rejected, not
-overwritten. Title continuation gets $1.80 with a verified
-$0.20 per-request reservation. No Jev calls or semantic-collapse
+810 incomplete cases in a separate uncapped experiment. That run saved 262 valid
+titles, then stopped after one provider connection failure lacked final billing;
+547 cases were unrun. The next continuation selects only those 548 incomplete
+cases, preserving all 382 successful titles. All three receipt-validated reports
+are required when packaging; duplicate successes are rejected, not overwritten.
+The shared budget reader conservatively accounts for
+$0.316831 of known charges in the first uncapped run; one failed call has an unknown charge. The active continuation is limited to $1.25 with
+the same $0.20 per-request reservation. This does not cap response length. No Jev calls or semantic-collapse
 hierarchy have yet been produced. Never reinterpret length failures as semantic
 failures. The offline viewer schema check is only a labelled fixture, not model
 results.
