@@ -271,6 +271,7 @@ Approved placement corrections for that separate hierarchy (not yet applied):
 | Meat consumption | Chickens and chicken products | Remove. The child includes living hens and egg-laying, which do not necessarily concern meat consumption. Retain its existing Animals parent for now; the Jev baseline remains unchanged. |
 | Meat consumption | Attitudes toward meat consumption | Add. The user reconfirmed carrying the previously approved relationship into this corrected hierarchy: discussing attitudes toward eating meat necessarily concerns meat consumption. The Jev baseline remains unchanged. |
 | Foods | coffee | Remove. The user agreed to interpret Foods as excluding drinks. Its already-accepted Food and drink relationship becomes the direct displayed parent, alongside tea and Wine. Other affected placements still require review; the Jev baseline remains unchanged. |
+| Foods | milk | Remove under the agreed food/drink distinction. Its already-accepted Food and drink relationship becomes the direct displayed parent. Retain milk → raw milk; the separate Raw food → raw milk relationship remains under review. The Jev baseline remains unchanged. |
 
 Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
