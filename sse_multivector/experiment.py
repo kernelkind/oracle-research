@@ -386,7 +386,7 @@ def report(directory):
     comments_path = directory / "ui-comments.json"
     comments = (
         inputs.prominence_comments(read(comments_path))
-        if plan["dataset"]["adapter"] == "prominence" and comments_path.exists()
+        if plan["dataset"]["adapter"] in {"prominence", "generic"} and comments_path.exists()
         else {}
     )
     reviews = (
@@ -647,15 +647,29 @@ def review(args):
         raise ValueError("--flagged-only requires --ui")
     if args.only and not args.ui:
         raise ValueError("--only requires --ui")
+    if (args.view or args.node or args.ordering or args.check) and not args.ui:
+        raise ValueError("--view/--node/--ordering/--check require --ui")
+    if args.ordering and not args.cosine_comparison:
+        raise ValueError("--ordering requires --cosine-comparison")
     with locked(directory):
         result = report(directory)
         if args.ui:
             if any((args.case, args.role, args.verdict, args.comment)):
                 raise ValueError("--ui cannot record a CLI judgment")
             plan, _, _ = load(directory)
+            prominence_view = args.view == "prominence" or plan["dataset"]["adapter"] == "prominence"
+            if (args.node or args.check) and not prominence_view:
+                raise ValueError("--node/--check require the prominence view")
+            if args.node:
+                available = {c.get("evidence", {}).get("node_id") for c in result["cases"]}
+                unknown = set(args.node) - available
+                if unknown:
+                    raise ValueError(f"unknown --node IDs: {', '.join(sorted(unknown))}")
+                result = {**result, "cases": [c for c in result["cases"]
+                          if c.get("evidence", {}).get("node_id") in args.node]}
             selected = None
             if args.flagged_only or args.only:
-                if plan["dataset"]["adapter"] not in {"titles", "masks", "prominence"}:
+                if not prominence_view and plan["dataset"]["adapter"] not in {"titles", "masks"}:
                     raise ValueError("--flagged-only/--only support titles, masks and prominence")
                 requested = set(args.only or [])
                 unknown = requested - {c["id"] for c in result["cases"]}
@@ -669,18 +683,22 @@ def review(args):
                 if not selected:
                     print("No flagged cases. No model calls or review decisions changed.")
                     return
-                if plan["dataset"]["adapter"] in {"titles", "prominence"}:
+                if prominence_view or plan["dataset"]["adapter"] == "titles":
                     result = {**result, "cases": [c for c in result["cases"] if c["id"] in selected]}
-            batch, excluded = inputs.review_batch(plan, result)
+            batch, excluded = inputs.review_batch(plan, result, view=args.view)
             if args.cosine_comparison:
-                if plan["dataset"]["adapter"] != "prominence":
+                if not prominence_view:
                     raise ValueError("--cosine-comparison requires prominence cases")
                 try:
                     from .prominence_ranking import add_rankings
                 except ImportError:
                     from prominence_ranking import add_rankings
                 batch = add_rankings(batch, result, read(args.cosine_comparison))
-            if plan["dataset"]["adapter"] == "prominence":
+                if args.ordering:
+                    if args.ordering not in {order["name"] for order in batch["orderings"]}:
+                        raise ValueError(f"unknown ordering: {args.ordering}")
+                    batch["orderings"].sort(key=lambda order: order["name"] != args.ordering)
+            if prominence_view:
                 # Comments are separate from approval sessions and model outputs.
                 batch_path = directory / ("ui-" + inputs.digest(batch)[:16] + ".json")
                 write(batch_path, batch)
@@ -692,8 +710,10 @@ def review(args):
                 print(
                     f"UI: {len(batch['notes'])} mask entries; c: comment. No model calls or implied decisions."
                 )
+                viewer_options = (["--check"] if args.check else
+                                  ["--comments", str(directory / "ui-comments.json")])
                 completed = subprocess.run(
-                    [str(binary), str(batch_path), "--comments", str(directory / "ui-comments.json")],
+                    [str(binary), str(batch_path), *viewer_options],
                     check=False,
                 )
                 if completed.returncode:
@@ -898,6 +918,13 @@ def parser():
     p.add_argument("--verdict", choices=("accept", "reject", "uncertain"))
     p.add_argument("--comment")
     p.add_argument("--ui", action="store_true")
+    p.add_argument("--view", choices=("prominence",),
+                   help="render saved generic prominence diagnostics in the existing mask viewer")
+    p.add_argument("--node", action="append", metavar="NODE_ID",
+                   help="prominence UI: show all masks of this node; repeat for several")
+    p.add_argument("--ordering", help="start in a named saved cosine-comparison ordering")
+    p.add_argument("--check", action="store_true",
+                   help="validate the prominence UI batch without opening a terminal")
     p.add_argument("--flagged-only", action="store_true",
                    help="title/mask/prominence UI: current reject/uncertain reviews and unresolved failures")
     p.add_argument("--only", action="append", metavar="CASE_ID",

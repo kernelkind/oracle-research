@@ -259,9 +259,28 @@ def is_flagged(case):
     )
 
 
-def review_batch(plan, report):
+def review_batch(plan, report, view=None):
     """Translate compatible cases to the existing UI; list all unsupported cases."""
     adapter = plan["dataset"]["adapter"]
+    if view == "prominence":
+        if adapter not in {"generic", "prominence"}:
+            raise ValueError("prominence view requires generic or prominence inputs")
+        fields = ("id", "node_id", "node_title", "note_id", "text", "mask_ids", "byte_spans")
+        for case in report["cases"]:
+            evidence = case.get("evidence", {})
+            if any(key not in evidence for key in fields):
+                raise ValueError(f"missing prominence evidence: {case['id']}")
+            expected = prepare_prominence({"cases": [{key: evidence[key] for key in fields}]})[0]
+            if (case["id"] != evidence["id"] or set(case["inputs"]) != {"INPUT_JSON"}
+                    or json.loads(case["inputs"]["INPUT_JSON"]) !=
+                    json.loads(expected["inputs"]["INPUT_JSON"])):
+                raise ValueError(f"model input differs from prominence evidence: {case['id']}")
+            if case["status"] == "valid":
+                parsed = case.get("parsed")
+                score = parsed.get("prominence") if isinstance(parsed, dict) else None
+                if type(score) is not int or not 0 <= score <= 100:
+                    raise ValueError(f"invalid prominence score: {case['id']}")
+        return prominence_review_batch(plan, report), []
     if adapter == "prominence":
         return prominence_review_batch(plan, report), []
     if adapter not in {"titles", "masks"}:

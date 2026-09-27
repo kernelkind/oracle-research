@@ -1314,6 +1314,37 @@ are visible. Case IDs stabilize ties; they do not establish quality differences.
 These settings do not change PPv10, memberships, saved outputs or production
 ranking. They neither aggregate posts nor establish a calibrated relevance score.
 
+For generic experiments containing saved prominence diagnostics (such as PPv30),
+use `review --ui --view prominence`. This is an explicit renderer selection,
+not a change to the frozen experiment adapter. The runner verifies the exact
+model input against source text and mask spans, and requires valid prominence
+scores before ranking scored cases. Unscored cases remain visible. `--node ID`
+selects all masks of a node; it can be repeated and combined with `--only` or
+`--flagged-only`. Unknown IDs are refused. `--ordering 'Linear cosine'` starts
+in the combined-score ordering; without it the existing default is unchanged.
+`--check` validates the generated batch using the existing viewer without a
+terminal or comment writes. Interactive `c` comments persist separately and
+are available in `show`, including for generic experiments; no approval is
+inferred. None of these review options performs inference.
+
+The Photography-only PPv30 review uses the existing `model-output-review` UI,
+not the hierarchy browser. It retains all five original masks as separate
+full-post cards and starts in prominence × rescaled-cosine order:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector && \
+python3 experiment.py review experiments/ppv30-diverse-nodes-v1 \
+  --ui --view prominence --node S45e455e0be \
+  --cosine-comparison experiments/ppv30-diverse-nodes-v1/photography-cosine-v1/comparison.json \
+  --ordering 'Linear cosine'
+```
+
+Left/Right steps through the ordered masks; `c` adds a comment, and `s` switches
+between the saved orderings. The label Linear cosine denotes the combined
+score, not cosine alone. The raw Jev hierarchy, masks and model outputs remain
+unchanged. Offline validation and interactive first-to-last navigation passed;
+these checks establish UI behavior, not a user verdict on ranking quality.
+
 `prominence_cosine.py prepare` accepts either the historical normalized-vector
 directory or a hierarchy-refresh directory containing `vector-map.json`,
 `worker-request.json` and `worker-result/`. The latter reads the original raw

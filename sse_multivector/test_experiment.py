@@ -422,6 +422,76 @@ class ExperimentTests(unittest.TestCase):
         self.assertFalse((self.root / "E1" / "reviews.jsonl").exists())
         self.assertFalse((self.root / "E1" / "review-ui.json").exists())
 
+    def test_generic_prominence_view_selects_node_and_starts_in_combined_order(self):
+        from sse_multivector.experiment_inputs import prepare_prominence
+        self.prominence_spec()
+        source = json.loads(self.cases.read_text())
+        extra = dict(source['cases'][0], id='other', node_id='other', node_title='Other')
+        source['cases'].append(extra)
+        self.write('cases.json', {'cases': prepare_prominence(source)})
+        spec = json.loads(self.spec.read_text())
+        spec['dataset']['adapter'] = 'generic'
+        spec['runner']['output_schema'] = {'type': 'object', 'required': ['prominence']}
+        self.write('spec.json', spec)
+        self.prepare()
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+                                 '{"prominence":80,"allocation":[],"missing_meaning":"test"}'})
+        rows = []
+        for case in self.show()['cases']:
+            if case['evidence']['node_id'] != 'tea':
+                continue
+            e = case['evidence']
+            rows.append(dict(id=case['id'], node_id='tea', title='Tea', note_id='N1',
+                             mask_ids=e['mask_ids'], prominence=80,
+                             fragments=json.loads(case['inputs']['INPUT_JSON'])['mask'],
+                             cosine=.1 if case['id']=='tea-first' else .9))
+        self.write('cosines.json', {'groups': {'tea': rows}})
+        viewer = self.root/'viewer'
+        viewer.write_text(
+            '#!/usr/bin/env python3\nimport json,sys\nfrom pathlib import Path\n'
+            "Path(__file__).with_suffix('.json').write_text(json.dumps({"
+            "'args':sys.argv[2:], 'batch':json.loads(Path(sys.argv[1]).read_text())}))\n")
+        viewer.chmod(0o755)
+        before = self.calls()
+        options = ('--ui','--view','prominence','--node','tea','--cosine-comparison',
+                   'cosines.json','--ordering','Linear cosine','--ui-binary',viewer)
+        self.cli('review','E1',*options,'--check')
+        shown = json.loads(viewer.with_suffix('.json').read_text())
+        self.assertIn('--check', shown['args'])
+        self.assertNotIn('--comments', shown['args'])
+        batch = shown['batch']
+        self.assertEqual(batch['orderings'][0]['name'], 'Linear cosine')
+        self.assertEqual(batch['orderings'][0]['note_ids'], ['tea-second','tea-first'])
+        self.assertEqual({n['id'] for n in batch['notes']}, {'tea-first','tea-second'})
+        self.assertEqual(batch['notes'][0]['text'], '☕ ⟦Tea⟧, then tea.')
+        self.cli('review','E1',*options)
+        shown = json.loads(viewer.with_suffix('.json').read_text())
+        self.assertIn('--comments', shown['args'])
+        viewer.write_text(viewer.read_text() +
+            "\nimport hashlib\n"
+            "batch=json.loads(Path(sys.argv[1]).read_text()); n=batch['notes'][0]; r=n['results'][0]\n"
+            "session={'comments':{r['comment_key']:{'note_id':n['id'],'model':r['model'],'comment':'Review this'}}}\n"
+            "raw=json.dumps(session,ensure_ascii=False,separators=(',',':')).encode()\n"
+            "Path(sys.argv[3]).write_text(json.dumps({'schema_version':1,'state_sha256':hashlib.sha256(raw).hexdigest(),'session':session}))\n")
+        self.cli('review','E1',*options)
+        comment = self.show('E1','--case','tea-first')['reviews'][-1]
+        self.assertEqual((comment['verdict'],comment['comment'],comment['current']),
+                         ('comment','Review this',True))
+        self.assertEqual(self.calls(), before)
+        self.assertFalse((self.root/'E1/reviews.jsonl').exists())
+        for extra_args, error in [(('--node','absent'),'unknown --node'),
+                                  (('--ordering','missing'),'unknown ordering')]:
+            bad = self.cli('review','E1',*options,*extra_args,ok=False)
+            self.assertIn(error,bad.stderr)
+        # A generic input cannot impersonate a mask review using unrelated evidence.
+        data = json.loads(self.cases.read_text())
+        data['cases'][0]['inputs']['INPUT_JSON'] = '{"mask":["wrong"],"marked_post":"wrong"}'
+        self.write('cases.json', data)
+        self.prepare('E2')
+        bad = self.cli('review','E2','--ui','--view','prominence','--node','tea',
+                       '--ui-binary',viewer,ok=False)
+        self.assertIn('input',bad.stderr)
+
     def test_prominence_review_sorts_within_nodes_without_omitting_failures(self):
         from sse_multivector import experiment_inputs as inputs
 
