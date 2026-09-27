@@ -776,11 +776,12 @@ review UI, including original mask IDs and complete source posts. Prior HR02,
 Jev and HDBSCAN artifacts remain untouched. Quality and whether to pursue this
 approach remain open until review.
 
-**Current checkpoint: continuation resumed after further billing reconciliation.**
-At the latest stopped checkpoint, 703 of 930 titles were saved: 120 from the
-capped run, 262 from the first uncapped run and 321 from its continuation.
-The continuation had 11 failed cases and 216 unrun cases. It is now running
-again; use the shared report for live progress. All three receipt-validated reports
+**Current checkpoint: authorized recovery prepared for the remaining 120 titles.**
+810 of 930 titles are saved: 120 from the capped run, 262 from the first
+uncapped run and 428 from its continuation. The prior scheduler has drained;
+the separate `experiments/hr02-m06-muse-titles-v1-recovery/` contains only the
+19 failed and 101 untouched cases, with unchanged inputs/model settings and no
+output cap. Use the shared report for live progress. All four receipt-validated reports
 are required when packaging; duplicate successes are rejected, not overwritten.
 There are no uncapped title format failures; semantic quality is not yet reviewed.
 
@@ -818,13 +819,15 @@ resumed within its original allowance. The intervening shared-runner change
 `4ab04733` affects only prominence preparation/validation; its inspected upgrade
 is recorded without changing title inputs or inference settings.
 
-Nine titles have now failed twice with the same upstream connection error.
-One other failed case has an unclassified body-transport error, and one has a
-single retry-eligible provider failure. Exhausted and ineligible cases remain
-visible; resuming does not bypass the existing retry policy. Independent unrun
-cases continue, but the complete titled tree and Jev inputs cannot be packaged
-until every title is recovered. No groups may be dropped or titles supplied by
-hand. Recovery beyond the existing retry policy remains undecided.
+Repeated failures have continued with the same upstream connection error;
+one case has an unclassified body-transport error. Earlier failed attempts
+remain visible and unchanged. The user explicitly approved the separate
+recovery pass: at most two attempts for each of its 120 cases, within a $2.25
+cumulative allowance and the original $4 experiment total. This is not an
+unlimited retry-policy change. One prior charge remains unknown and reserved;
+all other missing charges have been reconciled. The complete titled tree and
+Jev inputs still require every title. No groups may be dropped or titles
+supplied by hand.
 No model/settings substitution or canonical HR02 changes are authorized. No Jev calls or
 semantic-collapse hierarchy have yet been produced. The offline viewer schema
 check is a labelled fixture, not model results.
