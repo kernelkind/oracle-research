@@ -88,6 +88,8 @@ argv = sys.argv[1:]
 for text, action in json.loads(os.environ.get("FAKE_RUNNER_SEQUENCE", "{}")).items():
     if text in prompt:
         import time
+        if action.get("sleep_seconds"):
+            time.sleep(action["sleep_seconds"])
         if action.get("touch"):
             Path(action["touch"]).touch()
         until = time.monotonic() + 3

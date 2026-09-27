@@ -796,12 +796,22 @@ event, while heartbeat bytes continue arriving. This is evidence of an upstream
 generation/stream failure, not the local 1,800-second timeout or an imposed
 output-token limit; the exact upstream cause remains unproven. One additional
 failure says the model failed to generate a response and includes billing.
-The installed credential service does not expose billing lookup endpoints.
-Preserve all receipts and reserves; investigate the provider problem before
-seeking another allowance increase. No model/settings substitution or canonical
-HR02 changes are authorized. No Jev calls or semantic-collapse hierarchy have
-yet been produced. The offline viewer schema check is a labelled fixture,
-not model results.
+The read-only audit found 15 failures among 532 uncapped calls (2.8%), not a
+general failure of the model. None of the continuation's 14 failed cases had
+been retried: the scheduler put due retries behind untouched cases, then ran
+out of cost reservations. Typical successful calls cost about $0.00111, while
+each missing bill retains a $0.20 worst-case reserve.
+
+The user authorized correcting retry priority and assigned the read-only
+billing lookup to the credential-service owner. The scheduler now runs due
+retries before untouched cases, ordered by deadline, including after resume.
+Backoff, concurrency, retry eligibility and the two-attempt limit are unchanged.
+Offline regressions cover the original starvation and resumed execution; no
+paid calls were made for this fix. Preserve all receipts and reserves until
+actual-cost lookup is available, then reconcile and resume. No model/settings
+substitution or canonical HR02 changes are authorized. No Jev calls or
+semantic-collapse hierarchy have yet been produced. The offline viewer schema
+check is a labelled fixture, not model results.
 
 ### Jev full HR02 directional judgments
 

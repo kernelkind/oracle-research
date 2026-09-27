@@ -20,7 +20,6 @@ import sys
 import tempfile
 import threading
 import time
-from collections import deque
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from contextlib import contextmanager
 from dataclasses import dataclass, field, replace
@@ -3262,7 +3261,7 @@ def _execute_prompt_batch(
             raise AssertionError("successful prompt job returned structured output")
         return {"prompt_id": prompt.prompt_id, "response": response}
 
-    ready = deque()
+    ready = []
     delayed = []
     responses = {}
     failures = []
@@ -3278,17 +3277,17 @@ def _execute_prompt_batch(
                 failures.append(f"{prompt.prompt_id}: {previous.get('error')}")
                 fatal |= kind == "provider_fatal"
         else:
-            ready.append((index, prompt))
+            heapq.heappush(ready, (float("inf"), index, prompt))
     # Keep at most concurrency futures. Slow calls and retry delays do not hold
-    # unrelated cases behind a wave barrier. Each case has two lifetime attempts.
+    # unrelated cases behind a wave barrier. Due retries precede untouched cases,
+    # ordered by deadline. Each case still has two lifetime attempts.
     with ThreadPoolExecutor(max_workers=concurrency) as pool:
         active = {}
         while active or (not fatal and (ready or delayed)):
             while delayed and delayed[0][0] <= time.monotonic():
-                _, index, prompt = heapq.heappop(delayed)
-                ready.append((index, prompt))
+                heapq.heappush(ready, heapq.heappop(delayed))
             while ready and len(active) < concurrency and not fatal:
-                index, prompt = ready.popleft()
+                _, index, prompt = heapq.heappop(ready)
                 previous = latest.get("prompt:" + prompt.prompt_id)
                 active[pool.submit(execute, prompt)] = (index, prompt, previous)
             if not active:

@@ -763,6 +763,45 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(len(self.calls()), 3)
         self.assertEqual(self.show()["summary"]["valid"], 1)
 
+    def test_due_retries_precede_untouched_cases_in_deadline_order(self):
+        self.write("cases.json", {"cases": [
+            {"id": text, "inputs": {"POST": text}}
+            for text in ["Tea", "Coffee", "Milk", "Water"]
+        ]})
+        self.prepare()
+        self.cli("run", "E1", env={
+            "FAKE_RUNNER_FAILURES": json.dumps({
+                text: {"attempts": 1, "metadata": {"http_status": 503}}
+                for text in ["Tea", "Coffee"]
+            }),
+            "FAKE_RUNNER_SEQUENCE": json.dumps({"Milk": {"sleep_seconds": 2.1}}),
+        })
+        self.assertEqual([c["prompt"].splitlines()[0] for c in self.calls()],
+                         ["GENERIC PROMPT " + text for text in
+                          ["Tea", "Coffee", "Milk", "Tea", "Coffee", "Water"]])
+        self.assertEqual(self.show()["summary"]["valid"], 4)
+
+    def test_resumed_retry_precedes_untouched_cases_when_due(self):
+        self.write("cases.json", {"cases": [
+            {"id": text, "inputs": {"POST": text}}
+            for text in ["Tea", "Coffee", "Milk"]
+        ]})
+        self.prepare()
+        self.cli("run", "E1", "--max-new-attempts", "1", ok=False, env={
+            "FAKE_RUNNER_FAILURES": json.dumps({
+                "Tea": {"attempts": 1, "metadata": {"http_status": 503}}
+            }),
+        })
+        before = (self.root / "E1/run/results.jsonl").read_bytes()
+        self.cli("run", "E1", env={
+            "FAKE_RUNNER_SEQUENCE": json.dumps({"Coffee": {"sleep_seconds": 2.1}}),
+        })
+        self.assertEqual([c["prompt"].splitlines()[0] for c in self.calls()],
+                         ["GENERIC PROMPT " + text for text in
+                          ["Tea", "Coffee", "Tea", "Milk"]])
+        self.assertTrue((self.root / "E1/run/results.jsonl").read_bytes().startswith(before))
+        self.assertEqual(self.show()["summary"]["valid"], 3)
+
     def test_unknown_failure_is_not_retried(self):
         self.prepare()
         self.cli("run", "E1", ok=False, env={"FAKE_RUNNER_FAIL_STAGE": "prompt"})

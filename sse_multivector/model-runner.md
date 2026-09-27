@@ -449,6 +449,11 @@ timeouts, validation/parsing errors and unknown transport failures are never
 retried. Malformed completed output is retained, not repaired. The experiment
 CLI no longer offers a blanket `--retry-failed` override.
 
+Once their wait expires, eligible retries run before untouched cases, ordered
+by retry deadline. While a retry is still waiting, independent cases can run.
+Already-running calls are not interrupted. This priority also applies on resume;
+it changes neither retry eligibility nor the two-total-attempts limit.
+
 Provider authentication, credit/permission or endpoint errors (401, 402, 403,
 404) stop new scheduling, as do preflight/provenance errors or exhausted attempt
 allowances. Already-running calls retain their receipts. Other failures remain
