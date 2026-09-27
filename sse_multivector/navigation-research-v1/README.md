@@ -763,7 +763,7 @@ live only under `target/hr02-m06-muse-jev-v1/`; title execution uses
 `experiments/hr02-m06-muse-titles-v1-bounded/` and its explicit uncapped
 continuations `experiments/hr02-m06-muse-titles-v1-uncapped/` and
 `experiments/hr02-m06-muse-titles-v1-uncapped-continuation/`. The earlier initial
-preparation was never executed. The approved total allowance remains $2;
+preparation was never executed. The user increased the approved total allowance to $4;
 continuation uses the shared runner's cumulative dollar budget rather than an
 imposed response-length cap. The source spec now omits `max_output_tokens`.
 
@@ -776,7 +776,7 @@ review UI, including original mask IDs and complete source posts. Prior HR02,
 Jev and HDBSCAN artifacts remain untouched. Quality and whether to pursue this
 approach remain open until review.
 
-**Current checkpoint: stopped at the remaining dollar allowance after provider failures.** Muse exhausted the
+**Current checkpoint: resumed with the approved $4 allowance.** Muse exhausted the
 imposed 6,500-token allowance on several cases before returning any title.
 The scheduler was interrupted and in-flight calls drained normally; all receipts
 and successful titles are preserved. The shared report records partial progress,
@@ -798,12 +798,13 @@ No title format failures occurred in the uncapped continuations; semantic
 quality has not yet been reviewed.
 The shared budget reader totals known charges conservatively to $0.316831 in
 the first uncapped run and $0.254839 in the continuation; five failed calls across them have unknown charges. The installed credential
-service does not expose billing lookup endpoints. Further execution needs
-resolved billing or an approved larger allowance, not another response cap.
+service does not expose billing lookup endpoints. The user approved increasing
+the total allowance from $2 to $4; the same continuation resumed without a
+response cap or another experiment preparation.
 All three receipt-validated reports
 are required when packaging; duplicate successes are rejected, not overwritten.
 The shared budget reader conservatively accounts for
-$0.316831 of known charges in the first uncapped run; one failed call has an unknown charge. The active continuation is limited to $1.25 with
+$0.316831 of known charges in the first uncapped run; one failed call has an unknown charge. The active continuation is limited to $3.25 with
 the same $0.20 per-request reservation. This does not cap response length. No Jev calls or semantic-collapse
 hierarchy have yet been produced. Never reinterpret length failures as semantic
 failures. The offline viewer schema check is only a labelled fixture, not model
