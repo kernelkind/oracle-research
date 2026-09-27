@@ -950,10 +950,14 @@ production preparation and decoding functions:
   sample per mask does not establish causality, repeatability, or calibration.
   PPv26 remains the approved main prompt; PPv26-D3 is a tested diagnostic.
 
-  The user has authorized small, in-scope prominence diagnostics without
-  repeated permission requests. This does not authorize broad experiments or
-  scoring-prompt changes, and does not waive spending authorization or ledger
-  rules. Keep calls bounded and reuse saved baselines.
+  The user has authorized small, in-scope prominence diagnostics, explicitly
+  including prompt ablations, without repeated permission requests. Prepare
+  versioned diagnostic variants and run these ablations without pausing for
+  approval of each delta; still provide the deltas and report the results.
+  This does not authorize broad experiments, unrelated prompt changes, or
+  promotion of a diagnostic to the approved scoring prompt, and does not waive
+  spending authorization or ledger rules. Keep calls bounded and reuse saved
+  baselines.
 
   Alternatively, `path` may point to a saved title experiment's `report.json`
   (`adapter: "titles"` in that report). In this form, `select` names node IDs.
