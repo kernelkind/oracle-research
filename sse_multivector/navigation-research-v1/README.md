@@ -794,7 +794,8 @@ $1.25 cumulative allowance and the existing provider-only two-attempt retry poli
 It reached 133 valid titles, four failed provider calls and 411 unrun cases before
 maximum-cost reservations left insufficient allowance for another request.
 Across all three runs, 515 titles are valid and preserved; 415 remain unresolved.
-No title scope or format failures occurred in the uncapped continuations.
+No title format failures occurred in the uncapped continuations; semantic
+quality has not yet been reviewed.
 The shared budget reader totals known charges conservatively to $0.316831 in
 the first uncapped run and $0.254839 in the continuation; five failed calls across them have unknown charges. The installed credential
 service does not expose billing lookup endpoints. Further execution needs
