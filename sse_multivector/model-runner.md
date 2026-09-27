@@ -1378,6 +1378,40 @@ its ordering, using the viewer's rescaled-cosine formula above. The explicit
 `linear_formula` distinguishes the two; raw product is not the combined score
 chosen for this trial.
 
+`prominence_cosine.py prepare --include-inverse` additionally prepares each
+mask's exact UTF-8 byte complement and one full-post selection per distinct
+post. Both are encoded in the unchanged complete post. Selections are grouped
+by post and identical selections are reused within the request. Saved mask
+vectors and prominence answers are unchanged; the normal encoder replay check
+still applies. No new prominence inference is involved.
+
+`collect` adds two orderings to the same comparison file and review UI:
+
+- **Inverse combined**: `P * w(mask cosine) + (100 - P) * w(inverse cosine)`.
+- **Full-post cosine**: `100 * w(full-post cosine)`.
+
+Here `P` is saved prominence on 0–100 and `w(c) = (clip(c, -1, 1) + 1) / 2`.
+The existing **Prominence** and **Linear cosine** orderings remain available.
+All three cosine-based scores are ranking heuristics, not percentages of
+meaning. The inverse is a text complement, not a guaranteed partition of
+semantic meaning. An empty or whitespace-only inverse is not encoded and
+requires prominence 100; otherwise preparation refuses the case rather than
+inventing a similarity. The literal complement and full-post selection retain
+URLs and identifiers, unlike the prominence prompt's meaning assessment.
+This difference must be considered when interpreting the comparison.
+
+The Coffee inverse trial is available in the existing UI; press `s` to compare
+orderings. The view still shows one original mask inline per card, preserves
+all cases and comments, and does not aggregate posts or alter memberships:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector && \
+python3 experiment.py review experiments/ppv30-coffee-node-v1 \
+  --ui --view prominence \
+  --cosine-comparison experiments/ppv30-coffee-node-v1/inverse-cosine-v1/comparison.json \
+  --ordering 'Inverse combined'
+```
+
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
 within-node score is prominence times mask relevance, with direct membership

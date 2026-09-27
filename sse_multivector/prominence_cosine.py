@@ -13,10 +13,12 @@ import struct
 try:
     from . import experiment, worker
     from .experiment_inputs import prepare_prominence
+    from .prominence_ranking import ranking_scores
 except ImportError:
     import experiment
     from experiment_inputs import prepare_prominence
     import worker
+    from prominence_ranking import ranking_scores
 
 
 def read(path):
@@ -46,9 +48,29 @@ def cosine(a, b):
 def rank_rows(rows):
     for row in rows:
         row["product"] = row["prominence"] * row["cosine"]
-        row["linear_product"] = row["prominence"] * (max(-1, min(1, row["cosine"])) + 1) / 2
+        row.update(ranking_scores(row))
+    keys = ["prominence", "cosine", "product", "linear_product"]
+    if any('inverse_cosine' in row or 'full_post_cosine' in row for row in rows):
+        if any('inverse_product' not in row for row in rows):
+            raise ValueError('incomplete inverse comparison')
+        keys += ['inverse_product', 'full_post_score']
     return {key: [r["id"] for r in sorted(rows, key=lambda r: (-r[key], r["id"]))]
-            for key in ("prominence", "cosine", "product", "linear_product")}
+            for key in keys}
+
+
+def inverse_spans(text, spans):
+    """Exact UTF-8 complement, without rewriting the post or filtering its text."""
+    result, cursor = [], 0
+    for start, end in spans:
+        worker._byte_span_to_character_span(text, (start, end))
+        if start < cursor:
+            raise ValueError('overlapping or unordered spans')
+        if start > cursor:
+            result.append([cursor, start])
+        cursor = end
+    if cursor < len(text.encode()):
+        result.append([cursor, len(text.encode())])
+    return result
 
 
 def decode(path, dimensions, code):
@@ -169,6 +191,45 @@ def prepare(args):
         notes.append(dict(note_id=lookup[mid]["note_id"], text=e["text"],
                           subjects=[dict(subject_id=hashlib.sha256(mid.encode()).hexdigest()[:16],
                                          byte_spans=e["byte_spans"])]))
+    if getattr(args, 'include_inverse', False):
+        # Group selections by post so the encoder contextualizes each post once.
+        grouped, selections = {}, {}
+
+        def selection(note_id, text, spans, subject_id=None):
+            key = (note_id, tuple(map(tuple, spans)))
+            note = grouped.setdefault(note_id, dict(note_id=note_id, text=text, subjects=[]))
+            if note['text'] != text:
+                raise ValueError('conflicting text for post')
+            if key not in selections:
+                sid = subject_id or hashlib.sha256(json.dumps(key).encode()).hexdigest()[:16]
+                note['subjects'].append(dict(subject_id=sid, byte_spans=spans))
+                selections[key] = sid
+            return selections[key]
+
+        old_rows = []
+        for note in notes:
+            for subject in note['subjects']:
+                old_rows.append(selection(note['note_id'], note['text'], subject['byte_spans'],
+                                          subject['subject_id']))
+        for case in cases:
+            e = originals[case['mask_ids'][0]]
+            note_id = lookup[case['mask_ids'][0]]['note_id']
+            spans = inverse_spans(e['text'], e['byte_spans'])
+            content = ''.join(e['text'].encode()[a:b].decode() for a, b in spans)
+            if not content.strip() and case['prominence'] != 100:
+                raise ValueError(f"empty inverse with missing meaning: {case['id']}")
+            case['inverse_spans'] = spans
+            case['inverse_row'] = selection(note_id, e['text'], spans) if content.strip() else None
+            case['full_post_row'] = selection(note_id, e['text'], [[0, len(e['text'].encode())]])
+        notes = list(grouped.values())
+        indices = {s['subject_id']: i for i, (_, s) in enumerate(
+            (n, s) for n in notes for s in n['subjects'])}
+        title_rows = {nid: indices[old_rows[index]] for nid, index in title_rows.items()}
+        for replay in replays.values():
+            replay['row'] = indices[old_rows[replay['row']]]
+        for case in cases:
+            case['inverse_row'] = indices[case['inverse_row']] if case['inverse_row'] is not None else None
+            case['full_post_row'] = indices[case['full_post_row']]
     config = read(args.worker_config)
     for key in ("checkpoint_sha256", "base_model_artifact_tree_sha256", "model", "note_batch_size"):
         if config[key] != encoder[key]:
@@ -176,7 +237,8 @@ def prepare(args):
     if (config["device"] != "cpu" or ("worker_sha256" in encoder
             and sha(Path(worker.__file__)) != encoder["worker_sha256"])):
         raise ValueError("expected original CPU worker")
-    for path in (Path(__file__).resolve(), Path(worker.__file__).resolve(), args.worker_config.resolve()):
+    for path in (Path(__file__).resolve(), Path(worker.__file__).resolve(),
+                 Path(__file__).with_name('prominence_ranking.py').resolve(), args.worker_config.resolve()):
         protected[str(path)] = sha(path)
     output.mkdir(parents=True)
     plan = dict(schema_version=1, cases=cases, title_rows=title_rows, replays=replays,
@@ -185,13 +247,18 @@ def prepare(args):
                 formula="prominence (0..100) * raw cosine; no clipping or fitted calibration",
                 linear_formula="prominence * (clip(cosine, -1, 1) + 1) / 2; not calibrated relevance",
                 parity_min_cosine=0.999999, parity_max_normalized_component_error=0.00001)
+    if getattr(args, 'include_inverse', False):
+        plan['inverse_formula'] = 'linear_product + (100 - prominence) * (clip(inverse_cosine, -1, 1) + 1) / 2'
+        plan['full_post_formula'] = '100 * (clip(full_post_cosine, -1, 1) + 1) / 2'
+        plan['inverse_policy'] = 'Exact byte complement in unchanged post; URLs and identifiers remain; whitespace-only inverse has no vector and requires prominence 100.'
     save(output / "plan.json", plan)
     save(output / "worker-request.json", dict(schema_version=1, proposal_sha256=sha(output / "plan.json"), notes=notes))
     worker._load_request(output / "worker-request.json")
     config.update(request_path=str(output / "worker-request.json"),
                   request_sha256=sha(output / "worker-request.json"), output_path=str(output / "result"))
     save(output / "worker-config.json", config)
-    print(f"Prepared {len(titles)} titles, {len(replays)} replays; {len(cases)} saved masks. No inference.")
+    print(f"Prepared {len(titles)} titles, {len(replays)} replays; {len(cases)} saved masks; "
+          f"{sum(len(n['subjects']) for n in notes)} encoder rows. No inference.")
 
 
 def collect(output):
@@ -230,12 +297,20 @@ def collect(output):
     for case in plan["cases"]:
         scores = {nid: cosine(saved[case["ordinal"]],fresh[index]) for nid,index in plan["title_rows"].items()}
         row = dict(case, cosine=scores[case["node_id"]], title_cosines=scores)
+        if 'inverse_row' in case:
+            title = fresh[plan['title_rows'][case['node_id']]]
+            row['inverse_cosine'] = (cosine(fresh[case['inverse_row']], title)
+                                     if case['inverse_row'] is not None else None)
+            row['full_post_cosine'] = cosine(fresh[case['full_post_row']], title)
         groups.setdefault(case["node_id"], []).append(row)
     rankings = {nid:rank_rows(rows) for nid,rows in groups.items()}
     result = dict(parity=parity, groups=groups, rankings=rankings, formula=plan["formula"],
                   linear_formula=plan.get("linear_formula", "prominence * (clip(cosine, -1, 1) + 1) / 2"),
                   worker_receipt_sha256=sha(output / "result/worker-receipt.json"),
                   raw_vectors_sha256=sha(output / "result/raw-vectors.f32le"))
+    for key in ('inverse_formula', 'full_post_formula', 'inverse_policy'):
+        if key in plan:
+            result[key] = plan[key]
     save(output / "comparison.json", result)
     print(json.dumps(dict(parity=parity, masks=sum(map(len,groups.values())))))
 
@@ -250,6 +325,8 @@ def main():
     prep.add_argument("--vectors", type=Path, required=True)
     prep.add_argument("--worker-config", type=Path, required=True)
     prep.add_argument("--replay", nargs="+", required=True)
+    prep.add_argument('--include-inverse', action='store_true',
+                      help='also encode exact inverse masks and one full-post selection per post')
     c = sub.add_parser("collect")
     c.add_argument("output", type=Path)
     args = p.parse_args()

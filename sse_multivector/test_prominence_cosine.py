@@ -42,6 +42,47 @@ class ProminenceCosineTests(unittest.TestCase):
                 self.assertEqual([c['id'] for c in saved['cases']], ['photo-V1'])
                 request = json.loads((args.output/'worker-request.json').read_text())
                 self.assertEqual([n['text'] for n in request['notes']], ['Photography', 'Take photos.'])
+                args.output = root/'inverse'
+                args.include_inverse = True
+                pc.prepare(args)
+                inverse_plan = pc.read(args.output/'plan.json')
+                inverse_request = pc.read(args.output/'worker-request.json')
+                item = inverse_plan['cases'][0]
+                flat = [(n, s) for n in inverse_request['notes'] for s in n['subjects']]
+                note, subject = flat[item['inverse_row']]
+                self.assertEqual(note['text'], 'Take photos.')
+                self.assertEqual(subject['byte_spans'], [[0, 5], [11, 12]])
+                note, subject = flat[item['full_post_row']]
+                self.assertEqual(note['text'], 'Take photos.')
+                self.assertEqual(subject['byte_spans'], [[0, 12]])
+                result = args.output/'result'
+                result.mkdir()
+                (result/'raw-vectors.f32le').write_bytes(struct.pack('<8f', 1, 0, 1, 0, 0, 1, 1, 1))
+                receipt = dict(encoder, request_sha256=pc.sha(args.output/'worker-request.json'),
+                               proposal_sha256=pc.sha(args.output/'plan.json'),
+                               rows=[dict(note_id=n['note_id'], subject_id=s['subject_id'])
+                                     for n, s in flat])
+                (result/'worker-receipt.json').write_text(json.dumps(receipt))
+                pc.collect(args.output)
+                comparison = pc.read(args.output/'comparison.json')
+                self.assertEqual(comparison['groups']['photo'][0]['inverse_product'], 60)
+                self.assertEqual(comparison['groups']['photo'][0]['inverse_cosine'], 0)
+
+                full_evidence = dict(evidence, id='photo-full', mask_ids=['V2'], byte_spans=[[0, 12]])
+                full_case = prepare_prominence({'cases': [full_evidence]})[0]
+                full_case.update(status='valid', parsed={'prominence': 100})
+                full_row = dict(row, short_id='V2', ordinal=1,
+                                byte_spans=[[0, 12]], fragments=['Take photos.'])
+                vectors.write_bytes(struct.pack('<4f', 1, 0, 1, 1))
+                args.output = root/'deduplicated'
+                with patch.object(pc, 'load_vectors', return_value=(
+                        [row, full_row], encoder, vectors, 'f', {})), \
+                     patch.object(pc.experiment, 'report', return_value={'cases': [case, full_case]}):
+                    pc.prepare(args)
+                    dedup = pc.read(args.output/'plan.json')['cases']
+                    self.assertEqual(dedup[0]['full_post_row'], dedup[1]['full_post_row'])
+                    self.assertIsNone(dedup[1]['inverse_row'])
+                    self.assertEqual(dedup[1]['inverse_spans'], [])
                 args.output = root/'bad-input'
                 case['inputs']['INPUT_JSON'] = json.dumps({'mask': ['Take'], 'marked_post': '⟦Take⟧ photos.'})
                 with self.assertRaisesRegex(ValueError, 'input'):
@@ -58,6 +99,31 @@ class ProminenceCosineTests(unittest.TestCase):
         ranks = rank_rows(rows)
         self.assertEqual([r['linear_product'] for r in rows], [40, 50, 0])
         self.assertEqual(ranks['linear_product'], ['b', 'a', 'c'])
+
+    def test_inverse_product_and_full_post_baseline(self):
+        rows = [dict(id='a', prominence=20, cosine=1, inverse_cosine=0,
+                     full_post_cosine=.5),
+                dict(id='b', prominence=10, cosine=1, inverse_cosine=.8,
+                     full_post_cosine=.9),
+                dict(id='c', prominence=100, cosine=.6, inverse_cosine=None,
+                     full_post_cosine=.6)]
+        ranks = rank_rows(rows)
+        self.assertEqual([r['inverse_product'] for r in rows], [60, 91, 80])
+        self.assertEqual([r['full_post_score'] for r in rows], [75, 95, 80])
+        self.assertEqual(ranks['inverse_product'], ['b', 'c', 'a'])
+        self.assertEqual(ranks['full_post_score'], ['b', 'c', 'a'])
+        rows[-1]['prominence'] = 99
+        with self.assertRaisesRegex(ValueError, 'inverse'):
+            rank_rows(rows)
+
+    def test_inverse_spans_are_exact_utf8_complement(self):
+        from sse_multivector.prominence_cosine import inverse_spans
+        self.assertEqual(inverse_spans('☕ coffee ☕', [[4, 10]]), [[0, 4], [10, 14]])
+        self.assertEqual(inverse_spans('tea', [[0, 3]]), [])
+        self.assertEqual(inverse_spans('tea tea', [[0, 3], [4, 7]]), [[3, 4]])
+        for spans in ([[1, 3]], [[0, 4], [3, 7]], [[0, 100]]):
+            with self.assertRaises(ValueError):
+                inverse_spans('☕ tea', spans)
 
     def test_refresh_vectors_are_loaded_with_verified_rows_spans_and_bytes(self):
         from sse_multivector.prominence_cosine import load_vectors, sha

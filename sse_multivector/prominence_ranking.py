@@ -5,6 +5,35 @@ import math
 
 
 VARIANTS = ("Prominence", "Linear cosine")
+INVERSE_VARIANTS = ("Inverse combined", "Full-post cosine")
+
+
+def cosine_weight(value):
+    if (type(value) not in (float, int) or not math.isfinite(value)
+            or not -1.000001 <= value <= 1.000001):
+        raise ValueError("invalid cosine")
+    return (max(-1, min(1, value)) + 1) / 2
+
+
+def ranking_scores(row):
+    """One calculation shared by saved comparisons and the review UI."""
+    prominence = row['prominence']
+    if type(prominence) is not int or not 0 <= prominence <= 100:
+        raise ValueError('invalid prominence')
+    result = dict(linear_product=prominence * cosine_weight(row['cosine']))
+    if 'inverse_cosine' in row or 'full_post_cosine' in row:
+        if 'inverse_cosine' not in row or 'full_post_cosine' not in row:
+            raise ValueError('incomplete inverse comparison')
+        inverse = row['inverse_cosine']
+        if inverse is None:
+            if prominence != 100:
+                raise ValueError('empty inverse cannot account for missing meaning')
+            contribution = 0
+        else:
+            contribution = (100 - prominence) * cosine_weight(inverse)
+        result.update(inverse_product=result['linear_product'] + contribution,
+                      full_post_score=100 * cosine_weight(row['full_post_cosine']))
+    return result
 
 
 def add_rankings(batch, report, comparison):
@@ -17,6 +46,9 @@ def add_rankings(batch, report, comparison):
             saved[row["id"]] = row
     result = copy.deepcopy(batch)
     cards = {n["id"]: n for n in result["notes"]}
+    inverse = any('inverse_cosine' in saved.get(c['id'], {})
+                  or 'full_post_cosine' in saved.get(c['id'], {}) for c in report['cases'])
+    variants = VARIANTS + INVERSE_VARIANTS if inverse else VARIANTS
     groups, values = {}, {}
     for case in report["cases"]:
         cid, evidence = case["id"], case["evidence"]
@@ -33,19 +65,24 @@ def add_rankings(batch, report, comparison):
         if row is None or any(row.get(k) != v for k, v in expected.items()):
             raise ValueError(f"missing or stale cosine case: {cid}")
         cosine = row.get("cosine")
-        if (type(cosine) not in (float, int) or not math.isfinite(cosine)
-                or not -1.000001 <= cosine <= 1.000001):
-            raise ValueError(f"invalid cosine: {cid}")
-        weight = (max(-1, min(1, cosine)) + 1) / 2
-        values[cid] = [expected["prominence"], expected["prominence"] * weight]
+        scores = ranking_scores(row)
+        values[cid] = [expected["prominence"], scores['linear_product']]
+        if inverse:
+            if 'inverse_product' not in scores:
+                raise ValueError(f'incomplete inverse comparison: {cid}')
+            values[cid].extend([scores['inverse_product'], scores['full_post_score']])
         card = cards[cid]
         card["title"] = (f"{evidence['node_title']} [{evidence['node_id']}] · "
                          f"{evidence['note_id']} · {', '.join(evidence['mask_ids'])}")
         card["results"][0]["output"] = (
             f"Prominence: {expected['prominence']} / 100\nCosine: {cosine:.4f}\n"
         )
+        if inverse:
+            label = 'empty' if row['inverse_cosine'] is None else f"{row['inverse_cosine']:.4f}"
+            card['results'][0]['output'] += (
+                f"Inverse cosine: {label}\nFull-post cosine: {row['full_post_cosine']:.4f}\n")
     result["orderings"] = []
-    for index, name in enumerate(VARIANTS):
+    for index, name in enumerate(variants):
         ordering = []
         for ids in groups.values():
             ranked = sorted(ids, key=lambda cid: (
@@ -72,5 +109,11 @@ def add_rankings(batch, report, comparison):
             "Press s to change ordering at the same position (the post may change). "
             "Memberships and model outputs are unchanged. No post-score aggregation."
         )
+        if inverse:
+            card['results'][0]['comment'] += (
+                '\nInverse combined = Linear cosine + (100 − prominence) × '
+                '(inverse cosine + 1) / 2. Full-post cosine = 100 × (full-post cosine + 1) / 2. '
+                'Inverse spans and full-post spans are encoded in the unchanged complete post. '
+                'These scores are not percentages of meaning.')
     result["title"] = "Prominence × rescaled cosine · saved-score comparison"
     return result

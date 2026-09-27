@@ -99,6 +99,23 @@ class ProminenceRankingTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 add_rankings(batch, report, scores)
 
+    def test_inverse_comparison_adds_orderings_without_changing_masks(self):
+        from sse_multivector.prominence_ranking import add_rankings
+        batch, report, scores = self.fixture()
+        for rows in scores['groups'].values():
+            for row in rows:
+                row.update(inverse_cosine=.8, full_post_cosine=.9)
+        result = add_rankings(batch, report, scores)
+        self.assertEqual([o['name'] for o in result['orderings']],
+                         ['Prominence', 'Linear cosine', 'Inverse combined', 'Full-post cosine'])
+        self.assertEqual([n['text'] for n in result['notes']], [n['text'] for n in batch['notes']])
+        self.assertIn('Inverse combined: 96.00', result['notes'][1]['results'][0]['output'])
+        self.assertIn('Full-post cosine: 95.00', result['notes'][1]['results'][0]['output'])
+        self.assertIn('Inverse cosine: 0.8000', result['notes'][1]['results'][0]['output'])
+        del scores['groups']['Coffee'][0]['inverse_cosine']
+        with self.assertRaisesRegex(ValueError, 'inverse'):
+            add_rankings(batch, report, scores)
+
 
 if __name__ == "__main__":
     unittest.main()
