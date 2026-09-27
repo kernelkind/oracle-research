@@ -1007,11 +1007,14 @@ production preparation and decoding functions:
   its meanings/weights and passes arithmetic checks. Scores were 38/27/5/95.
   Agent reviews accept the qualitative low guitar-topic and high lunch-coverage
   behavior; decaf 38 and safety bars 27 remain uncertain weighting judgments,
-  not established failures. The allocations and scores have no user approval.
+  not established failures. On reviewing the full marked safety-bar post, the
+  user judged 27 probably on the high side but plausible. This is recorded as
+  an uncertain user review, not a rejection or a replacement score target.
+  No unqualified user approval of these allocations or scores is recorded.
   Older PPv24 scores (52/39/8/98) are saved context only: the two-stage workflow
   differs, so changes cannot be attributed solely to removing class analysis.
-  No prompt changed or was promoted. Review the uncertain real cases before
-  making another scoring revision.
+  No prompt changed or was promoted. The tentative numerical judgments do not
+  establish a failure requiring another scoring revision.
 
   The user has authorized small, in-scope prominence diagnostics, explicitly
   including prompt ablations, without repeated permission requests. Prepare
