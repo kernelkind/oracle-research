@@ -102,7 +102,7 @@ class NewJobLimitReached(Exception):
 class PromptSpendBudget:
     """Reserve a caller-verified maximum per request; never truncate responses."""
 
-    def __init__(self, limit_usd, request_usd, records, *, prior_request_usd=None):
+    def __init__(self, limit_usd, request_usd, records, *, prior_request_usd=None, reconciled_costs=None):
         self.limit = self.micros(limit_usd, ROUND_FLOOR)
         self.reservation = self.micros(request_usd, ROUND_CEILING)
         if self.limit <= 0 or self.reservation <= 0:
@@ -115,7 +115,7 @@ class PromptSpendBudget:
         for record in records:
             if record.get('execution') == 'cross_run_reuse':
                 continue
-            charge = self.charge(record)
+            charge = self.charge(record, reconciled_costs)
             self.spent += prior_reservation if charge is None else charge
             self.halted |= charge is not None and charge > prior_reservation
 
@@ -132,9 +132,9 @@ class PromptSpendBudget:
             raise RunnerError('invalid dollar amount') from None
 
     @classmethod
-    def charge(cls, record):
+    def charge(cls, record, reconciled_costs=None):
         try:
-            return cls.micros(record['model_result']['response_metadata']['usage']['cost'])
+            return cls.micros(provider_cost(record, reconciled_costs))
         except (KeyError, TypeError, RunnerError):
             return None
 
@@ -155,6 +155,41 @@ class PromptSpendBudget:
             self.spent += self.reservation if charge is None else charge
             self.halted |= charge is not None and charge > self.reservation
             self.condition.notify_all()
+
+
+def provider_cost(record, reconciled_costs=None):
+    native = record.get('model_result') or {}
+    for key in ('response_metadata', 'usage'):
+        native = native.get(key) if isinstance(native, dict) else None
+    cost = native.get('cost') if isinstance(native, dict) else None
+    if type(cost) in (int, float) and math.isfinite(cost) and cost >= 0:
+        return cost
+    return (reconciled_costs or {}).get(_sha256_bytes(_canonical_json_bytes(record)))
+
+
+def load_reconciled_costs(run_directory, records):
+    path = run_directory / 'cost-receipts.jsonl'
+    if not path.exists():
+        return {}
+    by_hash = {_sha256_bytes(_canonical_json_bytes(r)): r for r in records}
+    costs = {}
+    for line in path.read_bytes().splitlines():
+        receipt = json.loads(line)
+        key = receipt.get('record_sha256')
+        record = by_hash.get(key)
+        generation = receipt.get('generation') or {}
+        expected_id = ((record or {}).get('model_result') or {}).get('response_metadata', {}).get('id')
+        cost = generation.get('total_cost')
+        if (record is None or record.get('provider') != 'openrouter' or
+            record.get('execution') == 'cross_run_reuse' or not expected_id or
+            generation.get('id') != expected_id or receipt.get('source') != 'openrouter/generation' or
+            type(cost) not in (int, float) or not math.isfinite(cost) or cost < 0 or key in costs):
+            raise RunnerError('invalid or mismatched cost receipt')
+        native = provider_cost(record)
+        if native is not None and native != cost:
+            raise RunnerError('cost receipt conflicts with original billing')
+        costs[key] = cost
+    return costs
 
 
 @dataclass
@@ -3182,7 +3217,8 @@ def _execute_prompt_batch(
         prior_request = max([Decimal(str(max_request_cost_usd)),
                              *(Decimal(str(r['max_request_cost_usd'])) for r in prior_limits)])
         spend = PromptSpendBudget(max_cost_usd, max_request_cost_usd, records,
-                                  prior_request_usd=prior_request)
+                                  prior_request_usd=prior_request,
+                                  reconciled_costs=load_reconciled_costs(config.run_directory, records))
         _append_json_line(limits_path, dict(
             max_cost_usd=max_cost_usd, max_request_cost_usd=max_request_cost_usd,
             prior_spend_micro_usd=spend.spent, manifest_sha256=manifest_sha256,

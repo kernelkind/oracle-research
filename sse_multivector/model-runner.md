@@ -305,6 +305,16 @@ The existing provider-only retry policy is unchanged. Limits are recorded
 in `run/spend-limits.jsonl`. They do not replace ledger admission or authorize
 spending, and responses are never truncated to fit the dollar allowance.
 
+`experiment.py reconcile-costs EXPERIMENT` retrieves missing OpenRouter charges
+through the credential service's read-only generation lookup; it performs no
+inference. It saves separate `run/cost-receipts.jsonl` entries bound to each
+original receipt's hash and generation ID, without rewriting outputs or usage.
+Reports and resumed dollar budgets use these verified charges instead of the
+worst-case reserves. Failed lookups remain unknown; repeated reconciliation
+skips charges already known. Invalid IDs, negative/nonfinite charges, conflicting
+billing and mismatched receipt bindings are rejected. Ledger accounting remains
+the caller's responsibility. This does not change model settings or retry rules.
+
 Production extraction `extraction_pipeline.py run` / `subjects` and
 `claim_exec.py` retain their separate extraction contracts. The former public
 `extraction_pipeline.py prompt CONFIG`, `masks` and `revise-prompt` paths are

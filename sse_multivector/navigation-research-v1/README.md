@@ -776,7 +776,7 @@ review UI, including original mask IDs and complete source posts. Prior HR02,
 Jev and HDBSCAN artifacts remain untouched. Quality and whether to pursue this
 approach remain open until review.
 
-**Current checkpoint: provider failures exhausted available cost reservations.**
+**Current checkpoint: cost lookup verified; reserves reconciled for continuation.**
 638 of 930 titles are saved: 120 from the capped run, 262 from the first uncapped
 run and 256 from its continuation. The continuation has 14 failed cases and
 278 unrun cases; no requests remain active. All three receipt-validated reports
@@ -807,8 +807,11 @@ billing lookup to the credential-service owner. The scheduler now runs due
 retries before untouched cases, ordered by deadline, including after resume.
 Backoff, concurrency, retry eligibility and the two-attempt limit are unchanged.
 Offline regressions cover the original starvation and resumed execution; no
-paid calls were made for this fix. Preserve all receipts and reserves until
-actual-cost lookup is available, then reconcile and resume. No model/settings
+paid calls were made for this fix. 
+The shared `reconcile-costs` command verified all 14 missing bills as exactly $0, without rewriting model receipts. Its
+reports now show $0.316710016 and $0.511861742 for the two uncapped runs, with no
+unknown charges. Resume the same continuation using the corrected retry priority
+and original model settings within the approved $4 total. No model/settings
 substitution or canonical HR02 changes are authorized. No Jev calls or
 semantic-collapse hierarchy have yet been produced. The offline viewer schema
 check is a labelled fixture, not model results.

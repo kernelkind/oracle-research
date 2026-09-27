@@ -16,6 +16,7 @@ import json
 import math
 from pathlib import Path
 import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -381,6 +382,7 @@ def report(directory):
         if ledger.exists()
         else []
     )
+    reconciled_costs = engine.load_reconciled_costs(config.run_directory, records)
     reviews_path = directory / "reviews.jsonl"
     comments_path = directory / "ui-comments.json"
     comments = (
@@ -498,10 +500,7 @@ def report(directory):
     }
     attempts = [r for r in records if r.get("execution") != "cross_run_reuse"]
     for record in attempts:
-        native = record
-        for key in ("model_result", "response_metadata", "usage"):
-            native = native.get(key) if isinstance(native, dict) else None
-        charge = native.get("cost") if isinstance(native, dict) else None
+        charge = engine.provider_cost(record, reconciled_costs)
         if type(charge) in (int, float) and math.isfinite(charge) and charge >= 0:
             usage["provider_reported_cost_usd"] += charge
         else:
@@ -585,6 +584,51 @@ def execution_upgrade(directory, plan, reason):
             "results_prefix_bytes": len(results),
             "results_prefix_sha256": engine._sha256_bytes(results),
         })
+
+
+def reconcile_costs(directory):
+    """Read missing OpenRouter charges; never rewrite original model receipts."""
+    directory = Path(directory).resolve()
+    with locked(directory):
+        plan, config, manifest = load(directory)
+        if config.provider != 'openrouter' or plan['imported']:
+            raise ValueError('cost lookup requires a native OpenRouter experiment')
+        report(directory)  # Verify saved experiment and receipt provenance first.
+        path = config.run_directory / 'results.jsonl'
+        records = [json.loads(line) for line in path.read_bytes().splitlines()] if path.exists() else []
+        costs = engine.load_reconciled_costs(config.run_directory, records)
+        pending = [r for r in records if r.get('execution') != 'cross_run_reuse'
+                   and engine.provider_cost(r, costs) is None
+                   and (r.get('model_result') or {}).get('response_metadata', {}).get('id')]
+        if pending:
+            ids = list(dict.fromkeys(r['model_result']['response_metadata']['id'] for r in pending))
+            node = shutil.which('node')
+            argv = ([node] if node else ['nix', 'shell', 'nixpkgs#nodejs_24', '--command', 'node'])
+            argv += [str(Path(__file__).with_name('frontier_runner') / 'billing.mjs')]
+            result = subprocess.run(argv, input=json.dumps(ids), text=True, capture_output=True,
+                                    timeout=60 + 35 * len(ids))
+            if result.returncode:
+                raise ValueError('cost lookup failed; original reserves retained')
+            rows = json.loads(result.stdout)
+            if not isinstance(rows, list) or len(rows) != len(ids):
+                raise ValueError('invalid cost lookup response')
+            by_id = {r.get('id'): r for r in rows}
+            if set(by_id) != set(ids):
+                raise ValueError('cost lookup generation IDs differ')
+            for row in rows:
+                if 'error' not in row:
+                    cost = row.get('total_cost')
+                    if type(cost) not in (int, float) or not math.isfinite(cost) or cost < 0:
+                        raise ValueError('invalid cost lookup charge')
+            for record in pending:
+                row = by_id[record['model_result']['response_metadata']['id']]
+                if 'error' in row:
+                    continue  # Missing bills remain explicitly unknown.
+                engine._append_json_line(config.run_directory / 'cost-receipts.jsonl', {
+                    'source': 'openrouter/generation', 'record_sha256': inputs.digest(record),
+                    'generation': row, 'looked_up_at_utc': datetime.now(timezone.utc).isoformat(),
+                })
+        return report(directory)
 
 
 def run(directory, max_new_attempts=None, runner_upgrade_reason=None, *,
@@ -891,6 +935,8 @@ def parser():
     p.add_argument("--max-request-cost-usd", type=float,
                    help="caller-verified maximum cost reserved for each in-flight call; required with --max-cost-usd")
     p.add_argument("--runner-upgrade-reason", help="explicitly approve and audit a workflow-code upgrade; frozen inputs/settings remain immutable")
+    p = commands.add_parser('reconcile-costs', help='lookup missing OpenRouter charges; no inference')
+    p.add_argument('experiment', type=Path)
     p = commands.add_parser(
         "show", help="inspect all cases, or exact case evidence; no inference"
     )
@@ -955,6 +1001,8 @@ def main(argv=None):
                     for s in ("malformed", "invalid_receipt", "failed", "unrun")
                 )
             )
+        elif args.command == 'reconcile-costs':
+            compact(reconcile_costs(args.experiment))
         elif args.command == "show":
             result = report(args.experiment)
             if args.case:

@@ -1325,6 +1325,64 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(usage["attempts_without_provider_cost"], 0)
         self.assertIsNone(usage["catalog_cost_estimate_usd"])
 
+    def test_cost_lookup_preserves_receipts_and_releases_reserve_on_resume(self):
+        from unittest.mock import patch
+        from sse_multivector import experiment
+        spec = json.loads(self.spec.read_text())
+        spec['runner']['provider'] = 'openrouter'
+        self.spec.write_text(json.dumps(spec))
+        self.prepare()
+        self.cli('run', 'E1', '--max-cost-usd', '0.6', '--max-request-cost-usd', '0.4',
+                 ok=False, env={'FAKE_RUNNER_RESULT_OVERRIDE': json.dumps({
+                     'response_metadata': {'id': 'gen-test'}})})
+        receipts = self.root / 'E1/run/results.jsonl'
+        before = receipts.read_bytes()
+        reply = subprocess.CompletedProcess([], 0, json.dumps([
+            {'id': 'gen-test', 'total_cost': 0, 'model': 'fixture/model'}]), '')
+        with patch.object(experiment.subprocess, 'run', return_value=reply) as lookup:
+            experiment.reconcile_costs(self.root / 'E1')
+            lookup.assert_called_once()
+        self.assertEqual(receipts.read_bytes(), before)
+        self.assertEqual(self.show()['usage']['provider_reported_cost_usd'], 0)
+        self.assertEqual(self.show()['usage']['attempts_without_provider_cost'], 0)
+        with patch.object(experiment.subprocess, 'run') as lookup:
+            experiment.reconcile_costs(self.root / 'E1')
+            lookup.assert_not_called()
+        self.cli('run', 'E1', '--max-cost-usd', '0.6', '--max-request-cost-usd', '0.4',
+                 env={'FAKE_RUNNER_RESULT_OVERRIDE': json.dumps({
+                     'response_metadata': {'usage': {'cost': 0.1}}})})
+        self.assertEqual(len(self.calls()), 2)
+        self.assertTrue(receipts.read_bytes().startswith(before))
+        self.assertEqual(self.show()['summary']['valid'], 2)
+        self.assertAlmostEqual(self.show()['usage']['provider_reported_cost_usd'], 0.1)
+        path = self.root / 'E1/run/cost-receipts.jsonl'
+        receipt = json.loads(path.read_text())
+        receipt['generation']['id'] = 'gen-unrelated'
+        path.write_text(json.dumps(receipt) + '\n')
+        with self.assertRaisesRegex(Exception, 'cost receipt'):
+            experiment.report(self.root / 'E1')
+
+    def test_cost_lookup_rejects_invalid_charge_without_releasing_reserve(self):
+        from unittest.mock import patch
+        from sse_multivector import experiment
+        spec = json.loads(self.spec.read_text())
+        spec['runner']['provider'] = 'openrouter'
+        self.spec.write_text(json.dumps(spec))
+        self.prepare('E1', '--only', 'one')
+        self.cli('run', 'E1', env={'FAKE_RUNNER_RESULT_OVERRIDE': json.dumps({
+            'response_metadata': {'id': 'gen-test'}})})
+        for value in [-1, None, True, float('nan')]:
+            with self.subTest(value=value), patch.object(experiment.subprocess, 'run',
+                    return_value=subprocess.CompletedProcess([], 0, json.dumps([
+                        {'id': 'gen-test', 'total_cost': value, 'model': 'fixture/model'}]), '')):
+                with self.assertRaisesRegex(ValueError, 'cost'):
+                    experiment.reconcile_costs(self.root / 'E1')
+        self.assertEqual(self.show()['usage']['attempts_without_provider_cost'], 1)
+        with patch.object(experiment.subprocess, 'run', return_value=subprocess.CompletedProcess(
+                [], 0, json.dumps([{'id': 'gen-test', 'error': 'HTTP 404'}]), '')):
+            experiment.reconcile_costs(self.root / 'E1')
+        self.assertEqual(self.show()['usage']['attempts_without_provider_cost'], 1)
+
     def test_dollar_budget_preserves_uncapped_responses_and_counts_prior_spend(self):
         spec=json.loads(self.spec.read_text())
         spec['runner']['provider']='openrouter'
