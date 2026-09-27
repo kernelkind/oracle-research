@@ -950,6 +950,18 @@ production preparation and decoding functions:
   sample per mask does not establish causality, repeatability, or calibration.
   PPv26 remains the approved main prompt; PPv26-D3 is a tested diagnostic.
 
+  Unchanged PPv26-D3 was then tested against the accepted relief allocation in
+  `experiments/ppv26-relief-scoring-v1` (reusable spec:
+  `experiment_specs/ppv26-relief-scoring-v1.json`). Three Astra-low subscription
+  calls assessed separate masks for the scan-result clause, treatment-duration
+  phrase, and relief sentence. They scored 60, 18, and 22 respectively, each
+  with zero credit for the other two meanings. All retained the exact saved
+  allocation and passed point-sum checks. No allocation calls, baseline reruns,
+  retries, or reuse occurred. Agent reviews accept this local behavior; these
+  mask scores have not received a separate user judgment. The masks closely
+  match whole allocation entries, so partial and fragmented masks remain an
+  important untested boundary for this diagnostic. No prompt changed.
+
   The user has authorized small, in-scope prominence diagnostics, explicitly
   including prompt ablations, without repeated permission requests. Prepare
   versioned diagnostic variants and run these ablations without pausing for
