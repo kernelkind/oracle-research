@@ -776,39 +776,32 @@ review UI, including original mask IDs and complete source posts. Prior HR02,
 Jev and HDBSCAN artifacts remain untouched. Quality and whether to pursue this
 approach remain open until review.
 
-**Current checkpoint: resumed with the approved $4 allowance.** Muse exhausted the
-imposed 6,500-token allowance on several cases before returning any title.
-The scheduler was interrupted and in-flight calls drained normally; all receipts
-and successful titles are preserved. The shared report records partial progress,
-and the first stage's billing was settled. The user rejected the response cap
-and approved continuation: retain all 120 successful titles and select only the
-810 incomplete cases in a separate uncapped experiment. That run saved 262 valid
-titles, then stopped after one provider connection failure lacked final billing;
-547 cases were unrun. The next continuation selects only those 548 incomplete
-cases, preserving all 382 successful titles. It saved another 97 titles before
-the same missing-billing stop followed a provider connection failure. The user
-approved keeping the maximum charge reserved instead of stopping the whole
-batch. The runner now does that, including across resumes; reports continue to
-mark the actual charges unknown. Resumed this same continuation with its original
-$1.25 cumulative allowance and the existing provider-only two-attempt retry policy.
-It reached 133 valid titles, four failed provider calls and 411 unrun cases before
-maximum-cost reservations left insufficient allowance for another request.
-Across all three runs, 515 titles are valid and preserved; 415 remain unresolved.
-No title format failures occurred in the uncapped continuations; semantic
-quality has not yet been reviewed.
-The shared budget reader totals known charges conservatively to $0.316831 in
-the first uncapped run and $0.254839 in the continuation; five failed calls across them have unknown charges. The installed credential
-service does not expose billing lookup endpoints. The user approved increasing
-the total allowance from $2 to $4; the same continuation resumed without a
-response cap or another experiment preparation.
-All three receipt-validated reports
+**Current checkpoint: provider failures exhausted available cost reservations.**
+638 of 930 titles are saved: 120 from the capped run, 262 from the first uncapped
+run and 256 from its continuation. The continuation has 14 failed cases and
+278 unrun cases; no requests remain active. All three receipt-validated reports
 are required when packaging; duplicate successes are rejected, not overwritten.
-The shared budget reader conservatively accounts for
-$0.316831 of known charges in the first uncapped run; one failed call has an unknown charge. The active continuation is limited to $3.25 with
-the same $0.20 per-request reservation. This does not cap response length. No Jev calls or semantic-collapse
-hierarchy have yet been produced. Never reinterpret length failures as semantic
-failures. The offline viewer schema check is only a labelled fixture, not model
-results.
+There are no uncapped title format failures; semantic quality is not yet reviewed.
+
+The user rejected the original 6,500-token cap, approved retaining full maximum
+charges for missing bills instead of halting unrelated requests, and increased
+the total allowance to $4. The shared runner implements those decisions and
+preserves the provider-only two-attempt retry policy. The continuation's
+cumulative allowance is $3.25, with $0.20 reserved for each unbilled call.
+Fourteen failed calls across the uncapped runs have unknown charges. Their
+known charges total conservatively to $0.316831 and $0.511987 respectively;
+Saved failure receipts report Meta/OpenRouter provider-unavailable errors. The
+network failures repeatedly follow approximately 300 seconds without a model
+event, while heartbeat bytes continue arriving. This is evidence of an upstream
+generation/stream failure, not the local 1,800-second timeout or an imposed
+output-token limit; the exact upstream cause remains unproven. One additional
+failure says the model failed to generate a response and includes billing.
+The installed credential service does not expose billing lookup endpoints.
+Preserve all receipts and reserves; investigate the provider problem before
+seeking another allowance increase. No model/settings substitution or canonical
+HR02 changes are authorized. No Jev calls or semantic-collapse hierarchy have
+yet been produced. The offline viewer schema check is a labelled fixture,
+not model results.
 
 ### Jev full HR02 directional judgments
 
