@@ -959,8 +959,23 @@ production preparation and decoding functions:
   allocation and passed point-sum checks. No allocation calls, baseline reruns,
   retries, or reuse occurred. Agent reviews accept this local behavior; these
   mask scores have not received a separate user judgment. The masks closely
-  match whole allocation entries, so partial and fragmented masks remain an
-  important untested boundary for this diagnostic. No prompt changed.
+  match whole allocation entries, motivating the partial-mask test below.
+  No prompt changed.
+
+  `experiments/ppv26-relief-partial-v1` then tested four masks using unchanged
+  PPv26-D3 and the same accepted allocation (reusable spec:
+  `experiment_specs/ppv26-relief-partial-v1.json`). Four Astra-low subscription
+  calls, without retries, reuse, or allocation calls, returned: fragmented scan
+  result 60, fragmented relief 22, relief alone 12, cancer alone 8. The scan
+  fragments omitted "show"; the relief fragments omitted "with". Both retained
+  their whole-meaning scores. The single-word masks received only partial
+  credit in their relevant allocation entries, zero in the others. All outputs
+  preserved allocation meanings/weights and passed point-sum checks. Agent
+  reviews accept the two fragmented cases and the direction of the cancer-only
+  result; relief-only is uncertain because the exact 12/10 split needs judgment,
+  not because a failure is established. No user verdicts on these four masks
+  are recorded. These observations do not establish precise calibration or
+  general reliability for partial masks. No prompt changed.
 
   The user has authorized small, in-scope prominence diagnostics, explicitly
   including prompt ablations, without repeated permission requests. Prepare
