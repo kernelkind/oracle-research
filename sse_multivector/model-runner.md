@@ -1153,6 +1153,30 @@ production preparation and decoding functions:
   PPv30 remains a tested candidate, not approved or frozen; there is no user
   verdict on this ordering yet.
 
+  The user rejected further fine-grained score analysis and authorized a small
+  test outside coffee/tea, looking for obvious scoring or ordering failures.
+  `experiments/ppv30-diverse-nodes-v1` uses unchanged PPv30 and its matching
+  reusable spec. The production prominence input preparer validated all original
+  members from the saved title report: Kindness, goodness, and generosity
+  (Sdc00def87d, 7), Photography (S45e455e0be, 5), and Stress and anxiety
+  (S69c628e2ff, 2). Generic schema validation supports PPv30's allocation output;
+  full posts, exact spans and node evidence are preserved, with no membership
+  filtering or node titles in model input. Fourteen Astra-low subscription
+  calls completed without retries, reuse, or baseline calls. Membership/input
+  equality, unchanged prompt hash, schema and allocation arithmetic all passed.
+
+  Scores by descending order: kindness V0806 20, V1080 7, V1075 6, V1079 5,
+  V0805 4, V1072 3, V1071 3; photography V0964 13, V0765 8, V0963 4,
+  V0767 2, V0688 1; stress/anxiety V0123 10, V1051 1. Agent assessment found
+  no obvious coarse ranking failure: the full generosity claim outranks its
+  adjective alone; forgetting to take photos outranks take photos; photographer
+  credit outranks Photographer alone; an incidental photography hashtag ranks
+  last. Anxiety framing a short chemotherapy update outranks stress wording
+  within a long advice list. These are agent assessments, not user verdicts.
+  The sample mostly contains narrow masks and does not validate the upper
+  score range or calibrated percentages. No prompt edit or promotion occurred.
+  Saved two-stage diagnostics are not normative targets for PPv30.
+
   The user has authorized small, in-scope prominence diagnostics, explicitly
   including prompt ablations, without repeated permission requests. Prepare
   versioned diagnostic variants and run these ablations without pausing for
