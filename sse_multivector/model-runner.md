@@ -1387,6 +1387,44 @@ Python lacked torch, and an offline uv resolution failed before inference;
 the existing cached matching runtime completed the single two-row SSE job
 without installing packages or accessing the network.
 
+The subsequent authorized Coffee trial uses `experiments/ppv30-coffee-node-v1`
+and its matching reusable spec. Its 17 masks across 14 posts are exactly the
+direct `matched_instances` of raw Jev node
+`merged-426504446eac3b0f75ffa4893679c656567164616668f15f579713918a00a869`
+in `target/hierarchy-build-v1/hr02-jev-browser-v1/named-graph.json`.
+Original mask IDs are recovered from membership origins; no descendant masks,
+membership expansion or manual corrections are included. Production prominence
+preparation validates the spans and constructs the same input representation
+used for Photography. PPv30, its schema and Astra-low subscription settings
+are unchanged. Exact-request lookup found no reusable answers: 17 new calls
+completed, all valid, without retries or baseline calls. Allocation sums and
+exact membership/input checks passed; no prompt promotion is implied.
+
+Scores span 1–100. The three masks of More coffee in cool places scored 100
+(complete text, V0504), 85 (coffee in cool places, V0503), and 40 (coffee alone,
+V0502). The incidental Coffee hashtag beneath the Tolstoy quotation scored 1
+(V0690). This supplies a wider range than Photography; it does not establish
+calibration or a user verdict. The saved combined comparison is
+`experiments/ppv30-coffee-node-v1/cosine-v1/comparison.json`. Existing SSE mask
+vectors are reused; only the exact node title coffee and one V0504 replay were
+encoded locally with the matching checkpoint/runtime. Replay cosine was
+0.999999999999949 and maximum normalized component error 4.40e-8. Rescaled
+title-cosine weights span .8815–.9912 and change only prominence ties, not the
+ordering of unequal prominence scores. No ordering improvement is established.
+
+Review all 17 direct masks in combined order, one inline mask per full post:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector && \
+python3 experiment.py review experiments/ppv30-coffee-node-v1 \
+  --ui --view prominence \
+  --cosine-comparison experiments/ppv30-coffee-node-v1/cosine-v1/comparison.json \
+  --ordering 'Linear cosine'
+```
+
+The next step is user review of this ordering, not additional inference or a
+prompt edit. The UI retains comments and the original hierarchy is unchanged.
+
 ### Revision: explicit approved base, full-context diff
 
 Use a new versioned destination and the last approved prompt as the base:
