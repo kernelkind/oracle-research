@@ -776,7 +776,7 @@ review UI, including original mask IDs and complete source posts. Prior HR02,
 Jev and HDBSCAN artifacts remain untouched. Quality and whether to pursue this
 approach remain open until review.
 
-**Current checkpoint: uncapped continuation running after provider failure.** Muse exhausted the
+**Current checkpoint: stopped at the remaining dollar allowance after provider failures.** Muse exhausted the
 imposed 6,500-token allowance on several cases before returning any title.
 The scheduler was interrupted and in-flight calls drained normally; all receipts
 and successful titles are preserved. The shared report records partial progress,
@@ -789,9 +789,17 @@ cases, preserving all 382 successful titles. It saved another 97 titles before
 the same missing-billing stop followed a provider connection failure. The user
 approved keeping the maximum charge reserved instead of stopping the whole
 batch. The runner now does that, including across resumes; reports continue to
-mark the actual charges unknown. Resume this same continuation with its original
-$1.25 cumulative allowance, preserving all 479 valid titles and retrying only
-eligible provider failures under the existing two-attempt policy. All three receipt-validated reports
+mark the actual charges unknown. Resumed this same continuation with its original
+$1.25 cumulative allowance and the existing provider-only two-attempt retry policy.
+It reached 133 valid titles, four failed provider calls and 411 unrun cases before
+maximum-cost reservations left insufficient allowance for another request.
+Across all three runs, 515 titles are valid and preserved; 415 remain unresolved.
+No title scope or format failures occurred in the uncapped continuations.
+The shared budget reader totals known charges conservatively to $0.316831 in
+the first uncapped run and $0.254839 in the continuation; five failed calls across them have unknown charges. The installed credential
+service does not expose billing lookup endpoints. Further execution needs
+resolved billing or an approved larger allowance, not another response cap.
+All three receipt-validated reports
 are required when packaging; duplicate successes are rejected, not overwritten.
 The shared budget reader conservatively accounts for
 $0.316831 of known charges in the first uncapped run; one failed call has an unknown charge. The active continuation is limited to $1.25 with
