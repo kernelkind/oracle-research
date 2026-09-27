@@ -745,6 +745,35 @@ The user subsequently approved the full directional run below, rather than
 another small validation test. Prompt/input identity and frozen-label checks
 passed; no production code changed and no new hierarchy was built.
 
+### Separate M06 title and nesting experiment
+
+**HR02-M06-MUSE-JEV-v1 — approved, not canonical HR02:** keep the saved M06
+tree and the existing two-post/equal-post display projection fixed. Prepare
+930 non-root groups with unchanged v38 and Muse Spark 1.3 Contributor/high;
+then judge the 905 existing non-root edges in both directions (1,810 cases)
+with unchanged NSP-Jev-v3 / Jev 1.13 provider-default. This is a pragmatic
+combined-system diagnostic, not a controlled model comparison or production
+adoption. No OpenAI subscription inference is requested.
+
+The offline `merge_tree_nesting.py` preparation and packaging path uses the
+shared experiment runner for all inference. Reusable specs are
+`experiment_specs/hr02-m06-muse-titles-v1.json` and
+`experiment_specs/hr02-m06-jev-nesting-v1.json`. Generated inputs and views
+live only under `target/hr02-m06-muse-jev-v1/`; title execution uses
+`experiments/hr02-m06-muse-titles-v1-bounded/`. The earlier unbounded preparation
+was never executed. The $2 experiment allowance permits at most 950 Muse
+attempts, capped at 6,500 output/reasoning tokens each, plus at most 3,620 Jev
+attempts, with rendered-input admission checked before each stage.
+
+Only mutual Yes on an original edge permits contraction. Keep the upper
+group's existing title and complete masks; no extra naming inference. Preserve
+all other links, recording reversed, rejected and uncertain decisions for
+inspection. Do not rejudge promoted links or manually repair the tree. The
+original titled tree and separately simplified tree use the existing hierarchy
+review UI, including original mask IDs and complete source posts. Prior HR02,
+Jev and HDBSCAN artifacts remain untouched. Quality and whether to pursue this
+approach remain open until review.
+
 ### Jev full HR02 directional judgments
 
 The user approved unchanged **NSP-Jev-v3**, `typesafe/jev-1.13` provider-default,

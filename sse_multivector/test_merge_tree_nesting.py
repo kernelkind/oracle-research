@@ -1,0 +1,78 @@
+"""Offline coverage for the isolated merge-tree nesting experiment."""
+import copy
+import json
+import tempfile
+from pathlib import Path
+import unittest
+
+from merge_tree_nesting import project, contract, pair_cases, validate_decisions, view
+from experiment_inputs import render
+
+
+class MergeTreeNestingTests(unittest.TestCase):
+    def test_projection_matches_viewer_and_preserves_all_masks(self):
+        history = dict(vector_count=4, alias_groups=[['a'], ['b'], ['c'], ['d']],
+                       canonical_unique_ids=['a', 'b', 'c', 'd'], merges=[
+                           dict(id=4, left=0, right=1, size=2),
+                           dict(id=5, left=4, right=2, size=3),
+                           dict(id=6, left=5, right=3, size=4)])
+        mapping = {'vectors': [dict(vector_id=k, short_id='V'+k, note_id=n,
+                                   note_short_id=n, fragments=['x'], byte_spans=[[0, 1]])
+                               for k, n in zip('abcd', ['p', 'q', 'q', 'r'])]}
+        posts = {'notes': [dict(note_id=n, text='x') for n in ['p', 'q', 'r']]}
+        tree, packets = project(history, mapping, posts)
+        self.assertEqual(tree['root'], 'M06-6')
+        self.assertEqual(tree['edges'], [['M06-6', 'M06-5']])
+        self.assertEqual(tree['members']['M06-6'], ['Va', 'Vb', 'Vc', 'Vd'])
+        self.assertEqual(len(packets['packets']), 1)
+        self.assertEqual(len(packets['packets'][0]['instances']), 3)
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            (root/'posts.json').write_text(json.dumps(posts))
+            (root/'mapping.json').write_text(json.dumps(mapping))
+            exported=view(tree, {'M06-5':'X'}, root/'posts.json', root/'mapping.json', label='test')
+            masks=exported['mask_instances']['root']
+            self.assertEqual({i for ms in masks.values() for m in ms for i in m['ids']},
+                             {'Va','Vb','Vc','Vd'})
+            self.assertEqual(len(exported['notes']),3)
+            self.assertEqual(exported['nodes'][1]['note_ids'],['p','q'])
+        bad = copy.deepcopy(history)
+        bad['merges'][0]['size'] = 3
+        with self.assertRaises(ValueError): project(bad, mapping, posts)
+
+    def test_only_mutual_yes_collapses_keep_other_edges_and_top_title(self):
+        tree = dict(root='root', edges=[['root','a'],['a','b'],['b','c'],['b','d']],
+                    members={'root':['1','2','3'], 'a':['1','2','3'],
+                             'b':['1','2'], 'c':['1'], 'd':['2']})
+        decisions = {('a','b'):'yes',('b','a'):'yes',('b','c'):'no',
+                     ('c','b'):'yes',('b','d'):'uncertain',('d','b'):'no'}
+        result = contract(tree, decisions)
+        self.assertEqual(result['representative']['b'], 'a')
+        self.assertEqual(result['edges'], [['root','a'], ['a','c'], ['a','d']])
+        self.assertEqual([e['status'] for e in result['judgments']],
+                         ['equivalent','reversed','uncertain'])
+        self.assertEqual(result['members']['a'], tree['members']['a'])
+        self.assertEqual(tree['edges'][2], ['b','c'])
+
+    def test_pair_inventory_exact_and_titles_json_escaped(self):
+        tree = dict(root='root', edges=[['root','a'], ['a','b']])
+        titles = {'a':'A', 'b':'B "quoted"'}
+        cases = pair_cases(tree, titles)
+        self.assertEqual(len(cases), 2)
+        prompt = dict(id='NSP-Jev-v3', text='{"A":"{A_TITLE}","B":"{B_TITLE}"}')
+        self.assertEqual(json.loads(render(prompt['text'], cases[0]['inputs'])),
+                         {'A':'A','B':'B "quoted"'})
+        with self.assertRaises(ValueError): validate_decisions(tree, titles, {}, prompt)
+        titles['b'] = 'B'
+        report = dict(prompt_id=prompt['id'], settings=dict(provider='openrouter',
+                      model='typesafe/jev-1.13', reasoning_effort='provider-default'), cases=[])
+        for c in pair_cases(tree,titles):
+            report['cases'].append(dict(c, status='valid', receipt={'verified':True},
+                                      prompt=render(prompt['text'],c['inputs']),
+                                      parsed={'contains':{'choice':'no'}}))
+        self.assertEqual(len(validate_decisions(tree,titles,report,prompt)),2)
+        report['cases'][0]['inputs']['A_TITLE']='wrong'
+        with self.assertRaises(ValueError): validate_decisions(tree,titles,report,prompt)
+
+
+if __name__ == '__main__': unittest.main()

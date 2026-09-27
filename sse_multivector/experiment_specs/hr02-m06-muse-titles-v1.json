@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "prompt": {"id": "v38", "path": "../hdbv2-node-description-probe-v38/prompt.txt"},
+  "dataset": {"adapter": "titles", "path": "../../target/hr02-m06-muse-jev-v1/source-packets.json"},
+  "runner": {
+    "provider": "openrouter",
+    "auth_file": null,
+    "model": "meta/muse-spark-1.3-contributor",
+    "reasoning_effort": "high",
+    "max_output_tokens": 6500,
+    "timeout_seconds": 1800,
+    "concurrency": 8
+  }
+}
