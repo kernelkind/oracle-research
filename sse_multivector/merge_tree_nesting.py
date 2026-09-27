@@ -1,7 +1,8 @@
-"""Offline preparation and reversible nesting projection for a saved M06 tree.
+"""Offline preparation and reversible nesting projection for saved mask groups.
 
 All inference belongs to experiment.py. Never rewrites input trees, prompts or
-other experiments. Only mutual Yes on an existing edge permits contraction.
+other experiments. Contraction needs mutual containment Yes or direct equivalence
+Yes on an existing edge; those native judgment types remain separate.
 """
 import argparse
 from collections import Counter
@@ -83,10 +84,33 @@ def pair_cases(tree, titles):
 
 
 def validate_decisions(tree, titles, report, prompt):
-    expected = pair_cases(tree,titles)
+    return _validate_choices(pair_cases(tree,titles), report, prompt, 'contains')
+
+
+def mask_pair_cases(tree, packets):
+    """One direct-equivalence input per non-root edge, using exact source masks."""
+    groups = set(tree['members']) - {tree['root']}
+    prepared = prepare_titles(packets, '{NUMBERED_INSTANCES}', sorted(groups))
+    source = {p['packet']:p for p in packets['packets']}
+    for g in groups:
+        if set(tree['members'][g]) != {i['instance'] for i in source[g]['instances']}:
+            raise ValueError('mask membership mismatch '+g)
+    masks = {g['group']:json.dumps([i['fragments'] for i in g['instances']],
+                                  ensure_ascii=False) for g in prepared}
+    return [dict(id=f'{a}-same-topic-{b}',
+                 inputs=dict(A_MASKS_JSON=masks[a], B_MASKS_JSON=masks[b]),
+                 evidence=dict(original_a_id=a, original_b_id=b))
+            for a,b in tree['edges'] if a != tree['root']]
+
+
+def validate_equivalence_decisions(tree, packets, report, prompt):
+    return _validate_choices(mask_pair_cases(tree,packets), report, prompt, 'same_topic')
+
+
+def _validate_choices(expected, report, prompt, question):
     for c in expected:
         try: json.loads(render(prompt['text'],c['inputs']))
-        except (ValueError, TypeError) as e: raise ValueError('title cannot render unchanged Jev JSON') from e
+        except (ValueError, TypeError) as e: raise ValueError('input cannot render unchanged Jev JSON') from e
     if report.get('prompt_id') != prompt['id'] or any(report.get('settings',{}).get(k)!=v for k,v in
             dict(provider='openrouter',model='typesafe/jev-1.13',reasoning_effort='provider-default').items()):
         raise ValueError('Jev prompt/settings mismatch')
@@ -95,7 +119,7 @@ def validate_decisions(tree, titles, report, prompt):
         raise ValueError('decision inventory mismatch')
     result={}
     for e in expected:
-        c=cases[e['id']];choice=c.get('parsed',{}).get('contains',{}).get('choice')
+        c=cases[e['id']];choice=c.get('parsed',{}).get(question,{}).get('choice')
         if (c['status']!='valid' or not c.get('receipt') or c['inputs']!=e['inputs'] or
             c['prompt']!=render(prompt['text'],e['inputs']) or choice not in {'yes','no','uncertain'}):
             raise ValueError('invalid or mismatched decision '+e['id'])
@@ -104,23 +128,46 @@ def validate_decisions(tree, titles, report, prompt):
 
 
 def contract(tree, decisions):
+    """Apply native directed containment judgments without changing their meaning."""
+    edges = [(p,c) for p,c in tree['edges'] if p != tree['root']]
+    expected = {(a,b) for p,c in edges for a,b in [(p,c),(c,p)]}
+    if set(decisions) != expected: raise ValueError('exact edge decisions required')
+    judgments = {}
+    for p,c in edges:
+        forward,reverse = decisions[p,c],decisions[c,p]
+        if forward not in {'yes','no','uncertain'} or reverse not in {'yes','no','uncertain'}:
+            raise ValueError('unknown decision')
+        status = ('equivalent' if forward == reverse == 'yes' else
+                  'uncertain' if 'uncertain' in (forward,reverse) else
+                  'retained' if forward == 'yes' else 'reversed' if reverse == 'yes' else 'rejected')
+        judgments[p,c] = dict(parent=p,child=c,forward=forward,reverse=reverse,status=status)
+    return _contract_judged_edges(tree, judgments)
+
+
+def contract_equivalence(tree, decisions):
+    """Apply direct same-topic answers; never manufacture containment answers."""
+    expected = {(p,c) for p,c in tree['edges'] if p != tree['root']}
+    if set(decisions) != expected: raise ValueError('exact edge decisions required')
+    statuses = {'yes':'equivalent', 'no':'distinct', 'uncertain':'uncertain'}
+    judgments = {}
+    for (p,c),choice in decisions.items():
+        if choice not in statuses: raise ValueError('unknown decision')
+        judgments[p,c] = dict(parent=p,child=c,same_topic=choice,status=statuses[choice])
+    return _contract_judged_edges(tree, judgments)
+
+
+def _contract_judged_edges(tree, edge_judgments):
     root=tree['root'];children={g:[] for g in tree['members']}
     for a,b in tree['edges']: children[a].append(b)
-    expected={(a,b) for p,c in tree['edges'] if p!=root for a,b in [(p,c),(c,p)]}
-    if set(decisions)!=expected: raise ValueError('exact edge decisions required')
     representative={root:root};judgments=[];pending=[root]
     while pending:
         p=pending.pop()
         for c in children[p]:
             same=False
             if p!=root:
-                forward,reverse=decisions[p,c],decisions[c,p]
-                if forward not in {'yes','no','uncertain'} or reverse not in {'yes','no','uncertain'}:
-                    raise ValueError('unknown decision')
-                same=forward==reverse=='yes'
-                status=('equivalent' if same else 'uncertain' if 'uncertain' in (forward,reverse)
-                        else 'retained' if forward=='yes' else 'reversed' if reverse=='yes' else 'rejected')
-                judgments.append(dict(parent=p,child=c,forward=forward,reverse=reverse,status=status))
+                judgment=edge_judgments[p,c]
+                same=judgment['status']=='equivalent'
+                judgments.append(deepcopy(judgment))
             representative[c]=representative[p] if same else c
             pending.append(c)
     if set(representative)!=set(tree['members']): raise ValueError('disconnected tree')

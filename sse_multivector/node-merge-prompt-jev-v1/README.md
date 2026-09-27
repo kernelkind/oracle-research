@@ -1,6 +1,6 @@
 # NMP-Jev-v1 — mask-based node merging
 
-Status: draft for user review; not approved for inference, tested or frozen.
+Status: approved for the Sleep comparison; not yet tested or frozen.
 The unchanged title-only NSP-Jev-v3 remains the saved comparison baseline.
 
 This separate draft asks whether two groups express the same topic at the same
@@ -26,11 +26,22 @@ group. It does not generate titles, place parents or change the saved tree.
 
 ## Scope and review
 
-The requested first comparison remains confined to the same saved Sleep group
-pairs in HR02-NT02-C01. This task only drafts the prompt: no experiment, calls,
-integration changes, merges, placement corrections or production adoption.
-An approved test would need its own result validation and compare the same
-group boundaries with the saved title-only consolidation results.
+The approved comparison remains confined to the same ten saved Sleep group
+pairs in HR02-NT02-C01. It is prepared separately as HR02-NT02-C02, using the
+shared experiment runner and no baseline reruns. Only a direct Yes permits a
+collapse; No and Uncertain remain distinct. Saved groups, masks and compared
+boundaries stay fixed. No new titles, parent placement or production adoption.
+
+`merge_tree_nesting.mask_pair_cases` prepares the mask inputs through the
+existing title adapter. `validate_equivalence_decisions` checks the exact
+question, inputs, native choice and receipt-backed report;
+`contract_equivalence` preserves direct answers separately from containment
+answers. Both decision types reuse the same reversible edge-contraction code.
+The original title-only results still replay exactly.
+
+This changes both evidence (titles to masks) and question framing (two directed
+containment answers to one equivalence answer). It is a comparison of those
+complete approaches, not an isolation of the effect of adding masks alone.
 
 The criterion is semantic scope, not identical masks, common words, group size
 or a merely shared broader topic. Differing examples need not create different

@@ -10,6 +10,62 @@ from experiment_inputs import render
 
 
 class MergeTreeNestingTests(unittest.TestCase):
+    def test_direct_equivalence_contracts_without_inventing_directional_answers(self):
+        from merge_tree_nesting import contract_equivalence
+        tree = dict(root='root', edges=[['root','a'],['a','b'],['b','c'],['b','d']],
+                    members={'root':['1','2','3'], 'a':['1','2','3'],
+                             'b':['1','2'], 'c':['1'], 'd':['2']})
+        original = copy.deepcopy(tree)
+        choices = {('a','b'):'yes', ('b','c'):'no', ('b','d'):'uncertain'}
+        result = contract_equivalence(tree, choices)
+        self.assertEqual(result['edges'], [['root','a'],['a','c'],['a','d']])
+        self.assertEqual(result['members']['a'], ['1','2','3'])
+        self.assertEqual(result['representative'],
+                         {'root':'root','a':'a','b':'a','c':'c','d':'d'})
+        self.assertEqual(result['judgments'], [
+            dict(parent='a',child='b',same_topic='yes',status='equivalent'),
+            dict(parent='b',child='c',same_topic='no',status='distinct'),
+            dict(parent='b',child='d',same_topic='uncertain',status='uncertain')])
+        self.assertEqual(tree, original)
+        for bad in [{}, {**choices,('root','a'):'yes'},
+                    {**choices,('a','b'):'invalid'}]:
+            with self.assertRaises(ValueError): contract_equivalence(tree,bad)
+
+    def test_mask_pair_inputs_preserve_fragment_groups_and_deduplicate_exact_masks(self):
+        from merge_tree_nesting import mask_pair_cases, validate_equivalence_decisions
+        first = dict(instance='v1', vector_id='1', note_id='n1', text='sleep sleep',
+                     fragments=['sleep','sleep'], byte_spans=[[0,5],[6,11]])
+        alias = dict(first, instance='v2', vector_id='2')
+        other = dict(instance='v3', vector_id='3', note_id='n2', text='tired',
+                     fragments=['tired'], byte_spans=[[0,5]])
+        packets = {'packets':[dict(packet='a',instances=[first,alias,other]),
+                              dict(packet='b',instances=[first,alias])]}
+        tree = dict(root='root',edges=[['root','a'],['a','b']],
+                    members={'root':['v1','v2','v3'],'a':['v1','v2','v3'],
+                             'b':['v1','v2']})
+        prompt = dict(id='NMP-Jev-v1',text='{"A":{A_MASKS_JSON},"B":{B_MASKS_JSON}}')
+        cases = mask_pair_cases(tree,packets)
+        self.assertEqual(len(cases),1)
+        self.assertEqual(json.loads(render(prompt['text'],cases[0]['inputs'])),
+                         {'A':[['sleep','sleep'],['tired']], 'B':[['sleep','sleep']]})
+        report = dict(prompt_id=prompt['id'],settings=dict(provider='openrouter',
+                      model='typesafe/jev-1.13',reasoning_effort='provider-default'),
+                      cases=[dict(cases[0],status='valid',receipt={'verified':True},
+                             prompt=render(prompt['text'],cases[0]['inputs']),
+                             parsed={'same_topic':{'choice':'no'}})])
+        self.assertEqual(validate_equivalence_decisions(tree,packets,report,prompt),
+                         {('a','b'):'no'})
+        for field,value in [('status','failed'),('receipt',None),
+                            ('prompt','wrong'),('parsed',{'contains':{'choice':'yes'}})]:
+            bad=copy.deepcopy(report);bad['cases'][0][field]=value
+            with self.assertRaises(ValueError):
+                validate_equivalence_decisions(tree,packets,bad,prompt)
+        bad=copy.deepcopy(report);bad['cases'][0]['inputs']['A_MASKS_JSON']='[]'
+        with self.assertRaises(ValueError):
+            validate_equivalence_decisions(tree,packets,bad,prompt)
+        bad=copy.deepcopy(tree);bad['members']['b']=['v3']
+        with self.assertRaises(ValueError):mask_pair_cases(bad,packets)
+
     def test_explicit_plain_title_normalization_preserves_original_receipt(self):
         from merge_tree_nesting import normalize_title_reports, bind_title_reports, TITLE
         from prepare_category_title_inputs import prepare
