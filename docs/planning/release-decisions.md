@@ -275,6 +275,7 @@ Approved placement decisions for that separate hierarchy (changes not yet applie
 | Raw food | raw milk | Remove under the agreed food/drink distinction, avoiding the remaining Foods → Raw food → raw milk path. Keep milk → raw milk. The Jev baseline remains unchanged. |
 | Foods | Cream | Keep. The masks describe cream as a food ingredient, including when added to coffee, rather than a separate drink. No change to this baseline link is needed. |
 | Foods | Ice and ice cream | Remove. The group also contains ice used to serve iced coffee; retain the already-accepted Food and drink parent to cover the whole group without treating ice itself as food. Keep the node intact and the Jev baseline unchanged. |
+| Foods | Meat consumption | Keep. Discussing eating meat necessarily concerns food. The hierarchy organizes topics, so the child need not name a food item rather than an activity. No change to this baseline link is needed. |
 
 Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
