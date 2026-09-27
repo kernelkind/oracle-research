@@ -812,11 +812,17 @@ not a provider requirement and is not silently bypassed. Retain unresolved
 charges within the existing $4 allowance, including the $0.15 Jev allocation.
 Luna uses the existing subscription route, with no paid API fallback.
 
-The complete titled tree and all 1,810 Jev inputs are prepared from the 930
-titles. No groups are dropped and no titles are supplied by hand. Jev execution
-and the simplified hierarchy remain pending; the original titled view is now
-model-generated, separate from the earlier labelled schema fixture. Semantic
-quality remains open for user review.
+**Completed:** all 1,810 Jev judgments are valid: 1,159 fresh requests and
+651 exact-request reuses, with no failed cases. Of 905 original non-root edges,
+345 are mutually equivalent, 148 retain the original direction, 31 reverse it,
+and 381 are rejected in both directions. Only the 345 equivalent steps were
+contracted, reducing 930 groups to 585. Reversed and rejected links remain
+visible; this is not a repaired hierarchy. Both views pass the existing UI's
+checks, with all 1,674 masks and 100 posts preserved and source hashes unchanged.
+No titles were supplied by hand. The original titled view and
+`simplified/categories.json` under the experiment directory are ready for review.
+Known comparison costs were approximately $1.46 for Muse and $0.03 for Jev. Semantic quality and whether to pursue this direction remain open
+for user review; canonical HR02 is unchanged.
 
 ### Jev full HR02 directional judgments
 
