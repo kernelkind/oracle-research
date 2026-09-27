@@ -1077,6 +1077,36 @@ production preparation and decoding functions:
   the narrow Bitcoin scores. It remains evidence for the two-stage diagnostic,
   not verification of the approved single-call PPv26 or a prompt promotion.
 
+  The user then authorized testing the class-step removal in a single call.
+  `prominence-prompt-goal-v1/ppv30-draft-v1/PPv30.md` revises approved PPv26,
+  removes class analysis, retains the instruction not to fill in unspecified
+  meaning, and returns the full allocation alongside prominence. It generates
+  the allocation with the mask visible rather than receiving a saved allocation.
+  PPv30 is tested, not approved or frozen; PPv26 remains the approved main prompt.
+  `experiments/ppv30-horror-v2` and `experiments/ppv30-tea-v2` used the matching
+  `experiment_specs/ppv30-horror-v1.json` and `ppv30-tea-v1.json` specs. Initial
+  v1 preparations made no calls: a concurrent runner change triggered the code
+  identity guard. Fresh v2 preparations used the inspected runner, with no
+  guard bypass. Six Astra-low subscription calls completed without retries,
+  reuse, allocation calls, or baseline reruns. Posts, masks, and model settings
+  match the saved two-stage comparisons; only supplied allocation was removed.
+  The runner correctly labels these comparisons input mismatches, not matched
+  input experiments. All six outputs passed schema and 100-point arithmetic.
+
+  Saved two-stage versus PPv30 scores: claim 85 to 90; Horrifying 15 to 15;
+  short-post tea 25 to 35; health-post drank plus tea 15 to 20; health-post tea
+  5 to 10; diary tea 1 to 1. Tea ordering is unchanged. However, the claim call
+  allocates 90 to claim/explanation and 10 to reaction; the reaction call
+  allocates 85 and 15. Thus valid per-call totals do not establish a shared
+  allocation across masks. One pair cannot distinguish mask influence from
+  sampling variability. The two health-post masks also produce different
+  decompositions, both giving health concern 25 versus the saved allocation's
+  45. Meaning labels need care: the short-post tea entry includes desired, and
+  the drank-plus-tea entry includes the speaker, despite those words being
+  unselected. Agent reviews flag these labels as uncertain, not proven score
+  failures. No user score verdict, calibration, or need for a separate
+  allocation stage is established by this small comparison.
+
   The user has authorized small, in-scope prominence diagnostics, explicitly
   including prompt ablations, without repeated permission requests. Prepare
   versioned diagnostic variants and run these ablations without pausing for
