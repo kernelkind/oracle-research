@@ -295,8 +295,13 @@ selected provider's prices, maximum response length, and actual input bounds;
 it is a reservation, not a model parameter. The runner includes prior charged
 attempts, reserves M for each new in-flight call, waits when existing calls hold
 the available allowance, and replaces reservations with provider-reported costs.
-Exact-request reuse is free. Unknown billing or an exceeded per-request bound
-stops further calls; unknown prior billing prevents resuming. Limits are recorded
+Exact-request reuse is free. Unknown billing retains the full per-request
+reservation instead of stopping unrelated calls. Reports still show the charge
+as unknown, never zero or an invented bill. On resume, unbilled attempts count
+against the largest recorded per-request reservation (or the current bound,
+if larger), so reducing a later bound cannot discount earlier attempts.
+An actual charge exceeding the verified per-request bound still stops new calls.
+The existing provider-only retry policy is unchanged. Limits are recorded
 in `run/spend-limits.jsonl`. They do not replace ledger admission or authorize
 spending, and responses are never truncated to fit the dollar allowance.
 

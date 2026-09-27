@@ -1204,7 +1204,7 @@ class ExperimentTests(unittest.TestCase):
         self.cli('run','E1','--max-cost-usd','0.8','--max-request-cost-usd','0.4',env=env)
         self.assertEqual(len(self.calls()),2)
 
-    def test_dollar_budget_waits_for_concurrent_reservations_and_stops_unknown_billing(self):
+    def test_dollar_budget_waits_and_retains_unknown_billing_on_resume(self):
         spec=json.loads(self.spec.read_text())
         spec['runner'].update(provider='openrouter',concurrency=2)
         self.spec.write_text(json.dumps(spec))
@@ -1215,9 +1215,30 @@ class ExperimentTests(unittest.TestCase):
         self.prepare('E2','--repeat')
         self.cli('run','E2','--max-cost-usd','0.6','--max-request-cost-usd','0.4',ok=False)
         self.assertEqual(len(self.calls()),3)
+        self.cli('run','E2','--max-cost-usd','0.45','--max-request-cost-usd','0.1',ok=False)
+        self.assertEqual(len(self.calls()),3)
+        self.cli('run','E2','--max-cost-usd','0.5','--max-request-cost-usd','0.1')
+        self.assertEqual(len(self.calls()),4)
+        self.assertEqual(self.show('E2')['summary']['valid'],2)
+        self.assertIsNone(self.show('E2')['usage']['provider_reported_cost_usd'])
         self.prepare('E3','--repeat','--only','one')
         self.cli('run','E3','--max-cost-usd','0.6','--max-request-cost-usd','0.4',ok=False,
                  env={'FAKE_RUNNER_RESULT_OVERRIDE':json.dumps({'response_metadata':{'usage':{'cost':0.5}}})})
+        self.cli('run','E3','--max-cost-usd','0.6','--max-request-cost-usd','0.4',ok=False)
+
+    def test_missing_billing_keeps_reservation_without_stopping_provider_retry(self):
+        spec=json.loads(self.spec.read_text())
+        spec['runner'].update(provider='openrouter',concurrency=1)
+        self.spec.write_text(json.dumps(spec))
+        self.prepare()
+        self.cli('run','E1','--max-cost-usd','1.2','--max-request-cost-usd','0.4',
+                 env={'FAKE_RUNNER_FAILURES':json.dumps({'Tea':{'attempts':1,
+                     'metadata':{'http_status':502}}})})
+        self.assertEqual(len(self.calls()),3)
+        self.assertEqual(self.show()['summary']['valid'],2)
+        self.assertIsNone(self.show()['usage']['provider_reported_cost_usd'])
+        self.cli('run','E1','--max-cost-usd','1.2','--max-request-cost-usd','0.4')
+        self.assertEqual(len(self.calls()),3)
 
     def test_systemone_reuse_verifies_local_schema_without_wire_schema(self):
         self.prompt.write_text('{"state":"{POST}","questions":{"x":{"type":"noul","instructions":"Food?"}}}')

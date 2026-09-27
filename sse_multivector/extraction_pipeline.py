@@ -103,7 +103,7 @@ class NewJobLimitReached(Exception):
 class PromptSpendBudget:
     """Reserve a caller-verified maximum per request; never truncate responses."""
 
-    def __init__(self, limit_usd, request_usd, records):
+    def __init__(self, limit_usd, request_usd, records, *, prior_request_usd=None):
         self.limit = self.micros(limit_usd, ROUND_FLOOR)
         self.reservation = self.micros(request_usd, ROUND_CEILING)
         if self.limit <= 0 or self.reservation <= 0:
@@ -111,13 +111,14 @@ class PromptSpendBudget:
         self.spent = self.pending = 0
         self.halted = False
         self.condition = threading.Condition()
+        prior_reservation = max(self.reservation, self.micros(
+            request_usd if prior_request_usd is None else prior_request_usd))
         for record in records:
             if record.get('execution') == 'cross_run_reuse':
                 continue
             charge = self.charge(record)
-            if charge is None:
-                raise RunnerError('cannot resume dollar budget with unknown prior billing')
-            self.spent += charge
+            self.spent += prior_reservation if charge is None else charge
+            self.halted |= charge is not None and charge > prior_reservation
 
     @staticmethod
     def micros(value, rounding=ROUND_CEILING):
@@ -145,7 +146,7 @@ class PromptSpendBudget:
                     raise NewJobLimitReached('dollar allowance exhausted')
                 self.condition.wait()
             if self.halted:
-                raise NewJobLimitReached('billing unavailable or per-request bound exceeded')
+                raise NewJobLimitReached('per-request bound exceeded')
             self.pending += self.reservation
 
     def settle(self, record):
@@ -153,7 +154,7 @@ class PromptSpendBudget:
         with self.condition:
             self.pending -= self.reservation
             self.spent += self.reservation if charge is None else charge
-            self.halted |= charge is None or charge > self.reservation
+            self.halted |= charge is not None and charge > self.reservation
             self.condition.notify_all()
 
 
@@ -3174,8 +3175,16 @@ def _execute_prompt_batch(
         if config.provider != 'openrouter':
             raise RunnerError('dollar budget requires provider-reported OpenRouter billing')
         records = [json.loads(line) for line in results_path.read_bytes().splitlines()] if results_path.exists() else []
-        spend = PromptSpendBudget(max_cost_usd, max_request_cost_usd, records)
-        _append_json_line(config.run_directory/'spend-limits.jsonl', dict(
+        limits_path = config.run_directory/'spend-limits.jsonl'
+        prior_limits = [json.loads(line) for line in limits_path.read_bytes().splitlines()] if limits_path.exists() else []
+        if any(r.get('manifest_sha256') != manifest_sha256 for r in prior_limits):
+            raise RunnerError('saved dollar limits belong to another manifest')
+        # A smaller allowance on resume cannot discount an earlier unbilled call.
+        prior_request = max([Decimal(str(max_request_cost_usd)),
+                             *(Decimal(str(r['max_request_cost_usd'])) for r in prior_limits)])
+        spend = PromptSpendBudget(max_cost_usd, max_request_cost_usd, records,
+                                  prior_request_usd=prior_request)
+        _append_json_line(limits_path, dict(
             max_cost_usd=max_cost_usd, max_request_cost_usd=max_request_cost_usd,
             prior_spend_micro_usd=spend.spent, manifest_sha256=manifest_sha256,
             wrapper_sha256=provenance.active_wrapper_sha256))
@@ -3310,7 +3319,7 @@ def _execute_prompt_batch(
                         failures.append(f"{prompt.prompt_id}: {record.get('error')}")
                         fatal |= kind == "provider_fatal"
     if spend is not None and spend.halted:
-        failures.append('billing unavailable or per-request bound exceeded')
+        failures.append('per-request bound exceeded')
     if failures:
         raise RunnerError("unresolved prompt cases: " + ", ".join(failures))
 

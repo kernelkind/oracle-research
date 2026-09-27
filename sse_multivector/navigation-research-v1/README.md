@@ -785,7 +785,13 @@ and approved continuation: retain all 120 successful titles and select only the
 810 incomplete cases in a separate uncapped experiment. That run saved 262 valid
 titles, then stopped after one provider connection failure lacked final billing;
 547 cases were unrun. The next continuation selects only those 548 incomplete
-cases, preserving all 382 successful titles. All three receipt-validated reports
+cases, preserving all 382 successful titles. It saved another 97 titles before
+the same missing-billing stop followed a provider connection failure. The user
+approved keeping the maximum charge reserved instead of stopping the whole
+batch. The runner now does that, including across resumes; reports continue to
+mark the actual charges unknown. Resume this same continuation with its original
+$1.25 cumulative allowance, preserving all 479 valid titles and retrying only
+eligible provider failures under the existing two-attempt policy. All three receipt-validated reports
 are required when packaging; duplicate successes are rejected, not overwritten.
 The shared budget reader conservatively accounts for
 $0.316831 of known charges in the first uncapped run; one failed call has an unknown charge. The active continuation is limited to $1.25 with
