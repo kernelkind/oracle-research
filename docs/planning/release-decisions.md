@@ -266,6 +266,7 @@ Approved placement corrections for that separate hierarchy (not yet applied):
 | Food and drink | Enjoyment of food | Add alongside Positive emotions and attitudes. Discussing enjoyment of food necessarily concerns food. Both parents are approved for the corrected hierarchy; the Jev baseline remains unchanged. |
 | Art | Music | Add. Music is an art form; the parent is Art, not Visual art. The currently parentless Music node gains this parent in the corrected hierarchy only. |
 | Cooking | crockpot | Add. A crockpot is a cooking appliance, so it falls within the cooking topic; this is topic containment, not treating an appliance as an action. The Jev baseline remains unchanged. |
+| Psychology and philosophy | Psychological distress | Add. Psychological distress falls within the psychology side of this parent; the masks express unhealthy stress and anxiety. The Jev baseline remains unchanged. |
 
 Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
