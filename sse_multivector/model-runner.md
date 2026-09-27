@@ -1125,6 +1125,29 @@ production preparation and decoding functions:
   is not established as a failure, since the quantity/time meaning supporting
   the concern carries substantial points separately.
 
+  The user agreed to stop dissecting the health post and assess practical
+  ordering with unchanged PPv30, then authorized the five original masks of
+  Coffee taste and flavor (S29074d29b6). `experiments/ppv30-ordering-v1` uses
+  the matching reusable spec and all five saved masks across three posts,
+  including the gamey-meat member. Five Astra-low subscription calls completed
+  without retries, reuse, or baseline reruns. Exact input/settings checks,
+  unchanged prompt hash, schema, and allocation arithmetic passed. Inputs
+  omit only the previously supplied allocation. Four saved comparisons come
+  from `ppv26-ordering-scoring-v1`; V1524 comes from `ppv26-real-scoring-v1`.
+  The runner records four input mismatches and one absent attached baseline;
+  the fifth saved result was inspected separately, not recreated.
+
+  New order, with saved two-stage scores in parentheses: V1524 fuller decaf
+  motivation 40 (38), V1532 coffee-drinker motivation 37 (30), V1521 coffee
+  plus flavour 13 (8), V1397 taste profile plus coffee 12 (13), V0488 meat
+  flavor/taste mentions 5 (5). Agent assessment accepts the broad ordering;
+  the only swap is the near-tied topic masks at 13 and 12, both marked uncertain
+  for precise relative placement. No clear ranking failure or need for an
+  immediate edit is established. This small sample does not calibrate scores,
+  establish title relevance, or resolve cross-mask allocation consistency.
+  PPv30 remains a tested candidate, not approved or frozen; there is no user
+  verdict on this ordering yet.
+
   The user has authorized small, in-scope prominence diagnostics, explicitly
   including prompt ablations, without repeated permission requests. Prepare
   versioned diagnostic variants and run these ablations without pausing for
