@@ -1504,6 +1504,86 @@ python3 experiment.py review experiments/ppv30-coffee-node-v1 \
 The next step is user review of this ordering, not additional inference or a
 prompt edit. The UI retains comments and the original hierarchy is unchanged.
 
+### Node sorting: Coffee transfer trial (spec only; not run)
+
+The user restated the intended node sorting on September 27: a note belonging
+directly to a node is scored by how well it belongs in that node judged from
+the node's title, and a note arriving through a child node uses its direct
+score there together with the child node's relevance to the current node in a
+transfer function. Sorting at a node orders all of its notes by these scores.
+The transfer shape and the child-to-parent relevance are undefined; listing
+direct members first is the user's suspected better implementation, not a
+settled rule. This trial tests both on one real parent node. It authorizes no
+inference and adopts no scoring rule.
+
+**Target.** Raw Jev node
+`merged-426504446eac3b0f75ffa4893679c656567164616668f15f579713918a00a869`
+("coffee") in `target/hierarchy-build-v1/hr02-jev-browser-v1/named-graph.json`
+with its two complete children `S3c005e1a4f` ("coffeechain", 11 posts / 11
+masks) and `S6a96ad5a6d` ("Morning coffee", 2 posts / 2 masks). Coffee itself
+has 14 direct posts in 17 masks. The three nodes cover 20 distinct posts: six
+posts are direct in coffee and also under a child, one post is direct in coffee
+and in both children, and six posts arrive only through children. Both
+competitions the transfer must handle are therefore present. There is one child
+level only; a note arriving through two different parents is not exercised.
+
+**Scores.** Mask score `s(m, N) = prominence(m) * (clip(cos(m, title_N), -1, 1) + 1) / 2`,the existing Linear cosine. Note direct score `D(n, N)` = maximum over n's
+masks in N (agent default for multiple masks, not an adopted rule). Child
+relevance `R(C, P) = (clip(cos(title_C, title_P), -1, 1) + 1) / 2`, rescaled
+title cosine as one candidate only. A note's score at P is the maximum over
+routes of `transfer(D(n, C), R(C, P))` and of its own `D(n, P)` (agent
+proposal; untested).
+
+**Orderings compared** over the same 20 posts at coffee:
+
+1. Prominence baseline: maximum own-node prominence, no title relevance and
+   no transfer.
+2. Each of three transfer shapes — identity (`score = D`), multiply
+   (`score = R * D`), cap (`score = min(D, 100 * R)`) — under both listing
+   rules: pure score order, and direct members first with descendant posts
+   following in transferred-score order.
+
+**Inputs.** The saved coffee scores in `experiments/ppv30-coffee-node-v1/` and
+its `cosine-v1` / `inverse-cosine-v1` comparisons are reused unchanged. The
+child masks have no saved scores: the reusable spec
+`experiment_specs/ppv30-coffee-children-v1.json` selects exactly the 13 direct
+masks of both children through the shared hierarchy adapter, PPv30 and the
+unchanged Astra-low settings, for 13 new subscription calls when run. Offline
+SSE work encodes only those 13 masks and the three titles with the existing
+checkpoint, runtime versions and parity checks. No hierarchy membership,
+prompt, title or saved output changes.
+
+Prepare without model calls:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector && \
+python3 experiment.py prepare experiments/ppv30-coffee-children-v1 \
+  --spec experiment_specs/ppv30-coffee-children-v1.json
+```
+
+**Implementation needed before running.** Note-level aggregation, the three
+transfer shapes and both listing rules computed from saved rows, with their
+orderings exposed beside the existing ones in `experiment.py review --ui
+--view prominence --cosine-comparison ...` (`s` switches orderings at the same
+position). Save the child/parent title cosines, policy versions and input
+hashes in the comparison. Regression tests accompany the code.
+
+**Evaluation and limits.** The user judges the seven orderings of the same
+posts in that UI and records judgments with the existing
+`review --case ... --role ...` CLI. A preference selects what sorts well at
+this node only: it does not calibrate relevance, define the transfer generally,
+settle multi-mask aggregation or max-route combination. The `coffeechain`
+title is a known confound — the user identified `#coffeechain` as the intended
+title, and models have read the plain hashtag as coffee-shop chains — so
+`Morning coffee` is the cleaner transfer case. The earlier recorded position
+(prominence times mask relevance, direct membership ahead of descendants)
+remains a candidate here, not a baseline that must win.
+
+**Cost and authorization.** Thirteen Astra-low subscription calls, one per
+mask, plus free local preparation and SSE work. `prepare`, `show` and `review`
+make no model calls. Budget reservation and explicit approval are required
+before `run`; nothing in this section has been prepared or run.
+
 ### Revision: explicit approved base, full-context diff
 
 Use a new versioned destination and the last approved prompt as the base:
