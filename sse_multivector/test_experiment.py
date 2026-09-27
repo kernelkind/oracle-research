@@ -16,6 +16,28 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_prominence_hierarchy_with_explicit_diagnostic_schema(self):
+        self.prominence_spec()
+        self.write('cases.json', {'memberships': {'nodes': [dict(
+            group='G', title='Tea', matched_instances=[dict(instance='V1', note_id='N1',
+            text='Tea.', byte_spans=[[0, 3]], fragments=['Tea'])])]}})
+        spec = json.loads(self.spec.read_text())
+        spec['dataset']['select'] = ['G']
+        spec['runner']['output_schema'] = {
+            'type': 'object', 'required': ['prominence', 'allocation'],
+            'properties': {'prominence': {'type': 'integer'}, 'allocation': {'type': 'array'}},
+            'additionalProperties': False}
+        self.write('spec.json', spec)
+        self.prepare()
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+                                 '{"prominence":80,"allocation":[]}'})
+        case = self.show('E1', '--case', 'G-V1')
+        self.assertEqual(case['status'], 'valid')
+        self.assertEqual(case['parsed'], {'prominence': 80, 'allocation': []})
+        self.assertEqual(case['evidence']['mask_ids'], ['V1'])
+        self.assertEqual(json.loads(case['inputs']['INPUT_JSON']),
+                         {'mask': ['Tea'], 'marked_post': '⟦Tea⟧.'})
+
     def test_completed_review_and_intentional_repeat_do_not_scan_request_history(self):
         from unittest.mock import patch
         from sse_multivector import experiment

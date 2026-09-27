@@ -43,6 +43,32 @@ def render(template, inputs):
 
 def prepare_prominence(source, selected=None):
     """Render one exact saved mask per case, retaining node metadata only for review."""
+    if 'memberships' in source:
+        nodes = source['memberships']['nodes']
+        available = {node['group']: node for node in nodes}
+        if len(available) != len(nodes):
+            raise ValueError('duplicate hierarchy node identity')
+        if selected is not None and set(selected) - available.keys():
+            raise ValueError('unknown hierarchy node requested')
+        members = []
+        for nid, node in available.items():
+            if selected is not None and nid not in selected:
+                continue
+            for mask in node['matched_instances']:
+                aliases = []
+                for origin in mask.get('origins', []):
+                    original = origin['source_instance']
+                    if any(original[key] != mask[key] for key in ('note_id', 'byte_spans')):
+                        raise ValueError('hierarchy mask origin differs from direct member')
+                    aliases.append(original['instance'])
+                aliases = list(dict.fromkeys(aliases or [mask['instance']]))
+                raw = mask['text'].encode()
+                if [raw[a:b].decode() for a, b in mask['byte_spans']] != mask['fragments']:
+                    raise ValueError('hierarchy mask fragments differ from source spans')
+                members.append(dict(id=f'{nid}-{aliases[0]}', node_id=nid,
+                                    node_title=node['title'], note_id=mask['note_id'],
+                                    text=mask['text'], mask_ids=aliases, byte_spans=mask['byte_spans']))
+        source, selected = {'cases': members}, None
     if source.get("adapter") == "titles":
         available = {c["id"]: c for c in source["cases"]}
         if len(available) != len(source["cases"]):
@@ -209,8 +235,8 @@ def validate(dataset, case, raw, schema):
         )
         if (
             not isinstance(value, dict)
-            or set(value) != {"prominence"}
-            or type(value["prominence"]) is not int
+            or (schema is None and set(value) != {"prominence"})
+            or type(value.get("prominence")) is not int
             or not 0 <= value["prominence"] <= 100
         ):
             raise ValueError("expected one integer prominence score from 0 through 100")

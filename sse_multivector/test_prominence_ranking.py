@@ -7,6 +7,27 @@ from sse_multivector import experiment_inputs
 
 
 class ProminenceRankingTests(unittest.TestCase):
+    def test_hierarchy_prominence_uses_only_direct_members_and_original_ids(self):
+        mask = dict(instance='merged-mask', note_id='N', text='Tea, then tea.',
+                    byte_spans=[[0, 3]], fragments=['Tea'], origins=[
+                        dict(source_instance=dict(instance=identifier, note_id='N', byte_spans=[[0, 3]]))
+                        for identifier in ['V1', 'V2']])
+        source = {'memberships': {'nodes': [
+            dict(group='G', title='Tea', matched_instances=[mask], recursive_note_ids=['N', 'child']),
+            dict(group='child', title='Child', matched_instances=[])]}}
+        cases = experiment_inputs.prepare({'adapter': 'prominence', 'select': ['G']},
+                                          source, '{INPUT_JSON}')
+        self.assertEqual(len(cases), 1)
+        self.assertEqual(cases[0]['id'], 'G-V1')
+        self.assertEqual(cases[0]['evidence']['mask_ids'], ['V1', 'V2'])
+        self.assertEqual(json.loads(cases[0]['inputs']['INPUT_JSON']),
+                         dict(mask=['Tea'], marked_post='⟦Tea⟧, then tea.'))
+        with self.assertRaisesRegex(ValueError, 'unknown'):
+            experiment_inputs.prepare_prominence(source, ['missing'])
+        mask['origins'][0]['source_instance']['byte_spans'] = [[10, 13]]
+        with self.assertRaisesRegex(ValueError, 'origin'):
+            experiment_inputs.prepare_prominence(source, ['G'])
+
     def test_prominence_prepares_original_members_from_selected_title_report(self):
         packet = {"packet": "G", "instances": [
             dict(instance="V1", vector_id="v1", note_id="N", text="Tea tea",

@@ -545,6 +545,16 @@ production preparation and decoding functions:
   malformed, not ranked. This supports **PPv10**, unchanged and experimentally
   tested, not production-frozen; the adapter does not choose the prompt/model.
 
+  The adapter also accepts a saved hierarchy's `memberships.nodes` directly;
+  `select` then names node IDs. Only `matched_instances` become cases, never
+  recursive/descendant memberships. Original mask IDs are recovered from
+  `origins`, with exact post/span identity checks; fragments are checked against
+  source bytes before rendering. No hand-built intermediate case file is needed.
+  With an explicit `runner.output_schema`, additional diagnostic fields such as
+  PPv30's allocation are allowed under that schema. The integer prominence range
+  check remains mandatory; without a schema, the single-field contract remains.
+  See `experiment_specs/ppv30-eggs-node-v1.json` for a direct-hierarchy example.
+
   **PPv11** is [tested experimentally](prominence-prompt-goal-v1/ppv11-draft-v1/PPv11.md),
   not production-frozen. It replaces topic-centrality scoring with an estimate
   of the post's meaning expressed by the mask; inputs and output contract are
