@@ -123,7 +123,7 @@ benchmarks are not evidence for our 768-dimensional SSE workload.
 | Mask/prominence generation | The intended distilled model receives a complete note and emits its masks and prominence. Its speed and cost are unmeasured. The old 30-billion-token estimate describes the teacher pipeline, not this production path. |
 | SSE | Two saved 100-note CPU runs took about 67 seconds each. The encoder processes a note once, then pools its selected token representations for each mask. Large-batch GPU throughput remains unmeasured. |
 | Node titles | Current inputs include all distinct mask instances in each group. Neither launch-scale node counts nor group-input sizes are established; scaling 61 groups to 610,000 is not a forecast. |
-| Node relationships | The launch relationship method is open: HR02 exposed poor TRUE judgments, and a frontier replacement is only a diagnostic. Intended scale work uses cosine-filtered candidate pairs; retained-pair counts and throughput remain unknown, and filtering must preserve useful links. |
+| Node relationships | The launch relationship method is open. HR02's Jev baseline plus a separate, user-approved manual placement correction will diagnose the other stages; corrections are pending, and manual repair is not the scalable method. Intended scale work uses cosine-filtered candidate pairs; retained-pair counts and throughput remain unknown, and filtering must preserve useful links. |
 | Missing memberships | This is separate from linking nodes. The coffee/tea test checked 945 masks against six nodes. A scalable recovery procedure has not been selected here. |
 
 Evidence: [historical token estimate](../../sse_multivector/TOKEN-USAGE-ESTIMATE-1M-NOTES.md),

@@ -1,6 +1,6 @@
 # October 18 release decisions
 
-Updated September 25, 2026. This is the written record of the planning discussion.
+Updated September 26, 2026. This is the written record of the planning discussion.
 Agreed requirements, tentative choices and existing-data facts are distinguished
 below. The overall plan is not approved. Approval of an individual requirement
 or task-view edit does not approve the whole plan. The earlier draw.io diagram
@@ -241,6 +241,19 @@ The viewer passed `--check` and interactive leaf-note/O-view checks with the
 existing equal-note navigation collapse. Saved TRUE artifacts are unchanged.
 This is ready for user quality review, not a validated hierarchy or production
 adoption. Scalable relationship inference and downstream gates remain open.
+
+**HR02 placement diagnostic (approved September 26):** use Jev as the initial
+node-placement solution, then correct its failures by hand in a separate
+hierarchy so the other stages can be evaluated without placement errors
+obscuring them. Preserve the untouched Jev baseline. Keep the same nodes,
+titles and memberships; record every changed relationship reversibly, without
+quietly repairing other stages. The user's “90% / 10%” framing is not a
+measured accuracy claim. The 118-node parent audit is an agent assessment,
+not approval of its proposed corrections. Review those proposals and unresolved
+boundaries with the user before applying agreed corrections. The corrected
+hierarchy is not built or validated yet. This does not adopt Jev/manual repair
+as the scalable production method or authorize additional inference.
+
 Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
 hierarchy or title correction. Its prompt and validation are not complete.
@@ -521,7 +534,9 @@ The shared hierarchy construction is masks → SSE vectors → flat HDBSCAN grou
 node descriptions → cosine-filtered candidate pairs → subsumption judgments →
 directed node hierarchy. Prominence supports note ordering. The relationship
 method remains open: TRUE generated HR02, but its judgments were not good
-enough; a frontier-call replacement is a diagnostic, not a production choice.
+enough. The separate Jev hierarchy is now the diagnostic baseline; the approved
+next step is a separately recorded manual placement correction for evaluating
+the other stages, not a production choice.
 The cosine cutoff and its implementation remain open. Existing all-pairs
 experiments do not establish filtered behavior; filtering must preserve useful
 parent–child links, not merely reduce calls.
@@ -549,9 +564,10 @@ choose a member's title. Preserve every original title and node ID. This call
 only names the merged node: it does not decide the merge, change its links or
 trigger another round of TRUE comparisons. The offline preparation, verified
 title collection and browser export are implemented; a four-node live check
-is complete. HR02 was reviewed and found promising, but TRUE's relationship
-quality blocks validation. This does not authorize further model calls or
-settle the provisional merge policy.
+is complete. TRUE's relationship quality prevented HR02 validation; the separate
+Jev baseline and approved manual-placement diagnostic above are the current
+direction. This does not authorize further model calls or settle the provisional
+merge policy.
 
 ### Reversible hierarchy design decisions
 
@@ -620,9 +636,9 @@ saved in `target/hierarchy-build-v1/hr02-browser-v1/`; the existing viewer passe
 `--check` and interactive navigation/mask checks. It shows 98 represented posts
 and adds an All notes entry. Both user-rejected titles remain flagged in analysis.
 The user reviewed the hierarchy and found it promising but not validated:
-TRUE's relationship decisions were not a good fit. A frontier-call replacement
-is planned as a diagnostic of the remaining stages. Completed inference and
-this review do not settle the provisional merge policies.
+TRUE's relationship decisions were not a good fit. The subsequent Jev baseline
+and approved manual-placement diagnostic are recorded above. Completed inference
+and this review do not settle the provisional merge policies.
 
 **Hierarchy execution recovery (clarified September 24):** retry failed model
 calls and reuse successful results. Preserve failed-attempt receipts and the

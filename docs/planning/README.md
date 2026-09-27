@@ -133,10 +133,13 @@ directed pairs, reusing verified identical inputs. The provisional graph has
 116 nodes and 56 reduced links; all six merged titles are generated with
 v38/Astra low. The historical HRv1 path remains on v21. HR02 was generated
 and reviewed: promising, but TRUE's relationship decisions prevent validation.
-A frontier call in place of TRUE is the next diagnostic to test the other
-stages; it is not a production choice. Two eight-answer NSPv2 batches are complete;
-the second exposed an unsupported interpretation of coffeechain. No revised
-hierarchy has been built. Node 02 remains in progress, while
+A separate Jev hierarchy now contains 118 nodes and 84 reduced links. The user
+approved keeping it untouched and manually correcting agreed relationships in
+a separate diagnostic hierarchy, recording every change reversibly. Nodes,
+titles and memberships stay unchanged to evaluate the other stages. Individual
+corrections and unresolved boundaries still need review; no corrected hierarchy
+has been built. This is not the scalable production method or a measured
+“90% / 10%” accuracy claim. Node 02 remains in progress, while
 its 23 and 25 prerequisites are satisfied. Additional rows expose remaining
 construction work.
 This second 100-post experiment is **HR02**: generate a hierarchy the user is

@@ -1,7 +1,9 @@
 # GDC09 navigation research
 
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
-The objective is a repeatable construction method, not a hand-repaired 100-note tree.
+The production objective is a repeatable construction method. For HR02's
+diagnostic, the user approved a separate manually corrected placement view to
+evaluate the other stages; it is not a replacement for that production method.
 
 ## Required hierarchy-processing stages
 
@@ -813,7 +815,19 @@ none was corrected to make the graph consistent. The existing viewer passed
 `--check` and an interactive check: `l` on a leaf opens its notes; `O` switches
 to individual masks with original IDs. Equal-note collapse affects navigation,
 not saved nodes or masks. This is ready for user quality review, not evidence
-that the hierarchy is semantically correct. Open the separate Jev view:
+that the hierarchy is semantically correct.
+
+**Manual placement diagnostic — approved September 26, corrections pending:**
+retain this Jev baseline untouched and review the 118-node parent audit's
+proposals and unresolved boundaries with the user. Apply agreed relationship
+corrections in a separate hierarchy, recording each change reversibly. Keep
+nodes, titles and memberships unchanged so placement errors do not obscure
+evaluation of the other stages. The audit is agent assessment, not approval
+of individual corrections; the corrected hierarchy is not built yet. “90% / 10%”
+describes the intended division of work, not measured Jev accuracy. This does
+not adopt manual repair as the scalable method or authorize more inference.
+
+Open the unchanged Jev baseline:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
@@ -1359,8 +1373,9 @@ runs the actual refresh launcher and browser on fixtures for both views.
 HR02 has now completed TRUE inference and merged naming through the construction
 path above and its browser package is ready. The user reviewed it and found it
 promising, but TRUE's relationship judgments were not good enough to validate
-the hierarchy. A frontier-call replacement is planned as a diagnostic of the
-other stages. The two eight-answer NSPv2 batches above have not rebuilt the hierarchy.
+the hierarchy. The separate Jev baseline above is complete; its approved manual
+placement diagnostic will evaluate the other stages. Corrections are pending.
+The two eight-answer NSPv2 batches did not rebuild the hierarchy.
 Reprocessing the older HRv1 comparison under HD06 is still pending. No title,
 relation, membership or saved artifact was changed to implement this navigation
 rule.
