@@ -749,11 +749,13 @@ passed; no production code changed and no new hierarchy was built.
 
 **HR02-M06-MUSE-JEV-v1 — approved, not canonical HR02:** keep the saved M06
 tree and the existing two-post/equal-post display projection fixed. Prepare
-930 non-root groups with unchanged v38 and Muse Spark 1.3 Contributor/high;
+930 non-root groups with unchanged v38, initially Muse Spark 1.3 Contributor/high;
+the user subsequently approved GPT-6 Luna/max through the existing subscription
+runner for only the unfinished titles, preserving all successful Muse outputs;
 then judge the 905 existing non-root edges in both directions (1,810 cases)
 with unchanged NSP-Jev-v3 / Jev 1.13 provider-default. This is a pragmatic
 combined-system diagnostic, not a controlled model comparison or production
-adoption. No OpenAI subscription inference is requested.
+adoption. Title provenance remains explicit; this is now a mixed-model run.
 
 The offline `merge_tree_nesting.py` preparation and packaging path uses the
 shared experiment runner for all inference. Reusable specs are
@@ -762,7 +764,9 @@ shared experiment runner for all inference. Reusable specs are
 live only under `target/hr02-m06-muse-jev-v1/`; title execution uses
 `experiments/hr02-m06-muse-titles-v1-bounded/` and its explicit uncapped
 continuations `experiments/hr02-m06-muse-titles-v1-uncapped/` and
-`experiments/hr02-m06-muse-titles-v1-uncapped-continuation/`. The earlier initial
+`experiments/hr02-m06-muse-titles-v1-uncapped-continuation/`, followed by the
+explicit recovery `experiments/hr02-m06-muse-titles-v1-recovery/` and authorized
+Luna completion `experiments/hr02-m06-luna-titles-v1/`. The earlier initial
 preparation was never executed. The user increased the approved total allowance to $4;
 continuation uses the shared runner's cumulative dollar budget rather than an
 imposed response-length cap. The source spec now omits `max_output_tokens`.
@@ -776,61 +780,35 @@ review UI, including original mask IDs and complete source posts. Prior HR02,
 Jev and HDBSCAN artifacts remain untouched. Quality and whether to pursue this
 approach remain open until review.
 
-**Current checkpoint: authorized recovery prepared for the remaining 120 titles.**
-810 of 930 titles are saved: 120 from the capped run, 262 from the first
-uncapped run and 428 from its continuation. The prior scheduler has drained;
-the separate `experiments/hr02-m06-muse-titles-v1-recovery/` contains only the
-19 failed and 101 untouched cases, with unchanged inputs/model settings and no
-output cap. Use the shared report for live progress. All four receipt-validated reports
-are required when packaging; duplicate successes are rejected, not overwritten.
-There are no uncapped title format failures; semantic quality is not yet reviewed.
+**Current checkpoint: Luna/max completion authorized.** At the decision, 820
+of 930 titles were complete and 110 remained. Muse scheduling is stopped;
+already-admitted calls drain before the exact missing set is frozen for Luna.
+Retain any additional successful Muse titles instead of generating duplicates.
+All five receipt-validated reports are required when packaging; duplicate
+successes, changed prompts, unsupported model/effort combinations and missing
+titles are rejected. TPv38 and the source masks remain unchanged. The hierarchy
+review must identify the mixed title provenance; no canonical HR02 artifacts
+or other model settings change.
 
-The user rejected the original 6,500-token cap, approved retaining full maximum
-charges for missing bills instead of halting unrelated requests, and increased
-the total allowance to $4. The shared runner implements those decisions and
-preserves the provider-only two-attempt retry policy. The continuation's
-cumulative allowance is $3.25, with $0.20 reserved for each unbilled call.
-Unknown charges continue to retain their full reservation until verified;
-reconciliation does not increase the approved allowance.
+Muse's repeated failures have a roughly 300-second gap between model events,
+with connection heartbeats continuing, followed by an upstream 502. Some cases
+failed four times including the explicitly authorized recovery. This establishes
+repeated delivery/generation failure, not that Muse cannot understand or title
+those groups. The exact upstream cause remains unknown. All failure receipts
+remain available. The user rejected response-token caps; none are introduced.
 
-Saved failure receipts report Meta/OpenRouter provider-unavailable errors. The
-network failures repeatedly follow approximately 300 seconds without a model
-event, while heartbeat bytes continue arriving. This is evidence of an upstream
-generation/stream failure, not the local 1,800-second timeout or an imposed
-output-token limit; the exact upstream cause remains unproven. One additional
-failure says the model failed to generate a response and includes billing.
-The read-only audit found 15 failures among 532 uncapped calls (2.8%), not a
-general failure of the model. At that earlier checkpoint, none of the
-continuation's 14 failed cases had been retried: the scheduler put due retries behind untouched cases, then ran
-out of cost reservations. Typical successful calls cost about $0.00111, while
-each missing bill retains a $0.20 worst-case reserve.
+The shared runner now prioritizes due provider retries and supports separate
+verified billing receipts via `reconcile-costs`. Unknown charges retain their
+worst-case reservations; they are not reported as zero. Lookup currently occurs
+between runs, so missing bills can throttle an active batch. That limitation is
+not a provider requirement and is not silently bypassed. Retain unresolved
+charges within the existing $4 allowance, including the $0.15 Jev allocation.
+Luna uses the existing subscription route, with no paid API fallback.
 
-The user authorized correcting retry priority and assigned the read-only
-billing lookup to the credential-service owner. The scheduler now runs due
-retries before untouched cases, ordered by deadline, including after resume.
-Backoff, concurrency, retry eligibility and the two-attempt limit are unchanged.
-Offline regressions cover the original starvation and resumed execution; no
-paid calls were made for this fix. 
-The shared `reconcile-costs` command verified all 14 missing bills as exactly $0, without rewriting model receipts. Its
-reports then showed $0.316710016 and $0.511861742 for the two uncapped runs,
-with no unknown charges. A later stop had 12 new unknown charges; reconciliation
-verified 11 more at $0, retaining one unknown charge. The same continuation has
-resumed within its original allowance. The intervening shared-runner change
-`4ab04733` affects only prominence preparation/validation; its inspected upgrade
-is recorded without changing title inputs or inference settings.
-
-Repeated failures have continued with the same upstream connection error;
-one case has an unclassified body-transport error. Earlier failed attempts
-remain visible and unchanged. The user explicitly approved the separate
-recovery pass: at most two attempts for each of its 120 cases, within a $2.25
-cumulative allowance and the original $4 experiment total. This is not an
-unlimited retry-policy change. One prior charge remains unknown and reserved;
-all other missing charges have been reconciled. The complete titled tree and
-Jev inputs still require every title. No groups may be dropped or titles
-supplied by hand.
-No model/settings substitution or canonical HR02 changes are authorized. No Jev calls or
-semantic-collapse hierarchy have yet been produced. The offline viewer schema
-check is a labelled fixture, not model results.
+The complete titled tree and Jev inputs still require every title. No groups
+may be dropped or titles supplied by hand. No Jev calls or semantic-collapse
+hierarchy have yet been produced. The offline viewer schema check is a labelled
+fixture, not model results. Semantic quality remains open for user review.
 
 ### Jev full HR02 directional judgments
 

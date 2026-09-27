@@ -152,10 +152,13 @@ def bind_title_reports(packets, reports):
 
 
 def bind_titles(packets, report):
-    if report.get('prompt_id')!='v38' or report.get('adapter')!='titles' or any(
-        report.get('settings',{}).get(k)!=v for k,v in dict(provider='openrouter',
-        model='meta/muse-spark-1.3-contributor',reasoning_effort='high').items()):
-        raise ValueError('Muse-high v38 title report required')
+    settings=report.get('settings',{})
+    profile=tuple(settings.get(k) for k in ('provider','model','reasoning_effort'))
+    if report.get('prompt_id')!='v38' or report.get('adapter')!='titles' or profile not in {
+        ('openrouter','meta/muse-spark-1.3-contributor','high'),
+        ('openai-codex','gpt-6-luna','max'),
+    }:
+        raise ValueError('approved Muse-high or Luna-max v38 title report required')
     prepared=prepare_titles(packets,TITLE.read_text(),[])
     cases={c['id']:c for c in report['cases']};source={p['packet']:p for p in packets['packets']}
     if len(cases)!=len(report['cases']) or set(cases)!=set(source): raise ValueError('title inventory mismatch')
@@ -240,6 +243,9 @@ def main():
     replay,replay_packets=project(*(read(sources[k]['path']) for k in ['history','mapping','posts']))
     if tree!=replay or packets!=replay_packets:raise ValueError('saved projection changed')
     reports=[experiment_report(path) for path in a.titles];titles=bind_title_reports(packets,reports)
+    label=EXPERIMENT_ID
+    if any(r['settings']['model']=='gpt-6-luna' for r in reports):
+        label+=' (Muse high + Luna max titles)'
     prompt=dict(id='NSP-Jev-v3',text=JEV.read_text())
     cases=pair_cases(tree,titles)
     for c in cases:
@@ -247,7 +253,7 @@ def main():
         if state!=dict(A=titles[c['evidence']['original_a_id']],B=titles[c['evidence']['original_b_id']]):raise ValueError('title JSON mismatch')
     if a.command=='pairs':
         save(base/'titles.json',titles);save(base/'title-reports.json',reports);save(base/'cases.json',dict(cases=cases))
-        save(base/'original-categories.json',view(tree,titles,sources['posts']['path'],sources['mapping']['path'],label=EXPERIMENT_ID+' original'))
+        save(base/'original-categories.json',view(tree,titles,sources['posts']['path'],sources['mapping']['path'],label=label+' original'))
         print(f'{len(cases)} directional cases; original titled view saved; no inference');return
     if titles!=read(base/'titles.json'):raise ValueError('titles changed')
     plan,_,_=experiment_load(a.decisions)
@@ -257,7 +263,7 @@ def main():
     result=contract(tree,decisions);result['instances']=tree['instances']
     out=artifact_directory(base/'simplified')
     save(out/'tree.json',result);save(out/'decision-report.json',decisions_report)
-    save(out/'categories.json',view(result,titles,sources['posts']['path'],sources['mapping']['path'],label=EXPERIMENT_ID+' equivalent steps collapsed',judgments=result['judgments']))
+    save(out/'categories.json',view(result,titles,sources['posts']['path'],sources['mapping']['path'],label=label+' equivalent steps collapsed',judgments=result['judgments']))
     print(json.dumps(dict(groups=len(result['members'])-1,judgments=Counter(j['status'] for j in result['judgments']))))
 
 

@@ -26,6 +26,28 @@ class MergeTreeNestingTests(unittest.TestCase):
         self.assertEqual(bind_title_reports(packets,[original,resumed]),{'a':'a','b':'b'})
         with self.assertRaises(ValueError):bind_title_reports(packets,[original,dict(common,cases=cases)])
 
+    def test_luna_max_completion_preserves_muse_titles_and_rejects_other_settings(self):
+        from merge_tree_nesting import bind_title_reports, TITLE
+        from prepare_category_title_inputs import prepare
+        packets={'packets':[dict(packet=g,instances=[dict(instance=g,vector_id=g,
+                  note_id=g,text='x',fragments=['x'],byte_spans=[[0,1]])]) for g in ['a','b']]}
+        prepared=prepare(packets,TITLE.read_text(),[])
+        cases=[dict(id=g['group'],status='valid',receipt={'verified':True},prompt=g['prompt'],
+                    parsed={'title':g['group']},evidence={'packet':p})
+               for g,p in zip(prepared,packets['packets'])]
+        muse=dict(prompt_id='v38',adapter='titles',settings=dict(provider='openrouter',
+                  model='meta/muse-spark-1.3-contributor',reasoning_effort='high'),
+                  cases=[cases[0],dict(cases[1],status='failed')])
+        luna=dict(prompt_id='v38',adapter='titles',settings=dict(provider='openai-codex',
+                  model='gpt-6-luna',reasoning_effort='max'),cases=[cases[1]])
+        self.assertEqual(bind_title_reports(packets,[muse,luna]),{'a':'a','b':'b'})
+        for field,value in [('provider','openrouter'),('model','gpt-6-astra'),
+                            ('reasoning_effort','low')]:
+            bad=copy.deepcopy(luna);bad['settings'][field]=value
+            with self.assertRaises(ValueError):bind_title_reports(packets,[muse,bad])
+        bad=copy.deepcopy(luna);bad['cases'][0]['prompt']+=' changed'
+        with self.assertRaises(ValueError):bind_title_reports(packets,[muse,bad])
+
     def test_projection_matches_viewer_and_preserves_all_masks(self):
         history = dict(vector_count=4, alias_groups=[['a'], ['b'], ['c'], ['d']],
                        canonical_unique_ids=['a', 'b', 'c', 'd'], merges=[
