@@ -1016,6 +1016,24 @@ production preparation and decoding functions:
   No prompt changed or was promoted. The tentative numerical judgments do not
   establish a failure requiring another scoring revision.
 
+  An ordering test retained all five original direct members of Coffee taste
+  and flavor (S29074d29b6) from `experiments/ppv13-refresh-direct-v1`, including
+  the gamey-meat member despite its apparent grouping/title mismatch. No
+  membership expansion, merging, filtering, title relevance, or post deduplication
+  was applied. Three masks share the decaf post; its saved allocation and V1524
+  score were reused directly, not rerun. `experiments/ppv26-ordering-allocation-v1`
+  made two new PPv26-D2A calls, and `experiments/ppv26-ordering-scoring-v1` made
+  four new PPv26-D3 calls, all Astra-low subscription, without retries or request
+  reuse in those new runs. Matching reusable specs are under `experiment_specs/`.
+  Exact saved masks, complete original membership, fixed allocations, and score
+  arithmetic were verified. Descending order: V1524 38, V1532 30, V1397 13,
+  V1521 8, V0488 5 (all under S29074d29b6). The same-post fuller-to-thinner
+  ordering 38 > 30 > 8 is plausible to the agent. Low cross-post ordering at
+  13/8/5 remains uncertain; no user ordering verdict is recorded. All five
+  masks remain visible, including repeated posts and the grouping mismatch.
+  This tests mask prominence only, not title relevance or final post ordering.
+  Neither prompt was changed or promoted.
+
   The user has authorized small, in-scope prominence diagnostics, explicitly
   including prompt ablations, without repeated permission requests. Prepare
   versioned diagnostic variants and run these ablations without pausing for
