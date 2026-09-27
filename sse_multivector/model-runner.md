@@ -977,6 +977,25 @@ production preparation and decoding functions:
   are recorded. These observations do not establish precise calibration or
   general reliability for partial masks. No prompt changed.
 
+  The authorized small diverse test used three synthetic posts about an update
+  not deleting files, a camera loan/return, and opposition to a parking fee.
+  `experiments/ppv26-diverse-allocation-v1` used unchanged PPv26-D2A for three
+  mask-independent allocations; `experiments/ppv26-diverse-scoring-v1` used
+  unchanged PPv26-D3 for two masks per post. Corresponding reusable specs are
+  under `experiment_specs/` with the same names. Nine Astra-low subscription
+  calls total completed without retries, reuse, or baseline reruns. Allocations
+  were 45/55 (non-deletion/hidden folder), 60/40 (loan/return), and 25/35/40
+  (approval/opposition/reason). These allocations have no user approval.
+  Fragmented versus partial scores were 45/20, 60/48, and 75/32 respectively.
+  Partial outputs explicitly identified missing actor/negation, borrower, or
+  stance rather than filling them from context; all six preserved the exact
+  allocation and passed arithmetic checks. The negation pair removed both the
+  actor and negation, so it does not isolate the effect of negation alone.
+  Agent reviews accept the qualitative behavior, not precise calibration; no
+  user mask verdicts are recorded. No clear semantic failure was identified in
+  this small constructed sample, which does not establish real-corpus quality
+  or repeatability. No prompt changed or was promoted.
+
   The user has authorized small, in-scope prominence diagnostics, explicitly
   including prompt ablations, without repeated permission requests. Prepare
   versioned diagnostic variants and run these ablations without pausing for
