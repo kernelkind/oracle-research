@@ -1186,6 +1186,35 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(usage["attempts_without_provider_cost"], 0)
         self.assertIsNone(usage["catalog_cost_estimate_usd"])
 
+    def test_dollar_budget_preserves_uncapped_responses_and_counts_prior_spend(self):
+        spec=json.loads(self.spec.read_text())
+        spec['runner']['provider']='openrouter'
+        self.spec.write_text(json.dumps(spec))
+        self.prepare()
+        env={'FAKE_RUNNER_RESULT_OVERRIDE':json.dumps({'response_metadata':{'usage':{'cost':0.4}}})}
+        self.cli('run','E1','--max-cost-usd','0.6','--max-request-cost-usd','0.4',ok=False,env=env)
+        self.assertEqual(len(self.calls()),1)
+        self.assertNotIn('max_output_tokens',self.calls()[0]['request'])
+        self.cli('run','E1','--max-cost-usd','0.6','--max-request-cost-usd','0.4',ok=False,env=env)
+        self.assertEqual(len(self.calls()),1)
+        self.cli('run','E1','--max-cost-usd','0.8','--max-request-cost-usd','0.4',env=env)
+        self.assertEqual(len(self.calls()),2)
+
+    def test_dollar_budget_waits_for_concurrent_reservations_and_stops_unknown_billing(self):
+        spec=json.loads(self.spec.read_text())
+        spec['runner'].update(provider='openrouter',concurrency=2)
+        self.spec.write_text(json.dumps(spec))
+        self.prepare()
+        env={'FAKE_RUNNER_RESULT_OVERRIDE':json.dumps({'response_metadata':{'usage':{'cost':0.1}}})}
+        self.cli('run','E1','--max-cost-usd','0.6','--max-request-cost-usd','0.4',env=env)
+        self.assertEqual(len(self.calls()),2)
+        self.prepare('E2','--repeat')
+        self.cli('run','E2','--max-cost-usd','0.6','--max-request-cost-usd','0.4',ok=False)
+        self.assertEqual(len(self.calls()),3)
+        self.prepare('E3','--repeat','--only','one')
+        self.cli('run','E3','--max-cost-usd','0.6','--max-request-cost-usd','0.4',ok=False,
+                 env={'FAKE_RUNNER_RESULT_OVERRIDE':json.dumps({'response_metadata':{'usage':{'cost':0.5}}})})
+
     def test_systemone_reuse_verifies_local_schema_without_wire_schema(self):
         self.prompt.write_text('{"state":"{POST}","questions":{"x":{"type":"noul","instructions":"Food?"}}}')
         self.write('cases.json', {'cases':[{'id':'one','inputs':{'POST':'Tea'}}]})

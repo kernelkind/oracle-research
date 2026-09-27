@@ -288,6 +288,18 @@ or provider acceptance. User approval and the repository spending rules still
 apply before `run`; preparing an experiment does not authorize spending.
 
 The general `run-model.sh` transport remains available to non-experiment callers.
+For OpenRouter experiments, `run --max-cost-usd N --max-request-cost-usd M`
+can bound total experiment spending without imposing an output-token limit.
+Both arguments are required together. The caller must verify M against the
+selected provider's prices, maximum response length, and actual input bounds;
+it is a reservation, not a model parameter. The runner includes prior charged
+attempts, reserves M for each new in-flight call, waits when existing calls hold
+the available allowance, and replaces reservations with provider-reported costs.
+Exact-request reuse is free. Unknown billing or an exceeded per-request bound
+stops further calls; unknown prior billing prevents resuming. Limits are recorded
+in `run/spend-limits.jsonl`. They do not replace ledger admission or authorize
+spending, and responses are never truncated to fit the dollar allowance.
+
 Production extraction `extraction_pipeline.py run` / `subjects` and
 `claim_exec.py` retain their separate extraction contracts. The former public
 `extraction_pipeline.py prompt CONFIG`, `masks` and `revise-prompt` paths are

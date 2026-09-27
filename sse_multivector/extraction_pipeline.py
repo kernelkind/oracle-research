@@ -24,6 +24,7 @@ from collections import deque
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from contextlib import contextmanager
 from dataclasses import dataclass, field, replace
+from decimal import Decimal, ROUND_CEILING, ROUND_FLOOR
 from email.utils import parsedate_to_datetime
 from functools import lru_cache
 from pathlib import Path
@@ -99,6 +100,63 @@ class NewJobLimitReached(Exception):
     """The caller-requested limit on newly spawned model jobs was reached."""
 
 
+class PromptSpendBudget:
+    """Reserve a caller-verified maximum per request; never truncate responses."""
+
+    def __init__(self, limit_usd, request_usd, records):
+        self.limit = self.micros(limit_usd, ROUND_FLOOR)
+        self.reservation = self.micros(request_usd, ROUND_CEILING)
+        if self.limit <= 0 or self.reservation <= 0:
+            raise RunnerError('positive dollar limits required')
+        self.spent = self.pending = 0
+        self.halted = False
+        self.condition = threading.Condition()
+        for record in records:
+            if record.get('execution') == 'cross_run_reuse':
+                continue
+            charge = self.charge(record)
+            if charge is None:
+                raise RunnerError('cannot resume dollar budget with unknown prior billing')
+            self.spent += charge
+
+    @staticmethod
+    def micros(value, rounding=ROUND_CEILING):
+        if isinstance(value, bool):
+            raise RunnerError('invalid dollar amount')
+        try:
+            amount = Decimal(str(value))
+            if not amount.is_finite() or amount < 0:
+                raise ValueError
+            return int((amount * 1000000).to_integral_value(rounding=rounding))
+        except (ValueError, ArithmeticError):
+            raise RunnerError('invalid dollar amount') from None
+
+    @classmethod
+    def charge(cls, record):
+        try:
+            return cls.micros(record['model_result']['response_metadata']['usage']['cost'])
+        except (KeyError, TypeError, RunnerError):
+            return None
+
+    def claim(self):
+        with self.condition:
+            while self.spent + self.pending + self.reservation > self.limit:
+                if self.halted or not self.pending:
+                    raise NewJobLimitReached('dollar allowance exhausted')
+                self.condition.wait()
+            if self.halted:
+                raise NewJobLimitReached('billing unavailable or per-request bound exceeded')
+            self.pending += self.reservation
+
+    def settle(self, record):
+        charge = self.charge(record)
+        with self.condition:
+            self.pending -= self.reservation
+            self.spent += self.reservation if charge is None else charge
+            self.halted |= charge is None or charge > self.reservation
+            self.condition.notify_all()
+
+
 @dataclass
 class RetryDirective:
     job_key: str
@@ -113,6 +171,7 @@ class NewJobBudget:
     completed_notes: int = 0
     completed_takeaways: int = 0
     lock: Any = field(default_factory=threading.Lock, repr=False)
+    spend: PromptSpendBudget | None = None
 
     @property
     def exhausted(self) -> bool:
@@ -122,6 +181,8 @@ class NewJobBudget:
         with self.lock:
             if self.limit is not None and self.used >= self.limit:
                 raise NewJobLimitReached
+            if self.spend is not None:
+                self.spend.claim()
             self.used += 1
 
 
@@ -2314,7 +2375,12 @@ def _run_job(
     if new_job_budget is not None:
         new_job_budget.claim()
     attempt = 1 if previous is None else previous["attempt"] + 1
-    attempt_result = _invoke_model(config, stage, prompt, schema)
+    try:
+        attempt_result = _invoke_model(config, stage, prompt, schema)
+    except BaseException:
+        if new_job_budget is not None and new_job_budget.spend is not None:
+            new_job_budget.spend.settle(None)
+        raise
     error_message = attempt_result["error"]
     output_raw = attempt_result["final_output_raw"]
     response: list[str] | int | str | None = None
@@ -2364,8 +2430,12 @@ def _run_job(
         )
     if retry_reason is not None:
         record["retry_reason"] = retry_reason
-    _append_json_line(results_path, record)
-    latest[job_key] = record
+    try:
+        _append_json_line(results_path, record)
+        latest[job_key] = record
+    finally:
+        if new_job_budget is not None and new_job_budget.spend is not None:
+            new_job_budget.spend.settle(record)
     if error_message is not None:
         raise RunnerError(error_message)
     if response is None:
@@ -3067,6 +3137,8 @@ def _execute_prompt_batch(
     validate_output: Callable[[PromptJob, str], None] | None = None,
     max_new_attempts: int | None = None,
     runner_upgrade_reason: str | None = None,
+    max_cost_usd: float | None = None,
+    max_request_cost_usd: float | None = None,
 ) -> dict[str, object]:
     runner_version = manifest["runner_version"]
     proposed_manifest = {**manifest, "wrapper_sha256": _sha256_file(Path(__file__).resolve())}
@@ -3085,7 +3157,19 @@ def _execute_prompt_batch(
         prepared_manifest.provenance,
     )
     provenance = _append_runner_upgrade(config.run_directory, prepared_manifest)
-    budget = NewJobBudget(max_new_attempts)
+    if (max_cost_usd is None) != (max_request_cost_usd is None):
+        raise RunnerError('both dollar limits are required together')
+    spend = None
+    if max_cost_usd is not None:
+        if config.provider != 'openrouter':
+            raise RunnerError('dollar budget requires provider-reported OpenRouter billing')
+        records = [json.loads(line) for line in results_path.read_bytes().splitlines()] if results_path.exists() else []
+        spend = PromptSpendBudget(max_cost_usd, max_request_cost_usd, records)
+        _append_json_line(config.run_directory/'spend-limits.jsonl', dict(
+            max_cost_usd=max_cost_usd, max_request_cost_usd=max_request_cost_usd,
+            prior_spend_micro_usd=spend.spent, manifest_sha256=manifest_sha256,
+            wrapper_sha256=provenance.active_wrapper_sha256))
+    budget = NewJobBudget(max_new_attempts, spend=spend)
     (config.run_directory / "output.json").unlink(missing_ok=True)
     options = manifest["request_reuse"]
     history = RequestHistory(Path(options["history_root"]), exclude_run=config.run_directory)
@@ -3199,8 +3283,8 @@ def _execute_prompt_batch(
                 index, prompt, previous = active.pop(future)
                 try:
                     responses[index] = future.result()
-                except NewJobLimitReached:
-                    failures.append("new-attempt allowance exhausted")
+                except NewJobLimitReached as limit:
+                    failures.append(str(limit) or "new-attempt allowance exhausted")
                     fatal = True
                 except RunnerError:
                     record = latest.get("prompt:" + prompt.prompt_id)
@@ -3215,6 +3299,8 @@ def _execute_prompt_batch(
                     else:
                         failures.append(f"{prompt.prompt_id}: {record.get('error')}")
                         fatal |= kind == "provider_fatal"
+    if spend is not None and spend.halted:
+        failures.append('billing unavailable or per-request bound exceeded')
     if failures:
         raise RunnerError("unresolved prompt cases: " + ", ".join(failures))
 

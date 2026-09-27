@@ -760,10 +760,11 @@ shared experiment runner for all inference. Reusable specs are
 `experiment_specs/hr02-m06-muse-titles-v1.json` and
 `experiment_specs/hr02-m06-jev-nesting-v1.json`. Generated inputs and views
 live only under `target/hr02-m06-muse-jev-v1/`; title execution uses
-`experiments/hr02-m06-muse-titles-v1-bounded/`. The earlier unbounded preparation
-was never executed. The $2 experiment allowance permits at most 950 Muse
-attempts, capped at 6,500 output/reasoning tokens each, plus at most 3,620 Jev
-attempts, with rendered-input admission checked before each stage.
+`experiments/hr02-m06-muse-titles-v1-bounded/` and its explicit uncapped
+continuation `experiments/hr02-m06-muse-titles-v1-uncapped/`. The earlier initial
+preparation was never executed. The approved total allowance remains $2;
+continuation uses the shared runner's cumulative dollar budget rather than an
+imposed response-length cap. The source spec now omits `max_output_tokens`.
 
 Only mutual Yes on an original edge permits contraction. Keep the upper
 group's existing title and complete masks; no extra naming inference. Preserve
@@ -774,15 +775,19 @@ review UI, including original mask IDs and complete source posts. Prior HR02,
 Jev and HDBSCAN artifacts remain untouched. Quality and whether to pursue this
 approach remain open until review.
 
-**Current checkpoint: stopped during title generation.** Muse exhausted the
+**Current checkpoint: uncapped continuation approved.** Muse exhausted the
 imposed 6,500-token allowance on several cases before returning any title.
 The scheduler was interrupted and in-flight calls drained normally; all receipts
 and successful titles are preserved. The shared report records partial progress,
-and the saved report preserves the incurred charges. No Jev calls or
-semantic-collapse hierarchy have been produced. A higher output allowance and
-fresh attempts for incomplete cases require user direction; never rerun the
-successful titles or reinterpret length failures as semantic failures. The
-offline viewer schema check is only a labelled fixture, not model results.
+and the first stage's billing was settled. The user rejected the response cap
+and approved continuation: retain all 120 successful titles and select only the
+810 incomplete cases in a separate uncapped experiment. Both receipt-validated
+reports are required when packaging; duplicate successes are rejected, not
+overwritten. Title continuation gets $1.80 with a verified
+$0.20 per-request reservation. No Jev calls or semantic-collapse
+hierarchy have yet been produced. Never reinterpret length failures as semantic
+failures. The offline viewer schema check is only a labelled fixture, not model
+results.
 
 ### Jev full HR02 directional judgments
 

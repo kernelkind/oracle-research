@@ -10,6 +10,22 @@ from experiment_inputs import render
 
 
 class MergeTreeNestingTests(unittest.TestCase):
+    def test_combined_title_reports_preserve_successes_without_duplicate_results(self):
+        from merge_tree_nesting import bind_title_reports, TITLE
+        from prepare_category_title_inputs import prepare
+        packets={'packets':[dict(packet=g,instances=[dict(instance=g,vector_id=g,
+                  note_id=g,text='x',fragments=['x'],byte_spans=[[0,1]])]) for g in ['a','b']]}
+        prepared=prepare(packets,TITLE.read_text(),[])
+        cases=[dict(id=g['group'],status='valid',receipt={'verified':True},prompt=g['prompt'],
+                    parsed={'title':g['group']},evidence={'packet':p})
+               for g,p in zip(prepared,packets['packets'])]
+        common=dict(prompt_id='v38',adapter='titles',settings=dict(provider='openrouter',
+                    model='meta/muse-spark-1.3-contributor',reasoning_effort='high'))
+        original=dict(common,cases=[cases[0],dict(cases[1],status='unrun')])
+        resumed=dict(common,cases=[cases[1]])
+        self.assertEqual(bind_title_reports(packets,[original,resumed]),{'a':'a','b':'b'})
+        with self.assertRaises(ValueError):bind_title_reports(packets,[original,dict(common,cases=cases)])
+
     def test_projection_matches_viewer_and_preserves_all_masks(self):
         history = dict(vector_count=4, alias_groups=[['a'], ['b'], ['c'], ['d']],
                        canonical_unique_ids=['a', 'b', 'c', 'd'], merges=[

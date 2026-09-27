@@ -134,6 +134,23 @@ def contract(tree, decisions):
     return dict(root=root,edges=edges,members=members,representative=representative,judgments=judgments)
 
 
+def bind_title_reports(packets, reports):
+    """Keep earlier valid results, filling gaps only from a complete continuation."""
+    titles={}
+    inventory={p['packet']:p for p in packets['packets']}
+    for index,report in enumerate(reports):
+        cases=[c for c in report['cases'] if c['status']=='valid']
+        if index==len(reports)-1 and len(cases)!=len(report['cases']):
+            raise ValueError('continuation still has incomplete titles')
+        keys=[c['id'] for c in cases]
+        if len(set(keys))!=len(keys) or not set(keys)<=inventory.keys() or set(keys)&titles.keys():
+            raise ValueError('unknown or duplicate successful title')
+        subset={'packets':[inventory[k] for k in keys]}
+        titles.update(bind_titles(subset,dict(report,cases=cases)))
+    if titles.keys()!=inventory.keys():raise ValueError('incomplete combined title inventory')
+    return titles
+
+
 def bind_titles(packets, report):
     if report.get('prompt_id')!='v38' or report.get('adapter')!='titles' or any(
         report.get('settings',{}).get(k)!=v for k,v in dict(provider='openrouter',
@@ -208,7 +225,7 @@ def main():
     s=sub.add_parser('prepare')
     for k in ['history','mapping','posts','output']:s.add_argument('--'+k,type=Path,required=True)
     for command in ['pairs','package']:
-        s=sub.add_parser(command);s.add_argument('directory',type=Path);s.add_argument('--titles',type=Path,required=True)
+        s=sub.add_parser(command);s.add_argument('directory',type=Path);s.add_argument('--titles',type=Path,action='append',required=True)
         if command=='package':s.add_argument('--decisions',type=Path,required=True)
     a=p.parse_args()
     if a.command=='prepare':
@@ -222,14 +239,14 @@ def main():
     base=a.directory;sources=check_sources(base);tree=read(base/'tree.json');packets=read(base/'source-packets.json')
     replay,replay_packets=project(*(read(sources[k]['path']) for k in ['history','mapping','posts']))
     if tree!=replay or packets!=replay_packets:raise ValueError('saved projection changed')
-    report=experiment_report(a.titles);titles=bind_titles(packets,report)
+    reports=[experiment_report(path) for path in a.titles];titles=bind_title_reports(packets,reports)
     prompt=dict(id='NSP-Jev-v3',text=JEV.read_text())
     cases=pair_cases(tree,titles)
     for c in cases:
         state=json.loads(render(prompt['text'],c['inputs']))['state']
         if state!=dict(A=titles[c['evidence']['original_a_id']],B=titles[c['evidence']['original_b_id']]):raise ValueError('title JSON mismatch')
     if a.command=='pairs':
-        save(base/'titles.json',titles);save(base/'title-report.json',report);save(base/'cases.json',dict(cases=cases))
+        save(base/'titles.json',titles);save(base/'title-reports.json',reports);save(base/'cases.json',dict(cases=cases))
         save(base/'original-categories.json',view(tree,titles,sources['posts']['path'],sources['mapping']['path'],label=EXPERIMENT_ID+' original'))
         print(f'{len(cases)} directional cases; original titled view saved; no inference');return
     if titles!=read(base/'titles.json'):raise ValueError('titles changed')

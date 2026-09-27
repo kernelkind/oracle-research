@@ -588,7 +588,8 @@ def execution_upgrade(directory, plan, reason):
         })
 
 
-def run(directory, max_new_attempts=None, runner_upgrade_reason=None):
+def run(directory, max_new_attempts=None, runner_upgrade_reason=None, *,
+        max_cost_usd=None, max_request_cost_usd=None):
     directory = directory.resolve()
     with locked(directory):
         plan, config, manifest = load(directory)
@@ -622,6 +623,8 @@ def run(directory, max_new_attempts=None, runner_upgrade_reason=None):
                 concurrency=config.concurrency,
                 validate_output=validate_output,
                 max_new_attempts=max_new_attempts,
+                max_cost_usd=max_cost_usd,
+                max_request_cost_usd=max_request_cost_usd,
                 runner_upgrade_reason=runner_upgrade_reason if wrapper_changed else None,
             )
         except engine.RunnerError as caught:
@@ -864,6 +867,10 @@ def parser():
     p.add_argument("experiment", type=Path)
     p.add_argument("--max-new-attempts", type=int,
                    help="cap newly sent attempts, including provider retries; reserve spending for this allowance")
+    p.add_argument("--max-cost-usd", type=float,
+                   help="cumulative experiment spending allowance; includes prior attempts, never truncates responses")
+    p.add_argument("--max-request-cost-usd", type=float,
+                   help="caller-verified maximum cost reserved for each in-flight call; required with --max-cost-usd")
     p.add_argument("--runner-upgrade-reason", help="explicitly approve and audit a workflow-code upgrade; frozen inputs/settings remain immutable")
     p = commands.add_parser(
         "show", help="inspect all cases, or exact case evidence; no inference"
@@ -913,7 +920,8 @@ def main(argv=None):
                 raise ValueError("--max-new-attempts must be positive")
             if args.runner_upgrade_reason is not None and not args.runner_upgrade_reason.strip():
                 raise ValueError("--runner-upgrade-reason must not be blank")
-            result = run(args.experiment, args.max_new_attempts, args.runner_upgrade_reason)
+            result = run(args.experiment, args.max_new_attempts, args.runner_upgrade_reason,
+                         max_cost_usd=args.max_cost_usd, max_request_cost_usd=args.max_request_cost_usd)
             compact(result)
             return int(
                 any(
