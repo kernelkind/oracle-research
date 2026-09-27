@@ -260,6 +260,7 @@ Approved placement corrections for that separate hierarchy (not yet applied):
 | --- | --- | --- |
 | Eggs | Duck eggs | Add. The visible path becomes Foods → Eggs → Duck eggs; the direct Foods → Duck eggs shortcut becomes redundant. The Jev baseline remains unchanged. |
 | coffee | Coffee beans | Add while retaining the existing Seeds and seed-derived products parent. Coffee beans will have both parents in the corrected hierarchy. The Jev baseline remains unchanged. |
+| coffee | Coffee flavor | Add as the more-specific parent. Food and drink remains an ancestor; its direct Coffee flavor shortcut becomes redundant. The Jev baseline remains unchanged. |
 
 Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
