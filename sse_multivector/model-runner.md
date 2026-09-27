@@ -934,6 +934,22 @@ production preparation and decoding functions:
   systematic reaction underweighting or calibrated percentages. No prompt
   changed for this test.
 
+  The user authorized an ablation of the alternative-post-class operation.
+  [PPv26-D3](prominence-prompt-goal-v1/ppv26-no-class-v1/PPv26-D3.md) retains
+  PPv26-D2B's fixed-allocation scoring, drops the class-analysis paragraph after
+  its initial contextual-interpretation sentence, and removes `post_class` from
+  output. No reaction/reference-specific rule was added. The versioned revision
+  receipt compares against approved PPv26; the ablation comparison is against
+  tested PPv26-D2B. `experiments/ppv26-no-class-v1` uses the two exact saved
+  inputs and 85/15 allocation with two new Astra-low subscription calls, no
+  retries, reuse, allocation calls, or baseline reruns. Claim-only remains 85;
+  reaction-only changes from 10 to 15, with zero factual credit. Both outputs
+  retain every allocation meaning and weight and pass all point-sum checks.
+  Agent reviews accept the local behavior; no user acceptance is recorded.
+  This supports investigating removal of the class operation, but a single
+  sample per mask does not establish causality, repeatability, or calibration.
+  PPv26 remains the approved main prompt; PPv26-D3 is a tested diagnostic.
+
   The user has authorized small, in-scope prominence diagnostics without
   repeated permission requests. This does not authorize broad experiments or
   scoring-prompt changes, and does not waive spending authorization or ledger
