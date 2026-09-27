@@ -1,0 +1,14 @@
+{
+  "state": {"A": {A_MASKS_JSON}, "B": {B_MASKS_JSON}},
+  "questions": {
+    "same_topic": {
+      "type": "choice",
+      "instructions": "A and B are groups of masks from social media posts. Each mask is a list of text fragments selected from one post; interpret its fragments together. Do the two groups express the same topic at the same level of generality? For each group, consider the most specific topic that covers the subject matter of all its masks. Answer yes only if those topics are equivalent; different wording and examples need not make them different. Answer no if the topics differ, including when one is broader or narrower than the other. Answer uncertain if the masks do not establish whether the topics are equivalent.",
+      "criteria": {
+        "yes": "The groups express the same topic at the same level of generality",
+        "no": "The groups express different topics or different levels of generality",
+        "uncertain": "Cannot determine this from the masks"
+      }
+    }
+  }
+}
