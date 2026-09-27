@@ -1050,6 +1050,21 @@ production preparation and decoding functions:
   is weak evidence of meaningful rank differences. No clear semantic failure
   or user ordering verdict is established. No prompt or membership changed.
 
+  The tea ordering diagnostic retained all four original masks of Sa01eaf30fd
+  across three posts, sharing one allocation for the two health-concern masks.
+  `experiments/ppv26-tea-allocation-v1` and `experiments/ppv26-tea-scoring-v1`
+  used unchanged PPv26-D2A/PPv26-D3, with matching reusable specs under
+  `experiment_specs/`. Seven Astra-low subscription calls completed without
+  retries, reuse, or baseline reruns. Exact saved masks, original membership,
+  shared allocation identity, allocation preservation and arithmetic all passed
+  checks. Descending order: V0586 tea in a short desire statement 25, V1171
+  drank plus tea in the health-concern post 15, V1169 tea alone in that post 5,
+  V1298 incidental diary tea 1. Agent reviews accept this qualitative ordering
+  and the identified missing meanings; no user ordering verdict or calibrated
+  percentage is established. This provides a clearer cross-post contrast than
+  the narrow Bitcoin scores. It remains evidence for the two-stage diagnostic,
+  not verification of the approved single-call PPv26 or a prompt promotion.
+
   The user has authorized small, in-scope prominence diagnostics, explicitly
   including prompt ablations, without repeated permission requests. Prepare
   versioned diagnostic variants and run these ablations without pausing for
