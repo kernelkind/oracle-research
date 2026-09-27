@@ -262,7 +262,8 @@ Approved placement corrections for that separate hierarchy (not yet applied):
 | coffee | Coffee beans | Add while retaining the existing Seeds and seed-derived products parent. Coffee beans will have both parents in the corrected hierarchy. The Jev baseline remains unchanged. |
 | coffee | Coffee flavor | Add as the more-specific parent. Food and drink remains an ancestor; its direct Coffee flavor shortcut becomes redundant. The Jev baseline remains unchanged. |
 | Foods | Clean, simple dishes | Add. The currently parentless node describes prepared food, not tableware, as supported by its dinner/dish masks. The Jev baseline remains unchanged. |
-| Positive emotions and attitudes | Enjoyment of food | Add. Enjoyment denotes pleasure or satisfaction, so the child necessarily concerns a positive experience; the post need not itself express a positive emotion. This approval does not yet settle the separately proposed Food and drink parent. The Jev baseline remains unchanged. |
+| Positive emotions and attitudes | Enjoyment of food | Add. Enjoyment denotes pleasure or satisfaction, so the child necessarily concerns a positive experience; the post need not itself express a positive emotion. The Jev baseline remains unchanged. |
+| Food and drink | Enjoyment of food | Add alongside Positive emotions and attitudes. Discussing enjoyment of food necessarily concerns food. Both parents are approved for the corrected hierarchy; the Jev baseline remains unchanged. |
 
 Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
