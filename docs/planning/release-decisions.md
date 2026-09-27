@@ -254,7 +254,7 @@ boundaries with the user before applying agreed corrections. The corrected
 hierarchy is not built or validated yet. This does not adopt Jev/manual repair
 as the scalable production method or authorize additional inference.
 
-Approved placement corrections for that separate hierarchy (not yet applied):
+Approved placement decisions for that separate hierarchy (changes not yet applied):
 
 | Parent | Child | User decision |
 | --- | --- | --- |
@@ -273,6 +273,7 @@ Approved placement corrections for that separate hierarchy (not yet applied):
 | Foods | coffee | Remove. The user agreed to interpret Foods as excluding drinks. Its already-accepted Food and drink relationship becomes the direct displayed parent, alongside tea and Wine. Other affected placements still require review; the Jev baseline remains unchanged. |
 | Foods | milk | Remove under the agreed food/drink distinction. Its already-accepted Food and drink relationship becomes the direct displayed parent. Retain milk → raw milk. The Jev baseline remains unchanged. |
 | Raw food | raw milk | Remove under the agreed food/drink distinction, avoiding the remaining Foods → Raw food → raw milk path. Keep milk → raw milk. The Jev baseline remains unchanged. |
+| Foods | Cream | Keep. The masks describe cream as a food ingredient, including when added to coffee, rather than a separate drink. No change to this baseline link is needed. |
 
 Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
