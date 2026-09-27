@@ -776,10 +776,11 @@ review UI, including original mask IDs and complete source posts. Prior HR02,
 Jev and HDBSCAN artifacts remain untouched. Quality and whether to pursue this
 approach remain open until review.
 
-**Current checkpoint: cost lookup verified; reserves reconciled for continuation.**
-638 of 930 titles are saved: 120 from the capped run, 262 from the first uncapped
-run and 256 from its continuation. The continuation has 14 failed cases and
-278 unrun cases; no requests remain active. All three receipt-validated reports
+**Current checkpoint: continuation resumed after further billing reconciliation.**
+At the latest stopped checkpoint, 703 of 930 titles were saved: 120 from the
+capped run, 262 from the first uncapped run and 321 from its continuation.
+The continuation had 11 failed cases and 216 unrun cases. It is now running
+again; use the shared report for live progress. All three receipt-validated reports
 are required when packaging; duplicate successes are rejected, not overwritten.
 There are no uncapped title format failures; semantic quality is not yet reviewed.
 
@@ -788,8 +789,9 @@ charges for missing bills instead of halting unrelated requests, and increased
 the total allowance to $4. The shared runner implements those decisions and
 preserves the provider-only two-attempt retry policy. The continuation's
 cumulative allowance is $3.25, with $0.20 reserved for each unbilled call.
-Fourteen failed calls across the uncapped runs have unknown charges. Their
-known charges total conservatively to $0.316831 and $0.511987 respectively;
+Unknown charges continue to retain their full reservation until verified;
+reconciliation does not increase the approved allowance.
+
 Saved failure receipts report Meta/OpenRouter provider-unavailable errors. The
 network failures repeatedly follow approximately 300 seconds without a model
 event, while heartbeat bytes continue arriving. This is evidence of an upstream
@@ -797,8 +799,8 @@ generation/stream failure, not the local 1,800-second timeout or an imposed
 output-token limit; the exact upstream cause remains unproven. One additional
 failure says the model failed to generate a response and includes billing.
 The read-only audit found 15 failures among 532 uncapped calls (2.8%), not a
-general failure of the model. None of the continuation's 14 failed cases had
-been retried: the scheduler put due retries behind untouched cases, then ran
+general failure of the model. At that earlier checkpoint, none of the
+continuation's 14 failed cases had been retried: the scheduler put due retries behind untouched cases, then ran
 out of cost reservations. Typical successful calls cost about $0.00111, while
 each missing bill retains a $0.20 worst-case reserve.
 
@@ -809,10 +811,21 @@ Backoff, concurrency, retry eligibility and the two-attempt limit are unchanged.
 Offline regressions cover the original starvation and resumed execution; no
 paid calls were made for this fix. 
 The shared `reconcile-costs` command verified all 14 missing bills as exactly $0, without rewriting model receipts. Its
-reports now show $0.316710016 and $0.511861742 for the two uncapped runs, with no
-unknown charges. Resume the same continuation using the corrected retry priority
-and original model settings within the approved $4 total. No model/settings
-substitution or canonical HR02 changes are authorized. No Jev calls or
+reports then showed $0.316710016 and $0.511861742 for the two uncapped runs,
+with no unknown charges. A later stop had 12 new unknown charges; reconciliation
+verified 11 more at $0, retaining one unknown charge. The same continuation has
+resumed within its original allowance. The intervening shared-runner change
+`4ab04733` affects only prominence preparation/validation; its inspected upgrade
+is recorded without changing title inputs or inference settings.
+
+Nine titles have now failed twice with the same upstream connection error.
+One other failed case has an unclassified body-transport error, and one has a
+single retry-eligible provider failure. Exhausted and ineligible cases remain
+visible; resuming does not bypass the existing retry policy. Independent unrun
+cases continue, but the complete titled tree and Jev inputs cannot be packaged
+until every title is recovered. No groups may be dropped or titles supplied by
+hand. Recovery beyond the existing retry policy remains undecided.
+No model/settings substitution or canonical HR02 changes are authorized. No Jev calls or
 semantic-collapse hierarchy have yet been produced. The offline viewer schema
 check is a labelled fixture, not model results.
 
