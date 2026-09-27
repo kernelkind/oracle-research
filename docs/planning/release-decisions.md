@@ -264,6 +264,7 @@ Approved placement corrections for that separate hierarchy (not yet applied):
 | Foods | Clean, simple dishes | Add. The currently parentless node describes prepared food, not tableware, as supported by its dinner/dish masks. The Jev baseline remains unchanged. |
 | Positive emotions and attitudes | Enjoyment of food | Add. Enjoyment denotes pleasure or satisfaction, so the child necessarily concerns a positive experience; the post need not itself express a positive emotion. The Jev baseline remains unchanged. |
 | Food and drink | Enjoyment of food | Add alongside Positive emotions and attitudes. Discussing enjoyment of food necessarily concerns food. Both parents are approved for the corrected hierarchy; the Jev baseline remains unchanged. |
+| Art | Music | Add. Music is an art form; the parent is Art, not Visual art. The currently parentless Music node gains this parent in the corrected hierarchy only. |
 
 Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
