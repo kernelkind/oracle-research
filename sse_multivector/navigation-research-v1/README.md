@@ -780,10 +780,14 @@ review UI, including original mask IDs and complete source posts. Prior HR02,
 Jev and HDBSCAN artifacts remain untouched. Quality and whether to pursue this
 approach remain open until review.
 
-**Current checkpoint: Luna/max running on 106 remaining titles.** Muse is stopped
-and fully drained. Four additional successes during drain bring its total to
-824, preserved across its four reports. The Luna run contains exactly the
-106 missing titles, not the earlier live count of 110; nothing successful is rerun.
+**Current checkpoint: Luna/max finished all 106 requests.** Muse is stopped
+and fully drained, with 824 valid titles preserved across its four reports.
+Luna returned 105 schema-valid titles and one plain-text title without the
+required JSON wrapper (M06-3237); there were no request failures, retries or
+reused responses. Thus 929 titles pass the current packaging contract and one
+response needs an explicit handling decision. Its native receipt is unchanged;
+no automatic repair or rerun was performed. Four successful Muse calls during
+drain reduced the originally reported missing count from 110 to 106.
 All five receipt-validated reports are required when packaging; duplicate
 successes, changed prompts, unsupported model/effort combinations and missing
 titles are rejected. TPv38 and the source masks remain unchanged. The hierarchy
