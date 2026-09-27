@@ -12,8 +12,10 @@ import struct
 
 try:
     from . import experiment, worker
+    from .experiment_inputs import prepare_prominence
 except ImportError:
     import experiment
+    from experiment_inputs import prepare_prominence
     import worker
 
 
@@ -44,8 +46,9 @@ def cosine(a, b):
 def rank_rows(rows):
     for row in rows:
         row["product"] = row["prominence"] * row["cosine"]
+        row["linear_product"] = row["prominence"] * (max(-1, min(1, row["cosine"])) + 1) / 2
     return {key: [r["id"] for r in sorted(rows, key=lambda r: (-r[key], r["id"]))]
-            for key in ("prominence", "cosine", "product")}
+            for key in ("prominence", "cosine", "product", "linear_product")}
 
 
 def decode(path, dimensions, code):
@@ -109,18 +112,30 @@ def prepare(args):
     if len(lookup) != len(rows) or any(r["ordinal"] != i for i, r in enumerate(rows)):
         raise ValueError("vector map has duplicate IDs or unexpected row order")
     cases, titles, originals = [], {}, {}
+    selected_nodes = set(getattr(args, "node", None) or [])
     for directory in args.experiments:
         directory = directory.resolve()
         plan, _, _ = experiment.load(directory)
-        if plan["dataset"]["adapter"] != "prominence":
-            raise ValueError("expected a prominence experiment")
+        if plan["dataset"]["adapter"] not in ("prominence", "generic"):
+            raise ValueError("expected prominence inputs with saved mask evidence")
         report = experiment.report(directory)
         for name in (directory / "experiment.json", Path(plan["run_directory"]) / "results.jsonl"):
             protected[str(name)] = sha(name)
         for case in report["cases"]:
+            if selected_nodes and case.get("evidence", {}).get("node_id") not in selected_nodes:
+                continue
             if case["status"] != "valid":
                 raise ValueError(f"unscored or invalid case: {case['id']}")
             e = case["evidence"]
+            fields = ("id", "node_id", "node_title", "note_id", "text", "mask_ids", "byte_spans")
+            verified = prepare_prominence({"cases": [{key: e[key] for key in fields}]})[0]
+            if (case["id"] != e["id"] or set(case["inputs"]) != {"INPUT_JSON"}
+                    or json.loads(case["inputs"]["INPUT_JSON"]) !=
+                    json.loads(verified["inputs"]["INPUT_JSON"])):
+                raise ValueError(f"model input differs from saved mask evidence: {case['id']}")
+            score = case["parsed"].get("prominence")
+            if type(score) is not int or not 0 <= score <= 100:
+                raise ValueError(f"invalid prominence score: {case['id']}")
             nid, title = e["node_id"], e["node_title"]
             if nid in titles and titles[nid] != title:
                 raise ValueError("conflicting node titles")
@@ -135,7 +150,11 @@ def prepare(args):
                               mask_ids=e["mask_ids"], note_id=e["note_id"],
                               fragments=lookup[e["mask_ids"][0]]["fragments"],
                               ordinal=lookup[e["mask_ids"][0]]["ordinal"],
-                              prominence=case["parsed"]["prominence"]))
+                              prominence=score))
+    if selected_nodes - titles.keys():
+        raise ValueError(f"unknown requested node: {sorted(selected_nodes - titles.keys())}")
+    if not cases:
+        raise ValueError("no prominence cases selected")
     if len({c["id"] for c in cases}) != len(cases):
         raise ValueError("duplicate case IDs")
     notes, title_rows, replays = [], {}, {}
@@ -164,6 +183,7 @@ def prepare(args):
                 vectors=str(vectors), protected=protected, encoder=encoder,
                 vector_file=str(vector_file), vector_code=vector_code,
                 formula="prominence (0..100) * raw cosine; no clipping or fitted calibration",
+                linear_formula="prominence * (clip(cosine, -1, 1) + 1) / 2; not calibrated relevance",
                 parity_min_cosine=0.999999, parity_max_normalized_component_error=0.00001)
     save(output / "plan.json", plan)
     save(output / "worker-request.json", dict(schema_version=1, proposal_sha256=sha(output / "plan.json"), notes=notes))
@@ -213,6 +233,7 @@ def collect(output):
         groups.setdefault(case["node_id"], []).append(row)
     rankings = {nid:rank_rows(rows) for nid,rows in groups.items()}
     result = dict(parity=parity, groups=groups, rankings=rankings, formula=plan["formula"],
+                  linear_formula=plan.get("linear_formula", "prominence * (clip(cosine, -1, 1) + 1) / 2"),
                   worker_receipt_sha256=sha(output / "result/worker-receipt.json"),
                   raw_vectors_sha256=sha(output / "result/raw-vectors.f32le"))
     save(output / "comparison.json", result)
@@ -225,6 +246,7 @@ def main():
     prep = sub.add_parser("prepare")
     prep.add_argument("output", type=Path)
     prep.add_argument("--experiments", type=Path, nargs="+", required=True)
+    prep.add_argument("--node", action="append", help="select a node ID; repeat for multiple nodes")
     prep.add_argument("--vectors", type=Path, required=True)
     prep.add_argument("--worker-config", type=Path, required=True)
     prep.add_argument("--replay", nargs="+", required=True)

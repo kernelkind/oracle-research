@@ -1323,6 +1323,39 @@ checkpoint/settings and replay checks before `collect` emits a comparison.
 This diagnostic makes no prompt calls; the shared experiment runner remains the
 only prompt-experiment workflow.
 
+`prominence_cosine.py prepare --node NODE_ID` selects a complete node from the
+supplied experiments (repeat the flag for several nodes). It also accepts generic
+experiments carrying prominence evidence, such as PPv30's allocation-debug
+output. The production prominence preparer validates the full post and exact
+spans and reconstructs the model input; mismatches and non-integer/out-of-range
+scores are refused. Unselected nodes are not encoded or required to be scored.
+`collect` preserves the historical raw `product` and adds `linear_product` plus
+its ordering, using the viewer's rescaled-cosine formula above. The explicit
+`linear_formula` distinguishes the two; raw product is not the combined score
+chosen for this trial.
+
+The user selected Photography in the untouched raw Jev hierarchy for the first
+combined-score trial. This is not prominence-only hierarchy sorting: the intended
+within-node score is prominence times mask relevance, with direct membership
+ahead of descendants. Rescaled title cosine remains a candidate for relevance,
+not a calibrated percentage. Photography is a leaf, so this trial does not test
+parent/child priority or decide deduplicated post ordering.
+The saved result is
+`experiments/ppv30-diverse-nodes-v1/photography-cosine-v1/comparison.json`.
+The five original masks retain their saved PPv30 scores and contextual SSE
+vectors. Only the Photography title and a V0964 replay were encoded locally,
+with the same checkpoint, model artifacts and runtime versions. Replay cosine
+was 0.9999999999999587; maximum normalized component error was 3.29e-8.
+Descending combined order: V0964 10.4013 (prominence 13, cosine .600198),
+V0765 7.0840 (8, .770990), V0963 3.5640 (4, .782018), V0767 1.8620
+(2, .861961), V0688 .9651 (1, .930152). Ordering is unchanged from prominence
+alone; weights range from .800099 to .965076, so this is not evidence of an
+ordering improvement. No prominence/Jev/title-generation calls, UI changes,
+manual placement corrections or membership changes occurred. The default
+Python lacked torch, and an offline uv resolution failed before inference;
+the existing cached matching runtime completed the single two-row SSE job
+without installing packages or accessing the network.
+
 ### Revision: explicit approved base, full-context diff
 
 Use a new versioned destination and the last approved prompt as the base:
