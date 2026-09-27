@@ -119,15 +119,14 @@ def spec_setup(path):
 
 
 def request_preview(plan, manifest, cases):
-    history = engine.RequestHistory(
-        Path(manifest["request_reuse"]["history_root"]),
-        exclude_run=Path(plan["run_directory"]),
-    )
+    pending = [case for case in cases if case.get("status", "unrun") == "unrun"]
     reusable = 0
-    if not manifest["request_reuse"]["intentional_repeat"]:
-        for case in cases:
-            if case.get("status", "unrun") != "unrun":
-                continue
+    if pending and not manifest["request_reuse"]["intentional_repeat"]:
+        history = engine.RequestHistory(
+            Path(manifest["request_reuse"]["history_root"]),
+            exclude_run=Path(plan["run_directory"]),
+        )
+        for case in pending:
             for _, source in history.matches(
                 engine._prompt_request_key(manifest, case["prompt"])
             ):
@@ -142,7 +141,7 @@ def request_preview(plan, manifest, cases):
                     continue
                 reusable += 1
                 break
-    unrun = sum(c.get("status", "unrun") == "unrun" for c in cases)
+    unrun = len(pending)
     return {
         "unrun": unrun,
         "reusable": reusable,

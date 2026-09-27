@@ -392,6 +392,14 @@ during incomplete runs. Default output is a compact case/status list;
 `--case ID` shows the exact model input, output, baseline, validation and
 review evidence. `--json` provides machine-readable output.
 
+Request-history lookup is needed only when unrun cases can reuse answers.
+Completed experiments and intentional repeats skip that scan, including when
+opening or closing the review UI. Receipt and comment validation still run;
+unfinished non-repeat experiments still check reuse normally. On the 17-mask
+Coffee review, removing the unnecessary scans reduced the local `review --check`
+open-and-close measurement from 2.63 seconds to 0.08 seconds. This is a startup
+and exit improvement, not a change to rendering or scrolling.
+
 Experiment directories are **generated artifacts**, with a local `.gitignore`
 ignoring their contents from the outset. Keep reusable prompts, specs, tests and
 maintained documentation **outside** these directories. Do not force-add

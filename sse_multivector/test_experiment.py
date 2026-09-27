@@ -16,6 +16,32 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_completed_review_and_intentional_repeat_do_not_scan_request_history(self):
+        from unittest.mock import patch
+        from sse_multivector import experiment
+
+        self.prominence_spec()
+        self.prepare()
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': '{"prominence":80}'})
+        viewer = self.root / 'viewer'
+        viewer.write_text('#!/usr/bin/env python3\n')
+        viewer.chmod(0o755)
+        # Exercise the actual CLI review handler, including its report on exit.
+        args = experiment.parser().parse_args([
+            'review', str(self.root / 'E1'), '--ui', '--ui-binary', str(viewer)])
+        with patch.object(experiment.engine, 'RequestHistory',
+                          side_effect=AssertionError('unnecessary history scan')):
+            experiment.review(args)
+            result = experiment.report(self.root / 'E1')
+        self.assertEqual(result['requests']['unrun'], 0)
+
+        self.cli('prepare', 'repeat', '--from', 'E1', '--repeat')
+        with patch.object(experiment.engine, 'RequestHistory',
+                          side_effect=AssertionError('repeat must not search reuse')):
+            result = experiment.report(self.root / 'repeat')
+        self.assertEqual(result['requests']['new'], 2)
+        self.assertEqual(result['requests']['reusable'], 0)
+
     def test_title_review_selection_preserves_assessments_without_inference(self):
         self.prompt.write_text("GENERIC PROMPT\n{NUMBERED_INSTANCES}")
         self.cases.write_text(json.dumps({"packets": [
