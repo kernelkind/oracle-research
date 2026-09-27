@@ -8,17 +8,20 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import re
 import struct
 
 try:
     from . import experiment, worker
     from .experiment_inputs import prepare_prominence
     from .prominence_ranking import ranking_scores
+    from .extraction_pipeline import NIP19_IDENTIFIER, URL_SCHEME_PATTERN
 except ImportError:
     import experiment
     from experiment_inputs import prepare_prominence
     import worker
     from prominence_ranking import ranking_scores
+    from extraction_pipeline import NIP19_IDENTIFIER, URL_SCHEME_PATTERN
 
 
 def read(path):
@@ -70,6 +73,51 @@ def inverse_spans(text, spans):
         cursor = end
     if cursor < len(text.encode()):
         result.append([cursor, len(text.encode())])
+    return result
+
+
+def excluded_reference_spans(text):
+    """Versioned URL/NIP-19/64-hex detection; returns merged UTF-8 spans."""
+    url = re.compile(URL_SCHEME_PATTERN.pattern + r'''[^\s<>"']+''', URL_SCHEME_PATTERN.flags)
+    hexadecimal = re.compile(r'(?<![A-Za-z0-9_])[a-fA-F0-9]{64}(?![A-Za-z0-9_])')
+    spans = []
+    for pattern in (url, NIP19_IDENTIFIER, hexadecimal):
+        for match in pattern.finditer(text):
+            start, end = match.span()
+            if pattern is url:
+                # Keep sentence punctuation and unmatched enclosing brackets in the post selection.
+                while end > start:
+                    last = text[end - 1]
+                    unmatched = last in ')]}' and text[start:end].count(last) > text[start:end].count(
+                        {')': '(', ']': '[', '}': '{'}[last])
+                    if last not in '.,;!?' and not unmatched:
+                        break
+                    end -= 1
+            spans.append([len(text[:start].encode()), len(text[:end].encode())])
+    merged = []
+    for start, end in sorted(spans):
+        if merged and start <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], end)
+        else:
+            merged.append([start, end])
+    return merged
+
+
+def subtract_spans(spans, excluded):
+    """Subtract ordered disjoint exclusions without joining distant source text."""
+    result = []
+    for start, end in spans:
+        cursor = start
+        for left, right in excluded:
+            if right <= cursor:
+                continue
+            if left >= end:
+                break
+            if left > cursor:
+                result.append([cursor, left])
+            cursor = min(end, right)
+        if cursor < end:
+            result.append([cursor, end])
     return result
 
 
@@ -125,6 +173,9 @@ def load_vectors(vectors):
 
 
 def prepare(args):
+    exclude_references = getattr(args, 'exclude_references', False)
+    if exclude_references and not getattr(args, 'include_inverse', False):
+        raise ValueError('--exclude-references requires --include-inverse')
     output = args.output.resolve()
     if output.exists():
         raise ValueError("output already exists")
@@ -215,12 +266,21 @@ def prepare(args):
             e = originals[case['mask_ids'][0]]
             note_id = lookup[case['mask_ids'][0]]['note_id']
             spans = inverse_spans(e['text'], e['byte_spans'])
+            full_spans = [[0, len(e['text'].encode())]]
+            if exclude_references:
+                excluded = excluded_reference_spans(e['text'])
+                case['excluded_spans'] = excluded
+                spans = subtract_spans(spans, excluded)
+                full_spans = subtract_spans(full_spans, excluded)
+            if not ''.join(e['text'].encode()[a:b].decode() for a, b in full_spans).strip():
+                raise ValueError(f"empty full-post selection: {case['id']}")
             content = ''.join(e['text'].encode()[a:b].decode() for a, b in spans)
             if not content.strip() and case['prominence'] != 100:
                 raise ValueError(f"empty inverse with missing meaning: {case['id']}")
             case['inverse_spans'] = spans
+            case['full_post_spans'] = full_spans
             case['inverse_row'] = selection(note_id, e['text'], spans) if content.strip() else None
-            case['full_post_row'] = selection(note_id, e['text'], [[0, len(e['text'].encode())]])
+            case['full_post_row'] = selection(note_id, e['text'], full_spans)
         notes = list(grouped.values())
         indices = {s['subject_id']: i for i, (_, s) in enumerate(
             (n, s) for n in notes for s in n['subjects'])}
@@ -240,6 +300,9 @@ def prepare(args):
     for path in (Path(__file__).resolve(), Path(worker.__file__).resolve(),
                  Path(__file__).with_name('prominence_ranking.py').resolve(), args.worker_config.resolve()):
         protected[str(path)] = sha(path)
+    if exclude_references:
+        path = Path(__file__).with_name('extraction_pipeline.py').resolve()
+        protected[str(path)] = sha(path)
     output.mkdir(parents=True)
     plan = dict(schema_version=1, cases=cases, title_rows=title_rows, replays=replays,
                 vectors=str(vectors), protected=protected, encoder=encoder,
@@ -251,6 +314,11 @@ def prepare(args):
         plan['inverse_formula'] = 'linear_product + (100 - prominence) * (clip(inverse_cosine, -1, 1) + 1) / 2'
         plan['full_post_formula'] = '100 * (clip(full_post_cosine, -1, 1) + 1) / 2'
         plan['inverse_policy'] = 'Exact byte complement in unchanged post; URLs and identifiers remain; whitespace-only inverse has no vector and requires prominence 100.'
+        if exclude_references:
+            plan['reference_exclusion'] = 'url-nip19-hex64-v1'
+            plan['inverse_policy'] = ('Inverse and full-post selections exclude scheme URLs, NIP-19 identifiers '
+                                      'and standalone 64-hex identifiers. Original masks, prominence and full '
+                                      'post context remain unchanged; empty inverse requires prominence 100.')
     save(output / "plan.json", plan)
     save(output / "worker-request.json", dict(schema_version=1, proposal_sha256=sha(output / "plan.json"), notes=notes))
     worker._load_request(output / "worker-request.json")
@@ -308,7 +376,7 @@ def collect(output):
                   linear_formula=plan.get("linear_formula", "prominence * (clip(cosine, -1, 1) + 1) / 2"),
                   worker_receipt_sha256=sha(output / "result/worker-receipt.json"),
                   raw_vectors_sha256=sha(output / "result/raw-vectors.f32le"))
-    for key in ('inverse_formula', 'full_post_formula', 'inverse_policy'):
+    for key in ('inverse_formula', 'full_post_formula', 'inverse_policy', 'reference_exclusion'):
         if key in plan:
             result[key] = plan[key]
     save(output / "comparison.json", result)
@@ -327,6 +395,8 @@ def main():
     prep.add_argument("--replay", nargs="+", required=True)
     prep.add_argument('--include-inverse', action='store_true',
                       help='also encode exact inverse masks and one full-post selection per post')
+    prep.add_argument('--exclude-references', action='store_true',
+                      help='exclude scheme URLs, NIP-19 and 64-hex IDs from inverse/full selections only')
     c = sub.add_parser("collect")
     c.add_argument("output", type=Path)
     args = p.parse_args()

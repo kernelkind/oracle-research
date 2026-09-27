@@ -126,6 +126,7 @@ class ProminenceRankingTests(unittest.TestCase):
         for rows in scores['groups'].values():
             for row in rows:
                 row.update(inverse_cosine=.8, full_post_cosine=.9)
+        scores['reference_exclusion'] = 'url-nip19-hex64-v1'
         result = add_rankings(batch, report, scores)
         self.assertEqual([o['name'] for o in result['orderings']],
                          ['Prominence', 'Linear cosine', 'Inverse combined', 'Full-post cosine'])
@@ -133,6 +134,7 @@ class ProminenceRankingTests(unittest.TestCase):
         self.assertIn('Inverse combined: 96.00', result['notes'][1]['results'][0]['output'])
         self.assertIn('Full-post cosine: 95.00', result['notes'][1]['results'][0]['output'])
         self.assertIn('Inverse cosine: 0.8000', result['notes'][1]['results'][0]['output'])
+        self.assertIn('references excluded', result['title'])
         del scores['groups']['Coffee'][0]['inverse_cosine']
         with self.assertRaisesRegex(ValueError, 'inverse'):
             add_rankings(batch, report, scores)

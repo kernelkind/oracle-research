@@ -115,5 +115,11 @@ def add_rankings(batch, report, comparison):
                 '(inverse cosine + 1) / 2. Full-post cosine = 100 × (full-post cosine + 1) / 2. '
                 'Inverse spans and full-post spans are encoded in the unchanged complete post. '
                 'These scores are not percentages of meaning.')
+            if comparison.get('reference_exclusion'):
+                card['results'][0]['comment'] += (
+                    '\nURLs and encoded identifiers are excluded from inverse/full-post selections; '
+                    'they remain in the post context. Original mask vectors and prominence are unchanged.')
     result["title"] = "Prominence × rescaled cosine · saved-score comparison"
+    if comparison.get('reference_exclusion'):
+        result['title'] += ' · references excluded'
     return result

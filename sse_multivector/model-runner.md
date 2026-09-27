@@ -1420,6 +1420,18 @@ inventing a similarity. The literal complement and full-post selection retain
 URLs and identifiers, unlike the prominence prompt's meaning assessment.
 This difference must be considered when interpreting the comparison.
 
+For a controlled exclusion test, add `--exclude-references` alongside
+`--include-inverse` and use a new output directory. The versioned
+`url-nip19-hex64-v1` rule excludes HTTP(S)/WS(S) URLs, existing NIP-19 identifier
+matches, and standalone 64-character hexadecimal identifiers from the inverse
+and full-post selections. Surrounding wording, sentence punctuation and
+hashtags remain selected. It is a mechanical rule for these encoded forms,
+not a general semantic identifier detector. Exact excluded and retained UTF-8
+spans are saved in the plan/comparison. The original post remains the encoder
+context, and original mask vectors, prominence scores and title are unchanged.
+An empty full-post selection is refused. The UI labels this comparison
+**references excluded**; earlier URL-inclusive comparisons remain available.
+
 The Coffee inverse trial is available in the existing UI; press `s` to compare
 orderings. The view still shows one original mask inline per card, preserves
 all cases and comments, and does not aggregate posts or alter memberships:

@@ -83,6 +83,24 @@ class ProminenceCosineTests(unittest.TestCase):
                     self.assertEqual(dedup[0]['full_post_row'], dedup[1]['full_post_row'])
                     self.assertIsNone(dedup[1]['inverse_row'])
                     self.assertEqual(dedup[1]['inverse_spans'], [])
+                args.output = root/'filtered'
+                args.exclude_references = True
+                linked = dict(evidence, text='Take photos. https://example.com')
+                linked_case = prepare_prominence({'cases': [linked]})[0]
+                linked_case.update(status='valid', parsed={'prominence': 20})
+                vectors.write_bytes(struct.pack('<2f', 1, 0))
+                with patch.object(pc.experiment, 'report', return_value={'cases': [linked_case]}):
+                    pc.prepare(args)
+                filtered = pc.read(args.output/'plan.json')
+                request = pc.read(args.output/'worker-request.json')
+                item = filtered['cases'][0]
+                flat = [(n, s) for n in request['notes'] for s in n['subjects']]
+                self.assertEqual(item['excluded_spans'], [[13, len(linked['text'])]])
+                self.assertEqual(item['inverse_spans'], [[0, 5], [11, 13]])
+                self.assertEqual(item['full_post_spans'], [[0, 13]])
+                self.assertEqual(flat[item['inverse_row']][0]['text'], linked['text'])
+                self.assertEqual(flat[item['full_post_row']][1]['byte_spans'], [[0, 13]])
+                self.assertEqual(flat[filtered['replays']['V1']['row']][1]['byte_spans'], [[5, 11]])
                 args.output = root/'bad-input'
                 case['inputs']['INPUT_JSON'] = json.dumps({'mask': ['Take'], 'marked_post': '⟦Take⟧ photos.'})
                 with self.assertRaisesRegex(ValueError, 'input'):
@@ -124,6 +142,20 @@ class ProminenceCosineTests(unittest.TestCase):
         for spans in ([[1, 3]], [[0, 4], [3, 7]], [[0, 100]]):
             with self.assertRaises(ValueError):
                 inverse_spans('☕ tea', spans)
+
+    def test_reference_exclusion_preserves_utf8_context_and_surrounding_words(self):
+        from sse_multivector.prominence_cosine import excluded_reference_spans, subtract_spans
+        identifier = 'nostr:npub1' + 'q' * 58
+        text = '☕ Eggs (https://example.com/' + 'a'*64 + '). ' + identifier + ' #eggs ' + 'b'*64
+        excluded = excluded_reference_spans(text)
+        raw = text.encode()
+        self.assertEqual([raw[a:b].decode() for a, b in excluded],
+                         ['https://example.com/' + 'a'*64, identifier, 'b'*64])
+        kept = subtract_spans([[0, len(raw)]], excluded)
+        self.assertEqual(''.join(raw[a:b].decode() for a, b in kept), '☕ Eggs ().  #eggs ')
+        self.assertEqual(subtract_spans([[0, 5], [8, 15]], [[3, 10]]), [[0, 3], [10, 15]])
+        self.assertEqual(subtract_spans([[0, 3]], [[0, 3]]), [])
+        self.assertEqual(excluded_reference_spans('Ordinary eggs #eggs note1short'), [])
 
     def test_refresh_vectors_are_loaded_with_verified_rows_spans_and_bytes(self):
         from sse_multivector.prominence_cosine import load_vectors, sha
