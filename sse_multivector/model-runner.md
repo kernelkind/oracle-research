@@ -1107,6 +1107,24 @@ production preparation and decoding functions:
   failures. No user score verdict, calibration, or need for a separate
   allocation stage is established by this small comparison.
 
+  The subsequent health-post diagnostic used unchanged PPv30 in
+  `experiments/ppv30-health-parts-v1`, prepared from the matching reusable spec.
+  Two Astra-low subscription calls tested the approved masks: over a gallon
+  plus in less than 24 hours scored 45; the complete final concern sentence,
+  including the emoji, scored 40. Exact post text, selected fragments, unchanged
+  prompt hash, schema, and allocation arithmetic passed checks. No retries,
+  reuse, or baseline reruns occurred. Both exceed saved drank-plus-tea 20 and
+  tea-only 10, a plausible qualitative distinction. However, concern receives
+  25 allocated points when the quantity/time mask is selected, matching the
+  two earlier narrow masks, versus 40 when concern itself is selected. The
+  concern call assigns the remaining 60 to the consumption/realization and
+  credits none of those points to the mask. Agent assessments leave exact
+  weights and cross-mask consistency uncertain: these calls cannot separate
+  mask influence from sampling variability. There is no user score verdict
+  or prompt promotion. The earlier 45-to-25 concern-allocation change alone
+  is not established as a failure, since the quantity/time meaning supporting
+  the concern carries substantial points separately.
+
   The user has authorized small, in-scope prominence diagnostics, explicitly
   including prompt ablations, without repeated permission requests. Prepare
   versioned diagnostic variants and run these ablations without pausing for
