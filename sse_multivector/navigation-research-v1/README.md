@@ -774,6 +774,16 @@ review UI, including original mask IDs and complete source posts. Prior HR02,
 Jev and HDBSCAN artifacts remain untouched. Quality and whether to pursue this
 approach remain open until review.
 
+**Current checkpoint: stopped during title generation.** Muse exhausted the
+imposed 6,500-token allowance on several cases before returning any title.
+The scheduler was interrupted and in-flight calls drained normally; all receipts
+and successful titles are preserved. The shared report records partial progress,
+and the saved report preserves the incurred charges. No Jev calls or
+semantic-collapse hierarchy have been produced. A higher output allowance and
+fresh attempts for incomplete cases require user direction; never rerun the
+successful titles or reinterpret length failures as semantic failures. The
+offline viewer schema check is only a labelled fixture, not model results.
+
 ### Jev full HR02 directional judgments
 
 The user approved unchanged **NSP-Jev-v3**, `typesafe/jev-1.13` provider-default,
