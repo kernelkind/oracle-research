@@ -738,6 +738,9 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(len(self.calls()), 2)
 
     def test_engine_upgrade_records_new_receipt_provenance(self):
+        data = json.loads(self.cases.read_text())
+        data["cases"][1]["inputs"] = data["cases"][0]["inputs"]
+        self.write("cases.json", data)
         self.prepare()
         manifest = json.loads((self.root / "E1/run/manifest.json").read_text())
         manifest["wrapper_sha256"] = "0" * 64
@@ -752,9 +755,10 @@ class ExperimentTests(unittest.TestCase):
         self.write("E1/experiment.json", envelope)
         self.cli("run", "E1", "--runner-upgrade-reason", "Approved executor upgrade")
         self.assertEqual(self.show()["summary"]["valid"], 2)
+        self.assertEqual(self.show()["summary"]["reused"], 1)
         self.assertTrue((self.root / "E1/run/runner-upgrades.jsonl").exists())
         self.cli("run", "E1")
-        self.assertEqual(len(self.calls()), 2)
+        self.assertEqual(len(self.calls()), 1)
 
     def test_long_retry_after_is_not_ignored(self):
         self.prepare()

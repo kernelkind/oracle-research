@@ -2035,6 +2035,16 @@ def validate_prompt_receipt(
         key = _prompt_request_key(manifest, prompt.text)
         source = _read_request_source(record.get("reused_from"), key)
         expected = _reused_prompt_record(config, manifest, prompt, record["reused_from"], source)
+        provenance = _load_runner_upgrades(
+            config.run_directory,
+            manifest_sha256=expected["manifest_sha256"],
+            initial_wrapper_sha256=manifest["wrapper_sha256"],
+        )
+        allowed_wrappers = {provenance.initial_wrapper_sha256}
+        allowed_wrappers.update(wrapper for _, wrapper in provenance.boundaries)
+        if record.get("wrapper_sha256") not in allowed_wrappers:
+            raise RunnerError("saved reused response has unverified runner provenance")
+        expected["wrapper_sha256"] = record["wrapper_sha256"]
         if not _same_json(record, expected):
             raise RunnerError("saved reused response differs from its source receipt")
         return
