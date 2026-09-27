@@ -269,6 +269,7 @@ Approved placement corrections for that separate hierarchy (not yet applied):
 | Psychology and philosophy | Psychological distress | Add. Psychological distress falls within the psychology side of this parent; the masks express unhealthy stress and anxiety. The Jev baseline remains unchanged. |
 | Personal habit changes | Fasting | Remove. Fasting can be an established practice rather than a change of habits, so containment is not necessary. Leave Fasting parentless for now in the corrected hierarchy; the Jev baseline remains unchanged. |
 | Meat consumption | Chickens and chicken products | Remove. The child includes living hens and egg-laying, which do not necessarily concern meat consumption. Retain its existing Animals parent for now; the Jev baseline remains unchanged. |
+| Meat consumption | Attitudes toward meat consumption | Add. The user reconfirmed carrying the previously approved relationship into this corrected hierarchy: discussing attitudes toward eating meat necessarily concerns meat consumption. The Jev baseline remains unchanged. |
 
 Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
 Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
