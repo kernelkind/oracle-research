@@ -10,6 +10,32 @@ from experiment_inputs import render
 
 
 class MergeTreeNestingTests(unittest.TestCase):
+    def test_explicit_plain_title_normalization_preserves_original_receipt(self):
+        from merge_tree_nesting import normalize_title_reports, bind_title_reports, TITLE
+        from prepare_category_title_inputs import prepare
+        packet=dict(packet='a',instances=[dict(instance='v',vector_id='v',note_id='p',
+                    text='x',fragments=['x'],byte_spans=[[0,1]])])
+        packets={'packets':[packet]}
+        case=dict(id='a',status='malformed',output='Exact original title',
+                  receipt={'record_sha256':'0'*64,'results_path':'saved/results.jsonl'},
+                  prompt=prepare(packets,TITLE.read_text(),[])[0]['prompt'],
+                  evidence={'packet':packet})
+        report=dict(prompt_id='v38',adapter='titles',settings=dict(provider='openai-codex',
+                    model='gpt-6-luna',reasoning_effort='max'),cases=[case])
+        original=copy.deepcopy(report)
+        with self.assertRaises(ValueError):bind_title_reports(packets,[report])
+        normalized,receipts=normalize_title_reports([report],['a'])
+        self.assertEqual(bind_title_reports(packets,normalized),{'a':'Exact original title'})
+        self.assertEqual(report,original)
+        self.assertEqual(receipts,[dict(case_id='a',receipt=case['receipt'],
+                         original_output=case['output'],title=case['output'],
+                         operation='user-approved plain title to JSON object')])
+        with self.assertRaises(ValueError):normalize_title_reports([report],['unknown'])
+        with self.assertRaises(ValueError):normalize_title_reports([report],['a','a'])
+        for text in ['', 'Title\nComment', '{"title":broken']:
+            bad=copy.deepcopy(report);bad['cases'][0]['output']=text
+            with self.assertRaises(ValueError):normalize_title_reports([bad],['a'])
+
     def test_combined_title_reports_preserve_successes_without_duplicate_results(self):
         from merge_tree_nesting import bind_title_reports, TITLE
         from prepare_category_title_inputs import prepare

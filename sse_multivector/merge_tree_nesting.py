@@ -134,6 +134,26 @@ def contract(tree, decisions):
     return dict(root=root,edges=edges,members=members,representative=representative,judgments=judgments)
 
 
+def normalize_title_reports(reports, accepted_plain_titles):
+    """Apply only explicitly accepted format normalizations to derived copies."""
+    pending=set(accepted_plain_titles)
+    if len(pending)!=len(accepted_plain_titles):raise ValueError('duplicate normalization approval')
+    derived=deepcopy(reports);normalizations=[]
+    for report in derived:
+        for case in report['cases']:
+            if case['id'] not in pending or case['status']!='malformed':continue
+            text=case.get('output');receipt=case.get('receipt') or {}
+            if (not isinstance(text,str) or not text.strip() or len(text.splitlines())!=1
+                or text.lstrip().startswith(('{','[','"','```')) or not receipt.get('record_sha256')):
+                raise ValueError('not an exact plain title: '+case['id'])
+            normalizations.append(dict(case_id=case['id'],receipt=deepcopy(receipt),
+                original_output=text,title=text,operation='user-approved plain title to JSON object'))
+            case['status']='valid';case['parsed']={'title':text}
+            pending.remove(case['id'])
+    if pending:raise ValueError('normalization approval has no malformed response: '+','.join(sorted(pending)))
+    return derived,normalizations
+
+
 def bind_title_reports(packets, reports):
     """Keep earlier valid results, filling gaps only from a complete continuation."""
     titles={}
@@ -229,6 +249,8 @@ def main():
     for k in ['history','mapping','posts','output']:s.add_argument('--'+k,type=Path,required=True)
     for command in ['pairs','package']:
         s=sub.add_parser(command);s.add_argument('directory',type=Path);s.add_argument('--titles',type=Path,action='append',required=True)
+        s.add_argument('--accept-plain-title',action='append',default=[],metavar='CASE_ID',
+                       help='explicitly approved exact plain-title normalization; preserves native receipts')
         if command=='package':s.add_argument('--decisions',type=Path,required=True)
     a=p.parse_args()
     if a.command=='prepare':
@@ -242,7 +264,9 @@ def main():
     base=a.directory;sources=check_sources(base);tree=read(base/'tree.json');packets=read(base/'source-packets.json')
     replay,replay_packets=project(*(read(sources[k]['path']) for k in ['history','mapping','posts']))
     if tree!=replay or packets!=replay_packets:raise ValueError('saved projection changed')
-    reports=[experiment_report(path) for path in a.titles];titles=bind_title_reports(packets,reports)
+    reports=[experiment_report(path) for path in a.titles]
+    derived,normalizations=normalize_title_reports(reports,a.accept_plain_title)
+    titles=bind_title_reports(packets,derived)
     label=EXPERIMENT_ID
     if any(r['settings']['model']=='gpt-6-luna' for r in reports):
         label+=' (Muse high + Luna max titles)'
@@ -253,9 +277,11 @@ def main():
         if state!=dict(A=titles[c['evidence']['original_a_id']],B=titles[c['evidence']['original_b_id']]):raise ValueError('title JSON mismatch')
     if a.command=='pairs':
         save(base/'titles.json',titles);save(base/'title-reports.json',reports);save(base/'cases.json',dict(cases=cases))
+        save(base/'title-normalizations.json',normalizations)
         save(base/'original-categories.json',view(tree,titles,sources['posts']['path'],sources['mapping']['path'],label=label+' original'))
         print(f'{len(cases)} directional cases; original titled view saved; no inference');return
     if titles!=read(base/'titles.json'):raise ValueError('titles changed')
+    if normalizations!=read(base/'title-normalizations.json'):raise ValueError('title normalizations changed')
     plan,_,_=experiment_load(a.decisions)
     if plan['prompt']['id']!=prompt['id'] or plan['prompt']['text']!=prompt['text']:raise ValueError('decision prompt changed')
     decisions_report=experiment_report(a.decisions)

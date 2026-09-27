@@ -784,10 +784,13 @@ approach remain open until review.
 and fully drained, with 824 valid titles preserved across its four reports.
 Luna returned 105 schema-valid titles and one plain-text title without the
 required JSON wrapper (M06-3237); there were no request failures, retries or
-reused responses. Thus 929 titles pass the current packaging contract and one
-response needs an explicit handling decision. Its native receipt is unchanged;
-no automatic repair or rerun was performed. Four successful Muse calls during
-drain reduced the originally reported missing count from 110 to 106.
+reused responses. The user explicitly accepted the exact plain title. The
+packager's `--accept-plain-title M06-3237` records a separate, receipt-linked
+format normalization without changing native outputs or the general parser.
+All 930 titles are now available. `title-reports.json` preserves the native
+reports, and `title-normalizations.json` records the accepted exception; both
+are revalidated when packaging. Four successful Muse calls during drain
+reduced the originally reported missing count from 110 to 106.
 All five receipt-validated reports are required when packaging; duplicate
 successes, changed prompts, unsupported model/effort combinations and missing
 titles are rejected. TPv38 and the source masks remain unchanged. The hierarchy
@@ -809,10 +812,11 @@ not a provider requirement and is not silently bypassed. Retain unresolved
 charges within the existing $4 allowance, including the $0.15 Jev allocation.
 Luna uses the existing subscription route, with no paid API fallback.
 
-The complete titled tree and Jev inputs still require every title. No groups
-may be dropped or titles supplied by hand. No Jev calls or semantic-collapse
-hierarchy have yet been produced. The offline viewer schema check is a labelled
-fixture, not model results. Semantic quality remains open for user review.
+The complete titled tree and all 1,810 Jev inputs are prepared from the 930
+titles. No groups are dropped and no titles are supplied by hand. Jev execution
+and the simplified hierarchy remain pending; the original titled view is now
+model-generated, separate from the earlier labelled schema fixture. Semantic
+quality remains open for user review.
 
 ### Jev full HR02 directional judgments
 
