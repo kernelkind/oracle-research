@@ -9,7 +9,9 @@ available beside the unchanged saved Jev-v1 comparison.
 The user accepted the completed Astra merge result on September 28, 2026.
 That acceptance was not a production freeze. The user subsequently approved
 the separate wider HDBSCAN diagnostic HR02-NMP07 below, followed by the
-six-group cross-branch Coffee comparison HR02-NMP08. Neither changes production.
+six-group cross-branch Coffee comparison HR02-NMP08. The subsequent bounded
+cross-branch pass HR02-NMP09 is approved and implemented, with inference
+incomplete as recorded below. None of these adopts a production pipeline.
 
 This separate prompt asks whether two groups express the same topic at the same
 level of generality. It replaces generated title inputs with the masks in each
@@ -438,9 +440,77 @@ No containment judgments, new titles or hierarchy changes were made.
 Receipts and native usage are under
 `sse_multivector/experiments/hr02-cross-branch-coffee-astra-low-v1/`.
 All 95 relevant regression tests pass; original source replay and the saved
-merged-tree hash remain unchanged. The general comparison-selection and
-conflict-handling rules for cross-branch merging remain undecided. This test
-does not establish that merging separate branches can repair earlier bad merges.
+merged-tree hash remain unchanged. This test did not settle general comparison
+selection or conflict handling; the subsequent approved diagnostic rule is
+recorded below. It does not establish that merging separate branches can repair
+earlier bad merges.
+
+## Bounded cross-branch pass — HR02-NMP09
+
+Approved September 28: retain the 161 HR02-NMP07 surviving groups and perform
+one fixed comparison pass before generating an actual Jev-placed hierarchy.
+The purpose is a useful browsing result with acceptable errors, not perfect
+grouping. Subjects, masks, SSE vectors, HDBSCAN groups and all prompts stay fixed.
+No independent regrouping model, manual answer overrides or repeated rounds.
+
+[cross_branch_merge.py](../cross_branch_merge.py) provides offline preparation,
+consolidation and placement preparation; only the shared experiment runner
+performs inference. It replays the prior in-branch merge from verified receipts,
+validates the saved titles, and freezes inputs in
+`target/hierarchy-build-v1/hr02-cross-branch-v1/`.
+
+Selection is the union of two lists for each group:
+
+- Five nearest separate groups, ranked by cosine of the mean of unit mask
+  vectors. Exact same-post masks use the existing deduplication rule.
+- Up to five nearest separate groups whose titles match after trimming and
+  case folding. Titles nominate comparisons; they do not decide equivalence.
+
+Groups sharing masks are not cross-branch candidates. Either group can nominate
+a pair; unordered pairs are deduplicated. Ties use stable group IDs. The two
+lists cap nominations at ten per group. They do not guarantee completeness,
+bound mask-input sizes, or establish production-scale token costs. Five is a
+fixed diagnostic choice, not a learned semantic threshold.
+
+This preparation produces **593 pairs**: initially 579 new and 14 reusable.
+The unchanged NMP-Jev-v2/Astra-low configuration has ten concurrent calls,
+300-second timeouts and no paid fallback. The run bound is 1,158 new attempts,
+including at most two total attempts per case under the provider-only retry
+policy. Exact-request reuse remains enabled; reused answers are not new trials.
+
+The approved consolidation rule joins Yes-connected groups unless a recorded
+No opposes any pair within the proposed combination. In that case, the entire
+combination remains separate for this run. No chooses neither an alternative
+subset nor a preferred Yes edge. Uncertain creates no merge edge; untested pairs
+are not No. Prior No answers from the accepted Astra in-branch stage and the
+Coffee comparison remain constraints. Original groups, exact masks and aliases
+remain recoverable; merged IDs derive from sorted original group IDs.
+
+Only new combined groups need v38/Astra-low titles. Untouched groups retain their
+verified titles. The next stage uses the existing NSP-Jev-v3/Jev directional
+placement workflow and its existing provisional graph rules, not HDBSCAN
+nesting as semantic parent placement. All outputs are isolated from prior views.
+
+**Current result:** the merge run ended with 592 valid answers and one failed
+request: 26 Yes, 524 No and 42 Uncertain. The runner records 579 new attempts
+and 17 reused cases; three HTTP 503 failures were successfully retried. One other
+response reported a Codex processing error with HTTP 200, which the current
+classifier labels `unknown`; policy therefore forbids its automatic retry.
+That case is Gift / Moral goodness. No missing answer has been converted to No
+or Uncertain, and no consolidation, title calls, placement calls or new browser
+export have occurred. Continuing requires resolving this runner classification.
+No paid Jev commitment has been made.
+
+All 111 relevant offline tests pass, covering capped deterministic selection,
+No-vetoed Yes chains, exact-mask provenance, saved/new title binding, existing
+Jev graph/export integration and shared-runner regressions. The original HR02
+sources and existing hierarchy views remain unchanged.
+
+The reusable specs are
+[merges](../experiment_specs/hr02-cross-branch-merge-astra-low-v1.json),
+[new titles](../experiment_specs/hr02-cross-branch-titles-astra-low-v1.json) and
+[placement](../experiment_specs/hr02-cross-branch-placement-jev-v1.json).
+Receipts are in `sse_multivector/experiments/hr02-cross-branch-merge-astra-low-v1/`.
 
 ## Saved hierarchy comparison
 
