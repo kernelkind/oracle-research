@@ -23,8 +23,14 @@ from prepare_category_title_inputs import prepare as prepare_titles
 from prominence_centroid import centroid
 from prominence_cosine import cosine
 from true_graph_merge import union_packet, _digest
+from true_category_graph import graph_from_decisions
+from true_graph_notes import derive_note_memberships
 
 PLACEMENT=Path(__file__).resolve().parent/'node-subsumption-prompt-jev-v3/prompt.txt'
+PARENT_CHILD = Path(__file__).resolve().parent/'node-subsumption-prompt-astra-masks-v1/prompt.txt'
+PARENT_CHILD_ID = 'NSP-Astra-Masks-v1'
+PARENT_CHILD_SOURCES = ('state.json', 'merged/result.json', 'merged/experiment.json',
+                        'placement/title-experiment.json')
 
 
 def select_pairs(packets, titles, vectors, *, k=5):
@@ -271,13 +277,140 @@ def prepare_parent_child(directory, output, per_source=6):
     prepared = parent_child_cases(state, result, per_source=per_source)
     for case in prepared['cases']:
         case['evidence']['titles'] = [names[g] for g in case['evidence']['group_ids']]
-    sources = {name: identity(base/name) for name in
-        ['state.json', 'merged/result.json', 'merged/experiment.json', 'placement/title-experiment.json']}
+    sources = {name: identity(base/name) for name in PARENT_CHILD_SOURCES}
     out = artifact_directory(output)
     save(out/'cases.json', dict(cases=prepared.pop('cases')))
     save(out/'selection.json', dict(prepared, sources=sources))
     print(json.dumps(dict(candidate_counts=prepared['candidate_counts'],
                          selection=prepared['selection'], output=str(out))))
+
+
+def parent_child_graph(titles, prepared, decisions):
+    """Bind saved strict-containment choices to exact selected mask pairs.
+
+    Reviews never override native answers. Equivalence is not inferred from
+    neither; uncertain and untested pairs remain separate. Cycles are only
+    reported, never contracted. No HDBSCAN connection becomes a semantic edge.
+    """
+    profile = dict(provider='openai-codex', model='gpt-6-astra', reasoning_effort='low')
+    if (decisions.get('prompt_id') != PARENT_CHILD_ID or
+            any(decisions.get('settings', {}).get(k) != v for k,v in profile.items())):
+        raise ValueError('matching mask parent-child prompt / Astra low report required')
+    cases = {c['id']: c for c in decisions['cases']}
+    expected = prepared['cases']
+    if (not expected or len(cases) != len(decisions['cases']) or
+            len({c['id'] for c in expected}) != len(expected) or
+            set(cases) != {c['id'] for c in expected}):
+        raise ValueError('complete exact selected pair inventory required')
+    rows, pairs = [], []
+    prompt = PARENT_CHILD.read_text()
+    for item in expected:
+        case = cases[item['id']]
+        answer = case.get('parsed', {}).get('parent_child', {})
+        choice = answer.get('choice')
+        a, b = item['evidence']['group_ids']
+        if (case.get('status') != 'valid' or not case.get('receipt') or
+                case.get('inputs') != item['inputs'] or
+                case.get('evidence', {}).get('group_ids') != [a,b] or
+                case.get('prompt') != render(prompt, item['inputs']) or
+                choice not in {'a_parent', 'b_parent', 'neither', 'uncertain'} or
+                case.get('parsed') != {'parent_child': {'type': 'choice', 'choice': choice}}):
+            raise ValueError('invalid or mismatched parent-child decision: ' + item['id'])
+        pair = dict(id=item['id'], groups=[a,b], answer=deepcopy(answer),
+                    receipt=deepcopy(case['receipt']), inputs=deepcopy(item['inputs']),
+                    evidence=deepcopy(item['evidence']))
+        pairs.append(pair)
+        # Each choice explicitly covers both strict-containment directions.
+        forward, reverse = {'a_parent': (True, False), 'b_parent': (False, True),
+                            'neither': (False, False), 'uncertain': (None, None)}[choice]
+        for parent, child, predicted in [(a,b,forward), (b,a,reverse)]:
+            rows.append(dict(id=f'{item["id"]}:{parent}-contains-{child}', pair_id=item['id'],
+                a_id=parent, b_id=child, predicted=predicted,
+                answer=deepcopy(answer), receipt=deepcopy(case['receipt'])))
+    graph = graph_from_decisions(titles['groups'], rows, require_complete=False)
+    tested = {tuple(p['groups']) for p in pairs}
+    candidates = prepared['candidates']
+    untested = [deepcopy(p) for p in candidates if tuple(p['groups']) not in tested]
+    graph.update(prompt_id=PARENT_CHILD_ID, decision_rule='strict-parent-child-choice',
+        edge_rule='a_parent or b_parent; no review overrides or cycle contraction',
+        decisions=rows, pair_decisions=pairs,
+        unresolved_pairs=[p for p in pairs if p['answer']['choice'] == 'uncertain'],
+        untested_candidate_pairs=untested,
+        coverage=dict(candidate_pairs=len(candidates), tested_pairs=len(pairs),
+            untested_candidate_pairs=len(untested),
+            choice_counts=dict(Counter(p['answer']['choice'] for p in pairs)),
+            compared_groups=len({g for p in pairs for g in p['groups']})))
+    return graph
+
+
+def export_parent_child(graph, packets, tree, source, mapping, output, provenance):
+    """Save all decisions first; export the existing browser only for a DAG."""
+    out = artifact_directory(output)
+    save(out/'graph.json', graph)
+    save(out/'provenance.json', provenance)
+    if graph['cycle_components']:
+        raise ValueError('cycle prevents browsing; graph and provenance saved; no edges removed or nodes merged')
+    memberships = derive_note_memberships(graph, packets)
+    save(out/'memberships.json', memberships)
+    coverage = graph['coverage']
+    label = f'HR02 · {PARENT_CHILD_ID} · {coverage["tested_pairs"]}/{coverage["candidate_pairs"]} comparisons'
+    categories = render_placed(dict(graph=graph, memberships=memberships), tree, source, mapping,
+        label=label, connection_description='Saved mask parent-child choices; no manual corrections, new merges or membership expansion.')
+    names = {n['group']: n['title'] for n in graph['nodes']}
+    details = {g: [] for g in names}
+    for pair in graph['pair_decisions']:
+        a,b = pair['groups']
+        choice = pair['answer']['choice']
+        for g,other in [(a,b), (b,a)]:
+            status = ('uncertain' if choice == 'uncertain' else
+                      'neither strict direction (possibly equivalent)' if choice == 'neither' else
+                      'parent' if (g == a) == (choice == 'a_parent') else 'child')
+            details[g].append(f'{status}: {names[other]}')
+    untested = Counter(g for p in graph['untested_candidate_pairs'] for g in p['groups'])
+    conflicts = Counter(g for p in graph['reachable_rejected_pairs'] for g in (p['a_id'],p['b_id']))
+    for node in categories['nodes']:
+        g = node['node_id']
+        node['analysis'] += (f' Tested {coverage["tested_pairs"]} of {coverage["candidate_pairs"]} candidate pairs. '
+            'Untested and uncertain pairs are not rejections; reviews are not applied.')
+        if g in names:
+            node['analysis'] += f' {len(details[g])} comparisons for this node; {untested[g]} shortlisted pairs untested.'
+            if details[g]: node['analysis'] += ' Answers: ' + '; '.join(details[g]) + '.'
+            if conflicts[g]: node['analysis'] += f' WARNING: {conflicts[g]} rejected directions are nevertheless reachable; see graph.json.'
+    save(out/'categories.json', categories)
+    return categories
+
+
+def package_parent_child(directory, sample, experiment, output):
+    """Replay fixed groups and the frozen sample, then consume saved receipts."""
+    base, sample = Path(directory), Path(sample)
+    state, result = replay_merge(base)
+    selection = read(sample/'selection.json')
+    check_sources(selection)
+    title_run = read(base/'placement/title-experiment.json')['path']
+    titles = assemble_titles(state, result, report(title_run) if title_run else None)
+    prepared = parent_child_cases(state, result, per_source=selection['selection']['per_source'])
+    names = {g['group']: g['title'] for g in titles['groups']}
+    for case in prepared['cases']:
+        case['evidence']['titles'] = [names[g] for g in case['evidence']['group_ids']]
+    sources = {name: identity(base/name) for name in PARENT_CHILD_SOURCES}
+    if (selection != {**{k:v for k,v in prepared.items() if k != 'cases'}, 'sources': sources} or
+            read(sample/'cases.json') != dict(cases=prepared['cases'])):
+        raise ValueError('saved parent-child selection or masks changed')
+    plan, _, _ = load(experiment)
+    if plan['prompt']['id'] != PARENT_CHILD_ID or plan['prompt']['text'] != PARENT_CHILD.read_text():
+        raise ValueError('unchanged mask parent-child prompt required')
+    decisions = report(experiment)
+    graph = parent_child_graph(titles, prepared, decisions)
+    provenance = dict(experiment=str(Path(experiment).resolve()), decision_report=decisions,
+        prompt=plan['prompt'], selection=selection, titles=titles,
+        original_members=result['original_members'], sources=deepcopy(state['sources']),
+        policies=dict(HD07='strict-mask-parent-child-v1',
+                      cycle_handling='report-and-stop-export', review_overrides=False,
+                      untested_pairs='no-decisions-created', uncertain_pairs='unresolved'))
+    categories = export_parent_child(graph, result['source_packets'], state['tree'],
+        state['sources']['posts']['path'], state['sources']['mapping']['path'], output, provenance)
+    print(json.dumps(dict(coverage=graph['coverage'], stats=graph['stats'],
+                         posts=len(categories['notes']), output=str(output))))
 
 
 def placement(directory, title_experiment=None):
@@ -311,8 +444,9 @@ def placement_merge(directory, experiment):
                           stats=merged['graph']['stats'])))
 
 
-def render_placed(named, original_tree, source, mapping, *, label):
-    """Use the existing full-corpus browser export with Jev's saved DAG edges."""
+def render_placed(named, original_tree, source, mapping, *, label,
+                  connection_description='Saved NSP-Jev-v3/Jev links and cycle contractions; no manual corrections or membership expansion.'):
+    """Use the existing full-corpus browser export with saved DAG edges."""
     graph=named['graph'];root=original_tree['root']
     members={root:original_tree['members'][root]}
     for node in named['memberships']['nodes']:
@@ -326,7 +460,7 @@ def render_placed(named, original_tree, source, mapping, *, label):
               edges=[(root,g) for g in graph['roots']]+
                     [(e['a_id'],e['b_id']) for e in graph['transitive_reduced_edges']])
     return view(tree,{n['group']:n['title'] for n in graph['nodes']},source,mapping,label=label,
-        connection_description='Saved NSP-Jev-v3/Jev links and cycle contractions; no manual corrections or membership expansion.')
+        connection_description=connection_description)
 
 
 def placement_conflicts(result, merged):
@@ -396,6 +530,8 @@ def main():
     s=sub.add_parser('prepare-parent-child')
     s.add_argument('directory',type=Path);s.add_argument('output',type=Path)
     s.add_argument('--per-source',type=int,default=6)
+    s=sub.add_parser('package-parent-child')
+    for name in ['directory','sample','experiment','output']:s.add_argument(name,type=Path)
     s=sub.add_parser('placement');s.add_argument('directory',type=Path);s.add_argument('--titles',type=Path)
     s=sub.add_parser('placement-merge');s.add_argument('directory',type=Path);s.add_argument('experiment',type=Path)
     s=sub.add_parser('package');s.add_argument('directory',type=Path);s.add_argument('--titles',type=Path)
@@ -403,6 +539,7 @@ def main():
     if a.command=='prepare':prepare(a.directory,a.vectors,a.coffee_experiment,a.output)
     elif a.command=='merge':merge(a.directory,a.experiment)
     elif a.command=='prepare-parent-child':prepare_parent_child(a.directory,a.output,a.per_source)
+    elif a.command=='package-parent-child':package_parent_child(a.directory,a.sample,a.experiment,a.output)
     elif a.command=='placement':placement(a.directory,a.titles)
     elif a.command=='placement-merge':placement_merge(a.directory,a.experiment)
     else:package(a.directory,a.titles)

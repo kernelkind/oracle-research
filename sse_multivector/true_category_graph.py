@@ -153,17 +153,22 @@ def build_graph(titles, scores, threshold=THRESHOLD, *, decision_rule='cutoff'):
     return result
 
 
-def graph_from_decisions(nodes, rows, *, field='predicted'):
-    """Analyze complete directed decisions without model-specific scoring rules.
+def graph_from_decisions(nodes, rows, *, field='predicted', require_complete=True):
+    """Analyze directed decisions without model-specific scoring rules.
 
     Callers validate their model receipts first. Keep all nodes, raw decisions,
     cycles, and rejected-but-reachable pairs; reduce only acyclic graphs.
+    Bounded-candidate callers may allow partial coverage explicitly. Absent
+    pairs then remain untested, not fabricated negative or uncertain answers.
     """
     ids = [node['group'] for node in nodes]
     if not ids or len(set(ids)) != len(ids):
         raise ValueError('unique nonempty node inventory required')
     pairs = [(row['a_id'], row['b_id']) for row in rows]
-    if len(set(pairs)) != len(pairs) or set(pairs) != {(a,b) for a in ids for b in ids if a != b}:
+    known = set(ids)
+    if len(set(pairs)) != len(pairs) or any(a == b or a not in known or b not in known for a,b in pairs):
+        raise ValueError('unique distinct known ordered pair decisions required')
+    if require_complete and len(pairs) != len(ids) * (len(ids) - 1):
         raise ValueError('complete unique ordered pair decisions required')
     if any(row.get(field) is not None and type(row[field]) is not bool for row in rows):
         raise ValueError('decisions must be True, False or None')

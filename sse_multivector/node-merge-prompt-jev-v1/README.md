@@ -16,8 +16,13 @@ not manually repaired. None of these experiments adopts a production pipeline.
 
 The user approved the wording of the separate
 [NSP-Astra-Masks-v1 parent–child prompt](../node-subsumption-prompt-astra-masks-v1/prompt.txt)
-below. The authorized 12-pair test is complete; it is tested experimentally,
-not frozen. Agent review flags two answers for discussion.
+below. The prompt is tested experimentally, not frozen. HR02-NSP-MASKS02 expands
+the completed 12-pair test to 48 comparisons, with 36 new calls and 12 reuses.
+The earlier user-confirmed rejection remains recorded; Preservation remains
+unresolved. Initial agent review flagged seven of the 36 new answers. The user
+resolved the three linked meat comparisons and confirmed the missed Positive
+emotions parent of Enjoyment of food. Fire/Ash, Pizza and Ice/ice cream remain
+unresolved; the agent withdrew its likely-miss assessment of Ice/ice cream.
 Existing merges, titles and hierarchies stay fixed;
 combining equivalence and placement in one prompt is deferred.
 
@@ -597,10 +602,12 @@ This is the full candidate inventory, not a full-pass call approval.
 It excludes retries and extra ancestor comparisons; request reuse may reduce
 actual calls. This count does not describe a combined merge/placement run.
 
-The wording, small-test preparation and 12-pair inference run were approved.
-The prepared sample and output schema are described below. Graph-conflict policy
-and extra ancestor comparisons remain open. No existing Jev validator or
-cycle-merging code is silently reused for the new answer type.
+The wording, initial 12-pair run and subsequent 48-pair expansion were approved.
+The prepared sample and output schema are described below. Offline construction
+was subsequently approved and implemented: strict-containment cycles stop
+export, while other path contradictions are retained and reported. How to
+resolve conflicts and whether to add ancestor comparisons remain open. No
+existing Jev validator or cycle-merging code is reused for the new answer type.
 Any later full pass requires separate authorization. Human review evaluates
 the automated result; it does not supply undisclosed placement repairs.
 
@@ -640,18 +647,22 @@ choice envelope, now requiring `parent_child.type = "choice"` and one of
 `a_parent`, `b_parent`, `neither`, `uncertain`. No equivalence or graph rule is
 applied to these answers. Agent assessments are recorded separately through
 `experiment.py review` in `experiments/hr02-parent-child-astra-masks-v1/`:
-10 accept, one reject and one uncertain, with no user verdicts inferred.
+10 accept, one reject and one uncertain. The user separately confirmed the
+rejection below; no verdict is inferred for the other cases.
 
-The likely error is **Food consumption → Clean, simple dishes**: the masks
+The user-confirmed error is **Food consumption → Clean, simple dishes**: the masks
 describe meal qualities and a dish's appearance, which need not discuss eating.
+The agreed answer is **neither**, not B-parent. This is saved as a user review,
+without modifying the model answer or any hierarchy. The user subsequently
+left Preservation unresolved and approved
+expanding the experiment instead of forcing a verdict.
 The uncertain assessment is **Preservation → Preservation**: both groups have
 the same generic preservation masks, while B adds `foodpreservation`. That
 does not clearly settle whether B is narrower or expresses the same broad topic.
-These are agent assessments, not a ground-truth score. The model's separate
+The remaining assessments are agent-only, not a ground-truth score. The model's separate
 `uncertain` answer for the mixed food/Paraguay group is considered reasonable.
-The next recommendation is discussing the two flagged answers using their masks,
-before deciding on more calls or hierarchy construction. No prompt revision,
-manual placement, merge or browser change follows from this test.
+No prompt revision, manual placement, merge or browser change follows from
+this test. The separately approved expansion is recorded below.
 
 Preparation commands already completed (they refuse to overwrite existing artifacts):
 
@@ -665,6 +676,121 @@ python3 sse_multivector/experiment.py prepare \
   --spec sse_multivector/experiment_specs/hr02-parent-child-astra-masks-v1.json \
   --history-root sse_multivector/experiments
 ```
+
+### Expanded placement test — HR02-NSP-MASKS02
+
+Status: **complete, 48 structurally valid comparisons: 36 new calls and 12
+exact-request reuses, no failures or retries**. The user approved keeping
+NSP-Astra-Masks-v1 unchanged and expanding the sample while leaving Preservation
+unresolved. Model, concurrency and timeout match HR02-NSP-MASKS01. The run used
+`--max-new-attempts 72`; it sent only 36 subscription calls, with no paid fallback.
+The runner's $0.28714 catalog estimate is not a subscription bill.
+
+The [new spec](../experiment_specs/hr02-parent-child-astra-masks-v2.json) changes
+only the dataset path. The same deterministic selection uses `--per-source 24`,
+adding 18 in-branch and 18 cross-branch pairs. The original 12 inputs are
+identical and reused, not independent new observations. Every input still
+contains its groups' complete deduplicated masks. Saved artifacts are under
+`target/hierarchy-build-v1/hr02-parent-child-astra-masks-v2/` and
+`sse_multivector/experiments/hr02-parent-child-astra-masks-v2/`.
+
+All 36 new cases have separate initial agent reviews: **29 accept, two reject,
+five uncertain**. These are not measured accuracy. Subsequent user verdicts on
+the three meat comparisons and the positive-emotions comparison are recorded
+separately, without replacing the initial reviews. Updated agent reviews retain
+Fire/Ash and Pizza as uncertain and change Ice/ice cream to uncertain. Titles
+below identify the groups for human review; the model saw masks, not titles.
+
+| Groups | Model answer | Review status |
+|---|---|---|
+| Ice and ice cream / ice cream | Neither | Uncertain; the agent withdrew the likely-miss assessment. Additional ice masks do not by themselves establish a broader shared topic. |
+| Enjoyment of food / Positive emotions | Neither | User rejected: expected B-parent, Positive emotions containing Enjoyment of food. |
+| Fire and ashes / Ash | Neither | Uncertain. Source wording supports literal fire, but the topic-containment boundary remains unsettled. No firm user verdict. |
+| Pizza and restaurants / pizza | Neither | Uncertain. Chain comes from a barbecue-chain post; the additional generic masks leave A's shared topic unclear. |
+| meat / Meat consumption | A parent | User rejected: same topic, so expected neither. |
+| Food consumption / Meat consumption | A parent | User rejected: expected neither. |
+| Beef / Meat consumption | B parent | User accepted. |
+
+The last three comparisons use the exact same group titled Meat consumption,
+whose masks mix plain `meat`, `carnivore`, `diet`, `meat eaters` and explicit
+`eat meat` wording. The user agreed that the most specific shared topic is Meat,
+not specifically eating meat: the bare `meat` masks do not specify eating.
+This makes the two meat groups equivalent in topic, rejects Food consumption
+as parent of the disputed group, and accepts the disputed group as parent of
+Beef. The three user verdicts were saved through the shared review CLI. They
+do not authorize a merge, rename or graph change. The choices alone do not
+reveal whether the model inferred inconsistent topics or misjudged containment.
+The user also confirmed Positive emotions as the missed parent of Enjoyment
+of food: pleasure or satisfaction concerning food is narrower than the positive
+feelings expressed by B's happiness, joy and gratitude masks. This user rejection
+was saved through the shared review CLI, without editing the model answer.
+
+The flagged-case walkthrough is complete. Fire/Ash, Pizza and Ice/ice cream
+remain unresolved alongside the earlier Preservation comparison. The source
+inspections did not establish a definitive parent relationship for those pairs;
+in particular, mask-set inclusion is not proof of topic containment. The user
+subsequently approved the offline construction below with the unchanged prompt.
+No further calls or prompt changes are authorized by these review decisions.
+
+Verification: 18 relevant tests passed; frozen prompt/settings, the 12 reused
+inputs, all 48 complete group-mask inputs, source hashes and saved receipts
+were checked. No model answers, merges, links, titles or masks were changed.
+
+### Offline parent–child construction
+
+The approved `package-parent-child` command in
+[cross_branch_merge.py](../cross_branch_merge.py) replays the fixed groups,
+titles, source hashes and deterministic sample before consuming saved experiment
+receipts. It refuses incomplete, duplicated or changed selected comparisons,
+prompt text or model settings. It makes no model calls and requires a new output
+directory, preserving previous experiments.
+
+The native four-choice answer explicitly determines both strict-containment
+directions. Only its accepted direction creates a link. Neither may mean
+equivalence, but never authorizes a merge. Uncertain creates no link and remains
+recorded as unresolved. Untested pairs receive no fabricated decisions. Agent
+or user review verdicts do not override native choices.
+
+The existing graph analyzer now supports explicitly partial coverage; its
+default all-pairs completeness requirement remains unchanged for earlier
+callers. It retains all nodes, reports cycles and rejected-but-reachable
+directions, and reduces redundant links only in acyclic graphs. A cycle saves
+`graph.json` and `provenance.json`, then stops browser export. No link is chosen
+for deletion and no node is merged. Other path contradictions remain visible
+in the graph diagnostics and affected nodes' analysis.
+
+The saved-answer construction at
+`target/hierarchy-build-v1/hr02-parent-child-astra-masks-v2-view-verified/` retains all
+**148 nodes and 100 posts**. Its **48 comparisons** yield **20 links, 22 neither
+answers and six uncertain answers**; **518 candidate pairs remain untested**.
+Only 70 nodes occur in the sample's comparisons; the other 78 remain present.
+There are no cycles or rejected-but-reachable directions. The 96 directed rows
+are the two meanings of each saved choice, not 96 calls. Original direct masks,
+mask IDs and root-only masks are preserved; memberships are not expanded.
+
+The existing hierarchy browser passes `--check`. Five new production-path tests
+cover sparse coverage, all answer meanings, review independence, mismatched
+inputs, source-mask export, and saving cycle evidence without exporting a
+browser view. The broader 168-test regression suite passed. A second offline
+export reproduced identical graph and browser files; its provenance records
+HD07 (`strict-mask-parent-child-v1`). This is a partial
+construction check, not a finished hierarchy or approval of its placements.
+
+Completed command (refuses to overwrite its output):
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/cross_branch_merge.py package-parent-child \
+  target/hierarchy-build-v1/hr02-cross-branch-v1 \
+  target/hierarchy-build-v1/hr02-parent-child-astra-masks-v2 \
+  sse_multivector/experiments/hr02-parent-child-astra-masks-v2 \
+  target/hierarchy-build-v1/hr02-parent-child-astra-masks-v2-view-verified
+```
+
+The next recommendation is completing the remaining 518 candidate pairs with
+unchanged NSP-Astra-Masks-v1 / Astra low and request reuse, then inspecting the
+resulting hierarchy. That inference still requires separate authorization;
+the offline-construction approval does not include it.
 
 ## Saved hierarchy comparison
 

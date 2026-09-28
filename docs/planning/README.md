@@ -144,9 +144,26 @@ has been built. This is not the scalable production method or a measured
 on September 28; it is now tested experimentally, not frozen. The test holds existing
 HR02-NMP09 merges, groups and titles fixed. Combining merging and placement is
 deferred. The authorized HR02-NSP-MASKS01 run completed all 12 pairs, six from
-each saved comparison source, using Astra low without retries. Agent review
-flags two answers for discussion; no user verdicts are inferred. Further
+each saved comparison source, using Astra low without retries. The user confirmed
+rejecting Food consumption → Clean, simple dishes; the Preservation comparison
+remains unresolved. The user approved expanding the unchanged test without
+settling Preservation. HR02-NSP-MASKS02 completed 48 comparisons: 36 new Astra-low
+calls and 12 exact-request reuses, all structurally valid, without retries.
+Initial agent review of the 36 new answers accepted 29, rejected two and left
+five uncertain; this is not measured accuracy. The user subsequently resolved
+the three linked meat comparisons: interpret the disputed group as Meat,
+reject its strict-child relationships to plain Meat and Food consumption, and
+accept it as parent of Beef. The user also confirmed Positive emotions as the
+missed parent of Enjoyment of food. Fire/Ash, Pizza, Ice/ice cream and the earlier
+Preservation comparison remain unresolved; Ice/ice cream is no longer assessed
+as a likely miss. No prompt, merge or hierarchy changes followed. Further
 inference and graph changes require approval.
+The subsequently approved offline construction is implemented and checked on
+those 48 saved answers: a separate partial view retains all 148 nodes and 100
+posts, with 20 links, six model-uncertain pairs and 518 untested candidate pairs.
+It has no cycles or rejected-but-reachable directions. Reviews do not override
+answers. Strict-containment cycles stop export with evidence retained; they do
+not trigger merging. The remaining 518 comparisons are not authorized.
 Node 02 remains in progress, while
 its 23 and 25 prerequisites are satisfied. Additional rows expose remaining
 construction work.

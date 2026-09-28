@@ -572,9 +572,44 @@ deferred. The user subsequently authorized preparing and running HR02-NSP-MASKS0
 12 pairs selected reproducibly from the saved comparison sources, using Astra
 low and unchanged NSP-Astra-Masks-v1. All 12 returned structurally valid answers
 in 12 new subscription calls, without retries or reuse. Agent review accepts
-10 answers, rejects one and leaves one uncertain; these are not user verdicts
-or an accuracy benchmark. Review of the flagged answers, further inference,
-conflict handling and production adoption remain open. See the
+10 answers, rejects one and leaves one uncertain; these are not an accuracy
+benchmark. The user confirmed the rejection of Food consumption → Clean, simple
+dishes: the expected answer is neither. This records a review decision, not a
+hierarchy edit. Preservation → Preservation remains unresolved, and the ten
+agent-accepted answers have not received user verdicts. The user approved
+expanding the same test without resolving Preservation or changing the prompt.
+HR02-NSP-MASKS02 completed 48 comparisons: 36 new Astra-low subscription calls
+and 12 exact-request reuses, all structurally valid, without retries. The
+unchanged deterministic selection now takes 24 pairs from each source instead
+of six. Initial agent review of the 36 new answers accepted 29, rejected two
+and left five uncertain; these are not measured accuracy. The user subsequently
+agreed that the disputed group titled Meat consumption expresses Meat generally:
+its bare `meat` masks do not specify eating. The agreed answers are neither
+against the plain-Meat group (equivalent topics), neither against Food
+consumption, and disputed-group-as-parent against Beef. These are separate user
+reviews of the three saved answers, not authorization to merge, rename or place
+nodes. The user also confirmed rejecting neither for Enjoyment of food versus
+Positive emotions: the expected answer is Positive emotions as parent. The
+flagged-case walkthrough is complete, with Fire/Ash, Pizza, Ice/ice cream and
+the earlier Preservation comparison left unresolved. The agent withdrew its
+likely-miss assessment of Ice/ice cream: mask-set inclusion alone does not
+establish topic containment. No prompt revision or additional inference is
+approved by these reviews. Existing
+groups, merges, titles and existing hierarchies remain unchanged.
+The user subsequently approved implementing offline construction against the
+48 saved answers, without new calls. It is implemented: retain all existing
+groups, derive strict parent links only from native choices, preserve neither,
+uncertain and untested pairs separately, and apply no review corrections. A
+strict-containment cycle is a contradiction, not equivalence: save the graph
+and evidence, then stop browser export without merging nodes or removing
+links. Rejected directions reachable through other accepted links are reported,
+not repaired. Existing Jev/TRUE paths retain their earlier behavior.
+The separate partial view contains 148 nodes and all 100 posts, 20 links, six
+model-uncertain pairs and 518 untested candidate pairs. No cycles or
+rejected-but-reachable directions occurred; the existing browser's check
+passed. This is a construction check, not semantic approval or the completed
+hierarchy. Further inference, conflict resolution and production adoption
+remain open. See the
 [test scope](../../sse_multivector/node-merge-prompt-jev-v1/README.md#parentchild-prompt--nsp-astra-masks-v1).
 The cosine cutoff and its implementation remain open. Existing all-pairs
 experiments do not establish filtered behavior; filtering must preserve useful
@@ -624,6 +659,7 @@ user before implementation; do not resolve them through per-node exceptions.
 | HD04 | **Implemented:** generate merged titles through the frozen title workflow; bind returned names to exact combined-mask inputs and change labels only. Four-node live check and all six HR02 merged titles are complete. | The new wording may suggest a different scope from the original titles used by TRUE. The naming call does not establish new relationship evidence. | Save member titles, combined-mask input, prompt/model settings and generated title. A naming-only alternative need not rerun extraction or TRUE; using new titles for relationships would be a separate design change. |
 | HD05 | **Implemented and tested:** derive a new merged-node ID from the SHA-256 of the sorted original member-ID list, preserving every original ID. | The same members produce the same merged ID regardless of member order or displayed title. This identifies the merge, not independently verified semantic equivalence. | Keep the original-member mapping and ID-rule version. A different membership or ID rule can be rebuilt from that mapping; changing only the displayed title must not change the ID. |
 | HD06 | **Approved comparison design, not implemented:** preserve the first run's original reviewed view and create a separate reprocessed view from its saved nodes and TRUE answers using the new run's merging and navigation rules. Compare the new run primarily against the reprocessed view. | The first run included manual extraction corrections, group exclusions and a title override. Matching downstream rules does not make those inputs an untouched automatic baseline. | Freeze the original subjects, masks, node titles, answers and reviewed artifacts; do not regenerate them. Record the reprocessing policies and historical interventions separately so the original and reprocessed views remain inspectable. |
+| HD07 | **Approved and implemented for the NSP-Astra-Masks-v1 diagnostic:** keep existing merges; derive links from native strict-parent choices without review overrides. Keep neither, uncertain and untested pairs distinct. Save cycles and stop export without contraction; report other path contradictions without repairing them. | Strict-containment cycles cannot establish equivalence. Further conflict resolution, candidate coverage and semantic quality remain unvalidated. This does not replace HD02–03 for the earlier TRUE/Jev builds. | Preserve pair inputs, receipts, selection, source hashes and policy version `strict-mask-parent-child-v1`; rebuild a separate graph under another explicitly approved policy. |
 
 **NEv2 user review (September 25):** Coffee, Food, and morning-greetings merges
 accepted ("the other 3 look fine"); Beef / Beef products remains rejected.
