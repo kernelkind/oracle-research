@@ -16,6 +16,120 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_reuse_verification_does_not_reread_whole_files_per_case(self):
+        from collections import Counter
+        from unittest.mock import MagicMock, patch
+        from sse_multivector import extraction_pipeline as engine
+
+        self.write('cases.json', {'cases': [
+            {'id': str(i), 'inputs': {'POST': str(i)}} for i in range(8)]})
+        self.prepare()
+        self.cli('run', 'E1')
+        manifest_path = self.root/'E1/run/manifest.json'
+        ledger_path = self.root/'E1/run/results.jsonl'
+        manifest = json.loads(manifest_path.read_text())
+        keys = [engine._prompt_request_key(manifest, p['text']) for p in manifest['prompts']]
+        opens, scans = Counter(), Counter()
+        original_open = Path.open
+        def tracked_open(path, *args, **kwargs):
+            opens[path] += 1
+            stream = original_open(path, *args, **kwargs)
+            proxy = MagicMock(wraps=stream)
+            proxy.__enter__.return_value = proxy
+            proxy.__exit__.side_effect = stream.__exit__
+            def iterate():
+                scans[path] += 1
+                return iter(stream)
+            proxy.__iter__.side_effect = iterate
+            return proxy
+        with patch.object(Path, 'open', tracked_open):
+            history = engine.RequestHistory(self.root)
+            for key in keys:
+                reference, source = next(history.matches(key))
+                self.assertEqual(source['request_sha256'], key)
+        # One manifest parse/hash per operation; one receipt scan and direct
+        # seeks for individual receipts, not repeated scans from byte zero.
+        self.assertEqual(opens[manifest_path], 1)
+        self.assertEqual(opens[ledger_path], 1 + len(keys))
+        self.assertEqual(scans[ledger_path], 1)
+
+    def test_warm_reuse_cache_rejects_changed_files_and_handles_append(self):
+        from sse_multivector import extraction_pipeline as engine
+        self.prepare()
+        self.cli('run', 'E1')
+        manifest_path = self.root/'E1/run/manifest.json'
+        ledger_path = self.root/'E1/run/results.jsonl'
+        manifest = json.loads(manifest_path.read_text())
+        key = engine._prompt_request_key(manifest, manifest['prompts'][0]['text'])
+        history = engine.RequestHistory(self.root)
+        reference, source = next(history.matches(key))
+        for path, old, new in [(manifest_path, b'fixture/model', b'changed/model'),
+                                (ledger_path, b'Tea', b'Bad')]:
+            with self.subTest(path=path):
+                saved = path.read_bytes()
+                stamp = path.stat()
+                path.write_bytes(saved.replace(old, new))
+                # Size and mtime alone must not make changed data look unchanged.
+                os.utime(path, ns=(stamp.st_atime_ns, stamp.st_mtime_ns))
+                with self.assertRaises(engine.RunnerError):
+                    next(history.matches(key))
+                path.write_bytes(saved)
+                self.assertEqual(next(history.matches(key))[1], source)
+        saved = ledger_path.read_bytes()
+        replacement = ledger_path.with_suffix('.replacement')
+        replacement.write_bytes(saved.replace(b'Tea', b'Bad'))
+        replacement.replace(ledger_path)
+        with self.assertRaises(engine.RunnerError):
+            next(history.matches(key))
+        ledger_path.write_bytes(saved)
+        line = saved.splitlines(keepends=True)[reference['result_line'] - 1]
+        with ledger_path.open('ab') as stream:
+            stream.write(line)
+        appended = dict(reference, result_line=len(saved.splitlines()) + 1)
+        self.assertEqual(engine._read_request_source(appended, key, files=history.files), source)
+        # Inserting a line invalidates cached offsets; the old line number no
+        # longer identifies the receipt, even though its bytes still exist.
+        ledger_path.write_bytes(b'{}\n' + saved)
+        with self.assertRaises(engine.RunnerError):
+            next(history.matches(key))
+
+    def test_shared_receipt_reads_are_safe_across_workers_and_report_operations(self):
+        from concurrent.futures import ThreadPoolExecutor
+        from unittest.mock import patch
+        from sse_multivector import experiment, extraction_pipeline as engine
+        self.prepare()
+        self.cli('run', 'E1')
+        self.cli('prepare', 'E2', '--from', 'E1')
+        self.cli('run', 'E2')
+        path = self.root/'E1/run/manifest.json'
+        manifest = json.loads(path.read_text())
+        keys = [engine._prompt_request_key(manifest, p['text']) for p in manifest['prompts']]
+        history = engine.RequestHistory(self.root)
+        with ThreadPoolExecutor(max_workers=6) as pool:
+            results = list(pool.map(lambda key: next(history.matches(key))[1]['request_sha256'], keys * 10))
+        self.assertEqual(results, keys * 10)
+        with patch.object(engine, '_sha256_file', wraps=engine._sha256_file) as hashed:
+            self.assertEqual(experiment.report(self.root/'E2')['summary']['valid'], 2)
+            self.assertNotIn(path, [call.args[0] for call in hashed.call_args_list])
+        path.write_text(path.read_text().replace('fixture/model', 'changed/model'))
+        self.assertEqual(experiment.report(self.root/'E2')['summary']['invalid_receipt'], 2)
+
+    def test_warm_receipt_provenance_is_invalidated_by_a_changed_upgrade_ledger(self):
+        from dataclasses import replace
+        from sse_multivector import experiment, extraction_pipeline as engine
+        self.prepare()
+        self.cli('run', 'E1')
+        self.cli('prepare', 'E2', '--from', 'E1')
+        self.cli('run', 'E2')
+        _, config, manifest = experiment.load(self.root/'E2')
+        record = json.loads((self.root/'E2/run/results.jsonl').read_text().splitlines()[0])
+        config = replace(config, prompts=(config.prompts[0],))
+        files = engine.ReceiptFiles()
+        engine.validate_prompt_receipt(config, manifest, record, files=files)
+        self.write('E2/run/runner-upgrades.jsonl', {'invalid': 'upgrade'})
+        with self.assertRaises(engine.RunnerError):
+            engine.validate_prompt_receipt(config, manifest, record, files=files)
+
     def test_prominence_hierarchy_with_explicit_diagnostic_schema(self):
         self.prominence_spec()
         self.write('cases.json', {'memberships': {'nodes': [dict(
@@ -1524,9 +1638,16 @@ class ExperimentTests(unittest.TestCase):
         self.cli('run', 'E2')
         self.assertEqual(len(self.calls()), before)
         self.assertEqual(self.show('E2')['summary']['reused'], 1)
+        from sse_multivector import extraction_pipeline as engine
+        history = engine.RequestHistory(self.root)
+        manifest = json.loads((self.root/'E1/run/manifest.json').read_text())
+        key = engine._prompt_request_key(manifest, manifest['prompts'][0]['text'])
+        next(history.matches(key))
         saved = json.loads((self.root/'E1/runner-config.json').read_text())
         saved['output_schema'] = {'type':'object','required':['changed']}
         self.write('E1/runner-config.json', saved)
+        with self.assertRaises(engine.RunnerError):
+            next(history.matches(key))
         failed = self.cli('prepare', 'E3', '--from', 'E2', ok=False)
         self.assertIn('cannot verify request history source', failed.stderr)
 

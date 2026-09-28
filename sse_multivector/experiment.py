@@ -368,6 +368,7 @@ def import_setup(path, setup):
 
 def report(directory):
     directory = Path(directory).resolve()
+    files = engine.ReceiptFiles()
     plan, config, manifest = load(directory)
     manifest_hash = inputs.digest(manifest)
     provenance = engine._load_runner_upgrades(
@@ -432,7 +433,7 @@ def report(directory):
                 row["output"] = record.get("final_output_raw")
                 try:
                     engine.validate_prompt_receipt(
-                        replace(config, prompts=(job,)), manifest, record
+                        replace(config, prompts=(job,)), manifest, record, files=files
                     )
                 except engine.RunnerError as error:
                     row.update(status="invalid_receipt", error=str(error))

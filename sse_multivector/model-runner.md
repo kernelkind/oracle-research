@@ -508,6 +508,18 @@ again. Reused results contribute zero new attempts or usage. Reported costs are
 catalog estimates, not invoices; missing usage is explicit. Reasoning tokens
 are already included in output tokens.
 
+Reuse checks share parsed manifests/configs, manifest hashes and verified runner
+provenance within one operation. Source receipt files are indexed by byte offset;
+each requested receipt is still read and checked against its saved hash and
+invocation. This avoids rereading whole files for each comparison. Caches are
+thread-safe, discarded between operations, and invalidated by changes to file
+identity, size, mtime or ctime. Concurrent changes to a receipt file fall back to
+reading the requested line directly. No receipt-verification result or model
+answer is trusted merely because it was cached. On HR02-NMP09, the 21,756-case
+read-only inspection completed in 5.5 seconds after preparation had spent over
+19 minutes in repeated file reads. Request identities and reuse decisions are
+unchanged; the measurement does not describe model latency.
+
 ### Title, mask and prominence preparation
 
 The core workflow is task-independent. Optional adapters use the existing

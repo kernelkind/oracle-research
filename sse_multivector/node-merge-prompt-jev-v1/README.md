@@ -10,8 +10,8 @@ The user accepted the completed Astra merge result on September 28, 2026.
 That acceptance was not a production freeze. The user subsequently approved
 the separate wider HDBSCAN diagnostic HR02-NMP07 below, followed by the
 six-group cross-branch Coffee comparison HR02-NMP08. The subsequent bounded
-cross-branch pass HR02-NMP09 has completed merging and titles; preparation of
-the Jev experiment is in progress below. None adopts a production pipeline.
+cross-branch pass HR02-NMP09 has completed merging and titles; Jev placement
+is running as recorded below. None adopts a production pipeline.
 
 This separate prompt asks whether two groups express the same topic at the same
 level of generality. It replaces generated title inputs with the masks in each
@@ -504,17 +504,19 @@ answers oppose it. All seven combined titles validated with unchanged
 v38/Astra low: two new calls and five exact-request reuses. Other titles are
 unchanged. Placement has 21,756 directed cases with unchanged NSP-Jev-v3/Jev,
 ten concurrent calls and exact-request reuse. A $1 commitment is reserved;
-no Jev calls have started, and browser export is not yet complete. Preparing
-the experiment has spent more than 15 minutes validating reusable receipts:
-the shared runner rereads large source manifests, configs and receipts for
-individual comparisons. A separate performance fix has been proposed, not
-approved or implemented. The offline preparation remains running.
+Jev placement is running, and browser export is not yet complete. The user
+approved fixing repeated source-file reads in the shared runner after offline
+preparation spent over 19 minutes checking reuse. Operation-scoped file loading
+retains the existing receipt, schema, invocation and provenance checks. The
+same 21,756-case inspection now completes in 5.5 seconds: 15,052 reusable cases
+and 6,704 new requests. The saved experiment resumes with an explicit runner
+upgrade reason and a 13,408-new-attempt allowance, including provider retries.
 
 [run-cross-branch-hierarchy.sh](../run-cross-branch-hierarchy.sh) is the isolated
 launcher for the eventual `view/categories.json`. It refuses a missing view
 and adds no display-only collapsing; it is not yet a browsable result.
 
-All 241 relevant offline tests pass, covering capped deterministic selection,
+All 245 relevant offline tests pass, covering capped deterministic selection,
 No-vetoed Yes chains, exact-mask provenance, saved/new title binding, existing
 Jev graph/export integration, individual-mask export, the new launcher's
 arguments/refusals and shared-runner regressions. The original HR02

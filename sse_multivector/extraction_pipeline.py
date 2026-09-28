@@ -2002,6 +2002,107 @@ def _invoke_model(
     }
 
 
+class ReceiptFiles:
+    """Operation-scoped file reads and provenance, never receipt verdicts.
+
+    JSON files are parsed/hashed once until changed. JSONL files retain only
+    line offsets, not every receipt body. Every requested line is read and
+    verified normally. A new operation starts with an empty cache.
+    """
+
+    def __init__(self):
+        self._json = {}
+        self._offsets = {}
+        self._upgrades = {}
+        self._lock = threading.RLock()
+
+    @staticmethod
+    def _stamp(path):
+        info = path.stat()
+        return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns)
+
+    def _entry(self, path):
+        path = Path(path)
+        stamp = self._stamp(path)
+        entry = self._json.get(path)
+        if entry is None or entry['stamp'] != stamp:
+            raw = path.read_bytes()
+            if self._stamp(path) != stamp:
+                raise RunnerError(f'source changed while reading: {path}')
+            entry = dict(stamp=stamp, value=json.loads(raw), sha256=_sha256_bytes(raw))
+            self._json[path] = entry
+        return entry
+
+    def json(self, path):
+        with self._lock:
+            return self._entry(path)['value']
+
+    def sha256(self, path):
+        with self._lock:
+            return self._entry(path)['sha256']
+
+    def prompt(self, path, identifier):
+        with self._lock:
+            entry = self._entry(path)
+            if 'prompts' not in entry:
+                entry['prompts'] = {}
+                for prompt in entry['value']['prompts']:
+                    entry['prompts'].setdefault(prompt['prompt_id'], prompt)
+            return entry['prompts'][identifier]
+
+    def lines(self, path):
+        path = Path(path)
+        with self._lock:
+            stamp = self._stamp(path)
+            offsets, offset = [], 0
+            with path.open('rb') as stream:
+                for line in stream:
+                    offsets.append(offset)
+                    offset += len(line)
+                    yield line
+            # A live source can append while history is indexed. Its candidates
+            # still need verification; do not cache offsets from a moving file.
+            if self._stamp(path) == stamp:
+                self._offsets[path] = (stamp, offsets)
+
+    def line(self, path, number):
+        path = Path(path)
+        with self._lock:
+            stamp = self._stamp(path)
+            if path not in self._offsets or self._offsets[path][0] != stamp:
+                for _ in self.lines(path):
+                    pass
+            indexed = self._offsets.get(path)
+            if indexed is None or indexed[0] != stamp:
+                with path.open('rb') as stream:
+                    return next(line for i, line in enumerate(stream, 1) if i == number)
+            if type(number) is not int or not 1 <= number <= len(indexed[1]):
+                raise RunnerError('request history source line is missing')
+            with path.open('rb') as stream:
+                stream.seek(indexed[1][number - 1])
+                line = stream.readline()
+            if self._stamp(path) != stamp:
+                # A concurrently appended/replaced source must be read by line
+                # number again; the caller still verifies the exact line hash.
+                with path.open('rb') as stream:
+                    return next(line for i, line in enumerate(stream, 1) if i == number)
+            return line
+
+    def provenance(self, directory, *, manifest_sha256, initial_wrapper_sha256):
+        with self._lock:
+            paths = [directory/'runner-upgrades.jsonl', directory/'results.jsonl']
+            stamps = tuple(self._stamp(p) if p.exists() else None for p in paths)
+            key = (directory, manifest_sha256, initial_wrapper_sha256)
+            saved = self._upgrades.get(key)
+            if saved is None or saved[0] != stamps:
+                value = _load_runner_upgrades(directory, manifest_sha256=manifest_sha256,
+                                             initial_wrapper_sha256=initial_wrapper_sha256)
+                saved = (stamps, value)
+                if stamps == tuple(self._stamp(p) if p.exists() else None for p in paths):
+                    self._upgrades[key] = saved
+            return saved[1]
+
+
 def validate_model_receipt(
     config: Any,
     stage: Any,
@@ -2009,12 +2110,13 @@ def validate_model_receipt(
     schema: object,
     manifest: dict[str, Any],
     record: dict[str, Any],
+    *, files: ReceiptFiles | None = None,
 ) -> None:
     """Verify a saved native receipt without credentials or model requests."""
     expected = {
         "model": stage.model,
         "reasoning_effort": stage.reasoning_effort,
-        "manifest_sha256": _sha256_file(config.run_directory / "manifest.json"),
+        "manifest_sha256": (files.sha256 if files else _sha256_file)(config.run_directory / "manifest.json"),
         "response_schema_sha256": None
         if schema is None
         else _sha256_bytes(
@@ -2060,7 +2162,8 @@ def validate_model_receipt(
 
 
 def validate_prompt_receipt(
-    config: PromptRunnerConfig, manifest: dict[str, Any], record: dict[str, Any]
+    config: PromptRunnerConfig, manifest: dict[str, Any], record: dict[str, Any],
+    *, files: ReceiptFiles | None = None,
 ) -> None:
     """Bind one saved prompt to its explicit caller config without sending it."""
     if len(config.prompts) != 1:
@@ -2068,9 +2171,9 @@ def validate_prompt_receipt(
     prompt = config.prompts[0]
     if record.get("execution") == "cross_run_reuse":
         key = _prompt_request_key(manifest, prompt.text)
-        source = _read_request_source(record.get("reused_from"), key)
-        expected = _reused_prompt_record(config, manifest, prompt, record["reused_from"], source)
-        provenance = _load_runner_upgrades(
+        source = _read_request_source(record.get("reused_from"), key, files=files)
+        expected = _reused_prompt_record(config, manifest, prompt, record["reused_from"], source, files=files)
+        provenance = (files.provenance if files else _load_runner_upgrades)(
             config.run_directory,
             manifest_sha256=expected["manifest_sha256"],
             initial_wrapper_sha256=manifest["wrapper_sha256"],
@@ -2084,7 +2187,7 @@ def validate_prompt_receipt(
             raise RunnerError("saved reused response differs from its source receipt")
         return
     validate_model_receipt(
-        config, config, prompt.text, config.output_schema, manifest, record
+        config, config, prompt.text, config.output_schema, manifest, record, files=files
     )
     expected_schema = (
         None
@@ -2133,15 +2236,15 @@ def _request_history_options(
     manifest["request_reuse"] = {"history_root": str(root), "intentional_repeat": repeat}
 
 
-def _read_request_source(reference: object, request_key: str) -> dict[str, Any]:
+def _read_request_source(reference: object, request_key: str, *,
+                         files: ReceiptFiles | None = None) -> dict[str, Any]:
     """Read and verify the original native receipt; never trust just a cached answer."""
     try:
+        files = files or ReceiptFiles()
         reference = _expect_object(reference, "request history reference")
         path = Path(reference["results_path"])
-        manifest = _load_json(path.parent / "manifest.json", "source manifest")
-        with path.open("rb") as source:
-            line = next(line for number, line in enumerate(source, 1)
-                        if number == reference["result_line"])
+        manifest = files.json(path.parent / "manifest.json")
+        line = files.line(path, reference["result_line"])
         if _sha256_bytes(line) != reference["result_sha256"]:
             raise RunnerError("request history source receipt hash differs")
         record = json.loads(line)
@@ -2157,8 +2260,8 @@ def _read_request_source(reference: object, request_key: str) -> dict[str, Any]:
             # System One schemas validate locally, so none is sent on the wire.
             # Recover its original property order; immutable receipt hashes below
             # still reject a changed schema instead of trusting the config file.
-            schema = _load_json(Path(manifest["config_path"]), "source config").get("output_schema")
-        prompt = next(p for p in manifest["prompts"] if p["prompt_id"] == record["note_id"])
+            schema = files.json(Path(manifest["config_path"])).get("output_schema")
+        prompt = files.prompt(path.parent / "manifest.json", record["note_id"])
         config = PromptRunnerConfig(
             config_path=Path(manifest["config_path"]),
             runner_binary=Path(manifest["runner_binary"]),
@@ -2173,7 +2276,7 @@ def _read_request_source(reference: object, request_key: str) -> dict[str, Any]:
                 or record.get("request_sha256", request_key) != request_key
                 or manifest.get("response_schema_sha256") != record.get("response_schema_sha256")):
             raise RunnerError("request history source settings differ")
-        validate_prompt_receipt(config, manifest, record)
+        validate_prompt_receipt(config, manifest, record, files=files)
         return record
     except (OSError, ValueError, KeyError, TypeError, AttributeError, StopIteration, RunnerError) as error:
         raise RunnerError(f"cannot verify request history source: {error}") from error
@@ -2181,12 +2284,12 @@ def _read_request_source(reference: object, request_key: str) -> dict[str, Any]:
 
 def _reused_prompt_record(
     config: PromptRunnerConfig, manifest: dict[str, Any], prompt: PromptJob,
-    reference: dict[str, Any], source: dict[str, Any],
+    reference: dict[str, Any], source: dict[str, Any], *, files: ReceiptFiles | None = None,
 ) -> dict[str, Any]:
     raw = source["final_output_raw"]
     return {
         "schema_version": SCHEMA_VERSION,
-        "manifest_sha256": _sha256_file(config.run_directory / "manifest.json"),
+        "manifest_sha256": (files.sha256 if files else _sha256_file)(config.run_directory / "manifest.json"),
         "wrapper_sha256": manifest["wrapper_sha256"],
         "job_key": "prompt:" + prompt.prompt_id, "stage": "prompt",
         "note_id": prompt.prompt_id, "takeaway_index": None, "attempt": 1,
@@ -2208,6 +2311,7 @@ class RequestHistory:
 
     def __init__(self, root: Path, *, exclude_run: Path | None = None):
         self.directory = root / ".model-request-history"
+        self.files = ReceiptFiles()
         self.sources: dict[str, list[dict[str, Any]]] = {}
         ignored = {".git", "node_modules", "target", ".direnv", ".venv", "__pycache__",
                    self.directory.name}
@@ -2219,18 +2323,17 @@ class RequestHistory:
                 continue
             path = Path(directory) / "results.jsonl"
             try:
-                manifest = _load_json(path.parent / "manifest.json", "source manifest")
+                manifest = self.files.json(path.parent / "manifest.json")
                 if manifest.get("mode") not in {"prompt", "mask_generation"}:
                     continue
                 prompts = {p["prompt_id"]: p["text"] for p in manifest["prompts"]}
                 latest = {}
-                with path.open("rb") as source:
-                    for number, line in enumerate(source, 1):
-                        # Another run may still be appending its last record.
-                        if not line.endswith(b"\n"):
-                            continue
-                        record = json.loads(line)
-                        latest[record["job_key"]] = (number, line, record)
+                for number, line in enumerate(self.files.lines(path), 1):
+                    # Another run may still be appending its last record.
+                    if not line.endswith(b"\n"):
+                        continue
+                    record = json.loads(line)
+                    latest[record["job_key"]] = (number, line, record)
                 for number, line, record in latest.values():
                     if (record.get("status") != "succeeded" or record.get("execution") is not None
                             or record.get("stage") != "prompt" or not record.get("model_result")):
@@ -2261,7 +2364,7 @@ class RequestHistory:
             identity = _canonical_json_bytes(reference)
             if identity not in seen:
                 seen.add(identity)
-                yield reference, _read_request_source(reference, key)
+                yield reference, _read_request_source(reference, key, files=self.files)
 
     def remember(self, key: str, path: Path, record: dict[str, Any]) -> None:
         with RESULTS_WRITE_LOCK:
@@ -2292,6 +2395,7 @@ def _run_job(
     retry_directive: RetryDirective | None = None,
     new_job_budget: NewJobBudget | None = None,
     reuse_source: LoadedReuseSource | None = None,
+    receipt_files: ReceiptFiles | None = None,
 ) -> list[str] | int | str:
     job_key = _job_key(stage_name, note.note_id, takeaway_index)
     previous = latest.get(job_key)
@@ -2330,10 +2434,11 @@ def _run_job(
                 saved_prompt,
                 schema,
                 _expect_object(
-                    _load_json(config.run_directory / "manifest.json", "run manifest"),
+                    (receipt_files.json(config.run_directory / "manifest.json") if receipt_files
+                     else _load_json(config.run_directory / "manifest.json", "run manifest")),
                     "run manifest",
                 ),
-                previous,
+                previous, files=receipt_files,
             )
             raw_response = (
                 previous["final_output_raw"]
@@ -3258,7 +3363,7 @@ def _execute_prompt_batch(
         job_key = "prompt:" + prompt.prompt_id
         previous = latest.get(job_key)
         if previous is not None and previous.get("execution") == "cross_run_reuse":
-            validate_prompt_receipt(replace(config, prompts=(prompt,)), manifest, previous)
+            validate_prompt_receipt(replace(config, prompts=(prompt,)), manifest, previous, files=history.files)
             return {"prompt_id": prompt.prompt_id, "response": previous["response"]}
         arguments = dict(
             config=config,
@@ -3275,6 +3380,7 @@ def _execute_prompt_batch(
             retry_failed=previous is not None and prompt_failure_kind(previous) == "provider_transient",
             new_job_budget=budget,
             execution_wrapper_sha256=provenance.active_wrapper_sha256,
+            receipt_files=history.files,
         )
         if previous is not None:
             response = _run_job(**arguments)
@@ -3297,7 +3403,7 @@ def _execute_prompt_batch(
                         remember(key, prompt)
                     else:
                         reference, source = reusable
-                        record = _reused_prompt_record(config, manifest, prompt, reference, source)
+                        record = _reused_prompt_record(config, manifest, prompt, reference, source, files=history.files)
                         record["wrapper_sha256"] = provenance.active_wrapper_sha256
                         _append_json_line(results_path, record)
                         latest[job_key] = record
