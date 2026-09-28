@@ -1,6 +1,8 @@
 """Production-path checks for bounded selection and reversible equivalence."""
 import copy
 from pathlib import Path
+import shutil
+import subprocess
 import tempfile
 import unittest
 
@@ -14,6 +16,30 @@ def packet(g, text=None):
 
 
 class CrossBranchTests(unittest.TestCase):
+    def test_launcher_uses_isolated_view_and_existing_browser_without_collapsing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            launcher=root/'sse_multivector/run-cross-branch-hierarchy.sh'
+            launcher.parent.mkdir()
+            shutil.copy(Path(__file__).with_name(launcher.name),launcher)
+            def launch(*args):
+                return subprocess.run(['bash',str(launcher),*args],cwd='/',
+                                      text=True,capture_output=True)
+            self.assertEqual(launch('--unknown').returncode,2)
+            self.assertIn('missing',launch('--check').stderr)
+            view=root/'target/hierarchy-build-v1/hr02-cross-branch-v1/view/categories.json'
+            view.parent.mkdir(parents=True)
+            view.write_text('{}')
+            self.assertIn('browser is missing',launch().stderr)
+            binary=root/'target/infomap-review-build/debug/sse-subject-navigation'
+            binary.parent.mkdir(parents=True)
+            binary.write_text('#!/bin/sh\nprintf "%s\\n" "$@"\n')
+            binary.chmod(0o755)
+            result=launch('--check')
+            self.assertEqual(result.returncode,0,result.stderr)
+            self.assertEqual(result.stdout.splitlines(),['--categories',str(view),
+                str(root/'sse_multivector/hierarchy-refresh-v1/masked-posts.json'),'--check'])
+
     def test_saved_titles_are_kept_and_only_combined_masks_receive_new_titles(self):
         from test_hierarchy_build import report_for
         from prepare_category_title_inputs import prepare
