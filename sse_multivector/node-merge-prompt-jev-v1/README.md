@@ -3,8 +3,9 @@
 Status: tested on all 55 original pairs in the approved eleven-branch comparison;
 not frozen or adopted.
 The unchanged title-only NSP-Jev-v3 remains the saved comparison baseline.
-The separate [NMP-Jev-v2 trial](../node-merge-prompt-jev-v2/prompt.txt) below is
-tested, not adopted; it does not replace the saved v1 hierarchy comparison.
+The separate [NMP-Jev-v2 trials](../node-merge-prompt-jev-v2/prompt.txt) below use
+Jev and Astra low. They are tested, not adopted, and do not replace the saved v1
+hierarchy comparison.
 
 This separate prompt asks whether two groups express the same topic at the same
 level of generality. It replaces generated title inputs with the masks in each
@@ -184,17 +185,69 @@ addition of My son / son still receives No, and all three Art pairs remain No.
 Tea/Hot tea correctly remains separate. Agent assessments are distinct from
 human decisions; this targeted sample is not an accuracy estimate.
 
-This trial did not fix the motivating failure. It does not support replacing
+This Jev trial did not fix the motivating failure. It does not support replacing
 v1 with v2 or establish why Jev failed. No prompt promotion, new titles, group
-changes, contraction or hierarchy-view update was performed. The next proposed
-diagnostic is a different model on the same inputs and instructions, rather
-than assuming another wording edit is warranted; that test is not authorized
-by this trial.
+changes, contraction or hierarchy-view update was performed. The user then
+separately approved the Astra-low comparison below.
 
 The reports record provider charges of $0.000195132 and $0.000069930. All exact input/settings comparisons and frozen
 hierarchy source hashes pass verification; 85 prompt-revision, nesting and
 experiment regression tests pass. These mechanical checks do not imply that
 the semantic merge answers passed.
+
+## Astra-low comparison — HR02-NMP05
+
+The user approved Astra low for this small diagnostic. All eleven HR02-NMP04
+pairs were run through the shared experiment workflow with `openai-codex` /
+`gpt-6-astra` / `low`, using the subscription route with no paid fallback.
+Every rendered prompt and input variable is byte-for-byte identical to its
+saved Jev-v2 baseline. The original prompt ID NMP-Jev-v2 is retained to identify
+that exact text; no Astra-specific semantic prompt revision was made.
+
+Jev uses its native System One choice interface; Astra uses the existing
+structured-output transport. The output shape keeps `same_topic.type = choice`
+and `same_topic.choice = yes|no|uncertain`. The Astra schema closes both objects
+with `additionalProperties: false` and specifies string enums; it requests no
+generated probabilities or confidence. The offline SDK preview verified the
+exact model, low effort and strict schema without credentials or network calls.
+The [official model page](https://developers.openai.com/api/docs/models/gpt-6-astra)
+confirms low effort, and the
+[structured-output requirements](https://developers.openai.com/api/docs/guides/structured-outputs#additionalproperties-false-must-always-be-set-in-objects)
+require closed objects. This is a model/transport comparison, not a claim that
+the native classifiers and generative responses have identical mechanics.
+
+All eleven new subscription calls completed with valid outputs, no retries,
+failures or reused calls. No Jev baseline was rerun:
+
+| Pair set | Saved Jev v2 | Astra low |
+| --- | --- | --- |
+| Seven Children links | 3 Yes, 4 No | 7 Yes |
+| Three Art links | 3 No | 3 Yes |
+| Tea / Hot tea | No | No |
+
+Seven choices changed; four stayed the same. The motivating My son / son case
+now receives Yes. Applying the Children and Art answers would collapse their
+eight and four original groups to one each, removing the repeated-title chains;
+no contraction or browser update has been applied. Tea/Hot tea remains a
+successful narrower-topic control. The agent still flags the baby age-boundary
+case as uncertain: model agreement does not establish a human judgment.
+
+This supports keeping the task wording fixed while investigating the model's
+ability to perform it. It is a targeted diagnostic, not general accuracy or a
+production adoption decision. The proposed next step is the remaining 44 saved
+original pairs with Astra low, then comparing the resulting branches; those
+additional calls require separate task approval.
+
+Reusable specs: `../experiment_specs/hr02-shared-topic-merge-astra-low-v1-a.json`
+and `../experiment_specs/hr02-shared-topic-merge-astra-low-v1-b.json`.
+Receipts, immutable baselines and separate agent assessments:
+`sse_multivector/experiments/hr02-shared-topic-merge-astra-low-v1-a/` and
+`sse_multivector/experiments/hr02-shared-topic-merge-astra-low-v1-b/`.
+These inherit the eight/three case split solely to bind each exact Jev baseline.
+Catalog cost estimates are not subscription invoices; no paid API commitment
+was created. All 68 experiment regression tests and exact prompt/input checks
+pass. The motivating semantic regression now passes; all saved hierarchy source
+hashes remain unchanged.
 
 ## Saved hierarchy comparison
 
