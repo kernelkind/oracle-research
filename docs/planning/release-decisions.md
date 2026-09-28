@@ -568,8 +568,11 @@ The intended test reuses the 148 pre-Jev HR02-NMP09 groups, existing merges and
 titles, with comparisons selected automatically from tree links and the bounded
 cross-branch shortlist. No new model calls or graph implementation are approved
 by this wording approval. Combining merging and placement in one prompt is
-deferred; preparing and running the small test, conflict handling and production
-adoption remain open. See the [draft scope](../../sse_multivector/node-merge-prompt-jev-v1/README.md#parentchild-prompt-draft--nsp-astra-masks-v1).
+deferred. The user subsequently authorized test preparation. HR02-NSP-MASKS01
+has 12 unrun pairs selected reproducibly from the saved comparison sources,
+with Astra low and unchanged NSP-Astra-Masks-v1. Running the test, conflict
+handling and production adoption remain open. See the
+[test scope](../../sse_multivector/node-merge-prompt-jev-v1/README.md#parentchild-prompt-draft--nsp-astra-masks-v1).
 The cosine cutoff and its implementation remain open. Existing all-pairs
 experiments do not establish filtered behavior; filtering must preserve useful
 parent–child links, not merely reduce calls.

@@ -16,7 +16,8 @@ not manually repaired. None of these experiments adopts a production pipeline.
 
 The user approved the wording of the separate
 [NSP-Astra-Masks-v1 parent–child prompt](../node-subsumption-prompt-astra-masks-v1/prompt.txt)
-below. It is untested; test preparation and inference need further approval.
+below. It is untested; the authorized small-test preparation is complete, with
+inference still awaiting approval.
 Existing merges, titles and hierarchies stay fixed;
 combining equivalence and placement in one prompt is deferred.
 
@@ -592,15 +593,14 @@ The intended diagnostic keeps the 148 pre-Jev HR02-NMP09 groups fixed, using
 Astra low and the shared experiment runner. Mapping the saved in-branch links
 and cross-branch shortlist onto those groups yields 32 in-branch pairs and
 535 cross-branch pairs, with one pair in both lists: **566 unique pairs**.
-This is a read-only inventory count, not a prepared experiment or call approval.
+This is the full candidate inventory, not a full-pass call approval.
 It excludes retries and extra ancestor comparisons; request reuse may reduce
 actual calls. This count does not describe a combined merge/placement run.
 
-The wording is approved; preparing and running a small automatically selected
-diagnostic require further approval. Its selection, output schema,
-graph-conflict policy and any extra ancestor
-comparisons are not implemented or settled by this draft. No existing Jev
-validator or cycle-merging code is silently reused for the new answer type.
+The wording and small-test preparation are approved; inference is not.
+The prepared sample and output schema are described below. Graph-conflict policy
+and extra ancestor comparisons remain open. No existing Jev validator or
+cycle-merging code is silently reused for the new answer type.
 Any later full pass requires separate authorization. Human review evaluates
 the automated result; it does not supply undisclosed placement repairs.
 
@@ -609,6 +609,49 @@ informed the short task, explicit answer meanings and absence of examples or
 requested chain-of-thought. It does not establish semantic accuracy. The shared
 `experiment.py revise` command records the exact base hash and edits in the
 adjacent `.revision.json`; the accepted merge prompt is unchanged.
+
+### Prepared placement test — HR02-NSP-MASKS01
+
+Status: **prepared, 12 unrun cases, zero inference calls**. Uses unchanged
+NSP-Astra-Masks-v1 and `openai-codex / gpt-6-astra / low`, four concurrent calls
+and 300-second timeouts. This is the existing subscription route: no additional
+API charge and no paid fallback. Proposed execution permits at most 24 new
+attempts, including the existing provider-only retry allowance; no independent
+repetitions. Request reuse remains enabled; preparation found no reusable answers.
+Inference and its attempt allowance still require user approval.
+
+The offline `prepare-parent-child` command in
+[cross_branch_merge.py](../cross_branch_merge.py) replays and verifies the saved
+merge decisions and title receipts. It maps both endpoints of each saved pair
+onto the 148 surviving groups, removes self-pairs and deduplicates unordered
+pairs. A pair in both sources belongs to the in-branch sample. Within each source,
+sort by the SHA-256 of compact JSON `["parent-child-v1", source, A, B]`, with
+sorted surviving IDs for A/B and stable ID tie-breaking, then take six pairs.
+This gives six of 32 in-branch pairs and six of 534 cross-branch-only pairs.
+It is a fixed sample without semantic selection or expected-answer filtering,
+not proof of representativeness or candidate coverage. No new pairs are invented.
+
+Each comparison receives the complete deduplicated masks of its current groups,
+including masks added by accepted merges. Human-readable titles, mask IDs,
+full posts and the original pair sources remain review evidence only. The
+[spec](../experiment_specs/hr02-parent-child-astra-masks-v1.json) uses the accepted
+choice envelope, now requiring `parent_child.type = "choice"` and one of
+`a_parent`, `b_parent`, `neither`, `uncertain`. No equivalence or graph rule is
+applied to these answers. Review will assess the individual judgments before
+deciding whether to run more pairs or build a hierarchy.
+
+Preparation commands already completed (they refuse to overwrite existing artifacts):
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/cross_branch_merge.py prepare-parent-child \
+  target/hierarchy-build-v1/hr02-cross-branch-v1 \
+  target/hierarchy-build-v1/hr02-parent-child-astra-masks-v1 --per-source 6 && \
+python3 sse_multivector/experiment.py prepare \
+  sse_multivector/experiments/hr02-parent-child-astra-masks-v1 \
+  --spec sse_multivector/experiment_specs/hr02-parent-child-astra-masks-v1.json \
+  --history-root sse_multivector/experiments
+```
 
 ## Saved hierarchy comparison
 

@@ -16,6 +16,89 @@ def packet(g, text=None):
 
 
 class CrossBranchTests(unittest.TestCase):
+    def test_parent_child_cases_use_complete_surviving_groups_and_saved_pairs(self):
+        import json
+        packets = dict(packets=[packet(g) for g in 'abcdef'])
+        result = cross.consolidate(packets, {g: [g] for g in 'abcdef'},
+                                   {('a', 'b'): 'yes'}, [])
+        state = dict(tree=dict(root='root', edges=[['root', 'a'], ['a', 'c'],
+            ['b', 'c'], ['c', 'd'], ['d', 'c'], ['a', 'b']]),
+            comparisons=[dict(groups=p) for p in
+                [['a', 'd'], ['b', 'd'], ['d', 'a'], ['c', 'd'], ['e', 'f'], ['a', 'b']]])
+        before = copy.deepcopy((state, result))
+        prepared = cross.parent_child_cases(state, result, per_source=10)
+        self.assertEqual(prepared['candidate_counts'],
+                         dict(in_branch=2, cross_branch=3, shared=1, total=4))
+        self.assertEqual(len(prepared['cases']), 4)
+        merged = result['member_to_group']['a']
+        observed = set()
+        for case in prepared['cases']:
+            a, b = case['evidence']['group_ids']
+            observed.add(frozenset((a, b)))
+            self.assertNotEqual(a, b)
+            self.assertEqual(set(case['inputs']), {'A_MASKS_JSON', 'B_MASKS_JSON'})
+            for side, g in [('A', a), ('B', b)]:
+                masks = json.loads(case['inputs'][side + '_MASKS_JSON'])
+                self.assertEqual(masks, [['a'], ['b']] if g == merged else [[g]])
+            self.assertEqual(case['id'], f'{a}-parent-child-{b}')
+        self.assertEqual(len(observed), 4)
+        self.assertEqual((state, result), before)
+        small = cross.parent_child_cases(state, result, per_source=1)
+        self.assertEqual(len(small['cases']), 2)
+        self.assertEqual({c['evidence']['sample_source'] for c in small['cases']},
+                         {'in_branch', 'cross_branch'})
+        reverse = copy.deepcopy(state)
+        reverse['tree']['edges'].reverse()
+        reverse['comparisons'].reverse()
+        shuffled = copy.deepcopy(result)
+        shuffled['source_packets']['packets'].reverse()
+        self.assertEqual(small, cross.parent_child_cases(reverse, shuffled, per_source=1))
+        for invalid in [0, -1, True]:
+            with self.assertRaises(ValueError):
+                cross.parent_child_cases(state, result, per_source=invalid)
+        unknown = copy.deepcopy(state)
+        unknown['comparisons'].append(dict(groups=['a', 'unknown']))
+        with self.assertRaisesRegex(ValueError, 'unknown group'):
+            cross.parent_child_cases(unknown, result)
+        incomplete = copy.deepcopy(result)
+        incomplete['source_packets']['packets'].pop()
+        with self.assertRaisesRegex(ValueError, 'surviving groups'):
+            cross.parent_child_cases(state, incomplete)
+
+    def test_parent_child_spec_renders_only_masks_through_experiment_workflow(self):
+        import json
+        from experiment import spec_setup
+        packets = dict(packets=[packet(g) for g in 'abc'])
+        result = cross.consolidate(packets, {g: [g] for g in 'abc'}, {}, [])
+        state = dict(tree=dict(root='root', edges=[['root', 'a'], ['a', 'b']]),
+                     comparisons=[dict(groups=['b', 'c'])])
+        cases = cross.parent_child_cases(state, result, per_source=1)['cases']
+        for case in cases:
+            case['evidence']['titles'] = ['REVIEW ONLY', 'NOT MODEL INPUT']
+        source = Path(__file__).resolve().parent
+        spec = cross.read(source/'experiment_specs/hr02-parent-child-astra-masks-v1.json')
+        spec['prompt']['path'] = str(source/'node-subsumption-prompt-astra-masks-v1/prompt.txt')
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            spec['dataset']['path'] = str(root/'cases.json')
+            cross.save(root/'cases.json', dict(cases=cases))
+            cross.save(root/'spec.json', spec)
+            setup = spec_setup(root/'spec.json')
+        self.assertEqual(setup['runner']['provider'], 'openai-codex')
+        self.assertEqual(setup['runner']['model'], 'gpt-6-astra')
+        self.assertEqual(setup['runner']['reasoning_effort'], 'low')
+        schema = setup['runner']['output_schema']['properties']['parent_child']
+        self.assertEqual(schema['properties']['choice']['enum'],
+                         ['a_parent', 'b_parent', 'neither', 'uncertain'])
+        self.assertEqual(len(setup['cases']), 2)
+        for case in setup['cases']:
+            rendered = json.loads(case['prompt'])
+            self.assertEqual(rendered['state'], {
+                side: json.loads(case['inputs'][side + '_MASKS_JSON']) for side in ['A', 'B']})
+            self.assertEqual(set(rendered['questions']), {'parent_child'})
+            self.assertNotIn('REVIEW ONLY', case['prompt'])
+            self.assertEqual(case['evidence']['titles'], ['REVIEW ONLY', 'NOT MODEL INPUT'])
+
     def test_launcher_uses_isolated_view_and_existing_browser_without_collapsing(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp)

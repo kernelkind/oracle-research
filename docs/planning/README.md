@@ -143,7 +143,9 @@ has been built. This is not the scalable production method or a measured
 [NSP-Astra-Masks-v1 draft](../../sse_multivector/node-subsumption-prompt-astra-masks-v1/prompt.txt)
 on September 28; it remains untested. The intended test holds existing
 HR02-NMP09 merges, groups and titles fixed. Combining merging and placement is
-deferred; test preparation, inference and graph changes require further approval.
+deferred. The user authorized preparing a small test: HR02-NSP-MASKS01 now has
+12 unrun pairs, six from each saved comparison source, using Astra low.
+Inference and graph changes still require further approval.
 Node 02 remains in progress, while
 its 23 and 25 prerequisites are satisfied. Additional rows expose remaining
 construction work.

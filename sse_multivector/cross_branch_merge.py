@@ -207,6 +207,79 @@ def assemble_titles(state, result, title_report):
     return dict(prompt_version='v38',settings=dict(provider='openai-codex',model='gpt-6-astra',reasoning_effort='low'),groups=groups)
 
 
+def parent_child_cases(state, result, *, per_source=6):
+    """Sample saved pair sources after mapping both endpoints through fixed merges.
+
+    SHA-256 ordering is a reproducible sample, not a semantic ranking. Pairs
+    nominated by both sources count in the in-branch sample only.
+    """
+    if type(per_source) is not int or per_source < 1:
+        raise ValueError('positive integer sample size required')
+    mapping = result['member_to_group']
+    packets = result['source_packets']
+    by_id = {p['packet']: p for p in packets['packets']}
+    if len(by_id) != len(packets['packets']) or set(mapping.values()) != set(by_id):
+        raise ValueError('merged mapping must cover exactly the surviving groups')
+    candidates = {}
+    sources = {
+        'in_branch': [(a, b) for a, b in state['tree']['edges'] if a != state['tree']['root']],
+        'cross_branch': [row['groups'] for row in state['comparisons']],
+    }
+    for source, pairs in sources.items():
+        for a, b in pairs:
+            if a not in mapping or b not in mapping:
+                raise ValueError('saved pair references unknown group')
+            pair = tuple(sorted((mapping[a], mapping[b])))
+            if pair[0] == pair[1]:
+                continue
+            origins = candidates.setdefault(pair, {})
+            origins.setdefault(source, set()).add((a, b))
+    rows = [dict(groups=list(pair), sources=sorted(origins), original_pairs={
+        source: [list(p) for p in sorted(values)] for source, values in sorted(origins.items())})
+        for pair, origins in sorted(candidates.items())]
+    counts = {source: sum(source in r['sources'] for r in rows) for source in sources}
+    counts.update(shared=sum(len(r['sources']) == 2 for r in rows), total=len(rows))
+    selected = []
+    for source in sources:
+        pool = [r for r in rows if ('in_branch' in r['sources']) == (source == 'in_branch')]
+        def order(row):
+            key = json.dumps(['parent-child-v1', source, *row['groups']], separators=(',', ':'))
+            return hashlib.sha256(key.encode()).hexdigest(), row['groups']
+        selected.extend(dict(row, sample_source=source) for row in sorted(pool, key=order)[:per_source])
+    # mask_pair_cases needs exact membership, not semantic edges. No new tree is built.
+    memberships = dict(root=state['tree']['root'], members={
+        g: [i['instance'] for i in p['instances']] for g, p in by_id.items()})
+    cases = mask_pair_cases(memberships, packets, pairs=[r['groups'] for r in selected])
+    for case, row in zip(cases, selected):
+        a, b = row['groups']
+        case['id'] = f'{a}-parent-child-{b}'
+        case['evidence'] = dict(group_ids=[a, b], pair_sources=row['sources'],
+            sample_source=row['sample_source'], original_pairs=row['original_pairs'],
+            source_packets=[deepcopy(by_id[a]), deepcopy(by_id[b])])
+    return dict(candidate_counts=counts, candidates=rows, cases=cases,
+        selection=dict(rule='sha256-parent-child-v1-per-source', per_source=per_source,
+                       shared_pairs='in_branch', orientation='sorted-surviving-group-ids'))
+
+
+def prepare_parent_child(directory, output, per_source=6):
+    """Prepare an isolated mask-placement sample; never infer or change a graph."""
+    base = Path(directory)
+    state, result = replay_merge(base)
+    title_run = read(base/'placement/title-experiment.json')['path']
+    titles = assemble_titles(state, result, report(title_run) if title_run else None)
+    names = {g['group']: g['title'] for g in titles['groups']}
+    prepared = parent_child_cases(state, result, per_source=per_source)
+    for case in prepared['cases']:
+        case['evidence']['titles'] = [names[g] for g in case['evidence']['group_ids']]
+    sources = {name: identity(base/name) for name in
+        ['state.json', 'merged/result.json', 'merged/experiment.json', 'placement/title-experiment.json']}
+    out = artifact_directory(output)
+    save(out/'cases.json', dict(cases=prepared.pop('cases')))
+    save(out/'selection.json', dict(prepared, sources=sources))
+    print(json.dumps(dict(candidate_counts=prepared['candidate_counts'],
+                         selection=prepared['selection'], output=str(out))))
+
+
 def placement(directory, title_experiment=None):
     base=Path(directory);state,result=replay_merge(base)
     titles=assemble_titles(state,result,report(title_experiment) if title_experiment else None)
@@ -320,12 +393,16 @@ def main():
     s=sub.add_parser('prepare')
     for name in ['directory','vectors','coffee_experiment','output']:s.add_argument(name,type=Path)
     s=sub.add_parser('merge');s.add_argument('directory',type=Path);s.add_argument('experiment',type=Path)
+    s=sub.add_parser('prepare-parent-child')
+    s.add_argument('directory',type=Path);s.add_argument('output',type=Path)
+    s.add_argument('--per-source',type=int,default=6)
     s=sub.add_parser('placement');s.add_argument('directory',type=Path);s.add_argument('--titles',type=Path)
     s=sub.add_parser('placement-merge');s.add_argument('directory',type=Path);s.add_argument('experiment',type=Path)
     s=sub.add_parser('package');s.add_argument('directory',type=Path);s.add_argument('--titles',type=Path)
     a=p.parse_args()
     if a.command=='prepare':prepare(a.directory,a.vectors,a.coffee_experiment,a.output)
     elif a.command=='merge':merge(a.directory,a.experiment)
+    elif a.command=='prepare-parent-child':prepare_parent_child(a.directory,a.output,a.per_source)
     elif a.command=='placement':placement(a.directory,a.titles)
     elif a.command=='placement-merge':placement_merge(a.directory,a.experiment)
     else:package(a.directory,a.titles)
