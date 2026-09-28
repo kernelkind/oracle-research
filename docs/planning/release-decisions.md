@@ -994,6 +994,48 @@ volume and the time required to produce suitable data remain unresolved. These
 timing decisions do not authorize work to begin or establish that the full
 schedule fits.
 
+### Proposed release calendar — September 28, 2026 (proposal, not approved)
+
+Three weeks remain to the non-negotiable October 18 date. This re-cut of the
+efficient five-week sequence matches the release shape above; it is a proposal
+that authorizes nothing. Model-track and scale work (05–08, 10, 11, 20, 21,
+22, 28) proceeds opportunistically in parallel and is not scheduled here. This
+calendar supersedes the weekly-targets proposal on the draw.io page, which
+remains the lagging earlier view until explicitly updated.
+
+**Week 1 · September 28 – October 4: settle the quality foundation.** Review
+the completed mask-based parent-child diagnostic and settle the automated
+relationship method the user is pleased with (02) — the release's top risk,
+gating every build. Finish the mask-prominence prompt and output format (04)
+and implement node-note ordering (27). Land membership recovery (24) and
+validate navigation collapse (26); both gate 03. Define the Nostr hierarchy
+protocol (13), which is ready and independent. Begin corpus selection inside
+the decided 2–5k band (09).
+
+**Week 2 · October 5 – 11: validate the process; select the teachers.** Run
+the ladder with full user review at each rung: 200 (correctness + prominence
+ordering), 300 (correctness + scalable construction), 500 (combined +
+profile), then the ~1–2k review rung. The four reviews are the week's
+bottleneck; if review time slips, the proposal is to drop rungs from the
+bottom (200 first, then 300) and never from the top. Freeze the corpus IDs
+(09) at the start of the week, complete the teacher A/B hierarchy comparison
+and selection (17), and have the selected teachers label the frozen corpus.
+In parallel, verify the service code locally (14) against the 100-note
+snapshot and publish the Notedeck branch (15) on the user's fork.
+
+**Week 3 · October 12 – 18: build, verify, publish.** Build the release
+snapshot from the teacher labels (12) — hours to a day at this scale, subject
+to budget admission. Verify 14 and 15 against the final snapshot and fix what
+that exposes; this is the reserved buffer. On October 18 publish the package
+(16): snapshot, code and architecture, tested serving instructions,
+scalability roadmap, and the Notedeck fork branch. The model track and hosted
+demo publish only if they have already earned it.
+
+**Known risks.** If the relationship-quality review (02) absorbs week 1, it
+eats ladder time. Week 2 assumes the user's attention for consecutive-day
+reviews. Teacher labeling throughput and the added prominence calls are
+unmeasured at 2–5k notes. Task ownership remains unassigned.
+
 ## Compute, hosting and budget
 
 | Work | Agreed location |
