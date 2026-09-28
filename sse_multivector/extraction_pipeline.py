@@ -3154,6 +3154,15 @@ def prompt_failure_kind(record: dict[str, Any]) -> str:
         return "provider_fatal"
     if code in (408, 429, 500, 502, 503, 504):
         return "provider_transient"
+    # Codex can fail inside an HTTP-200 stream without a structured error code.
+    # Recognize only its explicit processing-error retry message, not arbitrary
+    # error prose, transport failures, or model-generated output.
+    message = result.get("error")
+    if (code == 200 and result.get("provider") == "openai-codex"
+            and result.get("stop_reason") == "error" and isinstance(message, str)
+            and message.startswith("Codex error: An error occurred while processing your request. "
+                                   "You can retry your request, or contact us")):
+        return "provider_transient"
     return "unknown"
 
 

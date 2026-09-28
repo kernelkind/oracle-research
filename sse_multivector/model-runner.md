@@ -451,7 +451,11 @@ Without that explicit reason, changed workflow code still refuses to run.
 The shared prompt executor fills available concurrency slots independently; a
 slow or failed case does not hold later cases behind a batch barrier. Only an
 explicit temporary provider error (HTTP/stream error code 408, 429, 500, 502,
-503 or 504) qualifies for automatic retry. Each case has at most two total
+503 or 504) qualifies for automatic retry. The Codex HTTP-200 stream failure
+beginning `Codex error: An error occurred while processing your request. You can
+retry your request, or contact us` also qualifies, only with provider
+`openai-codex` and stop reason `error`; arbitrary error prose does not.
+Each case has at most two total
 attempts across resumes, with a two-second minimum delay. `Retry-After` is
 honored; invalid values or waits above 60 seconds leave the case unresolved
 rather than retrying early. Local aborts override provider metadata. Our own

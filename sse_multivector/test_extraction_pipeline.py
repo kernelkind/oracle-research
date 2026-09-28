@@ -228,7 +228,7 @@ for text, failure in failures.items():
     if text in prompt:
         attempts = sum(c["prompt"] == prompt for c in json.loads(Path(os.environ["FAKE_RUNNER_LOG"]).read_text()))
         if attempts <= failure.get("attempts", 100):
-            result.update(valid=False, error="fixture failure", stop_reason="error",
+            result.update(valid=False, error=failure.get("error", "fixture failure"), stop_reason="error",
                           response_metadata=failure["metadata"])
             print(json.dumps(result))
             raise SystemExit(1)

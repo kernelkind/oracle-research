@@ -10,8 +10,8 @@ The user accepted the completed Astra merge result on September 28, 2026.
 That acceptance was not a production freeze. The user subsequently approved
 the separate wider HDBSCAN diagnostic HR02-NMP07 below, followed by the
 six-group cross-branch Coffee comparison HR02-NMP08. The subsequent bounded
-cross-branch pass HR02-NMP09 is approved and implemented, with inference
-incomplete as recorded below. None of these adopts a production pipeline.
+cross-branch pass HR02-NMP09 has completed merging and titles; Jev placement
+is prepared as recorded below. None of these adopts a production pipeline.
 
 This separate prompt asks whether two groups express the same topic at the same
 level of generality. It replaces generated title inputs with the masks in each
@@ -491,17 +491,22 @@ verified titles. The next stage uses the existing NSP-Jev-v3/Jev directional
 placement workflow and its existing provisional graph rules, not HDBSCAN
 nesting as semantic parent placement. All outputs are isolated from prior views.
 
-**Current result:** the merge run ended with 592 valid answers and one failed
-request: 26 Yes, 524 No and 42 Uncertain. The runner records 579 new attempts
-and 17 reused cases; three HTTP 503 failures were successfully retried. One other
-response reported a Codex processing error with HTTP 200, which the current
-classifier labels `unknown`; policy therefore forbids its automatic retry.
-That case is Gift / Moral goodness. No missing answer has been converted to No
-or Uncertain, and no consolidation, title calls, placement calls or new browser
-export have occurred. Continuing requires resolving this runner classification.
-No paid Jev commitment has been made.
+**Current result:** all 593 comparisons are valid: 26 Yes, 525 No and 42
+Uncertain. The runner records 580 new attempts and 17 reused cases. Three HTTP
+503 failures and one explicit Codex processing error were retried successfully.
+The user approved narrowly recognizing that HTTP-200 stream failure; local
+aborts, validation failures, unknown errors and the two-attempt limit are
+unchanged. No completed answer was rerun or missing answer invented.
 
-All 111 relevant offline tests pass, covering capped deterministic selection,
+The approved rule leaves **148 groups**, combining 20 groups into seven and
+keeping one four-group meat-related combination separate because recorded No
+answers oppose it. All seven combined titles validated with unchanged
+v38/Astra low: two new calls and five exact-request reuses. Other titles are
+unchanged. Placement has 21,756 directed cases with unchanged NSP-Jev-v3/Jev,
+ten concurrent calls and exact-request reuse. A $1 commitment is reserved;
+placement and browser export are not yet complete.
+
+All 200 relevant offline tests pass, covering capped deterministic selection,
 No-vetoed Yes chains, exact-mask provenance, saved/new title binding, existing
 Jev graph/export integration and shared-runner regressions. The original HR02
 sources and existing hierarchy views remain unchanged.

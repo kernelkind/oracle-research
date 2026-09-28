@@ -785,6 +785,57 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(len(self.calls()), 3)
         self.assertEqual(self.show()["summary"]["valid"], 1)
 
+    def test_codex_processing_error_retries_only_missing_case_on_resume(self):
+        self.prepare()
+        message = ("Codex error: An error occurred while processing your request. "
+                   "You can retry your request, or contact us through our help center "
+                   "at help.openai.com if the error persists.")
+        self.cli("run", "E1", "--max-new-attempts", "2", ok=False, env={
+            "FAKE_RUNNER_FAILURES": json.dumps({"Tea": {
+                "error": message, "metadata": {"http_status": 200}}})})
+        before = (self.root / "E1/run/results.jsonl").read_bytes()
+        self.assertEqual(self.show()["summary"]["valid"], 1)
+        self.cli("run", "E1", "--max-new-attempts", "1")
+        self.assertEqual(self.show()["summary"]["valid"], 2)
+        self.assertEqual(len(self.calls()), 3)
+        self.assertEqual(self.calls()[-1]["prompt"].splitlines()[0], "GENERIC PROMPT Tea {POST}")
+        self.assertTrue((self.root / "E1/run/results.jsonl").read_bytes().startswith(before))
+        self.cli("run", "E1")
+        self.assertEqual(len(self.calls()), 3)
+
+    def test_codex_processing_error_classification_preserves_retry_guards(self):
+        from copy import deepcopy
+        from sse_multivector.extraction_pipeline import prompt_failure_kind, provider_retry_delay
+
+        record = {"exit_code": 1, "attempt": 1, "model_result": {
+            "provider": "openai-codex", "stop_reason": "error",
+            "error": "Codex error: An error occurred while processing your request. You can retry your request, or contact us",
+            "response_metadata": {"http_status": 200}}}
+        self.assertEqual(prompt_failure_kind(record), "provider_transient")
+        self.assertEqual(provider_retry_delay(record), 2.0)
+        for changes, metadata, outer, expected in [
+            ({"provider": "openrouter"}, {}, {}, "unknown"),
+            ({"stop_reason": "stop"}, {}, {}, "unknown"),
+            ({"error": "You can retry your request"}, {}, {}, "unknown"),
+            ({"error": "Codex error: An error occurred while processing your request."}, {}, {}, "unknown"),
+            ({"error": {"message": "You can retry your request"}}, {}, {}, "unknown"),
+            ({}, {"http_status": 400}, {}, "unknown"),
+            ({}, {"error": {"code": "unsupported_parameter"}}, {}, "unknown"),
+            ({}, {"http_status": 401}, {}, "provider_fatal"),
+            ({}, {"abort_reason": {"name": "TimeoutError"}}, {}, "local"),
+            ({}, {}, {"exit_code": 0}, "local"),
+            ({}, {}, {"exit_code": None}, "local"),
+            ({}, {}, {"attempt": 2}, "provider_transient"),
+            ({}, {"retry_after": "120"}, {}, "provider_transient"),
+        ]:
+            with self.subTest(changes=changes, metadata=metadata, outer=outer):
+                candidate = deepcopy(record)
+                candidate.update(outer)
+                candidate["model_result"].update(changes)
+                candidate["model_result"]["response_metadata"].update(metadata)
+                self.assertEqual(prompt_failure_kind(candidate), expected)
+                self.assertIsNone(provider_retry_delay(candidate))
+
     def test_due_retries_precede_untouched_cases_in_deadline_order(self):
         self.write("cases.json", {"cases": [
             {"id": text, "inputs": {"POST": text}}
