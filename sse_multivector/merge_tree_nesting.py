@@ -255,7 +255,8 @@ def bind_titles(packets, report):
     return titles
 
 
-def view(tree, titles, source, mapping, *, label, judgments=()):
+def view(tree, titles, source, mapping, *, label, judgments=(),
+         connection_description='M06 links preserved except mutually accepted equivalent steps; not a Jev-generated hierarchy.'):
     root=tree['root'];keys=set(tree['members'])-{root}
     children={g:[] for g in tree['members']}
     for a,b in tree['edges']:children[a].append(b)
@@ -273,7 +274,7 @@ def view(tree, titles, source, mapping, *, label, judgments=()):
                transitive_reduced_edges=[dict(a_id=a,b_id=b) for a,b in tree['edges'] if a!=root])
     memberships=derive_note_memberships(graph,packets)
     result=render_categories(graph,memberships,source,mapping,hierarchy_id=label,
-                             connection_description='M06 links preserved except mutually accepted equivalent steps; not a Jev-generated hierarchy.')
+                             connection_description=connection_description)
     result=reconstruct(result,memberships,[],Path(source).read_bytes())
     # The navigation root also owns masks outside every retained child.
     shorts={v['note_id']:v['note_short_id'] for v in read(mapping)['vectors']}

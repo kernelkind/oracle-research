@@ -7,7 +7,8 @@ The separate [NMP-Jev-v2 trials](../node-merge-prompt-jev-v2/prompt.txt) below u
 Jev and Astra low. They are tested, not adopted. The completed Astra view is
 available beside the unchanged saved Jev-v1 comparison.
 The user accepted the completed Astra merge result on September 28, 2026.
-This accepts the diagnostic result, not a production freeze or a larger run.
+That acceptance was not a production freeze. The user subsequently approved
+the separate wider HDBSCAN diagnostic HR02-NMP07 below.
 
 This separate prompt asks whether two groups express the same topic at the same
 level of generality. It replaces generated title inputs with the masks in each
@@ -308,6 +309,94 @@ directories. The exporter checks their exact inputs against the saved source
 groups and combines them with NMP05 only when prompt/settings agree and every
 pair appears exactly once. It records receipt bindings and keeps each model's
 assessments separate. Subscription catalog estimates are not invoices.
+
+## Wider HDBSCAN diagnostic — HR02-NMP07
+
+The user approved applying the accepted NMP-Jev-v2 / Astra-low approach across
+the saved HR02 HDBSCAN groups. This does not select M06, rerun clustering,
+change prompts, expand memberships or judge new semantic parent placements.
+The saved HR02 hierarchy and the accepted eleven-branch comparison stay intact.
+Production adoption remains open.
+
+The reproducible selection keeps all 129 original EOM groups and, inside each,
+every smaller raw group whose formation distance is strictly lower than its
+immediate raw parent's formation distance. An EOM root is always retained.
+Each retained group attaches to its nearest retained ancestor. The result is
+487 groups and 358 adjacent non-root comparisons, with a synthetic navigation
+root above the 129 EOM groups. Cluster IDs are mapped to raw groups by exact
+canonical membership, not treated as raw-tree IDs.
+
+[hdbscan_nested_groups.py](../hdbscan_nested_groups.py) prepares and exports this
+diagnostic offline. [hdbscan-nested-hr02-v1.json](../hdbscan-nested-hr02-v1.json)
+identifies its saved inputs and approved result sources. Preparation reproduces
+all 43 previously tested HDBSCAN groups and all 129 original packets, preserving
+mask IDs, vector-sorted instance order and the title adapter's exact same-post
+mask deduplication. It verifies the historical source hashes and validates saved
+experiment receipts before binding an answer to an identical rendered prompt.
+For multiple matching answers, the same original group/pair ID takes precedence,
+then the manifest's saved-report order. No matching-title heuristic is used.
+
+There are 37 saved merge answers and 321 new comparisons. The shared experiment
+runner uses unchanged NMP-Jev-v2 / `openai-codex` / `gpt-6-astra` / `low`, ten
+concurrent calls, with the existing strict choice schema and no output-token
+cap or paid fallback. Only Yes contracts an original edge. No and Uncertain
+keep both groups; failed or invalid answers block export rather than becoming
+No. No newly adjacent pair is rejudged after a contraction. The larger group's
+membership already contains its children and is preserved; the original-to-
+surviving mapping records every contraction.
+
+Only surviving groups lacking exact saved TPv38/Astra-low titles are submitted
+for titles, at the existing six-call concurrency. Removed groups are not titled.
+Before merging, 168 groups have saved titles; the other 319 represent at most
+313 unique title inputs. Model execution, retries, usage and reviews remain in
+`experiment.py`; the offline helper does not execute models or fabricate reports.
+
+Generated artifacts are isolated under
+`target/hierarchy-build-v1/hr02-hdbscan-merge-v1/`. Merge and title receipts use
+`sse_multivector/experiments/hr02-hdbscan-{merge,titles}-astra-low-v1/`.
+The dedicated launcher is [run-hdbscan-merge.sh](../run-hdbscan-merge.sh), using
+the existing category browser without equal-note or single-child collapsing.
+The links are saved HDBSCAN nesting, **not validated semantic parent placement**.
+The groups cover 629 of 1,674 source masks; the other 1,045 remain accessible at
+the navigation root rather than being silently discarded.
+
+The run completed with all 321 new merge answers and all 27 required new titles
+valid, without retries or baseline reruns. Together with the 37 saved answers,
+the 358 comparisons contain 326 Yes, 23 No and nine Uncertain. Yes-only
+contraction leaves **161 groups**: the 129 original roots and 32 retained
+subdivisions. The other 134 surviving titles use exact saved answers. This is
+a diagnostic output, not a user-approved full hierarchy.
+
+Agent inspection confirms Dinner under Food and dining and separate
+Sleep/Sleepiness under Sleep and tiredness. Seven parent-child links still have
+the same title ignoring capitalization; titles alone do not justify merging
+them. Separate original roots, including multiple Coffee and Nostr groups,
+remain separate because cross-branch merging and placement were not tested.
+
+The agent recorded two title concerns through `experiment.py review`, separately
+from user judgments and without changing generated outputs:
+
+- **Mountain passes in Afghanistan** invents a shared geographic interpretation
+  for `Kreik` and `Khyber Pass`. Their full posts concern a Belgian drink and a
+  restaurant. This title is rejected in agent review.
+- **gianguja and guarani** repeats two names without establishing a shared topic.
+  The source posts concern a food product and a language. Agent review marks
+  this uncertain rather than assuming a better common title exists.
+
+The 93 offline selection, comparison, nesting, title-input and experiment tests
+pass. Source-hash checks preserve the canonical HR02 files and accepted sample;
+the export replays every merge from validated receipts. The actual browser
+passes `--check`. An interactive check confirms that leaf navigation opens
+full posts and O displays individual masks with IDs. Generated artifacts and
+reviews remain ignored; subscription catalog estimates are not paid invoices.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos && \
+bash oracle-mvp/sse_multivector/run-hdbscan-merge.sh
+```
+
+Next suggested review: inspect the 32 retained subdivisions, including the
+remaining repeated-title steps, before introducing another placement stage.
 
 ## Saved hierarchy comparison
 

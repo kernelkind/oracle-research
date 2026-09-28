@@ -1,0 +1,27 @@
+{
+  "experiment_id": "HR02-NMP07",
+  "sources": {
+    "hdbscan": "hierarchy-refresh-v1/hdbscan-response.json",
+    "mapping": "hierarchy-refresh-v1/vector-map.json",
+    "posts": "hierarchy-refresh-v1/masked-posts.json",
+    "original_packets": "hierarchy-refresh-v1/source-packets.json",
+    "accepted_comparison": "../target/hierarchy-build-v1/hr02-merge-comparison-v5/categories.json"
+  },
+  "sample_plans": [
+    "../target/hierarchy-build-v1/hr02-nested-titles-v1/plan.json",
+    "../target/hierarchy-build-v1/hr02-nested-nonfood-v1/plan.json"
+  ],
+  "merges": [
+    "experiments/hr02-shared-topic-merge-astra-low-v1-a",
+    "experiments/hr02-shared-topic-merge-astra-low-v1-b",
+    "experiments/hr02-sleep-merge-astra-low-v2",
+    "experiments/hr02-diverse-merge-astra-low-v2",
+    "experiments/hr02-remaining-merge-astra-low-v2"
+  ],
+  "titles": [
+    "experiments/hr02-title-v38-astra-low",
+    "experiments/hr02-xi01-titles-v38-astra-low",
+    "experiments/hr02-nested-titles-v38-astra-low",
+    "experiments/hr02-nested-nonfood-titles-v38-astra-low"
+  ]
+}

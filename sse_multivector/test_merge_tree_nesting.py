@@ -186,6 +186,10 @@ class MergeTreeNestingTests(unittest.TestCase):
                              {'Va','Vb','Vc','Vd'})
             self.assertEqual(len(exported['notes']),3)
             self.assertEqual(exported['nodes'][1]['note_ids'],['p','q'])
+            hdb=view(tree, {'M06-5':'X'}, root/'posts.json', root/'mapping.json',
+                     label='HDB test',connection_description='Saved HDBSCAN nesting.')
+            self.assertIn('Saved HDBSCAN nesting.',json.dumps(hdb))
+            self.assertNotIn('M06 links preserved',json.dumps(hdb))
         bad = copy.deepcopy(history)
         bad['merges'][0]['size'] = 3
         with self.assertRaises(ValueError): project(bad, mapping, posts)
