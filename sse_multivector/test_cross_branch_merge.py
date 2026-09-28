@@ -84,6 +84,52 @@ class CrossBranchTests(unittest.TestCase):
             ids={i for notes in spec['mask_instances'].values() for masks in notes.values() for m in masks for i in m['ids']}
             self.assertTrue({'va','vb','vc'}<=ids)
 
+    def test_placed_view_keeps_ungrouped_masks_at_root_without_new_membership(self):
+        from test_decision_hierarchy import decision_report
+        from hierarchy_build import name_merge
+        from decision_hierarchy import PROMPT
+        from prepare_category_title_inputs import prepare
+        packets=dict(packets=[packet(g) for g in 'ab'])
+        titles=dict(groups=[dict(p,title=p['group']) for p in prepare(packets,cross.TITLE.read_text(),[])])
+        decisions=decision_report(titles,[('a','b')])
+        merged=cross.merge_report(titles,packets,decisions,
+            prompt=dict(id='NSP-Jev-v1',text=PROMPT.read_text()))
+        named=name_merge(merged,None)
+        instances={p['instances'][0]['instance']:p['instances'][0] for p in [packet(g) for g in 'abc']}
+        tree=dict(root='root',members={'root':list(instances)},instances=instances)
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            cross.save(root/'posts.json',dict(notes=[dict(note_id=g,text=g) for g in 'abc']))
+            cross.save(root/'mapping.json',dict(vectors=[dict(vector_id=g,short_id='v'+g,
+                note_id=g,note_short_id='N'+g,fragments=[g],byte_spans=[[0,1]]) for g in 'abc']))
+            spec=cross.render_placed(named,tree,root/'posts.json',root/'mapping.json',label='test')
+            nodes={n['node_id']:n for n in spec['nodes']}
+            self.assertEqual(nodes['root']['children'],['a'])
+            self.assertEqual(nodes['a']['children'],['b'])
+            self.assertEqual(nodes['a']['note_ids'],['Na'])
+            self.assertEqual(nodes['b']['note_ids'],['Nb'])
+            self.assertEqual(nodes['root']['note_ids'],['Na','Nb','Nc'])
+            self.assertEqual(spec['mask_instances']['root']['Nc'][0]['ids'],['vc'])
+            self.assertNotIn('Nc',spec['mask_instances']['a'])
+
+    def test_placement_conflicts_report_no_answers_without_changing_graph(self):
+        from test_decision_hierarchy import decision_report
+        from decision_hierarchy import PROMPT
+        from prepare_category_title_inputs import prepare
+        packets=dict(packets=[packet(g) for g in 'abc'])
+        result=cross.consolidate(packets,{g:[g] for g in 'abc'},
+                                 {('a','b'):'no',('b','c'):'uncertain'},[])
+        titles=dict(groups=[dict(p,title=p['group']) for p in prepare(packets,cross.TITLE.read_text(),[])])
+        decisions=decision_report(titles,[('a','b'),('b','a')])
+        merged=cross.merge_report(titles,packets,decisions,
+            prompt=dict(id='NSP-Jev-v1',text=PROMPT.read_text()))
+        before=copy.deepcopy(merged)
+        conflicts=cross.placement_conflicts(result,merged)
+        self.assertEqual(len(conflicts),1)
+        self.assertEqual((conflicts[0]['a_title'],conflicts[0]['b_title']),('a','b'))
+        self.assertEqual(conflicts[0]['placed_group'],merged['member_to_group']['a'])
+        self.assertEqual(merged,before)
+
     def test_two_capped_lists_preserve_distant_title_matches_and_disjointness(self):
         packets=dict(packets=[packet(g) for g in 'abcd'])
         titles=dict(a='Coffee',b='Coffee beans',c='coffee',d='Other')

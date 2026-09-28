@@ -12,12 +12,13 @@ import math
 from pathlib import Path
 
 from experiment import report, load
-from hierarchy_build import artifact_directory, read, save, titles_from_report, prepare_naming
+from hierarchy_build import (artifact_directory, read, save, titles_from_report,
+                             prepare_naming, name_merge, _original_instances)
 from decision_hierarchy import make_cases, merge_report
 from experiment_inputs import render
 from hdbscan_nested_groups import (replay, answer_catalog, expected_merges,
     expected_titles, bind_saved, MERGE_PROMPT, TITLE)
-from merge_tree_nesting import mask_pair_cases, contract_equivalence, _validate_choices
+from merge_tree_nesting import mask_pair_cases, contract_equivalence, _validate_choices, view
 from prepare_category_title_inputs import prepare as prepare_titles
 from prominence_centroid import centroid
 from prominence_cosine import cosine
@@ -237,6 +238,83 @@ def placement_merge(directory, experiment):
                           stats=merged['graph']['stats'])))
 
 
+def render_placed(named, original_tree, source, mapping, *, label):
+    """Use the existing full-corpus browser export with Jev's saved DAG edges."""
+    graph=named['graph'];root=original_tree['root']
+    members={root:original_tree['members'][root]}
+    for node in named['memberships']['nodes']:
+        originals=[i for m in node['matched_instances'] for i in _original_instances(m)]
+        for mask in originals:
+            saved=original_tree['instances'][mask['instance']]
+            if any(saved[k]!=mask[k] for k in ('vector_id','note_id','text','byte_spans','fragments')):
+                raise ValueError('placed mask differs from original source')
+        members[node['group']]=sorted({m['instance'] for m in originals})
+    tree=dict(root=root,members=members,instances=original_tree['instances'],
+              edges=[(root,g) for g in graph['roots']]+
+                    [(e['a_id'],e['b_id']) for e in graph['transitive_reduced_edges']])
+    return view(tree,{n['group']:n['title'] for n in graph['nodes']},source,mapping,label=label,
+        connection_description='Saved NSP-Jev-v3/Jev links and cycle contractions; no manual corrections or membership expansion.')
+
+
+def placement_conflicts(result, merged):
+    """Expose later title-cycle contractions opposed by saved mask decisions."""
+    titles={g['group']:g['title'] for g in merged['source']['titles']['groups']}
+    negative=[*result['recorded_no'],*(dict(r,source='cross-branch') for r in result['decisions'] if r['choice']=='no')]
+    conflicts=[]
+    for row in negative:
+        a,b=(result['member_to_group'][row[k]] for k in ('a','b'))
+        placed=merged['member_to_group'][a]
+        if placed==merged['member_to_group'][b]:
+            conflicts.append(dict(row,a_title=titles[a],b_title=titles[b],placed_group=placed))
+    return conflicts
+
+
+def package(directory, naming_experiment=None):
+    base=Path(directory);state,result=replay_merge(base)
+    merged=read(base/'placed/merge.json')
+    title_run=read(base/'placement/title-experiment.json')['path']
+    titles=assemble_titles(state,result,report(title_run) if title_run else None)
+    experiment=read(base/'placed/decision-experiment.json')['path']
+    plan,_,_=load(experiment)
+    if plan['prompt']['id']!='NSP-Jev-v3' or plan['prompt']['text']!=PLACEMENT.read_text():
+        raise ValueError('unchanged NSP-Jev-v3 required')
+    expected=merge_report(titles,result['source_packets'],report(experiment),prompt=plan['prompt'],
+                          original_members=result['original_members'])
+    if merged!=expected:raise ValueError('placement differs from verified decisions')
+    named=name_merge(merged,report(naming_experiment) if naming_experiment else None)
+    conflicts=placement_conflicts(result,merged)
+    categories=render_placed(named,state['tree'],state['sources']['posts']['path'],
+                              state['sources']['mapping']['path'],label=state['experiment_id']+' · Jev placement')
+    grouped={i['instance'] for p in result['source_packets']['packets'] for m in p['instances'] for i in _original_instances(m)}
+    counts=dict(groups=len(named['graph']['nodes']),grouped_masks=len(grouped),
+                ungrouped_masks=len(state['tree']['instances'])-len(grouped),posts=len(categories['notes']),
+                placement_merge_conflicts=len(conflicts))
+    nodes={n['group']:n for n in named['graph']['nodes']}
+    rejected={}
+    for original in titles['groups']:
+        users=[r for r in original.get('reviews',[]) if r.get('role')=='user' and r.get('current')]
+        if users and users[-1].get('verdict')=='reject':
+            rejected.setdefault(merged['member_to_group'][original['group']],[]).append(original['title'])
+    for node in categories['nodes']:
+        if node['node_id'] in nodes:
+            node['analysis']+=' Original groups: '+', '.join(nodes[node['node_id']]['source_group_ids'])+'.'
+            for title in rejected.get(node['node_id'],[]):
+                node['analysis']+=' User rejected original title: '+title+'. Node retained; Jev used this wording.'
+            for conflict in conflicts:
+                if conflict['placed_group']==node['node_id']:
+                    node['analysis']+=f' WARNING: mask-based merge answered No for {conflict["a_title"]} / {conflict["b_title"]} ({conflict["source"]}); the later Jev title cycle combined them. No manual repair applied.'
+        else:
+            node['analysis']+=f' {counts["grouped_masks"]} source masks in groups; {counts["ungrouped_masks"]} ungrouped masks remain at this navigation root.'
+            node['analysis']+=f' {len(conflicts)} recorded mask-merge No answers conflict with later Jev cycle contractions; see the affected nodes\' analysis.'
+    out=artifact_directory(base/'view')
+    save(out/'named-graph.json',named);save(out/'categories.json',categories)
+    save(out/'verification.json',dict(experiment_id=state['experiment_id'],sources=state['sources'],counts=counts,
+        original_members=result['original_members'],member_to_group=merged['member_to_group'],
+        placement_merge_conflicts=conflicts))
+    check_sources(state)
+    print(json.dumps(counts))
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__);sub=p.add_subparsers(dest='command',required=True)
     s=sub.add_parser('prepare')
@@ -244,11 +322,13 @@ def main():
     s=sub.add_parser('merge');s.add_argument('directory',type=Path);s.add_argument('experiment',type=Path)
     s=sub.add_parser('placement');s.add_argument('directory',type=Path);s.add_argument('--titles',type=Path)
     s=sub.add_parser('placement-merge');s.add_argument('directory',type=Path);s.add_argument('experiment',type=Path)
+    s=sub.add_parser('package');s.add_argument('directory',type=Path);s.add_argument('--titles',type=Path)
     a=p.parse_args()
     if a.command=='prepare':prepare(a.directory,a.vectors,a.coffee_experiment,a.output)
     elif a.command=='merge':merge(a.directory,a.experiment)
     elif a.command=='placement':placement(a.directory,a.titles)
-    else:placement_merge(a.directory,a.experiment)
+    elif a.command=='placement-merge':placement_merge(a.directory,a.experiment)
+    else:package(a.directory,a.titles)
 
 
 if __name__=='__main__':main()

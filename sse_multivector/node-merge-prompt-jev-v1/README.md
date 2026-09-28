@@ -10,8 +10,9 @@ The user accepted the completed Astra merge result on September 28, 2026.
 That acceptance was not a production freeze. The user subsequently approved
 the separate wider HDBSCAN diagnostic HR02-NMP07 below, followed by the
 six-group cross-branch Coffee comparison HR02-NMP08. The subsequent bounded
-cross-branch pass HR02-NMP09 has completed merging and titles; Jev placement
-is running as recorded below. None adopts a production pipeline.
+cross-branch pass HR02-NMP09 is complete and browsable below. Seven later Jev
+cycle contractions conflict with mask-merge No answers; these are flagged,
+not manually repaired. None of these experiments adopts a production pipeline.
 
 This separate prompt asks whether two groups express the same topic at the same
 level of generality. It replaces generated title inputs with the masks in each
@@ -503,24 +504,57 @@ keeping one four-group meat-related combination separate because recorded No
 answers oppose it. All seven combined titles validated with unchanged
 v38/Astra low: two new calls and five exact-request reuses. Other titles are
 unchanged. Placement has 21,756 directed cases with unchanged NSP-Jev-v3/Jev,
-ten concurrent calls and exact-request reuse. A $1 commitment is reserved;
-Jev placement is running, and browser export is not yet complete. The user
-approved fixing repeated source-file reads in the shared runner after offline
-preparation spent over 19 minutes checking reuse. Operation-scoped file loading
+ten concurrent calls and exact-request reuse. The user approved fixing repeated
+source-file reads in the shared runner after offline preparation spent over
+19 minutes checking reuse. Operation-scoped file loading
 retains the existing receipt, schema, invocation and provenance checks. The
-same 21,756-case inspection now completes in 5.5 seconds: 15,052 reusable cases
-and 6,704 new requests. The saved experiment resumes with an explicit runner
+pre-run 21,756-case inspection completed in 5.5 seconds: 15,052 reusable cases
+and 6,704 new requests. The saved experiment resumed with an explicit runner
 upgrade reason and a 13,408-new-attempt allowance, including provider retries.
 
-[run-cross-branch-hierarchy.sh](../run-cross-branch-hierarchy.sh) is the isolated
-launcher for the eventual `view/categories.json`. It refuses a missing view
-and adds no display-only collapsing; it is not yet a browsable result.
+All **21,756 decisions validated**, with 6,358 new calls and 15,398 reused answers;
+no failures, retries or unknown charges. The shared report records
+**$0.111736548** in native Jev charges.
 
-All 245 relevant offline tests pass, covering capped deterministic selection,
+The existing Jev cycle-contraction stage leaves **137 nodes, 99 reduced links
+and 57 top-level nodes**. Nine combined titles required nine new unchanged
+v38/Astra-low calls; all validated. No Luna calls, prompt revisions, manual
+relationship repairs or membership expansion were introduced. The separate
+[placement-title spec](../experiment_specs/hr02-cross-branch-placement-titles-astra-low-v1.json)
+selects Astra explicitly; the older generic naming helper's Luna default was
+not used.
+
+**Unresolved stage conflict:** seven combined nodes include a pair that the
+mask-based stage judged not equivalent: Meat consumption, Eggs, grownostr and
+food growing, Chickens and chicken products, Food preservation, Peace, and Food
+preparation (the final displayed names). Six opposing No answers came from the
+accepted in-branch comparisons and one from this cross-branch pass. The later
+title-only Jev stage nevertheless connected each pair in a cycle and combined
+it under the pre-existing graph rule. Thus this combined result does not enforce
+the mask-stage No constraints throughout placement. This disagreement remains
+open, not resolved by changing either answer or inventing a cycle-repair rule.
+The root and affected nodes' `?` analysis disclose it; exact source pairs and
+stage mappings are in `view/verification.json`.
+
+The isolated browser export retains all **100 posts and 1,674 original mask
+IDs**: 629 grouped masks and 1,045 ungrouped masks at the navigation root.
+It uses Jev edges, not HDBSCAN nesting, and adds no display-only collapsing.
+Original sources and earlier views are unchanged. The browser's `--check`
+passes; interactive checks confirm leaf `l` opens full posts and `O` displays
+individual masks with IDs. These are mechanical checks, not semantic approval.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos && \
+bash oracle-mvp/sse_multivector/run-cross-branch-hierarchy.sh
+```
+
+All 247 relevant offline tests pass, covering capped deterministic selection,
 No-vetoed Yes chains, exact-mask provenance, saved/new title binding, existing
 Jev graph/export integration, individual-mask export, the new launcher's
-arguments/refusals and shared-runner regressions. The original HR02
-sources and existing hierarchy views remain unchanged.
+arguments/refusals, root-only ungrouped masks, conflict reporting without graph
+changes, and shared-runner regressions. Generated artifacts remain ignored.
+Next is reviewing the combined browsing result, including the flagged stage
+conflicts; no further component changes or production adoption are approved.
 
 The reusable specs are
 [merges](../experiment_specs/hr02-cross-branch-merge-astra-low-v1.json),
