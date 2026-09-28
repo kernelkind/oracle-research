@@ -608,8 +608,21 @@ The separate partial view contains 148 nodes and all 100 posts, 20 links, six
 model-uncertain pairs and 518 untested candidate pairs. No cycles or
 rejected-but-reachable directions occurred; the existing browser's check
 passed. This is a construction check, not semantic approval or the completed
-hierarchy. Further inference, conflict resolution and production adoption
-remain open. See the
+hierarchy. The user then approved HR02-NSP-MASKS03: complete all 566 pairs from
+the existing candidate list with unchanged NSP-Astra-Masks-v1 / Astra low,
+reusing the 48 saved answers and making 518 new subscription calls, at
+concurrency four. No new groups, merges, titles, candidate-selection rule or
+review overrides are introduced. HD07 still stops browser export on cycles.
+The pass completed with 566 valid answers, 48 exact-request reuses and 520 new
+attempts (518 requests plus two successful retries after HTTP 503). All 148
+groups were compared. The separate browser export retains 148 nodes and all
+100 posts: 129 accepted links reduce to 101 links, with 76 roots. There are no
+cycles, 39 uncertain pairs and three rejected directions reachable through
+accepted paths. These contradictions remain flagged and unrepaired. The browser
+check passed, and a second offline build reproduced identical graph/browser
+files. This is a completed diagnostic build, not semantic approval; reviewing
+its browsing result is next. Conflict resolution and production adoption remain
+open. See the
 [test scope](../../sse_multivector/node-merge-prompt-jev-v1/README.md#parentchild-prompt--nsp-astra-masks-v1).
 The cosine cutoff and its implementation remain open. Existing all-pairs
 experiments do not establish filtered behavior; filtering must preserve useful

@@ -133,7 +133,17 @@ links; six model-uncertain pairs remain unresolved and 518 candidate pairs are
 untested. Strict-containment cycles stop export without automatic merging;
 other path contradictions are reported without repairs. The saved sample had
 neither kind of contradiction. This does not validate semantic quality,
-candidate coverage or launch-scale throughput, or authorize the remaining calls.
+candidate coverage or launch-scale throughput. The user separately approved
+HR02-NSP-MASKS03 to finish the 518 remaining candidate pairs with unchanged
+prompt, Astra low and concurrency four, reusing the 48 saved answers. This
+completes the existing 566-pair list, not all pairs over the 148 groups; no
+production-scale claim follows. HD07 and existing groups/merges/titles stay fixed.
+The pass completed with 566 valid answers, 48 reuses and 520 new attempts
+(including two successful HTTP-503 retries). Its separate browser export has
+148 nodes, 100 posts, 101 reduced links and 76 roots, without cycles. The 39
+uncertain pairs and three rejected-but-reachable directions remain unresolved.
+Browser validation and deterministic rebuild passed; browsing quality and
+production scalability remain unvalidated.
 
 Evidence: [historical token estimate](../../sse_multivector/TOKEN-USAGE-ESTIMATE-1M-NOTES.md),
 [SSE worker](../../sse_multivector/worker.py),

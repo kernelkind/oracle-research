@@ -163,7 +163,15 @@ those 48 saved answers: a separate partial view retains all 148 nodes and 100
 posts, with 20 links, six model-uncertain pairs and 518 untested candidate pairs.
 It has no cycles or rejected-but-reachable directions. Reviews do not override
 answers. Strict-containment cycles stop export with evidence retained; they do
-not trigger merging. The remaining 518 comparisons are not authorized.
+not trigger merging. The user subsequently approved HR02-NSP-MASKS03 to complete
+the remaining 518 comparisons, reusing those 48 answers with unchanged prompt,
+Astra low and concurrency four. The candidate list, groups, merges and titles
+remain fixed. That pass is complete: 566 valid answers, 48 reused requests and
+520 new attempts including two successful HTTP-503 retries. The exported view
+retains 148 nodes and 100 posts, with 101 reduced links and 76 roots. No cycles
+occurred; 39 uncertain pairs and three path contradictions remain unrepaired.
+The existing browser check and byte-identical offline rebuild passed. Reviewing
+this browsing result is next; completion does not establish semantic quality.
 Node 02 remains in progress, while
 its 23 and 25 prerequisites are satisfied. Additional rows expose remaining
 construction work.

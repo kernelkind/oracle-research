@@ -10,7 +10,7 @@
       "id": "02",
       "title": "Build and review 100-note hierarchy",
       "status": "IN PROGRESS",
-      "description": "Preserve the 118-node Jev hierarchy as the untouched baseline.\nReview placement failures and correct agreed relationships by hand in a separate hierarchy, recording every change reversibly. Keep nodes, titles and memberships unchanged so the other stages can be evaluated.\nCorrections remain pending; the hierarchy is not yet validated. This is a diagnostic, not the scalable production method; task 25 remains complete."
+      "description": "HR02: build a hierarchy the user is pleased with; production adoption remains open.\nHR02-NSP-MASKS03 completed all 566 candidate pairs using unchanged NSP-Astra-Masks-v1 / Astra low. The browser view retains 148 nodes and 100 posts: 101 links, 76 roots, no cycles. There are 39 uncertain pairs and three path contradictions, unrepaired.\nNext: review the browsing result. Existing groups, merges, titles and direct memberships are unchanged; no review overrides were applied. Earlier results and manual reviews remain preserved. Task 25 remains complete."
     },
     {
       "id": "03",

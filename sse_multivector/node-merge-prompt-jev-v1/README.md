@@ -23,8 +23,11 @@ unresolved. Initial agent review flagged seven of the 36 new answers. The user
 resolved the three linked meat comparisons and confirmed the missed Positive
 emotions parent of Enjoyment of food. Fire/Ash, Pizza and Ice/ice cream remain
 unresolved; the agent withdrew its likely-miss assessment of Ice/ice cream.
-Existing merges, titles and hierarchies stay fixed;
-combining equivalence and placement in one prompt is deferred.
+The subsequent HR02-NSP-MASKS03 pass completed all 566 existing candidate pairs
+and exported a separate 148-node hierarchy, with 101 reduced links and 76 roots.
+It has no cycles; 39 uncertain pairs and three path contradictions remain
+unresolved. Existing merges, titles, direct memberships and earlier hierarchies
+stay fixed; combining equivalence and placement in one prompt is deferred.
 
 This separate prompt asks whether two groups express the same topic at the same
 level of generality. It replaces generated title inputs with the masks in each
@@ -787,10 +790,71 @@ python3 sse_multivector/cross_branch_merge.py package-parent-child \
   target/hierarchy-build-v1/hr02-parent-child-astra-masks-v2-view-verified
 ```
 
-The next recommendation is completing the remaining 518 candidate pairs with
-unchanged NSP-Astra-Masks-v1 / Astra low and request reuse, then inspecting the
-resulting hierarchy. That inference still requires separate authorization;
-the offline-construction approval does not include it.
+### Full candidate pass — HR02-NSP-MASKS03
+
+The user approved completing the remaining 518 candidate pairs with unchanged
+NSP-Astra-Masks-v1 / Astra low and exact-request reuse, then checking the graph
+and exporting to the existing browser only if acyclic. The separate
+[spec](../experiment_specs/hr02-parent-child-astra-masks-v3.json) differs from
+the 48-pair spec only in its dataset path. Concurrency remains four, with the
+existing provider-only retry policy and at most two attempts per new case.
+These use the subscription route, without paid API fallback.
+
+Preparation selected all **566 existing unique pairs**: 32 nominated by tree
+links and 534 additional cross-branch pairs. One pair occurs in both sources
+and is counted with the tree links. `--per-source 566` exhausts the existing
+selection rule; it introduces no new pairs or ranking. The shared runner
+confirmed **48 reusable requests and 518 new requests**, without inference
+during preparation. Inputs are saved separately under
+`target/hierarchy-build-v1/hr02-parent-child-astra-masks-v3/`; the experiment is
+`sse_multivector/experiments/hr02-parent-child-astra-masks-v3/`.
+
+HD07 remains unchanged: native answers only, no review overrides, new merges,
+renaming or membership expansion. A cycle saves evidence and stops browser
+export; it does not authorize repairs. Earlier experiments remain untouched.
+
+The run completed with **566 valid answers**, **48 exact-request reuses** and
+**520 new attempts**: 518 new requests plus two successful retries after
+HTTP 503. No malformed responses, terminal failures or unrun cases remain.
+The runner reported 187,395 input tokens and 27,088 output tokens, including
+15,984 reasoning tokens. These are subscription calls, not a paid API bill.
+
+The native answers produced 129 strict-parent links, 398 neither answers and
+39 uncertain answers. All 148 nodes were compared. Offline construction reduced
+the accepted links to **101**, with **76 roots**, **no cycles**, and all **100
+posts** retained. The browser adds one synthetic root above those 148 nodes;
+it is not a new inferred topic.
+
+Three rejected directions remain reachable through accepted links. Using the
+unchanged titles as labels, the shortest conflicting paths are:
+
+- Positive emotions → Happiness and joy → Enjoyment of food.
+- Positive emotions and attitudes → Positive emotions → Happiness and joy → Enjoyment of food.
+- nostr → foodstr → Preservation → Vacuum sealing.
+
+Each endpoint comparison answered neither. These are internal contradictions,
+not proof of which comparison is wrong. They are flagged in the graph and node
+analysis; no review correction or repair was applied.
+
+The view is saved at
+`target/hierarchy-build-v1/hr02-parent-child-astra-masks-v3-view/`. The existing
+browser's `--check` passed. A second offline build at the `-view-verified` path
+produced byte-identical graph and browser files. The 137-test runner/graph
+regression suite passed. The separate planning-page browser test could not
+start because Python's `websocket-client` dependency is unavailable.
+
+Open the completed diagnostic view:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+target/infomap-review-build/debug/sse-subject-navigation \
+  --categories target/hierarchy-build-v1/hr02-parent-child-astra-masks-v3-view/categories.json \
+  sse_multivector/hierarchy-refresh-v1/masked-posts.json
+```
+
+Next: review this hierarchy's browsing result before changing individual
+components. Completion and structural validation do not establish semantic
+quality or production adoption.
 
 ## Saved hierarchy comparison
 
