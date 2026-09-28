@@ -6,7 +6,7 @@ if [[ $# -gt 1 || ( $# -eq 1 && "$1" != --check ) ]]; then
     echo "Usage: $0 [--check]" >&2
     exit 2
 fi
-view="$root/target/hierarchy-build-v1/hr02-merge-comparison-v3/categories.json"
+view="$root/target/hierarchy-build-v1/hr02-merge-comparison-v5/categories.json"
 binary="$root/target/infomap-review-build/debug/sse-subject-navigation"
 if [[ ! -f "$view" ]]; then
     echo "Saved comparison is missing: $view" >&2

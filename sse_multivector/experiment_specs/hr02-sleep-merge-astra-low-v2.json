@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "NMP-Jev-v2",
+    "path": "../node-merge-prompt-jev-v2/prompt.txt"
+  },
+  "dataset": {
+    "adapter": "generic",
+    "path": "../../target/hierarchy-build-v1/hr02-sleep-mask-merge-v1/cases.json",
+    "select": [
+      "Sb00aae9d65-same-topic-S10a5e2c855",
+      "S9c2d4b9d6c-same-topic-S6ab666cc4e",
+      "Sb00aae9d65-same-topic-S9c2d4b9d6c",
+      "Sbacfeb16d9-same-topic-Sb00aae9d65",
+      "Sc719c3992c-same-topic-Sbacfeb16d9",
+      "Scbf188c49b-same-topic-Sc719c3992c",
+      "Sbdf406e595-same-topic-Scbf188c49b",
+      "Sca593cc31b-same-topic-Sbdf406e595",
+      "S3a03e0bb9d-same-topic-Sca593cc31b",
+      "Saa62bc7939-same-topic-S3a03e0bb9d"
+    ]
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "concurrency": 10,
+    "timeout_seconds": 300,
+    "output_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "same_topic"
+      ],
+      "properties": {
+        "same_topic": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "choice"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "choice"
+              ]
+            },
+            "choice": {
+              "type": "string",
+              "enum": [
+                "yes",
+                "no",
+                "uncertain"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

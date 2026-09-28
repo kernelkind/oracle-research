@@ -4,8 +4,8 @@ Status: tested on all 55 original pairs in the approved eleven-branch comparison
 not frozen or adopted.
 The unchanged title-only NSP-Jev-v3 remains the saved comparison baseline.
 The separate [NMP-Jev-v2 trials](../node-merge-prompt-jev-v2/prompt.txt) below use
-Jev and Astra low. They are tested, not adopted, and do not replace the saved v1
-hierarchy comparison.
+Jev and Astra low. They are tested, not adopted. The completed Astra view is
+available beside the unchanged saved Jev-v1 comparison.
 
 This separate prompt asks whether two groups express the same topic at the same
 level of generality. It replaces generated title inputs with the masks in each
@@ -21,8 +21,8 @@ group. It does not generate titles, place parents or change the saved tree.
   across masks, or add titles, source-post text, IDs or tree positions.
 - Use the shared generic adapter's literal variable substitution; serialize
   arrays with a JSON encoder. Never concatenate unescaped source text into JSON.
-- Intended transport: `typesafe/jev-1.13` through the existing System One runner,
-  with `provider-default` reasoning. No model change is proposed.
+- V1 transport: `typesafe/jev-1.13` through the existing System One runner,
+  with `provider-default` reasoning. The separate V2/Astra diagnostic is below.
 - Native choice question: `same_topic`, with `yes`, `no`, or `uncertain`.
   This is one symmetric equivalence question, not a directed containment answer.
   Do not relabel it as two native `contains` answers or feed it unchanged to the
@@ -228,15 +228,14 @@ failures or reused calls. No Jev baseline was rerun:
 Seven choices changed; four stayed the same. The motivating My son / son case
 now receives Yes. Applying the Children and Art answers would collapse their
 eight and four original groups to one each, removing the repeated-title chains;
-no contraction or browser update has been applied. Tea/Hot tea remains a
+this was subsequently applied in HR02-NMP06 below. Tea/Hot tea remains a
 successful narrower-topic control. The agent still flags the baby age-boundary
 case as uncertain: model agreement does not establish a human judgment.
 
 This supports keeping the task wording fixed while investigating the model's
 ability to perform it. It is a targeted diagnostic, not general accuracy or a
-production adoption decision. The proposed next step is the remaining 44 saved
-original pairs with Astra low, then comparing the resulting branches; those
-additional calls require separate task approval.
+production adoption decision. The user subsequently approved the remaining
+44 saved original pairs with Astra low, completed as HR02-NMP06 below.
 
 Reusable specs: `../experiment_specs/hr02-shared-topic-merge-astra-low-v1-a.json`
 and `../experiment_specs/hr02-shared-topic-merge-astra-low-v1-b.json`.
@@ -249,17 +248,71 @@ was created. All 68 experiment regression tests and exact prompt/input checks
 pass. The motivating semantic regression now passes; all saved hierarchy source
 hashes remain unchanged.
 
+## Completed Astra comparison — HR02-NMP06
+
+The remaining 44 pairs completed with unchanged NMP-Jev-v2 / Astra low through
+the same subscription configuration. All 44 new calls were valid, with no
+retries or reused requests. The eleven NMP05 answers were used directly, not
+rerun. No titles, source groups, masks or canonical HR02 artifacts changed.
+
+Across all 55 pairs, Astra answered 44 Yes, ten No and one Uncertain. Reversible
+contraction leaves 22 of the 66 original groups, versus 36 with Jev masks and
+26 with title-only judgments:
+
+| Branch | Original | Title-based | Jev masks v1 | Astra masks v2 |
+| --- | ---: | ---: | ---: | ---: |
+| Sleep | 11 | 6 | 2 | 3 |
+| Dinner | 8 | 2 | 1 | 2 |
+| Art | 4 | 1 | 4 | 1 |
+| Children | 8 | 1 | 6 | 1 |
+| Coffee | 7 | 1 | 1 | 1 |
+| Recipes | 5 | 3 | 2 | 2 |
+| Tea | 3 | 2 | 3 | 2 |
+| Food | 5 | 2 | 4 | 2 |
+| Animals | 6 | 3 | 6 | 3 |
+| Emotions | 3 | 2 | 3 | 2 |
+| Morning greetings | 6 | 3 | 4 | 3 |
+
+Agent inspection finds a substantially more useful comparison: repeated Children
+and Art chains collapse; Dinner remains below Food and dining, Hot tea below
+Tea, Processed food below Food, and Sleep/Sleepiness remain distinct. These are
+judgments of this selected sample, not an accuracy score or user approval.
+
+Uncertainties remain visible through `?`, without changing any answers:
+
+- The sole repeated-title link is Morning → Morning. The smaller group has
+  `Woke up` / `up`, `sunrise`, and `got up early`; Astra rejects equivalence
+  with the larger group that also includes greetings. It then merges that
+  smaller group with the sunrise/early group. The appropriate scope of the
+  waking mask remains unclear; identical saved titles do not settle it.
+- The recipe boundary receives Uncertain. The larger group adds only
+  `Made` / `made` to recipe masks, which does not say what was made. It remains
+  separate, producing Cooking → recipe with the unchanged saved titles.
+- The previously recorded baby/Children age-boundary uncertainty remains.
+
+The full Jev-v1 versus Astra-v2 comparison changes both wording and model;
+only the earlier eleven-pair Jev-v2 comparison held task text identical across
+models. No causal model-only claim is made for the other 44 pairs.
+
+Reusable specs are `../experiment_specs/hr02-{sleep,diverse,remaining}-merge-astra-low-v2.json`.
+Receipts and reviews are under the corresponding `sse_multivector/experiments/`
+directories. The exporter checks their exact inputs against the saved source
+groups and combines them with NMP05 only when prompt/settings agree and every
+pair appears exactly once. It records receipt bindings and keeps each model's
+assessments separate. Subscription catalog estimates are not invoices.
+
 ## Saved hierarchy comparison
 
-The existing category browser retains the NMP-Jev-v1 results, not the v2 trial.
-It exposes Original groups, Title-based merges
-and Mask-based merges for each tested topic. Sleep, Dinner, Art and Children
+The existing category browser exposes Original groups, Title-based merges,
+Jev masks · NMP-Jev-v1 and Astra low masks · NMP-Jev-v2 for each tested topic.
+The saved Jev-v2 eleven-pair trial is not a full branch view.
+Sleep, Dinner, Art and Children
 appear first; seven further topics are under Other tested topics. These are
 navigation menus, not newly generated hierarchy nodes.
 
-Both methods apply the same **55 tested original pairs**, with **no untested
+All three methods apply the same **55 tested original pairs**, with **no untested
 links** in the displayed branches. The title view now applies all saved title
-decisions within those branches; the mask view combines the three saved runs.
+decisions within those branches; each mask view combines its saved runs.
 View labels show tested/total counts; `?` exposes native answers and saved agent
 concerns. Native mask answers are never relabeled as containment answers.
 
@@ -280,20 +333,21 @@ direct posts, and O shows masks outside the children, individually with IDs;
 approved, edited or merged by browsing.
 
 The reusable offline exporter is [merge_tree_comparison.py](../merge_tree_comparison.py),
-configured by [merge-comparison-hr02-v2.json](../merge-comparison-hr02-v2.json).
+configured by [merge-comparison-hr02-v3.json](../merge-comparison-hr02-v3.json).
 It validates the saved title/mask experiment receipts through the shared runner,
 reuses existing contraction and mask rendering, and refuses to overwrite an
 export. Generated categories, source hashes and reversible mappings are ignored
-under `target/hierarchy-build-v1/hr02-merge-comparison-v3/`.
-The v1 manifest is retained as provenance for the earlier partial comparison.
+under `target/hierarchy-build-v1/hr02-merge-comparison-v5/`.
+Earlier manifests and exports remain intact as comparison provenance.
 
-Verification: all 88 comparison, nesting, title-input and experiment tests pass.
-The launcher coverage check first failed with 33 untested pairs, then passed
-after pointing it at the completed export. The actual browser accepts that
-export with `--check`. All 66 original groups, original masks, complete posts,
-source hashes and prior decisions remain unchanged; both methods preserve
-reversible original-group mappings. The earlier interactive check verified the
-unchanged three-view menu and full-post display with original mask IDs.
+All 89 comparison, nesting, title-input and experiment regression tests pass.
+Verification covers receipt/model binding, split-run coverage, separate model
+views and assessments, exact masks, full posts and reversible mappings. The
+actual browser accepts the completed export with `--check`. All 66 original
+groups and prior decisions remain available; the original and Jev views match
+their saved projections. No browser equal-note or single-child collapse is used.
+An interactive check verified the four-view menu, the single Children node,
+full-post display and individual masks with IDs in O view.
 
 The full delta against NSP-Jev-v3 and its exact edits are reproducible from
 `prompt.txt.revision.json`, generated by `experiment.py revise`. The prompt is

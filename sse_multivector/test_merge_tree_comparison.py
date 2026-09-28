@@ -36,10 +36,31 @@ class MergeTreeComparisonTests(unittest.TestCase):
                          ('a','d'):'yes', ('d','a'):'yes'}
         self.equivalent = {('a','b'):'yes', ('a','d'):'no'}
 
-    def build(self):
+    def build(self, **kwargs):
         return render_comparison(self.tree, self.titles, self.branches,
                                  self.directed, self.equivalent, self.source,
-                                 self.mapping, label='Saved comparison')
+                                 self.mapping, label='Saved comparison', **kwargs)
+
+    def test_additional_model_view_keeps_same_pairs_and_separate_assessments(self):
+        method = dict(label='Astra low · NMP-Jev-v2',
+                      equivalent={('a','b'):'no', ('a','d'):'yes'},
+                      assessments={('a','d'):['Astra-only concern.']})
+        view, evidence = self.build(mask_comparisons={'astra':method})
+        nodes = {n['node_id']:n for n in view['nodes']}
+        self.assertIn('Astra low · NMP-Jev-v2', nodes['branch:0:astra']['label'])
+        self.assertEqual(evidence['projections']['astra']['representative']['d'], 'a')
+        self.assertEqual(evidence['projections']['astra']['representative']['c'], 'c')
+        self.assertEqual(evidence['projections']['mask']['representative']['d'], 'd')
+        self.assertIn('Astra-only concern.', nodes['astra:a']['analysis'])
+        self.assertNotIn('Astra-only concern.', nodes['mask:a']['analysis'])
+        self.assertEqual(view['mask_instances']['astra:a'], view['mask_instances']['original:a'])
+        self.assertEqual(set(evidence['projections']['astra']['representative']),
+                         set(self.tree['members']))
+        for bad in [{('a','b'):'no'}, {('a','b'):'no', ('a','d'):'invalid'}]:
+            with self.assertRaises(ValueError):
+                self.build(mask_comparisons={'astra':dict(method, equivalent=bad)})
+        with self.assertRaises(ValueError):
+            self.build(mask_comparisons={'original':method})
 
     def test_same_tested_edges_and_recoverable_originals(self):
         before = copy.deepcopy(self.tree)

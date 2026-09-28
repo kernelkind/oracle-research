@@ -107,13 +107,29 @@ def validate_equivalence_decisions(tree, packets, report, prompt):
     return _validate_choices(mask_pair_cases(tree,packets), report, prompt, 'same_topic')
 
 
+def validate_equivalence_reports(tree, packets, reports, prompt):
+    """Bind split saved runs to one exact tree, without dropping or duplicating pairs."""
+    if not reports:
+        raise ValueError('equivalence reports required')
+    first = reports[0]
+    if any(r['settings'] != first['settings'] or r['prompt_id'] != prompt['id']
+           for r in reports):
+        raise ValueError('split equivalence prompt/settings mismatch')
+    combined = dict(first, cases=[c for r in reports for c in r['cases']])
+    return validate_equivalence_decisions(tree, packets, combined, prompt)
+
+
 def _validate_choices(expected, report, prompt, question):
     for c in expected:
         try: json.loads(render(prompt['text'],c['inputs']))
         except (ValueError, TypeError) as e: raise ValueError('input cannot render unchanged Jev JSON') from e
-    if report.get('prompt_id') != prompt['id'] or any(report.get('settings',{}).get(k)!=v for k,v in
-            dict(provider='openrouter',model='typesafe/jev-1.13',reasoning_effort='provider-default').items()):
-        raise ValueError('Jev prompt/settings mismatch')
+    profiles = {('openrouter', 'typesafe/jev-1.13', 'provider-default')}
+    if question == 'same_topic':
+        profiles.add(('openai-codex', 'gpt-6-astra', 'low'))
+    profile = tuple(report.get('settings', {}).get(k)
+                    for k in ('provider', 'model', 'reasoning_effort'))
+    if report.get('prompt_id') != prompt['id'] or profile not in profiles:
+        raise ValueError('decision prompt/settings mismatch')
     cases = {c['id']:c for c in report['cases']}
     if len(cases)!=len(report['cases']) or set(cases)!={c['id'] for c in expected}:
         raise ValueError('decision inventory mismatch')

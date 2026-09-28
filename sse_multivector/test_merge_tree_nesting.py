@@ -55,6 +55,36 @@ class MergeTreeNestingTests(unittest.TestCase):
                              parsed={'same_topic':{'choice':'no'}})])
         self.assertEqual(validate_equivalence_decisions(tree,packets,report,prompt),
                          {('a','b'):'no'})
+        astra = copy.deepcopy(report)
+        astra['settings'] = dict(provider='openai-codex', model='gpt-6-astra',
+                                 reasoning_effort='low')
+        self.assertEqual(validate_equivalence_decisions(tree,packets,astra,prompt),
+                         {('a','b'):'no'})
+        for field, value in [('provider','openrouter'), ('model','gpt-6-luna'),
+                             ('reasoning_effort','max')]:
+            bad = copy.deepcopy(astra); bad['settings'][field] = value
+            with self.assertRaises(ValueError):
+                validate_equivalence_decisions(tree,packets,bad,prompt)
+        with self.assertRaises(ValueError):
+            validate_decisions(tree, {'a':'Sleep','b':'Sleep'}, astra, prompt)
+        from merge_tree_nesting import validate_equivalence_reports
+        self.assertEqual(validate_equivalence_reports(tree, packets, [astra], prompt),
+                         {('a','b'):'no'})
+        for reports in [[], [astra, astra], [astra, report],
+                        [dict(astra, cases=[])], [dict(astra, prompt_id='wrong')]]:
+            with self.assertRaises(ValueError):
+                validate_equivalence_reports(tree, packets, reports, prompt)
+        split_tree = copy.deepcopy(tree)
+        split_tree['edges'].append(['b','c'])
+        split_tree['members']['c'] = ['v1']
+        split_packets = copy.deepcopy(packets)
+        split_packets['packets'].append(dict(packet='c', instances=[first]))
+        split_cases = mask_pair_cases(split_tree, split_packets)
+        reports = [dict(astra, cases=[dict(c, status='valid', receipt={'verified':True},
+                        prompt=render(prompt['text'],c['inputs']),
+                        parsed={'same_topic':{'choice':'yes'}})]) for c in split_cases]
+        self.assertEqual(validate_equivalence_reports(split_tree, split_packets, reports, prompt),
+                         {('a','b'):'yes', ('b','c'):'yes'})
         for field,value in [('status','failed'),('receipt',None),
                             ('prompt','wrong'),('parsed',{'contains':{'choice':'yes'}})]:
             bad=copy.deepcopy(report);bad['cases'][0][field]=value
@@ -191,6 +221,10 @@ class MergeTreeNestingTests(unittest.TestCase):
                                       prompt=render(prompt['text'],c['inputs']),
                                       parsed={'contains':{'choice':'no'}}))
         self.assertEqual(len(validate_decisions(tree,titles,report,prompt)),2)
+        astra = dict(report, settings=dict(provider='openai-codex',
+                     model='gpt-6-astra', reasoning_effort='low'))
+        with self.assertRaisesRegex(ValueError, 'settings mismatch'):
+            validate_decisions(tree,titles,astra,prompt)
         report['cases'][0]['inputs']['A_TITLE']='wrong'
         with self.assertRaises(ValueError): validate_decisions(tree,titles,report,prompt)
 
