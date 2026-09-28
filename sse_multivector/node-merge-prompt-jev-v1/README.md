@@ -16,8 +16,8 @@ not manually repaired. None of these experiments adopts a production pipeline.
 
 The user approved the wording of the separate
 [NSP-Astra-Masks-v1 parent–child prompt](../node-subsumption-prompt-astra-masks-v1/prompt.txt)
-below. It is untested; the authorized small-test preparation is complete, with
-inference still awaiting approval.
+below. The authorized 12-pair test is complete; it is tested experimentally,
+not frozen. Agent review flags two answers for discussion.
 Existing merges, titles and hierarchies stay fixed;
 combining equivalence and placement in one prompt is deferred.
 
@@ -570,11 +570,11 @@ The reusable specs are
 [placement](../experiment_specs/hr02-cross-branch-placement-jev-v1.json).
 Receipts are in `sse_multivector/experiments/hr02-cross-branch-merge-astra-low-v1/`.
 
-## Parent–child prompt draft — NSP-Astra-Masks-v1
+## Parent–child prompt — NSP-Astra-Masks-v1
 
 The user approved drafting a separate mask-based parent–child question before
 combining placement and equivalence. [NSP-Astra-Masks-v1](../node-subsumption-prompt-astra-masks-v1/prompt.txt)
-is **wording approved September 28, 2026; untested; not approved for inference**.
+is **wording approved September 28, 2026; tested experimentally; not frozen**.
 Its revision base is the
 accepted NMP-Jev-v2 text, not a new combined prompt or the title-only Jev prompt.
 The existing groups, merge answers, titles and browser exports are unchanged.
@@ -597,7 +597,7 @@ This is the full candidate inventory, not a full-pass call approval.
 It excludes retries and extra ancestor comparisons; request reuse may reduce
 actual calls. This count does not describe a combined merge/placement run.
 
-The wording and small-test preparation are approved; inference is not.
+The wording, small-test preparation and 12-pair inference run were approved.
 The prepared sample and output schema are described below. Graph-conflict policy
 and extra ancestor comparisons remain open. No existing Jev validator or
 cycle-merging code is silently reused for the new answer type.
@@ -610,15 +610,16 @@ requested chain-of-thought. It does not establish semantic accuracy. The shared
 `experiment.py revise` command records the exact base hash and edits in the
 adjacent `.revision.json`; the accepted merge prompt is unchanged.
 
-### Prepared placement test — HR02-NSP-MASKS01
+### Placement test — HR02-NSP-MASKS01
 
-Status: **prepared, 12 unrun cases, zero inference calls**. Uses unchanged
+Status: **complete, 12 structurally valid answers, 12 new calls, no retries or reuse**.
+Uses unchanged
 NSP-Astra-Masks-v1 and `openai-codex / gpt-6-astra / low`, four concurrent calls
 and 300-second timeouts. This is the existing subscription route: no additional
-API charge and no paid fallback. Proposed execution permits at most 24 new
+API charge and no paid fallback. The user authorized at most 24 new
 attempts, including the existing provider-only retry allowance; no independent
 repetitions. Request reuse remains enabled; preparation found no reusable answers.
-Inference and its attempt allowance still require user approval.
+The run used 12 attempts; further inference is not authorized by that allowance.
 
 The offline `prepare-parent-child` command in
 [cross_branch_merge.py](../cross_branch_merge.py) replays and verifies the saved
@@ -637,8 +638,20 @@ full posts and the original pair sources remain review evidence only. The
 [spec](../experiment_specs/hr02-parent-child-astra-masks-v1.json) uses the accepted
 choice envelope, now requiring `parent_child.type = "choice"` and one of
 `a_parent`, `b_parent`, `neither`, `uncertain`. No equivalence or graph rule is
-applied to these answers. Review will assess the individual judgments before
-deciding whether to run more pairs or build a hierarchy.
+applied to these answers. Agent assessments are recorded separately through
+`experiment.py review` in `experiments/hr02-parent-child-astra-masks-v1/`:
+10 accept, one reject and one uncertain, with no user verdicts inferred.
+
+The likely error is **Food consumption → Clean, simple dishes**: the masks
+describe meal qualities and a dish's appearance, which need not discuss eating.
+The uncertain assessment is **Preservation → Preservation**: both groups have
+the same generic preservation masks, while B adds `foodpreservation`. That
+does not clearly settle whether B is narrower or expresses the same broad topic.
+These are agent assessments, not a ground-truth score. The model's separate
+`uncertain` answer for the mixed food/Paraguay group is considered reasonable.
+The next recommendation is discussing the two flagged answers using their masks,
+before deciding on more calls or hierarchy construction. No prompt revision,
+manual placement, merge or browser change follows from this test.
 
 Preparation commands already completed (they refuse to overwrite existing artifacts):
 

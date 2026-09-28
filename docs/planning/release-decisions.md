@@ -563,16 +563,19 @@ manual-placement decisions remain preserved and unapplied. On September 28,
 the user approved the wording of
 [NSP-Astra-Masks-v1](../../sse_multivector/node-subsumption-prompt-astra-masks-v1/prompt.txt),
 a separate mask-based parent–child prompt based on the accepted merge prompt.
-It remains untested.
-The intended test reuses the 148 pre-Jev HR02-NMP09 groups, existing merges and
+It is tested experimentally, not frozen.
+The test reuses the 148 pre-Jev HR02-NMP09 groups, existing merges and
 titles, with comparisons selected automatically from tree links and the bounded
 cross-branch shortlist. No new model calls or graph implementation are approved
 by this wording approval. Combining merging and placement in one prompt is
-deferred. The user subsequently authorized test preparation. HR02-NSP-MASKS01
-has 12 unrun pairs selected reproducibly from the saved comparison sources,
-with Astra low and unchanged NSP-Astra-Masks-v1. Running the test, conflict
-handling and production adoption remain open. See the
-[test scope](../../sse_multivector/node-merge-prompt-jev-v1/README.md#parentchild-prompt-draft--nsp-astra-masks-v1).
+deferred. The user subsequently authorized preparing and running HR02-NSP-MASKS01:
+12 pairs selected reproducibly from the saved comparison sources, using Astra
+low and unchanged NSP-Astra-Masks-v1. All 12 returned structurally valid answers
+in 12 new subscription calls, without retries or reuse. Agent review accepts
+10 answers, rejects one and leaves one uncertain; these are not user verdicts
+or an accuracy benchmark. Review of the flagged answers, further inference,
+conflict handling and production adoption remain open. See the
+[test scope](../../sse_multivector/node-merge-prompt-jev-v1/README.md#parentchild-prompt--nsp-astra-masks-v1).
 The cosine cutoff and its implementation remain open. Existing all-pairs
 experiments do not establish filtered behavior; filtering must preserve useful
 parent–child links, not merely reduce calls.

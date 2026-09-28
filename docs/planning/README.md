@@ -140,12 +140,13 @@ titles and memberships stay unchanged to evaluate the other stages. Individual
 corrections and unresolved boundaries still need review; no corrected hierarchy
 has been built. This is not the scalable production method or a measured
 “90% / 10%” accuracy claim. The user approved the wording of the separate
-[NSP-Astra-Masks-v1 draft](../../sse_multivector/node-subsumption-prompt-astra-masks-v1/prompt.txt)
-on September 28; it remains untested. The intended test holds existing
+[NSP-Astra-Masks-v1](../../sse_multivector/node-subsumption-prompt-astra-masks-v1/prompt.txt)
+on September 28; it is now tested experimentally, not frozen. The test holds existing
 HR02-NMP09 merges, groups and titles fixed. Combining merging and placement is
-deferred. The user authorized preparing a small test: HR02-NSP-MASKS01 now has
-12 unrun pairs, six from each saved comparison source, using Astra low.
-Inference and graph changes still require further approval.
+deferred. The authorized HR02-NSP-MASKS01 run completed all 12 pairs, six from
+each saved comparison source, using Astra low without retries. Agent review
+flags two answers for discussion; no user verdicts are inferred. Further
+inference and graph changes require approval.
 Node 02 remains in progress, while
 its 23 and 25 prerequisites are satisfied. Additional rows expose remaining
 construction work.
