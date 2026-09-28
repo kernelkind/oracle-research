@@ -1,6 +1,7 @@
 # NMP-Jev-v1 — mask-based node merging
 
-Status: tested in the approved Sleep and diverse-pair comparisons; not frozen or adopted.
+Status: tested on all 55 original pairs in the approved eleven-branch comparison;
+not frozen or adopted.
 The unchanged title-only NSP-Jev-v3 remains the saved comparison baseline.
 
 This separate prompt asks whether two groups express the same topic at the same
@@ -119,7 +120,37 @@ The subsequent read-only audit found that NMP-Jev-v1 already states the relevant
 scope and example distinctions; these outputs do not establish a missing
 instruction or a contradiction. The recommendation was to leave it unchanged
 and inspect the saved merge decisions in the hierarchy UI. The user approved
-that comparison, not a revision, additional inference or adoption.
+that comparison, not a revision or adoption. Additional inference was approved
+separately for the missing pairs below.
+
+## Completed comparison — HR02-NMP03
+
+The user reviewed Sleep and said it looked fine, then asked why same-title
+nesting remained elsewhere. The first UI applied only 22 tested pairs, leaving
+33 pairs untested. The user approved testing all remaining pairs with unchanged
+NMP-Jev-v1 and refreshing the comparison, not another Sleep trial or UI redesign.
+That review does not establish individual human labels for the Sleep decisions.
+
+All 33 new calls completed with valid native answers: 16 Yes and 17 No, no
+Uncertain, failures, retries or reused requests. The prior 22 mask answers and
+all title answers were reused without inference. Selection is exactly the
+`untested` original links from the v2 verification, prepared through
+`merge_tree_nesting.mask_pair_cases`; no hand-selected exclusions were added.
+
+Both methods now cover all 55 original links across the same eleven branches.
+The 66 original groups become 36 with mask-based merging and 26 with title-based
+merging. Counts are not quality scores. In the mask view, Coffee becomes one
+group, Art remains four, and Children becomes six. Sixteen same-title links
+remain (ignoring capitalization), all because of native No answers, not missing
+checks. Dinner becomes one group, applying the previously flagged broad/narrow
+merge without an override. Sleep is unchanged. No new titles or semantic parent
+placement are included.
+
+Receipts: `sse_multivector/experiments/hr02-remaining-mask-merge-jev-v1/`.
+Exact selection and derived inputs:
+`target/hierarchy-build-v1/hr02-remaining-mask-merge-v1/`.
+Provider-reported cost was $0.000785778.
+The original partial comparison remains preserved; canonical HR02 is unchanged.
 
 ## Saved hierarchy comparison
 
@@ -128,12 +159,11 @@ and Mask-based merges for each tested topic. Sleep, Dinner, Art and Children
 appear first; seven further topics are under Other tested topics. These are
 navigation menus, not newly generated hierarchy nodes.
 
-Both methods apply only the same **22 tested original pairs**. All **33 other
-links** in the displayed branches remain separate in both views, even where
-title-only answers already exist. Thus the title view is a matched-coverage
-comparison, not the fully consolidated historical title result. View labels
-show tested/total counts; `?` exposes native answers, untested links and saved
-agent concerns. Native mask answers are never relabeled as containment answers.
+Both methods apply the same **55 tested original pairs**, with **no untested
+links** in the displayed branches. The title view now applies all saved title
+decisions within those branches; the mask view combines the three saved runs.
+View labels show tested/total counts; `?` exposes native answers and saved agent
+concerns. Native mask answers are never relabeled as containment answers.
 
 All original groups remain in the Original view. Surviving groups retain their
 saved titles and masks; no renamed nodes, inferred memberships, semantic parent
@@ -152,21 +182,24 @@ direct posts, and O shows masks outside the children, individually with IDs;
 approved, edited or merged by browsing.
 
 The reusable offline exporter is [merge_tree_comparison.py](../merge_tree_comparison.py),
-configured by [merge-comparison-hr02-v1.json](../merge-comparison-hr02-v1.json).
+configured by [merge-comparison-hr02-v2.json](../merge-comparison-hr02-v2.json).
 It validates the saved title/mask experiment receipts through the shared runner,
 reuses existing contraction and mask rendering, and refuses to overwrite an
 export. Generated categories, source hashes and reversible mappings are ignored
-under `target/hierarchy-build-v1/hr02-merge-comparison-v2/`.
+under `target/hierarchy-build-v1/hr02-merge-comparison-v3/`.
+The v1 manifest is retained as provenance for the earlier partial comparison.
 
-Verification: the new test suite first failed because the exporter did not yet
-exist; a further test caught ambiguous attribution of agent comments, now fixed.
-All five new tests and 83 related tests pass. The browser accepts the export
-with `--check`; interactive inspection confirms the three-view menu and full
-post display with original mask IDs. Canonical HR02 is unchanged.
+Verification: all 88 comparison, nesting, title-input and experiment tests pass.
+The launcher coverage check first failed with 33 untested pairs, then passed
+after pointing it at the completed export. The actual browser accepts that
+export with `--check`. All 66 original groups, original masks, complete posts,
+source hashes and prior decisions remain unchanged; both methods preserve
+reversible original-group mappings. The earlier interactive check verified the
+unchanged three-view menu and full-post display with original mask IDs.
 
-Next: review Sleep first to see the reduction in repeated levels, then Dinner
-to assess the cost of losing a narrower group. This is a browsing comparison,
-not a decision to adopt either merge method.
+Next: inspect the remaining Children and Art nesting. These levels now survive
+because of model decisions, not incomplete coverage. This is a browsing
+comparison, not a decision to adopt either merge method.
 
 The full delta against NSP-Jev-v3 and its exact edits are reproducible from
 `prompt.txt.revision.json`, generated by `experiment.py revise`. The prompt is
