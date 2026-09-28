@@ -16,61 +16,61 @@
       "id": "03",
       "title": "Test hierarchy across more topics",
       "status": "WAITING",
-      "description": "200: prominence + correctness.\n300: scalable construction + correctness.\n500: combine both; profile build.\nEnsure pair filtering keeps useful links.\nSTART WITH 02; FINISH WITH 24–27"
+      "description": "200: prominence + correctness.\n300: scalable construction + correctness.\n500: combine both; profile build.\n~1–2k: review rung before the release build.\n2–5k: release build, teacher-labeled and fully automated.\nEnsure pair filtering keeps useful links.\nSTART WITH 02; FINISH WITH 24–27"
     },
     {
       "id": "04",
       "title": "Define mask prominence",
-      "status": "PAUSED",
-      "description": "Develop the per-note mask-prominence prompt and output format. Mask prompt finished; prominence remains paused."
+      "status": "IN PROGRESS",
+      "description": "Develop the per-note mask-prominence prompt and output format. Mask prompt finished. In launch scope and actively worked on (user correction September 28); teachers generate prominence for the release corpus and 27 orders notes from it."
     },
     {
       "id": "05",
       "title": "Prepare pilot training data",
       "status": "WAITING",
-      "description": "Informal start: available subject/mask data; no prominence.\nLater: selected teachers, masks + prominence and separate evaluation notes.\nLARGER PILOT WAITING FOR 04 + 17"
+      "description": "Model track. Informal start: available subject/mask data; no prominence.\nLater: selected teachers, masks + prominence and separate evaluation notes.\nLARGER PILOT WAITING FOR 04 + 17"
     },
     {
       "id": "06",
       "title": "Choose the model to train",
       "status": "WAITING",
-      "description": "Informal: one fine-tune learns both subject and mask prompts; untuned baselines, no prominence.\nFormat examples and evaluate quality, speed and cost.\nCheck a small hierarchy from pilot outputs before model selection.\nConfirm weight-release permission before selection.\nCOMPLETION NEEDS 05 + 18"
+      "description": "Model track. Informal: one fine-tune learns both subject and mask prompts; untuned baselines, no prominence.\nFormat examples and evaluate quality, speed and cost.\nCheck a small hierarchy from pilot outputs before model selection.\nConfirm weight-release permission before selection.\nCOMPLETION NEEDS 05 + 18"
     },
     {
       "id": "07",
       "title": "Generate full training data",
       "status": "WAITING",
-      "description": "Produce masks + prominence to train the distilled model. Quality checks remain open.\nDATA TARGET · SEPTEMBER 27\nAFTER SUCCESSFUL 500-NOTE HIERARCHY RUN (03)\n+ TEACHER SELECTION (17); VOLUME DECISION OPEN"
+      "description": "Model track. Produce masks + prominence to train the distilled model. Quality checks remain open. The September 27 data-readiness target no longer constrains the release.\nAFTER SUCCESSFUL 500-NOTE HIERARCHY RUN (03)\n+ TEACHER SELECTION (17); VOLUME DECISION OPEN"
     },
     {
       "id": "08",
       "title": "Distill and package the model",
       "status": "WAITING",
-      "description": "Train on Vast.ai; check unseen-note masks/prominence and runtime.\nPrepare weights, supporting files, usage instructions and evaluation results.\nVerify loading and mask/prominence generation.\nWAITING FOR 06 + 07"
+      "description": "Model track. Train on Vast.ai; check unseen-note masks/prominence and runtime.\nPrepare weights, supporting files, usage instructions and evaluation results.\nVerify loading and mask/prominence generation.\nWAITING FOR 06 + 07"
     },
     {
       "id": "09",
       "title": "Choose notes for launch hierarchy",
       "status": "WAITING",
-      "description": "Select English kind-1 posts (no replies/quotes) from 3.51M candidates. Choose size for useful coverage and an affordable build; freeze note IDs.\nWAITING FOR 20 + SELECTION"
+      "description": "Select 2,000–5,000 English kind-1 posts (no replies/quotes) from the 3.51M candidates — the decided PoC release band — and freeze note IDs.\nWAITING FOR 20 + SELECTION"
     },
     {
       "id": "10",
       "title": "Check full-build time and cost",
       "status": "WAITING",
-      "description": "Can the distilled model produce launch-corpus masks + prominence, and the pipeline build the hierarchy, within budget and by October 18?\nNEEDS 08 + 09 + 20 + 28"
+      "description": "Model track / scalability roadmap: can the distilled model generate masks + prominence at launch scale, and the pipeline build the full hierarchy, within budget? Not a gate on the release.\nNEEDS 08 + 09 + 20 + 28"
     },
     {
       "id": "11",
       "title": "Test hierarchy with the distilled model",
       "status": "WAITING",
-      "description": "Build a sample hierarchy from its masks + prominence; check browsing and complete-pipeline operation.\nNEEDS 03 + 08"
+      "description": "Model track: build a sample hierarchy from its masks + prominence; check browsing and complete-pipeline operation. Passing this gates the model release.\nNEEDS 03 + 08"
     },
     {
       "id": "12",
       "title": "Build launch hierarchy snapshot",
       "status": "WAITING",
-      "description": "Use the distilled model’s masks + prominence to build the hierarchy. GPUs: Vast.ai. Check nodes, coverage, ranking and reproducibility.\nFor release: runnable code + instructions, architecture and continual-update path matching this build.\nNEEDS 10 + 11\nAND BUDGET APPROVAL"
+      "description": "Build the release snapshot: teachers generate subjects, masks and prominence over the frozen 2–5k corpus; the validated pipeline builds the hierarchy fully automated, with no manual repair. Check nodes, coverage, ranking and reproducibility.\nFor release: runnable code + instructions, architecture and continual-update path matching this build, and the scalability roadmap.\nNEEDS 03 + 09 + 17\nAND BUDGET APPROVAL"
     },
     {
       "id": "13",
@@ -82,19 +82,19 @@
       "id": "14",
       "title": "Build public hierarchy service",
       "status": "WAITING",
-      "description": "Serve a saved hierarchy via our Nostr protocol on rented hosting.\nTest capacity and deployment.\nSix months hosting: provisional.\nSTART: 13 · TEST: 02 SNAPSHOT"
+      "description": "Build service code that serves a saved snapshot over our Nostr protocol; verify it end to end locally and provide tested serving instructions. No operated hosting is required; hosting a demo is optional.\nSTART: 13 · TEST: 02 SNAPSHOT"
     },
     {
       "id": "15",
       "title": "Build Notedeck hierarchy browser",
       "status": "WAITING",
-      "description": "Browse hierarchy nodes and display their notes through our Nostr service; test service integration.\nSTART WITH 13; FINISH WITH 14"
+      "description": "Browse hierarchy nodes and display their notes through our Nostr service; test service integration. Delivered as a branch published on the user’s fork.\nSTART WITH 13; FINISH WITH 14"
     },
     {
       "id": "16",
       "title": "Launch public hierarchy",
       "status": "WAITING",
-      "description": "Launch service + Notedeck; publish the distilled model (08), full code, architecture and continual-update path (12).\nTARGET · OCTOBER 18"
+      "description": "Publish the release package: snapshot, code and architecture, tested serving instructions, scalability roadmap, and the Notedeck fork branch. The model track publishes the open-weight model whenever it passes 08 + 11; a hosted demo is optional.\nTARGET · OCTOBER 18"
     },
     {
       "id": "17",
@@ -355,15 +355,28 @@
       "label": "masks + prominence from the distilled model"
     },
     {
-      "source": "10",
+      "source": "03",
       "target": "12",
       "kind": "required",
-      "label": "feasibility required before full build"
+      "label": "validated automated workflow"
+    },
+    {
+      "source": "09",
+      "target": "12",
+      "kind": "required",
+      "label": "frozen release corpus"
+    },
+    {
+      "source": "17",
+      "target": "12",
+      "kind": "required",
+      "label": "teachers label the corpus"
     },
     {
       "source": "11",
-      "target": "12",
-      "kind": "required"
+      "target": "16",
+      "kind": "helpful",
+      "label": "model track publishes when it passes"
     },
     {
       "source": "02",

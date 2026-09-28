@@ -1,6 +1,6 @@
 # October 18 release decisions
 
-Updated September 26, 2026. This is the written record of the planning discussion.
+Updated September 28, 2026. This is the written record of the planning discussion.
 Agreed requirements, tentative choices and existing-data facts are distinguished
 below. The overall plan is not approved. Approval of an individual requirement
 or task-view edit does not approve the whole plan. The earlier draw.io diagram
@@ -278,12 +278,12 @@ Approved placement decisions for that separate hierarchy (changes not yet applie
 | Foods | Meat consumption | Keep. Discussing eating meat necessarily concerns food. The hierarchy organizes topics, so the child need not name a food item rather than an activity. No change to this baseline link is needed. |
 | Meat consumption | Beef | Remove. Discussing beef, such as its cuts or storage, does not necessarily discuss eating it. Retain Beef's Meat and animal fat products parent. The Jev baseline remains unchanged. |
 
-Mask-prominence work (04) is paused, reconfirmed by the user on September 23.
-Its mask-prompt prerequisite is satisfied. It need not wait for the 100-note
-hierarchy or title correction. Its prompt and validation are not complete.
-The user plans to revisit its open questions during the 100-note hierarchy
-build, using what that hierarchy reveals. The exact point remains open; this
-does not mark 04 active or authorize work to resume.
+Mask-prominence work (04) is in launch scope and, per the user's correction on
+September 28, actively being worked on; the earlier pause notes, including the
+September 23 reconfirmation, are superseded. Its mask-prompt prerequisite is
+satisfied. It need not wait for the 100-note hierarchy or title correction.
+Teachers generate prominence for the release corpus, and 27 turns it into
+node-note ordering. Its prompt and validation are not complete.
 The user confirms 17 is underway, comparing Muse high and Astra low;
 no teacher is selected.
 This does not establish completion of the subject/mask/prominence comparison (17).
@@ -338,13 +338,27 @@ the wording of its time.
 
 ## Agreed release goal
 
-By October 18, 2026, release:
+By October 18, 2026 — a date the user declared non-negotiable — release **the
+release**, the only must-deliver package:
 
-- A public service hosting a genuinely useful hierarchy for discovering Nostr content,
-  served through a custom Nostr protocol.
-- Notedeck browsing integration, implemented by agents under the user's direction.
-- An open-weight distilled model for generating masks and prominence.
+- A genuinely useful, fully automated hierarchy snapshot over a 2,000–5,000-note
+  corpus for discovering Nostr content, built without manual repair and judged by
+  the user's browsing review.
 - The full hierarchy-generation architecture and code.
+- Tested service code and instructions for serving the snapshot over the custom
+  Nostr protocol locally. Operating public infrastructure is not required.
+- Notedeck browsing integration, delivered as a branch published on the user's
+  fork and verified against a locally served snapshot.
+- A roadmap to scalability: the fine-tuning path for replacing the expensive
+  teacher calls at larger corpus sizes.
+
+Two optional tiers accompany the release:
+
+- **The model track** (nice-to-have, not a bare necessity): the open-weight
+  distilled model with usage docs, published whenever it passes its quality
+  gate (08 + 11), inside or after the release window.
+- **The hosted demo** (cherry on top): we operate the service ourselves, only
+  if everything else lands.
 
 A static launch snapshot is acceptable. Continual updates are not required for
 launch, but the release documentation must describe a path to supporting them.
@@ -352,6 +366,41 @@ Agents write the code; the user directs their work and reviews results rather
 than coding personally. The user can oversee overlapping efforts while agents
 are working, though parallel capacity is not unlimited or quantified. Individual
 agent assignments remain open.
+
+### Release-shape revision — September 28, 2026
+
+As the schedule slipped, the user re-cut the release shape on September 27–28:
+the date is fixed and the process must stay automated, so scope — not quality
+or automation — is the flexible knob. The names **the release**, **the model
+track** and **the hosted demo** replace the informal “Plan A / Plan B” wording.
+The release is the default path and always ships its snapshot; the model track
+is additive, never a replacement. The earlier goal listed an open-weight
+distilled model and an operated public service as launch deliverables; the
+model is now an optional tier and operating infrastructure is no longer
+required at all.
+
+The corpus decision is a proof of concept: an actually good, fully automated
+hierarchy over 2–5k notes demonstrates a correct process at small scale, and
+the roadmap to scalability names fine-tuning models for the expensive steps as
+the credible next step toward larger corpora. The user's browsing review
+remains the acceptance bar. Teacher selection (17) stays on the release path
+because teachers label the release corpus. Prominence (04) is in launch scope;
+per the user's correction on September 28 it is actively being worked on, and
+the earlier “paused” notes are superseded. Teachers generate prominence for
+the release corpus, and 27 orders node notes from it.
+
+The model-track quality gate is unchanged: a trained model must demonstrate
+acceptable masks and prominence on unseen notes (08) and build a hierarchy that
+passes the user's browsing review (11); “training ran” does not pass. The
+September 27 training-data readiness target belongs to the model track and no
+longer constrains the release. The validation ladder is kept and extended —
+200 / 300 / 500 as approved, then a ~1–2k-note review rung, then the 2–5k
+release build — because each rung gives diagnostic reference points when a
+larger build misbehaves, and the release build must not be an uninstrumented
+jump in scale. The dependency graph follows: the release build (12) now takes
+its inputs from the validated workflow (03), the frozen corpus (09) and the
+selected teachers (17), while the distilled-model checks (10, 11) gate the
+model track instead of the release.
 
 ## Corpus scope and size
 
@@ -366,6 +415,12 @@ establish either. The final processed count and exact subset remain open.
 Use the existing corpus as the starting point. Processing the whole candidate
 pool is not committed, and additional collection is not currently a prerequisite.
 Reconsider collection if a demonstrated coverage gap warrants it.
+
+**Release corpus (PoC, decided September 27, 2026):** the release snapshot
+covers 2,000–5,000 notes. The proof of concept demonstrates a correct
+automated process at small corpus size — an actually good hierarchy is the
+deliverable, not note count — and the roadmap to scalability covers larger
+corpora. The exact subset remains open within that band and is frozen by task 09.
 
 ### Data already available
 
@@ -409,7 +464,10 @@ filtering must preserve useful parent–child links, not just reduce relationshi
 checks.
 The 500-note / 5-topic build checks the combined pipeline and profiles build
 time and memory to find bottlenecks. All three increase subject coverage; none
-is merely a test of handling more notes.
+is merely a test of handling more notes. The ladder extends past 500: a
+~1–2k-note rung with full user review precedes the 2–5k release build (see the
+release-shape revision above), so the release build is never an uninstrumented
+jump in scale.
 
 Runtime, memory and million-note processing cost still require separate
 measurements. Profiling 500 notes does not establish launch-scale feasibility.
@@ -765,7 +823,8 @@ validation of the rebuilt hierarchy remains in 02.
 For 26, the [browser implementation and regression checks](../../sse_multivector/navigation-research-v1/README.md#shared-child-collapse)
 are complete; validation of this simplification in a rebuilt hierarchy remains
 pending.
-27 waits for 04, which remains paused. 28 waits for the validated small-corpus
+27 waits for 04, which is in launch scope and actively being worked on
+(September 28 correction). 28 waits for the validated small-corpus
 workflow and scale findings. Readiness does not authorize execution. Membership
 methods, final node-equivalence/cycle policy, ranking rules and scale
 implementation choices remain open.
@@ -774,8 +833,8 @@ The 100-note build exposed a relationship-quality blocker at minimal scope,
 without membership expansion or a claim to exercise scalable construction.
 Task 25's implementation gate is satisfied. Task 02 remains open while a
 frontier-call diagnostic tests whether the other stages support a useful
-hierarchy. Preliminary 200-note construction can follow 02 while prominence
-is paused, but its note-ordering check needs 04 and 27. The 300-note
+hierarchy. Preliminary 200-note construction can follow 02 before prominence is
+finished, but its note-ordering check needs 04 and 27. The 300-note
 scalable-construction work can proceed without waiting for that ordering
 check. Completing the combined 500-note validation (03) requires
 24–27. The prominence dependency remains 04 → 27 → 03. The stages' internal
@@ -809,8 +868,8 @@ Publication preparation belongs to the existing tasks, not a new workstream:
 | --- | --- |
 | **06 · Choose the model to train** | Confirm permission to release fine-tuned weights before selecting the base model and committing to the larger training run. Teacher provider permissions remain in 17. |
 | **08 · Distill and package the model** | Prepare trained weights, necessary supporting files, usage instructions and evaluation results. Verify that the intended release files load and generate masks and prominence. |
-| **12 · Build launch hierarchy snapshot** | Prepare runnable hierarchy-generation code and instructions, architecture documentation matching the actual build, and the agreed continual-update path. |
-| **16 · Launch public hierarchy** | Publish the prepared model, code and documentation alongside the service and Notedeck integration. |
+| **12 · Build launch hierarchy snapshot** | Prepare runnable hierarchy-generation code and instructions, architecture documentation matching the actual build, the agreed continual-update path, and the scalability roadmap. |
+| **16 · Launch public hierarchy** | Publish the release package: the snapshot, code and documentation, tested serving instructions, the scalability roadmap, and the Notedeck fork branch. The model track publishes the open-weight model whenever it passes its gate; a hosted demo is optional. |
 
 Preparation can accompany development; final verification requires the actual
 release artifacts. Checking an internal training checkpoint alone does not
@@ -894,7 +953,7 @@ cutoff, measured rates and counts, and the final corpus size remain open.
 1. After the good 100-note hierarchy, use 200 notes to test correctness and
    prominence-based ordering, 300 to test correctness and scalable construction,
    and 500 to validate them together and profile the build. The 200-note
-   construction can start while prominence is paused, but its ordering check
+   construction can start before prominence is finished, but its ordering check
    cannot finish without 04 and 27. The 300-note work need not wait for that
    check. The combined 500-note validation still needs 24–27.
 2. Start scale measurements during Week 2. Measure the complete build, including
@@ -942,15 +1001,17 @@ schedule fits.
 | Model fine-tuning, including the planned pilot fine-tunes | Vast.ai |
 | GPU work for generating the hierarchy snapshot | Vast.ai |
 | Local processing and orchestration | The user's own servers; detailed allocation remains open |
-| Public service serving the completed snapshot through the Nostr protocol | Rented hosting |
+| Serving the completed snapshot through the Nostr protocol | Wherever the user runs it; the release ships tested instructions. Operating rented hosting is the optional hosted demo |
 
 Do not assume that training or snapshot GPU work will run on the user's own
-GPUs. The rented public endpoint serves completed data; it does not build the
-hierarchy or require live model inference for browsing.
+GPUs. A hosted endpoint, if run at all, serves completed data; it does not
+build the hierarchy or require live model inference for browsing.
 
-Six months of public hosting is a **provisional planning target**, not a finalized
-commitment. If launch occurs on October 18, that would extend through April 18,
-2027. The hosting provider, capacity and cost remain open.
+Hosting is optional — the cherry-on-top demo — and not a release requirement.
+If the user elects to run it, six months remains a **provisional planning
+target**, not a finalized commitment; from an October 18 launch that would
+extend through April 18, 2027. The hosting provider, capacity and cost remain
+open.
 
 The $1,000 lifetime paid-resource cap still applies, including prior spending,
 Vast.ai training and snapshot GPU costs, hosting, storage, transfers and reruns.
@@ -963,13 +1024,15 @@ No allocation or new spending is approved by this document.
 
 ## Still open
 
-- Final corpus subset and processed count; whether existing length and language
-  filtering policies meet the release scope.
+- Final corpus subset within the decided 2–5k release band and its processed
+  count; whether existing length and language filtering policies meet the
+  release scope.
 - Concrete release-quality judgments, informed by the expanding hierarchy builds.
 - Teacher selection, the base model for the distilled model, both pilots' details and final training volume.
 - Teacher-output quality checks and treatment of unsuitable outputs.
 - Scale-measurement procedures, measured rates and counts, and the cosine cutoff.
-- Measured costs and budget allocations; rented-host capacity and confirmed duration.
+- Measured costs and budget allocations; demo-hosting capacity and duration if
+  the hosted demo runs.
 - Detailed task ownership and a feasible calendar within the proposed five-week sequence.
 
 The diagram's page 2 incorporates these approved scheduling changes into the

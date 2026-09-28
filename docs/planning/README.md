@@ -15,6 +15,13 @@ missing endpoints, duplicate IDs or links, and unknown statuses or link kinds.
 The written decision record remains the source for requirements, rationale,
 approvals, and open questions. Task readiness is not authorization to begin.
 
+The September 28 [release-shape revision](release-decisions.md#release-shape-revision--september-28-2026)
+re-cut the deliverables: the release is the only must-deliver package — a
+fully automated 2–5k-note snapshot with code and tested local serving
+instructions. The open-weight model is the nice-to-have model track, and
+operating the service is an optional demo. Task texts and statuses reflect
+that revision.
+
 The earlier `october-18-release.drawio` and its read-only [viewer](index.html)
 remain available, including the proposed weekly-targets page. They are not the
 source for current task status and may lag the JSON graph. The default route
@@ -184,13 +191,11 @@ accepted `grownostr` and `guarani`, rejected `Daily painting` and `Brands`, and
 authorized proceeding with all Astra titles, retaining every node and flagging
 the two rejected titles. The Luna-title run is stopped with its completed
 answers preserved; the Astra-title scoring and naming runs are complete.
-Node 04 (mask prominence) is grey and marked paused, reconfirmed by the user on
-September 23. Earlier experimental work does not establish that it is active
-now. Its mask-prompt prerequisite is satisfied. It need not wait for
-the 100-note hierarchy or title correction. Its prompt and validation are not
-complete. The user plans to revisit its open questions during the 100-note
-build as the hierarchy becomes clearer; the exact point is open. The top
-summary names only the green workstreams. Readiness
+Node 04 (mask prominence) is in launch scope and actively worked on, per the
+user's correction on September 28; the earlier paused notes are superseded. Its
+mask-prompt prerequisite is satisfied. Teachers generate prominence for the
+release corpus, and 27 orders node notes from it. Its prompt and validation are
+not complete. The top summary names only the green workstreams. Readiness
 does not authorize research, implementation, agent assignment or spending.
 
 Node 24 is ready but not started: recover missing memberships. Node 25 is
@@ -207,9 +212,11 @@ to complete the 500-note validation in 03. The 100-note run checks correctness
 at minimal scope. The 200-note run adds prominence-based note ordering; the
 300-note run tests scalable construction, including whether filtering retains
 useful parent–child links; the 500-note run validates the combined pipeline
-and profiles its build.
+and profiles its build. A ~1–2k-note review rung then precedes the 2–5k
+release build (September 28 ladder extension), so every scale jump keeps
+diagnostic reference points.
 Membership recovery does not expand the limited 100-note diagnostic. The
-200-note construction can start while prominence is paused, but its ordering
+200-note construction can start before prominence is finished, but its ordering
 check needs 04 and 27; 300-note work need not wait for that check. The
 04 → 27 → 03 completion dependency is unchanged.
 No membership algorithm, final cycle-resolution method or ranking formula is
