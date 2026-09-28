@@ -6,6 +6,8 @@ The unchanged title-only NSP-Jev-v3 remains the saved comparison baseline.
 The separate [NMP-Jev-v2 trials](../node-merge-prompt-jev-v2/prompt.txt) below use
 Jev and Astra low. They are tested, not adopted. The completed Astra view is
 available beside the unchanged saved Jev-v1 comparison.
+The user accepted the completed Astra merge result on September 28, 2026.
+This accepts the diagnostic result, not a production freeze or a larger run.
 
 This separate prompt asks whether two groups express the same topic at the same
 level of generality. It replaces generated title inputs with the masks in each
@@ -276,9 +278,15 @@ contraction leaves 22 of the 66 original groups, versus 36 with Jev masks and
 Agent inspection finds a substantially more useful comparison: repeated Children
 and Art chains collapse; Dinner remains below Food and dining, Hot tea below
 Tea, Processed food below Food, and Sleep/Sleepiness remain distinct. These are
-judgments of this selected sample, not an accuracy score or user approval.
+agent judgments of this selected sample, not an accuracy score.
 
-Uncertainties remain visible through `?`, without changing any answers:
+On September 28 the user clarified that the Astra merge result looks good.
+Record that as acceptance of the overall diagnostic result, not separate
+ground-truth labels for all 55 pairs. No answers, prompts or hierarchy data
+change with this approval; production adoption and wider testing remain open.
+
+The earlier agent uncertainties remain visible through `?` as provenance,
+not prerequisites to accepting the result:
 
 - The sole repeated-title link is Morning → Morning. The smaller group has
   `Woke up` / `up`, `sunrise`, and `got up early`; Astra rejects equivalence
