@@ -1,0 +1,15 @@
+{
+  "state": {"A": {A_MASKS_JSON}, "B": {B_MASKS_JSON}},
+  "questions": {
+    "parent_child": {
+      "type": "choice",
+      "instructions": "A and B are groups of masks from social media posts. Each mask is a list of text fragments selected from one post; interpret its fragments together. For each group separately, identify the most specific topic shared by all its masks, rather than a summary of their contents. Which topic, if either, strictly contains the other? A contains B when discussing B is necessarily discussing A; apply the same test in reverse. Mere association or partial overlap is not enough.",
+      "criteria": {
+        "a_parent": "A contains B, but B does not contain A",
+        "b_parent": "B contains A, but A does not contain B",
+        "neither": "Neither topic contains the other, or the topics are equivalent",
+        "uncertain": "Cannot determine this from the masks"
+      }
+    }
+  }
+}

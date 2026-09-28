@@ -14,6 +14,11 @@ cross-branch pass HR02-NMP09 is complete and browsable below. Seven later Jev
 cycle contractions conflict with mask-merge No answers; these are flagged,
 not manually repaired. None of these experiments adopts a production pipeline.
 
+The current authorized work is drafting the separate
+[NSP-Astra-Masks-v1 parent–child prompt](../node-subsumption-prompt-astra-masks-v1/prompt.txt)
+below. It is untested. Existing merges, titles and hierarchies stay fixed;
+combining equivalence and placement in one prompt is deferred.
+
 This separate prompt asks whether two groups express the same topic at the same
 level of generality. It replaces generated title inputs with the masks in each
 group. It does not generate titles, place parents or change the saved tree.
@@ -553,14 +558,54 @@ No-vetoed Yes chains, exact-mask provenance, saved/new title binding, existing
 Jev graph/export integration, individual-mask export, the new launcher's
 arguments/refusals, root-only ungrouped masks, conflict reporting without graph
 changes, and shared-runner regressions. Generated artifacts remain ignored.
-Next is reviewing the combined browsing result, including the flagged stage
-conflicts; no further component changes or production adoption are approved.
+Subsequent read-only inspection identified missing browsing routes and the
+flagged stage conflicts. The next authorized work is the parent–child prompt
+draft below, not another hierarchy run or production adoption.
 
 The reusable specs are
 [merges](../experiment_specs/hr02-cross-branch-merge-astra-low-v1.json),
 [new titles](../experiment_specs/hr02-cross-branch-titles-astra-low-v1.json) and
 [placement](../experiment_specs/hr02-cross-branch-placement-jev-v1.json).
 Receipts are in `sse_multivector/experiments/hr02-cross-branch-merge-astra-low-v1/`.
+
+## Parent–child prompt draft — NSP-Astra-Masks-v1
+
+The user approved drafting a separate mask-based parent–child question before
+combining placement and equivalence. [NSP-Astra-Masks-v1](../node-subsumption-prompt-astra-masks-v1/prompt.txt)
+is **draft, untested, not approved for inference**. Its revision base is the
+accepted NMP-Jev-v2 text, not a new combined prompt or the title-only Jev prompt.
+The existing groups, merge answers, titles and browser exports are unchanged.
+
+Keep NMP-Jev-v2's grouped-mask inputs and interpretation instructions verbatim.
+Change the question to `parent_child`, with one choice per pair:
+`a_parent`, `b_parent`, `neither`, or `uncertain`. Containment must be strict:
+the narrower topic necessarily concerns the broader topic, not merely a related
+topic. Equivalent topics produce `neither` for this placement-only question;
+this does not reject equivalence or trigger a new merge. `uncertain` remains
+unresolved, not a negative answer. No title, full-post context, tree position,
+model explanation, confidence score or example is added to the model input.
+The JSON question envelope is retained from the successful Astra mask trials.
+
+The intended diagnostic keeps the 148 pre-Jev HR02-NMP09 groups fixed, using
+Astra low and the shared experiment runner. Mapping the saved in-branch links
+and cross-branch shortlist onto those groups yields 32 in-branch pairs and
+535 cross-branch pairs, with one pair in both lists: **566 unique pairs**.
+This is a read-only inventory count, not a prepared experiment or call approval.
+It excludes retries and extra ancestor comparisons; request reuse may reduce
+actual calls. This count does not describe a combined merge/placement run.
+
+Prompt wording needs review before a small automatically selected diagnostic.
+Its selection, output schema, graph-conflict policy and any extra ancestor
+comparisons are not implemented or settled by this draft. No existing Jev
+validator or cycle-merging code is silently reused for the new answer type.
+Any later full pass requires separate authorization. Human review evaluates
+the automated result; it does not supply undisclosed placement repairs.
+
+The [official OpenAI prompting guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
+informed the short task, explicit answer meanings and absence of examples or
+requested chain-of-thought. It does not establish semantic accuracy. The shared
+`experiment.py revise` command records the exact base hash and edits in the
+adjacent `.revision.json`; the accepted merge prompt is unchanged.
 
 ## Saved hierarchy comparison
 

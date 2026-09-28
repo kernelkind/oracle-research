@@ -558,9 +558,17 @@ The shared hierarchy construction is masks → SSE vectors → flat HDBSCAN grou
 node descriptions → cosine-filtered candidate pairs → subsumption judgments →
 directed node hierarchy. Prominence supports note ordering. The relationship
 method remains open: TRUE generated HR02, but its judgments were not good
-enough. The separate Jev hierarchy is now the diagnostic baseline; the approved
-next step is a separately recorded manual placement correction for evaluating
-the other stages, not a production choice.
+enough. The separate Jev hierarchy remains a diagnostic baseline; the earlier
+manual-placement decisions remain preserved and unapplied. The current
+authorized work is drafting
+[NSP-Astra-Masks-v1](../../sse_multivector/node-subsumption-prompt-astra-masks-v1/prompt.txt),
+a separate mask-based parent–child prompt based on the accepted merge prompt.
+The intended test reuses the 148 pre-Jev HR02-NMP09 groups, existing merges and
+titles, with comparisons selected automatically from tree links and the bounded
+cross-branch shortlist. No new model calls or graph implementation are approved
+by this draft. Combining merging and placement in one prompt is deferred;
+prompt approval, the small test, conflict handling and production adoption remain
+open. See the [draft scope](../../sse_multivector/node-merge-prompt-jev-v1/README.md#parentchild-prompt-draft--nsp-astra-masks-v1).
 The cosine cutoff and its implementation remain open. Existing all-pairs
 experiments do not establish filtered behavior; filtering must preserve useful
 parent–child links, not merely reduce calls.
@@ -588,10 +596,10 @@ choose a member's title. Preserve every original title and node ID. This call
 only names the merged node: it does not decide the merge, change its links or
 trigger another round of TRUE comparisons. The offline preparation, verified
 title collection and browser export are implemented; a four-node live check
-is complete. TRUE's relationship quality prevented HR02 validation; the separate
-Jev baseline and approved manual-placement diagnostic above are the current
-direction. This does not authorize further model calls or settle the provisional
-merge policy.
+is complete. TRUE's relationship quality prevented HR02 validation. The saved
+Jev baseline and earlier manual-placement decisions remain intact; the current
+parent–child prompt draft above changes neither naming nor saved graphs. This
+does not authorize further model calls or settle the provisional merge policy.
 
 ### Reversible hierarchy design decisions
 
