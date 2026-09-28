@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "prompt": {"id": "NMP-Jev-v2", "path": "../node-merge-prompt-jev-v2/prompt.txt"},
+  "dataset": {"adapter": "generic", "path": "../../target/hierarchy-build-v1/hr02-cross-branch-coffee-v1/cases.json"},
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "concurrency": 10,
+    "timeout_seconds": 300,
+    "output_schema": {
+      "type": "object", "additionalProperties": false, "required": ["same_topic"],
+      "properties": {
+        "same_topic": {
+          "type": "object", "additionalProperties": false, "required": ["type", "choice"],
+          "properties": {
+            "type": {"type": "string", "enum": ["choice"]},
+            "choice": {"type": "string", "enum": ["yes", "no", "uncertain"]}
+          }
+        }
+      }
+    }
+  }
+}

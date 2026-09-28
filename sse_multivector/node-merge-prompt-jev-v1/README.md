@@ -8,7 +8,8 @@ Jev and Astra low. They are tested, not adopted. The completed Astra view is
 available beside the unchanged saved Jev-v1 comparison.
 The user accepted the completed Astra merge result on September 28, 2026.
 That acceptance was not a production freeze. The user subsequently approved
-the separate wider HDBSCAN diagnostic HR02-NMP07 below.
+the separate wider HDBSCAN diagnostic HR02-NMP07 below, followed by the
+six-group cross-branch Coffee comparison HR02-NMP08. Neither changes production.
 
 This separate prompt asks whether two groups express the same topic at the same
 level of generality. It replaces generated title inputs with the masks in each
@@ -395,8 +396,51 @@ cd /home/dev/src/notedeck_worktrees/algos && \
 bash oracle-mvp/sse_multivector/run-hdbscan-merge.sh
 ```
 
-Next suggested review: inspect the 32 retained subdivisions, including the
-remaining repeated-title steps, before introducing another placement stage.
+The user requested a smaller review rather than inspecting all 32 subdivisions.
+The subsequent cross-branch Coffee comparison is recorded below; it does not
+introduce parent placement or change this saved view.
+
+## Cross-branch Coffee comparison — HR02-NMP08
+
+The user approved comparing six surviving original groups: four titled Coffee
+(case-insensitive), Coffee beans and coffee shop. They have disjoint mask-ID
+sets and no children. Their titles identify this selection for the reader;
+the model receives only the two separate arrays of masks, as before.
+
+The offline `prepare-pairs` command validates the original sources and selected
+surviving memberships, then prepares every unordered pair in sorted group-ID
+order. It saves selection/source provenance without adding tree edges, applying
+merges or changing titles. The default adjacent-pair preparation is unchanged.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/hdbscan_nested_groups.py prepare-pairs \
+  target/hierarchy-build-v1/hr02-hdbscan-merge-v1 \
+  target/hierarchy-build-v1/hr02-cross-branch-coffee-v1 \
+  --groups S2f31604022 S54b2843dd5 S64fcf6c1d7 S794ece942d S6dde8fffb9 Sec383f12a1
+```
+
+That output already exists; preparation refuses to overwrite it. The tracked
+[experiment spec](../experiment_specs/hr02-cross-branch-coffee-astra-low-v1.json)
+uses unchanged NMP-Jev-v2 / Astra low with the HR02-NMP07 settings. The shared
+runner completed all **15 new calls** with valid answers, no retries or reuse:
+
+- All six comparisons between the four Coffee groups: **Yes**.
+- All nine other comparisons: **No**, keeping coffee shop and Coffee beans
+  distinct from Coffee and from each other.
+- No Uncertain answers or inconsistent equivalence chains in this sample.
+
+Agent inspection agrees with these decisions; they are not human-reviewed
+ground truth or a general accuracy estimate. Combining only the four Coffee
+groups would retain 17 masks from 14 posts, but **no merges were applied**.
+No containment judgments, new titles or hierarchy changes were made.
+
+Receipts and native usage are under
+`sse_multivector/experiments/hr02-cross-branch-coffee-astra-low-v1/`.
+All 95 relevant regression tests pass; original source replay and the saved
+merged-tree hash remain unchanged. The general comparison-selection and
+conflict-handling rules for cross-branch merging remain undecided. This test
+does not establish that merging separate branches can repair earlier bad merges.
 
 ## Saved hierarchy comparison
 

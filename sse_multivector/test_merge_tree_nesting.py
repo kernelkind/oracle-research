@@ -10,6 +10,27 @@ from experiment_inputs import render
 
 
 class MergeTreeNestingTests(unittest.TestCase):
+    def test_explicit_mask_pairs_compare_siblings_without_inventing_tree_edges(self):
+        from merge_tree_nesting import mask_pair_cases
+        items=[dict(instance='v'+g, vector_id=g, note_id=g, text=text,
+                    fragments=[text], byte_spans=[[0,len(text)]])
+               for g,text in [('a','coffee'),('b','coffee shop'),('c','coffee beans')]]
+        tree=dict(root='root',edges=[['root',g] for g in 'abc'],
+                  members={'root':[i['instance'] for i in items],
+                           **{g:[i['instance']] for g,i in zip('abc',items)}})
+        packets=dict(packets=[dict(packet=g,instances=[i]) for g,i in zip('abc',items)])
+        before=copy.deepcopy((tree,packets))
+        pairs=[('a','b'),('a','c'),('b','c')]
+        cases=mask_pair_cases(tree,packets,pairs=pairs)
+        self.assertEqual([c['id'] for c in cases],['a-same-topic-b','a-same-topic-c','b-same-topic-c'])
+        self.assertEqual(json.loads(cases[0]['inputs']['A_MASKS_JSON']),[['coffee']])
+        self.assertEqual(json.loads(cases[0]['inputs']['B_MASKS_JSON']),[['coffee shop']])
+        self.assertEqual(mask_pair_cases(tree,packets),[])
+        self.assertEqual((tree,packets),before)
+        for bad in [[('a','a')],[('a','missing')],[('root','a')],
+                    [('a','b'),('b','a')],[('a','b'),('a','b')]]:
+            with self.assertRaises(ValueError):mask_pair_cases(tree,packets,pairs=bad)
+
     def test_direct_equivalence_contracts_without_inventing_directional_answers(self):
         from merge_tree_nesting import contract_equivalence
         tree = dict(root='root', edges=[['root','a'],['a','b'],['b','c'],['b','d']],

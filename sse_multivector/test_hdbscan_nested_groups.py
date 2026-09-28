@@ -1,8 +1,14 @@
 """Offline regression checks for retaining and merging saved HDBSCAN groups."""
 import copy
+import contextlib
+import io
+from pathlib import Path
+import tempfile
 import unittest
 
+import hdbscan_nested_groups as nested
 from hdbscan_nested_groups import project, bind_saved, missing_title_packets
+from hierarchy_build import read, save
 from merge_tree_nesting import contract_equivalence
 
 
@@ -26,6 +32,40 @@ def fixture():
 
 
 class HdbscanNestedTests(unittest.TestCase):
+    def test_prepares_selected_surviving_pairs_without_changing_saved_groups(self):
+        result,mapping,posts=fixture()
+        tree,packets=project(result,mapping,posts)
+        with tempfile.TemporaryDirectory() as d, contextlib.redirect_stdout(io.StringIO()):
+            root=Path(d)
+            roots={b for a,b in tree['edges'] if a=='root'}
+            values=dict(hdbscan=dict(artifact=dict(result=result)),mapping=mapping,posts=posts,
+                        original_packets=dict(packets=[p for p in packets['packets'] if p['packet'] in roots]))
+            for name,value in values.items():save(root/(name+'.json'),value)
+            save(root/'manifest.json',dict(experiment_id='test',sources={k:k+'.json' for k in values},
+                                          merges=[],titles=[],sample_plans=[]))
+            base=root/'base';nested.prepare(root/'manifest.json',base)
+            merged=nested.artifact_directory(base/'merged')
+            choices={(a,b):'no' for a,b in tree['edges'] if a!='root'}
+            surviving=contract_equivalence(tree,choices)
+            save(merged/'tree.json',surviving)
+            before={p:p.read_bytes() for p in base.rglob('*') if p.is_file()}
+            groups=sorted(set(tree['members'])-{'root'})
+            output=root/'pairs'
+            nested.prepare_pairs(base,output,groups)
+            cases=read(output/'cases.json')['cases']
+            self.assertEqual(len(cases),3)
+            self.assertEqual([tuple(c['evidence'][k] for k in ('original_a_id','original_b_id')) for c in cases],
+                             [(groups[0],groups[1]),(groups[0],groups[2]),(groups[1],groups[2])])
+            self.assertEqual(read(output/'selection.json')['groups'],groups)
+            self.assertTrue((output/'.gitignore').exists())
+            self.assertEqual(before,{p:p.read_bytes() for p in before})
+            for bad in [[],groups[:1],[groups[0],groups[0]],['root',groups[0]],['unknown',groups[0]]]:
+                with self.assertRaises(ValueError):nested.prepare_pairs(base,root/'bad',bad)
+            # A removed group must not be silently selected from the original tree.
+            removed=groups[0];del surviving['members'][removed]
+            (merged/'tree.json').unlink();save(merged/'tree.json',surviving)
+            with self.assertRaises(ValueError):nested.prepare_pairs(base,root/'removed',groups)
+
     def test_preserves_eom_roots_skips_plateaus_and_keeps_aliases_and_noise(self):
         inputs = fixture()
         before = copy.deepcopy(inputs)

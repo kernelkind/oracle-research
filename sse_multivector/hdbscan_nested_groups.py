@@ -6,6 +6,7 @@ receipts, retries, usage and reviews. Original groups and sources are immutable.
 import argparse
 from collections import Counter
 import hashlib
+from itertools import combinations
 import json
 import math
 from pathlib import Path
@@ -198,6 +199,29 @@ def replay(directory):
     return spec,sources,tree,packets
 
 
+def prepare_pairs(directory, output, groups):
+    """Prepare all unordered pairs of selected survivors; do not apply merges."""
+    base=Path(directory)
+    spec,sources,tree,packets=replay(base)
+    merged_path=base/'merged/tree.json';merged=read(merged_path)
+    if len(groups)<2 or len(set(groups))!=len(groups):
+        raise ValueError('select at least two distinct surviving groups')
+    for g in groups:
+        if (g==tree['root'] or g not in merged['members'] or g not in tree['members'] or
+            set(merged['members'][g])!=set(tree['members'][g])):
+            raise ValueError('unknown, removed or changed group: '+g)
+    groups=sorted(groups)
+    cases=mask_pair_cases(tree,packets,pairs=combinations(groups,2))
+    out=artifact_directory(output)
+    save(out/'cases.json',dict(cases=cases))
+    save(out/'selection.json',dict(source_experiment=spec['experiment_id'],groups=groups,
+         source_directory=str(base.resolve()),sources=sources,
+         merged_tree=dict(path=str(merged_path.resolve()),
+                          sha256=hashlib.sha256(merged_path.read_bytes()).hexdigest()),
+         comparison_rule='all unordered pairs of selected surviving groups'))
+    print(json.dumps(dict(groups=len(groups),pairs=len(cases))))
+
+
 def merge(directory, experiment):
     base=Path(directory);spec,sources,tree,packets=replay(base)
     expected=expected_merges(tree,packets)
@@ -264,10 +288,13 @@ def package(directory, title_experiment):
 def main():
     p=argparse.ArgumentParser(description=__doc__);sub=p.add_subparsers(dest='command',required=True)
     s=sub.add_parser('prepare');s.add_argument('manifest',type=Path);s.add_argument('output',type=Path)
+    s=sub.add_parser('prepare-pairs');s.add_argument('directory',type=Path);s.add_argument('output',type=Path)
+    s.add_argument('--groups',nargs='+',required=True)
     s=sub.add_parser('merge');s.add_argument('directory',type=Path);s.add_argument('--experiment',type=Path,required=True)
     s=sub.add_parser('package');s.add_argument('directory',type=Path);s.add_argument('--titles',type=Path,action='append',default=[])
     a=p.parse_args()
     if a.command=='prepare':prepare(a.manifest,a.output)
+    elif a.command=='prepare-pairs':prepare_pairs(a.directory,a.output,a.groups)
     elif a.command=='merge':merge(a.directory,a.experiment)
     else:package(a.directory,a.titles)
 

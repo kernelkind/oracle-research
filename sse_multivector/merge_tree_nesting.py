@@ -87,9 +87,20 @@ def validate_decisions(tree, titles, report, prompt):
     return _validate_choices(pair_cases(tree,titles), report, prompt, 'contains')
 
 
-def mask_pair_cases(tree, packets):
-    """One direct-equivalence input per non-root edge, using exact source masks."""
+def mask_pair_cases(tree, packets, pairs=None):
+    """Compare exact masks for explicit pairs, or non-root edges by default."""
     groups = set(tree['members']) - {tree['root']}
+    if pairs is None:
+        pairs = [(a,b) for a,b in tree['edges'] if a != tree['root']]
+    else:
+        pairs = list(pairs)
+        seen = set()
+        for a,b in pairs:
+            key = frozenset((a,b))
+            if len(key)!=2 or not key<=groups or key in seen:
+                raise ValueError('invalid or duplicate mask pair: '+str((a,b)))
+            seen.add(key)
+        groups = {g for pair in pairs for g in pair}
     prepared = prepare_titles(packets, '{NUMBERED_INSTANCES}', sorted(groups))
     source = {p['packet']:p for p in packets['packets']}
     for g in groups:
@@ -100,7 +111,7 @@ def mask_pair_cases(tree, packets):
     return [dict(id=f'{a}-same-topic-{b}',
                  inputs=dict(A_MASKS_JSON=masks[a], B_MASKS_JSON=masks[b]),
                  evidence=dict(original_a_id=a, original_b_id=b))
-            for a,b in tree['edges'] if a != tree['root']]
+            for a,b in pairs]
 
 
 def validate_equivalence_decisions(tree, packets, report, prompt):
