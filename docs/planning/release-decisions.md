@@ -559,16 +559,17 @@ node descriptions → cosine-filtered candidate pairs → subsumption judgments 
 directed node hierarchy. Prominence supports note ordering. The relationship
 method remains open: TRUE generated HR02, but its judgments were not good
 enough. The separate Jev hierarchy remains a diagnostic baseline; the earlier
-manual-placement decisions remain preserved and unapplied. The current
-authorized work is drafting
+manual-placement decisions remain preserved and unapplied. On September 28,
+the user approved the wording of
 [NSP-Astra-Masks-v1](../../sse_multivector/node-subsumption-prompt-astra-masks-v1/prompt.txt),
 a separate mask-based parent–child prompt based on the accepted merge prompt.
+It remains untested.
 The intended test reuses the 148 pre-Jev HR02-NMP09 groups, existing merges and
 titles, with comparisons selected automatically from tree links and the bounded
 cross-branch shortlist. No new model calls or graph implementation are approved
-by this draft. Combining merging and placement in one prompt is deferred;
-prompt approval, the small test, conflict handling and production adoption remain
-open. See the [draft scope](../../sse_multivector/node-merge-prompt-jev-v1/README.md#parentchild-prompt-draft--nsp-astra-masks-v1).
+by this wording approval. Combining merging and placement in one prompt is
+deferred; preparing and running the small test, conflict handling and production
+adoption remain open. See the [draft scope](../../sse_multivector/node-merge-prompt-jev-v1/README.md#parentchild-prompt-draft--nsp-astra-masks-v1).
 The cosine cutoff and its implementation remain open. Existing all-pairs
 experiments do not establish filtered behavior; filtering must preserve useful
 parent–child links, not merely reduce calls.

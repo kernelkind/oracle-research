@@ -139,11 +139,11 @@ a separate diagnostic hierarchy, recording every change reversibly. Nodes,
 titles and memberships stay unchanged to evaluate the other stages. Individual
 corrections and unresolved boundaries still need review; no corrected hierarchy
 has been built. This is not the scalable production method or a measured
-“90% / 10%” accuracy claim. The current authorized work is the separate
-[NSP-Astra-Masks-v1 draft](../../sse_multivector/node-subsumption-prompt-astra-masks-v1/prompt.txt):
-test mask-based parent–child judgments with existing HR02-NMP09 merges, groups
-and titles held fixed. Combining merging and placement is deferred. Only prompt
-drafting is authorized now; inference and graph changes require further approval.
+“90% / 10%” accuracy claim. The user approved the wording of the separate
+[NSP-Astra-Masks-v1 draft](../../sse_multivector/node-subsumption-prompt-astra-masks-v1/prompt.txt)
+on September 28; it remains untested. The intended test holds existing
+HR02-NMP09 merges, groups and titles fixed. Combining merging and placement is
+deferred; test preparation, inference and graph changes require further approval.
 Node 02 remains in progress, while
 its 23 and 25 prerequisites are satisfied. Additional rows expose remaining
 construction work.

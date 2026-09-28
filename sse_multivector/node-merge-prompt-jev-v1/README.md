@@ -14,9 +14,10 @@ cross-branch pass HR02-NMP09 is complete and browsable below. Seven later Jev
 cycle contractions conflict with mask-merge No answers; these are flagged,
 not manually repaired. None of these experiments adopts a production pipeline.
 
-The current authorized work is drafting the separate
+The user approved the wording of the separate
 [NSP-Astra-Masks-v1 parent–child prompt](../node-subsumption-prompt-astra-masks-v1/prompt.txt)
-below. It is untested. Existing merges, titles and hierarchies stay fixed;
+below. It is untested; test preparation and inference need further approval.
+Existing merges, titles and hierarchies stay fixed;
 combining equivalence and placement in one prompt is deferred.
 
 This separate prompt asks whether two groups express the same topic at the same
@@ -559,8 +560,8 @@ Jev graph/export integration, individual-mask export, the new launcher's
 arguments/refusals, root-only ungrouped masks, conflict reporting without graph
 changes, and shared-runner regressions. Generated artifacts remain ignored.
 Subsequent read-only inspection identified missing browsing routes and the
-flagged stage conflicts. The next authorized work is the parent–child prompt
-draft below, not another hierarchy run or production adoption.
+flagged stage conflicts. The user approved the parent–child prompt wording
+below, not another hierarchy run or production adoption.
 
 The reusable specs are
 [merges](../experiment_specs/hr02-cross-branch-merge-astra-low-v1.json),
@@ -572,7 +573,8 @@ Receipts are in `sse_multivector/experiments/hr02-cross-branch-merge-astra-low-v
 
 The user approved drafting a separate mask-based parent–child question before
 combining placement and equivalence. [NSP-Astra-Masks-v1](../node-subsumption-prompt-astra-masks-v1/prompt.txt)
-is **draft, untested, not approved for inference**. Its revision base is the
+is **wording approved September 28, 2026; untested; not approved for inference**.
+Its revision base is the
 accepted NMP-Jev-v2 text, not a new combined prompt or the title-only Jev prompt.
 The existing groups, merge answers, titles and browser exports are unchanged.
 
@@ -594,8 +596,9 @@ This is a read-only inventory count, not a prepared experiment or call approval.
 It excludes retries and extra ancestor comparisons; request reuse may reduce
 actual calls. This count does not describe a combined merge/placement run.
 
-Prompt wording needs review before a small automatically selected diagnostic.
-Its selection, output schema, graph-conflict policy and any extra ancestor
+The wording is approved; preparing and running a small automatically selected
+diagnostic require further approval. Its selection, output schema,
+graph-conflict policy and any extra ancestor
 comparisons are not implemented or settled by this draft. No existing Jev
 validator or cycle-merging code is silently reused for the new answer type.
 Any later full pass requires separate authorization. Human review evaluates
