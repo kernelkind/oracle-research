@@ -575,6 +575,47 @@ The [BCPv4 six-pair spec](experiment_specs/lg01-bcpv4-six-pairs-astra-low-v1.jso
 now uses this adapter. Offline preparation reproduced all six prior prompts
 byte-for-byte and found all six saved answers reusable; no inference was run.
 
+To prepare comparisons after combining nodes judged equivalent, replace `pairs`
+with references to completed shared experiments:
+
+```json
+{
+  "schema_version": 1,
+  "inputs": "../saved-inputs/inputs.json",
+  "hierarchy": "../saved-hierarchy/results.json",
+  "comparisons": ["../comparisons/first", "../comparisons/remaining"]
+}
+```
+
+The same `subject_pairs` adapter obtains receipt-validated reports through the
+shared workflow. It checks source hashes, original node entries, exact inputs
+and rendered prompt before using the saved five-label relation/reason answers.
+Invalid or unfinished answers stop preparation; they are not re-prompted.
+Only `equivalent` combines nodes, including connected chains. Every original
+subject entry remains; combined groups use sorted original indices and the
+existing first-subject node identity. Mapped SP ancestry must survive as
+ancestor-or-equal, without a cycle. A failed check stops without repairing or
+writing to the source hierarchy.
+
+Preparation remaps only those previously compared pairs, removes self-pairs
+from model jobs, and deduplicates unordered current pairs. It prepares **only
+changed inputs** as new cases. For an unchanged pair it retains the saved A/B
+orientation, answer, settings and receipt reference in
+`plan.preparation.unchanged_comparisons`. Those are earlier judgments, not new
+samples or executor-cache reuse. This avoids resending unchanged inputs when
+transport identity has changed, without relaxing the executor's exact-request
+reuse checks. An answer is not retained merely because node IDs match.
+
+`plan.preparation` also freezes the combined partition, mapped SP links,
+original-to-combined node mapping, equivalence answers, internal comparisons
+and full selection counts. Changed cases retain their previous comparisons and
+all distinct subject/context entries, original masks and full posts as evidence.
+No ancestor answer is applied, no new pair is nominated, and new equivalences
+from this run do not automatically trigger another combination pass.
+The [HG6–HG7 spec](experiment_specs/lg01-bcpv4-combined-pairs-astra-low-v1.json)
+uses this preparation on the saved LG01 data. Author source references/specs,
+not copied case files; use the ordinary runner and attempt cap afterward.
+
 ### Title, mask and prominence preparation
 
 The core workflow is task-independent. Optional adapters use the existing

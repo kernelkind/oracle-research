@@ -6,6 +6,7 @@ Execution, history, baselines and human judgments do not belong here.
 
 import hashlib
 import json
+from graphlib import CycleError, TopologicalSorter
 from pathlib import Path
 import re
 
@@ -44,7 +45,7 @@ def render(template, inputs):
     return re.sub(r"\{([A-Z][A-Z0-9_]*)\}", substitute, template)
 
 
-def prepare_file(dataset, path, template):
+def prepare_file(dataset, path, template, load_report=None):
     """Load dataset references and hash the exact bytes used for preparation."""
     path = Path(path).resolve()
     sources = {}
@@ -55,8 +56,12 @@ def prepare_file(dataset, path, template):
         return json.loads(raw)
 
     source = read(path)
+    preparation = None
     if dataset['adapter'] == 'subject_pairs':
-        engine._expect_fields(source, 'subject pairs', {'schema_version', 'inputs', 'hierarchy', 'pairs'})
+        comparison_mode = 'comparisons' in source
+        engine._expect_fields(source, 'subject pairs',
+            {'schema_version', 'inputs', 'hierarchy',
+             'comparisons' if comparison_mode else 'pairs'})
         if type(source['schema_version']) is not int or source['schema_version'] != 1:
             raise ValueError('expected subject pairs schema_version 1')
         loaded, references = {}, {}
@@ -64,8 +69,166 @@ def prepare_file(dataset, path, template):
             source_path = engine._resolve_path(source[key], key, path.parent)
             loaded[key] = read(source_path)
             references[key] = dict(path=str(source_path), sha256=sources[str(source_path)])
-        source = dict(**loaded, pairs=source['pairs'], source=references)
-    return prepare(dataset, source, template), sources
+        if comparison_mode:
+            paths = engine._validate_string_array(source['comparisons'], 'comparisons', allow_empty=False)
+            paths = [engine._resolve_path(p, 'comparison experiment', path.parent) for p in paths]
+            if len(paths) != len(set(paths)):
+                raise ValueError('duplicate comparison experiment')
+            if load_report is None:
+                raise ValueError('comparison preparation requires validated experiment reports')
+            reports = []
+            for directory in paths:
+                envelope = read(directory / 'experiment.json')
+                result = load_report(directory)
+                # The shared report loader validates frozen plans and actual receipts.
+                for name in envelope['plan']['files']:
+                    file = directory / name
+                    sources[str(file)] = engine._sha256_file(file)
+                for case in result['cases']:
+                    if case.get('receipt'):
+                        file = Path(case['receipt']['results_path'])
+                        sources[str(file)] = engine._sha256_file(file)
+                reports.append(result)
+            source, preparation = combine_subject_pairs(
+                dict(**loaded, pairs=[], source=references), reports, template)
+        else:
+            source = dict(**loaded, pairs=source['pairs'], source=references)
+    effective = {**dataset, 'adapter': 'generic'} if preparation is not None else dataset
+    return prepare(effective, source, template), sources, preparation
+
+
+def combine_subject_pairs(source, reports, template):
+    """Combine saved equivalent nodes and remap only previously compared pairs.
+
+    Reports must come from the shared receipt-validating loader. No new pair
+    selection, ancestor application, retitling or semantic judgment happens here.
+    """
+    prepare_subject_pairs(source)  # Validate the complete original partition/edges.
+    subjects, original = source['inputs']['subjects'], source['hierarchy']
+    groups = original['groups']
+    by_id = {f'S{members[0]:04d}': g for g, members in enumerate(groups)}
+    parent = list(range(len(groups)))
+
+    def find(g):
+        while parent[g] != g:
+            parent[g] = parent[parent[g]]
+            g = parent[g]
+        return g
+
+    comparisons, equivalences = [], []
+    for report in reports:
+        for case in report['cases']:
+            if case['status'] != 'valid' or not case.get('receipt'):
+                raise ValueError(f"comparison is not valid: {case['id']}")
+            evidence = case['evidence']
+            saved_sources = evidence['source']
+            for key, reference in source['source'].items():
+                saved = saved_sources.get(key, saved_sources.get('results') if key == 'hierarchy' else None)
+                if not saved or saved['sha256'] != reference['sha256']:
+                    raise ValueError('comparison source hash differs from saved hierarchy inputs')
+            pair = dict(id=case['id'], A=evidence['A']['node_id'], B=evidence['B']['node_id'])
+            expected = prepare_subject_pairs({**source, 'pairs': [pair]})[0]
+            if (case['inputs'] != expected['inputs']
+                    or case['prompt'] != render(template, expected['inputs'])
+                    or any(evidence[k]['subject_entries'] != expected['evidence'][k]['subject_entries']
+                           for k in ('A', 'B'))):
+                raise ValueError('comparison inputs differ from original nodes or prompt')
+            answer = case['parsed']
+            if (set(answer) != {'relation', 'reason'} or not isinstance(answer['reason'], str)
+                    or answer['relation'] not in {'equivalent', 'a_parent_of_b', 'b_parent_of_a',
+                                                  'neither', 'uncertain'}):
+                raise ValueError('unsupported subject comparison answer')
+            prior = dict(experiment=report['experiment'], case_id=case['id'],
+                         A=pair['A'], B=pair['B'], inputs=case['inputs'],
+                         answer=answer, receipt=case['receipt'],
+                         prompt_id=report['prompt_id'], settings=report['settings'],
+                         reviews=case.get('reviews', []),
+                         shared_children=evidence.get('shared_children', []))
+            comparisons.append(prior)
+            if answer['relation'] == 'equivalent':
+                a, b = find(by_id[pair['A']]), find(by_id[pair['B']])
+                parent[b] = a
+                equivalences.append(prior)
+
+    components = {}
+    for g, members in enumerate(groups):
+        components.setdefault(find(g), []).extend(members)
+    merged = sorted((sorted(m) for m in components.values()), key=lambda m: m[0])
+    owners = {i: g for g, members in enumerate(merged) for i in members}
+    remap = {g: owners[members[0]] for g, members in enumerate(groups)}
+    edges = sorted({(remap[a], remap[b]) for a, b in original['edges'] if remap[a] != remap[b]})
+    outgoing = {g: set() for g in range(len(merged))}
+    incoming = {g: set() for g in range(len(merged))}
+    for a, b in edges:
+        outgoing[a].add(b)
+        incoming[b].add(a)
+    try:
+        list(TopologicalSorter(incoming).static_order())
+    except CycleError as error:
+        raise ValueError('equivalent-node combination creates an SP cycle; no repair applied') from error
+    descendants = {}
+    for a, b in source['inputs']['edges']:
+        a, b = owners[a], owners[b]
+        if a == b:
+            continue
+        if a not in descendants:
+            pending, visited = list(outgoing[a]), set()
+            while pending:
+                child = pending.pop()
+                if child not in visited:
+                    visited.add(child)
+                    pending.extend(outgoing[child] - visited)
+            descendants[a] = visited
+        if b not in descendants[a]:
+            raise ValueError('equivalent-node combination loses SP ancestry')
+
+    hierarchy = dict(groups=merged, member_to_group=[owners[i] for i in range(len(subjects))],
+                     edges=[list(e) for e in edges])
+    mapping = {nid: f'S{merged[remap[g]][0]:04d}' for nid, g in by_id.items()}
+    pairs, internal = {}, []
+    for prior in comparisons:
+        a, b = mapping[prior['A']], mapping[prior['B']]
+        if a == b:
+            internal.append(prior)
+        else:
+            key = tuple(sorted((remap[by_id[prior['A']]], remap[by_id[prior['B']]])))
+            pairs.setdefault(key, []).append(prior)
+
+    combined_source = {**source, 'hierarchy': hierarchy}
+    cases, unchanged = [], []
+    for (ga, gb), previous in sorted(pairs.items()):
+        a, b = f'S{merged[ga][0]:04d}', f'S{merged[gb][0]:04d}'
+        pair = dict(id=a + '-' + b, A=a, B=b)
+        # Keep unchanged judgments as source-bound evidence, not new model jobs.
+        # This does not weaken the executor's exact transport/request cache rules.
+        saved = None
+        for prior in previous:
+            trial = dict(id=prior['case_id'], A=mapping[prior['A']], B=mapping[prior['B']])
+            candidate = prepare_subject_pairs({**combined_source, 'pairs': [trial]})[0]
+            if candidate['inputs'] == prior['inputs']:
+                pair = trial
+                saved = prior
+                break
+        if saved is not None:
+            unchanged.append(dict(id=pair['id'], A=pair['A'], B=pair['B'],
+                                  source=saved, previous_comparisons=previous))
+            continue
+        case = prepare_subject_pairs({**combined_source, 'pairs': [pair]})[0]
+        case['evidence']['previous_comparisons'] = previous
+        for key in ('A', 'B'):
+            nid = case['evidence'][key]['node_id']
+            case['evidence'][key]['original_nodes'] = [old for old, new in mapping.items() if new == nid]
+        cases.append(case)
+    preparation = dict(
+        hierarchy=hierarchy, original_node_to_combined=mapping,
+        equivalent_answers=equivalences, internal_comparisons=internal,
+        unchanged_comparisons=unchanged,
+        summary=dict(original_nodes=len(groups), combined_nodes=len(merged),
+            equivalent_answers=len(equivalences), internal_comparisons=len(internal),
+            original_comparisons=len(comparisons), current_pairs=len(pairs),
+            changed_pairs=len(cases), unchanged_pairs=len(unchanged)))
+    # Already prepared evidence is preserved through the ordinary rendering path.
+    return dict(cases=cases), preparation
 
 
 def prepare_subject_pairs(source, selected=None):

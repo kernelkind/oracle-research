@@ -92,7 +92,7 @@ def spec_setup(path):
         {"adapter", "path"} | ({"select", "mask_format", "combine_masks"} & dataset.keys()),
     )
     source_path = resolve(dataset["path"], path.parent)
-    cases, sources = inputs.prepare_file(dataset, source_path, prompt["text"])
+    cases, sources, preparation = inputs.prepare_file(dataset, source_path, prompt["text"], report)
     runner = dict(spec["runner"])
     runner["runner_binary"] = str(
         engine._resolve_executable(
@@ -110,6 +110,7 @@ def spec_setup(path):
         "prompt": prompt,
         "dataset": {k: v for k, v in dataset.items() if k != "path"},
         "cases": cases,
+        "preparation": preparation,
         "runner": runner,
         "sources": {
             **sources,
@@ -160,6 +161,7 @@ def prepare(args):
         old, _, old_manifest = load(args.from_experiment)
         inherited_history = old_manifest.get("request_reuse", {}).get("history_root")
         setup = {k: old[k] for k in ("prompt", "dataset", "cases", "runner", "sources")}
+        setup['preparation'] = old.get('preparation')
         baseline = report(Path(args.from_experiment).resolve())
     else:
         setup = spec_setup(args.spec)

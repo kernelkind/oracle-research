@@ -1,11 +1,13 @@
 # BCPv4 — one-pair subject comparison
 
-Status: **user-approved wording, tested on 49 pairs, not frozen**. The user
+Status: **user-approved wording, tested on 49 original pairs and seven changed
+combined-input pairs, not frozen**. The user
 approved six Astra-low calls, then the remaining 43 nominated comparisons.
 All 49 returned valid JSON. Agent review accepted the first six; of the next
 43, 36 were accepted and seven flagged as uncertain across four issues below.
 These are agent assessments, not user decisions or a measured general accuracy
-rate. No judgments were applied to the saved hierarchy.
+rate. HG6–HG7 subsequently tested an isolated combined-node preparation below.
+No ancestor answers were applied, and the saved LG01 hierarchy is unchanged.
 
 [BCPv4.md](BCPv4.md) compares the subjects represented by two hierarchy nodes,
 A and B. Each node is represented by subject/context entries originating in one
@@ -31,8 +33,8 @@ did not adopt this as a construction rule or authorize model calls.
 
 The user approved **HG1–HG7** as stable labels for this SP-based investigation.
 They identify process stages, independently of prompt versions, experiment IDs
-and post count. Approval of the labels does not approve the proposed operations
-at HG6–HG7 or select a production hierarchy-generation policy.
+and post count. The user subsequently approved an isolated HG6–HG7 test, not
+production adoption or application of the ancestor answers.
 
 | Label | Stage | Current status |
 | --- | --- | --- |
@@ -40,14 +42,15 @@ at HG6–HG7 or select a production hierarchy-generation policy.
 | HG2 — SSE | Encode subjects and masks into separate vectors. | Saved vectors. |
 | HG3 — LG01 | Combine matching subjects across posts, preserving SP relationships. | Implemented experiment; see the [LG01 rules](../subject-order-probe.md#lg01--subject-hierarchy-merging). |
 | HG4 — Select comparisons | Select pairs of distinct immediate parents of a shared cross-post node; deduplicate by node identity. | Nominated the 49 tested pairs; not a complete construction rule. |
-| HG5 — Compare parents | Prompt BCPv4 for each selected pair using the two nodes' subject/context entries; save its relation and reason. | 49 pairs tested; answers not applied to the hierarchy. |
-| HG6 — Combine equivalent nodes | Combine parents judged equivalent at HG5, retaining original entries, relationships and answers. | Proposed; unapproved and unimplemented. |
-| HG7 — Recompare changed nodes | Remap and deduplicate affected pairs, then prompt BCPv4 using the combined entries. | Proposed; unapproved and unimplemented. |
+| HG5 — Compare parents | Prompt BCPv4 for each selected pair using the two nodes' subject/context entries; save its relation and reason. | 49 original pairs tested; the saved LG01 hierarchy is unchanged. |
+| HG6 — Combine equivalent nodes | Combine parents judged equivalent at HG5, retaining original entries, relationships and answers. | Implemented and tested in an isolated preparation; all 14 saved equivalences were assumed for this test, not individually adjudicated. |
+| HG7 — Recompare changed nodes | Remap and deduplicate affected pairs, then prompt BCPv4 using the combined entries. | Seven changed pairs tested with unchanged BCPv4/Astra low; 19 unchanged judgments retained without calls. |
 
 For example, the Dining/Meals inconsistency was observed at **HG5**. The
-proposed follow-up combines the equivalent Dining nodes and the equivalent
+tested follow-up combines the equivalent Dining nodes and the equivalent
 Meals nodes at **HG6**, then compares the combined nodes at **HG7**. Graph
-application, cycle handling and uncertain-equivalence policies remain open.
+ancestor application, cycles among ancestor answers and uncertain-equivalence
+policies remain open.
 LG01 names the technique at HG3, not the whole process or a particular run.
 
 ### Proposed HG8 — apply ancestor relationships
@@ -55,7 +58,7 @@ LG01 names the technique at HG3, not the whole process or a particular run.
 Status: **ancestor interpretation and browsing-link rule agreed; remaining
 application policy is a draft, not approved or implemented**. HG8 is a proposed
 label, not an extension of the approved HG1–HG7 labels. The current code does not
-apply BCPv4 answers.
+apply BCPv4 ancestor answers.
 The prompt, response labels and saved hierarchy remain unchanged.
 
 BCPv4 calls its answers `a_parent_of_b` and `b_parent_of_a`, but defines them
@@ -153,8 +156,9 @@ The output is a JSON object with exactly two string fields:
 - `reason`: one short justification.
 
 The [six-pair experiment spec](../experiment_specs/lg01-bcpv4-six-pairs-astra-low-v1.json)
-uses the shared runner's existing output JSON Schema validation. There is no
-graph-update parser or automatic application stage. A
+uses the shared runner's existing output JSON Schema validation. The adapter
+can now derive an isolated combined-node preparation; it does not apply ancestor
+answers or change the LG01 baseline. A
 pairwise judgment does not check global graph consistency or authorize
 overriding an SP relationship. LG01's preservation rules are unchanged.
 
@@ -221,12 +225,54 @@ The seven flags are not seven proven failures. The model itself used no
 `uncertain` answers; these flags are the reviewing agent's judgments. No prompt
 revision, graph changes or new application rule follows automatically.
 
+## HG6–HG7 combined-input test
+
+The user authorized preparation of the proposed HG6 merges followed by seven
+changed HG7 comparisons, with BCPv4 / Astra low unchanged. The shared
+[source-reference spec](../experiment_specs/lg01-bcpv4-combined-pairs-v1.json)
+uses the [reusable adapter](../model-runner.md#saved-subject-pair-preparation);
+no case payloads, rendered prompts or review files were assembled manually.
+Artifacts are isolated under
+`target/branch-comparison-v1/bcpv4-hg6-hg7-v1/experiment/`.
+
+The 14 saved equivalence answers combine 23 original nodes into ten combined
+nodes: 1,766 becomes 1,753. Every original SP entry/mask remains represented,
+SP ancestry survives as ancestor-or-equal, and there is no SP cycle. These are
+mechanical checks, not validation of the 14 semantic judgments. In particular,
+the earlier Dietary practices / Diets flag remains unresolved and retained.
+The original LG01 inputs and hierarchy were not edited.
+
+After combination, 14 old comparisons are internal to a node. The other 35
+comparisons become 26 distinct current pairs: 19 unchanged and seven changed.
+The preparation freezes the 19 earlier answers with their settings and receipt
+references; only the seven changed inputs become model jobs. Three unchanged
+requests had an older transport identity, so keeping them as saved judgments
+avoided baseline reruns without weakening executor-cache validation.
+
+All seven subscription calls returned valid JSON, with no retries, old-input
+reruns or paid API fallback:
+
+| Combined comparison | HG7 answer |
+| --- | --- |
+| Food/Foods / Dining | Food is an ancestor. |
+| Food/Foods / Meals | Food is an ancestor. |
+| Food/Foods / Cooking fats | Food is an ancestor. |
+| Food/Foods / Diet and nutrition | Food is an ancestor. |
+| Food/Foods / Cooking ingredients | Food is an ancestor. |
+| Food/Foods / Food ingredients | Food is an ancestor. |
+| Dining / Meals | Neither. |
+
+Dining now includes both contexts: enjoying dinner and taking someone out for
+dinner. Meals includes both saved dinner contexts. The new answer distinguishes
+the dining activity/experience from meals as food or eating occasions. This
+replaces conflicting old-input answers for the current pair, but does not prove
+that interpretation correct. No new equivalence was returned; no automatic
+repeat rule was needed or adopted. Ancestor answers remain unapplied.
+
 ## Next step
 
-Review the four issues above, starting with the Dining/Meals inconsistency,
-before applying judgments or revising the prompt. The saved outputs support
-that review. HG6–HG7 are an unapproved proposal for testing combined inputs,
-not authorization for additional calls. The [HG8 ancestor-application draft](#proposed-hg8--apply-ancestor-relationships)
+Check the 26 current judgments against the preserved SP graph read-only before
+applying ancestor relationships. The [HG8 ancestor-application draft](#proposed-hg8--apply-ancestor-relationships)
 records the agreed ancestor interpretation and browsing-link rule. Its remaining
 application policy, including cycle handling, needs user review. Do not alter
 the saved LG01 hierarchy.

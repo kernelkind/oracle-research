@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "inputs": "../../target/subject-matching-100-v1/inputs/inputs.json",
+  "hierarchy": "../../target/subject-matching-100-v1/run/results.json",
+  "comparisons": [
+    "../../target/branch-comparison-v1/bcpv4-six-pairs-v1/experiment",
+    "../../target/branch-comparison-v1/bcpv4-remaining-pairs-v1/experiment"
+  ]
+}

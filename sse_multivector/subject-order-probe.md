@@ -178,7 +178,10 @@ does not change their identifiers, paths or results.
 
 LG01 is **HG3** in the [HG1–HG7 hierarchy generation stages](branch-comparison-prompt-v1/README.md#hierarchy-generation-stages).
 The later HG4–HG5 parent comparisons are separate experiments; they have not
-changed this algorithm or its saved hierarchy. HG6–HG7 remain proposals.
+changed this algorithm or its saved hierarchy. HG6–HG7 have now been tested in
+an isolated combined-node preparation, not adopted as a production workflow;
+the [stage record](branch-comparison-prompt-v1/README.md#hg6hg7-combined-input-test)
+describes the seven changed comparisons. The saved LG01 hierarchy is unchanged.
 
 Compared with SMv1, LG01 adds HD11 before the unchanged cross-post matching
 procedure:
