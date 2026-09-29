@@ -18,6 +18,7 @@ import sys
 from sse_multivector.ancestor_cosine_probe import cosine, load_vectors
 from sse_multivector.subject_order_probe import build_inputs, read, reachable, save
 from sse_multivector.worker import _load_request, _sha256_file
+from sse_multivector.subject_hierarchy import browser_spec
 
 TIE_TOLERANCE = 1e-12  # Numerical ties only; not a semantic acceptance margin.
 
@@ -268,67 +269,6 @@ def match_subjects(inputs, subject_vectors, mask_vectors, *, subject_cutoff=.90,
         original_ancestor_pairs=len(original_paths), sp_order_preserved=True)
 
 
-def browser_spec(inputs, result, masks, source_hash):
-    """Use the existing DAG browser, preserving SP sources even for empty masks."""
-    subjects, groups = inputs["subjects"], result["groups"]
-    version = result["experiment_id"]
-    ids = [f"S{g[0]:04d}" for g in groups]
-    children = {i: [] for i in range(len(groups))}
-    nonroots = set()
-    for a, b in result["edges"]:
-        children[a].append(b)
-        nonroots.add(b)
-    names = [" / ".join(dict.fromkeys(subjects[m]["subject"] for m in g)) for g in groups]
-    nodes, own_notes, own_masks = [], {}, {}
-    for i, group in enumerate(groups):
-        own_notes[i], own_masks[i], origins = set(), {}, []
-        for m in group:
-            s = subjects[m]
-            own_notes[i].add(s["note_short_id"])
-            mask_ids = []
-            for v in s["mask_vector_ids"]:
-                mask = masks[v]
-                identity = mask["note_short_id"], tuple(map(tuple, mask["byte_spans"]))
-                own_masks[i].setdefault(identity, set()).add(mask["short_id"])
-                mask_ids.append(mask["short_id"])
-            origins.append(f'{s["note_short_id"]} SP {s["number"]}: {s["subject"]} '
-                           f'({", ".join(mask_ids) or "empty mask"})')
-        nodes.append(dict(node_id=ids[i], label=names[i],
-                          children=[ids[j] for j in sorted(children[i], key=lambda j: (names[j], ids[j]))],
-                          note_ids=sorted(own_notes[i]),
-                          analysis=f"{version} experimental subject matching; original SP links only. "
-                          "No title generation or new placements.\nOriginal subjects:\n" + "\n".join(origins)))
-    paths = reachable(len(groups), result["edges"])
-    nodes.insert(0, dict(node_id="root", label="All subjects", note_ids=[],
-                         children=[ids[i] for i in sorted(set(children) - nonroots,
-                                                         key=lambda j: (names[j], ids[j]))],
-                         analysis=f"{version} navigation root, not an inferred subject. All SP subjects retained; "
-                         "no display collapsing. Empty masks show original posts without highlights."))
-    note_masks, instances = {}, {}
-    for node in nodes:
-        key = node["node_id"]
-        if key == "root":
-            included = range(len(groups))
-        else:
-            i = ids.index(key)
-            included = [i] + [b for a, b in sorted(paths) if a == i]
-        notes, combined = set(), {}
-        for i in included:
-            notes.update(own_notes[i])
-            for identity, aliases in own_masks[i].items():
-                combined.setdefault(identity, set()).update(aliases)
-        individual = {p: [] for p in sorted(notes)}
-        for (p, spans), aliases in sorted(combined.items()):
-            individual[p].append(dict(ids=sorted(aliases), byte_spans=[list(s) for s in spans]))
-        instances[key] = individual
-        note_masks[key] = {p: [list(s) for s in sorted({tuple(s) for m in items for s in m["byte_spans"]})]
-                           for p, items in individual.items()}
-    return dict(schema_version=2, hierarchy_id=f"{version} · saved SP hierarchies · experimental matching",
-                source_sha256=source_hash, root_node_id="root", nodes=nodes,
-                notes=[dict(note_id=p["note_id"], note_short_id=p["note_short_id"])
-                       for p in inputs["posts"]], note_masks=note_masks, mask_instances=instances)
-
-
 def run(source, probe, output, *, subject_cutoff=.90, mask_cutoff=.80):
     source, probe, output = map(lambda p: Path(p).resolve(), (source, probe, output))
     if output.exists():
@@ -405,7 +345,8 @@ def run(source, probe, output, *, subject_cutoff=.90, mask_cutoff=.80):
         if _sha256_file(Path(path)) != expected:
             raise ValueError(f"protected input changed during run: {path}")
     provenance = dict(protected_sha256=protected, python=platform.python_version(),
-                      implementation_sha256={str(Path(__file__).resolve()): _sha256_file(Path(__file__))},
+                      implementation_sha256={str(p.resolve()): _sha256_file(p) for p in
+                                             (Path(__file__), Path(__file__).with_name("subject_hierarchy.py"))},
                       source_path=str(source), probe_path=str(probe), subjects=inputs["subjects"],
                       original_edges=inputs["edges"], masks=list(selected_masks.values()))
     output.mkdir(parents=True, exist_ok=False)

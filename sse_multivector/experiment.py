@@ -963,6 +963,10 @@ def parser():
     p.add_argument("--runner-upgrade-reason", help="explicitly approve and audit a workflow-code upgrade; frozen inputs/settings remain immutable")
     p = commands.add_parser('reconcile-costs', help='lookup missing OpenRouter charges; no inference')
     p.add_argument('experiment', type=Path)
+    p = commands.add_parser('export-hierarchy', help='export saved subject-pair ancestor answers to a separate test view; no inference')
+    p.add_argument('experiment', type=Path)
+    p.add_argument('--source', type=Path, required=True, help='saved masked-posts.json and vector-map.json directory')
+    p.add_argument('--output', type=Path, required=True, help='fresh directory outside saved sources')
     p = commands.add_parser(
         "show", help="inspect all cases, or exact case evidence; no inference"
     )
@@ -1033,6 +1037,12 @@ def main(argv=None):
             )
         elif args.command == 'reconcile-costs':
             compact(reconcile_costs(args.experiment))
+        elif args.command == 'export-hierarchy':
+            try:
+                from .subject_hierarchy import export_comparisons
+            except ImportError:
+                from subject_hierarchy import export_comparisons
+            print(json.dumps(export_comparisons(args.experiment, args.source, args.output), indent=2))
         elif args.command == "show":
             result = report(args.experiment, args.only, args.note)
             if args.case:

@@ -7,7 +7,9 @@ All 49 returned valid JSON. Agent review accepted the first six; of the next
 43, 36 were accepted and seven flagged as uncertain across four issues below.
 These are agent assessments, not user decisions or a measured general accuracy
 rate. HG6–HG7 subsequently tested an isolated combined-node preparation below.
-No ancestor answers were applied, and the saved LG01 hierarchy is unchanged.
+The authorized [ancestor-application test](#saved-ancestor-application-test)
+then applied 13 current ancestor answers in a separate view. The saved LG01
+hierarchy is unchanged; production adoption and general conflict handling remain open.
 
 [BCPv4.md](BCPv4.md) compares the subjects represented by two hierarchy nodes,
 A and B. Each node is represented by subject/context entries originating in one
@@ -33,8 +35,8 @@ did not adopt this as a construction rule or authorize model calls.
 
 The user approved **HG1–HG7** as stable labels for this SP-based investigation.
 They identify process stages, independently of prompt versions, experiment IDs
-and post count. The user subsequently approved an isolated HG6–HG7 test, not
-production adoption or application of the ancestor answers.
+and post count. The user subsequently approved isolated HG6–HG7 and saved
+ancestor-application tests, not production adoption.
 
 | Label | Stage | Current status |
 | --- | --- | --- |
@@ -48,18 +50,18 @@ production adoption or application of the ancestor answers.
 
 For example, the Dining/Meals inconsistency was observed at **HG5**. The
 tested follow-up combines the equivalent Dining nodes and the equivalent
-Meals nodes at **HG6**, then compares the combined nodes at **HG7**. Graph
-ancestor application, cycles among ancestor answers and uncertain-equivalence
-policies remain open.
+Meals nodes at **HG6**, then compares the combined nodes at **HG7**. A separate
+test applies the current ancestor answers. General conflict handling and
+uncertain-equivalence policies remain open.
 LG01 names the technique at HG3, not the whole process or a particular run.
 
 ### Proposed HG8 — apply ancestor relationships
 
-Status: **ancestor interpretation and browsing-link rule agreed; remaining
-application policy is a draft, not approved or implemented**. HG8 is a proposed
-label, not an extension of the approved HG1–HG7 labels. The current code does not
-apply BCPv4 ancestor answers.
-The prompt, response labels and saved hierarchy remain unchanged.
+Status: **ancestor interpretation and browsing-link rule agreed and tested in
+an isolated export; general application policy remains a draft**. HG8 is a proposed
+label, not an extension of the approved HG1–HG7 labels. The separate test below
+stops on conflicts; it does not implement this draft's cycle-withholding policy.
+The prompt, response labels and saved LG01 hierarchy remain unchanged.
 
 BCPv4 calls its answers `a_parent_of_b` and `b_parent_of_a`, but defines them
 as one subject being a more specific topic within the other's scope. The user
@@ -124,8 +126,8 @@ This is a browsing simplification, not deletion of source relationships.
 For N037's saved Food → Bread → Sourdough bread branch, a separate
 Food → Sourdough bread browsing link is redundant. Keep the route through
 Bread and preserve Food's ancestor relationship with Sourdough bread.
-The rule is agreed but not yet implemented in this investigation; earlier
-LG01 browser outputs remain unchanged.
+The rule is implemented in the separate ancestor-application test; earlier
+LG01 browser outputs remain unchanged. It never removes a hierarchy node.
 
 ## Input and output
 
@@ -267,15 +269,43 @@ dinner. Meals includes both saved dinner contexts. The new answer distinguishes
 the dining activity/experience from meals as food or eating occasions. This
 replaces conflicting old-input answers for the current pair, but does not prove
 that interpretation correct. No new equivalence was returned; no automatic
-repeat rule was needed or adopted. Ancestor answers remain unapplied.
+repeat rule was needed or adopted. Ancestor answers were not applied during
+HG6–HG7; the separate export below uses their completed results.
+
+## Saved ancestor-application test
+
+The user approved a separate hierarchy using the 26 current judgments, followed
+by the agreed browsing-link simplification and inspection of its Food branch.
+The read-only preflight found 13 ancestor answers and 13 `neither` answers,
+without cycles or conflicts with preserved SP ancestry or each other.
+
+The shared runner's [saved hierarchy export](../model-runner.md#saved-subject-hierarchy-export)
+revalidates the frozen preparation, current model inputs, settings and receipts.
+It applies all 13 ancestor proposals in a fresh directory and retains all
+1,753 nodes and 2,383 original SP entries. The 1,661 mapped SP links plus 13 new
+links remain in the underlying graph; the browsing view omits 15 redundant
+links, preserving identical ancestry and multiple parents. No new inference,
+titles or direct mask/post memberships were added. Artifacts are under
+`target/branch-comparison-v1/bcpv4-ancestors-v1/run/`.
+
+The exporter refuses a cycle, a `neither`/ancestry conflict or a newly returned
+equivalence rather than choosing a repair policy. Missing, invalid or stale
+judgments also stop export. This is a test guard, not approval of the broader
+HG8 draft or a rule for production conflict resolution.
+
+Food/Foods now connects to Dining, Meals, Cooking fats, Diet and nutrition,
+Cooking ingredients and one Food ingredients node. Its recursive post count
+changes from 48 to 50, but its direct membership is unchanged. Seven Food
+preparation nodes, Food appreciation and three other Food ingredients nodes
+remain outside that Food branch. No names-based combination was performed.
+These are agent observations of a partial hierarchy, not user quality approval.
 
 ## Next step
 
-Check the 26 current judgments against the preserved SP graph read-only before
-applying ancestor relationships. The [HG8 ancestor-application draft](#proposed-hg8--apply-ancestor-relationships)
-records the agreed ancestor interpretation and browsing-link rule. Its remaining
-application policy, including cycle handling, needs user review. Do not alter
-the saved LG01 hierarchy.
+Investigate how to nominate still-missing Food comparisons, using the separate
+test view as evidence; no new comparison selection or calls are authorized by
+this record. The [HG8 draft](#proposed-hg8--apply-ancestor-relationships) still
+requires review of general conflict handling. Keep the saved LG01 hierarchy unchanged.
 
 ## Design references
 

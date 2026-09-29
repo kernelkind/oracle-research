@@ -13,6 +13,7 @@ import platform
 from pathlib import Path
 
 from sse_multivector.worker import _load_request, _sha256_file
+from sse_multivector.subject_hierarchy import reachable
 
 
 def read(path):
@@ -84,24 +85,6 @@ def cosine_distances(vectors):
     return distances
 
 
-def reachable(n, edges):
-    outgoing = [set() for _ in range(n)]
-    for a, b in edges:
-        if not (0 <= a < n and 0 <= b < n):
-            raise ValueError("edge outside graph")
-        outgoing[a].add(b)
-    result = set()
-    for start in range(n):
-        pending, visited = list(outgoing[start]), set()
-        while pending:
-            target = pending.pop()
-            if target not in visited:
-                visited.add(target)
-                pending.extend(outgoing[target] - visited)
-        result.update((start, target) for target in visited)
-    return result
-
-
 def merge_sequence(distances, edges, *, constrained):
     import numpy as np
     from ophac.dtypes import DistMatrix, Quivers
@@ -146,7 +129,8 @@ def prepare(source, labels, output, protected):
     source, output = source.resolve(), output.resolve()
     paths = [source / name for name in ("masked-posts.json", "vector-map.json", "worker-config.json",
                                        "worker-result/worker-receipt.json", "subjects.json")]
-    paths += [Path(__file__).resolve(), Path(inspect.getfile(_load_request)).resolve()]
+    paths += [Path(__file__).resolve(), Path(inspect.getfile(_load_request)).resolve(),
+              Path(inspect.getfile(reachable)).resolve()]
     paths += [path.resolve() for path in protected]
     hashes = {str(path): _sha256_file(path) for path in paths}
     inputs, request = build_inputs(read(paths[0]), read(paths[1]), labels)

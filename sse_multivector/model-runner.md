@@ -298,8 +298,8 @@ preparation, not just execution; see [extension rules](#offline-verification-and
 If the extension exceeds the authorized task, request approval rather than
 bypassing the tool.
 
-Only `run` performs inference. `prepare`, `show`, `revise` and `review` do
-not call a model. Preparation checks the local runner identity, not credentials
+Only `run` performs inference. `prepare`, `show`, `revise`, `review` and
+`export-hierarchy` do not call a model. Preparation checks the local runner identity, not credentials
 or provider acceptance. User approval and the repository spending rules still
 apply before `run`; preparing an experiment does not authorize spending.
 
@@ -615,6 +615,48 @@ from this run do not automatically trigger another combination pass.
 The [HG6–HG7 spec](experiment_specs/lg01-bcpv4-combined-pairs-astra-low-v1.json)
 uses this preparation on the saved LG01 data. Author source references/specs,
 not copied case files; use the ordinary runner and attempt cap afterward.
+
+### Saved subject hierarchy export
+
+`export-hierarchy` consumes a completed combined `subject_pairs` experiment;
+it is an explicitly authorized, separate test, not automatic post-run behavior.
+It revalidates source hashes, receipts, model settings, the HG6 partition and
+each current input. HG5 judgments are used only for unchanged inputs; changed
+inputs require valid HG7 answers. Older relative source paths resolve only to
+their exact hash-bound files in the frozen preparation.
+
+The command retains every original entry, mask and SP relationship, adds the
+current ancestor proposals, and derives browsing links by omitting shortcuts
+already supplied through another path. All ancestry and multiple parents must
+survive. Direct memberships are unchanged; recursive browsing memberships follow
+the resulting graph. It does not generate titles, nominate new pairs or send calls.
+Cycles, `neither`/ancestry conflicts, pending new equivalences and stale or
+unfinished judgments stop export before writing; no general repair policy is selected.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py export-hierarchy \
+  target/branch-comparison-v1/bcpv4-hg6-hg7-v1/experiment \
+  --source sse_multivector/hierarchy-refresh-v1 \
+  --output target/branch-comparison-v1/bcpv4-ancestors-replay-v1
+```
+
+The output must be fresh and outside the source/model-experiment directories.
+`results.json` retains the full graph, SP links, answer-bound proposals and
+separate browsing links. `provenance.json` retains source hashes, the preparation,
+answers/receipts/settings, original entries/SP links and masks. `summary.json`
+reports mechanical checks, not semantic accuracy. `categories.json` reuses the
+existing browser with individual masks, IDs, full post context and empty-mask posts:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+target/infomap-review-build/debug/sse-subject-navigation \
+  --categories target/branch-comparison-v1/bcpv4-ancestors-v1/run/categories.json \
+  sse_multivector/hierarchy-refresh-v1/masked-posts.json
+```
+
+Do not enable display-collapse options. Append `--check` for noninteractive
+validation. No saved LG01 output is rewritten.
 
 ### Title, mask and prominence preparation
 

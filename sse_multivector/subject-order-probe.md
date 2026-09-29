@@ -182,6 +182,9 @@ changed this algorithm or its saved hierarchy. HG6–HG7 have now been tested in
 an isolated combined-node preparation, not adopted as a production workflow;
 the [stage record](branch-comparison-prompt-v1/README.md#hg6hg7-combined-input-test)
 describes the seven changed comparisons. The saved LG01 hierarchy is unchanged.
+The subsequent [saved ancestor-application test](branch-comparison-prompt-v1/README.md#saved-ancestor-application-test)
+adds 13 current model relationships and simplifies redundant browsing links in
+a separate export. It does not change LG01 matching, source data or saved outputs.
 
 Compared with SMv1, LG01 adds HD11 before the unchanged cross-post matching
 procedure:
