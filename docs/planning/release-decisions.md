@@ -537,9 +537,12 @@ then wrote an unexpected Python cache file into the frozen transport. The superv
 completed, and no GPU failure was reported. The cache is preserved outside
 transport; its original manifest verifies, including after a bytecode-disabled
 local import. Preliminary charges were $0.338. No replacement rental is authorized.
-The manual-deletion policy is implemented and regression-tested locally; new
-frozen artifacts and local deployment rehearsal are required before another
-paid launch. The old frozen operation and published image remain unchanged.
+The manual-deletion policy is implemented and regression-tested locally. On
+September 29, the rebuilt image and `package-v9` passed all 24 local VM tests,
+including real SSH training/retrieval and all three candidate preflights. The
+VM reused its disk and dependency cache with a new source snapshot. Tiny-model
+weights and evaluation metrics match the prior rehearsal exactly. The image is exported locally but unpublished; no replacement GPU execution has started.
+The old frozen operation and published image remain unchanged.
 The user accepted a $25 total maximum for GPU setup, baselines and initial
 fine-tunes across the three candidates, including storage, transfers and failed
 attempts. Budget admission passed before the run; no replacement rental is authorized without discussing any failure with the user.

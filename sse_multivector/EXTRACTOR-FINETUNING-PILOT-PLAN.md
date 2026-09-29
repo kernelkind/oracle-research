@@ -228,7 +228,8 @@ owns creation, key attachment, transfer, detached execution, result sealing,
 retrieval and verified destruction. `distillation_deploy.py` only freezes inputs
 and executes the candidate sequence; `distillation_vast.py` describes that work.
 The model recipes, prompts, data, batching and $25 total maximum are unchanged.
-Publication is verified; full-size candidate execution has started on Vast.
+The first published image reached Vast, but that rental ended before any
+baseline or training completed. The current rebuilt image is local only.
 
 The failure audit reproduced empty successful destroy output, distinct live
 and offer bundle IDs, and missing/null transfer counters in the old controller.
@@ -247,9 +248,15 @@ key attachment, then exercises the shared transfer/worker/retrieval code over
 real SSH. It cannot reproduce Vast's provider infrastructure or prove GPU execution.
 
 `target/distillation-pilot-v1/launch-preparation.json` records the current
-exported image, input package and validation evidence. Historical image/package
-receipts are preserved; changed code requires a new image and package.
-The exact exported image was published and verified on September 29 as
+exported image, `package-v9` and validation evidence. The September 29 rebuild
+includes the manual-deletion policy and passed all 24 VM tests in
+`target/distillation-vm-clean-deployment/attempt-1790699869508347098`.
+It reused the VM disk and dependency cache with a new source snapshot. All
+three candidate preflight reports, tiny-model adapter weights and evaluation
+metrics match the previous rehearsal exactly. The VM is stopped, and the new
+image is exported locally but unpublished. Historical image/package receipts
+are preserved; changed code requires a new image and package.
+The previous image was published and verified on September 29 as
 `docker.io/kernelkind/oracle-mvp@sha256:f6bafc128b7fed0eda387f56b34900bc794800cf9e38871b59a7c1679498f956`.
 The registry config digest, filesystem layers, runtime configuration and source
 hashes match the VM export. Read-only registry credentials successfully pulled
@@ -315,7 +322,7 @@ python3 -m sse_multivector.distillation_deploy prepare \
   --config sse_multivector/distillation/gemma-dense.json \
   --config sse_multivector/distillation/gemma-moe.json \
   --timeout-seconds 43200 \
-  --output target/distillation-pilot-v1/package-v8
+  --output target/distillation-pilot-v1/package-v9
 ```
 
 The output must be new. The package contains data, mask prompts, configurations
@@ -841,15 +848,16 @@ ledger accounting and the lifetime ceiling still apply.
 ## Next step
 
 The informal dataset is prepared for one fine-tune per candidate on both
-existing prompted tasks. Training and SSH deployment passed the earlier local
-VM validation. The deletion-policy change is implemented and regression-tested
-locally; the old frozen launch retains its original code. Rebuild, rehearse and
-freeze new artifacts before another paid launch. Candidate recipes and Vast
-limits are unchanged. Publication and one rental are
-authorized within $25, at up to $1.66/hour for at most 13 hours. The saved split
-inspection found no clear complete-note duplicates or close paraphrases across
+existing prompted tasks. The deletion-policy change is included in the rebuilt
+image and frozen `package-v9`; all 24 local VM tests passed, including training
+and SSH deployment. Next, publish and verify this new private image before
+preparing another rental. The old frozen launch retains its original code.
+Candidate recipes and Vast limits are unchanged. The prior publication and
+one rental were authorized within $25, at up to $1.66/hour for at most 13 hours.
+The saved split inspection found no clear complete-note duplicates or close paraphrases across
 the 80/20 split; topical overlaps remain recorded and this is an informal test.
-Registry verification is complete. The availability watch found a compatible offer. The shared runner
+Registry verification of the previous image completed before the first launch.
+The availability watch found a compatible offer. The shared runner
 passed preparation.
 The recorded rental rate was $1.6555555556/hour including 300 GB storage. The immutable operation is
 `target/distillation-pilot-v1/launch-20260929/operation/`. Its persistent local
