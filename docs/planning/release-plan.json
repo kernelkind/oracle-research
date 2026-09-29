@@ -16,7 +16,7 @@
       "id": "03",
       "title": "Test hierarchy across more topics",
       "status": "WAITING",
-      "description": "200: prominence + correctness.\n300: scalable construction + correctness.\n500: combine both; profile build.\n~1–2k: final pre-release validation rung with user browsing review.\nThe final 2–5k build and review belong to 12, not this task.\nEnsure pair filtering keeps useful links.\nSTART WITH 02; FINISH WITH 24–27"
+      "description": "200: prominence + correctness.\n300: scalable construction + correctness.\n500: combine both; profile build.\n~1–2k: final pre-release validation rung with user browsing review.\nThe final 2–5k build and review belong to 12, not this task.\nValidate relevant-content coverage for the chosen workflow. Ensure pair filtering keeps useful links.\nSTART WITH 02; FINISH WITH 25–27; ALSO 24 IF HDBSCAN IS USED."
     },
     {
       "id": "04",
@@ -112,7 +112,7 @@
       "id": "20",
       "title": "Assess full hierarchy-build resources",
       "status": "WAITING",
-      "description": "Combine generation/stage rates with hierarchy counts, including membership recovery and graph processing, to estimate full-build time, memory and cost.\nNEEDS 22; ALSO 21 IF HDBSCAN IS USED.\nThe chosen workflow's time and cost checks remain required."
+      "description": "Combine generation/stage rates with hierarchy counts, including graph processing and membership recovery where used, to estimate full-build time, memory and cost.\nNEEDS 22; ALSO 21 IF HDBSCAN IS USED.\nThe chosen workflow's time and cost checks remain required."
     },
     {
       "id": "21",
@@ -136,7 +136,7 @@
       "id": "24",
       "title": "Recover missing node memberships",
       "status": "READY TO START",
-      "description": "Develop and validate recovery beyond the six Coffee/Tea nodes. Include masks HDBSCAN left unassigned or grouped elsewhere."
+      "description": "Required only if HDBSCAN is used; that choice remains open.\nDevelop and validate recovery beyond the six Coffee/Tea nodes. Include masks HDBSCAN left unassigned or grouped elsewhere.\nRelevant-content coverage remains required in 03 whichever workflow is used."
     },
     {
       "id": "25",
@@ -182,7 +182,8 @@
     {
       "source": "24",
       "target": "03",
-      "kind": "required"
+      "kind": "helpful",
+      "label": "required only if HDBSCAN is used"
     },
     {
       "source": "25",

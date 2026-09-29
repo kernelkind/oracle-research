@@ -900,16 +900,23 @@ tree is not the specified launch hierarchy.
 
 ### Remaining construction work and completion dependencies
 
-The user approved surfacing the audit findings in the dependency map. These are
-required outcomes, not selected implementation methods or new dates:
+The user approved surfacing the audit findings in the dependency map. These
+separate required outcomes from conditional HDBSCAN-specific work; they do not
+select implementation methods or new dates:
 
 | Task | Required result | Completion dependency |
 | --- | --- | --- |
-| **24 · Recover missing node memberships** | A repeatable recovery process beyond the six Coffee/Tea nodes, covering masks left unassigned or grouped elsewhere. Measure its work and cost. | Required to finish 03; available measurements inform 20 without waiting for all of 24. |
+| **24 · Recover missing node memberships** | If HDBSCAN is used, a repeatable recovery process beyond the six Coffee/Tea nodes, covering masks left unassigned or grouped elsewhere. Measure its work and cost. | Required to finish 03 only if HDBSCAN is used; available measurements inform 20 without waiting for all of 24. |
 | **25 · Handle node equivalence and TRUE cycles** | Apply exact mask-set consolidation and a reversible, repeatable rule for HR02's equivalence candidates and cyclic TRUE answers. Provisional contraction does not prove that a cycle or equal title means semantic equivalence. | Implemented for HR02; its finish dependency for 02 is satisfied. Quality validation remains in 02. |
 | **26 · Collapse equal-note navigation steps** | Implement and validate the required navigation simplification, including shared children, while preserving note sets, masks and provenance. | Required to finish 03. |
 | **27 · Order node notes using mask prominence** | Define and implement note ordering within each hierarchy node using mask prominence and relevance, including multiple masks from the same note. Recursive sorting and parent-child score transfer are out of scope. | Needs prominence definition 04; required to finish 03. |
 | **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered relationship checks and large-group title inputs. The relationship method is open. | Needs 03 + 22, plus 21 only if HDBSCAN is used; required to finish full-build feasibility 10. |
+
+Task 24's recovery work is conditional on using HDBSCAN; that choice remains
+open. Its link to 03 is helpful while the choice is open and becomes required
+if HDBSCAN is selected. Relevant-content coverage remains part of 03's required
+hierarchy-quality validation for any workflow; this does not select a recovery
+method for a workflow without HDBSCAN.
 
 24 can start from saved artifacts and remains unstarted. 25 is complete for
 HR02: both merge stages, provenance-preserving naming and browser export are
@@ -954,7 +961,8 @@ can follow 02 before prominence is finished, but its note-ordering check needs
 04 and 27. The 300-note
 scalable-construction work can proceed without waiting for that ordering
 check. Completing the combined 500-note validation (03) requires
-24–27. The prominence dependency remains 04 → 27 → 03. The stages' internal
+25–27, plus 24 only if HDBSCAN is used. Relevant-content coverage is required
+either way. The prominence dependency remains 04 → 27 → 03. The stages' internal
 processing order must respect their inputs, but this does not impose a serial
 development schedule.
 
@@ -965,9 +973,10 @@ still verifies the final distilled model before the launch build. The new pilot
 check belongs within 06 rather than a separate node or a dependency on finishing
 the final fine-tune.
 
-Early scale assessment 20 includes membership-recovery and graph-processing
-costs, not only model calls. It can use available evidence from 24 and the growing
-hierarchy builds; it does not wait for the finished implementation in 28.
+Early scale assessment 20 includes graph-processing costs and membership-recovery
+costs where recovery is used, not only model calls. It can use available evidence
+from 24 and the growing hierarchy builds; it does not wait for the finished
+implementation in 28.
 
 Service testing needs both the protocol and a saved hierarchy snapshot. The
 100-note hierarchy can supply the initial snapshot; service development need
@@ -1029,8 +1038,8 @@ It does not approve implementation, benchmarks, spending or diagram changes.
   generation measurements from the fine-tuning pilot (06), and mask/node/cosine-filtered-pair counts
   from the growing hierarchy builds (03). Estimate launch-build time, memory and
   cost to inform an affordable corpus size while preserving hierarchy quality.
-  Include membership-recovery and graph-processing costs; available recovery
-  measurements from 24 are an additional dashed input.
+  Include graph-processing costs and membership-recovery costs where recovery
+  is used; available measurements from 24 are an additional dashed input.
   It waits for 22, plus 21 only if HDBSCAN is used. The dashed 06 and 03 inputs allow
   available evidence to be used without waiting for those workstreams to finish.
   Per-pair relationship cost alone does not establish total hierarchy-build cost.
@@ -1079,7 +1088,8 @@ cutoff, measured rates and counts, and the final corpus size remain open.
    and 500 to validate them together and profile the build. The 200-note
    construction can start before prominence is finished, but its ordering check
    cannot finish without 04 and 27. The 300-note work need not wait for that
-   check. The combined 500-note validation still needs 24–27.
+   check. The combined 500-note validation still needs 25–27, plus 24 only if
+   HDBSCAN is used. Relevant-content coverage remains required either way.
 2. Start scale measurements during Week 2. Measure the complete build, including
    SSE, HDBSCAN, node titles and cosine-filtered relationship checks, rather
    than relying only on distilled-model training or generation speed. Node 22
@@ -1131,9 +1141,10 @@ remains the lagging earlier view until explicitly updated.
 the completed mask-based parent-child diagnostic and settle the automated
 relationship method the user is pleased with (02) — the release's top risk,
 gating every build. Finish the mask-prominence prompt and output format (04)
-and implement node-note ordering (27). Land membership recovery (24) and
-validate navigation collapse (26); both gate 03. Define the Nostr hierarchy
-protocol (13), which is ready and independent. Begin corpus selection inside
+and implement node-note ordering (27). Land membership recovery (24) if HDBSCAN
+is used, and validate navigation collapse (26); 24 gates 03 only for HDBSCAN.
+Define the Nostr hierarchy protocol (13), which is ready and independent.
+Begin corpus selection inside
 the decided 2–5k band (09).
 
 **Week 2 · October 5 – 11: validate the process; select the teachers.** Run

@@ -33,6 +33,11 @@ are helpful while the choice is open; make them required if HDBSCAN is selected.
 The chosen workflow's time and cost checks remain required. No algorithm is
 selected by this tracking change.
 
+Task 24's membership-recovery work is also required only if HDBSCAN is used.
+Its link to 03 is helpful while the choice is open; make it required if HDBSCAN
+is selected. Relevant-content coverage remains part of 03's required validation
+for whichever workflow is used.
+
 Task 02 now tracks the SP-based hierarchy investigation: LG01 has run on 100
 posts, and BCPv4 has compared 49 parent pairs without applying its answers.
 Equivalent-node merging, re-comparison and graph-application policies remain
