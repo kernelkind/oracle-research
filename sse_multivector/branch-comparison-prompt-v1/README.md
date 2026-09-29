@@ -52,9 +52,10 @@ LG01 names the technique at HG3, not the whole process or a particular run.
 
 ### Proposed HG8 — apply ancestor relationships
 
-Status: **ancestor interpretation agreed; remaining application policy is a
-draft, not approved or implemented**. HG8 is a proposed label, not an extension
-of the approved HG1–HG7 labels. The current code does not apply BCPv4 answers.
+Status: **ancestor interpretation and browsing-link rule agreed; remaining
+application policy is a draft, not approved or implemented**. HG8 is a proposed
+label, not an extension of the approved HG1–HG7 labels. The current code does not
+apply BCPv4 answers.
 The prompt, response labels and saved hierarchy remain unchanged.
 
 BCPv4 calls its answers `a_parent_of_b` and `b_parent_of_a`, but defines them
@@ -109,8 +110,19 @@ disagreements are recorded, not silently resolved. Cycle checks establish
 structural validity, not semantic correctness. HG6 merge handling and any
 repeat rule for equivalences found at HG7 remain separate open decisions.
 
-Choosing direct parent links for browsing from these ancestor relationships
-also remains open; no new direct-link or transitive-reduction rule is selected.
+The user agreed to the following browsing-link rule, recorded as
+[HD22](../../docs/planning/release-decisions.md#sp-based-hierarchy-rules):
+omit a direct link A → B from the browsing view when another path of at least
+two links connects A to B. Derive the view from the complete acyclic ancestor
+graph, not by selecting one longest chain. Retain every node, multiple parent
+routes, and all original relationships and provenance in the underlying data.
+This is a browsing simplification, not deletion of source relationships.
+
+For N037's saved Food → Bread → Sourdough bread branch, a separate
+Food → Sourdough bread browsing link is redundant. Keep the route through
+Bread and preserve Food's ancestor relationship with Sourdough bread.
+The rule is agreed but not yet implemented in this investigation; earlier
+LG01 browser outputs remain unchanged.
 
 ## Input and output
 
@@ -215,9 +227,9 @@ Review the four issues above, starting with the Dining/Meals inconsistency,
 before applying judgments or revising the prompt. The saved outputs support
 that review. HG6–HG7 are an unapproved proposal for testing combined inputs,
 not authorization for additional calls. The [HG8 ancestor-application draft](#proposed-hg8--apply-ancestor-relationships)
-records the agreed ancestor interpretation; its remaining application policy
-and the derivation of direct browsing links need user review. Do not alter the
-saved LG01 hierarchy.
+records the agreed ancestor interpretation and browsing-link rule. Its remaining
+application policy, including cycle handling, needs user review. Do not alter
+the saved LG01 hierarchy.
 
 ## Design references
 
