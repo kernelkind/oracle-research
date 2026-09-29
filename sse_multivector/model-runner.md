@@ -282,6 +282,13 @@ rendering, batching, receipts, request reuse, comparisons, usage, revision diffs
 and review exports. Do not write per-case configs, orchestrate waves, add inline
 collection scripts, total usage by hand, or hand-edit review JSON.
 
+If a required capability is missing, add reusable, tested support to the shared
+workflow or its input adapters before continuing. Do not work around the gap by
+doing the mechanical work by hand or in a one-off script. This includes input
+preparation, not just execution; see [extension rules](#offline-verification-and-extension).
+If the extension exceeds the authorized task, request approval rather than
+bypassing the tool.
+
 Only `run` performs inference. `prepare`, `show`, `revise` and `review` do
 not call a model. Preparation checks the local runner identity, not credentials
 or provider acceptance. User approval and the repository spending rules still
@@ -1575,9 +1582,21 @@ python3 -m unittest sse_multivector.test_experiment \
   sse_multivector.test_category_title_inputs
 ```
 
-Add task-specific preparation/validation in
-[experiment_inputs.py](experiment_inputs.py) only when generic variables and
-optional schema are insufficient. Keep rendering/review evidence separate.
-Reuse the shared executor and receipts; do not add a second execution path or
-an experiment-specific report script. Tests must exercise the actual CLI and
-production engine using offline transport fixtures.
+First check whether existing generic variables, schemas or adapters cover the
+task. If not, extend the appropriate shared capability with the smallest reusable
+change. Keep the runner general-purpose; do not hard-code an experiment's cases
+or add a second execution path or experiment-specific report script.
+
+For missing source-data preparation or validation, extend
+[experiment_inputs.py](experiment_inputs.py). A generic adapter accepting an
+already-assembled `cases.json` does not automate gathering those cases from saved
+data. Do not fill that gap by manually copying subject entries, posts, IDs or
+hashes into large case files, or passing generated payloads through patches.
+Reusable preparation code must assemble the model inputs and separate review
+evidence from the saved sources. Authoring prompts/specs, choosing cases and
+assessing results remain deliberate inputs, not mechanical artifact assembly.
+
+Reuse the shared executor, receipts and reporting. For each behavior change,
+first add a failing test through the actual CLI or production codepath, implement
+the capability, then run the relevant regression tests with offline transport
+fixtures. Do not rerun model calls merely to add a preparation capability.
