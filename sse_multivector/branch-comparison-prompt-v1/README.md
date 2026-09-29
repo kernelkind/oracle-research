@@ -1,8 +1,10 @@
 # BCPv4 — one-pair subject comparison
 
-Status: **user-approved wording, untested, not frozen**. The user approved BCPv4
-after reviewing the prompt filled with real saved data. This approval does not
-authorize inference or changes to the saved hierarchy.
+Status: **user-approved wording, tested on six pairs, not frozen**. The user
+approved BCPv4 after reviewing the prompt filled with real saved data, then
+authorized six Astra-low calls. All six returned valid JSON and were accepted
+in agent review. These are agent assessments, not user decisions or a measured
+general accuracy rate. No judgments were applied to the saved hierarchy.
 
 [BCPv4.md](BCPv4.md) compares the subjects represented by two hierarchy nodes,
 A and B. Each node is represented by subject/context entries originating in one
@@ -52,16 +54,45 @@ The output is a JSON object with exactly two string fields:
   `uncertain`.
 - `reason`: one short justification.
 
-This prompt specifies the output contract; no inference setup or new validation
-code has been added. There is no graph-update parser or automatic application
-stage. A pairwise judgment does not check global graph consistency or authorize
+The [six-pair experiment spec](../experiment_specs/lg01-bcpv4-six-pairs-astra-low-v1.json)
+uses the shared runner's existing JSON Schema validation; no validation code
+was added. There is no graph-update parser or automatic application stage. A
+pairwise judgment does not check global graph consistency or authorize
 overriding an SP relationship. LG01's preservation rules are unchanged.
+
+## Six-pair test
+
+Unchanged BCPv4 was run with `openai-codex / gpt-6-astra / low`, concurrency 3,
+and six maximum new attempts. Six calls completed, without retries, reused
+answers, earlier-prompt baseline calls or paid API fallback.
+
+The six pairs were selected from the 49 distinct immediate-parent pairs found
+in the saved LG01 100-post run. They cover same-wording and different-wording
+equivalence, broader/narrower subjects, and overlapping subjects. The Food node
+retained all 27 distinct subject/context entries. Expected relations and shared
+children were not sent to the model.
+
+The ignored artifact directory is
+`target/branch-comparison-v1/bcpv4-six-pairs-v1/`. Its `cases.json` preserves the
+source entries, full posts, node IDs, shared-child evidence and source hashes;
+`experiment/` contains frozen inputs/settings, raw receipts, runner-generated
+reports and separate agent reviews. The prompt and saved LG01 inputs/results
+were hash-checked unchanged. No new subjects, masks, vectors or hierarchy
+were generated.
+
+The judgments preserved the Food ingredients / Baking ingredients distinction
+despite both contexts discussing bread, and did not mistake shared subjects for
+full containment. This selected sample supports further testing, not freezing
+the prompt or claiming a validated placement stage. Whether context descriptions
+help remains untested: there was no context-free comparison. No case exercised
+the `uncertain` response.
 
 ## Next step
 
-Propose a small pairwise test using unchanged BCPv4. The prompt approval does not
-select test cases, an execution model or an application policy. Obtain test
-authorization before inference; do not alter the saved LG01 hierarchy.
+Review the six saved judgments before expanding. A proposed next test is the
+remaining 43 pairs with unchanged BCPv4/Astra low; that expansion is not yet
+authorized. It would still only save judgments, not apply them. An application
+policy remains open; do not alter the saved LG01 hierarchy.
 
 ## Design references
 
