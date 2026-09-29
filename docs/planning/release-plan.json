@@ -16,7 +16,7 @@
       "id": "03",
       "title": "Test hierarchy across more topics",
       "status": "WAITING",
-      "description": "200: prominence + correctness.\n300: scalable construction + correctness.\n500: combine both; profile build.\n~1–2k: review rung before the release build.\n2–5k: release build, teacher-labeled and fully automated.\nEnsure pair filtering keeps useful links.\nSTART WITH 02; FINISH WITH 24–27"
+      "description": "200: prominence + correctness.\n300: scalable construction + correctness.\n500: combine both; profile build.\n~1–2k: final pre-release validation rung with user browsing review.\nThe final 2–5k build and review belong to 12, not this task.\nEnsure pair filtering keeps useful links.\nSTART WITH 02; FINISH WITH 24–27"
     },
     {
       "id": "04",
@@ -70,7 +70,7 @@
       "id": "12",
       "title": "Build launch hierarchy snapshot",
       "status": "WAITING",
-      "description": "Build the release snapshot: teachers generate subjects, masks and prominence over the frozen 2–5k corpus; the validated pipeline builds the hierarchy fully automated, with no manual repair. Check nodes, coverage, ranking and reproducibility.\nFor release: runnable code + instructions, architecture and continual-update path matching this build, and the scalability roadmap.\nNEEDS 03 + 09 + 17\nAND BUDGET APPROVAL"
+      "description": "Build the release snapshot: teachers generate subjects, masks and prominence over the frozen 2–5k corpus; the validated pipeline builds the hierarchy fully automated, with no manual repair. Check nodes, coverage, ranking and reproducibility. Completion requires the user's acceptance of this final snapshot in browsing review.\nFor release: runnable code + instructions, architecture and continual-update path matching this build, and the scalability roadmap.\nNEEDS 03 + 09 + 17\nAND BUDGET APPROVAL"
     },
     {
       "id": "13",

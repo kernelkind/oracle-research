@@ -480,6 +480,13 @@ is merely a test of handling more notes. The ladder extends past 500: a
 release-shape revision above), so the release build is never an uninstrumented
 jump in scale.
 
+**Task ownership clarified September 29:** task 03 covers the 200 / 300 / 500
+validation runs and the ~1–2k-note user-review rung. Task 12 alone owns the
+final teacher-labeled, fully automated 2–5k build and its user browsing review.
+Completing 03 does not accept the final release snapshot; completing 12 requires
+the user's acceptance of that snapshot. The full ladder and existing dependency
+arrows are unchanged.
+
 Runtime, memory and million-note processing cost still require separate
 measurements. Profiling 500 notes does not establish launch-scale feasibility.
 
@@ -978,7 +985,7 @@ Publication preparation belongs to the existing tasks, not a new workstream:
 | --- | --- |
 | **06 · Choose the model to train** | Confirm permission to release fine-tuned weights before selecting the base model and committing to the larger training run. Teacher provider permissions remain in 17. |
 | **08 · Distill and package the model** | Prepare trained weights, necessary supporting files, usage instructions and evaluation results. Verify that the intended release files load and generate masks and prominence. |
-| **12 · Build launch hierarchy snapshot** | Prepare runnable hierarchy-generation code and instructions, architecture documentation matching the actual build, the agreed continual-update path, and the scalability roadmap. |
+| **12 · Build launch hierarchy snapshot** | Build the final teacher-labeled, fully automated 2–5k snapshot and obtain the user's browsing acceptance. Prepare runnable hierarchy-generation code and instructions, architecture documentation matching the actual build, the agreed continual-update path, and the scalability roadmap. |
 | **16 · Launch public hierarchy** | Publish the release package: the snapshot, code and documentation, tested serving instructions, the scalability roadmap, and the Notedeck fork branch. The model track publishes the open-weight model whenever it passes its gate; a hosted demo is optional. |
 
 Preparation can accompany development; final verification requires the actual

@@ -22,6 +22,11 @@ instructions. The open-weight model is the nice-to-have model track, and
 operating the service is an optional demo. Task texts and statuses reflect
 that revision.
 
+Task 03 covers validation at 200 / 300 / 500 notes and the ~1–2k-note user-review
+rung. Task 12 alone owns the final teacher-labeled, fully automated 2–5k build
+and its user browsing review. Completion of 03 does not accept the release
+snapshot; 12 requires the user's acceptance of that final snapshot.
+
 Whether HDBSCAN will be used remains open (September 29 clarification).
 Task 21 is required only if the chosen workflow uses it. Its links to 20 and 28
 are helpful while the choice is open; make them required if HDBSCAN is selected.
