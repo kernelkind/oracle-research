@@ -3,6 +3,11 @@
 Status: **draft, untested, not frozen**. The user authorized drafting this
 prompt for review, not inference or changes to the saved hierarchy.
 
+The user subsequently chose to expand the unchanged SP combination experiment
+to [all 100 posts](../subject-order-probe.md#smv2-100--unchanged-rules-on-all-100-posts)
+before deciding what placement work is needed. Testing or revising this draft
+is deferred; neither whole-branch nor head-only comparison has been adopted.
+
 [BCPv1.md](BCPv1.md) is a new prompt, not a revision of the older mask-only
 equivalence or placement prompts. It compares supplied SP subject branches
 together, proposing missing parent links, semantic equivalences, or no change.
@@ -29,9 +34,9 @@ justifications, unresolved comparisons and any conflicts. There is no graph
 update parser or automatic application stage in this draft. Unmentioned pairs
 are not negative labels.
 
-## Proposed first review
+## Deferred test proposal
 
-After prompt approval, the proposed test is one call per saved case:
+The earlier, unrun proposal was one call per saved case:
 
 1. N037 / N072: Food ingredients and Baking ingredients above shared Cranberries.
 2. N015: food-preparation and bread-type paths above Sourdough bread preparation.

@@ -21,6 +21,11 @@ within one post; it is implemented in the separate
 [SMv2 experiment](../subject-order-probe.md#smv2--exact-same-post-combination).
 Earlier saved graphs remain unchanged.
 
+The approved [SMv2-100 expansion](../subject-order-probe.md#smv2-100--unchanged-rules-on-all-100-posts)
+applies those same combination rules to all 100 saved posts before deciding
+whether another placement stage is needed. It is separate from the six-post
+run and does not add frontier judgments or alter the mask-group rules below.
+
 1. **Deduplicate identical masks within each post before SSE.** Treat masks with
    the same post ID and identical ordered source-byte ranges as one encoder
    input. Preserve every originating subject and mask ID as provenance. Equal

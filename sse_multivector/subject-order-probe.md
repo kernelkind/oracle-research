@@ -246,3 +246,55 @@ python3 -m unittest \
 `tests/category_empty_masks.rs` covers actual loading and N/D/O rendering of an
 empty selection. The existing category/mask/DAG suites cover the preserved
 validation and navigation behavior.
+
+## SMv2-100 — unchanged rules on all 100 posts
+
+The user approved expanding the combination experiment before deciding whether
+to add a placement stage. SMv2-100 is a separate run of the same SMv2 rules, not
+a new matching algorithm. It reuses the saved 100-post SP/MP outputs and 1,674
+mask vectors. All 2,383 subject occurrences remain, including 252 empty masks.
+There are 1,702 distinct subject texts: 91 existing SSE encodings are reused and
+only the remaining 1,611 are encoded locally. No SP, MP, title or frontier
+placement calls are part of this experiment. The six-post outputs stay fixed.
+
+`subject_matching_probe prepare` now prepares source-bound inputs and missing
+subject encodings without running inference. Omit `--posts` to include every
+post; an unidentifiable post causes an error rather than silent omission.
+`--reuse-probe` references existing vector batches and their original receipts.
+It does not create a synthetic combined worker receipt. Both reused and new
+batches are checked for matching SSE model/runtime identity and source hashes.
+A fully cached preparation needs no worker run.
+
+The saved inputs are under `target/subject-matching-100-v1/inputs`; the combined
+hierarchy is written separately under `target/subject-matching-100-v1/run`.
+The algorithm ID remains `SMv2`; `SMv2-100` identifies this corpus-sized run.
+Preparation and matching can be reproduced in fresh directories:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 -m sse_multivector.subject_matching_probe prepare \
+  --source sse_multivector/hierarchy-refresh-v1 \
+  --reuse-probe target/subject-matching-100-v1/inputs \
+  --output target/subject-matching-100-v1/replay-inputs && \
+python3 -m sse_multivector.subject_matching_probe \
+  --source sse_multivector/hierarchy-refresh-v1 \
+  --probe target/subject-matching-100-v1/replay-inputs \
+  --output target/subject-matching-100-v1/replay
+```
+
+For the initial new encodings, the worker was recovered byte-for-byte from
+Git commit `6b788656eeb46c03c19ff0540d53092e5a336f97`, with SHA-256
+`6e1eb74c1d89fff98bd2196ddea6a6af32d62c5395a664a34afe2bfbea7224cb`.
+The ignored snapshot is `target/subject-matching-100-v1/encoder-source/worker.py`.
+This is the version used for the saved mask and six-post subject vectors; the
+current worker has since changed. The same CPU configuration, checkpoint,
+base-model files and recorded runtime versions were used. The original input
+protection correctly refuses a replay against changed worker source; no old
+hashes were rewritten. A fresh fully cached six-post preparation reproduced
+the saved SMv2 results, summary and browser input byte-for-byte.
+
+The next evaluation is the larger hierarchy's browsing structure. No new
+parent links, head-comparison policy, display collapsing or manual repairs are
+approved by this expansion. More data can change nearest-mask post selection
+and matching chains under the unchanged rules; the six-post graph is a saved
+baseline, not a constraint that its merges must survive the larger run.

@@ -13,12 +13,120 @@ import json
 import math
 from pathlib import Path
 import platform
+import sys
 
 from sse_multivector.ancestor_cosine_probe import cosine, load_vectors
-from sse_multivector.subject_order_probe import read, reachable, save
-from sse_multivector.worker import _sha256_file
+from sse_multivector.subject_order_probe import build_inputs, read, reachable, save
+from sse_multivector.worker import _load_request, _sha256_file
 
 TIE_TOLERANCE = 1e-12  # Numerical ties only; not a semantic acceptance margin.
+
+
+def load_subject_vectors(probe):
+    """Read original worker batches, retaining their receipts instead of synthesizing one."""
+    vectors, receipts, protected, visited, active = {}, [], {}, set(), set()
+
+    def visit(folder):
+        folder = Path(folder).resolve()
+        if folder in active:
+            raise ValueError('cyclic subject-vector reuse')
+        if folder in visited:
+            return
+        active.add(folder)
+        path = folder / 'inputs.json'
+        data = read(path)
+        protected[str(path)] = _sha256_file(path)
+        for prior in data.get('reused_probes', []):
+            visit(prior)
+        if data.get('new_encodings', 1):
+            batch, receipt = load_vectors(folder / 'worker-result')
+            if receipt['proposal_sha256'] != protected[str(path)]:
+                raise ValueError('subject vectors do not match the saved SP inputs')
+            request = folder / 'worker-request.json'
+            if request.exists() or 'new_encodings' in data:
+                if receipt['request_sha256'] != _sha256_file(request):
+                    raise ValueError('subject-vector request hash differs')
+                proposal, notes = _load_request(request)
+                if proposal != receipt['proposal_sha256']:
+                    raise ValueError('subject-vector request proposal differs')
+                expected = []
+                for note in notes:
+                    encoding = hashlib.sha256(note.text.encode()).hexdigest()
+                    if (note.note_id != encoding or len(note.subjects) != 1
+                            or note.subjects[0].subject_id != encoding[:16]
+                            or tuple(note.subjects[0].byte_spans) != ((0, len(note.text.encode())),)):
+                        raise ValueError('subject-vector request is not standalone full subject text')
+                    expected.append((note.note_id, note.subjects[0].subject_id))
+                if list(batch) != expected:
+                    raise ValueError('subject-vector worker rows differ from request')
+                protected[str(request)] = _sha256_file(request)
+            for name in ('worker-receipt.json', 'raw-vectors.f32le'):
+                path = folder / 'worker-result' / name
+                protected[str(path)] = _sha256_file(path)
+            if receipts:
+                for key in ('checkpoint_sha256', 'base_model_artifact_tree_sha256', 'model',
+                            'runtime', 'dimensions', 'device', 'note_batch_size'):
+                    if receipt.get(key) != receipts[0].get(key):
+                        raise ValueError(f'SSE identity mismatch between subject batches: {key}')
+            receipts.append(receipt)
+            for key, vector in batch.items():
+                if key in vectors and vectors[key] != vector:
+                    raise ValueError('conflicting saved vectors for the same subject')
+                vectors[key] = vector
+        active.remove(folder)
+        visited.add(folder)
+
+    visit(probe)
+    if not receipts:
+        raise ValueError('no saved subject-vector batches')
+    return vectors, receipts[0], protected
+
+
+def prepare(source, output, *, posts=None, reuse_probe=None, protected=()):
+    """Prepare all SP entries, requesting only standalone subject vectors not already saved."""
+    source, output = Path(source).resolve(), Path(output).resolve()
+    if output.exists():
+        raise FileExistsError(output)
+    mappings = read(source / 'vector-map.json')
+    corpus = read(source / 'masked-posts.json')
+    if posts is None:
+        if {p['note_id'] for p in corpus['notes']} != {v['note_id'] for v in mappings['vectors']}:
+            raise ValueError('cannot identify every corpus post from the saved vector map')
+        posts = sorted({v['note_short_id'] for v in mappings['vectors']})
+    inputs, request = build_inputs(corpus, mappings, posts)
+    hashes = {str(path.resolve()): _sha256_file(path) for path in [
+        source / 'masked-posts.json', source / 'vector-map.json', source / 'worker-config.json',
+        source / 'worker-result/worker-receipt.json', source / 'worker-result/raw-vectors.f32le',
+        *map(Path, protected)]}
+    reused, reusable = [], {}
+    if reuse_probe is not None:
+        reusable, receipt, prior_hashes = load_subject_vectors(reuse_probe)
+        original = read(source / 'worker-result/worker-receipt.json')
+        for key in ('checkpoint_sha256', 'base_model_artifact_tree_sha256', 'model', 'runtime'):
+            if receipt[key] != original[key]:
+                raise ValueError(f'SSE identity mismatch: {key}')
+        hashes.update(prior_hashes)
+        reused.append(str(Path(reuse_probe).resolve()))
+    total = len(request['notes'])
+    request['notes'] = [p for p in request['notes']
+                        if (p['note_id'], p['subjects'][0]['subject_id']) not in reusable]
+    new_count = len(request['notes'])
+    inputs.update(experiment_id='SMv2', protected_sha256=hashes, reused_probes=reused,
+                  new_encodings=new_count, encoding='standalone-subject-full-text')
+    output.mkdir(parents=True, exist_ok=False)
+    save(output / 'inputs.json', inputs)
+    if new_count:
+        request.update(schema_version=1, proposal_sha256=_sha256_file(output / 'inputs.json'))
+        save(output / 'worker-request.json', request)
+        _load_request(output / 'worker-request.json')
+        config = read(source / 'worker-config.json')
+        config.update(request_path=str(output / 'worker-request.json'),
+                      request_sha256=_sha256_file(output / 'worker-request.json'),
+                      output_path=str(output / 'worker-result'))
+        save(output / 'worker-config.json', config)
+    return dict(posts=len(inputs['posts']), subjects=len(inputs['subjects']), unique_encodings=total,
+                reused_encodings=total - new_count, new_encodings=new_count,
+                empty_masks=sum(not s['byte_spans'] for s in inputs['subjects']))
 
 
 def match_subjects(inputs, subject_vectors, mask_vectors, *, subject_cutoff=.90, mask_cutoff=.80):
@@ -227,14 +335,16 @@ def run(source, probe, output, *, subject_cutoff=.90, mask_cutoff=.80):
         raise FileExistsError(output)
     inputs = read(probe / "inputs.json")
     mask_vectors, mask_receipt = load_vectors(source / "worker-result")
-    subject_vectors, subject_receipt = load_vectors(probe / "worker-result")
+    subject_vectors, subject_receipt, subject_hashes = load_subject_vectors(probe)
     for key in ("checkpoint_sha256", "base_model_artifact_tree_sha256", "model", "runtime"):
         if mask_receipt[key] != subject_receipt[key]:
             raise ValueError(f"SSE identity mismatch: {key}")
-    if subject_receipt["proposal_sha256"] != _sha256_file(probe / "inputs.json"):
-        raise ValueError("subject vectors do not match the saved SP inputs")
     protected = dict(inputs["protected_sha256"])
-    for folder in (source, probe):
+    for path, expected in subject_hashes.items():
+        if path in protected and protected[path] != expected:
+            raise ValueError(f'protected input changed: {path}')
+        protected[path] = expected
+    for folder in (source,):
         for name in ("worker-receipt.json", "raw-vectors.f32le"):
             path = folder / "worker-result" / name
             expected = _sha256_file(path)
@@ -306,6 +416,16 @@ def run(source, probe, output, *, subject_cutoff=.90, mask_cutoff=.80):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    if len(sys.argv) > 1 and sys.argv[1] == 'prepare':
+        parser.add_argument('--source', type=Path, required=True)
+        parser.add_argument('--output', type=Path, required=True)
+        parser.add_argument('--posts', nargs='+')
+        parser.add_argument('--reuse-probe', type=Path)
+        parser.add_argument('--protect', type=Path, nargs='*', default=[])
+        args = parser.parse_args(sys.argv[2:])
+        print(json.dumps(prepare(args.source, args.output, posts=args.posts,
+                                 reuse_probe=args.reuse_probe, protected=args.protect), indent=2))
+        return
     for name in ("source", "probe", "output"):
         parser.add_argument("--" + name, type=Path, required=True)
     parser.add_argument("--subject-cutoff", type=float, default=.90)

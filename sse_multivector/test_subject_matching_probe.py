@@ -253,6 +253,92 @@ class SavedMatchingTests(unittest.TestCase):
             self.assertEqual(snapshot, {p: p.read_bytes() for p in output.iterdir()})
             self.assertEqual(before, {p: p.read_bytes() for p in before})
 
+    def test_prepare_reuses_saved_vectors_and_encodes_only_missing_subjects(self):
+        with tempfile.TemporaryDirectory() as directory:
+            directory = Path(directory)
+            source, cached = self.fixture(directory)
+            before = {p: p.read_bytes() for p in cached.rglob('*') if p.is_file()}
+            data = json.loads((source / 'masked-posts.json').read_text())
+            data['notes'][0]['subjects'].append(dict(
+                number='3', subject='Loaves', byte_spans=[[0, 5]], fragments=['bread']))
+            (source / 'masked-posts.json').write_text(json.dumps(data))
+            (source / 'worker-config.json').write_text(json.dumps({'device': 'cpu'}))
+            probe = directory / 'expanded'
+            process = subprocess.run([
+                sys.executable, '-m', 'sse_multivector.subject_matching_probe', 'prepare',
+                '--source', str(source), '--output', str(probe), '--reuse-probe', str(cached),
+            ], text=True, capture_output=True, check=False)
+            self.assertEqual(process.returncode, 0, process.stderr)
+            summary = json.loads(process.stdout)
+            self.assertEqual((summary['posts'], summary['subjects'], summary['reused_encodings'],
+                              summary['new_encodings']), (2, 5, 2, 1))
+            request = json.loads((probe / 'worker-request.json').read_text())
+            self.assertEqual([n['text'] for n in request['notes']], ['Loaves'])
+            self.assertFalse((probe / 'worker-result').exists())
+
+            # Saved output from the unchanged worker for the one new encoding.
+            folder = probe / 'worker-result'
+            folder.mkdir()
+            raw = struct.pack('<ff', 1, 0)
+            (folder / 'raw-vectors.f32le').write_bytes(raw)
+            receipt = json.loads((cached / 'worker-result/worker-receipt.json').read_text())
+            receipt.update(row_count=1, rows=[dict(
+                note_id=request['notes'][0]['note_id'],
+                subject_id=request['notes'][0]['subjects'][0]['subject_id'])],
+                proposal_sha256=hashlib.sha256((probe / 'inputs.json').read_bytes()).hexdigest(),
+                request_sha256=hashlib.sha256((probe / 'worker-request.json').read_bytes()).hexdigest(),
+                files={'raw-vectors.f32le': {'sha256': hashlib.sha256(raw).hexdigest()}})
+            (folder / 'worker-receipt.json').write_text(json.dumps(receipt))
+            output = directory / 'expanded-run'
+            self.assertEqual(run(source, probe, output)['subjects'], 5)
+            provenance = json.loads((output / 'provenance.json').read_text())
+            self.assertIn(str(cached / 'worker-result/raw-vectors.f32le'), provenance['protected_sha256'])
+            self.assertEqual(before, {p: p.read_bytes() for p in before})
+
+    def test_fully_cached_prepare_needs_no_worker_and_replays_identically(self):
+        with tempfile.TemporaryDirectory() as directory:
+            directory = Path(directory)
+            source, cached = self.fixture(directory)
+            (source / 'worker-config.json').write_text(json.dumps({'device': 'cpu'}))
+            probe = directory / 'fully-cached'
+            process = subprocess.run([
+                sys.executable, '-m', 'sse_multivector.subject_matching_probe', 'prepare',
+                '--source', str(source), '--output', str(probe), '--reuse-probe', str(cached),
+            ], text=True, capture_output=True, check=False)
+            self.assertEqual(process.returncode, 0, process.stderr)
+            self.assertEqual(json.loads(process.stdout)['new_encodings'], 0)
+            self.assertFalse((probe / 'worker-request.json').exists())
+            self.assertFalse((probe / 'worker-result').exists())
+            run(source, cached, directory / 'baseline')
+            run(source, probe, directory / 'reused')
+            self.assertEqual((directory / 'baseline/results.json').read_bytes(),
+                             (directory / 'reused/results.json').read_bytes())
+            self.assertEqual((directory / 'baseline/categories.json').read_bytes(),
+                             (directory / 'reused/categories.json').read_bytes())
+            path = cached / 'worker-result/raw-vectors.f32le'
+            path.write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError, 'vector hash|protected input'):
+                run(source, probe, directory / 'changed')
+            self.assertFalse((directory / 'changed').exists())
+
+    def test_prepare_rejects_incompatible_reuse_before_creating_output(self):
+        with tempfile.TemporaryDirectory() as directory:
+            directory = Path(directory)
+            source, cached = self.fixture(directory)
+            (source / 'worker-config.json').write_text(json.dumps({'device': 'cpu'}))
+            path = cached / 'worker-result/worker-receipt.json'
+            receipt = json.loads(path.read_text())
+            receipt['runtime'] = {'different': True}
+            path.write_text(json.dumps(receipt))
+            probe = directory / 'incompatible'
+            process = subprocess.run([
+                sys.executable, '-m', 'sse_multivector.subject_matching_probe', 'prepare',
+                '--source', str(source), '--output', str(probe), '--reuse-probe', str(cached),
+            ], text=True, capture_output=True, check=False)
+            self.assertNotEqual(process.returncode, 0)
+            self.assertIn('SSE identity mismatch: runtime', process.stderr)
+            self.assertFalse(probe.exists())
+
     def test_saved_duplicate_sources_remain_in_versioned_output(self):
         with tempfile.TemporaryDirectory() as directory:
             directory = Path(directory)
