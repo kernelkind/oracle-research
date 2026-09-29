@@ -15,6 +15,7 @@ from pathlib import Path
 def vast_create_arguments(
     offer_id: str, image: str, label: str, docker_pat: str, *,
     disk_gb: int = 200, entrypoint: str | None = None, environment: str | None = None,
+    onstart: str | None = None,
 ) -> list[str]:
     if not offer_id.isdecimal() or int(offer_id) <= 0:
         raise ValueError("offer ID must be a positive integer")
@@ -24,6 +25,10 @@ def vast_create_arguments(
         raise ValueError("Docker credential must be one nonempty token")
     if type(disk_gb) is not int or disk_gb <= 0:
         raise ValueError("disk size must be a positive integer")
+    if onstart is not None and (not isinstance(onstart, str) or "\0" in onstart):
+        raise ValueError("onstart must be a string without NUL characters")
+    if onstart and entrypoint is not None:
+        raise ValueError("onstart requires Vast-managed SSH, not an entrypoint override")
     arguments = [
         "vastai",
         "create",
@@ -43,7 +48,10 @@ def vast_create_arguments(
         "1",
     ]
     if entrypoint is None:
-        arguments[arguments.index("--cancel-unavail"):arguments.index("--cancel-unavail")] = ["--ssh", "--direct"]
+        position = arguments.index("--cancel-unavail")
+        arguments[position:position] = ["--ssh", "--direct"]
+        if onstart:
+            arguments += ["--onstart-cmd", onstart]
     else:
         arguments += ["--entrypoint", entrypoint, "--env", environment or "", "--args"]
     return arguments
@@ -162,6 +170,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--disk-gb", type=int, default=200)
     parser.add_argument("--entrypoint")
     parser.add_argument("--environment")
+    parser.add_argument("--onstart-cmd")
     return parser.parse_args()
 
 
@@ -169,7 +178,8 @@ def main() -> int:
     args = parse_args()
     docker_pat = sys.stdin.read().strip()
     arguments = vast_create_arguments(args.offer_id, args.image, args.label, docker_pat,
-        disk_gb=args.disk_gb, entrypoint=args.entrypoint, environment=args.environment)
+        disk_gb=args.disk_gb, entrypoint=args.entrypoint, environment=args.environment,
+        onstart=args.onstart_cmd)
     del docker_pat
     from vastai.cli.main import main as vast_main
 

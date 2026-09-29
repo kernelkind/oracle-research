@@ -33,10 +33,10 @@ COPY sse_multivector/distillation_run.py sse_multivector/distillation_data.py \
     sse_multivector/extraction_pipeline.py sse_multivector/mask_positions.py \
     sse_multivector/test_distillation_run.py sse_multivector/test_distillation_data.py \
     sse_multivector/distillation_deploy.py sse_multivector/test_distillation_deploy.py \
-    sse_multivector/test_distillation_candidates.py sse_multivector/distillation_start.py \
+    sse_multivector/test_distillation_candidates.py \
     sse_multivector/distillation_vast.py sse_multivector/test_distillation_vast.py \
     /work/sse_multivector/
-COPY sse_multivector/distillation_start.py /usr/local/bin/distillation-sshd
-RUN chmod 755 /usr/local/bin/distillation-sshd
+COPY vast/runner.py vast/package.py /work/vast/
 EXPOSE 22
-ENTRYPOINT ["/usr/local/bin/distillation-sshd"]
+# Vast replaces the image entrypoint with managed SSH and runs the frozen onstart.
+ENTRYPOINT ["/bin/bash"]

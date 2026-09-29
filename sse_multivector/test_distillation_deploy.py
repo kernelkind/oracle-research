@@ -13,17 +13,6 @@ from sse_multivector.test_distillation_data import DistillationDataTests
 
 
 class PackageTests(unittest.TestCase):
-    def test_connection_retry_is_bounded_and_does_not_retry_application_errors(self):
-        with patch.object(deploy.time, "sleep"), patch.object(deploy.time, "time", return_value=0):
-            with patch.object(deploy, "remote_json", side_effect=[ConnectionError("dropped"), {"state": "running"}]) as call:
-                result = deploy.retry_connection(lambda: deploy.remote_json(None, None, None, None), 10)
-                self.assertEqual(result["state"], "running")
-                self.assertEqual(call.call_count, 2)
-        with patch.object(deploy.time, "time", return_value=0), self.assertRaisesRegex(RuntimeError, "bad code"):
-            deploy.retry_connection(lambda: (_ for _ in ()).throw(RuntimeError("bad code")), 10)
-        with patch.object(deploy.time, "time", return_value=20), self.assertRaises(TimeoutError):
-            deploy.retry_connection(lambda: None, 10)
-
     def test_offer_checks_returned_storage_inclusive_price_and_total_budget(self):
         settings = read_json(Path(__file__).parent / "distillation/vast-launch.json")
         offer = {**settings["offer_equals"], **settings["offer_minimums"],
@@ -50,121 +39,129 @@ class PackageTests(unittest.TestCase):
             job = deploy.verify_package(package)
             copied = read_json(package / job["runs"][0])
             for key in ("data", "mask_prompt", "model"):
-                self.assertTrue(copied[key].startswith("package/"))
+                self.assertTrue(not Path(copied[key]).is_absolute())
                 self.assertNotIn(str(root), copied[key])
             self.assertEqual(job["timeout_seconds"], 600)
             self.assertEqual(job["through"], "preflight")
             self.assertFalse(any(p.suffix == ".py" for p in package.rglob("*")))
-            output = root / "deployment"
-            write_json(output / "deadline.json", {"deadline": 1})
-            saved = {"state": "complete", "package_sha256": sha256(package / "manifest.json")}
-            write_json(output / "result/deployment.json", saved)
-            deploy.write_manifest(output / "result", output / "result/manifest.json", "distillation-results")
-            self.assertEqual(deploy.operate(package, output, {"host": "unused"}), saved)
-            mask = package.parent / copied["mask_prompt"]
+            mask = package / copied["mask_prompt"]
             mask.write_text("changed")
             with self.assertRaisesRegex(ValueError, "manifest"):
                 deploy.verify_package(package)
 
 
-@unittest.skipUnless(os.environ.get("DISTILLATION_SSH_TARGET"), "requires the local deployment VM")
-class SSHDeploymentTests(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.root = Path(os.environ["DISTILLATION_DEPLOY_OUTPUT"])
-        cls.root.mkdir(parents=True)
-        cls.target = read_json(os.environ["DISTILLATION_SSH_TARGET"])
-        cls.fixture = Path(os.environ["DISTILLATION_TEST_OUTPUT"])
 
-    def command(self, package, output, *extra):
-        return [sys.executable, "-m", "sse_multivector.distillation_deploy", "run",
-                "--package", str(package), "--output", str(output),
-                "--host", self.target["host"], "--port", str(self.target["port"]),
-                "--identity", self.target["identity"], *extra]
+@unittest.skipUnless(os.environ.get('DISTILLATION_SSH_TARGET'), 'requires the local deployment VM')
+class SharedSSHTests(unittest.TestCase):
+    def run_package(self, inputs, root, expected=0, stop=False):
+        import argparse
+        import importlib.util
+        import shutil
+        import time
+        sys.path.insert(0, str(deploy.CODE_ROOT / 'vast'))
+        import package as packager
+        import runner
+        from sse_multivector.test_distillation_vast import quote
+        from sse_multivector.distillation_vast import make_spec
+        ledger = root.parent / (root.name + '-ledger.json')
+        write_json(ledger, {'lifetime_cap_cents': 100000, 'actual_spend_cents': 0,
+            'outstanding_commitments_cents': 0, 'reserved_remaining_work_cents': 0, 'entries': []})
+        settings, offer = quote()
+        spec = make_spec(settings, offer, inputs, settings['image_repository'] + '@sha256:' + '4' * 64)
+        config = packager.freeze(spec, root, ledger)
+        definition = importlib.util.spec_from_file_location('frozen_ssh_runner', root / 'transport/control/vast_full_build.py')
+        module = importlib.util.module_from_spec(definition)
+        sys.modules[definition.name] = module
+        definition.loader.exec_module(module)
+        context = module.Context.load(argparse.Namespace(root=root, config=config, operation='run'))
+        target = read_json(os.environ['DISTILLATION_SSH_TARGET'])
+        key = Path(target['identity'])
+        endpoint = ['-p', str(target['port']), target['host']]
+        # Provider receipts are fixture data; transport, worker, training and
+        # retrieval below are the real frozen shared runner over real SSH.
+        for name in ('approval-plan', 'approval', 'offer', 'create-result', 'instance', 'pre-transfer-instance-validation'):
+            write_json(root / f'launch/{name}.json', {})
+        shutil.copyfile(ledger, root / 'launch/reserved-budget-ledger.json')
+        write_json(root / 'launch/full-build-reservation.json', {'ledger_sha256': sha256(ledger)})
+        shutil.copyfile(config, root / 'launch/operation-contract.json')
+        remote = '/workspace/oracle-full-build'
+        module.verify_local_ssh(context)
+        module.tar_upload_directory(context, key, endpoint, root / 'transport', remote + '/transport')
+        module.tar_upload_directory(context, key, endpoint, root / 'launch', remote + '/launch')
+        # Each independent test uses a fresh operation on the same SSH target.
+        module.completed_process([*module.ssh_arguments(context, key, endpoint),
+            'rm -rf /workspace/oracle-full-build/work /workspace/oracle-full-build/package /workspace/oracle-full-build/preparation-attempts'])
+        def call(operation, *args):
+            return module.remote_json(context, key, endpoint, operation, *args)
+        self.assertTrue(call('_remote-verify-transfer')['verified'])
+        deadline = time.monotonic() + 240
+        while not call('_remote-prepare').get('prepared'):
+            self.assertLess(time.monotonic(), deadline)
+            time.sleep(.2)
+        call('_remote-worker', '--attempt', '001')
+        if stop:
+            time.sleep(2)
+            call('_remote-stop', '--attempt', '001')
+        while True:
+            state = call('_remote-status', '--attempt', '001')
+            if state['state'] == 'terminal':
+                break
+            self.assertLess(time.monotonic(), deadline)
+            time.sleep(.5)
+        (root / 'result.next').mkdir()
+        module.ensure_retrieved(context, 'offline-fixture', key, endpoint, '001')
+        if expected == 0:
+            self.assertEqual(state['exit_status'], 0, (root / 'result.next/work/full-build-attempts/001/full-build.log').read_text())
+            self.assertTrue(module.publish_verified_result(context, '001'))
+            results = root / 'result/work/results'
+            self.assertEqual(read_json(results / 'deployment.json')['state'], 'complete')
+            # A new SSH call cannot start a second execution after completion.
+            self.assertEqual(call('_remote-worker', '--attempt', '001')['exit_status'], 0)
+        else:
+            self.assertNotEqual(state['exit_status'], 0)
+            results = root / 'result.next/work/results'
+        return results
 
-    def test_cuda_preflight_and_runtime_environment_through_image_entrypoint(self):
-        config = read_json(self.fixture / "config.json")
-        config["device"] = "cuda"
-        path = self.root / "cuda.json"
-        write_json(path, config)
-        package, output = self.root / "cuda-package", self.root / "cuda-deployment"
-        deploy.prepare([path], package, 60, through="preflight")
-        subprocess.run(self.command(package, output), check=True, timeout=120)
-        manifest = read_json(output / "result/cuda/manifest.json")
-        self.assertEqual(manifest["packages"]["fla-core"], "0.5.2")
-        self.assertTrue((output / "result/cuda/preflight.json").exists())
-        command = deploy.ssh_command(self.target, output, "_status", "/unused")
-        command[-1] = "cd /work && python -c 'import os,sys; assert sys.prefix == \"/opt/distillation-venv\"; assert \"/usr/local/nvidia/lib64\" in os.environ[\"LD_LIBRARY_PATH\"]; from sse_multivector.distillation_run import load_gpu_packages; load_gpu_packages({\"device\":\"cuda\"}); from fla.ops.gated_delta_rule import chunk_gated_delta_rule'"
-        subprocess.run(command, check=True, timeout=60)
-
-    def test_remote_job_survives_operator_exit_and_retrieves_verified_results(self):
-        config = read_json(self.fixture / "config.json")
-        configs = []
-        for name in ("first", "second"):
-            path = self.root / (name + ".json")
+    def fixture_package(self, name, changes=None, seconds=180):
+        root = Path(os.environ['DISTILLATION_DEPLOY_OUTPUT']) / name
+        root.mkdir(parents=True)
+        config = read_json(Path(os.environ['DISTILLATION_TEST_OUTPUT']) / 'config.json')
+        config.update(changes or {})
+        paths = []
+        for candidate in ('first', 'second'):
+            path = root / (candidate + '.json')
             write_json(path, config)
-            configs.append(path)
-        package, output = self.root / "package", self.root / "deployment"
-        deploy.prepare(configs, package, 600)
-        started = subprocess.run(self.command(package, output, "--start-only"),
-                                 capture_output=True, text=True, timeout=60, check=True)
-        self.assertIn('"state": "running"', started.stdout)
-        # A new local process reconnects; it must attach to the same remote job.
-        subprocess.run(self.command(package, output), check=True, timeout=600)
-        result = read_json(output / "result" / "deployment.json")
-        self.assertEqual(result["state"], "complete")
-        self.assertEqual(result["starts"], 1)
-        for name in ("first", "second"):
-            report = read_json(output / "result" / name / "report.json")
-            self.assertTrue(report["training"]["reload_matches"])
-        before = sha256(output / "result" / "manifest.json")
-        write_json(output / "deadline.json", {"deadline": 1})
-        subprocess.run(self.command(package, output), check=True, timeout=30)
-        self.assertEqual(sha256(output / "result" / "manifest.json"), before)
+            paths.append(path)
+        deploy.prepare(paths, root / 'inputs', seconds)
+        return root
 
-    def test_failed_training_returns_logs_without_retrying(self):
-        config = read_json(self.fixture / "config.json")
-        config["max_length"] = 8
-        path = self.root / "failure.json"
-        write_json(path, config)
-        package, output = self.root / "bad-package", self.root / "failed-deployment"
-        deploy.prepare([path], package, 60)
-        failed = subprocess.run(self.command(package, output), capture_output=True, text=True, timeout=120)
-        self.assertNotEqual(failed.returncode, 0)
-        result = read_json(output / "result" / "deployment.json")
-        self.assertEqual(result["state"], "failed")
-        self.assertEqual(result["starts"], 1)
-        self.assertIn("invalid sampling, learning rate or length", (output / "result" / "failure.log").read_text())
-        subprocess.run(self.command(package, output), capture_output=True, timeout=30)
-        self.assertEqual(read_json(output / "result" / "deployment.json"), result)
+    def test_two_candidates_train_and_retrieve_through_shared_ssh(self):
+        root = self.fixture_package('training')
+        result = self.run_package(root / 'inputs', root / 'operation')
+        for name in ('first', 'second'):
+            self.assertTrue(read_json(result / name / 'report.json')['training']['reload_matches'])
 
-    def test_runtime_limit_stops_the_job_and_retrieves_failure(self):
-        config = read_json(self.fixture / "config.json")
-        config["max_steps"] = 1000000
-        path = self.root / "limited.json"
-        write_json(path, config)
-        package, output = self.root / "limited-package", self.root / "limited-deployment"
-        deploy.prepare([path], package, 1)
-        failed = subprocess.run(self.command(package, output), capture_output=True, text=True, timeout=60)
-        self.assertNotEqual(failed.returncode, 0)
-        result = read_json(output / "result" / "deployment.json")
-        self.assertEqual(result["state"], "failed")
-        self.assertLess(result["finished"] - result["deadline"], 10)
+    def test_failure_preserves_logs(self):
+        root = self.fixture_package('failure', {'max_length': 8})
+        result = self.run_package(root / 'inputs', root / 'operation', expected=1)
+        self.assertEqual(read_json(result / 'deployment.json')['state'], 'failed')
+        self.assertIn('invalid sampling, learning rate or length', (result / 'first.log').read_text())
+        self.assertFalse((result / 'second.log').exists())
 
-    def test_early_stop_retrieves_partial_results(self):
-        config = read_json(self.fixture / "config.json")
-        config["max_steps"] = 1000000
-        path = self.root / "stopped.json"
-        write_json(path, config)
-        package, output = self.root / "stopped-package", self.root / "stopped-deployment"
-        deploy.prepare([path], package, 600)
-        subprocess.run(self.command(package, output, "--start-only"), check=True, timeout=60)
-        result = subprocess.run(self.command(package, output, "--stop"), capture_output=True, text=True, timeout=60)
-        self.assertEqual(result.returncode, 1)
-        state = read_json(output / "result/deployment.json")
-        self.assertEqual(state["state"], "failed")
-        self.assertIn("stopped by controller", state["error"])
+    def test_worker_deadline_preserves_failure(self):
+        root = self.fixture_package('deadline', {'max_steps': 1000000}, seconds=1)
+        result = self.run_package(root / 'inputs', root / 'operation', expected=1)
+        state = read_json(result / 'deployment.json')
+        self.assertEqual(state['state'], 'failed')
+        self.assertLess(state['finished'] - state['deadline'], 10)
 
+    def test_stop_preserves_partial_results(self):
+        root = self.fixture_package('stop', {'max_steps': 1000000})
+        result = self.run_package(root / 'inputs', root / 'operation', expected=1, stop=True)
+        self.assertEqual(read_json(result / 'deployment.json')['state'], 'failed')
 
-if __name__ == "__main__":
-    unittest.main()
+    def test_actual_candidate_preflights(self):
+        inputs = Path(os.environ.get('DISTILLATION_PREFLIGHT_PACKAGE', '/missing'))
+        if not inputs.is_dir():
+            self.skipTest('no frozen candidate tokenizer package supplied')
+        self.run_package(inputs, Path(os.environ['DISTILLATION_DEPLOY_OUTPUT']) / 'candidate-preflight')

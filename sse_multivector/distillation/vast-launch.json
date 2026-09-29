@@ -9,9 +9,29 @@
   "outbound_gb": 20,
   "approved_maximum_usd": 25,
   "search_query": "gpu_name=RTX_PRO_6000_WS num_gpus=1 gpu_max_power=600 reliability>=0.995 cpu_arch=amd64 cpu_ram>=137.439 disk_space>=300 disk_bw>=1000 inet_down>=500 inet_down_cost<=0.01 inet_up>=100 inet_up_cost<=0.01 direct_port_count>=1 driver_version>=580.95.05 duration>=1 rentable=true rented=false verified=true dph_total<=1.6",
-  "search_options": ["--storage", "300", "--type", "on-demand", "--order", "dph_total", "--limit", "10", "--raw"],
-  "entrypoint": "/usr/local/bin/distillation-sshd",
-  "create_options": ["--disk", "300", "--entrypoint", "/usr/local/bin/distillation-sshd", "--cancel-unavail", "--retry", "1", "--raw", "--args"],
+  "search_options": [
+    "--storage",
+    "300",
+    "--type",
+    "on-demand",
+    "--order",
+    "dph_total",
+    "--limit",
+    "10",
+    "--raw"
+  ],
+  "create_options": [
+    "--disk",
+    "300",
+    "--ssh",
+    "--direct",
+    "--onstart-cmd",
+    "ssh-keygen -A && service ssh start",
+    "--cancel-unavail",
+    "--retry",
+    "1",
+    "--raw"
+  ],
   "offer_equals": {
     "gpu_name": "RTX PRO 6000 WS",
     "num_gpus": 1,
@@ -39,5 +59,11 @@
     "inet_down_cost": 0.01,
     "inet_up_cost": 0.01
   },
-  "minimum_driver": [580, 95, 5]
+  "minimum_driver": [
+    580,
+    95,
+    5
+  ],
+  "onstart": "ssh-keygen -A && service ssh start",
+  "ssh_direct": true
 }

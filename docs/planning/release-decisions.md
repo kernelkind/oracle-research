@@ -507,14 +507,15 @@ interrupted training reproduced the uninterrupted adapter weights exactly.
 The user clarified that the VM must rehearse the deployment process used on
 Vast: prepare an immutable image and frozen inputs locally, upload the inputs,
 start the experiment automatically, reconnect and retrieve verified results.
-Follow the existing GTE Vast deployment pattern; no manual code edits on the
-rented server. The distillation SSH operator runs against a separate container
-inside the VM, using the image's installed code and dependencies. Deployment
-now uses the image's own SSH entrypoint in Vast args mode, preserving
-the tested startup. A reproduced SSH GPU-package lookup defect was fixed; the
-VM exercises CUDA preflight over SSH. The local rental controller automates
-creation, bounded reconnect, result retrieval and verified destruction, with
-provider responses simulated in local lifecycle tests. No code edits or package
+The approved integration uses the successful September 27 shared Vast runner
+(`vast/runner.py`) for creation, direct SSH, transfers, execution, retrieval and
+verified destruction. It replaces the separate distillation provider controller
+and SSH operator. Managed SSH uses `ssh-keygen -A && service ssh start`; the
+workload explicitly supplies its Python and runtime environment. The VM
+rehearses the shared remote path against a separate container; provider calls
+remain simulated. `run --watch` automatically resumes through completion and
+cleanup while its local process remains alive. It is not an independent watchdog;
+local interruption requires resuming the saved operation. No code edits or package
 installs belong on a running rental. These tests cannot guarantee GPU execution
 or provider availability. Candidate
 quality, full-model memory use and CUDA compatibility are checked during

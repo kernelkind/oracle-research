@@ -118,10 +118,12 @@ requirement also covers deployment: frozen inputs uploaded over SSH to a
 separate container, automatic execution, reconnect and verified retrieval,
 following the existing GTE Vast process. Code and dependencies are built into
 the image locally; rented servers receive inputs and run the installed code.
-The same image-owned SSH entrypoint is tested locally and configured for Vast
-args mode. The local controller automates creation, reconnect, result retrieval
-and verified destruction. A reproduced SSH GPU-package lookup defect is fixed;
-CUDA preflight over SSH and simulated-provider lifecycle tests cover this path.
+The shared Vast runner from the successful September 27 deployment now owns
+creation, direct SSH, transfer, execution, retrieval and verified destruction.
+Managed SSH uses the proven host-key/startup hook. The VM exercises the shared
+remote path with real training and candidate CUDA preflight; provider lifecycle
+responses are simulated. `run --watch` automates progression and cleanup while
+the local process stays alive; interrupted local supervision must be resumed.
 Candidate settings and Vast limits are frozen locally: BF16 LoRA, 128 steps
 per candidate, and one 96 GB GPU within the approved $25 total. The user
 explicitly withheld publication. GPU compatibility, memory use, speed and

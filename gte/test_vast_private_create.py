@@ -3,6 +3,10 @@ import tempfile
 import contextlib
 import importlib.util
 import io
+import os
+import subprocess
+import sys
+import textwrap
 from unittest.mock import patch
 from pathlib import Path
 
@@ -14,6 +18,47 @@ from vast_private_create import (
 
 
 class VastPrivateCreateTest(unittest.TestCase):
+    @unittest.skipUnless(importlib.util.find_spec("vastai"), "requires pinned Vast SDK")
+    def test_real_cli_passes_optional_onstart_without_replacing_managed_ssh(self):
+        # Vast's parser is process-global. Exercise the real helper entry point
+        # and pinned CLI in a fresh process, intercepting only the paid API boundary.
+        program = textwrap.dedent('''
+            import io, json, os, sys, tempfile
+            from pathlib import Path
+            from unittest.mock import patch
+            from vastai.cli.commands import instances
+            from vast_private_create import main
+            with tempfile.TemporaryDirectory() as tmp:
+                marker, outcome = Path(tmp) / "attempt", Path(tmp) / "outcome.json"
+                hook = "ssh-keygen -A && service ssh start"
+                argv = ["helper", "123", "docker.io/kernelkind/oracle-mvp@sha256:" + "4" * 64,
+                        "pilot", str(marker), str(outcome), "--disk-gb", "100", "--onstart-cmd", hook]
+                with patch("sys.argv", argv), patch("sys.stdin", io.StringIO("fake-token")), \\
+                        patch.dict(os.environ, {"VASTAI_NO_UPDATE_CHECK": "1"}), \\
+                        patch.object(instances, "get_client", return_value=object()), \\
+                        patch.object(instances.instances_api, "create_instance", return_value={"success": True, "new_contract": 42}) as create, \\
+                        patch("requests.sessions.Session.request", side_effect=AssertionError("network forbidden")):
+                    assert main() == 0
+                assert create.call_count == 1
+                assert create.call_args.kwargs["runtype"] == "ssh_direc ssh_proxy"
+                assert create.call_args.kwargs["onstart_cmd"] == hook
+                assert create.call_args.kwargs["disk"] == 100
+                assert marker.exists()
+                assert json.loads(outcome.read_text())["new_contract"] == 42
+        ''')
+        result = subprocess.run([sys.executable, "-c", program], cwd=Path(__file__).parent,
+                                capture_output=True, text=True, timeout=20)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn("fake-token", result.stdout + result.stderr)
+
+    def test_onstart_rejects_non_scripts_and_entrypoint_conflict(self):
+        args = ("123", "docker.io/kernelkind/oracle-mvp@sha256:" + "4" * 64, "pilot", "fake-token")
+        for hook in (123, ["command"], "bad\0command"):
+            with self.subTest(hook=hook), self.assertRaisesRegex(ValueError, "onstart"):
+                vast_create_arguments(*args, onstart=hook)
+        with self.assertRaisesRegex(ValueError, "managed SSH"):
+            vast_create_arguments(*args, onstart="true", entrypoint="")
+
     @unittest.skipUnless(importlib.util.find_spec("vastai"), "requires the pinned Vast SDK")
     def test_real_vast_cli_sends_args_mode_and_public_key(self):
         from vastai.cli.main import main

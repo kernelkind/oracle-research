@@ -25,7 +25,7 @@ IMAGE_SHA256 = "612b2c0cc1bc413a6cb8c38fd611794caf0f2b436c50013d8b3794db12ad7354
 PACKAGE_FILES = (
     "distillation_run.py", "distillation_data.py", "extraction_pipeline.py", "mask_positions.py",
     "test_distillation_run.py", "test_distillation_data.py", "test_distillation_deploy.py", "distillation_deploy.py",
-    "test_distillation_candidates.py", "distillation_start.py", "distillation_vast.py", "test_distillation_vast.py",
+    "test_distillation_candidates.py", "distillation_vast.py", "test_distillation_vast.py",
     "distillation/vast-launch.json",
     "distillation/Dockerfile", "distillation/requirements.in", "distillation/requirements.lock",
     "distillation/requirements-gpu.in", "distillation/requirements-gpu.lock",
@@ -39,6 +39,9 @@ def prepare_package(source, destination):
         target = destination / "sse_multivector" / name
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source_path, target)
+    (destination / "vast").mkdir()
+    for name in ("runner.py", "package.py"):
+        shutil.copyfile(source / "vast" / name, destination / "vast" / name)
     (destination / "gte").mkdir()
     shutil.copyfile(source / "gte/full_build_package.py", destination / "gte/full_build_package.py")
     shutil.copyfile(source / "gte/calibration_package.py", destination / "gte/calibration_package.py")
@@ -161,11 +164,11 @@ cleanup_target() {
   rm -f "$result_dir/deployment-key" "$result_dir/deployment-key.pub"
 }
 trap cleanup_target EXIT
-# This is the image's production entrypoint, with only its public SSH key supplied.
-public_key=$(base64 -w0 "$result_dir/deployment-key.pub")
-docker run -d --name distillation-target --network distillation-local \\
-  --network-alias target -e DISTILLATION_SSH_PUBLIC_KEY_BASE64="$public_key" \\
-  notedeck-distillation:local
+# Model Vast managed SSH: override entrypoint, run the approved onstart,
+# attach the temporary key separately. No image-specific SSH daemon.
+docker run -d --name distillation-target --network distillation-local --network-alias target --entrypoint /bin/sh notedeck-distillation:local -c 'ssh-keygen -A && service ssh start && exec sleep infinity'
+docker exec distillation-target mkdir -p /root/.ssh
+docker exec -i distillation-target sh -c 'cat > /root/.ssh/authorized_keys; chmod 600 /root/.ssh/authorized_keys' < "$result_dir/deployment-key.pub"
 for attempt in $(seq 1 30); do
   if docker exec distillation-target test -f /etc/ssh/ssh_host_ed25519_key; then break; fi
   test "$(docker inspect -f '{{.State.Running}}' distillation-target)" = true
@@ -177,16 +180,9 @@ TARGET
 docker run --rm --network distillation-local \\
   -e DISTILLATION_TEST_OUTPUT=/results/workflow \\
   -e DISTILLATION_DEPLOY_OUTPUT=/results/deployment-tests \\
-  -e DISTILLATION_SSH_TARGET=/results/ssh-target.json -v "$result_dir":/results \\
+  -e DISTILLATION_SSH_TARGET=/results/ssh-target.json -e DISTILLATION_PREFLIGHT_PACKAGE=/results/preflight-package -v "$result_dir":/results \\
   --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \\
   sse_multivector.test_distillation_deploy sse_multivector.test_distillation_vast
-if test -d "$result_dir/preflight-package"; then
-  docker run --rm --network distillation-local \\
-    -v "$result_dir":/results --entrypoint /opt/distillation-venv/bin/python \\
-    notedeck-distillation:local -m sse_multivector.distillation_deploy run \\
-    --package /results/preflight-package --output /results/candidate-preflight \\
-    --host root@target --port 22 --identity /results/deployment-key
-fi
 docker logs distillation-target > "$result_dir/ssh-target.log" 2>&1
 rm "$result_dir/deployment-key" "$result_dir/deployment-key.pub"
 docker save notedeck-distillation:local | gzip -1 > "$result_dir/container.tar.gz"
