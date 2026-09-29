@@ -257,6 +257,10 @@ def prepare(args):
         raise ValueError(f"unknown requested node: {sorted(selected_nodes - titles.keys())}")
     if not cases:
         raise ValueError("no prominence cases selected")
+    post_order = getattr(args, 'post_order', None)
+    if post_order and (post_order != 'highest'
+                       or any(c.get('representation') != 'context' for c in cases)):
+        raise ValueError('highest post order requires only SP context cases')
     if len({c["id"] for c in cases}) != len(cases):
         raise ValueError("duplicate case IDs")
     notes, title_rows, replays = [], {}, {}
@@ -352,6 +356,8 @@ def prepare(args):
                 formula="prominence (0..100) * raw cosine; no clipping or fitted calibration",
                 linear_formula="prominence * (clip(cosine, -1, 1) + 1) / 2; not calibrated relevance",
                 parity_min_cosine=0.999999, parity_max_normalized_component_error=0.00001)
+    if post_order:
+        plan['post_order'] = post_order
     if getattr(args, 'include_inverse', False):
         plan['inverse_formula'] = 'linear_product + (100 - prominence) * (clip(inverse_cosine, -1, 1) + 1) / 2'
         plan['full_post_formula'] = '100 * (clip(full_post_cosine, -1, 1) + 1) / 2'
@@ -419,6 +425,25 @@ def collect(output):
                   linear_formula=plan.get("linear_formula", "prominence * (clip(cosine, -1, 1) + 1) / 2"),
                   worker_receipt_sha256=sha(output / "result/worker-receipt.json"),
                   raw_vectors_sha256=sha(output / "result/raw-vectors.f32le"))
+    if plan.get('post_order') == 'highest':
+        result['post_order'] = 'highest'
+        result['posts'], result['post_rankings'] = {}, {}
+        keys = ('prominence', 'linear_product')
+        for nid, rows in groups.items():
+            by_post = {}
+            for row in rows:
+                by_post.setdefault(row['note_id'], []).append(row)
+            posts = []
+            for note_id, contexts in sorted(by_post.items()):
+                post = dict(note_id=note_id, context_count=len(contexts))
+                for key in keys:
+                    winner = min(contexts, key=lambda r: (-r[key], r['id']))
+                    post[key], post[key + '_case'] = winner[key], winner['id']
+                posts.append(post)
+            result['posts'][nid] = posts
+            result['post_rankings'][nid] = {
+                key: [p['note_id'] for p in sorted(posts, key=lambda p: (-p[key], p['note_id']))]
+                for key in keys}
     for key in ('inverse_formula', 'full_post_formula', 'inverse_policy', 'reference_exclusion'):
         if key in plan:
             result[key] = plan[key]
@@ -442,6 +467,8 @@ def main():
                       help='also encode exact inverse masks and one full-post selection per post')
     prep.add_argument('--exclude-references', action='store_true',
                       help='exclude scheme URLs, NIP-19 and 64-hex IDs from inverse/full selections only')
+    prep.add_argument('--post-order', choices=('highest',),
+                      help='compare each post\'s highest prominence and highest SP-context sorting score')
     c = sub.add_parser("collect")
     c.add_argument("output", type=Path)
     args = p.parse_args()

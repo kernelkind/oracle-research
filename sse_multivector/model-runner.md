@@ -1936,6 +1936,94 @@ source preparation, answer reuse, allocation validation and complete-context
 encoding. No production ranking, membership, recursive sorting or parent-child
 transfer was introduced.
 
+The complete-node follow-up uses
+`experiment_specs/ppv30-context-node-orders-v1.json` with the unchanged tested
+**PPv30-context-v1** prompt and Astra-low subscription settings. Its source
+selector supplies only `nodes` plus the saved subject and hierarchy paths.
+The `subject_contexts` adapter enumerates every SP entry whose exact mask spans
+match a direct node membership, including distinct SP contexts sharing a mask.
+It rejects duplicate or unknown node selections and direct masks without a
+saved SP context. Descendant memberships do not supply cases. Preparation
+freezes 19 contexts from Coffee's 14 posts and 18 from Eggs' seven posts.
+The five earlier prominence requests match exactly and are reused.
+
+`prominence_cosine.py prepare --post-order highest` records the user-authorized
+experimental aggregation choice. After SSE encoding, `collect` retains the
+individual context results and adds `posts` and `post_rankings` to its comparison.
+Each post's highest prominence determines its prominence-only order; its
+highest `linear_product` determines its sorting-score order. These maxima are
+independent, with each winning case and the context count saved. Case-ID order
+breaks ties between contexts; note-ID order breaks ties between posts. This
+comparison does not establish a production aggregation rule.
+
+`experiments/ppv30-context-node-orders-v1` completed all 37 valid cases:
+32 new assessments and five exact-request reuses, with no failures, retries,
+baseline reruns or new SP calls. New-attempt usage was 19,511 input tokens and
+6,014 output tokens, including 397 reasoning tokens. The $0.49581 catalog
+estimate is not an invoice or subscription quota measurement; there was no
+incremental cash charge or paid fallback.
+
+The saved complete orders are in `relevance-v1/comparison.json`. The matching
+offline CPU SSE worker encoded 44 rows: two node titles, 37 complete SP contexts
+and five original-mask replays. Every replay cosine exceeded 0.9999999999999;
+the largest normalized component error was 4.66e-8. All 37 context selections,
+source identities, cosine calculations, sorting scores, post maxima and final
+orders were independently checked against the original sources and raw vectors.
+The experiment, cosine, ranking, node-sorting, worker and extraction suites
+passed 201 tests. Failing-first checks covered complete direct-node selection,
+answer reuse and independent post maxima with different winning contexts.
+
+The following tables list posts in descending sorting-score order. Prominence
+is the post's highest context prominence, which need not be the prominence of
+its highest-sorting-score context. Both orders use note IDs to break exact ties.
+
+Coffee:
+
+| Post (note-ID prefix) | Prominence rank | Highest prominence | Sorting-score rank | Highest sorting score |
+| --- | ---: | ---: | ---: | ---: |
+| More coffee in cool places (`37f44e1f`) | 1 | 100 | 1 | 86.860927 |
+| Coffee with raw cream and raw egg yolk (`f4c5aa5f`) | 2 | 95 | 2 | 71.803677 |
+| Is there coffee for me? (`78462b92`) | 3 | 85 | 3 | 70.697771 |
+| Hashtag-heavy second-coffee post (`862486d8`) | 4 | 60 | 4 | 55.578774 |
+| Roasting your own beans (`056e6466`) | 6 | 46 | 5 | 40.978201 |
+| Another coffee and Sunday wishes (`737eaa89`) | 7 | 45 | 6 | 38.121899 |
+| Iced coffee served in ice (`76e19c3e`) | 8 | 40 | 7 | 35.839159 |
+| Afternoon errands and morning coffee (`e0508834`) | 5 | 47 | 8 | 32.604173 |
+| Half & half versus cream (`143fee76`) | 9 | 30 | 9 | 26.917507 |
+| Duck-egg breakfast burrito and coffee (`ee3404d5`) | 10 | 30 | 10 | 26.729323 |
+| Decaf drinkers (`2dc50a30`) | 11 | 29 | 11 | 26.144851 |
+| Sunday weather with hot coffee (`82d3d344`) | 12 | 27 | 12 | 21.245928 |
+| Coffee, movement and stretching (`8a025f69`) | 13 | 14 | 13 | 13.400827 |
+| Tolstoy quotation with Coffee hashtag (`be8d07d4`) | 14 | 1 | 14 | 0.917359 |
+
+Eggs:
+
+| Post (note-ID prefix) | Prominence rank | Highest prominence | Sorting-score rank | Highest sorting score |
+| --- | ---: | ---: | ---: | ---: |
+| Avoiding eggs and snacking on chocolate (`612fa3c5`) | 1 | 57 | 1 | 50.215997 |
+| Coffee with raw egg yolk (`f4c5aa5f`) | 2 | 55 | 2 | 48.097435 |
+| Century-eggs explanation (`11d2afb1`) | 3 | 35 | 3 | 27.137100 |
+| Duck-egg breakfast burrito (`ee3404d5`) | 4 | 30 | 4 | 24.794540 |
+| Mixed diary with hens and egg preparations (`eaa6a5e6`) | 6 | 20 | 5 | 18.217952 |
+| Four-egg dinner (`fbd52a1d`) | 5 | 23 | 6 | 17.145254 |
+| Rocket stove (`99e6a514`) | 7 | 7 | 7 | 6.764276 |
+
+All three agreed comparisons still pass under both methods: decaf above weather
+(prominence 29 > 27; sorting score 26.144851 > 21.245928), century eggs above
+stove (35 > 7; 27.137100 > 6.764276), and diary above stove (20 > 7;
+18.217952 > 6.764276). The weather and century-eggs post maxima now select
+different SP entries from the initial five-post trial; those original context
+assessments remain intact.
+
+Relevance reverses four pairs with unequal prominence. In Coffee, errands falls
+from fifth to eighth, below roasting, another coffee and iced coffee. Its
+prominence 47 and relevance 0.693706 produce sorting score 32.604173; roasting's
+46 and 0.890830 produce 40.978201. In Eggs, the diary rises above the four-egg
+dinner: 20 × 0.910898 gives 18.217952, while 23 × 0.745446 gives 17.145254.
+These new preferences need user review before claiming an ordering improvement.
+Production adoption remains open; no recursive sorting or parent-child transfer
+was changed.
+
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
 within-node score is prominence times mask relevance. On September 29, the user

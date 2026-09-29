@@ -58,8 +58,9 @@ def prepare_file(dataset, path, template, load_report=None):
     source = read(path)
     preparation = None
     if dataset['adapter'] == 'subject_contexts':
+        selector = 'nodes' if 'nodes' in source else 'selections'
         engine._expect_fields(source, 'subject contexts',
-                              {'schema_version', 'subjects', 'hierarchy', 'selections'})
+                              {'schema_version', 'subjects', 'hierarchy', selector})
         if type(source['schema_version']) is not int or source['schema_version'] != 1:
             raise ValueError('expected subject contexts schema_version 1')
         references = {}
@@ -500,8 +501,31 @@ def prepare_subject_contexts(source, selected=None):
     if len(by_id) != len(posts):
         raise ValueError('duplicate source post identity')
     members = prepare_prominence(source['hierarchy'])
+    selections = source.get('selections')
+    if 'nodes' in source:
+        nodes = engine._validate_string_array(source['nodes'], 'nodes', allow_empty=False)
+        if len(nodes) != len(set(nodes)):
+            raise ValueError('duplicate subject context node')
+        if set(nodes) - {m['evidence']['node_id'] for m in members}:
+            raise ValueError('unknown subject context node or no direct members')
+        selections, seen = [], set()
+        for member in members:
+            e = member['evidence']
+            if e['node_id'] not in nodes:
+                continue
+            post = by_id.get(e['note_id'])
+            subjects = [s for s in post['subjects']
+                        if s['byte_spans'] == e['byte_spans']] if post else []
+            if not subjects:
+                raise ValueError('direct hierarchy member has no saved SP context')
+            for subject in subjects:
+                key = (e['node_id'], e['note_id'], subject['number'])
+                if key not in seen:
+                    seen.add(key)
+                    selections.append(dict(id='context-' + digest(key)[:24],
+                        node_id=e['node_id'], note_id=e['note_id'], number=subject['number']))
     cases, ids = [], set()
-    for selection in source['selections']:
+    for selection in selections:
         engine._expect_fields(selection, 'subject context selection',
                               {'id', 'node_id', 'note_id', 'number'})
         cid = engine._expect_identifier(selection['id'], 'case.id')

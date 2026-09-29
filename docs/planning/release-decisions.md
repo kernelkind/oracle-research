@@ -984,9 +984,21 @@ score as prominence × relevance. This trial replaces Inverse combined rather
 than keeping its inverse contribution. **PPv30-context-v1** is tested, not
 production-frozen. All three reference pairs pass in this draw, and prominence
 alone also passes all three. Relevance alone still favors the stove over the
-diary and century eggs. Formula adoption, selection among multiple SP contexts
-for the same post/node, and general ordering quality remain open; the trial is
-not a replacement production ranking rule.
+diary and century eggs. Formula adoption and general ordering quality remain
+open; the trial is not a replacement production ranking rule.
+
+The user subsequently authorized comparing complete Coffee and Eggs orders
+using every saved SP context whose mask belongs directly to that node. For
+this experiment, each post uses its highest context prominence in the
+prominence-only order and its highest context sorting score in the other
+order. The two maxima are chosen independently and can come from different
+SP contexts. This is authorization to test the rule, not production adoption.
+The completed comparison covers Coffee's 14 posts and Eggs' seven posts across
+37 contexts. Both methods still pass all three agreed pairs. Relevance reverses
+four additional pair orders: errands falls below roasting, another coffee and
+iced coffee; the diary rises above the four-egg dinner. These new preferences
+have not been judged by the user. The [complete orders and verification](../../sse_multivector/model-runner.md)
+record 32 new assessments, five exact-request reuses and 201 passing tests.
 
 27 waits for 04, which is in launch scope and actively being worked on
 (September 28 correction). 28 waits for the validated small-corpus

@@ -20,6 +20,10 @@ class ProminenceCosineTests(unittest.TestCase):
                 subject_number='1', subject='Tea', context='Tea warms the writer.')
             case = experiment_inputs.prepare_context_prominence({'cases': [evidence]})[0]
             case.update(status='valid', parsed={'prominence': 20})
+            other = dict(evidence, id='tea-other-context', subject_number='2',
+                         context='The writer drinks tea.')
+            other_case = experiment_inputs.prepare_context_prominence({'cases': [other]})[0]
+            other_case.update(status='valid', parsed={'prominence': 30})
             encoder = dict(checkpoint_sha256='b'*64, base_model_artifact_tree_sha256='c'*64,
                            model={'dimensions': 2}, note_batch_size=1)
             config = root/'config.json'
@@ -30,13 +34,15 @@ class ProminenceCosineTests(unittest.TestCase):
             vectors.write_bytes(struct.pack('<2f', 1, 0))
             rows = [dict(short_id='V1', ordinal=0, note_id='a'*64, note_short_id='N1',
                          byte_spans=[[0, 3]], fragments=['Tea'], subject_entries=[dict(
-                             number='1', subject='Tea', context=evidence['context'])])]
+                             number=e['subject_number'], subject='Tea', context=e['context'])
+                             for e in (evidence, other)])]
             args = Namespace(output=root/'out', vectors=root, experiments=[root],
-                             worker_config=config, replay=['V1'], include_inverse=False)
+                             worker_config=config, replay=['V1'], include_inverse=False,
+                             post_order='highest')
             plan = {'dataset': {'adapter': 'subject_contexts'}, 'run_directory': str(root)}
             with patch.object(pc, 'load_vectors', return_value=(rows, encoder, vectors, 'f', {})), \
                  patch.object(pc.experiment, 'load', return_value=(plan, None, None)), \
-                 patch.object(pc.experiment, 'report', return_value={'cases': [case]}):
+                 patch.object(pc.experiment, 'report', return_value={'cases': [case, other_case]}):
                 pc.prepare(args)
                 saved = pc.read(args.output/'plan.json')
                 item = saved['cases'][0]
@@ -49,6 +55,7 @@ class ProminenceCosineTests(unittest.TestCase):
                 self.assertEqual(flat[saved['replays']['V1']['row']][0]['text'], evidence['text'])
                 fresh = [(1, 0)] * len(flat)
                 fresh[item['mask_row']] = (0, 1)
+                fresh[saved['cases'][1]['mask_row']] = (-1, 0)
                 result = args.output/'result'
                 result.mkdir()
                 (result/'raw-vectors.f32le').write_bytes(struct.pack(
@@ -58,9 +65,18 @@ class ProminenceCosineTests(unittest.TestCase):
                     proposal_sha256=pc.sha(args.output/'plan.json'),
                     rows=[dict(note_id=n['note_id'], subject_id=s['subject_id']) for n,s in flat])))
                 pc.collect(args.output)
-                row = pc.read(args.output/'comparison.json')['groups']['tea'][0]
+                comparison = pc.read(args.output/'comparison.json')
+                row = comparison['groups']['tea'][0]
                 self.assertEqual(row['linear_product'], 10)
                 self.assertEqual(row['context'], evidence['context'])
+                post = comparison['posts']['tea'][0]
+                self.assertEqual(post['prominence'], 30)
+                self.assertEqual(post['linear_product'], 10)
+                self.assertEqual(post['prominence_case'], other['id'])
+                self.assertEqual(post['linear_product_case'], evidence['id'])
+                self.assertEqual(post['context_count'], 2)
+                self.assertEqual(comparison['post_rankings']['tea'],
+                                 {'prominence': ['a'*64], 'linear_product': ['a'*64]})
                 args.output = root/'bad'
                 case['inputs']['INPUT_JSON'] = json.dumps({'context': 'Different', 'post': evidence['text']})
                 with self.assertRaisesRegex(ValueError, 'model input'):

@@ -16,6 +16,58 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_subject_context_nodes_select_every_direct_entry_and_reuse_saved_requests(self):
+        self.prompt.write_text('GENERIC PROMPT CONTEXT PROMINENCE\n{INPUT_JSON}')
+        posts = [dict(note_id='N1', text='☕ Tea warms me.', subjects=[dict(
+            number=number, subject='Tea', context=context,
+            byte_spans=[[4, 7]], fragments=['Tea']) for number, context in (
+                ('1', 'Tea warms the writer.'), ('1.1', 'The writer mentions tea.'))]),
+            dict(note_id='N2', text='Tea.', subjects=[dict(number='2', subject='Tea',
+                context='The post names tea.', byte_spans=[[0, 3]], fragments=['Tea'])])]
+        self.write('subjects.json', {'notes': posts})
+        members = [dict(instance='V'+str(i), note_id=p['note_id'], text=p['text'],
+                        byte_spans=p['subjects'][0]['byte_spans'], fragments=['Tea'])
+                   for i, p in enumerate(posts, 1)]
+        self.write('hierarchy.json', {'memberships': {'nodes': [dict(
+            group='G', title='Tea', recursive_note_ids=['N1', 'N2', 'child'],
+            matched_instances=members), dict(group='child', title='Tea ritual',
+                matched_instances=[dict(instance='V3', note_id='N1', text=posts[0]['text'],
+                                        byte_spans=[[8, 13]], fragments=['warms'])])]}})
+        selector = dict(schema_version=1, subjects='subjects.json', hierarchy='hierarchy.json',
+                        selections=[dict(id='original', node_id='G', note_id='N1', number='1')])
+        self.write('selection.json', selector)
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='subject_contexts', path='selection.json')
+        self.write('spec.json', spec)
+        self.prepare()
+        answer = dict(missing_meaning='Some meaning is missing.', prominence=80,
+                      allocation=[dict(meaning='Tea', points=100, represented=80, missing=20)])
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        del selector['selections']
+        selector['nodes'] = ['G']
+        self.write('selection.json', selector)
+        self.prepare('E2')
+        cases = self.show('E2')['cases']
+        self.assertEqual({(c['evidence']['note_id'], c['evidence']['subject_number'])
+                          for c in cases}, {('N1', '1'), ('N1', '1.1'), ('N2', '2')})
+        self.assertTrue(all(c['evidence']['node_id'] == 'G' for c in cases))
+        self.assertTrue(all(set(json.loads(c['inputs']['INPUT_JSON'])) == {'context', 'post'}
+                            for c in cases))
+        self.cli('run', 'E2', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        self.assertEqual(self.show('E2')['summary']['reused'], 1)
+        self.assertEqual(len(self.calls()), 3)
+        for nodes in (['missing'], ['G', 'G']):
+            selector['nodes'] = nodes
+            self.write('selection.json', selector)
+            self.cli('prepare', 'bad', '--spec', self.spec, ok=False)
+            self.assertFalse((self.root/'bad').exists())
+        selector['nodes'] = ['G']
+        self.write('selection.json', selector)
+        posts[1]['subjects'] = []
+        self.write('subjects.json', {'notes': posts})
+        error = self.cli('prepare', 'missing-context', '--spec', self.spec, ok=False)
+        self.assertIn('no saved SP context', error.stderr)
+
     def test_subject_contexts_freeze_source_text_and_validate_prominence(self):
         self.prompt.write_text('GENERIC PROMPT CONTEXT PROMINENCE\n{INPUT_JSON}')
         post = dict(note_id='N1', text='☕ Tea warms me.', subjects=[dict(
