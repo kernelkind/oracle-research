@@ -61,8 +61,9 @@ S9c440e7f47 valid, Sbb8511308a valid, S68ce4fd21f none on record.
 Hierarchy context worth knowing while reviewing: in the TRUE14 navigation
 hierarchy, `Coffee` (S9c440e7f47) is a parent node with four child nodes and 22
 notes including descendants, while this packet's own membership is 2 masks / 2
-notes. Ordering a node's notes across shared descendants is part of task 27 and
-is not decided by this walk.
+notes. This packet assesses only the node's own membership. Task 27 now concerns
+within-node ordering and combining multiple masks from one note; the user's
+September 29 decision excludes recursive sorting and parent-child score transfer.
 
 ## Analysis (kept out of the cards)
 

@@ -154,7 +154,7 @@
       "id": "27",
       "title": "Order node notes using mask prominence",
       "status": "WAITING",
-      "description": "Define and implement how relevant mask scores determine note order, including multiple masks and shared descendants.\nNEEDS 04"
+      "description": "Define and implement note ordering within each hierarchy node using mask prominence and relevance, including multiple masks from the same note. Recursive sorting and parent-child score transfer are out of scope.\nNEEDS 04"
     },
     {
       "id": "28",

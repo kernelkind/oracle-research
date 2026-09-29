@@ -889,7 +889,7 @@ required outcomes, not selected implementation methods or new dates:
 | **24 · Recover missing node memberships** | A repeatable recovery process beyond the six Coffee/Tea nodes, covering masks left unassigned or grouped elsewhere. Measure its work and cost. | Required to finish 03; available measurements inform 20 without waiting for all of 24. |
 | **25 · Handle node equivalence and TRUE cycles** | Apply exact mask-set consolidation and a reversible, repeatable rule for HR02's equivalence candidates and cyclic TRUE answers. Provisional contraction does not prove that a cycle or equal title means semantic equivalence. | Implemented for HR02; its finish dependency for 02 is satisfied. Quality validation remains in 02. |
 | **26 · Collapse equal-note navigation steps** | Implement and validate the required navigation simplification, including shared children, while preserving note sets, masks and provenance. | Required to finish 03. |
-| **27 · Order node notes using mask prominence** | Define and implement how relevant mask scores produce node-note order, including multiple masks and shared descendants. | Needs prominence definition 04; required to finish 03. |
+| **27 · Order node notes using mask prominence** | Define and implement note ordering within each hierarchy node using mask prominence and relevance, including multiple masks from the same note. Recursive sorting and parent-child score transfer are out of scope. | Needs prominence definition 04; required to finish 03. |
 | **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered relationship checks and large-group title inputs. The relationship method is open. | Needs 03 + 21 + 22; required to finish full-build feasibility 10. |
 
 24 can start from saved artifacts and remains unstarted. 25 is complete for
@@ -900,6 +900,10 @@ validation of the rebuilt hierarchy remains in 02.
 For 26, the [browser implementation and regression checks](../../sse_multivector/navigation-research-v1/README.md#shared-child-collapse)
 are complete; validation of this simplification in a rebuilt hierarchy remains
 pending.
+On September 29, the user dropped recursive sorting from 27 and limited the work
+to sorting within a node. A child's score is not transferred to its parent.
+Prominence times mask relevance remains the intended within-node score; the
+relevance measure and how multiple masks produce one note score remain open.
 27 waits for 04, which is in launch scope and actively being worked on
 (September 28 correction). 28 waits for the validated small-corpus
 workflow and scale findings. Readiness does not authorize execution. Membership

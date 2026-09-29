@@ -1517,10 +1517,11 @@ python3 experiment.py review experiments/ppv30-coffee-node-v1 \
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
-within-node score is prominence times mask relevance, with direct membership
-ahead of descendants. Rescaled title cosine remains a candidate for relevance,
-not a calibrated percentage. Photography is a leaf, so this trial does not test
-parent/child priority or decide deduplicated post ordering.
+within-node score is prominence times mask relevance. On September 29, the user
+dropped recursive sorting: scores are evaluated within each node, without
+parent-child score transfer. Rescaled title cosine remains a candidate for
+relevance, not a calibrated percentage. This trial does not decide deduplicated
+post ordering.
 The saved result is
 `experiments/ppv30-diverse-nodes-v1/photography-cosine-v1/comparison.json`.
 The five original masks retain their saved PPv30 scores and contextual SSE
