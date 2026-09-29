@@ -1596,8 +1596,8 @@ python3 experiment.py review experiments/ppv30-coffee-node-v1 \
   --ordering 'Inverse combined'
 ```
 
-On September 29, the user approved two expected post orders after reading the
-complete wording with URLs omitted: decaf above weather in coffee, and the
+On September 29, the user initially approved two expected post orders after
+reading the complete wording with URLs omitted: decaf above weather in coffee, and the
 century-eggs explanation above the rocket-stove post in Eggs. The
 [decision record](../docs/planning/release-decisions.md#remaining-construction-work-and-completion-dependencies)
 identifies the posts. These are post-ordering judgments, not mask-prominence
@@ -1731,7 +1731,7 @@ crossing the burrito, dinner and stove posts. Its remaining text's egg-title
 cosine falls from the highest individual case's 0.399260 to 0.248475; combined
 mask cosine is 0.918896 and prominence 10. The resulting score is 65.775835,
 4.879346 points below its former maximum and below the stove's 68.492325. This
-is a new result to review, not a user-approved judgment about diary versus stove.
+was a new result to review; diary versus stove had not yet been judged by the user.
 At that checkpoint, the user-approved century-eggs-above-stove check was unresolved
 for combined masks, and a complete seven-post order was unavailable. The existing
 individual-mask result passed that pair; it was not the new union result.
@@ -1782,10 +1782,11 @@ passes by only 0.025578 points. The combined century mask has cosine 0.905204,
 inverse cosine 0.141138 and prominence 30. A read-only calculation using the
 production `ranking_scores` shows that, with these vectors fixed, a hypothetical
 prominence of 29 would score 68.135870 and reverse the pair. That hypothetical
-value is not a model answer or a changed artifact. The trial passes both reviewed
-pairs (Coffee and Eggs), but these small margins do not establish stability or
-general ranking quality. The diary remains below the stove; the user has not
-judged that pair. Combining masks remains a candidate, not an adopted rule.
+value is not a model answer or a changed artifact. At completion, the trial passed
+both reviewed pairs (Coffee and Eggs), but these small margins do not establish
+stability or general ranking quality. The diary remained below the stove; that
+pair was still awaiting user review. Combining masks remains a candidate, not an
+adopted rule.
 
 The 33 relevant checks passed again, as did the production review UI check for
 the three completed cases. The authorized call used 672 input and 218 output
@@ -1794,6 +1795,23 @@ an invoice or measured subscription quota. The first interrupted call's actual
 token usage remains unknown. There was no incremental cash charge or paid
 fallback. The combined-mask Eggs comparison is complete; no further calls were
 made under the single-attempt exception.
+
+The user then reviewed the complete diary and stove posts with image links
+omitted and chose A, the diary, as the higher post in Eggs. This adds a third
+expected-order check. It does not approve either prominence answer or adopt a
+scoring formula. The diary's combined case is Pd3503350f1556978382da064; the
+stove is S629f5c9bc7-V0024. Their saved scores were verified by recomputing them
+through the production `ranking_scores` function; no new inference ran.
+
+| Expected higher / lower posts | Highest individual-mask Inverse combined | Combined-mask Inverse combined |
+| --- | --- | --- |
+| coffee: decaf / weather | 63.77 < 65.47: fails | 63.77 > 63.37: passes |
+| Eggs: century eggs / stove | 69.04 > 68.49: passes | 68.52 > 68.49: passes |
+| Eggs: diary / stove | 70.66 > 68.49: passes | 65.78 < 68.49: fails |
+
+The combined-mask trial therefore passes two of the three user-approved pairs.
+The diary's fall below the stove is now a confirmed ordering failure, rather
+than an unreviewed movement. How to change the score remains open.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended

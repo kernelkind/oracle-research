@@ -943,7 +943,7 @@ relevance measure and how multiple masks produce one note score remain open.
 
 User-approved post-ordering checks for 27 (September 29): the user reviewed the
 complete wording of each pair with URLs omitted and chose the first post in
-both pairs. These judgments establish expected post order; they do not select
+all three pairs. These judgments establish expected post order; they do not select
 a scoring formula, approve mask-prominence outputs or adopt a mask-aggregation
 rule.
 
@@ -951,9 +951,10 @@ rule.
 | --- | --- | --- |
 | coffee | Decaf drinkers valuing experience and flavour (`2dc50a30`) | Sunday weather with hot coffee (`82d3d344`) |
 | Eggs | Explanation of preserved century eggs (`11d2afb1`) | Rocket stove with eggs among the foods cooked (`99e6a514`) |
+| Eggs | Mixed diary with laying hens and several egg preparations (`eaa6a5e6`) | Rocket stove with eggs among the foods cooked (`99e6a514`) |
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
-the exact mask cases and results for these two checks. They are reference pairs,
+the exact mask cases and results for these three checks. They are reference pairs,
 not a claim of general ranking quality.
 
 27 waits for 04, which is in launch scope and actively being worked on
