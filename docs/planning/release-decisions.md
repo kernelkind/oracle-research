@@ -761,6 +761,12 @@ user before implementation; do not resolve them through per-node exceptions.
 
 #### SP-based hierarchy rules
 
+**LG01 — subject hierarchy merging** is the technique's name, independent of
+post count. Refer to its applications as the **LG01 six-post run** and the
+**LG01 100-post run**. The current implementation and saved artifacts still use
+`SMv2`; `SMv2-100` was the earlier name for the 100-post run. This naming decision
+does not change the rules, saved data or implementation identifiers below.
+
 On September 29 the user requested consolidation of the recent rules in this
 version-controlled register. The current investigation preserves and combines
 per-post SP hierarchies, using their subject-text vectors as diagnostic helpers

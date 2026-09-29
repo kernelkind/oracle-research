@@ -8,7 +8,9 @@ This is diagnostic code, not an adopted production hierarchy algorithm.
 Decision status is centralized in the
 [SP-based hierarchy rule register](../docs/planning/release-decisions.md#sp-based-hierarchy-rules)
 (HD08–17). HD11's exact same-post combination and HD15's corresponding cycle
-policy are implemented in SMv2 below. Saved SOv1 and SMv1 results remain unchanged.
+policy are implemented in LG01 (implementation ID `SMv2`) below. LG01 names
+the subject hierarchy merging technique, not a corpus size or individual run.
+Saved SOv1 and SMv1 results remain unchanged.
 The procedures here document those experiments, not a production policy.
 
 ## Fixed scope
@@ -166,9 +168,14 @@ sample tests mechanical behavior and browsing, not generalization. New posts
 would be needed before claiming that the proposed matching rule generalizes.
 Whether to adopt the rule or change its cutoffs remains open.
 
-## SMv2 — exact same-post combination
+<a id="smv2--exact-same-post-combination"></a>
 
-SMv2 adds HD11 before the unchanged cross-post matching procedure:
+## LG01 — subject hierarchy merging
+
+LG01 is the technique used for both the six-post and 100-post runs. The code
+and saved artifacts retain the implementation ID `SMv2`; naming the technique
+does not change their identifiers, paths or results. Compared with SMv1, it
+adds HD11 before the unchanged cross-post matching procedure:
 
 1. Combine entries only when their post ID, exact subject wording and ordered,
    nonempty source-byte ranges match. Vector IDs or equal selected words alone
@@ -205,7 +212,7 @@ The runner verifies source hashes and SSE identities, repeats the calculation
 for determinism, and checks that every original SP ancestor relationship is
 still represented or internal to a merged group. It performs no inference.
 
-Use a fresh output path for a replay; the saved SMv2 experiment is `run`:
+Use a fresh output path for a replay; the saved LG01 six-post run is `run`:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
@@ -224,7 +231,7 @@ nix develop --command cargo build \
   --bin sse-subject-navigation
 ```
 
-Open SMv2 (the earlier baseline remains under `target/subject-matching-v1/run`):
+Open the LG01 six-post run (the earlier baseline remains under `target/subject-matching-v1/run`):
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
@@ -250,10 +257,12 @@ python3 -m unittest \
 empty selection. The existing category/mask/DAG suites cover the preserved
 validation and navigation behavior.
 
-## SMv2-100 — unchanged rules on all 100 posts
+<a id="smv2-100--unchanged-rules-on-all-100-posts"></a>
+
+## LG01 — 100-post run
 
 The user approved expanding the combination experiment before deciding whether
-to add a placement stage. SMv2-100 is a separate run of the same SMv2 rules, not
+to add a placement stage. This is a separate run of the same LG01 rules, not
 a new matching algorithm. It reuses the saved 100-post SP/MP outputs and 1,674
 mask vectors. All 2,383 subject occurrences remain, including 252 empty masks.
 There are 1,702 distinct subject texts: 91 existing SSE encodings are reused and
@@ -270,7 +279,8 @@ A fully cached preparation needs no worker run.
 
 The saved inputs are under `target/subject-matching-100-v1/inputs`; the combined
 hierarchy is written separately under `target/subject-matching-100-v1/run`.
-The algorithm ID remains `SMv2`; `SMv2-100` identifies this corpus-sized run.
+The serialized implementation ID remains `SMv2`. The former documentation label
+`SMv2-100` refers to this run; **LG01 identifies the technique**, not the 100 posts.
 Preparation and matching can be reproduced in fresh directories:
 
 ```bash

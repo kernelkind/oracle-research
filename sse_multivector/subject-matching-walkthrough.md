@@ -1,4 +1,4 @@
-# Combining SP hierarchies: the original walkthrough
+# LG01 — subject hierarchy merging: the original walkthrough
 
 The step-by-step explanation you asked for in our September 29, 2026 conversation. The answers below are reproduced verbatim and in order; the title, numbered section headings, navigation and editorial notes are added for this document.
 
@@ -235,6 +235,10 @@ This would check the complete procedure on known inputs—not validate generaliz
 ## Current-version note
 
 Added for this document; not part of the quoted walkthrough:
+
+**LG01** names the current technique, independent of post count. The six-post
+and 100-post runs use the same technique. Code and saved artifacts retain
+`SMv2`; the original exchange above uses the names from that conversation.
 
 - SMv2 first combines entries from the **same post** only when their subject wording and nonempty mask positions are identical.
 - Its cycle handling preserves those exact same-post combinations when undoing conflicting cross-post merges. If the exact same-post combinations alone create a cycle, it stops.

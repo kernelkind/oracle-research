@@ -3,10 +3,11 @@
 Status: **draft, untested, not frozen**. The user authorized drafting this
 prompt for review, not inference or changes to the saved hierarchy.
 
-The user subsequently chose to expand the unchanged SP combination experiment
+The user subsequently chose to apply **LG01 — subject hierarchy merging**
 to [all 100 posts](../subject-order-probe.md#smv2-100--unchanged-rules-on-all-100-posts)
 before deciding what placement work is needed. Testing or revising this draft
 is deferred; neither whole-branch nor head-only comparison has been adopted.
+LG01 names the technique, not this run's post count; its rules are unchanged.
 
 [BCPv1.md](BCPv1.md) is a new prompt, not a revision of the older mask-only
 equivalence or placement prompts. It compares supplied SP subject branches

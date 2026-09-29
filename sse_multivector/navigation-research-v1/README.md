@@ -11,20 +11,22 @@ These are requirements for the formal construction process, not optional review
 cleanups. They do not authorize a new run or change the frozen experiment data.
 
 These stages describe the mask-group construction path used for HRv1/HR02.
-The separate investigation that combines per-post SP hierarchies records its
+The separate **LG01 — subject hierarchy merging** investigation records its
 rules and implementation status in the same
 [decision register, HD08–21](../../docs/planning/release-decisions.md#sp-based-hierarchy-rules).
 Do not silently transfer the mask-set merge, generated merged-title or
 equal-post display-collapse rules below to SP subject nodes. In particular,
 HD11 requires both identical subject wording and identical nonempty masks
 within one post; it is implemented in the separate
-[SMv2 experiment](../subject-order-probe.md#smv2--exact-same-post-combination).
+[LG01 technique](../subject-order-probe.md#smv2--exact-same-post-combination).
 Earlier saved graphs remain unchanged.
 
-The approved [SMv2-100 expansion](../subject-order-probe.md#smv2-100--unchanged-rules-on-all-100-posts)
+The approved [LG01 100-post run](../subject-order-probe.md#smv2-100--unchanged-rules-on-all-100-posts)
 applies those same combination rules to all 100 saved posts before deciding
 whether another placement stage is needed. It is separate from the six-post
 run and does not add frontier judgments or alter the mask-group rules below.
+LG01 identifies the technique, not the number of posts; saved implementation
+identifiers and paths remain unchanged.
 
 1. **Deduplicate identical masks within each post before SSE.** Treat masks with
    the same post ID and identical ordered source-byte ranges as one encoder
