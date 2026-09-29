@@ -26,7 +26,6 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
             tmp = Path(tmp)
             public = tmp / "public"
             shutil.copytree(source, public)
-            (public / "october-18-release.drawio").unlink()
             handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=public)
             server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
             thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -93,9 +92,13 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                     "context": context, "viewport": {"width": 1280, "height": 800},
                     "devicePixelRatio": 1,
                 })
-                url = f"http://127.0.0.1:{server.server_port}/graph-prototype.html"
+                url = f"http://127.0.0.1:{server.server_port}/"
                 call("browsingContext.navigate", {"context": context, "url": url, "wait": "complete"})
                 wait_for("document.querySelector('#graph-status')?.textContent.includes('Showing')")
+                self.assertEqual(evaluate("document.title"), "Oracle release plan · task graph")
+                self.assertFalse(evaluate("document.body.innerText.includes('Earlier draw.io')"))
+                for retired in ("october-18-release.drawio", "vendor/viewer-static.min.js", "vendor/LICENSE.drawio"):
+                    self.assertFalse((source / retired).exists(), f"Retired viewer still present: {retired}")
                 self.assertEqual(evaluate("document.querySelector('#focus-task').value"), "02")
                 self.assertEqual(evaluate("document.querySelector('#depth').value"), "1")
                 counts = evaluate("document.querySelector('#graph-status').textContent.match(/Showing (\\d+) of (\\d+) tasks/)?.slice(1).join(',')")

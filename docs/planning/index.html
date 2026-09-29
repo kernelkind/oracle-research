@@ -4,95 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; font-src 'self'; base-uri 'none'; form-action 'none'">
-  <title>Oracle release plan · read-only</title>
-  <link rel="icon" href="data:,">
-  <style>
-    :root { color-scheme: dark; font-family: system-ui, sans-serif; color: #e6edf3;
-      --ge-dark-color: #161b22; }
-    body { margin: 0; background: #161b22; height: 100dvh; display: flex; flex-direction: column; }
-    header { display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-      flex-shrink: 0; padding: 14px 22px; border-bottom: 1px solid #374151; background: #1c2531; }
-    h1 { margin: 0; font-size: 18px; }
-    #status { flex: 1; font-size: 14px; }
-    button { font: inherit; padding: 6px 14px; cursor: pointer; background: #263445;
-      color: #e5e7eb; border: 1px solid #536378; border-radius: 5px; }
-    button:hover { background: #324356; }
-    button:focus-visible { outline: 2px solid #93c5fd; outline-offset: 2px; }
-    main { padding: 12px 22px 22px; flex: 1; min-height: 0; overflow: auto; }
-    #diagram { position: relative; width: 100%; min-height: 100px; }
-    .diagram-toolbar { position: sticky !important; top: 0 !important; left: 0 !important;
-      width: 100% !important; z-index: 2 !important; }
-    #status[role="alert"] { color: #fca5a5; }
-  </style>
-  <script>
-    // Keep the renderer and any attempted auxiliary loads on this host.
-    window.DRAWIO_BASE_URL = '.';
-    window.DRAWIO_VIEWER_URL = '.';
-    window.mxBasePath = '.';
-    window.mxImageBasePath = '.';
-    window.mxLoadResources = false;
-    window.mxLoadStylesheets = false;
-  </script>
-  <script defer src="vendor/viewer-static.min.js"></script>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="refresh" content="0; url=graph-prototype.html">
+  <title>Oracle release plan · task graph</title>
 </head>
 <body>
-  <header>
-    <h1>Oracle release plan</h1>
-    <span id="status" role="status">Loading diagram…</span>
-    <button id="refresh" type="button">Refresh</button>
-  </header>
-  <main><div id="diagram" aria-label="Read-only release diagram"></div></main>
-  <script>
-    document.getElementById('refresh').addEventListener('click', () => location.reload());
-    window.addEventListener('DOMContentLoaded', async () => {
-      const status = document.getElementById('status');
-      const diagram = document.getElementById('diagram');
-      try {
-        // Read the canonical source on every page load, never an exported snapshot.
-        const response = await fetch('october-18-release.drawio', {cache: 'no-store'});
-        if (!response.ok) throw new Error(`source returned HTTP ${response.status}`);
-        const xml = await response.text();
-        const parsed = new DOMParser().parseFromString(xml, 'application/xml');
-        if (parsed.querySelector('parsererror') || !parsed.querySelector('mxfile > diagram')) {
-          throw new Error('source is not a valid multi-page draw.io file');
-        }
-        diagram.setAttribute('data-mxgraph', JSON.stringify({
-          xml,
-          'dark-mode': 'dark',
-          toolbar: 'pages zoom',
-          'toolbar-nohide': true,
-          'auto-fit': false,
-          'allow-zoom-out': false,
-          'browser-translate': false,
-          editable: false,
-          lightbox: false,
-          nav: false,
-          center: false,
-          border: 12
-        }));
-        GraphViewer.createViewerForElement(diagram, viewer => {
-          viewer.toolbar.classList.add('diagram-toolbar');
-          // The bundled viewer's "Fit" action restores 100%.
-          const resetZoom = viewer.toolbar.querySelector('[title="Fit"]');
-          resetZoom.title = 'Reset zoom';
-          resetZoom.textContent = '100%';
-          diagram.before(viewer.toolbar);
-          const zoomOut = viewer.toolbar.querySelector('[title="Zoom Out"]');
-          const showPageAtDefaultZoom = () => {
-            for (let press = 0; press < 3; press++) zoomOut.click();
-            diagram.parentElement.scrollTo(0, 0);
-          };
-          viewer.addListener('graphChanged', showPageAtDefaultZoom);
-          showPageAtDefaultZoom();
-        });
-        status.textContent = 'Read-only · Scroll to explore. Toolbar: pages and zoom. Refresh loads the latest saved plan.';
-      } catch (error) {
-        diagram.replaceChildren();
-        status.setAttribute('role', 'alert');
-        status.textContent = `Could not load diagram: ${error.message}. Try Refresh after the source is fixed.`;
-      }
-    });
-  </script>
+  <a href="graph-prototype.html">Open the release-plan task graph</a>
 </body>
 </html>

@@ -3,17 +3,18 @@
 Updated September 29, 2026. This is the written record of the planning discussion.
 Agreed requirements, tentative choices and existing-data facts are distinguished
 below. The overall plan is not approved. Approval of an individual requirement
-or task-view edit does not approve the whole plan. The earlier draw.io diagram
-incorporates the approved scheduling changes below; other weekly targets and
-exact dates remain proposals.
+or task-view edit does not approve the whole plan. Approved scheduling changes
+are recorded below; other weekly targets and exact dates remain proposals.
 
 The user approved a read-only focused task graph backed by
 [`release-plan.json`](release-plan.json). Agents maintain its task text, status
 and dependencies from explicit instructions; Cytoscape and ELK render it without
 manual coordinates. This document remains the source for decisions and their
-rationale. The original draw.io viewer remains available for its proposed
-weekly-targets page, but may lag current task status. Whether to make the graph
-the default URL or retire that older view remains open.
+rationale. On September 29 the user approved retiring the obsolete draw.io view
+and opening this task graph at the existing planning root URL. The obsolete
+diagram, viewer, renderer and their tests are removed; earlier versions remain
+in Git. This changes the interface, not task contents, dependencies, scheduling
+decisions or the proposal status of the calendar below.
 
 This discussion is for planning: outcomes, dependencies, open decisions and
 timing. It does not select implementation methods or experimental procedures.
@@ -349,7 +350,7 @@ pilot training data; 06 · Choose model through larger fine-tuning pilot; 07 · 
 data; 08 · Distill and package the model; 11 · Test hierarchy with the distilled
 model; titles using "category" use "node" (22, 23, 24, 25, 27). This record uses
 the new names. Task 29 separately tracks the preliminary 100-note fine-tuning
-experiment; the earlier diagram pages may retain their older titles. Frozen
+experiment; the retired diagram is recoverable from Git. Frozen
 experiment and research evidence keeps the wording of its time.
 
 ## Agreed release goal
@@ -1148,7 +1149,7 @@ cutoff, measured rates and counts, and the final corpus size remain open.
    small saved hierarchy snapshot rather than waiting for the final corpus.
    Do not leave the first complete integration to Week 5; preserve time then
    for verification and fixes. Show this work as an explicit parallel track on
-   the weekly diagram, alongside hierarchy/model development rather than mainly
+   the task graph, alongside hierarchy/model development rather than mainly
    under Weeks 4–5. Service development can begin after the protocol; testing
    with the saved hierarchy needs the 100-note snapshot as well.
    Notedeck can start from the protocol and finish integration with the service.
@@ -1179,8 +1180,8 @@ Three weeks remain to the non-negotiable October 18 date. This re-cut of the
 efficient five-week sequence matches the release shape above; it is a proposal
 that authorizes nothing. Model-track and scale work (05–08, 10, 11, 20, 21,
 22, 28) proceeds opportunistically in parallel and is not scheduled here. This
-calendar supersedes the weekly-targets proposal on the draw.io page, which
-remains the lagging earlier view until explicitly updated.
+calendar supersedes the earlier weekly-targets proposal. The retired draw.io
+page is recoverable from Git, not a second current planning view.
 
 **Week 1 · September 28 – October 4: settle the quality foundation.** Review
 the completed mask-based parent-child diagnostic and settle the automated
@@ -1257,6 +1258,6 @@ No allocation or new spending is approved by this document.
   the hosted demo runs.
 - Detailed task ownership and a feasible calendar within the proposed five-week sequence.
 
-The diagram's page 2 incorporates these approved scheduling changes into the
-weekly targets. Other targets remain provisional until their dependencies,
-durations and owners are settled.
+The task graph reflects the approved dependency and status decisions. Other
+calendar targets remain provisional until their dependencies, durations and
+owners are settled.
