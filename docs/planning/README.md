@@ -43,6 +43,12 @@ Separate node-title generation, its input-growth measurements and the
 corresponding large-input work in 28 are required only if that stage is used.
 LG01 retains SP subject names; no production workflow is selected by this change.
 
+Task 20 keeps separate estimates: teacher generation plus construction for the
+required release, and pilot/distilled-model generation for the optional model
+track. Shared construction measurements can inform both where applicable.
+Model-track measurements do not block completing the release estimate. Checks
+10 and 11 belong to the model track; neither blocks the teacher-built snapshot.
+
 Task 02 now tracks the SP-based hierarchy investigation: LG01 has run on 100
 posts, and BCPv4 has compared 49 parent pairs without applying its answers.
 Equivalent-node merging, re-comparison and graph-application policies remain

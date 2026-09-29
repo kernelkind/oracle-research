@@ -112,7 +112,7 @@
       "id": "20",
       "title": "Assess full hierarchy-build resources",
       "status": "WAITING",
-      "description": "Combine generation/stage rates with hierarchy counts, including graph processing and membership recovery where used, to estimate full-build time, memory and cost.\nNEEDS 22; ALSO 21 IF HDBSCAN IS USED.\nThe chosen workflow's time and cost checks remain required."
+      "description": "Required release: estimate time, memory and cost for teachers to generate subjects, masks and prominence over 2–5k posts, plus the chosen hierarchy-construction workflow. Use teacher measurements and observed workload counts.\nOptional model track: retain pilot/distilled-model generation measurements as a separate estimate. Shared construction measurements can inform both where applicable; model-track measurements do not block the release estimate.\nInclude graph processing and membership recovery where used.\nNEEDS 22; ALSO 21 IF HDBSCAN IS USED."
     },
     {
       "id": "21",
@@ -304,7 +304,8 @@
     {
       "source": "20",
       "target": "10",
-      "kind": "required"
+      "kind": "required",
+      "label": "shared construction costs; separate model-track estimate"
     },
     {
       "source": "21",
@@ -326,7 +327,7 @@
       "source": "20",
       "target": "09",
       "kind": "required",
-      "label": "informs launch-corpus size"
+      "label": "teacher-based release estimate informs corpus size"
     },
     {
       "source": "08",
@@ -337,13 +338,19 @@
       "source": "06",
       "target": "20",
       "kind": "helpful",
-      "label": "fine-tuning pilot measurements"
+      "label": "optional model-track generation measurements"
+    },
+    {
+      "source": "17",
+      "target": "20",
+      "kind": "helpful",
+      "label": "teacher generation measurements"
     },
     {
       "source": "03",
       "target": "20",
       "kind": "helpful",
-      "label": "mask/node/filtered-pair counts"
+      "label": "observed subject/mask/node/pair counts"
     },
     {
       "source": "03",

@@ -969,7 +969,8 @@ development schedule.
 Pilot **06** also includes a small hierarchy built from pilot-model outputs before
 model selection. Use that check to detect downstream consequences of extraction
 errors; distinguish those from failures in the shared hierarchy pipeline. **11**
-still verifies the final distilled model before the launch build. The new pilot
+still verifies the final distilled model before model-track publication, not
+before the required release snapshot. The new pilot
 check belongs within 06 rather than a separate node or a dependency on finishing
 the final fine-tune.
 
@@ -1038,15 +1039,20 @@ It does not approve implementation, benchmarks, spending or diagram changes.
   before completing build-cost estimates.
   This is ready independently of 21's HDBSCAN assessment. No measurement
   procedure, hardware choice or spending is approved here.
-- **20 · Assess full hierarchy-build resources:** combine stage measurements
-  from 22, HDBSCAN requirements from 21 if HDBSCAN is used, mask/prominence
-  generation measurements from the fine-tuning pilot (06), and mask/node/cosine-filtered-pair counts
-  from the growing hierarchy builds (03). Estimate launch-build time, memory and
-  cost to inform an affordable corpus size while preserving hierarchy quality.
+- **20 · Assess full hierarchy-build resources:** keep the required-release
+  estimate separate from the optional model-track estimate. For the teacher-built
+  2–5k release, combine available teacher generation measurements from 17 with
+  stage measurements from 22 and observed subject/mask/node/pair counts from 03.
+  Include HDBSCAN requirements from 21 only if HDBSCAN is used. Estimate release
+  time, memory and cost to inform corpus selection in 09 while preserving quality.
+  Retain pilot/distilled-model generation measurements from 06 separately for
+  the model track; they do not estimate teacher generation or block completing
+  the release estimate. Shared construction measurements can inform both where
+  applicable; check workload differences rather than assuming identical counts.
   Include graph-processing costs and membership-recovery costs where recovery
   is used; available measurements from 24 are an additional dashed input.
-  It waits for 22, plus 21 only if HDBSCAN is used. The dashed 06 and 03 inputs allow
-  available evidence to be used without waiting for those workstreams to finish.
+  It waits for 22, plus 21 only if HDBSCAN is used. The dashed inputs from 17,
+  06 and 03 can inform the corresponding estimate before those tasks finish.
   Per-pair relationship cost alone does not establish total hierarchy-build cost.
 - **09 · Choose notes for launch hierarchy:** use the early measurements, agreed
   corpus scope and useful-coverage requirements to choose the intended corpus and
@@ -1055,18 +1061,20 @@ It does not approve implementation, benchmarks, spending or diagram changes.
 - **10 · Check full-build time and cost:** establish whether the distilled model
   can generate masks and prominence for the selected launch corpus, and the
   remaining pipeline can construct its full hierarchy, within the remaining
-  budget and before October 18. This needs the trained model, corpus selection,
+  budget and available time. This is a model-track check, not an October 18
+  release gate. It needs the trained model, corpus selection,
   resource measurements and the runnable build from 28; early estimates alone
   do not establish feasibility.
 - **11 · Test hierarchy with the distilled model:** build a sample hierarchy from
   that model's masks and prominence; check browsing and whether the complete
-  pipeline works before processing the full launch corpus.
+  pipeline works before publishing the optional model. It does not gate the
+  teacher-built release snapshot.
 
-10 and 11 are distinct checks: whether the full launch build fits the budget
-and deadline, and whether the distilled model's outputs produce a useful
-hierarchy. Both need evidence before 12; neither is required to finish before
-the other. They may share measurements, but that does not merge their purposes
-or require another planning decision. How they share work belongs to execution.
+10 and 11 are distinct model-track checks: whether a build using the distilled
+model fits the resources, and whether its outputs produce a useful hierarchy.
+Neither blocks 12 or is required to finish before the other. They may share
+construction measurements with the teacher-built release, but their generation
+measurements and acceptance decisions remain separate.
 
 **18 · Prepare training code for the fine-tuning pilot** is ready within the
 draft. Its scope is code to fine-tune each specified candidate model, save and
@@ -1100,8 +1108,9 @@ cutoff, measured rates and counts, and the final corpus size remain open.
    Node 22 measures SSE and hierarchy-construction stages using saved inputs;
    separate node-title generation is measured only if used. Node 21's HDBSCAN
    assessment is required only if HDBSCAN is used. Node 20 combines those
-   findings with pilot-model measurements and growing-build counts as they
-   become available. The combined assessment informs corpus selection in 09.
+   findings with teacher generation measurements and growing-build counts to
+   inform release corpus selection in 09. It retains pilot-model measurements
+   separately for the optional model track.
    Node 10 then checks time and cost for mask and prominence generation with the
    distilled model and hierarchy construction across the intended launch corpus.
 3. Bring protocol work and basic service/Notedeck integration forward, using a
