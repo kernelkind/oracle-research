@@ -291,6 +291,10 @@ print(json.dumps({"schema_version":1,"candidate_identity":identity,"artifact":{"
             self.assertEqual(207, report["encoding_count"])
             self.assertEqual(2, report["candidate_count"])
             frozen = json.loads(output.read_text())
+            self.assertEqual(
+                frozen["encoder"]["byte_span_rule"],
+                "complete-token-contained-in-utf8-byte-span-union-v2",
+            )
             prepared_private = json.loads(
                 (prepared / "blinding-private.json").read_text()
             )

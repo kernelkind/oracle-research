@@ -91,6 +91,24 @@ class WorkerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "selects no complete tokenizer token"):
             select_token_indices(text, ((1, 3),), offsets)
 
+    def test_adjacent_fragments_select_tokens_covered_by_their_union(self):
+        text = "☕ grownostr"
+        offsets = [(0, 1), (2, 7), (7, 10), (10, 11), (0, 0)]
+        # UTF-8 spans split grow|nostr inside the first word token.
+        whole = ((4, 13),)
+        split = ((4, 8), (8, 13))
+        expected = select_token_indices(text, whole, offsets)
+        self.assertEqual(expected, (1, 2, 3))
+        self.assertEqual(select_token_indices(text, split, offsets), expected)
+        self.assertEqual(select_token_indices(text, ((4, 8), (7, 13)), offsets), expected)
+        self.assertEqual(select_token_indices(text, ((4, 8), (8, 10), (10, 13)), offsets), expected)
+
+    def test_fragment_union_never_fills_a_gap_or_rounds_partial_tokens(self):
+        text = "grownostr"
+        offsets = [(0, 5), (5, 8), (8, 9)]
+        self.assertEqual(select_token_indices(text, ((0, 3), (4, 9)), offsets), (1, 2))
+        self.assertEqual(select_token_indices(text, ((1, 4), (4, 9)), offsets), (1, 2))
+
     def test_runs_one_grouped_request_and_publishes_bound_raw_vectors(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

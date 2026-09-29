@@ -22,6 +22,7 @@ from typing import Any, Iterable, Sequence
 SCHEMA_VERSION = 1
 VECTOR_FORMAT = "row-major-f32le-v1"
 POOLING_RULE = "selected-contextual-token-mean-linear-relu-linear-v1"
+BYTE_SPAN_RULE = "complete-token-contained-in-utf8-byte-span-union-v2"
 TREE_HASH_RULE = "sorted-relative-path-type-size-content-sha256-v1"
 
 
@@ -323,13 +324,20 @@ def select_token_indices(
     byte_spans: Sequence[tuple[int, int]],
     token_offsets: Sequence[tuple[int, int]],
 ) -> tuple[int, ...]:
-    """Apply the upstream complete-token containment rule to exact byte spans."""
+    """Select complete tokens contained in the union of exact UTF-8 byte spans."""
 
     if not byte_spans:
         raise ValueError("a subject mask must contain at least one byte span")
-    character_spans = tuple(
+    spans = sorted(
         _byte_span_to_character_span(text, span) for span in byte_spans
     )
+    character_spans = []
+    for start, end in spans:
+        if character_spans and start <= character_spans[-1][1]:
+            previous_start, previous_end = character_spans[-1]
+            character_spans[-1] = (previous_start, max(previous_end, end))
+        else:
+            character_spans.append((start, end))
     selected = []
     for index, (token_start, token_end) in enumerate(token_offsets):
         if token_start == token_end == 0:

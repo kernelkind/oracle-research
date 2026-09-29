@@ -1043,7 +1043,7 @@ def _build_technical_freeze(
     encoder_config_path: Path,
     candidate_executable: Path,
 ) -> dict[str, object]:
-    from sse_multivector.worker import TREE_HASH_RULE, canonical_tree_sha256
+    from sse_multivector.worker import BYTE_SPAN_RULE, TREE_HASH_RULE, canonical_tree_sha256
 
     prepared_report = verify_prepared_suite(repo_root, prepared_path)
     encoder_config = _read_json(encoder_config_path)
@@ -1149,7 +1149,7 @@ def _build_technical_freeze(
             "model": model,
             "dimensions": 768,
             "vector_format": "row-major-f32le-v1",
-            "byte_span_rule": "complete-token-contained-in-any-utf8-byte-span-v1",
+            "byte_span_rule": BYTE_SPAN_RULE,
         },
         "candidate_execution": {
             "executable_path": str(executable),

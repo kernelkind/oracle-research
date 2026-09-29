@@ -59,7 +59,23 @@ in `analysis.md` alongside it.
 
 The diagnostic exposed a shared encoder boundary issue, not evidence that the
 teacher chose different text: adjacent `grow` and `nostr` fragments cover the
-same bytes as `grownostr`, but `worker.select_token_indices` tests complete-token
-containment separately within each fragment. A token crossing that internal
-boundary is dropped. This comparison did not change that behavior or repair any
-candidate masks. Do not attribute that loss to teacher semantics.
+same bytes as `grownostr`, but the then-current `worker.select_token_indices`
+tested complete-token containment separately within each fragment. A token
+crossing that internal boundary was dropped. Do not attribute that loss to
+teacher semantics; the original diagnostic artifacts retain the old behavior.
+
+The subsequently authorized fix unions touching or overlapping spans before
+checking complete-token containment. It does not bridge gaps, extend partial
+tokens, change stored masks, or rewrite saved vectors. Technical freezes now
+identify this rule as `complete-token-contained-in-utf8-byte-span-union-v2`.
+The worker source hash also distinguishes the implementations. The comparison
+collector still rejects mixed worker identities rather than silently treating
+old and new encodings as equivalent.
+
+The local two-mask recheck is in `target/fragment-union-v1/`. Split and whole
+masks both select token positions 21, 22, 23 and produce bit-identical vectors.
+The unsplit control matches its saved baseline to cosine
+0.9999999999998919 (maximum component difference 7.45e-8). Against N092 / V1508,
+the corrected split mask scores 0.96118 instead of about 0.45. No full corpus
+rebuild was performed. Auditing other saved masks for this boundary effect
+remains a separate next step, not authorization to regenerate them.
