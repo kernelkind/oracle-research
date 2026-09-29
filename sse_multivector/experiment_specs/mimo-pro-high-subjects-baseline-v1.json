@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "ASv6.48",
+    "path": "saved-prompt-verbatim.txt"
+  },
+  "dataset": {
+    "adapter": "generic",
+    "path": "../frontier-model-comparison-v1/teacher-screen-v1-inputs/subjects.json"
+  },
+  "runner": {
+    "provider": "openrouter",
+    "auth_file": null,
+    "model": "xiaomi/mimo-v2.6-pro",
+    "reasoning_effort": "high",
+    "timeout_seconds": 1800,
+    "concurrency": 6,
+    "output_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "subjects": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "context": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "number": {
+                "pattern": "^[1-9][0-9]*(\\.[1-9][0-9]*)*$",
+                "type": "string"
+              },
+              "subject": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "number",
+              "context",
+              "subject"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "subjects"
+      ],
+      "type": "object"
+    }
+  }
+}
