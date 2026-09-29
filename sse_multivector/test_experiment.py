@@ -16,6 +16,50 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_subject_contexts_freeze_source_text_and_validate_prominence(self):
+        self.prompt.write_text('GENERIC PROMPT CONTEXT PROMINENCE\n{INPUT_JSON}')
+        post = dict(note_id='N1', text='☕ Tea warms me.', subjects=[dict(
+            number='1', subject='Tea', context='Tea warms the writer.',
+            byte_spans=[[4, 7]], fragments=['Tea'])])
+        self.write('subjects.json', {'notes': [post]})
+        self.write('hierarchy.json', {'memberships': {'nodes': [dict(
+            group='G', title='Tea', recursive_note_ids=['N1', 'child'],
+            matched_instances=[dict(instance='V1', note_id='N1', text=post['text'],
+                                    byte_spans=[[4, 7]], fragments=['Tea'])])]}})
+        self.write('selection.json', dict(schema_version=1, subjects='subjects.json',
+            hierarchy='hierarchy.json', selections=[dict(
+                id='tea-context', node_id='G', note_id='N1', number='1')]))
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='subject_contexts', path='selection.json')
+        self.write('spec.json', spec)
+        self.prepare()
+        case = self.show('E1', '--case', 'tea-context')
+        self.assertEqual(json.loads(case['inputs']['INPUT_JSON']),
+                         {'context': 'Tea warms the writer.', 'post': post['text']})
+        self.assertEqual(case['evidence']['mask_ids'], ['V1'])
+        self.assertEqual(case['evidence']['subject_number'], '1')
+        sources = json.loads((self.root/'E1/experiment.json').read_text())['plan']['sources']
+        self.assertTrue(all(str(self.root/name) in sources
+                            for name in ('selection.json', 'subjects.json', 'hierarchy.json')))
+        answer = dict(missing_meaning='The speaker is not identified.',
+                      allocation=[dict(meaning='Warmth', points=100, represented=80, missing=20)],
+                      prominence=80)
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        self.assertEqual(self.show('E1')['cases'][0]['status'], 'valid')
+        self.prepare('E2')
+        self.cli('run', 'E2')
+        self.assertEqual(self.show('E2')['summary']['reused'], 1)
+        self.assertEqual(len(self.calls()), 1)
+        from sse_multivector import experiment_inputs
+        answer['allocation'][0]['represented'] = 79
+        with self.assertRaisesRegex(ValueError, 'allocation'):
+            experiment_inputs.validate(spec['dataset'], case, json.dumps(answer), None)
+        post['subjects'][0]['byte_spans'] = [[8, 13]]
+        post['subjects'][0]['fragments'] = ['warms']
+        self.write('subjects.json', {'notes': [post]})
+        self.cli('prepare', 'outside', '--spec', self.spec, ok=False)
+        self.assertFalse((self.root/'outside').exists())
+
     def test_combined_prominence_uses_direct_post_span_union_and_reuses_unchanged_requests(self):
         self.prominence_spec()
         masks = [dict(instance=mid, note_id='N1', text='☕ Tea, then tea.',

@@ -13,12 +13,12 @@ import struct
 
 try:
     from . import experiment, worker
-    from .experiment_inputs import prepare_prominence, union_spans
+    from .experiment_inputs import prepare_prominence, prepare_context_prominence, union_spans
     from .prominence_ranking import ranking_scores
     from .extraction_pipeline import NIP19_IDENTIFIER, URL_SCHEME_PATTERN
 except ImportError:
     import experiment
-    from experiment_inputs import prepare_prominence, union_spans
+    from experiment_inputs import prepare_prominence, prepare_context_prominence, union_spans
     import worker
     from prominence_ranking import ranking_scores
     from extraction_pipeline import NIP19_IDENTIFIER, URL_SCHEME_PATTERN
@@ -190,7 +190,10 @@ def prepare(args):
     for directory in args.experiments:
         directory = directory.resolve()
         plan, _, _ = experiment.load(directory)
-        if plan["dataset"]["adapter"] not in ("prominence", "generic"):
+        context_input = plan['dataset']['adapter'] == 'subject_contexts'
+        if context_input and getattr(args, 'include_inverse', False):
+            raise ValueError('subject context relevance has no literal inverse')
+        if plan["dataset"]["adapter"] not in ("prominence", "generic", 'subject_contexts'):
             raise ValueError("expected prominence inputs with saved mask evidence")
         report = experiment.report(directory)
         for name in (directory / "experiment.json", Path(plan["run_directory"]) / "results.jsonl"):
@@ -204,7 +207,10 @@ def prepare(args):
                 raise ValueError(f"unscored or invalid case: {case['id']}")
             e = case["evidence"]
             fields = ("id", "node_id", "node_title", "note_id", "text", "mask_ids", "byte_spans")
-            verified = prepare_prominence({"cases": [{key: e[key] for key in fields}]})[0]
+            if context_input:
+                fields += ('subject_number', 'subject', 'context')
+            preparer = prepare_context_prominence if context_input else prepare_prominence
+            verified = preparer({"cases": [{key: e[key] for key in fields}]})[0]
             if (case["id"] != e["id"] or set(case["inputs"]) != {"INPUT_JSON"}
                     or json.loads(case["inputs"]["INPUT_JSON"]) !=
                     json.loads(verified["inputs"]["INPUT_JSON"])):
@@ -225,7 +231,12 @@ def prepare(args):
                         or saved["fragments"] != [e["text"].encode()[a:b].decode() for a,b in saved['byte_spans']]):
                     raise ValueError(f"mask differs from saved vector: {mid}")
                 original = dict(e, mask_ids=[mid], byte_spans=saved['byte_spans'])
-                prepare_prominence({'cases': [original]})
+                prepare_prominence({'cases': [{key: original[key] for key in
+                    ('id', 'node_id', 'node_title', 'note_id', 'text', 'mask_ids', 'byte_spans')}]})
+                if context_input and not any(
+                        s['number'] == e['subject_number'] and s['subject'] == e['subject']
+                        and s['context'] == e['context'] for s in saved.get('subject_entries', [])):
+                    raise ValueError('context differs from saved SP subject')
                 originals[mid] = original
                 masks.append(saved)
             if union_spans([span for mask in masks for span in mask['byte_spans']]) != union_spans(e['byte_spans']):
@@ -237,6 +248,9 @@ def prepare(args):
                               fragments=[e['text'].encode()[a:b].decode() for a,b in e['byte_spans']],
                               ordinal=exact['ordinal'] if exact else None,
                               prominence=score))
+            if context_input:
+                cases[-1].update(ordinal=None, representation='context', context=e['context'],
+                                 subject=e['subject'], subject_number=e['subject_number'])
     if selected_cases - {case['id'] for case in cases}:
         raise ValueError(f"unknown requested cases: {sorted(selected_cases - {case['id'] for case in cases})}")
     if selected_nodes - titles.keys():
@@ -281,7 +295,12 @@ def prepare(args):
             e = evidence[case['id']]
             note_id = lookup[case['mask_ids'][0]]['note_id']
             if case['ordinal'] is None:
-                case['mask_row'] = selection(note_id, e['text'], e['byte_spans'])
+                if case.get('representation') == 'context':
+                    text = case['context']
+                    case['mask_row'] = selection(hashlib.sha256(text.encode()).hexdigest(),
+                                                 text, [[0, len(text.encode())]])
+                else:
+                    case['mask_row'] = selection(note_id, e['text'], e['byte_spans'])
             if not getattr(args, 'include_inverse', False):
                 continue
             spans = inverse_spans(e['text'], e['byte_spans'])

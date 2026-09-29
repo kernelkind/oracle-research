@@ -57,6 +57,17 @@ def prepare_file(dataset, path, template, load_report=None):
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] == 'subject_contexts':
+        engine._expect_fields(source, 'subject contexts',
+                              {'schema_version', 'subjects', 'hierarchy', 'selections'})
+        if type(source['schema_version']) is not int or source['schema_version'] != 1:
+            raise ValueError('expected subject contexts schema_version 1')
+        references = {}
+        for key in ('subjects', 'hierarchy'):
+            source_path = engine._resolve_path(source[key], key, path.parent)
+            source[key] = read(source_path)
+            references[key] = dict(path=str(source_path), sha256=sources[str(source_path)])
+        source['source'] = references
     if dataset['adapter'] == 'subject_pairs':
         comparison_mode = 'comparisons' in source
         engine._expect_fields(source, 'subject pairs',
@@ -462,6 +473,68 @@ def prepare_prominence(source, selected=None, combine_masks=False):
     return cases
 
 
+def prepare_context_prominence(source):
+    """Prominence of a saved SP context's meaning in its complete original post."""
+    fields = ('id', 'node_id', 'node_title', 'note_id', 'text', 'mask_ids', 'byte_spans')
+    cases = []
+    for evidence in source['cases']:
+        case = prepare_prominence({'cases': [{k: evidence[k] for k in fields}]})[0]
+        for key in ('subject_number', 'subject', 'context'):
+            engine._expect_string(evidence[key], key)
+            if not evidence[key].strip():
+                raise ValueError(f'empty subject context field: {key}')
+        case['evidence'] = dict(case['evidence'], **{
+            k: evidence[k] for k in ('subject_number', 'subject', 'context')})
+        if 'source' in evidence:
+            case['evidence']['source'] = evidence['source']
+        case['inputs'] = {'INPUT_JSON': json.dumps(
+            {'context': evidence['context'], 'post': evidence['text']}, ensure_ascii=False)}
+        cases.append(case)
+    return cases
+
+
+def prepare_subject_contexts(source, selected=None):
+    """Select exact saved SP entries belonging directly to the specified node."""
+    posts = source['subjects']['notes']
+    by_id = {p['note_id']: p for p in posts}
+    if len(by_id) != len(posts):
+        raise ValueError('duplicate source post identity')
+    members = prepare_prominence(source['hierarchy'])
+    cases, ids = [], set()
+    for selection in source['selections']:
+        engine._expect_fields(selection, 'subject context selection',
+                              {'id', 'node_id', 'note_id', 'number'})
+        cid = engine._expect_identifier(selection['id'], 'case.id')
+        if cid in ids:
+            raise ValueError('duplicate context case identity')
+        ids.add(cid)
+        if selection['note_id'] not in by_id:
+            raise ValueError('unknown subject context post')
+        post = by_id[selection['note_id']]
+        subjects = [s for s in post['subjects'] if s['number'] == selection['number']]
+        if len(subjects) != 1:
+            raise ValueError('unknown or duplicate subject number')
+        subject = subjects[0]
+        matching = [m['evidence'] for m in members
+                    if m['evidence']['node_id'] == selection['node_id']
+                    and m['evidence']['note_id'] == selection['note_id']
+                    and m['evidence']['byte_spans'] == subject['byte_spans']]
+        if not matching or any(m['text'] != post['text'] for m in matching):
+            raise ValueError('SP context is not a direct hierarchy member')
+        raw = post['text'].encode()
+        if [raw[a:b].decode() for a,b in subject['byte_spans']] != subject['fragments']:
+            raise ValueError('SP context mask differs from source post')
+        evidence = dict(matching[0], id=cid, subject_number=subject['number'],
+                        subject=subject['subject'], context=subject['context'],
+                        source=source['source'])
+        evidence['mask_ids'] = list(dict.fromkeys(mid for m in matching for mid in m['mask_ids']))
+        if selected is None or cid in selected:
+            cases.append(evidence)
+    if selected is not None and set(selected) - ids:
+        raise ValueError('unknown subject context case requested')
+    return prepare_context_prominence({'cases': cases})
+
+
 def prepare(dataset, source, template):
     adapter = dataset["adapter"]
     if "select" in dataset:
@@ -491,6 +564,8 @@ def prepare(dataset, source, template):
         cases = prepare_prominence(source, dataset.get("select"), dataset.get('combine_masks', False))
     elif adapter == "subject_pairs":
         cases = prepare_subject_pairs(source, dataset.get("select"))
+    elif adapter == 'subject_contexts':
+        cases = prepare_subject_contexts(source, dataset.get('select'))
     elif adapter == "titles":
         groups = prepare_titles(
             source, "{NUMBERED_INSTANCES}", dataset.get("select", [])
@@ -546,18 +621,34 @@ def validate(dataset, case, raw, schema):
     result = {"status": "valid", "output": raw}
     if adapter == "grouped_masks":
         result.update(grouped_masks.validate(case, raw))
-    if adapter == "prominence":
+    if adapter in {'prominence', 'subject_contexts'}:
         value = json.loads(
             raw, object_pairs_hook=engine._position_decoder().unique_object
         )
         if (
             not isinstance(value, dict)
-            or (schema is None and set(value) != {"prominence"})
+            or (schema is None and adapter == 'prominence' and set(value) != {"prominence"})
             or type(value.get("prominence")) is not int
             or not 0 <= value["prominence"] <= 100
         ):
             raise ValueError("expected one integer prominence score from 0 through 100")
         result["parsed"] = value
+        if adapter == 'subject_contexts':
+            if set(value) != {'prominence', 'missing_meaning', 'allocation'} or not isinstance(value['missing_meaning'], str):
+                raise ValueError('expected context prominence diagnostics')
+            allocation = value['allocation']
+            if not isinstance(allocation, list) or not allocation:
+                raise ValueError('expected nonempty context prominence allocation')
+            for entry in allocation:
+                if (not isinstance(entry, dict) or set(entry) != {'meaning', 'points', 'represented', 'missing'}
+                        or not isinstance(entry['meaning'], str)
+                        or any(type(entry[k]) is not int or not 0 <= entry[k] <= 100
+                               for k in ('points', 'represented', 'missing'))
+                        or entry['represented'] + entry['missing'] != entry['points']):
+                    raise ValueError('invalid context prominence allocation')
+            if (sum(e['points'] for e in allocation) != 100
+                    or sum(e['represented'] for e in allocation) != value['prominence']):
+                raise ValueError('context prominence allocation totals differ')
     if schema is not None or adapter == "titles":
         result["parsed"] = json.loads(raw)
     if adapter == "titles":

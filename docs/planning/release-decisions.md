@@ -973,6 +973,18 @@ The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the exact mask cases and results for these three checks. They are reference pairs,
 not a claim of general ranking quality.
 
+The value used to order posts is the **sorting score**. The user authorized a
+five-post SP-context experiment: assess prominence for each saved SP context,
+encode the complete context and hierarchy node title separately with SSE,
+calculate relevance as `(clip(cosine, -1, 1) + 1) / 2`, then calculate sorting
+score as prominence × relevance. This trial replaces Inverse combined rather
+than keeping its inverse contribution. **PPv30-context-v1** is tested, not
+production-frozen. All three reference pairs pass in this draw, and prominence
+alone also passes all three. Relevance alone still favors the stove over the
+diary and century eggs. Formula adoption, selection among multiple SP contexts
+for the same post/node, and general ordering quality remain open; the trial is
+not a replacement production ranking rule.
+
 27 waits for 04, which is in launch scope and actively being worked on
 (September 28 correction). 28 waits for the validated small-corpus
 workflow and scale findings. Readiness does not authorize execution. Membership

@@ -10,6 +10,63 @@ from sse_multivector.prominence_cosine import cosine, rank_rows
 
 
 class ProminenceCosineTests(unittest.TestCase):
+    def test_subject_context_is_encoded_as_complete_text_and_uses_new_prominence(self):
+        from sse_multivector import prominence_cosine as pc
+        from sse_multivector import experiment_inputs
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            evidence = dict(id='tea-context', node_id='tea', node_title='Tea',
+                note_id='a'*64, text='Tea warms me.', mask_ids=['V1'], byte_spans=[[0, 3]],
+                subject_number='1', subject='Tea', context='Tea warms the writer.')
+            case = experiment_inputs.prepare_context_prominence({'cases': [evidence]})[0]
+            case.update(status='valid', parsed={'prominence': 20})
+            encoder = dict(checkpoint_sha256='b'*64, base_model_artifact_tree_sha256='c'*64,
+                           model={'dimensions': 2}, note_batch_size=1)
+            config = root/'config.json'
+            config.write_text(json.dumps(dict(encoder, device='cpu')))
+            (root/'experiment.json').write_text('{}')
+            (root/'results.jsonl').write_text('{}\n')
+            vectors = root/'vectors'
+            vectors.write_bytes(struct.pack('<2f', 1, 0))
+            rows = [dict(short_id='V1', ordinal=0, note_id='a'*64, note_short_id='N1',
+                         byte_spans=[[0, 3]], fragments=['Tea'], subject_entries=[dict(
+                             number='1', subject='Tea', context=evidence['context'])])]
+            args = Namespace(output=root/'out', vectors=root, experiments=[root],
+                             worker_config=config, replay=['V1'], include_inverse=False)
+            plan = {'dataset': {'adapter': 'subject_contexts'}, 'run_directory': str(root)}
+            with patch.object(pc, 'load_vectors', return_value=(rows, encoder, vectors, 'f', {})), \
+                 patch.object(pc.experiment, 'load', return_value=(plan, None, None)), \
+                 patch.object(pc.experiment, 'report', return_value={'cases': [case]}):
+                pc.prepare(args)
+                saved = pc.read(args.output/'plan.json')
+                item = saved['cases'][0]
+                flat = [(n, s) for n in pc.read(args.output/'worker-request.json')['notes']
+                        for s in n['subjects']]
+                note, selection = flat[item['mask_row']]
+                self.assertEqual(note['text'], evidence['context'])
+                self.assertEqual(selection['byte_spans'], [[0, len(evidence['context'].encode())]])
+                self.assertEqual(item['representation'], 'context')
+                self.assertEqual(flat[saved['replays']['V1']['row']][0]['text'], evidence['text'])
+                fresh = [(1, 0)] * len(flat)
+                fresh[item['mask_row']] = (0, 1)
+                result = args.output/'result'
+                result.mkdir()
+                (result/'raw-vectors.f32le').write_bytes(struct.pack(
+                    '<' + 'f' * (2*len(fresh)), *(v for row in fresh for v in row)))
+                (result/'worker-receipt.json').write_text(json.dumps(dict(
+                    encoder, request_sha256=pc.sha(args.output/'worker-request.json'),
+                    proposal_sha256=pc.sha(args.output/'plan.json'),
+                    rows=[dict(note_id=n['note_id'], subject_id=s['subject_id']) for n,s in flat])))
+                pc.collect(args.output)
+                row = pc.read(args.output/'comparison.json')['groups']['tea'][0]
+                self.assertEqual(row['linear_product'], 10)
+                self.assertEqual(row['context'], evidence['context'])
+                args.output = root/'bad'
+                case['inputs']['INPUT_JSON'] = json.dumps({'context': 'Different', 'post': evidence['text']})
+                with self.assertRaisesRegex(ValueError, 'model input'):
+                    pc.prepare(args)
+                self.assertFalse(args.output.exists())
+
     def test_combined_mask_encodes_exact_union_and_replays_original_spans(self):
         from sse_multivector import prominence_cosine as pc
         from sse_multivector.experiment_inputs import prepare_prominence

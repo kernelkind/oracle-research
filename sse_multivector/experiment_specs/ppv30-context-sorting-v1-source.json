@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "subjects": "../hierarchy-refresh-v1/masked-posts.json",
+  "hierarchy": "../../target/hierarchy-build-v1/hr02-jev-browser-v1/named-graph.json",
+  "selections": [
+    {
+      "id": "coffee-decaf",
+      "node_id": "merged-426504446eac3b0f75ffa4893679c656567164616668f15f579713918a00a869",
+      "note_id": "2dc50a304a2f029231506e3ad15f9dc9f1ce72db2bc4f74d31566cb0259e38f1",
+      "number": "1"
+    },
+    {
+      "id": "coffee-weather",
+      "node_id": "merged-426504446eac3b0f75ffa4893679c656567164616668f15f579713918a00a869",
+      "note_id": "82d3d344765a44441bee62a4004d8551a2923adc101bbd44734708faa3ba464c",
+      "number": "6.1"
+    },
+    {
+      "id": "eggs-century",
+      "node_id": "S629f5c9bc7",
+      "note_id": "11d2afb1607f1d1284adb6cb3dabb8876aaf53a7aff204cf65083df2c5d34865",
+      "number": "2.1"
+    },
+    {
+      "id": "eggs-diary",
+      "node_id": "S629f5c9bc7",
+      "note_id": "eaa6a5e60ffe198420a931845700e7396f51a10620a7f7a0bc4a77cfb8572a0b",
+      "number": "5"
+    },
+    {
+      "id": "eggs-stove",
+      "node_id": "S629f5c9bc7",
+      "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+      "number": "6.2"
+    }
+  ]
+}

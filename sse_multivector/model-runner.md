@@ -1855,6 +1855,65 @@ The combined-mask trial therefore passes two of the three user-approved pairs.
 The diary's fall below the stove is now a confirmed ordering failure, rather
 than an unreviewed movement. How to change the score remains open.
 
+The next user-authorized trial uses saved SP context for both prominence and
+relevance, with **sorting score = prominence × relevance**. It replaces Inverse
+combined in this experiment. The reusable spec is
+`experiment_specs/ppv30-context-sorting-v1.json`; its source selector contains
+only five post/node/SP-number references, not copied contexts or generated
+inputs. The shared `subject_contexts` adapter loads and hashes the existing
+masked-post and hierarchy sources, verifies each SP entry against a direct node
+membership, and freezes its exact context and complete original post. Node
+titles, masks and SP subjects remain review-only metadata in prominence inputs.
+
+[PPv30-context-v1](prominence-prompt-goal-v1/ppv30-context-v1/PPv30-context-v1.md)
+is an experimental context adaptation of PPv30's allocation diagnostics. The
+shared revision workflow records its full delta against the last approved
+main prompt, PPv26. It assesses the meaning represented by the supplied SP
+context in the original post; existing mask prominence values are not reused.
+The 100-point allocation and represented/missing totals are mechanically checked.
+This is a tested candidate, not approval of the new prominence values or a
+production-frozen prompt.
+
+`experiments/ppv30-context-sorting-v1` completed five valid Astra-low subscription
+calls, bounded by `--max-new-attempts 5`. There were no failures, retries, reused
+answers, baseline calls or new SP calls. Input tokens total 3,330 and output
+tokens 1,089, with no reported reasoning tokens. The $0.08775 catalog estimate
+is not an invoice or measured subscription quota; there was no incremental cash
+charge or paid fallback.
+
+`relevance-v1/comparison.json` under that experiment uses the existing SSE worker
+and checkpoint. Each complete SP context is encoded as its own text; the
+original post is not its encoder context. The two hierarchy node titles are
+encoded separately. Five original-mask replays (V0024, V1268, V1447, V1519,
+V0862) passed with cosine above 0.9999999999999 and maximum normalized component
+error below 4.7e-8. The local CPU worker encoded twelve rows. The collector
+verifies exact original SP context/number/subject identity, rejects a literal
+inverse for context inputs, and uses the unchanged production `ranking_scores`
+calculation. Original mask vectors remain provenance/parity controls; they are
+not used as the contexts' relevance vectors.
+
+| Post | SP number | Prominence | Relevance | Sorting score |
+| --- | --- | --- | --- | --- |
+| Decaf drinkers valuing experience and flavour | 1 | 29 | 0.901547 | 26.144851 |
+| Sunday weather with hot coffee | 6.1 | 14 | 0.823400 | 11.527605 |
+| Century-eggs explanation | 2.1 | 28 | 0.882428 | 24.707985 |
+| Mixed diary with laying hens and several egg preparations | 5 | 20 | 0.910898 | 18.217952 |
+| Rocket-stove post | 6.2 | 7 | 0.966325 | 6.764276 |
+
+All three user-approved pairs pass. Sorting score differences are 14.617246 for
+decaf above weather, 17.943709 for century eggs above stove, and 11.453676 for
+diary above stove.
+Prominence alone gives the same orders. Relevance alone favors the stove over
+both other Eggs posts, so this trial does not establish that relevance improves
+ordering. It tests one explicitly selected existing SP context per post, not a
+rule for combining or choosing multiple contexts. All five encoded selections
+and final calculations were independently checked against frozen inputs and raw
+vectors. The shared experiment, cosine, ranking, node-sorting, worker and
+extraction suites passed 200 tests, including failing-first checks for exact
+source preparation, answer reuse, allocation validation and complete-context
+encoding. No production ranking, membership, recursive sorting or parent-child
+transfer was introduced.
+
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
 within-node score is prominence times mask relevance. On September 29, the user
