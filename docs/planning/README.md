@@ -38,6 +38,11 @@ Its link to 03 is helpful while the choice is open; make it required if HDBSCAN
 is selected. Relevant-content coverage remains part of 03's required validation
 for whichever workflow is used.
 
+Task 22 measures SSE and the construction stages used in the chosen workflow.
+Separate node-title generation, its input-growth measurements and the
+corresponding large-input work in 28 are required only if that stage is used.
+LG01 retains SP subject names; no production workflow is selected by this change.
+
 Task 02 now tracks the SP-based hierarchy investigation: LG01 has run on 100
 posts, and BCPv4 has compared 49 parent pairs without applying its answers.
 Equivalent-node merging, re-comparison and graph-application policies remain

@@ -10,6 +10,11 @@ compute locations and budget remain in [release decisions](release-decisions.md)
   (21) is required for 20 and 28 only if HDBSCAN is used. Time and cost checks
   for the chosen workflow remain required. The investigation below remains
   evidence for that open choice, not selection of HDBSCAN or a replacement.
+- Task 22 measures stages used in the chosen workflow. Separate node-title
+  generation and its input-growth costs are required only if that stage is used;
+  the corresponding large-input work in 28 is conditional too. The title-cost
+  evidence below describes the HDBSCAN route, not a mandatory stage of every
+  workflow. No production workflow is selected by this clarification.
 - Authorized a read-only review of the pipeline's scaling risks, then a
   read-only investigation of scaling HDBSCAN while preserving its grouping
   rules. Those investigations are complete; launch-scale feasibility is not.

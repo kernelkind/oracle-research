@@ -910,7 +910,7 @@ select implementation methods or new dates:
 | **25 · Handle node equivalence and TRUE cycles** | Apply exact mask-set consolidation and a reversible, repeatable rule for HR02's equivalence candidates and cyclic TRUE answers. Provisional contraction does not prove that a cycle or equal title means semantic equivalence. | Implemented for HR02; its finish dependency for 02 is satisfied. Quality validation remains in 02. |
 | **26 · Collapse equal-note navigation steps** | Implement and validate the required navigation simplification, including shared children, while preserving note sets, masks and provenance. | Required to finish 03. |
 | **27 · Order node notes using mask prominence** | Define and implement note ordering within each hierarchy node using mask prominence and relevance, including multiple masks from the same note. Recursive sorting and parent-child score transfer are out of scope. | Needs prominence definition 04; required to finish 03. |
-| **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered relationship checks and large-group title inputs. The relationship method is open. | Needs 03 + 22, plus 21 only if HDBSCAN is used; required to finish full-build feasibility 10. |
+| **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered relationship checks. Handle large-group title inputs only if separate node-title generation is used. The relationship method is open. | Needs 03 + 22, plus 21 only if HDBSCAN is used; required to finish full-build feasibility 10. |
 
 Task 24's recovery work is conditional on using HDBSCAN; that choice remains
 open. Its link to 03 is helpful while the choice is open and becomes required
@@ -1026,11 +1026,16 @@ It does not approve implementation, benchmarks, spending or diagram changes.
   It does not presume that HDBSCAN or its implementation must be replaced. Its
   findings are needed for 20 and 28 only if HDBSCAN is used; they do not block
   completion of those tasks for a workflow without HDBSCAN.
-- **22 · Measure SSE, node-title and relationship-check costs:** use existing
-  masks and nodes to measure time, memory and cost. Preserve TRUE's historical
-  rate as a baseline, but include the eventually selected relationship method
-  before completing build-cost estimates. Include how title input length grows
-  with group size, not only cost per call.
+- **22 · Measure SSE and hierarchy-construction costs:** measure time, memory
+  and cost for the stages used in the chosen workflow, using saved masks, subjects
+  and nodes. Include subject matching, merging, relationship checks and graph
+  processing where used. Separate node-title generation is conditional, not an
+  assumed stage: measure it only if the chosen workflow includes it, accounting
+  for title input growth with group size. LG01 retains subject names from SP;
+  it does not run the old HDBSCAN-group naming pass. This does not select LG01
+  as the production workflow or rule out a later naming stage. Preserve TRUE's
+  historical rate as evidence, but measure the selected relationship method
+  before completing build-cost estimates.
   This is ready independently of 21's HDBSCAN assessment. No measurement
   procedure, hardware choice or spending is approved here.
 - **20 · Assess full hierarchy-build resources:** combine stage measurements
@@ -1090,11 +1095,11 @@ cutoff, measured rates and counts, and the final corpus size remain open.
    cannot finish without 04 and 27. The 300-note work need not wait for that
    check. The combined 500-note validation still needs 25–27, plus 24 only if
    HDBSCAN is used. Relevant-content coverage remains required either way.
-2. Start scale measurements during Week 2. Measure the complete build, including
-   SSE, HDBSCAN, node titles and cosine-filtered relationship checks, rather
-   than relying only on distilled-model training or generation speed. Node 22
-   measures SSE, node titles and relationship checks using existing masks and
-   nodes, independently of 21's HDBSCAN assessment. Node 20 combines those
+2. Start scale measurements during Week 2. Measure the complete chosen workflow,
+   rather than relying only on distilled-model training or generation speed.
+   Node 22 measures SSE and hierarchy-construction stages using saved inputs;
+   separate node-title generation is measured only if used. Node 21's HDBSCAN
+   assessment is required only if HDBSCAN is used. Node 20 combines those
    findings with pilot-model measurements and growing-build counts as they
    become available. The combined assessment informs corpus selection in 09.
    Node 10 then checks time and cost for mask and prominence generation with the

@@ -122,9 +122,9 @@
     },
     {
       "id": "22",
-      "title": "Measure SSE, node-title and relationship-check costs",
+      "title": "Measure SSE and hierarchy-construction costs",
       "status": "READY TO START",
-      "description": "Measure SSE and node-title work using existing masks and nodes. Retain TRUE's measured baseline; include whichever relationship method is eventually selected before completing build-cost estimates. Include title input growth with group size."
+      "description": "Measure time, memory and cost for SSE and the construction stages used in the chosen workflow, including subject matching, merging, relationship checks and graph processing where used.\nMeasure separate node-title generation only if the workflow includes it; then include title input growth with group size.\nRetain TRUE's measured baseline as historical evidence, not the assumed relationship method. The production workflow remains open."
     },
     {
       "id": "23",
@@ -160,7 +160,7 @@
       "id": "28",
       "title": "Implement and validate the launch-scale build",
       "status": "WAITING",
-      "description": "Make the strategies tested in 03 runnable at launch scale, preserving validated hierarchy behavior. Include cosine-filtered relationship checks and title inputs for large groups.\nThe relationship method remains open.\nNEEDS 03 + 22; ALSO 21 IF HDBSCAN IS USED."
+      "description": "Make the strategies tested in 03 runnable at launch scale, preserving validated hierarchy behavior. Include cosine-filtered relationship checks. Handle large-group title inputs only if separate node-title generation is used.\nThe relationship method remains open.\nNEEDS 03 + 22; ALSO 21 IF HDBSCAN IS USED."
     }
   ],
   "links": [
