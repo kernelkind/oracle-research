@@ -50,6 +50,58 @@ Meals nodes at **HG6**, then compares the combined nodes at **HG7**. Graph
 application, cycle handling and uncertain-equivalence policies remain open.
 LG01 names the technique at HG3, not the whole process or a particular run.
 
+### Proposed HG8 — apply parent links
+
+Status: **draft for user review; not approved or implemented**. HG8 is a
+proposed label, not an extension of the approved HG1–HG7 labels. The current
+code does not apply BCPv4 answers. This draft changes neither the prompt nor
+the saved hierarchy; it specifies how a separate result could be constructed.
+
+1. Start from the combined nodes and mapped SP links after HG6. Retain every
+   original subject, mask and SP relationship as provenance. Check that SP
+   ancestry is preserved as ancestor-or-equal and that distinct nodes form no
+   cycle. If the merges already violate these conditions, stop and report the
+   problem; the link-application stage must not repair those merges.
+2. Use HG5 answers for unchanged inputs and HG7 answers for changed inputs.
+   An answer must match the current A/B subject/context entries and the fixed
+   prompt/model settings. Reusing a node's old answer merely by replacing its
+   ID is not valid. Missing, invalid or stale answers remain unjudged; they
+   are not treated as `neither`.
+3. Translate the current answers into proposed links:
+
+   | Answer | Action at HG8 |
+   | --- | --- |
+   | `a_parent_of_b` | Propose A → B. |
+   | `b_parent_of_a` | Propose B → A. |
+   | `neither` | Propose no link; retain the answer. |
+   | `uncertain` | Propose no link; retain the unresolved answer. |
+   | `equivalent` | Belongs to HG6, not a parent link. Newly returned HG7 equivalences remain pending; no automatic repeat of HG6–HG7 has been selected. |
+
+4. Check all proposed parent links together with the existing SP links.
+   Withhold every new link that participates in a directed cycle, retaining
+   the answers and the conflicting paths for review. Keep all existing SP
+   links and all other proposed links; deduplicate identical links. Do not
+   select a winner by call order, delete an SP link, or infer an equivalence
+   from a cycle of strict-parent answers.
+5. Save the resulting hierarchy separately from the LG01 baseline. Record
+   which answer supplied each new link, which proposals were withheld, and
+   any disagreements between answers and the resulting ancestor paths.
+   No node removal, replacement titles, membership expansion or display
+   collapsing is part of this draft.
+
+For example, the saved Food ingredients / Baking ingredients parent answer
+would propose **Food ingredients → Baking ingredients**. Both nodes keep
+their existing SP children. If SP supplies A → B and the model proposes
+B → A, withhold the new B → A link and record the disagreement. If two new
+links jointly form a cycle, withhold both rather than accepting whichever was
+processed first.
+
+The proposed conflict policy needs explicit approval: a `neither` answer does
+not remove an SP path or veto a path supplied by other parent answers. Such
+disagreements are recorded, not silently resolved. Cycle checks establish
+structural validity, not semantic correctness. HG6 merge handling and any
+repeat rule for equivalences found at HG7 remain separate open decisions.
+
 ## Input and output
 
 Use the shared runner's [saved subject-pair adapter](../model-runner.md#saved-subject-pair-preparation)
@@ -152,8 +204,9 @@ revision, graph changes or new application rule follows automatically.
 Review the four issues above, starting with the Dining/Meals inconsistency,
 before applying judgments or revising the prompt. The saved outputs support
 that review. HG6–HG7 are an unapproved proposal for testing combined inputs,
-not authorization for additional calls. An application policy remains open;
-do not alter the saved LG01 hierarchy.
+not authorization for additional calls. The [HG8 link-application draft](#proposed-hg8--apply-parent-links)
+also needs user review; an application policy remains unapproved. Do not alter
+the saved LG01 hierarchy.
 
 ## Design references
 
