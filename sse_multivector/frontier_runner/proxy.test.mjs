@@ -167,27 +167,49 @@ test('ordinary subscription commands use the selected Pi service without a flag 
   assert.equal(requests.length, 2);
   assert.ok(requests.every(request => request.url === '/selected/pi/codex/responses' && request.authorization === `Bearer ${key}`));
   assert.equal(await readFile(calls, 'utf8'), 'launch\nlaunch\n');
-  // Exercise the real saved-batch CLI and unchanged shell runner, not a fake runner.
+  // Exercise the supported experiment CLI and unchanged shell runner, not a fake runner.
   await symlink(process.execPath, join(home, 'node'));
-  const batchConfig = join(home, 'batch.json');
-  await writeFile(batchConfig, JSON.stringify({
-    schema_version: 1, runner_binary: new URL('../run-model.sh', import.meta.url).pathname,
-    provider: config.provider, auth_file: null, run_directory: join(home, 'batch-run'),
-    model: config.model, reasoning_effort: config.reasoning,
-    prompts: [{ prompt_id: 'one', text: 'Batch request one' }, { prompt_id: 'two', text: 'Batch request two' }],
+  await writeFile(join(home, 'prompt.txt'), 'Batch request {VALUE}');
+  await writeFile(join(home, 'cases.json'), JSON.stringify({ cases: [
+    { id: 'one', inputs: { VALUE: 'one' } },
+    { id: 'two', inputs: { VALUE: 'two' } },
+  ] }));
+  const spec = join(home, 'spec.json');
+  const experiment = join(home, 'experiment');
+  await writeFile(spec, JSON.stringify({
+    schema_version: 1,
+    prompt: { id: 'service-test-v1', path: 'prompt.txt' },
+    dataset: { adapter: 'generic', path: 'cases.json' },
+    runner: {
+      runner_binary: new URL('../run-model.sh', import.meta.url).pathname,
+      provider: config.provider, auth_file: null,
+      model: config.model, reasoning_effort: config.reasoning, concurrency: 1,
+    },
   }));
-  const batch = spawn('python3', ['-B', new URL('../extraction_pipeline.py', import.meta.url).pathname,
-    'prompt', batchConfig], { env: { ...process.env, PATH: `${home}:${process.env.PATH}` },
-    stdio: ['ignore', 'pipe', 'pipe'], timeout: 15000 });
-  let batchOut = '', batchErr = '';
-  batch.stdout.on('data', chunk => { batchOut += chunk; });
-  batch.stderr.on('data', chunk => { batchErr += chunk; });
-  const batchStatus = await new Promise((resolve, reject) => { batch.once('error', reject); batch.once('close', resolve); });
-  assert.equal(batchStatus, 0, batchErr);
+  async function runExperiment(args) {
+    const child = spawn('python3', ['-B', new URL('../experiment.py', import.meta.url).pathname, ...args], {
+      env: { ...process.env, PATH: `${home}:${process.env.PATH}`, PI_CODING_AGENT_DIR: join(home, 'not-selected-yet') },
+      stdio: ['ignore', 'pipe', 'pipe'], timeout: 15000,
+    });
+    let stdout = '', stderr = '';
+    child.stdout.on('data', chunk => { stdout += chunk; });
+    child.stderr.on('data', chunk => { stderr += chunk; });
+    const status = await new Promise((resolve, reject) => { child.once('error', reject); child.once('close', resolve); });
+    assert.ok(!(stdout + stderr).includes(key));
+    assert.equal(status, 0, stderr);
+  }
+  await runExperiment(['prepare', experiment, '--spec', spec, '--history-root', home]);
+  assert.equal(requests.length, 2);
+  assert.equal(await readFile(calls, 'utf8'), 'launch\nlaunch\n');
+  await runExperiment(['run', experiment, '--max-new-attempts', '2']);
+  const report = JSON.parse(await readFile(join(experiment, 'report.json'), 'utf8'));
+  assert.equal(report.summary.valid, 2);
+  assert.equal(report.summary.reused, 0);
+  assert.equal(report.summary.failed, 0);
+  assert.equal(report.summary.unrun, 0);
   assert.equal(requests.length, 4);
   assert.ok(requests.every(request => request.url === '/selected/pi/codex/responses' && request.authorization === `Bearer ${key}`));
   assert.equal(await readFile(calls, 'utf8'), 'launch\nlaunch\nlaunch\nlaunch\n');
-  assert.ok(!(batchOut + batchErr).includes(key));
   await assert.rejects(readFile(unexpected), { code: 'ENOENT' });
 });
 
