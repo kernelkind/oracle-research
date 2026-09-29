@@ -904,6 +904,22 @@ On September 29, the user dropped recursive sorting from 27 and limited the work
 to sorting within a node. A child's score is not transferred to its parent.
 Prominence times mask relevance remains the intended within-node score; the
 relevance measure and how multiple masks produce one note score remain open.
+
+User-approved post-ordering checks for 27 (September 29): the user reviewed the
+complete wording of each pair with URLs omitted and chose the first post in
+both pairs. These judgments establish expected post order; they do not select
+a scoring formula, approve mask-prominence outputs or adopt a mask-aggregation
+rule.
+
+| Hierarchy node | Post expected higher | Post expected lower |
+| --- | --- | --- |
+| coffee | Decaf drinkers valuing experience and flavour (`2dc50a30`) | Sunday weather with hot coffee (`82d3d344`) |
+| Eggs | Explanation of preserved century eggs (`11d2afb1`) | Rocket stove with eggs among the foods cooked (`99e6a514`) |
+
+The [saved-score comparison](../../sse_multivector/model-runner.md) records
+the exact mask cases and results for these two checks. They are reference pairs,
+not a claim of general ranking quality.
+
 27 waits for 04, which is in launch scope and actively being worked on
 (September 28 correction). 28 waits for the validated small-corpus
 workflow and scale findings. Readiness does not authorize execution. Membership

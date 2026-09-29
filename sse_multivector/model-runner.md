@@ -1515,6 +1515,27 @@ python3 experiment.py review experiments/ppv30-coffee-node-v1 \
   --ordering 'Inverse combined'
 ```
 
+On September 29, the user approved two expected post orders after reading the
+complete wording with URLs omitted: decaf above weather in coffee, and the
+century-eggs explanation above the rocket-stove post in Eggs. The
+[decision record](../docs/planning/release-decisions.md#remaining-construction-work-and-completion-dependencies)
+identifies the posts. These are post-ordering judgments, not mask-prominence
+verdicts or adoption of a scoring formula.
+
+The saved `inverse-no-references-v1/comparison.json` under each of
+`experiments/ppv30-coffee-node-v1` and `experiments/ppv30-eggs-node-v1` supplies
+both candidate scores. For this comparison only, `node_sorting.note_scores`
+takes each post's highest Inverse combined score; Full-post cosine already
+gives one score per post. The highest-score aggregation remains a candidate.
+
+| Expected higher / lower cases | Highest Inverse combined | Full-post cosine |
+| --- | --- | --- |
+| coffee: decaf V1519 / weather V0862 | 63.77 < 65.47: fails | 63.57 < 65.25: fails |
+| Eggs: century eggs V1447 / stove V0024 | 69.04 > 68.49: passes | 65.88 < 74.36: fails |
+
+These two reviewed pairs do not establish overall accuracy. Original posts,
+mask vectors, prominence scores and memberships are preserved.
+
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
 within-node score is prominence times mask relevance. On September 29, the user
