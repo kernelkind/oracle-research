@@ -56,6 +56,11 @@ unfinished; agreed ancestor and browsing-link rules are not yet implemented.
 No production workflow is selected, and the useful-hierarchy browsing gate is
 still open. Earlier HR02 results remain preserved, not the current next step.
 
+Task 18 is complete for pilot setup. The rebuilt image is published and verified;
+local VM rehearsals cover all three candidate families. The replacement GPU run
+completed Qwen's baseline, training, reload check and trained evaluation. This
+does not complete candidate-quality review or model selection in 06.
+
 The earlier `october-18-release.drawio` and its read-only [viewer](index.html)
 remain available, including the proposed weekly-targets page. They are not the
 source for current task status and may lag the JSON graph. The default route

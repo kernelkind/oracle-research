@@ -515,8 +515,10 @@ uses up to four masks from one note per batch; training settings are unchanged.
 Direct-mask generation is deferred for this informal pilot.
 This initial informal experiment may use current saved annotations before
 prominence and final teacher selection are ready. Local data is prepared;
-the September 29 rental stopped after an agent monitoring error, with no
-completed baseline or training. Retrieval and deletion were verified. See the
+the first September 29 rental stopped after an agent monitoring error, with no
+completed baseline or training. Retrieval and deletion were verified. The
+approved replacement subsequently completed Qwen's baseline, training, reload
+check and trained evaluation; setup task 18 is complete, not model selection. See
 [current pilot preparation](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md#status-and-scope).
 The release model still requires prominence. Candidate selection, the larger
 pilot's evaluation requirements, full-data gates and paid-resource approval
@@ -569,7 +571,11 @@ A 30-minute watch found no eligible 600 W offer. The user then approved the
 450 W RTX PRO 6000 WS alternative: the same 96 GB GPU, with lower power that
 may reduce speed; all other frozen offer checks pass. The launch-specific
 `approved-settings-450w.json` overrides only that power requirement in addition
-to the prior price/time overrides. The experiment used a $1.4167/hour configuration including 300 GB storage. GPU startup is being observed.
+to the prior price/time overrides. The experiment used a $1.4167/hour configuration including 300 GB storage. The Qwen report and saved September 29 observation at 21:27 UTC
+record a completed baseline, 128-step training, matching reload and trained
+evaluation, with Gemma dense beginning its baseline. This verifies pilot execution, not
+acceptable model quality or completed selection. The rental remains billable
+until explicit deletion; no lifecycle action is authorized by this status sync.
 The old frozen operation and published image remain unchanged.
 The user accepted a $25 total maximum for GPU setup, baselines and initial
 fine-tunes across the three candidates, including storage, transfers and failed
@@ -1080,11 +1086,13 @@ Neither blocks 12 or is required to finish before the other. They may share
 construction measurements with the teacher-built release, but their generation
 measurements and acceptance decisions remain separate.
 
-**18 · Prepare training code for the fine-tuning pilot** is ready within the
-draft. Its scope is code to fine-tune each specified candidate model, save and
-reload its trained weights, and generate outputs for evaluation. This preparation
-does not require the final prominence definition or training-output format and
-does not select a framework or training method.
+**18 · Prepare training code for the fine-tuning pilot** is complete for setup.
+Local VM rehearsals cover all three candidate families, real adapter updates,
+interruption/resume, save/reload and SSH deployment; the rebuilt image is
+published and verified private. The replacement GPU run completed Qwen's
+baseline, 128-step training, reload check and trained evaluation. Candidate
+execution and quality assessment remain in 06; setup completion does not
+select a model, prove all full-size candidates work or complete the model track.
 
 Final training-example formatting and mask/prominence quality evaluation remain
 within **06 · Choose the model to train**. Its completion needs the agreed output

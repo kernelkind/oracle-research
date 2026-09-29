@@ -105,8 +105,8 @@
     {
       "id": "18",
       "title": "Prepare training code for the fine-tuning pilot",
-      "status": "IN PROGRESS",
-      "description": "Local VM training and SSH deployment rehearsals pass. Candidate settings and Vast limits are frozen locally; the image remains unpublished. No rental has started. Check GPU compatibility during the actual pilot."
+      "status": "COMPLETE",
+      "description": "Pilot setup complete: local VM tests cover all three candidate families, training, interruption/resume, save/reload and SSH deployment. The rebuilt image is published and verified private.\nThe GPU run included Qwen's baseline, 128-step training, reload check and trained evaluation. The September 29 observation also records Gemma dense starting its baseline.\nCandidate execution, semantic-quality review and model selection belong to 06 and remain unfinished. This does not approve the model or complete the model track."
     },
     {
       "id": "20",

@@ -63,7 +63,13 @@ answers. Its mask inputs must use the candidate's generated subjects. Data stays
 under `target/`. Conversion checks every selection using the existing mask
 decoder. The first rental stopped after a local monitoring error, before any
 baseline output or training completed. Its files were retrieved and the instance
-was deleted; no replacement rental is authorized.
+was deleted. After rebuilding and verifying the image, the user approved a
+replacement rental. The saved September 29 observation at
+21:27 UTC and Qwen report record a complete 20-note baseline, 128-step training,
+matching adapter reload and 20-note trained evaluation; Gemma dense had begun
+its baseline. This verifies execution, not acceptable semantic quality or model
+selection. Evidence is in `target/distillation-pilot-v1/launch-20260929-v2/operation/observations/`,
+including `progress-20260929T212719Z.json` and `reports-so-far.json`.
 
 The release model still needs prominence. The requirements below describe the
 larger evaluation and release decision; prominence is excluded only from this
@@ -116,13 +122,15 @@ Approved requirements:
 
 The staged experimental design below is proposed, not fully approved. Dataset
 sizes, exact training settings, hardware allocations, and individual spending
-authorizations remain open for that larger design. The informal rental below
+authorizations remain open for that larger design. The first informal rental below
 started and was deleted on September 29 after the monitoring error recorded
 below. No baseline or training completed.
 
 The release plan's **18 · Prepare training code for the fine-tuning pilot** is
-in progress: prepare code to fine-tune each candidate, save/reload its trained
-weights and generate evaluation outputs. Final training-example formatting and
+complete for setup: local VM rehearsals cover each candidate family, training,
+interruption/resume, save/reload and SSH deployment. The image is published and
+verified, and the replacement GPU run completed Qwen's baseline, training,
+reload check and trained evaluation. Final training-example formatting and
 mask/prominence quality evaluation remain in **06 · Choose the model to train**,
 which needs the agreed output format, prominence criteria and reviewed pilot
 data to complete release-model selection. The informal experiment above is
@@ -230,7 +238,9 @@ and executes the candidate sequence; `distillation_vast.py` describes that work.
 The model recipes, prompts, data, batching and $25 total maximum are unchanged.
 The first published image reached Vast, but that rental ended before any
 baseline or training completed. The rebuilt image is now published and verified
-private; the approved 450 W replacement rental is now starting.
+private; the approved 450 W replacement rental has completed Qwen's baseline,
+training, reload check and trained evaluation. Remaining candidate execution
+and semantic review do not belong to the completed setup task.
 
 The failure audit reproduced empty successful destroy output, distinct live
 and offer bundle IDs, and missing/null transfer counters in the old controller.
@@ -864,8 +874,9 @@ rental. After the 600 W availability watch, the user approved the 450 W
 workstation offer. All other frozen checks pass.
 The recorded rental rate was $1.4167/hour including 300 GB storage.
 The new immutable operation is
-`target/distillation-pilot-v1/launch-20260929-v2/operation/`. Startup is being
-observed. Continue through execution, verified retrieval and explicit deletion
+`target/distillation-pilot-v1/launch-20260929-v2/operation/`. The saved 21:27 UTC
+observation records Qwen complete and Gemma dense starting its baseline. Continue
+the remaining candidate execution, verified retrieval and explicit deletion
 within the approved limits. The old frozen launch retains its original code.
 Candidate recipes and Vast limits are unchanged. The prior publication and
 one rental were authorized within $25, at up to $1.66/hour for at most 13 hours.
