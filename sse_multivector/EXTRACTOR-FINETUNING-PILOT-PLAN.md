@@ -230,7 +230,7 @@ and executes the candidate sequence; `distillation_vast.py` describes that work.
 The model recipes, prompts, data, batching and $25 total maximum are unchanged.
 The first published image reached Vast, but that rental ended before any
 baseline or training completed. The rebuilt image is now published and verified
-private; no replacement rental has started.
+private; the approved 450 W replacement rental is now starting.
 
 The failure audit reproduced empty successful destroy output, distinct live
 and offer bundle IDs, and missing/null transfer counters in the old controller.
@@ -414,11 +414,12 @@ repository `docker.io/kernelkind/oracle-mvp`, with tag `distillation-pilot-v1`.
 The eventual create command must use its published **registry digest**. The
 local image ID is not a registry digest; one does not exist before publication.
 The user lifted the publication hold on September 29. The launch-specific
-`approved-settings.json` in the evidence directory overrides only the hourly
-ceiling, matching search filter and total rental time. The tested image and
-maintained source configuration remain frozen; use this settings file for launch.
+`approved-settings-450w.json` in `launch-20260929-v2/` overrides the hourly
+ceiling, total rental time and user-approved 450 W power requirement, with
+matching search filters. The tested image and maintained source configuration
+remain frozen; use this settings file for the replacement launch.
 
-- One on-demand RTX PRO 6000 WS, 600 W, 96 GB; at least 128 GiB host RAM,
+- One on-demand RTX PRO 6000 WS, 450 W, 96 GB; at least 128 GiB host RAM,
   eight effective CPU cores, 300 GB disk, direct SSH and NVIDIA driver 580.95.05.
 - Run Qwen, Gemma dense and Gemma MoE sequentially in the same container.
   Downloads total approximately 170 GB before image/input transfers; keep the
@@ -859,12 +860,13 @@ existing prompted tasks. The deletion-policy change is included in the rebuilt
 image and frozen `package-v9`; all 24 local VM tests passed, including training
 and SSH deployment. The rebuilt private image is published and verified.
 The user approved proceeding and required continuous observation throughout the
-rental. Next, select an available approved offer, freeze a new operation and
-commit its budget reservation. Observe startup, execution, result retrieval
-and explicit deletion within the approved limits. A 30-minute watch found no
-eligible offer under the frozen requirements and $1.66/hour ceiling. Evidence is in
-`target/distillation-pilot-v1/launch-20260929-v2/availability-watch-status.json`.
-The launch is blocked on availability. The old frozen launch retains its original code.
+rental. After the 600 W availability watch, the user approved the 450 W
+workstation offer. All other frozen checks pass.
+The recorded rental rate was $1.4167/hour including 300 GB storage.
+The new immutable operation is
+`target/distillation-pilot-v1/launch-20260929-v2/operation/`. Startup is being
+observed. Continue through execution, verified retrieval and explicit deletion
+within the approved limits. The old frozen launch retains its original code.
 Candidate recipes and Vast limits are unchanged. The prior publication and
 one rental were authorized within $25, at up to $1.66/hour for at most 13 hours.
 The saved split inspection found no clear complete-note duplicates or close paraphrases across

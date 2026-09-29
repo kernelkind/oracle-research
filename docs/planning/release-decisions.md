@@ -544,8 +544,11 @@ VM reused its disk and dependency cache with a new source snapshot. Tiny-model
 weights and evaluation metrics match the prior rehearsal exactly. The rebuilt image is published and verified private; read-only image pulling is verified for its immutable digest. The user then approved proceeding and explicitly required
 continuous observation throughout the rental. The operator must observe startup,
 execution, retrieval and explicit deletion within the approved limits.
-A 30-minute availability watch found no eligible offer under the frozen
-requirements and $1.66/hour ceiling. No replacement GPU execution has started. The launch is blocked on availability.
+A 30-minute watch found no eligible 600 W offer. The user then approved the
+450 W RTX PRO 6000 WS alternative: the same 96 GB GPU, with lower power that
+may reduce speed; all other frozen offer checks pass. The launch-specific
+`approved-settings-450w.json` overrides only that power requirement in addition
+to the prior price/time overrides. The experiment used a $1.4167/hour configuration including 300 GB storage. GPU startup is being observed.
 The old frozen operation and published image remain unchanged.
 The user accepted a $25 total maximum for GPU setup, baselines and initial
 fine-tunes across the three candidates, including storage, transfers and failed
