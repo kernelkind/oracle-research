@@ -6,6 +6,11 @@ inspecting the missing Food relationships. This is a diagnostic, not adoption of
 a placement algorithm. It makes no model calls, new embeddings, merges, or
 placements, and does not alter the original hierarchy or browser exports.
 
+The scoring and holdout rules are recorded separately as HD19 and HD20 in the
+[SP-based hierarchy rule register](../docs/planning/release-decisions.md#sp-based-hierarchy-rules).
+AVv1 is tested but not adopted; its exclusions are evaluation choices, not
+instructions to remove subjects from the real hierarchy.
+
 ## Inputs and scoring
 
 Reuse the six SOv1 posts, their saved standalone subject-text SSE vectors, and

@@ -5,6 +5,10 @@ along a selected, original per-post SP path, from its root (depth zero) through
 B itself. It uses SOv1's existing subject encodings and HR02's original mask
 vectors. It performs no inference, grouping, merging or placement.
 
+Its diagnostic-only status and the distinction between ranking and placement
+are recorded as HD18 in the
+[SP-based hierarchy rule register](../docs/planning/release-decisions.md#sp-based-hierarchy-rules).
+
 Each case specifies an exact mask ID and one SP occurrence of B. Other
 occurrences of the same subject wording may have different ancestor paths;
 this diagnostic does not silently combine them or claim to search all branches.

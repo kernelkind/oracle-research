@@ -10,6 +10,15 @@ evaluate the other stages; it is not a replacement for that production method.
 These are requirements for the formal construction process, not optional review
 cleanups. They do not authorize a new run or change the frozen experiment data.
 
+These stages describe the mask-group construction path used for HRv1/HR02.
+The separate investigation that combines per-post SP hierarchies records its
+rules and implementation status in the same
+[decision register, HD08–21](../../docs/planning/release-decisions.md#sp-based-hierarchy-rules).
+Do not silently transfer the mask-set merge, generated merged-title or
+equal-post display-collapse rules below to SP subject nodes. In particular,
+HD11 requires both identical subject wording and identical nonempty masks
+within one post; it is agreed but not yet implemented.
+
 1. **Deduplicate identical masks within each post before SSE.** Treat masks with
    the same post ID and identical ordered source-byte ranges as one encoder
    input. Preserve every originating subject and mask ID as provenance. Equal

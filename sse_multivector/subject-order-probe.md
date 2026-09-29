@@ -5,6 +5,12 @@ subject-text SSE vectors and OPHAC. It does not change HR02, its masks, node
 memberships, prompts, or saved vectors. No LLM calls or paid resources are used.
 This is diagnostic code, not an adopted production hierarchy algorithm.
 
+Decision status is centralized in the
+[SP-based hierarchy rule register](../docs/planning/release-decisions.md#sp-based-hierarchy-rules)
+(HD08–17). In particular, HD11's exact same-post combination is agreed but not
+implemented; neither the saved SOv1 run nor SMv1 below performs that new step.
+The procedures here document those experiments, not a production policy.
+
 ## Fixed scope
 
 - Source: `hierarchy-refresh-v1`; posts N004, N015, N037, N038, N065, N072.
