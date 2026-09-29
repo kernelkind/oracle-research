@@ -891,7 +891,7 @@ required outcomes, not selected implementation methods or new dates:
 | **25 · Handle node equivalence and TRUE cycles** | Apply exact mask-set consolidation and a reversible, repeatable rule for HR02's equivalence candidates and cyclic TRUE answers. Provisional contraction does not prove that a cycle or equal title means semantic equivalence. | Implemented for HR02; its finish dependency for 02 is satisfied. Quality validation remains in 02. |
 | **26 · Collapse equal-note navigation steps** | Implement and validate the required navigation simplification, including shared children, while preserving note sets, masks and provenance. | Required to finish 03. |
 | **27 · Order node notes using mask prominence** | Define and implement note ordering within each hierarchy node using mask prominence and relevance, including multiple masks from the same note. Recursive sorting and parent-child score transfer are out of scope. | Needs prominence definition 04; required to finish 03. |
-| **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered relationship checks and large-group title inputs. The relationship method is open. | Needs 03 + 21 + 22; required to finish full-build feasibility 10. |
+| **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered relationship checks and large-group title inputs. The relationship method is open. | Needs 03 + 22, plus 21 only if HDBSCAN is used; required to finish full-build feasibility 10. |
 
 24 can start from saved artifacts and remains unstarted. 25 is complete for
 HR02: both merge stages, provenance-preserving naming and browser export are
@@ -978,6 +978,13 @@ No dates, dependency arrows, model choices or spending approvals change.
 
 ### Scale measurements and final validation
 
+**September 29 clarification:** whether HDBSCAN will be used remains open.
+Task 21 is required only if the chosen workflow uses HDBSCAN. While that choice
+is open, its links to 20 and 28 are helpful inputs, not unconditional completion
+prerequisites; make those links required if HDBSCAN is selected. Time and cost
+checks for the chosen workflow remain required. This neither selects an
+alternative nor authorizes implementation, measurements or spending.
+
 The [scalability record](scalability.md) distinguishes findings, user decisions
 and proposed next steps from the separately authorized read-only investigation.
 It does not approve implementation, benchmarks, spending or diagram changes.
@@ -989,8 +996,8 @@ It does not approve implementation, benchmarks, spending or diagram changes.
   launch-scale feasibility remains unproven. Implementation and performance
   runs have not been authorized by that investigation.
   It does not presume that HDBSCAN or its implementation must be replaced. Its
-  findings are needed for the HDBSCAN portion of 20; they do not block independent
-  measurements of other stages.
+  findings are needed for 20 and 28 only if HDBSCAN is used; they do not block
+  completion of those tasks for a workflow without HDBSCAN.
 - **22 · Measure SSE, node-title and relationship-check costs:** use existing
   masks and nodes to measure time, memory and cost. Preserve TRUE's historical
   rate as a baseline, but include the eventually selected relationship method
@@ -999,13 +1006,13 @@ It does not approve implementation, benchmarks, spending or diagram changes.
   This is ready independently of 21's HDBSCAN assessment. No measurement
   procedure, hardware choice or spending is approved here.
 - **20 · Assess full hierarchy-build resources:** combine stage measurements
-  from 22, HDBSCAN requirements from 21, mask/prominence generation measurements
-  from the fine-tuning pilot (06), and mask/node/cosine-filtered-pair counts
+  from 22, HDBSCAN requirements from 21 if HDBSCAN is used, mask/prominence
+  generation measurements from the fine-tuning pilot (06), and mask/node/cosine-filtered-pair counts
   from the growing hierarchy builds (03). Estimate launch-build time, memory and
   cost to inform an affordable corpus size while preserving hierarchy quality.
   Include membership-recovery and graph-processing costs; available recovery
   measurements from 24 are an additional dashed input.
-  It stays grey pending inputs from 21 and 22. The dashed 06 and 03 inputs allow
+  It waits for 22, plus 21 only if HDBSCAN is used. The dashed 06 and 03 inputs allow
   available evidence to be used without waiting for those workstreams to finish.
   Per-pair relationship cost alone does not establish total hierarchy-build cost.
 - **09 · Choose notes for launch hierarchy:** use the early measurements, agreed

@@ -6,6 +6,10 @@ compute locations and budget remain in [release decisions](release-decisions.md)
 
 ## User decisions and scope
 
+- September 29 clarification: HDBSCAN use is undecided. Its scale assessment
+  (21) is required for 20 and 28 only if HDBSCAN is used. Time and cost checks
+  for the chosen workflow remain required. The investigation below remains
+  evidence for that open choice, not selection of HDBSCAN or a replacement.
 - Authorized a read-only review of the pipeline's scaling risks, then a
   read-only investigation of scaling HDBSCAN while preserving its grouping
   rules. Those investigations are complete; launch-scale feasibility is not.

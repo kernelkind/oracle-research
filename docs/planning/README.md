@@ -22,6 +22,12 @@ instructions. The open-weight model is the nice-to-have model track, and
 operating the service is an optional demo. Task texts and statuses reflect
 that revision.
 
+Whether HDBSCAN will be used remains open (September 29 clarification).
+Task 21 is required only if the chosen workflow uses it. Its links to 20 and 28
+are helpful while the choice is open; make them required if HDBSCAN is selected.
+The chosen workflow's time and cost checks remain required. No algorithm is
+selected by this tracking change.
+
 The earlier `october-18-release.drawio` and its read-only [viewer](index.html)
 remain available, including the proposed weekly-targets page. They are not the
 source for current task status and may lag the JSON graph. The default route

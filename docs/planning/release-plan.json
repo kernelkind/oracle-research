@@ -112,13 +112,13 @@
       "id": "20",
       "title": "Assess full hierarchy-build resources",
       "status": "WAITING",
-      "description": "Combine generation/stage rates with hierarchy counts, including membership recovery and graph processing, to estimate full-build time, memory and cost.\nNEEDS 21 + 22"
+      "description": "Combine generation/stage rates with hierarchy counts, including membership recovery and graph processing, to estimate full-build time, memory and cost.\nNEEDS 22; ALSO 21 IF HDBSCAN IS USED.\nThe chosen workflow's time and cost checks remain required."
     },
     {
       "id": "21",
       "title": "Assess HDBSCAN at launch scale",
       "status": "READY TO START",
-      "description": "Can HDBSCAN form our mask-vector groups at the intended corpus size within budget and deadline?\nIdentify work needed."
+      "description": "HDBSCAN use remains undecided. This assessment is required only if HDBSCAN is used.\nCan HDBSCAN form our mask-vector groups at the intended corpus size within budget and deadline? Identify work needed."
     },
     {
       "id": "22",
@@ -160,7 +160,7 @@
       "id": "28",
       "title": "Implement and validate the launch-scale build",
       "status": "WAITING",
-      "description": "Make the strategies tested in 03 runnable at launch scale, preserving validated hierarchy behavior. Include cosine-filtered relationship checks and title inputs for large groups.\nThe relationship method remains open.\nNEEDS 03 + 21 + 22"
+      "description": "Make the strategies tested in 03 runnable at launch scale, preserving validated hierarchy behavior. Include cosine-filtered relationship checks and title inputs for large groups.\nThe relationship method remains open.\nNEEDS 03 + 22; ALSO 21 IF HDBSCAN IS USED."
     }
   ],
   "links": [
@@ -217,7 +217,8 @@
     {
       "source": "21",
       "target": "28",
-      "kind": "required"
+      "kind": "helpful",
+      "label": "required only if HDBSCAN is used"
     },
     {
       "source": "22",
@@ -307,8 +308,8 @@
     {
       "source": "21",
       "target": "20",
-      "kind": "required",
-      "label": "HDBSCAN scale findings"
+      "kind": "helpful",
+      "label": "required only if HDBSCAN is used"
     },
     {
       "source": "22",
