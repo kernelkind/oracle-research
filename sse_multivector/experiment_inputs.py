@@ -349,6 +349,7 @@ def prepare(dataset, source, template):
             source, template, format_, dataset.get("select")
         )
         cases = []
+        occurrences = {}
         for item in items:
             inputs = {"POST": item["note"], "SUBJECT": item["subject"]}
             if format_ == "word_positions":
@@ -357,6 +358,9 @@ def prepare(dataset, source, template):
                 )
             # Independent of batch order, while changed text still fails input pairing.
             identifier = "M" + digest([item["note_id"], item["subject"]])[:24]
+            occurrences[identifier] = occurrences.get(identifier, 0) + 1
+            if occurrences[identifier] > 1:
+                identifier += "-" + str(occurrences[identifier])
             cases.append({"id": identifier, "inputs": inputs, "evidence": item})
     else:
         raise ValueError(f"unknown dataset adapter: {adapter}")

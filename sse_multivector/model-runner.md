@@ -593,6 +593,9 @@ production preparation and decoding functions:
   preview reports both post and call counts. Subjects may be strings or objects
   using `subject` or `text`. Diagnostic context/heading numbers are not sent.
   Case IDs derive from post ID and subject, not batch order.
+  Repeated identical subject entries retain separate cases with occurrence
+  suffixes; they are not silently dropped. Historical mask imports can use the
+  original `item_id` only when the saved prompt matches exactly.
   Templates require `{POST}`, `{SUBJECT}`, and (for the default
   `mask_format: "word_positions"`) `{INDEXED_POST}`.
   Legacy `mask_format: "fragments"` is available for historical comparisons.
@@ -607,6 +610,11 @@ production preparation and decoding functions:
   includes per-subject `mask_results`, decoded spans and optional exact-span
   comparison with validated saved `byte_spans`/`fragments`. Baselines are not
   ground truth; these comparisons are mechanical, not semantic judgments.
+  For read-only subset accounting, `show --only CASE_ID` or `show --note NOTE_ID`
+  (repeatable) scopes cases, attempts and usage to that selection. Unknown or
+  duplicate IDs fail; no calls are made and the saved experiment is unchanged.
+  Cases include saved `elapsed_seconds` when available. This supports matching
+  a grouped trial to the same individual-mask calls, including cache use.
 - `dataset.adapter: "prominence"`: `path` points to a `cases` array, with one
   saved mask per case. Optional `select` lists case IDs. Each case contains
   `id`, `node_id`, `node_title`, `note_id`, `text` (the complete original post),

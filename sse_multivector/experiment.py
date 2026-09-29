@@ -245,6 +245,11 @@ def prepare(args):
         }
         if args.import_config:
             config, manifest, cases = import_setup(args.import_config, setup)
+            # Equality above verifies the schema; retain the recorded key order
+            # as well, because native receipt identity hashes those exact bytes.
+            if config.output_schema is not None:
+                config_value["output_schema"] = config.output_schema
+                plan["runner"] = {**plan["runner"], "output_schema": config.output_schema}
             config_value["run_directory"] = str(config.run_directory)
             config_value["prompts"] = [
                 {"prompt_id": p.prompt_id, "text": p.text} for p in config.prompts
@@ -338,6 +343,8 @@ def import_setup(path, setup):
         matches = by_prompt.get(case["prompt"], [])
         if case["id"] in matches:
             identifier = case["id"]
+        elif case.get("evidence", {}).get("item_id") in matches:
+            identifier = case["evidence"]["item_id"]
         elif len(matches) == 1:
             identifier = matches[0]
         else:
@@ -367,10 +374,23 @@ def import_setup(path, setup):
     return config, manifest, cases
 
 
-def report(directory):
+def report(directory, only=None, note_ids=None):
     directory = Path(directory).resolve()
     files = engine.ReceiptFiles()
     plan, config, manifest = load(directory)
+    selected = plan["cases"]
+    for requested, available, field in (
+        (only, {c["id"] for c in selected}, "case"),
+        (note_ids, {c.get("evidence", {}).get("note_id") for c in selected}, "note"),
+    ):
+        if requested is not None:
+            if len(requested) != len(set(requested)) or set(requested) - available:
+                raise ValueError(f"unknown or duplicate selected {field} ID")
+    if only is not None:
+        selected = [c for c in selected if c["id"] in only]
+    if note_ids is not None:
+        selected = [c for c in selected if c.get("evidence", {}).get("note_id") in note_ids]
+    selected_jobs = {"prompt:" + c.get("job_id", c["id"]) for c in selected}
     manifest_hash = inputs.digest(manifest)
     provenance = engine._load_runner_upgrades(
         config.run_directory,
@@ -413,11 +433,12 @@ def report(directory):
         {c["id"]: c for c in plan["baseline"]["cases"]} if plan["baseline"] else {}
     )
     cases, comparisons = [], Counter()
-    for case in plan["cases"]:
+    for case in selected:
         job = engine.PromptJob(case.get("job_id", case["id"]), case["prompt"])
         record = latest.get("prompt:" + job.prompt_id)
         row = {**case, "status": "unrun", "output": None, "baseline": None}
         if record:
+            row["elapsed_seconds"] = record.get("elapsed_seconds")
             row["receipt"] = {
                 "results_path": str(ledger),
                 "record_sha256": inputs.digest(record),
@@ -500,7 +521,8 @@ def report(directory):
         "provider_reported_cost_usd": 0,
         "attempts_without_provider_cost": 0,
     }
-    attempts = [r for r in records if r.get("execution") != "cross_run_reuse"]
+    attempts = [r for r in records if r.get("execution") != "cross_run_reuse"
+                and r.get("job_key") in selected_jobs]
     for record in attempts:
         charge = engine.provider_cost(record, reconciled_costs)
         if type(charge) in (int, float) and math.isfinite(charge) and charge >= 0:
@@ -944,6 +966,10 @@ def parser():
     )
     p.add_argument("experiment", type=Path)
     p.add_argument("--case")
+    p.add_argument("--only", action="append", metavar="CASE_ID",
+                   help="limit cases and usage to these IDs (repeatable; read-only)")
+    p.add_argument("--note", action="append", metavar="NOTE_ID",
+                   help="limit cases and usage to saved evidence.note_id (repeatable)")
     p.add_argument("--json", action="store_true")
     p = commands.add_parser(
         "revise",
@@ -1006,7 +1032,7 @@ def main(argv=None):
         elif args.command == 'reconcile-costs':
             compact(reconcile_costs(args.experiment))
         elif args.command == "show":
-            result = report(args.experiment)
+            result = report(args.experiment, args.only, args.note)
             if args.case:
                 case = next((c for c in result["cases"] if c["id"] == args.case), None)
                 if case is None:
