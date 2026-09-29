@@ -1632,11 +1632,69 @@ relative to the highest individual-mask baseline; all other positions remain.
 | 14 | Tolstoy animal-ethics post with Coffee hashtag | 42.84 |
 
 No new user ordering judgments were inferred for these twelve unchanged posts.
-Eggs was not rerun with combined masks. Combining masks remains a tested
-candidate; recursive sorting remains abandoned. The shared workflow, cosine,
-ranking, node-sorting, worker and extraction regression suites passed 198 tests,
-including failing-first checks for union preparation, saved-answer reuse, exact
-combined-mask encoding and selecting saved cases across experiments.
+That Coffee trial did not test combined masks in Eggs. Combining masks remains
+a tested candidate; recursive sorting remains abandoned. The shared workflow,
+cosine, ranking, node-sorting, worker and extraction regression suites passed
+198 tests, including failing-first checks for union preparation, saved-answer
+reuse, exact combined-mask encoding and selecting saved cases across experiments.
+
+The subsequent authorized Eggs trial uses
+`experiment_specs/ppv30-eggs-combined-masks-v1.json` and the same **PPv30** prompt,
+schema and Astra-low subscription settings. Its frozen preparation,
+`experiments/ppv30-eggs-combined-masks-v1`, unions fifteen direct-node masks into
+seven post selections. Four selections exactly match original saved cases:
+stove V0024, breakfast burrito V1125, coffee with raw egg yolk V0886, and dinner
+V0310. Those four answers are kept directly; no baseline calls were rerun.
+
+Only three changed selections were sent through the `changed-masks` child
+experiment. Chocolate snacking (Pcf738f7f189508697732b562) scored prominence 37;
+the mixed diary (Pd3503350f1556978382da064) scored 10. Both allocations satisfy
+the fixed 100-point total and represented/missing sums. Century eggs
+(Pde87f624d765af78a16a664a) was interrupted after HTTP 200 and a partial response:
+the saved transport error is `terminated`, with no explicit temporary provider
+error code. Three initial attempts produced two valid answers and one failure;
+there were no retries. The unknown-cause failure is ineligible for automatic
+retry under AGENTS.md. Its receipt and partial text are preserved; no prominence
+value was inferred or copied from either original century-eggs mask.
+
+The six scored posts are saved in `inverse-no-references-v1/comparison.json`
+under the combined-mask Eggs preparation. The frozen seven-post input set is
+retained separately, so this partial result does not hide the missing post.
+The local CPU run used the same checkpoint/settings and cached runtime as the
+Coffee trial, encoding twenty rows. All five original-mask replays passed:
+cosine above 0.9999999999999, maximum normalized component error below 3.2e-8.
+The two changed scored masks were encoded in their original complete posts;
+the other four mask vectors were reused. All six selections match the frozen
+union inputs. Reference exclusions and the Inverse combined formula are unchanged.
+
+| Order among six scored posts | Post | Highest individual-mask Inverse combined | Combined-mask Inverse combined |
+| --- | --- | --- | --- |
+| 1 | Coffee with raw cream and raw egg yolk | 84.52 | 84.52 |
+| 2 | Avoiding cooking eggs and snacking on chocolate | 73.81 | 73.77 |
+| 3 | Duck-egg breakfast burrito | 70.40 | 70.40 |
+| 4 | Dinner with four eggs | 69.41 | 69.41 |
+| 5 | Rocket-stove post | 68.49 | 68.49 |
+| 6 | Mixed diary with laying hens and several egg preparations | 70.66 | 65.78 |
+| Unscored; position unknown | Century-eggs explanation | 69.04 | Missing after interrupted call |
+
+Among the same six completed posts, the diary falls from third to sixth,
+crossing the burrito, dinner and stove posts. Its remaining text's egg-title
+cosine falls from the highest individual case's 0.399260 to 0.248475; combined
+mask cosine is 0.918896 and prominence 10. The resulting score is 65.775835,
+4.879346 points below its former maximum and below the stove's 68.492325. This
+is a new result to review, not a user-approved judgment about diary versus stove.
+The user-approved century-eggs-above-stove check remains unresolved for combined
+masks, and a complete seven-post order cannot yet be reported. The existing
+individual-mask result still passes that pair; it is not the new union result.
+
+The 33 relevant shared union, cosine, ranking, node-sorting and worker checks
+passed, as did the production review UI check displaying all three changed
+cases, including the unscored failure. The successful calls' $0.0518 catalog
+estimate is a subtotal, not an invoice or measured subscription quota. The
+interrupted call emitted partial text but normalized its usage to zeros; its
+actual token usage is unknown. No incremental cash charge or paid fallback was
+introduced. Completion still requires a century-eggs prominence answer; another
+attempt requires an explicit user exception to the unknown-cause retry rule.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
