@@ -50,11 +50,14 @@ Model-track measurements do not block completing the release estimate. Checks
 10 and 11 belong to the model track; neither blocks the teacher-built snapshot.
 
 Task 02 now tracks the SP-based hierarchy investigation: LG01 has run on 100
-posts, and BCPv4 has compared 49 parent pairs without applying its answers.
-Equivalent-node merging, re-comparison and graph-application policies remain
-unfinished; agreed ancestor and browsing-link rules are not yet implemented.
-No production workflow is selected, and the useful-hierarchy browsing gate is
-still open. Earlier HR02 results remain preserved, not the current next step.
+posts. BCPv4 compared 49 parent pairs; isolated tests subsequently combined the
+saved equivalences, re-compared seven changed inputs and applied 13 ancestor
+answers with redundant browsing shortcuts omitted. Nine further Food comparisons
+returned ancestor answers that have not been applied. The saved LG01 hierarchy
+is unchanged. These are authorized tests, not production adoption or a general
+conflict policy; the useful-hierarchy browsing gate remains open. See the
+[current stage record](../../sse_multivector/branch-comparison-prompt-v1/README.md#hierarchy-generation-stages).
+Earlier HR02 results remain preserved, not the current next step.
 
 Task 18 is complete for pilot setup. The rebuilt image is published and verified;
 local VM rehearsals cover all three candidate families. The replacement GPU run

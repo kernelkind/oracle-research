@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "inputs": "../../target/subject-matching-100-v1/inputs/inputs.json",
+  "hierarchy": "../../target/branch-comparison-v1/bcpv4-ancestors-v1/run/results.json",
+  "pairs": [
+    {"id":"F01","A":"S0022","B":"S0142"},
+    {"id":"F02","A":"S0022","B":"S0244"},
+    {"id":"F03","A":"S0022","B":"S0290"},
+    {"id":"F04","A":"S0022","B":"S0299"},
+    {"id":"F05","A":"S0022","B":"S0524"},
+    {"id":"F06","A":"S0022","B":"S0767"},
+    {"id":"F07","A":"S0022","B":"S0776"},
+    {"id":"F08","A":"S0022","B":"S0953"},
+    {"id":"F09","A":"S0022","B":"S1954"}
+  ]
+}

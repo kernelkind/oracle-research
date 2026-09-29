@@ -1,15 +1,17 @@
 # BCPv4 — one-pair subject comparison
 
-Status: **user-approved wording, tested on 49 original pairs and seven changed
-combined-input pairs, not frozen**. The user
+Status: **user-approved wording, tested on 49 original pairs, seven changed
+combined-input pairs and nine further Food pairs, not frozen**. The user
 approved six Astra-low calls, then the remaining 43 nominated comparisons.
 All 49 returned valid JSON. Agent review accepted the first six; of the next
 43, 36 were accepted and seven flagged as uncertain across four issues below.
 These are agent assessments, not user decisions or a measured general accuracy
 rate. HG6–HG7 subsequently tested an isolated combined-node preparation below.
 The authorized [ancestor-application test](#saved-ancestor-application-test)
-then applied 13 current ancestor answers in a separate view. The saved LG01
-hierarchy is unchanged; production adoption and general conflict handling remain open.
+then applied 13 current ancestor answers in a separate view. A subsequent
+[nine-pair Food test](#recovered-food-comparisons) returned nine ancestor answers,
+not yet applied. The saved LG01 hierarchy is unchanged; production adoption
+and general conflict handling remain open.
 
 [BCPv4.md](BCPv4.md) compares the subjects represented by two hierarchy nodes,
 A and B. Each node is represented by subject/context entries originating in one
@@ -300,12 +302,56 @@ preparation nodes, Food appreciation and three other Food ingredients nodes
 remain outside that Food branch. No names-based combination was performed.
 These are agent observations of a partial hierarchy, not user quality approval.
 
+## Recovered Food comparisons
+
+Status: **authorized test completed; answers not applied**. Unchanged BCPv4 /
+`openai-codex / gpt-6-astra / low` compared Food/Foods (`S0022`) with nine
+disconnected Food nodes in the separate 100-post test hierarchy. The provider,
+schema, concurrency 3 and timeout 300 seconds match the HG6–HG7 test.
+
+The read-only nomination measurement paired distinct top-level nodes when they
+shared any strict descendant, at any depth, including single-post descendants.
+It found 393 pairs in the 456-root test graph: six had current saved answers,
+leaving 387 comparisons. Nine of the 11 identified Food gaps qualified; the
+bagel-making and pie-making Food preparation branches did not. This measured
+rule is not adopted as HG4 or as a complete construction policy.
+
+The user authorized only those nine recovered Food comparisons, not all 387.
+The [source/pair selection](../experiment_specs/lg01-bcpv4-food-ancestors-v1.json)
+references the saved ancestor-test graph and original SP inputs; the
+[experiment spec](../experiment_specs/lg01-bcpv4-food-ancestors-astra-low-v1.json)
+uses the existing `subject_pairs` adapter. It assembles and freezes the inputs,
+posts, masks and provenance without manually copied cases. The model receives
+only subject/context arrays: 31 distinct entries for Food/Foods and one for each
+compared node. Shared-descendant information is not added to the prompt.
+
+All nine new subscription calls returned valid JSON, with no reuse or failures.
+Every answer was `a_parent_of_b`, meaning Food/Foods is an ancestor of B:
+
+| Case | Compared node B | Source post |
+| --- | --- | --- |
+| F01 | S0142 — Food preparation | N007 |
+| F02 | S0244 — Food preparation | N013 |
+| F03 | S0290 — Food preparation | N015 |
+| F04 | S0299 — Food preparation | N016 |
+| F05 | S0524 — Food preparation | N026 |
+| F06 | S0767 — Food ingredients | N037 |
+| F07 | S0776 — Food appreciation | N037 |
+| F08 | S0953 — Food ingredients | N046 |
+| F09 | S1954 — Food ingredients | N083 |
+
+The shared workflow saved the exact requests, outputs, validation and usage at
+`target/branch-comparison-v1/bcpv4-food-ancestors-v1/experiment/`. No prompt,
+LG01 matching rule, source hierarchy or browsing export changed. These nine
+answers support the usefulness of the recovered comparisons on this selected
+sample; they do not validate all 393 pairs or authorize broader inference.
+
 ## Next step
 
-Investigate how to nominate still-missing Food comparisons, using the separate
-test view as evidence; no new comparison selection or calls are authorized by
-this record. The [HG8 draft](#proposed-hg8--apply-ancestor-relationships) still
-requires review of general conflict handling. Keep the saved LG01 hierarchy unchanged.
+Suggested, not started: apply the nine saved answers in a separately authorized
+test export, then inspect the Food branch before expanding inference. The
+[HG8 draft](#proposed-hg8--apply-ancestor-relationships) still requires review of
+general conflict handling. Keep the saved LG01 hierarchy unchanged.
 
 ## Design references
 

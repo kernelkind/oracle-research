@@ -29,7 +29,10 @@ combines the 14 saved equivalence answers in an isolated preparation and retains
 JSON. The subsequent authorized separate export applies 13 current ancestor
 answers and omits 15 redundant browsing links, preserving all 1,753 nodes,
 original entries, SP ancestry and source evidence. The saved LG01 hierarchy is
-unchanged. Ancestor interpretation and the browsing rule are implemented in
+unchanged. Nine further authorized BCPv4/Astra-low comparisons recovered Food
+gaps missed by the original nomination rule; all returned valid Food-ancestor
+answers, not yet applied. Broader nomination and inference remain unapproved.
+Ancestor interpretation and the browsing rule are implemented in
 this isolated test; production adoption and general conflict handling remain
 open. See the [stage record](../../sse_multivector/branch-comparison-prompt-v1/README.md#hierarchy-generation-stages).
 Task 02 remains in progress until a useful 100-note hierarchy passes the user's
