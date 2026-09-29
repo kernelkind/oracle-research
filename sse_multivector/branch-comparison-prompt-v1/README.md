@@ -50,12 +50,17 @@ Meals nodes at **HG6**, then compares the combined nodes at **HG7**. Graph
 application, cycle handling and uncertain-equivalence policies remain open.
 LG01 names the technique at HG3, not the whole process or a particular run.
 
-### Proposed HG8 — apply parent links
+### Proposed HG8 — apply ancestor relationships
 
-Status: **draft for user review; not approved or implemented**. HG8 is a
-proposed label, not an extension of the approved HG1–HG7 labels. The current
-code does not apply BCPv4 answers. This draft changes neither the prompt nor
-the saved hierarchy; it specifies how a separate result could be constructed.
+Status: **ancestor interpretation agreed; remaining application policy is a
+draft, not approved or implemented**. HG8 is a proposed label, not an extension
+of the approved HG1–HG7 labels. The current code does not apply BCPv4 answers.
+The prompt, response labels and saved hierarchy remain unchanged.
+
+BCPv4 calls its answers `a_parent_of_b` and `b_parent_of_a`, but defines them
+as one subject being a more specific topic within the other's scope. The user
+agreed to treat these as **ancestor relationships**, not proof of immediate
+parenthood. Other hierarchy nodes may sit between the compared nodes.
 
 1. Start from the combined nodes and mapped SP links after HG6. Retain every
    original subject, mask and SP relationship as provenance. Check that SP
@@ -67,40 +72,45 @@ the saved hierarchy; it specifies how a separate result could be constructed.
    prompt/model settings. Reusing a node's old answer merely by replacing its
    ID is not valid. Missing, invalid or stale answers remain unjudged; they
    are not treated as `neither`.
-3. Translate the current answers into proposed links:
+3. Translate the current answers into proposed ancestor relationships:
 
    | Answer | Action at HG8 |
    | --- | --- |
-   | `a_parent_of_b` | Propose A → B. |
-   | `b_parent_of_a` | Propose B → A. |
-   | `neither` | Propose no link; retain the answer. |
-   | `uncertain` | Propose no link; retain the unresolved answer. |
-   | `equivalent` | Belongs to HG6, not a parent link. Newly returned HG7 equivalences remain pending; no automatic repeat of HG6–HG7 has been selected. |
+   | `a_parent_of_b` | Record A as an ancestor of B; not necessarily its immediate parent. |
+   | `b_parent_of_a` | Record B as an ancestor of A; not necessarily its immediate parent. |
+   | `neither` | Propose no additional ancestor relationship; retain the answer. |
+   | `uncertain` | Propose no additional ancestor relationship; retain the unresolved answer. |
+   | `equivalent` | Belongs to HG6, not an ancestor relationship. Newly returned HG7 equivalences remain pending; no automatic repeat of HG6–HG7 has been selected. |
 
-4. Check all proposed parent links together with the existing SP links.
-   Withhold every new link that participates in a directed cycle, retaining
-   the answers and the conflicting paths for review. Keep all existing SP
-   links and all other proposed links; deduplicate identical links. Do not
-   select a winner by call order, delete an SP link, or infer an equivalence
-   from a cycle of strict-parent answers.
-5. Save the resulting hierarchy separately from the LG01 baseline. Record
-   which answer supplied each new link, which proposals were withheld, and
-   any disagreements between answers and the resulting ancestor paths.
+4. Check all proposed ancestor relationships together with the existing SP
+   relationships. Arrows in this check represent ancestry, not immediate
+   parent placement. Withhold every new relationship that participates in a
+   directed cycle, retaining the answers and the conflicting paths for review.
+   Keep all existing SP relationships and all other proposals; deduplicate
+   identical relationships. Do not select a winner by call order, delete an SP
+   link, or infer an equivalence from a cycle of strict-ancestor answers.
+5. Save the resulting ancestor relationships separately from the LG01 baseline.
+   Record which answer supplied each new relationship, which proposals were
+   withheld, and any disagreements between answers and the resulting ancestor paths.
    No node removal, replacement titles, membership expansion or display
    collapsing is part of this draft.
 
 For example, the saved Food ingredients / Baking ingredients parent answer
-would propose **Food ingredients → Baking ingredients**. Both nodes keep
-their existing SP children. If SP supplies A → B and the model proposes
-B → A, withhold the new B → A link and record the disagreement. If two new
-links jointly form a cycle, withhold both rather than accepting whichever was
-processed first.
+would record **Food ingredients as an ancestor of Baking ingredients**. It
+does not establish that Baking ingredients belongs immediately beneath Food
+ingredients. Both nodes retain their SP relationships. If SP supplies A → B
+and the model proposes B → A, withhold the new B → A relationship and record
+the disagreement. If two new relationships jointly form a cycle, withhold
+both rather than accepting whichever was processed first.
 
 The proposed conflict policy needs explicit approval: a `neither` answer does
 not remove an SP path or veto a path supplied by other parent answers. Such
 disagreements are recorded, not silently resolved. Cycle checks establish
 structural validity, not semantic correctness. HG6 merge handling and any
 repeat rule for equivalences found at HG7 remain separate open decisions.
+
+Choosing direct parent links for browsing from these ancestor relationships
+also remains open; no new direct-link or transitive-reduction rule is selected.
 
 ## Input and output
 
@@ -204,9 +214,10 @@ revision, graph changes or new application rule follows automatically.
 Review the four issues above, starting with the Dining/Meals inconsistency,
 before applying judgments or revising the prompt. The saved outputs support
 that review. HG6–HG7 are an unapproved proposal for testing combined inputs,
-not authorization for additional calls. The [HG8 link-application draft](#proposed-hg8--apply-parent-links)
-also needs user review; an application policy remains unapproved. Do not alter
-the saved LG01 hierarchy.
+not authorization for additional calls. The [HG8 ancestor-application draft](#proposed-hg8--apply-ancestor-relationships)
+records the agreed ancestor interpretation; its remaining application policy
+and the derivation of direct browsing links need user review. Do not alter the
+saved LG01 hierarchy.
 
 ## Design references
 
