@@ -1691,9 +1691,9 @@ cosine falls from the highest individual case's 0.399260 to 0.248475; combined
 mask cosine is 0.918896 and prominence 10. The resulting score is 65.775835,
 4.879346 points below its former maximum and below the stove's 68.492325. This
 is a new result to review, not a user-approved judgment about diary versus stove.
-The user-approved century-eggs-above-stove check remains unresolved for combined
-masks, and a complete seven-post order cannot yet be reported. The existing
-individual-mask result still passes that pair; it is not the new union result.
+At that checkpoint, the user-approved century-eggs-above-stove check was unresolved
+for combined masks, and a complete seven-post order was unavailable. The existing
+individual-mask result passed that pair; it was not the new union result.
 
 The 33 relevant shared union, cosine, ranking, node-sorting and worker checks
 passed, as did the production review UI check displaying all three changed
@@ -1701,8 +1701,58 @@ cases, including the unscored failure. The successful calls' $0.0518 catalog
 estimate is a subtotal, not an invoice or measured subscription quota. The
 interrupted call emitted partial text but normalized its usage to zeros; its
 actual token usage is unknown. No incremental cash charge or paid fallback was
-introduced. Completion still requires a century-eggs prominence answer; another
-attempt requires an explicit user exception to the unknown-cause retry rule.
+introduced. Completion required a century-eggs prominence answer and an explicit
+user exception to the unknown-cause retry rule for another attempt.
+
+The user subsequently approved one additional century-eggs attempt. It ran
+through the shared workflow in `completed-masks-v1`, prepared from the original
+three changed cases with unchanged inputs, **PPv30**, schema and Astra-low
+settings. Preparation verified one new request and two exact-request reuses;
+`run --max-new-attempts 1` bounded the exception to the single authorized call.
+Century eggs returned a valid prominence of 30, with allocation totals 100,
+represented 30 and missing 70. The chocolate and diary answers were reused,
+not sampled again. The original interrupted receipt is preserved in
+`changed-masks`; this does not change the normal retry policy. The earlier
+one-case `century-retry-v1` preparation remains unrun; the three-case completion
+allowed both successful answers and the new answer to share a scored experiment
+without rerunning them or changing the cosine workflow.
+
+The final seven-post comparison is
+`experiments/ppv30-eggs-combined-masks-v1/inverse-no-references-v2/comparison.json`.
+It selects four original cases and three cases from `completed-masks-v1`.
+All seven selections match the frozen union preparation. The local CPU worker
+encoded 23 rows, including five original-mask replays (V0024, V1447, V0226,
+V1270, V0886). All passed with cosine above 0.9999999999999 and maximum normalized
+component error below 4.7e-8. Checkpoint, reference exclusions and the Inverse
+combined formula remain unchanged. No baseline prominence calls were rerun.
+
+| Final position | Post | Highest individual-mask Inverse combined | Combined-mask Inverse combined |
+| --- | --- | --- | --- |
+| 1 | Coffee with raw cream and raw egg yolk | 84.52 | 84.52 |
+| 2 | Avoiding cooking eggs and snacking on chocolate | 73.81 | 73.77 |
+| 3 | Duck-egg breakfast burrito | 70.40 | 70.40 |
+| 4 | Dinner with four eggs | 69.41 | 69.41 |
+| 5 | Century-eggs explanation | 69.04 | 68.52 |
+| 6 | Rocket-stove post | 68.49 | 68.49 |
+| 7 | Mixed diary with laying hens and several egg preparations | 70.66 | 65.78 |
+
+Century eggs scores 68.517903 and the stove 68.492325: the user's expected order
+passes by only 0.025578 points. The combined century mask has cosine 0.905204,
+inverse cosine 0.141138 and prominence 30. A read-only calculation using the
+production `ranking_scores` shows that, with these vectors fixed, a hypothetical
+prominence of 29 would score 68.135870 and reverse the pair. That hypothetical
+value is not a model answer or a changed artifact. The trial passes both reviewed
+pairs (Coffee and Eggs), but these small margins do not establish stability or
+general ranking quality. The diary remains below the stove; the user has not
+judged that pair. Combining masks remains a candidate, not an adopted rule.
+
+The 33 relevant checks passed again, as did the production review UI check for
+the three completed cases. The authorized call used 672 input and 218 output
+tokens with no reported reasoning tokens; its $0.01762 catalog estimate is not
+an invoice or measured subscription quota. The first interrupted call's actual
+token usage remains unknown. There was no incremental cash charge or paid
+fallback. The combined-mask Eggs comparison is complete; no further calls were
+made under the single-attempt exception.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
