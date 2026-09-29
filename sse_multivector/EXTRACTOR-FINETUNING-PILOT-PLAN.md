@@ -245,9 +245,16 @@ real SSH. It cannot reproduce Vast's provider infrastructure or prove GPU execut
 `target/distillation-pilot-v1/launch-preparation.json` records the current
 exported image, input package and validation evidence. Historical image/package
 receipts are preserved; changed code requires a new image and package.
-Publication of the exact exported image is authorized and in progress. No
-full-size GPU run has occurred. Launch evidence is under
-`target/distillation-pilot-v1/launch-20260929/`.
+The exact exported image was published and verified on September 29 as
+`docker.io/kernelkind/oracle-mvp@sha256:f6bafc128b7fed0eda387f56b34900bc794800cf9e38871b59a7c1679498f956`.
+The registry config digest, filesystem layers, runtime configuration and source
+hashes match the VM export. Read-only registry credentials successfully pulled
+this immutable reference using cached local layers; this does not measure a
+cold pull. VM containerd reports the manifest digest as its image ID, while
+local legacy Docker reports the config digest; the publication receipt records
+both. No full-size GPU run has occurred. Evidence is under
+`target/distillation-pilot-v1/launch-20260929/`, including
+`publication/publication-receipt.json`.
 Validation passed 117 shared-controller tests, seven pinned-CLI checks and
 24 VM tests, including actual candidate preflights and real SSH training/retrieval.
 The tiny adapter weights and evaluation metrics match the earlier rehearsal.
@@ -367,7 +374,7 @@ full-model memory requirements or speed. Those are checked during the actual
 pilot; there is no separate throwaway GPU training run. The actual candidate
 baselines and fine-tunes have not run.
 
-### Vast launch configuration — authorized
+### Vast launch configuration — awaiting availability
 
 [The launch configuration](distillation/vast-launch.json) freezes the search,
 create options and admission limits. It reuses the existing private Docker Hub
@@ -820,8 +827,10 @@ Candidate recipes and Vast limits are frozen. Publication and one rental are
 authorized within $25, at up to $1.66/hour for at most 13 hours. The saved split
 inspection found no clear complete-note duplicates or close paraphrases across
 the 80/20 split; topical overlaps remain recorded and this is an informal test.
-Finish registry verification, obtain an available qualifying offer and commit
-ledger admission before launch. Establish each candidate's two-step baseline
+Registry verification is complete. The selected $1.6556/hour offer disappeared
+before launch; the post-publication search at 14:41 UTC on September 29 found
+no qualifying replacement among 14 returned offers. Obtain an
+available qualifying offer and commit ledger admission before launch. Establish each candidate's two-step baseline
 before fine-tuning and compare on the same held-out notes using its own generated
 subjects. Paid work must fit the approved $25 total and ledger admission.
 Prominence and the larger dataset-size schedule can wait.

@@ -127,8 +127,8 @@ the local process stays alive; interrupted local supervision must be resumed.
 Candidate settings and Vast limits are frozen locally: BF16 LoRA, 128 steps
 per candidate, and one 96 GB GPU within the approved $25 total. On September 29
 the user authorized publication and one rental at up to $1.66/hour including
-storage, for at most 13 hours with a 12-hour worker window. Publication is in
-progress; no rental has started. GPU compatibility, memory use, speed and
+storage, for at most 13 hours with a 12-hour worker window. The tested image is
+published and verified. No current offer meets the approved requirements; no GPU execution has started. GPU compatibility, memory use, speed and
 quality are checked during the actual pilot.
 Node 17 is blue and in progress: the user reports comparing
 Muse high and Astra low. No teacher is selected. Task 17 also requires an A/B

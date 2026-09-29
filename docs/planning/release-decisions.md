@@ -307,7 +307,7 @@ This is a dated checkpoint; current task status appears in `release-plan.json`.
 | 17 · Compare teachers | In progress; no completed selection established. |
 | 26 · Collapse equal-note navigation steps | Implemented and regression-tested; validation on the rebuilt hierarchy is waiting. |
 | 13 · Define Nostr hierarchy protocol | Not started. |
-| 18 · Prepare training code for the fine-tuning pilot | Candidate recipes and Vast limits frozen locally; VM tests training and SSH deployment. Publication and one $25 rental authorized September 29; launch pending. |
+| 18 · Prepare training code for the fine-tuning pilot | Candidate recipes and Vast limits frozen locally; VM tests training and SSH deployment. Image published and verified September 29; authorized $25 launch awaits a qualifying offer. |
 | 24 · Recover missing node memberships | Not started. |
 | 25 · Handle node equivalence and TRUE cycles | Complete for HR02: exact-mask consolidation and reversible cycle handling are implemented and tested, with naming/browser integration. The merge rules remain provisional; hierarchy-quality review belongs to 02. |
 | 21 · Assess HDBSCAN at launch scale | No further progress; earlier investigation remains evidence, not launch-scale validation. |
@@ -524,9 +524,9 @@ recipes and Vast limits are now frozen locally: BF16 LoRA, 128 steps per
 candidate and one 96 GB GPU. On September 29 the user authorized publication
 and one rental, then approved up to $1.66/hour including storage for at most
 13 hours, retaining the 12-hour worker window and $25 total. The full planned
-allowance is $23.78 including transfers. The exact tested image is being
-published; launch-specific settings record the approved limits without changing
-the image. No paid launch has occurred.
+allowance is $23.78 including transfers. The exact tested image is published and its identity and read-only pulling are verified; launch-specific settings record the approved limits without changing the image. The selected
+offer disappeared before launch, and the September 29 post-publication search
+found no qualifying offer. No paid launch or spending reservation has occurred.
 The user accepted a $25 total maximum for GPU setup, baselines and initial
 fine-tunes across the three candidates, including storage, transfers and failed
 attempts. No rental has started; ledger admission precedes any paid commitment.
