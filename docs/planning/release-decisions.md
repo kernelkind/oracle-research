@@ -344,11 +344,12 @@ Naming approved by the user on September 21, 2026:
 | **pilot training data** (05) and **full training data** (07) | Always qualify; avoid bare "training data". |
 
 Task titles approved with this vocabulary: 17 · Compare teachers; 05 · Prepare
-pilot training data; 06 · Choose the model to train; 07 · Generate full training
+pilot training data; 06 · Choose model through larger fine-tuning pilot; 07 · Generate full training
 data; 08 · Distill and package the model; 11 · Test hierarchy with the distilled
 model; titles using "category" use "node" (22, 23, 24, 25, 27). This record uses
-the new names, as do both diagram pages. Frozen experiment and research evidence keeps
-the wording of its time.
+the new names. Task 29 separately tracks the preliminary 100-note fine-tuning
+experiment; the earlier diagram pages may retain their older titles. Frozen
+experiment and research evidence keeps the wording of its time.
 
 ## Agreed release goal
 
@@ -502,6 +503,19 @@ stages or approve a dataset size, hardware rental or spending allocation.
 
 ## Two separate model pilots
 
+**Planning split approved September 29:** track the preliminary 100-note
+fine-tuning experiment separately as **29 · Run preliminary 100-note fine-tuning
+experiment**, in progress. It uses 80 training notes and 20 evaluation notes,
+existing subject/mask annotations and no prominence. **06 · Choose model through
+larger fine-tuning pilot** remains waiting for the larger pilot's data (05);
+training setup (18) is complete. That larger pilot was originally envisaged at
+roughly 1,000 notes, but its exact size is not frozen. Task 05 prepares the
+larger pilot's data, not 29's already-prepared data. Tasks 01 and 18 are required
+inputs to 29; 29's findings are helpful inputs to 06 and the optional
+model-track estimates in 20, not new completion gates. The split does not change
+either experiment's requirements, settings or spending approvals, select a
+model, or block the required teacher-built release on either pilot.
+
 **September 25 informal start:** the user approved beginning the fine-tuning
 pilot with available data from the latest subject and mask prompts, excluding
 prominence for now and establishing untuned baselines. The teachers generate
@@ -588,10 +602,10 @@ attempts. Budget admission passed before the run; no replacement rental is autho
   are handled remains open; repairing them is not an assumed workflow. Check the
   provider's data-use and output-use terms before producing training data at
   scale.
-- **Fine-tuning pilot (06):** compare the pretrained models that we will train
-  on those annotations and release as the distilled model. This is the
+- **Larger fine-tuning pilot (06):** compare the pretrained models that we will
+  train on those annotations and release as the distilled model. This is the
   [existing fine-tuning pilot](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md),
-  not the teacher selection.
+  not the teacher selection. Its preliminary 100-note experiment is tracked in 29.
 
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
 Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third
@@ -1004,7 +1018,7 @@ Publication preparation belongs to the existing tasks, not a new workstream:
 
 | Task | Required result for publication |
 | --- | --- |
-| **06 · Choose the model to train** | Confirm permission to release fine-tuned weights before selecting the base model and committing to the larger training run. Teacher provider permissions remain in 17. |
+| **06 · Choose model through larger fine-tuning pilot** | Confirm permission to release fine-tuned weights before selecting the base model and committing to the larger training run. Teacher provider permissions remain in 17. |
 | **08 · Distill and package the model** | Prepare trained weights, necessary supporting files, usage instructions and evaluation results. Verify that the intended release files load and generate masks and prominence. |
 | **12 · Build launch hierarchy snapshot** | Build the final teacher-labeled, fully automated 2–5k snapshot and obtain the user's browsing acceptance. Prepare runnable hierarchy-generation code and instructions, architecture documentation matching the actual build, the agreed continual-update path, and the scalability roadmap. |
 | **16 · Launch public hierarchy** | Publish the release package: the snapshot, code and documentation, tested serving instructions, the scalability roadmap, and the Notedeck fork branch. The model track publishes the open-weight model whenever it passes its gate; a hosted demo is optional. |
@@ -1091,17 +1105,20 @@ measurements and acceptance decisions remain separate.
 Local VM rehearsals cover all three candidate families, real adapter updates,
 interruption/resume, save/reload and SSH deployment; the rebuilt image is
 published and verified private. The replacement GPU run completed Qwen's
-baseline, 128-step training, reload check and trained evaluation. Candidate
-execution and quality assessment remain in 06; setup completion does not
-select a model, prove all full-size candidates work or complete the model track.
+baseline, 128-step training, reload check and trained evaluation. Preliminary
+candidate execution and quality review remain in 29; larger-pilot model
+selection remains in 06. Setup completion does not select a model, prove all
+full-size candidates work or complete the model track.
 
 Final training-example formatting and mask/prominence quality evaluation remain
-within **06 · Choose the model to train**. Its completion needs the agreed output
-format, prominence criteria, reviewed pilot data and training setup (05 + 18).
-The September 25 informal subject-and-mask experiment can start preparation
-using available data while those completion requirements remain outstanding.
-The subsequent $25 informal-pilot approval above bounds paid execution;
-training settings and ledger admission still need to be established.
+within **06 · Choose model through larger fine-tuning pilot**. Its completion
+needs the agreed output format, prominence criteria, reviewed pilot data and
+training setup (05 + 18).
+The September 25 informal subject-and-mask experiment is separate task 29;
+its preparation and Qwen execution have proceeded using available data while
+06's requirements remain outstanding. The $25 approval above bounds that
+experiment, not the larger pilot; frozen settings and ledger admission still
+govern execution.
 
 These are planning dependencies, not approval for measurements, model calls or
 paid runs in this discussion. Measurement procedures, sample sizes, the cosine

@@ -28,13 +28,13 @@
       "id": "05",
       "title": "Prepare pilot training data",
       "status": "WAITING",
-      "description": "Model track. Informal start: available subject/mask data; no prominence.\nLater: selected teachers, masks + prominence and separate evaluation notes.\nLARGER PILOT WAITING FOR 04 + 17"
+      "description": "Model track. Prepare training and separate evaluation notes for the larger fine-tuning pilot (06), using selected teachers and including masks + prominence.\nThe preliminary 100-note experiment (29) uses data already available; it does not wait for this task.\nWAITING FOR 04 + 17"
     },
     {
       "id": "06",
-      "title": "Choose the model to train",
+      "title": "Choose model through larger fine-tuning pilot",
       "status": "WAITING",
-      "description": "Model track. Informal: one fine-tune learns both subject and mask prompts; untuned baselines, no prominence.\nFormat examples and evaluate quality, speed and cost.\nCheck a small hierarchy from pilot outputs before model selection.\nConfirm weight-release permission before selection.\nCOMPLETION NEEDS 05 + 18"
+      "description": "Model track. Larger model-selection pilot, originally envisaged at ~1,000 notes; exact dataset size remains open. The preliminary 100-note experiment is separate task 29.\nFormat examples and compare untuned versus trained quality, speed and cost, including masks + prominence.\nCheck a small hierarchy from pilot outputs before model selection.\nConfirm weight-release permission before selection.\nWAITING FOR 05; TRAINING SETUP 18 COMPLETE"
     },
     {
       "id": "07",
@@ -106,7 +106,7 @@
       "id": "18",
       "title": "Prepare training code for the fine-tuning pilot",
       "status": "COMPLETE",
-      "description": "Pilot setup complete: local VM tests cover all three candidate families, training, interruption/resume, save/reload and SSH deployment. The rebuilt image is published and verified private.\nThe GPU run included Qwen's baseline, 128-step training, reload check and trained evaluation. The September 29 observation also records Gemma dense starting its baseline.\nCandidate execution, semantic-quality review and model selection belong to 06 and remain unfinished. This does not approve the model or complete the model track."
+      "description": "Pilot setup complete: local VM tests cover all three candidate families, training, interruption/resume, save/reload and SSH deployment. The rebuilt image is published and verified private.\nThe GPU run included Qwen's baseline, 128-step training, reload check and trained evaluation. The September 29 observation also records Gemma dense starting its baseline.\nPreliminary candidate execution and quality review belong to 29; larger-pilot model selection belongs to 06. Neither is complete. This does not approve the model or complete the model track."
     },
     {
       "id": "20",
@@ -161,6 +161,12 @@
       "title": "Implement and validate the launch-scale build",
       "status": "WAITING",
       "description": "Make the strategies tested in 03 runnable at launch scale, preserving validated hierarchy behavior. Include cosine-filtered relationship checks. Handle large-group title inputs only if separate node-title generation is used.\nThe relationship method remains open.\nNEEDS 03 + 22; ALSO 21 IF HDBSCAN IS USED."
+    },
+    {
+      "id": "29",
+      "title": "Run preliminary 100-note fine-tuning experiment",
+      "status": "IN PROGRESS",
+      "description": "Model track. Use existing data: 80 training notes, 20 evaluation notes; no prominence. One fine-tune per candidate learns both subject and mask prompts. Compare untuned and trained outputs, quality, speed and cost.\nQwen's baseline, training, reload check and trained evaluation are saved; candidate comparison and semantic review remain unfinished.\nThis informs the larger pilot (06), not final model selection. Existing experiment settings and $25 total approval remain unchanged.\nSUBJECT/MASK PROMPTS 01 + TRAINING SETUP 18 COMPLETE"
     }
   ],
   "links": [
@@ -282,6 +288,30 @@
       "source": "18",
       "target": "06",
       "kind": "required"
+    },
+    {
+      "source": "01",
+      "target": "29",
+      "kind": "required",
+      "label": "subject/mask prompts"
+    },
+    {
+      "source": "18",
+      "target": "29",
+      "kind": "required",
+      "label": "training setup"
+    },
+    {
+      "source": "29",
+      "target": "06",
+      "kind": "helpful",
+      "label": "preliminary findings; not a new completion gate"
+    },
+    {
+      "source": "29",
+      "target": "20",
+      "kind": "helpful",
+      "label": "optional preliminary model-track measurements"
     },
     {
       "source": "01",

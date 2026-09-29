@@ -2,6 +2,14 @@
 
 ## Status and scope
 
+**Release-plan tracking:** the preliminary 100-note experiment below is task
+**29 · Run preliminary 100-note fine-tuning experiment**, in progress. The larger
+model-selection pilot is **06 · Choose model through larger fine-tuning pilot**,
+waiting for its data in 05; its exact dataset size remains open. Task 18's
+training setup is complete. Task 29 needs 01 + 18, not the larger-pilot data
+in 05, and its findings inform 06 without becoming a new completion gate.
+Splitting the tracking does not change the experiments or spending approvals.
+
 **September 25: start an informal subject-and-mask pilot.** The user approved
 using the data already on hand with the latest subject and mask prompts,
 establishing untuned baselines and testing fine-tuning without prominence.
@@ -131,10 +139,11 @@ complete for setup: local VM rehearsals cover each candidate family, training,
 interruption/resume, save/reload and SSH deployment. The image is published and
 verified, and the replacement GPU run completed Qwen's baseline, training,
 reload check and trained evaluation. Final training-example formatting and
-mask/prominence quality evaluation remain in **06 · Choose the model to train**,
-which needs the agreed output format, prominence criteria and reviewed pilot
-data to complete release-model selection. The informal experiment above is
-authorized to begin preparation without prominence. The user subsequently
+mask/prominence quality evaluation remain in **06 · Choose model through larger
+fine-tuning pilot**, which needs the agreed output format, prominence criteria and reviewed pilot
+data to complete release-model selection. Preliminary candidate execution and
+subject/mask quality review belong to 29, not completion of 06. The informal
+experiment above is authorized to begin preparation without prominence. The user subsequently
 approved building and testing the automated workflow in a local VM before
 deploying it on rented hardware. The implementation uses Transformers Trainer
 and PEFT in a pinned PyTorch container. The user clarified that this must

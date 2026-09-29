@@ -59,7 +59,10 @@ still open. Earlier HR02 results remain preserved, not the current next step.
 Task 18 is complete for pilot setup. The rebuilt image is published and verified;
 local VM rehearsals cover all three candidate families. The replacement GPU run
 completed Qwen's baseline, training, reload check and trained evaluation. This
-does not complete candidate-quality review or model selection in 06.
+does not complete preliminary candidate-quality review in 29 or model selection
+in the larger pilot, 06. Task 29 tracks the preliminary 100-note fine-tuning
+experiment in progress; 06 remains waiting for its larger-pilot data. Its
+original ~1,000-note scale is not a frozen dataset-size requirement.
 
 The earlier `october-18-release.drawio` and its read-only [viewer](index.html)
 remain available, including the proposed weekly-targets page. They are not the
@@ -132,17 +135,21 @@ authorization.
 Page 1 highlights readiness: green means ready to start or resume, blue means in progress,
 grey means waiting, blocked or paused, and muted grey means complete. If preparation can start
 but later work cannot, show them as separate nodes linked by a dependency—not
-as one partly ready task. Node 18 is blue and in progress, preparing training code for the
-fine-tuning pilot: fine-tune each candidate, save/reload trained weights and
-generate outputs for evaluation. Final training-example formatting and
-mask/prominence evaluation remain in 06, after the agreed output format,
+as one partly ready task. In the current JSON graph, training setup 18 is
+complete. The preliminary 100-note fine-tuning experiment is separate node 29,
+in progress; the larger model-selection pilot is 06, waiting. Final
+training-example formatting and mask/prominence evaluation remain in 06,
+after the agreed output format,
 criteria and reviewed pilot data are available for release-model selection.
 On September 25 the user approved an informal first experiment using existing
 data from the latest subject and mask prompts, with untuned baselines and no
-prominence. Local preparation is underway; candidate inference, training and
-rentals have not run. The 05 + 18 dependencies describe completing 06; this
-informal start can use saved annotations before prominence and teacher
-selection are finished. The user then approved one fine-tune per candidate
+prominence. Task 29 uses 80 training notes and 20 evaluation notes; Qwen's
+baseline, training, reload check and trained evaluation are saved. The 05 + 18
+dependencies still belong to the larger pilot, 06. Task 29 instead needs the
+finished prompts (01) and training setup (18); its findings inform 06 but are
+not a new completion gate. This preliminary experiment uses saved annotations
+before prominence and teacher selection are finished. The user then approved
+one fine-tune per candidate
 learning both prompted tasks: generate subjects, then mask each generated
 subject. Direct-mask generation is deferred for this informal experiment.
 The approved evaluation batching processes up to four independent masks from
@@ -169,7 +176,10 @@ tests on September 29, including real SSH training/retrieval and all three
 candidate preflights. The rebuilt image is published and verified private; read-only image pulling is verified. The user approved proceeding
 with continuous observation through execution, retrieval and explicit deletion.
 After the 600 W availability watch, the user approved the 450 W workstation
-offer. GPU startup began with the $1.4167/hour configuration including 300 GB storage. GPU startup is being observed.
+offer. GPU startup began with the $1.4167/hour configuration including 300 GB storage. The saved September 29
+observation at 21:27 UTC records Qwen complete and Gemma dense starting its
+baseline; this is execution evidence, not model-quality acceptance. Rental
+billing continues until the operator explicitly deletes the instance.
 Candidate settings and Vast limits are frozen locally: BF16 LoRA, 128 steps
 per candidate, and one 96 GB GPU within the approved $25 total. On September 29
 the user authorized publication and one rental at up to $1.66/hour including
