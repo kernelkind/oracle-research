@@ -1,63 +1,61 @@
-# BCPv1 — SP branch comparison
+# BCPv2 — one-pair subject comparison
 
 Status: **draft, untested, not frozen**. The user authorized drafting this
 prompt for review, not inference or changes to the saved hierarchy.
 
-The user subsequently chose to apply **LG01 — subject hierarchy merging**
-to [all 100 posts](../subject-order-probe.md#smv2-100--unchanged-rules-on-all-100-posts)
-before deciding what placement work is needed. Testing or revising this draft
-is deferred; neither whole-branch nor head-only comparison has been adopted.
-LG01 names the technique, not this run's post count; its rules are unchanged.
+[BCPv2.md](BCPv2.md) compares two supplied hierarchy nodes, A and B. It returns
+one relationship judgment and a short justification, not a rewritten hierarchy.
+Equivalent, either parent direction, neither and uncertain are separate outcomes.
 
-[BCPv1.md](BCPv1.md) is a new prompt, not a revision of the older mask-only
-equivalence or placement prompts. It compares supplied SP subject branches
-together, proposing missing parent links, semantic equivalences, or no change.
-It does not minimize node count or collapse equal-post nodes.
+[BCPv1.md](BCPv1.md) is the unchanged, untested whole-branch draft used as the
+delta baseline, not a previously approved prompt or the proposed test prompt.
+BCPv2 removes its whole-branch proposal and conflict-resolution tasks while
+retaining its subject-generality and empty-mask guidance. Its revision receipt
+records the exact baseline and changes.
+
+The proposed candidate source is distinct pairs of immediate parents of an
+LG01 node shared across posts, deduplicated by node identity. Sharing a child
+nominates a comparison; it does not establish equivalence or containment.
+The read-only investigation of the [LG01 100-post run](../subject-order-probe.md#smv2-100--unchanged-rules-on-all-100-posts)
+did not adopt this as a construction rule or authorize model calls.
 
 ## Input and output
 
 Use the shared experiment runner's generic adapter with one `INPUT_JSON`
-variable. Serialize the input as JSON; do not manually render batches.
-Include:
+variable. The proposed JSON input contains nodes `A` and `B`. Serialize it as
+JSON; do not manually render batches. For each node include:
 
 - Stable node IDs and all original subject entries represented by each node.
 - Each entry's post ID, SP number, exact subject wording and saved `context`.
 - Its mask ID and complete source post with that individual mask marked inline.
   Preserve separate masks, including repeated posts. Represent an empty mask
   explicitly while retaining the subject and full post.
-- Existing parent–child links between the supplied nodes. Reuse one node ID
-  wherever a node is already shared across paths.
 
 Supply source evidence, not expected answers, previous model decisions or
-cosine scores. Existing links are inputs, not the model's proposed additions.
-The proposed test output is a readable list of relationships, brief
-justifications, unresolved comparisons and any conflicts. There is no graph
-update parser or automatic application stage in this draft. Unmentioned pairs
-are not negative labels.
+cosine scores. Do not send the whole branches or graph. Keep the shared-child
+references that nominated the pair in review evidence, outside the model input.
+The model compares the supplied subjects, not a new subject inferred only from
+their masks or a subject narrowed to the examples in the source posts.
 
-## Deferred test proposal
+The output is one of the prompt's five decision labels followed by a short
+justification. There is no graph-update parser or automatic application stage
+in this draft. A pairwise judgment does not check global graph consistency or
+authorize overriding an SP relationship. LG01's preservation rules are unchanged.
 
-The earlier, unrun proposal was one call per saved case:
+## Next review
 
-1. N037 / N072: Food ingredients and Baking ingredients above shared Cranberries.
-2. N015: food-preparation and bread-type paths above Sourdough bread preparation.
-3. N065: internet-access, network-equipment and retaliation paths above the
-   contemplated disruption of coffee shop internet access through password changes.
-4. N038: music, song and coffee-shop paths, including the distinction between
-   Coffee shop playing Baby Got Back and Baby Got Back playing in a coffee shop.
-
-These are diagnostic cases, not validated accuracy labels or examples embedded
-in the prompt. Preserve the saved SMv2 graph and all earlier results. Any run,
-input preparation and application policy remain separate work; this draft
-does not authorize them or select a production placement algorithm.
+Review the full BCPv1 → BCPv2 delta before preparing a small pairwise test.
+No test cases, execution model or application policy have been selected by this
+draft. Do not run the whole candidate set or alter the saved LG01 hierarchy.
 
 ## Design references
 
 The draft follows the existing
 [SP hierarchy rules](../../docs/planning/release-decisions.md#sp-based-hierarchy-rules),
-particularly HD08–11 and the open placement question HD21. No rule-register or
-existing prompt changes are made here.
+particularly HD08–11 and the open placement question HD21. Drafting a one-pair
+prompt does not settle the placement question or change those rules.
 
 The [official OpenAI reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
-informed the direct task statement, separated input and initial test without
-worked examples. This is guidance for the draft, not evidence that it works.
+informed the direct task, delimited evidence and explicit output choices, without
+worked examples or a prescribed reasoning trace. This is guidance for the draft,
+not evidence that it works.
