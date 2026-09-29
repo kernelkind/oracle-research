@@ -10,7 +10,7 @@
       "id": "02",
       "title": "Build and review 100-note hierarchy",
       "status": "IN PROGRESS",
-      "description": "HR02: build a hierarchy the user is pleased with; production adoption remains open.\nHR02-NSP-MASKS03 completed all 566 candidate pairs using unchanged NSP-Astra-Masks-v1 / Astra low. The browser view retains 148 nodes and 100 posts: 101 links, 76 roots, no cycles. There are 39 uncertain pairs and three path contradictions, unrepaired.\nNext: review the browsing result. Existing groups, merges, titles and direct memberships are unchanged; no review overrides were applied. Earlier results and manual reviews remain preserved. Task 25 remains complete."
+      "description": "Current: SP-based hierarchy investigation; no production workflow selected.\nLG01 has run on 100 posts. BCPv4 has compared 49 parent pairs; answers are saved, not applied.\nOpen: equivalent-node merging, re-comparison and graph-application policies. Agreed ancestor interpretation and redundant-link browsing rule are not yet implemented.\nCompletion: a useful 100-note hierarchy accepted in the user's browsing review.\nEarlier HR02/HDBSCAN evidence remains preserved. Task 25 is complete for HR02, not proof that the new construction work is finished."
     },
     {
       "id": "03",

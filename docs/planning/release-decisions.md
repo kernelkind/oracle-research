@@ -20,6 +20,17 @@ timing. It does not select implementation methods or experimental procedures.
 Readiness is not authorization to research, implement, assign agents or spend;
 each task requires explicit approval to begin.
 
+**Current task 02 status (September 29):** the active investigation builds from
+per-post subject hierarchies and masks. LG01 has run on 100 posts; BCPv4 has
+compared 49 nominated parent pairs, with answers saved but not applied.
+Equivalent-node merging (HG6), re-comparison (HG7) and the remaining
+graph-application policy are proposals, not approved implementations. Ancestor
+interpretation and the redundant-link browsing rule are agreed but not yet
+implemented. See the [stage record](../../sse_multivector/branch-comparison-prompt-v1/README.md#hierarchy-generation-stages).
+Task 02 remains in progress until a useful 100-note hierarchy passes the user's
+browsing review; no production workflow is selected. Earlier HR02/HDBSCAN
+results and reviews remain evidence, not the current next-step instruction.
+
 The subject and mask prompts are finished (01 complete), confirmed by the user
 on September 20. On September 24, the user confirmed that the node-title prompt
 is finished (23 complete). The [frozen v38/Luna max title pass](../../sse_multivector/navigation-research-v1/README.md#current-title-prompt-experiment) has produced
@@ -39,10 +50,10 @@ inputs cover all 16,512 directions. The provisional graph has 116 nodes and
 v38/Astra low, as subsequently approved, without changing merges or links.
 The historical HRv1 runner and artifacts remain on v21. HR02 browser export
 is complete. The user reviewed it and found it promising, but judged TRUE's
-relationship decisions unsuitable. Task 02 stays open: a frontier-call
-replacement is the next diagnostic for whether the other stages hold up, not
-yet a production choice or validation of those stages. The 23 → 02 and 25 → 02
-implementation prerequisites are satisfied; 25 stays complete.
+relationship decisions unsuitable. A frontier-call replacement was pursued as
+a diagnostic for whether the other stages hold up, not as a production choice
+or validation of those stages. The 23 → 02 and 25 → 02 implementation
+prerequisites are satisfied for HR02; 25 stays complete.
 The user subsequently approved the simplified
 [NSPv2 diagnostic prompt and four-pair pilot](../../sse_multivector/navigation-research-v1/README.md).
 Eight Astra-low subscription calls checked both directions: all outputs were
@@ -929,10 +940,11 @@ implementation choices remain open.
 
 The 100-note build exposed a relationship-quality blocker at minimal scope,
 without membership expansion or a claim to exercise scalable construction.
-Task 25's implementation gate is satisfied. Task 02 remains open while a
-frontier-call diagnostic tests whether the other stages support a useful
-hierarchy. Preliminary 200-note construction can follow 02 before prominence is
-finished, but its note-ordering check needs 04 and 27. The 300-note
+Task 25's implementation gate is satisfied for HR02, not proof that the current
+SP-based construction work is finished. Task 02 remains open for that
+investigation and the user's browsing review. Preliminary 200-note construction
+can follow 02 before prominence is finished, but its note-ordering check needs
+04 and 27. The 300-note
 scalable-construction work can proceed without waiting for that ordering
 check. Completing the combined 500-note validation (03) requires
 24–27. The prominence dependency remains 04 → 27 → 03. The stages' internal

@@ -28,6 +28,13 @@ are helpful while the choice is open; make them required if HDBSCAN is selected.
 The chosen workflow's time and cost checks remain required. No algorithm is
 selected by this tracking change.
 
+Task 02 now tracks the SP-based hierarchy investigation: LG01 has run on 100
+posts, and BCPv4 has compared 49 parent pairs without applying its answers.
+Equivalent-node merging, re-comparison and graph-application policies remain
+unfinished; agreed ancestor and browsing-link rules are not yet implemented.
+No production workflow is selected, and the useful-hierarchy browsing gate is
+still open. Earlier HR02 results remain preserved, not the current next step.
+
 The earlier `october-18-release.drawio` and its read-only [viewer](index.html)
 remain available, including the proposed weekly-targets page. They are not the
 source for current task status and may lag the JSON graph. The default route
