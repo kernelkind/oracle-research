@@ -376,7 +376,132 @@ def import_setup(path, setup):
     return config, manifest, cases
 
 
-def report(directory, only=None, note_ids=None):
+def usage_summary(calls, *, strict=False):
+    """Total saved usage; strict generation reports keep missing failures unknown."""
+    fields = (
+        ("input_tokens", "input", "input_tokens"),
+        ("cached_input_tokens", "cacheRead", "cached_input_tokens"),
+        ("cache_write_tokens", "cacheWrite", "cache_write_tokens"),
+        ("output_tokens", "output", "output_tokens"),
+        ("reasoning_tokens", "reasoning", "reasoning_output_tokens"),
+    )
+    usage = dict.fromkeys([f[0] for f in fields], 0)
+    usage.update(attempts_without_usage=0, catalog_cost_estimate_usd=0,
+                 attempts_without_cost_estimate=0, provider_reported_cost_usd=0,
+                 attempts_without_provider_cost=0)
+    for record, charge in calls:
+        if type(charge) in (int, float) and math.isfinite(charge) and charge >= 0:
+            usage["provider_reported_cost_usd"] += charge
+        else:
+            usage["attempts_without_provider_cost"] += 1
+        saved = record.get("usage")
+        values = [saved.get(sdk, saved.get(legacy, 0))
+                  for _, sdk, legacy in fields] if isinstance(saved, dict) else []
+        known = isinstance(saved, dict)
+        if strict and known:
+            known = (any(k in saved for k in ("input", "input_tokens"))
+                     and any(k in saved for k in ("output", "output_tokens"))
+                     and all(type(v) in (int, float) and math.isfinite(v) and v >= 0
+                             for v in values)
+                     and not (record.get("status") == "failed" and not any(values)))
+        if not known:
+            usage["attempts_without_usage"] += 1
+            usage["attempts_without_cost_estimate"] += 1
+            continue
+        if not strict:
+            values = [v or 0 for v in values]
+        for (field, _, _), value in zip(fields, values):
+            usage[field] += value
+        cost = saved.get("cost") or {}
+        estimate = cost.get("total") if isinstance(cost, dict) else None
+        if estimate is None or (strict and not (
+                type(estimate) in (int, float) and math.isfinite(estimate) and estimate >= 0)):
+            usage["attempts_without_cost_estimate"] += 1
+        else:
+            usage["catalog_cost_estimate_usd"] += estimate
+    if strict:
+        usage["known_catalog_cost_estimate_usd"] = usage["catalog_cost_estimate_usd"]
+        usage["known_provider_reported_cost_usd"] = usage["provider_reported_cost_usd"]
+    if usage["attempts_without_cost_estimate"]:
+        usage["catalog_cost_estimate_usd"] = None
+    if usage["attempts_without_provider_cost"]:
+        usage["provider_reported_cost_usd"] = None
+    return usage
+
+
+def generation_usage(config, manifest, selected, records, latest, files, reconciled_costs):
+    """Account for original calls once by verified file/line, not request text."""
+    ledger = (config.run_directory / "results.jsonl").resolve()
+    jobs = {"prompt:" + c.get("job_id", c["id"]): c for c in selected}
+    source_ledgers = {ledger: records}
+    source_attempts = {}
+    originals = {}
+    for number, record in enumerate(records, 1):
+        case = jobs.get(record.get("job_key"))
+        if case is None or record.get("execution") == "cross_run_reuse":
+            continue
+        if record.get("status") == "succeeded":
+            job = engine.PromptJob(case.get("job_id", case["id"]), case["prompt"])
+            engine.validate_prompt_receipt(replace(config, prompts=(job,)), manifest,
+                                           record, files=files)
+        originals[(ledger, number)] = (record, False)
+    local_count = len(originals)
+    for case in selected:
+        record = latest.get("prompt:" + case.get("job_id", case["id"]))
+        if not record or record.get("execution") != "cross_run_reuse":
+            continue
+        job = engine.PromptJob(case.get("job_id", case["id"]), case["prompt"])
+        engine.validate_prompt_receipt(replace(config, prompts=(job,)), manifest,
+                                       record, files=files)
+        reference = record["reused_from"]
+        source = engine._read_request_source(reference,
+            engine._prompt_request_key(manifest, case["prompt"]), files=files)
+        path = Path(reference["results_path"]).resolve()
+        if path not in source_ledgers:
+            source_manifest = files.json(path.parent / "manifest.json")
+            source_provenance = files.provenance(path.parent,
+                manifest_sha256=reference["manifest_sha256"],
+                initial_wrapper_sha256=source_manifest["wrapper_sha256"])
+            engine._load_latest_results(path, reference["manifest_sha256"], source_provenance)
+            source_ledgers[path] = [json.loads(line) for line in files.lines(path)]
+        if path not in source_attempts:
+            by_job = {}
+            for number, prior in enumerate(source_ledgers[path], 1):
+                if prior.get("execution") != "cross_run_reuse":
+                    by_job.setdefault(prior.get("job_key"), []).append((number, prior))
+            source_attempts[path] = by_job
+        for number, prior in source_attempts[path].get(source["job_key"], []):
+            if number > reference["result_line"]:
+                break
+            if prior.get("status") == "succeeded":
+                engine._read_request_source({**reference, "result_line": number,
+                    "result_sha256": engine._sha256_bytes(files.line(path, number))},
+                    engine._prompt_request_key(manifest, case["prompt"]), files=files)
+            key = (path, number)
+            if key in originals and originals[key][0] != prior:
+                raise engine.RunnerError("generation source changed while reporting")
+            originals.setdefault(key, (prior, True))
+    reconciled = {config.run_directory.resolve(): reconciled_costs}
+    calls, sources = [], []
+    for (path, number), (record, added) in originals.items():
+        line = files.line(path, number)
+        if json.loads(line) != record:
+            raise engine.RunnerError("generation source changed while reporting")
+        if path.parent not in reconciled:
+            reconciled[path.parent] = engine.load_reconciled_costs(
+                path.parent, source_ledgers[path])
+        calls.append((record, engine.provider_cost(record, reconciled[path.parent])))
+        sources.append(dict(results_path=str(path), result_line=number,
+                            result_sha256=engine._sha256_bytes(line),
+                            job_key=record.get("job_key"), status=record.get("status"),
+                            added_from_reuse=added))
+    return {**usage_summary(calls, strict=True), "original_calls": len(originals),
+            "source_calls_added": len(originals) - local_count,
+            "failed_calls": sum(r.get("status") == "failed" for r, _ in originals.values()),
+            "sources": sources}
+
+
+def report(directory, only=None, note_ids=None, *, generation_costs=False):
     directory = Path(directory).resolve()
     files = engine.ReceiptFiles()
     plan, config, manifest = load(directory)
@@ -511,48 +636,9 @@ def report(directory, only=None, note_ids=None):
         )
         comparisons[row["comparison"]] += 1
         cases.append(row)
-    usage = {
-        "input_tokens": 0,
-        "cached_input_tokens": 0,
-        "cache_write_tokens": 0,
-        "output_tokens": 0,
-        "reasoning_tokens": 0,
-        "attempts_without_usage": 0,
-        "catalog_cost_estimate_usd": 0,
-        "attempts_without_cost_estimate": 0,
-        "provider_reported_cost_usd": 0,
-        "attempts_without_provider_cost": 0,
-    }
     attempts = [r for r in records if r.get("execution") != "cross_run_reuse"
                 and r.get("job_key") in selected_jobs]
-    for record in attempts:
-        charge = engine.provider_cost(record, reconciled_costs)
-        if type(charge) in (int, float) and math.isfinite(charge) and charge >= 0:
-            usage["provider_reported_cost_usd"] += charge
-        else:
-            usage["attempts_without_provider_cost"] += 1
-        saved = record.get("usage")
-        if not isinstance(saved, dict):
-            usage["attempts_without_usage"] += 1
-            usage["attempts_without_cost_estimate"] += 1
-            continue
-        for field, sdk, legacy in (
-            ("input_tokens", "input", "input_tokens"),
-            ("cached_input_tokens", "cacheRead", "cached_input_tokens"),
-            ("cache_write_tokens", "cacheWrite", "cache_write_tokens"),
-            ("output_tokens", "output", "output_tokens"),
-            ("reasoning_tokens", "reasoning", "reasoning_output_tokens"),
-        ):
-            usage[field] += saved.get(sdk, saved.get(legacy, 0)) or 0
-        estimate = (saved.get("cost") or {}).get("total")
-        if estimate is None:
-            usage["attempts_without_cost_estimate"] += 1
-        else:
-            usage["catalog_cost_estimate_usd"] += estimate
-    if usage["attempts_without_cost_estimate"]:
-        usage["catalog_cost_estimate_usd"] = None
-    if usage["attempts_without_provider_cost"]:
-        usage["provider_reported_cost_usd"] = None
+    usage = usage_summary((r, engine.provider_cost(r, reconciled_costs)) for r in attempts)
     summary = {
         s: sum(c["status"] == s for c in cases)
         for s in ("valid", "empty", "malformed", "invalid_receipt", "failed", "unrun")
@@ -584,6 +670,9 @@ def report(directory, only=None, note_ids=None):
     )
     if result["adapter"] == "masks":
         result["posts"] = len({c["evidence"]["note_id"] for c in cases})
+    if generation_costs:
+        result["generation_usage"] = generation_usage(
+            config, manifest, selected, records, latest, files, reconciled_costs)
     return result
 
 
@@ -904,6 +993,10 @@ def compact(result, *, prepared=False):
             "Usage (new attempts only; reasoning already included in output): "
             + json.dumps(result["usage"])
         )
+        if "generation_usage" in result:
+            print("Generation usage (unique original calls; includes traced reused sources): "
+                  + json.dumps({k: v for k, v in result["generation_usage"].items()
+                                if k != "sources"}))
     for case in result["cases"]:
         print(f"  {case['id']}: {case['status']}; {case['comparison']}")
     action = "show" if result["imported"] or not result["summary"]["unrun"] else "run"
@@ -976,6 +1069,8 @@ def parser():
                    help="limit cases and usage to these IDs (repeatable; read-only)")
     p.add_argument("--note", action="append", metavar="NOTE_ID",
                    help="limit cases and usage to saved evidence.note_id (repeatable)")
+    p.add_argument("--generation-costs", action="store_true",
+                   help="trace verified original generation costs, counting reused sources once; no inference")
     p.add_argument("--json", action="store_true")
     p = commands.add_parser(
         "revise",
@@ -1044,12 +1139,16 @@ def main(argv=None):
                 from subject_hierarchy import export_comparisons
             print(json.dumps(export_comparisons(args.experiment, args.source, args.output), indent=2))
         elif args.command == "show":
-            result = report(args.experiment, args.only, args.note)
+            only = ([args.case] if args.generation_costs and args.case and args.only is None
+                    else args.only)
+            result = report(args.experiment, only, args.note, generation_costs=args.generation_costs)
             if args.case:
                 case = next((c for c in result["cases"] if c["id"] == args.case), None)
                 if case is None:
                     raise ValueError("unknown case")
-                result = {"settings": result["settings"], **case}
+                result = {"settings": result["settings"], **case,
+                          **({"generation_usage": result["generation_usage"]}
+                             if args.generation_costs else {})}
             if args.json or args.case:
                 print(json.dumps(result, ensure_ascii=False, indent=2))
             else:

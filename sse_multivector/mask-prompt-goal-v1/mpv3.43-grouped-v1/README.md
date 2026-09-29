@@ -42,13 +42,35 @@ changed; punctuation/fragment-boundary changes are not treated as semantic error
 
 For the same nine completed notes, the shared reporter imported and verified
 all original receipts and selected exactly their 201 individual-mask cases
-(169 original calls, 32 reused answers). With caching included, the user's
-Astra-equivalent rates give $0.030651492 grouped versus $0.152696832 individual,
-about 80% lower. Catalog API estimates are $0.88079 versus $4.38784. Both are
-cost references, not subscription invoices or measured weekly quota. Failed
-generation usage is unknown and excluded from this matched comparison;
-subject generation and prominence are not included. Historical and current
-cache/transport conditions differ, so this is not a randomized billing trial.
+(169 new calls, 32 reused answers). The initial new-attempt totals excluded
+reused answers' earlier generation costs. The read-only `show --generation-costs`
+view now traces nine additional source calls, counting duplicate references
+once: 178 original individual calls in total. With observed caching included,
+the user's Astra-equivalent rates give $0.030651492 grouped versus $0.16206534
+individual, about 81% lower. Catalog API estimates are $0.88079 versus $4.65705.
+Both are cost references, not subscription invoices or measured weekly quota.
+Failed generation usage is unknown and excluded from this successful-output
+comparison; subject generation and prominence are not included. Historical and
+current cache/transport conditions differ, so this is not a randomized billing
+trial or the cost of completing the entire batch.
+
+## Sol max comparison: corrected generation accounting
+
+The subsequent `sol61-max-grouped-masks-v1` experiment used the same ten posts
+and 287 fixed subjects with GPT-6.1 Sol max. Seven calls completed 122 masks;
+three calls were interrupted. No baseline was regenerated. The matched seven
+posts cost $0.72715 in Sol catalog references versus $2.647964 for ungrouped
+Astra low, including 22,144 cached Astra input tokens and the nine earlier source
+calls. The 25 reused answers map to nine external originals plus duplicates
+already counted, not 25 additional generations. This is about 72.5% lower for
+the completed subset, not a complete-job or subscription-quota saving.
+
+Across all ten posts, ungrouped Astra completed all 287 masks with 251 distinct
+original calls at a $6.96967 catalog reference. Sol's three interrupted calls
+have only normalized zero usage, so the complete Sol estimate is unknown, with
+$0.72715 as its known subtotal. The generation report explicitly retains those
+failures instead of labeling their costs zero. Completing or diagnosing the
+interrupted work remains open; no replacement calls were sent for this audit.
 
 The prompt is unchanged after this test. Per-note assessments are saved through
 `experiment.py review --case`; the ignored experiment `assessment.md` records

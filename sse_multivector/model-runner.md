@@ -524,6 +524,28 @@ again. Reused results contribute zero new attempts or usage. Reported costs are
 catalog estimates, not invoices; missing usage is explicit. Reasoning tokens
 are already included in output tokens.
 
+For comparisons that need original generation costs, use
+`experiment.py show EXPERIMENT --generation-costs --json`, optionally with
+`--only CASE_ID` or `--note NOTE_ID`. This read-only view adds `generation_usage`
+without changing the existing `usage` totals, which still measure new attempts
+in the selected run. It verifies reused answers against their original receipts
+and counts each source call once by its resolved receipt file and line number.
+Duplicate answers do not count twice; distinct repeated calls do. Selected
+attempts and earlier attempts needed to obtain a reused source answer remain
+included, even when they failed. `sources` provides the verified receipt links;
+`source_calls_added` identifies calls absent from the new-attempt total.
+
+Missing usage, including an interrupted call with only SDK-normalized zero
+counters, makes the complete generation estimate null rather than zero.
+`known_catalog_cost_estimate_usd` and `known_provider_reported_cost_usd` retain
+only known subtotals. Token totals likewise cover only calls with known usage.
+Verified source billing reconciliations are honored without new lookups, model
+calls, edits to receipts, or changes to spending reservations. These totals
+include observed cache discounts, not an assumed production cache-hit rate.
+Compare completion/failure counts as well as cost; a successful-output subtotal
+is not the price of completing an unfinished batch or measured subscription
+quota consumption.
+
 Reuse checks share parsed manifests/configs, manifest hashes and verified runner
 provenance within one operation. Source receipt files are indexed by byte offset;
 each requested receipt is still read and checked against its saved hash and
