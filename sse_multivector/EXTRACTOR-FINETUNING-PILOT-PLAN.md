@@ -61,8 +61,9 @@ The destination must be new. The manifest records input/output hashes and
 note IDs; evaluation starts with subject-prompt inputs containing no teacher
 answers. Its mask inputs must use the candidate's generated subjects. Data stays ignored
 under `target/`. Conversion checks every selection using the existing mask
-decoder. The rental has started and Qwen baseline evaluation is underway;
-completed candidate baselines and fine-tunes remain pending.
+decoder. The first rental stopped after a local monitoring error, before any
+baseline output or training completed. Its files were retrieved and the instance
+was deleted; no replacement rental is authorized.
 
 The release model still needs prominence. The requirements below describe the
 larger evaluation and release decision; prominence is excluded only from this
@@ -116,7 +117,8 @@ Approved requirements:
 The staged experimental design below is proposed, not fully approved. Dataset
 sizes, exact training settings, hardware allocations, and individual spending
 authorizations remain open for that larger design. The informal rental below
-started on September 29; its full-size baseline and training results are pending.
+started and was deleted on September 29 after the monitoring error recorded
+below. No baseline or training completed.
 
 The release plan's **18 · Prepare training code for the fine-tuning pilot** is
 in progress: prepare code to fine-tune each candidate, save/reload its trained
@@ -254,7 +256,8 @@ hashes match the VM export. Read-only registry credentials successfully pulled
 this immutable reference using cached local layers; this does not measure a
 cold pull. VM containerd reports the manifest digest as its image ID, while
 local legacy Docker reports the config digest; the publication receipt records
-both. Full-size candidate execution has started; results are pending. Evidence is under
+both. Full-size candidate execution was interrupted by the local monitoring
+error below, before baseline output or training completed. Evidence is under
 `target/distillation-pilot-v1/launch-20260929/`, including
 `publication/publication-receipt.json`.
 Validation passed 117 shared-controller tests, seven pinned-CLI checks and
@@ -373,10 +376,11 @@ not establish semantic correctness or approval; semantic review remains open.
 
 CPU VM validation cannot establish candidate quality, CUDA kernel compatibility,
 full-model memory requirements or speed. Those are checked during the actual
-pilot; there is no separate throwaway GPU training run. Qwen baseline
-evaluation has started; completed baselines and fine-tunes remain pending.
+pilot; there is no separate throwaway GPU training run. The first attempt
+reached Qwen weight loading, then the local monitoring error stopped it. No
+baseline or training result is available.
 
-### Vast launch configuration — rental started
+### Vast launch configuration — first rental stopped
 
 [The launch configuration](distillation/vast-launch.json) freezes the search,
 create options and admission limits. It reuses the existing private Docker Hub
@@ -833,11 +837,27 @@ Registry verification is complete. The availability watch found a compatible off
 passed preparation.
 The recorded rental rate was $1.6555555556/hour including 300 GB storage. The immutable operation is
 `target/distillation-pilot-v1/launch-20260929/operation/`. Its persistent local
-`run --watch` supervisor is active. Image startup, direct SSH, frozen-input
-verification and automatic worker start passed. Qwen preflight passed and its
-weights downloaded; baseline evaluation is underway. Results are pending. The cleanup deadline is **September 30, 04:38:30 UTC**, leaving
-15 minutes before the 13-hour session ceiling. Establish each candidate's
-two-step baseline
-before fine-tuning and compare on the same held-out notes using its own generated
-subjects. Paid work must fit the approved $25 total and ledger admission.
-Prominence and the larger dataset-size schedule can wait.
+supervisor stopped the first attempt after a local monitoring error. Image
+startup, direct SSH, frozen-input verification and automatic worker start passed.
+Qwen preflight and weight download completed; no baseline output or training
+completed.
+
+At 15:58:47 UTC the agent imported the frozen local runner while reading remote
+progress, without disabling Python bytecode writes. Python created
+`transport/control/__pycache__/vast_full_build.cpython-313.pyc`. The next
+supervisor manifest check rejected the unexpected file and invoked `stop`. This
+was caused by the agent's local monitoring command; no GPU failure was reported.
+Retrieval of 15 work files was verified at 15:59:17 UTC, and deletion was confirmed
+by two absent inventories at **15:59:27 UTC**. A separate inventory was also
+empty. No remote code edits or dependency installs occurred.
+
+The accidental cache is preserved in `operation/monitoring-failure/`; moving it
+out restored the original frozen transport hashes and file set. A local
+`python3 -B` import then passed the production manifest checks without creating
+cache files. All future inspection of frozen Python modules must disable
+bytecode writes before import. This verification is local and incurred no rental.
+
+The preliminary resource charge was **$0.338**. The supervisor has exited.
+Reconcile the final bill and discuss this failure with the user before any
+replacement rental. No baseline/training comparison or candidate selection can
+be made from this attempt.

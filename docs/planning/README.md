@@ -108,7 +108,7 @@ learning both prompted tasks: generate subjects, then mask each generated
 subject. Direct-mask generation is deferred for this informal experiment.
 The approved evaluation batching processes up to four independent masks from
 one note together, using the same settings before and after training.
-The accepted setup, baseline and initial fine-tune experiment maximum is $25; execution has started. This does not complete
+ This does not complete
 release-model selection. The user approved automated local VM validation before
 rented-hardware deployment: baseline, real training, interruption/resume,
 save/reload and evaluation with a tiny model. Those local tests pass, including
@@ -128,8 +128,9 @@ per candidate, and one 96 GB GPU within the approved $25 total. On September 29
 the user authorized publication and one rental at up to $1.66/hour including
 storage, for at most 13 hours with a 12-hour worker window. The tested image is
 published and verified. The September 29 configuration cost $1.6555555556/hour including storage. Image startup, direct SSH and frozen-input verification
-passed; the worker started automatically and Qwen baseline evaluation is
-underway. Persistent local supervision is active; results are pending. GPU compatibility, memory use, speed and
+passed, and the worker started automatically. An agent monitoring import wrote
+a cache file into the frozen local transport; the supervisor rejected it and
+stopped the workload. Retrieval was verified on September 29. No baseline or training completed. Preliminary charges were $0.338. No replacement rental is authorized. GPU compatibility, memory use, speed and
 quality are checked during the actual pilot.
 Node 17 is blue and in progress: the user reports comparing
 Muse high and Astra low. No teacher is selected. Task 17 also requires an A/B

@@ -307,7 +307,7 @@ This is a dated checkpoint; current task status appears in `release-plan.json`.
 | 17 · Compare teachers | In progress; no completed selection established. |
 | 26 · Collapse equal-note navigation steps | Implemented and regression-tested; validation on the rebuilt hierarchy is waiting. |
 | 13 · Define Nostr hierarchy protocol | Not started. |
-| 18 · Prepare training code for the fine-tuning pilot | Candidate recipes and Vast limits frozen locally; VM tests training and SSH deployment. Image published and verified; the experiment started September 29 within the approved $25 limit. Workload results pending. |
+| 18 · Prepare training code for the fine-tuning pilot | Candidate recipes and Vast limits frozen locally; VM tests training and SSH deployment. Image published and verified; the September 29 run stopped after an agent monitoring error. Retrieval/deletion verified; no baseline or training completed. |
 | 24 · Recover missing node memberships | Not started. |
 | 25 · Handle node equivalence and TRUE cycles | Complete for HR02: exact-mask consolidation and reversible cycle handling are implemented and tested, with naming/browser integration. The merge rules remain provisional; hierarchy-quality review belongs to 02. |
 | 21 · Assess HDBSCAN at launch scale | No further progress; earlier investigation remains evidence, not launch-scale validation. |
@@ -494,8 +494,8 @@ uses up to four masks from one note per batch; training settings are unchanged.
 Direct-mask generation is deferred for this informal pilot.
 This initial informal experiment may use current saved annotations before
 prominence and final teacher selection are ready. Local data is prepared;
-the rental started September 29 and candidate baseline/training results are
-pending. See the
+the September 29 rental stopped after an agent monitoring error, with no
+completed baseline or training. Retrieval and deletion were verified. See the
 [current pilot preparation](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md#status-and-scope).
 The release model still requires prominence. Candidate selection, the larger
 pilot's evaluation requirements, full-data gates and paid-resource approval
@@ -526,8 +526,11 @@ candidate and one 96 GB GPU. On September 29 the user authorized publication
 and one rental, then approved up to $1.66/hour including storage for at most
 13 hours, retaining the 12-hour worker window and $25 total. The full planned
 allowance is $23.78 including transfers. The exact tested image is published and its identity and read-only pulling are verified; launch-specific settings record the approved limits without changing the image.  The September 29 configuration cost $1.6555555556/hour including 300 GB storage. Image startup, direct SSH and
-frozen-input verification passed. Qwen preflight passed, its weights downloaded and baseline evaluation began.
-Persistent local supervision is active; baseline and training results are pending.
+frozen-input verification passed. Qwen preflight and weight download completed. A local agent monitoring import
+then wrote an unexpected Python cache file into the frozen transport. The supervisor rejected the changed file set, stopped the workload and verified retrieval. No baseline output or training
+completed, and no GPU failure was reported. The cache is preserved outside
+transport; its original manifest verifies, including after a bytecode-disabled
+local import. Preliminary charges were $0.338. No replacement rental is authorized.
 The user accepted a $25 total maximum for GPU setup, baselines and initial
 fine-tunes across the three candidates, including storage, transfers and failed
 attempts. Budget admission passed before the run; no replacement rental is authorized without discussing any failure with the user.
