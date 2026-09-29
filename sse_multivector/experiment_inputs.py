@@ -11,9 +11,11 @@ import re
 
 try:
     from . import extraction_pipeline as engine
+    from . import grouped_masks
     from .prepare_category_title_inputs import prepare as prepare_titles
 except ImportError:
     import extraction_pipeline as engine
+    import grouped_masks
     from prepare_category_title_inputs import prepare as prepare_titles
 
 
@@ -312,6 +314,8 @@ def prepare(dataset, source, template):
             }
             for g in groups
         ]
+    elif adapter == "grouped_masks":
+        cases = grouped_masks.prepare(source, dataset.get("select"))
     elif adapter == "masks":
         format_ = dataset.get("mask_format", "word_positions")
         items, _ = engine.prepare_mask_inputs(
@@ -346,6 +350,8 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter == "grouped_masks":
+        result.update(grouped_masks.validate(case, raw))
     if adapter == "prominence":
         value = json.loads(
             raw, object_pairs_hook=engine._position_decoder().unique_object

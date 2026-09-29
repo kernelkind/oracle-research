@@ -280,6 +280,7 @@ def prepare(args):
             for p in (
                 Path(__file__),
                 Path(inputs.__file__),
+                Path(inputs.grouped_masks.__file__),
                 Path(engine.__file__),
                 Path(__file__).with_name("mask_positions.py"),
             )

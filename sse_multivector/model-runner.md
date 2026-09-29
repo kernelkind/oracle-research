@@ -596,6 +596,17 @@ production preparation and decoding functions:
   Templates require `{POST}`, `{SUBJECT}`, and (for the default
   `mask_format: "word_positions"`) `{INDEXED_POST}`.
   Legacy `mask_format: "fragments"` is available for historical comparisons.
+- `dataset.adapter: "grouped_masks"`: the same saved-post/subject source and
+  optional post-ID `select`, but one case/call per post. Templates use `{POST}`,
+  `{INDEXED_POST}` and `{SUBJECTS}`; the last is a JSON array of `id`/`subject`
+  entries. Context and existing masks remain evidence, never model inputs.
+  Output is `{"results":[{"id":"S1","meaning":"...","expressible":true,
+  "evidence":"...","mask":[[1,1]]},...]}` in input order, including empty masks.
+  Missing, duplicate, foreign or reordered IDs fail validation; every mask uses
+  the production position decoder. Different subjects may overlap. `show`
+  includes per-subject `mask_results`, decoded spans and optional exact-span
+  comparison with validated saved `byte_spans`/`fragments`. Baselines are not
+  ground truth; these comparisons are mechanical, not semantic judgments.
 - `dataset.adapter: "prominence"`: `path` points to a `cases` array, with one
   saved mask per case. Optional `select` lists case IDs. Each case contains
   `id`, `node_id`, `node_title`, `note_id`, `text` (the complete original post),
