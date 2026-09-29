@@ -95,6 +95,19 @@ const sol = {
     tiers: [{ inputTokensAbove: 272000, input: 4, output: 15, cacheRead: 0.4, cacheWrite: 5 }] },
 };
 
+// The pinned catalog predates GPT-6.1 Sol. Exact metadata, verified 2026-09-29:
+// https://developers.openai.com/api/docs/models/gpt-6.1-sol
+// https://developers.openai.com/api/docs/pricing
+// API reference rates are not subscription charges or quota measurements.
+const sol61 = {
+  id: 'gpt-6.1-sol', name: 'GPT-6.1 Sol',
+  provider: 'openai-codex', api: 'openai-codex-responses', baseUrl: 'https://chatgpt.com/backend-api',
+  input: ['text', 'image'], reasoning: true, contextWindow: 1050000, maxTokens: 128000,
+  thinkingLevelMap: { off: null, minimal: null, low: 'low', medium: 'medium', high: 'high', xhigh: 'xhigh', max: 'max' },
+  cost: { input: 2, output: 10, cacheRead: 0.1, cacheWrite: 2.5,
+    tiers: [{ inputTokensAbove: 272000, input: 4, output: 15, cacheRead: 0.2, cacheWrite: 5 }] },
+};
+
 // This pinned catalog predates V4.1. Exact model metadata, not a V4 alias.
 // OpenRouter /api/v1/models inspected 2026-09-16; catalog costs are not invoices or caps.
 const deepseek = {
@@ -172,7 +185,8 @@ export async function prepare(config) {
   if (!config.prompt.isWellFormed()) throw new Error('prompt must contain well-formed Unicode; unpaired surrogates are unsupported');
   let model;
   if (config.provider === 'openai-codex') {
-    model = config.model === sol.id ? sol
+    model = config.model === sol61.id ? sol61
+      : config.model === sol.id ? sol
       : config.model === luna.id ? luna
       : Object.hasOwn(OPENAI_CODEX_MODELS, config.model) ? OPENAI_CODEX_MODELS[config.model] : undefined;
     if (!model) throw new Error('Unknown subscription model in the pinned pi-ai catalog; no model substitution');

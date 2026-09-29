@@ -259,6 +259,34 @@ test('GPT-6 Sol uses its exact subscription model and requested effort without s
   await assert.rejects(prepare(config(route, { max_output_tokens: 100 })), /output.*cap|output.*limit/i);
 });
 
+test('GPT-6.1 Sol sends the exact subscription model with supported reasoning and pricing', async () => {
+  const route = { ...codex, model: 'gpt-6.1-sol' };
+  const request = await prepare(config(route, { schema }));
+  const result = await preview(request);
+  assert.equal(request.model.api, 'openai-codex-responses');
+  assert.equal(request.model.contextWindow, 1050000);
+  assert.equal(request.model.maxTokens, 128000);
+  assert.deepEqual(request.model.cost, {
+    input: 2, output: 10, cacheRead: 0.1, cacheWrite: 2.5,
+    tiers: [{ inputTokensAbove: 272000, input: 4, output: 15, cacheRead: 0.2, cacheWrite: 5 }],
+  });
+  assert.equal(result.body.model, 'gpt-6.1-sol');
+  assert.deepEqual(result.body.reasoning, { effort: 'low' });
+  assert.equal(result.body.input[0].content[0].text, prompt);
+  assert.deepEqual(result.body.text.format.schema, schema);
+  assert.equal(result.body.max_output_tokens, undefined);
+  assert.equal(result.credentials_read, false);
+  assert.equal(result.network_requests, 0);
+  for (const reasoning of ['medium', 'high', 'xhigh', 'max']) {
+    const other = await preview(await prepare(config({ ...route, reasoning })));
+    assert.deepEqual(other.body.reasoning, { effort: reasoning });
+  }
+  for (const reasoning of ['off', 'minimal']) {
+    await assert.rejects(prepare(config({ ...route, reasoning })), /reasoning/);
+  }
+  await assert.rejects(prepare(config(route, { max_output_tokens: 100 })), /output.*cap|output.*limit/i);
+});
+
 test('invalid requests fail before transport without silently rewriting prompt, model, schema, or caps', async () => {
   for (const extra of [{ stage: 'subjects' }, { messages: [] }, { system: 'extra' }, { tools: [] }, { prompt: '\ud800' }, { prompt: 1 }, { schema: null }, { schema: [] }, { schema: { type: 'invented' } }, { schema: { $ref: 'https://example.com/remote-schema' } }]) {
     await assert.rejects(prepare(config(openrouter, extra)));

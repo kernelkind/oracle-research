@@ -50,6 +50,15 @@ Model limits and reference pricing come from the official
 [release entry](https://developers.openai.com/api/docs/changelog#sep-22),
 checked September 24, 2026. Catalog cost estimates are not subscription bills.
 
+`openai-codex` also accepts the exact model ID `gpt-6.1-sol`, with explicit
+metadata for the pinned SDK. It supports `low`, `medium`, `high`, `xhigh`, `max`,
+and `provider-default`; `off` and `minimal` are rejected. The subscription route
+and no-output-cap contract are unchanged. Reference API pricing is $2/M input,
+$0.10/M cached input, and $10/M output for short-context Standard requests;
+these rates are not subscription charges or measured quota use. Metadata was
+checked against the official [model page](https://developers.openai.com/api/docs/models/gpt-6.1-sol)
+and [pricing](https://developers.openai.com/api/docs/pricing) on September 29, 2026.
+
 ## Request
 
 The exact subscription model `gpt-6-luna` is also supplied explicitly for the
