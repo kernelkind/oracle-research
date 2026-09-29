@@ -229,7 +229,8 @@ retrieval and verified destruction. `distillation_deploy.py` only freezes inputs
 and executes the candidate sequence; `distillation_vast.py` describes that work.
 The model recipes, prompts, data, batching and $25 total maximum are unchanged.
 The first published image reached Vast, but that rental ended before any
-baseline or training completed. The current rebuilt image is local only.
+baseline or training completed. The rebuilt image is now published and verified
+private; no replacement rental has started.
 
 The failure audit reproduced empty successful destroy output, distinct live
 and offer bundle IDs, and missing/null transfer counters in the old controller.
@@ -253,8 +254,14 @@ includes the manual-deletion policy and passed all 24 VM tests in
 `target/distillation-vm-clean-deployment/attempt-1790699869508347098`.
 It reused the VM disk and dependency cache with a new source snapshot. All
 three candidate preflight reports, tiny-model adapter weights and evaluation
-metrics match the previous rehearsal exactly. The VM is stopped, and the new
-image is exported locally but unpublished. Historical image/package receipts
+metrics match the previous rehearsal exactly. The VM is stopped. The rebuilt
+image is published and verified private as
+`docker.io/kernelkind/oracle-mvp@sha256:ec161e009f607fdeb6e714c525e1c8eae07a562cd4d205c2579ad9b65c72f0db`.
+Source hashes, filesystem layers and runtime configuration match the VM export;
+read-only rental credentials can pull the digest, and anonymous manifest access
+returns HTTP 401. Evidence is under
+`target/distillation-pilot-v1/launch-20260929-v2/publication/`.
+Historical image/package receipts
 are preserved; changed code requires a new image and package.
 The previous image was published and verified on September 29 as
 `docker.io/kernelkind/oracle-mvp@sha256:f6bafc128b7fed0eda387f56b34900bc794800cf9e38871b59a7c1679498f956`.
@@ -850,8 +857,11 @@ ledger accounting and the lifetime ceiling still apply.
 The informal dataset is prepared for one fine-tune per candidate on both
 existing prompted tasks. The deletion-policy change is included in the rebuilt
 image and frozen `package-v9`; all 24 local VM tests passed, including training
-and SSH deployment. Next, publish and verify this new private image before
-preparing another rental. The old frozen launch retains its original code.
+and SSH deployment. The rebuilt private image is published and verified.
+The user approved proceeding and required continuous observation throughout the
+rental. Next, select an available approved offer, freeze a new operation and
+commit its budget reservation. Observe startup, execution, result retrieval
+and explicit deletion within the approved limits. The old frozen launch retains its original code.
 Candidate recipes and Vast limits are unchanged. The prior publication and
 one rental were authorized within $25, at up to $1.66/hour for at most 13 hours.
 The saved split inspection found no clear complete-note duplicates or close paraphrases across
@@ -890,6 +900,7 @@ expiry without SSH, hardware rejection, result retrieval and explicit deletion.
 The legacy GTE path retains its previous behavior. The failed frozen operation
 and published image are historical evidence and have not been modified.
 
-Reconcile the final bill and discuss this failure with the user before any
-replacement rental. No baseline/training comparison or candidate selection can
+The failure was discussed with the user, who requested manual deletion and
+then approved proceeding with continuous observation. Reconcile the first
+rental's final bill when eligible. No baseline/training comparison or candidate selection can
 be made from this attempt.

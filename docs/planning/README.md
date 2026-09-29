@@ -127,7 +127,9 @@ interruption. `run --watch` stops work and attempts retrieval when needed; only
 an explicit `stop` command deletes the instance. Billing continues until that
 operator action. The rebuilt image and `package-v9` passed all 24 local VM
 tests on September 29, including real SSH training/retrieval and all three
-candidate preflights. The new image is exported locally and unpublished; no replacement GPU execution has started.
+candidate preflights. The rebuilt image is published and verified private; read-only image pulling is verified. The user approved proceeding
+with continuous observation through execution, retrieval and explicit deletion.
+Availability is being checked; no replacement rental has started.
 Candidate settings and Vast limits are frozen locally: BF16 LoRA, 128 steps
 per candidate, and one 96 GB GPU within the approved $25 total. On September 29
 the user authorized publication and one rental at up to $1.66/hour including
@@ -135,7 +137,7 @@ storage, for at most 13 hours with a 12-hour worker window. The tested image is
 published and verified. The September 29 configuration cost $1.6555555556/hour including storage. Image startup, direct SSH and frozen-input verification
 passed, and the worker started automatically. An agent monitoring import wrote
 a cache file into the frozen local transport; the supervisor rejected it and
-stopped the workload. Retrieval was verified on September 29. No baseline or training completed. Preliminary charges were $0.338. No replacement rental is authorized. GPU compatibility, memory use, speed and
+stopped the workload. Retrieval was verified on September 29. No baseline or training completed. Preliminary charges were $0.338.  GPU compatibility, memory use, speed and
 quality are checked during the actual pilot.
 Node 17 is blue and in progress: the user reports comparing
 Muse high and Astra low. No teacher is selected. Task 17 also requires an A/B
