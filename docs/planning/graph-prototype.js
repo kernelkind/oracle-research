@@ -14,7 +14,8 @@
   let tasks;
   let links;
   let graph;
-  let layout;
+  let elk;
+  let renderGeneration = 0;
   let focusId;
   let allMode = false;
   const history = [];
@@ -152,7 +153,7 @@
   }
 
   function render() {
-    if (layout) layout.stop();
+    const generation = ++renderGeneration;
     const visible = visibleTaskIds();
     const visibleLinks = new Set(links.filter(link => visible.has(link.source) &&
       visible.has(link.target) && (!link.helpful || inputsCheckbox.checked))
@@ -174,7 +175,8 @@
       graph.edges().forEach(edge => edge.toggleClass('hidden', !visibleLinks.has(edge.id())));
     });
     const hiddenLinks = links.length - visibleLinks.size;
-    statusElement.textContent = `Showing ${visible.size} of ${tasks.size} tasks · ${hiddenLinks} other links hidden. Click a task to focus; scroll to zoom, drag to pan.`;
+    const summary = `Showing ${visible.size} of ${tasks.size} tasks · ${hiddenLinks} other links hidden.`;
+    statusElement.textContent = `${summary} Arranging layout…`;
     taskSelect.value = focusId;
     depthSelect.disabled = allMode;
     directionSelect.disabled = allMode;
@@ -182,20 +184,65 @@
     backButton.disabled = history.length === 0;
     focusButton.disabled = !allMode;
     updateDetails();
-    layout = graph.elements(':visible').layout({
-      name: 'elk',
-      fit: true,
-      padding: 35,
-      animate: false,
-      nodeDimensionsIncludeLabels: true,
-      elk: {
-        algorithm: 'layered',
+    const model = {
+      id: 'release-plan',
+      layoutOptions: {
+        'elk.algorithm': 'layered',
         'elk.direction': 'RIGHT',
+        'elk.edgeRouting': 'ORTHOGONAL',
         'elk.spacing.nodeNode': '42',
         'elk.layered.spacing.nodeNodeBetweenLayers': '95',
       },
+      children: sortedTasks().filter(task => visible.has(task.id)).map(task => {
+        const node = graph.getElementById(task.id);
+        return {id: task.id, width: node.outerWidth(), height: node.outerHeight()};
+      }),
+      edges: links.filter(link => visibleLinks.has(link.id)).map(link => ({
+        id: link.id, sources: [link.source], targets: [link.target],
+      })),
+    };
+    elk.layout(model).then(result => {
+      if (generation !== renderGeneration) return;
+      const positions = new Map(result.children.map(node => [node.id, {
+        x: node.x + node.width / 2,
+        y: node.y + node.height / 2,
+      }]));
+      graph.batch(() => {
+        graph.nodes().forEach(node => {
+          if (positions.has(node.id())) node.position(positions.get(node.id()));
+        });
+        for (const route of result.edges) {
+          const edge = graph.getElementById(route.id);
+          const {startPoint: start, endPoint: end, bendPoints: bends = []} = route.sections[0];
+          const source = positions.get(edge.source().id());
+          const target = positions.get(edge.target().id());
+          const dx = end.x - start.x;
+          const dy = end.y - start.y;
+          const lengthSquared = dx * dx + dy * dy;
+          const length = Math.sqrt(lengthSquared);
+          // Cytoscape expresses bends relative to the line between endpoints.
+          // Convert ELK's absolute points without changing its routing.
+          const style = {
+            'curve-style': bends.length ? 'segments' : 'straight',
+            'source-endpoint': [start.x - source.x, start.y - source.y],
+            'target-endpoint': [end.x - target.x, end.y - target.y],
+          };
+          if (bends.length) {
+            style['segment-weights'] = bends.map(point =>
+              ((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSquared);
+            style['segment-distances'] = bends.map(point =>
+              ((point.y - start.y) * dx - (point.x - start.x) * dy) / length);
+          }
+          edge.style(style);
+        }
+      });
+      graph.fit(graph.elements(':visible'), 35);
+      statusElement.textContent = `${summary} Layout ready. Click a task to focus; scroll to zoom, drag to pan.`;
+    }).catch(error => {
+      if (generation !== renderGeneration) return;
+      statusElement.setAttribute('role', 'alert');
+      statusElement.textContent = `Could not arrange graph: ${error.message}`;
     });
-    layout.run();
   }
 
   function chooseFocus(id) {
@@ -243,8 +290,8 @@
         {selector: 'node.focused', style: {'border-width': 4, 'border-color': '#f1d08b'}},
         {selector: 'edge', style: {
           width: 2, 'line-color': '#9fb1c4', 'target-arrow-color': '#9fb1c4',
-          'target-arrow-shape': 'triangle', 'curve-style': 'taxi',
-          'taxi-direction': 'horizontal', 'taxi-turn': '50%',
+          'target-arrow-shape': 'triangle', 'curve-style': 'straight',
+          'edge-distances': 'endpoints',
         }},
         {selector: 'edge.helpful', style: {
           'line-style': 'dashed', 'line-color': '#c1a9df',
@@ -259,11 +306,10 @@
 
   async function start() {
     try {
-      if (typeof cytoscape !== 'function' || typeof ELK !== 'function' ||
-        typeof cytoscapeElk !== 'function') {
+      if (typeof cytoscape !== 'function' || typeof ELK !== 'function') {
         throw new Error('Graph libraries did not load');
       }
-      if (!cytoscape('layout', 'elk')) cytoscape.use(cytoscapeElk);
+      elk = new ELK();
       const response = await fetch('release-plan.json', {cache: 'no-store'});
       if (!response.ok) throw new Error(`The task file returned HTTP ${response.status}`);
       ({tasks, links} = readPlan(await response.json()));

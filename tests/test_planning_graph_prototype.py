@@ -79,6 +79,47 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                         time.sleep(0.1)
                     self.fail("Prototype did not reach expected state: " + predicate)
 
+                def check_routes():
+                    wait_for("document.querySelector('#graph-status')?.textContent.includes('Layout ready')")
+                    geometry = json.loads(evaluate("""JSON.stringify((() => {
+                        const cy = document.querySelector('#graph')._cyreg.cy;
+                        return {
+                            nodes: cy.nodes(':visible').map(node => ({
+                                id: node.id(), box: node.boundingBox({includeLabels: false})})),
+                            edges: cy.edges(':visible').map(edge => ({
+                                id: edge.id(), source: edge.source().id(), target: edge.target().id(),
+                                points: [edge.sourceEndpoint(), ...(edge.segmentPoints() || []),
+                                         edge.targetEndpoint()],
+                                arrow: edge.style('target-arrow-shape'),
+                                line: edge.style('line-style')})),
+                        };
+                    })())"""))
+                    edges = geometry["edges"]
+                    for index, edge in enumerate(edges):
+                        self.assertEqual(edge["arrow"], "triangle", edge["id"])
+                        self.assertEqual(edge["line"], "dashed" if edge["id"].endswith("helpful") else "solid")
+                        for other in edges[index + 1:]:
+                            if edge["target"] == other["target"]:
+                                first, second = edge["points"][-1], other["points"][-1]
+                                separation = ((first["x"] - second["x"]) ** 2
+                                              + (first["y"] - second["y"]) ** 2) ** 0.5
+                                self.assertGreater(separation, 8,
+                                                   f"Incoming arrows overlap: {edge['id']} and {other['id']}")
+                        for first, second in zip(edge["points"], edge["points"][1:]):
+                            self.assertLess(min(abs(first["x"] - second["x"]),
+                                                abs(first["y"] - second["y"])), 0.01, edge["id"])
+                            for node in geometry["nodes"]:
+                                if node["id"] in (edge["source"], edge["target"]):
+                                    continue
+                                box = node["box"]
+                                crosses_box = (
+                                    min(first["x"], second["x"]) < box["x2"] - 0.01
+                                    and max(first["x"], second["x"]) > box["x1"] + 0.01
+                                    and min(first["y"], second["y"]) < box["y2"] - 0.01
+                                    and max(first["y"], second["y"]) > box["y1"] + 0.01)
+                                self.assertFalse(crosses_box, f"{edge['id']} crosses task {node['id']}")
+                    return geometry
+
                 def capture(name):
                     if directory := os.environ.get("PLANNING_SCREENSHOT_DIR"):
                         destination = Path(directory)
@@ -95,6 +136,7 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 url = f"http://127.0.0.1:{server.server_port}/"
                 call("browsingContext.navigate", {"context": context, "url": url, "wait": "complete"})
                 wait_for("document.querySelector('#graph-status')?.textContent.includes('Showing')")
+                wait_for("document.querySelector('#graph-status')?.textContent.includes('Layout ready')")
                 self.assertEqual(evaluate("document.title"), "Oracle release plan · task graph")
                 self.assertFalse(evaluate("document.body.innerText.includes('Earlier draw.io')"))
                 for retired in ("october-18-release.drawio", "vendor/viewer-static.min.js", "vendor/LICENSE.drawio"):
@@ -110,7 +152,20 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertIn("Handle node equivalence and TRUE cycles", evaluate("document.querySelector('#details').innerText"))
                 self.assertIn("IN PROGRESS", evaluate("document.querySelector('#details').innerText"))
                 self.assertTrue(evaluate("document.querySelector('#graph canvas')?.getBoundingClientRect().width > 500"))
+                self.assertGreaterEqual(sum(edge["target"] == "02" for edge in check_routes()["edges"]), 3)
                 capture("focused")
+
+                evaluate("document.querySelector('#focus-task').value = '06'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
+                mixed_routes = check_routes()
+                self.assertTrue(any(edge["line"] == "dashed" for edge in mixed_routes["edges"]))
+                self.assertTrue(any(edge["line"] == "solid" for edge in mixed_routes["edges"]))
+                capture("pilot-connections")
+                evaluate("document.querySelector('#show-inputs').click()")
+                self.assertTrue(all(edge["line"] == "solid" for edge in check_routes()["edges"]))
+                evaluate("document.querySelector('#show-inputs').click()")
+                self.assertEqual(check_routes(), mixed_routes, "The same view must produce the same routes")
+                evaluate("document.querySelector('#focus-task').value = '02'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
+                check_routes()
 
                 evaluate("document.querySelector('#direction').value = 'before'; document.querySelector('#direction').dispatchEvent(new Event('change'))")
                 before_count = int(evaluate("document.querySelector('#graph-status').textContent.match(/Showing (\\d+)/)[1]"))
@@ -126,10 +181,12 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
 
                 evaluate("document.querySelector('#depth').value = '0'; document.querySelector('#depth').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#graph-status').textContent.includes('Showing 1 of ')")
+                self.assertEqual(check_routes()["edges"], [])
                 evaluate("document.querySelector('#show-all').click()")
                 wait_for(f"document.querySelector('#graph-status').textContent.includes('Showing {total_count} of {total_count} tasks')")
                 self.assertGreaterEqual(total_count, 25)
                 self.assertTrue(evaluate("document.querySelector('#depth').disabled"))
+                check_routes()
                 capture("all-tasks")
 
                 # The graph must be derived from the served task data, not draw.io.

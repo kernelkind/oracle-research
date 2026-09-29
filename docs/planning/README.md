@@ -74,6 +74,11 @@ Open [the planning root](index.html) on the tailnet host for the
 read-only dependency view. It loads `release-plan.json` on every visit and
 arranges the graph automatically. It does not change the draft plan.
 
+ELK calculates both task positions and orthogonal connection routes. The viewer
+uses those routes and attachment points so arrows entering a task remain
+separate. Refocusing or changing filters recalculates the visible graph; no
+task-specific coordinates are stored in the plan.
+
 The graph initially focuses on task 02. Choose another task or click a
 node to refocus. Show zero to three steps in either or both directions, or
 show all tasks. A `+N other links` label means the node has arrows not drawn in
@@ -83,19 +88,17 @@ dashed arrows mean helpful inputs. Start conditions remain in task descriptions
 because task links do not encode them separately. No user choice
 or approval is inferred from a task's status.
 
-The browser uses local copies of Cytoscape.js 3.34.3, ELK.js 0.12.0 and
-cytoscape-elk 2.3.0; no external service or build step is needed. The bundles
-come from their npm source tarballs:
+The browser uses local copies of Cytoscape.js 3.34.3 and ELK.js 0.12.0;
+no external service or build step is needed. The bundles come from their
+npm source tarballs:
 [Cytoscape.js](https://registry.npmjs.org/cytoscape/-/cytoscape-3.34.3.tgz),
-[ELK.js](https://registry.npmjs.org/elkjs/-/elkjs-0.12.0.tgz), and
-[cytoscape-elk](https://registry.npmjs.org/cytoscape-elk/-/cytoscape-elk-2.3.0.tgz).
+[ELK.js](https://registry.npmjs.org/elkjs/-/elkjs-0.12.0.tgz).
 Their licenses are retained in `vendor/`.
 SHA-256 (in that order):
 
 ```text
 5f3b5b529546d5af1fc5628590af033b74511a5b6f789f5f4682845863228b91  cytoscape.min.js
 1222e44f953ce7746af23801e723708f8e6f436b8b377a6a5fc7552f34a307b3  elk.bundled.js
-25acbb9dea9b0dc6fef0e79b697547ee56e579f0e1c22ae4353131e72c7e140a  cytoscape-elk.js
 ```
 
 ## Planning conventions
