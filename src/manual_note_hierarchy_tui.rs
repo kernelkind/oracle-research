@@ -519,6 +519,12 @@ impl ManualNoteExplorer {
                         terminal_safe(&mask.ids.join(", ")),
                         notes.mask_cursor + 1
                     )
+                } else if self
+                    .category_masks
+                    .as_ref()
+                    .is_some_and(|masks| masks.spans(&self.category().node_id, id).is_empty())
+                {
+                    " · No selected fragments (empty mask)".to_owned()
                 } else if matches!(notes.scope, NoteScope::OutsideChildren)
                     && self.category_masks.is_some()
                 {

@@ -223,7 +223,12 @@ fn masks_reject_bad_bytes_wrong_memberships_and_missing_descendant_evidence() {
                 spec["note_masks"]["coffee"]["N001"] = json!([range("coffee with")]);
             }
             6 => {
-                spec["note_masks"]["tea"]["N001"] = json!([]);
+                // Empty selections are valid, but the note's explicit entry
+                // must still exist so absent data is not treated as an empty mask.
+                spec["note_masks"]["tea"]
+                    .as_object_mut()
+                    .unwrap()
+                    .remove("N001");
             }
             _ => unreachable!(),
         }

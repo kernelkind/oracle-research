@@ -326,14 +326,14 @@ impl ManualNoteHierarchy {
             }
             for (note, spans) in notes {
                 let text = &self.notes[note].content;
-                if spans.is_empty()
-                    || spans.iter().any(|&(start, end)| {
-                        start >= end
-                            || end > text.len()
-                            || !text.is_char_boundary(start)
-                            || !text.is_char_boundary(end)
-                    })
-                {
+                // An explicit empty selection keeps an SP subject's source post
+                // inspectable without inventing a highlighted fragment.
+                if spans.iter().any(|&(start, end)| {
+                    start >= end
+                        || end > text.len()
+                        || !text.is_char_boundary(start)
+                        || !text.is_char_boundary(end)
+                }) {
                     return Err(format!("invalid UTF-8 mask ranges for {category}/{note}").into());
                 }
                 spans.sort_unstable();

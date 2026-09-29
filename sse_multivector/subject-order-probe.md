@@ -103,3 +103,112 @@ in `assessment.md`; it is not ground truth or user approval.
 Sources: [paper](https://arxiv.org/abs/2004.12488),
 [upstream implementation](https://github.com/danielbakkelund/ophac),
 [pinned release](https://pypi.org/project/ophac/0.5.4/).
+
+## SMv1 — separate mutual subject-matching experiment
+
+The user approved an isolated end-to-end experiment on the **same six posts**,
+using SOv1's saved subject vectors and HR02's original mask vectors. SMv1 does
+not run OPHAC, HDBSCAN, a placement model, or a title model. It does not change
+SOv1, HR02, the prompts, or any saved source masks. Its settings are provisional
+development choices, not validated thresholds or a production architecture.
+
+The implemented procedure is
+[`subject_matching_probe.py`](subject_matching_probe.py):
+
+1. For each unique nonempty mask, find the closest mask from another post.
+   Keep numerical ties and deduplicate the resulting **post pairs**. This
+   uses mask-to-mask cosine only; empty-mask subjects do not supply searches.
+2. Within each selected post pair, compare every SP subject-text vector on
+   one side against every SP subject-text vector on the other. Empty-mask
+   subjects still participate here. Each subject selects its best counterpart
+   **within that other post**, not across the entire corpus. Keep ties.
+3. A pair must select each other and have subject cosine **>= 0.90** and mask
+   cosine **>= 0.80**. Find best choices before checking cutoffs or mask
+   availability; do not fall back to a weaker counterpart. If either mask is
+   empty, the pair is not merged. The two scores are not blended.
+4. Combine connected passing pairs. A–B and B–C can combine A, B, C without
+   requiring A–C to pass. Retain every constituent subject, mask, and source
+   reference. Matching titles alone never authorize merging. The procedure
+   does not repeatedly rematch merged groups or relax its cutoffs.
+5. Map the original SP parent–child links onto those groups, deduplicating
+   identical links. Links internal to one group remain in the provenance but
+   are not displayed as self-loops: the preserved ordering is ancestor-or-equal,
+   not SOv1's stricter ancestor-only requirement. If distinct groups form a
+   directed cycle, split **every merged group participating in any cycle** back
+   into its original subjects, then check again. Do not discard SP links,
+   choose one merge to blame, or force additional merges.
+6. Export all remaining subjects/groups and their mapped SP links to the
+   existing hierarchy browser. There is no additional parent-placement step,
+   transitive-edge reduction, equal-post collapse, or membership expansion.
+   Disconnected branches and unmatched subjects remain visible. Distinct names
+   within a merged group are displayed together, not replaced with a new title.
+
+All 18 empty-mask subject occurrences in this saved sample remain inspectable.
+Their original post references are retained; they do not acquire synthetic masks
+or vector IDs. The browser accepts explicitly empty selections and displays
+"No selected fragments (empty mask)" with the complete source post. Missing
+note-mask entries, invalid byte ranges, and missing child highlights still fail
+validation. Individual nonempty masks retain their original IDs and byte spans.
+
+The current diagnostic computes small, exhaustive cosine tables locally. This
+is not an approved million-post retrieval implementation. The familiar six-post
+sample tests mechanical behavior and browsing, not generalization. New posts
+would be needed before claiming that the proposed matching rule generalizes.
+Whether to adopt the rule or change its cutoffs remains open.
+
+### Run and inspect
+
+Outputs are ignored artifacts and an existing output directory is never
+overwritten. `results.json` contains the nearest-mask searches, post shortlist,
+every within-post-pair comparison, accepted pairs, cycle rollbacks, and final
+groups/links. `provenance.json` binds the run to source/vector hashes and keeps
+all original subject occurrences, SP links, and masks. `summary.json` reports
+mechanical counts and checks. `categories.json` is the existing browser format.
+The runner verifies source hashes and SSE identities, repeats the calculation
+for determinism, and checks that every original SP ancestor relationship is
+still represented or internal to a merged group. It performs no inference.
+
+Use a fresh output path for a replay; the initial saved experiment is `run`:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 -m sse_multivector.subject_matching_probe \
+  --source sse_multivector/hierarchy-refresh-v1 \
+  --probe target/subject-order-v1/run \
+  --output target/subject-matching-v1/replay
+```
+
+The browser must include the explicit-empty-mask support. Build it if needed:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+nix develop --command cargo build \
+  --target-dir target/infomap-review-build \
+  --bin sse-subject-navigation
+```
+
+Open the initial saved experiment:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+target/infomap-review-build/debug/sse-subject-navigation \
+  --categories target/subject-matching-v1/run/categories.json \
+  sse_multivector/hierarchy-refresh-v1/masked-posts.json
+```
+
+Append `--check` for noninteractive validation. Do not enable either display
+collapse option. `?` shows original SP references and mask IDs for a node;
+`N`, `D`, and `O` retain the existing browser meanings.
+
+Tests exercise the implementation and CLI with small source-bound fixtures:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 -m unittest \
+  sse_multivector.test_subject_matching_probe \
+  sse_multivector.test_ancestor_cosine_probe
+```
+
+`tests/category_empty_masks.rs` covers actual loading and N/D/O rendering of an
+empty selection. The existing category/mask/DAG suites cover the preserved
+validation and navigation behavior.
