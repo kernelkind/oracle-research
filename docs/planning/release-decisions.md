@@ -514,9 +514,15 @@ verified destruction. It replaces the separate distillation provider controller
 and SSH operator. Managed SSH uses `ssh-keygen -A && service ssh start`; the
 workload explicitly supplies its Python and runtime environment. The VM
 rehearses the shared remote path against a separate container; provider calls
-remain simulated. `run --watch` automatically resumes through completion and
-cleanup while its local process remains alive. It is not an independent watchdog;
-local interruption requires resuming the saved operation. No code edits or package
+remain simulated. The current `run --watch` resumes command workloads through
+execution and retrieval while its local process remains alive. Automatic
+deletion was removed at the user's request after the first rental failed.
+Completion and failures retain the instance. On expiry or interruption, the
+watcher requests a workload stop and attempts retrieval without deleting the
+instance, including when SSH is unavailable. Only an explicit `stop` command
+deletes it. Billing continues until deletion; the operator must act within the
+approved rental and spending limits. Local interruption requires resuming the
+saved operation. No code edits or package
 installs belong on a running rental. These tests cannot guarantee GPU execution
 or provider availability. Candidate
 quality, full-model memory use and CUDA compatibility are checked during
@@ -531,6 +537,9 @@ then wrote an unexpected Python cache file into the frozen transport. The superv
 completed, and no GPU failure was reported. The cache is preserved outside
 transport; its original manifest verifies, including after a bytecode-disabled
 local import. Preliminary charges were $0.338. No replacement rental is authorized.
+The manual-deletion policy is implemented and regression-tested locally; new
+frozen artifacts and local deployment rehearsal are required before another
+paid launch. The old frozen operation and published image remain unchanged.
 The user accepted a $25 total maximum for GPU setup, baselines and initial
 fine-tunes across the three candidates, including storage, transfers and failed
 attempts. Budget admission passed before the run; no replacement rental is authorized without discussing any failure with the user.

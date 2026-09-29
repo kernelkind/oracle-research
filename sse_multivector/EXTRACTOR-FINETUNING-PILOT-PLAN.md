@@ -331,13 +331,25 @@ Run the copied `transport/control/vast_full_build.py` with `--root` and `--confi
 `run --approve HASH --watch` uses its committed reservation and supervises execution.
 Bind the verified registry digest before freezing the operation.
 
-`run --watch` repeatedly resumes the shared runner until retrieval and deletion
-complete, or it reports a condition requiring attention. It preserves its first
-session deadline across restarts, leaves 15 minutes for cleanup before the
-13-hour ceiling, and invokes the existing `stop` path on expiry
-or controller errors. Run it in a persistent local session. It is not an independent
-watchdog: if the local process or host dies, an operator must resume `run --watch`
-or `stop`. The worker separately enforces its frozen runtime limit across all
+`run --watch` repeatedly resumes the shared runner through execution and
+retrieval. **Command workloads never automatically delete the instance.**
+Successful and failed jobs retain the instance after retrieval. Startup failures
+retain it without starting training. On expiry, controller errors or interruption,
+the watcher requests a workload stop and attempts retrieval, preserving the
+instance even when SSH or retrieval fails. The returned result reports that
+billing remains possible and manual stop is recommended.
+
+The explicit `stop` command stops the workload, retrieves available results and
+**deletes the instance**, confirming absence twice. This is the command operator
+action required to end the rental. A retained instance continues billing; stopping
+the worker does not stop rental charges or enforce the $25 ceiling. Budget
+admission, cost warnings and worker runtime limits remain in force.
+
+The watcher preserves its first session deadline across restarts and leaves
+15 minutes for retrieval and explicit deletion before the approved 13-hour
+ceiling. An operator must act within that allowance. Run supervision in a
+persistent local session; if the local process or host dies, an operator must
+resume it. The worker separately enforces its frozen runtime limit across all
 candidates and kills download/training subprocess groups on timeout or stop.
 Application failures are retrieved without retrying training.
 
@@ -444,14 +456,15 @@ renting a replacement. A live bundle ID need not equal the selected quote ID.
 Hardware validation and cleanup ownership are separate, so rejecting hardware
 does not prevent deleting the instance created by this operation.
 
-Successful and failed jobs lead to verified result retrieval and destruction.
-The shared runner preserves sealed evidence across interrupted transfers and
-confirms deletion twice. Posted invoices are reconciled separately; early or
-missing invoices are not final charges. The local controller must remain
-available. A failed host or unreachable provider can still prevent retrieval or
-destruction. CPU rehearsal does not establish GPU compatibility, full-model
-memory use or completion within the allowance. Fourteen hours is a ceiling,
-not a runtime estimate.
+Successful and failed command jobs lead to verified result retrieval while
+retaining the instance. The explicit `stop` command performs deletion. The
+shared runner preserves sealed evidence across interrupted transfers and
+confirms requested deletion twice. Posted invoices are reconciled separately;
+early or missing invoices are not final charges. A failed host or unreachable
+provider can still prevent retrieval or explicit deletion. CPU rehearsal does
+not establish GPU compatibility, full-model memory use or completion within
+the allowance. The 13-hour limit requires operator deletion; it is not a runtime
+estimate or an automatic billing cutoff.
 
 The later final fine-tune (08) also prepares trained weights, necessary
 supporting files, usage instructions and evaluation results for publication.
@@ -828,8 +841,11 @@ ledger accounting and the lifetime ceiling still apply.
 ## Next step
 
 The informal dataset is prepared for one fine-tune per candidate on both
-existing prompted tasks. The automated workflow passes local VM validation.
-Candidate recipes and Vast limits are frozen. Publication and one rental are
+existing prompted tasks. Training and SSH deployment passed the earlier local
+VM validation. The deletion-policy change is implemented and regression-tested
+locally; the old frozen launch retains its original code. Rebuild, rehearse and
+freeze new artifacts before another paid launch. Candidate recipes and Vast
+limits are unchanged. Publication and one rental are
 authorized within $25, at up to $1.66/hour for at most 13 hours. The saved split
 inspection found no clear complete-note duplicates or close paraphrases across
 the 80/20 split; topical overlaps remain recorded and this is an informal test.
@@ -858,6 +874,14 @@ cache files. All future inspection of frozen Python modules must disable
 bytecode writes before import. This verification is local and incurred no rental.
 
 The preliminary resource charge was **$0.338**. The supervisor has exited.
+Following this failure, the user explicitly requested removal of automatic
+deletion. The current shared command runner preserves instances on completion,
+errors, expiry and interruption; only an explicit `stop` command deletes them.
+Regression coverage includes the unexpected-cache failure, failed jobs, deadline
+expiry without SSH, hardware rejection, result retrieval and explicit deletion.
+The legacy GTE path retains its previous behavior. The failed frozen operation
+and published image are historical evidence and have not been modified.
+
 Reconcile the final bill and discuss this failure with the user before any
 replacement rental. No baseline/training comparison or candidate selection can
 be made from this attempt.

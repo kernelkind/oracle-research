@@ -4,6 +4,7 @@
 The original controller remains unchanged in gte/vast_full_build.py. Without a
 workload section this retains its GTE contract; with one, command/input/output
 configuration replaces only GTE-specific workload preparation and accounting.
+Command workloads preserve the instance until an explicit stop command.
 """
 
 from __future__ import annotations
@@ -4184,13 +4185,27 @@ def settle_preclaim_failure(context: Context) -> dict[str, object]:
     return settle(context)
 
 
-def cleanup_preworker_instance(context: Context, instance_id: str) -> dict[str, object]:
+def preserved_instance_result(context: Context, instance_id: str) -> dict[str, object]:
+    return {
+        "state": "retrieved" if context.path("launch/retrieval-verification.json").exists() else "manual_stop_required",
+        "instance_id": instance_id,
+        "instance_preserved": True,
+        "billing_possible": True,
+        "manual_stop_recommended": True,
+    }
+
+
+def cleanup_preworker_instance(
+    context: Context, instance_id: str, *, delete: bool = True,
+) -> dict[str, object]:
     failure = context.path("launch/preworker-instance-failure.log")
     if not failure.exists():
         atomic_bytes(
             failure,
             f"{utc_text()} pre-worker instance cleanup\n".encode("utf-8"),
         )
+    if not delete:
+        return preserved_instance_result(context, instance_id)
     destroy_instance(context, instance_id)
     charge = ensure_final_charge(context, instance_id)
     if charge is None:
@@ -4199,13 +4214,15 @@ def cleanup_preworker_instance(context: Context, instance_id: str) -> dict[str, 
 
 
 def ledger_reconciliation_state(
-    context: Context, instance_id: str
+    context: Context, instance_id: str, *, delete: bool = True,
 ) -> dict[str, object]:
     evidence = context.path("launch/result-loss-ledger-reconciliation.json")
     document = read_json(evidence)
     if not isinstance(document, dict) or document.get("instance_id") != instance_id:
         raise OperationError("result-loss reconciliation evidence is invalid")
     if not context.path("launch/destruction-confirmation.json").exists():
+        if not delete:
+            return preserved_instance_result(context, instance_id)
         destroy_instance(context, instance_id)
     charge = ensure_final_charge(context, instance_id)
     if charge is None:
@@ -4224,8 +4241,10 @@ def ledger_reconciliation_state(
 
 
 def destroy_without_remote_retrieval(
-    context: Context, instance_id: str, attempt_id: str, reason: str
+    context: Context, instance_id: str, attempt_id: str, reason: str, *, delete: bool = True,
 ) -> dict[str, object]:
+    if not delete:
+        return {**preserved_instance_result(context, instance_id), "retrieval_error": reason}
     evidence = context.path("launch/result-loss-ledger-reconciliation.json")
     if not evidence.exists():
         atomic_json(
@@ -4250,10 +4269,13 @@ def cleanup_terminal(
     target: list[str],
     attempt_id: str,
     remote: dict[str, object],
+    *, delete: bool = True,
 ) -> dict[str, object]:
     del remote
     ensure_retrieved(context, instance_id, private_key, target, attempt_id)
     publish_verified_result(context, attempt_id)
+    if not delete:
+        return preserved_instance_result(context, instance_id)
     destroy_instance(context, instance_id)
     charge = ensure_final_charge(context, instance_id)
     if charge is None:
@@ -4491,7 +4513,7 @@ def run(context: Context, approval: str | None) -> dict[str, object]:
         if context.path("launch/result-loss-ledger-reconciliation.json").exists():
             if instance_id is None:
                 raise OperationError("result-loss evidence has no instance identity")
-            return ledger_reconciliation_state(context, instance_id)
+            return ledger_reconciliation_state(context, instance_id, delete=not context.command_workload)
         if context.path("launch/provider-final-charge.json").exists():
             return settle(context)
         if context.path("launch/destruction-confirmation.json").exists():
@@ -4508,6 +4530,8 @@ def run(context: Context, approval: str | None) -> dict[str, object]:
             if attempt_id is None:
                 raise OperationError("retrieved worker has no attempt identity")
             publish_verified_result(context, attempt_id)
+            if context.command_workload:
+                return preserved_instance_result(context, instance_id)
             destroy_instance(context, instance_id)
             charge = ensure_final_charge(context, instance_id)
             if charge is None:
@@ -4516,7 +4540,7 @@ def run(context: Context, approval: str | None) -> dict[str, object]:
         if context.path("launch/preworker-instance-failure.log").exists():
             if instance_id is None:
                 raise OperationError("pre-worker instance failure has no instance identity")
-            return cleanup_preworker_instance(context, instance_id)
+            return cleanup_preworker_instance(context, instance_id, delete=not context.command_workload)
         if (
             instance_id is None
             and not context.path("launch/create-request-attempted.txt").exists()
@@ -4549,7 +4573,7 @@ def run(context: Context, approval: str | None) -> dict[str, object]:
                         "utf-8"
                     ),
                 )
-            return cleanup_preworker_instance(context, instance_id)
+            return cleanup_preworker_instance(context, instance_id, delete=not context.command_workload)
         try:
             private_key, target = ensure_ssh(context, instance_id)
         except RemoteAccessUnavailable:
@@ -4598,7 +4622,7 @@ def run(context: Context, approval: str | None) -> dict[str, object]:
                     context.path("launch/preworker-instance-failure.log"),
                     f"{utc_text()} pre-worker failure: {error}\n".encode("utf-8"),
                 )
-            return cleanup_preworker_instance(context, instance_id)
+            return cleanup_preworker_instance(context, instance_id, delete=not context.command_workload)
         remote = worker_status(context, private_key, target, attempt_id)
         if remote["state"] in ("running", "starting"):
             return {
@@ -4615,6 +4639,7 @@ def run(context: Context, approval: str | None) -> dict[str, object]:
                 target,
                 attempt_id,
                 remote,
+                delete=not context.command_workload,
             )
         raise OperationError("acknowledged worker has no recoverable remote state")
 
@@ -4636,7 +4661,7 @@ def run_watch(context: Context, approval: str | None) -> dict[str, object]:
             while True:
                 if utc_now() >= deadline:
                     if context.path("launch/create-request-attempted.txt").exists():
-                        return stop(context)
+                        return stop(context, delete=False)
                     raise OperationError("watch deadline expired before creation; prepare a new operation")
                 result = run(context, approval)
                 approval = None
@@ -4645,7 +4670,7 @@ def run_watch(context: Context, approval: str | None) -> dict[str, object]:
                 time.sleep(min(30, max(0, (deadline - utc_now()).total_seconds())))
         except (Exception, KeyboardInterrupt):
             if context.path("launch/create-request-attempted.txt").exists():
-                stop(context)
+                stop(context, delete=False)
             raise
 
 
@@ -4664,7 +4689,8 @@ def status(context: Context, watch: bool) -> dict[str, object]:
         time.sleep(interval)
 
 
-def stop(context: Context) -> dict[str, object]:
+def stop(context: Context, *, delete: bool = True) -> dict[str, object]:
+    """Stop and retrieve; automatic command supervision passes delete=False."""
     with operation_lock(context.root):
         if context.path("result/settlement/settlement-result.json").exists():
             return settle(context)
@@ -4672,7 +4698,7 @@ def stop(context: Context) -> dict[str, object]:
         if context.path("launch/result-loss-ledger-reconciliation.json").exists():
             if instance_id is None:
                 raise OperationError("result-loss evidence has no instance identity")
-            return ledger_reconciliation_state(context, instance_id)
+            return ledger_reconciliation_state(context, instance_id, delete=delete)
         if context.path("launch/provider-final-charge.json").exists():
             return settle(context)
         if context.path("launch/destruction-confirmation.json").exists():
@@ -4705,7 +4731,9 @@ def stop(context: Context) -> dict[str, object]:
             if attempt is not None:
                 publish_verified_result(context, attempt)
             if attempt is None:
-                return cleanup_preworker_instance(context, instance_id)
+                return cleanup_preworker_instance(context, instance_id, delete=delete)
+            if not delete:
+                return preserved_instance_result(context, instance_id)
             destroy_instance(context, instance_id)
             charge = ensure_final_charge(context, instance_id)
             if charge is None:
@@ -4713,7 +4741,7 @@ def stop(context: Context) -> dict[str, object]:
             return settle(context)
         attempt_id = last_attempt_id(context)
         if attempt_id is None:
-            return cleanup_preworker_instance(context, instance_id)
+            return cleanup_preworker_instance(context, instance_id, delete=delete)
         try:
             private_key, target = ensure_ssh(context, instance_id)
             remote = worker_status(context, private_key, target, attempt_id)
@@ -4777,7 +4805,7 @@ def stop(context: Context) -> dict[str, object]:
                     )
         except OperationError as error:
             return destroy_without_remote_retrieval(
-                context, instance_id, attempt_id, str(error)
+                context, instance_id, attempt_id, str(error), delete=delete
             )
         if remote["state"] not in ("terminal", "orphaned"):
             return destroy_without_remote_retrieval(
@@ -4785,6 +4813,7 @@ def stop(context: Context) -> dict[str, object]:
                 instance_id,
                 attempt_id,
                 "worker could not be reconciled to a terminal remote state",
+                delete=delete,
             )
         try:
             return cleanup_terminal(
@@ -4794,12 +4823,13 @@ def stop(context: Context) -> dict[str, object]:
                 target,
                 attempt_id,
                 remote,
+                delete=delete,
             )
         except OperationError as error:
             if context.path("launch/retrieval-verification.json").exists():
                 raise
             return destroy_without_remote_retrieval(
-                context, instance_id, attempt_id, str(error)
+                context, instance_id, attempt_id, str(error), delete=delete
             )
 
 
@@ -4814,7 +4844,7 @@ def parse_args() -> argparse.Namespace:
     run_parser.add_argument("--watch", action="store_true")
     status_parser = subparsers.add_parser("status")
     status_parser.add_argument("--watch", action="store_true")
-    subparsers.add_parser("stop")
+    subparsers.add_parser("stop", help="stop the workload, retrieve results and delete the instance")
     subparsers.add_parser("_remote-verify-transfer", help=argparse.SUPPRESS)
     subparsers.add_parser("_remote-prepare", help=argparse.SUPPRESS)
     prepare_worker = subparsers.add_parser(

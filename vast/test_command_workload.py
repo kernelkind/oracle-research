@@ -437,6 +437,74 @@ class CommandWorkloadTest(unittest.TestCase):
                 self.assertFalse((self.root / "launch/full-build-reservation.json").exists())
                 self.assertFalse((self.root / "launch/create-request-attempted.txt").exists())
 
+    def test_completed_command_is_retrieved_without_automatic_deletion(self):
+        fixture = self.lifecycle_fixture()
+        started = fixture.invoke_with_tty_secret("run")
+        self.assertEqual(started.returncode, 0, started.stderr)
+        fixture.set_provider(remote_status="terminal")
+        completed = fixture.invoke("run")
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertTrue((self.root / "launch/retrieval-verification.json").exists())
+        self.assertEqual(fixture.provider()["destroy_calls"], 0)
+        self.assertEqual(len(fixture.provider()["instances"]), 1)
+        self.assertTrue(fixture.output_json(completed)["billing_possible"])
+        self.assertTrue(fixture.output_json(completed)["manual_stop_recommended"])
+
+    def test_watch_manifest_error_stops_and_retrieves_without_deleting(self):
+        fixture = self.lifecycle_fixture()
+        self.assertEqual(fixture.invoke_with_tty_secret("run").returncode, 0)
+        context = self.module.Context.load(argparse.Namespace(
+            root=self.root, config=self.config, operation="run"))
+
+        def add_cache(_seconds):
+            path = self.root / "transport/control/__pycache__/monitoring.pyc"
+            path.parent.mkdir(exist_ok=True)
+            path.write_bytes(b"unexpected monitoring cache")
+
+        # Real run/watch/stop, manifest checks, retrieval and CLI provider boundary.
+        # Add the same kind of unexpected file between watcher iterations.
+        with mock.patch.dict(os.environ, fixture.environment), \
+                mock.patch.object(self.module.time, "sleep", side_effect=add_cache):
+            with self.assertRaisesRegex(self.module.OperationError, "file set"):
+                self.module.run_watch(context, None)
+        self.assertEqual(fixture.provider()["remote_status"], "terminal")
+        self.assertTrue((self.root / "launch/retrieval-verification.json").exists())
+        self.assertEqual(fixture.provider()["destroy_calls"], 0)
+        self.assertEqual(len(fixture.provider()["instances"]), 1)
+        self.assertFalse((self.root / "launch/result-loss-ledger-reconciliation.json").exists())
+        self.assertEqual(fixture.invoke("stop").returncode, 0)
+        self.assertEqual(fixture.provider()["destroy_calls"], 1)
+
+    def test_watch_deadline_preserves_instance_even_without_ssh(self):
+        fixture = self.lifecycle_fixture()
+        self.assertEqual(fixture.invoke_with_tty_secret("run").returncode, 0)
+        runner.atomic_json(self.root / "launch/watch-deadline.json",
+                           {"deadline_utc": "2000-01-01T00:00:00Z"})
+        fixture.set_provider(fail_all_ssh=True, allow_destroy_without_retrieval=True)
+        expired = fixture.invoke("run", "--watch")
+        self.assertEqual(expired.returncode, 0, expired.stderr)
+        self.assertTrue(fixture.output_json(expired)["instance_preserved"])
+        self.assertIn("retrieval_error", fixture.output_json(expired))
+        self.assertEqual(fixture.output_json(expired)["state"], "manual_stop_required")
+        self.assertEqual(fixture.provider()["remote_status"], "running")
+        self.assertEqual(fixture.provider()["destroy_calls"], 0)
+        self.assertEqual(len(fixture.provider()["instances"]), 1)
+        self.assertFalse((self.root / "launch/result-loss-ledger-reconciliation.json").exists())
+        self.assertEqual(fixture.invoke("stop").returncode, 0)
+        self.assertEqual(fixture.provider()["destroy_calls"], 1)
+
+    def test_failed_command_retains_instance_and_partial_results(self):
+        fixture = self.lifecycle_fixture()
+        self.assertEqual(fixture.invoke_with_tty_secret("run").returncode, 0)
+        fixture.set_provider(remote_status="terminal", remote_terminal_kind="start.exit")
+        failed = fixture.invoke("run", "--watch")
+        self.assertEqual(failed.returncode, 0, failed.stderr)
+        self.assertTrue(fixture.output_json(failed)["instance_preserved"])
+        self.assertTrue((self.root / "result.next/work/full-build-attempts/001/start.exit").exists())
+        self.assertEqual(fixture.provider()["destroy_calls"], 0)
+        self.assertEqual(fixture.invoke("run").returncode, 0)
+        self.assertEqual(fixture.provider()["destroy_calls"], 0)
+
     def test_command_lifecycle_uses_original_recovery_transfer_and_destroy(self):
         self.spec.update(onstart="ssh-keygen -A && service ssh start", ssh_direct=True)
         fixture = self.lifecycle_fixture()
@@ -457,13 +525,19 @@ class CommandWorkloadTest(unittest.TestCase):
         fixture.set_provider(remote_status="terminal")
         completed = fixture.invoke("run")
         self.assertEqual(completed.returncode, 0, completed.stderr)
-        self.assertEqual(fixture.output_json(completed)["state"], "ledger_reconciliation_required")
+        self.assertEqual(fixture.output_json(completed)["state"], "retrieved")
         self.assertTrue((self.root / "result/audit/local-verification.json").exists())
-        self.assertEqual(fixture.provider()["destroy_calls"], 1)
-        self.assertEqual(fixture.provider()["instances"], [])
+        self.assertEqual(fixture.provider()["destroy_calls"], 0)
+        self.assertEqual(len(fixture.provider()["instances"]), 1)
         self.assertEqual(runner.read_json(self.ledger)["outstanding_commitments_cents"], 1000)
         self.assertEqual(fixture.invoke("run").returncode, 0)
         self.assertEqual(fixture.provider()["create_calls"], 1)
+        self.assertEqual(fixture.provider()["destroy_calls"], 0)
+        stopped = fixture.invoke("stop")
+        self.assertEqual(stopped.returncode, 0, stopped.stderr)
+        self.assertEqual(fixture.output_json(stopped)["state"], "ledger_reconciliation_required")
+        self.assertEqual(fixture.provider()["destroy_calls"], 1)
+        self.assertEqual(fixture.provider()["instances"], [])
 
         calls = fixture.calls()
         self.assertFalse(any(c["tool"] == "vastai" and c["argv"][:1] == ["ssh-url"] for c in calls))
@@ -544,7 +618,8 @@ class CommandWorkloadTest(unittest.TestCase):
         self.assertLess(receipt["estimated_rental_micro_usd"], 1_000_000)
         self.assertGreater(receipt["estimated_total_micro_usd"], 1_000_000)
         self.assertEqual(fixture.provider()["worker_start_calls"], 0)
-        self.assertEqual(fixture.provider()["destroy_calls"], 1)
+        self.assertEqual(fixture.provider()["destroy_calls"], 0)
+        self.assertTrue(fixture.output_json(refused)["instance_preserved"])
 
     def test_cli_changed_transfer_allowance_invalidates_approval_before_create(self):
         fixture = self.lifecycle_fixture()
@@ -583,7 +658,7 @@ class CommandWorkloadTest(unittest.TestCase):
         self.assertFalse(any(c["tool"] == "vastai" and c["argv"][:1] == ["ssh-url"]
                              for c in fixture.calls()))
 
-    def test_cli_hardware_rejection_cleans_up_without_uploading_or_starting(self):
+    def test_cli_hardware_rejection_preserves_instance_without_uploading_or_starting(self):
         fixture = self.lifecycle_fixture()
         fixture.set_provider(crash_on_first_show_instance=True)
         interrupted = fixture.invoke_with_tty_secret("run")
@@ -596,29 +671,29 @@ class CommandWorkloadTest(unittest.TestCase):
         self.assertEqual(fixture.provider()["show_instance_calls"], previous_queries + 1)
         self.assertEqual(fixture.provider()["remote_prepare_calls"], 0)
         self.assertEqual(fixture.provider()["worker_start_calls"], 0)
-        self.assertEqual(fixture.provider()["destroy_calls"], 1)
-        self.assertEqual(fixture.provider()["instances"], [])
+        self.assertEqual(fixture.provider()["destroy_calls"], 0)
+        self.assertEqual(len(fixture.provider()["instances"]), 1)
         self.assertEqual(fixture.invoke("stop").returncode, 0)
         self.assertEqual(fixture.provider()["destroy_calls"], 1)
 
-    def test_watch_resumes_shared_run_until_cleanup_without_second_approval(self):
+    def test_watch_resumes_shared_run_until_retrieval_without_second_approval(self):
         self.freeze()
-        states = [{'state': 'preparing'}, {'state': 'running'}, {'state': 'invoice_pending'}]
+        states = [{'state': 'preparing'}, {'state': 'running'}, {'state': 'retrieved'}]
         with mock.patch.object(self.module, 'run', side_effect=states) as run, mock.patch.object(runner.time, 'sleep'):
             self.assertEqual(self.module.run_watch(self.context, 'approved'), states[-1])
         self.assertEqual(run.call_args_list, [mock.call(self.context, 'approved'),
             mock.call(self.context, None), mock.call(self.context, None)])
 
-    def test_watch_keeps_original_deadline_and_stops_on_expiry(self):
+    def test_watch_keeps_original_deadline_and_preserves_instance_on_expiry(self):
         self.freeze()
         runner.atomic_json(self.root / 'launch/watch-deadline.json', {'deadline_utc': '2000-01-01T00:00:00Z'})
         runner.atomic_bytes(self.root / 'launch/create-request-attempted.txt', b'attempted')
-        with mock.patch.object(self.module, 'run') as run, mock.patch.object(self.module, 'stop', return_value={'state': 'invoice_pending'}) as stop:
-            self.assertEqual(self.module.run_watch(self.context, None)['state'], 'invoice_pending')
+        with mock.patch.object(self.module, 'run') as run, mock.patch.object(self.module, 'stop', return_value={'state': 'retrieved', 'instance_preserved': True}) as stop:
+            self.assertEqual(self.module.run_watch(self.context, None)['state'], 'retrieved')
         run.assert_not_called()
-        stop.assert_called_once_with(self.context)
+        stop.assert_called_once_with(self.context, delete=False)
 
-    def test_watch_reserves_cleanup_time_and_cleans_up_after_controller_error(self):
+    def test_watch_reserves_cleanup_time_and_preserves_instance_after_controller_error(self):
         self.spec['limits']['cleanup_seconds'] = 600
         self.freeze()
         self.assertEqual(self.context.config['cleanup_seconds'], 600)
@@ -632,10 +707,10 @@ class CommandWorkloadTest(unittest.TestCase):
         deadline = runner.read_json(self.root / 'launch/watch-deadline.json')['deadline_utc']
         remaining = (self.module.parse_utc(deadline, 'deadline') - now).total_seconds()
         self.assertAlmostEqual(remaining, 6600, delta=1)
-        stop.assert_called_once_with(self.context)
+        stop.assert_called_once_with(self.context, delete=False)
 
 
-    def test_interrupt_during_watch_poll_still_uses_shared_cleanup(self):
+    def test_interrupt_during_watch_poll_stops_work_without_deleting(self):
         self.freeze()
         runner.atomic_bytes(self.root / 'launch/create-request-attempted.txt', b'attempted')
         with mock.patch.object(self.module, 'run', return_value={'state': 'running'}), \
@@ -643,7 +718,7 @@ class CommandWorkloadTest(unittest.TestCase):
                 mock.patch.object(self.module, 'stop') as stop:
             with self.assertRaises(KeyboardInterrupt):
                 self.module.run_watch(self.context, None)
-        stop.assert_called_once_with(self.context)
+        stop.assert_called_once_with(self.context, delete=False)
 
     def test_second_watch_cannot_interrupt_the_active_operator(self):
         self.freeze()

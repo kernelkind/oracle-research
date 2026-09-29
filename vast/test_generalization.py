@@ -84,19 +84,22 @@ class CommandContractTest(unittest.TestCase):
         before, after = definitions(original), definitions(generalized)
         # Configuration boundaries plus the approved ownership/readiness and
         # cost-estimation repairs, plus explicit local SSH configuration/preflight.
-        # Optional workload startup/endpoint settings are approved. The waits,
-        # cleanup and reconciliation remain original.
+        # Optional workload startup/endpoint settings are approved. Command
+        # workloads now preserve instances until explicit stop; GTE retains
+        # its original deletion behavior.
         allowed_changes = {"Context", "verify_reviewed_artifacts", "select_offer", "verify_image",
             "ensure_retrieval_destination", "refresh_approved_offer", "ensure_reservation", "invoke_private_create",
             "recover_or_freeze_create", "record_instance_ownership", "freeze_running_instance", "remote_arguments",
             "remote_status_report", "remote_prepare_worker", "remote_controller", "publish_verified_result", "settle", "prepare",
             "verify_destroy_ownership", "cost_record_from_instance", "live_cost_record",
-            "record_pre_worker_cost", "status_once", "ssh_options", "run", "ensure_ssh", "main", "parse_args"}
+            "record_pre_worker_cost", "status_once", "ssh_options", "run", "ensure_ssh", "main", "parse_args",
+            "cleanup_preworker_instance", "ledger_reconciliation_state", "destroy_without_remote_retrieval",
+            "cleanup_terminal", "stop"}
         self.assertTrue(set(before) <= set(after))
         changed = {name for name in before if ast.dump(before[name]) != ast.dump(after[name])}
         self.assertEqual(changed, allowed_changes)
         # In particular, these execute the original control flow, without a substitute controller.
-        for name in ("stop", "tar_upload_directory", "tar_download_directory",
+        for name in ("tar_upload_directory", "tar_download_directory",
                      "ensure_remote_prepared", "ensure_worker_started", "remote_worker", "remote_supervise",
                      "ensure_retrieved", "destroy_instance", "invoke_destroy_request", "ensure_final_charge"):
             self.assertEqual(ast.dump(before[name]), ast.dump(after[name]), name)
@@ -108,7 +111,8 @@ class CommandContractTest(unittest.TestCase):
         body[index:index + 1] = ast.parse('''result = completed_process(["vastai", "ssh-url", instance_id])
 target = parse_vast_ssh_target(result.stdout)''').body
         self.assertEqual(ast.dump(before["ensure_ssh"]), ast.dump(after["ensure_ssh"]))
-        # The run flow differs only by the approved check before a new rental.
+        # The run flow adds the local preflight and preserves command instances.
+        # Apart from those branches, retain the original GTE flow.
         preflight = ast.parse('''if (
             instance_id is None
             and not context.path("launch/create-request-attempted.txt").exists()
@@ -120,6 +124,27 @@ target = parse_vast_ssh_target(result.stdout)''').body
         matches = [node for node in body if ast.dump(node) == ast.dump(preflight)]
         self.assertEqual(len(matches), 1)
         body.remove(matches[0])
+        preservation = ast.parse('''if context.command_workload:
+            return preserved_instance_result(context, instance_id)
+        ''').body[0]
+        branches = [node for node in ast.walk(after["run"]) if isinstance(node, ast.If)]
+        removed = 0
+        for branch in branches:
+            for node in list(branch.body):
+                if ast.dump(node) == ast.dump(preservation):
+                    branch.body.remove(node)
+                    removed += 1
+        self.assertEqual(removed, 1)
+        policy = ast.parse("not context.command_workload", mode="eval").body
+        calls = []
+        for node in ast.walk(after["run"]):
+            if isinstance(node, ast.Call):
+                for keyword in list(node.keywords):
+                    if keyword.arg == "delete" and ast.dump(keyword.value) == ast.dump(policy):
+                        node.keywords.remove(keyword)
+                        calls.append(node.func.id)
+        self.assertCountEqual(calls, ["ledger_reconciliation_state", "cleanup_terminal",
+                                     *["cleanup_preworker_instance"] * 3])
         self.assertEqual(ast.dump(before["run"]), ast.dump(after["run"]))
         options = after["ssh_options"].body[0].value.elts
         self.assertEqual([node.value for node in options[1:3]], ["-F", "/dev/null"])

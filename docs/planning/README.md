@@ -121,8 +121,12 @@ The shared Vast runner from the successful September 27 deployment now owns
 creation, direct SSH, transfer, execution, retrieval and verified destruction.
 Managed SSH uses the proven host-key/startup hook. The VM exercises the shared
 remote path with real training and candidate CUDA preflight; provider lifecycle
-responses are simulated. `run --watch` automates progression and cleanup while
-the local process stays alive; interrupted local supervision must be resumed.
+responses are simulated. At the user's request after the first rental failure,
+command workloads now retain the instance after completion, errors, expiry or
+interruption. `run --watch` stops work and attempts retrieval when needed; only
+an explicit `stop` command deletes the instance. Billing continues until that
+operator action. The change is regression-tested locally; new frozen artifacts
+and local deployment rehearsal are required before another paid launch.
 Candidate settings and Vast limits are frozen locally: BF16 LoRA, 128 steps
 per candidate, and one 96 GB GPU within the approved $25 total. On September 29
 the user authorized publication and one rental at up to $1.66/hour including
