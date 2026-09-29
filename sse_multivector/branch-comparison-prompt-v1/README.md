@@ -27,6 +27,29 @@ nominates a comparison; it does not establish equivalence or containment.
 The read-only investigation of the [LG01 100-post run](../subject-order-probe.md#smv2-100--unchanged-rules-on-all-100-posts)
 did not adopt this as a construction rule or authorize model calls.
 
+## Hierarchy generation stages
+
+The user approved **HG1–HG7** as stable labels for this SP-based investigation.
+They identify process stages, independently of prompt versions, experiment IDs
+and post count. Approval of the labels does not approve the proposed operations
+at HG6–HG7 or select a production hierarchy-generation policy.
+
+| Label | Stage | Current status |
+| --- | --- | --- |
+| HG1 — SP + MP | Generate each post's local subject hierarchy and masks. | Saved inputs. |
+| HG2 — SSE | Encode subjects and masks into separate vectors. | Saved vectors. |
+| HG3 — LG01 | Combine matching subjects across posts, preserving SP relationships. | Implemented experiment; see the [LG01 rules](../subject-order-probe.md#lg01--subject-hierarchy-merging). |
+| HG4 — Select comparisons | Select pairs of distinct immediate parents of a shared cross-post node; deduplicate by node identity. | Nominated the 49 tested pairs; not a complete construction rule. |
+| HG5 — Compare parents | Prompt BCPv4 for each selected pair using the two nodes' subject/context entries; save its relation and reason. | 49 pairs tested; answers not applied to the hierarchy. |
+| HG6 — Combine equivalent nodes | Combine parents judged equivalent at HG5, retaining original entries, relationships and answers. | Proposed; unapproved and unimplemented. |
+| HG7 — Recompare changed nodes | Remap and deduplicate affected pairs, then prompt BCPv4 using the combined entries. | Proposed; unapproved and unimplemented. |
+
+For example, the Dining/Meals inconsistency was observed at **HG5**. The
+proposed follow-up combines the equivalent Dining nodes and the equivalent
+Meals nodes at **HG6**, then compares the combined nodes at **HG7**. Graph
+application, cycle handling and uncertain-equivalence policies remain open.
+LG01 names the technique at HG3, not the whole process or a particular run.
+
 ## Input and output
 
 Use the shared runner's [saved subject-pair adapter](../model-runner.md#saved-subject-pair-preparation)
@@ -127,9 +150,10 @@ revision, graph changes or new application rule follows automatically.
 ## Next step
 
 Review the four issues above, starting with the Dining/Meals inconsistency,
-before applying judgments or revising the prompt. The saved outputs suffice;
-no additional inference is proposed at this point. An application policy remains
-open; do not alter the saved LG01 hierarchy.
+before applying judgments or revising the prompt. The saved outputs support
+that review. HG6–HG7 are an unapproved proposal for testing combined inputs,
+not authorization for additional calls. An application policy remains open;
+do not alter the saved LG01 hierarchy.
 
 ## Design references
 

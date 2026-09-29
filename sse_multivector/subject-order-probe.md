@@ -174,8 +174,14 @@ Whether to adopt the rule or change its cutoffs remains open.
 
 LG01 is the technique used for both the six-post and 100-post runs. The code
 and saved artifacts retain the implementation ID `SMv2`; naming the technique
-does not change their identifiers, paths or results. Compared with SMv1, it
-adds HD11 before the unchanged cross-post matching procedure:
+does not change their identifiers, paths or results.
+
+LG01 is **HG3** in the [HG1–HG7 hierarchy generation stages](branch-comparison-prompt-v1/README.md#hierarchy-generation-stages).
+The later HG4–HG5 parent comparisons are separate experiments; they have not
+changed this algorithm or its saved hierarchy. HG6–HG7 remain proposals.
+
+Compared with SMv1, LG01 adds HD11 before the unchanged cross-post matching
+procedure:
 
 1. Combine entries only when their post ID, exact subject wording and ordered,
    nonempty source-byte ranges match. Vector IDs or equal selected words alone
