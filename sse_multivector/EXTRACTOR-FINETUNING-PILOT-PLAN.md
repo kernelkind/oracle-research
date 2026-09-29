@@ -128,8 +128,9 @@ deploying it on rented hardware. The implementation uses Transformers Trainer
 and PEFT in a pinned PyTorch container. The user clarified that this must
 rehearse deployment as previously done on Vast, with no manual code editing
 on the rented server. Candidate training settings and Vast launch limits are
-now frozen locally. The user explicitly withheld publication; GPU compatibility
-is checked during the actual pilot.
+now frozen locally. On September 29 the user authorized publication and one
+Vast rental, then approved up to $1.66/hour and 13 hours total within $25.
+GPU compatibility is checked during the actual pilot.
 
 ### Frozen informal settings
 
@@ -244,7 +245,9 @@ real SSH. It cannot reproduce Vast's provider infrastructure or prove GPU execut
 `target/distillation-pilot-v1/launch-preparation.json` records the current
 exported image, input package and validation evidence. Historical image/package
 receipts are preserved; changed code requires a new image and package.
-Nothing is published and no full-size GPU run has occurred.
+Publication of the exact exported image is authorized and in progress. No
+full-size GPU run has occurred. Launch evidence is under
+`target/distillation-pilot-v1/launch-20260929/`.
 Validation passed 117 shared-controller tests, seven pinned-CLI checks and
 24 VM tests, including actual candidate preflights and real SSH training/retrieval.
 The tiny adapter weights and evaluation metrics match the earlier rehearsal.
@@ -307,19 +310,19 @@ The output must be new. The package contains data, mask prompts, configurations
 and optional local model files. Remote model IDs require immutable revisions.
 Input paths are relative to the frozen package; the worker resolves them after upload.
 
-After publication is authorized, describe the workload with
+After verifying publication, describe the workload with
 `python3 -m sse_multivector.distillation_vast --package ... --offer ... --image ... --output ...`.
 The offer file contains one selected, validated quote; the image must be a registry
 digest. Freeze that specification with `python3 vast/package.py --spec ... --root ... --ledger ...`.
 Run the copied `transport/control/vast_full_build.py` with `--root` and `--config`:
 `prepare` checks local SSH, image and budget and writes an approval plan;
 `run --approve HASH --watch` uses its committed reservation and supervises execution.
-These are future launch instructions; no registry digest is invented for local preparation.
+Bind the verified registry digest before freezing the operation.
 
 `run --watch` repeatedly resumes the shared runner until retrieval and deletion
 complete, or it reports a condition requiring attention. It preserves its first
 session deadline across restarts, leaves 15 minutes for cleanup before the
-14-hour ceiling, and invokes the existing `stop` path on expiry
+13-hour ceiling, and invokes the existing `stop` path on expiry
 or controller errors. Run it in a persistent local session. It is not an independent
 watchdog: if the local process or host dies, an operator must resume `run --watch`
 or `stop`. The worker separately enforces its frozen runtime limit across all
@@ -364,14 +367,17 @@ full-model memory requirements or speed. Those are checked during the actual
 pilot; there is no separate throwaway GPU training run. The actual candidate
 baselines and fine-tunes have not run.
 
-### Vast launch configuration — unpublished
+### Vast launch configuration — authorized
 
 [The launch configuration](distillation/vast-launch.json) freezes the search,
 create options and admission limits. It reuses the existing private Docker Hub
 repository `docker.io/kernelkind/oracle-mvp`, with tag `distillation-pilot-v1`.
 The eventual create command must use its published **registry digest**. The
 local image ID is not a registry digest; one does not exist before publication.
-Publish the exact VM-exported image only after the user lifts the current hold.
+The user lifted the publication hold on September 29. The launch-specific
+`approved-settings.json` in the evidence directory overrides only the hourly
+ceiling, matching search filter and total rental time. The tested image and
+maintained source configuration remain frozen; use this settings file for launch.
 
 - One on-demand RTX PRO 6000 WS, 600 W, 96 GB; at least 128 GiB host RAM,
   eight effective CPU cores, 300 GB disk, direct SSH and NVIDIA driver 580.95.05.
@@ -380,12 +386,13 @@ Publish the exact VM-exported image only after the user lifts the current hold.
   pinned Hugging Face weights cached on the instance for baseline, training
   and reload. Anonymous HEAD requests to one pinned weight shard per candidate
   returned HTTP 200 on September 25; no Hugging Face token is required by this setup.
-- Maximum returned price **$1.60/hour including 300 GB storage**, for at most
-  **14 hours from instance creation**. The worker gets 12 hours for all three
-  runs including model downloads; setup and retrieval share the remaining two.
+- Maximum returned price **$1.66/hour including 300 GB storage**, for at most
+  **13 hours from instance creation**. The worker gets up to 12 hours for all
+  three runs including model downloads; setup and retrieval share the remaining
+  hour. The session deadline takes priority if setup consumes that allowance.
 - Transfer allowances: **200 GB inbound and 20 GB outbound**, each at no more
   than $0.01/GB. These are decimal GB. Maximum planned charge is
-  `14 × $1.60 + 200 × $0.01 + 20 × $0.01 = $24.60`.
+  `13 × $1.66 + 200 × $0.01 + 20 × $0.01 = $23.78`.
 - The approved $25 covers the entire experiment, including failures. Any retry
   consumes its remaining allowance; it does not receive another $25. No retry,
   longer rental, larger disk or higher rate is authorized by these files.
@@ -408,12 +415,13 @@ price and the total allowance. It performs no paid action and does not establish
 ledger admission. Refresh offers using the configuration's `search_query` and
 `search_options`; refresh/check again immediately before accepting a rental.
 
-For the eventual approved deployment: publish the exact VM-exported image,
+For the authorized deployment: publish the exact VM-exported image,
 select and validate an available quote, freeze the shared operation, and run
 `prepare`. Reconcile the budget ledger, add its matching `vast_run_reservation`
 (kind, plan SHA, operation evidence path, maximum charge 2500 cents, reserved
-status), and commit before accepting the paid commitment. Publication remains
-on hold; local preparation does not create a reservation.
+status), and commit before accepting the paid commitment. Local preparation
+does not create a reservation. No replacement rental is authorized after a
+failed run without discussing the failure with the user.
 
 The shared runner uses the pinned Vast 1.4.1 CLI. The registry pull token enters
 `gte/vast_private_create.py` through stdin from the local terminal; the Vast API
@@ -808,10 +816,12 @@ ledger accounting and the lifetime ceiling still apply.
 
 The informal dataset is prepared for one fine-tune per candidate on both
 existing prompted tasks. The automated workflow passes local VM validation.
-Candidate recipes and Vast limits are frozen; the tested image and input package
-remain local. Await explicit permission to publish the image. Before paid launch,
-inspect close paraphrases across the split, refresh the offer and complete ledger
-admission. Establish each candidate's two-step baseline
+Candidate recipes and Vast limits are frozen. Publication and one rental are
+authorized within $25, at up to $1.66/hour for at most 13 hours. The saved split
+inspection found no clear complete-note duplicates or close paraphrases across
+the 80/20 split; topical overlaps remain recorded and this is an informal test.
+Finish registry verification, obtain an available qualifying offer and commit
+ledger admission before launch. Establish each candidate's two-step baseline
 before fine-tuning and compare on the same held-out notes using its own generated
 subjects. Paid work must fit the approved $25 total and ledger admission.
 Prominence and the larger dataset-size schedule can wait.
