@@ -112,6 +112,9 @@ Sources: [paper](https://arxiv.org/abs/2004.12488),
 
 ## SMv1 — separate mutual subject-matching experiment
 
+For the original conversational explanation, read the
+[step-by-step walkthrough](subject-matching-walkthrough.md).
+
 The user approved an isolated end-to-end experiment on the **same six posts**,
 using SOv1's saved subject vectors and HR02's original mask vectors. SMv1 does
 not run OPHAC, HDBSCAN, a placement model, or a title model. It does not change
