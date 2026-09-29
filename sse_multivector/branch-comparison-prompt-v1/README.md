@@ -1,7 +1,8 @@
 # BCPv4 — one-pair subject comparison
 
-Status: **draft, untested, not frozen**. The user authorized drafting this
-prompt for review, not inference or changes to the saved hierarchy.
+Status: **user-approved wording, untested, not frozen**. The user approved BCPv4
+after reviewing the prompt filled with real saved data. This approval does not
+authorize inference or changes to the saved hierarchy.
 
 [BCPv4.md](BCPv4.md) compares the subjects represented by two hierarchy nodes,
 A and B. Each node is represented by subject/context entries originating in one
@@ -51,16 +52,16 @@ The output is a JSON object with exactly two string fields:
   `uncertain`.
 - `reason`: one short justification.
 
-This draft specifies the output contract; no inference setup or new validation
+This prompt specifies the output contract; no inference setup or new validation
 code has been added. There is no graph-update parser or automatic application
 stage. A pairwise judgment does not check global graph consistency or authorize
 overriding an SP relationship. LG01's preservation rules are unchanged.
 
-## Next review
+## Next step
 
-Review the full BCPv3 → BCPv4 delta before preparing a small pairwise test.
-No test cases, execution model or application policy have been selected by this
-draft. Do not run the whole candidate set or alter the saved LG01 hierarchy.
+Propose a small pairwise test using unchanged BCPv4. The prompt approval does not
+select test cases, an execution model or an application policy. Obtain test
+authorization before inference; do not alter the saved LG01 hierarchy.
 
 ## Design references
 
