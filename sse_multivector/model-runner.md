@@ -527,6 +527,45 @@ read-only inspection completed in 5.5 seconds after preparation had spent over
 19 minutes in repeated file reads. Request identities and reuse decisions are
 unchanged; the measurement does not describe model latency.
 
+### Saved subject-pair preparation
+
+Use `dataset.adapter: "subject_pairs"` for comparisons between saved SP
+hierarchy nodes. Its `path` names a small selection file, not a copied dataset:
+
+```json
+{
+  "schema_version": 1,
+  "inputs": "../saved-inputs/inputs.json",
+  "hierarchy": "../saved-hierarchy/results.json",
+  "pairs": [{"id": "pair-1", "A": "S0000", "B": "S0002"}]
+}
+```
+
+Paths resolve relative to that selection file. `inputs` supplies the saved
+`subjects`, `posts` and SP `edges`; `hierarchy` supplies `groups`,
+`member_to_group` and mapped `edges`, as written by
+[subject_matching_probe.py](subject_matching_probe.py). Node IDs use the
+browser's `S` plus zero-padded first subject index in each group, not the group
+index or title. Optional `dataset.select` names pair IDs; A/B order is retained.
+
+The adapter builds `{INPUT_JSON}` with `A` and `B` arrays of distinct exact
+`subject`/`context` pairs, in saved member order. Only identical pairs are
+deduplicated; different wordings/contexts and entries with empty masks remain.
+Original entries, masks, full source posts, node IDs and shared-child references
+stay in review evidence. Shared-child source-post labels follow the selected
+A/B order. No manual case-file generation or copying through patches is needed.
+
+Preparation hashes the selection file and both referenced sources, checks
+subject/group identities and membership, and freezes the resulting inputs and
+evidence. It rejects unknown/self-pairs, duplicate pair IDs, invalid membership
+or edges, and missing source posts. It does not judge semantics, select pairs,
+infer relationships, modify the hierarchy or send model calls. Use the normal
+prompt, model, schema, baseline and request-reuse settings.
+
+The [BCPv4 six-pair spec](experiment_specs/lg01-bcpv4-six-pairs-astra-low-v1.json)
+now uses this adapter. Offline preparation reproduced all six prior prompts
+byte-for-byte and found all six saved answers reusable; no inference was run.
+
 ### Title, mask and prominence preparation
 
 The core workflow is task-independent. Optional adapters use the existing

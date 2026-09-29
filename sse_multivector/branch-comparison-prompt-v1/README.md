@@ -28,13 +28,13 @@ did not adopt this as a construction rule or authorize model calls.
 
 ## Input and output
 
-Use the shared experiment runner's generic adapter with one `INPUT_JSON`
-variable. The proposed JSON input uses keys `A` and `B` to identify the two nodes.
-Serialize it as JSON; do not manually render batches. Each key's value is a list
-of subject-entry objects containing only `subject` and its saved `context`.
-Keep every distinct subject/context pair;
-remove only exact duplicate pairs, without selecting a representative wording
-or rewriting descriptions.
+Use the shared runner's [saved subject-pair adapter](../model-runner.md#saved-subject-pair-preparation)
+with saved source paths and explicit A/B node IDs. It assembles `INPUT_JSON`
+automatically; do not copy source entries into a case file. Keys `A` and `B`
+identify the two nodes. Each value is a list containing only `subject` and its
+saved `context`. The adapter retains every distinct subject/context pair and
+removes only exact duplicates, without choosing a representative wording or
+rewriting descriptions.
 
 Keep node/post IDs, SP numbers, masks, byte spans, full posts and the mapping of
 `A`/`B` to the original nodes in review evidence, outside the model input. Do not
@@ -55,8 +55,8 @@ The output is a JSON object with exactly two string fields:
 - `reason`: one short justification.
 
 The [six-pair experiment spec](../experiment_specs/lg01-bcpv4-six-pairs-astra-low-v1.json)
-uses the shared runner's existing JSON Schema validation; no validation code
-was added. There is no graph-update parser or automatic application stage. A
+uses the shared runner's existing output JSON Schema validation. There is no
+graph-update parser or automatic application stage. A
 pairwise judgment does not check global graph consistency or authorize
 overriding an SP relationship. LG01's preservation rules are unchanged.
 
@@ -79,6 +79,15 @@ source entries, full posts, node IDs, shared-child evidence and source hashes;
 reports and separate agent reviews. The prompt and saved LG01 inputs/results
 were hash-checked unchanged. No new subjects, masks, vectors or hierarchy
 were generated.
+
+The original test used the generic adapter. The reusable spec now uses
+`subject_pairs` and a [small source/pair selection file](../experiment_specs/lg01-bcpv4-six-pairs-v1.json).
+Offline preparation under `target/branch-comparison-v1/bcpv4-six-pairs-adapter-v1/`
+reproduced all six prompts byte-for-byte with unchanged model settings and
+identified six reusable saved answers. No new calls or results were generated.
+Deriving review evidence from SP edges corrected B04's previously swapped
+shared-child A/B post labels (Meals: N023; Food: N096). That metadata was never
+sent to the model; the original experiment remains untouched.
 
 The judgments preserved the Food ingredients / Baking ingredients distinction
 despite both contexts discussing bread, and did not mistake shared subjects for

@@ -5,8 +5,8 @@
     "path": "../branch-comparison-prompt-v1/BCPv4.md"
   },
   "dataset": {
-    "adapter": "generic",
-    "path": "../../target/branch-comparison-v1/bcpv4-six-pairs-v1/cases.json"
+    "adapter": "subject_pairs",
+    "path": "lg01-bcpv4-six-pairs-v1.json"
   },
   "runner": {
     "provider": "openai-codex",

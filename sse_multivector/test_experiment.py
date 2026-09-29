@@ -813,6 +813,140 @@ class ExperimentTests(unittest.TestCase):
             all(c["prompt"].startswith("GENERIC PROMPT") for c in self.calls())
         )
 
+    def subject_pairs_spec(self):
+        self.prompt.write_text('GENERIC PROMPT\n{INPUT_JSON}')
+        (self.root / 'selection').mkdir()
+        subjects = [
+            dict(index=i, subject=name, context=context, note_id=post,
+                 note_short_id=post, number=str(i + 1), mask_vector_ids=[],
+                 fragments=[], byte_spans=[])
+            for i, (name, context, post) in enumerate([
+                ('Tea', 'A cup of tea.', 'N1'),
+                ('Tea', 'A cup of tea.', 'N2'),
+                ('Drinks', 'Tea bags supply a drink.', 'N3'),
+                ('Teas', 'Several teas.', 'N2'),
+                ('Tea', 'Another reference to tea.', 'N1'),
+                ('Tea bags', 'Bags for tea.', 'N1'),
+                ('Tea bags', 'Tea in bags.', 'N3'),
+            ])]
+        subjects[0].update(mask_vector_ids=['saved-vector'], fragments=['Tea'], byte_spans=[[0, 3]])
+        self.write('subjects.json', dict(subjects=subjects,
+            posts=[dict(note_id=p, note_short_id=p, text='Tea. REVIEW ONLY ' + p)
+                   for p in ['N1', 'N2', 'N3']], edges=[[0, 5], [2, 6]]))
+        self.write('hierarchy.json', dict(groups=[[2], [0, 1, 3, 4], [5, 6]],
+            member_to_group=[1, 1, 0, 1, 1, 2, 2], edges=[[0, 2], [1, 2]]))
+        self.write('selection/pairs.json', dict(schema_version=1,
+            inputs='../subjects.json', hierarchy='../hierarchy.json', pairs=[
+                dict(id='pair', A='S0000', B='S0002'),
+                dict(id='reverse', A='S0002', B='S0000')]))
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='subject_pairs', path='selection/pairs.json')
+        self.write('spec.json', spec)
+
+    def test_subject_pairs_prepare_from_saved_nodes_without_copying_case_data(self):
+        self.subject_pairs_spec()
+        result = self.prepare()
+        self.assertIn('Model calls made: 0', result.stdout)
+        self.assertEqual(self.calls(), [])
+        case = self.show('E1', '--case', 'pair')
+        payload = {'A': [
+            {'subject': 'Tea', 'context': 'A cup of tea.'},
+            {'subject': 'Teas', 'context': 'Several teas.'},
+            {'subject': 'Tea', 'context': 'Another reference to tea.'}],
+            'B': [{'subject': 'Drinks', 'context': 'Tea bags supply a drink.'}]}
+        self.assertEqual(case['inputs'], {'INPUT_JSON': json.dumps(payload, ensure_ascii=False, indent=2)})
+        self.assertNotIn('REVIEW ONLY', case['prompt'])
+        self.assertNotIn('S0000', case['prompt'])
+        self.assertNotIn('saved-vector', case['prompt'])
+        evidence = case['evidence']
+        self.assertEqual(evidence['A']['node_id'], 'S0000')
+        self.assertEqual(evidence['A']['group_index'], 1)
+        self.assertEqual([e['index'] for e in evidence['A']['subject_entries']], [0, 1, 3, 4])
+        self.assertEqual(evidence['A']['subject_entries'][0]['mask_vector_ids'], ['saved-vector'])
+        self.assertEqual(evidence['A']['subject_entries'][0]['byte_spans'], [[0, 3]])
+        self.assertEqual(len(evidence['source_posts']), 3)
+        self.assertEqual(evidence['shared_children'], [dict(
+            id='S0005', names=['Tea bags'], a_posts=['N1'], b_posts=['N3'])])
+        plan = json.loads((self.root / 'E1/experiment.json').read_text())['plan']
+        for name in ['subjects.json', 'hierarchy.json', 'selection/pairs.json']:
+            path = self.root / name
+            self.assertEqual(plan['sources'][str(path)], hashlib.sha256(path.read_bytes()).hexdigest())
+        # A saved experiment remains self-contained if the source files change.
+        self.write('subjects.json', {})
+        self.assertEqual(self.show('E1', '--case', 'pair')['inputs'], case['inputs'])
+        self.assertEqual(self.calls(), [])
+
+    def test_subject_pairs_selection_preserves_orientation(self):
+        self.subject_pairs_spec()
+        spec = json.loads(self.spec.read_text())
+        spec['dataset']['select'] = ['reverse']
+        self.write('spec.json', spec)
+        self.prepare()
+        report = self.show()
+        self.assertEqual([c['id'] for c in report['cases']], ['reverse'])
+        payload = json.loads(report['cases'][0]['inputs']['INPUT_JSON'])
+        self.assertEqual(payload['A'][0]['subject'], 'Drinks')
+        self.assertEqual(payload['B'][0]['subject'], 'Tea')
+        shared = report['cases'][0]['evidence']['shared_children'][0]
+        self.assertEqual(shared['a_posts'], ['N3'])
+        self.assertEqual(shared['b_posts'], ['N1'])
+        self.assertEqual(self.calls(), [])
+
+    def test_subject_pairs_reuse_generic_saved_answers_without_another_call(self):
+        self.subject_pairs_spec()
+        self.prepare()
+        cases = self.show()['cases']
+        generic = [{'id': c['id'], 'inputs': c['inputs']} for c in cases]
+        self.write('cases.json', {'cases': generic})
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='generic', path='cases.json')
+        self.write('spec.json', spec)
+        self.prepare('baseline')
+        self.cli('run', 'baseline')
+        self.assertEqual(len(self.calls()), 2)
+        # Reuse binds the exact request, not the input adapter or review evidence.
+        self.assertEqual(self.show()['requests']['reusable'], 2)
+        self.cli('run', 'E1')
+        self.assertEqual(self.show()['summary']['reused'], 2)
+        self.assertEqual(len(self.calls()), 2)
+
+    def test_subject_pairs_reject_invalid_sources_and_selections_before_preparing(self):
+        self.subject_pairs_spec()
+        names = ['subjects.json', 'hierarchy.json', 'selection/pairs.json', 'spec.json']
+        originals = {name: (self.root / name).read_text() for name in names}
+        checks = [
+            ('selection/pairs.json', lambda x: x['pairs'][0].update(A='S9999'), 'unknown hierarchy node'),
+            ('selection/pairs.json', lambda x: x['pairs'][0].update(A='S0002'), 'distinct hierarchy nodes'),
+            ('selection/pairs.json', lambda x: x['pairs'][1].update(id='pair'), 'duplicate case identity'),
+            ('selection/pairs.json', lambda x: x.update(schema_version=True), 'schema_version'),
+            ('selection/pairs.json', lambda x: x.update(inputs='missing.json'), 'missing.json'),
+            ('spec.json', lambda x: x['dataset'].update(select=['missing']), 'unknown case requested'),
+            ('spec.json', lambda x: x['dataset'].update(select=['pair', 'pair']), 'duplicate selection'),
+            ('hierarchy.json', lambda x: x['groups'][1].append(2), 'repeated hierarchy subject'),
+            ('hierarchy.json', lambda x: x['groups'][0].__setitem__(0, -1), 'invalid or repeated'),
+            ('hierarchy.json', lambda x: x['groups'][0].__setitem__(0, True), 'invalid or repeated'),
+            ('hierarchy.json', lambda x: x['groups'][0].clear(), 'group must be nonempty'),
+            ('hierarchy.json', lambda x: x['groups'][1].remove(4), 'do not cover'),
+            ('hierarchy.json', lambda x: x['member_to_group'].__setitem__(0, 0), 'mapping differs'),
+            ('hierarchy.json', lambda x: x['edges'].append([0, 99]), 'invalid hierarchy or SP edge'),
+            ('subjects.json', lambda x: x['subjects'][0].update(index=9), 'index does not match'),
+            ('subjects.json', lambda x: x['subjects'][0].update(context=None), 'context must be a string'),
+            ('subjects.json', lambda x: x['subjects'][0].update(note_id='missing'), 'unknown source post'),
+            ('subjects.json', lambda x: x['posts'].append(x['posts'][0]), 'duplicate source post'),
+            ('subjects.json', lambda x: x['edges'].append([0, 99]), 'invalid hierarchy or SP edge'),
+        ]
+        for name, change, error in checks:
+            with self.subTest(source=name, error=error):
+                for source, contents in originals.items():
+                    (self.root / source).write_text(contents)
+                data = json.loads(originals[name])
+                change(data)
+                self.write(name, data)
+                result = self.cli('prepare', 'bad', '--spec', self.spec, ok=False)
+                self.assertIn(error, result.stderr)
+                self.assertFalse((self.root / 'bad').exists())
+                self.assertEqual(self.calls(), [])
+
     def test_inherit_baseline_resume_and_repeat_are_distinct(self):
         self.prepare()
         self.cli("run", "E1")

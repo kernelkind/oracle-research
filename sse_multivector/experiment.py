@@ -92,7 +92,7 @@ def spec_setup(path):
         {"adapter", "path"} | ({"select", "mask_format"} & dataset.keys()),
     )
     source_path = resolve(dataset["path"], path.parent)
-    cases = inputs.prepare(dataset, read(source_path), prompt["text"])
+    cases, sources = inputs.prepare_file(dataset, source_path, prompt["text"])
     runner = dict(spec["runner"])
     runner["runner_binary"] = str(
         engine._resolve_executable(
@@ -112,8 +112,8 @@ def spec_setup(path):
         "cases": cases,
         "runner": runner,
         "sources": {
+            **sources,
             str(path): engine._sha256_file(path),
-            str(source_path): engine._sha256_file(source_path),
             str(prompt_path): engine._sha256_file(prompt_path),
         },
     }

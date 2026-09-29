@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "inputs": "../../target/subject-matching-100-v1/inputs/inputs.json",
+  "hierarchy": "../../target/subject-matching-100-v1/run/results.json",
+  "pairs": [
+    {"id": "B01", "A": "S0280", "B": "S2137"},
+    {"id": "B02", "A": "S0874", "B": "S1872"},
+    {"id": "B03", "A": "S0767", "B": "S1676"},
+    {"id": "B04", "A": "S0437", "B": "S0022"},
+    {"id": "B05", "A": "S1236", "B": "S1242"},
+    {"id": "B06", "A": "S1354", "B": "S2234"}
+  ]
+}

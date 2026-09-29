@@ -6,6 +6,7 @@ Execution, history, baselines and human judgments do not belong here.
 
 import hashlib
 import json
+from pathlib import Path
 import re
 
 try:
@@ -39,6 +40,120 @@ def render(template, inputs):
         return inputs[key]
 
     return re.sub(r"\{([A-Z][A-Z0-9_]*)\}", substitute, template)
+
+
+def prepare_file(dataset, path, template):
+    """Load dataset references and hash the exact bytes used for preparation."""
+    path = Path(path).resolve()
+    sources = {}
+
+    def read(source_path):
+        raw = source_path.read_bytes()
+        sources[str(source_path)] = hashlib.sha256(raw).hexdigest()
+        return json.loads(raw)
+
+    source = read(path)
+    if dataset['adapter'] == 'subject_pairs':
+        engine._expect_fields(source, 'subject pairs', {'schema_version', 'inputs', 'hierarchy', 'pairs'})
+        if type(source['schema_version']) is not int or source['schema_version'] != 1:
+            raise ValueError('expected subject pairs schema_version 1')
+        loaded, references = {}, {}
+        for key in ('inputs', 'hierarchy'):
+            source_path = engine._resolve_path(source[key], key, path.parent)
+            loaded[key] = read(source_path)
+            references[key] = dict(path=str(source_path), sha256=sources[str(source_path)])
+        source = dict(**loaded, pairs=source['pairs'], source=references)
+    return prepare(dataset, source, template), sources
+
+
+def prepare_subject_pairs(source, selected=None):
+    """Compare explicitly selected saved SP hierarchy nodes, not their source posts."""
+    inputs, hierarchy = source['inputs'], source['hierarchy']
+    subjects, groups = inputs['subjects'], hierarchy['groups']
+    posts = {p['note_id']: p for p in inputs['posts']}
+    if len(posts) != len(inputs['posts']):
+        raise ValueError('duplicate source post identity')
+    for i, subject in enumerate(subjects):
+        if type(subject['index']) is not int or subject['index'] != i:
+            raise ValueError('subject index does not match saved position')
+        engine._expect_string(subject['subject'], 'subject')
+        if not isinstance(subject['context'], str):
+            raise ValueError('subject context must be a string')
+        if subject['note_id'] not in posts:
+            raise ValueError('subject refers to an unknown source post')
+
+    owners, nodes = {}, {}
+    for g, members in enumerate(groups):
+        if not isinstance(members, list) or not members:
+            raise ValueError('hierarchy group must be nonempty')
+        for i in members:
+            if type(i) is not int or not 0 <= i < len(subjects) or i in owners:
+                raise ValueError('invalid or repeated hierarchy subject member')
+            owners[i] = g
+        # Same identity as subject_matching_probe.browser_spec; not the group index.
+        nodes[f'S{members[0]:04d}'] = g
+    if set(owners) != set(range(len(subjects))):
+        raise ValueError('hierarchy groups do not cover the saved subjects')
+    if hierarchy['member_to_group'] != [owners[i] for i in range(len(subjects))]:
+        raise ValueError('hierarchy member mapping differs from groups')
+
+    def edges(value, size):
+        for edge in value:
+            if (not isinstance(edge, list) or len(edge) != 2
+                    or any(type(i) is not int or not 0 <= i < size for i in edge)):
+                raise ValueError('invalid hierarchy or SP edge')
+            yield edge
+
+    children = {g: set() for g in range(len(groups))}
+    for a, b in edges(hierarchy['edges'], len(groups)):
+        children[a].add(b)
+    witnesses = {}
+    for a, b in edges(inputs['edges'], len(subjects)):
+        witnesses.setdefault((owners[a], owners[b]), set()).add(subjects[a]['note_short_id'])
+
+    def node(nid):
+        g = nodes[nid]
+        entries, seen = [], set()
+        for i in groups[g]:
+            subject = subjects[i]
+            pair = subject['subject'], subject['context']
+            if pair not in seen:
+                seen.add(pair)
+                entries.append(dict(subject=pair[0], context=pair[1]))
+        return entries, dict(node_id=nid, group_index=g,
+                             subject_entries=[subjects[i] for i in groups[g]])
+
+    cases, ids = [], set()
+    for pair in source['pairs']:
+        engine._expect_fields(pair, 'subject pair', {'id', 'A', 'B'})
+        cid = engine._expect_identifier(pair['id'], 'case.id')
+        if cid in ids:
+            raise ValueError('duplicate case identity')
+        ids.add(cid)
+        for key in ('A', 'B'):
+            nid = engine._expect_string(pair[key], f'pair.{key}')
+            if nid not in nodes:
+                raise ValueError(f'unknown hierarchy node: {nid}')
+        if pair['A'] == pair['B']:
+            raise ValueError('subject pair must name distinct hierarchy nodes')
+        if selected is not None and cid not in selected:
+            continue
+        ea, a = node(pair['A'])
+        eb, b = node(pair['B'])
+        ga, gb = a['group_index'], b['group_index']
+        shared = [dict(id=f'S{groups[g][0]:04d}',
+                       names=list(dict.fromkeys(subjects[i]['subject'] for i in groups[g])),
+                       a_posts=sorted(witnesses.get((ga, g), [])),
+                       b_posts=sorted(witnesses.get((gb, g), [])))
+                  for g in sorted(children[ga] & children[gb])]
+        post_ids = sorted({s['note_id'] for n in (a, b) for s in n['subject_entries']})
+        cases.append(dict(id=cid,
+            inputs={'INPUT_JSON': json.dumps({'A': ea, 'B': eb}, ensure_ascii=False, indent=2)},
+            evidence=dict(A=a, B=b, source=source['source'], shared_children=shared,
+                          source_posts=[posts[p] for p in post_ids])))
+    if selected is not None and set(selected) - ids:
+        raise ValueError('unknown case requested')
+    return cases
 
 
 def prepare_prominence(source, selected=None):
@@ -182,6 +297,8 @@ def prepare(dataset, source, template):
             cases = [c for c in cases if c["id"] in dataset["select"]]
     elif adapter == "prominence":
         cases = prepare_prominence(source, dataset.get("select"))
+    elif adapter == "subject_pairs":
+        cases = prepare_subject_pairs(source, dataset.get("select"))
     elif adapter == "titles":
         groups = prepare_titles(
             source, "{NUMBERED_INSTANCES}", dataset.get("select", [])
