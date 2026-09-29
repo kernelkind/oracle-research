@@ -1,10 +1,11 @@
 # BCPv4 — one-pair subject comparison
 
-Status: **user-approved wording, tested on six pairs, not frozen**. The user
-approved BCPv4 after reviewing the prompt filled with real saved data, then
-authorized six Astra-low calls. All six returned valid JSON and were accepted
-in agent review. These are agent assessments, not user decisions or a measured
-general accuracy rate. No judgments were applied to the saved hierarchy.
+Status: **user-approved wording, tested on 49 pairs, not frozen**. The user
+approved six Astra-low calls, then the remaining 43 nominated comparisons.
+All 49 returned valid JSON. Agent review accepted the first six; of the next
+43, 36 were accepted and seven flagged as uncertain across four issues below.
+These are agent assessments, not user decisions or a measured general accuracy
+rate. No judgments were applied to the saved hierarchy.
 
 [BCPv4.md](BCPv4.md) compares the subjects represented by two hierarchy nodes,
 A and B. Each node is represented by subject/context entries originating in one
@@ -96,12 +97,39 @@ the prompt or claiming a validated placement stage. Whether context descriptions
 help remains untested: there was no context-free comparison. No case exercised
 the `uncertain` response.
 
+## Remaining 43-pair test
+
+The user authorized the remaining comparisons with unchanged BCPv4/Astra low.
+The [spec](../experiment_specs/lg01-bcpv4-remaining-pairs-astra-low-v1.json) uses
+the subject-pair adapter and [explicit source/pair selection](../experiment_specs/lg01-bcpv4-remaining-pairs-v1.json).
+Offline checks confirmed that the six prior pairs plus these 43 exactly cover
+the 49 pairs nominated by distinct immediate parents of cross-post shared LG01
+nodes. Selection, source data, prompt and model settings were not changed.
+
+All 43 subscription calls completed with valid JSON, no retries or reuse, and
+no paid API fallback. Earlier pairs were not rerun. The runner-generated report,
+receipts and separate agent reviews are under
+`target/branch-comparison-v1/bcpv4-remaining-pairs-v1/experiment/`.
+
+Agent review accepts 36 judgments and flags seven for user review:
+
+| Cases | Issue |
+| --- | --- |
+| B20, B21, B30, B46 | Dining contains Meals twice, but neither contains the other twice. B22 equates the Dining nodes and B29 equates the Meals nodes, so these judgments are jointly inconsistent. The correct relation is not yet adjudicated. |
+| B17 | Coffee / Coffee shops: neither was selected. Review whether beverage versus establishment is too narrow a reading of topic containment; B27 accepts dedicated food-smoking equipment beneath Food smoking. |
+| B37 | Dietary practices / Diets: equivalence may erase a broader practices-versus-diets distinction; both can also mean approaches to eating. |
+| B49 | Food ingredients / Vegetables: the parent judgment may be reasonable, but its justification narrows Vegetables to those "used in cooking." Review the full supplied scope. |
+
+The seven flags are not seven proven failures. The model itself used no
+`uncertain` answers; these flags are the reviewing agent's judgments. No prompt
+revision, graph changes or new application rule follows automatically.
+
 ## Next step
 
-Review the six saved judgments before expanding. A proposed next test is the
-remaining 43 pairs with unchanged BCPv4/Astra low; that expansion is not yet
-authorized. It would still only save judgments, not apply them. An application
-policy remains open; do not alter the saved LG01 hierarchy.
+Review the four issues above, starting with the Dining/Meals inconsistency,
+before applying judgments or revising the prompt. The saved outputs suffice;
+no additional inference is proposed at this point. An application policy remains
+open; do not alter the saved LG01 hierarchy.
 
 ## Design references
 
