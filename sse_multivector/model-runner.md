@@ -637,6 +637,15 @@ production preparation and decoding functions:
   check remains mandatory; without a schema, the single-field contract remains.
   See `experiment_specs/ppv30-eggs-node-v1.json` for a direct-hierarchy example.
 
+  For a separate post-ordering experiment, optional `dataset.combine_masks: true`
+  produces one case per node/post from the union of that node's selected masks.
+  Overlapping and adjacent spans merge; gaps remain unselected. Original mask IDs
+  remain in the evidence. Each original mask is validated before combination,
+  and hierarchy inputs still use only direct memberships. The default remains
+  one original mask per case. Unchanged rendered requests reuse saved answers;
+  a different selection requires a new prominence answer. See
+  `experiment_specs/ppv30-coffee-combined-masks-v1.json`.
+
   **PPv11** is [tested experimentally](prominence-prompt-goal-v1/ppv11-draft-v1/PPv11.md),
   not production-frozen. It replaces topic-centrality scoring with an estimate
   of the post's meaning expressed by the mask; inputs and output contract are
@@ -1469,6 +1478,14 @@ checkpoint/settings and replay checks before `collect` emits a comparison.
 This diagnostic makes no prompt calls; the shared experiment runner remains the
 only prompt-experiment workflow.
 
+For prominence experiments with `dataset.combine_masks: true`, the diagnostic
+checks the selected spans against the union of the referenced original vectors'
+spans. If an original vector already has that exact selection, it is reused.
+Otherwise the combined selection is encoded in its unchanged complete post;
+`collect` uses that new vector. Replays always select the original mask spans,
+and original vectors/results remain intact. Without the option, every referenced
+mask must still match the evidence's exact spans.
+
 `prominence_cosine.py prepare --node NODE_ID` selects a complete node from the
 supplied experiments (repeat the flag for several nodes). It also accepts generic
 experiments carrying prominence evidence, such as PPv30's allocation-debug
@@ -1479,6 +1496,10 @@ scores are refused. Unselected nodes are not encoded or required to be scored.
 its ordering, using the viewer's rescaled-cosine formula above. The explicit
 `linear_formula` distinguishes the two; raw product is not the combined score
 chosen for this trial.
+
+Optional `--only CASE_ID` (repeatable) selects exact saved cases across the supplied
+experiments. Unknown case IDs fail before encoding. This can combine unchanged
+original cases with newly scored selections without rerunning the originals.
 
 `prominence_cosine.py prepare --include-inverse` additionally prepares each
 mask's exact UTF-8 byte complement and one full-post selection per distinct
@@ -1546,6 +1567,76 @@ gives one score per post. The highest-score aggregation remains a candidate.
 
 These two reviewed pairs do not establish overall accuracy. Original posts,
 mask vectors, prominence scores and memberships are preserved.
+
+The next authorized Coffee trial combined the union of existing direct-node mask
+spans into one selection per post. The reusable spec is
+`experiment_specs/ppv30-coffee-combined-masks-v1.json`; its frozen preparation
+is `experiments/ppv30-coffee-combined-masks-v1`. It contains fourteen posts from
+seventeen original masks. Twelve posts have one original mask. More coffee in
+cool places has three nested masks whose union already equals V0504. Only the
+weather post needs a new selection: `coffee is hot` plus `coffee` within
+`#coffeechain`, at byte spans `[[116,129],[141,147]]`.
+
+Thirteen rendered inputs match saved original cases exactly. The transport's
+identity changed since those runs, so the runner conservatively offered no
+automatic reuse. Those thirteen cases were selected directly from the original
+experiment for the cosine comparison, rather than rerun. Only the new weather
+selection ran through `experiment.py`, in the `weather` child experiment: one
+valid Astra-low subscription call, no retries, unchanged **PPv30** and schema.
+It scored prominence 18; allocation points sum to 100, represented points to 18,
+and missing points to 82. This is a new answer, not a user approval. There was no
+incremental cash charge; the $0.01575 catalog estimate is not an invoice.
+
+`inverse-no-references-v2/comparison.json` under the combined-mask trial freezes
+all fourteen selected cases, using the same checkpoint and local cached CPU
+runtime as the original exclusion test. Five original-mask replays passed with
+cosine above 0.9999999999999 and maximum normalized component error below
+4.8e-8. The new combined mask is encoded in the unchanged weather post; the
+other thirteen mask vectors are reused. Reference exclusions and the Inverse
+combined formula are unchanged. Every selection was checked against the frozen
+union preparation. The first local encoding attempt remains in
+`inverse-no-references-v1`, without an accepted comparison: unrelated concurrent
+edits changed a protected adapter file before collection. The local encoding was
+repeated with fresh provenance; no prominence calls were repeated.
+
+| Post | Highest individual-mask Inverse combined | Combined-mask Inverse combined |
+| --- | --- | --- |
+| Decaf drinkers valuing experience and flavour | 63.77 | 63.77 |
+| Sunday weather with hot coffee | 65.47 | 63.37 |
+
+The weather selection has mask cosine 0.898960 and inverse cosine 0.128776.
+Selecting the hashtag's `coffee` as well reduces the coffee similarity of the
+remaining text. Its prominence rose from V0862's 15 to 18, but its final score
+fell from 65.47 to 63.37. Decaf remains unchanged at 63.767836, ahead of weather
+at 63.370444 by only 0.397392 points. This one trial passes the user's expected
+Coffee pair; it does not establish stability or overall ranking quality.
+
+The complete fourteen-post order is below. Only decaf and weather swap positions
+relative to the highest individual-mask baseline; all other positions remain.
+
+| Position | Post | Inverse combined |
+| --- | --- | --- |
+| 1 | More coffee in cool places | 88.43 |
+| 2 | Is there coffee for me? | 86.54 |
+| 3 | Coffee with raw cream and raw egg yolk | 75.13 |
+| 4 | Iced coffee served in ice | 74.70 |
+| 5 | Roasting one's own beans | 73.95 |
+| 6 | Half & half versus cream | 69.71 |
+| 7 | Hashtag-heavy second-coffee post | 69.40 |
+| 8 | Another coffee and Sunday wishes | 67.68 |
+| 9 | Duck-egg breakfast burrito and coffee | 65.87 |
+| 10 | Afternoon errands and morning coffee | 65.57 |
+| 11 | Decaf drinkers valuing experience and flavour | 63.77 |
+| 12 | Sunday weather with hot coffee | 63.37 |
+| 13 | Movement, stretching and coffee ritual | 59.06 |
+| 14 | Tolstoy animal-ethics post with Coffee hashtag | 42.84 |
+
+No new user ordering judgments were inferred for these twelve unchanged posts.
+Eggs was not rerun with combined masks. Combining masks remains a tested
+candidate; recursive sorting remains abandoned. The shared workflow, cosine,
+ranking, node-sorting, worker and extraction regression suites passed 198 tests,
+including failing-first checks for union preparation, saved-answer reuse, exact
+combined-mask encoding and selecting saved cases across experiments.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended

@@ -13,12 +13,12 @@ import struct
 
 try:
     from . import experiment, worker
-    from .experiment_inputs import prepare_prominence
+    from .experiment_inputs import prepare_prominence, union_spans
     from .prominence_ranking import ranking_scores
     from .extraction_pipeline import NIP19_IDENTIFIER, URL_SCHEME_PATTERN
 except ImportError:
     import experiment
-    from experiment_inputs import prepare_prominence
+    from experiment_inputs import prepare_prominence, union_spans
     import worker
     from prominence_ranking import ranking_scores
     from extraction_pipeline import NIP19_IDENTIFIER, URL_SCHEME_PATTERN
@@ -184,8 +184,9 @@ def prepare(args):
     lookup = {r["short_id"]: r for r in rows}
     if len(lookup) != len(rows) or any(r["ordinal"] != i for i, r in enumerate(rows)):
         raise ValueError("vector map has duplicate IDs or unexpected row order")
-    cases, titles, originals = [], {}, {}
+    cases, titles, originals, evidence = [], {}, {}, {}
     selected_nodes = set(getattr(args, "node", None) or [])
+    selected_cases = set(getattr(args, 'only', None) or [])
     for directory in args.experiments:
         directory = directory.resolve()
         plan, _, _ = experiment.load(directory)
@@ -196,6 +197,8 @@ def prepare(args):
             protected[str(name)] = sha(name)
         for case in report["cases"]:
             if selected_nodes and case.get("evidence", {}).get("node_id") not in selected_nodes:
+                continue
+            if selected_cases and case['id'] not in selected_cases:
                 continue
             if case["status"] != "valid":
                 raise ValueError(f"unscored or invalid case: {case['id']}")
@@ -213,17 +216,29 @@ def prepare(args):
             if nid in titles and titles[nid] != title:
                 raise ValueError("conflicting node titles")
             titles[nid] = title
+            masks = []
             for mid in e["mask_ids"]:
                 saved = lookup[mid]
-                if (saved["byte_spans"] != e["byte_spans"] or e["note_id"] not in (saved["note_short_id"], saved["note_id"])
-                        or saved["fragments"] != [e["text"].encode()[a:b].decode() for a,b in e["byte_spans"]]):
+                if not plan['dataset'].get('combine_masks', False) and saved['byte_spans'] != e['byte_spans']:
                     raise ValueError(f"mask differs from saved vector: {mid}")
-                originals[mid] = e
+                if (e["note_id"] not in (saved["note_short_id"], saved["note_id"])
+                        or saved["fragments"] != [e["text"].encode()[a:b].decode() for a,b in saved['byte_spans']]):
+                    raise ValueError(f"mask differs from saved vector: {mid}")
+                original = dict(e, mask_ids=[mid], byte_spans=saved['byte_spans'])
+                prepare_prominence({'cases': [original]})
+                originals[mid] = original
+                masks.append(saved)
+            if union_spans([span for mask in masks for span in mask['byte_spans']]) != union_spans(e['byte_spans']):
+                raise ValueError(f"mask union differs from saved vectors: {case['id']}")
+            exact = next((mask for mask in masks if mask['byte_spans'] == e['byte_spans']), None)
+            evidence[case['id']] = e
             cases.append(dict(id=case["id"], node_id=nid, title=title,
                               mask_ids=e["mask_ids"], note_id=e["note_id"],
-                              fragments=lookup[e["mask_ids"][0]]["fragments"],
-                              ordinal=lookup[e["mask_ids"][0]]["ordinal"],
+                              fragments=[e['text'].encode()[a:b].decode() for a,b in e['byte_spans']],
+                              ordinal=exact['ordinal'] if exact else None,
                               prominence=score))
+    if selected_cases - {case['id'] for case in cases}:
+        raise ValueError(f"unknown requested cases: {sorted(selected_cases - {case['id'] for case in cases})}")
     if selected_nodes - titles.keys():
         raise ValueError(f"unknown requested node: {sorted(selected_nodes - titles.keys())}")
     if not cases:
@@ -242,7 +257,7 @@ def prepare(args):
         notes.append(dict(note_id=lookup[mid]["note_id"], text=e["text"],
                           subjects=[dict(subject_id=hashlib.sha256(mid.encode()).hexdigest()[:16],
                                          byte_spans=e["byte_spans"])]))
-    if getattr(args, 'include_inverse', False):
+    if getattr(args, 'include_inverse', False) or any(c['ordinal'] is None for c in cases):
         # Group selections by post so the encoder contextualizes each post once.
         grouped, selections = {}, {}
 
@@ -263,8 +278,12 @@ def prepare(args):
                 old_rows.append(selection(note['note_id'], note['text'], subject['byte_spans'],
                                           subject['subject_id']))
         for case in cases:
-            e = originals[case['mask_ids'][0]]
+            e = evidence[case['id']]
             note_id = lookup[case['mask_ids'][0]]['note_id']
+            if case['ordinal'] is None:
+                case['mask_row'] = selection(note_id, e['text'], e['byte_spans'])
+            if not getattr(args, 'include_inverse', False):
+                continue
             spans = inverse_spans(e['text'], e['byte_spans'])
             full_spans = [[0, len(e['text'].encode())]]
             if exclude_references:
@@ -288,8 +307,11 @@ def prepare(args):
         for replay in replays.values():
             replay['row'] = indices[old_rows[replay['row']]]
         for case in cases:
-            case['inverse_row'] = indices[case['inverse_row']] if case['inverse_row'] is not None else None
-            case['full_post_row'] = indices[case['full_post_row']]
+            if 'mask_row' in case:
+                case['mask_row'] = indices[case['mask_row']]
+            if 'inverse_row' in case:
+                case['inverse_row'] = indices[case['inverse_row']] if case['inverse_row'] is not None else None
+                case['full_post_row'] = indices[case['full_post_row']]
     config = read(args.worker_config)
     for key in ("checkpoint_sha256", "base_model_artifact_tree_sha256", "model", "note_batch_size"):
         if config[key] != encoder[key]:
@@ -298,6 +320,7 @@ def prepare(args):
             and sha(Path(worker.__file__)) != encoder["worker_sha256"])):
         raise ValueError("expected original CPU worker")
     for path in (Path(__file__).resolve(), Path(worker.__file__).resolve(),
+                 Path(__file__).with_name('experiment_inputs.py').resolve(),
                  Path(__file__).with_name('prominence_ranking.py').resolve(), args.worker_config.resolve()):
         protected[str(path)] = sha(path)
     if exclude_references:
@@ -325,7 +348,7 @@ def prepare(args):
     config.update(request_path=str(output / "worker-request.json"),
                   request_sha256=sha(output / "worker-request.json"), output_path=str(output / "result"))
     save(output / "worker-config.json", config)
-    print(f"Prepared {len(titles)} titles, {len(replays)} replays; {len(cases)} saved masks; "
+    print(f"Prepared {len(titles)} titles, {len(replays)} replays; {len(cases)} masks; "
           f"{sum(len(n['subjects']) for n in notes)} encoder rows. No inference.")
 
 
@@ -363,7 +386,8 @@ def collect(output):
             raise ValueError(f"replay failed: {mid}: {parity[mid]}")
     groups = {}
     for case in plan["cases"]:
-        scores = {nid: cosine(saved[case["ordinal"]],fresh[index]) for nid,index in plan["title_rows"].items()}
+        mask = fresh[case['mask_row']] if 'mask_row' in case else saved[case['ordinal']]
+        scores = {nid: cosine(mask, fresh[index]) for nid,index in plan["title_rows"].items()}
         row = dict(case, cosine=scores[case["node_id"]], title_cosines=scores)
         if 'inverse_row' in case:
             title = fresh[plan['title_rows'][case['node_id']]]
@@ -390,6 +414,8 @@ def main():
     prep.add_argument("output", type=Path)
     prep.add_argument("--experiments", type=Path, nargs="+", required=True)
     prep.add_argument("--node", action="append", help="select a node ID; repeat for multiple nodes")
+    prep.add_argument('--only', action='append', metavar='CASE_ID',
+                      help='select a saved case; repeat to compare cases from several experiments')
     prep.add_argument("--vectors", type=Path, required=True)
     prep.add_argument("--worker-config", type=Path, required=True)
     prep.add_argument("--replay", nargs="+", required=True)

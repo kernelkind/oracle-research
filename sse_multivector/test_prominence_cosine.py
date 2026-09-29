@@ -10,6 +10,74 @@ from sse_multivector.prominence_cosine import cosine, rank_rows
 
 
 class ProminenceCosineTests(unittest.TestCase):
+    def test_combined_mask_encodes_exact_union_and_replays_original_spans(self):
+        from sse_multivector import prominence_cosine as pc
+        from sse_multivector.experiment_inputs import prepare_prominence
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            evidence = dict(id='photo-combined', node_id='photo', node_title='Photography',
+                            note_id='a'*64, text='Take photos twice.', mask_ids=['V1', 'V2'],
+                            byte_spans=[[5, 11], [12, 17]])
+            case = prepare_prominence({'cases': [evidence]})[0]
+            case.update(status='valid', parsed={'prominence': 20})
+            encoder = dict(checkpoint_sha256='b'*64, base_model_artifact_tree_sha256='c'*64,
+                           model={'dimensions': 2}, note_batch_size=1)
+            config = root/'config.json'
+            config.write_text(json.dumps(dict(encoder, device='cpu')))
+            (root/'experiment.json').write_text('{}')
+            (root/'results.jsonl').write_text('{}\n')
+            vectors = root/'vectors'
+            vectors.write_bytes(struct.pack('<4f', 1, 0, 1, 0))
+            rows = [dict(short_id=mid, ordinal=i, note_id='a'*64, note_short_id='N1',
+                         byte_spans=spans, fragments=fragments)
+                    for i, (mid, spans, fragments) in enumerate((
+                        ('V1', [[5, 11]], ['photos']), ('V2', [[12, 17]], ['twice'])))]
+            args = Namespace(output=root/'out', vectors=root, experiments=[root],
+                             worker_config=config, replay=['V1'], include_inverse=True)
+            plan = {'dataset': {'adapter': 'prominence', 'combine_masks': True},
+                    'run_directory': str(root)}
+            with patch.object(pc, 'load_vectors', return_value=(rows, encoder, vectors, 'f', {})), \
+                 patch.object(pc.experiment, 'load', return_value=(plan, None, None)), \
+                 patch.object(pc.experiment, 'report', return_value={'cases': [case]}):
+                pc.prepare(args)
+                saved = pc.read(args.output/'plan.json')
+                item = saved['cases'][0]
+                flat = [(n, s) for n in pc.read(args.output/'worker-request.json')['notes']
+                        for s in n['subjects']]
+                self.assertIsNone(item['ordinal'])
+                self.assertEqual(item['fragments'], ['photos', 'twice'])
+                self.assertEqual(flat[item['mask_row']][1]['byte_spans'], evidence['byte_spans'])
+                self.assertEqual(flat[item['inverse_row']][1]['byte_spans'], [[0, 5], [11, 12], [17, 18]])
+                self.assertEqual(flat[saved['replays']['V1']['row']][1]['byte_spans'], [[5, 11]])
+                fresh = [(1, 0)] * len(flat)
+                fresh[item['mask_row']] = (0, 1)
+                fresh[item['full_post_row']] = (1, 1)
+                result = args.output/'result'
+                result.mkdir()
+                (result/'raw-vectors.f32le').write_bytes(struct.pack(
+                    '<' + 'f' * (2 * len(fresh)), *(v for row in fresh for v in row)))
+                (result/'worker-receipt.json').write_text(json.dumps(dict(
+                    encoder, request_sha256=pc.sha(args.output/'worker-request.json'),
+                    proposal_sha256=pc.sha(args.output/'plan.json'),
+                    rows=[dict(note_id=n['note_id'], subject_id=s['subject_id']) for n, s in flat])))
+                pc.collect(args.output)
+                row = pc.read(args.output/'comparison.json')['groups']['photo'][0]
+                self.assertEqual(row['cosine'], 0)
+                self.assertEqual(row['inverse_product'], 90)
+                self.assertEqual(row['mask_ids'], ['V1', 'V2'])
+                args.output = root/'without-inverse'
+                args.include_inverse = False
+                pc.prepare(args)
+                item = pc.read(args.output/'plan.json')['cases'][0]
+                self.assertIn('mask_row', item)
+                self.assertNotIn('inverse_row', item)
+                args.output = root/'bad-union'
+                evidence['byte_spans'] = [[5, 17]]
+                case['inputs'] = prepare_prominence({'cases': [evidence]})[0]['inputs']
+                with self.assertRaisesRegex(ValueError, 'union'):
+                    pc.prepare(args)
+                self.assertFalse(args.output.exists())
+
     def test_prepare_selected_generic_prominence_validates_exact_model_input(self):
         from sse_multivector import prominence_cosine as pc
         from sse_multivector.experiment_inputs import prepare_prominence
@@ -42,6 +110,18 @@ class ProminenceCosineTests(unittest.TestCase):
                 self.assertEqual([c['id'] for c in saved['cases']], ['photo-V1'])
                 request = json.loads((args.output/'worker-request.json').read_text())
                 self.assertEqual([n['text'] for n in request['notes']], ['Photography', 'Take photos.'])
+                args.output = root/'selected-case'
+                args.only = ['photo-V1']
+                other['evidence']['node_id'] = 'photo'
+                pc.prepare(args)
+                self.assertEqual(len(pc.read(args.output/'plan.json')['cases']), 1)
+                args.only = ['missing']
+                args.output = root/'missing-case'
+                with self.assertRaisesRegex(ValueError, 'case'):
+                    pc.prepare(args)
+                self.assertFalse(args.output.exists())
+                args.only = None
+                other['evidence']['node_id'] = 'other'
                 args.output = root/'inverse'
                 args.include_inverse = True
                 pc.prepare(args)

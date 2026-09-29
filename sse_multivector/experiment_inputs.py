@@ -158,8 +158,19 @@ def prepare_subject_pairs(source, selected=None):
     return cases
 
 
-def prepare_prominence(source, selected=None):
-    """Render one exact saved mask per case, retaining node metadata only for review."""
+def union_spans(spans):
+    """Union validated byte spans, preserving every gap in the source text."""
+    result = []
+    for start, end in sorted(spans):
+        if result and start <= result[-1][1]:
+            result[-1][1] = max(result[-1][1], end)
+        else:
+            result.append([start, end])
+    return result
+
+
+def prepare_prominence(source, selected=None, combine_masks=False):
+    """Render saved masks, optionally unioned per node/post; metadata stays review-only."""
     if 'memberships' in source:
         nodes = source['memberships']['nodes']
         available = {node['group']: node for node in nodes}
@@ -272,6 +283,19 @@ def prepare_prominence(source, selected=None):
         if set(selected) - ids:
             raise ValueError("unknown case requested")
         cases = [c for c in cases if c["id"] in selected]
+    if combine_masks:
+        posts = {}
+        for case in cases:
+            e = case['evidence']
+            key = e['node_id'], e['note_id']
+            combined = posts.setdefault(key, dict(e, id='P' + digest(key)[:24],
+                                                   mask_ids=[], byte_spans=[]))
+            combined['mask_ids'].extend(e['mask_ids'])
+            combined['byte_spans'].extend(e['byte_spans'])
+        for combined in posts.values():
+            combined['mask_ids'] = list(dict.fromkeys(combined['mask_ids']))
+            combined['byte_spans'] = union_spans(combined['byte_spans'])
+        return prepare_prominence({'cases': list(posts.values())})
     return cases
 
 
@@ -285,6 +309,9 @@ def prepare(dataset, source, template):
             raise ValueError("duplicate selection IDs")
     if adapter != "masks" and "mask_format" in dataset:
         raise ValueError("mask_format is only supported by the masks adapter")
+    if 'combine_masks' in dataset:
+        if adapter != 'prominence' or type(dataset['combine_masks']) is not bool:
+            raise ValueError('combine_masks requires the prominence adapter and a boolean')
     if adapter == "generic":
         cases = source["cases"]
         for case in cases:
@@ -298,7 +325,7 @@ def prepare(dataset, source, template):
                 raise ValueError("unknown case requested")
             cases = [c for c in cases if c["id"] in dataset["select"]]
     elif adapter == "prominence":
-        cases = prepare_prominence(source, dataset.get("select"))
+        cases = prepare_prominence(source, dataset.get("select"), dataset.get('combine_masks', False))
     elif adapter == "subject_pairs":
         cases = prepare_subject_pairs(source, dataset.get("select"))
     elif adapter == "titles":

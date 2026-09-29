@@ -16,6 +16,48 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_combined_prominence_uses_direct_post_span_union_and_reuses_unchanged_requests(self):
+        self.prominence_spec()
+        masks = [dict(instance=mid, note_id='N1', text='☕ Tea, then tea.',
+                      byte_spans=spans, fragments=fragments)
+                 for mid, spans, fragments in (
+                     ('V1', [[4, 7]], ['Tea']),
+                     ('V2', [[4, 13]], ['Tea, then']),
+                     ('V3', [[14, 17]], ['tea']))]
+        masks.append(dict(instance='V4', note_id='N2', text='Tea.',
+                          byte_spans=[[0, 3]], fragments=['Tea']))
+        self.write('cases.json', {'memberships': {'nodes': [
+            dict(group='G', title='Tea', matched_instances=masks,
+                 recursive_note_ids=['N1', 'N2', 'N3']),
+            dict(group='child', title='Tea ritual', matched_instances=[dict(
+                instance='V5', note_id='N1', text='☕ Tea, then tea.',
+                byte_spans=[[0, 18]], fragments=['☕ Tea, then tea.'])])]}})
+        spec = json.loads(self.spec.read_text())
+        spec['dataset']['select'] = ['G']
+        self.write('spec.json', spec)
+        self.prepare()
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': '{"prominence":80}'})
+        self.assertEqual(len(self.calls()), 4)
+
+        spec['dataset']['combine_masks'] = True
+        self.write('spec.json', spec)
+        self.prepare('E2')
+        cases = self.show('E2')['cases']
+        self.assertEqual(len(cases), 2)
+        combined = next(c for c in cases if c['evidence']['note_id'] == 'N1')
+        self.assertEqual(combined['evidence']['mask_ids'], ['V1', 'V2', 'V3'])
+        self.assertEqual(combined['evidence']['byte_spans'], [[4, 13], [14, 17]])
+        self.assertEqual(json.loads(combined['inputs']['INPUT_JSON']),
+                         {'mask': ['Tea, then', 'tea'],
+                          'marked_post': '☕ ⟦Tea, then⟧ ⟦tea⟧.'})
+        self.cli('run', 'E2', env={'FAKE_RUNNER_PROMPT_RESPONSE': '{"prominence":80}'})
+        report = self.show('E2')
+        self.assertEqual(report['summary']['reused'], 1)
+        self.assertEqual(len(self.calls()), 5)
+        from sse_multivector import experiment, experiment_inputs
+        batch, _ = experiment_inputs.review_batch(experiment.load(self.root/'E2')[0], report)
+        self.assertEqual(len(batch['notes']), 2)
+
     def test_reuse_verification_does_not_reread_whole_files_per_case(self):
         from collections import Counter
         from unittest.mock import MagicMock, patch
