@@ -129,7 +129,8 @@ operator action. The rebuilt image and `package-v9` passed all 24 local VM
 tests on September 29, including real SSH training/retrieval and all three
 candidate preflights. The rebuilt image is published and verified private; read-only image pulling is verified. The user approved proceeding
 with continuous observation through execution, retrieval and explicit deletion.
-Availability is being checked; no replacement rental has started.
+A 30-minute availability watch found no eligible offer under $1.66/hour.
+The launch is blocked on availability.
 Candidate settings and Vast limits are frozen locally: BF16 LoRA, 128 steps
 per candidate, and one 96 GB GPU within the approved $25 total. On September 29
 the user authorized publication and one rental at up to $1.66/hour including

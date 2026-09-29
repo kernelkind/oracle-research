@@ -861,7 +861,10 @@ and SSH deployment. The rebuilt private image is published and verified.
 The user approved proceeding and required continuous observation throughout the
 rental. Next, select an available approved offer, freeze a new operation and
 commit its budget reservation. Observe startup, execution, result retrieval
-and explicit deletion within the approved limits. The old frozen launch retains its original code.
+and explicit deletion within the approved limits. A 30-minute watch found no
+eligible offer under the frozen requirements and $1.66/hour ceiling. Evidence is in
+`target/distillation-pilot-v1/launch-20260929-v2/availability-watch-status.json`.
+The launch is blocked on availability. The old frozen launch retains its original code.
 Candidate recipes and Vast limits are unchanged. The prior publication and
 one rental were authorized within $25, at up to $1.66/hour for at most 13 hours.
 The saved split inspection found no clear complete-note duplicates or close paraphrases across
