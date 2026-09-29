@@ -17,7 +17,9 @@ rules and implementation status in the same
 Do not silently transfer the mask-set merge, generated merged-title or
 equal-post display-collapse rules below to SP subject nodes. In particular,
 HD11 requires both identical subject wording and identical nonempty masks
-within one post; it is agreed but not yet implemented.
+within one post; it is implemented in the separate
+[SMv2 experiment](../subject-order-probe.md#smv2--exact-same-post-combination).
+Earlier saved graphs remain unchanged.
 
 1. **Deduplicate identical masks within each post before SSE.** Treat masks with
    the same post ID and identical ordered source-byte ranges as one encoder

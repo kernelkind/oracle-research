@@ -1,8 +1,9 @@
-"""SMv1: offline, reversible cross-post subject matching on saved SSE vectors.
+"""SMv2: exact same-post combination and reversible cross-post subject matching.
 
 Mask nearest neighbors select post pairs. Within each pair, mutual subject-text
 best matches must pass independent subject/mask cutoffs. Passing chains merge;
-all merged groups participating in a directed cycle are split back to subjects.
+cross-post merges in cycles are undone without splitting exact same-post groups.
+If exact same-post combination alone creates a cycle, stop before any export.
 No inference, new placement, title generation, or baseline edits.
 """
 import argparse
@@ -38,6 +39,26 @@ def match_subjects(inputs, subject_vectors, mask_vectors, *, subject_cutoff=.90,
         raise ValueError("original SP graph contains a cycle")
     if any(subjects[a]["note_id"] != subjects[b]["note_id"] for a, b in edges):
         raise ValueError("original SP edges must stay within a post")
+
+    def mapped_graph(groups):
+        owner = {member: i for i, group in enumerate(groups) for member in group}
+        mapped = sorted({(owner[a], owner[b]) for a, b in edges if owner[a] != owner[b]})
+        return owner, mapped, reachable(len(groups), mapped)
+
+    # HD11: identity comes from exact source positions, not vector IDs or cosine.
+    same_post = {}
+    for i, s in enumerate(subjects):
+        spans = tuple(map(tuple, s["byte_spans"]))
+        identity = (s["note_id"], s["subject"], spans) if spans else (i,)
+        same_post.setdefault(identity, []).append(i)
+    base_groups = sorted(same_post.values())
+    base_owner, _, base_paths = mapped_graph(base_groups)
+    base_cyclic = {a for a, b in base_paths if a == b}
+    if base_cyclic:
+        members = sorted(m for i in base_cyclic for m in base_groups[i])
+        refs = "; ".join(f'{subjects[m]["note_short_id"]} SP {subjects[m]["number"]}: '
+                         f'{subjects[m]["subject"]}' for m in members)
+        raise ValueError(f"exact same-post combination creates a cycle: {refs}")
 
     @lru_cache(None)
     def similarity(a, b):
@@ -87,6 +108,9 @@ def match_subjects(inputs, subject_vectors, mask_vectors, *, subject_cutoff=.90,
                     accepted.append(pair)
 
     parent = list(range(n))
+    for group in base_groups:
+        for m in group:
+            parent[m] = group[0]
 
     def find(i):
         while parent[i] != i:
@@ -103,28 +127,30 @@ def match_subjects(inputs, subject_vectors, mask_vectors, *, subject_cutoff=.90,
     groups = sorted(components.values())
     rollbacks = []
     while True:
-        owner = {member: i for i, group in enumerate(groups) for member in group}
-        mapped = sorted({(owner[a], owner[b]) for a, b in edges if owner[a] != owner[b]})
-        paths = reachable(len(groups), mapped)
+        owner, mapped, paths = mapped_graph(groups)
         cyclic = {a for a, b in paths if a == b}
         if not cyclic:
             break
-        undo = {i for i in cyclic if len(groups[i]) > 1}
+        undo = {i for i in cyclic if len({base_owner[m] for m in groups[i]}) > 1}
         if not undo:
-            raise ValueError("cycle without any proposed merge to undo")
+            raise ValueError("cycle without any cross-post merge to undo")
         rollbacks.append(dict(groups=[groups[i] for i in sorted(undo)],
                               cyclic_groups=[groups[i] for i in sorted(cyclic)],
                               edges=[list(e) for e in mapped]))
-        groups = sorted([part for i, group in enumerate(groups)
-                         for part in ([[m] for m in group] if i in undo else [group])])
+        groups = sorted(part for i, group in enumerate(groups)
+                        for part in ([base_groups[j] for j in sorted({base_owner[m] for m in group})]
+                                     if i in undo else [group]))
     if any(owner[a] != owner[b] and (owner[a], owner[b]) not in paths for a, b in original_paths):
         raise ValueError("an original SP relationship was lost")
-    return dict(experiment_id="SMv1", settings=dict(
+    return dict(experiment_id="SMv2", settings=dict(
         subject_cutoff=subject_cutoff, mask_cutoff=mask_cutoff, tie_tolerance=TIE_TOLERANCE,
+        same_post_combination="HD11: exact post, subject wording and nonempty source positions",
         post_selection="cross-post nearest mask; all numerical ties",
         matching="mutual subject best within each post pair, before cutoff/mask checks",
         merging="connected passing pairs; no all-pairs requirement or iterative rematching",
-        cycles="split every merged group in any cycle; repeat; retain original SP links"),
+        cycles="HD15: stop on exact-combination cycle; undo every cross-post merge in any cycle; "
+        "repeat; retain exact same-post groups and original SP links"),
+        same_post_groups=[g for g in base_groups if len(g) > 1],
         nearest_masks=nearest_masks, candidate_post_pairs=[list(p) for p in sorted(post_pairs)],
         comparisons=sorted(comparisons, key=lambda r: r["pair"]), accepted_pairs=sorted(accepted),
         cycle_rollbacks=rollbacks, groups=groups, edges=[list(e) for e in mapped],
@@ -137,6 +163,7 @@ def match_subjects(inputs, subject_vectors, mask_vectors, *, subject_cutoff=.90,
 def browser_spec(inputs, result, masks, source_hash):
     """Use the existing DAG browser, preserving SP sources even for empty masks."""
     subjects, groups = inputs["subjects"], result["groups"]
+    version = result["experiment_id"]
     ids = [f"S{g[0]:04d}" for g in groups]
     children = {i: [] for i in range(len(groups))}
     nonroots = set()
@@ -161,13 +188,13 @@ def browser_spec(inputs, result, masks, source_hash):
         nodes.append(dict(node_id=ids[i], label=names[i],
                           children=[ids[j] for j in sorted(children[i], key=lambda j: (names[j], ids[j]))],
                           note_ids=sorted(own_notes[i]),
-                          analysis="SMv1 experimental subject matching; original SP links only. "
+                          analysis=f"{version} experimental subject matching; original SP links only. "
                           "No title generation or new placements.\nOriginal subjects:\n" + "\n".join(origins)))
     paths = reachable(len(groups), result["edges"])
     nodes.insert(0, dict(node_id="root", label="All subjects", note_ids=[],
                          children=[ids[i] for i in sorted(set(children) - nonroots,
                                                          key=lambda j: (names[j], ids[j]))],
-                         analysis="SMv1 navigation root, not an inferred subject. All SP subjects retained; "
+                         analysis=f"{version} navigation root, not an inferred subject. All SP subjects retained; "
                          "no display collapsing. Empty masks show original posts without highlights."))
     note_masks, instances = {}, {}
     for node in nodes:
@@ -188,7 +215,7 @@ def browser_spec(inputs, result, masks, source_hash):
         instances[key] = individual
         note_masks[key] = {p: [list(s) for s in sorted({tuple(s) for m in items for s in m["byte_spans"]})]
                            for p, items in individual.items()}
-    return dict(schema_version=2, hierarchy_id="SMv1 · saved SP hierarchies · experimental matching",
+    return dict(schema_version=2, hierarchy_id=f"{version} · saved SP hierarchies · experimental matching",
                 source_sha256=source_hash, root_node_id="root", nodes=nodes,
                 notes=[dict(note_id=p["note_id"], note_short_id=p["note_short_id"])
                        for p in inputs["posts"]], note_masks=note_masks, mask_instances=instances)
@@ -253,8 +280,10 @@ def run(source, probe, output, *, subject_cutoff=.90, mask_cutoff=.80):
     if result != match_subjects(inputs, sv, mv, subject_cutoff=subject_cutoff, mask_cutoff=mask_cutoff):
         raise ValueError("matching did not reproduce deterministically")
     view = browser_spec(inputs, result, selected_masks, protected[str(source / "masked-posts.json")])
-    summary = dict(experiment_id="SMv1", posts=len(inputs["posts"]), subjects=len(sv),
+    summary = dict(experiment_id=result["experiment_id"], posts=len(inputs["posts"]), subjects=len(sv),
                    empty_masks=sum(v is None for v in mv), mask_vectors=len(selected_masks),
+                   same_post_groups=len(result["same_post_groups"]),
+                   same_post_reduction=sum(len(g) - 1 for g in result["same_post_groups"]),
                    candidate_post_pairs=len(result["candidate_post_pairs"]),
                    subject_pairs_compared=len(result["comparisons"]), accepted_pairs=len(result["accepted_pairs"]),
                    merged_groups=sum(len(g) > 1 for g in result["groups"]), nodes=len(result["groups"]),

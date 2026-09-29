@@ -56,6 +56,7 @@ class SubjectMatchingTests(unittest.TestCase):
 
     def test_mutual_choice_is_checked_before_thresholds_or_empty_mask_filter(self):
         data = inputs(["A", "B", "B"])
+        data["subjects"][1].update(mask_vector_ids=[], byte_spans=[], fragments=[])
         subject_vectors = [vector(0), vector(0), vector(.1)]
         result = match_subjects(data, subject_vectors, [vector(0), None, vector(0)])
         self.assertEqual(result["accepted_pairs"], [])
@@ -83,13 +84,69 @@ class SubjectMatchingTests(unittest.TestCase):
         self.assertEqual(result["cycle_rollbacks"], [])
 
     def test_all_merges_in_cycle_are_undone_but_unrelated_merge_is_kept(self):
-        data = inputs(["A", "A", "B", "B", "C", "D"], edges=[(0, 1), (2, 3)])
+        data = inputs(["A", "A", "B", "B", "C", "D"],
+                      ["X", "Y", "Y", "X", "Z", "Z"], edges=[(0, 1), (2, 3)])
         vectors = [vector(a) for a in (0, 1.2, 1.2, 0, 2.8, 2.8)]
         result = match_subjects(data, vectors, vectors)
         self.assertEqual(result["accepted_pairs"], [[0, 3], [1, 2], [4, 5]])
         self.assertEqual(result["groups"], [[0], [1], [2], [3], [4, 5]])
         self.assertEqual(result["edges"], [[0, 1], [2, 3]])
         self.assertEqual(result["cycle_rollbacks"][0]["groups"], [[0, 3], [1, 2]])
+
+    def test_same_post_combination_keeps_all_parents_children_and_mask_aliases(self):
+        data = inputs(["A"] * 5, ["Parent A", "Repeated", "Parent B", "Repeated", "Child"],
+                      [(0, 1), (2, 3), (1, 4)])
+        vectors = [vector(0)] * 5
+        result = match_subjects(data, vectors, vectors)
+        self.assertEqual(result["groups"], [[0], [1, 3], [2], [4]])
+        self.assertEqual(result["same_post_groups"], [[1, 3]])
+        self.assertEqual(result["edges"], [[0, 1], [1, 3], [2, 1]])
+        self.assertEqual(result["accepted_pairs"], [])
+        self.assertEqual(result, match_subjects(data, vectors, vectors))
+        masks = {f"v{i}": dict(short_id=f"V{i}", note_short_id="A", byte_spans=[[0, 1]])
+                 for i in range(5)}
+        spec = browser_spec(data, result, masks, "source-hash")
+        combined = next(n for n in spec["nodes"] if n["node_id"] == "S0001")
+        self.assertIn("A SP 2: Repeated (V1)", combined["analysis"])
+        self.assertIn("A SP 4: Repeated (V3)", combined["analysis"])
+        self.assertEqual(spec["mask_instances"]["S0001"]["A"][0]["ids"], ["V1", "V3", "V4"])
+
+    def test_same_post_rule_requires_exact_text_and_nonempty_source_positions(self):
+        data = inputs(["A"] * 7 + ["B"], ["X", "X", "X", "x", "Y", "Empty", "Empty", "X"])
+        data["subjects"][2]["byte_spans"] = [[2, 3]]  # Same words, different occurrence.
+        for i in (5, 6):
+            data["subjects"][i].update(mask_vector_ids=[], byte_spans=[], fragments=[])
+        result = match_subjects(data, [vector(0)] * 8,
+                                [vector(0)] * 5 + [None, None, vector(math.pi)])
+        self.assertEqual(result["groups"], [[0, 1], [2], [3], [4], [5], [6], [7]])
+        self.assertEqual(result["same_post_groups"], [[0, 1]])
+        self.assertEqual(result["accepted_pairs"], [])
+
+    def test_cycle_rollback_preserves_exact_same_post_combination(self):
+        data = inputs(["A", "A", "A", "B", "B", "C", "D"],
+                      ["X", "X", "Y", "Y", "X", "Z", "Z"], [(0, 2), (3, 4)])
+        vectors = [vector(a) for a in (0, 0, 1.2, 1.2, 0, 2.8, 2.8)]
+        result = match_subjects(data, vectors, vectors)
+        self.assertEqual(result["accepted_pairs"], [[0, 4], [1, 4], [2, 3], [5, 6]])
+        self.assertEqual(result["groups"], [[0, 1], [2], [3], [4], [5, 6]])
+        self.assertEqual(result["edges"], [[0, 1], [2, 3]])
+        self.assertEqual(result["same_post_groups"], [[0, 1]])
+        self.assertEqual(result["rolled_back_pairs"], [[0, 4], [1, 4], [2, 3]])
+        self.assertEqual(result["cycle_rollbacks"][0]["groups"], [[0, 1, 4], [2, 3]])
+        self.assertTrue(result["sp_order_preserved"])
+
+    def test_exact_combination_cycle_stops_with_source_references(self):
+        data = inputs(["A"] * 3, ["X", "Y", "X"], [(0, 1), (1, 2)])
+        with self.assertRaisesRegex(ValueError, "exact same-post.*cycle.*A SP 1.*A SP 2.*A SP 3"):
+            match_subjects(data, [vector(0)] * 3, [vector(0)] * 3)
+
+    def test_exact_ancestor_combination_can_collapse_internal_edge(self):
+        data = inputs(["A", "A"], ["X", "X"], [(0, 1)])
+        result = match_subjects(data, [vector(0)] * 2, [vector(0)] * 2)
+        self.assertEqual(result["groups"], [[0, 1]])
+        self.assertEqual(result["collapsed_sp_edges"], [[0, 1]])
+        self.assertEqual(result["edges"], [])
+        self.assertEqual(result["cycle_rollbacks"], [])
 
     def test_no_mask_candidates_does_not_remove_subjects(self):
         result = match_subjects(inputs(["A", "B"]), [vector(0)] * 2, [None, None])
@@ -125,7 +182,7 @@ class SubjectMatchingTests(unittest.TestCase):
 
 
 class SavedMatchingTests(unittest.TestCase):
-    def fixture(self, directory):
+    def fixture(self, directory, *, duplicates=False, cycle=False):
         source, probe = directory / "source", directory / "probe"
         source.mkdir()
         probe.mkdir()
@@ -142,6 +199,12 @@ class SavedMatchingTests(unittest.TestCase):
             notes.append(dict(note_id=note, text="bread", subjects=[
                 dict(number="1", subject="Bread", id=f"m{i}", byte_spans=[[0, 5]], fragments=["bread"]),
                 dict(number="2", subject="Empty", id=f"e{i}", byte_spans=[], fragments=[])]))
+            if duplicates or cycle:
+                if cycle:
+                    notes[-1]["subjects"][1]["number"] = "1.1"
+                notes[-1]["subjects"].append(dict(
+                    number="1.1.1" if cycle else "2.1", subject="Bread", id=f"d{i}",
+                    byte_spans=[[0, 5]], fragments=["bread"]))
             mapping.append(dict(note_id=note, note_short_id=f"N00{i}", vector_id=f"v{i}",
                                 short_id=f"V{i}", worker_subject_id=f"m{i}",
                                 byte_spans=[[0, 5]], fragments=["bread"]))
@@ -177,6 +240,7 @@ class SavedMatchingTests(unittest.TestCase):
             process = subprocess.run(command, text=True, capture_output=True, check=False)
             self.assertEqual(process.returncode, 0, process.stderr)
             summary = json.loads(process.stdout)
+            self.assertEqual(summary["experiment_id"], "SMv2")
             self.assertEqual((summary["subjects"], summary["nodes"], summary["empty_masks"]), (4, 3, 2))
             self.assertEqual(summary["inference_calls"], 0)
             spec = json.loads((output / "categories.json").read_text())
@@ -188,6 +252,32 @@ class SavedMatchingTests(unittest.TestCase):
             self.assertIn("FileExistsError", again.stderr)
             self.assertEqual(snapshot, {p: p.read_bytes() for p in output.iterdir()})
             self.assertEqual(before, {p: p.read_bytes() for p in before})
+
+    def test_saved_duplicate_sources_remain_in_versioned_output(self):
+        with tempfile.TemporaryDirectory() as directory:
+            directory = Path(directory)
+            source, probe = self.fixture(directory, duplicates=True)
+            summary = run(source, probe, directory / "run")
+            self.assertEqual(summary["experiment_id"], "SMv2")
+            self.assertEqual((summary["subjects"], summary["nodes"], summary["same_post_groups"]), (6, 3, 2))
+            self.assertEqual(summary["same_post_reduction"], 2)
+            result = json.loads((directory / "run/results.json").read_text())
+            self.assertEqual(result["same_post_groups"], [[0, 2], [3, 5]])
+            self.assertEqual(result["groups"], [[0, 2, 3, 5], [1], [4]])
+            provenance = json.loads((directory / "run/provenance.json").read_text())
+            self.assertEqual(len(provenance["subjects"]), 6)
+            self.assertEqual(provenance["original_edges"], [[1, 2], [4, 5]])
+            spec = json.loads((directory / "run/categories.json").read_text())
+            self.assertTrue(spec["hierarchy_id"].startswith("SMv2"))
+            self.assertTrue(all(n["analysis"].startswith("SMv2") for n in spec["nodes"]))
+
+    def test_exact_combination_cycle_creates_no_output(self):
+        with tempfile.TemporaryDirectory() as directory:
+            directory = Path(directory)
+            source, probe = self.fixture(directory, cycle=True)
+            with self.assertRaisesRegex(ValueError, "exact same-post.*cycle.*N001 SP 1"):
+                run(source, probe, directory / "run")
+            self.assertFalse((directory / "run").exists())
 
     def test_saved_vector_corruption_is_rejected_before_output_creation(self):
         with tempfile.TemporaryDirectory() as directory:

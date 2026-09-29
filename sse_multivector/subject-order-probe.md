@@ -7,8 +7,8 @@ This is diagnostic code, not an adopted production hierarchy algorithm.
 
 Decision status is centralized in the
 [SP-based hierarchy rule register](../docs/planning/release-decisions.md#sp-based-hierarchy-rules)
-(HD08–17). In particular, HD11's exact same-post combination is agreed but not
-implemented; neither the saved SOv1 run nor SMv1 below performs that new step.
+(HD08–17). HD11's exact same-post combination and HD15's corresponding cycle
+policy are implemented in SMv2 below. Saved SOv1 and SMv1 results remain unchanged.
 The procedures here document those experiments, not a production policy.
 
 ## Fixed scope
@@ -118,8 +118,9 @@ not run OPHAC, HDBSCAN, a placement model, or a title model. It does not change
 SOv1, HR02, the prompts, or any saved source masks. Its settings are provisional
 development choices, not validated thresholds or a production architecture.
 
-The implemented procedure is
-[`subject_matching_probe.py`](subject_matching_probe.py):
+The saved SMv1 procedure is below. The current
+[`subject_matching_probe.py`](subject_matching_probe.py) adds the SMv2 changes
+described in the next section; its cross-post search and comparisons are unchanged.
 
 1. For each unique nonempty mask, find the closest mask from another post.
    Keep numerical ties and deduplicate the resulting **post pairs**. This
@@ -162,26 +163,53 @@ sample tests mechanical behavior and browsing, not generalization. New posts
 would be needed before claiming that the proposed matching rule generalizes.
 Whether to adopt the rule or change its cutoffs remains open.
 
+## SMv2 — exact same-post combination
+
+SMv2 adds HD11 before the unchanged cross-post matching procedure:
+
+1. Combine entries only when their post ID, exact subject wording and ordered,
+   nonempty source-byte ranges match. Vector IDs or equal selected words alone
+   are not the identity test. Empty-mask entries remain separate.
+2. Map all original SP links onto these exact combinations. Internal links are
+   ancestor-or-equal, not self-loops. If distinct combined nodes form a cycle,
+   stop before creating output and report the involved posts and SP numbers.
+3. Compute cross-post candidates and passing pairs from the original entries,
+   with SMv1's unchanged search, mutual-best rule and cutoffs. Combine their
+   connected chains together with the exact same-post combinations.
+4. If a cycle appears, undo every participating cross-post merge back to its
+   constituent exact same-post groups or singleton entries, then check again.
+   Never split an exact combination, discard an SP link, or merge more nodes
+   to resolve a cycle. Unrelated cross-post merges remain intact.
+
+Every parent, child, source SP reference and mask ID remains traceable. Shared
+children do not create links between their parents. Exact same-post agreement
+is not independent confirmation: identical mask requests may reuse one answer.
+All remaining export and preservation checks are unchanged. This is an isolated
+experiment, not adoption of the matching thresholds or a missing-parent method.
+The original SMv1 output remains the input to the separate AVv1 diagnostic.
+
 ### Run and inspect
 
 Outputs are ignored artifacts and an existing output directory is never
 overwritten. `results.json` contains the nearest-mask searches, post shortlist,
-every within-post-pair comparison, accepted pairs, cycle rollbacks, and final
-groups/links. `provenance.json` binds the run to source/vector hashes and keeps
+every within-post-pair comparison, accepted cross-post pairs, cycle rollbacks,
+and final groups/links. SMv2 also records `same_post_groups` separately, keyed
+by original subject indices, and identifies HD11/HD15 in its settings.
+`provenance.json` binds the run to source/vector hashes and keeps
 all original subject occurrences, SP links, and masks. `summary.json` reports
 mechanical counts and checks. `categories.json` is the existing browser format.
 The runner verifies source hashes and SSE identities, repeats the calculation
 for determinism, and checks that every original SP ancestor relationship is
 still represented or internal to a merged group. It performs no inference.
 
-Use a fresh output path for a replay; the initial saved experiment is `run`:
+Use a fresh output path for a replay; the saved SMv2 experiment is `run`:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 python3 -m sse_multivector.subject_matching_probe \
   --source sse_multivector/hierarchy-refresh-v1 \
   --probe target/subject-order-v1/run \
-  --output target/subject-matching-v1/replay
+  --output target/subject-matching-v2/replay
 ```
 
 The browser must include the explicit-empty-mask support. Build it if needed:
@@ -193,12 +221,12 @@ nix develop --command cargo build \
   --bin sse-subject-navigation
 ```
 
-Open the initial saved experiment:
+Open SMv2 (the earlier baseline remains under `target/subject-matching-v1/run`):
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 target/infomap-review-build/debug/sse-subject-navigation \
-  --categories target/subject-matching-v1/run/categories.json \
+  --categories target/subject-matching-v2/run/categories.json \
   sse_multivector/hierarchy-refresh-v1/masked-posts.json
 ```
 
