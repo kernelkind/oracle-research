@@ -307,7 +307,7 @@ This is a dated checkpoint; current task status appears in `release-plan.json`.
 | 17 · Compare teachers | In progress; no completed selection established. |
 | 26 · Collapse equal-note navigation steps | Implemented and regression-tested; validation on the rebuilt hierarchy is waiting. |
 | 13 · Define Nostr hierarchy protocol | Not started. |
-| 18 · Prepare training code for the fine-tuning pilot | Candidate recipes and Vast limits frozen locally; VM tests training and SSH deployment. Image published and verified September 29; authorized $25 launch awaits a qualifying offer. |
+| 18 · Prepare training code for the fine-tuning pilot | Candidate recipes and Vast limits frozen locally; VM tests training and SSH deployment. Image published and verified; the experiment started September 29 within the approved $25 limit. Workload results pending. |
 | 24 · Recover missing node memberships | Not started. |
 | 25 · Handle node equivalence and TRUE cycles | Complete for HR02: exact-mask consolidation and reversible cycle handling are implemented and tested, with naming/browser integration. The merge rules remain provisional; hierarchy-quality review belongs to 02. |
 | 21 · Assess HDBSCAN at launch scale | No further progress; earlier investigation remains evidence, not launch-scale validation. |
@@ -494,7 +494,8 @@ uses up to four masks from one note per batch; training settings are unchanged.
 Direct-mask generation is deferred for this informal pilot.
 This initial informal experiment may use current saved annotations before
 prominence and final teacher selection are ready. Local data is prepared;
-no candidate baseline, training run or rental has run. See the
+the rental started September 29 and candidate baseline/training results are
+pending. See the
 [current pilot preparation](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md#status-and-scope).
 The release model still requires prominence. Candidate selection, the larger
 pilot's evaluation requirements, full-data gates and paid-resource approval
@@ -524,12 +525,12 @@ recipes and Vast limits are now frozen locally: BF16 LoRA, 128 steps per
 candidate and one 96 GB GPU. On September 29 the user authorized publication
 and one rental, then approved up to $1.66/hour including storage for at most
 13 hours, retaining the 12-hour worker window and $25 total. The full planned
-allowance is $23.78 including transfers. The exact tested image is published and its identity and read-only pulling are verified; launch-specific settings record the approved limits without changing the image. The selected
-offer disappeared before launch, and the September 29 post-publication search
-found no qualifying offer. No paid launch or spending reservation has occurred.
+allowance is $23.78 including transfers. The exact tested image is published and its identity and read-only pulling are verified; launch-specific settings record the approved limits without changing the image.  The September 29 configuration cost $1.6555555556/hour including 300 GB storage. Image startup, direct SSH and
+frozen-input verification passed. Qwen preflight passed, its weights downloaded and baseline evaluation began.
+Persistent local supervision is active; baseline and training results are pending.
 The user accepted a $25 total maximum for GPU setup, baselines and initial
 fine-tunes across the three candidates, including storage, transfers and failed
-attempts. No rental has started; ledger admission precedes any paid commitment.
+attempts. Budget admission passed before the run; no replacement rental is authorized without discussing any failure with the user.
 
 - **Teacher-comparison pilot (17):** choose the teachers that write the training
   data. The current comparison is Muse high versus Astra low; no teacher is

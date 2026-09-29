@@ -61,7 +61,8 @@ The destination must be new. The manifest records input/output hashes and
 note IDs; evaluation starts with subject-prompt inputs containing no teacher
 answers. Its mask inputs must use the candidate's generated subjects. Data stays ignored
 under `target/`. Conversion checks every selection using the existing mask
-decoder. No candidate baseline, fine-tune or GPU rental has run yet.
+decoder. The rental has started and Qwen baseline evaluation is underway;
+completed candidate baselines and fine-tunes remain pending.
 
 The release model still needs prominence. The requirements below describe the
 larger evaluation and release decision; prominence is excluded only from this
@@ -114,7 +115,8 @@ Approved requirements:
 
 The staged experimental design below is proposed, not fully approved. Dataset
 sizes, exact training settings, hardware allocations, and individual spending
-authorizations remain open. No rental or training run has started for this pilot.
+authorizations remain open for that larger design. The informal rental below
+started on September 29; its full-size baseline and training results are pending.
 
 The release plan's **18 · Prepare training code for the fine-tuning pilot** is
 in progress: prepare code to fine-tune each candidate, save/reload its trained
@@ -224,7 +226,7 @@ owns creation, key attachment, transfer, detached execution, result sealing,
 retrieval and verified destruction. `distillation_deploy.py` only freezes inputs
 and executes the candidate sequence; `distillation_vast.py` describes that work.
 The model recipes, prompts, data, batching and $25 total maximum are unchanged.
-Publication and full-size GPU execution remain pending.
+Publication is verified; full-size candidate execution has started on Vast.
 
 The failure audit reproduced empty successful destroy output, distinct live
 and offer bundle IDs, and missing/null transfer counters in the old controller.
@@ -252,7 +254,7 @@ hashes match the VM export. Read-only registry credentials successfully pulled
 this immutable reference using cached local layers; this does not measure a
 cold pull. VM containerd reports the manifest digest as its image ID, while
 local legacy Docker reports the config digest; the publication receipt records
-both. No full-size GPU run has occurred. Evidence is under
+both. Full-size candidate execution has started; results are pending. Evidence is under
 `target/distillation-pilot-v1/launch-20260929/`, including
 `publication/publication-receipt.json`.
 Validation passed 117 shared-controller tests, seven pinned-CLI checks and
@@ -371,10 +373,10 @@ not establish semantic correctness or approval; semantic review remains open.
 
 CPU VM validation cannot establish candidate quality, CUDA kernel compatibility,
 full-model memory requirements or speed. Those are checked during the actual
-pilot; there is no separate throwaway GPU training run. The actual candidate
-baselines and fine-tunes have not run.
+pilot; there is no separate throwaway GPU training run. Qwen baseline
+evaluation has started; completed baselines and fine-tunes remain pending.
 
-### Vast launch configuration — awaiting availability
+### Vast launch configuration — rental started
 
 [The launch configuration](distillation/vast-launch.json) freezes the search,
 create options and admission limits. It reuses the existing private Docker Hub
@@ -827,10 +829,15 @@ Candidate recipes and Vast limits are frozen. Publication and one rental are
 authorized within $25, at up to $1.66/hour for at most 13 hours. The saved split
 inspection found no clear complete-note duplicates or close paraphrases across
 the 80/20 split; topical overlaps remain recorded and this is an informal test.
-Registry verification is complete. The selected $1.6556/hour offer disappeared
-before launch; the post-publication search at 14:41 UTC on September 29 found
-no qualifying replacement among 14 returned offers. Obtain an
-available qualifying offer and commit ledger admission before launch. Establish each candidate's two-step baseline
+Registry verification is complete. The availability watch found a compatible offer. The shared runner
+passed preparation.
+The recorded rental rate was $1.6555555556/hour including 300 GB storage. The immutable operation is
+`target/distillation-pilot-v1/launch-20260929/operation/`. Its persistent local
+`run --watch` supervisor is active. Image startup, direct SSH, frozen-input
+verification and automatic worker start passed. Qwen preflight passed and its
+weights downloaded; baseline evaluation is underway. Results are pending. The cleanup deadline is **September 30, 04:38:30 UTC**, leaving
+15 minutes before the 13-hour session ceiling. Establish each candidate's
+two-step baseline
 before fine-tuning and compare on the same held-out notes using its own generated
 subjects. Paid work must fit the approved $25 total and ledger admission.
 Prominence and the larger dataset-size schedule can wait.
