@@ -34,7 +34,7 @@ identifiers and paths remain unchanged.
    wording at different positions or in different posts is not this identity
    rule; overlapping but different selections remain distinct. Title generation
    and review must also use the same deduplicated mask inventory, so aliases do
-   not become repeated evidence. Keep valid empty subject masks recorded without
+   not become repeated evidence. Keep valid empty MP masks recorded without
    generating vectors for them; invalid outputs are not empty masks.
 2. **Merge nodes with identical mask sets before hierarchy generation.** Compare
    sets of mask identities defined in stage 1, after resolving duplicate-mask

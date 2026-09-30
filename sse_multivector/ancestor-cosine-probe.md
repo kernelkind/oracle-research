@@ -1,6 +1,6 @@
 # ACv1 — mask-to-ancestor cosine curves
 
-This diagnostic plots `cosine(saved mask vector, saved subject-text vector)`
+This diagnostic plots `cosine(saved mask vector, saved subject vector)`
 along a selected, original per-post SP path, from its root (depth zero) through
 B itself. It uses SOv1's existing subject encodings and HR02's original mask
 vectors. It performs no inference, grouping, merging or placement.

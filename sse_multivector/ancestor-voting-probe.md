@@ -13,7 +13,7 @@ instructions to remove subjects from the real hierarchy.
 
 ## Inputs and scoring
 
-Reuse the six SOv1 posts, their saved standalone subject-text SSE vectors, and
+Reuse the six SOv1 posts, their saved subject vectors, and
 the 116 SMv1 nodes with their mapped SP relationships. Original mask/source
 references remain in the output. Mask vectors are **not** used in these scores.
 

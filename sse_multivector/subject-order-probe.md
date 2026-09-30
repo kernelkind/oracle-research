@@ -1,7 +1,7 @@
 # Subject-order diagnostic (SOv1)
 
 Isolated feasibility test of combining saved per-post SP hierarchies using
-subject-text SSE vectors and OPHAC. It does not change HR02, its masks, node
+subject vectors and OPHAC. It does not change HR02, its masks, node
 memberships, prompts, or saved vectors. No LLM calls or paid resources are used.
 This is diagnostic code, not an adopted production hierarchy algorithm.
 
@@ -21,9 +21,10 @@ The procedures here document those experiments, not a production policy.
   Original post text, SP numbering, masks and mask-vector IDs remain traceable.
 - Exact subject strings share one SSE encoding, not one graph entry. All graph
   merges are made by the same algorithm; no equality decisions are supplied.
-- Standalone subject text, fully selected, goes through the existing
-  `worker.py` with HR02's checkpoint, model, CPU settings and runtime versions.
-  Original contextual mask vectors are not recomputed or used as distances.
+- Subject vectors encode the full SP subject wording by itself through the
+  existing `worker.py`, with HR02's checkpoint, model, CPU settings and runtime
+  versions. Mask vectors instead use MP's selected source text in its original
+  post context; they are not recomputed or used as distances in SOv1.
 - Distance: `1 - cosine`, float64 computation from the worker's float32 vectors.
   Distances below `1e-12` become zero to remove numerical roundoff.
 - OPHAC 0.5.4, upstream `HACUntied_python`, complete linkage: group distance is
@@ -130,8 +131,8 @@ described in the next section; its cross-post search and comparisons are unchang
 1. For each unique nonempty mask, find the closest mask from another post.
    Keep numerical ties and deduplicate the resulting **post pairs**. This
    uses mask-to-mask cosine only; empty-mask subjects do not supply searches.
-2. Within each selected post pair, compare every SP subject-text vector on
-   one side against every SP subject-text vector on the other. Empty-mask
+2. Within each selected post pair, compare every SP subject vector on
+   one side against every SP subject vector on the other. Empty-mask
    subjects still participate here. Each subject selects its best counterpart
    **within that other post**, not across the entire corpus. Keep ties.
 3. A pair must select each other and have subject cosine **>= 0.90** and mask

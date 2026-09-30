@@ -9,64 +9,66 @@ The current tests reuse saved HG1–HG2 outputs rather than rerunning SP or MP.
 
 ## From posts to a combined hierarchy
 
-1. **HG1 — Generate each post's subjects and subject masks.** For each post,
+1. **HG1 — Generate each post's subjects and masks.** For each post,
    prompt SP to produce its local subject hierarchies and a context description
    for each subject. Then prompt MP for each supplied subject, selecting the
    exact fragments of that post that express that subject.
 
-   A **subject mask** is this set of selected fragments for one subject in one
-   post, not a mask for the whole post. A **nonempty subject mask** has at least
-   one selected fragment. Keep subjects whose subject masks are empty too.
+   A **mask** means only the exact fragments MP selects from the original post
+   for that supplied subject. If MP selects no fragments (`[]`), retain that
+   SP subject and its parent–child relationships; do not delete the subject.
    A post can have several subject trees; their top-level subjects need not be
    equally general or remain top-level in the global hierarchy.
 
 2. **HG2 — Generate two separate types of SSE vector.**
 
-   - Encode each SP subject's wording by itself: its **subject-text vector**.
-   - Encode each nonempty subject mask's selected text in the context of its
-     original post: its **subject-mask vector**.
+   - Encode each SP subject's wording by itself: its **subject vector**.
+     This does not run MP on the subject wording.
+   - Encode the text selected by each nonempty MP mask in the context of its
+     original post: its **mask vector**.
 
-   A subject with an empty subject mask still gets a subject-text vector, but
-   no subject-mask vector. Keep both vector types separate; retain the source
-   posts, subjects, subject masks and SP parent–child relationships.
+   A subject whose MP mask is empty still gets a subject vector, but no mask
+   vector. Keep both vector types separate; retain the source posts, subjects,
+   masks and SP parent–child relationships.
 
 3. **HG3 — LG01: combine matching SP subjects into hierarchy nodes.** Start
    with one hierarchy node per original SP subject. No model is prompted here.
 
    - **Combine repeated subjects within one post.** SP can put the same
      subject wording in several places in a post's local subject hierarchies.
-     Combine those subject entries only if their nonempty subject masks select
+     Combine those subject entries only if their nonempty MP masks select
      exactly the same parts of that post. Keep all their parent relationships.
 
-   - **Use subject-mask vectors to select post pairs.** If several subjects in
-     one post have identical subject masks, count that subject-mask vector once
-     for this search. For each subject-mask vector, compute cosine similarity
-     against every subject-mask vector from all other posts. Select the
-     other-post subject-mask vector with the highest cosine, retaining ties.
-     The posts containing those two subject masks become a selected post pair.
-     Multiple subject-mask matches selecting the same two posts still produce
+   - **Use mask vectors to select post pairs.** If several SP subjects in one
+     post have identical MP masks, count that mask vector once for this search.
+     For each mask vector generated from a nonempty MP mask, compute cosine
+     similarity against every mask vector from all other posts. Select the
+     other-post mask vector with the highest cosine, retaining ties.
+     The source posts of those two MP masks become a selected post pair.
+     Multiple mask-vector matches selecting the same two posts still produce
      only one post pair. This selects posts to examine; it does not combine
      their subjects yet.
 
-   - **Compare subject-text vectors within each selected post pair.** Compare
-     every original SP subject-text vector from the first post against every
-     original SP subject-text vector from the second post. Find each subject's
+   - **Compare subject vectors within each selected post pair.** Compare
+     every original SP subject vector from the first post against every
+     original SP subject vector from the second post. Find each subject's
      highest-cosine subject match in the other post, in both directions.
-     Include subjects whose subject masks are empty when finding these best
-     subject-text matches.
+     Include subjects whose MP masks are empty when finding these best
+     subject-vector matches.
 
    - **Check both vector comparisons before accepting a subject match.** The
-     two subjects must be each other's best subject-text match within this post
-     pair, with subject-text-vector cosine at least **0.90**. Their corresponding
-     subject-mask vectors must both exist and have cosine at least **0.80**.
+     two subjects must be each other's best match by subject-vector cosine
+     within this post pair, with cosine at least **0.90**. The mask vectors from
+     their corresponding MP masks must both exist and have cosine at least **0.80**.
      Ties qualify. If a best subject match fails these checks, do not fall back
      to a weaker match. These cutoffs are experimental.
 
    - **Combine the subjects that passed into hierarchy nodes.** If subject X
      matches Y, and Y matches Z, combine all three into one hierarchy node,
      even if X and Z did not pass a direct comparison. Retain each original
-     subject, its subject mask and its SP relationships; do not blend their
-     vectors. Subjects without a passing match remain separate hierarchy nodes.
+     subject, its MP mask and its SP relationships; do not blend their subject
+     vectors or mask vectors. Subjects without a passing match remain separate
+     hierarchy nodes.
 
    Preserve every original SP ancestor relationship as either a path between
    the resulting hierarchy nodes or a relationship inside one combined node.
@@ -96,7 +98,8 @@ The current tests reuse saved HG1–HG2 outputs rather than rerunning SP or MP.
    original SP subject wordings and SP context descriptions represented by
    each of the two hierarchy nodes. A combined node can supply several such
    entries; remove only exact duplicate subject/context entries. Do not send
-   whole posts, subject masks, vectors or the shared child to this prompt.
+   whole posts, MP masks, subject vectors, mask vectors or the shared child
+   to this prompt.
 
    The model returns equivalent, A ancestor of B, B ancestor of A, neither,
    or uncertain, plus a reason. A and B identify the two hierarchy nodes,
@@ -104,7 +107,7 @@ The current tests reuse saved HG1–HG2 outputs rather than rerunning SP or MP.
 
 6. **HG6 — Combine hierarchy nodes judged equivalent at HG5.** Combine
    connected chains of equivalent node pairs. The resulting hierarchy node
-   retains all contributing SP subjects, context descriptions, subject masks
+   retains all contributing SP subjects, context descriptions, MP masks
    and original SP relationships. Preserve SP ancestry and stop if the
    combinations create a cycle between distinct hierarchy nodes. No new
    prompt call or replacement-title generation happens here.
@@ -135,7 +138,7 @@ For browsing, omit a direct link between two hierarchy nodes only when another
 path connects those same nodes. For example, show **Food → Bread → Sourdough
 bread**, without a redundant Food → Sourdough bread shortcut. Keep every
 hierarchy node, multiple parent routes and original relationships in the
-underlying data. Each node's directly associated subject masks stay unchanged;
+underlying data. Each node's directly associated MP masks stay unchanged;
 new ancestor links can provide additional routes to posts through child nodes.
 
 ## What is still missing?
