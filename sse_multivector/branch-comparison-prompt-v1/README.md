@@ -4,14 +4,19 @@ The goal is a useful hierarchy for browsing posts. This is the SP-based process
 we are testing on 100 posts, not a settled production workflow. **HG1–HG7** name
 its stages; **LG01** names the technique used at HG3, regardless of post count.
 The current tests reuse saved HG1–HG2 outputs rather than rerunning SP or MP.
+Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
 
 <a id="hierarchy-generation-stages"></a>
 
 ## From posts to a combined hierarchy
 
-1. **HG1 — Generate each post's subjects and masks.** For each post,
+1. **HG1 — Generate each post's subjects and masks.**
+
+   **HG1.1 — Subjects.** For each post,
    prompt SP to produce its local subject hierarchies and a context description
-   for each subject. Then prompt MP for each supplied subject, selecting the
+   for each subject.
+
+   **HG1.2 — Masks.** Then prompt MP for each supplied subject, selecting the
    exact fragments of that post that express that subject.
 
    A **mask** means only the exact fragments MP selects from the original post
@@ -22,9 +27,10 @@ The current tests reuse saved HG1–HG2 outputs rather than rerunning SP or MP.
 
 2. **HG2 — Generate two separate types of SSE vector.**
 
-   - Encode each SP subject's wording by itself: its **subject vector**.
+   - **HG2.1 — Subject vectors.** Encode each SP subject's wording by itself:
+     its **subject vector**.
      This does not run MP on the subject wording.
-   - Encode the text selected by each nonempty MP mask in the context of its
+   - **HG2.2 — Mask vectors.** Encode the text selected by each nonempty MP mask in the context of its
      original post: its **mask vector**.
 
    A subject whose MP mask is empty still gets a subject vector, but no mask
@@ -34,12 +40,12 @@ The current tests reuse saved HG1–HG2 outputs rather than rerunning SP or MP.
 3. **HG3 — LG01: combine matching SP subjects into hierarchy nodes.** Start
    with one hierarchy node per original SP subject. No model is prompted here.
 
-   - **Combine repeated subjects within one post.** SP can put the same
+   - **HG3.1 — Combine repeated subjects within one post.** SP can put the same
      subject wording in several places in a post's local subject hierarchies.
      Combine those subject entries only if their nonempty MP masks select
      exactly the same parts of that post. Keep all their parent relationships.
 
-   - **Use mask vectors to select post pairs.** If several SP subjects in one
+   - **HG3.2 — Use mask vectors to select post pairs.** If several SP subjects in one
      post have identical MP masks, count that mask vector once for this search.
      For each mask vector generated from a nonempty MP mask, compute cosine
      similarity against every mask vector from all other posts. Select the
@@ -49,27 +55,28 @@ The current tests reuse saved HG1–HG2 outputs rather than rerunning SP or MP.
      only one post pair. This selects posts to examine; it does not combine
      their subjects yet.
 
-   - **Compare subject vectors within each selected post pair.** Compare
+   - **HG3.3 — Compare subject vectors within each selected post pair.** Compare
      every original SP subject vector from the first post against every
      original SP subject vector from the second post. Find each subject's
      highest-cosine subject match in the other post, in both directions.
      Include subjects whose MP masks are empty when finding these best
      subject-vector matches.
 
-   - **Check both vector comparisons before accepting a subject match.** The
+   - **HG3.4 — Check both vector comparisons before accepting a subject match.** The
      two subjects must be each other's best match by subject-vector cosine
      within this post pair, with cosine at least **0.90**. The mask vectors from
      their corresponding MP masks must both exist and have cosine at least **0.80**.
      Ties qualify. If a best subject match fails these checks, do not fall back
      to a weaker match. These cutoffs are experimental.
 
-   - **Combine the subjects that passed into hierarchy nodes.** If subject X
+   - **HG3.5 — Combine the subjects that passed into hierarchy nodes.** If subject X
      matches Y, and Y matches Z, combine all three into one hierarchy node,
      even if X and Z did not pass a direct comparison. Retain each original
      subject, its MP mask and its SP relationships; do not blend their subject
      vectors or mask vectors. Subjects without a passing match remain separate
      hierarchy nodes.
 
+   **HG3.6 — Preserve SP relationships and check cycles.**
    Preserve every original SP ancestor relationship as either a path between
    the resulting hierarchy nodes or a relationship inside one combined node.
    If within-post combinations alone create a cycle between distinct hierarchy
@@ -94,14 +101,16 @@ The current tests reuse saved HG1–HG2 outputs rather than rerunning SP or MP.
    Cranberries child does not decide whether those two parents are related.
 
 5. **HG5 — Prompt BCPv4 for each selected hierarchy-node pair.** Use
-   **BCPv4** (tested, not frozen) with **Astra low**. The model receives the
+   **BCPv4** (tested, not frozen) with **Astra low**.
+
+   **HG5.1 — Model input.** The model receives the
    original SP subject wordings and SP context descriptions represented by
    each of the two hierarchy nodes. A combined node can supply several such
    entries; remove only exact duplicate subject/context entries. Do not send
    whole posts, MP masks, subject vectors, mask vectors or the shared child
    to this prompt.
 
-   The model returns equivalent, A ancestor of B, B ancestor of A, neither,
+   **HG5.2 — Model output.** The model returns equivalent, A ancestor of B, B ancestor of A, neither,
    or uncertain, plus a reason. A and B identify the two hierarchy nodes,
    not the source posts. Save the answer without changing the hierarchy yet.
 
@@ -113,17 +122,19 @@ The current tests reuse saved HG1–HG2 outputs rather than rerunning SP or MP.
    prompt call or replacement-title generation happens here.
 
 7. **HG7 — Recompare previously judged node pairs whose prompt inputs changed.**
-   After HG6, replace each old node reference with its resulting combined-node
+   **HG7.1 — Update comparison pairs.** After HG6, replace each old node reference with its resulting combined-node
    reference. Drop a comparison if both sides now refer to the same hierarchy
    node. Count repeated pairs of resulting hierarchy nodes once.
 
-   Rebuild each remaining pair's subject/context lists for BCPv4. Reuse its
+   **HG7.2 — Reuse or recompare.** Rebuild each remaining pair's subject/context lists for BCPv4. Reuse its
    saved answer only if the exact prompt input and model settings still match.
    If the input changed, prompt **BCPv4 / Astra low** with the current lists.
    Combining nodes can add subject/context entries, so changing an old answer's
    node IDs is not enough to make that answer valid for the combined nodes.
 
 ## Apply answers, then browse
+
+### HG8.1 — Apply ancestor answers (proposed HG8)
 
 After HG7, the tested exporter uses saved, valid answers to add ancestor
 relationships between hierarchy nodes, alongside the preserved SP relationships,
@@ -133,6 +144,8 @@ relationship and do not delete existing SP relationships. A new equivalent
 answer requires a separate HG6 decision. The exporter stops on conflicting
 relationships; it does not choose a repair. This export makes **no model calls**.
 Its proposed HG8 label and general conflict policy are not settled.
+
+### HG8.2 — Browsing links (proposed HG8)
 
 For browsing, omit a direct link between two hierarchy nodes only when another
 path connects those same nodes. For example, show **Food → Bread → Sourdough
