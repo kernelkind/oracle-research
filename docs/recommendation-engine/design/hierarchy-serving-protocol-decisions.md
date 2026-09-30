@@ -41,12 +41,13 @@ Providers assign opaque node IDs unique within the hierarchy; titles may repeat.
 mapping uses those same IDs as keys. Put notes-list settings in tags; leave
 `content` empty.
 
-`K_NODE` is an unassigned integer kind; event IDs, keys and signatures are
-abbreviated. The logical node IDs below are examples, not a required format.
+`K_NODE` is an unassigned integer kind. Examples display shortened `note1…` IDs
+and `npub1…` keys; [wire values are hex](https://github.com/nostr-protocol/nips/blob/master/19.md#bare-keys-and-ids).
+Signatures are abbreviated. Logical node IDs are examples, not a required format.
 
 ```text
 {
-  "id":"C2", "pubkey":"P", "created_at":1790683200, "kind":K_NODE,
+  "id":"note1abc..abc", "pubkey":"npub1abc..abc", "created_at":1790683200, "kind":K_NODE,
   "tags":[
     ["d","8fc3492dd2094adf96a858c67e1b0394"], ["title","Cooking"],
     ["child","cda491245f344c9286e5dd497d840d52"],
@@ -55,7 +56,7 @@ abbreviated. The logical node IDs below are examples, not a required format.
     ["notes_events","2"], ["notes_per_page","800"]
   ],
   "content":"",
-  "sig":"S"
+  "sig":"abc..abc"
 }
 ```
 
@@ -71,6 +72,26 @@ abbreviated. The logical node IDs below are examples, not a required format.
 
 Regular kinds avoid addressable replacement discarding an earlier record
 during overlap. [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds)
+
+## Notes page — proposed schema
+
+`K_NOTES` uses a regular kind in `1000–9999`; its number remains open.
+[NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds)
+
+The page is signed by the same provider as its referencing node record.
+Example: final page `1`; page `0` contains 800 IDs. Values use the notation above.
+
+```text
+{
+  "id":"note1def..def", "pubkey":"npub1abc..abc", "created_at":1790683199, "kind":K_NOTES,
+  "tags":[["d","cooking-7/1"],["e","note1aaa..aaa"],["e","note1ddd..ddd"]],
+  "content":"",
+  "sig":"def..def"
+}
+```
+
+`e` tags contain note event IDs in served order. Read pages by index.
+Never overwrite published pages or reuse list IDs under the provider's public key.
 
 ## Open decisions
 
