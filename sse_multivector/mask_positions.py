@@ -21,8 +21,15 @@ def unique_object(pairs):
     return result
 
 
+def parse_json_response(raw):
+    """Accept bare JSON or one complete Markdown JSON fence, preserving validation."""
+    fenced = re.fullmatch(r"\s*```(?:json)?[ \t]*\r?\n(.*?)\r?\n```\s*", raw,
+                          flags=re.DOTALL | re.IGNORECASE)
+    return json.loads(fenced.group(1) if fenced else raw, object_pairs_hook=unique_object)
+
+
 def decode(raw, source):
-    response = json.loads(raw, object_pairs_hook=unique_object)
+    response = parse_json_response(raw)
     if not isinstance(response, dict) or set(response) != {"meaning", "expressible", "evidence", "mask"}:
         raise ValueError("expected meaning, expressible, evidence and mask fields")
     for key in ("meaning", "evidence"):

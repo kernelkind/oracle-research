@@ -20,7 +20,7 @@ import time
 from pathlib import Path
 
 from sse_multivector.extraction_pipeline import prepare_mask_inputs
-from sse_multivector.mask_positions import decode, unique_object
+from sse_multivector.mask_positions import decode, parse_json_response, unique_object
 
 
 def sha256(path):
@@ -130,7 +130,7 @@ def preflight(tokenizer, data, config):
 
 
 def parse_subjects(raw):
-    value = json.loads(raw, object_pairs_hook=unique_object)
+    value = parse_json_response(raw)
     if not isinstance(value, dict) or set(value) != {"subjects"} or not isinstance(value["subjects"], list):
         raise ValueError("expected subjects array")
     numbers = set()

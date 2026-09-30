@@ -403,6 +403,13 @@ including every prompt and one measured generation duration for the batch.
 Resuming reuses the whole saved batch, including malformed and empty answers;
 the final incomplete group can contain fewer than four requests.
 
+Subject and position-mask decoding accept bare JSON or one complete Markdown
+code fence labelled `json` (case-insensitive) or unlabelled. Existing field,
+duplicate-key, hierarchy, verdict and position validation still apply. Raw
+answers are retained. Parser changes do not rewrite a completed evaluation;
+apply the same decoder to both baseline and trained answers in a separate
+evaluation before comparing their scores.
+
 The JSON config requires explicit model/revision, prepared-data and mask-prompt
 paths; CPU/CUDA and none/NF4 quantization; seed, sequence and per-task output
 limits, subject limit, steps, checkpoint interval, training batch size,
@@ -894,19 +901,28 @@ hash-verified at **03:08:17 UTC**, and local output verification passed at
 13-hour limit; the 12-hour worker timeout did not fire. The local watcher was
 resumed after chat interruptions while the same remote attempt continued.
 
-| Candidate | Baseline `f1_80` | Trained `f1_80` | Trained subject / mask failures | Training minutes |
+| Candidate | Baseline `f1_80` with fences accepted | Trained `f1_80` | Trained subject / mask failures | Training minutes |
 | --- | ---: | ---: | ---: | ---: |
-| Qwen | 0.333 | 0.346 | 2 / 3 | 52.2 |
-| Gemma dense | 0.000* | 0.397 | 1 / 5 | 80.6 |
-| Gemma MoE | 0.000* | 0.313 | 3 / 13 | 24.8 |
+| Qwen | 0.344 | 0.346 | 2 / 3 | 52.2 |
+| Gemma dense | Pending mask generation | 0.397 | 1 / 5 | 80.6 |
+| Gemma MoE | Pending mask generation | 0.313 | 3 / 13 | 24.8 |
 
 These are teacher-agreement scores on 20 held-out notes, with one-to-one matching
 of unique nonempty source-word selections; semantic correctness remains pending.
 All 20 baseline subject answers from each Gemma candidate were wrapped in
 Markdown code fences and failed strict JSON parsing. Their zero scores reflect
-formatting failure, and no baseline mask calls were made. Removing fences from
-sampled answers for inspection exposed subjects, but neither saved scoring nor
-rental execution was changed. Qwen's invalid masks decreased from 22 to 3.
+formatting failure, and no baseline mask calls were made. The user subsequently
+requested accepting fenced JSON to recover those baselines. The updated subject
+and mask decoder was applied to saved Qwen baseline and all three trained
+outputs, using the same production evaluation and scoring paths without new
+inference. Eleven Qwen baseline masks were recovered: its baseline F1 rises
+from 0.333 to 0.344, with mask failures now 11 before and 3 after training. All
+trained scores remain identical. The separate replay and source provenance are
+saved under `target/distillation-pilot-v1/fenced-json-reparse-20260930/`.
+All 40 saved Gemma subject answers now validate, yielding 290 dense and 328 MoE
+subjects. Their 618 masks need generation with the untuned models before a
+baseline quality comparison is possible. Training need not be repeated; any
+new paid run needs maximum-charge approval under the repository spending rules.
 Each candidate trained on 211 sampled subject examples and 813 mask examples;
 all saved adapters reproduced their pre-save answers after reload. The training
 times above exclude saving and the reload comparison.
@@ -919,9 +935,9 @@ the longest was about 6.7 minutes. Maximum sampled VRAM use was 96,581 MiB.
 The preliminary resource charge was **$13.392**. Evidence is
 `observations/preliminary-charge-summary.json` and its native invoice snapshot. Including
 the earlier failed rental's $0.338, posted charges total **$13.73** across both
-rentals; unposted charges remain unresolved. The next step is semantic review
-of the saved answers and deciding how future baseline comparisons should handle
-format failures before candidate selection. The old frozen launch retains its
+rentals; unposted charges remain unresolved. The next steps are completing the
+Gemma baseline mask generation and semantic review before candidate selection.
+The old frozen launch retains its
 original code. Candidate recipes and Vast limits are unchanged. The prior
 publication and one rental were authorized within $25, at up to $1.66/hour for
 at most 13 hours.

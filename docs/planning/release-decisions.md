@@ -602,7 +602,7 @@ A 30-minute watch found no eligible 600 W offer. The user then approved the
 450 W RTX PRO 6000 WS alternative: the same 96 GB GPU, with lower power that
 may reduce speed; all other frozen offer checks pass. The launch-specific
 `approved-settings-450w.json` overrides only that power requirement in addition
-to the prior price/time overrides. The experiment used a $1.4167/hour configuration including 300 GB storage. All three candidates completed their 20-note baselines,
+to the prior price/time overrides. The experiment used a $1.4167/hour configuration including 300 GB storage. All three candidates completed their 20-note baseline attempts,
 128-step training, matching adapter reloads and trained evaluations in the frozen
 image and package. The worker exited successfully on September 30 at 02:56:58
 UTC. Retrieval of 671 work files was hash-verified, and local output verification passed. 
@@ -611,7 +611,17 @@ trained scores were 0.397 for Gemma dense and 0.313 for Gemma MoE. All 20
 untuned subject responses from each Gemma candidate had Markdown code fences
 and failed strict JSON parsing, producing zero baseline scores and no baseline
 mask calls. Those comparisons therefore include formatting gains; semantic
-quality review and model selection remain open. GPU telemetry has 553 periodic
+quality review and model selection remain open. The user subsequently requested
+parser support for Markdown-fenced JSON to recover the Gemma baselines. Subject
+and position-mask decoding now accept bare JSON or one complete JSON/unlabelled
+code fence, retaining duplicate-key, hierarchy and position validation. Replaying
+saved answers with this decoder raises Qwen's baseline F1 to 0.344 and reduces
+its baseline mask failures from 22 to 11; all three trained scores are unchanged.
+All 40 saved Gemma subject answers validate, exposing 290 dense and 328 MoE
+subjects. Completing their baselines requires generating those 618 missing
+masks with the untuned models; training need not be repeated. New paid work
+requires approval of its maximum charge under the repository spending rules.
+GPU telemetry has 553 periodic
 samples, including recorded sampling gaps. Preliminary charges for this run were $13.392.  The prior failed run's preliminary cost was $0.338. Posted charges for the two experiment runs totaled $13.73, within the unchanged $25 experiment maximum.
 The old frozen operation and published image remain unchanged.
 The user accepted a $25 total maximum for GPU setup, baselines and initial

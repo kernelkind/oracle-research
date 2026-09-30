@@ -15,6 +15,63 @@ from sse_multivector import distillation_data
 
 
 class DataContractTests(unittest.TestCase):
+    def test_subject_parser_accepts_a_complete_json_code_fence(self):
+        subjects = [{"number": "1", "context": "Tea is named.", "subject": "Tea"}]
+        raw = json.dumps({"subjects": subjects})
+        for opening in ("```json", "```", "```JSON"):
+            with self.subTest(opening=opening):
+                self.assertEqual(distillation_run.parse_subjects(f" \n{opening}\n{raw}\n```\n"), subjects)
+
+    def test_fences_do_not_hide_invalid_subject_responses(self):
+        raw = '{"subjects":[]}'
+        invalid = [f"Here is the JSON:\n```json\n{raw}\n```",
+                   f"```json\n{raw}\n```\nExplanation",
+                   f"```json\n{raw}",
+                   f"```python\n{raw}\n```",
+                   f"```json\n{raw}\n```\n```json\n{raw}\n```",
+                   '```json\n{"subjects":[],"subjects":[]}\n```',
+                   '```json\n{"subjects":[{"number":"1.1","context":"Tea","subject":"Tea"}]}\n```']
+        for response in invalid:
+            with self.subTest(response=response), self.assertRaises(ValueError):
+                distillation_run.parse_subjects(response)
+
+    def test_mask_fences_preserve_empty_verdict_and_position_validation(self):
+        mask = {"meaning": "Tea", "expressible": False, "evidence": "Only a drink is named.", "mask": []}
+        for opening in ("```json", "```"):
+            with self.subTest(opening=opening):
+                self.assertEqual(distillation_run.decode(f"{opening}\n{json.dumps(mask)}\n```", "Drink"),
+                                 (mask, []))
+        invalid = [json.dumps({**mask, "expressible": True}),
+                   json.dumps({**mask, "expressible": True, "mask": [[1, 1], [1, 1]]}),
+                   '{"meaning":"Tea","expressible":false,"evidence":"Drink","mask":[],"mask":[]}']
+        for raw in invalid:
+            with self.subTest(raw=raw), self.assertRaises(ValueError):
+                distillation_run.decode(f"```json\n{raw}\n```", "Drink")
+
+    def test_saved_fenced_subjects_proceed_to_fenced_mask_generation(self):
+        subjects = [{"number": "1", "context": "Tea is named.", "subject": "Tea"}]
+        messages = [{"role": "user", "content": "Subjects?"}]
+        data = {"evaluation": [{"note_id": "a", "messages": messages}],
+                "references": {"a": {"text": "Tea tastes good."}},
+                "mask_prompt": "{POST}\n{INDEXED_POST}\nSubject: {SUBJECT}"}
+        mask = {"meaning": "Tea", "expressible": True, "evidence": "Tea is named.", "mask": [[1, 1]]}
+        answer = {"raw": f"```json\n{json.dumps(mask)}\n```", "truncated": False, "tokens": 10}
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary)
+            distillation_run.write_json(output / "note-0000/subjects.json", {"messages": messages,
+                "answer": {"raw": f"```json\n{json.dumps({'subjects': subjects})}\n```", "truncated": False}})
+            original_hash = distillation_run.sha256(output / "note-0000/subjects.json")
+            with patch.object(distillation_run, "generate", side_effect=AssertionError("repeated subjects")), \
+                    patch.object(distillation_run, "generate_batch", return_value={"answers": [answer], "seconds": 1}) as calls:
+                results = distillation_run.evaluate(None, None, data,
+                    {"mask_batch_size": 4, "max_subjects": 8}, output)
+            self.assertEqual(results[0]["subjects"], subjects)
+            self.assertEqual(results[0]["errors"], [])
+            self.assertEqual(results[0]["masks"][0]["spans"], [{"start": 0, "end": 3}])
+            self.assertEqual(calls.call_count, 1)
+            self.assertEqual(distillation_run.sha256(output / "note-0000/subjects.json"), original_hash)
+            self.assertTrue(distillation_run.verify_saved(output))
+
     def test_mask_batches_preserve_subject_order_and_resume_without_repeating_saved_answers(self):
         subjects = [{"number": str(i + 1), "context": "Tea is named.", "subject": f"Tea {i}"}
                     for i in range(5)]
