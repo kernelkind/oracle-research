@@ -139,9 +139,8 @@ below. No baseline or training completed.
 The release plan's **18 · Prepare training code for the fine-tuning pilot** is
 complete for setup: local VM rehearsals cover each candidate family, training,
 interruption/resume, save/reload and SSH deployment. The image is published and
-verified, and the replacement GPU run completed Qwen's baseline, training,
-reload check and trained evaluation. Final training-example formatting and
-mask/prominence quality evaluation remain in **06 · Choose model through larger
+verified. Final training-example formatting and mask/prominence quality evaluation
+remain in **06 · Choose model through larger
 fine-tuning pilot**, which needs the agreed output format, prominence criteria and reviewed pilot
 data to complete release-model selection. Preliminary candidate execution and
 subject/mask quality review belong to 29, not completion of 06. The informal

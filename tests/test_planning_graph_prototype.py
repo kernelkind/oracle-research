@@ -216,6 +216,17 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('14 ·'))"))
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('15 ·'))"))
 
+                evaluate("document.querySelector('#focus-task').value = '18'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
+                wait_for("document.querySelector('#details h2').textContent.startsWith('18 ·')")
+                self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "COMPLETE")
+                setup_details = evaluate("document.querySelector('#details').innerText")
+                self.assertIn("local VM tests cover all three candidate families", setup_details)
+                self.assertIn("published and verified private", setup_details)
+                self.assertIn("candidate execution and quality review are tracked in 29", setup_details)
+                self.assertIn("model selection is tracked in 06", setup_details)
+                self.assertNotIn("900000053", setup_details)
+                self.assertNotIn("Qwen's baseline", setup_details)
+
                 evaluate("document.querySelector('#focus-task').value = '29'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#details h2').textContent.startsWith('29 ·')")
                 self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")

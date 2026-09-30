@@ -1299,11 +1299,10 @@ measurements and acceptance decisions remain separate.
 **18 · Prepare training code for the fine-tuning pilot** is complete for setup.
 Local VM rehearsals cover all three candidate families, real adapter updates,
 interruption/resume, save/reload and SSH deployment; the rebuilt image is
-published and verified private. The replacement GPU run completed Qwen's
-baseline, 128-step training, reload check and trained evaluation. Preliminary
-candidate execution and quality review remain in 29; larger-pilot model
-selection remains in 06. Setup completion does not select a model, prove all
-full-size candidates work or complete the model track.
+published and verified private. Preliminary candidate execution and quality
+review are tracked in 29; larger-pilot model selection is tracked in 06.
+Setup completion does not select a model, prove all full-size candidates work
+or complete the model track.
 
 Final training-example formatting and mask/prominence quality evaluation remain
 within **06 · Choose model through larger fine-tuning pilot**. Its completion

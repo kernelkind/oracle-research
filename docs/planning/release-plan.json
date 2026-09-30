@@ -106,7 +106,7 @@
       "id": "18",
       "title": "Prepare training code for the fine-tuning pilot",
       "status": "COMPLETE",
-      "description": "Pilot setup complete: local VM tests cover all three candidate families, training, interruption/resume, save/reload and SSH deployment. The rebuilt image is published and verified private.\nThe GPU run included Qwen's baseline, 128-step training, reload check and trained evaluation. The September 29 observation also records Gemma dense starting its baseline.\nPreliminary candidate execution and quality review belong to 29; larger-pilot model selection belongs to 06. Neither is complete. This does not approve the model or complete the model track."
+      "description": "Pilot setup complete: local VM tests cover all three candidate families, training, interruption/resume, save/reload and SSH deployment. The rebuilt image is published and verified private.\nPreliminary candidate execution and quality review are tracked in 29; larger-pilot model selection is tracked in 06. Setup completion does not select a model or complete the model track."
     },
     {
       "id": "20",

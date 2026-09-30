@@ -82,14 +82,15 @@ conflict policy; the useful-hierarchy browsing gate remains open. See the
 Earlier HR02 results remain preserved, not the current next step.
 
 Task 18 is complete for pilot setup. The rebuilt image is published and verified;
-local VM rehearsals cover all three candidate families. The replacement GPU run
-completed all three baseline attempts, 128-step training runs, matching adapter reloads
-and trained evaluations. Results were hash-verified locally. The user requested accepting Markdown
+local VM rehearsals cover all three candidate families.
+
+Task 29 tracks the preliminary 100-note fine-tuning experiment in progress. Its
+replacement GPU run completed all three baseline attempts, 128-step training runs,
+matching adapter reloads and trained evaluations. Results were hash-verified locally. The user requested accepting Markdown
 JSON fences to recover the Gemma baselines. The parser now accepts them for
 subjects and masks; all 40 saved Gemma subject answers validate, but their 618
 baseline masks still need generation. Reparsed Qwen teacher-agreement F1 is
-0.344 before and 0.346 after training. Semantic review remains pending; this does not complete candidate-quality review in 29 or model selection in the larger pilot, 06. Task 29 tracks the preliminary 100-note fine-tuning
-experiment in progress; 06 remains waiting for its larger-pilot data. Its
+0.344 before and 0.346 after training. Semantic review remains pending; this does not complete candidate-quality review in 29 or model selection in the larger pilot, 06. That larger pilot remains waiting for its data; its
 original ~1,000-note scale is not a frozen dataset-size requirement.
 
 Task 13 is in progress: the [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
