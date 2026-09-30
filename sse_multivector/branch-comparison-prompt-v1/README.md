@@ -208,6 +208,46 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
    combinations create a cycle between distinct hierarchy nodes. No new
    prompt call or replacement-title generation happens here.
 
+   **Visual example: two Dining hierarchy nodes.** The ingredient-node answer
+   shown at HG5 is an ancestor answer, so HG6 does not combine those nodes.
+   This different saved HG5 comparison returned `equivalent`.
+
+   **1. Before HG6, these are two distinct hierarchy nodes:**
+
+   ```text
+   ┌── Dining #1 ─────────────┐   ┌── Dining #2 ─────────────┐
+   │ SP subject entry: N007   │   │ SP subject entry: N084   │
+   └──────────────────────────┘   └──────────────────────────┘
+   ```
+
+   Each represents one Dining SP subject entry. Matching names alone do not
+   authorize combining them.
+
+   **2. HG6 uses the saved HG5 answer:**
+
+   ```text
+   ┌── SAVED HG5 ANSWER ────────────────────────────────────────┐
+   │ relation: equivalent                                       │
+   │                                                            │
+   │ reason: Both nodes represent dining generally;             │
+   │ the different dinner situations do not change              │
+   │ the subjects' scope.                                       │
+   └────────────────────────────────────────────────────────────┘
+   ```
+
+   **3. HG6 combines those hierarchy nodes:**
+
+   ```text
+   ┌── ONE Dining hierarchy node ───────────────────────────────┐
+   │ SP subject entry from N007                                 │
+   │ SP subject entry from N084                                 │
+   └────────────────────────────────────────────────────────────┘
+   ```
+
+   Both original SP subject entries, their context descriptions, MP masks
+   and SP relationships remain. Their shared Dinner child remains beneath
+   the combined Dining hierarchy node. **HG6 makes no model call.**
+
 7. **HG7 — Recompare previously judged node pairs whose prompt inputs changed.**
    **HG7.1 — Update comparison pairs.** After HG6, replace each old node reference with its resulting combined-node
    reference. Drop a comparison if both sides now refer to the same hierarchy
@@ -218,6 +258,82 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
    If the input changed, prompt **BCPv4 / Astra low** with the current lists.
    Combining nodes can add subject/context entries, so changing an old answer's
    node IDs is not enough to make that answer valid for the combined nodes.
+
+   **Visual example: the Dining / Meals comparison after HG6.** HG6 also
+   combines Meals #1 (representing the N023 SP subject entry) and Meals #2
+   (representing the N078 entry), using another saved `equivalent` answer.
+   The Dining #1 and #2 labels refer to the hierarchy nodes shown above.
+
+   **1. HG7.1 updates the previously compared hierarchy-node pairs:**
+
+   ```text
+   BEFORE HG6: six previously compared pairs
+
+   Dining #1  vs  Dining #2
+   Meals #1   vs  Meals #2
+   Dining #1  vs  Meals #1
+   Dining #1  vs  Meals #2
+   Dining #2  vs  Meals #1
+   Dining #2  vs  Meals #2
+
+   AFTER HG6: update the node references
+
+   Dining #1 / Dining #2: now one node; drop this pair.
+   Meals #1 / Meals #2:   now one node; drop this pair.
+
+   The four Dining / Meals pairs now identify
+   the SAME pair of combined hierarchy nodes.
+
+   KEEP ONCE: Dining vs Meals
+   ```
+
+   **2. HG7.2 checks whether the model input changed.** The old Dining / Meals
+   calls each supplied one subject/context entry per side. The current pair
+   supplies two per side, even though its names are still Dining and Meals:
+
+   ```text
+   ┌── A: combined Dining hierarchy node ───────────────────────┐
+   │ Entry 1 — Subject: Dining                                  │
+   │ Context: The writer describes being impressed with         │
+   │ dinner tonight and says the meal 'really hit the spot.'    │
+   │                                                            │
+   │ Entry 2 — Subject: Dining                                  │
+   │ Context: The writer says they are taking a girl out        │
+   │ for dinner.                                                │
+   └────────────────────────────────────────────────────────────┘
+
+   ┌── B: combined Meals hierarchy node ────────────────────────┐
+   │ Entry 1 — Subject: Meals                                   │
+   │ Context: The writer lists today's dinner, describes        │
+   │ its qualities, and asks what to add next time.             │
+   │                                                            │
+   │ Entry 2 — Subject: Meals                                   │
+   │ Context: The writer identifies the food as                 │
+   │ 'Tonight's dinner.'                                        │
+   └────────────────────────────────────────────────────────────┘
+   ```
+
+   Source-post IDs and the Entry 1/2 labels are for this diagram only.
+   The model receives the subject/context lists, as at HG5.
+
+   **3. The changed input needs ONE BCPv4 / Astra low comparison**, not four.
+   The saved answer for these combined inputs was:
+
+   ```text
+   ┌── SAVED HG7 ANSWER ────────────────────────────────────────┐
+   │ relation: neither                                          │
+   │                                                            │
+   │ reason: Dining concerns the activity or experience         │
+   │ of eating, while meals concerns the food or eating         │
+   │ occasions themselves; they overlap but neither fully       │
+   │ contains the other.                                        │
+   └────────────────────────────────────────────────────────────┘
+   ```
+
+   The answer for the combined inputs replaces the old-input answers for this
+   current pair. HG7 saves it without adding a hierarchy relationship.
+   For other pairs whose exact input and model settings did not change,
+   **reuse their saved answers—do not prompt again**.
 
 ## Apply answers, then browse
 
