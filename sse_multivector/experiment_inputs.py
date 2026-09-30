@@ -58,6 +58,17 @@ def prepare_file(dataset, path, template, load_report=None):
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] == 'parent_candidates':
+        engine._expect_fields(source, 'parent candidates',
+                              {'schema_version', 'inputs', 'hierarchy', 'judgments', 'nodes'})
+        if type(source['schema_version']) is not int or source['schema_version'] != 1:
+            raise ValueError('expected parent candidates schema_version 1')
+        references = {}
+        for key in ('inputs', 'hierarchy', 'judgments'):
+            source_path = engine._resolve_path(source[key], key, path.parent)
+            source[key] = read(source_path)
+            references[key] = dict(path=str(source_path), sha256=sources[str(source_path)])
+        source['source'] = references
     if dataset['adapter'] == 'subject_contexts':
         selector = 'nodes' if 'nodes' in source else 'selections'
         engine._expect_fields(source, 'subject contexts',
@@ -411,6 +422,70 @@ def prepare_subject_pairs(source, selected=None):
     return cases
 
 
+def prepare_parent_candidates(source, selected=None):
+    """Nominate broader parents from the full unrelated, unjudged node catalogue."""
+    try:
+        from .subject_hierarchy import reachable
+    except ImportError:
+        from subject_hierarchy import reachable
+    base = dict(inputs=source['inputs'], hierarchy=source['hierarchy'],
+                pairs=[], source=source['source'])
+    prepare_subject_pairs(base)  # Reuse production partition and source validation.
+    subjects, groups = base['inputs']['subjects'], base['hierarchy']['groups']
+    history = source['judgments']
+    if history.get('subjects') != subjects or not isinstance(history.get('comparisons'), list):
+        raise ValueError('saved judgment subjects differ or comparisons are missing')
+    judged = set()
+    for prior in history['comparisons']:
+        pair = {k: prior[k] for k in ('id', 'A', 'B')}
+        expected = prepare_subject_pairs(dict(base, pairs=[pair]))[0]
+        if (prior.get('inputs') != expected['inputs']
+                or prior.get('answer', {}).get('relation') not in {
+                    'equivalent', 'a_parent_of_b', 'b_parent_of_a', 'neither', 'uncertain'}):
+            raise ValueError('saved judgment inputs differ or answer is invalid')
+        judged.add(frozenset((prior['A'], prior['B'])))
+    nodes = engine._validate_string_array(source['nodes'], 'nodes', allow_empty=False)
+    if len(nodes) != len(set(nodes)):
+        raise ValueError('duplicate parent candidate query')
+    by_id = {f'S{members[0]:04d}': g for g, members in enumerate(groups)}
+    if set(nodes) - by_id.keys():
+        raise ValueError('unknown parent candidate query node')
+    if selected is not None and set(selected) - set(nodes):
+        raise ValueError('unknown case requested')
+    edges = base['hierarchy']['edges']
+    incoming = {g: set() for g in range(len(groups))}
+    for a, b in edges:
+        incoming[b].add(a)
+    try:
+        list(TopologicalSorter(incoming).static_order())
+    except CycleError as error:
+        raise ValueError('parent candidate hierarchy contains a cycle') from error
+    paths = reachable(len(groups), edges)
+    catalogue = [dict(id=nid, subjects=list(dict.fromkeys(
+        subjects[i]['subject'] for i in groups[g]))) for nid, g in by_id.items()]
+    cases = []
+    for nid in nodes:
+        g = by_id[nid]
+        if incoming[g]:
+            raise ValueError('parent candidate query must be top-level')
+        if selected is not None and nid not in selected:
+            continue
+        entries = list(dict.fromkeys((subjects[i]['subject'], subjects[i]['context'])
+                                     for i in groups[g]))
+        candidates = [c for c in catalogue if c['id'] != nid
+            and (g, by_id[c['id']]) not in paths and (by_id[c['id']], g) not in paths
+            and frozenset((nid, c['id'])) not in judged]
+        payload = dict(A=[dict(subject=s, context=c) for s, c in entries], candidates=candidates)
+        posts = {subjects[i]['note_id'] for i in groups[g]}
+        cases.append(dict(id=nid,
+            inputs={'INPUT_JSON': json.dumps(payload, ensure_ascii=False, indent=2)},
+            evidence=dict(A=dict(node_id=nid, group_index=g,
+                subject_entries=[subjects[i] for i in groups[g]]),
+                source=source['source'],
+                source_posts=[p for p in base['inputs']['posts'] if p['note_id'] in posts])))
+    return cases
+
+
 def union_spans(spans):
     """Union validated byte spans, preserving every gap in the source text."""
     result = []
@@ -670,6 +745,8 @@ def prepare(dataset, source, template):
         cases = prepare_prominence(source, dataset.get("select"), dataset.get('combine_masks', False))
     elif adapter == "subject_pairs":
         cases = prepare_subject_pairs(source, dataset.get("select"))
+    elif adapter == 'parent_candidates':
+        cases = prepare_parent_candidates(source, dataset.get('select'))
     elif adapter == 'subject_contexts':
         cases = prepare_subject_contexts(source, dataset.get('select'),
                                          dataset.get('prominence_basis', 'context'))
@@ -726,6 +803,20 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter == 'parent_candidates':
+        value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
+        if not isinstance(value, dict) or set(value) != {'candidates'} or not isinstance(value['candidates'], list):
+            raise ValueError('expected a parent candidate array')
+        eligible = {c['id'] for c in json.loads(case['inputs']['INPUT_JSON'])['candidates']}
+        seen = set()
+        for candidate in value['candidates']:
+            if (not isinstance(candidate, dict) or set(candidate) != {'id', 'reason'}
+                    or not isinstance(candidate['id'], str) or candidate['id'] not in eligible
+                    or candidate['id'] in seen or not isinstance(candidate['reason'], str)
+                    or not candidate['reason'].strip()):
+                raise ValueError('invalid, duplicate or unsupplied parent candidate')
+            seen.add(candidate['id'])
+        result['parsed'] = value
     if adapter == "grouped_masks":
         result.update(grouped_masks.validate(case, raw))
     if adapter in {'prominence', 'subject_contexts'}:
