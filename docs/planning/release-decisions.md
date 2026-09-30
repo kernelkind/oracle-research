@@ -1115,6 +1115,11 @@ costs where recovery is used, not only model calls. It can use available evidenc
 from 24 and the growing hierarchy builds; it does not wait for the finished
 implementation in 28.
 
+13 is in progress: the [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
+records a reconstructed decision baseline and proposed node-record format.
+Its wording awaits review; open choices are not resolved by this status update.
+The protocol is not complete. Its links to 14 and 15 are unchanged.
+
 Service testing needs both the protocol and a saved hierarchy snapshot. The
 100-note hierarchy can supply the initial snapshot; service development need
 not wait for the final corpus build. Public launch requires the final snapshot.
@@ -1298,7 +1303,7 @@ relationship method the user is pleased with (02) — the release's top risk,
 gating every build. Finish the mask-prominence prompt and output format (04)
 and implement node-note ordering (27). Land membership recovery (24) if HDBSCAN
 is used; 24 gates 03 only for HDBSCAN.
-Define the Nostr hierarchy protocol (13), which is ready and independent.
+Define the Nostr hierarchy protocol (13), now in progress and independent.
 Begin corpus selection inside
 the decided 2–5k band (09).
 

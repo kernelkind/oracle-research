@@ -75,8 +75,8 @@
     {
       "id": "13",
       "title": "Define Nostr hierarchy protocol",
-      "status": "READY TO START",
-      "description": "Specify requests/responses for browsing nodes, paths and ordered notes, pagination and snapshot versions."
+      "status": "IN PROGRESS",
+      "description": "Protocol drafting has started: a reconstructed decision baseline and proposed node-record format are documented. Wording awaits review; open protocol choices remain unresolved.\nSpecify requests/responses for browsing nodes, paths and ordered notes, pagination and snapshot versions."
     },
     {
       "id": "14",

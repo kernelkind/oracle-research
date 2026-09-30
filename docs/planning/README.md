@@ -88,6 +88,11 @@ and trained evaluations. Results were hash-verified locally. Semantic review rem
 experiment in progress; 06 remains waiting for its larger-pilot data. Its
 original ~1,000-note scale is not a frozen dataset-size requirement.
 
+Task 13 is in progress: the [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
+records a reconstructed decision baseline and proposed node-record format.
+Its wording and open choices still need review. This does not complete 13;
+the service/client dependencies (14/15) are unchanged.
+
 The task graph is the only release-plan viewer. The root URL opens it; the
 obsolete draw.io diagram, viewer and renderer have been removed. Earlier
 versions remain recoverable from Git, not as a competing planning view.
