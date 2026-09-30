@@ -1090,6 +1090,25 @@ points to enjoying coffee in cool places and counts all of them toward Coffee.
 The tentative preference remains separate from the seven clear checks; no
 revised prominence rule or exact percentages have been approved.
 
+The user then authorized testing that distinction in prominence with relevance
+unchanged. **PPv30-subject-v2** asks for meaning about each subject to be
+distinguished even within one statement; it supplies no post-specific examples
+or expected orders. The same 37 frozen inputs completed with 33 new assessments
+and four exact-request reuses, without failures, retries or new SSE encoding.
+All relevance values, vectors, the formula and independent highest-per-post
+aggregation match the preceding experiment. Both prominence alone and the
+sorting score still match the seven clear expected orders.
+For SP subject Coffee, the short post now has prominence 75, leaving 25 points
+for its places meaning; roasting has 96. However, the short post's broader SP
+subject Continued experiences of coffee in appealing places retains prominence
+100 and supplies its highest sorting score, 86.860927. Roasting's is 85.519723,
+so the final order still reverses the separate tentative preference. The prompt
+distinguishes the Coffee meaning, but taking the highest sorting score across
+SP subjects still chooses the broader meaning. The about-equal pair remains
+uncounted and has no agreed tolerance. **PPv30-subject-v2** is tested, not
+production-frozen; the [saved results and 91 passing workflow/comparison tests](../../sse_multivector/model-runner.md)
+do not approve exact percentages, a production rule or a change to aggregation.
+
 27 is in progress: saved Coffee/Eggs trials test within-node note ordering.
 Finishing still needs 04, which is in launch scope and actively being worked
 on (September 28 correction). The relevance measure and how multiple masks
