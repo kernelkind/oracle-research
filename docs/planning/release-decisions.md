@@ -1053,7 +1053,7 @@ particular formula. Its inputs and any treatment of multiple masks remain
 open under 04; 27 applies the selected definition.
 
 User-approved post-ordering checks for 27 (September 29–30): the user reviewed the
-complete wording with URLs omitted and established nine clear expected orders.
+complete wording with URLs omitted and established ten clear expected orders.
 These judgments establish expected post order; they do not select
 a scoring formula, approve mask-prominence outputs or adopt a mask-aggregation
 rule.
@@ -1069,25 +1069,26 @@ rule.
 | coffee | Roasting your own beans (`056e6466`) | Hashtag-heavy second-coffee post (`862486d8`) |
 | Eggs | Mixed diary with laying hens and several egg preparations (`eaa6a5e6`) | Coffee with raw cream and raw egg yolk (`f4c5aa5f`) |
 | coffee | Coffee with raw cream and raw egg yolk (`f4c5aa5f`) | More coffee in cool places (`37f44e1f`) |
+| coffee | Iced coffee served in ice (`76e19c3e`) | Coffee with raw cream and raw egg yolk (`f4c5aa5f`) |
 
 For another coffee and Sunday wishes (`737eaa89`) versus errands (`e0508834`),
 the user judged the posts about equal, with a tentative tiny preference for
 another coffee because of "but I need another one." Record this separately
-from the nine clear ordering checks. No numeric tolerance for "about equal"
+from the ten clear ordering checks. No numeric tolerance for "about equal"
 has been agreed.
 
 On September 30, the user reviewed decaf drinkers (`2dc50a30`, A) versus
 roasting your own beans (`056e6466`, B) inside Coffee, with complete wording
 and the image URL omitted, and answered "hm i'd say they're about the same".
 Record them as about equal, with no preferred direction, separately from the
-nine clear orders. PPv30-node-v1 gives prominence 100 and 98 and sorting
+ten clear orders. PPv30-node-v1 gives prominence 100 and 98 and sorting
 scores 90.154658 and 87.301384 respectively, a difference of 2.853274. No
 numeric tolerance or tie rule is approved; this comparison is not counted as
 passed or failed and does not approve the assessed percentages or formula.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
-these nine checks, plus the two about-equal judgments and separate slight
+these ten checks, plus the two about-equal judgments and separate slight
 preference for the weather post described below.
 They are reference pairs, not a claim of general ranking quality.
 
@@ -1210,8 +1211,9 @@ the preceding trial exactly.
 The short coffee/places post now has Coffee prominence 70 across all five SP
 entries; roasting has 98. Its broader SP subjects cannot supply a different
 prominence. Their final sorting scores are 65.443206 and 87.301384 respectively,
-matching the separate tentative roasting preference. Both prominence alone and
-the sorting score match all nine clear expected orders. Both about-equal
+matching the separate tentative roasting preference. With the tenth reviewed
+pair below, the sorting score matches all ten clear expected orders, while
+prominence alone matches nine. Both about-equal
 comparisons and the separate slight preference for the weather post remain
 outside that count, with no agreed tolerance. The [complete orders and verification](../../sse_multivector/model-runner.md)
 include two failing-first workflow/comparison checks and 202 passing regression
@@ -1242,7 +1244,7 @@ explanation of the calculation, the user said "A seems more related to coffee".
 The user then clarified that the difference is "pretty subtle": A's "glad the
 coffee is hot this AM" is about the same as B's "fetching coffee as a ritual
 of motion", with A's `#coffeechain` "prob the tie breaker". Record a slight,
-tentative preference for A separately from the nine clear orders; the main
+tentative preference for A separately from the ten clear orders; the main
 coffee statements are about equal. This supersedes treating the pair as a
 tenth clear order or clear failure.
 PPv30-node-v1's sorting-score direction still reverses this slight preference:
@@ -1279,7 +1281,7 @@ the hashtag's effect or establish a general replacement relevance input.
 The [saved inputs, runtime limits and results](../../sse_multivector/model-runner.md)
 record a failing-first source-text CLI check and 211 passing regression and
 integration tests. There were no provider calls, paid resources or baseline
-prompt reruns. The original full-node results and nine clear checks remain intact;
+prompt reruns. The full-node results and the original nine clear checks remain intact;
 this two-post diagnostic is not production adoption or a prompt revision.
 
 The user next authorized isolating the hashtag's effect on A's relevance input.
@@ -1297,6 +1299,21 @@ general hashtag bonus or a complete-post prominence change. No new teacher
 assessments, provider calls, paid resources, source-code changes or production
 rule adoption occurred. The [experiment evidence](../../sse_multivector/model-runner.md)
 records exact inputs, unchanged controls and the focused workflow checks.
+
+The user then reviewed coffee with raw cream and a raw egg yolk (`f4c5aa5f`, A)
+against iced coffee served in ice (`76e19c3e`, B) inside Coffee, with complete
+wording and media URLs omitted, and answered "B". This adds the tenth clear
+expected order: iced coffee above the raw-cream/egg-yolk coffee post.
+The saved PPv30-node-v1 sorting score follows that order, 85.118002 > 75.582818;
+prominence alone reverses it, 95 < 100. Those values use the original saved
+SP-context relevance, 0.895979 and 0.755828 respectively, not the later two-post
+original-statement diagnostics. Across all ten clear checks, the sorting score
+now matches ten and prominence alone nine. This is the first clear reviewed
+pair in this node-title trial where including relevance changes the direction
+to the user's expected order. It does not establish a general advantage,
+approve exact percentages or select a production formula. The about-equal
+judgments and slight weather preference remain separate. No inference,
+encoding, prompt change or saved-result modification was needed.
 
 04 and 27 are in progress: saved Coffee/Eggs trials test candidate sorting
 scores and within-node note ordering. 04 defines and validates the node sort

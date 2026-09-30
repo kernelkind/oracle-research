@@ -2566,7 +2566,7 @@ tentative preference:
 | A: More coffee in cool places (`37f44e1f`) | 70 | 0.934903 | 65.443206 |
 | B: Roasting your own beans (`056e6466`) | 98 | 0.890830 | 87.301384 |
 
-Both prominence alone and the sorting score match the nine clear checks:
+The sorting score matches all ten clear checks; prominence alone matches nine:
 
 | Hierarchy node | Expected higher / lower | Node-title prominence | Highest sorting score |
 | --- | --- | --- | --- |
@@ -2579,6 +2579,7 @@ Both prominence alone and the sorting score match the nine clear checks:
 | coffee | Roasting / second coffee | 98 > 70 | 87.301384 > 64.841903 |
 | Eggs | Mixed diary / coffee with raw egg yolk | 42 > 35 | 38.818971 > 32.538029 |
 | coffee | Coffee with raw egg yolk / More coffee in cool places | 100 > 70 | 75.582818 > 65.443206 |
+| coffee | Iced coffee / coffee with raw egg yolk | 95 < 100: fails | 85.118002 > 75.582818 |
 
 On September 30, the user reviewed the complete mixed diary (`eaa6a5e6`) as A
 and coffee with raw cream and raw egg yolk (`f4c5aa5f`) as B inside Eggs, with
@@ -2588,7 +2589,7 @@ raw-egg-yolk coffee post first (43.724941 > 33.703212). The user approved this
 order, not the assessed percentages, formula or production adoption. No new
 model calls, encoding, prompt edits or sorting calculations were needed.
 
-The tentative roasting/short-post judgment remains separate from the nine
+The tentative roasting/short-post judgment remains separate from the ten
 clear-check count. The earlier about-equal pair also remains separate: another
 coffee has prominence 50 and sorting score 42.357665; errands has 60 and
 41.622349. The difference is 0.735316 in the tentatively preferred direction,
@@ -2597,7 +2598,7 @@ without an agreed tolerance or a claim that closeness passed.
 The user next reviewed the complete decaf-drinkers post (`2dc50a30`, A) and
 roasting post (`056e6466`, B) inside Coffee, with the image URL omitted, and
 answered "hm i'd say they're about the same" on September 30. Record about
-equal with no preferred direction, separately from the nine clear orders.
+equal with no preferred direction, separately from the ten clear orders.
 PPv30-node-v1 assigns prominence 100 and 98 and sorting scores 90.154658 and
 87.301384 respectively, a difference of 2.853274. No numeric tolerance or tie
 rule was approved, so this comparison is not counted as passed or failed.
@@ -2620,7 +2621,7 @@ the user said "A seems more related to coffee", then clarified that the
 difference is "pretty subtle". A's "glad the coffee is hot this AM" is about
 the same as B's "fetching coffee as a ritual of motion"; A also has
 `#coffeechain`, which is "prob the tie breaker". Record a slight, tentative
-preference for A separately from the nine clear orders, with the main coffee
+preference for A separately from the ten clear orders, with the main coffee
 statements about equal. This supersedes the earlier clear-order classification.
 Both posts have prominence 35. Relevance still favors B, producing sorting
 scores 28.819013 < 33.502067, opposite to the slight preference. Prominence
@@ -2722,6 +2723,33 @@ suite passed 11 tests; its log is preserved with the ignored experiment artifact
 The workflow code, prompts, original complete-node results and production
 status remain unchanged.
 
+The user subsequently reviewed the complete raw-cream/egg-yolk coffee post
+(`f4c5aa5f`, A) against iced coffee served in ice (`76e19c3e`, B), inside Coffee
+with media URLs omitted, and answered "B". Record iced coffee above the
+raw-cream/egg-yolk coffee post as the tenth clear expected order. A's complete
+wording is `Made my coffee with raw cream and a raw egg yolk today #coffeechain`;
+B's is `Iced coffee, served in ice`, then a blank line and `📹 wolf.0313`, with
+the two media URLs omitted from the review. The original posts remain intact.
+The saved `relevance-v1` comparison supplies these unchanged values:
+
+| Post | Coffee prominence | Highest SP-context relevance | Highest sorting score |
+| --- | ---: | ---: | ---: |
+| A: Coffee with raw cream and raw egg yolk | 100 | 0.755828 | 75.582818 |
+| B: Iced coffee served in ice | 95 | 0.895979 | 85.118002 |
+
+B's highest sorting-score entry is `context-22008019e5987f70ab3df075`, with SP
+context "The post names iced coffee as the drink being served." A's is
+`context-1a161fcf30ad4a372fcaabe4`, with "The writer reports making coffee today
+with raw cream and a raw egg yolk." Multiplying the saved prominence by
+relevance puts B first, matching the user; prominence alone puts A first.
+The original comparison and encoding hashes are unchanged. No new teacher
+calls, encoding, prompt changes or saved-result modifications were needed.
+This is the first clear reviewed pair in PPv30-node-v1 where including
+relevance changes the direction to the expected order: the sorting score
+matches all ten clear checks, prominence alone nine. The about-equal judgments
+and separate slight weather preference remain uncounted. One such case does
+not establish a general advantage or select a production formula.
+
 Complete original node-title prominence orders, using saved SP-context
 relevance and descending by highest sorting score:
 
@@ -2762,7 +2790,7 @@ Putting the diary above coffee with raw egg yolk matches the new clear judgment.
 Putting coffee with raw egg yolk above More coffee in cool places matches the
 ninth clear judgment.
 Putting coffee, movement and stretching above Sunday weather reverses the
-separate slight preference; it is excluded from the nine clear checks.
+separate slight preference; it is excluded from the ten clear checks.
 Decaf versus roasting was reviewed as about equal, without a preferred
 direction. The other changed directions are not new user-approved orders.
 PPv30-node-v1 is tested, not production-frozen. These results do not
