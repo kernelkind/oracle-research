@@ -9,88 +9,142 @@ The current tests reuse saved HG1–HG2 outputs rather than rerunning SP or MP.
 
 ## From posts to a combined hierarchy
 
-1. **HG1 — Generate local subjects and masks.** Prompt SP for each post's
-   subject hierarchy and context descriptions. Then prompt MP to select source
-   text for each subject. A post can have several separate trees. A subject
-   stays in the hierarchy even if MP returns an empty mask. Local top-level
-   subjects need not be equally general or remain top-level globally.
+1. **HG1 — Generate each post's subjects and subject masks.** For each post,
+   prompt SP to produce its local subject hierarchies and a context description
+   for each subject. Then prompt MP for each supplied subject, selecting the
+   exact fragments of that post that express that subject.
 
-2. **HG2 — Encode with SSE.** Encode each subject's wording on its own, and
-   each nonempty mask in its source-post context. Keep these two vector types
-   separate, alongside the original subjects, masks and SP relationships.
+   A **subject mask** is this set of selected fragments for one subject in one
+   post, not a mask for the whole post. A **nonempty subject mask** has at least
+   one selected fragment. Keep subjects whose subject masks are empty too.
+   A post can have several subject trees; their top-level subjects need not be
+   equally general or remain top-level in the global hierarchy.
 
-3. **HG3 — Combine matching subjects with LG01.** No model is prompted here.
+2. **HG2 — Generate two separate types of SSE vector.**
 
-   - Within one post, combine entries only when their exact subject wording
-     and nonempty source positions match.
-   - For each unique nonempty mask, find its nearest mask in another post.
-     These matches select post pairs; repeated selections become one pair.
-   - Within each selected post pair, find each subject's best subject match
-     in the other post, in both directions, using subject-vector cosine.
-   - Combine a subject pair only if they choose each other, subject cosine
-     is at least **0.90**, and their mask cosine is at least **0.80**. Ties
-     qualify; empty masks do not. These are experimental cutoffs, not a
-     claim that every combination is correct.
-   - Combine overlapping passing pairs into one node. Preserve every original
-     entry and SP ancestry, allowing an ancestor and descendant to become the
-     same node. Undo cross-post combinations that create a cycle between
-     distinct nodes; never delete an SP relationship to repair one.
+   - Encode each SP subject's wording by itself: its **subject-text vector**.
+   - Encode each nonempty subject mask's selected text in the context of its
+     original post: its **subject-mask vector**.
 
-   The result retains unmatched and empty-mask subjects too. It does not yet
-   discover missing relationships between their parents. See the
-   [detailed LG01 rules](../subject-order-probe.md#lg01--subject-hierarchy-merging).
+   A subject with an empty subject mask still gets a subject-text vector, but
+   no subject-mask vector. Keep both vector types separate; retain the source
+   posts, subjects, subject masks and SP parent–child relationships.
+
+3. **HG3 — LG01: combine matching SP subjects into hierarchy nodes.** Start
+   with one hierarchy node per original SP subject. No model is prompted here.
+
+   - **Combine repeated subjects within one post.** SP can put the same
+     subject wording in several places in a post's local subject hierarchies.
+     Combine those subject entries only if their nonempty subject masks select
+     exactly the same parts of that post. Keep all their parent relationships.
+
+   - **Use subject-mask vectors to select post pairs.** If several subjects in
+     one post have identical subject masks, count that subject-mask vector once
+     for this search. For each subject-mask vector, compute cosine similarity
+     against every subject-mask vector from all other posts. Select the
+     other-post subject-mask vector with the highest cosine, retaining ties.
+     The posts containing those two subject masks become a selected post pair.
+     Multiple subject-mask matches selecting the same two posts still produce
+     only one post pair. This selects posts to examine; it does not combine
+     their subjects yet.
+
+   - **Compare subject-text vectors within each selected post pair.** Compare
+     every original SP subject-text vector from the first post against every
+     original SP subject-text vector from the second post. Find each subject's
+     highest-cosine subject match in the other post, in both directions.
+     Include subjects whose subject masks are empty when finding these best
+     subject-text matches.
+
+   - **Check both vector comparisons before accepting a subject match.** The
+     two subjects must be each other's best subject-text match within this post
+     pair, with subject-text-vector cosine at least **0.90**. Their corresponding
+     subject-mask vectors must both exist and have cosine at least **0.80**.
+     Ties qualify. If a best subject match fails these checks, do not fall back
+     to a weaker match. These cutoffs are experimental.
+
+   - **Combine the subjects that passed into hierarchy nodes.** If subject X
+     matches Y, and Y matches Z, combine all three into one hierarchy node,
+     even if X and Z did not pass a direct comparison. Retain each original
+     subject, its subject mask and its SP relationships; do not blend their
+     vectors. Subjects without a passing match remain separate hierarchy nodes.
+
+   Preserve every original SP ancestor relationship as either a path between
+   the resulting hierarchy nodes or a relationship inside one combined node.
+   If within-post combinations alone create a cycle between distinct hierarchy
+   nodes, stop. If cross-post combinations create a cycle, undo every involved
+   cross-post combination; never delete an SP relationship to repair it.
+   LG01 does not add missing relationships between parent hierarchy nodes.
+   See the [detailed LG01 rules](../subject-order-probe.md#lg01--subject-hierarchy-merging).
 
 ## From combined nodes to further relationships
 
-4. **HG4 — Select node pairs to compare.** Find a node shared across posts
-   with two or more distinct immediate parents. Select each parent pair once,
-   by node identity—not by matching names. Sharing a child is a reason to ask,
-   not an answer.
+4. **HG4 — Select pairs of parent hierarchy nodes for model comparison.** Look
+   for a hierarchy node containing original SP subjects from at least two
+   posts. If that node has two or more distinct immediate parent hierarchy
+   nodes, select every pair of those parents for HG5. Count each pair of
+   hierarchy nodes once, even if several shared children select it. Identical
+   node names do not make two hierarchy nodes the same node.
 
-   Real example: N037 supplies **Food ingredients → Cranberries**; N072
-   supplies **Baking ingredients → Cranberries**. HG3 combines Cranberries.
-   HG4 therefore selects **Food ingredients / Baking ingredients**.
+   Real example: N037's SP hierarchy includes **Food ingredients → Cranberries**;
+   N072's includes **Baking ingredients → Cranberries**. HG3 combines their
+   Cranberries subjects into one hierarchy node with both parent nodes. HG4
+   selects the **Food ingredients / Baking ingredients** node pair. The shared
+   Cranberries child does not decide whether those two parents are related.
 
-5. **HG5 — Prompt for each selected pair.** Prompt **BCPv4** (tested, not
-   frozen), using **Astra low**, with both nodes' subject/context entries.
-   It returns equivalent, A ancestor of B, B ancestor of A, neither, or
-   uncertain, plus a reason. Save the answer; this call does not change the
-   hierarchy. The model compares two nodes, not two whole posts.
+5. **HG5 — Prompt BCPv4 for each selected hierarchy-node pair.** Use
+   **BCPv4** (tested, not frozen) with **Astra low**. The model receives the
+   original SP subject wordings and SP context descriptions represented by
+   each of the two hierarchy nodes. A combined node can supply several such
+   entries; remove only exact duplicate subject/context entries. Do not send
+   whole posts, subject masks, vectors or the shared child to this prompt.
 
-6. **HG6 — Combine nodes judged equivalent.** Combine connected chains of
-   equivalent answers, retaining all their entries, masks and mapped SP
-   ancestry. This changes what the combined node represents; it is not just
-   renaming it. No new prompt call happens here.
+   The model returns equivalent, A ancestor of B, B ancestor of A, neither,
+   or uncertain, plus a reason. A and B identify the two hierarchy nodes,
+   not the source posts. Save the answer without changing the hierarchy yet.
 
-7. **HG7 — Recompare changed inputs.** Map the previously compared pairs onto
-   the combined nodes. Remove pairs now inside one node and deduplicate the
-   rest. Keep saved answers when their exact model input is unchanged; prompt
-   **BCPv4 / Astra low** only for changed inputs. An old answer cannot simply
-   be transferred to a larger node by changing its ID.
+6. **HG6 — Combine hierarchy nodes judged equivalent at HG5.** Combine
+   connected chains of equivalent node pairs. The resulting hierarchy node
+   retains all contributing SP subjects, context descriptions, subject masks
+   and original SP relationships. Preserve SP ancestry and stop if the
+   combinations create a cycle between distinct hierarchy nodes. No new
+   prompt call or replacement-title generation happens here.
+
+7. **HG7 — Recompare previously judged node pairs whose prompt inputs changed.**
+   After HG6, replace each old node reference with its resulting combined-node
+   reference. Drop a comparison if both sides now refer to the same hierarchy
+   node. Count repeated pairs of resulting hierarchy nodes once.
+
+   Rebuild each remaining pair's subject/context lists for BCPv4. Reuse its
+   saved answer only if the exact prompt input and model settings still match.
+   If the input changed, prompt **BCPv4 / Astra low** with the current lists.
+   Combining nodes can add subject/context entries, so changing an old answer's
+   node IDs is not enough to make that answer valid for the combined nodes.
 
 ## Apply answers, then browse
 
-After HG7, the tested exporter adds current **ancestor** answers to the
-preserved SP relationships in a separate hierarchy. An ancestor answer does
-not require an immediate parent link: other nodes may sit between them.
-Neither and uncertain add no link. New equivalences require a separate HG6
-decision. The current exporter stops on conflicts rather than repairing them.
-This export makes **no model calls**; its proposed HG8 label and general
-conflict policy are not settled.
+After HG7, the tested exporter uses saved, valid answers to add ancestor
+relationships between hierarchy nodes, alongside the preserved SP relationships,
+in a separate hierarchy. An A-ancestor-of-B answer means B is beneath A, but
+other hierarchy nodes may sit between them. Neither and uncertain add no
+relationship and do not delete existing SP relationships. A new equivalent
+answer requires a separate HG6 decision. The exporter stops on conflicting
+relationships; it does not choose a repair. This export makes **no model calls**.
+Its proposed HG8 label and general conflict policy are not settled.
 
-For browsing, omit a direct link only when another path supplies the same
-ancestry. For example, show **Food → Bread → Sourdough bread**, without a
-redundant Food → Sourdough bread shortcut. Keep all nodes, multiple parent
-routes and original relationships in the underlying data. Adding these links
-does not expand any node's direct mask membership.
+For browsing, omit a direct link between two hierarchy nodes only when another
+path connects those same nodes. For example, show **Food → Bread → Sourdough
+bread**, without a redundant Food → Sourdough bread shortcut. Keep every
+hierarchy node, multiple parent routes and original relationships in the
+underlying data. Each node's directly associated subject masks stay unchanged;
+new ancestor links can provide additional routes to posts through child nodes.
 
 ## What is still missing?
 
-HG4 is not a complete comparison-selection rule. A later test selected
-top-level nodes sharing a descendant at any depth. Its **nine Food calls were
-HG5 comparisons of Food against nine branches**, not comparisons of those
-branches against one another. That shortlist is experimental, not an adopted
-replacement for HG4.
+HG4 is not a complete comparison-selection rule. A later test selected pairs
+of top-level hierarchy nodes sharing a descendant hierarchy node at any depth.
+Its **nine Food calls were HG5 comparisons of the Food node against nine other
+hierarchy nodes**, not comparisons of those nine nodes against one another.
+That shortlist is experimental, not an adopted replacement for HG4.
 
 Selecting further comparisons, deciding when to repeat HG6–HG7, and general
 conflict handling remain open. The tests preserve the saved LG01 hierarchy;
