@@ -268,6 +268,92 @@ class SubjectPairMergeTests(unittest.TestCase):
                 self.assertFalse((self.root / 'merged-view').exists())
         self.assertEqual(len(self.calls()), calls)
 
+    def test_inherits_consistent_judgments_through_saved_equivalence_merges(self):
+        source = self.prepare_additional_export(relation='equivalent',
+            pairs=[dict(id='merge-meals', A='S0003', B='S0004')])
+        before = {p: p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        calls = len(self.calls())
+        result = self.cli('export-hierarchy', 'additional', '--base', 'view',
+            '--source', source, '--output', 'inherited-view', '--combine-equivalent',
+            '--inherit-equivalent-judgments')
+        summary = json.loads(result.stdout)
+        self.assertEqual(summary['inherited_comparisons'], 2)
+        self.assertEqual(summary['pending_comparisons'], 0)
+        self.assertEqual(summary['inference_calls'], 0)
+        provenance = json.loads((self.root / 'inherited-view/provenance.json').read_text())
+        self.assertEqual(len(provenance['comparisons']), 2)
+        for c in provenance['comparisons']:
+            self.assertEqual(c['stage'], 'HG7-inherited')
+            self.assertIsNone(c['receipt'])  # No model receipt for these new inputs.
+            self.assertTrue(c['inheritance']['previous_comparisons'])
+            self.assertTrue(c['inheritance']['equivalence_case_ids'])
+            self.assertTrue(all(p['receipt'] for p in c['inheritance']['previous_comparisons']))
+        food = next(c for c in provenance['comparisons'] if c['A'] == 'S0000')
+        self.assertEqual(food['answer']['relation'], 'a_parent_of_b')
+        self.assertEqual(len(food['inheritance']['previous_comparisons']), 2)
+        self.assertEqual(len(json.loads(food['inputs']['INPUT_JSON'])['B']), 2)
+        self.assertNotEqual(food['inputs'], food['inheritance']['previous_comparisons'][0]['inputs'])
+        self.assertEqual(before, {p: p.read_bytes() for p in before})
+        self.assertEqual(len(self.calls()), calls)
+
+        self.write('inherited-followup.json', dict(schema_version=1, inputs='subjects.json',
+            hierarchy='inherited-view/results.json',
+            pairs=[dict(id='food-tea', A='S0000', B='S0005')]))
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='subject_pairs', path='inherited-followup.json')
+        self.write('inherited-followup-spec.json', spec)
+        self.cli('prepare', 'inherited-followup', '--spec', self.root / 'inherited-followup-spec.json')
+        self.cli('run', 'inherited-followup', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"relation":"uncertain","reason":"Unrelated fixture."}'})
+        calls = len(self.calls())
+        replay = self.cli('export-hierarchy', 'inherited-followup', '--base', 'inherited-view',
+                         '--source', source, '--output', 'inherited-replay')
+        self.assertEqual(json.loads(replay.stdout)['inherited_comparisons'], 2)
+        self.assertEqual(json.loads(replay.stdout)['pending_comparisons'], 0)
+        self.assertEqual(len(self.calls()), calls)
+
+    def prepare_merge_after_additional(self, relation, a, b):
+        source = self.prepare_additional_export(relation=relation,
+            pairs=[dict(id='prior', A=a, B=b)])
+        self.cli('export-hierarchy', 'additional', '--base', 'view',
+                 '--source', source, '--output', 'before-merge')
+        self.write('new-merge.json', dict(schema_version=1, inputs='subjects.json',
+            hierarchy='before-merge/results.json',
+            pairs=[dict(id='merge-meals', A='S0003', B='S0004')]))
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='subject_pairs', path='new-merge.json')
+        self.write('new-merge-spec.json', spec)
+        self.cli('prepare', 'new-merge', '--spec', self.root / 'new-merge-spec.json')
+        self.cli('run', 'new-merge', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"relation":"equivalent","reason":"Fixture equivalence."}'})
+        return source
+
+    def test_equivalence_inheritance_normalizes_reversed_ancestor_answers(self):
+        source = self.prepare_merge_after_additional('a_parent_of_b', 'S0006', 'S0003')
+        calls = len(self.calls())
+        self.cli('export-hierarchy', 'new-merge', '--base', 'before-merge',
+                 '--source', source, '--output', 'inherited-view', '--combine-equivalent',
+                 '--inherit-equivalent-judgments')
+        p = json.loads((self.root / 'inherited-view/provenance.json').read_text())
+        c = next(c for c in p['comparisons'] if (c['A'], c['B']) == ('S0003', 'S0006'))
+        self.assertEqual(c['answer']['relation'], 'b_parent_of_a')
+        self.assertEqual(c['inheritance']['previous_comparisons'][0]['answer']['relation'], 'a_parent_of_b')
+        self.assertEqual(len(self.calls()), calls)
+
+    def test_equivalence_inheritance_keeps_disagreements_pending_without_choosing(self):
+        source = self.prepare_merge_after_additional('a_parent_of_b', 'S0005', 'S0003')
+        calls = len(self.calls())
+        result = self.cli('export-hierarchy', 'new-merge', '--base', 'before-merge',
+                 '--source', source, '--output', 'inherited-view', '--combine-equivalent',
+                 '--inherit-equivalent-judgments')
+        self.assertEqual(json.loads(result.stdout)['pending_comparisons'], 1)
+        p = json.loads((self.root / 'inherited-view/provenance.json').read_text())
+        pending = p['preparation']['pending_comparisons'][0]
+        self.assertEqual(len(pending['previous_comparisons']), 2)
+        self.assertIn('disagree', pending['pending_reason'])
+        self.assertFalse(any({c['A'], c['B']} == {'S0003', 'S0005'} for c in p['comparisons']))
+        self.assertEqual(len(self.calls()), calls)
+
     def test_merge_export_rebuilds_automatic_sibling_nomination_evidence(self):
         source, _ = self.prepare_export(duplicate_title=True,
             edges=[[0, 5], [0, 6], [2, 6]])

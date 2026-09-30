@@ -377,9 +377,11 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
 
    **HG7.2 — Reuse or recompare.** Rebuild each remaining pair's subject/context lists for BCPv4. Reuse its
    saved answer only if the exact prompt input and model settings still match.
-   If the input changed, prompt **BCPv4 / Astra low** with the current lists.
-   Combining nodes can add subject/context entries, so changing an old answer's
-   node IDs is not enough to make that answer valid for the combined nodes.
+   A changed input is not an exact-request reuse. HG7.3 can instead carry a
+   judgment through accepted equivalences without a new call. Otherwise leave
+   the pair pending until a **BCPv4 / Astra low** recheck is authorized.
+   Changing node IDs alone is not enough: retain the original evidence and
+   establish which rule supports the resulting judgment.
 
    **Visual example: the Dining / Meals comparison after HG6.** HG6 also
    combines Meals #1 (representing the N023 SP subject entry) and Meals #2
@@ -456,6 +458,20 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
    current pair. HG7 saves it without adding a hierarchy relationship.
    For other pairs whose exact input and model settings did not change,
    **reuse their saved answers—do not prompt again**.
+
+   **HG7.3 — Inherit through accepted equivalence merges.** In the authorized
+   isolated export, if input changes come from combining nodes already judged
+   equivalent, map the saved answers to the combined nodes and normalize A/B
+   direction. Carry the relationship forward only when all answers for that
+   resulting pair agree. If they disagree, retain every answer and leave the
+   pair pending; do not choose one.
+
+   Record the result as **inherited**, linking all original requests, receipts
+   and supporting equivalence judgments. It is not a model answer to the new
+   combined input and has no new model receipt. The ordinary exact-request
+   cache rules remain unchanged. The previous Dining / Meals example required
+   a recheck because its mapped answers disagreed; growth of context lists
+   alone does not require a new call.
 
 ## Apply answers, then browse
 
@@ -921,8 +937,9 @@ HG7 remapping retains 18 unchanged old judgments. Seventeen old judgments
 become nine distinct pairs with changed subject/context inputs, recorded in
 `provenance.json` under `preparation.pending_comparisons`. Their original
 answers and receipts are retained as evidence, not treated as current judgments
-of the combined nodes. Existing links remain in this provisional HG6 graph;
-the nine rechecks and general conflict handling remain open.
+of the combined nodes. Existing links remain in this provisional HG6 graph.
+The subsequent inheritance test below resolves these nine pairs without
+rechecking; general conflict handling remains open.
 
 The export is reproducible through the shared runner, with no model calls:
 
@@ -942,12 +959,52 @@ SP ancestry, cycle checks, browsing ancestry and the existing browser's
 noninteractive validation passed. The earlier hierarchies and model receipts
 remain unchanged; this is not a production adoption decision.
 
+## Saved judgments inherited through sibling equivalences
+
+Status: **authorized offline test completed; no model calls**. Read-only
+inspection found no disagreement among the 17 old answers mapped to the nine
+changed-input pairs, no cycles, and no conflict with graph ancestry. The user
+approved carrying those relationships through the accepted equivalences
+instead of rerunning BCPv4 merely because the context lists grew.
+
+The shared exporter implements HG7.3 with the explicit
+`--inherit-equivalent-judgments` option alongside `--combine-equivalent`.
+The mode is recorded in export provenance so it can be replayed or omitted;
+the earlier conservative export is unchanged. If mapped answers disagree,
+the option leaves them pending rather than choosing a replacement answer.
+The joint cycle, SP ancestry and neither/ancestry checks still apply.
+
+The separate result at
+`target/branch-comparison-v1/bcpv4-same-worded-siblings-inherited-v1/hierarchy/`
+contains 18 exact-input judgments and nine inherited judgments, with zero
+pending comparisons. All 17 original answers behind those nine pairs remain,
+with their original requests and receipts and links to the supporting
+equivalence answers. Inherited entries use `stage: HG7-inherited` and
+`receipt: null`; no model was called for the combined inputs.
+
+Nodes, underlying links, browsing links, original SP entries and masks exactly
+match the prior HG6 export. Food still has one Food preparation child, one
+Food ingredients child and 47 immediate children in total, reaching the same
+50 posts. Source hierarchies and model receipts are hash-checked unchanged.
+
+To reproduce into a fresh output:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py export-hierarchy \
+  target/branch-comparison-v1/bcpv4-same-worded-siblings-v1/experiment \
+  --base target/branch-comparison-v1/bcpv4-food-ancestors-v1/hierarchy \
+  --source sse_multivector/hierarchy-refresh-v1 \
+  --output target/branch-comparison-v1/bcpv4-same-worded-siblings-inherited-replay-v1 \
+  --combine-equivalent --inherit-equivalent-judgments
+```
+
 ## Next step
 
-Suggested, not started: recheck the nine changed-input pairs through HG7 using
-unchanged BCPv4/Astra low, then inspect their answers before applying new
-relationships. The 18 unchanged judgments need no rerun. No additional
-inference is yet authorized. The
+Suggested, not started: measure whether HG4.1 and HG4.2 nominate further
+unjudged pairs in the combined hierarchy, using saved data only. Combining
+nodes can expose additional shared-child comparisons. No additional inference
+is yet authorized. The
 [HG8 draft](#proposed-hg8--apply-ancestor-relationships) still requires review of
 general conflict handling. Keep the saved LG01 hierarchy unchanged.
 
