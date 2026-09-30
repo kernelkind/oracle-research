@@ -3,7 +3,7 @@
 [PCPv1](PCPv1.md) nominates possible broader parents for one top-level hierarchy
 node. It does not judge equivalence, authorize placements, or change the HG rules.
 Its output is a possible input to a separately authorized BCPv4 comparison.
-Status: tested in the separate three-root diagnostic; not frozen or adopted.
+Status: tested in separate three-root and ten-root diagnostics; not frozen or adopted.
 
 The shared experiment runner's `parent_candidates` adapter gathers the input
 directly from saved SP entries, a saved hierarchy, and current saved judgments.
@@ -61,3 +61,22 @@ python3 sse_multivector/experiment.py prepare \
   --spec sse_multivector/parent-candidate-prompt-v1/bcpv4-nominations-spec.json \
   --history-root target/branch-comparison-v1
 ```
+
+## Ten additional top-level nodes
+
+[ten-roots-selection.json](ten-roots-selection.json) records a deliberately
+varied diagnostic sample: Paraguay, Meat cutting and trimming, Sandwiches,
+Restaurant closures, Cookware handles, Dog feeding, Audiobooks, Infant age
+milestones, Social-media communities and Exercise. These are ten distinct,
+previously untested query nodes, not a random sample or an automatic selection
+rule. They use the same saved hierarchy, full eligible catalogue, unchanged
+PCPv1 and unchanged Astra-low subscription settings through
+[ten-roots-spec.json](ten-roots-spec.json).
+
+Discovery is isolated in `target/parent-candidate-v1/pcpv1-ten-roots-v1`.
+[bcpv4-ten-roots-selection.json](bcpv4-ten-roots-selection.json) derives pairs
+from those completed nominations, and
+[bcpv4-ten-roots-spec.json](bcpv4-ten-roots-spec.json) retains unchanged BCPv4
+and settings. Checks are isolated in
+`target/branch-comparison-v1/bcpv4-pcpv1-ten-roots-v1`. Neither step reruns the
+three-root baseline or applies answers to the hierarchy.

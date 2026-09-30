@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "prompt": {"id": "PCPv1", "path": "PCPv1.md"},
+  "dataset": {"adapter": "parent_candidates", "path": "ten-roots-selection.json"},
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "concurrency": 3,
+    "timeout_seconds": 300,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "candidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {"id": {"type": "string"}, "reason": {"type": "string"}},
+            "required": ["id", "reason"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["candidates"],
+      "additionalProperties": false
+    }
+  }
+}

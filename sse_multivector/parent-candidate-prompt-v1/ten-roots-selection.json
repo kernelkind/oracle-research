@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "inputs": "../../target/subject-matching-100-v1/inputs/inputs.json",
+  "hierarchy": "../../target/branch-comparison-v1/bcpv4-hg4-third-pass-v1/hierarchy/results.json",
+  "judgments": "../../target/branch-comparison-v1/bcpv4-hg4-third-pass-v1/hierarchy/provenance.json",
+  "nodes": ["S1166", "S2332", "S1742", "S1233", "S1218", "S0574", "S1851", "S1309", "S1408", "S0327"]
+}
