@@ -1011,7 +1011,7 @@ Prominence times mask relevance remains the intended within-node score; the
 relevance measure and how multiple masks produce one note score remain open.
 
 User-approved post-ordering checks for 27 (September 29–30): the user reviewed the
-complete wording with URLs omitted and established nine clear expected orders.
+complete wording with URLs omitted and established ten clear expected orders.
 These judgments establish expected post order; they do not select
 a scoring formula, approve mask-prominence outputs or adopt a mask-aggregation
 rule.
@@ -1027,25 +1027,26 @@ rule.
 | coffee | Roasting your own beans (`056e6466`) | Hashtag-heavy second-coffee post (`862486d8`) |
 | Eggs | Mixed diary with laying hens and several egg preparations (`eaa6a5e6`) | Coffee with raw cream and raw egg yolk (`f4c5aa5f`) |
 | coffee | Coffee with raw cream and raw egg yolk (`f4c5aa5f`) | More coffee in cool places (`37f44e1f`) |
+| coffee | Sunday weather with hot coffee (`82d3d344`) | Coffee, movement and stretching (`8a025f69`) |
 
 For another coffee and Sunday wishes (`737eaa89`) versus errands (`e0508834`),
 the user judged the posts about equal, with a tentative tiny preference for
 another coffee because of "but I need another one." Record this separately
-from the nine clear ordering checks. No numeric tolerance for "about equal"
+from the ten clear ordering checks. No numeric tolerance for "about equal"
 has been agreed.
 
 On September 30, the user reviewed decaf drinkers (`2dc50a30`, A) versus
 roasting your own beans (`056e6466`, B) inside Coffee, with complete wording
 and the image URL omitted, and answered "hm i'd say they're about the same".
 Record them as about equal, with no preferred direction, separately from the
-nine clear orders. PPv30-node-v1 gives prominence 100 and 98 and sorting
+ten clear orders. PPv30-node-v1 gives prominence 100 and 98 and sorting
 scores 90.154658 and 87.301384 respectively, a difference of 2.853274. No
 numeric tolerance or tie rule is approved; this comparison is not counted as
 passed or failed and does not approve the assessed percentages or formula.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
-these nine checks, plus the two about-equal judgments.
+these ten checks, plus the two about-equal judgments.
 They are reference pairs, not a claim of general ranking quality.
 
 The value used to order posts is the **sorting score**. The user authorized a
@@ -1166,9 +1167,10 @@ the preceding trial exactly.
 The short coffee/places post now has Coffee prominence 70 across all five SP
 entries; roasting has 98. Its broader SP subjects cannot supply a different
 prominence. Their final sorting scores are 65.443206 and 87.301384 respectively,
-matching the separate tentative roasting preference. Both prominence alone and
-the sorting score match all nine clear expected orders. Both about-equal
-comparisons remain uncounted with no agreed tolerance. The [complete orders and verification](../../sse_multivector/model-runner.md)
+matching the separate tentative roasting preference. Across ten clear expected
+orders, the sorting score matches nine and reverses one; prominence alone
+matches nine and ties the remaining pair. Both about-equal comparisons remain
+uncounted with no agreed tolerance. The [complete orders and verification](../../sse_multivector/model-runner.md)
 include two failing-first workflow/comparison checks and 202 passing regression
 and integration tests. **PPv30-node-v1** is tested, not production-frozen; this
 does not adopt a production ranking rule or approve exact percentages.
@@ -1190,6 +1192,19 @@ sorting score 75.582818 > 65.443206. PPv30-subject-v2 reversed it
 (75.582818 < 86.860927). This approves the post order, not the assessed
 percentages, formula or production adoption. No new model calls, encoding or
 prompt changes were needed.
+
+After reviewing the complete Sunday-weather post (`82d3d344`, A) and coffee,
+movement and stretching post (`8a025f69`, B) inside Coffee, and receiving an
+explanation of the calculation, the user said "A seems more related to coffee".
+Record A above B as the tenth clear expected order. PPv30-node-v1 reverses it:
+both posts have prominence 35, while relevance is 0.823400 for A and 0.957202
+for B, giving sorting scores 28.819013 < 33.502067. Prominence alone ties them.
+The preceding PPv30-subject-v2 trial matched this order: A had prominence 35
+and B 25, giving 28.819013 > 23.930048 with the same relevance values. The
+node-title trial raised B's prominence to 35; relevance was reused unchanged.
+This records an ordering failure, not approval of a new prominence
+definition, relevance input, formula or production rule. No new inference or
+encoding was needed; the calculation remains as tested.
 
 27 is in progress: saved Coffee/Eggs trials test within-node note ordering.
 Finishing still needs 04, which is in launch scope and actively being worked

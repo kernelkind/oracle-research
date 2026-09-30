@@ -2534,7 +2534,8 @@ tentative preference:
 | A: More coffee in cool places (`37f44e1f`) | 70 | 0.934903 | 65.443206 |
 | B: Roasting your own beans (`056e6466`) | 98 | 0.890830 | 87.301384 |
 
-Both prominence alone and the sorting score also match the nine clear checks:
+Across ten clear checks, the sorting score matches nine and reverses one.
+Prominence alone matches nine and ties the remaining pair:
 
 | Hierarchy node | Expected higher / lower | Node-title prominence | Highest sorting score |
 | --- | --- | --- | --- |
@@ -2547,6 +2548,7 @@ Both prominence alone and the sorting score also match the nine clear checks:
 | coffee | Roasting / second coffee | 98 > 70 | 87.301384 > 64.841903 |
 | Eggs | Mixed diary / coffee with raw egg yolk | 42 > 35 | 38.818971 > 32.538029 |
 | coffee | Coffee with raw egg yolk / More coffee in cool places | 100 > 70 | 75.582818 > 65.443206 |
+| coffee | Sunday weather / coffee, movement and stretching | 35 = 35: ties | 28.819013 < 33.502067: fails |
 
 On September 30, the user reviewed the complete mixed diary (`eaa6a5e6`) as A
 and coffee with raw cream and raw egg yolk (`f4c5aa5f`) as B inside Eggs, with
@@ -2556,7 +2558,7 @@ raw-egg-yolk coffee post first (43.724941 > 33.703212). The user approved this
 order, not the assessed percentages, formula or production adoption. No new
 model calls, encoding, prompt edits or sorting calculations were needed.
 
-The tentative roasting/short-post judgment remains separate from the nine
+The tentative roasting/short-post judgment remains separate from the ten
 clear-check count. The earlier about-equal pair also remains separate: another
 coffee has prominence 50 and sorting score 42.357665; errands has 60 and
 41.622349. The difference is 0.735316 in the tentatively preferred direction,
@@ -2565,7 +2567,7 @@ without an agreed tolerance or a claim that closeness passed.
 The user next reviewed the complete decaf-drinkers post (`2dc50a30`, A) and
 roasting post (`056e6466`, B) inside Coffee, with the image URL omitted, and
 answered "hm i'd say they're about the same" on September 30. Record about
-equal with no preferred direction, separately from the nine clear orders.
+equal with no preferred direction, separately from the ten clear orders.
 PPv30-node-v1 assigns prominence 100 and 98 and sorting scores 90.154658 and
 87.301384 respectively, a difference of 2.853274. No numeric tolerance or tie
 rule was approved, so this comparison is not counted as passed or failed.
@@ -2580,6 +2582,25 @@ ninth clear expected order. PPv30-node-v1 already follows it: prominence
 (75.582818 < 86.860927), while prominence alone tied at 100. The user approved
 the post order, not the percentages, formula or production adoption. No new
 inference, encoding or prompt change was needed.
+
+The user next reviewed the complete Sunday-weather post (`82d3d344`, A) and
+coffee, movement and stretching post (`8a025f69`, B) inside Coffee. After an
+explanation of prominence, SP-context relevance and the sorting-score formula,
+the user said "A seems more related to coffee". Record A above B as the tenth
+clear expected order. This is the node-title trial's first clear ordering
+failure: both posts have prominence 35, but relevance favors B, producing
+28.819013 < 33.502067. Prominence alone ties them.
+A's selected SP context is "'Glad the coffee is hot this AM!' explicitly
+identifies hot coffee." Its cosine with the node title is 0.646801, giving
+relevance 0.823400. B's context is "The writer describes fetching coffee."
+Its cosine is 0.914404, giving relevance 0.957202. The preceding PPv30-subject-v2
+trial used those identical contexts and relevance values, but B's prominence
+was 25 rather than 35, giving sorting score 23.930048 below A's 28.819013.
+The node-title trial changed the prominence assessment; relevance was reused
+unchanged. Removing relevance would leave a tie rather than the expected
+A-above-B order. This review does not approve revised percentages, a new
+relevance input, formula or production adoption. No new inference, encoding
+or prompt change was needed.
 
 Complete node-title prominence orders, descending by highest sorting score:
 
@@ -2619,6 +2640,8 @@ The roasting/short-post direction matches the user's tentative judgment.
 Putting the diary above coffee with raw egg yolk matches the new clear judgment.
 Putting coffee with raw egg yolk above More coffee in cool places matches the
 ninth clear judgment.
+Putting coffee, movement and stretching above Sunday weather reverses the
+tenth clear expected order.
 Decaf versus roasting was reviewed as about equal, without a preferred
 direction. The other changed directions are not new user-approved orders.
 PPv30-node-v1 is tested, not production-frozen. These results do not
