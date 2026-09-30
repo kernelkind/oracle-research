@@ -137,6 +137,8 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 call("browsingContext.navigate", {"context": context, "url": url, "wait": "complete"})
                 wait_for("document.querySelector('#graph-status')?.textContent.includes('Showing')")
                 wait_for("document.querySelector('#graph-status')?.textContent.includes('Layout ready')")
+                self.assertFalse(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('25 ·'))"),
+                                 "HR02-only task 25 must not be a dependency of the current task 02")
                 self.assertEqual(evaluate("document.title"), "Oracle release plan · task graph")
                 self.assertFalse(evaluate("document.body.innerText.includes('Earlier draw.io')"))
                 for retired in ("october-18-release.drawio", "vendor/viewer-static.min.js", "vendor/LICENSE.drawio"):
@@ -149,10 +151,9 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertLess(focused_count, total_count)
                 self.assertIn("other links", evaluate("document.querySelector('#graph-status').textContent"))
                 self.assertIn("needed to finish", evaluate("document.querySelector('#details').innerText.toLowerCase()"))
-                self.assertIn("Handle node equivalence and TRUE cycles", evaluate("document.querySelector('#details').innerText"))
                 self.assertIn("IN PROGRESS", evaluate("document.querySelector('#details').innerText"))
                 self.assertTrue(evaluate("document.querySelector('#graph canvas')?.getBoundingClientRect().width > 500"))
-                self.assertGreaterEqual(sum(edge["target"] == "02" for edge in check_routes()["edges"]), 3)
+                self.assertGreaterEqual(sum(edge["target"] == "02" for edge in check_routes()["edges"]), 2)
                 capture("focused")
 
                 evaluate("document.querySelector('#focus-task').value = '06'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
@@ -174,8 +175,10 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 evaluate("document.querySelector('#depth').value = '2'; document.querySelector('#depth').dispatchEvent(new Event('change'))")
                 two_step_count = int(evaluate("document.querySelector('#graph-status').textContent.match(/Showing (\\d+)/)[1]"))
                 self.assertGreater(two_step_count, focused_count)
-                evaluate("[...document.querySelectorAll('#details .related button')].find(button => button.textContent.startsWith('25 ·'))?.click()")
-                wait_for("document.querySelector('#focus-task').value === '25'")
+                evaluate("[...document.querySelectorAll('#details .related button')].find(button => button.textContent.startsWith('03 ·'))?.click()")
+                wait_for("document.querySelector('#focus-task').value === '03'")
+                self.assertFalse(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('25 ·'))"),
+                                 "HR02-only task 25 must not be a dependency of the current task 03")
                 evaluate("document.querySelector('#go-back').click()")
                 wait_for("document.querySelector('#focus-task').value === '02'")
 
@@ -188,6 +191,11 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertTrue(evaluate("document.querySelector('#depth').disabled"))
                 check_routes()
                 capture("all-tasks")
+                evaluate("document.querySelector('#focus-task').value = '25'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
+                wait_for("document.querySelector('#details h2').textContent.startsWith('25 ·')")
+                self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "COMPLETE")
+                self.assertEqual(evaluate("document.querySelectorAll('#details .related button').length"), 0)
+                self.assertEqual([node["id"] for node in check_routes()["nodes"]], ["25"])
 
                 # The graph must be derived from the served task data, not draw.io.
                 data_file = public / "release-plan.json"

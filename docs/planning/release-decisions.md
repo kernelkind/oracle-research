@@ -344,8 +344,8 @@ This is a dated checkpoint; current task status appears in `release-plan.json`.
 | 21 · Assess HDBSCAN at launch scale | No further progress; earlier investigation remains evidence, not launch-scale validation. |
 | 22 · Measure SSE, node-title and relationship-check costs | No further progress; TRUE timing remains baseline evidence, not an assumed launch method. |
 
-This checkpoint records statuses. The later approved correction adds 25 → 02
-as a finish dependency; dates, methods and authorization remain unchanged.
+This checkpoint records HR02-era statuses, not current prerequisites.
+The HR02 finish dependency 25 → 02 has since been removed from the task graph.
 Green cards identify work ready now, not work currently underway.
 
 ## Vocabulary
@@ -948,7 +948,7 @@ select implementation methods or new dates:
 | Task | Required result | Completion dependency |
 | --- | --- | --- |
 | **24 · Recover missing node memberships** | If HDBSCAN is used, a repeatable recovery process beyond the six Coffee/Tea nodes, covering masks left unassigned or grouped elsewhere. Measure its work and cost. | Required to finish 03 only if HDBSCAN is used; available measurements inform 20 without waiting for all of 24. |
-| **25 · Handle node equivalence and TRUE cycles** | Apply exact mask-set consolidation and a reversible, repeatable rule for HR02's equivalence candidates and cyclic TRUE answers. Provisional contraction does not prove that a cycle or equal title means semantic equivalence. | Implemented for HR02; its finish dependency for 02 is satisfied. Quality validation remains in 02. |
+| **25 · Handle node equivalence and TRUE cycles** | Apply exact mask-set consolidation and a reversible, repeatable rule for HR02's equivalence candidates and cyclic TRUE answers. Provisional contraction does not prove that a cycle or equal title means semantic equivalence. | Complete for HR02; not a prerequisite for 02 or 03. The newer hierarchy's merging and conflict decisions remain within 02. |
 | **26 · Collapse equal-note navigation steps** | Implement and validate the required navigation simplification, including shared children, while preserving note sets, masks and provenance. | Required to finish 03. |
 | **27 · Order node notes using mask prominence** | Define and implement note ordering within each hierarchy node using mask prominence and relevance, including multiple masks from the same note. Recursive sorting and parent-child score transfer are out of scope. | Needs prominence definition 04; required to finish 03. |
 | **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered relationship checks. Handle large-group title inputs only if separate node-title generation is used. The relationship method is open. | Needs 03 + 22, plus 21 only if HDBSCAN is used; required to finish full-build feasibility 10. |
@@ -963,7 +963,10 @@ method for a workflow without HDBSCAN.
 HR02: both merge stages, provenance-preserving naming and browser export are
 implemented and tested. The four-merge user review accepted three and rejected
 Beef; it was not blanket approval of the provisional rule. Further quality
-validation of the rebuilt hierarchy remains in 02.
+validation of that HR02 evidence does not establish the newer hierarchy's
+merging or conflict policy. The user approved removing 25's arrows into 02 and
+03; the current merging and conflict decisions remain within 02. This does not
+reopen 25, select a replacement rule or complete 02.
 For 26, the [browser implementation and regression checks](../../sse_multivector/navigation-research-v1/README.md#shared-child-collapse)
 are complete; validation of this simplification in a rebuilt hierarchy remains
 pending.
@@ -1038,14 +1041,14 @@ implementation choices remain open.
 
 The 100-note build exposed a relationship-quality blocker at minimal scope,
 without membership expansion or a claim to exercise scalable construction.
-Task 25's implementation gate is satisfied for HR02, not proof that the current
-SP-based construction work is finished. Task 02 remains open for that
-investigation and the user's browsing review. Preliminary 200-note construction
+Task 25 is complete for HR02 and no longer gates 02 or 03. Task 02 remains open
+for the current merging and conflict decisions and the user's browsing review.
+Preliminary 200-note construction
 can follow 02 before prominence is finished, but its note-ordering check needs
 04 and 27. The 300-note
 scalable-construction work can proceed without waiting for that ordering
 check. Completing the combined 500-note validation (03) requires
-25–27, plus 24 only if HDBSCAN is used. Relevant-content coverage is required
+26 and 27, plus 24 only if HDBSCAN is used. Relevant-content coverage is required
 either way. The prominence dependency remains 04 → 27 → 03. The stages' internal
 processing order must respect their inputs, but this does not impose a serial
 development schedule.
@@ -1190,7 +1193,7 @@ cutoff, measured rates and counts, and the final corpus size remain open.
    and 500 to validate them together and profile the build. The 200-note
    construction can start before prominence is finished, but its ordering check
    cannot finish without 04 and 27. The 300-note work need not wait for that
-   check. The combined 500-note validation still needs 25–27, plus 24 only if
+   check. The combined 500-note validation still needs 26 and 27, plus 24 only if
    HDBSCAN is used. Relevant-content coverage remains required either way.
 2. Start scale measurements during Week 2. Measure the complete chosen workflow,
    rather than relying only on distilled-model training or generation speed.

@@ -16,7 +16,7 @@
       "id": "03",
       "title": "Test hierarchy across more topics",
       "status": "WAITING",
-      "description": "200: prominence + correctness.\n300: scalable construction + correctness.\n500: combine both; profile build.\n~1–2k: final pre-release validation rung with user browsing review.\nThe final 2–5k build and review belong to 12, not this task.\nValidate relevant-content coverage for the chosen workflow. Ensure pair filtering keeps useful links.\nSTART WITH 02; FINISH WITH 25–27; ALSO 24 IF HDBSCAN IS USED."
+      "description": "200: prominence + correctness.\n300: scalable construction + correctness.\n500: combine both; profile build.\n~1–2k: final pre-release validation rung with user browsing review.\nThe final 2–5k build and review belong to 12, not this task.\nValidate relevant-content coverage for the chosen workflow. Ensure pair filtering keeps useful links.\nSTART WITH 02; FINISH WITH 26 + 27; ALSO 24 IF HDBSCAN IS USED."
     },
     {
       "id": "04",
@@ -142,7 +142,7 @@
       "id": "25",
       "title": "Handle node equivalence and TRUE cycles",
       "status": "COMPLETE",
-      "description": "Exact-mask-set consolidation and reversible TRUE-cycle handling are implemented and tested for HR02.\nThe merged graph is named and browsable; its provisional merge rules are evaluated during task 02."
+      "description": "Completed for HR02: exact-mask-set consolidation and reversible TRUE-cycle handling are implemented and tested.\nThe saved merged graph is named and browsable; its rules remain provisional.\nNot a prerequisite for 02 or 03. The newer hierarchy's merging and conflict decisions remain in 02."
     },
     {
       "id": "26",
@@ -182,20 +182,10 @@
       "label": "required only if separate node-title generation is used"
     },
     {
-      "source": "25",
-      "target": "02",
-      "kind": "required"
-    },
-    {
       "source": "24",
       "target": "03",
       "kind": "helpful",
       "label": "required only if HDBSCAN is used"
-    },
-    {
-      "source": "25",
-      "target": "03",
-      "kind": "required"
     },
     {
       "source": "26",
