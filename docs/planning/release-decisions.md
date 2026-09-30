@@ -1030,9 +1030,18 @@ another coffee because of "but I need another one." Record this separately
 from the eight clear ordering checks. No numeric tolerance for "about equal"
 has been agreed.
 
+On September 30, the user reviewed decaf drinkers (`2dc50a30`, A) versus
+roasting your own beans (`056e6466`, B) inside Coffee, with complete wording
+and the image URL omitted, and answered "hm i'd say they're about the same".
+Record them as about equal, with no preferred direction, separately from the
+eight clear orders. PPv30-node-v1 gives prominence 100 and 98 and sorting
+scores 90.154658 and 87.301384 respectively, a difference of 2.853274. No
+numeric tolerance or tie rule is approved; this comparison is not counted as
+passed or failed and does not approve the assessed percentages or formula.
+
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
-these eight checks, plus the about-equal judgment.
+these eight checks, plus the two about-equal judgments.
 They are reference pairs, not a claim of general ranking quality.
 
 The value used to order posts is the **sorting score**. The user authorized a
@@ -1154,8 +1163,8 @@ The short coffee/places post now has Coffee prominence 70 across all five SP
 entries; roasting has 98. Its broader SP subjects cannot supply a different
 prominence. Their final sorting scores are 65.443206 and 87.301384 respectively,
 matching the separate tentative roasting preference. Both prominence alone and
-the sorting score match all eight clear expected orders. The about-equal
-pair remains uncounted with no agreed tolerance. The [complete orders and verification](../../sse_multivector/model-runner.md)
+the sorting score match all eight clear expected orders. Both about-equal
+comparisons remain uncounted with no agreed tolerance. The [complete orders and verification](../../sse_multivector/model-runner.md)
 include two failing-first workflow/comparison checks and 202 passing regression
 and integration tests. **PPv30-node-v1** is tested, not production-frozen; this
 does not adopt a production ranking rule or approve exact percentages.
@@ -1167,7 +1176,7 @@ PPv30-node-v1 already follows it: prominence 42 > 35 and sorting score
 38.818971 > 32.538029. PPv30-subject-v2 reversed it (33.703212 < 43.724941).
 The decision approves this post order, not exact prominence percentages,
 the formula or production adoption. The tentative roasting preference and
-about-equal judgment remain separate.
+about-equal judgments remain separate.
 
 27 is in progress: saved Coffee/Eggs trials test within-node note ordering.
 Finishing still needs 04, which is in launch scope and actively being worked

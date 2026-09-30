@@ -2561,6 +2561,16 @@ coffee has prominence 50 and sorting score 42.357665; errands has 60 and
 41.622349. The difference is 0.735316 in the tentatively preferred direction,
 without an agreed tolerance or a claim that closeness passed.
 
+The user next reviewed the complete decaf-drinkers post (`2dc50a30`, A) and
+roasting post (`056e6466`, B) inside Coffee, with the image URL omitted, and
+answered "hm i'd say they're about the same" on September 30. Record about
+equal with no preferred direction, separately from the eight clear orders.
+PPv30-node-v1 assigns prominence 100 and 98 and sorting scores 90.154658 and
+87.301384 respectively, a difference of 2.853274. No numeric tolerance or tie
+rule was approved, so this comparison is not counted as passed or failed.
+The user did not approve the assessed percentages, formula or production
+adoption. No new inference, encoding or prompt change was needed.
+
 Complete node-title prominence orders, descending by highest sorting score:
 
 Coffee:
@@ -2597,7 +2607,8 @@ Eggs:
 Relative to v2, 11 Coffee pair directions and one Eggs pair direction change.
 The roasting/short-post direction matches the user's tentative judgment.
 Putting the diary above coffee with raw egg yolk matches the new clear judgment.
-The remaining changed directions are not new user-approved orders.
+Decaf versus roasting was reviewed as about equal, without a preferred
+direction. The other changed directions are not new user-approved orders.
 PPv30-node-v1 is tested, not production-frozen. These results do not
 establish general ordering quality, calibrated percentages, production adoption
 or a general advantage from relevance over prominence alone.
