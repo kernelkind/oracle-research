@@ -16,7 +16,7 @@
       "id": "03",
       "title": "Test hierarchy across more topics",
       "status": "WAITING",
-      "description": "200: prominence + correctness.\n300: scalable construction + correctness.\n500: combine both; profile build.\n~1–2k: final pre-release validation rung with user browsing review.\nThe final 2–5k build and review belong to 12, not this task.\nValidate relevant-content coverage for the chosen workflow. Ensure pair filtering keeps useful links.\nSTART WITH 02; FINISH WITH 26 + 27; ALSO 24 IF HDBSCAN IS USED."
+      "description": "200: prominence + correctness.\n300: scalable construction + correctness.\n500: combine both; profile build.\n~1–2k: final pre-release validation rung with user browsing review.\nThe final 2–5k build and review belong to 12, not this task.\nValidate understandable choices, meaningful narrowing and relevant-content coverage for the chosen workflow. Ensure pair filtering keeps useful links.\nSTART WITH 02; FINISH WITH 27; ALSO 24 IF HDBSCAN IS USED."
     },
     {
       "id": "04",
@@ -148,7 +148,7 @@
       "id": "26",
       "title": "Collapse equal-note navigation steps",
       "status": "VALIDATION PENDING",
-      "description": "Implemented and regression-tested, including shared children.\nReview on the rebuilt hierarchy is waiting. Preserve note sets, masks and provenance."
+      "description": "Earlier mask-group navigation rule: skip a child when its complete post-ID set equals its parent's. Implemented and regression-tested, including shared children; validation remains pending.\nNot a prerequisite for 03. Any use in the newer hierarchy needs an explicit decision under 02. Preserve note sets, masks and provenance."
     },
     {
       "id": "27",
@@ -186,11 +186,6 @@
       "target": "03",
       "kind": "helpful",
       "label": "required only if HDBSCAN is used"
-    },
-    {
-      "source": "26",
-      "target": "03",
-      "kind": "required"
     },
     {
       "source": "04",

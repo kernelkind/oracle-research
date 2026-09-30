@@ -177,6 +177,8 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertGreater(two_step_count, focused_count)
                 evaluate("[...document.querySelectorAll('#details .related button')].find(button => button.textContent.startsWith('03 ·'))?.click()")
                 wait_for("document.querySelector('#focus-task').value === '03'")
+                self.assertFalse(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('26 ·'))"),
+                                 "Earlier equal-note collapse must not gate the current task 03")
                 self.assertFalse(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('25 ·'))"),
                                  "HR02-only task 25 must not be a dependency of the current task 03")
                 evaluate("document.querySelector('#go-back').click()")
@@ -196,6 +198,11 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "COMPLETE")
                 self.assertEqual(evaluate("document.querySelectorAll('#details .related button').length"), 0)
                 self.assertEqual([node["id"] for node in check_routes()["nodes"]], ["25"])
+                evaluate("document.querySelector('#focus-task').value = '26'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
+                wait_for("document.querySelector('#details h2').textContent.startsWith('26 ·')")
+                self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "VALIDATION PENDING")
+                self.assertEqual(evaluate("document.querySelectorAll('#details .related button').length"), 0)
+                self.assertEqual([node["id"] for node in check_routes()["nodes"]], ["26"])
 
                 # The graph must be derived from the served task data, not draw.io.
                 data_file = public / "release-plan.json"

@@ -48,6 +48,11 @@ the earlier exact-mask-set and TRUE-cycle rules do not gate the newer hierarchy.
 Current merging and conflict decisions remain within 02; no replacement policy
 is selected by this tracking change.
 
+Task 26's earlier equal-note navigation collapse remains validation pending;
+its link to 03 has been removed. Any reuse in the newer hierarchy needs an
+explicit decision within 02. Understandable choices, meaningful narrowing and
+relevant-content coverage remain required in 03, without mandating that rule.
+
 Task 22 measures SSE and the construction stages used in the chosen workflow.
 Separate node-title generation, its input-growth measurements and the
 corresponding large-input work in 28 are required only if that stage is used.
