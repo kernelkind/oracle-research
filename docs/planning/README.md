@@ -67,7 +67,9 @@ not fixed requirements; the formula, inputs and any treatment of multiple masks
 remain open. Task 27 implements and validates ordering using that definition.
 Both are in progress, with saved Coffee/Eggs trials and user-reviewed order
 checks. No production scoring method is selected. The 04 → 27 → 03 completion
-dependencies and existing teacher/model prominence data contracts are unchanged.
+dependencies are unchanged. The sorting mechanism and any additional
+teacher/model outputs it needs remain undecided; prominence outputs are not
+required merely because earlier experiments used them.
 
 Task 22 measures SSE and the construction stages used in the chosen workflow.
 Separate node-title generation, its input-growth measurements and the

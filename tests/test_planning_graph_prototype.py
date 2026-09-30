@@ -223,6 +223,14 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertIn("No final formula or model inputs are selected", score_details)
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('27 ·'))"))
 
+                evaluate("document.querySelector('#focus-task').value = '17'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
+                wait_for("document.querySelector('#details h2').textContent.startsWith('17 ·')")
+                self.assertIn("Additional teacher outputs needed for sorting remain undecided", evaluate("document.querySelector('#details').innerText"))
+                evaluate("document.querySelector('#focus-task').value = '05'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
+                wait_for("document.querySelector('#details h2').textContent.startsWith('05 ·')")
+                self.assertIn("Additional model outputs needed for sorting remain undecided", evaluate("document.querySelector('#details').innerText"))
+                self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('17 ·'))"))
+
                 evaluate("document.querySelector('#focus-task').value = '27'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#details h2').textContent.startsWith('27 ·')")
                 self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")

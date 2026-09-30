@@ -87,9 +87,11 @@ is in `target/distillation-pilot-v1/launch-20260929-v2/operation/`, including
 `result/work/results/*/report.json`, `launch/retrieval-verification.json`,
 `launch/destruction-confirmation.json` and `observations/`.
 
-The release model still needs prominence. The requirements below describe the
-larger evaluation and release decision; prominence is excluded only from this
-initial informal experiment. The user accepted the proposed **$25 total maximum**
+The note-sorting mechanism is still being developed. Whether the release model
+needs prominence or other additional outputs is undecided. The requirements
+below describe the larger evaluation and release decision; this informal
+experiment's frozen subject/mask tasks remain unchanged. The user accepted the
+proposed **$25 total maximum**
 for GPU setup, untuned baselines and initial fine-tunes across the three
 candidates. This includes storage, transfers and failed attempts, within the
 existing lifetime cap. The informal settings and Vast limits below are frozen
@@ -108,7 +110,7 @@ has Muse Spark 1.3 Contributor as its leading, unselected candidate. Existing
 and the [12-note subject diagnostic](frontier-model-comparison-v1/asv6.23-diagnostic-v2/results.md)
 inform that choice; they do not establish mask or prominence quality.
 The [teacher-comparison pilot](../docs/planning/release-decisions.md#teacher-comparison-pilot-evaluation-plan)
-compares the quality of candidate subjects, masks, prominence and resulting
+compares candidate subjects, masks, any agreed additional outputs and resulting
 hierarchies, as well as generation speed, cost and training-data feasibility.
 Its experimental procedure and treatment of unsuitable annotations remain open.
 This fine-tuning pilot informs the training-volume decision and schedule check;
@@ -127,7 +129,8 @@ Approved requirements:
   permissions remain part of the teacher-comparison pilot (17).
 - Measure unseen-note quality before and after training, improvement as training
   data increases, actual training resources and cost, and batched generation
-  speed. Include both masks and prominence in the release-model evaluation.
+  speed. Evaluate masks and any agreed additional outputs; sorting-related
+  model outputs remain undecided.
 - Start automatic mask matching with an 80% token-overlap cutoff, alongside
   separate exact-match scores. Details are in [Evaluation and decisions](#evaluation-and-decisions).
 - The total oracle MVP spending ceiling is $1,000, replacing—not supplementing—
@@ -145,11 +148,12 @@ below. No baseline or training completed.
 The release plan's **18 · Prepare training code for the fine-tuning pilot** is
 complete for setup: local VM rehearsals cover each candidate family, training,
 interruption/resume, save/reload and SSH deployment. The image is published and
-verified. Final training-example formatting and mask/prominence quality evaluation
-remain in **06 · Choose model through larger
-fine-tuning pilot**, which needs the agreed output format, prominence criteria and reviewed pilot
-data to complete release-model selection. Preliminary candidate execution and
-subject/mask quality review belong to 29, not completion of 06. The informal
+verified. Final training-example formatting and output-quality evaluation remain
+in **06 · Choose model through larger fine-tuning pilot**, which needs the agreed
+output format, quality criteria and reviewed pilot data to complete release-model
+selection. Additional model outputs needed for sorting remain undecided.
+Preliminary candidate execution and subject/mask quality review belong to 29,
+not completion of 06. The informal
 experiment above is authorized to begin preparation without prominence. The user subsequently
 approved building and testing the automated workflow in a local VM before
 deploying it on rented hardware. The implementation uses Transformers Trainer
@@ -527,9 +531,9 @@ estimate or an automatic billing cutoff.
 
 The later final fine-tune (08) also prepares trained weights, necessary
 supporting files, usage instructions and evaluation results for publication.
-Verify that the intended release files load and generate masks and prominence;
-the pilot setup's internal save/reload check does not establish that release
-usability. Preparation can accompany development, with final verification on
+Verify that the intended release files load and generate masks and any agreed
+additional outputs; the pilot setup's internal save/reload check does not
+establish that release usability. Preparation can accompany development, with final verification on
 the actual release artifacts. Node 16 publishes these prepared outputs. File
 formats and publishing locations remain open, and publishing the training
 dataset is not required. See [publication preparation](../docs/planning/release-decisions.md#publication-preparation).
@@ -541,18 +545,17 @@ release task below remains a later experiment; it is not the informal pilot's
 training-output contract.
 
 ```text
-complete original note → complete set of grouped source-text masks + prominence per mask
+complete original note → complete set of grouped source-text masks
+additional outputs for note sorting, if needed: undecided
 ```
 
 The distilled model must discover subjects as well as locate their evidence. The
 input does not supply a subject list. Masks may contain separated fragments,
 overlap other masks, and vary in number. The production output need not include
-the intermediate English subject descriptions. Masks feed unchanged SSE;
-prominence supports ordering notes within nodes.
-
-Assess prominence from the complete note and the particular mask, without
-requiring a generated subject description. Prominence prompt development and
-scoring calibration are a separate workstream from release planning.
+the intermediate English subject descriptions. Masks feed unchanged SSE.
+The node-sorting workstream determines the scoring method and whether it needs
+additional teacher/model outputs. Neither prominence nor mask-level scoring is
+prescribed here; existing prominence experiments retain their own frozen inputs.
 
 Use the subject and mask prompts validated by the current extraction work, not
 the superseded ASv6.23 / MPv3.5 commitment. Freeze the exact prompt versions,
@@ -561,10 +564,10 @@ comparison. This plan does not select successor prompt versions. Preserve the
 per-note subject hierarchies, raw annotations and review findings for diagnosis;
 do not silently mix outputs from different annotation policies.
 
-The prominence definition, annotation prompt, output representation and evaluation
-criteria still need to be settled. Report any earlier mask-only results as
-mask-only evidence; they cannot establish prominence quality or the cost of
-generating both outputs. Starting full training-data generation requires both
+The note-sorting mechanism, any additional annotation/model outputs it needs,
+and their evaluation criteria still need to be settled. Report earlier mask-only
+results as mask-only evidence; they cannot establish the quality or cost of
+additional outputs. Starting full training-data generation requires both
 successful completion of the 500-note hierarchy validation and teacher
 selection in the [release plan](../docs/planning/release-decisions.md). The
 same teachers must write both the larger pilot training data and the full training
@@ -572,16 +575,18 @@ data, per the user's direction of September 21, 2026. The September 25 informal
 experiment may reuse current saved annotations before that selection. Work that consumes no
 labels may use any data and need not wait for the teacher selection.
 
-The agreed readiness target for the larger fine-tune's training data is
-**September 27, 2026**, including masks and prominence, with training/evaluation
-separation. The checks and handling of unsuitable annotations remain open;
+The earlier training-data readiness target was **September 27, 2026**, including
+masks and prominence with training/evaluation separation. That earlier scope
+does not decide the current sorting-related output requirements. The checks and
+handling of unsuitable annotations remain open;
 a correction workflow is not assumed. Dataset size and the time required to
 produce suitable data also remain open. The target does not establish
 feasibility or change the pilot's proposed sizes.
 
-The pilot includes a small hierarchy built from its masks and prominence before
-model selection, using the hierarchy construction being validated. This does not
-authorize changes to the title prompt, SSE, grouping method or segmentation. Distinguish
+The pilot includes a small hierarchy built from its outputs before model
+selection, using the hierarchy construction and note-sorting methods being
+validated. This does not authorize changes to the title prompt, SSE, grouping
+method or segmentation. Distinguish
 distilled-model errors from failures in the shared downstream pipeline; a parsing or
 mask-overlap score alone does not establish hierarchy quality. Release-plan
 task 11 still checks the final distilled model. This early check does not replace
@@ -598,8 +603,9 @@ the separate scale measurements or establish the full build's cost.
 The user approved these three candidates on September 24, 2026, replacing
 T5Gemma 9B–9B PrefixLM instruction-tuned with Gemma 4 26B-A4B instruction-tuned.
 The MoE candidate tests whether lower active computation can reduce corpus
-generation cost while preserving mask and prominence quality. Its actual
-batched speed and task quality remain unmeasured; fewer active parameters do
+generation cost while preserving mask quality and any agreed additional output
+quality. Its actual batched speed and task quality remain unmeasured; fewer
+active parameters do
 not establish lower training memory or cost. See the
 [published evidence](EXTRACTOR-FINETUNING-MODEL-RESEARCH.md#gemma-4-26b-a4b).
 This selects candidates, not a training recipe or spending amount.
@@ -728,7 +734,7 @@ and does not select checkpoints using these scores.
 
 | Measurement | Required evidence | Decision it informs |
 |---|---|---|
-| Quality on unseen notes | Before/after subject coverage, mask correctness and prominence quality on the same held-out notes | Whether training improves the intended task |
+| Quality on unseen notes | Before/after subject coverage, mask correctness and quality of any agreed additional outputs on the same held-out notes | Whether training improves the intended task |
 | Improvement with more training data | Quality at each tested data size, under the controls above | Which models and additional annotations merit investment |
 | Actual training resources and cost | GPU configuration, peak memory, training time and total rental cost, including setup and evaluation | Feasible hardware and measured inputs to larger-training estimates |
 | Batched generation speed | Notes processed per second, output lengths, peak memory and failures on representative notes | Time and cost to process the proposed launch corpus |
@@ -737,9 +743,10 @@ Measure semantic quality separately from mechanical correctness:
 
 - **Coverage:** which supported subjects received a faithful mask?
 - **Mask errors:** which masks omit necessary meaning or add unrelated meaning?
-- **Prominence:** how well do scores reflect the agreed meaning of prominence?
-  Freeze its review criteria before comparing models; do not infer correctness
-  from valid numbers or combine its errors with mask errors into one score.
+- **Additional outputs, if required by the chosen sorting method:** how well do
+  they meet their agreed meaning? Freeze review criteria before comparing
+  models; do not infer correctness from valid numbers or combine these errors
+  with mask errors into one score.
 - **Mechanical failures:** which outputs are malformed or cannot be located
   correctly in the original note?
 
@@ -801,7 +808,7 @@ The notes average about 312 characters; original note plus compact grouped-mask
 JSON averages about 841 characters after exact deduplication. These are character
 counts from a selected corpus, not model-token counts or a forecast for every
 new topic. These older annotations and counts do not establish the coverage,
-output lengths or prominence labels required by the current extraction work.
+output lengths or any additional labels needed by the chosen sorting method.
 
 ## Compute estimates and spending constraints
 
@@ -825,7 +832,7 @@ has been adopted.
 ### Runtime estimates — not measured
 
 The following September 15 estimates predate the current subject hierarchy and
-the addition of prominence. They are not measured runtimes for the release task.
+later prominence experiments. They are not measured runtimes for the release task.
 They assume 1,000 short training notes, three passes, compact mask-only outputs,
 and no CPU offloading. Use pilot measurements to replace these assumptions before
 allocating larger-run spending:

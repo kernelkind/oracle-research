@@ -326,14 +326,16 @@ Approved placement decisions for that separate hierarchy (changes not yet applie
 defines and validates one sorting score per note within a hierarchy node,
 including its inputs and output format. **27 · Order notes within each node**
 implements and validates ordering using that definition. Prominence may be a
-component, but is not the task's required end state. This does not adopt an
-experimental method or change existing teacher/model prominence data contracts.
+component, but is not the task's required end state. The sorting mechanism is
+still being developed; whether teachers or the distilled model need prominence
+or other additional outputs is undecided. Existing prominence experiments and
+frozen informal-pilot settings are unchanged; no production method is adopted.
 Both tasks remain in progress. 04 is in launch scope and actively worked on,
 superseding the earlier pause notes; it need not wait for the 100-note hierarchy
 or title correction. Statuses and completion dependencies are unchanged.
 The user confirms 17 is underway, comparing Muse high and Astra low;
 no teacher is selected.
-This does not establish completion of the subject/mask/prominence comparison (17).
+This does not establish completion of the teacher comparison (17).
 Dates are unchanged. The additional construction dependencies below expose
 unfinished work. Completing 01 and 23 does not complete the hierarchy. This
 records work and planning requirements, not authorization to start another
@@ -371,7 +373,7 @@ Naming approved by the user on September 21, 2026:
 | Name | Meaning |
 | --- | --- |
 | **teachers** | The models that write the training data by running the prompts. More than one teacher is allowed. Replaces "annotation model", "training-data generator" and "annotator". |
-| **the distilled model** | Takes a complete note and returns its masks and prominence. Trained in 06/08 and released in 16. Replaces "extractor", "fine-tuned model", "mask/prominence model", "embedding model" and "student". |
+| **the distilled model** | Takes a complete note and returns its masks. Any additional outputs needed for note sorting remain undecided. Trained in 06/08 and released in 16. Replaces "extractor", "fine-tuned model", "mask/prominence model", "embedding model" and "student". |
 | **hierarchy node** | A grouping of masks that appears in the hierarchy. Replaces "category", "fine subject" and "segment"; compounds use "node": node titles, node descriptions, node links, node-note ordering. |
 | subjects, masks, prominence | Unchanged. The older "takeaway" and "relevance" wording is retired. |
 | **pilot training data** (05) and **full training data** (07) | Always qualify; avoid bare "training data". |
@@ -444,14 +446,14 @@ hierarchy over 2–5k notes demonstrates a correct process at small scale, and
 the roadmap to scalability names fine-tuning models for the expensive steps as
 the credible next step toward larger corpora. The user's browsing review
 remains the acceptance bar. Teacher selection (17) stays on the release path
-because teachers label the release corpus. Prominence (04) is in launch scope;
-per the user's correction on September 28 it is actively being worked on, and
-the earlier “paused” notes are superseded. Teachers generate prominence for
-the release corpus, and 27 orders node notes from it.
+because teachers label the release corpus. Node sort score definition (04) is
+in launch scope and active, superseding the earlier pause notes. Task 27 orders
+notes using that definition. The mechanism and any additional teacher outputs
+it needs are undecided; prominence is an experimental option, not a requirement.
 
-The model-track quality gate is unchanged: a trained model must demonstrate
-acceptable masks and prominence on unseen notes (08) and build a hierarchy that
-passes the user's browsing review (11); “training ran” does not pass. The
+The model-track quality gate requires acceptable masks and any agreed additional
+outputs on unseen notes (08), plus a hierarchy that passes the user's browsing
+review (11); “training ran” does not pass. The
 September 27 training-data readiness target belongs to the model track and no
 longer constrains the release. The validation ladder is kept and extended —
 200 / 300 / 500 as approved, then a ~1–2k-note review rung, then the 2–5k
@@ -540,8 +542,9 @@ Runtime, memory and million-note processing cost still require separate
 measurements. Profiling 500 notes does not establish launch-scale feasibility.
 
 The [fine-tuning pilot](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md)
-must measure unseen-note mask and prominence quality before and after training,
-improvement with more training data, actual training resources and cost, and
+must measure unseen-note mask quality and any agreed additional output quality
+before and after training, improvement with more training data, actual training
+resources and cost, and
 batched generation speed on representative notes. Compare quality against total
 training-and-generation cost. This does not estimate the other hierarchy-build
 stages or approve a dataset size, hardware rental or spending allocation.
@@ -598,9 +601,10 @@ completed baseline or training. Retrieval and deletion were verified. The
 approved replacement subsequently completed Qwen's baseline, training, reload
 check and trained evaluation; setup task 18 is complete, not model selection. See
 [current pilot preparation](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md#status-and-scope).
-The release model still requires prominence. Candidate selection, the larger
-pilot's evaluation requirements, full-data gates and paid-resource approval
-rules remain in force; the informal result does not complete 06.
+Whether the release model needs prominence or other sorting-related outputs is
+undecided. Candidate selection, the larger pilot's evaluation requirements,
+full-data gates and paid-resource approval rules remain in force; the informal
+result does not complete 06.
 The user approved automating and testing the complete workflow in a local VM
 before deploying on rented hardware. The local test uses a tiny model and
 synthetic data, including actual weight updates, checkpoint interruption/resume,
@@ -677,9 +681,10 @@ attempts. Budget admission passed before the run; no replacement rental is autho
 
 - **Teacher-comparison pilot (17):** choose the teachers that write the training
   data. The current comparison is Muse high versus Astra low; no teacher is
-  selected. Assess subjects, masks, prominence and the resulting hierarchies,
-  along with generation time, cost and feasibility. How unsuitable annotations
-  are handled remains open; repairing them is not an assumed workflow. Check the
+  selected. Assess subjects, masks, any agreed additional outputs and the
+  resulting hierarchies, along with generation time, cost and feasibility. How
+  unsuitable annotations are handled remains open; repairing them is not an
+  assumed workflow. Check the
   provider's data-use and output-use terms before producing training data at
   scale.
 - **Larger fine-tuning pilot (06):** compare the pretrained models that we will
@@ -689,12 +694,13 @@ attempts. Budget admission passed before the run; no replacement rental is autho
 
 **Approved fine-tuning candidates (September 24, 2026):** Qwen3.8-27B,
 Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third
-candidate replaces T5Gemma 9B–9B PrefixLM instruction-tuned. Compare its mask
-and prominence quality and total training-and-generation cost with the dense
-candidates; lower active parameter count does not establish a cost advantage.
-The larger pilot's training settings, final example format, prominence criteria
-and spending amounts remain open. The informal subject/mask settings and $25
-approval above apply only to the current short experiment.
+candidate replaces T5Gemma 9B–9B PrefixLM instruction-tuned. Compare its masks,
+any agreed additional outputs and total training-and-generation cost with the
+dense candidates; lower active parameter count does not establish a cost
+advantage. The larger pilot's training settings, final example format,
+sorting-related output requirements and spending amounts remain open. The
+informal subject/mask settings and $25 approval above apply only to the current
+short experiment.
 
 The [teacher research](../../sse_multivector/TOKEN-USAGE-ESTIMATE-1M-NOTES.md#lower-cost-annotation-models)
 already identifies Muse. A later [12-note diagnostic](../../sse_multivector/frontier-model-comparison-v1/asv6.23-diagnostic-v2/results.md)
@@ -720,12 +726,13 @@ it does not establish completion of 17 or selection of a teacher.
 
 The comparison needs to establish:
 
-- Whether candidates produce suitable subjects, masks and prominence under the
-  validated requirements. Subject-only evidence does not establish mask or
-  prominence quality.
-- Whether hierarchies built from each candidate's own subjects, masks and
-  prominence on the same notes, with downstream construction held fixed, offer
-  useful browsing paths.
+- Whether candidates produce suitable subjects and masks under the validated
+  requirements, plus any additional outputs the chosen sorting method needs.
+  Those additional outputs are undecided. Subject-only evidence does not
+  establish mask quality or the quality of additional outputs.
+- Whether hierarchies built from each candidate's own outputs on the same notes,
+  with downstream construction and note sorting held fixed, offer useful
+  browsing paths.
   Compare the hierarchies before selecting teachers; distinguish differences
   caused by teacher outputs from failures shared by the construction pipeline.
   Label-only parity does not settle the selection.
@@ -734,9 +741,10 @@ The comparison needs to establish:
 - Whether provider data-use and output-use terms permit the intended training
   and open-weight release.
 
-Completing 17 needs the validated subject/mask prompts from 01 and prominence
-requirements and prompt from 04. These are completion prerequisites; independent
-comparison work is already underway.
+Completing 17 needs the validated subject/mask prompts from 01 and the scoring
+definition from 04 to establish whether additional teacher outputs are needed
+and what to evaluate. It does not presuppose a prominence prompt. These are
+completion prerequisites; independent comparison work is already underway.
 
 The hierarchy A/B comparison is part of 17, not a separate task. The sample,
 comparison procedure, review coverage, treatment of unsuitable annotations and
@@ -753,10 +761,10 @@ authorized here.
 
 ## Hierarchy construction and service dependencies
 
-Training-data generation uses subject descriptions to guide mask generation,
-with prominence assessed for each mask in its note. The intended distilled
-model instead takes a complete note and produces grouped source-text masks
-plus prominence. It must discover subjects, but its output need not include
+Training-data generation uses subject descriptions to guide mask generation.
+The intended distilled model instead takes a complete note and produces grouped
+source-text masks. Any additional teacher/model outputs needed for note sorting
+remain undecided. It must discover subjects, but its output need not include
 English subject descriptions. The plan does not require a separate
 subject-generation call for each final-corpus note.
 
@@ -1345,7 +1353,7 @@ Publication preparation belongs to the existing tasks, not a new workstream:
 | Task | Required result for publication |
 | --- | --- |
 | **06 · Choose model through larger fine-tuning pilot** | Confirm permission to release fine-tuned weights before selecting the base model and committing to the larger training run. Teacher provider permissions remain in 17. |
-| **08 · Distill and package the model** | Prepare trained weights, necessary supporting files, usage instructions and evaluation results. Verify that the intended release files load and generate masks and prominence. |
+| **08 · Distill and package the model** | Prepare trained weights, necessary supporting files, usage instructions and evaluation results. Verify that the intended release files load and generate masks and any agreed additional outputs. |
 | **12 · Build launch hierarchy snapshot** | Build the final teacher-labeled, fully automated 2–5k snapshot and obtain the user's browsing acceptance. Prepare runnable hierarchy-generation code and instructions, architecture documentation matching the actual build, the agreed continual-update path, and the scalability roadmap. |
 | **16 · Launch public hierarchy** | Publish the release package: the snapshot, code and documentation, tested serving instructions, the scalability roadmap, and the Notedeck fork branch. The model track publishes the open-weight model whenever it passes its gate; a hosted demo is optional. |
 
@@ -1410,15 +1418,15 @@ It does not approve implementation, benchmarks, spending or diagram changes.
   freeze its IDs. Corpus size is not fixed before feasibility is investigated;
   the selected size still needs final validation.
 - **10 · Check full-build time and cost:** establish whether the distilled model
-  can generate masks and prominence for the selected launch corpus, and the
-  remaining pipeline can construct its full hierarchy, within the remaining
-  budget and available time. This is a model-track check, not an October 18
+  can generate the agreed outputs for the selected launch corpus, and the
+  remaining pipeline can construct and order its full hierarchy, within the
+  remaining budget and available time. This is a model-track check, not an October 18
   release gate. It needs the trained model, corpus selection,
   resource measurements and the runnable build from 28; early estimates alone
   do not establish feasibility.
 - **11 · Test hierarchy with the distilled model:** build a sample hierarchy from
-  that model's masks and prominence; check browsing and whether the complete
-  pipeline works before publishing the optional model. It does not gate the
+  that model's outputs and the chosen note-sorting method; check browsing and
+  whether the complete pipeline works before publishing the optional model. It does not gate the
   teacher-built release snapshot.
 
 10 and 11 are distinct model-track checks: whether a build using the distilled
@@ -1435,10 +1443,10 @@ review are tracked in 29; larger-pilot model selection is tracked in 06.
 Setup completion does not select a model, prove all full-size candidates work
 or complete the model track.
 
-Final training-example formatting and mask/prominence quality evaluation remain
-within **06 · Choose model through larger fine-tuning pilot**. Its completion
-needs the agreed output format, prominence criteria, reviewed pilot data and
-training setup (05 + 18).
+Final training-example formatting and output-quality evaluation remain within
+**06 · Choose model through larger fine-tuning pilot**. Its completion needs the
+agreed output format and quality criteria, reviewed pilot data and training
+setup (05 + 18). Additional model outputs needed for sorting remain undecided.
 The September 25 informal subject-and-mask experiment is separate task 29;
 its preparation and Qwen execution have proceeded using available data while
 06's requirements remain outstanding. The $25 approval above bounds that
@@ -1466,8 +1474,9 @@ cutoff, measured rates and counts, and the final corpus size remain open.
    findings with teacher generation measurements and growing-build counts to
    inform release corpus selection in 09. It retains pilot-model measurements
    separately for the optional model track.
-   Node 10 then checks time and cost for mask and prominence generation with the
-   distilled model and hierarchy construction across the intended launch corpus.
+   Node 10 then checks time and cost for the distilled model's agreed outputs,
+   hierarchy construction and the chosen note-sorting method across the intended
+   launch corpus.
 3. Bring protocol work and basic service/Notedeck integration forward, using a
    small saved hierarchy snapshot rather than waiting for the final corpus.
    Do not leave the first complete integration to Week 5; preserve time then
@@ -1517,8 +1526,8 @@ Begin corpus selection inside
 the decided 2–5k band (09).
 
 **Week 2 · October 5 – 11: validate the process; select the teachers.** Run
-the ladder with full user review at each rung: 200 (correctness + prominence
-ordering), 300 (correctness + scalable construction), 500 (combined +
+the ladder with full user review at each rung: 200 (correctness + within-node
+note ordering), 300 (correctness + scalable construction), 500 (combined +
 profile), then the ~1–2k review rung. The four reviews are the week's
 bottleneck; if review time slips, the proposal is to drop rungs from the
 bottom (200 first, then 300) and never from the top. Freeze the corpus IDs
@@ -1537,8 +1546,8 @@ demo publish only if they have already earned it.
 
 **Known risks.** If the relationship-quality review (02) absorbs week 1, it
 eats ladder time. Week 2 assumes the user's attention for consecutive-day
-reviews. Teacher labeling throughput and the added prominence calls are
-unmeasured at 2–5k notes. Task ownership remains unassigned.
+reviews. Teacher labeling throughput and the cost of the chosen note-sorting
+method are unmeasured at 2–5k notes. Task ownership remains unassigned.
 
 ## Compute, hosting and budget
 

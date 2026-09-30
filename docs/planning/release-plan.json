@@ -28,25 +28,25 @@
       "id": "05",
       "title": "Prepare pilot training data",
       "status": "WAITING",
-      "description": "Model track. Prepare training and separate evaluation notes for the larger fine-tuning pilot (06), using selected teachers and including masks + prominence.\nThe preliminary 100-note experiment (29) uses data already available; it does not wait for this task.\nWAITING FOR 04 + 17"
+      "description": "Model track. Prepare training and separate evaluation notes for the larger fine-tuning pilot (06), using selected teachers and including masks. Additional model outputs needed for sorting remain undecided; follow the method defined in 04 rather than assuming prominence.\nThe preliminary 100-note experiment (29) uses data already available; it does not wait for this task.\nWAITING FOR 04 + 17"
     },
     {
       "id": "06",
       "title": "Choose model through larger fine-tuning pilot",
       "status": "WAITING",
-      "description": "Model track. Larger model-selection pilot, originally envisaged at ~1,000 notes; exact dataset size remains open. The preliminary 100-note experiment is separate task 29.\nFormat examples and compare untuned versus trained quality, speed and cost, including masks + prominence.\nCheck a small hierarchy from pilot outputs before model selection.\nConfirm weight-release permission before selection.\nWAITING FOR 05; TRAINING SETUP 18 COMPLETE"
+      "description": "Model track. Larger model-selection pilot, originally envisaged at ~1,000 notes; exact dataset size remains open. The preliminary 100-note experiment is separate task 29.\nFormat examples and compare untuned versus trained quality, speed and cost for masks and any agreed additional outputs; sorting-related outputs are not yet decided.\nCheck a small hierarchy from pilot outputs before model selection.\nConfirm weight-release permission before selection.\nWAITING FOR 05; TRAINING SETUP 18 COMPLETE"
     },
     {
       "id": "07",
       "title": "Generate full training data",
       "status": "WAITING",
-      "description": "Model track. Produce masks + prominence to train the distilled model. Quality checks remain open. The September 27 data-readiness target no longer constrains the release.\nAFTER SUCCESSFUL 500-NOTE HIERARCHY RUN (03)\n+ TEACHER SELECTION (17); VOLUME DECISION OPEN"
+      "description": "Model track. Produce masks and any agreed additional outputs to train the distilled model. Sorting-related outputs and quality checks remain open. The September 27 data-readiness target no longer constrains the release.\nAFTER SUCCESSFUL 500-NOTE HIERARCHY RUN (03)\n+ TEACHER SELECTION (17); VOLUME DECISION OPEN"
     },
     {
       "id": "08",
       "title": "Distill and package the model",
       "status": "WAITING",
-      "description": "Model track. Train on Vast.ai; check unseen-note masks/prominence and runtime.\nPrepare weights, supporting files, usage instructions and evaluation results.\nVerify loading and mask/prominence generation.\nWAITING FOR 06 + 07"
+      "description": "Model track. Train on Vast.ai; check unseen-note masks, any agreed additional outputs and runtime.\nPrepare weights, supporting files, usage instructions and evaluation results.\nVerify loading and generation of the agreed outputs; sorting-related outputs remain undecided.\nWAITING FOR 06 + 07"
     },
     {
       "id": "09",
@@ -58,19 +58,19 @@
       "id": "10",
       "title": "Check full-build time and cost",
       "status": "WAITING",
-      "description": "Model track / scalability roadmap: can the distilled model generate masks + prominence at launch scale, and the pipeline build the full hierarchy, within budget? Not a gate on the release.\nNEEDS 08 + 09 + 20 + 28"
+      "description": "Model track / scalability roadmap: can the distilled model generate the agreed outputs at launch scale, and the pipeline build and order the full hierarchy using the chosen methods, within budget? Sorting mechanism and related outputs remain undecided. Not a gate on the release.\nNEEDS 08 + 09 + 20 + 28"
     },
     {
       "id": "11",
       "title": "Test hierarchy with the distilled model",
       "status": "WAITING",
-      "description": "Model track: build a sample hierarchy from its masks + prominence; check browsing and complete-pipeline operation. Passing this gates the model release.\nNEEDS 03 + 08"
+      "description": "Model track: build a sample hierarchy from the distilled model's outputs, using the chosen construction and note-sorting methods; check browsing and complete-pipeline operation. Sorting-related model outputs remain undecided. Passing this gates the model release.\nNEEDS 03 + 08"
     },
     {
       "id": "12",
       "title": "Build launch hierarchy snapshot",
       "status": "WAITING",
-      "description": "Build the release snapshot: teachers generate subjects, masks and prominence over the frozen 2–5k corpus; the validated pipeline builds the hierarchy fully automated, with no manual repair. Check nodes, coverage, ranking and reproducibility. Completion requires the user's acceptance of this final snapshot in browsing review.\nFor release: runnable code + instructions, architecture and continual-update path matching this build, and the scalability roadmap.\nNEEDS 03 + 09 + 17\nAND BUDGET APPROVAL"
+      "description": "Build the release snapshot: teachers generate subjects, masks and any agreed additional outputs over the frozen 2–5k corpus; the validated pipeline builds and orders the hierarchy fully automated, with no manual repair. The sorting mechanism and any related teacher outputs remain undecided. Check nodes, coverage, ranking and reproducibility. Completion requires the user's acceptance of this final snapshot in browsing review.\nFor release: runnable code + instructions, architecture and continual-update path matching this build, and the scalability roadmap.\nNEEDS 03 + 09 + 17\nAND BUDGET APPROVAL"
     },
     {
       "id": "13",
@@ -100,7 +100,7 @@
       "id": "17",
       "title": "Compare teachers",
       "status": "IN PROGRESS",
-      "description": "A/B test resulting hierarchies on the same notes. Compare subject, mask and prominence quality, speed, cost and terms.\nMuse high vs Astra low; no teacher selected.\nFINISH WITH 04"
+      "description": "A/B test resulting hierarchies on the same notes. Compare subject and mask quality, speed, cost and terms. Additional teacher outputs needed for sorting remain undecided; evaluate them if required by the method defined in 04.\nMuse high vs Astra low; no teacher selected.\nFINISH WITH 04"
     },
     {
       "id": "18",
@@ -112,7 +112,7 @@
       "id": "20",
       "title": "Assess full hierarchy-build resources",
       "status": "WAITING",
-      "description": "Required release: estimate time, memory and cost for teachers to generate subjects, masks and prominence over 2–5k posts, plus the chosen hierarchy-construction workflow. Use teacher measurements and observed workload counts.\nOptional model track: retain pilot/distilled-model generation measurements as a separate estimate. Shared construction measurements can inform both where applicable; model-track measurements do not block the release estimate.\nInclude graph processing and membership recovery where used.\nNEEDS 22; ALSO 21 IF HDBSCAN IS USED."
+      "description": "Required release: estimate time, memory and cost for teachers to generate subjects, masks and any agreed additional outputs over 2–5k posts, plus the chosen hierarchy-construction and note-sorting methods. Sorting-related outputs remain undecided. Use teacher measurements and observed workload counts.\nOptional model track: retain pilot/distilled-model generation measurements as a separate estimate. Shared construction measurements can inform both where applicable; model-track measurements do not block the release estimate.\nInclude graph processing and membership recovery where used.\nNEEDS 22; ALSO 21 IF HDBSCAN IS USED."
     },
     {
       "id": "21",
@@ -377,7 +377,7 @@
       "source": "08",
       "target": "11",
       "kind": "required",
-      "label": "masks + prominence from the distilled model"
+      "label": "outputs from the distilled model"
     },
     {
       "source": "03",
