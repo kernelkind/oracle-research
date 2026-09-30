@@ -152,6 +152,8 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertIn("other links", evaluate("document.querySelector('#graph-status').textContent"))
                 self.assertIn("needed to finish", evaluate("document.querySelector('#details').innerText.toLowerCase()"))
                 self.assertIn("IN PROGRESS", evaluate("document.querySelector('#details').innerText"))
+                self.assertIn("Nine further Food-ancestor answers are applied in a separate continued test export.",
+                              evaluate("document.querySelector('#details').innerText"))
                 self.assertTrue(evaluate("document.querySelector('#graph canvas')?.getBoundingClientRect().width > 500"))
                 self.assertGreaterEqual(sum(edge["target"] == "02" for edge in check_routes()["edges"]), 2)
                 capture("focused")
