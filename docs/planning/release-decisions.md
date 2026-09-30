@@ -1072,8 +1072,13 @@ preference, separately from the seven clear checks and the about-equal judgment.
 Both have highest subject prominence 100, so prominence alone ties them. The
 saved sorting score puts A first: 93.490294 versus B's 89.083045, using relevance
 0.934903 versus 0.890830. This reverses the tentative preference. The seven clear
-checks still pass; this additional judgment does not approve a formula change,
-establish why B is preferred or select a production ranking rule.
+checks still pass; this additional judgment does not approve a formula change
+or select a production ranking rule.
+On September 30, the user clarified the reason: B only talks about coffee,
+whereas A also talks about "cool places". A's saved Coffee assessment assigns all 100
+points to enjoying coffee in cool places and counts all of them toward Coffee.
+The tentative preference remains separate from the seven clear checks; no
+revised prominence rule or exact percentages have been approved.
 
 27 is in progress: saved Coffee/Eggs trials test within-node note ordering.
 Finishing still needs 04, which is in launch scope and actively being worked

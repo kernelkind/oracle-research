@@ -2234,7 +2234,17 @@ relevance values are respectively `(0.8698058827170315 + 1) / 2` and
 alone puts A first, opposite to the user's tentative preference. Prominence
 alone ties the posts. No additional inference or encoding was needed; the
 formula and seven-clear-check counts remain unchanged. The preference does not
-establish why B is preferred or authorize a production change.
+authorize a production change.
+
+On September 30, the user clarified that B only talks about coffee, while A
+talks about coffee and also "cool places". In A's winning Coffee case
+`context-fce457df09c3838440927e0e`, the saved assessment assigns 100 points to
+"Continuing to enjoy coffee in cool places." It allocates `represented: 100` and
+`missing: 0`, counting the combined meaning entirely toward Coffee, and returns
+prominence 100. **PPv30-subject-v1** explicitly permits a part to concern the SP
+subject alongside other subjects. The saved result does not distinguish the
+additional meaning the user identified. No revised prominence rule or exact
+percentage is approved by this clarification; the pair remains tentative.
 
 This draw resolves the seven saved clear checks. It does not establish general
 ordering quality, calibrated percentages or production adoption. Prominence
