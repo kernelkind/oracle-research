@@ -12,6 +12,7 @@ import Ajv from 'ajv';
 import Ajv2019 from 'ajv/dist/2019.js';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
+import { Agent } from 'undici';
 import { getSupportedThinkingLevels } from '@earendil-works/pi-ai';
 import { OPENAI_CODEX_MODELS } from '@earendil-works/pi-ai/providers/openai-codex.models';
 import { OPENROUTER_MODELS } from '@earendil-works/pi-ai/providers/openrouter.models';
@@ -20,6 +21,9 @@ import { stream as openrouterStream } from '@earendil-works/pi-ai/api/openai-com
 
 export const VERSION = 'oracle-model-runner/1';
 const PI_AI_VERSION = '0.85.1';
+// SSE can pause while the provider reasons. Only the caller's overall deadline
+// bounds that wait; do not impose Undici's separate five-minute body idle limit.
+const streamDispatcher = new Agent({ bodyTimeout: 0 });
 const sha256 = text => createHash('sha256').update(text).digest('hex');
 const nonempty = value => typeof value === 'string' && value.trim().length > 0;
 const integer = (value, min, max) => Number.isSafeInteger(value) && value >= min && value <= max;
@@ -524,7 +528,7 @@ export async function execute(request, { apiKey, fetch = globalThis.fetch, signa
       calls++;
       wire = await wireRequest(input, init);
       let response;
-      try { response = await fetch(input, init); }
+      try { response = await fetch(input, { ...init, dispatcher: streamDispatcher }); }
       catch (error) {
         responseMetadata.transport_error = { phase: 'headers', ...errorDetails(error, redact) };
         timing.error_ms = elapsed();

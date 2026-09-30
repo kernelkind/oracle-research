@@ -82,7 +82,9 @@ Required fields:
 Optional fields:
 
 - `schema`: a JSON Schema for the response. Omit it for ordinary text.
-- `timeout_seconds`: integer from 1 to 3600; default 300.
+- `timeout_seconds`: integer from 1 to 3600; default 300. This is the overall
+  request deadline, including streaming. Chat streams have no separate body-idle
+  cutoff: silence between chunks does not cancel a request before this deadline.
 - `max_output_tokens`: optional for OpenRouter. Omit it or use null to send no
   caller token cap; the runner also removes the SDK's default cap. The provider
   can still impose its own limit. Positive integers retain the explicit cap.
@@ -288,6 +290,11 @@ nix shell nixpkgs#nodejs_24 --command npm ci --ignore-scripts --no-audit --no-fu
 ```
 
 The SDK is pinned to pi-ai 0.85.1 in [package-lock.json](frontier_runner/package-lock.json).
+Undici 7.24.4 supplies a runner-owned dispatcher for both chat-streaming routes,
+with its body-idle timeout disabled. The runner passes it per request; it does
+not change Node's global dispatcher, model parameters, automatic retry policy,
+or the non-streaming System One route. The existing overall abort deadline and
+caller cancellation still apply.
 Jev's separate System One transport does not pass through that SDK.
 
 ## Prompt experiments: one supported workflow

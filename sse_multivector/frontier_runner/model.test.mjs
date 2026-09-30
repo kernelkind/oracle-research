@@ -3,8 +3,10 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { createServer } from 'node:http';
 import { zstdDecompressSync } from 'node:zlib';
 import { test } from 'node:test';
+import { Agent, getGlobalDispatcher, setGlobalDispatcher } from 'undici';
 import { prepare, preview, execute, VERSION } from './model.mjs';
 
 for (const script of ['model.mjs', 'runner.mjs']) {
@@ -530,6 +532,74 @@ test('failure before headers records its cause and caller cancellation remains a
   assert.equal(cancelled.response_metadata.abort_reason.name, 'AbortError');
   assert.equal(cancelled.http_attempts, 1);
 });
+
+for (const route of [openrouter, codex]) {
+test(`${route.provider}: real HTTP streaming ignores body idle limits but keeps the overall deadline`, async t => {
+  const previousDispatcher = getGlobalDispatcher();
+  const shortIdleDispatcher = new Agent({ bodyTimeout: 50 });
+  setGlobalDispatcher(shortIdleDispatcher);
+  t.after(async () => {
+    setGlobalDispatcher(previousDispatcher);
+    await shortIdleDispatcher.destroy();
+  });
+  const item = { id: 'msg-idle-test', type: 'message', role: 'assistant', status: 'completed',
+    content: [{ type: 'output_text', text: 'answer', annotations: [] }] };
+  const frames = route === codex ? [
+    { type: 'response.created', response: { id: 'resp-idle-test', status: 'in_progress' } },
+    { type: 'response.output_item.added', output_index: 0, item: { ...item, content: [] } },
+    { type: 'response.output_text.delta', output_index: 0, content_index: 0, delta: 'answer' },
+    { type: 'response.output_item.done', output_index: 0, item },
+    { type: 'response.completed', response: { id: 'resp-idle-test', model: route.model, status: 'completed',
+      output: [item], usage: { input_tokens: 2, output_tokens: 1 } } },
+  ] : [
+    { id: 'resp-idle-test', choices: [] },
+    { id: 'resp-idle-test', choices: [{ index: 0, delta: { content: 'answer' }, finish_reason: null }] },
+    { id: 'resp-idle-test', choices: [{ index: 0, delta: {}, finish_reason: 'stop' }],
+      usage: { prompt_tokens: 2, completion_tokens: 1 } },
+    '[DONE]',
+  ];
+  const encode = frame => `data: ${typeof frame === 'string' ? frame : JSON.stringify(frame)}\n\n`;
+  const calls = [];
+  let stall = false;
+  const server = createServer((request, response) => {
+    request.resume();
+    calls.push(request.url);
+    response.writeHead(200); // Production subscription responses can omit Content-Type.
+    response.write(encode(frames[0]));
+    if (stall) return;
+    // Undici's body timeout uses coarse timers even for a scaled 50-ms limit.
+    const timer = setTimeout(() => response.end(frames.slice(1).map(encode).join('')), 1800);
+    response.once('close', () => clearTimeout(timer));
+  });
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => { server.closeAllConnections(); server.close(); });
+  const baseUrl = `http://127.0.0.1:${server.address().port}`;
+  // Prove the scaled idle limit is active on the real HTTP path before calling the runner.
+  await assert.rejects(async () => (await fetch(baseUrl + '/control')).text(),
+    error => error.cause?.code === 'UND_ERR_BODY_TIMEOUT');
+  const key = route === codex ? 'test.' + Buffer.from(JSON.stringify({
+    'https://api.openai.com/auth': { chatgpt_account_id: 'test-account' },
+  })).toString('base64url') + '.signature' : 'test-only';
+  const request = await prepare(config(route, { timeout_seconds: 3 }));
+  request.model = { ...request.model, baseUrl };
+  const completed = await execute(request, { apiKey: key });
+  assert.equal(completed.valid, true, JSON.stringify(completed.response_metadata));
+  assert.equal(completed.raw_text, 'answer');
+  assert.equal(completed.http_attempts, 1);
+  assert.equal(completed.response_metadata.transport_error, undefined);
+  assert.equal(getGlobalDispatcher(), shortIdleDispatcher); // No process-wide timeout override.
+
+  stall = true;
+  const timedOut = await execute({ ...request, timeout_seconds: 1 }, { apiKey: key });
+  assert.equal(timedOut.valid, false);
+  assert.equal(timedOut.http_attempts, 1);
+  assert.equal(timedOut.stop_reason, 'aborted');
+  assert.equal(timedOut.response_metadata.abort_reason.name, 'TimeoutError');
+  assert.ok(timedOut.elapsed_ms >= 900 && timedOut.elapsed_ms < 3000);
+  assert.equal(timedOut.response_metadata.transport_error?.cause?.code, undefined);
+  assert.equal(calls.length, 3);
+});
+}
 
 test('independent executions never supply earlier input or generated output to later calls', async () => {
   await run('previous response marker', { prompt: 'previous prompt marker' });
