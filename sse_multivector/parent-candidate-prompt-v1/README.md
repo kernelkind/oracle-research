@@ -36,3 +36,28 @@ python3 sse_multivector/experiment.py prepare \
 
 Only the separately authorized `experiment.py run` command sends model requests.
 Inspect answers with `experiment.py show EXPERIMENT --case NODE_ID`.
+
+## Checking saved nominations with BCPv4
+
+The `subject_pairs` adapter also accepts `parent_candidates`: a list of completed
+candidate-discovery experiment directories instead of hand-written `pairs`.
+It validates their receipts and source hashes, prepares each distinct nominated
+node pair, and preserves nomination reasons and receipts as review-only evidence.
+BCPv4 sees only the two nodes' original subject/context arrays, including the
+candidate node's contexts omitted from PCPv1. It does not see PCPv1's reason or
+the rest of its catalogue. Multiple nominations of the same unordered pair
+produce one comparison while preserving all nomination evidence.
+
+[bcpv4-nominations-selection.json](bcpv4-nominations-selection.json) references
+the completed three-root discovery. [bcpv4-nominations-spec.json](bcpv4-nominations-spec.json)
+uses unchanged BCPv4 and Astra-low subscription settings. This prepares seven
+pair comparisons without rerunning PCPv1 or applying relationships to the graph.
+It is a separate diagnostic, not a new canonical HG selection rule.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py prepare \
+  target/branch-comparison-v1/bcpv4-pcpv1-seven-nominations-v1 \
+  --spec sse_multivector/parent-candidate-prompt-v1/bcpv4-nominations-spec.json \
+  --history-root target/branch-comparison-v1
+```

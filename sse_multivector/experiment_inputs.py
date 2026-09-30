@@ -82,9 +82,9 @@ def prepare_file(dataset, path, template, load_report=None):
             references[key] = dict(path=str(source_path), sha256=sources[str(source_path)])
         source['source'] = references
     if dataset['adapter'] == 'subject_pairs':
-        modes = [key for key in ('pairs', 'comparisons', 'selection') if key in source]
+        modes = [key for key in ('pairs', 'comparisons', 'selection', 'parent_candidates') if key in source]
         if len(modes) != 1:
-            raise ValueError('subject pairs require exactly one of pairs, comparisons or selection')
+            raise ValueError('subject pairs require exactly one of pairs, comparisons, selection or parent_candidates')
         mode = modes[0]
         engine._expect_fields(source, 'subject pairs',
             {'schema_version', 'inputs', 'hierarchy', mode}
@@ -99,8 +99,8 @@ def prepare_file(dataset, path, template, load_report=None):
             source_path = engine._resolve_path(source[key], key, path.parent)
             loaded[key] = read(source_path)
             references[key] = dict(path=str(source_path), sha256=sources[str(source_path)])
-        if mode == 'comparisons':
-            paths = engine._validate_string_array(source['comparisons'], 'comparisons', allow_empty=False)
+        if mode in {'comparisons', 'parent_candidates'}:
+            paths = engine._validate_string_array(source[mode], mode, allow_empty=False)
             paths = [engine._resolve_path(p, 'comparison experiment', path.parent) for p in paths]
             if len(paths) != len(set(paths)):
                 raise ValueError('duplicate comparison experiment')
@@ -119,8 +119,11 @@ def prepare_file(dataset, path, template, load_report=None):
                         file = Path(case['receipt']['results_path'])
                         sources[str(file)] = engine._sha256_file(file)
                 reports.append(result)
-            source, preparation = combine_subject_pairs(
-                dict(**loaded, pairs=[], source=references), reports, template)
+            base = dict(**loaded, pairs=[], source=references)
+            if mode == 'parent_candidates':
+                cases = prepare_parent_candidate_pairs(base, reports)
+                return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, None
+            source, preparation = combine_subject_pairs(base, reports, template)
         else:
             exclusion = source.get('exclude_compared')
             source = dict(**loaded, **{mode: source[mode]}, source=references)
@@ -151,6 +154,49 @@ def prepare_file(dataset, path, template, load_report=None):
                 return prepare({**dataset, 'adapter': 'generic'}, source, template), sources, None
     effective = {**dataset, 'adapter': 'generic'} if preparation is not None else dataset
     return prepare(effective, source, template), sources, preparation
+
+
+def prepare_parent_candidate_pairs(source, reports):
+    """Use receipt-validated nominations as ordinary pair inputs, not placements."""
+    prepare_subject_pairs(source)
+    subjects, groups = source['inputs']['subjects'], source['hierarchy']['groups']
+    by_id = {f'S{members[0]:04d}': members for members in groups}
+    pairs, nominations = {}, {}
+    for report in reports:
+        if report['adapter'] != 'parent_candidates':
+            raise ValueError('expected a parent_candidates experiment')
+        for case in report['cases']:
+            if case['status'] != 'valid' or not case.get('receipt'):
+                raise ValueError(f"parent candidate case is not valid: {case['id']}")
+            for key, reference in source['source'].items():
+                saved = case['evidence']['source'].get(key)
+                if not saved or saved['sha256'] != reference['sha256']:
+                    raise ValueError('parent candidate source hash differs from saved hierarchy inputs')
+            a = case['evidence']['A']['node_id']
+            if a not in by_id or case['evidence']['A']['subject_entries'] != [subjects[i] for i in by_id[a]]:
+                raise ValueError('parent candidate query differs from saved hierarchy node')
+            payload = json.loads(case['inputs']['INPUT_JSON'])
+            catalogue = {c['id']: c['subjects'] for c in payload['candidates']}
+            for nomination in case['parsed']['candidates']:
+                b = nomination['id']
+                if (b not in by_id or b == a or catalogue.get(b) != list(dict.fromkeys(
+                        subjects[i]['subject'] for i in by_id[b]))):
+                    raise ValueError('parent candidate nomination differs from saved hierarchy node')
+                key = tuple(sorted((a, b)))
+                pair = pairs.setdefault(key, dict(id=a + '-' + b, A=a, B=b))
+                expected = prepare_subject_pairs(dict(source, pairs=[pair]))[0]
+                query_key = 'A' if pair['A'] == a else 'B'
+                if payload['A'] != json.loads(expected['inputs']['INPUT_JSON'])[query_key]:
+                    raise ValueError('parent candidate query contexts differ from saved hierarchy node')
+                nominations.setdefault(key, []).append(dict(
+                    experiment=report['experiment'], case_id=case['id'],
+                    prompt_id=report['prompt_id'], settings=report['settings'],
+                    candidate=nomination, receipt=case['receipt']))
+    cases = prepare_subject_pairs(dict(source, pairs=list(pairs.values())))
+    for case in cases:
+        key = tuple(sorted(case['evidence'][k]['node_id'] for k in ('A', 'B')))
+        case['evidence']['parent_candidates'] = nominations[key]
+    return cases
 
 
 def combine_subject_pairs(source, reports, template):

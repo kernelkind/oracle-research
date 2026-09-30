@@ -1,3 +1,5 @@
 # Reusable source references/settings, not generated experiment data.
 !/three-roots-selection.json
 !/three-roots-spec.json
+!/bcpv4-nominations-selection.json
+!/bcpv4-nominations-spec.json

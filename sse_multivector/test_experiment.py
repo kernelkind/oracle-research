@@ -1185,6 +1185,62 @@ class ExperimentTests(unittest.TestCase):
             with self.subTest(candidates=candidates), self.assertRaises(ValueError):
                 validate(dataset, case, json.dumps(dict(candidates=candidates)), None)
 
+    def parent_candidate_pairs_spec(self):
+        self.write('selection/nominated-pairs.json', dict(schema_version=1,
+            inputs='../subjects.json', hierarchy='../hierarchy.json',
+            parent_candidates=['../candidates']))
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='subject_pairs', path='selection/nominated-pairs.json')
+        spec['runner']['output_schema'] = dict(type='object',
+            properties=dict(relation=dict(type='string'), reason=dict(type='string')),
+            required=['relation', 'reason'], additionalProperties=False)
+        self.write('spec.json', spec)
+
+    def test_subject_pairs_prepare_saved_parent_nominations_with_contexts_and_receipts(self):
+        self.parent_candidates_spec()
+        self.prepare('candidates')
+        self.cli('run', 'candidates', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(dict(
+            candidates=[dict(id=nid, reason='NOMINATION ONLY') for nid in ('S0002', 'S0008')]))})
+        nomination = self.show('candidates', '--case', 'S0000')
+        original = (self.root / 'hierarchy.json').read_bytes()
+        self.parent_candidate_pairs_spec()
+        result = self.prepare('checks')
+        self.assertIn('Model calls made: 0', result.stdout)
+        cases = self.show('checks')['cases']
+        self.assertEqual([c['id'] for c in cases], ['S0000-S0002', 'S0000-S0008'])
+        for case in cases:
+            payload = json.loads(case['inputs']['INPUT_JSON'])
+            self.assertEqual(set(payload), {'A', 'B'})
+            self.assertEqual(payload['A'], json.loads(nomination['inputs']['INPUT_JSON'])['A'])
+            self.assertNotIn('NOMINATION ONLY', case['prompt'])
+            self.assertNotIn('REVIEW ONLY', case['prompt'])
+            self.assertEqual(case['evidence']['parent_candidates'][0]['receipt'], nomination['receipt'])
+        self.assertEqual(json.loads(cases[1]['inputs']['INPUT_JSON'])['B'], [
+            dict(subject='Other subtopic', context='Context for Other subtopic')])
+        plan = json.loads((self.root / 'checks/experiment.json').read_text())['plan']
+        receipt = self.root / 'candidates/run/results.jsonl'
+        self.assertEqual(plan['sources'][str(receipt)], hashlib.sha256(receipt.read_bytes()).hexdigest())
+        self.cli('run', 'checks', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"relation":"b_parent_of_a","reason":"Broader subject."}'})
+        self.assertEqual(self.show('checks')['summary']['valid'], 2)
+        self.assertEqual(len(self.calls()), 3)
+        self.assertEqual((self.root / 'hierarchy.json').read_bytes(), original)
+
+    def test_subject_pairs_parent_nominations_reject_unfinished_and_stale_sources(self):
+        self.parent_candidates_spec()
+        self.prepare('candidates')
+        self.parent_candidate_pairs_spec()
+        failed = self.cli('prepare', 'checks', '--spec', self.spec, ok=False)
+        self.assertIn('parent candidate case is not valid', failed.stderr)
+        self.cli('run', 'candidates', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"candidates":[{"id":"S0002","reason":"Broader."}]}'})
+        hierarchy = json.loads((self.root / 'hierarchy.json').read_text())
+        hierarchy['edges'].append([3, 0])
+        self.write('hierarchy.json', hierarchy)
+        failed = self.cli('prepare', 'checks', '--spec', self.spec, ok=False)
+        self.assertIn('parent candidate source hash differs', failed.stderr)
+        self.assertEqual(len(self.calls()), 1)
+
     def test_subject_pairs_selection_preserves_orientation(self):
         self.subject_pairs_spec()
         spec = json.loads(self.spec.read_text())
