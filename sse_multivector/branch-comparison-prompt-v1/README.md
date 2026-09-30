@@ -276,7 +276,20 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
    previously judged pairs, including neither and uncertain. Preparation checks
    that the saved nodes and judgment inputs still match and hashes the referenced
    provenance. Nomination evidence stays outside the model prompt.
-   This does not adopt an automatic repeat-until-finished loop.
+   The runner automates each individual pass; it does not yet execute the
+   repetition rule below automatically.
+
+   **HG4.3 — Approved canonical repetition and stopping rule.** After HG6 merges
+   or HG8 ancestor answers change the hierarchy, return to HG4 and apply its
+   current selection rules to the updated hierarchy. Count each pair once and
+   exclude pairs with current saved judgments, including neither and uncertain.
+   Send only the remaining unjudged pairs through HG5–HG8, then check HG4 again.
+
+   Stop **this comparison loop** when HG4 selects no unjudged pairs. That does
+   not declare the hierarchy complete, approve its browsing quality, or resolve
+   pending HG7 judgments and conflicts. Existing checks and inference-approval
+   requirements still apply. This decision establishes repetition, not a new
+   selection rule or general conflict policy.
 
 5. **HG5 — Prompt BCPv4 for each selected hierarchy-node pair.** Use
    **BCPv4** (tested, not frozen) with **Astra low**.
@@ -505,6 +518,8 @@ bread**, without a redundant Food → Sourdough bread shortcut. Keep every
 hierarchy node, multiple parent routes and original relationships in the
 underlying data. Each node's directly associated MP masks stay unchanged;
 new ancestor links can provide additional routes to posts through child nodes.
+After a completed pass, follow HG4.3 to select newly exposed pairs or stop the
+comparison loop.
 
 ## What is still missing?
 
@@ -517,10 +532,10 @@ Its **nine Food calls were HG5 comparisons of the Food node against nine other
 hierarchy nodes**, not comparisons of those nine nodes against one another.
 That shortlist is experimental, not an adopted replacement for HG4.
 
-Selecting further comparisons, deciding when to repeat HG6–HG7, and general
-conflict handling remain open. The tests preserve the saved LG01 hierarchy;
-they do not establish a finished global hierarchy. This process does not use
-HDBSCAN, TRUE/Jev, or a separate title-generation pass.
+The repetition and stopping rule is approved in HG4.3. Selecting further kinds
+of comparisons and general conflict handling remain open. The tests preserve
+the saved LG01 hierarchy; they do not establish a finished global hierarchy.
+This process does not use HDBSCAN, TRUE/Jev, or a separate title-generation pass.
 
 ---
 
@@ -597,7 +612,7 @@ parenthood. Other hierarchy nodes may sit between the compared nodes.
    | `b_parent_of_a` | Record B as an ancestor of A; not necessarily its immediate parent. |
    | `neither` | Propose no additional ancestor relationship; retain the answer. |
    | `uncertain` | Propose no additional ancestor relationship; retain the unresolved answer. |
-   | `equivalent` | Belongs to HG6, not an ancestor relationship. Newly returned HG7 equivalences remain pending; no automatic repeat of HG6–HG7 has been selected. |
+   | `equivalent` | Belongs to HG6, not an ancestor relationship. Newly returned HG7 equivalences remain pending until an HG6 decision; follow HG4.3 after an accepted merge changes the hierarchy. |
 
 4. Check all proposed ancestor relationships together with the existing SP
    relationships. Arrows in this check represent ancestry, not immediate
@@ -623,8 +638,9 @@ both rather than accepting whichever was processed first.
 The proposed conflict policy needs explicit approval: a `neither` answer does
 not remove an SP path or veto a path supplied by other parent answers. Such
 disagreements are recorded, not silently resolved. Cycle checks establish
-structural validity, not semantic correctness. HG6 merge handling and any
-repeat rule for equivalences found at HG7 remain separate open decisions.
+structural validity, not semantic correctness. Handling newly returned
+equivalences from HG7 rechecks remains a separate open decision; HG4.3 governs
+selection after accepted hierarchy changes.
 
 The user agreed to the following browsing-link rule, recorded as
 [HD22](../../docs/planning/release-decisions.md#sp-based-hierarchy-rules):
@@ -1014,8 +1030,9 @@ python3 sse_multivector/experiment.py export-hierarchy \
 ## Bounded second HG4–HG8 pass
 
 The user authorized one further pass using the updated 100-post hierarchy,
-unchanged BCPv4 and Astra low. This is a test of repeating the existing stages,
-not approval of an automatic loop or a new selection rule.
+unchanged BCPv4 and Astra low. This was a bounded test of repeating the existing
+stages. The later repetition-rule approval is recorded in HG4.3; it does not
+introduce a new selection rule.
 
 Before the calls, HG4.1 selected 15 pairs using browsing links: 12 already
 judged and three unjudged. HG4.2 selected one new unjudged pair. The rules did
@@ -1094,10 +1111,12 @@ establish that the hierarchy is complete or ready for browsing approval.
 
 ## Next step
 
-Suggested, not adopted: review whether returning to HG4 after hierarchy
-changes, excluding current saved judgments, and stopping that comparison loop
-when no unjudged pairs are nominated should become the canonical repetition
-rule. Automatic repetition remains open, and no further calls are authorized. The
+HG4.3 records the user-approved canonical repetition rule. Automatic execution
+of that loop is not implemented, and no further calls are authorized.
+
+Suggested, not started: a read-only audit of important missing parent
+relationships that HG4.1 and HG4.2 cannot select. The empty comparison queue
+does not establish that those rules cover the hierarchy's remaining gaps. The
 [HG8 draft](#proposed-hg8--apply-ancestor-relationships) still requires review of
 general conflict handling. Keep the saved LG01 hierarchy unchanged.
 
