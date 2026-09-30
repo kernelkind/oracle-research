@@ -59,6 +59,19 @@ abbreviated. The logical node IDs below are examples, not a required format.
 }
 ```
 
+## Node-record kind and retention — proposed
+
+- `K_NODE` uses a regular kind in `1000–9999`; its final number is open.
+- `d` identifies the logical node without replacing older signed records.
+- Updates create new event IDs with the same logical node ID. Reuse unchanged
+  signed records.
+- Keep every record referenced by a current or overlapping node list queryable,
+  together with its notes pages. Retiring an older list must not remove data
+  still referenced by a served list.
+
+Regular kinds avoid addressable replacement discarding an earlier record
+during overlap. [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds)
+
 ## Open decisions
 
 - Logical node identity across rebuilds; provider, manifest and root discovery.
