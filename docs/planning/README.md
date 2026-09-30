@@ -58,7 +58,9 @@ Task 02 now tracks the SP-based hierarchy investigation: LG01 has run on 100
 posts. BCPv4 compared 49 parent pairs; isolated tests subsequently combined the
 saved equivalences, re-compared seven changed inputs and applied 13 ancestor
 answers with redundant browsing shortcuts omitted. Nine further Food comparisons
-returned ancestor answers that have not been applied. The saved LG01 hierarchy
+returned ancestor answers, now applied in a separate continued export. Food still
+reaches 50 posts, with nine additional child branches; repeated nodes remain.
+The saved LG01 hierarchy
 is unchanged. These are authorized tests, not production adoption or a general
 conflict policy; the useful-hierarchy browsing gate remains open. See the
 [current stage record](../../sse_multivector/branch-comparison-prompt-v1/README.md#hierarchy-generation-stages).

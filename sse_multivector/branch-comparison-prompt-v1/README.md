@@ -10,7 +10,8 @@ rate. HG6–HG7 subsequently tested an isolated combined-node preparation below.
 The authorized [ancestor-application test](#saved-ancestor-application-test)
 then applied 13 current ancestor answers in a separate view. A subsequent
 [nine-pair Food test](#recovered-food-comparisons) returned nine ancestor answers,
-not yet applied. The saved LG01 hierarchy is unchanged; production adoption
+now applied in a [separate continued export](#extended-food-test-export).
+The saved LG01 hierarchy is unchanged; production adoption
 and general conflict handling remain open.
 
 [BCPv4.md](BCPv4.md) compares the subjects represented by two hierarchy nodes,
@@ -304,7 +305,7 @@ These are agent observations of a partial hierarchy, not user quality approval.
 
 ## Recovered Food comparisons
 
-Status: **authorized test completed; answers not applied**. Unchanged BCPv4 /
+Status: **authorized test completed; answers applied only in a separate continued export**. Unchanged BCPv4 /
 `openai-codex / gpt-6-astra / low` compared Food/Foods (`S0022`) with nine
 disconnected Food nodes in the separate 100-post test hierarchy. The provider,
 schema, concurrency 3 and timeout 300 seconds match the HG6–HG7 test.
@@ -341,15 +342,49 @@ Every answer was `a_parent_of_b`, meaning Food/Foods is an ancestor of B:
 | F09 | S1954 — Food ingredients | N083 |
 
 The shared workflow saved the exact requests, outputs, validation and usage at
-`target/branch-comparison-v1/bcpv4-food-ancestors-v1/experiment/`. No prompt,
-LG01 matching rule, source hierarchy or browsing export changed. These nine
+`target/branch-comparison-v1/bcpv4-food-ancestors-v1/experiment/`. The comparison
+run changed no prompt, LG01 matching rule, source hierarchy or browsing export.
+The subsequent application test below uses those saved answers. These nine
 answers support the usefulness of the recovered comparisons on this selected
 sample; they do not validate all 393 pairs or authorize broader inference.
 
+## Extended Food test export
+
+The user authorized applying the nine saved answers and inspecting Food, with
+no new inference. The shared runner's `export-hierarchy --base` replays and
+validates the original ancestor-test export, verifies the nine comparisons
+against its exact nodes, and writes a separate test hierarchy at
+`target/branch-comparison-v1/bcpv4-food-ancestors-v1/hierarchy/`. The earlier
+export, saved LG01 data and model receipts remain unchanged.
+
+All nine links passed the joint cycle and `neither`/ancestry checks. The export
+retains 100 posts, 2,383 subject entries, 1,753 nodes, 1,674 mask vectors and all
+direct post memberships. It has 447 top-level nodes, down from 456; its 1,683
+underlying links include the original 1,661 SP links and all 22 ancestor answers.
+The browsing view omits 15 redundant links, leaving 1,668, with identical ancestry.
+It retains all 35 current judgments, including the earlier 13 `neither` answers.
+
+Food/Foods still directly contains 31 posts and recursively reaches 50. Its
+immediate browsing children increase from 46 to 55. The nine newly linked
+branches supply additional browsing routes, not new posts. Five distinct Food
+preparation nodes and four Food ingredients nodes now appear beneath Food; no
+equal-name combination was performed. Three of those five preparation nodes and
+all four ingredients nodes have empty masks, explaining part of LG01's refusal
+to combine them. Empty-mask entries cannot pass its nonempty-mask matching rule.
+The other two preparation nodes select `fix` and `prepared`, respectively;
+matching subject names alone did not combine their different mask evidence.
+
+The N046 Food preparation → Bagel making branch and N083 Food preparation →
+Pie making / No-bake food preparation branch remain top-level. They were outside
+the shared-descendant shortlist and received no new comparison. Thus this test
+repairs the nine nominated browsing relationships, not all missing placements
+or repeated-node clutter. These are agent observations, not user quality approval.
+
 ## Next step
 
-Suggested, not started: apply the nine saved answers in a separately authorized
-test export, then inspect the Food branch before expanding inference. The
+Suggested, not started: inspect whether the existing comparison-selection rules
+can nominate the repeated Food preparation and Food ingredients siblings before
+expanding inference. The
 [HG8 draft](#proposed-hg8--apply-ancestor-relationships) still requires review of
 general conflict handling. Keep the saved LG01 hierarchy unchanged.
 

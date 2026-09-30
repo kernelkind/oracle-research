@@ -646,8 +646,10 @@ not copied case files; use the ordinary runner and attempt cap afterward.
 
 ### Saved subject hierarchy export
 
-`export-hierarchy` consumes a completed combined `subject_pairs` experiment;
-it is an explicitly authorized, separate test, not automatic post-run behavior.
+`export-hierarchy` consumes a completed combined `subject_pairs` experiment,
+or completed additional `subject_pairs` comparisons with `--base` naming their
+existing test export. It is an explicitly authorized, separate test, not
+automatic post-run behavior.
 It revalidates source hashes, receipts, model settings, the HG6 partition and
 each current input. HG5 judgments are used only for unchanged inputs; changed
 inputs require valid HG7 answers. Older relative source paths resolve only to
@@ -669,17 +671,40 @@ python3 sse_multivector/experiment.py export-hierarchy \
   --output target/branch-comparison-v1/bcpv4-ancestors-replay-v1
 ```
 
+For additional comparisons, their frozen hierarchy reference must be exactly
+`BASE/results.json`, with the same original SP inputs, prompt and model settings.
+The exporter reconstructs the base from its saved source experiments in memory,
+checks all four export files against that reconstruction, retains its answers
+and adds the completed new ones. First-generation exports without an explicit
+replay descriptor are supported only when their protected sources identify one
+unique combined experiment. New provenance records the experiment, source corpus
+and base path for reproducible continuation. Duplicate compared pairs or case IDs
+stop rather than choosing a replacement answer. The same joint conflict checks
+apply to old and new answers; no source export or receipt is rewritten.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py export-hierarchy \
+  target/branch-comparison-v1/bcpv4-food-ancestors-v1/experiment \
+  --base target/branch-comparison-v1/bcpv4-ancestors-v1/run \
+  --source sse_multivector/hierarchy-refresh-v1 \
+  --output target/branch-comparison-v1/bcpv4-food-ancestors-replay-v1
+```
+
 The output must be fresh and outside the source/model-experiment directories.
 `results.json` retains the full graph, SP links, answer-bound proposals and
 separate browsing links. `provenance.json` retains source hashes, the preparation,
 answers/receipts/settings, original entries/SP links and masks. `summary.json`
-reports mechanical checks, not semantic accuracy. `categories.json` reuses the
+reports mechanical checks, not semantic accuracy; `new_ancestor_links` counts
+links added relative to the supplied base, or relative to SP links for the first
+export. `ancestor_answers` and `comparisons` count all retained current answers.
+`categories.json` reuses the
 existing browser with individual masks, IDs, full post context and empty-mask posts:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 target/infomap-review-build/debug/sse-subject-navigation \
-  --categories target/branch-comparison-v1/bcpv4-ancestors-v1/run/categories.json \
+  --categories target/branch-comparison-v1/bcpv4-food-ancestors-v1/hierarchy/categories.json \
   sse_multivector/hierarchy-refresh-v1/masked-posts.json
 ```
 

@@ -88,8 +88,8 @@ def browser_spec(inputs, result, masks, source_hash):
                        for p in inputs["posts"]], note_masks=note_masks, mask_instances=instances)
 
 
-def export_comparisons(directory, source, output):
-    """Export completed HG6–HG7 answers; stop on conflicts instead of repairing."""
+def _export_bundle(directory, source, base=None, ancestry=()):
+    """Rebuild a complete export in memory; no inference or source writes."""
     try:
         from . import experiment as workflow
         from . import experiment_inputs as adapters
@@ -99,13 +99,18 @@ def export_comparisons(directory, source, output):
         import experiment_inputs as adapters
         from extraction_pipeline import _sha256_file
 
-    directory, source, output = (Path(p).resolve() for p in (directory, source, output))
-    if output.exists():
-        raise FileExistsError(f"output exists: {output}")
+    directory, source = (Path(p).resolve() for p in (directory, source))
+    if directory in ancestry:
+        raise ValueError("cyclic export provenance")
+    ancestry = (*ancestry, directory)
     plan, _, _ = workflow.load(directory)
     prep = plan.get("preparation")
-    if plan["dataset"]["adapter"] != "subject_pairs" or not prep:
-        raise ValueError("export requires a combined subject-pair experiment")
+    if plan["dataset"]["adapter"] != "subject_pairs":
+        raise ValueError("export requires a subject-pair experiment")
+    if base is None and not prep:
+        raise ValueError("export requires a combined subject-pair experiment or --base")
+    if base is not None and prep:
+        raise ValueError("--base requires ordinary additional subject-pair comparisons")
     protected = dict(plan["sources"])
 
     def protect(path, expected=None):
@@ -123,6 +128,96 @@ def export_comparisons(directory, source, output):
     for name in plan["files"]:
         protect(directory / name)
 
+    if base is None:
+        inputs, hierarchy, comparisons, prep = _initial_comparisons(
+            directory, plan, protect, workflow, adapters)
+    else:
+        inputs, hierarchy, comparisons, prep = _continued_comparisons(
+            Path(base).resolve(), directory, source, plan, protect, workflow, adapters, ancestry)
+
+    groups = hierarchy["groups"]
+    by_id = {f"S{members[0]:04d}": g for g, members in enumerate(groups)}
+    sp_edges = {tuple(e) for e in hierarchy.get("sp_edges", hierarchy["edges"])}
+    starting_edges = {tuple(e) for e in hierarchy["edges"]}
+    proposals, neither = [], []
+    for c in comparisons:
+        a, b = by_id[c["A"]], by_id[c["B"]]
+        relation = c["answer"]["relation"]
+        if relation == "equivalent":
+            raise ValueError("new equivalent answer requires a separate HG6 decision")
+        if relation in {"a_parent_of_b", "b_parent_of_a"}:
+            edge = (a, b) if relation == "a_parent_of_b" else (b, a)
+            proposals.append(dict(edge=list(edge), comparison_id=c["id"]))
+        elif relation == "neither":
+            neither.append((a, b))
+        elif relation != "uncertain":
+            raise ValueError("unsupported subject comparison answer")
+    edges = sorted(starting_edges | {tuple(p["edge"]) for p in proposals})
+    paths = reachable(len(groups), edges)
+    if any(a == b for a, b in paths):
+        raise ValueError("ancestor answers create a cycle; no conflict policy applied")
+    if any((a, b) in paths or (b, a) in paths for a, b in neither):
+        raise ValueError("neither answer conflicts with ancestry; no conflict policy applied")
+    owners = hierarchy["member_to_group"]
+    if any(owners[a] != owners[b] and (owners[a], owners[b]) not in paths for a, b in inputs["edges"]):
+        raise ValueError("combined hierarchy loses SP ancestry")
+    outgoing = {g: set() for g in range(len(groups))}
+    for a, b in edges:
+        outgoing[a].add(b)
+    browsing = [(a, b) for a, b in edges if not any(c != b and (c, b) in paths for c in outgoing[a])]
+    if reachable(len(groups), browsing) != paths:
+        raise ValueError("browsing simplification loses ancestry")
+
+    posts = workflow.read(protect(source / "masked-posts.json"))
+    mappings = workflow.read(protect(source / "vector-map.json"))["vectors"]
+    originals = {p["note_id"]: p["text"] for p in posts["notes"]}
+    masks = {v["vector_id"]: v for v in mappings}
+    if len(originals) != len(posts["notes"]) or len(masks) != len(mappings):
+        raise ValueError("duplicate post or mask vector identity")
+    if any(originals.get(p["note_id"]) != p["text"] for p in inputs["posts"]):
+        raise ValueError("saved SP post differs from original source")
+    selected_masks = {}
+    for s in inputs["subjects"]:
+        if not s["mask_vector_ids"] and (s["byte_spans"] or s["fragments"]):
+            raise ValueError("nonempty subject mask has no vector")
+        for vid in s["mask_vector_ids"]:
+            m = masks[vid]
+            if any(s[k] != m[k] for k in ("note_id", "note_short_id", "byte_spans", "fragments")):
+                raise ValueError("mask provenance mismatch")
+            raw = originals[s["note_id"]].encode()
+            if [raw[a:b].decode() for a, b in m["byte_spans"]] != m["fragments"]:
+                raise ValueError("mask differs from original post")
+            selected_masks[vid] = m
+    result = dict(hierarchy, experiment_id=plan["prompt"]["id"] + "-ancestor-test-v1",
+                  sp_edges=[list(e) for e in sorted(sp_edges)], ancestor_proposals=proposals,
+                  browsing_edges=[list(e) for e in browsing],
+                  analysis="Isolated saved-answer test: preserved SP links plus current BCP ancestor answers. "
+                  "Redundant browsing links omitted; no title generation, node removal or membership expansion.")
+    result["edges"] = [list(e) for e in edges]
+    view = browser_spec(inputs, result, selected_masks, protected[str(source / "masked-posts.json")])
+    view["hierarchy_id"] = plan["prompt"]["id"] + " · saved ancestor-application test"
+    summary = dict(posts=len(inputs["posts"]), subjects=len(inputs["subjects"]), nodes=len(groups),
+        roots=len(view["nodes"][0]["children"]), comparisons=len(comparisons),
+        ancestor_answers=len(proposals), new_ancestor_links=len(set(edges) - starting_edges),
+        sp_links=len(sp_edges), underlying_links=len(edges), browsing_links=len(browsing),
+        browsing_links_omitted=len(edges) - len(browsing),
+        uncertain_answers=sum(c["answer"]["relation"] == "uncertain" for c in comparisons),
+        sp_order_preserved=True, browsing_ancestry_preserved=True, inference_calls=0)
+    provenance = dict(protected_sha256=protected, subjects=inputs["subjects"], original_edges=inputs["edges"],
+        preparation=prep, comparisons=comparisons, masks=list(selected_masks.values()),
+        export=dict(experiment=str(directory), source=str(source),
+                    base=str(Path(base).resolve()) if base is not None else None),
+        implementation_sha256={str(Path(p).resolve()): _sha256_file(Path(p))
+                               for p in (__file__, workflow.__file__, adapters.__file__)})
+    for path, expected in protected.items():
+        if _sha256_file(Path(path)) != expected:
+            raise ValueError(f"protected source changed during export: {path}")
+    return dict(results=result, categories=view, provenance=provenance, summary=summary)
+
+
+def _initial_comparisons(directory, plan, protect, workflow, adapters):
+    """Rebuild the HG6 partition and validate unchanged HG5 and changed HG7 inputs."""
+    prep = plan["preparation"]
     priors = (prep["equivalent_answers"] + prep["internal_comparisons"]
               + [p for c in prep["unchanged_comparisons"] for p in c["previous_comparisons"]]
               + [p for c in plan["cases"] for p in c["evidence"]["previous_comparisons"]])
@@ -183,87 +278,109 @@ def export_comparisons(directory, source, output):
             receipt=c["receipt"], experiment=current["experiment"], prompt_id=current["prompt_id"],
             settings=current["settings"], stage="HG7"))
 
-    hierarchy = prep["hierarchy"]
-    groups = hierarchy["groups"]
-    by_id = {f"S{members[0]:04d}": g for g, members in enumerate(groups)}
-    sp_edges = {tuple(e) for e in hierarchy["edges"]}
-    proposals, neither = [], []
-    for c in comparisons:
-        a, b = by_id[c["A"]], by_id[c["B"]]
-        relation = c["answer"]["relation"]
-        if relation == "equivalent":
-            raise ValueError("new equivalent answer requires a separate HG6 decision")
-        if relation in {"a_parent_of_b", "b_parent_of_a"}:
-            edge = (a, b) if relation == "a_parent_of_b" else (b, a)
-            proposals.append(dict(edge=list(edge), comparison_id=c["id"]))
-        elif relation == "neither":
-            neither.append((a, b))
-        elif relation != "uncertain":
-            raise ValueError("unsupported subject comparison answer")
-    edges = sorted(sp_edges | {tuple(p["edge"]) for p in proposals})
-    paths = reachable(len(groups), edges)
-    if any(a == b for a, b in paths):
-        raise ValueError("ancestor answers create a cycle; no conflict policy applied")
-    if any((a, b) in paths or (b, a) in paths for a, b in neither):
-        raise ValueError("neither answer conflicts with ancestry; no conflict policy applied")
-    owners = hierarchy["member_to_group"]
-    if any(owners[a] != owners[b] and (owners[a], owners[b]) not in paths for a, b in inputs["edges"]):
-        raise ValueError("combined hierarchy loses SP ancestry")
-    outgoing = {g: set() for g in range(len(groups))}
-    for a, b in edges:
-        outgoing[a].add(b)
-    browsing = [(a, b) for a, b in edges if not any(c != b and (c, b) in paths for c in outgoing[a])]
-    if reachable(len(groups), browsing) != paths:
-        raise ValueError("browsing simplification loses ancestry")
+    return inputs, prep["hierarchy"], comparisons, prep
 
-    posts = workflow.read(protect(source / "masked-posts.json"))
-    mappings = workflow.read(protect(source / "vector-map.json"))["vectors"]
-    originals = {p["note_id"]: p["text"] for p in posts["notes"]}
-    masks = {v["vector_id"]: v for v in mappings}
-    if len(originals) != len(posts["notes"]) or len(masks) != len(mappings):
-        raise ValueError("duplicate post or mask vector identity")
-    if any(originals.get(p["note_id"]) != p["text"] for p in inputs["posts"]):
-        raise ValueError("saved SP post differs from original source")
-    selected_masks = {}
-    for s in inputs["subjects"]:
-        if not s["mask_vector_ids"] and (s["byte_spans"] or s["fragments"]):
-            raise ValueError("nonempty subject mask has no vector")
-        for vid in s["mask_vector_ids"]:
-            m = masks[vid]
-            if any(s[k] != m[k] for k in ("note_id", "note_short_id", "byte_spans", "fragments")):
-                raise ValueError("mask provenance mismatch")
-            raw = originals[s["note_id"]].encode()
-            if [raw[a:b].decode() for a, b in m["byte_spans"]] != m["fragments"]:
-                raise ValueError("mask differs from original post")
-            selected_masks[vid] = m
-    if any(output.is_relative_to(p) for p in [directory, source,
-            *(Path(r["experiment"]) for r in reports)]):
+
+def _continued_comparisons(base, directory, source, plan, protect, workflow, adapters, ancestry):
+    """Replay the base export, then validate additional inputs against that exact graph."""
+    saved = {name: workflow.read(protect(base / f"{name}.json"))
+             for name in ("results", "categories", "provenance", "summary")}
+    previous = saved["provenance"]
+    for path, expected in previous["protected_sha256"].items():
+        protect(path, expected)
+    origin = previous.get("export")
+    if origin is None:
+        # First-generation exports predate the explicit replay descriptor.
+        candidates = []
+        for path in previous["protected_sha256"]:
+            if Path(path).name == "experiment.json":
+                old = workflow.load(Path(path).parent)[0]
+                if old.get("preparation") and old["preparation"] == previous["preparation"]:
+                    candidates.append(Path(path).parent)
+        if len(candidates) != 1:
+            raise ValueError("base export has no unique combined source experiment")
+        origin = dict(experiment=str(candidates[0]), source=str(source), base=None)
+    if not isinstance(origin, dict) or set(origin) != {"experiment", "source", "base"}:
+        raise ValueError("invalid base export provenance")
+    rebuilt = _export_bundle(origin["experiment"], origin["source"], origin["base"], ancestry)
+    for name in ("results", "categories", "summary"):
+        if saved[name] != rebuilt[name]:
+            raise ValueError(f"base export {name} differs from saved comparisons")
+    for name in ("protected_sha256", "subjects", "original_edges", "preparation", "comparisons", "masks"):
+        if previous[name] != rebuilt["provenance"][name]:
+            raise ValueError(f"base export provenance {name} differs from saved comparisons")
+    if "export" in previous and previous["export"] != rebuilt["provenance"]["export"]:
+        raise ValueError("base export replay descriptor changed")
+
+    current = workflow.report(directory)
+    if not current["cases"]:
+        raise ValueError("no additional comparisons")
+    references = current["cases"][0]["evidence"]["source"]
+    if set(references) != {"inputs", "hierarchy"}:
+        raise ValueError("additional comparison source must name inputs and hierarchy")
+    for ref in references.values():
+        path = str(Path(ref["path"]).resolve())
+        if plan["sources"].get(path) != ref["sha256"]:
+            raise ValueError("comparison source is not bound to prepared sources")
+        protect(path, ref["sha256"])
+    if Path(references["hierarchy"]["path"]).resolve() != base / "results.json":
+        raise ValueError("comparison hierarchy does not match --base")
+    input_ref = references["inputs"]
+    if previous["protected_sha256"].get(str(Path(input_ref["path"]).resolve())) != input_ref["sha256"]:
+        raise ValueError("comparison inputs do not match base export sources")
+    inputs = workflow.read(input_ref["path"])
+    if inputs["subjects"] != previous["subjects"] or inputs["edges"] != previous["original_edges"]:
+        raise ValueError("comparison subjects or SP links differ from base export")
+    old_plan = workflow.load(origin["experiment"])[0]
+    if any(plan["prompt"][k] != old_plan["prompt"][k] for k in ("id", "text")):
+        raise ValueError("additional comparison prompt differs from base export")
+    for c in previous["comparisons"]:
+        for key in ("provider", "model", "reasoning_effort", "output_schema", "timeout_seconds", "max_output_tokens"):
+            if c["settings"].get(key) != current["settings"].get(key):
+                raise ValueError(f"comparison model settings differ: {key}")
+
+    pairs = [dict(id=c["id"], A=c["evidence"]["A"]["node_id"], B=c["evidence"]["B"]["node_id"])
+             for c in plan["cases"]]
+    expected = adapters.prepare(dict(adapter="subject_pairs"),
+        dict(inputs=inputs, hierarchy=saved["results"], pairs=pairs, source=references), plan["prompt"]["text"])
+    by_id = {c["id"]: c for c in expected}
+    if {c["id"] for c in current["cases"]} != set(by_id):
+        raise ValueError("additional comparison inventory differs from preparation")
+    comparisons = list(previous["comparisons"])
+    used_ids = {c["id"] for c in comparisons}
+    used_pairs = {frozenset((c["A"], c["B"])) for c in comparisons}
+    for c in current["cases"]:
+        if c["status"] != "valid" or not c.get("receipt"):
+            raise ValueError(f"comparison is not valid: {c['id']}")
+        protect(c["receipt"]["results_path"])
+        if any(c[k] != by_id[c["id"]][k] for k in ("inputs", "evidence", "prompt")):
+            raise ValueError("additional comparison inputs differ from base nodes")
+        a, b = c["evidence"]["A"]["node_id"], c["evidence"]["B"]["node_id"]
+        pair = frozenset((a, b))
+        if c["id"] in used_ids or pair in used_pairs:
+            raise ValueError("duplicate saved comparison; no replacement policy applied")
+        used_ids.add(c["id"])
+        used_pairs.add(pair)
+        comparisons.append(dict(id=c["id"], A=a, B=b, answer=c["parsed"], inputs=c["inputs"],
+            receipt=c["receipt"], experiment=current["experiment"], prompt_id=current["prompt_id"],
+            settings=current["settings"], stage="HG5"))
+    return inputs, saved["results"], comparisons, previous["preparation"]
+
+
+def export_comparisons(directory, source, output, base=None):
+    """Apply receipt-validated ancestor answers to a fresh, separately authorized export."""
+    output = Path(output).resolve()
+    if output.exists():
+        raise FileExistsError(f"output exists: {output}")
+    bundle = _export_bundle(directory, source, base)
+    protected = bundle["provenance"]["protected_sha256"]
+    forbidden = {Path(directory).resolve(), Path(source).resolve()}
+    forbidden.update(Path(p).parent for p in protected if Path(p).name in {"experiment.json", "provenance.json"})
+    if any(output.is_relative_to(path) for path in forbidden):
         raise ValueError("output must be separate from saved source directories")
-    result = dict(**hierarchy, experiment_id=plan["prompt"]["id"] + "-ancestor-test-v1",
-                  sp_edges=hierarchy["edges"], ancestor_proposals=proposals,
-                  browsing_edges=[list(e) for e in browsing],
-                  analysis="Isolated saved-answer test: preserved SP links plus current BCP ancestor answers. "
-                  "Redundant browsing links omitted; no title generation, node removal or membership expansion.")
-    result["edges"] = [list(e) for e in edges]
-    view = browser_spec(inputs, result, selected_masks, protected[str(source / "masked-posts.json")])
-    view["hierarchy_id"] = plan["prompt"]["id"] + " · saved ancestor-application test"
-    summary = dict(posts=len(inputs["posts"]), subjects=len(inputs["subjects"]), nodes=len(groups),
-        roots=len(view["nodes"][0]["children"]), comparisons=len(comparisons),
-        ancestor_answers=len(proposals), new_ancestor_links=len(set(edges) - sp_edges),
-        sp_links=len(sp_edges), underlying_links=len(edges), browsing_links=len(browsing),
-        browsing_links_omitted=len(edges) - len(browsing),
-        uncertain_answers=sum(c["answer"]["relation"] == "uncertain" for c in comparisons),
-        sp_order_preserved=True, browsing_ancestry_preserved=True, inference_calls=0)
-    provenance = dict(protected_sha256=protected, subjects=inputs["subjects"], original_edges=inputs["edges"],
-        preparation=prep, comparisons=comparisons, masks=list(selected_masks.values()),
-        implementation_sha256={str(Path(p).resolve()): _sha256_file(Path(p))
-                               for p in (__file__, workflow.__file__, adapters.__file__)})
-    for path, expected in protected.items():
-        if _sha256_file(Path(path)) != expected:
-            raise ValueError(f"protected source changed during export: {path}")
     output.mkdir(parents=True, exist_ok=False)
-    for name, value in (("results", result), ("categories", view), ("provenance", provenance), ("summary", summary)):
+    for name, value in bundle.items():
         with (output / f"{name}.json").open("x", encoding="utf-8") as stream:
             json.dump(value, stream, indent=2, ensure_ascii=False, allow_nan=False)
             stream.write("\n")
-    return summary
+    return bundle["summary"]

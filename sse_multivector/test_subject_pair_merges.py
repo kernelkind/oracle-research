@@ -212,6 +212,135 @@ class SubjectPairMergeTests(unittest.TestCase):
                 self.assertEqual(before, {p: p.read_bytes() for p in before})
                 self.assertEqual(len(self.calls()), calls)
 
+    def prepare_additional_export(self, relation='a_parent_of_b', run=True, pairs=None, **kwargs):
+        source, _ = self.prepare_export(**kwargs)
+        self.cli('export-hierarchy', 'combined', '--source', source, '--output', 'view')
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='subject_pairs', path='additional.json')
+        self.write('additional-spec.json', spec)
+        self.write('additional.json', dict(schema_version=1, inputs='subjects.json',
+            hierarchy='view/results.json', pairs=pairs or [dict(id='food-tea', A='S0000', B='S0005')]))
+        self.cli('prepare', 'additional', '--spec', self.root / 'additional-spec.json')
+        if run:
+            self.cli('run', 'additional', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(
+                dict(relation=relation, reason='Saved additional answer.'))})
+        return source
+
+    def test_extends_saved_export_with_completed_comparisons_without_calls_or_source_changes(self):
+        source = self.prepare_additional_export(edges=[[0, 6], [2, 6], [3, 6], [5, 6]])
+        base = json.loads((self.root / 'view/results.json').read_text())
+        previous = json.loads((self.root / 'view/provenance.json').read_text())
+        before = {p: p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        calls = len(self.calls())
+        exported = self.cli('export-hierarchy', 'additional', '--base', 'view',
+            '--source', source, '--output', 'extended')
+        summary = json.loads(exported.stdout)
+        self.assertEqual(summary['inference_calls'], 0)
+        self.assertEqual(summary['new_ancestor_links'], 1)
+        self.assertEqual(summary['comparisons'], 4)
+        graph = json.loads((self.root / 'extended/results.json').read_text())
+        self.assertEqual(graph['groups'], base['groups'])
+        self.assertEqual(graph['member_to_group'], base['member_to_group'])
+        self.assertEqual(graph['sp_edges'], base['sp_edges'])
+        self.assertEqual(set(map(tuple, graph['edges'])), set(map(tuple, base['edges'])) | {(0, 3)})
+        view = json.loads((self.root / 'extended/categories.json').read_text())
+        old_view = json.loads((self.root / 'view/categories.json').read_text())
+        self.assertEqual({n['node_id']: n['note_ids'] for n in view['nodes']},
+                         {n['node_id']: n['note_ids'] for n in old_view['nodes']})
+        self.assertEqual(view['mask_instances']['S0005'], old_view['mask_instances']['S0005'])
+        provenance = json.loads((self.root / 'extended/provenance.json').read_text())
+        self.assertEqual(provenance['comparisons'][:-1], previous['comparisons'])
+        self.assertEqual(provenance['comparisons'][-1]['id'], 'food-tea')
+        self.assertEqual(provenance['masks'], previous['masks'])
+        self.assertEqual(provenance['subjects'], previous['subjects'])
+        self.assertEqual(before, {p: p.read_bytes() for p in before})
+        self.assertEqual(len(self.calls()), calls)
+
+    def test_additional_export_replays_first_generation_provenance(self):
+        source = self.prepare_additional_export()
+        path = self.root / 'view/provenance.json'
+        old = json.loads(path.read_text())
+        del old['export']
+        path.write_text(json.dumps(old))
+        calls = len(self.calls())
+        result = self.cli('export-hierarchy', 'additional', '--base', 'view',
+            '--source', source, '--output', 'extended')
+        self.assertEqual(json.loads(result.stdout)['new_ancestor_links'], 1)
+        self.assertEqual(len(self.calls()), calls)
+
+    def test_additional_export_rejects_conflicts_equivalence_duplicates_and_unrun_answers(self):
+        for kwargs, message in [
+            (dict(pairs=[dict(id='cycle', A='S0006', B='S0000')]), 'create a cycle'),
+            (dict(relation='b_parent_of_a'), 'neither answer conflicts'),
+            (dict(relation='equivalent'), 'separate HG6 decision'),
+            (dict(run=False), 'comparison is not valid'),
+            (dict(pairs=[dict(id='repeat', A='S0000', B='S0003')]), 'duplicate saved comparison'),
+        ]:
+            with self.subTest(kwargs=kwargs):
+                self.setUp()
+                source = self.prepare_additional_export(**kwargs)
+                before = {p: p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+                calls = len(self.calls())
+                failed = self.cli('export-hierarchy', 'additional', '--base', 'view',
+                    '--source', source, '--output', 'extended', ok=False)
+                self.assertIn(message, failed.stderr)
+                self.assertFalse((self.root / 'extended').exists())
+                self.assertEqual(before, {p: p.read_bytes() for p in before})
+                self.assertEqual(len(self.calls()), calls)
+
+    def test_additional_export_rejects_tampered_base_receipts_and_source_hashes(self):
+        for name, message in [
+            ('view/categories.json', 'base export categories differs'),
+            ('view/provenance.json', 'base export provenance comparisons differs'),
+            ('additional/run/results.jsonl', 'comparison is not valid'),
+            ('subjects.json', 'protected source changed'),
+        ]:
+            with self.subTest(name=name):
+                self.setUp()
+                source = self.prepare_additional_export()
+                path = self.root / name
+                if path.suffix == '.jsonl':
+                    records = [json.loads(line) for line in path.read_text().splitlines()]
+                    records[0]['final_output_raw'] = '{"relation":"neither","reason":"Tampered."}'
+                    path.write_text(''.join(json.dumps(r) + '\n' for r in records))
+                else:
+                    value = json.loads(path.read_text())
+                    if name.endswith('categories.json'):
+                        value['nodes'][1]['label'] = 'Tampered.'
+                    elif name.endswith('provenance.json'):
+                        value['comparisons'][0]['answer']['reason'] = 'Tampered.'
+                    else:
+                        value['subjects'][0]['context'] = 'Tampered.'
+                    path.write_text(json.dumps(value))
+                calls = len(self.calls())
+                failed = self.cli('export-hierarchy', 'additional', '--base', 'view',
+                    '--source', source, '--output', 'extended', ok=False)
+                self.assertIn(message, failed.stderr)
+                self.assertFalse((self.root / 'extended').exists())
+                self.assertEqual(len(self.calls()), calls)
+
+    def test_additional_export_keeps_empty_masks_and_uncertain_answers(self):
+        source = self.prepare_additional_export(relation='uncertain', empty_mask=True)
+        result = self.cli('export-hierarchy', 'additional', '--base', 'view',
+            '--source', source, '--output', 'extended')
+        summary = json.loads(result.stdout)
+        self.assertEqual(summary['uncertain_answers'], 1)
+        self.assertEqual(summary['new_ancestor_links'], 0)
+        base = json.loads((self.root / 'view/categories.json').read_text())
+        view = json.loads((self.root / 'extended/categories.json').read_text())
+        self.assertEqual(view['mask_instances'], base['mask_instances'])
+        self.assertEqual(view['mask_instances']['S0005'], {'N5': []})
+
+    def test_additional_export_requires_exact_base_and_separate_output(self):
+        source = self.prepare_additional_export()
+        self.cli('export-hierarchy', 'combined', '--source', source, '--output', 'other')
+        for base, output, message in [('other', 'extended', 'does not match --base'),
+                                     ('view', 'view/nested', 'separate from saved source')]:
+            failed = self.cli('export-hierarchy', 'additional', '--base', base,
+                '--source', source, '--output', output, ok=False)
+            self.assertIn(message, failed.stderr)
+            self.assertFalse((self.root / output).exists())
+
     def test_export_preserves_empty_masks_and_distinct_nodes_with_identical_titles(self):
         source, _ = self.prepare_export(empty_mask=True, duplicate_title=True)
         self.cli('export-hierarchy', 'combined', '--source', source, '--output', 'view')
