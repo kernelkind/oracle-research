@@ -10,7 +10,7 @@
       "id": "02",
       "title": "Build and review 100-note hierarchy",
       "status": "IN PROGRESS",
-      "description": "Current: SP-based hierarchy investigation; no production workflow selected.\nLG01 has run on 100 posts. BCPv4 has compared 49 parent pairs; answers are saved, not applied.\nOpen: equivalent-node merging, re-comparison and graph-application policies. Agreed ancestor interpretation and redundant-link browsing rule are not yet implemented.\nCompletion: a useful 100-note hierarchy accepted in the user's browsing review.\nEarlier HR02/HDBSCAN evidence remains preserved. Task 25 is complete for HR02, not proof that the new construction work is finished."
+      "description": "Current: hierarchy investigation using per-post subject hierarchies and masks; no production workflow selected.\n100 posts processed. Isolated tests combined nodes judged equivalent, repeated seven changed comparisons and applied 13 ancestor links; redundant browsing shortcuts were omitted.\nNine further Food-ancestor answers are saved, not yet applied.\nOpen: general conflict handling, broader pair selection and production adoption.\nCompletion: a useful 100-note hierarchy accepted in the user's browsing review.\nThe original LG01 hierarchy and earlier HR02/HDBSCAN evidence remain unchanged. Task 25 is complete for HR02, not proof that the new construction work is finished."
     },
     {
       "id": "03",
