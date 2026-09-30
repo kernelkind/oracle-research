@@ -1121,6 +1121,80 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual((self.root / 'hierarchy.json').read_bytes(), original)
         self.assertEqual(self.calls(), [])
 
+    def test_subject_pairs_select_parents_of_shared_cross_post_child(self):
+        self.subject_pairs_spec()
+        self.write('selection/pairs.json', dict(schema_version=1,
+            inputs='../subjects.json', hierarchy='../hierarchy.json',
+            selection='shared_child_parents'))
+        self.prepare()
+        cases = self.show()['cases']
+        self.assertEqual([c['id'] for c in cases], ['S0000-S0002'])
+        self.assertEqual(cases[0]['evidence']['selection'], dict(
+            rule='shared_child_parents', nominations=[dict(
+                child='S0005', posts=['N1', 'N3'])]))
+        self.assertNotIn('nominations', cases[0]['prompt'])
+        self.assertEqual(self.calls(), [])
+
+    def test_hg4_union_deduplicates_pairs_and_excludes_current_saved_judgments(self):
+        self.subject_pairs_spec()
+        inputs = json.loads((self.root / 'subjects.json').read_text())
+        inputs['subjects'][2]['subject'] = 'Tea'
+        for name in ['Drinks', 'Tea']:
+            i = len(inputs['subjects'])
+            inputs['subjects'].append(dict(index=i, subject=name, context='',
+                note_id='N3', note_short_id='N3', number=str(i),
+                fragments=[], byte_spans=[], mask_vector_ids=[]))
+        self.write('subjects.json', inputs)
+        hierarchy = dict(groups=[[2], [0, 1, 3, 4], [5, 6], [7], [8]],
+            member_to_group=[1, 1, 0, 1, 1, 2, 2, 3, 4],
+            edges=[[0, 2], [1, 2], [3, 0], [3, 1], [3, 4]])
+        self.write('hierarchy.json', hierarchy)
+        self.write('selection/pairs.json', dict(schema_version=1,
+            inputs='../subjects.json', hierarchy='../hierarchy.json', selection='hg4'))
+        self.prepare('all-selected')
+        cases = self.show('all-selected')['cases']
+        self.assertEqual([c['id'] for c in cases], [
+            'S0000-S0002', 'S0000-S0008', 'S0002-S0008'])
+        nominations = cases[0]['evidence']['selection']['nominations']
+        self.assertEqual({n['rule'] for n in nominations}, {
+            'shared_child_parents', 'same_worded_siblings'})
+        saved = cases[0]
+        self.write('judgments.json', dict(subjects=inputs['subjects'],
+            preparation=dict(hierarchy=hierarchy), comparisons=[dict(
+                id=saved['id'], A='S0000', B='S0002', inputs=saved['inputs'],
+                answer=dict(relation='neither', reason='Saved decision.'))]))
+        self.write('selection/pairs.json', dict(schema_version=1,
+            inputs='../subjects.json', hierarchy='../hierarchy.json', selection='hg4',
+            exclude_compared='../judgments.json'))
+        self.prepare('unjudged')
+        self.assertEqual([c['id'] for c in self.show('unjudged')['cases']], [
+            'S0000-S0008', 'S0002-S0008'])
+        plan = json.loads((self.root / 'unjudged/experiment.json').read_text())['plan']
+        path = self.root / 'judgments.json'
+        self.assertEqual(plan['sources'][str(path)], hashlib.sha256(path.read_bytes()).hexdigest())
+        judgments = json.loads(path.read_text())
+        judgments['comparisons'][0]['inputs']['INPUT_JSON'] = '{}'
+        self.write('judgments.json', judgments)
+        error = self.cli('prepare', 'stale', '--spec', self.spec, ok=False)
+        self.assertIn('saved judgment inputs differ', error.stderr)
+        self.assertFalse((self.root / 'stale').exists())
+        self.assertEqual(self.calls(), [])
+
+    def test_shared_child_parents_require_cross_post_child_and_immediate_browsing_links(self):
+        from sse_multivector.experiment_inputs import prepare_subject_pairs
+        self.subject_pairs_spec()
+        inputs = json.loads((self.root / 'subjects.json').read_text())
+        hierarchy = json.loads((self.root / 'hierarchy.json').read_text())
+        source = dict(inputs=inputs, hierarchy=hierarchy,
+                      selection='shared_child_parents', source={})
+        hierarchy['browsing_edges'] = [[0, 1], [1, 2]]
+        self.assertEqual(prepare_subject_pairs(source), [])
+        hierarchy.pop('browsing_edges')
+        inputs['subjects'][6]['note_id'] = 'N1'
+        inputs['subjects'][6]['note_short_id'] = 'N1'
+        self.assertEqual(prepare_subject_pairs(source), [])
+        self.assertEqual(self.calls(), [])
+
     def test_subject_pairs_reuse_generic_saved_answers_without_another_call(self):
         self.subject_pairs_spec()
         self.prepare()

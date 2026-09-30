@@ -254,8 +254,8 @@ def _combine_saved_equivalences(inputs, hierarchy, comparisons, previous_prep,
                                 directory, plan, workflow, adapters, inherit=False):
     """Apply HG6 only; remap retained judgments and expose changed HG7 inputs."""
     report = workflow.report(directory)
-    if any(c["parsed"]["relation"] != "equivalent" for c in report["cases"]):
-        raise ValueError("merge-only export requires only equivalent answers")
+    if not any(c["parsed"]["relation"] == "equivalent" for c in report["cases"]):
+        raise ValueError("HG6 export requires at least one equivalent answer")
     references = report["cases"][0]["evidence"]["source"]
     source = dict(inputs=inputs, hierarchy=hierarchy, pairs=[], source=references)
     _, prep = adapters.combine_subject_pairs(source, [report], plan["prompt"]["text"])

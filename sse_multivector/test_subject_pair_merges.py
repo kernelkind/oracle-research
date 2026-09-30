@@ -259,7 +259,7 @@ class SubjectPairMergeTests(unittest.TestCase):
     def test_merge_only_export_rejects_other_answers_and_missing_base(self):
         source = self.prepare_additional_export(relation='uncertain')
         calls = len(self.calls())
-        for base, message in [(['--base', 'view'], 'requires only equivalent'),
+        for base, message in [(['--base', 'view'], 'requires at least one equivalent'),
                               ([], 'requires --base')]:
             with self.subTest(base=base):
                 failed = self.cli('export-hierarchy', 'additional', *base,
@@ -267,6 +267,33 @@ class SubjectPairMergeTests(unittest.TestCase):
                 self.assertIn(message, failed.stderr)
                 self.assertFalse((self.root / 'merged-view').exists())
         self.assertEqual(len(self.calls()), calls)
+
+    def test_combines_equivalences_and_applies_ancestors_from_one_mixed_batch(self):
+        source = self.prepare_additional_export(duplicate_title=True, run=False, pairs=[
+            dict(id='ancestor', A='S0003', B='S0005'),
+            dict(id='equivalence', A='S0005', B='S0006')])
+        partial = self.cli('run', 'additional', '--max-new-attempts', '1', ok=False, env={
+            'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"relation":"a_parent_of_b","reason":"A broader subject."}'})
+        self.assertIn('allowance exhausted', partial.stderr)
+        self.cli('run', 'additional', '--max-new-attempts', '1', env={
+            'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"relation":"equivalent","reason":"The same subject."}'})
+        calls = len(self.calls())
+        before = {p: p.read_bytes() for p in (self.root / 'view').iterdir() if p.is_file()}
+        result = self.cli('export-hierarchy', 'additional', '--base', 'view',
+            '--source', source, '--output', 'mixed-view', '--combine-equivalent',
+            '--inherit-equivalent-judgments')
+        summary = json.loads(result.stdout)
+        self.assertEqual(summary['nodes_combined'], 1)
+        self.assertEqual(summary['pending_comparisons'], 0)
+        self.assertEqual(summary['sp_order_preserved'], True)
+        graph = json.loads((self.root / 'mixed-view/results.json').read_text())
+        a, b = (graph['member_to_group'][i] for i in (3, 5))
+        self.assertEqual(graph['member_to_group'][5], graph['member_to_group'][6])
+        self.assertIn([a, b], graph['browsing_edges'])
+        self.assertEqual(len(self.calls()), calls)
+        self.assertEqual(before, {p: p.read_bytes() for p in before})
 
     def test_inherits_consistent_judgments_through_saved_equivalence_merges(self):
         source = self.prepare_additional_export(relation='equivalent',
@@ -371,6 +398,31 @@ class SubjectPairMergeTests(unittest.TestCase):
             '--source', source, '--output', 'merged-view', '--combine-equivalent')
         self.assertEqual(json.loads(result.stdout)['nodes_combined'], 1)
         self.assertEqual(len(self.calls()), calls)
+
+    def test_hg4_unjudged_selection_replays_through_merge_and_inheritance_export(self):
+        source, _ = self.prepare_export(duplicate_title=True,
+            edges=[[0, 5], [0, 6], [2, 6]])
+        self.cli('export-hierarchy', 'combined', '--source', source, '--output', 'view')
+        self.write('hg4.json', dict(schema_version=1, inputs='subjects.json',
+            hierarchy='view/results.json', selection='hg4',
+            exclude_compared='view/provenance.json'))
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='subject_pairs', path='hg4.json')
+        self.write('hg4-spec.json', spec)
+        self.cli('prepare', 'hg4', '--spec', self.root / 'hg4-spec.json')
+        self.assertEqual([c['id'] for c in self.show('hg4')['cases']], ['S0005-S0006'])
+        self.cli('run', 'hg4', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"relation":"equivalent","reason":"The same broad subject."}'})
+        before = {p: p.read_bytes() for p in (self.root / 'view').iterdir() if p.is_file()}
+        calls = len(self.calls())
+        result = self.cli('export-hierarchy', 'hg4', '--base', 'view',
+            '--source', source, '--output', 'hg4-view', '--combine-equivalent',
+            '--inherit-equivalent-judgments')
+        summary = json.loads(result.stdout)
+        self.assertEqual(summary['nodes_combined'], 1)
+        self.assertEqual(summary['pending_comparisons'], 0)
+        self.assertEqual(len(self.calls()), calls)
+        self.assertEqual(before, {p: p.read_bytes() for p in before})
 
     def test_additional_export_replays_first_generation_provenance(self):
         source = self.prepare_additional_export()

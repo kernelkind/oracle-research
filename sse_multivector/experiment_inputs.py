@@ -76,10 +76,12 @@ def prepare_file(dataset, path, template, load_report=None):
             raise ValueError('subject pairs require exactly one of pairs, comparisons or selection')
         mode = modes[0]
         engine._expect_fields(source, 'subject pairs',
-            {'schema_version', 'inputs', 'hierarchy', mode})
+            {'schema_version', 'inputs', 'hierarchy', mode}
+            | ({'exclude_compared'} if mode == 'selection' and 'exclude_compared' in source else set()))
         if type(source['schema_version']) is not int or source['schema_version'] != 1:
             raise ValueError('expected subject pairs schema_version 1')
-        if mode == 'selection' and source[mode] != 'same_worded_siblings':
+        if mode == 'selection' and source[mode] not in {
+                'same_worded_siblings', 'shared_child_parents', 'hg4'}:
             raise ValueError('unknown subject pair selection rule')
         loaded, references = {}, {}
         for key in ('inputs', 'hierarchy'):
@@ -109,7 +111,33 @@ def prepare_file(dataset, path, template, load_report=None):
             source, preparation = combine_subject_pairs(
                 dict(**loaded, pairs=[], source=references), reports, template)
         else:
+            exclusion = source.get('exclude_compared')
             source = dict(**loaded, **{mode: source[mode]}, source=references)
+            if exclusion is not None:
+                history_path = engine._resolve_path(exclusion, 'exclude_compared', path.parent)
+                history = read(history_path)
+                saved_hierarchy = history.get('preparation', {}).get('hierarchy', {})
+                if (history.get('subjects') != loaded['inputs']['subjects']
+                        or any(saved_hierarchy.get(k) != loaded['hierarchy'][k]
+                               for k in ('groups', 'member_to_group'))):
+                    raise ValueError('saved judgment subjects or nodes differ from selected hierarchy')
+                if not isinstance(history.get('comparisons'), list):
+                    raise ValueError('saved judgments require comparisons')
+                excluded = set()
+                for prior in history['comparisons']:
+                    pair = {k: prior[k] for k in ('id', 'A', 'B')}
+                    expected = prepare_subject_pairs(dict(**loaded, pairs=[pair], source=references))[0]
+                    if (prior.get('inputs') != expected['inputs']
+                            or prior.get('answer', {}).get('relation') not in {
+                                'equivalent', 'a_parent_of_b', 'b_parent_of_a', 'neither', 'uncertain'}):
+                        raise ValueError('saved judgment inputs differ or answer is invalid')
+                    excluded.add(frozenset((prior['A'], prior['B'])))
+                cases = prepare_subject_pairs(source, dataset.get('select'))
+                source = dict(cases=[c for c in cases if frozenset((
+                    c['evidence']['A']['node_id'], c['evidence']['B']['node_id'])) not in excluded])
+                # The selection/history sources are hash-bound; already prepared
+                # inputs and nomination evidence use the ordinary generic path.
+                return prepare({**dataset, 'adapter': 'generic'}, source, template), sources, None
     effective = {**dataset, 'adapter': 'generic'} if preparation is not None else dataset
     return prepare(effective, source, template), sources, preparation
 
@@ -295,21 +323,42 @@ def prepare_subject_pairs(source, selected=None):
 
     nominations = {}
     if 'selection' in source:
-        if source['selection'] != 'same_worded_siblings':
+        rule = source['selection']
+        if rule not in {'same_worded_siblings', 'shared_child_parents', 'hg4'}:
             raise ValueError('unknown subject pair selection rule')
         browsing_children = {g: set() for g in range(len(groups))}
+        browsing_parents = {g: set() for g in range(len(groups))}
         for a, b in edges(hierarchy.get('browsing_edges', hierarchy['edges']), len(groups)):
             browsing_children[a].add(b)
-        for parent, siblings in browsing_children.items():
-            by_wording = {}
-            for g in sorted(siblings):
-                nid = f'S{groups[g][0]:04d}'
-                for wording in {subjects[i]['subject'] for i in groups[g]}:
-                    by_wording.setdefault(wording, []).append(nid)
-            for wording, siblings in by_wording.items():
-                for pair in combinations(sorted(siblings), 2):
-                    parent_id = f'S{groups[parent][0]:04d}'
-                    nominations.setdefault(pair, {}).setdefault(parent_id, set()).add(wording)
+            browsing_parents[b].add(a)
+        sibling_nominations = {}
+        if rule in {'same_worded_siblings', 'hg4'}:
+            for parent, siblings in browsing_children.items():
+                by_wording = {}
+                for g in sorted(siblings):
+                    nid = f'S{groups[g][0]:04d}'
+                    for wording in {subjects[i]['subject'] for i in groups[g]}:
+                        by_wording.setdefault(wording, []).append(nid)
+                for wording, siblings in by_wording.items():
+                    for pair in combinations(sorted(siblings), 2):
+                        parent_id = f'S{groups[parent][0]:04d}'
+                        sibling_nominations.setdefault(pair, {}).setdefault(parent_id, set()).add(wording)
+            for pair, parents in sorted(sibling_nominations.items()):
+                for parent, wordings in sorted(parents.items()):
+                    nomination = dict(parent=parent, matching_subjects=sorted(wordings))
+                    if rule == 'hg4':
+                        nomination['rule'] = 'same_worded_siblings'
+                    nominations.setdefault(pair, []).append(nomination)
+        if rule in {'shared_child_parents', 'hg4'}:
+            for child, parents in browsing_parents.items():
+                child_posts = sorted({subjects[i]['note_short_id'] for i in groups[child]})
+                if len({subjects[i]['note_id'] for i in groups[child]}) < 2:
+                    continue
+                for pair in combinations(sorted(f'S{groups[g][0]:04d}' for g in parents), 2):
+                    nomination = dict(child=f'S{groups[child][0]:04d}', posts=child_posts)
+                    if rule == 'hg4':
+                        nomination['rule'] = 'shared_child_parents'
+                    nominations.setdefault(pair, []).append(nomination)
         pairs = [dict(id=f'{a}-{b}', A=a, B=b) for a, b in sorted(nominations)]
     else:
         pairs = source['pairs']
@@ -356,9 +405,7 @@ def prepare_subject_pairs(source, selected=None):
                           source_posts=[posts[p] for p in post_ids])))
         if 'selection' in source:
             cases[-1]['evidence']['selection'] = dict(
-                rule=source['selection'], nominations=[
-                    dict(parent=parent, matching_subjects=sorted(wordings))
-                    for parent, wordings in sorted(nominations[(pair['A'], pair['B'])].items())])
+                rule=source['selection'], nominations=nominations[(pair['A'], pair['B'])])
     if selected is not None and set(selected) - ids:
         raise ValueError('unknown case requested')
     return cases

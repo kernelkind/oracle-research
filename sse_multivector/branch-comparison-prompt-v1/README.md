@@ -267,6 +267,17 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
    subject/context entries. Differently worded siblings are outside this rule.
    This isolated test supplements HG4.1; general adoption remains open.
 
+   **Bounded second-pass test.** After HG6–HG8 update the hierarchy, the shared
+   runner can select these pairs again: `selection: shared_child_parents` uses
+   HG4.1, `selection: same_worded_siblings` uses HG4.2, and `selection: hg4`
+   takes their union, counting each pair once. This test uses immediate browsing
+   links for both rules when available; otherwise it uses the underlying links.
+   `exclude_compared` references the current export's `provenance.json` to omit
+   previously judged pairs, including neither and uncertain. Preparation checks
+   that the saved nodes and judgment inputs still match and hashes the referenced
+   provenance. Nomination evidence stays outside the model prompt.
+   This does not adopt an automatic repeat-until-finished loop.
+
 5. **HG5 — Prompt BCPv4 for each selected hierarchy-node pair.** Use
    **BCPv4** (tested, not frozen) with **Astra low**.
 
@@ -516,7 +527,8 @@ HDBSCAN, TRUE/Jev, or a separate title-generation pass.
 ## BCPv4 — one-pair subject comparison
 
 Status: **user-approved wording, tested on 49 original pairs, seven changed
-combined-input pairs, nine further Food pairs and 20 same-worded sibling pairs,
+combined-input pairs, nine further Food pairs, 20 same-worded sibling pairs
+and four second-pass HG4 pairs,
 not frozen**. The user
 approved six Astra-low calls, then the remaining 43 nominated comparisons.
 All 49 returned valid JSON. Agent review accepted the first six; of the next
@@ -999,12 +1011,56 @@ python3 sse_multivector/experiment.py export-hierarchy \
   --combine-equivalent --inherit-equivalent-judgments
 ```
 
+## Bounded second HG4–HG8 pass
+
+The user authorized one further pass using the updated 100-post hierarchy,
+unchanged BCPv4 and Astra low. This is a test of repeating the existing stages,
+not approval of an automatic loop or a new selection rule.
+
+Before the calls, HG4.1 selected 15 pairs using browsing links: 12 already
+judged and three unjudged. HG4.2 selected one new unjudged pair. The rules did
+not overlap. Using underlying links for HG4.1 added only already-judged pairs.
+The [source selection](../experiment_specs/lg01-bcpv4-hg4-second-pass-v1.json)
+uses `selection: hg4` and `exclude_compared`, without a hand-picked pair list.
+The [experiment spec](../experiment_specs/lg01-bcpv4-hg4-second-pass-astra-low-v1.json)
+retains the earlier prompt, provider, model, reasoning, schema and concurrency.
+Preparation automatically produced exactly four cases.
+
+All four subscription calls completed with valid answers, no retries and no
+request reuse. Agent assessment accepts the following answers; these are not
+individual user quality approvals:
+
+| Compared hierarchy nodes | Saved answer |
+| --- | --- |
+| Food smoking / Cooking equipment | Neither |
+| Food ingredients / Ingredients for mushroom risotto with shrimp | First is an ancestor of second |
+| Food ingredients / Herbs and seasonings | First is an ancestor of second |
+| Two Good-morning greeting to the Nostr community nodes, N058 and N089 | Equivalent |
+
+The shared exporter now supports mixed-answer batches with
+`--combine-equivalent`: HG6 uses only equivalent answers; HG7 remaps the other
+judgments, and HG8 applies their ancestor answers. At least one equivalent
+answer is required for that option. Existing cycle, ancestry and disagreement
+checks remain; no repair policy or new inference is introduced.
+
+The separate output is
+`target/branch-comparison-v1/bcpv4-hg4-second-pass-v1/hierarchy/`;
+its saved experiment is the sibling `experiment/` directory. The export combines
+one pair of greeting nodes and adds two ancestor links. It contains 1,741
+hierarchy nodes and preserves all 2,383 SP subject entries, all 1,674 masks,
+SP ancestry and the nine earlier inherited judgments. There are zero pending
+rechecks. The earlier hierarchy and model receipts remain unchanged.
+
+The post-pass read-only HG4 check finds three further unjudged pairs: the two
+Greetings nodes as a pair, and each Greetings node against Nostr community.
+The combined good-morning greeting node is their shared cross-post child.
+No additional calls have been made for those pairs.
+
 ## Next step
 
-Suggested, not started: measure whether HG4.1 and HG4.2 nominate further
-unjudged pairs in the combined hierarchy, using saved data only. Combining
-nodes can expose additional shared-child comparisons. No additional inference
-is yet authorized. The
+Suggested, not started: another bounded BCPv4/Astra-low pass on those three
+newly selected pairs, followed by the existing HG6–HG8 checks. This requires
+separate approval; automatic repetition remains open. The
 [HG8 draft](#proposed-hg8--apply-ancestor-relationships) still requires review of
 general conflict handling. Keep the saved LG01 hierarchy unchanged.
 
