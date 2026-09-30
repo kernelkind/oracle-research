@@ -39,6 +39,13 @@ Task 02 remains in progress until a useful 100-note hierarchy passes the user's
 browsing review; no production workflow is selected. Earlier HR02/HDBSCAN
 results and reviews remain evidence, not the current next-step instruction.
 
+**Task 23 dependency clarified September 29:** separate node-title generation
+is required for 02 only if the chosen workflow includes that stage. Task 23
+remains complete for the earlier HR02 work. While the workflow choice is open,
+its link to 02 is helpful, labeled with the condition; make it required if that
+stage is used. LG01 retains SP subject names instead of running the old
+HDBSCAN-group naming pass. No production workflow is selected by this change.
+
 The subject and mask prompts are finished (01 complete), confirmed by the user
 on September 20. On September 24, the user confirmed that the node-title prompt
 is finished (23 complete). The [frozen v38/Luna max title pass](../../sse_multivector/navigation-research-v1/README.md#current-title-prompt-experiment) has produced
@@ -60,8 +67,9 @@ The historical HRv1 runner and artifacts remain on v21. HR02 browser export
 is complete. The user reviewed it and found it promising, but judged TRUE's
 relationship decisions unsuitable. A frontier-call replacement was pursued as
 a diagnostic for whether the other stages hold up, not as a production choice
-or validation of those stages. The 23 → 02 and 25 → 02 implementation
-prerequisites are satisfied for HR02; 25 stays complete.
+or validation of those stages. For HR02, title-generation (23) and
+TRUE-cycle-handling (25) implementation prerequisites were satisfied;
+25 stays complete.
 The user subsequently approved the simplified
 [NSPv2 diagnostic prompt and four-pair pilot](../../sse_multivector/navigation-research-v1/README.md).
 Eight Astra-low subscription calls checked both directions: all outputs were

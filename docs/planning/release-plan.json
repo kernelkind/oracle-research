@@ -130,7 +130,7 @@
       "id": "23",
       "title": "Fix and validate node-title prompt",
       "status": "COMPLETE",
-      "description": "Astra-low v38 titles are saved for all 129 groups. Two rejected titles remain flagged during the hierarchy build."
+      "description": "Required only if the chosen workflow uses separate node-title generation; that choice remains open.\nCompleted for HR02: Astra-low v38 titles are saved for all 129 groups, with two rejected titles still flagged in the saved build."
     },
     {
       "id": "24",
@@ -178,7 +178,8 @@
     {
       "source": "23",
       "target": "02",
-      "kind": "required"
+      "kind": "helpful",
+      "label": "required only if separate node-title generation is used"
     },
     {
       "source": "25",

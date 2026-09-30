@@ -38,6 +38,11 @@ Its link to 03 is helpful while the choice is open; make it required if HDBSCAN
 is selected. Relevant-content coverage remains part of 03's required validation
 for whichever workflow is used.
 
+Task 23's completed title-prompt work is required for 02 only if the chosen
+workflow uses separate node-title generation. Its link to 02 is helpful while
+that choice is open; make it required if that stage is used. This does not
+select a workflow or reopen the completed HR02 title work.
+
 Task 22 measures SSE and the construction stages used in the chosen workflow.
 Separate node-title generation, its input-growth measurements and the
 corresponding large-input work in 28 are required only if that stage is used.
