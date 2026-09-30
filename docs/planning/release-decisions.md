@@ -1274,6 +1274,22 @@ integration tests. There were no provider calls, paid resources or baseline
 prompt reruns. The original full-node results and nine clear checks remain intact;
 this two-post diagnostic is not production adoption or a prompt revision.
 
+The user next authorized isolating the hashtag's effect on A's relevance input.
+The shared workflow encoded `Glad the coffee is hot this AM!` without the blank
+line and `#coffeechain`, retaining the original post, SP evidence, prominence 35
+and formula. Compared with the preceding original-statement trial, the title,
+B's statement, two original MP-mask replays, row positions, model settings,
+worker code and runtime versions were unchanged. All four unchanged vectors
+reproduced exactly, and both replay checks passed. A's relevance without the
+hashtag is 0.786343 and sorting score 27.522017; with it they are 0.836787 and
+29.287528. Including the hashtag therefore increases this sorting score by
+1.765511. B remains at 31.755387 and above A in both versions. This confirms
+an increase from including the hashtag in this exact relevance input, not a
+general hashtag bonus or a complete-post prominence change. No new teacher
+assessments, provider calls, paid resources, source-code changes or production
+rule adoption occurred. The [experiment evidence](../../sse_multivector/model-runner.md)
+records exact inputs, unchanged controls and the focused workflow checks.
+
 04 and 27 are in progress: saved Coffee/Eggs trials test candidate sorting
 scores and within-node note ordering. 04 defines and validates the node sort
 score; 27 implements ordering using that definition. The formula, inputs and

@@ -2688,6 +2688,40 @@ and collection, verifies unchanged prominence/evidence and exact UTF-8 source
 text, and rejects rewritten/empty text, duplicate/unknown cases and mismatched
 encoding reuse. PPv30-node-v1 remains tested, not production-frozen.
 
+The subsequent authorized hashtag diagnostic uses the same shared CLI and
+saved PPv30-node-v1 cases, with only A's standalone relevance text changed to
+`Glad the coffee is hot this AM!` at original-post byte spans `[[107, 138]]`.
+The blank line and `#coffeechain` are removed from that input; the complete
+original post and prominence assessment still contain the hashtag. The output
+is `experiments/ppv30-node-orders-v1/coffee-hashtag-without-v1`.
+The five-row request retains the same title, B statement, V0862/V0601 original
+MP-mask replays and row positions. The local CPU worker uses the identical
+checkpoint, base-model artifact hashes, model settings, batch size, worker code
+and runtime metadata as `original-coffee-statements-v1`: Python 3.13.12,
+torch 2.13.0+cpu, transformers 4.57.1 and tokenizers 0.22.2. It uses the same
+installed library path, offline settings and two CPU threads. One encoding
+completed without a retry, provider request, package install or paid resource.
+All four unchanged control vectors reproduce byte for byte. Both original
+MP-mask replay checks pass with the same errors below 3.1e-8. The saved
+with-hashtag artifacts remain unchanged.
+
+| Relevance input | Fixed prominence | Cosine with `coffee` | Relevance | Sorting score |
+| --- | ---: | ---: | ---: | ---: |
+| A: `Glad the coffee is hot this AM!` | 35 | 0.572687 | 0.786343 | 27.522017 |
+| A: same statement, blank line and `#coffeechain` | 35 | 0.673573 | 0.836787 | 29.287528 |
+| B: `Fetching coffee as a ritual of motion` | 35 | 0.814594 | 0.907297 | 31.755387 |
+
+Including the hashtag increases A's relevance by 0.050443 and sorting score
+by 1.765511. B remains above A in both versions. This isolates including the
+blank line and hashtag in this exact standalone relevance input; it does not
+establish a general hashtag bonus, assess new prominence or change the user's
+separate slight preference for A. Receipt/input hashes, source spans, row
+identities, runtime equality, preserved baseline hashes and independently
+recomputed cosines and sorting scores all pass. The focused prominence-cosine
+suite passed 11 tests; its log is preserved with the ignored experiment artifacts.
+The workflow code, prompts, original complete-node results and production
+status remain unchanged.
+
 Complete original node-title prominence orders, using saved SP-context
 relevance and descending by highest sorting score:
 
