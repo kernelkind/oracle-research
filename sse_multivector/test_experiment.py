@@ -1099,6 +1099,28 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(shared['b_posts'], ['N1'])
         self.assertEqual(self.calls(), [])
 
+    def test_subject_pairs_select_same_worded_siblings_from_saved_hierarchy(self):
+        self.subject_pairs_spec()
+        self.write('hierarchy.json', dict(groups=[[2], [0], [1, 3, 4], [5, 6]],
+            member_to_group=[1, 2, 0, 2, 2, 3, 3], edges=[[0, 1], [0, 2]]))
+        self.write('selection/pairs.json', dict(schema_version=1,
+            inputs='../subjects.json', hierarchy='../hierarchy.json',
+            selection='same_worded_siblings'))
+        original = (self.root / 'hierarchy.json').read_bytes()
+        self.prepare()
+        cases = self.show()['cases']
+        self.assertEqual([c['id'] for c in cases], ['S0000-S0001'])
+        case = cases[0]
+        self.assertEqual(case['evidence']['selection'], dict(
+            rule='same_worded_siblings', nominations=[dict(
+                parent='S0002', matching_subjects=['Tea'])]))
+        payload = json.loads(case['inputs']['INPUT_JSON'])
+        self.assertEqual(payload['A'], [dict(subject='Tea', context='A cup of tea.')])
+        self.assertEqual(len(payload['B']), 3)
+        self.assertNotIn('nominations', case['prompt'])
+        self.assertEqual((self.root / 'hierarchy.json').read_bytes(), original)
+        self.assertEqual(self.calls(), [])
+
     def test_subject_pairs_reuse_generic_saved_answers_without_another_call(self):
         self.subject_pairs_spec()
         self.prepare()
@@ -1116,6 +1138,90 @@ class ExperimentTests(unittest.TestCase):
         self.cli('run', 'E1')
         self.assertEqual(self.show()['summary']['reused'], 2)
         self.assertEqual(len(self.calls()), 2)
+
+    def test_same_worded_siblings_deduplicate_parents_and_exact_original_wordings(self):
+        self.subject_pairs_spec()
+        inputs = json.loads((self.root / 'subjects.json').read_text())
+        inputs['subjects'][5]['subject'] = 'Tea'
+        inputs['subjects'][6]['subject'] = 'Teas'
+        for name in ['Topic', 'tea', 'Tea']:
+            i = len(inputs['subjects'])
+            inputs['subjects'].append(dict(index=i, subject=name, context='',
+                note_id='N3', note_short_id='N3', number=str(i),
+                fragments=[], byte_spans=[], mask_vector_ids=[]))
+        self.write('subjects.json', inputs)
+        self.write('hierarchy.json', dict(
+            groups=[[2], [0], [1, 3, 4], [5, 6], [7], [8], [9]],
+            member_to_group=[1, 2, 0, 2, 2, 3, 3, 4, 5, 6],
+            edges=[[0, 1], [0, 2], [0, 3], [0, 5],
+                   [4, 1], [4, 2], [4, 3], [4, 1]]))
+        self.write('selection/pairs.json', dict(schema_version=1,
+            inputs='../subjects.json', hierarchy='../hierarchy.json',
+            selection='same_worded_siblings'))
+        self.prepare()
+        cases = self.show()['cases']
+        self.assertEqual([c['id'] for c in cases], [
+            'S0000-S0001', 'S0000-S0005', 'S0001-S0005'])
+        self.assertEqual(cases[-1]['evidence']['selection']['nominations'], [
+            dict(parent='S0002', matching_subjects=['Tea', 'Teas']),
+            dict(parent='S0007', matching_subjects=['Tea', 'Teas'])])
+        self.assertEqual(self.calls(), [])
+
+    def test_same_worded_siblings_use_immediate_browsing_links(self):
+        self.subject_pairs_spec()
+        inputs = json.loads((self.root / 'subjects.json').read_text())
+        inputs['subjects'][5]['subject'] = 'Tea'
+        self.write('subjects.json', inputs)
+        self.write('hierarchy.json', dict(groups=[[2], [0], [1, 3, 4], [5, 6]],
+            member_to_group=[1, 2, 0, 2, 2, 3, 3],
+            edges=[[0, 1], [0, 2], [0, 3], [1, 3], [2, 3]],
+            browsing_edges=[[0, 1], [0, 2], [1, 3], [2, 3]]))
+        self.write('selection/pairs.json', dict(schema_version=1,
+            inputs='../subjects.json', hierarchy='../hierarchy.json',
+            selection='same_worded_siblings'))
+        self.prepare()
+        self.assertEqual([c['id'] for c in self.show()['cases']], ['S0000-S0001'])
+
+    def test_same_worded_siblings_reuse_unchanged_explicit_requests(self):
+        self.subject_pairs_spec()
+        self.write('hierarchy.json', dict(groups=[[2], [0, 1, 3, 4], [5, 6]],
+            member_to_group=[1, 1, 0, 1, 1, 2, 2], edges=[[2, 0], [2, 1]]))
+        # Both nodes share an original wording after changing only Drinks' wording.
+        inputs = json.loads((self.root / 'subjects.json').read_text())
+        inputs['subjects'][2]['subject'] = 'Tea'
+        self.write('subjects.json', inputs)
+        selection = dict(schema_version=1,
+            inputs='../subjects.json', hierarchy='../hierarchy.json',
+            pairs=[dict(id='saved', A='S0000', B='S0002')])
+        self.write('selection/pairs.json', selection)
+        self.prepare('matching-explicit')
+        self.cli('run', 'matching-explicit')
+        self.assertEqual(len(self.calls()), 1)
+        selection.pop('pairs')
+        selection['selection'] = 'same_worded_siblings'
+        self.write('selection/pairs.json', selection)
+        self.prepare('automatic')
+        self.assertEqual(self.show('automatic')['requests']['reusable'], 1)
+        self.cli('run', 'automatic')
+        self.assertEqual(self.show('automatic')['summary']['reused'], 1)
+        self.assertEqual(len(self.calls()), 1)
+
+    def test_same_worded_siblings_reject_unknown_or_mixed_selection_modes(self):
+        self.subject_pairs_spec()
+        original = json.loads((self.root / 'selection/pairs.json').read_text())
+        for changes in [dict(selection='same_worded_siblings'),
+                        dict(comparisons=['saved']),
+                        dict(selection='unknown', pairs=None)]:
+            with self.subTest(changes=changes):
+                source = dict(original, **changes)
+                if source.get('pairs') is None:
+                    source.pop('pairs')
+                self.write('selection/pairs.json', source)
+                result = self.cli('prepare', 'invalid', '--spec', self.spec, ok=False)
+                expected = 'unknown subject pair selection' if changes.get('selection') == 'unknown' else 'exactly one'
+                self.assertIn(expected, result.stderr)
+                self.assertFalse((self.root / 'invalid').exists())
+        self.assertEqual(self.calls(), [])
 
     def test_subject_pairs_reject_invalid_sources_and_selections_before_preparing(self):
         self.subject_pairs_spec()

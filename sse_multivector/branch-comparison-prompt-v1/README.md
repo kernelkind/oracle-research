@@ -190,7 +190,9 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
 
 ## From combined nodes to further relationships
 
-4. **HG4 — Select pairs of parent hierarchy nodes for model comparison.** Look
+4. **HG4 — Select hierarchy-node pairs for model comparison.**
+
+   **HG4.1 — Parents of a shared cross-post child.** Look
    for a hierarchy node representing SP subject entries from at least two
    posts. If that node has two or more distinct immediate parent hierarchy
    nodes, select every pair of those parents for HG5. Count each pair of
@@ -241,6 +243,29 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
 
    HG4 adds that pair to the comparison list for HG5. **The hierarchy itself
    remains unchanged.** The shared child does not decide how its parents relate.
+
+   **HG4.2 — Supplementary test: same-worded siblings.** For every hierarchy
+   node, inspect its immediate browsing children. Select every pair of distinct
+   children sharing at least one identical original SP subject wording. Count
+   each node pair once, even if multiple parents or wordings nominate it.
+   Use exact wording, without normalization or semantic filtering. The UI's
+   synthetic All subjects root is not a hierarchy node and is excluded.
+
+   ```text
+   Food
+   ├── Food ingredients — node #1
+   ├── Food ingredients — node #2
+   └── Vegetables — node #3
+
+   SELECT: Food ingredients node #1 vs node #2.
+   WHY: both are immediate children of Food and share SP wording.
+   DO NOT SELECT: either ingredients node vs Vegetables by this rule.
+   ```
+
+   Matching wording nominates an HG5 comparison, **not an automatic merge**.
+   A node may represent several SP entries; HG5 still receives all its distinct
+   subject/context entries. Differently worded siblings are outside this rule.
+   This isolated test supplements HG4.1; general adoption remains open.
 
 5. **HG5 — Prompt BCPv4 for each selected hierarchy-node pair.** Use
    **BCPv4** (tested, not frozen) with **Astra low**.
@@ -456,7 +481,10 @@ new ancestor links can provide additional routes to posts through child nodes.
 
 ## What is still missing?
 
-HG4 is not a complete comparison-selection rule. A later test selected pairs
+HG4 is not a complete comparison-selection rule. The
+[same-worded sibling test](#same-worded-sibling-test) recovers repeated siblings
+that HG4.1 never nominated, but not differently worded duplicates. A later test
+selected pairs
 of top-level hierarchy nodes sharing a descendant hierarchy node at any depth.
 Its **nine Food calls were HG5 comparisons of the Food node against nine other
 hierarchy nodes**, not comparisons of those nine nodes against one another.
@@ -472,7 +500,8 @@ HDBSCAN, TRUE/Jev, or a separate title-generation pass.
 ## BCPv4 — one-pair subject comparison
 
 Status: **user-approved wording, tested on 49 original pairs, seven changed
-combined-input pairs and nine further Food pairs, not frozen**. The user
+combined-input pairs, nine further Food pairs and 20 same-worded sibling pairs,
+not frozen**. The user
 approved six Astra-low calls, then the remaining 43 nominated comparisons.
 All 49 returned valid JSON. Agent review accepted the first six; of the next
 43, 36 were accepted and seven flagged as uncertain across four issues below.
@@ -482,6 +511,8 @@ The authorized [ancestor-application test](#saved-ancestor-application-test)
 then applied 13 current ancestor answers in a separate view. A subsequent
 [nine-pair Food test](#recovered-food-comparisons) returned nine ancestor answers,
 now applied in a [separate continued export](#extended-food-test-export).
+The [same-worded sibling test](#same-worded-sibling-test) saved 20 equivalence
+answers without applying them.
 The saved LG01 hierarchy is unchanged; production adoption
 and general conflict handling remain open.
 
@@ -828,11 +859,49 @@ the shared-descendant shortlist and received no new comparison. Thus this test
 repairs the nine nominated browsing relationships, not all missing placements
 or repeated-node clutter. These are agent observations, not user quality approval.
 
+## Same-worded sibling test
+
+Status: **authorized isolated test completed; answers not applied**. HG4.2
+was applied uniformly to the separate extended Food test hierarchy, not to a
+manually chosen food-only list. It selected 20 distinct pairs:
+
+| Shared original SP wording | Pairs |
+| --- | ---: |
+| Food preparation | 10 |
+| Food ingredients | 6 |
+| Vegetables | 1 |
+| Greetings | 1 |
+| Nostr community | 1 |
+| Eating whatever is available for survival | 1 |
+
+The original shared-child rule selected none of the 16 Food preparation and
+Food ingredients pairs. The supplementary rule recovers all 16. It nominates
+the same 20 pairs using browsing links or all underlying links in this saved
+hierarchy; its implementation uses immediate browsing links when available.
+
+The [source selection](../experiment_specs/lg01-bcpv4-same-worded-siblings-v1.json)
+references saved SP inputs and the extended Food hierarchy, with
+`selection: same_worded_siblings`, rather than an explicit case list. The
+shared `subject_pairs` adapter assembles cases, source hashes and review
+evidence automatically. Nomination evidence stays outside the prompt.
+The [experiment spec](../experiment_specs/lg01-bcpv4-same-worded-siblings-astra-low-v1.json)
+uses unchanged BCPv4, Astra low, subscription provider, concurrency 3 and
+timeout 300 seconds.
+
+All 20 calls returned valid JSON and `equivalent`, with no retries, reuse or
+paid API fallback. Agent review accepts all 20: the contexts describe different
+examples without narrowing the stated subjects. These assessments are not user
+approvals or evidence that identical wording always implies equivalence.
+The runner preserves requests, receipts, outputs and separate agent reviews at
+`target/branch-comparison-v1/bcpv4-same-worded-siblings-v1/experiment/`.
+No hierarchy nodes or links were changed, and no HG6–HG8 stage was run.
+
 ## Next step
 
-Suggested, not started: inspect whether the existing comparison-selection rules
-can nominate the repeated Food preparation and Food ingredients siblings before
-expanding inference. The
+Suggested, not started: apply the 20 saved equivalence answers through HG6 in
+a separate test hierarchy, preserving the input hierarchy and original SP
+entries. Then check the combined nodes and whether HG7 has changed-input
+comparisons to resolve. No additional inference is yet authorized. The
 [HG8 draft](#proposed-hg8--apply-ancestor-relationships) still requires review of
 general conflict handling. Keep the saved LG01 hierarchy unchanged.
 

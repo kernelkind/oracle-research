@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "inputs": "../../target/subject-matching-100-v1/inputs/inputs.json",
+  "hierarchy": "../../target/branch-comparison-v1/bcpv4-food-ancestors-v1/hierarchy/results.json",
+  "selection": "same_worded_siblings"
+}

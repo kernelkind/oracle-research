@@ -7,6 +7,7 @@ Execution, history, baselines and human judgments do not belong here.
 import hashlib
 import json
 from graphlib import CycleError, TopologicalSorter
+from itertools import combinations
 from pathlib import Path
 import re
 
@@ -70,18 +71,22 @@ def prepare_file(dataset, path, template, load_report=None):
             references[key] = dict(path=str(source_path), sha256=sources[str(source_path)])
         source['source'] = references
     if dataset['adapter'] == 'subject_pairs':
-        comparison_mode = 'comparisons' in source
+        modes = [key for key in ('pairs', 'comparisons', 'selection') if key in source]
+        if len(modes) != 1:
+            raise ValueError('subject pairs require exactly one of pairs, comparisons or selection')
+        mode = modes[0]
         engine._expect_fields(source, 'subject pairs',
-            {'schema_version', 'inputs', 'hierarchy',
-             'comparisons' if comparison_mode else 'pairs'})
+            {'schema_version', 'inputs', 'hierarchy', mode})
         if type(source['schema_version']) is not int or source['schema_version'] != 1:
             raise ValueError('expected subject pairs schema_version 1')
+        if mode == 'selection' and source[mode] != 'same_worded_siblings':
+            raise ValueError('unknown subject pair selection rule')
         loaded, references = {}, {}
         for key in ('inputs', 'hierarchy'):
             source_path = engine._resolve_path(source[key], key, path.parent)
             loaded[key] = read(source_path)
             references[key] = dict(path=str(source_path), sha256=sources[str(source_path)])
-        if comparison_mode:
+        if mode == 'comparisons':
             paths = engine._validate_string_array(source['comparisons'], 'comparisons', allow_empty=False)
             paths = [engine._resolve_path(p, 'comparison experiment', path.parent) for p in paths]
             if len(paths) != len(set(paths)):
@@ -104,7 +109,7 @@ def prepare_file(dataset, path, template, load_report=None):
             source, preparation = combine_subject_pairs(
                 dict(**loaded, pairs=[], source=references), reports, template)
         else:
-            source = dict(**loaded, pairs=source['pairs'], source=references)
+            source = dict(**loaded, **{mode: source[mode]}, source=references)
     effective = {**dataset, 'adapter': 'generic'} if preparation is not None else dataset
     return prepare(effective, source, template), sources, preparation
 
@@ -244,7 +249,7 @@ def combine_subject_pairs(source, reports, template):
 
 
 def prepare_subject_pairs(source, selected=None):
-    """Compare explicitly selected saved SP hierarchy nodes, not their source posts."""
+    """Compare saved SP hierarchy nodes using explicit pairs or a selection rule."""
     inputs, hierarchy = source['inputs'], source['hierarchy']
     subjects, groups = inputs['subjects'], hierarchy['groups']
     posts = {p['note_id']: p for p in inputs['posts']}
@@ -288,6 +293,27 @@ def prepare_subject_pairs(source, selected=None):
     for a, b in edges(inputs['edges'], len(subjects)):
         witnesses.setdefault((owners[a], owners[b]), set()).add(subjects[a]['note_short_id'])
 
+    nominations = {}
+    if 'selection' in source:
+        if source['selection'] != 'same_worded_siblings':
+            raise ValueError('unknown subject pair selection rule')
+        browsing_children = {g: set() for g in range(len(groups))}
+        for a, b in edges(hierarchy.get('browsing_edges', hierarchy['edges']), len(groups)):
+            browsing_children[a].add(b)
+        for parent, siblings in browsing_children.items():
+            by_wording = {}
+            for g in sorted(siblings):
+                nid = f'S{groups[g][0]:04d}'
+                for wording in {subjects[i]['subject'] for i in groups[g]}:
+                    by_wording.setdefault(wording, []).append(nid)
+            for wording, siblings in by_wording.items():
+                for pair in combinations(sorted(siblings), 2):
+                    parent_id = f'S{groups[parent][0]:04d}'
+                    nominations.setdefault(pair, {}).setdefault(parent_id, set()).add(wording)
+        pairs = [dict(id=f'{a}-{b}', A=a, B=b) for a, b in sorted(nominations)]
+    else:
+        pairs = source['pairs']
+
     def node(nid):
         g = nodes[nid]
         entries, seen = [], set()
@@ -301,7 +327,7 @@ def prepare_subject_pairs(source, selected=None):
                              subject_entries=[subjects[i] for i in groups[g]])
 
     cases, ids = [], set()
-    for pair in source['pairs']:
+    for pair in pairs:
         engine._expect_fields(pair, 'subject pair', {'id', 'A', 'B'})
         cid = engine._expect_identifier(pair['id'], 'case.id')
         if cid in ids:
@@ -328,6 +354,11 @@ def prepare_subject_pairs(source, selected=None):
             inputs={'INPUT_JSON': json.dumps({'A': ea, 'B': eb}, ensure_ascii=False, indent=2)},
             evidence=dict(A=a, B=b, source=source['source'], shared_children=shared,
                           source_posts=[posts[p] for p in post_ids])))
+        if 'selection' in source:
+            cases[-1]['evidence']['selection'] = dict(
+                rule=source['selection'], nominations=[
+                    dict(parent=parent, matching_subjects=sorted(wordings))
+                    for parent, wordings in sorted(nominations[(pair['A'], pair['B'])].items())])
     if selected is not None and set(selected) - ids:
         raise ValueError('unknown case requested')
     return cases
