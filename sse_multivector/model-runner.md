@@ -1688,6 +1688,18 @@ Optional `--only CASE_ID` (repeatable) selects exact saved cases across the supp
 experiments. Unknown case IDs fail before encoding. This can combine unchanged
 original cases with newly scored selections without rerunning the originals.
 
+`prepare --relevance-source-text CASE_ID TEXT` selects an exact, nonempty
+statement from that case's saved complete post as standalone relevance input.
+Repeat the option for multiple cases; cases without it retain their previous
+representation. Duplicate or unknown case IDs and rewritten text are refused
+before output preparation. The plan records `representation: "source_text"`,
+the exact text and its UTF-8 byte spans in the original post. Saved prominence,
+SP context, membership evidence and original MP mask identities remain intact.
+The worker encodes the selected statement as its own complete text, alongside
+the node title and original-vector replays. Highest-per-post ordering supports
+both SP-context and source-text cases. Literal inverse diagnostics cannot be
+combined with this option, and changed text cannot reuse a different encoding.
+
 `prominence_cosine.py prepare --include-inverse` additionally prepares each
 mask's exact UTF-8 byte complement and one full-post selection per distinct
 post. Both are encoded in the unchanged complete post. Selections are grouped
@@ -2629,7 +2641,55 @@ slight preference for A. This review does not approve revised percentages, a new
 relevance input, formula or production adoption. No new inference, encoding
 or prompt change was needed.
 
-Complete node-title prominence orders, descending by highest sorting score:
+The user authorized a two-post relevance diagnostic using the original coffee
+statements, including A's `#coffeechain`, with prominence and the sorting-score
+formula fixed. The saved PPv30-node-v1 prominence assessments are both 35; no
+new prominence or SP calls were made. The shared `prominence_cosine.py prepare`
+source-text option verifies both statements against the complete original posts
+and retains the original SP evidence. The inputs are exactly:
+
+- A (`82d3d344`, `context-44202493a51f611a1448bd9a`):
+  `Glad the coffee is hot this AM!`, then a blank line, then `#coffeechain`.
+- B (`8a025f69`, `context-d8d12ef0759430f4cc75b15e`):
+  `Fetching coffee as a ritual of motion`.
+
+The source spans are respectively `[[107, 152]]` and `[[106, 143]]`. The output
+is `experiments/ppv30-node-orders-v1/original-coffee-statements-v1`. One local CPU
+SSE run encoded five rows: the unchanged `coffee` title, the two statements and
+two original MP-mask replays (V0862 and V0601). Both replay cosines exceeded
+0.9999999999999, with maximum normalized component error below 3.1e-8.
+Checkpoint, base-model artifact hashes, model settings, batch size and worker
+code match the SP-context encoding. Runtime packages differ: this run used
+Python 3.13.12, torch 2.13.0+cpu, transformers 4.57.1 and tokenizers 0.22.2;
+the SP-context baseline used Python 3.12.3, torch 2.12.1+cu130, transformers
+5.17.0 and tokenizers 0.23.2. The replay checks establish agreement for those
+original selections, not identical runtime metadata or every possible input.
+The first local startup stopped while importing torch because `libstdc++.so.6`
+was missing from the process library path, before inference or output creation.
+The installed library path resolved it without installing packages, accessing
+the network or changing the frozen inputs. Logs are preserved with the ignored
+artifacts. No paid resource or provider request was used.
+
+| Post | Fixed prominence | SP-context relevance | Original-statement relevance | Previous sorting score | New sorting score |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| A: Sunday weather and hot coffee | 35 | 0.823400 | 0.836787 | 28.819013 | 29.287528 |
+| B: Coffee, movement and stretching | 35 | 0.957202 | 0.907297 | 33.502067 | 31.755387 |
+
+B remains higher. The sorting-score gap narrows from 4.683055 to 2.467859,
+but the direction still reverses the separate slight preference for A.
+Both the wording and inclusion of the hashtag changed relative to SP-context
+input, and runtime package versions differ, so this is not an isolated
+measurement of the hashtag's contribution.
+It covers only these two cases and does not adopt a new relevance rule or
+update the complete node orders. The source-text CLI test failed before the
+option existed, then passed; the experiment, cosine, ranking, node-sorting,
+worker and extraction suites passed 211 tests. The test exercises preparation
+and collection, verifies unchanged prominence/evidence and exact UTF-8 source
+text, and rejects rewritten/empty text, duplicate/unknown cases and mismatched
+encoding reuse. PPv30-node-v1 remains tested, not production-frozen.
+
+Complete original node-title prominence orders, using saved SP-context
+relevance and descending by highest sorting score:
 
 Coffee:
 

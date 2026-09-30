@@ -187,6 +187,13 @@ def prepare(args):
     cases, titles, originals, evidence = [], {}, {}, {}
     selected_nodes = set(getattr(args, "node", None) or [])
     selected_cases = set(getattr(args, 'only', None) or [])
+    source_texts = {}
+    for case_id, text in getattr(args, 'relevance_source_text', None) or []:
+        if case_id in source_texts:
+            raise ValueError(f'duplicate relevance source text: {case_id}')
+        source_texts[case_id] = text
+    if source_texts and getattr(args, 'include_inverse', False):
+        raise ValueError('source-text relevance has no literal inverse')
     for directory in args.experiments:
         directory = directory.resolve()
         plan, _, _ = experiment.load(directory)
@@ -253,16 +260,27 @@ def prepare(args):
                 cases[-1].update(ordinal=None, representation='context', context=e['context'],
                                  subject=e['subject'], subject_number=e['subject_number'],
                                  prominence_basis=plan['dataset'].get('prominence_basis', 'context'))
+            if case['id'] in source_texts:
+                text = source_texts[case['id']]
+                start = e['text'].find(text)
+                if not text.strip() or start < 0:
+                    raise ValueError(f'relevance source text must be an exact nonempty post fragment: {case["id"]}')
+                byte_start = len(e['text'][:start].encode())
+                cases[-1].update(ordinal=None, representation='source_text',
+                                 relevance_source_text=text,
+                                 relevance_source_spans=[[byte_start, byte_start + len(text.encode())]])
     if selected_cases - {case['id'] for case in cases}:
         raise ValueError(f"unknown requested cases: {sorted(selected_cases - {case['id'] for case in cases})}")
     if selected_nodes - titles.keys():
         raise ValueError(f"unknown requested node: {sorted(selected_nodes - titles.keys())}")
+    if source_texts.keys() - {case['id'] for case in cases}:
+        raise ValueError(f"unknown relevance source cases: {sorted(source_texts.keys() - {case['id'] for case in cases})}")
     if not cases:
         raise ValueError("no prominence cases selected")
     post_order = getattr(args, 'post_order', None)
     if post_order and (post_order != 'highest'
-                       or any(c.get('representation') != 'context' for c in cases)):
-        raise ValueError('highest post order requires only SP context cases')
+                       or any(c.get('representation') not in ('context', 'source_text') for c in cases)):
+        raise ValueError('highest post order requires context or source-text cases')
     if len({c["id"] for c in cases}) != len(cases):
         raise ValueError("duplicate case IDs")
     notes, title_rows, replays = [], {}, {}
@@ -301,8 +319,9 @@ def prepare(args):
             e = evidence[case['id']]
             note_id = lookup[case['mask_ids'][0]]['note_id']
             if case['ordinal'] is None:
-                if case.get('representation') == 'context':
-                    text = case['context']
+                if case.get('representation') in ('context', 'source_text'):
+                    text = (case['relevance_source_text'] if case['representation'] == 'source_text'
+                            else case['context'])
                     case['mask_row'] = selection(hashlib.sha256(text.encode()).hexdigest(),
                                                  text, [[0, len(text.encode())]])
                 else:
@@ -488,6 +507,9 @@ def main():
     prep.add_argument("--node", action="append", help="select a node ID; repeat for multiple nodes")
     prep.add_argument('--only', action='append', metavar='CASE_ID',
                       help='select a saved case; repeat to compare cases from several experiments')
+    prep.add_argument('--relevance-source-text', action='append', nargs=2,
+                      metavar=('CASE_ID', 'TEXT'),
+                      help='encode an exact saved-post fragment as standalone relevance text; repeat per case')
     prep.add_argument("--vectors", type=Path, required=True)
     prep.add_argument("--worker-config", type=Path, required=True)
     prep.add_argument("--replay", nargs="+", required=True)

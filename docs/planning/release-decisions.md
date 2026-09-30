@@ -1252,6 +1252,28 @@ The clarification does not change the prominence definition, relevance input,
 formula or production rule. No new inference or encoding was needed; the
 calculation remains as tested.
 
+The user then authorized testing relevance with the original coffee statements,
+including A's `#coffeechain`, while keeping prominence and the sorting-score
+formula fixed. The exact inputs are A's "Glad the coffee is hot this AM!",
+a blank line and `#coffeechain`, and B's "Fetching coffee as a ritual of motion".
+The shared comparison workflow verifies the selected text against each saved
+complete post, preserves the original SP evidence and uses the existing
+PPv30-node-v1 prominence 35 for both. No new prominence or SP assessment ran.
+The local CPU SSE diagnostic encoded only the title, two statements and two
+original-vector replays. Checkpoint, model artifacts, settings and worker code
+match the prior SP-context calculation; runtime package versions differ,
+with both replay checks agreeing within 3.1e-8 normalized component error.
+A's relevance becomes 0.836787 and sorting score 29.287528; B's becomes
+0.907297 and 31.755387. B still comes first. The gap shrinks from 4.683055
+to 2.467859 but still reverses the user's separate slight preference for A.
+This changes wording and hashtag inclusion together, so it does not isolate
+the hashtag's effect or establish a general replacement relevance input.
+The [saved inputs, runtime limits and results](../../sse_multivector/model-runner.md)
+record a failing-first source-text CLI check and 211 passing regression and
+integration tests. There were no provider calls, paid resources or baseline
+prompt reruns. The original full-node results and nine clear checks remain intact;
+this two-post diagnostic is not production adoption or a prompt revision.
+
 04 and 27 are in progress: saved Coffee/Eggs trials test candidate sorting
 scores and within-node note ordering. 04 defines and validates the node sort
 score; 27 implements ordering using that definition. The formula, inputs and
