@@ -6,6 +6,11 @@ its stages; **LG01** names the technique used at HG3, regardless of post count.
 The current tests reuse saved HG1–HG2 outputs rather than rerunning SP or MP.
 Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
 
+## Definitions
+
+- **SP subject entry:** a subject in one post's local hierarchy.
+- **Hierarchy node:** a node in the combined global hierarchy, representing one or more SP subject entries.
+
 <a id="hierarchy-generation-stages"></a>
 
 ## From posts to a combined hierarchy
@@ -21,7 +26,7 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
 
    A **mask** means only the exact fragments MP selects from the original post
    for that supplied subject. If MP selects no fragments (`[]`), retain that
-   SP subject and its parent–child relationships; do not delete the subject.
+   SP subject entry and its parent–child relationships; do not delete the entry.
    A post can have several subject trees; their top-level subjects need not be
    equally general or remain top-level in the global hierarchy.
 
@@ -37,12 +42,13 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
    vector. Keep both vector types separate; retain the source posts, subjects,
    masks and SP parent–child relationships.
 
-3. **HG3 — LG01: combine matching SP subjects into hierarchy nodes.** Start
-   with one hierarchy node per original SP subject. No model is prompted here.
+3. **HG3 — LG01: combine matching SP subject entries into hierarchy nodes.**
+   Start with one hierarchy node per original SP subject entry. No model is
+   prompted here.
 
    - **HG3.1 — Combine repeated subjects within one post.** SP can put the same
      subject wording in several places in a post's local subject hierarchies.
-     Combine those subject entries only if their nonempty MP masks select
+     Combine those SP subject entries only if their nonempty MP masks select
      exactly the same parts of that post. Keep all their parent relationships.
 
    - **HG3.2 — Use mask vectors to select post pairs.** If several SP subjects in one
@@ -69,12 +75,12 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
      Ties qualify. If a best subject match fails these checks, do not fall back
      to a weaker match. These cutoffs are experimental.
 
-   - **HG3.5 — Combine the subjects that passed into hierarchy nodes.** If subject X
-     matches Y, and Y matches Z, combine all three into one hierarchy node,
+   - **HG3.5 — Combine the SP subject entries that passed into hierarchy nodes.**
+     If entry X matches Y, and Y matches Z, combine all three into one hierarchy node,
      even if X and Z did not pass a direct comparison. Retain each original
-     subject, its MP mask and its SP relationships; do not blend their subject
-     vectors or mask vectors. Subjects without a passing match remain separate
-     hierarchy nodes.
+     SP subject entry, its MP mask and its SP relationships; do not blend their
+     subject vectors or mask vectors. SP subject entries without a passing match
+     remain represented by separate hierarchy nodes.
 
    **HG3.6 — Preserve SP relationships and check cycles.**
    Preserve every original SP ancestor relationship as either a path between
@@ -88,17 +94,21 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
 ## From combined nodes to further relationships
 
 4. **HG4 — Select pairs of parent hierarchy nodes for model comparison.** Look
-   for a hierarchy node containing original SP subjects from at least two
+   for a hierarchy node representing SP subject entries from at least two
    posts. If that node has two or more distinct immediate parent hierarchy
    nodes, select every pair of those parents for HG5. Count each pair of
    hierarchy nodes once, even if several shared children select it. Identical
    node names do not make two hierarchy nodes the same node.
 
-   Real example: N037's SP hierarchy includes **Food ingredients → Cranberries**;
-   N072's includes **Baking ingredients → Cranberries**. HG3 combines their
-   Cranberries subjects into one hierarchy node with both parent nodes. HG4
-   selects the **Food ingredients / Baking ingredients** node pair. The shared
-   Cranberries child does not decide whether those two parents are related.
+   Real example: N037's local hierarchy places its **Cranberries** SP subject
+   entry beneath its **Food ingredients** entry. N072 places its **Cranberries**
+   entry beneath its **Baking ingredients** entry.
+
+   HG3 makes one hierarchy node representing both Cranberries entries.
+   Food ingredients and Baking ingredients are represented by two other
+   hierarchy nodes, each linked as a parent of the Cranberries hierarchy node.
+   HG4 selects these two parent hierarchy nodes for comparison. The shared
+   child does not decide how its parents relate.
 
 5. **HG5 — Prompt BCPv4 for each selected hierarchy-node pair.** Use
    **BCPv4** (tested, not frozen) with **Astra low**.
@@ -116,7 +126,7 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
 
 6. **HG6 — Combine hierarchy nodes judged equivalent at HG5.** Combine
    connected chains of equivalent node pairs. The resulting hierarchy node
-   retains all contributing SP subjects, context descriptions, MP masks
+   retains all contributing SP subject entries, context descriptions, MP masks
    and original SP relationships. Preserve SP ancestry and stop if the
    combinations create a cycle between distinct hierarchy nodes. No new
    prompt call or replacement-title generation happens here.
@@ -186,8 +196,9 @@ The saved LG01 hierarchy is unchanged; production adoption
 and general conflict handling remain open.
 
 [BCPv4.md](BCPv4.md) compares the subjects represented by two hierarchy nodes,
-A and B. Each node is represented by subject/context entries originating in one
-or more posts; the source posts themselves are not being compared. JSON output
+A and B. Each node represents SP subject entries originating in one or more
+posts; their subject wordings and context descriptions form the prompt input.
+The source posts themselves are not being compared. JSON output
 is required. Whether the saved context
 descriptions improve the judgments remains untested; including them is a trial
 input choice, not a validated requirement.
