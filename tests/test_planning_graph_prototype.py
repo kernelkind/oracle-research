@@ -216,6 +216,16 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('14 ·'))"))
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('15 ·'))"))
 
+                evaluate("document.querySelector('#focus-task').value = '29'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
+                wait_for("document.querySelector('#details h2').textContent.startsWith('29 ·')")
+                self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
+                pilot_details = evaluate("document.querySelector('#details').innerText")
+                self.assertIn("All three candidates have saved training runs, matching reload checks and trained evaluations", pilot_details)
+                self.assertIn("recovered Gemma baseline subjects still need mask generation", pilot_details)
+                self.assertIn("candidate comparison and semantic review remain unfinished", pilot_details)
+                self.assertIn("no prominence", pilot_details)
+                self.assertIn("larger pilot (06), not final model selection", pilot_details)
+
                 # The graph must be derived from the served task data, not draw.io.
                 data_file = public / "release-plan.json"
                 data = json.loads(data_file.read_text())

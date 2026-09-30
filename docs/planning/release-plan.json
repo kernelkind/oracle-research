@@ -166,7 +166,7 @@
       "id": "29",
       "title": "Run preliminary 100-note fine-tuning experiment",
       "status": "IN PROGRESS",
-      "description": "Model track. Use existing data: 80 training notes, 20 evaluation notes; no prominence. One fine-tune per candidate learns both subject and mask prompts. Compare untuned and trained outputs, quality, speed and cost.\nQwen's baseline, training, reload check and trained evaluation are saved; candidate comparison and semantic review remain unfinished.\nThis informs the larger pilot (06), not final model selection. Existing experiment settings and $25 total approval remain unchanged.\nSUBJECT/MASK PROMPTS 01 + TRAINING SETUP 18 COMPLETE"
+      "description": "Model track. Use existing data: 80 training notes, 20 evaluation notes; no prominence. One fine-tune per candidate learns both subject and mask prompts. Compare untuned and trained outputs, quality, speed and cost.\nAll three candidates have saved training runs, matching reload checks and trained evaluations. Qwen's baseline is saved; the recovered Gemma baseline subjects still need mask generation; candidate comparison and semantic review remain unfinished.\nThis informs the larger pilot (06), not final model selection. Existing experiment settings and $25 total approval remain unchanged.\nSUBJECT/MASK PROMPTS 01 + TRAINING SETUP 18 COMPLETE"
     }
   ],
   "links": [
