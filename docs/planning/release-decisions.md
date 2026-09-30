@@ -1007,8 +1007,8 @@ to sorting within a node. A child's score is not transferred to its parent.
 Prominence times mask relevance remains the intended within-node score; the
 relevance measure and how multiple masks produce one note score remain open.
 
-User-approved post-ordering checks for 27 (September 29): the user reviewed the
-complete wording with URLs omitted and established seven clear expected orders.
+User-approved post-ordering checks for 27 (September 29–30): the user reviewed the
+complete wording with URLs omitted and established eight clear expected orders.
 These judgments establish expected post order; they do not select
 a scoring formula, approve mask-prominence outputs or adopt a mask-aggregation
 rule.
@@ -1022,16 +1022,17 @@ rule.
 | Eggs | Mixed diary with laying hens and several egg preparations (`eaa6a5e6`) | Four-egg dinner (`fbd52a1d`) |
 | coffee | Iced coffee served in ice (`76e19c3e`) | Afternoon errands and morning coffee (`e0508834`) |
 | coffee | Roasting your own beans (`056e6466`) | Hashtag-heavy second-coffee post (`862486d8`) |
+| Eggs | Mixed diary with laying hens and several egg preparations (`eaa6a5e6`) | Coffee with raw cream and raw egg yolk (`f4c5aa5f`) |
 
 For another coffee and Sunday wishes (`737eaa89`) versus errands (`e0508834`),
 the user judged the posts about equal, with a tentative tiny preference for
 another coffee because of "but I need another one." Record this separately
-from the seven clear ordering checks. No numeric tolerance for "about equal"
+from the eight clear ordering checks. No numeric tolerance for "about equal"
 has been agreed.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
-the original mask comparisons and SP-context results for these seven checks,
-plus the about-equal judgment.
+the original mask comparisons, SP-context results and node-title trial for
+these eight checks, plus the about-equal judgment.
 They are reference pairs, not a claim of general ranking quality.
 
 The value used to order posts is the **sorting score**. The user authorized a
@@ -1153,11 +1154,20 @@ The short coffee/places post now has Coffee prominence 70 across all five SP
 entries; roasting has 98. Its broader SP subjects cannot supply a different
 prominence. Their final sorting scores are 65.443206 and 87.301384 respectively,
 matching the separate tentative roasting preference. Both prominence alone and
-the sorting score still match all seven clear expected orders. The about-equal
+the sorting score match all eight clear expected orders. The about-equal
 pair remains uncounted with no agreed tolerance. The [complete orders and verification](../../sse_multivector/model-runner.md)
 include two failing-first workflow/comparison checks and 202 passing regression
 and integration tests. **PPv30-node-v1** is tested, not production-frozen; this
 does not adopt a production ranking rule or approve exact percentages.
+
+On September 30, the user reviewed the complete mixed diary (`eaa6a5e6`, A)
+and coffee with raw cream and raw egg yolk (`f4c5aa5f`, B) in Eggs, with the
+image URL omitted, and answered "A". This adds the eighth clear expected order.
+PPv30-node-v1 already follows it: prominence 42 > 35 and sorting score
+38.818971 > 32.538029. PPv30-subject-v2 reversed it (33.703212 < 43.724941).
+The decision approves this post order, not exact prominence percentages,
+the formula or production adoption. The tentative roasting preference and
+about-equal judgment remain separate.
 
 27 is in progress: saved Coffee/Eggs trials test within-node note ordering.
 Finishing still needs 04, which is in launch scope and actively being worked

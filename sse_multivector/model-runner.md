@@ -2534,7 +2534,7 @@ tentative preference:
 | A: More coffee in cool places (`37f44e1f`) | 70 | 0.934903 | 65.443206 |
 | B: Roasting your own beans (`056e6466`) | 98 | 0.890830 | 87.301384 |
 
-Both prominence alone and the sorting score also match the seven clear checks:
+Both prominence alone and the sorting score also match the eight clear checks:
 
 | Hierarchy node | Expected higher / lower | Node-title prominence | Highest sorting score |
 | --- | --- | --- | --- |
@@ -2545,8 +2545,17 @@ Both prominence alone and the sorting score also match the seven clear checks:
 | Eggs | Mixed diary / four-egg dinner | 42 > 26 | 38.818971 > 22.423007 |
 | coffee | Iced coffee / errands | 95 > 60 | 85.118002 > 41.622349 |
 | coffee | Roasting / second coffee | 98 > 70 | 87.301384 > 64.841903 |
+| Eggs | Mixed diary / coffee with raw egg yolk | 42 > 35 | 38.818971 > 32.538029 |
 
-The tentative roasting/short-post judgment remains separate from the seven
+On September 30, the user reviewed the complete mixed diary (`eaa6a5e6`) as A
+and coffee with raw cream and raw egg yolk (`f4c5aa5f`) as B inside Eggs, with
+the image URL omitted, and answered "A". This adds an eighth clear expected
+order. The node-title trial already puts the diary first, whereas v2 put the
+raw-egg-yolk coffee post first (43.724941 > 33.703212). The user approved this
+order, not the assessed percentages, formula or production adoption. No new
+model calls, encoding, prompt edits or sorting calculations were needed.
+
+The tentative roasting/short-post judgment remains separate from the eight
 clear-check count. The earlier about-equal pair also remains separate: another
 coffee has prominence 50 and sorting score 42.357665; errands has 60 and
 41.622349. The difference is 0.735316 in the tentatively preferred direction,
@@ -2586,10 +2595,10 @@ Eggs:
 | Rocket stove (`99e6a514`) | 8 | 7.730602 |
 
 Relative to v2, 11 Coffee pair directions and one Eggs pair direction change.
-The roasting/short-post direction matches the user's tentative judgment; the
-remaining changed directions are not new user-approved orders. In Eggs, the
-diary now comes above the raw-egg-yolk coffee post; that pair has not been
-reviewed. PPv30-node-v1 is tested, not production-frozen. These results do not
+The roasting/short-post direction matches the user's tentative judgment.
+Putting the diary above coffee with raw egg yolk matches the new clear judgment.
+The remaining changed directions are not new user-approved orders.
+PPv30-node-v1 is tested, not production-frozen. These results do not
 establish general ordering quality, calibrated percentages, production adoption
 or a general advantage from relevance over prominence alone.
 
