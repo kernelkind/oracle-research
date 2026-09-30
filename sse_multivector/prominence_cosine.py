@@ -209,8 +209,9 @@ def prepare(args):
             fields = ("id", "node_id", "node_title", "note_id", "text", "mask_ids", "byte_spans")
             if context_input:
                 fields += ('subject_number', 'subject', 'context')
-            preparer = prepare_context_prominence if context_input else prepare_prominence
-            verified = preparer({"cases": [{key: e[key] for key in fields}]})[0]
+            source = {"cases": [{key: e[key] for key in fields}]}
+            verified = (prepare_context_prominence(source, plan['dataset'].get('prominence_basis', 'context'))
+                        if context_input else prepare_prominence(source))[0]
             if (case["id"] != e["id"] or set(case["inputs"]) != {"INPUT_JSON"}
                     or json.loads(case["inputs"]["INPUT_JSON"]) !=
                     json.loads(verified["inputs"]["INPUT_JSON"])):
@@ -250,7 +251,8 @@ def prepare(args):
                               prominence=score))
             if context_input:
                 cases[-1].update(ordinal=None, representation='context', context=e['context'],
-                                 subject=e['subject'], subject_number=e['subject_number'])
+                                 subject=e['subject'], subject_number=e['subject_number'],
+                                 prominence_basis=plan['dataset'].get('prominence_basis', 'context'))
     if selected_cases - {case['id'] for case in cases}:
         raise ValueError(f"unknown requested cases: {sorted(selected_cases - {case['id'] for case in cases})}")
     if selected_nodes - titles.keys():
@@ -342,6 +344,20 @@ def prepare(args):
     if (config["device"] != "cpu" or ("worker_sha256" in encoder
             and sha(Path(worker.__file__)) != encoder["worker_sha256"])):
         raise ValueError("expected original CPU worker")
+    encoding_source = getattr(args, 'reuse_encoding', None)
+    if encoding_source:
+        encoding_source = encoding_source.resolve()
+        if read(encoding_source/'worker-request.json')['notes'] != notes:
+            raise ValueError('reused encoder notes differ from current context selections')
+        previous = read(encoding_source/'comparison.json')
+        for key, name in (('worker_receipt_sha256', 'result/worker-receipt.json'),
+                          ('raw_vectors_sha256', 'result/raw-vectors.f32le')):
+            if previous[key] != sha(encoding_source/name):
+                raise ValueError('reused encoding differs from saved comparison')
+        for name in ('plan.json', 'worker-request.json', 'comparison.json',
+                     'result/worker-receipt.json', 'result/raw-vectors.f32le'):
+            path = encoding_source/name
+            protected[str(path)] = sha(path)
     for path in (Path(__file__).resolve(), Path(worker.__file__).resolve(),
                  Path(__file__).with_name('experiment_inputs.py').resolve(),
                  Path(__file__).with_name('prominence_ranking.py').resolve(), args.worker_config.resolve()):
@@ -358,6 +374,8 @@ def prepare(args):
                 parity_min_cosine=0.999999, parity_max_normalized_component_error=0.00001)
     if post_order:
         plan['post_order'] = post_order
+    if encoding_source:
+        plan['encoding_source'] = str(encoding_source)
     if getattr(args, 'include_inverse', False):
         plan['inverse_formula'] = 'linear_product + (100 - prominence) * (clip(inverse_cosine, -1, 1) + 1) / 2'
         plan['full_post_formula'] = '100 * (clip(full_post_cosine, -1, 1) + 1) / 2'
@@ -375,6 +393,8 @@ def prepare(args):
     save(output / "worker-config.json", config)
     print(f"Prepared {len(titles)} titles, {len(replays)} replays; {len(cases)} masks; "
           f"{sum(len(n['subjects']) for n in notes)} encoder rows. No inference.")
+    if encoding_source:
+        print(f"Reusing saved encoding from {encoding_source}; collect without running the worker.")
 
 
 def collect(output):
@@ -383,9 +403,15 @@ def collect(output):
     for path, expected in plan["protected"].items():
         if sha(path) != expected:
             raise ValueError(f"protected artifact changed: {path}")
-    receipt = read(output / "result/worker-receipt.json")
-    if (receipt["request_sha256"] != sha(output / "worker-request.json")
-            or receipt["proposal_sha256"] != sha(output / "plan.json")):
+    encoding_source = Path(plan.get('encoding_source', str(output)))
+    if encoding_source != output:
+        request = read(output/'worker-request.json')
+        if (request['notes'] != read(encoding_source/'worker-request.json')['notes']
+                or request['proposal_sha256'] != sha(output/'plan.json')):
+            raise ValueError('reused encoder request differs')
+    receipt = read(encoding_source / "result/worker-receipt.json")
+    if (receipt["request_sha256"] != sha(encoding_source / "worker-request.json")
+            or receipt["proposal_sha256"] != sha(encoding_source / "plan.json")):
         raise ValueError("worker input provenance mismatch")
     for key in ("checkpoint_sha256", "base_model_artifact_tree_sha256", "model", "note_batch_size"):
         if receipt[key] != plan["encoder"][key]:
@@ -394,7 +420,7 @@ def collect(output):
     if [(r["note_id"], r["subject_id"]) for r in receipt["rows"]] != [(n.note_id,s.subject_id) for n in requests for s in n.subjects]:
         raise ValueError("worker rows differ from request")
     dim = plan["encoder"]["model"]["dimensions"]
-    fresh = decode(output / "result/raw-vectors.f32le", dim, "f")
+    fresh = decode(encoding_source / "result/raw-vectors.f32le", dim, "f")
     saved = decode(Path(plan.get("vector_file", str(Path(plan["vectors"]) / "normalized-vectors.f64le"))),
                    dim, plan.get("vector_code", "d"))
     if len(fresh) != len(receipt["rows"]):
@@ -423,8 +449,10 @@ def collect(output):
     rankings = {nid:rank_rows(rows) for nid,rows in groups.items()}
     result = dict(parity=parity, groups=groups, rankings=rankings, formula=plan["formula"],
                   linear_formula=plan.get("linear_formula", "prominence * (clip(cosine, -1, 1) + 1) / 2"),
-                  worker_receipt_sha256=sha(output / "result/worker-receipt.json"),
-                  raw_vectors_sha256=sha(output / "result/raw-vectors.f32le"))
+                  worker_receipt_sha256=sha(encoding_source / "result/worker-receipt.json"),
+                  raw_vectors_sha256=sha(encoding_source / "result/raw-vectors.f32le"))
+    if encoding_source != output:
+        result['encoding_source'] = str(encoding_source)
     if plan.get('post_order') == 'highest':
         result['post_order'] = 'highest'
         result['posts'], result['post_rankings'] = {}, {}
@@ -469,6 +497,8 @@ def main():
                       help='exclude scheme URLs, NIP-19 and 64-hex IDs from inverse/full selections only')
     prep.add_argument('--post-order', choices=('highest',),
                       help='compare each post\'s highest prominence and highest SP-context sorting score')
+    prep.add_argument('--reuse-encoding', type=Path,
+                      help='reuse a completed encoding with exactly identical encoder notes and selections')
     c = sub.add_parser("collect")
     c.add_argument("output", type=Path)
     args = p.parse_args()

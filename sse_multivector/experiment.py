@@ -89,7 +89,7 @@ def spec_setup(path):
     engine._expect_fields(
         dataset,
         "dataset",
-        {"adapter", "path"} | ({"select", "mask_format", "combine_masks"} & dataset.keys()),
+        {"adapter", "path"} | ({"select", "mask_format", "combine_masks", "prominence_basis"} & dataset.keys()),
     )
     source_path = resolve(dataset["path"], path.parent)
     cases, sources, preparation = inputs.prepare_file(dataset, source_path, prompt["text"], report)

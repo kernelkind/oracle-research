@@ -77,8 +77,38 @@ class ProminenceCosineTests(unittest.TestCase):
                 self.assertEqual(post['context_count'], 2)
                 self.assertEqual(comparison['post_rankings']['tea'],
                                  {'prominence': ['a'*64], 'linear_product': ['a'*64]})
+                args.reuse_encoding = args.output
+                args.output = root/'subject'
+                plan['dataset']['prominence_basis'] = 'subject'
+                for original, e, prominence in ((case, evidence, 40), (other_case, other, 80)):
+                    original['inputs'] = experiment_inputs.prepare_context_prominence(
+                        {'cases': [e]}, basis='subject')[0]['inputs']
+                    original['parsed']['prominence'] = prominence
+                pc.prepare(args)
+                self.assertFalse((args.output/'result').exists())
+                pc.collect(args.output)
+                reused = pc.read(args.output/'comparison.json')
+                self.assertEqual(reused['groups']['tea'][0]['cosine'], row['cosine'])
+                self.assertEqual(reused['groups']['tea'][0]['prominence_basis'], 'subject')
+                self.assertEqual(reused['posts']['tea'][0]['linear_product'], 20)
+                self.assertEqual(reused['posts']['tea'][0]['prominence'], 80)
+                self.assertEqual(reused['raw_vectors_sha256'], comparison['raw_vectors_sha256'])
+                other_case['evidence']['context'] = 'A changed context.'
+                rows[0]['subject_entries'][1]['context'] = 'A changed context.'
+                args.output = root/'changed-encoding'
+                with self.assertRaisesRegex(ValueError, 'encoder notes differ'):
+                    pc.prepare(args)
+                self.assertFalse(args.output.exists())
+                other_case['evidence']['context'] = other['context']
+                rows[0]['subject_entries'][1]['context'] = other['context']
+                raw_path = args.reuse_encoding/'result/raw-vectors.f32le'
+                raw_bytes = raw_path.read_bytes()
+                raw_path.write_bytes(raw_bytes + b'changed')
+                with self.assertRaisesRegex(ValueError, 'protected artifact changed'):
+                    pc.collect(root/'subject')
+                raw_path.write_bytes(raw_bytes)
                 args.output = root/'bad'
-                case['inputs']['INPUT_JSON'] = json.dumps({'context': 'Different', 'post': evidence['text']})
+                case['inputs']['INPUT_JSON'] = json.dumps({'subject': 'Different', 'post': evidence['text']})
                 with self.assertRaisesRegex(ValueError, 'model input'):
                     pc.prepare(args)
                 self.assertFalse(args.output.exists())

@@ -1624,10 +1624,19 @@ these checks establish UI behavior, not a user verdict on ranking quality.
 directory or a hierarchy-refresh directory containing `vector-map.json`,
 `worker-request.json` and `worker-result/`. The latter reads the original raw
 vectors without re-encoding them, verifies receipt hashes and row/span identity,
-and freezes their hashes. Both formats require title encoding with the same
-checkpoint/settings and replay checks before `collect` emits a comparison.
+and freezes their hashes. Both formats require matching checkpoint/settings
+and replay checks before `collect` emits a comparison.
 This diagnostic makes no prompt calls; the shared experiment runner remains the
 only prompt-experiment workflow.
+
+`prepare --reuse-encoding COMPLETED_OUTPUT` permits new prominence assessments
+to use a completed comparison's exact vectors. Every encoder note, selection
+and row order must match. The saved comparison's vector and receipt hashes are
+verified; its plan, request, comparison, receipt and vectors are protected
+inputs. `collect` validates the original worker receipt against its original
+request and plan and uses the existing raw vectors. The new comparison records
+`encoding_source`. Run `collect` directly after preparation; no worker run is
+needed. Changed encoder input or modified source artifacts are refused.
 
 For prominence experiments with `dataset.combine_masks: true`, the diagnostic
 checks the selected spans against the union of the referenced original vectors'
@@ -2096,6 +2105,121 @@ formula. All four changed pair orders have now been reviewed. No new inference
 or encoding was needed to check the new judgments.
 Production adoption remains open; no recursive sorting or parent-child transfer
 was changed.
+
+The user then approved testing prominence as the percentage of the complete
+post's meaning that concerns the saved SP subject. The experimental
+[PPv30-subject-v1](prominence-prompt-goal-v1/ppv30-subject-v1/PPv30-subject-v1.md)
+prompt retains the fixed 100-point allocation. `represented` now means points
+concerning the SP subject; `missing` means points not concerning it, and
+`missing_meaning` describes that latter meaning. This is a semantic change to
+prominence, not a change to the output arithmetic. Its shared revision receipt
+records the full delta against last-approved main prompt PPv26. No expected
+orders or post-specific examples are supplied to the prompt.
+
+`experiment_specs/ppv30-subject-node-orders-v1.json` sets
+`dataset.prominence_basis: "subject"` on the existing `subject_contexts` adapter.
+Model input contains exactly `subject` and `post`. Node titles, SP contexts,
+masks and provenance remain review-only evidence. Omitting that option retains
+the previous context-and-post input; unsupported values or use on another
+adapter are refused. The new run preserves all 37 source entries and identical
+Astra-low subscription settings. There are 33 distinct subject/post inputs;
+four repeated entries can reuse exact requests. The context baseline remains
+saved and is not rerun; the shared comparison correctly marks all 37 changed
+inputs as `input_mismatch`.
+
+Relevance continues to use each complete saved SP context and the original
+node title. `prominence_cosine.py prepare --reuse-encoding` reuses
+`experiments/ppv30-context-node-orders-v1/relevance-v1` exactly. Only the new
+prominence values change the sorting scores. The seven clear user-reviewed
+orders and the separate about-equal judgment remain the checks, with independent
+highest prominence and highest sorting score per post. This experiment does
+not adopt a production ranking rule, revise SP entries or expand membership.
+
+`experiments/ppv30-subject-node-orders-v1` completed 37 valid cases with 33 new
+Astra-low subscription assessments and four reuses of identical requests from
+this run. There were no failures, retries, baseline reruns, new SP calls or new
+SSE worker calls. New-attempt usage was 20,157 input tokens and 5,772 output
+tokens, including 534 reasoning tokens. The $0.49017 catalog estimate is not an
+invoice or measured subscription quota; there was no incremental cash charge
+or paid fallback. **PPv30-subject-v1** is tested, not production-frozen; approved
+main prompt PPv26 is unchanged.
+
+`relevance-v1/comparison.json` reuses the preceding run's raw vectors and worker
+receipt. All 37 contexts, encoder notes, selections, cosine values and relevance
+values match exactly. The five original-mask replay results are identical.
+Every new allocation, prominence input, sorting score, independent post maximum
+and final order was checked against the frozen sources and existing raw vectors.
+The shared experiment, cosine, ranking, node-sorting, worker and extraction
+suites passed 201 tests. Failing-first checks cover the subject/post input,
+exact request reuse and collecting new prominence with existing encodings;
+changed contexts and modified vector artifacts are refused.
+
+Both prominence alone and the sorting score now match all seven clear expected
+orders. The about-equal judgment remains separate from the counts:
+
+| Hierarchy node | Expected higher / lower | Subject prominence | Sorting score |
+| --- | --- | --- | --- |
+| coffee | Decaf / Sunday weather | 100 > 35 | 90.154658 > 28.819013 |
+| Eggs | Century eggs / rocket stove | 100 > 10 | 88.242803 > 9.663252 |
+| Eggs | Mixed diary / rocket stove | 38 > 10 | 34.614109 > 9.663252 |
+| coffee | Roasting / errands | 100 > 60 | 89.083045 > 41.622349 |
+| Eggs | Mixed diary / four-egg dinner | 38 > 30 | 34.614109 > 25.872700 |
+| coffee | Iced coffee / errands | 95 > 60 | 85.118002 > 41.622349 |
+| coffee | Roasting / second coffee | 100 > 70 | 89.083045 > 64.841903 |
+
+The roasting assessment counts its opening contrast, personal taste profile,
+home-roasting journey, comparison with pre-roasted coffee and coffee-community
+sign-off as concerning Coffee: all 100 points. The second-coffee assessment
+assigns 70 points concerning Coffee and 30 to the remaining affiliations. The
+previous context's missing claims no longer reduce roasting's prominence.
+These are mechanically valid assessments, not user approval of exact percentages.
+
+Another coffee (`737eaa89`) has sorting score 42.357665 versus errands'
+41.622349, a difference of 0.735316 in the user's tentatively preferred direction.
+Subject prominence alone gives 50 versus 60 in the opposite direction. No
+numeric tolerance for "about equal" is inferred or marked as passed.
+
+The complete current orders below use descending sorting score. The preceding
+context-prominence orders remain saved for comparison; these changes are not
+new user-approved orders. The highest prominence column can refer to a different
+SP entry from the highest sorting score.
+
+Coffee:
+
+| Post (note-ID prefix) | Highest subject prominence | Highest sorting score |
+| --- | ---: | ---: |
+| More coffee in cool places (`37f44e1f`) | 100 | 93.490294 |
+| Decaf drinkers (`2dc50a30`) | 100 | 90.154658 |
+| Roasting your own beans (`056e6466`) | 100 | 89.083045 |
+| Iced coffee served in ice (`76e19c3e`) | 95 | 85.118002 |
+| Is there coffee for me? (`78462b92`) | 100 | 83.173849 |
+| Half & half versus cream (`143fee76`) | 90 | 80.752521 |
+| Coffee with raw cream and raw egg yolk (`f4c5aa5f`) | 100 | 75.582818 |
+| Hashtag-heavy second-coffee post (`862486d8`) | 70 | 64.841903 |
+| Another coffee and Sunday wishes (`737eaa89`) | 50 | 42.357665 |
+| Afternoon errands and morning coffee (`e0508834`) | 60 | 41.622349 |
+| Sunday weather with hot coffee (`82d3d344`) | 35 | 28.819013 |
+| Coffee, movement and stretching (`8a025f69`) | 30 | 28.716058 |
+| Duck-egg breakfast burrito and coffee (`ee3404d5`) | 25 | 22.274436 |
+| Tolstoy quotation with Coffee hashtag (`be8d07d4`) | 1 | 0.917359 |
+
+Eggs:
+
+| Post (note-ID prefix) | Highest subject prominence | Highest sorting score |
+| --- | ---: | ---: |
+| Century-eggs explanation (`11d2afb1`) | 100 | 88.242803 |
+| Avoiding eggs and snacking on chocolate (`612fa3c5`) | 85 | 74.883505 |
+| Coffee with raw egg yolk (`f4c5aa5f`) | 65 | 56.842423 |
+| Duck-egg breakfast burrito (`ee3404d5`) | 45 | 37.191810 |
+| Mixed diary with hens and egg preparations (`eaa6a5e6`) | 38 | 34.614109 |
+| Four-egg dinner (`fbd52a1d`) | 30 | 25.872700 |
+| Rocket stove (`99e6a514`) | 10 | 9.663252 |
+
+This draw resolves the seven saved clear checks. It does not establish general
+ordering quality, calibrated percentages or production adoption. Prominence
+alone also passes all seven, so they do not establish an advantage from relevance
+under the revised definition. The separate about-equal result is consistent in
+direction with the user's tentative preference, without an agreed tolerance.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended

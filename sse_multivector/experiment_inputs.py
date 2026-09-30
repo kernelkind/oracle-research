@@ -474,8 +474,10 @@ def prepare_prominence(source, selected=None, combine_masks=False):
     return cases
 
 
-def prepare_context_prominence(source):
-    """Prominence of a saved SP context's meaning in its complete original post."""
+def prepare_context_prominence(source, basis='context'):
+    """Prominence inputs from the saved SP context or subject and original post."""
+    if basis not in ('context', 'subject'):
+        raise ValueError('prominence_basis must be context or subject')
     fields = ('id', 'node_id', 'node_title', 'note_id', 'text', 'mask_ids', 'byte_spans')
     cases = []
     for evidence in source['cases']:
@@ -489,12 +491,12 @@ def prepare_context_prominence(source):
         if 'source' in evidence:
             case['evidence']['source'] = evidence['source']
         case['inputs'] = {'INPUT_JSON': json.dumps(
-            {'context': evidence['context'], 'post': evidence['text']}, ensure_ascii=False)}
+            {basis: evidence[basis], 'post': evidence['text']}, ensure_ascii=False)}
         cases.append(case)
     return cases
 
 
-def prepare_subject_contexts(source, selected=None):
+def prepare_subject_contexts(source, selected=None, basis='context'):
     """Select exact saved SP entries belonging directly to the specified node."""
     posts = source['subjects']['notes']
     by_id = {p['note_id']: p for p in posts}
@@ -556,7 +558,7 @@ def prepare_subject_contexts(source, selected=None):
             cases.append(evidence)
     if selected is not None and set(selected) - ids:
         raise ValueError('unknown subject context case requested')
-    return prepare_context_prominence({'cases': cases})
+    return prepare_context_prominence({'cases': cases}, basis)
 
 
 def prepare(dataset, source, template):
@@ -572,6 +574,8 @@ def prepare(dataset, source, template):
     if 'combine_masks' in dataset:
         if adapter != 'prominence' or type(dataset['combine_masks']) is not bool:
             raise ValueError('combine_masks requires the prominence adapter and a boolean')
+    if 'prominence_basis' in dataset and adapter != 'subject_contexts':
+        raise ValueError('prominence_basis requires the subject_contexts adapter')
     if adapter == "generic":
         cases = source["cases"]
         for case in cases:
@@ -589,7 +593,8 @@ def prepare(dataset, source, template):
     elif adapter == "subject_pairs":
         cases = prepare_subject_pairs(source, dataset.get("select"))
     elif adapter == 'subject_contexts':
-        cases = prepare_subject_contexts(source, dataset.get('select'))
+        cases = prepare_subject_contexts(source, dataset.get('select'),
+                                         dataset.get('prominence_basis', 'context'))
     elif adapter == "titles":
         groups = prepare_titles(
             source, "{NUMBERED_INSTANCES}", dataset.get("select", [])

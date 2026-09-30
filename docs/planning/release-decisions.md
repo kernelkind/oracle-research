@@ -1037,6 +1037,28 @@ six of seven clear expected orders; prominence alone matches three of seven.
 The about-equal judgment is excluded from that count. The [complete orders and verification](../../sse_multivector/model-runner.md)
 record 32 new assessments, five exact-request reuses and 201 passing tests.
 
+The user approved testing a revised prominence definition: the percentage of
+the complete post's meaning that concerns the saved SP subject. This replaces
+SP-context meaning coverage in that trial. The new experimental prompt is
+**PPv30-subject-v1**. It receives only the saved SP subject and complete original
+post; the exact saved SP context continues to supply relevance. The same 37
+entries, seven clear expected orders, separate about-equal judgment, highest
+per-post aggregation and sorting-score formula are retained. Existing SSE
+vectors are reused exactly. This authorizes the experiment, not production
+adoption or changes to hierarchy membership or SP outputs.
+The completed trial has 37 valid cases from 33 new assessments and four
+exact-request reuses, with no failures or retries. All 37 relevance values and
+the raw vectors match the preceding experiment exactly. Both prominence alone
+and the sorting score match all seven clear expected orders. Roasting now has
+prominence 100 and sorting score 89.083045, above second coffee's 70 and
+64.841903. The about-equal pair remains separate: another coffee has sorting
+score 42.357665 versus errands' 41.622349; prominence alone puts errands higher
+(60 versus 50). No numeric tolerance for that judgment is inferred.
+**PPv30-subject-v1** is tested, not production-frozen. The complete orders,
+allocation checks and 201 passing regression/integration tests are recorded in
+the [experiment results](../../sse_multivector/model-runner.md). Broader ordering
+quality and the value of relevance beyond these checks remain open.
+
 27 waits for 04, which is in launch scope and actively being worked on
 (September 28 correction). 28 waits for the validated small-corpus
 workflow and scale findings. Readiness does not authorize execution. Membership

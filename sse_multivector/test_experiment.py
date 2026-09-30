@@ -102,6 +102,25 @@ class ExperimentTests(unittest.TestCase):
         self.cli('run', 'E2')
         self.assertEqual(self.show('E2')['summary']['reused'], 1)
         self.assertEqual(len(self.calls()), 1)
+        spec['dataset']['prominence_basis'] = 'subject'
+        self.write('spec.json', spec)
+        self.prepare('subject')
+        subject_case = self.show('subject', '--case', 'tea-context')
+        self.assertEqual(json.loads(subject_case['inputs']['INPUT_JSON']),
+                         {'subject': 'Tea', 'post': post['text']})
+        self.assertEqual(subject_case['evidence']['context'], 'Tea warms the writer.')
+        self.cli('run', 'subject', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        self.assertEqual(len(self.calls()), 2)
+        self.prepare('subject-reuse')
+        self.cli('run', 'subject-reuse')
+        self.assertEqual(self.show('subject-reuse')['summary']['reused'], 1)
+        self.assertEqual(len(self.calls()), 2)
+        spec['dataset']['prominence_basis'] = 'unknown'
+        self.write('spec.json', spec)
+        self.cli('prepare', 'bad-basis', '--spec', self.spec, ok=False)
+        self.assertFalse((self.root/'bad-basis').exists())
+        spec['dataset']['prominence_basis'] = 'subject'
+        self.write('spec.json', spec)
         from sse_multivector import experiment_inputs
         answer['allocation'][0]['represented'] = 79
         with self.assertRaisesRegex(ValueError, 'allocation'):
