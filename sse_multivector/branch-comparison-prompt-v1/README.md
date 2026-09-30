@@ -102,7 +102,7 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
 
    **Visual example: N037 and N072.** Parents are above children in these diagrams.
 
-   **1. SP supplies two separate local hierarchies.** Every item here is an
+   **HG1.1 — SP supplies two separate local hierarchies.** Every item here is an
    SP subject entry:
 
    ```text
@@ -114,7 +114,7 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
        entry #1                  entry #2
    ```
 
-   **2. HG3 combines the two Cranberries entries.** Now these boxes are global
+   **HG3 — Combine the two Cranberries entries.** Now these boxes are global
    hierarchy nodes:
 
    ```text
@@ -129,7 +129,7 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
                  └─────────────────┘
    ```
 
-   **3. HG4 selects the two parents—not the child.**
+   **HG4 — Select the two parents—not the child.**
 
    ```text
     ┌──────────── SELECTED FOR COMPARISON ────────────┐
@@ -162,7 +162,7 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
    **Visual example: the pair selected in HG4.** Each hierarchy node represents
    one SP subject entry in this example.
 
-   **1. HG5 prepares the model input:**
+   **HG5.1 — Prepare the model input:**
 
    ```text
    ┌── A: Food ingredients ─────────────────────────────────┐
@@ -181,9 +181,9 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
 
    Cranberries, the hierarchy links, masks and full posts are **not sent**.
 
-   **2. Both lists go into ONE call using [BCPv4](BCPv4.md) / Astra low.**
+   **HG5 — Send both lists in ONE call using [BCPv4](BCPv4.md) / Astra low.**
 
-   **3. The saved JSON answer contains these fields:**
+   **HG5.2 — The saved JSON answer contains these fields:**
 
    ```text
    ┌── MODEL ANSWER ────────────────────────────────────────┐
@@ -212,7 +212,7 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
    shown at HG5 is an ancestor answer, so HG6 does not combine those nodes.
    This different saved HG5 comparison returned `equivalent`.
 
-   **1. Before HG6, these are two distinct hierarchy nodes:**
+   **Before HG6 — Two distinct hierarchy nodes:**
 
    ```text
    ┌── Dining #1 ─────────────┐   ┌── Dining #2 ─────────────┐
@@ -223,7 +223,7 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
    Each represents one Dining SP subject entry. Matching names alone do not
    authorize combining them.
 
-   **2. HG6 uses the saved HG5 answer:**
+   **HG5.2 — The saved answer used by HG6:**
 
    ```text
    ┌── SAVED HG5 ANSWER ────────────────────────────────────────┐
@@ -235,7 +235,7 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
    └────────────────────────────────────────────────────────────┘
    ```
 
-   **3. HG6 combines those hierarchy nodes:**
+   **After HG6 — One combined hierarchy node:**
 
    ```text
    ┌── ONE Dining hierarchy node ───────────────────────────────┐
@@ -264,7 +264,7 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
    (representing the N078 entry), using another saved `equivalent` answer.
    The Dining #1 and #2 labels refer to the hierarchy nodes shown above.
 
-   **1. HG7.1 updates the previously compared hierarchy-node pairs:**
+   **HG7.1 — Update the previously compared hierarchy-node pairs:**
 
    ```text
    BEFORE HG6: six previously compared pairs
@@ -287,7 +287,7 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
    KEEP ONCE: Dining vs Meals
    ```
 
-   **2. HG7.2 checks whether the model input changed.** The old Dining / Meals
+   **HG7.2 — Check whether the model input changed.** The old Dining / Meals
    calls each supplied one subject/context entry per side. The current pair
    supplies two per side, even though its names are still Dining and Meals:
 
@@ -316,7 +316,7 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
    Source-post IDs and the Entry 1/2 labels are for this diagram only.
    The model receives the subject/context lists, as at HG5.
 
-   **3. The changed input needs ONE BCPv4 / Astra low comparison**, not four.
+   **HG7.2 — Recompare the changed input: ONE BCPv4 / Astra low call**, not four.
    The saved answer for these combined inputs was:
 
    ```text
