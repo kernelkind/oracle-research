@@ -159,6 +159,48 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
    or uncertain, plus a reason. A and B identify the two hierarchy nodes,
    not the source posts. Save the answer without changing the hierarchy yet.
 
+   **Visual example: the pair selected in HG4.** Each hierarchy node represents
+   one SP subject entry in this example.
+
+   **1. HG5 prepares the model input:**
+
+   ```text
+   ┌── A: Food ingredients ─────────────────────────────────┐
+   │ Subject: Food ingredients                              │
+   │ Context: The post names cranberry, rosemary, brown     │
+   │ sugar, and cinnamon as ingredients in the sourdough    │
+   │ bread.                                                 │
+   └────────────────────────────────────────────────────────┘
+
+   ┌── B: Baking ingredients ───────────────────────────────┐
+   │ Subject: Baking ingredients                            │
+   │ Context: The post names fresh rosemary, cranberries,   │
+   │ and currants in discussing soda bread.                 │
+   └────────────────────────────────────────────────────────┘
+   ```
+
+   Cranberries, the hierarchy links, masks and full posts are **not sent**.
+
+   **2. Both lists go into ONE call using [BCPv4](BCPv4.md) / Astra low.**
+
+   **3. The saved JSON answer contains these fields:**
+
+   ```text
+   ┌── MODEL ANSWER ────────────────────────────────────────┐
+   │ relation: a_parent_of_b                                │
+   │                                                        │
+   │ reason: Baking ingredients are a specific subset of    │
+   │ food ingredients; the examples in the descriptions     │
+   │ do not limit either subject's broader scope.           │
+   └────────────────────────────────────────────────────────┘
+   ```
+
+   That means **Food ingredients is an ancestor of Baking ingredients**, not
+   necessarily its immediate parent.
+
+   HG5 **saves this answer without changing the hierarchy**. Applying ancestor
+   answers happens at the proposed HG8 stage.
+
 6. **HG6 — Combine hierarchy nodes judged equivalent at HG5.** Combine
    connected chains of equivalent node pairs. The resulting hierarchy node
    retains all contributing SP subject entries, context descriptions, MP masks
