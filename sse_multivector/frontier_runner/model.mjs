@@ -319,7 +319,10 @@ function observeResponse(response, metadata, timing, elapsed, redact, captureDeb
     const value = response.headers.get(header);
     if (value) metadata[key] = redact(value).slice(0, 1024);
   }
-  if (!response.ok || !response.body || !response.headers.get('content-type')?.includes('text/event-stream')) return response;
+  // Both callers request SSE. A missing Content-Type does not change that
+  // request contract; an explicitly different response type still takes priority.
+  const contentType = response.headers.get('content-type');
+  if (!response.ok || !response.body || (contentType && !contentType.includes('text/event-stream'))) return response;
   const decoder = new TextDecoder();
   let buffer = '';
   let data = [];

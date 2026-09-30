@@ -107,7 +107,7 @@ test('OpenRouter environment handoff rejects invalid routing or capabilities wit
   }
 });
 
-test('ordinary subscription commands use the selected Pi service without a flag or bearer export', async t => {
+test('ordinary subscription commands observe headerless SSE through the selected Pi service', async t => {
   const home = await mkdtemp(join(tmpdir(), 'oracle-default-service-'));
   t.after(() => rm(home, { recursive: true, force: true }));
   const key = 'test.' + Buffer.from(JSON.stringify({
@@ -129,7 +129,7 @@ test('ordinary subscription commands use the selected Pi service without a flag 
       content: [{ type: 'output_text', text, annotations: [] }] };
     const result = { id: 'resp-test', model: config.model, status: 'completed', output: [item],
       usage: { input_tokens: 1, output_tokens: 1 } };
-    response.writeHead(200, { 'content-type': 'text/event-stream' });
+    response.writeHead(200);
     response.end([
       { type: 'response.created', response: { id: 'resp-test', status: 'in_progress' } },
       { type: 'response.output_item.added', output_index: 0, item: { ...item, content: [] } },
@@ -162,6 +162,9 @@ test('ordinary subscription commands use the selected Pi service without a flag 
     assert.equal(receipt.valid, true, receipt.error);
     assert.equal(receipt.request.url, baseUrl + '/codex/responses');
     assert.equal(receipt.http_attempts, 1);
+    assert.equal(receipt.response_metadata.id, 'resp-test');
+    assert.ok(receipt.timing.byte_count > 0);
+    assert.equal(receipt.timing.event_count, 5);
     assert.ok(!stdout.includes(key));
   }
   assert.equal(requests.length, 2);

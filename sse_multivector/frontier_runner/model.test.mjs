@@ -453,18 +453,26 @@ test('stream timing distinguishes received bytes, parsed events, and normal comp
   assert.equal(result.response_metadata.transport_error, undefined);
 });
 
-test('body transport failure preserves its cause without reporting a server error or retrying', async () => {
+for (const route of [openrouter, codex]) {
+for (const declaredType of [true, false]) {
+test(`${route.provider}: ${declaredType ? 'declared' : 'headerless'} SSE body failure preserves its cause without retrying`, async () => {
+  const key = route === codex ? 'test.' + Buffer.from(JSON.stringify({
+    'https://api.openai.com/auth': { chatgpt_account_id: 'test-account' },
+  })).toString('base64url') + '.signature' : 'secret-test-key';
+  const first = route === codex
+    ? { type: 'response.created', response: { id: 'broken-stream', status: 'in_progress' } }
+    : { id: 'broken-stream', choices: [] };
   let read = false;
-  const result = await execute(await prepare(config()), { apiKey: 'secret-test-key', fetch: async () =>
+  const result = await execute(await prepare(config(route)), { apiKey: key, fetch: async () =>
     new Response(new ReadableStream({ pull(controller) {
       if (!read) {
         read = true;
-        controller.enqueue(new TextEncoder().encode('data: {"id":"broken-stream","choices":[]}\n\n'));
+        controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(first)}\n\n`));
       } else {
-        const cause = Object.assign(new Error('socket closed secret-test-key'), { code: 'UND_ERR_SOCKET', private: 'must-not-record' });
+        const cause = Object.assign(new Error(`socket closed ${key}`), { code: 'UND_ERR_SOCKET', private: 'must-not-record' });
         controller.error(new TypeError('terminated', { cause }));
       }
-    } }), { headers: { 'content-type': 'text/event-stream' } }) });
+    } }), { headers: declaredType ? { 'content-type': 'text/event-stream' } : {} }) });
   assert.equal(result.http_attempts, 1);
   assert.equal(result.error, 'terminated');
   assert.equal(result.response_metadata.error, undefined);
@@ -472,9 +480,24 @@ test('body transport failure preserves its cause without reporting a server erro
     phase: 'body', name: 'TypeError', message: 'terminated',
     cause: { name: 'Error', message: 'socket closed [REDACTED]', code: 'UND_ERR_SOCKET' },
   });
+  assert.equal(result.response_metadata.id, 'broken-stream');
+  assert.equal(result.timing.event_count, 1);
+  assert.ok(result.timing.byte_count > 0);
   assert.ok(result.timing.error_ms >= result.timing.last_byte_ms);
   assert.equal(result.timing.stream_end_ms, null);
   assert.ok(!JSON.stringify(result).includes('must-not-record'));
+  assert.ok(!JSON.stringify(result).includes(key));
+});
+}
+}
+
+test('an explicit JSON response is not observed as SSE', async () => {
+  const result = await execute(await prepare(config()), { apiKey: 'test-only', fetch: async () =>
+    new Response('{"id":"not-a-stream"}', { headers: { 'content-type': 'application/json' } }) });
+  assert.equal(result.valid, false);
+  assert.equal(result.response_metadata.id, undefined);
+  assert.equal(result.timing.first_event_ms, null);
+  assert.equal(result.timing.event_count, 0);
 });
 
 test('error text is redacted before bounding, and HTTP retry hints survive', async () => {

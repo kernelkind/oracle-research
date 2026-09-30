@@ -163,6 +163,12 @@ received, not when the provider generated tokens. It adds no retries, changes no
 timeouts, and cannot recover details missing from older receipts. Missing final
 usage after a failure does not establish zero cost.
 
+SSE diagnostics also observe a successful streaming response when `Content-Type`
+is absent. Both chat transports request streaming; an explicitly different
+response type is still respected. The observer leaves headers and forwarded
+bytes unchanged, and captures body-error causes before the SDK reduces them to
+messages such as `terminated`.
+
 With upstream debugging enabled, `timing.event_trace` retains the first 256 JSON
 events' times, kinds, and delta field names, not their content. Dropped entries
 are counted; aggregate timings still cover the complete observed stream.
