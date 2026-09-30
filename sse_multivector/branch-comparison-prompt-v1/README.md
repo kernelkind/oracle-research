@@ -100,15 +100,50 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
    hierarchy nodes once, even if several shared children select it. Identical
    node names do not make two hierarchy nodes the same node.
 
-   Real example: N037's local hierarchy places its **Cranberries** SP subject
-   entry beneath its **Food ingredients** entry. N072 places its **Cranberries**
-   entry beneath its **Baking ingredients** entry.
+   **Visual example: N037 and N072.** Parents are above children in these diagrams.
 
-   HG3 makes one hierarchy node representing both Cranberries entries.
-   Food ingredients and Baking ingredients are represented by two other
-   hierarchy nodes, each linked as a parent of the Cranberries hierarchy node.
-   HG4 selects these two parent hierarchy nodes for comparison. The shared
-   child does not decide how its parents relate.
+   **1. SP supplies two separate local hierarchies.** Every item here is an
+   SP subject entry:
+
+   ```text
+          N037                       N072
+
+    Food ingredients          Baking ingredients
+           │                         │
+      Cranberries               Cranberries
+       entry #1                  entry #2
+   ```
+
+   **2. HG3 combines the two Cranberries entries.** Now these boxes are global
+   hierarchy nodes:
+
+   ```text
+    ┌──────────────────┐     ┌────────────────────┐
+    │ Food ingredients │     │ Baking ingredients │
+    └────────┬─────────┘     └─────────┬──────────┘
+             │                         │
+             └────────────┬────────────┘
+                 ┌────────┴────────┐
+                 │   Cranberries   │
+                 │ entries #1 + #2 │
+                 └─────────────────┘
+   ```
+
+   **3. HG4 selects the two parents—not the child.**
+
+   ```text
+    ┌──────────── SELECTED FOR COMPARISON ────────────┐
+    │                                                 │
+    │ Food ingredients     vs     Baking ingredients  │
+    │                                                 │
+    └─────────────────────────────────────────────────┘
+
+    Cranberries is WHY this pair was selected.
+    Cranberries is NOT one of the two nodes compared.
+   ```
+
+   HG4 adds that pair to the comparison list for HG5. **The hierarchy itself
+   remains unchanged.** The shared child does not decide how its parents relate.
 
 5. **HG5 — Prompt BCPv4 for each selected hierarchy-node pair.** Use
    **BCPv4** (tested, not frozen) with **Astra low**.
