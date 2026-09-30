@@ -1638,6 +1638,13 @@ request and plan and uses the existing raw vectors. The new comparison records
 `encoding_source`. Run `collect` directly after preparation; no worker run is
 needed. Changed encoder input or modified source artifacts are refused.
 
+The `subject_contexts` adapter's `prominence_basis` can be `context` (the default),
+`subject`, or `node_title`. It renders only that saved field and the complete
+post as prominence input. SP subjects, contexts and original membership evidence
+remain available for review and SP-context relevance. The comparison reconstructs
+the chosen input from frozen evidence; exact-request reuse gives matching
+node-title/post inputs one assessment across repeated SP entries.
+
 For prominence experiments with `dataset.combine_masks: true`, the diagnostic
 checks the selected spans against the union of the referenced original vectors'
 spans. If an original vector already has that exact selection, it is reused.
@@ -2467,6 +2474,124 @@ Eggs:
 The seven clear passes do not establish general ordering quality or production
 adoption. PPv30-subject-v2 is tested, not production-frozen; the compound-SP
 choice still defeats the user's coffee/places distinction in the final order.
+
+The user next authorized using the hierarchy node title as prominence input for
+every post in that node, keeping relevance and the sorting-score formula fixed.
+Tested experimental candidate
+[PPv30-node-v1](prominence-prompt-goal-v1/ppv30-node-v1/PPv30-node-v1.md)
+retains v2's meaning allocation and distinction between subjects, but assesses
+the topic named by the hierarchy node title. Its input is exactly `node_title`
+and `post`; no SP subject or context is supplied to the prominence assessment.
+The prompt contains no post-specific examples or expected orders. The shared
+revision receipt records the full delta against approved main prompt PPv26,
+which remains unchanged. The reusable spec is
+`experiment_specs/ppv30-node-orders-v1.json`.
+
+`prominence_basis: "node_title"` is a third supported choice in the existing
+`subject_contexts` adapter. The default context input and explicit SP-subject
+input retain their previous contracts. Tests through the shared CLI verify
+node-title/post rendering, SP evidence retention, reuse across SP entries in
+the same node, separation between different node titles, refusal to reuse an
+old assessment for a changed title, and reuse on a later matching experiment.
+The shared cosine test collects common post prominence with the unchanged SP
+context encodings and checks the resulting post maximum. Both tests failed
+before implementation because `node_title` was unsupported, then passed. The
+experiment, cosine, ranking, node-sorting, worker and extraction suites passed
+202 tests. No production ranking implementation changed.
+
+`experiments/ppv30-node-orders-v1` was prepared from the reusable spec with the
+completed v2 experiment as baseline. All 37 case IDs, source evidence and runner
+settings match exactly; only the prominence input and prompt change. The shared
+comparison correctly records all 37 baseline inputs as `input_mismatch`, rather
+than reusing assessments of different subjects. All 37 new cases are valid:
+21 new Astra-low subscription assessments and 16 exact-request reuses within
+this run. This gives one assessment per post/node across Coffee's 14 posts and
+Eggs' seven posts. There were no failures, retries, baseline reruns, new SP calls
+or new SSE worker calls. New-attempt usage was 14,837 input tokens and 3,406
+output tokens, including 307 reasoning tokens; the $0.31867 catalog estimate is
+not an invoice or measured subscription quota. There was no incremental cash
+charge or paid fallback.
+
+`relevance-v1` reuses the original completed context encoding exactly. All 37
+contexts, SP subjects, cosine values and title cosines match v2; raw-vector and
+receipt hashes and five replay checks are identical. All allocations, input
+payloads, common prominence values per post/node, sorting scores, independent
+post maxima and complete orders were checked. With prominence common across a
+post's SP entries, its highest sorting score equals that prominence multiplied
+by its highest unchanged SP-context relevance. The existing maximum rule and
+formula remain unchanged; a broader SP subject cannot substitute a different
+prominence assessment.
+
+The short post's Coffee assessment allocates 70 points to continuing coffee
+experiences and 30 to the appeal of the places. All five SP entries receive that
+same prominence 70. Roasting's Coffee assessment assigns 98 points to Coffee and
+two to its community check-in. These percentages are experimental assessments,
+not user-approved values. The final sorting scores now follow the separate
+tentative preference:
+
+| Post | Common Coffee prominence | Highest SP-context relevance | Highest sorting score |
+| --- | ---: | ---: | ---: |
+| A: More coffee in cool places (`37f44e1f`) | 70 | 0.934903 | 65.443206 |
+| B: Roasting your own beans (`056e6466`) | 98 | 0.890830 | 87.301384 |
+
+Both prominence alone and the sorting score also match the seven clear checks:
+
+| Hierarchy node | Expected higher / lower | Node-title prominence | Highest sorting score |
+| --- | --- | --- | --- |
+| coffee | Decaf / Sunday weather | 100 > 35 | 90.154658 > 28.819013 |
+| Eggs | Century eggs / rocket stove | 100 > 8 | 88.242803 > 7.730602 |
+| Eggs | Mixed diary / rocket stove | 42 > 8 | 38.818971 > 7.730602 |
+| coffee | Roasting / errands | 98 > 60 | 87.301384 > 41.622349 |
+| Eggs | Mixed diary / four-egg dinner | 42 > 26 | 38.818971 > 22.423007 |
+| coffee | Iced coffee / errands | 95 > 60 | 85.118002 > 41.622349 |
+| coffee | Roasting / second coffee | 98 > 70 | 87.301384 > 64.841903 |
+
+The tentative roasting/short-post judgment remains separate from the seven
+clear-check count. The earlier about-equal pair also remains separate: another
+coffee has prominence 50 and sorting score 42.357665; errands has 60 and
+41.622349. The difference is 0.735316 in the tentatively preferred direction,
+without an agreed tolerance or a claim that closeness passed.
+
+Complete node-title prominence orders, descending by highest sorting score:
+
+Coffee:
+
+| Post (note-ID prefix) | Coffee prominence | Highest sorting score |
+| --- | ---: | ---: |
+| Decaf drinkers (`2dc50a30`) | 100 | 90.154658 |
+| Roasting your own beans (`056e6466`) | 98 | 87.301384 |
+| Iced coffee served in ice (`76e19c3e`) | 95 | 85.118002 |
+| Is there coffee for me? (`78462b92`) | 100 | 83.173849 |
+| Coffee with raw cream and raw egg yolk (`f4c5aa5f`) | 100 | 75.582818 |
+| More coffee in cool places (`37f44e1f`) | 70 | 65.443206 |
+| Hashtag-heavy second-coffee post (`862486d8`) | 70 | 64.841903 |
+| Half & half versus cream (`143fee76`) | 70 | 62.807517 |
+| Another coffee and Sunday wishes (`737eaa89`) | 50 | 42.357665 |
+| Afternoon errands and morning coffee (`e0508834`) | 60 | 41.622349 |
+| Coffee, movement and stretching (`8a025f69`) | 35 | 33.502067 |
+| Sunday weather with hot coffee (`82d3d344`) | 35 | 28.819013 |
+| Duck-egg breakfast burrito and coffee (`ee3404d5`) | 25 | 22.274436 |
+| Tolstoy quotation with Coffee hashtag (`be8d07d4`) | 1 | 0.917359 |
+
+Eggs:
+
+| Post (note-ID prefix) | Eggs prominence | Highest sorting score |
+| --- | ---: | ---: |
+| Century-eggs explanation (`11d2afb1`) | 100 | 88.242803 |
+| Avoiding eggs and snacking on chocolate (`612fa3c5`) | 52 | 45.811085 |
+| Mixed diary with hens and egg preparations (`eaa6a5e6`) | 42 | 38.818971 |
+| Coffee with raw egg yolk (`f4c5aa5f`) | 35 | 32.538029 |
+| Four-egg dinner (`fbd52a1d`) | 26 | 22.423007 |
+| Duck-egg breakfast burrito (`ee3404d5`) | 25 | 20.662117 |
+| Rocket stove (`99e6a514`) | 8 | 7.730602 |
+
+Relative to v2, 11 Coffee pair directions and one Eggs pair direction change.
+The roasting/short-post direction matches the user's tentative judgment; the
+remaining changed directions are not new user-approved orders. In Eggs, the
+diary now comes above the raw-egg-yolk coffee post; that pair has not been
+reviewed. PPv30-node-v1 is tested, not production-frozen. These results do not
+establish general ordering quality, calibrated percentages, production adoption
+or a general advantage from relevance over prominence alone.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended

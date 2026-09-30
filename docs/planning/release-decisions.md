@@ -1140,6 +1140,25 @@ uncounted and has no agreed tolerance. **PPv30-subject-v2** is tested, not
 production-frozen; the [saved results and 91 passing workflow/comparison tests](../../sse_multivector/model-runner.md)
 do not approve exact percentages, a production rule or a change to aggregation.
 
+The user authorized the next trial: assess prominence using the hierarchy node
+title for every post in that node, with relevance and the sorting-score formula
+unchanged. **PPv30-node-v1** receives exactly the saved node title and complete
+post. The shared adapter supports `prominence_basis: "node_title"`; SP subjects,
+contexts and membership evidence remain saved for review and relevance. The same
+37 entries completed with 21 new assessments and 16 exact-request reuses, giving
+one prominence assessment per post/node. No baseline, SP output or SSE encoding
+was regenerated. All 37 relevance values, raw vectors and receipt hashes match
+the preceding trial exactly.
+The short coffee/places post now has Coffee prominence 70 across all five SP
+entries; roasting has 98. Its broader SP subjects cannot supply a different
+prominence. Their final sorting scores are 65.443206 and 87.301384 respectively,
+matching the separate tentative roasting preference. Both prominence alone and
+the sorting score still match all seven clear expected orders. The about-equal
+pair remains uncounted with no agreed tolerance. The [complete orders and verification](../../sse_multivector/model-runner.md)
+include two failing-first workflow/comparison checks and 202 passing regression
+and integration tests. **PPv30-node-v1** is tested, not production-frozen; this
+does not adopt a production ranking rule or approve exact percentages.
+
 27 is in progress: saved Coffee/Eggs trials test within-node note ordering.
 Finishing still needs 04, which is in launch scope and actively being worked
 on (September 28 correction). The relevance measure and how multiple masks

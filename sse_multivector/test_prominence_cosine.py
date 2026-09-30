@@ -93,6 +93,22 @@ class ProminenceCosineTests(unittest.TestCase):
                 self.assertEqual(reused['posts']['tea'][0]['linear_product'], 20)
                 self.assertEqual(reused['posts']['tea'][0]['prominence'], 80)
                 self.assertEqual(reused['raw_vectors_sha256'], comparison['raw_vectors_sha256'])
+                args.output = root/'node-title'
+                plan['dataset']['prominence_basis'] = 'node_title'
+                for original, e in ((case, evidence), (other_case, other)):
+                    original['inputs'] = experiment_inputs.prepare_context_prominence(
+                        {'cases': [e]}, basis='node_title')[0]['inputs']
+                    original['parsed']['prominence'] = 50
+                pc.prepare(args)
+                self.assertFalse((args.output/'result').exists())
+                pc.collect(args.output)
+                node_result = pc.read(args.output/'comparison.json')
+                self.assertEqual(node_result['raw_vectors_sha256'], comparison['raw_vectors_sha256'])
+                self.assertTrue(all(r['prominence_basis'] == 'node_title'
+                                    and r['prominence'] == 50 for r in node_result['groups']['tea']))
+                self.assertEqual(node_result['posts']['tea'][0]['prominence'], 50)
+                self.assertEqual(node_result['posts']['tea'][0]['linear_product'], 25)
+                self.assertEqual(node_result['posts']['tea'][0]['linear_product_case'], evidence['id'])
                 other_case['evidence']['context'] = 'A changed context.'
                 rows[0]['subject_entries'][1]['context'] = 'A changed context.'
                 args.output = root/'changed-encoding'
@@ -108,7 +124,7 @@ class ProminenceCosineTests(unittest.TestCase):
                     pc.collect(root/'subject')
                 raw_path.write_bytes(raw_bytes)
                 args.output = root/'bad'
-                case['inputs']['INPUT_JSON'] = json.dumps({'subject': 'Different', 'post': evidence['text']})
+                case['inputs']['INPUT_JSON'] = json.dumps({'node_title': 'Different', 'post': evidence['text']})
                 with self.assertRaisesRegex(ValueError, 'model input'):
                     pc.prepare(args)
                 self.assertFalse(args.output.exists())

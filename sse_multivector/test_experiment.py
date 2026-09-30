@@ -16,6 +16,56 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_node_title_prominence_shares_post_requests_within_each_node(self):
+        self.prompt.write_text('GENERIC PROMPT CONTEXT PROMINENCE\n{INPUT_JSON}')
+        post = dict(note_id='N1', text='Tea warms me.', subjects=[dict(
+            number=number, subject=subject, context=context,
+            byte_spans=[[0, 3]], fragments=['Tea']) for number, subject, context in (
+                ('1', 'Tea', 'Tea warms the writer.'),
+                ('2', 'Warm tea', 'The writer experiences warmth from tea.'))])
+        self.write('subjects.json', {'notes': [post]})
+        nodes = [dict(group=nid, title=title, matched_instances=[dict(
+            instance='V1', note_id='N1', text=post['text'], byte_spans=[[0, 3]],
+            fragments=['Tea'])]) for nid, title in (('G', 'Beverages'), ('H', 'Tea'))]
+        self.write('hierarchy.json', {'memberships': {'nodes': nodes}})
+        self.write('selection.json', dict(schema_version=1, subjects='subjects.json',
+            hierarchy='hierarchy.json', nodes=['G', 'H']))
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='subject_contexts', path='selection.json',
+                               prominence_basis='subject')
+        self.write('spec.json', spec)
+        self.prepare('subject')
+        answer = dict(missing_meaning='Other meaning.', prominence=80,
+                      allocation=[dict(meaning='Tea', points=100, represented=80, missing=20)])
+        self.cli('run', 'subject', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        self.assertEqual(len(self.calls()), 2)
+        spec['dataset']['prominence_basis'] = 'node_title'
+        self.write('spec.json', spec)
+        self.prepare('node-title')
+        cases = self.show('node-title')['cases']
+        self.assertEqual(len(cases), 4)
+        for case in cases:
+            evidence = case['evidence']
+            self.assertEqual(json.loads(case['inputs']['INPUT_JSON']),
+                             {'node_title': evidence['node_title'], 'post': post['text']})
+            self.assertIn(evidence['context'], [s['context'] for s in post['subjects']])
+            self.assertIn(evidence['subject'], ['Tea', 'Warm tea'])
+        self.cli('run', 'node-title', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        self.assertEqual(self.show('node-title')['summary']['attempts'], 2)
+        self.assertEqual(self.show('node-title')['summary']['reused'], 2)
+        self.assertEqual(len(self.calls()), 4)
+        self.prepare('node-title-reuse')
+        self.cli('run', 'node-title-reuse')
+        self.assertEqual(self.show('node-title-reuse')['summary']['reused'], 4)
+        self.assertEqual(len(self.calls()), 4)
+        nodes[0]['title'] = 'Warm drinks'
+        self.write('hierarchy.json', {'memberships': {'nodes': nodes}})
+        self.prepare('changed-title')
+        self.cli('run', 'changed-title', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        self.assertEqual(self.show('changed-title')['summary']['attempts'], 1)
+        self.assertEqual(self.show('changed-title')['summary']['reused'], 3)
+        self.assertEqual(len(self.calls()), 5)
+
     def test_subject_context_nodes_select_every_direct_entry_and_reuse_saved_requests(self):
         self.prompt.write_text('GENERIC PROMPT CONTEXT PROMINENCE\n{INPUT_JSON}')
         posts = [dict(note_id='N1', text='☕ Tea warms me.', subjects=[dict(

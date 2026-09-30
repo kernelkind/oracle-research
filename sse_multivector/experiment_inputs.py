@@ -475,9 +475,9 @@ def prepare_prominence(source, selected=None, combine_masks=False):
 
 
 def prepare_context_prominence(source, basis='context'):
-    """Prominence inputs from the saved SP context or subject and original post."""
-    if basis not in ('context', 'subject'):
-        raise ValueError('prominence_basis must be context or subject')
+    """Prominence inputs from a saved context, SP subject or node title and post."""
+    if basis not in ('context', 'subject', 'node_title'):
+        raise ValueError('prominence_basis must be context, subject or node_title')
     fields = ('id', 'node_id', 'node_title', 'note_id', 'text', 'mask_ids', 'byte_spans')
     cases = []
     for evidence in source['cases']:
