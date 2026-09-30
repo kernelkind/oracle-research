@@ -153,8 +153,8 @@
     {
       "id": "27",
       "title": "Order node notes using mask prominence",
-      "status": "WAITING",
-      "description": "Define and implement note ordering within each hierarchy node using mask prominence and relevance, including multiple masks from the same note. Recursive sorting and parent-child score transfer are out of scope.\nNEEDS 04"
+      "status": "IN PROGRESS",
+      "description": "Saved Coffee/Eggs experiments have tested prominence and relevance against user-reviewed note-ordering checks; the relevance measure and how multiple masks produce one note score remain open.\nDefine and implement note ordering within each hierarchy node using mask prominence and relevance, including multiple masks from the same note. Recursive sorting and parent-child score transfer are out of scope.\nFINISH WITH 04"
     },
     {
       "id": "28",

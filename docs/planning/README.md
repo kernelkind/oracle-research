@@ -53,6 +53,11 @@ its link to 03 has been removed. Any reuse in the newer hierarchy needs an
 explicit decision within 02. Understandable choices, meaningful narrowing and
 relevant-content coverage remain required in 03, without mandating that rule.
 
+Task 27 is in progress, with saved Coffee/Eggs note-ordering trials and
+user-reviewed order checks. It still needs 04 to finish; the relevance measure
+and how multiple masks produce one note score remain open. The
+04 → 27 → 03 completion dependencies are unchanged.
+
 Task 22 measures SSE and the construction stages used in the chosen workflow.
 Separate node-title generation, its input-growth measurements and the
 corresponding large-input work in 28 are required only if that stage is used.

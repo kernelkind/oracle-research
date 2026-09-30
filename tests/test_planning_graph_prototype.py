@@ -205,6 +205,11 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "VALIDATION PENDING")
                 self.assertEqual(evaluate("document.querySelectorAll('#details .related button').length"), 0)
                 self.assertEqual([node["id"] for node in check_routes()["nodes"]], ["26"])
+                evaluate("document.querySelector('#focus-task').value = '27'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
+                wait_for("document.querySelector('#details h2').textContent.startsWith('27 ·')")
+                self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
+                self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('04 ·'))"))
+                self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('03 ·'))"))
 
                 # The graph must be derived from the served task data, not draw.io.
                 data_file = public / "release-plan.json"

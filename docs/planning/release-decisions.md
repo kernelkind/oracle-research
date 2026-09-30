@@ -1069,8 +1069,10 @@ saved sorting score puts A first: 93.490294 versus B's 89.083045, using relevanc
 checks still pass; this additional judgment does not approve a formula change,
 establish why B is preferred or select a production ranking rule.
 
-27 waits for 04, which is in launch scope and actively being worked on
-(September 28 correction). 28 waits for the validated small-corpus
+27 is in progress: saved Coffee/Eggs trials test within-node note ordering.
+Finishing still needs 04, which is in launch scope and actively being worked
+on (September 28 correction). The relevance measure and how multiple masks
+produce one note score remain open. 28 waits for the validated small-corpus
 workflow and scale findings. Readiness does not authorize execution. Membership
 methods, final node-equivalence/cycle policy, ranking rules and scale
 implementation choices remain open.
