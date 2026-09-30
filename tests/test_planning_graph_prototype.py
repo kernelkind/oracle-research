@@ -154,6 +154,14 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertIn("IN PROGRESS", evaluate("document.querySelector('#details').innerText"))
                 self.assertIn("Nine further Food-ancestor answers are applied in a separate continued test export.",
                               evaluate("document.querySelector('#details').innerText"))
+                hierarchy_details = evaluate("document.querySelector('#details').innerText")
+                for pending in (
+                    "repeated Food preparation/ingredients nodes",
+                    "bagel-making and pie-making branches disconnected from Food",
+                    "experimental Dietary practices / Diets merge",
+                    "Launch-scale construction is not this completion gate",
+                ):
+                    self.assertIn(pending, hierarchy_details)
                 self.assertTrue(evaluate("document.querySelector('#graph canvas')?.getBoundingClientRect().width > 500"))
                 self.assertGreaterEqual(sum(edge["target"] == "02" for edge in check_routes()["edges"]), 2)
                 capture("focused")

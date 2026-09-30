@@ -34,14 +34,17 @@ gaps missed by the original nomination rule; all returned valid Food-ancestor
 answers. The authorized continued test export applies those nine saved answers,
 preserving the earlier export and every node, mask and direct membership. Food
 still reaches 50 posts but now has 55 immediate browsing children; repeated
-Food preparation/ingredients nodes and two disconnected preparation branches
-remain. Broader nomination and inference remain unapproved.
+Food preparation/ingredients nodes remain separate, and bagel-making and
+pie-making branches remain disconnected from Food. Review their relationships,
+alongside unresolved judgments such as the experimental Dietary practices /
+Diets merge. Broader nomination and inference remain unapproved.
 Ancestor interpretation and the browsing rule are implemented in
 this isolated test; production adoption and general conflict handling remain
 open. See the [stage record](../../sse_multivector/branch-comparison-prompt-v1/README.md#hierarchy-generation-stages).
 Task 02 remains in progress until a useful 100-note hierarchy passes the user's
-browsing review; no production workflow is selected. Earlier HR02/HDBSCAN
-results and reviews remain evidence, not the current next-step instruction.
+browsing review; finishing launch-scale construction is not this gate. No
+production workflow is selected. Earlier HR02/HDBSCAN results and reviews remain
+evidence, not the current next-step instruction.
 
 **Task 23 dependency clarified September 29:** separate node-title generation
 is required for 02 only if the chosen workflow includes that stage. Task 23
