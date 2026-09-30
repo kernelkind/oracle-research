@@ -2014,7 +2014,7 @@ Eggs:
 | Four-egg dinner (`fbd52a1d`) | 5 | 23 | 6 | 17.145254 |
 | Rocket stove (`99e6a514`) | 7 | 7 | 7 | 6.764276 |
 
-All three agreed comparisons still pass under both methods: decaf above weather
+The three original agreed comparisons pass under both methods: decaf above weather
 (prominence 29 > 27; sorting score 26.144851 > 21.245928), century eggs above
 stove (35 > 7; 27.137100 > 6.764276), and diary above stove (20 > 7;
 18.217952 > 6.764276). The weather and century-eggs post maxima now select
@@ -2026,7 +2026,22 @@ from fifth to eighth, below roasting, another coffee and iced coffee. Its
 prominence 47 and relevance 0.693706 produce sorting score 32.604173; roasting's
 46 and 0.890830 produce 40.978201. In Eggs, the diary rises above the four-egg
 dinner: 20 × 0.910898 gives 18.217952, while 23 × 0.745446 gives 17.145254.
-These new preferences need user review before claiming an ordering improvement.
+The user then reviewed the complete wording of roasting versus errands and
+diary versus four-egg dinner with URLs omitted, answering "coffee A. eggs, A."
+This establishes two additional expected post orders:
+
+| Hierarchy node | Expected higher / lower | Prominence alone | Sorting score |
+| --- | --- | --- | --- |
+| coffee | Roasting (`056e6466`) above errands (`e0508834`) | 46 < 47: fails | 40.978201 > 32.604173: passes |
+| Eggs | Diary (`eaa6a5e6`) above four-egg dinner (`fbd52a1d`) | 20 < 23: fails | 18.217952 > 17.145254: passes |
+
+Across all five user-reviewed orders, the saved SP-context sorting score matches
+five and prominence alone matches three. Relevance improves these two reviewed
+comparisons in this saved experiment; this does not establish general ordering
+quality or approve the prominence values, prompt or production formula. The two
+other changed Coffee pairs, errands versus another coffee and errands versus
+iced coffee, remain unreviewed. No new inference or encoding was needed to check
+the new judgments.
 Production adoption remains open; no recursive sorting or parent-child transfer
 was changed.
 

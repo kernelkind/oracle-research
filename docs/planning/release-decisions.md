@@ -962,7 +962,7 @@ relevance measure and how multiple masks produce one note score remain open.
 
 User-approved post-ordering checks for 27 (September 29): the user reviewed the
 complete wording of each pair with URLs omitted and chose the first post in
-all three pairs. These judgments establish expected post order; they do not select
+all five pairs. These judgments establish expected post order; they do not select
 a scoring formula, approve mask-prominence outputs or adopt a mask-aggregation
 rule.
 
@@ -971,10 +971,12 @@ rule.
 | coffee | Decaf drinkers valuing experience and flavour (`2dc50a30`) | Sunday weather with hot coffee (`82d3d344`) |
 | Eggs | Explanation of preserved century eggs (`11d2afb1`) | Rocket stove with eggs among the foods cooked (`99e6a514`) |
 | Eggs | Mixed diary with laying hens and several egg preparations (`eaa6a5e6`) | Rocket stove with eggs among the foods cooked (`99e6a514`) |
+| coffee | Roasting your own beans (`056e6466`) | Afternoon errands and morning coffee (`e0508834`) |
+| Eggs | Mixed diary with laying hens and several egg preparations (`eaa6a5e6`) | Four-egg dinner (`fbd52a1d`) |
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
-the exact mask cases and results for these three checks. They are reference pairs,
-not a claim of general ranking quality.
+the original mask comparisons and SP-context results for these five checks.
+They are reference pairs, not a claim of general ranking quality.
 
 The value used to order posts is the **sorting score**. The user authorized a
 five-post SP-context experiment: assess prominence for each saved SP context,
@@ -994,10 +996,13 @@ prominence-only order and its highest context sorting score in the other
 order. The two maxima are chosen independently and can come from different
 SP contexts. This is authorization to test the rule, not production adoption.
 The completed comparison covers Coffee's 14 posts and Eggs' seven posts across
-37 contexts. Both methods still pass all three agreed pairs. Relevance reverses
+37 contexts. Both methods pass the three original agreed pairs. Relevance reverses
 four additional pair orders: errands falls below roasting, another coffee and
-iced coffee; the diary rises above the four-egg dinner. These new preferences
-have not been judged by the user. The [complete orders and verification](../../sse_multivector/model-runner.md)
+iced coffee; the diary rises above the four-egg dinner. The user then reviewed
+roasting versus errands and diary versus four-egg dinner and approved both
+sorting-score orders. The saved sorting score matches all five reviewed orders;
+prominence alone matches three. Errands versus another coffee and errands versus
+iced coffee remain unreviewed. The [complete orders and verification](../../sse_multivector/model-runner.md)
 record 32 new assessments, five exact-request reuses and 201 passing tests.
 
 27 waits for 04, which is in launch scope and actively being worked on
