@@ -2046,7 +2046,16 @@ preference, but this is not a clear expected higher/lower order. No numeric
 tolerance for "about equal" has been agreed, so the size of the sorting-score
 difference is not marked as passing or failing that judgment.
 
-Across the six clear user-reviewed orders, the saved SP-context sorting score
+The user next reviewed the complete wording of the hashtag-heavy second-coffee
+post (`862486d8`, A) versus roasting your own beans (`056e6466`, B), with URLs
+omitted, and chose B. This adds a clear expected order that both methods fail:
+roasting has prominence 46 versus second coffee's 60, and sorting score
+40.978201 versus 55.578774. Roasting's relevance is 0.890830 versus second
+coffee's 0.926313, so both prominence and relevance favor second coffee in the
+saved experiment. Each post has exactly one matching SP context; choosing among
+multiple contexts did not cause this failure.
+
+Across the seven clear user-reviewed orders, the saved SP-context sorting score
 matches six and prominence alone matches three. The about-equal comparison is
 recorded separately and excluded from these counts. Relevance improves three
 clear reviewed comparisons in this saved experiment; this does not establish
