@@ -72,12 +72,14 @@ under `target/`. Conversion checks every selection using the existing mask
 decoder. The first rental stopped after a local monitoring error, before any
 baseline output or training completed. Its files were retrieved and the instance
 was deleted. After rebuilding and verifying the image, the user approved a
-replacement rental. The saved September 29 observation at
-21:27 UTC and Qwen report record a complete 20-note baseline, 128-step training,
-matching adapter reload and 20-note trained evaluation; Gemma dense had begun
-its baseline. This verifies execution, not acceptable semantic quality or model
-selection. Evidence is in `target/distillation-pilot-v1/launch-20260929-v2/operation/observations/`,
-including `progress-20260929T212719Z.json` and `reports-so-far.json`.
+replacement rental. All three candidates completed their
+20-note baselines, 128-step training, matching adapter reloads and 20-note trained
+evaluations. The worker exited successfully on September 30 at 02:56:58 UTC.
+Retrieval of 671 work files was hash-verified at 03:08:17 UTC; local output verification passed. This
+verifies execution; semantic review and model selection remain open. Evidence
+is in `target/distillation-pilot-v1/launch-20260929-v2/operation/`, including
+`result/work/results/*/report.json`, `launch/retrieval-verification.json`,
+`launch/destruction-confirmation.json` and `observations/`.
 
 The release model still needs prominence. The requirements below describe the
 larger evaluation and release decision; prominence is excluded only from this
@@ -247,9 +249,10 @@ and executes the candidate sequence; `distillation_vast.py` describes that work.
 The model recipes, prompts, data, batching and $25 total maximum are unchanged.
 The first published image reached Vast, but that rental ended before any
 baseline or training completed. The rebuilt image is now published and verified
-private; the approved 450 W replacement rental has completed Qwen's baseline,
-training, reload check and trained evaluation. Remaining candidate execution
-and semantic review do not belong to the completed setup task.
+private; the approved 450 W replacement rental completed all three candidates'
+baselines, training, matching reloads and trained evaluations. Results were
+retrieved and verified before explicit deletion. Semantic review remains outside
+the completed setup task.
 
 The failure audit reproduced empty successful destroy output, distinct live
 and offer bundle IDs, and missing/null transfer counters in the old controller.
@@ -883,12 +886,45 @@ rental. After the 600 W availability watch, the user approved the 450 W
 workstation offer. All other frozen checks pass.
 The recorded rental rate was $1.4167/hour including 300 GB storage.
 The new immutable operation is
-`target/distillation-pilot-v1/launch-20260929-v2/operation/`. The saved 21:27 UTC
-observation records Qwen complete and Gemma dense starting its baseline. Continue
-the remaining candidate execution, verified retrieval and explicit deletion
-within the approved limits. The old frozen launch retains its original code.
-Candidate recipes and Vast limits are unchanged. The prior publication and
-one rental were authorized within $25, at up to $1.66/hour for at most 13 hours.
+`target/distillation-pilot-v1/launch-20260929-v2/operation/`. All three candidates
+completed in the frozen image and package. The worker exited with status zero
+on September 30 at **02:56:58 UTC**. Retrieval of **671 work files** was
+hash-verified at **03:08:17 UTC**, and local output verification passed at
+03:08:20 UTC. Rental time was about **9 hours 28 minutes**, below the approved
+13-hour limit; the 12-hour worker timeout did not fire. The local watcher was
+resumed after chat interruptions while the same remote attempt continued.
+
+| Candidate | Baseline `f1_80` | Trained `f1_80` | Trained subject / mask failures | Training minutes |
+| --- | ---: | ---: | ---: | ---: |
+| Qwen | 0.333 | 0.346 | 2 / 3 | 52.2 |
+| Gemma dense | 0.000* | 0.397 | 1 / 5 | 80.6 |
+| Gemma MoE | 0.000* | 0.313 | 3 / 13 | 24.8 |
+
+These are teacher-agreement scores on 20 held-out notes, with one-to-one matching
+of unique nonempty source-word selections; semantic correctness remains pending.
+All 20 baseline subject answers from each Gemma candidate were wrapped in
+Markdown code fences and failed strict JSON parsing. Their zero scores reflect
+formatting failure, and no baseline mask calls were made. Removing fences from
+sampled answers for inspection exposed subjects, but neither saved scoring nor
+rental execution was changed. Qwen's invalid masks decreased from 22 to 3.
+Each candidate trained on 211 sampled subject examples and 813 mask examples;
+all saved adapters reproduced their pre-save answers after reload. The training
+times above exclude saving and the reload comparison.
+
+The observation directory contains **553 periodic GPU samples** recording
+utilization, VRAM, power draw and power limit from September 29 at 17:46 UTC
+through September 30 at 02:56 UTC. Four sampling gaps exceeded two minutes;
+the longest was about 6.7 minutes. Maximum sampled VRAM use was 96,581 MiB.
+
+The preliminary resource charge was **$13.392**. Evidence is
+`observations/preliminary-charge-summary.json` and its native invoice snapshot. Including
+the earlier failed rental's $0.338, posted charges total **$13.73** across both
+rentals; unposted charges remain unresolved. The next step is semantic review
+of the saved answers and deciding how future baseline comparisons should handle
+format failures before candidate selection. The old frozen launch retains its
+original code. Candidate recipes and Vast limits are unchanged. The prior
+publication and one rental were authorized within $25, at up to $1.66/hour for
+at most 13 hours.
 The saved split inspection found no clear complete-note duplicates or close paraphrases across
 the 80/20 split; topical overlaps remain recorded and this is an informal test.
 Registry verification of the previous image completed before the first launch.

@@ -602,11 +602,17 @@ A 30-minute watch found no eligible 600 W offer. The user then approved the
 450 W RTX PRO 6000 WS alternative: the same 96 GB GPU, with lower power that
 may reduce speed; all other frozen offer checks pass. The launch-specific
 `approved-settings-450w.json` overrides only that power requirement in addition
-to the prior price/time overrides. The experiment used a $1.4167/hour configuration including 300 GB storage. The Qwen report and saved September 29 observation at 21:27 UTC
-record a completed baseline, 128-step training, matching reload and trained
-evaluation, with Gemma dense beginning its baseline. This verifies pilot execution, not
-acceptable model quality or completed selection. The rental remains billable
-until explicit deletion; no lifecycle action is authorized by this status sync.
+to the prior price/time overrides. The experiment used a $1.4167/hour configuration including 300 GB storage. All three candidates completed their 20-note baselines,
+128-step training, matching adapter reloads and trained evaluations in the frozen
+image and package. The worker exited successfully on September 30 at 02:56:58
+UTC. Retrieval of 671 work files was hash-verified, and local output verification passed. 
+Teacher-agreement `f1_80` was 0.333 before and 0.346 after training for Qwen;
+trained scores were 0.397 for Gemma dense and 0.313 for Gemma MoE. All 20
+untuned subject responses from each Gemma candidate had Markdown code fences
+and failed strict JSON parsing, producing zero baseline scores and no baseline
+mask calls. Those comparisons therefore include formatting gains; semantic
+quality review and model selection remain open. GPU telemetry has 553 periodic
+samples, including recorded sampling gaps. Preliminary charges for this run were $13.392.  The prior failed run's preliminary cost was $0.338. Posted charges for the two experiment runs totaled $13.73, within the unchanged $25 experiment maximum.
 The old frozen operation and published image remain unchanged.
 The user accepted a $25 total maximum for GPU setup, baselines and initial
 fine-tunes across the three candidates, including storage, transfers and failed

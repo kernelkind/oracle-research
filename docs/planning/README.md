@@ -83,9 +83,8 @@ Earlier HR02 results remain preserved, not the current next step.
 
 Task 18 is complete for pilot setup. The rebuilt image is published and verified;
 local VM rehearsals cover all three candidate families. The replacement GPU run
-completed Qwen's baseline, training, reload check and trained evaluation. This
-does not complete preliminary candidate-quality review in 29 or model selection
-in the larger pilot, 06. Task 29 tracks the preliminary 100-note fine-tuning
+completed all three baselines, 128-step training runs, matching adapter reloads
+and trained evaluations. Results were hash-verified locally. Semantic review remains pending; this does not complete candidate-quality review in 29 or model selection in the larger pilot, 06. Task 29 tracks the preliminary 100-note fine-tuning
 experiment in progress; 06 remains waiting for its larger-pilot data. Its
 original ~1,000-note scale is not a frozen dataset-size requirement.
 
