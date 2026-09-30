@@ -16,6 +16,29 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_explicit_websocket_transport_is_frozen_and_not_reused_from_sse(self):
+        self.prepare('sse')
+        self.cli('run', 'sse')
+        self.cli('prepare', 'ws', '--from', 'sse', '--transport', 'websocket')
+        plan = json.loads((self.root / 'ws' / 'experiment.json').read_text())['plan']
+        original = json.loads((self.root / 'sse' / 'experiment.json').read_text())['plan']
+        self.assertEqual(plan['cases'], original['cases'])
+        self.assertEqual(plan['prompt'], original['prompt'])
+        self.assertEqual(plan['runner'], {**original['runner'], 'transport': 'websocket'})
+        shown = self.show('ws')
+        self.assertEqual(shown['settings']['transport'], 'websocket')
+        self.assertEqual(shown['requests']['reusable'], 0)
+        self.cli('prepare', 'ws-copy', '--from', 'ws')
+        self.assertEqual(self.show('ws-copy')['settings']['transport'], 'websocket')
+        from sse_multivector import extraction_pipeline as engine
+        sse_manifest = json.loads((self.root / 'sse' / 'run' / 'manifest.json').read_text())
+        ws_manifest = json.loads((self.root / 'ws' / 'run' / 'manifest.json').read_text())
+        self.assertNotEqual(engine._prompt_request_key(sse_manifest, 'same'),
+                            engine._prompt_request_key(ws_manifest, 'same'))
+        explicit_sse = {**sse_manifest, 'transport': 'sse'}
+        self.assertEqual(engine._prompt_request_key(sse_manifest, 'same'),
+                         engine._prompt_request_key(explicit_sse, 'same'))
+
     def test_node_title_prominence_shares_post_requests_within_each_node(self):
         self.prompt.write_text('GENERIC PROMPT CONTEXT PROMINENCE\n{INPUT_JSON}')
         post = dict(note_id='N1', text='Tea warms me.', subjects=[dict(

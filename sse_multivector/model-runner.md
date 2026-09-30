@@ -81,6 +81,12 @@ Required fields:
 
 Optional fields:
 
+- `transport`: `sse` (default) or `websocket`. WebSocket is subscription-only:
+  one connection and one `response.create` frame, with no reconnect, continuation
+  or SSE fallback. It uses the same credential-proxy route and SDK serializer
+  and answer parser. The frame omits `stream` and `background`; model, prompt,
+  schema and reasoning are unchanged. See the official
+  [Responses WebSocket protocol](https://developers.openai.com/api/docs/guides/websocket-mode).
 - `schema`: a JSON Schema for the response. Omit it for ordinary text.
 - `timeout_seconds`: integer from 1 to 3600; default 300. This is the overall
   request deadline, including streaming. Chat streams have no separate body-idle
@@ -166,10 +172,20 @@ timeouts, and cannot recover details missing from older receipts. Missing final
 usage after a failure does not establish zero cost.
 
 SSE diagnostics also observe a successful streaming response when `Content-Type`
-is absent. Both chat transports request streaming; an explicitly different
+is absent. Both SSE chat routes request streaming; an explicitly different
 response type is still respected. The observer leaves headers and forwarded
 bytes unchanged, and captures body-error causes before the SDK reduces them to
 messages such as `terminated`.
+
+WebSocket receipts record the actual GET upgrade URL, redacted headers and
+`response.create` frame, not an HTTP POST. `http_status: 101` means the upgrade
+succeeded. Metadata includes frame/byte counts, the terminal event and observed
+close code/reason. The SDK consumes the same events through an in-process SSE
+parser interface; its synthetic HTTP status is never reported as server evidence.
+`timing` byte counts include that parser framing; `websocket_bytes` counts the
+original message payloads. A close without a terminal event is a failure, even
+if a partial answer has arrived. Successful transport does not establish answer
+quality or a longer upstream request lifetime.
 
 With upstream debugging enabled, `timing.event_trace` retains the first 256 JSON
 events' times, kinds, and delta field names, not their content. Dropped entries
@@ -253,6 +269,10 @@ sentence. The model's response does not trigger tools or additional calls.
 The runner makes no automatic retries, response repair, or model substitution.
 OpenRouter may try multiple providers internally under the fallback policy above;
 `http_attempts` counts the runner's HTTP attempts, not OpenRouter's provider attempts.
+For WebSockets it counts the single upgrade attempt; no additional model request
+is made. The experiment CLI accepts `prepare --transport websocket`, freezes it
+in the manifest and request identity, and cannot reuse an SSE response for it.
+Omitting transport retains historical SSE request keys.
 
 ## Result
 

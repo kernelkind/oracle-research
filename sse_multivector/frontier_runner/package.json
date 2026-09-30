@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test model.test.mjs runner.test.mjs auth.test.mjs proxy.test.mjs systemone.test.mjs"
+    "test": "node --test model.test.mjs runner.test.mjs auth.test.mjs proxy.test.mjs systemone.test.mjs websocket.test.mjs"
   },
   "engines": {
     "node": ">=24"

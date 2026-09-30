@@ -186,6 +186,7 @@ def prepare(args):
             "provider",
             "concurrency",
             "max_output_tokens",
+            "transport",
         )
         if getattr(args, k) is not None
     }
@@ -327,9 +328,11 @@ def import_setup(path, setup):
         "provider",
         "max_output_tokens",
         "timeout_seconds",
+        "transport",
     ):
-        expected = setup["runner"].get(name, {"timeout_seconds": 600}.get(name))
-        if expected != getattr(config, name) or expected != manifest.get(name):
+        default = {"timeout_seconds": 600, "transport": "sse"}.get(name)
+        expected = setup["runner"].get(name, default)
+        if expected != getattr(config, name) or expected != manifest.get(name, default):
             raise ValueError(f"legacy setting mismatch: {name}")
     if setup["runner"].get(
         "output_schema"
@@ -655,6 +658,7 @@ def report(directory, only=None, note_ids=None, *, generation_costs=False):
             **plan["runner"],
             "timeout_seconds": config.timeout_seconds,
             "max_output_tokens": config.max_output_tokens,
+            "transport": config.transport,
             "concurrency": config.concurrency,
         },
         "imported": plan["imported"],
@@ -1037,6 +1041,8 @@ def parser():
     p.add_argument("--provider", choices=("openai-codex", "openrouter"))
     p.add_argument("--concurrency", type=int)
     p.add_argument("--max-output-tokens", type=int)
+    p.add_argument("--transport", choices=("sse", "websocket"),
+                   help="explicit transport; websocket is subscription-only, without fallback")
     p.add_argument(
         "--import-config",
         type=Path,

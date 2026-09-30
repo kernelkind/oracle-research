@@ -18,6 +18,7 @@ import { OPENAI_CODEX_MODELS } from '@earendil-works/pi-ai/providers/openai-code
 import { OPENROUTER_MODELS } from '@earendil-works/pi-ai/providers/openrouter.models';
 import { stream as codexStream } from '@earendil-works/pi-ai/api/openai-codex-responses';
 import { stream as openrouterStream } from '@earendil-works/pi-ai/api/openai-completions';
+import { websocketRequest, websocketResponse } from './websocket.mjs';
 
 export const VERSION = 'oracle-model-runner/1';
 const PI_AI_VERSION = '0.85.1';
@@ -146,7 +147,7 @@ const mimoFlash = {
 
 async function identity() {
   const hash = createHash('sha256');
-  for (const path of ['model.mjs', 'package-lock.json', '../run-model.sh']) {
+  for (const path of ['model.mjs', 'websocket.mjs', 'package-lock.json', '../run-model.sh']) {
     const bytes = await readFile(new URL(path, import.meta.url));
     hash.update(`${path}\0${bytes.length}\0`).update(bytes);
   }
@@ -174,8 +175,11 @@ function compileSchema(schema) {
 /** Prepare the exact prompt and explicitly selected route, without reading any task inputs. */
 export async function prepare(config) {
   if (!config || typeof config !== 'object' || Array.isArray(config)) throw new Error('Config must be an object');
-  const allowed = new Set(['provider', 'model', 'reasoning', 'prompt', 'schema', 'max_output_tokens', 'timeout_seconds', 'debug']);
+  const allowed = new Set(['provider', 'model', 'reasoning', 'prompt', 'schema', 'max_output_tokens', 'timeout_seconds', 'debug', 'transport']);
   for (const key of Object.keys(config)) if (!allowed.has(key)) throw new Error(`Unknown config field: ${key}`);
+  const transport = config.transport ?? 'sse';
+  if (!['sse', 'websocket'].includes(transport)) throw new Error('transport must be sse or websocket');
+  if (transport === 'websocket' && config.provider !== 'openai-codex') throw new Error('WebSocket is supported only for subscription Responses');
   if ('debug' in config) {
     if (config.provider !== 'openrouter') throw new Error('debug is supported only for OpenRouter');
     if (!config.debug || typeof config.debug !== 'object' || Array.isArray(config.debug) ||
@@ -223,7 +227,7 @@ export async function prepare(config) {
   const schema = hasSchema ? structuredClone(config.schema) : null;
   const validate = hasSchema ? compileSchema(schema) : null;
   return {
-    model, decisions, reasoning: config.reasoning, prompt: config.prompt, debug: structuredClone(config.debug),
+    model, decisions, transport, reasoning: config.reasoning, prompt: config.prompt, debug: structuredClone(config.debug),
     max_output_tokens: config.max_output_tokens ?? null, timeout_seconds: timeout,
     prompt_sha256: sha256(config.prompt), schema, schema_name: 'output',
     schema_sha256: hasSchema ? sha256(JSON.stringify(schema)) : null, validate,
@@ -501,7 +505,7 @@ async function executeDecisions(request, { apiKey, fetch, signal }) {
 }
 
 /** Invoke pi-ai once through an explicit credential and transport. No auth discovery or fallback. */
-export async function execute(request, { apiKey, fetch = globalThis.fetch, signal } = {}) {
+export async function execute(request, { apiKey, fetch = globalThis.fetch, signal, offline = false } = {}) {
   if (!nonempty(apiKey)) throw new Error('Explicit credentials are required for execution');
   if (request.model.api === 'systemone') return executeDecisions(request, { apiKey, fetch, signal });
   const provenance = await identity();
@@ -518,6 +522,8 @@ export async function execute(request, { apiKey, fetch = globalThis.fetch, signa
   const started = performance.now();
   const elapsed = () => Math.round(performance.now() - started);
   const options = {
+    // Use the existing SDK serializer/parser only. Its native WebSocket path
+    // silently retries/falls back even with maxRetries:0, violating our contract.
     apiKey, transport: 'sse', cacheRetention: 'none', maxRetries: 0, timeoutMs: request.timeout_seconds * 1000,
     signal: abort,
     reasoningEffort: ['provider-default', 'on'].includes(request.reasoning) ? undefined : request.reasoning === 'off' ? 'none' : request.reasoning,
@@ -527,14 +533,23 @@ export async function execute(request, { apiKey, fetch = globalThis.fetch, signa
       if (calls !== 0) throw new Error('Only one HTTP attempt is permitted');
       calls++;
       wire = await wireRequest(input, init);
+      if (request.transport === 'websocket') wire = websocketRequest(wire);
       let response;
-      try { response = await fetch(input, { ...init, dispatcher: streamDispatcher }); }
+      try {
+        response = request.transport === 'websocket' && !offline
+          ? await websocketResponse(wire, init, responseMetadata, abort)
+          : await fetch(input, { ...init, dispatcher: streamDispatcher });
+      }
       catch (error) {
         responseMetadata.transport_error = { phase: 'headers', ...errorDetails(error, redact) };
         timing.error_ms = elapsed();
         throw error;
       }
-      return observeResponse(response, responseMetadata, timing, elapsed, redact, request.debug?.echo_upstream_body);
+      const observed = observeResponse(response, responseMetadata, timing, elapsed, redact, request.debug?.echo_upstream_body);
+      // observeResponse sees the in-process parser interface. Never report its
+      // synthetic status as a successful HTTP request to the server.
+      if (request.transport === 'websocket' && !offline) responseMetadata.http_status = 101;
+      return observed;
     },
   };
   const context = { messages: [{ role: 'user', content: request.prompt, timestamp: 0 }] };
@@ -545,7 +560,7 @@ export async function execute(request, { apiKey, fetch = globalThis.fetch, signa
   if (abort.aborted) responseMetadata.abort_reason = errorDetails(abort.reason, redact);
   const raw = result.content.filter(item => item.type === 'text').map(item => item.text).join('');
   return {
-    ...provenance, provider: request.model.provider, model: request.model.id, reasoning: request.reasoning,
+    ...provenance, provider: request.model.provider, model: request.model.id, reasoning: request.reasoning, transport: request.transport,
     prompt_sha256: request.prompt_sha256, schema_sha256: request.schema_sha256,
     elapsed_ms: elapsed(), timing, request: wire ?? null, response_metadata: redact(responseMetadata),
     response_id: redact(result.responseId ?? null), response_model: redact(result.responseModel ?? null),
@@ -564,6 +579,7 @@ export async function preview(request) {
     'https://api.openai.com/auth': { chatgpt_account_id: 'offline-preview' },
   })).toString('base64') + '.not-a-signature';
   const result = await execute(request, {
+    offline: true,
     apiKey: request.model.provider === 'openai-codex' ? fakeToken : 'offline-preview',
     fetch: async () => new Response('{"error":{"message":"Offline preview: no request sent"}}', { status: 400 }),
   });
@@ -573,7 +589,7 @@ export async function preview(request) {
     provider: result.provider, model: result.model, reasoning: result.reasoning,
     prompt_sha256: request.prompt_sha256, schema_sha256: request.schema_sha256, prompt: request.prompt,
     credentials_read: false, network_requests: 0, ...result.request,
-    notice: 'Actual transport HTTP body decoded for inspection; authentication headers are placeholders. Server acceptance and hidden provider behavior are untested.',
+    notice: 'Actual serialized request decoded for inspection; WebSocket body is the response.create frame. Authentication headers are placeholders. Server acceptance and hidden provider behavior are untested.',
   };
 }
 
@@ -638,7 +654,8 @@ export async function localPiConnection(providerName = 'openai-codex') {
 const help = `Usage: run-model.sh preview|run [CONFIG.json] [--send]
 Reads one JSON config from file or stdin; writes one JSON result to stdout.
 Required: provider, model, reasoning, prompt (sent exactly as supplied).
-Optional: schema, timeout_seconds (default 300). No tools, history, retries, or prompt repair.
+Optional: schema, timeout_seconds (default 300), transport (sse default; websocket for subscription only).
+No tools, history, retries, prompt repair, or WebSocket-to-SSE fallback.
 Providers: openai-codex subscription; OpenRouter chat via pi-ai; Jev via System One.
 Jev prompt: JSON encoding of {state, questions}; reasoning must be provider-default.
 Jev schema validates answers locally; no output caps or chat debug settings.

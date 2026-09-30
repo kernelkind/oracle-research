@@ -780,6 +780,7 @@ class PromptRunnerConfig:
     prompts: tuple[PromptJob, ...]
     output_schema: dict[str, object] | None = None
     concurrency: int = 16
+    transport: str = "sse"
 
     @classmethod
     def load(cls, path: Path) -> "PromptRunnerConfig":
@@ -798,13 +799,18 @@ class PromptRunnerConfig:
                 "reasoning_effort",
                 "prompts",
             }
-            | (({"output_schema", "concurrency"} | RUNTIME_FIELDS) & value.keys()),
+            | (({"output_schema", "concurrency", "transport"} | RUNTIME_FIELDS) & value.keys()),
         )
         if value["schema_version"] != SCHEMA_VERSION:
             raise RunnerError("unsupported config schema version")
         concurrency = value.get("concurrency", cls.concurrency)
         if type(concurrency) is not int or concurrency < 1:
             raise RunnerError("concurrency must be a positive integer")
+        transport = value.get("transport", "sse")
+        if transport not in ("sse", "websocket"):
+            raise RunnerError("transport must be sse or websocket")
+        if transport == "websocket" and value.get("provider") != "openai-codex":
+            raise RunnerError("WebSocket is supported only for subscription Responses")
         output_schema = None
         if "output_schema" in value:
             output_schema = _expect_object(
@@ -845,6 +851,7 @@ class PromptRunnerConfig:
             prompts=tuple(prompts),
             output_schema=output_schema,
             concurrency=concurrency,
+            transport=transport,
         )
         return config
 
@@ -1000,6 +1007,8 @@ def _build_prompt_manifest(
         manifest["response_schema_sha256"] = _sha256_bytes(
             _ordered_json_bytes(config.output_schema)
         )
+    if config.transport != "sse":
+        manifest["transport"] = config.transport
     return manifest
 
 
@@ -1872,6 +1881,9 @@ def _validate_model_result(
         raise RunnerError(
             "model runner did not return a valid completed response bound to the request"
         )
+    transport = getattr(config, "transport", "sse")
+    if result.get("transport", "sse") != transport:
+        raise RunnerError("model result transport differs from frozen request")
     raw = result.get("raw_text")
     if not isinstance(raw, str) or not raw.strip():
         raise RunnerError("model runner final response is empty")
@@ -1879,6 +1891,14 @@ def _validate_model_result(
         _expect_object(result.get("request"), "model request").get("body"),
         "model request body",
     )
+    if transport == "websocket" and (
+        result["request"].get("method") != "GET"
+        or not result["request"].get("url", "").startswith(("ws://", "wss://"))
+        or body.get("type") != "response.create"
+        or "stream" in body or "background" in body
+        or result.get("response_metadata", {}).get("http_status") != 101
+    ):
+        raise RunnerError("model result does not establish the requested WebSocket exchange")
     wire_schema = (
         (body.get("text") or {}).get("format", {}).get("schema")
         if config.provider == "openai-codex"
@@ -1924,6 +1944,8 @@ def _invoke_model(
         "prompt": prompt,
         "timeout_seconds": config.timeout_seconds,
     }
+    if getattr(config, "transport", "sse") != "sse":
+        request["transport"] = config.transport
     if schema is not None:
         request["schema"] = schema
     if config.max_output_tokens is not None:
@@ -2213,6 +2235,9 @@ def _prompt_request_key(manifest: dict[str, Any], prompt: str) -> str:
                    timeout_seconds=float(manifest["timeout_seconds"]),
                    max_output_tokens=manifest.get("max_output_tokens"),
                    response_schema_sha256=manifest.get("response_schema_sha256"))
+    # Preserve historical SSE keys; alternate transports are distinct requests.
+    if manifest.get("transport", "sse") != "sse":
+        request["transport"] = manifest["transport"]
     return _sha256_bytes(_canonical_json_bytes(request))
 
 
@@ -2270,6 +2295,7 @@ def _read_request_source(reference: object, request_key: str, *,
             max_output_tokens=manifest.get("max_output_tokens"), run_directory=path.parent,
             model=manifest["model"], reasoning_effort=manifest["reasoning_effort"],
             prompts=(PromptJob(prompt["prompt_id"], prompt["text"]),), output_schema=schema,
+            transport=manifest.get("transport", "sse"),
         )
         if (record["manifest_sha256"] != reference["manifest_sha256"]
                 or _prompt_request_key(manifest, prompt["text"]) != request_key
