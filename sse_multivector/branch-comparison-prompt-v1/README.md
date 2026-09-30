@@ -512,7 +512,8 @@ then applied 13 current ancestor answers in a separate view. A subsequent
 [nine-pair Food test](#recovered-food-comparisons) returned nine ancestor answers,
 now applied in a [separate continued export](#extended-food-test-export).
 The [same-worded sibling test](#same-worded-sibling-test) saved 20 equivalence
-answers without applying them.
+answers. The separate [HG6 application test](#same-worded-sibling-hg6-export)
+then combined those nodes without new inference.
 The saved LG01 hierarchy is unchanged; production adoption
 and general conflict handling remain open.
 
@@ -861,7 +862,8 @@ or repeated-node clutter. These are agent observations, not user quality approva
 
 ## Same-worded sibling test
 
-Status: **authorized isolated test completed; answers not applied**. HG4.2
+Status: **authorized isolated test completed; answers subsequently applied only
+in the separate HG6 export below**. HG4.2
 was applied uniformly to the separate extended Food test hierarchy, not to a
 manually chosen food-only list. It selected 20 distinct pairs:
 
@@ -894,14 +896,58 @@ examples without narrowing the stated subjects. These assessments are not user
 approvals or evidence that identical wording always implies equivalence.
 The runner preserves requests, receipts, outputs and separate agent reviews at
 `target/branch-comparison-v1/bcpv4-same-worded-siblings-v1/experiment/`.
-No hierarchy nodes or links were changed, and no HG6–HG8 stage was run.
+The comparison run changed no hierarchy nodes or links. The subsequent HG6
+test below uses its saved answers without rerunning them.
+
+## Same-worded sibling HG6 export
+
+Status: **authorized offline application completed; HG7 rechecks not run**.
+The shared runner's `export-hierarchy --combine-equivalent --base` validates
+the saved base export and the 20 equivalence receipts, uses the existing HG6
+combination code, and writes a separate browsable hierarchy. It preserves the
+existing relationships rather than adding new ancestor placements.
+
+The 20 answers combine 17 hierarchy nodes into six, reducing the complete
+100-post hierarchy from 1,753 to 1,742 nodes. All 2,383 original SP subject
+entries, 1,674 masks, source posts and SP relationships remain represented.
+Food's immediate browsing children decrease from 55 to 47: five Food preparation
+nodes become one, four Food ingredients nodes become one, and two Vegetables
+nodes become one. The other combinations are Greetings, Nostr community, and
+Eating whatever is available for survival. Food still directly represents 31
+posts and recursively reaches the same 50 posts. The two Food preparation
+nodes outside this branch remain separate; this rule did not nominate them.
+
+HG7 remapping retains 18 unchanged old judgments. Seventeen old judgments
+become nine distinct pairs with changed subject/context inputs, recorded in
+`provenance.json` under `preparation.pending_comparisons`. Their original
+answers and receipts are retained as evidence, not treated as current judgments
+of the combined nodes. Existing links remain in this provisional HG6 graph;
+the nine rechecks and general conflict handling remain open.
+
+The export is reproducible through the shared runner, with no model calls:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py export-hierarchy \
+  target/branch-comparison-v1/bcpv4-same-worded-siblings-v1/experiment \
+  --base target/branch-comparison-v1/bcpv4-food-ancestors-v1/hierarchy \
+  --source sse_multivector/hierarchy-refresh-v1 \
+  --output target/branch-comparison-v1/bcpv4-same-worded-siblings-replay-v1 \
+  --combine-equivalent
+```
+
+The output must be fresh. The saved result is under
+`target/branch-comparison-v1/bcpv4-same-worded-siblings-v1/hierarchy/`.
+SP ancestry, cycle checks, browsing ancestry and the existing browser's
+noninteractive validation passed. The earlier hierarchies and model receipts
+remain unchanged; this is not a production adoption decision.
 
 ## Next step
 
-Suggested, not started: apply the 20 saved equivalence answers through HG6 in
-a separate test hierarchy, preserving the input hierarchy and original SP
-entries. Then check the combined nodes and whether HG7 has changed-input
-comparisons to resolve. No additional inference is yet authorized. The
+Suggested, not started: recheck the nine changed-input pairs through HG7 using
+unchanged BCPv4/Astra low, then inspect their answers before applying new
+relationships. The 18 unchanged judgments need no rerun. No additional
+inference is yet authorized. The
 [HG8 draft](#proposed-hg8--apply-ancestor-relationships) still requires review of
 general conflict handling. Keep the saved LG01 hierarchy unchanged.
 

@@ -1059,6 +1059,8 @@ def parser():
     p = commands.add_parser('export-hierarchy', help='export saved subject-pair ancestor answers to a separate test view; no inference')
     p.add_argument('experiment', type=Path)
     p.add_argument('--base', type=Path, help='existing validated export referenced by these additional comparisons')
+    p.add_argument('--combine-equivalent', action='store_true',
+                   help='HG6 only: combine saved equivalences in --base; preserve links and flag changed HG7 inputs, without inference')
     p.add_argument('--source', type=Path, required=True, help='saved masked-posts.json and vector-map.json directory')
     p.add_argument('--output', type=Path, required=True, help='fresh directory outside saved sources')
     p = commands.add_parser(
@@ -1138,7 +1140,8 @@ def main(argv=None):
                 from .subject_hierarchy import export_comparisons
             except ImportError:
                 from subject_hierarchy import export_comparisons
-            print(json.dumps(export_comparisons(args.experiment, args.source, args.output, args.base), indent=2))
+            print(json.dumps(export_comparisons(args.experiment, args.source, args.output,
+                                               args.base, args.combine_equivalent), indent=2))
         elif args.command == "show":
             only = ([args.case] if args.generation_costs and args.case and args.only is None
                     else args.only)

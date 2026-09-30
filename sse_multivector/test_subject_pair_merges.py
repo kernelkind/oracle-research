@@ -256,6 +256,36 @@ class SubjectPairMergeTests(unittest.TestCase):
         self.assertEqual(before, {p: p.read_bytes() for p in before})
         self.assertEqual(len(self.calls()), calls)
 
+    def test_merge_only_export_rejects_other_answers_and_missing_base(self):
+        source = self.prepare_additional_export(relation='uncertain')
+        calls = len(self.calls())
+        for base, message in [(['--base', 'view'], 'requires only equivalent'),
+                              ([], 'requires --base')]:
+            with self.subTest(base=base):
+                failed = self.cli('export-hierarchy', 'additional', *base,
+                    '--source', source, '--output', 'merged-view', '--combine-equivalent', ok=False)
+                self.assertIn(message, failed.stderr)
+                self.assertFalse((self.root / 'merged-view').exists())
+        self.assertEqual(len(self.calls()), calls)
+
+    def test_merge_export_rebuilds_automatic_sibling_nomination_evidence(self):
+        source, _ = self.prepare_export(duplicate_title=True,
+            edges=[[0, 5], [0, 6], [2, 6]])
+        self.cli('export-hierarchy', 'combined', '--source', source, '--output', 'view')
+        self.write('siblings.json', dict(schema_version=1, inputs='subjects.json',
+            hierarchy='view/results.json', selection='same_worded_siblings'))
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='subject_pairs', path='siblings.json')
+        self.write('siblings-spec.json', spec)
+        self.cli('prepare', 'siblings', '--spec', self.root / 'siblings-spec.json')
+        self.cli('run', 'siblings', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"relation":"equivalent","reason":"The same broad subject."}'})
+        calls = len(self.calls())
+        result = self.cli('export-hierarchy', 'siblings', '--base', 'view',
+            '--source', source, '--output', 'merged-view', '--combine-equivalent')
+        self.assertEqual(json.loads(result.stdout)['nodes_combined'], 1)
+        self.assertEqual(len(self.calls()), calls)
+
     def test_additional_export_replays_first_generation_provenance(self):
         source = self.prepare_additional_export()
         path = self.root / 'view/provenance.json'
@@ -267,6 +297,61 @@ class SubjectPairMergeTests(unittest.TestCase):
             '--source', source, '--output', 'extended')
         self.assertEqual(json.loads(result.stdout)['new_ancestor_links'], 1)
         self.assertEqual(len(self.calls()), calls)
+
+    def test_exports_equivalence_only_merges_without_inference_or_stale_answers(self):
+        source = self.prepare_additional_export(relation='equivalent',
+            pairs=[dict(id='merge-meals', A='S0003', B='S0004')])
+        before = {p: p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        calls = len(self.calls())
+        result = self.cli('export-hierarchy', 'additional', '--base', 'view',
+            '--source', source, '--output', 'merged-view', '--combine-equivalent')
+        summary = json.loads(result.stdout)
+        self.assertEqual(summary['nodes'], 4)
+        self.assertEqual(summary['nodes_combined'], 1)
+        self.assertEqual(summary['pending_comparisons'], 2)
+        self.assertEqual(summary['inference_calls'], 0)
+        graph = json.loads((self.root / 'merged-view/results.json').read_text())
+        self.assertEqual(graph['groups'], [[0, 1, 2], [3, 4], [5], [6]])
+        self.assertIn([0, 1], graph['edges'])  # Existing Food ancestry survives.
+        provenance = json.loads((self.root / 'merged-view/provenance.json').read_text())
+        original = json.loads((self.root / 'view/provenance.json').read_text())
+        self.assertEqual(provenance['subjects'], original['subjects'])
+        self.assertEqual(provenance['masks'], original['masks'])
+        self.assertEqual(provenance['comparisons'], [])  # Old inputs are not current judgments.
+        prep = provenance['preparation']
+        self.assertEqual(len(prep['equivalent_answers']), 1)
+        self.assertEqual(len(prep['pending_comparisons']), 2)
+        self.assertEqual(len(prep['previous_comparisons']), 4)
+        view = json.loads((self.root / 'merged-view/categories.json').read_text())
+        nodes = {n['node_id']: n for n in view['nodes']}
+        self.assertEqual(nodes['S0003']['note_ids'], ['N3', 'N4'])
+        self.assertIn('HG7', nodes['S0003']['analysis'])
+        self.assertEqual(before, {p: p.read_bytes() for p in before})
+        self.assertEqual(len(self.calls()), calls)
+
+        # Continuation reconstructs the merge from bound source answers, not
+        # a trusted copy of its groups. Unrelated answers leave HG7 pending.
+        self.write('followup.json', dict(schema_version=1, inputs='subjects.json',
+            hierarchy='merged-view/results.json',
+            pairs=[dict(id='food-tea', A='S0000', B='S0005')]))
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='subject_pairs', path='followup.json')
+        self.write('followup-spec.json', spec)
+        self.cli('prepare', 'followup', '--spec', self.root / 'followup-spec.json')
+        self.cli('run', 'followup', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"relation":"uncertain","reason":"Unrelated fixture."}'})
+        calls = len(self.calls())
+        result = self.cli('export-hierarchy', 'followup', '--base', 'merged-view',
+                         '--source', source, '--output', 'replayed-view')
+        self.assertEqual(json.loads(result.stdout)['pending_comparisons'], 2)
+        self.assertEqual(len(self.calls()), calls)
+        altered = json.loads((self.root / 'merged-view/provenance.json').read_text())
+        altered['preparation']['pending_comparisons'].clear()
+        self.write('merged-view/provenance.json', altered)
+        failed = self.cli('export-hierarchy', 'followup', '--base', 'merged-view',
+                         '--source', source, '--output', 'tampered-view', ok=False)
+        self.assertIn('provenance preparation differs', failed.stderr)
+        self.assertFalse((self.root / 'tampered-view').exists())
 
     def test_additional_export_rejects_conflicts_equivalence_duplicates_and_unrun_answers(self):
         for kwargs, message in [

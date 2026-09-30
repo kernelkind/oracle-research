@@ -88,7 +88,7 @@ def browser_spec(inputs, result, masks, source_hash):
                        for p in inputs["posts"]], note_masks=note_masks, mask_instances=instances)
 
 
-def _export_bundle(directory, source, base=None, ancestry=()):
+def _export_bundle(directory, source, base=None, ancestry=(), combine_equivalent=False):
     """Rebuild a complete export in memory; no inference or source writes."""
     try:
         from . import experiment as workflow
@@ -107,6 +107,8 @@ def _export_bundle(directory, source, base=None, ancestry=()):
     prep = plan.get("preparation")
     if plan["dataset"]["adapter"] != "subject_pairs":
         raise ValueError("export requires a subject-pair experiment")
+    if combine_equivalent and base is None:
+        raise ValueError("--combine-equivalent requires --base")
     if base is None and not prep:
         raise ValueError("export requires a combined subject-pair experiment or --base")
     if base is not None and prep:
@@ -134,6 +136,9 @@ def _export_bundle(directory, source, base=None, ancestry=()):
     else:
         inputs, hierarchy, comparisons, prep = _continued_comparisons(
             Path(base).resolve(), directory, source, plan, protect, workflow, adapters, ancestry)
+    if combine_equivalent:
+        hierarchy, comparisons, prep = _combine_saved_equivalences(
+            inputs, hierarchy, comparisons, prep, directory, plan, workflow, adapters)
 
     groups = hierarchy["groups"]
     by_id = {f"S{members[0]:04d}": g for g, members in enumerate(groups)}
@@ -194,8 +199,16 @@ def _export_bundle(directory, source, base=None, ancestry=()):
                   analysis="Isolated saved-answer test: preserved SP links plus current BCP ancestor answers. "
                   "Redundant browsing links omitted; no title generation, node removal or membership expansion.")
     result["edges"] = [list(e) for e in edges]
+    if combine_equivalent:
+        result["experiment_id"] = plan["prompt"]["id"] + "-hg6-test-v1"
+        result["analysis"] = (
+            "Isolated HG6 test: saved equivalences combined; existing relationships preserved. "
+            "Changed-input comparisons remain pending HG7, not current judgments. "
+            "No inference, new ancestor placement, title generation or membership expansion.")
     view = browser_spec(inputs, result, selected_masks, protected[str(source / "masked-posts.json")])
     view["hierarchy_id"] = plan["prompt"]["id"] + " · saved ancestor-application test"
+    if combine_equivalent:
+        view["hierarchy_id"] = plan["prompt"]["id"] + " · saved HG6 equivalence test"
     summary = dict(posts=len(inputs["posts"]), subjects=len(inputs["subjects"]), nodes=len(groups),
         roots=len(view["nodes"][0]["children"]), comparisons=len(comparisons),
         ancestor_answers=len(proposals), new_ancestor_links=len(set(edges) - starting_edges),
@@ -203,16 +216,70 @@ def _export_bundle(directory, source, base=None, ancestry=()):
         browsing_links_omitted=len(edges) - len(browsing),
         uncertain_answers=sum(c["answer"]["relation"] == "uncertain" for c in comparisons),
         sp_order_preserved=True, browsing_ancestry_preserved=True, inference_calls=0)
+    if "pending_comparisons" in prep:
+        summary["pending_comparisons"] = len(prep["pending_comparisons"])
+    if combine_equivalent:
+        summary["nodes_combined"] = prep["summary"]["original_nodes"] - len(groups)
     provenance = dict(protected_sha256=protected, subjects=inputs["subjects"], original_edges=inputs["edges"],
         preparation=prep, comparisons=comparisons, masks=list(selected_masks.values()),
         export=dict(experiment=str(directory), source=str(source),
                     base=str(Path(base).resolve()) if base is not None else None),
         implementation_sha256={str(Path(p).resolve()): _sha256_file(Path(p))
                                for p in (__file__, workflow.__file__, adapters.__file__)})
+    if combine_equivalent:
+        provenance["export"]["combine_equivalent"] = True
     for path, expected in protected.items():
         if _sha256_file(Path(path)) != expected:
             raise ValueError(f"protected source changed during export: {path}")
     return dict(results=result, categories=view, provenance=provenance, summary=summary)
+
+
+def _combine_saved_equivalences(inputs, hierarchy, comparisons, previous_prep,
+                                directory, plan, workflow, adapters):
+    """Apply HG6 only; remap retained judgments and expose changed HG7 inputs."""
+    report = workflow.report(directory)
+    if any(c["parsed"]["relation"] != "equivalent" for c in report["cases"]):
+        raise ValueError("merge-only export requires only equivalent answers")
+    references = report["cases"][0]["evidence"]["source"]
+    source = dict(inputs=inputs, hierarchy=hierarchy, pairs=[], source=references)
+    _, prep = adapters.combine_subject_pairs(source, [report], plan["prompt"]["text"])
+    combined = prep["hierarchy"]
+    mapping = prep["original_node_to_combined"]
+    owners = combined["member_to_group"]
+    remap = {g: owners[members[0]] for g, members in enumerate(hierarchy["groups"])}
+    combined["sp_edges"] = [list(e) for e in sorted({
+        (remap[a], remap[b]) for a, b in hierarchy["sp_edges"] if remap[a] != remap[b]})]
+    previous = list(comparisons)
+    for pending in previous_prep.get("pending_comparisons", []):
+        prior_mapping = previous_prep["original_node_to_combined"]
+        previous.extend(dict(c, A=prior_mapping.get(c["A"], c["A"]),
+                             B=prior_mapping.get(c["B"], c["B"]))
+                        for c in pending["previous_comparisons"])
+    pairs, internal = {}, []
+    for prior in previous:
+        a, b = mapping[prior["A"]], mapping[prior["B"]]
+        if a == b:
+            if prior["answer"]["relation"] == "neither":
+                raise ValueError("equivalence conflicts with saved neither answer; no repair applied")
+            internal.append(prior)
+        else:
+            pairs.setdefault(tuple(sorted((a, b))), []).append(prior)
+    current, pending = [], []
+    combined_source = dict(source, hierarchy=combined)
+    for (a, b), priors in sorted(pairs.items()):
+        for prior in priors:
+            pair = dict(id=prior["id"], A=mapping[prior["A"]], B=mapping[prior["B"]])
+            case = adapters.prepare_subject_pairs(dict(combined_source, pairs=[pair]))[0]
+            if case["inputs"] == prior["inputs"]:
+                current.append(dict(prior, A=pair["A"], B=pair["B"]))
+                break
+        else:
+            pair = dict(id=a + "-" + b, A=a, B=b)
+            case = adapters.prepare_subject_pairs(dict(combined_source, pairs=[pair]))[0]
+            pending.append(dict(case, previous_comparisons=priors))
+    prep.update(previous_preparation=previous_prep, previous_comparisons=previous,
+                remapped_internal_comparisons=internal, pending_comparisons=pending)
+    return combined, current, prep
 
 
 def _initial_comparisons(directory, plan, protect, workflow, adapters):
@@ -300,9 +367,12 @@ def _continued_comparisons(base, directory, source, plan, protect, workflow, ada
         if len(candidates) != 1:
             raise ValueError("base export has no unique combined source experiment")
         origin = dict(experiment=str(candidates[0]), source=str(source), base=None)
-    if not isinstance(origin, dict) or set(origin) != {"experiment", "source", "base"}:
+    required = {"experiment", "source", "base"}
+    if (not isinstance(origin, dict) or set(origin) not in (required, required | {"combine_equivalent"})
+            or ("combine_equivalent" in origin and origin["combine_equivalent"] is not True)):
         raise ValueError("invalid base export provenance")
-    rebuilt = _export_bundle(origin["experiment"], origin["source"], origin["base"], ancestry)
+    rebuilt = _export_bundle(origin["experiment"], origin["source"], origin["base"], ancestry,
+                             origin.get("combine_equivalent", False))
     for name in ("results", "categories", "summary"):
         if saved[name] != rebuilt[name]:
             raise ValueError(f"base export {name} differs from saved comparisons")
@@ -341,8 +411,14 @@ def _continued_comparisons(base, directory, source, plan, protect, workflow, ada
 
     pairs = [dict(id=c["id"], A=c["evidence"]["A"]["node_id"], B=c["evidence"]["B"]["node_id"])
              for c in plan["cases"]]
-    expected = adapters.prepare(dict(adapter="subject_pairs"),
-        dict(inputs=inputs, hierarchy=saved["results"], pairs=pairs, source=references), plan["prompt"]["text"])
+    rules = {c["evidence"].get("selection", {}).get("rule") for c in plan["cases"]}
+    selection = dict(pairs=pairs)
+    if rules != {None}:
+        if len(rules) != 1 or None in rules:
+            raise ValueError("mixed additional comparison selection rules")
+        selection = dict(selection=rules.pop())
+    expected = adapters.prepare(dict(adapter="subject_pairs", select=[p["id"] for p in pairs]),
+        dict(inputs=inputs, hierarchy=saved["results"], **selection, source=references), plan["prompt"]["text"])
     by_id = {c["id"]: c for c in expected}
     if {c["id"] for c in current["cases"]} != set(by_id):
         raise ValueError("additional comparison inventory differs from preparation")
@@ -364,15 +440,21 @@ def _continued_comparisons(base, directory, source, plan, protect, workflow, ada
         comparisons.append(dict(id=c["id"], A=a, B=b, answer=c["parsed"], inputs=c["inputs"],
             receipt=c["receipt"], experiment=current["experiment"], prompt_id=current["prompt_id"],
             settings=current["settings"], stage="HG5"))
-    return inputs, saved["results"], comparisons, previous["preparation"]
+    preparation = previous["preparation"]
+    if "pending_comparisons" in preparation:
+        completed = {frozenset((c["A"], c["B"])) for c in comparisons}
+        preparation = dict(preparation, pending_comparisons=[
+            c for c in preparation["pending_comparisons"]
+            if frozenset((c["evidence"]["A"]["node_id"], c["evidence"]["B"]["node_id"])) not in completed])
+    return inputs, saved["results"], comparisons, preparation
 
 
-def export_comparisons(directory, source, output, base=None):
+def export_comparisons(directory, source, output, base=None, combine_equivalent=False):
     """Apply receipt-validated ancestor answers to a fresh, separately authorized export."""
     output = Path(output).resolve()
     if output.exists():
         raise FileExistsError(f"output exists: {output}")
-    bundle = _export_bundle(directory, source, base)
+    bundle = _export_bundle(directory, source, base, combine_equivalent=combine_equivalent)
     protected = bundle["provenance"]["protected_sha256"]
     forbidden = {Path(directory).resolve(), Path(source).resolve()}
     forbidden.update(Path(p).parent for p in protected if Path(p).name in {"experiment.json", "provenance.json"})
