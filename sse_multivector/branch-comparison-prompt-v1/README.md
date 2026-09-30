@@ -1,4 +1,105 @@
-# BCPv4 — one-pair subject comparison
+# HG process — start here
+
+The goal is a useful hierarchy for browsing posts. This is the SP-based process
+we are testing on 100 posts, not a settled production workflow. **HG1–HG7** name
+its stages; **LG01** names the technique used at HG3, regardless of post count.
+The current tests reuse saved HG1–HG2 outputs rather than rerunning SP or MP.
+
+<a id="hierarchy-generation-stages"></a>
+
+## From posts to a combined hierarchy
+
+1. **HG1 — Generate local subjects and masks.** Prompt SP for each post's
+   subject hierarchy and context descriptions. Then prompt MP to select source
+   text for each subject. A post can have several separate trees. A subject
+   stays in the hierarchy even if MP returns an empty mask. Local top-level
+   subjects need not be equally general or remain top-level globally.
+
+2. **HG2 — Encode with SSE.** Encode each subject's wording on its own, and
+   each nonempty mask in its source-post context. Keep these two vector types
+   separate, alongside the original subjects, masks and SP relationships.
+
+3. **HG3 — Combine matching subjects with LG01.** No model is prompted here.
+
+   - Within one post, combine entries only when their exact subject wording
+     and nonempty source positions match.
+   - For each unique nonempty mask, find its nearest mask in another post.
+     These matches select post pairs; repeated selections become one pair.
+   - Within each selected post pair, find each subject's best subject match
+     in the other post, in both directions, using subject-vector cosine.
+   - Combine a subject pair only if they choose each other, subject cosine
+     is at least **0.90**, and their mask cosine is at least **0.80**. Ties
+     qualify; empty masks do not. These are experimental cutoffs, not a
+     claim that every combination is correct.
+   - Combine overlapping passing pairs into one node. Preserve every original
+     entry and SP ancestry, allowing an ancestor and descendant to become the
+     same node. Undo cross-post combinations that create a cycle between
+     distinct nodes; never delete an SP relationship to repair one.
+
+   The result retains unmatched and empty-mask subjects too. It does not yet
+   discover missing relationships between their parents. See the
+   [detailed LG01 rules](../subject-order-probe.md#lg01--subject-hierarchy-merging).
+
+## From combined nodes to further relationships
+
+4. **HG4 — Select node pairs to compare.** Find a node shared across posts
+   with two or more distinct immediate parents. Select each parent pair once,
+   by node identity—not by matching names. Sharing a child is a reason to ask,
+   not an answer.
+
+   Real example: N037 supplies **Food ingredients → Cranberries**; N072
+   supplies **Baking ingredients → Cranberries**. HG3 combines Cranberries.
+   HG4 therefore selects **Food ingredients / Baking ingredients**.
+
+5. **HG5 — Prompt for each selected pair.** Prompt **BCPv4** (tested, not
+   frozen), using **Astra low**, with both nodes' subject/context entries.
+   It returns equivalent, A ancestor of B, B ancestor of A, neither, or
+   uncertain, plus a reason. Save the answer; this call does not change the
+   hierarchy. The model compares two nodes, not two whole posts.
+
+6. **HG6 — Combine nodes judged equivalent.** Combine connected chains of
+   equivalent answers, retaining all their entries, masks and mapped SP
+   ancestry. This changes what the combined node represents; it is not just
+   renaming it. No new prompt call happens here.
+
+7. **HG7 — Recompare changed inputs.** Map the previously compared pairs onto
+   the combined nodes. Remove pairs now inside one node and deduplicate the
+   rest. Keep saved answers when their exact model input is unchanged; prompt
+   **BCPv4 / Astra low** only for changed inputs. An old answer cannot simply
+   be transferred to a larger node by changing its ID.
+
+## Apply answers, then browse
+
+After HG7, the tested exporter adds current **ancestor** answers to the
+preserved SP relationships in a separate hierarchy. An ancestor answer does
+not require an immediate parent link: other nodes may sit between them.
+Neither and uncertain add no link. New equivalences require a separate HG6
+decision. The current exporter stops on conflicts rather than repairing them.
+This export makes **no model calls**; its proposed HG8 label and general
+conflict policy are not settled.
+
+For browsing, omit a direct link only when another path supplies the same
+ancestry. For example, show **Food → Bread → Sourdough bread**, without a
+redundant Food → Sourdough bread shortcut. Keep all nodes, multiple parent
+routes and original relationships in the underlying data. Adding these links
+does not expand any node's direct mask membership.
+
+## What is still missing?
+
+HG4 is not a complete comparison-selection rule. A later test selected
+top-level nodes sharing a descendant at any depth. Its **nine Food calls were
+HG5 comparisons of Food against nine branches**, not comparisons of those
+branches against one another. That shortlist is experimental, not an adopted
+replacement for HG4.
+
+Selecting further comparisons, deciding when to repeat HG6–HG7, and general
+conflict handling remain open. The tests preserve the saved LG01 hierarchy;
+they do not establish a finished global hierarchy. This process does not use
+HDBSCAN, TRUE/Jev, or a separate title-generation pass.
+
+---
+
+## BCPv4 — one-pair subject comparison
 
 Status: **user-approved wording, tested on 49 original pairs, seven changed
 combined-input pairs and nine further Food pairs, not frozen**. The user
@@ -34,31 +135,7 @@ nominates a comparison; it does not establish equivalence or containment.
 The read-only investigation of the [LG01 100-post run](../subject-order-probe.md#smv2-100--unchanged-rules-on-all-100-posts)
 did not adopt this as a construction rule or authorize model calls.
 
-## Hierarchy generation stages
-
-The user approved **HG1–HG7** as stable labels for this SP-based investigation.
-They identify process stages, independently of prompt versions, experiment IDs
-and post count. The user subsequently approved isolated HG6–HG7 and saved
-ancestor-application tests, not production adoption.
-
-| Label | Stage | Current status |
-| --- | --- | --- |
-| HG1 — SP + MP | Generate each post's local subject hierarchy and masks. | Saved inputs. |
-| HG2 — SSE | Encode subjects and masks into separate vectors. | Saved vectors. |
-| HG3 — LG01 | Combine matching subjects across posts, preserving SP relationships. | Implemented experiment; see the [LG01 rules](../subject-order-probe.md#lg01--subject-hierarchy-merging). |
-| HG4 — Select comparisons | Select pairs of distinct immediate parents of a shared cross-post node; deduplicate by node identity. | Nominated the 49 tested pairs; not a complete construction rule. |
-| HG5 — Compare parents | Prompt BCPv4 for each selected pair using the two nodes' subject/context entries; save its relation and reason. | 49 original pairs tested; the saved LG01 hierarchy is unchanged. |
-| HG6 — Combine equivalent nodes | Combine parents judged equivalent at HG5, retaining original entries, relationships and answers. | Implemented and tested in an isolated preparation; all 14 saved equivalences were assumed for this test, not individually adjudicated. |
-| HG7 — Recompare changed nodes | Remap and deduplicate affected pairs, then prompt BCPv4 using the combined entries. | Seven changed pairs tested with unchanged BCPv4/Astra low; 19 unchanged judgments retained without calls. |
-
-For example, the Dining/Meals inconsistency was observed at **HG5**. The
-tested follow-up combines the equivalent Dining nodes and the equivalent
-Meals nodes at **HG6**, then compares the combined nodes at **HG7**. A separate
-test applies the current ancestor answers. General conflict handling and
-uncertain-equivalence policies remain open.
-LG01 names the technique at HG3, not the whole process or a particular run.
-
-### Proposed HG8 — apply ancestor relationships
+## Proposed HG8 — apply ancestor relationships
 
 Status: **ancestor interpretation and browsing-link rule agreed and tested in
 an isolated export; general application policy remains a draft**. HG8 is a proposed
