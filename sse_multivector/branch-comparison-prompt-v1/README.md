@@ -91,6 +91,103 @@ Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
    LG01 does not add missing relationships between parent hierarchy nodes.
    See the [detailed LG01 rules](../subject-order-probe.md#lg01--subject-hierarchy-merging).
 
+   **Visual example: saved HG3 results for N037 and N072.** This follows the
+   same Cranberries entries used in the HG4 example below. All numbers are
+   from the saved 100-post run; no new model call is needed.
+
+   **HG3.1 — First combine identical entries within one post.** N072 contains
+   two SP subject entries with the wording **Currants not yet in season**.
+   Their nonempty MP masks select exactly the same source positions:
+
+   ```text
+   N072 SP entry 4.3.2: Currants not yet in season
+   N072 SP entry 5.1:   Currants not yet in season
+
+   Both select: ⟦currants aren't in season⟧ ⟦yet⟧
+   Both use mask vector V1160.
+
+   ONE hierarchy node represents both SP subject entries.
+   Keep both entries' original parent relationships.
+   ```
+
+   **HG3.2 — Mask-vector matches select a post pair.** For each mask vector,
+   search mask vectors from all other posts. These two saved nearest matches
+   both select N037 / N072; the words shown are the selected MP fragments:
+
+   ```text
+   From N037             Nearest match in another post
+   V0517 ⟦Cranberry⟧      V1158 in N072 ⟦cranberries⟧
+   V0518 ⟦rosemary⟧       V1157 in N072 ⟦fresh rosemary⟧
+
+   Mask-vector cosine(V0517, V1158) = 0.8112
+   Mask-vector cosine(V0518, V1157) = 0.9320
+
+   SELECT ONCE: N037 / N072
+   No cross-post subject entries have been combined yet.
+   ```
+
+   **HG3.3 — Compare the original subject vectors within that post pair.**
+   N037 has 16 SP subject entries; N072 has 44. Compare all **16 × 44 = 704**
+   subject-vector pairs, including entries with empty MP masks. Only four
+   cells of that full comparison table are shown here:
+
+   ```text
+                             N072 subject vectors
+                          Cranberries   Fresh rosemary
+   N037 subject vectors
+   Cranberries              1.0000 *        0.4426
+   Rosemary                 0.3584          0.7514 *
+
+   * Mutual best match across the full 16 × 44 table.
+   ```
+
+   **HG3.4 — A mutual best match must pass BOTH cosine cutoffs:**
+
+   ```text
+   SP subject entry pair        Subject cosine    Mask cosine
+   Cranberries / Cranberries    1.0000: PASS       0.8112: PASS
+   Rosemary / Fresh rosemary    0.7514: FAIL       0.9320: PASS
+
+   Required subject-vector cosine: at least 0.90
+   Required mask-vector cosine:    at least 0.80
+
+   Cranberries: accepts this cross-post match.
+   Rosemary:    rejects this cross-post match.
+   ```
+
+   The close rosemary mask vectors selected these posts for examination, but
+   do not override the failed subject-vector check. Neither score is blended
+   with the other.
+
+   **HG3.5 — Combine the passing Cranberries entries into one hierarchy node:**
+
+   ```text
+   ┌── ONE Cranberries hierarchy node ──────────────────────┐
+   │ N037 Cranberries SP subject entry; mask vector V0517   │
+   │ N072 Cranberries SP subject entry; mask vector V1158   │
+   └────────────────────────────────────────────────────────┘
+   ```
+
+   Both original entries and masks remain. Their vectors remain separate;
+   no replacement subject vector or mask vector is created.
+
+   **HG3.6 — Preserve the original SP relationships and check for cycles.**
+   The resulting portion of the global hierarchy is:
+
+   ```text
+   Food ingredients         Baking ingredients
+          │                         │
+          └────────────┬────────────┘
+                  Cranberries
+          represents entries from both posts
+   ```
+
+   Food ingredients and Baking ingredients remain distinct hierarchy nodes.
+   The two original SP parent–child relationships still hold. Only this
+   portion is shown; all other SP subject entries remain represented.
+   The run's cycle checks preserve SP ancestry; the rollback rules above
+   still apply. **HG3 makes no model call.**
+
 ## From combined nodes to further relationships
 
 4. **HG4 — Select pairs of parent hierarchy nodes for model comparison.** Look
