@@ -2035,13 +2035,24 @@ This establishes two additional expected post orders:
 | coffee | Roasting (`056e6466`) above errands (`e0508834`) | 46 < 47: fails | 40.978201 > 32.604173: passes |
 | Eggs | Diary (`eaa6a5e6`) above four-egg dinner (`fbd52a1d`) | 20 < 23: fails | 18.217952 > 17.145254: passes |
 
-Across all five user-reviewed orders, the saved SP-context sorting score matches
-five and prominence alone matches three. Relevance improves these two reviewed
-comparisons in this saved experiment; this does not establish general ordering
-quality or approve the prominence values, prompt or production formula. The two
-other changed Coffee pairs, errands versus another coffee and errands versus
-iced coffee, remain unreviewed. No new inference or encoding was needed to check
-the new judgments.
+The user subsequently reviewed the two remaining changed Coffee pairs. Iced
+coffee (`76e19c3e`) should be above errands (`e0508834`): sorting score
+35.839159 > 32.604173 matches this judgment; prominence 40 < 47 reverses it.
+Another coffee (`737eaa89`) versus errands was judged "about equal," with a
+tentative tiny preference for another coffee because of "but I need another
+one." Its sorting score is 38.121899 versus errands' 32.604173; its prominence
+is 45 versus 47. The sorting-score direction agrees with the tentative
+preference, but this is not a clear expected higher/lower order. No numeric
+tolerance for "about equal" has been agreed, so the size of the sorting-score
+difference is not marked as passing or failing that judgment.
+
+Across the six clear user-reviewed orders, the saved SP-context sorting score
+matches six and prominence alone matches three. The about-equal comparison is
+recorded separately and excluded from these counts. Relevance improves three
+clear reviewed comparisons in this saved experiment; this does not establish
+general ordering quality or approve the prominence values, prompt or production
+formula. All four changed pair orders have now been reviewed. No new inference
+or encoding was needed to check the new judgments.
 Production adoption remains open; no recursive sorting or parent-child transfer
 was changed.
 
