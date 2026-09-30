@@ -551,6 +551,25 @@ model-track estimates in 20, not new completion gates. The split does not change
 either experiment's requirements, settings or spending approvals, select a
 model, or block the required teacher-built release on either pilot.
 
+**September 30 pilot-process clarification:** the user requested a
+[process walkthrough](fine-tuning-pilot-process.md) to participate in the whole
+experiment's design. That role does not assign the user example labeling or
+semantic adjudication. Working prompts may be used before production wording
+is final; their chosen versions remain fixed within a comparison.
+
+Validation belongs throughout execution: check responses when they arrive and
+baseline coverage before training. Missing calls and parsing failures must be
+visible at those stages, well before retrieval or deletion. Current parsing
+records note failures and can finish with missing mask calls; stronger reporting
+and stage progression checks are intended changes, not implemented by this record.
+Semantic review of saved results happens from the local workspace after retrieval,
+without an active GPU rental. The proposed teacher reviewer performs evaluation;
+its judgments are not automatically training labels or weight updates. Reviewer
+criteria, reliability checks, and role in model selection remain design choices.
+The walkthrough also keeps data sizes, the larger pilot's output format,
+training settings, continuation rules, and new spending open. It authorizes no
+new code changes, model calls, or rental.
+
 **September 25 informal start:** the user approved beginning the fine-tuning
 pilot with available data from the latest subject and mask prompts, excluding
 prominence for now and establishing untuned baselines. The teachers generate

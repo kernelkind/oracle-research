@@ -5,6 +5,11 @@ discussion, including corpus scope, validation, Vast.ai compute and rented hosti
 [Scalability findings and decisions](scalability.md) records the separate
 read-only investigation, the low-memory HDBSCAN discussion and unapproved next steps.
 
+[Fine-tuning pilot process](fine-tuning-pilot-process.md) walks through data,
+training, evaluation, rental execution, and the design choices for user discussion.
+It separates the current implementation from intended checks and open proposals;
+semantic review happens outside the GPU rental.
+
 `release-plan.json` is the current task-and-dependency source for the focused
 graph. Agents update it from explicitly approved planning changes; the user
 does not need to edit it. Each task has a two-digit `id`, `title`, `status`, and

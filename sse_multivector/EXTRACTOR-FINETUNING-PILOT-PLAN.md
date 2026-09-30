@@ -1,5 +1,10 @@
 # Fine-tuning pilot
 
+For the complete process and the design choices requiring discussion, start with
+[the pilot walkthrough](../docs/planning/fine-tuning-pilot-process.md). It separates
+local preparation and semantic review from GPU execution, and distinguishes
+current behavior from required validation changes and open proposals.
+
 ## Status and scope
 
 **Release-plan tracking:** the preliminary 100-note experiment below is task
@@ -73,8 +78,9 @@ decoder. The first rental stopped after a local monitoring error, before any
 baseline output or training completed. Its files were retrieved and the instance
 was deleted. After rebuilding and verifying the image, the user approved a
 replacement rental. All three candidates completed their
-20-note baselines, 128-step training, matching adapter reloads and 20-note trained
-evaluations. The worker exited successfully on September 30 at 02:56:58 UTC.
+20-note baseline attempts, 128-step training, matching adapter reloads and
+20-note trained evaluations. The worker exited successfully on September 30 at
+02:56:58 UTC.
 Retrieval of 671 work files was hash-verified at 03:08:17 UTC; local output verification passed. This
 verifies execution; semantic review and model selection remain open. Evidence
 is in `target/distillation-pilot-v1/launch-20260929-v2/operation/`, including
@@ -249,7 +255,7 @@ The model recipes, prompts, data, batching and $25 total maximum are unchanged.
 The first published image reached Vast, but that rental ended before any
 baseline or training completed. The rebuilt image is now published and verified
 private; the approved 450 W replacement rental completed all three candidates'
-baselines, training, matching reloads and trained evaluations. Results were
+baseline attempts, training, matching reloads and trained evaluations. Results were
 retrieved and verified before explicit deletion. Semantic review remains outside
 the completed setup task.
 
@@ -427,6 +433,16 @@ words (any selected part includes that word), with one-to-one matching and
 micro averaging over unique nonempty selections per note. Exact matching uses
 selected non-whitespace source characters. These mechanical measurements do
 not establish semantic correctness or approval; semantic review remains open.
+
+For the next pilot, response failures must be reported when they occur and
+baseline coverage checked before training proceeds. The current evaluation
+records failed notes and continues; a sealed directory can therefore lack mask
+calls. The stronger reporting and stage checks in
+[the walkthrough](../docs/planning/fine-tuning-pilot-process.md#what-is-implemented-and-what-still-needs-work)
+require implementation and verification. Semantic review of saved results runs
+from the local workspace after retrieval, outside the GPU rental. The proposed
+teacher reviewer is an evaluation method, not another fine-tune; its detailed
+criteria and use in model selection remain open for design discussion.
 
 CPU VM validation cannot establish candidate quality, CUDA kernel compatibility,
 full-model memory requirements or speed. Those are checked during the actual
@@ -638,8 +654,12 @@ until needed. Do not use test outputs to revise the experiment.
 
 Mechanically check every training mask and deduplicate exact masks. Semantically
 review a varied sample of training annotations and every validation/test
-annotation. The assistant performs the review and asks the user about genuinely
-uncertain decisions. This review policy is proposed, not a release requirement.
+annotation. Annotation checks belong to local preparation before training.
+The review method and uncertainty handling remain design choices; the user's
+role is reviewing that design, not supplying example labels or adjudications.
+The proposed teacher review of saved candidate outputs occurs after retrieval,
+outside the rental, and does not feed judgments back into training. This review
+policy is proposed, not a release requirement.
 How unsuitable annotations are handled remains open; preserve teacher outputs
 separately from review findings and any subsequent changes.
 
