@@ -527,8 +527,8 @@ HDBSCAN, TRUE/Jev, or a separate title-generation pass.
 ## BCPv4 — one-pair subject comparison
 
 Status: **user-approved wording, tested on 49 original pairs, seven changed
-combined-input pairs, nine further Food pairs, 20 same-worded sibling pairs
-and four second-pass HG4 pairs,
+combined-input pairs, nine further Food pairs, 20 same-worded sibling pairs,
+four second-pass HG4 pairs and three third-pass HG4 pairs,
 not frozen**. The user
 approved six Astra-low calls, then the remaining 43 nominated comparisons.
 All 49 returned valid JSON. Agent review accepted the first six; of the next
@@ -1051,16 +1051,53 @@ hierarchy nodes and preserves all 2,383 SP subject entries, all 1,674 masks,
 SP ancestry and the nine earlier inherited judgments. There are zero pending
 rechecks. The earlier hierarchy and model receipts remain unchanged.
 
-The post-pass read-only HG4 check finds three further unjudged pairs: the two
+The second-pass read-only HG4 check found three further unjudged pairs: the two
 Greetings nodes as a pair, and each Greetings node against Nostr community.
 The combined good-morning greeting node is their shared cross-post child.
-No additional calls have been made for those pairs.
+Those pairs became the inputs to the bounded third pass below.
+
+## Bounded third HG4–HG8 pass
+
+The user authorized the three further comparisons using unchanged BCPv4 and
+Astra low, followed by a separate HG6–HG8 export. The
+[source selection](../experiment_specs/lg01-bcpv4-hg4-third-pass-v1.json)
+uses the same `hg4` rules and excludes current saved judgments from the
+second-pass export. The
+[experiment spec](../experiment_specs/lg01-bcpv4-hg4-third-pass-astra-low-v1.json)
+keeps all earlier prompt and runner settings. Preparation selected exactly the
+three previously measured pairs, without an explicit pair list.
+
+All three subscription calls returned valid answers, with no retries or request
+reuse. Agent assessment accepts them; these are not individual user quality
+approvals:
+
+| Compared hierarchy nodes | Saved answer |
+| --- | --- |
+| Greetings representing N017/N058 / Greetings representing N089 | Equivalent |
+| Greetings representing N017/N058 / Nostr community | Neither |
+| Nostr community / Greetings representing N089 | Neither |
+
+The output at
+`target/branch-comparison-v1/bcpv4-hg4-third-pass-v1/hierarchy/`
+combines the two Greetings nodes, leaving Nostr community separate. It contains
+1,740 hierarchy nodes and 446 actual roots, preserves all 2,383 SP subject
+entries and 1,674 masks, and adds no ancestor link. HG7.3 carries three resulting
+pair judgments through the merge: Greetings / Nostr community, Greetings /
+Sunday, and Greetings / Greetings and well-wishes. Their source judgments,
+requests and receipts remain; no rechecks are pending. Earlier hierarchies are
+unchanged. Six focused regression/integration tests and browser validation passed.
+
+The post-pass read-only selection finds 14 HG4.1 pairs, all already judged, and
+zero HG4.2 pairs. Thus neither existing rule nominates an unjudged pair now.
+This exhausts those selection rules on this saved hierarchy; it does not
+establish that the hierarchy is complete or ready for browsing approval.
 
 ## Next step
 
-Suggested, not started: another bounded BCPv4/Astra-low pass on those three
-newly selected pairs, followed by the existing HG6–HG8 checks. This requires
-separate approval; automatic repetition remains open. The
+Suggested, not adopted: review whether returning to HG4 after hierarchy
+changes, excluding current saved judgments, and stopping that comparison loop
+when no unjudged pairs are nominated should become the canonical repetition
+rule. Automatic repetition remains open, and no further calls are authorized. The
 [HG8 draft](#proposed-hg8--apply-ancestor-relationships) still requires review of
 general conflict handling. Keep the saved LG01 hierarchy unchanged.
 

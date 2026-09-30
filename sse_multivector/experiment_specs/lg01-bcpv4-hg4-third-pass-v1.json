@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "inputs": "../../target/subject-matching-100-v1/inputs/inputs.json",
+  "hierarchy": "../../target/branch-comparison-v1/bcpv4-hg4-second-pass-v1/hierarchy/results.json",
+  "selection": "hg4",
+  "exclude_compared": "../../target/branch-comparison-v1/bcpv4-hg4-second-pass-v1/hierarchy/provenance.json"
+}

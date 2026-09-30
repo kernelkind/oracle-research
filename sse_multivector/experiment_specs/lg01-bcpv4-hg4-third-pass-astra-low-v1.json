@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "BCPv4",
+    "path": "../branch-comparison-prompt-v1/BCPv4.md"
+  },
+  "dataset": {
+    "adapter": "subject_pairs",
+    "path": "lg01-bcpv4-hg4-third-pass-v1.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "concurrency": 3,
+    "timeout_seconds": 300,
+    "output_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relation", "reason"],
+      "properties": {
+        "relation": {
+          "type": "string",
+          "enum": [
+            "equivalent",
+            "a_parent_of_b",
+            "b_parent_of_a",
+            "neither",
+            "uncertain"
+          ]
+        },
+        "reason": {"type": "string"}
+      }
+    }
+  }
+}
