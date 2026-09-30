@@ -16,13 +16,13 @@
       "id": "03",
       "title": "Test hierarchy across more topics",
       "status": "WAITING",
-      "description": "200: prominence + correctness.\n300: scalable construction + correctness.\n500: combine both; profile build.\n~1–2k: final pre-release validation rung with user browsing review.\nThe final 2–5k build and review belong to 12, not this task.\nValidate understandable choices, meaningful narrowing and relevant-content coverage for the chosen workflow. Ensure pair filtering keeps useful links.\nSTART WITH 02; FINISH WITH 27; ALSO 24 IF HDBSCAN IS USED."
+      "description": "200: within-node note ordering + correctness.\n300: scalable construction + correctness.\n500: combine both; profile build.\n~1–2k: final pre-release validation rung with user browsing review.\nThe final 2–5k build and review belong to 12, not this task.\nValidate understandable choices, meaningful narrowing and relevant-content coverage for the chosen workflow. Ensure pair filtering keeps useful links.\nSTART WITH 02; FINISH WITH 27; ALSO 24 IF HDBSCAN IS USED."
     },
     {
       "id": "04",
-      "title": "Define mask prominence",
+      "title": "Define node sort score",
       "status": "IN PROGRESS",
-      "description": "Develop the per-note mask-prominence prompt and output format. Mask prompt finished. In launch scope and actively worked on (user correction September 28); teachers generate prominence for the release corpus and 27 orders notes from it."
+      "description": "Define and validate one sorting score per note within a hierarchy node, including its inputs, output format and how multiple masks contribute if used. Prominence and relevance are candidate components, not fixed requirements. No final formula or model inputs are selected.\nSaved Coffee/Eggs experiments test candidate scores; no production method is adopted.\nIn launch scope and actively worked on. 27 applies the scoring definition to order notes."
     },
     {
       "id": "05",
@@ -152,9 +152,9 @@
     },
     {
       "id": "27",
-      "title": "Order node notes using mask prominence",
+      "title": "Order notes within each node",
       "status": "IN PROGRESS",
-      "description": "Saved Coffee/Eggs experiments have tested prominence and relevance against user-reviewed note-ordering checks; the relevance measure and how multiple masks produce one note score remain open.\nDefine and implement note ordering within each hierarchy node using mask prominence and relevance, including multiple masks from the same note. Recursive sorting and parent-child score transfer are out of scope.\nFINISH WITH 04"
+      "description": "Implement and validate note ordering within each hierarchy node using the score defined in 04, including multiple masks from the same note where used. Recursive sorting and parent-child score transfer are out of scope.\nSaved Coffee/Eggs trials are experimental, not approval of a production method.\nFINISH WITH 04"
     },
     {
       "id": "28",
@@ -309,7 +309,7 @@
       "source": "04",
       "target": "17",
       "kind": "required",
-      "label": "prominence requirements + prompt"
+      "label": "node sort score requirements"
     },
     {
       "source": "06",

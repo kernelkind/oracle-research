@@ -53,10 +53,13 @@ its link to 03 has been removed. Any reuse in the newer hierarchy needs an
 explicit decision within 02. Understandable choices, meaningful narrowing and
 relevant-content coverage remain required in 03, without mandating that rule.
 
-Task 27 is in progress, with saved Coffee/Eggs note-ordering trials and
-user-reviewed order checks. It still needs 04 to finish; the relevance measure
-and how multiple masks produce one note score remain open. The
-04 → 27 → 03 completion dependencies are unchanged.
+Task 04 defines and validates the node sort score: one sorting score per note
+within a hierarchy node. Prominence and relevance are candidate components,
+not fixed requirements; the formula, inputs and any treatment of multiple masks
+remain open. Task 27 implements and validates ordering using that definition.
+Both are in progress, with saved Coffee/Eggs trials and user-reviewed order
+checks. No production scoring method is selected. The 04 → 27 → 03 completion
+dependencies and existing teacher/model prominence data contracts are unchanged.
 
 Task 22 measures SSE and the construction stages used in the chosen workflow.
 Separate node-title generation, its input-growth measurements and the

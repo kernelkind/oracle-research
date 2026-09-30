@@ -312,12 +312,15 @@ Approved placement decisions for that separate hierarchy (changes not yet applie
 | Foods | Meat consumption | Keep. Discussing eating meat necessarily concerns food. The hierarchy organizes topics, so the child need not name a food item rather than an activity. No change to this baseline link is needed. |
 | Meat consumption | Beef | Remove. Discussing beef, such as its cuts or storage, does not necessarily discuss eating it. Retain Beef's Meat and animal fat products parent. The Jev baseline remains unchanged. |
 
-Mask-prominence work (04) is in launch scope and, per the user's correction on
-September 28, actively being worked on; the earlier pause notes, including the
-September 23 reconfirmation, are superseded. Its mask-prompt prerequisite is
-satisfied. It need not wait for the 100-note hierarchy or title correction.
-Teachers generate prominence for the release corpus, and 27 turns it into
-node-note ordering. Its prompt and validation are not complete.
+**Scoring scope clarified September 30:** **04 · Define node sort score**
+defines and validates one sorting score per note within a hierarchy node,
+including its inputs and output format. **27 · Order notes within each node**
+implements and validates ordering using that definition. Prominence may be a
+component, but is not the task's required end state. This does not adopt an
+experimental method or change existing teacher/model prominence data contracts.
+Both tasks remain in progress. 04 is in launch scope and actively worked on,
+superseding the earlier pause notes; it need not wait for the 100-note hierarchy
+or title correction. Statuses and completion dependencies are unchanged.
 The user confirms 17 is underway, comparing Muse high and Astra low;
 no teacher is selected.
 This does not establish completion of the subject/mask/prominence comparison (17).
@@ -505,8 +508,8 @@ the builds should inform acceptance, not an invented accuracy percentage.
 The 100-note work tests hierarchy correctness at minimal scope and must
 establish an initial useful hierarchy; HR02 has not yet met that gate. The
 planned 200-note / 2-topic build checks
-correctness and prominence-based note ordering. The 300-note / 3-topic build
-checks correctness while testing scalable construction choices; candidate-pair
+correctness and note ordering using the node sort score. The 300-note / 3-topic
+build checks correctness while testing scalable construction choices; candidate-pair
 filtering must preserve useful parent–child links, not just reduce relationship
 checks.
 The 500-note / 5-topic build checks the combined pipeline and profiles build
@@ -981,7 +984,7 @@ select implementation methods or new dates:
 | **24 · Recover missing node memberships** | If HDBSCAN is used, a repeatable recovery process beyond the six Coffee/Tea nodes, covering masks left unassigned or grouped elsewhere. Measure its work and cost. | Required to finish 03 only if HDBSCAN is used; available measurements inform 20 without waiting for all of 24. |
 | **25 · Handle node equivalence and TRUE cycles** | Apply exact mask-set consolidation and a reversible, repeatable rule for HR02's equivalence candidates and cyclic TRUE answers. Provisional contraction does not prove that a cycle or equal title means semantic equivalence. | Complete for HR02; not a prerequisite for 02 or 03. The newer hierarchy's merging and conflict decisions remain within 02. |
 | **26 · Collapse equal-note navigation steps** | Earlier mask-group navigation rule, implemented and regression-tested including shared children; validation remains pending. Preserve note sets, masks and provenance. | Not a prerequisite for 03. Any reuse in the newer hierarchy needs an explicit decision within 02; useful navigation remains required in 03. |
-| **27 · Order node notes using mask prominence** | Define and implement note ordering within each hierarchy node using mask prominence and relevance, including multiple masks from the same note. Recursive sorting and parent-child score transfer are out of scope. | Needs prominence definition 04; required to finish 03. |
+| **27 · Order notes within each node** | Implement and validate ordering using the node sort score defined in 04, including multiple masks from the same note where used. Recursive sorting and parent-child score transfer are out of scope. | Needs score definition 04; required to finish 03. |
 | **28 · Implement and validate the launch-scale build** | Turn the strategies tested in 03 and the scale findings into a runnable launch-scale build preserving validated hierarchy behavior, including cosine-filtered relationship checks. Handle large-group title inputs only if separate node-title generation is used. The relationship method is open. | Needs 03 + 22, plus 21 only if HDBSCAN is used; required to finish full-build feasibility 10. |
 
 Task 24's recovery work is conditional on using HDBSCAN; that choice remains
@@ -1007,8 +1010,10 @@ Understandable choices, meaningful narrowing and relevant-content coverage
 remain required in 03; no replacement navigation rule is selected here.
 On September 29, the user dropped recursive sorting from 27 and limited the work
 to sorting within a node. A child's score is not transferred to its parent.
-Prominence times mask relevance remains the intended within-node score; the
-relevance measure and how multiple masks produce one note score remain open.
+Earlier trials used prominence times relevance. The September 30 scope
+clarification makes the node sort score the required outcome, not that
+particular formula. Its inputs and any treatment of multiple masks remain
+open under 04; 27 applies the selected definition.
 
 User-approved post-ordering checks for 27 (September 29–30): the user reviewed the
 complete wording with URLs omitted and established ten clear expected orders.
@@ -1049,7 +1054,8 @@ the original mask comparisons, SP-context results and node-title trial for
 these ten checks, plus the two about-equal judgments.
 They are reference pairs, not a claim of general ranking quality.
 
-The value used to order posts is the **sorting score**. The user authorized a
+The **node sort score** is the existing **sorting score** used to order posts
+within each hierarchy node. The user authorized a
 five-post SP-context experiment: assess prominence for each saved SP context,
 encode the complete context and hierarchy node title separately with SSE,
 calculate relevance as `(clip(cosine, -1, 1) + 1) / 2`, then calculate sorting
@@ -1206,11 +1212,11 @@ This records an ordering failure, not approval of a new prominence
 definition, relevance input, formula or production rule. No new inference or
 encoding was needed; the calculation remains as tested.
 
-27 is in progress: saved Coffee/Eggs trials test within-node note ordering.
-Finishing still needs 04, which is in launch scope and actively being worked
-on (September 28 correction). The relevance measure and how multiple masks
-produce one note score remain open. 28 waits for the validated small-corpus
-workflow and scale findings. Readiness does not authorize execution. Membership
+04 and 27 are in progress: saved Coffee/Eggs trials test candidate sorting
+scores and within-node note ordering. 04 defines and validates the node sort
+score; 27 implements ordering using that definition. The formula, inputs and
+any treatment of multiple masks remain open. Finishing 27 still needs 04.
+28 waits for the validated small-corpus workflow and scale findings. Readiness does not authorize execution. Membership
 methods, final node-equivalence/cycle policy, ranking rules and scale
 implementation choices remain open.
 
@@ -1219,12 +1225,12 @@ without membership expansion or a claim to exercise scalable construction.
 Task 25 is complete for HR02 and no longer gates 02 or 03. Task 02 remains open
 for the current merging and conflict decisions and the user's browsing review.
 Preliminary 200-note construction
-can follow 02 before prominence is finished, but its note-ordering check needs
+can follow 02 before the node sort score is settled, but its ordering check needs
 04 and 27. The 300-note
 scalable-construction work can proceed without waiting for that ordering
 check. Completing the combined 500-note validation (03) requires
 27, plus 24 only if HDBSCAN is used. Relevant-content coverage is required
-either way. The prominence dependency remains 04 → 27 → 03. The stages' internal
+either way. The scoring dependency remains 04 → 27 → 03. The stages' internal
 processing order must respect their inputs, but this does not impose a serial
 development schedule.
 
@@ -1368,10 +1374,10 @@ cutoff, measured rates and counts, and the final corpus size remain open.
 ## Approved scheduling changes
 
 1. After the good 100-note hierarchy, use 200 notes to test correctness and
-   prominence-based ordering, 300 to test correctness and scalable construction,
+   within-node note ordering, 300 to test correctness and scalable construction,
    and 500 to validate them together and profile the build. The 200-note
-   construction can start before prominence is finished, but its ordering check
-   cannot finish without 04 and 27. The 300-note work need not wait for that
+   construction can start before the node sort score is settled, but its ordering
+   check cannot finish without 04 and 27. The 300-note work need not wait for that
    check. The combined 500-note validation still needs 27, plus 24 only if
    HDBSCAN is used. Relevant-content coverage remains required either way.
 2. Start scale measurements during Week 2. Measure the complete chosen workflow,
@@ -1425,7 +1431,7 @@ page is recoverable from Git, not a second current planning view.
 **Week 1 · September 28 – October 4: settle the quality foundation.** Review
 the completed mask-based parent-child diagnostic and settle the automated
 relationship method the user is pleased with (02) — the release's top risk,
-gating every build. Finish the mask-prominence prompt and output format (04)
+gating every build. Define and validate the node sort score (04)
 and implement node-note ordering (27). Land membership recovery (24) if HDBSCAN
 is used; 24 gates 03 only for HDBSCAN.
 Define the Nostr hierarchy protocol (13), now in progress and independent.
