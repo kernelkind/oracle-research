@@ -237,6 +237,12 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('14 ·'))"))
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('15 ·'))"))
 
+                for task_id, preparation in (("03", "Corpus preparation underway"), ("15", "Integration preparation underway")):
+                    evaluate(f"document.querySelector('#focus-task').value = '{task_id}'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
+                    wait_for(f"document.querySelector('#details h2').textContent.startsWith('{task_id} ·')")
+                    self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
+                    self.assertIn(preparation, evaluate("document.querySelector('#details').innerText"))
+
                 evaluate("document.querySelector('#focus-task').value = '18'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#details h2').textContent.startsWith('18 ·')")
                 self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "COMPLETE")

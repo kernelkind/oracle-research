@@ -31,6 +31,9 @@ Task 03 covers validation at 200 / 300 / 500 notes and the ~1–2k-note user-rev
 rung. Task 12 alone owns the final teacher-labeled, fully automated 2–5k build
 and its user browsing review. Completion of 03 does not accept the release
 snapshot; 12 requires the user's acceptance of that final snapshot.
+Corpus preparation and Notedeck integration preparation are underway as of
+September 30. Broader hierarchy tests and client implementation have not started;
+their existing prerequisites and completion dependencies remain unchanged.
 
 Whether HDBSCAN will be used remains open (September 29 clarification).
 Task 21 is required only if the chosen workflow uses it. Its links to 20 and 28

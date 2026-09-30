@@ -15,8 +15,8 @@
     {
       "id": "03",
       "title": "Test hierarchy across more topics",
-      "status": "WAITING",
-      "description": "200: within-node note ordering + correctness.\n300: scalable construction + correctness.\n500: combine both; profile build.\n~1–2k: final pre-release validation rung with user browsing review.\nThe final 2–5k build and review belong to 12, not this task.\nValidate understandable choices, meaningful narrowing and relevant-content coverage for the chosen workflow. Ensure pair filtering keeps useful links.\nSTART WITH 02; FINISH WITH 27; ALSO 24 IF HDBSCAN IS USED."
+      "status": "IN PROGRESS",
+      "description": "Corpus preparation underway: inspect collected data and prepare proposed 200/300/500-note inputs. Broader hierarchy tests have not started; they still need the reviewed 100-note hierarchy.\n200: within-node note ordering + correctness.\n300: scalable construction + correctness.\n500: combine both; profile build.\n~1–2k: final pre-release validation rung with user browsing review.\nThe final 2–5k build and review belong to 12, not this task.\nValidate understandable choices, meaningful narrowing and relevant-content coverage for the chosen workflow. Ensure pair filtering keeps useful links.\nTESTS START WITH 02; FINISH WITH 27; ALSO 24 IF HDBSCAN IS USED."
     },
     {
       "id": "04",
@@ -87,8 +87,8 @@
     {
       "id": "15",
       "title": "Build Notedeck hierarchy browser",
-      "status": "WAITING",
-      "description": "Browse hierarchy nodes and display their notes through our Nostr service; test service integration. Delivered as a branch published on the user’s fork.\nSTART WITH 13; FINISH WITH 14"
+      "status": "IN PROGRESS",
+      "description": "Integration preparation underway: inspect the existing UI and identify required browsing changes. Implementation has not started; it still waits for the protocol.\nBrowse hierarchy nodes and display their notes through our Nostr service; test service integration. Delivered as a branch published on the user’s fork.\nIMPLEMENTATION STARTS WITH 13; FINISH WITH 14"
     },
     {
       "id": "16",

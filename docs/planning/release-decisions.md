@@ -1,6 +1,6 @@
 # October 18 release decisions
 
-Updated September 29, 2026. This is the written record of the planning discussion.
+Updated September 30, 2026. This is the written record of the planning discussion.
 Agreed requirements, tentative choices and existing-data facts are distinguished
 below. The overall plan is not approved. Approval of an individual requirement
 or task-view edit does not approve the whole plan. Approved scheduling changes
@@ -20,6 +20,16 @@ This discussion is for planning: outcomes, dependencies, open decisions and
 timing. It does not select implementation methods or experimental procedures.
 Readiness is not authorization to research, implement, assign agents or spend;
 each task requires explicit approval to begin.
+
+**Parallel preparation started September 30:** the user has started agents on
+broader test-corpus preparation and Notedeck integration preparation. Corpus work
+inspects collected data and prepares proposed 200/300/500-note inputs; the broader
+hierarchy tests have not started. Integration work inspects the existing UI and
+identifies required browsing changes; implementation has not started. Both tasks
+are in progress for preparation only. The reviewed 100-note hierarchy and the
+protocol remain prerequisites for their respective execution work; existing
+completion dependencies, acceptance requirements and open design choices are
+unchanged.
 
 **Current task 02 status (September 29):** the active investigation builds from
 per-post subject hierarchies and masks. LG01 has run on 100 posts; BCPv4 has
