@@ -1059,6 +1059,16 @@ allocation checks and 201 passing regression/integration tests are recorded in
 the [experiment results](../../sse_multivector/model-runner.md). Broader ordering
 quality and the value of relevance beyond these checks remain open.
 
+The user subsequently reviewed More coffee in cool places (`37f44e1f`, A)
+against roasting your own beans (`056e6466`, B), with image URLs omitted, and
+answered "probably B". Record roasting above the short post as a tentative
+preference, separately from the seven clear checks and the about-equal judgment.
+Both have highest subject prominence 100, so prominence alone ties them. The
+saved sorting score puts A first: 93.490294 versus B's 89.083045, using relevance
+0.934903 versus 0.890830. This reverses the tentative preference. The seven clear
+checks still pass; this additional judgment does not approve a formula change,
+establish why B is preferred or select a production ranking rule.
+
 27 waits for 04, which is in launch scope and actively being worked on
 (September 28 correction). 28 waits for the validated small-corpus
 workflow and scale findings. Readiness does not authorize execution. Membership

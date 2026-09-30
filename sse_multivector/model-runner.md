@@ -2215,6 +2215,27 @@ Eggs:
 | Four-egg dinner (`fbd52a1d`) | 30 | 25.872700 |
 | Rocket stove (`99e6a514`) | 10 | 9.663252 |
 
+The next user review presented More coffee in cool places (`37f44e1f`) as A and
+roasting your own beans (`056e6466`) as B, using the complete wording with image
+URLs omitted. The user answered "probably B". This is a tentative preference
+for roasting above the short post, recorded separately from the seven clear
+checks and the earlier about-equal judgment:
+
+| Post | Highest subject prominence | Relevance of highest sorting-score entry | Highest sorting score |
+| --- | ---: | ---: | ---: |
+| A: More coffee in cool places (`37f44e1f`) | 100 | 0.934903 | 93.490294 |
+| B: Roasting your own beans (`056e6466`) | 100 | 0.890830 | 89.083045 |
+
+Both winning entries have SP subject Coffee. A's SP context is "The post
+explicitly mentions 'More coffee.'" B's is "The post discusses drinking coffee,
+roasting coffee beans, and discovering a personal taste profile." Their
+relevance values are respectively `(0.8698058827170315 + 1) / 2` and
+`(0.7816608935627184 + 1) / 2`. With prominence 100 in both entries, relevance
+alone puts A first, opposite to the user's tentative preference. Prominence
+alone ties the posts. No additional inference or encoding was needed; the
+formula and seven-clear-check counts remain unchanged. The preference does not
+establish why B is preferred or authorize a production change.
+
 This draw resolves the seven saved clear checks. It does not establish general
 ordering quality, calibrated percentages or production adoption. Prominence
 alone also passes all seven, so they do not establish an advantage from relevance
