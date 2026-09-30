@@ -1,9 +1,9 @@
 # Fine-tuning pilot
 
-For the complete process and the design choices requiring discussion, start with
-[the pilot walkthrough](../docs/planning/fine-tuning-pilot-process.md). It separates
-local preparation and semantic review from GPU execution, and distinguishes
-current behavior from required validation changes and open proposals.
+For the experiment's sequence—shared data, untuned baselines, training,
+evaluation, and model comparison—start with
+[the pilot walkthrough](../docs/planning/fine-tuning-pilot-process.md).
+Implementation and deployment details are recorded below.
 
 ## Status and scope
 
@@ -442,7 +442,7 @@ For the next pilot, response failures must be reported when they occur and
 baseline coverage checked before training proceeds. The current evaluation
 records failed notes and continues; a sealed directory can therefore lack mask
 calls. The stronger reporting and stage checks in
-[the walkthrough](../docs/planning/fine-tuning-pilot-process.md#what-is-implemented-and-what-still-needs-work)
+[the walkthrough](../docs/planning/fine-tuning-pilot-process.md#2-measure-untuned-baselines)
 require implementation and verification. Semantic review of saved results runs
 from the local workspace after retrieval, outside the GPU rental. The proposed
 teacher reviewer is an evaluation method, not another fine-tune; its detailed
