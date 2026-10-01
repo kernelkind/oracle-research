@@ -58,6 +58,17 @@ def prepare_file(dataset, path, template, load_report=None):
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] == 'hierarchy_construction':
+        engine._expect_fields(source, 'hierarchy construction',
+                              {'schema_version', 'inputs', 'hierarchy'})
+        if type(source['schema_version']) is not int or source['schema_version'] != 1:
+            raise ValueError('expected hierarchy construction schema_version 1')
+        references = {}
+        for key in ('inputs', 'hierarchy'):
+            source_path = engine._resolve_path(source[key], key, path.parent)
+            source[key] = read(source_path)
+            references[key] = dict(path=str(source_path), sha256=sources[str(source_path)])
+        source['source'] = references
     if dataset['adapter'] == 'parent_candidates':
         engine._expect_fields(source, 'parent candidates',
                               {'schema_version', 'inputs', 'hierarchy', 'judgments', 'nodes'})
@@ -468,6 +479,50 @@ def prepare_subject_pairs(source, selected=None):
     return cases
 
 
+def prepare_hierarchy_construction(source, selected=None):
+    """Schedule existing nodes once by source post, against the full saved graph."""
+    base = dict(inputs=source['inputs'], hierarchy=source['hierarchy'],
+                pairs=[], source=source['source'])
+    prepare_subject_pairs(base)
+    subjects, groups = base['inputs']['subjects'], base['hierarchy']['groups']
+    node_ids = [f'S{min(members):04d}' for members in groups]
+    incoming = {g: set() for g in range(len(groups))}
+    for a, b in base['hierarchy']['edges']:
+        incoming[b].add(a)
+    try:
+        list(TopologicalSorter(incoming).static_order())
+    except CycleError as error:
+        raise ValueError('hierarchy construction source contains a cycle') from error
+    post_names = {}
+    for s in subjects:
+        name = engine._expect_identifier(s['note_short_id'], 'note_short_id')
+        if name in post_names and post_names[name] != s['note_id']:
+            raise ValueError('duplicate source post short identity')
+        post_names[name] = s['note_id']
+    if len(set(post_names.values())) != len(post_names):
+        raise ValueError('source post has inconsistent short identities')
+
+    nodes, evidence, queries = [], [], {}
+    for nid, members in sorted(zip(node_ids, groups)):
+        entries = list(dict.fromkeys((subjects[i]['subject'], subjects[i]['context'])
+                                     for i in members))
+        nodes.append(dict(id=nid, entries=[dict(subject=s, context=c) for s, c in entries]))
+        evidence.append(dict(node_id=nid, subject_entries=[subjects[i] for i in members]))
+        owner = min(subjects[i]['note_short_id'] for i in members)
+        queries.setdefault(owner, []).append(nid)
+    if selected is not None and set(selected) - queries.keys():
+        raise ValueError('unknown case requested')
+    catalogue = json.dumps(dict(nodes=nodes, links=[
+        dict(ancestor=a, descendant=b) for a, b in sorted(set(
+            (node_ids[a], node_ids[b]) for a, b in base['hierarchy']['edges']))]),
+        ensure_ascii=False, separators=(',', ':'))
+    return [dict(id=post, inputs=dict(CATALOGUE_JSON=catalogue,
+                  QUERY_JSON=json.dumps(dict(nodes=ids), ensure_ascii=False)),
+                 evidence=dict(scheduling_post=post, nodes=evidence,
+                               source_posts=base['inputs']['posts'], source=source['source']))
+            for post, ids in sorted(queries.items()) if selected is None or post in selected]
+
+
 def prepare_parent_candidates(source, selected=None):
     """Nominate broader parents from the full unrelated, unjudged node catalogue."""
     try:
@@ -820,6 +875,8 @@ def prepare(dataset, source, template):
         occurrences = {}
         for item in items:
             inputs = {"POST": item["note"], "SUBJECT": item["subject"]}
+    elif adapter == 'hierarchy_construction':
+        cases = prepare_hierarchy_construction(source, dataset.get('select'))
             if format_ == "word_positions":
                 inputs["INDEXED_POST"] = engine._position_decoder().index_post(
                     item["note"]
@@ -878,6 +935,29 @@ def validate(dataset, case, raw, schema):
             raise ValueError("expected one integer prominence score from 0 through 100")
         result["parsed"] = value
         if adapter == 'subject_contexts':
+    if adapter == 'hierarchy_construction':
+        value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
+        engine._expect_fields(value, 'construction proposals', {'equivalences', 'ancestors'})
+        supplied = {n['id'] for n in json.loads(case['inputs']['CATALOGUE_JSON'])['nodes']}
+        query = set(json.loads(case['inputs']['QUERY_JSON'])['nodes'])
+        for field in ('equivalences', 'ancestors'):
+            if not isinstance(value[field], list):
+                raise ValueError('construction proposals must be arrays')
+            seen = set()
+            for proposal in value[field]:
+                fields = {'nodes', 'reason'} if field == 'equivalences' else {'ancestor', 'descendant', 'reason'}
+                engine._expect_fields(proposal, 'construction proposal', fields)
+                ids = (engine._validate_string_array(proposal['nodes'], 'equivalent nodes', allow_empty=False)
+                       if field == 'equivalences' else [proposal['ancestor'], proposal['descendant']])
+                if (len(ids) < 2 or any(not isinstance(nid, str) or nid not in supplied for nid in ids)
+                        or len(set(ids)) != len(ids) or not set(ids) & query
+                        or not isinstance(proposal['reason'], str) or not proposal['reason'].strip()):
+                    raise ValueError('invalid or unsupplied construction proposal')
+                key = tuple(sorted(ids)) if field == 'equivalences' else tuple(ids)
+                if key in seen:
+                    raise ValueError('duplicate construction proposal')
+                seen.add(key)
+        result['parsed'] = value
             if set(value) != {'prominence', 'missing_meaning', 'allocation'} or not isinstance(value['missing_meaning'], str):
                 raise ValueError('expected context prominence diagnostics')
             allocation = value['allocation']

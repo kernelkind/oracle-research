@@ -32,6 +32,10 @@ __pycache__/
 !/sse_multivector/*-v[0-9]*/**/tests/fixtures/**/*.json
 !/sse_multivector/*-v[0-9]*/**/tests/fixtures/**/*.jsonl
 
+# Reusable construction source references/settings, not generated case data.
+!/sse_multivector/hierarchy-construction-prompt-v1/n100-selection.json
+!/sse_multivector/hierarchy-construction-prompt-v1/n100-spec.json
+
 # The batch runner writes these schema copies into its run directories.
 /sse_multivector/*-v[0-9]*/**/prompt-output-schema.json
 /sse_multivector/*-v[0-9]*/**/subject-output-schema.json

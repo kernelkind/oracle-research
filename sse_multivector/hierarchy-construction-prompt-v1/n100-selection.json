@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "inputs": "../../target/subject-matching-100-v1/inputs/inputs.json",
+  "hierarchy": "../../target/branch-comparison-v1/bcpv4-pcpv1-ten-roots-applied-v1/results.json"
+}

@@ -1147,6 +1147,92 @@ class ExperimentTests(unittest.TestCase):
         self.assertNotIn('REVIEW ONLY', case['prompt'])
         self.assertNotIn('saved-vector', case['prompt'])
         self.assertEqual(case['evidence']['A']['node_id'], 'S0000')
+    def hierarchy_construction_spec(self):
+        self.subject_pairs_spec()
+        self.prompt.write_text('GENERIC PROMPT\n{CATALOGUE_JSON}\n{QUERY_JSON}')
+        self.write('selection/construction.json', dict(schema_version=1,
+            inputs='../subjects.json', hierarchy='../hierarchy.json'))
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='hierarchy_construction',
+                               path='selection/construction.json')
+        self.write('spec.json', spec)
+
+    def test_hierarchy_construction_prepares_post_queries_against_full_saved_graph(self):
+        self.hierarchy_construction_spec()
+        self.prepare()
+        cases = self.show()['cases']
+        self.assertEqual([c['id'] for c in cases], ['N1', 'N3'])
+        first = self.show('E1', '--case', 'N1')
+        second = self.show('E1', '--case', 'N3')
+        self.assertEqual(first['inputs']['CATALOGUE_JSON'], second['inputs']['CATALOGUE_JSON'])
+        catalogue = json.loads(first['inputs']['CATALOGUE_JSON'])
+        self.assertEqual([n['id'] for n in catalogue['nodes']], ['S0000', 'S0002', 'S0005'])
+        self.assertEqual(catalogue['nodes'][0]['entries'], [
+            dict(subject='Tea', context='A cup of tea.'),
+            dict(subject='Teas', context='Several teas.'),
+            dict(subject='Tea', context='Another reference to tea.')])
+        self.assertEqual(catalogue['links'], [
+            dict(ancestor='S0000', descendant='S0005'),
+            dict(ancestor='S0002', descendant='S0005')])
+        self.assertEqual(json.loads(first['inputs']['QUERY_JSON']),
+                         dict(nodes=['S0000', 'S0005']))
+        self.assertEqual(json.loads(second['inputs']['QUERY_JSON']), dict(nodes=['S0002']))
+        self.assertNotIn('REVIEW ONLY', first['prompt'])
+        self.assertNotIn('saved-vector', first['prompt'])
+        self.assertEqual(sum(len(n['subject_entries']) for n in first['evidence']['nodes']), 7)
+        self.assertEqual(len(first['evidence']['source_posts']), 3)
+        self.assertEqual(first['evidence']['scheduling_post'], 'N1')
+        plan = json.loads((self.root / 'E1/experiment.json').read_text())['plan']
+        for name in ['subjects.json', 'hierarchy.json', 'selection/construction.json']:
+            path = self.root / name
+            self.assertEqual(plan['sources'][str(path)], hashlib.sha256(path.read_bytes()).hexdigest())
+        self.write('subjects.json', {})
+        self.assertEqual(self.show('E1', '--case', 'N1')['inputs'], first['inputs'])
+        self.assertEqual(self.calls(), [])
+
+    def test_hierarchy_construction_selects_once_and_rejects_invalid_sources(self):
+        self.hierarchy_construction_spec()
+        spec = json.loads(self.spec.read_text())
+        spec['dataset']['select'] = ['N3']
+        self.write('spec.json', spec)
+        self.prepare()
+        self.assertEqual([c['id'] for c in self.show()['cases']], ['N3'])
+        spec['dataset']['select'] = ['N2']
+        self.write('spec.json', spec)
+        failure = self.cli('prepare', 'bad-selection', '--spec', self.spec, ok=False)
+        self.assertIn('unknown case requested', failure.stderr)
+        spec['dataset'].pop('select')
+        self.write('spec.json', spec)
+        hierarchy = json.loads((self.root / 'hierarchy.json').read_text())
+        hierarchy['edges'].append([2, 0])
+        self.write('hierarchy.json', hierarchy)
+        failure = self.cli('prepare', 'cycle', '--spec', self.spec, ok=False)
+        self.assertIn('cycle', failure.stderr)
+        self.assertEqual(self.calls(), [])
+
+    def test_hierarchy_construction_checks_proposal_ids_without_changing_graph(self):
+        from sse_multivector.experiment_inputs import validate
+        from sse_multivector.extraction_pipeline import RunnerError
+        case = dict(inputs=dict(
+            CATALOGUE_JSON=json.dumps(dict(nodes=[dict(id=i) for i in ('A', 'B', 'C')])),
+            QUERY_JSON=json.dumps(dict(nodes=['A']))))
+        dataset = dict(adapter='hierarchy_construction')
+        valid = dict(equivalences=[dict(nodes=['A', 'B'], reason='Same subject.')],
+                     ancestors=[dict(ancestor='C', descendant='A', reason='Broader subject.')])
+        self.assertEqual(validate(dataset, case, json.dumps(valid), None)['parsed'], valid)
+        for value in (dict(equivalences=[], ancestors=[]), valid):
+            self.assertEqual(validate(dataset, case, json.dumps(value), None)['status'], 'valid')
+        for value in (
+                {},
+                dict(equivalences=[dict(nodes=['A', 'invented'], reason='Same.')], ancestors=[]),
+                dict(equivalences=[dict(nodes=['B', 'C'], reason='Same.')], ancestors=[]),
+                dict(equivalences=[dict(nodes=['A', 'A'], reason='Same.')], ancestors=[]),
+                dict(equivalences=[], ancestors=[dict(ancestor='A', descendant='A', reason='No.')]),
+                dict(equivalences=[], ancestors=[dict(ancestor='B', descendant='C', reason='No.')]),
+                dict(equivalences=[], ancestors=[dict(ancestor='B', descendant='A', reason='')])):
+            with self.subTest(value=value), self.assertRaises((ValueError, RunnerError)):
+                validate(dataset, case, json.dumps(value), None)
+
         plan = json.loads((self.root / 'E1/experiment.json').read_text())['plan']
         for name in ['subjects.json', 'hierarchy.json', 'judgments.json', 'selection/candidates.json']:
             path = self.root / name

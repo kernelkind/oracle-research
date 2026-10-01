@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "prompt": {"id": "HCPv1", "path": "HCPv1.md"},
+  "dataset": {
+    "adapter": "hierarchy_construction",
+    "path": "n100-selection.json",
+    "select": ["N100"]
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6-astra",
+    "reasoning_effort": "low",
+    "concurrency": 1,
+    "timeout_seconds": 300,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "equivalences": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "nodes": {"type": "array", "items": {"type": "string"}},
+              "reason": {"type": "string"}
+            },
+            "required": ["nodes", "reason"],
+            "additionalProperties": false
+          }
+        },
+        "ancestors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ancestor": {"type": "string"},
+              "descendant": {"type": "string"},
+              "reason": {"type": "string"}
+            },
+            "required": ["ancestor", "descendant", "reason"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["equivalences", "ancestors"],
+      "additionalProperties": false
+    }
+  }
+}
