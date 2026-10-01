@@ -1755,10 +1755,36 @@ all other 107 nodes and earlier agreed checks remain untouched. Native usage
 is 12,202 input and 2,560 output tokens including 80 reasoning tokens; catalog
 reference $0.250020 remains separate from cash $0 and unmeasured quota. 
 
-The agent recommends checking the same fixed-meaning approach on `coffeechain`
-next, with relevance, SSE and formula fixed. That trial has not begun. One
-developmental node does not establish a general description method, broader
-sorting quality or production adoption.
+The agent recommended checking the same fixed-meaning approach on `coffeechain`
+next, with relevance, SSE and formula fixed; the user approved the prepared
+trial below. These developmental trials do not establish a general description
+method, broader sorting quality or production adoption.
+
+**Fixed coffeechain meaning approved October 1 (prepared):** The user's
+"proceed" authorizes one consistent meaning across the eleven saved direct-member
+posts in `coffeechain` (`S3c005e1a4f`). Their existing prominence answers already
+mostly use a coffee-sharing community meaning. The
+[Nostr community guide](https://quillie.github.io/nostr-wegweiser/),
+[a public author greeting](https://thegrinder.npub.pro/post/note1atxm208fgp2nq8fklknqseglftssann06r8y09gmq0re3ea6dt7q0xern2/)
+and complete saved posts ground the trial definition: the #coffeechain community
+on Nostr, where people share coffee experiences and exchange morning greetings.
+The earlier user correction to preserve `#` remains recorded; neither the saved
+sorting title nor hierarchy changes in this comparison.
+
+Draft **PPv30-coffeechain-v1** revises only the interpretation paragraph,
+retaining complete original post/title inputs, schema, allocations, Astra-low
+subscription settings and eleven saved baselines. Native preparation and four
+pre-run agent observations precede inference; exact percentages, numerical gaps
+and a strict complete order are unset. All eleven cases are unrun, bounded to
+twenty-two attempts including eligible provider retries, with incremental cash
+zero and no paid fallback. Forty-five relevant checks pass. Relevance will reuse
+exact SP subject-plus-context encoding; SSE learned layers, title, formula and
+highest-entry post rule remain fixed. All 110 protected source/result/review
+hashes remain unchanged. No new vectors, SP/MP generation, other-node or
+workflow/production change, hierarchy repair or recursion is authorized.
+[Model-runner record](../../sse_multivector/model-runner.md) supplies the prompt,
+source grounding and frozen scope. General description generation, exact
+prominence calibration and production adoption remain open.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for

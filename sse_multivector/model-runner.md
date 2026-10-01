@@ -4593,9 +4593,50 @@ The result supports supplying one node meaning consistently when assessing
 prominence, but this single-node developmental trial does not select a general
 node-description method or production prompt. Next recommended work is the
 same bounded consistency check for `coffeechain`, using one source-grounded
-meaning and fixed relevance/SSE/formula. That trial has not begun. Broader
-generation, hierarchy repairs, recursion and production adoption remain open
-or outside the authorized comparison.
+meaning and fixed relevance/SSE/formula. The user approved the prepared trial
+below. Broader generation, hierarchy repairs, recursion and production adoption
+remain open or outside the authorized comparison.
+
+**Fixed coffeechain meaning approved October 1 (prepared):**
+
+The user approved the same check across the eleven saved direct-member posts
+in `coffeechain` (`S3c005e1a4f`). All eleven include the hashtag. Unlike the
+GrowNostr baseline, their saved prominence answers already mostly describe a
+coffee-sharing community, not a chain of businesses. Earlier relationship
+experiments did use that unsupported business meaning even after the user's
+hashtag-title correction; this trial does not change those results or titles.
+The [Nostr community guide](https://quillie.github.io/nostr-wegweiser/)
+describes morning coffee and accompanying greetings, and an
+[author's public coffeechain greeting](https://thegrinder.npub.pro/post/note1atxm208fgp2nq8fklknqseglftssann06r8y09gmq0re3ea6dt7q0xern2/)
+supports that use. Together with the complete saved posts, they ground the
+trial meaning: the #coffeechain community on Nostr, where people share coffee
+experiences and exchange morning greetings. This is a trial interpretation,
+not proof of every author's intent or a production node-description method.
+
+Draft **PPv30-coffeechain-v1** changes only PPv30-node-v1's interpretation
+paragraph through native revision. The allocation instructions, schema,
+complete post/title inputs, Astra-low subscription settings and eleven saved
+baselines stay fixed. Its [prompt](prominence-prompt-goal-v1/ppv30-coffeechain-v1/PPv30-coffeechain-v1.md),
+exact edits and revision receipt are maintained sources. Native
+`prepare --from` with eleven `--only` IDs produces
+`experiments/ppv30-coffeechain-fixed-meaning-v1`. Four native pre-run agent
+observations inspect coffee experience versus hashtag association, unrelated
+jokes, morning greetings versus household details, and the unusual coffee-shop
+occasion. No exact prominence, numerical gap or strict complete order is set.
+
+All eleven cases are unrun; execution is bounded to twenty-two attempts
+including eligible provider retries, with zero subscription incremental cash
+and no paid fallback or rentals. Forty-five existing comparison, ranking,
+selection and actual local T5 worker checks pass. Relevance will reuse the
+exact preceding SP subject-plus-context SSE encoding, without a worker run or
+new byte/token selections. Node title, SSE learned layers, formula and highest
+selected-entry post rule remain fixed. Work grows with selected post/node
+inputs, full-post tokens and one short repeated meaning, not all-post/all-node
+inputs. All 110 protected source/prompt/hierarchy/result/review hashes remain
+unchanged. No SP/MP generation, hierarchy repair, other-node change or workflow/
+production code change is included. Preparation, evidence and checks are ignored
+under `experiments/ppv30-coffeechain-fixed-meaning-v1-checks`; only reusable
+prompts, maintained documentation and zero-cash accounting are tracked.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
