@@ -3,72 +3,76 @@
 Compare **Qwen3.8-27B, Gemma 4 31B, and Gemma 4 26B-A4B**: how much does
 learning from teacher answers improve quality, and what does it cost?
 
-Prompt versions, task format, training settings, and the review rubric
-remain to be settled.
+The execution flow below is a draft. Prompt versions, task format, training
+settings, and review rubric remain open.
 
-## 1. Use shared data
+**Local preparation → Vast baselines/training/evaluation → verified retrieval
+→ local scoring and comparison.**
 
-Give all candidates the same varied notes and saved teacher answers. Separate
-training, validation, and final test notes; keep authors and duplicates within
-one split. Check teacher answers before using them.
+## 1. Freeze shared inputs — locally
 
-The planned pilot includes **1,000 training notes**. **250 and 500 notes** are
-the proposed smaller comparisons. **100 validation** and **200 final test** notes
-remain proposals. Validation guides comparisons; the final test stays untouched
-during development.
+Freeze shared training, validation, and final test notes, checked teacher
+answers, prompts, model revisions, and settings. Keep authors and duplicates
+within one split.
 
-## 2. Measure untuned baselines
+**1,000 training notes** are included; **250/500 training**, **100 validation**,
+and **200 final test** remain proposals. Keep final test notes out of development.
 
-Run each original model on the validation notes and save its answers. In a
-two-step setup, each model generates its own subjects, then their masks.
+## 2. Generate untuned baselines — Vast
 
-**Check responses immediately and expected calls before training.** Report
-parsing failures and any mask calls they prevent. Teacher answers are references;
-the baseline is the untuned candidate's actual output.
+Save one baseline per candidate on the shared validation notes. Each model
+generates its own subjects, then their masks. Preserve original responses.
 
-## 3. Train on the first dataset
+**Check every response and dependent call immediately, before training.**
+Account for every requested mask response for valid subjects. Invalid subject
+answers prevent the mask stage; its size may be unknown. Valid empty masks
+remain saved answers.
 
-In a two-step setup, examples are **note → teacher's subject hierarchy** and
-**note + subject → teacher's masks**, each using the relevant prompt. The model
-predicts the teacher answer; prediction errors update adapter weights. Both
-tasks train one adapter per candidate.
+A bad model answer is a measured failure. Missing work or a parser bug blocks
+the affected comparison from advancing.
 
-Save checkpoints, verify adapter reload, and log loss, elapsed time, GPU
-utilization, memory, and power.
+## 3. Train and evaluate each data size — Vast
 
-## 4. Evaluate trained models
+Each run starts from the original model weights with a fresh adapter and
+optimizer. The 500-note set includes the first 250; the 1,000-note set includes
+the 500. Keep each candidate's recipe fixed and compare matched training work.
 
-Use the same validation notes, prompts, and generation settings as the baseline.
-Continue checking responses and call counts as they arrive.
+In the two-task format, training examples are **note → teacher hierarchy** and
+**note + subject → teacher mask**, using their respective prompts. Both tasks
+train one adapter per candidate.
 
-Measure mask overlap separately from semantic quality. One review prompt per
-note and model version sees the full note, task prompt, subjects, hierarchy,
-and masks. It returns separate **correctness** and **coverage** scores with
-evidence: how correct the returned content is, and what required content is
-missing. Output reliability is checked mechanically. The scoring scale, rubric,
-and reviewer model remain open. Review happens **after retrieval, outside the
-rental**, and is evaluation only.
+Save the adapter, verify reload, and generate validation outputs with the same
+prompts, settings, and checks as its baseline. Log training loss, time, GPU
+utilization, memory, power, and generation speed.
 
-Verify required results and transferred files before explicitly deleting the
-rental. I observe it throughout; automatic deletion stays off.
+## 4. Retrieve verified results — Vast to local
 
-## 5. Repeat with more training data
+Copy completed stage results locally as execution progresses. Before explicit
+deletion, verify expected work and transferred files: responses, failures,
+adapters, settings, and telemetry. File hashes alone do not prove completeness.
+I observe the rental throughout; automatic deletion stays off.
 
-The 500-note set contains the first 250 notes plus 250 new notes. Train each
-candidate from its original weights. Keep its recipe fixed and compare after
-matched amounts of training,
-so additional training time does not explain an apparent benefit from more notes.
+After interruption, check whether the worker still runs before resuming. Reuse
+verified saved work with the original settings. Preserve evidence of workflow
+defects; prepare code changes locally.
 
-The smaller comparison sizes and rental grouping remain open.
+## 5. Score and compare — locally, after the rental
 
-## 6. Compare and select
+Measure mask agreement and output reliability mechanically. One semantic review
+prompt per note and model version sees the full note, task prompt, subjects,
+hierarchy, and masks. It returns separate **correctness** and **coverage** scores
+with evidence. The rubric, scale, and reviewer model remain open.
 
-For each candidate, report **baseline quality, quality at each training size,
-failures, generation speed, and total cost**. Show improvements and regressions.
-
+Compare quality before/after training and across data sizes, with failures,
+speed, and cost visible. Missing reviewer judgments are evaluation failures.
 Check a small hierarchy built from candidate outputs before model selection.
-After development decisions stop, use the reserved final test to confirm the
-selected candidates' gains over their untuned baselines.
+
+## 6. Confirm on the final test
+
+After model and training choices are settled, use the reserved test to confirm
+gains over the corresponding untuned baseline. Whether GPU test outputs are
+collected during the main rental and kept sealed, or generated later, is open.
+Rental grouping, duration, and spending also remain open.
 
 [Technical details and prerequisites](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md)
 · [Decision record](release-decisions.md#two-separate-model-pilots).

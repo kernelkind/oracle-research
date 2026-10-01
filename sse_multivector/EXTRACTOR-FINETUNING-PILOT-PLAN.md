@@ -445,7 +445,7 @@ For the next pilot, response failures must be reported when they occur and
 baseline coverage checked before training proceeds. The current evaluation
 records failed notes and continues; a sealed directory can therefore lack mask
 calls. The stronger reporting and stage checks in
-[the walkthrough](../docs/planning/fine-tuning-pilot-process.md#2-measure-untuned-baselines)
+[the walkthrough](../docs/planning/fine-tuning-pilot-process.md#2-generate-untuned-baselines--vast)
 require implementation and verification. Semantic review of saved results runs
 from the local workspace after retrieval, outside the GPU rental. The proposed
 teacher reviewer is an evaluation method, not another fine-tune. The
@@ -700,6 +700,70 @@ separately from review findings and any subsequent changes.
    each mask as an independent observation.
 7. **Use the final test after selection.** Compare selected fine-tuned
    candidates with their corresponding untuned baselines on the reserved notes.
+
+### Execution and failure handling (draft)
+
+The [process walkthrough](../docs/planning/fine-tuning-pilot-process.md) maps
+where each stage runs. This is a proposed execution contract for the larger
+pilot, not a claim that the current worker enforces it.
+
+- **Local preparation:** freeze note splits, nested training sets, teacher
+  answers, prompt versions, model revisions, generation limits, and each
+  candidate's recipe. Prepare code and configuration locally.
+- **GPU execution:** one untuned baseline per candidate, followed by independent
+  training/reload/validation runs at each selected size. Reuse that baseline
+  across sizes. Start each size from the original weights with a fresh adapter
+  and optimizer. Use the same validation inputs and generation settings.
+- **Checks during execution:** account for every validation note and dependent
+  call as responses arrive. For valid generated subjects, account for every
+  requested mask response. An invalid subject response records that the mask
+  stage was prevented, without inventing its unknown request count. Fewer
+  generated subjects alone does not prove skipped work. Valid empty masks
+  remain saved responses. Check baseline accounting
+  before advancing to training and trained-output accounting before advancing
+  the affected run.
+- **Progressive retrieval:** copy completed stage results locally, then verify
+  both expected work and file hashes before explicit rental deletion. Preserve
+  original responses, parsed outputs, failure records, adapters, configuration,
+  and telemetry. Automatic deletion stays off; observation continues until
+  explicit deletion is confirmed. An incomplete run remains marked incomplete.
+- **Local scoring:** after the rental, calculate mechanical reliability and
+  mask agreement, and run the agreed per-note correctness/coverage review.
+  Compare the same notes across baseline and trained versions. Keep semantic
+  findings, model failures, and missing reviewer verdicts distinct.
+- **Final test:** keep it out of development comparisons. Review it only after
+  model and training choices are fixed. Whether to generate its GPU outputs
+  during the main rental and seal them, or in a later job, remains open.
+
+Proposed handling of failures:
+
+| What happened | Response |
+|---|---|
+| The model returned an invalid or truncated answer under the frozen settings | Preserve it, count the failure, record any prevented mask stage, and continue independently evaluable notes. |
+| Required work was skipped, parsing is defective, inputs are wrong, or files are damaged | Stop advancing affected work, preserve/retrieve evidence, and mark the comparison incomplete. A pipeline defect is not a candidate quality score. |
+| Execution or observation was interrupted | Reconcile the existing worker first to avoid duplicate starts. Reuse completed responses; resume training only from a verified checkpoint for that run under its original configuration. |
+| A reviewer response is missing or invalid | Report an evaluation failure separately; do not assign that failure as a candidate correctness/coverage score. |
+
+Parser corrections can re-evaluate saved baseline and trained outputs
+consistently, without regenerating them. Missing dependent calls still require
+actual generation. Changed generation settings require a separately identified,
+matched evaluation. Preserve original responses; do not silently regenerate a
+malformed answer or edit code on the rental.
+A sealed `complete.json` establishes saved-file integrity, not that every
+required model call occurred. Current sealed-result retrieval and checkpoint
+resume exist; the stronger stage accounting and progressive retrieval above
+still require implementation and verification.
+
+With three candidates and the proposed three training sizes, there are twelve
+validation versions: three untuned and nine trained. For N shared validation
+notes, this means 12N note outputs and 12N main semantic reviews; at the proposed
+100 notes, 1,200 reviews. Subject and mask generation call counts additionally
+depend on each version's own subjects. Check total generation/review tokens,
+full-note review input length, stored adapters, and transfer volume before
+launch; include long notes and notes with many subjects. A reviewer input that
+exceeds its limit must be reported, not silently truncated. Additional final-test
+work depends on the still-open generation arrangement. Rental grouping,
+runtime limits, and spending require separate decisions.
 
 The exact training-work budget, checkpoint schedule, and checkpoint-selection
 rule must be specified before runs. The earlier three-pass runtime estimates
