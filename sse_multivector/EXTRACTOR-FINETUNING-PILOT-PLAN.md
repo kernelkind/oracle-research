@@ -10,8 +10,10 @@ Implementation and deployment details are recorded below.
 **Release-plan tracking:** the preliminary 100-note experiment below is task
 **29 · Run preliminary 100-note fine-tuning experiment**, in progress. The larger
 model-selection pilot is **06 · Choose model through larger fine-tuning pilot**,
-waiting for its data in 05; its exact dataset size remains open. Task 18's
-training setup is complete. Task 29 needs 01 + 18, not the larger-pilot data
+waiting for its data in 05. The planned pilot includes a comparison trained on
+1,000 notes, approved September 30; smaller training comparisons and
+validation/test counts remain open. Task 18's training setup is complete.
+Task 29 needs 01 + 18, not the larger-pilot data
 in 05, and its findings inform 06 without becoming a new completion gate.
 Splitting the tracking does not change the experiments or spending approvals.
 
@@ -139,8 +141,9 @@ Approved requirements:
   ceiling. See [Pilot budget](#pilot-budget--approved-approach); no amount or
   percentage is approved yet.
 
-The staged experimental design below is proposed, not fully approved. Dataset
-sizes, exact training settings, hardware allocations, and individual spending
+The staged experimental design below is only partly approved. The 1,000-note
+training comparison is included; smaller training comparisons, validation/test
+counts, exact training settings, hardware allocations, and individual spending
 authorizations remain open for that larger design. The first informal rental below
 started and was deleted on September 29 after the monitoring error recorded
 below. No baseline or training completed.
