@@ -85,7 +85,9 @@ at 250/500/1,000 training notes, 100 validation notes, and the selected model's
 200-note final comparison against its untuned baseline. This assumes 128–1,024
 training updates per run and teacher labeling/review through the existing Codex
 subscription. Training amount is undecided; subscription quota is finite.
-Longer training or paid API calls would increase the estimate.
+Longer training or paid API calls would increase the estimate. At the previous
+GPU's speed, allow **5–9 days of GPU work**, including headroom. Label preparation
+and local review add time outside the rental; hardware is still undecided.
 
 [Technical details and prerequisites](../../sse_multivector/EXTRACTOR-FINETUNING-PILOT-PLAN.md)
 · [Decision record](release-decisions.md#two-separate-model-pilots).

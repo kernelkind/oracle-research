@@ -996,6 +996,72 @@ previous analysis `target/distillation-pilot-v1/results-deep-dive-20260930.md`.
 The following older estimates remain historical scenarios and do not describe
 this measured BF16 workload.
 
+### GPU alternatives and duration — October 1, provisional
+
+A read-only search compared verified on-demand offers with the previous driver,
+CPU-memory, disk, connectivity and reliability constraints. Single-GPU rates
+include 300 GB storage. These are observed quotes, not selected or reserved
+hardware; the cheaper Max-Q offer was absent on the refresh a few minutes later.
+
+| Configuration observed | Dollars/hour | Whole-workload speed required to beat the previous $1.4167/hour rental |
+| --- | ---: | ---: |
+| RTX PRO 6000 Max-Q, 96 GB, 300 W | $1.1311 | More than 79.8% of previous throughput; less than 25.3% longer |
+| RTX PRO 6000 WS, 96 GB, 500 W | $1.4722 | More than 3.9% faster |
+| RTX PRO 6000 Server, 96 GB, 600 W | $1.5222 | More than 7.5% faster |
+| H200, 141 GB | $5.2281 | More than 3.69 times as fast |
+| B200, 180 GB | $6.3281 | More than 4.47 times as fast |
+
+Break-even calculation: `alternative hours / previous hours < previous hourly
+rate / alternative hourly rate`, before differences in setup and transfers.
+No measured run establishes these speed changes. A broad search returned a
+600 W workstation at $1.31/hour, but its older driver and slower download link
+failed the current host constraints; its price is not a compatible-run quote.
+
+The 500 W workstation is a simple candidate for both lower cost and shorter
+duration if it clears the small speed threshold. Max-Q is a plausible cost
+candidate but may take longer. Both workstation variants have 96 GB and the
+same published 1,792 GB/s bandwidth; [NVIDIA Max-Q specifications](https://www.nvidia.com/content/dam/en-zz/Solutions/products/workstations/professional-desktop-gpus/rtx-pro-6000-max-q/workstation-datasheet-blackwell-rtx-pro-6000-max-q-nvidia-3519233.pdf),
+[workstation specifications](https://www.nvidia.com/en-us/products/workstations/professional-desktop-gpus/rtx-pro-6000/).
+The server variant's bandwidth is 1,597 GB/s, so its higher power does not
+establish faster generation. [Server specifications](https://www.nvidia.com/en-us/data-center/rtx-pro-6000-blackwell-server-edition/)
+H200/B200 have higher published bandwidth and capacity, but those ratios are
+not whole-run speedups. [HGX specifications](https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory-h100-h200-b200/latest/components.html)
+
+Prior telemetry supports caution on Max-Q: training/save/reload power medians
+were approximately 450/450/445 W for Qwen/dense Gemma/MoE. Qwen and dense Gemma
+baseline subject/generation samples exceeded 300 W most of the time, whereas
+MoE evaluation medians were approximately 178–184 W. Qwen trained evaluation
+median was 245 W, dense Gemma 299 W. These are periodic samples, not energy
+integrals or isolated decoding benchmarks. They do not prove unchanged speed
+under a 300 W limit. The full unchanged workload also exceeded 80 GB: dense
+Gemma allocated 85.34 GiB of CUDA tensors, with sampled overall GPU use peaking
+at 94.32 GiB. An 80 GB H100/A100 is therefore not a substitute for this recipe.
+
+At the measured 450 W throughput, including 1,200 validation outputs and the
+winner's 400 final-test outputs:
+
+| Illustrative updates/run | One GPU, with 25% headroom | Three candidate runs concurrently, with 25% headroom |
+| ---: | ---: | ---: |
+| 128 | 126–136 hours / 5.2–5.7 days | 63–74 hours / 2.6–3.1 days |
+| 512 | 155–166 hours / 6.5–6.9 days | 78–89 hours / 3.2–3.7 days |
+| 1,024 | 195–205 hours / 8.1–8.6 days | 98–109 hours / 4.1–4.5 days |
+
+Raw single-GPU work is approximately 100–165 hours before the allowance.
+Parallel durations assume independent candidate jobs and count the longest
+main run followed by the selected candidate's final comparison. They exclude
+the intervening local model-selection review and teacher-label preparation;
+those elapsed times remain unknown. They do not claim that the existing worker
+supports parallel jobs. Separate rentals can end independently; one multi-GPU
+rental charges for unused GPUs as shorter jobs finish. Current two/four-GPU
+server offers showed little per-GPU price discount, so parallelism primarily
+reduces elapsed time rather than total cost. No execution change is approved
+by this comparison. Any new hardware choice still needs local preparation and
+validation of its launch configuration.
+
+Offer evidence is saved in `target/distillation-pilot-v1/cost-estimate-20261001/`;
+GPU telemetry is under the completed operation's `observations/progress-*.json`.
+These duration scenarios do not establish adequate training or a spending cap.
+
 ### Runtime estimates — not measured
 
 The following September 15 estimates predate the current subject hierarchy and
