@@ -47,9 +47,12 @@ utilization, memory, power, and generation speed.
 
 ## 4. Retrieve verified results — Vast to local
 
-Copy completed stage results locally as execution progresses. Before explicit
-deletion, verify expected work and transferred files: responses, failures,
-adapters, settings, and telemetry. File hashes alone do not prove completeness.
+One background copier transfers subject responses, mask batches, and checkpoints
+as soon as saving finishes, while the experiment continues. Verify local copies
+and retain remote originals at least until verification. Limit transfer bandwidth
+and disk activity.
+
+Before explicit deletion, verify both expected work and required local files.
 I observe the rental throughout; automatic deletion stays off.
 
 After interruption, check whether the worker still runs before resuming. Reuse

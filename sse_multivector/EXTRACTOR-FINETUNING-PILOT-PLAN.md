@@ -722,11 +722,19 @@ pilot, not a claim that the current worker enforces it.
   remain saved responses. Check baseline accounting
   before advancing to training and trained-output accounting before advancing
   the affected run.
-- **Progressive retrieval:** copy completed stage results locally, then verify
-  both expected work and file hashes before explicit rental deletion. Preserve
-  original responses, parsed outputs, failure records, adapters, configuration,
-  and telemetry. Automatic deletion stays off; observation continues until
-  explicit deletion is confirmed. An incomplete run remains marked incomplete.
+- **Live observation — approved October 1:** observe from launch through
+  verified retrieval and explicit deletion. Inspect actual baseline subject and
+  mask responses before training, training progress and GPU telemetry, and
+  trained outputs as they arrive, alongside automatic response/call checks.
+- **Progressive retrieval — approved design October 1:** one background copier
+  transfers each subject response, mask batch, and checkpoint as soon as saving
+  finishes while execution continues. Verify local copies using file hashes;
+  retain remote originals at least until verification, including checkpoints
+  awaiting transfer. Limit bandwidth and disk activity to protect throughput.
+  Before explicit deletion, verify both expected work and all required local
+  files. Preserve original responses, parsed outputs, failures, adapters,
+  configuration, and telemetry. Automatic deletion stays off. An incomplete
+  run remains marked incomplete.
 - **Local scoring:** after the rental, calculate mechanical reliability and
   mask agreement, and run the agreed per-note correctness/coverage review.
   Compare the same notes across baseline and trained versions. Keep semantic
@@ -751,8 +759,9 @@ matched evaluation. Preserve original responses; do not silently regenerate a
 malformed answer or edit code on the rental.
 A sealed `complete.json` establishes saved-file integrity, not that every
 required model call occurred. Current sealed-result retrieval and checkpoint
-resume exist; the stronger stage accounting and progressive retrieval above
-still require implementation and verification.
+resume exist; the stronger stage accounting and approved background copier
+above still require implementation and verification. Transfer mechanism and
+resource limits remain implementation choices.
 
 With three candidates and the proposed three training sizes, there are twelve
 validation versions: three untuned and nine trained. For N shared validation

@@ -609,6 +609,16 @@ The walkthrough also keeps remaining data choices, the larger pilot's output for
 training settings, continuation rules, and new spending open. It authorizes no
 new code changes, model calls, or rental.
 
+**October 1 observation and transfer design approved:** the assistant observes
+from launch through verified retrieval and explicit deletion, inspecting actual
+subject and mask responses during baseline before training, training progress
+and GPU telemetry, and trained outputs as they arrive.
+One background copier transfers subject responses, mask batches, and checkpoints
+as soon as saving finishes while the experiment continues. Verify each local
+copy and retain remote originals at least until verification. Limit transfer
+bandwidth and disk activity to protect experiment throughput. This records the
+intended design; the copier and stronger stage checks still need implementation.
+
 **September 30 training-data clarification:** the user confirmed that the
 500-note comparison includes the first 250 training notes plus 250 new notes.
 Each dataset-size run starts from the original model weights. This confirms
