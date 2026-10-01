@@ -101,6 +101,11 @@ equality; the two kinds of relationship are not interchangeable.
 Then apply verified ancestor answers in sorted order. Neither and uncertain
 answers do not create links. Conflicting or uncertified proposals are recorded
 as deferred; never delete an SP relationship to make a proposal work.
+Each pass reconsiders the saved answers against the current node identities;
+it does not create new model receipts for those applications. Earlier accepted
+links remain in the starting graph. Deferred graph applications can become
+eligible after the graph changes. Every snapshot and original answer remains
+available for replay under a different documented policy.
 
 Each proposal has a structural work allowance of 20,000 inspected operations,
 including adjacency and existing-judgment work. Exhaustion means deferred,
@@ -179,3 +184,35 @@ env LD_LIBRARY_PATH=/nix/store/1xw5xccqqh1xw3mvd70hyil6x418wxcm-gcc-14.3.0-lib/l
 passes, unresolved work and the final browser export without inference.
 Individual cases remain inspectable in each pass's ordinary discovery and
 comparison experiment.
+
+## Completed build and browser handoff
+
+HG100-SOL01 completed its three scheduled passes on September 30, 2026:
+522 new attempts, two exact-request reuses, and no failed or unrun model cases.
+The final snapshot is `target/hg100-sol01/exports/final-004/`; its saved
+summary and provenance contain the detailed counts and receipt bindings.
+All 100 posts, 2,383 SP entries and 1,674 masks were retained. The native browser
+check passed, along with ancestry, DAG and export-hash checks. Mechanical
+completion does not establish semantic placement accuracy or browsing quality.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+target/infomap-review-build/debug/sse-subject-navigation \
+  --categories target/hg100-sol01/exports/final-004/categories.json \
+  sse_multivector/hierarchy-refresh-v1/masked-posts.json
+```
+
+### Important limitation of preserving every local SP relationship
+
+A generic ingredient subject underneath a specific recipe in a local SP
+hierarchy can become a cross-post ingredient node. Preserving that parent link
+then makes unrelated posts reachable beneath the specific recipe. Verified
+new placements can extend the leakage without violating any graph invariant.
+This occurred in the finished build; it was not manually repaired or hidden.
+
+BCPv5 checks nominated global pairs, not every retained local SP relationship.
+Consequently, this build does not establish that every local link can safely
+become unconditional ancestry between combined global nodes. Remaining roots
+and duplicate branches also show that the bounded selection is not complete.
+The next read-only investigation should examine that local-to-global link
+assumption, using the saved source entries and actual inherited posts.
