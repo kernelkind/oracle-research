@@ -57,8 +57,52 @@ order. A node with no `e` tags has no children. `content` is empty.
   "tags":[
     ["title","Cooking"],
     ["e","note1jkl..jkl"],
-    ["e","note1mno..mno"]
+    ["e","note1mno..mno"],
+    ["notes_index","note1pqr..pqr"]
   ],
   "content":"", "sig":"def..def"
 }
 ```
+
+## Note lists — proposed schema
+
+`K_NOTES` and `K_NOTES_INDEX` are unassigned regular kinds in `1000–9999`.
+
+In nodes and indexes, `notes` references a `K_NOTES` page; `notes_index`
+references a `K_NOTES_INDEX` index. A node uses exactly one of these tags,
+or neither for an empty list.
+
+In an index, all `notes` tags precede all `notes_index` tags:
+
+```text
+{
+  "id":"note1pqr..pqr", "pubkey":"npub1abc..abc",
+  "created_at":1790683198, "kind":K_NOTES_INDEX,
+  "tags":[["notes","note1stu..stu"],["notes_index","note1vwx..vwx"]],
+  "content":"", "sig":"abc..abc"
+}
+```
+
+In `K_NOTES`, `e` tags contain note event IDs, in order:
+
+```text
+{
+  "id":"note1stu..stu", "pubkey":"npub1abc..abc",
+  "created_at":1790683197, "kind":K_NOTES,
+  "tags":[["e","note1aaa..aaa"],["e","note1bbb..bbb"]],
+  "content":"", "sig":"abc..abc"
+}
+```
+
+Concatenate the pages' note IDs in `notes` tag order, then append each
+referenced index's complete sequence in `notes_index` tag order. Apply this
+rule recursively.
+A missing referenced page or index makes the read incomplete.
+
+An index must not reference itself directly or through other indexes. If
+following `notes_index` references revisits an index on the current traversal
+path, the list is invalid. Reusing an index in a separate branch is allowed.
+
+Pages and indexes are published by the hierarchy author and served by the same
+relay. `content` is empty. The author chooses how many entries fit each event's
+byte and tag limits. [NIP-11](https://github.com/nostr-protocol/nips/blob/master/11.md#server-limitations)
