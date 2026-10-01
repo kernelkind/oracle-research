@@ -108,7 +108,7 @@ def spec_setup(path):
     )
     return {
         "prompt": prompt,
-        "dataset": {k: v for k, v in dataset.items() if k != "path"},
+        "dataset": {**dataset, "path": str(source_path)},
         "cases": cases,
         "preparation": preparation,
         "runner": runner,
@@ -289,6 +289,7 @@ def prepare(args):
                 Path(__file__),
                 Path(inputs.__file__),
                 Path(inputs.grouped_masks.__file__),
+                Path(inputs.hierarchy_inputs.__file__),
                 Path(engine.__file__),
                 Path(__file__).with_name("mask_positions.py"),
             )
@@ -680,6 +681,88 @@ def report(directory, only=None, note_ids=None, *, generation_costs=False):
     return result
 
 
+def collect(directories, output, worker_config=None):
+    """Publish validated extraction inputs without inference or source writes."""
+    output = output.expanduser().resolve()
+    if output.exists():
+        raise ValueError("collection output already exists")
+    bundles, protected, provenance = [], {}, []
+    for directory in directories:
+        directory = directory.expanduser().resolve()
+        if output == directory or directory in output.parents:
+            raise ValueError("collection output must be outside saved experiments")
+        plan, _, _ = load(directory)
+        if "path" not in plan["dataset"]:
+            raise ValueError("collect requires source-bound preparation; import or prepare a new experiment")
+        result = report(directory)
+        if any(c["status"] not in {"valid", "empty"} or not c.get("receipt") for c in result["cases"]):
+            raise ValueError("collect requires complete valid saved answers")
+        plan = {**plan, "experiment": str(directory)}
+        bundles.append((plan, result))
+        source = plan["dataset"]["path"]
+        expected = plan["sources"][source]
+        if source in protected and protected[source] != expected:
+            raise ValueError(f"conflicting source hashes: {source}")
+        protected[source] = expected
+        protected[str(directory / "experiment.json")] = engine._sha256_file(directory / "experiment.json")
+        for name, expected in plan["files"].items():
+            protected[str(directory / name)] = expected
+        for case in result["cases"]:
+            path = case["receipt"]["results_path"]
+            if path not in protected:
+                protected[path] = engine._sha256_file(Path(path))
+        provenance.append(dict(experiment=str(directory), prompt_id=plan["prompt"]["id"],
+                               settings=result["settings"], sources=plan["sources"], cases=[dict(id=c["id"],
+                               receipt=c["receipt"], reused=c.get("reused", False)) for c in result["cases"]]))
+    adapters = {p["dataset"]["adapter"] for p, _ in bundles}
+    if adapters == {"subjects"}:
+        files = inputs.hierarchy_inputs.collect_subjects(bundles)
+    elif adapters <= {"masks", "grouped_masks"}:
+        files = inputs.hierarchy_inputs.collect_masks(bundles)
+    else:
+        raise ValueError("collect supports subjects, masks and grouped_masks experiments")
+    if worker_config is not None:
+        if adapters == {"subjects"}:
+            raise ValueError("--worker-config requires mask experiments")
+        worker_config = worker_config.expanduser().resolve()
+        protected[str(worker_config)] = engine._sha256_file(worker_config)
+        settings = read(worker_config)
+    for path, expected in protected.items():
+        if engine._sha256_file(Path(path)) != expected:
+            raise ValueError(f"protected source changed: {path}")
+    files["provenance.json"] = dict(schema_version=1, sources=protected, experiments=provenance,
+                                    inference_calls=0)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=".experiment-collect-", dir=output.parent) as temporary:
+        staged = Path(temporary)
+        for name, value in files.items():
+            write(staged / name, value)
+        if "worker-request.json" in files:
+            request = files["worker-request.json"]
+            request["proposal_sha256"] = engine._sha256_file(staged / "masked-posts.json")
+            write(staged / "worker-request.json", request)
+            try:
+                from .worker import _load_request, WorkerConfig
+            except ImportError:
+                from worker import _load_request, WorkerConfig
+            _load_request(staged / "worker-request.json")
+            if worker_config is not None:
+                files["worker-config.json"] = {**settings,
+                    "request_path": str(output / "worker-request.json"),
+                    "request_sha256": engine._sha256_file(staged / "worker-request.json"),
+                    "output_path": str(output / "worker-result")}
+                write(staged / "worker-config.json", files["worker-config.json"])
+                WorkerConfig.load(staged / "worker-config.json")
+        (staged / ".gitignore").write_text("*\n")
+        for path, expected in protected.items():
+            if engine._sha256_file(Path(path)) != expected:
+                raise ValueError(f"protected source changed: {path}")
+        output.mkdir()
+        for child in staged.iterdir():
+            child.rename(output / child.name)
+    return dict(output=str(output), files=sorted(files), inference_calls=0)
+
+
 def execution_upgrade(directory, plan, reason):
     """Audit an explicitly approved code transition without rewriting frozen inputs."""
     active = plan["code"]
@@ -1048,6 +1131,10 @@ def parser():
         type=Path,
         help="verify/import a historical batch without running it",
     )
+    p = commands.add_parser("collect", help="collect valid saved SP/MP answers into reusable inputs; no inference")
+    p.add_argument("experiments", type=Path, nargs="+")
+    p.add_argument("--output", type=Path, required=True, help="fresh output directory outside saved experiments")
+    p.add_argument("--worker-config", type=Path, help="bind supplied SSE settings to collected masks; does not run SSE")
     p = commands.add_parser(
         "run",
         help="execute a prepared experiment; retry only temporary provider errors",
@@ -1127,6 +1214,8 @@ def main(argv=None):
             if args.from_experiment and args.baseline:
                 raise ValueError("--from already specifies the baseline")
             compact(prepare(args), prepared=True)
+        elif args.command == "collect":
+            print(json.dumps(collect(args.experiments, args.output, args.worker_config), indent=2))
         elif args.command == "run":
             if args.max_new_attempts is not None and args.max_new_attempts < 1:
                 raise ValueError("--max-new-attempts must be positive")

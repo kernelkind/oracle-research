@@ -331,7 +331,7 @@ preparation, not just execution; see [extension rules](#offline-verification-and
 If the extension exceeds the authorized task, request approval rather than
 bypassing the tool.
 
-Only `run` performs inference. `prepare`, `show`, `revise`, `review` and
+Only `run` performs inference. `prepare`, `show`, `revise`, `review`, `collect` and
 `export-hierarchy` do not call a model. Preparation checks the local runner identity, not credentials
 or provider acceptance. User approval and the repository spending rules still
 apply before `run`; preparing an experiment does not authorize spending.
@@ -738,11 +738,77 @@ target/infomap-review-build/debug/sse-subject-navigation \
 Do not enable display-collapse options. Append `--check` for noninteractive
 validation. No saved LG01 output is rewritten.
 
-### Title, mask and prominence preparation
+### Collect subjects and masks into reusable inputs
+
+`collect` is offline. It validates saved answers and receipts through the same
+report loader as `show`, then writes a fresh output directory. Collection paths,
+prompt versions, teacher settings and saved-answer reuse are data supplied to
+`prepare`; no collection name, topic or post count is hardcoded into this path.
+
+- Collect completed `subjects` experiments into `subjects.json`, retaining
+  complete posts, IDs, source metadata, numbered SP entries and contexts. Supply
+  that file to the existing `masks` or `grouped_masks` adapter.
+- Collect completed `masks` (word-position format) or `grouped_masks` experiments
+  into `masked-posts.json`, `vector-map.json` and, when masks are nonempty,
+  `worker-request.json`. Keep every original SP entry, including valid empty MP
+  masks and selected posts with no subjects. Encode exactly identical nonempty
+  source-byte ranges within one post once, retaining all subject associations.
+- Multiple experiment paths can combine disjoint collections or complete partial
+  mask batches. Reject duplicate subject answers, conflicting posts, missing
+  masks, invalid receipts and changed source data. Collection does not choose
+  between repeated trials or treat generated semantics as user approvals.
+- Each output includes `provenance.json` with source hashes, experiment settings
+  and receipts. Outputs cannot overwrite existing directories or be placed
+  inside source experiments. Their generated data is ignored from the outset.
+
+For illustrative already-completed experiment paths:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+python3 sse_multivector/experiment.py collect \
+  target/subjects-food target/subjects-music \
+  --output target/combined-subjects
+```
+
+After separately authorized MP calls have completed, collection can also bind
+an explicitly supplied SSE worker configuration to the new request:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+python3 sse_multivector/experiment.py collect \
+  target/music-masks \
+  --output target/music-sse-inputs \
+  --worker-config sse_multivector/hierarchy-refresh-v1/worker-config.json
+```
+
+The generated worker configuration preserves the supplied model, checkpoint,
+runtime paths and batch settings, updating only request/output paths and the
+request hash. It does not run SSE or establish compatibility with existing
+vectors; verify worker/runtime provenance before later encoding or reuse.
+If every mask is empty, no worker request or configuration is needed.
+
+This replaces experiment-specific assembly for new work. The historical
+`hierarchy_refresh.py` preparation and saved HRv1 artifacts remain unchanged;
+its mask-to-SSE conversion uses the same reusable implementation. Older
+experiments without a saved dataset path can be imported using a current spec;
+collection never reruns their answers. Source hashing and input assembly add
+no model calls or cross-post comparisons. Collection reads each distinct source
+once and hashes each result ledger once per validation pass. Existing SP/MP
+request sizes and repeated post context remain unchanged.
+
+### Subject, title, mask and prominence preparation
 
 The core workflow is task-independent. Optional adapters use the existing
 production preparation and decoding functions:
 
+- `dataset.adapter: "subjects"`: `path` points to
+  `{"schema_version":1,"notes":[{"note_id":"...","text":"..."}]}`.
+  It uses the `posts` adapter's `{POST}` inputs and optional case-ID `select`;
+  `origin.prompt_id`, when supplied, preserves historical prompt identities.
+  Other saved fields remain source evidence. Expected output is a `subjects`
+  array of `number`, `context`, `subject` entries. Require unique section-style
+  numbers and each parent before its children; preserve repeated subject wording
+  and an empty array. No semantic repairs or prompt/model defaults are applied.
 - `dataset.adapter: "titles"`: `path` points to source packets with
   `packets[].packet` and `instances[]` (instance/vector/post IDs, original text,
   UTF-8 byte spans, fragments). Optional `select` lists exact packet IDs.

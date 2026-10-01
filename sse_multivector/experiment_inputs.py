@@ -14,10 +14,12 @@ import re
 try:
     from . import extraction_pipeline as engine
     from . import grouped_masks
+    from . import hierarchy_inputs
     from .prepare_category_title_inputs import prepare as prepare_titles
 except ImportError:
     import extraction_pipeline as engine
     import grouped_masks
+    import hierarchy_inputs
     from prepare_category_title_inputs import prepare as prepare_titles
 
 
@@ -869,7 +871,7 @@ def prepare(dataset, source, template):
             if set(dataset["select"]) - {c["id"] for c in cases}:
                 raise ValueError("unknown case requested")
             cases = [c for c in cases if c["id"] in dataset["select"]]
-    elif adapter == "posts":
+    elif adapter in {"posts", "subjects"}:
         cases = prepare_posts(source, dataset.get('select'))
     elif adapter == "prominence":
         cases = prepare_prominence(source, dataset.get("select"), dataset.get('combine_masks', False))
@@ -935,6 +937,10 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter == "subjects":
+        value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
+        hierarchy_inputs.validate_subjects(value)
+        result["parsed"] = value
     if adapter == 'hierarchy_construction':
         value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
         engine._expect_fields(value, 'construction proposals', {'equivalences', 'ancestors'})

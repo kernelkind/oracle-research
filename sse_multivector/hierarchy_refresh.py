@@ -15,6 +15,7 @@ import time
 from pathlib import Path
 
 from . import extraction_pipeline as pipeline
+from .hierarchy_inputs import encode_inputs
 
 ROOT = Path(__file__).resolve().parent.parent
 SSE = ROOT / "sse_multivector"
@@ -134,46 +135,6 @@ def masks(output):
     print(json.dumps({"posts": len(notes), "subject_entries": len(parsed.prompts),
                       "distinct_requests": len({p.text for p in parsed.prompts})}))
 
-
-def encode_inputs(source, checks):
-    """Preserve every heading; only exact nonempty masks enter the encoder."""
-    checks = {c["item_id"]: c for c in checks}
-    request, vectors, notes, preserved = [], [], [], []
-    counter = 0
-    for index, post in enumerate(source["notes"], 1):
-        short = f"N{index:03}"
-        notes.append({"note_id": post["note_id"], "short_id": short})
-        distinct, entries = {}, []
-        for entry in post["subjects"]:
-            counter += 1
-            check = checks[f"M{counter:03}"]
-            if check["status"] != "valid":
-                raise ValueError(f"invalid mask M{counter:03}; never repair or silently omit")
-            ranges = check["ranges"]
-            text = post["text"]
-            spans = [[len(text[:r["start"]].encode()), len(text[:r["end"]].encode())] for r in ranges]
-            fragments = [text[r["start"]:r["end"]] for r in ranges]
-            record = {**entry, "id": f"M{counter:03}", "byte_spans": spans, "fragments": fragments,
-                      "semantic_status": "generated, not independently approved", "diagnostics": check.get("diagnostics")}
-            entries.append(record)
-            if not spans:
-                continue
-            key = tuple(map(tuple, spans))
-            if key not in distinct:
-                identifier = hashlib.sha256(json.dumps([post["note_id"], text, spans], ensure_ascii=False).encode()).hexdigest()
-                row = {"vector_id": identifier, "worker_subject_id": identifier[:16],
-                       "note_id": post["note_id"], "note_short_id": short, "byte_spans": spans,
-                       "fragments": fragments, "subject_entries": [], "short_id": f"V{len(vectors)+1:04}"}
-                distinct[key] = row
-                vectors.append(row)
-            distinct[key]["subject_entries"].append(record)
-        preserved.append({"note_id": post["note_id"], "text": post["text"], "subjects": entries})
-        if distinct:
-            request.append({"note_id": post["note_id"], "text": post["text"], "subjects": [
-                {"subject_id": row["worker_subject_id"], "byte_spans": row["byte_spans"]} for row in distinct.values()]})
-    if counter != len(checks):
-        raise ValueError("mask count does not match subject entries")
-    return request, {"schema_version": 1, "notes": notes, "vectors": vectors, "vector_count": len(vectors)}, {"schema_version": 1, "notes": preserved}
 
 
 def vectors(output):

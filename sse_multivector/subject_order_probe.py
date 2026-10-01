@@ -26,10 +26,25 @@ def save(path, value):
         stream.write("\n")
 
 
+def post_ids(vector_map):
+    """Identify posts independently of whether any MP mask has a vector."""
+    result = {v["note_short_id"]: v["note_id"] for v in vector_map["vectors"]}
+    for note in vector_map.get("notes", []):
+        label = note.get("note_short_id", note.get("short_id"))
+        if not isinstance(label, str) or not label:
+            raise ValueError("saved post mapping requires a short ID")
+        if label in result and result[label] != note["note_id"]:
+            raise ValueError("saved post mapping conflicts with mask vectors")
+        result[label] = note["note_id"]
+    if len(set(result.values())) != len(result):
+        raise ValueError("saved post mapping repeats a post under different short IDs")
+    return result
+
+
 def build_inputs(posts, vector_map, labels):
     if len(set(labels)) != len(labels):
         raise ValueError("duplicate post selection")
-    note_ids = {v["note_short_id"]: v["note_id"] for v in vector_map["vectors"]}
+    note_ids = post_ids(vector_map)
     by_id = {p["note_id"]: p for p in posts["notes"]}
     mask_ids = {}
     for v in vector_map["vectors"]:

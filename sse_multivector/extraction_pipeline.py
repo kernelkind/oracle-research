@@ -3591,7 +3591,7 @@ def prepare_mask_inputs(source, template, mask_format="word_positions", note_ids
         subjects = note.get("subjects")
         if not isinstance(subjects, list):
             raise RunnerError("each selected note must have a subjects array")
-        for raw_subject in subjects:
+        for subject_index, raw_subject in enumerate(subjects):
             subject = raw_subject
             if isinstance(subject, dict):
                 if "subject" in subject and "text" in subject:
@@ -3602,7 +3602,8 @@ def prepare_mask_inputs(source, template, mask_format="word_positions", note_ids
                 raise RunnerError("subject must not be blank")
             item_id = f"M{len(items) + 1:03}"
             items.append({"item_id": item_id, "note_id": note_id,
-                          "note": text, "subject": subject})
+                          "note": text, "subject": subject,
+                          "subject_index": subject_index})
             # Substitute in the template only, never in text inserted from a note.
             values = {"POST": text, "SUBJECT": subject}
             if mask_format == "word_positions":

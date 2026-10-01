@@ -16,7 +16,7 @@ import platform
 import sys
 
 from sse_multivector.ancestor_cosine_probe import cosine, load_vectors
-from sse_multivector.subject_order_probe import build_inputs, read, reachable, save
+from sse_multivector.subject_order_probe import build_inputs, post_ids, read, reachable, save
 from sse_multivector.worker import _load_request, _sha256_file
 from sse_multivector.subject_hierarchy import browser_spec
 
@@ -91,9 +91,10 @@ def prepare(source, output, *, posts=None, reuse_probe=None, protected=()):
     mappings = read(source / 'vector-map.json')
     corpus = read(source / 'masked-posts.json')
     if posts is None:
-        if {p['note_id'] for p in corpus['notes']} != {v['note_id'] for v in mappings['vectors']}:
+        identifiers = post_ids(mappings)
+        if {p['note_id'] for p in corpus['notes']} != set(identifiers.values()):
             raise ValueError('cannot identify every corpus post from the saved vector map')
-        posts = sorted({v['note_short_id'] for v in mappings['vectors']})
+        posts = sorted(identifiers)
     inputs, request = build_inputs(corpus, mappings, posts)
     hashes = {str(path.resolve()): _sha256_file(path) for path in [
         source / 'masked-posts.json', source / 'vector-map.json', source / 'worker-config.json',
