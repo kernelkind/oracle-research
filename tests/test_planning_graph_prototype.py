@@ -225,6 +225,16 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 evaluate("document.querySelector('#show-all').click()")
                 self.assertEqual(visible_ids(), shared | release | model | historical)
                 capture("both-tracks")
+                # Every task is a short planning summary, not an experiment log.
+                evaluate("document.querySelector('#depth').value = '0'; document.querySelector('#depth').dispatchEvent(new Event('change'))")
+                for task in plan["tasks"]:
+                    evaluate(f"document.querySelector('#focus-task').value = '{task['id']}'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
+                    wait_for(f"document.querySelector('#details h2').textContent.startsWith('{task['id']} ·')")
+                    description = evaluate("document.querySelector('#details .description').textContent")
+                    self.assertEqual(description, task["description"])
+                    self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), task["status"])
+                    self.assertLessEqual(len(description.split()), 70, f"Task {task['id']} contains too much detail")
+                    self.assertLessEqual(len(description.splitlines()), 3, f"Task {task['id']} is a task log")
                 evaluate("document.querySelector('#focus-task').value = '02'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                 evaluate("document.querySelector('#depth').value = '1'; document.querySelector('#depth').dispatchEvent(new Event('change'))")
                 evaluate("document.querySelector('#direction').value = 'both'; document.querySelector('#direction').dispatchEvent(new Event('change'))")
@@ -242,22 +252,10 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertIn("other links", evaluate("document.querySelector('#graph-status').textContent"))
                 self.assertIn("needed to finish", evaluate("document.querySelector('#details').innerText.toLowerCase()"))
                 self.assertIn("IN PROGRESS", evaluate("document.querySelector('#details').innerText"))
-                self.assertIn("Latest saved build: 1,651 hierarchy nodes and 220 roots.",
-                              evaluate("document.querySelector('#details').innerText"))
                 hierarchy_details = evaluate("document.querySelector('#details').innerText")
-                for progress in (
-                    "three scheduled passes completed",
-                    "All 2,383 original subject entries and 1,674 masks retained",
-                    "Mechanical completion is not browsing acceptance",
-                    "original subject links make unrelated posts reachable beneath specific recipes",
-                    "Remaining roots and duplicate branches",
-                    "Six-link diagnostic completed",
-                    "agent expectations, not corpus-wide validation",
-                    "Full original-link check prepared only: 1,755 comparisons in 110 batches, all unrun",
-                    "No filtering or production workflow selected",
-                    "Launch-scale construction is not this completion gate",
-                ):
-                    self.assertIn(progress, hierarchy_details)
+                for summary in ("accepted by the user in browsing review", "The export is ready",
+                                "recipe branches include unrelated posts", "No production workflow is selected"):
+                    self.assertIn(summary, hierarchy_details)
                 self.assertTrue(evaluate("document.querySelector('#graph canvas')?.getBoundingClientRect().width > 500"))
                 self.assertGreaterEqual(sum(edge["target"] == "02" for edge in check_routes()["edges"]), 2)
                 capture("focused")
@@ -315,54 +313,43 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
                 score_details = evaluate("document.querySelector('#details').innerText")
                 self.assertIn("one sorting score per note within a hierarchy node", score_details)
-                self.assertIn("candidate components, not fixed requirements", score_details)
-                self.assertIn("No final formula or model inputs are selected", score_details)
-                self.assertIn("11 clear Coffee/Eggs/Music pair preferences", score_details)
-                self.assertIn("One Coffee comparison repeated successfully", score_details)
+                self.assertIn("the formula, model inputs and any use of multiple masks remain undecided", score_details)
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('27 ·'))"))
 
                 evaluate("document.querySelector('#focus-task').value = '17'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#details h2').textContent.startsWith('17 ·')")
-                self.assertIn("Additional teacher outputs needed for sorting remain undecided", evaluate("document.querySelector('#details').innerText"))
                 self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
                 teacher_details = evaluate("document.querySelector('#details').innerText")
+                for summary in ("resulting hierarchies on the same notes", "Candidate testing continues",
+                                "no teachers selected", "Final selection awaits prompt stress-testing",
+                                "node sort score requirements"):
+                    self.assertIn(summary, teacher_details)
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('30 ·'))"))
-                self.assertIn("Final teacher selection waits for prompt stress-testing", teacher_details)
-                self.assertIn("Comparison work may continue", teacher_details)
                 evaluate("document.querySelector('#depth').value = '1'; document.querySelector('#depth').dispatchEvent(new Event('change'))")
                 self.assertTrue(any(edge["source"] == "30" and edge["target"] == "17" and edge["line"] == "solid" for edge in check_routes()["edges"]))
-                for progress in ("Sol low assessed on 20 posts", "20 posts (684 masks)",
-                                 "using saved Astra subjects", "Agent reviews",
-                                 "Combined Sol subject-and-mask process and resulting hierarchy comparison remain unvalidated",
-                                 "Subscription quota use remains unmeasured",
-                                 "Mask teacher and final selection remain open"):
-                    self.assertIn(progress, teacher_details)
+                capture("teacher-summary")
                 evaluate("document.querySelector('#focus-task').value = '05'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#details h2').textContent.startsWith('05 ·')")
-                self.assertIn("Additional model outputs needed for sorting remain undecided", evaluate("document.querySelector('#details').innerText"))
+                self.assertIn("Awaits selected teachers and any sorting-output requirements", evaluate("document.querySelector('#details').innerText"))
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('17 ·'))"))
 
                 evaluate("document.querySelector('#focus-task').value = '27'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#details h2').textContent.startsWith('27 ·')")
                 self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
                 self.assertEqual(evaluate("document.querySelector('#details h2').textContent"), "27 · Order notes within each node")
-                self.assertIn("using the score defined in 04", evaluate("document.querySelector('#details').innerText"))
-                self.assertIn("Recursive sorting and parent-child score transfer are out of scope", evaluate("document.querySelector('#details').innerText"))
                 ordering_details = evaluate("document.querySelector('#details').innerText")
-                self.assertIn("Photography's three-post order and the accepted seven-post Eggs order", ordering_details)
-                self.assertIn("Either order is acceptable for four about-equal Coffee pairs", ordering_details)
-                self.assertIn("identical scores are not required", ordering_details)
-                self.assertIn("Broader-hierarchy validation and a production method remain open", ordering_details)
+                self.assertIn("completion awaits a settled node sort score", ordering_details)
+                self.assertIn("Recursive sorting and parent-child score transfer are out of scope", ordering_details)
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('04 ·'))"))
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('03 ·'))"))
                 evaluate("document.querySelector('#focus-task').value = '13'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#details h2').textContent.startsWith('13 ·')")
                 self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
-                self.assertIn("The current draft covers only the opening proposal", evaluate("document.querySelector('#details').innerText"))
+                self.assertIn("Protocol agreement blocks service and client implementation", evaluate("document.querySelector('#details').innerText"))
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('14 ·'))"))
                 self.assertTrue(evaluate("[...document.querySelectorAll('#details .related button')].some(button => button.textContent.startsWith('15 ·'))"))
 
-                for task_id, preparation in (("03", "Corpus preparation underway"), ("15", "Integration preparation underway")):
+                for task_id, preparation in (("03", "Corpus preparation is underway"), ("15", "Integration preparation is underway")):
                     evaluate(f"document.querySelector('#focus-task').value = '{task_id}'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                     wait_for(f"document.querySelector('#details h2').textContent.startsWith('{task_id} ·')")
                     self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
@@ -370,12 +357,12 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
 
                 evaluate("document.querySelector('#focus-task').value = '03'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#details h2').textContent.startsWith('03 ·')")
-                self.assertIn("New note generation is on hold pending prompt stress-testing", evaluate("document.querySelector('#details').innerText"))
+                self.assertIn("New generation awaits prompt stress-testing", evaluate("document.querySelector('#details').innerText"))
                 evaluate("[...document.querySelectorAll('#details .related button')].find(button => button.textContent.startsWith('30 ·')).click()")
                 wait_for("document.querySelector('#details h2').textContent === '30 · Stress-test prompts'")
                 self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
                 self.assertIn("Shared", evaluate("document.querySelector('#details .task-track').textContent"))
-                self.assertIn("Corpus selection and offline preparation may continue", evaluate("document.querySelector('#details').innerText"))
+                self.assertIn("corpus selection, offline preparation and teacher comparisons can continue", evaluate("document.querySelector('#details').innerText"))
                 evaluate("document.querySelector('#depth').value = '1'; document.querySelector('#depth').dispatchEvent(new Event('change'))")
                 self.assertTrue(any(edge["source"] == "30" and edge["target"] == "03" and edge["line"] == "solid" for edge in check_routes()["edges"]))
                 capture("prompt-stress-testing")
@@ -387,22 +374,16 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 wait_for("document.querySelector('#details h2').textContent.startsWith('18 ·')")
                 self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "COMPLETE")
                 setup_details = evaluate("document.querySelector('#details').innerText")
-                self.assertIn("local VM tests cover all three candidate families", setup_details)
-                self.assertIn("published and verified private", setup_details)
-                self.assertIn("candidate execution and quality review are tracked in 29", setup_details)
-                self.assertIn("model selection is tracked in 06", setup_details)
-                self.assertNotIn("900000053", setup_details)
-                self.assertNotIn("Qwen's baseline", setup_details)
+                self.assertIn("setup is ready for the fine-tuning pilots", setup_details)
+                self.assertIn("not candidate evaluation or model selection", setup_details)
 
                 evaluate("document.querySelector('#focus-task').value = '29'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#details h2').textContent.startsWith('29 ·')")
                 self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
                 pilot_details = evaluate("document.querySelector('#details').innerText")
-                self.assertIn("All three candidates have saved training runs, matching reload checks and trained evaluations", pilot_details)
-                self.assertIn("recovered Gemma baseline subjects still need mask generation", pilot_details)
-                self.assertIn("candidate comparison and semantic review remain unfinished", pilot_details)
-                self.assertIn("no prominence", pilot_details)
-                self.assertIn("larger pilot (06), not final model selection", pilot_details)
+                self.assertIn("trained and untuned subject-and-mask outputs", pilot_details)
+                self.assertIn("baseline mask generation and semantic review remain unfinished", pilot_details)
+                self.assertIn("larger pilot, not final model selection", pilot_details)
 
                 # The graph must be derived from the served task data, not draw.io.
                 data_file = public / "release-plan.json"

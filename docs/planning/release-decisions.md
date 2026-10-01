@@ -34,6 +34,14 @@ timing. It does not select implementation methods or experimental procedures.
 Readiness is not authorization to research, implement, assign agents or spend;
 each task requires explicit approval to begin.
 
+**Task-summary convention approved October 1:** the graph is a planning view,
+not an experiment log. Every task description gives a brief outcome, current
+state and real blockers or start conditions. Keep model settings, experiment
+counts, run histories and detailed findings in linked workstream records rather
+than the UI. This applies to completed and historical tasks too. Scope, statuses,
+tracks, dependencies and approvals are unchanged; concise summaries do not
+replace the full decision record.
+
 **Parallel preparation started September 30:** the user has started agents on
 broader test-corpus preparation and Notedeck integration preparation. Corpus work
 inspects collected data and prepares proposed 200/300/500-note inputs; the broader

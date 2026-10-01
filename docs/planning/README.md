@@ -215,6 +215,13 @@ without tracing arrows. Name the model's role—teachers or the distilled model�
 rather than saying only “the model.” Arrows explain prerequisites; they should
 not supply a task's missing meaning.
 
+Keep descriptions to short summaries of the outcome, current state and real
+blockers or start conditions. Experiment counts, model settings, run histories
+and detailed findings belong in linked workstream records, not the task UI.
+Shortening a summary must not change the task's scope, status, dependencies or
+approval. Do not repeat status or dependency information already clear in the
+view unless a start condition or conditional requirement needs explanation.
+
 Only add approved decisions to the task data and views. Permission to
 investigate or draft a proposal does not approve its contents. Keep proposals
 in the written plan until the user explicitly approves them for the graph.
