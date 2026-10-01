@@ -11,6 +11,10 @@ The subsequent [ASv6.51 (approved candidate, tested on Sol xhigh)](../asv6.51/AS
 is now the last approved subject prompt. ASv6.50 and its saved answers remain
 comparison evidence.
 
+[ASv6.52 (draft, untested)](../asv6.52/ASv6.52.md) is the subsequent
+example-only revision for review. Its wording and model test remain open;
+the [draft audit](#asv652-example-only-draft) records its scope.
+
 [ASv6.50.md](ASv6.50.md) replaces the existing hierarchy paragraph in
 [ASv6.48](../asv6.48/ASv6.48.md). It makes the relationship explicit using the
 `subject` headings: every post about the child subject must also be about the
@@ -564,3 +568,74 @@ answers among twelve; these samples do not establish a quality improvement or
 generalization. The conditional non-food check was not started. ASv6.48 and
 MPv3.43 remain frozen, and ASv6.51 adoption remains open. Any further prompt
 revision requires a separately reviewed delta and authorization.
+
+## ASv6.52 example-only draft
+
+Status: draft, untested. On October 1, 2026, the user directed the work to focus
+on SP, retain examples and ensure that they demonstrate the intended behavior,
+then authorized preparing an example-only delta for review. This authorizes
+drafting, not approval of its wording or another model run. ASv6.51 remains the
+last approved candidate and ASv6.48 remains the frozen subject baseline.
+
+[ASv6.52 (draft, untested)](../asv6.52/ASv6.52.md) makes three edits to the
+railway example against approved ASv6.51:
+
+- Retain "the steam locomotive" in the exhibition-photography child at
+  `7.1.1.1`, correcting the loss recorded above.
+- Add explicit advice to museum visitors to book their visit ahead and stay on
+  the marked visitor route to the example's source post.
+- Extend the complete example output with general subjects, a replacement-parts
+  branch and the individual and combined visitor-advice subjects.
+
+All instructions and the entire lunar example are byte-identical to ASv6.51.
+The original 31 railway entries remain, with only the photography child's
+subject wording corrected. Seventeen entries are added. The general `Boilers`
+heading remains outside `Replacement parts`; the role branch is
+`Replacement parts` → `Replacement boilers` →
+`Replacement boiler for Bracken the steam locomotive`. That particular boiler
+heading also remains in its original steam-locomotive-boilers branch.
+
+The combined advice appears under each individual instruction. Both occurrences
+preserve the advice role, railway-museum visitor scope and both actions.
+`Advance booking`, `Marked routes`, `Staying on marked routes` and `Visitors`
+have separate general headings and museum-specific children. The example does
+not assert that anyone booked or followed the route. The worked examples use
+astronomy and railway-museum content, separate from the four food regression
+posts.
+
+Before revision, the minimal heading check reproduced the original photography
+child's missing locomotive restriction. After revision, that check passes.
+Both complete JSON outputs pass the production subjects-adapter validator:
+11 lunar entries with six relationships and 48 railway entries with 33
+relationships. All entries retain the `number`, `context`, `subject` field
+order, with unique numbers and parents preceding children. Preservation checks
+verify every original railway entry, the unchanged instruction bytes and the
+unchanged lunar example.
+
+The agent reviewed all 39 direct parent-child relationships using standalone
+headings and checked the entries against their complete source posts. The new
+branches preserve replacement and advice roles; the combined advice fits both
+individual instructions without placing either individual beneath the whole
+combination. Named locomotive references, restoration, volunteer participation,
+boiler need, photography purpose and continuing tours remain represented. The
+added visitor advice, both actions, visitors and marked route have individual
+and combined subjects. This is an agent assessment of the worked examples,
+not a user semantic verdict or evidence of model generalization.
+
+This follows the official OpenAI guidance that examples should closely agree
+with the instructions; discrepancies can reduce reliability.
+[Reasoning best practices](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively).
+That guidance does not establish that these particular examples improve SP.
+
+Shared `experiment.py revise` generated the draft and its
+[ASv6.52 revision receipt](../asv6.52/ASv6.52.md.revision.json) against approved
+ASv6.51 SHA-256
+`db164a973f81791445b1816a9a2cc79da36e9e20a294b1dea9292552ae298cc7`.
+The draft SHA-256 is
+`e956efea3391c26c0180893c6c753d7eb246abd26040979b64c6dd8c152df0ff`.
+The source prompt grows from 11,057 to 14,385 UTF-8 bytes, adding 3,328 bytes
+of repeated input per SP request. This remains one request per post, with two
+worked examples and the existing output schema. Actual model token use is
+unmeasured. No template, experiment or inference request was created for this
+draft. Review the delta first; the proposed next comparison is the same twelve
+GPT-6.1 Sol xhigh SP cases paired with saved ASv6.51 answers, subject to approval.

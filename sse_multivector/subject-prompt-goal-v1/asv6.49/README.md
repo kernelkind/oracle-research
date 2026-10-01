@@ -19,7 +19,10 @@ The initial lunar-eclipse and railway-museum audit missed one qualifier loss:
 the railway example's 7.1.1 names Bracken as a steam locomotive, while its
 7.1.1.1 child omits that type. The [subsequent ASv6.51 audit](../asv6.50/README.md#worked-example-finding)
 records this inconsistency. The examples' source posts, headings, contexts and
-numbering remain byte-identical; correcting the example is not yet authorized.
+numbering remain byte-identical in ASv6.49. The separately authorized
+[ASv6.52 (draft, untested)](../asv6.52/ASv6.52.md) corrects this loss and
+strengthens the railway example for review; its wording and model test remain
+open.
 The existing instructions retain individual subjects, combinations and broader
 headings. This revision preserves those coverage requirements.
 
