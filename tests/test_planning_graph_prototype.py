@@ -242,21 +242,22 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertIn("other links", evaluate("document.querySelector('#graph-status').textContent"))
                 self.assertIn("needed to finish", evaluate("document.querySelector('#details').innerText.toLowerCase()"))
                 self.assertIn("IN PROGRESS", evaluate("document.querySelector('#details').innerText"))
-                self.assertIn("Latest saved test export: 1,740 hierarchy nodes; original subjects and masks preserved.",
+                self.assertIn("Latest saved build: 1,651 hierarchy nodes and 220 roots.",
                               evaluate("document.querySelector('#details').innerText"))
                 hierarchy_details = evaluate("document.querySelector('#details').innerText")
-                for pending in (
-                    "Same-worded Food preparation/ingredients siblings beneath Food have been combined",
-                    "two further bounded passes completed",
-                    "The two existing pair-selection rules now nominate no unjudged pairs",
-                    "not proof that important parent relationships are complete",
-                    "parent links outside the current selection rules",
-                    "general conflict handling and production adoption",
-                    "bagel-making and pie-making branches disconnected from Food",
-                    "experimental Dietary practices / Diets merge",
+                for progress in (
+                    "three scheduled passes completed",
+                    "All 2,383 original subject entries and 1,674 masks retained",
+                    "Mechanical completion is not browsing acceptance",
+                    "original subject links make unrelated posts reachable beneath specific recipes",
+                    "Remaining roots and duplicate branches",
+                    "Six-link diagnostic completed",
+                    "agent expectations, not corpus-wide validation",
+                    "Full original-link check prepared only: 1,755 comparisons in 110 batches, all unrun",
+                    "No filtering or production workflow selected",
                     "Launch-scale construction is not this completion gate",
                 ):
-                    self.assertIn(pending, hierarchy_details)
+                    self.assertIn(progress, hierarchy_details)
                 self.assertTrue(evaluate("document.querySelector('#graph canvas')?.getBoundingClientRect().width > 500"))
                 self.assertGreaterEqual(sum(edge["target"] == "02" for edge in check_routes()["edges"]), 2)
                 capture("focused")

@@ -108,25 +108,26 @@ track. Shared construction measurements can inform both where applicable.
 Model-track measurements do not block completing the release estimate. Checks
 10 and 11 belong to the model track; neither blocks the teacher-built snapshot.
 
-Task 02 tracks the SP-based hierarchy investigation on 100 posts. Later
-authorized tests combined same-worded siblings, including Food preparation and
-Food ingredients beneath Food, carried consistent saved judgments through
-equivalences and completed two further bounded passes. The latest separate
-test export has 1,740 hierarchy nodes; original subjects, masks and source
-evidence remain represented. Food still reaches the same 50 posts.
+Task 02 tracks the 100-note hierarchy investigation. The newer
+[bounded build](../../sse_multivector/bounded-hierarchy-v1/README.md#completed-build-and-browser-handoff)
+completed three scheduled passes on September 30, with 522 new model attempts
+and two exact-request reuses. Its final browsing export contains 1,651 hierarchy
+nodes and 220 roots, retaining all 100 posts, 2,383 original subject entries and
+1,674 masks. Mechanical completion does not establish browsing quality.
 
-The two existing pair-selection rules now find no unjudged pairs. That does
-not establish complete parent relationships or browsing acceptance. Review
-still includes links outside those rules, disconnected bagel-making/pie-making
-branches, unresolved judgments such as the experimental Dietary practices /
-Diets merge, and general conflict handling. Automatic repetition is not
-implemented; further calls and production adoption remain unapproved.
+Some original subject links make unrelated posts reachable beneath specific
+recipes after nodes are combined. Remaining roots and duplicate branches also
+need review. The October 1 six-link diagnostic rejected both problematic risotto
+links and accepted four valid controls, matching agent expectations; this is
+not corpus-wide validation. The full original-link check is prepared only:
+1,755 comparisons in 110 batches, all unrun. No filtering or construction-policy
+change is selected by this status update, and further inference needs separate
+authorization.
 
-The saved LG01 hierarchy is unchanged. Task 02 remains in progress until the
-user accepts a useful 100-note hierarchy, not finished launch-scale construction.
-Track and dependencies are unchanged. See the
-[current stage record](../../sse_multivector/branch-comparison-prompt-v1/README.md#hierarchy-generation-stages).
-Earlier HR02 results remain preserved, not the current next step.
+Task 02 stays in progress until the user accepts a useful 100-note hierarchy,
+not finished launch-scale construction. Track, dependencies and production
+workflow choices are unchanged. The original LG01 hierarchy and earlier
+HR02/Astra tests remain preserved as evidence; task 25 stays complete for HR02.
 
 Task 18 is complete for pilot setup. The rebuilt image is published and verified;
 local VM rehearsals cover all three candidate families.
