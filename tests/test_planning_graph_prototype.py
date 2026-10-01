@@ -84,8 +84,21 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                     geometry = json.loads(evaluate("""JSON.stringify((() => {
                         const cy = document.querySelector('#graph')._cyreg.cy;
                         return {
-                            nodes: cy.nodes(':visible').map(node => ({
-                                id: node.id(), box: node.boundingBox({includeLabels: false})})),
+                            nodes: cy.nodes(':visible').map(node => {
+                                const image = node.style('background-image');
+                                const svg = new DOMParser().parseFromString(
+                                    decodeURIComponent((Array.isArray(image) ? image[0] : image).split(',')[1]),
+                                    'image/svg+xml');
+                                return {id: node.id(), box: node.boundingBox({includeLabels: false}),
+                                    label: node.data('label'), titleFont: parseFloat(node.style('font-size')),
+                                    titleOffset: parseFloat(node.style('text-margin-y')),
+                                    footer: {
+                                        lines: [...svg.querySelectorAll('text')].map(text => text.textContent),
+                                        fontSize: Number(svg.querySelector('g').getAttribute('font-size')),
+                                        dividerY: Number(svg.querySelector('line').getAttribute('y1')),
+                                        firstLineY: Number(svg.querySelector('text').getAttribute('y')),
+                                    }};
+                            }),
                             edges: cy.edges(':visible').map(edge => ({
                                 id: edge.id(), source: edge.source().id(), target: edge.target().id(),
                                 points: [edge.sourceEndpoint(), ...(edge.segmentPoints() || []),
@@ -95,6 +108,19 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                         };
                     })())"""))
                     edges = geometry["edges"]
+                    visible_edges = {edge["id"] for edge in edges}
+                    for node in geometry["nodes"]:
+                        task = next(task for task in plan["tasks"] if task["id"] == node["id"])
+                        self.assertEqual(node["label"], f"{task['id']} · {task['title']}")
+                        track = {"release": "Required release", "model": "Optional model",
+                                 "shared": "Shared", "historical": "Historical experiment"}[task["track"]]
+                        hidden = sum(node["id"] in (link["source"], link["target"])
+                                     and f"{link['source']}-{link['target']}-{link['kind']}" not in visible_edges
+                                     for link in plan["links"])
+                        self.assertEqual(node["footer"]["lines"], [track] + ([f"+{hidden} other links"] if hidden else []))
+                        self.assertLess(node["footer"]["fontSize"], node["titleFont"])
+                        self.assertLess(node["titleOffset"], 0)
+                        self.assertLess(node["footer"]["dividerY"], node["footer"]["firstLineY"])
                     for index, edge in enumerate(edges):
                         self.assertEqual(edge["arrow"], "triangle", edge["id"])
                         self.assertEqual(edge["line"], "dashed" if edge["id"].endswith("helpful") else "solid")
@@ -143,6 +169,9 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertEqual(json.loads(evaluate("JSON.stringify([...document.querySelector('#track').options].map(option => option.textContent))")),
                                  ["Required release", "Optional model", "Both"])
                 plan = json.loads((public / "release-plan.json").read_text())
+                self.assertEqual(evaluate("document.querySelector('#graph')._cyreg.cy.getElementById('02').data('label')"),
+                                 "02 · " + next(task["title"] for task in plan["tasks"] if task["id"] == "02"),
+                                 "The node title must not include its track or hidden-link count")
                 shared = {"01", "02", "03", "04", "09", "17", "20", "21", "22", "23", "24", "27", "28", "30"}
                 release = {"12", "13", "14", "15", "16"}
                 model = {"05", "06", "07", "08", "10", "11", "18", "29"}
@@ -174,8 +203,8 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertEqual(evaluate("document.querySelector('#focus-task').value"), "02")
                 self.assertIn("Shared", evaluate("document.querySelector('#details .task-track').textContent"))
                 capture("optional-model")
-                self.assertIn("Shared", evaluate("document.querySelector('#graph')._cyreg.cy.getElementById('02').data('label')"))
-                self.assertIn("Optional model", evaluate("document.querySelector('#graph')._cyreg.cy.getElementById('06').data('label')"))
+                self.assertIn("Shared", evaluate("decodeURIComponent(document.querySelector('#graph')._cyreg.cy.getElementById('02').data('footerImage'))"))
+                self.assertIn("Optional model", evaluate("decodeURIComponent(document.querySelector('#graph')._cyreg.cy.getElementById('06').data('footerImage'))"))
 
                 # Compose with the completed-task filter when that control is present.
                 if evaluate("!!document.querySelector('#hide-completed')"):

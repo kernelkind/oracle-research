@@ -166,6 +166,9 @@ appear in both track views as the same task, not duplicate records. Earlier
 cycle/navigation experiments are marked **Historical experiment** and remain
 accessible in Both, without becoming current prerequisites.
 
+Each node shows its task title prominently above a divider. The track and any
+hidden-link count sit below it in a smaller, muted footer, not in the title.
+
 The `track` field is `release`, `model`, `shared`, or `historical`. It describes
 which views include the task, not its readiness or dependency strength. Shared
 HDBSCAN and separate-title work remains conditional on the chosen workflow.

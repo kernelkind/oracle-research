@@ -81,6 +81,19 @@
     return `${task.id} · ${task.title}`;
   }
 
+  function nodeFooter(task, hiddenLinks) {
+    const color = task.statusKey === 'complete' ? '#93a2b1' : '#b7c6d5';
+    const svg = `<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="205" height="94">
+        <line x1="12" y1="61" x2="193" y2="61" stroke="${color}" stroke-opacity="0.45"/>
+        <g fill="${color}" font-family="system-ui, sans-serif" font-size="10" text-anchor="middle">
+          <text x="102.5" y="${hiddenLinks ? 74 : 81}">${trackLabels[task.track]}</text>
+          ${hiddenLinks ? `<text x="102.5" y="87">+${hiddenLinks} other links</text>` : ''}
+        </g>
+      </svg>`;
+    return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  }
+
   function matchesTrack(task) {
     return trackSelect.value === 'both' || task.track === 'shared' ||
       task.track === trackSelect.value;
@@ -216,7 +229,7 @@
       graph.nodes().forEach(node => {
         const task = tasks.get(node.id());
         const hidden = hiddenByTask.get(node.id());
-        node.data('label', `${task.id} · ${task.title}\n${trackLabels[task.track]}${hidden ? `\n+${hidden} other links` : ''}`);
+        node.data({label: displayName(task.id), footerImage: nodeFooter(task, hidden)});
         node.toggleClass('hidden', !visible.has(node.id()));
         node.toggleClass('focused', node.id() === focusId);
       });
@@ -311,7 +324,7 @@
   function createGraph() {
     const elements = [
       ...sortedTasks().map(task => ({
-        data: {id: task.id, label: displayName(task.id)},
+        data: {id: task.id, label: displayName(task.id), footerImage: nodeFooter(task, 0)},
         classes: task.statusKey,
       })),
       ...links.map(link => ({
@@ -331,10 +344,11 @@
         {selector: 'node', style: {
           shape: 'round-rectangle', width: 205, height: 94,
           'background-color': '#2c3a49', 'border-color': '#8da3b8',
-          'border-width': 2, color: '#f0f5fa', 'font-size': 12,
+          'border-width': 2, color: '#f0f5fa', 'font-size': 13,
           'font-weight': 600, label: 'data(label)', 'text-wrap': 'wrap',
           'text-max-width': 184, 'text-valign': 'center', 'text-halign': 'center',
-          'text-margin-x': 4, 'text-margin-y': 1,
+          'text-margin-x': 0, 'text-margin-y': -15,
+          'background-image': 'data(footerImage)',
         }},
         {selector: 'node.ready', style: {'border-color': '#68d391'}},
         {selector: 'node.active', style: {'border-color': '#79b8ff'}},

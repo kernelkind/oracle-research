@@ -29,6 +29,10 @@ outside the view remain visible in task details and switch tracks when followed.
 This changes navigation only: statuses, dependencies, approvals, release gates
 and undecided implementation methods are unchanged.
 
+**Node-label presentation approved October 1:** task titles are prominent;
+track labels and hidden-link counts occupy a smaller, muted footer below a
+divider. The displayed information, graph behavior and plan data are unchanged.
+
 This discussion is for planning: outcomes, dependencies, open decisions and
 timing. It does not select implementation methods or experimental procedures.
 Readiness is not authorization to research, implement, assign agents or spend;
