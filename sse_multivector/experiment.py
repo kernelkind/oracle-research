@@ -1219,6 +1219,10 @@ def parser():
     p.add_argument('output', type=Path, help='fresh directory outside saved sources')
     p.add_argument('--comparisons', type=Path, nargs='+', required=True,
                    help='complete source-bound BCPv5 experiments; include earlier supplementary trials')
+    p = commands.add_parser('compare-parent-policies',
+                            help='compare fixed-membership saved-parent rules in two new views; no inference')
+    p.add_argument('snapshot', type=Path, help='complete saved bounded hierarchy export')
+    p.add_argument('output', type=Path, help='fresh directory outside saved sources')
     p = commands.add_parser(
         "show", help="inspect all cases, or exact case evidence; no inference"
     )
@@ -1352,6 +1356,12 @@ def main(argv=None):
                 from parent_guide_export import export_parent_guides
             print(json.dumps(export_parent_guides(args.build, args.comparisons, args.output),
                              ensure_ascii=False))
+        elif args.command == 'compare-parent-policies':
+            try:
+                from .parent_guide_export import compare_parent_policies
+            except ImportError:
+                from parent_guide_export import compare_parent_policies
+            print(json.dumps(compare_parent_policies(args.snapshot, args.output), ensure_ascii=False))
         elif args.command == 'export-hierarchy':
             try:
                 from .subject_hierarchy import export_comparisons

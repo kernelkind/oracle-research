@@ -6,6 +6,7 @@ remain intact; graph deferrals are recorded rather than repaired.
 """
 
 from copy import deepcopy
+from collections import Counter, defaultdict, deque
 from pathlib import Path
 
 try:
@@ -14,7 +15,7 @@ try:
     from . import experiment as workflow
     from . import experiment_inputs as adapters
     from . import extraction_pipeline as engine
-    from .bounded_hierarchy_graph import apply_relations, export_hierarchy
+    from .bounded_hierarchy_graph import apply_relations, audit_neither, export_hierarchy
     from .parent_guide_workflow import _protect_report
 except ImportError:
     import bounded_hierarchy_build as build_workflow
@@ -22,11 +23,13 @@ except ImportError:
     import experiment as workflow
     import experiment_inputs as adapters
     import extraction_pipeline as engine
-    from bounded_hierarchy_graph import apply_relations, export_hierarchy
+    from bounded_hierarchy_graph import apply_relations, audit_neither, export_hierarchy
     from parent_guide_workflow import _protect_report
 
 
 EXPORT_FILES = {"results.json", "categories.json", "provenance.json", "summary.json"}
+EXPORT_SUMMARY_FIELDS = {"masks", "comparisons", "underlying_links", "browsing_links",
+                         "browsing_links_omitted", "browsing_ancestry_preserved"}
 
 
 def _protect(protected, path, expected=None):
@@ -221,3 +224,179 @@ def export_parent_guides(build, directories, output):
     return dict(bundle["summary"], output=str(output), source_build=str(build),
         original_comparisons=provenance["original_comparisons"],
         additional_comparisons=provenance["additional_comparisons"], duplicate_comparisons=len(duplicates))
+
+
+def _navigation(categories):
+    nodes = {node["node_id"]: node for node in categories["nodes"]}
+    parents = defaultdict(set)
+    remaining = {identifier: len(set(node["children"])) for identifier, node in nodes.items()}
+    memberships = {identifier: set(node["note_ids"]) for identifier, node in nodes.items()}
+    for identifier, node in nodes.items():
+        for child in node["children"]:
+            parents[child].add(identifier)
+    pending = deque(sorted(identifier for identifier, count in remaining.items() if not count))
+    completed = 0
+    while pending:
+        child = pending.popleft()
+        completed += 1
+        for parent in sorted(parents[child]):
+            memberships[parent].update(memberships[child])
+            remaining[parent] -= 1
+            if not remaining[parent]:
+                pending.append(parent)
+    if completed != len(nodes):
+        raise ValueError("browsing graph has a cycle or missing child")
+    memberships = {identifier: frozenset(posts) for identifier, posts in memberships.items()}
+    posts = memberships.__getitem__
+    root = nodes[categories["root_node_id"]]
+    return nodes, posts, dict(roots=len(root["children"]),
+        displayed_roots_min_notes_2=sum(len(posts(child)) >= 2 for child in root["children"]))
+
+
+def _route_changes(before, after):
+    before_nodes, before_posts, _ = _navigation(before)
+    after_nodes, after_posts, _ = _navigation(after)
+    changed = []
+    for identifier in sorted(before_nodes.keys() - {before["root_node_id"]}):
+        added = sorted(after_posts(identifier) - before_posts(identifier))
+        removed = sorted(before_posts(identifier) - after_posts(identifier))
+        if added or removed:
+            changed.append(dict(node=identifier, label=after_nodes[identifier]["label"],
+                before_posts=len(before_posts(identifier)), after_posts=len(after_posts(identifier)),
+                added_posts=added, removed_posts=removed))
+    def edges(nodes):
+        return {(identifier, child) for identifier, node in nodes.items()
+                if identifier != before["root_node_id"] for child in node["children"]}
+    old_edges, new_edges = edges(before_nodes), edges(after_nodes)
+    return dict(changed_reachability=changed, added_browsing_links=sorted(new_edges - old_edges),
+                removed_browsing_links=sorted(old_edges - new_edges))
+
+
+def compare_parent_policies(snapshot, output):
+    """Offline fixed-membership comparison; never alter a source or call a model.
+
+    This small-snapshot diagnostic reconstructs SP-only starting links rather
+    than privileging teacher edges accumulated in earlier build passes.
+    """
+    snapshot, output = Path(snapshot).resolve(), Path(output).resolve()
+    if output.exists():
+        raise ValueError("comparison output already exists")
+    if snapshot in output.parents:
+        raise ValueError("comparison output must be outside the source export")
+    protected = {}
+    _protect(protected, snapshot / "manifest.json")
+    manifest = workflow.read(snapshot / "manifest.json")
+    if manifest.get("schema_version") != 1 or set(manifest.get("files", {})) != EXPORT_FILES:
+        raise ValueError("a complete source hierarchy export is required")
+    for name, expected in manifest["files"].items():
+        _protect(protected, snapshot / name, expected)
+    evidence = workflow.read(snapshot / "provenance.json")
+    baseline = evidence["baseline"]
+    published = workflow.read(snapshot / "results.json")
+    source_summary = workflow.read(snapshot / "summary.json")
+    # The exporter adds browsing edges and six summary fields to its original
+    # application. Remove those additions to verify the original binding.
+    source_application = dict(results={key: value for key, value in published.items()
+                                      if key != "browsing_edges"},
+        mapping=evidence["mapping"], applied=evidence["applied"], deferred=evidence["deferred"],
+        stats={key: value for key, value in source_summary.items() if key not in EXPORT_SUMMARY_FIELDS})
+    if manifest.get("snapshot_binding") != adapters.digest(dict(application=source_application,
+                                                                 provenance=baseline)):
+        raise ValueError("source snapshot binding differs")
+    input_path = Path(baseline["spec"]["inputs"]).resolve()
+    source = Path(baseline["spec"]["source"]).resolve()
+    if source in output.parents:
+        raise ValueError("comparison output must be outside the source corpus")
+    pinned = baseline["protected_sha256"]
+    if str(input_path) not in pinned:
+        raise ValueError("original SP input is not protected")
+    _protect(protected, input_path, pinned[str(input_path)])
+    inputs = workflow.read(input_path)
+    if len(inputs["subjects"]) > 5000:
+        raise ValueError("offline parent-policy comparison is limited to 5000 SP entries")
+    if any(evidence[key] != inputs[original] for key, original in (
+            ("subjects", "subjects"), ("posts", "posts"), ("original_edges", "edges"))):
+        raise ValueError("source export differs from original SP evidence")
+    for name in ("masked-posts.json", "vector-map.json"):
+        path = source / name
+        expected = evidence["protected_sha256"].get(str(path))
+        if not expected:
+            raise ValueError("source corpus is not protected")
+        _protect(protected, path, expected)
+    groups, owners = published["groups"], published["member_to_group"]
+    sp_edges = sorted({(owners[a], owners[b]) for a, b in inputs["edges"] if owners[a] != owners[b]})
+    seed = dict(experiment_id="fixed-membership-parent-replay-v1", groups=deepcopy(groups),
+                member_to_group=list(owners), edges=[list(edge) for edge in sp_edges])
+    originals = baseline["comparisons"]
+    # Keep full historical inputs/receipts in the hash-bound original export,
+    # rather than copying rendered batches into every new snapshot again.
+    judgments = []
+    for index, judgment in enumerate(originals):
+        if not judgment.get("receipt"):
+            raise ValueError("saved judgment has no receipt")
+        judgments.append(dict(id=judgment["id"], A=judgment["A"], B=judgment["B"],
+            answer=deepcopy(judgment["answer"]), receipt=deepcopy(judgment["receipt"]),
+            source_index=index, source_provenance=str(snapshot / "provenance.json")))
+    work_budget = baseline["spec"]["work_budget"]
+    descriptor = dict(schema_version=1, workflow="fixed-membership-parent-policy-v1",
+        source_snapshot=str(snapshot), source_input=str(input_path), source=str(source),
+        protected_sha256=protected, comparisons=judgments,
+        fixed_membership_sha256=adapters.digest(dict(groups=groups, member_to_group=owners)),
+        seed="mapped original SP links only", work_budget=work_budget,
+        inference_calls=0, implementation_sha256={str(Path(__file__).resolve()):
+                                                engine._sha256_file(Path(__file__))})
+    _verify(protected)
+    bundles, applications, audits = {}, {}, {}
+    for policy in ("binding", "diagnostic"):
+        application = apply_relations(inputs, seed, judgments, work_budget=work_budget,
+            freeze_membership=True, cross_pair_neither=policy)
+        if (application["results"]["groups"] != groups
+                or application["results"]["member_to_group"] != owners):
+            raise ValueError("parent replay changed fixed memberships")
+        audits[policy] = audit_neither(application, judgments, work_budget=work_budget)
+        applications[policy] = application
+        _verify(protected)
+        bundles[policy] = export_hierarchy(output / policy, inputs, application, source=source,
+            provenance=dict(descriptor, policy=policy))
+    # Attach original SP and accepted teacher contributors to every witness hop.
+    for policy, audit in audits.items():
+        contributors = defaultdict(list)
+        for a, b in inputs["edges"]:
+            if owners[a] != owners[b]:
+                contributors[owners[a], owners[b]].append(dict(original_sp_entries=[a, b]))
+        for row in applications[policy]["applied"]:
+            judgment = row["judgment"]
+            relation = judgment["answer"]["relation"]
+            if relation not in {"a_parent_of_b", "b_parent_of_a"}:
+                continue
+            a, b = owners[int(judgment["A"][1:])], owners[int(judgment["B"][1:])]
+            if relation == "b_parent_of_a":
+                a, b = b, a
+            contributors[a, b].append(dict(judgment_index=judgment["source_index"]))
+        indices = {f"S{group[0]:04d}": index for index, group in enumerate(groups)}
+        for row in audit["contradictions"]:
+            row["edge_sources"] = [dict(parent=a, child=b,
+                contributors=contributors[indices[a], indices[b]])
+                for a, b in zip(row["path"], row["path"][1:])]
+    published_categories = workflow.read(snapshot / "categories.json")
+    comparison = dict(descriptor,
+        published_navigation=_navigation(published_categories)[2],
+        binding_navigation=_navigation(bundles["binding"]["categories"])[2],
+        diagnostic_navigation=_navigation(bundles["diagnostic"]["categories"])[2],
+        published_vs_binding=_route_changes(published_categories, bundles["binding"]["categories"]),
+        binding_vs_diagnostic=_route_changes(bundles["binding"]["categories"],
+                                             bundles["diagnostic"]["categories"]),
+        binding_neither=audits["binding"], diagnostic_neither=audits["diagnostic"],
+        deferrals={policy: dict(Counter(row["reason"] for row in application["deferred"]))
+                   for policy, application in applications.items()})
+    _verify(protected)
+    workflow.write(output / "comparison.json", comparison)
+    workflow.write(output / "manifest.json", dict(schema_version=1,
+        protected_sha256=protected, files={name: engine._sha256_file(output / name)
+            for name in ("comparison.json", "binding/manifest.json", "diagnostic/manifest.json")}))
+    return dict(output=str(output), inference_calls=0, membership_fixed=True,
+        comparisons=len(judgments), binding=comparison["binding_navigation"],
+        diagnostic=comparison["diagnostic_navigation"],
+        binding_contradictions=len(audits["binding"]["contradictions"]),
+        diagnostic_contradictions=len(audits["diagnostic"]["contradictions"]),
+        changed_nodes=len(comparison["binding_vs_diagnostic"]["changed_reachability"]))

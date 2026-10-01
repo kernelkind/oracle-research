@@ -138,6 +138,26 @@ class _Graph:
                     pending.append(child)
         return False
 
+    def path(self, start, target, work):
+        """Return one shortest ancestry witness within an explicit work budget."""
+        start, target = self.root(start), self.root(target)
+        previous = {start: None}
+        pending = deque([start])
+        while pending:
+            node = pending.popleft()
+            work.step()
+            if node == target:
+                result = []
+                while node is not None:
+                    result.append(node)
+                    node = previous[node]
+                return list(reversed(result))
+            for child in self.children(node, work):
+                if child not in previous:
+                    previous[child] = node
+                    pending.append(child)
+        return None
+
     def parents(self, node, work):
         node = self.root(node)
         seen = set()
@@ -214,7 +234,8 @@ def _normalized(judgment, owners):
     return a, b, relation
 
 
-def apply_relations(inputs, hierarchy, judgments, *, work_budget=20000):
+def apply_relations(inputs, hierarchy, judgments, *, work_budget=20000,
+                    freeze_membership=False, cross_pair_neither="binding"):
     """Return a lossless hierarchy plus applied/deferred saved judgments.
 
     ``judgments`` includes previously accepted comparisons as well as fresh
@@ -224,6 +245,12 @@ def apply_relations(inputs, hierarchy, judgments, *, work_budget=20000):
     """
     if not isinstance(work_budget, int) or isinstance(work_budget, bool) or work_budget < 0:
         raise ValueError("work_budget must be a nonnegative integer")
+    if not isinstance(freeze_membership, bool):
+        raise ValueError("freeze_membership must be boolean")
+    if cross_pair_neither not in {"binding", "diagnostic"}:
+        raise ValueError("unknown cross-pair neither policy")
+    if cross_pair_neither == "diagnostic" and not freeze_membership:
+        raise ValueError("diagnostic neither policy requires fixed membership")
     size = len(inputs["subjects"])
     groups = [sorted(group) for group in hierarchy["groups"]]
     flattened = [m for group in groups for m in group]
@@ -352,6 +379,9 @@ def apply_relations(inputs, hierarchy, judgments, *, work_budget=20000):
                     if a == b:
                         record(judgment, "already_equivalent", work, accepted=True)
                         continue
+                    if freeze_membership:
+                        record(judgment, "fixed_membership", work)
+                        continue
                     if min(groups[a]) > min(groups[b]):
                         a, b = b, a
                     if (graph.reaches(a, b, work, indirect=True)
@@ -370,11 +400,14 @@ def apply_relations(inputs, hierarchy, judgments, *, work_budget=20000):
                         record(judgment, "equivalent_conflict", work)
                     elif graph.reaches(child, parent, work):
                         record(judgment, "cycle", work)
-                    elif not permits(work, edge=(parent, child)):
-                        record(judgment, "neither_conflict", work)
                     else:
-                        graph.add_edge(parent, child)
-                        record(judgment, "ancestor", work, accepted=True)
+                        permitted = permits(work, edge=(parent, child))
+                        if not permitted and cross_pair_neither == "binding":
+                            record(judgment, "neither_conflict", work)
+                        else:
+                            graph.add_edge(parent, child)
+                            reason = "ancestor" if permitted else "ancestor_with_neither_conflict"
+                            record(judgment, reason, work, accepted=True)
             except _BudgetExceeded:
                 record(judgment, "work_budget", work)
 
@@ -394,6 +427,10 @@ def apply_relations(inputs, hierarchy, judgments, *, work_budget=20000):
                            "Unresolved relationships are deferred, not repaired.")
     result.pop("browsing_edges", None)
     result.pop("ancestor_proposals", None)
+    if freeze_membership:
+        result["parent_replay_policy"] = dict(membership="fixed", cross_pair_neither=cross_pair_neither)
+        result["analysis"] = ("Fixed-membership saved-parent replay. Original SP ancestry retained; "
+                              f"cross-pair neither policy: {cross_pair_neither}. No new model calls.")
     identifiers = [f"S{group[0]:04d}" for group in combined]
     mapping = {f"S{member:04d}": identifiers[owner]
                for member, owner in enumerate(member_to_group)}
@@ -405,6 +442,45 @@ def apply_relations(inputs, hierarchy, judgments, *, work_budget=20000):
                  edge_inspections=inspections, work_budget_per_proposal=work_budget,
                  sp_order_preserved=True, dag=True, inference_calls=0)
     return dict(results=result, mapping=mapping, applied=applied, deferred=deferred, stats=stats)
+
+
+def audit_neither(application, judgments, *, work_budget=20000):
+    """Retain every negative claim and report bounded final-graph witnesses.
+
+    Repeated historical aliases share a graph check, not a new model judgment.
+    An exhausted search is unresolved, never evidence of compatibility.
+    """
+    if not isinstance(work_budget, int) or isinstance(work_budget, bool) or work_budget < 0:
+        raise ValueError("work_budget must be a nonnegative integer")
+    result = application["results"]
+    groups, owners = result["groups"], result["member_to_group"]
+    graph = _Graph(groups, result["edges"])
+    negatives = defaultdict(list)
+    for index, judgment in enumerate(judgments):
+        a, b, relation = _normalized(judgment, owners)
+        if relation == "neither":
+            negatives[a, b].append(index)
+    contradictions, unresolved, compatible = [], [], 0
+    identifiers = [f"S{group[0]:04d}" for group in groups]
+    inspections = 0
+    for (a, b), indices in sorted(negatives.items()):
+        work = _Work(work_budget)
+        row = dict(nodes=[identifiers[a], identifiers[b]], judgment_indices=indices)
+        try:
+            witness = graph.path(a, b, work)
+            if witness is None:
+                witness = graph.path(b, a, work)
+            if witness is None:
+                compatible += 1
+            else:
+                contradictions.append(dict(row, path=[identifiers[node] for node in witness],
+                                           inspected=work.used))
+        except _BudgetExceeded:
+            unresolved.append(dict(row, reason="work_budget", inspected=work.used))
+        inspections += work.used
+    return dict(contradictions=contradictions, unresolved=unresolved,
+                compatible_pairs=compatible, unique_negative_pairs=len(negatives),
+                edge_inspections=inspections, work_budget_per_pair=work_budget)
 
 
 def export_hierarchy(output, inputs, application, *, source, provenance=None):
@@ -457,6 +533,9 @@ def export_hierarchy(output, inputs, application, *, source, provenance=None):
     result["browsing_edges"] = browsing
     categories = browser_spec(inputs, result, selected, protected[str(paths[0])])
     categories["hierarchy_id"] = EXPERIMENT_ID + " · bounded saved-comparison build"
+    if "parent_replay_policy" in result:
+        categories["hierarchy_id"] = (EXPERIMENT_ID + " · fixed-membership parent replay · "
+                                      + result["parent_replay_policy"]["cross_pair_neither"])
     references = {f"S{group[0]:04d}": inputs["subjects"][group[0]]["subject"] for group in groups}
     for node in categories["nodes"]:
         if node["node_id"] in references:

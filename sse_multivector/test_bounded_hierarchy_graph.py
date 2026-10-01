@@ -37,6 +37,70 @@ def judgment(a, b, relation, **extra):
 
 
 class BoundedHierarchyGraphTests(unittest.TestCase):
+    def test_neither_audit_reports_paths_sp_conflicts_and_unfinished_checks(self):
+        from sse_multivector.bounded_hierarchy_graph import audit_neither
+        inputs, hierarchy = fixture(edges=[(0, 1), (1, 2)])
+        judgments = [judgment(0, 2, "neither"), judgment(0, 3, "neither")]
+        result = apply_relations(inputs, hierarchy, judgments, freeze_membership=True,
+                                 cross_pair_neither="diagnostic")
+        audit = audit_neither(result, judgments, work_budget=20000)
+        self.assertEqual(audit["contradictions"][0]["path"], ["S0000", "S0001", "S0002"])
+        self.assertEqual(audit["compatible_pairs"], 1)
+        limited = audit_neither(result, judgments, work_budget=0)
+        self.assertEqual(len(limited["unresolved"]), 2)
+        self.assertEqual(limited["compatible_pairs"], 0)
+        self.assertEqual(result["results"]["edges"], hierarchy["edges"])
+
+    def test_fixed_membership_remaps_historical_same_pair_disagreements(self):
+        inputs, hierarchy = fixture(5)
+        hierarchy.update(groups=[[0, 1], [2, 3], [4]], member_to_group=[0, 0, 1, 1, 2])
+        judgments = [judgment(0, 2, "a_parent_of_b"), judgment(3, 1, "neither")]
+        for policy in ("binding", "diagnostic"):
+            result = apply_relations(inputs, hierarchy, judgments, freeze_membership=True,
+                                     cross_pair_neither=policy)
+            self.assertEqual(result["results"]["edges"], [])
+            self.assertEqual([row["reason"] for row in result["deferred"]],
+                             ["judgment_conflict", "judgment_conflict"])
+
+    def test_diagnostic_policy_does_not_skip_work_limits_or_enable_merges(self):
+        inputs, hierarchy = fixture(edges=[(0, 1)])
+        with self.assertRaisesRegex(ValueError, "fixed membership"):
+            apply_relations(inputs, hierarchy, [], cross_pair_neither="diagnostic")
+        for policy in ("binding", "diagnostic"):
+            result = apply_relations(inputs, hierarchy, [judgment(2, 3, "a_parent_of_b")],
+                work_budget=0, freeze_membership=True, cross_pair_neither=policy)
+            self.assertEqual(result["results"]["edges"], [[0, 1]])
+            self.assertEqual(result["deferred"][0]["reason"], "work_budget")
+
+    def test_fixed_membership_parent_replay_can_record_cross_pair_neither(self):
+        inputs, hierarchy = fixture(edges=[(0, 1)])
+        judgments = [judgment(0, 2, "neither"), judgment(1, 2, "a_parent_of_b"),
+                     judgment(2, 3, "equivalent")]
+        original = deepcopy((inputs, hierarchy, judgments))
+        binding = apply_relations(inputs, hierarchy, judgments, freeze_membership=True)
+        diagnostic = apply_relations(inputs, hierarchy, judgments, freeze_membership=True,
+                                     cross_pair_neither="diagnostic")
+        self.assertEqual(binding["results"]["edges"], [[0, 1]])
+        self.assertEqual(diagnostic["results"]["edges"], [[0, 1], [1, 2]])
+        self.assertEqual(diagnostic["results"]["groups"], hierarchy["groups"])
+        self.assertTrue(any(row["reason"] == "ancestor_with_neither_conflict"
+                            for row in diagnostic["applied"]))
+        self.assertTrue(any(row["reason"] == "fixed_membership"
+                            for row in diagnostic["deferred"]))
+        self.assertEqual((inputs, hierarchy, judgments), original)
+
+    def test_diagnostic_policy_still_defers_same_pair_conflicts_and_cycles(self):
+        inputs, hierarchy = fixture(edges=[(0, 1)])
+        judgments = [judgment(1, 2, "neither"), judgment(1, 2, "a_parent_of_b"),
+                     judgment(0, 1, "b_parent_of_a")]
+        result = apply_relations(inputs, hierarchy, judgments, freeze_membership=True,
+                                 cross_pair_neither="diagnostic")
+        self.assertEqual(result["results"]["edges"], [[0, 1]])
+        self.assertEqual([row["reason"] for row in result["deferred"]].count("judgment_conflict"), 2)
+        self.assertIn("cycle", {row["reason"] for row in result["deferred"]})
+        self.assertEqual(result, apply_relations(inputs, hierarchy, list(reversed(judgments)),
+                         freeze_membership=True, cross_pair_neither="diagnostic"))
+
     def test_equivalence_preserves_every_entry_and_internal_sp_relationship(self):
         inputs, hierarchy = fixture(edges=[(0, 1), (1, 2)])
         result = apply_relations(inputs, hierarchy, [judgment(0, 1, "equivalent")])

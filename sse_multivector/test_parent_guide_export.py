@@ -21,6 +21,76 @@ from sse_multivector.test_extraction_pipeline import FAKE_RUNNER
 
 
 class ParentGuideExportTests(unittest.TestCase):
+    def test_parent_policy_comparison_checks_snapshot_binding(self):
+        from sse_multivector.parent_guide_export import compare_parent_policies
+        comparison = self.comparison_experiment("binding-check", {"S0000": ["Parent B"]},
+                                                {"S0000-S0002": "a_parent_of_b"})
+        export_parent_guides(self.directory, [comparison], self.output)
+        manifest = workflow.read(self.output / "manifest.json")
+        manifest["snapshot_binding"] = "0" * 64
+        workflow.write(self.output / "manifest.json", manifest)
+        destination = self.root / "bad-binding"
+        with self.assertRaisesRegex(ValueError, "snapshot binding"):
+            compare_parent_policies(self.output, destination)
+        self.assertFalse(destination.exists())
+
+    def test_navigation_handles_deep_valid_browsing_paths(self):
+        from sse_multivector.parent_guide_export import _navigation
+        nodes = [dict(node_id=f"S{i:04d}", note_ids=[],
+                      children=[f"S{i + 1:04d}"] if i < 1099 else []) for i in range(1100)]
+        nodes[-1]["note_ids"] = ["N001"]
+        nodes.append(dict(node_id="root", note_ids=[], children=["S0000"]))
+        _, posts, stats = _navigation(dict(root_node_id="root", nodes=nodes))
+        self.assertEqual(posts("S0000"), frozenset({"N001"}))
+        self.assertEqual(stats["roots"], 1)
+
+    def test_parent_policy_comparison_replays_fixed_nodes_without_inference(self):
+        from sse_multivector.parent_guide_export import compare_parent_policies
+        comparison = self.comparison_experiment("policy-pairs",
+            {"S0000": ["Unrelated"], "S0001": ["Unrelated"]},
+            {"S0000-S0004": "neither", "S0001-S0004": "a_parent_of_b"})
+        export_parent_guides(self.directory, [comparison], self.output)
+        before = {str(p): engine._sha256_file(p) for p in self.root.rglob("*") if p.is_file()}
+        destination = self.root / "policy-comparison"
+        report = compare_parent_policies(self.output, destination)
+        binding = workflow.read(destination / "binding" / "results.json")
+        diagnostic = workflow.read(destination / "diagnostic" / "results.json")
+        self.assertEqual(binding["groups"], diagnostic["groups"])
+        self.assertEqual(binding["groups"], workflow.read(self.output / "results.json")["groups"])
+        self.assertIn([1, 4], diagnostic["edges"])
+        self.assertNotIn([1, 4], binding["edges"])
+        # The source contains an inherited teacher-only edge without a saved answer.
+        self.assertNotIn([2, 1], binding["edges"])
+        self.assertNotIn([2, 1], diagnostic["edges"])
+        self.assertEqual(report["inference_calls"], 0)
+        binding_categories = workflow.read(destination / "binding" / "categories.json")
+        diagnostic_categories = workflow.read(destination / "diagnostic" / "categories.json")
+        self.assertNotEqual(binding_categories["hierarchy_id"], diagnostic_categories["hierarchy_id"])
+        saved = workflow.read(destination / "comparison.json")
+        witness = next(row for row in saved["diagnostic_neither"]["contradictions"]
+                       if row["nodes"] == ["S0000", "S0004"])
+        self.assertEqual(witness["path"], ["S0000", "S0001", "S0004"])
+        self.assertTrue(all(str(p) in before and engine._sha256_file(p) == before[str(p)]
+                            for p in map(Path, before)))
+        self.assertTrue((destination / "manifest.json").is_file())
+
+    def test_parent_policy_comparison_refuses_tampered_source_and_existing_output(self):
+        from sse_multivector.parent_guide_export import compare_parent_policies
+        comparison = self.comparison_experiment("saved-pair", {"S0000": ["Parent B"]},
+                                                {"S0000-S0002": "a_parent_of_b"})
+        export_parent_guides(self.directory, [comparison], self.output)
+        destination = self.root / "policy-comparison"
+        destination.mkdir()
+        with self.assertRaisesRegex(ValueError, "exists"):
+            compare_parent_policies(self.output, destination)
+        self.assertEqual(list(destination.iterdir()), [])
+        with (self.output / "summary.json").open("a") as stream:
+            stream.write(" ")
+        missing = self.root / "tampered-output"
+        with self.assertRaisesRegex(ValueError, "source changed"):
+            compare_parent_policies(self.output, missing)
+        self.assertFalse(missing.exists())
+
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)

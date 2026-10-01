@@ -794,3 +794,70 @@ inference. A first pass would require 110 new calls; the existing provider-only
 retry rule permits at most two attempts per batch. Sending the full check or
 changing global ancestry requires approval beyond this offline preparation;
 no full-check outputs exist yet.
+
+## Offline parent-policy comparison — experimental, not adopted
+
+On October 1 the user approved comparing the cross-pair `neither` veto using
+saved answers. This does not authorize a contradiction-review prompt, new model
+calls, additional merges, SP-link removal or a canonical policy change.
+
+The shared runner's `compare-parent-policies` command reads a complete saved
+export and verifies its manifest, original SP inputs and source masks. It freezes
+the export's hierarchy-node memberships. Both variants start with **only mapped
+original SP links**, then replay the same full saved answer inventory in the
+same deterministic order. Previously accumulated teacher links are not retained
+without replaying their answers.
+
+- **Binding:** a saved `neither` answer can block a different proposed parent
+  link if that link would create ancestry contradicting the answer.
+- **Diagnostic:** keep the rejection and its receipt, but do not use that
+  cross-pair disagreement to veto the parent link. Record the resulting
+  contradictory path and every contributing SP/model relationship.
+
+Both keep same-pair answer disagreements unresolved, preserve every original
+SP relationship, reject cycles, retain the source's structural work allowance
+and prohibit changes to node memberships. Diagnostic application still runs the
+bounded veto check; exhausted checks remain deferred. Final negative-answer
+audits also have an explicit allowance. Unfinished audits are reported as
+unresolved, never counted as compatible. This small-snapshot diagnostic refuses
+more than 5,000 SP entries; it is not the million-post construction method.
+
+The output includes separate `binding` and `diagnostic` browser exports,
+`comparison.json` and source-bound manifests. The comparison distinguishes
+**published versus reconstructed binding** from **binding versus diagnostic**.
+It lists changed browsing links, newly/lost reachable posts for every changed
+node, negative-answer witness paths and their original evidence. Full historical
+prompts and settings remain in the hash-bound source export rather than being
+copied into every new artifact. No receipt or existing export is rewritten.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+python3 sse_multivector/experiment.py compare-parent-policies \
+  target/hg100-sol01-parent-guides-v1/full-pass/export \
+  target/hg100-sol01-parent-policy-v1/final
+```
+
+The 100-post comparison retains **1,651 node memberships and 4,632 saved
+comparisons**, with zero model calls. Filtered starting choices are **58 binding
+versus 52 diagnostic**; the published source has 55. Reachability changes for
+53 nodes between variants. The final audits find **3 versus 110** contradictory
+negative pairs and no exhausted audits or proposal work limits. These are graph
+disagreements, not measured model-error rates.
+
+Agent browsing assessment: bypassing the veto recovers Food and drink → Food
+(80 → 95 reachable posts), but also expands Risotto from 1 → 14 through existing
+general-ingredient links, and Places from 6 → 17 through a saved judgment treating
+`#coffeechain` as a location. Thus fewer roots do not establish better browsing;
+the veto can obstruct useful links and protect real scope boundaries. The
+canonical binding policy remains unchanged. Membership/equivalence changes and
+semantic conflict resolution remain separate, unapproved decisions.
+
+Open either export with the existing viewer; substitute `binding` to compare:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+target/infomap-review-build/debug/sse-subject-navigation \
+  --categories target/hg100-sol01-parent-policy-v1/final/diagnostic/categories.json \
+  sse_multivector/hierarchy-refresh-v1/masked-posts.json \
+  --min-notes 2
+```
