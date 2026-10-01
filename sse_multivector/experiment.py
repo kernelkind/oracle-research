@@ -1133,6 +1133,12 @@ def parser():
                             help='freeze a bounded multi-pass hierarchy build; no inference')
     p.add_argument('destination', type=Path)
     p.add_argument('--spec', type=Path, required=True)
+    p = commands.add_parser('measure-root-candidates',
+                            help='size root-candidate supplements on a saved build; no inference')
+    p.add_argument('build', type=Path)
+    p.add_argument('destination', type=Path)
+    p.add_argument('--pair', action='append', default=[], metavar='NODE_ID:NODE_ID',
+                   help='track this diagnostic comparison in the prepared candidate lists')
     p = commands.add_parser(
         "prepare", help="freeze inputs/settings and baseline; no inference"
     )
@@ -1250,6 +1256,24 @@ def main(argv=None):
             except ImportError:
                 from bounded_hierarchy_build import prepare_build
             print(json.dumps(prepare_build(args.spec, args.destination), indent=2))
+        elif args.command == 'measure-root-candidates':
+            try:
+                from .root_candidate_measurement import measure_build
+            except ImportError:
+                from root_candidate_measurement import measure_build
+            pairs = [tuple(pair.split(':')) for pair in args.pair]
+            if any(len(pair) != 2 for pair in pairs):
+                raise ValueError('--pair requires NODE_ID:NODE_ID')
+            result = measure_build(args.build, args.destination, diagnostic_pairs=pairs)
+            fields = ('root_quota', 'minimum_existing_candidates', 'catalogue_mode', 'query_scope',
+                'status', 'reason', 'discovery_requests', 'maximum_verification_requests',
+                'maximum_first_attempt_requests', 'maximum_attempts_with_one_retry',
+                'maximum_rendered_input_tokens_first_attempt',
+                'within_remaining_budget_with_one_retry_each')
+            print(json.dumps({**{k: result[k] for k in ('measurement_id', 'inference_attempts',
+                'node_count', 'root_search', 'baseline', 'total_seconds', 'process_peak_rss_kib')},
+                'measurement_report': str(args.destination.resolve() / 'report.json'),
+                'profiles': [{k: p[k] for k in fields if k in p} for p in result['profiles']]}, indent=2))
         elif args.command == "collect":
             print(json.dumps(collect(args.experiments, args.output, args.worker_config), indent=2))
         elif args.command == "run":

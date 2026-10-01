@@ -41,6 +41,151 @@ class CompactEntriesTests(unittest.TestCase):
                 compact_entries(inputs, members)
 
 
+class DiscoveryPackingTests(unittest.TestCase):
+    def fixture(self, query_count=2):
+        queries = [f"S{i:04d}" for i in range(query_count)]
+        references = {q: [{"index": i, "subject": q, "context": "Original context."}]
+                      for i, q in enumerate(queries)}
+        candidates = ["S0010", "S0011", "S0012"]
+        wordings = {q: [q] for q in candidates + ["S0020", "S0021"]}
+        eligible = {q: set(candidates) for q in queries}
+        return queries, references, candidates, wordings, eligible
+
+    def test_oversized_existing_catalogue_is_not_silently_recapped(self):
+        from sse_multivector.bounded_hierarchy_candidates import pack_discovery_requests
+
+        queries, references, candidates, wordings, eligible = self.fixture()
+        with self.assertRaisesRegex(ValueError, "existing candidate catalogue"):
+            pack_discovery_requests("N001", queries, references, candidates, wordings,
+                eligible, "Compare {INPUT_JSON}",
+                supplemental_by_query={"S0000": ["S0020"]}, max_candidates=2)
+
+    def test_supplement_is_retained_and_excluded_for_other_queries(self):
+        from sse_multivector.bounded_hierarchy_candidates import pack_discovery_requests
+
+        queries = ["S0000", "S0001"]
+        references = {q: [{"index": i, "subject": q, "context": "Original context."}]
+                      for i, q in enumerate(queries)}
+        cases = pack_discovery_requests("N001", queries, references,
+            ["S0010", "S0011"], {q: [q] for q in ["S0010", "S0011", "S0020"]},
+            {q: {"S0010", "S0011"} for q in queries}, "Compare {INPUT_JSON}",
+            supplemental_by_query={"S0000": ["S0020"]}, max_candidates=3)
+        self.assertEqual(len(cases), 1)
+        self.assertEqual(cases[0]["evidence"]["candidates"], ["S0010", "S0011", "S0020"])
+        self.assertEqual(cases[0]["evidence"]["excluded_candidates"],
+                         {"S0001": ["S0020"]})
+
+    def test_minimum_existing_splits_without_losing_supplements(self):
+        from sse_multivector.bounded_hierarchy_candidates import pack_discovery_requests
+
+        queries, references, candidates, wordings, eligible = self.fixture()
+        cases = pack_discovery_requests("N001", queries, references, candidates,
+            wordings, eligible, "Compare {INPUT_JSON}",
+            supplemental_by_query={"S0000": ["S0020"], "S0001": ["S0021"]},
+            minimum_existing_candidates=2, max_candidates=3)
+        self.assertEqual([c["id"] for c in cases], ["PCPv2-N001-001", "PCPv2-N001-002"])
+        self.assertEqual([c["evidence"]["queries"] for c in cases], [["S0000"], ["S0001"]])
+        self.assertEqual([c["evidence"]["candidates"] for c in cases],
+                         [["S0010", "S0011", "S0020"], ["S0010", "S0011", "S0021"]])
+
+    def test_overlapping_supplements_are_deduplicated_before_capacity_check(self):
+        from sse_multivector.bounded_hierarchy_candidates import pack_discovery_requests
+
+        queries, references, candidates, wordings, eligible = self.fixture()
+        cases = pack_discovery_requests("N001", queries, references, candidates,
+            wordings, eligible, "Compare {INPUT_JSON}",
+            supplemental_by_query={q: ["S0010", "S0020", "S0020"] for q in queries},
+            minimum_existing_candidates=2, max_candidates=3)
+        self.assertEqual(len(cases), 1)
+        self.assertEqual(cases[0]["evidence"]["candidates"], ["S0010", "S0011", "S0020"])
+        self.assertEqual(cases[0]["evidence"]["excluded_candidates"], {})
+
+    def test_supplement_overlap_does_not_hide_original_query_eligibility(self):
+        from sse_multivector.bounded_hierarchy_candidates import pack_discovery_requests
+
+        queries, references, candidates, wordings, eligible = self.fixture()
+        eligible["S0001"].remove("S0012")
+        cases = pack_discovery_requests("N001", queries, references, candidates,
+            wordings, eligible, "Compare {INPUT_JSON}",
+            supplemental_by_query={"S0000": ["S0012", "S0020"]}, max_candidates=3)
+        self.assertEqual(cases[0]["evidence"]["candidates"], ["S0010", "S0012", "S0020"])
+        self.assertEqual(cases[0]["evidence"]["excluded_candidates"],
+                         {"S0001": ["S0012", "S0020"]})
+
+    def test_actual_tokens_split_queries_and_oversized_single_query_fails_closed(self):
+        import tiktoken
+        from sse_multivector.bounded_hierarchy_candidates import pack_discovery_requests
+        from sse_multivector.experiment_inputs import render
+
+        queries, references, candidates, wordings, eligible = self.fixture()
+        template = 'Literal JSON: {"answers": []}\nCompare {INPUT_JSON}'
+        single = pack_discovery_requests("N001", queries[:1], references, candidates,
+            wordings, eligible, template, supplemental_by_query={"S0000": ["S0020"]},
+            max_candidates=3)[0]
+        limit = single["evidence"]["input_tokens"]
+        cases = pack_discovery_requests("N001", queries, references, candidates,
+            wordings, eligible, template,
+            supplemental_by_query={q: ["S0020"] for q in queries},
+            max_candidates=3, max_input_tokens=limit)
+        self.assertEqual(len(cases), 2)
+        encoding = tiktoken.get_encoding("o200k_base")
+        for case in cases:
+            self.assertEqual(case["evidence"]["input_tokens"],
+                             len(encoding.encode(render(template, case["inputs"]))))
+            self.assertIn("S0020", case["evidence"]["candidates"])
+        with self.assertRaisesRegex(ValueError, "fixed candidate catalogue exceed"):
+            pack_discovery_requests("N001", queries[:1], references, candidates,
+                wordings, eligible, template, supplemental_by_query={"S0000": ["S0020"]},
+                max_candidates=3, max_input_tokens=limit - 1)
+
+    def test_single_query_cannot_drop_supplements_to_satisfy_minimum(self):
+        from sse_multivector.bounded_hierarchy_candidates import pack_discovery_requests
+
+        queries, references, candidates, wordings, eligible = self.fixture()
+        with self.assertRaisesRegex(ValueError, "S0000.*candidate limit"):
+            pack_discovery_requests("N001", queries[:1], references, candidates,
+                wordings, eligible, "Compare {INPUT_JSON}",
+                supplemental_by_query={"S0000": ["S0020", "S0021"]},
+                minimum_existing_candidates=2, max_candidates=3)
+
+    def test_query_limit_remains_independent_of_candidate_overlap(self):
+        from sse_multivector.bounded_hierarchy_candidates import pack_discovery_requests
+
+        queries, references, candidates, wordings, eligible = self.fixture()
+        cases = pack_discovery_requests("N001", queries, references, candidates,
+            wordings, eligible, "Compare {INPUT_JSON}",
+            supplemental_by_query={q: ["S0020"] for q in queries},
+            max_candidates=3, max_queries=1)
+        self.assertEqual([c["evidence"]["queries"] for c in cases], [["S0000"], ["S0001"]])
+
+    def test_five_supplements_per_query_are_never_dropped_at_real_request_limits(self):
+        from sse_multivector.bounded_hierarchy_candidates import pack_discovery_requests
+
+        queries = [f"S{1000 + i:04d}" for i in range(16)]
+        references = {q: [{"index": i, "subject": q, "context": "Original context."}]
+                      for i, q in enumerate(queries)}
+        candidates = [f"S{2000 + i:04d}" for i in range(60)]
+        supplements = {q: [f"S{3000 + i * 5 + j:04d}" for j in range(5)]
+                       for i, q in enumerate(queries)}
+        wordings = {q: [q] for q in candidates + sum(supplements.values(), [])}
+        for minimum in [0, 55]:
+            with self.subTest(minimum=minimum):
+                cases = pack_discovery_requests("N001", queries, references, candidates,
+                    wordings, {q: set(candidates) for q in queries}, "Compare {INPUT_JSON}",
+                    supplemental_by_query=supplements, minimum_existing_candidates=minimum)
+                self.assertEqual([q for c in cases for q in c["evidence"]["queries"]], queries)
+                for case in cases:
+                    evidence = case["evidence"]
+                    self.assertLessEqual(len(evidence["queries"]), 16)
+                    self.assertLessEqual(len(evidence["candidates"]), 60)
+                    self.assertLessEqual(evidence["input_tokens"], 4000)
+                    self.assertTrue(set(candidates[:minimum]) <= set(evidence["candidates"]))
+                    for query in evidence["queries"]:
+                        self.assertTrue(set(supplements[query]) <= set(evidence["candidates"]))
+                        self.assertTrue(set(supplements[query]).isdisjoint(
+                            evidence["excluded_candidates"].get(query, [])))
+
+
 class DiscoveryTests(unittest.TestCase):
     def fixture(self):
         subjects = [
@@ -58,6 +203,16 @@ class DiscoveryTests(unittest.TestCase):
             vectors[digest, digest[:16]] = vector
         hierarchy = {"groups": [[0], [1], [2], [3]], "edges": [[0, 1], [2, 3]]}
         return inputs, hierarchy, vectors
+
+    def test_default_discovery_is_byte_for_byte_unchanged_after_packing_extraction(self):
+        from sse_multivector.bounded_hierarchy_candidates import build_discovery
+
+        inputs, hierarchy, vectors = self.fixture()
+        result = build_discovery(inputs, hierarchy, vectors, "Compare {INPUT_JSON}")
+        serialized = json.dumps(result, sort_keys=True, separators=(",", ":"))
+        # Full production result captured before extracting its real packing path.
+        self.assertEqual(hashlib.sha256(serialized.encode()).hexdigest(),
+                         "dca72832d2362aca13ec8478a64e00f4998c733b14379180fed87eec676ad8d5")
 
     def test_cli_bare_import_prepares_an_empty_followup(self):
         from pathlib import Path

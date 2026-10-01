@@ -243,6 +243,108 @@ def _ancestor(ancestor, node, parents, *, max_operations=2048):
     return False
 
 
+def pack_discovery_requests(source_post, queries, references, candidates, wordings,
+                            eligible_by_query, template, *, supplemental_by_query=None,
+                            minimum_existing_candidates=0, max_candidates=60,
+                            max_queries=16, max_input_tokens=4000):
+    """Pack one source post's discovery queries using the actual prompt limits.
+
+    Supplied supplements are already eligible candidates, not semantic judgments.
+    Each request retains every supplement for its queries and the leading minimum
+    existing candidates, filling remaining places in existing ranked order. With
+    no supplements the existing catalogue is retained unchanged.
+    """
+    try:
+        from .experiment_inputs import render
+    except ImportError:
+        from experiment_inputs import render
+    try:
+        import tiktoken
+    except ImportError as error:
+        raise RuntimeError("bounded discovery requires tiktoken o200k_base") from error
+    for value, name in [(max_candidates, "candidate"), (max_queries, "query"),
+                        (max_input_tokens, "input-token")]:
+        if type(value) is not int or value < 1:
+            raise ValueError(f"positive {name} limit required")
+    if type(minimum_existing_candidates) is not int or minimum_existing_candidates < 0:
+        raise ValueError("nonnegative minimum existing candidate count required")
+    queries, candidates = list(queries), list(candidates)
+    if len(set(queries)) != len(queries) or len(set(candidates)) != len(candidates):
+        raise ValueError("distinct discovery query and existing candidate IDs required")
+    if len(candidates) > max_candidates:
+        raise ValueError(f"existing candidate catalogue exceeds {max_candidates} candidate limit")
+    if set(queries) - references.keys() or set(queries) - eligible_by_query.keys():
+        raise ValueError("original references and eligibility required for every query")
+    supplemental_by_query = supplemental_by_query or {}
+    if set(supplemental_by_query) - set(queries):
+        raise ValueError("supplements must belong to supplied discovery queries")
+    supplements = {q: list(dict.fromkeys(supplemental_by_query.get(q, ())))
+                   for q in queries}
+    candidate_set = set(candidates)
+    all_candidates = candidate_set | {c for values in supplements.values() for c in values}
+    if all_candidates - wordings.keys():
+        raise ValueError("original wordings required for every discovery candidate")
+    if any(set(eligible_by_query[q]) - candidate_set for q in queries):
+        raise ValueError("base eligibility must refer to the existing candidate catalogue")
+    if any(q in supplements[q] for q in queries):
+        raise ValueError("query itself cannot be a supplemental candidate")
+    encoding = tiktoken.get_encoding("o200k_base")
+    required_existing = candidates[:minimum_existing_candidates]
+
+    def prepare(page_queries, page):
+        supplemental = list(dict.fromkeys(c for q in page_queries for c in supplements[q]))
+        if supplemental:
+            required = set(required_existing) | set(supplemental)
+            if len(required) > max_candidates:
+                return None
+            retained = required.copy()
+            for candidate in candidates:
+                if len(retained) == max_candidates:
+                    break
+                retained.add(candidate)
+            selected = ([c for c in candidates if c in retained] +
+                        [c for c in supplemental if c not in candidate_set])
+        else:
+            selected = candidates
+        excluded = {query: [node for node in selected
+                           if node not in eligible_by_query[query]
+                           and node not in supplements[query]]
+                    for query in page_queries}
+        excluded = {query: nodes for query, nodes in excluded.items() if nodes}
+        payload = dict(queries=[dict(id=q, entries=references[q]) for q in page_queries],
+            candidates=[dict(id=c, subjects=wordings[c]) for c in selected],
+            excluded_candidates=excluded)
+        variables = {"INPUT_JSON": json.dumps(payload, ensure_ascii=False,
+                                              separators=(",", ":"))}
+        tokens = len(encoding.encode(render(template, variables)))
+        return dict(id=f"PCPv2-{source_post}-{page:03d}", inputs=variables,
+            evidence=dict(source_post=source_post, queries=list(page_queries),
+                candidates=list(selected),
+                query_entries={q: references[q] for q in page_queries},
+                candidate_wordings={c: wordings[c] for c in selected},
+                excluded_candidates=excluded, input_tokens=tokens))
+
+    cases, page, pending_queries = [], 1, []
+    for query in queries:
+        trial = prepare(pending_queries + [query], page)
+        if pending_queries and (len(pending_queries) == max_queries or trial is None
+                                or trial["evidence"]["input_tokens"] > max_input_tokens):
+            cases.append(prepare(pending_queries, page))
+            page += 1
+            pending_queries = []
+            trial = prepare([query], page)
+        if trial is None:
+            raise ValueError(f"query {query} supplements and minimum existing catalogue "
+                             f"exceed {max_candidates} candidate limit")
+        if trial["evidence"]["input_tokens"] > max_input_tokens:
+            raise ValueError(f"query {query} and fixed candidate catalogue exceed "
+                             f"{max_input_tokens} rendered input tokens")
+        pending_queries.append(query)
+    if pending_queries:
+        cases.append(prepare(pending_queries, page))
+    return cases
+
+
 def build_discovery(inputs, hierarchy, subject_vectors, template, *, query_nodes=None,
                     judged_pairs=(), max_candidates=60, max_queries=16,
                     max_input_tokens=4000, nearest_neighbors=None):
@@ -253,10 +355,6 @@ def build_discovery(inputs, hierarchy, subject_vectors, template, *, query_nodes
     Exact retrieval is a small-corpus reference; callers can supply an ANN provider
     with the same nearest-node contract. No result here authorizes a graph change.
     """
-    try:
-        from .experiment_inputs import render
-    except ImportError:
-        from experiment_inputs import render
     try:
         import tiktoken
     except ImportError as error:
@@ -291,7 +389,6 @@ def build_discovery(inputs, hierarchy, subject_vectors, template, *, query_nodes
     provider = nearest_neighbors
     if provider is None and selected:
         provider = ExactSubjectNeighbors(inputs, hierarchy, subject_vectors)
-    encoding = tiktoken.get_encoding("o200k_base")
     references = {node: compact_entries(inputs, members) for node, members in by_id.items()}
     wordings = {node: list(dict.fromkeys(entry["subject"] for entry in entries))
                 for node, entries in references.items()}
@@ -349,44 +446,11 @@ def build_discovery(inputs, hierarchy, subject_vectors, template, *, query_nodes
         candidates = [node for node in capped if node in eligible]
         pool_counts.append(len(candidates))
 
-        def prepare(page_queries, page):
-            excluded = {query: [node for node in candidates
-                               if node not in eligible_by_query[query]]
-                        for query in page_queries}
-            excluded = {query: nodes for query, nodes in excluded.items() if nodes}
-            payload = dict(queries=[dict(id=q, entries=references[q]) for q in page_queries],
-                candidates=[dict(id=c, subjects=wordings[c]) for c in candidates],
-                excluded_candidates=excluded)
-            variables = {"INPUT_JSON": json.dumps(payload, ensure_ascii=False,
-                                                   separators=(",", ":"))}
-            tokens = len(encoding.encode(render(template, variables)))
-            case = dict(id=f"PCPv2-{post}-{page:03d}", inputs=variables,
-                evidence=dict(source_post=post, queries=list(page_queries),
-                    candidates=list(candidates),
-                    query_entries={q: references[q] for q in page_queries},
-                    candidate_wordings={c: wordings[c] for c in candidates},
-                    excluded_candidates=excluded, input_tokens=tokens))
-            return case, tokens
-
-        page, pending_queries = 1, []
-        for query in queries:
-            trial, tokens = prepare(pending_queries + [query], page)
-            if pending_queries and (len(pending_queries) == max_queries
-                                    or tokens > max_input_tokens):
-                case, tokens = prepare(pending_queries, page)
-                cases.append(case)
-                rendered_tokens.append(tokens)
-                page += 1
-                pending_queries = []
-                trial, tokens = prepare([query], page)
-            if tokens > max_input_tokens:
-                raise ValueError(f"query {query} and fixed candidate catalogue exceed "
-                                 f"{max_input_tokens} rendered input tokens")
-            pending_queries.append(query)
-        if pending_queries:
-            case, tokens = prepare(pending_queries, page)
-            cases.append(case)
-            rendered_tokens.append(tokens)
+        post_cases = pack_discovery_requests(post, queries, references, candidates,
+            wordings, eligible_by_query, template, max_candidates=max_candidates,
+            max_queries=max_queries, max_input_tokens=max_input_tokens)
+        cases.extend(post_cases)
+        rendered_tokens.extend(case["evidence"]["input_tokens"] for case in post_cases)
     settings = dict(neighbors_per_wording=1, ancestor_hops=2,
         parents_per_node=3, visited_nodes=8, candidate_limit=max_candidates,
         query_limit=max_queries, input_token_limit=max_input_tokens,

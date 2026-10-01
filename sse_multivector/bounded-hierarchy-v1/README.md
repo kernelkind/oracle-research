@@ -185,6 +185,79 @@ passes, unresolved work and the final browser export without inference.
 Individual cases remain inspectable in each pass's ordinary discovery and
 comparison experiment.
 
+## Offline candidate measurements — RCMv1
+
+`measure-root-candidates` measures an additional candidate-search option against
+a saved build. It does **not** adopt that option, prepare an inference run, send
+requests, change the hierarchy, or reset the completed build's pass/quota limits.
+Another model pass needs separate authorization and a versioned policy.
+
+Measure both querying every current hierarchy node and, for the root-only
+follow-up, querying only current roots. The latter directly targets the crowded
+starting view; it does not nominate new parents for internal nodes. Unqueried
+nodes and existing relationships remain in the saved hierarchy.
+Candidate nodes are current roots:
+nodes with no parents in the underlying graph, not an artificial browsing root.
+Compare their **subject vectors**, using at most two original SP wordings per
+node. This does not assert that roots have equal generality or that a high cosine
+establishes containment. Inspect at most 32 candidate nodes, excluding the query,
+previously judged pairs, existing ancestry in either direction, and pairs whose
+ancestry cannot be checked within the existing work allowance. No unbounded
+refill follows exclusions.
+
+The indexed search uses HNSW with pinned dependencies, seed 17, one thread,
+`M=16`, `ef_construction=200`, and `ef_search=128`. Probe at most 64 indexed
+wordings per query wording. The offline measurement also compares these results
+with exact search, and refuses sources exceeding 5,000 SP entries before loading
+vectors. Exact search and capacity calculation are small-corpus checks, not
+million-post replacements for the indexed search.
+
+Measure three candidate quotas: 3, 5 and 10. Each quota is tested in two ways:
+
+- **Root-only follow-up:** offer only these eligible root candidates. Existing
+  model answers and the saved hierarchy remain unchanged; the old candidate
+  catalogue is not offered again in this proposed follow-up.
+- **Combined catalogue:** supplement the existing per-post catalogue, retaining
+  at least its first 0, 30, 45 or 55 candidates. Measure displaced candidate
+  opportunities rather than assuming supplementation is free. Required root
+  candidates are never silently dropped to fit a request.
+
+The real discovery packer measures request count, rendered input tokens,
+candidate count, and queries per request under the unchanged 60/16/4,000 limits.
+An impossible profile is reported as refused, not truncated. Selected diagnostic
+pairs show availability and direction in the resulting inputs; they are not a
+gold set, nomination accuracy, or placement recall.
+
+Verification has not run, so its exact count is unknown. Bound nominations by
+three per query and the distinct eligible pair universe. The frozen-evidence
+capacity check certifies a minimum number of pairs in every nonfinal greedy
+verification batch using the production renderer and token counter. This gives
+a conservative request ceiling, including one provider retry per request. Total
+rendered-input ceilings include discovery plus up to 4,000 tokens per verification
+request; they are not provider billing or output-token ceilings. Saved output
+usage and timings are observations, not guarantees for a new pass.
+
+The runner verifies source/export/prompt/vector hashes, records measurement-code
+identities, and writes a separate ignored `report.json`. It refuses an existing
+destination. Runtime, whole-process peak resident memory and normalized vector
+buffer sizes are recorded separately: the process peak includes loading and
+hashing the archived build, not just candidate search. For example, use a new
+destination for each measurement:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
+env LD_LIBRARY_PATH=/nix/store/1xw5xccqqh1xw3mvd70hyil6x418wxcm-gcc-14.3.0-lib/lib:/nix/store/ri9paa3mri4kqakljak8ldvbcp7lpmif-zlib-1.3.1/lib \
+  OPENBLAS_NUM_THREADS=4 \
+  uv run --offline --no-project --python python3.13 \
+  --with-requirements sse_multivector/bounded-hierarchy-v1/requirements.txt \
+  python -m sse_multivector.experiment measure-root-candidates \
+  target/hg100-sol01 target/hg100-sol01-root-measurements-new \
+  --pair S0346:S0874
+```
+
+Here the optional diagnostic pair identifies the saved Coffee and Beverages
+references. Other pairs must use two distinct original `S####` entry IDs.
+
 ## Completed build and browser handoff
 
 HG100-SOL01 completed its three scheduled passes on September 30, 2026:
