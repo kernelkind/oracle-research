@@ -12,8 +12,9 @@ Give all candidates the same varied notes and saved teacher answers. Separate
 training, validation, and final test notes; keep authors and duplicates within
 one split. Check teacher answers before using them.
 
-Proposed sizes: **250 → 500 → optionally 1,000 training notes**, with
-**100 validation** and **200 final test** notes. Validation guides comparisons;
+Training sizes under discussion: **250, 500, and 1,000 notes**; inclusion of
+1,000 and any rule for making it conditional remain open. **100 validation**
+and **200 final test** notes are also proposals. Validation guides comparisons;
 the final test stays untouched during development.
 
 ## 2. Measure untuned baselines
@@ -56,7 +57,7 @@ candidate from its original weights. Keep its recipe fixed and compare after
 matched amounts of training,
 so additional training time does not explain an apparent benefit from more notes.
 
-Review improvement, remaining errors, and cost before expanding to 1,000 notes.
+Which sizes we run and how jobs are grouped into rentals remain open.
 
 ## 6. Compare and select
 

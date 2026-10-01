@@ -586,8 +586,10 @@ new code changes, model calls, or rental.
 **September 30 training-data clarification:** the user confirmed that the
 500-note comparison includes the first 250 training notes plus 250 new notes.
 Each dataset-size run starts from the original model weights. This confirms
-data reuse and independent training starts; rental grouping, duration, and
-spending remain to be finalized.
+data reuse and independent training starts. The user clarified that making
+1,000 notes conditional on reviewing the 250/500 results has not been approved.
+Comparison sizes, the role of a 1,000-note stage, rental grouping, duration, and
+spending remain open.
 
 **September 25 informal start:** the user approved beginning the fine-tuning
 pilot with available data from the latest subject and mask prompts, excluding
