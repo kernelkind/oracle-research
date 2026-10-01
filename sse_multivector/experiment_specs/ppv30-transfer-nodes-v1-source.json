@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "subjects": "../hierarchy-refresh-v1/masked-posts.json",
+  "hierarchy": "../../target/hierarchy-build-v1/hr02-jev-browser-v1/named-graph.json",
+  "nodes": [
+    "Sdd9ab7afc6",
+    "Scfde838bff",
+    "S69c628e2ff",
+    "merged-6e49fa93d6348e573dd61acffecd6b266eaeeaf0219a48ffaeba5b88232ab730"
+  ]
+}

@@ -3221,6 +3221,41 @@ PPv30-node-v1 is tested, not production-frozen. These results do not
 establish general ordering quality, calibrated percentages, production adoption
 or a general advantage from relevance over prominence alone.
 
+**Agent assessment across other subjects: PPv30-node-v1.**
+
+On September 30, the user directed the agent to assess transfer to other
+subjects from the established sorting examples, without asking for new user
+ordering labels or user inspection of each order.
+
+`experiment_specs/ppv30-transfer-nodes-v1.json` and its reusable source selector
+use the native `subject_contexts` adapter with node-title prominence. The agent
+selected all direct members of four existing raw-hierarchy nodes: Children
+(`Sdd9ab7afc6`, five posts), Literature (`Scfde838bff`, four), Psychological
+distress (`S69c628e2ff`, two), and Bitcoin
+(`merged-6e49fa93d6348e573dd61acffecd6b266eaeeaf0219a48ffaeba5b88232ab730`, eight).
+Native preparation validates twenty-five matching saved SP cases, with nineteen
+distinct complete-post/title inputs. Repeated SP entries share the same
+prominence request. No new subjects or masks are generated.
+
+Prompt PPv30-node-v1, Astra-low subscription settings, relevance from standalone
+SP context and node title, and highest sorting score per post remain unchanged.
+The agent observes the complete resulting orders and compares prominence alone
+with prominence × relevance, using the established distinction between meaning
+about the topic, additional meaning and incidental mentions. About-equal
+placements may appear in either order. These are agent assessments, not new
+user judgments or an accuracy rate. Broader validation and production adoption
+remain open.
+
+The experiment is bounded to nineteen node/post inputs and at most thirty-eight
+new attempts including only eligible provider retries. Input work is proportional
+to selected node/post memberships and full-post length, with exact-request
+reuse across SP entries; it does not compare all posts with all hierarchy nodes.
+Local CPU SSE encodes only the selected contexts/titles and saved-mask replay
+controls. The zero-cash subscription reservation is recorded in the lifetime
+ledger; API-reference costs and subscription quota are separate. The selector,
+preparation and protected inputs passed native validation. Original comparisons,
+source data and prompt remain intact; no production code or rule changes occur.
+
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
 within-node score is prominence times mask relevance. On September 29, the user

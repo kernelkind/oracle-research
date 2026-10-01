@@ -1192,6 +1192,20 @@ acceptable in this complete-order review. This approval does not select the
 formula, numerical values or production rule. No new model calls, encoding or
 saved-result changes were needed.
 
+The user directs the agent to observe sorting on other subjects using the
+established examples; obtaining new user ordering labels or asking the user
+to inspect each new order is not required. Agent assessments remain distinct
+from user judgments. The agent selected Children, Literature, Psychological
+distress and Bitcoin from the saved raw hierarchy, covering nineteen distinct
+post/node-title inputs and twenty-five matching SP entries. Test the unchanged
+PPv30-node-v1 prominence × SP-context relevance calculation, taking each post's
+highest sorting score, and compare with prominence alone. Keep existing
+judgments, source memberships, prompt and production decisions intact. This
+authorizes the bounded experiment and agent observation, not adoption or a
+change to the calculation. The run allows at most thirty-eight new Astra-low
+subscription attempts including eligible retries, with no paid fallback;
+selected-context SSE encoding runs locally on CPU.
+
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
 these ten checks, plus the four about-equal judgments and separate slight
