@@ -650,7 +650,7 @@ checked mechanically. The scoring scale, rubric, reviewer model, reliability
 checks, and checkpoint/model selection rule remain design choices. The user deferred
 review-prompt and grading details while the overall pilot pipeline is designed.
 The walkthrough also keeps remaining data choices, remaining output format details,
-training settings, continuation rules, and new spending open. It authorizes no
+remaining training settings, continuation rules, and new spending open. It authorizes no
 new code changes, model calls, or rental.
 
 **October 1 observation and transfer design approved:** the assistant observes
@@ -681,7 +681,7 @@ transfers. Training labels are shared across checkpoints.
 Reusing training state does not itself require repeating earlier notes or
 establish a reduction in training compute. The complete-pass training amount and
 stage allocation and batch construction were subsequently approved below.
-Block membership, seed value, training batch size, task loss weights, model
+Block membership, seed value, task loss weights and normalization, remaining model
 settings, validation/test counts, and GPU parallelism remain open. This corrects
 the intended design; continuation across
 expanding datasets and parallel execution still need implementation and tests.
@@ -693,8 +693,9 @@ Introduce five new 200-note blocks and finish each block's examples before its
 checkpoint. Continue the same adapter, optimizer, schedule, random state and
 data-order position; earlier blocks are not automatically replayed.
 Check actual example coverage at every milestone. Record task-specific loss and
-supervised tokens; task loss weights, block membership, seed value, batch size,
-numerical settings and adapter coverage remain open. The natural row exposure differs from the
+supervised tokens; task loss weights and normalization, block membership, seed
+value, remaining numerical settings and adapter coverage remain open. The
+natural row exposure differs from the
 preliminary 20/80 replacement sampler. One pass is a modest starting budget,
 not an established optimum or a comparison of each architecture's maximum
 capability. Select from generated correctness, coverage and output reliability;
@@ -717,8 +718,21 @@ adapter update**, including a smaller final group when needed. Use each example
 once and finish the block before its checkpoint; the subject/mask mix varies
 between updates. An update can include examples from different notes. Freeze
 the seed and save the data-order position so continuation preserves the same stream.
-N, the seed value, and block membership remain open. This approves the batch
-construction design; loss weights remain open and implementation is separate.
+N was subsequently selected as 8 below; the seed value and block membership
+remain open. This approves the batch construction design; loss weights remain
+open and implementation is separate.
+
+**October 1 starting training settings approved after comparable-experiment research:**
+all three students use **8 prompt–answer examples per adapter update, total across
+all GPUs; constant learning rate 0.0001 with no warmup; LoRA rank 16 / alpha 32**.
+Retain a smaller final group and the approved one-pass, five-block continuation.
+These are a reasonable shared starting recipe, not established optima or each
+model's maximum attainable quality. MoE adapter coverage remains unresolved;
+the informal configuration leaves routed experts frozen. Task loss weights and
+normalization, block membership, seed value, remaining optimizer/adapter settings,
+hardware, and spending remain open. This approves the intended settings; the
+current 128-step replacement sampler is not the approved larger-pilot worker.
+Implementation and launch require separate authorization.
 
 **Training-data reuse clarified September 30; milestones approved October 1:**
 each larger training set retains the earlier notes and labels. Add 200 new
@@ -839,8 +853,8 @@ Gemma 4 31B instruction-tuned, and Gemma 4 26B-A4B instruction-tuned. The third
 candidate replaces T5Gemma 9B–9B PrefixLM instruction-tuned. Compare its masks,
 any agreed additional outputs and total training-and-generation cost with the
 dense candidates; lower active parameter count does not establish a cost
-advantage. The larger pilot's training settings, remaining output format details,
-sorting-related output requirements and spending amounts remain open. The
+advantage. The larger pilot's remaining training settings, remaining output
+format details, sorting-related output requirements and spending amounts remain open. The
 informal subject/mask settings and $25 approval above apply only to the current
 short experiment.
 

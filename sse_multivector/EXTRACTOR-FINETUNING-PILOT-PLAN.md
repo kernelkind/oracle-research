@@ -147,7 +147,7 @@ Approved requirements:
 
 The staged experimental design below is only partly approved. The 1,000-note
 training comparison and checkpoints every 200 notes are included; validation/test
-counts, exact training settings, hardware allocations, and individual spending
+counts, remaining training settings, hardware allocations, and individual spending
 authorizations remain open for that larger design. The first informal rental below
 started and was deleted on September 29 after the monitoring error recorded
 below. No baseline or training completed.
@@ -741,8 +741,8 @@ pilot, not a claim that the current worker enforces it.
   failures. Validation must not update weights or reset the ongoing training
   state. Use each frozen training example once in its new 200-note block.
   Shuffle the block's subject and mask examples together using a fixed seed;
-  take consecutive groups of N examples for one adapter update, retaining a
-  smaller final group when needed. This batch construction was approved
+  take consecutive groups of 8 examples total across all GPUs for one adapter
+  update, retaining a smaller final group when needed. This batch construction was approved
   October 1; the task mix varies between updates. Check exact coverage before
   the checkpoint; do not consume later-block notes early or repeat earlier
   blocks. Use the same held-out notes and
@@ -811,9 +811,16 @@ runtime limits, and spending require separate decisions.
 training example is used once, without replacement, in five new 200-note blocks.
 This guarantees example coverage under a modest training budget; it does not
 establish optimum training or each model's maximum capability. Batch construction
-uses the approved shuffle within each block; block membership, seed value,
-examples per update, task loss weights, optimizer/adapters and checkpoint
-selection remain open.
+uses the approved shuffle within each block. **Starting settings approved
+October 1 after comparable-experiment research:** 8 prompt–answer examples per
+adapter update total across all GPUs, constant learning rate 0.0001 with no
+warmup, and LoRA rank 16 / alpha 32 for all three students. Retain smaller final
+groups; no checkpoint resets the training state. These are a shared starting
+recipe, not established optima. Block membership, seed value, task loss weights
+and normalization, remaining optimizer/adapter settings and checkpoint selection
+remain open. MoE adapter coverage is unresolved; the informal route leaves
+routed experts frozen. The current worker still implements the preliminary
+128-step replacement sampler, not the approved larger-pilot continuation.
 The preliminary 20% subject / 80% mask replacement sampler is a different recipe.
 At the old subject-count average, a natural pass is about 4% subject rows and
 96% mask rows. On the saved 80-note training set, production-encoder accounting

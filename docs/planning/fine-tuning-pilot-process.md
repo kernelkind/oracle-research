@@ -4,7 +4,7 @@ Compare **Qwen3.8-27B, Gemma 4 31B, and Gemma 4 26B-A4B**: how much does
 learning from teacher answers improve quality, and what does it cost?
 
 The execution flow below is a draft. Prompt versions, remaining output format details,
-task loss weights, adapter/optimizer settings, and review rubric remain open.
+task loss weights, remaining adapter/optimizer settings, and review rubric remain open.
 
 **Local preparation → Vast baselines/training/evaluation → verified retrieval
 → local scoring and comparison.**
@@ -53,11 +53,14 @@ Start **one continuing training run per student**:
 once, without replacement, in five new 200-note blocks. Earlier notes and labels
 remain saved; their examples are not repeated at later milestones. Within each
 block, shuffle all subject and mask examples together using a fixed random seed.
-Use the next **N prompt–answer examples for one adapter update**, retaining a
-smaller final batch when needed. The subject/mask mix varies between batches.
-Block membership, the seed value, N, task loss weights, and model settings remain
-open. Record per-task loss, resource telemetry, and actual example coverage at
-each stage. This compares
+Use the next **8 prompt–answer examples for one adapter update**, total across
+all GPUs, retaining a smaller final batch when needed. The subject/mask mix
+varies between batches. **Starting settings approved October 1:** learning rate
+**0.0001, constant with no warmup; LoRA rank 16 / alpha 32** for all three students.
+These are reasonable starting settings, not established optima. Block membership,
+the seed value, task loss weights and normalization, MoE adapter coverage, and
+remaining model settings stay open. Record per-task loss, resource telemetry,
+and actual example coverage at each stage. This compares
 the tested configurations under a modest budget; one pass is not established as
 optimal training for every student.
 
