@@ -1076,7 +1076,7 @@ clarification makes the node sort score the required outcome, not that
 particular formula. Its inputs and any treatment of multiple masks remain
 open under 04; 27 applies the selected definition.
 
-User-approved post-ordering checks for 27 (September 29–30): the user reviewed the
+User-approved Coffee/Eggs post-ordering checks for 27 (September 29–30): the user reviewed the
 complete wording with URLs omitted and established ten clear expected orders.
 These judgments establish expected post order; they do not select
 a scoring formula, approve mask-prominence outputs or adopt a mask-aggregation
@@ -1388,8 +1388,21 @@ attempts, followed by local CPU SSE encoding and original-mask replay checks.
 The expected order is review evidence, not an input to either calculation.
 No exact percentages, production formula or multiple-entry rule is approved.
 
-04 and 27 are in progress: saved Coffee/Eggs trials test candidate sorting
-scores and within-node note ordering. 04 defines and validates the node sort
+The completed Music trial gives A prominence 85 and highest SP-context
+relevance 0.835578, yielding sorting score 71.024162; B has prominence 3,
+relevance 0.939429 and sorting score 2.818288. Both prominence and sorting
+score follow A > B; relevance alone favors B. With this pair, the same tested
+method matches eleven of eleven clear Coffee/Eggs/Music pairs, while
+prominence alone matches ten. Photography's matching three-post judgment
+remains separate, as do the three about-equal Coffee judgments and tentative
+preferences. Two new assessments and one exact-request reuse completed
+without failures or retries. Local CPU SSE encoded seven rows, all three
+original-mask replays matched exactly, and eleven focused workflow tests
+passed. [Exact inputs and verification](../../sse_multivector/model-runner.md)
+remain evidence for the candidate calculation, not production adoption.
+
+04 and 27 are in progress: saved Coffee/Eggs, Photography and Music trials test
+candidate sorting scores and within-node note ordering. 04 defines and validates the node sort
 score; 27 implements ordering using that definition. The formula, inputs and
 any treatment of multiple masks remain open. Finishing 27 still needs 04.
 28 waits for the validated small-corpus workflow and scale findings. Readiness does not authorize execution. Membership

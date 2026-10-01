@@ -2566,7 +2566,8 @@ tentative preference:
 | A: More coffee in cool places (`37f44e1f`) | 70 | 0.934903 | 65.443206 |
 | B: Roasting your own beans (`056e6466`) | 98 | 0.890830 | 87.301384 |
 
-The sorting score matches all ten clear checks; prominence alone matches nine:
+In Coffee/Eggs, the sorting score matches all ten clear checks; prominence
+alone matches nine:
 
 | Hierarchy node | Expected higher / lower | Node-title prominence | Highest sorting score |
 | --- | --- | --- | --- |
@@ -2868,10 +2869,63 @@ prominence input contains exactly the unchanged Music title and complete
 original post. Prompt PPv30-node-v1, schema, Astra-low subscription settings,
 standalone SP-context relevance and the prominence × relevance formula match
 the preceding Coffee/Eggs and Photography node-title tests. Expected order is
-kept only as review evidence. Two new attempts are allowed; the duplicate A
-post/title request is reused. Preparation and exact-input checks passed;
-inference and local CPU context encoding remain pending. No baseline or SP
-calls, prompt edits, paid resources or production changes are included.
+kept only as review evidence. All three cases completed validly with two new
+assessments and one exact-request reuse, without failures or retries. Native
+generation accounting traces both original calls and reports 1,618 input
+and 391 output tokens, including 59 reasoning tokens, with no missing usage.
+The $0.03573 catalog reference estimate is not a subscription invoice or quota
+measurement. Incremental cash is zero.
+
+The shared `prominence_cosine.py` workflow prepared and collected `relevance-v1`.
+One local CPU worker encoded seven rows: one standalone Music title, three
+complete standalone saved SP contexts and three original MP-mask controls.
+All three replays matched the original vectors exactly (cosine 1.0, maximum
+normalized component error 0.0). Checkpoint, model artifacts, 768 dimensions,
+512-token maximum, pooling and batch size eight match the preceding node-title
+SP-context tests. Worker code and runtime match the Photography run: Python
+3.13.12, torch 2.13.0+cpu, transformers 4.57.1 and tokenizers 0.22.2.
+
+Sorting score remains `prominence * (clip(cosine, -1, 1) + 1) / 2`, and each
+post uses its highest sorting score among its matching SP entries:
+
+| Post | SP entries | Prominence | Highest SP-context relevance | Highest sorting score |
+| --- | ---: | ---: | ---: | ---: |
+| A: Baby Got Back playing in a coffee shop | 2 | 85 | 0.835578 | 71.024162 |
+| B: Island lunch with `#Music` | 1 | 3 | 0.939429 | 2.818288 |
+
+A's prominence assessment assigns 85 points to the song playing, enthusiasm
+and music-community association, and 15 to the coffee-shop setting and
+coffee-community association. B's assigns two points to a possible song
+allusion in "Sitting,waiting, wishing" and one to the Music hashtag. That
+possible allusion and the percentages are teacher assessments, not user
+judgments. Both prominence and sorting score put A first, matching the prior
+user answer; relevance alone favors B.
+
+A's winning entry is `context-e590ad3dbf0eaec94cdb1bfd`, with SP context "The
+writer tags the music-related post with #musicstr." Its other entry,
+`context-283858545185a45fe46b887b`, has context "The post reports a named song
+playing and includes the hashtag #musicstr.", relevance 0.815989 and sorting
+score 69.359080. Both A entries use the same prominence 85. B uses
+`context-7edfeaf44a6159063a4846a8`, with "#Music explicitly identifies music
+as a subject."
+
+With this additional clear pair, the tested method matches eleven of eleven
+Coffee/Eggs/Music pair checks; prominence alone matches ten. The single
+Photography three-post ordering judgment also matches and stays separate
+from that count. Three about-equal Coffee judgments and the tentative
+preferences stay uncounted. This Music pair does not show an added benefit
+from relevance over prominence or select a production rule.
+
+Exact inputs, all point allocations, standalone context selections, receipt
+and protected-file hashes, row identities, independently recomputed cosines,
+sorting-score formulas and per-post maxima passed. Eleven focused
+prominence-cosine workflow tests passed; the log is saved at
+`experiments/ppv30-music-node-v1/workflow-tests.log`. Comparison SHA-256 is
+`0344a891768976b47b903ffb6d324195f881e38e373025c3f531b5c01b8aa20a`.
+The original hierarchy, masked posts, vector map, prompt and Coffee/Eggs and
+Photography comparisons remain unchanged. No baseline calls, SP generation,
+prompt or source-code changes, paid resources or production adoption occurred.
+PPv30-node-v1 remains tested, not production-frozen.
 
 Complete original node-title prominence orders, using saved SP-context
 relevance and descending by highest sorting score:
