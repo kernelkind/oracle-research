@@ -10,6 +10,70 @@ from sse_multivector.prominence_cosine import cosine, rank_rows
 
 
 class ProminenceCosineTests(unittest.TestCase):
+    def test_saved_context_comparison_needs_no_mp_masks_or_saved_vectors(self):
+        from sse_multivector import prominence_cosine as pc
+        from sse_multivector.experiment_inputs import prepare_context_prominence
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            evidence = dict(id='one', node_id='music', node_title='Music',
+                note_id='a'*64, text='Music cheers me up.', subject_id='SP1',
+                subject='Music.', context='Music brings joy.', source={})
+            carrier = root/'subjects.json'
+            carrier.write_text(json.dumps({'notes': [dict(note_id=evidence['note_id'],
+                text=evidence['text'], subjects=[dict(id='SP1', subject='Music.',
+                                                     context=evidence['context'])])]}))
+            original_carrier = carrier.read_bytes()
+            evidence['source']['subjects'] = dict(path=str(carrier), sha256=pc.sha(carrier))
+            case = prepare_context_prominence({'cases': [evidence]}, basis='node_title')[0]
+            case.update(status='valid', parsed={'prominence': 80})
+            encoder = dict(checkpoint_sha256='b'*64, base_model_artifact_tree_sha256='c'*64,
+                           model={'dimensions': 2}, note_batch_size=1)
+            config = root/'config.json'
+            config.write_text(json.dumps(dict(encoder, device='cpu')))
+            (root/'experiment.json').write_text('{}')
+            (root/'results.jsonl').write_text('{}\n')
+            plan = {'dataset': {'adapter': 'subject_contexts', 'prominence_basis': 'node_title'},
+                    'run_directory': str(root)}
+            command = ['prominence_cosine.py', 'prepare', str(root/'out'),
+                       '--experiments', str(root), '--worker-config', str(config),
+                       '--post-order', 'highest']
+            with patch.object(pc.experiment, 'load', return_value=(plan, None, None)), \
+                 patch.object(pc.experiment, 'report', return_value={'cases': [case]}), \
+                 patch.object(pc, 'load_vectors', side_effect=AssertionError('unused vectors')):
+                with patch('sys.argv', command):
+                    pc.main()
+            output = root/'out'
+            saved = pc.read(output/'plan.json')
+            flat = [(n, s) for n in pc.read(output/'worker-request.json')['notes']
+                    for s in n['subjects']]
+            item = saved['cases'][0]
+            self.assertEqual(item['subject_id'], 'SP1')
+            self.assertEqual(flat[item['mask_row']][0]['text'], evidence['context'])
+            self.assertEqual(flat[item['mask_row']][1]['byte_spans'], [[0, 17]])
+            self.assertEqual(saved['replays'], {})
+            self.assertIsNone(saved['vectors'])
+            fresh = [(1, 0)] * len(flat)
+            fresh[item['mask_row']] = (0, 1)
+            result = output/'result'
+            result.mkdir()
+            (result/'raw-vectors.f32le').write_bytes(struct.pack(
+                '<'+'f'*(2*len(flat)), *(v for row in fresh for v in row)))
+            (result/'worker-receipt.json').write_text(json.dumps(dict(encoder,
+                request_sha256=pc.sha(output/'worker-request.json'),
+                proposal_sha256=pc.sha(output/'plan.json'),
+                rows=[dict(note_id=n['note_id'], subject_id=s['subject_id']) for n,s in flat])))
+            pc.collect(output)
+            comparison = pc.read(output/'comparison.json')
+            self.assertEqual(comparison['posts']['music'][0]['linear_product'], 40)
+            self.assertEqual(comparison['parity'], {})
+            carrier.write_text('{}\n')
+            with self.assertRaisesRegex(ValueError, 'protected artifact changed'):
+                pc.collect(output)
+            carrier.write_bytes(original_carrier)
+            config.write_text(config.read_text()+' ')
+            with self.assertRaisesRegex(ValueError, 'protected artifact changed'):
+                pc.collect(output)
+
     def test_subject_and_context_are_encoded_together_with_fixed_prominence(self):
         from sse_multivector import prominence_cosine as pc
         from sse_multivector.experiment_inputs import prepare_context_prominence

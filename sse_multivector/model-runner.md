@@ -3654,9 +3654,72 @@ over prominence alone and exposes no clear reversal caused by relevance.
 It uses thirteen posts from the same original 100-post corpus, so it does not
 establish transfer to fresh posts or broad non-food coverage. The agent
 recommends a bounded trial on fresh non-food posts outside that corpus before
-further relevance-input changes. That next trial has not begun; PPv30-node-v1,
+further relevance-input changes. The user approved the saved-input trial below;
+PPv30-node-v1,
 the formula, input selection and production adoption remain tested candidates
 or open decisions, not frozen production behavior.
+
+**Fresh non-food posts: saved SP contexts and fixed PPv30-node-v1.**
+
+The user approved a bounded sorting trial on posts outside the original 100,
+keeping the calculation fixed and delegating observation to the agent. The
+selector `experiment_specs/ppv30-fresh-nonfood-v1-source.json` references the
+unchanged saved music100 subjects and the unchanged raw HR02 graph for exact
+existing Music, Photography and Bitcoin titles. Nine original posts have IDs
+disjoint from the old 100. Forty-three exact ASv6.23 SP entries cover eleven
+selected post/node inputs: six Music, three Photography and two Bitcoin.
+These are explicit diagnostic assignments, not new hierarchy memberships or
+validation of an automatic placement rule. No SP or MP answers are generated;
+the broader-corpus generation hold is respected. ASv6.23 is older than the
+current SP prompt, so this evaluates saved-input sorting and cannot isolate
+current SP quality.
+
+The shared `subject_contexts` adapter now accepts explicit `subject_id`
+selections against a saved SP carrier and existing graph titles. It preserves
+the exact post, subject, context and source hashes, without inventing MP masks
+or SP numbers for older flat SP records. Existing numbered-SP/direct-membership
+selection keeps its original validation. `prominence_cosine.py` can prepare and
+collect these context-only cases without `--vectors` or `--replay`; saved MP
+comparisons still require vectors. Context-only inputs use the supplied worker
+config's checkpoint/model identity, with source and code hashes frozen and
+checked. A source file is hashed once per preparation, not once per SP entry.
+No original-mask controls are present on this new path; do not report them as
+replay checks. The calculation is unchanged: prominence from the complete post
+and exact title; relevance from the standalone unchanged SP context and title;
+sorting score is prominence × rescaled cosine; highest sorting score among the
+explicitly selected SP entries is used for each post.
+
+Two production-path tests first failed for the expected unsupported-input
+reasons: the preparer required hierarchy membership data and the comparison
+required `mask_ids`. They now verify native selection by exact saved SP ID,
+unchanged full-post/title inputs, source preservation and unknown-subject
+refusal, native CLI context encoding without MP masks or vectors, full content
+selection, unchanged product and per-post maximum, and protected-source refusal.
+Thirty-one comparison/selection/ranking tests and 108 experiment/worker tests
+passed. An initial regression command named a nonexistent test module; the
+corrected existing suites passed. Logs are in the ignored
+`experiments/ppv30-fresh-nonfood-v1-preparation` directory.
+
+The reusable `experiment_specs/ppv30-fresh-nonfood-v1.json` retains fixed
+PPv30-node-v1 / Astra-low subscription settings. Native preparation freezes
+forty-three SP cases but only eleven exact complete-post/title requests; SP
+entries for the same post/title share one prominence answer. The agent recorded
+pre-run observations natively: focused musical posts should lead the mixed
+reposting/travel accounts; band photographs before the father-photography
+account before photography incidental to song inspiration; Bitcoin support
+instructions before a song's incidental Bitcoin association. Subtle directions
+remain open, and none of these are new user labels.
+
+The prepared `experiments/ppv30-fresh-nonfood-v1` run is bounded to twenty-two
+new attempts, including eligible provider retries. Input/output work scales
+with selected post/node memberships and full-post length, not every post
+against every hierarchy node; repeated SP entries do not cause repeated
+complete-post inference. Local offline CPU SSE encodes selected contexts and
+three exact titles with the same checkpoint and model artifacts. Source lookup
+is linear in the saved carrier and selected entries. The zero-cash reservation
+is recorded without changing lifetime monetary totals or unrelated accounting.
+Prompts, formula and original artifacts are preserved; results and production
+adoption remain open.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended

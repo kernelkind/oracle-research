@@ -762,13 +762,26 @@ def prepare_context_prominence(source, basis='context'):
     fields = ('id', 'node_id', 'node_title', 'note_id', 'text', 'mask_ids', 'byte_spans')
     cases = []
     for evidence in source['cases']:
-        case = prepare_prominence({'cases': [{k: evidence[k] for k in fields}]})[0]
-        for key in ('subject_number', 'subject', 'context'):
+        identity = 'subject_id' if 'subject_id' in evidence else 'subject_number'
+        if identity == 'subject_id':
+            engine._expect_fields(evidence, 'saved subject context',
+                {'id', 'node_id', 'node_title', 'note_id', 'text',
+                 'subject_id', 'subject', 'context', 'source'})
+            for key in ('id', 'node_id', 'subject_id'):
+                engine._expect_identifier(evidence[key], key)
+            for key in ('node_title', 'note_id', 'text'):
+                engine._expect_string(evidence[key], key)
+                if not evidence[key].strip():
+                    raise ValueError(f'empty saved context field: {key}')
+            case = dict(id=evidence['id'], evidence=dict(evidence))
+        else:
+            case = prepare_prominence({'cases': [{k: evidence[k] for k in fields}]})[0]
+        for key in (identity, 'subject', 'context'):
             engine._expect_string(evidence[key], key)
             if not evidence[key].strip():
                 raise ValueError(f'empty subject context field: {key}')
         case['evidence'] = dict(case['evidence'], **{
-            k: evidence[k] for k in ('subject_number', 'subject', 'context')})
+            k: evidence[k] for k in (identity, 'subject', 'context')})
         if 'source' in evidence:
             case['evidence']['source'] = evidence['source']
         case['inputs'] = {'INPUT_JSON': json.dumps(
@@ -783,8 +796,40 @@ def prepare_subject_contexts(source, selected=None, basis='context'):
     by_id = {p['note_id']: p for p in posts}
     if len(by_id) != len(posts):
         raise ValueError('duplicate source post identity')
-    members = prepare_prominence(source['hierarchy'])
     selections = source.get('selections')
+    if selections and any('subject_id' in s for s in selections):
+        # Explicit saved SP entries can test existing titles without a new
+        # hierarchy build or MP generation. They are diagnostic assignments,
+        # not members added to the preserved hierarchy.
+        nodes = source['hierarchy']['graph']['nodes']
+        titles = {n['group']: n['title'] for n in nodes}
+        if len(titles) != len(nodes):
+            raise ValueError('duplicate hierarchy node identity')
+        cases, ids = [], set()
+        for selection in selections:
+            engine._expect_fields(selection, 'saved subject selection',
+                {'id', 'node_id', 'note_id', 'subject_id'})
+            cid = engine._expect_identifier(selection['id'], 'case.id')
+            if cid in ids:
+                raise ValueError('duplicate context case identity')
+            ids.add(cid)
+            post = by_id.get(selection['note_id'])
+            matches = [s for s in post['subjects']
+                       if s.get('id') == selection['subject_id']] if post else []
+            if len(matches) != 1:
+                raise ValueError('unknown or duplicate saved subject')
+            if selection['node_id'] not in titles:
+                raise ValueError('unknown context hierarchy node')
+            subject = matches[0]
+            cases.append(dict(selection, node_title=titles[selection['node_id']],
+                text=post['text'], subject=subject['subject'], context=subject['context'],
+                source=source['source']))
+        if selected is not None:
+            if set(selected) - ids:
+                raise ValueError('unknown subject context case requested')
+            cases = [c for c in cases if c['id'] in selected]
+        return prepare_context_prominence({'cases': cases}, basis)
+    members = prepare_prominence(source['hierarchy'])
     if 'nodes' in source:
         nodes = engine._validate_string_array(source['nodes'], 'nodes', allow_empty=False)
         if len(nodes) != len(set(nodes)):

@@ -186,8 +186,14 @@ def prepare(args):
         reuse_notes = read(encoding_source/'worker-request.json')['notes']
         reuse_rows = [(n, s) for n in reuse_notes for s in n['subjects']]
         reuse_replays = read(encoding_source/'plan.json')['replays']
-    vectors = args.vectors.resolve()
-    rows, encoder, vector_file, vector_code, protected = load_vectors(vectors)
+    vectors = args.vectors.resolve() if args.vectors else None
+    if vectors:
+        rows, encoder, vector_file, vector_code, protected = load_vectors(vectors)
+    else:
+        if args.replay:
+            raise ValueError('mask replays require --vectors')
+        rows, vector_file, vector_code, protected = [], None, None, {}
+        encoder = read(args.worker_config)
     lookup = {r["short_id"]: r for r in rows}
     if len(lookup) != len(rows) or any(r["ordinal"] != i for i, r in enumerate(rows)):
         raise ValueError("vector map has duplicate IDs or unexpected row order")
@@ -224,9 +230,24 @@ def prepare(args):
             if case["status"] != "valid":
                 raise ValueError(f"unscored or invalid case: {case['id']}")
             e = case["evidence"]
-            fields = ("id", "node_id", "node_title", "note_id", "text", "mask_ids", "byte_spans")
+            saved_context = context_input and 'subject_id' in e
+            if not vectors and not saved_context:
+                raise ValueError('saved mask comparisons require --vectors')
+            if saved_context:
+                for reference in e['source'].values():
+                    path = Path(reference['path'])
+                    expected = protected.get(str(path))
+                    if expected is None:
+                        expected = sha(path)
+                    if expected != reference['sha256']:
+                        raise ValueError(f'saved context source changed: {path}')
+                    protected[str(path)] = expected
+            fields = ("id", "node_id", "node_title", "note_id", "text")
+            fields += ('subject_id', 'source') if saved_context else ('mask_ids', 'byte_spans')
             if context_input:
-                fields += ('subject_number', 'subject', 'context')
+                fields += ('subject', 'context')
+                if not saved_context:
+                    fields += ('subject_number',)
             source = {"cases": [{key: e[key] for key in fields}]}
             verified = (prepare_context_prominence(source, plan['dataset'].get('prominence_basis', 'context'))
                         if context_input else prepare_prominence(source))[0]
@@ -242,7 +263,7 @@ def prepare(args):
                 raise ValueError("conflicting node titles")
             titles[nid] = title
             masks = []
-            for mid in e["mask_ids"]:
+            for mid in e.get("mask_ids", []):
                 saved = lookup[mid]
                 if not plan['dataset'].get('combine_masks', False) and saved['byte_spans'] != e['byte_spans']:
                     raise ValueError(f"mask differs from saved vector: {mid}")
@@ -258,21 +279,23 @@ def prepare(args):
                     raise ValueError('context differs from saved SP subject')
                 originals[mid] = original
                 masks.append(saved)
-            if union_spans([span for mask in masks for span in mask['byte_spans']]) != union_spans(e['byte_spans']):
+            if not saved_context and union_spans([span for mask in masks for span in mask['byte_spans']]) != union_spans(e['byte_spans']):
                 raise ValueError(f"mask union differs from saved vectors: {case['id']}")
             exact = next((mask for mask in masks if mask['byte_spans'] == e['byte_spans']), None)
             evidence[case['id']] = e
             cases.append(dict(id=case["id"], node_id=nid, title=title,
-                              mask_ids=e["mask_ids"], note_id=e["note_id"],
-                              fragments=[e['text'].encode()[a:b].decode() for a,b in e['byte_spans']],
+                              mask_ids=e.get("mask_ids", []), note_id=e["note_id"],
+                              fragments=[e['text'].encode()[a:b].decode() for a,b in e.get('byte_spans', [])],
                               ordinal=exact['ordinal'] if exact else None,
                               prominence=score))
             if context_input:
                 cases[-1].update(ordinal=None,
                                  representation='subject_context' if include_subject else 'context',
                                  context=e['context'],
-                                 subject=e['subject'], subject_number=e['subject_number'],
+                                 subject=e['subject'],
                                  prominence_basis=plan['dataset'].get('prominence_basis', 'context'))
+                identity = 'subject_id' if saved_context else 'subject_number'
+                cases[-1][identity] = e[identity]
             if case['id'] in source_texts:
                 text = source_texts[case['id']]
                 start = e['text'].find(text)
@@ -344,7 +367,7 @@ def prepare(args):
                                           subject['subject_id']))
         for case in cases:
             e = evidence[case['id']]
-            note_id = lookup[case['mask_ids'][0]]['note_id']
+            note_id = lookup[case['mask_ids'][0]]['note_id'] if case['mask_ids'] else case['note_id']
             if case['ordinal'] is None:
                 if case.get('representation') in ('context', 'subject_context', 'source_text'):
                     if case['representation'] == 'source_text':
@@ -428,8 +451,8 @@ def prepare(args):
         protected[str(path)] = sha(path)
     output.mkdir(parents=True)
     plan = dict(schema_version=1, cases=cases, title_rows=title_rows, replays=replays,
-                vectors=str(vectors), protected=protected, encoder=encoder,
-                vector_file=str(vector_file), vector_code=vector_code,
+                vectors=str(vectors) if vectors else None, protected=protected, encoder=encoder,
+                vector_file=str(vector_file) if vector_file else None, vector_code=vector_code,
                 formula="prominence (0..100) * raw cosine; no clipping or fitted calibration",
                 linear_formula="prominence * (clip(cosine, -1, 1) + 1) / 2; not calibrated relevance",
                 parity_min_cosine=0.999999, parity_max_normalized_component_error=0.00001)
@@ -452,7 +475,7 @@ def prepare(args):
     config.update(request_path=str(output / "worker-request.json"),
                   request_sha256=sha(output / "worker-request.json"), output_path=str(output / "result"))
     save(output / "worker-config.json", config)
-    print(f"Prepared {len(titles)} titles, {len(replays)} replays; {len(cases)} masks; "
+    print(f"Prepared {len(titles)} titles, {len(replays)} replays; {len(cases)} cases; "
           f"{sum(len(n['subjects']) for n in notes)} encoder rows. No inference.")
     if encoding_source:
         print(f"Reusing saved encoding from {encoding_source}; collect without running the worker.")
@@ -482,8 +505,10 @@ def collect(output):
         raise ValueError("worker rows differ from request")
     dim = plan["encoder"]["model"]["dimensions"]
     fresh = decode(encoding_source / "result/raw-vectors.f32le", dim, "f")
-    saved = decode(Path(plan.get("vector_file", str(Path(plan["vectors"]) / "normalized-vectors.f64le"))),
-                   dim, plan.get("vector_code", "d"))
+    saved = []
+    if plan['vectors'] is not None:
+        vector_file = plan.get('vector_file') or str(Path(plan['vectors']) / 'normalized-vectors.f64le')
+        saved = decode(Path(vector_file), dim, plan.get('vector_code', 'd'))
     if len(fresh) != len(receipt["rows"]):
         raise ValueError("vector count differs from receipt")
     parity = {}
@@ -554,9 +579,9 @@ def main():
                       help='encode an exact saved-post fragment as standalone relevance text; repeat per case')
     prep.add_argument('--include-subject', action='store_true',
                       help='encode the saved SP subject, a newline, and its unchanged context together')
-    prep.add_argument("--vectors", type=Path, required=True)
+    prep.add_argument("--vectors", type=Path, help='required for saved MP masks or mask replay controls')
     prep.add_argument("--worker-config", type=Path, required=True)
-    prep.add_argument("--replay", nargs="+", required=True)
+    prep.add_argument("--replay", nargs="+", default=[], help='original MP-mask controls from --vectors')
     prep.add_argument('--include-inverse', action='store_true',
                       help='also encode exact inverse masks and one full-post selection per post')
     prep.add_argument('--exclude-references', action='store_true',

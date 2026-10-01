@@ -18,6 +18,38 @@ class ExperimentSelectionTests(unittest.TestCase):
     calls = fixtures.ExperimentTests.calls
     mask_spec = fixtures.ExperimentTests.mask_spec
 
+    def test_saved_subject_ids_prepare_contexts_without_masks_or_membership_edits(self):
+        notes = self.write('subjects.json', {'notes': [dict(note_id='a'*64,
+            text='Music cheers me up.', subjects=[dict(id='SP1', subject='Music.',
+                context='The writer enjoys music.')])]})
+        hierarchy = self.write('hierarchy.json', {'graph': {'nodes': [
+            dict(group='music', title='Music')]}})
+        self.write('source.json', dict(schema_version=1, subjects=str(notes),
+            hierarchy=str(hierarchy), selections=[dict(id='one', node_id='music',
+                note_id='a'*64, subject_id='SP1')]))
+        spec = json.loads(self.spec.read_text())
+        spec['dataset'] = dict(adapter='subject_contexts', path='source.json',
+                               prominence_basis='node_title')
+        self.prompt.write_text('{INPUT_JSON}')
+        self.write('spec.json', spec)
+        originals = notes.read_bytes(), hierarchy.read_bytes()
+        self.prepare()
+        case = self.show()['cases'][0]
+        self.assertEqual(json.loads(case['inputs']['INPUT_JSON']),
+                         {'node_title': 'Music', 'post': 'Music cheers me up.'})
+        self.assertEqual(case['evidence']['subject_id'], 'SP1')
+        self.assertEqual(case['evidence']['context'], 'The writer enjoys music.')
+        self.assertNotIn('mask_ids', case['evidence'])
+        self.assertNotIn('subject_number', case['evidence'])
+        self.assertEqual((notes.read_bytes(), hierarchy.read_bytes()), originals)
+        self.assertEqual(self.calls(), [])
+        data = json.loads((self.root/'source.json').read_text())
+        data['selections'][0]['subject_id'] = 'missing'
+        self.write('source.json', data)
+        result = self.cli('prepare', 'bad', '--spec', 'spec.json', ok=False)
+        self.assertIn('unknown or duplicate saved subject', result.stderr)
+        self.assertFalse((self.root/'bad').exists())
+
     def test_show_only_scopes_usage_and_validates_ids_without_inference(self):
         self.prepare()
         self.cli("run", "E1", env={"FAKE_RUNNER_RESULT_OVERRIDE": json.dumps({
