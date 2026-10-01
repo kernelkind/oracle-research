@@ -262,9 +262,10 @@ references. Other pairs must use two distinct original `S####` entry IDs.
 
 Status: **tested on eight selected nodes, not frozen or adopted**. The user
 authorized the draft, offline full-corpus sizing and this small nomination /
-verification trial, not a full supplementary pass. HG100-SOL01 remains unchanged
-and its frozen nomination prompt remains PCPv2. Approximate lookup and adoption
-of a new construction rule remain undecided.
+verification trials, not a full supplementary pass. HG100-SOL01 remains unchanged
+and its frozen nomination prompt remains PCPv2. Exact-only and bounded HNSW
+lookup have small diagnostic implementations; a full pass and adoption of a new
+construction rule remain undecided.
 
 The proposed supplementary pass works as follows:
 
@@ -281,8 +282,9 @@ The proposed supplementary pass works as follows:
    SSE encoding of new names and indexed subject-vector search. Repeated names
    do not establish equivalence. Limit alias expansion, candidate inspections,
    and the **total to three resolved existing nodes per query**, not three per
-   proposed name. The small trial implements exact-only lookup, described below;
-   approximate lookup and its ranking policy are not implemented or selected.
+   proposed name. The small trials implement exact-only lookup and a separate
+   bounded HNSW fallback, described below. Neither is adopted as a construction
+   rule or evidence of complete candidate coverage.
 4. Reuse BCPv5 to compare the queried node against each resolved existing node,
    using only their unchanged saved SP evidence, not the generated search name.
    The generated name cannot redefine either node. Filter existing ancestry and
@@ -398,11 +400,91 @@ or a useful saved node under different wording.
 
 The shared lifetime attempt counter moved from 522 to **531 / 2,000**. No new
 vectors, nodes, merges or placements were produced. This selected small trial
-does not establish browsing improvement or authorize a full pass. A bounded
-subject-vector lookup test using these saved nominations is the next proposal,
-not an adopted rule. One adapter limitation remains: if lookup produces no
+does not establish browsing improvement or authorize a full pass. The separate
+subject-vector lookup test below reuses these nominations without changing the
+prompt. One adapter limitation remains: if lookup produces no
 eligible pairs, generic experiment preparation rejects the empty dataset;
 such an outcome must not be replaced with invented verification cases.
+
+### Bounded subject-vector fallback trial
+
+Status: **small-tested, not adopted**. This trial searches only the ten proposed
+names whose exact wording was absent. It does not regenerate nominations,
+repeat the two exact comparisons or change the hierarchy. The source and model
+specs are `pcpv3-eight-vectors-source-v1.json` and
+`pcpv3-eight-vector-verification-sol-low-v1.json` under
+`sse_multivector/experiment_specs/`.
+
+`experiment.py prepare-parent-guide-vectors SOURCE DESTINATION` prepares a
+source-bound request through the shared workflow. Verbatim names reuse saved
+standalone subject vectors when available; repeated names share one encoding.
+For this sample, ten names required **nine unique new subject vectors**. The
+existing local CPU worker encoded them using the original checkpoint, base
+model, runtime and batch settings. Its frozen source is
+`target/subject-matching-100-v1/encoder-source/worker.py`, whose hash matches the
+saved runtime. No rental, external embedding API or changed SSE implementation
+was used. The new worker receipt, full-text UTF-8 selections and original-vector
+reuse are checked by the existing subject-vector loader.
+
+In explicit `subject_vector_fallback_only` mode, the comparison adapter:
+
+1. Runs the unchanged exact lookup first to preserve its exclusions and account
+   for its alias/candidate work. All exact-selected pairs are excluded globally
+   from this separate trial, even if nominated in the opposite direction.
+2. Builds the existing deterministic HNSW index of saved SP subject wordings.
+   For each exact-absent name, retrieves at most 256 wording neighbors from its
+   standalone subject vector, then orders that shortlist by float64 cosine and
+   wording. Repeated search names reuse the shortlist; no exhaustive fallback
+   or all-pairs similarity table is added.
+3. Expands returned wordings into current hierarchy nodes in stable ID order.
+   It selects **one nearest eligible node per name**, sharing the existing
+   32-alias-inspection and three-candidate total budgets per queried node with
+   exact lookup. Self, duplicate candidates, existing ancestry, unchanged saved
+   judgments and unknown bounded ancestry are excluded. Prior receipted BCPv5
+   experiments also exclude unchanged comparisons, regardless of their answer.
+4. Sends only those new actual-node pairs to unchanged BCPv5. The generated
+   name, matched wording, cosine and retrieval settings remain provenance, not
+   model hints. All five possible relations are retained; a reverse-direction
+   answer is not relabeled to match the proposed parent direction.
+
+The 256 limit bounds returned-wording inspection, **not HNSW's internal index
+visits**. An index error stops preparation; it does not trigger an exhaustive
+search. Existing archive loading and the 5,000-entry diagnostic guard remain
+small-corpus limitations. Candidate fanout and model inputs are bounded; this
+trial does not claim that every implementation detail is million-post-ready.
+
+Artifacts are `target/hg100-sol01-parent-guides-v1/guide-vectors/` and
+`vector-verification/`. Ten new pairs fit one batch of **1,335 rendered input
+tokens**; the provider reported 1,341 input and 332 output tokens. One new Sol low
+request completed without retries or failures. The counter is **532 / 2,000**;
+none of the earlier nomination or verification requests was rerun.
+
+| Actual node pair | BCPv5 judgment |
+| --- | --- |
+| Social-media communities / Nostr community | Social-media communities contains Nostr community |
+| Coffee / Caffeine addiction among coffee drinkers | Coffee contains the addiction topic: opposite the nominated direction |
+| Diet and nutrition / Health effects of tea consumption | Diet and nutrition contains the tea-health topic |
+| Nostr community / Invitation to visit a website | Neither |
+| Social-media communities / Invitation to visit a website | Neither |
+| Slush drinks / Not drinking wine | Neither |
+| Slush drinks / Ice used as a beverage serving vessel | Neither |
+| Butter / Food portioning | Neither |
+| Siamstr community / Nostr content preferences | Neither |
+| Health effects of tea consumption / Food and drink appreciation | Neither |
+
+The model accepted three relationships: two candidate ancestors and one
+candidate child. These fit the supplied meanings on agent inspection; they are
+not user approvals or applied placements. Seven matches were related or
+different subjects, not valid containment. For example, the subject-vector
+cosine from "Caffeinated beverages" to "Caffeine addiction among coffee drinkers"
+was 0.9408, yet that matched node was narrower than Coffee, not a broader parent.
+Cosine selects a comparison; it does not establish either equivalence or
+generality. Some sensible matches were already excluded by ancestry or saved
+judgment history, so this result is not unfiltered retrieval accuracy.
+
+The next proposed check is read-only: inspect the rejected matches' existing
+ancestors to see whether lookup lands below a useful broader node. No ancestor
+expansion rule, further model pass or application of these answers is approved.
 
 ## Completed build and browser handoff
 

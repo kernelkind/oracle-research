@@ -21,6 +21,10 @@ import subprocess
 import sys
 import tempfile
 
+if not __package__:
+    # The supported file entry point must also resolve package-owned adapters.
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 try:
     from . import extraction_pipeline as engine
     from . import experiment_inputs as inputs
@@ -1149,6 +1153,10 @@ def parser():
     p.add_argument('destination', type=Path)
     p.add_argument('--prompt', type=Path, required=True)
     p.add_argument('--prompt-id', required=True)
+    p = commands.add_parser('prepare-parent-guide-vectors',
+                            help='prepare source-bound standalone guide-name SSE requests; no inference')
+    p.add_argument('source', type=Path)
+    p.add_argument('destination', type=Path)
     p = commands.add_parser(
         "prepare", help="freeze inputs/settings and baseline; no inference"
     )
@@ -1302,6 +1310,12 @@ def main(argv=None):
                 'guaranteed_comparisons_per_request':
                     result['comparison_capacity']['guaranteed_pairs_per_request'],
                 'measurement_report': str(args.destination.resolve() / 'report.json')}, indent=2))
+        elif args.command == 'prepare-parent-guide-vectors':
+            try:
+                from .parent_guide_vectors import prepare_vectors
+            except ImportError:
+                from parent_guide_vectors import prepare_vectors
+            print(json.dumps(prepare_vectors(args.source, args.destination, report), indent=2))
         elif args.command == "collect":
             print(json.dumps(collect(args.experiments, args.output, args.worker_config), indent=2))
         elif args.command == "run":

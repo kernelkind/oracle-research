@@ -77,8 +77,15 @@ def prepare_file(dataset, path, template, load_report=None):
             if len(set(directories)) != len(directories):
                 raise ValueError('duplicate parent-guide experiment')
             reports = [load_report(p) for p in directories]
+            prior_paths = engine._validate_string_array(
+                source.get('prior_comparisons', []), 'prior comparison experiments', allow_empty=True)
+            prior_directories = [engine._resolve_path(p, 'prior comparison experiment', path.parent)
+                                 for p in prior_paths]
+            if len(set(prior_directories)) != len(prior_directories):
+                raise ValueError('duplicate prior comparison experiment')
             cases, protected, preparation = guides.build_comparison_source(
-                source, reports, template, base=path.parent, selected=dataset.get('select'))
+                source, reports, template, base=path.parent, selected=dataset.get('select'),
+                prior_reports=[load_report(p) for p in prior_directories])
         sources.update(protected)
         return prepare({**dataset, 'adapter': 'generic'}, {'cases': cases}, template), sources, preparation
     if dataset['adapter'] in {'bounded_discovery', 'bounded_comparisons'}:

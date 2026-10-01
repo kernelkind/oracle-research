@@ -161,6 +161,34 @@ class HNSWSubjectNeighbors:
         scores = data.vectors[labels] @ query
         return data.best_eligible(labels, scores, excluded_node_ids)
 
+    def wording_neighbors(self, vector):
+        """Return up to 256 existing wordings for a standalone subject vector.
+
+        Rerank the ANN shortlist by float64 cosine, then wording. This method
+        does not expand node aliases, infer relationships or search beyond the
+        returned shortlist when a caller excludes a candidate.
+        """
+        data = self._data
+        try:
+            query = data.np.asarray(vector, dtype=data.np.float64)
+        except (TypeError, ValueError) as error:
+            raise ValueError("finite subject vector with matching dimensions required") from error
+        if (query.shape != (data.vectors.shape[1],)
+                or not data.np.isfinite(query).all()):
+            raise ValueError("finite subject vector with matching dimensions required")
+        with data.np.errstate(over="ignore", invalid="ignore"):
+            norm = data.np.linalg.norm(query)
+        if not data.np.isfinite(norm) or norm == 0:
+            raise ValueError("nonzero finite subject-vector norm required")
+        query = query / norm
+        labels, _ = self._index.knn_query(query.astype(data.np.float32),
+            k=min(256, len(data.words)), num_threads=1)
+        labels = labels[0]
+        scores = data.vectors[labels] @ query
+        matches = [(data.words[int(label)], max(-1.0, min(1.0, float(score))))
+                   for label, score in zip(labels, scores, strict=True)]
+        return sorted(matches, key=lambda item: (-item[1], item[0]))
+
 
 def _validate_graph(inputs, hierarchy):
     subjects, groups = inputs["subjects"], hierarchy["groups"]

@@ -16,6 +16,13 @@ CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_parent_vector_preparation_has_an_offline_source_bound_cli(self):
+        error = self.cli("prepare-parent-guide-vectors", "missing-source.json", "vectors", ok=False)
+        self.assertNotIn("invalid choice", error.stderr)
+        self.assertIn("missing-source.json", error.stderr)
+        self.assertFalse((self.root / "vectors").exists())
+        self.assertEqual(self.calls(), [])
+
     def test_parent_guide_preparation_pins_its_packer_and_validator_code(self):
         subjects = [dict(index=i, subject=name, context=name,
                          note_id=f"p{i}", note_short_id=f"N{i+1:03d}")

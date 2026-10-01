@@ -1,10 +1,11 @@
-"""Source-bound parent-name nominations and exact-only diagnostic lookup.
+"""Source-bound parent-name nominations and bounded diagnostic lookup.
 
 Preparation never performs inference, creates nodes or changes a hierarchy.
-Unmatched names remain unresolved rather than receiving a semantic substitute.
+Exact-only lookup remains the default; vector lookup selects comparisons only.
 """
 
 from collections import defaultdict
+import hashlib
 from pathlib import Path
 import re
 
@@ -202,15 +203,159 @@ def _protect_report(report, protected):
         protected[str(path)] = bounded.engine._sha256_file(path)
 
 
-def build_comparison_source(source_refs, reports, template, *, base=None, selected=None):
+def resolve_vector_guides(inputs, hierarchy, reports, references, subject_vectors, *,
+                          history=None, prior_reports=()):
+    """Test one nearest eligible node per unmatched name; never repeat exact pairs."""
+    try:
+        from .bounded_hierarchy_candidates import HNSWSubjectNeighbors
+    except ImportError:
+        from bounded_hierarchy_candidates import HNSWSubjectNeighbors
+    exact_pairs, nodes, resolution = resolve_exact_guides(
+        inputs, hierarchy, reports, references, history=history)
+    exact_selected = {frozenset((pair["A"], pair["B"])) for pair in exact_pairs}
+    owner, _, parents, _ = _validate_graph(inputs, hierarchy)
+    judged = _judged_pairs(history, inputs, hierarchy, references, owner)
+    for report in prior_reports:
+        if (report.get("adapter") not in {"bounded_comparisons", "bounded_parent_comparisons"}
+                or report.get("prompt_id") != "BCPv5"):
+            raise ValueError("prior comparisons require validated BCPv5 reports")
+        previous = []
+        for case in report["cases"]:
+            if (case.get("status") != "valid" or not case.get("receipt")
+                    or case["evidence"].get("source", {}).get("inputs") != references["inputs"]):
+                raise ValueError("prior comparisons require valid source-bound saved answers")
+            previous.extend(bounded.extract_comparisons(case, case["parsed"]))
+        judged.update(_judged_pairs(dict(subjects=inputs["subjects"], comparisons=previous),
+                                    inputs, hierarchy, references, owner))
+    aliases = defaultdict(set)
+    for index, entry in enumerate(inputs["subjects"]):
+        aliases[entry["subject"]].add(owner[index])
+    aliases = {name: sorted(ids) for name, ids in aliases.items()}
+    provider = HNSWSubjectNeighbors(inputs, hierarchy, subject_vectors)
+    inspections = defaultdict(int, resolution["alias_inspections_by_query"])
+    chosen = {qid: set(ids) for qid, ids in resolution["candidates_by_query"].items()}
+    saved_cases = {(report["experiment"], case["id"]): (report, case)
+                   for report in reports for case in report["cases"]}
+    pairs, shortlist_cache = {}, {}
+    for record in resolution["guides"]:
+        if record.get("reason") != "exact_name_absent":
+            continue
+        qid, name = record["query"], record["name"]
+        if inspections[qid] >= 32 or len(chosen.get(qid, set())) >= 3:
+            record.update(status="skipped", reason=("alias_limit" if inspections[qid] >= 32
+                                                   else "candidate_limit"))
+            continue
+        encoding = hashlib.sha256(name.encode()).hexdigest()
+        try:
+            vector = subject_vectors[encoding, encoding[:16]]
+        except KeyError as error:
+            raise ValueError(f"missing standalone guide vector: {name}") from error
+        if name not in shortlist_cache:
+            shortlist_cache[name] = provider.wording_neighbors(vector)
+        shortlist = shortlist_cache[name]
+        record.update(resolution="subject_vector_fallback", query_encoding_id=encoding,
+                      wording_inspections=len(shortlist), search_complete=False)
+        found = None
+        for word, score in shortlist:
+            for cid in aliases[word]:
+                if inspections[qid] >= 32:
+                    break
+                inspections[qid] += 1
+                record["alias_inspections"] += 1
+                reason = None
+                if cid == qid:
+                    reason = "self"
+                elif cid in chosen.get(qid, set()):
+                    reason = "duplicate_candidate"
+                elif frozenset((qid, cid)) in exact_selected:
+                    reason = "exact_pair_already_selected"
+                elif frozenset((qid, cid)) in judged:
+                    reason = "unchanged_judgment"
+                else:
+                    forward = _ancestor(qid, cid, parents, max_operations=2048)
+                    reverse = _ancestor(cid, qid, parents, max_operations=2048)
+                    if forward is None or reverse is None:
+                        reason = "ancestry_work_limit"
+                    elif forward or reverse:
+                        reason = "existing_ancestry"
+                if reason:
+                    record["skipped_nodes"].append(dict(id=cid, reason=reason))
+                else:
+                    found = cid, word, score
+                    break
+            if found is not None or inspections[qid] >= 32:
+                break
+        if found is None:
+            record.update(status="unresolved", reason=("alias_limit" if inspections[qid] >= 32
+                                                       else "no_eligible_shortlist_match"))
+            continue
+        cid, word, score = found
+        chosen.setdefault(qid, set()).add(cid)
+        record.update(status="resolved", selected=[cid], matched_wording=word, cosine=score)
+        record.pop("reason", None)
+        a, b = sorted((qid, cid))
+        pair = pairs.setdefault((a, b), dict(id=a + "-" + b, A=a, B=b,
+            reference_entries=dict(A=nodes[a], B=nodes[b]), parent_candidates=[]))
+        report, case = saved_cases[record["experiment"], record["case_id"]]
+        pair["parent_candidates"].append(dict(experiment=report["experiment"],
+            case_id=case["id"], prompt_id=report["prompt_id"], settings=report["settings"],
+            query=qid, candidate=dict(id=cid, name=name, matched_wording=word, cosine=score),
+            resolution="subject_vector_fallback", query_encoding_id=encoding,
+            lookup=provider.metadata, receipt=case["receipt"]))
+    resolution.update(alias_inspections_by_query=dict(inspections),
+        candidates_by_query={qid: sorted(ids) for qid, ids in chosen.items()},
+        unresolved_guides=[r for r in resolution["guides"] if r["status"] == "unresolved"],
+        skipped_guides=[r for r in resolution["guides"] if r["status"] == "skipped"],
+        nearest_neighbors=provider.metadata,
+        exact_pairs_excluded_from_trial=[p["id"] for p in exact_pairs])
+    return [pairs[key] for key in sorted(pairs)], nodes, resolution
+
+
+def build_comparison_source(source_refs, reports, template, *, base=None, selected=None,
+                            prior_reports=()):
     """Pack only resolved real-node pairs for ordinary five-way BCP verification."""
     if not isinstance(source_refs, dict) or set(source_refs) - {
-            "schema_version", "inputs", "hierarchy", "judgments", "discoveries"}:
+            "schema_version", "inputs", "hierarchy", "judgments", "discoveries",
+            "resolution", "subject_probe", "guide_probe", "prior_comparisons"}:
         raise ValueError("invalid parent-comparison source references")
-    loaded, references, protected = bounded._read_sources(source_refs, base)
-    pairs, nodes, resolution = resolve_exact_guides(loaded["inputs"], loaded["hierarchy"],
-        reports, references, history=loaded.get("judgments"))
-    for report in reports:
+    mode = source_refs.get("resolution", "exact_saved_wording_only")
+    if mode not in {"exact_saved_wording_only", "subject_vector_fallback_only"}:
+        raise ValueError("invalid parent-comparison resolution mode")
+    if mode == "exact_saved_wording_only" and any(
+            key in source_refs for key in ("subject_probe", "guide_probe", "prior_comparisons")):
+        raise ValueError("vector references require subject-vector fallback mode")
+    loaded, references, protected = bounded._read_sources({key: value for key, value in source_refs.items()
+        if key in {"schema_version", "inputs", "hierarchy", "judgments", "discoveries"}}, base)
+    if mode == "subject_vector_fallback_only":
+        try:
+            from .subject_matching_probe import load_subject_vectors
+        except ImportError:
+            from subject_matching_probe import load_subject_vectors
+        batches = {}
+        for key in ("subject_probe", "guide_probe"):
+            if not isinstance(source_refs.get(key), str) or not source_refs[key]:
+                raise ValueError("vector fallback requires subject_probe and guide_probe")
+            path = (Path(base or ".") / source_refs[key]).resolve()
+            vectors, receipt, hashes = load_subject_vectors(path)
+            protected.update(hashes)
+            references[key] = dict(path=str(path), protected_sha256=hashes)
+            batches[key] = vectors, receipt
+        candidate_vectors, candidate_receipt = batches["subject_probe"]
+        guide_vectors, guide_receipt = batches["guide_probe"]
+        for key in ("checkpoint_sha256", "base_model_artifact_tree_sha256", "model",
+                    "runtime", "dimensions", "device", "note_batch_size"):
+            if candidate_receipt.get(key) != guide_receipt.get(key):
+                raise ValueError(f"SSE identity mismatch between guide and saved subject vectors: {key}")
+        for key, vector in candidate_vectors.items():
+            if key in guide_vectors and guide_vectors[key] != vector:
+                raise ValueError("conflicting saved vectors for the same subject")
+        pairs, nodes, resolution = resolve_vector_guides(loaded["inputs"], loaded["hierarchy"],
+            reports, references, {**candidate_vectors, **guide_vectors},
+            history=loaded.get("judgments"), prior_reports=prior_reports)
+    else:
+        pairs, nodes, resolution = resolve_exact_guides(loaded["inputs"], loaded["hierarchy"],
+            reports, references, history=loaded.get("judgments"))
+    for report in [*reports, *prior_reports]:
         _protect_report(report, protected)
     cases = bounded._pack_comparisons(pairs, nodes, template, references)
     if selected is not None:
@@ -218,7 +363,7 @@ def build_comparison_source(source_refs, reports, template, *, base=None, select
             raise ValueError("unknown parent-comparison case requested")
         cases = [case for case in cases if case["id"] in selected]
     preparation = dict(phase="parent_comparisons", source=references, pairs=pairs,
-        reference_policy=bounded.REFERENCE_POLICY, resolution="exact_saved_wording_only",
+        reference_policy=bounded.REFERENCE_POLICY, resolution=mode,
         max_candidates_per_query=3, max_alias_inspections_per_query=32,
         ancestry_max_operations=2048, max_pairs=bounded.MAX_PAIRS,
         max_input_tokens=bounded.MAX_INPUT_TOKENS, tokenizer="o200k_base", **resolution)

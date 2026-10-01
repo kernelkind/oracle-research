@@ -292,6 +292,64 @@ assert result["cases"] == []
         self.assertEqual(metadata["inspection_limit"], 256)
 
     @unittest.skipUnless(importlib.util.find_spec("hnswlib"), "hnswlib is optional")
+    def test_hnsw_arbitrary_vector_returns_original_wordings_and_float64_cosines(self):
+        from sse_multivector.bounded_hierarchy_candidates import HNSWSubjectNeighbors
+
+        inputs, hierarchy, vectors = self.fixture()
+        provider = HNSWSubjectNeighbors(inputs, hierarchy, vectors)
+        previous = provider.nearest("Potatoes", {"S0000", "S0001"})
+        query = (2.0, 3.0)
+        expected = []
+        for word in sorted({entry["subject"] for entry in inputs["subjects"]}):
+            digest = hashlib.sha256(word.encode()).hexdigest()
+            vector = vectors[digest, digest[:16]]
+            score = sum(a * b for a, b in zip(vector, query)) / (
+                math.hypot(*vector) * math.hypot(*query))
+            expected.append((word, score))
+        expected.sort(key=lambda item: (-item[1], item[0]))
+        actual = provider.wording_neighbors(query)
+        self.assertEqual([word for word, _ in actual], [word for word, _ in expected])
+        for (_, score), (_, expected_score) in zip(actual, expected):
+            self.assertIs(type(score), float)
+            self.assertAlmostEqual(score, expected_score, places=14)
+        self.assertEqual(provider.nearest("Potatoes", {"S0000", "S0001"}), previous)
+
+    @unittest.skipUnless(importlib.util.find_spec("hnswlib"), "hnswlib is optional")
+    def test_hnsw_arbitrary_vector_rejects_malformed_queries(self):
+        from sse_multivector.bounded_hierarchy_candidates import HNSWSubjectNeighbors
+
+        provider = HNSWSubjectNeighbors(*self.fixture())
+        for vector in (None, 1.0, [], [1.0], [[1.0, 0.0]], ["bad", 1.0],
+                       [math.nan, 0.0], [math.inf, 0.0], [0.0, 0.0],
+                       [1e308, 1e308]):
+            with self.subTest(vector=vector), self.assertRaises(ValueError):
+                provider.wording_neighbors(vector)
+
+    @unittest.skipUnless(importlib.util.find_spec("hnswlib"), "hnswlib is optional")
+    def test_hnsw_arbitrary_vector_shortlist_has_stable_ties_and_bounded_wordings(self):
+        from sse_multivector.bounded_hierarchy_candidates import HNSWSubjectNeighbors
+
+        inputs, vectors = {"subjects": []}, {}
+        for i in range(300):
+            word = f"Word {i:04d}"
+            digest = hashlib.sha256(word.encode()).hexdigest()
+            inputs["subjects"].append(dict(subject=word))
+            angle = 0.0 if i < 2 else i / 1000
+            vectors[digest, digest[:16]] = (math.cos(angle), math.sin(angle))
+        # Repeated source headings must not expand into node aliases here.
+        inputs["subjects"].append(dict(subject="Word 0000"))
+        hierarchy = {"groups": [[i] for i in range(len(inputs["subjects"]))]}
+        first = HNSWSubjectNeighbors(inputs, hierarchy, vectors)
+        second = HNSWSubjectNeighbors(inputs, hierarchy, vectors)
+        actual = first.wording_neighbors((10.0, 0.0))
+        self.assertEqual(len(actual), 256)
+        self.assertEqual(len({word for word, _ in actual}), 256)
+        self.assertEqual(actual, sorted(actual, key=lambda item: (-item[1], item[0])))
+        self.assertEqual(actual[:2], [("Word 0000", 1.0), ("Word 0001", 1.0)])
+        self.assertEqual(actual, first.wording_neighbors((1.0, 0.0)))
+        self.assertEqual(actual, second.wording_neighbors((1.0, 0.0)))
+
+    @unittest.skipUnless(importlib.util.find_spec("hnswlib"), "hnswlib is optional")
     def test_hnsw_does_not_exhaustively_search_past_inspection_limit(self):
         from sse_multivector.bounded_hierarchy_candidates import (
             ExactSubjectNeighbors, HNSWSubjectNeighbors)

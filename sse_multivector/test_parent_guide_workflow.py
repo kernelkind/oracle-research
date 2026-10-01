@@ -252,6 +252,92 @@ class ParentGuideWorkflowTests(unittest.TestCase):
                                                  self.source_path, self.template)[0]
         self.assertEqual([case["id"] for case in selected], ["PCPv3-N001-001"])
 
+    def subject_vectors(self, extra=None):
+        rows = {"Butter": [0, 1, 0], "Dairy products": [1, 0, 0],
+                "Fats": [0.9, 0.1, 0], "Food": [0, 0, 1],
+                "Community": [-1, 0, 0], "Social media": [0, -1, 0]}
+        rows.update(extra or {})
+        return {(hashlib.sha256(word.encode()).hexdigest(),
+                 hashlib.sha256(word.encode()).hexdigest()[:16]): vector
+                for word, vector in rows.items()}
+
+    def test_vector_fallback_retrieves_actual_nodes_without_repeating_exact_pairs(self):
+        from sse_multivector.parent_guide_workflow import resolve_vector_guides
+        report = self.guide_report({"S0000": ["Dairy products", "Edible fats"]})
+        references = {name: self.refs[name] for name in ("inputs", "hierarchy")}
+        pairs, nodes, resolution = resolve_vector_guides(self.inputs, self.hierarchy,
+            [report], references, self.subject_vectors({"Edible fats": [0.9, 0.1, 0]}))
+        self.assertEqual([(p["A"], p["B"]) for p in pairs], [("S0000", "S0002")])
+        self.assertEqual(pairs[0]["reference_entries"]["B"], nodes["S0002"])
+        candidate = pairs[0]["parent_candidates"][0]["candidate"]
+        self.assertEqual(candidate["name"], "Edible fats")
+        self.assertEqual(candidate["matched_wording"], "Fats")
+        self.assertAlmostEqual(candidate["cosine"], 1)
+        self.assertEqual(resolution["exact_pairs_excluded_from_trial"], ["S0000-S0001"])
+        self.assertEqual(resolution["candidates_by_query"]["S0000"], ["S0001", "S0002"])
+
+    def test_vector_fallback_preserves_missing_vector_and_alias_work_limits(self):
+        from sse_multivector.parent_guide_workflow import resolve_vector_guides
+        from sse_multivector.bounded_hierarchy_workflow import _node_entries
+        report = self.guide_report({"S0000": ["Edible fats"]})
+        references = {name: self.refs[name] for name in ("inputs", "hierarchy")}
+        with self.assertRaisesRegex(ValueError, "missing.*guide vector"):
+            resolve_vector_guides(self.inputs, self.hierarchy, [report], references,
+                                  self.subject_vectors())
+        self.add_aliases(35)
+        report = self.guide_report({"S0000": ["Edible fats"]})
+        references = {name: self.refs[name] for name in ("inputs", "hierarchy")}
+        nodes = _node_entries(self.inputs, self.hierarchy)
+        history = dict(subjects=self.inputs["subjects"], comparisons=[
+            dict(A="S0000", B=nid, reference_entries=dict(A=nodes["S0000"], B=entries))
+            for nid, entries in nodes.items() if entries[0]["subject"] == "Dairy products"])
+        pairs, _, resolution = resolve_vector_guides(self.inputs, self.hierarchy, [report],
+            references, self.subject_vectors({"Edible fats": [1, 0, 0]}), history=history)
+        self.assertEqual(pairs, [])
+        self.assertEqual(resolution["alias_inspections_by_query"]["S0000"], 32)
+        self.assertEqual(resolution["unresolved_guides"][0]["reason"], "alias_limit")
+
+    def test_vector_fallback_skips_receipted_unchanged_comparisons(self):
+        from sse_multivector.parent_guide_workflow import resolve_vector_guides
+        guides = self.guide_report({"S0000": ["Edible fats"]})
+        cases, _, _ = self.prepare_comparisons(self.guide_report({"S0000": ["Dairy products"]}))
+        for case in cases:
+            case.update(status="valid", receipt=dict(results_path="fixture"), parsed=dict(comparisons=[
+                dict(id=p["id"], relation="b_parent_of_a", reason="Broader subject.")
+                for p in case["evidence"]["pairs"]]))
+        previous = dict(adapter="bounded_parent_comparisons", prompt_id="BCPv5", cases=cases)
+        references = {name: self.refs[name] for name in ("inputs", "hierarchy")}
+        pairs, _, resolution = resolve_vector_guides(self.inputs, self.hierarchy, [guides],
+            references, self.subject_vectors({"Edible fats": [1, 0, 0]}), prior_reports=[previous])
+        self.assertEqual([(p["A"], p["B"]) for p in pairs], [("S0000", "S0002")])
+        self.assertEqual(resolution["guides"][0]["skipped_nodes"],
+                         [dict(id="S0001", reason="unchanged_judgment")])
+
+    def test_vector_adapter_rejects_mismatched_encoder_before_packing(self):
+        from sse_multivector import subject_matching_probe
+        from sse_multivector import parent_guide_workflow
+        report = self.guide_report({"S0000": ["Edible fats"]})
+        vectors = self.subject_vectors({"Edible fats": [1, 0, 0]})
+        with patch.object(subject_matching_probe, "load_subject_vectors", side_effect=[
+                (vectors, dict(checkpoint_sha256="first"), {}),
+                (vectors, dict(checkpoint_sha256="different"), {})]), patch.object(
+                parent_guide_workflow.bounded, "_pack_comparisons") as packer:
+            with self.assertRaisesRegex(ValueError, "SSE identity mismatch.*checkpoint"):
+                self.prepare_comparisons(report, resolution="subject_vector_fallback_only",
+                                         subject_probe="saved-subjects", guide_probe="new-guides")
+            packer.assert_not_called()
+
+    def test_vector_fallback_excludes_an_exact_pair_nominated_in_reverse(self):
+        from sse_multivector.parent_guide_workflow import resolve_vector_guides
+        report = self.guide_report({"S0000": ["Edible fats"], "S0001": ["Butter"]})
+        references = {name: self.refs[name] for name in ("inputs", "hierarchy")}
+        pairs, _, resolution = resolve_vector_guides(self.inputs, self.hierarchy, [report],
+            references, self.subject_vectors({"Edible fats": [1, 0, 0]}))
+        self.assertEqual([(p["A"], p["B"]) for p in pairs], [("S0000", "S0002")])
+        self.assertEqual(resolution["exact_pairs_excluded_from_trial"], ["S0000-S0001"])
+        self.assertEqual(resolution["guides"][0]["skipped_nodes"],
+                         [dict(id="S0001", reason="exact_pair_already_selected")])
+
 
 if __name__ == "__main__":
     unittest.main()
