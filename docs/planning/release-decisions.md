@@ -1837,28 +1837,65 @@ explaining it. The user approved the general prompt trial below instead.
 General description generation, calibrated prominence and production adoption
 remain open; no broader work or recursion is authorized.
 
-**General Nostr context approved October 1 (prepared):** The user's "sure"
-authorizes one shared prominence-prompt change on the twenty-six saved posts
-in `grownostr` and `coffeechain`, without separately supplying either definition.
-Draft **PPv30-nostr-v1** changes only the interpretation paragraph to state that
-node titles come from Nostr posts, where hashtags can identify communities.
-Native revision/preparation preserves exact full post/title inputs, source
-evidence, output schema, allocations, Astra-low subscription settings and
+**General Nostr context approved October 1 (completed):** The user's "sure"
+authorized one shared prominence-prompt change on twenty-six exact post/node
+inputs in `grownostr` and `coffeechain`, covering twenty-two original posts.
+Tested **PPv30-nostr-v1** changes only the interpretation paragraph: titles
+come from Nostr posts, where hashtags can identify communities, and should be
+interpreted as used on Nostr. Neither node name nor manual definition occurs
+in the template. Native revision/preparation retains exact posts/titles,
+evidence, schema, allocation instructions, Astra-low subscription settings and
 original PPv30-node-v1 baselines. The two completed fixed-definition trials
-remain saved semantic references, not new samples or relabeled user decisions.
+remain separate references, not new samples or relabeled user decisions.
 
-Eight pre-run native agent observations set no exact percentages, gaps or full
-strict order. All twenty-six cases are unrun; execution is bounded to fifty-two
-attempts including eligible retries, with incremental cash zero and no paid
-fallback. Forty-five relevant existing checks pass with local T5 integration.
-Relevance will reuse exact SP subject-plus-context encoding; SSE final learned
-layers, titles, formula and highest-entry post rule stay fixed. No new worker,
-vectors, SP/MP generation, workflow/production code change or hierarchy repair
-is included. All 123 protected earlier hashes remain unchanged. The optional
-viewer remains unsupported for subject-context inputs; native saved-case review
-is used. [Model-runner record](../../sse_multivector/model-runner.md) supplies
-the versioned prompt, preserved scope and comparison limits. This approval is
-a test of the existing prominence call, not adoption of a production prompt.
+Eight pre-run agent observations preceded twenty-six fresh valid calls with
+no retries, failures or reuse, within the fifty-two-attempt bound. Relevance
+reuses all 738 cached SP subject-plus-context rows; all twenty-six values are
+bit-identical to the original and fixed-definition comparisons. SSE final
+learned layers, titles, formula and highest-entry post rule remain fixed, with
+no worker, new vectors, SP/MP or definition-generation step.
+
+The two main semantic improvements hold: GrowNostr outputs use Nostr growth/
+community rather than food cultivation, and coffeechain's roasting experience
+retains prominence 100 / sorting score 85.341143. GrowNostr stock and steak
+food work receive represented zero, with prominence four and two; salsa work
+is separate from considering a Nostr sale. The food-growing member receives
+zero instead of the fixed-definition draw's uncertain profile-reference credit.
+Coffee with cream/egg yolk stays at 100 and unrelated joke bodies remain
+represented zero. Exact percentages and full strict orders are not approved.
+
+The general prompt still treats coffeechain greetings inconsistently. The
+household morning/closing wishes receive represented 12+11 and the gym greeting
+25, but weather's GM Nostr/Sunday greeting receives zero out of 20 and the
+another-coffee greeting zero out of 45. The fixed definition included them all.
+Agent review rejects the two omissions as inconsistent inclusion, not exact
+percentage mismatch. Another-coffee's sorting score falls from 90.001991 to 47.369469,
+below the rave's 48.352492. Those consequences are not new user-labeled pairs.
+The instruction is helpful on the main cases but is not adopted as a complete
+replacement for explicit shared node meaning.
+
+Twenty-six native post-run agent reviews record seven semantic accepts, two
+rejects and seventeen uncertainties, preserving eight pre-run comments and all
+prior user labels. Exact full inputs/baselines/allocations, reused cosines,
+products, maxima and both complete orders verify, with all 123 earlier
+protected hashes unchanged. Sixteen prominence values change versus original,
+twenty versus fixed definitions; text changes are not quality grades.
+Forty-five relevant existing tests pass with local T5 integration. The optional
+subject-context prominence viewer remains unsupported, not reported passed;
+native saved-case review is used without extending it. No code upgrade was
+needed. [Model-runner results](../../sse_multivector/model-runner.md) record
+full paired tables, exact greeting failures, hashes and limits.
+
+Native usage is 19,382 input and 5,367 output tokens including 864 reasoning;
+API catalog reference $0.462170 is separate from incremental cash $0 and
+unmeasured quota. 
+The task changes no production/workflow code, hierarchy, source membership,
+other-node result or old SP/MP data. Earlier agreed checks remain untouched.
+Next recommended work is read-only inspection of these two nodes' saved
+title-generation inputs to assess whether the existing title call could supply
+one consistent meaning. It has not begun; frozen v38 is unchanged and no
+new generation stage, broader work, hierarchy repair or adoption is authorized.
+The SP-only generation proposal remains withdrawn, not approved.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for

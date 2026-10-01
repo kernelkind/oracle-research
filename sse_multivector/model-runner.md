@@ -4713,46 +4713,159 @@ The earlier recommendation to derive node meanings from saved SP subjects and
 contexts was not approved and is withdrawn. The coffeechain SP contexts mostly
 name the hashtag without explaining its community meaning, so those inputs do
 not establish a sufficient description source. The user instead approved the
-single general prominence-prompt change prepared below. General description
+single general prominence-prompt change completed below. General description
 generation, calibrated prominence and production adoption remain open.
 
-**General Nostr context approved October 1 (prepared):**
+**General Nostr context approved October 1 (completed):**
 
-The user's "sure" approves one shared prompt on the twenty-six existing posts
-in `grownostr` (`Sa233efc2db`, fifteen) and `coffeechain` (`S3c005e1a4f`, eleven).
-Draft **PPv30-nostr-v1** replaces only PPv30-node-v1's interpretation paragraph:
-the title comes from Nostr posts, where hashtags can identify communities, and
-the complete post should interpret the title as used on Nostr. Neither node is
-named in the template and neither manual definition is supplied. The same
+The user's "sure" approved one shared prompt on the twenty-six saved post/node
+inputs in `grownostr` (`Sa233efc2db`, fifteen) and `coffeechain`
+(`S3c005e1a4f`, eleven). They cover twenty-two unique original posts; four
+appear in both nodes with different title inputs. Tested **PPv30-nostr-v1**
+replaces only PPv30-node-v1's interpretation paragraph: the title comes from
+Nostr posts, where hashtags can identify communities, and the complete post
+should interpret the title as used on Nostr. Neither node is named in the
+template and neither manual definition is supplied. The same
 [prompt](prominence-prompt-goal-v1/ppv30-nostr-v1/PPv30-nostr-v1.md) is used for
-both. Allocation instructions, output schema and Astra-low subscription
-settings remain unchanged; no definition-generation call or SP/MP step is added.
+both. Allocation instructions, schema and Astra-low subscription settings
+stay fixed; no definition-generation call or SP/MP step is added.
 
 Native revision and `prepare --from` with twenty-six `--only` IDs preserve all
 complete original post/title inputs, source evidence and original PPv30-node-v1
 baselines in `experiments/ppv30-nostr-context-v1`. Both completed fixed-definition
-experiments remain separate references, not newly paired baselines or new model
-samples. Every input and source-bound entry matches all three saved versions.
-Eight native pre-run agent observations check GrowNostr meaning consistency and
-food/community separation, the salsa sale, the uncertain food-growing member,
-coffee roasting, focused coffee preparation, unrelated jokes and mixed
-weather/greetings. No exact percentage, gap or complete strict order is set.
+experiments remain separate saved references, not newly paired baselines or
+new model samples. Every selected input and source entry matches its original,
+fixed-definition and new versions. Eight native pre-run agent observations
+checked GrowNostr meaning and food/community separation, salsa sale, the
+uncertain food-growing member, coffee roasting, focused preparation, unrelated
+jokes and mixed weather/greetings. They set no exact percentages, gaps or full
+strict order.
 
-All twenty-six cases are unrun. Execution is bounded to fifty-two attempts
-including eligible provider retries, with zero incremental subscription cash
-and no paid fallback or rentals. Forty-five existing comparison, ranking,
-selection and actual local T5 worker checks pass. Relevance will reuse exact
-saved SP subject-plus-context SSE encoding and all 738 cached rows; SSE final
-learned layers, titles, formula and highest selected-entry post rule stay fixed.
-Work grows with selected post/node inputs and full-post tokens plus two short
-sentences, with no new worker or all-post/all-node inputs. All 123 protected
-source/prompt/hierarchy/result/review hashes remain unchanged. This task makes
-no workflow/production code change, hierarchy repair or other-node change.
-The subject-context adapter's optional prominence viewer remains unsupported;
-review uses native `show` and `review --case`, with no viewer extension.
-Generated evidence and checks are ignored under the experiment and
-`experiments/ppv30-nostr-context-v1-checks`. Fixed-definition results, user
-labels, node membership and earlier accepted orders remain intact.
+All twenty-six cases completed in twenty-six fresh valid calls, with no
+failures, retries or reuses, within the fifty-two-attempt bound. Relevance
+reuses exact saved SP subject-plus-context SSE encoding through native
+`prominence_cosine.py prepare --include-subject --post-order highest
+--reuse-encoding` and `collect`. All 738 cached rows and twenty-six relevance
+values are bit-identical to both reference versions, with no worker run,
+new vectors or selections. SSE final learned layers, titles, formula and
+highest selected-entry post rule remain fixed. Work grows with selected
+memberships and full-post tokens plus two short sentences. The offline
+comparison emits fifty-two selected-title cosines; only twenty-six own-node
+values enter sorting. This is not a production cross-node matrix.
+
+GrowNostr order, highest sorting score first:
+
+| Post (note-ID prefix) | Original prominence | Fixed-definition prominence | General Nostr prominence | Fixed-definition sorting score | General Nostr sorting score |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Greeting / jetlag / breakfast (`a9b49c0a`) | 25 | 25 | 25 | 16.464491 | 16.464491 |
+| Second coffee / hashtags (`862486d8`) | 25 | 40 | 25 | 26.009181 | 16.255738 |
+| Food work / possible Nostr salsa sale (`f7ed481e`) | 60 | 11 | 16 | 9.011088 | 13.107037 |
+| Greeting / household plans (`61bdef2b`) | 12 | 17 | 12 | 14.658919 | 10.347472 |
+| Stove / invitation (`99e6a514`) | 10 | 20 | 10 | 18.162986 | 9.081493 |
+| Gianduja store (`b3c0ab8f`) | 8 | 5 | 5 | 3.891874 | 3.891874 |
+| Baby / family (`cf50b578`) | 7 | 5 | 5 | 3.559984 | 3.559984 |
+| Tolstoy / tags (`be8d07d4`) | 4 | 6 | 5 | 4.140899 | 3.450749 |
+| Stock preservation (`25f5a4c0`) | 85 | 7 | 4 | 5.913327 | 3.379044 |
+| Greeting / burrito / coffee / pet (`ee3404d5`) | 10 | 30 | 3 | 20.275159 | 2.027516 |
+| Steak / preservation / sealer (`f67c7c54`) | 2 | 5 | 2 | 3.984306 | 1.593722 |
+| Omelette (`3202cb94`) | 2 | 15 | 2 | 10.570288 | 1.409372 |
+| Red-flag jokes / many tags (`41efa59d`) | 2 | 4 | 2 | 2.749973 | 1.374986 |
+| High-altitude bread (`03313183`) | 3 | 6 | 2 | 3.977921 | 1.325974 |
+| Food growing / allotment (`7d538c44`) | 80 | 15 | 0 | 9.815497 | 0.000000 |
+
+The general instruction preserves the two main GrowNostr interpretation
+corrections: stock and steak food work receive represented zero under the
+Nostr-growth/community meaning, with prominence four and two respectively.
+The salsa post also separates food work from explicitly considering a Nostr
+sale. All fifteen outputs use Nostr growth/community rather than substituting
+literal food cultivation. The food-growing member now receives zero: unlike
+the fixed-definition draw's uncertain fifteen points, its opaque profile
+reference is not credited as initiative participation. This fits identifier
+exclusion and the same supplied reference meaning; membership is unchanged.
+These four agent-accepted interpretation/separation checks do not approve
+exact percentages or the complete strict order. Greeting/tag shares remain
+uncertain, including the breakfast greeting's three points versus thirty with
+the explicit definition. A shared title interpretation does not prove stable
+allocation of every community activity.
+
+Coffeechain order, highest sorting score first:
+
+| Post (note-ID prefix) | Original prominence | Fixed-definition prominence | General Nostr prominence | Fixed-definition sorting score | General Nostr sorting score |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Coffee with cream and egg yolk (`f4c5aa5f`) | 100 | 100 | 100 | 92.622641 | 92.622641 |
+| Personal home roasting (`056e6466`) | 12 | 100 | 100 | 85.341143 | 85.341143 |
+| Weird coffeechain / coffee-shop rave (`ccbd903d`) | 80 | 70 | 60 | 56.411241 | 48.352492 |
+| Another coffee / Sunday greeting (`737eaa89`) | 55 | 95 | 50 | 90.001991 | 47.369469 |
+| Greeting / burrito / coffee / pet (`ee3404d5`) | 25 | 48 | 35 | 45.354342 | 33.070874 |
+| Weather / hot coffee / greeting (`82d3d344`) | 30 | 65 | 35 | 59.313610 | 31.938098 |
+| Music in the coffee shop (`46ed60cb`) | 30 | 45 | 30 | 41.164532 | 27.443021 |
+| Greeting / gym / breakfast (`bd357fcf`) | 10 | 25 | 25 | 22.868590 | 22.868590 |
+| Greeting / household plans (`61bdef2b`) | 10 | 27 | 23 | 25.690581 | 21.884569 |
+| Greeting / jetlag / breakfast (`a9b49c0a`) | 18 | 35 | 25 | 28.149388 | 20.106706 |
+| Red-flag jokes / many tags (`41efa59d`) | 2 | 1 | 2 | 0.974300 | 1.948600 |
+
+Home roasting keeps prominence 100 and sorting score 85.341143, preserving the
+fixed-definition correction from the original twelve-point hashtag-only
+interpretation. Coffee with cream and egg yolk remains at 100 / 92.622641.
+The red-flag joke body remains represented zero; only its community tag gets
+two points. Agent review accepts these three checks, not general numerical
+calibration or every strict position.
+
+The general prompt does not preserve coffeechain's shared greeting boundary.
+In the household post, "Good morning nostr" receives twelve represented points,
+and the closing Saturday wishes eleven. In the gym post, "Good morning"
+receives twenty-five. Yet the weather post's "GM Nostr!" / "Happy Sunday!"
+receives zero represented points out of twenty, and the another-coffee post's
+morning/Sunday wishes zero out of forty-five. All four contain #coffeechain.
+The saved fixed definition included these greetings; no exact share is needed
+to identify the inconsistent inclusion rule. Agent review rejects those two
+omissions as failures to preserve that meaning, rather than rejecting 35 or
+50 merely because they differ from 65 or 95.
+
+This affects the order: another-coffee drops from sorting score 90.001991 with
+the fixed definition to 47.369469 and falls below the rave's 48.352492. Weather/
+coffee drops from 59.313610 to 31.938098. Those are observed consequences, not
+new user-labeled pairs or calibrated gap limits. Exact shares and other
+mixed-post positions remain uncertain. The general instruction helps on the
+stated interpretation failures but is not a complete substitute for one
+explicit node meaning; it is tested, not adopted as the production prompt.
+Sixteen of twenty-six prominence values change versus the original and twenty
+versus the fixed-definition references, while all twenty-six output texts
+change. The native text-change report is mechanical, not a quality grade.
+
+Twenty-six native post-run agent reviews record seven semantic accepts, two
+greeting-consistency rejects and seventeen uncertainties. The eight original
+pre-run comments and all prior user labels remain unchanged. Comments bind
+exact input/output hashes and this native comparison, SHA256
+`d59df07efa70fd5ab0e7b00cc82a3c97c8209f6af94ede005ae7f2f9bb2a1be0`, under
+`experiments/ppv30-nostr-context-v1/relevance-v1/comparison.json`.
+Independent checks verify all twenty-six exact full inputs and baselines,
+allocations, unchanged subjects/contexts, bit-identical relevance, products,
+post maxima and both complete orders. Maximum independent cosine difference is
+1.1102230246251565e-16. All 123 earlier protected source/prompt/hierarchy/result/
+review hashes and new frozen prompt/plan/receipt/result/comparison hashes are
+unchanged. No code upgrade was required during execution. Forty-five existing
+comparison/ranking/selection/worker tests pass, including local T5 integration.
+The optional prominence viewer remains unsupported for subject-context inputs;
+it is not claimed passed or extended. Review uses native `show --case` and
+`review --case`, with exact critical posts inspected. The task changes no
+workflow/production code, hierarchy, membership, other-node result or SP/MP
+source. Earlier accepted Coffee/Eggs/Music and full-order checks are preserved,
+not rerun or relabeled. Plans, results, reviews and checks are ignored under
+the experiment and `experiments/ppv30-nostr-context-v1-checks`.
+
+Native usage is 19,382 input tokens and 5,367 output tokens including 864
+reasoning tokens, with no reported cache tokens. Catalog reference $0.462170
+is separate from incremental subscription cash $0, unavailable provider billing
+and unmeasured weekly quota. Only this zero-cash reservation is settled;
+lifetime monetary totals and unrelated accounting are unchanged.
+
+Next recommended work is a read-only inspection of these two nodes' saved
+node-title inputs to determine whether the existing title call has enough
+information to also provide one consistent node meaning. That inspection has
+not begun; it does not reopen frozen title prompt v38 or authorize generation,
+a new stage, hierarchy repair or production adoption. SP-only meaning generation
+remains unapproved and withdrawn for insufficient explanatory context.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
