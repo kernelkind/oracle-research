@@ -51,8 +51,9 @@ rental. I observe it throughout; automatic deletion stays off.
 
 ## 5. Repeat with more training data
 
-Train each candidate on the expanded dataset, starting again from its original
-weights. Keep its recipe fixed and compare after matched amounts of training,
+The 500-note set contains the first 250 notes plus 250 new notes. Train each
+candidate from its original weights. Keep its recipe fixed and compare after
+matched amounts of training,
 so additional training time does not explain an apparent benefit from more notes.
 
 Review improvement, remaining errors, and cost before expanding to 1,000 notes.

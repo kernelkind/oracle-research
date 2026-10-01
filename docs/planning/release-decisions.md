@@ -583,6 +583,12 @@ The walkthrough also keeps data sizes, the larger pilot's output format,
 training settings, continuation rules, and new spending open. It authorizes no
 new code changes, model calls, or rental.
 
+**September 30 training-data clarification:** the user confirmed that the
+500-note comparison includes the first 250 training notes plus 250 new notes.
+Each dataset-size run starts from the original model weights. This confirms
+data reuse and independent training starts; rental grouping, duration, and
+spending remain to be finalized.
+
 **September 25 informal start:** the user approved beginning the fine-tuning
 pilot with available data from the latest subject and mask prompts, excluding
 prominence for now and establishing untuned baselines. The teachers generate
