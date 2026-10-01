@@ -1584,10 +1584,11 @@ Bitcoin privacy's sorting score rises from 66.258643 to 73.438592 before the
 projection. It remains below block transmission and scaling, and above both
 mixed posts. This changes its numerical gap without demonstrating a better
 order or approving a target gap. The agent recommends keeping the existing
-projection; there is no clear sorting improvement from removing it. The next
-recommendation is the unchanged calculation on the remaining hierarchy nodes
+projection; there is no clear sorting improvement from removing it. The user
+has now approved the unchanged calculation on the remaining hierarchy nodes
 with at least two posts in the saved corpus, using saved SP contexts and agent
-observation. That further transfer test has not begun; adoption remains open.
+observation. The preparation below records this transfer test; adoption
+remains open.
 
 Independent application of the saved projection reproduces all eighty-five
 vectors exactly. All 164 cosine/products, fifty-two post maxima and six full
@@ -1600,6 +1601,31 @@ tests; the broader experiment suite passes 101 of 102, with the unrelated new
 parent-guide test blocked by missing `tiktoken`.
 [Model-runner results](../../sse_multivector/model-runner.md) record the frozen
 scope, both comparison hashes, workflow semantics and check evidence.
+
+**Remaining-node transfer approved October 1 (prepared):** The latest "proceed"
+authorizes the unchanged PPv30-node-v1 / Astra-low prominence prompt and
+context-only SSE relevance with its final learned layers, then prominence
+× relevance and the highest selected-context sorting score per post. The
+original saved source and raw named hierarchy contain 104 remaining nodes
+with at least two direct-member posts after excluding fourteen tested nodes:
+354 distinct post/title inputs, 94 original posts and 587 context cases.
+The agent assesses the posts and resulting orders, recording uncertainty
+and suspect title/member assignments separately; no new user labels or
+numerical tie threshold are introduced.
+
+Native preparation uses reusable selectors and the shared runner; there is
+no required source-code change. Concurrency eight changes scheduling only;
+identical prominence requests share answers across contexts. At most 708
+new attempts cover eligible provider retries, with 354 expected initial calls.
+A zero-cash subscription reservation precedes execution. Local CPU SSE uses
+unchanged weights/projection and only the selected contexts and 104 titles.
+Fifty-two relevant existing tests pass. This covers more of the developmental
+saved corpus, not unseen/population accuracy. Work scales with direct selected
+memberships, repeated complete-post tokens per title and selected context
+lengths; production-scale admission remains open. New SP/MP generation,
+hierarchy changes, broader corpus generation and production adoption are
+outside this test. Native results are pending; full workflow/provenance is in
+[model-runner.md](../../sse_multivector/model-runner.md).
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for

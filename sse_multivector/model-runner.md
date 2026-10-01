@@ -4237,11 +4237,10 @@ other two focused posts. This changes the earlier numerical gap without
 demonstrating an ordering improvement. No strict order or target score gap
 among those focused posts has been approved. The agent recommends retaining
 the existing projection: this comparison gives no clear sorting advantage
-from omitting it. The next recommendation is to run the unchanged calculation
-on the remaining hierarchy nodes with at least two posts in the saved corpus,
-using saved SP contexts and agent observation. That further transfer test has
-not begun; no new prompt, user labels, source-text policy, recursion or
-production sorting adoption is introduced.
+from omitting it. The user has now approved the unchanged calculation on the
+remaining hierarchy nodes with at least two posts in the saved corpus; the
+preparation below records that bounded transfer test. No new prompt, user labels, source-text policy,
+recursion or production sorting adoption is introduced.
 
 Independent verification confirms identical source text, token indices/IDs
 and all eighty-two prominence/evidence rows. Applying the saved linear → ReLU
@@ -4278,6 +4277,45 @@ Thirty-six comparison/ranking/selection and nine worker tests pass, with no
 inference-dependency skips. The broader experiment suite passes 101 of 102;
 the concurrently added parent-guide test fails because the default Python lacks
 `tiktoken`. That unrelated work is not changed by this task.
+
+**Remaining-node transfer approved October 1 (prepared):** The user's
+"proceed" authorizes fixed PPv30-node-v1 complete-post/title prominence,
+standalone saved SP-context relevance through the existing SSE projection,
+`P × (clip(cosine, -1, 1) + 1) / 2`, and the highest sorting score among the
+selected contexts for each post. Observation is delegated to the agent.
+The original saved 100-post source and unchanged raw named hierarchy supply
+104 remaining direct-member nodes, 354 distinct post/title inputs, 94 distinct
+posts and 587 context cases. Fourteen previously tested nodes are excluded;
+no descendants are added. This is broader coverage of the developmental
+saved corpus, not an unseen or representative population sample.
+
+Reusable source/spec files are
+`experiment_specs/ppv30-remaining-nodes-v1-source.json` and
+`experiment_specs/ppv30-remaining-nodes-v1.json`; the native experiment is
+`experiments/ppv30-remaining-nodes-v1`. The existing workflow is sufficient;
+no production or workflow behavior change is needed. Its shared runner uses
+concurrency eight and coalesces identical requests without changing model
+input, prompt, Astra-low settings or the two-attempt provider-only retry rule.
+The maximum is 708 new attempts; expected first-attempt requests are 354,
+with 233 context-case reuses. Local CPU SSE will encode the selected saved
+contexts and 104 titles, with the unchanged checkpoint and final projection.
+Work grows with selected direct memberships and full-post input lengths for
+prominence, and selected context/title lengths for relevance; this does not
+compare every post to every hierarchy node. At larger corpus sizes, the model
+calls and repeated full-post tokens per distinct node remain a cost to assess
+before any production adoption.
+
+The agent reads complete posts and freezes one native pre-run comment per
+node before inference. Clear focused-versus-mixed directions are distinguished
+from uncertain within-focus orders and suspect title/member assignments;
+104 node observations are not hundreds of independent user labels. Existing
+prominence comparisons, source texts, graph, masks, prompt and SSE weights
+are preserved. Fifty-two relevant existing adapter, selection, ranking,
+worker and runner tests pass. Subscription cash is zero, with native usage,
+API catalog estimates and unmeasured quota reported separately. The zero-cash
+reservation is recorded before running. New SP/MP generation, hierarchy
+changes, broader corpus generation and production adoption remain outside
+this test. The result is pending.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
