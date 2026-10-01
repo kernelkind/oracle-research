@@ -1206,6 +1206,30 @@ change to the calculation. The run allows at most thirty-eight new Astra-low
 subscription attempts including eligible retries, with no paid fallback;
 selected-context SSE encoding runs locally on CPU.
 
+The completed transfer run has twenty-five valid SP cases from nineteen new
+assessments and six exact-request reuses, with no failures or retries. Agent
+inspection of all nineteen post/node inputs found no clear ordering error:
+the baby-development update leads Children; the audiobook discussion leads
+Literature; the personal anxiety/chemotherapy update leads Psychological
+distress; Bitcoin payments, the workshop and community commentary precede
+incidental Bitcoin tags. Prominence alone and prominence × relevance produce
+the same complete order in all four nodes, so this sample adds no demonstrated
+ordering benefit from relevance. Literature and Psychological distress have
+few posts, and fine distinctions among incidental Bitcoin mentions remain
+uncertain; this is not broad validation or new user approval.
+
+Relevance nearly removes one meaningful prominence difference in Children:
+the son's ice-cream conversation has prominence 55 and relevance 0.515541,
+while the Lunchly market argument has 40 and 0.707843. Their sorting scores
+are 28.354729 and 28.313701, only 0.041028 apart, still in the agent's preferred
+direction. This is a concern about the narrowed gap, not an observed reversal
+or an agreed minimum difference. The SP context says "son" without stating an
+age, so the cause is not established. Investigating this saved relevance result
+is the recommended next step; it has not been started. Prompt, formula,
+memberships and production decisions remain unchanged. The detailed orders,
+agent assessments, usage and replay checks are recorded in
+[model-runner.md](../../sse_multivector/model-runner.md).
+
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
 these ten checks, plus the four about-equal judgments and separate slight

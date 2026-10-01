@@ -3256,6 +3256,97 @@ ledger; API-reference costs and subscription quota are separate. The selector,
 preparation and protected inputs passed native validation. Original comparisons,
 source data and prompt remain intact; no production code or rule changes occur.
 
+The completed `experiments/ppv30-transfer-nodes-v1` run has twenty-five valid
+cases: nineteen new assessments and six within-run exact-request reuses, with
+no failures, invalid outputs or retries. These cover seventeen original posts
+and nineteen post/node memberships, not twenty-five independent assessments.
+Native usage is 15,087 input tokens, zero cached input, and 4,162 output tokens
+including 448 reasoning tokens. The catalog reference is $0.35897, not a
+subscription invoice or quota measurement; incremental cash is zero.
+
+`relevance-v1` encodes twenty-five standalone SP contexts, four exact node
+titles and four original-mask replay controls locally on CPU. The replay
+cosines are at least 0.9999999999999446, with maximum normalized component
+error 3.73e-8. Original masks are controls, not relevance inputs. The native
+comparison SHA-256 is
+`7c2f74c0026d1d014d0b3b618b56aa204db65d31e40094d57eefbf832df99f0f`.
+All products, independently selected post maxima, complete orders and original
+protected inputs were verified. The existing experiment-selection and
+prominence-cosine suites passed twenty-two tests. No workflow implementation
+changed.
+
+Complete orders below descend by highest sorting score. Prominence alone gives
+the same order in all four nodes. Relevance shown is from the winning SP context;
+values are rounded for display, with products calculated from full precision.
+
+Children:
+
+| Post (note-ID prefix) | Prominence | Relevance | Sorting score |
+| --- | ---: | ---: | ---: |
+| Baby development and food interest (`cf50b578`) | 100 | 0.644050 | 64.405028 |
+| Son's ice-cream conversation (`7e7eeee7`) | 55 | 0.515541 | 28.354729 |
+| Lunchly market argument (`38862a72`) | 40 | 0.707843 | 28.313701 |
+| Pancake recipe prompted by child (`4bb3dd6e`) | 15 | 0.668220 | 10.023303 |
+| Mental clarity with passing mention of kids (`89cdcfbb`) | 5 | 0.758104 | 3.790522 |
+
+Literature:
+
+| Post (note-ID prefix) | Prominence | Relevance | Sorting score |
+| --- | ---: | ---: | ---: |
+| Diary discussing audiobooks and a murder mystery (`eaa6a5e6`) | 22 | 0.706732 | 15.548097 |
+| Lifestyle list with reading advice (`05f275f4`) | 4 | 0.765525 | 3.062102 |
+| Island lunch with Literature hashtag (`d6628bf3`) | 1 | 0.961959 | 0.961959 |
+| Morning work routine, "first minutes written" (`8a025f69`) | 0 | 0.613817 | 0.000000 |
+
+Psychological distress:
+
+| Post (note-ID prefix) | Prominence | Relevance | Sorting score |
+| --- | ---: | ---: | ---: |
+| Personal chemotherapy update with anxiety framing (`5305db5e`) | 40 | 0.805911 | 32.236439 |
+| Lifestyle list with stress advice (`05f275f4`) | 21 | 0.781278 | 16.406843 |
+
+Bitcoin:
+
+| Post (note-ID prefix) | Prominence | Relevance | Sorting score |
+| --- | ---: | ---: | ---: |
+| Bitcoin Pizza Day and planned restaurant acceptance (`7258eaac`) | 50 | 0.742142 | 37.107083 |
+| Bitcoin workshop followed by a shared meal (`1c964a41`) | 35 | 0.831849 | 29.114720 |
+| Criticism of the bitcoin carnivore narrative (`fbd37967`) | 18 | 0.777065 | 13.987178 |
+| Second coffee with Bitcoin hashtag (`862486d8`) | 15 | 0.902435 | 13.536523 |
+| Island-life/lunch post with Bitcoin heading and tags (`d6628bf3`) | 14 | 0.816560 | 11.431840 |
+| Cheese Doodle Day with Bitcoin tags (`896b0a29`) | 10 | 0.863585 | 8.635846 |
+| Workout/food/ice-cream joke with Bitcoin tags (`41efa59d`) | 6 | 0.926204 | 5.557222 |
+| Animal-ethics quotation with Bitcoin/payment tags (`be8d07d4`) | 5 | 0.917214 | 4.586071 |
+
+Agent observation found no clear wrong complete order. Developed discussion
+leads each node; incidental mentions generally remain below it. The anxiety
+hashtag frames a personal update rather than an unrelated tag list. The work
+routine's "minutes written" does not establish discussion of literary writing;
+its zero prominence is plausible, with node membership a separate question.
+Directions among incidental Bitcoin posts are subtle. These observations use
+the user's established preferences but do not create new user judgments or a
+global accuracy rate. Literature and Psychological distress are small samples
+with limited subject-focused discussion.
+
+Relevance does not improve any complete order in this sample. It narrows two
+potentially useful prominence differences: the son conversation remains above
+the Lunchly argument by only 0.041028 sorting-score points, and the Bitcoin
+community opinion remains above the second-coffee hashtag by 0.450655.
+Neither is an observed reversal or a violation of an agreed numerical gap.
+For Children, the exact contexts are "The writer's son eats the ice cream,
+proposes using a plate, and confirms the reason" and "The product is discussed
+as a lunch a mother buys for her child." Their cosines against Children are
+0.031081 and 0.415685. This establishes the inputs and difference, not its cause;
+the son's age is not specified. The two related Children cases are marked
+agent `uncertain` through native review, with all twenty-five matching SP cases
+inspected and separately recorded. The other twenty-three agent assessments
+accept the plausible relative placements, not calibrated percentages.
+
+Investigating the saved Children relevance difference is recommended before
+adoption or more formula changes; that separate diagnostic has not begun.
+PPv30-node-v1 remains tested, not production-frozen. No prompt, formula, source
+membership or previous user judgment changed, and no user review was requested.
+
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
 within-node score is prominence times mask relevance. On September 29, the user
