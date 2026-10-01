@@ -85,3 +85,56 @@ authorization of the retry is not a semantic verdict on the output. There are
 no new user verdicts. ASv6.50 remains untested and unapproved; the recommended
 next step is testing it against these saved Sol outputs without rerunning
 completed ASv6.48 cases.
+
+## Frozen-baseline reproduction on GPT-6 Astra medium
+
+On October 1, 2026, the user authorized one fresh ASv6.48 answer per regression
+post with GPT-6 Astra medium. Shared `prepare --from` inherited the complete
+posts, frozen prompt, schema and runner settings from the Sol experiment,
+changing only model and reasoning effort. All four rendered prompt hashes
+match the original Astra-low requests. Subscription WebSocket transport,
+four concurrent requests, a 1,800-second deadline, no output cap and no paid
+fallback remain. `--repeat` prevents reuse; `--max-new-attempts 4` bounds calls.
+
+The first preparation, `astra-medium-sp-scope-regression-v1`, was refused
+before inference because concurrent workspace work changed `experiment.py`.
+Inspection found an unrelated offline-command addition. A fresh native
+preparation, `astra-medium-sp-scope-regression-v2`, preserved identical prompt,
+cases and runner settings and recorded the current code. It returned four
+valid answers from four calls, with no failures, retries or reuse. Receipts
+verify the actual request model `gpt-6-astra` and reasoning effort `medium`.
+The original Sol plan, receipts, report and reviews remain byte-identical.
+
+| Post | Entries | Parent-scope finding |
+| --- | --- | --- |
+| N063 | 45 | Original error avoided: 1.2.8, culinary fats and oils, is a sibling of 1.2.1, ingredients for mushroom risotto with shrimp. General olive oil, extra-virgin olive oil and butter remain. No clear instance of the same restriction-dropping pattern was found elsewhere. |
+| N074 | 40 | Original error reproduced: 6.1, eating real food in moderation, mostly plants, has single-part children at 6.1.1–6.1.3. Attribution also drops between 6.2, Michael Pollan's dietary advice, and 6.2.1, the unqualified combined recommendation. |
+| N096 | 66 | Original error reproduced: 4.1, preparing spaghetti Bolognaise, contains general sautéing at 4.1.1, gently frying ground beef without browning at 4.1.4, and cooking spaghetti according to packet instructions at 4.1.9. Those headings also describe preparation of other dishes. |
+| N100 | 66 | Original general-material nesting avoided; the same pattern appears between 4, use of meat-preparation byproducts, and 4.1, tallow making. The child does not specify using byproducts. Its own child at 4.1.1 does specify trimmed beef fat. The chicken water/seeds combination stays intact, avoiding Sol's conjunction error. |
+
+Coverage matters separately from the parent check. N063 names all 15 ingredients
+individually in general branches, but combines their dish-specific instances into
+one long ingredient-list heading at 1.2.1.1 instead of retaining separate entries.
+Avoiding the original nesting therefore does not establish overall regression
+acceptance. N096 retains its ingredient quantities, recipe/yield and preparation
+instructions, but names salt and pepper only together. N100 retains purchase,
+cutting, trimming, materials and intended uses, chicken provisions and sealer
+details, but has no individual cold-water heading. Its myoglobin-for-chickens
+interpretation remains a separate source ambiguity. N074 retains the individual
+and combined recommendations, comparisons, parent/child example and attribution.
+These coverage findings are agent assessments, not exhaustive-extraction proof.
+
+The same parent-scope pattern occurs in three observed Astra-medium answers;
+N063 avoids it with a coverage concern. This is one completed answer per post,
+not a failure rate or evidence of a general model ranking. Four native agent
+rejections record the relationship failures and N063's coverage concern; there
+are no user semantic verdicts. Complete answers, receipts and reviews remain
+ignored under `sse_multivector/experiments/astra-medium-sp-scope-regression-v2/`.
+Native reported usage is 10,854 input tokens and 10,621 output tokens, including
+309 reasoning tokens. The $0.63959 catalog reference estimate is not a bill or
+measured subscription quota; incremental cash is zero.
+
+ASv6.50 remains an untested, unapproved draft. The useful next step is testing
+its replacement paragraph against these saved ASv6.48 answers, checking both
+parent relationships and preservation of individual subjects and their
+particular instances. No candidate inference was started.
