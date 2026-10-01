@@ -40,6 +40,9 @@ class ExperimentTests(unittest.TestCase):
         plan = json.loads((self.root / "E1" / "experiment.json").read_text())["plan"]
         self.assertIn("parent_guide_measurement.py", plan["code"])
         self.assertIn("parent_guide_workflow.py", plan["code"])
+        cosine_source = CLI.with_name("ancestor_cosine_probe.py")
+        self.assertEqual(plan["code"][cosine_source.name],
+                         hashlib.sha256(cosine_source.read_bytes()).hexdigest())
         self.assertEqual(self.calls(), [])
 
     def test_posts_adapter_imports_exact_saved_prompts_without_leaking_subjects(self):

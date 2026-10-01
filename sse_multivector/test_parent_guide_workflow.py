@@ -338,6 +338,149 @@ class ParentGuideWorkflowTests(unittest.TestCase):
         self.assertEqual(resolution["guides"][0]["skipped_nodes"],
                          [dict(id="S0001", reason="exact_pair_already_selected")])
 
+    def test_ancestor_mode_prepares_a_parent_above_an_already_judged_seed(self):
+        from sse_multivector import subject_matching_probe
+        from sse_multivector.bounded_hierarchy_workflow import _node_entries
+        report = self.guide_report({"S0000": ["Edible fats"]})
+        nodes = _node_entries(self.inputs, self.hierarchy)
+        history = self.root / "judgments.json"
+        history.write_text(json.dumps(dict(subjects=self.inputs["subjects"], comparisons=[dict(
+            A="S0000", B="S0001", reference_entries=dict(A=nodes["S0000"], B=nodes["S0001"]))])))
+        vectors = self.subject_vectors({"Edible fats": [1, 0, 0]})
+        with patch.object(subject_matching_probe, "load_subject_vectors", return_value=(vectors, {}, {})):
+            cases, _, preparation = self.prepare_comparisons(report,
+                resolution="subject_vector_ancestors_only", subject_probe="saved-subjects",
+                guide_probe="new-guides", judgments=str(history))
+        self.assertEqual([(p["A"], p["B"]) for p in preparation["pairs"]], [("S0000", "S0003")])
+        proof = preparation["pairs"][0]["parent_candidates"][0]["candidate"]
+        self.assertEqual(proof["seed"], "S0001")
+        self.assertEqual(proof["path"], ["S0001", "S0003"])
+        payload = json.loads(cases[0]["inputs"]["INPUT_JSON"])
+        self.assertNotIn("seed", cases[0]["inputs"]["INPUT_JSON"])
+        self.assertEqual(payload["pairs"][0]["B"], "S0003")
+
+    def test_ancestor_walk_keeps_budget_cutoff_when_its_seed_is_selected(self):
+        from sse_multivector.parent_guide_workflow import resolve_vector_guides
+        from sse_multivector.bounded_hierarchy_workflow import _node_entries
+        self.add_aliases(30)
+        report = self.guide_report({"S0000": ["Dairy products", "Edible fats"]})
+        references = {name: self.refs[name] for name in ("inputs", "hierarchy")}
+        nodes = _node_entries(self.inputs, self.hierarchy)
+        history = dict(subjects=self.inputs["subjects"], comparisons=[
+            dict(A="S0000", B=nid, reference_entries=dict(A=nodes["S0000"], B=entries))
+            for nid, entries in nodes.items() if entries[0]["subject"] == "Dairy products"])
+        pairs, _, resolution = resolve_vector_guides(self.inputs, self.hierarchy, [report], references,
+            self.subject_vectors({"Edible fats": [0.9, 0.1, 0]}), history=history, include_ancestors=True)
+        self.assertEqual([(p["A"], p["B"]) for p in pairs], [("S0000", "S0002")])
+        self.assertEqual(resolution["alias_inspections_by_query"]["S0000"], 32)
+        record = resolution["guides"][1]
+        self.assertEqual(record["status"], "resolved")
+        self.assertEqual(record["alias_inspections"], 1)
+        self.assertEqual([node["id"] for node in record["visited_nodes"]], ["S0002"])
+        self.assertTrue(record["traversal_limit_reached"])
+        self.assertEqual(record["traversal_stop_reason"], "alias_limit")
+
+    def add_nodes(self, names):
+        for name in names:
+            index, group = len(self.inputs["subjects"]), len(self.hierarchy["groups"])
+            self.inputs["posts"].append(dict(note_id=f"p{index}", text=name))
+            self.inputs["subjects"].append(dict(index=index, subject=name, context=f"Original {name}.",
+                                                note_id=f"p{index}", note_short_id=f"N{index + 1:03d}"))
+            self.hierarchy["groups"].append([index])
+            self.hierarchy["member_to_group"].append(group)
+        self.save_sources()
+
+    def test_ancestor_mode_pools_names_before_filling_two_slots_left_by_exact_lookup(self):
+        from sse_multivector import subject_matching_probe
+        report = self.guide_report({"S0000": ["Dairy products", "Edible fats", "People together"]})
+        vectors = self.subject_vectors({"Edible fats": [0.9, 0.1, 0], "People together": [-1, 0, 0]})
+        before = {Path(ref["path"]): Path(ref["path"]).read_bytes() for ref in self.refs.values() if isinstance(ref, dict)}
+        with patch.object(subject_matching_probe, "load_subject_vectors", return_value=(vectors, {}, {})):
+            first = self.prepare_comparisons(report, resolution="subject_vector_ancestors_only",
+                subject_probe="subjects", guide_probe="guides")
+            again = self.prepare_comparisons(report, resolution="subject_vector_ancestors_only",
+                subject_probe="subjects", guide_probe="guides")
+        self.assertEqual(first, again)
+        cases, _, preparation = first
+        self.assertEqual([(p["A"], p["B"]) for p in preparation["pairs"]],
+                         [("S0000", "S0002"), ("S0000", "S0004")])
+        self.assertEqual(preparation["candidates_by_query"]["S0000"], ["S0001", "S0002", "S0004"])
+        self.assertEqual([c["id"] for c in preparation["guides"][1]["candidate_pool"]], ["S0002", "S0003"])
+        self.assertEqual(preparation["guides"][2]["selected"], ["S0004"])
+        self.assertEqual(preparation["exact_pairs_excluded_from_trial"], ["S0000-S0001"])
+        self.assertNotIn("Edible fats", cases[0]["inputs"]["INPUT_JSON"])
+        self.assertNotIn("People together", cases[0]["inputs"]["INPUT_JSON"])
+        self.assertEqual({path: path.read_bytes() for path in before}, before)
+
+    def test_ancestor_walk_bounds_hops_parent_width_and_total_visited_nodes(self):
+        from sse_multivector import parent_guide_workflow as workflow
+        from heapq import nsmallest
+        self.add_nodes([f"Parent {i}" for i in range(6, 16)])
+        self.hierarchy["edges"] = [[p, 1] for p in (2, 3, 4, 5, 6)] + [
+            [p, 2] for p in (6, 7, 8, 9)] + [[p, 3] for p in (9, 10, 11)] + [
+            [p, 4] for p in (12, 13, 14)] + [[15, 6]]
+        self.save_sources()
+        report = self.guide_report({"S0000": ["Edible fats"]})
+        vectors = self.subject_vectors({"Edible fats": [1, 0, 0],
+                                       **{f"Parent {i}": [0, 0, 1] for i in range(6, 16)}})
+        references = {name: self.refs[name] for name in ("inputs", "hierarchy")}
+        with patch.object(workflow, "nsmallest", wraps=nsmallest) as fronts:
+            pairs, _, resolution = workflow.resolve_vector_guides(
+                self.inputs, self.hierarchy, [report], references, vectors, include_ancestors=True)
+        record = resolution["guides"][0]
+        self.assertEqual([node["id"] for node in record["visited_nodes"]],
+                         ["S0001", "S0002", "S0003", "S0004", "S0006", "S0007", "S0008", "S0009"])
+        self.assertTrue(all(node["path_distance"] <= 2 for node in record["visited_nodes"]))
+        self.assertEqual(record["traversal_stop_reason"], "visited_node_limit")
+        self.assertEqual(record["alias_inspections"], 8)
+        self.assertEqual(record["seed_inspections"], 1)
+        self.assertEqual(fronts.call_count, len(self.hierarchy["groups"]))
+        self.assertTrue(all(call.args[0] == 3 for call in fronts.call_args_list))
+        self.assertEqual(len(pairs), 3)
+
+    def test_ancestor_score_uses_fixed_first_reference_not_the_seed_alias(self):
+        from sse_multivector.parent_guide_workflow import resolve_vector_guides
+        self.add_nodes(["Eating dairy things"])
+        self.hierarchy["groups"] = [[0], [1, 6], [2], [3], [4], [5]]
+        self.hierarchy["member_to_group"] = [0, 1, 2, 3, 4, 5, 1]
+        self.save_sources()
+        report = self.guide_report({"S0000": ["Fats", "Community", "Dairy-like foods"]})
+        references = {name: self.refs[name] for name in ("inputs", "hierarchy")}
+        vectors = self.subject_vectors({"Eating dairy things": [0, 0, 1], "Dairy-like foods": [0, 0, 1]})
+        pairs, _, resolution = resolve_vector_guides(self.inputs, self.hierarchy,
+            [report], references, vectors, include_ancestors=True)
+        self.assertEqual([(p["A"], p["B"]) for p in pairs], [("S0000", "S0003")])
+        candidate = pairs[0]["parent_candidates"][0]["candidate"]
+        self.assertEqual((candidate["seed"], candidate["matched_wording"]), ("S0001", "Eating dairy things"))
+        self.assertEqual(candidate["score_reference"], dict(index=3, subject="Food"))
+        self.assertAlmostEqual(candidate["cosine"], 1)
+        seed = resolution["guides"][2]["candidate_pool"][0]
+        self.assertEqual(seed["score_reference"], dict(index=1, subject="Dairy products"))
+        self.assertAlmostEqual(seed["cosine"], 0)
+
+    def test_ancestor_seed_search_skips_self_and_counts_the_seed_only_once(self):
+        from sse_multivector.parent_guide_workflow import resolve_vector_guides
+        report = self.guide_report({"S0000": ["Butter-like matters"]})
+        references = {name: self.refs[name] for name in ("inputs", "hierarchy")}
+        _, _, resolution = resolve_vector_guides(self.inputs, self.hierarchy, [report], references,
+            self.subject_vectors({"Butter-like matters": [0, 1, 0]}), include_ancestors=True)
+        record = resolution["guides"][0]
+        self.assertEqual(record["seed"], "S0002")
+        self.assertEqual(record["skipped_nodes"][0], dict(id="S0000", reason="self"))
+        self.assertEqual(record["seed_inspections"], 2)
+        self.assertEqual(record["alias_inspections"], 3)
+        self.assertEqual(len(record["visited_nodes"]), 2)
+
+    def test_ancestor_walk_traverses_an_exact_pair_selected_in_reverse(self):
+        from sse_multivector.parent_guide_workflow import resolve_vector_guides
+        report = self.guide_report({"S0000": ["Edible fats"], "S0001": ["Butter"]})
+        references = {name: self.refs[name] for name in ("inputs", "hierarchy")}
+        pairs, _, resolution = resolve_vector_guides(self.inputs, self.hierarchy, [report],
+            references, self.subject_vectors({"Edible fats": [1, 0, 0]}), include_ancestors=True)
+        self.assertEqual([(p["A"], p["B"]) for p in pairs], [("S0000", "S0003")])
+        self.assertEqual(resolution["guides"][0]["skipped_nodes"],
+                         [dict(id="S0001", reason="exact_pair_already_selected")])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -482,9 +482,92 @@ Cosine selects a comparison; it does not establish either equivalence or
 generality. Some sensible matches were already excluded by ancestry or saved
 judgment history, so this result is not unfiltered retrieval accuracy.
 
-The next proposed check is read-only: inspect the rejected matches' existing
-ancestors to see whether lookup lands below a useful broader node. No ancestor
-expansion rule, further model pass or application of these answers is approved.
+The read-only follow-up inspected all seven rejected pairs. The clearest missing
+comparison was Slush drinks against Beverages: the rejected match, Not drinking
+wine, has the existing path Beverages / Wine / Not drinking wine, but Beverages
+does not reach Slush drinks. Other inspected paths mostly supplied unrelated
+subjects or ancestry already present. This is evidence for a bounded lookup
+test, not permission to assert a relationship from that path.
+
+### Bounded ancestor-expansion trial
+
+Status: **small-tested, not adopted**. Reuse the same eight queries,
+saved PCPv3 answers, subject vectors and unchanged final-004 hierarchy. Keep
+BCPv5 and GPT-6.1 Sol low unchanged. Neither accepted trial answers nor original
+SP relationships are edited or applied by this test.
+
+The explicit `subject_vector_ancestors_only` mode keeps exact lookup first and
+its reserved comparison slots. For each exact-absent search name:
+
+1. Retrieve the same bounded HNSW wording shortlist. Find its nearest non-self
+   hierarchy node in stable alias order. This is a search starting point, even
+   if its relationship was already judged or it already shares ancestry with
+   the query; excluding it before walking would hide its ancestors.
+2. Inspect that node and at most two existing parent steps. Precompute at most
+   three lowest-ID parents per node once per snapshot; visit at most eight
+   nodes per search name, including the starting node. All alias and visited
+   node inspections share the existing **32-inspection total per query**.
+3. Pool eligible candidates from all suggested names before choosing. Apply
+   the existing self, duplicate, exact-pair, unchanged-judgment and bounded
+   ancestry exclusions. Previously checked relationships remain excluded even
+   when their endpoints were used to reach a candidate.
+4. Rank by cosine between the suggested name's subject vector and the subject
+   vector of the candidate's **first fixed SP reference**. Break ties by fewer
+   parent steps, stable candidate ID and guide order. This ranks comparisons,
+   not semantic relationships. Keep at most **three candidates per queried
+   hierarchy node in total**, including exact-lookup selections.
+5. Send only new actual-node pairs to unchanged BCPv5. Search names, retrieval
+   scores and paths stay in provenance, not the model prompt. Prior exact and
+   vector-verification reports are source-bound exclusions; no baseline calls
+   or name encodings are repeated.
+
+Reusable source/model specs are
+`pcpv3-eight-ancestor-verification-source-v1.json` and
+`pcpv3-eight-ancestor-verification-sol-low-v1.json` under
+`sse_multivector/experiment_specs/`. The separate ignored output is
+`target/hg100-sol01-parent-guides-v1/ancestor-verification/`.
+
+With one saved nomination per queried node, as in this trial, at most three
+names supply at most 24 visited-node records per query before the shared
+inspection allowance is applied. Repeated nominations across reports still
+share the 32-inspection total. Parent-front preparation is once
+per snapshot, not a sort of a wide parent set for every query. This adds bounded
+local work, no full-pair similarity table or growing model catalogue. The
+existing ANN, archive-loading and small-corpus limitations still apply; this
+test does not claim a complete million-post implementation.
+
+The shared workflow prepared **seven new pairs in one BCPv5 request**, using
+1,073 rendered input tokens. The provider reported 1,079 input and 238 output
+tokens. One Sol-low attempt completed without failures, retries or request
+reuse; the shared counter is **533 / 2,000**. No new nominations or encodings
+were needed, and the old exact/vector comparisons were not rerun.
+
+| Actual node pair | BCPv5 judgment |
+| --- | --- |
+| Slush drinks / Beverages | Beverages contains Slush drinks |
+| Slush drinks / Food and drink | Food and drink contains Slush drinks |
+| Health / Health effects of tea consumption | Health contains the tea-health subject |
+| Slush drinks / Ice | Neither |
+| Coffee / Caffeine | Neither |
+| Coffee / Caffeine addiction | Neither |
+| Welcoming invitations / Social-media communities | Neither |
+
+All three accepted relationships fit the supplied subject meanings on agent
+inspection. They remain model judgments, not user-approved or applied links.
+The maximum observed query work was ten alias/node inspections; every query
+stayed within three selected nodes including exact lookup. The stronger Slush
+comparison was reached through the already-rejected Not drinking wine match;
+skipping that match before walking would have missed it. Ranked candidates also
+included inappropriate parents, which BCPv5 rejected. This supports ancestor
+expansion as a bounded candidate source, not cosine as a relationship test or
+evidence of overall recall.
+
+The reusable runner tests cover pooled ranking, fixed-reference scoring,
+shared comparison/inspection quotas, two-hop/three-parent/eight-visited bounds,
+judged and reverse-exact starting nodes, and explicit truncated-walk provenance.
+The relevant regression/integration suites passed **266 tests**. The original
+final-004 hierarchy hashes are unchanged; applying any saved supplementary
+answers or running a full pass remains separate work.
 
 ## Completed build and browser handoff
 

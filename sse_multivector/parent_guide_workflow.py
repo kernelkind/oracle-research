@@ -4,8 +4,9 @@ Preparation never performs inference, creates nodes or changes a hierarchy.
 Exact-only lookup remains the default; vector lookup selects comparisons only.
 """
 
-from collections import defaultdict
+from collections import defaultdict, deque
 import hashlib
+from heapq import nsmallest
 from pathlib import Path
 import re
 
@@ -203,9 +204,145 @@ def _protect_report(report, protected):
         protected[str(path)] = bounded.engine._sha256_file(path)
 
 
+def _candidate_exclusion(qid, cid, chosen, exact_selected, judged, parents):
+    if cid == qid:
+        return "self"
+    if cid in chosen:
+        return "duplicate_candidate"
+    if frozenset((qid, cid)) in exact_selected:
+        return "exact_pair_already_selected"
+    if frozenset((qid, cid)) in judged:
+        return "unchanged_judgment"
+    forward = _ancestor(qid, cid, parents, max_operations=2048)
+    reverse = _ancestor(cid, qid, parents, max_operations=2048)
+    if forward is None or reverse is None:
+        return "ancestry_work_limit"
+    if forward or reverse:
+        return "existing_ancestry"
+    return None
+
+
+def _ancestor_vector_pairs(resolution, nodes, parents, aliases, provider, subject_vectors,
+                           exact_selected, judged, chosen, inspections, saved_cases):
+    """Pool bounded seed/parent walks across names before consuming free slots."""
+    try:
+        from .ancestor_cosine_probe import cosine
+    except ImportError:
+        from ancestor_cosine_probe import cosine
+    fronts = {node: nsmallest(3, adjacency) for node, adjacency in parents.items()}
+    pools, shortlist_cache, pairs = defaultdict(dict), {}, {}
+    for guide_order, record in enumerate(resolution["guides"]):
+        if record.get("reason") != "exact_name_absent":
+            continue
+        qid, name = record["query"], record["name"]
+        if inspections[qid] >= 32 or len(chosen.get(qid, set())) >= 3:
+            record.update(status="skipped", reason=("alias_limit" if inspections[qid] >= 32
+                                                   else "candidate_limit"))
+            continue
+        encoding = hashlib.sha256(name.encode()).hexdigest()
+        try:
+            vector = subject_vectors[encoding, encoding[:16]]
+        except KeyError as error:
+            raise ValueError(f"missing standalone guide vector: {name}") from error
+        if name not in shortlist_cache:
+            shortlist_cache[name] = provider.wording_neighbors(vector)
+        shortlist = shortlist_cache[name]
+        record.update(resolution="subject_vector_ancestors", query_encoding_id=encoding,
+            wording_inspections=len(shortlist), search_complete=False, seed_inspections=0,
+            visited_nodes=[], candidate_pool=[])
+        seed = None
+        for word, _ in shortlist:
+            for cid in aliases[word]:
+                if inspections[qid] >= 32:
+                    break
+                inspections[qid] += 1
+                record["alias_inspections"] += 1
+                record["seed_inspections"] += 1
+                if cid == qid:
+                    record["skipped_nodes"].append(dict(id=cid, reason="self"))
+                else:
+                    seed = cid, word
+                    break
+            if seed is not None or inspections[qid] >= 32:
+                break
+        if seed is None:
+            record.update(status="unresolved", reason=("alias_limit" if inspections[qid] >= 32
+                                                       else "no_nonself_shortlist_match"))
+            continue
+        seed, word = seed
+        record.update(seed=seed, matched_wording=word)
+        pending, visited = deque([(seed, [seed])]), set()
+        while pending and len(visited) < 8:
+            cid, path = pending[0]
+            if cid in visited:
+                pending.popleft()
+                continue
+            if cid != seed:
+                if inspections[qid] >= 32:
+                    record["reason"] = "alias_limit"
+                    break
+                inspections[qid] += 1
+                record["alias_inspections"] += 1
+            pending.popleft()
+            visited.add(cid)
+            distance = len(path) - 1
+            record["visited_nodes"].append(dict(id=cid, path=path, path_distance=distance))
+            reason = _candidate_exclusion(qid, cid, chosen.get(qid, set()),
+                                          exact_selected, judged, parents)
+            if reason:
+                record["skipped_nodes"].append(dict(id=cid, reason=reason))
+            else:
+                first = nodes[cid][0]["subject"]
+                fixed_encoding = hashlib.sha256(first.encode()).hexdigest()
+                score = cosine(vector, subject_vectors[fixed_encoding, fixed_encoding[:16]])
+                candidate = dict(id=cid, name=name, seed=seed, matched_wording=word,
+                                 cosine=score, path=path, path_distance=distance,
+                                 score_reference=dict(index=nodes[cid][0]["index"], subject=first))
+                record["candidate_pool"].append(candidate)
+                rank = (-score, distance, cid, guide_order)
+                previous = pools[qid].get(cid)
+                if previous is None or rank < previous[0]:
+                    pools[qid][cid] = rank, record, candidate
+            if distance < 2:
+                pending.extend((parent, [*path, parent]) for parent in fronts[cid]
+                               if parent not in visited)
+        record["traversal_limit_reached"] = bool(pending)
+        if pending:
+            record["traversal_stop_reason"] = "visited_node_limit" if len(visited) == 8 else "alias_limit"
+    for qid, pool in pools.items():
+        for _, record, candidate in sorted(pool.values(), key=lambda item: item[0])[:3 - len(chosen.get(qid, set()))]:
+            cid = candidate["id"]
+            chosen.setdefault(qid, set()).add(cid)
+            record["selected"].append(cid)
+            a, b = sorted((qid, cid))
+            pair = pairs.setdefault((a, b), dict(id=a + "-" + b, A=a, B=b,
+                reference_entries=dict(A=nodes[a], B=nodes[b]), parent_candidates=[]))
+            report, case = saved_cases[record["experiment"], record["case_id"]]
+            pair["parent_candidates"].append(dict(experiment=report["experiment"],
+                case_id=case["id"], prompt_id=report["prompt_id"], settings=report["settings"],
+                query=qid, candidate=candidate, resolution="subject_vector_ancestors",
+                query_encoding_id=record["query_encoding_id"], lookup=provider.metadata,
+                receipt=case["receipt"]))
+    for record in resolution["guides"]:
+        if record.get("resolution") != "subject_vector_ancestors":
+            continue
+        if record["selected"]:
+            record["status"] = "resolved"
+            record.pop("reason", None)
+        elif record["candidate_pool"]:
+            record.update(status="skipped", reason="candidate_limit")
+        elif record.get("reason") == "exact_name_absent":
+            record.update(status="unresolved", reason="no_eligible_ancestor_match")
+    resolution["ancestor_lookup"] = dict(max_hops=2, max_parents=3, max_visited_nodes=8,
+        seed_excludes_self_only=True, seed_counted_once=True,
+        score_reference="first fixed SP-reference subject vector",
+        rank=["descending cosine", "path distance", "node ID", "guide order"])
+    return pairs
+
+
 def resolve_vector_guides(inputs, hierarchy, reports, references, subject_vectors, *,
-                          history=None, prior_reports=()):
-    """Test one nearest eligible node per unmatched name; never repeat exact pairs."""
+                          history=None, prior_reports=(), include_ancestors=False):
+    """Select bounded vector comparisons, optionally pooling two parent steps."""
     try:
         from .bounded_hierarchy_candidates import HNSWSubjectNeighbors
     except ImportError:
@@ -237,7 +374,11 @@ def resolve_vector_guides(inputs, hierarchy, reports, references, subject_vector
     saved_cases = {(report["experiment"], case["id"]): (report, case)
                    for report in reports for case in report["cases"]}
     pairs, shortlist_cache = {}, {}
-    for record in resolution["guides"]:
+    if include_ancestors:
+        pairs = _ancestor_vector_pairs(resolution, nodes, parents, aliases, provider, subject_vectors,
+            exact_selected, judged, chosen, inspections, saved_cases)
+    fallback_records = () if include_ancestors else resolution["guides"]
+    for record in fallback_records:
         if record.get("reason") != "exact_name_absent":
             continue
         qid, name = record["query"], record["name"]
@@ -262,22 +403,8 @@ def resolve_vector_guides(inputs, hierarchy, reports, references, subject_vector
                     break
                 inspections[qid] += 1
                 record["alias_inspections"] += 1
-                reason = None
-                if cid == qid:
-                    reason = "self"
-                elif cid in chosen.get(qid, set()):
-                    reason = "duplicate_candidate"
-                elif frozenset((qid, cid)) in exact_selected:
-                    reason = "exact_pair_already_selected"
-                elif frozenset((qid, cid)) in judged:
-                    reason = "unchanged_judgment"
-                else:
-                    forward = _ancestor(qid, cid, parents, max_operations=2048)
-                    reverse = _ancestor(cid, qid, parents, max_operations=2048)
-                    if forward is None or reverse is None:
-                        reason = "ancestry_work_limit"
-                    elif forward or reverse:
-                        reason = "existing_ancestry"
+                reason = _candidate_exclusion(qid, cid, chosen.get(qid, set()),
+                                              exact_selected, judged, parents)
                 if reason:
                     record["skipped_nodes"].append(dict(id=cid, reason=reason))
                 else:
@@ -319,14 +446,14 @@ def build_comparison_source(source_refs, reports, template, *, base=None, select
             "resolution", "subject_probe", "guide_probe", "prior_comparisons"}:
         raise ValueError("invalid parent-comparison source references")
     mode = source_refs.get("resolution", "exact_saved_wording_only")
-    if mode not in {"exact_saved_wording_only", "subject_vector_fallback_only"}:
+    if mode not in {"exact_saved_wording_only", "subject_vector_fallback_only", "subject_vector_ancestors_only"}:
         raise ValueError("invalid parent-comparison resolution mode")
     if mode == "exact_saved_wording_only" and any(
             key in source_refs for key in ("subject_probe", "guide_probe", "prior_comparisons")):
         raise ValueError("vector references require subject-vector fallback mode")
     loaded, references, protected = bounded._read_sources({key: value for key, value in source_refs.items()
         if key in {"schema_version", "inputs", "hierarchy", "judgments", "discoveries"}}, base)
-    if mode == "subject_vector_fallback_only":
+    if mode in {"subject_vector_fallback_only", "subject_vector_ancestors_only"}:
         try:
             from .subject_matching_probe import load_subject_vectors
         except ImportError:
@@ -351,7 +478,8 @@ def build_comparison_source(source_refs, reports, template, *, base=None, select
                 raise ValueError("conflicting saved vectors for the same subject")
         pairs, nodes, resolution = resolve_vector_guides(loaded["inputs"], loaded["hierarchy"],
             reports, references, {**candidate_vectors, **guide_vectors},
-            history=loaded.get("judgments"), prior_reports=prior_reports)
+            history=loaded.get("judgments"), prior_reports=prior_reports,
+            include_ancestors=mode == "subject_vector_ancestors_only")
     else:
         pairs, nodes, resolution = resolve_exact_guides(loaded["inputs"], loaded["hierarchy"],
             reports, references, history=loaded.get("judgments"))

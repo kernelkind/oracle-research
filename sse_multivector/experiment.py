@@ -303,7 +303,8 @@ def prepare(args):
             )
         }
         if plan["dataset"]["adapter"] in {"bounded_parent_guides", "bounded_parent_comparisons"}:
-            for name in ("parent_guide_measurement.py", "parent_guide_workflow.py"):
+            for name in ("parent_guide_measurement.py", "parent_guide_workflow.py",
+                         "ancestor_cosine_probe.py"):
                 code = Path(__file__).with_name(name)
                 plan["code"][name] = engine._sha256_file(code)
         plan["requests_at_prepare"] = (

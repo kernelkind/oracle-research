@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "prompt": {"id": "BCPv5", "path": "../bounded-hierarchy-v1/BCPv5.md"},
+  "dataset": {
+    "adapter": "bounded_parent_comparisons",
+    "path": "pcpv3-eight-ancestor-verification-source-v1.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "low",
+    "concurrency": 8,
+    "timeout_seconds": 600
+  }
+}
