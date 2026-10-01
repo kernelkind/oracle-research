@@ -138,3 +138,42 @@ ASv6.50 remains an untested, unapproved draft. The useful next step is testing
 its replacement paragraph against these saved ASv6.48 answers, checking both
 parent relationships and preservation of individual subjects and their
 particular instances. No candidate inference was started.
+
+## Frozen-baseline reproduction on GPT-6 Astra high
+
+On October 1, 2026, the user authorized testing Astra high, then xhigh unless
+an effort level returned no failures. Shared `prepare --from` inherited the
+Astra-medium experiment's complete posts, frozen ASv6.48 prompt and runner
+settings, changing only reasoning effort to `high`. Four fresh answers returned
+from four calls, with no failures, retries or reuse. `--repeat` prevents reuse;
+`--max-new-attempts 8` allows the shared policy's two-attempt maximum per case
+if an eligible provider failure occurs. No retries were needed.
+
+| Post | Entries | Complete-output finding |
+| --- | --- | --- |
+| N063 | 42 | Original fats-under-dish error avoided. New clear instance: 1.3.8, wine as a cooking ingredient, → 1.3.8.1, dry white wine, drops the cooking role. A post about drinking dry white wine fits the child without the parent. |
+| N074 | 50 | Original conjunction error avoided: individual recommendations at 4.1–4.3 are siblings of the combined attributed advice at 4.4. Possible book-source loss between 8.1, Food Rules by Michael Pollan, and 8.1.1, Pollan's combined advice, is recorded as uncertain; the child names Pollan but not the book. The relationship repeats at 9.1.1 → 9.1.1.1. |
+| N096 | 82 | Original error reproduced: 4.3.1, preparing beef and tomato sauce for Spaghetti Bolognaise, → 4.3.1.2, gently frying ground beef without browning. The child drops sauce/dish scope. Sautéing children at 4.2.1.1 and 4.2.1.2 also lose restrictions from 4.2.1. |
+| N100 | 74 | Original byproduct branch and Sol's chicken conjunction error avoided. New clear instance: 1, beef, → 1.6, myoglobin. The generic protein heading drops the beef restriction; its `context` cannot supply it. |
+
+High therefore did not meet the user's stopping condition: N063, N096 and N100
+contain clear instances of the same pattern. N074's possible source relationship
+is not needed for that decision. Native reviews record three agent rejections
+and one uncertain assessment, with no user semantic verdicts.
+
+Coverage remains a separate check. N063 retains all named general ingredients
+but omits separate dish-specific ingredient subjects and the dish-specific
+ingredient-list heading. N096 retains quantities, recipe/yield and preparation
+details, with salt and pepper individually represented. N100 retains purchase,
+cutting, trimming, materials and intended uses, individual water/cold water and
+sunflower seeds, chicken provisions and sealer details. N074 retains individual
+and combined advice, comparisons, controversy, the family example and attribution.
+N100's myoglobin-for-chickens and vacuum-sealing-prepared-beef interpretations
+remain separate grounding uncertainties. These are agent coverage assessments.
+
+Complete answers, receipts and reviews remain ignored under
+`sse_multivector/experiments/astra-high-sp-scope-regression-v1/`. Native usage is
+10,854 input tokens and 14,679 output tokens, including 2,957 reasoning tokens.
+The $0.84249 catalog reference estimate is not a bill or measured subscription
+quota; incremental cash is zero. ASv6.48 remains frozen; ASv6.50 remains an
+untested, unapproved draft.
