@@ -7,7 +7,7 @@ test. This supersedes the ASv6.49 draft. ASv6.48 remains the frozen subject
 baseline. MPv3.43 remains the frozen mask working baseline. Adoption as the
 subject baseline remains open.
 
-The subsequent [ASv6.51 (approved candidate, untested)](../asv6.51/ASv6.51.md)
+The subsequent [ASv6.51 (approved candidate, testing)](../asv6.51/ASv6.51.md)
 is now the last approved subject prompt. ASv6.50 and its saved answers remain
 comparison evidence.
 
@@ -345,18 +345,18 @@ These are the native per-trial usage totals. Catalog estimates are not bills or
 measured subscription quota; provider-reported cost is unavailable and
 incremental cash is zero. Adoption as the subject baseline remains open. The
 subsequent agent review confirmed the two failing relationships and the user
-authorized preparing the ASv6.51 revision below. A fresh transfer test outside food
-remains proposed and requires separate authorization.
+authorized preparing the ASv6.51 revision below. The user subsequently authorized
+its regression test and a fresh transfer check outside food if that set passes.
 
 ## ASv6.51 approved candidate
 
-Status: approved candidate, untested. On October 1, 2026, the user approved
+Status: approved candidate, testing on GPT-6.1 Sol xhigh. On October 1, 2026, the user approved
 the ASv6.51 wording with "lgtm" after reviewing its full-context delta.
 The preceding drafting authorization followed the agent's confirmation of
 N074 trial 3's advice-role loss and N096 trial 2's loss of sautéing restrictions.
-Candidate inference remains unrun and requires a testing instruction.
+The subsequent testing instruction authorized the comparison below.
 
-[ASv6.51 (approved candidate, untested)](../asv6.51/ASv6.51.md) replaces
+[ASv6.51 (approved candidate, testing)](../asv6.51/ASv6.51.md) replaces
 ASv6.50's existing hierarchy condition with a counterexample check. Compare the `subject` headings
 alone and imagine another post that fits the child: if it could fail to fit the
 proposed parent, use a broader parent. Each applicable branch must pass that
@@ -378,6 +378,36 @@ The ASv6.51 SHA-256 is
 Mechanical revision checks verify preservation and provenance; they do not
 establish a semantic improvement. No model calls were made while drafting.
 ASv6.48 remains the frozen subject baseline and MPv3.43 remains the frozen
-mask working baseline. The recommended next step is testing approved ASv6.51
-on the agreed regression set, followed by a separately authorized fresh-topic
-transfer test if it passes.
+mask working baseline. The authorized regression comparison is in progress;
+the fresh-topic transfer check depends on its results.
+
+## ASv6.51 comparison on GPT-6.1 Sol xhigh
+
+On October 1, 2026, the user authorized the same three-answer regression design
+on approved ASv6.51, followed by a fresh non-food check if it passes. N063, N074,
+N096 and N100 retain their complete original text and source evidence. Each of
+three native `prepare --from ... --prompt ... --prompt-id ASv6.51 --repeat`
+trials inherits its corresponding completed ASv6.50 trial, pairing all four
+cases with saved answers without regenerating a baseline.
+
+The [ASv6.51 post template](../../experiment_specs/asv6.51-hr01-post-template.txt)
+was derived through shared `revise` from the ASv6.50 template using the single
+approved paragraph edit. Its instructions are exactly approved ASv6.51, with
+the unchanged `<post>` wrapper and `{POST}` variable. Native revision receipts
+pin both template hashes. Pre-run checks verify all twelve rendered requests:
+same complete inputs, evidence, schema, GPT-6.1 Sol model, xhigh effort,
+WebSocket transport, 1,800-second deadline, four concurrent requests per trial
+and no output cap. Only the approved paragraph differs. Each trial uses
+`run --max-new-attempts 8`, permitting only the shared provider-retry policy's
+two-attempt maximum per case. Incremental subscription cash is zero; no paid
+fallback is configured.
+
+The ignored experiments are
+`sse_multivector/experiments/asv6.51-sol61-xhigh-sp-scope-regression-t1/`,
+`sse_multivector/experiments/asv6.51-sol61-xhigh-sp-scope-regression-t2/` and
+`sse_multivector/experiments/asv6.51-sol61-xhigh-sp-scope-regression-t3/`.
+Twenty saved ASv6.48/ASv6.50 baseline plan, output, report and review files are
+hash-pinned before inference. ASv6.48 and MPv3.43 remain frozen; ASv6.51 adoption
+remains open. Complete candidate hierarchies will be reviewed for the agreed
+parent-scope pattern, core coverage and new errors, with agent assessments
+kept separate from user semantic verdicts. Results are pending.
