@@ -1372,6 +1372,19 @@ mention Photography briefly, so the result does not cover posts primarily
 about Photography. [Exact inputs and verification](../../sse_multivector/model-runner.md)
 remain experiment evidence; production sorting is still undecided.
 
+The user then reviewed Music's two distinct complete posts, with URLs omitted
+and no sorting scores shown, and answered "A": Baby Got Back playing in a
+coffee shop (`46ed60cb`) above the island-lunch post with `#Music` (`d6628bf3`).
+This is one additional clear expected pair, separate from Photography's
+three-post ordering judgment and the three about-equal Coffee judgments.
+The authorized `ppv30-music-node-v1` experiment keeps PPv30-node-v1 and
+prominence × SP-context relevance fixed. The production adapter prepares three
+saved SP entries from all three direct Music masks, with two distinct original
+post/title requests. Inference is bounded to two new Astra-low subscription
+attempts, followed by local CPU SSE encoding and original-mask replay checks.
+The expected order is review evidence, not an input to either calculation.
+No exact percentages, production formula or multiple-entry rule is approved.
+
 04 and 27 are in progress: saved Coffee/Eggs trials test candidate sorting
 scores and within-node note ordering. 04 defines and validates the node sort
 score; 27 implements ordering using that definition. The formula, inputs and

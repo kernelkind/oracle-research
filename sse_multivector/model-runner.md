@@ -2852,6 +2852,27 @@ changes, paid resources or production rule adoption occurred. This run uses
 the current local runtime; it does not claim the older Coffee/Eggs runtime
 packages are identical. PPv30-node-v1 remains tested, not production-frozen.
 
+**Music: node-title prominence and SP-context relevance.**
+
+The user authorized the next node test, then reviewed complete wording with
+URLs omitted and no sorting scores shown. A is the Baby Got Back/coffee-shop
+post (`46ed60cb`); B is the island-lunch/photographer-credits post (`d6628bf3`)
+with `#Music`. The answer "A" establishes a clear A > B Music pair before
+inference. This judgment does not approve prominence percentages or a formula.
+
+`experiments/ppv30-music-node-v1` uses the reusable specification
+`experiment_specs/ppv30-music-node-v1.json` and the production subject-context
+adapter with node-title prominence. Node `S9f8ab11969` has three direct masks
+(V0522, V0528, V0770), matching three saved SP entries across two posts. Every
+prominence input contains exactly the unchanged Music title and complete
+original post. Prompt PPv30-node-v1, schema, Astra-low subscription settings,
+standalone SP-context relevance and the prominence × relevance formula match
+the preceding Coffee/Eggs and Photography node-title tests. Expected order is
+kept only as review evidence. Two new attempts are allowed; the duplicate A
+post/title request is reused. Preparation and exact-input checks passed;
+inference and local CPU context encoding remain pending. No baseline or SP
+calls, prompt edits, paid resources or production changes are included.
+
 Complete original node-title prominence orders, using saved SP-context
 relevance and descending by highest sorting score:
 
