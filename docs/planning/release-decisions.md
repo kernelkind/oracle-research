@@ -1465,10 +1465,15 @@ model calls or editing frozen plans. [Exact results and verification](../../sse_
 are saved with this repeated pair, separate from the eleven original clear
 Coffee/Eggs/Music checks and the Photography ordering judgment.
 
-04 and 27 are in progress: saved Coffee/Eggs, Photography and Music trials test
-candidate sorting scores and within-node note ordering. 04 defines and validates the node sort
-score; 27 implements ordering using that definition. The formula, inputs and
-any treatment of multiple masks remain open. Finishing 27 still needs 04.
+04 and 27 remain in progress. The saved candidate matches the eleven clear
+Coffee/Eggs/Music pair preferences, Photography's three-post order and the
+accepted seven-post Eggs order; one Coffee comparison repeated successfully.
+Either order is acceptable for the four about-equal Coffee pairs, without
+requiring identical scores. These selected reviews do not establish general
+ordering quality. 04 defines and validates the node sort score; 27 implements
+ordering using that definition. The formula, inputs, any treatment of multiple
+masks and production adoption remain open, as does broader-hierarchy validation.
+Finishing 27 still needs 04.
 28 waits for the validated small-corpus workflow and scale findings. Readiness does not authorize execution. Membership
 methods, final node-equivalence/cycle policy, ranking rules and scale
 implementation choices remain open.

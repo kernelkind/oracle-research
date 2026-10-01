@@ -65,8 +65,13 @@ Task 04 defines and validates the node sort score: one sorting score per note
 within a hierarchy node. Prominence and relevance are candidate components,
 not fixed requirements; the formula, inputs and any treatment of multiple masks
 remain open. Task 27 implements and validates ordering using that definition.
-Both are in progress, with saved Coffee/Eggs trials and user-reviewed order
-checks. No production scoring method is selected. The 04 → 27 → 03 completion
+Both remain in progress. The saved candidate matches the 11 clear
+Coffee/Eggs/Music pair preferences, Photography's three-post order and the
+accepted seven-post Eggs order. One Coffee comparison repeated successfully.
+Either order is acceptable for the four about-equal Coffee pairs; identical
+scores are not required. These selected reviews do not establish general
+ordering quality. Broader-hierarchy validation and a production scoring method
+remain open. The 04 → 27 → 03 completion
 dependencies are unchanged. The sorting mechanism and any additional
 teacher/model outputs it needs remain undecided; prominence outputs are not
 required merely because earlier experiments used them.

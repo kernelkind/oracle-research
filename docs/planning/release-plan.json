@@ -26,7 +26,7 @@
       "track": "shared",
       "title": "Define node sort score",
       "status": "IN PROGRESS",
-      "description": "Define and validate one sorting score per note within a hierarchy node, including its inputs, output format and how multiple masks contribute if used. Prominence and relevance are candidate components, not fixed requirements. No final formula or model inputs are selected.\nSaved Coffee/Eggs experiments test candidate scores; no production method is adopted.\nIn launch scope and actively worked on. 27 applies the scoring definition to order notes."
+      "description": "Define and validate one sorting score per note within a hierarchy node, including its inputs, output format and how multiple masks contribute if used. Prominence and relevance are candidate components, not fixed requirements. No final formula or model inputs are selected.\nSaved candidate matches 11 clear Coffee/Eggs/Music pair preferences, Photography's three-post order and the accepted seven-post Eggs order. One Coffee comparison repeated successfully. Either order is acceptable for four about-equal Coffee pairs; identical scores are not required. Broader-hierarchy validation and a production method remain open.\nIn launch scope and actively worked on. 27 applies the scoring definition to order notes."
     },
     {
       "id": "05",
@@ -180,7 +180,7 @@
       "track": "shared",
       "title": "Order notes within each node",
       "status": "IN PROGRESS",
-      "description": "Implement and validate note ordering within each hierarchy node using the score defined in 04, including multiple masks from the same note where used. Recursive sorting and parent-child score transfer are out of scope.\nSaved Coffee/Eggs trials are experimental, not approval of a production method.\nFINISH WITH 04"
+      "description": "Implement and validate note ordering within each hierarchy node using the score defined in 04, including multiple masks from the same note where used. Recursive sorting and parent-child score transfer are out of scope.\nSaved candidate matches 11 clear Coffee/Eggs/Music pair preferences, Photography's three-post order and the accepted seven-post Eggs order. One Coffee comparison repeated successfully. Either order is acceptable for four about-equal Coffee pairs; identical scores are not required. Broader-hierarchy validation and a production method remain open.\nFINISH WITH 04"
     },
     {
       "id": "28",
