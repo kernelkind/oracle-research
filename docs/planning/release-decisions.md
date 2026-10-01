@@ -1293,16 +1293,33 @@ production input or formula change is adopted. The small shared comparison
 option, nineteen comparison tests and 118 runner/worker checks are recorded
 in [model-runner.md](../../sse_multivector/model-runner.md).
 
-**Further non-food sorting trial approved October 1:** the user approved the
-agent's next bounded assessment using context-only relevance. Native preparation
-selects every direct member of Dogs, Sleep and tiredness, Christmas, Workouts
-and Moral goodness: fifty-one saved SP cases, sixteen post/node inputs and
-thirteen original posts. PPv30-node-v1, Astra-low subscription settings,
-prominence × relevance and highest sorting score per post remain fixed.
-The agent has recorded observations before inference; no new user ordering
-labels are requested or inferred. Local CPU SSE supplies relevance. This trial
-is prepared, with at most thirty-two new attempts including eligible provider
-retries and zero incremental cash; results and production adoption remain open.
+**Further non-food sorting trial approved and completed October 1:** the user
+approved the agent's bounded assessment using context-only relevance. Every
+direct member of Dogs, Sleep and tiredness, Christmas, Workouts and Moral
+goodness was included: fifty-one saved SP cases, sixteen post/node inputs and
+thirteen original posts. Fixed PPv30-node-v1 / Astra low produced sixteen new
+valid assessments and thirty-five exact-request reuses without failures or
+retries. Native usage is 13,510 input and 5,010 output tokens, including 447
+reasoning tokens; catalog reference is $0.3856 and incremental cash is zero.
+
+All five complete sorting-score orders match prominence-only orders. The
+agent found no clear wrong order: dog-feeding posts precede dog hashtags;
+sleep/tiredness accounts precede embedded advice; the Christmas-lunch headline
+leads mixed-topic mentions; gym session precedes workout joke and brief advice.
+The generosity story leads the conduct list in Moral goodness. The pre-run
+reverse preference was explicitly uncertain, and the story's sharing and
+hospitality give the observed direction a defensible basis; its scope and
+allocation remain uncertain. Forty-three native agent case reviews accept
+ordering and eight correlated Moral goodness cases remain uncertain, covering
+two distinct inputs. These are agent assessments, not new user labels or an
+accuracy rate. Five original-mask replay controls, independent products and
+post maxima, unchanged source hashes and twenty-three workflow tests passed.
+
+The agent recommends fresh non-food posts outside the original 100-post
+sample, rather than further wording changes without an observed failure. That
+next trial has not begun. Prompts, hierarchy, source posts, masks, formula and
+production adoption remain unchanged or open as before; detailed orders and
+provenance are in [model-runner.md](../../sse_multivector/model-runner.md).
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for

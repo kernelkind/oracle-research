@@ -3548,7 +3548,7 @@ mutual order, with a tentative preference for the list's several conduct
 recommendations. Either order is acceptable where stated; these observations
 are agent expectations, not new user judgments.
 
-The run is prepared and bounded to thirty-two new attempts, including eligible
+The approved run was bounded to thirty-two new attempts, including eligible
 provider retries. Repeated SP entries reuse each complete-post/title assessment;
 no baseline or SP/MP generation is needed. Total input work grows with direct
 selected post/node memberships and complete-post length, not all-post/all-node
@@ -3556,8 +3556,107 @@ pairs. Local CPU SSE encodes only fifty-one standalone SP contexts, five exact
 titles and original-mask replay controls. Prominence × context-only relevance,
 highest sorting score per post, source posts, masks and hierarchy remain fixed.
 The zero-cash subscription reservation is recorded in the lifetime ledger;
-reference API cost and subscription quota are separate. Results and production
-adoption remain open.
+reference API cost and subscription quota are separate. Production adoption
+remains open.
+
+The completed `experiments/ppv30-transfer-nodes-v2` trial has fifty-one valid
+cases: sixteen new complete-post/title assessments and thirty-five within-run
+exact-request reuses, with no failures, invalid outputs or retries. Native
+original-generation accounting reports 13,510 input tokens, zero cached input,
+and 5,010 output tokens including 447 reasoning tokens. Catalog reference is
+$0.3856, not a subscription invoice or measured quota; incremental cash is zero.
+The zero-cash reservation is settled without changing lifetime monetary totals
+or unrelated commitments.
+
+The completed native relevance preparation was:
+
+```sh
+python3 sse_multivector/prominence_cosine.py prepare \
+  sse_multivector/experiments/ppv30-transfer-nodes-v2/relevance-v1 \
+  --experiments sse_multivector/experiments/ppv30-transfer-nodes-v2 \
+  --post-order highest \
+  --vectors sse_multivector/hierarchy-refresh-v1 \
+  --worker-config sse_multivector/experiments/ppv30-transfer-nodes-v1/relevance-v1/worker-config.json \
+  --replay V0392 V0957 V0497 V0332 V1075
+```
+
+This is the historical command for the existing immutable output; use a new
+output directory for a deliberately repeated encoding. The local offline CPU
+worker encoded sixty-one rows: fifty-one unchanged standalone SP contexts,
+five exact titles and five original-mask controls. All context content tokens
+are selected; the longest context has 31 tokens and the longest replay input
+336, below the unchanged 512-token limit. Checkpoint, model artifacts, pooling
+and runtime match the original comparison. Replay cosines are at least
+0.9999999999999302, with maximum normalized component error 4.79e-8. Original
+MP masks are controls, not relevance inputs. Comparison SHA-256 is
+`a279fb7fc1bb9e882c814319a45a64b6bce6b6933bd5dd9cb5b02adefa50c9aa`.
+
+Every node below descends by each post's highest sorting score. Relevance
+shown belongs to that post's winning SP context; displayed numbers are rounded,
+while products use full precision. All five prominence-only orders are the
+same. Christmas's two prominence-30 posts are tied by prominence; relevance
+separates them in a plausible direction that was not a clear pre-run judgment.
+
+| Hierarchy node | Post (note-ID prefix) | Prominence | Relevance | Sorting score |
+| --- | --- | ---: | ---: | ---: |
+| Dogs | Chihuahua raw-diet transition (`f7ed481e`) | 19 | 0.762887 | 14.494857 |
+| Dogs | Preparing dog scraps and myoglobin (`f67c7c54`) | 17 | 0.684255 | 11.632333 |
+| Dogs | Island lunch with dog hashtag (`d6628bf3`) | 2 | 0.808076 | 1.616151 |
+| Dogs | Tolstoy quotation with dog hashtag (`be8d07d4`) | 1 | 0.833549 | 0.833549 |
+| Christmas | Christmas-lunch costs headline (`7160694f`) | 95 | 0.836045 | 79.424276 |
+| Christmas | Slowing down after Christmas (`bca8827b`) | 30 | 0.911125 | 27.333753 |
+| Christmas | Island lunch after Santa did not arrive (`d6628bf3`) | 30 | 0.747616 | 22.428493 |
+| Christmas | Long diary with Christmas-card printing (`eaa6a5e6`) | 6 | 0.771970 | 4.631821 |
+| Sleep and tiredness | Tired despite caffeine (`8cf2c204`) | 75 | 0.874081 | 65.556083 |
+| Sleep and tiredness | Detailed sleep and clarity account (`89cdcfbb`) | 60 | 0.913289 | 54.797361 |
+| Sleep and tiredness | Eighteen-item advice list (`05f275f4`) | 16 | 0.941514 | 15.064225 |
+| Workouts | Morning gym session (`bd357fcf`) | 65 | 0.885325 | 57.546102 |
+| Workouts | Workout-plans red-flag joke (`41efa59d`) | 33 | 0.940079 | 31.022611 |
+| Workouts | Eighteen-item advice list (`05f275f4`) | 8 | 0.796563 | 6.372503 |
+| Moral goodness | Shared-meal generosity story (`1c964a41`) | 64 | 0.732755 | 46.896329 |
+| Moral goodness | Eighteen-item advice list (`05f275f4`) | 25 | 0.865191 | 21.629782 |
+
+Agent inspection found no clear wrong order in Dogs, Sleep and tiredness,
+Christmas or Workouts. Both dog-feeding posts lead both dog hashtags, although
+hashtag contexts have higher relevance. Both sleep/tiredness accounts lead
+sleep advice in the long list, although the advice has the highest winning
+relevance. Gym session leads workout joke and brief advice, matching the clear
+pre-run expectation. Christmas-lunch costs lead three mixed mentions. The
+stated about-equal directions remain acceptable; do not invent strict expected
+orders among those pairs from their displayed numbers.
+
+Moral goodness remains uncertain. Its generosity story leads the conduct
+list, reversing the agent's explicitly tentative pre-run preference. The story
+also says knowledge and joy must be shared and treats a shared meal as sacred;
+it illustrates hospitality and praises generosity. The teacher assigns those
+parts 30, 12 and 18 represented points, plus four for humility, for prominence
+64. The list assigns 25 to several conduct recommendations amid other advice.
+This supplies a defensible basis for the observed direction; whether all of
+that opening and hospitality meaning warrants its moral-goodness allocation
+remains uncertain. A tentative agent preference is not a clear failure or a
+user-approved ordering constraint. No changed prompt or corrective trial was
+initiated.
+
+Native post-run agent reviews accept ordering on forty-three correlated SP
+cases and mark the eight Moral goodness cases uncertain; the latter share only
+two complete-post/title assessments. Earlier pre-run observations are retained,
+and no user reviews were created. These counts are not an accuracy rate or
+approval of exact prominence percentages. All fifty-one saved contexts and
+complete selections, five titles, point allocations, independent cosines and
+sorting-score products, sixteen post maxima and complete orders were verified.
+Protected source/prompt/prior-comparison hashes remain unchanged. The existing
+experiment-selection and prominence-cosine suites passed twenty-three tests;
+`experiments/ppv30-transfer-nodes-v2/workflow-tests.log` retains the check log.
+No production code change was needed.
+
+This five-node sample adds no demonstrated ordering benefit from relevance
+over prominence alone and exposes no clear reversal caused by relevance.
+It uses thirteen posts from the same original 100-post corpus, so it does not
+establish transfer to fresh posts or broad non-food coverage. The agent
+recommends a bounded trial on fresh non-food posts outside that corpus before
+further relevance-input changes. That next trial has not begun; PPv30-node-v1,
+the formula, input selection and production adoption remain tested candidates
+or open decisions, not frozen production behavior.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended
