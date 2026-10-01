@@ -1162,6 +1162,24 @@ and sorting score produce this accepted order. This review does not select a
 formula, approve numerical values or adopt production sorting. No new model
 calls, encoding or saved-result changes were needed.
 
+The user then reviewed the complete original wording of all fourteen Coffee
+posts, with URLs omitted and highest sorting score first, and answered "lgtm".
+The accepted displayed order is decaf (`2dc50a30`), roasting (`056e6466`), iced
+coffee (`76e19c3e`), coffee request (`78462b92`), raw-cream/egg-yolk coffee
+(`f4c5aa5f`), coffee in cool places (`37f44e1f`), second coffee (`862486d8`),
+half & half (`143fee76`), another coffee/Sunday wishes (`737eaa89`), errands
+(`e0508834`), coffee/movement/stretching (`8a025f69`), Sunday weather/hot coffee
+(`82d3d344`), breakfast burrito/coffee (`ee3404d5`), then the Tolstoy quotation
+with `#Coffee` (`be8d07d4`). Record one accepted fourteen-post Coffee order,
+alongside the accepted seven-post Eggs order. Both remain separate from the
+eleven clear pair checks, Photography's three-post judgment and the four
+about-equal Coffee pairs; do not infer 91 independent new pair judgments or
+strict differences between every adjacent post. The earlier slight weather
+preference remains recorded, but movement/stretching above weather is now
+acceptable in this complete-order review. This approval does not select the
+formula, numerical values or production rule. No new model calls, encoding or
+saved-result changes were needed.
+
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
 these ten checks, plus the four about-equal judgments and separate slight
@@ -1473,7 +1491,8 @@ Coffee/Eggs/Music checks and the Photography ordering judgment.
 
 04 and 27 remain in progress. The saved candidate matches the eleven clear
 Coffee/Eggs/Music pair preferences, Photography's three-post order and the
-accepted seven-post Eggs order; one Coffee comparison repeated successfully.
+accepted fourteen-post Coffee and seven-post Eggs orders; one Coffee comparison
+repeated successfully.
 Either order is acceptable for the four about-equal Coffee pairs, without
 requiring identical scores. These selected reviews do not establish general
 ordering quality. 04 defines and validates the node sort score; 27 implements

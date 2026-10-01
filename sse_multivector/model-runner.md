@@ -3094,6 +3094,24 @@ Coffee:
 | Duck-egg breakfast burrito and coffee (`ee3404d5`) | 25 | 22.274436 |
 | Tolstoy quotation with Coffee hashtag (`be8d07d4`) | 1 | 0.917359 |
 
+The user reviewed the complete original wording of all fourteen Coffee posts
+in the displayed order, with URLs omitted, and answered "lgtm". Record one
+accepted full-node Coffee order, exactly as shown above, alongside the accepted
+seven-post Eggs order below. Keep both separate from the eleven clear
+Coffee/Eggs/Music pair checks, Photography's three-post judgment and the four
+about-equal Coffee comparisons. Do not count this review as 91 independent
+pair judgments or infer strict differences between every adjacent post.
+
+The accepted Coffee order includes coffee/movement/stretching above Sunday
+weather/hot coffee. The earlier slight weather preference remains recorded;
+its opposite direction is acceptable in this complete-order review. All
+fourteen post maxima and sorting-score products match the unchanged original
+comparison, whose SHA-256 remains
+`77f1e9bf073a504f76b26d1c8f667df85254fefc1640d94d4cf575c6bf51bbec`.
+This approves the displayed order, without selecting numerical values, the
+formula or production adoption. Prompts, calculations and saved results are
+unchanged; no new teacher calls or encoding were needed.
+
 Eggs:
 
 | Post (note-ID prefix) | Eggs prominence | Highest sorting score |
@@ -3128,9 +3146,11 @@ Putting the diary above coffee with raw egg yolk matches the new clear judgment.
 Putting coffee with raw egg yolk above More coffee in cool places matches the
 ninth clear judgment.
 Putting coffee, movement and stretching above Sunday weather reverses the
-separate slight preference; it is excluded from the ten clear checks.
-Decaf versus roasting was reviewed as about equal, without a preferred
-direction. The other changed directions are not new user-approved orders.
+earlier slight preference, but is acceptable in the subsequent complete Coffee
+review; that tentative preference stays outside the eleven clear pair checks.
+Decaf versus roasting was reviewed as about equal, with either order acceptable.
+The full Coffee review accepts the displayed placements without establishing
+additional independent pair judgments.
 PPv30-node-v1 is tested, not production-frozen. These results do not
 establish general ordering quality, calibrated percentages, production adoption
 or a general advantage from relevance over prominence alone.
