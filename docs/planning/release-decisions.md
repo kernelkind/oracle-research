@@ -1129,9 +1129,18 @@ fourth, tentative about-equal Coffee judgment with no preferred direction.
 Both saved PPv30-node-v1 prominence values are 100; highest SP-context
 relevance is 0.901547 and 0.831738, producing sorting scores 90.154658 and
 83.173849. The difference, 6.980809 toward A, comes entirely from relevance.
-No numerical tolerance or tie rule is approved; this pair is not counted as
-passed or failed and does not approve the percentages, formula or a change to
-relevance. No new inference, encoding or result changes were required.
+No numerical tolerance or production tie rule is approved; this judgment
+does not approve the percentages, formula or a change to relevance. No new
+inference, encoding or result changes were required.
+
+The user then confirmed that either order is acceptable for pairs judged about
+equal. This applies to all four recorded Coffee comparisons, including the two
+with tentative small preferences: neither direction is an ordering mismatch.
+Keep them separate from the eleven clear expected Coffee/Eggs/Music pairs and
+Photography's three-post judgment; they do not distinguish prominence from
+prominence × relevance. No equal sorting scores, numerical gap limit,
+production tie handling or rule for identifying other about-equal pairs was
+selected. The sorting calculation and saved results stay unchanged.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for

@@ -3025,8 +3025,9 @@ The user reviewed the complete decaf-drinkers post (`2dc50a30`, A) and
 omitted and no sorting scores shown, and answered "about equal maybe".
 Record tentative about equality with no preferred direction, separately
 from the eleven clear Coffee/Eggs/Music pairs and the Photography ordering
-judgment. This makes four about-equal Coffee judgments; no numerical tolerance
-or tie rule is approved, so the comparison is not marked as passed or failed.
+judgment. This makes four about-equal Coffee judgments. The later approval
+below accepts either order for these pairs and leaves numerical tolerance and
+production tie handling unspecified.
 
 The unchanged original `ppv30-node-orders-v1/relevance-v1` results give:
 
@@ -3051,8 +3052,25 @@ relevance/products match the saved comparison. Its SHA-256 remains
 No new teacher calls, encoding, prompt changes or saved-result modifications
 were needed. The original clear-check counts remain eleven matched sorting
 orders and ten matched prominence orders out of eleven; this tentative
-about-equal judgment stays outside those counts. Production sorting and the
-meaning of numerical closeness remain open.
+about-equal judgment stays outside those counts. Production sorting remains
+open.
+
+**About-equal judgments: either order is acceptable.**
+
+The user answered "sure" to "For pairs you judge about equal, is either order
+acceptable?" Either direction is now acceptable for the four reviewed Coffee
+pairs: another coffee/Sunday wishes versus errands; decaf versus roasting;
+roasting versus "Is there coffee for me?"; and decaf versus that coffee request.
+The two tentative small preferences remain recorded, but the opposite orders
+are also acceptable. Both saved prominence-only and sorting-score orders meet
+this condition for all four pairs. Keep these pairs separate from the eleven
+clear expected orders and Photography's three-post judgment, because they do
+not distinguish between the two calculations.
+
+This approval does not require equal sorting scores or set a numerical gap
+limit. It does not identify unreviewed pairs as about equal or select production
+tie handling. Prominence, relevance, formula, prompts, code and saved results
+are unchanged; no new model calls or encoding were needed.
 
 Complete original node-title prominence orders, using saved SP-context
 relevance and descending by highest sorting score:
