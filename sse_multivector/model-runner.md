@@ -3521,9 +3521,43 @@ comparison hash; existing user judgments remain unchanged.
 The agent recommends retaining context-only relevance for the next broader
 subject trial: this additional input gives little benefit and corrects no
 demonstrated wrong order. Testing more non-food subjects for actual ordering
-failures is the useful next step; it has not begun. The new option is diagnostic
-support, not production adoption. PPv30-node-v1 and the sorting formula remain
+failures was recommended and the user subsequently approved the bounded trial
+below. The new option is diagnostic support, not production adoption.
+PPv30-node-v1 and the sorting formula remain
 tested candidates, with production input selection and broader validation open.
+
+**Further non-food agent assessment: fixed PPv30-node-v1 and context relevance.**
+
+The user approved proceeding with more non-food subjects and retained agent
+observation instead of asking for additional user ordering labels.
+`experiment_specs/ppv30-transfer-nodes-v2.json` uses the existing
+`subject_contexts` adapter, with node-title prominence and the unchanged
+PPv30-node-v1 prompt and Astra-low subscription settings. Its source selector
+includes all direct members of Dogs (`S1ca3bbb104`, four posts), Sleep and
+tiredness (`Saa62bc7939`, three), Christmas (`S5b66e451d0`, four), Workouts
+(`Sc9583cd381`, three) and Moral goodness (`Sdc00def87d`, two).
+
+Native preparation validates fifty-one saved SP cases sharing sixteen exact
+complete-post/title inputs across thirteen original posts. Pre-run agent
+observations are recorded through native `review` on each distinct input:
+dog feeding before dog hashtags; the sleep/tiredness accounts before brief
+sleep advice within the long list; the Christmas-lunch headline before mixed
+Christmas mentions; gym session before the workout-plans joke before the
+long-list workout advice. The two moral-goodness posts have an uncertain
+mutual order, with a tentative preference for the list's several conduct
+recommendations. Either order is acceptable where stated; these observations
+are agent expectations, not new user judgments.
+
+The run is prepared and bounded to thirty-two new attempts, including eligible
+provider retries. Repeated SP entries reuse each complete-post/title assessment;
+no baseline or SP/MP generation is needed. Total input work grows with direct
+selected post/node memberships and complete-post length, not all-post/all-node
+pairs. Local CPU SSE encodes only fifty-one standalone SP contexts, five exact
+titles and original-mask replay controls. Prominence × context-only relevance,
+highest sorting score per post, source posts, masks and hierarchy remain fixed.
+The zero-cash subscription reservation is recorded in the lifetime ledger;
+reference API cost and subscription quota are separate. Results and production
+adoption remain open.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended

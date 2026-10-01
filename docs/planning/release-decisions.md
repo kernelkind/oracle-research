@@ -1293,6 +1293,17 @@ production input or formula change is adopted. The small shared comparison
 option, nineteen comparison tests and 118 runner/worker checks are recorded
 in [model-runner.md](../../sse_multivector/model-runner.md).
 
+**Further non-food sorting trial approved October 1:** the user approved the
+agent's next bounded assessment using context-only relevance. Native preparation
+selects every direct member of Dogs, Sleep and tiredness, Christmas, Workouts
+and Moral goodness: fifty-one saved SP cases, sixteen post/node inputs and
+thirteen original posts. PPv30-node-v1, Astra-low subscription settings,
+prominence × relevance and highest sorting score per post remain fixed.
+The agent has recorded observations before inference; no new user ordering
+labels are requested or inferred. Local CPU SSE supplies relevance. This trial
+is prepared, with at most thirty-two new attempts including eligible provider
+retries and zero incremental cash; results and production adoption remain open.
+
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
 these ten checks, plus the four about-equal judgments and separate slight
