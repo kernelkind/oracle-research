@@ -19,7 +19,7 @@
       "track": "shared",
       "title": "Test hierarchy across more topics",
       "status": "IN PROGRESS",
-      "description": "Corpus preparation underway: inspect collected data and prepare proposed 200/300/500-note inputs. Broader hierarchy tests have not started; they still need the reviewed 100-note hierarchy.\n200: within-node note ordering + correctness.\n300: scalable construction + correctness.\n500: combine both; profile build.\n~1–2k: final pre-release validation rung with user browsing review.\nThe final 2–5k build and review belong to 12, not this task.\nValidate understandable choices, meaningful narrowing and relevant-content coverage for the chosen workflow. Ensure pair filtering keeps useful links.\nTESTS START WITH 02; FINISH WITH 27; ALSO 24 IF HDBSCAN IS USED."
+      "description": "Corpus preparation underway: inspect collected data and prepare proposed 200/300/500-note inputs. Reusable preparation code is committed; the actual 200-note input is not prepared yet.\nCandidate 200-note input: 100 food/drink + 100 music notes, considered reasonable by the user, not final corpus approval. Food has current subjects, masks and vectors; music has older-prompt outputs.\nNew note generation is on hold pending prompt stress-testing (30). Corpus selection and offline preparation may continue.\nBroader hierarchy tests have not started; they still need the reviewed 100-note hierarchy.\n200: within-node note ordering + correctness.\n300: scalable construction + correctness.\n500: combine both; profile build.\n~1–2k: final pre-release validation rung with user browsing review.\nThe final 2–5k build and review belong to 12, not this task.\nValidate understandable choices, meaningful narrowing and relevant-content coverage for the chosen workflow. Ensure pair filtering keeps useful links.\nNEW GENERATION NEEDS 30; TESTS START WITH 02; FINISH WITH 27; ALSO 24 IF HDBSCAN IS USED."
     },
     {
       "id": "04",
@@ -195,9 +195,22 @@
       "title": "Run preliminary 100-note fine-tuning experiment",
       "status": "IN PROGRESS",
       "description": "Model track. Use existing data: 80 training notes, 20 evaluation notes; no prominence. One fine-tune per candidate learns both subject and mask prompts. Compare untuned and trained outputs, quality, speed and cost.\nAll three candidates have saved training runs, matching reload checks and trained evaluations. Qwen's baseline is saved; the recovered Gemma baseline subjects still need mask generation; candidate comparison and semantic review remain unfinished.\nThis informs the larger pilot (06), not final model selection. Existing experiment settings and $25 total approval remain unchanged.\nSUBJECT/MASK PROMPTS 01 + TRAINING SETUP 18 COMPLETE"
+    },
+    {
+      "id": "30",
+      "track": "shared",
+      "title": "Stress-test prompts",
+      "status": "IN PROGRESS",
+      "description": "Stress-test the prompts used for broader-corpus generation. Work is underway with the user.\nNew note generation is on hold until this testing is complete. Corpus selection and offline preparation may continue.\nCompleted prompt development in 01 remains complete. Model calls still require separate authorization."
     }
   ],
   "links": [
+    {
+      "source": "30",
+      "target": "03",
+      "kind": "required",
+      "label": "complete prompt stress-testing before new corpus generation"
+    },
     {
       "source": "01",
       "target": "02",

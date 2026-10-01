@@ -1,6 +1,6 @@
 # October 18 release decisions
 
-Updated September 30, 2026. This is the written record of the planning discussion.
+Updated October 1, 2026. This is the written record of the planning discussion.
 Agreed requirements, tentative choices and existing-data facts are distinguished
 below. The overall plan is not approved. Approval of an individual requirement
 or task-view edit does not approve the whole plan. Approved scheduling changes
@@ -43,6 +43,24 @@ are in progress for preparation only. The reviewed 100-note hierarchy and the
 protocol remain prerequisites for their respective execution work; existing
 completion dependencies, acceptance requirements and open design choices are
 unchanged.
+
+**Broader-corpus generation hold — October 1:** the user is undertaking prompt
+stress-testing and has put generation of the additional notes on hold until that
+testing is complete. Shared task **30 · Stress-test prompts** is in progress,
+with a required 30 → 03 link. The start condition is specifically new corpus
+subject/mask generation; corpus selection and offline preparation may continue.
+Task 03 remains in progress for preparation, and completed prompt-development
+task 01 remains complete. Testing methods, acceptance criteria and any prompt
+changes belong to that workstream; this planning update selects none.
+
+The corpus-preparation session confirms that reusable preparation code is
+committed. The candidate 200-note input is 100 food/drink + 100 music notes,
+which the user considered reasonable without authorizing generation or freezing
+the combined corpus. Food has current subjects, masks and vectors; music has
+older-prompt outputs. The actual 200-note input is not prepared yet. The
+reviewed 100-note hierarchy remains a prerequisite for broader hierarchy tests;
+other completion requirements are unchanged. Clearing the stress-testing hold
+is not authorization for model calls or spending.
 
 **Current task 02 status (September 30):** the active investigation builds from
 per-post subject hierarchies and masks. The original 100-post LG01 hierarchy

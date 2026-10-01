@@ -143,7 +143,7 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                 self.assertEqual(json.loads(evaluate("JSON.stringify([...document.querySelector('#track').options].map(option => option.textContent))")),
                                  ["Required release", "Optional model", "Both"])
                 plan = json.loads((public / "release-plan.json").read_text())
-                shared = {"01", "02", "03", "04", "09", "17", "20", "21", "22", "23", "24", "27", "28"}
+                shared = {"01", "02", "03", "04", "09", "17", "20", "21", "22", "23", "24", "27", "28", "30"}
                 release = {"12", "13", "14", "15", "16"}
                 model = {"05", "06", "07", "08", "10", "11", "18", "29"}
                 historical = {"25", "26"}
@@ -361,6 +361,21 @@ class PlanningGraphPrototypeTest(unittest.TestCase):
                     wait_for(f"document.querySelector('#details h2').textContent.startsWith('{task_id} ·')")
                     self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
                     self.assertIn(preparation, evaluate("document.querySelector('#details').innerText"))
+
+                evaluate("document.querySelector('#focus-task').value = '03'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
+                wait_for("document.querySelector('#details h2').textContent.startsWith('03 ·')")
+                self.assertIn("New note generation is on hold pending prompt stress-testing", evaluate("document.querySelector('#details').innerText"))
+                evaluate("[...document.querySelectorAll('#details .related button')].find(button => button.textContent.startsWith('30 ·')).click()")
+                wait_for("document.querySelector('#details h2').textContent === '30 · Stress-test prompts'")
+                self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "IN PROGRESS")
+                self.assertIn("Shared", evaluate("document.querySelector('#details .task-track').textContent"))
+                self.assertIn("Corpus selection and offline preparation may continue", evaluate("document.querySelector('#details').innerText"))
+                evaluate("document.querySelector('#depth').value = '1'; document.querySelector('#depth').dispatchEvent(new Event('change'))")
+                self.assertTrue(any(edge["source"] == "30" and edge["target"] == "03" and edge["line"] == "solid" for edge in check_routes()["edges"]))
+                capture("prompt-stress-testing")
+                evaluate("document.querySelector('#focus-task').value = '01'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
+                wait_for("document.querySelector('#details h2').textContent.startsWith('01 ·')")
+                self.assertEqual(evaluate("document.querySelector('#details .task-status').textContent"), "COMPLETE")
 
                 evaluate("document.querySelector('#focus-task').value = '18'; document.querySelector('#focus-task').dispatchEvent(new Event('change'))")
                 wait_for("document.querySelector('#details h2').textContent.startsWith('18 ·')")

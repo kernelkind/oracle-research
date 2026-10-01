@@ -31,9 +31,19 @@ Task 03 covers validation at 200 / 300 / 500 notes and the ~1–2k-note user-rev
 rung. Task 12 alone owns the final teacher-labeled, fully automated 2–5k build
 and its user browsing review. Completion of 03 does not accept the release
 snapshot; 12 requires the user's acceptance of that final snapshot.
-Corpus preparation and Notedeck integration preparation are underway as of
-September 30. Broader hierarchy tests and client implementation have not started;
-their existing prerequisites and completion dependencies remain unchanged.
+Corpus preparation and Notedeck integration preparation started September 30.
+Broader hierarchy tests and client implementation have not started. Their
+reviewed-100-note and protocol prerequisites remain in place.
+
+On October 1, the user is undertaking prompt stress-testing. Shared task 30,
+**Stress-test prompts**, is in progress and blocks new generation for broader
+corpus inputs in 03. Corpus selection and offline preparation may continue;
+completed prompt-development task 01 remains complete. Task 03 stays in progress
+for preparation, not active hierarchy tests. Reusable preparation code is
+committed, but the actual 200-note input is not prepared. The user considered
+100 food/drink + 100 music notes reasonable; this is not final corpus approval.
+Food has current subjects, masks and vectors; music has older-prompt outputs.
+Stress-testing completion does not authorize generation calls.
 
 Whether HDBSCAN will be used remains open (September 29 clarification).
 Task 21 is required only if the chosen workflow uses it. Its links to 20 and 28
