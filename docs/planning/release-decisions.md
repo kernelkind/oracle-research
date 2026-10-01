@@ -1359,6 +1359,18 @@ subscription attempts, with repeated requests reused, followed by local CPU
 SSE encoding. No production formula, percentages, tie rule or multiple-entry
 rule is approved by this judgment; the ten Coffee/Eggs clear checks and three
 about-equal judgments retain their existing classifications.
+The completed trial gives A, B and C prominence 12, 7 and 1; highest SP-context
+relevance 0.760010, 0.780966 and 0.870545; and sorting scores 9.120122, 5.466762
+and 0.870545. Both prominence and sorting score follow A > B > C. Relevance
+alone gives C > B > A, so this case depends on prominence to put brief hashtag
+association below the other mentions. Record a matching three-post order
+separately from the ten Coffee/Eggs pair checks, not three independent new
+samples. Three new assessments and three exact-request reuses completed
+without failures; local CPU SSE encoded twelve rows and all five original-mask
+replays passed. The shared workflow suites passed 107 tests. These posts each
+mention Photography briefly, so the result does not cover posts primarily
+about Photography. [Exact inputs and verification](../../sse_multivector/model-runner.md)
+remain experiment evidence; production sorting is still undecided.
 
 04 and 27 are in progress: saved Coffee/Eggs trials test candidate sorting
 scores and within-node note ordering. 04 defines and validates the node sort

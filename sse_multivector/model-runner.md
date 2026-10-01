@@ -2794,10 +2794,63 @@ shared run is bounded to three new attempts, with repeated requests reused.
 The user order is review evidence, not a prompt input. This does not reuse the
 older Photography mask-prominence/mask-vector calculation as the same method.
 
-Preparation and input checks passed; inference and the local CPU SP-context
-encoding remain pending. No baseline calls, SP generation, membership changes,
-prompt edits, paid fallback or production rule adoption are authorized here.
-The ten clear Coffee/Eggs checks remain separate from this three-post judgment.
+All six cases completed validly with three new assessments and three exact
+request reuses, without failures or retries. Each post has common prominence
+across its SP entries. Native generation accounting reports 2,499 input tokens,
+611 output tokens and zero reported reasoning tokens, with no missing usage.
+The $0.05554 catalog reference estimate is not a subscription invoice or quota
+measurement; incremental cash is zero and no paid fallback was used.
+
+The shared `prominence_cosine.py` workflow prepared `relevance-v1` and encoded
+one standalone title, six complete standalone SP contexts and five original
+MP-mask replay controls: twelve rows across ten encoder notes. The masks are
+controls, not the relevance input. The local CPU worker uses the existing
+sentence-t5-base/SSE checkpoint and model artifacts, 768 dimensions, maximum
+512 tokens, unchanged pooling and batch size eight. Receipt runtime is Python
+3.13.12, torch 2.13.0+cpu, transformers 4.57.1 and tokenizers 0.22.2. All five
+replays passed (cosine at least 0.9999999999999624, maximum normalized component
+error at most 3.285e-8). The collector validated protected hashes, request and
+row identities, model settings and replay parity.
+
+Sorting score remains `prominence * (clip(cosine, -1, 1) + 1) / 2`. Each post
+uses its highest SP-context sorting score:
+
+| Post | SP entries | Prominence | Highest SP-context relevance | Highest sorting score |
+| --- | ---: | ---: | ---: | ---: |
+| A: Forgot to take photos while cooking | 2 | 12 | 0.760010 | 9.120122 |
+| B: Island lunch with photographer credits | 3 | 7 | 0.780966 | 5.466762 |
+| C: Tolstoy quotation with `#Photography` | 1 | 1 | 0.870545 | 0.870545 |
+
+The winning A entry is `context-de2c82937271074d2f85c96f`, with context "The
+writer explicitly says they forgot to take photos." B uses
+`context-7cf5810209f3518f2bca31fa`, with "'The respective ... Photographer'
+identifies an unnamed photographer as a credit recipient." C uses
+`context-a8b79d95c89b9cce65e811c8`, with "The hashtag #Photography explicitly
+names photography."
+
+A's assessment assigns 12 of 100 points to forgetting to take photos; B's
+assigns ten to author/photographer credits, of which seven concern Photography;
+C's assigns 15 to all hashtags, of which one concerns Photography. These are
+experimental assessments, not approved percentages. Both prominence and
+sorting score follow the user's A > B > C order; relevance alone gives
+C > B > A. This one three-post order matches in all pair directions, but the
+directions are not three independent judgments and are recorded separately
+from the ten clear Coffee/Eggs pair checks. The three about-equal judgments and
+tentative Coffee preferences retain their existing classifications. All three
+Photography posts mention the subject briefly; this does not test posts
+primarily about Photography or establish general sorting quality.
+
+All allocations, exact node-title/post inputs, standalone context selections,
+independently recomputed cosines/formulas and per-post maxima passed. The
+shared experiment and prominence-cosine suites passed 107 tests; the log is
+saved at `experiments/ppv30-photography-node-v1/workflow-tests.log`. The original
+hierarchy, masked posts, vector map, Coffee/Eggs comparison and prompt hashes
+are unchanged. Comparison SHA-256 is
+`60fddf522334b14c1d834d4eb9ecfa6d5b3b893eb0b21eceb4b1b926464fbee6`.
+No baseline calls, SP generation, prompt or source-code changes, membership
+changes, paid resources or production rule adoption occurred. This run uses
+the current local runtime; it does not claim the older Coffee/Eggs runtime
+packages are identical. PPv30-node-v1 remains tested, not production-frozen.
 
 Complete original node-title prominence orders, using saved SP-context
 relevance and descending by highest sorting score:
