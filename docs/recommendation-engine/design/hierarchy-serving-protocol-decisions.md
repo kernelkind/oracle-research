@@ -63,9 +63,7 @@ order. A node with no `e` tags has no children. `content` is empty.
     ["d","7602d719-2393-4fab-93b8-5df19d887eb0"],
     ["title","Cooking"],
     ["e","note1jkl..jkl"],
-    ["e","note1mno..mno"],
-    ["notes_index","note1pqr..pqr"],
-    ["notes_index","note1stu..stu"]
+    ["e","note1mno..mno"]
   ],
   "content":"", "sig":"def..def"
 }
@@ -73,17 +71,43 @@ order. A node with no `e` tags has no children. `content` is empty.
 
 ## Note lists — proposed schema
 
-`K_NOTES_INDEX` is an unassigned regular kind in `1000–9999`.
+`K_NOTES_LIST` is an unassigned addressable kind in `30000–39999`.
+[NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds)
 
-A node uses `notes_index` tags to reference its note list. Concatenate each
-referenced index's complete sequence in `notes_index` tag order. A node
-with no `notes_index` tags has an empty list.
+Each node has a note-list event with exactly one `d` tag matching the node's.
+Request the current list from the hierarchy author:
+
+```text
+["REQ","sid",{"authors":["npub1abc..abc"],"kinds":[K_NOTES_LIST],"#d":["7602d719-2393-4fab-93b8-5df19d887eb0"],"limit":1}]
+```
+
+Clients use the current note list independently of the selected node version.
+An empty list has no `e` or `notes_index` tags. A missing list event makes
+the read incomplete.
 
 Child nodes do not automatically contribute notes. A child's note is
-included only if the author also lists its ID in this node's indexes.
+included only if the author also lists its ID in this node's note list.
 
-In an index, `e` tags list note event IDs. All `e` tags precede all
-`notes_index` tags, which reference further indexes:
+In both lists and indexes, `e` tags list note event IDs and `notes_index`
+tags reference indexes. All `e` tags precede all `notes_index` tags.
+
+```text
+{
+  "id":"note1xyz..xyz", "pubkey":"npub1abc..abc",
+  "created_at":1790683201, "kind":K_NOTES_LIST,
+  "tags":[
+    ["d","7602d719-2393-4fab-93b8-5df19d887eb0"],
+    ["e","note1ccc..ccc"],
+    ["notes_index","note1pqr..pqr"],
+    ["notes_index","note1stu..stu"]
+  ],
+  "content":"", "sig":"abc..abc"
+}
+```
+
+## Note indexes — proposed schema
+
+`K_NOTES_INDEX` is an unassigned regular kind in `1000–9999`.
 
 ```text
 {
@@ -98,19 +122,20 @@ In an index, `e` tags list note event IDs. All `e` tags precede all
 }
 ```
 
-List the `e` tag values in their tag order, then append each referenced
-index's complete sequence in `notes_index` tag order. Apply this rule
-recursively.
+For both lists and indexes, list the `e` tag values in their tag order, then
+append each referenced index's complete sequence in `notes_index` tag order.
+Apply this rule recursively.
 A missing referenced index makes the read incomplete.
 
-Within a node's note list, indexes MUST NOT overlap: each note event ID
-MUST appear at most once across all its indexes, including nested indexes.
-The same note ID MAY appear in different nodes' lists.
+Within a node's note list, each note event ID MUST appear at most once,
+whether listed directly or through an index. Indexes MUST NOT overlap,
+including nested indexes. The same note ID MAY appear in different nodes' lists.
 
 An index must not reference itself directly or through other indexes. If
 following `notes_index` references revisits an index on the current traversal
 path, the list is invalid.
 
-Indexes are published by the hierarchy author and served by the same relay.
+Lists and indexes are published by the hierarchy author and served by the
+same relay.
 `content` is empty. The author chooses how many entries fit each event's
 byte and tag limits. [NIP-11](https://github.com/nostr-protocol/nips/blob/master/11.md#server-limitations)
