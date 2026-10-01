@@ -349,8 +349,10 @@ frozen informal-pilot settings are unchanged; no production method is adopted.
 Both tasks remain in progress. 04 is in launch scope and actively worked on,
 superseding the earlier pause notes; it need not wait for the 100-note hierarchy
 or title correction. Statuses and completion dependencies are unchanged.
-The user confirms 17 is underway, comparing Muse high and Astra low;
-no teacher is selected.
+The user labels GPT-6.1 Sol low as the provisional favorite for SP
+(subject generation). The mask teacher and final teacher selection remain open.
+Frozen ASv6.48 and production model settings are unchanged; Sol's subscription
+quota consumption remains unmeasured. Task 17 stays in progress.
 This does not establish completion of the teacher comparison (17).
 Dates are unchanged. The additional construction dependencies below expose
 unfinished work. Completing 01 and 23 does not complete the hierarchy. This
@@ -704,11 +706,11 @@ fine-tunes across the three candidates, including storage, transfers and failed
 attempts. Budget admission passed before the run; no replacement rental is authorized without discussing any failure with the user.
 
 - **Teacher-comparison pilot (17):** choose the teachers that write the training
-  data. The current comparison is Muse high versus Astra low; no teacher is
-  selected. Assess subjects, masks, any agreed additional outputs and the
-  resulting hierarchies, along with generation time, cost and feasibility. How
-  unsuitable annotations are handled remains open; repairing them is not an
-  assumed workflow. Check the
+  data. GPT-6.1 Sol low is provisionally favored for SP; the mask teacher and
+  final selection remain open. Assess subjects, masks, any agreed additional
+  outputs and the resulting hierarchies, along with generation time, cost and
+  feasibility. How unsuitable annotations are handled remains open; repairing
+  them is not an assumed workflow. Check the
   provider's data-use and output-use terms before producing training data at
   scale.
 - **Larger fine-tuning pilot (06):** compare the pretrained models that we will
@@ -744,9 +746,9 @@ need not wait for the teacher selection.
 ### Teacher-comparison pilot evaluation plan
 
 Node 17 covers the teacher comparison, including its planning.
-The user confirms it is in progress, comparing Muse high and Astra low.
-Coverage and results of that current comparison have not yet been reported here;
-it does not establish completion of 17 or selection of a teacher.
+It remains in progress, with GPT-6.1 Sol low provisionally favored for SP.
+This preference does not establish mask quality, end-to-end hierarchy quality,
+completion of 17 or final teacher selection.
 
 The comparison needs to establish:
 
