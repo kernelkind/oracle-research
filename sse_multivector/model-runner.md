@@ -3902,24 +3902,107 @@ controls. Within-focus directions remain uncertain, with no numeric tie rule or
 new user judgment. Pre-run comments are observations, not exact-percentage
 approvals or fixed truth labels.
 
-Native preparation freezes ninety-nine cases but fifteen exact complete-post/
+Native preparation froze ninety-nine cases but fifteen exact complete-post/
 title requests; repeated SP entries reuse the same prominence answer. Prominence
 × standalone SP-context relevance and highest sorting score among the selected
-entries per post remain fixed. The zero-cash reservation permits at most thirty
-new attempts including eligible provider retries, no paid fallback. Local
-offline CPU SSE will encode selected complete contexts and three existing titles
-with the unchanged checkpoint/model identity. Work scales with selected
+entries per post remain fixed. The zero-cash reservation bounded the run at
+thirty new attempts including eligible provider retries, no paid fallback. Local
+offline CPU SSE encoded ninety-nine complete contexts and three existing titles
+with the unchanged checkpoint/model/runtime identity. Work scales with selected
 post/node inputs and text length, not every post against every hierarchy node;
 source lookup is linear in the saved carrier and selected entries. No baseline,
 SP/MP, title or hierarchy generation, rentals, UI or production adoption is
-included. Native generation costs and subscription cash will remain separate.
+included. Native generation costs and subscription cash remain separate.
+
+All ninety-nine cases are valid: fifteen new complete-post/title calls and
+eighty-four exact-request reuses, no failures, malformed outputs or retries.
+The first run stopped before inference because another session added the
+unrelated `measure-root-candidates` command to `experiment.py`. Review confirmed
+that this was the only changed frozen code file and left the prominence paths
+unchanged. The native `--runner-upgrade-reason` audit records that change with
+an empty result prefix; frozen inputs/settings and manifest were not rewritten.
+
+The full post orders below use the highest sorting score among the explicitly
+selected contexts. Relevance is the rescaled cosine, not a calibrated percentage.
+
+| Literature, in sorting order | Prominence | Relevance | Sorting score |
+| --- | ---: | ---: | ---: |
+| Audiobooks and reading anywhere (`05f24382`) | 100 | 0.817159 | 81.715856 |
+| Books for an 18-year-old (`650ee6fe`) | 100 | 0.757302 | 75.730245 |
+| Five favorite books (`1814c48f`) | 100 | 0.695630 | 69.563026 |
+| Terry Tempest Williams poem (`237edb1b`) | 95 | 0.682086 | 64.798217 |
+| Fear of books versus thinking (`2e71ddd3`) | 60 | 0.808773 | 48.526372 |
+
+| Psychology and philosophy, in sorting order | Prominence | Relevance | Sorting score |
+| --- | ---: | ---: | ---: |
+| Alan Watts on life and achievement (`ee76234e`) | 94 | 0.838122 | 78.783443 |
+| Advice for happiness (`48e78e7a`) | 100 | 0.673511 | 67.351122 |
+| Destiny and choice in the present (`991c3225`) | 100 | 0.626722 | 62.672241 |
+| Emmet Fox on living in the present (`4b43f03e`) | 80 | 0.760248 | 60.819813 |
+| Mixed year-end activities and gratitude (`62b103a0`) | 60 | 0.603501 | 36.210034 |
+
+| Bitcoin, in sorting order | Prominence | Relevance | Sorting score |
+| --- | ---: | ---: | ---: |
+| Block transmission and verification (`c9224e91`) | 100 | 0.911480 | 91.148035 |
+| Scaling debate and remaining problems (`e36fad15`) | 100 | 0.887407 | 88.740711 |
+| Node, mempool, Tor and Sparrow privacy (`7ef38052`) | 100 | 0.662586 | 66.258643 |
+| Bitcoin and Nostr optimism (`51161520`) | 35 | 0.828469 | 28.996428 |
+| Physical Nostr client with zap controls (`9942031f`) | 10 | 0.564978 | 5.649778 |
+
+All three orders preserve the clear pre-run focus comparisons: focused books,
+reading and the poem precede the broader fear-of-thinking argument; four focused
+reflections/advice posts precede mixed year-end activities; three Bitcoin
+technology discussions precede joint Bitcoin/Nostr optimism, which precedes the
+mostly Nostr hardware proposal. The prominence allocations retain details that
+develop the node's subject, including the poem's imagery and Bitcoin privacy,
+without counting all shared-topic meaning toward the node. Exact percentages
+are not approved. Within-focus directions were not established independently.
+All three deterministic full orders differ from prominence alone, but Literature
+and Bitcoin changes only resolve prominence ties; Psychology and philosophy moves
+the prominence-94 Alan Watts post above two prominence-100 posts. These changes
+are not demonstrated ordering improvements.
+
+The Bitcoin privacy post exposes a question about relevance. Its complete post
+is recognized as entirely concerning Bitcoin without the literal word Bitcoin,
+but all fourteen saved contexts also omit Bitcoin and retain only parts of the
+technical connections. Its best context describes running a node over Tor when
+broadcasting transactions. The sorting score is 66.258643 against 91.148035 and
+88.740711 for two other prominence-100 Bitcoin posts. The strict direction and
+large gap remain uncertain. Missing context or weak technical-domain recognition
+are possible explanations, not established causes. The poem presents a related
+question: its eleven SP contexts mostly describe imagery, and the winning text
+is only “The assertion that concludes the poem.” The teacher correctly counts
+the poem as Literature, but the relevance-created placement below all three
+book/reading posts is not an established improvement.
+
+Fifteen native final agent reviews cover complete post/title inputs and their
+selected contexts: four accept the clear mixed-post comparisons, eleven retain
+uncertainty about focused-post directions or shares. These are observations,
+not ninety-nine independent quality labels or a population accuracy estimate.
+No new user judgments or numeric tie threshold were introduced. The next
+recommendation is to compare relevance from the complete Bitcoin privacy post
+with relevance from its saved contexts, keeping prominence 100 and the formula
+fixed. This diagnostic has not begun and no input change is adopted.
+
+Native generation accounting records 10,170 input tokens, no cached input,
+2,473 output tokens including 573 reasoning tokens and a $0.225350 catalogue
+reference estimate. Original calls are fifteen, source calls added zero;
+historical SP/MP generation is not booked again. Incremental subscription cash
+is zero; provider-reported dollar charges are unavailable and weekly quota is
+unmeasured. Only this zero-cash reservation is settled, preserving lifetime
+totals and unrelated accounting.
 
 Thirty-one selection/comparison/ranking tests and 108 experiment/worker tests
 passed. Logs are in the ignored `experiments/ppv30-fresh-nonfood-v2-preparation`
 directory. Prepared data and native observations are under the ignored
-`experiments/ppv30-fresh-nonfood-v2` directory. Protected source/prompt/prior-
-comparison hashes were recorded before preparation. Results and production
-adoption remain open.
+`experiments/ppv30-fresh-nonfood-v2` directory. Independent verification checks
+all ninety-nine exact source entries, fifteen complete-post/title allocations,
+102 complete encoder selections with no truncation, unchanged encoder identity,
+ninety-nine cosine/products, fifteen post maxima and three full orders. Saved
+SP/MP, original source posts, raw graph, prompt and both prior comparison hashes
+remain unchanged. The native result is `relevance-v1/comparison.json`, SHA256
+`5e0f3a6c0ffedbf7ccf3eb6ef919c6f15eb08ed3d4586fcd26b64ff26ce7f599`.
+The transfer trial is complete; production adoption remains open.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended

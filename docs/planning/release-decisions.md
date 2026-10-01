@@ -1403,7 +1403,7 @@ new user judgments, paid resources or task accounting changes occurred.
 
 **Three fresh subjects approved October 1:** the user approved five fresh posts
 each for three existing nodes outside food and music, with the calculation
-fixed and agent observation. The prepared `ppv30-fresh-nonfood-v2` trial uses
+fixed and agent observation. The completed `ppv30-fresh-nonfood-v2` trial uses
 fifteen posts from the saved 48-post coverage expansion for Literature,
 Psychology and philosophy, and Bitcoin. Their IDs are disjoint from the original
 100 and the prior nine-post sorting trial. Ninety-nine exact reviewed ASv6.23
@@ -1423,8 +1423,38 @@ source posts, titles, hierarchy and earlier results are protected. No new SP/MP
 or broader-corpus generation runs, respecting the separate generation hold.
 Local encoding scales with selected contexts and titles, and complete-post
 inference with selected post/node inputs rather than every post/node pair.
-Results and production adoption remain open. Native source selectors and
-provenance are described in [model-runner.md](../../sse_multivector/model-runner.md).
+All ninety-nine cases are valid from fifteen new calls and eighty-four exact-
+request reuses, with no retries or failures. Local CPU encoding covered ninety-
+nine complete contexts and three unchanged titles. All three orders preserve
+the clear pre-run focused-versus-mixed comparisons: book/reading posts and the
+poem precede the fear-of-thinking argument; focused reflections/advice precede
+mixed year-end gratitude; three Bitcoin technology posts precede Bitcoin/Nostr
+optimism, which precedes mostly Nostr hardware. Changes from prominence alone
+mainly resolve ties; the Alan Watts post also moves above two prominence-100
+posts. No clear ordering improvement is established among focused posts.
+
+The Bitcoin privacy post has prominence 100 but highest context relevance
+.662586 and sorting score 66.258643, below block transmission 91.148035 and
+scaling 88.740711, also prominence 100. All fourteen saved privacy contexts omit
+Bitcoin and retain only parts of the technical connections, although the
+teacher recognizes the complete post's Bitcoin meaning. Missing context or
+technical-domain recognition may explain the gap; the cause and strict
+within-focus direction remain uncertain. The poem's contexts mostly describe
+imagery rather than retaining the full literary framing, giving a similar
+unresolved question. Fifteen final native agent reviews accept four clear mixed-
+post comparisons and retain uncertainty for eleven focused inputs; these are
+not ninety-nine independent labels or an accuracy rate. No new user judgments,
+exact-percentage approvals or numeric tie threshold are introduced.
+
+Independent source, allocation, encoder, product and post-maximum checks pass;
+protected sources and earlier comparisons are unchanged. A concurrent unrelated
+CLI addition caused a pre-inference stop and was reviewed/audited through the
+native code-upgrade mechanism before any teacher call. The result uses $0 incremental cash and a $0.225350 catalogue reference estimate. The next recommendation is to compare the complete
+Bitcoin privacy post with saved contexts as the relevance input, holding
+prominence 100 and the formula fixed. This diagnostic has not begun. The transfer
+trial is complete and production adoption remains open. Native source selectors,
+full orders and provenance are described in
+[model-runner.md](../../sse_multivector/model-runner.md).
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
