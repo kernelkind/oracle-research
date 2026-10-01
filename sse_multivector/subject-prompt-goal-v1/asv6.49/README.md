@@ -1,7 +1,7 @@
 # ASv6.49
 
 Status: superseded, untested.
-[ASv6.51 (approved candidate, retry testing)](../asv6.51/ASv6.51.md) is the latest
+[ASv6.51 (approved candidate, tested on Sol xhigh)](../asv6.51/ASv6.51.md) is the latest
 approved subject prompt. ASv6.49 repeated existing instructions about refinement
 and independently understandable headings; ASv6.50 clarified the existing
 hierarchy paragraph instead. ASv6.48 remains the frozen subject baseline.
@@ -15,9 +15,11 @@ meaning without borrowing restrictions from the source post or `context`.
 The question is whether every post about the child would also be about the
 parent.
 
-The lunar-eclipse and railway-museum examples were inspected for the agreed
-failure pattern. No child was found to drop a restriction stated by its parent.
-Their source posts, headings, contexts and numbering remain byte-identical.
+The initial lunar-eclipse and railway-museum audit missed one qualifier loss:
+the railway example's 7.1.1 names Bracken as a steam locomotive, while its
+7.1.1.1 child omits that type. The [subsequent ASv6.51 audit](../asv6.50/README.md#worked-example-finding)
+records this inconsistency. The examples' source posts, headings, contexts and
+numbering remain byte-identical; correcting the example is not yet authorized.
 The existing instructions retain individual subjects, combinations and broader
 headings. This revision preserves those coverage requirements.
 
@@ -58,6 +60,9 @@ contain the parent-scope failure pattern. The linked comparison records the
 complete-output reviews and separate grounding uncertainties. The user has
 authorized the [ASv6.51 comparison](../asv6.50/README.md#asv651-comparison-on-gpt-61-sol-xhigh),
 with a fresh transfer check outside food conditional on a passing regression set.
-All twelve initial ASv6.51 requests were interrupted by a local service interruption. No candidate answer completed; the prompt remains unevaluated.
-The user subsequently authorized the identical twelve-request retry set, which
-is now running on GPT-6.1 Sol xhigh.
+All twelve initial ASv6.51 requests were interrupted by a local service interruption. No candidate answer completed in that attempt. The user
+subsequently authorized the identical twelve-request retry set on GPT-6.1 Sol
+xhigh. All twelve answers completed; N096 trials 1 and 3 contain new instances
+of the same failure pattern. The linked comparison records all twelve agent
+reviews, coverage findings and separate grounding uncertainties. The conditional
+non-food check was not started because the regression set did not pass.

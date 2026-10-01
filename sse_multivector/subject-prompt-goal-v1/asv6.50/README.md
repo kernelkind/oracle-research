@@ -7,7 +7,7 @@ test. This supersedes the ASv6.49 draft. ASv6.48 remains the frozen subject
 baseline. MPv3.43 remains the frozen mask working baseline. Adoption as the
 subject baseline remains open.
 
-The subsequent [ASv6.51 (approved candidate, retry testing)](../asv6.51/ASv6.51.md)
+The subsequent [ASv6.51 (approved candidate, tested on Sol xhigh)](../asv6.51/ASv6.51.md)
 is now the last approved subject prompt. ASv6.50 and its saved answers remain
 comparison evidence.
 
@@ -350,15 +350,16 @@ its regression test and a fresh transfer check outside food if that set passes.
 
 ## ASv6.51 approved candidate
 
-Status: approved candidate; authorized GPT-6.1 Sol xhigh retries are running
-after the first evaluation was interrupted before any answer completed.
+Status: approved candidate, tested on GPT-6.1 Sol xhigh. Two of twelve completed
+answers contain the parent-scope failure pattern. The first evaluation was
+interrupted before any answer completed; all twelve authorized retries succeeded.
 On October 1, 2026, the user approved
 the ASv6.51 wording with "lgtm" after reviewing its full-context delta.
 The preceding drafting authorization followed the agent's confirmation of
 N074 trial 3's advice-role loss and N096 trial 2's loss of sautéing restrictions.
 The subsequent testing instruction authorized the comparison below.
 
-[ASv6.51 (approved candidate, retry testing)](../asv6.51/ASv6.51.md) replaces
+[ASv6.51 (approved candidate, tested on Sol xhigh)](../asv6.51/ASv6.51.md) replaces
 ASv6.50's existing hierarchy condition with a counterexample check. Compare the `subject` headings
 alone and imagine another post that fits the child: if it could fail to fit the
 proposed parent, use a broader parent. Each applicable branch must pass that
@@ -380,8 +381,8 @@ The ASv6.51 SHA-256 is
 Mechanical revision checks verify preservation and provenance; they do not
 establish a semantic improvement. No model calls were made while drafting.
 ASv6.48 remains the frozen subject baseline and MPv3.43 remains the frozen
-mask working baseline. The authorized regression comparison is running again;
-the fresh-topic transfer check depends on completed regression results.
+mask working baseline. The authorized regression comparison is complete; it
+did not pass, so the conditional fresh-topic transfer check was not started.
 
 ## ASv6.51 comparison on GPT-6.1 Sol xhigh
 
@@ -435,8 +436,8 @@ the interrupted upstream generations consumed no quota. Incremental cash
 remains zero on the subscription route, with no paid fallback.
 
 No automatic retries were sent. The [repository retry rule](../../../AGENTS.md)
-allows them only for provider failures, not unknown causes. Native `prepare`
-has created three identical, unrun retry trials at
+allows them only for provider failures, not unknown causes. Before explicit
+retry authorization, native `prepare` created three identical retry trials at
 `sse_multivector/experiments/asv6.51-sol61-xhigh-sp-scope-regression-t1-retry-v1/`,
 `sse_multivector/experiments/asv6.51-sol61-xhigh-sp-scope-regression-t2-retry-v1/`
 and `sse_multivector/experiments/asv6.51-sol61-xhigh-sp-scope-regression-t3-retry-v1/`.
@@ -447,9 +448,119 @@ made no model calls and preserved the interrupted receipts.
 ### Authorized retry
 
 After the interruption report, the user explicitly authorized retrying all
-twelve requests with "proceed" on October 1. The local service is active;
-the approved prompt and template hashes, complete case inputs, settings,
-paired baselines and prepared workflow code match the retry plans. All three
-prepared retry trials are running through native `run --max-new-attempts 8`.
-The shared provider-only automatic retry policy still applies. No paid fallback
-is configured. Results and complete-hierarchy agent reviews are pending.
+twelve requests with "proceed" on October 1. Pre-run verification found the
+local service active and the approved prompt/template hashes, complete inputs,
+settings, paired baselines and prepared workflow code unchanged. All three
+retry trials completed through native `run --max-new-attempts 8`: four valid
+answers and four attempts each, with no additional provider retries, reused
+answers, malformed outputs or execution failures. No paid fallback was used.
+
+### Completed retry results
+
+Complete candidate hierarchies and source posts were read for all twelve
+answers. Native agent reviews record ten acceptances for the regression check
+and two rejections, with no user semantic verdicts. Numbering is unique and each
+parent exists before its children. Mechanical validity does not establish
+semantic correctness.
+
+| Post | Trial 1 | Trial 2 | Trial 3 |
+| --- | --- | --- | --- |
+| N063 | Pass; 81 entries | Pass; 78 entries | Pass; 85 entries |
+| N074 | Pass; 89 entries | Pass; 91 entries | Pass; 87 entries |
+| N096 | **Fail; 143 entries** | Pass; 117 entries | **Fail; 158 entries** |
+| N100 | Pass; 124 entries | Pass; 141 entries | Pass; 128 entries |
+
+Pass/fail describes the parent-scope check on the complete hierarchy, not
+blanket output approval or proof of exhaustive extraction.
+
+N096 trial 1 contains:
+
+```text
+1.4.6.1    Finely chopped onion, celery and carrot mixture
+1.4.6.1.1  Sautéed onion, celery and carrot mixture with crushed garlic
+```
+
+The child loses "finely chopped." A post about a coarsely chopped mixture
+sautéed with garlic fits the child without fitting the parent. Its `context`
+states that the vegetables were finely chopped, but that cannot constrain the
+standalone `subject` heading.
+
+N096 trial 3 contains:
+
+```text
+3        Cooking ingredients
+3.1      Vegetable ingredients
+3.1.1    Onions
+3.3      Meat ingredients
+3.3.1    Beef
+3.6      Pasta
+```
+
+The general entity headings lose the ingredient role. A post about onion
+cultivation or beef export prices fits the child without describing its use as
+an ingredient. Other general entries in this branch require the same check.
+This parallels the saved Astra-high `Wine as a cooking ingredient` →
+`Dry white wine` failure. The general entities should remain represented under
+broader headings; preserving them does not require these invalid relationships.
+
+The earlier garlic-addition loss is avoided in all three N096 answers: garlic
+addition and the fully specified sauté have separate broader parents. Pan and
+dish-specific water entries have no children that drop their restrictions.
+Ingredients and quantities, recipe/dish/yield, the preparation sequence,
+heat/timing/visual cues and packet instructions remain represented. N063 keeps
+all fifteen general ingredient subjects and particular dish instances. N074
+keeps individual and combined advice, comparisons, the mother/10-year-old
+example, Bitcoin narrative/fatigue and the Food Rules/Michael Pollan attribution.
+Trials 1 and 2 have no separate alternative-to-Bitcoin-carnivore heading; the
+critique and complete advice are represented separately. N100 retains general
+materials, by-product uses, measurements, animal provisions and product/purchase
+subjects. These are agent coverage assessments, not exhaustive-extraction proof.
+
+Separate N100 grounding uncertainties persist. Trials 1 and 3 infer that the
+beef steaks were vacuum-sealed from the order of statements; the post does not
+name the sealed object. All three interpret the ambiguous "some some" wording
+as myoglobin intended for chickens. These findings are distinct from the
+parent-scope check and limit the meaning of its pass verdicts.
+
+### Worked-example finding
+
+Reviewing the surviving modifier loss exposed an inconsistency in the unchanged
+railway example in [ASv6.51](../asv6.51/ASv6.51.md):
+
+```text
+7.1.1    Photography of Bracken the steam locomotive's restoration
+7.1.1.1  Photography of Bracken's restoration for an exhibition
+```
+
+The child omits "the steam locomotive." A standalone heading about restoration
+photography of a different object named Bracken could fit it without fitting
+the parent's locomotive restriction. Resolving Bracken from the supplied example
+post cannot add that restriction to a subject vector encoded from the heading
+alone. The earlier example audit missed this loss; its assessment is corrected
+in the ASv6.49 documentation. The same wording is present in frozen ASv6.48.
+Neither prompt nor either example was edited during this evaluation.
+
+This is a reason to review a correction to the existing example before another
+prompt test. The observed outputs do not establish that the example caused
+their failures. A correction is a recommendation, not an approved prompt change.
+
+### Completed retry usage and disposition
+
+Native usage reports for the completed retry trials are:
+
+| Trial | Input tokens | Cached input | Output tokens, including reasoning | Reasoning tokens | Catalog cost estimate, USD |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 1 | 10,954 | 0 | 66,177 | 44,872 | 0.683678 |
+| 2 | 10,954 | 0 | 58,700 | 38,130 | 0.608908 |
+| 3 | 8,394 | 2,560 | 61,917 | 40,033 | 0.636214 |
+
+Catalog estimates are not invoices or subscription charges. Incremental cash
+is zero on the subscription route; provider-reported billing is unavailable.
+The interrupted first attempts still lack final usage. No usage total was
+assembled outside the shared workflow.
+
+ASv6.51 does not pass the agreed regression. ASv6.50 also had two failing
+answers among twelve; these samples do not establish a quality improvement or
+generalization. The conditional non-food check was not started. ASv6.48 and
+MPv3.43 remain frozen, and ASv6.51 adoption remains open. Any further prompt
+revision requires a separately reviewed delta and authorization.
