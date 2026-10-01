@@ -60,6 +60,28 @@ def prepare_file(dataset, path, template, load_report=None):
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] in {'bounded_discovery', 'bounded_comparisons'}:
+        try:
+            from . import bounded_hierarchy_workflow as bounded
+        except ImportError:
+            import bounded_hierarchy_workflow as bounded
+        if dataset['adapter'] == 'bounded_discovery':
+            cases, protected, preparation = bounded.create_discovery_source(
+                source, template, base=path.parent, selected=dataset.get('select'))
+        else:
+            if load_report is None:
+                raise ValueError('bounded comparisons require validated experiment reports')
+            paths = engine._validate_string_array(
+                source.get('discoveries'), 'discovery experiments', allow_empty=False)
+            directories = [engine._resolve_path(p, 'discovery experiment', path.parent)
+                           for p in paths]
+            if len(set(directories)) != len(directories):
+                raise ValueError('duplicate discovery experiment')
+            reports = [load_report(p) for p in directories]
+            cases, protected, preparation = bounded.build_comparison_source(
+                source, reports, template, base=path.parent, selected=dataset.get('select'))
+        sources.update(protected)
+        return prepare({**dataset, 'adapter': 'generic'}, {'cases': cases}, template), sources, preparation
     if dataset['adapter'] == 'hierarchy_construction':
         engine._expect_fields(source, 'hierarchy construction',
                               {'schema_version', 'inputs', 'hierarchy'})
@@ -937,6 +959,14 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter in {'bounded_discovery', 'bounded_comparisons'}:
+        try:
+            from . import bounded_hierarchy_workflow as bounded
+        except ImportError:
+            import bounded_hierarchy_workflow as bounded
+        validator = (bounded.validate_discovery if adapter == 'bounded_discovery'
+                     else bounded.validate_comparisons)
+        result['parsed'] = validator(case, raw)
     if adapter == "subjects":
         value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
         hierarchy_inputs.validate_subjects(value)

@@ -6,6 +6,15 @@ its stages; **LG01** names the technique used at HG3, regardless of post count.
 The current tests reuse saved HG1–HG2 outputs rather than rerunning SP or MP.
 Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
 
+**Current authorized build: [HG100-SOL01](../bounded-hierarchy-v1/README.md).**
+It reuses the original 100-post HG1–HG3 data and replaces the open-ended
+HG4–HG8 diagnostic loop below with documented bounded candidate selection,
+Sol nomination and batched verification, fixed original-entry references,
+deterministic graph application, and at most three passes under one
+2,000-attempt limit. The older tests below remain evidence, not extra work
+silently added to this build. No source entries, masks or SP ancestry are
+discarded.
+
 ## Definitions
 
 - **SP subject entry:** a subject in one post's local hierarchy.

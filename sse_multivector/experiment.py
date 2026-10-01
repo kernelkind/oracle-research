@@ -292,6 +292,10 @@ def prepare(args):
                 Path(inputs.hierarchy_inputs.__file__),
                 Path(engine.__file__),
                 Path(__file__).with_name("mask_positions.py"),
+                *(Path(__file__).with_name(name) for name in (
+                    "bounded_hierarchy_candidates.py", "bounded_hierarchy_workflow.py",
+                    "bounded_hierarchy_graph.py", "bounded_hierarchy_build.py")
+                  if Path(__file__).with_name(name).exists()),
             )
         }
         plan["requests_at_prepare"] = (
@@ -834,8 +838,16 @@ def reconcile_costs(directory):
 
 
 def run(directory, max_new_attempts=None, runner_upgrade_reason=None, *,
-        max_cost_usd=None, max_request_cost_usd=None):
+        max_cost_usd=None, max_request_cost_usd=None, attempt_budget_path=None):
     directory = directory.resolve()
+    if (directory / 'bounded-build.json').exists():
+        if any(x is not None for x in (max_cost_usd, max_request_cost_usd, attempt_budget_path)):
+            raise ValueError('bounded builds use their frozen shared attempt budget and subscription route')
+        try:
+            from .bounded_hierarchy_build import run_build
+        except ImportError:
+            from bounded_hierarchy_build import run_build
+        return run_build(directory, max_new_attempts, runner_upgrade_reason)
     with locked(directory):
         plan, config, manifest = load(directory)
         if plan["imported"]:
@@ -870,6 +882,7 @@ def run(directory, max_new_attempts=None, runner_upgrade_reason=None, *,
                 max_new_attempts=max_new_attempts,
                 max_cost_usd=max_cost_usd,
                 max_request_cost_usd=max_request_cost_usd,
+                attempt_budget_path=attempt_budget_path,
                 runner_upgrade_reason=runner_upgrade_reason if wrapper_changed else None,
             )
         except engine.RunnerError as caught:
@@ -1105,6 +1118,10 @@ def compact(result, *, prepared=False):
 def parser():
     root = argparse.ArgumentParser(description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
+    p = commands.add_parser('prepare-bounded-hierarchy',
+                            help='freeze a bounded multi-pass hierarchy build; no inference')
+    p.add_argument('destination', type=Path)
+    p.add_argument('--spec', type=Path, required=True)
     p = commands.add_parser(
         "prepare", help="freeze inputs/settings and baseline; no inference"
     )
@@ -1142,6 +1159,8 @@ def parser():
     p.add_argument("experiment", type=Path)
     p.add_argument("--max-new-attempts", type=int,
                    help="cap newly sent attempts, including provider retries; reserve spending for this allowance")
+    p.add_argument("--attempt-budget", type=Path,
+                   help="persistent cross-experiment launch counter; failed/interrupted attempts are not refunded")
     p.add_argument("--max-cost-usd", type=float,
                    help="cumulative experiment spending allowance; includes prior attempts, never truncates responses")
     p.add_argument("--max-request-cost-usd", type=float,
@@ -1214,6 +1233,12 @@ def main(argv=None):
             if args.from_experiment and args.baseline:
                 raise ValueError("--from already specifies the baseline")
             compact(prepare(args), prepared=True)
+        elif args.command == 'prepare-bounded-hierarchy':
+            try:
+                from .bounded_hierarchy_build import prepare_build
+            except ImportError:
+                from bounded_hierarchy_build import prepare_build
+            print(json.dumps(prepare_build(args.spec, args.destination), indent=2))
         elif args.command == "collect":
             print(json.dumps(collect(args.experiments, args.output, args.worker_config), indent=2))
         elif args.command == "run":
@@ -1222,7 +1247,11 @@ def main(argv=None):
             if args.runner_upgrade_reason is not None and not args.runner_upgrade_reason.strip():
                 raise ValueError("--runner-upgrade-reason must not be blank")
             result = run(args.experiment, args.max_new_attempts, args.runner_upgrade_reason,
-                         max_cost_usd=args.max_cost_usd, max_request_cost_usd=args.max_request_cost_usd)
+                         max_cost_usd=args.max_cost_usd, max_request_cost_usd=args.max_request_cost_usd,
+                         attempt_budget_path=args.attempt_budget)
+            if (args.experiment / 'bounded-build.json').exists():
+                print(json.dumps(result, indent=2))
+                return int(result.get('status') != 'finished')
             compact(result)
             return int(
                 any(
@@ -1241,6 +1270,15 @@ def main(argv=None):
                                                args.base, args.combine_equivalent,
                                                args.inherit_equivalent_judgments), indent=2))
         elif args.command == "show":
+            if (args.experiment / 'bounded-build.json').exists():
+                if any((args.case, args.only, args.note, args.generation_costs)):
+                    raise ValueError('inspect individual cases in the child experiments')
+                try:
+                    from .bounded_hierarchy_build import report_build
+                except ImportError:
+                    from bounded_hierarchy_build import report_build
+                print(json.dumps(report_build(args.experiment), indent=2))
+                return 0
             only = ([args.case] if args.generation_costs and args.case and args.only is None
                     else args.only)
             result = report(args.experiment, only, args.note, generation_costs=args.generation_costs)

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "id": "HG100-SOL01",
+  "inputs": "../../target/subject-matching-100-v1/inputs/inputs.json",
+  "hierarchy": "../../target/subject-matching-100-v1/run/results.json",
+  "subject_probe": "../../target/subject-matching-100-v1/inputs",
+  "source": "../hierarchy-refresh-v1",
+  "prompts": {
+    "discovery": {"id": "PCPv2", "path": "PCPv2.md"},
+    "comparison": {"id": "BCPv5", "path": "BCPv5.md"}
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "low",
+    "concurrency": 8,
+    "timeout_seconds": 600
+  },
+  "max_model_calls": 2000,
+  "max_passes": 3,
+  "max_nominations_per_reference": 9,
+  "work_budget": 20000
+}

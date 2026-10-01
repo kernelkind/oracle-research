@@ -200,6 +200,30 @@ class RetryDirective:
 
 
 @dataclass
+class PersistentAttemptBudget:
+    """An irreversible launch counter shared by separate saved experiments."""
+    path: Path
+
+    def claim(self, job_key: str | None = None) -> None:
+        path = self.path.resolve()
+        with path.with_suffix(path.suffix + '.lock').open('a') as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            value = _load_json(path, 'attempt budget')
+            _expect_fields(value, 'attempt budget', {'schema_version', 'limit', 'used'})
+            if (value['schema_version'] != 1 or type(value['limit']) is not int
+                    or type(value['used']) is not int or value['limit'] < 1
+                    or not 0 <= value['used'] <= value['limit']):
+                raise RunnerError('invalid persistent attempt budget')
+            if value['used'] >= value['limit']:
+                raise NewJobLimitReached
+            value['used'] += 1
+            # Reserve before invoking the transport; interruptions never refund a call.
+            _atomic_write(path, _canonical_json_bytes(value))
+            _append_json_line(path.with_suffix(path.suffix + '.claims.jsonl'),
+                              {'ordinal': value['used'], 'job_key': job_key})
+
+
+@dataclass
 class NewJobBudget:
     limit: int | None
     used: int = 0
@@ -207,15 +231,18 @@ class NewJobBudget:
     completed_takeaways: int = 0
     lock: Any = field(default_factory=threading.Lock, repr=False)
     spend: PromptSpendBudget | None = None
+    persistent: PersistentAttemptBudget | None = None
 
     @property
     def exhausted(self) -> bool:
         return self.limit is not None and self.used >= self.limit
 
-    def claim(self) -> None:
+    def claim(self, job_key: str | None = None) -> None:
         with self.lock:
             if self.limit is not None and self.used >= self.limit:
                 raise NewJobLimitReached
+            if self.persistent is not None:
+                self.persistent.claim(job_key)
             if self.spend is not None:
                 self.spend.claim()
             self.used += 1
@@ -2549,7 +2576,7 @@ def _run_job(
             )
             return response
     if new_job_budget is not None:
-        new_job_budget.claim()
+        new_job_budget.claim(job_key)
     attempt = 1 if previous is None else previous["attempt"] + 1
     try:
         attempt_result = _invoke_model(config, stage, prompt, schema)
@@ -3324,6 +3351,7 @@ def _execute_prompt_batch(
     runner_upgrade_reason: str | None = None,
     max_cost_usd: float | None = None,
     max_request_cost_usd: float | None = None,
+    attempt_budget_path: Path | None = None,
 ) -> dict[str, object]:
     runner_version = manifest["runner_version"]
     proposed_manifest = {**manifest, "wrapper_sha256": _sha256_file(Path(__file__).resolve())}
@@ -3363,7 +3391,9 @@ def _execute_prompt_batch(
             max_cost_usd=max_cost_usd, max_request_cost_usd=max_request_cost_usd,
             prior_spend_micro_usd=spend.spent, manifest_sha256=manifest_sha256,
             wrapper_sha256=provenance.active_wrapper_sha256))
-    budget = NewJobBudget(max_new_attempts, spend=spend)
+    budget = NewJobBudget(max_new_attempts, spend=spend,
+                         persistent=PersistentAttemptBudget(attempt_budget_path)
+                         if attempt_budget_path is not None else None)
     (config.run_directory / "output.json").unlink(missing_ok=True)
     options = manifest["request_reuse"]
     history = RequestHistory(Path(options["history_root"]), exclude_run=config.run_directory)
