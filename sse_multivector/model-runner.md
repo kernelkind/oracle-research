@@ -3979,10 +3979,10 @@ Fifteen native final agent reviews cover complete post/title inputs and their
 selected contexts: four accept the clear mixed-post comparisons, eleven retain
 uncertainty about focused-post directions or shares. These are observations,
 not ninety-nine independent quality labels or a population accuracy estimate.
-No new user judgments or numeric tie threshold were introduced. The next
-recommendation is to compare relevance from the complete Bitcoin privacy post
-with relevance from its saved contexts, keeping prominence 100 and the formula
-fixed. This diagnostic has not begun and no input change is adopted.
+No new user judgments or numeric tie threshold were introduced. The user
+approved comparing relevance from the complete Bitcoin privacy post with
+relevance from its saved contexts, keeping prominence 100 and the formula
+fixed. The completed diagnostic is recorded below; no input change is adopted.
 
 Native generation accounting records 10,170 input tokens, no cached input,
 2,473 output tokens including 573 reasoning tokens and a $0.225350 catalogue
@@ -4003,6 +4003,69 @@ SP/MP, original source posts, raw graph, prompt and both prior comparison hashes
 remain unchanged. The native result is `relevance-v1/comparison.json`, SHA256
 `5e0f3a6c0ffedbf7ccf3eb6ef919c6f15eb08ed3d4586fcd26b64ff26ce7f599`.
 The transfer trial is complete; production adoption remains open.
+
+**Bitcoin privacy: exact complete post as relevance input.**
+
+The user approved this bounded check. Native `prominence_cosine.py prepare`
+selects only the existing Bitcoin node's forty-five cases and five posts from
+`ppv30-fresh-nonfood-v2`, retaining all saved PPv30-node-v1 prominence answers.
+The fourteen `fresh2-merged-6-N041-*` privacy entries replace their standalone
+SP-context relevance inputs with the exact complete original post. All 356
+UTF-8 bytes, including its original paragraph breaks, are selected. Those
+fourteen entries share one complete-post encoder row; they are not fourteen
+independent observations. The other thirty-one contexts and the Bitcoin title
+remain exact. The existing `--relevance-source-text` and `--node` options suffice;
+no workflow or production source changes were needed.
+
+| Privacy-post relevance input | Prominence | Relevance | Sorting score |
+| --- | ---: | ---: | ---: |
+| Highest saved SP context, describing node/Tor broadcast privacy | 100 | .662586 | 66.258643 |
+| Exact complete original post | 100 | .542481 | 54.248130 |
+
+The sorting score decreases by 12.010514. The full Bitcoin order remains block
+transmission (91.148035), scaling (88.740711), privacy (54.248130), Bitcoin/Nostr
+optimism (28.996428), and Nostr hardware with zap controls (5.649778). All four
+other post maxima and their winning cases are bit-identical to the original.
+All fourteen privacy cases now have identical relevance and sorting score, so
+the native per-post maximum selects the first case ID only to break that tie.
+Literature and Psychology and philosophy are not re-encoded; their original
+comparison remains unchanged.
+
+The complete post's node, mempool, Tor and Sparrow details still develop
+Bitcoin privacy, consistent with its saved prominence 100. Replacing its SP
+contexts with the original post does not close its gap to the other focused
+Bitcoin posts or demonstrate an ordering improvement. This is not proof that
+all SP wording is irrelevant or that a particular SSE/model/title limitation
+causes the gap. The strict within-focus direction remains uncertain. The agent
+recommends a bounded wording diagnostic: replace the opening “a node” with
+“a Bitcoin node” in a diagnostic copy, holding all other words, the title,
+prominence and formula fixed. That would test sensitivity to explicitly naming
+Bitcoin; it has not begun and would not change the original post or production
+input policy.
+
+The same cached offline CPU SSE checkpoint, model artifacts, worker and runtime
+encoded thirty-three complete rows: one title, thirty-one other contexts and
+one complete privacy post. Every byte span and non-special token selection is
+complete, with no truncation. Twenty-six other case cosines/products are
+bit-identical; five change on re-encoding by at most 5.537e-8 cosine and
+.000002768269 sorting-score points, without changing any other post maximum or
+order. These are numerical checks, not a semantic tie threshold. Independent
+checks verify all forty-five cosine/products, five post maxima, full Bitcoin
+orders and twenty protected artifact/source hashes. Original prominence
+receipts, SP/MP sources, raw graph, prompt and earlier comparisons remain
+unchanged. Fourteen existing comparison tests passed. No new teacher calls,
+tokens, paid resources, user judgments or task budget-ledger edits occurred.
+
+Native `experiment.py review` appended fourteen uncertain agent comments to
+the original privacy cases, explicitly bound to this diagnostic's comparison
+hash. They preserve the original history and represent one complete-post/title
+input. Native generation accounting remains fifteen original calls and
+eighty-four reuses; those are the earlier trial's calls, not new diagnostic
+usage. Ignored artifacts are under
+`experiments/ppv30-fresh-nonfood-v2/relevance-privacy-post-v1`: plan, request,
+config, receipt, vectors, comparison, verification and review/test logs.
+The comparison SHA256 is
+`d26ab11ff6ae33591560271e2ae65b737c596dd60ae3bb9953ef301f3a32a0c4`.
 
 The user selected Photography in the untouched raw Jev hierarchy for the first
 combined-score trial. This is not prominence-only hierarchy sorting: the intended

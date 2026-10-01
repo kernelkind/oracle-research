@@ -1454,12 +1454,43 @@ exact-percentage approvals or numeric tie threshold are introduced.
 Independent source, allocation, encoder, product and post-maximum checks pass;
 protected sources and earlier comparisons are unchanged. A concurrent unrelated
 CLI addition caused a pre-inference stop and was reviewed/audited through the
-native code-upgrade mechanism before any teacher call. The result uses $0 incremental cash and a $0.225350 catalogue reference estimate. The next recommendation is to compare the complete
-Bitcoin privacy post with saved contexts as the relevance input, holding
-prominence 100 and the formula fixed. This diagnostic has not begun. The transfer
+native code-upgrade mechanism before any teacher call. The result uses $0 incremental cash and a $0.225350 catalogue reference estimate. The user approved comparing the complete Bitcoin
+privacy post with saved contexts as the relevance input, holding prominence 100
+and the formula fixed. The completed diagnostic is recorded below. The transfer
 trial is complete and production adoption remains open. Native source selectors,
 full orders and provenance are described in
 [model-runner.md](../../sse_multivector/model-runner.md).
+
+**Bitcoin privacy complete-post relevance check completed October 1:** only
+the fourteen privacy entries in the existing five-post Bitcoin trial use the
+exact complete original post as relevance input; they share one encoder row.
+All 356 original UTF-8 bytes are retained. Saved prominence stays 100, the
+formula and Bitcoin title stay fixed, and the other thirty-one context inputs
+are unchanged. Relevance drops from the highest context's .662586 to .542481,
+and the sorting score from 66.258643 to 54.248130. The Bitcoin order remains
+block transmission, scaling, privacy, Bitcoin/Nostr optimism, and Nostr
+hardware with zaps. The other four post maxima and winners are bit-identical.
+The Literature and Psychology and philosophy comparisons are untouched.
+
+The replacement does not close the privacy post's gap to the other focused
+Bitcoin posts. Its complete meaning still concerns Bitcoin privacy, but this
+result does not identify the cause of its lower relevance or establish a
+benefit from the strict focused-post order. The next recommendation is a
+bounded wording diagnostic: replace “a node” with “a Bitcoin node” in the
+opening of a diagnostic copy, keeping other words, title, prominence and formula
+fixed. This would check sensitivity to explicitly naming Bitcoin; it has not
+begun. Original source posts and production input policy remain unchanged.
+
+Native offline CPU preparation/collection used thirty-three complete rows with
+the unchanged SSE checkpoint/model/runtime. Exact inputs, complete token
+selections, forty-five independent products, five post maxima, full orders and
+twenty protected hashes were verified. Five nonwinning context cases differ
+on re-encoding by at most .000002768269 sorting-score points; all other inputs
+and post maxima remain fixed. Fourteen comparison tests passed. Fourteen native
+uncertain agent comments preserve original history and represent one privacy
+post, not independent labels. No teacher calls, new token usage, user judgments,
+paid resources or task accounting changes occurred. Production adoption remains
+open; [model-runner.md](../../sse_multivector/model-runner.md) records provenance.
 
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
