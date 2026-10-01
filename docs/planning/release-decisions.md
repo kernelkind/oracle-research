@@ -1142,6 +1142,20 @@ prominence × relevance. No equal sorting scores, numerical gap limit,
 production tie handling or rule for identifying other about-equal pairs was
 selected. The sorting calculation and saved results stay unchanged.
 
+The user next reviewed the complete original wording of all seven Eggs posts,
+with URLs omitted and highest sorting score first, and answered "lgtm".
+The accepted displayed order is century eggs (`11d2afb1`), avoiding eggs and
+snacking on chocolate (`612fa3c5`), mixed diary with hens and egg preparations
+(`eaa6a5e6`), coffee with raw egg yolk (`f4c5aa5f`), four-egg dinner (`fbd52a1d`),
+duck-egg breakfast burrito (`ee3404d5`), then rocket stove (`99e6a514`).
+Record one accepted seven-post Eggs order, separately from the eleven clear
+Coffee/Eggs/Music pair checks, Photography's three-post judgment and the four
+about-equal Coffee pairs. Do not infer 21 independent pair judgments or require
+strict differences between every adjacent post. Both saved prominence alone
+and sorting score produce this accepted order. This review does not select a
+formula, approve numerical values or adopt production sorting. No new model
+calls, encoding or saved-result changes were needed.
+
 The [saved-score comparison](../../sse_multivector/model-runner.md) records
 the original mask comparisons, SP-context results and node-title trial for
 these ten checks, plus the four about-equal judgments and separate slight

@@ -3106,6 +3106,22 @@ Eggs:
 | Duck-egg breakfast burrito (`ee3404d5`) | 25 | 20.662117 |
 | Rocket stove (`99e6a514`) | 8 | 7.730602 |
 
+The user reviewed the complete original wording of all seven Eggs posts in
+the displayed order, with URLs omitted, and answered "lgtm". Record one
+accepted full-node Eggs order, exactly as shown above. Both prominence alone
+and sorting score give this order, so this review does not distinguish between
+the two calculations. It remains separate from the eleven clear
+Coffee/Eggs/Music pair checks, Photography's three-post judgment and the four
+about-equal Coffee comparisons. Do not count it as 21 independent pair
+judgments or infer strict differences between every adjacent post.
+
+The seven post maxima and both complete orders were checked against the
+unchanged original comparison, whose SHA-256 remains
+`77f1e9bf073a504f76b26d1c8f667df85254fefc1640d94d4cf575c6bf51bbec`.
+This is approval of the displayed order, not the numerical values, formula or
+production adoption. Prompts, calculations and saved results are unchanged;
+no new teacher calls or encoding were needed.
+
 Relative to v2, 11 Coffee pair directions and one Eggs pair direction change.
 The roasting/short-post direction matches the user's tentative judgment.
 Putting the diary above coffee with raw egg yolk matches the new clear judgment.
