@@ -41,3 +41,24 @@ Fetch the referenced root nodes from that relay:
 ```text
 ["REQ","sid",{"ids":["note1def..def","note1ghi..ghi"]}]
 ```
+
+## Node event — proposed schema
+
+`K_NODE` is an unassigned regular kind in `1000–9999`.
+Node events are published by the hierarchy author and served by the same relay.
+
+`title` names the node. Its `e` tags list immediate child node event IDs in
+order. A node with no `e` tags has no children. `content` is empty.
+
+```text
+{
+  "id":"note1def..def", "pubkey":"npub1abc..abc",
+  "created_at":1790683199, "kind":K_NODE,
+  "tags":[
+    ["title","Cooking"],
+    ["e","note1jkl..jkl"],
+    ["e","note1mno..mno"]
+  ],
+  "content":"", "sig":"def..def"
+}
+```
