@@ -103,9 +103,13 @@ index's complete sequence in `notes_index` tag order. Apply this rule
 recursively.
 A missing referenced index makes the read incomplete.
 
+Within a node's note list, indexes MUST NOT overlap: each note event ID
+MUST appear at most once across all its indexes, including nested indexes.
+The same note ID MAY appear in different nodes' lists.
+
 An index must not reference itself directly or through other indexes. If
 following `notes_index` references revisits an index on the current traversal
-path, the list is invalid. Reusing an index in a separate branch is allowed.
+path, the list is invalid.
 
 Indexes are published by the hierarchy author and served by the same relay.
 `content` is empty. The author chooses how many entries fit each event's
